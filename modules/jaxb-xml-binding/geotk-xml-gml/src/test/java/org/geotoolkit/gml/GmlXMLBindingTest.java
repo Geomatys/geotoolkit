@@ -24,6 +24,7 @@ import java.io.StringWriter;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import org.geotoolkit.gml.xml.GMLMarshallerPool;
 import org.geotoolkit.gml.xml.v311.DirectPositionListType;
 import org.geotoolkit.gml.xml.v311.DirectPositionType;
 import org.geotoolkit.gml.xml.v311.EnvelopeType;
@@ -33,6 +34,7 @@ import org.geotoolkit.gml.xml.v311.LineStringSegmentType;
 import org.geotoolkit.gml.xml.v311.ObjectFactory;
 import org.geotoolkit.gml.xml.v311.TimePeriodType;
 import org.geotoolkit.gml.xml.v311.TimePositionType;
+import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.xml.MarshallerPool;
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -51,7 +53,7 @@ public class GmlXMLBindingTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        pool = new MarshallerPool("org.geotoolkit.gml.xml.v311:org.geotoolkit.internal.jaxb.geometry");
+        pool = GMLMarshallerPool.getInstance();
     }
 
     @AfterClass
@@ -93,11 +95,9 @@ public class GmlXMLBindingTest {
         //we remove the first line
         result = result.substring(result.indexOf("?>") + 3);
         //we remove the xmlmns
-        result = result.replace(" xmlns:gml=\"http://www.opengis.net/gml\"", "");
-        result = result.replace(" xmlns:xlink=\"http://www.w3.org/1999/xlink\"", "");
+        result = StringUtilities.removeXmlns(result);
        
-
-        String expResult = "<gml:Envelope srsName=\"urn:ogc:def:crs:EPSG:6.8:4283\" gml:id=\"bound-1\">" + '\n' +
+        String expResult = "<gml:Envelope srsName=\"urn:ogc:def:crs:EPSG:6.8:4283\" gml:id=\"bound-1\" >" + '\n' +
                            "    <gml:lowerCorner>-30.711 134.196</gml:lowerCorner>" + '\n' +
                            "    <gml:upperCorner>-30.702 134.205</gml:upperCorner>" + '\n' +
                            "</gml:Envelope>" + '\n' ;
@@ -128,10 +128,9 @@ public class GmlXMLBindingTest {
         //we remove the first line
         result = result.substring(result.indexOf("?>") + 3);
         //we remove the xmlmns
-        result = result.replace(" xmlns:gml=\"http://www.opengis.net/gml\"", "");
-        result = result.replace(" xmlns:xlink=\"http://www.w3.org/1999/xlink\"", "");
+        result = StringUtilities.removeXmlns(result);
 
-        expResult = "<gml:LineStringSegment>" + '\n' +
+        expResult = "<gml:LineStringSegment >" + '\n' +
                     "    <gml:posList>1.0 1.1 1.2</gml:posList>" + '\n' +
                     "</gml:LineStringSegment>" + '\n' ;
         assertEquals(expResult, result);
@@ -149,10 +148,9 @@ public class GmlXMLBindingTest {
         //we remove the first line
         result = result.substring(result.indexOf("?>") + 3);
         //we remove the xmlmns
-        result = result.replace(" xmlns:gml=\"http://www.opengis.net/gml\"", "");
-        result = result.replace(" xmlns:xlink=\"http://www.w3.org/1999/xlink\"", "");
+        result = StringUtilities.removeXmlns(result);
 
-        expResult = "<gml:LineStringSegment>" + '\n' +
+        expResult = "<gml:LineStringSegment >" + '\n' +
                     "    <gml:pos>1.1 1.2</gml:pos>" + '\n' +
                     "    <gml:pos>2.3 48.1</gml:pos>" + '\n' +
                     "</gml:LineStringSegment>" + '\n' ;

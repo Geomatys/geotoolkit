@@ -55,14 +55,14 @@ import org.geotoolkit.metadata.iso.quality.DefaultRelativeInternalPositionalAccu
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
+/*@XmlType(name = "", propOrder = {
     "abstractDQPositionalAccuracy"
-})
+})*/
 @XmlRootElement(name = "coordinateOperationAccuracy")
 public class CoordinateOperationAccuracy {
 
-    @XmlElementRef(name = "AbstractDQ_PositionalAccuracy", namespace = "http://www.isotc211.org/2005/gmd", type = JAXBElement.class)
-    private JAXBElement<? extends AbstractPositionalAccuracy> abstractDQPositionalAccuracy;
+    /**@XmlElementRef(name = "AbstractDQ_PositionalAccuracy", namespace = "http://www.isotc211.org/2005/gmd", type = JAXBElement.class)
+    private JAXBElement<? extends AbstractPositionalAccuracy> abstractDQPositionalAccuracy;*/
     @XmlAttribute
     private List<String> nilReason;
     @XmlAttribute(namespace = "http://www.opengis.net/gml/3.2")
@@ -96,10 +96,10 @@ public class CoordinateOperationAccuracy {
      *     {@link JAXBElement }{@code <}{@link AbstractPositionalAccuracy }{@code >}
      *     {@link JAXBElement }{@code <}{@link DefaultGriddedDataPositionalAccuracy }{@code >}
      *     
-     */
+     
     public JAXBElement<? extends AbstractPositionalAccuracy> getAbstractDQPositionalAccuracy() {
         return abstractDQPositionalAccuracy;
-    }
+    }*/
 
     /**
      * Sets the value of the abstractDQPositionalAccuracy property.
@@ -111,10 +111,10 @@ public class CoordinateOperationAccuracy {
      *     {@link JAXBElement }{@code <}{@link AbstractPositionalAccuracy }{@code >}
      *     {@link JAXBElement }{@code <}{@link DefaultGriddedDataPositionalAccuracy }{@code >}
      *     
-     */
+    
     public void setAbstractDQPositionalAccuracy(JAXBElement<? extends AbstractPositionalAccuracy> value) {
         this.abstractDQPositionalAccuracy = ((JAXBElement<? extends AbstractPositionalAccuracy> ) value);
-    }
+    } */
 
     /**
      * Gets the value of the nilReason property.

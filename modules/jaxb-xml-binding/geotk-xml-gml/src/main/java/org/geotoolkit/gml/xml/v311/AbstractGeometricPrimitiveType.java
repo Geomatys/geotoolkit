@@ -84,31 +84,37 @@ public abstract class AbstractGeometricPrimitiveType extends AbstractGeometryTyp
 
     @Override
     public Set<Primitive> getContainedPrimitives() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        // TODO calculate this for each subtype of geometry
+        return null;
     }
 
     @Override
     public Set<Primitive> getContainingPrimitives() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        // TODO calculate this for each subtype of geometry
+        return null;
     }
 
     @Override
     public Set<Complex> getComplexes() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        // TODO calculate this for each subtype of geometry
+        return null;
     }
 
     @Override
     public Composite getComposite() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        // TODO calculate this for each subtype of geometry
+        return null;
     }
 
     @Override
     public OrientablePrimitive[] getProxy() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        // TODO calculate this for each subtype of geometry
+        return null;
     }
 
     @Override
     public AbstractGeometricPrimitiveType clone() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        // TODO calculate this for each subtype of geometry
+        return null;
     }
 }

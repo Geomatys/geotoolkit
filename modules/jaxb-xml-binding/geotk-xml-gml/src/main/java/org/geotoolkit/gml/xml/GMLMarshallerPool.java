@@ -31,9 +31,7 @@ public class GMLMarshallerPool {
     private static MarshallerPool instance;
     static {
         try {
-            instance = new MarshallerPool("org.geotoolkit.ogc.xml.exception:" +
-                                          "org.geotoolkit.gml.xml.v212:" +
-                                          "org.geotoolkit.gml.xml.v311:" +
+            instance = new MarshallerPool("org.geotoolkit.gml.xml.v311:" +
                                           "org.geotoolkit.gml.xml.v321");
         } catch (JAXBException ex) {
             Logger.getLogger(GMLMarshallerPool.class.getName()).log(Level.SEVERE, null, ex);

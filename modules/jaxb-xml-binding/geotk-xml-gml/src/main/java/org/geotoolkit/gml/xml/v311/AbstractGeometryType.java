@@ -17,6 +17,7 @@
 package org.geotoolkit.gml.xml.v311;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -26,6 +27,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.Utilities;
@@ -96,6 +98,10 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
     @XmlAttribute
     private List<String> uomLabels;
 
+    // Opengis attribute
+    @XmlTransient
+    private Precision precision;
+    
     /**
      * empty constructor used by JAXB
      */
@@ -224,16 +230,15 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
 
     @Override
     public PrimitiveBoundary getBoundary() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        // TODO calculate this for each subtype of geometry
+        return null;
     }
 
     @Override
     public CoordinateReferenceSystem getCoordinateReferenceSystem() {
-        String srsName = getSrsName();
-
         if(srsName != null){
             try {
-                return CRS.decode(getSrsName());
+                return CRS.decode(srsName);
             } catch (FactoryException ex) {
                 Logger.getLogger(AbstractGeometryType.class.getName()).log(Level.WARNING, "Could not decode CRS which name is : " + srsName, ex);
             }
@@ -244,42 +249,56 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
 
     @Override
     public Precision getPrecision() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return precision;
+    }
+    
+    /**
+     * @param precision the precision to set
+     */
+    public void setPrecision(Precision precision) {
+        this.precision = precision;
     }
 
     @Override
     public Geometry getMbRegion() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        // TODO calculate this for each subtype of geometry
+        return null;
     }
 
     @Override
     public DirectPosition getRepresentativePoint() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        // TODO calculate this for each subtype of geometry
+        return null;
     }
 
     @Override
     public Complex getClosure() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        // TODO calculate this for each subtype of geometry
+        return null;
     }
 
     @Override
     public boolean isSimple() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        // TODO calculate this for each subtype of geometry
+        return false;
     }
 
     @Override
     public boolean isCycle() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        // TODO calculate this for each subtype of geometry
+        return false;
     }
 
     @Override
     public double distance(final Geometry geometry) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        // TODO calculate this for each subtype of geometry
+        return -1;
     }
 
     @Override
     public int getDimension(final DirectPosition point) {
-        throw new UnsupportedOperationException("Not supported yet.");
+       // TODO calculate this for each subtype of geometry
+        return -1;
     }
 
     @Override
@@ -294,62 +313,76 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
 
     @Override
     public Set<? extends Complex> getMaximalComplex() {
-        throw new UnsupportedOperationException("Not supported yet.");
+       // TODO calculate this for each subtype of geometry
+        return new HashSet<Complex>();
     }
 
     @Override
     public Geometry transform(final CoordinateReferenceSystem newCRS) throws TransformException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        // TODO calculate this for each subtype of geometry
+        return null;
     }
 
     @Override
     public Geometry transform(final CoordinateReferenceSystem newCRS, final MathTransform transform) throws TransformException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        // TODO calculate this for each subtype of geometry
+        return null;
     }
 
     @Override
     public Envelope getEnvelope() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        // TODO calculate this for each subtype of geometry
+        return null;
     }
 
     @Override
     public DirectPosition getCentroid() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        // TODO calculate this for each subtype of geometry
+        return null;
     }
 
     @Override
     public Geometry getConvexHull() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        // TODO calculate this for each subtype of geometry
+        return null;
     }
 
     @Override
     public Geometry getBuffer(final double distance) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        // TODO calculate this for each subtype of geometry
+        return null;
     }
 
     @Override
     public boolean isMutable() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return true;
     }
 
+    /**
+     * cant return immutable version of the object fir this module. 
+     * @return 
+     */
     @Override
     public Geometry toImmutable() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return null;
     }
 
     @Override
     public boolean contains(final TransfiniteSet pointSet) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        // TODO calculate this for each subtype of geometry
+        return false;
     }
 
     @Override
     public boolean contains(final DirectPosition point) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        // TODO calculate this for each subtype of geometry
+        return false;
     }
 
     @Override
     public boolean intersects(final TransfiniteSet pointSet) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        // TODO calculate this for each subtype of geometry
+        return false;
     }
 
     @Override
@@ -359,24 +392,33 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
 
     @Override
     public TransfiniteSet union(final TransfiniteSet pointSet) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        // TODO calculate this for each subtype of geometry
+        return null;
     }
 
     @Override
     public TransfiniteSet intersection(final TransfiniteSet pointSet) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        // TODO calculate this for each subtype of geometry
+        return null;
     }
 
     @Override
     public TransfiniteSet difference(final TransfiniteSet pointSet) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        // TODO calculate this for each subtype of geometry
+        return null;
     }
 
     @Override
     public TransfiniteSet symmetricDifference(final TransfiniteSet pointSet) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        // TODO calculate this for each subtype of geometry
+        return null;
     }
 
+    @Override
+    public boolean isEmpty() {
+        return false;
+    }
+    
     /**
      * Verify if this entry is identical to the specified object.
      */
