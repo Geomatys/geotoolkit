@@ -129,24 +129,32 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
             if (event == START_ELEMENT) {
 
                 // we search an embedded featureType description
-                final String schemaLocation = reader.getAttributeValue(Namespaces.XSI, "schemaLocation");
+                String schemaLocation = reader.getAttributeValue(Namespaces.XSI, "schemaLocation");
                 if (readEmbeddedFeatureType && schemaLocation != null) {
-                    final String fturl = schemaLocation.substring(schemaLocation.indexOf(' ') + 1);
                     final JAXBFeatureTypeReader featureTypeReader = new JAXBFeatureTypeReader();
-                    try {
-                       final URL url = new URL(fturl);
-                       List<FeatureType> fts = (List<FeatureType>) featureTypeReader.read(url.openStream());
-                       for (FeatureType ft : fts) {
-                           if (!featureTypes.contains(ft)) {
-                                featureTypes.add(ft);
-                           }
-                       }
-                    } catch (MalformedURLException ex) {
-                        LOGGER.log(Level.WARNING, null, ex);
-                    } catch (IOException ex) {
-                        LOGGER.log(Level.WARNING, null, ex);
-                    } catch (JAXBException ex) {
-                        LOGGER.log(Level.WARNING, null, ex);
+                    schemaLocation = schemaLocation.trim();
+                    final String[] urls = schemaLocation.split(" ");
+                    for (int i = 0; i < urls.length; i++) {
+                        final String namespace = urls[i];
+                        if (!namespace.equalsIgnoreCase("http://www.opengis.net/gml") && i + 1 < urls.length) {
+                            final String fturl = urls[i + 1];
+                            try {
+                                final URL url = new URL(fturl);
+                                List<FeatureType> fts = (List<FeatureType>) featureTypeReader.read(url.openStream());
+                                for (FeatureType ft : fts) {
+                                    if (!featureTypes.contains(ft)) {
+                                        featureTypes.add(ft);
+                                    }
+                                }
+                            } catch (MalformedURLException ex) {
+                                LOGGER.log(Level.WARNING, null, ex);
+                            } catch (IOException ex) {
+                                LOGGER.log(Level.WARNING, null, ex);
+                            } catch (JAXBException ex) {
+                                LOGGER.log(Level.WARNING, null, ex);
+                            }
+                            i++;
+                        }
                     }
                 }
                 
