@@ -483,7 +483,8 @@ public final class DimapAccessor extends Static {
         final GeometryFactory geometryFact = new JTSGeometryFactory(crs);
 
         final int len = vertexs.size();
-        final DirectPosition[] exteriorRing = new DirectPosition[len];
+        final DirectPosition[] exteriorRing = new DirectPosition[len + 1];
+        DirectPosition first = null;
         for (int i = 0; i < len; i++) {
             final Element vertex = vertexs.get(i);
             final Double lon = textValueSafe(vertex, "FRAME_LON", Double.class);
@@ -492,9 +493,16 @@ public final class DimapAccessor extends Static {
             final double[] coords = new double[2];
             coords[0] = lon;
             coords[1] = lat;
-            exteriorRing[i] = geometryFact.createDirectPosition(coords);
+            final DirectPosition position = geometryFact.createDirectPosition(coords);
+            exteriorRing[i] = position;
+            if (i == 0) {
+                first = position;
+            }
         }
-
+        
+        if (first != null) {
+            exteriorRing[len] = first;
+        }
         return (Geometry) GeometryUtils.createPolygon(exteriorRing);
     }
 
