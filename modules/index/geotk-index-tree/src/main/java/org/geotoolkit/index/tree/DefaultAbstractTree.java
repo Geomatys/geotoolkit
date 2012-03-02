@@ -46,19 +46,18 @@ public abstract class DefaultAbstractTree implements Tree{
      */
     protected DefaultAbstractTree(int nbMaxElement, CoordinateReferenceSystem crs, Calculator calculator, NodeFactory nodefactory) {
         ArgumentChecks.ensureNonNull("Create Tree : CRS", crs);
-        ArgumentChecks.ensureNonNull("Create Tree : Calculator", calculator);
         ArgumentChecks.ensureNonNull("Create NodeFactory : nodefactory", nodefactory);
         ArgumentChecks.ensureStrictlyPositive("Create Tree : maxElements", nbMaxElement);
         final CoordinateSystem cs = crs.getCoordinateSystem();
         if(!(cs instanceof CartesianCS)){
-            throw new IllegalArgumentException("Tree constructor : invalid crs");
+            throw new IllegalArgumentException("Tree constructor : invalid crs, it isn't Cartesian");
         }
         
         if(calculator == null){
             switch(cs.getDimension()){
                 case 2 : this.calculator = DefaultCalculator.CALCULATOR_2D;break;
                 case 3 : this.calculator = DefaultCalculator.CALCULATOR_3D;break;
-                default : throw new IllegalArgumentException("CoordinateSystem from CRS is not Cartesian");
+                default : throw new IllegalArgumentException("CoordinateSystem dimension from CRS is not conform");
             }
         }else{
             final String strClash = "Clash between CoordinateSystem and calculator. CoordinateSystem : "+cs.getClass().getName()
