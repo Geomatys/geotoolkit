@@ -94,6 +94,8 @@ public class TreeReader {
             sourceStream = ((URL) input).openStream();
         } else if (input instanceof URI) {
             sourceStream = ((URI) input).toURL().openStream();
+        } else if (input instanceof byte[]) {
+            sourceStream = new ByteArrayInputStream((byte[])input);
         } else {
             throw new IOException("Unsuported input : " + input.getClass());
         }
