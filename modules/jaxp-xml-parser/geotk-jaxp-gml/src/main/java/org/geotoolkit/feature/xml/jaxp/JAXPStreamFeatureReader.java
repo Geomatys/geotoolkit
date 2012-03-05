@@ -154,6 +154,8 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                                 LOGGER.log(Level.WARNING, null, ex);
                             }
                             i++;
+                        } else if(namespace.equalsIgnoreCase("http://www.opengis.net/gml")) {
+                            i++;
                         }
                     }
                 }
