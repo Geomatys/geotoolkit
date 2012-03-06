@@ -17,10 +17,13 @@
 package org.geotoolkit.coverage;
 
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.geom.Point2D;
-import java.awt.image.RenderedImage;
 import java.io.InputStream;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
+import org.geotoolkit.image.io.mosaic.Tile;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.geometry.Envelope;
 
@@ -100,7 +103,7 @@ public interface GridMosaic {
      * @return RenderedImage , may be null if tile is missing.
      * @throws DataStoreException  
      */
-    RenderedImage getTile(int col, int row, Map hints) throws DataStoreException;
+    Tile getTile(int col, int row, Map hints) throws DataStoreException;
     
     /**
      * Get a tile as a stream
@@ -111,5 +114,16 @@ public interface GridMosaic {
      * @throws DataStoreException  
      */
     InputStream getTileStream(int col, int row, Map hints) throws DataStoreException;
+    
+    /**
+     * Retrieve a set of tiles.
+     * 
+     * @param positions : requested tiles positions
+     * @param hints : additional hints
+     * @return blocking iterator over the requested tiles. Order might be different
+     *          from the list of positions.
+     * @throws DataStoreException 
+     */
+    Iterator<Tile> getTiles(Collection<? extends Point> positions, Map hints) throws DataStoreException;
     
 }

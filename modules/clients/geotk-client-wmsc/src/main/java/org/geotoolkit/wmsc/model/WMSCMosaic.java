@@ -17,14 +17,17 @@
 package org.geotoolkit.wmsc.model;
 
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.geom.Point2D;
-import java.awt.image.RenderedImage;
 import java.io.InputStream;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
 import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.coverage.Pyramid;
 import org.geotoolkit.geometry.GeneralEnvelope;
+import org.geotoolkit.image.io.mosaic.Tile;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.wms.xml.v111.BoundingBox;
 import org.opengis.geometry.Envelope;
@@ -131,13 +134,18 @@ public class WMSCMosaic implements GridMosaic{
     }
 
     @Override
-    public RenderedImage getTile(int col, int row, Map hints) throws DataStoreException {
+    public Tile getTile(int col, int row, Map hints) throws DataStoreException {
         return ((WMSCPyramidSet)getPyramid().getPyramidSet()).getTile(this, col, row, hints);
     }
 
     @Override
     public InputStream getTileStream(int col, int row, Map hints) throws DataStoreException {
         return ((WMSCPyramidSet)getPyramid().getPyramidSet()).getTileStream(this, col, row, hints);
+    }
+
+    @Override
+    public Iterator<Tile> getTiles(Collection<? extends Point> positions, Map hints) throws DataStoreException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

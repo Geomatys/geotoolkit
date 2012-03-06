@@ -17,13 +17,11 @@
 package org.geotoolkit.display2d.container.stateless;
 
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.coverage.Pyramid;
@@ -44,16 +42,15 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.geometry.GeneralEnvelope;
+import org.geotoolkit.image.io.mosaic.Tile;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.util.logging.Logging;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.feature.type.Name;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
 /**
@@ -63,15 +60,6 @@ import org.opengis.referencing.operation.TransformException;
  * @module pending
  */
 public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapLayer>{
-
-    private class TileReference{
-        GridMosaic mosaic;
-        String mimeType;
-        int col;
-        int row;
-        MathTransform gridToCRS;
-        Map hints;
-    }
     
     private final PyramidalModel model;
     private final double tolerance;
@@ -198,42 +186,33 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
         }
         
         //tiles to render         
-        final Collection<TileReference> queries = new ArrayList<TileReference>();
+        final Collection<Point> queries = new ArrayList<Point>();
         final Map hints = new HashMap(item.getUserProperties());
         
-        loopCol:
-        for(int tileCol=(int)tileMinCol; tileCol<tileMaxCol; tileCol++){
-            
-            loopRow:
+        for(int tileCol=(int)tileMinCol; tileCol<tileMaxCol; tileCol++){   
             for(int tileRow=(int)tileMinRow; tileRow<tileMaxRow; tileRow++){
-
                 if(mosaic.isMissing(tileCol, tileRow)){
                     //tile not available
                     continue;
                 }
-                
-                //tile bbox
-                final double leftX  = tileMatrixMinX + tileCol * tileSpanX ;
-                final double upperY = tileMatrixMaxY - tileRow * tileSpanY;
-                final double rightX = tileMatrixMinX + (tileCol+1) * tileSpanX;
-                final double lowerY = tileMatrixMaxY - (tileRow+1) * tileSpanY;
-
-                final double scaleX = (rightX - leftX) / tileWidth ;
-                final double scaleY = (upperY - lowerY) / tileHeight ;
-
-                final TileReference ref = new TileReference();
-                ref.mosaic = mosaic;
-                ref.col = tileCol;
-                ref.row = tileRow;                
-                ref.gridToCRS = new AffineTransform2D(
-                        scaleX, 0, 0, -scaleY, leftX, upperY);
-                ref.hints = hints;
-                
-                queries.add(ref);
+                queries.add(new Point(tileCol, tileRow));
             }
         }
 
-        paintTiles(context2D, queries);
+        //paint tiles ----------------------------------------------------------
+        if(queries.isEmpty()){
+            //bypass if no queries
+            return;
+        }
+        
+        try {
+            final Iterator<Tile> ite = mosaic.getTiles(queries, hints);
+            while(ite.hasNext()){
+                paintTile(context2D, pyramidCRS, ite.next());
+            }
+        } catch (DataStoreException ex) {
+            monitor.exceptionOccured(ex, Level.WARNING);
+        }
     }
 
     /**
@@ -273,55 +252,8 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
         return graphics;
     }
 
-    
-    /**
-     * Render each query response as a coverage with the given gridToCRS and CRS.
-     * @param context 
-     * @param tileRefs 
-     */
-    private static void paintTiles(final RenderingContext2D context, 
-            final Collection<TileReference>  tileRefs) {
-        final CanvasMonitor monitor = context.getMonitor();
-        
-        //bypass all if no queries
-        if(tileRefs.isEmpty()){
-            return;
-        }
-        
-        //bypass thread creation when only a single tile
-        if(tileRefs.size() == 1){
-            paintTile(context, tileRefs.iterator().next());            
-            return;
-        }
-        
-        final ExecutorService executor = Executors.newFixedThreadPool(6);
-        
-        for(final TileReference entry : tileRefs){            
-            if(monitor.stopRequested()){
-                return;
-            }
-            
-            final Runnable call = new Runnable() {
-                @Override
-                public void run() {
-                    paintTile(context, entry);
-                }
-            };
-            
-            executor.execute(call);            
-        }
-        
-        executor.shutdown();
-        try {
-            executor.awaitTermination(2, TimeUnit.MINUTES);
-        } catch (InterruptedException ex) {
-            Logging.getLogger(StatelessPyramidalCoverageLayerJ2D.class).log(Level.WARNING, ex.getMessage(), ex);
-        }
-        
-    }
-    
     private static void paintTile(final RenderingContext2D context, 
-            final TileReference tileRef){        
+            final CoordinateReferenceSystem tileCRS ,final Tile tile){
         final CanvasMonitor monitor = context.getMonitor();
         final CoordinateReferenceSystem objCRS2D = context.getObjectiveCRS2D();
                 
@@ -329,25 +261,16 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
             return;
         }
         
-        
-        RenderedImage image;
-        try {
-            image = tileRef.mosaic.getTile(tileRef.col, tileRef.row, tileRef.hints);
-        } catch (DataStoreException ex) {
-            monitor.exceptionOccured(ex, Level.WARNING);
-            return;
+        final Object input = tile.getInput();
+        RenderedImage image = null;
+        if(input instanceof RenderedImage){
+            image = (RenderedImage) input;
         }
                 
-        if (image == null) {
-            //no tile at this position
-            return;
-        }
-
         final GridCoverageFactory gc = new GridCoverageFactory();
         GridCoverage2D coverage;
         
         //check the crs
-        final CoordinateReferenceSystem tileCRS = tileRef.mosaic.getPyramid().getCoordinateReferenceSystem();
         if(!CRS.equalsIgnoreMetadata(tileCRS,objCRS2D) ){
             
             //will be reprojected, we must check that image has alpha support
@@ -359,12 +282,12 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
             }
             
             coverage = gc.create("tile", image,
-            tileCRS, tileRef.gridToCRS, null, null, null);            
+            tileCRS, new AffineTransform2D(tile.getGridToCRS()), null, null, null);            
             coverage = (GridCoverage2D) Operations.DEFAULT.resample(coverage.view(ViewType.NATIVE), objCRS2D);
             
         }else{
             coverage = gc.create("tile", image,
-            tileCRS, tileRef.gridToCRS, null, null, null);
+            tileCRS, new AffineTransform2D(tile.getGridToCRS()), null, null, null);
         }
         
         try {
@@ -373,8 +296,9 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
             monitor.exceptionOccured(ex, Level.WARNING);
             return;
         }
+        
     }
-    
+        
     private static Pyramid findOptimalPyramid(final PyramidSet set, final CoordinateReferenceSystem crs){
         
         Pyramid result = null;

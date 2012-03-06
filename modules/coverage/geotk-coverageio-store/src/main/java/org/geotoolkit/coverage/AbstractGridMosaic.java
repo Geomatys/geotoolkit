@@ -17,9 +17,15 @@
 package org.geotoolkit.coverage;
 
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.geom.Point2D;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.UUID;
 import org.geotoolkit.geometry.GeneralEnvelope;
+import org.geotoolkit.image.io.mosaic.Tile;
+import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.util.converter.Classes;
 import org.opengis.geometry.Envelope;
 
@@ -30,7 +36,7 @@ import org.opengis.geometry.Envelope;
  * @module pending
  */
 public abstract class AbstractGridMosaic implements GridMosaic{
-
+    
     private final String id = UUID.randomUUID().toString();
     private final Pyramid pyramid;
     private final Point2D upperLeft;
@@ -112,6 +118,12 @@ public abstract class AbstractGridMosaic implements GridMosaic{
         return false;
     }
 
+    
+    @Override
+    public Iterator<Tile> getTiles(Collection<? extends Point> positions, Map hints) {
+        return new DefaultTileIterator(this,positions.iterator(), hints);
+    }
+    
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder(Classes.getShortClassName(this));
@@ -119,6 +131,19 @@ public abstract class AbstractGridMosaic implements GridMosaic{
         sb.append("   gridSize[").append(getGridSize().width).append(',').append(getGridSize().height).append(']');
         sb.append("   tileSize[").append(getTileSize().width).append(',').append(getTileSize().height).append(']');
         return sb.toString();
+    }
+        
+    
+    public static AffineTransform2D getTileGridToCRS(GridMosaic mosaic, Point location){
+        
+        final Dimension tileSize = mosaic.getTileSize();
+        final Point2D upperleft = mosaic.getUpperLeftCorner();
+        final double scale = mosaic.getScale();
+                
+        final double offsetX  = upperleft.getX() + location.x * (scale * tileSize.width) ;
+        final double offsetY = upperleft.getY() - location.y * (scale * tileSize.height);
+
+        return new AffineTransform2D(scale, 0, 0, -scale, offsetX, offsetY);
     }
     
 }

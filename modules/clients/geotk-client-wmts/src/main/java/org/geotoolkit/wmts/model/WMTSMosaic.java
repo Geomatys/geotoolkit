@@ -17,13 +17,17 @@
 package org.geotoolkit.wmts.model;
 
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.geom.Point2D;
-import java.awt.image.RenderedImage;
 import java.io.InputStream;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
+import org.geotoolkit.coverage.DefaultTileIterator;
 import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.geometry.GeneralEnvelope;
+import org.geotoolkit.image.io.mosaic.Tile;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.wmts.WMTSUtilities;
@@ -135,7 +139,7 @@ public class WMTSMosaic implements GridMosaic{
     }
 
     @Override
-    public RenderedImage getTile(int col, int row, Map hints) throws DataStoreException {
+    public Tile getTile(int col, int row, Map hints) throws DataStoreException {
         return ((WMTSPyramidSet)getPyramid().getPyramidSet()).getTile(this, col, row, hints);
     }
 
@@ -151,6 +155,11 @@ public class WMTSMosaic implements GridMosaic{
         sb.append("   gridSize[").append(getGridSize().width).append(',').append(getGridSize().height).append(']');
         sb.append("   tileSize[").append(getTileSize().width).append(',').append(getTileSize().height).append(']');
         return sb.toString();
+    }
+
+    @Override
+    public Iterator<Tile> getTiles(Collection<? extends Point> positions, Map hints) throws DataStoreException {
+        return new DefaultTileIterator(this, positions.iterator(), hints);
     }
     
 }

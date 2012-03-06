@@ -101,6 +101,7 @@ public class OSMTMSPyramidSet extends CachedPyramidSet{
         request.setTileCol(col);
         request.setTileRow(row);        
         try {
+            System.out.println(request.getURL());
             return request.getResponseStream();
         } catch (IOException ex) {
             throw new DataStoreException(ex);

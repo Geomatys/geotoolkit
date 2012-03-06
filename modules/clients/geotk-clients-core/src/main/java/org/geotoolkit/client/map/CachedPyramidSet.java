@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.client.map;
 
+import java.awt.Point;
+import java.awt.geom.AffineTransform;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,8 +25,10 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import org.geotoolkit.coverage.AbstractGridMosaic;
 import org.geotoolkit.coverage.DefaultPyramidSet;
 import org.geotoolkit.coverage.GridMosaic;
+import org.geotoolkit.image.io.mosaic.Tile;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.collection.Cache;
 import org.geotoolkit.util.logging.Logging;
@@ -59,7 +63,7 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet{
         return download(mosaic,col,row, hints);
     }
     
-    public RenderedImage getTile(GridMosaic mosaic, int col, int row, Map hints) throws DataStoreException{
+    public RenderedImage getTileImage(GridMosaic mosaic, int col, int row, Map hints) throws DataStoreException{
         
         final String tileId = toId(mosaic, col, row, hints);
         
@@ -92,6 +96,11 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet{
         return value;
     }
     
-    
+    public Tile getTile(GridMosaic mosaic, int col, int row, Map hints) throws DataStoreException{
+        final RenderedImage image = getTileImage(mosaic, col, row, hints);
+        final AffineTransform gridToCRS = AbstractGridMosaic.getTileGridToCRS(mosaic, new Point(col, row));
+        final Tile tile = new Tile(image, gridToCRS);
+        return tile;
+    }
     
 }

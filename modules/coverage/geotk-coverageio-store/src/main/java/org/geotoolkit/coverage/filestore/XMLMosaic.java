@@ -17,6 +17,8 @@
 package org.geotoolkit.coverage.filestore;
 
 import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
@@ -24,6 +26,8 @@ import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
 import java.io.*;
 import java.util.BitSet;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,8 +38,11 @@ import javax.imageio.stream.ImageOutputStream;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
+import org.geotoolkit.coverage.AbstractGridMosaic;
+import org.geotoolkit.coverage.DefaultTileIterator;
 import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.geometry.GeneralEnvelope;
+import org.geotoolkit.image.io.mosaic.Tile;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.converter.Classes;
 import org.opengis.geometry.Envelope;
@@ -193,16 +200,21 @@ public class XMLMosaic implements GridMosaic{
     }
 
     @Override
-    public RenderedImage getTile(int col, int row, Map hints) throws DataStoreException {
+    public Tile getTile(int col, int row, Map hints) throws DataStoreException {
+        RenderedImage img = null;
         if(isEmpty(col, row)){
-            return emptyTile;
+            img = emptyTile;
+        }else{
+            try {
+                img = ImageIO.read(getTileFile(col, row));
+            } catch (IOException ex) {
+                throw new DataStoreException(ex.getMessage(),ex);
+            }
         }
         
-        try {
-            return ImageIO.read(getTileFile(col, row));
-        } catch (IOException ex) {
-            throw new DataStoreException(ex.getMessage(),ex);
-        }
+        final AffineTransform gridToCRS = AbstractGridMosaic.getTileGridToCRS(this, new Point(col, row));
+        final Tile tile = new Tile(img, gridToCRS);
+        return tile;
     }
 
     @Override
@@ -345,6 +357,11 @@ public class XMLMosaic implements GridMosaic{
             }
         }
         return true;
+    }
+
+    @Override
+    public Iterator<Tile> getTiles(Collection<? extends Point> positions, Map hints) throws DataStoreException {
+        return new DefaultTileIterator(this, positions.iterator(), hints);
     }
     
 }
