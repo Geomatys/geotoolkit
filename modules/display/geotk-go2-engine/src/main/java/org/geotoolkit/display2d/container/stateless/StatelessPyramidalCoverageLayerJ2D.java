@@ -21,10 +21,12 @@ import java.awt.Point;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
+import javax.imageio.ImageReader;
 import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.coverage.Pyramid;
 import org.geotoolkit.coverage.PyramidSet;
@@ -280,7 +282,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
     }
 
     private static void paintTile(final RenderingContext2D context, 
-            final CoordinateReferenceSystem tileCRS ,final Tile tile){
+            final CoordinateReferenceSystem tileCRS ,final Tile tile) {
         final CanvasMonitor monitor = context.getMonitor();
         final CoordinateReferenceSystem objCRS2D = context.getObjectiveCRS2D();
                 
@@ -288,10 +290,19 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
             return;
         }
         
-        final Object input = tile.getInput();
+        Object input = tile.getInput();
         RenderedImage image = null;
         if(input instanceof RenderedImage){
             image = (RenderedImage) input;
+        }else{
+            final ImageReader reader;
+            try {
+                reader = tile.getImageReader();
+                image = reader.read(tile.getImageIndex());
+            } catch (IOException ex) {
+                monitor.exceptionOccured(ex, Level.WARNING);
+                return;
+            }
         }
                 
         final GridCoverageFactory gc = new GridCoverageFactory();

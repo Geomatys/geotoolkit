@@ -202,19 +202,17 @@ public class XMLMosaic implements GridMosaic{
 
     @Override
     public Tile getTile(int col, int row, Map hints) throws DataStoreException {
-        RenderedImage img = null;
-        if(isEmpty(col, row)){
-            img = emptyTile;
-        }else{
-            try {
-                img = ImageIO.read(getTileFile(col, row));
-            } catch (IOException ex) {
-                throw new DataStoreException(ex.getMessage(),ex);
-            }
-        }
         
         final AffineTransform gridToCRS = AbstractGridMosaic.getTileGridToCRS(this, new Point(col, row));
-        final Tile tile = new Tile(img, gridToCRS);
+        
+        final Tile tile;
+        if(isEmpty(col, row)){
+            tile = new Tile(emptyTile, gridToCRS);
+        }else{
+            tile = new Tile(null, getTileFile(col, row), 0, null, gridToCRS);
+            tile.setSubsampling(new Dimension(1, 1));
+        }
+        
         return tile;
     }
     
