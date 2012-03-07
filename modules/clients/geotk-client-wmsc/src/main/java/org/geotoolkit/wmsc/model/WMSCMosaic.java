@@ -19,7 +19,6 @@ package org.geotoolkit.wmsc.model;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.geom.Point2D;
-import java.io.InputStream;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
@@ -139,13 +138,8 @@ public class WMSCMosaic implements GridMosaic{
     }
 
     @Override
-    public InputStream getTileStream(int col, int row, Map hints) throws DataStoreException {
-        return ((WMSCPyramidSet)getPyramid().getPyramidSet()).getTileStream(this, col, row, hints);
-    }
-
-    @Override
     public Iterator<Tile> getTiles(Collection<? extends Point> positions, Map hints) throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return ((WMSCPyramidSet)getPyramid().getPyramidSet()).getTiles(this, positions, hints);
     }
 
 }

@@ -20,9 +20,9 @@ import java.awt.Dimension;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Map;
 import javax.imageio.ImageIO;
+import org.geotoolkit.client.Request;
 import org.geotoolkit.client.map.CachedPyramidSet;
 import org.geotoolkit.coverage.DefaultPyramid;
 import org.geotoolkit.coverage.GridMosaic;
@@ -82,12 +82,10 @@ public class GoogleMapsPyramidSet extends CachedPyramidSet{
         }
     }
     
-    private final StaticGoogleMapsServer server;
     private final String mapType;
     
     public GoogleMapsPyramidSet(final StaticGoogleMapsServer server, final String mapType) throws DataStoreException{
-        
-        this.server = server;
+        super(server,true);
         this.mapType = mapType;
         
         final int maxScale;        
@@ -129,12 +127,17 @@ public class GoogleMapsPyramidSet extends CachedPyramidSet{
         
         getPyramids().add(pyramid);    
     }
+
+    @Override
+    protected StaticGoogleMapsServer getServer() {
+        return (StaticGoogleMapsServer)super.getServer();
+    }
     
     @Override
-    protected InputStream download(GridMosaic mosaic, int col, int row, Map hints) throws DataStoreException {
+    public Request getTileRequest(GridMosaic mosaic, int col, int row, Map hints) throws DataStoreException {
         final int zoom = ((GoogleMapsMosaic)mosaic).getScaleLevel();
         
-        final GetMapRequest request = server.createGetMap();
+        final GetMapRequest request = getServer().createGetMap();
         
         Object format = hints.get(PyramidSet.HINT_FORMAT);
         if(format == null){
@@ -149,15 +152,14 @@ public class GoogleMapsPyramidSet extends CachedPyramidSet{
 
         final DirectPosition position = getCenter(zoom, col, row);
         request.setCenter(position);
-        try {
-            return request.getResponseStream();
-        } catch (IOException ex) {
-            throw new DataStoreException(ex);
-        }
+        
+        return request;
     }
-     
+         
     /**
      * Returns resolution at zoom given level. in meter by pixel.
+     * @param zoom
+     * @return  
      */
     public static double getZoomResolution(final int zoom){
         return ZOOM_ZERO_RESOLUTION * Math.pow(0.5d, zoom);

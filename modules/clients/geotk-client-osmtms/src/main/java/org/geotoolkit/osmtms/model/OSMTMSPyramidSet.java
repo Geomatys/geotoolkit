@@ -18,9 +18,8 @@ package org.geotoolkit.osmtms.model;
 
 import java.awt.Dimension;
 import java.awt.geom.Point2D;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Map;
+import org.geotoolkit.client.Request;
 import org.geotoolkit.client.map.CachedPyramidSet;
 import org.geotoolkit.coverage.DefaultPyramid;
 import org.geotoolkit.coverage.GridMosaic;
@@ -61,10 +60,8 @@ public class OSMTMSPyramidSet extends CachedPyramidSet{
         }       
     }
     
-    private final OSMTileMapServer server;
-    
     public OSMTMSPyramidSet(final OSMTileMapServer server, final int maxScale) {
-        this.server = server;
+        super(server,true);
         
         final DefaultPyramid pyramid = new DefaultPyramid(this,GOOGLE_MERCATOR);
         
@@ -95,17 +92,17 @@ public class OSMTMSPyramidSet extends CachedPyramidSet{
     }
 
     @Override
-    protected InputStream download(GridMosaic mosaic, int col, int row, Map hints) throws DataStoreException {
-        final GetTileRequest request = server.createGetTile();
+    protected OSMTileMapServer getServer() {
+        return (OSMTileMapServer) server;
+    }
+    
+    @Override
+    public Request getTileRequest(GridMosaic mosaic, int col, int row, Map hints) throws DataStoreException {
+        final GetTileRequest request = getServer().createGetTile();
         request.setScaleLevel( ((OSMTMSMosaic)mosaic).getScaleLevel() );
         request.setTileCol(col);
-        request.setTileRow(row);        
-        try {
-            System.out.println(request.getURL());
-            return request.getResponseStream();
-        } catch (IOException ex) {
-            throw new DataStoreException(ex);
-        }
+        request.setTileRow(row);  
+        return request;
     }
 
 }

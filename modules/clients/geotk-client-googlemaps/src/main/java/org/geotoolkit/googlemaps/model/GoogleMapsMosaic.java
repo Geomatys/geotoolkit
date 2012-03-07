@@ -17,8 +17,10 @@
 package org.geotoolkit.googlemaps.model;
 
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.geom.Point2D;
-import java.io.InputStream;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
 import org.geotoolkit.coverage.AbstractGridMosaic;
 import org.geotoolkit.coverage.Pyramid;
@@ -48,10 +50,10 @@ public class GoogleMapsMosaic extends AbstractGridMosaic{
     public Tile getTile(int col, int row, Map hints) throws DataStoreException {
         return ((GoogleMapsPyramidSet)getPyramid().getPyramidSet()).getTile(this, col, row, hints);
     }
-
+    
     @Override
-    public InputStream getTileStream(int col, int row, Map hints) throws DataStoreException {
-        return ((GoogleMapsPyramidSet)getPyramid().getPyramidSet()).getTileStream(this, col, row, hints);
+    public Iterator<Tile> getTiles(Collection<? extends Point> positions, Map hints) throws DataStoreException {
+        return ((GoogleMapsPyramidSet)getPyramid().getPyramidSet()).getTiles(this, positions, hints);
     }
     
 }

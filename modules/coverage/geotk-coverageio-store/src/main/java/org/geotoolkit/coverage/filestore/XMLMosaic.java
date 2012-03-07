@@ -24,7 +24,9 @@ import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.Iterator;
@@ -215,19 +217,6 @@ public class XMLMosaic implements GridMosaic{
         final AffineTransform gridToCRS = AbstractGridMosaic.getTileGridToCRS(this, new Point(col, row));
         final Tile tile = new Tile(img, gridToCRS);
         return tile;
-    }
-
-    @Override
-    public InputStream getTileStream(int col, int row, Map hints) throws DataStoreException {
-        if(isEmpty(col, row)){
-            return new ByteArrayInputStream(emptyTileEncoded);
-        }
-        
-        try {
-            return new FileInputStream(getTileFile(col, row));
-        } catch (FileNotFoundException ex) {
-            throw new DataStoreException(ex.getMessage(),ex);
-        }
     }
     
     @Override

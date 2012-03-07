@@ -19,7 +19,6 @@ package org.geotoolkit.coverage;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.geom.Point2D;
-import java.io.InputStream;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
@@ -104,17 +103,7 @@ public interface GridMosaic {
      * @throws DataStoreException  
      */
     Tile getTile(int col, int row, Map hints) throws DataStoreException;
-    
-    /**
-     * Get a tile as a stream
-     * @param col : tile column index
-     * @param row : row column index
-     * @param hints : additional hints
-     * @return InputStream , may be null if tile is missing.
-     * @throws DataStoreException  
-     */
-    InputStream getTileStream(int col, int row, Map hints) throws DataStoreException;
-    
+        
     /**
      * Retrieve a set of tiles.
      * 

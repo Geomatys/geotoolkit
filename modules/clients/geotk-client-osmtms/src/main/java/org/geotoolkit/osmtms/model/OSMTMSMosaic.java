@@ -17,8 +17,10 @@
 package org.geotoolkit.osmtms.model;
 
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.geom.Point2D;
-import java.io.InputStream;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
 import org.geotoolkit.coverage.AbstractGridMosaic;
 import org.geotoolkit.coverage.Pyramid;
@@ -50,8 +52,8 @@ public class OSMTMSMosaic extends AbstractGridMosaic{
     }
 
     @Override
-    public InputStream getTileStream(int col, int row, Map hints) throws DataStoreException {
-        return ((OSMTMSPyramidSet)getPyramid().getPyramidSet()).getTileStream(this, col, row, hints);
+    public Iterator<Tile> getTiles(Collection<? extends Point> positions, Map hints) throws DataStoreException {
+        return ((OSMTMSPyramidSet)getPyramid().getPyramidSet()).getTiles(this, positions, hints);
     }
     
 }

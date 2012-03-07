@@ -26,6 +26,7 @@ import java.util.UUID;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.image.io.mosaic.Tile;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.converter.Classes;
 import org.opengis.geometry.Envelope;
 
@@ -120,7 +121,7 @@ public abstract class AbstractGridMosaic implements GridMosaic{
 
     
     @Override
-    public Iterator<Tile> getTiles(Collection<? extends Point> positions, Map hints) {
+    public Iterator<Tile> getTiles(Collection<? extends Point> positions, Map hints) throws DataStoreException{
         return new DefaultTileIterator(this,positions.iterator(), hints);
     }
     

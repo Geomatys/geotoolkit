@@ -83,12 +83,24 @@
       <artifactId>geotk-coverageio-store</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-clients-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
     <!--for base64 enconding -->
     <dependency>
       <groupId>net.iharder</groupId>
       <artifactId>base64</artifactId>
     </dependency>
+    
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpcore-nio</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    
   </dependencies>
 
 

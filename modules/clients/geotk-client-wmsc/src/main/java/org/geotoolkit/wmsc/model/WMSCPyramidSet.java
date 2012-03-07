@@ -16,12 +16,11 @@
  */
 package org.geotoolkit.wmsc.model;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import org.geotoolkit.client.CapabilitiesException;
+import org.geotoolkit.client.Request;
 import org.geotoolkit.client.map.CachedPyramidSet;
 import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.storage.DataStoreException;
@@ -40,11 +39,10 @@ import org.opengis.util.FactoryException;
  */
 public class WMSCPyramidSet extends CachedPyramidSet{
     
-    private final WebMapServerCached server;
     private final String layer;
     
     public WMSCPyramidSet(final WebMapServerCached server, final String layer) throws CapabilitiesException {
-        this.server = server;
+        super(server,true);
         this.layer = layer;
         
         //WMSC is a WMS 1.1.1
@@ -81,22 +79,23 @@ public class WMSCPyramidSet extends CachedPyramidSet{
         }        
     }
 
+    @Override
+    protected WebMapServerCached getServer() {
+        return (WebMapServerCached)super.getServer();
+    }
+    
     public String getLayer() {
         return layer;
     }
 
     @Override
-    protected InputStream download(GridMosaic mosaic, int col, int row, Map hints) throws DataStoreException {
-        final GetMapRequest request = server.createGetMap();
+    public Request getTileRequest(GridMosaic mosaic, int col, int row, Map hints) throws DataStoreException {
+        final GetMapRequest request = getServer().createGetMap();
         request.setLayers(layer);
         request.setEnvelope(mosaic.getEnvelope(col, row));
         request.setDimension(mosaic.getTileSize());
         request.setFormat(((WMSCPyramid)mosaic.getPyramid()).getTileset().getFormat());
-        try {
-            return request.getResponseStream();
-        } catch (IOException ex) {
-            throw new DataStoreException(ex);
-        }
+        return request;
     }
         
 }

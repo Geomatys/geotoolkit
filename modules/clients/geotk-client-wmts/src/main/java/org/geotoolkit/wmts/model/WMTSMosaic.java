@@ -19,12 +19,10 @@ package org.geotoolkit.wmts.model;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.geom.Point2D;
-import java.io.InputStream;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
-import org.geotoolkit.coverage.DefaultTileIterator;
 import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.image.io.mosaic.Tile;
@@ -142,11 +140,6 @@ public class WMTSMosaic implements GridMosaic{
     public Tile getTile(int col, int row, Map hints) throws DataStoreException {
         return ((WMTSPyramidSet)getPyramid().getPyramidSet()).getTile(this, col, row, hints);
     }
-
-    @Override
-    public InputStream getTileStream(int col, int row, Map hints) throws DataStoreException {
-        return ((WMTSPyramidSet)getPyramid().getPyramidSet()).getTileStream(this, col, row, hints);
-    }
  
     @Override
     public String toString() {
@@ -159,7 +152,7 @@ public class WMTSMosaic implements GridMosaic{
 
     @Override
     public Iterator<Tile> getTiles(Collection<? extends Point> positions, Map hints) throws DataStoreException {
-        return new DefaultTileIterator(this, positions.iterator(), hints);
+        return ((WMTSPyramidSet)getPyramid().getPyramidSet()).getTiles(this, positions, hints);
     }
     
 }

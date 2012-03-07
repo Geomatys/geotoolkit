@@ -16,9 +16,8 @@
  */
 package org.geotoolkit.wmts.model;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.*;
+import org.geotoolkit.client.Request;
 import org.geotoolkit.client.map.CachedPyramidSet;
 import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.coverage.Pyramid;
@@ -41,15 +40,13 @@ public class WMTSPyramidSet extends CachedPyramidSet{
      */
     public static final String HINT_STYLE = "style";
     
-    private final WebMapTileServer server;
     private final String layerName;
     private final String id = UUID.randomUUID().toString();
     private LayerType wmtsLayer;
     
     public WMTSPyramidSet(final WebMapTileServer server, final String layerName){
-        ArgumentChecks.ensureNonNull("server", server);
+        super(server,true);
         ArgumentChecks.ensureNonNull("layer name", layerName);
-        this.server = server;
         this.layerName = layerName;
                 
         //find the wmts layer
@@ -62,9 +59,14 @@ public class WMTSPyramidSet extends CachedPyramidSet{
             }            
         }
     }
+
+    @Override
+    protected WebMapTileServer getServer() {
+        return (WebMapTileServer)super.getServer();
+    }
     
     public Capabilities getCapabilities() {
-        return server.getCapabilities();
+        return getServer().getCapabilities();
     }
 
     public String getLayerName() {
@@ -80,7 +82,7 @@ public class WMTSPyramidSet extends CachedPyramidSet{
     public Collection<Pyramid> getPyramids() {        
         final List<Pyramid> pyramids = new ArrayList<Pyramid>();
         
-        final ContentsType contents = server.getCapabilities().getContents();
+        final ContentsType contents = getServer().getCapabilities().getContents();
         
         //first find the layer
         LayerType layer = null;
@@ -104,10 +106,10 @@ public class WMTSPyramidSet extends CachedPyramidSet{
     }
 
     @Override
-    protected InputStream download(GridMosaic mosaic, int col, int row, Map hints) throws DataStoreException {
+    public Request getTileRequest(GridMosaic mosaic, int col, int row, Map hints) throws DataStoreException {
         final WMTSMosaic wmtsMosaic = (WMTSMosaic) mosaic;
         
-        final GetTileRequest request = server.createGetTile();
+        final GetTileRequest request = getServer().createGetTile();
         
         //set the format
         Object format = hints.get(PyramidSet.HINT_FORMAT);
@@ -140,12 +142,7 @@ public class WMTSPyramidSet extends CachedPyramidSet{
         if(style != null){
             request.setStyle(style.toString());
         }
-        
-        try {
-            return request.getResponseStream();
-        } catch (IOException ex) {
-            throw new DataStoreException(ex);
-        }
+        return request;
     }
         
 }

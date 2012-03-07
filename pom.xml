@@ -222,6 +222,12 @@
          <artifactId>lucene-core</artifactId>
          <version>3.5.0</version>
       </dependency>
+      
+      <dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpcore-nio</artifactId>
+        <version>4.2-beta1</version>
+      </dependency>
 
       <!-- Jasper report -->
       <dependency>
