@@ -20,8 +20,8 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.BlockingQueue;
 import org.geotoolkit.image.io.mosaic.Tile;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.geometry.Envelope;
@@ -36,6 +36,11 @@ import org.opengis.geometry.Envelope;
  * @module pending
  */
 public interface GridMosaic {
+    
+    /**
+     * Sentinel object used to notify the end of the queue.
+     */
+    public static final Object END_OF_QUEUE = new Object();
     
     /**
      * @return unique id.
@@ -105,14 +110,17 @@ public interface GridMosaic {
     Tile getTile(int col, int row, Map hints) throws DataStoreException;
         
     /**
-     * Retrieve a set of tiles.
+     * Retrieve a set of tiles.<p>
+     * The end of the queue is notified by the {@link GridMosaic#END_OF_QUEUE} object.<p>
+     * The returned queue may implement Canceleable if for some reason there is no need
+     * to continue iteration on the queue.
      * 
      * @param positions : requested tiles positions
      * @param hints : additional hints
-     * @return blocking iterator over the requested tiles. Order might be different
-     *          from the list of positions.
+     * @return blocking queue over the requested tiles. 
+     *         Order might be different from the list of positions.
      * @throws DataStoreException 
      */
-    Iterator<Tile> getTiles(Collection<? extends Point> positions, Map hints) throws DataStoreException;
+    BlockingQueue<Object> getTiles(Collection<? extends Point> positions, Map hints) throws DataStoreException;
     
 }

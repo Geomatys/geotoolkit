@@ -22,6 +22,8 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.util.*;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.coverage.Pyramid;
@@ -47,6 +49,7 @@ import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.util.Cancellable;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.feature.type.Name;
 import org.opengis.geometry.Envelope;
@@ -77,7 +80,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
      */
     @Override
     public void paintLayer(final RenderingContext2D context2D) {
-                     
+        
         final Name coverageName = item.getCoverageName();
         final CachedRule[] rules = GO2Utilities.getValidCachedRules(item.getStyle(),
                 context2D.getSEScale(), coverageName,null);
@@ -205,14 +208,38 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
             return;
         }
         
+        final BlockingQueue<Object> queue;
         try {
-            final Iterator<Tile> ite = mosaic.getTiles(queries, hints);
-            while(ite.hasNext()){
-                paintTile(context2D, pyramidCRS, ite.next());
-            }
+            queue = mosaic.getTiles(queries, hints);
         } catch (DataStoreException ex) {
             monitor.exceptionOccured(ex, Level.WARNING);
+            return;
         }
+        
+        while(true){
+            Object obj = null;
+            try {
+                obj = queue.poll(50, TimeUnit.MILLISECONDS);
+            } catch (InterruptedException ex) {
+                monitor.exceptionOccured(ex, Level.INFO);
+            }
+
+            if(monitor.stopRequested()){
+                if(queue instanceof Cancellable){
+                    ((Cancellable)queue).cancel();
+                }
+                break;
+            }
+
+            if(obj == GridMosaic.END_OF_QUEUE){
+                break;
+            }
+
+            if(obj instanceof Tile){
+                paintTile(context2D, pyramidCRS, (Tile)obj);
+            }
+        }
+        
     }
 
     /**

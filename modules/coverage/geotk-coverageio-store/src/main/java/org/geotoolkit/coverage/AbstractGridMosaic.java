@@ -20,9 +20,10 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.image.io.mosaic.Tile;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
@@ -121,8 +122,8 @@ public abstract class AbstractGridMosaic implements GridMosaic{
 
     
     @Override
-    public Iterator<Tile> getTiles(Collection<? extends Point> positions, Map hints) throws DataStoreException{
-        return new DefaultTileIterator(this,positions.iterator(), hints);
+    public BlockingQueue<Object> getTiles(Collection<? extends Point> positions, Map hints) throws DataStoreException{
+        return getTiles(this, positions, hints);
     }
     
     @Override
@@ -145,6 +146,16 @@ public abstract class AbstractGridMosaic implements GridMosaic{
         final double offsetY = upperleft.getY() - location.y * (scale * tileSize.height);
 
         return new AffineTransform2D(scale, 0, 0, -scale, offsetX, offsetY);
+    }
+    
+    public static BlockingQueue<Object> getTiles(GridMosaic mosaic, Collection<? extends Point> positions, Map hints) throws DataStoreException{
+        final ArrayBlockingQueue queue = new ArrayBlockingQueue(positions.size()+1);
+        for(Point p : positions){
+            final Tile t = mosaic.getTile(p.x, p.y, hints);
+            queue.offer(t);
+        }
+        queue.offer(END_OF_QUEUE);
+        return queue;
     }
     
 }

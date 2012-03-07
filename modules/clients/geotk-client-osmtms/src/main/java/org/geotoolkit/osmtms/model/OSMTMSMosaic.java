@@ -20,8 +20,8 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.BlockingQueue;
 import org.geotoolkit.coverage.AbstractGridMosaic;
 import org.geotoolkit.coverage.Pyramid;
 import org.geotoolkit.image.io.mosaic.Tile;
@@ -52,7 +52,7 @@ public class OSMTMSMosaic extends AbstractGridMosaic{
     }
 
     @Override
-    public Iterator<Tile> getTiles(Collection<? extends Point> positions, Map hints) throws DataStoreException {
+    public BlockingQueue<Object> getTiles(Collection<? extends Point> positions, Map hints) throws DataStoreException {
         return ((OSMTMSPyramidSet)getPyramid().getPyramidSet()).getTiles(this, positions, hints);
     }
     

@@ -20,9 +20,9 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.BlockingQueue;
 import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.coverage.Pyramid;
 import org.geotoolkit.geometry.GeneralEnvelope;
@@ -138,7 +138,7 @@ public class WMSCMosaic implements GridMosaic{
     }
 
     @Override
-    public Iterator<Tile> getTiles(Collection<? extends Point> positions, Map hints) throws DataStoreException {
+    public BlockingQueue<Object> getTiles(Collection<? extends Point> positions, Map hints) throws DataStoreException {
         return ((WMSCPyramidSet)getPyramid().getPyramidSet()).getTiles(this, positions, hints);
     }
 

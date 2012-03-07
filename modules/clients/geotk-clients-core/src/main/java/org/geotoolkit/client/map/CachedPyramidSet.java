@@ -24,8 +24,10 @@ import java.io.InputStream;
 import java.io.InterruptedIOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
-import java.util.concurrent.ArrayBlockingQueue;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.logging.Level;
@@ -55,7 +57,6 @@ import org.geotoolkit.client.Request;
 import org.geotoolkit.client.Server;
 import org.geotoolkit.coverage.AbstractGridMosaic;
 import org.geotoolkit.coverage.DefaultPyramidSet;
-import org.geotoolkit.coverage.DefaultTileIterator;
 import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.image.io.mosaic.Tile;
 import org.geotoolkit.security.DefaultClientSecurity;
@@ -69,6 +70,8 @@ import org.geotoolkit.util.logging.Logging;
  * @module pending
  */
 public abstract class CachedPyramidSet extends DefaultPyramidSet{
+    
+    protected static final Logger LOGGER = Logging.getLogger(CachedPyramidSet.class);
     
     // NIO Reactor for queries
     private static ConnectingIOReactor ioReactor = null;
@@ -134,19 +137,15 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet{
                     httpproc, new DefaultConnectionReuseStrategy(), params);
             
         }catch(Exception ex){
-            
+            LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
         }
         
-        
     }
-    
-    
-    protected static final Logger LOGGER = Logging.getLogger(CachedPyramidSet.class);
     
     /**
      * Cache the last queried tiles
      */
-    private final Cache<String,RenderedImage> tileCache = new Cache<String, RenderedImage>(4, 10, false);
+    private final Cache<String,RenderedImage> tileCache = new Cache<String, RenderedImage>(30, 30, false);
     
     protected final Server server;
     protected final boolean useURLQueries;
@@ -222,22 +221,22 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet{
     }
     
     
-    public Iterator<Tile> getTiles(GridMosaic mosaic, Collection<? extends Point> locations, Map hints) throws DataStoreException{
-        
+    public BlockingQueue<Object> getTiles(GridMosaic mosaic, Collection<? extends Point> locations, Map hints) throws DataStoreException{
+                
         if(!useURLQueries){
             //can not optimize a non url server
-            return new DefaultTileIterator(mosaic, locations.iterator(), hints);
+            return getTiles(mosaic, locations, hints);
         }
         
         final Server server = getServer();
         
         if(server == null){
-            return new DefaultTileIterator(mosaic, locations.iterator(), hints);
+            return getTiles(mosaic, locations, hints);
         }
         
         if(!(server.getClientSecurity() == DefaultClientSecurity.NO_SECURITY)){
             //we can optimize only if there is no security
-            return new DefaultTileIterator(mosaic, locations.iterator(), hints);
+            return getTiles(mosaic, locations, hints);
         }
         
         final URL url = server.getURL();
@@ -245,21 +244,45 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet{
         
         if(!"http".equalsIgnoreCase(protocol)){
             //we can optimize only an http protocol
-            return new DefaultTileIterator(mosaic, locations.iterator(), hints);
+            return getTiles(mosaic, locations, hints);
         }
         
-        //compose the requiered queries, TODO check the cache if some images already exist
-        final List<ImagePack> packs = new ArrayList<ImagePack>();
+        
+        final CancellableQueue<Object> queue = new CancellableQueue<Object>(1000);
+        
+        //compose the requiered queries
+        final List<ImagePack> downloadList = new ArrayList<ImagePack>();
         for(Point p : locations){
-            String str;
-            try {
-                str = getTileRequest(mosaic, p.x, p.y, hints).getURL().toString();
-                str = str.replaceAll(url.toString(), "");
-                packs.add(new ImagePack(str, mosaic, p));
-            } catch (MalformedURLException ex) {
-                Logger.getLogger(CachedPyramidSet.class.getName()).log(Level.SEVERE, null, ex);
+            //check the cache if we have the image already
+            final String tid = toId(mosaic, p.x, p.y, hints);
+            final RenderedImage image = tileCache.get(tid);
+            
+            if (queue.isCancelled()) {
+                return queue;
             }
             
+            if(image != null){
+                //image was in cache, reuse it
+                final ImagePack pack = new ImagePack(tid, mosaic, p);
+                pack.img = image;
+                queue.offer(pack.getTile());
+            }else{
+                //we will have to download this image
+                String str;
+                try {
+                    str = getTileRequest(mosaic, p.x, p.y, hints).getURL().toString();
+                    str = str.replaceAll(url.toString(), "");
+                    downloadList.add(new ImagePack(str, mosaic, p));
+                } catch (MalformedURLException ex) {
+                    Logger.getLogger(CachedPyramidSet.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+        
+        //nothing to download, everything was in cache.
+        if(downloadList.isEmpty()){
+            queue.offer(GridMosaic.END_OF_QUEUE); //end sentinel
+            return queue;
         }
         
         
@@ -270,9 +293,8 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet{
         final String host = url.getHost();
         final int port = (url.getPort() == -1) ? url.getDefaultPort() : url.getPort();
         
-        final BlockingQueue<Object> queue = new ArrayBlockingQueue<Object>(10);
                     
-        final CountDownLatch latch = new CountDownLatch(packs.size()){
+        final CountDownLatch latch = new CountDownLatch(downloadList.size()){
             @Override
             public void countDown() {
                 super.countDown();
@@ -280,7 +302,7 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet{
                     try {
                         //put a custom object, this is used in the iterator 
                         //to detect the end.
-                        queue.put(new Object());
+                        queue.put(GridMosaic.END_OF_QUEUE);
                     } catch (InterruptedException ex) {
                         LOGGER.log(Level.WARNING, ex.getMessage(), ex);
                     }
@@ -288,7 +310,7 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet{
             }
         };
 
-        for (final ImagePack pack : packs) {
+        for (final ImagePack pack : downloadList) {
             final HttpHost httphost = new HttpHost(host, port, protocol);
             final BasicHttpRequest request = new BasicHttpRequest("GET", pack.getRequestPath());
             requester.execute(
@@ -301,9 +323,13 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet{
 
                         @Override
                         public void completed(final HttpResponse response) {
+                            if (queue.isCancelled()) {
+                                return;
+                            }
+                            
                             try {
                                 pack.setBuffer(response.getEntity().getContent());
-                                queue.put(pack);
+                                queue.put(pack.getTile());
                             } catch (IOException ex) {
                                 LOGGER.log(Level.WARNING, ex.getMessage(), ex);
                             } catch (Exception ex) {
@@ -324,60 +350,14 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet{
 
             });
         }   
-        
-        
-        return new Iterator<Tile>() {
-            
-            Tile next = null;
-            
-            @Override
-            public boolean hasNext() {
-                checkNext();
-                return next != null;
-            }
-            @Override
-            public Tile next() {
-                checkNext();
-                if(next == null){
-                    throw new NoSuchElementException("No more tiles");
-                }
                 
-                Tile c = next;
-                next = null;
-                return c;
-            }
-            
-            private void checkNext() {
-                if(next != null){
-                    return;
-                }
-                
-                Object obj = null;
-                try {
-                    obj = queue.take();
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(CachedPyramidSet.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                if(obj instanceof ImagePack){
-                    final ImagePack pack = (ImagePack) obj;
-                    final RenderedImage img = pack.img;
-                    final AffineTransform trs = AbstractGridMosaic.getTileGridToCRS(pack.mosaic, pack.pt);
-                    next = new Tile(img, trs);
-                }
-                //we have finish
-            }
-            
-            @Override
-            public void remove() {
-                throw new UnsupportedOperationException("Not supported.");
-            }
-        };
+        return queue;
     }
     
     /**
      * Used is NIO queries, act as an information container for each query.
      */
-    private static class ImagePack{
+    private class ImagePack{
         
         private final String requestPath;
         private final GridMosaic mosaic;
@@ -394,13 +374,23 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet{
             return requestPath;
         }
         
-        public void setBuffer(InputStream buffer) {            
+        public void setBuffer(InputStream buffer) {
             try{
                 img = ImageIO.read(buffer);
+                final String tid = toId(mosaic, pt.x, pt.y, null);
+                //store it in the cache
+                tileCache.put(tid, img);
+                
             }catch(Exception ex){
-                ex.printStackTrace();
+                LOGGER.log(Level.WARNING, ex.getMessage(), ex);
             }
             
+        }
+        
+        public Tile getTile(){
+            final AffineTransform trs = AbstractGridMosaic.getTileGridToCRS(mosaic, pt);
+            final Tile t = new Tile(img, trs);
+            return t;
         }
         
     }

@@ -29,8 +29,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.BitSet;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.BlockingQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.IIOImage;
@@ -41,7 +41,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
 import org.geotoolkit.coverage.AbstractGridMosaic;
-import org.geotoolkit.coverage.DefaultTileIterator;
 import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.image.io.mosaic.Tile;
@@ -349,8 +348,8 @@ public class XMLMosaic implements GridMosaic{
     }
 
     @Override
-    public Iterator<Tile> getTiles(Collection<? extends Point> positions, Map hints) throws DataStoreException {
-        return new DefaultTileIterator(this, positions.iterator(), hints);
+    public BlockingQueue<Object> getTiles(Collection<? extends Point> positions, Map hints) throws DataStoreException{
+        return AbstractGridMosaic.getTiles(this, positions, hints);
     }
     
 }

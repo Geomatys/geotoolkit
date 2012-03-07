@@ -125,6 +125,7 @@ public class JMap2DFrame extends javax.swing.JFrame {
         guiMap.getContainer().setContext(context);
         guiMap.getCanvas().setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         guiMap.getCanvas().setRenderingHint(GO2Hints.KEY_GENERALIZE, GO2Hints.GENERALIZE_ON);
+        guiMap.getCanvas().setRenderingHint(GO2Hints.KEY_BEHAVIOR_MODE, GO2Hints.BEHAVIOR_KEEP_TILE);
         guiMap.getCanvas().getController().setAutoRepaint(true);
 
         for(TreePopupItem item : guiContextTree.controls()){
