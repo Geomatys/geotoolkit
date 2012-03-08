@@ -66,7 +66,7 @@ public class StaticGoogleServerFactory extends AbstractServerFactory implements 
         boolean cacheImage = false;
         try{
             final ParameterValue val = params.parameter(IMAGE_CACHE.getName().getCode());
-            cacheImage = (Boolean) val.getValue();
+            cacheImage = Boolean.TRUE.equals(val.getValue());
         }catch(ParameterNotFoundException ex){}
         
         return new StaticGoogleMapsServer(url,key,security,cacheImage);

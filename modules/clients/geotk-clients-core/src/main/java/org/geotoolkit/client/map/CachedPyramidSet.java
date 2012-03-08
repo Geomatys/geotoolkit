@@ -276,7 +276,8 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet{
                 String str;
                 try {
                     str = getTileRequest(mosaic, p.x, p.y, hints).getURL().toString();
-                    str = str.replaceAll(url.toString(), "");
+                    str = str.replaceFirst("http://", "");
+                    str = str.substring(str.indexOf('/'));
                     downloadList.add(new ImagePack(str, mosaic, p));
                 } catch (MalformedURLException ex) {
                     Logger.getLogger(CachedPyramidSet.class.getName()).log(Level.SEVERE, null, ex);

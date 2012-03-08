@@ -67,7 +67,7 @@ public class WMTSServerFactory extends AbstractServerFactory implements Coverage
         boolean cacheImage = false;
         try{
             final ParameterValue val = params.parameter(IMAGE_CACHE.getName().getCode());
-            cacheImage = (Boolean) val.getValue();
+            cacheImage = Boolean.TRUE.equals(val.getValue());
         }catch(ParameterNotFoundException ex){}
         
         return new WebMapTileServer(url,security,version,null,cacheImage);
