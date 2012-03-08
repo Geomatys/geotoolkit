@@ -21,14 +21,14 @@ import java.awt.Rectangle;
 import java.io.IOException;
 
 import org.junit.*;
-import static org.junit.Assert.*;
+import static org.geotoolkit.test.Assert.*;
 
 
 /**
  * Tests {@link Tile}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.20
  *
  * @since 2.5
  */
@@ -55,9 +55,24 @@ public final strictfp class TileTest {
         bounds = new Rectangle(0, 0, 70000, 70000);
         try {
             tile = new Tile(null, "Tile.png", 0, bounds);
-            fail("Should be out of unsigned short range.");
+            fail(tile + " should be out of unsigned short range.");
         } catch (IllegalArgumentException e) {
             // This is the expected exception.
         }
+    }
+
+    /**
+     * Tests the serialization of a tile. In particular, we want to verify that
+     * the image reader SPI has been properly set on the deserialized object.
+     *
+     * @since 3.20
+     */
+    @Test
+    public void testSerialization() {
+        final Rectangle bounds = new Rectangle(0, 0, 1000, 1000);
+        final Tile tile = new Tile(null, "Tile.png", 0, bounds);
+        final Tile result = assertSerializable(tile);
+        assertNotSame("Expected a deserialized instance. ", tile, result);
+        assertSame(tile.getImageReaderSpi(), result.getImageReaderSpi());
     }
 }

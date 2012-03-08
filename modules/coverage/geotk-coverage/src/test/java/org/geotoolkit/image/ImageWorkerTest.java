@@ -147,13 +147,13 @@ public final strictfp class ImageWorkerTest extends SampleImageTestBase {
         final RenderedImage binarize = worker.image;
         worker.binarize(192, 64);
         assertNotSame(binarize, image = worker.image);
-        assertCurrentChecksumEquals("binarize(192,64)", 4034897437L);
+        assertCurrentChecksumEquals("binarize(192,64)", 4034897437L, 2284770832L);
         showCurrentImage("binarize(192,64)");
 
         worker.setImage(original);
         worker.mask(binarize, new double[] {0});
         assertNotSame(original, image = worker.image);
-        assertCurrentChecksumEquals("mask(binarize,0)", 2185221001L);
+        assertCurrentChecksumEquals("mask(binarize,0)", 2185221001L, 523688203L);
         showCurrentImage("mask(binarize,0)");
 
         worker.setImage(original);
@@ -243,13 +243,13 @@ public final strictfp class ImageWorkerTest extends SampleImageTestBase {
         final RenderedImage binarize = worker.image;
         worker.binarize(192, 64);
         assertNotSame(binarize, image = worker.image);
-        assertCurrentChecksumEquals("binarize(192,64)", 1507269011L);
+        assertCurrentChecksumEquals("binarize(192,64)", 1507269011L, 1828969399L);
         showCurrentImage("binarize(192,64)");
 
         worker.setImage(original);
         worker.mask(binarize, new double[] {255,128,64});
         assertNotSame(original, image = worker.image);
-        assertCurrentChecksumEquals("mask(binarize,orange)", 3974692828L, 3148611825L);
+        assertCurrentChecksumEquals("mask(binarize,orange)", 3974692828L, 3148611825L, 328489765L);
         showCurrentImage("mask(binarize,orange)");
 
         worker.setImage(original);

@@ -46,6 +46,7 @@ import java.sql.DatabaseMetaData;
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.Version;
 import org.geotoolkit.util.XArrays;
+import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 
 
@@ -339,11 +340,11 @@ public class ScriptRunner implements FilenameFilter {
         } else {
             reader = new InputStreamReader(new FileInputStream(file), encoding);
         }
-        final LineNumberReader in = new LineNumberReader(reader);
-        currentFile = file;
-        final int count = run(in);
-        // The stream is closed by the 'in' method (TODO: Use resource management with JDK 7 anyway).
-        currentFile = null; // Clear on success only.
+        final int count;
+        try (LineNumberReader in = new LineNumberReader(reader)) {
+            currentFile = file; count = run(in);
+            currentFile = null; // Clear on success only.
+        }
         return count;
     }
 
@@ -363,7 +364,9 @@ public class ScriptRunner implements FilenameFilter {
         } else {
             reader = new InputStreamReader(in, encoding);
         }
-        return run(new LineNumberReader(reader));
+        try (LineNumberReader lr = new LineNumberReader(reader)) {
+            return run(lr);
+        }
     }
 
     /**
@@ -416,12 +419,12 @@ public class ScriptRunner implements FilenameFilter {
                 if (pos >= 0) {
                     pos += escape.length();
                     while ((pos = line.indexOf(escape, pos)) < 0) {
-                        pos = 0;
                         buffer.append(line).append('\n');
                         line = in.readLine();
                         if (line == null) {
                             throw new EOFException();
                         }
+                        pos = 0;
                     }
                     pos += escape.length();
                     buffer.append(line.substring(0, pos));
@@ -519,6 +522,9 @@ scanLine:   for (; i<length; i++) {
             }
         }
         in.close();
+        if (!buffer.toString().trim().isEmpty()) {
+            throw new EOFException(Errors.format(Errors.Keys.MISSING_CHARACTER_$1, END_OF_STATEMENT));
+        }
         return count;
     }
 

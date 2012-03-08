@@ -27,7 +27,6 @@ import java.awt.image.WritableRenderedImage;
 import java.awt.image.renderable.RenderableImage;
 import java.io.IOException;
 import java.io.InvalidClassException;
-import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Field;
@@ -1003,12 +1002,8 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
             final Field field = GridCoverage2D.class.getDeclaredField("image");
             field.setAccessible(true);
             field.set(this, PlanarImage.wrapRenderedImage(serializedImage));
-        } catch (NoSuchFieldException cause) {
-            InvalidClassException e = new InvalidClassException(cause.getLocalizedMessage());
-            e.initCause(cause);
-            throw e;
-        } catch (IllegalAccessException cause) {
-            InvalidObjectException e = new InvalidObjectException(cause.getLocalizedMessage());
+        } catch (ReflectiveOperationException cause) {
+            InvalidClassException e = new InvalidClassException(getClass().getCanonicalName(), cause.getLocalizedMessage());
             e.initCause(cause);
             throw e;
         }
