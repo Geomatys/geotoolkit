@@ -21,6 +21,8 @@ import java.util.Comparator;
 import org.geotoolkit.index.tree.Node;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
+import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  * Define a generic Calculator to define computing rules of tree.
@@ -104,7 +106,7 @@ public abstract class Calculator {
      * @throws IllegalArgumentException if param hl Hilbert order is larger than
      * them Hilbert RTree order.
      */
-    public abstract void createBasicHL(final Node candidate, final int order, final Envelope bound);
+    public abstract void createBasicHL(final Node candidate, final int order, final Envelope bound)throws MismatchedDimensionException, TransformException;
 
     /**
      * Find Hilbert order of an entry from candidate.

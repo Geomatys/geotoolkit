@@ -68,7 +68,7 @@ public abstract class TreeTest {
      * @throws TransformException if lData entries can't be transform into tree
      * crs.
      */
-    private void insert() throws MismatchedReferenceSystemException {
+    private void insert() throws IllegalArgumentException, TransformException {
         for (Envelope gEnv : lData) {
             tree.insert(gEnv);
         }
@@ -114,7 +114,7 @@ public abstract class TreeTest {
      *
      * @throws TransformException if entry can't be transform into tree crs.
      */
-    public void queryOnBorderTest() throws MismatchedReferenceSystemException {
+    public void queryOnBorderTest() throws IllegalArgumentException, TransformException {
         final List<GeneralEnvelope> lGE = new ArrayList<GeneralEnvelope>();
         for (Envelope ge : lData) {
             tree.delete(ge);
@@ -208,7 +208,7 @@ public abstract class TreeTest {
      *
      * @throws TransformException if entry can't be transform into tree crs.
      */
-    protected void insertDelete() throws MismatchedReferenceSystemException {
+    protected void insertDelete() throws IllegalArgumentException, TransformException {
         Collections.shuffle(lData);
         for (Envelope env : lData) {
             tree.delete(env);

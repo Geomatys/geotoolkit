@@ -33,6 +33,7 @@ import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedReferenceSystemException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  * Create Hilbert RTree.
@@ -79,7 +80,7 @@ public class HilbertRTree extends DefaultAbstractTree {
      * {@inheritDoc}
      */
     @Override
-    public void search(final Envelope regionSearch, final List<Envelope> result) throws MismatchedReferenceSystemException {
+    public void search(final Envelope regionSearch, final List<Envelope> result) throws IllegalArgumentException {
         ArgumentChecks.ensureNonNull("search : region search", regionSearch);
         ArgumentChecks.ensureNonNull("search : result", result);
         if(!CRS.equalsIgnoreMetadata(crs, regionSearch.getCoordinateReferenceSystem())){
@@ -95,7 +96,7 @@ public class HilbertRTree extends DefaultAbstractTree {
      * {@inheritDoc}
      */
     @Override
-    public void insert(final Envelope entry) throws MismatchedReferenceSystemException {
+    public void insert(final Envelope entry) throws IllegalArgumentException, TransformException{
         ArgumentChecks.ensureNonNull("insert : entry", entry);
         if(!CRS.equalsIgnoreMetadata(crs, entry.getCoordinateReferenceSystem())){
             throw new MismatchedReferenceSystemException();
@@ -116,7 +117,7 @@ public class HilbertRTree extends DefaultAbstractTree {
      * {@inheritDoc}
      */
     @Override
-    public void delete(final Envelope entry) throws MismatchedReferenceSystemException {
+    public void delete(final Envelope entry) throws IllegalArgumentException, TransformException {
         ArgumentChecks.ensureNonNull("delete : entry", entry);
         if(!CRS.equalsIgnoreMetadata(crs, entry.getCoordinateReferenceSystem())){
             throw new MismatchedReferenceSystemException();
@@ -183,7 +184,7 @@ public class HilbertRTree extends DefaultAbstractTree {
      * @param entry to insert.
      * @throws IllegalArgumentException if candidate or entry are null.
      */
-    public static void insertNode(final Node candidate, final Envelope entry) {
+    public static void insertNode(final Node candidate, final Envelope entry) throws IllegalArgumentException, TransformException{
         ArgumentChecks.ensureNonNull("impossible to insert a null entry", entry);
         if (candidate.isFull()) {
             List<Node> lSp = splitNode(candidate);
@@ -228,7 +229,7 @@ public class HilbertRTree extends DefaultAbstractTree {
      * subnode.
      * @throws IllegalArgumentException if this {@code Node} doesn't contains {@code Entry}.
      */
-    public static List<Node> splitNode(final Node candidate) {
+    public static List<Node> splitNode(final Node candidate) throws IllegalArgumentException, TransformException{
         boolean cleaf = candidate.isLeaf();
         int cHO = (Integer) candidate.getUserProperty(PROP_HO);
         final Calculator calc = candidate.getTree().getCalculator();
@@ -375,7 +376,7 @@ public class HilbertRTree extends DefaultAbstractTree {
      * @return Two appropriate {@code Node} in List in accordance with
      * R*Tree split properties.
      */
-    private static List<Node> hilbertNodeSplit(final Node candidate) {
+    private static List<Node> hilbertNodeSplit(final Node candidate) throws IllegalArgumentException, TransformException{
 
         final int splitIndex = defineSplitAxis(candidate);
         final boolean isLeaf = candidate.isLeaf();
@@ -629,8 +630,8 @@ public class HilbertRTree extends DefaultAbstractTree {
         if (!candidate.isLeaf()) {
             throw new IllegalArgumentException("impossible to find another leaf in Node which isn't LEAF tree");
         }
-        ArgumentChecks.ensureBetween("index to find another leaf is out of required limit",
-                0, (int) Math.pow(2, ((Integer)  candidate.getUserProperty("hilbertOrder") * 2)), index);
+//        ArgumentChecks.ensureBetween("index to find another leaf is out of required limit",
+//                0, (int) Math.pow(2, ((Integer)  candidate.getUserProperty("hilbertOrder") * candidate.getTree().getCrs().getCoordinateSystem().getDimension())), index);
         final List<Node> listCells = candidate.getChildren();
         int siz = listCells.size();
         boolean oneTime = false;
@@ -664,7 +665,7 @@ public class HilbertRTree extends DefaultAbstractTree {
      * @throws IllegalArgumentException if candidate or entry is null.
      * @return true if entry is find and deleted else false.
      */
-    private static void deleteHilbertNode(final Node candidate, final Envelope entry) {
+    private static void deleteHilbertNode(final Node candidate, final Envelope entry) throws IllegalArgumentException, TransformException{
         ArgumentChecks.ensureNonNull("deleteHilbertNode Node candidate : ", candidate);
         ArgumentChecks.ensureNonNull("deleteHilbertNode Envelope entry : ", entry);
         if (new GeneralEnvelope(candidate.getBoundary()).intersects(entry, true)) {
@@ -694,7 +695,7 @@ public class HilbertRTree extends DefaultAbstractTree {
      *
      * @param candidate {@code Node} to begin condense.
      */
-    public static void trim(final Node candidate) {
+    public static void trim(final Node candidate) throws IllegalArgumentException, TransformException{
 
         if (!candidate.isLeaf()) {
             final List<Node> children = candidate.getChildren();
@@ -753,7 +754,7 @@ public class HilbertRTree extends DefaultAbstractTree {
      * {@inheritDoc }.
      */
     @Override
-    public Node createNode(Tree tree, Node parent, List<Node> listChildren, List<Envelope> listEntries, double... coordinates) {
+    public Node createNode(Tree tree, Node parent, List<Node> listChildren, List<Envelope> listEntries, double... coordinates) throws IllegalArgumentException, TransformException{
         if(!(tree instanceof HilbertRTree)){
             throw new IllegalArgumentException("argument tree : "+tree.getClass().getName()+" not adapted to create an Hilbert RTree Node");
         }

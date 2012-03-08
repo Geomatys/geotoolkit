@@ -31,7 +31,7 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class StarRTree2DTest extends TreeTest {
 
-    public StarRTree2DTest() throws TransformException {
+    public StarRTree2DTest() throws IllegalArgumentException, TransformException {
         super(new StarRTree(4, DefaultEngineeringCRS.CARTESIAN_2D, DefaultCalculator.CALCULATOR_2D, TreeNodeFactory.DEFAULT_FACTORY),
                 DefaultEngineeringCRS.CARTESIAN_2D);
     }

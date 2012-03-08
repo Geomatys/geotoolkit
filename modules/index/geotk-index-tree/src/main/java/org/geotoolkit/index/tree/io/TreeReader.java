@@ -24,11 +24,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.util.ArgumentChecks;
 import org.opengis.geometry.Envelope;
+import org.opengis.referencing.operation.TransformException;
 
 /**Create TreeReader object.
  *
@@ -120,7 +120,7 @@ public class TreeReader {
      * @throws IOException
      * @throws ClassNotFoundException 
      */
-    public void read(final Tree tree) throws IOException, ClassNotFoundException {
+    public void read(final Tree tree) throws IOException, ClassNotFoundException, IllegalArgumentException, TransformException {
         ArgumentChecks.ensureNonNull("read : tree", tree);
         final List<Node> listNodes = new ArrayList<Node>();
         final Map<Integer, Node> index = new HashMap<Integer, Node>();
@@ -148,7 +148,7 @@ public class TreeReader {
      * @throws IOException
      * @throws ClassNotFoundException 
      */
-    private void readNode(final Tree tree, final DataInputStream dips, final List<Node> listNodes, final Map<Integer, Node> index) throws IOException, ClassNotFoundException {
+    private void readNode(final Tree tree, final DataInputStream dips, final List<Node> listNodes, final Map<Integer, Node> index) throws IOException, ClassNotFoundException, IllegalArgumentException, TransformException {
         ArgumentChecks.ensureNonNull("readNode : tree", tree);
         ArgumentChecks.ensureNonNull("readNode : dips", dips);
         ArgumentChecks.ensureNonNull("readNode : listNodes", listNodes);
@@ -204,7 +204,7 @@ public class TreeReader {
      * @throws IOException
      * @throws ClassNotFoundException 
      */
-    public static void read(final Tree tree, final Object input) throws IOException, ClassNotFoundException {
+    public static void read(final Tree tree, final Object input) throws IOException, ClassNotFoundException, IllegalArgumentException, TransformException {
         ArgumentChecks.ensureNonNull("static read : tree", tree);
         ArgumentChecks.ensureNonNull("static read : input", input);
         final TreeReader reader = new TreeReader();

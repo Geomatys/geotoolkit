@@ -34,7 +34,7 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class HilbertRTree2DTest extends TreeTest {
 
-    public HilbertRTree2DTest() throws TransformException {
+    public HilbertRTree2DTest() throws IllegalArgumentException, TransformException {
         super(new HilbertRTree(4, 1, DefaultEngineeringCRS.CARTESIAN_2D, DefaultCalculator.CALCULATOR_2D, TreeNodeFactory.DEFAULT_FACTORY),
                                      DefaultEngineeringCRS.CARTESIAN_2D);
     }
@@ -45,7 +45,7 @@ public class HilbertRTree2DTest extends TreeTest {
      * @throws TransformException if entry can't be transform into tree crs.
      */
     @Test
-    public void testInsert() throws TransformException {
+    public void testInsert() throws IllegalArgumentException, TransformException {
         super.insertTest();
     }
 
@@ -55,7 +55,7 @@ public class HilbertRTree2DTest extends TreeTest {
      * @throws TransformException if entry can't be transform into tree crs.
      */
     @Test
-    public void testCheckBoundary() throws TransformException {
+    public void testCheckBoundary() throws IllegalArgumentException, TransformException {
         super.checkBoundaryTest();
     }
 
@@ -85,7 +85,7 @@ public class HilbertRTree2DTest extends TreeTest {
      * @throws TransformException if entry can't be transform into tree crs.
      */
     @Test
-    public void testQueryInside() throws TransformException {
+    public void testQueryInside() throws IllegalArgumentException, TransformException {
         super.queryInsideTest();
     }
 
@@ -95,7 +95,7 @@ public class HilbertRTree2DTest extends TreeTest {
      * @throws TransformException if entry can't be transform into tree crs.
      */
     @Test
-    public void testQueryOutside() throws TransformException {
+    public void testQueryOutside() throws IllegalArgumentException, TransformException {
         super.queryOutsideTest();
     }
 
@@ -105,7 +105,7 @@ public class HilbertRTree2DTest extends TreeTest {
      * @throws TransformException if entry can't be transform into tree crs.
      */
     @Test
-    public void testQueryOnBorder() throws TransformException {
+    public void testQueryOnBorder() throws IllegalArgumentException, TransformException {
         super.queryOnBorderTest();
     }
 
@@ -115,7 +115,7 @@ public class HilbertRTree2DTest extends TreeTest {
      * @throws TransformException if entry can't be transform into tree crs.
      */
     @Test
-    public void testInsertDelete() throws TransformException {
+    public void testInsertDelete() throws IllegalArgumentException, TransformException {
         super.insertDelete();
     }
 }

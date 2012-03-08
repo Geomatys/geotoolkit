@@ -32,7 +32,7 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class BasicRTree2DTest extends TreeTest {
 
-    public BasicRTree2DTest() throws TransformException {
+    public BasicRTree2DTest() throws IllegalArgumentException, TransformException {
         super(new BasicRTree(4, DefaultEngineeringCRS.CARTESIAN_2D, SplitCase.QUADRATIC, DefaultCalculator.CALCULATOR_2D, TreeNodeFactory.DEFAULT_FACTORY)
                 , DefaultEngineeringCRS.CARTESIAN_2D);
     }
@@ -43,7 +43,7 @@ public class BasicRTree2DTest extends TreeTest {
      * @throws TransformException if entry can't be transform into tree crs.
      */
     @Test
-    public void testInsert() throws TransformException {
+    public void testInsert() throws IllegalArgumentException, TransformException {
         super.insertTest();
     }
 
@@ -53,7 +53,7 @@ public class BasicRTree2DTest extends TreeTest {
      * @throws TransformException if entry can't be transform into tree crs.
      */
     @Test
-    public void testCheckBoundary() throws TransformException {
+    public void testCheckBoundary() throws IllegalArgumentException, TransformException {
         super.checkBoundaryTest();
     }
 
@@ -63,7 +63,7 @@ public class BasicRTree2DTest extends TreeTest {
      * @throws TransformException if entry can't be transform into tree crs.
      */
     @Test
-    public void testQueryInside() throws TransformException {
+    public void testQueryInside() throws IllegalArgumentException, TransformException {
         super.queryInsideTest();
     }
 
@@ -73,7 +73,7 @@ public class BasicRTree2DTest extends TreeTest {
      * @throws TransformException if entry can't be transform into tree crs.
      */
     @Test
-    public void testQueryOutside() throws TransformException {
+    public void testQueryOutside() throws IllegalArgumentException, TransformException {
         super.queryOutsideTest();
     }
 
@@ -83,7 +83,7 @@ public class BasicRTree2DTest extends TreeTest {
      * @throws TransformException if entry can't be transform into tree crs.
      */
     @Test
-    public void testQueryOnBorder() throws TransformException {
+    public void testQueryOnBorder() throws IllegalArgumentException, TransformException {
         super.queryOnBorderTest();
     }
 
@@ -93,7 +93,7 @@ public class BasicRTree2DTest extends TreeTest {
      * @throws TransformException if entry can't be transform into tree crs.
      */
     @Test
-    public void testInsertDelete() throws TransformException {
+    public void testInsertDelete() throws IllegalArgumentException, TransformException{
         super.insertDelete();
     }
 }

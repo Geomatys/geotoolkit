@@ -34,6 +34,7 @@ import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedReferenceSystemException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.TransformException;
 
 
 /**Create R*Tree in Euclidean space.
@@ -64,7 +65,7 @@ public class StarRTree extends DefaultAbstractTree {
      * {@inheritDoc} 
      */
     @Override
-    public void search(final Envelope regionSearch, final List<Envelope> result) throws MismatchedReferenceSystemException{
+    public void search(final Envelope regionSearch, final List<Envelope> result) throws IllegalArgumentException{
         ArgumentChecks.ensureNonNull("search : region search", regionSearch);
         ArgumentChecks.ensureNonNull("search : result", result);
         if(!CRS.equalsIgnoreMetadata(crs, regionSearch.getCoordinateReferenceSystem())){
@@ -80,7 +81,7 @@ public class StarRTree extends DefaultAbstractTree {
      * {@inheritDoc} 
      */
     @Override
-    public void insert(final Envelope entry) throws MismatchedReferenceSystemException{
+    public void insert(final Envelope entry) throws IllegalArgumentException, TransformException{
         ArgumentChecks.ensureNonNull("insert : entry", entry);
         if(!CRS.equalsIgnoreMetadata(crs, entry.getCoordinateReferenceSystem())){
             throw new MismatchedReferenceSystemException();
@@ -102,7 +103,7 @@ public class StarRTree extends DefaultAbstractTree {
      * {@inheritDoc} 
      */
     @Override
-    public void delete(final Envelope entry) throws MismatchedReferenceSystemException{
+    public void delete(final Envelope entry) throws IllegalArgumentException, TransformException{
         ArgumentChecks.ensureNonNull("delete : entry", entry);
         if(!CRS.equalsIgnoreMetadata(crs, entry.getCoordinateReferenceSystem())){
             throw new MismatchedReferenceSystemException();
@@ -162,7 +163,7 @@ public class StarRTree extends DefaultAbstractTree {
      * @throws IllegalArgumentException if {@code Node} candidate is null.
      * @throws IllegalArgumentException if {@code Envelope} entry is null.
      */
-    private static void nodeInsert(final Node candidate, final Envelope entry) {
+    private static void nodeInsert(final Node candidate, final Envelope entry) throws IllegalArgumentException, TransformException {
         if(candidate.isLeaf()){
             candidate.getEntries().add(entry);
         }else{
@@ -333,7 +334,7 @@ public class StarRTree extends DefaultAbstractTree {
      * 
      * @return Two appropriate {@code Node} in List in accordance with R*Tree split properties.
      */
-    private static List<Node> nodeSplit(final Node candidate){
+    private static List<Node> nodeSplit(final Node candidate) throws IllegalArgumentException, TransformException{
         
         final int splitIndex = defineSplitAxis(candidate);
         final boolean isLeaf = candidate.isLeaf();
@@ -575,7 +576,7 @@ public class StarRTree extends DefaultAbstractTree {
      * @throws IllegalArgumentException if candidate or entry is null.
      * @return true if entry is find and deleted else false.
      */
-    private static boolean deleteNode(final Node candidate, final Envelope entry) throws MismatchedReferenceSystemException{
+    private static boolean deleteNode(final Node candidate, final Envelope entry) throws IllegalArgumentException, TransformException{
         ArgumentChecks.ensureNonNull("DeleteNode : Node candidate", candidate);
         ArgumentChecks.ensureNonNull("DeleteNode : Node candidate", candidate);
         if(new GeneralEnvelope(candidate.getBoundary()).intersects(entry, true)){
@@ -604,7 +605,7 @@ public class StarRTree extends DefaultAbstractTree {
      * @param candidate {@code Node} to begin condense.
      * @throws IllegalArgumentException if candidate is null.
      */
-    private static void trim(final Node candidate) throws MismatchedReferenceSystemException {
+    private static void trim(final Node candidate) throws IllegalArgumentException, TransformException {
         ArgumentChecks.ensureNonNull("trim : Node candidate", candidate);
         final List<Node> children = candidate.getChildren();
         final Tree tree = candidate.getTree();
@@ -641,7 +642,7 @@ public class StarRTree extends DefaultAbstractTree {
      * @throws IllegalArgumentException if nodeA or nodeB are not tree leaf.
      * @throws IllegalArgumentException if nodeA or nodeB, and their subnodes, don't contains some {@code Envelope} entry(ies).
      */
-    private static void branchGrafting(final Node nodeA, final Node nodeB ) throws MismatchedReferenceSystemException{
+    private static void branchGrafting(final Node nodeA, final Node nodeB ) throws IllegalArgumentException, TransformException{
         if(!nodeA.isLeaf() || !nodeB.isLeaf()){
             throw new IllegalArgumentException("branchGrafting : not leaf");
         }
