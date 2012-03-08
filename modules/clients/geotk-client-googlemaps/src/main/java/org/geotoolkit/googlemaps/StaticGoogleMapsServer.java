@@ -57,6 +57,7 @@ public class StaticGoogleMapsServer extends AbstractServer implements CoverageSt
     }
     
     private final String key;
+    private final boolean cacheImage;
     
     /**
      * Builds a google maps server with the default google server address.
@@ -72,12 +73,14 @@ public class StaticGoogleMapsServer extends AbstractServer implements CoverageSt
      * @param key, account key.
      */
     public StaticGoogleMapsServer(final URL serverURL, final String key) {
-        this(serverURL,key,null);
+        this(serverURL,key,null,false);
     }
     
-    public StaticGoogleMapsServer(final URL serverURL, final String key, final ClientSecurity security) {
+    public StaticGoogleMapsServer(final URL serverURL, final String key, 
+            final ClientSecurity security, boolean cacheImage) {
         super(serverURL,security);
         this.key = key;
+        this.cacheImage = cacheImage;
     }
         
     public String getKey(){
@@ -98,7 +101,7 @@ public class StaticGoogleMapsServer extends AbstractServer implements CoverageSt
 
     @Override
     public CoverageReference getCoverageReference(Name name) throws DataStoreException {
-        return new GoogleCoverageReference(this,name);
+        return new GoogleCoverageReference(this,name,cacheImage);
     }
 
     @Override

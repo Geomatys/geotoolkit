@@ -41,8 +41,8 @@ public class WMSCPyramidSet extends CachedPyramidSet{
     
     private final String layer;
     
-    public WMSCPyramidSet(final WebMapServerCached server, final String layer) throws CapabilitiesException {
-        super(server,true);
+    public WMSCPyramidSet(final WebMapServerCached server, final String layer, boolean cacheImage) throws CapabilitiesException {
+        super(server,true,cacheImage);
         this.layer = layer;
         
         //WMSC is a WMS 1.1.1

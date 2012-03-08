@@ -22,15 +22,15 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import javax.imageio.ImageReader;
-import org.geotoolkit.coverage.GridMosaic;
-import org.geotoolkit.coverage.Pyramid;
-import org.geotoolkit.coverage.PyramidSet;
-import org.geotoolkit.coverage.PyramidalModel;
+import org.geotoolkit.coverage.*;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageFactory;
 import org.geotoolkit.coverage.grid.ViewType;
@@ -46,16 +46,15 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotoolkit.image.io.mosaic.Tile;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.Cancellable;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.feature.type.Name;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
 /**
@@ -191,7 +190,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
         }
         
         //tiles to render         
-        final Collection<Point> queries = new ArrayList<Point>();
+        final Map<Point,MathTransform> queries = new HashMap<Point,MathTransform>();
         final Map hints = new HashMap(item.getUserProperties());
         
         for(int tileCol=(int)tileMinCol; tileCol<tileMaxCol; tileCol++){   
@@ -200,7 +199,10 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
                     //tile not available
                     continue;
                 }
-                queries.add(new Point(tileCol, tileRow));
+                
+                final Point pt = new Point(tileCol, tileRow);
+                final MathTransform trs = AbstractGridMosaic.getTileGridToCRS(mosaic, pt);
+                queries.put(pt,trs);
             }
         }
 
@@ -212,7 +214,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
         
         final BlockingQueue<Object> queue;
         try {
-            queue = mosaic.getTiles(queries, hints);
+            queue = mosaic.getTiles(queries.keySet(), hints);
         } catch (DataStoreException ex) {
             monitor.exceptionOccured(ex, Level.WARNING);
             return;
@@ -237,8 +239,10 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
                 break;
             }
 
-            if(obj instanceof Tile){
-                paintTile(context2D, pyramidCRS, (Tile)obj);
+            if(obj instanceof TileReference){
+                final TileReference tile = (TileReference)obj;
+                final MathTransform trs = queries.get(tile.getPosition());
+                paintTile(context2D, pyramidCRS, tile, trs);
             }
         }
         
@@ -282,7 +286,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
     }
 
     private static void paintTile(final RenderingContext2D context, 
-            final CoordinateReferenceSystem tileCRS ,final Tile tile) {
+            final CoordinateReferenceSystem tileCRS ,final TileReference tile, MathTransform trs) {
         final CanvasMonitor monitor = context.getMonitor();
         final CoordinateReferenceSystem objCRS2D = context.getObjectiveCRS2D();
                 
@@ -319,13 +323,11 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
                 image = buffer;
             }
             
-            coverage = gc.create("tile", image,
-            tileCRS, new AffineTransform2D(tile.getGridToCRS()), null, null, null);            
+            coverage = gc.create("tile", image, tileCRS, trs, null, null, null);            
             coverage = (GridCoverage2D) Operations.DEFAULT.resample(coverage.view(ViewType.NATIVE), objCRS2D);
             
         }else{
-            coverage = gc.create("tile", image,
-            tileCRS, new AffineTransform2D(tile.getGridToCRS()), null, null, null);
+            coverage = gc.create("tile", image, tileCRS, trs, null, null, null);
         }
         
         try {

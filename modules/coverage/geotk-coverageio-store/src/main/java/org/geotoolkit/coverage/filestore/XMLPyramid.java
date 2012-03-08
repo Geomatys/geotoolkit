@@ -47,8 +47,6 @@ public class XMLPyramid implements Pyramid{
     String id;
     @XmlElement(name="crs")
     String crs;
-    @XmlElement(name="postfix")
-    String postfix;
     @XmlElement(name="Mosaic")
     List<XMLMosaic> mosaics;
     
@@ -83,10 +81,6 @@ public class XMLPyramid implements Pyramid{
     @Override
     public String getId() {
         return id;
-    }
-
-    public String getPostfix() {
-        return postfix;
     }
     
     public File getFolder(){

@@ -52,6 +52,12 @@ public abstract class AbstractServerFactory extends Factory implements ServerFac
     public static final ParameterDescriptor<ClientSecurity> SECURITY =
             new DefaultParameterDescriptor<ClientSecurity>("security","Server security",ClientSecurity.class,null,false);
     
+    /**
+     * Cache images in memory, Optional.
+     */
+    public static final ParameterDescriptor<Boolean> IMAGE_CACHE =
+            new DefaultParameterDescriptor<Boolean>("imagecache", "Cache images in memory", Boolean.class,null,false);
+    
     /** 
      * Default Implementation abuses the naming convention.
      * <p>

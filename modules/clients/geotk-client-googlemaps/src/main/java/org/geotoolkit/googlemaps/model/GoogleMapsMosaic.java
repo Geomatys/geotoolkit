@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import org.geotoolkit.coverage.AbstractGridMosaic;
 import org.geotoolkit.coverage.Pyramid;
-import org.geotoolkit.image.io.mosaic.Tile;
+import org.geotoolkit.coverage.TileReference;
 import org.geotoolkit.storage.DataStoreException;
 
 /**
@@ -47,7 +47,7 @@ public class GoogleMapsMosaic extends AbstractGridMosaic{
     }
 
     @Override
-    public Tile getTile(int col, int row, Map hints) throws DataStoreException {
+    public TileReference getTile(int col, int row, Map hints) throws DataStoreException {
         return ((GoogleMapsPyramidSet)getPyramid().getPyramidSet()).getTile(this, col, row, hints);
     }
     

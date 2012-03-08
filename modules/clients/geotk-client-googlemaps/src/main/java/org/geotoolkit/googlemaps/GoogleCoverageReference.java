@@ -35,8 +35,8 @@ public class GoogleCoverageReference implements CoverageReference, PyramidalMode
 
     private final PyramidSet set;
     
-    GoogleCoverageReference(final StaticGoogleMapsServer server, final Name name) throws DataStoreException{
-        this.set = new GoogleMapsPyramidSet(server, name.getLocalPart());
+    GoogleCoverageReference(final StaticGoogleMapsServer server, final Name name,boolean cacheImage) throws DataStoreException{
+        this.set = new GoogleMapsPyramidSet(server, name.getLocalPart(),cacheImage);
     }
     
     @Override

@@ -17,7 +17,7 @@
 package org.geotoolkit.wmsc;
 
 import java.net.URL;
-import java.util.Set;
+import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.security.ClientSecurity;
@@ -36,22 +36,29 @@ import org.opengis.feature.type.Name;
  */
 public class WebMapServerCached extends WebMapServer implements CoverageStore{
     
+    private final boolean cacheImage;
+    
     /**
      * Builds a web map server with the given server url and version.
      *
      * @param serverURL The server base url.
+     * @param cacheImage  
      */
-    public WebMapServerCached(final URL serverURL) {
+    public WebMapServerCached(final URL serverURL, boolean cacheImage) {
         super(serverURL,"1.1.1");
+        this.cacheImage = cacheImage;
     }
     
     /**
      * Builds a web map server with the given server url and version.
      *
      * @param serverURL The server base url.
+     * @param security
+     * @param cacheImage  
      */
-    public WebMapServerCached(final URL serverURL, final ClientSecurity security) {
+    public WebMapServerCached(final URL serverURL, final ClientSecurity security, boolean cacheImage) {
         super(serverURL, security, WMSVersion.v111, null);
+        this.cacheImage = cacheImage;
     }
     
     @Override
@@ -62,22 +69,16 @@ public class WebMapServerCached extends WebMapServer implements CoverageStore{
     }
 
     @Override
-    public Set<Name> getNames() throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
     public CoverageReference getCoverageReference(Name name) throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        try {
+            return new WMSCCoverageReference(this, name, cacheImage);
+        } catch (CapabilitiesException ex) {
+            throw new DataStoreException(ex.getMessage(), ex);
+        }
     }
 
     @Override
     public void dispose() {
-    }
-
-    @Override
-    public CoverageReference create(Name name) throws DataStoreException {
-        throw new DataStoreException("Can not create new coverage.");
     }
     
 }

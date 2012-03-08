@@ -44,7 +44,7 @@ public class WMSCGraphic extends AbstractPyramidGraphic{
         this.layer = layer;
         setSilentErrors(true);
         
-        pyramidset = new WMSCPyramidSet((WebMapServerCached)layer.getServer(), layer.getLayerNames()[0]);
+        pyramidset = new WMSCPyramidSet((WebMapServerCached)layer.getServer(), layer.getLayerNames()[0],true);
     }
     
     @Override

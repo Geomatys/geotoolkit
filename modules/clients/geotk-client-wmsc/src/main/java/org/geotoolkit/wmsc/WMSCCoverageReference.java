@@ -14,15 +14,16 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.wmts;
+package org.geotoolkit.wmsc;
 
 import java.awt.Dimension;
 import java.awt.geom.Point2D;
 import java.awt.image.RenderedImage;
+import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.coverage.*;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.wmts.model.WMTSPyramidSet;
+import org.geotoolkit.wmsc.model.WMSCPyramidSet;
 import org.opengis.feature.type.Name;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -31,12 +32,12 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class WMTSCoverageReference implements CoverageReference, PyramidalModel{
+public class WMSCCoverageReference implements CoverageReference, PyramidalModel{
 
     private final PyramidSet set;
     
-    WMTSCoverageReference(WebMapTileServer server, Name name, boolean cacheImage){
-        set = new WMTSPyramidSet(server, name.getLocalPart(), cacheImage);
+    WMSCCoverageReference(WebMapServerCached server, Name name, boolean cacheImage) throws CapabilitiesException{
+        set = new WMSCPyramidSet(server, name.getLocalPart(), cacheImage);
     }
     
     @Override

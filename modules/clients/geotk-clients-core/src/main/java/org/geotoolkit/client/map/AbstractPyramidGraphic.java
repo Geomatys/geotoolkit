@@ -136,7 +136,7 @@ public abstract class AbstractPyramidGraphic extends AbstractTiledGraphic{
 
         //find all the tiles we need --------------------------------------
         //tiles to render         
-        final Collection<TileReference> queries = new ArrayList<TileReference>();
+        final Collection<QueryTileReference> queries = new ArrayList<QueryTileReference>();
 
         final double epsilon = 1e-6;
         final double bBoxMinX = wantedEnv.getMinimum(0);
@@ -186,7 +186,7 @@ public abstract class AbstractPyramidGraphic extends AbstractTiledGraphic{
                 final Request request = createRequest(mosaic, tileCol, tileRow);
 
                 final String tileId = mosaic.getId() +"_"+tileRow+"_"+tileCol;
-                final TileReference ref = new TileReference(tileId, pyramidCRS, gridToCRS, request);
+                final QueryTileReference ref = new QueryTileReference(tileId, pyramidCRS, gridToCRS, request);
                 
                 queries.add(ref);
                 //break loopCol;

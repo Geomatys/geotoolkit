@@ -28,7 +28,7 @@ import java.util.*;
 import java.util.logging.Level;
 import javax.imageio.ImageIO;
 import org.geotoolkit.client.map.AbstractTiledGraphic;
-import org.geotoolkit.client.map.TileReference;
+import org.geotoolkit.client.map.QueryTileReference;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
@@ -145,7 +145,7 @@ public class WMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
             }
 
             //render a single tile            
-            final Collection<TileReference> queries = new ArrayList<TileReference>();
+            final Collection<QueryTileReference> queries = new ArrayList<QueryTileReference>();
             
             try {
                 final CoordinateReferenceSystem crs2d = CRSUtilities.getCRS2D(env.getCoordinateReferenceSystem());
@@ -155,7 +155,7 @@ public class WMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
                 //only if envelope is not empty, avoid a wms error
                 if(!env.isEmpty()){
                     final String id = UUID.randomUUID().toString();
-                    final TileReference ref = new TileReference(id,
+                    final QueryTileReference ref = new QueryTileReference(id,
                             CRSUtilities.getCRS2D(env.getCoordinateReferenceSystem()), 
                             gridToCRS, request);
                     queries.add(ref);

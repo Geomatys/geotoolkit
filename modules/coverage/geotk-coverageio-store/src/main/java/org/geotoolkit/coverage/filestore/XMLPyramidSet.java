@@ -17,11 +17,13 @@
 package org.geotoolkit.coverage.filestore;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import javax.xml.bind.JAXBContext;
+import javax.imageio.ImageReader;
+import javax.imageio.spi.ImageReaderSpi;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
@@ -29,6 +31,7 @@ import javax.xml.bind.annotation.*;
 import org.geotoolkit.coverage.Pyramid;
 import org.geotoolkit.coverage.PyramidSet;
 import org.geotoolkit.gui.swing.tree.Trees;
+import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.converter.Classes;
@@ -58,12 +61,24 @@ public class XMLPyramidSet implements PyramidSet{
     
     @XmlElement(name="Pyramid")
     private List<XMLPyramid> pyramids;
+    @XmlElement(name="MimeType")
+    private String mimeType;
     
     @XmlTransient
     private String id;
     @XmlTransient
     private File mainfile;
+    @XmlTransient
+    private ImageReaderSpi spi;
 
+    public XMLPyramidSet(){
+        this("image/png");
+    }
+    
+    public XMLPyramidSet(String mimeType){
+        this.mimeType = mimeType;
+    }
+    
     void initialize(File mainFile){
         this.mainfile = mainFile;
         //calculate id based on file name
@@ -76,6 +91,19 @@ public class XMLPyramidSet implements PyramidSet{
         for(XMLPyramid pyramid : pyramids()){
             pyramid.initialize(this);
         }
+    }
+    
+    public ImageReaderSpi getReaderSpi() throws DataStoreException{
+        if(spi == null){
+            try {
+                final ImageReader reader = XImageIO.getReaderByMIMEType(mimeType, null, Boolean.TRUE, Boolean.TRUE);
+                spi = reader.getOriginatingProvider();
+                reader.dispose();
+            } catch (IOException ex) {
+                throw new DataStoreException(ex.getMessage(), ex);
+            }
+        }
+        return spi;
     }
     
     public List<XMLPyramid> pyramids() {
@@ -102,6 +130,10 @@ public class XMLPyramidSet implements PyramidSet{
      */
     public File getFolder(){
         return new File(mainfile.getParentFile(),getId());
+    }
+
+    public String getMimeType() {
+        return mimeType;
     }
     
     @Override
@@ -156,7 +188,6 @@ public class XMLPyramidSet implements PyramidSet{
         final XMLPyramid pyramid = new XMLPyramid();
         pyramid.crs = crs.toWKT();
         pyramid.id = IdentifiedObjects.getIdentifier(crs);
-        pyramid.postfix = "png";
         pyramid.initialize(this);
         pyramids().add(pyramid);
         return pyramid;

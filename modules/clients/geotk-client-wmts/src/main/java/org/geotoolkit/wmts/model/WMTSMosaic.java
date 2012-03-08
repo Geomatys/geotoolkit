@@ -24,8 +24,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import org.geotoolkit.coverage.GridMosaic;
+import org.geotoolkit.coverage.TileReference;
 import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotoolkit.image.io.mosaic.Tile;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.wmts.WMTSUtilities;
@@ -137,7 +137,7 @@ public class WMTSMosaic implements GridMosaic{
     }
 
     @Override
-    public Tile getTile(int col, int row, Map hints) throws DataStoreException {
+    public TileReference getTile(int col, int row, Map hints) throws DataStoreException {
         return ((WMTSPyramidSet)getPyramid().getPyramidSet()).getTile(this, col, row, hints);
     }
  

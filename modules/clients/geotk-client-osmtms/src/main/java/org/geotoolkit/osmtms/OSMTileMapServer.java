@@ -48,7 +48,7 @@ public class OSMTileMapServer extends AbstractServer implements CoverageStore{
      * @param maxZoomLevel maximum zoom level supported on server.
      */
     public OSMTileMapServer(final URL serverURL, final int maxZoomLevel) {
-        this(serverURL,null,maxZoomLevel);
+        this(serverURL,null,maxZoomLevel, false);
     }
     
     /**
@@ -59,10 +59,10 @@ public class OSMTileMapServer extends AbstractServer implements CoverageStore{
      * @param maxZoomLevel maximum zoom level supported on server.
      */
     public OSMTileMapServer(final URL serverURL, final ClientSecurity security,
-            final int maxZoomLevel) {
+            final int maxZoomLevel, boolean cacheImage) {
         super(serverURL,security);
         this.maxZoomLevel = maxZoomLevel;
-        pyramidSet = new OSMTMSPyramidSet(this,maxZoomLevel);
+        pyramidSet = new OSMTMSPyramidSet(this,maxZoomLevel,cacheImage);
         this.name = new DefaultName(serverURL.toString(),"main");
     }
 

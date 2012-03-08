@@ -25,14 +25,14 @@ import org.opengis.referencing.operation.MathTransform;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public final class TileReference {
+public final class QueryTileReference {
     
     public final CoordinateReferenceSystem crs;
     public final MathTransform gridToCRS;
     public final String id;
     public final Request query;
 
-    public TileReference(final String id, final CoordinateReferenceSystem crs, 
+    public QueryTileReference(final String id, final CoordinateReferenceSystem crs, 
             final MathTransform gridToCRS, final Request query) {
         this.crs = crs;
         this.gridToCRS = gridToCRS;

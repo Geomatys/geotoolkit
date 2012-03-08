@@ -46,7 +46,7 @@ public class OSMTMSServerFactory extends AbstractServerFactory implements Covera
 
     public static final ParameterDescriptorGroup PARAMETERS =
             new DefaultParameterDescriptorGroup("OSMTMSParameters",
-                URL,MAX_ZOOM_LEVEL,SECURITY);
+                URL,MAX_ZOOM_LEVEL,SECURITY,IMAGE_CACHE);
     
     @Override
     public ParameterDescriptorGroup getParametersDescriptor() {
@@ -63,7 +63,13 @@ public class OSMTMSServerFactory extends AbstractServerFactory implements Covera
             security = (ClientSecurity) val.getValue();
         }catch(ParameterNotFoundException ex){}
         
-        return new OSMTileMapServer(url,security,zoom);
+        boolean cacheImage = false;
+        try{
+            final ParameterValue val = params.parameter(IMAGE_CACHE.getName().getCode());
+            cacheImage = (Boolean) val.getValue();
+        }catch(ParameterNotFoundException ex){}
+        
+        return new OSMTileMapServer(url,security,zoom,cacheImage);
     }
 
     @Override

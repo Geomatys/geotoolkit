@@ -18,12 +18,12 @@ package org.geotoolkit.coverage.filestore;
 
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -36,14 +36,17 @@ import java.util.logging.Logger;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriter;
+import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageOutputStream;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
 import org.geotoolkit.coverage.AbstractGridMosaic;
+import org.geotoolkit.coverage.DefaultTileReference;
 import org.geotoolkit.coverage.GridMosaic;
+import org.geotoolkit.coverage.TileReference;
 import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotoolkit.image.io.mosaic.Tile;
+import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.converter.Classes;
 import org.opengis.geometry.Envelope;
@@ -201,16 +204,16 @@ public class XMLMosaic implements GridMosaic{
     }
 
     @Override
-    public Tile getTile(int col, int row, Map hints) throws DataStoreException {
+    public TileReference getTile(int col, int row, Map hints) throws DataStoreException {
         
-        final AffineTransform gridToCRS = AbstractGridMosaic.getTileGridToCRS(this, new Point(col, row));
-        
-        final Tile tile;
+        final TileReference tile;
         if(isEmpty(col, row)){
-            tile = new Tile(emptyTile, gridToCRS);
+            tile = new DefaultTileReference(getPyramid().getPyramidSet().getReaderSpi(), 
+                    new ByteArrayInputStream(emptyTileEncoded), 0, new Point(col, row));
         }else{
-            tile = new Tile(null, getTileFile(col, row), 0, null, gridToCRS);
-            tile.setSubsampling(new Dimension(1, 1));
+            final ImageReaderSpi spi;
+            tile = new DefaultTileReference(getPyramid().getPyramidSet().getReaderSpi(), 
+                    getTileFile(col, row), 0, new Point(col, row));
         }
         
         return tile;
@@ -227,7 +230,8 @@ public class XMLMosaic implements GridMosaic{
     
     public File getTileFile(int col, int row) throws DataStoreException{
         checkPosition(col, row);
-        return new File(getFolder(),row+"_"+col+"."+getPyramid().getPostfix());
+        final String postfix = getPyramid().getPyramidSet().getReaderSpi().getFileSuffixes()[0];
+        return new File(getFolder(),row+"_"+col+"."+postfix);
     }
 
     void createTile(int col, int row, RenderedImage image) throws DataStoreException {
@@ -243,7 +247,8 @@ public class XMLMosaic implements GridMosaic{
         f.getParentFile().mkdirs();
         try {
             final ImageOutputStream out = ImageIO.createImageOutputStream(f);
-            final ImageWriter writer = ImageIO.getImageWritersByFormatName("PNG").next();
+            final ImageWriter writer = XImageIO.getWriterByMIMEType(
+                    getPyramid().getPyramidSet().getMimeType(), out, image);
             writer.setOutput(out);
             writer.write(image);
             writer.dispose();

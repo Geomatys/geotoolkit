@@ -44,8 +44,8 @@ public class WMTSPyramidSet extends CachedPyramidSet{
     private final String id = UUID.randomUUID().toString();
     private LayerType wmtsLayer;
     
-    public WMTSPyramidSet(final WebMapTileServer server, final String layerName){
-        super(server,true);
+    public WMTSPyramidSet(final WebMapTileServer server, final String layerName, boolean cacheImage){
+        super(server,true,cacheImage);
         ArgumentChecks.ensureNonNull("layer name", layerName);
         this.layerName = layerName;
                 

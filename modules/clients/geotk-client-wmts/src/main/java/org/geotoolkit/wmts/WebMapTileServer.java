@@ -51,6 +51,7 @@ public class WebMapTileServer extends AbstractServer implements CoverageStore{
     private static final Logger LOGGER = Logging.getLogger(WebMapTileServer.class);
 
     private final WMTSVersion version;
+    private final boolean cacheImage;
     private Capabilities capabilities;
     private Set<Name> names = null;
 
@@ -95,7 +96,7 @@ public class WebMapTileServer extends AbstractServer implements CoverageStore{
      * @param capabilities A getCapabilities response.
      */
     public WebMapTileServer(final URL serverURL, final WMTSVersion version, final Capabilities capabilities) {
-        this(serverURL,null,version,capabilities);
+        this(serverURL,null,version,capabilities,false);
     }
     
     /**
@@ -106,10 +107,11 @@ public class WebMapTileServer extends AbstractServer implements CoverageStore{
      * @param capabilities A getCapabilities response.
      */
     public WebMapTileServer(final URL serverURL, final ClientSecurity security, 
-            final WMTSVersion version, final Capabilities capabilities) {
+            final WMTSVersion version, final Capabilities capabilities, boolean cacheImage) {
         super(serverURL,security);
         this.version = version;
         this.capabilities = capabilities;
+        this.cacheImage = cacheImage;
     }
     
     /**
@@ -208,7 +210,7 @@ public class WebMapTileServer extends AbstractServer implements CoverageStore{
     @Override
     public CoverageReference getCoverageReference(Name name) throws DataStoreException {
         if(getNames().contains(name)){
-            return new WMTSCoverageReference(this,name);
+            return new WMTSCoverageReference(this,name,cacheImage);
         }
         throw new DataStoreException("No layer for name : " + name);
     }

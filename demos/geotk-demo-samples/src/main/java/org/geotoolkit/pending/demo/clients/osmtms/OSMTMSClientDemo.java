@@ -28,7 +28,7 @@ public class OSMTMSClientDemo {
         final MapContext context = MapBuilder.createContext(DefaultGeographicCRS.WGS84);
 
         OSMTileMapServer server = new OSMTileMapServer(
-                new URL("http://tile.openstreetmap.org"),18);
+                new URL("http://tile.openstreetmap.org"),null,18,true);
         OSMTMSMapLayer layer = new OSMTMSMapLayer(server);
         layer.setDescription(SF.description("Mapnik", ""));
         context.layers().add(layer);

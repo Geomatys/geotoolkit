@@ -60,8 +60,8 @@ public class OSMTMSPyramidSet extends CachedPyramidSet{
         }       
     }
     
-    public OSMTMSPyramidSet(final OSMTileMapServer server, final int maxScale) {
-        super(server,true);
+    public OSMTMSPyramidSet(final OSMTileMapServer server, final int maxScale, boolean cacheImage) {
+        super(server,true,cacheImage);
         
         final DefaultPyramid pyramid = new DefaultPyramid(this,GOOGLE_MERCATOR);
         

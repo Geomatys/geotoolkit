@@ -25,7 +25,6 @@ import java.util.UUID;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotoolkit.image.io.mosaic.Tile;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.converter.Classes;
@@ -151,7 +150,7 @@ public abstract class AbstractGridMosaic implements GridMosaic{
     public static BlockingQueue<Object> getTiles(GridMosaic mosaic, Collection<? extends Point> positions, Map hints) throws DataStoreException{
         final ArrayBlockingQueue queue = new ArrayBlockingQueue(positions.size()+1);
         for(Point p : positions){
-            final Tile t = mosaic.getTile(p.x, p.y, hints);
+            final TileReference t = mosaic.getTile(p.x, p.y, hints);
             queue.offer(t);
         }
         queue.offer(END_OF_QUEUE);

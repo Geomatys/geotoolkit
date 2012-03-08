@@ -47,7 +47,7 @@ public class WMTSServerFactory extends AbstractServerFactory implements Coverage
 
     public static final ParameterDescriptorGroup PARAMETERS =
             new DefaultParameterDescriptorGroup("WMTSParameters",
-                URL,VERSION);
+                URL,VERSION,IMAGE_CACHE);
     
     @Override
     public ParameterDescriptorGroup getParametersDescriptor() {
@@ -64,7 +64,13 @@ public class WMTSServerFactory extends AbstractServerFactory implements Coverage
             security = (ClientSecurity) val.getValue();
         }catch(ParameterNotFoundException ex){}
         
-        return new WebMapTileServer(url,security,version,null);
+        boolean cacheImage = false;
+        try{
+            final ParameterValue val = params.parameter(IMAGE_CACHE.getName().getCode());
+            cacheImage = (Boolean) val.getValue();
+        }catch(ParameterNotFoundException ex){}
+        
+        return new WebMapTileServer(url,security,version,null,cacheImage);
     }
 
     @Override

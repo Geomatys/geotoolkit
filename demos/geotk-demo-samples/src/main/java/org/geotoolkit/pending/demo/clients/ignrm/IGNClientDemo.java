@@ -55,7 +55,7 @@ public class IGNClientDemo {
         final ClientSecurity tokenAndReferer = ClientSecurityStack.wrap(refererInfo,tokenInfo);
         
         final WebMapServerCached server = new WebMapServerCached(
-                new URL("http://wxs.ign.fr/inspire/wmsc?"), tokenAndReferer);        
+                new URL("http://wxs.ign.fr/inspire/wmsc?"), tokenAndReferer,true);        
         final WMSCMapLayer sloplayer = new WMSCMapLayer(server, "ELEVATION.SLOPES");
         sloplayer.setDescription(SF.description("ELEVATION", ""));
         context.layers().add(sloplayer);

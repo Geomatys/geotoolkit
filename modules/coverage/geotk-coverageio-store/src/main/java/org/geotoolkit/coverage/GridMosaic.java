@@ -104,13 +104,13 @@ public interface GridMosaic {
      * @param col : tile column index
      * @param row : row column index
      * @param hints : additional hints
-     * @return RenderedImage , may be null if tile is missing.
+     * @return TileReference , may be null if tile is missing.
      * @throws DataStoreException  
      */
-    Tile getTile(int col, int row, Map hints) throws DataStoreException;
+    TileReference getTile(int col, int row, Map hints) throws DataStoreException;
         
     /**
-     * Retrieve a set of tiles.<p>
+     * Retrieve a set of TileReferences.<p>
      * The end of the queue is notified by the {@link GridMosaic#END_OF_QUEUE} object.<p>
      * The returned queue may implement Canceleable if for some reason there is no need
      * to continue iteration on the queue.

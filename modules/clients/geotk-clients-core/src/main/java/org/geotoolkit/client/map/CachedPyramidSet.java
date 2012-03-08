@@ -17,7 +17,6 @@
 package org.geotoolkit.client.map;
 
 import java.awt.Point;
-import java.awt.geom.AffineTransform;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -55,10 +54,7 @@ import org.apache.http.params.SyncBasicHttpParams;
 import org.apache.http.protocol.*;
 import org.geotoolkit.client.Request;
 import org.geotoolkit.client.Server;
-import org.geotoolkit.coverage.AbstractGridMosaic;
-import org.geotoolkit.coverage.DefaultPyramidSet;
-import org.geotoolkit.coverage.GridMosaic;
-import org.geotoolkit.image.io.mosaic.Tile;
+import org.geotoolkit.coverage.*;
 import org.geotoolkit.security.DefaultClientSecurity;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.collection.Cache;
@@ -145,39 +141,46 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet{
     /**
      * Cache the last queried tiles
      */
-    private final Cache<String,RenderedImage> tileCache = new Cache<String, RenderedImage>(30, 30, false);
+    private final Cache<String,RenderedImage> tileCache;
     
     protected final Server server;
     protected final boolean useURLQueries;
+    protected final boolean cacheImages;
 
-    public CachedPyramidSet(Server server, boolean useURLQueries) {
+    public CachedPyramidSet(Server server, boolean useURLQueries, boolean cacheImages) {
         this.server = server;
         this.useURLQueries = useURLQueries;
+        this.cacheImages = cacheImages;
+        if(cacheImages){
+            tileCache = new Cache<String, RenderedImage>(30, 30, false);
+        }else{
+            tileCache = null;
+        }
     }
-    
+        
     protected Server getServer(){
         return server;
     }
       
     public abstract Request getTileRequest(GridMosaic mosaic, int col, int row, Map hints) throws DataStoreException ;
     
-    public Tile getTile(GridMosaic mosaic, int col, int row, Map hints) throws DataStoreException{
-        final RenderedImage image = getTileImage(mosaic, col, row, hints);
-        final AffineTransform gridToCRS = AbstractGridMosaic.getTileGridToCRS(mosaic, new Point(col, row));
-        final Tile tile = new Tile(image, gridToCRS);
-        return tile;
-    }
-    
-    private InputStream download(GridMosaic mosaic, int col, int row, Map hints) throws DataStoreException {
-        final Request request = getTileRequest(mosaic, col, row, hints);
-        try {
-            return request.getResponseStream();
-        } catch (IOException ex) {
-            throw new DataStoreException(ex);
+    public TileReference getTile(GridMosaic mosaic, int col, int row, Map hints) throws DataStoreException{
+        
+        final Object input;
+        if(cacheImages){
+            input = getTileImage(mosaic, col, row, hints);
+        }else{
+            try {
+                input = getTileRequest(mosaic, col, row, hints).getURL();
+            } catch (MalformedURLException ex) {
+                throw new DataStoreException(ex.getMessage(),ex);
+            }
         }
+        
+        return new DefaultTileReference(null, input, 0, new Point(col, row));
     }
-    
-    private String toId(GridMosaic mosaic, int col, int row, Map hints){
+        
+    private static String toId(GridMosaic mosaic, int col, int row, Map hints){
         final String pyramidId = mosaic.getPyramid().getId();
         final String mosaicId = mosaic.getId();
         
@@ -198,18 +201,18 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet{
             try {
                 value = handler.peek();
                 if (value == null) {
-                    final InputStream stream = download(mosaic, col, row, hints);
-                    if(stream != null){
-                        try{
-                            value = ImageIO.read(stream);
-                        }catch (IOException ex) {
+                    final Request request = getTileRequest(mosaic, col, row, hints);
+                    InputStream stream = null;
+                    try{
+                        stream = request.getResponseStream();
+                        value = ImageIO.read(stream);
+                    }catch (IOException ex) {
+                        LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+                    }finally{
+                        try {
+                            stream.close();
+                        } catch (IOException ex) {
                             LOGGER.log(Level.WARNING, ex.getMessage(), ex);
-                        }finally{
-                            try {
-                                stream.close();
-                            } catch (IOException ex) {
-                                LOGGER.log(Level.WARNING, ex.getMessage(), ex);
-                            }
                         }
                     }
                 }
@@ -223,20 +226,22 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet{
     
     public BlockingQueue<Object> getTiles(GridMosaic mosaic, Collection<? extends Point> locations, Map hints) throws DataStoreException{
                 
-        if(!useURLQueries){
+        
+        
+        if(!cacheImages || !useURLQueries){
             //can not optimize a non url server
-            return getTiles(mosaic, locations, hints);
+            return AbstractGridMosaic.getTiles(mosaic, locations, hints);
         }
         
         final Server server = getServer();
         
         if(server == null){
-            return getTiles(mosaic, locations, hints);
+            return AbstractGridMosaic.getTiles(mosaic, locations, hints);
         }
         
         if(!(server.getClientSecurity() == DefaultClientSecurity.NO_SECURITY)){
             //we can optimize only if there is no security
-            return getTiles(mosaic, locations, hints);
+            return AbstractGridMosaic.getTiles(mosaic, locations, hints);
         }
         
         final URL url = server.getURL();
@@ -244,7 +249,7 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet{
         
         if(!"http".equalsIgnoreCase(protocol)){
             //we can optimize only an http protocol
-            return getTiles(mosaic, locations, hints);
+            return AbstractGridMosaic.getTiles(mosaic, locations, hints);
         }
         
         
@@ -387,9 +392,8 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet{
             
         }
         
-        public Tile getTile(){
-            final AffineTransform trs = AbstractGridMosaic.getTileGridToCRS(mosaic, pt);
-            final Tile t = new Tile(img, trs);
+        public TileReference getTile(){
+            final TileReference t = new DefaultTileReference(null, img, 0, pt);
             return t;
         }
         

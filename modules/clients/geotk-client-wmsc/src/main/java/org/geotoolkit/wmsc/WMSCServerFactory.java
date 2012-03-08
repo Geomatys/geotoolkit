@@ -37,7 +37,7 @@ import org.opengis.parameter.ParameterValueGroup;
 public class WMSCServerFactory extends AbstractServerFactory{
     
     public static final ParameterDescriptorGroup PARAMETERS = 
-            new DefaultParameterDescriptorGroup("WMSCParameters", URL,SECURITY);
+            new DefaultParameterDescriptorGroup("WMSCParameters", URL,SECURITY,IMAGE_CACHE);
     
     @Override
     public ParameterDescriptorGroup getParametersDescriptor() {
@@ -53,7 +53,13 @@ public class WMSCServerFactory extends AbstractServerFactory{
             security = (ClientSecurity) val.getValue();
         }catch(ParameterNotFoundException ex){}
         
-        return new WebMapServerCached(url,security);
+        boolean cacheImage = false;
+        try{
+            final ParameterValue val = params.parameter(IMAGE_CACHE.getName().getCode());
+            cacheImage = (Boolean) val.getValue();
+        }catch(ParameterNotFoundException ex){}
+        
+        return new WebMapServerCached(url,security,cacheImage);
     }
     
 }

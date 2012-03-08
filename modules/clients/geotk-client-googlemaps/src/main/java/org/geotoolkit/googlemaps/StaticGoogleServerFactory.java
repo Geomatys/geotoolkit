@@ -46,7 +46,7 @@ public class StaticGoogleServerFactory extends AbstractServerFactory implements 
 
     public static final ParameterDescriptorGroup PARAMETERS =
             new DefaultParameterDescriptorGroup("GSParameters",
-                URL,MAPTYPE,SECURITY);
+                URL,MAPTYPE,SECURITY,IMAGE_CACHE);
     
     @Override
     public ParameterDescriptorGroup getParametersDescriptor() {
@@ -63,7 +63,13 @@ public class StaticGoogleServerFactory extends AbstractServerFactory implements 
             security = (ClientSecurity) val.getValue();
         }catch(ParameterNotFoundException ex){}
         
-        return new StaticGoogleMapsServer(url,key,security);
+        boolean cacheImage = false;
+        try{
+            final ParameterValue val = params.parameter(IMAGE_CACHE.getName().getCode());
+            cacheImage = (Boolean) val.getValue();
+        }catch(ParameterNotFoundException ex){}
+        
+        return new StaticGoogleMapsServer(url,key,security,cacheImage);
     }
 
     @Override

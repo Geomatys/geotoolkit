@@ -84,8 +84,8 @@ public class GoogleMapsPyramidSet extends CachedPyramidSet{
     
     private final String mapType;
     
-    public GoogleMapsPyramidSet(final StaticGoogleMapsServer server, final String mapType) throws DataStoreException{
-        super(server,true);
+    public GoogleMapsPyramidSet(final StaticGoogleMapsServer server, final String mapType, final boolean cacheImage) throws DataStoreException{
+        super(server,true,cacheImage);
         this.mapType = mapType;
         
         final int maxScale;        
