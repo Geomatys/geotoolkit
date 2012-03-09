@@ -38,12 +38,15 @@ public class GMLTemporalFactory extends DefaultTemporalFactory {
     }
     
     @Override
-    public Instant createInstant(Position pstn) {
-        return new TimeInstantType(pstn);
+    public Instant createInstant(final Position pstn) {
+        if (pstn != null) {
+            return new TimeInstantType(pstn);
+        }
+        return null;
     }
 
     @Override
-    public Period createPeriod(Instant begin, Instant end) {
+    public Period createPeriod(final Instant begin, final Instant end) {
        Position beginPosition = null;
        if (begin != null) {
             beginPosition = begin.getPosition();
@@ -56,7 +59,10 @@ public class GMLTemporalFactory extends DefaultTemporalFactory {
     }
 
     @Override
-    public Position createPosition(Date date) {
-        return new TimePositionType(date);
+    public Position createPosition(final Date date) {
+        if (date != null) {
+            return new TimePositionType(date);
+        }
+        return null;
     }
 }
