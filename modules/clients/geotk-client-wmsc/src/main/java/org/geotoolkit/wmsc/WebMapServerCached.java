@@ -39,18 +39,37 @@ public class WebMapServerCached extends WebMapServer implements CoverageStore{
     private final boolean cacheImage;
     
     /**
-     * Builds a web map server with the given server url and version.
+     * Builds a web map server with the given server url.
      *
      * @param serverURL The server base url.
-     * @param cacheImage  
+     */
+    public WebMapServerCached(final URL serverURL) {
+        this(serverURL, false);
+    }
+
+    /**
+     * Builds a web map server with the given server url and cache flag.
+     *
+     * @param serverURL The server base url.
+     * @param cacheImage
      */
     public WebMapServerCached(final URL serverURL, boolean cacheImage) {
         super(serverURL,"1.1.1");
         this.cacheImage = cacheImage;
     }
-    
+
     /**
-     * Builds a web map server with the given server url and version.
+     * Builds a web map server with the given server url and security.
+     *
+     * @param serverURL The server base url.
+     * @param security
+     */
+    public WebMapServerCached(final URL serverURL, final ClientSecurity security) {
+        this(serverURL, security, false);
+    }
+
+    /**
+     * Builds a web map server with the given server url, security and cache flag.
      *
      * @param serverURL The server base url.
      * @param security

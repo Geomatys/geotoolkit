@@ -52,11 +52,25 @@ public class OSMTileMapServer extends AbstractServer implements CoverageStore{
     }
     
     /**
-     * Builds a tile map server with the given server url and version.
+     * Builds a tile map server with the given server url, security and max zoom level.
      *
      * @param serverURL The server base url. must not be null.
      * @param security ClientSecurity.
      * @param maxZoomLevel maximum zoom level supported on server.
+     */
+    public OSMTileMapServer(final URL serverURL, final ClientSecurity security,
+            final int maxZoomLevel) {
+        this(serverURL,security,maxZoomLevel, false);
+    }
+
+    /**
+     * Builds a tile map server with the given server url, security, maximum
+     * zoom level and a flag for cache.
+     *
+     * @param serverURL The server base url. must not be null.
+     * @param security ClientSecurity.
+     * @param maxZoomLevel maximum zoom level supported on server.
+     * @param cacheImage
      */
     public OSMTileMapServer(final URL serverURL, final ClientSecurity security,
             final int maxZoomLevel, boolean cacheImage) {
