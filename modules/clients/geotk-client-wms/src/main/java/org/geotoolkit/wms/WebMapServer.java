@@ -58,6 +58,11 @@ public class WebMapServer extends AbstractServer implements CoverageStore{
 
     private static final Logger LOGGER = Logging.getLogger(WebMapServer.class);
 
+    /**
+     * Defines the timeout in milliseconds for the GetCapabilities request.
+     */
+    private static final long TIMEOUT_GETCAPS = 20000L;
+
     private final WMSVersion version;
     private AbstractWMSCapabilities capabilities;
     private Set<Name> names = null;
@@ -162,11 +167,27 @@ public class WebMapServer extends AbstractServer implements CoverageStore{
 
     /**
      * Returns the {@linkplain AbstractWMSCapabilities capabilities} response for this
-     * request.
-     * @return
-     * @throws CapabilitiesException  
+     * request if the server answers in less than 20s, otherwise throws a
+     * {@link CapabilitiesException}.
+     *
+     * @return {@linkplain AbstractWMSCapabilities capabilities} response but never {@code null}.
+     * @throws CapabilitiesException
+     * @see {@link #getCapabilities(long)}
      */
     public AbstractWMSCapabilities getCapabilities() throws CapabilitiesException{
+    	return getCapabilities(TIMEOUT_GETCAPS);
+    }
+
+    /**
+     * Returns the {@linkplain AbstractWMSCapabilities capabilities} response for this
+     * request if the server answers before the specified timeout, otherwise throws a
+     * {@link CapabilitiesException}.
+     *
+     * @param timeout Timeout in milliseconds
+     * @return {@linkplain AbstractWMSCapabilities capabilities} response but never {@code null}.
+     * @throws CapabilitiesException  
+     */
+    public AbstractWMSCapabilities getCapabilities(final long timeout) throws CapabilitiesException{
 
         if (capabilities != null) {
             return capabilities;
@@ -202,7 +223,7 @@ public class WebMapServer extends AbstractServer implements CoverageStore{
         thread.start();
         final long start = System.currentTimeMillis();
         try {
-            thread.join(10000);
+            thread.join(timeout);
         } catch (InterruptedException ex) {
             throw new CapabilitiesException("The thread to obtain GetCapabilities doesn't answer.");
         }
@@ -211,7 +232,7 @@ public class WebMapServer extends AbstractServer implements CoverageStore{
             throw exception[0];
         }
         
-        if ((System.currentTimeMillis() - start) > 10000) {
+        if ((System.currentTimeMillis() - start) > timeout) {
             throw new CapabilitiesException("TimeOut error, the server takes too much time to answer.");
         }
 
