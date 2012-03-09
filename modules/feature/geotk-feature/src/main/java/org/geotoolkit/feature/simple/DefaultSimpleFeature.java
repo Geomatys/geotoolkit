@@ -348,6 +348,7 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
         @Override
         public void setValue(Object newValue) throws IllegalArgumentException, IllegalStateException {
             valueArray[index] = newValue;
+            bounds = null; //reset bounds
         }
         
     }
