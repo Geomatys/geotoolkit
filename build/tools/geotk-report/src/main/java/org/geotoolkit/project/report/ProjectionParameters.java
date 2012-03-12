@@ -78,7 +78,7 @@ public final class ProjectionParameters extends ParameterNamesReport {
     @SuppressWarnings({"unchecked","rawtypes"})
     private ProjectionParameters(final Citation... authorities) {
         super(null);
-        Reports.properties(properties);
+        Reports.initialize(properties);
         properties.setProperty("TITLE", "Coordinate Operation parameters");
         properties.setProperty("DESCRIPTION",
                 "All those <cite>Operation Methods</cite> and parameter names are supported "  +
@@ -113,7 +113,7 @@ public final class ProjectionParameters extends ParameterNamesReport {
     public static void main(final String[] args) throws IOException {
         final ProjectionParameters writer = new ProjectionParameters();
         writer.add(FactoryFinder.getMathTransformFactory(null));
-        writer.write(new File("test.html"));
+        writer.write(new File("operation-parameters.html"));
     }
 
     /**

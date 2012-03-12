@@ -24,7 +24,7 @@ package org.geotoolkit.util;
  * a slightly different purpose. The {@code Closeable} interface is for closing a source or
  * destination of data, while the {@code Disposable} interface is used for objects than can
  * be reused for different source or destination of data.
- * <b>
+ * <p>
  * <b>Example:</b> An {@link javax.imageio.ImageReader} can be instantiated once, then reused
  * for reading many images of the same format. An {@code ImageReader} implementation could
  * provide both the {@code close()} and {@code dispose()} methods:

@@ -42,7 +42,7 @@ final class Reports {
      * property keys, see {@link ParameterNamesReport#ParameterNamesReport(Properties)} and
      * {@link org.opengis.test.report.Report} javadoc.
      */
-    static void properties(final Properties p) {
+    static void initialize(final Properties p) {
         p.setProperty("PRODUCT.NAME",    "Geotoolkit.org");
         p.setProperty("PRODUCT.VERSION", getGeotkVersion());
         p.setProperty("PRODUCT.URL",     "http://www.geotoolkit.org");
