@@ -625,7 +625,7 @@
                   <link>http://jcip.net/annotations/doc</link>
                   <link>http://www.unidata.ucar.edu/software/netcdf-java/v4.3/javadoc</link>
                   <link>http://javadoc.geotoolkit.org/external/swingx</link>
-                  <link>http://jscience.org/api/</link>
+                  <link>http://jscience.org/api</link>
                   <link>http://www.geoapi.org/snapshot/pending</link>
                 </links>
 

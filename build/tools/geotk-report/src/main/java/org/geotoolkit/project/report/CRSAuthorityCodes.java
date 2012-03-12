@@ -17,13 +17,12 @@
  */
 package org.geotoolkit.project.report;
 
-import java.io.*;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Locale;
+import java.io.File;
+import java.io.IOException;
 
 import org.opengis.util.FactoryException;
-import org.opengis.util.InternationalString;
+import org.opengis.referencing.AuthorityFactory;
+import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.cs.CartesianCS;
 import org.opengis.referencing.cs.SphericalCS;
 import org.opengis.referencing.cs.CoordinateSystem;
@@ -36,11 +35,12 @@ import org.opengis.referencing.crs.GeneralDerivedCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.datum.VerticalDatumType;
+import org.opengis.test.report.AuthorityCodesReport;
 
 import org.geotoolkit.util.Strings;
+import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.referencing.CRS;
 
-import static java.lang.StrictMath.*;
 import static org.geotoolkit.internal.referencing.CRSUtilities.EPSG_VERSION;
 
 
@@ -49,11 +49,11 @@ import static org.geotoolkit.internal.referencing.CRSUtilities.EPSG_VERSION;
  * after the EPSG database has been updated, or the projection implementations changed.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.16
+ * @version 3.20
  *
  * @since 3.16
  */
-public final class CRSAuthorityCodes extends ReportGenerator {
+public final class CRSAuthorityCodes extends AuthorityCodesReport {
     /**
      * The symbol to write in from of EPSG code of CRS having an axis order different
      * then the (longitude, latitude) one.
@@ -61,69 +61,38 @@ public final class CRSAuthorityCodes extends ReportGenerator {
     private static final char YX_ORDER = '\u21B7';
 
     /**
-     * The authority code.
+     * The factory which create CRS instances having the longitude axis before the latitude axis.
      */
-    private final String code;
+    private final CRSAuthorityFactory xyOrder;
 
     /**
-     * The CRS description, or {@code null} if none.
+     * Creates a new instance.
      */
-    private final String description;
-
-    /**
-     * Whatever the CRS is supported.
-     */
-    private boolean isSupported;
-
-    /**
-     * Whatever the CRS orders longitude before latitude.
-     */
-    private boolean isLongitudeFirst = true;
-
-    /**
-     * A message to display after the name.
-     */
-    private String message;
-
-    /**
-     * For internal usage only.
-     */
-    private CRSAuthorityCodes(final String code, final InternationalString description) {
-        this.code = code;
-        this.description = (description != null) ? description.toString(LOCALE) : null;
+    private CRSAuthorityCodes() throws FactoryException {
+        super(null);
+        Reports.initialize(properties);
+        properties.setProperty("FACTORY.NAME", "EPSG");
+        properties.setProperty("FACTORY.VERSION", EPSG_VERSION);
+        xyOrder = CRS.getAuthorityFactory(true);
+        add(CRS.getAuthorityFactory(false));
     }
 
     /**
-     * Writes this object to the given stream.
+     * Generates the HTML report.
+     *
+     * @param  args Ignored.
+     * @throws FactoryException If an error occurred while fetching the CRS.
+     * @throws IOException If an error occurred while writing the HTML file.
      */
-    private void write(final Writer out, final boolean highlight) throws IOException {
-        out.write("<tr");
-        if (highlight) {
-            out.write(" bgcolor=\"" + TABLE_HIGHLIGHT + "\"");
-        }
-        out.write("><td>");
-        if (!isLongitudeFirst) {
-            out.write(YX_ORDER);
-        }
-        out.write("</td><td nowrap><code>");
-        out.write(code);
-        out.write("&nbsp;</code></td nowrap><td>");
-        out.write(description);
-        out.write("</td><td nowrap>");
-        if (!isSupported) {
-            out.write("<font color=\"red\">");
-        }
-        out.write(message);
-        if (!isSupported) {
-            out.write("</font>");
-        }
-        out.write("</td></tr>\n");
+    public static void main(final String[] args) throws FactoryException, IOException {
+        final CRSAuthorityCodes writer = new CRSAuthorityCodes();
+        writer.write(new File("supported-codes.html"));
     }
 
     /**
-     * Returns a message for the given CRS.
+     * Creates the remarks for the given CRS.
      */
-    private static String getMessage(final CoordinateReferenceSystem crs) {
+    private String getRemark(final CoordinateReferenceSystem crs) {
         if (crs instanceof GeographicCRS) {
             return (crs.getCoordinateSystem().getDimension() == 3) ? "Geographic 3D" : "Geographic";
         }
@@ -141,7 +110,7 @@ public final class CRSAuthorityCodes extends ReportGenerator {
         }
         if (crs instanceof VerticalCRS) {
             final VerticalDatumType type = ((VerticalCRS) crs).getDatum().getVerticalDatumType();
-            return Strings.camelCaseToSentence(type.name().toLowerCase(LOCALE)) + " height";
+            return Strings.camelCaseToSentence(type.name().toLowerCase(getLocale())) + " height";
         }
         if (crs instanceof CompoundCRS) {
             final StringBuilder buffer = new StringBuilder();
@@ -149,7 +118,7 @@ public final class CRSAuthorityCodes extends ReportGenerator {
                 if (buffer.length() != 0) {
                     buffer.append(" + ");
                 }
-                buffer.append(getMessage(component));
+                buffer.append(getRemark(component));
             }
             return buffer.toString();
         }
@@ -160,77 +129,43 @@ public final class CRSAuthorityCodes extends ReportGenerator {
     }
 
     /**
-     * Generates the list of CRS now.
-     *
-     * @param args Ignored.
-     * @throws Exception If an error occurred while reading the database, or writing the HTML file.
+     * Invoked when a CRS has been successfully created. This method modifies the default
+     * {@link Row} attribute values created by GeoAPI.
      */
-    public static void main(final String[] args) throws Exception {
-        int numValids = 0, numYX = 0;
-        Locale.setDefault(LOCALE);
-        final List<CRSAuthorityCodes> list = new ArrayList<CRSAuthorityCodes>();
-        final CRSAuthorityFactory factory = CRS.getAuthorityFactory(false);
-        final CRSAuthorityFactory xyOrder = CRS.getAuthorityFactory(true);
-        for (final String code : factory.getAuthorityCodes(CoordinateReferenceSystem.class)) {
-            final CRSAuthorityCodes element = new CRSAuthorityCodes(code, factory.getDescriptionText(code));
-            if (code.startsWith("AUTO2:")) {
-                element.message = "Projected";
-                element.isSupported = true;
-                numValids++;
-            } else try {
-                final CoordinateReferenceSystem crs = factory.createCoordinateReferenceSystem(code);
-                element.isLongitudeFirst = CRS.equalsIgnoreMetadata(crs.getCoordinateSystem(),
-                        xyOrder.createCoordinateReferenceSystem(code).getCoordinateSystem());
-                element.message = getMessage(crs);
-                element.isSupported = true;
-                numValids++;
-            } catch (FactoryException exception) {
-                String message = exception.getMessage();
-                if (message.contains("Unable to format units in UCUM")) {
-                    // Simplify a very long and badly formatted message.
-                    message = "Unable to format units in UCUM";
+    @Override
+    protected Row createRow(final AuthorityFactory factory, final String code, final IdentifiedObject object) throws FactoryException {
+        final Row row = super.createRow(factory, code, object);
+        if (code.startsWith("AUTO2:")) {
+            row.remark = "Projected";
+        } else {
+            final CoordinateReferenceSystem crs = (CoordinateReferenceSystem) object;
+            try {
+                final CoordinateReferenceSystem crsXY = xyOrder.createCoordinateReferenceSystem(code);
+                if (!CRS.equalsIgnoreMetadata(crs.getCoordinateSystem(), crsXY.getCoordinateSystem())) {
+                    row.annotation = YX_ORDER;
                 }
-                element.message = message;
+            } catch (FactoryException e) {
+                Logging.unexpectedException(CRSAuthorityCodes.class, "createRow", e);
             }
-            if (!element.isLongitudeFirst) {
-                numYX++;
-            }
-            list.add(element);
+            row.remark = getRemark(crs);
         }
-        int n = 0;
-        final Writer out = openHTML(new File("supported-codes.html"), "Authority codes for Coordinate Reference Systems");
-        try {
-            out.write("<p>This list is generated from the EPSG database version ");
-            out.write(EPSG_VERSION);
-            out.write(", together with other sources.\n");
-            out.write("All those <cite>Coordinate Reference Systems</cite> (CRS) are supported by the " +
-                      "<a href=\"http://www.geotoolkit.org/modules/referencing/index.html\">" +
-                      "Geotoolkit.org referencing module</a> version ");
-            out.write(getGeotkVersion());
-            out.write(", except those with a red text in the last column.\nThere is ");
-            out.write(String.valueOf(list.size()));
-            out.write(" codes, ");
-            out.write(String.valueOf(100 * numValids / list.size())); // Really want rounding toward 0.
-            out.write("% of them being supported.</p>\n" +
-                      "<p><b>Notation:</b></p>\n" +
-                      "<ul>\n" +
-                      "  <li>The " + YX_ORDER + " symbol in front of authority codes (");
-            out.write(String.valueOf(round(100.0 * numYX / list.size())));
-            out.write("% of them) identifies the CRS having an axis order different than " +
-                      "(<var>easting</var>, <var>northing</var>).</li>\n" +
-                      "</ul>");
+        return row;
+    }
 
-            openTable(out);
-            writeTableHeader(out, "", "Code", "Description", "Type, or reason for unsupport");
-            for (final CRSAuthorityCodes element : list) {
-                element.write(out, (n & 2) != 0);
-                n++;
-            }
-            closeTable(out);
-            closeHTML(out);
-        } finally {
-            out.close();
+    /**
+     * Invoked when a CRS creation failed. This method modifies the default
+     * {@link Row} attribute values created by GeoAPI.
+     */
+    @Override
+    protected Row createRow(final AuthorityFactory factory, final String code, final FactoryException exception) throws FactoryException {
+        final Row row = super.createRow(factory, code, exception);
+        row.name = factory.getDescriptionText(code).toString(getLocale());
+        String message = exception.getMessage();
+        if (message.contains("Unable to format units in UCUM")) {
+            // Simplify a very long and badly formatted message.
+            message = "Unable to format units in UCUM";
         }
-        System.exit(0);
+        row.remark = message;
+        return row;
     }
 }

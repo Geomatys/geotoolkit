@@ -63,6 +63,11 @@
       <artifactId>geotk-epsg-javadb</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.opengis</groupId>
+      <artifactId>geoapi-conformance</artifactId>
+      <scope>compile</scope>
+    </dependency>
   </dependencies>
 
 

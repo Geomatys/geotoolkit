@@ -36,6 +36,7 @@ import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.FileImageInputStream;
 import net.jcip.annotations.Immutable;
+import java.lang.reflect.Field;
 
 import org.opengis.metadata.spatial.PixelOrientation;
 
@@ -165,12 +166,8 @@ public class Tile implements Comparable<Tile>, Serializable {
     /**
      * The provider to use. The same provider is typically given to every {@code Tile} objects
      * to be given to the same {@link TileManager} instance, but this is not mandatory.
-     * <p>
-     * Consider this field as final. It is not because it needs to be set by {@link #readObject}.
-     * If this field become public or protected in a future version, then we should make it final
-     * and use reflection like {@link org.geotoolkit.coverage.grid.GridCoverage2D#readObject}.
      */
-    private transient ImageReaderSpi provider;
+    private final transient ImageReaderSpi provider;
 
     /**
      * The input to be given to the image reader. If the reader can not read that input
@@ -664,7 +661,6 @@ public class Tile implements Comparable<Tile>, Serializable {
                 // as a paranoiac safety (it should not be opened anyway).
                 if (stream != null) {
                     stream.close();
-                    stream = null;
                 }
                 actualInput = input;
             } else {
@@ -1682,8 +1678,14 @@ public class Tile implements Comparable<Tile>, Serializable {
         Class<?> type = candidate.getClass(); // Initialized in case of failure on next line.
         try {
             type = (Class<?>) candidate;
-            provider = (ImageReaderSpi) registry.getServiceProviderByClass(type);
-        } catch (ClassCastException cause) {
+            /*
+             * Set the 'provider' field using reflection, because this field is final. This is a
+             * legal usage for deserialization according Field.set(...) documentation in J2SE 1.5.
+             */
+            final Field field = Tile.class.getDeclaredField("provider");
+            field.setAccessible(true);
+            field.set(this, registry.getServiceProviderByClass(type));
+        } catch (Exception cause) {
             InvalidClassException e = new InvalidClassException(type.getCanonicalName(),
                     Errors.format(Errors.Keys.ILLEGAL_CLASS_$2, type, ImageReaderSpi.class));
             e.initCause(cause);
