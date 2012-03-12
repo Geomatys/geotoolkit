@@ -18,6 +18,7 @@ package org.geotoolkit.process.coverage.pyramid;
 
 import java.awt.Dimension;
 import org.geotoolkit.coverage.PyramidalModel;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
@@ -77,10 +78,16 @@ public final class MapcontextPyramidDescriptor extends AbstractProcessDescriptor
             new DefaultParameterDescriptor<PyramidalModel>("container",
             "The container which will receive the tiles.",PyramidalModel.class,null,true);
     
-
+    /**
+     * Optional - Rendering hints.
+     * Hints for the rendering engine.
+     */
+    public static final ParameterDescriptor<Hints> IN_HINTS =
+            new DefaultParameterDescriptor<Hints>("hints","Rendering hints",Hints.class,null,false);
+    
     public static final ParameterDescriptorGroup INPUT_DESC =
             new DefaultParameterDescriptorGroup(NAME+"InputParameters",
-                IN_MAPCONTEXT,IN_EXTENT,IN_TILE_SIZE,IN_SCALES,IN_CONTAINER);
+                IN_MAPCONTEXT,IN_EXTENT,IN_TILE_SIZE,IN_SCALES,IN_CONTAINER,IN_HINTS);
 
 
     public static final ParameterDescriptorGroup OUTPUT_DESC =

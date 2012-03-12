@@ -28,6 +28,7 @@ import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.display2d.service.ViewDef;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessEvent;
@@ -35,6 +36,7 @@ import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.geometry.Envelope;
+import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -72,9 +74,15 @@ public final class MapcontextPyramidProcess extends AbstractProcess{
         final PyramidalModel container = (PyramidalModel) inputParameters.parameter(
                 MapcontextPyramidDescriptor.IN_CONTAINER.getName().getCode()).getValue();
         
+        Hints hints = null;
+        try{
+            hints = (Hints) inputParameters.parameter(
+                MapcontextPyramidDescriptor.IN_HINTS.getName().getCode()).getValue();
+        }catch(ParameterNotFoundException ex){}
+        
         final CanvasDef canvasDef = new CanvasDef(new Dimension(1, 1), null);
         final ViewDef viewDef = new ViewDef(envelope);
-        final SceneDef sceneDef = new SceneDef(context);
+        final SceneDef sceneDef = new SceneDef(context,hints);
         
         //find if we already have a pyramid in the given CRS
         Pyramid pyramid = null;
