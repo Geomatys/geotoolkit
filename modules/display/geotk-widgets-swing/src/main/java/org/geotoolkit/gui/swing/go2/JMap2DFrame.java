@@ -57,6 +57,7 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.display2d.GO2Hints;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.gui.swing.go2.control.JConfigBar;
 import org.geotoolkit.gui.swing.go2.control.JCoordinateBar;
 import org.geotoolkit.gui.swing.go2.control.JEditionBar;
@@ -114,7 +115,7 @@ public class JMap2DFrame extends javax.swing.JFrame {
     private final JMap2D guiMap;
     private final JContextTree guiContextTree;
     
-    private JMap2DFrame(final MapContext context) {
+    private JMap2DFrame(final MapContext context, Hints hints) {
         initComponents();        
 
         guiContextTree = (JContextTree) jScrollPane1;
@@ -125,7 +126,12 @@ public class JMap2DFrame extends javax.swing.JFrame {
         guiMap.getContainer().setContext(context);
         guiMap.getCanvas().setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         guiMap.getCanvas().setRenderingHint(GO2Hints.KEY_GENERALIZE, GO2Hints.GENERALIZE_ON);
-        guiMap.getCanvas().setRenderingHint(GO2Hints.KEY_BEHAVIOR_MODE, GO2Hints.BEHAVIOR_KEEP_TILE);
+        guiMap.getCanvas().setRenderingHint(GO2Hints.KEY_BEHAVIOR_MODE, GO2Hints.BEHAVIOR_PROGRESSIVE);
+        
+        if(hints != null){
+            guiMap.getCanvas().setRenderingHints(hints);
+        }
+        
         guiMap.getCanvas().getController().setAutoRepaint(true);
 
         for(TreePopupItem item : guiContextTree.controls()){
@@ -456,16 +462,15 @@ private void jButton3ActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_j
     }
 
     public static void show(final MapContext context){
-//        try {
-//            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-//        } catch (Exception ex) {
-//            Logger.getLogger(JMap2DFrame.class.getName()).log(Level.WARNING, null, ex);
-//        }
+        show(context,null);
+    }
+    
+    public static void show(final MapContext context, final Hints hints){
 
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new JMap2DFrame(context).setVisible(true);
+                new JMap2DFrame(context,hints).setVisible(true);
             }
         });
     }
