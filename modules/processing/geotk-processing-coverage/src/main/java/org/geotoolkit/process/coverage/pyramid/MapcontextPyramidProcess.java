@@ -89,7 +89,7 @@ public final class MapcontextPyramidProcess extends AbstractProcess{
         final CoordinateReferenceSystem crs = envelope.getCoordinateReferenceSystem();
         try{
             for(Pyramid candidate : container.getPyramidSet().getPyramids()){
-                if(CRS.equalsIgnoreMetadata(crs, candidate.getCoordinateReferenceSystem())){
+                if(CRS.equalsApproximatively(crs, candidate.getCoordinateReferenceSystem())){
                     pyramid = candidate;
                     break;
                 }
