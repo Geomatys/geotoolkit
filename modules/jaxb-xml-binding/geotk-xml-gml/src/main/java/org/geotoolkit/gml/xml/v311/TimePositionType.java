@@ -288,29 +288,28 @@ public class TimePositionType implements Position, Serializable {
     @Override
     public String toString() {
         final StringBuilder s = new StringBuilder();
-        try {
-
-            if (calendarEraName != null) {
-                s.append("calendarEraName:").append(calendarEraName).append('\n');
-            }
-            if (frame != null) {
-                s.append("frame:").append(frame).append('\n');
-            }
-            if (indeterminatePosition != null) {
-                s.append("indeterminatePosition:").append(indeterminatePosition.value()).append('\n');
-            }
-
-            final SimpleDateFormat sdf = new SimpleDateFormat("d MMMMM yyyy HH:mm:ss z");
-            final Date date;
-            synchronized (formatter) {
-                date = formatter.parse(value);
-            }
-            s.append(sdf.format(date));
-
-        } catch (ParseException ex) {
-            Logger.getLogger(TimePositionType.class.getName()).log(Level.WARNING, null, ex);
+        if (calendarEraName != null) {
+            s.append("calendarEraName:").append(calendarEraName).append('\n');
+        }
+        if (frame != null) {
+            s.append("frame:").append(frame).append('\n');
+        }
+        if (indeterminatePosition != null) {
+            s.append("indeterminatePosition:").append(indeterminatePosition.value()).append('\n');
         }
 
+        if (value != null) {
+            try {
+                final SimpleDateFormat sdf = new SimpleDateFormat("d MMMMM yyyy HH:mm:ss z");
+                final Date date;
+                synchronized (formatter) {
+                    date = formatter.parse(value);
+                }
+                s.append(sdf.format(date));
+            } catch (ParseException ex) {
+                Logger.getLogger(TimePositionType.class.getName()).log(Level.WARNING, null, ex);
+            }
+        }
         return s.toString();
     }
 
