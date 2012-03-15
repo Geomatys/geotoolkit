@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<gml:FeatureCollection xmlns:ms="http://mapserver.gis.umn.edu/mapserver" xmlns:gml="http://www.opengis.net/gml" xmlns:wfs="http://www.opengis.net/wfs" xmlns:ogc="http://www.opengis.net/ogc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/gml http://schemas.opengis.net/gml/3.1.1/base.xsd http://mapserver.gis.umn.edu/mapserver http://www.ifremer.fr/services/wfs1?SERVICE=WFS&amp;VERSION=1.1.0&amp;REQUEST=DescribeFeatureType&amp;TYPENAME=quadrige&amp;OUTPUTFORMAT=text/xml;%20subtype=gml/3.1.1">
+      <gml:boundedBy>
+      	<gml:Envelope srsName="EPSG:4326">
+      		<gml:lowerCorner>-21.377488 -61.841000</gml:lowerCorner>
+      		<gml:upperCorner>51.213333 55.813188</gml:upperCorner>
+      	</gml:Envelope>
+      </gml:boundedBy>
+    <gml:featureMember>
+      <ms:quadrige>
+        <gml:boundedBy>
+        	<gml:Envelope srsName="EPSG:4326">
+        		<gml:lowerCorner>42.889167 3.044000</gml:lowerCorner>
+        		<gml:upperCorner>42.889167 3.044000</gml:upperCorner>
+        	</gml:Envelope>
+        </gml:boundedBy>
+        <ms:msGeometry>
+          <gml:Point srsName="EPSG:4326">
+            <gml:pos>42.889167 3.044000</gml:pos>
+          </gml:Point>
+        </ms:msGeometry>
+        <ms:C_SIEPT38>36083001</ms:C_SIEPT38>
+        <ms:L_SIEPT>Etang de Leucate - Palourdes</ms:L_SIEPT>
+      </ms:quadrige>
+    </gml:featureMember>
+</gml:FeatureCollection>

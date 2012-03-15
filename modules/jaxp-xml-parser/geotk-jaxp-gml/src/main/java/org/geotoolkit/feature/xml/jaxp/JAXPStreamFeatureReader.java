@@ -21,12 +21,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBElement;
@@ -136,7 +131,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                     final String[] urls = schemaLocation.split(" ");
                     for (int i = 0; i < urls.length; i++) {
                         final String namespace = urls[i];
-                        if (!namespace.equalsIgnoreCase("http://www.opengis.net/gml") && i + 1 < urls.length) {
+                        if (!(namespace.equalsIgnoreCase("http://www.opengis.net/gml") || namespace.equalsIgnoreCase("http://www.opengis.net/wfs")) && i + 1 < urls.length) {
                             final String fturl = urls[i + 1];
                             try {
                                 final URL url = new URL(fturl);
@@ -153,8 +148,8 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                             } catch (JAXBException ex) {
                                 LOGGER.log(Level.WARNING, null, ex);
                             }
-                            i++;
-                        } else if(namespace.equalsIgnoreCase("http://www.opengis.net/gml")) {
+                            i = i + 2;
+                        } else if(namespace.equalsIgnoreCase("http://www.opengis.net/gml") || namespace.equalsIgnoreCase("http://www.opengis.net/wfs")) {
                             i++;
                         }
                     }
@@ -201,6 +196,11 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                 String fid = null;
                 if (reader.getAttributeCount() > 0) {
                     fid = reader.getAttributeValue(0);
+                }
+                
+                if (fid == null) {
+                    LOGGER.info("Missing feature collection id: geenrating a random one");
+                    fid = UUID.randomUUID().toString();
                 }
 
                 if (name.getLocalPart().equals("featureMember") || name.getLocalPart().equals("featureMembers")) {

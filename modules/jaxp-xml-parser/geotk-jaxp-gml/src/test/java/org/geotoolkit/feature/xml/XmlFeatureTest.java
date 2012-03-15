@@ -298,6 +298,16 @@ public class XmlFeatureTest {
         assertEquals(1, types.size());
         assertEquals(complexType, types.get(0));
     }
+    
+    @Test
+    public void testReadWfsFeatureType() throws JAXBException {
+        final XmlFeatureTypeReader reader = new JAXBFeatureTypeReader();
+        final List<FeatureType> types = reader.read(XmlFeatureTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/wfs1.xsd"));
+
+        assertEquals(1, types.size());
+        //assertEquals(complexType, types.get(0));
+    }
 
     @Test
     public void testWriteSimpleFeatureType() throws JAXBException, IOException, ParserConfigurationException, SAXException{
@@ -403,6 +413,34 @@ public class XmlFeatureTest {
         expectedIte.close();
     }
 
+    @Test
+    public void testReadSimpleCollectionEmbeddedFT() throws JAXBException, IOException, XMLStreamException{
+        JAXPStreamFeatureReader reader = new JAXPStreamFeatureReader();
+        reader.setReadEmbeddedFeatureType(true);
+        
+        Object obj = reader.read(XmlFeatureTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/featureCollectionEmbedFT.xml"));
+        reader.dispose();
+
+        assertTrue(obj instanceof FeatureCollection);
+        
+        reader = new JAXPStreamFeatureReader();
+        reader.setReadEmbeddedFeatureType(true);
+        
+        obj = reader.read(XmlFeatureTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/featureCollectionEmbedFT2.xml"));
+        reader.dispose();
+
+        assertTrue(obj instanceof FeatureCollection);
+        
+        obj = reader.read(XmlFeatureTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/featureCollectionEmbedFT3.xml"));
+        reader.dispose();
+
+        assertTrue(obj instanceof FeatureCollection);
+    }
+    
+    
     @Test
     public void testWriteSimpleCollection() throws JAXBException, IOException, XMLStreamException,
             DataStoreException, ParserConfigurationException, SAXException{
