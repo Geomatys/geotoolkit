@@ -53,6 +53,7 @@ import static org.opengis.referencing.IdentifiedObject.IDENTIFIERS_KEY;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.internal.Citations.iterator;
 import static org.geotoolkit.internal.Citations.identifierMatches;
+import org.geotoolkit.metadata.iso.DefaultIdentifier;
 
 
 /**
@@ -656,6 +657,9 @@ public final class IdentifiedObjects extends Static {
      *
      * @param  identifier The identifier, or {@code null}.
      * @return A string representation of the given identifier, or {@code null}.
+     *
+     * @see DefaultIdentifier#toString()
+     * @see NamedIdentifier#toString()
      *
      * @since 3.20
      */

@@ -40,10 +40,12 @@ import org.opengis.test.Configuration;
 import org.opengis.test.TestSuite;
 
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.Commons;
+import org.geotoolkit.referencing.factory.epsg.ThreadedEpsgFactory;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
 import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
+import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.factory.FactoryNotFoundException;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.util.logging.Logging;
 
 import static org.opengis.test.CalculationType.*;
@@ -102,6 +104,11 @@ public final strictfp class GeoapiTest extends TestSuite implements Implementati
     }
 
     /**
+     * Whatever the EPSG factory is available, or {@code null} if not yet tested.
+     */
+    private static Boolean isEpsgFactoryAvailable;
+
+    /**
      * Returns {@code false} if the given factory is the Geotk EPSG factory but this factory
      * is declared unavailable. We also exclude every non-Geotk implementations as a safety.
      * <p>
@@ -114,10 +121,25 @@ public final strictfp class GeoapiTest extends TestSuite implements Implementati
         if (!(factory.getClass().getName().startsWith("org.geotoolkit."))) {
             return false;
         }
-        if (AuthorityFactory.class.isAssignableFrom(category)) {
-            return Commons.isEpsgFactoryAvailable();
+        if (!AuthorityFactory.class.isAssignableFrom(category)) {
+            return true;
         }
-        return true;
+        /*
+         * This check is similar to Commons.isEpsgFactoryAvailable(), but we have to perform
+         * our own check because we can not depend on a class in the 'test' directory.  This
+         * is because this class will be copied into the main JAR for allowing execution from
+         * the geoapi-conformance widget.
+         */
+        if (isEpsgFactoryAvailable == null) {
+            final Hints hints = new Hints(Hints.CRS_AUTHORITY_FACTORY, ThreadedEpsgFactory.class);
+            try {
+                AuthorityFactoryFinder.getCRSAuthorityFactory("EPSG", hints);
+                isEpsgFactoryAvailable = Boolean.TRUE;
+            } catch (FactoryNotFoundException e) {
+                isEpsgFactoryAvailable = Boolean.FALSE;
+            }
+        }
+        return isEpsgFactoryAvailable;
     }
 
     /**

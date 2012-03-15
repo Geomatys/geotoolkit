@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.opengis.util.FactoryException;
+import org.opengis.util.InternationalString;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.cs.CartesianCS;
 import org.opengis.referencing.cs.SphericalCS;
@@ -37,7 +38,6 @@ import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.datum.VerticalDatumType;
 import org.opengis.test.report.AuthorityCodesReport;
 
-import org.opengis.util.InternationalString;
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.referencing.CRS;
@@ -145,7 +145,8 @@ public final class CRSAuthorityCodes extends AuthorityCodesReport {
 
     /**
      * Invoked when a CRS has been successfully created. This method modifies the default
-     * {@link Row} attribute values created by GeoAPI.
+     * {@link org.opengis.test.report.AuthorityCodesReport.Row} attribute values created
+     * by GeoAPI.
      */
     @Override
     protected Row createRow(final String code, final IdentifiedObject object) {
@@ -193,7 +194,8 @@ public final class CRSAuthorityCodes extends AuthorityCodesReport {
 
     /**
      * Invoked when a CRS creation failed. This method modifies the default
-     * {@link Row} attribute values created by GeoAPI.
+     * {@link org.opengis.test.report.AuthorityCodesReport.Row} attribute values
+     * created by GeoAPI.
      */
     @Override
     protected Row createRow(final String code, final FactoryException exception) {
