@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.project.report;
+package org.geotoolkit.build.project.report;
 
 import java.util.Set;
 import java.util.Collections;

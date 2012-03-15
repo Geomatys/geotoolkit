@@ -31,12 +31,14 @@ import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.factory.FactoryNotFoundException;
 
+import static javax.xml.datatype.DatatypeConstants.FIELD_UNDEFINED;
+
 
 /**
  * Utilities methods related to XML.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.17
+ * @version 3.20
  *
  * @since 3.00
  * @module
@@ -81,6 +83,51 @@ public final class XmlUtilities extends Static {
                     Errors.Keys.FACTORY_NOT_FOUND_$1, DatatypeFactory.class), e);
         }
         return factory;
+    }
+
+    /**
+     * Trims the time components of the given calendar if their values are zero, or leave
+     * them unchanged otherwise (except for milliseconds). More specifically:
+     * <p>
+     * <ul>
+     *   <li>If the {@code force} argument is {@code false}, then:
+     *     <ul>
+     *       <li>If every time components (hour, minute, seconds and milliseconds) are zero, set
+     *           them to {@code FIELD_UNDEFINED} in order to prevent them from being formatted
+     *           at XML marshalling time. Then returns {@code true}.</li>
+     *       <li>Otherwise returns {@code false}. But before doing so, still set the milliseconds
+     *           to {@code FIELD_UNDEFINED} if its value was 0.</li>
+     *     </ul></li>
+     *   <li>Otherwise (if the {@code force} argument is {@code false}), then the temporal
+     *       part is set to {@code FIELD_UNDEFINED} unconditionally and this method returns
+     *       {@code true}.</li>
+     * </ul>
+     * <p>
+     * <strong>WARNING: The timezone information may be lost!</strong> This method is used mostly
+     * when the Gregorian Calendar were created from a {@link Date}, in which case we don't know
+     * if the time is really 0 or just unspecified. This method should be invoked only when we
+     * want to assume that a time of zero means "unspecified".
+     * <p>
+     * This method should be deprecated after we implemented ISO 19108 in Geotk.
+     *
+     * @param  gc The date to modify in-place.
+     * @param  force {@code true} for forcing the temporal components to be removed without any check.
+     * @return {@code true} if the time part has been completely removed, {@code false} otherwise.
+     *
+     * @since 3.20
+     */
+    public static boolean trimTime(final XMLGregorianCalendar gc, final boolean force) {
+        if (force || gc.getMillisecond() == 0) {
+            gc.setMillisecond(FIELD_UNDEFINED);
+            if (force || (gc.getHour() == 0 && gc.getMinute() == 0 && gc.getSecond() == 0)) {
+                gc.setHour(FIELD_UNDEFINED);
+                gc.setMinute(FIELD_UNDEFINED);
+                gc.setSecond(FIELD_UNDEFINED);
+                gc.setTimezone(FIELD_UNDEFINED);
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

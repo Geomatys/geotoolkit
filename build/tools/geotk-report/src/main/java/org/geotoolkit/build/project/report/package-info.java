@@ -34,4 +34,4 @@
  *
  * @since 3.20 (derived from 3.16)
  */
-package org.geotoolkit.project.report;
+package org.geotoolkit.build.project.report;
