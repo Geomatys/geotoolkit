@@ -20,6 +20,7 @@ package org.geotoolkit.process.coverage.tiling;
 import java.awt.Dimension;
 import java.awt.geom.AffineTransform;
 import java.io.File;
+import javax.imageio.ImageReader;
 
 import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
@@ -54,7 +55,13 @@ public final class TilingProcess extends AbstractProcess{
                     new NullPointerException("Input parameters not set.")));
         }
 
-        final File input = (File) inputParameters.parameter(TilingDescriptor.IN_SOURCE_FILE.getName().getCode()).getValue();
+        final Object input;
+        final ImageReader imgReader = (ImageReader) inputParameters.parameter(TilingDescriptor.IN_SOURCE_READER.getName().getCode()).getValue();
+        if (imgReader != null) {
+            input = imgReader;
+        } else {
+            input = (File) inputParameters.parameter(TilingDescriptor.IN_SOURCE_FILE.getName().getCode()).getValue();
+        }
         final File output = (File) inputParameters.parameter(TilingDescriptor.IN_TILES_FOLDER.getName().getCode()).getValue();
         AffineTransform gridtoCRS = (AffineTransform)
                 inputParameters.parameter(TilingDescriptor.IN_GRID_TO_CRS.getName().getCode()).getValue();

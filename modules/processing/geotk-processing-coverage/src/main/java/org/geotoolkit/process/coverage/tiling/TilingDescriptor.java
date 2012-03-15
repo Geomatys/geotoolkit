@@ -18,6 +18,8 @@ package org.geotoolkit.process.coverage.tiling;
 
 import java.awt.geom.AffineTransform;
 import java.io.File;
+import javax.imageio.ImageReader;
+import javax.imageio.spi.ImageReaderSpi;
 
 import org.geotoolkit.image.io.mosaic.TileManager;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
@@ -48,6 +50,9 @@ public final class TilingDescriptor extends AbstractProcessDescriptor{
      */
     public static final ParameterDescriptor<File> IN_SOURCE_FILE =
             new DefaultParameterDescriptor<File>("source","Coverage to tyle.",File.class,null,true);
+    
+    public static final ParameterDescriptor<ImageReader> IN_SOURCE_READER =
+            new DefaultParameterDescriptor<ImageReader>("sourceReader","An image reader for the input",ImageReader.class,null,false);
 
     /**
      * Mandatory - Output folder
@@ -64,7 +69,7 @@ public final class TilingDescriptor extends AbstractProcessDescriptor{
 
     public static final ParameterDescriptorGroup INPUT_DESC =
             new DefaultParameterDescriptorGroup(NAME+"InputParameters",
-                IN_SOURCE_FILE,IN_TILES_FOLDER,IN_GRID_TO_CRS);
+                IN_SOURCE_FILE,IN_SOURCE_READER,IN_TILES_FOLDER,IN_GRID_TO_CRS);
 
     /**
      * Mandatory - Resulting tile manager
