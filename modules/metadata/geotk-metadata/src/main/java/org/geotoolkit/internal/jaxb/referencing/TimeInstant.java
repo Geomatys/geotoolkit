@@ -53,7 +53,13 @@ import org.geotoolkit.internal.jaxb.gml.GMLAdapter;
 @Workaround(library="Geotk", version="3.15")
 public final class TimeInstant extends GMLAdapter {
     /**
-     * The time.
+     * The date, optionally with its time component. The time component is omitted
+     * if the hours, minutes, seconds and milliseconds fields are all set to 0.
+     * <p>
+     * <strong>WARNING: The timezone information may be lost!</strong> This is because this field
+     * is derived from a {@link java.util.Date}, in which case we don't know if the time is really
+     * 0 or just unspecified. This class assumes that a time of zero means "unspecified". This will
+     * be revised after we implemented ISO 19108.
      */
     @XmlElement(namespace = Namespaces.GML)
     public XMLGregorianCalendar timePosition;
@@ -71,6 +77,9 @@ public final class TimeInstant extends GMLAdapter {
      */
     public TimeInstant(final Instant instant) {
         timePosition = toDate(instant);
+        if (timePosition != null) {
+            XmlUtilities.trimTime(timePosition, false);
+        }
     }
 
     /**

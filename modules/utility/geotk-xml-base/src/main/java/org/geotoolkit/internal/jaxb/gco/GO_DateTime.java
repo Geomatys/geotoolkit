@@ -23,8 +23,6 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.geotoolkit.internal.jaxb.XmlUtilities;
 
-import static javax.xml.datatype.DatatypeConstants.FIELD_UNDEFINED;
-
 
 /**
  * JAXB adapter wrapping the date value in a {@code <gco:Date>} or {@code <gco:DateTime>} element,
@@ -64,29 +62,16 @@ public final class GO_DateTime extends XmlAdapter<GO_DateTime, Date> {
      * Builds a wrapper for the given {@link Date}.
      *
      * @param date The date to marshal, or {@code null} for formating only an empty element.
-     * @param auto {@code true} for detecting whatever using the {@code "DateTime"} field,
-     *        or {@code false} for using {@code "Date"} field in every cases.
+     * @param allowTime {@code true} for allowing the usage of {@code "DateTime"} field if
+     *        applicable, or {@code false} for using the {@code "Date"} field in every cases.
      */
-    GO_DateTime(final Date date, boolean auto) {
+    GO_DateTime(final Date date, final boolean allowTime) {
         if (date != null) {
             final XMLGregorianCalendar gc = XmlUtilities.toXML(date);
-            if (auto && gc.getHour() == 0 && gc.getMinute() == 0 &&
-                    gc.getSecond() == 0 && gc.getMillisecond() == 0)
-            {
-                auto = false;
-            }
-            if (auto) {
-                if (gc.getMillisecond() == 0) {
-                    gc.setMillisecond(FIELD_UNDEFINED);
-                }
-                dateTime = gc;
-            } else {
-                gc.setHour(FIELD_UNDEFINED);
-                gc.setMinute(FIELD_UNDEFINED);
-                gc.setSecond(FIELD_UNDEFINED);
-                gc.setMillisecond(FIELD_UNDEFINED);
-                gc.setTimezone(FIELD_UNDEFINED);
+            if (XmlUtilities.trimTime(gc, !allowTime)) {
                 this.date = gc;
+            } else {
+                dateTime = gc;
             }
         }
     }
