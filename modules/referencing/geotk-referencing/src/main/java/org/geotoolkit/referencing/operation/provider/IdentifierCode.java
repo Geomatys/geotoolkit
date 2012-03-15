@@ -44,7 +44,7 @@ final class IdentifierCode extends DefaultReferenceIdentifier {
     private static final long serialVersionUID = 357222258307746767L;
 
     /**
-     * If this identifier is deprecated, the identifier that supersed this one.
+     * If this identifier is deprecated, the identifier that supersede this one.
      * Otherwise {@code 0}.
      */
     final int supersededBy;

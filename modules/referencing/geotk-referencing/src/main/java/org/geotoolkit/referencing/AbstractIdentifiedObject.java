@@ -185,32 +185,32 @@ public class AbstractIdentifiedObject extends FormattableObject implements Ident
      *   <tr>
      *     <td nowrap>&nbsp;{@value org.opengis.referencing.IdentifiedObject#ALIAS_KEY}&nbsp;</td>
      *     <td nowrap>&nbsp;{@link CharSequence}, {@link GenericName} or an array of those&nbsp;</td>
-     *     <td nowrap>&nbsp;{@link #getAlias}</td>
+     *     <td nowrap>&nbsp;{@link #getAlias()}</td>
      *   </tr>
      *   <tr>
      *     <td nowrap>&nbsp;{@value org.opengis.metadata.Identifier#AUTHORITY_KEY}&nbsp;</td>
      *     <td nowrap>&nbsp;{@link String} or {@link Citation}&nbsp;</td>
-     *     <td nowrap>&nbsp;{@link ReferenceIdentifier#getAuthority} on the {@linkplain #getName() name}</td>
+     *     <td nowrap>&nbsp;{@link ReferenceIdentifier#getAuthority()} on the {@linkplain #getName() name}</td>
      *   </tr>
      *   <tr>
      *     <td nowrap>&nbsp;{@value org.opengis.referencing.ReferenceIdentifier#CODESPACE_KEY}&nbsp;</td>
      *     <td nowrap>&nbsp;{@link String}&nbsp;</td>
-     *     <td nowrap>&nbsp;{@link ReferenceIdentifier#getCodeSpace} on the {@linkplain #getName() name}</td>
+     *     <td nowrap>&nbsp;{@link ReferenceIdentifier#getCodeSpace()} on the {@linkplain #getName() name}</td>
      *   </tr>
      *   <tr>
      *     <td nowrap>&nbsp;{@value org.opengis.referencing.ReferenceIdentifier#VERSION_KEY}&nbsp;</td>
      *     <td nowrap>&nbsp;{@link String}&nbsp;</td>
-     *     <td nowrap>&nbsp;{@link ReferenceIdentifier#getVersion} on the {@linkplain #getName() name}</td>
+     *     <td nowrap>&nbsp;{@link ReferenceIdentifier#getVersion()} on the {@linkplain #getName() name}</td>
      *   </tr>
      *   <tr>
      *     <td nowrap>&nbsp;{@value org.opengis.referencing.IdentifiedObject#IDENTIFIERS_KEY}&nbsp;</td>
      *     <td nowrap>&nbsp;{@link ReferenceIdentifier} or <code>{@linkplain ReferenceIdentifier}[]</code>&nbsp;</td>
-     *     <td nowrap>&nbsp;{@link #getIdentifiers}</td>
+     *     <td nowrap>&nbsp;{@link #getIdentifiers()}</td>
      *   </tr>
      *   <tr>
      *     <td nowrap>&nbsp;{@value org.opengis.referencing.IdentifiedObject#REMARKS_KEY}&nbsp;</td>
      *     <td nowrap>&nbsp;{@link String} or {@link InternationalString}&nbsp;</td>
-     *     <td nowrap>&nbsp;{@link #getRemarks}</td>
+     *     <td nowrap>&nbsp;{@link #getRemarks()}</td>
      *   </tr>
      * </table>
      * <p>
@@ -622,6 +622,45 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
      */
     public boolean nameMatches(final String name) {
         return IdentifiedObjects.nameMatches(this, alias, name);
+    }
+
+    /**
+     * Returns {@code true} if this object is deprecated. Deprecated objects exist in some
+     * {@linkplain org.opengis.referencing.AuthorityFactory authority factories} like the
+     * EPSG database. Deprecated objects are usually obtained from a deprecated authority
+     * code. For this reason, the default implementation applies the following rules:
+     * <p>
+     * <ul>
+     *   <li>If the {@linkplain #getName() name}
+     *       {@linkplain DefaultReferenceIdentifier#isDeprecated() is deprecated},
+     *       then returns {@code true}.</li>
+     *   <li>Otherwise if <strong>every</strong> {@linkplain #getIdentifiers() identifiers}
+     *       {@linkplain DefaultReferenceIdentifier#isDeprecated() are deprecated}, ignoring
+     *       the identifiers that are not instance of {@link DefaultReferenceIdentifier}
+     *       (because they can not be tested), then returns {@code true}.</li>
+     *   <li>Otherwise returns {@code false}.</li>
+     * </ul>
+     *
+     * @return {@code true} if this object is deprecated.
+     *
+     * @see DefaultReferenceIdentifier#isDeprecated()
+     *
+     * @since 3.20
+     */
+    public boolean isDeprecated() {
+        if (name instanceof DefaultReferenceIdentifier) {
+            if (((DefaultReferenceIdentifier) name).isDeprecated()) {
+                return true;
+            }
+        }
+        boolean isDeprecated = false;
+        for (final ReferenceIdentifier identifier : identifiers) {
+            if (identifier instanceof DefaultReferenceIdentifier) {
+                isDeprecated = ((DefaultReferenceIdentifier) identifier).isDeprecated();
+                if (!isDeprecated) break;
+            }
+        }
+        return isDeprecated;
     }
 
     /**

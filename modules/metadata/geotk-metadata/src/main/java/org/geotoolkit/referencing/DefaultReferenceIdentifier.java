@@ -513,9 +513,11 @@ public class DefaultReferenceIdentifier implements ReferenceIdentifier, Serializ
 
     /**
      * Returns {@code true} if the object represented by this identifier is deprecated. In such
-     * case, the {@linkplain #getRemarks remarks} may contains the new identifier to use.
+     * case, the {@linkplain #getRemarks() remarks} may contains the new identifier to use.
      * <p>
      * The default implementation returns {@code false} in all cases.
+     *
+     * @see AbstractIdentifiedObject#isDeprecated()
      *
      * @return {@code true} if this code is deprecated.
      */

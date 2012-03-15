@@ -30,6 +30,7 @@ import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.operation.projection.Equirectangular;
 import org.geotoolkit.internal.referencing.Identifiers;
+import org.geotoolkit.internal.referencing.DeprecatedName;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
 
