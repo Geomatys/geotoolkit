@@ -17,11 +17,11 @@
  */
 package org.geotoolkit.project.report;
 
+import java.util.Locale;
 import java.io.File;
 import java.io.IOException;
 
 import org.opengis.util.FactoryException;
-import org.opengis.referencing.AuthorityFactory;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.cs.CartesianCS;
 import org.opengis.referencing.cs.SphericalCS;
@@ -37,9 +37,11 @@ import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.datum.VerticalDatumType;
 import org.opengis.test.report.AuthorityCodesReport;
 
+import org.opengis.util.InternationalString;
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.AbstractIdentifiedObject;
 
 import static org.geotoolkit.internal.referencing.CRSUtilities.EPSG_VERSION;
 
@@ -61,9 +63,9 @@ public final class CRSAuthorityCodes extends AuthorityCodesReport {
     private static final char YX_ORDER = '\u21B7';
 
     /**
-     * The factory which create CRS instances having the longitude axis before the latitude axis.
+     * The factory which create CRS instances.
      */
-    private final CRSAuthorityFactory xyOrder;
+    private final CRSAuthorityFactory factory, xyOrder;
 
     /**
      * Creates a new instance.
@@ -73,8 +75,21 @@ public final class CRSAuthorityCodes extends AuthorityCodesReport {
         Reports.initialize(properties);
         properties.setProperty("FACTORY.NAME", "EPSG");
         properties.setProperty("FACTORY.VERSION", EPSG_VERSION);
+        properties.setProperty("FACTORY.VERSION.SUFFIX", ", together with other sources");
+        properties.setProperty("DESCRIPTION", "<p><b>Notation:</b></p>\n" +
+                "<ul>\n" +
+                "  <li>The " + YX_ORDER + " symbol in front of authority codes (${PERCENT.ANNOTATED} of them)" +
+                " identifies the CRS having an axis order different than (<var>easting</var>, <var>northing</var>).</li>\n" +
+                "  <li>The <del>codes with a strike</del> (${PERCENT.DEPRECATED} of them) identify deprecated CRS." +
+                " In some cases, the remarks column indicates the replacement.</li>\n" +
+                "</ul>");
+        factory = CRS.getAuthorityFactory(false);
         xyOrder = CRS.getAuthorityFactory(true);
-        add(CRS.getAuthorityFactory(false));
+        add(factory);
+        /*
+         * We have to use this hack for now because exceptions are formatted in the current locale.
+         */
+        Locale.setDefault(getLocale());
     }
 
     /**
@@ -133,21 +148,45 @@ public final class CRSAuthorityCodes extends AuthorityCodesReport {
      * {@link Row} attribute values created by GeoAPI.
      */
     @Override
-    protected Row createRow(final AuthorityFactory factory, final String code, final IdentifiedObject object) throws FactoryException {
-        final Row row = super.createRow(factory, code, object);
-        if (code.startsWith("AUTO2:")) {
-            row.remark = "Projected";
-        } else {
-            final CoordinateReferenceSystem crs = (CoordinateReferenceSystem) object;
-            try {
-                final CoordinateReferenceSystem crsXY = xyOrder.createCoordinateReferenceSystem(code);
-                if (!CRS.equalsIgnoreMetadata(crs.getCoordinateSystem(), crsXY.getCoordinateSystem())) {
-                    row.annotation = YX_ORDER;
-                }
-            } catch (FactoryException e) {
-                Logging.unexpectedException(CRSAuthorityCodes.class, "createRow", e);
+    protected Row createRow(final String code, final IdentifiedObject object) {
+        final Row row = super.createRow(code, object);
+        final CoordinateReferenceSystem crs = (CoordinateReferenceSystem) object;
+        try {
+            final CoordinateReferenceSystem crsXY = xyOrder.createCoordinateReferenceSystem(code);
+            if (!CRS.equalsIgnoreMetadata(crs.getCoordinateSystem(), crsXY.getCoordinateSystem())) {
+                row.annotation = YX_ORDER;
             }
-            row.remark = getRemark(crs);
+        } catch (FactoryException e) {
+            Logging.unexpectedException(CRSAuthorityCodes.class, "createRow", e);
+        }
+        row.remark = getRemark(crs);
+        if (object instanceof AbstractIdentifiedObject) {
+            row.isDeprecated = ((AbstractIdentifiedObject) object).isDeprecated();
+        }
+        /*
+         * If the object is deprecated, try to find the reason.
+         * Don't take the whole comment, because it may be pretty long.
+         */
+        if (row.isDeprecated) {
+            final InternationalString i18n = object.getRemarks();
+            if (i18n != null) {
+                String remark = i18n.toString(getLocale());
+                final int s = Math.max(remark.lastIndexOf("Superseded"),
+                              Math.max(remark.lastIndexOf("superseded"),
+                              Math.max(remark.lastIndexOf("Replaced"),
+                              Math.max(remark.lastIndexOf("replaced"),
+                              Math.max(remark.lastIndexOf("See"),
+                                       remark.lastIndexOf("see"))))));
+                if (s >= 0) {
+                    final int start = remark.lastIndexOf('.', s) + 1;
+                    final int end = remark.indexOf('.', s);
+                    remark = (end >= 0) ? remark.substring(start, end) : remark.substring(start);
+                    remark = Strings.trim(remark.replace('¶', '\n').trim());
+                    if (!remark.isEmpty()) {
+                        row.remark = remark;
+                    }
+                }
+            }
         }
         return row;
     }
@@ -157,13 +196,25 @@ public final class CRSAuthorityCodes extends AuthorityCodesReport {
      * {@link Row} attribute values created by GeoAPI.
      */
     @Override
-    protected Row createRow(final AuthorityFactory factory, final String code, final FactoryException exception) throws FactoryException {
-        final Row row = super.createRow(factory, code, exception);
-        row.name = factory.getDescriptionText(code).toString(getLocale());
-        String message = exception.getMessage();
-        if (message.contains("Unable to format units in UCUM")) {
-            // Simplify a very long and badly formatted message.
-            message = "Unable to format units in UCUM";
+    protected Row createRow(final String code, final FactoryException exception) {
+        final Row row = super.createRow(code, exception);
+        try {
+            row.name = factory.getDescriptionText(code).toString(getLocale());
+        } catch (FactoryException e) {
+            Logging.unexpectedException(CRSAuthorityCodes.class, "createRow", e);
+        }
+        String message;
+        if (code.startsWith("AUTO2:")) {
+            // It is normal to be unable to instantiate an "AUTO" CRS,
+            // because those authority codes need parameters.
+            message = "Projected";
+            row.hasError = false;
+        } else {
+            message = exception.getMessage();
+            if (message.contains("Unable to format units in UCUM")) {
+                // Simplify a very long and badly formatted message.
+                message = "Unable to format units in UCUM";
+            }
         }
         row.remark = message;
         return row;

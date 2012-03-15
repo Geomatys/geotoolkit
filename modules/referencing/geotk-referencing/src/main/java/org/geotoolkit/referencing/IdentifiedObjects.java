@@ -411,17 +411,14 @@ public final class IdentifiedObjects extends Static {
         if (object != null) {
             final Iterator<ReferenceIdentifier> it = iterator(object.getIdentifiers());
             if (it != null) while (it.hasNext()) {
-                final ReferenceIdentifier identifier = it.next();
-                if (identifier != null) { // Paranoiac check.
-                    final String code = identifier.toString();
-                    if (code != null) { // Paranoiac check.
-                        return code;
-                    }
+                final String code = toString(it.next());
+                if (code != null) { // Paranoiac check.
+                    return code;
                 }
             }
-            final ReferenceIdentifier name = object.getName();
-            if (name != null) {
-                return name.toString();
+            final String name = toString(object.getName());
+            if (name != null) { // Paranoiac check.
+                return name;
             }
         }
         return null;
@@ -637,5 +634,47 @@ public final class IdentifiedObjects extends Static {
             }
         }
         return false;
+    }
+
+    /**
+     * Returns a string representation of the given identifier.
+     * This method applies the following rule:
+     * <p>
+     * <ul>
+     *   <li>If the given identifier implements the {@link GenericName} interface, then
+     *       this method delegates to the {@link GenericName#toString()} method.</li>
+     *   <li>Otherwise if the given identifier has a {@linkplain ReferenceIdentifier#getCodeSpace()
+     *       code space}, formats the identifier as "{@code codespace:code}".</li>
+     *   <li>Otherwise if the given identifier has an {@linkplain Identifier#getAuthority()
+     *       authority}, formats the identifier as "{@code authority:code}".</li>
+     *   <li>Otherwise returns the {@linkplain Identifier#getCode() code}.</li>
+     * </ul>
+     * <p>
+     * This method is provided because the {@link GenericName#toString()} behavior is specified
+     * by its javadoc, while {@link ReferenceIdentifier} has no such contract - so its string
+     * representation is implementation-dependent.
+     *
+     * @param  identifier The identifier, or {@code null}.
+     * @return A string representation of the given identifier, or {@code null}.
+     *
+     * @since 3.20
+     */
+    public static String toString(final Identifier identifier) {
+        if (identifier == null) {
+            return null;
+        }
+        if (identifier instanceof GenericName) {
+            // The toString() behavior is specified by the GenericName javadoc.
+            return identifier.toString();
+        }
+        final String code = identifier.getCode();
+        if (identifier instanceof ReferenceIdentifier) {
+            final String cs = ((ReferenceIdentifier) identifier).getCodeSpace();
+            if (cs != null) {
+                return cs + DefaultNameSpace.DEFAULT_SEPARATOR + code;
+            }
+        }
+        final String authority = org.geotoolkit.internal.Citations.getIdentifier(identifier.getAuthority());
+        return (authority != null) ? (authority + DefaultNameSpace.DEFAULT_SEPARATOR + code) : code;
     }
 }

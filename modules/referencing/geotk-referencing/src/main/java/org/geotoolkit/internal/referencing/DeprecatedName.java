@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.referencing.operation.provider;
+package org.geotoolkit.internal.referencing;
 
 import net.jcip.annotations.Immutable;
 import org.opengis.metadata.citation.Citation;
@@ -26,13 +26,13 @@ import org.geotoolkit.referencing.NamedIdentifier;
  * A name which is deprecated (when associated to a given object) in the EPSG database.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.16
+ * @version 3.20
  *
  * @since 3.16
  * @module
  */
 @Immutable
-final class DeprecatedName extends NamedIdentifier {
+public final class DeprecatedName extends NamedIdentifier {
     /**
      * For cross-version compatibility.
      */
@@ -40,8 +40,11 @@ final class DeprecatedName extends NamedIdentifier {
 
     /**
      * Creates a new deprecated name for the given code.
+     *
+     * @param authority The authority, or {@code null} if not available.
+     * @param code      The code.
      */
-    DeprecatedName(final Citation authority, final String code) {
+    public DeprecatedName(final Citation authority, final String code) {
         super(authority, code);
     }
 

@@ -37,7 +37,6 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.internal.Citations;
-import org.geotoolkit.naming.DefaultNameSpace;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.logging.Logging;
@@ -321,18 +320,8 @@ public class IdentifiedObjectFinder {
         ReferenceIdentifier identifier = IdentifiedObjects.getIdentifier(candidate, authority);
         if (identifier == null) {
             identifier = candidate.getName();
-            if (identifier == null) {
-                // Paranoiac check, since 'name' is a mandatory attribute.
-                return null;
-            }
         }
-        final String code      = identifier.getCode();
-        final String codespace = identifier.getCodeSpace();
-        if (codespace != null) {
-            return codespace + DefaultNameSpace.DEFAULT_SEPARATOR + code;
-        } else {
-            return code;
-        }
+        return IdentifiedObjects.toString(identifier);
     }
 
     /**
@@ -407,7 +396,7 @@ public class IdentifiedObjectFinder {
                 // The identifier is not for this authority. Looks the other ones.
                 continue;
             }
-            final String code = id.toString();
+            final String code = IdentifiedObjects.toString(id);
             for (int n=0; ; n++) {
                 final IdentifiedObject candidate;
                 try {

@@ -17,19 +17,20 @@
  */
 package org.geotoolkit.project.report;
 
-import java.util.Map;
+import java.util.Set;
 import java.util.Collections;
-import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.io.File;
 import java.io.IOException;
 
 import org.opengis.metadata.citation.Citation;
+import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.operation.Projection;
 import org.opengis.referencing.operation.Conversion;
 import org.opengis.referencing.operation.Transformation;
 import org.opengis.referencing.operation.SingleOperation;
-import org.opengis.test.report.ParameterNamesReport;
+import org.opengis.test.report.OperationParametersReport;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.factory.FactoryFinder;
@@ -47,13 +48,13 @@ import static org.geotoolkit.metadata.iso.citation.Citations.*;
  *
  * @since 3.20
  */
-public final class ProjectionParameters extends ParameterNamesReport {
+public final class ProjectionParameters extends OperationParametersReport {
     /**
      * All authority names as {@link String} instances. Those names will be used as
      * column headers in the table of coordinate operation methods. Those headers will
      * typically be "EPSG", "OGC", "ESRI", "NetCDF", "GeoTIFF" and "PROJ4".
      */
-    private final Map<String,String> columnHeaders;
+    private final Set<String> columnHeaders;
 
     /**
      * The type of coordinate operation methods, in the order to be shown in the HTML report.
@@ -80,23 +81,11 @@ public final class ProjectionParameters extends ParameterNamesReport {
         super(null);
         Reports.initialize(properties);
         properties.setProperty("TITLE", "Coordinate Operation parameters");
-        properties.setProperty("DESCRIPTION",
-                "All those <cite>Operation Methods</cite> and parameter names are supported "  +
-                "by the <a href=\"http://www.geotoolkit.org/modules/referencing/index.html\">" +
-                "Geotoolkit.org referencing module</a>.");
-
-        final Map<String,String> columns = new LinkedHashMap<>(XCollections.hashMapCapacity(authorities.length));
+        final Set<String> columns = new LinkedHashSet<>(XCollections.hashMapCapacity(authorities.length));
         for (final Citation authority : authorities) {
-            final String code = getIdentifier(authority);
-            String name = code;
-            if (name.equalsIgnoreCase("PROJ4")) {
-                name = "Proj.4"; // This is the actual project name.
-            }
-            if (columns.put(code, name) != null) {
-                throw new IllegalArgumentException(Errors.format(Errors.Keys.VALUE_ALREADY_DEFINED_$1, code));
-            }
+            columns.add(getIdentifier(authority));
         }
-        columnHeaders = Collections.unmodifiableMap(columns);
+        columnHeaders = Collections.unmodifiableSet(columns);
         categories = new Class[] {
             Projection.class,
             Conversion.class,
@@ -117,77 +106,61 @@ public final class ProjectionParameters extends ParameterNamesReport {
     }
 
     /**
-     * Returns the HTML text to use as a column header for each
-     * {@linkplain ReferenceIdentifier#getCodeSpace() code spaces} or
-     * {@linkplain GenericName#scope() scopes}. For each entry in the returned map, the
-     * {@linkplain java.util.Map.Entry#getKey() key} is the code spaces or scope and the
-     * {@linkplain java.util.Map.Entry#getValue() value} is the column header. The columns
-     * will be shown in iteration order.
-     *
-     * @return The name of all code spaces or scopes. Some typical values are {@code "EPSG"},
-     *         {@code "OGC"}, {@code "ESRI"}, {@code "GeoTIFF"} or {@code "NetCDF"}.
+     * Creates a new row for the given operation and parameters. The given code spaces will
+     * be ignored; we will use our own code spaces derived from the citations given at
+     * construction time instead.
      */
     @Override
-    public Map<String,String> getColumnHeaders() {
-        return columnHeaders;
-    }
-
-    /**
-     * Returns a user category for the given object, or {@code null} if none. If non-null,
-     * this category will be formatted as a single row in the HTML table before all subsequent
-     * objects of the same category.
-     *
-     * <p>In order to get good results, the {@link #compare(IdentifiedObject, IdentifiedObject)}
-     * method needs to be defined in such a way that objects of the same category are grouped
-     * together.</p>
-     *
-     * @param  object The object for which to get the category.
-     * @return The category of the given object, or {@code null} if none.
-     */
-    @Override
-    public String getCategory(final IdentifiedObject object) {
-        if (object instanceof MathTransformProvider) {
-            final Class<? extends SingleOperation> c = ((MathTransformProvider) object).getOperationType();
+    protected Row createRow(final IdentifiedObject operation, final ParameterDescriptorGroup parameters, final Set<String> codeSpaces) {
+        final Row row = super.createRow(operation, parameters, columnHeaders);
+        /*
+         * Find a user category for the given object. If a category is found, it will be formatted
+         * as a single row in the HTML table before all subsequent objects of the same category.
+         * Note that in order to get good results, the Row.compare(...) method needs to be defined
+         * in such a way that objects of the same category are grouped together.
+         */
+        int categoryIndex = categories.length;
+        if (operation instanceof MathTransformProvider) {
+            final Class<? extends SingleOperation> c = ((MathTransformProvider) operation).getOperationType();
             if (c != null) {
-                for (final Class<?> category : categories) {
+                for (int i=0; i<categoryIndex; i++) {
+                    final Class<?> category = categories[i];
                     if (category.isAssignableFrom(c)) {
                         if (category == Projection.class) {
-                            return "Map projections";
+                            row.category = "Map projections";
+                        } else {
+                            row.category = category.getSimpleName() + 's';
                         }
-                        return category.getSimpleName() + 's';
+                        categoryIndex = i;
+                        break;
                     }
                 }
             }
         }
-        return super.getCategory(object);
+        return new OrderedRow(row, categoryIndex);
     }
 
     /**
-     * Compares the given operation methods for display order. This method is used for
-     * sorting the operation methods in the order to be show on the HTML output page.
-     * First, methods are sorted by categories according the order of elements in the
+     * A row implementation sorted by category before to be sorted by name. This implementation
+     * is used for sorting the operation methods in the order to be show on the HTML output page.
+     * First, the operations are sorted by categories according the order of elements in the
      * {@link #categories} array. For each operation of the same category, methods are
      * sorted by alphabetical order.
-     *
-     * @param o1 The first operation method to compare.
-     * @param o2 The second operation method to compare.
-     * @return -1 if {@code o1} should appears before {@code o2}, or -1 for the converse.
      */
-    @Override
-    public int compare(final IdentifiedObject o1, final IdentifiedObject o2) {
-        boolean c1 = (o1 instanceof MathTransformProvider);
-        boolean c2 = (o2 instanceof MathTransformProvider);
-        if (c1 && c2) {
-            final Class<? extends SingleOperation> op1 = ((MathTransformProvider) o1).getOperationType();
-            final Class<? extends SingleOperation> op2 = ((MathTransformProvider) o2).getOperationType();
-            for (final Class<?> category : categories) {
-                c1 = category.isAssignableFrom(op1);
-                c2 = category.isAssignableFrom(op2);
-                if (c1 != c2) return c1 ? -1 : +1;
-            }
-        } else if (c1 != c2) {
-            return c1 ? -1 : +1; // Sort Geotk implementations before non-Geotk ones.
+    private static final class OrderedRow extends Row {
+        /** The category index to use for sorting rows. */
+        private final int categoryIndex;
+
+        /** Creates a new row as a copy of the given row.*/
+        OrderedRow(final Row toCopy, final int categoryIndex) {
+            super(toCopy);
+            this.categoryIndex = categoryIndex;
         }
-        return super.compare(o1, o2);
+
+        /** Compares by category, then compares by name. */
+        @Override public int compareTo(final Row o) {
+            final int c = categoryIndex - ((OrderedRow) o).categoryIndex;
+            return (c != 0) ? c : super.compareTo(o);
+        }
     }
 }

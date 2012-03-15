@@ -196,7 +196,8 @@ public final strictfp class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase 
      * Returns the EPSG code of the operation method for the given projected CRS.
      */
     private static String getOperationMethod(final CoordinateReferenceSystem crs) {
-        return ((ProjectedCRS) crs).getConversionFromBase().getMethod().getIdentifiers().iterator().next().toString();
+        final ReferenceIdentifier id = ((ProjectedCRS) crs).getConversionFromBase().getMethod().getIdentifiers().iterator().next();
+        return id.getCodeSpace() + ':' + id.getCode();
     }
 
     /**
