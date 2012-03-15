@@ -564,6 +564,14 @@ public class DefaultReferenceIdentifier implements ReferenceIdentifier, Serializ
 
     /**
      * Returns a string representation of this identifier.
+     * The default implementation returns a pseudo-WKT format.
+     *
+     * {@note The <code>NamedIdentifier</code> subclass overrides this method with a different
+     *        behavior, in order to be compliant with the contract of the <code>GenericName</code>
+     *        interface.}
+     *
+     * @see IdentifiedObjects#toString(Identifier)
+     * @see NamedIdentifier#toString()
      */
     @Override
     public String toString() {

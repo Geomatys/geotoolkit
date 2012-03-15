@@ -1499,7 +1499,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
             }
         }
         if (bwInfos == null) {
-            // Don't close the connection here.
+            // Don't close the ResultSet here.
             return null;
         }
         toClose.close();
@@ -1668,7 +1668,6 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                             break;
                         }
                         default: {
-                            result.close();
                             throw new FactoryException(Errors.format(Errors.Keys.UNKNOWN_TYPE_$1, type));
                         }
                     }
@@ -1999,11 +1998,11 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                     final CoordinateReferenceSystem crs;
                     switch (type.toLowerCase(Locale.US)) {
                         /* ----------------------------------------------------------------------
-                        *   GEOGRAPHIC CRS
-                        *
-                        *   NOTE: 'createProperties' MUST be invoked after any call to an other
-                        *         'createFoo' method. Consequently, do not factor out.
-                        * ---------------------------------------------------------------------- */
+                         *   GEOGRAPHIC CRS
+                         *
+                         *   NOTE: 'createProperties' MUST be invoked after any call to an other
+                         *         'createFoo' method. Consequently, do not factor out.
+                         * ---------------------------------------------------------------------- */
                         case "geographic 2d":
                         case "geographic 3d": {
                             final String csCode    = getString(result, 8, code);
@@ -2024,11 +2023,11 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                             break;
                         }
                         /* ----------------------------------------------------------------------
-                        *   PROJECTED CRS
-                        *
-                        *   NOTE: This method invokes itself indirectly, through createGeographicCRS.
-                        *         Consequently, we can't use 'result' anymore. We must close it here.
-                        * ---------------------------------------------------------------------- */
+                         *   PROJECTED CRS
+                         *
+                         *   NOTE: This method invokes itself indirectly, through createGeographicCRS.
+                         *         Consequently, we can't use 'result' anymore. We must close it here.
+                         * ---------------------------------------------------------------------- */
                         case "projected": {
                             final String csCode  = getString(result,  8, code);
                             final String geoCode = getString(result, 10, code);
@@ -2047,8 +2046,8 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                             break;
                         }
                         /* ----------------------------------------------------------------------
-                        *   VERTICAL CRS
-                        * ---------------------------------------------------------------------- */
+                         *   VERTICAL CRS
+                         * ---------------------------------------------------------------------- */
                         case "vertical": {
                             final String        csCode = getString(result, 8, code);
                             final String        dmCode = getString(result, 9, code);
@@ -2060,11 +2059,11 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                             break;
                         }
                         /* ----------------------------------------------------------------------
-                        *   COMPOUND CRS
-                        *
-                        *   NOTE: This method invokes itself recursively.
-                        *         Consequently, we can't use 'result' anymore.
-                        * ---------------------------------------------------------------------- */
+                         *   COMPOUND CRS
+                         *
+                         *   NOTE: This method invokes itself recursively.
+                         *         Consequently, we can't use 'result' anymore.
+                         * ---------------------------------------------------------------------- */
                         case "compound": {
                             final String code1 = getString(result, 12, code);
                             final String code2 = getString(result, 13, code);
@@ -2082,12 +2081,12 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                             final Map<String,Object> properties = createProperties(
                                     "[Coordinate Reference System]", name, epsg, area, scope, remarks, deprecated);
                             crs  = factory.createCompoundCRS(properties,
-                                new CoordinateReferenceSystem[] {crs1, crs2});
+                                    new CoordinateReferenceSystem[] {crs1, crs2});
                             break;
                         }
                         /* ----------------------------------------------------------------------
-                        *   GEOCENTRIC CRS
-                        * ---------------------------------------------------------------------- */
+                         *   GEOCENTRIC CRS
+                         * ---------------------------------------------------------------------- */
                         case "geocentric": {
                             final String           csCode = getString(result, 8, code);
                             final String           dmCode = getString(result, 9, code);
@@ -2107,8 +2106,8 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                             break;
                         }
                         /* ----------------------------------------------------------------------
-                        *   ENGINEERING CRS
-                        * ---------------------------------------------------------------------- */
+                         *   ENGINEERING CRS
+                         * ---------------------------------------------------------------------- */
                         case "engineering": {
                             final String           csCode = getString(result, 8, code);
                             final String           dmCode = getString(result, 9, code);
@@ -2120,8 +2119,8 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                             break;
                         }
                         /* ----------------------------------------------------------------------
-                        *   UNKNOWN CRS
-                        * ---------------------------------------------------------------------- */
+                         *   UNKNOWN CRS
+                         * ---------------------------------------------------------------------- */
                         default: {
                             throw new FactoryException(Errors.format(Errors.Keys.UNKNOWN_TYPE_$1, type));
                         }
@@ -2237,10 +2236,10 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                 " WHERE COORD_OP_METHOD_CODE = ?" +
              " ORDER BY SORT_ORDER");
         final List<ParameterDescriptor<?>> descriptors;
-        try (ResultSet results = executeQuery(stmt, method)) {
+        try (ResultSet result = executeQuery(stmt, method)) {
             descriptors = new ArrayList<>();
-            while (results.next()) {
-                final String param = getString(results, 1, method);
+            while (result.next()) {
+                final String param = getString(result, 1, method);
                 descriptors.add(buffered.createParameterDescriptor(param));
             }
         }

@@ -776,7 +776,7 @@ public final class Logging extends Static {
      *         doesn't log anything at the {@link Level#FINE FINE} level.
      *
      * @see #unexpectedException(Logger, Class, String, Throwable)
-     * @see #severeException(Logger, Class, Throwable)
+     * @see #severeException(Logger, Class, String, Throwable)
      *
      * @since 2.5
      */

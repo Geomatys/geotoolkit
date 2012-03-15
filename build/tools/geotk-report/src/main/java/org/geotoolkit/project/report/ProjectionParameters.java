@@ -32,7 +32,6 @@ import org.opengis.referencing.operation.Transformation;
 import org.opengis.referencing.operation.SingleOperation;
 import org.opengis.test.report.OperationParametersReport;
 
-import org.geotoolkit.resources.Errors;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.referencing.operation.MathTransformProvider;
