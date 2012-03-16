@@ -77,20 +77,24 @@ public final class TimeInstant extends GMLAdapter {
      */
     public TimeInstant(final Instant instant) {
         timePosition = toDate(instant);
-        if (timePosition != null) {
-            XmlUtilities.trimTime(timePosition, false);
-        }
     }
 
     /**
      * Creates a XML Gregorian Calendar from the given instants, if non-null.
      * Otherwise returns {@code null}.
+     * <p>
+     * <strong>WARNING: The timezone information may be lost!</strong> This is because this field
+     * is derived from a {@link java.util.Date}, in which case we don't know if the time is really
+     * 0 or just unspecified. This class assumes that a time of zero means "unspecified". This will
+     * be revised after we implemented ISO 19108.
      */
     static XMLGregorianCalendar toDate(final Instant instant) {
         if (instant != null) {
             final Position position = instant.getPosition();
             if (position != null) {
-                return XmlUtilities.toXML(position.getDate());
+                final XMLGregorianCalendar date = XmlUtilities.toXML(position.getDate());
+                XmlUtilities.trimTime(date, false);
+                return date;
             }
         }
         return null;
