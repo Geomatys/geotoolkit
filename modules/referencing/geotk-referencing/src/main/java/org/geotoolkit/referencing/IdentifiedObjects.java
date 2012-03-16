@@ -639,21 +639,22 @@ public final class IdentifiedObjects extends Static {
 
     /**
      * Returns a string representation of the given identifier.
-     * This method applies the following rule:
+     * This method applies the following rules:
      * <p>
      * <ul>
      *   <li>If the given identifier implements the {@link GenericName} interface, then
      *       this method delegates to the {@link GenericName#toString()} method.</li>
      *   <li>Otherwise if the given identifier has a {@linkplain ReferenceIdentifier#getCodeSpace()
-     *       code space}, formats the identifier as "{@code codespace:code}".</li>
+     *       code space}, then formats the identifier as "{@code codespace:code}".</li>
      *   <li>Otherwise if the given identifier has an {@linkplain Identifier#getAuthority()
-     *       authority}, formats the identifier as "{@code authority:code}".</li>
+     *       authority}, then formats the identifier as "{@code authority:code}".</li>
      *   <li>Otherwise returns the {@linkplain Identifier#getCode() code}.</li>
      * </ul>
      * <p>
      * This method is provided because the {@link GenericName#toString()} behavior is specified
-     * by its javadoc, while {@link ReferenceIdentifier} has no such contract - so its string
-     * representation is implementation-dependent.
+     * by its javadoc, while {@link ReferenceIdentifier} has no such contract. For example the
+     * {@link DefaultIdentifier} implementation provides a WKT-like string representation. This
+     * static method can be used when a "name-like" representation is needed for any implementation.
      *
      * @param  identifier The identifier, or {@code null}.
      * @return A string representation of the given identifier, or {@code null}.

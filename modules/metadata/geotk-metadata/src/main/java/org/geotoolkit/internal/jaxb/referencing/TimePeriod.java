@@ -60,6 +60,11 @@ public final class TimePeriod extends GMLAdapter {
     /**
      * The end time. This element is part of GML 3.1.1 specification.
      * If non-null, then this field has precedence over {@link #end}.
+     * <p>
+     * <strong>WARNING: The timezone information may be lost!</strong> This is because this field
+     * is derived from a {@link java.util.Date}, in which case we don't know if the time is really
+     * 0 or just unspecified. This class assumes that a time of zero means "unspecified". This will
+     * be revised after we implemented ISO 19108.
      */
     @XmlElement(namespace = Namespaces.GML)
     public XMLGregorianCalendar endPosition;
@@ -67,6 +72,11 @@ public final class TimePeriod extends GMLAdapter {
     /**
      * The start time. This element is part of GML 2.1.1 specification
      * and is used only if {@link #beginPosition} (from GML 3) is null.
+     * <p>
+     * <strong>WARNING: The timezone information may be lost!</strong> This is because this field
+     * is derived from a {@link java.util.Date}, in which case we don't know if the time is really
+     * 0 or just unspecified. This class assumes that a time of zero means "unspecified". This will
+     * be revised after we implemented ISO 19108.
      */
     @XmlElement(namespace = Namespaces.GML)
     public TimeInstantPropertyType begin;
