@@ -49,6 +49,7 @@ import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_DATA_FILE_FORMAT;
 import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_DATA_PROCESSING;
 import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_DATA_PROCESSING_ALGORITHM_NAME;
 import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_DATA_PROCESSING_ALGORITHM_TYPE;
+import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_DATA_PROCESSING_PROCESSING_LEVEL;
 import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_DATA_TYPE;
 import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_DYNAMIC_STRETCH;
 import static org.geotoolkit.metadata.dimap.DimapConstants.TAG_GEOPOSITION;
@@ -881,7 +882,7 @@ public final class DimapAccessor extends Static {
             
             final String algoType = textValueSafe(dataProcessing, TAG_DATA_PROCESSING_ALGORITHM_TYPE, String.class);
             final String algoName = textValueSafe(dataProcessing, TAG_DATA_PROCESSING_ALGORITHM_NAME, String.class);
-
+            final String processingLevel = textValueSafe(dataProcessing, TAG_DATA_PROCESSING_PROCESSING_LEVEL, String.class);
             /**
              * Fills DataQualityInfo
              */
@@ -928,6 +929,12 @@ public final class DimapAccessor extends Static {
                         dimension.setSequenceIdentifier(memberName);
                     }
                 }
+            }
+            
+            //MetaData > ContentInfo (ImageDescription) > ProcessingLevelCode
+            if (processingLevel != null) {
+                final DefaultImageDescription contentInfo = (DefaultImageDescription) getContentInfo(metadata);
+                contentInfo.setProcessingLevelCode(new DefaultIdentifier(processingLevel));
             }
         }
 
@@ -1110,7 +1117,6 @@ public final class DimapAccessor extends Static {
                     final String instrumentName = textValueSafe(sceneSource, TAG_SCENE_INSTRUMENT, String.class);
                     final int instrumentIndex = textValueSafe(sceneSource, TAG_SCENE_INSTRUMENT_INDEX, Integer.class);
                     final String sensorCode = textValueSafe(sceneSource, TAG_SCENE_SENSOR_CODE, String.class);
-                    final String processingLevel = textValueSafe(sceneSource, TAG_SCENE_PROCESSING_LEVEL, String.class);
                     final Double incidenceAngle = textValueSafe(sceneSource, TAG_SCENE_INCIDENCE_ANGLE, Double.class);
                     final Double theoreticalResolution = textValueSafe(sceneSource, TAG_SCENE_THEORETICAL_RESOLUTION, Double.class);
                     final String viewingAngle = textValueSafe(sceneSource, TAG_SCENE_VIEWING_ANGLE, String.class);
@@ -1181,12 +1187,6 @@ public final class DimapAccessor extends Static {
                     /**
                      * Fills ContentInfo
                      */
-
-                    //MetaData > ContentInfo (ImageDescription) > ProcessingLevelCode
-                    if (processingLevel != null) {
-                        final DefaultImageDescription contentInfo = (DefaultImageDescription) getContentInfo(metadata);
-                        contentInfo.setProcessingLevelCode(new DefaultIdentifier(processingLevel));
-                    }
 
                     //MetaData > ContentInfo (ImageDescription) > IlluminationAzimuthAngle AND IlluminationElevationAngle
                     final DefaultImageDescription contentInfo = (DefaultImageDescription) getContentInfo(metadata);

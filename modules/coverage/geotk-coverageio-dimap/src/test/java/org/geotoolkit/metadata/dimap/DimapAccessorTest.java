@@ -400,6 +400,7 @@ public class DimapAccessorTest {
         assertEquals(66.084528d,imgDesc.getIlluminationAzimuthAngle().doubleValue(), 0.00000001d);
         assertEquals(59.429144d,imgDesc.getIlluminationElevationAngle().doubleValue(), 0.00000001d);
 
+        assertEquals(imgDesc.getProcessingLevelCode().getCode(), "2A");
 
         //Satellite_Time -------------------------------------------------------
         //UT_DATE         → ?
