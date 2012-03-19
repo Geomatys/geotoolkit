@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.csw.xml.DistributedSearch;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -56,15 +57,16 @@ public class DistributedSearchType implements DistributedSearch {
 
     @XmlAttribute
     @XmlSchemaType(name = "positiveInteger")
-    private BigInteger hopCount;
+    private Integer hopCount;
 
     /**
      * Gets the value of the hopCount property.
      * 
      */
-    public BigInteger getHopCount() {
+    @Override
+    public Integer getHopCount() {
         if (hopCount == null) {
-            return new BigInteger("2");
+            return 2;
         } else {
             return hopCount;
         }
@@ -74,8 +76,30 @@ public class DistributedSearchType implements DistributedSearch {
      * Sets the value of the hopCount property.
      * 
      */
-    public void setHopCount(final BigInteger value) {
+    @Override
+    public void setHopCount(final Integer value) {
         this.hopCount = value;
     }
 
+     /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof DistributedSearchType) {
+            DistributedSearchType that = (DistributedSearchType) object;
+            return Utilities.equals(this.hopCount,  that.hopCount);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 37 * hash + (this.hopCount != null ? this.hopCount.hashCode() : 0);
+        return hash;
+    }
 }

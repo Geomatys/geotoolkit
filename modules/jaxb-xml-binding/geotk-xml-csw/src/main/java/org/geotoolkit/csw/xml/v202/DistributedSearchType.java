@@ -72,12 +72,21 @@ public class DistributedSearchType implements DistributedSearch {
     
     /**
      */
+    @Override
     public Integer getHopCount() {
         if (hopCount == null) {
             return 2;
-        } else {
-            return hopCount;
         }
+        return hopCount;
+    }
+    
+     /**
+     * Sets the value of the hopCount property.
+     * 
+     */
+    @Override
+    public void setHopCount(final Integer value) {
+        this.hopCount = value;
     }
     
      /**
