@@ -643,6 +643,7 @@ public final class DimapAccessor extends Static {
             //<DATASET_QL_PATH/>    → ?
             //<DATASET_QL_FORMAT/>  → ?
             //<COPYRIGHT/>          → MetaData.metadataConstraints > LegalConstraints.otherConstraints
+            //                      → MetaData.identificationInfo > resourcesConstraints > LegalConstraints.otherConstraints 
             
             final String copyright = textValueSafe(datasetID, TAG_DATASET_COPYRIGHT, String.class);
             thumbnail = textAttributeValueSafe(datasetID, TAG_DATASET_TN_PATH, ATTRIBUTE_HREF, String.class);
@@ -658,6 +659,10 @@ public final class DimapAccessor extends Static {
             constraints.setOtherConstraints(Collections.singleton(new SimpleInternationalString(copyright)));
             
             metadata.getMetadataConstraints().add(constraints);
+            
+            // duplicate ?
+            final AbstractIdentification identification = getIdentificationInfo(metadata);
+            identification.getResourceConstraints().add(constraints);
         }
 
         //<xsd:element minOccurs="0" maxOccurs="1" ref="Dataset_Frame"/> -------
