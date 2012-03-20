@@ -1139,6 +1139,10 @@ public final class DimapAccessor extends Static {
                                 generateFileName(name, thumbnail.substring(thumbnail.lastIndexOf(".")))));
                     }
 
+                    // MetaData > IdentificationInfo (DataIdentification) > supplementalInformation
+                    if (incidenceAngle != null) {
+                        dataIdentification.setSupplementalInformation(new SimpleInternationalString(("incidence angle :" + incidenceAngle)));
+                    }
                     //MetaData > IdentificationInfo (DataIdentification) > Abstract
                     dataIdentification.setAbstract(new SimpleInternationalString(
                             missionName + " " + missionIndex + " " + sourceDesc));
