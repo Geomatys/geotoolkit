@@ -52,12 +52,12 @@ import org.geotoolkit.util.FileUtilities;
 
 
 /**
- * An Abstract lucene index searcher. allowing to perform query on the index.
+ * An Lucene index searcher. allowing to perform query on the index.
  * 
  * @author Guilhem legal (Geomatys)
  * @module pending
  */
-public class AbstractIndexSearcher extends IndexLucene {
+public class LuceneIndexSearcher extends IndexLucene {
 
     /**
      * This is the index searcher of Lucene.
@@ -101,7 +101,7 @@ public class AbstractIndexSearcher extends IndexLucene {
      * @param serviceID the "ID" of the service (allow multiple index in the same directory). The value "" is allowed.
      * @param analyzer  A lucene Analyzer (Default is ClassicAnalyzer)
      */
-    public AbstractIndexSearcher(final File configDir, final String serviceID, final Analyzer analyzer) throws IndexingException {
+    public LuceneIndexSearcher(final File configDir, final String serviceID, final Analyzer analyzer) throws IndexingException {
         super(analyzer);
         try {
             // we get the last index directory
@@ -162,7 +162,7 @@ public class AbstractIndexSearcher extends IndexLucene {
      * 
      * @throws IndexingException
      */
-    public AbstractIndexSearcher(final File configDir, final String serviceID) throws IndexingException {
+    public LuceneIndexSearcher(final File configDir, final String serviceID) throws IndexingException {
         this(configDir, serviceID, null);
     }
 
