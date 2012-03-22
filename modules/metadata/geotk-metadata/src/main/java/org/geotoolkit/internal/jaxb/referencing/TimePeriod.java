@@ -101,8 +101,10 @@ public final class TimePeriod extends GMLAdapter {
      */
     public TimePeriod(final Period period) {
         super(period);
-        beginPosition = TimeInstant.toDate(period.getBeginning());
-        endPosition   = TimeInstant.toDate(period.getEnding());
+        if (period != null) {
+            beginPosition = TimeInstant.toDate(period.getBeginning());
+            endPosition   = TimeInstant.toDate(period.getEnding());
+        }
     }
 
     /**
