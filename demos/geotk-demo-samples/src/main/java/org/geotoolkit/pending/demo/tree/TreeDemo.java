@@ -73,6 +73,9 @@ public class TreeDemo {
         //Delete an entry in tree-----------------------------------------------
         tree.delete(entry);
         
+        // re-insert
+        tree.insert(entry);
+        
         
                                 /*-------------------
                                   -------------------*/
@@ -88,9 +91,15 @@ public class TreeDemo {
         final Tree anotherTree = TreeFactory.createStarRTree(3, anotherCrs, anotherCalculator, nodefactory);
         
         //Same methods ---------------------------------------------------------
-        anotherTree.insert(entry);
-        anotherTree.search(areaSearch, resultList);
-        anotherTree.delete(entry);
+        final GeneralEnvelope anotherEntry = new GeneralEnvelope(anotherCrs);
+        anotherEntry.setEnvelope(10, 20, 50, 150, 41, 78);
+        
+        final GeneralEnvelope anotherAreaSearch = new GeneralEnvelope(anotherCrs);
+        anotherAreaSearch.setEnvelope(-10, -20, 100, 200, 100, 200);
+        
+        anotherTree.insert(anotherEntry);
+        anotherTree.search(anotherAreaSearch, resultList);
+        anotherTree.delete(anotherEntry);
         
                                 /*-------------------
                                   -------------------*/
