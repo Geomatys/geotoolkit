@@ -507,7 +507,9 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
                     area.intersect(new Area(requestRect));
                     geodeticBounds = (shapeToRead = area).getBounds2D();
                 }
-                ensureNonEmpty(geodeticBounds);
+                if (geodeticBounds.isEmpty()) {
+                    throw new DisjointCoverageDomainException(formatErrorMessage(Errors.Keys.REQUESTED_ENVELOPE_DO_NOT_INTERSECT));
+                }
             }
         }
         /*
