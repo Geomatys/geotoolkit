@@ -1063,6 +1063,11 @@ public final class Errors extends IndexedResourceBundle {
         public static final int RECURSIVE_CALL_$2 = 194;
 
         /**
+         * The requested envelope does not intersect the data envelope.
+         */
+        public static final int REQUESTED_ENVELOPE_DO_NOT_INTERSECT = 266;
+
+        /**
          * RGB value {0} is out of range.
          */
         public static final int RGB_OUT_OF_RANGE_$1 = 195;
@@ -1270,7 +1275,7 @@ public final class Errors extends IndexedResourceBundle {
         public static final int UNMODIFIABLE_OBJECT_$1 = 231;
 
         /**
-         * Can't parse value “{1}” in attribute ‘{0}’.
+         * Can’t parse value “{1}” in attribute ‘{0}’.
          */
         public static final int UNPARSABLE_ATTRIBUTE_$2 = 263;
 

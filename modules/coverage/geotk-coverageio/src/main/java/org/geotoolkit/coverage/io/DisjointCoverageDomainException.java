@@ -2,8 +2,8 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2010-2012, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2010-2012, Geomatys
+ *    (C) 2012, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,28 +17,28 @@
  */
 package org.geotoolkit.coverage.io;
 
-import org.geotoolkit.storage.DataStoreException;
-
 
 /**
- * Thrown when a {@link GridCoverageReader} or {@link GridCoverageWriter} operation failed.
+ * Thrown when the {@linkplain GridCoverageReadParam#getEnvelope() envelope parameter}
+ * given to a {@link GridCoverageReader} does not intersect the envelope of the stored
+ * coverage.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.10
+ * @version 3.20
  *
- * @since 3.09
+ * @since 3.20
  * @module
  */
-public class CoverageStoreException extends DataStoreException {
+public class DisjointCoverageDomainException extends CoverageStoreException {
     /**
      * For cross-version compatibility.
      */
-    private static final long serialVersionUID = 782165122782532854L;
+    private static final long serialVersionUID = 3818685838021231218L;
 
     /**
      * Creates an exception with no cause and no details message.
      */
-    public CoverageStoreException() {
+    public DisjointCoverageDomainException() {
         super();
     }
 
@@ -47,7 +47,7 @@ public class CoverageStoreException extends DataStoreException {
      *
      * @param message The detail message.
      */
-    public CoverageStoreException(final String message) {
+    public DisjointCoverageDomainException(final String message) {
         super(message);
     }
 
@@ -56,7 +56,7 @@ public class CoverageStoreException extends DataStoreException {
      *
      * @param cause The cause for this exception.
      */
-    public CoverageStoreException(final Throwable cause) {
+    public DisjointCoverageDomainException(final Throwable cause) {
         super(cause);
     }
 
@@ -66,7 +66,7 @@ public class CoverageStoreException extends DataStoreException {
      * @param message The detail message.
      * @param cause The cause for this exception.
      */
-    public CoverageStoreException(final String message, final Throwable cause) {
+    public DisjointCoverageDomainException(final String message, final Throwable cause) {
         super(message, cause);
     }
 }
