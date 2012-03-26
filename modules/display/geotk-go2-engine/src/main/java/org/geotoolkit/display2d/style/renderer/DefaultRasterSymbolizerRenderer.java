@@ -24,7 +24,6 @@ import java.awt.image.ColorModel;
 import java.awt.image.ComponentColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.IndexColorModel;
-import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.renderable.ParameterBlock;
 import java.util.ArrayList;
@@ -44,6 +43,7 @@ import javax.media.jai.RenderedOp;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.processing.CoverageProcessingException;
 import org.geotoolkit.coverage.processing.Operations;
@@ -57,7 +57,6 @@ import org.geotoolkit.display2d.style.raster.CompatibleColorModel;
 import org.geotoolkit.display2d.style.raster.ShadedReliefOp;
 import org.geotoolkit.display2d.style.raster.StatisticOp;
 import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotoolkit.image.io.ImageMetadataException;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.internal.image.ColorUtilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;
@@ -118,6 +117,9 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         try {
             dataCoverage = projectedCoverage.getCoverage(param);
             elevationCoverage = projectedCoverage.getElevationCoverage(param);
+        } catch (DisjointCoverageDomainException ex) {
+            LOGGER.log(Level.INFO, ex.getMessage());
+            return;
         } catch (CoverageStoreException ex) {
             throw new PortrayalException(ex);
         }
