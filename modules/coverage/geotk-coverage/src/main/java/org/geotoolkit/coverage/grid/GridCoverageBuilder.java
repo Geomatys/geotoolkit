@@ -28,7 +28,6 @@ import java.awt.Graphics;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.image.Raster;
-import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferFloat;
 import java.awt.image.ColorModel;
 import java.awt.image.SampleModel;
@@ -83,6 +82,8 @@ import org.geotoolkit.referencing.operation.transform.LogarithmicTransform1D;
 import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.image.io.PaletteFactory;
 import org.geotoolkit.resources.Errors;
+
+import static java.awt.image.DataBuffer.*;
 
 
 /**
@@ -502,6 +503,12 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
     }
 
     /**
+     * The raster, or {@code null} if none. This field takes a non-null value only for a
+     * short period of time, during the call to {@link #setRenderedImage(WritableRaster)}.
+     */
+    private Raster raster;
+
+    /**
      * The rendered image, or {@code null} if not yet computed. This image can either be
      * {@linkplain #setRenderedImage(RenderedImage) specified explicitely} by the user or
      * created from other properties.
@@ -772,15 +779,15 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * See {@link #setCoordinateReferenceSystem(CoordinateReferenceSystem)} for information about
      * precedence.
      *
-     * @param  code The authority code of the CRS to use.
+     * @param  code The authority code of the CRS to use, or {@code null}.
      * @throws IllegalArgumentException if the given authority code is illegal.
      *
      * @see #crs
      * @see CRS#decode(String, boolean)
      */
     public void setCoordinateReferenceSystem(final String code) throws IllegalArgumentException {
-        final CoordinateReferenceSystem crs;
-        try {
+        CoordinateReferenceSystem crs = null;
+        if (code != null) try {
             crs = CRS.decode(code, true);
         } catch (FactoryException exception) {
             throw new IllegalArgumentException(Errors.format(
@@ -882,18 +889,20 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * See {@link #setEnvelope(Envelope)} for information about recommended practices and
      * precedence.
      *
-     * @param  ordinates The ordinates of the new envelope to use.
+     * @param  ordinates The ordinates of the new envelope to use, or {@code null}.
      * @throws IllegalArgumentException if the envelope is illegal.
      */
     public void setEnvelope(final double... ordinates) throws IllegalArgumentException {
-        final CoordinateReferenceSystem crs = this.crs;
-        final GeneralEnvelope env;
-        if (crs != null) {
-            env = new GeneralEnvelope(crs);
-        } else {
-            env = new GeneralEnvelope(ordinates.length / 2);
+        GeneralEnvelope env = null;
+        if (ordinates != null) {
+            final CoordinateReferenceSystem crs = this.crs;
+            if (crs != null) {
+                env = new GeneralEnvelope(crs);
+            } else {
+                env = new GeneralEnvelope(ordinates.length / 2);
+            }
+            env.setEnvelope(ordinates);
         }
-        env.setEnvelope(ordinates);
         setEnvelope(env);
     }
 
@@ -949,14 +958,13 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * @since 3.20
      */
     public void setExtent(final GridEnvelope extent) throws MismatchedDimensionException {
-        GridEnvelope newValue = extent;
         if (extent != null) {
             final int dim = getGridDimension(-1);
             if (dim >= 0) {
                 ensureDimensionMatch("extent", extent.getDimension(), dim);
             }
         }
-        this.extent = newValue;
+        this.extent = extent;
         gridGeometryChanged();
     }
 
@@ -972,14 +980,14 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      *
      * See {@link #setExtent(GridEnvelope)} for information about precedence.
      *
-     * @param  span The span values for all dimensions.
+     * @param  span The span values for all dimensions, or {@code null}.
      * @throws MismatchedDimensionException If the arguments contain negative span values, or the
      *         number of values is not equal to the <cite>grid to CRS</cite> source dimensions.
      *
      * @since 3.20
      */
     public void setExtent(final int... span) throws MismatchedDimensionException {
-        setExtent(new GeneralGridEnvelope(new int[span.length], span, false));
+        setExtent(span != null ? new GeneralGridEnvelope(new int[span.length], span, false) : null);
     }
 
     /**
@@ -1411,12 +1419,9 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * This method gets the names, colors, ranges of sample values and units for each band
      * (if available), then delegates the actual work to {@link RenderedSampleDimension}.
      *
-     * @param raster The raster for which to build sample dimensions, or {@code null} for
-     *               using the {@linkplain #image} instead.
-     *
      * @since 3.20
      */
-    private SampleDimension[] getDefaultSampleDimensions(final Raster raster) {
+    private SampleDimension[] getDefaultSampleDimensions() {
         Color[][]     colors = null;
         Unit<?>[]      units = null;
         CharSequence[] names = null;
@@ -1451,8 +1456,10 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
         final double[] maximum = getArrayProperty("maximum");
         if (raster != null) {
             return RenderedSampleDimension.create(names, raster, minimum, maximum, units, colors, hints);
-        } else {
+        } else if (image != null) {
             return RenderedSampleDimension.create(names, image, minimum, maximum, units, colors, hints);
+        } else {
+            return null;
         }
     }
 
@@ -1489,9 +1496,14 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
                     bands[i] = band;
                 }
             }
-            // If the were no variables, build default sample dimensions.
-            if (bands == null && image != null) {
-                bands = getDefaultSampleDimensions(null);
+            if (bands == null) {
+                // If the were no variables, build default sample dimensions.
+                bands = getDefaultSampleDimensions();
+            } else if (bands instanceof GridSampleDimension[]) {
+                final boolean isGeophysics = isGeophysics();
+                for (int i=0; i<bands.length; i++) {
+                    bands[i] = ((GridSampleDimension[]) bands)[i].geophysics(isGeophysics);
+                }
             }
             sampleDimensions = bands;
         }
@@ -1573,35 +1585,84 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * @since 3.20
      */
     public ColorModel getColorModel() {
-        ColorModel cm = getColorModel(getSampleDimensions(), DataBuffer.TYPE_UNDEFINED);
-        if (cm == null) {
-            final RenderedImage image = this.image;
-            if (image != null) {
-                cm = image.getColorModel();
+        ColorModel cm = null;
+        final SampleDimension[] bands = getSampleDimensions();
+        if (bands != null) {
+            for (int i=0; i<bands.length; i++) {
+                final SampleDimension band = bands[i];
+                if (band instanceof GridSampleDimension) {
+                    final int dataType = getDataType();
+                    if (dataType != TYPE_UNDEFINED) {
+                        cm = ((GridSampleDimension) band).getColorModel(i, bands.length, dataType);
+                    } else {
+                        cm = ((GridSampleDimension) band).getColorModel(i, bands.length);
+                    }
+                    if (cm != null) {
+                        return cm;
+                    }
+                }
             }
+        }
+        final RenderedImage image = this.image;
+        if (image != null) {
+            cm = image.getColorModel();
         }
         return cm;
     }
 
     /**
-     * Creates a color model from the bands for the given data type.
+     * Infers the data type from the {@linkplain #image} or the {@linkplain #raster}, if specified.
      *
-     * @param dataType One of the {@link java.awt.image.DataBuffer} constants.
+     * @return The data type, or {@code TYPE_UNDEFINED} if unspecified.
      */
-    private static ColorModel getColorModel(final SampleDimension[] bands, final int dataType) {
-        if (bands != null) {
-            for (int i=0; i<bands.length; i++) {
-                final SampleDimension band = bands[i];
-                if (band instanceof GridSampleDimension) {
-                    if (dataType != DataBuffer.TYPE_UNDEFINED) {
-                        return ((GridSampleDimension) band).getColorModel(i, bands.length, dataType);
-                    } else {
-                        return ((GridSampleDimension) band).getColorModel(i, bands.length);
-                    }
+    private int getDataType() {
+        SampleModel model = null;
+        if (image != null) {
+            model = image.getSampleModel();
+        }
+        if (model == null && raster != null) {
+            model = raster.getSampleModel();
+        }
+        return (model != null) ? model.getDataType() : TYPE_UNDEFINED;
+    }
+
+    /**
+     * Detects whatever the coverage stores geophysics values or packed values.
+     * This method applies the following criterion, in that order:
+     * <p>
+     * <ul>
+     *   <li>If an image has been {@linkplain #setRenderedImage(RenderedImage) explicitely set},
+     *       then this method will infer the status from the image data type.</li>
+     *   <li>If at least one {@linkplain SampleDimension sample dimensions} has been
+     *       {@linkplain Variable#setSampleDimension(SampleDimension) explicitely set},
+     *       then this method will infer the status from those sample dimensions.</li>
+     *   <li>Otherwise this method conservatively returns {@code false}.</li>
+     * </ul>
+     *
+     * @return {@code true} if the coverage stores geophysics values, or {@code false}
+     *         if it stores packed values.
+     */
+    private boolean isGeophysics() {
+        switch (getDataType()) {
+            case TYPE_FLOAT:
+            case TYPE_DOUBLE: return true;
+            case TYPE_BYTE:
+            case TYPE_SHORT:
+            case TYPE_USHORT:
+            case TYPE_INT:    return false;
+        }
+        boolean isGeophysics = false;
+        for (int i=numBands; --i>=0;) {
+            final SampleDimension band = variable(i).sampleDimension;
+            if (band != null) {
+                final MathTransform1D sampleToGeophysics = band.getSampleToGeophysics();
+                if (sampleToGeophysics == null || !sampleToGeophysics.isIdentity()) {
+                    return false;
                 }
+                isGeophysics = true;
             }
         }
-        return null;
+        return isGeophysics;
     }
 
     /**
@@ -1881,7 +1942,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
                  * rather than the JDK one.
                  */
                 if (cm == null) {
-                    cm = PlanarImage.getDefaultColorModel(DataBuffer.TYPE_BYTE, getNumBands());
+                    cm = PlanarImage.getDefaultColorModel(TYPE_BYTE, getNumBands());
                 }
                 image = new TiledImage(bounds.x, bounds.y, bounds.width, bounds.height,
                         (offset != null) ? offset.x : bounds.x,
@@ -1897,12 +1958,13 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
     /**
      * Sets the rendered image.
      *
-     * @param image The rendered image to be wrapped by {@code GridCoverage2D}.
+     * @param image The rendered image to be wrapped by {@code GridCoverage2D}, or {@code null}.
      *
      * @since 3.20 (derived from 2.5)
      */
     public void setRenderedImage(final RenderedImage image) {
         this.image = image;
+        raster   = null;
         coverage = null;
     }
 
@@ -1912,25 +1974,22 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * and the raster, and finally invokes {@link #setRenderedImage(RenderedImage)} with
      * the result in argument.
      *
-     * @param raster The raster to be wrapped by {@code GridCoverage2D}.
+     * @param raster The raster to be wrapped by {@code GridCoverage2D}, or {@code null}.
      *
      * @since 3.20
      */
     public void setRenderedImage(final WritableRaster raster) {
-        ColorModel cm = getColorModel();
-        if (cm == null) {
-            final int dataType = raster.getDataBuffer().getDataType();
-            final SampleDimension[] bands = getDefaultSampleDimensions(raster);
-            if (bands == null) {
-                cm = PlanarImage.getDefaultColorModel(dataType, raster.getNumBands());
-            } else {
-                cm = getColorModel(bands, dataType);
-                if (sampleDimensions == null) {
-                    sampleDimensions = bands;
-                }
+        image = null;
+        this.raster = raster;
+        RenderedImage data = null;
+        if (raster != null) {
+            ColorModel cm = getColorModel();
+            if (cm == null) {
+                cm = PlanarImage.getDefaultColorModel(getDataType(), raster.getNumBands());
             }
+            data = new BufferedImage(cm, raster, false, null);
         }
-        setRenderedImage(new BufferedImage(cm, raster, false, null));
+        setRenderedImage(data);
     }
 
     /**
@@ -1949,30 +2008,34 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * @since 3.20 (derived from 2.2)
      */
     public void setRenderedImage(final float[][] matrix) {
-        int width  = 0;
-        int height = matrix.length;
-        for (final float[] row : matrix) {
-            if (row != null) {
-                if (row.length > width) {
-                    width = row.length;
+        WritableRaster data = null;
+        if (matrix != null) {
+            int width  = 0;
+            int height = matrix.length;
+            for (final float[] row : matrix) {
+                if (row != null) {
+                    if (row.length > width) {
+                        width = row.length;
+                    }
                 }
             }
-        }
-        final float[] buffer = new float[width * height];
-        int offset = 0;
-        for (final float[] row : matrix) {
-            int length = 0;
-            if (row != null) {
-                length = row.length;
-                System.arraycopy(row, 0, buffer, offset, length);
+            final float[] buffer = new float[width * height];
+            int offset = 0;
+            for (final float[] row : matrix) {
+                int length = 0;
+                if (row != null) {
+                    length = row.length;
+                    System.arraycopy(row, 0, buffer, offset, length);
+                }
+                Arrays.fill(buffer, offset + length, offset += width, Float.NaN);
             }
-            Arrays.fill(buffer, offset + length, offset += width, Float.NaN);
+            // Need to use JAI raster factory, since WritableRaster
+            // does not supports TYPE_FLOAT as of J2SE 1.5.0_06.
+            final int[] zero = new int[1];
+            data = RasterFactory.createBandedRaster(
+                    new DataBufferFloat(buffer, buffer.length), width, height, width, zero, zero, null);
         }
-        // Need to use JAI raster factory, since WritableRaster
-        // does not supports TYPE_FLOAT as of J2SE 1.5.0_06.
-        final int[] zero = new int[1];
-        setRenderedImage(RasterFactory.createBandedRaster(
-                new DataBufferFloat(buffer, buffer.length), width, height, width, zero, zero, null));
+        setRenderedImage(data);
     }
 
     /**
@@ -1980,39 +2043,43 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * The {@link #getGridGeometry()} method must return a fully defined value before
      * this method can be invoked.
      *
-     * @param function The image function.
+     * @param function The image function, or {@code null}.
      *
      * @see ImageFunctionDescriptor
      *
      * @since 3.20 (derived from 2.2)
      */
     public void setRenderedImage(final ImageFunction function) {
-        final MathTransform transform = GridGeometry2D.castOrCopy(getGridGeometry()).getGridToCRS2D();
-        if (!(transform instanceof AffineTransform)) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.NOT_AN_AFFINE_TRANSFORM));
+        RenderedImage data = null;
+        if (function != null) {
+            final MathTransform transform = GridGeometry2D.castOrCopy(getGridGeometry()).getGridToCRS2D();
+            if (!(transform instanceof AffineTransform)) {
+                throw new IllegalArgumentException(Errors.format(Errors.Keys.NOT_AN_AFFINE_TRANSFORM));
+            }
+            final AffineTransform at = (AffineTransform) transform;
+            if (at.getShearX()!=0 || at.getShearY()!=0) {
+                // TODO: We may support that in a future version.
+                //       1) Create a copy with shear[X/Y] set to 0. Use the copy.
+                //       2) Compute the residu with createInverse() and concatenate().
+                //       3) Apply the residu with JAI.create("Affine").
+                throw new IllegalArgumentException("Shear and rotation not supported");
+            }
+            final double xScale =  at.getScaleX();
+            final double yScale =  at.getScaleY();
+            final double xTrans = -at.getTranslateX() / xScale;
+            final double yTrans = -at.getTranslateY() / yScale;
+            final GridEnvelope extent = gridGeometry.getExtent();
+            data = ImageFunctionDescriptor.create(
+                    function,
+                    extent.getSpan(0), // width
+                    extent.getSpan(1), // height
+                    (float) xScale,
+                    (float) yScale,
+                    (float) xTrans,
+                    (float) yTrans,
+                    hints);
         }
-        final AffineTransform at = (AffineTransform) transform;
-        if (at.getShearX()!=0 || at.getShearY()!=0) {
-            // TODO: We may support that in a future version.
-            //       1) Create a copy with shear[X/Y] set to 0. Use the copy.
-            //       2) Compute the residu with createInverse() and concatenate().
-            //       3) Apply the residu with JAI.create("Affine").
-            throw new IllegalArgumentException("Shear and rotation not supported");
-        }
-        final double xScale =  at.getScaleX();
-        final double yScale =  at.getScaleY();
-        final double xTrans = -at.getTranslateX() / xScale;
-        final double yTrans = -at.getTranslateY() / yScale;
-        final GridEnvelope extent = gridGeometry.getExtent();
-        setRenderedImage(ImageFunctionDescriptor.create(
-                function,
-                extent.getSpan(0), // width
-                extent.getSpan(1), // height
-                (float) xScale,
-                (float) yScale,
-                (float) xTrans,
-                (float) yTrans,
-                hints));
+        setRenderedImage(data);
     }
 
     /**
@@ -2222,6 +2289,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
         gridGeometry       = null;
         cachedGridGeometry = null;
         sampleDimensions   = null;
+        raster             = null;
         image              = null;
         coverage           = null;
         sources            = null;
@@ -2432,10 +2500,11 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
                 final SampleDimension sampleDimension = this.sampleDimension;
                 if (sampleDimension != null) {
                     value = sampleDimension.getDescription();
-                    if (value == null) {
-                        value = GridCoverageBuilder.this.name;
+                    if (value != null) {
+                        return value;
                     }
                 }
+                value = GridCoverageBuilder.this.name;
             }
             return value;
         }
