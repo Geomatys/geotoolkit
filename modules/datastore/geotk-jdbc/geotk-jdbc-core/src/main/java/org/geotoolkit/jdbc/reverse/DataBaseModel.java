@@ -271,7 +271,7 @@ public final class DataBaseModel {
             result = metadata.getColumns(null, schemaName, tableName, "%");
             while (result.next()) {
                 final PropertyDescriptor desc = analyzeColumn(result);
-                ftb.add(analyzeColumn(result));
+                ftb.add(desc);
             }
             store.closeSafe(result);
 
@@ -317,7 +317,58 @@ public final class DataBaseModel {
 
                 cols.add(col);
             }
+            store.closeSafe(result);
 
+            //ask the metadata for the best column combinaison to be used as id
+            //TODO that might be a good idea but so far I haven't seen any database which
+            //return a result here when the primary key is null
+            //if(cols.isEmpty()){
+            //    result = metadata.getBestRowIdentifier(null, schemaName, tableName, 
+            //            DatabaseMetaData.bestRowSession, false);
+            //    while (result.next()) {
+            //        final String cname = result.getString(BestRow.COLUMN_NAME);
+            //
+            //    }
+            //    store.closeSafe(result);
+            //}
+            
+            //check if we could use a unique key index if no primary key found
+            if(cols.isEmpty()){
+                result = metadata.getIndexInfo(null, schemaName, tableName, true, false);
+                final List<String> names = new ArrayList<String>();
+                String indexname = null;
+                while (result.next()) {
+                    final String columnName = result.getString(Index.COLUMN_NAME);
+                    
+                    //we use a single index columns set as primary key
+                    //we must not mix with other potential indexes.
+                    if(indexname == null){
+                        indexname = result.getString(Index.INDEX_NAME);
+                    }else if(!indexname.equals(result.getString(Index.INDEX_NAME))){
+                        continue;
+                    }
+                    
+                    names.add(columnName);
+                }
+                store.closeSafe(result);
+                
+                if(!names.isEmpty()){
+                    result = metadata.getColumns(null, schemaName, tableName, "%");
+                    while (result.next()) {
+                        final String columnName = result.getString(Column.COLUMN_NAME);
+                        if(!names.contains(columnName)){
+                            continue;
+                        }
+                        
+                        final PropertyDescriptor desc = analyzeColumn(result);
+                        final PrimaryKeyColumn col = new NonIncrementingPrimaryKeyColumn(columnName, desc.getType().getBinding());
+                        cols.add(col);
+                    }
+                    store.closeSafe(result);
+                }                
+            }
+            
+            
             if (cols.isEmpty()) {
                 store.getLogger().log(Level.FINE, "No primary key found for {0}.", tableName);
                 table.key = new NullPrimaryKey(tableName);

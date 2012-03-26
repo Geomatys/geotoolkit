@@ -273,6 +273,82 @@ public final class MetaDataConstants {
 
         private ExportedKey(){}
     }
+    
+    public static final class BestRow{
+        
+        /** short => actual scope of result 
+         *  bestRowTemporary - very temporary, while using row 
+         *  bestRowTransaction - valid for remainder of current transaction 
+         *  bestRowSession - valid for remainder of current session */
+        public static final String SCOPE = "SCOPE";
+        /** String => column name */
+        public static final String COLUMN_NAME = "COLUMN_NAME";
+        /** int => SQL data type from java.sql.Types */
+        public static final String DATA_TYPE = "DATA_TYPE";
+        /** String => Data source dependent type name, 
+         * for a UDT the type name is fully qualified */
+        public static final String TYPE_NAME = "TYPE_NAME";
+        /** int => precision  */
+        public static final String COLUMN_SIZE = "COLUMN_SIZE";
+        /** int => not used  */
+        public static final String BUFFER_LENGTH = "BUFFER_LENGTH";
+        /** short => scale - Null is returned for data types where DECIMAL_DIGITS is not applicable. */
+        public static final String DECIMAL_DIGITS = "DECIMAL_DIGITS";
+        /** short => is this a pseudo column like an Oracle ROWID 
+            bestRowUnknown - may or may not be pseudo column 
+            bestRowNotPseudo - is NOT a pseudo column 
+            bestRowPseudo - is a pseudo column */
+        public static final String PSEUDO_COLUMN = "PSEUDO_COLUMN";
+        
+        private BestRow(){}
+    }
+    
+    public static final class Index{
+
+        /** String => table catalog (may be null) */
+        public static final String TABLE_CAT = "TABLE_CAT";
+        /** String => table schema (may be null)  */
+        public static final String TABLE_SCHEM = "TABLE_SCHEM";
+        /** String => table name  */
+        public static final String TABLE_NAME = "TABLE_NAME";
+        /** boolean => Can index values be non-unique. 
+         * false when TYPE is tableIndexStatistic  */
+        public static final String NON_UNIQUE = "NON_UNIQUE";
+        /** String => index catalog (may be null); 
+         * null when TYPE is tableIndexStatistic  */
+        public static final String INDEX_QUALIFIER = "INDEX_QUALIFIER";
+        /** String => index name; 
+         * null when TYPE is tableIndexStatistic  */
+        public static final String INDEX_NAME = "INDEX_NAME";
+        /** short => index type: 
+         *   tableIndexStatistic - this identifies table statistics that are 
+         *       returned in conjuction with a table's index descriptions 
+         *   tableIndexClustered - this is a clustered index 
+         *   tableIndexHashed - this is a hashed index 
+         *   tableIndexOther - this is some other style of index  */
+        public static final String TYPE = "TYPE";
+        /** short => column sequence number within index; 
+         * zero when TYPE is tableIndexStatistic  */
+        public static final String ORDINAL_POSITION = "ORDINAL_POSITION";
+        /** String => column name; 
+         * null when TYPE is tableIndexStatistic  */
+        public static final String COLUMN_NAME = "COLUMN_NAME";
+        /** String => column sort sequence, 
+         * "A" => ascending, 
+         * "D" => descending, may be null if sort sequence is not supported; 
+         * null when TYPE is tableIndexStatistic  */
+        public static final String ASC_OR_DESC = "ASC_OR_DESC";
+        /** int => When TYPE is tableIndexStatistic, then this is the number of rows in the table; 
+         * otherwise, it is the number of unique values in the index.  */
+        public static final String CARDINALITY = "CARDINALITY";
+        /** int => When TYPE is tableIndexStatisic then this is the number of pages used for the table, 
+         * otherwise it is the number of pages used for the current index.  */
+        public static final String PAGES = "PAGES";
+        /** String => Filter condition, if any. (may be null) */
+        public static final String FILTER_CONDITION = "FILTER_CONDITION";
+        
+        private Index(){}
+    }
 
     private MetaDataConstants(){}
 
