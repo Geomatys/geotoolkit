@@ -18,9 +18,10 @@ package org.geotoolkit.client.map;
 
 import java.awt.Point;
 import java.awt.image.RenderedImage;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InterruptedIOException;
+import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -28,30 +29,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpRequestInterceptor;
-import org.apache.http.HttpResponse;
-import org.apache.http.concurrent.FutureCallback;
-import org.apache.http.impl.DefaultConnectionReuseStrategy;
-import org.apache.http.impl.nio.DefaultHttpClientIODispatch;
-import org.apache.http.impl.nio.pool.BasicNIOConnPool;
-import org.apache.http.impl.nio.reactor.DefaultConnectingIOReactor;
-import org.apache.http.message.BasicHttpRequest;
-import org.apache.http.nio.protocol.BasicAsyncRequestProducer;
-import org.apache.http.nio.protocol.BasicAsyncResponseConsumer;
-import org.apache.http.nio.protocol.HttpAsyncRequestExecutor;
-import org.apache.http.nio.protocol.HttpAsyncRequester;
-import org.apache.http.nio.reactor.ConnectingIOReactor;
-import org.apache.http.nio.reactor.IOEventDispatch;
-import org.apache.http.params.CoreConnectionPNames;
-import org.apache.http.params.CoreProtocolPNames;
-import org.apache.http.params.HttpParams;
-import org.apache.http.params.SyncBasicHttpParams;
-import org.apache.http.protocol.*;
 import org.geotoolkit.client.Request;
 import org.geotoolkit.client.Server;
 import org.geotoolkit.coverage.*;
@@ -59,90 +42,42 @@ import org.geotoolkit.security.DefaultClientSecurity;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.collection.Cache;
 import org.geotoolkit.util.logging.Logging;
+import org.jboss.netty.bootstrap.ClientBootstrap;
+import org.jboss.netty.buffer.ChannelBuffer;
+import org.jboss.netty.buffer.ChannelBuffers;
+import org.jboss.netty.channel.*;
+import org.jboss.netty.channel.group.ChannelGroup;
+import org.jboss.netty.channel.group.DefaultChannelGroup;
+import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
+import org.jboss.netty.handler.codec.http.*;
 
 /**
  *
- * @author Johann Sorel (Geomatys)
- * @module pending
+ * @author Johann Sorel (Geomatys) @module pending
  */
-public abstract class CachedPyramidSet extends DefaultPyramidSet{
-    
+public abstract class CachedPyramidSet extends DefaultPyramidSet {
+
     protected static final Logger LOGGER = Logging.getLogger(CachedPyramidSet.class);
-    
-    // NIO Reactor for queries
-    private static ConnectingIOReactor ioReactor = null;
-    private static BasicNIOConnPool pool = null;
-    private static HttpAsyncRequester requester;
-    
-    static{
+
+    private static final ClientBootstrap BOOTSTRAP;
+
+    static {
+        BOOTSTRAP = new ClientBootstrap(
+                new NioClientSocketChannelFactory(
+                Executors.newCachedThreadPool(),
+                Executors.newCachedThreadPool()));
+        BOOTSTRAP.setOption("keepAlive", true);
+        BOOTSTRAP.setOption("tcpNoDelay", true);
+        BOOTSTRAP.setOption("reuseAddress", true);
+        BOOTSTRAP.setOption("connectTimeoutMillis", 30000);
         
-        try{
-            // HTTP parameters for the client
-            final HttpParams params = new SyncBasicHttpParams();
-                params
-                    .setIntParameter(CoreConnectionPNames.SO_TIMEOUT, 30000)
-                    .setIntParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, 3000)
-                    .setIntParameter(CoreConnectionPNames.SOCKET_BUFFER_SIZE, 30 * 1024)
-                    .setBooleanParameter(CoreConnectionPNames.TCP_NODELAY, true)
-                    .setBooleanParameter(CoreConnectionPNames.SO_REUSEADDR, true)
-                    .setBooleanParameter(CoreConnectionPNames.SO_KEEPALIVE, true)
-                    .setParameter(CoreProtocolPNames.USER_AGENT, "Test/1.1");
-                
-            // Create HTTP protocol processing chain
-            final HttpProcessor httpproc = new ImmutableHttpProcessor(new HttpRequestInterceptor[] {
-                    // Use standard client-side protocol interceptors
-                    new RequestContent(),
-                    new RequestTargetHost(),
-                    new RequestConnControl(),
-                    new RequestUserAgent(),
-                    new RequestExpectContinue()});
-            
-            // Create client-side HTTP protocol handler
-            final HttpAsyncRequestExecutor protocolHandler = new HttpAsyncRequestExecutor();
-            // Create client-side I/O event dispatch
-            final IOEventDispatch ioEventDispatch = new DefaultHttpClientIODispatch(protocolHandler, params);
-            // Create client-side I/O reactor
-//            final IOReactorConfig config = new IOReactorConfig();
-//            config.setIoThreadCount(2);
-            ioReactor = new DefaultConnectingIOReactor();
-            // Create HTTP connection pool
-            pool = new BasicNIOConnPool(ioReactor, params);
-            // Limit total number of connections to just two
-            pool.setDefaultMaxPerRoute(2);
-            pool.setMaxTotal(2);
-            // Run the I/O reactor in a separate thread
-            final Thread t = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        // Ready to go!
-                        ioReactor.execute(ioEventDispatch);
-                    } catch (InterruptedIOException ex) {
-                        System.err.println("Interrupted");
-                    } catch (IOException e) {
-                        System.err.println("I/O error: " + e.getMessage());
-                    }
-                    System.out.println("Shutdown");
-                }
-            });
-            // Start the client thread
-            t.start();
-            
-            // Create HTTP requester
-            requester = new HttpAsyncRequester(
-                    httpproc, new DefaultConnectionReuseStrategy(), params);
-            
-        }catch(Exception ex){
-            LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
-        }
-        
+        //TODO release the bootstrap resources on application close. bootstrap.releaseExternalResources();
     }
-    
+
     /**
      * Cache the last queried tiles
      */
-    private final Cache<String,RenderedImage> tileCache;
-    
+    private final Cache<String, RenderedImage> tileCache;
     protected final Server server;
     protected final boolean useURLQueries;
     protected final boolean cacheImages;
@@ -151,49 +86,48 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet{
         this.server = server;
         this.useURLQueries = useURLQueries;
         this.cacheImages = cacheImages;
-        if(cacheImages){
+        if (cacheImages) {
             tileCache = new Cache<String, RenderedImage>(30, 30, false);
-        }else{
+        } else {
             tileCache = null;
         }
     }
-        
-    protected Server getServer(){
+
+    protected Server getServer() {
         return server;
     }
-      
-    public abstract Request getTileRequest(GridMosaic mosaic, int col, int row, Map hints) throws DataStoreException ;
-    
-    public TileReference getTile(GridMosaic mosaic, int col, int row, Map hints) throws DataStoreException{
-        
+
+    public abstract Request getTileRequest(GridMosaic mosaic, int col, int row, Map hints) throws DataStoreException;
+
+    public TileReference getTile(GridMosaic mosaic, int col, int row, Map hints) throws DataStoreException {
+
         final Object input;
-        if(cacheImages){
+        if (cacheImages) {
             input = getTileImage(mosaic, col, row, hints);
-        }else{
+        } else {
             try {
                 input = getTileRequest(mosaic, col, row, hints).getURL();
             } catch (MalformedURLException ex) {
-                throw new DataStoreException(ex.getMessage(),ex);
+                throw new DataStoreException(ex.getMessage(), ex);
             }
         }
-        
+
         return new DefaultTileReference(null, input, 0, new Point(col, row));
     }
-        
-    private static String toId(GridMosaic mosaic, int col, int row, Map hints){
+
+    private static String toId(GridMosaic mosaic, int col, int row, Map hints) {
         final String pyramidId = mosaic.getPyramid().getId();
         final String mosaicId = mosaic.getId();
-        
-        final StringBuilder sb = new StringBuilder(pyramidId).append('_').append(mosaicId)
-                .append('_').append(col).append('_').append(row);
-        
+
+        final StringBuilder sb = new StringBuilder(pyramidId).append('_').append(mosaicId).append('_').append(col).append('_').append(row);
+
         return sb.toString();
     }
-    
-    private RenderedImage getTileImage(GridMosaic mosaic, int col, int row, Map hints) throws DataStoreException{
-        
+
+    private RenderedImage getTileImage(GridMosaic mosaic, int col, int row, Map hints) throws DataStoreException {
+
         final String tileId = toId(mosaic, col, row, hints);
-        
+
         //use the cache if available        
         RenderedImage value = tileCache.peek(tileId);
         if (value == null) {
@@ -203,12 +137,12 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet{
                 if (value == null) {
                     final Request request = getTileRequest(mosaic, col, row, hints);
                     InputStream stream = null;
-                    try{
+                    try {
                         stream = request.getResponseStream();
                         value = ImageIO.read(stream);
-                    }catch (IOException ex) {
+                    } catch (IOException ex) {
                         LOGGER.log(Level.WARNING, ex.getMessage(), ex);
-                    }finally{
+                    } finally {
                         try {
                             stream.close();
                         } catch (IOException ex) {
@@ -222,56 +156,55 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet{
         }
         return value;
     }
-    
-    
-    public BlockingQueue<Object> getTiles(GridMosaic mosaic, Collection<? extends Point> locations, Map hints) throws DataStoreException{
-                
-        
-        
-        if(!cacheImages || !useURLQueries){
+
+    public BlockingQueue<Object> getTiles(GridMosaic mosaic, Collection<? extends Point> locations, Map hints) throws DataStoreException {
+
+
+
+        if (!cacheImages || !useURLQueries) {
             //can not optimize a non url server
             return AbstractGridMosaic.getTiles(mosaic, locations, hints);
         }
-        
+
         final Server server = getServer();
-        
-        if(server == null){
+
+        if (server == null) {
             return AbstractGridMosaic.getTiles(mosaic, locations, hints);
         }
-        
-        if(!(server.getClientSecurity() == DefaultClientSecurity.NO_SECURITY)){
+
+        if (!(server.getClientSecurity() == DefaultClientSecurity.NO_SECURITY)) {
             //we can optimize only if there is no security
             return AbstractGridMosaic.getTiles(mosaic, locations, hints);
         }
-        
+
         final URL url = server.getURL();
         final String protocol = url.getProtocol();
-        
-        if(!"http".equalsIgnoreCase(protocol)){
+
+        if (!"http".equalsIgnoreCase(protocol)) {
             //we can optimize only an http protocol
             return AbstractGridMosaic.getTiles(mosaic, locations, hints);
         }
-        
-        
+
+
         final CancellableQueue<Object> queue = new CancellableQueue<Object>(1000);
-        
+
         //compose the requiered queries
         final List<ImagePack> downloadList = new ArrayList<ImagePack>();
-        for(Point p : locations){
+        for (Point p : locations) {
             //check the cache if we have the image already
             final String tid = toId(mosaic, p.x, p.y, hints);
             final RenderedImage image = tileCache.get(tid);
-            
+
             if (queue.isCancelled()) {
                 return queue;
             }
-            
-            if(image != null){
+
+            if (image != null) {
                 //image was in cache, reuse it
                 final ImagePack pack = new ImagePack(tid, mosaic, p);
                 pack.img = image;
                 queue.offer(pack.getTile());
-            }else{
+            } else {
                 //we will have to download this image
                 String str;
                 try {
@@ -284,27 +217,29 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet{
                 }
             }
         }
-        
+
         //nothing to download, everything was in cache.
-        if(downloadList.isEmpty()){
+        if (downloadList.isEmpty()) {
             queue.offer(GridMosaic.END_OF_QUEUE); //end sentinel
             return queue;
         }
-        
-        
+
         ////////////////////////////////////////////////////////////////////////
         // USE NIO TO QUERY EVERYTHING IN PARALLAL /////////////////////////////
         ////////////////////////////////////////////////////////////////////////
-        
+
         final String host = url.getHost();
         final int port = (url.getPort() == -1) ? url.getDefaultPort() : url.getPort();
-        
-                    
-        final CountDownLatch latch = new CountDownLatch(downloadList.size()){
+
+
+        final ChannelGroup group = new DefaultChannelGroup("group");
+
+        final CountDownLatch latch = new CountDownLatch(downloadList.size()) {
+
             @Override
             public void countDown() {
                 super.countDown();
-                if(getCount() <= 0){
+                if (getCount() <= 0) {
                     try {
                         //put a custom object, this is used in the iterator 
                         //to detect the end.
@@ -315,59 +250,49 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet{
                 }
             }
         };
-
+        
+        final Map<Integer, ImagePack> PACK_MAP = new ConcurrentHashMap<Integer, ImagePack>();
+        
+        // Set up the event pipeline factory.
+        BOOTSTRAP.setPipelineFactory(new TilePipelineFactory(queue, latch, PACK_MAP));
+        
         for (final ImagePack pack : downloadList) {
-            final HttpHost httphost = new HttpHost(host, port, protocol);
-            final BasicHttpRequest request = new BasicHttpRequest("GET", pack.getRequestPath());
-            requester.execute(
-                    new BasicAsyncRequestProducer(httphost, request),
-                    new BasicAsyncResponseConsumer(),
-                    pool,
-                    new BasicHttpContext(),
-                    // Handle HTTP response from a callback
-                    new FutureCallback<HttpResponse>() {
+            final ChannelFuture future = BOOTSTRAP.connect(new InetSocketAddress(host, port));
 
-                        @Override
-                        public void completed(final HttpResponse response) {
-                            if (queue.isCancelled()) {
-                                return;
-                            }
-                            
-                            try {
-                                pack.setBuffer(response.getEntity().getContent());
-                                queue.put(pack.getTile());
-                            } catch (IOException ex) {
-                                LOGGER.log(Level.WARNING, ex.getMessage(), ex);
-                            } catch (Exception ex) {
-                                LOGGER.log(Level.WARNING, ex.getMessage(), ex);
-                            }
-                            latch.countDown();
-                        }
+            future.addListener(new ChannelFutureListener() {
 
-                        @Override
-                        public void failed(final Exception ex) {
-                            latch.countDown();
-                        }
+                @Override
+                public void operationComplete(ChannelFuture cf) throws Exception {
 
-                        @Override
-                        public void cancelled() {
-                            latch.countDown();
-                        }
+                    final Channel channel = future.getChannel();
+                    group.add(channel);
+                    PACK_MAP.put(channel.getId(), pack);
 
+                    final HttpRequest request = new DefaultHttpRequest(
+                            HttpVersion.HTTP_1_1, HttpMethod.GET, getServer().getURL() + pack.requestPath);
+                    request.setHeader(HttpHeaders.Names.HOST, host);
+                    request.setHeader(HttpHeaders.Names.CONNECTION, HttpHeaders.Values.CLOSE);
+                    request.setHeader(HttpHeaders.Names.ACCEPT_ENCODING, HttpHeaders.Values.BYTES);
+
+                    if (channel.isOpen() && channel.isWritable() && !queue.isCancelled()) {
+                        channel.write(request);
+                    }
+                }
             });
-        }   
-                
+        }
+
         return queue;
     }
-    
+
     /**
      * Used is NIO queries, act as an information container for each query.
      */
-    private class ImagePack{
-        
+    private class ImagePack {
+
         private final String requestPath;
         private final GridMosaic mosaic;
         private final Point pt;
+        private final ChannelBuffer buffer = ChannelBuffers.dynamicBuffer();
         private RenderedImage img;
 
         public ImagePack(String requestPath, GridMosaic mosaic, Point pt) {
@@ -375,29 +300,129 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet{
             this.mosaic = mosaic;
             this.pt = pt;
         }
-        
-        public String getRequestPath(){
+
+        public String getRequestPath() {
             return requestPath;
         }
-        
-        public void setBuffer(InputStream buffer) {
-            try{
-                img = ImageIO.read(buffer);
-                final String tid = toId(mosaic, pt.x, pt.y, null);
-                //store it in the cache
-                tileCache.put(tid, img);
-                
-            }catch(Exception ex){
-                LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+
+        public TileReference getTile() {
+            if(img == null){
+                try {
+                    img = ImageIO.read(new ByteArrayInputStream(buffer.array()));
+                    final String tid = toId(mosaic, pt.x, pt.y, null);
+                    //store it in the cache
+                    tileCache.put(tid, img);
+                } catch (Exception ex) {
+                    LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+                }
+            }
+            return new DefaultTileReference(null, img, 0, pt);
+        }
+    }
+
+    /**
+     * Pipeline Factory.
+     */
+    private class TilePipelineFactory implements ChannelPipelineFactory {
+
+        private final CancellableQueue<Object> queue;
+        private final CountDownLatch latch;
+        private final Map<Integer,ImagePack> packs;
+
+        public TilePipelineFactory(final CancellableQueue<Object> queue, 
+                final CountDownLatch latch, final Map<Integer,ImagePack> packs) {
+            this.queue = queue;
+            this.latch = latch;
+            this.packs = packs;
+        }
+
+        @Override
+        public ChannelPipeline getPipeline() throws Exception {
+            final ChannelPipeline pipeline = new DefaultChannelPipeline();
+            pipeline.addLast("codec", new HttpClientCodec());
+            pipeline.addLast("handler", new TileClientHandler(queue, latch, packs));
+            return pipeline;
+        }
+    }
+
+    /**
+     * ChannelHandler that aggregate chunks and update ImagePack, queue and latch. 
+     */
+    private class TileClientHandler extends SimpleChannelHandler {
+
+        private final CancellableQueue<Object> queue;
+        private final CountDownLatch latch;
+        private final Map<Integer,ImagePack> packs;
+        private boolean chunks;
+
+        public TileClientHandler(final CancellableQueue<Object> queue, 
+                final CountDownLatch latch, final Map<Integer,ImagePack> packs) {
+            this.queue = queue;
+            this.latch = latch;
+            this.packs = packs;
+        }
+
+        @Override
+        public void messageReceived(final ChannelHandlerContext ctx, final MessageEvent e) throws Exception {
+            final Integer channelID = e.getChannel().getId();
+            final ImagePack pack = packs.get(channelID);
+            
+            if (!chunks) {
+                final HttpResponse response = (HttpResponse) e.getMessage();
+
+                if (response.isChunked()) {
+                    chunks = true;
+
+                } else {
+                    final ChannelBuffer content = response.getContent();
+                    if (content.readable()) {
+                        pack.buffer.writeBytes(content);
+                        messageCompleted(e);
+                    }
+                }
+            } else {
+                final HttpChunk chunk = (HttpChunk) e.getMessage();
+                if (chunk.isLast()) {
+                    chunks = false;
+                    messageCompleted(e);
+
+                } else {
+                    pack.buffer.writeBytes(chunk.getContent());
+                }
+            }
+            
+            if(queue.isCancelled()){
+                ctx.getChannel().close();
             }
             
         }
-        
-        public TileReference getTile(){
-            final TileReference t = new DefaultTileReference(null, img, 0, pt);
-            return t;
+
+        @Override
+        public void exceptionCaught(final ChannelHandlerContext ctx, final ExceptionEvent e) throws Exception {
+            e.getCause().printStackTrace();
+            latch.countDown();
+            e.getChannel().close();
         }
-        
+
+        /**
+         * Message completed, all chunk are aggregated into buffer attribute.
+         * Create an InputStream from that buffer and update PackImage and add it tho queue.
+         * 
+         * @param e 
+         */
+        private void messageCompleted(final MessageEvent e) {
+            final Integer channelID = e.getChannel().getId();
+            final ImagePack pack = packs.get(channelID);
+            
+            try {
+                queue.put(pack.getTile());
+            } catch (Exception ex) {
+                LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+            }
+            
+            latch.countDown();
+            packs.remove(channelID);
+            e.getChannel().close();
+        }
     }
-    
 }

@@ -223,12 +223,6 @@
          <version>3.5.0</version>
       </dependency>
       
-      <dependency>
-        <groupId>org.apache.httpcomponents</groupId>
-        <artifactId>httpcore-nio</artifactId>
-        <version>4.2-beta1</version>
-      </dependency>
-
       <!-- Jasper report -->
       <dependency>
         <groupId>net.sf.jasperreports</groupId>
@@ -305,6 +299,13 @@
           <groupId>org.codehaus.woodstox</groupId>
           <artifactId>woodstox-core-lgpl</artifactId>
           <version>4.1.2</version>
+      </dependency>
+
+      <!-- Netty -->
+      <dependency>
+          <groupId>io.netty</groupId>
+          <artifactId>netty</artifactId>
+          <version>3.3.1.Final</version>
       </dependency>
 
     </dependencies>

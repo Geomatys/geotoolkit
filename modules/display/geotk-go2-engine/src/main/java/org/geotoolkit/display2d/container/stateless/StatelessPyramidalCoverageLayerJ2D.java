@@ -184,7 +184,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
         if(tileMaxRow > gridHeight) tileMaxRow = gridHeight;
                 
         //don't render layer if it requieres more then 100 queries
-        if( (tileMaxCol-tileMinCol) * (tileMaxRow-tileMinRow) > 100 ){
+        if( (tileMaxCol-tileMinCol) * (tileMaxRow-tileMinRow) > 500 ){
             System.out.println("Too much tiles requiered to render layer at this scale.");
             return;
         }
