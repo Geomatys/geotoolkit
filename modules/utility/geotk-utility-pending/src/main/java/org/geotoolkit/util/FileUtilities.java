@@ -876,15 +876,16 @@ public final class FileUtilities extends Static {
     public static List<File> unZipFileList(final InputStream is) {
         ZipInputStream in = null;
         final List<File> files = new ArrayList<File>();
-        final List<String> fileNames = new ArrayList<String>();
         try {
             in = new ZipInputStream(is);
             ZipEntry zi;
             while ((zi = in.getNextEntry()) != null) {
                 if (!zi.isDirectory()) {
-                    final String fileName = getUnicFileName(removeDirectory(zi.getName()), fileNames);
-                    fileNames.add(fileName);
-                    final File f = new File(fileName);
+                    final String fileName = removeDirectory(zi.getName());
+                    final String fileExt = extractExtension(zi.getName());
+                    final String suffix = "." + (fileExt != null ? fileExt : "tmp");
+                    
+                    final File f = File.createTempFile(fileName, suffix);
 
                     final FileOutputStream out = new FileOutputStream(f);
                     int c = 0;
@@ -914,15 +915,37 @@ public final class FileUtilities extends Static {
      * Remove the directory names before the file name.
      *
      * @param fileName A zipEntry file name.
-     * @return The zipEntry name without the directory structure.
+     * @return The zipEntry name without the directory structure and the file extention if exist.
      */
     private static String removeDirectory(final String fileName) {
         final int index = fileName.lastIndexOf('/');
+        final int dotIndex = fileName.lastIndexOf('.');
         if (index != -1) {
-            return fileName.substring(index + 1);
+            if(dotIndex != -1){
+                return fileName.substring(index + 1, dotIndex);
+            }else{
+                return fileName.substring(index + 1);
+            }
         }
         return fileName;
     }
+    
+    /**
+     * Extract the file extension from a string. 
+     * If the there is no extension, return null.
+     * 
+     * @param name A zipEntry file name.
+     * @return The zipEntry extension, or null if not found.
+     */
+    private static String extractExtension(final String fileName) {
+        final int dotIndex = fileName.lastIndexOf('.');
+        if(dotIndex != -1){
+            return fileName.substring(dotIndex + 1);
+        }else{
+            return null;
+        }
+    }
+
     
     /**
      * Return an unic name for the file in the specified list fileNames.
