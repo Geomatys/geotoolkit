@@ -93,7 +93,7 @@ final public strictfp class DefaultMathTransformFactoryTest {
 
     /**
      * Asks for names which are known to be duplicated. One of the duplicated elements
-     * is deprecated. Geotk shall return the non-deprecated one.
+     * is deprecated. However Geotk uses the same implementation.
      *
      * @throws NoSuchIdentifierException Should never happen.
      *
@@ -104,14 +104,12 @@ final public strictfp class DefaultMathTransformFactoryTest {
         final OperationMethod ellipsoidal = factory.getOperationMethod("EPSG:1028");
         final OperationMethod spherical   = factory.getOperationMethod("EPSG:1029");
         final OperationMethod deprecated  = factory.getOperationMethod("EPSG:9823");
-        // Following should intentionally be tested immediately after EPSG:9823.
         assertSame(spherical, factory.getOperationMethod("Equidistant Cylindrical (Spherical)"));
         assertSame("EPSG:1028 and 1029 are implemented by the same class.", ellipsoidal, spherical);
-        assertNotSame("Deprecated methods have their one implementation.", ellipsoidal, deprecated);
+        assertSame("Should share the non-deprecated implementation.", ellipsoidal, deprecated);
 
         assertFalse(isDeprecated(ellipsoidal, "Equidistant Cylindrical"));
         assertFalse(isDeprecated(spherical,   "Equidistant Cylindrical (Spherical)"));
-        assertTrue (isDeprecated(deprecated,  "Equidistant Cylindrical (Spherical)"));
 
         assertSame(spherical,   factory.getOperationMethod("Equidistant Cylindrical (Spherical)"));
         assertSame(ellipsoidal, factory.getOperationMethod("Equidistant Cylindrical"));

@@ -19,6 +19,7 @@ package org.geotoolkit.internal.referencing;
 
 import net.jcip.annotations.Immutable;
 import org.opengis.metadata.citation.Citation;
+import org.opengis.referencing.ReferenceIdentifier;
 import org.geotoolkit.referencing.NamedIdentifier;
 
 
@@ -37,6 +38,16 @@ public final class DeprecatedName extends NamedIdentifier {
      * For cross-version compatibility.
      */
     private static final long serialVersionUID = 1792369861343798471L;
+
+    /**
+     * Creates a new deprecated name with the same authority, code, version and remarks
+     * than the identifier.
+     *
+     * @param identifier The identifier.
+     */
+    public DeprecatedName(final ReferenceIdentifier identifier) {
+        super(identifier);
+    }
 
     /**
      * Creates a new deprecated name for the given code.

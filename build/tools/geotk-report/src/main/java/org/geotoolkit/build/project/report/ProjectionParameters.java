@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.build.project.report;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -32,8 +33,10 @@ import org.opengis.referencing.operation.Transformation;
 import org.opengis.referencing.operation.SingleOperation;
 import org.opengis.test.report.OperationParametersReport;
 
+import org.opengis.util.GenericName;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.util.collection.XCollections;
+import org.geotoolkit.referencing.DefaultReferenceIdentifier;
 import org.geotoolkit.referencing.operation.MathTransformProvider;
 
 import static org.geotoolkit.metadata.iso.citation.Citations.*;
@@ -41,6 +44,9 @@ import static org.geotoolkit.metadata.iso.citation.Citations.*;
 
 /**
  * Generates a list of projection parameters.
+ * <p>
+ * The {@linkplain #main(String[])} method create a "{@code operation-parameters.html}" file in
+ * the local directory. This file needs to be copied manually on the server hosting the web site.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.20
@@ -101,13 +107,19 @@ public final class ProjectionParameters extends OperationParametersReport {
     public static void main(final String[] args) throws IOException {
         final ProjectionParameters writer = new ProjectionParameters();
         writer.add(FactoryFinder.getMathTransformFactory(null));
-        writer.write(new File("operation-parameters.html"));
+        final File file = writer.write(new File("operation-parameters.html"));
+        System.out.println("Created " + file.getAbsolutePath());
     }
 
     /**
      * Creates a new row for the given operation and parameters. The given code spaces will
      * be ignored; we will use our own code spaces derived from the citations given at
      * construction time instead.
+     *
+     * @param  operation  The operation.
+     * @param  parameters The operation parameters, or {@code null} if none.
+     * @param  codeSpaces The code spaces for which to get the name and aliases.
+     * @return The new row, or {@code null} if none.
      */
     @Override
     protected Row createRow(final IdentifiedObject operation, final ParameterDescriptorGroup parameters, final Set<String> codeSpaces) {
@@ -132,6 +144,28 @@ public final class ProjectionParameters extends OperationParametersReport {
                         }
                         categoryIndex = i;
                         break;
+                    }
+                }
+            }
+        }
+        /*
+         * Search for deprecated names. We will render them as deleted name.
+         */
+        for (final Map.Entry<String,String[]> entry : row.names.entrySet()) {
+            final String authority = entry.getKey();
+            for (final GenericName candidate : operation.getAlias()) {
+                if (candidate instanceof DefaultReferenceIdentifier) {
+                    final DefaultReferenceIdentifier identifier = (DefaultReferenceIdentifier) candidate;
+                    if (identifier.isDeprecated() && authority.equalsIgnoreCase(identifier.getCodeSpace())) {
+                        final String[] codes = entry.getValue();
+                        final String deprecated = identifier.getCode();
+                        for (int i=0; i<codes.length; i++) {
+                            final String code = codes[i];
+                            if (code.equalsIgnoreCase(deprecated)) {
+                                codes[i] = "<del>" + code + "</del>";
+                                break; // Continue the outer loop.
+                            }
+                        }
                     }
                 }
             }
