@@ -71,7 +71,7 @@ public class PrimaryKey {
 
         // just one, no need to build support structures
         if (columns.size() == 1) {
-            return rs.getString(columns.get(0).getName());
+            return escapeDot(rs.getString(columns.get(0).getName()));
         }
 
         // more than one
@@ -85,12 +85,22 @@ public class PrimaryKey {
     public static String encodeFID(final List<Object> keyValues) {
         final StringBuilder fid = new StringBuilder();
         for (Object o : keyValues) {
-            fid.append(o).append('.');
+            final String str = escapeDot(o);
+            fid.append(str).append('.');
         }
         fid.setLength(fid.length() - 1);
         return fid.toString();
     }
 
+    private static String escapeDot(Object obj){
+        String str = String.valueOf(obj);
+        return str.replaceAll("\\.", "◼");
+    }
+    
+    private static String unescapeDot(String str){
+        return str.replaceAll("◼",".");
+    }
+    
     /**
      * Decodes a fid into its components based on a primary key.
      *
@@ -123,11 +133,13 @@ public class PrimaryKey {
             //can not do this or it will be a typed list which will raise errors a bit later.
             //values = Arrays.asList(split);
             values = new ArrayList(split.length);
-            for(Object o : split) values.add(o);
+            for(String o : split){
+                values.add(unescapeDot(o));
+            }
         } else {
             //single value case
             values = new ArrayList();
-            values.add(FID);
+            values.add(unescapeDot(FID));
         }
         if (values.size() != key.getColumns().size()) {
             throw new IllegalArgumentException("Illegal fid: " + FID + ". Expected " +
