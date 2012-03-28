@@ -71,6 +71,7 @@ import org.geotoolkit.style.function.InterpolationPoint;
 import org.geotoolkit.style.function.Method;
 import org.geotoolkit.style.function.Mode;
 import org.geotoolkit.util.converter.Classes;
+import org.opengis.coverage.Coverage;
 
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
@@ -255,9 +256,8 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
     private static RenderedImage applyStyle(GridCoverage2D coverage, final RasterSymbolizer styleElement,
                 final RenderingHints hints) throws PortrayalException {
 
-        RenderedImage image = null;
-
         //band select ----------------------------------------------------------
+        //works as a JAI operation
         final int nbDim = coverage.getNumSampleDimensions();
         if(nbDim > 1){
 
@@ -272,41 +272,35 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                     Integer.valueOf(channel.getChannelName())
                 };
             }else{
-                image = coverage.getRenderedImage();
-                
-                if (image.getColorModel().hasAlpha()) {
-                    indices = new int[]{
-                        Integer.valueOf(channels[0].getChannelName()),
-                        Integer.valueOf(channels[1].getChannelName()),
-                        Integer.valueOf(channels[2].getChannelName()),
-                        // Here we suppose that the transparent band is the last one. This is the
-                        // default behaviour with standard java.
-                        image.getSampleModel().getNumBands() - 1
-                        };
-                } else {
-                    indices = new int[]{
-                        Integer.valueOf(channels[0].getChannelName()),
-                        Integer.valueOf(channels[1].getChannelName()),
-                        Integer.valueOf(channels[2].getChannelName())
-                        };
-                }
+                indices = new int[]{
+                    Integer.valueOf(channels[0].getChannelName()),
+                    Integer.valueOf(channels[1].getChannelName()),
+                    Integer.valueOf(channels[2].getChannelName())
+                    };
             }
             
-            if(image == null){
-                image = coverage.getRenderedImage();
-            }
-            image = selectBand(image, indices);
+            coverage = (GridCoverage2D)selectBand(coverage, indices);
         }
 
+        
+        RenderedImage image = null;
+        
         //Recolor coverage -----------------------------------------------------
         final ColorMap recolor = styleElement.getColorMap();
         if(recolor != null && recolor.getFunction() != null){
+            //colormap is applyed on geophysic view
+            coverage = coverage.view(ViewType.GEOPHYSICS);
+            
             if(image == null){
                 image = coverage.getRenderedImage();
             }
             
             final Function fct = recolor.getFunction();
             image = recolor(image,fct);
+        }else{
+            //no colormap, used the default image rendered view
+            coverage = coverage.view(ViewType.RENDERED);
+            image = coverage.getRenderedImage();
         }
 
         //shaded relief---------------------------------------------------------
@@ -350,16 +344,13 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         return new ShadedReliefOp(img, null, null, null);
     }
 
-    private static RenderedImage selectBand(final RenderedImage image, final int[] indices){
-        if(image.getSampleModel().getNumBands() < indices.length){
+    private static Coverage selectBand(final Coverage coverage, final int[] indices){
+        if(coverage.getNumSampleDimensions() < indices.length){
             //not enough bands in the image
             LOGGER.log(Level.WARNING, "Raster Style define more bands than the data");
-            return image;
+            return coverage;
         }else{
-            final ParameterBlock pb = new ParameterBlock();
-            pb.addSource(image);
-            pb.add(indices);
-            return JAI.create("bandSelect",pb);
+            return Operations.DEFAULT.selectSampleDimension(coverage, indices);
         }
     }
 
