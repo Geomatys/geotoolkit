@@ -17,32 +17,22 @@
  */
 package org.geotoolkit.index.tree.calculator;
 
-import com.sun.org.apache.bcel.internal.generic.INSTANCEOF;
-import java.awt.geom.AffineTransform;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.vecmath.Matrix4d;
-import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import static org.geotoolkit.index.tree.DefaultTreeUtils.*;
 import org.geotoolkit.index.tree.Node;
+import org.geotoolkit.index.tree.hilbert.Hilbert;
 import org.geotoolkit.index.tree.hilbert.HilbertRTree;
 import org.geotoolkit.referencing.operation.MathTransforms;
-import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
-import org.geotoolkit.referencing.operation.matrix.Matrix3;
 import org.geotoolkit.referencing.operation.matrix.Matrix4;
-import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.util.ArgumentChecks;
-import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.TransformException;
 
 /**
@@ -388,13 +378,9 @@ public class Calculator3D extends Calculator {
             if (getSpace(bound) <= 0) {
                 final int nbCells2D = ((int) Math.pow(2, 2 * order));
                 if(getEdge(bound)<= 0){
-                    //on regle dans la seul dim ki rest
                     int index = -1;
                     for(int i = 0; i<3; i++){
-                        if(bound.getSpan(i) > 0){
-                            index = i;
-                            break;
-                        }
+                        if(bound.getSpan(i) > 0)index = i;break;
                     }
 
                     final double fract = bound.getSpan(index)/(2*nbCells2D);
@@ -402,11 +388,8 @@ public class Calculator3D extends Calculator {
                     final DirectPosition dpt = new GeneralDirectPosition(crs);
                     for(int i = 1; i<2*nbCells2D; i+= 2){
                         for(int j = 0; j<bound.getDimension(); j++){
-                            if(j!=index){
-                                dpt.setOrdinate(j, bound.getMedian(j));
-                            }
+                            if(j!=index)dpt.setOrdinate(j, bound.getMedian(j));
                         }
-
                         dpt.setOrdinate(index, valMin + i * fract);
                         listOfCentroidChild.add(dpt);
                     }
@@ -425,31 +408,14 @@ public class Calculator3D extends Calculator {
                         }
                     }
                     int[][] tabHV = new int[dim][dim];
-                    double planValue;
                     int  d0, d1;
                     switch(index){
-                        case 0 : {
-                            //defini sur yz
-                            planValue = bound.getLowerCorner().getOrdinate(0);
-                            d0 = 1;d1 = 2;
-                        }break;
-                        case 1 : {
-                            //defini sur xz
-                            planValue = bound.getLowerCorner().getOrdinate(1);
-                            d0 = 0;d1 = 2;
-                        }break;
-                        case 2 : {
-                            //defini sur xy
-                            planValue = bound.getLowerCorner().getOrdinate(2);
-                            d0 = 0; d1 = 1;
-                        }break;
+                        case 0 : d0 = 1;d1 = 2; break;//defined on yz plan
+                        case 1 : d0 = 0;d1 = 2; break;//defined on xz
+                        case 2 : d0 = 0; d1 = 1;break;//defined on xy
                         default : throw new IllegalStateException("invalid no space index : "+index);
                     }
-
-                    listOfCentroidChild.addAll(createPath2D(candidate, order, d0, d1));
-                    for(DirectPosition pos : listOfCentroidChild){
-                        pos.setOrdinate(index, planValue);//check les add dans le tablo
-                    }
+                    listOfCentroidChild.addAll(createPath(candidate, order, d0, d1));//////
                     for (int i = 0, s = listOfCentroidChild.size(); i < s; i++) {
                         final DirectPosition ptCTemp = listOfCentroidChild.get(i);
                         ArgumentChecks.ensureNonNull("the crs ptCTemp", ptCTemp.getCoordinateReferenceSystem());
@@ -463,46 +429,123 @@ public class Calculator3D extends Calculator {
             } else {
 
                 int[][][] tabHV = new int[dim][dim][dim];
-                //pt0
-                dp0.setOrdinate(0, minx);
-                dp0.setOrdinate(1, maxy);
-                dp0.setOrdinate(2, maxz);
-                //pt1
-                dp1.setOrdinate(0, minx);
-                dp1.setOrdinate(1, maxy);
-                dp1.setOrdinate(2, minz);
-                //pt2
-                dp2.setOrdinate(0, minx);
-                dp2.setOrdinate(1, miny);
-                dp2.setOrdinate(2, minz);
-                //pt3
-                dp3.setOrdinate(0, minx);
-                dp3.setOrdinate(1, miny);
-                dp3.setOrdinate(2, maxz);
-                //pt4
-                dp4.setOrdinate(0, maxx);
-                dp4.setOrdinate(1, miny);
-                dp4.setOrdinate(2, maxz);
-                //pt5
-                dp5.setOrdinate(0, maxx);
-                dp5.setOrdinate(1, miny);
-                dp5.setOrdinate(2, minz);
-                //pt6
-                dp6.setOrdinate(0, maxx);
-                dp6.setOrdinate(1, maxy);
-                dp6.setOrdinate(2, minz);
-                //pt7
-                dp7.setOrdinate(0, maxx);
-                dp7.setOrdinate(1, maxy);
-                dp7.setOrdinate(2, maxz);
+//                //pt0
+//                dp0.setOrdinate(0, minx);
+//                dp0.setOrdinate(1, maxy);
+//                dp0.setOrdinate(2, maxz);
+////                pt1
+//                dp1.setOrdinate(0, minx);
+//                dp1.setOrdinate(1, maxy);
+//                dp1.setOrdinate(2, minz);
+////                pt2
+//                dp2.setOrdinate(0, minx);
+//                dp2.setOrdinate(1, miny);
+//                dp2.setOrdinate(2, minz);
+////                pt3
+//                dp3.setOrdinate(0, minx);
+//                dp3.setOrdinate(1, miny);
+//                dp3.setOrdinate(2, maxz);
+////                pt4
+//                dp4.setOrdinate(0, maxx);
+//                dp4.setOrdinate(1, miny);
+//                dp4.setOrdinate(2, maxz);
+////                pt5
+//                dp5.setOrdinate(0, maxx);
+//                dp5.setOrdinate(1, miny);
+//                dp5.setOrdinate(2, minz);
+////                pt6
+//                dp6.setOrdinate(0, maxx);
+//                dp6.setOrdinate(1, maxy);
+//                dp6.setOrdinate(2, minz);
+////                pt7
+//                dp7.setOrdinate(0, maxx);
+//                dp7.setOrdinate(1, maxy);
+//                dp7.setOrdinate(2, maxz);
+//                listOfCentroidChild.addAll(UnmodifiableArrayList.wrap(dp2, dp3, dp0, dp1, dp6, dp7, dp4, dp5));
+//////
+//                if (order > 1) {
+//                    for (int i = 1; i < order; i++) {
+//                            createHB(candidate);
+//                    }
+//                }
+//                if(order==2){
+//                    System.out.println("");
+//                }
 
-                listOfCentroidChild.addAll(UnmodifiableArrayList.wrap(dp0, dp1, dp2, dp3, dp4, dp5, dp6, dp7));
+                listOfCentroidChild.addAll(createPath(candidate, order, 0, 1,2));
 
-                if (order > 1) {
-                    for (int i = 1; i < order; i++) {
-                            createHB(candidate);
-                    }
-                }
+                //////////////////////////dans le but de faire des verifs ////////////////////
+//                if(order==3){
+//                    Hilbert hi = new Hilbert(3, new int[12]);
+//
+//                    int[]base = hi.generateBasicPath(2, new int[]{2,1,2});
+//                    System.out.println("generic base dim = "+Arrays.toString(base));
+////                    int[] resultbase = hi.iterateDimPath(base, order);
+//                    int[] resultbase = new int[(2<<3*order-1)];
+//                    boolean[] bool = hi.generateBasicSign(2, new boolean[]{true, true, false});
+////                    boolean[] resultbool = hi.procesSignPath3D(bool, order);
+//                    boolean[]resultbool = new boolean[(2<<3*order-1)];
+//
+//                    hi.iterateDimPathBis(base,order, resultbase, resultbool);
+//                    String stbool = "";
+//
+//                    System.out.println("avec hilbert");
+//
+//                    for(int i = 0;i<resultbool.length;i++){
+//                        if(i%64==0){
+//                            System.out.println(stbool);
+//                            stbool = "";
+//                        }
+//                        stbool=(resultbool[i])?stbool+"+, ":stbool+"-, ";
+//                    }
+//                    System.out.println(stbool);
+//
+//                    String stbase = "";
+//                    for(int i :resultbase){
+//                        stbase+=i+", ";
+//                    }
+//                    int compteurPath = 0;
+//                    int[]thePath = new int[listOfCentroidChild.size()];
+//                    boolean[]theSign = new boolean[listOfCentroidChild.size()];
+//                    for(int i = 0;i<listOfCentroidChild.size()-1;i++){
+//                        final DirectPosition dpfirst = listOfCentroidChild.get(i);
+//                        final DirectPosition dpsec = listOfCentroidChild.get(i+1);
+//
+//                        for(int j = 0;j<bound.getDimension();j++){
+//                            if(Math.abs(dpfirst.getOrdinate(j)-dpsec.getOrdinate(j))>1E-8){
+//                                thePath[compteurPath] = j;
+//                                double cursi = Math.signum(dpsec.getOrdinate(j)-dpfirst.getOrdinate(j));
+//                                boolean curbool = (cursi>0)?true:false;
+//                                theSign[compteurPath] = curbool;
+//                                compteurPath++;
+//                            }
+//                        }
+//                    }
+//
+//                    String strpath = "";
+//                    String strbool = "";
+//                    System.out.println("avec matrice");
+//                    for(int i = 0;i<thePath.length;i++){
+//                        if(i%64==0){
+//                            System.out.println(strbool);
+//                            strbool = "";
+//                        }
+//                        strpath+=thePath[i]+", ";
+//                        strbool=(theSign[i])?strbool+"+, ":strbool+"-, ";
+//                    }
+//                    System.out.println(strbool);
+//
+//                    System.out.println("length ref = "+thePath.length);
+//                    System.out.println("length cur = "+resultbase.length);
+////
+//                    System.out.println("tab ref = ["+strpath+"]");//patern des coordonnées OK !!!!! ;-)))
+//                    System.out.println("tab cur = ["+stbase+"]");
+//
+////                    System.out.println("bool ref : ["+strbool+"]");
+////                    System.out.println("bool cur : ["+stbool+"]");
+//
+//                }
+                //////////////////////////////////////fin verif/////////////////////////////////
 
                 for (int i = 0, s = listOfCentroidChild.size(); i < s; i++) {
                     final DirectPosition ptCTemp = listOfCentroidChild.get(i);
@@ -566,157 +609,29 @@ public class Calculator3D extends Calculator {
         }
     }
 
-    private static List<DirectPosition> createPath2D(final Node hl, final int ordre, final int dim0, final int dim1) {
+    private static List<DirectPosition> createPath(final Node hl, final int ordre, final int ...dims) {
         final Envelope bound = hl.getBound();
+        final DirectPosition median = getMedian(bound);
+        final int spaceDimension = dims.length;
         final List<DirectPosition> path = new ArrayList<DirectPosition>();
-        iteratePath2DTest(dim0, dim1, new DirectPosition[] {getMedian(bound)},
-                bound.getSpan(dim0), bound.getSpan(dim1), 0, false, ordre-1, path);
+        final int[] generalPath = Hilbert.createPath(spaceDimension, ordre);
+        final double[] spans = new double[spaceDimension];
+        for(int i = 0; i<spaceDimension;i++){
+            spans[i] = bound.getSpan(dims[i])/(2<<(ordre-1));
+        }
+        final double[] coords = new double[spaceDimension];
+        for(int i = 0;i<spaceDimension;i++){
+            coords[i] = bound.getMinimum(dims[i]) + spans[i]/2;
+        }
+        for(int i = 0,l=generalPath.length; i<=l-spaceDimension; i+=spaceDimension){
+            final DirectPosition dptemp = new GeneralDirectPosition(median);
+            for(int j = 0;j<spaceDimension;j++){
+                dptemp.setOrdinate(dims[j], coords[j]+spans[j]*generalPath[i+j]);
+            }
+            path.add(dptemp);
+        }
         return path;
     }
-
-    /**
-     *
-     * @param centroids Must be an array of length 4.
-     */
-    private static void iteratePath2D(final int dim0, final int dim1,
-            final DirectPosition[] centroids, final double span0, final double span1,
-            int firstCorner, boolean reverse, final int remainingOrder, final List<DirectPosition> addTo)
-    {
-        final double q0 = span0 / 2;
-        final double q1 = span1 / 2;
-        for (int i=0; i<centroids.length; i++) {
-            switch (i) {
-                case 3: firstCorner ^= 2; // Fall through
-                case 1: reverse = !reverse;
-            }
-            final DirectPosition[] path = createQuadPath2D(dim0, dim1, centroids[i], q0, q1, firstCorner, reverse);
-            if (remainingOrder == 0) {
-                addTo.addAll(Arrays.asList(path));
-            } else {
-                iteratePath2D(dim0, dim1, path, q0, q1, firstCorner, !reverse, remainingOrder-1, addTo);
-            }
-        }
-    }
-
-    /**
-     *
-     * @param corner 0: rotate right (-pi/2) and reverse point order.
-     *             1: no change
-     *             2: no change
-     *             3: rotate left (pi/2) and reverse point order.
-     */
-    private static DirectPosition[] createQuadPath2D(final int dim0, final int dim1,
-            final DirectPosition centroid, final double span0, final double span1,
-            int corner, final boolean reverse)
-    {
-        final DirectPosition[] positions = new DirectPosition[4];
-        final double centre0 = centroid.getOrdinate(dim0);
-        final double centre1 = centroid.getOrdinate(dim1);
-
-        final double quart0 = span0 / 2;
-        final double quart1 = span1 / 2;
-
-        for (int i=0; i<4; i++) {
-            final double c0, c1;
-            switch (corner) {
-                case 0: c0 = centre0 - quart0; c1 = centre1 - quart1; break;
-                case 1: c0 = centre0 - quart0; c1 = centre1 + quart1; break;
-                case 2: c0 = centre0 + quart0; c1 = centre1 + quart1; break;
-                case 3: c0 = centre0 + quart0; c1 = centre1 - quart1; break;
-                default: throw new AssertionError(corner);
-            }
-            final DirectPosition pos = new GeneralDirectPosition(centroid);
-            pos.setOrdinate(dim0, c0);
-            pos.setOrdinate(dim1, c1);
-            positions[i] = pos;
-            if (reverse) {if (--corner < 0) corner = 3;}
-            else         {if (++corner > 3) corner = 0;}
-        }
-        return positions;
-    }
-
-
-    /**
-     *
-     * @param centroids Must be an array of length 4.
-     */
-    private static void iteratePath2DTest(final int dim0, final int dim1,
-            final DirectPosition[] centroids, final double span0, final double span1,
-            int firstCorner, boolean reverse, final int remainingOrder, final List<DirectPosition> addTo)
-    {
-        final double q0 = span0 / 2;
-        final double q1 = span1 / 2;
-        for (int i=0; i<centroids.length; i++) {
-            switch (i) {
-                case 3: firstCorner ^= 2; // Fall through //on fait un ou exclusif sur le 2eme bit
-                case 1: reverse = !reverse;
-            }
-            //final DirectPosition[] path = createQuadPath2D(dim0, dim1, centroids[i], q0, q1, firstCorner, reverse);
-            final DirectPosition[] path = new DirectPosition[4];
-            final double centre0 = centroids[i].getOrdinate(dim0);
-            final double centre1 = centroids[i].getOrdinate(dim1);
-
-            final double quart0 = q0 / 2;
-            final double quart1 = q1 / 2;
-            final double c0, c1;
-            switch (firstCorner) {
-                case 0: c0 = centre0 - quart0; c1 = centre1 - quart1; break;
-                case 1: c0 = centre0 - quart0; c1 = centre1 + quart1; break;
-                case 2: c0 = centre0 + quart0; c1 = centre1 + quart1; break;
-                case 3: c0 = centre0 + quart0; c1 = centre1 - quart1; break;
-                default: throw new AssertionError(firstCorner);
-            }
-            final DirectPosition pos = new GeneralDirectPosition(centroids[i]);
-            pos.setOrdinate(dim0, c0);
-            pos.setOrdinate(dim1, c1);
-            path[i] = pos;
-            if (reverse) {if (--firstCorner < 0) firstCorner = 3;}
-            else         {if (++firstCorner > 3) firstCorner = 0;}
-            if (remainingOrder == 0) {
-                addTo.addAll(Arrays.asList(path));
-            } else {
-                iteratePath2DTest(dim0, dim1, path, q0, q1, firstCorner, !reverse, remainingOrder-1, addTo);
-            }
-        }
-    }
-
-    /**
-     *
-     * @param corner 0: rotate right (-pi/2) and reverse point order.
-     *             1: no change
-     *             2: no change
-     *             3: rotate left (pi/2) and reverse point order.
-     */
-    private static DirectPosition[] createQuadPath2DTest(final int dim0, final int dim1,
-            final DirectPosition centroid, final double span0, final double span1,
-            int corner, final boolean reverse)
-    {
-        final DirectPosition[] positions = new DirectPosition[4];
-        final double centre0 = centroid.getOrdinate(dim0);
-        final double centre1 = centroid.getOrdinate(dim1);
-
-        final double quart0 = span0 / 2;
-        final double quart1 = span1 / 2;
-
-        for (int i=0; i<4; i++) {
-            final double c0, c1;
-            switch (corner) {
-                case 0: c0 = centre0 - quart0; c1 = centre1 - quart1; break;
-                case 1: c0 = centre0 - quart0; c1 = centre1 + quart1; break;
-                case 2: c0 = centre0 + quart0; c1 = centre1 + quart1; break;
-                case 3: c0 = centre0 + quart0; c1 = centre1 - quart1; break;
-                default: throw new AssertionError(corner);
-            }
-            final DirectPosition pos = new GeneralDirectPosition(centroid);
-            pos.setOrdinate(dim0, c0);
-            pos.setOrdinate(dim1, c1);
-            positions[i] = pos;
-            if (reverse) {if (--corner < 0) corner = 3;}
-            else         {if (++corner > 3) corner = 0;}
-        }
-        return positions;
-    }
-
 
 
     /**
@@ -773,38 +688,39 @@ public class Calculator3D extends Calculator {
             switch(i){
                 case 0 :{
                     mtGlob.set(new Matrix4(1, 0, 0, centreX - quart_X,
-                                           0, 1, 0, centreY + quart_Y,
-                                           0, 0, 1, centreZ + quart_Z,
+                                           0, 1, 0, centreY - quart_Y,
+                                           0, 0, 1, centreZ - quart_Z,
                                            0, 0, 0, 1));
-                    mtRot.set(getRotate_Y(-PI_2));
+                    mtRot.set(getRotate_Z(-PI_2));
+                    mtRot.multiply(getRotate_Y(-PI_2));
                 }break;
 
                 case 1 : case 2 :{
                     if(i == 1){
                         mtGlob.set(new Matrix4(1, 0, 0, centreX - quart_X,
-                                               0, 1, 0, centreY + quart_Y,
-                                               0, 0, 1, centreZ - quart_Z,
+                                               0, 1, 0, centreY - quart_Y,
+                                               0, 0, 1, centreZ + quart_Z,
                                                0, 0, 0, 1));
                     }else{
                         mtGlob.set(new Matrix4(1, 0, 0, centreX - quart_X,
-                                               0, 1, 0, centreY - quart_Y,
-                                               0, 0, 1, centreZ - quart_Z,
+                                               0, 1, 0, centreY + quart_Y,
+                                               0, 0, 1, centreZ + quart_Z,
                                                0, 0, 0, 1));
                     }
-                    mtRot.set(getRotate_X(PI_2));
-                    mtRot.multiply(getRotate_Y(-PI_2));
+                    mtRot.set(getRotate_Y(PI_2));
+                    mtRot.multiply(getRotate_Z(PI_2));
                 }break;
                 case 3 : case 4 :{
 
                     if(i == 3){
                         mtGlob.set(new Matrix4(1, 0, 0, centreX - quart_X,
-                                               0, 1, 0, centreY - quart_Y,
-                                               0, 0, 1, centreZ + quart_Z,
+                                               0, 1, 0, centreY + quart_Y,
+                                               0, 0, 1, centreZ - quart_Z,
                                                0, 0, 0, 1));
                     }else{
                         mtGlob.set(new Matrix4(1, 0, 0, centreX + quart_X,
-                                               0, 1, 0, centreY - quart_Y,
-                                               0, 0, 1, centreZ + quart_Z,
+                                               0, 1, 0, centreY + quart_Y,
+                                               0, 0, 1, centreZ - quart_Z,
                                                0, 0, 0, 1));
                     }
                     mtRot.set(getRotate_X(Math.PI));
@@ -812,25 +728,26 @@ public class Calculator3D extends Calculator {
                 case 5 : case 6 : {
                     if(i == 5){
                         mtGlob.set(new Matrix4(1, 0, 0, centreX + quart_X,
-                                               0, 1, 0, centreY - quart_Y,
-                                               0, 0, 1, centreZ - quart_Z,
+                                               0, 1, 0, centreY + quart_Y,
+                                               0, 0, 1, centreZ + quart_Z,
                                                0, 0, 0, 1));
                     }else{
                         mtGlob.set(new Matrix4(1, 0, 0, centreX + quart_X,
-                                               0, 1, 0, centreY + quart_Y,
-                                               0, 0, 1, centreZ - quart_Z,
+                                               0, 1, 0, centreY - quart_Y,
+                                               0, 0, 1, centreZ + quart_Z,
                                                0, 0, 0, 1));
                     }
-                    mtRot.set(getRotate_Y(PI_2));
-                    mtRot.multiply(getRotate_Z(PI_2));
+                    mtRot.set(getRotate_Y(-PI_2));
+                    mtRot.multiply(getRotate_Z(-PI_2));
                 }break;
                 case 7 :{
 
                     mtGlob.set(new Matrix4(1, 0, 0, centreX + quart_X,
-                                           0, 1, 0, centreY + quart_Y,
-                                           0, 0, 1, centreZ + quart_Z,
+                                           0, 1, 0, centreY - quart_Y,
+                                           0, 0, 1, centreZ - quart_Z,
                                            0, 0, 0, 1));
-                    mtRot.set(getRotate_Y(PI_2));
+                    mtRot.set(getRotate_X(-PI_2));
+                    mtRot.multiply(getRotate_Z(PI_2));
                 }break;
                 default : throw new IllegalStateException("createHB crash ");
             }
@@ -842,19 +759,22 @@ public class Calculator3D extends Calculator {
             mtGlob.multiply(mtr1);
 
             final List<DirectPosition> ldpResult = new ArrayList<DirectPosition>();
+            for(DirectPosition dpp : lPTemp2){
+                ldpResult.add(new GeneralDirectPosition(dpp));
+            }
             final MathTransform mtFiGlob = MathTransforms.linear(mtGlob);
-            for (DirectPosition pt : lPTemp2) {
-                DirectPosition ptt = mtFiGlob.transform(pt, null);
-                DirectPosition ptt2 = new GeneralDirectPosition(crs);
-                for (int t = 0; t < ptt.getDimension(); t++) {
-                    ptt2.setOrdinate(t, ptt.getOrdinate(t));
-                }
-                ldpResult.add(ptt2);
+            for (DirectPosition pt : ldpResult) {
+                DirectPosition ptt = mtFiGlob.transform(pt, pt);
+//                DirectPosition ptt2 = new GeneralDirectPosition(crs);
+//                for (int t = 0; t < ptt.getDimension(); t++) {
+//                    ptt2.setOrdinate(t, ptt.getOrdinate(t));
+//                }
+//                ldpResult.add(ptt2);
             }
 
-            switch(i){
-                case 0 : case 7 : Collections.reverse(ldpResult);
-            }
+//            switch(i){
+//                  case 7 : Collections.reverse(ldpResult);
+//            }
             listOfCentroidChild.addAll(ldpResult);
         }
     }

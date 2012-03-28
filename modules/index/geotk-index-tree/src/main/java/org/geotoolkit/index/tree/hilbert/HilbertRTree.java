@@ -41,7 +41,7 @@ import org.opengis.referencing.operation.TransformException;
  * @author Rémi Maréchal (Geomatys).
  */
 public class HilbertRTree extends DefaultAbstractTree {
-    
+
     int hilbertOrder;
     private static final String PROP_LEAF = "isleaf";
     private static final String PROP_HO = "hilbertOrder";
@@ -133,7 +133,7 @@ public class HilbertRTree extends DefaultAbstractTree {
      * @param result {@code List} where is add search resulting.
      */
     public static void searchHilbertNode(final Node candidate, final Envelope regionSearch, final List<Envelope> resultList) {
-        
+
         final Envelope bound = candidate.getBoundary();
         if(bound != null){
             if(regionSearch == null){
@@ -215,7 +215,7 @@ public class HilbertRTree extends DefaultAbstractTree {
                 }
             } else {
                 chooseSubtree(candidate, entry).getEntries().add(entry);
-                
+
             }
         } else {
             insertNode(chooseSubtree(candidate, entry), entry);
@@ -716,7 +716,7 @@ public class HilbertRTree extends DefaultAbstractTree {
             final Calculator calc = tree.getCalculator();
             final List<Envelope> lS = new ArrayList<Envelope>();
             searchHilbertNode(candidate, candidate.getBoundary(), lS);
-            
+
             if (lS.size() <= tree.getMaxElements() * Math.pow(2, tree.getHilbertOrder() * 2) && !lS.isEmpty()) {
                 final Envelope bound = getEnveloppeMin(lS);
                 calc.createBasicHL(candidate, tree.getHilbertOrder(), bound);
@@ -780,7 +780,8 @@ public class HilbertRTree extends DefaultAbstractTree {
         }
         result.setUserProperty("isleaf", false);
         if (listEntries != null && !listEntries.isEmpty()) {
-            final int diment = listEntries.get(0).getDimension();
+            int diment = listEntries.get(0).getDimension();
+            if(tree.getCalculator().getSpace(getEnveloppeMin(listEntries))<=0)diment--;
             final int size = listEntries.size();
             final int maxElts = tree.getMaxElements();
             final int hOrder = (size <= maxElts) ? 0 : (int)((Math.log(size-1)-Math.log(maxElts))/(diment*LN2)) + 1;

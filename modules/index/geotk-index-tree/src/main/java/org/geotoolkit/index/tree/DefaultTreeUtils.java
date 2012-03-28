@@ -35,10 +35,10 @@ public class DefaultTreeUtils {
 
     private DefaultTreeUtils() {
     }
-    
-    /**To compare two {@code Node} from them boundary box minimum x axis coordinate. 
-     * 
-     * @see StarNode#organizeFrom(int) 
+
+    /**To compare two {@code Node} from them boundary box minimum x axis coordinate.
+     *
+     * @see StarNode#organizeFrom(int)
      */
     private static final Comparator<Node> NODE3D_COMPARATOR_X_LEFT = new Comparator<Node>() {
 
@@ -49,10 +49,10 @@ public class DefaultTreeUtils {
             return x1.compareTo(x2);
         }
     };
-    
-    /**To compare two {@code Node} from them boundary box minimum y axis coordinate. 
-     * 
-     * @see StarNode#organizeFrom(int) 
+
+    /**To compare two {@code Node} from them boundary box minimum y axis coordinate.
+     *
+     * @see StarNode#organizeFrom(int)
      */
     private static final Comparator<Node> NODE3D_COMPARATOR_Y_LEFT = new Comparator<Node>() {
 
@@ -63,10 +63,10 @@ public class DefaultTreeUtils {
             return y1.compareTo(y2);
         }
     };
-    
-    /**To compare two {@code Node} from them boundary box minimum z axis coordinate. 
-     * 
-     * @see StarNode#organizeFrom(int) 
+
+    /**To compare two {@code Node} from them boundary box minimum z axis coordinate.
+     *
+     * @see StarNode#organizeFrom(int)
      */
     private static final Comparator<Node> NODE3D_COMPARATOR_Z_LEFT = new Comparator<Node>() {
 
@@ -77,10 +77,10 @@ public class DefaultTreeUtils {
             return y1.compareTo(y2);
         }
     };
-    
-    /**To compare two {@code Envelope} from them boundary box minimum x axis coordinate. 
-     * 
-     * @see StarNode#organizeFrom(int) 
+
+    /**To compare two {@code Envelope} from them boundary box minimum x axis coordinate.
+     *
+     * @see StarNode#organizeFrom(int)
      */
     private static final Comparator<Envelope> GE_COMPARATOR_X_LEFT = new Comparator<Envelope>() {
 
@@ -91,10 +91,10 @@ public class DefaultTreeUtils {
             return x1.compareTo(x2);
         }
     };
-    
-    /**To compare two {@code Envelope} from them boundary box minimum y axis coordinate. 
-     * 
-     * @see StarNode#organizeFrom(int) 
+
+    /**To compare two {@code Envelope} from them boundary box minimum y axis coordinate.
+     *
+     * @see StarNode#organizeFrom(int)
      */
     private static final Comparator<Envelope> GE_COMPARATOR_Y_LEFT = new Comparator<Envelope>() {
 
@@ -105,10 +105,10 @@ public class DefaultTreeUtils {
             return y1.compareTo(y2);
         }
     };
-    
-    /**To compare two {@code Envelope} from them boundary box minimum z axis coordinate. 
-     * 
-     * @see StarNode#organizeFrom(int) 
+
+    /**To compare two {@code Envelope} from them boundary box minimum z axis coordinate.
+     *
+     * @see StarNode#organizeFrom(int)
      */
     private static final Comparator<Envelope> GE_COMPARATOR_Z_LEFT = new Comparator<Envelope>() {
 
@@ -119,10 +119,10 @@ public class DefaultTreeUtils {
             return y1.compareTo(y2);
         }
     };
-    
-    /**To compare two {@code Node} from them boundary box minimum x axis coordinate. 
-     * 
-     * @see StarNode#organizeFrom(int) 
+
+    /**To compare two {@code Node} from them boundary box minimum x axis coordinate.
+     *
+     * @see StarNode#organizeFrom(int)
      */
     private static final Comparator<Node> NODE3D_COMPARATOR_X_RIGHT = new Comparator<Node>() {
 
@@ -133,10 +133,10 @@ public class DefaultTreeUtils {
             return x1.compareTo(x2);
         }
     };
-    
-    /**To compare two {@code Node} from them boundary box minimum y axis coordinate. 
-     * 
-     * @see StarNode#organizeFrom(int) 
+
+    /**To compare two {@code Node} from them boundary box minimum y axis coordinate.
+     *
+     * @see StarNode#organizeFrom(int)
      */
     private static final Comparator<Node> NODE3D_COMPARATOR_Y_RIGHT = new Comparator<Node>() {
 
@@ -147,10 +147,10 @@ public class DefaultTreeUtils {
             return y1.compareTo(y2);
         }
     };
-    
+
     /**To compare two {@code Node} from them boundary box minimum z axis coordinate.
-     * 
-     * @see StarNode#organizeFrom(int) 
+     *
+     * @see StarNode#organizeFrom(int)
      */
     private static final Comparator<Node> NODE3D_COMPARATOR_Z_RIGHT = new Comparator<Node>() {
 
@@ -161,10 +161,10 @@ public class DefaultTreeUtils {
             return y1.compareTo(y2);
         }
     };
-    
-    /**To compare two {@code Envelope} from them boundary box maximum x axis coordinate. 
-     * 
-     * @see StarNode#organizeFrom(int) 
+
+    /**To compare two {@code Envelope} from them boundary box maximum x axis coordinate.
+     *
+     * @see StarNode#organizeFrom(int)
      */
     private static final Comparator<Envelope> GE_COMPARATOR_X_RIGHT = new Comparator<Envelope>() {
 
@@ -175,10 +175,10 @@ public class DefaultTreeUtils {
             return x1.compareTo(x2);
         }
     };
-    
-    /**To compare two {@code Envelope} from them boundary box maximum y axis coordinate. 
-     * 
-     * @see StarNode#organizeFrom(int) 
+
+    /**To compare two {@code Envelope} from them boundary box maximum y axis coordinate.
+     *
+     * @see StarNode#organizeFrom(int)
      */
     private static final Comparator<Envelope> GE_COMPARATOR_Y_RIGHT = new Comparator<Envelope>() {
 
@@ -189,10 +189,10 @@ public class DefaultTreeUtils {
             return y1.compareTo(y2);
         }
     };
-    
-    /**To compare two {@code Envelope} from them boundary box maximum z axis coordinate. 
-     * 
-     * @see StarNode#organizeFrom(int) 
+
+    /**To compare two {@code Envelope} from them boundary box maximum z axis coordinate.
+     *
+     * @see StarNode#organizeFrom(int)
      */
     private static final Comparator<Envelope> GE_COMPARATOR_Z_RIGHT = new Comparator<Envelope>() {
 
@@ -203,7 +203,7 @@ public class DefaultTreeUtils {
             return y1.compareTo(y2);
         }
     };
-    
+
     /**
      * @param node to denominate elements number.
      * @return elements number within node.
@@ -211,9 +211,9 @@ public class DefaultTreeUtils {
     public static int countElements(Node node){
         return node.getChildren().size()+node.getEntries().size();
     }
-    
+
     /**Compute {@code Envelop} bulk.
-     * 
+     *
      * @param envelope {@code Envelope}.
      * @return bulk value.
      */
@@ -234,9 +234,9 @@ public class DefaultTreeUtils {
         }
         return bulk;
     }
-    
+
     /**Compute {@code Envelope} perimeter.
-     * 
+     *
      * @param envelope {@code Envelope}.
      * @throws IllegalArgumentException if envelope is null.
      * @throws IllegalArgumentException if envelope dimension > 2.
@@ -254,16 +254,16 @@ public class DefaultTreeUtils {
         }
         return 2*perim;
     }
-    
-    
+
+
     /**Compute overlaps between two {@code Envelop}.
-     * 
+     *
      * <blockquote><font size=-1>
      * <strong>NOTE: In first time : compute intersection {@code Envelope} between envelopA and envelopB.
      *                               - If intersection dimension is 2 compute its area.
-     *                               - If intersection dimension is 3 compute its bulk.</strong> 
+     *                               - If intersection dimension is 3 compute its bulk.</strong>
      * </font></blockquote>
-     * 
+     *
      * @param envelopA
      * @param envelopB
      * @return intersection between envelopA, envelopB bulk, or area from area dimension.
@@ -279,9 +279,9 @@ public class DefaultTreeUtils {
         }
         return getGeneralEnvelopBulk(intersectionGN);
     }
-    
+
     /** Compute Euclidean distance between two {@code DirectPosition} in dimension n.
-     * 
+     *
      * @param directPositionA
      * @param directPositionB
      * @throws IllegalArgumentException if directPositionA or directPositionB are null.
@@ -303,9 +303,9 @@ public class DefaultTreeUtils {
         }
         return XMath.magnitude(tab);
     }
-    
+
     /**Compute Euclidean distance between two {@code Envelope} in dimension n.
-     * 
+     *
      * @param envelopA
      * @param envelopB
      * @throws IllegalArgumentException if envelopA or envelopB are null.
@@ -320,10 +320,10 @@ public class DefaultTreeUtils {
         }
         return getDistanceBetween2DirectPosition(getMedian(envelopA), getMedian(envelopB));
     }
-    
+
     /**Organize all elements from {@code Node} List and {@code Envelope} List by differents criterion.
      * Compare left boundary coordinates elements.
-     * 
+     *
      * @param index : - 0 : organize all List by smallest left boundary x value to tallest.
      *                - 1 : organize all List by smallest left boundary y value to tallest.
      *                - 2 : organize all List by smallest left boundary z value to tallest.
@@ -363,10 +363,10 @@ public class DefaultTreeUtils {
                 break;
         }
     }
-    
+
     /**Organize all elements from {@code Node} List and {@code Envelope} List by differents criterion.
      * Compare right boundary coordinates elements.
-     * 
+     *
      * @param index : - 0 : organize all List by smallest right boundary x value to tallest.
      *                - 1 : organize all List by smallest right boundary y value to tallest.
      *                - 2 : organize all List by smallest right boundary z value to tallest.
@@ -406,9 +406,9 @@ public class DefaultTreeUtils {
                 break;
         }
     }
-    
+
     /**Compute general boundary of all {@code Envelope} passed in parameter.
-     * 
+     *
      * @param lS GeneralEnvelope List.
      * @throws IllegalArgumentException if {@code Envelope} list lS is null.
      * @throws IllegalArgumentException if {@code Envelope} list lS is empty.
@@ -425,9 +425,9 @@ public class DefaultTreeUtils {
         }
         return envlop;
     }
-    
+
     /**Compute {@code Envelope} area in euclidean cartesian space.
-     * 
+     *
      * @param envelope
      * @return candidate area.
      */
@@ -442,17 +442,17 @@ public class DefaultTreeUtils {
         }
         return (dim-1)*(area);
     }
-    
+
 //    /**Compute enlargement difference between two {@code Envelope}.
-//     * 
+//     *
 //     * <blockquote><font size=-1>
 //     * <strong>NOTE: - If dimension is 1 : compute their perimeter difference.
 //     *               - If dimension is 2 : compute their area difference.
 //     *               - If dimension is 3 : compute their bulk difference.
-//     * 
-//     * Moreover in case of narrowing, negative value is returned.</strong> 
+//     *
+//     * Moreover in case of narrowing, negative value is returned.</strong>
 //     * </font></blockquote>
-//     * 
+//     *
 //     * @param envMin smallest boundary before enlargement.
 //     * @param envMax largest boundary after enlargement.
 //     * @throws IllegalArgumentException if envMin or envMax are null.
@@ -475,13 +475,13 @@ public class DefaultTreeUtils {
 //            default : throw new IllegalArgumentException("dimension not conform.");
 //        }
 //    }
-    
+
     /**
      * A coordinate position consisting of all the {@linkplain #getMedian(int) middle ordinates}
      * for each dimension for all points within the {@code Envelope}.
      *
      * @return The median coordinates.
-     * 
+     *
      * @param env
      */
     public static DirectPosition getMedian(final Envelope env){
