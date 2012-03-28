@@ -49,10 +49,11 @@ import org.opengis.filter.Filter;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Mehdi Sidhoum (Geomatys)
+ * @author Giuseppe La Scaleia (IMAA)
  * @module pending
  */
 public abstract class AbstractGetRecords extends AbstractCSWRequest implements GetRecordsRequest {
-    
+
     /**
      * The version to use for this webservice request.
      */
@@ -345,7 +346,7 @@ public abstract class AbstractGetRecords extends AbstractCSWRequest implements G
 
             /*
              * Getting  SortByType value, default is null
-             * 
+             *
              * @TODO if sortBy is not null we must creates SortByType instance
              * the value can be sortBy=Title:A,Abstract:D where A for ascending order and D for decending.
              * see Table 29 - Parameters in GetRecords operation request in document named
@@ -362,21 +363,21 @@ public abstract class AbstractGetRecords extends AbstractCSWRequest implements G
             /*
              * Building QueryType from the cql constraint
              */
-            QueryType queryType = null;
-            try {
+            QueryConstraintType qct = null;
+            if (constraint != null && !constraint.isEmpty()) try {
                 final FilterType filterType;
                 Filter filter = CQL.toFilter(constraint, new FilterFactoryImpl());
-                if (!(filter instanceof FilterType)) {
-                    filterType = new FilterType(filter);
-                } else {
+                if (filter instanceof FilterType) {
                     filterType = (FilterType) filter;
+                } else {
+                    filterType = new FilterType(filter);
                 }
-                final QueryConstraintType qct = new QueryConstraintType(filterType, constraintLanguageVersion != null ? constraintLanguageVersion : "1.1.0");
-                queryType = new QueryType(typNames, esnt, sort, qct);
+                qct = new QueryConstraintType(filterType, constraintLanguageVersion != null ? constraintLanguageVersion : "1.1.0");
             } catch (CQLException ex) {
                 //@TODO maybe use another Exception.
                 throw new IllegalArgumentException("Constraint cannot be parsed to filter, the constraint parameter value is not in OGC CQL format.", ex);
             }
+            final QueryType queryType = new QueryType(typNames, esnt, sort, qct);
 
             final GetRecordsType recordsXml = new GetRecordsType("CSW", version, resultType,
                     requestId, outputFormat, outputSchema, startPosition, maxRecords,
