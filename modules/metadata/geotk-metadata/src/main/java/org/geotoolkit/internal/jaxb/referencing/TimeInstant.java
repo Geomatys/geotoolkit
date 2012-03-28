@@ -95,8 +95,8 @@ public final class TimeInstant extends GMLAdapter {
                 final XMLGregorianCalendar date = XmlUtilities.toXML(position.getDate());
                 if (date != null) {
                     XmlUtilities.trimTime(date, false);
+                    return date;
                 }
-                return date;
             }
         }
         return null;

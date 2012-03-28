@@ -129,9 +129,9 @@ public final class TM_Primitive extends PropertyType<TM_Primitive, TemporalPrimi
         if (period != null) {
             final Date begin = XmlUtilities.toDate(TimePeriod.select(period.beginPosition, period.begin));
             final Date end   = XmlUtilities.toDate(TimePeriod.select(period.endPosition,   period.end));
-            if (begin != null && end != null) {
+            if (begin != null || end != null) {
                 final LogRecord record;
-                if (end.before(begin)) {
+                if (begin != null && end != null && end.before(begin)) {
                     /*
                      * Be tolerant - we can treat such case as an empty range, which is a similar
                      * approach to what JDK does for Rectangle width and height. We will log with
