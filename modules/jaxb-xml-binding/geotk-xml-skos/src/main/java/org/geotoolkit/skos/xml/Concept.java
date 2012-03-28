@@ -21,11 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.*;
 import org.geotoolkit.gml.xml.v311.AbstractGMLType;
 import org.geotoolkit.util.Utilities;
 
@@ -176,7 +172,12 @@ public class Concept implements Serializable {
     @XmlElement(namespace="http://www.geomatys.com/count")
     private Integer count;
 
-
+    /**
+     * An extension for concept theme.
+     */
+    @XmlTransient
+    private String theme;
+    
     public Concept() {
         
     }
@@ -1068,6 +1069,20 @@ public class Concept implements Serializable {
     public void setCount(Integer count) {
         this.count = count;
     }
+    
+    /**
+     * @return the theme
+     */
+    public String getTheme() {
+        return theme;
+    }
+
+    /**
+     * @param theme the theme to set
+     */
+    public void setTheme(String theme) {
+        this.theme = theme;
+    }
 
     @Override
     public String toString() {
@@ -1156,6 +1171,9 @@ public class Concept implements Serializable {
             sb.append("hasVersion:").append(hasVersion).append('\n');
         if (count != null)
             sb.append("count:").append(count).append('\n');
+        if (theme != null) {
+            sb.append("EXT:theme:").append(theme).append('\n');
+        }
         return sb.toString();
     }
 
@@ -1202,6 +1220,7 @@ public class Concept implements Serializable {
                    Utilities.equals(this.example,            that.example)     &&
                    Utilities.equals(this.geometry,           that.geometry)    &&
                    Utilities.equals(this.count,              that.count)       &&
+                   Utilities.equals(this.theme,              that.theme)       &&
                    Utilities.equals(this.value,              that.value);
         }
         return false;
