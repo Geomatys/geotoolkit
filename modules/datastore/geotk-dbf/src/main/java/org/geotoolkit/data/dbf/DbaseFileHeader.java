@@ -37,7 +37,6 @@ import java.util.logging.Logger;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.FeatureTypeUtilities;
-
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -346,7 +345,6 @@ public class DbaseFileHeader {
         return retCol;
     }
 
-    // Retrieve the length of the field at the given index
     /**
      * Returns the field length in bytes.
      * 
@@ -358,9 +356,9 @@ public class DbaseFileHeader {
         return fields[inIndex].fieldLength;
     }
 
-    // Retrieve the location of the decimal point within the field.
     /**
      * Get the decimal count of this field.
+     * location of the decimal point within the field.
      * 
      * @param inIndex
      *                The field index.
@@ -370,7 +368,6 @@ public class DbaseFileHeader {
         return fields[inIndex].decimalCount;
     }
 
-    // Retrieve the Name of the field at the given index
     /**
      * Get the field name.
      * 
@@ -382,7 +379,6 @@ public class DbaseFileHeader {
         return fields[inIndex].fieldName;
     }
 
-    // Retrieve the type of field at the given index
     /**
      * Get the character class of the field.
      * 
@@ -394,6 +390,22 @@ public class DbaseFileHeader {
         return fields[inIndex].fieldType;
     }
 
+    /**
+     * Get the field offset from the record start position.
+     * First field will start at 1, the first byte is for the deleted flag.
+     * 
+     * @param inIndex
+     *                The field index.
+     * @return fild offset
+     */
+    public int getFieldOffset(final int inIndex) {
+        int offset = 1;
+        for (int x = 0, n = inIndex; x < n; x++) {
+            offset += fields[x].fieldLength;
+        }
+        return offset;
+    }
+    
     /**
      * Get the date this file was last updated.
      * 
@@ -547,7 +559,7 @@ public class DbaseFileHeader {
             // read the field decimal count in bytes
             int decimalCount = (int) in.get();
 
-            // rreservedvededved bytes.
+            // reserved bytes.
             // in.skipBytes(14);
             in.position(in.position() + 14);
 
@@ -573,7 +585,7 @@ public class DbaseFileHeader {
     /**
      * Get the largest field size of this table.
      * 
-     * @return The largt field size iiin bytes.
+     * @return The largt field size in bytes.
      */
     public int getLargestFieldSize() {
         return largestFieldSize;

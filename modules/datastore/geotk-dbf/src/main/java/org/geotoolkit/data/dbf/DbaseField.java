@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.nio.CharBuffer;
 import java.util.Calendar;
 import java.util.Date;
-
 import org.geotoolkit.util.XInteger;
 
 /**
@@ -138,7 +137,7 @@ abstract class DbaseField {
         return charBuffer2.subSequence(fieldOffset, fieldLen);
     }
 
-    public abstract Object read(CharBuffer buffer, int offset) throws IOException;
+    public abstract Object read(CharBuffer charBuffer) throws IOException;
 
     public abstract String string(Object obj, DbaseFieldFormatter formatter) throws IOException;
 
@@ -151,8 +150,9 @@ abstract class DbaseField {
         }
 
         @Override
-        public Object read(final CharBuffer charBuffer, final int fieldOffset) throws IOException {
-            switch (charBuffer.charAt(fieldOffset)) {
+        public Object read(final CharBuffer charBuffer) throws IOException {
+                        
+            switch (charBuffer.charAt(0)) {
                 case 't':
                 case 'T':
                 case 'Y':
@@ -165,7 +165,7 @@ abstract class DbaseField {
                     return Boolean.FALSE;
                 default:
                     throw new IOException("Unknown logical value : '"
-                            + charBuffer.charAt(fieldOffset) + "'");
+                            + charBuffer.charAt(0) + "'");
                 }
         }
 
@@ -184,14 +184,13 @@ abstract class DbaseField {
         }
 
         @Override
-        public Object read(final CharBuffer charBuffer, final int fieldOffset) throws IOException {
+        public Object read(final CharBuffer charBuffer) throws IOException {
             // oh, this seems like a lot of work to parse strings...but,
             // For some reason if zero characters ( (int) char == 0 ) are allowed
             // in these strings, they do not compare correctly later on down
             // the line....
-
-            int start = fieldOffset;
-            int end = fieldOffset + fieldLength - 1;
+            int start = 0;
+            int end = fieldLength - 1;
             charBuffer.limit(charBuffer.capacity());
             // trim off whitespace and 'zero' chars
             while (start < end) {
@@ -211,7 +210,7 @@ abstract class DbaseField {
             // set up the new indexes for start and end
             charBuffer.position(start).limit(end + 1);
             String s = charBuffer.toString();
-            charBuffer.clear();
+            charBuffer.limit(charBuffer.capacity());
             return s;
         }
 
@@ -231,16 +230,13 @@ abstract class DbaseField {
         }
 
         @Override
-        public Object read(final CharBuffer charBuffer, final int fieldOffset) throws IOException {
+        public Object read(final CharBuffer charBuffer) throws IOException {
             try {
-                String tempString = charBuffer.subSequence(fieldOffset,
-                        fieldOffset + 4).toString();
+                String tempString = charBuffer.subSequence(0,4).toString();
                 final int tempYear = Integer.parseInt(tempString);
-                tempString = charBuffer.subSequence(fieldOffset + 4,
-                        fieldOffset + 6).toString();
+                tempString = charBuffer.subSequence(4,6).toString();
                 final int tempMonth = Integer.parseInt(tempString) - 1;
-                tempString = charBuffer.subSequence(fieldOffset + 6,
-                        fieldOffset + 8).toString();
+                tempString = charBuffer.subSequence(6,8).toString();
                 final int tempDay = Integer.parseInt(tempString);
                 final Calendar cal = Calendar.getInstance();
                 cal.clear();
@@ -271,16 +267,15 @@ abstract class DbaseField {
         }
 
         @Override
-        public Object read(final CharBuffer charBuffer, final int fieldOffset) throws IOException {
+        public Object read(final CharBuffer charBuffer) throws IOException {
             try {
-                final CharSequence number = extractNumberString(charBuffer,
-                        fieldOffset);
+                final CharSequence number = extractNumberString(charBuffer,0);
                 return XInteger.parseIntSigned(number, 0, number.length());
                 // else will fall through to the floating point number
             } catch (NumberFormatException e) {
                 // Lets try parsing a long instead...
                 try {
-                    return Long.valueOf(extractNumberString(charBuffer, fieldOffset).toString());
+                    return Long.valueOf(extractNumberString(charBuffer, 0).toString());
                 } catch (NumberFormatException e2) {
                     return ZERO;
                 }
@@ -304,10 +299,9 @@ abstract class DbaseField {
         }
 
         @Override
-        public Object read(final CharBuffer charBuffer, final int fieldOffset) throws IOException {
+        public Object read(final CharBuffer charBuffer) throws IOException {
             try {
-                final CharSequence number = extractNumberString(charBuffer,
-                        fieldOffset);
+                final CharSequence number = extractNumberString(charBuffer,0);
                 return Long.valueOf(number.toString());
                 // else will fall through to the floating point number
             } catch (NumberFormatException e) {
@@ -331,9 +325,9 @@ abstract class DbaseField {
         }
 
         @Override
-        public Object read(final CharBuffer charBuffer, final int fieldOffset) throws IOException {
+        public Object read(final CharBuffer charBuffer) throws IOException {
             try {
-                return Double.valueOf(extractNumberString(charBuffer, fieldOffset).toString());
+                return Double.valueOf(extractNumberString(charBuffer, 0).toString());
             } catch (NumberFormatException e) {
                 // todo: use progresslistener, this isn't a grave error,
                 // though it does indicate something is wrong

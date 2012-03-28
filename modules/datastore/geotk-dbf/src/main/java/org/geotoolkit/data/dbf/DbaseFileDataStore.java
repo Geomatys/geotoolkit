@@ -21,34 +21,27 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.net.MalformedURLException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
-
 import org.geotoolkit.data.AbstractDataStore;
 import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
+import org.geotoolkit.data.dbf.DbaseFileReader.Row;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
-import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.simple.DefaultSimpleFeature;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.storage.DataStoreException;
-
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
@@ -246,13 +239,14 @@ public class DbaseFileDataStore extends AbstractDataStore{
             if(!reader.hasNext()) return;
 
             try{
+                final Row row = reader.next();
                 if(reuse != null){
-                    reuse.setAttributes(reader.readEntry());
+                    reuse.setAttributes(row.readAll(null));
                     reuse.setId(String.valueOf(inc++));
                     current = reuse;
                 }else{
                     sfb.reset();
-                    sfb.addAll(reader.readEntry());
+                    sfb.addAll(row.readAll(null));
                     current = sfb.buildFeature(Integer.toString(inc++));
                 }
             }catch(IOException ex){

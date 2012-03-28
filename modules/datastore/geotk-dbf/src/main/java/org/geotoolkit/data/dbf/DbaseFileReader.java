@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2010, Geomatys
+ *    (C) 2010-2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -20,16 +20,16 @@
  */
 package org.geotoolkit.data.dbf;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.CharBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CoderResult;
 import org.geotoolkit.io.Closeable;
 
 /**
@@ -37,95 +37,98 @@ import org.geotoolkit.io.Closeable;
  * The general use of this class is: <CODE><PRE>
  * 
  * FileChannel in = new FileInputStream(&quot;thefile.dbf&quot;).getChannel();
- * DbaseFileReader r = new DbaseFileReader( in ) Object[] fields = new
- * Object[r.getHeader().getNumFields()]; while (r.hasNext()) {
- * r.readEntry(fields); // do stuff } r.close();
+ * DbaseFileReader r = new DbaseFileReader( in );
+ * Object[] fields = new Object[r.getHeader().getNumFields()]; 
+ * while (r.hasNext()) {
+ *    Row row = r.next();
+ *    row.readAll(fields);
+ *    //do stuff
+ * }
+ * r.close();
  * 
- * </PRE></CODE> For consumers who wish to be a bit more selective with their reading
- * of rows, the Row object has been added. The semantics are the same as using
- * the readEntry method, but remember that the Row object is always the same.
+ * </PRE></CODE> 
+ * For consumers who wish to be a bit more selective with their reading
+ * of rows, the read(column) method has been added. 
+ * Remember that the Row object is always the same.
  * The values are parsed as they are read, so it pays to copy them out (as each
- * call to Row.read() will result in an expensive String parse). <br>
- * <b>EACH CALL TO readEntry OR readRow ADVANCES THE FILE!</b><br>
- * An example of using the Row method of reading: <CODE><PRE>
- * 
- * FileChannel in = new FileInputStream(&quot;thefile.dbf&quot;).getChannel();
- * DbaseFileReader r = new DbaseFileReader( in ) int fields =
- * r.getHeader().getNumFields(); while (r.hasNext()) { DbaseFileReader.Row row =
- * r.readRow(); for (int i = 0; i &lt; fields; i++) { // do stuff Foo.bar(
- * row.read(i) ); } } r.close();
- * 
- * </PRE></CODE>
+ * call to Row.read() will result in an expensive String parse).
  * 
  * @author Ian Schneider
+ * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DbaseFileReader implements Closeable{
+public final class DbaseFileReader implements Closeable{
 
     public static final Charset DEFAULT_STRING_CHARSET = Charset.forName("ISO-8859-1");
 
     public final class Row {
+        
         public Object read(final int column) throws IOException {
-            final int offset = getOffset(column);
-            return fieldReaders[column].read(charBuffer, offset);
+            final int offset = header.getFieldOffset(column);
+            final DbaseField field = fieldReaders[column];
+            prepareFieldRead(field, offset);
+            return field.read(charBuffer);
         }
-
-        @Override
-        public String toString() {
-            final StringBuilder ret = new StringBuilder("DBF Row - ");
-            for (int i=0; i < header.getNumFields(); i++) {
-                ret.append(header.getFieldName(i)).append(": \"");
-                try {
-                    ret.append(this.read(i));
-                } catch (IOException ioe) {
-                    ret.append(ioe.getMessage());
-                }
-                ret.append("\" ");
+        
+        public Object[] readAll(Object[] entry) throws IOException {
+            if(entry == null){
+                entry = new Object[fieldReaders.length];
+            }else if (entry.length < fieldReaders.length) {
+                throw new ArrayIndexOutOfBoundsException();
             }
-            return ret.toString();
+
+            int fieldOffset = 1; //1 to skip the delete flag
+            for (int x = 0; x < fieldReaders.length; x++) {
+                final DbaseField field = fieldReaders[x];
+                prepareFieldRead(field, fieldOffset);
+                entry[x] = field.read(charBuffer);
+                fieldOffset += field.fieldLength;
+            }
+
+            return entry;
         }
+        
     }
 
     protected final DbaseFileHeader header;
     protected final ByteBuffer buffer;
     protected final ReadableByteChannel channel;
-    protected final CharBuffer charBuffer;
-    private final Charset charset;
+    protected final CharBuffer charBuffer; //char buffer cache
     private final CharsetDecoder decoder;
     private final DbaseField[] fieldReaders;
-    private int cnt = 1;
-    private final Row row;
+    private int cnt = 0;
+    private final Row row = new Row();
+    private Row next = null;
 
     protected boolean useMemoryMappedBuffer;
     protected boolean randomAccessEnabled;
-    protected long currentOffset = 0;
 
     /**
      * Creates a new instance of DBaseFileReader
      * 
      * @param dbfChannel The readable channel to use.
+     * @param useMemoryMappedBuffer 
+     * @param charset 
      * @throws IOException If an error occurs while initializing.
      */
 
-    public DbaseFileReader(final ReadableByteChannel dbfChannel, final boolean useMemoryMappedBuffer, Charset charset) throws IOException {
-        this.channel = dbfChannel;
-
+    public DbaseFileReader(final ReadableByteChannel dbfChannel, 
+            final boolean useMemoryMappedBuffer, Charset charset) throws IOException {
+        
         if(charset == null) charset = DEFAULT_STRING_CHARSET;
 
-        this.charset = Charset.forName("ISO-8859-1"); // charset;
-
+        this.channel = dbfChannel;
         this.useMemoryMappedBuffer = useMemoryMappedBuffer;
         this.randomAccessEnabled = (channel instanceof FileChannel);
-        header = new DbaseFileHeader();
-        header.readHeader(channel);
+        this.header = new DbaseFileHeader();
+        this.header.readHeader(channel);
 
         // create the ByteBuffer
         // if we have a FileChannel, lets map it
         if (channel instanceof FileChannel && this.useMemoryMappedBuffer) {
-            FileChannel fc = (FileChannel) channel;
-            buffer = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
-            buffer.position((int) fc.position());
-            this.currentOffset = 0;
+            final FileChannel fc = (FileChannel) channel;
+            this.buffer = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
+            this.buffer.position((int) fc.position());
         } else {
             // Force useMemoryMappedBuffer to false
             this.useMemoryMappedBuffer = false;
@@ -133,13 +136,11 @@ public class DbaseFileReader implements Closeable{
             // start with a 8K buffer, should be more than adequate
             int size = 8 * 1024;
             // if for some reason its not, resize it
-            size = header.getRecordLength() > size ? header.getRecordLength()
-                    : size;
+            size = header.getRecordLength() > size ? header.getRecordLength() : size;
             buffer = ByteBuffer.allocateDirect(size);
             // fill it and reset
             fill(buffer, channel);
             buffer.flip();
-            this.currentOffset = header.getHeaderLength();
         }
         
         // The entire file is in little endian
@@ -153,8 +154,6 @@ public class DbaseFileReader implements Closeable{
         
         charBuffer = CharBuffer.allocate(header.getRecordLength() - 1);
         decoder = charset.newDecoder();
-        
-        row = new Row();
     }
 
     protected void fill(final ByteBuffer buffer, final ReadableByteChannel channel)
@@ -170,26 +169,17 @@ public class DbaseFileReader implements Closeable{
         }
     }
 
+    /**
+     * Fill buffer if remaining is smaller then one record size.
+     * @throws IOException 
+     */
     private void bufferCheck() throws IOException {
-        // remaining is less than record length
-        // compact the remaining data and read again
-        if (!buffer.isReadOnly()
-                && buffer.remaining() < header.getRecordLength()) {
-            // if (!this.useMemoryMappedBuffer) {
-            this.currentOffset += buffer.position();
-            // }
+        buffer.limit(buffer.capacity());
+        if (!buffer.isReadOnly() && buffer.remaining() < header.getRecordLength()) {
             buffer.compact();
             fill(buffer, channel);
             buffer.position(0);
         }
-    }
-
-    private int getOffset(final int column) {
-        int offset = 0;
-        for (int i = 0, ii = column; i < ii; i++) {
-            offset += fieldReaders[i].fieldLength;
-        }
-        return offset;
     }
 
     /**
@@ -203,166 +193,94 @@ public class DbaseFileReader implements Closeable{
     }
 
     /**
-     * Clean up all resources associated with this reader.<B>Highly recomended.</B>
-     * 
-     * @throws IOException If an error occurs.
-     */
-    @Override
-    public void close() throws IOException {
-        if (channel.isOpen()) {
-            channel.close();
-        }
-    }
-
-    @Override
-    public boolean isClosed() {
-        return !channel.isOpen();
-    }
-    
-    /**
      * Query the reader as to whether there is another record.
      * 
      * @return True if more records exist, false otherwise.
      */
     public boolean hasNext() {
-        return cnt < header.getNumRecords() + 1;
+        return cnt < header.getNumRecords();
     }
 
     /**
-     * Get the next record (entry). Will return a new array of values.
-     * 
+     * @return Row, always same instance
      * @throws IOException
-     *                 If an error occurs.
-     * @return A new array of values.
      */
-    public Object[] readEntry() throws IOException {
-        return readEntry(new Object[fieldReaders.length]);
+    public Row next() throws IOException {
+        checkNext();
+        final Row r = next;
+        next = null;
+        return r;
     }
 
-    public Row readRow() throws IOException {
-        read();
-        return row;
+    private void checkNext() throws IOException{
+        if(next!=null)return;
+        
+        if(cnt != 0){
+            //move cursor to next record if it's not the first
+            buffer.position(buffer.position()+header.getRecordLength());
+        }
+        prepareNext();
     }
-
+        
     /**
-     * Skip the next record.
-     * 
+     * fill buffer with current record, skip it if it's deleted
      * @throws IOException
-     *                 If an error occurs.
      */
-    public void skip() throws IOException {
+    private void prepareNext() throws IOException {
+                
         boolean foundRecord = false;
         while (!foundRecord) {
-
             bufferCheck();
 
             // read the deleted flag
-            final char tempDeleted = (char) buffer.get();
-
-            // skip the next bytes
-            // the 1 is for the deleted flag just read.
-            buffer.position(buffer.position() + header.getRecordLength() - 1); 
-
-            // add the row if it is not deleted.
-            if (tempDeleted != '*') {
-                foundRecord = true;
+            char deleted = (char) buffer.get();
+            if (deleted == '*') {
+                //record was deleted, move to next one, -1 for the delete flag we just read
+                buffer.position(buffer.position()+header.getRecordLength()-1);
+                continue;
             }
+            buffer.position(buffer.position()-1);
+            foundRecord = true;
+            next = row;
         }
+        
+        cnt++;
     }
-
-    /**
-     * Copy the next record into the array starting at offset.
-     * 
-     * @param entry The array to copy into.
-     * @param offset The offset to start at
-     * @throws IOException If an error occurs.
-     * @return The same array passed in.
-     */
-    public Object[] readEntry(final Object[] entry, final int offset)
-            throws IOException {
-        if (entry.length - offset < fieldReaders.length) {
-            throw new ArrayIndexOutOfBoundsException();
+    
+    private void prepareFieldRead(final DbaseField field, final int fieldOffset) throws CharacterCodingException{
+        //prepare byte buffer
+        final int previousposition = buffer.position();
+        final int previouslimit = buffer.limit();
+        decoder.reset();
+        charBuffer.clear();
+        buffer.position(previousposition+fieldOffset);
+        buffer.limit(buffer.position()+field.fieldLength);
+        CoderResult result = decoder.decode(buffer, charBuffer, true);
+        if(CoderResult.UNDERFLOW != result){
+            result.throwException();
         }
-
-        read();
-
-        int fieldOffset = 0;
-        for (int j = 0; j < fieldReaders.length; j++) {
-            final DbaseField field = fieldReaders[j];
-            entry[j + offset] = field.read(charBuffer, fieldOffset);
-            fieldOffset += field.fieldLength;
+        result = decoder.flush(charBuffer);
+        if(CoderResult.UNDERFLOW != result){
+            result.throwException();
         }
-
-        return entry;
+        buffer.limit(previouslimit);
+        buffer.position(previousposition);
+        charBuffer.flip();
     }
     
     /**
-     * Reads a single field from the current record and returns it. Remember to call {@link #read()} before
-     * starting to read fields from the dbf, and call it every time you need to move to the next record.
-     * @param fieldNum The field number to be read (zero based)
-     * @throws IOException
-     *                 If an error occurs.
-     * @return The value of the field
-     */
-    public Object readField(final int fieldNum)
-            throws IOException {
-        // retrieve the record length
-        int fieldOffset = 0;
-        for (int j = 0; j < fieldNum; j++) {
-            fieldOffset += fieldReaders[j].fieldLength;
-        }
-        return fieldReaders[fieldNum].read(charBuffer, fieldOffset);
-    }
-
-    /**
      * Transfer, by bytes, the next record to the writer.
+     * @param writer
+     * @throws IOException  
      */
     public void transferTo(final DbaseFileWriter writer) throws IOException {
         bufferCheck();
         buffer.limit(buffer.position() + header.getRecordLength());
         writer.channel.write(buffer);
         buffer.limit(buffer.capacity());
-
         cnt++;
     }
 
-    /**
-     * Reads the next record into memory. You need to use this directly when reading only
-     * a subset of the fields using {@link #readField(int)}. 
-     * @throws IOException
-     */
-    public void read() throws IOException {
-        boolean foundRecord = false;
-        while (!foundRecord) {
-
-            bufferCheck();
-
-            // read the deleted flag
-            char deleted = (char) buffer.get();
-            if (deleted == '*') {
-                continue;
-            }
-
-            charBuffer.position(0);
-            buffer.limit(buffer.position() + header.getRecordLength() - 1);
-            decoder.decode(buffer, charBuffer, true);
-            buffer.limit(buffer.capacity());
-            charBuffer.flip();
-
-            foundRecord = true;
-        }
-
-        cnt++;
-    }
-
-    /**
-     * If this method return true, then the index navigation (goto method) can be used.
-     * @return true if source is a FileChannel
-     */
-    public boolean IsRandomAccessEnabled() {
-        return this.randomAccessEnabled;
-    }
-    
     /**
      * Navigate to the given record index.
      * 
@@ -385,9 +303,8 @@ public class DbaseFileReader implements Closeable{
                 buffer.position(0);
                 fill(buffer, channel);
                 buffer.position(0);
-
-                this.currentOffset = newPosition;
             }
+            prepareNext();
         } else {
             throw new UnsupportedOperationException("Random access not enabled!");
         }
@@ -395,27 +312,28 @@ public class DbaseFileReader implements Closeable{
     }
     
     /**
-     * Copy the next entry into the array.
-     * 
-     * @param entry
-     *                The array to copy into.
-     * @throws IOException
-     *                 If an error occurs.
-     * @return The same array passed in.
+     * If this method return true, then the index navigation (goto method) can be used.
+     * @return true if source is a FileChannel
      */
-    public Object[] readEntry(final Object[] entry) throws IOException {
-        return readEntry(entry, 0);
+    public boolean IsRandomAccessEnabled() {
+        return this.randomAccessEnabled;
     }
-
-    public static void main(final String[] args) throws Exception {
-        DbaseFileReader reader = new DbaseFileReader(new RandomAccessFile(new File(args[0]),"r").getChannel(),
-                false, Charset.forName("ISO-8859-1"));
-        System.out.println(reader.getHeader());
-        int r = 0;
-        while (reader.hasNext()) {
-            System.out.println(++r + "," + java.util.Arrays.asList(reader.readEntry()));
+    
+    /**
+     * Clean up all resources associated with this reader.<B>Highly recomended.</B>
+     * 
+     * @throws IOException If an error occurs.
+     */
+    @Override
+    public void close() throws IOException {
+        if (channel.isOpen()) {
+            channel.close();
         }
-        reader.close();
     }
 
+    @Override
+    public boolean isClosed() {
+        return !channel.isOpen();
+    }
+    
 }

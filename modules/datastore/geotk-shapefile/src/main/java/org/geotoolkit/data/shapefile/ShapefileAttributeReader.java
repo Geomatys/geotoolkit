@@ -16,17 +16,15 @@
  */
 package org.geotoolkit.data.shapefile;
 
-import org.geotoolkit.data.shapefile.lock.AccessManager;
 import java.io.IOException;
-
 import java.nio.charset.Charset;
 import org.geotoolkit.data.dbf.DbaseFileHeader;
 import org.geotoolkit.data.dbf.DbaseFileReader;
+import org.geotoolkit.data.shapefile.lock.AccessManager;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.Converters;
-
 import org.opengis.feature.type.PropertyDescriptor;
 
 /**
@@ -184,7 +182,7 @@ public class ShapefileAttributeReader {
 
     protected void nextDbf() throws IOException {
         if (dbf != null) {
-            row = dbf.readRow();
+            row = dbf.next();
         }
     }
 
