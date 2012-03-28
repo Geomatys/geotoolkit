@@ -17,10 +17,12 @@
  */
 package org.geotoolkit.referencing.operation.provider;
 
+import java.util.List;
 import net.jcip.annotations.Immutable;
 
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.referencing.ReferenceIdentifier;
 
 import org.geotoolkit.referencing.NamedIdentifier;
@@ -45,7 +47,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  *
  * @author Rueben Schulz (UBC)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.20
  *
  * @since 2.4
  * @module
@@ -66,7 +68,7 @@ public class HotineObliqueMercator extends ObliqueMercator {
      * Valid values range is unrestricted and default value is 0 metre.
      */
     @SuppressWarnings("hiding")
-    public static final ParameterDescriptor<Double> FALSE_EASTING = Mercator1SP.FALSE_EASTING;
+    public static final ParameterDescriptor<Double> FALSE_EASTING = EquidistantCylindrical.FALSE_EASTING;
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -77,7 +79,7 @@ public class HotineObliqueMercator extends ObliqueMercator {
      * Valid values range is unrestricted and default value is 0 metre.
      */
     @SuppressWarnings("hiding")
-    public static final ParameterDescriptor<Double> FALSE_NORTHING = Mercator1SP.FALSE_NORTHING;
+    public static final ParameterDescriptor<Double> FALSE_NORTHING = EquidistantCylindrical.FALSE_NORTHING;
 
     /**
      * The parameters group.
@@ -128,7 +130,7 @@ public class HotineObliqueMercator extends ObliqueMercator {
      *
      * @author Rueben Schulz (UBC)
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.00
+     * @version 3.20
      *
      * @see org.geotoolkit.referencing.operation.projection.ObliqueMercator
      *
@@ -178,17 +180,15 @@ public class HotineObliqueMercator extends ObliqueMercator {
          * The parameters group.
          */
         @SuppressWarnings("hiding")
-        public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
+        public static final ParameterDescriptorGroup PARAMETERS;
+        static {
+            final List<GeneralParameterDescriptor> param = ObliqueMercator.TwoPoint.PARAMETERS.descriptors();
+            PARAMETERS = Identifiers.createDescriptorGroup(
             new ReferenceIdentifier[] {
                 new NamedIdentifier(Citations.ESRI, "Hotine_Oblique_Mercator_Two_Point_Natural_Origin"),
                 sameNameAs(Citations.GEOTOOLKIT, HotineObliqueMercator.PARAMETERS)
-            }, new ParameterDescriptor<?>[] {
-                SEMI_MAJOR,          SEMI_MINOR, ROLL_LONGITUDE,
-                LAT_OF_1ST_POINT,    LONG_OF_1ST_POINT,
-                LAT_OF_2ND_POINT,    LONG_OF_2ND_POINT,
-                LATITUDE_OF_CENTRE,  SCALE_FACTOR,
-                FALSE_EASTING,       FALSE_NORTHING
-            });
+            }, param.toArray(new ParameterDescriptor<?>[param.size()]));
+        }
 
         /**
          * Constructs a new provider.

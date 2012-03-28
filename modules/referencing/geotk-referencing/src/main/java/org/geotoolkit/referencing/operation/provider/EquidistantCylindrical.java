@@ -60,7 +60,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  *
  * @author John Grange
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.17
+ * @version 3.20
  *
  * @since 2.2
  * @module
@@ -129,6 +129,7 @@ public class EquidistantCylindrical extends MapProjection {
                 "latitude_of_origin",                // OGC
                 "Standard_Parallel_1",               // ESRI
                 "ProjCenterLat");                    // GeoTIFF
+        // Following are the same than Mercator1SP except for the exclusion list.
         FALSE_EASTING = Identifiers.FALSE_EASTING.select(excludes, null,
                 "False easting",                     // EPSG
                 "FalseEasting");                     // GeoTIFF

@@ -38,7 +38,7 @@ import static org.geotoolkit.internal.referencing.Identifiers.exclude;
  *
  * @author John Grange
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.20
  *
  * @since 2.2
  * @module

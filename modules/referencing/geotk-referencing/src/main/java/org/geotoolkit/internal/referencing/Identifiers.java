@@ -455,7 +455,7 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
          * names array, discards all other identifiers of that authority. Otherwise if there
          * is some remaining authorities declaring exactly one identifier, inherits that
          * identifier silently. If more than one identifier is found for the same authority,
-         * do not add this authority name.
+         * this is considered an error.
          */
         int n=0;
         for (int i=0; i<selected.length; i++) {
@@ -512,9 +512,11 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
      * @return A copy of the given parameter, excluding the names of the given authorities.
      */
     public static ParameterDescriptor<Double> exclude(final ParameterDescriptor<Double> model, final Citation... excludes) {
+        final Object[] alias;
         final Map<String, Object> properties = new HashMap<>(IdentifiedObjects.getProperties(model));
         properties.put(IDENTIFIERS_KEY, exclude(excludes, (Object[]) properties.get(IDENTIFIERS_KEY)));
-        properties.put(ALIAS_KEY,       exclude(excludes, (Object[]) properties.get(ALIAS_KEY)));
+        properties.put(ALIAS_KEY, alias=exclude(excludes, (Object[]) properties.get(ALIAS_KEY)));
+        properties.put(NAME_KEY, alias[0]); // In case the primary name is one of the excluded names.
         return new DefaultParameterDescriptor<>(properties, Double.class, null,
                 model.getDefaultValue(), model.getMinimumValue(), model.getMaximumValue(),
                 model.getUnit(), model.getMinimumOccurs() != 0);
