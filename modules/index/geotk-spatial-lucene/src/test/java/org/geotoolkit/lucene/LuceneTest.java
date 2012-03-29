@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2007-2009, Geomatys
+ *    (C) 2007-2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -28,7 +28,6 @@ import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
-import com.vividsolutions.jts.io.WKBWriter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,10 +50,16 @@ import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.SimpleFSDirectory;
 import org.geotoolkit.filter.DefaultFilterFactory2;
+import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
-import org.geotoolkit.io.wkb.WKBUtils;
+import org.geotoolkit.index.tree.Tree;
+import org.geotoolkit.index.tree.TreeFactory;
+import org.geotoolkit.index.tree.calculator.Calculator;
+import org.geotoolkit.index.tree.calculator.DefaultCalculator;
+import org.geotoolkit.index.tree.nodefactory.NodeFactory;
+import org.geotoolkit.index.tree.nodefactory.TreeNodeFactory;
 import org.geotoolkit.lucene.filter.SerialChainFilter;
 import org.geotoolkit.lucene.filter.SpatialQuery;
 import org.geotoolkit.lucene.index.AbstractIndexer;
@@ -66,6 +71,9 @@ import org.junit.*;
 import org.opengis.filter.FilterFactory2;
 import static org.junit.Assert.*;
 import static org.geotoolkit.lucene.filter.LuceneOGCFilter.*;
+import org.geotoolkit.lucene.tree.NamedEnvelope;
+import org.geotoolkit.lucene.tree.TreeIndexReaderWrapper;
+import org.opengis.geometry.Envelope;
 
 /**
  * A Test classes testing the different spatial filters.
@@ -82,15 +90,21 @@ public class LuceneTest {
     private static Query         simpleQuery;
     private static FilterFactory2 FF = new DefaultFilterFactory2();
     private static CoordinateReferenceSystem crs;
+    private static CoordinateReferenceSystem treeCrs;
+    private static Tree rTree;
     private static final Logger LOGGER = Logger.getLogger("org.constellation.lucene");
 
     private static final double TOLERANCE = 0.001;
 
+    private org.opengis.filter.Filter filter;
+    private Geometry geom;
    
+    
+    
     @BeforeClass
     public static void setUpClass() throws Exception {
 
-        crs = CRS.decode("CRS:84", true);
+        crs = CRS.decode("CRS:84");
 
         directory = new File("luceneTest");
         if (!directory.exists())
@@ -100,15 +114,28 @@ public class LuceneTest {
                 f.delete();
             }
         }
-        final Analyzer analyzer = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_33);
-        final IndexWriterConfig config = new IndexWriterConfig(org.apache.lucene.util.Version.LUCENE_33, analyzer);
-        final Directory FSDirectory = new SimpleFSDirectory(directory);
+        
+        // the tree CRS (must be) cartesian
+        treeCrs = CRS.decode("EPSG:3857");
+        
+        //Create Calculator. Be careful to choice calculator adapted from crs---
+        final Calculator calculator = DefaultCalculator.CALCULATOR_2D;
+        
+        //Create NodeFactory adapted about caller uses.
+        final NodeFactory nodefactory = TreeNodeFactory.DEFAULT_FACTORY;
+        
+        //creating tree (R-Tree)------------------------------------------------
+        rTree = TreeFactory.createStarRTree(10, treeCrs, calculator, nodefactory);
+        
+        final Analyzer analyzer = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_35);
+        IndexWriterConfig config = new IndexWriterConfig(org.apache.lucene.util.Version.LUCENE_35, analyzer);
+        Directory FSDirectory = new SimpleFSDirectory(directory);
         final IndexWriter writer = new IndexWriter(FSDirectory, config);
-        fillTestData(writer);
+        fillTestData(writer, rTree);
         writer.commit();
         writer.close();
 
-        IndexReader reader = IndexReader.open(FSDirectory);
+        IndexReader reader = new TreeIndexReaderWrapper(IndexReader.open(FSDirectory),rTree);
         searcher = new IndexSearcher(reader);
         //create a term query to search against all documents
         simpleQuery = new TermQuery(new Term("metafile", "doc"));
@@ -154,9 +181,9 @@ public class LuceneTest {
         List<String> results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results
@@ -190,9 +217,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
 
         //we verify that we obtain the correct results
@@ -211,8 +238,7 @@ public class LuceneTest {
         /*
          * second bbox
          */ 
-        spaFilter = FF.bbox(GEOMETRY_PROPERTY,
-                -5, -5, 60, 60, "CRS:84");
+        spaFilter = FF.bbox(GEOMETRY_PROPERTY, -5, -5, 60, 60, "CRS:84");
         bboxQuery = new SpatialQuery(wrap(spaFilter));
         
         //we perform a lucene query
@@ -224,9 +250,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
          //we verify that we obtain the correct results
@@ -256,9 +282,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
          //we verify that we obtain the correct results
@@ -266,8 +292,151 @@ public class LuceneTest {
         assertTrue(results.contains("box 5"));
     }
 
-    org.opengis.filter.Filter filter;
-    Geometry geom;
+    /**
+     * Test the rTree.
+     */
+    @Test
+    public void rTreeBBOXTest() throws Exception {
+        /*
+         * first bbox
+         */
+        GeneralEnvelope env = new GeneralEnvelope(crs);
+        env.setEnvelope(-20,-20,20,20);
+
+        // reproject to tree CRS
+        env = (GeneralEnvelope) Envelopes.transform(env, treeCrs);
+        
+        //we perform a retree query
+        List<Envelope> docs = new ArrayList<Envelope>();
+        rTree.search(env, docs);
+
+        int nbResults = docs.size();
+        LOGGER.log(Level.FINER, "BBOX:BBOX 1 CRS=4326: nb Results: {0}", nbResults);
+        
+        List<String> results = new ArrayList<String>();
+        for (int i = 0; i < nbResults; i++) {
+            NamedEnvelope doc = (NamedEnvelope) docs.get(i);
+            String name =  doc.getName();
+            results.add(name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
+        }
+        
+        //we verify that we obtain the correct results
+        assertEquals(nbResults, 10);
+        assertTrue(results.contains("point 1"));
+        assertTrue(results.contains("point 1 projected"));
+        assertTrue(results.contains("point 2"));
+        assertTrue(results.contains("point 3"));
+        assertTrue(results.contains("box 2"));
+        assertTrue(results.contains("box 2 projected"));
+        assertTrue(results.contains("box 4"));
+        assertTrue(results.contains("line 1"));
+        assertTrue(results.contains("line 1 projected"));
+        assertTrue(results.contains("line 2"));
+     
+        /*
+         * The same box in a diferent crs
+         */ 
+        env = new GeneralEnvelope(CRS.decode("EPSG:3395"));
+        env.setEnvelope(-2226389.8158654715, -2258423.6490963786,
+                         2226389.8158654715, 2258423.6490963805);
+
+        // reproject to tree CRS
+        env = (GeneralEnvelope) Envelopes.transform(env, treeCrs);
+        
+
+        //we perform a retree query
+        docs = new ArrayList<Envelope>();
+        rTree.search(env, docs);
+
+        nbResults = docs.size();
+        LOGGER.log(Level.FINER, "BBOX:BBOX 1 CRS= 3395: nb Results: {0}", nbResults);
+
+        results = new ArrayList<String>();
+        for (int i = 0; i < nbResults; i++) {
+            NamedEnvelope doc = (NamedEnvelope) docs.get(i);
+            String name =  doc.getName();
+            results.add(name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
+        }
+
+        //we verify that we obtain the correct results
+        assertEquals(nbResults, 10);
+        assertTrue(results.contains("point 1"));
+        assertTrue(results.contains("point 1 projected"));
+        assertTrue(results.contains("point 2"));
+        assertTrue(results.contains("point 3"));
+        assertTrue(results.contains("box 2"));
+        assertTrue(results.contains("box 2 projected"));
+        assertTrue(results.contains("box 4"));
+        assertTrue(results.contains("line 1"));
+        assertTrue(results.contains("line 1 projected"));
+        assertTrue(results.contains("line 2"));
+
+        /*
+         * second bbox
+         */ 
+        env = new GeneralEnvelope(crs);
+        env.setEnvelope(-5, -5, 60, 60);
+        
+        // reproject to tree CRS
+        env = (GeneralEnvelope) Envelopes.transform(env, treeCrs);
+
+        //we perform a retree query
+        docs = new ArrayList<Envelope>();
+        rTree.search(env, docs);
+        
+        nbResults = docs.size();
+        LOGGER.log(Level.FINER, "BBOX:BBOX 2 CRS= 4326: nb Results: {0}", nbResults);
+        
+        results = new ArrayList<String>();
+        for (int i = 0; i < nbResults; i++) {
+            NamedEnvelope doc = (NamedEnvelope) docs.get(i);
+            String name =  doc.getName();
+            results.add(name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
+        }
+        
+         //we verify that we obtain the correct results
+        assertEquals(nbResults, 9);
+        assertTrue(results.contains("point 3"));
+        assertTrue(results.contains("point 4"));
+        assertTrue(results.contains("box 3"));
+        assertTrue(results.contains("box 2"));
+        assertTrue(results.contains("box 2 projected"));
+        assertTrue(results.contains("box 5"));
+        assertTrue(results.contains("line 1"));
+        assertTrue(results.contains("line 1 projected"));
+        assertTrue(results.contains("line 2"));
+        
+        /*
+         * third bbox
+         */ 
+        env = new GeneralEnvelope(crs);
+        env.setEnvelope(40, -9, 50, -5);
+        
+        // reproject to tree CRS
+        env = (GeneralEnvelope) Envelopes.transform(env, treeCrs);
+
+        //we perform a retree query
+        docs = new ArrayList<Envelope>();
+        rTree.search(env, docs);
+        
+        nbResults = docs.size();
+        LOGGER.log(Level.FINER, "BBOX:BBOX 3 CRS= 4326: nb Results: {0}", nbResults);
+        
+        results = new ArrayList<String>();
+        for (int i = 0; i < nbResults; i++) {
+            NamedEnvelope doc = (NamedEnvelope) docs.get(i);
+            String name =  doc.getName();
+            results.add(name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
+        }
+        
+         //we verify that we obtain the correct results
+        assertEquals(nbResults, 1);
+        assertTrue(results.contains("box 5"));
+    }
 
     /**
      * Test the spatial filter INTERSECT.
@@ -281,7 +450,6 @@ public class LuceneTest {
         double min1[] = {-20, -20};
         double max1[] = { 20,  20};
         GeneralEnvelope bbox = new GeneralEnvelope(min1, max1);
-        CoordinateReferenceSystem crs = CRS.decode("CRS:84", true);
         bbox.setCoordinateReferenceSystem(crs);
         filter = FF.intersects(GEOMETRY_PROPERTY, FF.literal(bbox));
         SpatialQuery bboxQuery = new SpatialQuery(wrap(filter));
@@ -295,9 +463,9 @@ public class LuceneTest {
         List<String> results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -332,9 +500,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results
@@ -357,7 +525,7 @@ public class LuceneTest {
             new Coordinate(7, 30),
             new Coordinate(7, -30),
         });
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
+        geom.setSRID(SRIDGenerator.toSRID(crs, Version.V1));
         filter = FF.intersects(GEOMETRY_PROPERTY,FF.literal(geom));
         bboxQuery = new SpatialQuery(wrap(filter));
 
@@ -372,9 +540,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         
@@ -405,9 +573,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -424,7 +592,7 @@ public class LuceneTest {
             new Coordinate(40, 40),
             new Coordinate(40, -30),
         });
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
+        geom.setSRID(SRIDGenerator.toSRID(crs, Version.V1));
         filter = FF.intersects(GEOMETRY_PROPERTY, FF.literal(geom));
         bboxQuery = new SpatialQuery(wrap(filter));
 
@@ -437,9 +605,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -467,9 +635,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -490,7 +658,6 @@ public class LuceneTest {
         double min1[] = { 30,   0};
         double max1[] = { 50,  15};
         GeneralEnvelope bbox = new GeneralEnvelope(min1, max1);
-        CoordinateReferenceSystem crs = CRS.decode("CRS:84", true);
         bbox.setCoordinateReferenceSystem(crs);
         filter = FF.equal(GEOMETRY_PROPERTY, FF.literal(bbox));
         SpatialQuery bboxQuery = new SpatialQuery(wrap(filter));
@@ -504,9 +671,9 @@ public class LuceneTest {
         List<String> results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -521,7 +688,7 @@ public class LuceneTest {
             new Coordinate(0, 0),
             new Coordinate(25, 0),
         });
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
+        geom.setSRID(SRIDGenerator.toSRID(crs, Version.V1));
         filter = FF.equal(GEOMETRY_PROPERTY, FF.literal(geom));
         bboxQuery = new SpatialQuery(wrap(filter));
 
@@ -534,9 +701,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -550,7 +717,7 @@ public class LuceneTest {
          * case 3: point
          */
         geom = GF.createPoint(new Coordinate(-10, 10));
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
+        geom.setSRID(SRIDGenerator.toSRID(crs, Version.V1));
         filter = FF.equal(GEOMETRY_PROPERTY, FF.literal(geom));
         bboxQuery = new SpatialQuery(wrap(filter));
 
@@ -563,9 +730,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
          //we verify that we obtain the correct results.
@@ -585,7 +752,6 @@ public class LuceneTest {
         double min1[] = {-30, -47};
         double max1[] = {-26, -42};
         GeneralEnvelope bbox = new GeneralEnvelope(min1, max1);
-        CoordinateReferenceSystem crs = CRS.decode("CRS:84", true);
         bbox.setCoordinateReferenceSystem(crs);
         filter = FF.contains(GEOMETRY_PROPERTY, FF.literal(bbox));
         SpatialQuery bboxQuery = new SpatialQuery(wrap(filter));
@@ -599,9 +765,9 @@ public class LuceneTest {
         List<String> results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -615,7 +781,7 @@ public class LuceneTest {
             new Coordinate(-25, 5),
             new Coordinate(-15, 5),
         });
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
+        geom.setSRID(SRIDGenerator.toSRID(crs, Version.V1));
         filter = FF.contains(GEOMETRY_PROPERTY, FF.literal(geom));
         bboxQuery = new SpatialQuery(wrap(filter));
 
@@ -628,9 +794,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -641,7 +807,7 @@ public class LuceneTest {
          * case 3: BOX/point
          */ 
         geom = GF.createPoint(new Coordinate(-25, 5));
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
+        geom.setSRID(SRIDGenerator.toSRID(crs, Version.V1));
         filter = FF.contains(GEOMETRY_PROPERTY, FF.literal(geom));
         bboxQuery = new SpatialQuery(wrap(filter));
 
@@ -654,9 +820,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -667,7 +833,7 @@ public class LuceneTest {
          * case 4: Line/point
          */ 
         geom = GF.createPoint(new Coordinate(20, 0));
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
+        geom.setSRID(SRIDGenerator.toSRID(crs, Version.V1));
         filter = FF.dwithin(GEOMETRY_PROPERTY, FF.literal(geom),0.00001,"m");
         bboxQuery = new SpatialQuery(wrap(filter));
 
@@ -680,9 +846,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
 
         
@@ -698,7 +864,7 @@ public class LuceneTest {
             new Coordinate(20, 0),
             new Coordinate(15, 0),
         });
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
+        geom.setSRID(SRIDGenerator.toSRID(crs, Version.V1));
         filter = FF.dwithin(GEOMETRY_PROPERTY, FF.literal(geom),TOLERANCE,"m");
         bboxQuery = new SpatialQuery(wrap(filter));
 
@@ -711,9 +877,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -733,7 +899,7 @@ public class LuceneTest {
          * 
          */
         geom = GF.createPoint(new Coordinate(-25, 5));
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
+        geom.setSRID(SRIDGenerator.toSRID(crs, Version.V1));
         filter = FF.disjoint(GEOMETRY_PROPERTY, FF.literal(geom));
         SpatialQuery spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -746,9 +912,9 @@ public class LuceneTest {
         List<String> results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -774,7 +940,7 @@ public class LuceneTest {
          * 
          */
         geom = GF.createPoint(new Coordinate(0, 0));
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
+        geom.setSRID(SRIDGenerator.toSRID(crs, Version.V1));
         filter = FF.disjoint(GEOMETRY_PROPERTY, FF.literal(geom));
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -787,9 +953,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -816,7 +982,7 @@ public class LuceneTest {
             new Coordinate(-40, 0),
             new Coordinate(30, 0),
         });
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
+        geom.setSRID(SRIDGenerator.toSRID(crs, Version.V1));
         filter = FF.disjoint(GEOMETRY_PROPERTY, FF.literal(geom));
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -829,9 +995,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -855,7 +1021,7 @@ public class LuceneTest {
             new Coordinate(7, 40),
             new Coordinate(7, -20),
         });
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
+        geom.setSRID(SRIDGenerator.toSRID(crs, Version.V1));
         filter = FF.disjoint(GEOMETRY_PROPERTY, FF.literal(geom));
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -868,9 +1034,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -907,9 +1073,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -940,9 +1106,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -971,7 +1137,7 @@ public class LuceneTest {
          * 
          */
         geom = GF.createPoint(new Coordinate(0, 0));
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
+        geom.setSRID(SRIDGenerator.toSRID(crs, Version.V1));
         filter = FF.touches(GEOMETRY_PROPERTY, FF.literal(geom));
         SpatialQuery spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -984,9 +1150,9 @@ public class LuceneTest {
         List<String> results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -1001,7 +1167,7 @@ public class LuceneTest {
          * 
          */
         geom = GF.createPoint(new Coordinate(-30, 5));
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
+        geom.setSRID(SRIDGenerator.toSRID(crs, Version.V1));
         filter = FF.touches(GEOMETRY_PROPERTY, FF.literal(geom));
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1014,9 +1180,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -1028,7 +1194,7 @@ public class LuceneTest {
          * 
          */
         geom = GF.createPoint(new Coordinate(-25, -50));
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
+        geom.setSRID(SRIDGenerator.toSRID(crs, Version.V1));
         filter = FF.touches(GEOMETRY_PROPERTY, FF.literal(geom));
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1041,9 +1207,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -1055,7 +1221,7 @@ public class LuceneTest {
          * 
          */
         geom = GF.createPoint(new Coordinate(0, -10));
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
+        geom.setSRID(SRIDGenerator.toSRID(crs, Version.V1));
         filter = FF.touches(GEOMETRY_PROPERTY, FF.literal(geom));
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1069,9 +1235,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
 
 
@@ -1085,7 +1251,7 @@ public class LuceneTest {
          * 
          */
         geom = GF.createPoint(new Coordinate(40, 20));
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
+        geom.setSRID(SRIDGenerator.toSRID(crs, Version.V1));
         filter = FF.touches(GEOMETRY_PROPERTY, FF.literal(geom));
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1098,9 +1264,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -1115,7 +1281,7 @@ public class LuceneTest {
             new Coordinate(7, 30),
             new Coordinate(7, 0),
         });
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
+        geom.setSRID(SRIDGenerator.toSRID(crs, Version.V1));
         filter = FF.touches(GEOMETRY_PROPERTY, FF.literal(geom));
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1128,9 +1294,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -1146,7 +1312,7 @@ public class LuceneTest {
             new Coordinate(-15, 3),
             new Coordinate(30, 4),
         });
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
+        geom.setSRID(SRIDGenerator.toSRID(crs, Version.V1));
         filter = FF.touches(GEOMETRY_PROPERTY, FF.literal(geom));
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1159,9 +1325,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -1177,7 +1343,7 @@ public class LuceneTest {
             new Coordinate(0, 0),
             new Coordinate(-40, -40),
         });
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
+        geom.setSRID(SRIDGenerator.toSRID(crs, Version.V1));
         filter = FF.touches(GEOMETRY_PROPERTY, FF.literal(geom));
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1190,9 +1356,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -1223,9 +1389,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -1251,7 +1417,6 @@ public class LuceneTest {
         double min1[] = {-20, -20};
         double max1[] = { 20,  20};
         GeneralEnvelope bbox = new GeneralEnvelope(min1, max1);
-        CoordinateReferenceSystem crs = CRS.decode("CRS:84", true);
         bbox.setCoordinateReferenceSystem(crs);
         filter = FF.within(GEOMETRY_PROPERTY, FF.literal(bbox));
         SpatialQuery bboxQuery = new SpatialQuery(wrap(filter));
@@ -1265,9 +1430,9 @@ public class LuceneTest {
         List<String> results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -1299,9 +1464,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -1318,7 +1483,7 @@ public class LuceneTest {
             new Coordinate(-40, 30),
             new Coordinate(40, 20),
         });
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
+        geom.setSRID(SRIDGenerator.toSRID(crs, Version.V1));
         filter = FF.within(GEOMETRY_PROPERTY, FF.literal(geom));
         SpatialQuery spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1331,9 +1496,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -1356,7 +1521,7 @@ public class LuceneTest {
             new Coordinate(40, 10),
             new Coordinate(40, 30),
         });
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
+        geom.setSRID(SRIDGenerator.toSRID(crs, Version.V1));
         filter = FF.crosses(GEOMETRY_PROPERTY, FF.literal(geom));
         SpatialQuery spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1369,9 +1534,9 @@ public class LuceneTest {
         List<String> results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -1387,7 +1552,7 @@ public class LuceneTest {
             new Coordinate(40, 10),
             new Coordinate(-5, -5),
         });
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
+        geom.setSRID(SRIDGenerator.toSRID(crs, Version.V1));
         filter = FF.crosses(GEOMETRY_PROPERTY, FF.literal(geom));
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1400,9 +1565,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -1420,7 +1585,7 @@ public class LuceneTest {
             new Coordinate(-25, 5),
             new Coordinate(-35, -45),
         });
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
+        geom.setSRID(SRIDGenerator.toSRID(crs, Version.V1));
         filter = FF.crosses(GEOMETRY_PROPERTY, FF.literal(geom));
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1433,9 +1598,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -1448,7 +1613,7 @@ public class LuceneTest {
          * 
          */
         geom = GF.createPoint(new Coordinate(0, 0));
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
+        geom.setSRID(SRIDGenerator.toSRID(crs, Version.V1));
         filter = FF.crosses(GEOMETRY_PROPERTY, FF.literal(geom));
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1461,9 +1626,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -1478,7 +1643,7 @@ public class LuceneTest {
          * 
          */
         geom = GF.createPoint(new Coordinate(5, 13));
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
+        geom.setSRID(SRIDGenerator.toSRID(crs, Version.V1));
         filter = FF.crosses(GEOMETRY_PROPERTY, FF.literal(geom));
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1491,9 +1656,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -1521,9 +1686,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -1546,7 +1711,6 @@ public class LuceneTest {
         double min1[] = { 25, -10};
         double max1[] = { 60,  50};
         GeneralEnvelope bbox = new GeneralEnvelope(min1, max1);
-        CoordinateReferenceSystem crs = CRS.decode("CRS:84", true);
         bbox.setCoordinateReferenceSystem(crs);
         org.opengis.filter.Filter filter1 = FF.touches(GEOMETRY_PROPERTY, FF.literal(bbox));
         org.opengis.filter.Filter filter2 = FF.bbox(GEOMETRY_PROPERTY, 25,-10,60,50,"CRS:84");
@@ -1570,9 +1734,9 @@ public class LuceneTest {
         List<String> results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -1602,9 +1766,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -1619,7 +1783,7 @@ public class LuceneTest {
             new Coordinate(7, 40),
             new Coordinate(6, -40),
         });
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
+        geom.setSRID(SRIDGenerator.toSRID(crs, Version.V1));
         filter = FF.intersects(GEOMETRY_PROPERTY, FF.literal(geom));
         SpatialQuery spatialQuery = new SpatialQuery(wrap(filter));
         List<Filter> filters3     = new ArrayList<Filter>();
@@ -1636,9 +1800,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -1681,9 +1845,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -1709,9 +1873,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -1731,7 +1895,7 @@ public class LuceneTest {
          * 
          */
         geom = GF.createPoint(new Coordinate(0, 0));
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
+        geom.setSRID(SRIDGenerator.toSRID(crs, Version.V1));
         filter = FF.dwithin(GEOMETRY_PROPERTY, FF.literal(geom),5.0,"kilometers");
         SpatialQuery spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1744,9 +1908,9 @@ public class LuceneTest {
         List<String> results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -1761,7 +1925,7 @@ public class LuceneTest {
          * 
          */
         geom = GF.createPoint(new Coordinate(0, 0));
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
+        geom.setSRID(SRIDGenerator.toSRID(crs, Version.V1));
         filter = FF.dwithin(GEOMETRY_PROPERTY, FF.literal(geom),1500.0,"kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1774,9 +1938,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -1794,7 +1958,7 @@ public class LuceneTest {
          * 
          */
         geom = GF.createPoint(new Coordinate(0, 0));
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
+        geom.setSRID(SRIDGenerator.toSRID(crs, Version.V1));
         filter = FF.dwithin(GEOMETRY_PROPERTY, FF.literal(geom),1500000,"meters");
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1807,9 +1971,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -1827,7 +1991,7 @@ public class LuceneTest {
          * 
          */
         geom = GF.createPoint(new Coordinate(0, 0));
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
+        geom.setSRID(SRIDGenerator.toSRID(crs, Version.V1));
         filter = FF.dwithin(GEOMETRY_PROPERTY, FF.literal(geom),2000,"kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1840,9 +2004,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -1863,7 +2027,7 @@ public class LuceneTest {
          * 
          */
         geom = GF.createPoint(new Coordinate(0, 0));
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
+        geom.setSRID(SRIDGenerator.toSRID(crs, Version.V1));
         filter = FF.dwithin(GEOMETRY_PROPERTY, FF.literal(geom),4000,"kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1876,9 +2040,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -1900,7 +2064,7 @@ public class LuceneTest {
          * 
          */
         geom = GF.createPoint(new Coordinate(0, 0));
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
+        geom.setSRID(SRIDGenerator.toSRID(crs, Version.V1));
         filter = FF.dwithin(GEOMETRY_PROPERTY, FF.literal(geom),5000,"kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1913,9 +2077,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -1939,7 +2103,7 @@ public class LuceneTest {
          * 
          */
         geom = GF.createPoint(new Coordinate(0, 0));
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
+        geom.setSRID(SRIDGenerator.toSRID(crs, Version.V1));
         filter = FF.dwithin(GEOMETRY_PROPERTY, FF.literal(geom),6000,"kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -1952,9 +2116,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -1994,9 +2158,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -2028,9 +2192,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -2062,9 +2226,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -2093,7 +2257,7 @@ public class LuceneTest {
             new Coordinate(-50, -45),
             new Coordinate(60, -43),
         });
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
+        geom.setSRID(SRIDGenerator.toSRID(crs, Version.V1));
         filter = FF.dwithin(GEOMETRY_PROPERTY, FF.literal(geom),5,"kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -2106,9 +2270,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -2131,9 +2295,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -2161,9 +2325,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
 
@@ -2195,9 +2359,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -2230,7 +2394,7 @@ public class LuceneTest {
          * 
          */
         geom = GF.createPoint(new Coordinate(0, 0));
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
+        geom.setSRID(SRIDGenerator.toSRID(crs, Version.V1));
         filter = FF.beyond(GEOMETRY_PROPERTY, FF.literal(geom),5,"kilometers");
         SpatialQuery spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -2243,9 +2407,9 @@ public class LuceneTest {
         List<String> results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -2267,7 +2431,7 @@ public class LuceneTest {
          * 
          */ 
         geom = GF.createPoint(new Coordinate(0, 0));
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
+        geom.setSRID(SRIDGenerator.toSRID(crs, Version.V1));
         filter = FF.beyond(GEOMETRY_PROPERTY, FF.literal(geom),1500,"kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -2280,13 +2444,12 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 8);
         assertTrue(results.contains("point 1"));
         assertTrue(results.contains("point 1 projected"));
         assertTrue(results.contains("point 4"));
@@ -2296,12 +2459,14 @@ public class LuceneTest {
         assertTrue(results.contains("box 4"));
         assertTrue(results.contains("box 5"));
         
+        assertEquals(nbResults, 8);
+        
         /*
          * case 3: point distance 1500000m
          * 
          */
         geom = GF.createPoint(new Coordinate(0, 0));
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
+        geom.setSRID(SRIDGenerator.toSRID(crs, Version.V1));
         filter = FF.beyond(GEOMETRY_PROPERTY, FF.literal(geom),1500000,"meters");
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -2314,9 +2479,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -2336,7 +2501,7 @@ public class LuceneTest {
          * 
          */
         geom = GF.createPoint(new Coordinate(0, 0));
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
+        geom.setSRID(SRIDGenerator.toSRID(crs, Version.V1));
         filter = FF.beyond(GEOMETRY_PROPERTY, FF.literal(geom),2000,"kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -2349,9 +2514,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -2367,7 +2532,7 @@ public class LuceneTest {
          * 
          */
         geom = GF.createPoint(new Coordinate(0, 0));
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
+        geom.setSRID(SRIDGenerator.toSRID(crs, Version.V1));
         filter = FF.beyond(GEOMETRY_PROPERTY, FF.literal(geom),4000,"kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -2380,9 +2545,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -2397,7 +2562,7 @@ public class LuceneTest {
          * 
          */
         geom = GF.createPoint(new Coordinate(0, 0));
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
+        geom.setSRID(SRIDGenerator.toSRID(crs, Version.V1));
         filter = FF.beyond(GEOMETRY_PROPERTY, FF.literal(geom),5000,"kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -2410,9 +2575,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -2425,7 +2590,7 @@ public class LuceneTest {
          * 
          */
         geom = GF.createPoint(new Coordinate(0, 0));
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
+        geom.setSRID(SRIDGenerator.toSRID(crs, Version.V1));
         filter = FF.beyond(GEOMETRY_PROPERTY, FF.literal(geom),6000,"kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -2438,9 +2603,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -2465,9 +2630,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -2494,9 +2659,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -2522,9 +2687,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -2538,7 +2703,7 @@ public class LuceneTest {
             new Coordinate(-50, -45),
             new Coordinate(60, -43),
         });
-        geom.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
+        geom.setSRID(SRIDGenerator.toSRID(crs, Version.V1));
         filter = FF.beyond(GEOMETRY_PROPERTY, FF.literal(geom),5,"kilometers");
         spatialQuery = new SpatialQuery(wrap(filter));
 
@@ -2551,9 +2716,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -2589,9 +2754,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -2627,9 +2792,9 @@ public class LuceneTest {
 //        results = new ArrayList<String>();
 //        for (int i = 0; i < nbResults; i++) {
 //            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-//            String name =  doc.get("name");
+//            String name =  doc.get("id");
 //            results.add(name);
-//            LOGGER.log(Level.FINER, "\tName: {0}", name);
+//            LOGGER.log(Level.FINER, "\tid: {0}", name);
 //        }
 //
 //        //we verify that we obtain the correct results.
@@ -2657,9 +2822,9 @@ public class LuceneTest {
 //        results = new ArrayList<String>();
 //        for (int i = 0; i < nbResults; i++) {
 //            Document doc = searcher.doc(docs.scoreDocs[i].doc);
-//            String name =  doc.get("name");
+//            String name =  doc.get("id");
 //            results.add(name);
-//            LOGGER.log(Level.FINER, "\tName: {0}", name);
+//            LOGGER.log(Level.FINER, "\tid: {0}", name);
 //        }
 //
 //        //we verify that we obtain the correct results.
@@ -2680,7 +2845,6 @@ public class LuceneTest {
         double min1[] = {-20, -20};
         double max1[] = { 20,  20};
         GeneralEnvelope bbox = new GeneralEnvelope(min1, max1);
-        CoordinateReferenceSystem crs = CRS.decode("CRS:84", true);
         bbox.setCoordinateReferenceSystem(crs);
         org.opengis.filter.Filter filter = FF.overlaps(GEOMETRY_PROPERTY, FF.literal(bbox));
         SpatialQuery bboxQuery = new SpatialQuery(wrap(filter));
@@ -2694,9 +2858,9 @@ public class LuceneTest {
         List<String> results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -2722,9 +2886,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results.
@@ -2747,7 +2911,6 @@ public class LuceneTest {
         double min1[] = {-20, -20};
         double max1[] = { 20,  20};
         GeneralEnvelope bbox = new GeneralEnvelope(min1, max1);
-        CoordinateReferenceSystem crs = CRS.decode("CRS:84", true);
         bbox.setCoordinateReferenceSystem(crs);
         org.opengis.filter.Filter bboxFilter = FF.bbox(GEOMETRY_PROPERTY, -20, -20, 20, 20, "CRS:84");
         SpatialQuery bboxQuery = new SpatialQuery(wrap(bboxFilter));
@@ -2761,9 +2924,9 @@ public class LuceneTest {
         List<String> results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results
@@ -2786,7 +2949,7 @@ public class LuceneTest {
         //we perform a lucene query
         Analyzer analyzer    = new KeywordAnalyzer();
         QueryParser parser  = new QueryParser(org.apache.lucene.util.Version.LUCENE_33, "metafile", analyzer);
-        Query query         = parser.parse("name:point*");
+        Query query         = parser.parse("id:point*");
         
         docs = searcher.search(query, bboxQuery.getSpatialFilter(), 15);
 
@@ -2796,9 +2959,9 @@ public class LuceneTest {
         results = new ArrayList<String>();
         for (int i = 0; i < nbResults; i++) {
             Document doc = searcher.doc(docs.scoreDocs[i].doc);
-            String name =  doc.get("name");
+            String name =  doc.get("id");
             results.add(name);
-            LOGGER.log(Level.FINER, "\tName: {0}", name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
         //we verify that we obtain the correct results
@@ -2815,7 +2978,7 @@ public class LuceneTest {
         //we perform two lucene query
         analyzer      = new KeywordAnalyzer();
         parser        = new QueryParser(org.apache.lucene.util.Version.LUCENE_33, "metafile", analyzer);
-        query         = parser.parse("name:point*");
+        query         = parser.parse("id:point*");
         
         TopDocs hits1 = searcher.search(query, 15);
         TopDocs hits2 = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
@@ -2825,15 +2988,15 @@ public class LuceneTest {
         StringBuilder resultString = new StringBuilder();
         for (int i = 0; i < hits1.totalHits; i++) {
 
-            String name = searcher.doc(hits1.scoreDocs[i].doc).get("name");
+            String name = searcher.doc(hits1.scoreDocs[i].doc).get("id");
             results.add(name);
-            resultString.append('\t').append("Name: ").append(name).append('\n');
+            resultString.append('\t').append("id: ").append(name).append('\n');
         }
         for (int i = 0; i < hits2.totalHits; i++) {
-            String name = searcher.doc(hits2.scoreDocs[i].doc).get("name");
+            String name = searcher.doc(hits2.scoreDocs[i].doc).get("id");
             if (!results.contains(name)) {
                 results.add(name);
-                resultString.append('\t').append("Name: ").append(name).append('\n');
+                resultString.append('\t').append("id: ").append(name).append('\n');
             }
         }
         nbResults = results.size();
@@ -2863,14 +3026,14 @@ public class LuceneTest {
         //we perform two lucene query
         analyzer                = new KeywordAnalyzer();
         parser                  = new QueryParser(org.apache.lucene.util.Version.LUCENE_33, "metafile", analyzer);
-        Query query1            = parser.parse("name:point*");
-        Query query2            = parser.parse("name:box*");
+        Query query1            = parser.parse("id:point*");
+        Query query2            = parser.parse("id:box*");
 
         Geometry geom1 = GF.createLineString(new Coordinate[]{
             new Coordinate(40, 30),
             new Coordinate(40, -30),
         });
-        geom1.setSRID(SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1));
+        geom1.setSRID(SRIDGenerator.toSRID(crs, Version.V1));
         filter = FF.intersects(GEOMETRY_PROPERTY, FF.literal(geom1));
         SpatialQuery interQuery = new SpatialQuery(wrap(filter));
 
@@ -2880,15 +3043,15 @@ public class LuceneTest {
         results      = new ArrayList<String>();
         resultString = new StringBuilder();
         for (int i = 0; i < hits1.totalHits; i++) {
-            String name = searcher.doc(hits1.scoreDocs[i].doc).get("name");
+            String name = searcher.doc(hits1.scoreDocs[i].doc).get("id");
             results.add(name);
-            resultString.append('\t').append("Name: ").append(name).append('\n');
+            resultString.append('\t').append("id: ").append(name).append('\n');
         }
         for (int i = 0; i < hits2.totalHits; i++) {
-            String name = searcher.doc(hits2.scoreDocs[i].doc).get("name");
+            String name = searcher.doc(hits2.scoreDocs[i].doc).get("id");
             if (!results.contains(name)) {
                 results.add(name);
-                resultString.append('\t').append("Name: ").append(name).append('\n');
+                resultString.append('\t').append("id: ").append(name).append('\n');
             }
         }
         nbResults = results.size();
@@ -2904,72 +3067,180 @@ public class LuceneTest {
         assertTrue(results.contains("box 3"));
     }
     
-    private static void fillTestData(final IndexWriter writer) throws Exception {
+    
+    /**
+     * Test the combination of a String query and/or spatial filter.
+     */
+    @Test
+    public void QueryAndSpatialFilterAfterRemoveTest() throws Exception {
+        
+        System.out.println("\n\n\n\n deleting \n\n\n\n");
+        // we remove a document
+        final Analyzer analyzer = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_35);
+        IndexWriterConfig config = new IndexWriterConfig(org.apache.lucene.util.Version.LUCENE_35, analyzer);
+        Directory FSDirectory = new SimpleFSDirectory(directory);
+        IndexWriter writer = new IndexWriter(FSDirectory, config);
+        
+        Query query = new TermQuery(new Term("id", "box 2 projected"));
+        writer.deleteDocuments(query);
+        writer.commit();
+        writer.close();
 
-        final int srid4326 = SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1);
+        IndexReader reader = new TreeIndexReaderWrapper(IndexReader.open(FSDirectory),rTree);
+        searcher = new IndexSearcher(reader);
+        
+        /*
+         * case 1: a normal spatial request BBOX
+         */ 
+        double min1[] = {-20, -20};
+        double max1[] = { 20,  20};
+        GeneralEnvelope bbox = new GeneralEnvelope(min1, max1);
+        bbox.setCoordinateReferenceSystem(crs);
+        org.opengis.filter.Filter bboxFilter = FF.bbox(GEOMETRY_PROPERTY, -20, -20, 20, 20, "CRS:84");
+        SpatialQuery bboxQuery = new SpatialQuery(wrap(bboxFilter));
+
+        //we perform a lucene query
+        TopDocs docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+
+        int nbResults = docs.totalHits;
+        LOGGER.log(Level.FINER, "QnS:BBOX 1 CRS=4326: nb Results: {0}", nbResults);
+        
+        List<String> results = new ArrayList<String>();
+        for (int i = 0; i < nbResults; i++) {
+            Document doc = searcher.doc(docs.scoreDocs[i].doc);
+            String name =  doc.get("id");
+            results.add(name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
+        }
+        
+        //we verify that we obtain the correct results
+        assertEquals(nbResults, 9);
+        assertTrue(results.contains("point 1"));
+        assertTrue(results.contains("point 1 projected"));
+        assertTrue(results.contains("point 2"));
+        assertTrue(results.contains("point 3"));
+        assertTrue(results.contains("box 4"));
+        assertTrue(results.contains("box 2"));
+        assertTrue(results.contains("line 2"));
+        assertTrue(results.contains("line 1"));
+        assertTrue(results.contains("line 1 projected"));
+        
+        
+        // re-add the document
+        
+         System.out.println("\n\n\n\n re-add \n\n\n\n");
+         
+        config = new IndexWriterConfig(org.apache.lucene.util.Version.LUCENE_35, analyzer);
+        FSDirectory = new SimpleFSDirectory(directory);
+        writer = new IndexWriter(FSDirectory, config);
+        
+        final int srid3395 = SRIDGenerator.toSRID(CRS.decode("EPSG:3395"), Version.V1);
+        Document docu = new Document();
+        docu.add(new Field("id", "box 2 projected", Field.Store.YES, Field.Index.NOT_ANALYZED));
+        addBoundingBox(docu,             556597.4539663679,  1113194.9079327357,  1111475.1028522244, 1678147.5163917788, srid3395, rTree); // attention !! reprojeté
+        writer.addDocument(docu);
+        
+        writer.commit();
+        writer.close();
+        
+        reader = new TreeIndexReaderWrapper(IndexReader.open(FSDirectory),rTree);
+        searcher = new IndexSearcher(reader);
+        
+        
+         //we perform a lucene query
+        docs = searcher.search(simpleQuery, bboxQuery.getSpatialFilter(), 15);
+
+        nbResults = docs.totalHits;
+        LOGGER.log(Level.FINER, "QnS:BBOX 1 CRS=4326: nb Results: {0}", nbResults);
+        
+        results = new ArrayList<String>();
+        for (int i = 0; i < nbResults; i++) {
+            Document doc = searcher.doc(docs.scoreDocs[i].doc);
+            String name =  doc.get("id");
+            results.add(name);
+            LOGGER.log(Level.FINER, "\tid: {0}", name);
+        }
+        
+        //we verify that we obtain the correct results
+        assertEquals(nbResults, 10);
+        assertTrue(results.contains("point 1"));
+        assertTrue(results.contains("point 1 projected"));
+        assertTrue(results.contains("point 2"));
+        assertTrue(results.contains("point 3"));
+        assertTrue(results.contains("box 4"));
+        assertTrue(results.contains("box 2"));
+        assertTrue(results.contains("box 2 projected"));
+        assertTrue(results.contains("line 2"));
+        assertTrue(results.contains("line 1"));
+        assertTrue(results.contains("line 1 projected"));
+    }
+    
+    private static void fillTestData(final IndexWriter writer, final Tree rTree) throws Exception {
+
+        final int srid4326 = SRIDGenerator.toSRID(crs, Version.V1);
         final int srid3395 = SRIDGenerator.toSRID(CRS.decode("EPSG:3395"), Version.V1);
 
         Document doc = new Document();
-        doc.add(new Field("name", "point 1", Field.Store.YES, Field.Index.ANALYZED));
-        addPoint      (doc,           -10,                10, srid4326);
+        doc.add(new Field("id", "point 1", Field.Store.YES, Field.Index.NOT_ANALYZED));
+        addPoint      (doc,           -10,                10, srid4326, rTree);
         writer.addDocument(doc);
         doc = new Document();
-        doc.add(new Field("name", "point 1 projected", Field.Store.YES, Field.Index.ANALYZED));
-        addPoint      (doc,           -1111475.102852225,   1113194.9079327357, srid3395);
+        doc.add(new Field("id", "point 1 projected", Field.Store.YES, Field.Index.NOT_ANALYZED));
+        addPoint      (doc,           -1111475.102852225,   1113194.9079327357, srid3395, rTree); // attention !! reprojeté
         writer.addDocument(doc);
         doc = new Document();
-        doc.add(new Field("name", "point 2", Field.Store.YES, Field.Index.ANALYZED));
-        addPoint      (doc,           -10,                 0, srid4326);
+        doc.add(new Field("id", "point 2", Field.Store.YES, Field.Index.NOT_ANALYZED));
+        addPoint      (doc,           -10,                 0, srid4326, rTree);
         writer.addDocument(doc);
         doc = new Document();
-        doc.add(new Field("name", "point 3", Field.Store.YES, Field.Index.ANALYZED));
-        addPoint      (doc,             0,                 0, srid4326);
+        doc.add(new Field("id", "point 3", Field.Store.YES, Field.Index.NOT_ANALYZED));
+        addPoint      (doc,             0,                 0, srid4326, rTree);
         writer.addDocument(doc);
         doc = new Document();
-        doc.add(new Field("name", "point 4", Field.Store.YES, Field.Index.ANALYZED));
-        addPoint      (doc,            40,                20, srid4326);
+        doc.add(new Field("id", "point 4", Field.Store.YES, Field.Index.NOT_ANALYZED));
+        addPoint      (doc,            40,                20, srid4326, rTree);
         writer.addDocument(doc);
         doc = new Document();
-        doc.add(new Field("name", "point 5", Field.Store.YES, Field.Index.ANALYZED));
-        addPoint      (doc,           -40,                30, srid4326);
-        writer.addDocument(doc);
-        
-        doc = new Document();
-        doc.add(new Field("name", "box 1", Field.Store.YES, Field.Index.ANALYZED));
-        addBoundingBox(doc,           -40,                -25,           -50,               -40, srid4326);
-        writer.addDocument(doc);
-        doc = new Document();
-        doc.add(new Field("name", "box 2", Field.Store.YES, Field.Index.ANALYZED));
-        addBoundingBox(doc,             5,                 10,            10,                15, srid4326);
-        writer.addDocument(doc);
-        doc = new Document();
-        doc.add(new Field("name", "box 2 projected", Field.Store.YES, Field.Index.ANALYZED));
-        addBoundingBox(doc,             556597.4539663679,  1113194.9079327357,  1111475.1028522244, 1678147.5163917788, srid3395);
-        writer.addDocument(doc);
-        doc = new Document();
-        doc.add(new Field("name", "box 3", Field.Store.YES, Field.Index.ANALYZED));
-        addBoundingBox(doc,            30,                 50,             0,                15, srid4326);
-        writer.addDocument(doc);
-        doc = new Document();
-        doc.add(new Field("name", "box 4", Field.Store.YES, Field.Index.ANALYZED));
-        addBoundingBox(doc,           -30,                -15,             0,                10, srid4326);
-        writer.addDocument(doc);
-        doc = new Document();
-        doc.add(new Field("name", "box 5", Field.Store.YES, Field.Index.ANALYZED));
-        addBoundingBox(doc,        44.792,             51.126,        -6.171,             -2.28, srid4326);
+        doc.add(new Field("id", "point 5", Field.Store.YES, Field.Index.NOT_ANALYZED));
+        addPoint      (doc,           -40,                30, srid4326, rTree);
         writer.addDocument(doc);
         
         doc = new Document();
-        doc.add(new Field("name", "line 1", Field.Store.YES, Field.Index.ANALYZED));
-        addLine       (doc,             0,                  0,            25,                 0, srid4326);
+        doc.add(new Field("id", "box 1", Field.Store.YES, Field.Index.NOT_ANALYZED));
+        addBoundingBox(doc,           -40,                -25,           -50,               -40, srid4326, rTree);
         writer.addDocument(doc);
         doc = new Document();
-        doc.add(new Field("name", "line 1 projected", Field.Store.YES, Field.Index.ANALYZED));
-        addLine       (doc,             0,        0,      2857692.6111605316,                 0, srid3395);
+        doc.add(new Field("id", "box 2", Field.Store.YES, Field.Index.NOT_ANALYZED));
+        addBoundingBox(doc,             5,                 10,            10,                15, srid4326, rTree);
         writer.addDocument(doc);
         doc = new Document();
-        doc.add(new Field("name", "line 2", Field.Store.YES, Field.Index.ANALYZED));
-        addLine       (doc,             0,                  0,             0,               -15, srid4326);
+        doc.add(new Field("id", "box 2 projected", Field.Store.YES, Field.Index.NOT_ANALYZED));
+        addBoundingBox(doc,             556597.4539663679,  1113194.9079327357,  1111475.1028522244, 1678147.5163917788, srid3395, rTree); // attention !! reprojeté
+        writer.addDocument(doc);
+        doc = new Document();
+        doc.add(new Field("id", "box 3", Field.Store.YES, Field.Index.NOT_ANALYZED));
+        addBoundingBox(doc,            30,                 50,             0,                15, srid4326, rTree);
+        writer.addDocument(doc);
+        doc = new Document();
+        doc.add(new Field("id", "box 4", Field.Store.YES, Field.Index.NOT_ANALYZED));
+        addBoundingBox(doc,           -30,                -15,             0,                10, srid4326, rTree);
+        writer.addDocument(doc);
+        doc = new Document();
+        doc.add(new Field("id", "box 5", Field.Store.YES, Field.Index.NOT_ANALYZED));
+        addBoundingBox(doc,        44.792,             51.126,        -6.171,             -2.28, srid4326, rTree);
+        writer.addDocument(doc);
+        
+        doc = new Document();
+        doc.add(new Field("id", "line 1", Field.Store.YES, Field.Index.NOT_ANALYZED));
+        addLine       (doc,             0,                  0,            25,                 0, srid4326, rTree);
+        writer.addDocument(doc);
+        doc = new Document();
+        doc.add(new Field("id", "line 1 projected", Field.Store.YES, Field.Index.NOT_ANALYZED));
+        addLine       (doc,             0,        0,      2857692.6111605316,                 0, srid3395, rTree); // attention !! reprojeté
+        writer.addDocument(doc);
+        doc = new Document();
+        doc.add(new Field("id", "line 2", Field.Store.YES, Field.Index.NOT_ANALYZED));
+        addLine       (doc,             0,                  0,             0,               -15, srid4326, rTree);
         writer.addDocument(doc);
     }
         
@@ -2983,7 +3254,7 @@ public class LuceneTest {
      * @param y2  the Y coordinate of the first point of the line.
      * @param crsName The coordinate reference system in witch the coordinates are expressed.
      */
-    private static void addLine(final Document doc, final double x1, final double y1, final double x2, final double y2, final int srid) {
+    private static void addLine(final Document doc, final double x1, final double y1, final double x2, final double y2, final int srid, final Tree rTree) {
 
         LineString line = GF.createLineString(new Coordinate[]{
             new Coordinate(x1,y1),
@@ -2991,7 +3262,7 @@ public class LuceneTest {
         });
         line.setSRID(srid);
 
-        AbstractIndexer.addGeometry(doc, line);
+        AbstractIndexer.addGeometry(doc, line, rTree);
         
         // add a default meta field to make searching all documents easy 
         doc.add(new Field("metafile", "doc",   Field.Store.YES, Field.Index.ANALYZED));
@@ -3006,12 +3277,12 @@ public class LuceneTest {
      * @param y       The y coordinate of the point.
      * @param crsName The coordinate reference system in witch the coordinates are expressed.
      */
-    private static void addPoint(final Document doc, final double x, final double y, final int srid) {
+    private static void addPoint(final Document doc, final double x, final double y, final int srid, final Tree rTree) {
 
         Point pt = GF.createPoint(new Coordinate(x, y));
         pt.setSRID(srid);
 
-        AbstractIndexer.addGeometry(doc, pt);
+        AbstractIndexer.addGeometry(doc, pt, rTree);
 
         // add a default meta field to make searching all documents easy
         doc.add(new Field("metafile", "doc",    Field.Store.YES, Field.Index.ANALYZED));
@@ -3027,44 +3298,34 @@ public class LuceneTest {
      * @param maxy the maximum Y coordinate of the bounding box.
      * @param crsName The coordinate reference system in witch the coordinates are expressed.
      */
-    private static void addBoundingBox(final Document doc, final double minx, final double maxx, final double miny, final double maxy, final int srid) {
+    private static void addBoundingBox(final Document doc, final double minx, final double maxx, final double miny, final double maxy, final int srid, final Tree rTree) {
 
-        toByte(minx, maxx, miny, maxy,srid);
-        byte[] bytes = WKBUtils.toWKBwithSRID(polygon);
+        final Coordinate[] crds = new Coordinate[]{
+        new Coordinate(0, 0),
+        new Coordinate(0, 0),
+        new Coordinate(0, 0),
+        new Coordinate(0, 0),
+        new Coordinate(0, 0)};
 
-        AbstractIndexer.addGeometry(doc, bytes);
+        final CoordinateSequence pts = new CoordinateArraySequence(crds);
+        final LinearRing rg          = new LinearRing(pts, GF);
+        final Polygon poly           = new Polygon(rg, new LinearRing[0],GF);
+        crds[0].x = minx;
+        crds[0].y = miny;
+        crds[1].x = minx;
+        crds[1].y = maxy;
+        crds[2].x = maxx;
+        crds[2].y = maxy;
+        crds[3].x = maxx;
+        crds[3].y = miny;
+        crds[4].x = minx;
+        crds[4].y = miny;
+        poly.setSRID(srid);
+
+        AbstractIndexer.addGeometry(doc, poly, rTree);
 
         // add a default meta field to make searching all documents easy
         doc.add(new Field("metafile", "doc", Field.Store.YES, Field.Index.ANALYZED));
-    }
-
-
-    private static final Coordinate[] coords = new Coordinate[]{
-        new Coordinate(0, 0),
-        new Coordinate(0, 0),
-        new Coordinate(0, 0),
-        new Coordinate(0, 0),
-        new Coordinate(0, 0)
-    };
-    private static final CoordinateSequence points = new CoordinateArraySequence(coords);
-    private static final LinearRing ring = new LinearRing(points, GF);
-    private static final Polygon polygon = new Polygon(ring, new LinearRing[0],GF);
-
-
-    protected static byte[] toByte(final double minx, final double maxx, final double miny, final double maxy,final int srid){
-        polygon.setSRID(4326);
-        coords[0].x = minx;
-        coords[0].y = miny;
-        coords[1].x = minx;
-        coords[1].y = maxy;
-        coords[2].x = maxx;
-        coords[2].y = maxy;
-        coords[3].x = maxx;
-        coords[3].y = miny;
-        coords[4].x = minx;
-        coords[4].y = miny;
-        polygon.setSRID(srid);
-       return new WKBWriter(2).write(polygon);
     }
 
 }

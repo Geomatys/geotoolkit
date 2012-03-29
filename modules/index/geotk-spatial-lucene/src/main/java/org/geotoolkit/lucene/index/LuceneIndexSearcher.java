@@ -48,7 +48,6 @@ import org.geotoolkit.lucene.IndexingException;
 import org.geotoolkit.lucene.SearchingException;
 import org.geotoolkit.lucene.filter.SerialChainFilter;
 import org.geotoolkit.lucene.filter.SpatialQuery;
-import org.geotoolkit.lucene.index.AbstractIndexer.IndexDirectoryFilter;
 import org.geotoolkit.lucene.tree.TreeIndexReaderWrapper;
 import org.geotoolkit.util.FileUtilities;
 
