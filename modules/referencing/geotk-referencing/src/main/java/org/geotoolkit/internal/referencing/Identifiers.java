@@ -30,12 +30,12 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.GeneralParameterDescriptor;
-import org.geotoolkit.referencing.IdentifiedObjects;
 import org.opengis.referencing.ReferenceIdentifier;
 
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.referencing.NamedIdentifier;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
@@ -513,7 +513,7 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
      */
     public static ParameterDescriptor<Double> exclude(final ParameterDescriptor<Double> model, final Citation... excludes) {
         final Object[] alias;
-        final Map<String, Object> properties = new HashMap<>(IdentifiedObjects.getProperties(model));
+        final Map<String,Object> properties = new HashMap<>(IdentifiedObjects.getProperties(model));
         properties.put(IDENTIFIERS_KEY, exclude(excludes, (Object[]) properties.get(IDENTIFIERS_KEY)));
         properties.put(ALIAS_KEY, alias=exclude(excludes, (Object[]) properties.get(ALIAS_KEY)));
         properties.put(NAME_KEY, alias[0]); // In case the primary name is one of the excluded names.
