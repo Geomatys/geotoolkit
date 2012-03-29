@@ -272,8 +272,9 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      */
     public void indexDocument(final IndexWriter writer, final E meta) {
         try {
+            final int docId = writer.maxDoc();
             //adding the document in a specific model. in this case we use a MDwebDocument.
-            writer.addDocument(createDocument(meta));
+            writer.addDocument(createDocument(meta, docId));
             LOGGER.log(Level.FINER, "Metadata: {0} indexed", getIdentifier(meta));
 
         } catch (IndexingException ex) {
@@ -293,8 +294,9 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
             final IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_35, analyzer);
             final IndexWriter writer = new IndexWriter(new SimpleFSDirectory(getFileDirectory()), config);
 
+            final int docId = writer.maxDoc();
             //adding the document in a specific model. in this case we use a MDwebDocument.
-            writer.addDocument(createDocument(meta));
+            writer.addDocument(createDocument(meta, docId));
             LOGGER.log(Level.FINER, "Metadata: {0} indexed", getIdentifier(meta));
             writer.close();
 
@@ -395,7 +397,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
     * @param object an object to index.
     * @return A Lucene document.
     */
-    protected abstract Document createDocument(E object) throws IndexingException;
+    protected abstract Document createDocument(E object, int docId) throws IndexingException;
 
     /**
      * Return a JTS polygon from bounding box coordinate.
@@ -465,7 +467,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
         if (rTree != null) {
             final Envelope jtsBound = geom.getEnvelopeInternal();
             try {
-                final String name =  doc.get("id");
+                final String name     =  doc.get("docid");
                 final String epsgCode = SRIDGenerator.toSRS(geom.getSRID(), SRIDGenerator.Version.V1);
                 final CoordinateReferenceSystem geomCRS = CRS.decode(epsgCode);
                 final GeneralEnvelope bound = new GeneralEnvelope(geomCRS);

@@ -323,16 +323,16 @@ public class LuceneTest {
         
         //we verify that we obtain the correct results
         assertEquals(nbResults, 10);
-        assertTrue(results.contains("point 1"));
-        assertTrue(results.contains("point 1 projected"));
-        assertTrue(results.contains("point 2"));
-        assertTrue(results.contains("point 3"));
-        assertTrue(results.contains("box 2"));
-        assertTrue(results.contains("box 2 projected"));
-        assertTrue(results.contains("box 4"));
-        assertTrue(results.contains("line 1"));
-        assertTrue(results.contains("line 1 projected"));
-        assertTrue(results.contains("line 2"));
+        assertTrue(results.contains("0"));
+        assertTrue(results.contains("1"));
+        assertTrue(results.contains("2"));
+        assertTrue(results.contains("3"));
+        assertTrue(results.contains("7"));
+        assertTrue(results.contains("8"));
+        assertTrue(results.contains("10"));
+        assertTrue(results.contains("12"));
+        assertTrue(results.contains("13"));
+        assertTrue(results.contains("14"));
      
         /*
          * The same box in a diferent crs
@@ -362,16 +362,16 @@ public class LuceneTest {
 
         //we verify that we obtain the correct results
         assertEquals(nbResults, 10);
-        assertTrue(results.contains("point 1"));
-        assertTrue(results.contains("point 1 projected"));
-        assertTrue(results.contains("point 2"));
-        assertTrue(results.contains("point 3"));
-        assertTrue(results.contains("box 2"));
-        assertTrue(results.contains("box 2 projected"));
-        assertTrue(results.contains("box 4"));
-        assertTrue(results.contains("line 1"));
-        assertTrue(results.contains("line 1 projected"));
-        assertTrue(results.contains("line 2"));
+        assertTrue(results.contains("0"));
+        assertTrue(results.contains("1"));
+        assertTrue(results.contains("2"));
+        assertTrue(results.contains("3"));
+        assertTrue(results.contains("7"));
+        assertTrue(results.contains("8"));
+        assertTrue(results.contains("10"));
+        assertTrue(results.contains("12"));
+        assertTrue(results.contains("13"));
+        assertTrue(results.contains("14"));
 
         /*
          * second bbox
@@ -399,15 +399,15 @@ public class LuceneTest {
         
          //we verify that we obtain the correct results
         assertEquals(nbResults, 9);
-        assertTrue(results.contains("point 3"));
-        assertTrue(results.contains("point 4"));
-        assertTrue(results.contains("box 3"));
-        assertTrue(results.contains("box 2"));
-        assertTrue(results.contains("box 2 projected"));
-        assertTrue(results.contains("box 5"));
-        assertTrue(results.contains("line 1"));
-        assertTrue(results.contains("line 1 projected"));
-        assertTrue(results.contains("line 2"));
+        assertTrue(results.contains("3"));
+        assertTrue(results.contains("4"));
+        assertTrue(results.contains("9"));
+        assertTrue(results.contains("7"));
+        assertTrue(results.contains("8"));
+        assertTrue(results.contains("11"));
+        assertTrue(results.contains("12"));
+        assertTrue(results.contains("13"));
+        assertTrue(results.contains("14"));
         
         /*
          * third bbox
@@ -435,7 +435,7 @@ public class LuceneTest {
         
          //we verify that we obtain the correct results
         assertEquals(nbResults, 1);
-        assertTrue(results.contains("box 5"));
+        assertTrue(results.contains("11"));
     }
 
     /**
@@ -2846,7 +2846,7 @@ public class LuceneTest {
         double max1[] = { 20,  20};
         GeneralEnvelope bbox = new GeneralEnvelope(min1, max1);
         bbox.setCoordinateReferenceSystem(crs);
-        org.opengis.filter.Filter filter = FF.overlaps(GEOMETRY_PROPERTY, FF.literal(bbox));
+        filter = FF.overlaps(GEOMETRY_PROPERTY, FF.literal(bbox));
         SpatialQuery bboxQuery = new SpatialQuery(wrap(filter));
 
         //we perform a lucene query
@@ -3137,6 +3137,7 @@ public class LuceneTest {
         final int srid3395 = SRIDGenerator.toSRID(CRS.decode("EPSG:3395"), Version.V1);
         Document docu = new Document();
         docu.add(new Field("id", "box 2 projected", Field.Store.YES, Field.Index.NOT_ANALYZED));
+        docu.add(new Field("docid", writer.maxDoc() + "", Field.Store.YES, Field.Index.NOT_ANALYZED));
         addBoundingBox(docu,             556597.4539663679,  1113194.9079327357,  1111475.1028522244, 1678147.5163917788, srid3395, rTree); // attention !! reprojeté
         writer.addDocument(docu);
         
@@ -3182,64 +3183,91 @@ public class LuceneTest {
 
         Document doc = new Document();
         doc.add(new Field("id", "point 1", Field.Store.YES, Field.Index.NOT_ANALYZED));
+        doc.add(new Field("docid", writer.maxDoc() + "", Field.Store.YES, Field.Index.NOT_ANALYZED));
         addPoint      (doc,           -10,                10, srid4326, rTree);
         writer.addDocument(doc);
+        
         doc = new Document();
         doc.add(new Field("id", "point 1 projected", Field.Store.YES, Field.Index.NOT_ANALYZED));
+        doc.add(new Field("docid", writer.maxDoc() + "", Field.Store.YES, Field.Index.NOT_ANALYZED));
         addPoint      (doc,           -1111475.102852225,   1113194.9079327357, srid3395, rTree); // attention !! reprojeté
         writer.addDocument(doc);
+        
         doc = new Document();
         doc.add(new Field("id", "point 2", Field.Store.YES, Field.Index.NOT_ANALYZED));
+        doc.add(new Field("docid", writer.maxDoc() + "", Field.Store.YES, Field.Index.NOT_ANALYZED));
         addPoint      (doc,           -10,                 0, srid4326, rTree);
         writer.addDocument(doc);
+        
         doc = new Document();
         doc.add(new Field("id", "point 3", Field.Store.YES, Field.Index.NOT_ANALYZED));
+        doc.add(new Field("docid", writer.maxDoc() + "", Field.Store.YES, Field.Index.NOT_ANALYZED));
         addPoint      (doc,             0,                 0, srid4326, rTree);
         writer.addDocument(doc);
+        
         doc = new Document();
         doc.add(new Field("id", "point 4", Field.Store.YES, Field.Index.NOT_ANALYZED));
+        doc.add(new Field("docid", writer.maxDoc() + "", Field.Store.YES, Field.Index.NOT_ANALYZED));
         addPoint      (doc,            40,                20, srid4326, rTree);
         writer.addDocument(doc);
+        
         doc = new Document();
         doc.add(new Field("id", "point 5", Field.Store.YES, Field.Index.NOT_ANALYZED));
+        doc.add(new Field("docid", writer.maxDoc() + "", Field.Store.YES, Field.Index.NOT_ANALYZED));
         addPoint      (doc,           -40,                30, srid4326, rTree);
         writer.addDocument(doc);
         
         doc = new Document();
         doc.add(new Field("id", "box 1", Field.Store.YES, Field.Index.NOT_ANALYZED));
+        doc.add(new Field("docid", writer.maxDoc() + "", Field.Store.YES, Field.Index.NOT_ANALYZED));
         addBoundingBox(doc,           -40,                -25,           -50,               -40, srid4326, rTree);
         writer.addDocument(doc);
+        
         doc = new Document();
         doc.add(new Field("id", "box 2", Field.Store.YES, Field.Index.NOT_ANALYZED));
+        doc.add(new Field("docid", writer.maxDoc() + "", Field.Store.YES, Field.Index.NOT_ANALYZED));
         addBoundingBox(doc,             5,                 10,            10,                15, srid4326, rTree);
         writer.addDocument(doc);
+        
         doc = new Document();
         doc.add(new Field("id", "box 2 projected", Field.Store.YES, Field.Index.NOT_ANALYZED));
+        doc.add(new Field("docid", writer.maxDoc() + "", Field.Store.YES, Field.Index.NOT_ANALYZED));
         addBoundingBox(doc,             556597.4539663679,  1113194.9079327357,  1111475.1028522244, 1678147.5163917788, srid3395, rTree); // attention !! reprojeté
         writer.addDocument(doc);
+        
         doc = new Document();
         doc.add(new Field("id", "box 3", Field.Store.YES, Field.Index.NOT_ANALYZED));
+        doc.add(new Field("docid", writer.maxDoc() + "", Field.Store.YES, Field.Index.NOT_ANALYZED));
         addBoundingBox(doc,            30,                 50,             0,                15, srid4326, rTree);
         writer.addDocument(doc);
+        
         doc = new Document();
         doc.add(new Field("id", "box 4", Field.Store.YES, Field.Index.NOT_ANALYZED));
+        doc.add(new Field("docid", writer.maxDoc() + "", Field.Store.YES, Field.Index.NOT_ANALYZED));
         addBoundingBox(doc,           -30,                -15,             0,                10, srid4326, rTree);
         writer.addDocument(doc);
+        
         doc = new Document();
         doc.add(new Field("id", "box 5", Field.Store.YES, Field.Index.NOT_ANALYZED));
+        doc.add(new Field("docid", writer.maxDoc() + "", Field.Store.YES, Field.Index.NOT_ANALYZED));
         addBoundingBox(doc,        44.792,             51.126,        -6.171,             -2.28, srid4326, rTree);
         writer.addDocument(doc);
         
         doc = new Document();
         doc.add(new Field("id", "line 1", Field.Store.YES, Field.Index.NOT_ANALYZED));
+        doc.add(new Field("docid", writer.maxDoc() + "", Field.Store.YES, Field.Index.NOT_ANALYZED));
         addLine       (doc,             0,                  0,            25,                 0, srid4326, rTree);
         writer.addDocument(doc);
+        
         doc = new Document();
         doc.add(new Field("id", "line 1 projected", Field.Store.YES, Field.Index.NOT_ANALYZED));
+        doc.add(new Field("docid", writer.maxDoc() + "", Field.Store.YES, Field.Index.NOT_ANALYZED));
         addLine       (doc,             0,        0,      2857692.6111605316,                 0, srid3395, rTree); // attention !! reprojeté
         writer.addDocument(doc);
+        
         doc = new Document();
         doc.add(new Field("id", "line 2", Field.Store.YES, Field.Index.NOT_ANALYZED));
+        doc.add(new Field("docid", writer.maxDoc() + "", Field.Store.YES, Field.Index.NOT_ANALYZED));
         addLine       (doc,             0,                  0,             0,               -15, srid4326, rTree);
         writer.addDocument(doc);
     }
