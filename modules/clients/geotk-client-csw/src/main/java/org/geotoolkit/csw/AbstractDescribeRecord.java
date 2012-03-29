@@ -102,7 +102,7 @@ public abstract class AbstractDescribeRecord extends AbstractCSWRequest implemen
     protected void prepareParameters() {
         super.prepareParameters();
         requestParameters.put("SERVICE", "CSW");
-        requestParameters.put("REQUEST", "GetRecords");
+        requestParameters.put("REQUEST", "DescribeRecord");
         requestParameters.put("VERSION", version);
 
         if (namespace != null) {

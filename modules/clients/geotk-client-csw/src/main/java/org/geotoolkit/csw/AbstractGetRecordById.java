@@ -109,7 +109,7 @@ public abstract class AbstractGetRecordById extends AbstractCSWRequest implement
         }
 
         requestParameters.put("SERVICE", "CSW");
-        requestParameters.put("REQUEST", "GetRecords");
+        requestParameters.put("REQUEST", "GetRecordById");
         requestParameters.put("VERSION", version);
         requestParameters.put("ID",      StringUtilities.toCommaSeparatedValues(ids));
 
