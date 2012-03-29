@@ -19,11 +19,13 @@ package org.geotoolkit.internal.jaxb.referencing;
 
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.datatype.XMLGregorianCalendar;
+import javax.xml.bind.annotation.XmlElements;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.opengis.temporal.Period;
 
 import org.geotoolkit.xml.Namespaces;
+import org.geotoolkit.internal.jaxb.MarshalContext;
 import org.geotoolkit.internal.jaxb.gml.GMLAdapter;
 import org.geotoolkit.lang.Workaround;
 
@@ -32,6 +34,7 @@ import org.geotoolkit.lang.Workaround;
  * The adapter for {@code "TimePeriod"}. This is an attribute of {@link TM_Primitive}.
  *
  * @author Guilhem Legal (Geomatys)
+ * @author Martin Desruisseaux (Geomatys)
  * @version 3.20
  *
  * @since 3.00
@@ -41,52 +44,36 @@ import org.geotoolkit.lang.Workaround;
  *       do that because we already have an other class in the GML binding of Constellation, and it
  *       falls on conflict. Remove the namespace, in order to fallback on GML, when the temporal
  *       implementation will have a floor in Geotk.
+ *
+ * @todo A time period can also be expressed as a begin position and a period or duration.
+ *       This is not yet supported in the current implementation.
  */
+@XmlRootElement(name="TimePeriod")
 @XmlType(name = "TimePeriodType", namespace = Namespaces.GMD, propOrder = {
-    "beginPosition",
-    "endPosition",
     "begin",
     "end"
 })
 @Workaround(library="Geotk", version="3.15")
 public final class TimePeriod extends GMLAdapter {
     /**
-     * The start time. This element is part of GML 3.1.1 specification.
-     * If non-null, then this field has precedence over {@link #begin}.
+     * The start time, which may be marshalled in a GML3 way or GML2 way.
+     * The GML2 way is more verbose.
      */
-    @XmlElement(namespace = Namespaces.GML)
-    public XMLGregorianCalendar beginPosition;
+    @XmlElements({
+        @XmlElement(type=TimePeriodBound.GML3.class, name="beginPosition", namespace=Namespaces.GML),
+        @XmlElement(type=TimePeriodBound.GML2.class, name="begin",         namespace=Namespaces.GML)
+    })
+    TimePeriodBound begin;
 
     /**
-     * The end time. This element is part of GML 3.1.1 specification.
-     * If non-null, then this field has precedence over {@link #end}.
-     * <p>
-     * <strong>WARNING: The timezone information may be lost!</strong> This is because this field
-     * is derived from a {@link java.util.Date}, in which case we don't know if the time is really
-     * 0 or just unspecified. This class assumes that a time of zero means "unspecified". This will
-     * be revised after we implemented ISO 19108.
+     * The end time, which may be marshalled in a GML3 way or GML2 way.
+     * The GML2 way is more verbose.
      */
-    @XmlElement(namespace = Namespaces.GML)
-    public XMLGregorianCalendar endPosition;
-
-    /**
-     * The start time. This element is part of GML 2.1.1 specification
-     * and is used only if {@link #beginPosition} (from GML 3) is null.
-     * <p>
-     * <strong>WARNING: The timezone information may be lost!</strong> This is because this field
-     * is derived from a {@link java.util.Date}, in which case we don't know if the time is really
-     * 0 or just unspecified. This class assumes that a time of zero means "unspecified". This will
-     * be revised after we implemented ISO 19108.
-     */
-    @XmlElement(namespace = Namespaces.GML)
-    public TimeInstantPropertyType begin;
-
-    /**
-     * The end time. This element is part of GML 2.1.1 specification
-     * and is used only if {@link #endPosition} (from GML 3) is null.
-     */
-    @XmlElement(namespace = Namespaces.GML)
-    public TimeInstantPropertyType end;
+    @XmlElements({
+        @XmlElement(type=TimePeriodBound.GML3.class, name="endPosition", namespace=Namespaces.GML),
+        @XmlElement(type=TimePeriodBound.GML2.class, name="end",         namespace=Namespaces.GML)
+    })
+    TimePeriodBound end;
 
     /**
      * Empty constructor used by JAXB.
@@ -102,8 +89,13 @@ public final class TimePeriod extends GMLAdapter {
     public TimePeriod(final Period period) {
         super(period);
         if (period != null) {
-            beginPosition = TimeInstant.toDate(period.getBeginning());
-            endPosition   = TimeInstant.toDate(period.getEnding());
+            if (MarshalContext.versionGML(MarshalContext.GML_3_0)) {
+                begin = new TimePeriodBound.GML3(period.getBeginning(), "before");
+                end   = new TimePeriodBound.GML3(period.getEnding(), "after");
+            } else {
+                begin = new TimePeriodBound.GML2(period.getBeginning());
+                end   = new TimePeriodBound.GML2(period.getEnding());
+            }
         }
     }
 
@@ -112,20 +104,6 @@ public final class TimePeriod extends GMLAdapter {
      */
     @Override
     public String toString() {
-        return "TimePeriod[" + select(beginPosition, begin) + " ... " + select(endPosition, end) + ']';
-    }
-
-    /**
-     * Returns the given position if non-null, or the position extracted from
-     * the given type otherwise. If neither is defined, returns {@code null}.
-     */
-    static XMLGregorianCalendar select(XMLGregorianCalendar position, final TimeInstantPropertyType type) {
-        if (position == null && type != null) {
-            final TimeInstant t = type.timeInstant;
-            if (t != null) {
-                position = t.timePosition;
-            }
-        }
-        return position;
+        return "TimePeriod[" + begin + " ... " + end + ']';
     }
 }

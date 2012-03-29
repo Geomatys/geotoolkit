@@ -43,11 +43,12 @@ import org.geotoolkit.util.Version;
  */
 public final class MarshalContext {
     /**
-     * The GML 3.2 version.
+     * A GML version suitable for calls to {@link #versionGML(Version)}.
      *
      * @since 3.20
      */
-    public static final Version GML_3_2 = new Version("3.2");
+    public static final Version GML_3_0 = new Version("3.0"),
+                                GML_3_2 = new Version("3.2");
 
     /**
      * The bit flag telling if a marshalling process is under progress.
