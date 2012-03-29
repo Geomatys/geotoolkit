@@ -30,7 +30,11 @@ import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CoderResult;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.geotoolkit.io.Closeable;
+import org.geotoolkit.util.logging.Logging;
 
 /**
  * A DbaseFileReader is used to read a dbase III format file. <br>
@@ -58,6 +62,10 @@ import org.geotoolkit.io.Closeable;
  * @module pending
  */
 public final class DbaseFileReader implements Closeable{
+	/**
+	 * Logger.
+	 */
+	private static final Logger LOGGER = Logging.getLogger(DbaseFileReader.class);
 
     public static final Charset DEFAULT_STRING_CHARSET = Charset.forName("ISO-8859-1");
 
@@ -255,9 +263,15 @@ public final class DbaseFileReader implements Closeable{
         charBuffer.clear();
         buffer.position(previousposition+fieldOffset);
         buffer.limit(buffer.position()+field.fieldLength);
-        CoderResult result = decoder.decode(buffer, charBuffer, true);
-        if(CoderResult.UNDERFLOW != result){
+        CoderResult result = decoder.decode(buffer, charBuffer, true);        
+        if(result == CoderResult.OVERFLOW){
             result.throwException();
+        } else if(result != CoderResult.UNDERFLOW) {
+        	try {
+        		result.throwException();
+        	} catch (Exception e) {
+        		LOGGER.log(Level.INFO, e.getMessage(), e);
+        	}
         }
         result = decoder.flush(charBuffer);
         if(CoderResult.UNDERFLOW != result){
