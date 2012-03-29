@@ -82,7 +82,7 @@ public abstract class IndexLucene {
     /**
      * A R-Tree to perform spatial query.
      */
-    protected final Tree rTree;
+    protected Tree rTree;
     
    /**
     * Creates a new Lucene Index.
@@ -143,6 +143,10 @@ public abstract class IndexLucene {
      */
     public void setLogLevel(final Level logLevel) {
         this.logLevel = logLevel;
+    }
+    
+    protected void resetTree() {
+        rTree = buildNewTree();
     }
     
     private Tree buildNewTree() {

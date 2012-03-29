@@ -182,6 +182,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
             final IndexWriter writer     = new IndexWriter(new SimpleFSDirectory(getFileDirectory()), conf);
             final String serviceID       = getServiceID();
             
+            resetTree();
             nbEntries = toIndex.size();
             for (E entry : toIndex) {
                 if (!stopIndexing && !indexationToStop.contains(serviceID)) {
@@ -225,6 +226,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
             final IndexWriter writer       = new IndexWriter(new SimpleFSDirectory(getFileDirectory()), conf);
             final String serviceID         = getServiceID();
             final List<String> identifiers = getAllIdentifiers();
+            resetTree();
             
             LOGGER.log(logLevel, "{0} entry to read.", identifiers.size());
             for (String identifier : identifiers) {
