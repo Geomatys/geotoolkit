@@ -34,8 +34,9 @@ import org.geotoolkit.internal.jaxb.gml.GMLAdapter;
 
 
 /**
- * Encapsulates a Time Instant. This element is contained inside a {@link TimeInstantPropertyType},
- * which is itself contained in a {@link TimePeriod} in GML 2. It is not used for GML 3.
+ * Encapsulates a {@code gml:TimeInstant}. This element may be used alone, or included in a
+ * {@link TimePeriodBound.GML2} object. The later is itself included in {@link TimePeriod}.
+ * Note that GML3 does not anymore include {@code TimeInstant} inside {@code TimePeriod}.
  *
  * @author Guilhem Legal (Geomatys)
  * @version 3.20
@@ -95,8 +96,8 @@ public final class TimeInstant extends GMLAdapter {
                 final XMLGregorianCalendar date = XmlUtilities.toXML(position.getDate());
                 if (date != null) {
                     XmlUtilities.trimTime(date, false);
+                    return date;
                 }
-                return date;
             }
         }
         return null;

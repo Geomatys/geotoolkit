@@ -19,6 +19,7 @@ package org.geotoolkit.referencing.operation.provider;
 
 import net.jcip.annotations.Immutable;
 
+import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.ReferenceIdentifier;
@@ -26,6 +27,8 @@ import org.opengis.referencing.ReferenceIdentifier;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.internal.referencing.Identifiers;
 import org.geotoolkit.metadata.iso.citation.Citations;
+
+import static org.geotoolkit.internal.referencing.Identifiers.exclude;
 
 
 /**
@@ -35,7 +38,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  *
  * @author John Grange
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.20
  *
  * @since 2.2
  * @module
@@ -53,18 +56,25 @@ public class PlateCarree extends EquidistantCylindrical {
      * in the comment attached to the Equidistant Cylindrical case.
      */
     @SuppressWarnings("hiding")
-    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
+    public static final ParameterDescriptorGroup PARAMETERS;
+    static {
+        final Citation[] excludes = new Citation[] {Citations.GEOTIFF, Citations.PROJ4};
+        PARAMETERS = Identifiers.createDescriptorGroup(
         new ReferenceIdentifier[] {
-            new NamedIdentifier(Citations.OGC,  "Equirectangular"),
+            new NamedIdentifier(Citations.OGC,  "Plate_Carree"),
             new NamedIdentifier(Citations.ESRI, "Plate_Carree"),
             new NamedIdentifier(Citations.EPSG, "Pseudo Plate Carree"),
             new IdentifierCode (Citations.EPSG,  9825),
             new NamedIdentifier(Citations.GEOTOOLKIT, "Plate Carrée")
         }, new ParameterDescriptor<?>[] {
-            SEMI_MAJOR,       SEMI_MINOR,
-            ROLL_LONGITUDE,   CENTRAL_MERIDIAN,
-            FALSE_EASTING,    FALSE_NORTHING
+            exclude(SEMI_MAJOR,       excludes),
+            exclude(SEMI_MINOR,       excludes),
+                    ROLL_LONGITUDE,
+            exclude(CENTRAL_MERIDIAN, excludes),
+            exclude(FALSE_EASTING,    excludes),
+            exclude(FALSE_NORTHING,   excludes)
         });
+    }
 
     /**
      * Constructs a new provider.

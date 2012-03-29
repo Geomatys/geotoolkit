@@ -19,6 +19,7 @@ package org.geotoolkit.referencing.operation.provider;
 
 import net.jcip.annotations.Immutable;
 
+import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -30,6 +31,8 @@ import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.internal.referencing.Identifiers;
 import org.geotoolkit.metadata.iso.citation.Citations;
+
+import static org.geotoolkit.internal.referencing.Identifiers.exclude;
 
 
 /**
@@ -45,7 +48,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  *
  * @author Rueben Schulz (UBC)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.20
  *
  * @since 2.1
  * @module
@@ -65,12 +68,7 @@ public class ObliqueMercator extends MapProjection {
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is [-180 &hellip; 180]&deg; and default value is 0&deg;.
      */
-    public static final ParameterDescriptor<Double> LONGITUDE_OF_CENTRE =
-            Identifiers.CENTRAL_MERIDIAN.select(
-                "longitude_of_center",              // OGC
-                "Longitude_Of_Center",              // ESRI
-                "Longitude of projection centre",   // EPSG
-                "CenterLong");                      // GeoTIFF
+    public static final ParameterDescriptor<Double> LONGITUDE_OF_CENTRE;
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -80,12 +78,7 @@ public class ObliqueMercator extends MapProjection {
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is [-90 &hellip; 90]&deg; and default value is 0&deg;.
      */
-    public static final ParameterDescriptor<Double> LATITUDE_OF_CENTRE =
-            Identifiers.LATITUDE_OF_ORIGIN.select(
-                "latitude_of_center",            // OGC
-                "Latitude_Of_Center",            // ESRI
-                "Latitude of projection centre", // EPSG
-                "CenterLat");                    // GeoTIFF
+    public static final ParameterDescriptor<Double> LATITUDE_OF_CENTRE;
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -93,9 +86,7 @@ public class ObliqueMercator extends MapProjection {
      * parameter value. Valid values range is from -360 to -270, -90 to 90, and 270 to 360 degrees.
      * This parameter is mandatory and has no default value.
      */
-    public static final ParameterDescriptor<Double> AZIMUTH =
-            Identifiers.AZIMUTH.select(
-                "Azimuth of initial line"); // EPSG
+    public static final ParameterDescriptor<Double> AZIMUTH;
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -105,7 +96,7 @@ public class ObliqueMercator extends MapProjection {
      * This parameter is <a href="package-summary.html#Obligation">optional</a>.
      * Valid values rage is [-360 &hellip; 360]&deg; and default value is the azimuth.
      */
-    public static final ParameterDescriptor<Double> RECTIFIED_GRID_ANGLE = Identifiers.RECTIFIED_GRID_ANGLE;
+    public static final ParameterDescriptor<Double> RECTIFIED_GRID_ANGLE;
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -115,10 +106,7 @@ public class ObliqueMercator extends MapProjection {
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is (0 &hellip; &infin;) and default value is 1.
      */
-    public static final ParameterDescriptor<Double> SCALE_FACTOR =
-            Identifiers.SCALE_FACTOR.select(
-                "Scale factor on initial line", // EPSG
-                "ScaleAtCenter");               // GeoTIFF
+    public static final ParameterDescriptor<Double> SCALE_FACTOR;
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -128,10 +116,7 @@ public class ObliqueMercator extends MapProjection {
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is unrestricted and default value is 0 metre.
      */
-    public static final ParameterDescriptor<Double> FALSE_EASTING =
-            Identifiers.FALSE_EASTING.select(
-                "Easting at projection centre", // EPSG
-                "FalseEasting");                // GeoTIFF
+    public static final ParameterDescriptor<Double> FALSE_EASTING;
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -141,10 +126,36 @@ public class ObliqueMercator extends MapProjection {
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is unrestricted and default value is 0 metre.
      */
-    public static final ParameterDescriptor<Double> FALSE_NORTHING =
-            Identifiers.FALSE_NORTHING.select(
-                "Northing at projection centre", // EPSG
-                "FalseNorthing");                // GeoTIFF
+    public static final ParameterDescriptor<Double> FALSE_NORTHING;
+
+    /**
+     * Parameters creation, which must be done before to initialize the {@link #PARAMETERS} field.
+     */
+    static {
+        final Citation[] excludes = new Citation[] {Citations.NETCDF};
+        LONGITUDE_OF_CENTRE = Identifiers.CENTRAL_MERIDIAN.select(excludes, null,
+                "Longitude of projection centre",   // EPSG
+                "longitude_of_center",              // OGC
+                "Longitude_Of_Center",              // ESRI
+                "CenterLong");                      // GeoTIFF
+        LATITUDE_OF_CENTRE = Identifiers.LATITUDE_OF_ORIGIN.select(excludes, null,
+                "Latitude of projection centre",    // EPSG
+                "latitude_of_center",               // OGC
+                "Latitude_Of_Center",               // ESRI
+                "CenterLat");                       // GeoTIFF
+        AZIMUTH = Identifiers.AZIMUTH.select(excludes, null,
+                "Azimuth of initial line");         // EPSG
+        RECTIFIED_GRID_ANGLE = Identifiers.RECTIFIED_GRID_ANGLE;
+        SCALE_FACTOR = Identifiers.SCALE_FACTOR.select(excludes, null,
+                "Scale factor on initial line",     // EPSG
+                "ScaleAtCenter");                   // GeoTIFF
+        FALSE_EASTING = Identifiers.FALSE_EASTING.select(excludes, null,
+                "Easting at projection centre",     // EPSG
+                "FalseEasting");                    // GeoTIFF
+        FALSE_NORTHING = Identifiers.FALSE_NORTHING.select(excludes, null,
+                "Northing at projection centre",    // EPSG
+                "FalseNorthing");                   // GeoTIFF
+    }
 
     /**
      * The parameters group.
@@ -210,7 +221,7 @@ public class ObliqueMercator extends MapProjection {
      *
      * @author Rueben Schulz (UBC)
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.00
+     * @version 3.20
      *
      * @see org.geotoolkit.referencing.operation.projection.ObliqueMercator
      *
@@ -256,17 +267,27 @@ public class ObliqueMercator extends MapProjection {
          * The parameters group.
          */
         @SuppressWarnings("hiding")
-        public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
+        public static final ParameterDescriptorGroup PARAMETERS;
+        static {
+            final Citation[] excludes = new Citation[] {
+                Citations.EPSG, Citations.OGC, Citations.NETCDF, Citations.GEOTIFF, Citations.PROJ4
+            };
+            PARAMETERS = Identifiers.createDescriptorGroup(
             new NamedIdentifier[] {
                 new NamedIdentifier(Citations.ESRI, "Hotine_Oblique_Mercator_Two_Point_Center"),
                 sameNameAs(Citations.GEOTOOLKIT, ObliqueMercator.PARAMETERS)
             }, new ParameterDescriptor<?>[] {
-                SEMI_MAJOR,          SEMI_MINOR, ROLL_LONGITUDE,
+                exclude(SEMI_MAJOR, excludes),
+                exclude(SEMI_MINOR, excludes),
+                ROLL_LONGITUDE,
                 LAT_OF_1ST_POINT,    LONG_OF_1ST_POINT,
                 LAT_OF_2ND_POINT,    LONG_OF_2ND_POINT,
-                LATITUDE_OF_CENTRE,  SCALE_FACTOR,
-                FALSE_EASTING,       FALSE_NORTHING
+                exclude(LATITUDE_OF_CENTRE, excludes),
+                exclude(SCALE_FACTOR,       excludes),
+                exclude(FALSE_EASTING,      excludes),
+                exclude(FALSE_NORTHING,     excludes)
             });
+        }
 
         /**
          * Constructs a new provider.

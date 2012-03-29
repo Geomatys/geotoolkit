@@ -127,11 +127,11 @@ public final class TM_Primitive extends PropertyType<TM_Primitive, TemporalPrimi
     public void setElement(final TimePeriod period) {
         metadata = null; // Cleaned first in case of failure.
         if (period != null) {
-            final Date begin = XmlUtilities.toDate(TimePeriod.select(period.beginPosition, period.begin));
-            final Date end   = XmlUtilities.toDate(TimePeriod.select(period.endPosition,   period.end));
-            if (begin != null && end != null) {
+            final Date begin = toDate(period.begin);
+            final Date end   = toDate(period.end);
+            if (begin != null || end != null) {
                 final LogRecord record;
-                if (end.before(begin)) {
+                if (begin != null && end != null && end.before(begin)) {
                     /*
                      * Be tolerant - we can treat such case as an empty range, which is a similar
                      * approach to what JDK does for Rectangle width and height. We will log with
@@ -171,6 +171,13 @@ public final class TM_Primitive extends PropertyType<TM_Primitive, TemporalPrimi
                 log("setTimeInstant", TemporalUtilities.createLog(e));
             }
         }
+    }
+
+    /**
+     * Returns the date of the given bounds, or {@code null} if none.
+     */
+    private static Date toDate(final TimePeriodBound bound) {
+        return (bound != null) ? XmlUtilities.toDate(bound.calendar()) : null;
     }
 
     /**

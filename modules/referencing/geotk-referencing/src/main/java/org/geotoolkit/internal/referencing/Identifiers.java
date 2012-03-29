@@ -20,7 +20,6 @@ package org.geotoolkit.internal.referencing;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import javax.measure.unit.SI;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
@@ -31,13 +30,12 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.GeneralParameterDescriptor;
-import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.ReferenceIdentifier;
 
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.referencing.NamedIdentifier;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
@@ -273,6 +271,7 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
      */
     public static final Identifiers FALSE_EASTING = new Identifiers(new NamedIdentifier[] {
             new NamedIdentifier(OGC,     "false_easting"),
+            new NamedIdentifier(NETCDF,  "false_easting"),
             new NamedIdentifier(ESRI,    "False_Easting"),
             new NamedIdentifier(EPSG,    "False easting"),
             new NamedIdentifier(EPSG,    "Easting at false origin"),
@@ -293,6 +292,7 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
      */
     public static final Identifiers FALSE_NORTHING = new Identifiers(new NamedIdentifier[] {
             new NamedIdentifier(OGC,     "false_northing"),
+            new NamedIdentifier(NETCDF,  "false_northing"),
             new NamedIdentifier(ESRI,    "False_Northing"),
             new NamedIdentifier(EPSG,    "False northing"),
             new NamedIdentifier(EPSG,    "Northing at false origin"),
@@ -303,11 +303,18 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
         }, 0, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, SI.METRE, true);
 
     /**
-     * The identifiers which can be declared to the descriptor. The keys are the code and the
-     * values are the identifiers. Only a subset of this collection will actually be used. The
-     * subset is specified by a call to a {@code select} method.
+     * The identifiers which can be declared to the descriptor. Only a subset of those values
+     * will actually be used. The subset is specified by a call to a {@code select} method.
      */
-    private final Map<String,NamedIdentifier> identifiers;
+    private final NamedIdentifier[] identifiers;
+
+    /**
+     * Locates the identifiers by their {@linkplain ReferenceIdentifier#getCode() code}.
+     * The {@linkplain Map#values() values} are the same than the {@linkplain #identifiers}
+     * array, or a subset of the identifiers array. The later case (only a subset) occurs
+     * if many authorities use the same code. In such case, we map only the first authority.
+     */
+    private final Map<String,NamedIdentifier> identifiersMap;
 
     /**
      * Creates a new instance of {@code Identifiers} for the given identifiers.
@@ -327,67 +334,87 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
                 Double.isNaN(defaultValue)          ? null : Double.valueOf(defaultValue),
                 minimum == Double.NEGATIVE_INFINITY ? null : Double.valueOf(minimum),
                 maximum == Double.POSITIVE_INFINITY ? null : Double.valueOf(maximum), unit, required);
-        this.identifiers = new LinkedHashMap<String,NamedIdentifier>(hashMapCapacity(identifiers.length));
-        for (final NamedIdentifier id : identifiers) {
-            if (this.identifiers.put(id.getCode(), id) != null) {
-                throw new IllegalArgumentException(Errors.format(Errors.Keys.DUPLICATED_VALUES_FOR_KEY_$1, id));
-            }
+        this.identifiers = identifiers;
+        identifiersMap = new HashMap<String,NamedIdentifier>(hashMapCapacity(identifiers.length));
+        // Put elements in reverse order in order to give precedence to the first occurrence.
+        for (int i=identifiers.length; --i>=0;) {
+            final NamedIdentifier id = identifiers[i];
+            identifiersMap.put(id.getCode(), id);
         }
     }
 
     /**
-     * Returns a new descriptor having the same identifiers than this descriptor, except for the
-     * one that are not explicitly declared in the names array and that can not be inherited.
+     * Returns a new descriptor having the same identifiers than this descriptor.
+     * The given array is used for disambiguation when the same authority defines
+     * many names.
      *
-     * @param  names The names to be used for disambiguation.
+     * @param  names    The names to be used for disambiguation.
      * @return The requested identifiers.
      */
     public ParameterDescriptor<Double> select(final String... names) {
-        return select(getMinimumOccurs() != 0, getDefaultValue(), names);
+        return select(getMinimumOccurs() != 0, getDefaultValue(), null, null, names);
     }
 
     /**
-     * Returns a new descriptor having the same identifiers than this descriptor, except for the
-     * one that are not explicitly declared in the names array and that can not be inherited.
+     * Returns a new descriptor having the same identifiers than this descriptor.
+     * The given array is used for disambiguation when the same authority defines
+     * many names.
+     *
+     * @param  excludes   The citations to exclude, or {@code null} if none.
+     * @param  deprecated The names of deprecated identifiers, or {@code null} if none.
+     * @param  names      The names to be used for disambiguation.
+     * @return The requested identifiers.
+     */
+    public ParameterDescriptor<Double> select(final Citation[] excludes, final String[] deprecated, final String... names) {
+        return select(getMinimumOccurs() != 0, getDefaultValue(), excludes, deprecated, names);
+    }
+
+    /**
+     * Returns a new descriptor having the same identifiers than this descriptor but a different
+     * {@code mandatory} status. The given array is used for disambiguation when the same authority
+     * defines many names.
      *
      * @param  required Whatever the parameter shall be mandatory or not.
-     * @param  names The names to be used for disambiguation.
+     * @param  names    The names to be used for disambiguation.
      * @return The requested identifiers.
      */
     public ParameterDescriptor<Double> select(final boolean required, final String... names) {
-        return select(required, getDefaultValue(), names);
+        return select(required, getDefaultValue(), null, null, names);
     }
 
     /**
-     * Returns a new descriptor having the same identifiers than this descriptor, except for the
-     * one that are not explicitly declared in the names array and that can not be inherited.
+     * Returns a new descriptor having the same identifiers than this descriptor but a different
+     * {@code mandatory} status and default value. The given array is used for disambiguation when
+     * the same authority defines many names.
      *
-     * @param  required Whatever the parameter shall be mandatory or not.
+     * @param  required     Whatever the parameter shall be mandatory or not.
      * @param  defaultValue The default value.
-     * @param  names The names to be used for disambiguation.
+     * @param  names        The names to be used for disambiguation.
      * @return The requested identifiers.
      */
-    public ParameterDescriptor<Double> select(final boolean required, final double defaultValue,
-            final String... names)
-    {
-        return select(required, Double.valueOf(defaultValue), names);
+    public ParameterDescriptor<Double> select(final boolean required, final double defaultValue, final String... names) {
+        return select(required, Double.valueOf(defaultValue), null, null, names);
     }
 
     /**
      * Implementation of all {@code select} methods.
+     * This method returns a new descriptor having the same identifiers than this descriptor,
+     * except for the one that are not explicitly declared in the names array and that can not
+     * be inherited.
      *
-     * @param  required Whatever the parameter shall be mandatory or not.
-     * @param  defaultValue The default value.
-     * @param  replace The list of identifiers to use as a replacement for matching authorities.
-     * @param  names The names to be used for disambiguation.
+     * @param  required     Whatever the parameter shall be mandatory or not.
+     * @param  defaultValue The default value, or {@code null} if none.
+     * @param  excludes     The citations to exclude, or {@code null} if none.
+     * @param  deprecated   The names of deprecated identifiers, or {@code null} if none.
+     * @param  names        The names to be used for disambiguation.
+     *                      The same name may be used for more than one authority.
      * @return The requested identifiers.
      */
     private ParameterDescriptor<Double> select(final boolean required, Double defaultValue,
-            final String... names)
+            final Citation[] excludes, final String[] deprecated, final String... names)
     {
         final Map<Citation,Boolean> authorities = new HashMap<Citation,Boolean>();
-        NamedIdentifier[] selected = new NamedIdentifier[identifiers.size()];
-        selected = identifiers.values().toArray(selected);
+        NamedIdentifier[] selected = identifiers.clone();
         final boolean[] idUsed = new boolean[selected.length];
         final boolean[] nameUsed = new boolean[names.length];
         /*
@@ -400,19 +427,22 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
             for (int j=names.length; --j>=0;) {
                 if (code.equals(names[j])) {
                     final Citation authority = candidate.getAuthority();
-                    if (authorities.put(authority, TRUE) != null) {
-                        throw new IllegalStateException(Errors.format(
-                                Errors.Keys.VALUE_ALREADY_DEFINED_$1, authority));
+                    if (!XArrays.contains(excludes, authority)) {
+                        if (authorities.put(authority, TRUE) != null) {
+                            throw new IllegalStateException(Errors.format(
+                                    Errors.Keys.VALUE_ALREADY_DEFINED_$1, authority));
+                        }
+                        nameUsed[j] = true;
+                        idUsed[i] = true;
+                        break;
                     }
-                    nameUsed[j] = true;
-                    idUsed[i] = true;
-                    break;
                 }
             }
         }
         /*
          * If a name has not been used, this is considered as an error. We perform
          * this check for reducing the risk of erroneous declaration in providers.
+         * Note that the same name may be used for more than one authority.
          */
         for (int i=0; i<nameUsed.length; i++) {
             if (!nameUsed[i]) {
@@ -424,34 +454,47 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
          * If some identifiers were selected as a result of explicit requirement through the
          * names array, discards all other identifiers of that authority. Otherwise if there
          * is some remaining authorities declaring exactly one identifier, inherits that
-         * identifier silently. If more than one identifier if found for the same authority,
-         * do not add this authority name.
+         * identifier silently. If more than one identifier is found for the same authority,
+         * this is considered an error.
          */
         int n=0;
         for (int i=0; i<selected.length; i++) {
             final NamedIdentifier candidate = selected[i];
-            if (!idUsed[i]) {
-                final Citation authority = candidate.getAuthority();
-                final Boolean explicit = authorities.get(authority);
-                if (explicit == null) {
-                    // Inherit silently an identifier for a new authority.
-                    authorities.put(authority, FALSE);
-                } else {
-                    // An identifier was already specified for this authority.
-                    // If the identifier was specified explicitly by the user,
-                    // do nothing. Otherwise we have ambiguity, so remove the
-                    // identifier we added previously.
-                    if (explicit.equals(FALSE)) {
-                        for (int j=0; j<n; j++) {
-                            if (authority.equals(selected[j].getAuthority())) {
-                                System.arraycopy(selected, j+1, selected, j, (--n)-j);
+            final Citation authority = candidate.getAuthority();
+            if (!XArrays.contains(excludes, authority)) {
+                if (!idUsed[i]) {
+                    final Boolean explicit = authorities.get(authority);
+                    if (explicit == null) {
+                        // Inherit silently an identifier for a new authority.
+                        authorities.put(authority, FALSE);
+                    } else {
+                        // An identifier was already specified for this authority.
+                        // If the identifier was specified explicitly by the user,
+                        // do nothing. Otherwise we have ambiguity, so remove the
+                        // identifier we added previously.
+                        if (explicit.equals(FALSE)) {
+                            for (int j=0; j<n; j++) {
+                                if (authority.equals(selected[j].getAuthority())) {
+                                    System.arraycopy(selected, j+1, selected, j, (--n)-j);
+                                }
                             }
                         }
+                        continue;
                     }
-                    continue;
                 }
+                selected[n++] = candidate;
             }
-            selected[n++] = candidate;
+        }
+        /*
+         * Adds deprecated names, if any. Those names will appears last in the names array.
+         * Note that at the difference of ordinary names, we don't share deprecated names
+         * between different provider. Deprecated names are rare enough that this is not needed.
+         */
+        if (deprecated != null) {
+            selected = XArrays.resize(selected, n + deprecated.length);
+            for (final String code : deprecated) {
+                selected[n++] = new DeprecatedName(identifiersMap.get(code));
+            }
         }
         selected = XArrays.resize(selected, n);
         if (required && (defaultValue == null || defaultValue.isNaN())) {
@@ -459,6 +502,45 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
         }
         return new DefaultParameterDescriptor<Double>(toMap(selected), Double.class, null,
                 defaultValue, getMinimumValue(), getMaximumValue(), getUnit(), required);
+    }
+
+    /**
+     * Returns a copy of the given descriptor, excluding the names from the given authorities.
+     *
+     * @param  model    The descriptor to copy.
+     * @param  excludes The authorities to exclude.
+     * @return A copy of the given parameter, excluding the names of the given authorities.
+     */
+    public static ParameterDescriptor<Double> exclude(final ParameterDescriptor<Double> model, final Citation... excludes) {
+        final Object[] alias;
+        final Map<String,Object> properties = new HashMap<String,Object>(IdentifiedObjects.getProperties(model));
+        properties.put(IDENTIFIERS_KEY, exclude(excludes, (Object[]) properties.get(IDENTIFIERS_KEY)));
+        properties.put(ALIAS_KEY, alias=exclude(excludes, (Object[]) properties.get(ALIAS_KEY)));
+        properties.put(NAME_KEY, alias[0]); // In case the primary name is one of the excluded names.
+        return new DefaultParameterDescriptor<Double>(properties, Double.class, null,
+                model.getDefaultValue(), model.getMinimumValue(), model.getMaximumValue(),
+                model.getUnit(), model.getMinimumOccurs() != 0);
+    }
+
+    /**
+     * Removes the identifier of the given authorities from the given array. This method will
+     * modify the given {@code array} in-place before to return a new array. This method is
+     * only for {@link #exclude(ParameterDescriptor, Citation[])} internal working.
+     */
+    private static Object[] exclude(final Citation[] excludes, final Object[] array) {
+        int n = 0;
+        if (array != null) {
+            for (int i=0; i<array.length; i++) {
+                final Object candidate = array[i];
+                if (candidate instanceof ReferenceIdentifier) {
+                    if (XArrays.contains(excludes, ((ReferenceIdentifier) candidate).getAuthority())) {
+                        continue;
+                    }
+                }
+                array[n++] = candidate;
+            }
+        }
+        return XArrays.resize(array, n);
     }
 
     /**
@@ -474,7 +556,7 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
     public ParameterDescriptor<?> find(final Collection<GeneralParameterDescriptor> candidates) {
         for (final GeneralParameterDescriptor candidate : candidates) {
             final ReferenceIdentifier search = candidate.getName();
-            final NamedIdentifier identifier = identifiers.get(search.getCode());
+            final NamedIdentifier identifier = identifiersMap.get(search.getCode());
             if (identifier != null) {
                 if (identifierMatches(search.getAuthority(), identifier.getAuthority())) {
                     /*
@@ -576,24 +658,25 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
     }
 
     /**
-     * Puts the identifiers into a properties map suitable for {@link IdentifiedObject}
-     * constructor.
+     * Puts the identifiers into a properties map suitable for {@link ParameterDescriptorGroup}
+     * constructor. The first identifier is used as the primary name. All other elements are aliases.
      */
     private static Map<String,Object> toMap(final ReferenceIdentifier[] identifiers) {
-        if (identifiers == null) {
-            throw new NullArgumentException("identifiers");
-        }
-        if (identifiers.length == 0) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.EMPTY_ARRAY));
-        }
         int idCount    = 0;
         int aliasCount = 0;
-        ReferenceIdentifier[] id = new ReferenceIdentifier[identifiers.length];
-        GenericName[] alias = new GenericName[identifiers.length];
-        for (final ReferenceIdentifier candidate : identifiers) {
+        GenericName[] alias = null;
+        ReferenceIdentifier[] id = null;
+        for (int i=0; i<identifiers.length; i++) {
+            final ReferenceIdentifier candidate = identifiers[i];
             if (candidate instanceof GenericName) {
+                if (alias == null) {
+                    alias = new GenericName[identifiers.length - i];
+                }
                 alias[aliasCount++] = (GenericName) candidate;
             } else {
+                if (id == null) {
+                    id = new ReferenceIdentifier[identifiers.length - i];
+                }
                 id[idCount++] = candidate;
             }
         }

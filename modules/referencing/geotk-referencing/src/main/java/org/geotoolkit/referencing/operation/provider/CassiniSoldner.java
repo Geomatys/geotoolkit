@@ -19,6 +19,7 @@ package org.geotoolkit.referencing.operation.provider;
 
 import net.jcip.annotations.Immutable;
 
+import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -44,7 +45,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  *
  * @author Mauro Bartolomeoli
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.20
  *
  * @since 3.00
  * @module
@@ -64,7 +65,7 @@ public class CassiniSoldner extends MapProjection {
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is [-180 &hellip; 180]&deg; and default value is 0&deg;.
      */
-    public static final ParameterDescriptor<Double> CENTRAL_MERIDIAN = Mercator1SP.CENTRAL_MERIDIAN;
+    public static final ParameterDescriptor<Double> CENTRAL_MERIDIAN;
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -74,7 +75,7 @@ public class CassiniSoldner extends MapProjection {
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is [-90 &hellip; 90]&deg; and default value is 0&deg;.
      */
-    public static final ParameterDescriptor<Double> LATITUDE_OF_ORIGIN = Mercator2SP.LATITUDE_OF_ORIGIN;
+    public static final ParameterDescriptor<Double> LATITUDE_OF_ORIGIN;
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -84,7 +85,7 @@ public class CassiniSoldner extends MapProjection {
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is (0 &hellip; &infin;) and default value is 1.
      */
-    public static final ParameterDescriptor<Double> SCALE_FACTOR = Mercator1SP.SCALE_FACTOR;
+    public static final ParameterDescriptor<Double> SCALE_FACTOR;
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -94,7 +95,7 @@ public class CassiniSoldner extends MapProjection {
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is unrestricted and default value is 0 metre.
      */
-    public static final ParameterDescriptor<Double> FALSE_EASTING = Mercator1SP.FALSE_EASTING;
+    public static final ParameterDescriptor<Double> FALSE_EASTING;
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -104,7 +105,29 @@ public class CassiniSoldner extends MapProjection {
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is unrestricted and default value is 0 metre.
      */
-    public static final ParameterDescriptor<Double> FALSE_NORTHING = Mercator1SP.FALSE_NORTHING;
+    public static final ParameterDescriptor<Double> FALSE_NORTHING;
+
+    /**
+     * Parameters creation, which must be done before to initialize the {@link #PARAMETERS} field.
+     */
+    static {
+        final Citation[] excludes = new Citation[] {Citations.NETCDF};
+        CENTRAL_MERIDIAN = Identifiers.CENTRAL_MERIDIAN.select(excludes, null,
+                "Longitude of natural origin",      // EPSG
+                "central_meridian",                 // OGC
+                "Central_Meridian",                 // ESRI
+                "NatOriginLong");                   // GeoTIFF
+        LATITUDE_OF_ORIGIN = Identifiers.LATITUDE_OF_ORIGIN.select(excludes, null,
+                "Latitude of natural origin",       // EPSG
+                "latitude_of_origin",               // OGC
+                "Latitude_Of_Origin",               // ESRI
+                "NatOriginLat");                    // GeoTIFF
+        SCALE_FACTOR = Identifiers.SCALE_FACTOR.select(excludes, null,
+                "Scale factor at natural origin",   // EPSG
+                "ScaleAtNatOrigin");                // GeoTIFf
+        FALSE_EASTING  = EquidistantCylindrical.FALSE_EASTING;
+        FALSE_NORTHING = EquidistantCylindrical.FALSE_NORTHING;
+    }
 
     /**
      * The parameters group.

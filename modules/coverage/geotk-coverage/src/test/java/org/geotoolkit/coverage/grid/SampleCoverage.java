@@ -42,13 +42,14 @@ import static java.awt.Color.decode;
 import static javax.measure.unit.SI.*;
 import static org.geotoolkit.util.NumberRange.create;
 import static org.geotoolkit.referencing.crs.DefaultGeographicCRS.WGS84;
+import static org.junit.Assert.*;
 
 
 /**
  * Enumeration of sample grid coverages.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.02
+ * @version 3.20
  *
  * @since 3.02
  */
@@ -111,7 +112,7 @@ public strictfp enum SampleCoverage {
      * in a matrix.
      */
     FLOAT(null, WGS84, new Rectangle(35, -41, 45, 46)) {
-        @Override GridCoverage2D load() {
+        @Override final WritableRaster raster() {
             final int width  = 500;
             final int height = 500;
             final WritableRaster raster =
@@ -121,17 +122,22 @@ public strictfp enum SampleCoverage {
                     raster.setSample(x, y, 0, x+y);
                 }
             }
+            return raster;
+        }
+
+        @Override final GridCoverage2D load() {
             final Color[] colors = new Color[] {
                 Color.BLUE, Color.CYAN, Color.WHITE, Color.YELLOW, Color.RED
             };
             final GridCoverageFactory factory = CoverageFactoryFinder.getGridCoverageFactory(null);
-            return factory.create("Float coverage", raster, new Envelope2D(this.crs, this.bounds),
+            return factory.create("Float coverage", raster(), new Envelope2D(this.crs, this.bounds),
                     null, null, null, new Color[][] {colors}, null);
         }
     };
 
     /**
-     * The enum for the image to load.
+     * The enum for the image to load, or {@code null} if the image is computed rather
+     * than loaded.
      */
     private final SampleImage image;
 
@@ -163,6 +169,18 @@ public strictfp enum SampleCoverage {
     }
 
     /**
+     * Loads or computes the raster.
+     *
+     * @return The sample raster.
+     * @throws IOException If the raster can not be read.
+     *
+     * @since 3.20
+     */
+    WritableRaster raster() throws IOException {
+        return image.load().getRaster();
+    }
+
+    /**
      * Loads the sample coverage.
      *
      * @return The sample coverage.
@@ -174,5 +192,19 @@ public strictfp enum SampleCoverage {
         envelope.setCoordinateReferenceSystem(crs);
         final GridCoverageFactory factory = CoverageFactoryFinder.getGridCoverageFactory(null);
         return factory.create(this.image.filename, image, envelope, bands, null, null);
+    }
+
+    /**
+     * Verifies that the grid geometry of the given coverage is conform to the expected one.
+     *
+     * @param coverage The coverage to verify.
+     * @param eps Tolerance threshold for comparisons of floating point numbers.
+     *
+     * @since 3.20
+     */
+    void verifyGridGeometry(final GridCoverage2D coverage, final double eps) {
+        assertSame(crs, coverage.getCoordinateReferenceSystem2D());
+        assertArrayEquals(new double[] {bounds.getMinX(), bounds.getMinY()}, coverage.getEnvelope2D().getLowerCorner().getCoordinate(), eps);
+        assertArrayEquals(new double[] {bounds.getMaxX(), bounds.getMaxY()}, coverage.getEnvelope2D().getUpperCorner().getCoordinate(), eps);
     }
 }

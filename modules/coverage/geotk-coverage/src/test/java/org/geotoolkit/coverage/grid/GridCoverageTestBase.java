@@ -83,6 +83,7 @@ public abstract strictfp class GridCoverageTestBase extends ImageTestBase {
         } catch (IOException e) {
             throw new AssertionError(e);
         }
+        s.verifyGridGeometry(coverage, 1E-10);
     }
 
     /**

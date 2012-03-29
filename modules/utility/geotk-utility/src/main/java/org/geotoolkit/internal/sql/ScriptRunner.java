@@ -520,7 +520,8 @@ scanLine:   for (; i<length; i++) {
             }
         }
         in.close();
-        if (!buffer.toString().trim().isEmpty()) {
+        line = buffer.toString().trim();
+        if (!line.isEmpty() && !line.startsWith(COMMENT)) {
             throw new EOFException(Errors.format(Errors.Keys.MISSING_CHARACTER_$1, END_OF_STATEMENT));
         }
         return count;
