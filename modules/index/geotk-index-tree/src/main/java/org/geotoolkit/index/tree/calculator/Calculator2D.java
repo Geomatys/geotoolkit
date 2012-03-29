@@ -17,9 +17,6 @@
  */
 package org.geotoolkit.index.tree.calculator;
 
-import java.awt.geom.AffineTransform;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import org.geotoolkit.geometry.GeneralDirectPosition;
@@ -27,7 +24,6 @@ import org.geotoolkit.geometry.GeneralEnvelope;
 import static org.geotoolkit.index.tree.DefaultTreeUtils.*;
 import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.index.tree.hilbert.HilbertRTree;
-import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.util.ArgumentChecks;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -290,16 +286,11 @@ public class Calculator2D extends Calculator {
         if (order > 0) {
             final double width = bound.getSpan(0);
             final double height = bound.getSpan(1);
-            int dim = (int) Math.pow(2, (Integer) candidate.getUserProperty("hilbertOrder"));
+            final int dim = 2<<((Integer) candidate.getUserProperty("hilbertOrder"))-1;
             int[][] tabHV = new int[dim][dim];
 
-            final DirectPosition dp0 = new GeneralDirectPosition(crs);
-            final DirectPosition dp1 = new GeneralDirectPosition(crs);
-            final DirectPosition dp2 = new GeneralDirectPosition(crs);
-            final DirectPosition dp3 = new GeneralDirectPosition(crs);
-
             double fract, ymin, xmin;
-            final int nbCells = ((int) Math.pow(2, 2 * order));
+            final int nbCells = 2<<(2*order-1);
             if (width * height <= 0) {
                 if (width <= 0) {
                     fract = height / (2 * nbCells);
@@ -329,31 +320,7 @@ public class Calculator2D extends Calculator {
                 }
                 candidate.setUserProperty("tabHV", groundZero);
             } else {
-                final double w = width / 4;
-                final double h = height / 4;
-                final double minx = bound.getLowerCorner().getOrdinate(0) + w;
-                final double maxx = bound.getUpperCorner().getOrdinate(0) - w;
-                final double miny = bound.getLowerCorner().getOrdinate(1) + h;
-                final double maxy = bound.getUpperCorner().getOrdinate(1) - h;
-                dp0.setOrdinate(0, minx);
-                dp0.setOrdinate(1, miny);
-                dp1.setOrdinate(0, minx);
-                dp1.setOrdinate(1, maxy);
-                dp2.setOrdinate(0, maxx);
-                dp2.setOrdinate(1, maxy);
-                dp3.setOrdinate(0, maxx);
-                dp3.setOrdinate(1, miny);
-                listOfCentroidChild.add(dp0);
-                listOfCentroidChild.add(dp1);
-                listOfCentroidChild.add(dp2);
-                listOfCentroidChild.add(dp3);
-
-                if (order > 1) {
-                    for (int i = 1; i < order; i++) {
-                        createHB(candidate);
-                    }
-                }
-
+                listOfCentroidChild.addAll(createPath(candidate, order, 0,1));
                 for (int i = 0, s = listOfCentroidChild.size(); i < s; i++) {
                     final DirectPosition ptCTemp = listOfCentroidChild.get(i);
                     ArgumentChecks.ensureNonNull("the crs ptCTemp", ptCTemp.getCoordinateReferenceSystem());
@@ -371,87 +338,6 @@ public class Calculator2D extends Calculator {
     }
 
     /**
-     * Create subnode(s) centroid(s). These centroids define Hilbert curve.
-     * Increase the Hilbert order of "HilbertLeaf" passed in parameter by one
-     * unity.
-     *
-     * @param hl HilbertLeaf to increase Hilbert order.
-     * @throws IllegalArgumentException if parameter "hl" is null.
-     * @throws IllegalArgumentException if parameter hl Hilbert order is larger
-     * than them Hilbert RTree.
-     */
-    private static void createHB(final Node hl) {
-
-        ArgumentChecks.ensureNonNull("impossible to increase hilbert order", hl);
-        if ((Integer) hl.getUserProperty("hilbertOrder") > ((HilbertRTree) hl.getTree()).getHilbertOrder()) {
-            throw new IllegalArgumentException("hilbert order is larger than hilbertRTree hilbert order");
-        }
-
-        final List<DirectPosition> listOfCentroidChild = (List<DirectPosition>) hl.getUserProperty("centroids");
-        final CoordinateReferenceSystem crs = listOfCentroidChild.get(0).getCoordinateReferenceSystem();
-        final List<DirectPosition> lPTemp2 = new ArrayList<DirectPosition>(listOfCentroidChild);
-        final Envelope bound = hl.getBound();
-        final DirectPosition centroid = new GeneralDirectPosition(getMedian(bound));
-        final double centreX = centroid.getOrdinate(0);
-        final double centreY = centroid.getOrdinate(1);
-        final double width = bound.getSpan(0);
-        final double height = bound.getSpan(1);
-        final double quartWidth = (width > 1) ? width / 4 : 1;
-        final double quartHeight = (height > 1) ? height / 4 : 1;
-        listOfCentroidChild.clear();
-        final AffineTransform mt1 = new AffineTransform(1, 0, 0, 1, -centreX, -centreY);
-        final AffineTransform rot1 = new AffineTransform();
-        final AffineTransform mt21 = new AffineTransform(1 / quartWidth, 0, 0, 1 / quartHeight, 0, 0);
-        final AffineTransform mt22 = new AffineTransform(quartWidth, 0, 0, quartHeight, 0, 0);
-        final AffineTransform mt2 = new AffineTransform();
-        final AffineTransform mt3 = new AffineTransform(1 / 2.0, 0, 0, 1 / 2.0, 0, 0);
-
-        for (int i = 0; i < 4; i++) {
-
-            if (i == 0) {
-                rot1.setToRotation(-Math.PI / 2);
-                mt2.setTransform(1, 0, 0, 1, centreX - quartWidth, centreY - quartHeight);
-                mt2.concatenate(mt3);
-                mt2.concatenate(mt22);
-                mt2.concatenate(rot1);
-                mt2.concatenate(mt21);
-                mt2.concatenate(mt1);
-                Collections.reverse(lPTemp2);
-            } else if (i == 1) {
-
-                mt2.setTransform(1, 0, 0, 1, centreX - quartWidth, centreY + quartHeight);
-                mt2.concatenate(mt3);
-                mt2.concatenate(mt1);
-                Collections.reverse(lPTemp2);
-
-            } else if (i == 2) {
-                mt2.setTransform(1, 0, 0, 1, centreX + quartWidth, centreY + quartHeight);
-                mt2.concatenate(mt3);
-                mt2.concatenate(mt1);
-            } else if (i == 3) {
-                Collections.reverse(lPTemp2);
-                rot1.setToRotation(Math.PI / 2);
-                mt2.setTransform(1, 0, 0, 1, centreX + quartWidth, centreY - quartHeight);
-                mt2.concatenate(mt3);
-                mt2.concatenate(mt22);
-                mt2.concatenate(rot1);
-                mt2.concatenate(mt21);
-                mt2.concatenate(mt1);
-            }
-
-            for (DirectPosition pt : lPTemp2) {
-                final AffineTransform2D mt = new AffineTransform2D(mt2);
-                DirectPosition ptt = mt.transform(pt, null);
-                DirectPosition ptt2 = new GeneralDirectPosition(crs);
-                for (int t = 0; t < ptt.getDimension(); t++) {
-                    ptt2.setOrdinate(t, ptt.getOrdinate(t));
-                }
-                listOfCentroidChild.add(ptt2);
-            }
-        }
-    }
-
-    /**
      * Find {@code DirectPosition} Hilbert coordinate from this Node.
      *
      * @param pt {@code DirectPosition}
@@ -465,7 +351,7 @@ public class Calculator2D extends Calculator {
         if (!new GeneralEnvelope(envelop).contains(dPt)) {
             throw new IllegalArgumentException("Point is out of this node boundary");
         }
-        double div = Math.pow(2, hilbertOrder);
+        double div = 2<<(hilbertOrder-1);
         final double divX = envelop.getSpan(0) / div;
         final double divY = envelop.getSpan(1) / div;
         double hdx = (Math.abs(dPt.getOrdinate(0) - envelop.getLowerCorner().getOrdinate(0)) / divX);
@@ -492,13 +378,11 @@ public class Calculator2D extends Calculator {
             final double w = bound.getSpan(0);
             final double h = bound.getSpan(1);
             final int ordinate = (w > h) ? 0 : 1;
-            final int nbCells = (int) (Math.pow(2, 2 * order));
+            final int nbCells = 2<<(2*order-1);
             final double fract = bound.getSpan(ordinate) / nbCells;
             final double lenght = Math.abs(bound.getLower(ordinate) - ptCE.getOrdinate(ordinate));
             int result = (int) (lenght / fract);
-            if (result == nbCells) {
-                result--;
-            }
+            if (result == nbCells)result--;
             return result;
         } else {
             int[] hCoord = getHilbCoord(candidate, ptCE, bound, order);

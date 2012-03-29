@@ -17,8 +17,13 @@
  */
 package org.geotoolkit.index.tree.calculator;
 
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
+import org.geotoolkit.geometry.GeneralDirectPosition;
+import static org.geotoolkit.index.tree.DefaultTreeUtils.getMedian;
 import org.geotoolkit.index.tree.Node;
+import org.geotoolkit.index.tree.hilbert.Hilbert;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
@@ -88,7 +93,7 @@ public abstract class Calculator {
      * @param index : ordinate choosen to compare.
      * @param lowerOrUpper : true to sort from "lower boundary", false from
      * "upper boundary"
-     * @param nodeOrGE : true  to sort {@code Node} type elements, 
+     * @param nodeOrGE : true  to sort {@code Node} type elements,
      *                   false to sort {@code Envelope} type elements.
      */
     public abstract Comparator sortFrom(final int index, final boolean lowerOrUpper, final boolean nodeOrGE);
@@ -119,4 +124,35 @@ public abstract class Calculator {
      * @return integer the entry Hilbert order.
      */
     public abstract int getHVOfEntry(final Node candidate, final Envelope entry);
+
+    /**Create subnode(s) centroid(s). These centroids define Hilbert curve.
+     *
+     * @param hl HilbertLeaf to create Hilbert curve (subnode centroids).
+     * @param order Hilbert curve order.
+     * @param dims[] space dimension.
+     */
+    protected List<DirectPosition> createPath(final Node hl, final int order, final int ...dims) {
+        final Envelope bound = hl.getBound();
+        final DirectPosition median = getMedian(bound);
+        final int spaceDimension = dims.length;
+        final List<DirectPosition> path = new ArrayList<DirectPosition>();
+        final int[] generalPath = Hilbert.createPath(spaceDimension, order);
+        final double[] spans = new double[spaceDimension];
+        for(int i = 0; i<spaceDimension;i++){
+            spans[i] = bound.getSpan(dims[i])/(2<<(order-1));
+        }
+        final double[] coords = new double[spaceDimension];
+        for(int i = 0;i<spaceDimension;i++){
+            coords[i] = bound.getMinimum(dims[i]) + spans[i]/2;
+        }
+        for(int i = 0,l=generalPath.length; i<=l-spaceDimension; i+=spaceDimension){
+            final DirectPosition dptemp = new GeneralDirectPosition(median);
+            for(int j = 0;j<spaceDimension;j++){
+                dptemp.setOrdinate(dims[j], coords[j]+spans[j]*generalPath[i+j]);
+            }
+            path.add(dptemp);
+        }
+        return path;
+    }
+
 }

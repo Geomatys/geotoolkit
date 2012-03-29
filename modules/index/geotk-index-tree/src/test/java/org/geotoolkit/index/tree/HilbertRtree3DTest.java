@@ -1,19 +1,6 @@
 /*
- *    Geotoolkit.org - An Open Source Java GIS Toolkit
- *    http://www.geotoolkit.org
- *
- *    (C) 2008-2012, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009-2012, Geomatys
- *
- *    This library is free software; you can redistribute it and/or
- *    modify it under the terms of the GNU Lesser General Public
- *    License as published by the Free Software Foundation;
- *    version 2.1 of the License.
- *
- *    This library is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *    Lesser General Public License for more details.
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
  */
 package org.geotoolkit.index.tree;
 
@@ -28,16 +15,16 @@ import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 
 /**
- * Create Hilbert R-Tree test suite.
  *
- * @author Rémi Marechal (Geomatys).
+ * @author rmarech
  */
-public class HilbertRTree2DTest extends TreeTest {
+public class HilbertRtree3DTest extends TreeTest{
 
-    public HilbertRTree2DTest() throws IllegalArgumentException, TransformException {
-        super(new HilbertRTree(4, 2, DefaultEngineeringCRS.CARTESIAN_2D, DefaultCalculator.CALCULATOR_2D, TreeNodeFactory.DEFAULT_FACTORY),
-                                     DefaultEngineeringCRS.CARTESIAN_2D);
+    public HilbertRtree3DTest() throws TransformException {
+        super(new HilbertRTree(4, 2, DefaultEngineeringCRS.CARTESIAN_3D, DefaultCalculator.CALCULATOR_3D, TreeNodeFactory.DEFAULT_FACTORY),
+                                     DefaultEngineeringCRS.CARTESIAN_3D);
     }
+
 
     /**
      * Some elements inserted in Hilbert R-Tree.
