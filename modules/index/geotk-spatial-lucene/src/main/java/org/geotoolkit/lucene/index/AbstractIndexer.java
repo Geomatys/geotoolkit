@@ -17,22 +17,16 @@
 
 package org.geotoolkit.lucene.index;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.CoordinateSequence;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryCollection;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LinearRing;
-import com.vividsolutions.jts.geom.Polygon;
-import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
-
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 
+// JTS dependencies
+import com.vividsolutions.jts.geom.*;
+import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
+
+// Apache Lucene dependencies
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -41,13 +35,25 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.TermQuery;
-
 import org.apache.lucene.store.SimpleFSDirectory;
 import org.apache.lucene.util.Version;
+
+// Geotoolkit dependencies
+import org.geotoolkit.geometry.Envelopes;
+import org.geotoolkit.geometry.GeneralEnvelope;
+import org.geotoolkit.geometry.jts.SRIDGenerator;
+import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.io.wkb.WKBUtils;
 import org.geotoolkit.lucene.IndexingException;
 import org.geotoolkit.lucene.filter.LuceneOGCFilter;
+import org.geotoolkit.lucene.tree.NamedEnvelope;
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.FileUtilities;
+
+// GeoAPI dependencies
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 
 /**
  * An abstract lucene Indexer used to create and writer lucene index.
@@ -83,6 +89,11 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
     protected static final List<String> indexationToStop = new ArrayList<String>();
 
     /**
+     * Map of fieldName / Number type.
+     */
+    private final Map<String, String> numericFields = new HashMap<String, String>();
+    
+    /**
      * Build a new Indexer witch create an index in the specified directory,
      * with the specified analyzer.
      *
@@ -115,13 +126,19 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
         if (currentIndexDirectory == null) {
             currentIndexDirectory = new File(configDirectory, serviceID + "index-" + System.currentTimeMillis());
             create = true;
+            setFileDirectory(currentIndexDirectory);
         } else {
             LOGGER.log(logLevel, "Index already created.");
             deleteOldIndexDir(configDirectory, serviceID, currentIndexDirectory.getName());
+            // must be set before reading tree
+            setFileDirectory(currentIndexDirectory);
             create = false;
+            try {
+                readTree();
+            } catch (IOException ex) {
+                LOGGER.log(Level.WARNING, "IO exception while reading tree", ex);
+            }
         }
-        
-        setFileDirectory(currentIndexDirectory);
     }
 
     /**
@@ -148,19 +165,102 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
         
     }
     
-    /**
-     * Create a new Index.
-     *
-     * @throws IndexingException
-     */
-    public abstract void createIndex() throws IndexingException;
-
+    protected abstract List<String> getAllIdentifiers() throws IndexingException;
+    
+    protected abstract E getEntry(final String identifier) throws IndexingException;
+    
     /**
      * Create a new Index with the specified list of object.
      *
      * @throws IndexingException
      */
-    public abstract void createIndex(List<E> toIndex) throws IndexingException;
+    public void createIndex(final List<E> toIndex) throws IndexingException {
+        LOGGER.log(logLevel, "Creating lucene index for please wait...");
+        
+        final long time = System.currentTimeMillis();
+        int nbEntries = 0;
+        try {
+            final IndexWriterConfig conf = new IndexWriterConfig(Version.LUCENE_35, analyzer);
+            final IndexWriter writer     = new IndexWriter(new SimpleFSDirectory(getFileDirectory()), conf);
+            final String serviceID       = getServiceID();
+            
+            nbEntries = toIndex.size();
+            for (E entry : toIndex) {
+                if (!stopIndexing && !indexationToStop.contains(serviceID)) {
+                    indexDocument(writer, entry);
+                } else {
+                     LOGGER.info("Index creation stopped after " + (System.currentTimeMillis() - time) + " ms for service:" + serviceID);
+                     stopIndexation(writer, serviceID);
+                     return;
+                }
+            }
+            // writer.optimize(); no longer justified
+            writer.close();
+
+            // we store the R-tree (only if there is results)
+            if (!toIndex.isEmpty()) {
+                writeTree();
+            }
+            
+            // we store the numeric fields in a properties file int the index directory
+            storeNumericFieldsFile();
+            
+        } catch (IOException ex) {
+            LOGGER.log(Level.WARNING, IO_SINGLE_MSG, ex);
+        }
+        LOGGER.log(logLevel, "Index creation process in " + (System.currentTimeMillis() - time) + " ms\n" +
+                " documents indexed: " + nbEntries);
+    }
+
+    /**
+     * Create a new Index.
+     *
+     * @throws IndexingException
+     */
+    public void createIndex() throws IndexingException {
+        LOGGER.log(logLevel, "(light memory) Creating lucene index please wait...");
+
+        final long time  = System.currentTimeMillis();
+        int nbEntries      = 0;
+        try {
+            final IndexWriterConfig conf   = new IndexWriterConfig(Version.LUCENE_35, analyzer);
+            final IndexWriter writer       = new IndexWriter(new SimpleFSDirectory(getFileDirectory()), conf);
+            final String serviceID         = getServiceID();
+            final List<String> identifiers = getAllIdentifiers();
+            
+            LOGGER.log(logLevel, "{0} entry to read.", identifiers.size());
+            for (String identifier : identifiers) {
+                if (!stopIndexing && !indexationToStop.contains(serviceID)) {
+                    try {
+                        final E entry = getEntry(identifier);
+                        indexDocument(writer, entry);
+                        nbEntries++;
+                    } catch (IndexingException ex) {
+                        LOGGER.warning("Metadata IO exeption while indexing metadata: " + identifier + " " + ex.getMessage() + "\nmove to next metadata...");
+                    }
+                } else {
+                     LOGGER.info("Index creation stopped after " + (System.currentTimeMillis() - time) + " ms for service:" + serviceID);
+                     stopIndexation(writer, serviceID);
+                     return;
+                }
+            }
+            // writer.optimize(); no longer justified
+            writer.close();
+            
+            // we store the R-tree (obly if there is results)
+            if (!identifiers.isEmpty()) {
+                writeTree();
+            }
+            
+            // we store the numeric fields in a properties file int the index directory
+            storeNumericFieldsFile();
+
+        } catch (IOException ex) {
+            LOGGER.log(Level.SEVERE,IO_SINGLE_MSG + "{0}", ex.getMessage());
+            throw new IndexingException("IOException while indexing documents:" + ex.getMessage(), ex);
+        }
+        LOGGER.log(logLevel, "Index creation process in " + (System.currentTimeMillis() - time) + " ms\n documents indexed: " + nbEntries + ".");
+    }
 
     
    /**
@@ -185,7 +285,6 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
 
     /**
      * This method add to index of lucene a new document.
-     * (implements AbstractIndex.indexDocument() )
      *
      * @param object The object to index.
      */
@@ -220,6 +319,46 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      */
     public static void stopIndexation() {
         stopIndexing = true;
+    }
+    
+    private void stopIndexation(final IndexWriter writer, final String serviceID) throws IOException {
+        // writer.optimize(); no longer justified
+        writer.close();
+        FileUtilities.deleteDirectory(getFileDirectory());
+        if (indexationToStop.contains(serviceID)) {
+            indexationToStop.remove(serviceID);
+        }
+        if (indexationToStop.isEmpty()) {
+            stopIndexing = false;
+        }
+    }
+    
+    /**
+     * Store the numeric fields in a properties file int the index directory
+     */
+    protected void storeNumericFieldsFile() {
+        final File indexDirectory   = getFileDirectory();
+        final File numericFieldFile = new File(indexDirectory, "numericFields.properties");
+        final Properties prop       = new Properties();
+        prop.putAll(numericFields);
+        try {
+            FileUtilities.storeProperties(prop, numericFieldFile);
+        } catch (IOException ex) {
+            LOGGER.log(Level.WARNING, "Unable to store the numeric fields properties file.", ex);
+        }
+        
+    }
+    
+    /**
+     * Add a numeric fields to the current list.
+     * 
+     * @param fieldName
+     * @param numberType 
+     */
+    protected void addNumericField(final String fieldName, final Character numberType) {
+        if (numericFields.get(fieldName) == null) {
+            numericFields.put(fieldName, numberType.toString());
+        }
     }
     
     /**
@@ -258,45 +397,6 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
     */
     protected abstract Document createDocument(E object) throws IndexingException;
 
-
-    
-    private final Coordinate[] coords = new Coordinate[]{
-        new Coordinate(0, 0),
-        new Coordinate(0, 0),
-        new Coordinate(0, 0),
-        new Coordinate(0, 0),
-        new Coordinate(0, 0)
-    };
-    private final CoordinateSequence points = new CoordinateArraySequence(coords);
-    private final LinearRing ring           = new LinearRing(points, GF);
-    private final Polygon polygon           = new Polygon(ring, new LinearRing[0],GF);
-    
-
-    /**
-     * Encode bounding box coordinate in a byte array.
-     * 
-     * @param minx minimal X coordinate.
-     * @param maxx maximal X coordinate.
-     * @param miny minimal Y coordinate.
-     * @param maxy maximal Y coordinate.
-     * @param srid coordinate spatial reference identifier.
-     * @return
-     */
-    protected byte[] toBytes(final double minx, final double maxx, final double miny, final double maxy, final int srid){
-        coords[0].x = minx;
-        coords[0].y = miny;
-        coords[1].x = minx;
-        coords[1].y = maxy;
-        coords[2].x = maxx;
-        coords[2].y = maxy;
-        coords[3].x = maxx;
-        coords[3].y = miny;
-        coords[4].x = minx;
-        coords[4].y = miny;
-        polygon.setSRID(srid);
-        return WKBUtils.toWKBwithSRID(polygon);
-    }
-
     /**
      * Return a JTS polygon from bounding box coordinate.
      * 
@@ -306,7 +406,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      * @param maxy maximal Y coordinate.
      * @param srid coordinate spatial reference identifier.
      */
-    protected Polygon getPolygon(final double minx, final double maxx, final double miny, final double maxy, final int srid){
+    private Polygon getPolygon(final double minx, final double maxx, final double miny, final double maxy, final int srid){
         final Coordinate[] crds = new Coordinate[]{
         new Coordinate(0, 0),
         new Coordinate(0, 0),
@@ -331,23 +431,8 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
         return poly;
     }
 
-
     /**
-     * Add a geometric field with a boundingBox object in the specified document.
-     * 
-     * @param doc The lucene document currently building.
-     * @param minx minimal X coordinate.
-     * @param maxx maximal X coordinate.
-     * @param miny minimal Y coordinate.
-     * @param maxy maximal Y coordinate.
-     * @param srid coordinate spatial reference identifier.
-     */
-    protected void addBoundingBox(final Document doc, final double minx, final double maxx, final double miny, final double maxy, final int srid) {
-        addGeometry(doc, toBytes(minx, maxx, miny, maxy,srid));
-    }
-
-    /**
-     * Add a geometric field with a Multi-boundingBox object in the specified lucene document.
+     * Add a geometric field with on ore more boundingBox object in the specified lucene document.
      *
      * @param doc The lucene document currently building.
      * @param minx a list of minimal X coordinate.
@@ -356,13 +441,19 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      * @param maxy a list of maximal Y coordinate.
      * @param srid coordinate spatial reference identifier.
      */
-    protected void addMultipleBoundingBox(final Document doc, final List<Double> minx, final List<Double> maxx, final List<Double> miny, final List<Double> maxy, final int srid) {
+    protected void addBoundingBox(final Document doc, final List<Double> minx, final List<Double> maxx, final List<Double> miny, final List<Double> maxy, final int srid) {
         final Polygon[] polygons = new Polygon[minx.size()];
         for (int i = 0; i < minx.size(); i++) {
             polygons[i] = getPolygon(minx.get(i), maxx.get(i), miny.get(i), maxy.get(i),srid);
         }
-        final GeometryCollection geom = GF.createGeometryCollection(polygons);
-        addGeometry(doc, geom);
+        Geometry geom;
+        if (polygons.length == 1) {
+            geom = polygons[0];
+        } else {
+            geom = GF.createGeometryCollection(polygons);
+            geom.setSRID(srid);
+        }
+        addGeometry(doc, geom, rTree);
     }
 
     /**
@@ -370,17 +461,27 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      * @param doc The lucene document currently building.
      * @param geom A JTS geometry
      */
-    public static void addGeometry(final Document doc, final Geometry geom) {
-        addGeometry(doc, WKBUtils.toWKBwithSRID(geom));
-    }
-
-     /**
-     * Add a geometric field with a geometry byte encoded in the specified lucene document.
-     * @param doc The lucene document currently building.
-     * @param geom A geometry byte encoded.
-     */
-    public static void addGeometry(final Document doc, final byte[] geom) {
-        doc.add(new Field(LuceneOGCFilter.GEOMETRY_FIELD_NAME,geom));
+    public static void addGeometry(final Document doc, final Geometry geom, final Tree rTree) {
+        if (rTree != null) {
+            final Envelope jtsBound = geom.getEnvelopeInternal();
+            try {
+                final String name =  doc.get("id");
+                final String epsgCode = SRIDGenerator.toSRS(geom.getSRID(), SRIDGenerator.Version.V1);
+                final CoordinateReferenceSystem geomCRS = CRS.decode(epsgCode);
+                final GeneralEnvelope bound = new GeneralEnvelope(geomCRS);
+                bound.setRange(0, jtsBound.getMinX(), jtsBound.getMaxX());
+                bound.setRange(1, jtsBound.getMinY(), jtsBound.getMaxY());
+            
+                // reproject to cartesian CRS
+                final NamedEnvelope namedBound = new NamedEnvelope(Envelopes.transform(bound, rTree.getCrs()), name);
+                rTree.insert(namedBound);
+            } catch (TransformException ex) {
+                LOGGER.log(Level.WARNING, "Unable to insert envelope in R-Tree.", ex);
+            } catch (FactoryException ex) {
+                LOGGER.log(Level.WARNING, "Unable to insert envelope in R-Tree.", ex);
+            }
+        }
+        doc.add(new Field(LuceneOGCFilter.GEOMETRY_FIELD_NAME,WKBUtils.toWKBwithSRID(geom)));
     }
 
     /**
@@ -419,44 +520,6 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
             serviceId = "";
         }
         return serviceId;
-    }
-
-    /**
-     * A file filter to retrieve all the index directory in a specified directory.
-     *
-     * @author Guilhem Legal (Geomatys)
-     */
-    public static class IndexDirectoryFilter implements FilenameFilter {
-
-        /**
-         * The service ID.
-         */
-        private final String prefix;
-
-        public IndexDirectoryFilter(final String id) {
-            if (id != null) {
-                prefix = id;
-            } else {
-                prefix = "";
-            }
-        }
-
-        /**
-         * Return true if the specified file is a directory and if its name start with the serviceID + 'index-'.
-         *
-         * @param dir The current directory explored.
-         * @param name The name of the file.
-         * @return True if the specified file in the current directory match the conditions.
-         */
-        @Override
-        public boolean accept(final File dir, final String name) {
-            File f = new File(dir, name);
-            if ("all".equals(prefix)) {
-                return (name.indexOf("index-") != -1 && f.isDirectory());
-            } else {
-                return (name.startsWith(prefix + "index-") && f.isDirectory());
-            }
-        }
     }
 }
 
