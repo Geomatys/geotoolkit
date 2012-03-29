@@ -283,7 +283,7 @@ public class FilterFactoryImpl implements FilterFactory2 {
 
     public BBOX bbox(final String propertyName, final double minx, final double miny, final double maxx, final double maxy, String srs) {
         if (srs == null || srs.equals("")) {
-            srs = "EPSG:4326";
+            srs = "CRS:84"; // default CRS used is normally EPSG 4326 but most of the implementation use this one by default
         }
         return new BBOXType(propertyName, minx, miny, maxx, maxy, srs);
     }
@@ -296,7 +296,7 @@ public class FilterFactoryImpl implements FilterFactory2 {
             throw new IllegalArgumentException("unexpected type instead of propertyNameType: " + geometry.getClass().getSimpleName());
         }
         if (srs == null || srs.equals("")) {
-            srs = "EPSG:4326";
+            srs = "CRS:84"; // default CRS used is normally EPSG 4326 but most of the implementation use this one by default
         }
         return new BBOXType(propertyName, minx, miny, maxx, maxy, srs);
     }
@@ -310,7 +310,7 @@ public class FilterFactoryImpl implements FilterFactory2 {
         if (bounds.getCoordinateReferenceSystem() != null) {
             CRSName = IdentifiedObjects.getIdentifier(bounds.getCoordinateReferenceSystem());
         } else {
-            CRSName = "EPSG:4326";
+            CRSName = "CRS:84";
         }
         return new BBOXType(propertyName, bounds.getMinX(), bounds.getMinY(), bounds.getMaxX(), bounds.getMaxY(), CRSName);
     }

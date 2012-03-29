@@ -64,8 +64,6 @@ import org.opengis.util.FactoryException;
  */
 public abstract class AbstractIndexer<E> extends IndexLucene {
 
-    protected static final int SRID_4326 = 4326;
-
     protected static final GeometryFactory GF = new GeometryFactory();
     protected static final String CORRUPTED_SINGLE_MSG = "CorruptIndexException while indexing document: ";
     protected static final String CORRUPTED_MULTI_MSG  = "CorruptIndexException while indexing document: ";
