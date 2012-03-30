@@ -101,7 +101,7 @@ public class NewZealandMapGrid extends MapProjection {
      * Valid values range is [-180 &hellip; 180]&deg; and default value is 173&deg;.
      */
     public static final ParameterDescriptor<Double> CENTRAL_MERIDIAN =
-            Identifiers.CENTRAL_MERIDIAN.select(true, 173,
+            Identifiers.CENTRAL_MERIDIAN.select(true, 173, null,
                 "central_meridian",             // OGC
                 "Longitude_Of_Origin",          // ESRI
                 "Longitude of natural origin",  // EPSG
@@ -116,7 +116,7 @@ public class NewZealandMapGrid extends MapProjection {
      * Valid values range is [-90 &hellip; 90]&deg; and default value is -41&deg;.
      */
     public static final ParameterDescriptor<Double> LATITUDE_OF_ORIGIN =
-            Identifiers.LATITUDE_OF_ORIGIN.select(true, -41,
+            Identifiers.LATITUDE_OF_ORIGIN.select(true, -41, null,
                 "latitude_of_origin",           // OGC
                 "Latitude_Of_Origin",           // ESRI
                 "Latitude of natural origin",   // EPSG
@@ -131,7 +131,7 @@ public class NewZealandMapGrid extends MapProjection {
      * Valid values range is unrestricted and default value is 2510000 metre.
      */
     public static final ParameterDescriptor<Double> FALSE_EASTING =
-            Identifiers.FALSE_EASTING.select(true, 2510000,
+            Identifiers.FALSE_EASTING.select(true, 2510000, null,
                 "False easting",    // EPSG
                 "FalseEasting");    // GeoTIFF
 
@@ -144,7 +144,7 @@ public class NewZealandMapGrid extends MapProjection {
      * Valid values range is unrestricted and default value is 6023150 metre.
      */
     public static final ParameterDescriptor<Double> FALSE_NORTHING =
-            Identifiers.FALSE_NORTHING.select(true, 6023150,
+            Identifiers.FALSE_NORTHING.select(true, 6023150, null,
                 "False northing",   // EPSG
                 "FalseNorthing");   // GeoTIFF
 

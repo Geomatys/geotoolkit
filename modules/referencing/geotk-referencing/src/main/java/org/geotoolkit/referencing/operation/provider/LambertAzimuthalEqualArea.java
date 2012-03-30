@@ -27,16 +27,20 @@ import org.opengis.referencing.ReferenceIdentifier;
 
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.internal.referencing.Identifiers;
-import org.geotoolkit.internal.referencing.DeprecatedName;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
 
 /**
- * The provider for "<cite>Lambert Azimuthal Equal Area</cite>" projection (EPSG:9820, EPSG:1027).
+ * The provider for "<cite>Lambert Azimuthal Equal Area</cite>" projection (EPSG:9820, EPSG:1027,
+ * <del>EPSG:9821</del>).
  *
  * {@note EPSG defines two codes for this projection, 1027 being the spherical case and 9820 the
  *        ellipsoidal case. However the formulas are the same in both cases. Consequently they are
  *        implemented in Geotk by the same class.}
+ *
+ * {@code EPSG:9820 and 1027 are the current codes, while EPSG:9821 is a deprecated code. The new
+ *        and deprecated definitions differ only by their names. In the Geotk implementation, both
+ *        current and legacy definitions are known, but the legacy names are marked as deprecated.}
  *
  * The programmatic names and parameters are enumerated at
  * <A HREF="http://www.remotesensing.org/geotiff/proj_list/lambert_azimuthal_equal_area.html">Lambert
@@ -70,9 +74,10 @@ public class LambertAzimuthalEqualArea extends MapProjection {
      * Valid values range is [-180 &hellip; 180]&deg; and default value is 0&deg;.
      */
     public static final ParameterDescriptor<Double> LONGITUDE_OF_CENTRE =
-            Identifiers.CENTRAL_MERIDIAN.select(
-                "longitude_of_center",            // OGC
+            Identifiers.CENTRAL_MERIDIAN.select(null, new String[] {
+                "Spherical longitude of origin"}, // EPSG (deprecated - was used by EPSG:9821 only)
                 "Longitude of natural origin",    // EPSG
+                "longitude_of_center",            // OGC
                 "Central_Meridian",               // ESRI
                 "longitude_of_projection_origin", // NetCDF
                 "ProjCenterLong");                // GeoTIFF
@@ -86,11 +91,12 @@ public class LambertAzimuthalEqualArea extends MapProjection {
      * Valid values range is [-90 &hellip; 90]&deg; and default value is 0&deg;.
      */
     public static final ParameterDescriptor<Double> LATITUDE_OF_CENTRE =
-            Identifiers.LATITUDE_OF_ORIGIN.select(
-                "latitude_of_center",           // OGC
-                "Latitude_Of_Origin",           // ESRI
-                "Latitude of natural origin",   // EPSG
-                "ProjCenterLat");               // GeoTIFF
+            Identifiers.LATITUDE_OF_ORIGIN.select(null, new String[] {
+                "Spherical latitude of origin"},  // EPSG (deprecated - was used by EPSG:9821 only)
+                "Latitude of natural origin",     // EPSG
+                "latitude_of_center",             // OGC
+                "Latitude_Of_Origin",             // ESRI
+                "ProjCenterLat");                 // GeoTIFF
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -122,6 +128,8 @@ public class LambertAzimuthalEqualArea extends MapProjection {
             new NamedIdentifier(Citations.EPSG,    "Lambert Azimuthal Equal Area (Spherical)"),
             new IdentifierCode (Citations.EPSG,     9820),
             new IdentifierCode (Citations.EPSG,     1027),
+            new IdentifierCode (Citations.EPSG,     9821, 1027), // Legacy (deprecated) code.
+            new NamedIdentifier(Citations.ESRI,    "Lambert_Azimuthal_Equal_Area"),
             new NamedIdentifier(Citations.NETCDF,  "LambertAzimuthalEqualArea"),
             new NamedIdentifier(Citations.GEOTIFF, "CT_LambertAzimEqualArea"),
             new IdentifierCode (Citations.GEOTIFF,  10),
@@ -152,80 +160,5 @@ public class LambertAzimuthalEqualArea extends MapProjection {
     @Override
     protected MathTransform2D createMathTransform(ParameterValueGroup values) {
         return org.geotoolkit.referencing.operation.projection.LambertAzimuthalEqualArea.create(getParameters(), values);
-    }
-
-    /**
-     * The provider for "<cite>Lambert Azimuthal Equal Area (Spherical)</cite>" projection
-     * (EPSG:9821). This provider is declared explicitly only because EPSG uses a distinct
-     * code with different parameter names for this case.
-     *
-     * {@note <strong>This projection method is deprecated by EPSG.</strong> It has been replaced
-     *        by EPSG:1027, which use the same parameter names than the ellipsoidal case.}
-     *
-     * @author Beate Stollberg
-     * @author Martin Desruisseaux (Geomatys)
-     * @version 3.16
-     *
-     * @since 3.00
-     * @module
-     */
-    @Immutable
-    public static class Spherical extends LambertAzimuthalEqualArea {
-        /**
-         * For cross-version compatibility.
-         */
-        private static final long serialVersionUID = -6583175996290305778L;
-
-        /**
-         * The operation parameter descriptor for the {@linkplain
-         * org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#centralMeridian
-         * central meridian} parameter value.
-         *
-         * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
-         * Valid values range is [-180 &hellip; 180]&deg; and default value is 0&deg;.
-         */
-        @SuppressWarnings("hiding")
-        public static final ParameterDescriptor<Double> LONGITUDE_OF_CENTRE =
-                Identifiers.CENTRAL_MERIDIAN.select(
-                    "longitude_of_center",            // OGC
-                    "Spherical longitude of origin",  // EPSG
-                    "Central_Meridian",               // ESRI
-                    "ProjCenterLong");                // GeoTIFF
-
-        /**
-         * The operation parameter descriptor for the {@linkplain
-         * org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#latitudeOfOrigin
-         * latitude of origin} parameter value.
-         *
-         * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
-         * Valid values range is [-90 &hellip; 90]&deg; and default value is 0&deg;.
-         */
-        @SuppressWarnings("hiding")
-        public static final ParameterDescriptor<Double> LATITUDE_OF_CENTRE =
-                Identifiers.LATITUDE_OF_ORIGIN.select(
-                    "latitude_of_center",           // OGC
-                    "Latitude_Of_Origin",           // ESRI
-                    "Spherical latitude of origin", // EPSG
-                    "ProjCenterLat");               // GeoTIFF
-
-        /**
-         * The parameters group.
-         */
-        public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
-            new ReferenceIdentifier[] {
-                new DeprecatedName(Citations.EPSG, "Lambert Azimuthal Equal Area (Spherical)"),
-                new IdentifierCode(Citations.EPSG,  9821, 1027),
-            },  new ParameterDescriptor<?>[] {
-                    SEMI_MAJOR,         SEMI_MINOR, ROLL_LONGITUDE,
-                    LATITUDE_OF_CENTRE, LONGITUDE_OF_CENTRE,
-                    FALSE_EASTING,      FALSE_NORTHING
-            });
-
-        /**
-         * Constructs a new provider.
-         */
-        public Spherical() {
-            super(PARAMETERS);
-        }
     }
 }

@@ -215,7 +215,7 @@ public class ObliqueMercator extends MapProjection {
 
 
     /**
-     * The provider for "<cite>Oblique Mercator</cite>" projection specified with two points
+     * The provider for "<cite>Oblique Mercator</cite>" projection specified by two points
      * on the central line. This is different than the classical {@linkplain ObliqueMercator
      * Oblique Mercator}, which uses a central point and azimuth.
      *

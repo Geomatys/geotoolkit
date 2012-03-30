@@ -43,12 +43,10 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  *        adjustment of Earth radius in the ellipsoidal case. Consequently they are implemented
  *        in Geotk by the same class.}
  *
- * EPSG:1028 and 1029 are the current codes, while EPSG:9842 and 9823 are deprecated codes.
- * The only difference between the legacy operations and the new ones are some parameter names.
- * In the Geotk implementation, both current and legacy EPSG names are known, but the legacy names
- * are marked as {@linkplain org.geotoolkit.referencing.DefaultReferenceIdentifier#isDeprecated()
- * deprecated}.
- * <p>
+ * {@code EPSG:1028 and 1029 are the current codes, while EPSG:9842 and 9823 are deprecated codes.
+ *        The new and deprecated definitions differ only by their names. In the Geotk implementation,
+ *        both current and legacy definitions are known, but the legacy names are marked as deprecated.}
+ *
  * The programmatic names and parameters are enumerated at
  * <A HREF="http://www.remotesensing.org/geotiff/proj_list/equirectangular.html">Equirectangular
  * on RemoteSensing.org</A>. The math transform implementations instantiated by this provider may

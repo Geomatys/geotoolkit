@@ -19,6 +19,7 @@ package org.geotoolkit.build.project.report;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.io.File;
@@ -69,7 +70,10 @@ public final class ProjectionParameters extends OperationParametersReport {
     private final Class<? extends SingleOperation>[] categories;
 
     /**
-     * Creates a new instance with the default set of authorities.
+     * Creates a new instance with the default set of authorities. ESRI needs to be right after OGC,
+     * because the {@link #createRow(IdentifiedObject, ParameterDescriptorGroup, Set)} method contains
+     * an empirical hack for allowing the GeoAPI report to merge long ESRI projection names with the
+     * OGC name when the names are identical.
      */
     private ProjectionParameters() {
         this(EPSG, OGC, ESRI, NETCDF, GEOTIFF, PROJ4);
@@ -145,6 +149,26 @@ public final class ProjectionParameters extends OperationParametersReport {
                         categoryIndex = i;
                         break;
                     }
+                }
+            }
+        }
+        /*
+         * Empirical adjustment in the table layout:  for a few very long ESRI names, just declare
+         * that the name is the same than the OGC name. This allow the GeoAPI report to generate a
+         * more compact HTML table, by avoiding the column space required when repeating the same
+         * information twice.
+         */
+        String names[] = row.names.get("ESRI");
+        if (names != null && names.length == 1) {
+            final String name = names[0];
+            switch (name) {
+                case "Lambert_Azimuthal_Equal_Area":
+                case "Lambert_Conformal_Conic_2SP_Belgium": {
+                    names = row.names.get("OGC");
+                    assert names.length == 1 && names[0].contains(name) : name;
+                    names[0] += " \u00A0<font size=\"-1\" color=\"MediumSlateBlue\">(ESRI: same name)</font>";
+                    row.names.remove("ESRI");
+                    break;
                 }
             }
         }

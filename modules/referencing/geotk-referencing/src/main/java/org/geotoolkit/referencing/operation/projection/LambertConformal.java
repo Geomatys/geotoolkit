@@ -54,7 +54,6 @@ import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.
  *   <li>{@link org.geotoolkit.referencing.operation.provider.LambertConformal1SP}</li>
  *   <li>{@link org.geotoolkit.referencing.operation.provider.LambertConformal2SP}</li>
  *   <li>{@link org.geotoolkit.referencing.operation.provider.LambertConformal2SP.Belgium}</li>
- *   <li>{@link org.geotoolkit.referencing.operation.provider.LambertConformal2SP.ESRI}</li>
  * </ul>
  *
  * {@section Description}

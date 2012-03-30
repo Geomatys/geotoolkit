@@ -28,9 +28,11 @@ import org.opengis.referencing.operation.SingleOperation;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.CoordinateOperationAuthorityFactory;
 
+import org.geotoolkit.util.XArrays;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.referencing.DefaultReferenceIdentifier;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
 
 import org.junit.*;
@@ -45,11 +47,18 @@ import static org.geotoolkit.referencing.Commons.*;
  * declared in the EPSG database, but this could be extended to other authorities as well.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.07
+ * @version 3.20
  *
  * @since 3.03
  */
 public final strictfp class ConformanceTest extends ReferencingTestBase {
+    /**
+     * Deprecated method names to ignore.
+     */
+    private static final String[] ignore = {
+        "Krovak Oblique Conic Conformal"  // Since EPSG 7.6, the name is only "Krovak".
+    };
+
     /**
      * Tests the conformance of EPSG codes.
      *
@@ -116,6 +125,10 @@ skip:   for (final OperationMethod method : mtFactory.getAvailableMethods(Single
             for (final GenericName alias : aliases) {
                 if (Citations.identifierMatches(authority, alias.head().toString())) {
                     final String name = alias.tip().toString().trim();
+                    if (XArrays.contains(ignore, name)) {
+                        assertTrue(name, ((DefaultReferenceIdentifier) alias).isDeprecated());
+                        continue;
+                    }
                     assertFalse("Not a name: " + name, isNumber(name));
                     Map<OperationMethod,OperationMethod> methods = names.get(name);
                     if (methods == null) {

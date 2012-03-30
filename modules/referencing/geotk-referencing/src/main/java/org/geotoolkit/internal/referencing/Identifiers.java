@@ -88,15 +88,15 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
      */
     public static final Identifiers CENTRAL_MERIDIAN = new Identifiers(new NamedIdentifier[] {
             new NamedIdentifier(OGC,     "central_meridian"),
-            new NamedIdentifier(ESRI,    "Central_Meridian"),
             new NamedIdentifier(OGC,     "longitude_of_center"),
-            new NamedIdentifier(ESRI,    "Longitude_Of_Center"),
-            new NamedIdentifier(ESRI,    "Longitude_Of_Origin"),
             new NamedIdentifier(EPSG,    "Longitude of origin"),
             new NamedIdentifier(EPSG,    "Longitude of false origin"),
             new NamedIdentifier(EPSG,    "Longitude of natural origin"),
             new NamedIdentifier(EPSG,    "Spherical longitude of origin"),
             new NamedIdentifier(EPSG,    "Longitude of projection centre"),
+            new NamedIdentifier(ESRI,    "Central_Meridian"),
+            new NamedIdentifier(ESRI,    "Longitude_Of_Center"),
+            new NamedIdentifier(ESRI,    "Longitude_Of_Origin"),
             new NamedIdentifier(NETCDF,  "longitude_of_projection_origin"),
             new NamedIdentifier(NETCDF,  "longitude_of_central_meridian"),
             new NamedIdentifier(GEOTIFF, "NatOriginLong"),
@@ -138,13 +138,13 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
 
         LATITUDE_OF_ORIGIN = new Identifiers(new NamedIdentifier[] {
             new NamedIdentifier(OGC,     "latitude_of_origin"),
-            new NamedIdentifier(ESRI,    "Latitude_Of_Origin"),
             new NamedIdentifier(OGC,     "latitude_of_center"),
-            new NamedIdentifier(ESRI,    "Latitude_Of_Center"), esri,
             new NamedIdentifier(EPSG,    "Latitude of false origin"),
             new NamedIdentifier(EPSG,    "Latitude of natural origin"),
             new NamedIdentifier(EPSG,    "Spherical latitude of origin"),
             new NamedIdentifier(EPSG,    "Latitude of projection centre"), epsg,
+            new NamedIdentifier(ESRI,    "Latitude_Of_Origin"),
+            new NamedIdentifier(ESRI,    "Latitude_Of_Center"), esri,
             new NamedIdentifier(NETCDF,  "latitude_of_projection_origin"),
             new NamedIdentifier(GEOTIFF, "NatOriginLat"),
             new NamedIdentifier(GEOTIFF, "FalseOriginLat"),
@@ -156,9 +156,9 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
         STANDARD_PARALLEL_1 = new Identifiers(new NamedIdentifier[] {
             new NamedIdentifier(OGC,     "standard_parallel_1"),
             new NamedIdentifier(OGC,     "pseudo_standard_parallel_1"),
-            new NamedIdentifier(ESRI,    "Pseudo_Standard_Parallel_1"), esri,
             new NamedIdentifier(EPSG,    "Latitude of standard parallel"), epsg,
             new NamedIdentifier(EPSG,    "Latitude of pseudo standard parallel"),
+            new NamedIdentifier(ESRI,    "Pseudo_Standard_Parallel_1"), esri,
             new NamedIdentifier(NETCDF,  "standard_parallel[1]"),
             new NamedIdentifier(GEOTIFF, "StdParallel1"),
             new NamedIdentifier(PROJ4,   "lat_1")
@@ -171,8 +171,8 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
      */
     public static final Identifiers STANDARD_PARALLEL_2 = new Identifiers(new NamedIdentifier[] {
             new NamedIdentifier(OGC,     "standard_parallel_2"),
-            new NamedIdentifier(ESRI,    "Standard_Parallel_2"),
             new NamedIdentifier(EPSG,    "Latitude of 2nd standard parallel"),
+            new NamedIdentifier(ESRI,    "Standard_Parallel_2"),
             new NamedIdentifier(NETCDF,  "standard_parallel[2]"),
             new NamedIdentifier(GEOTIFF, "StdParallel2"),
             new NamedIdentifier(PROJ4,   "lat_2")
@@ -220,9 +220,9 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
      */
     public static final Identifiers AZIMUTH = new Identifiers(new NamedIdentifier[] {
             new NamedIdentifier(OGC,      "azimuth"),
-            new NamedIdentifier(ESRI,     "Azimuth"),
             new NamedIdentifier(EPSG,     "Azimuth of initial line"),
             new NamedIdentifier(EPSG,     "Co-latitude of cone axis"), // Used in Krovak projection.
+            new NamedIdentifier(ESRI,     "Azimuth"),
             new NamedIdentifier(GEOTIFF,  "AzimuthAngle")
         }, Double.NaN, -360, 360, NonSI.DEGREE_ANGLE, true);
 
@@ -249,10 +249,10 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
      */
     public static final Identifiers SCALE_FACTOR = new Identifiers(new NamedIdentifier[] {
             new NamedIdentifier(OGC,     "scale_factor"),
-            new NamedIdentifier(ESRI,    "Scale_Factor"),
             new NamedIdentifier(EPSG,    "Scale factor at natural origin"),
             new NamedIdentifier(EPSG,    "Scale factor on initial line"),
             new NamedIdentifier(EPSG,    "Scale factor on pseudo standard parallel"),
+            new NamedIdentifier(ESRI,    "Scale_Factor"),
             new NamedIdentifier(NETCDF,  "scale_factor_at_projection_origin"),
             new NamedIdentifier(NETCDF,  "scale_factor_at_central_meridian"),
             new NamedIdentifier(GEOTIFF, "ScaleAtNatOrigin"),
@@ -271,11 +271,11 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
      */
     public static final Identifiers FALSE_EASTING = new Identifiers(new NamedIdentifier[] {
             new NamedIdentifier(OGC,     "false_easting"),
-            new NamedIdentifier(NETCDF,  "false_easting"),
-            new NamedIdentifier(ESRI,    "False_Easting"),
             new NamedIdentifier(EPSG,    "False easting"),
             new NamedIdentifier(EPSG,    "Easting at false origin"),
             new NamedIdentifier(EPSG,    "Easting at projection centre"),
+            new NamedIdentifier(ESRI,    "False_Easting"),
+            new NamedIdentifier(NETCDF,  "false_easting"),
             new NamedIdentifier(GEOTIFF, "FalseEasting"),
             new NamedIdentifier(GEOTIFF, "FalseOriginEasting"),
             new NamedIdentifier(PROJ4,   "x_0")
@@ -292,11 +292,11 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
      */
     public static final Identifiers FALSE_NORTHING = new Identifiers(new NamedIdentifier[] {
             new NamedIdentifier(OGC,     "false_northing"),
-            new NamedIdentifier(NETCDF,  "false_northing"),
-            new NamedIdentifier(ESRI,    "False_Northing"),
             new NamedIdentifier(EPSG,    "False northing"),
             new NamedIdentifier(EPSG,    "Northing at false origin"),
             new NamedIdentifier(EPSG,    "Northing at projection centre"),
+            new NamedIdentifier(ESRI,    "False_Northing"),
+            new NamedIdentifier(NETCDF,  "false_northing"),
             new NamedIdentifier(GEOTIFF, "FalseNorthing"),
             new NamedIdentifier(GEOTIFF, "FalseOriginNorthing"),
             new NamedIdentifier(PROJ4,   "y_0")
@@ -360,7 +360,7 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
      * The given array is used for disambiguation when the same authority defines
      * many names.
      *
-     * @param  excludes   The citations to exclude, or {@code null} if none.
+     * @param  excludes   The authorities to exclude, or {@code null} if none.
      * @param  deprecated The names of deprecated identifiers, or {@code null} if none.
      * @param  names      The names to be used for disambiguation.
      * @return The requested identifiers.
@@ -389,11 +389,14 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
      *
      * @param  required     Whatever the parameter shall be mandatory or not.
      * @param  defaultValue The default value.
+     * @param  excludes     The authorities to exclude, or {@code null} if none.
      * @param  names        The names to be used for disambiguation.
      * @return The requested identifiers.
      */
-    public ParameterDescriptor<Double> select(final boolean required, final double defaultValue, final String... names) {
-        return select(required, Double.valueOf(defaultValue), null, null, names);
+    public ParameterDescriptor<Double> select(final boolean required, final double defaultValue,
+            final Citation[] excludes, final String... names)
+    {
+        return select(required, Double.valueOf(defaultValue), excludes, null, names);
     }
 
     /**
@@ -404,7 +407,7 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
      *
      * @param  required     Whatever the parameter shall be mandatory or not.
      * @param  defaultValue The default value, or {@code null} if none.
-     * @param  excludes     The citations to exclude, or {@code null} if none.
+     * @param  excludes     The authorities to exclude, or {@code null} if none.
      * @param  deprecated   The names of deprecated identifiers, or {@code null} if none.
      * @param  names        The names to be used for disambiguation.
      *                      The same name may be used for more than one authority.

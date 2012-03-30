@@ -19,6 +19,7 @@ package org.geotoolkit.referencing.operation.provider;
 
 import net.jcip.annotations.Immutable;
 
+import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -30,6 +31,8 @@ import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.operation.projection.LambertConformal;
 import org.geotoolkit.internal.referencing.Identifiers;
 import org.geotoolkit.metadata.iso.citation.Citations;
+
+import static org.geotoolkit.internal.referencing.Identifiers.exclude;
 
 
 /**
@@ -67,9 +70,9 @@ public class LambertConformal2SP extends MapProjection {
      */
     public static final ParameterDescriptor<Double> CENTRAL_MERIDIAN =
             Identifiers.CENTRAL_MERIDIAN.select(
+                "Longitude of false origin",     // EPSG
                 "central_meridian",              // OGC
                 "Central_Meridian",              // ESRI
-                "Longitude of false origin",     // EPSG
                 "longitude_of_central_meridian", // NetCDF
                 "FalseOriginLong");              // GeoTIFF
 
@@ -83,9 +86,9 @@ public class LambertConformal2SP extends MapProjection {
      */
     public static final ParameterDescriptor<Double> LATITUDE_OF_ORIGIN =
             Identifiers.LATITUDE_OF_ORIGIN.select(
+                "Latitude of false origin",  // EPSG
                 "latitude_of_origin",        // OGC
                 "Latitude_Of_Origin",        // ESRI
-                "Latitude of false origin",  // EPSG
                 "FalseOriginLat");           // GeoTIFF
 
     /**
@@ -99,9 +102,9 @@ public class LambertConformal2SP extends MapProjection {
      */
     public static final ParameterDescriptor<Double> STANDARD_PARALLEL_1 =
             Identifiers.STANDARD_PARALLEL_1.select(
-                "standard_parallel_1",                  // OGC
-                "Standard_Parallel_1",                  // ESRI
-                "Latitude of 1st standard parallel");   // EPSG
+                "Latitude of 1st standard parallel",  // EPSG
+                "standard_parallel_1",                // OGC
+                "Standard_Parallel_1");               // ESRI
 
     /**
      * The operation parameter descriptor for the second {@linkplain
@@ -114,6 +117,21 @@ public class LambertConformal2SP extends MapProjection {
      */
     public static final ParameterDescriptor<Double> STANDARD_PARALLEL_2 =
             Identifiers.STANDARD_PARALLEL_2.select("Latitude of 2nd standard parallel");
+
+    /**
+     * The ESRI operation parameter descriptor for the {@linkplain
+     * org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#scaleFactor
+     * scale factor} parameter value.
+     *
+     * This parameter is <a href="package-summary.html#Obligation">optional</a>, because not
+     * defined by EPSG. Valid values range is (0 &hellip; &infin;) and default value is 1.
+     *
+     * @since 3.20
+     */
+    public static final ParameterDescriptor<Double> SCALE_FACTOR =
+            Identifiers.SCALE_FACTOR.select(false, 1, new Citation[] {
+                Citations.EPSG, Citations.OGC, Citations.NETCDF, Citations.GEOTIFF, Citations.PROJ4
+            });
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -149,6 +167,7 @@ public class LambertConformal2SP extends MapProjection {
             new NamedIdentifier(Citations.OGC,     "Lambert_Conformal_Conic_2SP"),
             new NamedIdentifier(Citations.EPSG,    "Lambert Conic Conformal (2SP)"),
             new IdentifierCode (Citations.EPSG,     9802),
+            new NamedIdentifier(Citations.ESRI,    "Lambert_Conformal_Conic"),
             new NamedIdentifier(Citations.NETCDF,  "LambertConformal"),
             new NamedIdentifier(Citations.GEOTIFF, "CT_LambertConfConic_2SP"),
             new NamedIdentifier(Citations.GEOTIFF, "CT_LambertConfConic"),
@@ -159,7 +178,7 @@ public class LambertConformal2SP extends MapProjection {
             SEMI_MAJOR,          SEMI_MINOR,
             ROLL_LONGITUDE,
             CENTRAL_MERIDIAN,    LATITUDE_OF_ORIGIN,
-            STANDARD_PARALLEL_1, STANDARD_PARALLEL_2,
+            STANDARD_PARALLEL_1, STANDARD_PARALLEL_2, SCALE_FACTOR,
             FALSE_EASTING,       FALSE_NORTHING
         });
 
@@ -222,84 +241,41 @@ public class LambertConformal2SP extends MapProjection {
          * The parameters group.
          */
         @SuppressWarnings("hiding")
-        public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
-            new ReferenceIdentifier[] {
-                /*
-                 * IMPORTANT: Do not put any name that could be confused with the 1SP or
-                 * 2SP cases below, except for the Citations.GEOTOOLKIT authority which is
-                 * ignored. The LambertConformal constructor relies on those names for
-                 * distinguish the kind of projection being created.
-                 */
-                new NamedIdentifier(Citations.OGC,  "Lambert_Conformal_Conic_2SP_Belgium"),
-                new NamedIdentifier(Citations.EPSG, "Lambert Conic Conformal (2SP Belgium)"),
-                new IdentifierCode (Citations.EPSG,  9803),
-                         sameNameAs(Citations.GEOTOOLKIT, LambertConformal2SP.PARAMETERS)
-            }, new ParameterDescriptor<?>[] {
-                SEMI_MAJOR,          SEMI_MINOR,
-                ROLL_LONGITUDE,
-                CENTRAL_MERIDIAN,    LATITUDE_OF_ORIGIN,
-                STANDARD_PARALLEL_1, STANDARD_PARALLEL_2,
-                FALSE_EASTING,       FALSE_NORTHING
-            });
+        public static final ParameterDescriptorGroup PARAMETERS;
+        static {
+            final Citation[] excludes = new Citation[] {
+                Citations.NETCDF, Citations.GEOTIFF, Citations.PROJ4
+            };
+            PARAMETERS = Identifiers.createDescriptorGroup(
+                new ReferenceIdentifier[] {
+                    /*
+                     * IMPORTANT: Do not put any name that could be confused with the 1SP or
+                     * 2SP cases below, except for the Citations.GEOTOOLKIT authority which is
+                     * ignored. The LambertConformal constructor relies on those names for
+                     * distinguish the kind of projection being created.
+                     */
+                    new NamedIdentifier(Citations.OGC,  "Lambert_Conformal_Conic_2SP_Belgium"),
+                    new NamedIdentifier(Citations.ESRI, "Lambert_Conformal_Conic_2SP_Belgium"),
+                    new NamedIdentifier(Citations.EPSG, "Lambert Conic Conformal (2SP Belgium)"),
+                    new IdentifierCode (Citations.EPSG,  9803),
+                            sameNameAs(Citations.GEOTOOLKIT, LambertConformal2SP.PARAMETERS)
+                }, new ParameterDescriptor<?>[] {
+                    exclude(SEMI_MAJOR, excludes),
+                    exclude(SEMI_MINOR, excludes),
+                    ROLL_LONGITUDE,
+                    exclude(CENTRAL_MERIDIAN,    excludes),
+                    exclude(LATITUDE_OF_ORIGIN,  excludes),
+                    exclude(STANDARD_PARALLEL_1, excludes),
+                    exclude(STANDARD_PARALLEL_2, excludes),
+                    exclude(FALSE_EASTING,       excludes),
+                    exclude(FALSE_NORTHING,      excludes)
+                });
+        }
 
         /**
          * Constructs a new provider.
          */
         public Belgium() {
-            super(PARAMETERS);
-        }
-    }
-
-    /**
-     * The provider for "<cite>Lambert Conformal Conic</cite>" projection. This provider
-     * accepts a scale factor in addition of the standard 2SP parameters.
-     *
-     * @author Rueben Schulz (UBC)
-     * @author Martin Desruisseaux (Geomatys)
-     * @version 3.00
-     *
-     * @see LambertConformal
-     *
-     * @since 2.2
-     * @module
-     */
-    @Immutable
-    public static class ESRI extends LambertConformal2SP {
-        /**
-         * For cross-version compatibility.
-         */
-        private static final long serialVersionUID = -560511707695966609L;
-
-        /**
-         * The operation parameter descriptor for the {@linkplain
-         * org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#scaleFactor
-         * scale factor} parameter value.
-         *
-         * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
-         * Valid values range is (0 &hellip; &infin;) and default value is 1.
-         */
-        public static final ParameterDescriptor<Double> SCALE_FACTOR = LambertConformal1SP.SCALE_FACTOR;
-
-        /**
-         * The parameters group.
-         */
-        @SuppressWarnings("hiding")
-        public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
-            new ReferenceIdentifier[] {
-                new NamedIdentifier(Citations.ESRI, "Lambert_Conformal_Conic"),
-                         sameNameAs(Citations.GEOTOOLKIT, LambertConformal2SP.PARAMETERS)
-            }, new ParameterDescriptor<?>[] {
-                SEMI_MAJOR,          SEMI_MINOR,
-                ROLL_LONGITUDE,
-                CENTRAL_MERIDIAN,    LATITUDE_OF_ORIGIN,
-                STANDARD_PARALLEL_1, STANDARD_PARALLEL_2, SCALE_FACTOR,
-                FALSE_EASTING,       FALSE_NORTHING
-            });
-
-        /**
-         * Constructs a new provider.
-         */
-        public ESRI() {
             super(PARAMETERS);
         }
     }

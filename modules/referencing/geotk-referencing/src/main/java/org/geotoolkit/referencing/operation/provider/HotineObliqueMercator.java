@@ -124,7 +124,7 @@ public class HotineObliqueMercator extends ObliqueMercator {
 
 
     /**
-     * The provider for "<cite>Hotine Oblique Mercator</cite>" projection specified with two points
+     * The provider for "<cite>Hotine Oblique Mercator</cite>" projection specified by two points
      * on the central line. This is different than the classical {@linkplain HotineObliqueMercator
      * Hotine Oblique Mercator}, which uses a central point and azimuth.
      *

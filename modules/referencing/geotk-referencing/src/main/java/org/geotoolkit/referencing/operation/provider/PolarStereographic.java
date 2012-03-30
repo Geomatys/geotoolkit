@@ -217,7 +217,7 @@ public class PolarStereographic extends Stereographic {
          * Valid values range is from -90 to 90&deg;. The default value is 90&deg;N.
          */
         public static final ParameterDescriptor<Double> STANDARD_PARALLEL =
-                Identifiers.STANDARD_PARALLEL_1.select(false, 90,
+                Identifiers.STANDARD_PARALLEL_1.select(false, 90, null,
                     "standard_parallel_1",                  // OGC
                     "Standard_Parallel_1",                  // ESRI
                     "Latitude of standard parallel");       // EPSG
@@ -269,7 +269,7 @@ public class PolarStereographic extends Stereographic {
          * Valid values range is from -90 to 90&deg;. The default value is 90&deg;S.
          */
         public static final ParameterDescriptor<Double> STANDARD_PARALLEL =
-                Identifiers.STANDARD_PARALLEL_1.select(false, -90,
+                Identifiers.STANDARD_PARALLEL_1.select(false, -90, null,
                     "standard_parallel_1",                  // OGC
                     "Standard_Parallel_1",                  // ESRI
                     "Latitude of standard parallel");       // EPSG
