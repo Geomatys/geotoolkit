@@ -9,6 +9,3 @@ Tools for Geotk maintenance
   The main tools are:
 
   * {{{./geotk-epsg-pack/index.html}EPSG pack}} to be used when upgrading the EPSG database.
-
-  * {{{./geotk-migrate/index.html}Migrate}} for making migration from GeoTools 2
-    a little bit easier, at least for metadata and referencing works.
