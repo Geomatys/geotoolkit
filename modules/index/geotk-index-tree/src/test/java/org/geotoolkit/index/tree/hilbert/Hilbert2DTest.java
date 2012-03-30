@@ -27,14 +27,14 @@ import static org.junit.Assert.assertTrue;
 public class Hilbert2DTest {
 
     final int dimension = 2;
-    BitSet validPath;
+    boolean[][] validPath;
     public Hilbert2DTest() {
     }
 
     @Test
     public void order1Test(){
         final int[] path = Hilbert.createPath(2, 1);
-        validPath = new BitSet(2<<(dimension*1-1));
+        validPath = new boolean[2][2];
         followPath(path);
         validPath(2);
     }
@@ -42,7 +42,7 @@ public class Hilbert2DTest {
     @Test
     public void order2Test(){
         final int[] path = Hilbert.createPath(2, 2);
-        validPath = new BitSet(2<<(dimension*2-1));
+        validPath = new boolean[4][4];
         followPath(path);
         validPath(4);
     }
@@ -50,7 +50,7 @@ public class Hilbert2DTest {
     @Test
     public void order3Test(){
         final int[] path = Hilbert.createPath(2, 3);
-        validPath = new BitSet(2<<(dimension*3-1));
+        validPath = new boolean[8][8];
         followPath(path);
         validPath(8);
     }
@@ -58,7 +58,7 @@ public class Hilbert2DTest {
     @Test
     public void order4Test(){
         final int[] path = Hilbert.createPath(2, 4);
-        validPath = new BitSet(2<<(dimension*4-1));
+        validPath = new boolean[16][16];
         followPath(path);
         validPath(16);
     }
@@ -66,21 +66,21 @@ public class Hilbert2DTest {
     @Test
     public void order5Test(){
         final int[] path = Hilbert.createPath(2, 5);
-        validPath = new BitSet(2<<(dimension*5-1));
+        validPath = new boolean[32][32];
         followPath(path);
         validPath(32);
     }
 
     private void followPath(int[]path){
         for(int i = 0; i<=path.length-dimension;i+=dimension){
-            validPath.flip(path[i]+path[i+1]);
+            validPath[path[i]][path[i+1]] = true;
         }
     }
 
     private void validPath(int length){
         for(int j = 0;j<length;j++){
             for(int i = 0;i<length;i++){
-                assertTrue(validPath.get(i+j));
+                assertTrue(validPath[i][j]);
             }
         }
     }

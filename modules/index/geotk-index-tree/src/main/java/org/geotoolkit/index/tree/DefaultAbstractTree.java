@@ -17,16 +17,15 @@
  */
 package org.geotoolkit.index.tree;
 
-import org.geotoolkit.index.tree.calculator.Calculator;
-import org.geotoolkit.index.tree.calculator.Calculator2D;
-import org.geotoolkit.index.tree.calculator.Calculator3D;
-import org.geotoolkit.index.tree.calculator.DefaultCalculator;
+import org.geotoolkit.index.tree.calculator.*;
 import org.geotoolkit.index.tree.nodefactory.NodeFactory;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.converter.Classes;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.cs.CartesianCS;
-import org.opengis.referencing.cs.CoordinateSystem;
+import org.opengis.referencing.crs.SingleCRS;
+import org.opengis.referencing.cs.*;
+import org.opengis.referencing.datum.Ellipsoid;
+import org.opengis.referencing.datum.GeodeticDatum;
 
 /**Create a "generic" Tree.
  *
@@ -49,15 +48,42 @@ public abstract class DefaultAbstractTree implements Tree{
         ArgumentChecks.ensureNonNull("Create NodeFactory : nodefactory", nodefactory);
         ArgumentChecks.ensureStrictlyPositive("Create Tree : maxElements", nbMaxElement);
         final CoordinateSystem cs = crs.getCoordinateSystem();
-        if(!(cs instanceof CartesianCS)){
-            throw new IllegalArgumentException("Tree constructor : invalid crs, it isn't Cartesian");
+        if(!(cs instanceof CartesianCS)&&!(cs instanceof SphericalCS)&&!(cs instanceof EllipsoidalCS)){
+            throw new IllegalArgumentException("Tree constructor : invalid crs, it isn't Cartesian, Spherical, or Ellipsoidal "+cs);
         }
-        
+        final boolean isCartesian = (cs instanceof CartesianCS)?true:false;
+        final int dim = cs.getDimension();
+        double radius = 0;
+        if(cs instanceof EllipsoidalCS){
+            final Ellipsoid ell = ((GeodeticDatum)((SingleCRS)cs).getDatum()).getEllipsoid();
+            double semiMinorAxis = ell.getSemiMinorAxis();
+            double semiMajorAxis = ell.getSemiMajorAxis();
+            semiMinorAxis*=semiMinorAxis;
+            semiMajorAxis*=semiMajorAxis;
+            final double e = (semiMajorAxis - semiMinorAxis)/semiMajorAxis;
+            radius = Math.sqrt(semiMajorAxis/2+semiMinorAxis/4*Math.log((1+e)/(1-e))/e);
+        }
+        final int[] dims = new int[dim];
+        AxisDirection ad;
+        for(int i = 0;i<dim;i++){
+            ad = cs.getAxis(i).getDirection();
+            if(ad.compareTo(AxisDirection.EAST) == 0 || ad.compareTo(AxisDirection.WEST) == 0){
+                dims[0] = i;
+            }else if(ad.compareTo(AxisDirection.NORTH) == 0 || ad.compareTo(AxisDirection.SOUTH) == 0){
+                dims[1] = i;
+            }else{
+                dims[2] = i;
+            }
+        }
         if(calculator == null){
-            switch(cs.getDimension()){
-                case 2 : this.calculator = DefaultCalculator.CALCULATOR_2D;break;
-                case 3 : this.calculator = DefaultCalculator.CALCULATOR_3D;break;
-                default : throw new IllegalArgumentException("CoordinateSystem dimension from CRS is not conform");
+            if(isCartesian){
+                switch(dim){
+                    case 2 : this.calculator = DefaultCalculator.CALCULATOR_2D;break;
+                    case 3 : this.calculator = DefaultCalculator.CALCULATOR_3D;break;
+                    default : throw new IllegalArgumentException("CoordinateSystem dimension from CRS is not conform");
+                }
+            }else{
+                this.calculator = new GeoCalculator(radius, dims);
             }
         }else{
             final String strClash = "Clash between CoordinateSystem and calculator. CoordinateSystem : "+cs.getClass().getName()
@@ -79,7 +105,7 @@ public abstract class DefaultAbstractTree implements Tree{
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     @Override
     public int getMaxElements() {
@@ -87,7 +113,7 @@ public abstract class DefaultAbstractTree implements Tree{
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     @Override
     public Node getRoot() {
@@ -95,7 +121,7 @@ public abstract class DefaultAbstractTree implements Tree{
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     @Override
     public void setRoot(Node root) {
@@ -108,25 +134,25 @@ public abstract class DefaultAbstractTree implements Tree{
     public CoordinateReferenceSystem getCrs(){
         return crs;
     }
-    
+
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     @Override
     public Calculator getCalculator() {
         return this.calculator;
     }
-    
+
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     @Override
     public NodeFactory getNodeFactory() {
         return this.nodefactory;
     }
-    
+
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     @Override
     public String toString() {

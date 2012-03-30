@@ -50,7 +50,7 @@ public class Hilbert5DTest {
         followPath(path);
         validPath();
     }
-    
+
     @Test
     public void order3Test(){
         final int[] path = Hilbert.createPath(dimension, 3);
@@ -69,14 +69,14 @@ public class Hilbert5DTest {
         validPath();
     }
 
-    @Test
-    public void order5Test(){
-        final int[] path = Hilbert.createPath(dimension, 5);
-        length = 2<<4;
-        validPath = new boolean[length][length][length][length][length];
-        followPath(path);
-        validPath();
-    }
+//    @Test
+//    public void order5Test(){
+//        final int[] path = Hilbert.createPath(dimension, 5);
+//        length = 2<<4;
+//        validPath = new boolean[length][length][length][length][length];
+//        followPath(path);
+//        validPath();
+//    }
 
     private void followPath(int[]path){
         for(int i = 0; i<=path.length-dimension;i+=dimension){
