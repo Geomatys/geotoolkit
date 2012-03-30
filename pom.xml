@@ -459,6 +459,11 @@
           <artifactId>cobertura-maven-plugin</artifactId>
           <version>2.5.1</version>
         </plugin>
+        <plugin>
+          <groupId>com.agilejava.docbkx</groupId>
+          <artifactId>docbkx-maven-plugin</artifactId>
+          <version>2.0.14</version>
+        </plugin>
       </plugins>
     </pluginManagement>
 
@@ -765,6 +770,44 @@
             </plugin>
           </reportPlugins>
         </configuration>
+      </plugin>
+
+
+
+      <!-- ====================================================
+             Build XHTML pages from the Docbook files.
+             Can also be run from the command line as:
+
+             mvn -N docbkx:generate-xhtml
+           ==================================================== -->
+      <plugin>
+        <groupId>com.agilejava.docbkx</groupId>
+        <artifactId>docbkx-maven-plugin</artifactId>
+        <inherited>false</inherited>
+        <dependencies>
+          <dependency>
+            <groupId>net.sf.docbook</groupId>
+            <artifactId>docbook-xml</artifactId>
+            <version>5.0-all</version>
+            <classifier>resources</classifier>
+            <type>zip</type>
+            <scope>runtime</scope>
+          </dependency>
+        </dependencies>
+        <configuration>
+          <sourceDirectory>${basedir}/src/main/docbook</sourceDirectory>
+          <targetDirectory>${basedir}/target/site/book</targetDirectory>
+          <xincludeSupported>true</xincludeSupported>
+          <htmlStylesheet>book.css</htmlStylesheet>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>generate-xhtml</goal>
+            </goals>
+            <phase>pre-site</phase>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
 

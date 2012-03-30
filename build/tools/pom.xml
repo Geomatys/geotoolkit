@@ -67,7 +67,6 @@
     <module>geotk-test</module>
     <module>geotk-stressor</module>
     <module>geotk-report</module>
-    <module>geotk-migrate</module>
     <module>geotk-epsg-pack</module>
   </modules>
 

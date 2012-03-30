@@ -128,15 +128,3 @@ mvn install
   and with new technical visions of its contributors.
 
   The {{{./project.html}Geotoolkit.org Project}} page provides more information on the Geotk project.
-
-
-~~** History
-
-  Geotk originated from several long term development projects. One original thread was the
-  Seagis project of Martin Desruisseaux and another the GeoTools applet based project of James
-  MacGill at the University of Leeds. Along the way, these two projects decided to fuse to create
-  the GeoTools\ 2 project. Geotk started its independent existence as a fork from this
-  GeoTools\ 2 project with the intent to clean the code base, remove duplicate functionality, reduce
-  dependencies, fully document the javadoc API, and ensure that the code could be built daily.
-
-  The {{{./history.html}Geotoolkit.org History}} page provides a more complete history of the project.
