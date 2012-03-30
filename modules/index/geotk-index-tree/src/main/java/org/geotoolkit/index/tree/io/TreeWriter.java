@@ -37,8 +37,8 @@ import org.opengis.geometry.Envelope;
  * writer.setOutput(output);
  * writer.write(tree);
  * writer.dispose();
- * writer.reset(); 
- * 
+ * writer.reset();
+ *
  * writer.setOutput(input2);...//for another output
  * }
  * </pre>
@@ -48,7 +48,7 @@ import org.opengis.geometry.Envelope;
  * TreeWriter.write(arbre, fil);
  * }
  * </pre>
- * 
+ *
  * @author Rémi Marechal (Geomatys)
  * @author Johann Sorel (Geomatys)
  */
@@ -67,7 +67,7 @@ public class TreeWriter {
      * Handle types are :<br/>
      * - java.io.File<br/>
      * - java.io.OutputStream<br/>
-     * 
+     *
      * @param output
      * @throws IOException
      */
@@ -91,9 +91,9 @@ public class TreeWriter {
     }
 
     /**Write tree in binary.
-     * 
+     *
      * @param tree
-     * @throws IOException 
+     * @throws IOException
      */
     public void write(final Tree tree) throws IOException {
         final Node root = (Node)tree.getRoot();
@@ -102,10 +102,10 @@ public class TreeWriter {
     }
 
     /**Write all node to binary.
-     * 
+     *
      * @param root
      * @param dops
-     * @throws IOException 
+     * @throws IOException
      */
     private void serializeNode(final Node root, final DataOutputStream dops) throws IOException {
         nodeToBinary(root, dops);
@@ -115,10 +115,10 @@ public class TreeWriter {
     }
 
     /**Write node in binary.
-     * 
+     *
      * @param node
      * @param dops
-     * @throws IOException 
+     * @throws IOException
      */
     private void nodeToBinary(final Node node, final DataOutputStream dops) throws IOException {
         final List<Node> listChild = node.getChildren();
@@ -128,7 +128,7 @@ public class TreeWriter {
         final Envelope bound = node.getBoundary();
         final int dim = bound.getDimension();
         dops.writeInt(dim);
-        
+
         for(int i = 0; i<dim; i++){
             dops.writeDouble(bound.getLowerCorner().getOrdinate(i));
         }
@@ -157,14 +157,10 @@ public class TreeWriter {
             }
             dops.writeInt(0);
         }
-        
-
-            
-            
     }
 
     /**Find all tree node and affect an id for each them.
-     * 
+     *
      * @param node tree root node.
      */
     private void createIndex(final Node node) {
@@ -200,11 +196,11 @@ public class TreeWriter {
     }
 
     /**To write one time without TreeWriter re-utilization.
-     * 
+     *
      * @param tree
      * @param output
      * @throws IOException
-     * @throws ClassNotFoundException 
+     * @throws ClassNotFoundException
      */
     public static void write(final Tree tree, final Object output) throws IOException {
         ArgumentChecks.ensureNonNull("static write : tree", tree);
