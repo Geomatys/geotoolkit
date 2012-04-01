@@ -46,6 +46,7 @@ import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.parameter.InvalidParameterValueException;
 
+import org.geotoolkit.util.Deprecable;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.LenientComparable;
 import org.geotoolkit.util.DefaultInternationalString;
@@ -83,7 +84,7 @@ import static org.geotoolkit.internal.InternalUtilities.nonEmptySet;
  * situation, a plain {@link org.geotoolkit.referencing.cs.AbstractCS} object may be instantiated.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.18
+ * @version 3.20
  *
  * @since 1.2
  * @module
@@ -94,7 +95,9 @@ import static org.geotoolkit.internal.InternalUtilities.nonEmptySet;
     "identifier",
     "name"
 })
-public class AbstractIdentifiedObject extends FormattableObject implements IdentifiedObject, LenientComparable, Serializable {
+public class AbstractIdentifiedObject extends FormattableObject implements IdentifiedObject,
+        LenientComparable, Deprecable, Serializable
+{
     /**
      * Serial number for inter-operability with different versions.
      */
@@ -647,6 +650,7 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
      *
      * @since 3.20
      */
+    @Override
     public boolean isDeprecated() {
         if (name instanceof DefaultReferenceIdentifier) {
             if (((DefaultReferenceIdentifier) name).isDeprecated()) {

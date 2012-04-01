@@ -29,10 +29,10 @@ import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.CoordinateOperationAuthorityFactory;
 
 import org.geotoolkit.util.XArrays;
+import org.geotoolkit.util.Deprecable;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.referencing.DefaultReferenceIdentifier;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
 
 import org.junit.*;
@@ -55,7 +55,7 @@ public final strictfp class ConformanceTest extends ReferencingTestBase {
     /**
      * Deprecated method names to ignore.
      */
-    private static final String[] ignore = {
+    private static final String[] IGNORE = {
         "Krovak Oblique Conic Conformal"  // Since EPSG 7.6, the name is only "Krovak".
     };
 
@@ -125,8 +125,8 @@ skip:   for (final OperationMethod method : mtFactory.getAvailableMethods(Single
             for (final GenericName alias : aliases) {
                 if (Citations.identifierMatches(authority, alias.head().toString())) {
                     final String name = alias.tip().toString().trim();
-                    if (XArrays.contains(ignore, name)) {
-                        assertTrue(name, ((DefaultReferenceIdentifier) alias).isDeprecated());
+                    if (XArrays.contains(IGNORE, name)) {
+                        assertTrue(name, ((Deprecable) alias).isDeprecated());
                         continue;
                     }
                     assertFalse("Not a name: " + name, isNumber(name));
