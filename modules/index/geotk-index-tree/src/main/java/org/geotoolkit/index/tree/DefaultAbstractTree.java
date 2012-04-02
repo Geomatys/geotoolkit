@@ -43,7 +43,7 @@ public abstract class DefaultAbstractTree implements Tree{
     /**
      * To create an R-Tree use {@linkplain TreeFactory}.
      */
-    protected DefaultAbstractTree(int nbMaxElement, CoordinateReferenceSystem crs, Calculator calculator, NodeFactory nodefactory) {
+    protected DefaultAbstractTree(int nbMaxElement, CoordinateReferenceSystem crs, NodeFactory nodefactory) {
         ArgumentChecks.ensureNonNull("Create Tree : CRS", crs);
         ArgumentChecks.ensureNonNull("Create NodeFactory : nodefactory", nodefactory);
         ArgumentChecks.ensureStrictlyPositive("Create Tree : maxElements", nbMaxElement);
@@ -54,51 +54,42 @@ public abstract class DefaultAbstractTree implements Tree{
         final boolean isCartesian = (cs instanceof CartesianCS)?true:false;
         final int dim = cs.getDimension();
         double radius = 0;
-        if(cs instanceof EllipsoidalCS){
-            final Ellipsoid ell = ((GeodeticDatum)((SingleCRS)cs).getDatum()).getEllipsoid();
-            double semiMinorAxis = ell.getSemiMinorAxis();
-            double semiMajorAxis = ell.getSemiMajorAxis();
-            semiMinorAxis*=semiMinorAxis;
-            semiMajorAxis*=semiMajorAxis;
-            final double e = (semiMajorAxis - semiMinorAxis)/semiMajorAxis;
-            radius = Math.sqrt(semiMajorAxis/2+semiMinorAxis/4*Math.log((1+e)/(1-e))/e);
-        }
-        final int[] dims = new int[dim];
-        AxisDirection ad;
-        for(int i = 0;i<dim;i++){
-            ad = cs.getAxis(i).getDirection();
-            if(ad.compareTo(AxisDirection.EAST) == 0 || ad.compareTo(AxisDirection.WEST) == 0){
-                dims[0] = i;
-            }else if(ad.compareTo(AxisDirection.NORTH) == 0 || ad.compareTo(AxisDirection.SOUTH) == 0){
-                dims[1] = i;
-            }else{
-                dims[2] = i;
-            }
-        }
-        if(calculator == null){
+
             if(isCartesian){
                 switch(dim){
-                    case 2 : this.calculator = DefaultCalculator.CALCULATOR_2D;break;
-                    case 3 : this.calculator = DefaultCalculator.CALCULATOR_3D;break;
+                    case 2 : this.calculator = new Calculator2D();break;
+                    case 3 : this.calculator = new Calculator3D();break;
                     default : throw new IllegalArgumentException("CoordinateSystem dimension from CRS is not conform");
                 }
             }else{
-                this.calculator = new GeoCalculator(radius, dims);
-            }
-        }else{
-            final String strClash = "Clash between CoordinateSystem and calculator. CoordinateSystem : "+cs.getClass().getName()
-                                    +" Calculator : "+calculator.getClass().getName();
-            if(calculator instanceof Calculator2D){
-                if(cs.getDimension() !=2){
-                    throw new IllegalArgumentException(strClash);
+
+                if(cs instanceof EllipsoidalCS){
+                    final Ellipsoid ell = ((GeodeticDatum)((SingleCRS)crs).getDatum()).getEllipsoid();
+                    double semiMinorAxis = ell.getSemiMinorAxis();
+                    double semiMajorAxis = ell.getSemiMajorAxis();
+                    semiMinorAxis*=semiMinorAxis;
+                    semiMajorAxis*=semiMajorAxis;
+                    final double e = (semiMajorAxis - semiMinorAxis)/semiMajorAxis;
+                    radius = Math.sqrt(semiMajorAxis/2+semiMinorAxis/4*Math.log((1+e)/(1-e))/e);
                 }
-            }else if(calculator instanceof Calculator3D){
-                if(cs.getDimension() !=3){
-                    throw new IllegalArgumentException(strClash);
+                final int[] dims = new int[dim];
+                AxisDirection ad;
+                for(int i = 0;i<dim;i++){
+                    ad = cs.getAxis(i).getDirection();
+                    if(ad.compareTo(AxisDirection.EAST) == 0 || ad.compareTo(AxisDirection.WEST) == 0){
+                        dims[0] = i;
+                    }else if(ad.compareTo(AxisDirection.NORTH) == 0 || ad.compareTo(AxisDirection.SOUTH) == 0){
+                        dims[1] = i;
+                    }else{
+                        dims[2] = i;
+                    }
+                }
+                switch(dim){
+                    case 2 : this.calculator = new GeoCalculator2D(radius, dims);break;
+                    case 3 : this.calculator = new GeoCalculator3D(radius, dims);break;
+                    default : throw new IllegalArgumentException("CoordinateSystem dimension from CRS is not conform");
                 }
             }
-            this.calculator = calculator;
-        }
         this.nodefactory = nodefactory;
         this.nbMaxElement = nbMaxElement;
         this.crs = crs;

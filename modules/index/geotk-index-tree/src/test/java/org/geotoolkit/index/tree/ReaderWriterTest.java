@@ -24,7 +24,8 @@ import java.util.Collections;
 import java.util.List;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.index.tree.basic.SplitCase;
-import org.geotoolkit.index.tree.calculator.DefaultCalculator;
+import org.geotoolkit.index.tree.calculator.Calculator;
+import org.geotoolkit.index.tree.calculator.Calculator3D;
 import org.geotoolkit.index.tree.io.TreeReader;
 import org.geotoolkit.index.tree.io.TreeWriter;
 import org.geotoolkit.index.tree.nodefactory.TreeNodeFactory;
@@ -45,6 +46,7 @@ public class ReaderWriterTest {
     private Tree treeRef, treeTest;
     private final File fil = new File("tree.bin");
     private final List<GeneralEnvelope> lData = new ArrayList<GeneralEnvelope>();
+    private final Calculator calculator = new Calculator3D();
 
     public ReaderWriterTest() {
         fil.deleteOnExit();
@@ -142,8 +144,8 @@ public class ReaderWriterTest {
      * Affect (Basic) R-Tree on two tree test.
      */
     private void setBasicRTree() throws TransformException {
-        treeRef  = TreeFactory.createBasicRTree(4, DefaultEngineeringCRS.CARTESIAN_3D, SplitCase.LINEAR, DefaultCalculator.CALCULATOR_3D, TreeNodeFactory.DEFAULT_FACTORY);
-        treeTest = TreeFactory.createBasicRTree(4, DefaultEngineeringCRS.CARTESIAN_3D, SplitCase.LINEAR, DefaultCalculator.CALCULATOR_3D, TreeNodeFactory.DEFAULT_FACTORY);
+        treeRef  = TreeFactory.createBasicRTree(4, DefaultEngineeringCRS.CARTESIAN_3D, SplitCase.LINEAR, TreeNodeFactory.DEFAULT_FACTORY);
+        treeTest = TreeFactory.createBasicRTree(4, DefaultEngineeringCRS.CARTESIAN_3D, SplitCase.LINEAR, TreeNodeFactory.DEFAULT_FACTORY);
         insert();
     }
 
@@ -151,8 +153,8 @@ public class ReaderWriterTest {
      * Affect R*Tree on two tree test.
      */
     private void setStarRTree() throws TransformException {
-        treeRef  = TreeFactory.createStarRTree(4, DefaultEngineeringCRS.CARTESIAN_3D, DefaultCalculator.CALCULATOR_3D, TreeNodeFactory.DEFAULT_FACTORY);
-        treeTest = TreeFactory.createStarRTree(4, DefaultEngineeringCRS.CARTESIAN_3D, DefaultCalculator.CALCULATOR_3D, TreeNodeFactory.DEFAULT_FACTORY);
+        treeRef  = TreeFactory.createStarRTree(4, DefaultEngineeringCRS.CARTESIAN_3D, TreeNodeFactory.DEFAULT_FACTORY);
+        treeTest = TreeFactory.createStarRTree(4, DefaultEngineeringCRS.CARTESIAN_3D, TreeNodeFactory.DEFAULT_FACTORY);
         insert();
     }
 
@@ -160,8 +162,8 @@ public class ReaderWriterTest {
      * Affect Hilbert RTree on two tree test.
      */
     private void setHilbertRTree() throws TransformException {
-        treeRef  = TreeFactory.createHilbertRTree(4, 2, DefaultEngineeringCRS.CARTESIAN_2D, DefaultCalculator.CALCULATOR_2D, TreeNodeFactory.DEFAULT_FACTORY);
-        treeTest = TreeFactory.createHilbertRTree(4, 2, DefaultEngineeringCRS.CARTESIAN_2D, DefaultCalculator.CALCULATOR_2D, TreeNodeFactory.DEFAULT_FACTORY);
+        treeRef  = TreeFactory.createHilbertRTree(4, 2, DefaultEngineeringCRS.CARTESIAN_2D, TreeNodeFactory.DEFAULT_FACTORY);
+        treeTest = TreeFactory.createHilbertRTree(4, 2, DefaultEngineeringCRS.CARTESIAN_2D, TreeNodeFactory.DEFAULT_FACTORY);
         lData.clear();
         for (int j = -120; j <= 120; j += 4) {
             for (int i = -200; i <= 200; i += 4) {
@@ -373,7 +375,7 @@ public class ReaderWriterTest {
         boolean shapequals = false;
         for (Envelope eshs : listA) {
             final GeneralEnvelope shs = new GeneralEnvelope(eshs);
-            
+
             for (Envelope shr : listB) {
                 if (shs.equals(shr, 1E-9, false)) {
                     shapequals = true;

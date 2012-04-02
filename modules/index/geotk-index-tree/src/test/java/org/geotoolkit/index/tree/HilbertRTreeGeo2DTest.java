@@ -21,25 +21,23 @@ import java.util.ArrayList;
 import java.util.List;
 import org.geotoolkit.index.tree.hilbert.HilbertRTree;
 import org.geotoolkit.index.tree.nodefactory.TreeNodeFactory;
-import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.junit.Test;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 
-/**
- * Create Hilbert R-Tree test suite in 2D Cartesian space.
+/**Create Hilbert R-Tree test suite in 2D Geographical space.
  *
  * @author Rémi Marechal (Geomatys).
  */
-public class HilbertRTree2DTest extends TreeTest {
+public class HilbertRTreeGeo2DTest extends TreeTest{
 
-    public HilbertRTree2DTest() throws IllegalArgumentException, TransformException {
-        super(new HilbertRTree(4, 2, DefaultEngineeringCRS.CARTESIAN_2D, /*DefaultCalculator.CALCULATOR_2D,*/ TreeNodeFactory.DEFAULT_FACTORY)/*,
-                                     DefaultEngineeringCRS.CARTESIAN_2D*/);
+    public HilbertRTreeGeo2DTest() throws TransformException {
+        super(new HilbertRTree(4,3, DefaultGeographicCRS.WGS84, TreeNodeFactory.DEFAULT_FACTORY));
     }
 
     /**
-     * Some elements inserted in Hilbert R-Tree.
+     * Some elements inserted Tree.
      *
      * @throws TransformException if entry can't be transform into tree crs.
      */
@@ -49,7 +47,7 @@ public class HilbertRTree2DTest extends TreeTest {
     }
 
     /**
-     * Verify all node boundary from its subnode boundary.
+     * Verify all boundary Node from its "children" Node.
      *
      * @throws TransformException if entry can't be transform into tree crs.
      */

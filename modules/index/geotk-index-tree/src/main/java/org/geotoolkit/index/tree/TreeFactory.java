@@ -35,32 +35,31 @@ public final class TreeFactory {
     }
 
     /**Create a Basic R-Tree ({@linkplain BasicRTree).
-     * 
+     *
      * @param maxElements_per_leaf : max elements number within each tree Node.
      * @param crs                   : associate coordinate system.
      * @param splitMade             : made to split.
      * @param calculator            : calculator associate to define internal computing.
      *                                If calculator is null an appropriate calculator is define.
-     * @param nodefactory           : made to create tree {@code Node}. 
+     * @param nodefactory           : made to create tree {@code Node}.
      * @return Basic RTree.
      */
-    public static Tree createBasicRTree(final int maxElements_per_leaf, final CoordinateReferenceSystem crs, 
-                        final SplitCase splitMade, final Calculator calculator, final NodeFactory nodefactory) {
-        return new BasicRTree(maxElements_per_leaf, crs, splitMade, calculator, nodefactory);
+    public static Tree createBasicRTree(final int maxElements_per_leaf, final CoordinateReferenceSystem crs,
+                        final SplitCase splitMade, final NodeFactory nodefactory) {
+        return new BasicRTree(maxElements_per_leaf, crs, splitMade, nodefactory);
     }
 
     /**Create a R*Tree ({@linkplain StarRTree).
-     * 
+     *
      * @param maxElements_per_leaf : max elements number within each tree Node.
      * @param crs                   : associate coordinate system.
      * @param calculator            : calculator associate to define internal computing.
      *                                If calculator is null an appropriate calculator is define.
-     * @param nodefactory           : made to create tree {@code Node}. 
+     * @param nodefactory           : made to create tree {@code Node}.
      * @return R*Tree.
      */
-    public static Tree createStarRTree(final int maxElements_per_leaf, final CoordinateReferenceSystem crs,
-                                                final Calculator calculator, final NodeFactory nodefactory) {
-        return new StarRTree(maxElements_per_leaf, crs, calculator, nodefactory);
+    public static Tree createStarRTree(final int maxElements_per_leaf, final CoordinateReferenceSystem crs, final NodeFactory nodefactory) {
+        return new StarRTree(maxElements_per_leaf, crs, nodefactory);
     }
 
     /**Create Hilbert R-Tree.
@@ -68,7 +67,7 @@ public final class TreeFactory {
      * <blockquote><font size=-1> <strong>
      * NOTE: In HilbertRTree each leaf contains some sub-{@code Node} called cells.
      * {@code Envelope} entries are contains in their cells.
-     * Cells number per leaf = 2 ^ (dim*hilbertOrder). 
+     * Cells number per leaf = 2 ^ (dim*hilbertOrder).
      * Moreother there are maxElements_per_cells 2 ^(dim*hilbertOrder) elements per leaf.
      * </strong> </font></blockquote>
      *
@@ -80,7 +79,7 @@ public final class TreeFactory {
      * @return Hilbert R-Tree.
      */
     public static Tree createHilbertRTree(final int maxElements_per_cells, final int hilbertOrder,
-            final CoordinateReferenceSystem crs, final Calculator calculator, final NodeFactory nodefactory) {
-        return new HilbertRTree(maxElements_per_cells, hilbertOrder, crs, calculator, nodefactory);
+            final CoordinateReferenceSystem crs, final NodeFactory nodefactory) {
+        return new HilbertRTree(maxElements_per_cells, hilbertOrder, crs, nodefactory);
     }
 }

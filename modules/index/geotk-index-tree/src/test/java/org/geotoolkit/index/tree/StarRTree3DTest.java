@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.index.tree;
 
-import org.geotoolkit.index.tree.calculator.DefaultCalculator;
 import org.geotoolkit.index.tree.nodefactory.TreeNodeFactory;
 import org.geotoolkit.index.tree.star.StarRTree;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
@@ -32,8 +31,8 @@ import org.opengis.referencing.operation.TransformException;
 public class StarRTree3DTest extends TreeTest {
 
     public StarRTree3DTest() throws TransformException {
-        super(new StarRTree(4, DefaultEngineeringCRS.CARTESIAN_3D, DefaultCalculator.CALCULATOR_3D, TreeNodeFactory.DEFAULT_FACTORY),
-                               DefaultEngineeringCRS.CARTESIAN_3D);
+        super(new StarRTree(4, DefaultEngineeringCRS.CARTESIAN_3D, /*DefaultCalculator.CALCULATOR_3D,*/ TreeNodeFactory.DEFAULT_FACTORY)/*,
+                               DefaultEngineeringCRS.CARTESIAN_3D*/);
     }
 
     /**

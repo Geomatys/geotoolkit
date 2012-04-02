@@ -1,23 +1,37 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ *    Geotoolkit.org - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2008-2012, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009-2012, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
  */
 package org.geotoolkit.index.tree.calculator;
 
-import static java.lang.Math.*;
+import static java.lang.Math.cos;
 import java.util.Comparator;
 import org.geotoolkit.geometry.GeneralEnvelope;
-import static org.geotoolkit.index.tree.DefaultTreeUtils.*;
+import static org.geotoolkit.index.tree.DefaultTreeUtils.getGeneralEnvelopArea;
+import static org.geotoolkit.index.tree.DefaultTreeUtils.getMedian;
 import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.util.ArgumentChecks;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 
-/**
- * TODO : all
- * @author rmarech
+/**Define a Geographic Calculator.
+ *
+ * @author Rémi Maréchal (Geomatys).
  */
-public class GeoCalculator extends Calculator2D{
+public abstract class GeoCalculator extends Calculator{
 
     final double radius;
     final int[]dims;
@@ -58,6 +72,24 @@ public class GeoCalculator extends Calculator2D{
             return y1.compareTo(y2);
         }
     };
+
+    /**
+     * To compare two {@code Node} from them boundary box minimum y axis
+     * coordinate.
+     *
+     * @see StarNode#organizeFrom(int)
+     */
+    private final Comparator<Node> nodeComparatorHLow = new Comparator<Node>() {
+
+        @Override
+        public int compare(Node o1, Node o2) {
+            java.lang.Double y1 = new java.lang.Double(o1.getBoundary().getLowerCorner().getOrdinate(dims[2]));
+            java.lang.Double y2 = new java.lang.Double(o2.getBoundary().getLowerCorner().getOrdinate(dims[2]));
+            return y1.compareTo(y2);
+        }
+    };
+
+
     /**
      * To compare two {@code Envelope} from them boundary box minimum x
      * axis coordinate.
@@ -87,6 +119,21 @@ public class GeoCalculator extends Calculator2D{
         public int compare(Envelope o1, Envelope o2) {
             java.lang.Double y1 = new java.lang.Double(o1.getLowerCorner().getOrdinate(dims[1]));
             java.lang.Double y2 = new java.lang.Double(o2.getLowerCorner().getOrdinate(dims[1]));
+            return y1.compareTo(y2);
+        }
+    };
+    /**
+     * To compare two {@code Envelope} from them boundary box minimum y
+     * axis coordinate.
+     *
+     * @see StarNode#organizeFrom(int)
+     */
+    private final Comparator<Envelope> gEComparatorHLow = new Comparator<Envelope>() {
+
+        @Override
+        public int compare(Envelope o1, Envelope o2) {
+            java.lang.Double y1 = new java.lang.Double(o1.getLowerCorner().getOrdinate(dims[2]));
+            java.lang.Double y2 = new java.lang.Double(o2.getLowerCorner().getOrdinate(dims[2]));
             return y1.compareTo(y2);
         }
     };
@@ -123,6 +170,21 @@ public class GeoCalculator extends Calculator2D{
         }
     };
     /**
+     * To compare two {@code Node} from them boundary box minimum y axis
+     * coordinate.
+     *
+     * @see StarNode#organizeFrom(int)
+     */
+    private final Comparator<Node> nodeComparatorHUpp = new Comparator<Node>() {
+
+        @Override
+        public int compare(Node o1, Node o2) {
+            java.lang.Double y1 = new java.lang.Double(o1.getBoundary().getUpperCorner().getOrdinate(dims[2]));
+            java.lang.Double y2 = new java.lang.Double(o2.getBoundary().getUpperCorner().getOrdinate(dims[2]));
+            return y1.compareTo(y2);
+        }
+    };
+    /**
      * To compare two {@code Envelope} from them boundary box minimum x
      * axis coordinate.
      *
@@ -154,58 +216,88 @@ public class GeoCalculator extends Calculator2D{
             return y1.compareTo(y2);
         }
     };
+    /**
+     * To compare two {@code Envelope} from them boundary box minimum y
+     * axis coordinate.
+     *
+     * @see StarNode#organizeFrom(int)
+     */
+    private final Comparator<Envelope> gEComparatorHUpp = new Comparator<Envelope>() {
+
+        @Override
+        public int compare(Envelope o1, Envelope o2) {
+            java.lang.Double y1 = new java.lang.Double(o1.getUpperCorner().getOrdinate(dims[2]));
+            java.lang.Double y2 = new java.lang.Double(o2.getUpperCorner().getOrdinate(dims[2]));
+            return y1.compareTo(y2);
+        }
+    };
 
     /**
-     * Compute Euclidean 2D area. {@inheritDoc }
+     * Compute Geographic bulk. {@inheritDoc }
      */
     @Override
     public double getSpace(final Envelope envelop) {
-
-
-
-        return getGeneralEnvelopArea(envelop);
+        final DirectPosition dpL = envelop.getLowerCorner();
+        final DirectPosition dpU = envelop.getUpperCorner();
+        double dλ = Math.abs(dpU.getOrdinate(dims[0]) - dpL.getOrdinate(dims[0]));
+        dλ*=cos((dpL.getOrdinate(dims[1]) + dpU.getOrdinate(dims[1]))/2);
+        dλ = Math.abs(dλ);
+        double dφ = Math.abs(dpU.getOrdinate(dims[1]) - dpL.getOrdinate(dims[1]));
+        double ray = (dims.length>2)?Math.min(dpL.getOrdinate(dims[2]),dpU.getOrdinate(dims[2]))+radius:radius;
+        dλ*=ray;dφ*=ray;
+        assert dλ >=0:"dλ<0"+dλ;
+        assert dφ >=0:"dφ<0"+dφ;
+        assert ray >=0:"ray<0"+ray;
+        return (dims.length>2)?dλ*dφ*Math.abs(dpU.getOrdinate(dims[2]) - dpL.getOrdinate(dims[2])):dλ*dφ;
     }
 
     /**
-     * Compute Euclidean 2D perimeter. {@inheritDoc }
+     * Compute Geographic area Envelop. {@inheritDoc }
      */
     @Override
     public double getEdge(final Envelope envelop) {
-        return getGeneralEnvelopPerimeter(envelop);
+        final DirectPosition dpL = envelop.getLowerCorner();
+        final DirectPosition dpU = envelop.getUpperCorner();
+        double dλ = Math.abs(dpU.getOrdinate(dims[0]) - dpL.getOrdinate(dims[0]));
+        dλ*=cos((dpL.getOrdinate(dims[1]) + dpU.getOrdinate(dims[1]))/2.0f);
+        dλ = Math.abs(dλ);
+        double dφ = Math.abs(dpU.getOrdinate(dims[1]) - dpL.getOrdinate(dims[1]));
+        final double ray = (dims.length>2)?Math.min(dpL.getOrdinate(dims[2]),dpU.getOrdinate(dims[2]))+radius:radius;
+        dλ*=ray;dφ*=ray;
+        assert dλ >=0:"dλ<0"+dλ;
+        assert dφ >=0:"dφ<0"+dφ;
+        assert ray >=0:"ray<0"+ray;
+        if(dims.length>2){
+            double dR = Math.abs(dpL.getOrdinate(dims[2]) - dpU.getOrdinate(dims[2]));
+            return 2*(dλ*dφ+dλ*dR+dφ*dR);
+        }
+        return 2*(dλ+dφ);
     }
 
     /**
-     * Compute Euclidean 2D distance. {@inheritDoc }
+     * Compute Geographic distance. {@inheritDoc }
      */
     @Override
     public double getDistance(final Envelope envelopA, final Envelope envelopB) {
-        final DirectPosition dpA = getMedian(envelopA);
-        final DirectPosition dpB = getMedian(envelopB);
-        double dλ = dpB.getOrdinate(dims[0]) - dpA.getOrdinate(dims[0]);
-        dλ*=cos(dpA.getOrdinate(dims[1])+dpB.getOrdinate(dims[1])/2);
-        double dφ = dpA.getOrdinate(dims[1])-dpB.getOrdinate(dims[1]);
-        double dR = (dims.length>2)?Math.abs(dpA.getOrdinate(dims[2])-dpB.getOrdinate(dims[2])):0;
-        double ray = (dims.length>2)?Math.min(dpA.getOrdinate(dims[2]),dpB.getOrdinate(dims[2])):radius;
-        dλ*=dλ;ray*=ray;dR*=dR;dφ*=dφ;
-        return Math.sqrt(dλ*ray+dφ*ray+dR);
+        return getDistance(getMedian(envelopA), getMedian(envelopB));
     }
 
     /**
-     * Compute Euclidean 2D distance. {@inheritDoc }
+     * Compute Geographic distance. {@inheritDoc }
      */
     @Override
     public double getDistance(final DirectPosition positionA, final DirectPosition positionB) {
-        double dλ = positionB.getOrdinate(dims[0]) - positionA.getOrdinate(dims[0]);
-        dλ*=cos(positionA.getOrdinate(dims[1])+positionB.getOrdinate(dims[1])/2);
+        double dλ = Math.abs(positionB.getOrdinate(dims[0]) - positionA.getOrdinate(dims[0]));
+        dλ*=cos((positionA.getOrdinate(dims[1])+positionB.getOrdinate(dims[1]))/2);
         double dφ = positionA.getOrdinate(dims[1])-positionB.getOrdinate(dims[1]);
         double dR = (dims.length>2)?Math.abs(positionA.getOrdinate(dims[2])-positionB.getOrdinate(dims[2])):0;
-        double ray = (dims.length>2)?Math.min(positionA.getOrdinate(dims[2]),positionB.getOrdinate(dims[2])):radius;
+        double ray = (dims.length>2)?Math.min(positionA.getOrdinate(dims[2]),positionB.getOrdinate(dims[2]))+radius:radius;
         dλ*=dλ;ray*=ray;dR*=dR;dφ*=dφ;
         return Math.sqrt(dλ*ray+dφ*ray+dR);
     }
 
     /**
-     * Compute Euclidean 2D distance. {@inheritDoc }
+     * Compute Geographic distance. {@inheritDoc }
      */
     @Override
     public double getDistance(final Node nodeA, final Node nodeB) {
@@ -213,7 +305,7 @@ public class GeoCalculator extends Calculator2D{
     }
 
     /**
-     * Compute Euclidean overlaps 2D area. {@inheritDoc }
+     * Compute Euclidean overlaps Geographic area. {@inheritDoc }
      */
     @Override
     public double getOverlaps(final Envelope envelopA, final Envelope envelopB) {
@@ -223,7 +315,7 @@ public class GeoCalculator extends Calculator2D{
     }
 
     /**
-     * Compute Euclidean enlargement 2D area. {@inheritDoc }
+     * Compute Euclidean enlargement Geographic area. {@inheritDoc }
      */
     @Override
     public double getEnlargement(final Envelope envMin, final Envelope envMax) {
@@ -231,49 +323,41 @@ public class GeoCalculator extends Calculator2D{
     }
 
     /**
-     * Comparator for 2D space axis. {@inheritDoc }
+     * Comparator for Geographic space axis. {@inheritDoc }
      */
     @Override
     public Comparator sortFrom(final int index, final boolean lowerOrUpper, final boolean nodeOrGE) {
-        ArgumentChecks.ensureBetween("sortFrom : index ", 0, 1, index);
+        ArgumentChecks.ensureBetween("sortFrom : index ", 0, 2, index);
         if (lowerOrUpper) {
             if (nodeOrGE) {
                 switch (index) {
-                    case 0:
-                        return nodeComparatorλLow;
-                    case 1:
-                        return nodeComparatorφLow;
-                    default:
-                        throw new IllegalStateException("no comparator finded");
+                    case 0 : return nodeComparatorλLow;
+                    case 1 : return nodeComparatorφLow;
+                    case 2 : return nodeComparatorHLow;
+                    default:throw new IllegalStateException("no comparator finded");
                 }
             } else {
                 switch (index) {
-                    case 0:
-                        return gEComparatorλLow;
-                    case 1:
-                        return gEComparatorφLow;
-                    default:
-                        throw new IllegalStateException("no comparator finded");
+                    case 0 : return gEComparatorλLow;
+                    case 1 : return gEComparatorφLow;
+                    case 2 : return gEComparatorHLow;
+                    default: throw new IllegalStateException("no comparator finded");
                 }
             }
         } else {
             if (nodeOrGE) {
                 switch (index) {
-                    case 0:
-                        return nodeComparatorλUpp;
-                    case 1:
-                        return nodeComparatorφUpp;
-                    default:
-                        throw new IllegalStateException("no comparator finded");
+                    case 0 : return nodeComparatorλUpp;
+                    case 1 : return nodeComparatorφUpp;
+                    case 2 : return nodeComparatorHUpp;
+                    default: throw new IllegalStateException("no comparator finded");
                 }
             } else {
                 switch (index) {
-                    case 0:
-                        return gEComparatorλUpp;
-                    case 1:
-                        return gEComparatorφUpp;
-                    default:
-                        throw new IllegalStateException("no comparator finded");
+                    case 0 : return gEComparatorλUpp;
+                    case 1 : return gEComparatorφUpp;
+                    case 2 : return gEComparatorHUpp;
+                    default: throw new IllegalStateException("no comparator finded");
                 }
             }
         }

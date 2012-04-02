@@ -41,7 +41,7 @@ public class TreeDemo {
         final CoordinateReferenceSystem crs = DefaultEngineeringCRS.CARTESIAN_2D;
 
         //Create Calculator. Be careful to choice calculator adapted from crs---
-        final Calculator calculator = DefaultCalculator.CALCULATOR_2D;
+        final Calculator calculator = DefaultCalculator.CARTESIAN_2D;
 
         //In this demo basic r-tree requires split case. "LINEAR" or "QUADRATIC"
         final SplitCase splitcase = SplitCase.QUADRATIC;
@@ -72,11 +72,11 @@ public class TreeDemo {
 
         //Delete an entry in tree-----------------------------------------------
         tree.delete(entry);
-        
+
         // re-insert
         tree.insert(entry);
-        
-        
+
+
                                 /*-------------------
                                   -------------------*/
 
@@ -85,7 +85,7 @@ public class TreeDemo {
          */
 
         final CoordinateReferenceSystem anotherCrs = DefaultEngineeringCRS.CARTESIAN_3D;
-        final Calculator anotherCalculator = DefaultCalculator.CALCULATOR_3D;
+        final Calculator anotherCalculator = DefaultCalculator.CARTESIAN_3D;
 
         //NOTE : no Splitcase required because split made is single in this tree case and contained in Tree body.
         final Tree anotherTree = TreeFactory.createStarRTree(3, anotherCrs, anotherCalculator, nodefactory);
@@ -93,14 +93,14 @@ public class TreeDemo {
         //Same methods ---------------------------------------------------------
         final GeneralEnvelope anotherEntry = new GeneralEnvelope(anotherCrs);
         anotherEntry.setEnvelope(10, 20, 50, 150, 41, 78);
-        
+
         final GeneralEnvelope anotherAreaSearch = new GeneralEnvelope(anotherCrs);
         anotherAreaSearch.setEnvelope(-10, -20, 100, 200, 100, 200);
-        
+
         anotherTree.insert(anotherEntry);
         anotherTree.search(anotherAreaSearch, resultList);
         anotherTree.delete(anotherEntry);
-        
+
                                 /*-------------------
                                   -------------------*/
 

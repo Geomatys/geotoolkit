@@ -54,8 +54,8 @@ public class HilbertRTree extends DefaultAbstractTree {
      * @throws IllegalArgumentException if maxElements <= 0.
      * @throws IllegalArgumentException if hilbertOrder <= 0.
      */
-    public HilbertRTree(int nbMaxElement, int hilbertOrder, CoordinateReferenceSystem crs, Calculator calculator, NodeFactory nodefactory) {
-        super(nbMaxElement, crs, calculator, nodefactory);
+    public HilbertRTree(int nbMaxElement, int hilbertOrder, CoordinateReferenceSystem crs, NodeFactory nodefactory) {
+        super(nbMaxElement, crs, nodefactory);
         ArgumentChecks.ensureStrictlyPositive("impossible to create Hilbert Rtree with order <= 0", hilbertOrder);
         this.hilbertOrder = hilbertOrder;
         setRoot(null);

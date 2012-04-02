@@ -48,18 +48,18 @@ public class BasicRTree extends DefaultAbstractTree {
     private SplitCase choice;
 
     /**Create R-Tree.
-     * 
+     *
      * @param maxElements max value of elements per tree cell.
      * @param choice Split made "linear" or "quadratic".
      */
-    public BasicRTree(final int maxElements, CoordinateReferenceSystem crs, final SplitCase choice, Calculator calculator, NodeFactory nodefactory) {
-        super(maxElements, crs, calculator, nodefactory);
+    public BasicRTree(final int maxElements, CoordinateReferenceSystem crs, final SplitCase choice, /*Calculator calculator,*/ NodeFactory nodefactory) {
+        super(maxElements, crs, /*calculator,*/ nodefactory);
         this.choice = choice;
         setRoot(null);
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     @Override
     public void search(final Envelope regionSearch, final List<Envelope> result) throws IllegalArgumentException{
@@ -75,7 +75,7 @@ public class BasicRTree extends DefaultAbstractTree {
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     @Override
     public void insert(final Envelope entry) throws IllegalArgumentException, TransformException {
@@ -83,7 +83,7 @@ public class BasicRTree extends DefaultAbstractTree {
         if(!CRS.equalsIgnoreMetadata(crs, entry.getCoordinateReferenceSystem())){
             throw new MismatchedReferenceSystemException();
         }
-        
+
         final Node root = getRoot();
         final int dim = entry.getDimension();
         final double[] coords = new double[2 * dim];
@@ -97,7 +97,7 @@ public class BasicRTree extends DefaultAbstractTree {
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     @Override
     public void delete(final Envelope entry) throws IllegalArgumentException, TransformException {
@@ -112,14 +112,14 @@ public class BasicRTree extends DefaultAbstractTree {
     }
 
     /**
-     * @return split case chosen to split. 
+     * @return split case chosen to split.
      */
     public SplitCase getSplitCase() {
         return this.choice;
     }
 
-    /**Find all {@code Envelope} entries which intersect regionSearch parameter in {@code Tree}. 
-     * 
+    /**Find all {@code Envelope} entries which intersect regionSearch parameter in {@code Tree}.
+     *
      * @param regionSearch area of search.
      * @param result {@code List} where is add search resulting.
      */
@@ -154,13 +154,13 @@ public class BasicRTree extends DefaultAbstractTree {
             }
         }
     }
-    
+
     /**Insert new {@code Envelope} in branch and re-organize {@code Node} if it's necessary.
-     * 
+     *
      * <blockquote><font size=-1>
-     * <strong>NOTE: insertion is in accordance with R*Tree properties.</strong> 
+     * <strong>NOTE: insertion is in accordance with R*Tree properties.</strong>
      * </font></blockquote>
-     * 
+     *
      * @param candidate where to insert entry.
      * @param entry to add.
      * @throws IllegalArgumentException if {@code Node} candidate is null.
@@ -172,7 +172,7 @@ public class BasicRTree extends DefaultAbstractTree {
         }else{
             nodeInsert(chooseSubtree(candidate, entry), entry);
         }
-        
+
         if(!candidate.isLeaf()){
             final List<Node> children = candidate.getChildren();
             int size = children.size();
@@ -181,13 +181,15 @@ public class BasicRTree extends DefaultAbstractTree {
                     for(int j = i+1; j<size; j++){
                         final Node nodeA = children.get(i);
                         final Node nodeB = children.get(j);
-                        if(new GeneralEnvelope(nodeA.getBoundary()).intersects(nodeB.getBoundary(), false) && nodeA.isLeaf() && nodeB.isLeaf()){
+                        if(new GeneralEnvelope(nodeA.getBoundary()).intersects(nodeB.getBoundary(), false)
+                                && nodeA.isLeaf() && nodeB.isLeaf()
+                                &&nodeA.getEntries().size()>1 && nodeB.getEntries().size()>1){
                             branchGrafting(nodeA, nodeB);
                         }
                     }
                 }
             }
-            
+
             for(int i =0; i<size; i++){
                 if (DefaultTreeUtils.countElements(children.get(i)) > candidate.getTree().getMaxElements()) {
                     final Node child = children.remove(i);
@@ -200,7 +202,7 @@ public class BasicRTree extends DefaultAbstractTree {
                 }
             }
         }
-        
+
         if (candidate.getParent() == null) {
             if (DefaultTreeUtils.countElements(candidate) > candidate.getTree().getMaxElements()) {
                 List<Node> l = splitNode(candidate);
@@ -218,7 +220,7 @@ public class BasicRTree extends DefaultAbstractTree {
     /**
      * Exchange some entry(ies) between two nodes in aim to find best form with lesser overlaps.
      * Also branchGrafting will be able to avoid splitting node.
-     * 
+     *
      * @param nodeA Node
      * @param nodeB Node
      * @throws IllegalArgumentException if nodeA or nodeB are null.
@@ -251,7 +253,7 @@ public class BasicRTree extends DefaultAbstractTree {
                 indexSplit = i;
             }
         }
-        
+
         final Calculator calc = nodeA.getTree().getCalculator();
         final Comparator comp = calc.sortFrom(indexSplit, true, false);
         Collections.sort(listGlobale, comp);
@@ -275,16 +277,16 @@ public class BasicRTree extends DefaultAbstractTree {
             }
         }
         for(int i = 0; i<index;i++){
-            nodeInsert(nodeA, listGlobale.get(i));
+            nodeA.getEntries().add(listGlobale.get(i));
         }
         for(int i = index; i<size;i++){
-            nodeInsert(nodeB, listGlobale.get(i));
+            nodeB.getEntries().add(listGlobale.get(i));
         }
     }
-    
+
     /**
      * Split a overflow {@code Node} in accordance with R-Tree properties.
-     * 
+     *
      * @param candidate {@code Node} to Split.
      * @throws IllegalArgumentException if candidate is null.
      * @throws IllegalArgumentException if candidate elements number is lesser 2.
@@ -295,7 +297,7 @@ public class BasicRTree extends DefaultAbstractTree {
         if (DefaultTreeUtils.countElements(candidate) < 2) {
             throw new IllegalArgumentException("not enought elements within " + candidate + " to split.");
         }
-        
+
         final int dim = candidate.getBoundary().getDimension();
         final Tree tree = candidate.getTree();
         final Calculator calc = tree.getCalculator();
@@ -368,7 +370,7 @@ public class BasicRTree extends DefaultAbstractTree {
         Envelope r1Temp, r2Temp;
         Envelope boundS1, boundS2;
         Node result1, result2;
-        
+
         if(leaf){
             boundS1 = ((Envelope)s1);
             boundS2 = ((Envelope)s2);
@@ -386,18 +388,18 @@ public class BasicRTree extends DefaultAbstractTree {
             tabS1[i] = boundS1.getUpperCorner().getOrdinate(i);
             tabS2[i] = boundS2.getUpperCorner().getOrdinate(i);
         }
-        
+
         if(leaf){
-            result1 = tree.createNode(tree, null, null, UnmodifiableArrayList.wrap((Envelope) s1), tabS1); 
+            result1 = tree.createNode(tree, null, null, UnmodifiableArrayList.wrap((Envelope) s1), tabS1);
             result2 = tree.createNode(tree, null, null, UnmodifiableArrayList.wrap((Envelope) s2), tabS2);
         }else{
-            result1 = tree.createNode(tree, null, UnmodifiableArrayList.wrap((Node) s1), null, tabS1); 
+            result1 = tree.createNode(tree, null, UnmodifiableArrayList.wrap((Node) s1), null, tabS1);
             result2 = tree.createNode(tree, null, UnmodifiableArrayList.wrap((Node) s2), null, tabS2);
         }
-        
+
         double demimaxE = maxElmnts / 3;
         demimaxE = Math.max(demimaxE, 1);
-        
+
         for (Object ent : ls) {
             r1Temp = (leaf) ? DefaultTreeUtils.getEnveloppeMin(UnmodifiableArrayList.wrap((Envelope) s1, (Envelope)ent))
                             : DefaultTreeUtils.getEnveloppeMin(UnmodifiableArrayList.wrap(((Node) s1).getBoundary(), ((Node)ent).getBoundary()));
@@ -466,7 +468,7 @@ public class BasicRTree extends DefaultAbstractTree {
                 }
             }
         }
-        
+
         if(!leaf){
             final List<Node> lR1 = result1.getChildren();
             if(lR1.size() == 1){
@@ -490,11 +492,11 @@ public class BasicRTree extends DefaultAbstractTree {
 
     /**
      * Travel {@code Tree}, find {@code Entry} if it exist and delete it.
-     * 
+     *
      * <blockquote><font size=-1>
-     * <strong>NOTE: Moreover {@code Tree} is condensate after a deletion to stay conform about R-Tree properties.</strong> 
+     * <strong>NOTE: Moreover {@code Tree} is condensate after a deletion to stay conform about R-Tree properties.</strong>
      * </font></blockquote>
-     * 
+     *
      * @param candidate {@code Node}  where to delete.
      * @param entry {@code Envelope} to delete.
      * @throws IllegalArgumentException if candidate or entry is null.
@@ -521,11 +523,11 @@ public class BasicRTree extends DefaultAbstractTree {
         }
         return false;
     }
-    
+
     /**Condense R-Tree.
-     * 
+     *
      * Condense made, travel up from leaf to tree trunk.
-     * 
+     *
      * @param candidate {@code Node} to begin condense.
      * @throws IllegalArgumentException if candidate is null.
      */
@@ -556,13 +558,13 @@ public class BasicRTree extends DefaultAbstractTree {
             tree.insert(ent);
         }
     }
-    
+
     /**
      * Find appropriate {@code Node} to insert {@code Envelope} entry.
-     * To define appropriate Node, criterion are : 
+     * To define appropriate Node, criterion are :
      *      - require minimum area enlargement to cover shape.
      *      - or put into {@code Node} with lesser elements number in case of area equals.
-     * 
+     *
      * @param children List of {@code Node}.
      * @param entry {@code Envelope} to add.
      * @throws IllegalArgumentException if children or entry are null.
@@ -618,7 +620,7 @@ public class BasicRTree extends DefaultAbstractTree {
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     @Override
     public Node createNode(Tree tree, Node parent, List<Node> listChildren, List<Envelope> listEntries, double... coordinates) {
@@ -634,7 +636,7 @@ public class BasicRTree extends DefaultAbstractTree {
         final double[] dp2Coords = new double[dim];
         System.arraycopy(coordinates, 0, dp1Coords, 0, dim);
         System.arraycopy(coordinates, dim, dp2Coords, 0, dim);
-        
+
         final DirectPosition dp1 = new GeneralDirectPosition(crs);
         final DirectPosition dp2 = new GeneralDirectPosition(crs);
         for(int i =0; i<dim; i++){

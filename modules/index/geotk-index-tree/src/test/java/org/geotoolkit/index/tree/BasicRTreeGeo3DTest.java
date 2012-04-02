@@ -17,29 +17,25 @@
  */
 package org.geotoolkit.index.tree;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.geotoolkit.index.tree.hilbert.HilbertRTree;
+import org.geotoolkit.index.tree.basic.BasicRTree;
+import org.geotoolkit.index.tree.basic.SplitCase;
 import org.geotoolkit.index.tree.nodefactory.TreeNodeFactory;
-import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.junit.Test;
-import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 
-/**
- * Create Hilbert R-Tree test suite in 2D Cartesian space.
+/**Create R-Tree test suite in geographic 3D space.
  *
  * @author Rémi Marechal (Geomatys).
  */
-public class HilbertRTree2DTest extends TreeTest {
+public class BasicRTreeGeo3DTest extends TreeTest{
 
-    public HilbertRTree2DTest() throws IllegalArgumentException, TransformException {
-        super(new HilbertRTree(4, 2, DefaultEngineeringCRS.CARTESIAN_2D, /*DefaultCalculator.CALCULATOR_2D,*/ TreeNodeFactory.DEFAULT_FACTORY)/*,
-                                     DefaultEngineeringCRS.CARTESIAN_2D*/);
+    public BasicRTreeGeo3DTest() throws TransformException {
+        super(new BasicRTree(4, DefaultGeographicCRS.WGS84_3D, SplitCase.QUADRATIC, TreeNodeFactory.DEFAULT_FACTORY));
     }
 
     /**
-     * Some elements inserted in Hilbert R-Tree.
+     * Some elements inserted Tree.
      *
      * @throws TransformException if entry can't be transform into tree crs.
      */
@@ -49,33 +45,13 @@ public class HilbertRTree2DTest extends TreeTest {
     }
 
     /**
-     * Verify all node boundary from its subnode boundary.
+     * Verify all boundary Node from its "children" Node.
      *
      * @throws TransformException if entry can't be transform into tree crs.
      */
     @Test
     public void testCheckBoundary() throws IllegalArgumentException, TransformException {
         super.checkBoundaryTest();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean checkBoundaryNode(final Node node) {
-        final List<Envelope> lS = new ArrayList<Envelope>();
-        if (node.isLeaf()) {
-            for (Node no : node.getChildren()) {
-                if (!no.isEmpty()) {
-                    lS.addAll(no.getEntries());
-                }
-            }
-        } else {
-            for (Node no : node.getChildren()) {
-                lS.add(no.getBoundary());
-            }
-        }
-        return (DefaultTreeUtils.getEnveloppeMin(lS).equals(node.getBoundary()));
     }
 
     /**
@@ -117,4 +93,5 @@ public class HilbertRTree2DTest extends TreeTest {
     public void testInsertDelete() throws IllegalArgumentException, TransformException {
         super.insertDelete();
     }
+
 }
