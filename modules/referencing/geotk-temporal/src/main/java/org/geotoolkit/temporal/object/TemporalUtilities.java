@@ -108,6 +108,7 @@ public final class TemporalUtilities {
             "yyyy-MM-dd");
     static {
         // we don't hour here so we put the timeZone to GMT+0
+        // 02/04/2012  why GMT+0 ? adding additional dateFormat sdf6
         sdf2.setTimeZone(TimeZone.getTimeZone("GMT+0"));
     }
     private static final SimpleDateFormat sdf3 = new java.text.SimpleDateFormat(
@@ -117,6 +118,12 @@ public final class TemporalUtilities {
     private static final SimpleDateFormat sdf5 = new java.text.SimpleDateFormat(
             "yyyy-MM-dd'T'HH:mm:ssZ");
 
+    private static final SimpleDateFormat sdf6 = new java.text.SimpleDateFormat(
+            "yyyy-MM-dd");
+    static {
+        sdf6.setTimeZone(TimeZone.getDefault());
+    }
+    
     private static final Map<String, TimeZone> TIME_ZONES = new UnSynchronizedCache<String, TimeZone>(
             50) {
         @Override
@@ -154,10 +161,26 @@ public final class TemporalUtilities {
      * defined with pattern yyyy-MM-dd'T'HH:mm:ss.SSSZ or yyyy-MM-dd).
      * 
      * @param dateString
+     * 
      * @return Date result of parsing the given string
      * @throws ParseException
      */
-    public static Date getDateFromString(String dateString)
+    public static Date getDateFromString(final String dateString) throws ParseException {
+       return getDateFromString(dateString, false); 
+    }
+            
+    /**
+     * Returns a Date object from an ISO-8601 representation string. (String
+     * defined with pattern yyyy-MM-dd'T'HH:mm:ss.SSSZ or yyyy-MM-dd).
+     * 
+     * @param dateString
+     * @param noGMTO
+     *            : will use date parser with default timezone for input with no time 
+     *            (dd-MM-yyyy) instead of GMT+0.
+     * @return Date result of parsing the given string
+     * @throws ParseException
+     */
+    public static Date getDateFromString(String dateString, final boolean noGMTO)
             throws ParseException {
 
         boolean defaultTimezone = false;
@@ -215,8 +238,14 @@ public final class TemporalUtilities {
 
         } else if (dateString.indexOf('-') > 0) {
             // simple date format is not thread safe
-            synchronized (sdf2) {
-                return sdf2.parse(dateString);
+            if (noGMTO) {
+                synchronized (sdf6) {
+                    return sdf6.parse(dateString);
+                }
+            } else {
+                synchronized (sdf2) {
+                    return sdf2.parse(dateString);
+                }
             }
         }
 
@@ -640,6 +669,26 @@ public final class TemporalUtilities {
      */
     public static Date parseDate(final String date) throws ParseException,
             NullPointerException {
+        return parseDate(date, false);
+        
+    }
+    
+    /**
+     * Try to parse a date from different well knowed writing types.
+     * 
+     * @param date
+     *            String to parse
+     * @param noGMTO
+     *            : will use date parser with default timezone for input with no time 
+     *            (dd-MM-yyyy) instead of GMT+0.
+     * @return resulting parsed Date.
+     * @throws ParseException
+     *             if String is not valid.
+     * @throws NullPointerException
+     *             if String is null.
+     */
+    public static Date parseDate(final String date, final boolean noGMTO) throws ParseException,
+            NullPointerException {
 
         if (date.endsWith("BC")) {
             throw new ParseException(
@@ -726,7 +775,7 @@ public final class TemporalUtilities {
         } else if (dashOccurences.length >= 2) {
             // if date is in format yyyy-mm-ddTHH:mm:ss
             try {
-                final java.util.Date resultDate = getDateFromString(date);
+                final java.util.Date resultDate = getDateFromString(date, noGMTO);
                 if (resultDate != null) {
                     return resultDate;
                 }
@@ -800,9 +849,27 @@ public final class TemporalUtilities {
      *         is false.
      */
     public static Date parseDateSafe(final String date, final boolean neverNull) {
+        return parseDateSafe(date, neverNull, false);
+    }
+    
+    /**
+     * @see TemporalUtilities#parseDate(java.lang.String)
+     * 
+     * @param date
+     *            : string to parse.
+     * @param neverNull
+     *            : will return today's date if parsing fail, otherwise return
+     *            null if parsing fails.
+     * @param noGMTO
+     *            : will use date parser with default timezone for input with no time 
+     *            (dd-MM-yyyy) instead of GMT+0.
+     * @return result of the parsed string or today's date or null if neverNull
+     *         is false.
+     */
+    public static Date parseDateSafe(final String date, final boolean neverNull, final boolean noGMTO) {
         if (date != null) {
             try {
-                return parseDate(date);
+                return parseDate(date, noGMTO);
             } catch (ParseException ex) {
                 // do nothing
             }
