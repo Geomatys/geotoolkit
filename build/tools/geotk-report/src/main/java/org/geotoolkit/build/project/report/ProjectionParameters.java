@@ -19,7 +19,6 @@ package org.geotoolkit.build.project.report;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.io.File;
@@ -193,6 +192,12 @@ public final class ProjectionParameters extends OperationParametersReport {
                     }
                 }
             }
+        }
+        /*
+         * If the parameter is Geotk-specific, hides it for now.
+         */
+        if (row.names.isEmpty()) {
+            return null;
         }
         return new OrderedRow(row, categoryIndex);
     }

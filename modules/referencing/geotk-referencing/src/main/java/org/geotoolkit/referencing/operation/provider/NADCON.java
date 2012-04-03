@@ -56,7 +56,7 @@ import org.geotoolkit.util.logging.Logging;
  *
  * @author Rueben Schulz (UBC)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.20
  *
  * @since 2.1
  * @module
@@ -73,14 +73,14 @@ public class NADCON extends MathTransformProvider {
      * parameter value. The default value is {@code "conus.las"}.
      */
     public static final ParameterDescriptor<String> LAT_DIFF_FILE = new DefaultParameterDescriptor<>(
-            "Latitude difference file", String.class, null, "conus.las");
+            Citations.EPSG, "Latitude difference file", String.class, null, "conus.las", null, null, null, true);
 
     /**
      * The operation parameter descriptor for the <cite>Longitude difference file</cite>
      * parameter value. The default value is {@code "conus.los"}.
      */
     public static final ParameterDescriptor<String> LONG_DIFF_FILE = new DefaultParameterDescriptor<>(
-            "Longitude difference file", String.class, null, "conus.los");
+            Citations.EPSG, "Longitude difference file", String.class, null, "conus.los", null, null, null, true);
 
     /**
      * The parameters group.
@@ -91,7 +91,7 @@ public class NADCON extends MathTransformProvider {
             new IdentifierCode (Citations.EPSG,  9613),
             new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
                                 Vocabulary.Keys.NADCON_TRANSFORM))
-        }, new ParameterDescriptor<?>[] {
+        }, null, new ParameterDescriptor<?>[] {
             LAT_DIFF_FILE,
             LONG_DIFF_FILE
         });

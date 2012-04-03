@@ -44,9 +44,9 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  *   <li>{@link org.geotoolkit.referencing.operation.projection.LambertConformal}</li>
  * </ul>
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Rueben Schulz (UBC)
- * @version 3.00
+ * @version 3.20
  *
  * @since 2.2
  * @module
@@ -127,8 +127,9 @@ public class LambertConformal1SP extends MapProjection {
             new NamedIdentifier(Citations.PROJ4,    "lcc"),
             new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
                                 Vocabulary.Keys.LAMBERT_CONFORMAL_PROJECTION))
-        }, new ParameterDescriptor<?>[] {
-            SEMI_MAJOR,          SEMI_MINOR,
+        }, null, new ParameterDescriptor<?>[] {
+            (ParameterDescriptor<?>) Mercator1SP.PARAMETERS.descriptor("semi_major"),
+            (ParameterDescriptor<?>) Mercator1SP.PARAMETERS.descriptor("semi_minor"),
             ROLL_LONGITUDE,      CENTRAL_MERIDIAN,
             LATITUDE_OF_ORIGIN,  SCALE_FACTOR,
             FALSE_EASTING,       FALSE_NORTHING

@@ -41,8 +41,8 @@ import static org.geotoolkit.internal.referencing.Identifiers.createDescriptorGr
 /**
  * The provider for {@link LogarithmicTransform1D}.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.20
  *
  * @see LogarithmicTransform1D
  *
@@ -76,7 +76,7 @@ public class Logarithmic extends MathTransformProvider {
     public static final ParameterDescriptorGroup PARAMETERS = createDescriptorGroup(
             new NamedIdentifier[] {
                 new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(Vocabulary.Keys.LOGARITHMIC))
-            }, new ParameterDescriptor<?>[] {
+            }, null, new ParameterDescriptor<?>[] {
                 BASE, OFFSET
             });
 

@@ -66,7 +66,7 @@ public class Orthographic extends MapProjection {
      * Valid values range is [-180 &hellip; 180]&deg; and default value is 0&deg;.
      */
     public static final ParameterDescriptor<Double> LONGITUDE_OF_CENTRE =
-            Identifiers.CENTRAL_MERIDIAN.select(
+            Identifiers.CENTRAL_MERIDIAN.select(null,
                 "central_meridian",                 // OGC
                 "Longitude_Of_Center",              // ESRI
                 "Longitude of natural origin",      // EPSG
@@ -82,7 +82,7 @@ public class Orthographic extends MapProjection {
      * Valid values range is [-90 &hellip; 90]&deg; and default value is 0&deg;.
      */
     public static final ParameterDescriptor<Double> LATITUDE_OF_CENTRE =
-            Identifiers.LATITUDE_OF_ORIGIN.select(
+            Identifiers.LATITUDE_OF_ORIGIN.select(null,
                 "latitude_of_origin",            // OGC
                 "Latitude_Of_Center",            // ESRI
                 "Latitude of natural origin",    // EPSG
@@ -98,7 +98,7 @@ public class Orthographic extends MapProjection {
      * &infin;) and default value is 1.
      */
     public static final ParameterDescriptor<Double> SCALE_FACTOR =
-            Identifiers.SCALE_FACTOR.select(false,
+            Identifiers.SCALE_FACTOR.select(false, null, null, null,
                 "Scale factor at natural origin",   // EPSG
                 "ScaleAtNatOrigin");                // GeoTIFF
 
@@ -110,7 +110,7 @@ public class Orthographic extends MapProjection {
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is unrestricted and default value is 0 metre.
      */
-    public static final ParameterDescriptor<Double> FALSE_EASTING = Mercator1SP.FALSE_EASTING;
+    public static final ParameterDescriptor<Double> FALSE_EASTING = Mercator2SP.FALSE_EASTING;
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -120,7 +120,7 @@ public class Orthographic extends MapProjection {
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is unrestricted and default value is 0 metre.
      */
-    public static final ParameterDescriptor<Double> FALSE_NORTHING = Mercator1SP.FALSE_NORTHING;
+    public static final ParameterDescriptor<Double> FALSE_NORTHING = Mercator2SP.FALSE_NORTHING;
 
     /**
      * The parameters group.
@@ -137,7 +137,7 @@ public class Orthographic extends MapProjection {
             new NamedIdentifier(Citations.PROJ4,   "ortho"),
             new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
                                 Vocabulary.Keys.ORTHOGRAPHIC_PROJECTION))
-        }, new ParameterDescriptor<?>[] {
+        }, null, new ParameterDescriptor<?>[] {
             SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
             LONGITUDE_OF_CENTRE, LATITUDE_OF_CENTRE,
             SCALE_FACTOR, FALSE_EASTING, FALSE_NORTHING

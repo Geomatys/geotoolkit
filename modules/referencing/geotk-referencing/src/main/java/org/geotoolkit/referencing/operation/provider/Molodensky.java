@@ -49,7 +49,6 @@ import static org.geotoolkit.parameter.Parameters.doubleValue;
 import static org.geotoolkit.parameter.Parameters.integerValue;
 import static org.geotoolkit.internal.referencing.Identifiers.createDescriptor;
 import static org.geotoolkit.internal.referencing.Identifiers.createDescriptorGroup;
-import static org.geotoolkit.internal.referencing.Identifiers.createOptionalDescriptor;
 
 
 /**
@@ -63,7 +62,7 @@ import static org.geotoolkit.internal.referencing.Identifiers.createOptionalDesc
  *
  * @author Rueben Schulz (UBC)
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @see MolodenskyTransform
  *
@@ -131,7 +130,7 @@ public class Molodensky extends MathTransformProvider {
      */
     public static final ParameterDescriptor<Double> SRC_SEMI_MAJOR = createDescriptor(
             identifiers(PositionVector7Param.SRC_SEMI_MAJOR),
-            Double.NaN, 0.0, Double.POSITIVE_INFINITY, SI.METRE);
+            Double.NaN, 0.0, Double.POSITIVE_INFINITY, SI.METRE, true);
 
     /**
      * The operation parameter descriptor for the {@code "src_semi_minor"} parameter value.
@@ -139,7 +138,7 @@ public class Molodensky extends MathTransformProvider {
      */
     public static final ParameterDescriptor<Double> SRC_SEMI_MINOR = createDescriptor(
             identifiers(PositionVector7Param.SRC_SEMI_MINOR),
-            Double.NaN, 0.0, Double.POSITIVE_INFINITY, SI.METRE);
+            Double.NaN, 0.0, Double.POSITIVE_INFINITY, SI.METRE, true);
 
     /**
      * The operation parameter descriptor for the {@code "tgt_semi_major"} parameter value.
@@ -150,7 +149,7 @@ public class Molodensky extends MathTransformProvider {
      */
     public static final ParameterDescriptor<Double> TGT_SEMI_MAJOR = createDescriptor(
             identifiers(PositionVector7Param.TGT_SEMI_MAJOR),
-            Double.NaN, 0.0, Double.POSITIVE_INFINITY, SI.METRE);
+            Double.NaN, 0.0, Double.POSITIVE_INFINITY, SI.METRE, true);
 
     /**
      * The operation parameter descriptor for the {@code "tgt_semi_minor"} parameter value.
@@ -161,7 +160,7 @@ public class Molodensky extends MathTransformProvider {
      */
     public static final ParameterDescriptor<Double> TGT_SEMI_MINOR = createDescriptor(
             identifiers(PositionVector7Param.TGT_SEMI_MINOR),
-            Double.NaN, 0.0, Double.POSITIVE_INFINITY, SI.METRE);
+            Double.NaN, 0.0, Double.POSITIVE_INFINITY, SI.METRE, true);
 
     /**
      * The operation parameter descriptor for the <cite>Semi-major axis length difference</cite>
@@ -172,11 +171,11 @@ public class Molodensky extends MathTransformProvider {
      *
      * @since 3.19
      */
-     public static final ParameterDescriptor<Double> AXIS_LENGTH_DIFFERENCE = createOptionalDescriptor(
+     public static final ParameterDescriptor<Double> AXIS_LENGTH_DIFFERENCE = createDescriptor(
             new NamedIdentifier[] {
                 new NamedIdentifier(Citations.EPSG, "Semi-major axis length difference"),
             },
-            Double.NaN, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, SI.METRE);
+            Double.NaN, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, SI.METRE, false);
 
     /**
      * The operation parameter descriptor for the <cite>Flattening difference</cite> optional
@@ -187,11 +186,11 @@ public class Molodensky extends MathTransformProvider {
      *
      * @since 3.19
      */
-     public static final ParameterDescriptor<Double> FLATTENING_DIFFERENCE = createOptionalDescriptor(
+     public static final ParameterDescriptor<Double> FLATTENING_DIFFERENCE = createDescriptor(
             new NamedIdentifier[] {
                 new NamedIdentifier(Citations.EPSG, "Flattening difference"),
             },
-            Double.NaN, -1.0, +1.0, Unit.ONE);
+            Double.NaN, -1.0, +1.0, Unit.ONE, false);
 
     /**
      * Helper method for parameter descriptor creation.
@@ -211,7 +210,7 @@ public class Molodensky extends MathTransformProvider {
                 new IdentifierCode (Citations.EPSG,  9604),
                 new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
                                     Vocabulary.Keys.MOLODENSKY_TRANSFORM))
-            }, new ParameterDescriptor<?>[] {
+            }, null, new ParameterDescriptor<?>[] {
                 DIM, SRC_DIM, TGT_DIM, DX, DY, DZ,
                 SRC_SEMI_MAJOR, SRC_SEMI_MINOR,
                 TGT_SEMI_MAJOR, TGT_SEMI_MINOR,

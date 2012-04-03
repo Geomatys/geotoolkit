@@ -19,6 +19,7 @@ package org.geotoolkit.referencing.operation.provider;
 
 import net.jcip.annotations.Immutable;
 
+import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -43,7 +44,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  *
  * @author Rueben Schulz (UBC)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.20
  *
  * @since 2.4
  * @module
@@ -64,12 +65,7 @@ public class PolarStereographic extends Stereographic {
      * Valid values range is [-180 &hellip; 180]&deg; and default value is 0&deg;.
      */
     @SuppressWarnings("hiding")
-    public static final ParameterDescriptor<Double> CENTRAL_MERIDIAN =
-            Identifiers.CENTRAL_MERIDIAN.select(
-                "central_meridian",             // OGC
-                "Central_Meridian",             // ESRI
-                "Longitude of natural origin",  // EPSG
-                "StraightVertPoleLong");        // GeoTIFF
+    public static final ParameterDescriptor<Double> CENTRAL_MERIDIAN;
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -80,26 +76,40 @@ public class PolarStereographic extends Stereographic {
      * Valid values range is [-90 &hellip; 90]&deg; and default value is 0&deg;.
      */
     @SuppressWarnings("hiding")
-    public static final ParameterDescriptor<Double> LATITUDE_OF_ORIGIN = Mercator1SP.LATITUDE_OF_ORIGIN;
+    public static final ParameterDescriptor<Double> LATITUDE_OF_ORIGIN;
 
     /**
      * The parameters group.
      */
     @SuppressWarnings("hiding")
-    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
-        new ReferenceIdentifier[] {
-            new NamedIdentifier(Citations.OGC,      "Polar_Stereographic"),
-            new NamedIdentifier(Citations.EPSG,     "Polar Stereographic (variant A)"),
-            new IdentifierCode (Citations.EPSG,      9810),
-            new NamedIdentifier(Citations.GEOTIFF,  "CT_PolarStereographic"),
-            new IdentifierCode (Citations.GEOTIFF,   15),
-            sameNameAs(Citations.PROJ4,      Stereographic.PARAMETERS),
-            sameNameAs(Citations.GEOTOOLKIT, Stereographic.PARAMETERS)
-        }, new ParameterDescriptor<?>[] {
-            SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
-            CENTRAL_MERIDIAN, LATITUDE_OF_ORIGIN, SCALE_FACTOR,
-            FALSE_EASTING, FALSE_NORTHING
-        });
+    public static final ParameterDescriptorGroup PARAMETERS;
+    static {
+        final Citation[] excludes = {Citations.ESRI, Citations.NETCDF};
+        CENTRAL_MERIDIAN = Identifiers.CENTRAL_MERIDIAN.select(excludes,
+                "Longitude of natural origin",  // EPSG
+                "central_meridian",             // OGC
+                "StraightVertPoleLong");        // GeoTIFF
+        // Same as Mercator1SP except for the exclusion list.
+        LATITUDE_OF_ORIGIN = Identifiers.LATITUDE_OF_ORIGIN.select(excludes,
+                "Latitude of natural origin",   // EPSG
+                "latitude_of_origin",           // OGC
+                "NatOriginLat");                // GeoTIFF
+
+        PARAMETERS = Identifiers.createDescriptorGroup(
+            new ReferenceIdentifier[] {
+                new NamedIdentifier(Citations.OGC,      "Polar_Stereographic"),
+                new NamedIdentifier(Citations.EPSG,     "Polar Stereographic (variant A)"),
+                new IdentifierCode (Citations.EPSG,      9810),
+                new NamedIdentifier(Citations.GEOTIFF,  "CT_PolarStereographic"),
+                new IdentifierCode (Citations.GEOTIFF,   15),
+                sameNameAs(Citations.PROJ4,      Stereographic.PARAMETERS),
+                sameNameAs(Citations.GEOTOOLKIT, Stereographic.PARAMETERS)
+            }, excludes, new ParameterDescriptor<?>[] {
+                SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
+                CENTRAL_MERIDIAN, LATITUDE_OF_ORIGIN, SCALE_FACTOR,
+                FALSE_EASTING, FALSE_NORTHING
+            });
+    }
 
     /**
      * Constructs a new provider.
@@ -135,7 +145,7 @@ public class PolarStereographic extends Stereographic {
      *
      * @author Rueben Schulz (UBC)
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.00
+     * @version 3.20
      *
      * @since 2.4
      * @module
@@ -156,32 +166,45 @@ public class PolarStereographic extends Stereographic {
          * Valid values range is [-180 &hellip; 180]&deg; and default value is 0&deg;.
          */
         @SuppressWarnings("hiding")
-        public static final ParameterDescriptor<Double> CENTRAL_MERIDIAN =
-                Identifiers.CENTRAL_MERIDIAN.select(
-                    "central_meridian",         // OGC
-                    "Longitude_Of_Origin",      // ESRI
-                    "Longitude of origin",      // EPSG
-                    "StraightVertPoleLong");    // GeoTIFF
+        public static final ParameterDescriptor<Double> CENTRAL_MERIDIAN;
 
         /**
          * The operation parameter descriptor for the {@code standardParallel} parameter value.
          * Valid values range is from [-90 &hellip; 90]&deg; and default value is 90&deg;N.
          */
-        public static final ParameterDescriptor<Double> STANDARD_PARALLEL = North.STANDARD_PARALLEL;
+        public static final ParameterDescriptor<Double> STANDARD_PARALLEL;
 
         /**
          * The parameters group.
          */
         @SuppressWarnings("hiding")
-        public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(new ReferenceIdentifier[] {
-                new NamedIdentifier(Citations.EPSG, "Polar Stereographic (variant B)"),
-                new IdentifierCode (Citations.EPSG,  9829),
-                sameNameAs(Citations.GEOTOOLKIT, PolarStereographic.PARAMETERS)
-            }, new ParameterDescriptor<?>[] {
-                SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
-                CENTRAL_MERIDIAN, STANDARD_PARALLEL,
-                FALSE_EASTING, FALSE_NORTHING
-            });
+        public static final ParameterDescriptorGroup PARAMETERS;
+        static {
+            final Citation[] excludes = {
+                // While I'm not sure that OGC parameter names are defined for this
+                // projection, some WKT expect them. We could exclude the OGC param
+                // if we had ESRI param (because there are often the same except for
+                // the case), but EPSG parameter names are too different.
+                Citations.ESRI, Citations.NETCDF, Citations.GEOTIFF, Citations.PROJ4
+            };
+            CENTRAL_MERIDIAN = Identifiers.CENTRAL_MERIDIAN.select(excludes,
+                    "Longitude of origin",            // EPSG
+                    "central_meridian");              // OGC
+            STANDARD_PARALLEL = Identifiers.STANDARD_PARALLEL_1.select(false, 90.0, excludes, null,
+                    "Latitude of standard parallel",  // EPSG
+                    "standard_parallel_1");           // OGC
+
+            PARAMETERS = Identifiers.createDescriptorGroup(
+                new ReferenceIdentifier[] {
+                    new NamedIdentifier(Citations.EPSG, "Polar Stereographic (variant B)"),
+                    new IdentifierCode (Citations.EPSG,  9829),
+                    sameNameAs(Citations.GEOTOOLKIT, PolarStereographic.PARAMETERS)
+                }, excludes, new ParameterDescriptor<?>[] {
+                    SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
+                    CENTRAL_MERIDIAN, STANDARD_PARALLEL,
+                    FALSE_EASTING, FALSE_NORTHING
+                });
+        }
 
         /**
          * Constructs a new provider.
@@ -200,7 +223,7 @@ public class PolarStereographic extends Stereographic {
      *
      * @author Rueben Schulz (UBC)
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.00
+     * @version 3.20
      *
      * @since 2.4
      * @module
@@ -216,24 +239,30 @@ public class PolarStereographic extends Stereographic {
          * The operation parameter descriptor for the {@code standardParallel} parameter value.
          * Valid values range is from -90 to 90&deg;. The default value is 90&deg;N.
          */
-        public static final ParameterDescriptor<Double> STANDARD_PARALLEL =
-                Identifiers.STANDARD_PARALLEL_1.select(false, 90, null,
-                    "standard_parallel_1",                  // OGC
-                    "Standard_Parallel_1",                  // ESRI
-                    "Latitude of standard parallel");       // EPSG
+        public static final ParameterDescriptor<Double> STANDARD_PARALLEL;
 
         /**
          * The parameters group.
          */
         @SuppressWarnings("hiding")
-        public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(new NamedIdentifier[] {
-                new NamedIdentifier(Citations.ESRI, "Stereographic_North_Pole"),
-                sameNameAs(Citations.GEOTOOLKIT, PolarStereographic.PARAMETERS)
-            }, new ParameterDescriptor<?>[] {
-                SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
-                CENTRAL_MERIDIAN, STANDARD_PARALLEL, SCALE_FACTOR,
-                FALSE_EASTING, FALSE_NORTHING
-            });
+        public static final ParameterDescriptorGroup PARAMETERS;
+        static {
+            final Citation[] excludes = {
+                Citations.EPSG, Citations.OGC, Citations.NETCDF, Citations.GEOTIFF, Citations.PROJ4
+            };
+            STANDARD_PARALLEL = Identifiers.STANDARD_PARALLEL_1.select(false, 90.0, excludes, null,
+                    "Standard_Parallel_1"); // ESRI
+
+            PARAMETERS = Identifiers.createDescriptorGroup(
+                new NamedIdentifier[] {
+                    new NamedIdentifier(Citations.ESRI, "Stereographic_North_Pole"),
+                    sameNameAs(Citations.GEOTOOLKIT, PolarStereographic.PARAMETERS)
+                }, excludes, new ParameterDescriptor<?>[] {
+                    SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
+                    Stereographic.CENTRAL_MERIDIAN, STANDARD_PARALLEL, SCALE_FACTOR,
+                    FALSE_EASTING, FALSE_NORTHING
+                });
+        }
 
         /**
          * Constructs a new provider.
@@ -252,7 +281,7 @@ public class PolarStereographic extends Stereographic {
      *
      * @author Rueben Schulz (UBC)
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.00
+     * @version 3.20
      *
      * @since 2.4
      * @module
@@ -268,24 +297,29 @@ public class PolarStereographic extends Stereographic {
          * The operation parameter descriptor for the {@code standardParallel} parameter value.
          * Valid values range is from -90 to 90&deg;. The default value is 90&deg;S.
          */
-        public static final ParameterDescriptor<Double> STANDARD_PARALLEL =
-                Identifiers.STANDARD_PARALLEL_1.select(false, -90, null,
-                    "standard_parallel_1",                  // OGC
-                    "Standard_Parallel_1",                  // ESRI
-                    "Latitude of standard parallel");       // EPSG
+        public static final ParameterDescriptor<Double> STANDARD_PARALLEL;
 
         /**
          * The parameters group.
          */
         @SuppressWarnings("hiding")
-        public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(new NamedIdentifier[] {
-                new NamedIdentifier(Citations.ESRI, "Stereographic_South_Pole"),
-                sameNameAs(Citations.GEOTOOLKIT, PolarStereographic.PARAMETERS)
-            }, new ParameterDescriptor<?>[] {
-                SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
-                CENTRAL_MERIDIAN, STANDARD_PARALLEL, SCALE_FACTOR,
-                FALSE_EASTING, FALSE_NORTHING
-            });
+        public static final ParameterDescriptorGroup PARAMETERS;
+        static {
+            final Citation[] excludes = {
+                Citations.EPSG, Citations.OGC, Citations.NETCDF, Citations.GEOTIFF, Citations.PROJ4
+            };
+            STANDARD_PARALLEL = Identifiers.STANDARD_PARALLEL_1.select(false, -90.0, excludes, null,
+                "Standard_Parallel_1"); // ESRI
+            PARAMETERS = Identifiers.createDescriptorGroup(
+                new NamedIdentifier[] {
+                    new NamedIdentifier(Citations.ESRI, "Stereographic_South_Pole"),
+                    sameNameAs(Citations.GEOTOOLKIT, PolarStereographic.PARAMETERS)
+                }, excludes, new ParameterDescriptor<?>[] {
+                    SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
+                    Stereographic.CENTRAL_MERIDIAN, STANDARD_PARALLEL, SCALE_FACTOR,
+                    FALSE_EASTING, FALSE_NORTHING
+                });
+        }
 
         /**
          * Constructs a new provider.

@@ -115,23 +115,23 @@ public class EquidistantCylindrical extends MapProjection {
      */
     static {
         final Citation[] excludes = new Citation[] {Citations.NETCDF};
-        CENTRAL_MERIDIAN = Identifiers.CENTRAL_MERIDIAN.select(excludes, new String[] {
+        CENTRAL_MERIDIAN = Identifiers.CENTRAL_MERIDIAN.select(null, null, excludes, new String[] {
                 "Longitude of false origin"},        // EPSG (deprecated - was used by EPSG:9842 only)
                 "Longitude of natural origin",       // EPSG
                 "central_meridian",                  // OGC
                 "Central_Meridian",                  // ESRI
                 "ProjCenterLong");                   // GeoTIFF
-        LATITUDE_OF_ORIGIN = Identifiers.LATITUDE_OF_ORIGIN.select(excludes, new String[] {
+        LATITUDE_OF_ORIGIN = Identifiers.LATITUDE_OF_ORIGIN.select(null, null, excludes, new String[] {
                 "Latitude of natural origin"},       // EPSG (deprecated - was used by EPSG:9842 and 9823)
                 "Latitude of 1st standard parallel", // EPSG
                 "latitude_of_origin",                // OGC
                 "Standard_Parallel_1",               // ESRI
                 "ProjCenterLat");                    // GeoTIFF
         // Following are the same than Mercator1SP except for the exclusion list.
-        FALSE_EASTING = Identifiers.FALSE_EASTING.select(excludes, null,
+        FALSE_EASTING = Identifiers.FALSE_EASTING.select(excludes,
                 "False easting",                     // EPSG
                 "FalseEasting");                     // GeoTIFF
-        FALSE_NORTHING = Identifiers.FALSE_NORTHING.select(excludes, null,
+        FALSE_NORTHING = Identifiers.FALSE_NORTHING.select(excludes,
                 "False northing",                    // EPSG
                 "FalseNorthing");                    // GeoTIFF
     }
@@ -155,7 +155,7 @@ public class EquidistantCylindrical extends MapProjection {
             new NamedIdentifier(Citations.PROJ4,    "eqc"),
             new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
                                 Vocabulary.Keys.EQUIDISTANT_CYLINDRICAL_PROJECTION))
-        }, new ParameterDescriptor<?>[] {
+        }, null, new ParameterDescriptor<?>[] {
             SEMI_MAJOR,       SEMI_MINOR, ROLL_LONGITUDE,
             CENTRAL_MERIDIAN, LATITUDE_OF_ORIGIN,
             FALSE_EASTING,    FALSE_NORTHING

@@ -20,6 +20,7 @@ package org.geotoolkit.referencing.operation.provider;
 import javax.measure.unit.SI;
 import net.jcip.annotations.Immutable;
 
+import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -47,7 +48,7 @@ import static org.geotoolkit.internal.referencing.Identifiers.createDescriptor;
  *
  * @author Justin Deoliveira (Refractions)
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.00
+ * @version 3.20
  *
  * @since 2.2
  * @module
@@ -68,12 +69,7 @@ public class NewZealandMapGrid extends MapProjection {
      * Valid values range is (0 &hellip; &infin;) and default value is 6378388 metres.
      */
     @SuppressWarnings("hiding")
-    public static final ParameterDescriptor<Double> SEMI_MAJOR = createDescriptor(
-            new NamedIdentifier[] {
-                sameNameAs(Citations.OGC,  MapProjection.SEMI_MAJOR),
-                sameNameAs(Citations.EPSG, MapProjection.SEMI_MAJOR)
-            },
-            6378388.0, 0.0, Double.POSITIVE_INFINITY, SI.METRE);
+    public static final ParameterDescriptor<Double> SEMI_MAJOR;
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -85,12 +81,7 @@ public class NewZealandMapGrid extends MapProjection {
      * 6356911.95 metres.
      */
     @SuppressWarnings("hiding")
-    public static final ParameterDescriptor<Double> SEMI_MINOR = createDescriptor(
-            new NamedIdentifier[] {
-                sameNameAs(Citations.OGC,  MapProjection.SEMI_MINOR),
-                sameNameAs(Citations.EPSG, MapProjection.SEMI_MINOR)
-            },
-            6378388.0*(1-1/297.0), 0.0, Double.POSITIVE_INFINITY, SI.METRE);
+    public static final ParameterDescriptor<Double> SEMI_MINOR;
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -100,12 +91,7 @@ public class NewZealandMapGrid extends MapProjection {
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is [-180 &hellip; 180]&deg; and default value is 173&deg;.
      */
-    public static final ParameterDescriptor<Double> CENTRAL_MERIDIAN =
-            Identifiers.CENTRAL_MERIDIAN.select(true, 173, null,
-                "central_meridian",             // OGC
-                "Longitude_Of_Origin",          // ESRI
-                "Longitude of natural origin",  // EPSG
-                "NatOriginLong");               // GeoTIFF
+    public static final ParameterDescriptor<Double> CENTRAL_MERIDIAN;
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -115,12 +101,7 @@ public class NewZealandMapGrid extends MapProjection {
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is [-90 &hellip; 90]&deg; and default value is -41&deg;.
      */
-    public static final ParameterDescriptor<Double> LATITUDE_OF_ORIGIN =
-            Identifiers.LATITUDE_OF_ORIGIN.select(true, -41, null,
-                "latitude_of_origin",           // OGC
-                "Latitude_Of_Origin",           // ESRI
-                "Latitude of natural origin",   // EPSG
-                "NatOriginLat");                // GeoTIFF
+    public static final ParameterDescriptor<Double> LATITUDE_OF_ORIGIN;
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -130,10 +111,7 @@ public class NewZealandMapGrid extends MapProjection {
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is unrestricted and default value is 2510000 metre.
      */
-    public static final ParameterDescriptor<Double> FALSE_EASTING =
-            Identifiers.FALSE_EASTING.select(true, 2510000, null,
-                "False easting",    // EPSG
-                "FalseEasting");    // GeoTIFF
+    public static final ParameterDescriptor<Double> FALSE_EASTING;
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -143,10 +121,40 @@ public class NewZealandMapGrid extends MapProjection {
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is unrestricted and default value is 6023150 metre.
      */
-    public static final ParameterDescriptor<Double> FALSE_NORTHING =
-            Identifiers.FALSE_NORTHING.select(true, 6023150, null,
-                "False northing",   // EPSG
-                "FalseNorthing");   // GeoTIFF
+    public static final ParameterDescriptor<Double> FALSE_NORTHING;
+
+    /**
+     * Parameters creation, which must be done before to initialize the {@link #PARAMETERS} field.
+     */
+    static {
+        final Citation[] excludes = new Citation[] {Citations.ESRI, Citations.NETCDF};
+        SEMI_MAJOR = createDescriptor(new NamedIdentifier[] {
+                sameNameAs(Citations.OGC,     MapProjection.SEMI_MAJOR),
+                sameNameAs(Citations.EPSG,    MapProjection.SEMI_MAJOR),
+                sameNameAs(Citations.GEOTIFF, MapProjection.SEMI_MAJOR),
+                sameNameAs(Citations.PROJ4,   MapProjection.SEMI_MAJOR)
+            }, 6378388.0, 0.0, Double.POSITIVE_INFINITY, SI.METRE, true);
+        SEMI_MINOR = createDescriptor(new NamedIdentifier[] {
+                sameNameAs(Citations.OGC,     MapProjection.SEMI_MINOR),
+                sameNameAs(Citations.EPSG,    MapProjection.SEMI_MINOR),
+                sameNameAs(Citations.GEOTIFF, MapProjection.SEMI_MINOR),
+                sameNameAs(Citations.PROJ4,   MapProjection.SEMI_MINOR)
+            }, 6378388.0*(1-1/297.0), 0.0, Double.POSITIVE_INFINITY, SI.METRE, true);
+        CENTRAL_MERIDIAN = Identifiers.CENTRAL_MERIDIAN.select(true, 173.0, excludes, null,
+                "Longitude of natural origin",  // EPSG
+                "central_meridian",             // OGC
+                "NatOriginLong");               // GeoTIFF
+        LATITUDE_OF_ORIGIN = Identifiers.LATITUDE_OF_ORIGIN.select(true, -41.0, excludes, null,
+                "Latitude of natural origin",   // EPSG
+                "latitude_of_origin",           // OGC
+                "NatOriginLat");                // GeoTIFF
+        FALSE_EASTING = Identifiers.FALSE_EASTING.select(true, 2510000.0, excludes, null,
+                "False easting",                // EPSG
+                "FalseEasting");                // GeoTIFF
+        FALSE_NORTHING = Identifiers.FALSE_NORTHING.select(true, 6023150.0, excludes, null,
+                "False northing",               // EPSG
+                "FalseNorthing");               // GeoTIFF
+    }
 
     /**
      * The parameters group.
@@ -159,7 +167,7 @@ public class NewZealandMapGrid extends MapProjection {
             new NamedIdentifier(Citations.GEOTIFF, "CT_NewZealandMapGrid"),
             new IdentifierCode (Citations.GEOTIFF,  26),
             new NamedIdentifier(Citations.PROJ4,   "nzmg")
-        }, new ParameterDescriptor<?>[] {
+        }, null, new ParameterDescriptor<?>[] {
             SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
             LATITUDE_OF_ORIGIN, CENTRAL_MERIDIAN,
             FALSE_EASTING, FALSE_NORTHING

@@ -52,7 +52,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * </ul>
  *
  * @author Beate Stollberg
- * @author Martin Desruisseaux (Geomatys)
+ * @author Martin Desruisseaux (Geomatys, Geomatys)
  * @version 3.20
  *
  * @since 2.4
@@ -74,7 +74,7 @@ public class LambertAzimuthalEqualArea extends MapProjection {
      * Valid values range is [-180 &hellip; 180]&deg; and default value is 0&deg;.
      */
     public static final ParameterDescriptor<Double> LONGITUDE_OF_CENTRE =
-            Identifiers.CENTRAL_MERIDIAN.select(null, new String[] {
+            Identifiers.CENTRAL_MERIDIAN.select(null, null, null, new String[] {
                 "Spherical longitude of origin"}, // EPSG (deprecated - was used by EPSG:9821 only)
                 "Longitude of natural origin",    // EPSG
                 "longitude_of_center",            // OGC
@@ -91,7 +91,7 @@ public class LambertAzimuthalEqualArea extends MapProjection {
      * Valid values range is [-90 &hellip; 90]&deg; and default value is 0&deg;.
      */
     public static final ParameterDescriptor<Double> LATITUDE_OF_CENTRE =
-            Identifiers.LATITUDE_OF_ORIGIN.select(null, new String[] {
+            Identifiers.LATITUDE_OF_ORIGIN.select(null, null, null, new String[] {
                 "Spherical latitude of origin"},  // EPSG (deprecated - was used by EPSG:9821 only)
                 "Latitude of natural origin",     // EPSG
                 "latitude_of_center",             // OGC
@@ -106,7 +106,7 @@ public class LambertAzimuthalEqualArea extends MapProjection {
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is unrestricted and default value is 0 metre.
      */
-    public static final ParameterDescriptor<Double> FALSE_EASTING = Mercator1SP.FALSE_EASTING;
+    public static final ParameterDescriptor<Double> FALSE_EASTING = Mercator2SP.FALSE_EASTING;
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -116,7 +116,7 @@ public class LambertAzimuthalEqualArea extends MapProjection {
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is unrestricted and default value is 0 metre.
      */
-    public static final ParameterDescriptor<Double> FALSE_NORTHING = Mercator1SP.FALSE_NORTHING;
+    public static final ParameterDescriptor<Double> FALSE_NORTHING = Mercator2SP.FALSE_NORTHING;
 
     /**
      * The parameters group.
@@ -134,7 +134,7 @@ public class LambertAzimuthalEqualArea extends MapProjection {
             new NamedIdentifier(Citations.GEOTIFF, "CT_LambertAzimEqualArea"),
             new IdentifierCode (Citations.GEOTIFF,  10),
             new NamedIdentifier(Citations.PROJ4,    "laea"),
-        },  new ParameterDescriptor<?>[] {
+        }, null, new ParameterDescriptor<?>[] {
                 SEMI_MAJOR,         SEMI_MINOR, ROLL_LONGITUDE,
                 LATITUDE_OF_CENTRE, LONGITUDE_OF_CENTRE,
                 FALSE_EASTING,      FALSE_NORTHING

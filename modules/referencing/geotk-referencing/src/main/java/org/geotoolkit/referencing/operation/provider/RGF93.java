@@ -41,7 +41,7 @@ import org.geotoolkit.resources.Errors;
  *
  * @author Simon Reynard (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.12
+ * @version 3.20
  *
  * @since 3.12
  * @module
@@ -57,7 +57,7 @@ public class RGF93 extends MathTransformProvider {
      * parameter value. The default value is {@code "gr3df97a.txt"}.
      */
     public static final ParameterDescriptor<String> TRANSLATION_FILE = new DefaultParameterDescriptor<>(
-            "Geocentric translation file", String.class, null, "gr3df97a.txt");
+            Citations.EPSG, "Geocentric translation file", String.class, null, "gr3df97a.txt", null, null, null, true);
 
     /**
      * The parameters group.
@@ -66,7 +66,7 @@ public class RGF93 extends MathTransformProvider {
         new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.EPSG, "France geocentric interpolation"),
             new IdentifierCode (Citations.EPSG,  9655)
-        }, new ParameterDescriptor<?>[] {
+        }, null, new ParameterDescriptor<?>[] {
             TRANSLATION_FILE
         });
 

@@ -32,8 +32,6 @@ import org.geotoolkit.referencing.operation.projection.LambertConformal;
 import org.geotoolkit.internal.referencing.Identifiers;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
-import static org.geotoolkit.internal.referencing.Identifiers.exclude;
-
 
 /**
  * The provider for "<cite>Lambert Conic Conformal (2SP)</cite>" projection (EPSG:9802).
@@ -46,7 +44,7 @@ import static org.geotoolkit.internal.referencing.Identifiers.exclude;
  *   <li>{@link org.geotoolkit.referencing.operation.projection.LambertConformal}</li>
  * </ul>
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Rueben Schulz (UBC)
  * @version 3.20
  *
@@ -69,7 +67,7 @@ public class LambertConformal2SP extends MapProjection {
      * Valid values range is [-180 &hellip; 180]&deg; and default value is 0&deg;.
      */
     public static final ParameterDescriptor<Double> CENTRAL_MERIDIAN =
-            Identifiers.CENTRAL_MERIDIAN.select(
+            Identifiers.CENTRAL_MERIDIAN.select(null,
                 "Longitude of false origin",     // EPSG
                 "central_meridian",              // OGC
                 "Central_Meridian",              // ESRI
@@ -85,7 +83,7 @@ public class LambertConformal2SP extends MapProjection {
      * Valid values range is [-90 &hellip; 90]&deg; and default value is 0&deg;.
      */
     public static final ParameterDescriptor<Double> LATITUDE_OF_ORIGIN =
-            Identifiers.LATITUDE_OF_ORIGIN.select(
+            Identifiers.LATITUDE_OF_ORIGIN.select(null,
                 "Latitude of false origin",  // EPSG
                 "latitude_of_origin",        // OGC
                 "Latitude_Of_Origin",        // ESRI
@@ -101,7 +99,7 @@ public class LambertConformal2SP extends MapProjection {
      * Valid values range is [-90 &hellip; 90]&deg;.
      */
     public static final ParameterDescriptor<Double> STANDARD_PARALLEL_1 =
-            Identifiers.STANDARD_PARALLEL_1.select(
+            Identifiers.STANDARD_PARALLEL_1.select(null,
                 "Latitude of 1st standard parallel",  // EPSG
                 "standard_parallel_1",                // OGC
                 "Standard_Parallel_1");               // ESRI
@@ -116,7 +114,8 @@ public class LambertConformal2SP extends MapProjection {
      * Valid values range is [-90 &hellip; 90]&deg;.
      */
     public static final ParameterDescriptor<Double> STANDARD_PARALLEL_2 =
-            Identifiers.STANDARD_PARALLEL_2.select("Latitude of 2nd standard parallel");
+            Identifiers.STANDARD_PARALLEL_2.select(null,
+                    "Latitude of 2nd standard parallel");
 
     /**
      * The ESRI operation parameter descriptor for the {@linkplain
@@ -129,9 +128,9 @@ public class LambertConformal2SP extends MapProjection {
      * @since 3.20
      */
     public static final ParameterDescriptor<Double> SCALE_FACTOR =
-            Identifiers.SCALE_FACTOR.select(false, 1, new Citation[] {
+            Identifiers.SCALE_FACTOR.select(false, null, new Citation[] {
                 Citations.EPSG, Citations.OGC, Citations.NETCDF, Citations.GEOTIFF, Citations.PROJ4
-            });
+            }, null);
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -142,7 +141,7 @@ public class LambertConformal2SP extends MapProjection {
      * Valid values range is unrestricted and default value is 0 metre.
      */
     public static final ParameterDescriptor<Double> FALSE_EASTING =
-            Identifiers.FALSE_EASTING.select(
+            Identifiers.FALSE_EASTING.select(null,
                 "Easting at false origin",  // EPSG
                 "FalseOriginEasting");      // GeoTIFF
 
@@ -155,7 +154,7 @@ public class LambertConformal2SP extends MapProjection {
      * Valid values range is unrestricted and default value is 0 metre.
      */
     public static final ParameterDescriptor<Double> FALSE_NORTHING =
-            Identifiers.FALSE_NORTHING.select(
+            Identifiers.FALSE_NORTHING.select(null,
                 "Northing at false origin", // EPSG
                 "FalseOriginNorthing");     // GeoTIFF
 
@@ -174,7 +173,7 @@ public class LambertConformal2SP extends MapProjection {
             new IdentifierCode (Citations.GEOTIFF,  9), // The same code is used for 1SP.
                      sameNameAs(Citations.PROJ4,      LambertConformal1SP.PARAMETERS),
                      sameNameAs(Citations.GEOTOOLKIT, LambertConformal1SP.PARAMETERS)
-        }, new ParameterDescriptor<?>[] {
+        }, null, new ParameterDescriptor<?>[] {
             SEMI_MAJOR,          SEMI_MINOR,
             ROLL_LONGITUDE,
             CENTRAL_MERIDIAN,    LATITUDE_OF_ORIGIN,
@@ -223,9 +222,9 @@ public class LambertConformal2SP extends MapProjection {
      *   <li>{@link org.geotoolkit.referencing.operation.projection.LambertConformal}</li>
      * </ul>
      *
-     * @author Martin Desruisseaux (IRD)
+     * @author Martin Desruisseaux (IRD, Geomatys)
      * @author Rueben Schulz (UBC)
-     * @version 3.00
+     * @version 3.20
      *
      * @since 2.2
      * @module
@@ -241,36 +240,28 @@ public class LambertConformal2SP extends MapProjection {
          * The parameters group.
          */
         @SuppressWarnings("hiding")
-        public static final ParameterDescriptorGroup PARAMETERS;
-        static {
-            final Citation[] excludes = new Citation[] {
+        public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
+            new ReferenceIdentifier[] {
+                /*
+                 * IMPORTANT: Do not put any name that could be confused with the 1SP or
+                 * 2SP cases below, except for the Citations.GEOTOOLKIT authority which is
+                 * ignored. The LambertConformal constructor relies on those names for
+                 * distinguish the kind of projection being created.
+                 */
+                new NamedIdentifier(Citations.OGC,  "Lambert_Conformal_Conic_2SP_Belgium"),
+                new NamedIdentifier(Citations.ESRI, "Lambert_Conformal_Conic_2SP_Belgium"),
+                new NamedIdentifier(Citations.EPSG, "Lambert Conic Conformal (2SP Belgium)"),
+                new IdentifierCode (Citations.EPSG,  9803),
+                        sameNameAs(Citations.GEOTOOLKIT, LambertConformal2SP.PARAMETERS)
+            }, new Citation[] { // Authorities to exclude from the parameter descriptors.
                 Citations.NETCDF, Citations.GEOTIFF, Citations.PROJ4
-            };
-            PARAMETERS = Identifiers.createDescriptorGroup(
-                new ReferenceIdentifier[] {
-                    /*
-                     * IMPORTANT: Do not put any name that could be confused with the 1SP or
-                     * 2SP cases below, except for the Citations.GEOTOOLKIT authority which is
-                     * ignored. The LambertConformal constructor relies on those names for
-                     * distinguish the kind of projection being created.
-                     */
-                    new NamedIdentifier(Citations.OGC,  "Lambert_Conformal_Conic_2SP_Belgium"),
-                    new NamedIdentifier(Citations.ESRI, "Lambert_Conformal_Conic_2SP_Belgium"),
-                    new NamedIdentifier(Citations.EPSG, "Lambert Conic Conformal (2SP Belgium)"),
-                    new IdentifierCode (Citations.EPSG,  9803),
-                            sameNameAs(Citations.GEOTOOLKIT, LambertConformal2SP.PARAMETERS)
-                }, new ParameterDescriptor<?>[] {
-                    exclude(SEMI_MAJOR, excludes),
-                    exclude(SEMI_MINOR, excludes),
-                    ROLL_LONGITUDE,
-                    exclude(CENTRAL_MERIDIAN,    excludes),
-                    exclude(LATITUDE_OF_ORIGIN,  excludes),
-                    exclude(STANDARD_PARALLEL_1, excludes),
-                    exclude(STANDARD_PARALLEL_2, excludes),
-                    exclude(FALSE_EASTING,       excludes),
-                    exclude(FALSE_NORTHING,      excludes)
-                });
-        }
+            }, new ParameterDescriptor<?>[] {
+                SEMI_MAJOR,          SEMI_MINOR,
+                ROLL_LONGITUDE,
+                CENTRAL_MERIDIAN,    LATITUDE_OF_ORIGIN,
+                STANDARD_PARALLEL_1, STANDARD_PARALLEL_2,
+                FALSE_EASTING,       FALSE_NORTHING
+            });
 
         /**
          * Constructs a new provider.

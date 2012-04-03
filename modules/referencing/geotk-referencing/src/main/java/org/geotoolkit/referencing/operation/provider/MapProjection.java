@@ -40,7 +40,6 @@ import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.internal.referencing.Identifiers;
 
 import static org.geotoolkit.internal.referencing.Identifiers.createDescriptor;
-import static org.geotoolkit.internal.referencing.Identifiers.createOptionalDescriptor;
 /*
  * Do not import UnitaryProjection, and do not use it neither except as fully-qualified names
  * only in javadoc comments. As of Java 6 update 10, using UnitaryProjection seems to confuse
@@ -55,8 +54,8 @@ import static org.geotoolkit.internal.referencing.Identifiers.createOptionalDesc
  * declare the parameters they use in a {@linkplain ParameterDescriptorGroup descriptor group}
  * named {@code PARAMETERS}.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.20
  *
  * @see <A HREF="http://mathworld.wolfram.com/MapProjection.html">Map projections on MathWorld</A>
  * @see <A HREF="http://atlas.gc.ca/site/english/learningresources/carto_corner/map_projections.html">Map projections on the atlas of Canada</A>
@@ -86,7 +85,7 @@ public abstract class MapProjection extends MathTransformProvider {
                 new NamedIdentifier(Citations.GEOTIFF, "SemiMajor"),
                 new NamedIdentifier(Citations.PROJ4,   "a")
             },
-            Double.NaN, 0, Double.POSITIVE_INFINITY, SI.METRE);
+            Double.NaN, 0, Double.POSITIVE_INFINITY, SI.METRE, true);
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -103,7 +102,7 @@ public abstract class MapProjection extends MathTransformProvider {
                 new NamedIdentifier(Citations.GEOTIFF, "SemiMinor"),
                 new NamedIdentifier(Citations.PROJ4,   "b")
             },
-            Double.NaN, 0, Double.POSITIVE_INFINITY, SI.METRE);
+            Double.NaN, 0, Double.POSITIVE_INFINITY, SI.METRE, true);
 
     /**
      * The operation parameter descriptor for whatever the projection should roll longitude.
@@ -129,11 +128,11 @@ public abstract class MapProjection extends MathTransformProvider {
      *
      * @since 3.00
      */
-    public static final ParameterDescriptor<Double> X_SCALE = createOptionalDescriptor(
+    public static final ParameterDescriptor<Double> X_SCALE = createDescriptor(
             new NamedIdentifier[] {
                 new NamedIdentifier(Citations.ESRI, "X_Scale")
             },
-            1, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Unit.ONE);
+            1, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Unit.ONE, false);
 
     /**
      * The operation parameter descriptor for the ESRI {@code "Y_Scale"} parameter value.
@@ -144,11 +143,11 @@ public abstract class MapProjection extends MathTransformProvider {
      *
      * @since 3.00
      */
-    public static final ParameterDescriptor<Double> Y_SCALE = createOptionalDescriptor(
+    public static final ParameterDescriptor<Double> Y_SCALE = createDescriptor(
             new NamedIdentifier[] {
                 new NamedIdentifier(Citations.ESRI, "Y_Scale")
             },
-            1, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Unit.ONE);
+            1, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Unit.ONE, false);
 
     /**
      * The operation parameter descriptor for the ESRI {@code "XY_Plane_Rotation"} parameter value.
@@ -161,7 +160,7 @@ public abstract class MapProjection extends MathTransformProvider {
      *
      * @since 3.00
      */
-    public static final ParameterDescriptor<Double> XY_PLANE_ROTATION = createOptionalDescriptor(
+    public static final ParameterDescriptor<Double> XY_PLANE_ROTATION = createDescriptor(
             /*
              * The descriptors defined in this class are ordinary descriptors instead than the
              * special Identifiers subclass because there is no need to manage aliases for them.
@@ -175,7 +174,7 @@ public abstract class MapProjection extends MathTransformProvider {
             new NamedIdentifier[] {
                 sameNameAs(Citations.ESRI, Identifiers.RECTIFIED_GRID_ANGLE)
             },
-            0, -360, +360, NonSI.DEGREE_ANGLE);
+            0, -360, +360, NonSI.DEGREE_ANGLE, false);
 
     /**
      * Returns the name of the given authority declared in the given parameter descriptor.

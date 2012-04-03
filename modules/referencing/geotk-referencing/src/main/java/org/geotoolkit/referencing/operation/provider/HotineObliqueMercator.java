@@ -98,7 +98,7 @@ public class HotineObliqueMercator extends ObliqueMercator {
                      sameNameAs(Citations.PROJ4, ObliqueMercator.PARAMETERS),
             new NamedIdentifier(Citations.GEOTOOLKIT, "Rectified Skew Orthomorphic (RSO)"), // Legacy EPSG
                      sameNameAs(Citations.GEOTOOLKIT, ObliqueMercator.PARAMETERS)
-        }, new ParameterDescriptor<?>[] {
+        }, null, new ParameterDescriptor<?>[] {
             SEMI_MAJOR,          SEMI_MINOR, ROLL_LONGITUDE,
             LONGITUDE_OF_CENTRE, LATITUDE_OF_CENTRE,
             AZIMUTH,             RECTIFIED_GRID_ANGLE,
@@ -184,10 +184,10 @@ public class HotineObliqueMercator extends ObliqueMercator {
         static {
             final List<GeneralParameterDescriptor> param = ObliqueMercator.TwoPoint.PARAMETERS.descriptors();
             PARAMETERS = Identifiers.createDescriptorGroup(
-            new ReferenceIdentifier[] {
-                new NamedIdentifier(Citations.ESRI, "Hotine_Oblique_Mercator_Two_Point_Natural_Origin"),
-                sameNameAs(Citations.GEOTOOLKIT, HotineObliqueMercator.PARAMETERS)
-            }, param.toArray(new ParameterDescriptor<?>[param.size()]));
+                new ReferenceIdentifier[] {
+                    new NamedIdentifier(Citations.ESRI, "Hotine_Oblique_Mercator_Two_Point_Natural_Origin"),
+                    sameNameAs(Citations.GEOTOOLKIT, HotineObliqueMercator.PARAMETERS)
+            }, null, param.toArray(new ParameterDescriptor<?>[param.size()]));
         }
 
         /**

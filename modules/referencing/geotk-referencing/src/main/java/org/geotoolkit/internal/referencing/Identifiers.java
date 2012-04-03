@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.internal.referencing;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Collection;
@@ -348,38 +349,12 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
      * The given array is used for disambiguation when the same authority defines
      * many names.
      *
-     * @param  names    The names to be used for disambiguation.
-     * @return The requested identifiers.
-     */
-    public ParameterDescriptor<Double> select(final String... names) {
-        return select(getMinimumOccurs() != 0, getDefaultValue(), null, null, names);
-    }
-
-    /**
-     * Returns a new descriptor having the same identifiers than this descriptor.
-     * The given array is used for disambiguation when the same authority defines
-     * many names.
-     *
      * @param  excludes   The authorities to exclude, or {@code null} if none.
-     * @param  deprecated The names of deprecated identifiers, or {@code null} if none.
      * @param  names      The names to be used for disambiguation.
      * @return The requested identifiers.
      */
-    public ParameterDescriptor<Double> select(final Citation[] excludes, final String[] deprecated, final String... names) {
-        return select(getMinimumOccurs() != 0, getDefaultValue(), excludes, deprecated, names);
-    }
-
-    /**
-     * Returns a new descriptor having the same identifiers than this descriptor but a different
-     * {@code mandatory} status. The given array is used for disambiguation when the same authority
-     * defines many names.
-     *
-     * @param  required Whatever the parameter shall be mandatory or not.
-     * @param  names    The names to be used for disambiguation.
-     * @return The requested identifiers.
-     */
-    public ParameterDescriptor<Double> select(final boolean required, final String... names) {
-        return select(required, getDefaultValue(), null, null, names);
+    public ParameterDescriptor<Double> select(final Citation[] excludes, final String... names) {
+        return select(getMinimumOccurs() != 0, getDefaultValue(), excludes, null, names);
     }
 
     /**
@@ -387,33 +362,15 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
      * {@code mandatory} status and default value. The given array is used for disambiguation when
      * the same authority defines many names.
      *
-     * @param  required     Whatever the parameter shall be mandatory or not.
-     * @param  defaultValue The default value.
-     * @param  excludes     The authorities to exclude, or {@code null} if none.
-     * @param  names        The names to be used for disambiguation.
-     * @return The requested identifiers.
-     */
-    public ParameterDescriptor<Double> select(final boolean required, final double defaultValue,
-            final Citation[] excludes, final String... names)
-    {
-        return select(required, Double.valueOf(defaultValue), excludes, null, names);
-    }
-
-    /**
-     * Implementation of all {@code select} methods.
-     * This method returns a new descriptor having the same identifiers than this descriptor,
-     * except for the one that are not explicitly declared in the names array and that can not
-     * be inherited.
-     *
-     * @param  required     Whatever the parameter shall be mandatory or not.
-     * @param  defaultValue The default value, or {@code null} if none.
+     * @param  required     Whatever the parameter shall be mandatory or not, or {@code null} if unchanged.
+     * @param  defaultValue The default value, or {@code null} for keeping it unchanged.
      * @param  excludes     The authorities to exclude, or {@code null} if none.
      * @param  deprecated   The names of deprecated identifiers, or {@code null} if none.
      * @param  names        The names to be used for disambiguation.
      *                      The same name may be used for more than one authority.
      * @return The requested identifiers.
      */
-    private ParameterDescriptor<Double> select(final boolean required, Double defaultValue,
+    public ParameterDescriptor<Double> select(final Boolean required, final Double defaultValue,
             final Citation[] excludes, final String[] deprecated, final String... names)
     {
         final Map<Citation,Boolean> authorities = new HashMap<>();
@@ -500,50 +457,10 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
             }
         }
         selected = XArrays.resize(selected, n);
-        if (required && (defaultValue == null || defaultValue.isNaN())) {
-            defaultValue = Double.valueOf(0);
-        }
         return new DefaultParameterDescriptor<>(toMap(selected), Double.class, null,
-                defaultValue, getMinimumValue(), getMaximumValue(), getUnit(), required);
-    }
-
-    /**
-     * Returns a copy of the given descriptor, excluding the names from the given authorities.
-     *
-     * @param  model    The descriptor to copy.
-     * @param  excludes The authorities to exclude.
-     * @return A copy of the given parameter, excluding the names of the given authorities.
-     */
-    public static ParameterDescriptor<Double> exclude(final ParameterDescriptor<Double> model, final Citation... excludes) {
-        final Object[] alias;
-        final Map<String,Object> properties = new HashMap<>(IdentifiedObjects.getProperties(model));
-        properties.put(IDENTIFIERS_KEY, exclude(excludes, (Object[]) properties.get(IDENTIFIERS_KEY)));
-        properties.put(ALIAS_KEY, alias=exclude(excludes, (Object[]) properties.get(ALIAS_KEY)));
-        properties.put(NAME_KEY, alias[0]); // In case the primary name is one of the excluded names.
-        return new DefaultParameterDescriptor<>(properties, Double.class, null,
-                model.getDefaultValue(), model.getMinimumValue(), model.getMaximumValue(),
-                model.getUnit(), model.getMinimumOccurs() != 0);
-    }
-
-    /**
-     * Removes the identifier of the given authorities from the given array. This method will
-     * modify the given {@code array} in-place before to return a new array. This method is
-     * only for {@link #exclude(ParameterDescriptor, Citation[])} internal working.
-     */
-    private static Object[] exclude(final Citation[] excludes, final Object[] array) {
-        int n = 0;
-        if (array != null) {
-            for (int i=0; i<array.length; i++) {
-                final Object candidate = array[i];
-                if (candidate instanceof ReferenceIdentifier) {
-                    if (XArrays.contains(excludes, ((ReferenceIdentifier) candidate).getAuthority())) {
-                        continue;
-                    }
-                }
-                array[n++] = candidate;
-            }
-        }
-        return XArrays.resize(array, n);
+                (defaultValue != null) ? defaultValue : getDefaultValue(),
+                getMinimumValue(), getMaximumValue(), getUnit(),
+                (required != null) ? required : getMinimumOccurs() != 0);
     }
 
     /**
@@ -593,47 +510,33 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
      * {@linkplain ParameterDescriptor#getIdentifiers identifiers}.
      * All others elements are {@linkplain ParameterDescriptor#getAlias aliases}.
      * <p>
-     * The descriptor created by this method is flagged as <cite>mandatory</cite>, meaning that
-     * it will always appear in the list of parameter values that a user shall provides. However
-     * the value will be initialized with the given default value (if different than {@linkplain
-     * Double#NaN NaN}), so the user may not needs to supply explicitly a value.
+     * The {@code required} argument is handled as below:
+     * <ul>
+     *   <li><p>If {@code true}, then the descriptor created by this method is flagged as
+     *   <cite>mandatory</cite>, meaning that it will always appear in the list of parameter values
+     *   that a user shall provides. However the value will be initialized with the given default
+     *   value (if different than {@linkplain Double#NaN NaN}), so the user may not needs to supply
+     *   explicitly a value.</p></li>
+     *
+     *   <li><p>If {@code false}, then the descriptor created by this method is flagged as
+     *   <cite>optional</cite>, meaning that it will appear in the list of parameter values
+     *   only if set to a value different than the default value.</p></li>
+     * </ul>
      *
      * @param  identifiers  The parameter identifiers. Must contains at least one entry.
      * @param  defaultValue The default value for the parameter, or {@link Double#NaN} if none.
      * @param  minimum      The minimum parameter value, or {@link Double#NEGATIVE_INFINITY} if none.
      * @param  maximum      The maximum parameter value, or {@link Double#POSITIVE_INFINITY} if none.
      * @param  unit         The unit for default, minimum and maximum values.
+     * @param  required     {@code true} if the parameter is mandatory, or {@code false} if optional.
      * @return The descriptor for the given identifiers.
      */
     public static ParameterDescriptor<Double> createDescriptor(
             final ReferenceIdentifier[] identifiers, final double defaultValue,
-            final double minimum, final double maximum, final Unit<?> unit)
+            final double minimum, final double maximum, final Unit<?> unit, final boolean required)
     {
         return DefaultParameterDescriptor.create(toMap(identifiers),
-                defaultValue, minimum, maximum, unit, true);
-    }
-
-    /**
-     * Constructs a parameter descriptor for an optional floating point value. The identifiers
-     * are handled as described in the above {@link #createDescriptor createDescriptor} method.
-     * <p>
-     * The descriptor created by this method is flagged as <cite>optional</cite>, meaning that
-     * it will appear in the list of parameter values only if set to a value different than
-     * the default value.
-     *
-     * @param  identifiers  The parameter identifiers. Must contains at least one entry.
-     * @param  defaultValue The default value for the parameter, or {@link Double#NaN} if none.
-     * @param  minimum      The minimum parameter value, or {@link Double#NEGATIVE_INFINITY} if none.
-     * @param  maximum      The maximum parameter value, or {@link Double#POSITIVE_INFINITY} if none.
-     * @param  unit         The unit for default, minimum and maximum values.
-     * @return The descriptor for the given identifiers.
-     */
-    public static ParameterDescriptor<Double> createOptionalDescriptor(
-            final ReferenceIdentifier[] identifiers, final double defaultValue,
-            final double minimum, final double maximum, final Unit<?> unit)
-    {
-        return DefaultParameterDescriptor.create(toMap(identifiers),
-                defaultValue, minimum, maximum, unit, false);
+                defaultValue, minimum, maximum, unit, required);
     }
 
     /**
@@ -649,14 +552,63 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
      *       an {@linkplain ParameterDescriptorGroup#getIdentifiers identifiers}.</li>
      *   <li>All others are {@linkplain ParameterDescriptorGroup#getAlias aliases}.</li>
      * </ul>
+     * <p>
+     * <b>Note:</b> This method may modify in-place the given array. Do not pass a cached array.
      *
      * @param  identifiers  The operation identifiers. Most contains at least one entry.
+     * @param  excludes     The authorities to exclude from all parameters, or {@code null} if none.
      * @param  parameters   The set of parameters, or {@code null} or an empty array if none.
      * @return The descriptor for the given identifiers.
      */
-    public static ParameterDescriptorGroup createDescriptorGroup(
-            final ReferenceIdentifier[] identifiers, final GeneralParameterDescriptor[] parameters)
+    public static ParameterDescriptorGroup createDescriptorGroup(final ReferenceIdentifier[] identifiers,
+            final Citation[] excludes, final ParameterDescriptor<?>[] parameters)
     {
+        if (excludes != null) {
+            final Map<String,Object> properties = new HashMap<>();
+            for (int i=0; i<parameters.length; i++) {
+                @SuppressWarnings("unchecked")
+                final ParameterDescriptor<Double> param = (ParameterDescriptor) parameters[i];
+                if (param.getValueClass() != Double.class) {
+                    // To be strict, we should have done this check before the above cast.
+                    // However since generic types are implemented in Java by type erasure,
+                    // it actually doesn't hurt to perform the check after, so we can use
+                    // the 'param' field.
+                    continue;
+                }
+                properties.putAll(IdentifiedObjects.getProperties(param));
+                boolean forAlias = false;
+                boolean modified = false;
+                Object[] aliases;
+                do { // Executed exactly twice: once for identifier, than once for aliases.
+                    final String key = forAlias ? ALIAS_KEY : IDENTIFIERS_KEY;
+                    aliases = (Object[]) properties.get(key);
+                    if (aliases != null) {
+                        int n = 0;
+                        for (final Object alias : aliases) {
+                            if (alias instanceof ReferenceIdentifier) {
+                                if (XArrays.contains(excludes, ((ReferenceIdentifier) alias).getAuthority())) {
+                                    continue;
+                                }
+                            }
+                            aliases[n++] = alias;
+                        }
+                        // If at least one alias or identifier has been removed, remember that we
+                        // will need to create a new parameter in replacement to the provided one.
+                        if (n != aliases.length) {
+                            properties.put(key, Arrays.copyOf(aliases, n));
+                            modified = true;
+                        }
+                    }
+                } while ((forAlias = !forAlias) == true);
+                if (modified) {
+                    properties.put(NAME_KEY, aliases[0]); // In case the primary name was one of the excluded names.
+                    parameters[i] = new DefaultParameterDescriptor<>(properties, Double.class, null,
+                            param.getDefaultValue(), param.getMinimumValue(), param.getMaximumValue(),
+                            param.getUnit(), param.getMinimumOccurs() != 0);
+                }
+                properties.clear();
+            }
+        }
         return new DefaultParameterDescriptorGroup(toMap(identifiers), parameters);
     }
 

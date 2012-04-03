@@ -273,7 +273,7 @@ public class GeocentricTransform extends AbstractMathTransform implements Ellips
      * @param  descriptor The parameter descriptor.
      * @return A copy of the parameter values for this math transform.
      */
-    private ParameterValueGroup getParameterValues(final ParameterDescriptorGroup descriptor) {
+    final ParameterValueGroup getParameterValues(final ParameterDescriptorGroup descriptor) {
         final ParameterValue<?>[] parameters = new ParameterValue<?>[hasHeight ? 2 : 3];
         int index = 0;
         if (!hasHeight) {

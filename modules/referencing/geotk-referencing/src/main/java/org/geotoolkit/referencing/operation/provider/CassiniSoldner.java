@@ -112,17 +112,17 @@ public class CassiniSoldner extends MapProjection {
      */
     static {
         final Citation[] excludes = new Citation[] {Citations.NETCDF};
-        CENTRAL_MERIDIAN = Identifiers.CENTRAL_MERIDIAN.select(excludes, null,
+        CENTRAL_MERIDIAN = Identifiers.CENTRAL_MERIDIAN.select(excludes,
                 "Longitude of natural origin",      // EPSG
                 "central_meridian",                 // OGC
                 "Central_Meridian",                 // ESRI
                 "NatOriginLong");                   // GeoTIFF
-        LATITUDE_OF_ORIGIN = Identifiers.LATITUDE_OF_ORIGIN.select(excludes, null,
+        LATITUDE_OF_ORIGIN = Identifiers.LATITUDE_OF_ORIGIN.select(excludes,
                 "Latitude of natural origin",       // EPSG
                 "latitude_of_origin",               // OGC
                 "Latitude_Of_Origin",               // ESRI
                 "NatOriginLat");                    // GeoTIFF
-        SCALE_FACTOR = Identifiers.SCALE_FACTOR.select(excludes, null,
+        SCALE_FACTOR = Identifiers.SCALE_FACTOR.select(excludes,
                 "Scale factor at natural origin",   // EPSG
                 "ScaleAtNatOrigin");                // GeoTIFf
         FALSE_EASTING  = EquidistantCylindrical.FALSE_EASTING;
@@ -143,7 +143,7 @@ public class CassiniSoldner extends MapProjection {
             new NamedIdentifier(Citations.PROJ4,   "cass"),
             new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
                                 Vocabulary.Keys.CASSINI_SOLDNER_PROJECTION))
-        }, new ParameterDescriptor<?>[] {
+        }, null, new ParameterDescriptor<?>[] {
             SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
             CENTRAL_MERIDIAN, LATITUDE_OF_ORIGIN, SCALE_FACTOR,
             FALSE_EASTING, FALSE_NORTHING

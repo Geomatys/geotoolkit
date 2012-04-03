@@ -50,7 +50,8 @@ import org.geotoolkit.referencing.operation.MathTransformProvider;
  * for downloading and installing the grid data.
  *
  * @author Simon Reynard (Geomatys)
- * @version 3.12
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.20
  *
  * @since 3.12
  * @module
@@ -66,7 +67,7 @@ public class NTv2 extends MathTransformProvider {
      * parameter value. The file extension is typically {@code ".gsb"}. There is no default value.
      */
     public static final ParameterDescriptor<String> DIFFERENCE_FILE = new DefaultParameterDescriptor<>(
-            "Latitude and longitude difference file", String.class, null, null);
+            Citations.EPSG, "Latitude and longitude difference file", String.class, null, null, null, null, null, true);
 
     /**
      * The parameters group.
@@ -75,7 +76,7 @@ public class NTv2 extends MathTransformProvider {
         new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.EPSG, "NTv2"),
             new IdentifierCode (Citations.EPSG,  9615)
-        }, new ParameterDescriptor<?>[] {
+        }, null, new ParameterDescriptor<?>[] {
             DIFFERENCE_FILE
         });
 

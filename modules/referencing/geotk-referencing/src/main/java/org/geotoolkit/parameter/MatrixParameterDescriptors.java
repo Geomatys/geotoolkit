@@ -18,6 +18,7 @@
 package org.geotoolkit.parameter;
 
 import java.util.Map;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Collections;
 import java.util.Objects;
@@ -33,10 +34,12 @@ import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.InvalidParameterNameException;
 import org.opengis.referencing.operation.Matrix;
 
-import org.geotoolkit.util.ComparisonMode;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
+import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.resources.Errors;
 
 import static org.geotoolkit.util.Utilities.hash;
@@ -64,7 +67,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * }
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.18
+ * @version 3.20
  *
  * @see MatrixParameters
  *
@@ -96,8 +99,17 @@ public class MatrixParameterDescriptors extends DefaultParameterDescriptorGroup 
      * {@link MatrixParameters} instances.
      */
     @SuppressWarnings({"unchecked","rawtypes"})
-    private final ParameterDescriptor<Double>[] parameters =
-            new ParameterDescriptor[CACHE_SIZE * CACHE_SIZE];
+    private final ParameterDescriptor<Double>[] parameters = new ParameterDescriptor[CACHE_SIZE * CACHE_SIZE];
+
+    /**
+     * EPSG parameter names for a 3×3 affine transform.
+     *
+     * @since 3.20
+     */
+    private static final String[] EPSG_NAMES = {
+        "A1", "A2", "A0",
+        "B1", "B2", "B0"
+    };
 
     /**
      * The descriptor for the {@code "num_row"} parameter.
@@ -120,6 +132,13 @@ public class MatrixParameterDescriptors extends DefaultParameterDescriptorGroup 
     protected final char separator;
 
     /**
+     * Returns the property map for the given parameter name.
+     */
+    private static Map<String,Object> properties(final String name) {
+        return Collections.<String,Object>singletonMap(NAME_KEY, new NamedIdentifier(Citations.OGC, name));
+    }
+
+    /**
      * Constructs a parameter group with default name format matching
      * <cite><A HREF="http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html">Well
      * Known Text</A></cite> usages.
@@ -135,8 +154,8 @@ public class MatrixParameterDescriptors extends DefaultParameterDescriptorGroup 
          *       elements.
          */
         this(properties, new ParameterDescriptor<?>[] {
-            DefaultParameterDescriptor.create("num_row", DEFAULT_MATRIX_SIZE, 2, 50),
-            DefaultParameterDescriptor.create("num_col", DEFAULT_MATRIX_SIZE, 2, 50)
+            DefaultParameterDescriptor.create(properties("num_row"), DEFAULT_MATRIX_SIZE, 2, 50, true),
+            DefaultParameterDescriptor.create(properties("num_col"), DEFAULT_MATRIX_SIZE, 2, 50, true)
         }, "elt_", '_');
     }
 
@@ -253,8 +272,8 @@ public class MatrixParameterDescriptors extends DefaultParameterDescriptorGroup 
      * {@linkplain ParameterDescriptor#getMaximumValue maximum values}
      * given to the {@link #numRow} and {@link #numCol} parameters.
      *
-     * @param  row    The row indice.
-     * @param  column The column indice
+     * @param  row    The row index.
+     * @param  column The column index
      * @return The parameter descriptor for the specified matrix element.
      * @throws IndexOutOfBoundsException if {@code row} or {@code column} is out of bounds.
      */
@@ -269,8 +288,8 @@ public class MatrixParameterDescriptors extends DefaultParameterDescriptorGroup 
     /**
      * Implementation of the {@link #descriptor(int,int)} method.
      *
-     * @param  row    The row indice.
-     * @param  column The column indice
+     * @param  row    The row index.
+     * @param  column The column index
      * @param  numRow The maximum number of rows.
      * @param  numCol The maximum number of columns.
      * @return The parameter descriptor for the specified matrix element.
@@ -286,23 +305,37 @@ public class MatrixParameterDescriptors extends DefaultParameterDescriptorGroup 
         ParameterDescriptor<Double> param;
         if (row<CACHE_SIZE && column<CACHE_SIZE) {
             index = row*CACHE_SIZE + column;
-            param = parameters[index];
+            synchronized (parameters) {
+                param = parameters[index];
+            }
             if (param != null) {
                 return param;
             }
         }
         /*
          * Parameter not found in the cache. Create a new one and cache it for future reuse.
-         * Note that this cache is shared by all MatrixParameterDescriptors instance. There
-         * is no need to synchronize since it is not a big deal if the same parameter is
-         * constructed twice.
          */
-        param = new DefaultParameterDescriptor<>(
-                Collections.singletonMap(NAME_KEY, prefix + row + separator + column),
+        Map<String,Object> properties = properties(prefix + row + separator + column);
+        if (numRow == 3 && numCol == 3) {
+            final int i = row*3 + column;
+            if (i >= 0 && i < EPSG_NAMES.length) {
+                properties = new HashMap<>(properties);
+                properties.put(ALIAS_KEY, new NamedIdentifier(Citations.EPSG, EPSG_NAMES[i]));
+            }
+        }
+        param = new DefaultParameterDescriptor<>(properties,
                 Double.class, null, (row == column) ? 1.0 : 0.0,
                 null, null, Unit.ONE, true);
         if (index >= 0) {
-            parameters[index] = param;
+            synchronized (parameters) {
+                // Paranoiac check in case another thread created the parameter
+                // descriptor in same time= return the shared instance.
+                final ParameterDescriptor<Double> existing = parameters[index];
+                if (existing != null) {
+                    return existing;
+                }
+                parameters[index] = param;
+            }
         }
         return param;
     }
@@ -344,7 +377,7 @@ public class MatrixParameterDescriptors extends DefaultParameterDescriptorGroup 
 
     /**
      * Creates a new instance of {@linkplain MatrixParameters parameter values} with
-     * elements initialized to the 1 on the diagonal, and 0 everywere else. The returned
+     * elements initialized to the 1 on the diagonal, and 0 everywhere else. The returned
      * parameter group is extensible, i.e. the number of elements will depends upon the
      * value associated to the {@link #numRow} and {@link #numCol numCol} parameters.
      *

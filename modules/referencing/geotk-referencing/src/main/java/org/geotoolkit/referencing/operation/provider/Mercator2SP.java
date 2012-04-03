@@ -28,6 +28,7 @@ import org.opengis.referencing.ReferenceIdentifier;
 
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.operation.projection.Mercator;
+import org.geotoolkit.internal.referencing.DeprecatedName;
 import org.geotoolkit.internal.referencing.Identifiers;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
@@ -43,7 +44,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  *   <li>{@link org.geotoolkit.referencing.operation.projection.Mercator}</li>
  * </ul>
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Rueben Schulz (UBC)
  * @version 3.20
  *
@@ -65,7 +66,7 @@ public class Mercator2SP extends MapProjection {
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is [-180 &hellip; 180]&deg; and default value is 0&deg;.
      */
-    public static final ParameterDescriptor<Double> CENTRAL_MERIDIAN = Mercator1SP.CENTRAL_MERIDIAN;
+    public static final ParameterDescriptor<Double> CENTRAL_MERIDIAN;
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -75,12 +76,7 @@ public class Mercator2SP extends MapProjection {
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is [-90 &hellip; 90]&deg; and default value is 0&deg;.
      */
-    public static final ParameterDescriptor<Double> LATITUDE_OF_ORIGIN =
-            Identifiers.LATITUDE_OF_ORIGIN.select(
-                "latitude_of_origin",           // OGC
-                "Latitude_Of_Origin",           // ESRI
-                "Latitude of natural origin",   // EPSG
-                "NatOriginLat");                // GeoTIFF
+    public static final ParameterDescriptor<Double> LATITUDE_OF_ORIGIN;
 
     /**
      * The operation parameter descriptor for the standard parallel parameter value.
@@ -88,12 +84,7 @@ public class Mercator2SP extends MapProjection {
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is [-90 &hellip; 90]&deg; and default value is 0&deg;.
      */
-    public static final ParameterDescriptor<Double> STANDARD_PARALLEL =
-            Identifiers.STANDARD_PARALLEL_1.select(true,
-                "standard_parallel_1",                  // OGC
-                "Standard_Parallel_1",                  // ESRI
-                "standard_parallel[1]",                 // NetCDF
-                "Latitude of 1st standard parallel");   // EPSG
+    public static final ParameterDescriptor<Double> STANDARD_PARALLEL;
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -103,7 +94,7 @@ public class Mercator2SP extends MapProjection {
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is unrestricted and default value is 0 metre.
      */
-    public static final ParameterDescriptor<Double> FALSE_EASTING = Mercator1SP.FALSE_EASTING;
+    public static final ParameterDescriptor<Double> FALSE_EASTING;
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -113,7 +104,35 @@ public class Mercator2SP extends MapProjection {
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is unrestricted and default value is 0 metre.
      */
-    public static final ParameterDescriptor<Double> FALSE_NORTHING = Mercator1SP.FALSE_NORTHING;
+    public static final ParameterDescriptor<Double> FALSE_NORTHING;
+
+    /**
+     * Parameters creation, which must be done before to initialize the {@link #PARAMETERS} field.
+     */
+    static {
+        CENTRAL_MERIDIAN = Identifiers.CENTRAL_MERIDIAN.select(null,
+                "Longitude of natural origin",    // EPSG
+                "central_meridian",               // OGC
+                "Central_Meridian",               // ESRI
+                "longitude_of_projection_origin", // NetCDF
+                "NatOriginLong");                 // GeoTIFF
+        LATITUDE_OF_ORIGIN = Identifiers.LATITUDE_OF_ORIGIN.select(null,
+                "Latitude of natural origin",     // EPSG
+                "latitude_of_origin",             // OGC
+                "Latitude_Of_Origin",             // ESRI
+                "NatOriginLat");                  // GeoTIFF
+        STANDARD_PARALLEL = Identifiers.STANDARD_PARALLEL_1.select(true, null, null, null,
+                "Latitude of 1st standard parallel", // EPSG
+                "standard_parallel_1",               // OGC
+                "Standard_Parallel_1",               // ESRI
+                "standard_parallel[1]");             // NetCDF
+        FALSE_EASTING = Identifiers.FALSE_EASTING.select(null,
+                "False easting",    // EPSG
+                "FalseEasting");    // GeoTIFF
+        FALSE_NORTHING = Identifiers.FALSE_NORTHING.select(null,
+                "False northing",   // EPSG
+                "FalseNorthing");   // GeoTIFF
+    }
 
     /**
      * The parameters group.
@@ -122,14 +141,14 @@ public class Mercator2SP extends MapProjection {
         new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.OGC,    "Mercator_2SP"),
             new NamedIdentifier(Citations.EPSG,   "Mercator (variant B)"), // Starting from 7.6
-            new NamedIdentifier(Citations.EPSG,   "Mercator (2SP)"), // Prior to EPSG version 7.6
+            new DeprecatedName (Citations.EPSG,   "Mercator (2SP)"), // Prior to EPSG version 7.6
             new IdentifierCode (Citations.EPSG,    9805),
             new NamedIdentifier(Citations.NETCDF, "Mercator"),
             new NamedIdentifier(Citations.ESRI,   "Mercator"),
                      sameNameAs(Citations.GEOTIFF,    Mercator1SP.PARAMETERS),
                      sameNameAs(Citations.PROJ4,      Mercator1SP.PARAMETERS),
                      sameNameAs(Citations.GEOTOOLKIT, Mercator1SP.PARAMETERS)
-        }, new ParameterDescriptor<?>[] {
+        }, null, new ParameterDescriptor<?>[] {
             SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
             STANDARD_PARALLEL, LATITUDE_OF_ORIGIN, CENTRAL_MERIDIAN,
             FALSE_EASTING, FALSE_NORTHING

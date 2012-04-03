@@ -19,6 +19,7 @@ package org.geotoolkit.referencing.operation.provider;
 
 import net.jcip.annotations.Immutable;
 
+import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -73,7 +74,7 @@ public class Stereographic extends MapProjection {
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is [-180 &hellip; 180]&deg; and default value is 0&deg;.
      */
-    public static final ParameterDescriptor<Double> CENTRAL_MERIDIAN = EquidistantCylindrical.CENTRAL_MERIDIAN;
+    public static final ParameterDescriptor<Double> CENTRAL_MERIDIAN;
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -83,12 +84,7 @@ public class Stereographic extends MapProjection {
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is [-90 &hellip; 90]&deg; and default value is 0&deg;.
      */
-    public static final ParameterDescriptor<Double> LATITUDE_OF_ORIGIN =
-            Identifiers.LATITUDE_OF_ORIGIN.select(
-                "latitude_of_origin",            // OGC
-                "Latitude_Of_Origin",            // ESRI
-                "Latitude of natural origin",    // EPSG
-                "ProjCenterLat");                // GeoTIFF
+    public static final ParameterDescriptor<Double> LATITUDE_OF_ORIGIN;
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -99,7 +95,7 @@ public class Stereographic extends MapProjection {
      * <cite>remotesensing.org</cite>. Valid values range is (0 &hellip; &infin;) and
      * default value is 1.
      */
-    public static final ParameterDescriptor<Double> SCALE_FACTOR = Orthographic.SCALE_FACTOR;
+    public static final ParameterDescriptor<Double> SCALE_FACTOR;
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -109,7 +105,7 @@ public class Stereographic extends MapProjection {
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is unrestricted and default value is 0 metre.
      */
-    public static final ParameterDescriptor<Double> FALSE_EASTING = Orthographic.FALSE_EASTING;
+    public static final ParameterDescriptor<Double> FALSE_EASTING;
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -119,7 +115,30 @@ public class Stereographic extends MapProjection {
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is unrestricted and default value is 0 metre.
      */
-    public static final ParameterDescriptor<Double> FALSE_NORTHING = Orthographic.FALSE_NORTHING;
+    public static final ParameterDescriptor<Double> FALSE_NORTHING;
+
+    /**
+     * Parameters creation, which must be done before to initialize the {@link #PARAMETERS} field.
+     */
+    static {
+        CENTRAL_MERIDIAN = Identifiers.CENTRAL_MERIDIAN.select(null,
+                "Longitude of natural origin",       // EPSG
+                "central_meridian",                  // OGC
+                "Central_Meridian",                  // ESRI
+                "longitude_of_projection_origin",    // NetCDF
+                "ProjCenterLong");                   // GeoTIFF
+        LATITUDE_OF_ORIGIN = Identifiers.LATITUDE_OF_ORIGIN.select(null,
+                "Latitude of natural origin",        // EPSG
+                "latitude_of_origin",                // OGC
+                "Latitude_Of_Origin",                // ESRI
+                "ProjCenterLat");                    // GeoTIFF
+        SCALE_FACTOR = Identifiers.SCALE_FACTOR.select(false, null, null, null,
+                "Scale factor at natural origin",    // EPSG
+                "scale_factor_at_projection_origin", // NetCDF
+                "ScaleAtNatOrigin");                 // GeoTIFF
+        FALSE_EASTING  = Orthographic.FALSE_EASTING;
+        FALSE_NORTHING = Orthographic.FALSE_NORTHING;
+    }
 
     /**
      * The parameters group.
@@ -134,7 +153,10 @@ public class Stereographic extends MapProjection {
             new NamedIdentifier(Citations.PROJ4,   "stere"),
             new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
                                 Vocabulary.Keys.STEREOGRAPHIC_PROJECTION))
-        }, new ParameterDescriptor<?>[] {
+        }, new Citation[] {
+            Citations.EPSG
+        },
+        new ParameterDescriptor<?>[] {
             SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
             CENTRAL_MERIDIAN, LATITUDE_OF_ORIGIN, SCALE_FACTOR,
             FALSE_EASTING, FALSE_NORTHING

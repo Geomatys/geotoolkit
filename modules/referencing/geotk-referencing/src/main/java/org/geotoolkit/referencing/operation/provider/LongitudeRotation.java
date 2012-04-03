@@ -42,8 +42,8 @@ import static org.geotoolkit.internal.referencing.Identifiers.createDescriptorGr
 /**
  * The provider for "<cite>Longitude rotation</cite>" (EPSG:9601).
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.20
  *
  * @see org.geotoolkit.referencing.operation.transform.ProjectiveTransform
  *
@@ -64,7 +64,7 @@ public class LongitudeRotation extends MathTransformProvider {
             new NamedIdentifier[] {
                 new NamedIdentifier(Citations.EPSG, "Longitude offset")
             },
-            Double.NaN, -180, +180, NonSI.DEGREE_ANGLE);
+            Double.NaN, -180, +180, NonSI.DEGREE_ANGLE, true);
 
     /**
      * The parameters group.
@@ -73,7 +73,7 @@ public class LongitudeRotation extends MathTransformProvider {
             new ReferenceIdentifier[] {
                 new NamedIdentifier(Citations.EPSG, "Longitude rotation"),
                 new IdentifierCode (Citations.EPSG,  9601)
-            }, new ParameterDescriptor<?>[] {
+            }, null, new ParameterDescriptor<?>[] {
                 OFFSET
             });
 
