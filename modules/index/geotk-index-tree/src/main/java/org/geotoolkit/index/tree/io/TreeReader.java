@@ -40,8 +40,8 @@ import org.opengis.referencing.operation.TransformException;
  *      reader.setInput(input);
  *      reader.read(tree);
  *      reader.dispose();
- *      reader.reset(); 
- * 
+ *      reader.reset();
+ *
  *      reader.setInput(input2);...//for another input
  * }
  * </pre>
@@ -51,10 +51,10 @@ import org.opengis.referencing.operation.TransformException;
  *      TreeReader.read(tree, File);
  * }
  * <blockquote><font size=-1>
- * <strong>NOTE: tree root node will be exchange with read node from file</strong> 
+ * <strong>NOTE: tree root node will be exchange with read node from file</strong>
  * </font></blockquote>
  * </pre>
- * 
+ *
  * @author Rémi Marechal (Geomatys)
  * @author Johann Sorel (Geomatys)
  */
@@ -74,7 +74,7 @@ public class TreeReader {
      * - java.io.InputStream<br/>
      * - java.net.URL<br/>
      * - java.net.URI<br/>
-     * 
+     *
      * @param input
      * @throws IOException
      */
@@ -115,10 +115,10 @@ public class TreeReader {
 
     /**
      * Read and re-create R-Tree.
-     * 
+     *
      * @param tree  where result is affect.
      * @throws IOException
-     * @throws ClassNotFoundException 
+     * @throws ClassNotFoundException
      */
     public void read(final Tree tree) throws IOException, ClassNotFoundException, IllegalArgumentException, TransformException {
         ArgumentChecks.ensureNonNull("read : tree", tree);
@@ -140,21 +140,21 @@ public class TreeReader {
 
     /**
      * Read and create one appropriate tree {@code Node}.
-     * 
+     *
      * @param tree
-     * @param dips 
+     * @param dips
      * @param listNodes to stock all node.
      * @param index to stock all node with them children id.
      * @throws IOException
-     * @throws ClassNotFoundException 
+     * @throws ClassNotFoundException
      */
     private void readNode(final Tree tree, final DataInputStream dips, final List<Node> listNodes, final Map<Integer, Node> index) throws IOException, ClassNotFoundException, IllegalArgumentException, TransformException {
         ArgumentChecks.ensureNonNull("readNode : tree", tree);
         ArgumentChecks.ensureNonNull("readNode : dips", dips);
         ArgumentChecks.ensureNonNull("readNode : listNodes", listNodes);
         ArgumentChecks.ensureNonNull("readNode : index", index);
-        
-        if (dips.available() > 0) {
+
+        while (dips.available() > 0) {
             final int id = dips.readInt();
             final int dim = dips.readInt();
             double[] coordinates = new double[dim*2];
@@ -180,7 +180,6 @@ public class TreeReader {
             result.setUserProperty("tabidchildren", tabChild);
             index.put(id, result);
             listNodes.add(result);
-            readNode(tree, dips, listNodes, index);
         }
     }
 
@@ -198,11 +197,11 @@ public class TreeReader {
 
     /**
      * To read one time without TreeReader re-utilization.
-     * 
+     *
      * @param tree
      * @param input
      * @throws IOException
-     * @throws ClassNotFoundException 
+     * @throws ClassNotFoundException
      */
     public static void read(final Tree tree, final Object input) throws IOException, ClassNotFoundException, IllegalArgumentException, TransformException {
         ArgumentChecks.ensureNonNull("static read : tree", tree);

@@ -35,32 +35,32 @@ import org.opengis.referencing.operation.TransformException;
 public interface Tree {
 
     /**
-     * Find some {@code Entry} which intersect regionSearch parameter 
+     * Find some {@code Entry} which intersect regionSearch parameter
      * and add them into result {@code List} parameter.
-     * 
+     *
      * <blockquote><font size=-1>
-     * <strong>NOTE: if no result found, the list passed in parameter is unchanged.</strong> 
+     * <strong>NOTE: if no result found, the list passed in parameter is unchanged.</strong>
      * </font></blockquote>
-     * 
+     *
      * @param regionSearch Define the region to find Shape within tree.
      * @param result List of Entr(y)(ies).
-     * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS 
+     * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
      */
     void search(Envelope regionSearch, List<Envelope> result) throws IllegalArgumentException;
 
     /**
      * Insert a {@code Entry} into Rtree.
-     * 
+     *
      * @param Entry to insert into tree.
-     * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS 
+     * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
      */
     void insert(Envelope entry) throws IllegalArgumentException, TransformException;
 
     /**
      * Find a {@code Envelope} (entry) into the tree and delete it.
-     * 
+     *
      * @param Entry to delete.
-     * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS 
+     * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
      */
     void delete(Envelope entry) throws IllegalArgumentException, TransformException;
 
@@ -73,36 +73,36 @@ public interface Tree {
      * @return tree trunk.
      */
     Node getRoot();
-    
+
     /**
      * Affect a new root {@code Node}.
-     * 
+     *
      * @param root new root.
      */
     void setRoot(Node root);
-    
+
     /**
      * @return associate crs.
      */
     CoordinateReferenceSystem getCrs();
-    
+
     /**
      * @return Calculator to effectuate Tree compute.
      */
     Calculator getCalculator();
-    
+
     /**
      * @return Calculator to effectuate Tree compute.
      */
     NodeFactory getNodeFactory();
-    
+
     /**Create a node in accordance with this properties.
-     *  
+     *
      * @param tree pointer on Tree.
      * @param parent pointer on parent {@code Node}.
      * @param children sub {@code Node}.
-     * @param entries entries {@code List} to add in this node. 
-     * @param coordinates lower upper bounding box coordinates table. 
+     * @param entries entries {@code List} to add in this node.
+     * @param coordinates lower upper bounding box coordinates table.
      * @return appropriate Node from tree.
      */
     Node createNode(Tree tree, Node parent, List<Node> listChildren, List<Envelope> listEntries, double ...coordinates) throws IllegalArgumentException, TransformException;
