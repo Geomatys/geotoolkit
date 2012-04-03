@@ -10,7 +10,7 @@ import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.index.tree.TreeFactory;
 import org.geotoolkit.index.tree.basic.SplitCase;
 import org.geotoolkit.index.tree.calculator.Calculator;
-import org.geotoolkit.index.tree.calculator.DefaultCalculator;
+
 import org.geotoolkit.index.tree.io.TreeReader;
 import org.geotoolkit.index.tree.io.TreeWriter;
 import org.geotoolkit.index.tree.nodefactory.TreeNodeFactory;
@@ -41,7 +41,7 @@ public class TreeDemo {
         final CoordinateReferenceSystem crs = DefaultEngineeringCRS.CARTESIAN_2D;
 
         //Create Calculator. Be careful to choice calculator adapted from crs---
-        final Calculator calculator = DefaultCalculator.CARTESIAN_2D;
+        //final Calculator calculator = DefaultCalculator.CARTESIAN_2D;
 
         //In this demo basic r-tree requires split case. "LINEAR" or "QUADRATIC"
         final SplitCase splitcase = SplitCase.QUADRATIC;
@@ -50,7 +50,7 @@ public class TreeDemo {
         final NodeFactory nodefactory = TreeNodeFactory.DEFAULT_FACTORY;
 
         //creating tree (R-Tree)------------------------------------------------
-        final Tree tree = TreeFactory.createBasicRTree(4, crs, splitcase, calculator, nodefactory);
+        final Tree tree = TreeFactory.createBasicRTree(4, crs, splitcase, nodefactory);
 
         //Create an entry to add in tree----------------------------------------
         //NOTE : entry are GeneralEnvelope type---------------------------------
@@ -85,10 +85,10 @@ public class TreeDemo {
          */
 
         final CoordinateReferenceSystem anotherCrs = DefaultEngineeringCRS.CARTESIAN_3D;
-        final Calculator anotherCalculator = DefaultCalculator.CARTESIAN_3D;
+        //final Calculator anotherCalculator = DefaultCalculator.CARTESIAN_3D;
 
         //NOTE : no Splitcase required because split made is single in this tree case and contained in Tree body.
-        final Tree anotherTree = TreeFactory.createStarRTree(3, anotherCrs, anotherCalculator, nodefactory);
+        final Tree anotherTree = TreeFactory.createStarRTree(3, anotherCrs, nodefactory);
 
         //Same methods ---------------------------------------------------------
         final GeneralEnvelope anotherEntry = new GeneralEnvelope(anotherCrs);
@@ -130,7 +130,7 @@ public class TreeDemo {
         treeReader.setInput(fil);
 
         //Create an R-Tree to re-build read result------------------------------
-        final Tree resultTree = TreeFactory.createBasicRTree(4, crs, splitcase, calculator, nodefactory);
+        final Tree resultTree = TreeFactory.createBasicRTree(4, crs, splitcase, nodefactory);
 
         //read (read result pushing in result tree)-----------------------------
         treeReader.read(resultTree);

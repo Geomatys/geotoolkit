@@ -19,11 +19,7 @@ package org.geotoolkit.lucene.index;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.logging.Level;
 
 import org.apache.lucene.analysis.Analyzer;
@@ -73,7 +69,7 @@ public class LuceneIndexSearcher extends IndexLucene {
     /**
      * A map of cached request
      */
-    private final Map<SpatialQuery, List<String>> cachedQueries = new HashMap<SpatialQuery, List<String>>();
+    private final Map<SpatialQuery, Set<String>> cachedQueries = new HashMap<SpatialQuery, Set<String>>();
 
     /**
      * The maximum size of the map of queries.
@@ -278,16 +274,16 @@ public class LuceneIndexSearcher extends IndexLucene {
      *
      * @return A List of metadata identifiers.
      */
-    public List<String> doSearch(final SpatialQuery spatialQuery) throws SearchingException {
+    public Set<String> doSearch(final SpatialQuery spatialQuery) throws SearchingException {
         try {
             final long start = System.currentTimeMillis();
-            List<String> results = new ArrayList<String>();
+            final Set<String> results = new LinkedHashSet<String>();
 
             //we look for a cached Query
             if (isCacheEnabled && cachedQueries.containsKey(spatialQuery)) {
-                results = cachedQueries.get(spatialQuery);
+                final Set<String> cachedResults = cachedQueries.get(spatialQuery);
                 LOGGER.log(logLevel, "returning result from cache ({0} matching documents)", results.size());
-                return results;
+                return cachedResults;
             }
 
             int maxRecords = searcher.maxDoc();
@@ -373,7 +369,7 @@ public class LuceneIndexSearcher extends IndexLucene {
                 } else {
                     hits1 = searcher.search(query, filter, maxRecords);
                 }
-                final List<String> unWanteds = new ArrayList<String>();
+                final Set<String> unWanteds = new LinkedHashSet<String>();
                 for (ScoreDoc doc : hits1.scoreDocs) {
                     unWanteds.add(identifiers.get(doc.doc));
                 }
@@ -403,8 +399,8 @@ public class LuceneIndexSearcher extends IndexLucene {
                 }
                 
                 for (SpatialQuery sub : spatialQuery.getSubQueries()) {
-                    final List<String> subResults = doSearch(sub);
-                    final List<String> toRemove   = new ArrayList<String>();
+                    final Set<String> subResults = doSearch(sub);
+                    final Set<String> toRemove   = new LinkedHashSet<String>();
                     if (operator == SerialChainFilter.AND) {
                         for (String r : results) {
                             if (!subResults.contains(r)) {
@@ -412,11 +408,8 @@ public class LuceneIndexSearcher extends IndexLucene {
                             }
                         }
                     } else if (operator == SerialChainFilter.OR){
-                        for (String r : subResults) {
-                            if (!results.contains(r)) {
-                                results.add(r);
-                            }
-                        }
+                        results.addAll(subResults);
+                        
                     } else {
                         LOGGER.warning("unimplemented case in doSearch");
                     }
@@ -443,7 +436,7 @@ public class LuceneIndexSearcher extends IndexLucene {
      * @param query a Lucene spatial query.
      * @param results A list of metadataIdentifier.
      */
-    private void putInCache(final SpatialQuery query, final List<String> results) {
+    private void putInCache(final SpatialQuery query, final Set<String> results) {
         if (isCacheEnabled) {
             // if we had reach the maximum cache size we remove the first request
             if (cachedQueries.size() >= MAX_CACHED_QUERIES_SIZE) {

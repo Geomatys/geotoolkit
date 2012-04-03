@@ -57,7 +57,6 @@ import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
 import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.index.tree.TreeFactory;
 import org.geotoolkit.index.tree.calculator.Calculator;
-import org.geotoolkit.index.tree.calculator.DefaultCalculator;
 import org.geotoolkit.index.tree.nodefactory.NodeFactory;
 import org.geotoolkit.index.tree.nodefactory.TreeNodeFactory;
 import org.geotoolkit.lucene.filter.SerialChainFilter;
@@ -119,13 +118,13 @@ public class LuceneTest {
         treeCrs = CRS.decode("EPSG:3857");
         
         //Create Calculator. Be careful to choice calculator adapted from crs---
-        final Calculator calculator = DefaultCalculator.CALCULATOR_2D;
+        //final Calculator calculator = DefaultCalculator.CALCULATOR_2D;
         
         //Create NodeFactory adapted about caller uses.
         final NodeFactory nodefactory = TreeNodeFactory.DEFAULT_FACTORY;
         
         //creating tree (R-Tree)------------------------------------------------
-        rTree = TreeFactory.createStarRTree(10, treeCrs, calculator, nodefactory);
+        rTree = TreeFactory.createStarRTree(10, treeCrs, nodefactory);
         
         final Analyzer analyzer = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_35);
         IndexWriterConfig config = new IndexWriterConfig(org.apache.lucene.util.Version.LUCENE_35, analyzer);

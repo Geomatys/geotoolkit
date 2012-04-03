@@ -29,8 +29,6 @@ import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.util.Version;
 import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.index.tree.TreeFactory;
-import org.geotoolkit.index.tree.calculator.Calculator;
-import org.geotoolkit.index.tree.calculator.DefaultCalculator;
 import org.geotoolkit.index.tree.io.TreeReader;
 import org.geotoolkit.index.tree.io.TreeWriter;
 import org.geotoolkit.index.tree.nodefactory.NodeFactory;
@@ -151,15 +149,14 @@ public abstract class IndexLucene {
     
     private Tree buildNewTree() {
         try {
-            //Create Calculator. Be careful to choice calculator adapted from crs---
-            final Calculator calculator = DefaultCalculator.CALCULATOR_2D;
+;
 
             //Create NodeFactory adapted about caller uses.
             final NodeFactory nodefactory = TreeNodeFactory.DEFAULT_FACTORY;
         
             final CoordinateReferenceSystem crs = CRS.decode("EPSG:3857");
             //creating tree (R-Tree)------------------------------------------------
-            return TreeFactory.createStarRTree(10, crs, calculator, nodefactory);
+            return TreeFactory.createStarRTree(10, crs, nodefactory);
             
         } catch (FactoryException ex) {
             LOGGER.log(Level.WARNING, "Unable to get the EPSG:3857 CRS", ex);
