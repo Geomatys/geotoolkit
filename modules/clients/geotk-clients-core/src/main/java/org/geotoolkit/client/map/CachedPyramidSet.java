@@ -269,7 +269,7 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
                     PACK_MAP.put(channel.getId(), pack);
 
                     final HttpRequest request = new DefaultHttpRequest(
-                            HttpVersion.HTTP_1_1, HttpMethod.GET, getServer().getURL() + pack.requestPath);
+                            HttpVersion.HTTP_1_1, HttpMethod.GET, pack.requestPath);
                     request.setHeader(HttpHeaders.Names.HOST, host);
                     request.setHeader(HttpHeaders.Names.CONNECTION, HttpHeaders.Values.CLOSE);
                     request.setHeader(HttpHeaders.Names.ACCEPT_ENCODING, HttpHeaders.Values.BYTES);
