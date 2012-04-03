@@ -17,10 +17,7 @@
  */
 package org.geotoolkit.index.tree.star;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import static org.geotoolkit.index.tree.DefaultTreeUtils.getMedian;
@@ -67,7 +64,7 @@ public class StarRTree extends DefaultAbstractTree {
      * {@inheritDoc}
      */
     @Override
-    public void search(final Envelope regionSearch, final List<Envelope> result) throws IllegalArgumentException{
+    public void search(final Envelope regionSearch, final Collection<Envelope> result) throws IllegalArgumentException{
         ArgumentChecks.ensureNonNull("search : region search", regionSearch);
         ArgumentChecks.ensureNonNull("search : result", result);
         if(!CRS.equalsIgnoreMetadata(crs, regionSearch.getCoordinateReferenceSystem())){
@@ -122,7 +119,7 @@ public class StarRTree extends DefaultAbstractTree {
      * @param regionSearch area of search.
      * @param result {@code List} where is add search resulting.
      */
-    private static void nodeSearch(final Node candidate, final Envelope regionSearch, final List<Envelope> resultList){
+    private static void nodeSearch(final Node candidate, final Envelope regionSearch, final Collection<Envelope> resultList){
         final Envelope bound = candidate.getBoundary();
         if(bound != null){
             if(regionSearch == null){

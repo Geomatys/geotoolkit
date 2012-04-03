@@ -80,7 +80,7 @@ public class HilbertRTree extends DefaultAbstractTree {
      * {@inheritDoc}
      */
     @Override
-    public void search(final Envelope regionSearch, final List<Envelope> result) throws IllegalArgumentException {
+    public void search(final Envelope regionSearch, final Collection<Envelope> result) throws IllegalArgumentException {
         ArgumentChecks.ensureNonNull("search : region search", regionSearch);
         ArgumentChecks.ensureNonNull("search : result", result);
         if(!CRS.equalsIgnoreMetadata(crs, regionSearch.getCoordinateReferenceSystem())){
@@ -132,7 +132,7 @@ public class HilbertRTree extends DefaultAbstractTree {
      * @param regionSearch area of search.
      * @param result {@code List} where is add search resulting.
      */
-    public static void searchHilbertNode(final Node candidate, final Envelope regionSearch, final List<Envelope> resultList) {
+    public static void searchHilbertNode(final Node candidate, final Envelope regionSearch, final Collection<Envelope> resultList) {
 
         final Envelope bound = candidate.getBoundary();
         if(bound != null){

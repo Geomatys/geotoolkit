@@ -56,7 +56,6 @@ import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
 import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.index.tree.TreeFactory;
-import org.geotoolkit.index.tree.calculator.Calculator;
 import org.geotoolkit.index.tree.nodefactory.NodeFactory;
 import org.geotoolkit.index.tree.nodefactory.TreeNodeFactory;
 import org.geotoolkit.lucene.filter.SerialChainFilter;
@@ -312,26 +311,26 @@ public class LuceneTest {
         int nbResults = docs.size();
         LOGGER.log(Level.FINER, "BBOX:BBOX 1 CRS=4326: nb Results: {0}", nbResults);
         
-        List<String> results = new ArrayList<String>();
+        List<Integer> results = new ArrayList<Integer>();
         for (int i = 0; i < nbResults; i++) {
             NamedEnvelope doc = (NamedEnvelope) docs.get(i);
-            String name =  doc.getName();
-            results.add(name);
-            LOGGER.log(Level.FINER, "\tid: {0}", name);
+            int id =  doc.getId();
+            results.add(id);
+            LOGGER.log(Level.FINER, "\tid: {0}", id);
         }
         
         //we verify that we obtain the correct results
         assertEquals(nbResults, 10);
-        assertTrue(results.contains("0"));
-        assertTrue(results.contains("1"));
-        assertTrue(results.contains("2"));
-        assertTrue(results.contains("3"));
-        assertTrue(results.contains("7"));
-        assertTrue(results.contains("8"));
-        assertTrue(results.contains("10"));
-        assertTrue(results.contains("12"));
-        assertTrue(results.contains("13"));
-        assertTrue(results.contains("14"));
+        assertTrue(results.contains(0));
+        assertTrue(results.contains(1));
+        assertTrue(results.contains(2));
+        assertTrue(results.contains(3));
+        assertTrue(results.contains(7));
+        assertTrue(results.contains(8));
+        assertTrue(results.contains(10));
+        assertTrue(results.contains(12));
+        assertTrue(results.contains(13));
+        assertTrue(results.contains(14));
      
         /*
          * The same box in a diferent crs
@@ -351,26 +350,26 @@ public class LuceneTest {
         nbResults = docs.size();
         LOGGER.log(Level.FINER, "BBOX:BBOX 1 CRS= 3395: nb Results: {0}", nbResults);
 
-        results = new ArrayList<String>();
+        results = new ArrayList<Integer>();
         for (int i = 0; i < nbResults; i++) {
             NamedEnvelope doc = (NamedEnvelope) docs.get(i);
-            String name =  doc.getName();
+            Integer name =  doc.getId();
             results.add(name);
             LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
 
         //we verify that we obtain the correct results
         assertEquals(nbResults, 10);
-        assertTrue(results.contains("0"));
-        assertTrue(results.contains("1"));
-        assertTrue(results.contains("2"));
-        assertTrue(results.contains("3"));
-        assertTrue(results.contains("7"));
-        assertTrue(results.contains("8"));
-        assertTrue(results.contains("10"));
-        assertTrue(results.contains("12"));
-        assertTrue(results.contains("13"));
-        assertTrue(results.contains("14"));
+        assertTrue(results.contains(0));
+        assertTrue(results.contains(1));
+        assertTrue(results.contains(2));
+        assertTrue(results.contains(3));
+        assertTrue(results.contains(7));
+        assertTrue(results.contains(8));
+        assertTrue(results.contains(10));
+        assertTrue(results.contains(12));
+        assertTrue(results.contains(13));
+        assertTrue(results.contains(14));
 
         /*
          * second bbox
@@ -388,25 +387,25 @@ public class LuceneTest {
         nbResults = docs.size();
         LOGGER.log(Level.FINER, "BBOX:BBOX 2 CRS= 4326: nb Results: {0}", nbResults);
         
-        results = new ArrayList<String>();
+        results = new ArrayList<Integer>();
         for (int i = 0; i < nbResults; i++) {
             NamedEnvelope doc = (NamedEnvelope) docs.get(i);
-            String name =  doc.getName();
+            int name =  doc.getId();
             results.add(name);
             LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
          //we verify that we obtain the correct results
         assertEquals(nbResults, 9);
-        assertTrue(results.contains("3"));
-        assertTrue(results.contains("4"));
-        assertTrue(results.contains("9"));
-        assertTrue(results.contains("7"));
-        assertTrue(results.contains("8"));
-        assertTrue(results.contains("11"));
-        assertTrue(results.contains("12"));
-        assertTrue(results.contains("13"));
-        assertTrue(results.contains("14"));
+        assertTrue(results.contains(3));
+        assertTrue(results.contains(4));
+        assertTrue(results.contains(9));
+        assertTrue(results.contains(7));
+        assertTrue(results.contains(8));
+        assertTrue(results.contains(11));
+        assertTrue(results.contains(12));
+        assertTrue(results.contains(13));
+        assertTrue(results.contains(14));
         
         /*
          * third bbox
@@ -424,17 +423,17 @@ public class LuceneTest {
         nbResults = docs.size();
         LOGGER.log(Level.FINER, "BBOX:BBOX 3 CRS= 4326: nb Results: {0}", nbResults);
         
-        results = new ArrayList<String>();
+        results = new ArrayList<Integer>();
         for (int i = 0; i < nbResults; i++) {
             NamedEnvelope doc = (NamedEnvelope) docs.get(i);
-            String name =  doc.getName();
+            int name =  doc.getId();
             results.add(name);
             LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
         
          //we verify that we obtain the correct results
         assertEquals(nbResults, 1);
-        assertTrue(results.contains("11"));
+        assertTrue(results.contains(11));
     }
 
     /**

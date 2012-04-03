@@ -17,7 +17,6 @@
 package org.geotoolkit.lucene.filter;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 import java.util.logging.Level;
@@ -27,6 +26,7 @@ import javax.measure.unit.Unit;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
+import java.util.*;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.FieldSelector;
@@ -42,7 +42,6 @@ import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.index.tree.Tree;
-import org.geotoolkit.lucene.index.IDFieldSelector;
 import org.geotoolkit.lucene.tree.NamedEnvelope;
 import org.geotoolkit.lucene.tree.TreeIndexReaderWrapper;
 import org.geotoolkit.measure.Units;
@@ -102,7 +101,7 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter{
     @Override
     public DocIdSet getDocIdSet(final IndexReader reader) throws IOException {
 
-        final List<String> treeMatching = new ArrayList<String>();
+        final Set<Integer> treeMatching = new HashSet<Integer>();
         boolean treeSearch = false;
         boolean reverse = false;
         if (reader instanceof TreeIndexReaderWrapper) {
@@ -208,7 +207,7 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter{
                     LOGGER.log(Level.WARNING, "not a bin spatial op:{0}", filter.getClass().getName());
                 }
                 for (org.opengis.geometry.Envelope result : results) {
-                    treeMatching.add(((NamedEnvelope) result).getName());
+                    treeMatching.add(((NamedEnvelope) result).getId());
                 }
             } else {
                 LOGGER.warning("Null R-tree in spatial search");
@@ -219,10 +218,10 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter{
         final TermDocs termDocs;
         termDocs = reader.termDocs();
         termDocs.seek(META_FIELD);
-
+        
         while (termDocs.next()){
             final int docId = termDocs.doc();
-            boolean match = treeMatching.contains(docId + "");
+            boolean match = treeMatching.contains(docId);
             if (treeSearch && reverse && !match) {
                 set.getBitSet().set(docId);
                 

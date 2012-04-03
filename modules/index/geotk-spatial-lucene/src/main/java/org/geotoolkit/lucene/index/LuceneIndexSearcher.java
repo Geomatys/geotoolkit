@@ -356,9 +356,7 @@ public class LuceneIndexSearcher extends IndexLucene {
                 }
                 for (ScoreDoc doc : hits2.scoreDocs) {
                     final String id = identifiers.get(doc.doc);
-                    if (!results.contains(id)) {
-                        results.add(id);
-                    }
+                    results.add(id);
                 }
 
             // for a NOT we need to perform many request
@@ -400,20 +398,20 @@ public class LuceneIndexSearcher extends IndexLucene {
                 
                 for (SpatialQuery sub : spatialQuery.getSubQueries()) {
                     final Set<String> subResults = doSearch(sub);
-                    final Set<String> toRemove   = new LinkedHashSet<String>();
                     if (operator == SerialChainFilter.AND) {
+                        final Set<String> toRemove   = new HashSet<String>();
                         for (String r : results) {
                             if (!subResults.contains(r)) {
                                 toRemove.add(r);
                             }
                         }
+                        results.removeAll(toRemove);
                     } else if (operator == SerialChainFilter.OR){
                         results.addAll(subResults);
                         
                     } else {
                         LOGGER.warning("unimplemented case in doSearch");
                     }
-                    results.removeAll(toRemove);
                 }
             }
 

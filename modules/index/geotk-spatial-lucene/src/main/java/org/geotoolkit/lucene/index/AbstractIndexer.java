@@ -467,7 +467,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
         if (rTree != null) {
             final Envelope jtsBound = geom.getEnvelopeInternal();
             try {
-                final String name     =  doc.get("docid");
+                final int id     =  Integer.parseInt(doc.get("docid"));
                 final String epsgCode = SRIDGenerator.toSRS(geom.getSRID(), SRIDGenerator.Version.V1);
                 final CoordinateReferenceSystem geomCRS = CRS.decode(epsgCode);
                 final GeneralEnvelope bound = new GeneralEnvelope(geomCRS);
@@ -475,7 +475,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
                 bound.setRange(1, jtsBound.getMinY(), jtsBound.getMaxY());
             
                 // reproject to cartesian CRS
-                final NamedEnvelope namedBound = new NamedEnvelope(Envelopes.transform(bound, rTree.getCrs()), name);
+                final NamedEnvelope namedBound = new NamedEnvelope(Envelopes.transform(bound, rTree.getCrs()), id);
                 rTree.insert(namedBound);
             } catch (TransformException ex) {
                 LOGGER.log(Level.WARNING, "Unable to insert envelope in R-Tree.", ex);

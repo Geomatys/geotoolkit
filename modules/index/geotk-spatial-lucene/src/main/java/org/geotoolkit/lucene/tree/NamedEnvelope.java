@@ -35,7 +35,7 @@ public class NamedEnvelope extends GeneralEnvelope implements Externalizable {
     /**
      * The identifier of the envelope.
      */
-    private String name;
+    private int id;
     
     /**
      * Empty constructor required by the externalizable pattern.
@@ -47,24 +47,24 @@ public class NamedEnvelope extends GeneralEnvelope implements Externalizable {
     /**
      * Build a new envelope with the specified CRS and name.
      */
-    public NamedEnvelope(final CoordinateReferenceSystem crs, final String name) {
+    public NamedEnvelope(final CoordinateReferenceSystem crs, final int id) {
         super(crs);
-        this.name = name;
+        this.id = id;
     }
     
     /**
      * Build a new envelope from the specified one and affect a name to it.
      */
-    public NamedEnvelope(final Envelope env, final String name ) {
+    public NamedEnvelope(final Envelope env, final int id ) {
         super(env);
-        this.name = name;
+        this.id = id;
     }
 
     /**
      * @return the name / identifier bounded to the envelope
      */
-    public String getName() {
-        return name;
+    public int getId() {
+        return id;
     }
 
     /**
@@ -76,9 +76,7 @@ public class NamedEnvelope extends GeneralEnvelope implements Externalizable {
         stream.writeDouble(super.getLower(1));
         stream.writeDouble(super.getUpper(0));
         stream.writeDouble(super.getUpper(1));
-        final byte[] bytes = name.getBytes("UTF-8");
-        stream.writeInt(bytes.length);
-        stream.write(bytes);
+        stream.writeInt(id);
     }
 
     /**
@@ -90,11 +88,8 @@ public class NamedEnvelope extends GeneralEnvelope implements Externalizable {
         final double miny = stream.readDouble();
         final double maxx = stream.readDouble();
         final double maxy = stream.readDouble();
-        final int length = stream.readInt();
-        final byte[] bytes = new byte[length];
-        stream.read(bytes);
-        final String envName = new String(bytes, "UTF-8");
-        this.name = envName;
+        final int id      = stream.readInt();
+        this.id = id;
         setRange(0, minx, maxx);
         setRange(1, miny, maxy);
     }
