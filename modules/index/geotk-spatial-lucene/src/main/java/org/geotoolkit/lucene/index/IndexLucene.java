@@ -149,17 +149,16 @@ public abstract class IndexLucene {
     
     private Tree buildNewTree() {
         try {
-;
 
             //Create NodeFactory adapted about caller uses.
             final NodeFactory nodefactory = TreeNodeFactory.DEFAULT_FACTORY;
         
-            final CoordinateReferenceSystem crs = CRS.decode("EPSG:3857");
+            final CoordinateReferenceSystem crs = CRS.decode("CRS:84");
             //creating tree (R-Tree)------------------------------------------------
             return TreeFactory.createStarRTree(10, crs, nodefactory);
             
         } catch (FactoryException ex) {
-            LOGGER.log(Level.WARNING, "Unable to get the EPSG:3857 CRS", ex);
+            LOGGER.log(Level.WARNING, "Unable to get the CRS:84 CRS", ex);
         }
         return null;
     }

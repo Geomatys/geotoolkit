@@ -451,9 +451,11 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
         Geometry geom;
         if (polygons.length == 1) {
             geom = polygons[0];
-        } else {
+        } else if (polygons.length > 1 ){
             geom = GF.createGeometryCollection(polygons);
             geom.setSRID(srid);
+        } else {
+            return;
         }
         addGeometry(doc, geom, rTree);
     }
