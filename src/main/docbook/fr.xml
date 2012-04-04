@@ -28,5 +28,6 @@
   </info>
 
   <xi:include href="fr/introduction.xml"/>
+  <xi:include href="fr/standards.xml"/>
 
 </book>
