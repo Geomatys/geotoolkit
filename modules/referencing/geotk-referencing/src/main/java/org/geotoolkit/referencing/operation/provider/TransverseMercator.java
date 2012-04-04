@@ -70,9 +70,9 @@ public class TransverseMercator extends MapProjection {
      */
     public static final ParameterDescriptor<Double> CENTRAL_MERIDIAN =
             Identifiers.CENTRAL_MERIDIAN.select(null,
+                "Longitude of natural origin",    // EPSG
                 "central_meridian",               // OGC
                 "Central_Meridian",               // ESRI
-                "Longitude of natural origin",    // EPSG
                 "longitude_of_central_meridian",  // NetCDF
                 "NatOriginLong");                 // GeoTIFF
 
@@ -126,13 +126,13 @@ public class TransverseMercator extends MapProjection {
     public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
         new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.OGC,      "Transverse_Mercator"),
-            new NamedIdentifier(Citations.ESRI,     "Transverse_Mercator"),
-            new NamedIdentifier(Citations.ESRI,     "Gauss_Kruger"),
             new NamedIdentifier(Citations.EPSG,     "Transverse Mercator"),
             new NamedIdentifier(Citations.EPSG,     "Gauss-Kruger"),
             new NamedIdentifier(Citations.EPSG,     "Gauss-Boaga"),
             new NamedIdentifier(Citations.EPSG,     "TM"),
             new IdentifierCode (Citations.EPSG,      9807),
+            new NamedIdentifier(Citations.ESRI,     "Transverse_Mercator"),
+            new NamedIdentifier(Citations.ESRI,     "Gauss_Kruger"),
             new NamedIdentifier(Citations.NETCDF,   "TransverseMercator"),
             new NamedIdentifier(Citations.GEOTIFF,  "CT_TransverseMercator"),
             new IdentifierCode (Citations.GEOTIFF,   1),

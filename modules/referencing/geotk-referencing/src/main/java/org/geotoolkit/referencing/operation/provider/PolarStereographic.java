@@ -89,11 +89,7 @@ public class PolarStereographic extends Stereographic {
                 "Longitude of natural origin",  // EPSG
                 "central_meridian",             // OGC
                 "StraightVertPoleLong");        // GeoTIFF
-        // Same as Mercator1SP except for the exclusion list.
-        LATITUDE_OF_ORIGIN = Identifiers.LATITUDE_OF_ORIGIN.select(excludes,
-                "Latitude of natural origin",   // EPSG
-                "latitude_of_origin",           // OGC
-                "NatOriginLat");                // GeoTIFF
+        LATITUDE_OF_ORIGIN = Mercator1SP.LATITUDE_OF_ORIGIN;
 
         PARAMETERS = Identifiers.createDescriptorGroup(
             new ReferenceIdentifier[] {
@@ -105,9 +101,12 @@ public class PolarStereographic extends Stereographic {
                 sameNameAs(Citations.PROJ4,      Stereographic.PARAMETERS),
                 sameNameAs(Citations.GEOTOOLKIT, Stereographic.PARAMETERS)
             }, excludes, new ParameterDescriptor<?>[] {
-                SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
+                (ParameterDescriptor<?>) Mercator1SP.PARAMETERS.descriptor("semi_major"),
+                (ParameterDescriptor<?>) Mercator1SP.PARAMETERS.descriptor("semi_minor"),
+                ROLL_LONGITUDE,
                 CENTRAL_MERIDIAN, LATITUDE_OF_ORIGIN, SCALE_FACTOR,
-                FALSE_EASTING, FALSE_NORTHING
+                Mercator1SP.FALSE_EASTING,
+                Mercator1SP.FALSE_NORTHING
             });
     }
 

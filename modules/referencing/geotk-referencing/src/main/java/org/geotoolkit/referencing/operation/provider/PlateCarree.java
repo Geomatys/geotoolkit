@@ -57,9 +57,9 @@ public class PlateCarree extends EquidistantCylindrical {
     public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
         new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.OGC,  "Plate_Carree"),
-            new NamedIdentifier(Citations.ESRI, "Plate_Carree"),
             new NamedIdentifier(Citations.EPSG, "Pseudo Plate Carree"),
             new IdentifierCode (Citations.EPSG,  9825),
+            new NamedIdentifier(Citations.ESRI, "Plate_Carree"),
             new NamedIdentifier(Citations.GEOTOOLKIT, "Plate Carrée")
         }, new Citation[] { // Authorities to exclude from the parameter descriptors.
             Citations.GEOTIFF, Citations.PROJ4

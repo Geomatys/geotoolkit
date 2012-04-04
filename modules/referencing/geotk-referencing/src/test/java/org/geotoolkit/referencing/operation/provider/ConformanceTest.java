@@ -96,8 +96,8 @@ public final strictfp class ConformanceTest extends ReferencingTestBase {
          * Get all known names and codes for the given authority. For
          * each name or code, we remember the method that declare it.
          *
-         * Only one OperationMethod can be associated to a given code, but many
-         * OperationMethods can be associated to the same name or alias because
+         * Only one OperationMethod can be associated to a given numerical identifier,
+         * but many OperationMethods can be associated to the same name or alias because
          * some are ambiguous (e.g. "Bursa-Wolf").
          */
         final Map<String, OperationMethod> codes = new LinkedHashMap<>();

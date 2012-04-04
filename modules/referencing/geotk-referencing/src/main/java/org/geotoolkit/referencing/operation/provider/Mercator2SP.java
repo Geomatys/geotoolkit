@@ -143,8 +143,8 @@ public class Mercator2SP extends MapProjection {
             new NamedIdentifier(Citations.EPSG,   "Mercator (variant B)"), // Starting from 7.6
             new DeprecatedName (Citations.EPSG,   "Mercator (2SP)"), // Prior to EPSG version 7.6
             new IdentifierCode (Citations.EPSG,    9805),
-            new NamedIdentifier(Citations.NETCDF, "Mercator"),
             new NamedIdentifier(Citations.ESRI,   "Mercator"),
+            new NamedIdentifier(Citations.NETCDF, "Mercator"),
                      sameNameAs(Citations.GEOTIFF,    Mercator1SP.PARAMETERS),
                      sameNameAs(Citations.PROJ4,      Mercator1SP.PARAMETERS),
                      sameNameAs(Citations.GEOTOOLKIT, Mercator1SP.PARAMETERS)

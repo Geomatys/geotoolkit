@@ -72,9 +72,9 @@ public class AlbersEqualArea extends MapProjection {
      */
     public static final ParameterDescriptor<Double> CENTRAL_MERIDIAN =
             Identifiers.CENTRAL_MERIDIAN.select(null,
+                "Longitude of false origin",     // EPSG
                 "central_meridian",              // OGC
                 "Central_Meridian",              // ESRI
-                "Longitude of false origin",     // EPSG
                 "longitude_of_central_meridian", // NetCDF
                 "NatOriginLong");                // GeoTIFF
 
@@ -93,9 +93,9 @@ public class AlbersEqualArea extends MapProjection {
      */
     public static final ParameterDescriptor<Double> LATITUDE_OF_ORIGIN =
             Identifiers.LATITUDE_OF_ORIGIN.select(null,
+                "Latitude of false origin",      // EPSG
                 "latitude_of_origin",            // OGC
                 "Latitude_Of_Origin",            // ESRI
-                "Latitude of false origin",      // EPSG
                 "NatOriginLat");                 // GeoTIFF
 
     /**
@@ -154,11 +154,11 @@ public class AlbersEqualArea extends MapProjection {
             new NamedIdentifier(Citations.OGC,     "Albers_Conic_Equal_Area"),
             new NamedIdentifier(Citations.EPSG,    "Albers Equal Area"),
             new IdentifierCode (Citations.EPSG,     9822),
-            new NamedIdentifier(Citations.GEOTIFF, "CT_AlbersEqualArea"),
-            new IdentifierCode (Citations.GEOTIFF,  11),
             new NamedIdentifier(Citations.ESRI,    "Albers"),
             new NamedIdentifier(Citations.ESRI,    "Albers_Equal_Area_Conic"),
             new NamedIdentifier(Citations.NETCDF,  "AlbersEqualArea"),
+            new NamedIdentifier(Citations.GEOTIFF, "CT_AlbersEqualArea"),
+            new IdentifierCode (Citations.GEOTIFF,  11),
             new NamedIdentifier(Citations.PROJ4,   "aea"),
             new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
                                 Vocabulary.Keys.ALBERS_EQUAL_AREA_PROJECTION))

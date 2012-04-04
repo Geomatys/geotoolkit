@@ -166,10 +166,10 @@ public class ObliqueMercator extends MapProjection {
             new NamedIdentifier(Citations.EPSG,    "Rectified Skew Orthomorphic (RSO)"),
             new DeprecatedName (Citations.EPSG,    "Oblique Mercator"), // Prior to EPSG database version 7.6
             new IdentifierCode (Citations.EPSG,     9815),
-            new NamedIdentifier(Citations.GEOTIFF, "CT_ObliqueMercator"),
-            new IdentifierCode (Citations.GEOTIFF,  3), // Also used by CT_ObliqueMercator_Hotine
             new NamedIdentifier(Citations.ESRI,    "Hotine_Oblique_Mercator_Azimuth_Center"),
             new NamedIdentifier(Citations.ESRI,    "Rectified_Skew_Orthomorphic_Center"),
+            new NamedIdentifier(Citations.GEOTIFF, "CT_ObliqueMercator"),
+            new IdentifierCode (Citations.GEOTIFF,  3), // Also used by CT_ObliqueMercator_Hotine
             new NamedIdentifier(Citations.PROJ4,   "omerc"),
             new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
                                 Vocabulary.Keys.OBLIQUE_MERCATOR_PROJECTION))

@@ -83,31 +83,25 @@ public class ObliqueStereographic extends Stereographic {
     public static final ParameterDescriptorGroup PARAMETERS;
     static {
         final Citation[] excludes = new Citation[] {Citations.NETCDF};
-        CENTRAL_MERIDIAN = Identifiers.CENTRAL_MERIDIAN.select(excludes,
-                "Longitude of natural origin",    // EPSG
-                "central_meridian",               // OGC
-                "Central_Meridian",               // ESRI
-                "NatOriginLong");                 // GeoTIFF
-        LATITUDE_OF_ORIGIN = Identifiers.LATITUDE_OF_ORIGIN.select(excludes,
-                "Latitude of natural origin",     // EPSG
-                "latitude_of_origin",             // OGC
-                "Latitude_Of_Origin",             // ESRI
-                "NatOriginLat");                  // GeoTIFF
+        CENTRAL_MERIDIAN   = CassiniSoldner.CENTRAL_MERIDIAN;
+        LATITUDE_OF_ORIGIN = CassiniSoldner.LATITUDE_OF_ORIGIN;
 
         PARAMETERS = Identifiers.createDescriptorGroup(new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.OGC,     "Oblique_Stereographic"),
             new NamedIdentifier(Citations.EPSG,    "Oblique Stereographic"),
             new NamedIdentifier(Citations.EPSG,    "Roussilhe"),
             new IdentifierCode (Citations.EPSG,     9809),
+            new NamedIdentifier(Citations.ESRI,    "Double_Stereographic"),
             new NamedIdentifier(Citations.GEOTIFF, "CT_ObliqueStereographic"),
             new IdentifierCode (Citations.GEOTIFF,  16),
-            new NamedIdentifier(Citations.ESRI,    "Double_Stereographic"),
             new NamedIdentifier(Citations.PROJ4,   "sterea"),
             sameNameAs(Citations.GEOTOOLKIT, Stereographic.PARAMETERS)
-        }, excludes, new ParameterDescriptor<?>[] {
+        }, null, new ParameterDescriptor<?>[] {
             SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
-            CENTRAL_MERIDIAN, LATITUDE_OF_ORIGIN, SCALE_FACTOR,
-            FALSE_EASTING, FALSE_NORTHING
+            CENTRAL_MERIDIAN, LATITUDE_OF_ORIGIN,
+            Orthographic.SCALE_FACTOR,
+            EquidistantCylindrical.FALSE_EASTING,
+            EquidistantCylindrical.FALSE_NORTHING
         });
     }
 

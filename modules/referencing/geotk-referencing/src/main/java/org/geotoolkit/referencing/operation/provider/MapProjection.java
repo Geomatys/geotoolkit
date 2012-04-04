@@ -79,9 +79,9 @@ public abstract class MapProjection extends MathTransformProvider {
     public static final ParameterDescriptor<Double> SEMI_MAJOR = createDescriptor(
             new NamedIdentifier[] {
                 new NamedIdentifier(Citations.OGC,     "semi_major"),
-                new NamedIdentifier(Citations.ESRI,    "Semi_Major"),
                 new NamedIdentifier(Citations.EPSG,    "Semi-major axis"),
                 // EPSG does not specifically define the above parameter
+                new NamedIdentifier(Citations.ESRI,    "Semi_Major"),
                 new NamedIdentifier(Citations.GEOTIFF, "SemiMajor"),
                 new NamedIdentifier(Citations.PROJ4,   "a")
             },
@@ -96,9 +96,9 @@ public abstract class MapProjection extends MathTransformProvider {
     public static final ParameterDescriptor<Double> SEMI_MINOR = createDescriptor(
             new NamedIdentifier[] {
                 new NamedIdentifier(Citations.OGC,     "semi_minor"),
-                new NamedIdentifier(Citations.ESRI,    "Semi_Minor"),
                 new NamedIdentifier(Citations.EPSG,    "Semi-minor axis"),
                 // EPSG does not specifically define the above parameter
+                new NamedIdentifier(Citations.ESRI,    "Semi_Minor"),
                 new NamedIdentifier(Citations.GEOTIFF, "SemiMinor"),
                 new NamedIdentifier(Citations.PROJ4,   "b")
             },

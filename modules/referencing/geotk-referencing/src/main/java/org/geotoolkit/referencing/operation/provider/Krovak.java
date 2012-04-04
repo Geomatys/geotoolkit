@@ -172,7 +172,9 @@ public class Krovak extends MapProjection {
             new NamedIdentifier(Citations.PROJ4,      "krovak"),
             new NamedIdentifier(Citations.GEOTOOLKIT, "Krovak Oblique Conformal Conic"),
         }, null, new ParameterDescriptor<?>[] {
-            SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
+            (ParameterDescriptor<?>) ObliqueStereographic.PARAMETERS.descriptor("semi_major"),
+            (ParameterDescriptor<?>) ObliqueStereographic.PARAMETERS.descriptor("semi_minor"),
+            ROLL_LONGITUDE,
             LATITUDE_OF_CENTRE, LONGITUDE_OF_CENTRE,
             AZIMUTH, PSEUDO_STANDARD_PARALLEL, SCALE_FACTOR,
             X_SCALE, Y_SCALE, XY_PLANE_ROTATION,

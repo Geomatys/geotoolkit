@@ -19,6 +19,7 @@ package org.geotoolkit.referencing.operation.provider;
 
 import net.jcip.annotations.Immutable;
 
+import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -67,9 +68,9 @@ public class Orthographic extends MapProjection {
      */
     public static final ParameterDescriptor<Double> LONGITUDE_OF_CENTRE =
             Identifiers.CENTRAL_MERIDIAN.select(null,
+                "Longitude of natural origin",      // EPSG
                 "central_meridian",                 // OGC
                 "Longitude_Of_Center",              // ESRI
-                "Longitude of natural origin",      // EPSG
                 "longitude_of_projection_origin",   // NetCDF
                 "ProjCenterLong");                  // GeoTIFF
 
@@ -83,9 +84,9 @@ public class Orthographic extends MapProjection {
      */
     public static final ParameterDescriptor<Double> LATITUDE_OF_CENTRE =
             Identifiers.LATITUDE_OF_ORIGIN.select(null,
+                "Latitude of natural origin",    // EPSG
                 "latitude_of_origin",            // OGC
                 "Latitude_Of_Center",            // ESRI
-                "Latitude of natural origin",    // EPSG
                 "ProjCenterLat");                // GeoTIFF
 
     /**
@@ -98,7 +99,9 @@ public class Orthographic extends MapProjection {
      * &infin;) and default value is 1.
      */
     public static final ParameterDescriptor<Double> SCALE_FACTOR =
-            Identifiers.SCALE_FACTOR.select(false, null, null, null,
+            Identifiers.SCALE_FACTOR.select(false, null, new Citation[] {
+                Citations.NETCDF // NetCDF 4.3 doesn't have this parameter.
+            }, null,
                 "Scale factor at natural origin",   // EPSG
                 "ScaleAtNatOrigin");                // GeoTIFF
 
@@ -128,9 +131,9 @@ public class Orthographic extends MapProjection {
     public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
         new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.OGC,     "Orthographic"),
-            new NamedIdentifier(Citations.ESRI,    "Orthographic"),
             new NamedIdentifier(Citations.EPSG,    "Orthographic"),
             new IdentifierCode (Citations.EPSG,     9840),
+            new NamedIdentifier(Citations.ESRI,    "Orthographic"),
             new NamedIdentifier(Citations.NETCDF,  "Orthographic"),
             new NamedIdentifier(Citations.GEOTIFF, "CT_Orthographic"),
             new IdentifierCode (Citations.GEOTIFF,  21),

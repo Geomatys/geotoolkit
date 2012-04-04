@@ -41,8 +41,6 @@ import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 
-import static java.lang.Boolean.TRUE;
-import static java.lang.Boolean.FALSE;
 import static org.opengis.referencing.operation.SingleOperation.*;
 import static org.geotoolkit.metadata.iso.citation.Citations.*;
 import static org.geotoolkit.util.collection.XCollections.hashMapCapacity;
@@ -374,41 +372,42 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
             final Citation[] excludes, final String[] deprecated, final String... names)
     {
         final Map<Citation,Boolean> authorities = new HashMap<>();
-        NamedIdentifier[] selected = identifiers.clone();
-        final boolean[] idUsed = new boolean[selected.length];
-        final boolean[] nameUsed = new boolean[names.length];
+        NamedIdentifier[] selected = new NamedIdentifier[identifiers.length];
+        long usedIdent = 0; // A bitmask of elements from the 'identifiers' array which have been used.
+        long usedNames = 0; // A bitmask of elements from the given 'names' array which have been used.
         /*
-         * Finds every identifiers explicitly requested by the names array given in argument.
-         * Elements for which no identifier has been found at this stage will be left to null.
+         * Finds every identifiers which have not been excluded. In this process, also take note
+         * of every identifiers explicitly requested by the names array given in argument.
          */
-        for (int i=0; i<selected.length; i++) {
-            final NamedIdentifier candidate = selected[i];
+        int included = 0;
+        for (final NamedIdentifier candidate : identifiers) {
+            final Citation authority = candidate.getAuthority();
+            if (XArrays.contains(excludes, authority)) {
+                continue;
+            }
+            selected[included] = candidate;
             final String code = candidate.getCode();
             for (int j=names.length; --j>=0;) {
                 if (code.equals(names[j])) {
-                    final Citation authority = candidate.getAuthority();
-                    if (!XArrays.contains(excludes, authority)) {
-                        if (authorities.put(authority, TRUE) != null) {
-                            throw new IllegalStateException(Errors.format(
-                                    Errors.Keys.VALUE_ALREADY_DEFINED_$1, authority));
-                        }
-                        nameUsed[j] = true;
-                        idUsed[i] = true;
-                        break;
+                    if (authorities.put(authority, Boolean.TRUE) != null) {
+                        throw new IllegalArgumentException(Errors.format(
+                                Errors.Keys.VALUE_ALREADY_DEFINED_$1, authority));
                     }
+                    usedNames |= (1 << j);
+                    usedIdent |= (1 << included);
+                    break;
                 }
             }
+            included++;
         }
         /*
          * If a name has not been used, this is considered as an error. We perform
          * this check for reducing the risk of erroneous declaration in providers.
          * Note that the same name may be used for more than one authority.
          */
-        for (int i=0; i<nameUsed.length; i++) {
-            if (!nameUsed[i]) {
-                throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.UNKNOWN_PARAMETER_$1, names[i]));
-            }
+        if (usedNames != (1 << names.length) - 1) {
+            throw new IllegalArgumentException(Errors.format(
+                    Errors.Keys.UNKNOWN_PARAMETER_$1, names[Long.numberOfTrailingZeros(~usedNames)]));
         }
         /*
          * If some identifiers were selected as a result of explicit requirement through the
@@ -417,33 +416,24 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
          * identifier silently. If more than one identifier is found for the same authority,
          * this is considered an error.
          */
-        int n=0;
-        for (int i=0; i<selected.length; i++) {
+        int n = 0;
+        for (int i=0; i<included; i++) {
             final NamedIdentifier candidate = selected[i];
-            final Citation authority = candidate.getAuthority();
-            if (!XArrays.contains(excludes, authority)) {
-                if (!idUsed[i]) {
-                    final Boolean explicit = authorities.get(authority);
-                    if (explicit == null) {
-                        // Inherit silently an identifier for a new authority.
-                        authorities.put(authority, FALSE);
-                    } else {
-                        // An identifier was already specified for this authority.
-                        // If the identifier was specified explicitly by the user,
-                        // do nothing. Otherwise we have ambiguity, so remove the
-                        // identifier we added previously.
-                        if (explicit.equals(FALSE)) {
-                            for (int j=0; j<n; j++) {
-                                if (authority.equals(selected[j].getAuthority())) {
-                                    System.arraycopy(selected, j+1, selected, j, (--n)-j);
-                                }
-                            }
-                        }
+            if ((usedIdent & (1 << i)) == 0) {
+                final Citation authority = candidate.getAuthority();
+                final Boolean explicit = authorities.put(authority, Boolean.FALSE);
+                if (explicit != null) {
+                    // An identifier was already specified for this authority.
+                    // If the identifier was specified explicitly by the user,
+                    // do nothing. Otherwise we have ambiguity.
+                    if (explicit) {
+                        authorities.put(authority, Boolean.TRUE); // Restore the previous value.
                         continue;
                     }
+                    throw new IllegalStateException(String.valueOf(candidate));
                 }
-                selected[n++] = candidate;
             }
+            selected[n++] = candidate;
         }
         /*
          * Adds deprecated names, if any. Those names will appears last in the names array.

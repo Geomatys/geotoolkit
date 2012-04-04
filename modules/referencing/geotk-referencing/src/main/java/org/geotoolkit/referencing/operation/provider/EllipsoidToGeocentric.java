@@ -21,7 +21,6 @@ import java.util.Collections;
 import javax.measure.unit.SI;
 import net.jcip.annotations.Immutable;
 
-import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;

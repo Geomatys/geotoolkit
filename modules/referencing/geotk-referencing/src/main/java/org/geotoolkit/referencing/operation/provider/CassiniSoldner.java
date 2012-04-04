@@ -109,6 +109,7 @@ public class CassiniSoldner extends MapProjection {
 
     /**
      * Parameters creation, which must be done before to initialize the {@link #PARAMETERS} field.
+     * Note that the central Meridian and Latitude of Origin are shared with ObliqueStereographic.
      */
     static {
         final Citation[] excludes = new Citation[] {Citations.NETCDF};
@@ -137,9 +138,9 @@ public class CassiniSoldner extends MapProjection {
             new NamedIdentifier(Citations.OGC,     "Cassini_Soldner"),
             new NamedIdentifier(Citations.EPSG,    "Cassini-Soldner"),
             new IdentifierCode (Citations.EPSG,     9806),
+            new NamedIdentifier(Citations.ESRI,    "Cassini"),
             new NamedIdentifier(Citations.GEOTIFF, "CT_CassiniSoldner"),
             new IdentifierCode (Citations.GEOTIFF,  18),
-            new NamedIdentifier(Citations.ESRI,    "Cassini"),
             new NamedIdentifier(Citations.PROJ4,   "cass"),
             new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
                                 Vocabulary.Keys.CASSINI_SOLDNER_PROJECTION))
