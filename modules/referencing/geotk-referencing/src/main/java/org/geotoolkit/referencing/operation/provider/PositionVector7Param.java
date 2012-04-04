@@ -46,14 +46,13 @@ import org.geotoolkit.internal.referencing.Identifiers;
 
 import static java.util.Collections.singletonMap;
 import static org.geotoolkit.internal.referencing.Identifiers.createDescriptor;
-import static org.geotoolkit.internal.referencing.Identifiers.createOptionalDescriptor;
 
 
 /**
  * The provider for "<cite>Position Vector 7-parameters transformation</cite>" (EPSG:9606).
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.07
+ * @version 3.20
  *
  * @since 2.2
  * @module
@@ -103,11 +102,11 @@ public class PositionVector7Param extends MathTransformProvider {
      * <p>
      * Valid values range from 0 to infinity. Units are {@linkplain SI#METRE metres}.
      */
-    public static final ParameterDescriptor<Double> SRC_SEMI_MAJOR = createOptionalDescriptor(
+    public static final ParameterDescriptor<Double> SRC_SEMI_MAJOR = createDescriptor(
             new NamedIdentifier[] {
                 new NamedIdentifier(Citations.OGC, "src_semi_major")
             },
-            Double.NaN, 0.0, Double.POSITIVE_INFINITY, SI.METRE);
+            Double.NaN, 0.0, Double.POSITIVE_INFINITY, SI.METRE, false);
 
     /**
      * The operation parameter descriptor for the {@code "src_semi_minor"} optional parameter value.
@@ -116,11 +115,11 @@ public class PositionVector7Param extends MathTransformProvider {
      * <p>
      * Valid values range from 0 to infinity. Units are {@linkplain SI#METRE metres}.
      */
-     public static final ParameterDescriptor<Double> SRC_SEMI_MINOR = createOptionalDescriptor(
+     public static final ParameterDescriptor<Double> SRC_SEMI_MINOR = createDescriptor(
             new NamedIdentifier[] {
                 new NamedIdentifier(Citations.OGC, "src_semi_minor"),
             },
-            Double.NaN, 0.0, Double.POSITIVE_INFINITY, SI.METRE);
+            Double.NaN, 0.0, Double.POSITIVE_INFINITY, SI.METRE, false);
 
     /**
      * The operation parameter descriptor for the {@code "tgt_semi_major"} optional parameter value.
@@ -129,11 +128,11 @@ public class PositionVector7Param extends MathTransformProvider {
      * <p>
      * Valid values range from 0 to infinity. Units are {@linkplain SI#METRE metres}.
      */
-    public static final ParameterDescriptor<Double> TGT_SEMI_MAJOR = createOptionalDescriptor(
+    public static final ParameterDescriptor<Double> TGT_SEMI_MAJOR = createDescriptor(
             new NamedIdentifier[] {
                 new NamedIdentifier(Citations.OGC, "tgt_semi_major")
             },
-            Double.NaN, 0.0, Double.POSITIVE_INFINITY, SI.METRE);
+            Double.NaN, 0.0, Double.POSITIVE_INFINITY, SI.METRE, false);
 
     /**
      * The operation parameter descriptor for the {@code "tgt_semi_minor"} optional parameter value.
@@ -142,11 +141,11 @@ public class PositionVector7Param extends MathTransformProvider {
      * <p>
      * Valid values range from 0 to infinity. Units are {@linkplain SI#METRE metres}.
      */
-    public static final ParameterDescriptor<Double> TGT_SEMI_MINOR = createOptionalDescriptor(
+    public static final ParameterDescriptor<Double> TGT_SEMI_MINOR = createDescriptor(
             new NamedIdentifier[] {
                 new NamedIdentifier(Citations.OGC, "tgt_semi_minor")
             },
-            Double.NaN, 0.0, Double.POSITIVE_INFINITY, SI.METRE);
+            Double.NaN, 0.0, Double.POSITIVE_INFINITY, SI.METRE, false);
 
     /**
      * The operation parameter descriptor for the <cite>X-axis translation</cite>
@@ -158,7 +157,7 @@ public class PositionVector7Param extends MathTransformProvider {
                 new NamedIdentifier(Citations.OGC,  "dx"),
                 new NamedIdentifier(Citations.EPSG, "X-axis translation")
             },
-            0.0, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, SI.METRE);
+            0.0, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, SI.METRE, true);
 
     /**
      * The operation parameter descriptor for the <cite>Y-axis translation</cite>
@@ -170,7 +169,7 @@ public class PositionVector7Param extends MathTransformProvider {
                 new NamedIdentifier(Citations.OGC,  "dy"),
                 new NamedIdentifier(Citations.EPSG, "Y-axis translation")
             },
-            0.0, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, SI.METRE);
+            0.0, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, SI.METRE, true);
 
     /**
      * The operation parameter descriptor for the <cite>Z-axis translation</cite>
@@ -182,7 +181,7 @@ public class PositionVector7Param extends MathTransformProvider {
                 new NamedIdentifier(Citations.OGC,  "dz"),
                 new NamedIdentifier(Citations.EPSG, "Z-axis translation")
             },
-            0.0, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, SI.METRE);
+            0.0, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, SI.METRE, true);
 
     /**
      * The operation parameter descriptor for the <cite>X-axis rotation</cite>
@@ -194,7 +193,7 @@ public class PositionVector7Param extends MathTransformProvider {
                 new NamedIdentifier(Citations.OGC,  "ex"),
                 new NamedIdentifier(Citations.EPSG, "X-axis rotation")
             },
-            0.0, -MAX_ROTATION, MAX_ROTATION, NonSI.SECOND_ANGLE);
+            0.0, -MAX_ROTATION, MAX_ROTATION, NonSI.SECOND_ANGLE, true);
 
     /**
      * The operation parameter descriptor for the <cite>Y-axis rotation</cite>
@@ -206,7 +205,7 @@ public class PositionVector7Param extends MathTransformProvider {
                 new NamedIdentifier(Citations.OGC,  "ey"),
                 new NamedIdentifier(Citations.EPSG, "Y-axis rotation")
             },
-            0.0, -MAX_ROTATION, MAX_ROTATION, NonSI.SECOND_ANGLE);
+            0.0, -MAX_ROTATION, MAX_ROTATION, NonSI.SECOND_ANGLE, true);
 
     /**
      * The operation parameter descriptor for the <cite>Z-axis rotation</cite>
@@ -218,7 +217,7 @@ public class PositionVector7Param extends MathTransformProvider {
                 new NamedIdentifier(Citations.OGC,  "ez"),
                 new NamedIdentifier(Citations.EPSG, "Z-axis rotation")
             },
-            0.0, -MAX_ROTATION, MAX_ROTATION, NonSI.SECOND_ANGLE);
+            0.0, -MAX_ROTATION, MAX_ROTATION, NonSI.SECOND_ANGLE, true);
 
     /**
      * The operation parameter descriptor for the <cite>Scale difference</cite>
@@ -231,7 +230,7 @@ public class PositionVector7Param extends MathTransformProvider {
                 new NamedIdentifier(Citations.OGC,  "ppm"),
                 new NamedIdentifier(Citations.EPSG, "Scale difference")
             },
-            0.0, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Units.PPM);
+            0.0, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Units.PPM, true);
 
     /**
      * The parameters group.
@@ -242,15 +241,13 @@ public class PositionVector7Param extends MathTransformProvider {
     /**
      * Creates a parameters group using the 7 parameters.
      */
-    static ParameterDescriptorGroup createDescriptorGroup(final int code, final String name,
-            final String legacyName)
-    {
+    static ParameterDescriptorGroup createDescriptorGroup(final int code, final String name, final String legacyName) {
         return Identifiers.createDescriptorGroup(new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.EPSG, name),
             new NamedIdentifier(Citations.EPSG, legacyName),
             new NamedIdentifier(Citations.EPSG, "Bursa-Wolf"),
             new IdentifierCode (Citations.EPSG, code)
-        }, new ParameterDescriptor<?>[] {
+        }, null, new ParameterDescriptor<?>[] {
             DX, DY, DZ, EX, EY, EZ, PPM,
             SRC_SEMI_MAJOR, SRC_SEMI_MINOR,
             TGT_SEMI_MAJOR, TGT_SEMI_MINOR,

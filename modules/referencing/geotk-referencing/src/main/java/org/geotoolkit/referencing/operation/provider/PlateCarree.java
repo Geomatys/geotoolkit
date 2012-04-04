@@ -28,8 +28,6 @@ import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.internal.referencing.Identifiers;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
-import static org.geotoolkit.internal.referencing.Identifiers.exclude;
-
 
 /**
  * The provider for "<cite>Plate Carrée</cite>" projection. This is a special case of
@@ -56,25 +54,20 @@ public class PlateCarree extends EquidistantCylindrical {
      * in the comment attached to the Equidistant Cylindrical case.
      */
     @SuppressWarnings("hiding")
-    public static final ParameterDescriptorGroup PARAMETERS;
-    static {
-        final Citation[] excludes = new Citation[] {Citations.GEOTIFF, Citations.PROJ4};
-        PARAMETERS = Identifiers.createDescriptorGroup(
+    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
         new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.OGC,  "Plate_Carree"),
-            new NamedIdentifier(Citations.ESRI, "Plate_Carree"),
             new NamedIdentifier(Citations.EPSG, "Pseudo Plate Carree"),
             new IdentifierCode (Citations.EPSG,  9825),
+            new NamedIdentifier(Citations.ESRI, "Plate_Carree"),
             new NamedIdentifier(Citations.GEOTOOLKIT, "Plate Carrée")
+        }, new Citation[] { // Authorities to exclude from the parameter descriptors.
+            Citations.GEOTIFF, Citations.PROJ4
         }, new ParameterDescriptor<?>[] {
-            exclude(SEMI_MAJOR,       excludes),
-            exclude(SEMI_MINOR,       excludes),
-                    ROLL_LONGITUDE,
-            exclude(CENTRAL_MERIDIAN, excludes),
-            exclude(FALSE_EASTING,    excludes),
-            exclude(FALSE_NORTHING,   excludes)
+            SEMI_MAJOR,     SEMI_MINOR,
+            ROLL_LONGITUDE, CENTRAL_MERIDIAN,
+            FALSE_EASTING,  FALSE_NORTHING
         });
-    }
 
     /**
      * Constructs a new provider.

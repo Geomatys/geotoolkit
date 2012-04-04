@@ -110,7 +110,7 @@
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Rueben Schulz (UBC)
- * @version 3.03
+ * @version 3.20
  *
  * @see org.geotoolkit.referencing.operation.transform
  * @see org.geotoolkit.referencing.operation.projection

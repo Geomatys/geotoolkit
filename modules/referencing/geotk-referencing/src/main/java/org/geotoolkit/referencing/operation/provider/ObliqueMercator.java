@@ -30,9 +30,8 @@ import org.opengis.referencing.ReferenceIdentifier;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.internal.referencing.Identifiers;
+import org.geotoolkit.internal.referencing.DeprecatedName;
 import org.geotoolkit.metadata.iso.citation.Citations;
-
-import static org.geotoolkit.internal.referencing.Identifiers.exclude;
 
 
 /**
@@ -133,26 +132,26 @@ public class ObliqueMercator extends MapProjection {
      */
     static {
         final Citation[] excludes = new Citation[] {Citations.NETCDF};
-        LONGITUDE_OF_CENTRE = Identifiers.CENTRAL_MERIDIAN.select(excludes, null,
+        LONGITUDE_OF_CENTRE = Identifiers.CENTRAL_MERIDIAN.select(excludes,
                 "Longitude of projection centre",   // EPSG
                 "longitude_of_center",              // OGC
                 "Longitude_Of_Center",              // ESRI
                 "CenterLong");                      // GeoTIFF
-        LATITUDE_OF_CENTRE = Identifiers.LATITUDE_OF_ORIGIN.select(excludes, null,
+        LATITUDE_OF_CENTRE = Identifiers.LATITUDE_OF_ORIGIN.select(excludes,
                 "Latitude of projection centre",    // EPSG
                 "latitude_of_center",               // OGC
                 "Latitude_Of_Center",               // ESRI
                 "CenterLat");                       // GeoTIFF
-        AZIMUTH = Identifiers.AZIMUTH.select(excludes, null,
+        AZIMUTH = Identifiers.AZIMUTH.select(excludes,
                 "Azimuth of initial line");         // EPSG
         RECTIFIED_GRID_ANGLE = Identifiers.RECTIFIED_GRID_ANGLE;
-        SCALE_FACTOR = Identifiers.SCALE_FACTOR.select(excludes, null,
+        SCALE_FACTOR = Identifiers.SCALE_FACTOR.select(excludes,
                 "Scale factor on initial line",     // EPSG
                 "ScaleAtCenter");                   // GeoTIFF
-        FALSE_EASTING = Identifiers.FALSE_EASTING.select(excludes, null,
+        FALSE_EASTING = Identifiers.FALSE_EASTING.select(excludes,
                 "Easting at projection centre",     // EPSG
                 "FalseEasting");                    // GeoTIFF
-        FALSE_NORTHING = Identifiers.FALSE_NORTHING.select(excludes, null,
+        FALSE_NORTHING = Identifiers.FALSE_NORTHING.select(excludes,
                 "Northing at projection centre",    // EPSG
                 "FalseNorthing");                   // GeoTIFF
     }
@@ -164,17 +163,17 @@ public class ObliqueMercator extends MapProjection {
         new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.OGC,     "Oblique_Mercator"),
             new NamedIdentifier(Citations.EPSG,    "Hotine Oblique Mercator (variant B)"), // Starting from 7.6
-            new NamedIdentifier(Citations.EPSG,    "Oblique Mercator"), // Prior to EPSG database version 7.6
             new NamedIdentifier(Citations.EPSG,    "Rectified Skew Orthomorphic (RSO)"),
+            new DeprecatedName (Citations.EPSG,    "Oblique Mercator"), // Prior to EPSG database version 7.6
             new IdentifierCode (Citations.EPSG,     9815),
-            new NamedIdentifier(Citations.GEOTIFF, "CT_ObliqueMercator"),
-            new IdentifierCode (Citations.GEOTIFF,  3), // Also used by CT_ObliqueMercator_Hotine
             new NamedIdentifier(Citations.ESRI,    "Hotine_Oblique_Mercator_Azimuth_Center"),
             new NamedIdentifier(Citations.ESRI,    "Rectified_Skew_Orthomorphic_Center"),
+            new NamedIdentifier(Citations.GEOTIFF, "CT_ObliqueMercator"),
+            new IdentifierCode (Citations.GEOTIFF,  3), // Also used by CT_ObliqueMercator_Hotine
             new NamedIdentifier(Citations.PROJ4,   "omerc"),
             new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
                                 Vocabulary.Keys.OBLIQUE_MERCATOR_PROJECTION))
-        }, new ParameterDescriptor<?>[] {
+        }, null, new ParameterDescriptor<?>[] {
             SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
             LONGITUDE_OF_CENTRE, LATITUDE_OF_CENTRE,
             AZIMUTH, RECTIFIED_GRID_ANGLE, SCALE_FACTOR,
@@ -215,7 +214,7 @@ public class ObliqueMercator extends MapProjection {
 
 
     /**
-     * The provider for "<cite>Oblique Mercator</cite>" projection specified with two points
+     * The provider for "<cite>Oblique Mercator</cite>" projection specified by two points
      * on the central line. This is different than the classical {@linkplain ObliqueMercator
      * Oblique Mercator}, which uses a central point and azimuth.
      *
@@ -267,27 +266,19 @@ public class ObliqueMercator extends MapProjection {
          * The parameters group.
          */
         @SuppressWarnings("hiding")
-        public static final ParameterDescriptorGroup PARAMETERS;
-        static {
-            final Citation[] excludes = new Citation[] {
-                Citations.EPSG, Citations.OGC, Citations.NETCDF, Citations.GEOTIFF, Citations.PROJ4
-            };
-            PARAMETERS = Identifiers.createDescriptorGroup(
+        public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
             new NamedIdentifier[] {
                 new NamedIdentifier(Citations.ESRI, "Hotine_Oblique_Mercator_Two_Point_Center"),
                 sameNameAs(Citations.GEOTOOLKIT, ObliqueMercator.PARAMETERS)
+            }, new Citation[] { // Authorities to exclude from the parameter descriptors.
+                Citations.EPSG, Citations.OGC, Citations.NETCDF, Citations.GEOTIFF, Citations.PROJ4
             }, new ParameterDescriptor<?>[] {
-                exclude(SEMI_MAJOR, excludes),
-                exclude(SEMI_MINOR, excludes),
-                ROLL_LONGITUDE,
+                SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
                 LAT_OF_1ST_POINT,    LONG_OF_1ST_POINT,
                 LAT_OF_2ND_POINT,    LONG_OF_2ND_POINT,
-                exclude(LATITUDE_OF_CENTRE, excludes),
-                exclude(SCALE_FACTOR,       excludes),
-                exclude(FALSE_EASTING,      excludes),
-                exclude(FALSE_NORTHING,     excludes)
+                LATITUDE_OF_CENTRE,  SCALE_FACTOR,
+                FALSE_EASTING,       FALSE_NORTHING
             });
-        }
 
         /**
          * Constructs a new provider.

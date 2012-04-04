@@ -48,13 +48,13 @@ import org.geotoolkit.measure.Latitude;
 import org.geotoolkit.measure.Longitude;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.Deprecable;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.collection.WeakHashSet;
 import org.geotoolkit.internal.referencing.Identifiers;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.IdentifiedObjects;
-import org.geotoolkit.referencing.DefaultReferenceIdentifier;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.referencing.operation.provider.MapProjection;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform2D;
@@ -938,9 +938,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
                     if (!XArrays.containsIdentity(AMBIGUOUS, identifier.getAuthority()) &&
                             IdentifiedObjects.nameMatches(descriptor, identifier.getCode()))
                     {
-                        if (identifier instanceof DefaultReferenceIdentifier &&
-                                ((DefaultReferenceIdentifier) identifier).isDeprecated())
-                        {
+                        if (identifier instanceof Deprecable && ((Deprecable) identifier).isDeprecated()) {
                             /*
                              * The name matches, but is a deprecated. This case occurs with:
                              *

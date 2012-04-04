@@ -19,7 +19,7 @@ package org.geotoolkit.util;
 
 
 /**
- * Interface for classes providing a {@link #dispose()} method.
+ * Interface of classes providing a {@link #dispose()} method.
  * This interface is similar to the standard {@link java.io.Closeable} interface, but serve
  * a slightly different purpose. The {@code Closeable} interface is for closing a source or
  * destination of data, while the {@code Disposable} interface is used for objects than can
@@ -34,7 +34,7 @@ package org.geotoolkit.util;
  *       while keeping the {@code ImageReader} instance ready to accept new input streams for
  *       other images to read.</li>
  *   <li>The {@link javax.imageio.ImageReader#dispose() dispose()} method indicating that the
- *       {@code ImageReader} will not be used anymore can release all internal resources.</li>
+ *       {@code ImageReader} will not be used anymore and can release all internal resources.</li>
  * </ul>
  *
  * @author Martin Desruisseaux (Geomatys)

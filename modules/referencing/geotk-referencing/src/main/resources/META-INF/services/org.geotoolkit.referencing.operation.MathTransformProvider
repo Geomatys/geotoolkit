@@ -18,10 +18,8 @@ org.geotoolkit.referencing.operation.provider.MillerCylindrical
 org.geotoolkit.referencing.operation.provider.LambertConformal1SP
 org.geotoolkit.referencing.operation.provider.LambertConformal2SP
 org.geotoolkit.referencing.operation.provider.LambertConformal2SP$Belgium
-org.geotoolkit.referencing.operation.provider.LambertConformal2SP$ESRI
 org.geotoolkit.referencing.operation.provider.AlbersEqualArea
 org.geotoolkit.referencing.operation.provider.LambertAzimuthalEqualArea
-org.geotoolkit.referencing.operation.provider.LambertAzimuthalEqualArea$Spherical
 org.geotoolkit.referencing.operation.provider.Orthographic
 org.geotoolkit.referencing.operation.provider.ObliqueMercator
 org.geotoolkit.referencing.operation.provider.ObliqueMercator$TwoPoint

@@ -141,11 +141,6 @@ public class LambertAzimuthalEqualArea extends UnitaryProjection {
                                          final ParameterValueGroup values)
     {
         final Parameters parameters = new Parameters(descriptor, values);
-        if (parameters.nameMatches(org.geotoolkit.referencing.operation.provider.
-                LambertAzimuthalEqualArea.Spherical.PARAMETERS))
-        {
-            parameters.ensureSpherical();
-        }
         final LambertAzimuthalEqualArea projection;
         if (parameters.isSpherical()) {
             projection = new Spherical(parameters);

@@ -69,7 +69,10 @@ public final class ProjectionParameters extends OperationParametersReport {
     private final Class<? extends SingleOperation>[] categories;
 
     /**
-     * Creates a new instance with the default set of authorities.
+     * Creates a new instance with the default set of authorities. ESRI needs to be right after OGC,
+     * because the {@link #createRow(IdentifiedObject, ParameterDescriptorGroup, Set)} method contains
+     * an empirical hack for allowing the GeoAPI report to merge long ESRI projection names with the
+     * OGC name when the names are identical.
      */
     private ProjectionParameters() {
         this(EPSG, OGC, ESRI, NETCDF, GEOTIFF, PROJ4);
@@ -149,6 +152,24 @@ public final class ProjectionParameters extends OperationParametersReport {
             }
         }
         /*
+         * Empirical adjustment in the table layout:  for a few very long ESRI names, just declare
+         * that the name is the same than the OGC name. This allow the GeoAPI report to generate a
+         * more compact HTML table, by avoiding the column space required when repeating the same
+         * information twice.
+         */
+        String names[] = row.names.get("ESRI");
+        if (names != null && names.length == 1) {
+            final String name = names[0];
+            if (name.equals("Lambert_Azimuthal_Equal_Area") ||
+                name.equals("Lambert_Conformal_Conic_2SP_Belgium"))
+            {
+                names = row.names.get("OGC");
+                assert names.length == 1 && names[0].contains(name) : name;
+                names[0] += " \u00A0<font size=\"-1\" color=\"MediumSlateBlue\">(ESRI: same name)</font>";
+                row.names.remove("ESRI");
+            }
+        }
+        /*
          * Search for deprecated names. We will render them as deleted name.
          */
         for (final Map.Entry<String,String[]> entry : row.names.entrySet()) {
@@ -169,6 +190,12 @@ public final class ProjectionParameters extends OperationParametersReport {
                     }
                 }
             }
+        }
+        /*
+         * If the parameter is Geotk-specific, hides it for now.
+         */
+        if (row.names.isEmpty()) {
+            return null;
         }
         return new OrderedRow(row, categoryIndex);
     }

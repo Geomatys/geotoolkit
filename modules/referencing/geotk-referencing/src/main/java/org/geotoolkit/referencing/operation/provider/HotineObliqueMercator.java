@@ -91,14 +91,14 @@ public class HotineObliqueMercator extends ObliqueMercator {
             new NamedIdentifier(Citations.EPSG,    "Hotine Oblique Mercator (variant A)"), // Starting from 7.6
             new NamedIdentifier(Citations.EPSG,    "Hotine Oblique Mercator"), // Prior to EPSG version 7.6
             new IdentifierCode (Citations.EPSG,     9812),
-            new NamedIdentifier(Citations.GEOTIFF, "CT_ObliqueMercator_Hotine"),
-            // Note: The GeoTIFF numerical code (3) is already used by CT_ObliqueMercator.
             new NamedIdentifier(Citations.ESRI,    "Hotine_Oblique_Mercator_Azimuth_Natural_Origin"),
             new NamedIdentifier(Citations.ESRI,    "Rectified_Skew_Orthomorphic_Natural_Origin"),
+            new NamedIdentifier(Citations.GEOTIFF, "CT_ObliqueMercator_Hotine"),
+            // Note: The GeoTIFF numerical code (3) is already used by CT_ObliqueMercator.
                      sameNameAs(Citations.PROJ4, ObliqueMercator.PARAMETERS),
             new NamedIdentifier(Citations.GEOTOOLKIT, "Rectified Skew Orthomorphic (RSO)"), // Legacy EPSG
                      sameNameAs(Citations.GEOTOOLKIT, ObliqueMercator.PARAMETERS)
-        }, new ParameterDescriptor<?>[] {
+        }, null, new ParameterDescriptor<?>[] {
             SEMI_MAJOR,          SEMI_MINOR, ROLL_LONGITUDE,
             LONGITUDE_OF_CENTRE, LATITUDE_OF_CENTRE,
             AZIMUTH,             RECTIFIED_GRID_ANGLE,
@@ -124,7 +124,7 @@ public class HotineObliqueMercator extends ObliqueMercator {
 
 
     /**
-     * The provider for "<cite>Hotine Oblique Mercator</cite>" projection specified with two points
+     * The provider for "<cite>Hotine Oblique Mercator</cite>" projection specified by two points
      * on the central line. This is different than the classical {@linkplain HotineObliqueMercator
      * Hotine Oblique Mercator}, which uses a central point and azimuth.
      *
@@ -184,10 +184,10 @@ public class HotineObliqueMercator extends ObliqueMercator {
         static {
             final List<GeneralParameterDescriptor> param = ObliqueMercator.TwoPoint.PARAMETERS.descriptors();
             PARAMETERS = Identifiers.createDescriptorGroup(
-            new ReferenceIdentifier[] {
-                new NamedIdentifier(Citations.ESRI, "Hotine_Oblique_Mercator_Two_Point_Natural_Origin"),
-                sameNameAs(Citations.GEOTOOLKIT, HotineObliqueMercator.PARAMETERS)
-            }, param.toArray(new ParameterDescriptor<?>[param.size()]));
+                new ReferenceIdentifier[] {
+                    new NamedIdentifier(Citations.ESRI, "Hotine_Oblique_Mercator_Two_Point_Natural_Origin"),
+                    sameNameAs(Citations.GEOTOOLKIT, HotineObliqueMercator.PARAMETERS)
+            }, null, param.toArray(new ParameterDescriptor<?>[param.size()]));
         }
 
         /**

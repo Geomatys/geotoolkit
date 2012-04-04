@@ -19,6 +19,7 @@ package org.geotoolkit.referencing.operation.provider;
 
 import net.jcip.annotations.Immutable;
 
+import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -45,7 +46,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * </ul>
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.03
+ * @version 3.20
  *
  * @since 3.03
  * @module
@@ -100,16 +101,21 @@ public class PseudoMercator extends MapProjection {
     /**
      * The parameters group.
      */
-    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
-        new ReferenceIdentifier[] {
+    public static final ParameterDescriptorGroup PARAMETERS;
+    static {
+        final Citation[] excludes = {
+            Citations.ESRI, Citations.NETCDF, Citations.GEOTIFF, Citations.PROJ4
+        };
+        PARAMETERS = Identifiers.createDescriptorGroup(new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.EPSG, "Popular Visualisation Pseudo Mercator"),
             new IdentifierCode (Citations.EPSG,  1024),
             sameNameAs(Citations.GEOTOOLKIT, Mercator1SP.PARAMETERS)
-        }, new ParameterDescriptor<?>[] {
+        }, excludes, new ParameterDescriptor<?>[] {
             SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
             LATITUDE_OF_ORIGIN, CENTRAL_MERIDIAN,
             FALSE_EASTING, FALSE_NORTHING
         });
+    }
 
     /**
      * Constructs a new provider.

@@ -38,6 +38,7 @@ import org.opengis.util.InternationalString;
 
 import org.geotoolkit.xml.Namespaces;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.Deprecable;
 import org.geotoolkit.util.DefaultInternationalString;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.metadata.iso.citation.Citations;
@@ -63,7 +64,7 @@ import static org.opengis.referencing.IdentifiedObject.REMARKS_KEY;
  */
 @Immutable
 @XmlRootElement(name = "RS_Identifier", namespace = Namespaces.GMD)
-public class DefaultReferenceIdentifier implements ReferenceIdentifier, Serializable {
+public class DefaultReferenceIdentifier implements ReferenceIdentifier, Deprecable, Serializable {
     /**
      * For cross-version compatibility.
      */
@@ -521,6 +522,7 @@ public class DefaultReferenceIdentifier implements ReferenceIdentifier, Serializ
      *
      * @return {@code true} if this code is deprecated.
      */
+    @Override
     public boolean isDeprecated() {
         return false;
     }

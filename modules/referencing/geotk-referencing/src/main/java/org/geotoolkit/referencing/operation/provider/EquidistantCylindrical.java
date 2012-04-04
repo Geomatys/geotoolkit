@@ -43,12 +43,10 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  *        adjustment of Earth radius in the ellipsoidal case. Consequently they are implemented
  *        in Geotk by the same class.}
  *
- * EPSG:1028 and 1029 are the current codes, while EPSG:9842 and 9823 are deprecated codes.
- * The only difference between the legacy operations and the new ones are some parameter names.
- * In the Geotk implementation, both current and legacy EPSG names are known, but the legacy names
- * are marked as {@linkplain org.geotoolkit.referencing.DefaultReferenceIdentifier#isDeprecated()
- * deprecated}.
- * <p>
+ * {@code EPSG:1028 and 1029 are the current codes, while EPSG:9842 and 9823 are deprecated codes.
+ *        The new and deprecated definitions differ only by their names. In the Geotk implementation,
+ *        both current and legacy definitions are known, but the legacy names are marked as deprecated.}
+ *
  * The programmatic names and parameters are enumerated at
  * <A HREF="http://www.remotesensing.org/geotiff/proj_list/equirectangular.html">Equirectangular
  * on RemoteSensing.org</A>. The math transform implementations instantiated by this provider may
@@ -117,23 +115,23 @@ public class EquidistantCylindrical extends MapProjection {
      */
     static {
         final Citation[] excludes = new Citation[] {Citations.NETCDF};
-        CENTRAL_MERIDIAN = Identifiers.CENTRAL_MERIDIAN.select(excludes, new String[] {
+        CENTRAL_MERIDIAN = Identifiers.CENTRAL_MERIDIAN.select(null, null, excludes, new String[] {
                 "Longitude of false origin"},        // EPSG (deprecated - was used by EPSG:9842 only)
                 "Longitude of natural origin",       // EPSG
                 "central_meridian",                  // OGC
                 "Central_Meridian",                  // ESRI
                 "ProjCenterLong");                   // GeoTIFF
-        LATITUDE_OF_ORIGIN = Identifiers.LATITUDE_OF_ORIGIN.select(excludes, new String[] {
+        LATITUDE_OF_ORIGIN = Identifiers.LATITUDE_OF_ORIGIN.select(null, null, excludes, new String[] {
                 "Latitude of natural origin"},       // EPSG (deprecated - was used by EPSG:9842 and 9823)
                 "Latitude of 1st standard parallel", // EPSG
                 "latitude_of_origin",                // OGC
                 "Standard_Parallel_1",               // ESRI
                 "ProjCenterLat");                    // GeoTIFF
         // Following are the same than Mercator1SP except for the exclusion list.
-        FALSE_EASTING = Identifiers.FALSE_EASTING.select(excludes, null,
+        FALSE_EASTING = Identifiers.FALSE_EASTING.select(excludes,
                 "False easting",                     // EPSG
                 "FalseEasting");                     // GeoTIFF
-        FALSE_NORTHING = Identifiers.FALSE_NORTHING.select(excludes, null,
+        FALSE_NORTHING = Identifiers.FALSE_NORTHING.select(excludes,
                 "False northing",                    // EPSG
                 "FalseNorthing");                    // GeoTIFF
     }
@@ -157,7 +155,7 @@ public class EquidistantCylindrical extends MapProjection {
             new NamedIdentifier(Citations.PROJ4,    "eqc"),
             new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
                                 Vocabulary.Keys.EQUIDISTANT_CYLINDRICAL_PROJECTION))
-        }, new ParameterDescriptor<?>[] {
+        }, null, new ParameterDescriptor<?>[] {
             SEMI_MAJOR,       SEMI_MINOR, ROLL_LONGITUDE,
             CENTRAL_MERIDIAN, LATITUDE_OF_ORIGIN,
             FALSE_EASTING,    FALSE_NORTHING

@@ -129,12 +129,11 @@ public class ParameterGroup extends AbstractParameter implements ParameterValueG
         ensureNonNull("values", values);
         this.values = new ArrayList<GeneralParameterValue>(Arrays.asList(values));
         final List<GeneralParameterDescriptor> parameters = descriptor.descriptors();
-        final Map<GeneralParameterDescriptor,int[]> occurrences =
-                new LinkedHashMap<GeneralParameterDescriptor,int[]>(XCollections.hashMapCapacity(parameters.size()));
+        final Map<GeneralParameterDescriptor,Integer> occurrences =
+                new LinkedHashMap<GeneralParameterDescriptor,Integer>(XCollections.hashMapCapacity(parameters.size()));
         for (final GeneralParameterDescriptor param : parameters) {
             ensureNonNull("parameters", param);
-            occurrences.put(param, new int[1]);
-            // The value 'int[1]' will be used by 'ensureValidOccurs'
+            occurrences.put(param, 0);
         }
         ensureValidOccurs(values, occurrences);
     }
@@ -164,12 +163,11 @@ public class ParameterGroup extends AbstractParameter implements ParameterValueG
             final Map<String,?> properties, final GeneralParameterValue[] values)
     {
         ensureNonNull("values", values);
-        final Map<GeneralParameterDescriptor,int[]> occurrences =
-                new LinkedHashMap<GeneralParameterDescriptor,int[]>(XCollections.hashMapCapacity(values.length));
+        final Map<GeneralParameterDescriptor,Integer> occurrences =
+                new LinkedHashMap<GeneralParameterDescriptor,Integer>(XCollections.hashMapCapacity(values.length));
         for (int i=0; i<values.length; i++) {
             ensureNonNull("values", i, values);
-            occurrences.put(values[i].getDescriptor(), new int[1]);
-            // The value 'int[1]' will be used by 'ensureValidOccurs'
+            occurrences.put(values[i].getDescriptor(), 0);
         }
         ensureValidOccurs(values, occurrences);
         final Set<GeneralParameterDescriptor> descriptors = occurrences.keySet();
@@ -183,12 +181,12 @@ public class ParameterGroup extends AbstractParameter implements ParameterValueG
      * @param  values The list of parameter values.
      * @param  occurrences A map of the number of occurrences of a value for each descriptor.
      *         The key must be {@link GeneralParameterDescriptor} instances and the values
-     *         must be {@code int[]} array of length 1 initialized with the 0 value.
+     *         must be {@link Integer} initialized with the 0 value.
      * @throws IllegalStateException If the number of parameter values is not in the
      *         range of minimum and maximum occurrences declared in the descriptor.
      */
     private static void ensureValidOccurs(final GeneralParameterValue[] values,
-                                          final Map<GeneralParameterDescriptor,int[]> occurrences)
+                                          final Map<GeneralParameterDescriptor,Integer> occurrences)
     {
         /*
          * Count the parameters occurrences.
@@ -196,20 +194,23 @@ public class ParameterGroup extends AbstractParameter implements ParameterValueG
         for (int i=0; i<values.length; i++) {
             ensureNonNull("values", i, values);
             final GeneralParameterDescriptor descriptor = values[i].getDescriptor();
-            final int[] count = occurrences.get(descriptor);
+            final Integer count = occurrences.put(descriptor, 1);
             if (count == null) {
                 final String name = getName(descriptor);
                 throw new InvalidParameterTypeException(Errors.format(
                         Errors.Keys.ILLEGAL_DESCRIPTOR_FOR_PARAMETER_$1, name), name);
             }
-            count[0]++;
+            if (count != 0) {
+                // Rarely enter in this block because there is usually at most 1 occurrence.
+                occurrences.put(descriptor, count + 1);
+            }
         }
         /*
          * Now check if the occurrences are in the expected ranges.
          */
-        for (final Map.Entry<GeneralParameterDescriptor,int[]> entry : occurrences.entrySet()) {
+        for (final Map.Entry<GeneralParameterDescriptor,Integer> entry : occurrences.entrySet()) {
             final GeneralParameterDescriptor descriptor = entry.getKey();
-            final int count = entry.getValue()[0];
+            final int count = entry.getValue();
             final int min   = descriptor.getMinimumOccurs();
             final int max   = descriptor.getMaximumOccurs();
             if (!(count>=min && count<=max)) {

@@ -44,8 +44,8 @@ import static org.geotoolkit.parameter.Parameters.*;
  * <strong>WARNING:</strong> The EPSG code is the same than the {@link EllipsoidToGeocentric}
  * one. To avoid ambiguity, use the OGC name instead: {@code "Geocentric_To_Ellipsoid"}.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.20
  *
  * @see GeocentricTransform
  *

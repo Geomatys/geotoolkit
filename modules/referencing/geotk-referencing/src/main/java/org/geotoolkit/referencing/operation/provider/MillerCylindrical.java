@@ -19,6 +19,7 @@ package org.geotoolkit.referencing.operation.provider;
 
 import net.jcip.annotations.Immutable;
 
+import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -27,6 +28,7 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.CylindricalProjection;
 
 import org.geotoolkit.referencing.NamedIdentifier;
+import org.geotoolkit.referencing.DefaultReferenceIdentifier;
 import org.geotoolkit.referencing.operation.projection.Mercator;
 import org.geotoolkit.internal.referencing.Identifiers;
 import org.geotoolkit.metadata.iso.citation.Citations;
@@ -57,7 +59,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * the parameters shall contains semi-major and semi-minor axis lengths of equal length.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.14
+ * @version 3.20
  *
  * @since 3.14
  * @module
@@ -77,10 +79,7 @@ public class MillerCylindrical extends MapProjection {
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is [-180 &hellip; 180]&deg; and default value is 0&deg;.
      */
-    public static final ParameterDescriptor<Double> LONGITUDE_OF_CENTRE =
-            Identifiers.CENTRAL_MERIDIAN.select(
-                "longitude_of_center", // OGC
-                "ProjCenterLong");     // GeoTIFF
+    public static final ParameterDescriptor<Double> LONGITUDE_OF_CENTRE;
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -91,10 +90,7 @@ public class MillerCylindrical extends MapProjection {
      * (its value is normally zero).
      * Valid values range is [-90 &hellip; 90]&deg; and default value is 0&deg;.
      */
-    public static final ParameterDescriptor<Double> LATITUDE_OF_CENTRE =
-            Identifiers.LATITUDE_OF_ORIGIN.select(false,
-                "latitude_of_center", // OGC
-                "ProjCenterLat");     // GeoTIFF
+    public static final ParameterDescriptor<Double> LATITUDE_OF_CENTRE;
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -104,7 +100,7 @@ public class MillerCylindrical extends MapProjection {
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is unrestricted and default value is 0 metre.
      */
-    public static final ParameterDescriptor<Double> FALSE_EASTING = Mercator1SP.FALSE_EASTING;
+    public static final ParameterDescriptor<Double> FALSE_EASTING;
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -114,22 +110,38 @@ public class MillerCylindrical extends MapProjection {
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is unrestricted and default value is 0 metre.
      */
-    public static final ParameterDescriptor<Double> FALSE_NORTHING = Mercator1SP.FALSE_NORTHING;
+    public static final ParameterDescriptor<Double> FALSE_NORTHING;
 
     /**
      * The parameters group.
      */
-    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
-        new ReferenceIdentifier[] {
+    public static final ParameterDescriptorGroup PARAMETERS;
+    static {
+        final Citation[] excludes = new Citation[] {Citations.EPSG, Citations.ESRI, Citations.NETCDF};
+        LONGITUDE_OF_CENTRE = Identifiers.CENTRAL_MERIDIAN.select(excludes,
+                "longitude_of_center", // OGC
+                "ProjCenterLong");     // GeoTIFF
+        LATITUDE_OF_CENTRE = Identifiers.LATITUDE_OF_ORIGIN.select(false, null, excludes, null,
+                "latitude_of_center",  // OGC
+                "ProjCenterLat");      // GeoTIFF
+        FALSE_EASTING = Identifiers.FALSE_EASTING.select(excludes,
+                "FalseEasting");       // GeoTIFF
+        FALSE_NORTHING = Identifiers.FALSE_NORTHING.select(excludes,
+                "FalseNorthing");      // GeoTIFF
+
+        PARAMETERS = Identifiers.createDescriptorGroup(new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.OGC,     "Miller_Cylindrical"),
+            new NamedIdentifier(Citations.IGNF,    "Miller_Cylindrical_Sphere"),
+            new DefaultReferenceIdentifier(Citations.IGNF, "IGNF", "PRC9901"),
             new NamedIdentifier(Citations.GEOTIFF, "CT_MillerCylindrical"),
             new IdentifierCode (Citations.GEOTIFF,  20),
             new NamedIdentifier(Citations.PROJ4,   "mill")
-        }, new ParameterDescriptor<?>[] {
+        }, excludes, new ParameterDescriptor<?>[] {
             SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
             LATITUDE_OF_CENTRE, LONGITUDE_OF_CENTRE,
             FALSE_EASTING, FALSE_NORTHING
         });
+    }
 
     /**
      * Constructs a new provider.

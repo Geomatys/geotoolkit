@@ -60,7 +60,7 @@ import static java.util.Collections.singleton;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Jody Garnett (Refractions)
- * @version 3.19
+ * @version 3.20
  *
  * @since 2.2
  * @module
@@ -139,6 +139,8 @@ public final class Citations extends Static {
 
     /**
      * The <A HREF="http://www.esri.com">ESRI</A> organisation.
+     * This company defines many Coordinate Reference Systems in addition to the {@linkplain #EPSG}
+     * ones.
      *
      * @see org.geotoolkit.io.wkt.Convention#ESRI
      * @category Organisation
@@ -326,6 +328,26 @@ public final class Citations extends Static {
         c.setPresentationForm(PresentationForm.TABLE_DIGITAL);
         c.freeze();
         EPSG = c;
+    }
+
+    /**
+     * The French mapping agency (<A HREF="http://www.ign.fr">Institut Géographique National</A>).
+     * This agency defines many Coordinate Reference Systems in addition to the {@linkplain #EPSG}
+     * ones.
+     *
+     * @category Code space
+     *
+     * @since 3.20
+     */
+    public static final IdentifierSpace<Integer> IGNF;
+    static {
+        final DefaultResponsibleParty r = new DefaultResponsibleParty(Role.RESOURCE_PROVIDER);
+        r.setOrganisationName(new SimpleInternationalString("Institut Géographique National"));
+        r.setContactInfo(new DefaultContact(new DefaultOnlineResource(URI.create("http://www.ign.fr"))));
+        final CitationConstant.Authority<Integer> c = new CitationConstant.Authority<Integer>(r, "IGNF", "IGNF");
+        c.getPresentationForms().add(PresentationForm.TABLE_DIGITAL);
+        c.freeze();
+        IGNF = c;
     }
 
     /**

@@ -53,8 +53,8 @@ import static org.geotoolkit.parameter.Parameters.*;
  * <strong>WARNING:</strong> The EPSG code is the same than the {@link GeocentricToEllipsoid}
  * one. To avoid ambiguity, use the OGC name instead: {@code "Ellipsoid_To_Geocentric"}.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.20
  *
  * @see GeocentricTransform
  *
@@ -73,14 +73,18 @@ public class EllipsoidToGeocentric extends MathTransformProvider {
      * Valid values range from 0 to infinity. This parameter is mandatory and has no
      * default value.
      */
-    public static final ParameterDescriptor<Double> SEMI_MAJOR = MapProjection.SEMI_MAJOR;
+    @SuppressWarnings("unchecked")
+    public static final ParameterDescriptor<Double> SEMI_MAJOR =
+            (ParameterDescriptor<Double>) PseudoMercator.PARAMETERS.descriptor("semi_major");
 
     /**
      * The operation parameter descriptor for the {@code "semi_minor"} parameter value.
      * Valid values range from 0 to infinity. This parameter is mandatory and has no
      * default value.
      */
-    public static final ParameterDescriptor<Double> SEMI_MINOR = MapProjection.SEMI_MINOR;
+    @SuppressWarnings("unchecked")
+    public static final ParameterDescriptor<Double> SEMI_MINOR =
+            (ParameterDescriptor<Double>) PseudoMercator.PARAMETERS.descriptor("semi_minor");
 
     /**
      * The operation parameter descriptor for the number of geographic dimension (2 or 3).
@@ -95,8 +99,7 @@ public class EllipsoidToGeocentric extends MathTransformProvider {
     /**
      * The parameters group.
      */
-    public static final ParameterDescriptorGroup PARAMETERS =
-            createDescriptorGroup("Ellipsoid_To_Geocentric");
+    public static final ParameterDescriptorGroup PARAMETERS = createDescriptorGroup("Ellipsoid_To_Geocentric");
 
     /**
      * Constructs the parameters group.
@@ -108,7 +111,7 @@ public class EllipsoidToGeocentric extends MathTransformProvider {
                 new IdentifierCode (Citations.EPSG, 9602),
                 new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
                                     Vocabulary.Keys.GEOCENTRIC_TRANSFORM))
-            }, new ParameterDescriptor<?>[] {
+            }, null, new ParameterDescriptor<?>[] {
                 SEMI_MAJOR, SEMI_MINOR, DIM
             });
     }

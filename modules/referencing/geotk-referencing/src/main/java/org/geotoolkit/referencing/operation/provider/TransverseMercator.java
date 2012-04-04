@@ -17,11 +17,14 @@
  */
 package org.geotoolkit.referencing.operation.provider;
 
+import java.util.List;
 import net.jcip.annotations.Immutable;
 
+import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.CylindricalProjection;
@@ -45,7 +48,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  *
  * @author Martin Desruisseaux (MPO, IRD, Geomatys)
  * @author Rueben Schulz (UBC)
- * @version 3.00
+ * @version 3.20
  *
  * @since 2.1
  * @module
@@ -66,10 +69,10 @@ public class TransverseMercator extends MapProjection {
      * Valid values range is [-180 &hellip; 180]&deg; and default value is 0&deg;.
      */
     public static final ParameterDescriptor<Double> CENTRAL_MERIDIAN =
-            Identifiers.CENTRAL_MERIDIAN.select(
+            Identifiers.CENTRAL_MERIDIAN.select(null,
+                "Longitude of natural origin",    // EPSG
                 "central_meridian",               // OGC
                 "Central_Meridian",               // ESRI
-                "Longitude of natural origin",    // EPSG
                 "longitude_of_central_meridian",  // NetCDF
                 "NatOriginLong");                 // GeoTIFF
 
@@ -92,7 +95,7 @@ public class TransverseMercator extends MapProjection {
      * Valid values range is (0 &hellip; &infin;) and default value is 1.
      */
     public static final ParameterDescriptor<Double> SCALE_FACTOR =
-            Identifiers.SCALE_FACTOR.select(
+            Identifiers.SCALE_FACTOR.select(null,
                 "Scale factor at natural origin",   // EPSG
                 "scale_factor_at_central_meridian", // NetCDF
                 "ScaleAtNatOrigin");                // GeoTIFF
@@ -105,7 +108,7 @@ public class TransverseMercator extends MapProjection {
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is unrestricted and default value is 0 metre.
      */
-    public static final ParameterDescriptor<Double> FALSE_EASTING = Mercator1SP.FALSE_EASTING;
+    public static final ParameterDescriptor<Double> FALSE_EASTING = Mercator2SP.FALSE_EASTING;
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -115,38 +118,31 @@ public class TransverseMercator extends MapProjection {
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is unrestricted and default value is 0 metre.
      */
-    public static final ParameterDescriptor<Double> FALSE_NORTHING = Mercator1SP.FALSE_NORTHING;
-
-    /**
-     * Returns a descriptor group for the specified parameters.
-     */
-    static ParameterDescriptorGroup createDescriptorGroup(final ReferenceIdentifier[] identifiers) {
-        return Identifiers.createDescriptorGroup(identifiers, new ParameterDescriptor<?>[] {
-            SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
-            CENTRAL_MERIDIAN, LATITUDE_OF_ORIGIN,
-            SCALE_FACTOR, FALSE_EASTING, FALSE_NORTHING
-        });
-    }
+    public static final ParameterDescriptor<Double> FALSE_NORTHING = Mercator2SP.FALSE_NORTHING;
 
     /**
      * The parameters group.
      */
-    public static final ParameterDescriptorGroup PARAMETERS = createDescriptorGroup(
+    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
         new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.OGC,      "Transverse_Mercator"),
-            new NamedIdentifier(Citations.ESRI,     "Transverse_Mercator"),
-            new NamedIdentifier(Citations.ESRI,     "Gauss_Kruger"),
             new NamedIdentifier(Citations.EPSG,     "Transverse Mercator"),
             new NamedIdentifier(Citations.EPSG,     "Gauss-Kruger"),
             new NamedIdentifier(Citations.EPSG,     "Gauss-Boaga"),
             new NamedIdentifier(Citations.EPSG,     "TM"),
             new IdentifierCode (Citations.EPSG,      9807),
+            new NamedIdentifier(Citations.ESRI,     "Transverse_Mercator"),
+            new NamedIdentifier(Citations.ESRI,     "Gauss_Kruger"),
             new NamedIdentifier(Citations.NETCDF,   "TransverseMercator"),
             new NamedIdentifier(Citations.GEOTIFF,  "CT_TransverseMercator"),
             new IdentifierCode (Citations.GEOTIFF,   1),
             new NamedIdentifier(Citations.PROJ4,    "tmerc"),
             new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
-                                Vocabulary.Keys.TRANSVERSE_MERCATOR_PROJECTION))
+                                Vocabulary.Keys.TRANSVERSE_MERCATOR_PROJECTION)),
+        }, null, new ParameterDescriptor<?>[] {
+            SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
+            CENTRAL_MERIDIAN, LATITUDE_OF_ORIGIN,
+            SCALE_FACTOR, FALSE_EASTING, FALSE_NORTHING
         });
 
     /**
@@ -192,7 +188,7 @@ public class TransverseMercator extends MapProjection {
      * <cite>false westing</cite> (FW) and <cite>false southing</cite> (FS) respectively.
      *
      * @author Martin Desruisseaux (MPO, IRD, Geomatys)
-     * @version 3.00
+     * @version 3.20
      *
      * @see org.geotoolkit.referencing.operation.projection.TransverseMercator
      *
@@ -210,11 +206,19 @@ public class TransverseMercator extends MapProjection {
          * The parameters group.
          */
         @SuppressWarnings("hiding")
-        public static final ParameterDescriptorGroup PARAMETERS = createDescriptorGroup(new ReferenceIdentifier[] {
-            new NamedIdentifier(Citations.EPSG, "Transverse Mercator (South Orientated)"),
-            new IdentifierCode (Citations.EPSG,  9808),
-            sameNameAs(Citations.GEOTOOLKIT, TransverseMercator.PARAMETERS)
-        });
+        public static final ParameterDescriptorGroup PARAMETERS;
+        static {
+            final Citation[] excludes = {
+                Citations.ESRI, Citations.NETCDF, Citations.GEOTIFF, Citations.PROJ4
+            };
+            final List<GeneralParameterDescriptor> param = TransverseMercator.PARAMETERS.descriptors();
+            PARAMETERS = Identifiers.createDescriptorGroup(
+                new ReferenceIdentifier[] {
+                    new NamedIdentifier(Citations.EPSG, "Transverse Mercator (South Orientated)"),
+                    new IdentifierCode (Citations.EPSG,  9808),
+                    sameNameAs(Citations.GEOTOOLKIT, TransverseMercator.PARAMETERS)
+            }, excludes, param.toArray(new ParameterDescriptor<?>[param.size()]));
+        }
 
         /**
          * Constructs a new provider.

@@ -117,7 +117,7 @@ public class WarpPolynomial extends MathTransformProvider {
      */
     public static final ParameterDescriptorGroup PARAMETERS = createDescriptorGroup(new NamedIdentifier[] {
             new NamedIdentifier(Citations.GEOTOOLKIT, "WarpPolynomial")
-        }, new ParameterDescriptor<?>[] {
+        }, null, new ParameterDescriptor<?>[] {
             DEGREE, X_COEFFS, Y_COEFFS, PRE_SCALE_X, PRE_SCALE_Y, POST_SCALE_X, POST_SCALE_Y
         });
 

@@ -19,6 +19,7 @@ package org.geotoolkit.referencing.operation.provider;
 
 import net.jcip.annotations.Immutable;
 
+import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -44,7 +45,8 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * </ul>
  *
  * @author Simon Reynard (Geomatys)
- * @version 3.11
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.20
  *
  * @since 3.11
  * @module
@@ -64,12 +66,7 @@ public class Polyconic extends MapProjection {
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is [-180 &hellip; 180]&deg; and default value is 0&deg;.
      */
-    public static final ParameterDescriptor<Double> CENTRAL_MERIDIAN =
-            Identifiers.CENTRAL_MERIDIAN.select(
-                "central_meridian",             // OGC
-                "Central_Meridian",             // ESRI
-                "Longitude of natural origin",  // EPSG
-                "NatOriginLong");               // GeoTIFF
+    public static final ParameterDescriptor<Double> CENTRAL_MERIDIAN;
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -79,12 +76,7 @@ public class Polyconic extends MapProjection {
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is [-90 &hellip; 90]&deg; and default value is 0&deg;.
      */
-    public static final ParameterDescriptor<Double> LATITUDE_OF_ORIGIN =
-            Identifiers.LATITUDE_OF_ORIGIN.select(
-                "latitude_of_origin",           // OGC
-                "Latitude of natural origin",   // EPSG
-                "Standard_Parallel_1",          // ESRI
-                "NatOriginLat");                // GeoTIFF
+    public static final ParameterDescriptor<Double> LATITUDE_OF_ORIGIN;
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -94,10 +86,7 @@ public class Polyconic extends MapProjection {
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is unrestricted and default value is 0 metre.
      */
-    public static final ParameterDescriptor<Double> FALSE_EASTING =
-            Identifiers.FALSE_EASTING.select(
-                "False easting",    // EPSG
-                "FalseEasting");    // GeoTIFF
+    public static final ParameterDescriptor<Double> FALSE_EASTING;
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -107,26 +96,43 @@ public class Polyconic extends MapProjection {
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is unrestricted and default value is 0 metre.
      */
-    public static final ParameterDescriptor<Double> FALSE_NORTHING =
-            Identifiers.FALSE_NORTHING.select(
-                "False northing",   // EPSG
-                "FalseNorthing");   // GeoTIFF
+    public static final ParameterDescriptor<Double> FALSE_NORTHING;
 
     /**
      * The parameters group.
      */
-    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
-        new ReferenceIdentifier[] {
+    public static final ParameterDescriptorGroup PARAMETERS;
+    static {
+        final Citation[] excludes = {
+            Citations.ESRI, Citations.NETCDF, Citations.PROJ4
+        };
+        CENTRAL_MERIDIAN = Identifiers.CENTRAL_MERIDIAN.select(excludes,
+                "Longitude of natural origin",  // EPSG
+                "central_meridian",             // OGC
+                "NatOriginLong");               // GeoTIFF
+        LATITUDE_OF_ORIGIN = Identifiers.LATITUDE_OF_ORIGIN.select(excludes,
+                "Latitude of natural origin",   // EPSG
+                "latitude_of_origin",           // OGC
+                "NatOriginLat");                // GeoTIFF
+        FALSE_EASTING = Identifiers.FALSE_EASTING.select(excludes,
+                "False easting",                // EPSG
+                "FalseEasting");                // GeoTIFF
+        FALSE_NORTHING = Identifiers.FALSE_NORTHING.select(excludes,
+                "False northing",               // EPSG
+                "FalseNorthing");               // GeoTIFF
+
+        PARAMETERS = Identifiers.createDescriptorGroup(new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.OGC,     "Polyconic"),
             new NamedIdentifier(Citations.EPSG,    "American Polyconic"),
             new IdentifierCode (Citations.EPSG,     9818), // The ellipsoidal case
             new NamedIdentifier(Citations.GEOTIFF, "CT_Polyconic"),
             new IdentifierCode (Citations.GEOTIFF,  22)
-        }, new ParameterDescriptor<?>[] {
+        }, excludes, new ParameterDescriptor<?>[] {
             SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
             LATITUDE_OF_ORIGIN, CENTRAL_MERIDIAN,
             FALSE_EASTING, FALSE_NORTHING
         });
+    }
 
     /**
      * Constructs a new provider.

@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.internal.referencing.factory;
 
-import java.net.URI;
 import java.util.Set;
 import java.util.Map;
 import java.util.HashMap;
@@ -26,9 +25,7 @@ import java.util.Collections;
 
 import org.opengis.util.FactoryException;
 import org.opengis.util.InternationalString;
-import org.opengis.metadata.citation.Role;
 import org.opengis.metadata.citation.Citation;
-import org.opengis.metadata.citation.PresentationForm;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.ReferenceIdentifier;
@@ -37,12 +34,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 
 import org.geotoolkit.util.SimpleInternationalString;
-import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.metadata.iso.citation.DefaultCitation;
-import org.geotoolkit.metadata.iso.citation.DefaultContact;
-import org.geotoolkit.metadata.iso.citation.DefaultOnlineResource;
-import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
 import org.geotoolkit.referencing.DefaultReferenceIdentifier;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.cs.DefaultCartesianCS;
@@ -58,27 +50,12 @@ import org.geotoolkit.referencing.factory.DirectAuthorityFactory;
  * The IGNF authority factory.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.14
+ * @version 3.20
  *
  * @since 3.14
  * @module
  */
 public final class IGNF extends DirectAuthorityFactory implements CRSAuthorityFactory {
-    /**
-     * The authority citation.
-     */
-    private static final Citation AUTHORITY;
-    static {
-        final DefaultResponsibleParty r = new DefaultResponsibleParty(Role.RESOURCE_PROVIDER);
-        r.setOrganisationName(new SimpleInternationalString("Institut Géographique National"));
-        r.setContactInfo(new DefaultContact(new DefaultOnlineResource(URI.create("http://www.ign.fr"))));
-        final DefaultCitation c = new DefaultCitation(r);
-        c.getIdentifiers().add(new DefaultIdentifier("IGNF"));
-        c.getPresentationForms().add(PresentationForm.TABLE_DIGITAL);
-        c.freeze();
-        AUTHORITY = c;
-    }
-
     /**
      * The map of pre-defined CRS. Will be created when first needed. Keys are IGNF codes.
      * Values are initially projection names, to be replaced by the actual CRS when first
@@ -105,7 +82,7 @@ public final class IGNF extends DirectAuthorityFactory implements CRSAuthorityFa
      */
     @Override
     public Citation getAuthority() {
-        return AUTHORITY;
+        return Citations.IGNF;
     }
 
     /**
@@ -162,10 +139,10 @@ public final class IGNF extends DirectAuthorityFactory implements CRSAuthorityFa
 
         // Creates the projection.
         final ParameterValueGroup param = factories.getMathTransformFactory().getDefaultParameters((String) value);
-        param.parameter("semi-major axis").setValue(6378137);
-        param.parameter("semi-minor axis").setValue(6378137);
+        param.parameter("semi_major").setValue(6378137);
+        param.parameter("semi_minor").setValue(6378137);
         final ReferenceIdentifier[] identifiers = {
-            new NamedIdentifier(AUTHORITY, "MILLER"),
+            new NamedIdentifier(Citations.IGNF, "MILLER"),
             new DefaultReferenceIdentifier(Citations.EPSG, "EPSG", "310642901"), // Unofficial
             new DefaultReferenceIdentifier(Citations.EPSG, "EPSG", "54003") // Unofficial
         };

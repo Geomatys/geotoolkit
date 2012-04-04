@@ -28,6 +28,8 @@ import org.opengis.referencing.operation.SingleOperation;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.CoordinateOperationAuthorityFactory;
 
+import org.geotoolkit.util.XArrays;
+import org.geotoolkit.util.Deprecable;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.metadata.iso.citation.Citations;
@@ -45,11 +47,18 @@ import static org.geotoolkit.referencing.Commons.*;
  * declared in the EPSG database, but this could be extended to other authorities as well.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.07
+ * @version 3.20
  *
  * @since 3.03
  */
 public final strictfp class ConformanceTest extends ReferencingTestBase {
+    /**
+     * Deprecated method names to ignore.
+     */
+    private static final String[] IGNORE = {
+        "Krovak Oblique Conic Conformal"  // Since EPSG 7.6, the name is only "Krovak".
+    };
+
     /**
      * Tests the conformance of EPSG codes.
      *
@@ -87,8 +96,8 @@ public final strictfp class ConformanceTest extends ReferencingTestBase {
          * Get all known names and codes for the given authority. For
          * each name or code, we remember the method that declare it.
          *
-         * Only one OperationMethod can be associated to a given code, but many
-         * OperationMethods can be associated to the same name or alias because
+         * Only one OperationMethod can be associated to a given numerical identifier,
+         * but many OperationMethods can be associated to the same name or alias because
          * some are ambiguous (e.g. "Bursa-Wolf").
          */
         final Map<String, OperationMethod> codes = new LinkedHashMap<String, OperationMethod>();
@@ -117,6 +126,10 @@ skip:   for (final OperationMethod method : mtFactory.getAvailableMethods(Single
             for (final GenericName alias : aliases) {
                 if (Citations.identifierMatches(authority, alias.head().toString())) {
                     final String name = alias.tip().toString().trim();
+                    if (XArrays.contains(IGNORE, name)) {
+                        assertTrue(name, ((Deprecable) alias).isDeprecated());
+                        continue;
+                    }
                     assertFalse("Not a name: " + name, isNumber(name));
                     Map<OperationMethod,OperationMethod> methods = names.get(name);
                     if (methods == null) {

@@ -41,8 +41,8 @@ import static org.geotoolkit.internal.referencing.Identifiers.createDescriptorGr
 /**
  * The provider for {@link ExponentialTransform1D}.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.20
  *
  * @see ExponentialTransform1D
  *
@@ -75,7 +75,7 @@ public class Exponential extends MathTransformProvider {
     public static final ParameterDescriptorGroup PARAMETERS = createDescriptorGroup(
             new NamedIdentifier[] {
                 new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(Vocabulary.Keys.EXPONENTIAL))
-            }, new ParameterDescriptor<?>[] {
+            }, null, new ParameterDescriptor<?>[] {
                 BASE, SCALE
             });
 

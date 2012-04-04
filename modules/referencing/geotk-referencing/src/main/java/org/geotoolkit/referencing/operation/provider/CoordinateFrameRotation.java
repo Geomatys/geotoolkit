@@ -29,7 +29,7 @@ import org.geotoolkit.referencing.datum.BursaWolfParameters;
  * that the rotation angles have the opposite sign.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.07
+ * @version 3.20
  *
  * @since 2.2
  * @module

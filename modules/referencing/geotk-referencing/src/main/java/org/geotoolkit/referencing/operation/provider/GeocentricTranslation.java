@@ -37,7 +37,7 @@ import org.geotoolkit.internal.referencing.Identifiers;
  * where only the translation terms can be set to a non-null value.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.07
+ * @version 3.20
  *
  * @since 2.2
  * @module
@@ -60,7 +60,7 @@ public class GeocentricTranslation extends PositionVector7Param {
             new NamedIdentifier(Citations.EPSG, "Geocentric translations (geog2D domain)"),
             new NamedIdentifier(Citations.EPSG, "Geocentric Translations"), // Legacy name
             new IdentifierCode (Citations.EPSG,  9603)
-        }, new ParameterDescriptor<?>[] {
+        }, null, new ParameterDescriptor<?>[] {
             DX, DY, DZ,
             SRC_SEMI_MAJOR, SRC_SEMI_MINOR,
             TGT_SEMI_MAJOR, TGT_SEMI_MINOR,

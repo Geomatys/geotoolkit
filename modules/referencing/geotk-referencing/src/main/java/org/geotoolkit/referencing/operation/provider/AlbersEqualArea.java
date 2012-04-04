@@ -71,10 +71,10 @@ public class AlbersEqualArea extends MapProjection {
      *       2.x and is preserved for now.
      */
     public static final ParameterDescriptor<Double> CENTRAL_MERIDIAN =
-            Identifiers.CENTRAL_MERIDIAN.select(
+            Identifiers.CENTRAL_MERIDIAN.select(null,
+                "Longitude of false origin",     // EPSG
                 "central_meridian",              // OGC
                 "Central_Meridian",              // ESRI
-                "Longitude of false origin",     // EPSG
                 "longitude_of_central_meridian", // NetCDF
                 "NatOriginLong");                // GeoTIFF
 
@@ -92,10 +92,10 @@ public class AlbersEqualArea extends MapProjection {
      *       2.x and is preserved for now.
      */
     public static final ParameterDescriptor<Double> LATITUDE_OF_ORIGIN =
-            Identifiers.LATITUDE_OF_ORIGIN.select(
+            Identifiers.LATITUDE_OF_ORIGIN.select(null,
+                "Latitude of false origin",      // EPSG
                 "latitude_of_origin",            // OGC
                 "Latitude_Of_Origin",            // ESRI
-                "Latitude of false origin",      // EPSG
                 "NatOriginLat");                 // GeoTIFF
 
     /**
@@ -129,7 +129,7 @@ public class AlbersEqualArea extends MapProjection {
      * Valid values range is unrestricted and default value is 0 metre.
      */
     public static final ParameterDescriptor<Double> FALSE_EASTING =
-            Identifiers.FALSE_EASTING.select(
+            Identifiers.FALSE_EASTING.select(null,
                 "Easting at false origin",  // EPSG
                 "FalseEasting");            // GeoTIFF
 
@@ -142,7 +142,7 @@ public class AlbersEqualArea extends MapProjection {
      * Valid values range is unrestricted and default value is 0 metre.
      */
     public static final ParameterDescriptor<Double> FALSE_NORTHING =
-            Identifiers.FALSE_NORTHING.select(
+            Identifiers.FALSE_NORTHING.select(null,
                 "Northing at false origin", // EPSG
                 "FalseNorthing");           // GeoTIFF
 
@@ -154,15 +154,15 @@ public class AlbersEqualArea extends MapProjection {
             new NamedIdentifier(Citations.OGC,     "Albers_Conic_Equal_Area"),
             new NamedIdentifier(Citations.EPSG,    "Albers Equal Area"),
             new IdentifierCode (Citations.EPSG,     9822),
-            new NamedIdentifier(Citations.GEOTIFF, "CT_AlbersEqualArea"),
-            new IdentifierCode (Citations.GEOTIFF,  11),
             new NamedIdentifier(Citations.ESRI,    "Albers"),
             new NamedIdentifier(Citations.ESRI,    "Albers_Equal_Area_Conic"),
             new NamedIdentifier(Citations.NETCDF,  "AlbersEqualArea"),
+            new NamedIdentifier(Citations.GEOTIFF, "CT_AlbersEqualArea"),
+            new IdentifierCode (Citations.GEOTIFF,  11),
             new NamedIdentifier(Citations.PROJ4,   "aea"),
             new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
                                 Vocabulary.Keys.ALBERS_EQUAL_AREA_PROJECTION))
-        }, new ParameterDescriptor<?>[] {
+        }, null, new ParameterDescriptor<?>[] {
             SEMI_MAJOR,          SEMI_MINOR, ROLL_LONGITUDE,
             CENTRAL_MERIDIAN,    LATITUDE_OF_ORIGIN,
             STANDARD_PARALLEL_1, STANDARD_PARALLEL_2,
