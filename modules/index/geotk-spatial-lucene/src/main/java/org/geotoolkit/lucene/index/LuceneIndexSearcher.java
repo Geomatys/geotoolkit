@@ -298,9 +298,7 @@ public class LuceneIndexSearcher extends IndexLucene {
             parser.setDefaultOperator(Operator.AND);
             
             // remove term:* query
-            System.out.println("before:" + stringQuery);
             stringQuery = removeOnlyWildchar(stringQuery);
-            System.out.println("after:" + stringQuery);
             
             
             // we enable the leading wildcard mode if the first character of the query is a '*'
