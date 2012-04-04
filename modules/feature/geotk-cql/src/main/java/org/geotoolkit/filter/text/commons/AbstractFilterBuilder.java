@@ -660,7 +660,7 @@ public abstract class AbstractFilterBuilder {
         // creates and filter firstDate<= property <= lastDate
         final Expression property = resultStack.popExpression();
 
-        return filterFactory.and(filterFactory.lessOrEqual(begin,
+        return filterFactory.and(filterFactory.greaterOrEqual(begin,
                 property), filterFactory.lessOrEqual(property, end));
     }
 
