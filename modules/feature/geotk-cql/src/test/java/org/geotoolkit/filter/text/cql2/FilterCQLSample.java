@@ -382,7 +382,7 @@ public class FilterCQLSample {
             final Date lastDate = dateFormatter.parse(LAST_DATE);
             final String propName = "ATTR1";
 
-            duringFilter = FACTORY.and(FACTORY.lessOrEqual(FACTORY.literal(firstDate),
+            duringFilter = FACTORY.and(FACTORY.greaterOrEqual(FACTORY.literal(firstDate),
                         FACTORY.property(propName)),
                     FACTORY.lessOrEqual(FACTORY.property(propName), FACTORY.literal(lastDate)));
 
@@ -405,7 +405,7 @@ public class FilterCQLSample {
                 // creates an And filter firstDate <= prop <= lastDate
                 final String propName = "ATTR1";
 
-                duringFilter = FACTORY.and(FACTORY.lessOrEqual(FACTORY.literal(firstDate),
+                duringFilter = FACTORY.and(FACTORY.greaterOrEqual(FACTORY.literal(firstDate),
                             FACTORY.property(propName)),
                         FACTORY.lessOrEqual(FACTORY.property(propName), FACTORY.literal(lastDate)));
 
@@ -425,7 +425,7 @@ public class FilterCQLSample {
                 // creates an And filter firstDate <= prop <= lastDate
                 final String propName = "ATTR1";
 
-                duringFilter = FACTORY.and(FACTORY.lessOrEqual(FACTORY.literal(firstDate),
+                duringFilter = FACTORY.and(FACTORY.greaterOrEqual(FACTORY.literal(firstDate),
                             FACTORY.property(propName)),
                         FACTORY.lessOrEqual(FACTORY.property(propName), FACTORY.literal(lastDate)));
 

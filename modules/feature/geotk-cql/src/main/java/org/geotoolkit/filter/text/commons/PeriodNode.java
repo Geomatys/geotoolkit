@@ -43,7 +43,7 @@ public class PeriodNode {
     private final Literal begin;
     private final Literal end;
 
-    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ssZ");
+    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'");
     
     /**
      * @see create
