@@ -17,8 +17,7 @@
 package org.geotoolkit.lucene;
 
 import java.util.logging.Level;
-import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
+
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.Geometry;
@@ -34,10 +33,12 @@ import java.util.List;
 import java.util.logging.Logger;
 import java.io.File;
 
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.KeywordAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
@@ -49,6 +50,7 @@ import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.SimpleFSDirectory;
+
 import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.geometry.GeneralEnvelope;
@@ -61,17 +63,17 @@ import org.geotoolkit.index.tree.nodefactory.TreeNodeFactory;
 import org.geotoolkit.lucene.filter.SerialChainFilter;
 import org.geotoolkit.lucene.filter.SpatialQuery;
 import org.geotoolkit.lucene.index.AbstractIndexer;
-import org.geotoolkit.referencing.CRS;
-
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
-import org.junit.*;
-import org.opengis.filter.FilterFactory2;
-import static org.junit.Assert.*;
-import static org.geotoolkit.lucene.filter.LuceneOGCFilter.*;
 import org.geotoolkit.lucene.tree.NamedEnvelope;
 import org.geotoolkit.lucene.tree.TreeIndexReaderWrapper;
+import org.geotoolkit.referencing.CRS;
+import static org.geotoolkit.lucene.filter.LuceneOGCFilter.*;
+
+import org.opengis.filter.FilterFactory2;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.Envelope;
+
+import org.junit.*;
+import static org.junit.Assert.*;
 
 /**
  * A Test classes testing the different spatial filters.
@@ -3072,7 +3074,6 @@ public class LuceneTest {
     @Test
     public void QueryAndSpatialFilterAfterRemoveTest() throws Exception {
         
-        System.out.println("\n\n\n\n deleting \n\n\n\n");
         // we remove a document
         final Analyzer analyzer = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_35);
         IndexWriterConfig config = new IndexWriterConfig(org.apache.lucene.util.Version.LUCENE_35, analyzer);
@@ -3126,8 +3127,6 @@ public class LuceneTest {
         
         // re-add the document
         
-         System.out.println("\n\n\n\n re-add \n\n\n\n");
-         
         config = new IndexWriterConfig(org.apache.lucene.util.Version.LUCENE_35, analyzer);
         FSDirectory = new SimpleFSDirectory(directory);
         writer = new IndexWriter(FSDirectory, config);

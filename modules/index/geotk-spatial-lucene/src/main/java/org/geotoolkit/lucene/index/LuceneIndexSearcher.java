@@ -293,12 +293,19 @@ public class LuceneIndexSearcher extends IndexLucene {
             }
 
             final String field       = "title";
+            String stringQuery       = spatialQuery.getQuery();
             final QueryParser parser = new ExtendedQueryParser(Version.LUCENE_35, field, analyzer, numericFields);
             parser.setDefaultOperator(Operator.AND);
-
+            
+            // remove term:* query
+            System.out.println("before:" + stringQuery);
+            stringQuery = removeOnlyWildchar(stringQuery);
+            System.out.println("after:" + stringQuery);
+            
+            
             // we enable the leading wildcard mode if the first character of the query is a '*'
-            if (spatialQuery.getQuery().indexOf(":*") != -1 || spatialQuery.getQuery().indexOf(":?") != -1 || spatialQuery.getQuery().indexOf(":(*") != -1
-             || spatialQuery.getQuery().indexOf(":(+*") != -1 || spatialQuery.getQuery().indexOf(":+*") != -1) {
+            if (stringQuery.indexOf(":*") != -1 || stringQuery.indexOf(":?") != -1 || stringQuery.indexOf(":(*") != -1
+             || stringQuery.indexOf(":(+*") != -1 || stringQuery.indexOf(":+*") != -1) {
                 parser.setAllowLeadingWildcard(true);
                 LOGGER.log(Level.FINER, "Allowing leading wildChar");
                 BooleanQuery.setMaxClauseCount(Integer.MAX_VALUE);
@@ -306,10 +313,15 @@ public class LuceneIndexSearcher extends IndexLucene {
 
             //we set off the mecanism setting all the character to lower case
             // we do that for range queries only for now. TODO see if we need to set it every time
-            if (spatialQuery.getQuery().contains(" TO ")) {
+            if (stringQuery.contains(" TO ")) {
                 parser.setLowercaseExpandedTerms(false);
             }
-            final Query query   = parser.parse(spatialQuery.getQuery());
+            final Query query;
+            if (!stringQuery.isEmpty()) {
+               query = parser.parse(stringQuery);
+            } else {
+                query = SIMPLE_QUERY;
+            }
             LOGGER.log(Level.FINER, "QueryType:{0}", query.getClass().getName());
             final Filter filter = spatialQuery.getSpatialFilter();
             final int operator  = spatialQuery.getLogicalOperator();
@@ -427,6 +439,22 @@ public class LuceneIndexSearcher extends IndexLucene {
         }
     }
 
+    public static String removeOnlyWildchar(String s) {
+        final String pattern = "[^: +\\(]*:\\* ";
+        s = s.replaceAll(pattern, "metafile:doc ");
+        
+        final String pattern2 = "[^: +\\(]*:\\*$";
+        s = s.replaceAll(pattern2, "metafile:doc");
+        
+        final String pattern3 = "[^: +\\(]*:[(][*][)]";
+        s = s.replaceAll(pattern3, "metafile:doc");
+        
+        final String pattern4 = "[^: +\\(]*:\\*[)]";
+        s = s.replaceAll(pattern4, "metafile:doc)");
+        
+        return s;
+    }
+    
     /**
      * Add a query and its results to the cache.
      * if the map has reach the maximum size the older query is removed from the cache.

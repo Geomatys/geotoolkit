@@ -108,10 +108,6 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter{
             final Tree tree = ((TreeIndexReaderWrapper)reader).getrTree();
             final List<org.opengis.geometry.Envelope> results = new ArrayList<org.opengis.geometry.Envelope>();
             if (tree != null) {
-                // debug
-                final List<org.opengis.geometry.Envelope> temps = new ArrayList<org.opengis.geometry.Envelope>();
-                tree.search(tree.getRoot().getBoundary(), temps);
-                LOGGER.log(Level.FINE, "nb entry in tree:{0}", temps.size());
                 
                 if (filter instanceof DistanceBufferOperator) {
                     if (filter instanceof Beyond) {
@@ -220,8 +216,8 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter{
         termDocs.seek(META_FIELD);
         
         while (termDocs.next()){
-            final int docId = termDocs.doc();
-            boolean match = treeMatching.contains(docId);
+            final int docId     = termDocs.doc();
+            final boolean match = treeMatching.contains(docId);
             if (treeSearch && reverse && !match) {
                 set.getBitSet().set(docId);
                 
