@@ -4,7 +4,31 @@
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://maven.apache.org/FML/1.0.1 http://maven.apache.org/xsd/fml-1.0.1.xsd"
       title="Code patterns" toplink="false">
-  <part id="database">
+  <part id="referencing">
+    <title>Referencing</title>
+
+    <faq id="axisOrder">
+      <question>
+        Never explicitely swap ordinates for axis order
+      </question>
+      <answer>
+        <p>The <a href="modules/referencing/faq.html#axisOrder">axis order issue</a> causes lot of
+        confusion, and developers are sometime tempted to swap their ordinate values in order to
+        comply with some expected axis ordering. It should never be necessary, since the Geotk
+        referencing engine manages axis order transparently - provided that the Coordinate Reference
+        System (CRS) definition is accurate. If a code needs to swap ordinates, this is probably an
+        indication that the CRS has not been properly defined. Instead than patching the coordinate
+        values, try to make sure that the <em>Source CRS</em> (associated to the original data) and
+        the <em>Target CRS</em> (the coordinate space where to perform the work) are properly defined,
+        and let the referencing engine performs the conversion from the source to the target CRS.
+        For example when fetching the CRS, make sure that the proper boolean value is given to the
+        <code><a href="apidocs/org/geotoolkit/referencing/CRS.html#decode%28java.lang.String,%20boolean%29">decode(String,
+        boolean)</a></code> method.</p>
+      </answer>
+    </faq>
+  </part>
+
+  <part id="coverage">
     <title>Coverages</title>
 
     <faq id="gridToCRS">
@@ -34,12 +58,31 @@
         <p>Geospatial data often cover a wide geographic area, spanning many time zones.
         When reading dates or timestamps from a <code>ResultSet</code>, always specify
         the expected time zone. It may not be the local time zone.</p>
+
+        <p>A similar recommendation applies to usages of <code>java.text.DateFormat</code>
+        and <code>java.util.Calendar</code>.</p>
       </answer>
     </faq>
   </part>
 
   <part id="international">
     <title>International</title>
+
+    <faq id="spaces-in-sort">
+      <question>
+        Replace underscores by spaces before sorting
+      </question>
+      <answer>
+        <p>Before to sort programmatic names for human reading, consider replacing all occurrences
+        of the underscore character (<code>'_'</code>) by the space character (<code>' '</code>).
+        The ASCII value of the underscore character is greater than <code>'Z'</code> but lower than
+        <code>'a'</code>, which sometime produce unexpected sort results. For example
+        <code>"Foo_bar"</code> is sorted <em>between</em> <code>"FooBar"</code> and <code>"Foobar"</code>.
+        The space character produces more consistent sort results because its ASCII value is less
+        than any printable character, so <code>"Foo bar"</code> is sorted before both
+        <code>"FooBar"</code> and <code>"Foobar"</code>.</p>
+      </answer>
+    </faq>
 
     <faq id="unicode-loop">
       <question>

@@ -92,6 +92,13 @@ public class MetadataSource {
     protected final MetadataStandard standard;
 
     /**
+     * The catalog, set to {@code null} for now. This is defined as a constant in order to
+     * make easier to spot the place where catalog would be used, if we want to use it in
+     * a future version.
+     */
+    static final String CATALOG = null;
+
+    /**
      * The schema where metadata are stored, or {@code null} if none.
      */
     final String schema;
@@ -214,8 +221,8 @@ public class MetadataSource {
      *         or {@code null} if the given value is null or an empty collection.
      */
     static Object extractFromCollection(Object value) {
-        while (value instanceof Collection<?>) {
-            final Iterator<?> it = ((Collection<?>) value).iterator();
+        while (value instanceof Iterable<?>) {
+            final Iterator<?> it = ((Iterable<?>) value).iterator();
             if (!it.hasNext()) {
                 return null;
             }
@@ -313,7 +320,7 @@ public class MetadataSource {
      * identifier (primary key) is returned. Otherwise this method returns {@code null}.
      *
      * @param  table The table where to search.
-     * @param  columns The table columns as given by {@link #getColumns}, or {@code null}.
+     * @param  columns The table columns as given by {@link #getExistingColumns}, or {@code null}.
      * @param  metadata A map view of the metadata to search for.
      * @param  stmt The statement to use for executing the query.
      * @param  buffer An initially buffer for creating the SQL query.
@@ -334,7 +341,7 @@ public class MetadataSource {
             Object value = extractFromCollection(entry.getValue());
             final String column = entry.getKey();
             if (columns == null) {
-                columns = getColumns(table);
+                columns = getExistingColumns(table);
             }
             if (!columns.contains(column)) {
                 if (value != null) {
@@ -400,35 +407,40 @@ public class MetadataSource {
     }
 
     /**
-     * Returns the set of all columns in a table. Because each table should have at least
-     * the {@value #ID_COLUMN} column, an empty set of columns will be understood as meaning
-     * that the table doesn't exist.
+     * Returns the set of all columns in a table, or an empty set if none (never {@code null}).
+     * Because each table should have at least the {@value #ID_COLUMN} column, an empty set of
+     * columns will be understood as meaning that the table doesn't exist.
+     * <p>
+     * This method returns a direct reference to the cached set. The returned set shall be
+     * modified in-place if new columns are added in the database table.
      *
      * @param  table The name of the table for which to get the columns.
-     * @return The set of columns. This is a direct reference to the cached set and should
-     *         be modified in-place if new columns are added in the database table.
+     * @return The set of columns, or an empty set if the table has not yet been created.
      * @throws SQLException If an error occurred while querying the database.
      */
-    final Set<String> getColumns(final String table) throws SQLException {
+    final Set<String> getExistingColumns(final String table) throws SQLException {
         assert Thread.holdsLock(statements);
         Set<String> columns = tables.get(table);
         if (columns == null) {
             columns = new HashSet<String>();
             /*
-             * Note: a null schema in the DatabaseMetadata. getColumns(...) call means "do not
+             * Note: a null schema in the DatabaseMetadata. getExistingColumns(...) call means "do not
              * take schema in account" - it does not mean "no schema" (the later is specified
              * by an empty string). This match better what we want because if we do not specify
              * a schema in a SELECT statement, then the actual schema used depends on the search
              * path set in the database environment variables.
              */
-            final ResultSet rs = statements.connection().getMetaData().getColumns(null, schema, table, null);
-            while (rs.next()) {
-                if (!columns.add(rs.getString("COLUMN_NAME"))) {
-                    // Paranoiac check, but should never happen.
-                    throw new SQLNonTransientException(table);
+            final ResultSet rs = statements.connection().getMetaData().getColumns(CATALOG, schema, table, null);
+            try {
+                while (rs.next()) {
+                    if (!columns.add(rs.getString("COLUMN_NAME"))) {
+                        // Paranoiac check, but should never happen.
+                        throw new SQLNonTransientException(table);
+                    }
                 }
+            } finally {
+                rs.close();
             }
-            rs.close();
             tables.put(table, columns);
         }
         return columns;
@@ -500,7 +512,7 @@ public class MetadataSource {
         final boolean  isArray;
         Object value;
         synchronized (statements) {
-            if (getColumns(tableName).contains(columnName)) {
+            if (getExistingColumns(tableName).contains(columnName)) {
                 /*
                  * Prepares the statement and executes the SQL query in this synchronized block.
                  * Note that the usage of 'result' must stay inside this synchronized block
