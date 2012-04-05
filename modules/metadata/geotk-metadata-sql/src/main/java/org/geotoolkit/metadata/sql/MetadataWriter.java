@@ -519,9 +519,9 @@ public class MetadataWriter extends MetadataSource {
                 final String column = entry.getKey();
                 final String target = getTableName(rt);
                 stmt.executeUpdate(buffer.createForeignKey(
-                        schema, fkey.tableName, column,  // Source (schema.table.column)
-                        target, primaryKey,           // Target (table.column)
-                        !isCodeList));                // CASCADE if metadata, RESTRICT if CodeList.
+                        schema, fkey.tableName, column, // Source (schema.table.column)
+                        target, primaryKey,             // Target (table.column)
+                        !isCodeList));                  // CASCADE if metadata, RESTRICT if CodeList.
                 /*
                  * In a classical object-oriented model, the constraint would be inherited
                  * by child tables. However this is not yet supported as of PostgreSQL 9.1.
