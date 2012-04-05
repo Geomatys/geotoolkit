@@ -163,7 +163,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
         
     }
     
-    protected abstract List<String> getAllIdentifiers() throws IndexingException;
+    protected abstract Collection<String> getAllIdentifiers() throws IndexingException;
     
     protected abstract E getEntry(final String identifier) throws IndexingException;
     
@@ -225,7 +225,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
             final IndexWriterConfig conf   = new IndexWriterConfig(Version.LUCENE_35, analyzer);
             final IndexWriter writer       = new IndexWriter(new SimpleFSDirectory(getFileDirectory()), conf);
             final String serviceID         = getServiceID();
-            final List<String> identifiers = getAllIdentifiers();
+            final Collection<String> identifiers = getAllIdentifiers();
             resetTree();
             
             LOGGER.log(logLevel, "{0} entry to read.", identifiers.size());
