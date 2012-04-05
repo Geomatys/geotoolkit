@@ -97,6 +97,7 @@ public class TreeWriter {
      */
     public void write(final Tree tree) throws IOException {
         final Node root = (Node)tree.getRoot();
+        if(root == null)return;
         createIndex(root);
         serializeNode(root, dataOPStream);
     }
