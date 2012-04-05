@@ -20,6 +20,7 @@ package org.geotoolkit.lucene.index;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
 import org.apache.lucene.analysis.Analyzer;
@@ -69,7 +70,7 @@ public class LuceneIndexSearcher extends IndexLucene {
     /**
      * A map of cached request
      */
-    private final Map<SpatialQuery, Set<String>> cachedQueries = new HashMap<SpatialQuery, Set<String>>();
+    private final Map<SpatialQuery, Set<String>> cachedQueries = new ConcurrentHashMap<SpatialQuery, Set<String>>();
 
     /**
      * The maximum size of the map of queries.
