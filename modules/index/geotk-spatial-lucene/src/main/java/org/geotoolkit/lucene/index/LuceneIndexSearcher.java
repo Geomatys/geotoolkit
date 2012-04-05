@@ -92,6 +92,12 @@ public class LuceneIndexSearcher extends IndexLucene {
     private Map<String, Character> numericFields;
     
     /**
+     * A flag indicating if all the geometry indexed are envelope.
+     * if set, no JTS filter will be applied on geometry search (only R-tree search)
+     */
+    private final boolean envelopeOnly;
+    
+    /**
      * Build a new index searcher.
      *
      * @param configDir The configuration directory where to build the index directory.
@@ -99,7 +105,23 @@ public class LuceneIndexSearcher extends IndexLucene {
      * @param analyzer  A lucene Analyzer (Default is ClassicAnalyzer)
      */
     public LuceneIndexSearcher(final File configDir, final String serviceID, final Analyzer analyzer) throws IndexingException {
+        this(configDir, serviceID, analyzer, false);
+    }
+    
+    /**
+     * Build a new index searcher.
+     *
+     * @param configDir The configuration directory where to build the index directory.
+     * @param serviceID the "ID" of the service (allow multiple index in the same directory). The value "" is allowed.
+     * @param analyzer  A lucene Analyzer (Default is ClassicAnalyzer)
+     * @param envelopeOnly A flag indicating if all the geometry indexed are envelope.
+     */
+    public LuceneIndexSearcher(final File configDir, final String serviceID, final Analyzer analyzer, final boolean envelopeOnly) throws IndexingException {
         super(analyzer);
+        this.envelopeOnly = envelopeOnly;
+        if (envelopeOnly) {
+            LOGGER.info("envelope only mode activated");
+        }
         try {
             // we get the last index directory
             long maxTime = 0;
@@ -169,7 +191,7 @@ public class LuceneIndexSearcher extends IndexLucene {
     private void initSearcher() throws CorruptIndexException, IOException {
         final File indexDirectory = getFileDirectory();
         readTree();
-        final IndexReader reader  = new TreeIndexReaderWrapper(IndexReader.open(new SimpleFSDirectory(indexDirectory)), rTree);
+        final IndexReader reader  = new TreeIndexReaderWrapper(IndexReader.open(new SimpleFSDirectory(indexDirectory)), rTree, envelopeOnly);
         searcher                  = new IndexSearcher(reader);
         LOGGER.log(Level.INFO, "Creating new Index Searcher with index directory:{0}", indexDirectory.getPath());
        
@@ -220,7 +242,7 @@ public class LuceneIndexSearcher extends IndexLucene {
     public String identifierQuery(final String id) throws SearchingException {
         try {
             final TermQuery query = new TermQuery(new Term(getIdentifierSearchField(), id));
-            final List<String> results = new ArrayList<String>();
+            final Set<String> results = new LinkedHashSet<String>();
             final int maxRecords = searcher.maxDoc();
             if (maxRecords == 0) {
                 LOGGER.warning("There is no document in the index");
@@ -233,14 +255,13 @@ public class LuceneIndexSearcher extends IndexLucene {
             if (results.size() > 1) {
                 LOGGER.log(Level.WARNING, "multiple record in lucene index for identifier: {0}", id);
             }
-            if (results.size() > 0) {
-                return results.get(0);
-            } else {
-                return null;
+            if (!results.isEmpty()) {
+                return results.iterator().next();
             }
         } catch (IOException ex) {
             throw new SearchingException("Parse Exception while performing lucene request", ex);
         }
+        return null;
     }
 
     /**

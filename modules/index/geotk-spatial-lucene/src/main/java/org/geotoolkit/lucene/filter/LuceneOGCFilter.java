@@ -51,10 +51,7 @@ import org.geotoolkit.util.logging.Logging;
 import org.opengis.filter.Filter;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
-import org.opengis.filter.spatial.Beyond;
-import org.opengis.filter.spatial.BinarySpatialOperator;
-import org.opengis.filter.spatial.Disjoint;
-import org.opengis.filter.spatial.DistanceBufferOperator;
+import org.opengis.filter.spatial.*;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
@@ -65,7 +62,7 @@ import org.opengis.util.FactoryException;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class LuceneOGCFilter extends org.apache.lucene.search.Filter{
+public class LuceneOGCFilter extends org.apache.lucene.search.Filter {
 
     public static final String GEOMETRY_FIELD_NAME     = "idx_lucene_geometry";
     public static final String IDENTIFIER_FIELD_NAME   = "id";
@@ -104,11 +101,12 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter{
         final Set<Integer> treeMatching = new HashSet<Integer>();
         boolean treeSearch = false;
         boolean reverse = false;
+        boolean envelopeOnly = false;
         if (reader instanceof TreeIndexReaderWrapper) {
-            final Tree tree = ((TreeIndexReaderWrapper)reader).getrTree();
+            final TreeIndexReaderWrapper wrapper = (TreeIndexReaderWrapper)reader;
+            final Tree tree = wrapper.getrTree();
             final List<org.opengis.geometry.Envelope> results = new ArrayList<org.opengis.geometry.Envelope>();
             if (tree != null) {
-                
                 if (filter instanceof DistanceBufferOperator) {
                     if (filter instanceof Beyond) {
                         reverse = true;
@@ -160,6 +158,8 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter{
                 } else if (filter instanceof BinarySpatialOperator) {
                     if (filter instanceof Disjoint) {
                         reverse = true;
+                    } else if (filter instanceof BBOX) {
+                        envelopeOnly = wrapper.isEnvelopeOnly();
                     }
                     final BinarySpatialOperator sp = (BinarySpatialOperator)filter;
                     if (sp.getExpression2() instanceof Literal) {
@@ -212,8 +212,7 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter{
         final DocIdBitSet set = new DocIdBitSet(new BitSet(reader.maxDoc()));
 
         final TermDocs termDocs;
-        termDocs = reader.termDocs();
-        termDocs.seek(META_FIELD);
+        termDocs = reader.termDocs(META_FIELD);
         
         while (termDocs.next()){
             final int docId     = termDocs.doc();
@@ -222,9 +221,13 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter{
                 set.getBitSet().set(docId);
                 
             } else if (!treeSearch || match) {
-                final Document doc = reader.document(docId,GEOMETRY_FIELD_SELECTOR);
-                if (filter.evaluate(doc)) {
+                if (envelopeOnly) {
                     set.getBitSet().set(docId);
+                } else {
+                    final Document doc = reader.document(docId,GEOMETRY_FIELD_SELECTOR);
+                    if (filter.evaluate(doc)) {
+                        set.getBitSet().set(docId);
+                    }
                 }
             }
         }

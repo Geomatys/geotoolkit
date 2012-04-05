@@ -22,9 +22,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
-import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
 
@@ -81,7 +79,7 @@ import static org.junit.Assert.*;
  * @author Guilhem Legal
  * @module pending
  */
-public class LuceneTest {
+public class LuceneEnvelopeOnlyTest {
 
     private static final GeometryFactory GF = new GeometryFactory();
 
@@ -135,7 +133,7 @@ public class LuceneTest {
         writer.commit();
         writer.close();
 
-        IndexReader reader = new TreeIndexReaderWrapper(IndexReader.open(FSDirectory),rTree, false);
+        IndexReader reader = new TreeIndexReaderWrapper(IndexReader.open(FSDirectory),rTree, true);
         searcher = new IndexSearcher(reader);
         //create a term query to search against all documents
         simpleQuery = new TermQuery(new Term("metafile", "doc"));
@@ -187,17 +185,10 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results
-        assertEquals(nbResults, 10);
-        assertTrue(results.contains("point 1"));
-        assertTrue(results.contains("point 1 projected"));
-        assertTrue(results.contains("point 2"));
-        assertTrue(results.contains("point 3"));
+        assertEquals(nbResults, 3);
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
         assertTrue(results.contains("box 4"));
-        assertTrue(results.contains("line 1"));
-        assertTrue(results.contains("line 1 projected"));
-        assertTrue(results.contains("line 2"));
         
         /*
          * The same box in a diferent crs
@@ -223,17 +214,10 @@ public class LuceneTest {
         }
 
         //we verify that we obtain the correct results
-        assertEquals(nbResults, 10);
-        assertTrue(results.contains("point 1"));
-        assertTrue(results.contains("point 1 projected"));
-        assertTrue(results.contains("point 2"));
-        assertTrue(results.contains("point 3"));
+        assertEquals(nbResults, 3);
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
         assertTrue(results.contains("box 4"));
-        assertTrue(results.contains("line 1"));
-        assertTrue(results.contains("line 1 projected"));
-        assertTrue(results.contains("line 2"));
 
         /*
          * second bbox
@@ -256,16 +240,11 @@ public class LuceneTest {
         }
         
          //we verify that we obtain the correct results
-        assertEquals(nbResults, 9);
-        assertTrue(results.contains("point 3"));
-        assertTrue(results.contains("point 4"));
+        assertEquals(nbResults, 4);
         assertTrue(results.contains("box 3"));
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
         assertTrue(results.contains("box 5"));
-        assertTrue(results.contains("line 1"));
-        assertTrue(results.contains("line 1 projected"));
-        assertTrue(results.contains("line 2"));
         
         /*
          * third bbox
@@ -322,17 +301,10 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results
-        assertEquals(nbResults, 10);
-        assertTrue(results.contains(0));
+        assertEquals(nbResults, 3);
         assertTrue(results.contains(1));
         assertTrue(results.contains(2));
-        assertTrue(results.contains(3));
-        assertTrue(results.contains(7));
-        assertTrue(results.contains(8));
-        assertTrue(results.contains(10));
-        assertTrue(results.contains(12));
-        assertTrue(results.contains(13));
-        assertTrue(results.contains(14));
+        assertTrue(results.contains(4));
      
         /*
          * The same box in a diferent crs
@@ -361,17 +333,10 @@ public class LuceneTest {
         }
 
         //we verify that we obtain the correct results
-        assertEquals(nbResults, 10);
-        assertTrue(results.contains(0));
+        assertEquals(nbResults, 3);
         assertTrue(results.contains(1));
         assertTrue(results.contains(2));
-        assertTrue(results.contains(3));
-        assertTrue(results.contains(7));
-        assertTrue(results.contains(8));
-        assertTrue(results.contains(10));
-        assertTrue(results.contains(12));
-        assertTrue(results.contains(13));
-        assertTrue(results.contains(14));
+        assertTrue(results.contains(4));
 
         /*
          * second bbox
@@ -398,16 +363,11 @@ public class LuceneTest {
         }
         
          //we verify that we obtain the correct results
-        assertEquals(nbResults, 9);
+        assertEquals(nbResults, 4);
         assertTrue(results.contains(3));
-        assertTrue(results.contains(4));
-        assertTrue(results.contains(9));
-        assertTrue(results.contains(7));
-        assertTrue(results.contains(8));
-        assertTrue(results.contains(11));
-        assertTrue(results.contains(12));
-        assertTrue(results.contains(13));
-        assertTrue(results.contains(14));
+        assertTrue(results.contains(1));
+        assertTrue(results.contains(2));
+        assertTrue(results.contains(5));
         
         /*
          * third bbox
@@ -435,7 +395,7 @@ public class LuceneTest {
         
          //we verify that we obtain the correct results
         assertEquals(nbResults, 1);
-        assertTrue(results.contains(11));
+        assertTrue(results.contains(5));
     }
 
     /**
@@ -469,17 +429,10 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 10);
-        assertTrue(results.contains("point 1"));
-        assertTrue(results.contains("point 1 projected"));
-        assertTrue(results.contains("point 2"));
-        assertTrue(results.contains("point 3"));
+        assertEquals(nbResults, 3);
         assertTrue(results.contains("box 2"  ));
         assertTrue(results.contains("box 2 projected"));
         assertTrue(results.contains("box 4"  ));
-        assertTrue(results.contains("line 1" ));
-        assertTrue(results.contains("line 1 projected"));
-        assertTrue(results.contains("line 2" )); 
         
         /*
          * case 2: The same box in a diferent crs.
@@ -506,17 +459,10 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results
-        assertEquals(nbResults, 10);
-        assertTrue(results.contains("point 1"));
-        assertTrue(results.contains("point 1 projected"));
-        assertTrue(results.contains("point 2"));
-        assertTrue(results.contains("point 3"));
+        assertEquals(nbResults, 3);
         assertTrue(results.contains("box 2"  ));
         assertTrue(results.contains("box 2 projected"));
         assertTrue(results.contains("box 4"  ));
-        assertTrue(results.contains("line 1" ));
-        assertTrue(results.contains("line 1 projected"));
-        assertTrue(results.contains("line 2" ));
         
         /*
          * case 3: line
@@ -547,11 +493,9 @@ public class LuceneTest {
         
         
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 4);
+        assertEquals(nbResults, 2);
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
-        assertTrue(results.contains("line 1" ));
-        assertTrue(results.contains("line 1 projected"));
         
         /*
          * case 4: same line diferent CRS
@@ -579,11 +523,9 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 4);
+        assertEquals(nbResults, 2);
         assertTrue(results.contains("box 2"  ));
         assertTrue(results.contains("box 2 projected"));
-        assertTrue(results.contains("line 1" ));
-        assertTrue(results.contains("line 1 projected"));
         
         /*
          * case 5: another line
@@ -611,9 +553,8 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 2);
+        assertEquals(nbResults, 1);
         assertTrue(results.contains("box 3"  ));
-        assertTrue(results.contains("point 4"));
         
         /*
          * case 6: same line another CRS
@@ -641,9 +582,8 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 2);
+        assertEquals(nbResults, 1);
         assertTrue(results.contains("box 3"  ));
-        assertTrue(results.contains("point 4"));
     }
     
     /**
@@ -707,11 +647,8 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 1);
-        assertTrue(results.contains("line 1" ));
+        assertEquals(nbResults, 0);
         
-        //TODO  issue here the projected line does not have the exact same coordinates (this issue happen for all geometry in Equals)
-        //assertTrue(results.contains("line 1 projected"));
         
         /*
          * case 3: point
@@ -736,8 +673,7 @@ public class LuceneTest {
         }
         
          //we verify that we obtain the correct results.
-        assertEquals(nbResults, 1);
-        assertTrue(results.contains("point 1" ));
+        assertEquals(nbResults, 0);
     }
     
     /**
@@ -853,9 +789,7 @@ public class LuceneTest {
 
         
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 2);
-        assertTrue(results.contains("line 1"));
-        assertTrue(results.contains("line 1 projected"));
+        assertEquals(nbResults, 0);
         
         /*
          * case 5: Line/Line
@@ -883,9 +817,7 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 2);
-        assertTrue(results.contains("line 1"));
-        assertTrue(results.contains("line 1 projected"));
+        assertEquals(nbResults, 0);
     }
     
     /**
@@ -918,21 +850,12 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 14);
-        assertTrue(results.contains("point 1"));
-        assertTrue(results.contains("point 1 projected"));
-        assertTrue(results.contains("point 2"));
-        assertTrue(results.contains("point 3"));
-        assertTrue(results.contains("point 4"));
-        assertTrue(results.contains("point 5"));
+        assertEquals(nbResults, 5);
         assertTrue(results.contains("box 1"));
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
         assertTrue(results.contains("box 3"));
         assertTrue(results.contains("box 5"));
-        assertTrue(results.contains("line 1"));
-        assertTrue(results.contains("line 1 projected"));
-        assertTrue(results.contains("line 2"));
         
         /*
          * case 2: another point intersecting with the two registered lines.
@@ -959,20 +882,13 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 11);
-        assertTrue(results.contains("point 1"));
-        assertTrue(results.contains("point 1 projected"));
-        assertTrue(results.contains("point 2"));
-        assertTrue(results.contains("point 4"));
-        assertTrue(results.contains("point 5"));
+        assertEquals(nbResults, 6);
         assertTrue(results.contains("box 1"));
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
         assertTrue(results.contains("box 3"));
         assertTrue(results.contains("box 4"));
         assertTrue(results.contains("box 5"));
-        //since there is no more precision errors this geometry should not be present
-        assertFalse(results.contains("line 1 projected"));
         
         /*
          * case 3: a line
@@ -1001,17 +917,11 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 8);
-        assertTrue(results.contains("point 1"));
-        assertTrue(results.contains("point 1 projected"));
-        assertTrue(results.contains("point 4"));
-        assertTrue(results.contains("point 5"));
+        assertEquals(nbResults, 4);
         assertTrue(results.contains("box 1"));
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
         assertTrue(results.contains("box 5"));
-        //since there is no more precision errors this geometry should not be present
-        assertFalse(results.contains("line 1 projected"));
         
         /*
          * case 4: another line
@@ -1040,18 +950,11 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 11);
-        assertTrue(results.contains("point 1"));
-        assertTrue(results.contains("point 1 projected"));
-        assertTrue(results.contains("point 2"));
-        assertTrue(results.contains("point 3"));
-        assertTrue(results.contains("point 4"));
-        assertTrue(results.contains("point 5"));
+        assertEquals(nbResults, 4);
         assertTrue(results.contains("box 1"));
         assertTrue(results.contains("box 3"));
         assertTrue(results.contains("box 4"));
         assertTrue(results.contains("box 5"));
-        assertTrue(results.contains("line 2"));
         
         /*
          * case 5: a BBOX
@@ -1079,9 +982,7 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 5);
-        assertTrue(results.contains("point 4"));
-        assertTrue(results.contains("point 5"));
+        assertEquals(nbResults, 3);
         assertTrue(results.contains("box 1"  ));
         assertTrue(results.contains("box 3"  ));
         assertTrue(results.contains("box 5"));
@@ -1112,16 +1013,11 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 9);
-        assertTrue(results.contains("point 3"));
-        assertTrue(results.contains("point 4"));
+        assertEquals(nbResults, 4);
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
         assertTrue(results.contains("box 3"));
         assertTrue(results.contains("box 5"));
-        assertTrue(results.contains("line 1"));
-        assertTrue(results.contains("line 1 projected"));
-        assertTrue(results.contains("line 2"));
 
         
     }
@@ -1156,11 +1052,7 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 3);
-//        assertTrue(results.contains("point 3")); //it overlaps
-        assertTrue(results.contains("line 1"));
-        assertTrue(results.contains("line 1 projected")); // match because precision errors have been corrected
-        assertTrue(results.contains("line 2"));
+        assertEquals(nbResults, 0);
         
         /*
          * case 2: another point
@@ -1240,8 +1132,6 @@ public class LuceneTest {
             LOGGER.log(Level.FINER, "\tid: {0}", name);
         }
 
-
-
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 0);
 //        assertTrue(results.contains("line 2")); //point intersect or in within, it is not consider "touches" in jts
@@ -1300,9 +1190,7 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 2);
-        assertTrue(results.contains("line 1"));
-        assertTrue(results.contains("line 1 projected")); // match because precision errors have been corrected
+        assertEquals(nbResults, 0);
         
         /*
          * case 7: another line
@@ -1362,12 +1250,8 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 5);
-        assertTrue(results.contains("point 3"));
+        assertEquals(nbResults, 1);
         assertTrue(results.contains("box 1"));
-        assertTrue(results.contains("line 1"));
-        assertTrue(results.contains("line 1 projected"));  // match because precision errors have been corrected
-        assertTrue(results.contains("line 2"));
         
         /*
          * case 9: a BBOX
@@ -1395,14 +1279,9 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 7);
-        assertTrue(results.contains("point 2"));
-        assertTrue(results.contains("point 3"));
+        assertEquals(nbResults, 2);
         assertTrue(results.contains("box 3"  ));
         assertTrue(results.contains("box 4"  ));
-        assertTrue(results.contains("line 1"));
-        assertTrue(results.contains("line 1 projected"));// match because precision errors have been corrected
-        assertTrue(results.contains("line 2"));
     }
     
     /**
@@ -1436,14 +1315,9 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 7);
-        assertTrue(results.contains("point 1"));
-        assertTrue(results.contains("point 1 projected"));
-        assertTrue(results.contains("point 2"));
-        assertTrue(results.contains("point 3"));
+        assertEquals(nbResults, 2);
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
-        assertTrue(results.contains("line 2"));
         
         /*
          * case 2: another BBOX.
@@ -1470,10 +1344,9 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 3);
+        assertEquals(nbResults, 2);
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
-        assertTrue(results.contains("point 4"));
 
         /*
          * case 6: a line
@@ -1571,11 +1444,8 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 4);
+        assertEquals(nbResults, 1);
         assertTrue(results.contains("box 3"));
-        assertTrue(results.contains("line 1"));
-        assertTrue(results.contains("line 1 projected"));
-        assertTrue(results.contains("line 2"));
         
         /*
          * case 3: another line
@@ -1692,9 +1562,7 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 2);
-        assertTrue(results.contains("line 1"));
-        assertTrue(results.contains("line 1 projected"));
+        assertEquals(nbResults, 0);
 //        assertTrue(results.contains("point 2"));     //points can not cross anything
     }
     
@@ -1740,11 +1608,8 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 5);
-        assertTrue(results.contains("point 4"));
+        assertEquals(nbResults, 2);
         assertTrue(results.contains("box 3"  ));
-        assertTrue(results.contains("line 1"));
-        assertTrue(results.contains("line 1 projected"));
         assertTrue(results.contains("box 5"));
 	
         // TODO add precision
@@ -1772,8 +1637,7 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 1);
-        assertTrue(results.contains("line 1"));
+        assertEquals(nbResults, 0);
         
         /*
          * case 3: NOT INTERSECT line1
@@ -1806,18 +1670,11 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 11);
-        assertTrue(results.contains("point 1"));
-        assertTrue(results.contains("point 1 projected"));
-        assertTrue(results.contains("point 2"));
-        assertTrue(results.contains("point 3"));
-        assertTrue(results.contains("point 4"));
-        assertTrue(results.contains("point 5"));
+        assertEquals(nbResults, 4);
         assertTrue(results.contains("box 1"));
         assertTrue(results.contains("box 3"));
         assertTrue(results.contains("box 4"));
         assertTrue(results.contains("box 5"));
-        assertTrue(results.contains("line 2"));
         
         
         /*
@@ -1851,11 +1708,9 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 4);
+        assertEquals(nbResults, 2);
 	assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
-        assertTrue(results.contains("line 1"));
-        assertTrue(results.contains("line 1 projected"));
         
         /*
          * case 5: INTERSECT line AND NOT BBOX 
@@ -1914,11 +1769,7 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 4);
-        assertTrue(results.contains("point 3"));
-        assertTrue(results.contains("line 1"));
-        assertTrue(results.contains("line 1 projected"));
-        assertTrue(results.contains("line 2"));
+        assertEquals(nbResults, 0);
         
         /*
          * case 2: point distance 1500Km
@@ -1944,12 +1795,7 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 7);
-        assertTrue(results.contains("point 2"));
-        assertTrue(results.contains("point 3"));
-        assertTrue(results.contains("line 1"));
-        assertTrue(results.contains("line 1 projected"));
-        assertTrue(results.contains("line 2"));
+        assertEquals(nbResults, 2);
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
         
@@ -1977,12 +1823,7 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 7);
-        assertTrue(results.contains("point 2"));
-        assertTrue(results.contains("point 3"));
-        assertTrue(results.contains("line 1"));
-        assertTrue(results.contains("line 1 projected"));
-        assertTrue(results.contains("line 2"));
+        assertEquals(nbResults, 2);
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
         
@@ -2010,17 +1851,10 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 10);
-        assertTrue(results.contains("point 1"));
-        assertTrue(results.contains("point 1 projected"));
-        assertTrue(results.contains("point 2"));
-        assertTrue(results.contains("point 3"));
+        assertEquals(nbResults, 3);
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
         assertTrue(results.contains("box 4"));
-        assertTrue(results.contains("line 1"));
-        assertTrue(results.contains("line 1 projected"));
-        assertTrue(results.contains("line 2"));
         
         /*
          * case 5: point distance 4000Km
@@ -2046,17 +1880,10 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 11);
-        assertTrue(results.contains("point 1"));
-        assertTrue(results.contains("point 1 projected"));
-        assertTrue(results.contains("point 2"));
-        assertTrue(results.contains("point 3"));
+        assertEquals(nbResults, 4);
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
         assertTrue(results.contains("box 4"));
-        assertTrue(results.contains("line 1"));
-        assertTrue(results.contains("line 1 projected"));
-        assertTrue(results.contains("line 2"));
         assertTrue(results.contains("box 3"));
         
         /*
@@ -2083,18 +1910,10 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 13);
-        assertTrue(results.contains("point 1"));
-        assertTrue(results.contains("point 1 projected"));
-        assertTrue(results.contains("point 2"));
-        assertTrue(results.contains("point 3"));
-        assertTrue(results.contains("point 4"));
+        assertEquals(nbResults, 5);
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
         assertTrue(results.contains("box 4"));
-        assertTrue(results.contains("line 1"));
-        assertTrue(results.contains("line 1 projected"));
-        assertTrue(results.contains("line 2"));
         assertTrue(results.contains("box 3"));
         assertTrue(results.contains("box 5"));
         
@@ -2122,20 +1941,11 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 15);
-        assertTrue(results.contains("point 1"));
-        assertTrue(results.contains("point 1 projected"));
-        assertTrue(results.contains("point 2"));
-        assertTrue(results.contains("point 3"));
-        assertTrue(results.contains("point 4"));
+        assertEquals(nbResults, 6);
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
         assertTrue(results.contains("box 4"));
-        assertTrue(results.contains("line 1"));
-        assertTrue(results.contains("line 1 projected"));
-        assertTrue(results.contains("line 2"));
         assertTrue(results.contains("box 3"));
-        assertTrue(results.contains("point 5"));
         assertTrue(results.contains("box 1"));
         assertTrue(results.contains("box 5"));
         
@@ -2164,17 +1974,10 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 10);
-        assertTrue(results.contains("point 1"));
-        assertTrue(results.contains("point 1 projected"));
-        assertTrue(results.contains("point 2"));
-        assertTrue(results.contains("point 3"));
+        assertEquals(nbResults, 3);
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
         assertTrue(results.contains("box 4"));
-        assertTrue(results.contains("line 1"));
-        assertTrue(results.contains("line 1 projected"));
-        assertTrue(results.contains("line 2"));
         
         
         /*
@@ -2198,18 +2001,11 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 11);
-        assertTrue(results.contains("point 1"));
-        assertTrue(results.contains("point 1 projected"));
-        assertTrue(results.contains("point 2"));
-        assertTrue(results.contains("point 3"));
+        assertEquals(nbResults, 4);
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
         assertTrue(results.contains("box 3"));
         assertTrue(results.contains("box 4"));
-        assertTrue(results.contains("line 1"));
-        assertTrue(results.contains("line 1 projected"));
-        assertTrue(results.contains("line 2"));
         
         /*
          * case 9: BBOX distance 3000km  
@@ -2232,20 +2028,11 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 15);
-        assertTrue(results.contains("point 1"));
-        assertTrue(results.contains("point 1 projected"));
-        assertTrue(results.contains("point 2"));
-        assertTrue(results.contains("point 3"));
+        assertEquals(nbResults, 6);
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
         assertTrue(results.contains("box 3"));
         assertTrue(results.contains("box 4"));
-        assertTrue(results.contains("line 1"));
-        assertTrue(results.contains("line 1 projected"));
-        assertTrue(results.contains("line 2"));
-        assertTrue(results.contains("point 4"));
-        assertTrue(results.contains("point 5"));
         assertTrue(results.contains("box 1"));
         assertTrue(results.contains("box 5"));
         
@@ -2301,10 +2088,9 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 2);
+        assertEquals(nbResults, 1);
         assertTrue(results.contains("box 1"));
 //        assertTrue(results.contains("box 3"));
-        assertTrue(results.contains("line 2"));
 //        assertTrue(results.contains("box 5"));
         
         /*
@@ -2332,14 +2118,13 @@ public class LuceneTest {
         
 
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 3);
+        assertEquals(nbResults, 2);
 //        assertTrue(results.contains("point 2"));   //touches are not considered within
 //        assertTrue(results.contains("point 3"));
         assertTrue(results.contains("box 1"));
 //        assertTrue(results.contains("box 3"));
 //        assertTrue(results.contains("box 4"));
         assertTrue(results.contains("box 5"));
-        assertTrue(results.contains("line 2"));
 //        assertTrue(results.contains("line 1"));
 //        assertTrue(results.contains("line 1 projected"));
         
@@ -2365,19 +2150,11 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 9);
-        assertTrue(results.contains("point 2"));
-        assertTrue(results.contains("point 3"));
+        assertEquals(nbResults, 4);
         assertTrue(results.contains("box 1"));
         assertTrue(results.contains("box 3"));
         assertTrue(results.contains("box 4"));
         assertTrue(results.contains("box 5"));
-        assertTrue(results.contains("line 2"));
-        assertTrue(results.contains("line 1"));
-        assertTrue(results.contains("line 1 projected"));
-//        assertTrue(results.contains("point 1"));
-//        assertTrue(results.contains("point 1 projected"));
-//        assertTrue(results.contains("point 4"));
 //        assertTrue(results.contains("box 2"));
 //        assertTrue(results.contains("box 2 projected"));
 
@@ -2413,12 +2190,7 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 11);
-        assertTrue(results.contains("point 1"));
-        assertTrue(results.contains("point 1 projected"));
-        assertTrue(results.contains("point 2"));
-        assertTrue(results.contains("point 4"));
-        assertTrue(results.contains("point 5"));
+        assertEquals(nbResults, 6);
         assertTrue(results.contains("box 1"));
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
@@ -2450,16 +2222,12 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results.
-        assertTrue(results.contains("point 1"));
-        assertTrue(results.contains("point 1 projected"));
-        assertTrue(results.contains("point 4"));
-        assertTrue(results.contains("point 5"));
         assertTrue(results.contains("box 1"));
         assertTrue(results.contains("box 3"));
         assertTrue(results.contains("box 4"));
         assertTrue(results.contains("box 5"));
         
-        assertEquals(nbResults, 8);
+        assertEquals(nbResults, 4);
         
         /*
          * case 3: point distance 1500000m
@@ -2485,11 +2253,7 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 8);
-        assertTrue(results.contains("point 1"));
-        assertTrue(results.contains("point 1 projected"));
-        assertTrue(results.contains("point 4"));
-        assertTrue(results.contains("point 5"));
+        assertEquals(nbResults, 4);
         assertTrue(results.contains("box 1"));
         assertTrue(results.contains("box 3"));
         assertTrue(results.contains("box 4"));
@@ -2520,9 +2284,7 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 5);
-        assertTrue(results.contains("point 4"));
-        assertTrue(results.contains("point 5"));
+        assertEquals(nbResults, 3);
         assertTrue(results.contains("box 1"));
         assertTrue(results.contains("box 3"));
         assertTrue(results.contains("box 5"));
@@ -2551,9 +2313,7 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 4);
-        assertTrue(results.contains("point 4"));
-        assertTrue(results.contains("point 5"));
+        assertEquals(nbResults, 2);
         assertTrue(results.contains("box 1"));
         assertTrue(results.contains("box 5"));
         
@@ -2581,8 +2341,7 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 2);
-        assertTrue(results.contains("point 5"));
+        assertEquals(nbResults, 1);
         assertTrue(results.contains("box 1"));
         
         /*
@@ -2636,9 +2395,7 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 5);
-        assertTrue(results.contains("point 4"));
-        assertTrue(results.contains("point 5"));
+        assertEquals(nbResults, 3);
         assertTrue(results.contains("box 1"));
         assertTrue(results.contains("box 3"));
         assertTrue(results.contains("box 5"));
@@ -2665,9 +2422,7 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 4);
-        assertTrue(results.contains("point 4"));
-        assertTrue(results.contains("point 5"));
+        assertEquals(nbResults, 2);
         assertTrue(results.contains("box 1"));
         assertTrue(results.contains("box 5"));
         
@@ -2722,21 +2477,12 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 14);
-        assertTrue(results.contains("point 1"));
-        assertTrue(results.contains("point 1 projected"));
-        assertTrue(results.contains("point 2"));
-        assertTrue(results.contains("point 3"));
-        assertTrue(results.contains("point 4"));
-        assertTrue(results.contains("point 5"));
+        assertEquals(nbResults, 5);
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
         assertTrue(results.contains("box 3"));
         assertTrue(results.contains("box 4"));
         assertTrue(results.contains("box 5"));
-        assertTrue(results.contains("line 1"));
-        assertTrue(results.contains("line 1 projected"));
-        assertTrue(results.contains("line 2"));
         
         /*
          * case 11: a line distance 4000km
@@ -2760,21 +2506,13 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 13);
-        assertTrue(results.contains("point 1"));
-        assertTrue(results.contains("point 1 projected"));
-        assertTrue(results.contains("point 2"));
-        assertTrue(results.contains("point 3"));
-        assertTrue(results.contains("point 4"));
-        assertTrue(results.contains("point 5"));
+        assertEquals(nbResults, 5);
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
         //issue: this box as tha same y value than box 3
         assertTrue(results.contains("box 3"));
         assertTrue(results.contains("box 4"));
         assertTrue(results.contains("box 5"));
-        assertTrue(results.contains("line 1"));
-        assertTrue(results.contains("line 1 projected"));
         
 //        /*
 //         * case 12: a line distance 5000km
@@ -2930,17 +2668,10 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results
-        assertEquals(nbResults, 10);
-        assertTrue(results.contains("point 1"));
-        assertTrue(results.contains("point 1 projected"));
-        assertTrue(results.contains("point 2"));
-        assertTrue(results.contains("point 3"));
+        assertEquals(nbResults, 3);
         assertTrue(results.contains("box 4"));
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
-        assertTrue(results.contains("line 2"));
-        assertTrue(results.contains("line 1"));
-        assertTrue(results.contains("line 1 projected"));
         
         /*
          *  case 2: same filter with a StringQuery
@@ -2965,11 +2696,7 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results
-        assertEquals(nbResults, 4);
-        assertTrue(results.contains("point 1"));
-        assertTrue(results.contains("point 1 projected"));
-        assertTrue(results.contains("point 2"));
-        assertTrue(results.contains("point 3"));
+        assertEquals(nbResults, 0);
         
         /*
          *  case 3: same filter same query but with an OR
@@ -3004,19 +2731,10 @@ public class LuceneTest {
         LOGGER.finer(resultString.toString());
                 
         //we verify that we obtain the correct results
-        assertEquals(nbResults, 12);
-        assertTrue(results.contains("point 1"));
-        assertTrue(results.contains("point 1 projected"));
-        assertTrue(results.contains("point 2"));
-        assertTrue(results.contains("point 3"));
-        assertTrue(results.contains("point 4"));
-        assertTrue(results.contains("point 5"));
+        assertEquals(nbResults, 3);
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
-        assertTrue(results.contains("line 2"));
         assertTrue(results.contains("box 4"));
-        assertTrue(results.contains("line 1 projected"));
-        assertTrue(results.contains("line 1"));
         
         /*
          *  case 4: two filter two query with an OR in the middle
@@ -3059,11 +2777,7 @@ public class LuceneTest {
         LOGGER.finer(resultString.toString());
                 
         //we verify that we obtain the correct results
-        assertEquals(nbResults, 5);
-        assertTrue(results.contains("point 1"));
-        assertTrue(results.contains("point 1 projected"));
-        assertTrue(results.contains("point 2"));
-        assertTrue(results.contains("point 3"));
+        assertEquals(nbResults, 1);
         assertTrue(results.contains("box 3"));
     }
     
@@ -3113,16 +2827,9 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results
-        assertEquals(nbResults, 9);
-        assertTrue(results.contains("point 1"));
-        assertTrue(results.contains("point 1 projected"));
-        assertTrue(results.contains("point 2"));
-        assertTrue(results.contains("point 3"));
+        assertEquals(nbResults, 2);
         assertTrue(results.contains("box 4"));
         assertTrue(results.contains("box 2"));
-        assertTrue(results.contains("line 2"));
-        assertTrue(results.contains("line 1"));
-        assertTrue(results.contains("line 1 projected"));
         
         
         // re-add the document
@@ -3160,17 +2867,10 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results
-        assertEquals(nbResults, 10);
-        assertTrue(results.contains("point 1"));
-        assertTrue(results.contains("point 1 projected"));
-        assertTrue(results.contains("point 2"));
-        assertTrue(results.contains("point 3"));
+        assertEquals(nbResults, 3);
         assertTrue(results.contains("box 4"));
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
-        assertTrue(results.contains("line 2"));
-        assertTrue(results.contains("line 1"));
-        assertTrue(results.contains("line 1 projected"));
     }
     
     private static void fillTestData(final IndexWriter writer, final Tree rTree) throws Exception {
@@ -3179,42 +2879,6 @@ public class LuceneTest {
         final int srid3395 = SRIDGenerator.toSRID(CRS.decode("EPSG:3395"), Version.V1);
 
         Document doc = new Document();
-        doc.add(new Field("id", "point 1", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        doc.add(new Field("docid", writer.maxDoc() + "", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        addPoint      (doc,           -10,                10, srid4326, rTree);
-        writer.addDocument(doc);
-        
-        doc = new Document();
-        doc.add(new Field("id", "point 1 projected", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        doc.add(new Field("docid", writer.maxDoc() + "", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        addPoint      (doc,           -1111475.102852225,   1113194.9079327357, srid3395, rTree); // attention !! reprojeté
-        writer.addDocument(doc);
-        
-        doc = new Document();
-        doc.add(new Field("id", "point 2", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        doc.add(new Field("docid", writer.maxDoc() + "", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        addPoint      (doc,           -10,                 0, srid4326, rTree);
-        writer.addDocument(doc);
-        
-        doc = new Document();
-        doc.add(new Field("id", "point 3", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        doc.add(new Field("docid", writer.maxDoc() + "", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        addPoint      (doc,             0,                 0, srid4326, rTree);
-        writer.addDocument(doc);
-        
-        doc = new Document();
-        doc.add(new Field("id", "point 4", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        doc.add(new Field("docid", writer.maxDoc() + "", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        addPoint      (doc,            40,                20, srid4326, rTree);
-        writer.addDocument(doc);
-        
-        doc = new Document();
-        doc.add(new Field("id", "point 5", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        doc.add(new Field("docid", writer.maxDoc() + "", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        addPoint      (doc,           -40,                30, srid4326, rTree);
-        writer.addDocument(doc);
-        
-        doc = new Document();
         doc.add(new Field("id", "box 1", Field.Store.YES, Field.Index.NOT_ANALYZED));
         doc.add(new Field("docid", writer.maxDoc() + "", Field.Store.YES, Field.Index.NOT_ANALYZED));
         addBoundingBox(doc,           -40,                -25,           -50,               -40, srid4326, rTree);
@@ -3250,69 +2914,8 @@ public class LuceneTest {
         addBoundingBox(doc,        44.792,             51.126,        -6.171,             -2.28, srid4326, rTree);
         writer.addDocument(doc);
         
-        doc = new Document();
-        doc.add(new Field("id", "line 1", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        doc.add(new Field("docid", writer.maxDoc() + "", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        addLine       (doc,             0,                  0,            25,                 0, srid4326, rTree);
-        writer.addDocument(doc);
-        
-        doc = new Document();
-        doc.add(new Field("id", "line 1 projected", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        doc.add(new Field("docid", writer.maxDoc() + "", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        addLine       (doc,             0,        0,      2857692.6111605316,                 0, srid3395, rTree); // attention !! reprojeté
-        writer.addDocument(doc);
-        
-        doc = new Document();
-        doc.add(new Field("id", "line 2", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        doc.add(new Field("docid", writer.maxDoc() + "", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        addLine       (doc,             0,                  0,             0,               -15, srid4326, rTree);
-        writer.addDocument(doc);
     }
         
-    /**
-     * Add a Line geometry to the specified Document.
-     * 
-     * @param doc The document to add the geometry
-     * @param x1  the X coordinate of the first point of the line.
-     * @param y1  the Y coordinate of the first point of the line.
-     * @param x2  the X coordinate of the second point of the line.
-     * @param y2  the Y coordinate of the first point of the line.
-     * @param crsName The coordinate reference system in witch the coordinates are expressed.
-     */
-    private static void addLine(final Document doc, final double x1, final double y1, final double x2, final double y2, final int srid, final Tree rTree) {
-
-        LineString line = GF.createLineString(new Coordinate[]{
-            new Coordinate(x1,y1),
-            new Coordinate(x2,y2)
-        });
-        line.setSRID(srid);
-
-        AbstractIndexer.addGeometry(doc, line, rTree);
-        
-        // add a default meta field to make searching all documents easy 
-        doc.add(new Field("metafile", "doc",   Field.Store.YES, Field.Index.ANALYZED));
-
-    }
-
-    /**
-     *  Add a point geometry to the specified Document.
-     *
-     * @param doc     The document to add the geometry
-     * @param x       The x coordinate of the point.
-     * @param y       The y coordinate of the point.
-     * @param crsName The coordinate reference system in witch the coordinates are expressed.
-     */
-    private static void addPoint(final Document doc, final double x, final double y, final int srid, final Tree rTree) {
-
-        Point pt = GF.createPoint(new Coordinate(x, y));
-        pt.setSRID(srid);
-
-        AbstractIndexer.addGeometry(doc, pt, rTree);
-
-        // add a default meta field to make searching all documents easy
-        doc.add(new Field("metafile", "doc",    Field.Store.YES, Field.Index.ANALYZED));
-    }
-
     /**
      * Add a boundingBox geometry to the specified Document.
      *

@@ -35,10 +35,13 @@ public class TreeIndexReaderWrapper extends IndexReader {
 
     private final IndexReader reader;
     private final Tree rTree;
+    private final boolean envelopeOnly;
     
-    public TreeIndexReaderWrapper(final IndexReader reader, final Tree rTree) {
+    
+    public TreeIndexReaderWrapper(final IndexReader reader, final Tree rTree, final boolean envelopeOnly) {
         this.reader = reader;
         this.rTree  = rTree;
+        this.envelopeOnly = envelopeOnly;
         this.readerFinishedListeners = new ArrayList<ReaderFinishedListener>();
     }
     
@@ -223,5 +226,12 @@ public class TreeIndexReaderWrapper extends IndexReader {
     @Override
     protected void doClose() throws IOException {
         throw new UnsupportedOperationException("Not supported beacuse this implementation is only on wrapper on an existing IndexReader");
+    }
+
+    /**
+     * @return the envelopeOnly
+     */
+    public boolean isEnvelopeOnly() {
+        return envelopeOnly;
     }
 }
