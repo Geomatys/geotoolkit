@@ -24,6 +24,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.IdentityHashMap;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
 import java.sql.Statement;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -43,6 +45,7 @@ import org.geotoolkit.internal.sql.DefaultDataSource;
 import org.geotoolkit.internal.sql.IdentifierGenerator;
 import org.geotoolkit.internal.sql.StatementEntry;
 import org.geotoolkit.naming.DefaultNameSpace;
+import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.Workaround;
 
@@ -87,7 +90,7 @@ public class MetadataWriter extends MetadataSource {
     /**
      * Maximal length for the identifier. This applies also to code list values.
      */
-    private int maximumPrimaryKeyLength = 24;
+    private int maximumIdentifierLength = 24;
 
     /**
      * Maximal length of values.
@@ -208,10 +211,12 @@ public class MetadataWriter extends MetadataSource {
      * @return The maximal number of characters allowed for primary keys.
      *
      * @since 3.20
+     *
+     * @see #suggestIdentifier(Object)
      */
-    public int getMaximumPrimaryKeyLength() {
+    public int getMaximumIdentifierLength() {
         synchronized (statements) {
-            return maximumPrimaryKeyLength;
+            return maximumIdentifierLength;
         }
     }
 
@@ -226,11 +231,13 @@ public class MetadataWriter extends MetadataSource {
      * @param length The maximal number of characters allowed for primary keys.
      *
      * @since 3.20
+     *
+     * @see #suggestIdentifier(Object)
      */
-    public void setMaximumPrimaryKeyLength(final int length) {
+    public void setMaximumIdentifierLength(final int length) {
         ensureStrictlyPositive("length", length);
         synchronized (statements) {
-            maximumPrimaryKeyLength = length;
+            maximumIdentifierLength = length;
         }
     }
 
@@ -370,7 +377,7 @@ public class MetadataWriter extends MetadataSource {
                      * Found a reference to an other metadata. Remind that
                      * column for creating a foreign key constraint later.
                      */
-                    maxLength = maximumPrimaryKeyLength;
+                    maxLength = maximumIdentifierLength;
                     if (foreigners == null) {
                         foreigners = new LinkedHashMap<>();
                     }
@@ -415,12 +422,12 @@ public class MetadataWriter extends MetadataSource {
          * produces its own SQLException.
          */
         for (int i=0; i<4; i++) {
-            final int maxLength = maximumPrimaryKeyLength - i;
+            final int maxLength = maximumIdentifierLength - i;
             if (identifier.length() > maxLength) {
                 identifier = identifier.substring(0, maxLength);
             }
             identifier = idCheck.identifier(schema, table, identifier);
-            if (identifier.length() <= maximumPrimaryKeyLength) {
+            if (identifier.length() <= maximumIdentifierLength) {
                 break;
             }
         }
@@ -490,6 +497,12 @@ public class MetadataWriter extends MetadataSource {
                                     buffer.clear().append("ALTER TABLE ").appendIdentifier(schema, table)
                                             .append(" DROP CONSTRAINT ").appendIdentifier(fkey.keyName);
                                     stmt.executeUpdate(buffer.toString());
+                                    final LogRecord record = Errors.getResources(null).getLogRecord(
+                                            Level.WARNING, Errors.Keys.DROPPED_FOREIGNER_KEY_$1,
+                                            table + '.' + column + " ⇒ " + fkey.tableName + '.' + ID_COLUMN);
+                                    record.setSourceMethodName("add");
+                                    record.setSourceClassName(MetadataWriter.class.getName());
+                                    Logging.getLogger(MetadataWriter.class).log(record);
                                 }
                             }
                         }
@@ -630,7 +643,7 @@ public class MetadataWriter extends MetadataSource {
      */
     private String createTable(final String table, final String primaryKey) {
         return buffer.clear().append("CREATE TABLE ").appendIdentifier(schema, table)
-                .append(" (").append(primaryKey).append(" VARCHAR(").append(maximumPrimaryKeyLength)
+                .append(" (").append(primaryKey).append(" VARCHAR(").append(maximumIdentifierLength)
                 .append(") NOT NULL PRIMARY KEY)").toString();
     }
 
@@ -674,7 +687,7 @@ public class MetadataWriter extends MetadataSource {
      * Subclasses can override this method for implementing their own heuristic.
      * <p>
      * This method doesn't need to care about key collision. The caller will adds some
-     * suffix if this is necessary for differentiation otherwise identical identifiers.
+     * suffix if this is necessary for differentiating otherwise identical identifiers.
      *
      * @param  metadata The metadata for which to suggests an identifier.
      * @return The proposed identifier, or {@code null} if this method doesn't have any
