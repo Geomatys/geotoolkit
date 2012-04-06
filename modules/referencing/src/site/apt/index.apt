@@ -13,9 +13,12 @@ Referencing
 
   * {{{./faq.html}Frequently Asked Questions}}
 
-  * {{{./supported-codes.html}List of authority codes}}
+  * Supported coordinate operations
 
-  * {{{../../apidocs/org/geotoolkit/referencing/operation/provider/package-summary.html}List of supported transforms}}
+     * {{{./operation-parameters.html}List of operation methods}}
+       ({{{../../apidocs/org/geotoolkit/referencing/operation/provider/package-summary.html}Javadoc}})
+
+     * {{{./supported-codes.html}List of authority codes}}
 
   * {{{http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html}Well Known Text (WKT) format}}
 

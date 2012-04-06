@@ -57,17 +57,16 @@ import org.geotoolkit.internal.ReferenceQueueConsumer;
  * and to invoke the {@link #getOrCreate getOrCreate} method. Example:
  *
  * {@preformat java
- *     private final Cache<String,Datum> cache = new Cache<String,Datum>();
+ *     private final Cache<String,MyObject> cache = new Cache<String,MyObject>();
  *
- *     // Note: an example of key is "EPSG:6326".
- *     public Datum getDatum(final String key) throws FactoryException {
+ *     public MyObject getMyObject(final String key) throws MyCheckedException {
  *         try {
- *             return cache.getOrCreate(key, new Callable<Datum>() {
- *                 Datum call() throws FactoryException {
- *                     return factory.createGeodeticDatum(key);
+ *             return cache.getOrCreate(key, new Callable<MyObject>() {
+ *                 MyObject call() throws FactoryException {
+ *                     return createMyObject(key);
  *                 }
  *             });
- *         } catch (FactoryException e) {
+ *         } catch (MyCheckedException e) {
  *             throw e;
  *         } catch (RuntimeException e) {
  *             throw e;
@@ -85,16 +84,16 @@ import org.geotoolkit.internal.ReferenceQueueConsumer;
  * no matter what the result of the computation is (including {@code null}).
  *
  * {@preformat java
- *     private final Cache<String,Datum> cache = new Cache<String,Datum>();
+ *     private final Cache<String,MyObject> cache = new Cache<String,MyObject>();
  *
- *     public Datum getDatum(String key) {
- *         Datum value = cache.peek(key);
+ *     public MyObject getMyObject(final String key) throws MyCheckedException {
+ *         MyObject value = cache.peek(key);
  *         if (value == null) {
- *             Cache.Handler<Datum> handler = cache.lock(key);
+ *             final Cache.Handler<MyObject> handler = cache.lock(key);
  *             try {
  *                 value = handler.peek();
  *                 if (value == null) {
- *                     value = factory.createGeodeticDatum(key);
+ *                     value = createMyObject(key);
  *                 }
  *             } finally {
  *                 handler.putAndUnlock(value);
@@ -562,7 +561,7 @@ public class Cache<K,V> extends AbstractMap<K,V> {
      *     try {
      *         value = handler.peek();
      *         if (value == null) {
-     *             value = factory.createGeodeticDatum(key);
+     *             value = createMyObject(key);
      *         }
      *     } finally {
      *         handler.putAndUnlock(value);

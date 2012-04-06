@@ -31,8 +31,8 @@ import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.RangeMeaning;
 
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.display.shape.XRectangle2D;
 
 import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
@@ -131,11 +131,15 @@ public abstract class AbstractEnvelope implements Envelope {
      * Returns {@code true} if at least one of the specified CRS is null, or both CRS are equals.
      * This special processing for {@code null} values is different from the usual contract of an
      * {@code equals} method, but allow to handle the case where the CRS is unknown.
+     * <p>
+     * Note that in debug mode (to be used in assertions only), the comparison are actually a bit
+     * more relax than just "ignoring metadata", since some rounding errors are tolerated.
      */
     static boolean equalsIgnoreMetadata(final CoordinateReferenceSystem crs1,
-                                        final CoordinateReferenceSystem crs2)
+                                        final CoordinateReferenceSystem crs2, final boolean debug)
     {
-        return (crs1 == null) || (crs2 == null) || CRS.equalsIgnoreMetadata(crs1, crs2);
+        return (crs1 == null) || (crs2 == null) || Utilities.deepEquals(crs1, crs2,
+                debug ? ComparisonMode.DEBUG : ComparisonMode.IGNORE_METADATA);
     }
 
     /**
@@ -551,15 +555,16 @@ public abstract class AbstractEnvelope implements Envelope {
      *         of this envelope; {@code false} otherwise.
      * @throws MismatchedDimensionException if the specified point doesn't have
      *         the expected dimension.
+     * @throws AssertionError If assertions are enabled and the envelopes have mismatched CRS.
      *
      * @since 3.20 (derived from 3.00)
      */
-    public boolean contains(final DirectPosition position) throws MismatchedDimensionException {
+    public boolean contains(final DirectPosition position) throws MismatchedDimensionException, AssertionError {
         ensureNonNull("position", position);
         final int dimension = getDimension();
         AbstractDirectPosition.ensureDimensionMatch("point", position.getDimension(), dimension);
         assert equalsIgnoreMetadata(getCoordinateReferenceSystem(),
-                position.getCoordinateReferenceSystem()) : position;
+                position.getCoordinateReferenceSystem(), true) : position;
         for (int i=0; i<dimension; i++) {
             final double value = position.getOrdinate(i);
             final double lower = getLower(i);
@@ -605,6 +610,7 @@ public abstract class AbstractEnvelope implements Envelope {
      * @return {@code true} if this envelope completely encloses the specified one.
      * @throws MismatchedDimensionException if the specified envelope doesn't have
      *         the expected dimension.
+     * @throws AssertionError If assertions are enabled and the envelopes have mismatched CRS.
      *
      * @see #intersects(Envelope, boolean)
      * @see #equals(Envelope, double, boolean)
@@ -612,13 +618,13 @@ public abstract class AbstractEnvelope implements Envelope {
      * @since 3.20 (derived from 2.2)
      */
     public boolean contains(final Envelope envelope, final boolean edgesInclusive)
-            throws MismatchedDimensionException
+            throws MismatchedDimensionException, AssertionError
     {
         ensureNonNull("envelope", envelope);
         final int dimension = getDimension();
         AbstractDirectPosition.ensureDimensionMatch("envelope", envelope.getDimension(), dimension);
         assert equalsIgnoreMetadata(getCoordinateReferenceSystem(),
-                envelope.getCoordinateReferenceSystem()) : envelope;
+                envelope.getCoordinateReferenceSystem(), true) : envelope;
         final DirectPosition lower = envelope.getLowerCorner();
         final DirectPosition upper = envelope.getUpperCorner();
         for (int i=0; i<dimension; i++) {
@@ -703,6 +709,7 @@ public abstract class AbstractEnvelope implements Envelope {
      * @return {@code true} if this envelope intersects the specified one.
      * @throws MismatchedDimensionException if the specified envelope doesn't have
      *         the expected dimension.
+     * @throws AssertionError If assertions are enabled and the envelopes have mismatched CRS.
      *
      * @see #contains(Envelope, boolean)
      * @see #equals(Envelope, double, boolean)
@@ -710,13 +717,13 @@ public abstract class AbstractEnvelope implements Envelope {
      * @since 3.20 (derived from 2.2)
      */
     public boolean intersects(final Envelope envelope, final boolean edgesInclusive)
-            throws MismatchedDimensionException
+            throws MismatchedDimensionException, AssertionError
     {
         ensureNonNull("envelope", envelope);
         final int dimension = getDimension();
         AbstractDirectPosition.ensureDimensionMatch("envelope", envelope.getDimension(), dimension);
         assert equalsIgnoreMetadata(getCoordinateReferenceSystem(),
-                envelope.getCoordinateReferenceSystem()) : envelope;
+                envelope.getCoordinateReferenceSystem(), true) : envelope;
         final DirectPosition lower = envelope.getLowerCorner();
         final DirectPosition upper = envelope.getUpperCorner();
         for (int i=0; i<dimension; i++) {
@@ -976,7 +983,7 @@ public abstract class AbstractEnvelope implements Envelope {
         if (envelope.getDimension() != dimension) {
             return false;
         }
-        if (!equalsIgnoreMetadata(getCoordinateReferenceSystem(), envelope.getCoordinateReferenceSystem())) {
+        if (!equalsIgnoreMetadata(getCoordinateReferenceSystem(), envelope.getCoordinateReferenceSystem(), false)) {
             return false;
         }
         final DirectPosition lower = envelope.getLowerCorner();

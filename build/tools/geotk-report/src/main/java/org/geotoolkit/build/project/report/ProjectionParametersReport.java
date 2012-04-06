@@ -24,6 +24,7 @@ import java.util.LinkedHashSet;
 import java.io.File;
 import java.io.IOException;
 
+import org.opengis.util.GenericName;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.IdentifiedObject;
@@ -33,7 +34,6 @@ import org.opengis.referencing.operation.Transformation;
 import org.opengis.referencing.operation.SingleOperation;
 import org.opengis.test.report.OperationParametersReport;
 
-import org.opengis.util.GenericName;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.referencing.DefaultReferenceIdentifier;
@@ -53,7 +53,7 @@ import static org.geotoolkit.metadata.iso.citation.Citations.*;
  *
  * @since 3.20
  */
-public final class ProjectionParameters extends OperationParametersReport {
+public final class ProjectionParametersReport extends OperationParametersReport {
     /**
      * All authority names as {@link String} instances. Those names will be used as
      * column headers in the table of coordinate operation methods. Those headers will
@@ -74,7 +74,7 @@ public final class ProjectionParameters extends OperationParametersReport {
      * an empirical hack for allowing the GeoAPI report to merge long ESRI projection names with the
      * OGC name when the names are identical.
      */
-    private ProjectionParameters() {
+    private ProjectionParametersReport() {
         this(EPSG, OGC, ESRI, NETCDF, GEOTIFF, PROJ4);
     }
 
@@ -85,7 +85,7 @@ public final class ProjectionParameters extends OperationParametersReport {
      * @param authorities The authorities for which to show parameter names and aliases.
      */
     @SuppressWarnings({"unchecked","rawtypes"})
-    private ProjectionParameters(final Citation... authorities) {
+    private ProjectionParametersReport(final Citation... authorities) {
         super(null);
         Reports.initialize(properties);
         properties.setProperty("TITLE", "Coordinate Operation parameters");
@@ -108,7 +108,7 @@ public final class ProjectionParameters extends OperationParametersReport {
      * @throws IOException If an error occurred while writing the HTML file.
      */
     public static void main(final String[] args) throws IOException {
-        final ProjectionParameters writer = new ProjectionParameters();
+        final ProjectionParametersReport writer = new ProjectionParametersReport();
         writer.add(FactoryFinder.getMathTransformFactory(null));
         final File file = writer.write(new File("operation-parameters.html"));
         System.out.println("Created " + file.getAbsolutePath());

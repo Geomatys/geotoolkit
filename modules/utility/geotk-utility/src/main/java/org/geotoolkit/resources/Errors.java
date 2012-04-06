@@ -250,6 +250,11 @@ public final class Errors extends IndexedResourceBundle {
         public static final int DISTANCE_OUT_OF_RANGE_$4 = 52;
 
         /**
+         * Dropped the “{0}” foreigner key constraint.
+         */
+        public static final int DROPPED_FOREIGNER_KEY_$1 = 267;
+
+        /**
          * Name or alias for parameter “{0}” at index {1} conflict with name “{2}” at index {3}.
          */
         public static final int DUPLICATED_PARAMETER_NAME_$4 = 182;

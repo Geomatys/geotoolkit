@@ -39,6 +39,11 @@ import org.geotoolkit.util.logging.Logging;
  * be assumed thread-safe). The synchronization block shall be the {@link StatementPool} which
  * contain this entry.
  *
+ * {@section Closing}
+ * This class does not implement {@link java.lang.AutoCloseable} because it is typically closed
+ * by method (and even a thread) different than the one that created the {@code StatementEntry}
+ * instance. It normally closed by {@link StatementPool#close()}.
+ *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.03
  *
@@ -73,6 +78,9 @@ public class StatementEntry {
      * This method should be invoked instead than a direct call to {@code statement.close()}
      * because some subclasses override this method in order to release additional resources
      * hold by this {@code StatementEntry}.
+     * <p>
+     * This method is usually not invoked by the method or thread that created the
+     * {@code StatementEntry} instance. It is invoked by {@link StatementPool#close()} instead.
      *
      * @throws SQLException If an error occurred while closing the statement.
      */

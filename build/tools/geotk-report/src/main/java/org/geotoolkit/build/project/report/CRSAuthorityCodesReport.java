@@ -58,7 +58,7 @@ import static org.geotoolkit.internal.referencing.CRSUtilities.EPSG_VERSION;
  *
  * @since 3.16
  */
-public final class CRSAuthorityCodes extends AuthorityCodesReport {
+public final class CRSAuthorityCodesReport extends AuthorityCodesReport {
     /**
      * The symbol to write in from of EPSG code of CRS having an axis order different
      * then the (longitude, latitude) one.
@@ -73,7 +73,7 @@ public final class CRSAuthorityCodes extends AuthorityCodesReport {
     /**
      * Creates a new instance.
      */
-    private CRSAuthorityCodes() throws FactoryException {
+    private CRSAuthorityCodesReport() throws FactoryException {
         super(null);
         Reports.initialize(properties);
         properties.setProperty("FACTORY.NAME", "EPSG");
@@ -103,7 +103,7 @@ public final class CRSAuthorityCodes extends AuthorityCodesReport {
      * @throws IOException If an error occurred while writing the HTML file.
      */
     public static void main(final String[] args) throws FactoryException, IOException {
-        final CRSAuthorityCodes writer = new CRSAuthorityCodes();
+        final CRSAuthorityCodesReport writer = new CRSAuthorityCodesReport();
         final File file = writer.write(new File("supported-codes.html"));
         System.out.println("Created " + file.getAbsolutePath());
     }
@@ -162,7 +162,7 @@ public final class CRSAuthorityCodes extends AuthorityCodesReport {
                 row.annotation = YX_ORDER;
             }
         } catch (FactoryException e) {
-            Logging.unexpectedException(CRSAuthorityCodes.class, "createRow", e);
+            Logging.unexpectedException(CRSAuthorityCodesReport.class, "createRow", e);
         }
         row.remark = getRemark(crs);
         if (object instanceof AbstractIdentifiedObject) {
@@ -207,7 +207,7 @@ public final class CRSAuthorityCodes extends AuthorityCodesReport {
         try {
             row.name = factory.getDescriptionText(code).toString(getLocale());
         } catch (FactoryException e) {
-            Logging.unexpectedException(CRSAuthorityCodes.class, "createRow", e);
+            Logging.unexpectedException(CRSAuthorityCodesReport.class, "createRow", e);
         }
         String message;
         if (code.startsWith("AUTO2:")) {
