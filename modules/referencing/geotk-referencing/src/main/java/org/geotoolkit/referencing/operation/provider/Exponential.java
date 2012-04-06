@@ -79,6 +79,38 @@ public class Exponential extends MathTransformProvider {
 
     /**
      * The parameters group.
+     * <!-- GENERATED PARAMETERS - inserted by ProjectionParametersJavadoc -->
+     * <table bgcolor="#F4F8FF" border="1" cellspacing="0" cellpadding="6">
+     *   <tr bgcolor="#B9DCFF" valign="top"><td colspan="2">
+     *     <table border="0" cellspacing="0" cellpadding="0">
+     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>Geotk:</code></td><td><code>Exponential</code></td></tr>
+     *     </table>
+     *   </td></tr>
+     *   <tr valign="top"><td>
+     *     <table border="0" cellspacing="0" cellpadding="0">
+     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>null:</code></td><td><code>base</code></td></tr>
+     *     </table>
+     *   </td><td>
+     *     <table border="0" cellspacing="0" cellpadding="0">
+     *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
+     *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>mandatory</td></tr>
+     *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>[0…∞)</td></tr>
+     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>10</td></tr>
+     *     </table>
+     *   </td></tr>
+     *   <tr valign="top"><td>
+     *     <table border="0" cellspacing="0" cellpadding="0">
+     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>null:</code></td><td><code>scale</code></td></tr>
+     *     </table>
+     *   </td><td>
+     *     <table border="0" cellspacing="0" cellpadding="0">
+     *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
+     *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>mandatory</td></tr>
+     *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>(-∞ … ∞)</td></tr>
+     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>1</td></tr>
+     *     </table>
+     *   </td></tr>
+     * </table>
      */
     public static final ParameterDescriptorGroup PARAMETERS = createDescriptorGroup(
             new NamedIdentifier[] {

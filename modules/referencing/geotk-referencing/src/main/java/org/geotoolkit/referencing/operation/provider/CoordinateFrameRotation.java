@@ -44,6 +44,181 @@ public class CoordinateFrameRotation extends PositionVector7Param {
     /**
      * The parameters group. This is the same group than
      * {@link PositionVector7Param#PARAMETERS} except for the name.
+     *
+     * <!-- GENERATED PARAMETERS - inserted by ProjectionParametersJavadoc -->
+     * <table bgcolor="#F4F8FF" border="1" cellspacing="0" cellpadding="6">
+     *   <tr bgcolor="#B9DCFF" valign="top"><td colspan="2">
+     *     <table border="0" cellspacing="0" cellpadding="0">
+     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>EPSG:</code></td><td><code>Coordinate Frame Rotation (geog2D domain)</code></td></tr>
+     *       <tr><th align="left">Alias:&nbsp;&nbsp;</th><td><code>EPSG:</code></td><td><code>Coordinate Frame Rotation</code></td></tr>
+     *       <tr><th align="left">&nbsp;&nbsp;</th><td><code>EPSG:</code></td><td><code>Bursa-Wolf</code></td></tr>
+     *       <tr><th align="left">Identifier:&nbsp;&nbsp;</th><td><code>EPSG:</code></td><td><code>9607</code></td></tr>
+     *     </table>
+     *   </td></tr>
+     *   <tr valign="top"><td>
+     *     <table border="0" cellspacing="0" cellpadding="0">
+     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>OGC:</code></td><td><code>dx</code></td></tr>
+     *       <tr><th align="left">Alias:&nbsp;&nbsp;</th><td><code>EPSG:</code></td><td><code>X-axis translation</code></td></tr>
+     *     </table>
+     *   </td><td>
+     *     <table border="0" cellspacing="0" cellpadding="0">
+     *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
+     *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>mandatory</td></tr>
+     *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>(-∞ … ∞) metres</td></tr>
+     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>0 metres</td></tr>
+     *     </table>
+     *   </td></tr>
+     *   <tr valign="top"><td>
+     *     <table border="0" cellspacing="0" cellpadding="0">
+     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>OGC:</code></td><td><code>dy</code></td></tr>
+     *       <tr><th align="left">Alias:&nbsp;&nbsp;</th><td><code>EPSG:</code></td><td><code>Y-axis translation</code></td></tr>
+     *     </table>
+     *   </td><td>
+     *     <table border="0" cellspacing="0" cellpadding="0">
+     *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
+     *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>mandatory</td></tr>
+     *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>(-∞ … ∞) metres</td></tr>
+     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>0 metres</td></tr>
+     *     </table>
+     *   </td></tr>
+     *   <tr valign="top"><td>
+     *     <table border="0" cellspacing="0" cellpadding="0">
+     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>OGC:</code></td><td><code>dz</code></td></tr>
+     *       <tr><th align="left">Alias:&nbsp;&nbsp;</th><td><code>EPSG:</code></td><td><code>Z-axis translation</code></td></tr>
+     *     </table>
+     *   </td><td>
+     *     <table border="0" cellspacing="0" cellpadding="0">
+     *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
+     *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>mandatory</td></tr>
+     *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>(-∞ … ∞) metres</td></tr>
+     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>0 metres</td></tr>
+     *     </table>
+     *   </td></tr>
+     *   <tr valign="top"><td>
+     *     <table border="0" cellspacing="0" cellpadding="0">
+     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>OGC:</code></td><td><code>ex</code></td></tr>
+     *       <tr><th align="left">Alias:&nbsp;&nbsp;</th><td><code>EPSG:</code></td><td><code>X-axis rotation</code></td></tr>
+     *     </table>
+     *   </td><td>
+     *     <table border="0" cellspacing="0" cellpadding="0">
+     *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
+     *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>mandatory</td></tr>
+     *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>[-648000 … 648000] ''</td></tr>
+     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>0 ''</td></tr>
+     *     </table>
+     *   </td></tr>
+     *   <tr valign="top"><td>
+     *     <table border="0" cellspacing="0" cellpadding="0">
+     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>OGC:</code></td><td><code>ey</code></td></tr>
+     *       <tr><th align="left">Alias:&nbsp;&nbsp;</th><td><code>EPSG:</code></td><td><code>Y-axis rotation</code></td></tr>
+     *     </table>
+     *   </td><td>
+     *     <table border="0" cellspacing="0" cellpadding="0">
+     *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
+     *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>mandatory</td></tr>
+     *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>[-648000 … 648000] ''</td></tr>
+     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>0 ''</td></tr>
+     *     </table>
+     *   </td></tr>
+     *   <tr valign="top"><td>
+     *     <table border="0" cellspacing="0" cellpadding="0">
+     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>OGC:</code></td><td><code>ez</code></td></tr>
+     *       <tr><th align="left">Alias:&nbsp;&nbsp;</th><td><code>EPSG:</code></td><td><code>Z-axis rotation</code></td></tr>
+     *     </table>
+     *   </td><td>
+     *     <table border="0" cellspacing="0" cellpadding="0">
+     *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
+     *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>mandatory</td></tr>
+     *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>[-648000 … 648000] ''</td></tr>
+     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>0 ''</td></tr>
+     *     </table>
+     *   </td></tr>
+     *   <tr valign="top"><td>
+     *     <table border="0" cellspacing="0" cellpadding="0">
+     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>OGC:</code></td><td><code>ppm</code></td></tr>
+     *       <tr><th align="left">Alias:&nbsp;&nbsp;</th><td><code>EPSG:</code></td><td><code>Scale difference</code></td></tr>
+     *     </table>
+     *   </td><td>
+     *     <table border="0" cellspacing="0" cellpadding="0">
+     *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
+     *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>mandatory</td></tr>
+     *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>(-∞ … ∞)</td></tr>
+     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>0</td></tr>
+     *     </table>
+     *   </td></tr>
+     *   <tr valign="top"><td>
+     *     <table border="0" cellspacing="0" cellpadding="0">
+     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>OGC:</code></td><td><code>src_semi_major</code></td></tr>
+     *     </table>
+     *   </td><td>
+     *     <table border="0" cellspacing="0" cellpadding="0">
+     *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
+     *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>optional</td></tr>
+     *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>[0…∞) metres</td></tr>
+     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>0 metres</td></tr>
+     *     </table>
+     *   </td></tr>
+     *   <tr valign="top"><td>
+     *     <table border="0" cellspacing="0" cellpadding="0">
+     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>OGC:</code></td><td><code>src_semi_minor</code></td></tr>
+     *     </table>
+     *   </td><td>
+     *     <table border="0" cellspacing="0" cellpadding="0">
+     *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
+     *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>optional</td></tr>
+     *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>[0…∞) metres</td></tr>
+     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>0 metres</td></tr>
+     *     </table>
+     *   </td></tr>
+     *   <tr valign="top"><td>
+     *     <table border="0" cellspacing="0" cellpadding="0">
+     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>OGC:</code></td><td><code>tgt_semi_major</code></td></tr>
+     *     </table>
+     *   </td><td>
+     *     <table border="0" cellspacing="0" cellpadding="0">
+     *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
+     *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>optional</td></tr>
+     *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>[0…∞) metres</td></tr>
+     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>0 metres</td></tr>
+     *     </table>
+     *   </td></tr>
+     *   <tr valign="top"><td>
+     *     <table border="0" cellspacing="0" cellpadding="0">
+     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>OGC:</code></td><td><code>tgt_semi_minor</code></td></tr>
+     *     </table>
+     *   </td><td>
+     *     <table border="0" cellspacing="0" cellpadding="0">
+     *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
+     *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>optional</td></tr>
+     *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>[0…∞) metres</td></tr>
+     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>0 metres</td></tr>
+     *     </table>
+     *   </td></tr>
+     *   <tr valign="top"><td>
+     *     <table border="0" cellspacing="0" cellpadding="0">
+     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>Geotk:</code></td><td><code>src_dim</code></td></tr>
+     *     </table>
+     *   </td><td>
+     *     <table border="0" cellspacing="0" cellpadding="0">
+     *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Integer</code></td></tr>
+     *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>optional</td></tr>
+     *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>[2…3]</td></tr>
+     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>2</td></tr>
+     *     </table>
+     *   </td></tr>
+     *   <tr valign="top"><td>
+     *     <table border="0" cellspacing="0" cellpadding="0">
+     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>Geotk:</code></td><td><code>tgt_dim</code></td></tr>
+     *     </table>
+     *   </td><td>
+     *     <table border="0" cellspacing="0" cellpadding="0">
+     *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Integer</code></td></tr>
+     *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>optional</td></tr>
+     *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>[2…3]</td></tr>
+     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>2</td></tr>
+     *     </table>
+     *   </td></tr>
+     * </table>
      */
     @SuppressWarnings("hiding")
     public static final ParameterDescriptorGroup PARAMETERS = createDescriptorGroup(9607,
@@ -60,7 +235,7 @@ public class CoordinateFrameRotation extends PositionVector7Param {
      * Fills the given Bursa-Wolf parameters according the specified values.
      */
     @Override
-    void fill(final BursaWolfParameters parameters, final ParameterValueGroup values) {
+    final void fill(final BursaWolfParameters parameters, final ParameterValueGroup values) {
         super.fill(parameters, values);
         parameters.ex = -parameters.ex;
         parameters.ey = -parameters.ey;

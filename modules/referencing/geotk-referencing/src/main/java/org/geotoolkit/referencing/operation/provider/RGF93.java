@@ -65,6 +65,26 @@ public class RGF93 extends MathTransformProvider {
 
     /**
      * The parameters group.
+     * <!-- GENERATED PARAMETERS - inserted by ProjectionParametersJavadoc -->
+     * <table bgcolor="#F4F8FF" border="1" cellspacing="0" cellpadding="6">
+     *   <tr bgcolor="#B9DCFF" valign="top"><td colspan="2">
+     *     <table border="0" cellspacing="0" cellpadding="0">
+     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>EPSG:</code></td><td><code>France geocentric interpolation</code></td></tr>
+     *       <tr><th align="left">Identifier:&nbsp;&nbsp;</th><td><code>EPSG:</code></td><td><code>9655</code></td></tr>
+     *     </table>
+     *   </td></tr>
+     *   <tr valign="top"><td>
+     *     <table border="0" cellspacing="0" cellpadding="0">
+     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>EPSG:</code></td><td><code>Geocentric translation file</code></td></tr>
+     *     </table>
+     *   </td><td>
+     *     <table border="0" cellspacing="0" cellpadding="0">
+     *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>String</code></td></tr>
+     *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>mandatory</td></tr>
+     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>gr3df97a.txt</td></tr>
+     *     </table>
+     *   </td></tr>
+     * </table>
      */
     public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
         new ReferenceIdentifier[] {

@@ -18,10 +18,9 @@
 package org.geotoolkit.build.project.report;
 
 import java.util.Set;
-import java.util.List;
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.Locale;
+import java.io.IOException;
 
 import org.opengis.util.GenericName;
 import org.opengis.referencing.ReferenceIdentifier;
@@ -29,6 +28,7 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.GeneralParameterDescriptor;
 
+import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Deprecable;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.converter.Numbers;
@@ -45,7 +45,7 @@ import org.geotoolkit.referencing.operation.provider.*;
  *
  * @since 3.20
  */
-public final class ProjectionParametersJavadoc {
+public final class ProjectionParametersJavadoc extends JavadocUpdater {
     /**
      * Beginning of a row.
      */
@@ -64,16 +64,17 @@ public final class ProjectionParametersJavadoc {
     /**
      * Runs from the command line.
      *
-     * @param args Ignored.
+     * @param  args Ignored.
      * @throws ReflectiveOperationException Should never happen.
+     * @throws IOException If an error occurred while updating the source files.
      */
-    public static void main(String[] args) throws ReflectiveOperationException {
+    public static void main(String[] args) throws ReflectiveOperationException, IOException {
         Locale.setDefault(Locale.ENGLISH);
         final ProjectionParametersJavadoc updater = new ProjectionParametersJavadoc();
         for (final Class<?> parameter : updater.parameters) {
             updater.createGlobalTable((ParameterDescriptorGroup) parameter.getField("PARAMETERS").get(null));
+            updater.update("referencing/geotk-referencing", parameter);
         }
-        System.out.println(updater);
     }
 
     /**
@@ -83,57 +84,73 @@ public final class ProjectionParametersJavadoc {
      * then replace {@code PARAMETERS} by {@code class}.
      */
     private final Class<?>[] parameters = {
-        AbridgedMolodensky       .class,
-        Affine                   .class,
-        AlbersEqualArea          .class,
-        CassiniSoldner           .class,
-        CoordinateFrameRotation  .class,
-        EllipsoidToGeocentric    .class,
-        EquidistantCylindrical   .class,
-        Exponential              .class,
-        GeocentricToEllipsoid    .class,
-        GeocentricTranslation    .class,
-        HotineObliqueMercator    .class,
-        Krovak                   .class,
-        LambertAzimuthalEqualArea.class,
-        LambertConformal1SP      .class,
-        LambertConformal2SP      .class,
-        Logarithmic              .class,
-        LongitudeRotation        .class,
-        Mercator1SP              .class,
-        Mercator2SP              .class,
-        MillerCylindrical        .class,
-        Molodensky               .class,
-        NADCON                   .class,
-        NTv2                     .class,
-        NewZealandMapGrid        .class,
-        ObliqueMercator          .class,
-        ObliqueStereographic     .class,
-        Orthographic             .class,
-        PlateCarree              .class,
-        PolarStereographic       .class,
-        Polyconic                .class,
-        PositionVector7Param     .class,
-        PseudoMercator           .class,
-        RGF93                    .class,
-        Stereographic            .class,
-        TransverseMercator       .class
+        AbridgedMolodensky                .class,
+        Affine                            .class,
+        AlbersEqualArea                   .class,
+        CassiniSoldner                    .class,
+        CoordinateFrameRotation           .class,
+        EllipsoidToGeocentric             .class,
+        EquidistantCylindrical            .class,
+        Exponential                       .class,
+        GeocentricToEllipsoid             .class,
+        GeocentricTranslation             .class,
+        HotineObliqueMercator             .class,
+        HotineObliqueMercator.TwoPoint    .class,
+        Krovak                            .class,
+        LambertAzimuthalEqualArea         .class,
+        LambertConformal1SP               .class,
+        LambertConformal2SP               .class,
+        LambertConformal2SP.Belgium       .class,
+        Logarithmic                       .class,
+        LongitudeRotation                 .class,
+        Mercator1SP                       .class,
+        Mercator2SP                       .class,
+        MillerCylindrical                 .class,
+        Molodensky                        .class,
+        NADCON                            .class,
+        NTv2                              .class,
+        NewZealandMapGrid                 .class,
+        ObliqueMercator                   .class,
+        ObliqueMercator.TwoPoint          .class,
+        ObliqueStereographic              .class,
+        Orthographic                      .class,
+        PlateCarree                       .class,
+        PolarStereographic                .class,
+        PolarStereographic.North          .class,
+        PolarStereographic.South          .class,
+        PolarStereographic.VariantB       .class,
+        Polyconic                         .class,
+        PositionVector7Param              .class,
+        PseudoMercator                    .class,
+        RGF93                             .class,
+        Stereographic                     .class,
+        TransverseMercator                .class,
+        TransverseMercator.SouthOrientated.class
     };
 
     /**
-     * The lines in HTML formats, without carriage returns. All {@code createFoo(...)} methods
-     * defined in this class will append lines in HTML format to this list. After the list has
-     * been completed, its content can be printed directly (for example by {@link #toString()},
-     * or can be prefixed by the {@code " * "} characters of the lines are to be inserted in a
-     * class Javadoc.
+     * Parameters to default to the latitude of origin. We can hardly detect those cases
+     * automatically, since the behavior for the default value is hard-coded in Java.
      */
-    private final List<String> lines;
+    private final GeneralParameterDescriptor defaultToLatitudeOfOrigin[] = {
+        AlbersEqualArea    .PARAMETERS.descriptor("Latitude of 1st standard parallel"),
+        LambertConformal2SP.PARAMETERS.descriptor("Latitude of 1st standard parallel")
+    };
+
+    /**
+     * Parameters to default to the first standard parallel. We can hardly detect those
+     * cases automatically, since the behavior for the default value is hard-coded in Java.
+     */
+    private final GeneralParameterDescriptor defaultToStandardParallel1[] = {
+        AlbersEqualArea    .PARAMETERS.descriptor("Latitude of 2nd standard parallel"),
+        LambertConformal2SP.PARAMETERS.descriptor("Latitude of 2nd standard parallel")
+    };
 
     /**
      * Creates a new instance to be used for updating the javadoc.
      */
-    private ProjectionParametersJavadoc() {
-        lines = new ArrayList<>();
+    private ProjectionParametersJavadoc() throws IOException {
+        super();
     }
 
     /**
@@ -142,6 +159,7 @@ public final class ProjectionParametersJavadoc {
      * and {@link #createConditionTable(ParameterDescriptor)}.
      */
     private void createGlobalTable(final ParameterDescriptorGroup group) {
+        lines.clear();
         lines.add("<table bgcolor=\"#F4F8FF\" border=\"1\" cellspacing=\"0\" cellpadding=\"6\">");
         lines.add("  <tr bgcolor=\"#B9DCFF\" valign=\"top\"><td colspan=\"2\">");
         createNameTable(group);
@@ -237,7 +255,13 @@ public final class ProjectionParametersJavadoc {
          */
         Object defaultValue = descriptor.getDefaultValue();
         if (defaultValue == null && descriptor.getMinimumOccurs() == 0) {
-            if (Number.class.isAssignableFrom(valueClass)) {
+            if (XArrays.contains(defaultToLatitudeOfOrigin, descriptor)) {
+                defaultValue = "<var>latitude of origin</var>";
+                unit = "";
+            } else if (XArrays.contains(defaultToStandardParallel1, descriptor)) {
+                defaultValue = "<var>standard parallel 1</var>";
+                unit = "";
+            } else if (Number.class.isAssignableFrom(valueClass)) {
                 defaultValue = 0;
             } else if (valueClass == Boolean.class) {
                 defaultValue = Boolean.FALSE;
@@ -283,18 +307,5 @@ public final class ProjectionParametersJavadoc {
      */
     private static String toHTML(final String codespace, final String code) {
         return "<code>" + codespace + ":</code></td><td><code>" + code + "</code>";
-    }
-
-    /**
-     * Returns the HTML code for debugging purpose
-     */
-    @Override
-    public String toString() {
-        final String lineSeparator = System.lineSeparator();
-        final StringBuilder buffer = new StringBuilder();
-        for (final String line : lines) {
-            buffer.append(line).append(lineSeparator);
-        }
-        return buffer.toString();
     }
 }
