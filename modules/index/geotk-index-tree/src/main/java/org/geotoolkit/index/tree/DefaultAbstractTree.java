@@ -17,11 +17,13 @@
  */
 package org.geotoolkit.index.tree;
 
+import java.util.Iterator;
 import javax.measure.unit.Unit;
 import org.geotoolkit.index.tree.calculator.*;
 import org.geotoolkit.index.tree.nodefactory.NodeFactory;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.converter.Classes;
+import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CompoundCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.SingleCRS;
@@ -44,6 +46,7 @@ public abstract class DefaultAbstractTree implements Tree{
     protected Calculator calculator;
     protected final int[]dims;
     protected final int spatialDimension;
+    protected int eltCompteur = 0;
 
     /**
      * To create an R-Tree use {@linkplain TreeFactory}.
@@ -179,6 +182,67 @@ public abstract class DefaultAbstractTree implements Tree{
     @Override
     public String toString() {
         return Classes.getShortClassName(this) + "\n" + getRoot();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void insertAll(Iterator<? extends Envelope> itr){
+        while(itr.hasNext()){
+            insert((Envelope)itr.next());
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void deleteAll(Iterator<? extends Envelope> itr){
+        while(itr.hasNext()){
+            delete((Envelope)itr.next());
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void removeAll(Iterator<? extends Envelope> itr){
+        while(itr.hasNext()){
+            remove((Envelope)itr.next());
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void clear(){
+        setRoot(null);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getElementsNumber() {
+        return eltCompteur;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setElementsNumber(int value) {
+        this.eltCompteur = value;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Envelope getExtent(){
+        return getRoot().getBoundary();
     }
 
     /**

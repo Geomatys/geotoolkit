@@ -79,7 +79,7 @@ public class BasicRTree extends DefaultAbstractTree {
         if(!CRS.equalsIgnoreMetadata(crs, entry.getCoordinateReferenceSystem())){
             throw new MismatchedReferenceSystemException();
         }
-
+        super.eltCompteur++;
         final Node root = getRoot();
         final int dim = entry.getDimension();
         final double[] coords = new double[2 * dim];
@@ -104,6 +104,21 @@ public class BasicRTree extends DefaultAbstractTree {
         final Node root = getRoot();
         if (root != null) {
             deleteNode(root, entry);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void remove(final Envelope entry) throws IllegalArgumentException {
+        ArgumentChecks.ensureNonNull("remove : entry", entry);
+        if(!CRS.equalsIgnoreMetadata(crs, entry.getCoordinateReferenceSystem())){
+            throw new MismatchedReferenceSystemException();
+        }
+        final Node root = getRoot();
+        if (root != null) {
+            removeNode(root, entry);
         }
     }
 
@@ -501,18 +516,64 @@ public class BasicRTree extends DefaultAbstractTree {
      * @return true if entry is find and deleted else false.
      */
     private static boolean deleteNode(final Node candidate, final Envelope entry) throws IllegalArgumentException{
-        ArgumentChecks.ensureNonNull("DeleteNode3D : Node3D candidate", candidate);
-        ArgumentChecks.ensureNonNull("DeleteNode3D : Node3D candidate", candidate);
+        ArgumentChecks.ensureNonNull("DeleteNode : Node candidate", candidate);
+        ArgumentChecks.ensureNonNull("DeleteNode : Node candidate", candidate);
         if(new GeneralEnvelope(candidate.getBoundary()).intersects(entry, true)){
             if(candidate.isLeaf()){
                 final boolean removed = candidate.getEntries().remove(entry);
                 if(removed){
+                    final DefaultAbstractTree tree = ((DefaultAbstractTree)candidate.getTree());
+                    tree.setElementsNumber(tree.getElementsNumber()-1);
                     trim(candidate);
                     return true;
                 }
             }else{
                 for(Node no : candidate.getChildren()){
                     final boolean removed = deleteNode(no, entry);
+                    if(removed){
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Travel {@code Tree}, find {@code Entry} if it exist and delete it from reference.
+     *
+     * <blockquote><font size=-1>
+     * <strong>NOTE: Moreover {@code Tree} is condensate after a deletion to stay conform about R-Tree properties.</strong>
+     * </font></blockquote>
+     *
+     * @param candidate {@code Node}  where to delete.
+     * @param entry {@code Envelope} to delete.
+     * @throws IllegalArgumentException if candidate or entry is null.
+     * @return true if entry is find and deleted else false.
+     */
+    private static boolean removeNode(final Node candidate, final Envelope entry) throws IllegalArgumentException{
+        ArgumentChecks.ensureNonNull("removeNode : Node candidate", candidate);
+        ArgumentChecks.ensureNonNull("removeNode : Node candidate", candidate);
+        if(new GeneralEnvelope(candidate.getBoundary()).intersects(entry, true)){
+            if(candidate.isLeaf()){
+                final List<Envelope> l = candidate.getEntries();
+                boolean removed = false;
+                for(int i = l.size()-1;i>=0;i--){
+                    if(l.get(i)==entry){
+                        removed = true;
+                        l.remove(i);
+                        break;
+                    }
+                }
+                if(removed){
+                    final DefaultAbstractTree tree = ((DefaultAbstractTree)candidate.getTree());
+                    tree.setElementsNumber(tree.getElementsNumber()-1);
+                    trim(candidate);
+                    return true;
+                }
+            }else{
+                for(Node no : candidate.getChildren()){
+                    final boolean removed = removeNode(no, entry);
                     if(removed){
                         return true;
                     }
@@ -532,10 +593,12 @@ public class BasicRTree extends DefaultAbstractTree {
     private static void trim(final Node candidate) throws IllegalArgumentException {
         ArgumentChecks.ensureNonNull("trim : Node3D candidate", candidate);
         final List<Node> children = candidate.getChildren();
-        final Tree tree = candidate.getTree();
+        final DefaultAbstractTree tree = ((DefaultAbstractTree)candidate.getTree());
         final List<Envelope> reinsertList = new ArrayList<Envelope>();
         for(int i = children.size()-1;i>=0;i--){
             final Node child = children.get(i);
+            final List<Envelope> childList = child.getEntries();
+            final int siz = childList.size();
             if(child.isEmpty()){
                 children.remove(i);
             }else if(child.getChildren().size() ==1){
@@ -544,8 +607,9 @@ public class BasicRTree extends DefaultAbstractTree {
                     n2d.setParent(candidate);
                 }
                 children.addAll(n.getChildren());
-            }else if(child.isLeaf()&&child.getEntries().size()<=tree.getMaxElements()/3){
-                reinsertList.addAll(child.getEntries());
+            }else if(child.isLeaf()&&siz<=tree.getMaxElements()/3){
+                reinsertList.addAll(childList);
+                tree.setElementsNumber(tree.getElementsNumber()-siz);
                 children.remove(i);
             }
         }

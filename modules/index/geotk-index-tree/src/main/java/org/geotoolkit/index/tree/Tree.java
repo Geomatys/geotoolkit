@@ -18,6 +18,7 @@
 package org.geotoolkit.index.tree;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import org.geotoolkit.index.tree.calculator.Calculator;
 import org.geotoolkit.index.tree.nodefactory.NodeFactory;
@@ -57,12 +58,52 @@ public interface Tree {
     void insert(Envelope entry) throws IllegalArgumentException;
 
     /**
+     * Insert all {@code Entry} into Rtree.
+     *
+     * @param Iterator to insert into tree.
+     * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
+     */
+    void insertAll(Iterator<? extends Envelope> itr) throws IllegalArgumentException;
+
+    /**
      * Find a {@code Envelope} (entry) into the tree and delete it.
      *
      * @param Entry to delete.
      * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
      */
     void delete(Envelope entry) throws IllegalArgumentException;
+
+    /**
+     * Find a {@code Envelope} (entry) into the tree and delete it.
+     *
+     * @param Iterator to delete.
+     * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
+     */
+    void deleteAll(Iterator<? extends Envelope> itr) throws IllegalArgumentException;
+
+
+    /**Find a {@code Envelope} (entry) from Iterator into the tree and delete it.
+     *
+     * <blockquote><font size=-1>
+     * <strong>NOTE: comparison to remove entry is based from them references.</strong>
+     * </font></blockquote>
+     *
+     * @param Entry to delete.
+     * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
+     */
+    void remove(Envelope entry) throws IllegalArgumentException;
+
+
+    /**Find all {@code Envelope} (entry) from Iterator into the tree and delete it.
+     *
+     * <blockquote><font size=-1>
+     * <strong>NOTE: comparison to remove entry is based from them references.</strong>
+     * </font></blockquote>
+     *
+     * @param Entry to delete.
+     * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
+     */
+    void removeAll(Iterator<? extends Envelope> itr) throws IllegalArgumentException;
 
     /**
      * @return max number authorized by tree cells.
@@ -92,9 +133,25 @@ public interface Tree {
     Calculator getCalculator();
 
     /**
-     * @return Calculator to effectuate Tree compute.
+     * @return NodeFactory to create adapted Tree Node.
      */
     NodeFactory getNodeFactory();
+
+    /**
+     * Clear tree (tree root Node becomme null).
+     */
+    void clear();
+
+    /**
+     * Return elements number within tree.
+     */
+    int getElementsNumber();
+
+    /**
+     * @return all tree data set boundary.
+     */
+    Envelope getExtent();
+
 
     /**Create a node in accordance with this properties.
      *

@@ -101,6 +101,7 @@ public class HilbertRTree extends DefaultAbstractTree {
         if(!CRS.equalsIgnoreMetadata(crs, entry.getCoordinateReferenceSystem())){
             throw new MismatchedReferenceSystemException();
         }
+        super.eltCompteur++;
         final Node root = getRoot();
         final int dim = entry.getDimension();
         final double[] coords = new double[2 * dim];
@@ -123,6 +124,18 @@ public class HilbertRTree extends DefaultAbstractTree {
             throw new MismatchedReferenceSystemException();
         }
         deleteHilbertNode(getRoot(), entry);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void remove(final Envelope entry) throws IllegalArgumentException {
+        ArgumentChecks.ensureNonNull("remove : entry", entry);
+        if(!CRS.equalsIgnoreMetadata(crs, entry.getCoordinateReferenceSystem())){
+            throw new MismatchedReferenceSystemException();
+        }
+        removeHilbertNode(getRoot(), entry);
     }
 
     /**
@@ -675,15 +688,64 @@ public class HilbertRTree extends DefaultAbstractTree {
                 for (Node nod : lN) {
                     if (nod.getEntries().remove(entry)) {
                         removed = true;
+                        break;
                     }
                 }
                 if (removed) {
+                    final DefaultAbstractTree tree = ((DefaultAbstractTree)candidate.getTree());
+                    tree.setElementsNumber(tree.getElementsNumber()-1);
                     candidate.setBound(null);
                     trim(candidate);
                 }
             } else {
                 for (Node nod : candidate.getChildren().toArray(new Node[candidate.getChildren().size()])) {
                     deleteHilbertNode(nod, entry);
+                }
+            }
+        }
+    }
+
+    /**
+     * Travel down {@code Tree}, find {@code Envelope} entry if it exist
+     * and delete it.
+     *
+     * <blockquote><font size=-1> <strong>NOTE: Moreover {@code Tree} is
+     * condensate after a deletion to stay conform about R-Tree
+     * properties.</strong> </font></blockquote>
+     *
+     * @param candidate {@code Node} where to delete.
+     * @param entry {@code Envelope} to delete.
+     * @throws IllegalArgumentException if candidate or entry is null.
+     * @return true if entry is find and deleted else false.
+     */
+    private static void removeHilbertNode(final Node candidate, final Envelope entry) throws IllegalArgumentException{
+        ArgumentChecks.ensureNonNull("deleteHilbertNode Node candidate : ", candidate);
+        ArgumentChecks.ensureNonNull("deleteHilbertNode Envelope entry : ", entry);
+        if (new GeneralEnvelope(candidate.getBoundary()).intersects(entry, true)) {
+            if (candidate.isLeaf()) {
+                boolean removed = false;
+                final List<Node> lN = candidate.getChildren();
+                List<Envelope> l;
+                for (Node nod : lN) {
+                    l = nod.getEntries();
+                    for(int i = l.size()-1;i>=0;i--){
+                        if(l.get(i)==entry){
+                            removed = true;
+                            l.remove(i);
+                            break;
+                        }
+                    }
+                    if(removed)break;
+                }
+                if (removed) {
+                    final DefaultAbstractTree tree = ((DefaultAbstractTree)candidate.getTree());
+                    tree.setElementsNumber(tree.getElementsNumber()-1);
+                    candidate.setBound(null);
+                    trim(candidate);
+                }
+            } else {
+                for (Node nod : candidate.getChildren().toArray(new Node[candidate.getChildren().size()])) {
+                    removeHilbertNode(nod, entry);
                 }
             }
         }

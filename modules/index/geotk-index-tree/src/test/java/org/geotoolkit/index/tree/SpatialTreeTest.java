@@ -89,7 +89,6 @@ public abstract class SpatialTreeTest extends TreeTest{
             throw new IllegalArgumentException("invalid crs, Coordinate system type :"+cs.getClass() +" is not supported");
         }
         insert();
-        System.out.println("");
     }
 
     /**
@@ -99,10 +98,7 @@ public abstract class SpatialTreeTest extends TreeTest{
      * crs.
      */
     protected void insert() throws IllegalArgumentException, TransformException {
-        int i = 0;
-        for (Envelope gEnv : lData) {
-            tree.insert(gEnv);
-        }
+        tree.insertAll(lData.iterator());
     }
 
     /**
@@ -150,9 +146,7 @@ public abstract class SpatialTreeTest extends TreeTest{
     @Test
     public void queryOnBorderTest() throws IllegalArgumentException, TransformException {
         final List<GeneralEnvelope> lGE = new ArrayList<GeneralEnvelope>();
-        for (Envelope ge : lData) {
-            tree.delete(ge);
-        }
+        tree.deleteAll(lData.iterator());
         final List<Envelope> lGERef = new ArrayList<Envelope>();
         final GeneralEnvelope gR = new GeneralEnvelope(crs);
 
@@ -181,12 +175,7 @@ public abstract class SpatialTreeTest extends TreeTest{
             }
             gR.setEnvelope(93, 18, 19, 130, 87, 21);
         }
-
-        int i = 0;
-        for (GeneralEnvelope ge : lGE) {
-            tree.insert(ge);
-            i++;
-        }
+        tree.insertAll(lGE.iterator());
 
         final List<Envelope> lGES = new ArrayList<Envelope>();
         tree.search(gR, lGES);
@@ -220,9 +209,6 @@ public abstract class SpatialTreeTest extends TreeTest{
     public void queryInsideTest() throws MismatchedReferenceSystemException {
         final List<Envelope> listSearch = new ArrayList<Envelope>();
         tree.search(DefaultTreeUtils.getEnveloppeMin(lData), listSearch);
-        if(!compareList(lData, listSearch)){
-            System.out.println("");
-        }
         assertTrue(compareList(lData, listSearch));
     }
 
@@ -250,9 +236,7 @@ public abstract class SpatialTreeTest extends TreeTest{
     @Test
     public void insertDelete() throws IllegalArgumentException, TransformException {
         Collections.shuffle(lData);
-        for (Envelope env : lData) {
-            tree.delete(env);
-        }
+        tree.deleteAll(lData.iterator());
         final GeneralEnvelope areaSearch = new GeneralEnvelope(crs);
         for (int i = 0; i < dimension; i++) {
             areaSearch.setRange(i, minMax[2*i], minMax[2*i+1]);
@@ -260,6 +244,7 @@ public abstract class SpatialTreeTest extends TreeTest{
         final List<Envelope> listSearch = new ArrayList<Envelope>();
         tree.search(areaSearch, listSearch);
         assertTrue(listSearch.isEmpty());
+        assertTrue(tree.getElementsNumber()==0);
         insert();
         tree.search(areaSearch, listSearch);
         assertTrue(compareList(listSearch, lData));
