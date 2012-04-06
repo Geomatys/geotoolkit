@@ -72,8 +72,11 @@ public class EllipsoidToGeocentric extends MathTransformProvider {
      * The operation parameter descriptor for the {@code "semi_major"} parameter value.
      * Valid values range from 0 to infinity. This parameter is mandatory and has no
      * default value.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
-    @SuppressWarnings("unchecked")
+    @Deprecated
     public static final ParameterDescriptor<Double> SEMI_MAJOR =
             (ParameterDescriptor<Double>) PseudoMercator.PARAMETERS.descriptor("semi_major");
 
@@ -81,8 +84,11 @@ public class EllipsoidToGeocentric extends MathTransformProvider {
      * The operation parameter descriptor for the {@code "semi_minor"} parameter value.
      * Valid values range from 0 to infinity. This parameter is mandatory and has no
      * default value.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
-    @SuppressWarnings("unchecked")
+    @Deprecated
     public static final ParameterDescriptor<Double> SEMI_MINOR =
             (ParameterDescriptor<Double>) PseudoMercator.PARAMETERS.descriptor("semi_minor");
 
@@ -90,7 +96,11 @@ public class EllipsoidToGeocentric extends MathTransformProvider {
      * The operation parameter descriptor for the number of geographic dimension (2 or 3).
      * This is a Geotk-specific argument. The default value is 3, which is the value
      * implied in OGC's WKT.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
+    @Deprecated
     public static final ParameterDescriptor<Integer> DIM = DefaultParameterDescriptor.create(
                 Collections.singletonMap(NAME_KEY,
                     new NamedIdentifier(Citations.GEOTOOLKIT, "dim")),

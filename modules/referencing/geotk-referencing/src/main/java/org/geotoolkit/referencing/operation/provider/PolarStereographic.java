@@ -63,8 +63,11 @@ public class PolarStereographic extends Stereographic {
      *
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is [-180 &hellip; 180]&deg; and default value is 0&deg;.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
-    @SuppressWarnings("hiding")
+    @Deprecated
     public static final ParameterDescriptor<Double> CENTRAL_MERIDIAN;
 
     /**
@@ -74,8 +77,11 @@ public class PolarStereographic extends Stereographic {
      *
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is [-90 &hellip; 90]&deg; and default value is 0&deg;.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
-    @SuppressWarnings("hiding")
+    @Deprecated
     public static final ParameterDescriptor<Double> LATITUDE_OF_ORIGIN;
 
     /**
@@ -163,14 +169,21 @@ public class PolarStereographic extends Stereographic {
          *
          * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
          * Valid values range is [-180 &hellip; 180]&deg; and default value is 0&deg;.
+         *
+         * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+         * descriptor(String)}</code> instead.
          */
-        @SuppressWarnings("hiding")
+        @Deprecated
         public static final ParameterDescriptor<Double> CENTRAL_MERIDIAN;
 
         /**
          * The operation parameter descriptor for the {@code standardParallel} parameter value.
          * Valid values range is from [-90 &hellip; 90]&deg; and default value is 90&deg;N.
+         *
+         * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+         * descriptor(String)}</code> instead.
          */
+        @Deprecated
         public static final ParameterDescriptor<Double> STANDARD_PARALLEL;
 
         /**
@@ -237,7 +250,11 @@ public class PolarStereographic extends Stereographic {
         /**
          * The operation parameter descriptor for the {@code standardParallel} parameter value.
          * Valid values range is from -90 to 90&deg;. The default value is 90&deg;N.
+         *
+         * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+         * descriptor(String)}</code> instead.
          */
+        @Deprecated
         public static final ParameterDescriptor<Double> STANDARD_PARALLEL;
 
         /**
@@ -295,7 +312,11 @@ public class PolarStereographic extends Stereographic {
         /**
          * The operation parameter descriptor for the {@code standardParallel} parameter value.
          * Valid values range is from -90 to 90&deg;. The default value is 90&deg;S.
+         *
+         * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+         * descriptor(String)}</code> instead.
          */
+        @Deprecated
         public static final ParameterDescriptor<Double> STANDARD_PARALLEL;
 
         /**

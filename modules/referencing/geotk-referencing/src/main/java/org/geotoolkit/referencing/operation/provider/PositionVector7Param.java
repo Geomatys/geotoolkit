@@ -81,7 +81,11 @@ public class PositionVector7Param extends MathTransformProvider {
      * The operation parameter descriptor for the number of source geographic dimension (2 or 3).
      * This is a Geotk-specific argument. If presents, an {@code "Ellipsoid_To_Geocentric"}
      * transform will be concatenated before the geocentric translation.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
+    @Deprecated
     public static final ParameterDescriptor<Integer> SRC_DIM = DefaultParameterDescriptor.create(
             singletonMap(NAME_KEY, new NamedIdentifier(Citations.GEOTOOLKIT, "src_dim")),
             DEFAULT_DIMENSION, 2, 3, false);
@@ -90,7 +94,11 @@ public class PositionVector7Param extends MathTransformProvider {
      * The operation parameter descriptor for the number of target geographic dimension (2 or 3).
      * This is a Geotk-specific argument. If presents, a {@code "Geocentric_To_Ellipsoid"}
      * transform will be concatenated after the geocentric translation.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
+    @Deprecated
     public static final ParameterDescriptor<Integer> TGT_DIM = DefaultParameterDescriptor.create(
             singletonMap(NAME_KEY, new NamedIdentifier(Citations.GEOTOOLKIT, "tgt_dim")),
             DEFAULT_DIMENSION, 2, 3, false);
@@ -101,7 +109,11 @@ public class PositionVector7Param extends MathTransformProvider {
      * transform will be concatenated before the geocentric translation.
      * <p>
      * Valid values range from 0 to infinity. Units are {@linkplain SI#METRE metres}.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
+    @Deprecated
     public static final ParameterDescriptor<Double> SRC_SEMI_MAJOR = createDescriptor(
             new NamedIdentifier[] {
                 new NamedIdentifier(Citations.OGC, "src_semi_major")
@@ -114,8 +126,12 @@ public class PositionVector7Param extends MathTransformProvider {
      * transform will be concatenated before the geocentric translation.
      * <p>
      * Valid values range from 0 to infinity. Units are {@linkplain SI#METRE metres}.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
-     public static final ParameterDescriptor<Double> SRC_SEMI_MINOR = createDescriptor(
+    @Deprecated
+    public static final ParameterDescriptor<Double> SRC_SEMI_MINOR = createDescriptor(
             new NamedIdentifier[] {
                 new NamedIdentifier(Citations.OGC, "src_semi_minor"),
             },
@@ -127,7 +143,11 @@ public class PositionVector7Param extends MathTransformProvider {
      * transform will be concatenated after the geocentric translation.
      * <p>
      * Valid values range from 0 to infinity. Units are {@linkplain SI#METRE metres}.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
+    @Deprecated
     public static final ParameterDescriptor<Double> TGT_SEMI_MAJOR = createDescriptor(
             new NamedIdentifier[] {
                 new NamedIdentifier(Citations.OGC, "tgt_semi_major")
@@ -140,7 +160,11 @@ public class PositionVector7Param extends MathTransformProvider {
      * transform will be concatenated after the geocentric translation.
      * <p>
      * Valid values range from 0 to infinity. Units are {@linkplain SI#METRE metres}.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
+    @Deprecated
     public static final ParameterDescriptor<Double> TGT_SEMI_MINOR = createDescriptor(
             new NamedIdentifier[] {
                 new NamedIdentifier(Citations.OGC, "tgt_semi_minor")
@@ -151,7 +175,11 @@ public class PositionVector7Param extends MathTransformProvider {
      * The operation parameter descriptor for the <cite>X-axis translation</cite>
      * ({@linkplain BursaWolfParameters#dx dx}) parameter value. Valid values range
      * from negative to positive infinity. Units are {@linkplain SI#METRE metres}.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
+    @Deprecated
     public static final ParameterDescriptor<Double> DX = createDescriptor(
             new NamedIdentifier[] {
                 new NamedIdentifier(Citations.OGC,  "dx"),
@@ -163,7 +191,11 @@ public class PositionVector7Param extends MathTransformProvider {
      * The operation parameter descriptor for the <cite>Y-axis translation</cite>
      * ({@linkplain BursaWolfParameters#dy dy}) parameter value. Valid values range
      * from negative to positive infinity. Units are {@linkplain SI#METRE metres}.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
+    @Deprecated
     public static final ParameterDescriptor<Double> DY = createDescriptor(
             new NamedIdentifier[] {
                 new NamedIdentifier(Citations.OGC,  "dy"),
@@ -175,7 +207,11 @@ public class PositionVector7Param extends MathTransformProvider {
      * The operation parameter descriptor for the <cite>Z-axis translation</cite>
      * ({@linkplain BursaWolfParameters#dz dz}) parameter value. Valid values range
      * from negative to positive infinity. Units are {@linkplain SI#METRE metres}.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
+    @Deprecated
     public static final ParameterDescriptor<Double> DZ = createDescriptor(
             new NamedIdentifier[] {
                 new NamedIdentifier(Citations.OGC,  "dz"),
@@ -187,7 +223,11 @@ public class PositionVector7Param extends MathTransformProvider {
      * The operation parameter descriptor for the <cite>X-axis rotation</cite>
      * ({@linkplain BursaWolfParameters#ex ex}) parameter value. Units are
      * {@linkplain NonSI#SECOND_ANGLE arc-seconds}.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
+    @Deprecated
     public static final ParameterDescriptor<Double> EX = createDescriptor(
             new NamedIdentifier[] {
                 new NamedIdentifier(Citations.OGC,  "ex"),
@@ -199,7 +239,11 @@ public class PositionVector7Param extends MathTransformProvider {
      * The operation parameter descriptor for the <cite>Y-axis rotation</cite>
      * ({@linkplain BursaWolfParameters#ey ey}) parameter value. Units are
      * {@linkplain NonSI#SECOND_ANGLE arc-seconds}.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
+    @Deprecated
     public static final ParameterDescriptor<Double> EY = createDescriptor(
             new NamedIdentifier[] {
                 new NamedIdentifier(Citations.OGC,  "ey"),
@@ -211,7 +255,11 @@ public class PositionVector7Param extends MathTransformProvider {
      * The operation parameter descriptor for the <cite>Z-axis rotation</cite>
      * ({@linkplain BursaWolfParameters#ez ez}) parameter value. Units are
      * {@linkplain NonSI#SECOND_ANGLE arc-seconds}.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
+    @Deprecated
     public static final ParameterDescriptor<Double> EZ = createDescriptor(
             new NamedIdentifier[] {
                 new NamedIdentifier(Citations.OGC,  "ez"),
@@ -224,7 +272,11 @@ public class PositionVector7Param extends MathTransformProvider {
      * ({@linkplain BursaWolfParameters#ppm ppm}) parameter value. Valid values
      * range from negative to positive infinity. Units are
      * {@linkplain Units#PPM parts per million}.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
+    @Deprecated
     public static final ParameterDescriptor<Double> PPM = createDescriptor(
             new NamedIdentifier[] {
                 new NamedIdentifier(Citations.OGC,  "ppm"),

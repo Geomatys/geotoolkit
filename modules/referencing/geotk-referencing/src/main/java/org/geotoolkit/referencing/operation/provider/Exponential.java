@@ -59,13 +59,21 @@ public class Exponential extends MathTransformProvider {
     /**
      * The operation parameter descriptor for the {@linkplain ExponentialTransform1D#base base}
      * parameter value. Valid values range from 0 to infinity. The default value is 10.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
+    @Deprecated
     public static final ParameterDescriptor<Double> BASE = Logarithmic.BASE;
 
     /**
      * The operation parameter descriptor for the {@linkplain ExponentialTransform1D#scale scale}
      * parameter value. Valid values range is unrestricted. The default value is 1.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
+    @Deprecated
     public static final ParameterDescriptor<Double> SCALE = DefaultParameterDescriptor.create(
             "scale", 1, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Unit.ONE);
 

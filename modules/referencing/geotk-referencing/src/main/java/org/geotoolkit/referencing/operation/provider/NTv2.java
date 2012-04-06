@@ -65,7 +65,11 @@ public class NTv2 extends MathTransformProvider {
     /**
      * The operation parameter descriptor for the <cite>Latitude and longitude difference file</cite>
      * parameter value. The file extension is typically {@code ".gsb"}. There is no default value.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
+    @Deprecated
     public static final ParameterDescriptor<String> DIFFERENCE_FILE = new DefaultParameterDescriptor<>(
             Citations.EPSG, "Latitude and longitude difference file", String.class, null, null, null, null, null, true);
 

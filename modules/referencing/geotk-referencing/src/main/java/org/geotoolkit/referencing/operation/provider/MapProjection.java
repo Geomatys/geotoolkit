@@ -75,7 +75,11 @@ public abstract class MapProjection extends MathTransformProvider {
      * org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#semiMajor
      * semi major} parameter value. Valid values range is (0 &hellip; &infin;). This parameter
      * is mandatory and has no default value.
+     *
+     * @deprecated Invoke <code>PARAMETERS.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
+    @Deprecated
     public static final ParameterDescriptor<Double> SEMI_MAJOR = createDescriptor(
             new NamedIdentifier[] {
                 new NamedIdentifier(Citations.OGC,     "semi_major"),
@@ -92,7 +96,11 @@ public abstract class MapProjection extends MathTransformProvider {
      * org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#semiMinor
      * semi minor} parameter value. Valid values range is (0 &hellip; &infin;). This parameter
      * is mandatory and has no default value.
+     *
+     * @deprecated Invoke <code>PARAMETERS.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
+    @Deprecated
     public static final ParameterDescriptor<Double> SEMI_MINOR = createDescriptor(
             new NamedIdentifier[] {
                 new NamedIdentifier(Citations.OGC,     "semi_minor"),
@@ -115,7 +123,11 @@ public abstract class MapProjection extends MathTransformProvider {
      * This is a Geotk-specific parameter.
      *
      * @since 3.00
+     *
+     * @deprecated Invoke <code>PARAMETERS.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
+    @Deprecated
     public static final ParameterDescriptor<Boolean> ROLL_LONGITUDE = new DefaultParameterDescriptor<>(
             Citations.GEOTOOLKIT, "roll_longitude", Boolean.class, null, null, null, null, null, false);
 
@@ -127,7 +139,11 @@ public abstract class MapProjection extends MathTransformProvider {
      * The choice to allow this parameter or not is taken on a projection-by-projection basis.
      *
      * @since 3.00
+     *
+     * @deprecated Invoke <code>PARAMETERS.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
+    @Deprecated
     public static final ParameterDescriptor<Double> X_SCALE = createDescriptor(
             new NamedIdentifier[] {
                 new NamedIdentifier(Citations.ESRI, "X_Scale")
@@ -142,7 +158,11 @@ public abstract class MapProjection extends MathTransformProvider {
      * The choice to allow this parameter or not is taken on a projection-by-projection basis.
      *
      * @since 3.00
+     *
+     * @deprecated Invoke <code>PARAMETERS.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
+    @Deprecated
     public static final ParameterDescriptor<Double> Y_SCALE = createDescriptor(
             new NamedIdentifier[] {
                 new NamedIdentifier(Citations.ESRI, "Y_Scale")
@@ -159,7 +179,11 @@ public abstract class MapProjection extends MathTransformProvider {
      * The choice to allow this parameter or not is taken on a projection-by-projection basis.
      *
      * @since 3.00
+     *
+     * @deprecated Invoke <code>PARAMETERS.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
+    @Deprecated
     public static final ParameterDescriptor<Double> XY_PLANE_ROTATION = createDescriptor(
             /*
              * The descriptors defined in this class are ordinary descriptors instead than the

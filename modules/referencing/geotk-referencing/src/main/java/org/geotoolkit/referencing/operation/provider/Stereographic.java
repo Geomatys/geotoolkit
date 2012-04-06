@@ -73,7 +73,11 @@ public class Stereographic extends MapProjection {
      *
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is [-180 &hellip; 180]&deg; and default value is 0&deg;.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
+    @Deprecated
     public static final ParameterDescriptor<Double> CENTRAL_MERIDIAN;
 
     /**
@@ -83,7 +87,11 @@ public class Stereographic extends MapProjection {
      *
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is [-90 &hellip; 90]&deg; and default value is 0&deg;.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
+    @Deprecated
     public static final ParameterDescriptor<Double> LATITUDE_OF_ORIGIN;
 
     /**
@@ -94,7 +102,11 @@ public class Stereographic extends MapProjection {
      * This parameter is <a href="package-summary.html#Obligation">optional</a> as in
      * <cite>remotesensing.org</cite>. Valid values range is (0 &hellip; &infin;) and
      * default value is 1.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
+    @Deprecated
     public static final ParameterDescriptor<Double> SCALE_FACTOR;
 
     /**
@@ -104,7 +116,11 @@ public class Stereographic extends MapProjection {
      *
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is unrestricted and default value is 0 metre.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
+    @Deprecated
     public static final ParameterDescriptor<Double> FALSE_EASTING;
 
     /**
@@ -114,7 +130,11 @@ public class Stereographic extends MapProjection {
      *
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is unrestricted and default value is 0 metre.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
+    @Deprecated
     public static final ParameterDescriptor<Double> FALSE_NORTHING;
 
     /**

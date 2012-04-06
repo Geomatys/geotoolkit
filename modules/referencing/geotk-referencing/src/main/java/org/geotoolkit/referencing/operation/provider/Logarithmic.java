@@ -59,14 +59,22 @@ public class Logarithmic extends MathTransformProvider {
     /**
      * The operation parameter descriptor for the {@linkplain LogarithmicTransform1D#base base}
      * parameter value. Valid values range from 0 to infinity. The default value is 10.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
+    @Deprecated
     public static final ParameterDescriptor<Double> BASE = DefaultParameterDescriptor.create(
             "base", 10, 0, Double.POSITIVE_INFINITY, Unit.ONE);
 
     /**
      * The operation parameter descriptor for the {@linkplain LogarithmicTransform1D#offset offset}
      * parameter value. Valid values range is unrestricted. The default value is 0.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
+    @Deprecated
     public static final ParameterDescriptor<Double> OFFSET = DefaultParameterDescriptor.create(
             "offset", 0, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Unit.ONE);
 

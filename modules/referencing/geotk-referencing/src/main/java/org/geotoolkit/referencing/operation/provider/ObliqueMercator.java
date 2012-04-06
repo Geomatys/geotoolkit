@@ -66,7 +66,11 @@ public class ObliqueMercator extends MapProjection {
      *
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is [-180 &hellip; 180]&deg; and default value is 0&deg;.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
+    @Deprecated
     public static final ParameterDescriptor<Double> LONGITUDE_OF_CENTRE;
 
     /**
@@ -76,7 +80,11 @@ public class ObliqueMercator extends MapProjection {
      *
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is [-90 &hellip; 90]&deg; and default value is 0&deg;.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
+    @Deprecated
     public static final ParameterDescriptor<Double> LATITUDE_OF_CENTRE;
 
     /**
@@ -84,7 +92,11 @@ public class ObliqueMercator extends MapProjection {
      * org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#azimuth azimuth}
      * parameter value. Valid values range is from -360 to -270, -90 to 90, and 270 to 360 degrees.
      * This parameter is mandatory and has no default value.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
+    @Deprecated
     public static final ParameterDescriptor<Double> AZIMUTH;
 
     /**
@@ -94,7 +106,11 @@ public class ObliqueMercator extends MapProjection {
      *
      * This parameter is <a href="package-summary.html#Obligation">optional</a>.
      * Valid values rage is [-360 &hellip; 360]&deg; and default value is the azimuth.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
+    @Deprecated
     public static final ParameterDescriptor<Double> RECTIFIED_GRID_ANGLE;
 
     /**
@@ -104,7 +120,11 @@ public class ObliqueMercator extends MapProjection {
      *
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is (0 &hellip; &infin;) and default value is 1.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
+    @Deprecated
     public static final ParameterDescriptor<Double> SCALE_FACTOR;
 
     /**
@@ -114,7 +134,11 @@ public class ObliqueMercator extends MapProjection {
      *
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is unrestricted and default value is 0 metre.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
+    @Deprecated
     public static final ParameterDescriptor<Double> FALSE_EASTING;
 
     /**
@@ -124,7 +148,11 @@ public class ObliqueMercator extends MapProjection {
      *
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is unrestricted and default value is 0 metre.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
+    @Deprecated
     public static final ParameterDescriptor<Double> FALSE_NORTHING;
 
     /**
@@ -238,28 +266,44 @@ public class ObliqueMercator extends MapProjection {
          * The operation parameter descriptor for the {@code latitudeOf1stPoint} parameter value.
          * Valid values range is [-90 &hellip; 90]&deg;. This parameter is mandatory and has no
          * default value.
+         *
+         * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+         * descriptor(String)}</code> instead.
          */
+        @Deprecated
         public static final ParameterDescriptor<Double> LAT_OF_1ST_POINT = Identifiers.LAT_OF_1ST_POINT;
 
         /**
          * The operation parameter descriptor for the {@code longitudeOf1stPoint} parameter value.
          * Valid values range is [-180 &hellip; 180]&deg;. This parameter is mandatory and has no
          * default value.
+         *
+         * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+         * descriptor(String)}</code> instead.
          */
+        @Deprecated
         public static final ParameterDescriptor<Double> LONG_OF_1ST_POINT = Identifiers.LONG_OF_1ST_POINT;
 
         /**
          * The operation parameter descriptor for the {@code latitudeOf2ndPoint} parameter value.
          * Valid values range is [-90 &hellip; 90]&deg;. This parameter is mandatory and has no
          * default value.
+         *
+         * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+         * descriptor(String)}</code> instead.
          */
+        @Deprecated
         public static final ParameterDescriptor<Double> LAT_OF_2ND_POINT = Identifiers.LAT_OF_2ND_POINT;
 
         /**
          * The operation parameter descriptor for the {@code longitudeOf2ndPoint} parameter value.
          * Valid values range is [-180 &hellip; 180]&deg;. This parameter is mandatory and has no
          * default value.
+         *
+         * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+         * descriptor(String)}</code> instead.
          */
+        @Deprecated
         public static final ParameterDescriptor<Double> LONG_OF_2ND_POINT = Identifiers.LONG_OF_2ND_POINT;
 
         /**

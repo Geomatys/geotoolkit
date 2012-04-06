@@ -65,7 +65,11 @@ public class LambertConformal2SP extends MapProjection {
      *
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is [-180 &hellip; 180]&deg; and default value is 0&deg;.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
+    @Deprecated
     public static final ParameterDescriptor<Double> CENTRAL_MERIDIAN =
             Identifiers.CENTRAL_MERIDIAN.select(null,
                 "Longitude of false origin",     // EPSG
@@ -81,7 +85,11 @@ public class LambertConformal2SP extends MapProjection {
      *
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is [-90 &hellip; 90]&deg; and default value is 0&deg;.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
+    @Deprecated
     public static final ParameterDescriptor<Double> LATITUDE_OF_ORIGIN =
             Identifiers.LATITUDE_OF_ORIGIN.select(null,
                 "Latitude of false origin",  // EPSG
@@ -97,7 +105,11 @@ public class LambertConformal2SP extends MapProjection {
      * This parameter is <a href="package-summary.html#Obligation">optional</a> - if omitted,
      * it takes the same value than the one given for {@link #LATITUDE_OF_ORIGIN}.
      * Valid values range is [-90 &hellip; 90]&deg;.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
+    @Deprecated
     public static final ParameterDescriptor<Double> STANDARD_PARALLEL_1 =
             Identifiers.STANDARD_PARALLEL_1.select(null,
                 "Latitude of 1st standard parallel",  // EPSG
@@ -112,7 +124,11 @@ public class LambertConformal2SP extends MapProjection {
      * This parameter is <a href="package-summary.html#Obligation">optional</a> - if omitted,
      * it takes the same value than the one given for {@link #STANDARD_PARALLEL_1}.
      * Valid values range is [-90 &hellip; 90]&deg;.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
+    @Deprecated
     public static final ParameterDescriptor<Double> STANDARD_PARALLEL_2 =
             Identifiers.STANDARD_PARALLEL_2.select(null,
                     "Latitude of 2nd standard parallel");
@@ -126,7 +142,11 @@ public class LambertConformal2SP extends MapProjection {
      * defined by EPSG. Valid values range is (0 &hellip; &infin;) and default value is 1.
      *
      * @since 3.20
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
+    @Deprecated
     public static final ParameterDescriptor<Double> SCALE_FACTOR =
             Identifiers.SCALE_FACTOR.select(false, null, new Citation[] {
                 Citations.EPSG, Citations.OGC, Citations.NETCDF, Citations.GEOTIFF, Citations.PROJ4
@@ -139,7 +159,11 @@ public class LambertConformal2SP extends MapProjection {
      *
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is unrestricted and default value is 0 metre.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
+    @Deprecated
     public static final ParameterDescriptor<Double> FALSE_EASTING =
             Identifiers.FALSE_EASTING.select(null,
                 "Easting at false origin",  // EPSG
@@ -152,7 +176,11 @@ public class LambertConformal2SP extends MapProjection {
      *
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is unrestricted and default value is 0 metre.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
+    @Deprecated
     public static final ParameterDescriptor<Double> FALSE_NORTHING =
             Identifiers.FALSE_NORTHING.select(null,
                 "Northing at false origin", // EPSG
