@@ -20,10 +20,13 @@
 
     <faq id="supportedCodes">
       <question>
-        Which EPSG codes are supported?
+        Which map projections are supported?
       </question>
       <answer>
-        <p>See the <a href="supported-codes.html">Authority codes for Coordinate Reference Systems</a> page.</p>
+        <p>The operation <em>methods</em> (including, but not limited to, map projections) and their parameters
+        are listed in the <a href="operation-parameters.html">Coordinate Operation parameters</a> page.
+        Pre-configured instances of coordinate operations (most of them defined by the EPSG database) are
+        listed in the <a href="supported-codes.html">Authority codes for Coordinate Reference Systems</a> page.</p>
       </answer>
     </faq>
 

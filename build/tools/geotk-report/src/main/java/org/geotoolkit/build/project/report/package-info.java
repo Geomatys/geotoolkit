@@ -25,8 +25,10 @@
  * <p>This package is used for the following reports:</p>
  *
  * <ul>
+ *   <li><a href="http://www.geotoolkit.org/modules/referencing/operation-parameters.html">Operation
+ *   paramters</a> created by {@link org.geotoolkit.project.report.ProjectionParametersReport}.</li>
  *   <li><a href="http://www.geotoolkit.org/modules/referencing/supported-codes.html">Authority codes for
- *   Coordinate Reference Systems</a> created by {@link org.geotoolkit.project.report.CRSAuthorityCodes}.</li>
+ *   Coordinate Reference Systems</a> created by {@link org.geotoolkit.project.report.CRSAuthorityCodesReport}.</li>
  * </ul>
  *
  * @author Martin Desruisseaux (Geomatys)

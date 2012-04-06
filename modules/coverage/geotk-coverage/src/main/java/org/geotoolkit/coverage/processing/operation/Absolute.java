@@ -30,7 +30,7 @@ import org.geotoolkit.coverage.processing.OperationJAI;
  * <P><b>Name:</b>&nbsp;{@code "Absolute"}<BR>
  *    <b>JAI operator:</b>&nbsp;<CODE>"{@linkplain AbsoluteDescriptor Absolute}"</CODE><BR>
  *    <b>Parameters:</b></P>
- * <table border='3' cellpadding='6' bgcolor='F4F8FF'>
+ * <table border='3' cellpadding='6' bgcolor='#F4F8FF'>
  *   <tr bgcolor='#B9DCFF'>
  *     <th>Name</th>
  *     <th>Class</th>
