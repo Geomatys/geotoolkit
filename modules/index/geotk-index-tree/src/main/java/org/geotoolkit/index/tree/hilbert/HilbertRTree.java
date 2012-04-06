@@ -96,7 +96,7 @@ public class HilbertRTree extends DefaultAbstractTree {
      * {@inheritDoc}
      */
     @Override
-    public void insert(final Envelope entry) throws IllegalArgumentException, TransformException{
+    public void insert(final Envelope entry) throws IllegalArgumentException{
         ArgumentChecks.ensureNonNull("insert : entry", entry);
         if(!CRS.equalsIgnoreMetadata(crs, entry.getCoordinateReferenceSystem())){
             throw new MismatchedReferenceSystemException();
@@ -117,7 +117,7 @@ public class HilbertRTree extends DefaultAbstractTree {
      * {@inheritDoc}
      */
     @Override
-    public void delete(final Envelope entry) throws IllegalArgumentException, TransformException {
+    public void delete(final Envelope entry) throws IllegalArgumentException {
         ArgumentChecks.ensureNonNull("delete : entry", entry);
         if(!CRS.equalsIgnoreMetadata(crs, entry.getCoordinateReferenceSystem())){
             throw new MismatchedReferenceSystemException();
@@ -184,7 +184,7 @@ public class HilbertRTree extends DefaultAbstractTree {
      * @param entry to insert.
      * @throws IllegalArgumentException if candidate or entry are null.
      */
-    public static void insertNode(final Node candidate, final Envelope entry) throws IllegalArgumentException, TransformException{
+    public static void insertNode(final Node candidate, final Envelope entry) throws IllegalArgumentException{
         ArgumentChecks.ensureNonNull("impossible to insert a null entry", entry);
         if (candidate.isFull()) {
             List<Node> lSp = splitNode(candidate);
@@ -229,7 +229,7 @@ public class HilbertRTree extends DefaultAbstractTree {
      * subnode.
      * @throws IllegalArgumentException if this {@code Node} doesn't contains {@code Entry}.
      */
-    public static List<Node> splitNode(final Node candidate) throws IllegalArgumentException, TransformException{
+    public static List<Node> splitNode(final Node candidate) throws IllegalArgumentException{
         boolean cleaf = candidate.isLeaf();
         int cHO = (Integer) candidate.getUserProperty(PROP_HO);
         final Calculator calc = candidate.getTree().getCalculator();
@@ -287,8 +287,9 @@ public class HilbertRTree extends DefaultAbstractTree {
         } else {
             eltList = candidate.getChildren();
         }
-        Calculator calc = candidate.getTree().getCalculator();
-        final int dim = candidate.getBoundary().getDimension();
+        final DefaultAbstractTree tree = (DefaultAbstractTree)candidate.getTree();
+        final Calculator calc = tree.getCalculator();
+        final int dim = tree.getDims().length;
         final int size = eltList.size();
         final double size04 = size * 0.4;
         final int demiSize = (int) ((size04 >= 1) ? size04 : 1);
@@ -376,13 +377,12 @@ public class HilbertRTree extends DefaultAbstractTree {
      * @return Two appropriate {@code Node} in List in accordance with
      * R*Tree split properties.
      */
-    private static List<Node> hilbertNodeSplit(final Node candidate) throws IllegalArgumentException, TransformException{
+    private static List<Node> hilbertNodeSplit(final Node candidate) throws IllegalArgumentException{
 
         final int splitIndex = defineSplitAxis(candidate);
         final boolean isLeaf = candidate.isLeaf();
         final Tree tree = candidate.getTree();
         final Calculator calc = tree.getCalculator();
-        final NodeFactory nodeFact = tree.getNodeFactory();
         List eltList;
         if (isLeaf) {
             final List<Node> ldf = candidate.getChildren();
@@ -665,7 +665,7 @@ public class HilbertRTree extends DefaultAbstractTree {
      * @throws IllegalArgumentException if candidate or entry is null.
      * @return true if entry is find and deleted else false.
      */
-    private static void deleteHilbertNode(final Node candidate, final Envelope entry) throws IllegalArgumentException, TransformException{
+    private static void deleteHilbertNode(final Node candidate, final Envelope entry) throws IllegalArgumentException{
         ArgumentChecks.ensureNonNull("deleteHilbertNode Node candidate : ", candidate);
         ArgumentChecks.ensureNonNull("deleteHilbertNode Envelope entry : ", entry);
         if (new GeneralEnvelope(candidate.getBoundary()).intersects(entry, true)) {
@@ -695,7 +695,7 @@ public class HilbertRTree extends DefaultAbstractTree {
      *
      * @param candidate {@code Node} to begin condense.
      */
-    public static void trim(final Node candidate) throws IllegalArgumentException, TransformException{
+    public static void trim(final Node candidate) throws IllegalArgumentException{
 
         if (!candidate.isLeaf()) {
             final List<Node> children = candidate.getChildren();
@@ -754,7 +754,7 @@ public class HilbertRTree extends DefaultAbstractTree {
      * {@inheritDoc }.
      */
     @Override
-    public Node createNode(Tree tree, Node parent, List<Node> listChildren, List<Envelope> listEntries, double... coordinates) throws IllegalArgumentException, TransformException{
+    public Node createNode(Tree tree, Node parent, List<Node> listChildren, List<Envelope> listEntries, double... coordinates) throws IllegalArgumentException{
         if(!(tree instanceof HilbertRTree)){
             throw new IllegalArgumentException("argument tree : "+tree.getClass().getName()+" not adapted to create an Hilbert RTree Node");
         }
@@ -780,7 +780,7 @@ public class HilbertRTree extends DefaultAbstractTree {
         }
         result.setUserProperty("isleaf", false);
         if (listEntries != null && !listEntries.isEmpty()) {
-            int diment = listEntries.get(0).getDimension();
+            int diment = ((DefaultAbstractTree)tree).getDims().length;
             if(tree.getCalculator().getSpace(getEnveloppeMin(listEntries))<=0)diment--;
             final int size = listEntries.size();
             final int maxElts = tree.getMaxElements();

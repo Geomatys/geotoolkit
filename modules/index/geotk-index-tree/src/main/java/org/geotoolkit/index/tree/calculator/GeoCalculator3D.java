@@ -28,7 +28,6 @@ import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.TransformException;
 
 /**
  * Define a 3 dimension geographical Calculator.
@@ -46,7 +45,7 @@ public class GeoCalculator3D extends GeoCalculator{
      * {@inheritDoc }
      */
     @Override
-    public void createBasicHL(final Node candidate, final int order, final Envelope bound) throws MismatchedDimensionException, TransformException{
+    public void createBasicHL(final Node candidate, final int order, final Envelope bound) throws MismatchedDimensionException {
         ArgumentChecks.ensurePositive("impossible to create Hilbert Curve with negative indice", order);
         candidate.getChildren().clear();
         final CoordinateReferenceSystem crs = bound.getCoordinateReferenceSystem();

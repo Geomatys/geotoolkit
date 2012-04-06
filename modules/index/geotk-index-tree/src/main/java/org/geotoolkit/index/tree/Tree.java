@@ -24,7 +24,6 @@ import org.geotoolkit.index.tree.nodefactory.NodeFactory;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedReferenceSystemException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.TransformException;
 
 /**
  * Define a generic Tree.
@@ -55,7 +54,7 @@ public interface Tree {
      * @param Entry to insert into tree.
      * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
      */
-    void insert(Envelope entry) throws IllegalArgumentException, TransformException;
+    void insert(Envelope entry) throws IllegalArgumentException;
 
     /**
      * Find a {@code Envelope} (entry) into the tree and delete it.
@@ -63,7 +62,7 @@ public interface Tree {
      * @param Entry to delete.
      * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
      */
-    void delete(Envelope entry) throws IllegalArgumentException, TransformException;
+    void delete(Envelope entry) throws IllegalArgumentException;
 
     /**
      * @return max number authorized by tree cells.
@@ -106,5 +105,5 @@ public interface Tree {
      * @param coordinates lower upper bounding box coordinates table.
      * @return appropriate Node from tree.
      */
-    Node createNode(Tree tree, Node parent, List<Node> listChildren, List<Envelope> listEntries, double ...coordinates) throws IllegalArgumentException, TransformException;
+    Node createNode(Tree tree, Node parent, List<Node> listChildren, List<Envelope> listEntries, double ...coordinates) throws IllegalArgumentException;
 }

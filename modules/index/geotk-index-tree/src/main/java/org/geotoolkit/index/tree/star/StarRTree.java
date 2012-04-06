@@ -33,7 +33,6 @@ import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedReferenceSystemException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.TransformException;
 
 
 /**Create R*Tree in Euclidean space.
@@ -80,7 +79,7 @@ public class StarRTree extends DefaultAbstractTree {
      * {@inheritDoc}
      */
     @Override
-    public void insert(final Envelope entry) throws IllegalArgumentException, TransformException{
+    public void insert(final Envelope entry) throws IllegalArgumentException{
         ArgumentChecks.ensureNonNull("insert : entry", entry);
         if(!CRS.equalsIgnoreMetadata(crs, entry.getCoordinateReferenceSystem())){
             throw new MismatchedReferenceSystemException();
@@ -102,7 +101,7 @@ public class StarRTree extends DefaultAbstractTree {
      * {@inheritDoc}
      */
     @Override
-    public void delete(final Envelope entry) throws IllegalArgumentException, TransformException{
+    public void delete(final Envelope entry) throws IllegalArgumentException{
         ArgumentChecks.ensureNonNull("delete : entry", entry);
         if(!CRS.equalsIgnoreMetadata(crs, entry.getCoordinateReferenceSystem())){
             throw new MismatchedReferenceSystemException();
@@ -162,7 +161,7 @@ public class StarRTree extends DefaultAbstractTree {
      * @throws IllegalArgumentException if {@code Node} candidate is null.
      * @throws IllegalArgumentException if {@code Envelope} entry is null.
      */
-    private static void nodeInsert(final Node candidate, final Envelope entry) throws IllegalArgumentException, TransformException {
+    private static void nodeInsert(final Node candidate, final Envelope entry) throws IllegalArgumentException {
         if(candidate.isLeaf()){
             candidate.getEntries().add(entry);
         }else{
@@ -334,7 +333,7 @@ public class StarRTree extends DefaultAbstractTree {
      *
      * @return Two appropriate {@code Node} in List in accordance with R*Tree split properties.
      */
-    private static List<Node> nodeSplit(final Node candidate) throws IllegalArgumentException, TransformException{
+    private static List<Node> nodeSplit(final Node candidate) throws IllegalArgumentException {
 
         final int splitIndex = defineSplitAxis(candidate);
         final boolean isLeaf = candidate.isLeaf();
@@ -489,8 +488,9 @@ public class StarRTree extends DefaultAbstractTree {
         }else{
             eltList = candidate.getChildren();
         }
-        final Calculator calc = candidate.getTree().getCalculator();
-        final int dim = candidate.getBoundary().getDimension();
+        final DefaultAbstractTree tree = (DefaultAbstractTree)candidate.getTree();
+        final Calculator calc = tree.getCalculator();
+        final int dim = tree.getDims().length;
         final int size = eltList.size();
         final double size04 = size*0.4;
         final int demiSize = (int) ((size04>=1)?size04:1);
@@ -576,7 +576,7 @@ public class StarRTree extends DefaultAbstractTree {
      * @throws IllegalArgumentException if candidate or entry is null.
      * @return true if entry is find and deleted else false.
      */
-    private static boolean deleteNode(final Node candidate, final Envelope entry) throws IllegalArgumentException, TransformException{
+    private static boolean deleteNode(final Node candidate, final Envelope entry) throws IllegalArgumentException{
         ArgumentChecks.ensureNonNull("DeleteNode : Node candidate", candidate);
         ArgumentChecks.ensureNonNull("DeleteNode : Node entry", entry);
         if(new GeneralEnvelope(candidate.getBoundary()).intersects(entry, true)){
@@ -605,7 +605,7 @@ public class StarRTree extends DefaultAbstractTree {
      * @param candidate {@code Node} to begin condense.
      * @throws IllegalArgumentException if candidate is null.
      */
-    private static void trim(final Node candidate) throws IllegalArgumentException, TransformException {
+    private static void trim(final Node candidate) throws IllegalArgumentException {
         ArgumentChecks.ensureNonNull("trim : Node candidate", candidate);
         final List<Node> children = candidate.getChildren();
         final Tree tree = candidate.getTree();
@@ -642,7 +642,7 @@ public class StarRTree extends DefaultAbstractTree {
      * @throws IllegalArgumentException if nodeA or nodeB are not tree leaf.
      * @throws IllegalArgumentException if nodeA or nodeB, and their subnodes, don't contains some {@code Envelope} entry(ies).
      */
-    private static void branchGrafting(final Node nodeA, final Node nodeB ) throws IllegalArgumentException, TransformException{
+    private static void branchGrafting(final Node nodeA, final Node nodeB ) throws IllegalArgumentException {
         if(!nodeA.isLeaf() || !nodeB.isLeaf()){
             throw new IllegalArgumentException("branchGrafting : not leaf");
         }
@@ -653,21 +653,24 @@ public class StarRTree extends DefaultAbstractTree {
         if(listGlobale.isEmpty()){
             throw new IllegalArgumentException("branchGrafting : empty list");
         }
-        final Calculator calc = nodeA.getTree().getCalculator();
+        DefaultAbstractTree tree = (DefaultAbstractTree)nodeA.getTree();
+        final Calculator calc = tree.getCalculator();
         final GeneralEnvelope globalE = new GeneralEnvelope(listGlobale.get(0));
+        final int[]dims = tree.getDims();
         final int size = listGlobale.size();
         for(int i = 1;i<size; i++){
             globalE.add(listGlobale.get(i));
         }
         double lengthDimRef = -1;
         int indexSplit = -1;
-        for(int i = 0, dim = globalE.getDimension(); i<dim; i++){
-            double lengthDimTemp = globalE.getSpan(i);
+        for(int i = 0, l = dims.length; i<l; i++){
+            double lengthDimTemp = globalE.getSpan(dims[i]);
             if(lengthDimTemp>lengthDimRef){
                 lengthDimRef = lengthDimTemp;
                 indexSplit = i;
             }
         }
+        assert indexSplit != -1 : "BranchGrafting : indexSplit not find"+indexSplit;
         final Comparator comp = calc.sortFrom(indexSplit, true, false);
         Collections.sort(listGlobale, comp);
         GeneralEnvelope envB;
@@ -689,7 +692,7 @@ public class StarRTree extends DefaultAbstractTree {
                 index = cut;
             }
         }
-        assert index!=-1:"branchGrafting : index cut out of bound";
+        assert index != -1:"branchGrafting : index cut out of bound";
         for(int i = 0; i<index;i++){
             nodeA.getEntries().add(listGlobale.get(i));
         }
@@ -720,7 +723,8 @@ public class StarRTree extends DefaultAbstractTree {
      */
     private static List<Envelope> getElementAtMore33PerCent(final Node candidate) {
         ArgumentChecks.ensureNonNull("getElementAtMore33PerCent : candidate", candidate);
-        final Calculator calc = (candidate.getTree().getCrs().getCoordinateSystem().getDimension()<=2)?new Calculator2D():new Calculator3D();
+        final int[] dims = ((DefaultAbstractTree)candidate.getTree()).getDims();
+        final Calculator calc =(dims.length<=2)?new Calculator2D(dims):new Calculator3D(dims);
         final List<Envelope> lsh = new ArrayList<Envelope>();
         final Envelope boundGE = candidate.getBoundary();
         final DirectPosition candidateCentroid = getMedian(boundGE);

@@ -21,7 +21,6 @@ import org.geotoolkit.index.tree.basic.BasicRTree;
 import org.geotoolkit.index.tree.basic.SplitCase;
 import org.geotoolkit.index.tree.nodefactory.TreeNodeFactory;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
-import org.junit.Test;
 import org.opengis.referencing.operation.TransformException;
 
 /**
@@ -29,69 +28,9 @@ import org.opengis.referencing.operation.TransformException;
  *
  * @author Rémi Marechal (Geomatys).
  */
-public class BasicRTree2DTest extends TreeTest {
+public class BasicRTree2DTest extends SpatialTreeTest {
 
     public BasicRTree2DTest() throws IllegalArgumentException, TransformException {
         super(new BasicRTree(4, DefaultEngineeringCRS.CARTESIAN_2D, SplitCase.QUADRATIC, TreeNodeFactory.DEFAULT_FACTORY));
-    }
-
-    /**
-     * Some elements inserted Tree.
-     *
-     * @throws TransformException if entry can't be transform into tree crs.
-     */
-    @Test
-    public void testInsert() throws IllegalArgumentException, TransformException {
-        super.insertTest();
-    }
-
-    /**
-     * Verify all boundary Node from its "children" Node.
-     *
-     * @throws TransformException if entry can't be transform into tree crs.
-     */
-    @Test
-    public void testCheckBoundary() throws IllegalArgumentException, TransformException {
-        super.checkBoundaryTest();
-    }
-
-    /**
-     * Test search query inside tree.
-     *
-     * @throws TransformException if entry can't be transform into tree crs.
-     */
-    @Test
-    public void testQueryInside() throws IllegalArgumentException, TransformException {
-        super.queryInsideTest();
-    }
-
-    /**
-     * Test query outside of tree area.
-     *
-     * @throws TransformException if entry can't be transform into tree crs.
-     */
-    @Test
-    public void testQueryOutside() throws IllegalArgumentException, TransformException {
-        super.queryOutsideTest();
-    }
-
-    /**
-     * Test query on tree boundary border.
-     *
-     * @throws TransformException if entry can't be transform into tree crs.
-     */
-    @Test
-    public void testQueryOnBorder() throws IllegalArgumentException, TransformException {
-        super.queryOnBorderTest();
-    }
-
-    /**
-     * Test insertion and deletion in tree.
-     *
-     * @throws TransformException if entry can't be transform into tree crs.
-     */
-    @Test
-    public void testInsertDelete() throws IllegalArgumentException, TransformException{
-        super.insertDelete();
     }
 }

@@ -33,7 +33,6 @@ import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedReferenceSystemException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.TransformException;
 
 /**Create R-Tree (Basic)
  *
@@ -75,7 +74,7 @@ public class BasicRTree extends DefaultAbstractTree {
      * {@inheritDoc}
      */
     @Override
-    public void insert(final Envelope entry) throws IllegalArgumentException, TransformException {
+    public void insert(final Envelope entry) throws IllegalArgumentException {
         ArgumentChecks.ensureNonNull("insert : entry", entry);
         if(!CRS.equalsIgnoreMetadata(crs, entry.getCoordinateReferenceSystem())){
             throw new MismatchedReferenceSystemException();
@@ -97,7 +96,7 @@ public class BasicRTree extends DefaultAbstractTree {
      * {@inheritDoc}
      */
     @Override
-    public void delete(final Envelope entry) throws IllegalArgumentException, TransformException {
+    public void delete(final Envelope entry) throws IllegalArgumentException {
         ArgumentChecks.ensureNonNull("delete : entry", entry);
         if(!CRS.equalsIgnoreMetadata(crs, entry.getCoordinateReferenceSystem())){
             throw new MismatchedReferenceSystemException();
@@ -163,7 +162,7 @@ public class BasicRTree extends DefaultAbstractTree {
      * @throws IllegalArgumentException if {@code Node} candidate is null.
      * @throws IllegalArgumentException if {@code Envelope} entry is null.
      */
-    private static void nodeInsert(final Node candidate, final Envelope entry) throws IllegalArgumentException, TransformException{
+    private static void nodeInsert(final Node candidate, final Envelope entry) throws IllegalArgumentException{
         if(candidate.isLeaf()){
             candidate.getEntries().add(entry);
         }else{
@@ -225,7 +224,7 @@ public class BasicRTree extends DefaultAbstractTree {
      * @throws IllegalArgumentException if nodeA or nodeB are not tree leaf.
      * @throws IllegalArgumentException if nodeA or nodeB, and their subnodes, don't contains some {@code Entry}.
      */
-    private static void branchGrafting(final Node nodeA, final Node nodeB ) throws IllegalArgumentException, TransformException {
+    private static void branchGrafting(final Node nodeA, final Node nodeB ) throws IllegalArgumentException {
         if(!nodeA.isLeaf() || !nodeB.isLeaf()){
             throw new IllegalArgumentException("branchGrafting : not leaf");
         }
@@ -236,6 +235,8 @@ public class BasicRTree extends DefaultAbstractTree {
         if(listGlobale.isEmpty()){
             throw new IllegalArgumentException("branchGrafting : empty list");
         }
+        final DefaultAbstractTree tree = (DefaultAbstractTree)nodeA.getTree();
+        final int[]dims = tree.getDims();
         final GeneralEnvelope globalE = new GeneralEnvelope(listGlobale.get(0));
         final int size = listGlobale.size();
         for(int i = 1;i<size; i++){
@@ -243,15 +244,15 @@ public class BasicRTree extends DefaultAbstractTree {
         }
         double lengthDimRef = -1;
         int indexSplit = -1;
-        for(int i = 0, dim = globalE.getDimension(); i<dim; i++){
-            double lengthDimTemp = globalE.getSpan(i);
+        for(int i = 0, l = dims.length; i<l; i++){
+            double lengthDimTemp = globalE.getSpan(dims[i]);
             if(lengthDimTemp>lengthDimRef){
                 lengthDimRef = lengthDimTemp;
                 indexSplit = i;
             }
         }
-
-        final Calculator calc = nodeA.getTree().getCalculator();
+        assert indexSplit != -1 : "BranchGrafting : indexSplit not find"+indexSplit;
+        final Calculator calc = tree.getCalculator();
         final Comparator comp = calc.sortFrom(indexSplit, true, false);
         Collections.sort(listGlobale, comp);
         GeneralEnvelope envB;
@@ -289,7 +290,7 @@ public class BasicRTree extends DefaultAbstractTree {
      * @throws IllegalArgumentException if candidate elements number is lesser 2.
      * @return {@code Node} List which contains two {@code Node} (split result of candidate).
      */
-    private static List<Node> splitNode(final Node candidate) throws IllegalArgumentException, TransformException {
+    private static List<Node> splitNode(final Node candidate) throws IllegalArgumentException {
         ArgumentChecks.ensureNonNull("splitNode : candidate", candidate);
         if (DefaultTreeUtils.countElements(candidate) < 2) {
             throw new IllegalArgumentException("not enought elements within " + candidate + " to split.");
@@ -499,7 +500,7 @@ public class BasicRTree extends DefaultAbstractTree {
      * @throws IllegalArgumentException if candidate or entry is null.
      * @return true if entry is find and deleted else false.
      */
-    private static boolean deleteNode(final Node candidate, final Envelope entry) throws IllegalArgumentException, TransformException{
+    private static boolean deleteNode(final Node candidate, final Envelope entry) throws IllegalArgumentException{
         ArgumentChecks.ensureNonNull("DeleteNode3D : Node3D candidate", candidate);
         ArgumentChecks.ensureNonNull("DeleteNode3D : Node3D candidate", candidate);
         if(new GeneralEnvelope(candidate.getBoundary()).intersects(entry, true)){
@@ -528,7 +529,7 @@ public class BasicRTree extends DefaultAbstractTree {
      * @param candidate {@code Node} to begin condense.
      * @throws IllegalArgumentException if candidate is null.
      */
-    private static void trim(final Node candidate) throws IllegalArgumentException, TransformException {
+    private static void trim(final Node candidate) throws IllegalArgumentException {
         ArgumentChecks.ensureNonNull("trim : Node3D candidate", candidate);
         final List<Node> children = candidate.getChildren();
         final Tree tree = candidate.getTree();

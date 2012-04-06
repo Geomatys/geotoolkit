@@ -27,7 +27,6 @@ import org.geotoolkit.index.tree.hilbert.Hilbert;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
-import org.opengis.referencing.operation.TransformException;
 
 /**
  * Define a generic Calculator to define computing rules of tree.
@@ -36,6 +35,13 @@ import org.opengis.referencing.operation.TransformException;
  * @author Martin Desruisseaux (Geomatys).
  */
 public abstract class Calculator {
+
+    final int[]dims;
+
+    public Calculator(final int[] dims) {
+        this.dims = dims;
+    }
+
 
     /**
      * @param envelop
@@ -111,7 +117,7 @@ public abstract class Calculator {
      * @throws IllegalArgumentException if param hl Hilbert order is larger than
      * them Hilbert RTree order.
      */
-    public abstract void createBasicHL(final Node candidate, final int order, final Envelope bound)throws MismatchedDimensionException, TransformException;
+    public abstract void createBasicHL(final Node candidate, final int order, final Envelope bound)throws MismatchedDimensionException;
 
     /**
      * Find Hilbert order of an entry from candidate.
@@ -124,6 +130,10 @@ public abstract class Calculator {
      * @return integer the entry Hilbert order.
      */
     public abstract int getHVOfEntry(final Node candidate, final Envelope entry);
+
+    public int[]getDims(){
+        return dims;
+    }
 
     /**Create subnode(s) centroid(s). These centroids define Hilbert curve.
      *

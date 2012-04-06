@@ -30,32 +30,11 @@ import org.opengis.referencing.operation.TransformException;
  *
  * @author Rémi Marechal (Geomatys).
  */
-public class HilbertRtree3DTest extends TreeTest{
+public class HilbertRtree3DTest extends SpatialTreeTest{
 
     public HilbertRtree3DTest() throws TransformException {
         super(new HilbertRTree(4, 2, DefaultEngineeringCRS.CARTESIAN_3D, /*DefaultCalculator.CALCULATOR_3D,*/ TreeNodeFactory.DEFAULT_FACTORY)/*,
                                      DefaultEngineeringCRS.CARTESIAN_3D*/);
-    }
-
-
-    /**
-     * Some elements inserted in Hilbert R-Tree.
-     *
-     * @throws TransformException if entry can't be transform into tree crs.
-     */
-    @Test
-    public void testInsert() throws IllegalArgumentException, TransformException {
-        super.insertTest();
-    }
-
-    /**
-     * Verify all node boundary from its subnode boundary.
-     *
-     * @throws TransformException if entry can't be transform into tree crs.
-     */
-    @Test
-    public void testCheckBoundary() throws IllegalArgumentException, TransformException {
-        super.checkBoundaryTest();
     }
 
     /**
@@ -76,45 +55,5 @@ public class HilbertRtree3DTest extends TreeTest{
             }
         }
         return (DefaultTreeUtils.getEnveloppeMin(lS).equals(node.getBoundary()));
-    }
-
-    /**
-     * Test search query inside tree.
-     *
-     * @throws TransformException if entry can't be transform into tree crs.
-     */
-    @Test
-    public void testQueryInside() throws IllegalArgumentException, TransformException {
-        super.queryInsideTest();
-    }
-
-    /**
-     * Test query outside of tree area.
-     *
-     * @throws TransformException if entry can't be transform into tree crs.
-     */
-    @Test
-    public void testQueryOutside() throws IllegalArgumentException, TransformException {
-        super.queryOutsideTest();
-    }
-
-    /**
-     * Test query on tree boundary border.
-     *
-     * @throws TransformException if entry can't be transform into tree crs.
-     */
-    @Test
-    public void testQueryOnBorder() throws IllegalArgumentException, TransformException {
-        super.queryOnBorderTest();
-    }
-
-    /**
-     * Test insertion and deletion in tree.
-     *
-     * @throws TransformException if entry can't be transform into tree crs.
-     */
-    @Test
-    public void testInsertDelete() throws IllegalArgumentException, TransformException {
-        super.insertDelete();
     }
 }

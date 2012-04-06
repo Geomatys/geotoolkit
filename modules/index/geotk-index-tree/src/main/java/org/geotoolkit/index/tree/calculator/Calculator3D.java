@@ -21,7 +21,7 @@ import java.util.Comparator;
 import java.util.List;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
-import static org.geotoolkit.index.tree.DefaultTreeUtils.*;
+import static org.geotoolkit.index.tree.DefaultTreeUtils.getMedian;
 import org.geotoolkit.index.tree.Node;
 import org.geotoolkit.index.tree.hilbert.HilbertRTree;
 import org.geotoolkit.util.ArgumentChecks;
@@ -29,7 +29,6 @@ import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.TransformException;
 
 /**
  * Define a three dimension {@code Calculator}.
@@ -38,6 +37,7 @@ import org.opengis.referencing.operation.TransformException;
  * @author Martin Desruisseaux (Geomatys).
  */
 public class Calculator3D extends Calculator {
+
     /**
      * To compare two {@code Node} from them boundary box minimum x axis coordinate.
      */
@@ -45,8 +45,8 @@ public class Calculator3D extends Calculator {
 
         @Override
         public int compare(Node o1, Node o2) {
-            java.lang.Double x1 = new java.lang.Double(o1.getBoundary().getLowerCorner().getOrdinate(0));
-            java.lang.Double x2 = new java.lang.Double(o2.getBoundary().getLowerCorner().getOrdinate(0));
+            java.lang.Double x1 = new java.lang.Double(o1.getBoundary().getLowerCorner().getOrdinate(dims[0]));
+            java.lang.Double x2 = new java.lang.Double(o2.getBoundary().getLowerCorner().getOrdinate(dims[0]));
             return x1.compareTo(x2);
         }
     };
@@ -58,8 +58,8 @@ public class Calculator3D extends Calculator {
 
         @Override
         public int compare(Node o1, Node o2) {
-            java.lang.Double y1 = new java.lang.Double(o1.getBoundary().getLowerCorner().getOrdinate(1));
-            java.lang.Double y2 = new java.lang.Double(o2.getBoundary().getLowerCorner().getOrdinate(1));
+            java.lang.Double y1 = new java.lang.Double(o1.getBoundary().getLowerCorner().getOrdinate(dims[1]));
+            java.lang.Double y2 = new java.lang.Double(o2.getBoundary().getLowerCorner().getOrdinate(dims[1]));
             return y1.compareTo(y2);
         }
     };
@@ -84,8 +84,8 @@ public class Calculator3D extends Calculator {
 
         @Override
         public int compare(Envelope o1, Envelope o2) {
-            java.lang.Double x1 = new java.lang.Double(o1.getLowerCorner().getOrdinate(0));
-            java.lang.Double x2 = new java.lang.Double(o2.getLowerCorner().getOrdinate(0));
+            java.lang.Double x1 = new java.lang.Double(o1.getLowerCorner().getOrdinate(dims[0]));
+            java.lang.Double x2 = new java.lang.Double(o2.getLowerCorner().getOrdinate(dims[0]));
             return x1.compareTo(x2);
         }
     };
@@ -97,8 +97,8 @@ public class Calculator3D extends Calculator {
 
         @Override
         public int compare(Envelope o1, Envelope o2) {
-            java.lang.Double y1 = new java.lang.Double(o1.getLowerCorner().getOrdinate(1));
-            java.lang.Double y2 = new java.lang.Double(o2.getLowerCorner().getOrdinate(1));
+            java.lang.Double y1 = new java.lang.Double(o1.getLowerCorner().getOrdinate(dims[1]));
+            java.lang.Double y2 = new java.lang.Double(o2.getLowerCorner().getOrdinate(dims[1]));
             return y1.compareTo(y2);
         }
     };
@@ -110,8 +110,8 @@ public class Calculator3D extends Calculator {
 
         @Override
         public int compare(Envelope o1, Envelope o2) {
-            java.lang.Double y1 = new java.lang.Double(o1.getLowerCorner().getOrdinate(2));
-            java.lang.Double y2 = new java.lang.Double(o2.getLowerCorner().getOrdinate(2));
+            java.lang.Double y1 = new java.lang.Double(o1.getLowerCorner().getOrdinate(dims[2]));
+            java.lang.Double y2 = new java.lang.Double(o2.getLowerCorner().getOrdinate(dims[2]));
             return y1.compareTo(y2);
         }
     };
@@ -123,8 +123,8 @@ public class Calculator3D extends Calculator {
 
         @Override
         public int compare(Node o1, Node o2) {
-            java.lang.Double x1 = new java.lang.Double(o1.getBoundary().getUpperCorner().getOrdinate(0));
-            java.lang.Double x2 = new java.lang.Double(o2.getBoundary().getUpperCorner().getOrdinate(0));
+            java.lang.Double x1 = new java.lang.Double(o1.getBoundary().getUpperCorner().getOrdinate(dims[0]));
+            java.lang.Double x2 = new java.lang.Double(o2.getBoundary().getUpperCorner().getOrdinate(dims[0]));
             return x1.compareTo(x2);
         }
     };
@@ -136,8 +136,8 @@ public class Calculator3D extends Calculator {
 
         @Override
         public int compare(Node o1, Node o2) {
-            java.lang.Double y1 = new java.lang.Double(o1.getBoundary().getUpperCorner().getOrdinate(1));
-            java.lang.Double y2 = new java.lang.Double(o2.getBoundary().getUpperCorner().getOrdinate(1));
+            java.lang.Double y1 = new java.lang.Double(o1.getBoundary().getUpperCorner().getOrdinate(dims[1]));
+            java.lang.Double y2 = new java.lang.Double(o2.getBoundary().getUpperCorner().getOrdinate(dims[1]));
             return y1.compareTo(y2);
         }
     };
@@ -149,8 +149,8 @@ public class Calculator3D extends Calculator {
 
         @Override
         public int compare(Node o1, Node o2) {
-            java.lang.Double y1 = new java.lang.Double(o1.getBoundary().getUpperCorner().getOrdinate(2));
-            java.lang.Double y2 = new java.lang.Double(o2.getBoundary().getUpperCorner().getOrdinate(2));
+            java.lang.Double y1 = new java.lang.Double(o1.getBoundary().getUpperCorner().getOrdinate(dims[2]));
+            java.lang.Double y2 = new java.lang.Double(o2.getBoundary().getUpperCorner().getOrdinate(dims[2]));
             return y1.compareTo(y2);
         }
     };
@@ -162,8 +162,8 @@ public class Calculator3D extends Calculator {
 
         @Override
         public int compare(Envelope o1, Envelope o2) {
-            java.lang.Double x1 = new java.lang.Double(o1.getUpperCorner().getOrdinate(0));
-            java.lang.Double x2 = new java.lang.Double(o2.getUpperCorner().getOrdinate(0));
+            java.lang.Double x1 = new java.lang.Double(o1.getUpperCorner().getOrdinate(dims[0]));
+            java.lang.Double x2 = new java.lang.Double(o2.getUpperCorner().getOrdinate(dims[0]));
             return x1.compareTo(x2);
         }
     };
@@ -175,8 +175,8 @@ public class Calculator3D extends Calculator {
 
         @Override
         public int compare(Envelope o1, Envelope o2) {
-            java.lang.Double y1 = new java.lang.Double(o1.getUpperCorner().getOrdinate(1));
-            java.lang.Double y2 = new java.lang.Double(o2.getUpperCorner().getOrdinate(1));
+            java.lang.Double y1 = new java.lang.Double(o1.getUpperCorner().getOrdinate(dims[1]));
+            java.lang.Double y2 = new java.lang.Double(o2.getUpperCorner().getOrdinate(dims[1]));
             return y1.compareTo(y2);
         }
     };
@@ -188,13 +188,14 @@ public class Calculator3D extends Calculator {
 
         @Override
         public int compare(Envelope o1, Envelope o2) {
-            java.lang.Double y1 = new java.lang.Double(o1.getUpperCorner().getOrdinate(2));
-            java.lang.Double y2 = new java.lang.Double(o2.getUpperCorner().getOrdinate(2));
+            java.lang.Double y1 = new java.lang.Double(o1.getUpperCorner().getOrdinate(dims[2]));
+            java.lang.Double y2 = new java.lang.Double(o2.getUpperCorner().getOrdinate(dims[2]));
             return y1.compareTo(y2);
         }
     };
 
-    public Calculator3D() {
+    public Calculator3D(final int[] dims) {
+        super(dims);
     }
 
     /**
@@ -202,7 +203,11 @@ public class Calculator3D extends Calculator {
      */
     @Override
     public double getSpace(final Envelope envelop) {
-        return getGeneralEnvelopBulk(envelop);
+        double result = 1;
+        for(int i = 0,l = dims.length;i<l;i++){
+            result*=envelop.getSpan(dims[i]);
+        }
+        return result;
     }
 
     /**
@@ -210,7 +215,13 @@ public class Calculator3D extends Calculator {
      */
     @Override
     public double getEdge(final Envelope envelop) {
-        return getGeneralEnvelopArea(envelop);
+        double result = 0;
+        for(int i = 0,l = dims.length;i<l;i++){
+            for(int j = i+1;j<l;j++){
+                result+=envelop.getSpan(dims[i])*envelop.getSpan(dims[j]);
+            }
+        }
+        return 2*result;
     }
 
     /**
@@ -218,7 +229,7 @@ public class Calculator3D extends Calculator {
      */
     @Override
     public double getDistance(final Envelope envelopA, final Envelope envelopB) {
-        return getDistanceBetween2Envelop(envelopA, envelopB);
+        return getDistance(getMedian(envelopA), getMedian(envelopB));
     }
 
     /**
@@ -234,7 +245,16 @@ public class Calculator3D extends Calculator {
      */
     @Override
     public double getDistance(final DirectPosition positionA, final DirectPosition positionB) {
-        return getDistanceBetween2DirectPosition(positionA, positionB);
+        final int l = dims.length;
+        double[] tab = new double[l];
+        for(int i = 0;i<l;i++){
+            tab[i] = positionB.getOrdinate(dims[i]) - positionA.getOrdinate(dims[i]);
+        }
+        double result = 0;
+        for(int i = 0;i<l;i++){
+            result+=(tab[i]*tab[i]);
+        }
+        return Math.sqrt(result);
     }
 
     /**
@@ -244,7 +264,7 @@ public class Calculator3D extends Calculator {
     public double getOverlaps(final Envelope envelopA, final Envelope envelopB) {
         final GeneralEnvelope ge = new GeneralEnvelope(envelopA);
         ge.intersect(envelopB);
-        return getGeneralEnvelopBulk(ge);
+        return getSpace(ge);
     }
 
     /**
@@ -252,7 +272,7 @@ public class Calculator3D extends Calculator {
      */
     @Override
     public double getEnlargement(final Envelope envMin, final Envelope envMax) {
-        return getGeneralEnvelopBulk(envMax) - getGeneralEnvelopBulk(envMin);
+        return getSpace(envMax) - getSpace(envMin);
     }
 
     /**
@@ -316,7 +336,7 @@ public class Calculator3D extends Calculator {
      * {@inheritDoc }
      */
     @Override
-    public void createBasicHL(final Node candidate, final int order, final Envelope bound) throws MismatchedDimensionException, TransformException{
+    public void createBasicHL(final Node candidate, final int order, final Envelope bound) throws MismatchedDimensionException {
         ArgumentChecks.ensurePositive("impossible to create Hilbert Curve with negative indice", order);
         candidate.getChildren().clear();
         final CoordinateReferenceSystem crs = bound.getCoordinateReferenceSystem();
@@ -334,8 +354,8 @@ public class Calculator3D extends Calculator {
                 if(getEdge(bound)<= 0){
                     int index = -1;
                     for(int i = 0; i<3; i++){
-                        if(bound.getSpan(i) > 0){
-                            index = i;break;
+                        if(bound.getSpan(dims[i]) > 0){
+                            index = dims[i];break;
                         }
                     }
                     final double fract = bound.getSpan(index)/(2*nbCells2D);
@@ -358,7 +378,7 @@ public class Calculator3D extends Calculator {
                 }else{
                     int index = -1;
                     for(int i = 0; i<3; i++){
-                        if(bound.getSpan(i)<=0){
+                        if(bound.getSpan(dims[i])<=0){
                             index = i;break;
                         }
                     }
@@ -370,7 +390,7 @@ public class Calculator3D extends Calculator {
                         case 2 : d0 = 0; d1 = 1;break;//defined on xy
                         default : throw new IllegalStateException("invalid no space index : "+index);
                     }
-                    listOfCentroidChild.addAll(createPath(candidate, order, d0, d1));
+                    listOfCentroidChild.addAll(createPath(candidate, order, dims[d0], dims[d1]));
                     for (int i = 0, s = listOfCentroidChild.size(); i < s; i++) {
                         final DirectPosition ptCTemp = listOfCentroidChild.get(i);
                         ArgumentChecks.ensureNonNull("the crs ptCTemp", ptCTemp.getCoordinateReferenceSystem());
@@ -385,7 +405,7 @@ public class Calculator3D extends Calculator {
 
                 int[][][] tabHV = new int[dim][dim][dim];
 
-                listOfCentroidChild.addAll(createPath(candidate, order, 0, 1,2));
+                listOfCentroidChild.addAll(createPath(candidate, order, dims[0], dims[1],dims[2]));
 
                 for (int i = 0, s = listOfCentroidChild.size(); i < s; i++) {
                     final DirectPosition ptCTemp = listOfCentroidChild.get(i);
@@ -413,7 +433,7 @@ public class Calculator3D extends Calculator {
      * @throws IllegalArgumentException if parameter dPt is null.
      * @return int[] table of length 3 which contains 3 coordinates.
      */
-    public static int[] getHilbCoord(final Node candidate, final DirectPosition dPt, final Envelope envelop, final int hilbertOrder) {
+    public int[] getHilbCoord(final Node candidate, final DirectPosition dPt, final Envelope envelop, final int hilbertOrder) {
         ArgumentChecks.ensureNonNull("DirectPosition dPt : ", dPt);
         if (!new GeneralEnvelope(envelop).contains(dPt)) {
             throw new IllegalArgumentException("Point is out of this node boundary");
@@ -421,12 +441,12 @@ public class Calculator3D extends Calculator {
         final Calculator calc = candidate.getTree().getCalculator();
         assert calc instanceof Calculator3D : "getHilbertCoord : calculator3D type required";
         final double div = 2<<hilbertOrder-1;
-        final double divX = envelop.getSpan(0) / div;
-        final double divY = envelop.getSpan(1) / div;
-        final double divZ = envelop.getSpan(2) / div;
-        double hdx = (Math.abs(dPt.getOrdinate(0) - envelop.getLowerCorner().getOrdinate(0)) / divX);
-        double hdy = (Math.abs(dPt.getOrdinate(1) - envelop.getLowerCorner().getOrdinate(1)) / divY);
-        double hdz = (Math.abs(dPt.getOrdinate(2) - envelop.getLowerCorner().getOrdinate(2)) / divZ);
+        final double divX = envelop.getSpan(dims[0]) / div;
+        final double divY = envelop.getSpan(dims[1]) / div;
+        final double divZ = envelop.getSpan(dims[2]) / div;
+        double hdx = (Math.abs(dPt.getOrdinate(dims[0]) - envelop.getLowerCorner().getOrdinate(dims[0])) / divX);
+        double hdy = (Math.abs(dPt.getOrdinate(dims[1]) - envelop.getLowerCorner().getOrdinate(dims[1])) / divY);
+        double hdz = (Math.abs(dPt.getOrdinate(dims[2]) - envelop.getLowerCorner().getOrdinate(dims[2])) / divZ);
         final int hx = (hdx <= 1) ? 0 : 1;
         final int hy = (hdy <= 1) ? 0 : 1;
         final int hz = (hdz <= 1) ? 0 : 1;
@@ -434,7 +454,7 @@ public class Calculator3D extends Calculator {
         if(calc.getSpace(envelop) <= 0){
             int index = -1;
             for(int i = 0; i<3; i++){
-                if(envelop.getSpan(i)<=0){
+                if(envelop.getSpan(dims[i])<=0){
                     index = i;break;
                 }
             }
@@ -463,11 +483,11 @@ public class Calculator3D extends Calculator {
         }
         if(getSpace(bound)<= 0){
             if(getEdge(bound)<=0){
-                final int nbCells = (int) (Math.pow(2, 2 * order));
+                final int nbCells = 2<<2*order-1;
                 int index = -1;
-                for(int i = 0, d = bound.getDimension();i<d;i++){
-                    if(bound.getSpan(i)>0){
-                        index = i;
+                for(int i = 0, d = dims.length;i<d;i++){
+                    if(bound.getSpan(dims[i])>0){
+                        index = dims[i];
                         break;
                     }
                 }

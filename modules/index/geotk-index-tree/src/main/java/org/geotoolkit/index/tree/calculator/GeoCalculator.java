@@ -34,10 +34,9 @@ import org.opengis.geometry.Envelope;
 public abstract class GeoCalculator extends Calculator{
 
     final double radius;
-    final int[]dims;
     private final static double TO_RAD = Math.PI/180;
     public GeoCalculator(double radius, int...dims) {
-        this.dims = dims;
+        super(dims);
         this.radius = radius;
     }
 

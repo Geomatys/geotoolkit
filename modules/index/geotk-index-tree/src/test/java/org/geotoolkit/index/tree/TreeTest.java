@@ -17,256 +17,21 @@
  */
 package org.geotoolkit.index.tree;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.util.ArgumentChecks;
-import static org.junit.Assert.assertTrue;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
-import org.opengis.geometry.MismatchedReferenceSystemException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.cs.CartesianCS;
-import org.opengis.referencing.cs.CoordinateSystem;
-import org.opengis.referencing.cs.EllipsoidalCS;
-import org.opengis.referencing.operation.TransformException;
 
-/**
- * Test some R-Tree queries.
+/**Class which contains tree test utils methods.
  *
- * @author Rémi Marechal (Geomatys).
+ * @author Rémi Maréchal (Géomatys).
  */
 public abstract class TreeTest {
 
-    protected final Tree tree;
-    protected final List<Envelope> lData = new ArrayList<Envelope>();
-    protected final CoordinateReferenceSystem crs;
-    protected final int dimension;
-    protected final double[] minMax;
-
-    public TreeTest(Tree tree) throws TransformException {
-        ArgumentChecks.ensureNonNull("tree", tree);
-        crs = tree.getCrs();
-        ArgumentChecks.ensureNonNull("crs", crs);
-        this.dimension = crs.getCoordinateSystem().getDimension();
-        ArgumentChecks.ensurePositive("dimension", this.dimension);
-        this.tree = tree;
-        final CoordinateSystem cs = crs.getCoordinateSystem();
-        minMax = new double[2*dimension];
-        final DirectPosition centerEntry = new GeneralDirectPosition(crs);
-        if(cs instanceof CartesianCS){
-            for(int l = 0;l<2*dimension;l+=2){
-                minMax[l] = -1500;
-                minMax[l+1] = 1500;
-            }
-            for (int i = 0; i < 3000; i++) {
-                for (int nbCoords = 0; nbCoords < this.dimension; nbCoords++) {
-                    double value = (Math.random() < 0.5) ? -1 : 1;
-                    value *= 1500 * Math.random();
-                    centerEntry.setOrdinate(nbCoords, value);
-                }
-                lData.add(createEntry(centerEntry));
-            }
-        }else if(cs instanceof EllipsoidalCS){
-            minMax[0] = -180;
-            minMax[1] = 180;
-            minMax[2] = -90;
-            minMax[3] = 90;
-            for (int i = 0; i < 3000; i++) {
-                centerEntry.setOrdinate(0, (Math.random()-0.5)*2*170);//max value -10 because envelops width and height.
-                centerEntry.setOrdinate(1, (Math.random()-0.5)*2*80);
-                if(cs.getDimension()>2){
-                    centerEntry.setOrdinate(2, Math.random()*8800);
-                    minMax[4] = -8800;
-                    minMax[5] = 8800;
-                }
-                lData.add(createEntry(centerEntry));
-            }
-        }else{
-            throw new IllegalArgumentException("invalid crs, Coordinate system type :"+cs.getClass() +" is not supported");
-        }
-        insert();
-        System.out.println("");
-    }
-
-    /**
-     * Insert all entries within ldata in tree.
-     *
-     * @throws TransformException if lData entries can't be transform into tree
-     * crs.
-     */
-    protected void insert() throws IllegalArgumentException, TransformException {
-        int i = 0;
-        for (Envelope gEnv : lData) {
-//            System.out.println(""+i++);
-            tree.insert(gEnv);
-        }
-    }
-
-    /**
-     * Test if tree contain all elements inserted.
-     *
-     * @throws TransformException if entry can't be transform into tree crs.
-     */
-    protected void insertTest() throws MismatchedReferenceSystemException {
-        final Envelope gr = ((Node) tree.getRoot()).getBoundary();
-        final GeneralEnvelope gem = DefaultTreeUtils.getEnveloppeMin(lData);
-        assertTrue(gem.equals(gr, 1E-9, false));
-        final List<Envelope> listSearch = new ArrayList<Envelope>();
-        tree.search(gr, listSearch);
-        if(listSearch.size()!=lData.size()){
-            System.out.println("");
-        }
-        assertTrue(listSearch.size() == lData.size());
-    }
-
-    /**
-     * Compare all boundary node from their children boundary.
-     *
-     * @throws TransformException if entry can't be transform into tree crs.
-     */
-    protected void checkBoundaryTest() throws MismatchedReferenceSystemException {
-        checkNodeBoundaryTest((Node) tree.getRoot());
-    }
-
-    /**
-     * Compare boundary node from its children boundary.
-     */
-    protected void checkNodeBoundaryTest(final Node node) {
-        assertTrue(checkBoundaryNode(node));
-        if(!node.isLeaf()){
-            for (Node no : node.getChildren()) {
-                checkNodeBoundaryTest(no);
-            }
-        }
-    }
-
-    /**
-     * Test search query on tree border.
-     *
-     * @throws TransformException if entry can't be transform into tree crs.
-     */
-    public void queryOnBorderTest() throws IllegalArgumentException, TransformException {
-        final List<GeneralEnvelope> lGE = new ArrayList<GeneralEnvelope>();
-        for (Envelope ge : lData) {
-            tree.delete(ge);
-        }
-        final List<Envelope> lGERef = new ArrayList<Envelope>();
-        final GeneralEnvelope gR = new GeneralEnvelope(crs);
-
-        if (dimension == 2) {
-            for (int i = 0; i < 20; i++) {
-                for (int j = 0; j < 20; j++) {
-                    final GeneralEnvelope gE = new GeneralEnvelope(crs);
-                    gE.setEnvelope(5 * i, 5 * j, 5 * i, 5 * j);
-                    lGE.add(gE);
-                    if (i == 19 && j > 3 && j < 18) {
-                        lGERef.add(gE);
-                    }
-                }
-            }
-            gR.setEnvelope(93, 18, 130, 87);
-        } else {
-            for (int i = 0; i < 20; i++) {
-                for (int j = 0; j < 20; j++) {
-                    final GeneralEnvelope gE = new GeneralEnvelope(crs);
-                    gE.setEnvelope(5 * i, 5 * j, 20, 5 * i, 5 * j, 20);
-                    lGE.add(gE);
-                    if (i == 19 && j > 3 && j < 18) {
-                        lGERef.add(gE);
-                    }
-                }
-            }
-            gR.setEnvelope(93, 18, 19, 130, 87, 21);
-        }
-
-        int i = 0;
-        for (GeneralEnvelope ge : lGE) {
-            tree.insert(ge);
-            i++;
-        }
-
-        final List<Envelope> lGES = new ArrayList<Envelope>();
-        tree.search(gR, lGES);
-
-        assertTrue(compareList(lGERef, lGES));
-    }
-
-    /**
-     * Compare boundary node from his children boundary.
-     */
-    protected boolean checkBoundaryNode(final Node node) {
-        final List<Envelope> lGE = new ArrayList<Envelope>();
-        if (node.isLeaf()) {
-            for (Envelope gEnv : node.getEntries()) {
-                lGE.add(gEnv);
-            }
-
-        } else {
-            for (Node no : node.getChildren()) {
-                lGE.add(no.getBoundary());
-            }
-        }
-        final GeneralEnvelope subBound = DefaultTreeUtils.getEnveloppeMin(lGE);
-        return subBound.equals(node.getBoundary());
-    }
-
-    /**
-     * Test search query inside tree.
-     */
-    protected void queryInsideTest() throws MismatchedReferenceSystemException {
-        final List<Envelope> listSearch = new ArrayList<Envelope>();
-        tree.search(DefaultTreeUtils.getEnveloppeMin(lData), listSearch);
-        if(!compareList(lData, listSearch)){
-            System.out.println("");
-        }
-        assertTrue(compareList(lData, listSearch));
-    }
-
-    /**
-     * Test query outside of tree area.
-     *
-     * @throws TransformException if entry can't be transform into tree crs.
-     */
-    protected void queryOutsideTest() throws MismatchedReferenceSystemException {
-        final GeneralEnvelope areaSearch = new GeneralEnvelope(crs);
-        for (int i = 0; i < dimension; i++) {
-            areaSearch.setRange(i, minMax[i+1]+100, minMax[i+1]+2000);
-        }
-        final List<Envelope> listSearch = new ArrayList<Envelope>();
-        tree.search(areaSearch, listSearch);
-        assertTrue(listSearch.isEmpty());
-    }
-
-    /**
-     * Test insertion and deletion in tree.
-     *
-     * @throws TransformException if entry can't be transform into tree crs.
-     */
-    protected void insertDelete() throws IllegalArgumentException, TransformException {
-        Collections.shuffle(lData);
-        for (Envelope env : lData) {
-            tree.delete(env);
-        }
-        final GeneralEnvelope areaSearch = new GeneralEnvelope(crs);
-        for (int i = 0; i < dimension; i++) {
-            areaSearch.setRange(i, minMax[2*i], minMax[2*i+1]);
-        }
-        final List<Envelope> listSearch = new ArrayList<Envelope>();
-        tree.search(areaSearch, listSearch);
-        if(!listSearch.isEmpty()){
-            System.out.println("");
-        }
-        assertTrue(listSearch.isEmpty());
-        insert();
-        tree.search(areaSearch, listSearch);
-        assertTrue(compareList(listSearch, lData));
-    }
-
-    /**
-     * Compare 2 lists elements.
+    /**Compare 2 lists elements.
      *
      * <blockquote><font size=-1> <strong> NOTE: return {@code true} if listA
      * and listB are empty. </strong> </font></blockquote>
@@ -303,8 +68,7 @@ public abstract class TreeTest {
         return true;
     }
 
-    /**
-     * Create a default adapted test entry({@code GeneralEnvelope}).
+    /**Create a default adapted test entry({@code GeneralEnvelope}).
      *
      * @param position the median of future entry.
      * @return {@code GeneralEnvelope} entry.

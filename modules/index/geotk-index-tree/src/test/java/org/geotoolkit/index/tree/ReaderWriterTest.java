@@ -24,8 +24,6 @@ import java.util.Collections;
 import java.util.List;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.index.tree.basic.SplitCase;
-import org.geotoolkit.index.tree.calculator.Calculator;
-import org.geotoolkit.index.tree.calculator.Calculator3D;
 import org.geotoolkit.index.tree.io.TreeReader;
 import org.geotoolkit.index.tree.io.TreeWriter;
 import org.geotoolkit.index.tree.nodefactory.TreeNodeFactory;
@@ -46,7 +44,6 @@ public class ReaderWriterTest {
     private Tree treeRef, treeTest;
     private final File fil = new File("tree.bin");
     private final List<GeneralEnvelope> lData = new ArrayList<GeneralEnvelope>();
-    private final Calculator calculator = new Calculator3D();
 
     public ReaderWriterTest() {
         fil.deleteOnExit();
