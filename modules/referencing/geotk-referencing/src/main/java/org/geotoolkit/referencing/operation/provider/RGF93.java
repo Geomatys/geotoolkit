@@ -64,7 +64,9 @@ public class RGF93 extends MathTransformProvider {
             Citations.EPSG, "Geocentric translation file", String.class, null, "gr3df97a.txt", null, null, null, true);
 
     /**
-     * The parameters group.
+     * The group of all parameters expected by this coordinate operation.
+     * The following table lists the operation names and the parameters recognized by Geotk:
+     * <p>
      * <!-- GENERATED PARAMETERS - inserted by ProjectionParametersJavadoc -->
      * <table bgcolor="#F4F8FF" border="1" cellspacing="0" cellpadding="6">
      *   <tr bgcolor="#B9DCFF" valign="top"><td colspan="2">
@@ -81,7 +83,7 @@ public class RGF93 extends MathTransformProvider {
      *     <table border="0" cellspacing="0" cellpadding="0">
      *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>String</code></td></tr>
      *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>mandatory</td></tr>
-     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>gr3df97a.txt</td></tr>
+     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td><code>"gr3df97a.txt"</code></td></tr>
      *     </table>
      *   </td></tr>
      * </table>

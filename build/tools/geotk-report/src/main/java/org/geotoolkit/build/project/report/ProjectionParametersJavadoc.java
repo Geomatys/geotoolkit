@@ -141,8 +141,9 @@ public final class ProjectionParametersJavadoc extends JavadocUpdater {
      * automatically, since the behavior for the default value is hard-coded in Java.
      */
     private final GeneralParameterDescriptor defaultToLatitudeOfOrigin[] = {
-        AlbersEqualArea    .PARAMETERS.descriptor("Latitude of 1st standard parallel"),
-        LambertConformal2SP.PARAMETERS.descriptor("Latitude of 1st standard parallel")
+        AlbersEqualArea            .PARAMETERS.descriptor("Latitude of 1st standard parallel"),
+        LambertConformal2SP        .PARAMETERS.descriptor("Latitude of 1st standard parallel"),
+        LambertConformal2SP.Belgium.PARAMETERS.descriptor("Latitude of 1st standard parallel")
     };
 
     /**
@@ -150,8 +151,18 @@ public final class ProjectionParametersJavadoc extends JavadocUpdater {
      * cases automatically, since the behavior for the default value is hard-coded in Java.
      */
     private final GeneralParameterDescriptor defaultToStandardParallel1[] = {
-        AlbersEqualArea    .PARAMETERS.descriptor("Latitude of 2nd standard parallel"),
-        LambertConformal2SP.PARAMETERS.descriptor("Latitude of 2nd standard parallel")
+        AlbersEqualArea            .PARAMETERS.descriptor("Latitude of 2nd standard parallel"),
+        LambertConformal2SP        .PARAMETERS.descriptor("Latitude of 2nd standard parallel"),
+        LambertConformal2SP.Belgium.PARAMETERS.descriptor("Latitude of 2nd standard parallel")
+    };
+
+    /**
+     * Parameters to default to the azimuth. We can hardly detect those cases automatically,
+     * since the behavior for the default value is hard-coded in Java.
+     */
+    private final GeneralParameterDescriptor defaultToAzimuth[] = {
+        ObliqueMercator      .PARAMETERS.descriptor("Angle from Rectified to Skew Grid"),
+        HotineObliqueMercator.PARAMETERS.descriptor("Angle from Rectified to Skew Grid")
     };
 
     /**
@@ -262,24 +273,28 @@ public final class ProjectionParametersJavadoc extends JavadocUpdater {
          * value in the ParameterDescriptorGroup.
          */
         Object defaultValue = descriptor.getDefaultValue();
-        if (defaultValue == null && descriptor.getMinimumOccurs() == 0) {
+        if (defaultValue != null) {
+            if (defaultValue instanceof Number) {
+                // Trim the fractional part if unnecessary (e.g. "0.0" to "0").
+                defaultValue = Numbers.finestNumber((Number) defaultValue);
+            } else if (defaultValue instanceof String) {
+                defaultValue = "<code>\"" + defaultValue + "\"</code>";
+            }
+        } else if (descriptor.getMinimumOccurs() == 0) {
             if (XArrays.contains(defaultToLatitudeOfOrigin, descriptor)) {
                 defaultValue = "<var>latitude of origin</var>";
                 unit = "";
             } else if (XArrays.contains(defaultToStandardParallel1, descriptor)) {
                 defaultValue = "<var>standard parallel 1</var>";
                 unit = "";
-            } else if (Number.class.isAssignableFrom(valueClass)) {
-                defaultValue = 0;
+            } else if (XArrays.contains(defaultToAzimuth, descriptor)) {
+                defaultValue = "<var>Azimuth of initial line</var>";
+                unit = "";
             } else if (valueClass == Boolean.class) {
                 defaultValue = Boolean.FALSE;
             }
         }
         if (defaultValue != null) {
-            if (defaultValue instanceof Number) {
-                // Trim the fractional part if unnecessary (e.g. "0.0" to "0").
-                defaultValue = Numbers.finestNumber((Number) defaultValue);
-            }
             lines.add(ROW_START + "Default value:" + SEPARATOR + defaultValue + unit + ROW_END);
         }
         lines.add("    </table>");

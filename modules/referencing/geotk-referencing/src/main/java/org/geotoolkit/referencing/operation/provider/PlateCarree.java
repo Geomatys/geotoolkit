@@ -49,7 +49,9 @@ public class PlateCarree extends EquidistantCylindrical {
     private static final long serialVersionUID = 8535645757318203345L;
 
     /**
-     * The parameters group.
+     * The group of all parameters expected by this coordinate operation.
+     * The following table lists the operation names and the parameters recognized by Geotk:
+     * <p>
      * <!-- GENERATED PARAMETERS - inserted by ProjectionParametersJavadoc -->
      * <table bgcolor="#F4F8FF" border="1" cellspacing="0" cellpadding="6">
      *   <tr bgcolor="#B9DCFF" valign="top"><td colspan="2">

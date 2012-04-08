@@ -171,7 +171,15 @@ public class AlbersEqualArea extends MapProjection {
                 "FalseNorthing");           // GeoTIFF
 
     /**
-     * The parameters group.
+     * The group of all parameters expected by this coordinate operation.
+     * The following table lists the operation names and the parameters recognized by Geotk:
+     *
+     * {@note According the <cite>remote-sensing</cite> web site, the OGC name for the
+     * <code>"central_meridian"</code> and <code>"latitude_of_origin"</code> parameters
+     * are <code>"longitude_of_center"</code> and <code>"latitude_of_center"</code> respectively.
+     * However the <cite>spatial-reference</cite> web site uses the former name, which was also
+     * the usage in GeoTools 2.x and is preserved for now.}
+     *
      * <!-- GENERATED PARAMETERS - inserted by ProjectionParametersJavadoc -->
      * <table bgcolor="#F4F8FF" border="1" cellspacing="0" cellpadding="6">
      *   <tr bgcolor="#B9DCFF" valign="top"><td colspan="2">

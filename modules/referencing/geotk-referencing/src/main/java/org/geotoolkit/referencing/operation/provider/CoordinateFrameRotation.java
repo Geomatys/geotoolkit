@@ -27,6 +27,17 @@ import org.geotoolkit.referencing.datum.BursaWolfParameters;
  * The provider for "<cite>Coordinate Frame Rotation</cite>" (EPSG:9607). This is the same
  * transformation than "{@linkplain PositionVector7Param Position Vector 7-param."} except
  * that the rotation angles have the opposite sign.
+ * <p>
+ * In addition to the EPSG parameters, this provider defines some OGC/Geotk-specific parameters.
+ * Those parameters begin with the {@code "src_"} or {@code "tgt_"} prefix, and modify the math
+ * transform as below:
+ * <p>
+ * <ul>
+ *   <li>If a {@code "src_*"} parameter is present, then an {@link EllipsoidToGeocentric}
+ *       transform will be concatenated before the geocentric operation.</li>
+ *   <li>If a {@code "tgt_*"} parameter is present, then an {@link GeocentricToEllipsoid}
+ *       transform will be concatenated after the geocentric operation.</li>
+ * </ul>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.20
@@ -43,8 +54,9 @@ public class CoordinateFrameRotation extends PositionVector7Param {
 
     /**
      * The parameters group. This is the same group than
-     * {@link PositionVector7Param#PARAMETERS} except for the name.
-     *
+     * {@link PositionVector7Param#PARAMETERS} except for the operation name.
+     * The following table lists the operation names and the parameters recognized by Geotk:
+     * <p>
      * <!-- GENERATED PARAMETERS - inserted by ProjectionParametersJavadoc -->
      * <table bgcolor="#F4F8FF" border="1" cellspacing="0" cellpadding="6">
      *   <tr bgcolor="#B9DCFF" valign="top"><td colspan="2">
@@ -155,7 +167,6 @@ public class CoordinateFrameRotation extends PositionVector7Param {
      *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
      *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>optional</td></tr>
      *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>[0…∞) metres</td></tr>
-     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>0 metres</td></tr>
      *     </table>
      *   </td></tr>
      *   <tr valign="top"><td>
@@ -167,7 +178,6 @@ public class CoordinateFrameRotation extends PositionVector7Param {
      *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
      *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>optional</td></tr>
      *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>[0…∞) metres</td></tr>
-     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>0 metres</td></tr>
      *     </table>
      *   </td></tr>
      *   <tr valign="top"><td>
@@ -179,7 +189,6 @@ public class CoordinateFrameRotation extends PositionVector7Param {
      *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
      *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>optional</td></tr>
      *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>[0…∞) metres</td></tr>
-     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>0 metres</td></tr>
      *     </table>
      *   </td></tr>
      *   <tr valign="top"><td>
@@ -191,7 +200,6 @@ public class CoordinateFrameRotation extends PositionVector7Param {
      *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
      *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>optional</td></tr>
      *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>[0…∞) metres</td></tr>
-     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>0 metres</td></tr>
      *     </table>
      *   </td></tr>
      *   <tr valign="top"><td>

@@ -50,6 +50,16 @@ import static org.geotoolkit.internal.referencing.Identifiers.createDescriptor;
 
 /**
  * The provider for "<cite>Position Vector 7-parameters transformation</cite>" (EPSG:9606).
+ * In addition to the EPSG parameters, this provider defines some OGC/Geotk-specific parameters.
+ * Those parameters begin with the {@code "src_"} or {@code "tgt_"} prefix, and modify the math
+ * transform as below:
+ * <p>
+ * <ul>
+ *   <li>If a {@code "src_*"} parameter is present, then an {@link EllipsoidToGeocentric}
+ *       transform will be concatenated before the geocentric operation.</li>
+ *   <li>If a {@code "tgt_*"} parameter is present, then an {@link GeocentricToEllipsoid}
+ *       transform will be concatenated after the geocentric operation.</li>
+ * </ul>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.20
@@ -285,7 +295,18 @@ public class PositionVector7Param extends MathTransformProvider {
             0.0, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Units.PPM, true);
 
     /**
-     * The parameters group.
+     * The group of all parameters expected by this coordinate operation.
+     * The following table lists the operation names and the parameters recognized by Geotk.
+     * Note that all {@code "src_*"} and {@code "tgt_*"} parameters are OGC/Geotk-specific,
+     * and modify the math transform as below:
+     * <p>
+     * <ul>
+     *   <li>If a {@code "src_*"} parameter is present, then an {@link EllipsoidToGeocentric}
+     *       transform will be concatenated before the geocentric translation.</li>
+     *   <li>If a {@code "tgt_*"} parameter is present, then an {@link GeocentricToEllipsoid}
+     *       transform will be concatenated after the geocentric translation.</li>
+     * </ul>
+     * <p>
      * <!-- GENERATED PARAMETERS - inserted by ProjectionParametersJavadoc -->
      * <table bgcolor="#F4F8FF" border="1" cellspacing="0" cellpadding="6">
      *   <tr bgcolor="#B9DCFF" valign="top"><td colspan="2">
@@ -396,7 +417,6 @@ public class PositionVector7Param extends MathTransformProvider {
      *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
      *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>optional</td></tr>
      *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>[0…∞) metres</td></tr>
-     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>0 metres</td></tr>
      *     </table>
      *   </td></tr>
      *   <tr valign="top"><td>
@@ -408,7 +428,6 @@ public class PositionVector7Param extends MathTransformProvider {
      *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
      *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>optional</td></tr>
      *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>[0…∞) metres</td></tr>
-     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>0 metres</td></tr>
      *     </table>
      *   </td></tr>
      *   <tr valign="top"><td>
@@ -420,7 +439,6 @@ public class PositionVector7Param extends MathTransformProvider {
      *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
      *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>optional</td></tr>
      *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>[0…∞) metres</td></tr>
-     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>0 metres</td></tr>
      *     </table>
      *   </td></tr>
      *   <tr valign="top"><td>
@@ -432,7 +450,6 @@ public class PositionVector7Param extends MathTransformProvider {
      *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
      *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>optional</td></tr>
      *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>[0…∞) metres</td></tr>
-     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>0 metres</td></tr>
      *     </table>
      *   </td></tr>
      *   <tr valign="top"><td>

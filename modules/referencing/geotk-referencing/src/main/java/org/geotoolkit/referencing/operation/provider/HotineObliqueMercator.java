@@ -88,7 +88,9 @@ public class HotineObliqueMercator extends ObliqueMercator {
     public static final ParameterDescriptor<Double> FALSE_NORTHING = EquidistantCylindrical.FALSE_NORTHING;
 
     /**
-     * The parameters group.
+     * The group of all parameters expected by this coordinate operation.
+     * The following table lists the operation names and the parameters recognized by Geotk:
+     * <p>
      * <!-- GENERATED PARAMETERS - inserted by ProjectionParametersJavadoc -->
      * <table bgcolor="#F4F8FF" border="1" cellspacing="0" cellpadding="6">
      *   <tr bgcolor="#B9DCFF" valign="top"><td colspan="2">
@@ -204,7 +206,7 @@ public class HotineObliqueMercator extends ObliqueMercator {
      *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
      *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>optional</td></tr>
      *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>[-360 … 360]°</td></tr>
-     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>0°</td></tr>
+     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td><var>Azimuth of initial line</var></td></tr>
      *     </table>
      *   </td></tr>
      *   <tr valign="top"><td>
@@ -350,7 +352,9 @@ public class HotineObliqueMercator extends ObliqueMercator {
                 ObliqueMercator.TwoPoint.LONG_OF_2ND_POINT;
 
         /**
-         * The parameters group.
+         * The group of all parameters expected by this coordinate operation.
+         * The following table lists the operation names and the parameters recognized by Geotk:
+         * <p>
          * <!-- GENERATED PARAMETERS - inserted by ProjectionParametersJavadoc -->
          * <table bgcolor="#F4F8FF" border="1" cellspacing="0" cellpadding="6">
          *   <tr bgcolor="#B9DCFF" valign="top"><td colspan="2">

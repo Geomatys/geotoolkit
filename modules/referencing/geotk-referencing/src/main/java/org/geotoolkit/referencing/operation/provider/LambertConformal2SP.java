@@ -187,7 +187,9 @@ public class LambertConformal2SP extends MapProjection {
                 "FalseOriginNorthing");     // GeoTIFF
 
     /**
-     * The parameters group.
+     * The group of all parameters expected by this coordinate operation.
+     * The following table lists the operation names and the parameters recognized by Geotk:
+     * <p>
      * <!-- GENERATED PARAMETERS - inserted by ProjectionParametersJavadoc -->
      * <table bgcolor="#F4F8FF" border="1" cellspacing="0" cellpadding="6">
      *   <tr bgcolor="#B9DCFF" valign="top"><td colspan="2">
@@ -437,7 +439,9 @@ public class LambertConformal2SP extends MapProjection {
         private static final long serialVersionUID = -6388030784088639876L;
 
         /**
-         * The parameters group.
+         * The group of all parameters expected by this coordinate operation.
+         * The following table lists the operation names and the parameters recognized by Geotk:
+         * <p>
          * <!-- GENERATED PARAMETERS - inserted by ProjectionParametersJavadoc -->
          * <table bgcolor="#F4F8FF" border="1" cellspacing="0" cellpadding="6">
          *   <tr bgcolor="#B9DCFF" valign="top"><td colspan="2">
@@ -525,7 +529,7 @@ public class LambertConformal2SP extends MapProjection {
          *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
          *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>optional</td></tr>
          *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>[-90 … 90]°</td></tr>
-         *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>0°</td></tr>
+         *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td><var>latitude of origin</var></td></tr>
          *     </table>
          *   </td></tr>
          *   <tr valign="top"><td>
@@ -539,7 +543,7 @@ public class LambertConformal2SP extends MapProjection {
          *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
          *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>optional</td></tr>
          *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>[-90 … 90]°</td></tr>
-         *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>0°</td></tr>
+         *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td><var>standard parallel 1</var></td></tr>
          *     </table>
          *   </td></tr>
          *   <tr valign="top"><td>

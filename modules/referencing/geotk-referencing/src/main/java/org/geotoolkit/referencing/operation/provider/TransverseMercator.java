@@ -141,7 +141,9 @@ public class TransverseMercator extends MapProjection {
     public static final ParameterDescriptor<Double> FALSE_NORTHING = Mercator2SP.FALSE_NORTHING;
 
     /**
-     * The parameters group.
+     * The group of all parameters expected by this coordinate operation.
+     * The following table lists the operation names and the parameters recognized by Geotk:
+     * <p>
      * <!-- GENERATED PARAMETERS - inserted by ProjectionParametersJavadoc -->
      * <table bgcolor="#F4F8FF" border="1" cellspacing="0" cellpadding="6">
      *   <tr bgcolor="#B9DCFF" valign="top"><td colspan="2">
@@ -369,7 +371,12 @@ public class TransverseMercator extends MapProjection {
         private static final long serialVersionUID = -5938929136350638347L;
 
         /**
-         * The parameters group.
+         * The group of all parameters expected by this coordinate operation.
+         * The following table lists the operation names and the parameters recognized by Geotk.
+         * Note that the terms <cite>false easting</cite> (FE) and <cite>false northing</cite> (FN)
+         * increase the Westing and Southing value at the natural origin. In other words they are
+         * effectively <cite>false westing</cite> (FW) and <cite>false southing</cite> (FS) respectively.
+         * <p>
          * <!-- GENERATED PARAMETERS - inserted by ProjectionParametersJavadoc -->
          * <table bgcolor="#F4F8FF" border="1" cellspacing="0" cellpadding="6">
          *   <tr bgcolor="#B9DCFF" valign="top"><td colspan="2">

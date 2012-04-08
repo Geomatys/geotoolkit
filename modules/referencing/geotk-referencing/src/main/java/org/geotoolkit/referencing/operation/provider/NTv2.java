@@ -74,7 +74,10 @@ public class NTv2 extends MathTransformProvider {
             Citations.EPSG, "Latitude and longitude difference file", String.class, null, null, null, null, null, true);
 
     /**
-     * The parameters group.
+     * The group of all parameters expected by this coordinate operation.
+     * The following table lists the operation names and the parameters recognized by Geotk.
+     * Note that the file extension for the parameter is typically {@code ".gsb"}.
+     * <p>
      * <!-- GENERATED PARAMETERS - inserted by ProjectionParametersJavadoc -->
      * <table bgcolor="#F4F8FF" border="1" cellspacing="0" cellpadding="6">
      *   <tr bgcolor="#B9DCFF" valign="top"><td colspan="2">

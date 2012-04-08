@@ -37,10 +37,18 @@ import static org.geotoolkit.internal.referencing.Identifiers.createDescriptorGr
  * The provider for "<cite>Abridged Molodensky transformation</cite>" (EPSG:9605). This provider
  * constructs transforms from {@linkplain GeographicCRS geographic} to geographic coordinate
  * reference systems, without passing though {@linkplain GeocentricCRS geocentric} one.
- *
- * {@note The EPSG database does not use <code>src_semi_major</code>, <i>etc.</i>
- *        parameters and instead uses "<cite>Semi-major axis length difference</cite>"
- *        and "<cite>Flattening difference</cite>".}
+ * <p>
+ * The translation terms (<var>dx</var>, <var>dy</var> and <var>dz</var>) are common to all authorities.
+ * But remaining parameters are specified in different ways depending on the authority:
+ * <p>
+ * <ul>
+ *   <li>EPSG defines "<cite>Semi-major axis length difference</cite>" and
+ *       "<cite>Flattening difference</cite>" parameters.</li>
+ *   <li>OGC rather defines "{@code src_semi_major}", "{@code src_semi_minor}",
+ *       "{@code tgt_semi_major}", "{@code tgt_semi_minor}" and "{@code dim}" parameters.</li>
+ *   <li>Geotk splits the OGC "{@code dim}" parameters in two separated
+ *       "{@code src_dim}" and "{@code tgt_dim}" parameters.</li>
+ * </ul>
  *
  * @author Rueben Schulz (UBC)
  * @author Martin Desruisseaux (IRD, Geomatys)
@@ -59,7 +67,12 @@ public class AbridgedMolodensky extends Molodensky {
     private static final long serialVersionUID = -3889456253400732280L;
 
     /**
-     * The parameters group.
+     * The group of all parameters expected by this coordinate operation.
+     * The following table lists the operation names and the parameters recognized by Geotk.
+     * Note that the "<cite>Semi-major axis length difference</cite>" and "<cite>Flattening
+     * difference</cite>" parameters are exclusive with all {@code "src_*"} and {@code "tgt_*"}
+     * parameters (see class javadoc).
+     * <p>
      * <!-- GENERATED PARAMETERS - inserted by ProjectionParametersJavadoc -->
      * <table bgcolor="#F4F8FF" border="1" cellspacing="0" cellpadding="6">
      *   <tr bgcolor="#B9DCFF" valign="top"><td colspan="2">
@@ -198,7 +211,6 @@ public class AbridgedMolodensky extends Molodensky {
      *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
      *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>optional</td></tr>
      *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>(-∞ … ∞) metres</td></tr>
-     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>0 metres</td></tr>
      *     </table>
      *   </td></tr>
      *   <tr valign="top"><td>
@@ -210,7 +222,6 @@ public class AbridgedMolodensky extends Molodensky {
      *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
      *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>optional</td></tr>
      *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>[-1 … 1]</td></tr>
-     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>0</td></tr>
      *     </table>
      *   </td></tr>
      * </table>

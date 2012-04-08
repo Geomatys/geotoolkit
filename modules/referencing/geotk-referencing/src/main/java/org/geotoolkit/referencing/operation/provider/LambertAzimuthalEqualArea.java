@@ -38,7 +38,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  *        ellipsoidal case. However the formulas are the same in both cases. Consequently they are
  *        implemented in Geotk by the same class.}
  *
- * {@code EPSG:9820 and 1027 are the current codes, while EPSG:9821 is a deprecated code. The new
+ * {@note EPSG:9820 and 1027 are the current codes, while EPSG:9821 is a deprecated code. The new
  *        and deprecated definitions differ only by their names. In the Geotk implementation, both
  *        current and legacy definitions are known, but the legacy names are marked as deprecated.}
  *
@@ -135,7 +135,9 @@ public class LambertAzimuthalEqualArea extends MapProjection {
     public static final ParameterDescriptor<Double> FALSE_NORTHING = Mercator2SP.FALSE_NORTHING;
 
     /**
-     * The parameters group.
+     * The group of all parameters expected by this coordinate operation.
+     * The following table lists the operation names and the parameters recognized by Geotk:
+     * <p>
      * <!-- GENERATED PARAMETERS - inserted by ProjectionParametersJavadoc -->
      * <table bgcolor="#F4F8FF" border="1" cellspacing="0" cellpadding="6">
      *   <tr bgcolor="#B9DCFF" valign="top"><td colspan="2">
