@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 import java.io.File;
 import java.io.Writer;
 import java.io.IOException;
+import java.io.EOFException;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -107,6 +108,7 @@ public abstract class JavadocUpdater {
         // What to search as an indication of the begining of the section to modify.
         final Pattern classSignature = Pattern.compile(".*\\bclass\\s+" + classe.getSimpleName() + "\\b.*");
         boolean foundClassSignature = false;
+        boolean done = false;
 
         final File file = new File(root, "modules/" + module + "/src/main/java/" +
                 getOuterClass(classe).getCanonicalName().replace('.', '/') + ".java");
@@ -115,14 +117,27 @@ public abstract class JavadocUpdater {
             String line;
             while ((line = in.readLine()) != null) {
                 buffer.append(line).append('\n');
-                if (!foundClassSignature) {
-                    foundClassSignature = classSignature.matcher(line).matches();
-                } else {
-                    if (line.contains(SIGNATURE)) {
+                if (!done) {
+                    if (!foundClassSignature) {
+                        foundClassSignature = classSignature.matcher(line).matches();
+                    } else if (line.contains(SIGNATURE)) {
                         final String margin = line.substring(0, line.indexOf('*') + 2);
+                        if (!margin.trim().equals("*")) {
+                            throw new IOException("Expected a comment line, but found: " + line);
+                        }
                         for (final String gen : lines) {
                             buffer.append(margin).append(gen).append('\n');
                         }
+                        // Skip all remaining lines until the end of comments.
+                        // Those lines were the previous generated table.
+                        do {
+                            line = in.readLine();
+                            if (line == null) {
+                                throw new EOFException();
+                            }
+                        } while (!line.trim().equals("*/"));
+                        buffer.append(line).append('\n');
+                        done = true;
                     }
                 }
             }

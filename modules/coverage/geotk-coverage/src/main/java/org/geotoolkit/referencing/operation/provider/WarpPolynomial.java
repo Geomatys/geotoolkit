@@ -46,8 +46,8 @@ import static org.geotoolkit.internal.referencing.Identifiers.createDescriptorGr
  * {@linkplain javax.media.jai.WarpPolynomial} from a set of polynomial coefficients,
  * and wraps it in a {@link WarpTransform2D} object.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.20
  *
  * @since 2.1
  * @module
@@ -62,58 +62,169 @@ public class WarpPolynomial extends MathTransformProvider {
     /**
      * The operation parameter descriptor for the
      * "{@link javax.media.jai.WarpPolynomial#getDegree degree}" parameter value.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
-    public static final ParameterDescriptor<Integer> DEGREE = DefaultParameterDescriptor.create(
-            "degree", 2, 1, WarpTransform2D.MAX_DEGREE);
+    public static final ParameterDescriptor<Integer> DEGREE = new DefaultParameterDescriptor<Integer>(
+            Citations.GEOTOOLKIT, "degree", Integer.class, null, 2, 1, WarpTransform2D.MAX_DEGREE, null, true);
 
     /**
      * The operation parameter descriptor for the
      * "{@link javax.media.jai.WarpPolynomial#getXCoeffs xCoeffs}" parameter value.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
     public static final ParameterDescriptor<float[]> X_COEFFS = new DefaultParameterDescriptor<float[]>(
-            "xCoeffs", float[].class, null, null);
+            Citations.GEOTOOLKIT, "xCoeffs", float[].class, null, null, null, null, null, true);
 
     /**
      * The operation parameter descriptor for the
      * "{@link javax.media.jai.WarpPolynomial#getYCoeffs yCoeffs}" parameter value.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
     public static final ParameterDescriptor<float[]> Y_COEFFS = new DefaultParameterDescriptor<float[]>(
-            "yCoeffs", float[].class, null, null);
+            Citations.GEOTOOLKIT, "yCoeffs", float[].class, null, null, null, null, null, true);
 
     /**
      * The operation parameter descriptor for the
      * "{@link javax.media.jai.WarpPolynomial#getPreScaleX preScaleX}" parameter value.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
     public static final ParameterDescriptor<Float> PRE_SCALE_X;
 
     /**
      * The operation parameter descriptor for the
      * "{@link javax.media.jai.WarpPolynomial#getPreScaleY preScaleY}" parameter value.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
     public static final ParameterDescriptor<Float> PRE_SCALE_Y;
 
     /**
      * The operation parameter descriptor for the
      * "{@link javax.media.jai.WarpPolynomial#getPostScaleX postScaleX}" parameter value.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
     public static final ParameterDescriptor<Float> POST_SCALE_X;
 
     /**
      * The operation parameter descriptor for the
      * "{@link javax.media.jai.WarpPolynomial#getPostScaleY postScaleY}" parameter value.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
     public static final ParameterDescriptor<Float> POST_SCALE_Y;
     static {
         final Float ONE = 1f;
         final Class<Float> type = Float.class;
-        PRE_SCALE_X  = new DefaultParameterDescriptor<Float>( "preScaleX", null, type, ONE, false);
-        PRE_SCALE_Y  = new DefaultParameterDescriptor<Float>( "preScaleY", null, type, ONE, false);
-        POST_SCALE_X = new DefaultParameterDescriptor<Float>("postScaleX", null, type, ONE, false);
-        POST_SCALE_Y = new DefaultParameterDescriptor<Float>("postScaleY", null, type, ONE, false);
+        PRE_SCALE_X  = new DefaultParameterDescriptor<Float>(Citations.GEOTOOLKIT, "preScaleX",  type, null, ONE, null, null, null, false);
+        PRE_SCALE_Y  = new DefaultParameterDescriptor<Float>(Citations.GEOTOOLKIT, "preScaleY",  type, null, ONE, null, null, null, false);
+        POST_SCALE_X = new DefaultParameterDescriptor<Float>(Citations.GEOTOOLKIT, "postScaleX", type, null, ONE, null, null, null, false);
+        POST_SCALE_Y = new DefaultParameterDescriptor<Float>(Citations.GEOTOOLKIT, "postScaleY", type, null, ONE, null, null, null, false);
     }
 
     /**
-     * The parameters group.
+     * The group of all parameters expected by this coordinate operation.
+     * The following table lists the operation names and the parameters recognized by Geotk:
+     * <p>
+     * <!-- GENERATED PARAMETERS - inserted by ProjectionParametersJavadoc -->
+     * <table bgcolor="#F4F8FF" border="1" cellspacing="0" cellpadding="6">
+     *   <tr bgcolor="#B9DCFF" valign="top"><td colspan="2">
+     *     <table border="0" cellspacing="0" cellpadding="0">
+     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>Geotk:</code></td><td><code>WarpPolynomial</code></td></tr>
+     *     </table>
+     *   </td></tr>
+     *   <tr valign="top"><td>
+     *     <table border="0" cellspacing="0" cellpadding="0">
+     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>Geotk:</code></td><td><code>degree</code></td></tr>
+     *     </table>
+     *   </td><td>
+     *     <table border="0" cellspacing="0" cellpadding="0">
+     *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Integer</code></td></tr>
+     *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>mandatory</td></tr>
+     *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>[1…7]</td></tr>
+     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>2</td></tr>
+     *     </table>
+     *   </td></tr>
+     *   <tr valign="top"><td>
+     *     <table border="0" cellspacing="0" cellpadding="0">
+     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>Geotk:</code></td><td><code>xCoeffs</code></td></tr>
+     *     </table>
+     *   </td><td>
+     *     <table border="0" cellspacing="0" cellpadding="0">
+     *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>float[]</code></td></tr>
+     *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>mandatory</td></tr>
+     *     </table>
+     *   </td></tr>
+     *   <tr valign="top"><td>
+     *     <table border="0" cellspacing="0" cellpadding="0">
+     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>Geotk:</code></td><td><code>yCoeffs</code></td></tr>
+     *     </table>
+     *   </td><td>
+     *     <table border="0" cellspacing="0" cellpadding="0">
+     *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>float[]</code></td></tr>
+     *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>mandatory</td></tr>
+     *     </table>
+     *   </td></tr>
+     *   <tr valign="top"><td>
+     *     <table border="0" cellspacing="0" cellpadding="0">
+     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>Geotk:</code></td><td><code>preScaleX</code></td></tr>
+     *     </table>
+     *   </td><td>
+     *     <table border="0" cellspacing="0" cellpadding="0">
+     *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Float</code></td></tr>
+     *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>optional</td></tr>
+     *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>(-∞ … ∞)</td></tr>
+     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>1</td></tr>
+     *     </table>
+     *   </td></tr>
+     *   <tr valign="top"><td>
+     *     <table border="0" cellspacing="0" cellpadding="0">
+     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>Geotk:</code></td><td><code>preScaleY</code></td></tr>
+     *     </table>
+     *   </td><td>
+     *     <table border="0" cellspacing="0" cellpadding="0">
+     *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Float</code></td></tr>
+     *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>optional</td></tr>
+     *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>(-∞ … ∞)</td></tr>
+     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>1</td></tr>
+     *     </table>
+     *   </td></tr>
+     *   <tr valign="top"><td>
+     *     <table border="0" cellspacing="0" cellpadding="0">
+     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>Geotk:</code></td><td><code>postScaleX</code></td></tr>
+     *     </table>
+     *   </td><td>
+     *     <table border="0" cellspacing="0" cellpadding="0">
+     *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Float</code></td></tr>
+     *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>optional</td></tr>
+     *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>(-∞ … ∞)</td></tr>
+     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>1</td></tr>
+     *     </table>
+     *   </td></tr>
+     *   <tr valign="top"><td>
+     *     <table border="0" cellspacing="0" cellpadding="0">
+     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>Geotk:</code></td><td><code>postScaleY</code></td></tr>
+     *     </table>
+     *   </td><td>
+     *     <table border="0" cellspacing="0" cellpadding="0">
+     *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Float</code></td></tr>
+     *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>optional</td></tr>
+     *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>(-∞ … ∞)</td></tr>
+     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>1</td></tr>
+     *     </table>
+     *   </td></tr>
+     * </table>
      */
     public static final ParameterDescriptorGroup PARAMETERS = createDescriptorGroup(new NamedIdentifier[] {
             new NamedIdentifier(Citations.GEOTOOLKIT, "WarpPolynomial")

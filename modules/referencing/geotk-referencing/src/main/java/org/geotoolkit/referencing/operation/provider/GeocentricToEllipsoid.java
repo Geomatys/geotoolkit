@@ -41,6 +41,10 @@ import static org.geotoolkit.parameter.Parameters.*;
  * constructs transforms from {@linkplain GeocentricCRS geocentric} to {@linkplain GeographicCRS
  * geographic} coordinate reference systems.
  * <p>
+ * By default, this provider creates a transform to a three-dimensional ellipsoidal coordinate
+ * system, which is the behavior implied in OGC's WKT. However a Geotk-specific {@code "dim"}
+ * parameter allows to transform to a two-dimensional ellipsoidal coordinate system instead.
+ * <p>
  * <strong>WARNING:</strong> The EPSG code is the same than the {@link EllipsoidToGeocentric}
  * one. To avoid ambiguity, use the OGC name instead: {@code "Geocentric_To_Ellipsoid"}.
  *
@@ -91,7 +95,9 @@ public class GeocentricToEllipsoid extends MathTransformProvider {
     public static final ParameterDescriptor<Integer> DIM = EllipsoidToGeocentric.DIM;
 
     /**
-     * The parameters group.
+     * The group of all parameters expected by this coordinate operation.
+     * The following table lists the operation names and the parameters recognized by Geotk:
+     * <p>
      * <!-- GENERATED PARAMETERS - inserted by ProjectionParametersJavadoc -->
      * <table bgcolor="#F4F8FF" border="1" cellspacing="0" cellpadding="6">
      *   <tr bgcolor="#B9DCFF" valign="top"><td colspan="2">

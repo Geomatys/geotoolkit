@@ -64,8 +64,8 @@ public class Logarithmic extends MathTransformProvider {
      * descriptor(String)}</code> instead.
      */
     @Deprecated
-    public static final ParameterDescriptor<Double> BASE = DefaultParameterDescriptor.create(
-            "base", 10, 0, Double.POSITIVE_INFINITY, Unit.ONE);
+    public static final ParameterDescriptor<Double> BASE = new DefaultParameterDescriptor<Double>(
+            Citations.GEOTOOLKIT, "base", Double.class, null, 10.0, 0.0, null, Unit.ONE, true);
 
     /**
      * The operation parameter descriptor for the {@linkplain LogarithmicTransform1D#offset offset}
@@ -75,11 +75,13 @@ public class Logarithmic extends MathTransformProvider {
      * descriptor(String)}</code> instead.
      */
     @Deprecated
-    public static final ParameterDescriptor<Double> OFFSET = DefaultParameterDescriptor.create(
-            "offset", 0, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Unit.ONE);
+    public static final ParameterDescriptor<Double> OFFSET = new DefaultParameterDescriptor<Double>(
+            Citations.GEOTOOLKIT, "offset", Double.class, null, 0.0, null, null, Unit.ONE, true);
 
     /**
-     * The parameters group.
+     * The group of all parameters expected by this coordinate operation.
+     * The following table lists the operation names and the parameters recognized by Geotk:
+     * <p>
      * <!-- GENERATED PARAMETERS - inserted by ProjectionParametersJavadoc -->
      * <table bgcolor="#F4F8FF" border="1" cellspacing="0" cellpadding="6">
      *   <tr bgcolor="#B9DCFF" valign="top"><td colspan="2">
@@ -89,7 +91,7 @@ public class Logarithmic extends MathTransformProvider {
      *   </td></tr>
      *   <tr valign="top"><td>
      *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>null:</code></td><td><code>base</code></td></tr>
+     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>Geotk:</code></td><td><code>base</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table border="0" cellspacing="0" cellpadding="0">
@@ -101,7 +103,7 @@ public class Logarithmic extends MathTransformProvider {
      *   </td></tr>
      *   <tr valign="top"><td>
      *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>null:</code></td><td><code>offset</code></td></tr>
+     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>Geotk:</code></td><td><code>offset</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table border="0" cellspacing="0" cellpadding="0">

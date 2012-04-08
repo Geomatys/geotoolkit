@@ -64,6 +64,16 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-referencing3D</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-coverage</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.opengis</groupId>
       <artifactId>geoapi-conformance</artifactId>
       <scope>compile</scope>
