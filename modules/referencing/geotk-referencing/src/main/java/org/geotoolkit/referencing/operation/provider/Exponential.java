@@ -74,8 +74,8 @@ public class Exponential extends MathTransformProvider {
      * descriptor(String)}</code> instead.
      */
     @Deprecated
-    public static final ParameterDescriptor<Double> SCALE = DefaultParameterDescriptor.create(
-            "scale", 1, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Unit.ONE);
+    public static final ParameterDescriptor<Double> SCALE = new DefaultParameterDescriptor<Double>(
+            Citations.GEOTOOLKIT, "scale", Double.class, null, 1.0, null, null, Unit.ONE, true);
 
     /**
      * The parameters group.
@@ -88,7 +88,7 @@ public class Exponential extends MathTransformProvider {
      *   </td></tr>
      *   <tr valign="top"><td>
      *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>null:</code></td><td><code>base</code></td></tr>
+     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>Geotk:</code></td><td><code>base</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table border="0" cellspacing="0" cellpadding="0">
@@ -100,7 +100,7 @@ public class Exponential extends MathTransformProvider {
      *   </td></tr>
      *   <tr valign="top"><td>
      *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>null:</code></td><td><code>scale</code></td></tr>
+     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>Geotk:</code></td><td><code>scale</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table border="0" cellspacing="0" cellpadding="0">

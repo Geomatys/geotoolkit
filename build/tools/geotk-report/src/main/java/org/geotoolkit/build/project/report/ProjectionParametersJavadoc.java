@@ -68,12 +68,18 @@ public final class ProjectionParametersJavadoc extends JavadocUpdater {
      * @throws ReflectiveOperationException Should never happen.
      * @throws IOException If an error occurred while updating the source files.
      */
-    public static void main(String[] args) throws ReflectiveOperationException, IOException {
+    public static void main(final String[] args) throws ReflectiveOperationException, IOException {
         Locale.setDefault(Locale.ENGLISH);
         final ProjectionParametersJavadoc updater = new ProjectionParametersJavadoc();
         for (final Class<?> parameter : updater.parameters) {
             updater.createGlobalTable((ParameterDescriptorGroup) parameter.getField("PARAMETERS").get(null));
-            updater.update("referencing/geotk-referencing", parameter);
+            String module = "referencing/geotk-referencing";
+            if (parameter == EllipsoidToGeoid.class) {
+                module = "referencing/geotk-referencing3D";
+            } else if (parameter == WarpPolynomial.class) {
+                module = "coverage/geotk-coverage";
+            }
+            updater.update(module, parameter);
         }
     }
 
@@ -90,6 +96,7 @@ public final class ProjectionParametersJavadoc extends JavadocUpdater {
         CassiniSoldner                    .class,
         CoordinateFrameRotation           .class,
         EllipsoidToGeocentric             .class,
+        EllipsoidToGeoid                  .class, // Provided in geotk-referencing3D module.
         EquidistantCylindrical            .class,
         Exponential                       .class,
         GeocentricToEllipsoid             .class,
@@ -125,7 +132,8 @@ public final class ProjectionParametersJavadoc extends JavadocUpdater {
         RGF93                             .class,
         Stereographic                     .class,
         TransverseMercator                .class,
-        TransverseMercator.SouthOrientated.class
+        TransverseMercator.SouthOrientated.class,
+        WarpPolynomial                    .class  // Provided in the geotk-coverage module.
     };
 
     /**

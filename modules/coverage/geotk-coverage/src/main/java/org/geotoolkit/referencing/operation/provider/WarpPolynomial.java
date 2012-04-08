@@ -46,8 +46,8 @@ import static org.geotoolkit.internal.referencing.Identifiers.createDescriptorGr
  * {@linkplain javax.media.jai.WarpPolynomial} from a set of polynomial coefficients,
  * and wraps it in a {@link WarpTransform2D} object.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.20
  *
  * @since 2.1
  * @module
@@ -62,54 +62,75 @@ public class WarpPolynomial extends MathTransformProvider {
     /**
      * The operation parameter descriptor for the
      * "{@link javax.media.jai.WarpPolynomial#getDegree degree}" parameter value.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
-    public static final ParameterDescriptor<Integer> DEGREE = DefaultParameterDescriptor.create(
-            "degree", 2, 1, WarpTransform2D.MAX_DEGREE);
+    public static final ParameterDescriptor<Integer> DEGREE = new DefaultParameterDescriptor<Integer>(
+            Citations.GEOTOOLKIT, "degree", Integer.class, null, 2, 1, WarpTransform2D.MAX_DEGREE, null, true);
 
     /**
      * The operation parameter descriptor for the
      * "{@link javax.media.jai.WarpPolynomial#getXCoeffs xCoeffs}" parameter value.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
     public static final ParameterDescriptor<float[]> X_COEFFS = new DefaultParameterDescriptor<>(
-            "xCoeffs", float[].class, null, null);
+            Citations.GEOTOOLKIT, "xCoeffs", float[].class, null, null, null, null, null, true);
 
     /**
      * The operation parameter descriptor for the
      * "{@link javax.media.jai.WarpPolynomial#getYCoeffs yCoeffs}" parameter value.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
     public static final ParameterDescriptor<float[]> Y_COEFFS = new DefaultParameterDescriptor<>(
-            "yCoeffs", float[].class, null, null);
+            Citations.GEOTOOLKIT, "yCoeffs", float[].class, null, null, null, null, null, true);
 
     /**
      * The operation parameter descriptor for the
      * "{@link javax.media.jai.WarpPolynomial#getPreScaleX preScaleX}" parameter value.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
     public static final ParameterDescriptor<Float> PRE_SCALE_X;
 
     /**
      * The operation parameter descriptor for the
      * "{@link javax.media.jai.WarpPolynomial#getPreScaleY preScaleY}" parameter value.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
     public static final ParameterDescriptor<Float> PRE_SCALE_Y;
 
     /**
      * The operation parameter descriptor for the
      * "{@link javax.media.jai.WarpPolynomial#getPostScaleX postScaleX}" parameter value.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
     public static final ParameterDescriptor<Float> POST_SCALE_X;
 
     /**
      * The operation parameter descriptor for the
      * "{@link javax.media.jai.WarpPolynomial#getPostScaleY postScaleY}" parameter value.
+     *
+     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+     * descriptor(String)}</code> instead.
      */
     public static final ParameterDescriptor<Float> POST_SCALE_Y;
     static {
         final Float ONE = 1f;
         final Class<Float> type = Float.class;
-        PRE_SCALE_X  = new DefaultParameterDescriptor<>( "preScaleX", null, type, ONE, false);
-        PRE_SCALE_Y  = new DefaultParameterDescriptor<>( "preScaleY", null, type, ONE, false);
-        POST_SCALE_X = new DefaultParameterDescriptor<>("postScaleX", null, type, ONE, false);
-        POST_SCALE_Y = new DefaultParameterDescriptor<>("postScaleY", null, type, ONE, false);
+        PRE_SCALE_X  = new DefaultParameterDescriptor<Float>(Citations.GEOTOOLKIT, "preScaleX",  type, null, ONE, null, null, null, false);
+        PRE_SCALE_Y  = new DefaultParameterDescriptor<Float>(Citations.GEOTOOLKIT, "preScaleY",  type, null, ONE, null, null, null, false);
+        POST_SCALE_X = new DefaultParameterDescriptor<Float>(Citations.GEOTOOLKIT, "postScaleX", type, null, ONE, null, null, null, false);
+        POST_SCALE_Y = new DefaultParameterDescriptor<Float>(Citations.GEOTOOLKIT, "postScaleY", type, null, ONE, null, null, null, false);
     }
 
     /**
