@@ -37,7 +37,6 @@
 
         <!-- GeoToolKit dependencies -->
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-analytics</artifactId></dependency>
-        <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-clustering</artifactId></dependency>
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-coverage</artifactId></dependency>
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-coverage-sql</artifactId></dependency>
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-coverageio</artifactId></dependency>
