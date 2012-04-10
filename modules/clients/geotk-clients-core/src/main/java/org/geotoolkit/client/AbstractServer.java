@@ -16,11 +16,14 @@
  */
 package org.geotoolkit.client;
 
+import java.net.URLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.List;
+import java.util.Map;
 
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.security.DefaultClientSecurity;
@@ -39,6 +42,8 @@ public abstract class AbstractServer implements Server{
     
     protected final URL serverURL;
     protected final ClientSecurity securityManager;
+    
+    private String sessionId = null;
 
     public AbstractServer(URL serverURL) {
         this(serverURL,null);
@@ -86,4 +91,19 @@ public abstract class AbstractServer implements Server{
         return LOGGER;
     }
     
+    protected void applySessionId(final URLConnection conec) {
+        if (sessionId != null) {
+            conec.setRequestProperty("Cookie", sessionId);
+        } else {
+            final Map<String, List<String>> headers = conec.getHeaderFields();
+            for (String key : headers.keySet()) {
+                for (String value : headers.get(key)) {
+                    final int beginIndex = value.indexOf("JSESSIONID=");
+                    if (beginIndex != -1) {
+                        sessionId = value;
+                    }
+                }
+            }
+        }
+    }
 }
