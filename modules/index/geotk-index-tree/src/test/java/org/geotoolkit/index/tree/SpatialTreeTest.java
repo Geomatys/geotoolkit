@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.List;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
+import org.geotoolkit.index.tree.io.DefaultTreeVisitor;
 import org.geotoolkit.util.ArgumentChecks;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
@@ -112,7 +113,7 @@ public abstract class SpatialTreeTest extends TreeTest{
         final GeneralEnvelope gem = DefaultTreeUtils.getEnveloppeMin(lData);
         assertTrue(gem.equals(gr, 1E-9, false));
         final List<Envelope> listSearch = new ArrayList<Envelope>();
-        tree.search(gr, listSearch);
+        tree.search(gr, new DefaultTreeVisitor(listSearch));
         assertTrue(listSearch.size() == lData.size());
     }
 
@@ -178,7 +179,7 @@ public abstract class SpatialTreeTest extends TreeTest{
         tree.insertAll(lGE.iterator());
 
         final List<Envelope> lGES = new ArrayList<Envelope>();
-        tree.search(gR, lGES);
+        tree.search(gR, new DefaultTreeVisitor(lGES));
 
         assertTrue(compareList(lGERef, lGES));
     }
@@ -208,7 +209,7 @@ public abstract class SpatialTreeTest extends TreeTest{
     @Test
     public void queryInsideTest() throws MismatchedReferenceSystemException {
         final List<Envelope> listSearch = new ArrayList<Envelope>();
-        tree.search(DefaultTreeUtils.getEnveloppeMin(lData), listSearch);
+        tree.search(DefaultTreeUtils.getEnveloppeMin(lData), new DefaultTreeVisitor(listSearch));
         assertTrue(compareList(lData, listSearch));
     }
 
@@ -224,7 +225,7 @@ public abstract class SpatialTreeTest extends TreeTest{
             areaSearch.setRange(i, minMax[i+1]+100, minMax[i+1]+2000);
         }
         final List<Envelope> listSearch = new ArrayList<Envelope>();
-        tree.search(areaSearch, listSearch);
+        tree.search(areaSearch, new DefaultTreeVisitor(listSearch));
         assertTrue(listSearch.isEmpty());
     }
 
@@ -242,11 +243,11 @@ public abstract class SpatialTreeTest extends TreeTest{
             areaSearch.setRange(i, minMax[2*i], minMax[2*i+1]);
         }
         final List<Envelope> listSearch = new ArrayList<Envelope>();
-        tree.search(areaSearch, listSearch);
+        tree.search(areaSearch, new DefaultTreeVisitor(listSearch));
         assertTrue(listSearch.isEmpty());
         assertTrue(tree.getElementsNumber()==0);
         insert();
-        tree.search(areaSearch, listSearch);
+        tree.search(areaSearch, new DefaultTreeVisitor(listSearch));
         assertTrue(compareList(listSearch, lData));
     }
 }

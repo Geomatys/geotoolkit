@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.index.tree.basic.SplitCase;
+import org.geotoolkit.index.tree.io.DefaultTreeVisitor;
 import org.geotoolkit.index.tree.io.TreeReader;
 import org.geotoolkit.index.tree.io.TreeWriter;
 import org.geotoolkit.index.tree.nodefactory.TreeNodeFactory;
@@ -198,8 +199,8 @@ public class ReaderWriterTest {
         ArgumentChecks.ensureNonNull("testTree : treeTest", treeTest);
         final List<Envelope> listSearchTreeRef = new ArrayList<Envelope>();
         final List<Envelope> listSearchTreeTest = new ArrayList<Envelope>();
-        treeRef.search(((Node) treeRef.getRoot()).getBoundary(), listSearchTreeRef);
-        treeTest.search(((Node) treeTest.getRoot()).getBoundary(), listSearchTreeTest);
+        treeRef.search(((Node) treeRef.getRoot()).getBoundary(), new DefaultTreeVisitor(listSearchTreeRef));
+        treeTest.search(((Node) treeTest.getRoot()).getBoundary(), new DefaultTreeVisitor(listSearchTreeTest));
         assertTrue(compareList(listSearchTreeRef, listSearchTreeTest));
         assertTrue(countAllNode(treeRef) == countAllNode(treeTest));
         assertTrue(compareListLeaf(getAllLeaf(treeRef), getAllLeaf(treeTest)));

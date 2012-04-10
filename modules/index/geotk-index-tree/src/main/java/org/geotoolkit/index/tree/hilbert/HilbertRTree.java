@@ -17,13 +17,20 @@
  */
 package org.geotoolkit.index.tree.hilbert;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import static org.geotoolkit.index.tree.DefaultTreeUtils.countElements;
 import static org.geotoolkit.index.tree.DefaultTreeUtils.getEnveloppeMin;
 import org.geotoolkit.index.tree.*;
 import org.geotoolkit.index.tree.calculator.Calculator;
+import org.geotoolkit.index.tree.io.DefaultTreeVisitor;
+import static org.geotoolkit.index.tree.io.TVR.*;
+import org.geotoolkit.index.tree.io.TreeVisitor;
+import org.geotoolkit.index.tree.io.TreeVisitorResult;
 import org.geotoolkit.index.tree.nodefactory.NodeFactory;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.ArgumentChecks;
@@ -33,7 +40,6 @@ import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedReferenceSystemException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.TransformException;
 
 /**
  * Create Hilbert RTree.
@@ -80,15 +86,15 @@ public class HilbertRTree extends DefaultAbstractTree {
      * {@inheritDoc}
      */
     @Override
-    public void search(final Envelope regionSearch, final Collection<Envelope> result) throws IllegalArgumentException {
+    public void search(final Envelope regionSearch, final TreeVisitor visitor) throws IllegalArgumentException {
         ArgumentChecks.ensureNonNull("search : region search", regionSearch);
-        ArgumentChecks.ensureNonNull("search : result", result);
+        ArgumentChecks.ensureNonNull("search : visitor", visitor);
         if(!CRS.equalsIgnoreMetadata(crs, regionSearch.getCoordinateReferenceSystem())){
             throw new MismatchedReferenceSystemException();
         }
         final Node root = getRoot();
         if (!root.isEmpty() && root != null) {
-            searchHilbertNode(root, regionSearch, result);
+            searchHilbertNode(root, regionSearch, visitor);
         }
     }
 
@@ -145,8 +151,9 @@ public class HilbertRTree extends DefaultAbstractTree {
      * @param regionSearch area of search.
      * @param result {@code List} where is add search resulting.
      */
-    public static void searchHilbertNode(final Node candidate, final Envelope regionSearch, final Collection<Envelope> resultList) {
-
+    public static TreeVisitorResult searchHilbertNode(final Node candidate, final Envelope regionSearch, final TreeVisitor visitor) {
+        final TreeVisitorResult tvr = visitor.filter(candidate);
+        if(isTerminate(tvr))return tvr;
         final Envelope bound = candidate.getBoundary();
         if(bound != null){
             if(regionSearch == null){
@@ -154,40 +161,58 @@ public class HilbertRTree extends DefaultAbstractTree {
                     final List<Node> lN = candidate.getChildren();
                     for (Node n2d : lN.toArray(new Node[lN.size()])) {
                         if (!n2d.isEmpty()) {
-                            resultList.addAll(Arrays.asList(n2d.getEntries().toArray(new Envelope[n2d.getEntries().size()])));
+                            for(Envelope env : n2d.getEntries().toArray(new Envelope[n2d.getEntries().size()])){
+                                final TreeVisitorResult tvrTemp = visitor.visit(env);
+                                if(isTerminate(tvrTemp))return tvrTemp;
+                                if(isSkipSibling(tvrTemp))break;
+                            }
                         }
                     }
                 }else{
-                    for(Node nod : candidate.getChildren()){
-                        searchHilbertNode(nod, null, resultList);
+                    if(!isSkipSubTree(tvr)){
+                        for(Node nod : candidate.getChildren()){
+                            final TreeVisitorResult tvrTemp = searchHilbertNode(nod, null, visitor);
+                            if(isTerminate(tvrTemp))return tvrTemp;
+                            if(isSkipSibling(tvrTemp))break;
+                        }
                     }
                 }
             }else{
                 final GeneralEnvelope rS = new GeneralEnvelope(regionSearch);
                 if(rS.contains(bound, true)){
-                    searchHilbertNode(candidate, null, resultList);
+                    searchHilbertNode(candidate, null, visitor);
                 }else if(rS.intersects(bound, true)){
                     if(candidate.isLeaf()){
                         final List<Node> lN = candidate.getChildren();
                         for (Node n2d : lN.toArray(new Node[lN.size()])) {
+                            TreeVisitorResult tvrTemp = null;
                             if (!n2d.isEmpty()) {
                                 if (rS.intersects(n2d.getBoundary(), true)) {
                                     for (Envelope sh : n2d.getEntries().toArray(new Envelope[n2d.getEntries().size()])) {
                                         if (rS.intersects(sh, true)) {
-                                            resultList.add(sh);
+                                            tvrTemp = visitor.visit(sh);
                                         }
+                                        if(isTerminate(tvrTemp) && tvrTemp != null)return tvrTemp;
+                                        if(isSkipSibling(tvrTemp) && tvrTemp != null)break;
                                     }
                                 }
                             }
+                            if(isSkipSibling(tvrTemp))break;
                         }
                     }else{
-                        for(Node child : candidate.getChildren()){
-                            searchHilbertNode(child, regionSearch, resultList);
+                        if(!isSkipSubTree(tvr)){
+                            for(Node child : candidate.getChildren()){
+                                final TreeVisitorResult tvrTemp = searchHilbertNode(child, regionSearch, visitor);
+                                if(isTerminate(tvrTemp))return tvrTemp;
+                                if(isSkipSibling(tvrTemp))break;
+                            }
                         }
                     }
                 }
             }
+            return tvr;
         }
+        return TreeVisitorResult.TERMINATE;
     }
 
     /**
@@ -218,7 +243,7 @@ public class HilbertRTree extends DefaultAbstractTree {
             final GeneralEnvelope cB = new GeneralEnvelope(candidate.getBoundary());
             if ((!cB.contains(entry, true))) {
                 List<Envelope> lS = new ArrayList<Envelope>();
-                searchHilbertNode(candidate, cB, lS);
+                searchHilbertNode(candidate, cB, new DefaultTreeVisitor(lS));
                 lS.add(entry);
                 Envelope envelope = getEnveloppeMin(lS);
                 candidate.getTree().getCalculator().createBasicHL(candidate, (Integer) candidate.getUserProperty("hilbertOrder"), envelope);
@@ -252,7 +277,7 @@ public class HilbertRTree extends DefaultAbstractTree {
         if (cleaf && (cHO < ((HilbertRTree) candidate.getTree()).getHilbertOrder())) {
 
             final List<Envelope> lS = new ArrayList<Envelope>();
-            searchHilbertNode(candidate, candidate.getBoundary(), lS);
+            searchHilbertNode(candidate, candidate.getBoundary(), new DefaultTreeVisitor(lS));
             if (lS.isEmpty()) {
                 throw new IllegalStateException("impossible to increase Hilbert order of a empty Node");
             }
@@ -777,7 +802,7 @@ public class HilbertRTree extends DefaultAbstractTree {
             final HilbertRTree tree = (HilbertRTree) candidate.getTree();
             final Calculator calc = tree.getCalculator();
             final List<Envelope> lS = new ArrayList<Envelope>();
-            searchHilbertNode(candidate, candidate.getBoundary(), lS);
+            searchHilbertNode(candidate, candidate.getBoundary(), new DefaultTreeVisitor(lS));
 
             if (lS.size() <= tree.getMaxElements() * Math.pow(2, tree.getHilbertOrder() * 2) && !lS.isEmpty()) {
                 final Envelope bound = getEnveloppeMin(lS);

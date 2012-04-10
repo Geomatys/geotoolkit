@@ -17,7 +17,10 @@
  */
 package org.geotoolkit.index.tree.star;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import static org.geotoolkit.index.tree.DefaultTreeUtils.getMedian;
@@ -25,6 +28,10 @@ import org.geotoolkit.index.tree.*;
 import org.geotoolkit.index.tree.calculator.Calculator;
 import org.geotoolkit.index.tree.calculator.Calculator2D;
 import org.geotoolkit.index.tree.calculator.Calculator3D;
+import org.geotoolkit.index.tree.io.DefaultTreeVisitor;
+import static org.geotoolkit.index.tree.io.TVR.*;
+import org.geotoolkit.index.tree.io.TreeVisitor;
+import org.geotoolkit.index.tree.io.TreeVisitorResult;
 import org.geotoolkit.index.tree.nodefactory.NodeFactory;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.ArgumentChecks;
@@ -63,15 +70,15 @@ public class StarRTree extends DefaultAbstractTree {
      * {@inheritDoc}
      */
     @Override
-    public void search(final Envelope regionSearch, final Collection<Envelope> result) throws IllegalArgumentException{
+    public void search(final Envelope regionSearch, TreeVisitor visitor) throws IllegalArgumentException{
         ArgumentChecks.ensureNonNull("search : region search", regionSearch);
-        ArgumentChecks.ensureNonNull("search : result", result);
+        ArgumentChecks.ensureNonNull("search : visitor", visitor);
         if(!CRS.equalsIgnoreMetadata(crs, regionSearch.getCoordinateReferenceSystem())){
             throw new MismatchedReferenceSystemException();
         }
         final Node root = this.getRoot();
         if(root != null){
-            nodeSearch(root, regionSearch, result);
+            nodeSearch(root, regionSearch, visitor);
         }
     }
 
@@ -133,36 +140,58 @@ public class StarRTree extends DefaultAbstractTree {
      * @param regionSearch area of search.
      * @param result {@code List} where is add search resulting.
      */
-    private static void nodeSearch(final Node candidate, final Envelope regionSearch, final Collection<Envelope> resultList){
+    private static TreeVisitorResult nodeSearch(final Node candidate, final Envelope regionSearch, final TreeVisitor visitor){
+        final TreeVisitorResult tvr = visitor.filter(candidate);
+        if(isTerminate(tvr))return tvr;
         final Envelope bound = candidate.getBoundary();
         if(bound != null){
             if(regionSearch == null){
                 if(candidate.isLeaf()){
-                    resultList.addAll(candidate.getEntries());
-                }else{
-                    for(Node nod : candidate.getChildren()){
-                        nodeSearch(nod, null, resultList);
+                    for(Envelope env : candidate.getEntries()){
+                        final TreeVisitorResult tvrTemp = visitor.visit(env);
+                        if(isTerminate(tvrTemp))return tvrTemp;
+                        if(isSkipSibling(tvrTemp))break;
                     }
+                }else{
+                    if(!isSkipSubTree(tvr)){
+                        for(Node nod : candidate.getChildren()){
+                            final TreeVisitorResult tvrTemp = nodeSearch(nod, null, visitor);//filter
+                            if(isTerminate(tvrTemp))return tvrTemp;
+                            if(isSkipSibling(tvrTemp))break;
+                        }
+                    }
+
                 }
             }else{
                 final GeneralEnvelope rS = new GeneralEnvelope(regionSearch);
                 if(rS.contains(bound, true)){
-                    nodeSearch(candidate, null, resultList);
+                    nodeSearch(candidate, null, visitor);
                 }else if(rS.intersects(bound, true)){
                     if(candidate.isLeaf()){
                         for(Envelope gn : candidate.getEntries()){
+                            TreeVisitorResult tvrTemp = null;
                             if(rS.intersects(gn, true)){
-                                resultList.add(gn);
+                                tvrTemp = visitor.visit(gn);
+                            }
+                            if(tvrTemp != null){
+                                if(isTerminate(tvrTemp))return tvrTemp;
+                                if(isSkipSibling(tvrTemp))break;
                             }
                         }
                     }else{
-                        for(Node child : candidate.getChildren()){
-                            nodeSearch(child, regionSearch, resultList);
+                        if(!isSkipSubTree(tvr)){
+                            for(Node child : candidate.getChildren()){
+                                final TreeVisitorResult tvrTemp = nodeSearch(child, regionSearch, visitor);
+                                if(isTerminate(tvrTemp))return tvrTemp;
+                                if(isSkipSibling(tvrTemp))break;
+                            }
                         }
                     }
                 }
             }
+            return tvr;
         }
+        return TreeVisitorResult.TERMINATE;
     }
 
     /**Insert new {@code Entry} in branch and re-organize {@code Node} if it's necessary.
@@ -788,10 +817,11 @@ public class StarRTree extends DefaultAbstractTree {
         final int[] dims = ((DefaultAbstractTree)candidate.getTree()).getDims();
         final Calculator calc =(dims.length<=2)?new Calculator2D(dims):new Calculator3D(dims);
         final List<Envelope> lsh = new ArrayList<Envelope>();
+        final TreeVisitor tvrSearch = new DefaultTreeVisitor(lsh);
         final Envelope boundGE = candidate.getBoundary();
         final DirectPosition candidateCentroid = getMedian(boundGE);
         final double distPermit = calc.getDistance(boundGE.getLowerCorner(), boundGE.getUpperCorner()) / 1.666666666;
-        nodeSearch(candidate, boundGE, lsh);
+        nodeSearch(candidate, boundGE, tvrSearch);
         for (int i = lsh.size() - 1; i >= 0; i--) {
             if (calc.getDistance(candidateCentroid, DefaultTreeUtils.getMedian(lsh.get(i))) < distPermit) {
                 lsh.remove(i);

@@ -10,8 +10,10 @@ import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.index.tree.TreeFactory;
 import org.geotoolkit.index.tree.basic.SplitCase;
 import org.geotoolkit.index.tree.calculator.Calculator;
+import org.geotoolkit.index.tree.io.DefaultTreeVisitor;
 
 import org.geotoolkit.index.tree.io.TreeReader;
+import org.geotoolkit.index.tree.io.TreeVisitor;
 import org.geotoolkit.index.tree.io.TreeWriter;
 import org.geotoolkit.index.tree.nodefactory.TreeNodeFactory;
 import org.geotoolkit.index.tree.nodefactory.NodeFactory;
@@ -63,12 +65,15 @@ public class TreeDemo {
         //Create empty GeneralEnvelope list to put search query results---------
         final List<Envelope> resultList = new ArrayList<Envelope>();
 
+        //Create Tree Visitor to know what we do search result------------------
+        final TreeVisitor treevisitor = new DefaultTreeVisitor(resultList);
+
         //Create area search----------------------------------------------------
         final GeneralEnvelope areaSearch = new GeneralEnvelope(crs);
         areaSearch.setEnvelope(-10, -20, 100, 200);
 
         //search----------------------------------------------------------------
-        tree.search(areaSearch, resultList);
+        tree.search(areaSearch, treevisitor);
 
         //Delete an entry in tree-----------------------------------------------
         tree.delete(entry);
@@ -97,8 +102,9 @@ public class TreeDemo {
         final GeneralEnvelope anotherAreaSearch = new GeneralEnvelope(anotherCrs);
         anotherAreaSearch.setEnvelope(-10, -20, 100, 200, 100, 200);
 
+        //we keep same visitor
         anotherTree.insert(anotherEntry);
-        anotherTree.search(anotherAreaSearch, resultList);
+        anotherTree.search(anotherAreaSearch, treevisitor);
         anotherTree.delete(anotherEntry);
 
                                 /*-------------------

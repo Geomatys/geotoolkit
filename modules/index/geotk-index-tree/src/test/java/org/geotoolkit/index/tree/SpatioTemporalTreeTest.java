@@ -24,6 +24,8 @@ import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.index.tree.basic.BasicRTree;
 import org.geotoolkit.index.tree.basic.SplitCase;
 import org.geotoolkit.index.tree.hilbert.HilbertRTree;
+import org.geotoolkit.index.tree.io.DefaultTreeVisitor;
+import org.geotoolkit.index.tree.io.TreeVisitor;
 import org.geotoolkit.index.tree.nodefactory.NodeFactory;
 import org.geotoolkit.index.tree.nodefactory.TreeNodeFactory;
 import org.geotoolkit.index.tree.star.StarRTree;
@@ -158,15 +160,16 @@ public class SpatioTemporalTreeTest extends TreeTest{
         initAreaSearch(areaSearch1, 0, 9);
         final List<Envelope> listSearch = new ArrayList<Envelope>();
         final List<Envelope> listRef = new ArrayList<Envelope>();
+        TreeVisitor tv = new DefaultTreeVisitor(listSearch);
         listRef.addAll(lResult.get(0));
-        tree.search(areaSearch1, listSearch);
+        tree.search(areaSearch1, tv);
         assertTrue(compareList(listSearch, listRef));
 
         listRef.clear();
         listSearch.clear();
         initAreaSearch(areaSearch1, 85, 95);
         listRef.addAll(lResult.get(9));
-        tree.search(areaSearch1, listSearch);
+        tree.search(areaSearch1, tv);
         assertTrue(compareList(listSearch, listRef));
 
         listRef.clear();
@@ -175,7 +178,7 @@ public class SpatioTemporalTreeTest extends TreeTest{
         listRef.addAll(lResult.get(5));
         listRef.addAll(lResult.get(6));
         listRef.addAll(lResult.get(7));
-        tree.search(areaSearch1, listSearch);
+        tree.search(areaSearch1, tv);
         assertTrue(compareList(listSearch, listRef));
     }
 
