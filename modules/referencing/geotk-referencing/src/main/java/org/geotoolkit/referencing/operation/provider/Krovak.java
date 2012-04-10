@@ -35,17 +35,39 @@ import org.geotoolkit.metadata.iso.citation.Citations;
 
 /**
  * The provider for "<cite>Krovak Oblique Conic Conformal</cite>" projection (EPSG:9819).
- * The programmatic names and parameters are enumerated at
- * <A HREF="http://www.remotesensing.org/geotiff/proj_list/krovak.html">Krovak on RemoteSensing.org</A>.
  * The math transform implementations instantiated by this provider may be any of the following classes:
  * <p>
  * <ul>
  *   <li>{@link org.geotoolkit.referencing.operation.projection.Krovak}</li>
  * </ul>
  *
+ * <!-- PARAMETERS Krovak -->
+ * <p>The following table summarizes the parameters recognized by this provider.
+ * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
+ * <p><b>Operation name:</b> Krovak</p>
+ * <table bgcolor="#F4F8FF" cellspacing="0" cellpadding="0">
+ *   <tr bgcolor="#B9DCFF"><th>Parameter Name</th><th>Default value</th></tr>
+ *   <tr><td>semi_major</td><td>&nbsp;&nbsp;</td></tr>
+ *   <tr><td>semi_minor</td><td>&nbsp;&nbsp;</td></tr>
+ *   <tr><td>roll_longitude</td><td>&nbsp;&nbsp;false</td></tr>
+ *   <tr><td>latitude_of_center</td><td>&nbsp;&nbsp;49.5°</td></tr>
+ *   <tr><td>longitude_of_center</td><td>&nbsp;&nbsp;24.83333333333333°</td></tr>
+ *   <tr><td>azimuth</td><td>&nbsp;&nbsp;30.28813972222222°</td></tr>
+ *   <tr><td>pseudo_standard_parallel_1</td><td>&nbsp;&nbsp;78.5°</td></tr>
+ *   <tr><td>scale_factor</td><td>&nbsp;&nbsp;0.9999</td></tr>
+ *   <tr><td>X_Scale</td><td>&nbsp;&nbsp;1</td></tr>
+ *   <tr><td>Y_Scale</td><td>&nbsp;&nbsp;1</td></tr>
+ *   <tr><td>XY_Plane_Rotation</td><td>&nbsp;&nbsp;0°</td></tr>
+ *   <tr><td>false_easting</td><td>&nbsp;&nbsp;0 metres</td></tr>
+ *   <tr><td>false_northing</td><td>&nbsp;&nbsp;0 metres</td></tr>
+ * </table>
+ * <!-- END OF PARAMETERS -->
+ *
  * @author Jan Jezek (HSRS)
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.20
+ *
+ * @see <A HREF="http://www.remotesensing.org/geotiff/proj_list/krovak.html">Krovak on RemoteSensing.org</A>
  *
  * @since 2.4
  * @module
@@ -405,8 +427,8 @@ public class Krovak extends MapProjection {
             new NamedIdentifier(Citations.PROJ4,      "krovak"),
             new NamedIdentifier(Citations.GEOTOOLKIT, "Krovak Oblique Conformal Conic"),
         }, null, new ParameterDescriptor<?>[] {
-            (ParameterDescriptor<?>) ObliqueStereographic.PARAMETERS.descriptor("semi_major"),
-            (ParameterDescriptor<?>) ObliqueStereographic.PARAMETERS.descriptor("semi_minor"),
+            sameParameterAs(ObliqueStereographic.PARAMETERS, "semi_major"),
+            sameParameterAs(ObliqueStereographic.PARAMETERS, "semi_minor"),
             ROLL_LONGITUDE,
             LATITUDE_OF_CENTRE, LONGITUDE_OF_CENTRE,
             AZIMUTH, PSEUDO_STANDARD_PARALLEL, SCALE_FACTOR,

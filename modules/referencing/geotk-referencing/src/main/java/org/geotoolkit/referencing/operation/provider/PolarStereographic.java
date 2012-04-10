@@ -33,18 +33,34 @@ import org.geotoolkit.metadata.iso.citation.Citations;
 
 /**
  * The provider for "<cite>Polar Stereographic (Variant A)</cite>" projection (EPSG:9810).
- * The programmatic names and parameters are enumerated at
- * <A HREF="http://www.remotesensing.org/geotiff/proj_list/polar_stereographic.html">Polar
- * Stereographic on RemoteSensing.org</A>. The math transform implementations instantiated
- * by this provider may be any of the following classes:
+ * The math transform implementations instantiated by this provider may be any of the following classes:
  * <p>
  * <ul>
  *   <li>{@link org.geotoolkit.referencing.operation.projection.PolarStereographic}</li>
  * </ul>
  *
+ * <!-- PARAMETERS PolarStereographic -->
+ * <p>The following table summarizes the parameters recognized by this provider.
+ * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
+ * <p><b>Operation name:</b> Polar_Stereographic</p>
+ * <table bgcolor="#F4F8FF" cellspacing="0" cellpadding="0">
+ *   <tr bgcolor="#B9DCFF"><th>Parameter Name</th><th>Default value</th></tr>
+ *   <tr><td>semi_major</td><td>&nbsp;&nbsp;</td></tr>
+ *   <tr><td>semi_minor</td><td>&nbsp;&nbsp;</td></tr>
+ *   <tr><td>roll_longitude</td><td>&nbsp;&nbsp;false</td></tr>
+ *   <tr><td>central_meridian</td><td>&nbsp;&nbsp;0°</td></tr>
+ *   <tr><td>latitude_of_origin</td><td>&nbsp;&nbsp;0°</td></tr>
+ *   <tr><td>scale_factor</td><td>&nbsp;&nbsp;1</td></tr>
+ *   <tr><td>false_easting</td><td>&nbsp;&nbsp;0 metres</td></tr>
+ *   <tr><td>false_northing</td><td>&nbsp;&nbsp;0 metres</td></tr>
+ * </table>
+ * <!-- END OF PARAMETERS -->
+ *
  * @author Rueben Schulz (UBC)
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.20
+ *
+ * @see <A HREF="http://www.remotesensing.org/geotiff/proj_list/polar_stereographic.html">Polar Stereographic on RemoteSensing.org</A>
  *
  * @since 2.4
  * @module
@@ -237,8 +253,8 @@ public class PolarStereographic extends Stereographic {
                 sameNameAs(Citations.PROJ4,      Stereographic.PARAMETERS),
                 sameNameAs(Citations.GEOTOOLKIT, Stereographic.PARAMETERS)
             }, excludes, new ParameterDescriptor<?>[] {
-                (ParameterDescriptor<?>) Mercator1SP.PARAMETERS.descriptor("semi_major"),
-                (ParameterDescriptor<?>) Mercator1SP.PARAMETERS.descriptor("semi_minor"),
+                sameParameterAs(Mercator1SP.PARAMETERS, "semi_major"),
+                sameParameterAs(Mercator1SP.PARAMETERS, "semi_minor"),
                 ROLL_LONGITUDE,
                 CENTRAL_MERIDIAN, LATITUDE_OF_ORIGIN, SCALE_FACTOR,
                 Mercator1SP.FALSE_EASTING,
@@ -277,6 +293,22 @@ public class PolarStereographic extends Stereographic {
      * The provider for "<cite>Polar Stereographic (Variant B)</cite>" projection (EPSG:9829).
      * This provider includes a {@code "Standard_Parallel_1"} parameter and determines
      * the hemisphere of the projection from the {@code Standard_Parallel_1} value.
+     *
+     * <!-- PARAMETERS VariantB -->
+     * <p>The following table summarizes the parameters recognized by this provider.
+     * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
+     * <p><b>Operation name:</b> Polar Stereographic (variant B)</p>
+     * <table bgcolor="#F4F8FF" cellspacing="0" cellpadding="0">
+     *   <tr bgcolor="#B9DCFF"><th>Parameter Name</th><th>Default value</th></tr>
+     *   <tr><td>semi_major</td><td>&nbsp;&nbsp;</td></tr>
+     *   <tr><td>semi_minor</td><td>&nbsp;&nbsp;</td></tr>
+     *   <tr><td>roll_longitude</td><td>&nbsp;&nbsp;false</td></tr>
+     *   <tr><td>central_meridian</td><td>&nbsp;&nbsp;0°</td></tr>
+     *   <tr><td>standard_parallel_1</td><td>&nbsp;&nbsp;90°</td></tr>
+     *   <tr><td>false_easting</td><td>&nbsp;&nbsp;0 metres</td></tr>
+     *   <tr><td>false_northing</td><td>&nbsp;&nbsp;0 metres</td></tr>
+     * </table>
+     * <!-- END OF PARAMETERS -->
      *
      * @author Rueben Schulz (UBC)
      * @author Martin Desruisseaux (Geomatys)
@@ -441,9 +473,12 @@ public class PolarStereographic extends Stereographic {
                     new IdentifierCode (Citations.EPSG,  9829),
                     sameNameAs(Citations.GEOTOOLKIT, PolarStereographic.PARAMETERS)
                 }, excludes, new ParameterDescriptor<?>[] {
-                    SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
+                    sameParameterAs(PseudoMercator.PARAMETERS, "semi_major"),
+                    sameParameterAs(PseudoMercator.PARAMETERS, "semi_minor"),
+                    ROLL_LONGITUDE,
                     CENTRAL_MERIDIAN, STANDARD_PARALLEL,
-                    FALSE_EASTING, FALSE_NORTHING
+                    sameParameterAs(PseudoMercator.PARAMETERS, "false_easting"),
+                    sameParameterAs(PseudoMercator.PARAMETERS, "false_northing"),
                 });
         }
 
@@ -460,7 +495,24 @@ public class PolarStereographic extends Stereographic {
 
     /**
      * The provider for "<cite>North Polar Stereographic</cite>" projection. This provider sets the
-     * {@linkplain PolarStereographic#LATITUDE_OF_ORIGIN latitude of origin} parameter to 90&deg;N.
+     * <cite>latitude of origin</cite> parameter to 90&deg;N.
+     *
+     * <!-- PARAMETERS North -->
+     * <p>The following table summarizes the parameters recognized by this provider.
+     * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
+     * <p><b>Operation name:</b> Stereographic_North_Pole</p>
+     * <table bgcolor="#F4F8FF" cellspacing="0" cellpadding="0">
+     *   <tr bgcolor="#B9DCFF"><th>Parameter Name</th><th>Default value</th></tr>
+     *   <tr><td>Semi_Major</td><td>&nbsp;&nbsp;</td></tr>
+     *   <tr><td>Semi_Minor</td><td>&nbsp;&nbsp;</td></tr>
+     *   <tr><td>roll_longitude</td><td>&nbsp;&nbsp;false</td></tr>
+     *   <tr><td>Central_Meridian</td><td>&nbsp;&nbsp;0°</td></tr>
+     *   <tr><td>Standard_Parallel_1</td><td>&nbsp;&nbsp;90°</td></tr>
+     *   <tr><td>Scale_Factor</td><td>&nbsp;&nbsp;1</td></tr>
+     *   <tr><td>False_Easting</td><td>&nbsp;&nbsp;0 metres</td></tr>
+     *   <tr><td>False_Northing</td><td>&nbsp;&nbsp;0 metres</td></tr>
+     * </table>
+     * <!-- END OF PARAMETERS -->
      *
      * @author Rueben Schulz (UBC)
      * @author Martin Desruisseaux (Geomatys)
@@ -607,9 +659,12 @@ public class PolarStereographic extends Stereographic {
                     new NamedIdentifier(Citations.ESRI, "Stereographic_North_Pole"),
                     sameNameAs(Citations.GEOTOOLKIT, PolarStereographic.PARAMETERS)
                 }, excludes, new ParameterDescriptor<?>[] {
-                    SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
-                    Stereographic.CENTRAL_MERIDIAN, STANDARD_PARALLEL, SCALE_FACTOR,
-                    FALSE_EASTING, FALSE_NORTHING
+                    sameParameterAs(ObliqueMercator.TwoPoint.PARAMETERS, "semi_major"),
+                    sameParameterAs(ObliqueMercator.TwoPoint.PARAMETERS, "semi_minor"),
+                    ROLL_LONGITUDE, Stereographic.CENTRAL_MERIDIAN, STANDARD_PARALLEL,
+                    sameParameterAs(LambertConformal2SP     .PARAMETERS, "scale_factor"),
+                    sameParameterAs(ObliqueMercator.TwoPoint.PARAMETERS, "false_easting"),
+                    sameParameterAs(ObliqueMercator.TwoPoint.PARAMETERS, "false_northing"),
                 });
         }
 
@@ -626,7 +681,24 @@ public class PolarStereographic extends Stereographic {
 
     /**
      * The Provider for "<cite>South Polar Stereographic</cite>" projection. This provider sets the
-     * {@linkplain PolarStereographic#LATITUDE_OF_ORIGIN latitude of origin} parameter to 90&deg;S.
+     * <cite>latitude of origin</cite> parameter to 90&deg;S.
+     *
+     * <!-- PARAMETERS South -->
+     * <p>The following table summarizes the parameters recognized by this provider.
+     * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
+     * <p><b>Operation name:</b> Stereographic_South_Pole</p>
+     * <table bgcolor="#F4F8FF" cellspacing="0" cellpadding="0">
+     *   <tr bgcolor="#B9DCFF"><th>Parameter Name</th><th>Default value</th></tr>
+     *   <tr><td>Semi_Major</td><td>&nbsp;&nbsp;</td></tr>
+     *   <tr><td>Semi_Minor</td><td>&nbsp;&nbsp;</td></tr>
+     *   <tr><td>roll_longitude</td><td>&nbsp;&nbsp;false</td></tr>
+     *   <tr><td>Central_Meridian</td><td>&nbsp;&nbsp;0°</td></tr>
+     *   <tr><td>Standard_Parallel_1</td><td>&nbsp;&nbsp;-90°</td></tr>
+     *   <tr><td>Scale_Factor</td><td>&nbsp;&nbsp;1</td></tr>
+     *   <tr><td>False_Easting</td><td>&nbsp;&nbsp;0 metres</td></tr>
+     *   <tr><td>False_Northing</td><td>&nbsp;&nbsp;0 metres</td></tr>
+     * </table>
+     * <!-- END OF PARAMETERS -->
      *
      * @author Rueben Schulz (UBC)
      * @author Martin Desruisseaux (Geomatys)
@@ -771,10 +843,15 @@ public class PolarStereographic extends Stereographic {
                 new NamedIdentifier[] {
                     new NamedIdentifier(Citations.ESRI, "Stereographic_South_Pole"),
                     sameNameAs(Citations.GEOTOOLKIT, PolarStereographic.PARAMETERS)
-                }, excludes, new ParameterDescriptor<?>[] {
-                    SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
-                    Stereographic.CENTRAL_MERIDIAN, STANDARD_PARALLEL, SCALE_FACTOR,
-                    FALSE_EASTING, FALSE_NORTHING
+                }, null, new ParameterDescriptor<?>[] {
+                    sameParameterAs(North.PARAMETERS, "semi_major"),
+                    sameParameterAs(North.PARAMETERS, "semi_minor"),
+                    ROLL_LONGITUDE,
+                    sameParameterAs(North.PARAMETERS, "central_meridian"),
+                    STANDARD_PARALLEL,
+                    sameParameterAs(North.PARAMETERS, "scale_factor"),
+                    sameParameterAs(North.PARAMETERS, "false_easting"),
+                    sameParameterAs(North.PARAMETERS, "false_northing"),
                 });
         }
 

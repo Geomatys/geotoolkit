@@ -42,10 +42,29 @@ import static org.geotoolkit.parameter.MatrixParameterDescriptors.DEFAULT_MATRIX
 
 /**
  * The provider for "<cite>Affine general parametric transformation</cite>" (EPSG:9624).
- * This is a special case of projective transforms. The OGC's name is {@code "Affine"}. The
- * default matrix size is
+ * The set of available parameters depends on the matrix size, which is
  * {@value org.geotoolkit.parameter.MatrixParameterDescriptors#DEFAULT_MATRIX_SIZE}&times;{@value
- * org.geotoolkit.parameter.MatrixParameterDescriptors#DEFAULT_MATRIX_SIZE}.
+ * org.geotoolkit.parameter.MatrixParameterDescriptors#DEFAULT_MATRIX_SIZE} by default.
+ *
+ * <!-- PARAMETERS Affine -->
+ * <p>The following table summarizes the parameters recognized by this provider.
+ * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
+ * <p><b>Operation name:</b> Affine</p>
+ * <table bgcolor="#F4F8FF" cellspacing="0" cellpadding="0">
+ *   <tr bgcolor="#B9DCFF"><th>Parameter Name</th><th>Default value</th></tr>
+ *   <tr><td>num_row</td><td>&nbsp;&nbsp;3</td></tr>
+ *   <tr><td>num_col</td><td>&nbsp;&nbsp;3</td></tr>
+ *   <tr><td>elt_0_0</td><td>&nbsp;&nbsp;1</td></tr>
+ *   <tr><td>elt_0_1</td><td>&nbsp;&nbsp;0</td></tr>
+ *   <tr><td>elt_0_2</td><td>&nbsp;&nbsp;0</td></tr>
+ *   <tr><td>elt_1_0</td><td>&nbsp;&nbsp;0</td></tr>
+ *   <tr><td>elt_1_1</td><td>&nbsp;&nbsp;1</td></tr>
+ *   <tr><td>elt_1_2</td><td>&nbsp;&nbsp;0</td></tr>
+ *   <tr><td>elt_2_0</td><td>&nbsp;&nbsp;0</td></tr>
+ *   <tr><td>elt_2_1</td><td>&nbsp;&nbsp;0</td></tr>
+ *   <tr><td>elt_2_2</td><td>&nbsp;&nbsp;1</td></tr>
+ * </table>
+ * <!-- END OF PARAMETERS -->
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.20

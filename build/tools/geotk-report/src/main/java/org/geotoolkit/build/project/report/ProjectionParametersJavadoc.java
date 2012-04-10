@@ -21,6 +21,7 @@ import java.util.Set;
 import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.io.IOException;
+import javax.measure.unit.Unit;
 
 import org.opengis.util.GenericName;
 import org.opengis.referencing.ReferenceIdentifier;
@@ -37,7 +38,7 @@ import org.geotoolkit.referencing.operation.provider.*;
 
 /**
  * Updates the javadoc of provider classes in the {@link org.geotoolkit.referencing.operation.provider}
- * package. This tools need to be run manually be the developer (together with other report generators)
+ * package. This tools need to be run manually by the developer (together with other report generators)
  * after any provider has been modified.
  *
  * @author Martin Desruisseaux (Geomatys)
@@ -70,15 +71,18 @@ public final class ProjectionParametersJavadoc extends JavadocUpdater {
     public static void main(final String[] args) throws Exception {
         Locale.setDefault(Locale.ENGLISH);
         final ProjectionParametersJavadoc updater = new ProjectionParametersJavadoc();
-        for (final Class<?> parameter : updater.parameters) {
-            updater.createGlobalTable((ParameterDescriptorGroup) parameter.getField("PARAMETERS").get(null));
-            String module = "referencing/geotk-referencing";
-            if (parameter == EllipsoidToGeoid.class) {
-                module = "referencing/geotk-referencing3D";
-            } else if (parameter == WarpPolynomial.class) {
-                module = "coverage/geotk-coverage";
-            }
-            updater.update(module, parameter);
+        for (final Class<?> provider : updater.parameters) {
+            final ParameterDescriptorGroup parameters = (ParameterDescriptorGroup) provider.getField("PARAMETERS").get(null);
+            final String module;
+                 if (provider == WarpPolynomial  .class) module = "coverage/geotk-coverage";
+            else if (provider == EllipsoidToGeoid.class) module = "referencing/geotk-referencing3D";
+            else                                         module = "referencing/geotk-referencing";
+            updater.createSummaryTable(parameters);
+            updater.rewriteClassComment(module, provider,
+                    "<!-- PARAMETERS " + provider.getSimpleName() + " -->",
+                    "<!-- END OF PARAMETERS -->");
+            updater.createGlobalTable(parameters);
+            updater.rewriteMemberComment(module, provider);
         }
     }
 
@@ -168,7 +172,25 @@ public final class ProjectionParametersJavadoc extends JavadocUpdater {
      * Creates a new instance to be used for updating the javadoc.
      */
     private ProjectionParametersJavadoc() throws IOException {
-        super();
+        super("<!-- GENERATED PARAMETERS", "*/");
+    }
+
+    /**
+     * Creates the table that summarize the operation.
+     */
+    private void createSummaryTable(final ParameterDescriptorGroup group) {
+        lines.clear();
+        lines.add("<p>The following table summarizes the parameters recognized by this provider.");
+        lines.add("For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>");
+        lines.add("<p><b>Operation name:</b> " + group.getName().getCode() + "</p>");
+        lines.add("<table bgcolor=\"#F4F8FF\" cellspacing=\"0\" cellpadding=\"0\">");
+        lines.add("  <tr bgcolor=\"#B9DCFF\"><th>Parameter Name</th><th>Default value</th></tr>");
+        for (final GeneralParameterDescriptor gp : group.descriptors()) {
+            final ParameterDescriptor<?> param = (ParameterDescriptor<?>) gp;
+            lines.add("  <tr><td>" + param.getName().getCode() +
+                    "</td><td>&nbsp;&nbsp;" + getDefaultValue(param, getUnit(param)) + "</td></tr>");
+        }
+        lines.add("</table>");
     }
 
     /**
@@ -235,26 +257,7 @@ public final class ProjectionParametersJavadoc extends JavadocUpdater {
         lines.add("    <table border=\"0\" cellspacing=\"0\" cellpadding=\"0\">");
         lines.add(ROW_START + "Type:" + SEPARATOR + "<code>" + valueClass.getSimpleName() + "</code></td></tr>");
         lines.add(ROW_START + "Obligation:" + SEPARATOR + (descriptor.getMinimumOccurs() != 0 ? "mandatory" : "optional") + "</td></tr>");
-        /*
-         * Get a string representation of the units.
-         * This will be used both by the range and the default value.
-         */
-        Object unit = descriptor.getUnit();
-        if (unit != null) {
-            try {
-                unit = unit.toString();
-            } catch (IllegalArgumentException e) { // Workaround for JSR-275 implementation bug.
-                unit = "";
-            }
-            if (unit.equals("deg")) unit = "°";
-            else if (unit.equals("m")) unit = " metres";
-            else if (!unit.equals("")) unit = " " + unit;
-        } else {
-            unit = "";
-        }
-        /*
-         * Format the range of valid values. This range may include infinity symbols.
-         */
+        final String unit = getUnit(descriptor);
         if (Number.class.isAssignableFrom(valueClass)) {
             NumberRange<?> range = NumberRange.createBestFit(
                     (Number) descriptor.getMinimumValue(), true,
@@ -264,39 +267,60 @@ public final class ProjectionParametersJavadoc extends JavadocUpdater {
             }
             lines.add(ROW_START +  "Value range:" + SEPARATOR + range + unit + ROW_END);
         }
-        /*
-         * Format the default value. If no default value were explicitely specified and the
-         * parameter is optional, then '0' or 'false' is used as an implicit default value.
-         * The default value are sometime not explicitely specified for optional parameters
-         * in order to avoid the creation of a ParameterDescriptor entry with that default
-         * value in the ParameterDescriptorGroup.
-         */
-        Object defaultValue = descriptor.getDefaultValue();
+        final String defaultValue = getDefaultValue(descriptor, unit);
+        if (!defaultValue.isEmpty()) {
+            lines.add(ROW_START + "Default value:" + SEPARATOR + defaultValue + ROW_END);
+        }
+        lines.add("    </table>");
+    }
+
+    /**
+     * Returns the string representation of the given parameter unit,
+     * or an empty string (never {@code null}) if none.
+     */
+    private static String getUnit(final ParameterDescriptor<?> param) {
+        final Unit<?> unit = param.getUnit();
+        String text;
+        if (unit != null) {
+            try {
+                text = unit.toString();
+            } catch (IllegalArgumentException e) { // Workaround for JSR-275 implementation bug.
+                text = "";
+            }
+            if (text.equals("deg"))    text = "°";
+            else if (text.equals("m")) text = " metres";
+            else if (!text.isEmpty())  text = " " + text;
+        } else {
+            text = "";
+        }
+        return text;
+    }
+
+    /**
+     * Returns the string representation of the given parameter default value,
+     * or an empty string (never {@code null}) if none.
+     */
+    private String getDefaultValue(final ParameterDescriptor<?> param, final String unit) {
+        Object defaultValue = param.getDefaultValue();
         if (defaultValue != null) {
             if (defaultValue instanceof Number) {
                 // Trim the fractional part if unnecessary (e.g. "0.0" to "0").
                 defaultValue = Numbers.finestNumber((Number) defaultValue);
             } else if (defaultValue instanceof String) {
-                defaultValue = "<code>\"" + defaultValue + "\"</code>";
+                return "<code>\"" + defaultValue + "\"</code>";
             }
-        } else if (descriptor.getMinimumOccurs() == 0) {
-            if (XArrays.contains(defaultToLatitudeOfOrigin, descriptor)) {
-                defaultValue = "<var>latitude of origin</var>";
-                unit = "";
-            } else if (XArrays.contains(defaultToStandardParallel1, descriptor)) {
-                defaultValue = "<var>standard parallel 1</var>";
-                unit = "";
-            } else if (XArrays.contains(defaultToAzimuth, descriptor)) {
-                defaultValue = "<var>Azimuth of initial line</var>";
-                unit = "";
-            } else if (valueClass == Boolean.class) {
+        } else if (param.getMinimumOccurs() == 0) {
+            if (XArrays.contains(defaultToLatitudeOfOrigin, param)) {
+                return "<var>latitude of origin</var>";
+            } else if (XArrays.contains(defaultToStandardParallel1, param)) {
+                return "<var>standard parallel 1</var>";
+            } else if (XArrays.contains(defaultToAzimuth, param)) {
+                return "<var>Azimuth of initial line</var>";
+            } else if (param.getValueClass() == Boolean.class) {
                 defaultValue = Boolean.FALSE;
             }
         }
-        if (defaultValue != null) {
-            lines.add(ROW_START + "Default value:" + SEPARATOR + defaultValue + unit + ROW_END);
-        }
-        lines.add("    </table>");
+        return (defaultValue != null) ? defaultValue + unit : "";
     }
 
     /**

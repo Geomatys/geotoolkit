@@ -17,14 +17,12 @@
  */
 package org.geotoolkit.referencing.operation.provider;
 
-import java.util.List;
 import net.jcip.annotations.Immutable;
 
 import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
-import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.CylindricalProjection;
@@ -37,18 +35,34 @@ import org.geotoolkit.metadata.iso.citation.Citations;
 
 /**
  * The provider for "<cite>Transverse Mercator</cite>" projection (EPSG:9807).
- * The programmatic names and parameters are enumerated at
- * <A HREF="http://www.remotesensing.org/geotiff/proj_list/transverse_mercator.html">Transverse
- * Mercator on RemoteSensing.org</A>. The math transform implementations instantiated by this
- * provider may be any of the following classes:
+ * The math transform implementations instantiated by this provider may be any of the following classes:
  * <p>
  * <ul>
  *   <li>{@link org.geotoolkit.referencing.operation.projection.TransverseMercator}</li>
  * </ul>
  *
+ * <!-- PARAMETERS TransverseMercator -->
+ * <p>The following table summarizes the parameters recognized by this provider.
+ * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
+ * <p><b>Operation name:</b> Transverse_Mercator</p>
+ * <table bgcolor="#F4F8FF" cellspacing="0" cellpadding="0">
+ *   <tr bgcolor="#B9DCFF"><th>Parameter Name</th><th>Default value</th></tr>
+ *   <tr><td>semi_major</td><td>&nbsp;&nbsp;</td></tr>
+ *   <tr><td>semi_minor</td><td>&nbsp;&nbsp;</td></tr>
+ *   <tr><td>roll_longitude</td><td>&nbsp;&nbsp;false</td></tr>
+ *   <tr><td>central_meridian</td><td>&nbsp;&nbsp;0°</td></tr>
+ *   <tr><td>latitude_of_origin</td><td>&nbsp;&nbsp;0°</td></tr>
+ *   <tr><td>scale_factor</td><td>&nbsp;&nbsp;1</td></tr>
+ *   <tr><td>false_easting</td><td>&nbsp;&nbsp;0 metres</td></tr>
+ *   <tr><td>false_northing</td><td>&nbsp;&nbsp;0 metres</td></tr>
+ * </table>
+ * <!-- END OF PARAMETERS -->
+ *
  * @author Martin Desruisseaux (MPO, IRD, Geomatys)
  * @author Rueben Schulz (UBC)
  * @version 3.20
+ *
+ * @see <A HREF="http://www.remotesensing.org/geotiff/proj_list/transverse_mercator.html">Transverse Mercator on RemoteSensing.org</A>
  *
  * @since 2.1
  * @module
@@ -355,6 +369,23 @@ public class TransverseMercator extends MapProjection {
      * the Westing and Southing value at the natural origin. In other words they are effectively
      * <cite>false westing</cite> (FW) and <cite>false southing</cite> (FS) respectively.
      *
+     * <!-- PARAMETERS SouthOrientated -->
+     * <p>The following table summarizes the parameters recognized by this provider.
+     * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
+     * <p><b>Operation name:</b> Transverse Mercator (South Orientated)</p>
+     * <table bgcolor="#F4F8FF" cellspacing="0" cellpadding="0">
+     *   <tr bgcolor="#B9DCFF"><th>Parameter Name</th><th>Default value</th></tr>
+     *   <tr><td>semi_major</td><td>&nbsp;&nbsp;</td></tr>
+     *   <tr><td>semi_minor</td><td>&nbsp;&nbsp;</td></tr>
+     *   <tr><td>roll_longitude</td><td>&nbsp;&nbsp;false</td></tr>
+     *   <tr><td>central_meridian</td><td>&nbsp;&nbsp;0°</td></tr>
+     *   <tr><td>latitude_of_origin</td><td>&nbsp;&nbsp;0°</td></tr>
+     *   <tr><td>scale_factor</td><td>&nbsp;&nbsp;1</td></tr>
+     *   <tr><td>false_easting</td><td>&nbsp;&nbsp;0 metres</td></tr>
+     *   <tr><td>false_northing</td><td>&nbsp;&nbsp;0 metres</td></tr>
+     * </table>
+     * <!-- END OF PARAMETERS -->
+     *
      * @author Martin Desruisseaux (MPO, IRD, Geomatys)
      * @version 3.20
      *
@@ -494,13 +525,21 @@ public class TransverseMercator extends MapProjection {
             final Citation[] excludes = {
                 Citations.ESRI, Citations.NETCDF, Citations.GEOTIFF, Citations.PROJ4
             };
-            final List<GeneralParameterDescriptor> param = TransverseMercator.PARAMETERS.descriptors();
             PARAMETERS = Identifiers.createDescriptorGroup(
                 new ReferenceIdentifier[] {
                     new NamedIdentifier(Citations.EPSG, "Transverse Mercator (South Orientated)"),
                     new IdentifierCode (Citations.EPSG,  9808),
                     sameNameAs(Citations.GEOTOOLKIT, TransverseMercator.PARAMETERS)
-            }, excludes, param.toArray(new ParameterDescriptor<?>[param.size()]));
+            }, excludes, new ParameterDescriptor<?>[] {
+                sameParameterAs(PseudoMercator.PARAMETERS, "semi_major"),
+                sameParameterAs(PseudoMercator.PARAMETERS, "semi_minor"),
+                ROLL_LONGITUDE,
+                sameParameterAs(PseudoMercator.PARAMETERS, "central_meridian"),
+                sameParameterAs(PseudoMercator.PARAMETERS, "latitude_of_origin"),
+                SCALE_FACTOR,
+                sameParameterAs(PseudoMercator.PARAMETERS, "false_easting"),
+                sameParameterAs(PseudoMercator.PARAMETERS, "false_northing")
+            });
         }
 
         /**

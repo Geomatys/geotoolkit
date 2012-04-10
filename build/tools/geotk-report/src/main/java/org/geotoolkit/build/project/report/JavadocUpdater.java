@@ -30,8 +30,6 @@ import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
-import org.geotoolkit.internal.io.IOUtilities;
-
 
 /**
  * Base classes of tools that automatically generate javadoc comments.
@@ -49,8 +47,14 @@ public abstract class JavadocUpdater {
 
     /**
      * The signature that indicates where to insert the comments.
+     * Typically a HTML comment like {@code "<!-- GENERATED PARAMETERS -->"}.
      */
-    private static final String SIGNATURE = "<!-- GENERATED PARAMETERS";
+    private final String signatureBegin;
+
+    /**
+     * The signature that indicates where to stop the insertion of lines.
+     */
+    private final String signatureEnd;
 
     /**
      * The lines in HTML formats, without carriage returns. All {@code createFoo(...)} methods
@@ -68,22 +72,16 @@ public abstract class JavadocUpdater {
 
     /**
      * For subclass constructors only.
+     *
+     * @param signatureBegin The signature that indicates where to insert the comments.
+     *        Typically a HTML comment like {@code "<!-- GENERATED PARAMETERS -->"}.
+     * @param signatureEnd The signature that indicates where to stop the insertion of lines.
      */
-    JavadocUpdater() throws IOException {
+    JavadocUpdater(final String signatureBegin, final String signatureEnd) throws IOException {
+        this.signatureBegin = signatureBegin;
+        this.signatureEnd   = signatureEnd;
         lines = new ArrayList<String>();
-        File file = IOUtilities.toFile(JavadocUpdater.class.getResource("JavadocUpdater.class"), null);
-        while (file != null) {
-            if (new File(file, "pom.xml").isFile() &&
-                new File(file, "modules").isDirectory() &&
-                new File(file, "demos")  .isDirectory() &&
-                new File(file, "build")  .isDirectory())
-            {
-                root = file;
-                return;
-            }
-            file = file.getParentFile();
-        }
-        throw new IOException("Project root not found.");
+        root = Reports.getProjectRootDirectory();
     }
 
     /**
@@ -99,15 +97,57 @@ public abstract class JavadocUpdater {
     }
 
     /**
-     * Updates the given class with the current content of {@link #lines}.
+     * Updates the source code of the given class with the current content of {@link #lines}.
+     * This method is used only for rewriting the comments of class description, since it
+     * doesn't verify the class declaration before to search for the signature.
+     *
+     * <p>The begin and end signature must be specified explicitely since we can not rely on
+     * class declaration. We expect different signature to be used for inner classes, if any.</p>
+     *
+     * @param module The module where are located the source files (e.g. {@code "referencing/geotk-referencing"}).
+     * @param classe The class to rewrite.
+     * @param begin  The signature that indicate the beginning of the comments to generate.
+     * @param end    The signature that indicate the end of the comments to generate.
      */
-    final void update(final String module, final Class<?> classe) throws IOException {
+    final void rewriteClassComment(final String module, final Class<?> classe,
+            final String begin, final String end) throws IOException
+    {
+        rewriteSourceFile(module, classe, true, begin, end);
+    }
+
+    /**
+     * Updates the source code of the given class with the current content of {@link #lines}.
+     * This method is used only for rewriting the comments of a field or method, since it
+     * searches for the class declaration before to search for the signature.
+     *
+     * @param module The module where are located the source files (e.g. {@code "referencing/geotk-referencing"}).
+     * @param classe The class to rewrite.
+     */
+    final void rewriteMemberComment(final String module, final Class<?> classe) throws IOException {
+        rewriteSourceFile(module, classe, false, signatureBegin, signatureEnd);
+    }
+
+    /**
+     * Updates the source code of the given class with the current content of {@link #lines}.
+     * This method is used only for rewriting the comments of class description, since it doesn't
+     * verify the class declaration before to search for the signature.
+     *
+     * @param module The module where are located the source files (e.g. {@code "referencing/geotk-referencing"}).
+     * @param classe The class to rewrite.
+     * @param begin  The signature that indicate the beginning of the comments to generate.
+     * @param end    The signature that indicate the end of the comments to generate.
+     * @param foundClassSignature {@code true} for processing as if the class signature was
+     *        already found, or {@code false} for performing the checks.
+     */
+    private void rewriteSourceFile(final String module, final Class<?> classe, boolean foundClassSignature,
+            final String begin, final String end) throws IOException
+    {
         // Where to put the updated code.
         final StringBuilder buffer = new StringBuilder();
 
         // What to search as an indication of the begining of the section to modify.
-        final Pattern classSignature = Pattern.compile(".*\\bclass\\s+" + classe.getSimpleName() + "\\b.*");
-        boolean foundClassSignature = false;
+        final Pattern classSignature = foundClassSignature ? null :
+                Pattern.compile(".*\\bclass\\s+" + classe.getSimpleName() + "\\b.*");
         boolean done = false;
 
         final File file = new File(root, "modules/" + module + "/src/main/java/" +
@@ -120,7 +160,7 @@ public abstract class JavadocUpdater {
                 if (!done) {
                     if (!foundClassSignature) {
                         foundClassSignature = classSignature.matcher(line).matches();
-                    } else if (line.contains(SIGNATURE)) {
+                    } else if (line.contains(begin)) {
                         final String margin = line.substring(0, line.indexOf('*') + 2);
                         if (!margin.trim().equals("*")) {
                             throw new IOException("Expected a comment line, but found: " + line);
@@ -135,7 +175,7 @@ public abstract class JavadocUpdater {
                             if (line == null) {
                                 throw new EOFException();
                             }
-                        } while (!line.trim().equals("*/"));
+                        } while (!line.trim().endsWith(end));
                         buffer.append(line).append('\n');
                         done = true;
                     }

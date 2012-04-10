@@ -68,6 +68,27 @@ import static org.geotoolkit.internal.referencing.Identifiers.createDescriptorGr
  *       "{@code src_dim}" and "{@code tgt_dim}" parameters.</li>
  * </ul>
  *
+ * <!-- PARAMETERS Molodensky -->
+ * <p>The following table summarizes the parameters recognized by this provider.
+ * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
+ * <p><b>Operation name:</b> Molodenski</p>
+ * <table bgcolor="#F4F8FF" cellspacing="0" cellpadding="0">
+ *   <tr bgcolor="#B9DCFF"><th>Parameter Name</th><th>Default value</th></tr>
+ *   <tr><td>dim</td><td>&nbsp;&nbsp;2</td></tr>
+ *   <tr><td>src_dim</td><td>&nbsp;&nbsp;2</td></tr>
+ *   <tr><td>tgt_dim</td><td>&nbsp;&nbsp;2</td></tr>
+ *   <tr><td>dx</td><td>&nbsp;&nbsp;0 metres</td></tr>
+ *   <tr><td>dy</td><td>&nbsp;&nbsp;0 metres</td></tr>
+ *   <tr><td>dz</td><td>&nbsp;&nbsp;0 metres</td></tr>
+ *   <tr><td>src_semi_major</td><td>&nbsp;&nbsp;</td></tr>
+ *   <tr><td>src_semi_minor</td><td>&nbsp;&nbsp;</td></tr>
+ *   <tr><td>tgt_semi_major</td><td>&nbsp;&nbsp;</td></tr>
+ *   <tr><td>tgt_semi_minor</td><td>&nbsp;&nbsp;</td></tr>
+ *   <tr><td>Semi-major axis length difference</td><td>&nbsp;&nbsp;</td></tr>
+ *   <tr><td>Flattening difference</td><td>&nbsp;&nbsp;</td></tr>
+ * </table>
+ * <!-- END OF PARAMETERS -->
+ *
  * @author Rueben Schulz (UBC)
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.20

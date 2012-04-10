@@ -35,23 +35,39 @@ import org.geotoolkit.metadata.iso.citation.Citations;
 
 /**
  * The base provider for "<cite>Stereographic</cite>" projections.
- * The programmatic names and parameters are enumerated at
- * <A HREF="http://www.remotesensing.org/geotiff/proj_list/stereographic.html">Stereographic
- * on RemoteSensing.org</A>. The math transform implementations instantiated by this
- * provider may be any of the following classes:
+ * The default implementation uses USGS equations. This is <strong>not</strong> the provider
+ * for EPSG:9809. For the later, use {@link ObliqueStereographic} instead.
+ * <p>
+ * The math transform implementations instantiated by this provider may be any of the following classes:
  * <p>
  * <ul>
  *   <li>{@link org.geotoolkit.referencing.operation.projection.Stereographic}</li>
  *   <li>{@link org.geotoolkit.referencing.operation.projection.PolarStereographic}</li>
  *   <li>{@link org.geotoolkit.referencing.operation.projection.EquatorialStereographic}</li>
  * </ul>
- * <p>
- * The default implementation uses USGS equations. This is <strong>not</strong> the provider
- * for EPSG:9809. For the later, use {@link ObliqueStereographic} instead.
+ *
+ * <!-- PARAMETERS Stereographic -->
+ * <p>The following table summarizes the parameters recognized by this provider.
+ * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
+ * <p><b>Operation name:</b> Stereographic</p>
+ * <table bgcolor="#F4F8FF" cellspacing="0" cellpadding="0">
+ *   <tr bgcolor="#B9DCFF"><th>Parameter Name</th><th>Default value</th></tr>
+ *   <tr><td>semi_major</td><td>&nbsp;&nbsp;</td></tr>
+ *   <tr><td>semi_minor</td><td>&nbsp;&nbsp;</td></tr>
+ *   <tr><td>roll_longitude</td><td>&nbsp;&nbsp;false</td></tr>
+ *   <tr><td>central_meridian</td><td>&nbsp;&nbsp;0°</td></tr>
+ *   <tr><td>latitude_of_origin</td><td>&nbsp;&nbsp;0°</td></tr>
+ *   <tr><td>scale_factor</td><td>&nbsp;&nbsp;1</td></tr>
+ *   <tr><td>false_easting</td><td>&nbsp;&nbsp;0 metres</td></tr>
+ *   <tr><td>false_northing</td><td>&nbsp;&nbsp;0 metres</td></tr>
+ * </table>
+ * <!-- END OF PARAMETERS -->
  *
  * @author Rueben Schulz (UBC)
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.20
+ *
+ * @see <A HREF="http://www.remotesensing.org/geotiff/proj_list/stereographic.html">Stereographic on RemoteSensing.org</A>
  *
  * @see ObliqueStereographic
  * @see PolarStereographic

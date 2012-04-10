@@ -17,15 +17,12 @@
  */
 
 /**
- * {@linkplain org.geotoolkit.referencing.operation.MathTransformProvider Math transforms providers},
- * including map projections. Most users will not need to work directly with this package.
- * It is included in the documentation mostly for information purpose, as a way to list the
- * available projections, their EPSG code (when any) and their expected parameters.
- * <p>
- * Providers instantiate objects from the {@linkplain org.geotoolkit.referencing.operation.transform
- * transform} or {@linkplain org.geotoolkit.referencing.operation.projection projection} packages
- * from a set of parameter values. The above packages contain the actual formulas transforming
- * the coordinates. Providers never contain such formulas themselves.
+ * {@linkplain org.geotoolkit.referencing.operation.MathTransformProvider Providers} of
+ * {@linkplain org.geotoolkit.referencing.operation.transform transforms} and
+ * {@linkplain org.geotoolkit.referencing.operation.projection projections} implementations.
+ * This package is provided mostly for documentation purpose, since the javadoc of each provider
+ * lists the operation names, identifiers (e.g. EPSG codes) and parameters. The preferred way to
+ * get a provider is to use the {@link org.opengis.referencing.operation.MathTransformFactory} class.
  * <p>
  * Providers are registered in the following file, which may appears in any JAR file. See
  * the {@linkplain org.geotoolkit.factory factory} package for more information about how to
@@ -38,37 +35,21 @@
  *
  * {@section Parameters}
  *
- * Each provider declares two kind of static constants:
+ * Each provider declares a single {@link org.opengis.parameter.ParameterDescriptorGroup} constant
+ * named {@code PARAMETERS}. Each group describes all the parameters expected by an operation method.
+ * The set of parameters varies for each projection, but the following can be considered typical:
  * <p>
  * <ul>
- *   <li>A set of {@link org.opengis.parameter.ParameterDescriptor} constants,
- *       one for each parameter.</li>
- *   <li>A single {@link org.opengis.parameter.ParameterDescriptorGroup} constant called
- *       {@code PARAMETERS}. This group contains all the individual parameters enumerated
- *       above.</li>
+ *   <li>A <cite>semi-major</cite> and <cite>semi-minor</cite> axis length in metres.</li>
+ *   <li>A <cite>central meridian</cite> and <cite>latitude of origin</cite> in decimal degrees.</li>
+ *   <li>A <cite>scale factor</cite>, which default to 1.</li>
+ *   <li>A <cite>false easting</cite> and <cite>false northing</cite> in metres, which default to 0.</li>
  * </ul>
- *
- * The parameter descriptors for
- * {@link org.geotoolkit.referencing.operation.provider.MapProjection#SEMI_MAJOR SEMI_MAJOR} and
- * {@link org.geotoolkit.referencing.operation.provider.MapProjection#SEMI_MINOR SEMI_MINOR} axis
- * length are common to all map projection providers. Other descriptors are available on a
- * projection-by-projection basis, but the most typical ones are the
- * {@link org.geotoolkit.referencing.operation.provider.Mercator1SP#CENTRAL_MERIDIAN   CENTRAL_MERIDIAN},
- * {@link org.geotoolkit.referencing.operation.provider.Mercator1SP#LATITUDE_OF_ORIGIN LATITUDE_OF_ORIGIN},
- * {@link org.geotoolkit.referencing.operation.provider.Mercator1SP#SCALE_FACTOR       SCALE_FACTOR},
- * {@link org.geotoolkit.referencing.operation.provider.Mercator1SP#FALSE_EASTING      FALSE_EASTING} and
- * {@link org.geotoolkit.referencing.operation.provider.Mercator1SP#FALSE_NORTHING     FALSE_NORTHING}.
  * <p>
  * Each descriptor has many aliases, and those aliases may vary between different projections.
- * For example the {@code FALSE_EASTING} parameter is usually called {@code "false_easting"}
- * by OGC and {@code "False easting"} by EPSG (those names are used for example in the
- * {@link org.geotoolkit.referencing.operation.provider.Mercator1SP} projection). But some
- * projections use different names. For example in the
- * {@link org.geotoolkit.referencing.operation.provider.LambertConformal2SP} projection,
- * {@code FALSE_EASTING} is still called {@code "false_easting"} by OGC, but is called
- * {@code "Easting at false origin"} by EPSG, which is different than the name EPSG used
- * in the {@code Mercator1SP} case.
- *
+ * For example the <cite>false easting</cite> parameter is usually called {@code "false_easting"}
+ * by OGC, while EPSG uses various names like "<cite>False easting</cite>" or "<cite>Easting at
+ * false origin</cite>".
  *
  * {@section Mandatory and optional parameters}
  *
@@ -86,9 +67,8 @@
  *
  * {@section Geotoolkit.org extensions}
  *
- * Geotk defines a
- * {@link org.geotoolkit.referencing.operation.provider.MapProjection#ROLL_LONGITUDE ROLL_LONGITUDE}
- * boolean parameter. If this parameter is set to {@code TRUE}, then any longitude outside the
+ * Geotk defines a {@code "roll_longitude"} boolean parameter.
+ * If this parameter is set to {@code TRUE}, then any longitude outside the
  * [-180 &hellip; 180)&deg; range (upper value is exclusive) will be forced to that range by the
  * addition or subtraction of some multiple of 360&deg;. This applies to both the input of
  * projections and the output of inverse projections.
@@ -101,19 +81,14 @@
  *
  * In Geotk, axis flips are inferred from the {@linkplain org.opengis.referencing.is.AxisOrientation
  * axis orientation}. In <cite>Well Known Text</cite> (WKT), they are given by {@code AXIS} elements.
- * But ESRI ignores {@code AXIS} elements and uses intead some additional parameters:
- * {@link org.geotoolkit.referencing.operation.provider.MapProjection#X_SCALE X_SCALE},
- * {@link org.geotoolkit.referencing.operation.provider.MapProjection#Y_SCALE Y_SCALE} and
- * {@link org.geotoolkit.referencing.operation.provider.MapProjection#XY_PLANE_ROTATION XY_PLANE_ROTATION}.
+ * But ESRI ignores {@code AXIS} elements and uses instead some additional parameters:
+ * {@code "X_Scale"}, {@code "Y_Scale"} and {@code "XY_Plane_Rotation"}.
  * Those parameters are not OGC standards, but are nevertheless provided in Geotk for better
  * inter-operability with ESRI definitions of coordinate reference systems.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Rueben Schulz (UBC)
  * @version 3.20
- *
- * @see org.geotoolkit.referencing.operation.transform
- * @see org.geotoolkit.referencing.operation.projection
  *
  * @since 3.00
  * @level advanced

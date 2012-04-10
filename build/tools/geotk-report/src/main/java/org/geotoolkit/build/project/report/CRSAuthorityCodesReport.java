@@ -50,8 +50,8 @@ import static org.geotoolkit.internal.referencing.CRSUtilities.EPSG_VERSION;
  * Generates a list of supported CRS in the current directory. This class is for manual execution
  * after the EPSG database has been updated, or the projection implementations changed.
  * <p>
- * The {@linkplain #main(String[])} method create a "{@code supported-codes.html}" file in the
- * local directory. This file needs to be copied manually on the server hosting the web site.
+ * The {@linkplain #main(String[])} method creates a "{@code supported-codes.html}"
+ * file in the {@code "modules/referencing/src/site/resources/"} project directory.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.20
@@ -104,7 +104,8 @@ public final class CRSAuthorityCodesReport extends AuthorityCodesReport {
      */
     public static void main(final String[] args) throws FactoryException, IOException {
         final CRSAuthorityCodesReport writer = new CRSAuthorityCodesReport();
-        final File file = writer.write(new File("supported-codes.html"));
+        final File file = writer.write(new File(Reports.getProjectRootDirectory(),
+                "modules/referencing/src/site/resources/supported-codes.html"));
         System.out.println("Created " + file.getAbsolutePath());
     }
 

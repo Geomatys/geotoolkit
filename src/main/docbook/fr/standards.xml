@@ -43,13 +43,82 @@
   <para>
     Outre ces organisations formelles de normalisation, il existe aussi des organisations qui ne sont pas officiellement
     dédiées à l’élaboration de normes mais dont les travaux ont été largement adoptés comme standards de fait.
-    En particulier, la base de données <link xlink:href="http:www.epsg.org">EPSG</link> fournit des
+    En particulier, la base de données <link xlink:href="http://www.epsg.org">EPSG</link> fournit des
     codes numériques permettant d’identifier facilement un système de référence des coordonnées parmi
-    <link xlink:href="modules/referencing/supported-codes.html">plusieurs milliers</link>.
+    <link xlink:href="../modules/referencing/supported-codes.html">plusieurs milliers</link>.
     Cette base de données est offerte par des compagnies pétrolières qui ont vu leur intérêt à ce
-    que leurs forages se fassent bien à l’endroit voulu, sachant qu’elles ne contrôlent pas toujours
+    que leurs prospections se fassent bien à l’endroit voulu, sachant qu’elles ne contrôlent pas toujours
     la production des cartes sur lesquelles elles se positionnent.
+    D’autres exemples de standards de fait sont les formats
+    <link xlink:href="http://geotiff.osgeo.org">GeoTIFF</link> pour les données réparties sur une grille (les images), et
+    <link xlink:href="http://fr.wikipedia.org/wiki/Shapefile">Shapefile</link> pour les données vectorielles (les géométries).
   </para>
+</section>
+
+<section>
+  <title>Les processus de standardisation à l’<acronym>OGC</acronym></title>
+  <para>
+    Les travaux de l’OGC se font par courriers électroniques, par conférences téléphoniques et par
+    <link xlink:href="http://www.opengeospatial.org/event?category=ogctcpc">réunions réelles</link>.
+    L’OGC organise quatre réunions par années, chacune d’une durée de cinq jours, hébergées par des organisations membres
+    sponsorisant l’événement (compagnies, universités, centres de recherches, <foreignphrase>etc.</foreignphrase>).
+    Le continent hôte alterne entre l’Europe et l’Amérique du Nord, avec une présence croissante en Asie depuis 2011.
+    Ces réunions reçoivent habituellement entre 50 et 100 participants parmi les centaines de membres de l’<acronym>OGC</acronym>.
+    Certains participants sont présents à quasiment toutes les réunions et constituent des piliers de l’organisation.
+  </para>
+  <para>
+    Les réunions de l’OGC offrent des opportunités d’échanges avec des membres d’horizons diverses.
+    La création d’un standard OGC commence par le regroupement d’organisations ou d’individus constatant
+    un intérêt commun pour une problématique. Un groupe de travail est proposé sous l’appellation de
+    <foreignphrase>Discussion Working Group</foreignphrase> (<acronym>DWG</acronym>) si le travail est au
+    stade exploratoire, ou <foreignphrase>Standard Working Group</foreignphrase> (<acronym>SWG</acronym>)
+    si le travail de normalisation peut commencer. Les <acronym>DWG</acronym> sont ouverts à tout membre
+    de l’<acronym>OGC</acronym>, tandis que les <acronym>SWG</acronym> nécessitent de la part des participants
+    un engagement à ne pas entraver la diffusion du standard par des réclamations de propriétés intellectuelles.
+  </para>
+
+<section>
+  <title>Fonctionnement des groupes de travail (<acronym>SWG</acronym>)</title>
+  <para>
+    Pour être accepté, un projet de standardisation doit être supporté par un nombre minimal de membres
+    appartement à des organisations distinctes. Ces membres fondateurs rédigent une charte définissant les
+    objectifs du <acronym>SWG</acronym>, qui doit être approuvée par le comité technique de l’<acronym>OGC</acronym>.
+    Chaque membre fondateur est doté d’un droit de vote, dans les limites d’un membre votant par organisation.
+    Tout nouveau membre qui souhaite joindre le <acronym>SWG</acronym> après sa création se verra attribué un rôle d’observateur,
+    avec attribution sur demande d’un droit de vote après quelques mois d’observation.
+  </para>
+  <para>
+    Un <acronym>SWG</acronym> peut contenir plusieurs dizaines de membres, mais les volontaires effectuant
+    l’essentiel du travail sont habituellement moins nombreux. Leurs propositions sont soumises à l’ensemble
+    des membres du groupe, qui peuvent les accepter par consentement unanime. Les objections, s’il y en a,
+    doivent être argumentées et une alternative proposée. Les <acronym>SWG</acronym> essaient généralement de
+    débattre d’un problème jusqu’à ce qu’un consensus se forme plutôt que d’avancer malgré des votes négatifs,
+    même s’ils sont minoritaires. Les décisions du groupes sont alors intégrées dans la spécification par un
+    membre assumant le rôle d’éditeur.
+  </para>
+  <para>
+    Lorsque le standard est jugé prêt, le <acronym>SWG</acronym> vote une motion proposant de le soumettre
+    au vote des instances supérieures de l’OGC. Cette procédure nécessite plusieurs mois. Il existe une
+    procédure plus rapide pour entériner des standards de fait, mais elle n’est appliquée qu’avec parcimonie.
+  </para>
+</section>
+
+<section>
+  <title>Le conseil d’architecture (<acronym>OAB</acronym>) et le comité technique (<acronym>TC</acronym>)</title>
+  <para>
+    Toute proposition de standard est d’abord examinée par le conseil d’architecture
+    (<foreignphrase>OGC Architecture Board</foreignphrase> - <acronym>OAB</acronym>). Ce conseil
+    vérifie que le standard répond aux exigences de l’OGC sur la forme, sur la modularisation, et
+    en termes d’intégration avec les autres standards. Si l’<acronym>OAB</acronym> donne son aval,
+    le standard est alors soumis en session plénière au vote des membres du comité technique.
+    Ce comité regroupe les principaux membres de l’OGC qui sont seuls habilités à donner le vote final.
+    En cas d’approbation, le standard est diffusé publiquement pour commentaires pendant une période
+    de quelques mois. Au terme de cette période, le <acronym>SWG</acronym> doit examiner et répondre
+    à chacun des commentaires. Les éventuelles modifications au standard sous soumises à l’<acronym>OAB</acronym>,
+    puis le standard est définitivement publié.
+    Cette diffusion est alors annoncée par un communiqué de presse de l’<acronym>OGC</acronym>.
+  </para>
+</section>
 </section>
 
 </chapter>

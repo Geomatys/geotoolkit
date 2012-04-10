@@ -39,6 +39,16 @@ import org.geotoolkit.resources.Errors;
  * The provider for "<cite>France geocentric interpolation</cite>" (ESPG:9655).
  * The current implementation delegates to the emulation based on NTv2 method.
  *
+ * <!-- PARAMETERS RGF93 -->
+ * <p>The following table summarizes the parameters recognized by this provider.
+ * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
+ * <p><b>Operation name:</b> France geocentric interpolation</p>
+ * <table bgcolor="#F4F8FF" cellspacing="0" cellpadding="0">
+ *   <tr bgcolor="#B9DCFF"><th>Parameter Name</th><th>Default value</th></tr>
+ *   <tr><td>Geocentric translation file</td><td>&nbsp;&nbsp;<code>"gr3df97a.txt"</code></td></tr>
+ * </table>
+ * <!-- END OF PARAMETERS -->
+ *
  * @author Simon Reynard (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.20

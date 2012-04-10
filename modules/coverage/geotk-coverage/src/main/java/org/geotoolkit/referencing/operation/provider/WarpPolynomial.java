@@ -46,6 +46,22 @@ import static org.geotoolkit.internal.referencing.Identifiers.createDescriptorGr
  * {@linkplain javax.media.jai.WarpPolynomial} from a set of polynomial coefficients,
  * and wraps it in a {@link WarpTransform2D} object.
  *
+ * <!-- PARAMETERS WarpPolynomial -->
+ * <p>The following table summarizes the parameters recognized by this provider.
+ * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
+ * <p><b>Operation name:</b> WarpPolynomial</p>
+ * <table bgcolor="#F4F8FF" cellspacing="0" cellpadding="0">
+ *   <tr bgcolor="#B9DCFF"><th>Parameter Name</th><th>Default value</th></tr>
+ *   <tr><td>degree</td><td>&nbsp;&nbsp;2</td></tr>
+ *   <tr><td>xCoeffs</td><td>&nbsp;&nbsp;</td></tr>
+ *   <tr><td>yCoeffs</td><td>&nbsp;&nbsp;</td></tr>
+ *   <tr><td>preScaleX</td><td>&nbsp;&nbsp;1</td></tr>
+ *   <tr><td>preScaleY</td><td>&nbsp;&nbsp;1</td></tr>
+ *   <tr><td>postScaleX</td><td>&nbsp;&nbsp;1</td></tr>
+ *   <tr><td>postScaleY</td><td>&nbsp;&nbsp;1</td></tr>
+ * </table>
+ * <!-- END OF PARAMETERS -->
+ *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.20
  *
