@@ -19,6 +19,11 @@ package org.geotoolkit.build.project.report;
 
 import java.util.Properties;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.util.Version;
 
 
@@ -26,7 +31,7 @@ import org.geotoolkit.util.Version;
  * Miscellaneous helper tools for report implementations in this package.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.16
+ * @version 3.20
  *
  * @since 3.16
  */
@@ -62,5 +67,26 @@ final class Reports {
             version = version.substring(0, snapshot);
         }
         return version;
+    }
+
+    /**
+     * Returns the root directory of the Geotk project.
+     *
+     * @return The project root directory.
+     * @throws IOException If the root directory can not be found.
+     */
+    static File getProjectRootDirectory() throws IOException {
+        File file = IOUtilities.toFile(JavadocUpdater.class.getResource("Reports.class"), null);
+        while (file != null) {
+            if (new File(file, "pom.xml").isFile() &&
+                new File(file, "modules").isDirectory() &&
+                new File(file, "demos")  .isDirectory() &&
+                new File(file, "build")  .isDirectory())
+            {
+                return file;
+            }
+            file = file.getParentFile();
+        }
+        throw new FileNotFoundException("Project root not found.");
     }
 }

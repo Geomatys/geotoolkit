@@ -45,8 +45,8 @@ import static org.geotoolkit.metadata.iso.citation.Citations.*;
 /**
  * Generates a list of projection parameters.
  * <p>
- * The {@linkplain #main(String[])} method create a "{@code operation-parameters.html}" file in
- * the local directory. This file needs to be copied manually on the server hosting the web site.
+ * The {@linkplain #main(String[])} method creates a "{@code operation-parameters.html}"
+ * file in the {@code "modules/referencing/src/site/resources/"} project directory.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.20
@@ -110,7 +110,8 @@ public final class ProjectionParametersReport extends OperationParametersReport 
     public static void main(final String[] args) throws IOException {
         final ProjectionParametersReport writer = new ProjectionParametersReport();
         writer.add(FactoryFinder.getMathTransformFactory(null));
-        final File file = writer.write(new File("operation-parameters.html"));
+        final File file = writer.write(new File(Reports.getProjectRootDirectory(),
+                "modules/referencing/src/site/resources/operation-parameters.html"));
         System.out.println("Created " + file.getAbsolutePath());
     }
 

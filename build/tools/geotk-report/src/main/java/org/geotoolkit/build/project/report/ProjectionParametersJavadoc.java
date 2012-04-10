@@ -169,7 +169,7 @@ public final class ProjectionParametersJavadoc extends JavadocUpdater {
      * Creates a new instance to be used for updating the javadoc.
      */
     private ProjectionParametersJavadoc() throws IOException {
-        super();
+        super("<!-- GENERATED PARAMETERS");
     }
 
     /**

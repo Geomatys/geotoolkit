@@ -30,8 +30,6 @@ import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
-import org.geotoolkit.internal.io.IOUtilities;
-
 
 /**
  * Base classes of tools that automatically generate javadoc comments.
@@ -49,8 +47,9 @@ public abstract class JavadocUpdater {
 
     /**
      * The signature that indicates where to insert the comments.
+     * Typically a HTML comment like {@code "<!-- GENERATED PARAMETERS -->"}.
      */
-    private static final String SIGNATURE = "<!-- GENERATED PARAMETERS";
+    private final String signature;
 
     /**
      * The lines in HTML formats, without carriage returns. All {@code createFoo(...)} methods
@@ -68,22 +67,14 @@ public abstract class JavadocUpdater {
 
     /**
      * For subclass constructors only.
+     *
+     * @param signature The signature that indicates where to insert the comments.
+     *        Typically a HTML comment like {@code "<!-- GENERATED PARAMETERS -->"}.
      */
-    JavadocUpdater() throws IOException {
+    JavadocUpdater(final String signature) throws IOException {
+        this.signature = signature;
         lines = new ArrayList<>();
-        File file = IOUtilities.toFile(JavadocUpdater.class.getResource("JavadocUpdater.class"), null);
-        while (file != null) {
-            if (new File(file, "pom.xml").isFile() &&
-                new File(file, "modules").isDirectory() &&
-                new File(file, "demos")  .isDirectory() &&
-                new File(file, "build")  .isDirectory())
-            {
-                root = file;
-                return;
-            }
-            file = file.getParentFile();
-        }
-        throw new IOException("Project root not found.");
+        root = Reports.getProjectRootDirectory();
     }
 
     /**
@@ -119,7 +110,7 @@ public abstract class JavadocUpdater {
                 if (!done) {
                     if (!foundClassSignature) {
                         foundClassSignature = classSignature.matcher(line).matches();
-                    } else if (line.contains(SIGNATURE)) {
+                    } else if (line.contains(signature)) {
                         final String margin = line.substring(0, line.indexOf('*') + 2);
                         if (!margin.trim().equals("*")) {
                             throw new IOException("Expected a comment line, but found: " + line);
