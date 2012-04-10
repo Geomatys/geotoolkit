@@ -35,7 +35,6 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.TermQuery;
-import org.apache.lucene.store.SimpleFSDirectory;
 import org.apache.lucene.util.Version;
 
 // Geotoolkit dependencies
@@ -45,6 +44,7 @@ import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.io.wkb.WKBUtils;
 import org.geotoolkit.lucene.IndexingException;
+import org.geotoolkit.lucene.LuceneUtils;
 import org.geotoolkit.lucene.filter.LuceneOGCFilter;
 import org.geotoolkit.lucene.tree.NamedEnvelope;
 import org.geotoolkit.referencing.CRS;
@@ -179,7 +179,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
         int nbEntries = 0;
         try {
             final IndexWriterConfig conf = new IndexWriterConfig(Version.LUCENE_35, analyzer);
-            final IndexWriter writer     = new IndexWriter(new SimpleFSDirectory(getFileDirectory()), conf);
+            final IndexWriter writer     = new IndexWriter(LuceneUtils.getAppropriateDirectory(getFileDirectory()), conf);
             final String serviceID       = getServiceID();
             
             resetTree();
@@ -223,7 +223,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
         int nbEntries      = 0;
         try {
             final IndexWriterConfig conf   = new IndexWriterConfig(Version.LUCENE_35, analyzer);
-            final IndexWriter writer       = new IndexWriter(new SimpleFSDirectory(getFileDirectory()), conf);
+            final IndexWriter writer       = new IndexWriter(LuceneUtils.getAppropriateDirectory(getFileDirectory()), conf);
             final String serviceID         = getServiceID();
             final Collection<String> identifiers = getAllIdentifiers();
             resetTree();
@@ -292,7 +292,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
     public void indexDocument(final E meta) {
         try {
             final IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_35, analyzer);
-            final IndexWriter writer = new IndexWriter(new SimpleFSDirectory(getFileDirectory()), config);
+            final IndexWriter writer = new IndexWriter(LuceneUtils.getAppropriateDirectory(getFileDirectory()), config);
 
             final int docId = writer.maxDoc();
             //adding the document in a specific model. in this case we use a MDwebDocument.
@@ -371,7 +371,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
     public void removeDocument(final String identifier) {
         try {
             final IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_35, analyzer);
-            final IndexWriter writer = new IndexWriter(new SimpleFSDirectory(getFileDirectory()), config);
+            final IndexWriter writer = new IndexWriter(LuceneUtils.getAppropriateDirectory(getFileDirectory()), config);
 
             final Term t          = new Term("id", identifier);
             final TermQuery query = new TermQuery(t);

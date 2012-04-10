@@ -39,9 +39,9 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
-import org.apache.lucene.store.SimpleFSDirectory;
 import org.apache.lucene.util.Version;
 import org.geotoolkit.lucene.IndexingException;
+import org.geotoolkit.lucene.LuceneUtils;
 import org.geotoolkit.lucene.SearchingException;
 import org.geotoolkit.lucene.filter.SerialChainFilter;
 import org.geotoolkit.lucene.filter.SpatialQuery;
@@ -192,7 +192,7 @@ public class LuceneIndexSearcher extends IndexLucene {
     private void initSearcher() throws CorruptIndexException, IOException {
         final File indexDirectory = getFileDirectory();
         readTree();
-        final IndexReader reader  = new TreeIndexReaderWrapper(IndexReader.open(new SimpleFSDirectory(indexDirectory)), rTree, envelopeOnly);
+        final IndexReader reader  = new TreeIndexReaderWrapper(IndexReader.open(LuceneUtils.getAppropriateDirectory(indexDirectory)), rTree, envelopeOnly);
         searcher                  = new IndexSearcher(reader);
         LOGGER.log(Level.INFO, "Creating new Index Searcher with index directory:{0}", indexDirectory.getPath());
        
