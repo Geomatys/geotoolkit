@@ -17,6 +17,7 @@
 
 package org.geotoolkit.data;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -37,6 +38,7 @@ import org.geotoolkit.data.memory.GenericSortByFeatureIterator;
 import org.geotoolkit.data.memory.GenericStartIndexFeatureIterator;
 import org.geotoolkit.data.memory.GenericTransformFeatureIterator;
 import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.Selector;
 import org.geotoolkit.data.query.Source;
 import org.geotoolkit.data.session.DefaultSession;
@@ -55,6 +57,7 @@ import org.geotoolkit.util.logging.Logging;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
+import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
@@ -216,6 +219,21 @@ public abstract class AbstractDataStore implements DataStore{
     @Override
     public Envelope getEnvelope(Query query) throws DataStoreException, DataStoreRuntimeException {
         // TODO query = addSeparateFeatureHint(query);
+        
+        if(query.retrieveAllProperties()){
+            //we simplify it, get only geometry attributs
+            final FeatureType ft = getFeatureType(query.getTypeName());
+            final List<Name> names = new ArrayList<Name>();
+            for(PropertyDescriptor desc : ft.getDescriptors()){
+                if(desc instanceof GeometryDescriptor){
+                    names.add(desc.getName());
+                }
+            }
+            final QueryBuilder qb = new QueryBuilder(query);
+            qb.setProperties(names.toArray(new Name[names.size()]));
+            query = qb.buildQuery();
+        }
+        
         final FeatureReader reader = getFeatureReader(query);
         return DataUtilities.calculateEnvelope(reader);
     }
