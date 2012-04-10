@@ -593,7 +593,8 @@ public class LambertConformal2SP extends MapProjection {
             }, new Citation[] { // Authorities to exclude from the parameter descriptors.
                 Citations.NETCDF, Citations.GEOTIFF, Citations.PROJ4
             }, new ParameterDescriptor<?>[] {
-                SEMI_MAJOR,          SEMI_MINOR,
+                sameParameterAs(PlateCarree.PARAMETERS, "semi_major"),
+                sameParameterAs(PlateCarree.PARAMETERS, "semi_minor"),
                 ROLL_LONGITUDE,
                 CENTRAL_MERIDIAN,    LATITUDE_OF_ORIGIN,
                 STANDARD_PARALLEL_1, STANDARD_PARALLEL_2,

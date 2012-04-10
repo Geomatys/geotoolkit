@@ -237,8 +237,8 @@ public class PolarStereographic extends Stereographic {
                 sameNameAs(Citations.PROJ4,      Stereographic.PARAMETERS),
                 sameNameAs(Citations.GEOTOOLKIT, Stereographic.PARAMETERS)
             }, excludes, new ParameterDescriptor<?>[] {
-                (ParameterDescriptor<?>) Mercator1SP.PARAMETERS.descriptor("semi_major"),
-                (ParameterDescriptor<?>) Mercator1SP.PARAMETERS.descriptor("semi_minor"),
+                sameParameterAs(Mercator1SP.PARAMETERS, "semi_major"),
+                sameParameterAs(Mercator1SP.PARAMETERS, "semi_minor"),
                 ROLL_LONGITUDE,
                 CENTRAL_MERIDIAN, LATITUDE_OF_ORIGIN, SCALE_FACTOR,
                 Mercator1SP.FALSE_EASTING,
@@ -441,9 +441,12 @@ public class PolarStereographic extends Stereographic {
                     new IdentifierCode (Citations.EPSG,  9829),
                     sameNameAs(Citations.GEOTOOLKIT, PolarStereographic.PARAMETERS)
                 }, excludes, new ParameterDescriptor<?>[] {
-                    SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
+                    sameParameterAs(PseudoMercator.PARAMETERS, "semi_major"),
+                    sameParameterAs(PseudoMercator.PARAMETERS, "semi_minor"),
+                    ROLL_LONGITUDE,
                     CENTRAL_MERIDIAN, STANDARD_PARALLEL,
-                    FALSE_EASTING, FALSE_NORTHING
+                    sameParameterAs(PseudoMercator.PARAMETERS, "false_easting"),
+                    sameParameterAs(PseudoMercator.PARAMETERS, "false_northing"),
                 });
         }
 
@@ -607,9 +610,12 @@ public class PolarStereographic extends Stereographic {
                     new NamedIdentifier(Citations.ESRI, "Stereographic_North_Pole"),
                     sameNameAs(Citations.GEOTOOLKIT, PolarStereographic.PARAMETERS)
                 }, excludes, new ParameterDescriptor<?>[] {
-                    SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
-                    Stereographic.CENTRAL_MERIDIAN, STANDARD_PARALLEL, SCALE_FACTOR,
-                    FALSE_EASTING, FALSE_NORTHING
+                    sameParameterAs(ObliqueMercator.TwoPoint.PARAMETERS, "semi_major"),
+                    sameParameterAs(ObliqueMercator.TwoPoint.PARAMETERS, "semi_minor"),
+                    ROLL_LONGITUDE, Stereographic.CENTRAL_MERIDIAN, STANDARD_PARALLEL,
+                    sameParameterAs(LambertConformal2SP     .PARAMETERS, "scale_factor"),
+                    sameParameterAs(ObliqueMercator.TwoPoint.PARAMETERS, "false_easting"),
+                    sameParameterAs(ObliqueMercator.TwoPoint.PARAMETERS, "false_northing"),
                 });
         }
 
@@ -771,10 +777,15 @@ public class PolarStereographic extends Stereographic {
                 new NamedIdentifier[] {
                     new NamedIdentifier(Citations.ESRI, "Stereographic_South_Pole"),
                     sameNameAs(Citations.GEOTOOLKIT, PolarStereographic.PARAMETERS)
-                }, excludes, new ParameterDescriptor<?>[] {
-                    SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
-                    Stereographic.CENTRAL_MERIDIAN, STANDARD_PARALLEL, SCALE_FACTOR,
-                    FALSE_EASTING, FALSE_NORTHING
+                }, null, new ParameterDescriptor<?>[] {
+                    sameParameterAs(North.PARAMETERS, "semi_major"),
+                    sameParameterAs(North.PARAMETERS, "semi_minor"),
+                    ROLL_LONGITUDE,
+                    sameParameterAs(North.PARAMETERS, "central_meridian"),
+                    STANDARD_PARALLEL,
+                    sameParameterAs(North.PARAMETERS, "scale_factor"),
+                    sameParameterAs(North.PARAMETERS, "false_easting"),
+                    sameParameterAs(North.PARAMETERS, "false_northing"),
                 });
         }
 

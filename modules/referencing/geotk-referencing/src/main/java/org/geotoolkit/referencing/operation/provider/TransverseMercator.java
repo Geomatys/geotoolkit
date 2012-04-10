@@ -17,14 +17,12 @@
  */
 package org.geotoolkit.referencing.operation.provider;
 
-import java.util.List;
 import net.jcip.annotations.Immutable;
 
 import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
-import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.CylindricalProjection;
@@ -494,13 +492,21 @@ public class TransverseMercator extends MapProjection {
             final Citation[] excludes = {
                 Citations.ESRI, Citations.NETCDF, Citations.GEOTIFF, Citations.PROJ4
             };
-            final List<GeneralParameterDescriptor> param = TransverseMercator.PARAMETERS.descriptors();
             PARAMETERS = Identifiers.createDescriptorGroup(
                 new ReferenceIdentifier[] {
                     new NamedIdentifier(Citations.EPSG, "Transverse Mercator (South Orientated)"),
                     new IdentifierCode (Citations.EPSG,  9808),
                     sameNameAs(Citations.GEOTOOLKIT, TransverseMercator.PARAMETERS)
-            }, excludes, param.toArray(new ParameterDescriptor<?>[param.size()]));
+            }, excludes, new ParameterDescriptor<?>[] {
+                sameParameterAs(PseudoMercator.PARAMETERS, "semi_major"),
+                sameParameterAs(PseudoMercator.PARAMETERS, "semi_minor"),
+                ROLL_LONGITUDE,
+                sameParameterAs(PseudoMercator.PARAMETERS, "central_meridian"),
+                sameParameterAs(PseudoMercator.PARAMETERS, "latitude_of_origin"),
+                SCALE_FACTOR,
+                sameParameterAs(PseudoMercator.PARAMETERS, "false_easting"),
+                sameParameterAs(PseudoMercator.PARAMETERS, "false_northing")
+            });
         }
 
         /**

@@ -323,7 +323,11 @@ public class HotineObliqueMercator extends ObliqueMercator {
          * The operation parameter descriptor for the {@code latitudeOf1stPoint} parameter value.
          * Valid values range is [-90 &hellip; 90]&deg;. This parameter is mandatory and has no
          * default value.
+         *
+         * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+         * descriptor(String)}</code> instead.
          */
+        @Deprecated
         public static final ParameterDescriptor<Double> LAT_OF_1ST_POINT =
                 ObliqueMercator.TwoPoint.LAT_OF_1ST_POINT;
 
@@ -331,7 +335,11 @@ public class HotineObliqueMercator extends ObliqueMercator {
          * The operation parameter descriptor for the {@code longitudeOf1stPoint} parameter value.
          * Valid values range is [-180 &hellip; 180]&deg;. This parameter is mandatory and has no
          * default value.
+         *
+         * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+         * descriptor(String)}</code> instead.
          */
+        @Deprecated
         public static final ParameterDescriptor<Double> LONG_OF_1ST_POINT =
                 ObliqueMercator.TwoPoint.LONG_OF_1ST_POINT;
 
@@ -339,7 +347,11 @@ public class HotineObliqueMercator extends ObliqueMercator {
          * The operation parameter descriptor for the {@code latitudeOf2ndPoint} parameter value.
          * Valid values range is [-90 &hellip; 90]&deg;. This parameter is mandatory and has no
          * default value.
+         *
+         * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+         * descriptor(String)}</code> instead.
          */
+        @Deprecated
         public static final ParameterDescriptor<Double> LAT_OF_2ND_POINT =
                 ObliqueMercator.TwoPoint.LAT_OF_2ND_POINT;
 
@@ -347,7 +359,11 @@ public class HotineObliqueMercator extends ObliqueMercator {
          * The operation parameter descriptor for the {@code longitudeOf2ndPoint} parameter value.
          * Valid values range is [-180 &hellip; 180]&deg;. This parameter is mandatory and has no
          * default value.
+         *
+         * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
+         * descriptor(String)}</code> instead.
          */
+        @Deprecated
         public static final ParameterDescriptor<Double> LONG_OF_2ND_POINT =
                 ObliqueMercator.TwoPoint.LONG_OF_2ND_POINT;
 

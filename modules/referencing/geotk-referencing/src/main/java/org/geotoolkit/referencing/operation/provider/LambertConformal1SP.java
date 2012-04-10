@@ -277,8 +277,8 @@ public class LambertConformal1SP extends MapProjection {
             new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
                                 Vocabulary.Keys.LAMBERT_CONFORMAL_PROJECTION))
         }, null, new ParameterDescriptor<?>[] {
-            (ParameterDescriptor<?>) Mercator1SP.PARAMETERS.descriptor("semi_major"),
-            (ParameterDescriptor<?>) Mercator1SP.PARAMETERS.descriptor("semi_minor"),
+            sameParameterAs(Mercator1SP.PARAMETERS, "semi_major"),
+            sameParameterAs(Mercator1SP.PARAMETERS, "semi_minor"),
             ROLL_LONGITUDE,      CENTRAL_MERIDIAN,
             LATITUDE_OF_ORIGIN,  SCALE_FACTOR,
             FALSE_EASTING,       FALSE_NORTHING

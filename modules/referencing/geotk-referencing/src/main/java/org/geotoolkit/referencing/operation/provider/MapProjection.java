@@ -217,6 +217,14 @@ public abstract class MapProjection extends MathTransformProvider {
     }
 
     /**
+     * Returns the parameters of the given name declared in the given group. This method
+     * is used for sharing the same parameter instance across different map projections.
+     */
+    static ParameterDescriptor<?> sameParameterAs(final ParameterDescriptorGroup parameters, final String name) {
+        return (ParameterDescriptor<?>) parameters.descriptor(name);
+    }
+
+    /**
      * Constructs a math transform provider from a set of parameters. The provider
      * {@linkplain #getIdentifiers identifiers} will be the same than the parameter
      * ones.
