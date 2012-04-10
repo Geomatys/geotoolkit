@@ -45,6 +45,17 @@ import static org.geotoolkit.referencing.operation.transform.EarthGravitationalM
  * The provider for "<cite>Ellipsoid to Geoid</cite>" vertical transformation.
  * This transformation uses a Earth Gravitational Model.
  *
+ * <!-- PARAMETERS EllipsoidToGeoid -->
+ * <p>The following table summarizes the parameters recognized by this provider.
+ * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
+ * <p><b>Operation name:</b> Ellipsoid_To_Geoid</p>
+ * <table bgcolor="#F4F8FF" cellspacing="0" cellpadding="0">
+ *   <tr bgcolor="#B9DCFF"><th>Parameter Name</th><th>Default value</th></tr>
+ *   <tr><td>Datum</td><td>&nbsp;&nbsp;<code>"WGS84"</code></td></tr>
+ *   <tr><td>Order</td><td>&nbsp;&nbsp;180</td></tr>
+ * </table>
+ * <!-- END OF PARAMETERS -->
+ *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.20
  *

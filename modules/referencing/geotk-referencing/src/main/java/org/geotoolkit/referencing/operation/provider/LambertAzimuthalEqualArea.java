@@ -42,18 +42,33 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  *        and deprecated definitions differ only by their names. In the Geotk implementation, both
  *        current and legacy definitions are known, but the legacy names are marked as deprecated.}
  *
- * The programmatic names and parameters are enumerated at
- * <A HREF="http://www.remotesensing.org/geotiff/proj_list/lambert_azimuthal_equal_area.html">Lambert
- * Azimuthal Equal Area on RemoteSensing.org</A>. The math transform implementations instantiated by
- * this provider may be any of the following classes:
+ * The math transform implementations instantiated by this provider may be any of the following classes:
  * <p>
  * <ul>
  *   <li>{@link org.geotoolkit.referencing.operation.projection.LambertAzimuthalEqualArea}</li>
  * </ul>
  *
+ * <!-- PARAMETERS LambertAzimuthalEqualArea -->
+ * <p>The following table summarizes the parameters recognized by this provider.
+ * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
+ * <p><b>Operation name:</b> Lambert_Azimuthal_Equal_Area</p>
+ * <table bgcolor="#F4F8FF" cellspacing="0" cellpadding="0">
+ *   <tr bgcolor="#B9DCFF"><th>Parameter Name</th><th>Default value</th></tr>
+ *   <tr><td>semi_major</td><td>&nbsp;&nbsp;</td></tr>
+ *   <tr><td>semi_minor</td><td>&nbsp;&nbsp;</td></tr>
+ *   <tr><td>roll_longitude</td><td>&nbsp;&nbsp;false</td></tr>
+ *   <tr><td>latitude_of_center</td><td>&nbsp;&nbsp;0°</td></tr>
+ *   <tr><td>longitude_of_center</td><td>&nbsp;&nbsp;0°</td></tr>
+ *   <tr><td>false_easting</td><td>&nbsp;&nbsp;0 metres</td></tr>
+ *   <tr><td>false_northing</td><td>&nbsp;&nbsp;0 metres</td></tr>
+ * </table>
+ * <!-- END OF PARAMETERS -->
+ *
  * @author Beate Stollberg
  * @author Martin Desruisseaux (Geomatys, Geomatys)
  * @version 3.20
+ *
+ * @see <A HREF="http://www.remotesensing.org/geotiff/proj_list/lambert_azimuthal_equal_area.html">Lambert Azimuthal Equal Area on RemoteSensing.org</A>
  *
  * @since 2.4
  * @module

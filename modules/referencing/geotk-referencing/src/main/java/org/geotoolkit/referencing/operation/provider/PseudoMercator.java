@@ -45,6 +45,22 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  *   <li>{@link org.geotoolkit.referencing.operation.projection.Mercator}</li>
  * </ul>
  *
+ * <!-- PARAMETERS PseudoMercator -->
+ * <p>The following table summarizes the parameters recognized by this provider.
+ * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
+ * <p><b>Operation name:</b> Popular Visualisation Pseudo Mercator</p>
+ * <table bgcolor="#F4F8FF" cellspacing="0" cellpadding="0">
+ *   <tr bgcolor="#B9DCFF"><th>Parameter Name</th><th>Default value</th></tr>
+ *   <tr><td>semi_major</td><td>&nbsp;&nbsp;</td></tr>
+ *   <tr><td>semi_minor</td><td>&nbsp;&nbsp;</td></tr>
+ *   <tr><td>roll_longitude</td><td>&nbsp;&nbsp;false</td></tr>
+ *   <tr><td>latitude_of_origin</td><td>&nbsp;&nbsp;0°</td></tr>
+ *   <tr><td>central_meridian</td><td>&nbsp;&nbsp;0°</td></tr>
+ *   <tr><td>false_easting</td><td>&nbsp;&nbsp;0 metres</td></tr>
+ *   <tr><td>false_northing</td><td>&nbsp;&nbsp;0 metres</td></tr>
+ * </table>
+ * <!-- END OF PARAMETERS -->
+ *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.20
  *

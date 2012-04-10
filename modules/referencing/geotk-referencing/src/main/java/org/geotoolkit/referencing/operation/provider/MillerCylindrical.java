@@ -45,21 +45,36 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  *   <li>The northing is multiplied by 1.25 after the projection.</li>
  * </ol>
  * <p>
- * The programmatic names and parameters are enumerated at
- * <A HREF="http://www.remotesensing.org/geotiff/proj_list/miller_cylindrical.html">Miller Cylindrical
- * on RemoteSensing.org</A>. The math transform implementations instantiated by this provider may
- * be any of the following classes:
+ * Note that the Miller projection is typically used with spherical formulas. However the Geotk
+ * implementation supports also the ellipsoidal formulas. If spherical formulas are desired, then
+ * the parameters shall contains semi-major and semi-minor axis lengths of equal length.
+ * <p>
+ * The math transform implementations instantiated by this provider may be any of the following classes:
  * <p>
  * <ul>
  *   <li>{@link org.geotoolkit.referencing.operation.projection.Mercator}</li>
  * </ul>
- * <p>
- * Note that the Miller projection is typically used with spherical formulas. However the Geotk
- * implementation supports also the ellipsoidal formulas. If spherical formulas are desired, then
- * the parameters shall contains semi-major and semi-minor axis lengths of equal length.
+ *
+ * <!-- PARAMETERS MillerCylindrical -->
+ * <p>The following table summarizes the parameters recognized by this provider.
+ * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
+ * <p><b>Operation name:</b> Miller_Cylindrical</p>
+ * <table bgcolor="#F4F8FF" cellspacing="0" cellpadding="0">
+ *   <tr bgcolor="#B9DCFF"><th>Parameter Name</th><th>Default value</th></tr>
+ *   <tr><td>semi_major</td><td>&nbsp;&nbsp;</td></tr>
+ *   <tr><td>semi_minor</td><td>&nbsp;&nbsp;</td></tr>
+ *   <tr><td>roll_longitude</td><td>&nbsp;&nbsp;false</td></tr>
+ *   <tr><td>latitude_of_center</td><td>&nbsp;&nbsp;0°</td></tr>
+ *   <tr><td>longitude_of_center</td><td>&nbsp;&nbsp;0°</td></tr>
+ *   <tr><td>false_easting</td><td>&nbsp;&nbsp;0 metres</td></tr>
+ *   <tr><td>false_northing</td><td>&nbsp;&nbsp;0 metres</td></tr>
+ * </table>
+ * <!-- END OF PARAMETERS -->
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.20
+ *
+ * @see <A HREF="http://www.remotesensing.org/geotiff/proj_list/miller_cylindrical.html">Miller Cylindrical on RemoteSensing.org</A>
  *
  * @since 3.14
  * @module

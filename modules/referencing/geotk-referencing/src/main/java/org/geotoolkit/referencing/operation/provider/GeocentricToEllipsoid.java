@@ -48,6 +48,18 @@ import static org.geotoolkit.parameter.Parameters.*;
  * <strong>WARNING:</strong> The EPSG code is the same than the {@link EllipsoidToGeocentric}
  * one. To avoid ambiguity, use the OGC name instead: {@code "Geocentric_To_Ellipsoid"}.
  *
+ * <!-- PARAMETERS GeocentricToEllipsoid -->
+ * <p>The following table summarizes the parameters recognized by this provider.
+ * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
+ * <p><b>Operation name:</b> Geocentric_To_Ellipsoid</p>
+ * <table bgcolor="#F4F8FF" cellspacing="0" cellpadding="0">
+ *   <tr bgcolor="#B9DCFF"><th>Parameter Name</th><th>Default value</th></tr>
+ *   <tr><td>semi_major</td><td>&nbsp;&nbsp;</td></tr>
+ *   <tr><td>semi_minor</td><td>&nbsp;&nbsp;</td></tr>
+ *   <tr><td>dim</td><td>&nbsp;&nbsp;3</td></tr>
+ * </table>
+ * <!-- END OF PARAMETERS -->
+ *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.20
  *

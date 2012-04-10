@@ -34,18 +34,35 @@ import org.geotoolkit.metadata.iso.citation.Citations;
 
 /**
  * The provider for "<cite>Albers Equal Area</cite>" projection (EPSG:9822).
- * The programmatic names and parameters are enumerated at
- * <A HREF="http://www.remotesensing.org/geotiff/proj_list/albers_equal_area_conic.html">Albers
- * Equal-Area Conic on RemoteSensing.org</A>. The math transform implementations instantiated by
- * this provider may be any of the following classes:
+ * The math transform implementations instantiated by this provider may be any of the following classes:
  * <p>
  * <ul>
  *   <li>{@link org.geotoolkit.referencing.operation.projection.AlbersEqualArea}</li>
  * </ul>
  *
+ * <!-- PARAMETERS AlbersEqualArea -->
+ * <p>The following table summarizes the parameters recognized by this provider.
+ * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
+ * <p><b>Operation name:</b> Albers_Conic_Equal_Area</p>
+ * <table bgcolor="#F4F8FF" cellspacing="0" cellpadding="0">
+ *   <tr bgcolor="#B9DCFF"><th>Parameter Name</th><th>Default value</th></tr>
+ *   <tr><td>semi_major</td><td>&nbsp;&nbsp;</td></tr>
+ *   <tr><td>semi_minor</td><td>&nbsp;&nbsp;</td></tr>
+ *   <tr><td>roll_longitude</td><td>&nbsp;&nbsp;false</td></tr>
+ *   <tr><td>central_meridian</td><td>&nbsp;&nbsp;0°</td></tr>
+ *   <tr><td>latitude_of_origin</td><td>&nbsp;&nbsp;0°</td></tr>
+ *   <tr><td>standard_parallel_1</td><td>&nbsp;&nbsp;<var>latitude of origin</var></td></tr>
+ *   <tr><td>standard_parallel_2</td><td>&nbsp;&nbsp;<var>standard parallel 1</var></td></tr>
+ *   <tr><td>false_easting</td><td>&nbsp;&nbsp;0 metres</td></tr>
+ *   <tr><td>false_northing</td><td>&nbsp;&nbsp;0 metres</td></tr>
+ * </table>
+ * <!-- END OF PARAMETERS -->
+ *
  * @author Rueben Schulz (UBC)
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.20
+ *
+ * @see <A HREF="http://www.remotesensing.org/geotiff/proj_list/albers_equal_area_conic.html">Albers Equal-Area Conic on RemoteSensing.org</A>
  *
  * @since 2.1
  * @module

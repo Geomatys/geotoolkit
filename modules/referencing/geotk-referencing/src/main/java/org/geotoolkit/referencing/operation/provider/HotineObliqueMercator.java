@@ -32,22 +32,40 @@ import org.geotoolkit.metadata.iso.citation.Citations;
 
 /**
  * The provider for "<cite>Hotine Oblique Mercator</cite>" projection (EPSG:9812).
- * The programmatic names and parameters are enumerated at
- * <A HREF="http://www.remotesensing.org/geotiff/proj_list/hotine_oblique_mercator.html">Hotine
- * Oblique Mercator on RemoteSensing.org</A>. The math transform implementations instantiated by
- * this provider may be any of the following classes:
+ * This projection is similar to the {@linkplain ObliqueMercator oblique mercator} projection,
+ * except that coordinates start at the intersection of the central line and the equator
+ * of the aposphere.
+ * <p>
+ * The math transform implementations instantiated by this provider may be any of the following classes:
  * <p>
  * <ul>
  *   <li>{@link org.geotoolkit.referencing.operation.projection.ObliqueMercator}</li>
  * </ul>
- * <p>
- * This projection is similar to the {@linkplain ObliqueMercator oblique mercator} projection,
- * except that coordinates start at the intersection of the central line and the equator
- * of the aposphere.
+ *
+ * <!-- PARAMETERS HotineObliqueMercator -->
+ * <p>The following table summarizes the parameters recognized by this provider.
+ * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
+ * <p><b>Operation name:</b> Hotine_Oblique_Mercator</p>
+ * <table bgcolor="#F4F8FF" cellspacing="0" cellpadding="0">
+ *   <tr bgcolor="#B9DCFF"><th>Parameter Name</th><th>Default value</th></tr>
+ *   <tr><td>semi_major</td><td>&nbsp;&nbsp;</td></tr>
+ *   <tr><td>semi_minor</td><td>&nbsp;&nbsp;</td></tr>
+ *   <tr><td>roll_longitude</td><td>&nbsp;&nbsp;false</td></tr>
+ *   <tr><td>longitude_of_center</td><td>&nbsp;&nbsp;0°</td></tr>
+ *   <tr><td>latitude_of_center</td><td>&nbsp;&nbsp;0°</td></tr>
+ *   <tr><td>azimuth</td><td>&nbsp;&nbsp;</td></tr>
+ *   <tr><td>rectified_grid_angle</td><td>&nbsp;&nbsp;<var>Azimuth of initial line</var></td></tr>
+ *   <tr><td>scale_factor</td><td>&nbsp;&nbsp;1</td></tr>
+ *   <tr><td>false_easting</td><td>&nbsp;&nbsp;0 metres</td></tr>
+ *   <tr><td>false_northing</td><td>&nbsp;&nbsp;0 metres</td></tr>
+ * </table>
+ * <!-- END OF PARAMETERS -->
  *
  * @author Rueben Schulz (UBC)
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.20
+ *
+ * @see <A HREF="http://www.remotesensing.org/geotiff/proj_list/hotine_oblique_mercator.html">Hotine Oblique Mercator on RemoteSensing.org</A>
  *
  * @since 2.4
  * @module
@@ -302,6 +320,26 @@ public class HotineObliqueMercator extends ObliqueMercator {
      * The provider for "<cite>Hotine Oblique Mercator</cite>" projection specified by two points
      * on the central line. This is different than the classical {@linkplain HotineObliqueMercator
      * Hotine Oblique Mercator}, which uses a central point and azimuth.
+     *
+     * <!-- PARAMETERS TwoPoint -->
+     * <p>The following table summarizes the parameters recognized by this provider.
+     * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
+     * <p><b>Operation name:</b> Hotine_Oblique_Mercator_Two_Point_Natural_Origin</p>
+     * <table bgcolor="#F4F8FF" cellspacing="0" cellpadding="0">
+     *   <tr bgcolor="#B9DCFF"><th>Parameter Name</th><th>Default value</th></tr>
+     *   <tr><td>Semi_Major</td><td>&nbsp;&nbsp;</td></tr>
+     *   <tr><td>Semi_Minor</td><td>&nbsp;&nbsp;</td></tr>
+     *   <tr><td>roll_longitude</td><td>&nbsp;&nbsp;false</td></tr>
+     *   <tr><td>Latitude_Of_1st_Point</td><td>&nbsp;&nbsp;</td></tr>
+     *   <tr><td>Longitude_Of_1st_Point</td><td>&nbsp;&nbsp;</td></tr>
+     *   <tr><td>Latitude_Of_2nd_Point</td><td>&nbsp;&nbsp;</td></tr>
+     *   <tr><td>Longitude_Of_2nd_Point</td><td>&nbsp;&nbsp;</td></tr>
+     *   <tr><td>Latitude_Of_Center</td><td>&nbsp;&nbsp;0°</td></tr>
+     *   <tr><td>Scale_Factor</td><td>&nbsp;&nbsp;1</td></tr>
+     *   <tr><td>False_Easting</td><td>&nbsp;&nbsp;0 metres</td></tr>
+     *   <tr><td>False_Northing</td><td>&nbsp;&nbsp;0 metres</td></tr>
+     * </table>
+     * <!-- END OF PARAMETERS -->
      *
      * @author Rueben Schulz (UBC)
      * @author Martin Desruisseaux (Geomatys)

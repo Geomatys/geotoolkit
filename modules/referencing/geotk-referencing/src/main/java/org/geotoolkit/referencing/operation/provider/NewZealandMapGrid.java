@@ -35,20 +35,34 @@ import static org.geotoolkit.internal.referencing.Identifiers.createDescriptor;
 
 /**
  * The provider for "<cite>New Zealand Map Grid</cite>" (EPSG:9811).
- * The programmatic names and parameters are enumerated at
- * <A HREF="http://www.remotesensing.org/geotiff/proj_list/new_zealand_map_grid.html">New Zealand
- * Map Grid on RemoteSensing.org</A>. The math transform implementations instantiated by this
- * provider may be any of the following classes:
+ * This projection is used with the International 1924 ellipsoid.
+ * The math transform implementations instantiated by this provider may be any of the following classes:
  * <p>
  * <ul>
  *   <li>{@link org.geotoolkit.referencing.operation.projection.NewZealandMapGrid}</li>
  * </ul>
- * <p>
- * This projection is used with the International 1924 ellipsoid.
+ *
+ * <!-- PARAMETERS NewZealandMapGrid -->
+ * <p>The following table summarizes the parameters recognized by this provider.
+ * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
+ * <p><b>Operation name:</b> New_Zealand_Map_Grid</p>
+ * <table bgcolor="#F4F8FF" cellspacing="0" cellpadding="0">
+ *   <tr bgcolor="#B9DCFF"><th>Parameter Name</th><th>Default value</th></tr>
+ *   <tr><td>semi_major</td><td>&nbsp;&nbsp;6378388 metres</td></tr>
+ *   <tr><td>semi_minor</td><td>&nbsp;&nbsp;6356911.9461279465 metres</td></tr>
+ *   <tr><td>roll_longitude</td><td>&nbsp;&nbsp;false</td></tr>
+ *   <tr><td>latitude_of_origin</td><td>&nbsp;&nbsp;-41°</td></tr>
+ *   <tr><td>central_meridian</td><td>&nbsp;&nbsp;173°</td></tr>
+ *   <tr><td>false_easting</td><td>&nbsp;&nbsp;2510000 metres</td></tr>
+ *   <tr><td>false_northing</td><td>&nbsp;&nbsp;6023150 metres</td></tr>
+ * </table>
+ * <!-- END OF PARAMETERS -->
  *
  * @author Justin Deoliveira (Refractions)
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.20
+ *
+ * @see <A HREF="http://www.remotesensing.org/geotiff/proj_list/new_zealand_map_grid.html">New Zealand Map Grid on RemoteSensing.org</A>
  *
  * @since 2.2
  * @module

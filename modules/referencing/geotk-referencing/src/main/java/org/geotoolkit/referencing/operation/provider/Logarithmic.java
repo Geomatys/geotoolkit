@@ -41,6 +41,17 @@ import static org.geotoolkit.internal.referencing.Identifiers.createDescriptorGr
 /**
  * The provider for {@link LogarithmicTransform1D}.
  *
+ * <!-- PARAMETERS Logarithmic -->
+ * <p>The following table summarizes the parameters recognized by this provider.
+ * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
+ * <p><b>Operation name:</b> Logarithmic</p>
+ * <table bgcolor="#F4F8FF" cellspacing="0" cellpadding="0">
+ *   <tr bgcolor="#B9DCFF"><th>Parameter Name</th><th>Default value</th></tr>
+ *   <tr><td>base</td><td>&nbsp;&nbsp;10</td></tr>
+ *   <tr><td>offset</td><td>&nbsp;&nbsp;0</td></tr>
+ * </table>
+ * <!-- END OF PARAMETERS -->
+ *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.20
  *

@@ -43,8 +43,17 @@ import org.geotoolkit.referencing.operation.MathTransformProvider;
  *   <li>{@link org.geotoolkit.referencing.operation.transform.NTv2Transform}</li>
  * </ul>
  *
- * {@section Grid data}
+ * <!-- PARAMETERS NTv2 -->
+ * <p>The following table summarizes the parameters recognized by this provider.
+ * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
+ * <p><b>Operation name:</b> NTv2</p>
+ * <table bgcolor="#F4F8FF" cellspacing="0" cellpadding="0">
+ *   <tr bgcolor="#B9DCFF"><th>Parameter Name</th><th>Default value</th></tr>
+ *   <tr><td>Latitude and longitude difference file</td><td>&nbsp;&nbsp;</td></tr>
+ * </table>
+ * <!-- END OF PARAMETERS -->
  *
+ * {@section Grid data}
  * This transform requires data that are not bundled by default with Geotk. Run the
  * <a href="http://www.geotoolkit.org/modules/utility/geotk-setup">geotk-setup</a> module
  * for downloading and installing the grid data.

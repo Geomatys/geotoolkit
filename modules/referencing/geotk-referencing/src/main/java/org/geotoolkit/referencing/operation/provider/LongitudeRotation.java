@@ -42,6 +42,16 @@ import static org.geotoolkit.internal.referencing.Identifiers.createDescriptorGr
 /**
  * The provider for "<cite>Longitude rotation</cite>" (EPSG:9601).
  *
+ * <!-- PARAMETERS LongitudeRotation -->
+ * <p>The following table summarizes the parameters recognized by this provider.
+ * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
+ * <p><b>Operation name:</b> Longitude rotation</p>
+ * <table bgcolor="#F4F8FF" cellspacing="0" cellpadding="0">
+ *   <tr bgcolor="#B9DCFF"><th>Parameter Name</th><th>Default value</th></tr>
+ *   <tr><td>Longitude offset</td><td>&nbsp;&nbsp;</td></tr>
+ * </table>
+ * <!-- END OF PARAMETERS -->
+ *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.20
  *
