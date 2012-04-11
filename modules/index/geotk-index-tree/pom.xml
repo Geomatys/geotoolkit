@@ -31,13 +31,6 @@
       <artifactId>geotk-utility-pending</artifactId>
       <version>${project.version}</version>
     </dependency>
-
-    <dependency>
-      <groupId>org.geotoolkit.pending</groupId>
-      <artifactId>geotk-spatial-lucene</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
     <dependency>
       <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-referencing</artifactId>

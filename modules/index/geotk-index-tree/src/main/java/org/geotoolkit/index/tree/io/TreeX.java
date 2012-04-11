@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.index.tree.Tree;
-import org.geotoolkit.lucene.filter.SpatialFilterType;
+import org.geotoolkit.filter.SpatialFilterType;
 import org.opengis.geometry.Envelope;
 
 /**Logics operate.

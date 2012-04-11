@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.lucene.filter;
+package org.geotoolkit.filter;
 
 /**
  *
