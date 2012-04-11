@@ -58,6 +58,7 @@ public abstract class TreeTest {
             for (Envelope shr : listB) {
                 if (new GeneralEnvelope(shs).equals(shr, 1E-9, false)) {
                     shapequals = true;
+                    break;
                 }
             }
             if (!shapequals) {

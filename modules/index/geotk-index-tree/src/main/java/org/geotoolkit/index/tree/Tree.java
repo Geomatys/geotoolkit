@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.index.tree;
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import org.geotoolkit.index.tree.calculator.Calculator;
@@ -48,7 +47,7 @@ public interface Tree {
      * @param result List of Entr(y)(ies).
      * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
      */
-    void search(Envelope regionSearch,TreeVisitor visitor) throws IllegalArgumentException;
+    void search(Envelope regionSearch, TreeVisitor visitor) throws IllegalArgumentException;
 
     /**
      * Insert a {@code Entry} into Rtree.

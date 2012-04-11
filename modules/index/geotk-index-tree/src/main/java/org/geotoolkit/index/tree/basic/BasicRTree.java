@@ -54,8 +54,8 @@ public class BasicRTree extends DefaultAbstractTree {
      * @param maxElements max value of elements per tree cell.
      * @param choice Split made "linear" or "quadratic".
      */
-    public BasicRTree(final int maxElements, CoordinateReferenceSystem crs, final SplitCase choice, /*Calculator calculator,*/ NodeFactory nodefactory) {
-        super(maxElements, crs, /*calculator,*/ nodefactory);
+    public BasicRTree(final int maxElements, CoordinateReferenceSystem crs, final SplitCase choice, NodeFactory nodefactory) {
+        super(maxElements, crs, nodefactory);
         this.choice = choice;
         setRoot(null);
     }
