@@ -45,20 +45,20 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * <!-- PARAMETERS ObliqueMercator -->
  * <p>The following table summarizes the parameters recognized by this provider.
  * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
- * <p><b>Operation name:</b> Oblique_Mercator</p>
- * <table bgcolor="#F4F8FF" cellspacing="0" cellpadding="0">
- *   <tr bgcolor="#B9DCFF"><th>Parameter Name</th><th>Default value</th></tr>
- *   <tr><td>semi_major</td><td>&nbsp;&nbsp;</td></tr>
- *   <tr><td>semi_minor</td><td>&nbsp;&nbsp;</td></tr>
- *   <tr><td>roll_longitude</td><td>&nbsp;&nbsp;false</td></tr>
- *   <tr><td>longitude_of_center</td><td>&nbsp;&nbsp;0°</td></tr>
- *   <tr><td>latitude_of_center</td><td>&nbsp;&nbsp;0°</td></tr>
- *   <tr><td>azimuth</td><td>&nbsp;&nbsp;</td></tr>
- *   <tr><td>rectified_grid_angle</td><td>&nbsp;&nbsp;<var>Azimuth of initial line</var></td></tr>
- *   <tr><td>scale_factor</td><td>&nbsp;&nbsp;1</td></tr>
- *   <tr><td>false_easting</td><td>&nbsp;&nbsp;0 metres</td></tr>
- *   <tr><td>false_northing</td><td>&nbsp;&nbsp;0 metres</td></tr>
- * </table>
+ * <blockquote><p><b>Operation name:</b> {@code Oblique_Mercator}</p>
+ * <table class="geotk">
+ *   <tr><th>Parameter Name</th><th>Default value</th></tr>
+ *   <tr><td>{@code semi_major}</td><td></td></tr>
+ *   <tr><td>{@code semi_minor}</td><td></td></tr>
+ *   <tr><td>{@code roll_longitude}</td><td>false</td></tr>
+ *   <tr><td>{@code longitude_of_center}</td><td>0°</td></tr>
+ *   <tr><td>{@code latitude_of_center}</td><td>0°</td></tr>
+ *   <tr><td>{@code azimuth}</td><td></td></tr>
+ *   <tr><td>{@code rectified_grid_angle}</td><td><var>Azimuth of initial line</var></td></tr>
+ *   <tr><td>{@code scale_factor}</td><td>1</td></tr>
+ *   <tr><td>{@code false_easting}</td><td>0 metres</td></tr>
+ *   <tr><td>{@code false_northing}</td><td>0 metres</td></tr>
+ * </table></blockquote>
  * <!-- END OF PARAMETERS -->
  *
  * @author Rueben Schulz (UBC)
@@ -207,170 +207,170 @@ public class ObliqueMercator extends MapProjection {
      * The following table lists the operation names and the parameters recognized by Geotk:
      * <p>
      * <!-- GENERATED PARAMETERS - inserted by ProjectionParametersJavadoc -->
-     * <table bgcolor="#F4F8FF" border="1" cellspacing="0" cellpadding="6">
-     *   <tr bgcolor="#B9DCFF" valign="top"><td colspan="2">
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>OGC:</code></td><td><code>Oblique_Mercator</code></td></tr>
-     *       <tr><th align="left">Alias:&nbsp;&nbsp;</th><td><code>EPSG:</code></td><td><code>Hotine Oblique Mercator (variant B)</code></td></tr>
-     *       <tr><th align="left">&nbsp;&nbsp;</th><td><code>EPSG:</code></td><td><code>Rectified Skew Orthomorphic (RSO)</code></td></tr>
-     *       <tr><th align="left">&nbsp;&nbsp;</th><td><code>EPSG:</code></td><td><code><del>Oblique Mercator</del></code></td></tr>
-     *       <tr><th align="left">&nbsp;&nbsp;</th><td><code>ESRI:</code></td><td><code>Hotine_Oblique_Mercator_Azimuth_Center</code></td></tr>
-     *       <tr><th align="left">&nbsp;&nbsp;</th><td><code>ESRI:</code></td><td><code>Rectified_Skew_Orthomorphic_Center</code></td></tr>
-     *       <tr><th align="left">&nbsp;&nbsp;</th><td><code>GeoTIFF:</code></td><td><code>CT_ObliqueMercator</code></td></tr>
-     *       <tr><th align="left">&nbsp;&nbsp;</th><td><code>PROJ4:</code></td><td><code>omerc</code></td></tr>
-     *       <tr><th align="left">&nbsp;&nbsp;</th><td><code>Geotk:</code></td><td><code>Oblique Mercator projection</code></td></tr>
-     *       <tr><th align="left">Identifier:&nbsp;&nbsp;</th><td><code>EPSG:</code></td><td><code>9815</code></td></tr>
-     *       <tr><th align="left">&nbsp;&nbsp;</th><td><code>GeoTIFF:</code></td><td><code>3</code></td></tr>
+     * <table class="geotk" border="1">
+     *   <tr><th colspan="2">
+     *     <table class="compact">
+     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code Oblique_Mercator}</td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code Hotine Oblique Mercator (variant B)}</td></tr>
+     *       <tr><td></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code Rectified Skew Orthomorphic (RSO)}</td></tr>
+     *       <tr><td></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code <del>Oblique Mercator</del>}</td></tr>
+     *       <tr><td></td><td class="onright">{@code ESRI}:</td><td class="onleft">{@code Hotine_Oblique_Mercator_Azimuth_Center}</td></tr>
+     *       <tr><td></td><td class="onright">{@code ESRI}:</td><td class="onleft">{@code Rectified_Skew_Orthomorphic_Center}</td></tr>
+     *       <tr><td></td><td class="onright">{@code GeoTIFF}:</td><td class="onleft">{@code CT_ObliqueMercator}</td></tr>
+     *       <tr><td></td><td class="onright">{@code PROJ4}:</td><td class="onleft">{@code omerc}</td></tr>
+     *       <tr><td></td><td class="onright">{@code Geotk}:</td><td class="onleft">{@code Oblique Mercator projection}</td></tr>
+     *       <tr><td><b>Identifier:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code 9815}</td></tr>
+     *       <tr><td></td><td class="onright">{@code GeoTIFF}:</td><td class="onleft">{@code 3}</td></tr>
      *     </table>
-     *   </td></tr>
-     *   <tr valign="top"><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>OGC:</code></td><td><code>semi_major</code></td></tr>
-     *       <tr><th align="left">Alias:&nbsp;&nbsp;</th><td><code>EPSG:</code></td><td><code>Semi-major axis</code></td></tr>
-     *       <tr><th align="left">&nbsp;&nbsp;</th><td><code>ESRI:</code></td><td><code>Semi_Major</code></td></tr>
-     *       <tr><th align="left">&nbsp;&nbsp;</th><td><code>GeoTIFF:</code></td><td><code>SemiMajor</code></td></tr>
-     *       <tr><th align="left">&nbsp;&nbsp;</th><td><code>PROJ4:</code></td><td><code>a</code></td></tr>
-     *     </table>
-     *   </td><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
-     *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>mandatory</td></tr>
-     *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>[0…∞) metres</td></tr>
-     *     </table>
-     *   </td></tr>
-     *   <tr valign="top"><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>OGC:</code></td><td><code>semi_minor</code></td></tr>
-     *       <tr><th align="left">Alias:&nbsp;&nbsp;</th><td><code>EPSG:</code></td><td><code>Semi-minor axis</code></td></tr>
-     *       <tr><th align="left">&nbsp;&nbsp;</th><td><code>ESRI:</code></td><td><code>Semi_Minor</code></td></tr>
-     *       <tr><th align="left">&nbsp;&nbsp;</th><td><code>GeoTIFF:</code></td><td><code>SemiMinor</code></td></tr>
-     *       <tr><th align="left">&nbsp;&nbsp;</th><td><code>PROJ4:</code></td><td><code>b</code></td></tr>
+     *   </th></tr>
+     *   <tr><td>
+     *     <table class="compact">
+     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code semi_major}</td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code Semi-major axis}</td></tr>
+     *       <tr><td></td><td class="onright">{@code ESRI}:</td><td class="onleft">{@code Semi_Major}</td></tr>
+     *       <tr><td></td><td class="onright">{@code GeoTIFF}:</td><td class="onleft">{@code SemiMajor}</td></tr>
+     *       <tr><td></td><td class="onright">{@code PROJ4}:</td><td class="onleft">{@code a}</td></tr>
      *     </table>
      *   </td><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
-     *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>mandatory</td></tr>
-     *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>[0…∞) metres</td></tr>
+     *     <table class="compact">
+     *       <tr><td><b>Type:</b></td><td>{@code Double}</td></tr>
+     *       <tr><td><b>Obligation:</b></td><td>mandatory</td></tr>
+     *       <tr><td><b>Value range:</b></td><td>[0…∞) metres</td></tr>
      *     </table>
      *   </td></tr>
-     *   <tr valign="top"><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>Geotk:</code></td><td><code>roll_longitude</code></td></tr>
+     *   <tr><td>
+     *     <table class="compact">
+     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code semi_minor}</td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code Semi-minor axis}</td></tr>
+     *       <tr><td></td><td class="onright">{@code ESRI}:</td><td class="onleft">{@code Semi_Minor}</td></tr>
+     *       <tr><td></td><td class="onright">{@code GeoTIFF}:</td><td class="onleft">{@code SemiMinor}</td></tr>
+     *       <tr><td></td><td class="onright">{@code PROJ4}:</td><td class="onleft">{@code b}</td></tr>
      *     </table>
      *   </td><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Boolean</code></td></tr>
-     *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>optional</td></tr>
-     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>false</td></tr>
+     *     <table class="compact">
+     *       <tr><td><b>Type:</b></td><td>{@code Double}</td></tr>
+     *       <tr><td><b>Obligation:</b></td><td>mandatory</td></tr>
+     *       <tr><td><b>Value range:</b></td><td>[0…∞) metres</td></tr>
      *     </table>
      *   </td></tr>
-     *   <tr valign="top"><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>OGC:</code></td><td><code>longitude_of_center</code></td></tr>
-     *       <tr><th align="left">Alias:&nbsp;&nbsp;</th><td><code>EPSG:</code></td><td><code>Longitude of projection centre</code></td></tr>
-     *       <tr><th align="left">&nbsp;&nbsp;</th><td><code>ESRI:</code></td><td><code>Longitude_Of_Center</code></td></tr>
-     *       <tr><th align="left">&nbsp;&nbsp;</th><td><code>GeoTIFF:</code></td><td><code>CenterLong</code></td></tr>
-     *       <tr><th align="left">&nbsp;&nbsp;</th><td><code>PROJ4:</code></td><td><code>lon_0</code></td></tr>
+     *   <tr><td>
+     *     <table class="compact">
+     *       <tr><td><b>Name:</b></td><td class="onright">{@code Geotk}:</td><td class="onleft">{@code roll_longitude}</td></tr>
      *     </table>
      *   </td><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
-     *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>mandatory</td></tr>
-     *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>[-180 … 180]°</td></tr>
-     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>0°</td></tr>
+     *     <table class="compact">
+     *       <tr><td><b>Type:</b></td><td>{@code Boolean}</td></tr>
+     *       <tr><td><b>Obligation:</b></td><td>optional</td></tr>
+     *       <tr><td><b>Default value:</b></td><td>false</td></tr>
      *     </table>
      *   </td></tr>
-     *   <tr valign="top"><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>OGC:</code></td><td><code>latitude_of_center</code></td></tr>
-     *       <tr><th align="left">Alias:&nbsp;&nbsp;</th><td><code>EPSG:</code></td><td><code>Latitude of projection centre</code></td></tr>
-     *       <tr><th align="left">&nbsp;&nbsp;</th><td><code>ESRI:</code></td><td><code>Latitude_Of_Center</code></td></tr>
-     *       <tr><th align="left">&nbsp;&nbsp;</th><td><code>GeoTIFF:</code></td><td><code>CenterLat</code></td></tr>
-     *       <tr><th align="left">&nbsp;&nbsp;</th><td><code>PROJ4:</code></td><td><code>lat_0</code></td></tr>
+     *   <tr><td>
+     *     <table class="compact">
+     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code longitude_of_center}</td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code Longitude of projection centre}</td></tr>
+     *       <tr><td></td><td class="onright">{@code ESRI}:</td><td class="onleft">{@code Longitude_Of_Center}</td></tr>
+     *       <tr><td></td><td class="onright">{@code GeoTIFF}:</td><td class="onleft">{@code CenterLong}</td></tr>
+     *       <tr><td></td><td class="onright">{@code PROJ4}:</td><td class="onleft">{@code lon_0}</td></tr>
      *     </table>
      *   </td><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
-     *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>mandatory</td></tr>
-     *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>[-90 … 90]°</td></tr>
-     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>0°</td></tr>
+     *     <table class="compact">
+     *       <tr><td><b>Type:</b></td><td>{@code Double}</td></tr>
+     *       <tr><td><b>Obligation:</b></td><td>mandatory</td></tr>
+     *       <tr><td><b>Value range:</b></td><td>[-180 … 180]°</td></tr>
+     *       <tr><td><b>Default value:</b></td><td>0°</td></tr>
      *     </table>
      *   </td></tr>
-     *   <tr valign="top"><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>OGC:</code></td><td><code>azimuth</code></td></tr>
-     *       <tr><th align="left">Alias:&nbsp;&nbsp;</th><td><code>EPSG:</code></td><td><code>Azimuth of initial line</code></td></tr>
-     *       <tr><th align="left">&nbsp;&nbsp;</th><td><code>ESRI:</code></td><td><code>Azimuth</code></td></tr>
-     *       <tr><th align="left">&nbsp;&nbsp;</th><td><code>GeoTIFF:</code></td><td><code>AzimuthAngle</code></td></tr>
+     *   <tr><td>
+     *     <table class="compact">
+     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code latitude_of_center}</td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code Latitude of projection centre}</td></tr>
+     *       <tr><td></td><td class="onright">{@code ESRI}:</td><td class="onleft">{@code Latitude_Of_Center}</td></tr>
+     *       <tr><td></td><td class="onright">{@code GeoTIFF}:</td><td class="onleft">{@code CenterLat}</td></tr>
+     *       <tr><td></td><td class="onright">{@code PROJ4}:</td><td class="onleft">{@code lat_0}</td></tr>
      *     </table>
      *   </td><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
-     *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>mandatory</td></tr>
-     *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>[-360 … 360]°</td></tr>
+     *     <table class="compact">
+     *       <tr><td><b>Type:</b></td><td>{@code Double}</td></tr>
+     *       <tr><td><b>Obligation:</b></td><td>mandatory</td></tr>
+     *       <tr><td><b>Value range:</b></td><td>[-90 … 90]°</td></tr>
+     *       <tr><td><b>Default value:</b></td><td>0°</td></tr>
      *     </table>
      *   </td></tr>
-     *   <tr valign="top"><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>OGC:</code></td><td><code>rectified_grid_angle</code></td></tr>
-     *       <tr><th align="left">Alias:&nbsp;&nbsp;</th><td><code>EPSG:</code></td><td><code>Angle from Rectified to Skew Grid</code></td></tr>
-     *       <tr><th align="left">&nbsp;&nbsp;</th><td><code>ESRI:</code></td><td><code>XY_Plane_Rotation</code></td></tr>
-     *       <tr><th align="left">&nbsp;&nbsp;</th><td><code>GeoTIFF:</code></td><td><code>RectifiedGridAngle</code></td></tr>
+     *   <tr><td>
+     *     <table class="compact">
+     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code azimuth}</td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code Azimuth of initial line}</td></tr>
+     *       <tr><td></td><td class="onright">{@code ESRI}:</td><td class="onleft">{@code Azimuth}</td></tr>
+     *       <tr><td></td><td class="onright">{@code GeoTIFF}:</td><td class="onleft">{@code AzimuthAngle}</td></tr>
      *     </table>
      *   </td><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
-     *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>optional</td></tr>
-     *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>[-360 … 360]°</td></tr>
-     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td><var>Azimuth of initial line</var></td></tr>
+     *     <table class="compact">
+     *       <tr><td><b>Type:</b></td><td>{@code Double}</td></tr>
+     *       <tr><td><b>Obligation:</b></td><td>mandatory</td></tr>
+     *       <tr><td><b>Value range:</b></td><td>[-360 … 360]°</td></tr>
      *     </table>
      *   </td></tr>
-     *   <tr valign="top"><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>OGC:</code></td><td><code>scale_factor</code></td></tr>
-     *       <tr><th align="left">Alias:&nbsp;&nbsp;</th><td><code>EPSG:</code></td><td><code>Scale factor on initial line</code></td></tr>
-     *       <tr><th align="left">&nbsp;&nbsp;</th><td><code>ESRI:</code></td><td><code>Scale_Factor</code></td></tr>
-     *       <tr><th align="left">&nbsp;&nbsp;</th><td><code>GeoTIFF:</code></td><td><code>ScaleAtCenter</code></td></tr>
-     *       <tr><th align="left">&nbsp;&nbsp;</th><td><code>PROJ4:</code></td><td><code>k</code></td></tr>
+     *   <tr><td>
+     *     <table class="compact">
+     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code rectified_grid_angle}</td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code Angle from Rectified to Skew Grid}</td></tr>
+     *       <tr><td></td><td class="onright">{@code ESRI}:</td><td class="onleft">{@code XY_Plane_Rotation}</td></tr>
+     *       <tr><td></td><td class="onright">{@code GeoTIFF}:</td><td class="onleft">{@code RectifiedGridAngle}</td></tr>
      *     </table>
      *   </td><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
-     *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>mandatory</td></tr>
-     *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>[0…∞)</td></tr>
-     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>1</td></tr>
+     *     <table class="compact">
+     *       <tr><td><b>Type:</b></td><td>{@code Double}</td></tr>
+     *       <tr><td><b>Obligation:</b></td><td>optional</td></tr>
+     *       <tr><td><b>Value range:</b></td><td>[-360 … 360]°</td></tr>
+     *       <tr><td><b>Default value:</b></td><td><var>Azimuth of initial line</var></td></tr>
      *     </table>
      *   </td></tr>
-     *   <tr valign="top"><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>OGC:</code></td><td><code>false_easting</code></td></tr>
-     *       <tr><th align="left">Alias:&nbsp;&nbsp;</th><td><code>EPSG:</code></td><td><code>Easting at projection centre</code></td></tr>
-     *       <tr><th align="left">&nbsp;&nbsp;</th><td><code>ESRI:</code></td><td><code>False_Easting</code></td></tr>
-     *       <tr><th align="left">&nbsp;&nbsp;</th><td><code>GeoTIFF:</code></td><td><code>FalseEasting</code></td></tr>
-     *       <tr><th align="left">&nbsp;&nbsp;</th><td><code>PROJ4:</code></td><td><code>x_0</code></td></tr>
+     *   <tr><td>
+     *     <table class="compact">
+     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code scale_factor}</td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code Scale factor on initial line}</td></tr>
+     *       <tr><td></td><td class="onright">{@code ESRI}:</td><td class="onleft">{@code Scale_Factor}</td></tr>
+     *       <tr><td></td><td class="onright">{@code GeoTIFF}:</td><td class="onleft">{@code ScaleAtCenter}</td></tr>
+     *       <tr><td></td><td class="onright">{@code PROJ4}:</td><td class="onleft">{@code k}</td></tr>
      *     </table>
      *   </td><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
-     *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>mandatory</td></tr>
-     *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>(-∞ … ∞) metres</td></tr>
-     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>0 metres</td></tr>
+     *     <table class="compact">
+     *       <tr><td><b>Type:</b></td><td>{@code Double}</td></tr>
+     *       <tr><td><b>Obligation:</b></td><td>mandatory</td></tr>
+     *       <tr><td><b>Value range:</b></td><td>[0…∞)</td></tr>
+     *       <tr><td><b>Default value:</b></td><td>1</td></tr>
      *     </table>
      *   </td></tr>
-     *   <tr valign="top"><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>OGC:</code></td><td><code>false_northing</code></td></tr>
-     *       <tr><th align="left">Alias:&nbsp;&nbsp;</th><td><code>EPSG:</code></td><td><code>Northing at projection centre</code></td></tr>
-     *       <tr><th align="left">&nbsp;&nbsp;</th><td><code>ESRI:</code></td><td><code>False_Northing</code></td></tr>
-     *       <tr><th align="left">&nbsp;&nbsp;</th><td><code>GeoTIFF:</code></td><td><code>FalseNorthing</code></td></tr>
-     *       <tr><th align="left">&nbsp;&nbsp;</th><td><code>PROJ4:</code></td><td><code>y_0</code></td></tr>
+     *   <tr><td>
+     *     <table class="compact">
+     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code false_easting}</td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code Easting at projection centre}</td></tr>
+     *       <tr><td></td><td class="onright">{@code ESRI}:</td><td class="onleft">{@code False_Easting}</td></tr>
+     *       <tr><td></td><td class="onright">{@code GeoTIFF}:</td><td class="onleft">{@code FalseEasting}</td></tr>
+     *       <tr><td></td><td class="onright">{@code PROJ4}:</td><td class="onleft">{@code x_0}</td></tr>
      *     </table>
      *   </td><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
-     *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>mandatory</td></tr>
-     *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>(-∞ … ∞) metres</td></tr>
-     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>0 metres</td></tr>
+     *     <table class="compact">
+     *       <tr><td><b>Type:</b></td><td>{@code Double}</td></tr>
+     *       <tr><td><b>Obligation:</b></td><td>mandatory</td></tr>
+     *       <tr><td><b>Value range:</b></td><td>(-∞ … ∞) metres</td></tr>
+     *       <tr><td><b>Default value:</b></td><td>0 metres</td></tr>
+     *     </table>
+     *   </td></tr>
+     *   <tr><td>
+     *     <table class="compact">
+     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code false_northing}</td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code Northing at projection centre}</td></tr>
+     *       <tr><td></td><td class="onright">{@code ESRI}:</td><td class="onleft">{@code False_Northing}</td></tr>
+     *       <tr><td></td><td class="onright">{@code GeoTIFF}:</td><td class="onleft">{@code FalseNorthing}</td></tr>
+     *       <tr><td></td><td class="onright">{@code PROJ4}:</td><td class="onleft">{@code y_0}</td></tr>
+     *     </table>
+     *   </td><td>
+     *     <table class="compact">
+     *       <tr><td><b>Type:</b></td><td>{@code Double}</td></tr>
+     *       <tr><td><b>Obligation:</b></td><td>mandatory</td></tr>
+     *       <tr><td><b>Value range:</b></td><td>(-∞ … ∞) metres</td></tr>
+     *       <tr><td><b>Default value:</b></td><td>0 metres</td></tr>
      *     </table>
      *   </td></tr>
      * </table>
@@ -437,21 +437,21 @@ public class ObliqueMercator extends MapProjection {
      * <!-- PARAMETERS TwoPoint -->
      * <p>The following table summarizes the parameters recognized by this provider.
      * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
-     * <p><b>Operation name:</b> Hotine_Oblique_Mercator_Two_Point_Center</p>
-     * <table bgcolor="#F4F8FF" cellspacing="0" cellpadding="0">
-     *   <tr bgcolor="#B9DCFF"><th>Parameter Name</th><th>Default value</th></tr>
-     *   <tr><td>Semi_Major</td><td>&nbsp;&nbsp;</td></tr>
-     *   <tr><td>Semi_Minor</td><td>&nbsp;&nbsp;</td></tr>
-     *   <tr><td>roll_longitude</td><td>&nbsp;&nbsp;false</td></tr>
-     *   <tr><td>Latitude_Of_1st_Point</td><td>&nbsp;&nbsp;</td></tr>
-     *   <tr><td>Longitude_Of_1st_Point</td><td>&nbsp;&nbsp;</td></tr>
-     *   <tr><td>Latitude_Of_2nd_Point</td><td>&nbsp;&nbsp;</td></tr>
-     *   <tr><td>Longitude_Of_2nd_Point</td><td>&nbsp;&nbsp;</td></tr>
-     *   <tr><td>Latitude_Of_Center</td><td>&nbsp;&nbsp;0°</td></tr>
-     *   <tr><td>Scale_Factor</td><td>&nbsp;&nbsp;1</td></tr>
-     *   <tr><td>False_Easting</td><td>&nbsp;&nbsp;0 metres</td></tr>
-     *   <tr><td>False_Northing</td><td>&nbsp;&nbsp;0 metres</td></tr>
-     * </table>
+     * <blockquote><p><b>Operation name:</b> {@code Hotine_Oblique_Mercator_Two_Point_Center}</p>
+     * <table class="geotk">
+     *   <tr><th>Parameter Name</th><th>Default value</th></tr>
+     *   <tr><td>{@code Semi_Major}</td><td></td></tr>
+     *   <tr><td>{@code Semi_Minor}</td><td></td></tr>
+     *   <tr><td>{@code roll_longitude}</td><td>false</td></tr>
+     *   <tr><td>{@code Latitude_Of_1st_Point}</td><td></td></tr>
+     *   <tr><td>{@code Longitude_Of_1st_Point}</td><td></td></tr>
+     *   <tr><td>{@code Latitude_Of_2nd_Point}</td><td></td></tr>
+     *   <tr><td>{@code Longitude_Of_2nd_Point}</td><td></td></tr>
+     *   <tr><td>{@code Latitude_Of_Center}</td><td>0°</td></tr>
+     *   <tr><td>{@code Scale_Factor}</td><td>1</td></tr>
+     *   <tr><td>{@code False_Easting}</td><td>0 metres</td></tr>
+     *   <tr><td>{@code False_Northing}</td><td>0 metres</td></tr>
+     * </table></blockquote>
      * <!-- END OF PARAMETERS -->
      *
      * @author Rueben Schulz (UBC)
@@ -519,136 +519,136 @@ public class ObliqueMercator extends MapProjection {
          * The following table lists the operation names and the parameters recognized by Geotk:
          * <p>
          * <!-- GENERATED PARAMETERS - inserted by ProjectionParametersJavadoc -->
-         * <table bgcolor="#F4F8FF" border="1" cellspacing="0" cellpadding="6">
-         *   <tr bgcolor="#B9DCFF" valign="top"><td colspan="2">
-         *     <table border="0" cellspacing="0" cellpadding="0">
-         *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>ESRI:</code></td><td><code>Hotine_Oblique_Mercator_Two_Point_Center</code></td></tr>
-         *       <tr><th align="left">Alias:&nbsp;&nbsp;</th><td><code>Geotk:</code></td><td><code>Oblique Mercator projection</code></td></tr>
+         * <table class="geotk" border="1">
+         *   <tr><th colspan="2">
+         *     <table class="compact">
+         *       <tr><td><b>Name:</b></td><td class="onright">{@code ESRI}:</td><td class="onleft">{@code Hotine_Oblique_Mercator_Two_Point_Center}</td></tr>
+         *       <tr><td><b>Alias:</b></td><td class="onright">{@code Geotk}:</td><td class="onleft">{@code Oblique Mercator projection}</td></tr>
          *     </table>
-         *   </td></tr>
-         *   <tr valign="top"><td>
-         *     <table border="0" cellspacing="0" cellpadding="0">
-         *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>ESRI:</code></td><td><code>Semi_Major</code></td></tr>
-         *     </table>
-         *   </td><td>
-         *     <table border="0" cellspacing="0" cellpadding="0">
-         *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
-         *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>mandatory</td></tr>
-         *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>[0…∞) metres</td></tr>
-         *     </table>
-         *   </td></tr>
-         *   <tr valign="top"><td>
-         *     <table border="0" cellspacing="0" cellpadding="0">
-         *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>ESRI:</code></td><td><code>Semi_Minor</code></td></tr>
+         *   </th></tr>
+         *   <tr><td>
+         *     <table class="compact">
+         *       <tr><td><b>Name:</b></td><td class="onright">{@code ESRI}:</td><td class="onleft">{@code Semi_Major}</td></tr>
          *     </table>
          *   </td><td>
-         *     <table border="0" cellspacing="0" cellpadding="0">
-         *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
-         *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>mandatory</td></tr>
-         *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>[0…∞) metres</td></tr>
+         *     <table class="compact">
+         *       <tr><td><b>Type:</b></td><td>{@code Double}</td></tr>
+         *       <tr><td><b>Obligation:</b></td><td>mandatory</td></tr>
+         *       <tr><td><b>Value range:</b></td><td>[0…∞) metres</td></tr>
          *     </table>
          *   </td></tr>
-         *   <tr valign="top"><td>
-         *     <table border="0" cellspacing="0" cellpadding="0">
-         *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>Geotk:</code></td><td><code>roll_longitude</code></td></tr>
+         *   <tr><td>
+         *     <table class="compact">
+         *       <tr><td><b>Name:</b></td><td class="onright">{@code ESRI}:</td><td class="onleft">{@code Semi_Minor}</td></tr>
          *     </table>
          *   </td><td>
-         *     <table border="0" cellspacing="0" cellpadding="0">
-         *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Boolean</code></td></tr>
-         *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>optional</td></tr>
-         *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>false</td></tr>
+         *     <table class="compact">
+         *       <tr><td><b>Type:</b></td><td>{@code Double}</td></tr>
+         *       <tr><td><b>Obligation:</b></td><td>mandatory</td></tr>
+         *       <tr><td><b>Value range:</b></td><td>[0…∞) metres</td></tr>
          *     </table>
          *   </td></tr>
-         *   <tr valign="top"><td>
-         *     <table border="0" cellspacing="0" cellpadding="0">
-         *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>ESRI:</code></td><td><code>Latitude_Of_1st_Point</code></td></tr>
+         *   <tr><td>
+         *     <table class="compact">
+         *       <tr><td><b>Name:</b></td><td class="onright">{@code Geotk}:</td><td class="onleft">{@code roll_longitude}</td></tr>
          *     </table>
          *   </td><td>
-         *     <table border="0" cellspacing="0" cellpadding="0">
-         *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
-         *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>mandatory</td></tr>
-         *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>[-90 … 90]°</td></tr>
+         *     <table class="compact">
+         *       <tr><td><b>Type:</b></td><td>{@code Boolean}</td></tr>
+         *       <tr><td><b>Obligation:</b></td><td>optional</td></tr>
+         *       <tr><td><b>Default value:</b></td><td>false</td></tr>
          *     </table>
          *   </td></tr>
-         *   <tr valign="top"><td>
-         *     <table border="0" cellspacing="0" cellpadding="0">
-         *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>ESRI:</code></td><td><code>Longitude_Of_1st_Point</code></td></tr>
+         *   <tr><td>
+         *     <table class="compact">
+         *       <tr><td><b>Name:</b></td><td class="onright">{@code ESRI}:</td><td class="onleft">{@code Latitude_Of_1st_Point}</td></tr>
          *     </table>
          *   </td><td>
-         *     <table border="0" cellspacing="0" cellpadding="0">
-         *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
-         *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>mandatory</td></tr>
-         *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>[-180 … 180]°</td></tr>
+         *     <table class="compact">
+         *       <tr><td><b>Type:</b></td><td>{@code Double}</td></tr>
+         *       <tr><td><b>Obligation:</b></td><td>mandatory</td></tr>
+         *       <tr><td><b>Value range:</b></td><td>[-90 … 90]°</td></tr>
          *     </table>
          *   </td></tr>
-         *   <tr valign="top"><td>
-         *     <table border="0" cellspacing="0" cellpadding="0">
-         *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>ESRI:</code></td><td><code>Latitude_Of_2nd_Point</code></td></tr>
+         *   <tr><td>
+         *     <table class="compact">
+         *       <tr><td><b>Name:</b></td><td class="onright">{@code ESRI}:</td><td class="onleft">{@code Longitude_Of_1st_Point}</td></tr>
          *     </table>
          *   </td><td>
-         *     <table border="0" cellspacing="0" cellpadding="0">
-         *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
-         *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>mandatory</td></tr>
-         *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>[-90 … 90]°</td></tr>
+         *     <table class="compact">
+         *       <tr><td><b>Type:</b></td><td>{@code Double}</td></tr>
+         *       <tr><td><b>Obligation:</b></td><td>mandatory</td></tr>
+         *       <tr><td><b>Value range:</b></td><td>[-180 … 180]°</td></tr>
          *     </table>
          *   </td></tr>
-         *   <tr valign="top"><td>
-         *     <table border="0" cellspacing="0" cellpadding="0">
-         *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>ESRI:</code></td><td><code>Longitude_Of_2nd_Point</code></td></tr>
+         *   <tr><td>
+         *     <table class="compact">
+         *       <tr><td><b>Name:</b></td><td class="onright">{@code ESRI}:</td><td class="onleft">{@code Latitude_Of_2nd_Point}</td></tr>
          *     </table>
          *   </td><td>
-         *     <table border="0" cellspacing="0" cellpadding="0">
-         *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
-         *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>mandatory</td></tr>
-         *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>[-180 … 180]°</td></tr>
+         *     <table class="compact">
+         *       <tr><td><b>Type:</b></td><td>{@code Double}</td></tr>
+         *       <tr><td><b>Obligation:</b></td><td>mandatory</td></tr>
+         *       <tr><td><b>Value range:</b></td><td>[-90 … 90]°</td></tr>
          *     </table>
          *   </td></tr>
-         *   <tr valign="top"><td>
-         *     <table border="0" cellspacing="0" cellpadding="0">
-         *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>ESRI:</code></td><td><code>Latitude_Of_Center</code></td></tr>
+         *   <tr><td>
+         *     <table class="compact">
+         *       <tr><td><b>Name:</b></td><td class="onright">{@code ESRI}:</td><td class="onleft">{@code Longitude_Of_2nd_Point}</td></tr>
          *     </table>
          *   </td><td>
-         *     <table border="0" cellspacing="0" cellpadding="0">
-         *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
-         *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>mandatory</td></tr>
-         *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>[-90 … 90]°</td></tr>
-         *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>0°</td></tr>
+         *     <table class="compact">
+         *       <tr><td><b>Type:</b></td><td>{@code Double}</td></tr>
+         *       <tr><td><b>Obligation:</b></td><td>mandatory</td></tr>
+         *       <tr><td><b>Value range:</b></td><td>[-180 … 180]°</td></tr>
          *     </table>
          *   </td></tr>
-         *   <tr valign="top"><td>
-         *     <table border="0" cellspacing="0" cellpadding="0">
-         *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>ESRI:</code></td><td><code>Scale_Factor</code></td></tr>
+         *   <tr><td>
+         *     <table class="compact">
+         *       <tr><td><b>Name:</b></td><td class="onright">{@code ESRI}:</td><td class="onleft">{@code Latitude_Of_Center}</td></tr>
          *     </table>
          *   </td><td>
-         *     <table border="0" cellspacing="0" cellpadding="0">
-         *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
-         *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>mandatory</td></tr>
-         *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>[0…∞)</td></tr>
-         *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>1</td></tr>
+         *     <table class="compact">
+         *       <tr><td><b>Type:</b></td><td>{@code Double}</td></tr>
+         *       <tr><td><b>Obligation:</b></td><td>mandatory</td></tr>
+         *       <tr><td><b>Value range:</b></td><td>[-90 … 90]°</td></tr>
+         *       <tr><td><b>Default value:</b></td><td>0°</td></tr>
          *     </table>
          *   </td></tr>
-         *   <tr valign="top"><td>
-         *     <table border="0" cellspacing="0" cellpadding="0">
-         *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>ESRI:</code></td><td><code>False_Easting</code></td></tr>
+         *   <tr><td>
+         *     <table class="compact">
+         *       <tr><td><b>Name:</b></td><td class="onright">{@code ESRI}:</td><td class="onleft">{@code Scale_Factor}</td></tr>
          *     </table>
          *   </td><td>
-         *     <table border="0" cellspacing="0" cellpadding="0">
-         *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
-         *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>mandatory</td></tr>
-         *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>(-∞ … ∞) metres</td></tr>
-         *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>0 metres</td></tr>
+         *     <table class="compact">
+         *       <tr><td><b>Type:</b></td><td>{@code Double}</td></tr>
+         *       <tr><td><b>Obligation:</b></td><td>mandatory</td></tr>
+         *       <tr><td><b>Value range:</b></td><td>[0…∞)</td></tr>
+         *       <tr><td><b>Default value:</b></td><td>1</td></tr>
          *     </table>
          *   </td></tr>
-         *   <tr valign="top"><td>
-         *     <table border="0" cellspacing="0" cellpadding="0">
-         *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>ESRI:</code></td><td><code>False_Northing</code></td></tr>
+         *   <tr><td>
+         *     <table class="compact">
+         *       <tr><td><b>Name:</b></td><td class="onright">{@code ESRI}:</td><td class="onleft">{@code False_Easting}</td></tr>
          *     </table>
          *   </td><td>
-         *     <table border="0" cellspacing="0" cellpadding="0">
-         *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
-         *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>mandatory</td></tr>
-         *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>(-∞ … ∞) metres</td></tr>
-         *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>0 metres</td></tr>
+         *     <table class="compact">
+         *       <tr><td><b>Type:</b></td><td>{@code Double}</td></tr>
+         *       <tr><td><b>Obligation:</b></td><td>mandatory</td></tr>
+         *       <tr><td><b>Value range:</b></td><td>(-∞ … ∞) metres</td></tr>
+         *       <tr><td><b>Default value:</b></td><td>0 metres</td></tr>
+         *     </table>
+         *   </td></tr>
+         *   <tr><td>
+         *     <table class="compact">
+         *       <tr><td><b>Name:</b></td><td class="onright">{@code ESRI}:</td><td class="onleft">{@code False_Northing}</td></tr>
+         *     </table>
+         *   </td><td>
+         *     <table class="compact">
+         *       <tr><td><b>Type:</b></td><td>{@code Double}</td></tr>
+         *       <tr><td><b>Obligation:</b></td><td>mandatory</td></tr>
+         *       <tr><td><b>Value range:</b></td><td>(-∞ … ∞) metres</td></tr>
+         *       <tr><td><b>Default value:</b></td><td>0 metres</td></tr>
          *     </table>
          *   </td></tr>
          * </table>
