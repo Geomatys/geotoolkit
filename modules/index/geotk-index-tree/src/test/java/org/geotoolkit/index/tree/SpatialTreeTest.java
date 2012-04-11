@@ -23,6 +23,9 @@ import java.util.List;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.index.tree.io.DefaultTreeVisitor;
+import org.geotoolkit.index.tree.nodefactory.TreeNodeFactory;
+import org.geotoolkit.index.tree.star.StarRTree;
+import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 import org.geotoolkit.util.ArgumentChecks;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
@@ -124,7 +127,7 @@ public abstract class SpatialTreeTest extends TreeTest{
      */
     @Test
     public void checkBoundaryTest() throws MismatchedReferenceSystemException {
-        checkNodeBoundaryTest((Node) tree.getRoot());
+        checkNodeBoundaryTest(tree.getRoot());
     }
 
     /**
@@ -177,12 +180,20 @@ public abstract class SpatialTreeTest extends TreeTest{
             gR.setEnvelope(93, 18, 19, 130, 87, 21);
         }
         tree.insertAll(lGE.iterator());
-
         final List<Envelope> lGES = new ArrayList<Envelope>();
         tree.search(gR, new DefaultTreeVisitor(lGES));
-
         assertTrue(compareList(lGERef, lGES));
     }
+
+    /**
+     * Assert avoid null pointer exception.
+     */
+    @Test
+    public void checkExtends(){
+        tree.setRoot(null);
+        assertTrue(tree.getExtent() == null);
+    }
+
 
     /**
      * Compare boundary node from his children boundary.

@@ -33,7 +33,7 @@ public final class TreeX {
     private TreeX() {
     }
 
-    /**Effectuate differente logic operations on tree.
+    /**Effectuate differents logics operations on tree.
      *
      * @param tree
      * @param areaSearch

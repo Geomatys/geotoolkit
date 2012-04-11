@@ -148,6 +148,10 @@ public interface Tree {
     int getElementsNumber();
 
     /**
+     * <blockquote><font size=-1>
+     * <strong>NOTE: return {@code null} if tree root node is null.</strong>
+     * </font></blockquote>
+     *
      * @return all tree data set boundary.
      */
     Envelope getExtent();

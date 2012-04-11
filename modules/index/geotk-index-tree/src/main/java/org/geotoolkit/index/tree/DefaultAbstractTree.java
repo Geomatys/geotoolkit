@@ -242,7 +242,7 @@ public abstract class DefaultAbstractTree implements Tree{
      */
     @Override
     public Envelope getExtent(){
-        return getRoot().getBoundary();
+        return (getRoot() == null)?null:getRoot().getBoundary();
     }
 
     /**
