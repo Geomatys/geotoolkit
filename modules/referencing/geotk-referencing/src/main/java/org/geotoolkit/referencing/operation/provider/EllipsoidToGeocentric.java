@@ -73,6 +73,7 @@ import static org.geotoolkit.parameter.Parameters.*;
  * @version 3.20
  *
  * @see GeocentricTransform
+ * @see <a href="{@docRoot}/../modules/referencing/operation-parameters.html">Geotk coordinate operations matrix</a>
  *
  * @since 2.0
  * @module

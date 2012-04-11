@@ -72,6 +72,7 @@ import static org.geotoolkit.parameter.MatrixParameterDescriptors.DEFAULT_MATRIX
  * @see ProjectiveTransform
  * @see org.geotoolkit.referencing.operation.transform.AffineTransform2D
  * @see org.geotoolkit.referencing.operation.transform.LinearTransform1D
+ * @see <a href="{@docRoot}/../modules/referencing/operation-parameters.html">Geotk coordinate operations matrix</a>
  *
  * @since 2.0
  * @module

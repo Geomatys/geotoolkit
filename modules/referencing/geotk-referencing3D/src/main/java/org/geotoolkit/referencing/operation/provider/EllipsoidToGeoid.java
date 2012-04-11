@@ -59,6 +59,8 @@ import static org.geotoolkit.referencing.operation.transform.EarthGravitationalM
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.20
  *
+ * @see <a href="{@docRoot}/../modules/referencing/operation-parameters.html">Geotk coordinate operations matrix</a>
+ *
  * @since 2.3
  * @module
  */

@@ -67,6 +67,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * @version 3.20
  *
  * @see <A HREF="http://www.remotesensing.org/geotiff/proj_list/mercator_1sp.html">Mercator 1SP on RemoteSensing.org</A>
+ * @see <a href="{@docRoot}/../modules/referencing/operation-parameters.html">Geotk coordinate operations matrix</a>
  *
  * @since 2.2
  * @module

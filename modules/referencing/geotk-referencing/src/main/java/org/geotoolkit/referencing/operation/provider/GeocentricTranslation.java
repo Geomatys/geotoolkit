@@ -68,6 +68,8 @@ import org.geotoolkit.internal.referencing.Identifiers;
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.20
  *
+ * @see <a href="{@docRoot}/../modules/referencing/operation-parameters.html">Geotk coordinate operations matrix</a>
+ *
  * @since 2.2
  * @module
  */

@@ -62,6 +62,8 @@ import org.geotoolkit.referencing.operation.MathTransformProvider;
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.20
  *
+ * @see <a href="{@docRoot}/../modules/referencing/operation-parameters.html">Geotk coordinate operations matrix</a>
+ *
  * @since 3.12
  * @module
  */

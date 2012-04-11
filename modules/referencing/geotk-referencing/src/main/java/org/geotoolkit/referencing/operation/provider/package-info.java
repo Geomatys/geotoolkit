@@ -90,6 +90,9 @@
  * @author Rueben Schulz (UBC)
  * @version 3.20
  *
+ * @see <a href="{@docRoot}/../modules/referencing/operation-parameters.html">Geotk coordinate operations matrix</a>
+ * @see <a href="http://www.remotesensing.org/geotiff/proj_list">Projections list on RemoteSensing.org</a>
+ *
  * @since 3.00
  * @level advanced
  * @module

@@ -62,6 +62,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * @version 3.20
  *
  * @see <A HREF="http://www.remotesensing.org/geotiff/proj_list/cassini_soldner.html">Cassini-Soldner on RemoteSensing.org</A>
+ * @see <a href="{@docRoot}/../modules/referencing/operation-parameters.html">Geotk coordinate operations matrix</a>
  *
  * @since 3.00
  * @module

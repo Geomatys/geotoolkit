@@ -56,6 +56,7 @@ import static org.geotoolkit.internal.referencing.Identifiers.createDescriptorGr
  * @version 3.20
  *
  * @see LogarithmicTransform1D
+ * @see <a href="{@docRoot}/../modules/referencing/operation-parameters.html">Geotk coordinate operations matrix</a>
  *
  * @since 2.0
  * @module

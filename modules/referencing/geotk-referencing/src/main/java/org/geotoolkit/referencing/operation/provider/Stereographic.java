@@ -68,6 +68,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * @version 3.20
  *
  * @see <A HREF="http://www.remotesensing.org/geotiff/proj_list/stereographic.html">Stereographic on RemoteSensing.org</A>
+ * @see <a href="{@docRoot}/../modules/referencing/operation-parameters.html">Geotk coordinate operations matrix</a>
  *
  * @see ObliqueStereographic
  * @see PolarStereographic

@@ -66,6 +66,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * @version 3.20
  *
  * @see <A HREF="http://www.remotesensing.org/geotiff/proj_list/hotine_oblique_mercator.html">Hotine Oblique Mercator on RemoteSensing.org</A>
+ * @see <a href="{@docRoot}/../modules/referencing/operation-parameters.html">Geotk coordinate operations matrix</a>
  *
  * @since 2.4
  * @module
@@ -346,6 +347,7 @@ public class HotineObliqueMercator extends ObliqueMercator {
      * @version 3.20
      *
      * @see org.geotoolkit.referencing.operation.projection.ObliqueMercator
+     * @see <a href="{@docRoot}/../modules/referencing/operation-parameters.html">Geotk coordinate operations matrix</a>
      *
      * @since 2.4
      * @module

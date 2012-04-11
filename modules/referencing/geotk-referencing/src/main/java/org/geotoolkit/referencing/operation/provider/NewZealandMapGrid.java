@@ -63,6 +63,7 @@ import static org.geotoolkit.internal.referencing.Identifiers.createDescriptor;
  * @version 3.20
  *
  * @see <A HREF="http://www.remotesensing.org/geotiff/proj_list/new_zealand_map_grid.html">New Zealand Map Grid on RemoteSensing.org</A>
+ * @see <a href="{@docRoot}/../modules/referencing/operation-parameters.html">Geotk coordinate operations matrix</a>
  *
  * @since 2.2
  * @module
