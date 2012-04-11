@@ -193,6 +193,21 @@ public final class ProjectionParametersReport extends OperationParametersReport 
             }
         }
         /*
+         * Adds a link to javadoc for the first name found, in column order preference (EPSG first).
+         * We will add a link only for operation methods, not parameters, and only on the first name.
+         */
+        if (parameters != null) { // For excluding link on parameter descriptions.
+            for (final String codeSpace : columnHeaders) {
+                names = row.names.get(codeSpace);
+                if (names != null) {
+                    names[0] = "<a href=\"../../apidocs/" +
+                            operation.getClass().getName().replace('.', '/').replace('$', '.') +
+                            ".html\">" + names[0] + "</a>";
+                    break; // Found a name, don't put link on other names.
+                }
+            }
+        }
+        /*
          * If the parameter is Geotk-specific, hides it for now.
          */
         if (row.names.isEmpty()) {

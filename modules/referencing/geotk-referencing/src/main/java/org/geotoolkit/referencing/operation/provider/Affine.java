@@ -49,21 +49,21 @@ import static org.geotoolkit.parameter.MatrixParameterDescriptors.DEFAULT_MATRIX
  * <!-- PARAMETERS Affine -->
  * <p>The following table summarizes the parameters recognized by this provider.
  * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
- * <p><b>Operation name:</b> Affine</p>
- * <table bgcolor="#F4F8FF" cellspacing="0" cellpadding="0">
- *   <tr bgcolor="#B9DCFF"><th>Parameter Name</th><th>Default value</th></tr>
- *   <tr><td>num_row</td><td>&nbsp;&nbsp;3</td></tr>
- *   <tr><td>num_col</td><td>&nbsp;&nbsp;3</td></tr>
- *   <tr><td>elt_0_0</td><td>&nbsp;&nbsp;1</td></tr>
- *   <tr><td>elt_0_1</td><td>&nbsp;&nbsp;0</td></tr>
- *   <tr><td>elt_0_2</td><td>&nbsp;&nbsp;0</td></tr>
- *   <tr><td>elt_1_0</td><td>&nbsp;&nbsp;0</td></tr>
- *   <tr><td>elt_1_1</td><td>&nbsp;&nbsp;1</td></tr>
- *   <tr><td>elt_1_2</td><td>&nbsp;&nbsp;0</td></tr>
- *   <tr><td>elt_2_0</td><td>&nbsp;&nbsp;0</td></tr>
- *   <tr><td>elt_2_1</td><td>&nbsp;&nbsp;0</td></tr>
- *   <tr><td>elt_2_2</td><td>&nbsp;&nbsp;1</td></tr>
- * </table>
+ * <blockquote><p><b>Operation name:</b> {@code Affine}</p>
+ * <table class="geotk">
+ *   <tr><th>Parameter Name</th><th>Default value</th></tr>
+ *   <tr><td>{@code num_row}</td><td>3</td></tr>
+ *   <tr><td>{@code num_col}</td><td>3</td></tr>
+ *   <tr><td>{@code elt_0_0}</td><td>1</td></tr>
+ *   <tr><td>{@code elt_0_1}</td><td>0</td></tr>
+ *   <tr><td>{@code elt_0_2}</td><td>0</td></tr>
+ *   <tr><td>{@code elt_1_0}</td><td>0</td></tr>
+ *   <tr><td>{@code elt_1_1}</td><td>1</td></tr>
+ *   <tr><td>{@code elt_1_2}</td><td>0</td></tr>
+ *   <tr><td>{@code elt_2_0}</td><td>0</td></tr>
+ *   <tr><td>{@code elt_2_1}</td><td>0</td></tr>
+ *   <tr><td>{@code elt_2_2}</td><td>1</td></tr>
+ * </table></blockquote>
  * <!-- END OF PARAMETERS -->
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
@@ -72,6 +72,7 @@ import static org.geotoolkit.parameter.MatrixParameterDescriptors.DEFAULT_MATRIX
  * @see ProjectiveTransform
  * @see org.geotoolkit.referencing.operation.transform.AffineTransform2D
  * @see org.geotoolkit.referencing.operation.transform.LinearTransform1D
+ * @see <a href="{@docRoot}/../modules/referencing/operation-parameters.html">Geotk coordinate operations matrix</a>
  *
  * @since 2.0
  * @module
@@ -93,151 +94,151 @@ public class Affine extends MathTransformProvider {
      * The following table lists the operation names and the parameters recognized by Geotk:
      * <p>
      * <!-- GENERATED PARAMETERS - inserted by ProjectionParametersJavadoc -->
-     * <table bgcolor="#F4F8FF" border="1" cellspacing="0" cellpadding="6">
-     *   <tr bgcolor="#B9DCFF" valign="top"><td colspan="2">
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>OGC:</code></td><td><code>Affine</code></td></tr>
-     *       <tr><th align="left">Alias:&nbsp;&nbsp;</th><td><code>EPSG:</code></td><td><code>Affine parametric transformation</code></td></tr>
-     *       <tr><th align="left">&nbsp;&nbsp;</th><td><code>Geotk:</code></td><td><code>Affine transform</code></td></tr>
-     *       <tr><th align="left">Identifier:&nbsp;&nbsp;</th><td><code>EPSG:</code></td><td><code>9624</code></td></tr>
+     * <table class="geotk" border="1">
+     *   <tr><th colspan="2">
+     *     <table class="compact">
+     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code Affine}</td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code Affine parametric transformation}</td></tr>
+     *       <tr><td></td><td class="onright">{@code Geotk}:</td><td class="onleft">{@code Affine transform}</td></tr>
+     *       <tr><td><b>Identifier:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code 9624}</td></tr>
      *     </table>
-     *   </td></tr>
-     *   <tr valign="top"><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>OGC:</code></td><td><code>num_row</code></td></tr>
-     *     </table>
-     *   </td><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Integer</code></td></tr>
-     *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>mandatory</td></tr>
-     *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>[2 … 50]</td></tr>
-     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>3</td></tr>
-     *     </table>
-     *   </td></tr>
-     *   <tr valign="top"><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>OGC:</code></td><td><code>num_col</code></td></tr>
+     *   </th></tr>
+     *   <tr><td>
+     *     <table class="compact">
+     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code num_row}</td></tr>
      *     </table>
      *   </td><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Integer</code></td></tr>
-     *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>mandatory</td></tr>
-     *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>[2 … 50]</td></tr>
-     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>3</td></tr>
+     *     <table class="compact">
+     *       <tr><td><b>Type:</b></td><td>{@code Integer}</td></tr>
+     *       <tr><td><b>Obligation:</b></td><td>mandatory</td></tr>
+     *       <tr><td><b>Value range:</b></td><td>[2 … 50]</td></tr>
+     *       <tr><td><b>Default value:</b></td><td>3</td></tr>
      *     </table>
      *   </td></tr>
-     *   <tr valign="top"><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>OGC:</code></td><td><code>elt_0_0</code></td></tr>
-     *       <tr><th align="left">Alias:&nbsp;&nbsp;</th><td><code>EPSG:</code></td><td><code>A1</code></td></tr>
+     *   <tr><td>
+     *     <table class="compact">
+     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code num_col}</td></tr>
      *     </table>
      *   </td><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
-     *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>mandatory</td></tr>
-     *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>(-∞ … ∞)</td></tr>
-     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>1</td></tr>
+     *     <table class="compact">
+     *       <tr><td><b>Type:</b></td><td>{@code Integer}</td></tr>
+     *       <tr><td><b>Obligation:</b></td><td>mandatory</td></tr>
+     *       <tr><td><b>Value range:</b></td><td>[2 … 50]</td></tr>
+     *       <tr><td><b>Default value:</b></td><td>3</td></tr>
      *     </table>
      *   </td></tr>
-     *   <tr valign="top"><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>OGC:</code></td><td><code>elt_0_1</code></td></tr>
-     *       <tr><th align="left">Alias:&nbsp;&nbsp;</th><td><code>EPSG:</code></td><td><code>A2</code></td></tr>
+     *   <tr><td>
+     *     <table class="compact">
+     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code elt_0_0}</td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code A1}</td></tr>
      *     </table>
      *   </td><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
-     *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>mandatory</td></tr>
-     *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>(-∞ … ∞)</td></tr>
-     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>0</td></tr>
+     *     <table class="compact">
+     *       <tr><td><b>Type:</b></td><td>{@code Double}</td></tr>
+     *       <tr><td><b>Obligation:</b></td><td>mandatory</td></tr>
+     *       <tr><td><b>Value range:</b></td><td>(-∞ … ∞)</td></tr>
+     *       <tr><td><b>Default value:</b></td><td>1</td></tr>
      *     </table>
      *   </td></tr>
-     *   <tr valign="top"><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>OGC:</code></td><td><code>elt_0_2</code></td></tr>
-     *       <tr><th align="left">Alias:&nbsp;&nbsp;</th><td><code>EPSG:</code></td><td><code>A0</code></td></tr>
+     *   <tr><td>
+     *     <table class="compact">
+     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code elt_0_1}</td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code A2}</td></tr>
      *     </table>
      *   </td><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
-     *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>mandatory</td></tr>
-     *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>(-∞ … ∞)</td></tr>
-     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>0</td></tr>
+     *     <table class="compact">
+     *       <tr><td><b>Type:</b></td><td>{@code Double}</td></tr>
+     *       <tr><td><b>Obligation:</b></td><td>mandatory</td></tr>
+     *       <tr><td><b>Value range:</b></td><td>(-∞ … ∞)</td></tr>
+     *       <tr><td><b>Default value:</b></td><td>0</td></tr>
      *     </table>
      *   </td></tr>
-     *   <tr valign="top"><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>OGC:</code></td><td><code>elt_1_0</code></td></tr>
-     *       <tr><th align="left">Alias:&nbsp;&nbsp;</th><td><code>EPSG:</code></td><td><code>B1</code></td></tr>
+     *   <tr><td>
+     *     <table class="compact">
+     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code elt_0_2}</td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code A0}</td></tr>
      *     </table>
      *   </td><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
-     *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>mandatory</td></tr>
-     *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>(-∞ … ∞)</td></tr>
-     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>0</td></tr>
+     *     <table class="compact">
+     *       <tr><td><b>Type:</b></td><td>{@code Double}</td></tr>
+     *       <tr><td><b>Obligation:</b></td><td>mandatory</td></tr>
+     *       <tr><td><b>Value range:</b></td><td>(-∞ … ∞)</td></tr>
+     *       <tr><td><b>Default value:</b></td><td>0</td></tr>
      *     </table>
      *   </td></tr>
-     *   <tr valign="top"><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>OGC:</code></td><td><code>elt_1_1</code></td></tr>
-     *       <tr><th align="left">Alias:&nbsp;&nbsp;</th><td><code>EPSG:</code></td><td><code>B2</code></td></tr>
+     *   <tr><td>
+     *     <table class="compact">
+     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code elt_1_0}</td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code B1}</td></tr>
      *     </table>
      *   </td><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
-     *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>mandatory</td></tr>
-     *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>(-∞ … ∞)</td></tr>
-     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>1</td></tr>
+     *     <table class="compact">
+     *       <tr><td><b>Type:</b></td><td>{@code Double}</td></tr>
+     *       <tr><td><b>Obligation:</b></td><td>mandatory</td></tr>
+     *       <tr><td><b>Value range:</b></td><td>(-∞ … ∞)</td></tr>
+     *       <tr><td><b>Default value:</b></td><td>0</td></tr>
      *     </table>
      *   </td></tr>
-     *   <tr valign="top"><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>OGC:</code></td><td><code>elt_1_2</code></td></tr>
-     *       <tr><th align="left">Alias:&nbsp;&nbsp;</th><td><code>EPSG:</code></td><td><code>B0</code></td></tr>
+     *   <tr><td>
+     *     <table class="compact">
+     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code elt_1_1}</td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code B2}</td></tr>
      *     </table>
      *   </td><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
-     *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>mandatory</td></tr>
-     *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>(-∞ … ∞)</td></tr>
-     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>0</td></tr>
+     *     <table class="compact">
+     *       <tr><td><b>Type:</b></td><td>{@code Double}</td></tr>
+     *       <tr><td><b>Obligation:</b></td><td>mandatory</td></tr>
+     *       <tr><td><b>Value range:</b></td><td>(-∞ … ∞)</td></tr>
+     *       <tr><td><b>Default value:</b></td><td>1</td></tr>
      *     </table>
      *   </td></tr>
-     *   <tr valign="top"><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>OGC:</code></td><td><code>elt_2_0</code></td></tr>
+     *   <tr><td>
+     *     <table class="compact">
+     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code elt_1_2}</td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code B0}</td></tr>
      *     </table>
      *   </td><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
-     *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>mandatory</td></tr>
-     *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>(-∞ … ∞)</td></tr>
-     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>0</td></tr>
+     *     <table class="compact">
+     *       <tr><td><b>Type:</b></td><td>{@code Double}</td></tr>
+     *       <tr><td><b>Obligation:</b></td><td>mandatory</td></tr>
+     *       <tr><td><b>Value range:</b></td><td>(-∞ … ∞)</td></tr>
+     *       <tr><td><b>Default value:</b></td><td>0</td></tr>
      *     </table>
      *   </td></tr>
-     *   <tr valign="top"><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>OGC:</code></td><td><code>elt_2_1</code></td></tr>
+     *   <tr><td>
+     *     <table class="compact">
+     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code elt_2_0}</td></tr>
      *     </table>
      *   </td><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
-     *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>mandatory</td></tr>
-     *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>(-∞ … ∞)</td></tr>
-     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>0</td></tr>
+     *     <table class="compact">
+     *       <tr><td><b>Type:</b></td><td>{@code Double}</td></tr>
+     *       <tr><td><b>Obligation:</b></td><td>mandatory</td></tr>
+     *       <tr><td><b>Value range:</b></td><td>(-∞ … ∞)</td></tr>
+     *       <tr><td><b>Default value:</b></td><td>0</td></tr>
      *     </table>
      *   </td></tr>
-     *   <tr valign="top"><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>OGC:</code></td><td><code>elt_2_2</code></td></tr>
+     *   <tr><td>
+     *     <table class="compact">
+     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code elt_2_1}</td></tr>
      *     </table>
      *   </td><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
-     *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>mandatory</td></tr>
-     *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>(-∞ … ∞)</td></tr>
-     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>1</td></tr>
+     *     <table class="compact">
+     *       <tr><td><b>Type:</b></td><td>{@code Double}</td></tr>
+     *       <tr><td><b>Obligation:</b></td><td>mandatory</td></tr>
+     *       <tr><td><b>Value range:</b></td><td>(-∞ … ∞)</td></tr>
+     *       <tr><td><b>Default value:</b></td><td>0</td></tr>
+     *     </table>
+     *   </td></tr>
+     *   <tr><td>
+     *     <table class="compact">
+     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code elt_2_2}</td></tr>
+     *     </table>
+     *   </td><td>
+     *     <table class="compact">
+     *       <tr><td><b>Type:</b></td><td>{@code Double}</td></tr>
+     *       <tr><td><b>Obligation:</b></td><td>mandatory</td></tr>
+     *       <tr><td><b>Value range:</b></td><td>(-∞ … ∞)</td></tr>
+     *       <tr><td><b>Default value:</b></td><td>1</td></tr>
      *     </table>
      *   </td></tr>
      * </table>

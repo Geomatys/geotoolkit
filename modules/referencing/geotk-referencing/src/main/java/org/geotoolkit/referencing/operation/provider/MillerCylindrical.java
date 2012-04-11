@@ -58,23 +58,24 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * <!-- PARAMETERS MillerCylindrical -->
  * <p>The following table summarizes the parameters recognized by this provider.
  * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
- * <p><b>Operation name:</b> Miller_Cylindrical</p>
- * <table bgcolor="#F4F8FF" cellspacing="0" cellpadding="0">
- *   <tr bgcolor="#B9DCFF"><th>Parameter Name</th><th>Default value</th></tr>
- *   <tr><td>semi_major</td><td>&nbsp;&nbsp;</td></tr>
- *   <tr><td>semi_minor</td><td>&nbsp;&nbsp;</td></tr>
- *   <tr><td>roll_longitude</td><td>&nbsp;&nbsp;false</td></tr>
- *   <tr><td>latitude_of_center</td><td>&nbsp;&nbsp;0°</td></tr>
- *   <tr><td>longitude_of_center</td><td>&nbsp;&nbsp;0°</td></tr>
- *   <tr><td>false_easting</td><td>&nbsp;&nbsp;0 metres</td></tr>
- *   <tr><td>false_northing</td><td>&nbsp;&nbsp;0 metres</td></tr>
- * </table>
+ * <blockquote><p><b>Operation name:</b> {@code Miller_Cylindrical}</p>
+ * <table class="geotk">
+ *   <tr><th>Parameter Name</th><th>Default value</th></tr>
+ *   <tr><td>{@code semi_major}</td><td></td></tr>
+ *   <tr><td>{@code semi_minor}</td><td></td></tr>
+ *   <tr><td>{@code roll_longitude}</td><td>false</td></tr>
+ *   <tr><td>{@code latitude_of_center}</td><td>0°</td></tr>
+ *   <tr><td>{@code longitude_of_center}</td><td>0°</td></tr>
+ *   <tr><td>{@code false_easting}</td><td>0 metres</td></tr>
+ *   <tr><td>{@code false_northing}</td><td>0 metres</td></tr>
+ * </table></blockquote>
  * <!-- END OF PARAMETERS -->
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.20
  *
  * @see <A HREF="http://www.remotesensing.org/geotiff/proj_list/miller_cylindrical.html">Miller Cylindrical on RemoteSensing.org</A>
+ * @see <a href="{@docRoot}/../modules/referencing/operation-parameters.html">Geotk coordinate operations matrix</a>
  *
  * @since 3.14
  * @module
@@ -148,108 +149,108 @@ public class MillerCylindrical extends MapProjection {
      * The following table lists the operation names and the parameters recognized by Geotk:
      * <p>
      * <!-- GENERATED PARAMETERS - inserted by ProjectionParametersJavadoc -->
-     * <table bgcolor="#F4F8FF" border="1" cellspacing="0" cellpadding="6">
-     *   <tr bgcolor="#B9DCFF" valign="top"><td colspan="2">
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>OGC:</code></td><td><code>Miller_Cylindrical</code></td></tr>
-     *       <tr><th align="left">Alias:&nbsp;&nbsp;</th><td><code>IGNF:</code></td><td><code>Miller_Cylindrical_Sphere</code></td></tr>
-     *       <tr><th align="left">&nbsp;&nbsp;</th><td><code>GeoTIFF:</code></td><td><code>CT_MillerCylindrical</code></td></tr>
-     *       <tr><th align="left">&nbsp;&nbsp;</th><td><code>PROJ4:</code></td><td><code>mill</code></td></tr>
-     *       <tr><th align="left">Identifier:&nbsp;&nbsp;</th><td><code>IGNF:</code></td><td><code>PRC9901</code></td></tr>
-     *       <tr><th align="left">&nbsp;&nbsp;</th><td><code>GeoTIFF:</code></td><td><code>20</code></td></tr>
+     * <table class="geotk" border="1">
+     *   <tr><th colspan="2">
+     *     <table class="compact">
+     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code Miller_Cylindrical}</td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright">{@code IGNF}:</td><td class="onleft">{@code Miller_Cylindrical_Sphere}</td></tr>
+     *       <tr><td></td><td class="onright">{@code GeoTIFF}:</td><td class="onleft">{@code CT_MillerCylindrical}</td></tr>
+     *       <tr><td></td><td class="onright">{@code PROJ4}:</td><td class="onleft">{@code mill}</td></tr>
+     *       <tr><td><b>Identifier:</b></td><td class="onright">{@code IGNF}:</td><td class="onleft">{@code PRC9901}</td></tr>
+     *       <tr><td></td><td class="onright">{@code GeoTIFF}:</td><td class="onleft">{@code 20}</td></tr>
      *     </table>
-     *   </td></tr>
-     *   <tr valign="top"><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>OGC:</code></td><td><code>semi_major</code></td></tr>
-     *       <tr><th align="left">Alias:&nbsp;&nbsp;</th><td><code>GeoTIFF:</code></td><td><code>SemiMajor</code></td></tr>
-     *       <tr><th align="left">&nbsp;&nbsp;</th><td><code>PROJ4:</code></td><td><code>a</code></td></tr>
-     *     </table>
-     *   </td><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
-     *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>mandatory</td></tr>
-     *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>[0…∞) metres</td></tr>
-     *     </table>
-     *   </td></tr>
-     *   <tr valign="top"><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>OGC:</code></td><td><code>semi_minor</code></td></tr>
-     *       <tr><th align="left">Alias:&nbsp;&nbsp;</th><td><code>GeoTIFF:</code></td><td><code>SemiMinor</code></td></tr>
-     *       <tr><th align="left">&nbsp;&nbsp;</th><td><code>PROJ4:</code></td><td><code>b</code></td></tr>
+     *   </th></tr>
+     *   <tr><td>
+     *     <table class="compact">
+     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code semi_major}</td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright">{@code GeoTIFF}:</td><td class="onleft">{@code SemiMajor}</td></tr>
+     *       <tr><td></td><td class="onright">{@code PROJ4}:</td><td class="onleft">{@code a}</td></tr>
      *     </table>
      *   </td><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
-     *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>mandatory</td></tr>
-     *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>[0…∞) metres</td></tr>
+     *     <table class="compact">
+     *       <tr><td><b>Type:</b></td><td>{@code Double}</td></tr>
+     *       <tr><td><b>Obligation:</b></td><td>mandatory</td></tr>
+     *       <tr><td><b>Value range:</b></td><td>[0…∞) metres</td></tr>
      *     </table>
      *   </td></tr>
-     *   <tr valign="top"><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>Geotk:</code></td><td><code>roll_longitude</code></td></tr>
+     *   <tr><td>
+     *     <table class="compact">
+     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code semi_minor}</td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright">{@code GeoTIFF}:</td><td class="onleft">{@code SemiMinor}</td></tr>
+     *       <tr><td></td><td class="onright">{@code PROJ4}:</td><td class="onleft">{@code b}</td></tr>
      *     </table>
      *   </td><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Boolean</code></td></tr>
-     *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>optional</td></tr>
-     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>false</td></tr>
+     *     <table class="compact">
+     *       <tr><td><b>Type:</b></td><td>{@code Double}</td></tr>
+     *       <tr><td><b>Obligation:</b></td><td>mandatory</td></tr>
+     *       <tr><td><b>Value range:</b></td><td>[0…∞) metres</td></tr>
      *     </table>
      *   </td></tr>
-     *   <tr valign="top"><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>OGC:</code></td><td><code>latitude_of_center</code></td></tr>
-     *       <tr><th align="left">Alias:&nbsp;&nbsp;</th><td><code>GeoTIFF:</code></td><td><code>ProjCenterLat</code></td></tr>
-     *       <tr><th align="left">&nbsp;&nbsp;</th><td><code>PROJ4:</code></td><td><code>lat_0</code></td></tr>
+     *   <tr><td>
+     *     <table class="compact">
+     *       <tr><td><b>Name:</b></td><td class="onright">{@code Geotk}:</td><td class="onleft">{@code roll_longitude}</td></tr>
      *     </table>
      *   </td><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
-     *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>optional</td></tr>
-     *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>[-90 … 90]°</td></tr>
-     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>0°</td></tr>
+     *     <table class="compact">
+     *       <tr><td><b>Type:</b></td><td>{@code Boolean}</td></tr>
+     *       <tr><td><b>Obligation:</b></td><td>optional</td></tr>
+     *       <tr><td><b>Default value:</b></td><td>false</td></tr>
      *     </table>
      *   </td></tr>
-     *   <tr valign="top"><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>OGC:</code></td><td><code>longitude_of_center</code></td></tr>
-     *       <tr><th align="left">Alias:&nbsp;&nbsp;</th><td><code>GeoTIFF:</code></td><td><code>ProjCenterLong</code></td></tr>
-     *       <tr><th align="left">&nbsp;&nbsp;</th><td><code>PROJ4:</code></td><td><code>lon_0</code></td></tr>
+     *   <tr><td>
+     *     <table class="compact">
+     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code latitude_of_center}</td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright">{@code GeoTIFF}:</td><td class="onleft">{@code ProjCenterLat}</td></tr>
+     *       <tr><td></td><td class="onright">{@code PROJ4}:</td><td class="onleft">{@code lat_0}</td></tr>
      *     </table>
      *   </td><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
-     *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>mandatory</td></tr>
-     *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>[-180 … 180]°</td></tr>
-     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>0°</td></tr>
+     *     <table class="compact">
+     *       <tr><td><b>Type:</b></td><td>{@code Double}</td></tr>
+     *       <tr><td><b>Obligation:</b></td><td>optional</td></tr>
+     *       <tr><td><b>Value range:</b></td><td>[-90 … 90]°</td></tr>
+     *       <tr><td><b>Default value:</b></td><td>0°</td></tr>
      *     </table>
      *   </td></tr>
-     *   <tr valign="top"><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>OGC:</code></td><td><code>false_easting</code></td></tr>
-     *       <tr><th align="left">Alias:&nbsp;&nbsp;</th><td><code>GeoTIFF:</code></td><td><code>FalseEasting</code></td></tr>
-     *       <tr><th align="left">&nbsp;&nbsp;</th><td><code>PROJ4:</code></td><td><code>x_0</code></td></tr>
+     *   <tr><td>
+     *     <table class="compact">
+     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code longitude_of_center}</td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright">{@code GeoTIFF}:</td><td class="onleft">{@code ProjCenterLong}</td></tr>
+     *       <tr><td></td><td class="onright">{@code PROJ4}:</td><td class="onleft">{@code lon_0}</td></tr>
      *     </table>
      *   </td><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
-     *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>mandatory</td></tr>
-     *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>(-∞ … ∞) metres</td></tr>
-     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>0 metres</td></tr>
+     *     <table class="compact">
+     *       <tr><td><b>Type:</b></td><td>{@code Double}</td></tr>
+     *       <tr><td><b>Obligation:</b></td><td>mandatory</td></tr>
+     *       <tr><td><b>Value range:</b></td><td>[-180 … 180]°</td></tr>
+     *       <tr><td><b>Default value:</b></td><td>0°</td></tr>
      *     </table>
      *   </td></tr>
-     *   <tr valign="top"><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>OGC:</code></td><td><code>false_northing</code></td></tr>
-     *       <tr><th align="left">Alias:&nbsp;&nbsp;</th><td><code>GeoTIFF:</code></td><td><code>FalseNorthing</code></td></tr>
-     *       <tr><th align="left">&nbsp;&nbsp;</th><td><code>PROJ4:</code></td><td><code>y_0</code></td></tr>
+     *   <tr><td>
+     *     <table class="compact">
+     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code false_easting}</td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright">{@code GeoTIFF}:</td><td class="onleft">{@code FalseEasting}</td></tr>
+     *       <tr><td></td><td class="onright">{@code PROJ4}:</td><td class="onleft">{@code x_0}</td></tr>
      *     </table>
      *   </td><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
-     *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>mandatory</td></tr>
-     *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>(-∞ … ∞) metres</td></tr>
-     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>0 metres</td></tr>
+     *     <table class="compact">
+     *       <tr><td><b>Type:</b></td><td>{@code Double}</td></tr>
+     *       <tr><td><b>Obligation:</b></td><td>mandatory</td></tr>
+     *       <tr><td><b>Value range:</b></td><td>(-∞ … ∞) metres</td></tr>
+     *       <tr><td><b>Default value:</b></td><td>0 metres</td></tr>
+     *     </table>
+     *   </td></tr>
+     *   <tr><td>
+     *     <table class="compact">
+     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code false_northing}</td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright">{@code GeoTIFF}:</td><td class="onleft">{@code FalseNorthing}</td></tr>
+     *       <tr><td></td><td class="onright">{@code PROJ4}:</td><td class="onleft">{@code y_0}</td></tr>
+     *     </table>
+     *   </td><td>
+     *     <table class="compact">
+     *       <tr><td><b>Type:</b></td><td>{@code Double}</td></tr>
+     *       <tr><td><b>Obligation:</b></td><td>mandatory</td></tr>
+     *       <tr><td><b>Value range:</b></td><td>(-∞ … ∞) metres</td></tr>
+     *       <tr><td><b>Default value:</b></td><td>0 metres</td></tr>
      *     </table>
      *   </td></tr>
      * </table>

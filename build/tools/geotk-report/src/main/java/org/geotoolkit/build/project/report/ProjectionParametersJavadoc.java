@@ -48,21 +48,6 @@ import org.geotoolkit.referencing.operation.provider.*;
  */
 public final class ProjectionParametersJavadoc extends JavadocUpdater {
     /**
-     * Beginning of a row.
-     */
-    private static final String ROW_START = "      <tr><th align=\"left\">";
-
-    /**
-     * Some spaces to insert between the first and the second column.
-     */
-    private static final String SEPARATOR = "&nbsp;&nbsp;</th><td>";
-
-    /**
-     * Ending of a row.
-     */
-    private static final String ROW_END = "</td></tr>";
-
-    /**
      * Runs from the command line.
      *
      * @param  args Ignored.
@@ -182,15 +167,15 @@ public final class ProjectionParametersJavadoc extends JavadocUpdater {
         lines.clear();
         lines.add("<p>The following table summarizes the parameters recognized by this provider.");
         lines.add("For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>");
-        lines.add("<p><b>Operation name:</b> " + group.getName().getCode() + "</p>");
-        lines.add("<table bgcolor=\"#F4F8FF\" cellspacing=\"0\" cellpadding=\"0\">");
-        lines.add("  <tr bgcolor=\"#B9DCFF\"><th>Parameter Name</th><th>Default value</th></tr>");
+        lines.add("<blockquote><p><b>Operation name:</b> {@code " + group.getName().getCode() + "}</p>");
+        lines.add("<table class=\"geotk\">");
+        lines.add("  <tr><th>Parameter Name</th><th>Default value</th></tr>");
         for (final GeneralParameterDescriptor gp : group.descriptors()) {
             final ParameterDescriptor<?> param = (ParameterDescriptor<?>) gp;
-            lines.add("  <tr><td>" + param.getName().getCode() +
-                    "</td><td>&nbsp;&nbsp;" + getDefaultValue(param, getUnit(param)) + "</td></tr>");
+            lines.add("  <tr><td>{@code " + param.getName().getCode() + "}</td>" +
+                    "<td>" + getDefaultValue(param, getUnit(param)) + "</td></tr>");
         }
-        lines.add("</table>");
+        lines.add("</table></blockquote>");
     }
 
     /**
@@ -200,12 +185,12 @@ public final class ProjectionParametersJavadoc extends JavadocUpdater {
      */
     private void createGlobalTable(final ParameterDescriptorGroup group) {
         lines.clear();
-        lines.add("<table bgcolor=\"#F4F8FF\" border=\"1\" cellspacing=\"0\" cellpadding=\"6\">");
-        lines.add("  <tr bgcolor=\"#B9DCFF\" valign=\"top\"><td colspan=\"2\">");
+        lines.add("<table class=\"geotk\" border=\"1\">");
+        lines.add("  <tr><th colspan=\"2\">");
         createNameTable(group);
-        lines.add("  </td></tr>");
+        lines.add("  </th></tr>");
         for (final GeneralParameterDescriptor param : group.descriptors()) {
-            lines.add("  <tr valign=\"top\"><td>");
+            lines.add("  <tr><td>");
             createNameTable(param);
             lines.add("  </td><td>");
             createConditionTable((ParameterDescriptor<?>) param);
@@ -231,18 +216,18 @@ public final class ProjectionParametersJavadoc extends JavadocUpdater {
         for (final ReferenceIdentifier identifier : descriptor.getIdentifiers()) {
             names.add(toHTML(identifier));
         }
-        lines.add("    <table border=\"0\" cellspacing=\"0\" cellpadding=\"0\">");
+        lines.add("    <table class=\"compact\">");
         /*
          * Adds one additional column for separating primary name, aliases and identifiers.
          */
         int i=0;
         for (final String name : names) {
             final String header;
-            if      (i == 0)               header = "Name:";
-            else if (i == firstIdentifier) header = "Identifier:";
-            else if (i == 1)               header = "Alias:";
+            if      (i == 0)               header = "<b>Name:</b>";
+            else if (i == firstIdentifier) header = "<b>Identifier:</b>";
+            else if (i == 1)               header = "<b>Alias:</b>";
             else                           header = "";
-            lines.add(ROW_START + header + SEPARATOR + name + ROW_END);
+            lines.add("      <tr><td>" + header + "</td>" + name + "</tr>");
             i++;
         }
         lines.add("    </table>");
@@ -254,9 +239,9 @@ public final class ProjectionParametersJavadoc extends JavadocUpdater {
      */
     private void createConditionTable(final ParameterDescriptor<?> descriptor) {
         final Class<?> valueClass = descriptor.getValueClass();
-        lines.add("    <table border=\"0\" cellspacing=\"0\" cellpadding=\"0\">");
-        lines.add(ROW_START + "Type:" + SEPARATOR + "<code>" + valueClass.getSimpleName() + "</code></td></tr>");
-        lines.add(ROW_START + "Obligation:" + SEPARATOR + (descriptor.getMinimumOccurs() != 0 ? "mandatory" : "optional") + "</td></tr>");
+        lines.add("    <table class=\"compact\">");
+        lines.add("      <tr><td><b>Type:</b>" + "</td><td>" + "{@code " + valueClass.getSimpleName() + "}</td></tr>");
+        lines.add("      <tr><td><b>Obligation:</b>" + "</td><td>" + (descriptor.getMinimumOccurs() != 0 ? "mandatory" : "optional") + "</td></tr>");
         final String unit = getUnit(descriptor);
         if (Number.class.isAssignableFrom(valueClass)) {
             NumberRange<?> range = NumberRange.createBestFit(
@@ -265,11 +250,11 @@ public final class ProjectionParametersJavadoc extends JavadocUpdater {
             if (range == null) {
                 range = new NumberRange<Double>(Double.class, null, null);
             }
-            lines.add(ROW_START +  "Value range:" + SEPARATOR + range + unit + ROW_END);
+            lines.add("      <tr><td><b>Value range:</b>" + "</td><td>" + range + unit + "</td></tr>");
         }
         final String defaultValue = getDefaultValue(descriptor, unit);
         if (!defaultValue.isEmpty()) {
-            lines.add(ROW_START + "Default value:" + SEPARATOR + defaultValue + ROW_END);
+            lines.add("      <tr><td><b>Default value:</b>" + "</td><td>" + defaultValue + "</td></tr>");
         }
         lines.add("    </table>");
     }
@@ -307,7 +292,7 @@ public final class ProjectionParametersJavadoc extends JavadocUpdater {
                 // Trim the fractional part if unnecessary (e.g. "0.0" to "0").
                 defaultValue = Numbers.finestNumber((Number) defaultValue);
             } else if (defaultValue instanceof String) {
-                return "<code>\"" + defaultValue + "\"</code>";
+                return "{@code \"" + defaultValue + "\"}";
             }
         } else if (param.getMinimumOccurs() == 0) {
             if (XArrays.contains(defaultToLatitudeOfOrigin, param)) {
@@ -352,6 +337,6 @@ public final class ProjectionParametersJavadoc extends JavadocUpdater {
      * This method uses 2 table columns.
      */
     private static String toHTML(final String codespace, final String code) {
-        return "<code>" + codespace + ":</code></td><td><code>" + code + "</code>";
+        return "<td class=\"onright\">{@code " + codespace + "}:</td><td class=\"onleft\">{@code " + code + "}</td>";
     }
 }

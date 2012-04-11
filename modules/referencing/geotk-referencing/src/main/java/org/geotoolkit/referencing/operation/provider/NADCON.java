@@ -51,12 +51,12 @@ import org.geotoolkit.util.logging.Logging;
  * <!-- PARAMETERS NADCON -->
  * <p>The following table summarizes the parameters recognized by this provider.
  * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
- * <p><b>Operation name:</b> NADCON</p>
- * <table bgcolor="#F4F8FF" cellspacing="0" cellpadding="0">
- *   <tr bgcolor="#B9DCFF"><th>Parameter Name</th><th>Default value</th></tr>
- *   <tr><td>Latitude difference file</td><td>&nbsp;&nbsp;<code>"conus.las"</code></td></tr>
- *   <tr><td>Longitude difference file</td><td>&nbsp;&nbsp;<code>"conus.los"</code></td></tr>
- * </table>
+ * <blockquote><p><b>Operation name:</b> {@code NADCON}</p>
+ * <table class="geotk">
+ *   <tr><th>Parameter Name</th><th>Default value</th></tr>
+ *   <tr><td>{@code Latitude difference file}</td><td>{@code "conus.las"}</td></tr>
+ *   <tr><td>{@code Longitude difference file}</td><td>{@code "conus.los"}</td></tr>
+ * </table></blockquote>
  * <!-- END OF PARAMETERS -->
  *
  * {@section Grid data}
@@ -67,6 +67,8 @@ import org.geotoolkit.util.logging.Logging;
  * @author Rueben Schulz (UBC)
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.20
+ *
+ * @see <a href="{@docRoot}/../modules/referencing/operation-parameters.html">Geotk coordinate operations matrix</a>
  *
  * @since 2.1
  * @module
@@ -105,34 +107,34 @@ public class NADCON extends MathTransformProvider {
      * The following table lists the operation names and the parameters recognized by Geotk:
      * <p>
      * <!-- GENERATED PARAMETERS - inserted by ProjectionParametersJavadoc -->
-     * <table bgcolor="#F4F8FF" border="1" cellspacing="0" cellpadding="6">
-     *   <tr bgcolor="#B9DCFF" valign="top"><td colspan="2">
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>EPSG:</code></td><td><code>NADCON</code></td></tr>
-     *       <tr><th align="left">Alias:&nbsp;&nbsp;</th><td><code>Geotk:</code></td><td><code>NADCON transform</code></td></tr>
-     *       <tr><th align="left">Identifier:&nbsp;&nbsp;</th><td><code>EPSG:</code></td><td><code>9613</code></td></tr>
+     * <table class="geotk" border="1">
+     *   <tr><th colspan="2">
+     *     <table class="compact">
+     *       <tr><td><b>Name:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code NADCON}</td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright">{@code Geotk}:</td><td class="onleft">{@code NADCON transform}</td></tr>
+     *       <tr><td><b>Identifier:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code 9613}</td></tr>
      *     </table>
-     *   </td></tr>
-     *   <tr valign="top"><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>EPSG:</code></td><td><code>Latitude difference file</code></td></tr>
-     *     </table>
-     *   </td><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>String</code></td></tr>
-     *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>mandatory</td></tr>
-     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td><code>"conus.las"</code></td></tr>
-     *     </table>
-     *   </td></tr>
-     *   <tr valign="top"><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>EPSG:</code></td><td><code>Longitude difference file</code></td></tr>
+     *   </th></tr>
+     *   <tr><td>
+     *     <table class="compact">
+     *       <tr><td><b>Name:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code Latitude difference file}</td></tr>
      *     </table>
      *   </td><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>String</code></td></tr>
-     *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>mandatory</td></tr>
-     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td><code>"conus.los"</code></td></tr>
+     *     <table class="compact">
+     *       <tr><td><b>Type:</b></td><td>{@code String}</td></tr>
+     *       <tr><td><b>Obligation:</b></td><td>mandatory</td></tr>
+     *       <tr><td><b>Default value:</b></td><td>{@code "conus.las"}</td></tr>
+     *     </table>
+     *   </td></tr>
+     *   <tr><td>
+     *     <table class="compact">
+     *       <tr><td><b>Name:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code Longitude difference file}</td></tr>
+     *     </table>
+     *   </td><td>
+     *     <table class="compact">
+     *       <tr><td><b>Type:</b></td><td>{@code String}</td></tr>
+     *       <tr><td><b>Obligation:</b></td><td>mandatory</td></tr>
+     *       <tr><td><b>Default value:</b></td><td>{@code "conus.los"}</td></tr>
      *     </table>
      *   </td></tr>
      * </table>

@@ -21,11 +21,11 @@
 
   <itemizedlist>
     <listitem>
-      permettre à une communauté d’annoncer leurs informations,
-      de manière à ce que des individus ou des systèmes en dehors de cette communauté puissent les découvrir;
+      Permettre à une communauté d’annoncer leurs informations,
+      de manière à ce que des individus ou des systèmes en dehors de cette communauté puissent les découvrir.
     </listitem>
     <listitem>
-      transférer des informations d’une communauté vers une autre en préservant leurs sémantiques,
+      Transférer des informations d’une communauté vers une autre en préservant leurs sémantiques,
       même si les deux communautés utilisent des représentations internes très différentes.
     </listitem>
   </itemizedlist>
@@ -56,7 +56,7 @@
 </section>
 
 <section>
-  <title>Les processus de standardisation à l’<acronym>OGC</acronym></title>
+  <title>Processus de standardisation à l’<acronym>OGC</acronym></title>
   <para>
     Les travaux de l’OGC se font par courriers électroniques, par conférences téléphoniques et par
     <link xlink:href="http://www.opengeospatial.org/event?category=ogctcpc">réunions réelles</link>.
@@ -110,7 +110,7 @@
     (<foreignphrase>OGC Architecture Board</foreignphrase> - <acronym>OAB</acronym>). Ce conseil
     vérifie que le standard répond aux exigences de l’OGC sur la forme, sur la modularisation, et
     en termes d’intégration avec les autres standards. Si l’<acronym>OAB</acronym> donne son aval,
-    le standard est alors soumis en session plénière au vote des membres du comité technique.
+    le standard est alors soumis au vote des membres du comité technique (<acronym>TC</acronym>).
     Ce comité regroupe les principaux membres de l’OGC qui sont seuls habilités à donner le vote final.
     En cas d’approbation, le standard est diffusé publiquement pour commentaires pendant une période
     de quelques mois. Au terme de cette période, le <acronym>SWG</acronym> doit examiner et répondre
@@ -118,7 +118,87 @@
     puis le standard est définitivement publié.
     Cette diffusion est alors annoncée par un communiqué de presse de l’<acronym>OGC</acronym>.
   </para>
+  <para>
+    Certains membres de l’<acronym>OAB</acronym> et du <acronym>TC</acronym> assurent aussi la liaison
+    avec l’organisation internationale de normalisation (<acronym>ISO</acronym>).
+    La coopération entre les deux organismes va dans les deux sens: l’<acronym>OGC</acronym> adopte
+    les standards <acronym>ISO</acronym> comme base sur laquelle développer de nouveaux standards,
+    et certains de ces nouveaux standards <acronym>OGC</acronym> deviennent des standards <acronym>ISO</acronym>.
+  </para>
+</section>
+
+<section>
+  <title>Procédure de soumission de propositions de modifications</title>
+  <para>
+    Tout utilisateur, qu’il soit membre ou non du consortium <foreignphrase>Open Geospatial</foreignphrase>,
+    peut proposer des modifications à des standards <acronym>OGC</acronym>.
+    Une liste des propositions actuelles de changements, ainsi qu’un formulaire permettant d’en soumettre de nouvelles,
+    sont <link xlink:href="http://www.opengeospatial.org/standards/cr">disponibles en ligne</link>.
+    Chaque proposition est revue par le <acronym>SWG</acronym>.
+  </para>
+  <para>
+    Certains groupes de travail utilisent d’autres systèmes de soumission en parallèle.
+    En particulier, le projet GeoAPI continue à utiliser un
+    <link xlink:href="http://jira.codehaus.org/browse/GEO">système de tâches JIRA</link>
+    hébergé en dehors des structures de l’<acronym>OGC</acronym>.
+    Cet état des choses existe en partie pour des raisons historiques, et en partie parce que les
+    développements du projet GeoAPI se font davantage au niveau d’un code source plutôt qu’au
+    niveau de documents ou de diagrammes de classes.
+  </para>
 </section>
 </section>
 
+<section>
+  <title>Les différents types de spécifications</title>
+  <para>
+    Les standards <acronym>OGC</acronym> sont spécifiés dans plusieurs dizaines de documents.
+    Chaque document élabore un service, par exemple les transformations de coordonnées.
+    Le fonctionnement de chaque service est décrit par un ensemble de classes d’objets et leurs interactions.
+    Ces éléments sont illustrés par des diagrammes <acronym>UML</acronym> (<foreignphrase>Unified Modeling Language</foreignphrase>)
+    dans des spécifications dites « abstraites ».
+  </para>
+  <para>
+    Les <firstterm>spécifications abstraites</firstterm> ne font référence à aucun langage informatique concret.
+    Leurs concepts peuvent se concrétiser dans un langage de programmation, une base de données ou un schéma
+    <acronym>XML</acronym> de manière plus ou moins directe. Il existe toutefois une part d’arbitraire dans la façon
+    de concrétiser une spécification abstraite, étant donné que des ajustements sont souvent nécessaires
+    pour tenir compte des contraintes ou des conventions du langage ciblé. Par exemple:
+  </para>
+
+  <itemizedlist>
+    <listitem>
+      L’approche orientée objets se concrétise par des solutions verbeuses dans certains langages
+      (notamment le <acronym>XML</acronym> défini par <acronym>ISO</acronym> 19139),
+      notamment pour le support du polymorphisme.
+    </listitem>
+    <listitem>
+      Certaines structures de données n’existent que dans quelques langages,
+      par exemple les unions qui existent en C/C++ mais pas en Java.
+    </listitem>
+    <listitem>
+      Certaines spécifications (surtout les plus anciennes) définissent des opérations,
+      qui se prêtent bien aux langages de programmation ou à des services mais pas à des bases de données.
+    </listitem>
+  </itemizedlist>
+
+  <para>
+    Au tournant du millénaire, les spécifications abstraites étaient explicitement concrétisées dans des
+    <firstterm>spécifications d’implémentations</firstterm>. Le terme « implémentation » était ici à prendre au
+    sens de tout type d’interfaces (Java ou autres) dérivées des diagrammes <acronym>UML</acronym> — et non pas
+    d’implémentations au sens du Java. Des telles spécifications existaient pour les langages
+    <acronym>SQL</acronym>, <acronym>CORBA</acronym>, <acronym>COM</acronym> et Java.
+    Ces langages étant capables d’exécuter des procédures, les spécifications de cette époque définissaient
+    non seulement des structures de données, mais aussi des opérations s’appliquant sur ces structures.
+  </para>
+  <para>
+    Par la suite, l’engouement pour le « web 2.0 » a fait grimper l’intérêt pour le <acronym>XML</acronym>
+    au détriment des autres langages. Les anciennes spécifications d’implémentations ont été dépréciées,
+    et les schémas <acronym>XSD</acronym> sont devenus la principale concrétisation des spécifications abstraites.
+    Même la façon de concevoir les spécifications abstraites a évoluée: les opérations y sont plus rarement définies,
+    par conséquence ce qui reste ressemble davantage à des descriptions de schémas de base de données.
+    Certaines opérations qui étaient définies dans les anciennes normes apparaissent maintenant,
+    sous une autre forme, dans les spécifications des services web.
+    Enfin le terme « spécification d’implémentation » a été abandonné, pour être englobé dans « standard <acronym>OGC</acronym> ».
+  </para>
+</section>
 </chapter>

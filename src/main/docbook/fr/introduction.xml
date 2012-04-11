@@ -41,8 +41,8 @@
     Les accès aux bases de données relationnelles sont un exemple de tâche ayant bénéficié d’une standardisation
     relativement bien réussie. L’industrie a établie un langage commun - le standard <acronym>SQL</acronym> -
     que les concepteurs du Java ont enrobé dans des interfaces de programmation formant le standard <acronym>JDBC</acronym>.
-    Ces interfaces sont aujourd’hui implementés par de nombreux logiciels libres et commerciaux.
-    Comme pour les bases de données, des méthodes d’accès à l’informations géographiques ont été standardisées.
+    Ces interfaces sont aujourd’hui implementées par de nombreux logiciels libres et commerciaux.
+    Comme pour les bases de données, des méthodes d’accès aux informations géographiques ont été standardisées.
     Mais les efforts en ce sens sont plus récents et leurs intégrations dans les logiciels,
     surtout les plus anciens, sont incomplètes et pas toujours cohérentes.
     Au moment d’écrire ces lignes, aucun produit de notre connaissance n’implémente la totalité des spécifications.

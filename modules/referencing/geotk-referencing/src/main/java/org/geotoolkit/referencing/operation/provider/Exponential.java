@@ -44,18 +44,19 @@ import static org.geotoolkit.internal.referencing.Identifiers.createDescriptorGr
  * <!-- PARAMETERS Exponential -->
  * <p>The following table summarizes the parameters recognized by this provider.
  * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
- * <p><b>Operation name:</b> Exponential</p>
- * <table bgcolor="#F4F8FF" cellspacing="0" cellpadding="0">
- *   <tr bgcolor="#B9DCFF"><th>Parameter Name</th><th>Default value</th></tr>
- *   <tr><td>base</td><td>&nbsp;&nbsp;10</td></tr>
- *   <tr><td>scale</td><td>&nbsp;&nbsp;1</td></tr>
- * </table>
+ * <blockquote><p><b>Operation name:</b> {@code Exponential}</p>
+ * <table class="geotk">
+ *   <tr><th>Parameter Name</th><th>Default value</th></tr>
+ *   <tr><td>{@code base}</td><td>10</td></tr>
+ *   <tr><td>{@code scale}</td><td>1</td></tr>
+ * </table></blockquote>
  * <!-- END OF PARAMETERS -->
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.20
  *
  * @see ExponentialTransform1D
+ * @see <a href="{@docRoot}/../modules/referencing/operation-parameters.html">Geotk coordinate operations matrix</a>
  *
  * @since 2.0
  * @module
@@ -93,34 +94,34 @@ public class Exponential extends MathTransformProvider {
      * The following table lists the operation names and the parameters recognized by Geotk:
      * <p>
      * <!-- GENERATED PARAMETERS - inserted by ProjectionParametersJavadoc -->
-     * <table bgcolor="#F4F8FF" border="1" cellspacing="0" cellpadding="6">
-     *   <tr bgcolor="#B9DCFF" valign="top"><td colspan="2">
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>Geotk:</code></td><td><code>Exponential</code></td></tr>
+     * <table class="geotk" border="1">
+     *   <tr><th colspan="2">
+     *     <table class="compact">
+     *       <tr><td><b>Name:</b></td><td class="onright">{@code Geotk}:</td><td class="onleft">{@code Exponential}</td></tr>
      *     </table>
-     *   </td></tr>
-     *   <tr valign="top"><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>Geotk:</code></td><td><code>base</code></td></tr>
-     *     </table>
-     *   </td><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
-     *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>mandatory</td></tr>
-     *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>[0…∞)</td></tr>
-     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>10</td></tr>
-     *     </table>
-     *   </td></tr>
-     *   <tr valign="top"><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Name:&nbsp;&nbsp;</th><td><code>Geotk:</code></td><td><code>scale</code></td></tr>
+     *   </th></tr>
+     *   <tr><td>
+     *     <table class="compact">
+     *       <tr><td><b>Name:</b></td><td class="onright">{@code Geotk}:</td><td class="onleft">{@code base}</td></tr>
      *     </table>
      *   </td><td>
-     *     <table border="0" cellspacing="0" cellpadding="0">
-     *       <tr><th align="left">Type:&nbsp;&nbsp;</th><td><code>Double</code></td></tr>
-     *       <tr><th align="left">Obligation:&nbsp;&nbsp;</th><td>mandatory</td></tr>
-     *       <tr><th align="left">Value range:&nbsp;&nbsp;</th><td>(-∞ … ∞)</td></tr>
-     *       <tr><th align="left">Default value:&nbsp;&nbsp;</th><td>1</td></tr>
+     *     <table class="compact">
+     *       <tr><td><b>Type:</b></td><td>{@code Double}</td></tr>
+     *       <tr><td><b>Obligation:</b></td><td>mandatory</td></tr>
+     *       <tr><td><b>Value range:</b></td><td>[0…∞)</td></tr>
+     *       <tr><td><b>Default value:</b></td><td>10</td></tr>
+     *     </table>
+     *   </td></tr>
+     *   <tr><td>
+     *     <table class="compact">
+     *       <tr><td><b>Name:</b></td><td class="onright">{@code Geotk}:</td><td class="onleft">{@code scale}</td></tr>
+     *     </table>
+     *   </td><td>
+     *     <table class="compact">
+     *       <tr><td><b>Type:</b></td><td>{@code Double}</td></tr>
+     *       <tr><td><b>Obligation:</b></td><td>mandatory</td></tr>
+     *       <tr><td><b>Value range:</b></td><td>(-∞ … ∞)</td></tr>
+     *       <tr><td><b>Default value:</b></td><td>1</td></tr>
      *     </table>
      *   </td></tr>
      * </table>
