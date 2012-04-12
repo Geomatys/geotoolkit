@@ -19,7 +19,6 @@ package org.geotoolkit.feature.simple;
 
 import com.vividsolutions.jts.geom.Geometry;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -32,10 +31,10 @@ import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.identity.Identifier;
+import org.opengis.geometry.BoundingBox;
 
 /**
  * An implementation of {@link SimpleFeature} geared towards speed and backed by an Object[].
@@ -348,7 +347,8 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
         @Override
         public void setValue(Object newValue) throws IllegalArgumentException, IllegalStateException {
             valueArray[index] = newValue;
-            bounds = null; //reset bounds
+            bounds = null; //reset property bounds
+            DefaultSimpleFeature.this.bounds = null; //reset feature bounds
         }
         
     }

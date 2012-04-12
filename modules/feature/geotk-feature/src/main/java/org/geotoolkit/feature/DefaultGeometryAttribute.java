@@ -206,6 +206,12 @@ public class DefaultGeometryAttribute extends DefaultAttribute<Object,GeometryDe
         return true;
     }
 
+    @Override
+    public void setValue(Object newValue) throws IllegalArgumentException, IllegalStateException {
+        bounds = null; //clear cache
+        super.setValue(newValue);
+    }
+
     /**
      * {@inheritDoc }
      */
