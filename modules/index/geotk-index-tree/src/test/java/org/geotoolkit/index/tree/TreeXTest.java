@@ -25,7 +25,7 @@ import org.geotoolkit.index.tree.io.TreeVisitor;
 import org.geotoolkit.index.tree.io.TreeX;
 import org.geotoolkit.index.tree.nodefactory.TreeNodeFactory;
 import org.geotoolkit.index.tree.star.StarRTree;
-import org.geotoolkit.lucene.filter.SpatialFilterType;
+import org.geotoolkit.filter.SpatialFilterType;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
