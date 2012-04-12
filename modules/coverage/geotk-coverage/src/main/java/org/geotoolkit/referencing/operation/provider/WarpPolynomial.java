@@ -159,12 +159,12 @@ public class WarpPolynomial extends MathTransformProvider {
      * <table class="geotk" border="1">
      *   <tr><th colspan="2">
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code Geotk}:</td><td class="onleft">{@code WarpPolynomial}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>Geotk</code>:</td><td class="onleft"><code>WarpPolynomial</code></td></tr>
      *     </table>
      *   </th></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code Geotk}:</td><td class="onleft">{@code degree}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>Geotk</code>:</td><td class="onleft"><code>degree</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -176,7 +176,7 @@ public class WarpPolynomial extends MathTransformProvider {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code Geotk}:</td><td class="onleft">{@code xCoeffs}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>Geotk</code>:</td><td class="onleft"><code>xCoeffs</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -186,7 +186,7 @@ public class WarpPolynomial extends MathTransformProvider {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code Geotk}:</td><td class="onleft">{@code yCoeffs}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>Geotk</code>:</td><td class="onleft"><code>yCoeffs</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -196,7 +196,7 @@ public class WarpPolynomial extends MathTransformProvider {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code Geotk}:</td><td class="onleft">{@code preScaleX}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>Geotk</code>:</td><td class="onleft"><code>preScaleX</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -208,7 +208,7 @@ public class WarpPolynomial extends MathTransformProvider {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code Geotk}:</td><td class="onleft">{@code preScaleY}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>Geotk</code>:</td><td class="onleft"><code>preScaleY</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -220,7 +220,7 @@ public class WarpPolynomial extends MathTransformProvider {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code Geotk}:</td><td class="onleft">{@code postScaleX}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>Geotk</code>:</td><td class="onleft"><code>postScaleX</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -232,7 +232,7 @@ public class WarpPolynomial extends MathTransformProvider {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code Geotk}:</td><td class="onleft">{@code postScaleY}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>Geotk</code>:</td><td class="onleft"><code>postScaleY</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">

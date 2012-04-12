@@ -241,8 +241,8 @@ public final class ProjectionParametersJavadoc extends JavadocUpdater {
     private void createConditionTable(final ParameterDescriptor<?> descriptor) {
         final Class<?> valueClass = descriptor.getValueClass();
         lines.add("    <table class=\"compact\">");
-        lines.add("      <tr><td><b>Type:</b>" + "</td><td>" + "{@code " + valueClass.getSimpleName() + "}</td></tr>");
-        lines.add("      <tr><td><b>Obligation:</b>" + "</td><td>" + (descriptor.getMinimumOccurs() != 0 ? "mandatory" : "optional") + "</td></tr>");
+        lines.add("      <tr><td><b>Type:</b></td><td>{@code " + valueClass.getSimpleName() + "}</td></tr>");
+        lines.add("      <tr><td><b>Obligation:</b></td><td>" + (descriptor.getMinimumOccurs() != 0 ? "mandatory" : "optional") + "</td></tr>");
         final String unit = getUnit(descriptor);
         if (Number.class.isAssignableFrom(valueClass)) {
             NumberRange<?> range = NumberRange.createBestFit(
@@ -338,6 +338,7 @@ public final class ProjectionParametersJavadoc extends JavadocUpdater {
      * This method uses 2 table columns.
      */
     private static String toHTML(final String codespace, final String code) {
-        return "<td class=\"onright\">{@code " + codespace + "}:</td><td class=\"onleft\">{@code " + code + "}</td>";
+        // Note: use <code>, not {@code}, because the value may contain other HTML tags.
+        return "<td class=\"onright\"><code>" + codespace + "</code>:</td><td class=\"onleft\"><code>" + code + "</code></td>";
     }
 }
