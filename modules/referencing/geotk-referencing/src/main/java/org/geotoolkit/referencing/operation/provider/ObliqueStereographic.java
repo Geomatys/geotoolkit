@@ -40,7 +40,12 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * <!-- PARAMETERS ObliqueStereographic -->
  * <p>The following table summarizes the parameters recognized by this provider.
  * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
- * <blockquote><p><b>Operation name:</b> {@code Oblique_Stereographic}</p>
+ * <blockquote><p><b>Operation name:</b> {@code Oblique_Stereographic}
+ * <br><b>Area of use:</b> <font size="-1">(union of CRS domains of validity from EPSG database)</font></p>
+ * <blockquote><table class="compact">
+ *   <tr><td><b>in latitudes:</b></td><td class="onright">32°18.6′N</td><td>to</td><td class="onright">54°52.2′N</td></tr>
+ *   <tr><td><b>in longitudes:</b></td><td class="onright">69°03.0′W</td><td>to</td><td class="onright">42°22.8′E</td></tr>
+ * </table></blockquote>
  * <table class="geotk">
  *   <tr><th>Parameter Name</th><th>Default value</th></tr>
  *   <tr><td>{@code semi_major}</td><td></td></tr>

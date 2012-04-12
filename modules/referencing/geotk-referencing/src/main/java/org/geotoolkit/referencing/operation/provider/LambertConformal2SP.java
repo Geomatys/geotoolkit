@@ -44,7 +44,12 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * <!-- PARAMETERS LambertConformal2SP -->
  * <p>The following table summarizes the parameters recognized by this provider.
  * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
- * <blockquote><p><b>Operation name:</b> {@code Lambert_Conformal_Conic_2SP}</p>
+ * <blockquote><p><b>Operation name:</b> {@code Lambert_Conformal_Conic_2SP}
+ * <br><b>Area of use:</b> <font size="-1">(union of CRS domains of validity from EPSG database)</font></p>
+ * <blockquote><table class="compact">
+ *   <tr><td><b>in latitudes:</b></td><td class="onright">81°00.0′S</td><td>to</td><td class="onright">86°27.0′N</td></tr>
+ *   <tr><td><b>in longitudes:</b></td><td class="onright">180°00.0′W</td><td>to</td><td class="onright">180°00.0′E</td></tr>
+ * </table></blockquote>
  * <table class="geotk">
  *   <tr><th>Parameter Name</th><th>Default value</th></tr>
  *   <tr><td>{@code semi_major}</td><td></td></tr>
@@ -443,7 +448,12 @@ public class LambertConformal2SP extends MapProjection {
      * <!-- PARAMETERS Belgium -->
      * <p>The following table summarizes the parameters recognized by this provider.
      * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
-     * <blockquote><p><b>Operation name:</b> {@code Lambert_Conformal_Conic_2SP_Belgium}</p>
+     * <blockquote><p><b>Operation name:</b> {@code Lambert_Conformal_Conic_2SP_Belgium}
+     * <br><b>Area of use:</b> <font size="-1">(union of CRS domains of validity from EPSG database)</font></p>
+     * <blockquote><table class="compact">
+     *   <tr><td><b>in latitudes:</b></td><td class="onright">49°30.6′N</td><td>to</td><td class="onright">51°30.0′N</td></tr>
+     *   <tr><td><b>in longitudes:</b></td><td class="onright">2°32.4′E</td><td>to</td><td class="onright">6°24.0′E</td></tr>
+     * </table></blockquote>
      * <table class="geotk">
      *   <tr><th>Parameter Name</th><th>Default value</th></tr>
      *   <tr><td>{@code semi_major}</td><td></td></tr>

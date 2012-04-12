@@ -18,13 +18,20 @@
 package org.geotoolkit.build.project.report;
 
 import java.util.Set;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.io.IOException;
 import javax.measure.unit.Unit;
 
 import org.opengis.util.GenericName;
+import org.opengis.util.FactoryException;
 import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.referencing.crs.GeneralDerivedCRS;
+import org.opengis.referencing.crs.CRSAuthorityFactory;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.GeneralParameterDescriptor;
@@ -33,7 +40,11 @@ import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Deprecable;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.converter.Numbers;
+import org.geotoolkit.measure.Latitude;
+import org.geotoolkit.measure.Longitude;
+import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.geotoolkit.referencing.operation.provider.*;
+import org.geotoolkit.referencing.CRS;
 
 
 /**
@@ -53,8 +64,9 @@ public final class ProjectionParametersJavadoc extends JavadocUpdater {
      * @param  args Ignored.
      * @throws ReflectiveOperationException Should never happen.
      * @throws IOException If an error occurred while updating the source files.
+     * @throws FactoryException If an error occurred while querying the authority factory.
      */
-    public static void main(final String[] args) throws ReflectiveOperationException, IOException {
+    public static void main(final String[] args) throws ReflectiveOperationException, IOException, FactoryException {
         Locale.setDefault(Locale.ENGLISH);
         final ProjectionParametersJavadoc updater = new ProjectionParametersJavadoc();
         for (final Class<?> provider : updater.parameters) {
@@ -155,20 +167,71 @@ public final class ProjectionParametersJavadoc extends JavadocUpdater {
     };
 
     /**
+     * The union of domain of validity of all map projections using a method of the given name.
+     */
+    private final Map<String, DefaultGeographicBoundingBox> domainOfValidity;
+
+    /**
      * Creates a new instance to be used for updating the javadoc.
      */
-    private ProjectionParametersJavadoc() throws IOException {
+    private ProjectionParametersJavadoc() throws IOException, FactoryException {
         super("<!-- GENERATED PARAMETERS", "*/");
+        domainOfValidity = new HashMap<>();
+        final CRSAuthorityFactory factory = CRS.getAuthorityFactory(Boolean.FALSE);
+        for (final String code : factory.getAuthorityCodes(GeneralDerivedCRS.class)) {
+            final CoordinateReferenceSystem crs;
+            try {
+                crs = factory.createCoordinateReferenceSystem(code);
+            } catch (FactoryException e) {
+                continue; // Ignore and inspect the next element.
+            }
+            if (crs instanceof GeneralDerivedCRS) {
+                final GeographicBoundingBox candidate = CRS.getGeographicBoundingBox(crs);
+                if (candidate != null) {
+                    final String name = ((GeneralDerivedCRS) crs).getConversionFromBase().getMethod().getName().getCode();
+                    DefaultGeographicBoundingBox validity = domainOfValidity.get(name);
+                    if (validity == null) {
+                        validity = new DefaultGeographicBoundingBox(candidate);
+                        domainOfValidity.put(name, validity);
+                    } else {
+                        validity.add(candidate);
+                    }
+                }
+            }
+        }
     }
 
     /**
      * Creates the table that summarize the operation.
      */
     private void createSummaryTable(final ParameterDescriptorGroup group) {
+        DefaultGeographicBoundingBox validity = null;
+        for (final GenericName name : group.getAlias()) {
+            final String tip = name.tip().toString();
+            final DefaultGeographicBoundingBox candidate = domainOfValidity.get(tip);
+            if (candidate != null) {
+                if (validity == null) {
+                    validity = new DefaultGeographicBoundingBox(candidate);
+                } else {
+                    validity.add(candidate);
+                }
+            }
+        }
         lines.clear();
         lines.add("<p>The following table summarizes the parameters recognized by this provider.");
         lines.add("For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>");
-        lines.add("<blockquote><p><b>Operation name:</b> {@code " + group.getName().getCode() + "}</p>");
+        lines.add("<blockquote><p><b>Operation name:</b> {@code " + group.getName().getCode() + (validity != null ? "}" : "}</p>"));
+        if (validity != null) {
+            lines.add("<br><b>Area of use:</b> <font size=\"-1\">(union of CRS domains of validity from EPSG database)</font></p>");
+            lines.add("<blockquote><table class=\"compact\">");
+            lines.add("  <tr><td><b>in latitudes:</b></td><td class=\"onright\">" +
+                    new Latitude(validity.getSouthBoundLatitude()) + "</td><td>to</td><td class=\"onright\">" +
+                    new Latitude(validity.getNorthBoundLatitude()) + "</td></tr>");
+            lines.add("  <tr><td><b>in longitudes:</b></td><td class=\"onright\">" +
+                    new Longitude(validity.getWestBoundLongitude()) + "</td><td>to</td><td class=\"onright\">" +
+                    new Longitude(validity.getEastBoundLongitude()) + "</td></tr>");
+            lines.add("</table></blockquote>");
+        }
         lines.add("<table class=\"geotk\">");
         lines.add("  <tr><th>Parameter Name</th><th>Default value</th></tr>");
         for (final GeneralParameterDescriptor gp : group.descriptors()) {

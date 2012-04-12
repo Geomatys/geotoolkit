@@ -44,7 +44,12 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * <!-- PARAMETERS Mercator2SP -->
  * <p>The following table summarizes the parameters recognized by this provider.
  * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
- * <blockquote><p><b>Operation name:</b> {@code Mercator_2SP}</p>
+ * <blockquote><p><b>Operation name:</b> {@code Mercator_2SP}
+ * <br><b>Area of use:</b> <font size="-1">(union of CRS domains of validity from EPSG database)</font></p>
+ * <blockquote><table class="compact">
+ *   <tr><td><b>in latitudes:</b></td><td class="onright">55°57.0′S</td><td>to</td><td class="onright">47°06.6′N</td></tr>
+ *   <tr><td><b>in longitudes:</b></td><td class="onright">157°24.6′W</td><td>to</td><td class="onright">170°53.4′E</td></tr>
+ * </table></blockquote>
  * <table class="geotk">
  *   <tr><th>Parameter Name</th><th>Default value</th></tr>
  *   <tr><td>{@code semi_major}</td><td></td></tr>

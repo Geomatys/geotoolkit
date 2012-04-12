@@ -44,7 +44,12 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * <!-- PARAMETERS Krovak -->
  * <p>The following table summarizes the parameters recognized by this provider.
  * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
- * <blockquote><p><b>Operation name:</b> {@code Krovak}</p>
+ * <blockquote><p><b>Operation name:</b> {@code Krovak}
+ * <br><b>Area of use:</b> <font size="-1">(union of CRS domains of validity from EPSG database)</font></p>
+ * <blockquote><table class="compact">
+ *   <tr><td><b>in latitudes:</b></td><td class="onright">47°44.4′N</td><td>to</td><td class="onright">51°03.0′N</td></tr>
+ *   <tr><td><b>in longitudes:</b></td><td class="onright">12°05.4′E</td><td>to</td><td class="onright">22°33.6′E</td></tr>
+ * </table></blockquote>
  * <table class="geotk">
  *   <tr><th>Parameter Name</th><th>Default value</th></tr>
  *   <tr><td>{@code semi_major}</td><td></td></tr>
