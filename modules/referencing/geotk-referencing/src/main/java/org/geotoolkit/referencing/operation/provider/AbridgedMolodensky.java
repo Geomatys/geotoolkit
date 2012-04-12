@@ -99,15 +99,15 @@ public class AbridgedMolodensky extends Molodensky {
      * <table class="geotk" border="1">
      *   <tr><th colspan="2">
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code Abridged_Molodenski}</td></tr>
-     *       <tr><td><b>Alias:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code Abridged Molodensky}</td></tr>
-     *       <tr><td></td><td class="onright">{@code Geotk}:</td><td class="onleft">{@code Abridged Molodensky transform}</td></tr>
-     *       <tr><td><b>Identifier:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code 9605}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>Abridged_Molodenski</code></td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>Abridged Molodensky</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>Geotk</code>:</td><td class="onleft"><code>Abridged Molodensky transform</code></td></tr>
+     *       <tr><td><b>Identifier:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>9605</code></td></tr>
      *     </table>
      *   </th></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code dim}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>dim</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -119,7 +119,7 @@ public class AbridgedMolodensky extends Molodensky {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code Geotk}:</td><td class="onleft">{@code src_dim}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>Geotk</code>:</td><td class="onleft"><code>src_dim</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -131,7 +131,7 @@ public class AbridgedMolodensky extends Molodensky {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code Geotk}:</td><td class="onleft">{@code tgt_dim}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>Geotk</code>:</td><td class="onleft"><code>tgt_dim</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -143,8 +143,8 @@ public class AbridgedMolodensky extends Molodensky {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code dx}</td></tr>
-     *       <tr><td><b>Alias:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code X-axis translation}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>dx</code></td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>X-axis translation</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -156,8 +156,8 @@ public class AbridgedMolodensky extends Molodensky {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code dy}</td></tr>
-     *       <tr><td><b>Alias:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code Y-axis translation}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>dy</code></td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>Y-axis translation</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -169,8 +169,8 @@ public class AbridgedMolodensky extends Molodensky {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code dz}</td></tr>
-     *       <tr><td><b>Alias:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code Z-axis translation}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>dz</code></td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>Z-axis translation</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -182,7 +182,7 @@ public class AbridgedMolodensky extends Molodensky {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code src_semi_major}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>src_semi_major</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -193,7 +193,7 @@ public class AbridgedMolodensky extends Molodensky {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code src_semi_minor}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>src_semi_minor</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -204,7 +204,7 @@ public class AbridgedMolodensky extends Molodensky {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code tgt_semi_major}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>tgt_semi_major</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -215,7 +215,7 @@ public class AbridgedMolodensky extends Molodensky {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code tgt_semi_minor}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>tgt_semi_minor</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -226,7 +226,7 @@ public class AbridgedMolodensky extends Molodensky {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code Semi-major axis length difference}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>Semi-major axis length difference</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -237,7 +237,7 @@ public class AbridgedMolodensky extends Molodensky {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code Flattening difference}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>Flattening difference</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">

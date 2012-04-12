@@ -152,19 +152,19 @@ public class MillerCylindrical extends MapProjection {
      * <table class="geotk" border="1">
      *   <tr><th colspan="2">
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code Miller_Cylindrical}</td></tr>
-     *       <tr><td><b>Alias:</b></td><td class="onright">{@code IGNF}:</td><td class="onleft">{@code Miller_Cylindrical_Sphere}</td></tr>
-     *       <tr><td></td><td class="onright">{@code GeoTIFF}:</td><td class="onleft">{@code CT_MillerCylindrical}</td></tr>
-     *       <tr><td></td><td class="onright">{@code PROJ4}:</td><td class="onleft">{@code mill}</td></tr>
-     *       <tr><td><b>Identifier:</b></td><td class="onright">{@code IGNF}:</td><td class="onleft">{@code PRC9901}</td></tr>
-     *       <tr><td></td><td class="onright">{@code GeoTIFF}:</td><td class="onleft">{@code 20}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>Miller_Cylindrical</code></td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright"><code>IGNF</code>:</td><td class="onleft"><code>Miller_Cylindrical_Sphere</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>GeoTIFF</code>:</td><td class="onleft"><code>CT_MillerCylindrical</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>PROJ4</code>:</td><td class="onleft"><code>mill</code></td></tr>
+     *       <tr><td><b>Identifier:</b></td><td class="onright"><code>IGNF</code>:</td><td class="onleft"><code>PRC9901</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>GeoTIFF</code>:</td><td class="onleft"><code>20</code></td></tr>
      *     </table>
      *   </th></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code semi_major}</td></tr>
-     *       <tr><td><b>Alias:</b></td><td class="onright">{@code GeoTIFF}:</td><td class="onleft">{@code SemiMajor}</td></tr>
-     *       <tr><td></td><td class="onright">{@code PROJ4}:</td><td class="onleft">{@code a}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>semi_major</code></td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright"><code>GeoTIFF</code>:</td><td class="onleft"><code>SemiMajor</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>PROJ4</code>:</td><td class="onleft"><code>a</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -175,9 +175,9 @@ public class MillerCylindrical extends MapProjection {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code semi_minor}</td></tr>
-     *       <tr><td><b>Alias:</b></td><td class="onright">{@code GeoTIFF}:</td><td class="onleft">{@code SemiMinor}</td></tr>
-     *       <tr><td></td><td class="onright">{@code PROJ4}:</td><td class="onleft">{@code b}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>semi_minor</code></td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright"><code>GeoTIFF</code>:</td><td class="onleft"><code>SemiMinor</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>PROJ4</code>:</td><td class="onleft"><code>b</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -188,7 +188,7 @@ public class MillerCylindrical extends MapProjection {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code Geotk}:</td><td class="onleft">{@code roll_longitude}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>Geotk</code>:</td><td class="onleft"><code>roll_longitude</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -199,9 +199,9 @@ public class MillerCylindrical extends MapProjection {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code latitude_of_center}</td></tr>
-     *       <tr><td><b>Alias:</b></td><td class="onright">{@code GeoTIFF}:</td><td class="onleft">{@code ProjCenterLat}</td></tr>
-     *       <tr><td></td><td class="onright">{@code PROJ4}:</td><td class="onleft">{@code lat_0}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>latitude_of_center</code></td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright"><code>GeoTIFF</code>:</td><td class="onleft"><code>ProjCenterLat</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>PROJ4</code>:</td><td class="onleft"><code>lat_0</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -213,9 +213,9 @@ public class MillerCylindrical extends MapProjection {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code longitude_of_center}</td></tr>
-     *       <tr><td><b>Alias:</b></td><td class="onright">{@code GeoTIFF}:</td><td class="onleft">{@code ProjCenterLong}</td></tr>
-     *       <tr><td></td><td class="onright">{@code PROJ4}:</td><td class="onleft">{@code lon_0}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>longitude_of_center</code></td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright"><code>GeoTIFF</code>:</td><td class="onleft"><code>ProjCenterLong</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>PROJ4</code>:</td><td class="onleft"><code>lon_0</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -227,9 +227,9 @@ public class MillerCylindrical extends MapProjection {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code false_easting}</td></tr>
-     *       <tr><td><b>Alias:</b></td><td class="onright">{@code GeoTIFF}:</td><td class="onleft">{@code FalseEasting}</td></tr>
-     *       <tr><td></td><td class="onright">{@code PROJ4}:</td><td class="onleft">{@code x_0}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>false_easting</code></td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright"><code>GeoTIFF</code>:</td><td class="onleft"><code>FalseEasting</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>PROJ4</code>:</td><td class="onleft"><code>x_0</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -241,9 +241,9 @@ public class MillerCylindrical extends MapProjection {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code false_northing}</td></tr>
-     *       <tr><td><b>Alias:</b></td><td class="onright">{@code GeoTIFF}:</td><td class="onleft">{@code FalseNorthing}</td></tr>
-     *       <tr><td></td><td class="onright">{@code PROJ4}:</td><td class="onleft">{@code y_0}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>false_northing</code></td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright"><code>GeoTIFF</code>:</td><td class="onleft"><code>FalseNorthing</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>PROJ4</code>:</td><td class="onleft"><code>y_0</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">

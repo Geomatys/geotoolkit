@@ -5,3 +5,39 @@
 p {
   text-align: justify;
 }
+
+span.deprecated {
+  text-decoration: line-through;
+}
+
+table {
+  border-style: solid;
+  border-width:   2pt;
+  border-spacing: 0pt;
+}
+
+table tr th {
+  background-color: #B9DCFF;
+  border-bottom-style: solid;
+  border-bottom-width: 1pt;
+  padding: 3pt;
+}
+
+table tr td {
+  padding-left:  9pt;
+  padding-right: 9pt;
+}
+
+table tr td.separator {
+  font-weight: bold;
+  text-align: center;
+  padding-top:    3pt;
+  padding-bottom: 3pt;
+  border-top-style: solid;
+  border-top-width: 1pt;
+  border-top-color: lightgray;
+  border-bottom-style: solid;
+  border-bottom-width: 1pt;
+  border-bottom-color: lightgray;
+  background-color: #F4F8FF;
+}

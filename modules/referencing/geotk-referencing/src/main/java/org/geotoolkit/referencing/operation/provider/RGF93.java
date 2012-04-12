@@ -83,13 +83,13 @@ public class RGF93 extends MathTransformProvider {
      * <table class="geotk" border="1">
      *   <tr><th colspan="2">
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code France geocentric interpolation}</td></tr>
-     *       <tr><td><b>Identifier:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code 9655}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>France geocentric interpolation</code></td></tr>
+     *       <tr><td><b>Identifier:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>9655</code></td></tr>
      *     </table>
      *   </th></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code Geocentric translation file}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>Geocentric translation file</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">

@@ -89,13 +89,13 @@ public class LongitudeRotation extends MathTransformProvider {
      * <table class="geotk" border="1">
      *   <tr><th colspan="2">
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code Longitude rotation}</td></tr>
-     *       <tr><td><b>Identifier:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code 9601}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>Longitude rotation</code></td></tr>
+     *       <tr><td><b>Identifier:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>9601</code></td></tr>
      *     </table>
      *   </th></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code Longitude offset}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>Longitude offset</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">

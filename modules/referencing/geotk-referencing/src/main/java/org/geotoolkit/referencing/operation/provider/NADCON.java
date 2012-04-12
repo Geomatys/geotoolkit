@@ -110,14 +110,14 @@ public class NADCON extends MathTransformProvider {
      * <table class="geotk" border="1">
      *   <tr><th colspan="2">
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code NADCON}</td></tr>
-     *       <tr><td><b>Alias:</b></td><td class="onright">{@code Geotk}:</td><td class="onleft">{@code NADCON transform}</td></tr>
-     *       <tr><td><b>Identifier:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code 9613}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>NADCON</code></td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright"><code>Geotk</code>:</td><td class="onleft"><code>NADCON transform</code></td></tr>
+     *       <tr><td><b>Identifier:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>9613</code></td></tr>
      *     </table>
      *   </th></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code Latitude difference file}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>Latitude difference file</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -128,7 +128,7 @@ public class NADCON extends MathTransformProvider {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code Longitude difference file}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>Longitude difference file</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">

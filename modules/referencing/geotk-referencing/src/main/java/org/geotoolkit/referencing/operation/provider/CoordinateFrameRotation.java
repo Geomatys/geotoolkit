@@ -85,16 +85,16 @@ public class CoordinateFrameRotation extends PositionVector7Param {
      * <table class="geotk" border="1">
      *   <tr><th colspan="2">
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code Coordinate Frame Rotation (geog2D domain)}</td></tr>
-     *       <tr><td><b>Alias:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code Coordinate Frame Rotation}</td></tr>
-     *       <tr><td></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code Bursa-Wolf}</td></tr>
-     *       <tr><td><b>Identifier:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code 9607}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>Coordinate Frame Rotation (geog2D domain)</code></td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>Coordinate Frame Rotation</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>Bursa-Wolf</code></td></tr>
+     *       <tr><td><b>Identifier:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>9607</code></td></tr>
      *     </table>
      *   </th></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code dx}</td></tr>
-     *       <tr><td><b>Alias:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code X-axis translation}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>dx</code></td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>X-axis translation</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -106,8 +106,8 @@ public class CoordinateFrameRotation extends PositionVector7Param {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code dy}</td></tr>
-     *       <tr><td><b>Alias:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code Y-axis translation}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>dy</code></td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>Y-axis translation</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -119,8 +119,8 @@ public class CoordinateFrameRotation extends PositionVector7Param {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code dz}</td></tr>
-     *       <tr><td><b>Alias:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code Z-axis translation}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>dz</code></td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>Z-axis translation</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -132,8 +132,8 @@ public class CoordinateFrameRotation extends PositionVector7Param {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code ex}</td></tr>
-     *       <tr><td><b>Alias:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code X-axis rotation}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>ex</code></td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>X-axis rotation</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -145,8 +145,8 @@ public class CoordinateFrameRotation extends PositionVector7Param {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code ey}</td></tr>
-     *       <tr><td><b>Alias:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code Y-axis rotation}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>ey</code></td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>Y-axis rotation</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -158,8 +158,8 @@ public class CoordinateFrameRotation extends PositionVector7Param {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code ez}</td></tr>
-     *       <tr><td><b>Alias:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code Z-axis rotation}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>ez</code></td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>Z-axis rotation</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -171,8 +171,8 @@ public class CoordinateFrameRotation extends PositionVector7Param {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code ppm}</td></tr>
-     *       <tr><td><b>Alias:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code Scale difference}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>ppm</code></td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>Scale difference</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -184,7 +184,7 @@ public class CoordinateFrameRotation extends PositionVector7Param {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code src_semi_major}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>src_semi_major</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -195,7 +195,7 @@ public class CoordinateFrameRotation extends PositionVector7Param {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code src_semi_minor}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>src_semi_minor</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -206,7 +206,7 @@ public class CoordinateFrameRotation extends PositionVector7Param {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code tgt_semi_major}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>tgt_semi_major</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -217,7 +217,7 @@ public class CoordinateFrameRotation extends PositionVector7Param {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code tgt_semi_minor}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>tgt_semi_minor</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -228,7 +228,7 @@ public class CoordinateFrameRotation extends PositionVector7Param {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code Geotk}:</td><td class="onleft">{@code src_dim}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>Geotk</code>:</td><td class="onleft"><code>src_dim</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -240,7 +240,7 @@ public class CoordinateFrameRotation extends PositionVector7Param {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code Geotk}:</td><td class="onleft">{@code tgt_dim}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>Geotk</code>:</td><td class="onleft"><code>tgt_dim</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">

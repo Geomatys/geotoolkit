@@ -97,15 +97,15 @@ public class Affine extends MathTransformProvider {
      * <table class="geotk" border="1">
      *   <tr><th colspan="2">
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code Affine}</td></tr>
-     *       <tr><td><b>Alias:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code Affine parametric transformation}</td></tr>
-     *       <tr><td></td><td class="onright">{@code Geotk}:</td><td class="onleft">{@code Affine transform}</td></tr>
-     *       <tr><td><b>Identifier:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code 9624}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>Affine</code></td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>Affine parametric transformation</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>Geotk</code>:</td><td class="onleft"><code>Affine transform</code></td></tr>
+     *       <tr><td><b>Identifier:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>9624</code></td></tr>
      *     </table>
      *   </th></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code num_row}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>num_row</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -117,7 +117,7 @@ public class Affine extends MathTransformProvider {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code num_col}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>num_col</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -129,8 +129,8 @@ public class Affine extends MathTransformProvider {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code elt_0_0}</td></tr>
-     *       <tr><td><b>Alias:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code A1}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>elt_0_0</code></td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>A1</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -142,8 +142,8 @@ public class Affine extends MathTransformProvider {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code elt_0_1}</td></tr>
-     *       <tr><td><b>Alias:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code A2}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>elt_0_1</code></td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>A2</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -155,8 +155,8 @@ public class Affine extends MathTransformProvider {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code elt_0_2}</td></tr>
-     *       <tr><td><b>Alias:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code A0}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>elt_0_2</code></td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>A0</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -168,8 +168,8 @@ public class Affine extends MathTransformProvider {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code elt_1_0}</td></tr>
-     *       <tr><td><b>Alias:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code B1}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>elt_1_0</code></td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>B1</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -181,8 +181,8 @@ public class Affine extends MathTransformProvider {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code elt_1_1}</td></tr>
-     *       <tr><td><b>Alias:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code B2}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>elt_1_1</code></td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>B2</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -194,8 +194,8 @@ public class Affine extends MathTransformProvider {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code elt_1_2}</td></tr>
-     *       <tr><td><b>Alias:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code B0}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>elt_1_2</code></td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>B0</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -207,7 +207,7 @@ public class Affine extends MathTransformProvider {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code elt_2_0}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>elt_2_0</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -219,7 +219,7 @@ public class Affine extends MathTransformProvider {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code elt_2_1}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>elt_2_1</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -231,7 +231,7 @@ public class Affine extends MathTransformProvider {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code elt_2_2}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>elt_2_2</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">

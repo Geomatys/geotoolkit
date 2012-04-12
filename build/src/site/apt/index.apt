@@ -49,6 +49,8 @@ Building Geotoolkit.org
 
     * <<<GeoAPI-3.0>>>
 
+    * <<<JDK7>>>
+
   If the GeoAPI branch is wanted instead than the default one, execute the following command
   (available only if the source code was obtained from the Mercurial repository):
 

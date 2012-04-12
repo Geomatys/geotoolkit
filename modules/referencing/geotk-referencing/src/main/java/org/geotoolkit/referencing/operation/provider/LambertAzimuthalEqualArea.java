@@ -51,7 +51,12 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * <!-- PARAMETERS LambertAzimuthalEqualArea -->
  * <p>The following table summarizes the parameters recognized by this provider.
  * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
- * <blockquote><p><b>Operation name:</b> {@code Lambert_Azimuthal_Equal_Area}</p>
+ * <blockquote><p><b>Operation name:</b> {@code Lambert_Azimuthal_Equal_Area}
+ * <br><b>Area of use:</b> <font size="-1">(union of CRS domains of validity from EPSG database)</font></p>
+ * <blockquote><table class="compact">
+ *   <tr><td><b>in latitudes:</b></td><td class="onright">90°00.0′S</td><td>to</td><td class="onright">90°00.0′N</td></tr>
+ *   <tr><td><b>in longitudes:</b></td><td class="onright">180°00.0′W</td><td>to</td><td class="onright">180°00.0′E</td></tr>
+ * </table></blockquote>
  * <table class="geotk">
  *   <tr><th>Parameter Name</th><th>Default value</th></tr>
  *   <tr><td>{@code semi_major}</td><td></td></tr>
@@ -158,26 +163,26 @@ public class LambertAzimuthalEqualArea extends MapProjection {
      * <table class="geotk" border="1">
      *   <tr><th colspan="2">
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code Lambert_Azimuthal_Equal_Area}</td></tr>
-     *       <tr><td><b>Alias:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code Lambert Azimuthal Equal Area}</td></tr>
-     *       <tr><td></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code Lambert Azimuthal Equal Area (Spherical)}</td></tr>
-     *       <tr><td></td><td class="onright">{@code ESRI}:</td><td class="onleft">{@code Lambert_Azimuthal_Equal_Area}</td></tr>
-     *       <tr><td></td><td class="onright">{@code NetCDF}:</td><td class="onleft">{@code LambertAzimuthalEqualArea}</td></tr>
-     *       <tr><td></td><td class="onright">{@code GeoTIFF}:</td><td class="onleft">{@code CT_LambertAzimEqualArea}</td></tr>
-     *       <tr><td></td><td class="onright">{@code PROJ4}:</td><td class="onleft">{@code laea}</td></tr>
-     *       <tr><td><b>Identifier:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code 9820}</td></tr>
-     *       <tr><td></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code 1027}</td></tr>
-     *       <tr><td></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code <del>9821</del>}</td></tr>
-     *       <tr><td></td><td class="onright">{@code GeoTIFF}:</td><td class="onleft">{@code 10}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>Lambert_Azimuthal_Equal_Area</code></td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>Lambert Azimuthal Equal Area</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>Lambert Azimuthal Equal Area (Spherical)</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>ESRI</code>:</td><td class="onleft"><code>Lambert_Azimuthal_Equal_Area</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>NetCDF</code>:</td><td class="onleft"><code>LambertAzimuthalEqualArea</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>GeoTIFF</code>:</td><td class="onleft"><code>CT_LambertAzimEqualArea</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>PROJ4</code>:</td><td class="onleft"><code>laea</code></td></tr>
+     *       <tr><td><b>Identifier:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>9820</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>1027</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code><del>9821</del></code></td></tr>
+     *       <tr><td></td><td class="onright"><code>GeoTIFF</code>:</td><td class="onleft"><code>10</code></td></tr>
      *     </table>
      *   </th></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code semi_major}</td></tr>
-     *       <tr><td><b>Alias:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code Semi-major axis}</td></tr>
-     *       <tr><td></td><td class="onright">{@code ESRI}:</td><td class="onleft">{@code Semi_Major}</td></tr>
-     *       <tr><td></td><td class="onright">{@code GeoTIFF}:</td><td class="onleft">{@code SemiMajor}</td></tr>
-     *       <tr><td></td><td class="onright">{@code PROJ4}:</td><td class="onleft">{@code a}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>semi_major</code></td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>Semi-major axis</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>ESRI</code>:</td><td class="onleft"><code>Semi_Major</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>GeoTIFF</code>:</td><td class="onleft"><code>SemiMajor</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>PROJ4</code>:</td><td class="onleft"><code>a</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -188,11 +193,11 @@ public class LambertAzimuthalEqualArea extends MapProjection {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code semi_minor}</td></tr>
-     *       <tr><td><b>Alias:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code Semi-minor axis}</td></tr>
-     *       <tr><td></td><td class="onright">{@code ESRI}:</td><td class="onleft">{@code Semi_Minor}</td></tr>
-     *       <tr><td></td><td class="onright">{@code GeoTIFF}:</td><td class="onleft">{@code SemiMinor}</td></tr>
-     *       <tr><td></td><td class="onright">{@code PROJ4}:</td><td class="onleft">{@code b}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>semi_minor</code></td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>Semi-minor axis</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>ESRI</code>:</td><td class="onleft"><code>Semi_Minor</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>GeoTIFF</code>:</td><td class="onleft"><code>SemiMinor</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>PROJ4</code>:</td><td class="onleft"><code>b</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -203,7 +208,7 @@ public class LambertAzimuthalEqualArea extends MapProjection {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code Geotk}:</td><td class="onleft">{@code roll_longitude}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>Geotk</code>:</td><td class="onleft"><code>roll_longitude</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -214,13 +219,13 @@ public class LambertAzimuthalEqualArea extends MapProjection {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code latitude_of_center}</td></tr>
-     *       <tr><td><b>Alias:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code Latitude of natural origin}</td></tr>
-     *       <tr><td></td><td class="onright">{@code ESRI}:</td><td class="onleft">{@code Latitude_Of_Origin}</td></tr>
-     *       <tr><td></td><td class="onright">{@code NetCDF}:</td><td class="onleft">{@code latitude_of_projection_origin}</td></tr>
-     *       <tr><td></td><td class="onright">{@code GeoTIFF}:</td><td class="onleft">{@code ProjCenterLat}</td></tr>
-     *       <tr><td></td><td class="onright">{@code PROJ4}:</td><td class="onleft">{@code lat_0}</td></tr>
-     *       <tr><td></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code <del>Spherical latitude of origin</del>}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>latitude_of_center</code></td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>Latitude of natural origin</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>ESRI</code>:</td><td class="onleft"><code>Latitude_Of_Origin</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>NetCDF</code>:</td><td class="onleft"><code>latitude_of_projection_origin</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>GeoTIFF</code>:</td><td class="onleft"><code>ProjCenterLat</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>PROJ4</code>:</td><td class="onleft"><code>lat_0</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code><del>Spherical latitude of origin</del></code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -232,13 +237,13 @@ public class LambertAzimuthalEqualArea extends MapProjection {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code longitude_of_center}</td></tr>
-     *       <tr><td><b>Alias:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code Longitude of natural origin}</td></tr>
-     *       <tr><td></td><td class="onright">{@code ESRI}:</td><td class="onleft">{@code Central_Meridian}</td></tr>
-     *       <tr><td></td><td class="onright">{@code NetCDF}:</td><td class="onleft">{@code longitude_of_projection_origin}</td></tr>
-     *       <tr><td></td><td class="onright">{@code GeoTIFF}:</td><td class="onleft">{@code ProjCenterLong}</td></tr>
-     *       <tr><td></td><td class="onright">{@code PROJ4}:</td><td class="onleft">{@code lon_0}</td></tr>
-     *       <tr><td></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code <del>Spherical longitude of origin</del>}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>longitude_of_center</code></td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>Longitude of natural origin</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>ESRI</code>:</td><td class="onleft"><code>Central_Meridian</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>NetCDF</code>:</td><td class="onleft"><code>longitude_of_projection_origin</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>GeoTIFF</code>:</td><td class="onleft"><code>ProjCenterLong</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>PROJ4</code>:</td><td class="onleft"><code>lon_0</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code><del>Spherical longitude of origin</del></code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -250,12 +255,12 @@ public class LambertAzimuthalEqualArea extends MapProjection {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code false_easting}</td></tr>
-     *       <tr><td><b>Alias:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code False easting}</td></tr>
-     *       <tr><td></td><td class="onright">{@code ESRI}:</td><td class="onleft">{@code False_Easting}</td></tr>
-     *       <tr><td></td><td class="onright">{@code NetCDF}:</td><td class="onleft">{@code false_easting}</td></tr>
-     *       <tr><td></td><td class="onright">{@code GeoTIFF}:</td><td class="onleft">{@code FalseEasting}</td></tr>
-     *       <tr><td></td><td class="onright">{@code PROJ4}:</td><td class="onleft">{@code x_0}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>false_easting</code></td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>False easting</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>ESRI</code>:</td><td class="onleft"><code>False_Easting</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>NetCDF</code>:</td><td class="onleft"><code>false_easting</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>GeoTIFF</code>:</td><td class="onleft"><code>FalseEasting</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>PROJ4</code>:</td><td class="onleft"><code>x_0</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -267,12 +272,12 @@ public class LambertAzimuthalEqualArea extends MapProjection {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code false_northing}</td></tr>
-     *       <tr><td><b>Alias:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code False northing}</td></tr>
-     *       <tr><td></td><td class="onright">{@code ESRI}:</td><td class="onleft">{@code False_Northing}</td></tr>
-     *       <tr><td></td><td class="onright">{@code NetCDF}:</td><td class="onleft">{@code false_northing}</td></tr>
-     *       <tr><td></td><td class="onright">{@code GeoTIFF}:</td><td class="onleft">{@code FalseNorthing}</td></tr>
-     *       <tr><td></td><td class="onright">{@code PROJ4}:</td><td class="onleft">{@code y_0}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>false_northing</code></td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>False northing</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>ESRI</code>:</td><td class="onleft"><code>False_Northing</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>NetCDF</code>:</td><td class="onleft"><code>false_northing</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>GeoTIFF</code>:</td><td class="onleft"><code>FalseNorthing</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>PROJ4</code>:</td><td class="onleft"><code>y_0</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">

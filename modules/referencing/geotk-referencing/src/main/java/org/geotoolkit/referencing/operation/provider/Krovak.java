@@ -44,7 +44,12 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * <!-- PARAMETERS Krovak -->
  * <p>The following table summarizes the parameters recognized by this provider.
  * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
- * <blockquote><p><b>Operation name:</b> {@code Krovak}</p>
+ * <blockquote><p><b>Operation name:</b> {@code Krovak}
+ * <br><b>Area of use:</b> <font size="-1">(union of CRS domains of validity from EPSG database)</font></p>
+ * <blockquote><table class="compact">
+ *   <tr><td><b>in latitudes:</b></td><td class="onright">47°44.4′N</td><td>to</td><td class="onright">51°03.0′N</td></tr>
+ *   <tr><td><b>in longitudes:</b></td><td class="onright">12°05.4′E</td><td>to</td><td class="onright">22°33.6′E</td></tr>
+ * </table></blockquote>
  * <table class="geotk">
  *   <tr><th>Parameter Name</th><th>Default value</th></tr>
  *   <tr><td>{@code semi_major}</td><td></td></tr>
@@ -217,23 +222,23 @@ public class Krovak extends MapProjection {
      * <table class="geotk" border="1">
      *   <tr><th colspan="2">
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code Krovak}</td></tr>
-     *       <tr><td><b>Alias:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code Krovak}</td></tr>
-     *       <tr><td></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code <del>Krovak Oblique Conic Conformal</del>}</td></tr>
-     *       <tr><td></td><td class="onright">{@code ESRI}:</td><td class="onleft">{@code Krovak}</td></tr>
-     *       <tr><td></td><td class="onright">{@code GeoTIFF}:</td><td class="onleft">{@code Krovak}</td></tr>
-     *       <tr><td></td><td class="onright">{@code PROJ4}:</td><td class="onleft">{@code krovak}</td></tr>
-     *       <tr><td></td><td class="onright">{@code Geotk}:</td><td class="onleft">{@code Krovak Oblique Conformal Conic}</td></tr>
-     *       <tr><td><b>Identifier:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code 9819}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>Krovak</code></td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>Krovak</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code><del>Krovak Oblique Conic Conformal</del></code></td></tr>
+     *       <tr><td></td><td class="onright"><code>ESRI</code>:</td><td class="onleft"><code>Krovak</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>GeoTIFF</code>:</td><td class="onleft"><code>Krovak</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>PROJ4</code>:</td><td class="onleft"><code>krovak</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>Geotk</code>:</td><td class="onleft"><code>Krovak Oblique Conformal Conic</code></td></tr>
+     *       <tr><td><b>Identifier:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>9819</code></td></tr>
      *     </table>
      *   </th></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code semi_major}</td></tr>
-     *       <tr><td><b>Alias:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code Semi-major axis}</td></tr>
-     *       <tr><td></td><td class="onright">{@code ESRI}:</td><td class="onleft">{@code Semi_Major}</td></tr>
-     *       <tr><td></td><td class="onright">{@code GeoTIFF}:</td><td class="onleft">{@code SemiMajor}</td></tr>
-     *       <tr><td></td><td class="onright">{@code PROJ4}:</td><td class="onleft">{@code a}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>semi_major</code></td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>Semi-major axis</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>ESRI</code>:</td><td class="onleft"><code>Semi_Major</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>GeoTIFF</code>:</td><td class="onleft"><code>SemiMajor</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>PROJ4</code>:</td><td class="onleft"><code>a</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -244,11 +249,11 @@ public class Krovak extends MapProjection {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code semi_minor}</td></tr>
-     *       <tr><td><b>Alias:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code Semi-minor axis}</td></tr>
-     *       <tr><td></td><td class="onright">{@code ESRI}:</td><td class="onleft">{@code Semi_Minor}</td></tr>
-     *       <tr><td></td><td class="onright">{@code GeoTIFF}:</td><td class="onleft">{@code SemiMinor}</td></tr>
-     *       <tr><td></td><td class="onright">{@code PROJ4}:</td><td class="onleft">{@code b}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>semi_minor</code></td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>Semi-minor axis</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>ESRI</code>:</td><td class="onleft"><code>Semi_Minor</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>GeoTIFF</code>:</td><td class="onleft"><code>SemiMinor</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>PROJ4</code>:</td><td class="onleft"><code>b</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -259,7 +264,7 @@ public class Krovak extends MapProjection {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code Geotk}:</td><td class="onleft">{@code roll_longitude}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>Geotk</code>:</td><td class="onleft"><code>roll_longitude</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -270,11 +275,11 @@ public class Krovak extends MapProjection {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code latitude_of_center}</td></tr>
-     *       <tr><td><b>Alias:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code Latitude of projection centre}</td></tr>
-     *       <tr><td></td><td class="onright">{@code ESRI}:</td><td class="onleft">{@code Latitude_Of_Center}</td></tr>
-     *       <tr><td></td><td class="onright">{@code GeoTIFF}:</td><td class="onleft">{@code CenterLat}</td></tr>
-     *       <tr><td></td><td class="onright">{@code PROJ4}:</td><td class="onleft">{@code lat_0}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>latitude_of_center</code></td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>Latitude of projection centre</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>ESRI</code>:</td><td class="onleft"><code>Latitude_Of_Center</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>GeoTIFF</code>:</td><td class="onleft"><code>CenterLat</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>PROJ4</code>:</td><td class="onleft"><code>lat_0</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -286,11 +291,11 @@ public class Krovak extends MapProjection {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code longitude_of_center}</td></tr>
-     *       <tr><td><b>Alias:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code Longitude of origin}</td></tr>
-     *       <tr><td></td><td class="onright">{@code ESRI}:</td><td class="onleft">{@code Longitude_Of_Center}</td></tr>
-     *       <tr><td></td><td class="onright">{@code GeoTIFF}:</td><td class="onleft">{@code CenterLong}</td></tr>
-     *       <tr><td></td><td class="onright">{@code PROJ4}:</td><td class="onleft">{@code lon_0}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>longitude_of_center</code></td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>Longitude of origin</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>ESRI</code>:</td><td class="onleft"><code>Longitude_Of_Center</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>GeoTIFF</code>:</td><td class="onleft"><code>CenterLong</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>PROJ4</code>:</td><td class="onleft"><code>lon_0</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -302,10 +307,10 @@ public class Krovak extends MapProjection {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code azimuth}</td></tr>
-     *       <tr><td><b>Alias:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code Co-latitude of cone axis}</td></tr>
-     *       <tr><td></td><td class="onright">{@code ESRI}:</td><td class="onleft">{@code Azimuth}</td></tr>
-     *       <tr><td></td><td class="onright">{@code GeoTIFF}:</td><td class="onleft">{@code AzimuthAngle}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>azimuth</code></td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>Co-latitude of cone axis</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>ESRI</code>:</td><td class="onleft"><code>Azimuth</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>GeoTIFF</code>:</td><td class="onleft"><code>AzimuthAngle</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -317,11 +322,11 @@ public class Krovak extends MapProjection {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code pseudo_standard_parallel_1}</td></tr>
-     *       <tr><td><b>Alias:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code Latitude of pseudo standard parallel}</td></tr>
-     *       <tr><td></td><td class="onright">{@code ESRI}:</td><td class="onleft">{@code Pseudo_Standard_Parallel_1}</td></tr>
-     *       <tr><td></td><td class="onright">{@code GeoTIFF}:</td><td class="onleft">{@code StdParallel1}</td></tr>
-     *       <tr><td></td><td class="onright">{@code PROJ4}:</td><td class="onleft">{@code lat_1}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>pseudo_standard_parallel_1</code></td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>Latitude of pseudo standard parallel</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>ESRI</code>:</td><td class="onleft"><code>Pseudo_Standard_Parallel_1</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>GeoTIFF</code>:</td><td class="onleft"><code>StdParallel1</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>PROJ4</code>:</td><td class="onleft"><code>lat_1</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -333,11 +338,11 @@ public class Krovak extends MapProjection {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code scale_factor}</td></tr>
-     *       <tr><td><b>Alias:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code Scale factor on pseudo standard parallel}</td></tr>
-     *       <tr><td></td><td class="onright">{@code ESRI}:</td><td class="onleft">{@code Scale_Factor}</td></tr>
-     *       <tr><td></td><td class="onright">{@code GeoTIFF}:</td><td class="onleft">{@code ScaleAtCenter}</td></tr>
-     *       <tr><td></td><td class="onright">{@code PROJ4}:</td><td class="onleft">{@code k}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>scale_factor</code></td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>Scale factor on pseudo standard parallel</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>ESRI</code>:</td><td class="onleft"><code>Scale_Factor</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>GeoTIFF</code>:</td><td class="onleft"><code>ScaleAtCenter</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>PROJ4</code>:</td><td class="onleft"><code>k</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -349,7 +354,7 @@ public class Krovak extends MapProjection {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code ESRI}:</td><td class="onleft">{@code X_Scale}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>ESRI</code>:</td><td class="onleft"><code>X_Scale</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -361,7 +366,7 @@ public class Krovak extends MapProjection {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code ESRI}:</td><td class="onleft">{@code Y_Scale}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>ESRI</code>:</td><td class="onleft"><code>Y_Scale</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -373,7 +378,7 @@ public class Krovak extends MapProjection {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code ESRI}:</td><td class="onleft">{@code XY_Plane_Rotation}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>ESRI</code>:</td><td class="onleft"><code>XY_Plane_Rotation</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -385,11 +390,11 @@ public class Krovak extends MapProjection {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code false_easting}</td></tr>
-     *       <tr><td><b>Alias:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code False easting}</td></tr>
-     *       <tr><td></td><td class="onright">{@code ESRI}:</td><td class="onleft">{@code False_Easting}</td></tr>
-     *       <tr><td></td><td class="onright">{@code GeoTIFF}:</td><td class="onleft">{@code FalseEasting}</td></tr>
-     *       <tr><td></td><td class="onright">{@code PROJ4}:</td><td class="onleft">{@code x_0}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>false_easting</code></td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>False easting</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>ESRI</code>:</td><td class="onleft"><code>False_Easting</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>GeoTIFF</code>:</td><td class="onleft"><code>FalseEasting</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>PROJ4</code>:</td><td class="onleft"><code>x_0</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
@@ -401,11 +406,11 @@ public class Krovak extends MapProjection {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright">{@code OGC}:</td><td class="onleft">{@code false_northing}</td></tr>
-     *       <tr><td><b>Alias:</b></td><td class="onright">{@code EPSG}:</td><td class="onleft">{@code False northing}</td></tr>
-     *       <tr><td></td><td class="onright">{@code ESRI}:</td><td class="onleft">{@code False_Northing}</td></tr>
-     *       <tr><td></td><td class="onright">{@code GeoTIFF}:</td><td class="onleft">{@code FalseNorthing}</td></tr>
-     *       <tr><td></td><td class="onright">{@code PROJ4}:</td><td class="onleft">{@code y_0}</td></tr>
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>false_northing</code></td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>False northing</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>ESRI</code>:</td><td class="onleft"><code>False_Northing</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>GeoTIFF</code>:</td><td class="onleft"><code>FalseNorthing</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>PROJ4</code>:</td><td class="onleft"><code>y_0</code></td></tr>
      *     </table>
      *   </td><td>
      *     <table class="compact">
