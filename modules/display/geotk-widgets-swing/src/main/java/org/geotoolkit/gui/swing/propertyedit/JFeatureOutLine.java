@@ -79,7 +79,7 @@ public class JFeatureOutLine extends Outline{
     public JFeatureOutLine(){
         setRenderDataProvider(new JFeatureOutLine.PropertyDataProvider());
         setShowHorizontalLines(false);
-        setColumnSelectionAllowed(false);
+        //setColumnSelectionAllowed(false);
         setFillsViewportHeight(true);
         setBackground(Color.WHITE);
         getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -94,8 +94,12 @@ public class JFeatureOutLine extends Outline{
         treeModel = new FeatureTreeModel(property);
         setModel(DefaultOutlineModel.createOutlineModel(treeModel, rowModel));
         setRootVisible(!(property instanceof ComplexAttribute));
-        getColumnModel().getColumn(0).setMinWidth(100);
+        getColumnModel().getColumn(0).setHeaderValue(" ");
+        getColumnModel().getColumn(0).setResizable(true);
+        getColumnModel().getColumn(1).setResizable(true);
+        getColumnModel().getColumn(2).setMinWidth(26);
         getColumnModel().getColumn(2).setMaxWidth(26);
+        getColumnModel().getColumn(2).setResizable(false);
     }
     
     /**

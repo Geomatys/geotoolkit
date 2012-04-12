@@ -30,6 +30,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
@@ -52,6 +54,7 @@ import javax.swing.JToolBar.Separator;
 import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 
+import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.query.QueryBuilder;
@@ -82,8 +85,11 @@ import org.geotoolkit.gui.swing.contexttree.menu.SeparatorItem;
 import org.geotoolkit.gui.swing.contexttree.menu.SessionCommitItem;
 import org.geotoolkit.gui.swing.contexttree.menu.SessionRollbackItem;
 import org.geotoolkit.gui.swing.contexttree.menu.ZoomToLayerItem;
+import org.geotoolkit.gui.swing.filestore.JCoverageStoreChooser;
+import org.geotoolkit.gui.swing.filestore.JDataStoreChooser;
 import org.geotoolkit.gui.swing.filestore.JFileCoverageChooser;
 import org.geotoolkit.gui.swing.filestore.JFileDatastoreChooser;
+import org.geotoolkit.gui.swing.filestore.JLayerChooser;
 import org.geotoolkit.gui.swing.go2.decoration.JClassicNavigationDecoration;
 import org.geotoolkit.gui.swing.propertyedit.ClearSelectionAction;
 import org.geotoolkit.gui.swing.propertyedit.DeleteSelectionAction;
@@ -97,6 +103,7 @@ import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyle;
@@ -242,7 +249,7 @@ public class JMap2DFrame extends javax.swing.JFrame {
         guiConfigBar = new JConfigBar();
         jMenuBar1 = new JMenuBar();
         jMenu1 = new JMenu();
-        jMenuItem3 = new JMenuItem();
+        jMenuItem4 = new JMenuItem();
         jMenuItem2 = new JMenuItem();
         jSeparator4 = new JPopupMenu.Separator();
         jMenuItem1 = new JMenuItem();
@@ -330,18 +337,18 @@ public class JMap2DFrame extends javax.swing.JFrame {
 
         jMenu1.setText("File");
 
-        jMenuItem3.setText("Add image file ...");
-        jMenuItem3.addActionListener(new ActionListener() {
+        jMenuItem4.setText("Add coverage store ...");
+        jMenuItem4.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                jMenuItem3ActionPerformed(evt);
+                openCoverageStoreChooser(evt);
             }
         });
-        jMenu1.add(jMenuItem3);
+        jMenu1.add(jMenuItem4);
 
-        jMenuItem2.setText("Add vector data ...");
+        jMenuItem2.setText("Add data store ...");
         jMenuItem2.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                jMenuItem2ActionPerformed(evt);
+                openDataStoreChooser(evt);
             }
         });
         jMenu1.add(jMenuItem2);
@@ -419,38 +426,47 @@ private void jButton3ActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_j
     
 }//GEN-LAST:event_jButton3ActionPerformed
 
-    private void jMenuItem2ActionPerformed(ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
-        
-        final List<DataStore> stores = JFileDatastoreChooser.showDialog();
-        
-        for(DataStore store : stores){
+private void openCoverageStoreChooser(ActionEvent evt) {//GEN-FIRST:event_openCoverageStoreChooser
+        try {
+            final List<CoverageStore> stores = JCoverageStoreChooser.showDialog();
             
-            try{
-                final Session session = store.createSession(true);
-                for(Name n : store.getNames()){
-                    final FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(n));
-                    final MutableStyle style = RandomStyleFactory.createDefaultVectorStyle(col);
-                    final FeatureMapLayer layer = MapBuilder.createFeatureLayer(col, style);
-                    layer.setName(n.getLocalPart());
-                    layer.setDescription(new DefaultStyleFactory().description(n.getLocalPart(), n.getLocalPart()));
-                    guiMap.getContainer().getContext().layers().add(layer);
-                    
+            for(CoverageStore store : stores){
+                if(store == null) continue;
+                
+                final List<MapLayer> layers = JLayerChooser.showDialog(store);
+                for(MapLayer layer : layers){
+                    if(layer == null) continue;                    
+                    guiContextTree.getContext().layers().add(layer);                    
                 }
-            }catch(DataStoreException ex){
-                ex.printStackTrace();
-            }
+            }   
             
+        } catch (DataStoreException ex) {
+            Logger.getLogger(JMap2DFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
+    
         
-        
-    }//GEN-LAST:event_jMenuItem2ActionPerformed
+}//GEN-LAST:event_openCoverageStoreChooser
 
-    private void jMenuItem3ActionPerformed(ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
-        
-        final Map<File,ImageReaderSpi> map = JFileCoverageChooser.showDialog();
-        
-    }//GEN-LAST:event_jMenuItem3ActionPerformed
+private void openDataStoreChooser(ActionEvent evt) {//GEN-FIRST:event_openDataStoreChooser
 
+        try {
+            final List<DataStore> stores = JDataStoreChooser.showDialog();
+            
+            for(DataStore store : stores){
+                if(store == null) continue;
+                
+                final List<MapLayer> layers = JLayerChooser.showDialog(store);
+                for(MapLayer layer : layers){
+                    if(layer == null) continue;                    
+                    guiContextTree.getContext().layers().add(layer);                    
+                }
+            }   
+            
+        } catch (DataStoreException ex) {
+            Logger.getLogger(JMap2DFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    
+}//GEN-LAST:event_openDataStoreChooser
 
     private boolean isValidType(final Class<?>[] validTypes, final Object type) {
         for (final Class<?> t : validTypes) {
@@ -490,7 +506,7 @@ private void jButton3ActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_j
     private JMenuBar jMenuBar1;
     private JMenuItem jMenuItem1;
     private JMenuItem jMenuItem2;
-    private JMenuItem jMenuItem3;
+    private JMenuItem jMenuItem4;
     private JPanel jPanel1;
     private JScrollPane jScrollPane1;
     private Separator jSeparator1;
