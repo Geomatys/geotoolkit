@@ -30,6 +30,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.media.jai.RasterFactory;
 import org.geotoolkit.display.exception.PortrayalException;
+import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.canvas.J2DCanvasBuffered;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.opengis.geometry.Envelope;
@@ -97,7 +98,8 @@ public class PortrayalRenderedImage implements RenderedImage{
                 nbtileonwidth*tileSize.width, 
                 nbtileonheight*tileSize.height);
         
-        canvas = new J2DCanvasBuffered(crs, canvasSize);        
+        canvas = new J2DCanvasBuffered(crs, canvasSize);
+        canvas.setRenderingHint(GO2Hints.KEY_COLOR_MODEL, colorModel);
         DefaultPortrayalService.prepareCanvas(canvas, canvasDef, sceneDef, viewDef);        
     }
     
