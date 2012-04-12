@@ -97,6 +97,13 @@
     membre assumant le rôle d’éditeur.
   </para>
   <para>
+    Le groupe de travail doit autant que possible structurer la spécification sous forme d’un noyau
+    autour duquel gravite diverses extensions. Une suite de tests doit accompagner le standard,
+    et permettre de classer les implémentations en fonction du niveau des tests passés.
+    Au moins une <firstterm>implémentation de référence</firstterm> passant les tests doit exister
+    pour démontrer que le standard est utilisable.
+  </para>
+  <para>
     Lorsque le standard est jugé prêt, le <acronym>SWG</acronym> vote une motion proposant de le soumettre
     au vote des instances supérieures de l’OGC. Cette procédure nécessite plusieurs mois. Il existe une
     procédure plus rapide pour entériner des standards de fait, mais elle n’est appliquée qu’avec parcimonie.
@@ -158,7 +165,8 @@
     dans des spécifications dites « abstraites ».
   </para>
   <para>
-    Les <firstterm>spécifications abstraites</firstterm> ne font référence à aucun langage informatique concret.
+    Les <link xlink:href="http://www.opengeospatial.org/standards/as"><firstterm>spécifications abstraites</firstterm></link>
+    ne font référence à aucun langage informatique concret.
     Leurs concepts peuvent se concrétiser dans un langage de programmation, une base de données ou un schéma
     <acronym>XML</acronym> de manière plus ou moins directe. Il existe toutefois une part d’arbitraire dans la façon
     de concrétiser une spécification abstraite, étant donné que des ajustements sont souvent nécessaires
@@ -199,6 +207,191 @@
     Certaines opérations qui étaient définies dans les anciennes normes apparaissent maintenant,
     sous une autre forme, dans les spécifications des services web.
     Enfin le terme « spécification d’implémentation » a été abandonné, pour être englobé dans « standard <acronym>OGC</acronym> ».
+    Mais malgré leur dépréciation, les <link xlink:href="http://www.opengeospatial.org/standards/retired">anciennes spécifications d’implémentations</link>
+    restent utiles aux programmes en langage Java car:
   </para>
+
+  <itemizedlist>
+    <listitem>
+      Leurs modèles plus simples, appliqués aux mêmes concepts, aident à comprendre les nouvelles spécifications.
+    </listitem>
+    <listitem>
+      Ils définissent parfois des façons simples d’effectuer des tâches courantes
+      là où les nouvelles spécifications se limitent au cas général.
+    </listitem>
+    <listitem>
+      Les opérations étant plus souvent omises dans les nouvelles spécifications,
+      les anciennes spécifications restent un complément utile pour définir des <acronym>API</acronym>.
+    </listitem>
+  </itemizedlist>
+
+  <para>
+    Le projet Geotoolkit.org se base sur les spécifications les plus récentes, tout en puisant dans les archives
+    de l’<acronym>OGC</acronym> pour compléter certains standards abstraits ou les rendre un peu plus facile
+    d’utilisation. Certaines anciennes définitions sont conservées comme « méthodes de commodités »,
+    n’apportant pas toujours de nouvelles fonctionnalités mais facilitant l’usage pratique d’une bibliothèque.
+  </para>
+  <para>
+    Le tableau suivant liste les principales normes utilisées par le projet.
+    Plusieurs normes sont publiées à la fois comme standard <acronym>ISO</acronym> et comme
+    standard <acronym>OGC</acronym>, d’où la disposition côte-à-côte des deux premières colonnes.
+    Les normes dépréciées mais malgré tout utilisées apparaissent <phrase role="deprecated">barrées</phrase>.
+    Enfin, les paquets GeoAPI seront introduits dans le chapitre suivant.
+  </para>
+
+  <table frame="none">
+    <title>Principaux standards utilisés par le projet Geotoolkit.org</title>
+    <tgroup cols="4">
+      <colspec colname="ISO"/>
+      <colspec colname="OGC"/>
+      <colspec colname="name"/>
+      <colspec colname="GeoAPI"/>
+      <thead>
+        <row>
+          <entry>Norme ISO</entry>
+          <entry>Norme OGC</entry>
+          <entry>Titre</entry>
+          <entry>Paquet GeoAPI</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry namest="ISO" nameend="GeoAPI" role="separator">Spécifications abstraites</entry>
+        </row>
+        <row>
+          <entry>ISO 19103</entry>
+          <entry></entry>
+          <entry><foreignphrase>Conceptual schema language</foreignphrase></entry>
+          <entry><literal>org.opengis.util</literal></entry>
+        </row>
+        <row>
+          <entry>ISO 19115</entry>
+          <entry>Topic 11</entry>
+          <entry><foreignphrase>Metadata</foreignphrase></entry>
+          <entry><literal>org.opengis.metadata</literal></entry>
+        </row>
+        <row>
+          <entry>ISO 19111</entry>
+          <entry>Topic 2</entry>
+          <entry><foreignphrase>Spatial referencing by coordinates</foreignphrase></entry>
+          <entry><literal>org.opengis.referencing</literal></entry>
+        </row>
+        <row>
+          <entry>ISO 19108</entry>
+          <entry></entry>
+          <entry><foreignphrase>Temporal Schema</foreignphrase></entry>
+          <entry><literal>org.opengis.temporal</literal></entry>
+        </row>
+        <row>
+          <entry>ISO 19107</entry>
+          <entry>Topic 1</entry>
+          <entry><foreignphrase>Feature geometry</foreignphrase></entry>
+          <entry><literal>org.opengis.geometry</literal></entry>
+        </row>
+        <row>
+          <entry>ISO 19101</entry>
+          <entry>Topic 5</entry>
+          <entry><foreignphrase>Features</foreignphrase></entry>
+          <entry><literal>org.opengis.feature</literal></entry>
+        </row>
+        <row>
+          <entry>ISO 19123</entry>
+          <entry>Topic 6</entry>
+          <entry><foreignphrase>Schema for coverage geometry and functions</foreignphrase></entry>
+          <entry><literal>org.opengis.coverage</literal></entry>
+        </row>
+        <row>
+          <entry>ISO 19156</entry>
+          <entry>Topic 20</entry>
+          <entry><foreignphrase>Observations and measurements</foreignphrase></entry>
+          <entry><literal>org.opengis.observation</literal></entry>
+        </row>
+        <row>
+          <entry namest="ISO" nameend="GeoAPI" role="separator">Spécifications d’implémentation</entry>
+        </row>
+        <row>
+          <entry>ISO 19139</entry>
+          <entry></entry>
+          <entry><foreignphrase>Metadata XML schema implementation</foreignphrase></entry>
+          <entry></entry>
+        </row>
+        <row>
+          <entry>ISO 13249</entry>
+          <entry></entry>
+          <entry><foreignphrase>SQL spatial</foreignphrase></entry>
+          <entry></entry>
+        </row>
+        <row>
+          <entry></entry>
+          <entry><phrase role="deprecated">OGC 01-009</phrase></entry>
+          <entry><phrase role="deprecated"><foreignphrase>Coordinate Transformation Services</foreignphrase></phrase></entry>
+          <entry><literal>org.opengis.referencing</literal></entry>
+        </row>
+        <row>
+          <entry></entry>
+          <entry><phrase role="deprecated">OGC 01-004</phrase></entry>
+          <entry><phrase role="deprecated"><foreignphrase>Grid Coverage</foreignphrase></phrase></entry>
+          <entry><literal>org.opengis.coverage</literal></entry>
+        </row>
+        <row>
+          <entry></entry>
+          <entry>SLD</entry>
+          <entry><foreignphrase>Styled Layer Descriptor</foreignphrase></entry>
+          <entry><literal>org.opengis.style</literal></entry>
+        </row>
+        <row>
+          <entry namest="ISO" nameend="GeoAPI" role="separator">Services web</entry>
+        </row>
+        <row>
+          <entry>ISO 19128</entry>
+          <entry>WMS</entry>
+          <entry><foreignphrase>Web Map Service</foreignphrase></entry>
+          <entry></entry>
+        </row>
+        <row>
+          <entry></entry>
+          <entry>WMTS</entry>
+          <entry><foreignphrase>Web Map Tile Service</foreignphrase></entry>
+          <entry></entry>
+        </row>
+        <row>
+          <entry>ISO 19142</entry>
+          <entry>WFS</entry>
+          <entry><foreignphrase>Web Feature Service</foreignphrase></entry>
+          <entry></entry>
+        </row>
+        <row>
+          <entry></entry>
+          <entry>WCS</entry>
+          <entry><foreignphrase>Web Coverage Service</foreignphrase></entry>
+          <entry></entry>
+        </row>
+        <row>
+          <entry></entry>
+          <entry>WPS</entry>
+          <entry><foreignphrase>Web Processing Service</foreignphrase></entry>
+          <entry></entry>
+        </row>
+        <row>
+          <entry></entry>
+          <entry>OpenLS</entry>
+          <entry><foreignphrase>Location Services</foreignphrase></entry>
+          <entry></entry>
+        </row>
+        <row>
+          <entry></entry>
+          <entry>SWE</entry>
+          <entry><foreignphrase>Sensor Web Enablement</foreignphrase></entry>
+          <entry></entry>
+        </row>
+        <row>
+          <entry></entry>
+          <entry>SOS</entry>
+          <entry><foreignphrase>Sensor Observation Service</foreignphrase></entry>
+          <entry></entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </table>
 </section>
 </chapter>
