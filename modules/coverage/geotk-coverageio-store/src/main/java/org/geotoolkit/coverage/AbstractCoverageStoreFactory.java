@@ -54,7 +54,7 @@ public abstract class AbstractCoverageStoreFactory extends Factory implements Co
     public String getDisplayName() {
         String name = this.getClass().getName();
 
-        name = name.substring(name.lastIndexOf('.'));
+        name = name.substring(name.lastIndexOf('.')+1);
         if (name.endsWith("Factory")) {
             name = name.substring(0, name.length() - 7);
         }
