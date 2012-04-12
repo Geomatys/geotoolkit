@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.skos.xml;
 
+import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -27,7 +28,7 @@ import org.geotoolkit.util.Utilities;
  * @author Guilhem legal (Geomatys)
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Value {
+public class Value implements Serializable{
     
     @XmlValue
     private String value;
