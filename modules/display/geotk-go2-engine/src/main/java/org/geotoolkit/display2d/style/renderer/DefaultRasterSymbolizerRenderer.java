@@ -253,6 +253,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
     // Renderedmage JAI image operations ///////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
+    
     private static RenderedImage applyStyle(GridCoverage2D coverage, final RasterSymbolizer styleElement,
                 final RenderingHints hints) throws PortrayalException {
 
@@ -265,21 +266,44 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             final ChannelSelection selections = styleElement.getChannelSelection();
             final SelectedChannelType channel = selections.getGrayChannel();
             final SelectedChannelType[] channels = selections.getRGBChannels();
-            final int[] indices;
             
             if(channel != null){
-                indices = new int[]{
+                //single band selection
+                final int[] indices = new int[]{
                     Integer.valueOf(channel.getChannelName())
                 };
+                coverage = (GridCoverage2D)selectBand(coverage, indices);
             }else{
-                indices = new int[]{
-                    Integer.valueOf(channels[0].getChannelName()),
-                    Integer.valueOf(channels[1].getChannelName()),
-                    Integer.valueOf(channels[2].getChannelName())
-                    };
+                
+                final int[] selected = new int[]{
+                        Integer.valueOf(channels[0].getChannelName()),
+                        Integer.valueOf(channels[1].getChannelName()),
+                        Integer.valueOf(channels[2].getChannelName())
+                        };
+                
+                //@Workaround(library="JAI",version="1.0.x")
+                //TODO when JAI has been rewritten, this test might not be necessary anymore
+                //check if selection actually does something
+                if(!(selected[0] == 0 && selected[1] == 1 && selected[2] == 2)){
+                    final int[] indices;
+                    final RenderedImage image = coverage.getRenderedImage();
+
+                    if (image.getColorModel().hasAlpha()) {
+                        indices = new int[]{
+                            Integer.valueOf(channels[0].getChannelName()),
+                            Integer.valueOf(channels[1].getChannelName()),
+                            Integer.valueOf(channels[2].getChannelName()),
+                            // Here we suppose that the transparent band is the last one. This is the
+                            // default behaviour with standard java.
+                            image.getSampleModel().getNumBands() - 1
+                            };
+                    } else {
+                        indices = selected;
+                    }
+                    coverage = (GridCoverage2D)selectBand(coverage, indices);
+                }
             }
             
-            coverage = (GridCoverage2D)selectBand(coverage, indices);
         }
 
         
