@@ -15,13 +15,13 @@
     While not mandatory,
     users are encouraged to declare <A HREF="http://developers.sun.com/javadb/">JavaDB</A> in
     their classpath in order to take advantage of the embedded EPSG database. JavaDB is bundled
-    in the Sun distribution of JDK.</P>
+    in the Oracle distribution of JDK.</P>
 
     <H2>System initialization</H2>
     <P ALIGN="justify">Geotk does not require explicit initialization and shutdown for most cases.
     However a few services behave better when managed in an <cite>initialization - shutdown</cite>
     cycle. The {@link org.geotoolkit.lang.Setup} class provides a central place for initialization
-    and shutdown, but developers can also gain more control by invoking themself the various methods
+    and shutdown, but developers can also gain more control by invoking themselves the various methods
     identified by the {@link org.geotoolkit.lang.Configuration} annotation.</P>
 
     <H2>Javadoc annotations</H2>
@@ -33,7 +33,7 @@
 
     <P ALIGN="justify">The {@code @since} javadoc tag gives the Geotk version when the annotated
     element (class, method, <i>etc.</i>) was first introduced. If the declared version is the same
-    than the class {@code @version}, then that element is under development and <em>uncommited</em>:
+    than the class {@code @version}, then that element is under development and <em>uncommitted</em>:
     it may change in any future snapshot and it will become stable only after the next release.</P>
 
     <P ALIGN="justify">Stable API (for example those annotated as {@code @since 2.4}) will not

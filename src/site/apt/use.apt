@@ -27,8 +27,8 @@ Introduction to Geotoolkit.org
   Before trying these examples, it is important to make sure that the requirements are met. The
   Java Developer Kit which provides the <<<javac>>> command and the runtime environment which
   provides the <<<java>>> command must both conform to Java version 6. These examples use the JDK
-  and JRE provided by Sun Microsystems on the
-  {{{http://java.sun.com/javase/downloads/index.jsp}download page}}, update 7 or newer.
+  and JRE provided by Oracle on the
+  {{{http://www.oracle.com/technetwork/java/javase/downloads/index.html}download page}}.
 
   The examples presume the user has downloaded the Referencing bundle available from the
   {{{http://download.geotoolkit.org/}download page}} and used the <<<unpack200>>>

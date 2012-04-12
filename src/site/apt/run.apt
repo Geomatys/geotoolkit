@@ -7,7 +7,7 @@ Running Geotoolkit.org
 
   Geotk requires Java 6. No extension is required for the referencing and metadata
   modules. However if the coverage module is also used, then Geotk requires some
-  additional dependencies listed in the _Running modules beyond GeoAPI 3.0_ section
+  additional dependencies listed in the <Running modules beyond GeoAPI 3.0> section
   below.
 
 
