@@ -20,6 +20,7 @@ import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
 import javax.measure.quantity.Length;
+import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
 import org.geotoolkit.data.FeatureCollection;
@@ -50,8 +51,7 @@ import org.opengis.util.FactoryException;
  * store it into a result Feature. Inputs process parameters :
  * <ul>
  *      <li>A FeatureCollection </li>
- *      <li>Buffer distance</li>
- *      <li>Unit for the distance</li>
+ *      <li>Buffer distance in meters</li>
  *      <li>Boolean for the transformation from Geometry CRS to WGS84</li>
  * </ul>
  *
@@ -75,11 +75,10 @@ public class Buffer extends AbstractProcess {
         fireStartEvent(new ProcessEvent(this));
         final FeatureCollection<Feature> inputFeatureList = Parameters.value(BufferDescriptor.FEATURE_IN, inputParameters);
         final double inputDistance = Parameters.value(BufferDescriptor.DISTANCE_IN, inputParameters).doubleValue();
-        final Unit<Length> inputUnit = Parameters.value(BufferDescriptor.UNIT_IN, inputParameters);
         final boolean inputLenient = Parameters.value(BufferDescriptor.LENIENT_TRANSFORM_IN, inputParameters);
 
         final FeatureCollection resultFeatureList =
-                new BufferFeatureCollection(inputFeatureList, inputDistance, inputUnit, inputLenient);
+                new BufferFeatureCollection(inputFeatureList, inputDistance, inputLenient);
 
         outputParameters.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
         fireEndEvent(new ProcessEvent(this,null,100));
@@ -99,8 +98,8 @@ public class Buffer extends AbstractProcess {
      * @throws MismatchedDimensionException
      * @throws TransformException
      */
-    static Feature makeBuffer(final Feature oldFeature, final FeatureType newType, final double distance,
-            final Unit<Length> unit, final Boolean lenient) throws FactoryException, MismatchedDimensionException, TransformException {
+    static Feature makeBuffer(final Feature oldFeature, final FeatureType newType, final double distance, final Boolean lenient) 
+            throws FactoryException, MismatchedDimensionException, TransformException {
 
         final CoordinateReferenceSystem originalCRS;
         
@@ -126,7 +125,7 @@ public class Buffer extends AbstractProcess {
                 final Envelope convertEnvelope = convertedGeometry.getEnvelopeInternal();
 
                 //create custom projection for the geometry
-                final MathTransform projection = VectorProcessUtils.changeProjection(convertEnvelope, longLatCRS, unit);
+                final MathTransform projection = VectorProcessUtils.changeProjection(convertEnvelope, longLatCRS, SI.METRE);
 
                 //Apply the custom projection to geometry
                 final Geometry calculatedGeom = JTS.transform(convertedGeometry, projection);

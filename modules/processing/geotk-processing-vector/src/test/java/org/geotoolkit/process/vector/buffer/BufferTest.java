@@ -88,7 +88,7 @@ public class BufferTest extends AbstractProcessTest{
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("feature_in").setValue(featureList);
         in.parameter("distance_in").setValue(distance);
-        in.parameter("unit_in").setValue(unit);
+        //in.parameter("unit_in").setValue(unit);
         in.parameter("lenient_transform_in").setValue(true);
         org.geotoolkit.process.Process proc = desc.createProcess(in);
 

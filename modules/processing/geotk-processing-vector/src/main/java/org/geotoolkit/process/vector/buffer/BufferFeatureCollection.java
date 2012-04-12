@@ -41,22 +41,18 @@ public class BufferFeatureCollection extends WrapFeatureCollection {
 
     private final FeatureType newFeatureType;
     private final double inputDistance;
-    private final Unit<Length> inputUnit;
     private final Boolean inputLenient;
 
     /**
      * Connect to the original FeatureConnection
      * @param originalFC
      * @param inputAccuracy
-     * @param inputUnit
      * @param inputBehavior
      * @param inputLenient
      */
-    public BufferFeatureCollection(final FeatureCollection<Feature> originalFC, final double inputDistance,
-            final Unit<Length> inputUnit, final Boolean inputLenient) {
+    public BufferFeatureCollection(final FeatureCollection<Feature> originalFC, final double inputDistance, final Boolean inputLenient) {
         super(originalFC);
         this.inputDistance = inputDistance;
-        this.inputUnit = inputUnit;
         this.inputLenient = inputLenient;
         this.newFeatureType = VectorProcessUtils.changeGeometryFeatureType(super.getFeatureType(), Geometry.class);
     }
@@ -76,7 +72,7 @@ public class BufferFeatureCollection extends WrapFeatureCollection {
     @Override
     public Feature modify(final Feature original) throws DataStoreRuntimeException {
         try {
-            return Buffer.makeBuffer(original, newFeatureType, inputDistance, inputUnit, inputLenient);
+            return Buffer.makeBuffer(original, newFeatureType, inputDistance, inputLenient);
         } catch (FactoryException ex) {
             throw new DataStoreRuntimeException(ex);
         } catch (MismatchedDimensionException ex) {

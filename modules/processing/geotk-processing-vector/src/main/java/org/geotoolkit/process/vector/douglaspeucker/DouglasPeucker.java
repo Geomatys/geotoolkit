@@ -23,6 +23,7 @@ import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
 
 import java.util.Collections;
 import javax.measure.quantity.Length;
+import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
 import org.geotoolkit.data.FeatureCollection;
@@ -51,6 +52,8 @@ import org.opengis.util.FactoryException;
  * Process to simplify geometry contained into a Features.
  * If the simplification accuracy is more than geometry envelope width or height
  * and the simplification behavior boolean is true, the returned geometry will be null.
+ * The used unit for the accuracy is meters.
+ * 
  * @author Quentin Boileau
  * @module pending
  */
@@ -71,12 +74,11 @@ public class DouglasPeucker extends AbstractProcess {
         fireStartEvent(new ProcessEvent(this));
         final FeatureCollection<Feature> inputFeatureList = Parameters.value(DouglasPeuckerDescriptor.FEATURE_IN, inputParameters);
         final double inputAccuracy = Parameters.value(DouglasPeuckerDescriptor.ACCURACY_IN, inputParameters).doubleValue();
-        final Unit<Length> inputUnit = Parameters.value(DouglasPeuckerDescriptor.UNIT_IN, inputParameters);
         final boolean inputBehavior = Parameters.value(DouglasPeuckerDescriptor.DEL_SMALL_GEO_IN, inputParameters);
         final boolean inputLenient = Parameters.value(DouglasPeuckerDescriptor.LENIENT_TRANSFORM_IN, inputParameters);
 
         final FeatureCollection resultFeatureList =
-                new DouglasPeuckerFeatureCollection(inputFeatureList,inputAccuracy,inputUnit,inputBehavior,inputLenient);
+                new DouglasPeuckerFeatureCollection(inputFeatureList, inputAccuracy, inputBehavior, inputLenient);
 
         outputParameters.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
         fireEndEvent(new ProcessEvent(this,null,100));
@@ -90,7 +92,6 @@ public class DouglasPeucker extends AbstractProcess {
      * is set to true, the result geometry will be <code>null</code>.
      * @param oldFeature
      * @param accuracy
-     * @param unit
      * @param behavior - boolean to set the process behavior with small geometries
      * @param lenient - boolean used to set the lenient parameter during CRS change
      * @return the simplified Feature
@@ -99,8 +100,7 @@ public class DouglasPeucker extends AbstractProcess {
      * @throws MismatchedDimensionException
      * @throws TransformException
      */
-    static Feature simplifyFeature(final Feature oldFeature, final double accuracy, final Unit<Length> unit,
-            final boolean behavior, final boolean lenient)
+    static Feature simplifyFeature(final Feature oldFeature, final double accuracy, final boolean behavior, final boolean lenient)
             throws FactoryException, MismatchedDimensionException, TransformException {
 
         final CoordinateReferenceSystem originalCRS = oldFeature.getType().getCoordinateReferenceSystem();
@@ -119,7 +119,7 @@ public class DouglasPeucker extends AbstractProcess {
                 Envelope convertEnvelope = convertedGeometry.getEnvelopeInternal();
 
                 //create custom projection for the geometry
-                final MathTransform projection = VectorProcessUtils.changeProjection(convertEnvelope, longLatCRS, unit);
+                final MathTransform projection = VectorProcessUtils.changeProjection(convertEnvelope, longLatCRS, SI.METRE);
                 //Apply the custom projection to geometry
                 final Geometry calculatedGeom = JTS.transform(convertedGeometry, projection);
                 convertEnvelope = calculatedGeom.getEnvelopeInternal();

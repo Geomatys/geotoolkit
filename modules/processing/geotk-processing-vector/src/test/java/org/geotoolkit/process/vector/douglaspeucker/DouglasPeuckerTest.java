@@ -85,7 +85,6 @@ public class DouglasPeuckerTest extends AbstractProcessTest{
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("feature_in").setValue(featureList);
         in.parameter("accuracy_in").setValue(new Double(10));
-        in.parameter("unit_in").setValue(unit);
         in.parameter("del_small_geo_in").setValue(false);
         in.parameter("lenient_transform_in").setValue(false);
         org.geotoolkit.process.Process proc = desc.createProcess(in);
@@ -151,7 +150,6 @@ public class DouglasPeuckerTest extends AbstractProcessTest{
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("feature_in").setValue(featureList);
         in.parameter("accuracy_in").setValue(new Double(61));
-        in.parameter("unit_in").setValue(unit);
         in.parameter("del_small_geo_in").setValue(true);
         in.parameter("lenient_transform_in").setValue(true);
         org.geotoolkit.process.Process proc = desc.createProcess(in);
@@ -183,7 +181,6 @@ public class DouglasPeuckerTest extends AbstractProcessTest{
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("feature_in").setValue(featureList);
         in.parameter("accuracy_in").setValue(new Double(61));
-        in.parameter("unit_in").setValue(unit);
         in.parameter("del_small_geo_in").setValue(false);
         in.parameter("lenient_transform_in").setValue(true);
         org.geotoolkit.process.Process proc = desc.createProcess(in);
