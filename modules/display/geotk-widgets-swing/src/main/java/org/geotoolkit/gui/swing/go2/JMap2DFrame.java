@@ -92,6 +92,7 @@ import org.geotoolkit.gui.swing.propertyedit.styleproperty.JClassificationSingle
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JClassificationIntervalStylePanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JRasterColorMapStylePanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JSLDImportExportPanel;
+import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 
 import org.geotoolkit.map.MapLayer;
@@ -496,8 +497,9 @@ private void openServerChooser(ActionEvent evt) {//GEN-FIRST:event_openServerCho
         }
         return false;
     }
-
-    public static void show(final MapContext context){
+    
+    public static void show(MapContext context){
+        if(context == null) context = MapBuilder.createContext();
         show(context,null);
     }
     
