@@ -34,7 +34,6 @@ import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.identity.Identifier;
-import org.opengis.geometry.BoundingBox;
 
 /**
  * An implementation of {@link SimpleFeature} geared towards speed and backed by an Object[].
@@ -348,7 +347,6 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
         public void setValue(Object newValue) throws IllegalArgumentException, IllegalStateException {
             valueArray[index] = newValue;
             bounds = null; //reset property bounds
-            DefaultSimpleFeature.this.bounds = null; //reset feature bounds
         }
         
     }

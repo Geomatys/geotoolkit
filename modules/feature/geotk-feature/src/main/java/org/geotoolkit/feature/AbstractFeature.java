@@ -46,7 +46,6 @@ public abstract class AbstractFeature<C extends Collection<Property>> extends Ab
      * Default geometry attribute
      */
     protected GeometryAttribute defaultGeometry;
-    protected BoundingBox bounds;
 
     /**
      * Create a Feature with the following content.
@@ -93,19 +92,26 @@ public abstract class AbstractFeature<C extends Collection<Property>> extends Ab
     @Override
     public BoundingBox getBounds() {
 
-        if(bounds == null){
-            for (Iterator itr = getValue().iterator(); itr.hasNext();) {
-                final Property property = (Property) itr.next();
-                if (property instanceof GeometryAttribute) {
-                    final GeometryAttribute ga = (GeometryAttribute) property;
-                    if(bounds == null){
-                        final BoundingBox bbox = ga.getBounds();
-                        if(!bbox.isEmpty()){
-                            bounds = new DefaultBoundingBox(ga.getBounds());
-                        }
-                    }else{
-                        bounds.include(ga.getBounds());
+        boolean copy = false;
+        BoundingBox bounds = null;
+        
+        for (Iterator itr = getValue().iterator(); itr.hasNext();) {
+            final Property property = (Property) itr.next();
+            if (property instanceof GeometryAttribute) {
+                final GeometryAttribute ga = (GeometryAttribute) property;
+                if(bounds == null){
+                    final BoundingBox bbox = ga.getBounds();
+                    if(!bbox.isEmpty()){
+                        //avoid copying geometry bounds if there is only one
+                        bounds = bbox;
                     }
+                }else{
+                    if(!copy){
+                        //ensure we do not modify the geometry attribut bound
+                        copy = true;
+                        bounds = new DefaultBoundingBox(bounds);
+                    }
+                    bounds.include(ga.getBounds());
                 }
             }
         }
