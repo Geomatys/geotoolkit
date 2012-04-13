@@ -20,6 +20,7 @@ package org.geotoolkit.display2d.style.renderer;
 import java.awt.Color;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.ComponentColorModel;
 import java.awt.image.DataBuffer;
@@ -57,6 +58,7 @@ import org.geotoolkit.display2d.style.raster.CompatibleColorModel;
 import org.geotoolkit.display2d.style.raster.ShadedReliefOp;
 import org.geotoolkit.display2d.style.raster.StatisticOp;
 import org.geotoolkit.geometry.GeneralEnvelope;
+import org.geotoolkit.image.jai.FloodFill;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.internal.image.ColorUtilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;
@@ -130,13 +132,13 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             return;
         }
 
+        boolean isReprojected = false;
         final CoordinateReferenceSystem coverageCRS = dataCoverage.getCoordinateReferenceSystem();
         try{
             final CoordinateReferenceSystem candidate2D = CRSUtilities.getCRS2D(coverageCRS);
             if(!CRS.equalsIgnoreMetadata(candidate2D,renderingContext.getObjectiveCRS2D()) ){
-
+                isReprojected = true;
                 dataCoverage = (GridCoverage2D) Operations.DEFAULT.resample(dataCoverage, renderingContext.getObjectiveCRS2D());
-                
             }
         } catch (CoverageProcessingException ex) {
             monitor.exceptionOccured(ex, Level.WARNING);
@@ -160,7 +162,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         //we must switch to objectiveCRS for grid coverage
         renderingContext.switchToObjectiveCRS();
 
-        RenderedImage img = applyStyle(dataCoverage, symbol.getSource(), hints);
+        RenderedImage img = applyStyle(dataCoverage, symbol.getSource(), hints, isReprojected);
         final MathTransform2D trs2D = dataCoverage.getGridGeometry().getGridToCRS2D(PixelOrientation.UPPER_LEFT);
         if(trs2D instanceof AffineTransform){
             g2d.setComposite(symbol.getJ2DComposite());
@@ -253,9 +255,18 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
     // Renderedmage JAI image operations ///////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
-    
+    /**
+     * 
+     * @param coverage
+     * @param styleElement
+     * @param hints
+     * @param isReprojected : if the coverage was rerprojected, this implies some
+     *       black borders might have been added on the image
+     * @return
+     * @throws PortrayalException 
+     */
     private static RenderedImage applyStyle(GridCoverage2D coverage, final RasterSymbolizer styleElement,
-                final RenderingHints hints) throws PortrayalException {
+                final RenderingHints hints, boolean isReprojected) throws PortrayalException {
 
         //band select ----------------------------------------------------------
         //works as a JAI operation
@@ -314,10 +325,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         if(recolor != null && recolor.getFunction() != null){
             //colormap is applyed on geophysic view
             coverage = coverage.view(ViewType.GEOPHYSICS);
-            
-            if(image == null){
-                image = coverage.getRenderedImage();
-            }
+            image = coverage.getRenderedImage();
             
             final Function fct = recolor.getFunction();
             image = recolor(image,fct);
@@ -325,6 +333,10 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             //no colormap, used the default image rendered view
             coverage = coverage.view(ViewType.RENDERED);
             image = coverage.getRenderedImage();
+            if(isReprojected){
+                //remove potential black borders
+                image = forceAlpha(image);
+            }
         }
 
         //shaded relief---------------------------------------------------------
@@ -333,6 +345,10 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         //contrast enhancement -------------------------------------------------
         if(image == null){
             image = coverage.getRenderedImage();
+            if(isReprojected){
+                //remove potential black borders
+                image = forceAlpha(image);
+            }
         }
         
         final ContrastEnhancement ce = styleElement.getContrastEnhancement();
@@ -360,6 +376,35 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
     }
 
+    /**
+     * Add an alpha band to the image and remove any black border.
+     * 
+     * TODO, this could be done more efficiently by adding an ImageLayout hints
+     * when doing the coverage reprojection. but hints can not be passed currently.
+     */
+    private static RenderedImage forceAlpha(RenderedImage img){
+        if(!img.getColorModel().hasAlpha()){
+            //ensure we have a bufferedImage for floodfill operation
+            final BufferedImage buffer;
+            if(img instanceof BufferedImage){
+                buffer = (BufferedImage) img;
+            }else{
+                buffer = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
+                buffer.createGraphics().drawRenderedImage(img, new AffineTransform());
+            }
+
+            //remove black borders+
+            FloodFill.fill(buffer, new Color[]{Color.BLACK}, new Color(0f,0f,0f,0f),
+                    new java.awt.Point(0,0),
+                    new java.awt.Point(buffer.getWidth()-1,0),
+                    new java.awt.Point(buffer.getWidth()-1,buffer.getHeight()-1),
+                    new java.awt.Point(0,buffer.getHeight()-1)
+                    );
+            img = buffer;
+        }
+        return img;
+    }
+    
     private static RenderedImage shadowed(final RenderedImage img){
         final ParameterBlock pb = new ParameterBlock();
         pb.setSource(img, 0);
