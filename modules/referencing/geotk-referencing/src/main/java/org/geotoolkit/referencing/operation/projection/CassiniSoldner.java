@@ -34,7 +34,7 @@ import static java.lang.Math.*;
 
 
 /**
- * Cassini-Soldner Projection (EPSG code 9806). See the
+ * <cite>Cassini-Soldner</cite> projection (EPSG code 9806). See the
  * <A HREF="http://mathworld.wolfram.com/CassiniProjection.html">Cassini projection on MathWorld</A>
  * for an overview. See any of the following providers for a list of programmatic parameters:
  * <p>

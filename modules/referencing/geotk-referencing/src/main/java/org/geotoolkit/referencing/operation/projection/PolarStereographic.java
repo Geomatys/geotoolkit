@@ -37,7 +37,7 @@ import static org.geotoolkit.referencing.operation.provider.PolarStereographic.*
 
 
 /**
- * The polar case of the {@linkplain Stereographic stereographic} projection.
+ * The polar case of the {@linkplain Stereographic} projection (EPSG codes 9810, 9829).
  * This default implementation uses USGS equation (i.e. iteration) for computing
  * the {@linkplain #inverseTransform inverse transform}.
  *

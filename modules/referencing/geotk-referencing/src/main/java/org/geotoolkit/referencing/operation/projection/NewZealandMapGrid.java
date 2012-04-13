@@ -32,7 +32,7 @@ import static java.lang.Math.*;
 
 
 /**
- * The NZMG (New Zealand Map Grid) projection (EPSG code 9811).
+ * <cite>New Zealand Map Grid</cite> (NZMG) projection (EPSG code 9811).
  * See any of the following providers for a list of programmatic parameters:
  * <p>
  * <ul>

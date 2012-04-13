@@ -37,7 +37,7 @@ import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.
 
 
 /**
- * Krovak Oblique Conformal Conic projection (EPSG code 9819). See the
+ * <cite>Krovak Oblique Conformal Conic</cite> projection (EPSG code 9819). See the
  * <A HREF="http://www.posc.org/Epicentre.2_2/DataModel/ExamplesofUsage/eu_cs34e2.html">Krovak on POSC</A>
  * for an overview. See any of the following providers for a list of programmatic parameters:
  * <p>

@@ -52,7 +52,7 @@ import static org.geotoolkit.referencing.operation.provider.ObliqueMercator.LONG
 
 
 /**
- * Oblique Mercator projection (EPSG code 9815). See the
+ * <cite>Oblique Mercator</cite> projection (EPSG codes 9812, 9815). See the
  * <A HREF="http://mathworld.wolfram.com/MercatorProjection.html">Mercator projection on MathWorld</A>
  * for an overview. See any of the following providers for a list of programmatic parameters:
  * <p>

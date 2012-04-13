@@ -35,7 +35,7 @@ import static java.lang.Math.*;
 
 
 /**
- * American Polyconic Projection (EPSG codes 9818). See the
+ * <cite>American Polyconic</cite> projection (EPSG codes 9818). See the
  * <A HREF="http://mathworld.wolfram.com/PolyconicProjection.html">Polyconic projection on MathWorld</A>
  * for an overview. See the following provider for a list of programmatic parameters:
  * <p>

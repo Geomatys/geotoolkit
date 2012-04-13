@@ -43,7 +43,7 @@ import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.
 
 
 /**
- * Albers Equal Area Projection (EPSG code 9822). See the
+ * <cite>Albers Equal Area</cite> projection (EPSG code 9822). See the
  * <A HREF="http://mathworld.wolfram.com/AlbersEqual-AreaConicProjection.html">Albers Equal-Area
  * Conic projection on MathWorld</A> for an overview. See any of the following providers for a
  * list of programmatic parameters:

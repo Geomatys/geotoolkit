@@ -45,7 +45,7 @@ import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.
 
 
 /**
- * Lambert Conical Conformal Projection (EPSG codes 9801, 9802, 9803). See the
+ * <cite>Lambert Conical Conformal</cite> projection (EPSG codes 9801, 9802, 9803). See the
  * <A HREF="http://mathworld.wolfram.com/LambertConformalConicProjection.html">Lambert conformal
  * conic projection on MathWorld</A> for an overview. See any of the following providers for a
  * list of programmatic parameters:

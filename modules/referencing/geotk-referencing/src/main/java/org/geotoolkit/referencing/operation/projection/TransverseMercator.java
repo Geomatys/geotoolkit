@@ -37,7 +37,7 @@ import static org.geotoolkit.referencing.operation.provider.TransverseMercator.*
 
 
 /**
- * Transverse Mercator Projection (EPSG codes 9807, 9808). See the
+ * <cite>Transverse Mercator</cite> projection (EPSG codes 9807, 9808). See the
  * <A HREF="http://mathworld.wolfram.com/MercatorProjection.html">Mercator projection on MathWorld</A>
  * for an overview. See any of the following providers for a list of programmatic parameters:
  * <p>

@@ -38,7 +38,7 @@ import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
 
 
 /**
- * Lambert Azimuthal Equal Area projection (EPSG codes 9820, 9821). See the
+ * <cite>Lambert Azimuthal Equal Area</cite> projection (EPSG codes 9820, 1027, <del>9821</del>). See the
  * <A HREF="http://mathworld.wolfram.com/LambertAzimuthalEqual-AreaProjection.html">Lambert Azimuthal
  * Equal-Area projection on MathWorld</A> for an overview. See any of the following providers for a
  * list of programmatic parameters:
