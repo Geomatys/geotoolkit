@@ -159,6 +159,7 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
             new NamedIdentifier(EPSG,    "Latitude of pseudo standard parallel"),
             new NamedIdentifier(ESRI,    "Pseudo_Standard_Parallel_1"), esri,
             new NamedIdentifier(NETCDF,  "standard_parallel[1]"),
+            new NamedIdentifier(NETCDF,  "standard_parallel"), // Because this parameter is an array.
             new NamedIdentifier(GEOTIFF, "StdParallel1"),
             new NamedIdentifier(PROJ4,   "lat_1")
         }, Double.NaN, -90, 90, NonSI.DEGREE_ANGLE, false);

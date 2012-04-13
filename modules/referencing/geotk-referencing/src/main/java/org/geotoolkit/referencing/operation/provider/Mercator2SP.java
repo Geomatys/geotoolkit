@@ -167,7 +167,7 @@ public class Mercator2SP extends MapProjection {
                 "Latitude of 1st standard parallel", // EPSG
                 "standard_parallel_1",               // OGC
                 "Standard_Parallel_1",               // ESRI
-                "standard_parallel[1]");             // NetCDF
+                "standard_parallel");                // NetCDF
         FALSE_EASTING = Identifiers.FALSE_EASTING.select(null,
                 "False easting",    // EPSG
                 "FalseEasting");    // GeoTIFF
@@ -241,7 +241,7 @@ public class Mercator2SP extends MapProjection {
      *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>standard_parallel_1</code></td></tr>
      *       <tr><td><b>Alias:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>Latitude of 1st standard parallel</code></td></tr>
      *       <tr><td></td><td class="onright"><code>ESRI</code>:</td><td class="onleft"><code>Standard_Parallel_1</code></td></tr>
-     *       <tr><td></td><td class="onright"><code>NetCDF</code>:</td><td class="onleft"><code>standard_parallel[1]</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>NetCDF</code>:</td><td class="onleft"><code>standard_parallel</code></td></tr>
      *       <tr><td></td><td class="onright"><code>GeoTIFF</code>:</td><td class="onleft"><code>StdParallel1</code></td></tr>
      *       <tr><td></td><td class="onright"><code>PROJ4</code>:</td><td class="onleft"><code>lat_1</code></td></tr>
      *     </table>

@@ -138,7 +138,8 @@ public class LambertConformal2SP extends MapProjection {
             Identifiers.STANDARD_PARALLEL_1.select(null,
                 "Latitude of 1st standard parallel",  // EPSG
                 "standard_parallel_1",                // OGC
-                "Standard_Parallel_1");               // ESRI
+                "Standard_Parallel_1",                // ESRI
+                "standard_parallel[1]");              // NetCDF
 
     /**
      * The operation parameter descriptor for the second {@linkplain
