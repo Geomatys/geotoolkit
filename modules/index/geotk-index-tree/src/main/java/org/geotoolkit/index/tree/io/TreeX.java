@@ -97,7 +97,7 @@ public final class TreeX {
             tree.search(areaSearch, defVisitor);
                 for(Envelope env : listSearch){
                     final GeneralEnvelope ge = new GeneralEnvelope(env);
-                    if(ge.intersects(areaSearch, false))visitor.visit(env);
+                    if(ge.intersects(areaSearch, false)&&!ge.contains(areaSearch, true)&&!areaSearch.contains(ge, true))visitor.visit(env);
                 }
             }break;
             default : throw new IllegalStateException("not implemented yet");
