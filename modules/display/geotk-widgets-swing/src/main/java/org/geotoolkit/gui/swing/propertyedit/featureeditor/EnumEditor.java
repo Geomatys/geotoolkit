@@ -35,7 +35,7 @@ public class EnumEditor implements JFeatureOutLine.PropertyEditor {
 
     @Override
     public boolean canHandle(PropertyType candidate) {
-        return Enum.class.equals(candidate.getBinding());
+        return Enum.class.isAssignableFrom(candidate.getBinding());
     }
 
     @Override
