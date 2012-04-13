@@ -144,6 +144,19 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
         }
     }
 
+    /**
+     * Clear any potential cache
+     */
+    public void clearCaches(){
+        if(value != null){
+            for(Property prop : value){
+                if(prop instanceof SimpleGeometryAttribut){
+                    ((SimpleGeometryAttribut)prop).clearCache();
+                }
+            }
+        }
+    }
+    
     @Override
     public List<Property> getValue() {
         if(value == null){
@@ -349,6 +362,9 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
             bounds = null; //reset property bounds
         }
         
+        private void clearCache(){
+            bounds = null;
+        }
     }
     
 }

@@ -99,12 +99,14 @@ public abstract class AbstractFeature<C extends Collection<Property>> extends Ab
             final Property property = (Property) itr.next();
             if (property instanceof GeometryAttribute) {
                 final GeometryAttribute ga = (GeometryAttribute) property;
+                final BoundingBox bbox = ga.getBounds();
+                if(bbox == null || bbox.isEmpty()){
+                    continue;
+                }
+                
                 if(bounds == null){
-                    final BoundingBox bbox = ga.getBounds();
-                    if(!bbox.isEmpty()){
-                        //avoid copying geometry bounds if there is only one
-                        bounds = bbox;
-                    }
+                    //avoid copying geometry bounds if there is only one
+                    bounds = bbox;
                 }else{
                     if(!copy){
                         //ensure we do not modify the geometry attribut bound

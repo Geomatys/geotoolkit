@@ -240,7 +240,8 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
         try {
             ensureOpen();
             ensureNext();
-
+            feature.clearCaches();
+            
             // figure out the fid
             final String fid;
             try {

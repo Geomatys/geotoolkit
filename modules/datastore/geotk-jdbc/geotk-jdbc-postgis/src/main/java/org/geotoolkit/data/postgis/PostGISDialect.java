@@ -117,13 +117,15 @@ public class PostGISDialect extends AbstractSQLDialect {
         public Geometry parse(String value) {
             final Geometry geom =  super.parse(value);
 
-            final int srid = geom.getSRID();
-            if(srid >= 0){
-                try {
-                    //set the real crs
-                    geom.setUserData(createCRS(geom.getSRID(), null));
-                } catch (SQLException ex) {
-                    dataStore.getLogger().log(Level.WARNING, ex.getLocalizedMessage(),ex);
+            if(geom != null){
+                final int srid = geom.getSRID();
+                if(srid >= 0){
+                    try {
+                        //set the real crs
+                        geom.setUserData(createCRS(geom.getSRID(), null));
+                    } catch (SQLException ex) {
+                        dataStore.getLogger().log(Level.WARNING, ex.getLocalizedMessage(),ex);
+                    }
                 }
             }
             return geom;

@@ -695,6 +695,16 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
      */
     @Override
     public Envelope getEnvelope(final Query query) throws DataStoreException, DataStoreRuntimeException {
+        if(CUSTOM_SQL.equalsIgnoreCase(query.getLanguage())){
+            //can not optimize this query
+            final FeatureReader reader = getSQLFeatureReader(query);
+            try{
+                return DataUtilities.calculateEnvelope(reader);
+            }finally{
+                reader.close();
+            }
+        }
+        
         typeCheck(query.getTypeName());
         final SimpleFeatureType type = (SimpleFeatureType) getFeatureType(query.getTypeName());
 

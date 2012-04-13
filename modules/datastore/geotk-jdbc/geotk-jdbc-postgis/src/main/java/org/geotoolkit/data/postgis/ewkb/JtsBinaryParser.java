@@ -74,6 +74,8 @@ public class JtsBinaryParser {
      * Parse a hex encoded geometry
      */
     public Geometry parse(String value) {
+        if(value == null) return null;
+        
         StringByteGetter bytes = new ByteGetter.StringByteGetter(value);
         return parseGeometry(valueGetterForEndian(bytes));
     }
