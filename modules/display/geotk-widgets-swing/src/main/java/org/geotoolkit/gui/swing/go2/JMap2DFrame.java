@@ -29,14 +29,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
-import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.stream.ImageOutputStream;
 import javax.swing.ButtonGroup;
@@ -47,18 +45,15 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
 import javax.swing.JToolBar.Separator;
 import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 
+import org.geotoolkit.client.Server;
 import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.data.session.Session;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.gui.swing.go2.control.JConfigBar;
@@ -87,28 +82,20 @@ import org.geotoolkit.gui.swing.contexttree.menu.SessionRollbackItem;
 import org.geotoolkit.gui.swing.contexttree.menu.ZoomToLayerItem;
 import org.geotoolkit.gui.swing.filestore.JCoverageStoreChooser;
 import org.geotoolkit.gui.swing.filestore.JDataStoreChooser;
-import org.geotoolkit.gui.swing.filestore.JFileCoverageChooser;
-import org.geotoolkit.gui.swing.filestore.JFileDatastoreChooser;
 import org.geotoolkit.gui.swing.filestore.JLayerChooser;
+import org.geotoolkit.gui.swing.filestore.JServerChooser;
 import org.geotoolkit.gui.swing.go2.decoration.JClassicNavigationDecoration;
 import org.geotoolkit.gui.swing.propertyedit.ClearSelectionAction;
 import org.geotoolkit.gui.swing.propertyedit.DeleteSelectionAction;
-import org.geotoolkit.gui.swing.propertyedit.JFeatureOutLine;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JAdvancedStylePanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JClassificationSingleStylePanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JClassificationIntervalStylePanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JRasterColorMapStylePanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JSLDImportExportPanel;
-import org.geotoolkit.map.FeatureMapLayer;
-import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.style.DefaultStyleFactory;
-import org.geotoolkit.style.MutableStyle;
-import org.geotoolkit.util.RandomStyleFactory;
-import org.opengis.feature.type.Name;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -251,6 +238,7 @@ public class JMap2DFrame extends javax.swing.JFrame {
         jMenu1 = new JMenu();
         jMenuItem4 = new JMenuItem();
         jMenuItem2 = new JMenuItem();
+        jMenuItem3 = new JMenuItem();
         jSeparator4 = new JPopupMenu.Separator();
         jMenuItem1 = new JMenuItem();
 
@@ -352,6 +340,14 @@ public class JMap2DFrame extends javax.swing.JFrame {
             }
         });
         jMenu1.add(jMenuItem2);
+
+        jMenuItem3.setText("Add from server ...");
+        jMenuItem3.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                openServerChooser(evt);
+            }
+        });
+        jMenu1.add(jMenuItem3);
         jMenu1.add(jSeparator4);
 
         jMenuItem1.setText("Quit");
@@ -468,6 +464,30 @@ private void openDataStoreChooser(ActionEvent evt) {//GEN-FIRST:event_openDataSt
     
 }//GEN-LAST:event_openDataStoreChooser
 
+private void openServerChooser(ActionEvent evt) {//GEN-FIRST:event_openServerChooser
+
+    try {
+        final List<Server> stores = JServerChooser.showDialog();
+
+        for (Server server : stores) {
+            
+            if(server instanceof DataStore || server instanceof CoverageStore){
+                final List<MapLayer> layers = JLayerChooser.showDialog(server);
+                for (MapLayer layer : layers) {
+                    if (layer == null) {
+                        continue;
+                    }
+                    guiContextTree.getContext().layers().add(layer);
+                }
+            }            
+        }
+
+    } catch (DataStoreException ex) {
+        Logger.getLogger(JMap2DFrame.class.getName()).log(Level.SEVERE, null, ex);
+    }
+
+}//GEN-LAST:event_openServerChooser
+
     private boolean isValidType(final Class<?>[] validTypes, final Object type) {
         for (final Class<?> t : validTypes) {
             if (t.isInstance(type)) {
@@ -506,6 +526,7 @@ private void openDataStoreChooser(ActionEvent evt) {//GEN-FIRST:event_openDataSt
     private JMenuBar jMenuBar1;
     private JMenuItem jMenuItem1;
     private JMenuItem jMenuItem2;
+    private JMenuItem jMenuItem3;
     private JMenuItem jMenuItem4;
     private JPanel jPanel1;
     private JScrollPane jScrollPane1;

@@ -108,6 +108,24 @@
 
     <dependency>
       <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-datastore-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-coverageio-store</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-clients-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.geotoolkit.pending</groupId>
       <artifactId>geotk-jasperreport</artifactId>
       <version>${project.version}</version>
     </dependency>
