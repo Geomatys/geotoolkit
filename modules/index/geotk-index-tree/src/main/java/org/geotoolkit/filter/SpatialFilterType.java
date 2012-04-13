@@ -19,18 +19,18 @@ package org.geotoolkit.filter;
 
 /**
  *
- * @author guilhem
+ * @author Guilhem Legal (Geomatys)
  */
 public enum SpatialFilterType {
 
-    CONTAINS,
+    CONTAINS, 
     INTERSECTS,
     EQUALS,
     DISJOINT,
     BBOX,
-    BEYOND,
-    CROSSES,
-    DWITHIN,
+    BEYOND, // not implemented in TreeX
+    CROSSES, // not implemented in TreeX
+    DWITHIN, // not implemented in TreeX
     WITHIN,
     TOUCHES,
     OVERLAPS,

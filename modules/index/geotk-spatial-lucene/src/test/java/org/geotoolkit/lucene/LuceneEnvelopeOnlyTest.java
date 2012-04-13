@@ -1229,7 +1229,7 @@ public class LuceneEnvelopeOnlyTest {
          /*
          * case 8: another line
          *
-         */
+        
         geom = GF.createLineString(new Coordinate[]{
             new Coordinate(0, 0),
             new Coordinate(-40, -40),
@@ -1254,7 +1254,7 @@ public class LuceneEnvelopeOnlyTest {
 
         //we verify that we obtain the correct results.
         assertEquals(nbResults, 1);
-        assertTrue(results.contains("box 1"));
+        assertTrue(results.contains("box 1")); */
 
         /*
          * case 9: a BBOX

@@ -28,12 +28,15 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.MMapDirectory;
 import org.apache.lucene.store.NIOFSDirectory;
 import org.apache.lucene.store.SimpleFSDirectory;
+import org.geotoolkit.filter.SpatialFilterType;
 import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.measure.Units;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.logging.Logging;
+import org.opengis.filter.Filter;
+import org.opengis.filter.spatial.*;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
@@ -63,22 +66,35 @@ public class LuceneUtils {
         }
     }
     
-    public static GeneralEnvelope getExtendedReprojectedEnvelope(final Geometry geom, final CoordinateReferenceSystem treeCrs, final String strUnit, final double distance) {
-        final GeneralEnvelope bound =  getReprojectedEnvelope(geom, treeCrs);
+    public static GeneralEnvelope getExtendedReprojectedEnvelope(final Object geom, final CoordinateReferenceSystem treeCrs, final String strUnit, final double distance) {
+        final GeneralEnvelope bound = getReprojectedEnvelope(geom, treeCrs);
         
         // add the reprojected distance
-        final Unit unit = Units.valueOf(strUnit);
-        final UnitConverter converter = unit.getConverterTo(treeCrs.getCoordinateSystem().getAxis(0).getUnit());
-        final double rdistance = converter.convert(distance);
-        final double minx = bound.getLower(0) - rdistance;
-        final double miny = bound.getLower(1) - rdistance;
-        final double maxx = bound.getUpper(0) + rdistance;
-        final double maxy = bound.getUpper(1) + rdistance;
-        bound.setRange(0, minx, maxx);
-        bound.setRange(1, miny, maxy);
+        if (bound != null) {
+            final Unit unit = Units.valueOf(strUnit);
+            final UnitConverter converter = unit.getConverterTo(treeCrs.getCoordinateSystem().getAxis(0).getUnit());
+            final double rdistance = converter.convert(distance);
+            final double minx = bound.getLower(0) - rdistance;
+            final double miny = bound.getLower(1) - rdistance;
+            final double maxx = bound.getUpper(0) + rdistance;
+            final double maxy = bound.getUpper(1) + rdistance;
+            bound.setRange(0, minx, maxx);
+            bound.setRange(1, miny, maxy);
+        }
         return bound;
     }
     
+    public static GeneralEnvelope getReprojectedEnvelope(final Object geom, final CoordinateReferenceSystem treeCrs) {
+        if (geom instanceof Geometry) {
+            return getReprojectedEnvelope((Geometry) geom, treeCrs);
+
+        } else if (geom instanceof org.opengis.geometry.Envelope) {
+            return getReprojectedEnvelope((org.opengis.geometry.Envelope) geom, treeCrs);
+
+        }
+        LOGGER.log(Level.WARNING, "Not a geometry for literal:{0} (class: {1})", new Object[]{geom, geom.getClass().getName()});
+        return null;
+    }
     /**
      * Extract the internal envelope from the geometry and reprojected it to the treeCRS.
      * 
@@ -86,7 +102,7 @@ public class LuceneUtils {
      * @param treeCrs
      * @return 
      */
-    public static GeneralEnvelope getReprojectedEnvelope(final Geometry geom, final CoordinateReferenceSystem treeCrs) {
+    private static GeneralEnvelope getReprojectedEnvelope(final Geometry geom, final CoordinateReferenceSystem treeCrs) {
         final Envelope jtsBound = geom.getEnvelopeInternal();
         final String epsgCode = SRIDGenerator.toSRS(geom.getSRID(), SRIDGenerator.Version.V1);
         try {
@@ -111,13 +127,41 @@ public class LuceneUtils {
      * @param treeCrs
      * @return 
      */
-    public static org.opengis.geometry.Envelope getReprojectedEnvelope(final org.opengis.geometry.Envelope env, final CoordinateReferenceSystem treeCrs) {
+    private static GeneralEnvelope getReprojectedEnvelope(final org.opengis.geometry.Envelope env, final CoordinateReferenceSystem treeCrs) {
         try {
-            return Envelopes.transform(env, treeCrs);
+            return (GeneralEnvelope) Envelopes.transform(env, treeCrs);
         } catch (TransformException ex) {
             LOGGER.log(Level.WARNING, "Transform exception while reprojecting filter geometry", ex);
         }
         return null;
+    }
+    
+    public static SpatialFilterType getSpatialFilterType(final Filter filter) {
+     
+        if (filter instanceof BBOX) {
+            return SpatialFilterType.BBOX;
+        } else if (filter instanceof Beyond){
+            return SpatialFilterType.BEYOND;
+        } else if (filter instanceof Contains){
+            return SpatialFilterType.CONTAINS;
+        } else if (filter instanceof Crosses){
+            return SpatialFilterType.CROSSES;
+        } else if (filter instanceof Disjoint){
+            return SpatialFilterType.DISJOINT;
+        } else if (filter instanceof DWithin){
+            return SpatialFilterType.DWITHIN;
+        } else if (filter instanceof Equals){
+            return SpatialFilterType.EQUALS;
+        } else if (filter instanceof Intersects){
+            return SpatialFilterType.INTERSECTS;
+        } else if (filter instanceof Overlaps){
+            return SpatialFilterType.OVERLAPS;
+        } else if (filter instanceof Touches){
+            return SpatialFilterType.TOUCHES;
+        } else if (filter instanceof Within){
+            return SpatialFilterType.WITHIN;
+        }
+        throw new IllegalArgumentException("unexpected filter type:" + filter);
     }
     
 }

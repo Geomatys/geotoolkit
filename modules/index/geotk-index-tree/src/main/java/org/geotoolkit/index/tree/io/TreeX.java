@@ -49,12 +49,13 @@ public final class TreeX {
             case INTERSECTS : {
                 tree.search(regionSearch, visitor);
             }break;
+            case BBOX : {
+                tree.search(regionSearch, visitor);
+            }break;
             case CONTAINS : {
                 tree.search(areaSearch, defVisitor);
                 for(Envelope env : listSearch){
-                    if(areaSearch.contains(env, true)){
-                        visitor.visit(env);
-                    }
+                    if(new GeneralEnvelope(env).contains(areaSearch, true))visitor.visit(env);
                 }
             }break;
             case DISJOINT : {
@@ -75,7 +76,7 @@ public final class TreeX {
             case WITHIN : {
                 tree.search(areaSearch, defVisitor);
                 for(Envelope env : listSearch){
-                    if(new GeneralEnvelope(env).contains(areaSearch, true))visitor.visit(env);
+                    if(areaSearch.contains(env, true))visitor.visit(env);
                 }
             }break;
             case TOUCHES : {
@@ -94,7 +95,7 @@ public final class TreeX {
                 }
             }break;
             case OVERLAPS : {
-            tree.search(areaSearch, defVisitor);
+                tree.search(areaSearch, defVisitor);
                 for(Envelope env : listSearch){
                     final GeneralEnvelope ge = new GeneralEnvelope(env);
                     if(ge.intersects(areaSearch, false)&&!ge.contains(areaSearch, true)&&!areaSearch.contains(ge, true))visitor.visit(env);
