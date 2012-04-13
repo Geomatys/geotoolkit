@@ -87,12 +87,14 @@ public final strictfp class NetcdfNameTest {
                 }
                 for (final GeneralParameterDescriptor param : method.getParameters().descriptors()) {
                     final String name = IdentifiedObjects.getName(param, Citations.NETCDF);
-                    if (name != null) try {
-                        final ParameterValue<?> netcdfValue = netcdfParam.parameter(name);
-                        assertTrue(methodName, netcdfParameterNames.remove(IdentifiedObjects.getName(netcdfValue.getDescriptor(), Citations.NETCDF)));
-                        assertNameEquals(methodName, netcdfValue.getDescriptor(), param, skipEPSG);
-                    } catch (ParameterNotFoundException e) {
-                        System.out.println("WARNING: " + methodName + ": " + e.getLocalizedMessage());
+                    if (name != null) {
+                        if (!name.equals("semi_major_axis") && !name.equals("semi_minor_axis")) try {
+                            final ParameterValue<?> netcdfValue = netcdfParam.parameter(name);
+                            assertTrue(methodName, netcdfParameterNames.remove(IdentifiedObjects.getName(netcdfValue.getDescriptor(), Citations.NETCDF)));
+                            assertNameEquals(methodName, netcdfValue.getDescriptor(), param, skipEPSG);
+                        } catch (ParameterNotFoundException e) {
+                            System.out.println("WARNING: " + methodName + ": " + e.getLocalizedMessage());
+                        }
                     }
                 }
                 assertTrue(netcdfParameterNames.remove("earth_radius"));

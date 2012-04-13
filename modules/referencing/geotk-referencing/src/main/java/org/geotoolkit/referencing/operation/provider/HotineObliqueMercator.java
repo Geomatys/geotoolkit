@@ -298,7 +298,9 @@ public class HotineObliqueMercator extends ObliqueMercator {
             new NamedIdentifier(Citations.GEOTOOLKIT, "Rectified Skew Orthomorphic (RSO)"), // Legacy EPSG
                      sameNameAs(Citations.GEOTOOLKIT, ObliqueMercator.PARAMETERS)
         }, null, new ParameterDescriptor<?>[] {
-            SEMI_MAJOR,          SEMI_MINOR, ROLL_LONGITUDE,
+            sameParameterAs(EquidistantCylindrical.PARAMETERS, "semi_major"),
+            sameParameterAs(EquidistantCylindrical.PARAMETERS, "semi_minor"),
+            ROLL_LONGITUDE,
             LONGITUDE_OF_CENTRE, LATITUDE_OF_CENTRE,
             AZIMUTH,             RECTIFIED_GRID_ANGLE,
             SCALE_FACTOR,

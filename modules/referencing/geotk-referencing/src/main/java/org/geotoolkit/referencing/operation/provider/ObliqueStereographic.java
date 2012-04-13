@@ -249,7 +249,6 @@ public class ObliqueStereographic extends Stereographic {
     @SuppressWarnings("hiding")
     public static final ParameterDescriptorGroup PARAMETERS;
     static {
-        final Citation[] excludes = new Citation[] {Citations.NETCDF};
         CENTRAL_MERIDIAN   = CassiniSoldner.CENTRAL_MERIDIAN;
         LATITUDE_OF_ORIGIN = CassiniSoldner.LATITUDE_OF_ORIGIN;
 
@@ -264,7 +263,9 @@ public class ObliqueStereographic extends Stereographic {
             new NamedIdentifier(Citations.PROJ4,   "sterea"),
             sameNameAs(Citations.GEOTOOLKIT, Stereographic.PARAMETERS)
         }, null, new ParameterDescriptor<?>[] {
-            SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
+            sameParameterAs(EquidistantCylindrical.PARAMETERS, "semi_major"),
+            sameParameterAs(EquidistantCylindrical.PARAMETERS, "semi_minor"),
+            ROLL_LONGITUDE,
             CENTRAL_MERIDIAN, LATITUDE_OF_ORIGIN,
             Orthographic.SCALE_FACTOR,
             EquidistantCylindrical.FALSE_EASTING,

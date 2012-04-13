@@ -173,7 +173,8 @@ public class PlateCarree extends EquidistantCylindrical {
         }, new Citation[] { // Authorities to exclude from the parameter descriptors.
             Citations.GEOTIFF, Citations.PROJ4
         }, new ParameterDescriptor<?>[] {
-            SEMI_MAJOR,     SEMI_MINOR,
+            sameParameterAs(EquidistantCylindrical.PARAMETERS, "semi_major"),
+            sameParameterAs(EquidistantCylindrical.PARAMETERS, "semi_minor"),
             ROLL_LONGITUDE, CENTRAL_MERIDIAN,
             FALSE_EASTING,  FALSE_NORTHING
         });

@@ -396,7 +396,9 @@ public class ObliqueMercator extends MapProjection {
             new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
                                 Vocabulary.Keys.OBLIQUE_MERCATOR_PROJECTION))
         }, null, new ParameterDescriptor<?>[] {
-            SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
+            sameParameterAs(EquidistantCylindrical.PARAMETERS, "semi_major"),
+            sameParameterAs(EquidistantCylindrical.PARAMETERS, "semi_minor"),
+            ROLL_LONGITUDE,
             LONGITUDE_OF_CENTRE, LATITUDE_OF_CENTRE,
             AZIMUTH, RECTIFIED_GRID_ANGLE, SCALE_FACTOR,
             FALSE_EASTING, FALSE_NORTHING
