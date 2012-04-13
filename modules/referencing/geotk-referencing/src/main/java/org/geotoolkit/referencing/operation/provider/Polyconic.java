@@ -28,7 +28,6 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.ConicProjection;
 
 import org.geotoolkit.referencing.NamedIdentifier;
-import org.geotoolkit.internal.referencing.Identifiers;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
 
@@ -248,22 +247,22 @@ public class Polyconic extends MapProjection {
         final Citation[] excludes = {
             Citations.ESRI, Citations.NETCDF, Citations.PROJ4
         };
-        CENTRAL_MERIDIAN = Identifiers.CENTRAL_MERIDIAN.select(excludes,
+        CENTRAL_MERIDIAN = UniversalParameters.CENTRAL_MERIDIAN.select(excludes,
                 "Longitude of natural origin",  // EPSG
                 "central_meridian",             // OGC
                 "NatOriginLong");               // GeoTIFF
-        LATITUDE_OF_ORIGIN = Identifiers.LATITUDE_OF_ORIGIN.select(excludes,
+        LATITUDE_OF_ORIGIN = UniversalParameters.LATITUDE_OF_ORIGIN.select(excludes,
                 "Latitude of natural origin",   // EPSG
                 "latitude_of_origin",           // OGC
                 "NatOriginLat");                // GeoTIFF
-        FALSE_EASTING = Identifiers.FALSE_EASTING.select(excludes,
+        FALSE_EASTING = UniversalParameters.FALSE_EASTING.select(excludes,
                 "False easting",                // EPSG
                 "FalseEasting");                // GeoTIFF
-        FALSE_NORTHING = Identifiers.FALSE_NORTHING.select(excludes,
+        FALSE_NORTHING = UniversalParameters.FALSE_NORTHING.select(excludes,
                 "False northing",               // EPSG
                 "FalseNorthing");               // GeoTIFF
 
-        PARAMETERS = Identifiers.createDescriptorGroup(new ReferenceIdentifier[] {
+        PARAMETERS = UniversalParameters.createDescriptorGroup(new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.OGC,     "Polyconic"),
             new NamedIdentifier(Citations.EPSG,    "American Polyconic"),
             new IdentifierCode (Citations.EPSG,     9818), // The ellipsoidal case

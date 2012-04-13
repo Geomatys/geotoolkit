@@ -29,7 +29,6 @@ import org.opengis.referencing.ReferenceIdentifier;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.operation.projection.LambertConformal;
-import org.geotoolkit.internal.referencing.Identifiers;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
 
@@ -282,7 +281,7 @@ public class LambertConformal1SP extends MapProjection {
      *   </td></tr>
      * </table>
      */
-    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
+    public static final ParameterDescriptorGroup PARAMETERS = UniversalParameters.createDescriptorGroup(
         new ReferenceIdentifier[] {
             /*
              * IMPORTANT:  Do not put any name that could be confused with the 2SP or

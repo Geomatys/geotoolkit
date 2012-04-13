@@ -37,8 +37,8 @@ import org.geotoolkit.referencing.operation.matrix.Matrix2;
 import static java.lang.Math.*;
 import static java.lang.Double.*;
 import static org.geotoolkit.parameter.Parameters.getOrCreate;
-import static org.geotoolkit.internal.referencing.Identifiers.*;
 import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
+import static org.geotoolkit.referencing.operation.provider.UniversalParameters.*;
 import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters.ensureLatitudeInRange;
 
 

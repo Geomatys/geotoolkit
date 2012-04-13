@@ -37,7 +37,7 @@ import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Errors;
 
 import static org.geotoolkit.parameter.Parameters.*;
-import static org.geotoolkit.internal.referencing.Identifiers.createDescriptorGroup;
+import static org.geotoolkit.referencing.operation.provider.UniversalParameters.createDescriptorGroup;
 import static org.geotoolkit.referencing.operation.transform.EarthGravitationalModel.*;
 
 

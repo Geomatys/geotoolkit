@@ -19,13 +19,11 @@ package org.geotoolkit.referencing.operation.provider;
 
 import net.jcip.annotations.Immutable;
 
-import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.ReferenceIdentifier;
 
 import org.geotoolkit.referencing.NamedIdentifier;
-import org.geotoolkit.internal.referencing.Identifiers;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
 
@@ -252,7 +250,7 @@ public class ObliqueStereographic extends Stereographic {
         CENTRAL_MERIDIAN   = CassiniSoldner.CENTRAL_MERIDIAN;
         LATITUDE_OF_ORIGIN = CassiniSoldner.LATITUDE_OF_ORIGIN;
 
-        PARAMETERS = Identifiers.createDescriptorGroup(new ReferenceIdentifier[] {
+        PARAMETERS = UniversalParameters.createDescriptorGroup(new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.OGC,     "Oblique_Stereographic"),
             new NamedIdentifier(Citations.EPSG,    "Oblique Stereographic"),
             new NamedIdentifier(Citations.EPSG,    "Roussilhe"),

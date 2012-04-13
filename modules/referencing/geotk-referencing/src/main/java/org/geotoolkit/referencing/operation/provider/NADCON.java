@@ -31,7 +31,6 @@ import org.opengis.referencing.ReferenceIdentifier;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.internal.referencing.Identifiers;
 import org.geotoolkit.internal.io.Installation;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.operation.MathTransformProvider;
@@ -139,7 +138,7 @@ public class NADCON extends MathTransformProvider {
      *   </td></tr>
      * </table>
      */
-    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
+    public static final ParameterDescriptorGroup PARAMETERS = UniversalParameters.createDescriptorGroup(
         new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.EPSG, "NADCON"),
             new IdentifierCode (Citations.EPSG,  9613),

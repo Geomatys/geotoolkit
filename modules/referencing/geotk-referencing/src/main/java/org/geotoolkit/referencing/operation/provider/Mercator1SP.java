@@ -31,7 +31,6 @@ import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.operation.projection.Mercator;
 import org.geotoolkit.internal.referencing.DeprecatedName;
-import org.geotoolkit.internal.referencing.Identifiers;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
 
@@ -295,25 +294,25 @@ public class Mercator1SP extends MapProjection {
     public static final ParameterDescriptorGroup PARAMETERS;
     static {
         final Citation[] excludes = new Citation[] {Citations.ESRI, Citations.NETCDF};
-        CENTRAL_MERIDIAN = Identifiers.CENTRAL_MERIDIAN.select(excludes,
+        CENTRAL_MERIDIAN = UniversalParameters.CENTRAL_MERIDIAN.select(excludes,
                 "Longitude of natural origin",      // EPSG
                 "central_meridian",                 // OGC
                 "NatOriginLong");                   // GeoTIFF
-        LATITUDE_OF_ORIGIN = Identifiers.LATITUDE_OF_ORIGIN.select(excludes,
+        LATITUDE_OF_ORIGIN = UniversalParameters.LATITUDE_OF_ORIGIN.select(excludes,
                 "Latitude of natural origin",       // EPSG
                 "latitude_of_origin",               // OGC
                 "NatOriginLat");                    // GeoTIFF
-        SCALE_FACTOR = Identifiers.SCALE_FACTOR.select(excludes,
+        SCALE_FACTOR = UniversalParameters.SCALE_FACTOR.select(excludes,
                 "Scale factor at natural origin",   // EPSG
                 "ScaleAtNatOrigin");                // GeoTIFF
-        FALSE_EASTING = Identifiers.FALSE_EASTING.select(excludes,
+        FALSE_EASTING = UniversalParameters.FALSE_EASTING.select(excludes,
                 "False easting",                    // EPSG
                 "FalseEasting");                    // GeoTIFF
-        FALSE_NORTHING = Identifiers.FALSE_NORTHING.select(excludes,
+        FALSE_NORTHING = UniversalParameters.FALSE_NORTHING.select(excludes,
                 "False northing",                   // EPSG
                 "FalseNorthing");                   // GeoTIFF
 
-        PARAMETERS = Identifiers.createDescriptorGroup(
+        PARAMETERS = UniversalParameters.createDescriptorGroup(
         new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.OGC,     "Mercator_1SP"),
             new NamedIdentifier(Citations.EPSG,    "Mercator (variant A)"), // Starting from 7.6

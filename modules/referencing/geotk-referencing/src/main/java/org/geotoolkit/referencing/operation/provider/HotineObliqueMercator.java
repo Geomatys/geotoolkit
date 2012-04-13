@@ -26,7 +26,6 @@ import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.referencing.ReferenceIdentifier;
 
 import org.geotoolkit.referencing.NamedIdentifier;
-import org.geotoolkit.internal.referencing.Identifiers;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
 
@@ -284,7 +283,7 @@ public class HotineObliqueMercator extends ObliqueMercator {
      * </table>
      */
     @SuppressWarnings("hiding")
-    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
+    public static final ParameterDescriptorGroup PARAMETERS = UniversalParameters.createDescriptorGroup(
         new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.OGC,     "Hotine_Oblique_Mercator"),
             new NamedIdentifier(Citations.EPSG,    "Hotine Oblique Mercator (variant A)"), // Starting from 7.6
@@ -557,7 +556,7 @@ public class HotineObliqueMercator extends ObliqueMercator {
         public static final ParameterDescriptorGroup PARAMETERS;
         static {
             final List<GeneralParameterDescriptor> param = ObliqueMercator.TwoPoint.PARAMETERS.descriptors();
-            PARAMETERS = Identifiers.createDescriptorGroup(
+            PARAMETERS = UniversalParameters.createDescriptorGroup(
                 new ReferenceIdentifier[] {
                     new NamedIdentifier(Citations.ESRI, "Hotine_Oblique_Mercator_Two_Point_Natural_Origin"),
                     sameNameAs(Citations.GEOTOOLKIT, HotineObliqueMercator.PARAMETERS)

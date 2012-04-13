@@ -35,8 +35,8 @@ import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.referencing.operation.MathTransformProvider;
 
 import static org.geotoolkit.parameter.Parameters.*;
-import static org.geotoolkit.internal.referencing.Identifiers.createDescriptor;
-import static org.geotoolkit.internal.referencing.Identifiers.createDescriptorGroup;
+import static org.geotoolkit.referencing.operation.provider.UniversalParameters.createDescriptor;
+import static org.geotoolkit.referencing.operation.provider.UniversalParameters.createDescriptorGroup;
 
 
 /**

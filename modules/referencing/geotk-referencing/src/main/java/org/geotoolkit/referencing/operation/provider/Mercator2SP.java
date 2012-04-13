@@ -29,7 +29,6 @@ import org.opengis.referencing.ReferenceIdentifier;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.operation.projection.Mercator;
 import org.geotoolkit.internal.referencing.DeprecatedName;
-import org.geotoolkit.internal.referencing.Identifiers;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
 
@@ -152,26 +151,26 @@ public class Mercator2SP extends MapProjection {
      * Parameters creation, which must be done before to initialize the {@link #PARAMETERS} field.
      */
     static {
-        CENTRAL_MERIDIAN = Identifiers.CENTRAL_MERIDIAN.select(null,
+        CENTRAL_MERIDIAN = UniversalParameters.CENTRAL_MERIDIAN.select(null,
                 "Longitude of natural origin",    // EPSG
                 "central_meridian",               // OGC
                 "Central_Meridian",               // ESRI
                 "longitude_of_projection_origin", // NetCDF
                 "NatOriginLong");                 // GeoTIFF
-        LATITUDE_OF_ORIGIN = Identifiers.LATITUDE_OF_ORIGIN.select(null,
+        LATITUDE_OF_ORIGIN = UniversalParameters.LATITUDE_OF_ORIGIN.select(null,
                 "Latitude of natural origin",     // EPSG
                 "latitude_of_origin",             // OGC
                 "Latitude_Of_Origin",             // ESRI
                 "NatOriginLat");                  // GeoTIFF
-        STANDARD_PARALLEL = Identifiers.STANDARD_PARALLEL_1.select(true, null, null, null,
+        STANDARD_PARALLEL = UniversalParameters.STANDARD_PARALLEL_1.select(true, null, null, null,
                 "Latitude of 1st standard parallel", // EPSG
                 "standard_parallel_1",               // OGC
                 "Standard_Parallel_1",               // ESRI
                 "standard_parallel");                // NetCDF
-        FALSE_EASTING = Identifiers.FALSE_EASTING.select(null,
+        FALSE_EASTING = UniversalParameters.FALSE_EASTING.select(null,
                 "False easting",    // EPSG
                 "FalseEasting");    // GeoTIFF
-        FALSE_NORTHING = Identifiers.FALSE_NORTHING.select(null,
+        FALSE_NORTHING = UniversalParameters.FALSE_NORTHING.select(null,
                 "False northing",   // EPSG
                 "FalseNorthing");   // GeoTIFF
     }
@@ -324,7 +323,7 @@ public class Mercator2SP extends MapProjection {
      *   </td></tr>
      * </table>
      */
-    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
+    public static final ParameterDescriptorGroup PARAMETERS = UniversalParameters.createDescriptorGroup(
         new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.OGC,    "Mercator_2SP"),
             new NamedIdentifier(Citations.EPSG,   "Mercator (variant B)"), // Starting from 7.6

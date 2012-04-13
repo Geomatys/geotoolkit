@@ -28,9 +28,9 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.ReferenceIdentifier;
 
 import org.geotoolkit.referencing.NamedIdentifier;
-import org.geotoolkit.internal.referencing.Identifiers;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import static org.geotoolkit.internal.referencing.Identifiers.createDescriptor;
+
+import static org.geotoolkit.referencing.operation.provider.UniversalParameters.createDescriptor;
 
 
 /**
@@ -182,18 +182,18 @@ public class NewZealandMapGrid extends MapProjection {
                 sameNameAs(Citations.GEOTIFF, MapProjection.SEMI_MINOR),
                 sameNameAs(Citations.PROJ4,   MapProjection.SEMI_MINOR)
             }, 6378388.0*(1-1/297.0), 0.0, Double.POSITIVE_INFINITY, SI.METRE, true);
-        CENTRAL_MERIDIAN = Identifiers.CENTRAL_MERIDIAN.select(true, 173.0, excludes, null,
+        CENTRAL_MERIDIAN = UniversalParameters.CENTRAL_MERIDIAN.select(true, 173.0, excludes, null,
                 "Longitude of natural origin",  // EPSG
                 "central_meridian",             // OGC
                 "NatOriginLong");               // GeoTIFF
-        LATITUDE_OF_ORIGIN = Identifiers.LATITUDE_OF_ORIGIN.select(true, -41.0, excludes, null,
+        LATITUDE_OF_ORIGIN = UniversalParameters.LATITUDE_OF_ORIGIN.select(true, -41.0, excludes, null,
                 "Latitude of natural origin",   // EPSG
                 "latitude_of_origin",           // OGC
                 "NatOriginLat");                // GeoTIFF
-        FALSE_EASTING = Identifiers.FALSE_EASTING.select(true, 2510000.0, excludes, null,
+        FALSE_EASTING = UniversalParameters.FALSE_EASTING.select(true, 2510000.0, excludes, null,
                 "False easting",                // EPSG
                 "FalseEasting");                // GeoTIFF
-        FALSE_NORTHING = Identifiers.FALSE_NORTHING.select(true, 6023150.0, excludes, null,
+        FALSE_NORTHING = UniversalParameters.FALSE_NORTHING.select(true, 6023150.0, excludes, null,
                 "False northing",               // EPSG
                 "FalseNorthing");               // GeoTIFF
     }
@@ -317,7 +317,7 @@ public class NewZealandMapGrid extends MapProjection {
      *   </td></tr>
      * </table>
      */
-    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
+    public static final ParameterDescriptorGroup PARAMETERS = UniversalParameters.createDescriptorGroup(
         new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.OGC,     "New_Zealand_Map_Grid"),
             new NamedIdentifier(Citations.EPSG,    "New Zealand Map Grid"),

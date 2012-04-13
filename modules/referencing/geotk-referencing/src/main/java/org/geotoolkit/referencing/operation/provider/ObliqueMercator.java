@@ -29,7 +29,6 @@ import org.opengis.referencing.ReferenceIdentifier;
 
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.referencing.NamedIdentifier;
-import org.geotoolkit.internal.referencing.Identifiers;
 import org.geotoolkit.internal.referencing.DeprecatedName;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
@@ -184,26 +183,26 @@ public class ObliqueMercator extends MapProjection {
      */
     static {
         final Citation[] excludes = new Citation[] {Citations.NETCDF};
-        LONGITUDE_OF_CENTRE = Identifiers.CENTRAL_MERIDIAN.select(excludes,
+        LONGITUDE_OF_CENTRE = UniversalParameters.CENTRAL_MERIDIAN.select(excludes,
                 "Longitude of projection centre",   // EPSG
                 "longitude_of_center",              // OGC
                 "Longitude_Of_Center",              // ESRI
                 "CenterLong");                      // GeoTIFF
-        LATITUDE_OF_CENTRE = Identifiers.LATITUDE_OF_ORIGIN.select(excludes,
+        LATITUDE_OF_CENTRE = UniversalParameters.LATITUDE_OF_ORIGIN.select(excludes,
                 "Latitude of projection centre",    // EPSG
                 "latitude_of_center",               // OGC
                 "Latitude_Of_Center",               // ESRI
                 "CenterLat");                       // GeoTIFF
-        AZIMUTH = Identifiers.AZIMUTH.select(excludes,
+        AZIMUTH = UniversalParameters.AZIMUTH.select(excludes,
                 "Azimuth of initial line");         // EPSG
-        RECTIFIED_GRID_ANGLE = Identifiers.RECTIFIED_GRID_ANGLE;
-        SCALE_FACTOR = Identifiers.SCALE_FACTOR.select(excludes,
+        RECTIFIED_GRID_ANGLE = UniversalParameters.RECTIFIED_GRID_ANGLE;
+        SCALE_FACTOR = UniversalParameters.SCALE_FACTOR.select(excludes,
                 "Scale factor on initial line",     // EPSG
                 "ScaleAtCenter");                   // GeoTIFF
-        FALSE_EASTING = Identifiers.FALSE_EASTING.select(excludes,
+        FALSE_EASTING = UniversalParameters.FALSE_EASTING.select(excludes,
                 "Easting at projection centre",     // EPSG
                 "FalseEasting");                    // GeoTIFF
-        FALSE_NORTHING = Identifiers.FALSE_NORTHING.select(excludes,
+        FALSE_NORTHING = UniversalParameters.FALSE_NORTHING.select(excludes,
                 "Northing at projection centre",    // EPSG
                 "FalseNorthing");                   // GeoTIFF
     }
@@ -381,7 +380,7 @@ public class ObliqueMercator extends MapProjection {
      *   </td></tr>
      * </table>
      */
-    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
+    public static final ParameterDescriptorGroup PARAMETERS = UniversalParameters.createDescriptorGroup(
         new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.OGC,     "Oblique_Mercator"),
             new NamedIdentifier(Citations.EPSG,    "Hotine Oblique Mercator (variant B)"), // Starting from 7.6
@@ -488,7 +487,7 @@ public class ObliqueMercator extends MapProjection {
          * descriptor(String)}</code> instead.
          */
         @Deprecated
-        public static final ParameterDescriptor<Double> LAT_OF_1ST_POINT = Identifiers.LAT_OF_1ST_POINT;
+        public static final ParameterDescriptor<Double> LAT_OF_1ST_POINT = UniversalParameters.LAT_OF_1ST_POINT;
 
         /**
          * The operation parameter descriptor for the {@code longitudeOf1stPoint} parameter value.
@@ -499,7 +498,7 @@ public class ObliqueMercator extends MapProjection {
          * descriptor(String)}</code> instead.
          */
         @Deprecated
-        public static final ParameterDescriptor<Double> LONG_OF_1ST_POINT = Identifiers.LONG_OF_1ST_POINT;
+        public static final ParameterDescriptor<Double> LONG_OF_1ST_POINT = UniversalParameters.LONG_OF_1ST_POINT;
 
         /**
          * The operation parameter descriptor for the {@code latitudeOf2ndPoint} parameter value.
@@ -510,7 +509,7 @@ public class ObliqueMercator extends MapProjection {
          * descriptor(String)}</code> instead.
          */
         @Deprecated
-        public static final ParameterDescriptor<Double> LAT_OF_2ND_POINT = Identifiers.LAT_OF_2ND_POINT;
+        public static final ParameterDescriptor<Double> LAT_OF_2ND_POINT = UniversalParameters.LAT_OF_2ND_POINT;
 
         /**
          * The operation parameter descriptor for the {@code longitudeOf2ndPoint} parameter value.
@@ -521,7 +520,7 @@ public class ObliqueMercator extends MapProjection {
          * descriptor(String)}</code> instead.
          */
         @Deprecated
-        public static final ParameterDescriptor<Double> LONG_OF_2ND_POINT = Identifiers.LONG_OF_2ND_POINT;
+        public static final ParameterDescriptor<Double> LONG_OF_2ND_POINT = UniversalParameters.LONG_OF_2ND_POINT;
 
         /**
          * The group of all parameters expected by this coordinate operation.
@@ -663,7 +662,7 @@ public class ObliqueMercator extends MapProjection {
          * </table>
          */
         @SuppressWarnings("hiding")
-        public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
+        public static final ParameterDescriptorGroup PARAMETERS = UniversalParameters.createDescriptorGroup(
             new NamedIdentifier[] {
                 new NamedIdentifier(Citations.ESRI, "Hotine_Oblique_Mercator_Two_Point_Center"),
                 sameNameAs(Citations.GEOTOOLKIT, ObliqueMercator.PARAMETERS)

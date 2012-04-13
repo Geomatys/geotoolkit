@@ -35,7 +35,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.resources.Vocabulary;
 
 import static org.geotoolkit.parameter.Parameters.*;
-import static org.geotoolkit.internal.referencing.Identifiers.createDescriptorGroup;
+import static org.geotoolkit.referencing.operation.provider.UniversalParameters.createDescriptorGroup;
 
 
 /**

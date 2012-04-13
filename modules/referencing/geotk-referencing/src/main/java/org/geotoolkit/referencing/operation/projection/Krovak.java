@@ -26,8 +26,8 @@ import org.opengis.referencing.operation.Matrix;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.ComparisonMode;
-import org.geotoolkit.internal.referencing.Identifiers;
 import org.geotoolkit.referencing.operation.matrix.Matrix2;
+import org.geotoolkit.referencing.operation.provider.UniversalParameters;
 
 import static java.lang.Math.*;
 import static org.geotoolkit.util.Utilities.hash;
@@ -156,7 +156,7 @@ public class Krovak extends UnitaryProjection {
         double pseudoStandardParallel;
         switch (parameters.standardParallels.length) {
             default: {
-                throw unknownParameter(Identifiers.STANDARD_PARALLEL_2);
+                throw unknownParameter(UniversalParameters.STANDARD_PARALLEL_2);
             }
             case 0: {
                 pseudoStandardParallel = PSEUDO_STANDARD_PARALLEL.getDefaultValue();

@@ -29,7 +29,6 @@ import org.opengis.referencing.ReferenceIdentifier;
 
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.operation.projection.LambertConformal;
-import org.geotoolkit.internal.referencing.Identifiers;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
 
@@ -95,7 +94,7 @@ public class LambertConformal2SP extends MapProjection {
      */
     @Deprecated
     public static final ParameterDescriptor<Double> CENTRAL_MERIDIAN =
-            Identifiers.CENTRAL_MERIDIAN.select(null,
+            UniversalParameters.CENTRAL_MERIDIAN.select(null,
                 "Longitude of false origin",     // EPSG
                 "central_meridian",              // OGC
                 "Central_Meridian",              // ESRI
@@ -115,7 +114,7 @@ public class LambertConformal2SP extends MapProjection {
      */
     @Deprecated
     public static final ParameterDescriptor<Double> LATITUDE_OF_ORIGIN =
-            Identifiers.LATITUDE_OF_ORIGIN.select(null,
+            UniversalParameters.LATITUDE_OF_ORIGIN.select(null,
                 "Latitude of false origin",  // EPSG
                 "latitude_of_origin",        // OGC
                 "Latitude_Of_Origin",        // ESRI
@@ -135,7 +134,7 @@ public class LambertConformal2SP extends MapProjection {
      */
     @Deprecated
     public static final ParameterDescriptor<Double> STANDARD_PARALLEL_1 =
-            Identifiers.STANDARD_PARALLEL_1.select(null,
+            UniversalParameters.STANDARD_PARALLEL_1.select(null,
                 "Latitude of 1st standard parallel",  // EPSG
                 "standard_parallel_1",                // OGC
                 "Standard_Parallel_1",                // ESRI
@@ -155,7 +154,7 @@ public class LambertConformal2SP extends MapProjection {
      */
     @Deprecated
     public static final ParameterDescriptor<Double> STANDARD_PARALLEL_2 =
-            Identifiers.STANDARD_PARALLEL_2.select(null,
+            UniversalParameters.STANDARD_PARALLEL_2.select(null,
                     "Latitude of 2nd standard parallel");
 
     /**
@@ -173,7 +172,7 @@ public class LambertConformal2SP extends MapProjection {
      */
     @Deprecated
     public static final ParameterDescriptor<Double> SCALE_FACTOR =
-            Identifiers.SCALE_FACTOR.select(false, null, new Citation[] {
+            UniversalParameters.SCALE_FACTOR.select(false, null, new Citation[] {
                 Citations.EPSG, Citations.OGC, Citations.NETCDF, Citations.GEOTIFF, Citations.PROJ4
             }, null);
 
@@ -190,7 +189,7 @@ public class LambertConformal2SP extends MapProjection {
      */
     @Deprecated
     public static final ParameterDescriptor<Double> FALSE_EASTING =
-            Identifiers.FALSE_EASTING.select(null,
+            UniversalParameters.FALSE_EASTING.select(null,
                 "Easting at false origin",  // EPSG
                 "FalseOriginEasting");      // GeoTIFF
 
@@ -207,7 +206,7 @@ public class LambertConformal2SP extends MapProjection {
      */
     @Deprecated
     public static final ParameterDescriptor<Double> FALSE_NORTHING =
-            Identifiers.FALSE_NORTHING.select(null,
+            UniversalParameters.FALSE_NORTHING.select(null,
                 "Northing at false origin", // EPSG
                 "FalseOriginNorthing");     // GeoTIFF
 
@@ -390,7 +389,7 @@ public class LambertConformal2SP extends MapProjection {
      *   </td></tr>
      * </table>
      */
-    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
+    public static final ParameterDescriptorGroup PARAMETERS = UniversalParameters.createDescriptorGroup(
         new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.OGC,     "Lambert_Conformal_Conic_2SP"),
             new NamedIdentifier(Citations.EPSG,    "Lambert Conic Conformal (2SP)"),
@@ -627,7 +626,7 @@ public class LambertConformal2SP extends MapProjection {
          * </table>
          */
         @SuppressWarnings("hiding")
-        public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
+        public static final ParameterDescriptorGroup PARAMETERS = UniversalParameters.createDescriptorGroup(
             new ReferenceIdentifier[] {
                 /*
                  * IMPORTANT: Do not put any name that could be confused with the 1SP or

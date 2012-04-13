@@ -38,7 +38,7 @@ import org.geotoolkit.referencing.operation.MathTransformProvider;
 import org.geotoolkit.referencing.operation.transform.WarpTransform2D;
 
 import static org.geotoolkit.parameter.Parameters.*;
-import static org.geotoolkit.internal.referencing.Identifiers.createDescriptorGroup;
+import static org.geotoolkit.referencing.operation.provider.UniversalParameters.createDescriptorGroup;
 
 
 /**

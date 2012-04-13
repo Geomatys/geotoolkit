@@ -47,8 +47,8 @@ import org.geotoolkit.resources.Errors;
 import static java.util.Collections.singletonMap;
 import static org.geotoolkit.parameter.Parameters.doubleValue;
 import static org.geotoolkit.parameter.Parameters.integerValue;
-import static org.geotoolkit.internal.referencing.Identifiers.createDescriptor;
-import static org.geotoolkit.internal.referencing.Identifiers.createDescriptorGroup;
+import static org.geotoolkit.referencing.operation.provider.UniversalParameters.createDescriptor;
+import static org.geotoolkit.referencing.operation.provider.UniversalParameters.createDescriptorGroup;
 
 
 /**

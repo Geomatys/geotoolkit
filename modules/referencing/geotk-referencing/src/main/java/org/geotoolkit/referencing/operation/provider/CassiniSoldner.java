@@ -28,7 +28,6 @@ import org.opengis.referencing.ReferenceIdentifier;
 
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.referencing.NamedIdentifier;
-import org.geotoolkit.internal.referencing.Identifiers;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
 
@@ -155,17 +154,17 @@ public class CassiniSoldner extends MapProjection {
      */
     static {
         final Citation[] excludes = new Citation[] {Citations.NETCDF};
-        CENTRAL_MERIDIAN = Identifiers.CENTRAL_MERIDIAN.select(excludes,
+        CENTRAL_MERIDIAN = UniversalParameters.CENTRAL_MERIDIAN.select(excludes,
                 "Longitude of natural origin",      // EPSG
                 "central_meridian",                 // OGC
                 "Central_Meridian",                 // ESRI
                 "NatOriginLong");                   // GeoTIFF
-        LATITUDE_OF_ORIGIN = Identifiers.LATITUDE_OF_ORIGIN.select(excludes,
+        LATITUDE_OF_ORIGIN = UniversalParameters.LATITUDE_OF_ORIGIN.select(excludes,
                 "Latitude of natural origin",       // EPSG
                 "latitude_of_origin",               // OGC
                 "Latitude_Of_Origin",               // ESRI
                 "NatOriginLat");                    // GeoTIFF
-        SCALE_FACTOR = Identifiers.SCALE_FACTOR.select(excludes,
+        SCALE_FACTOR = UniversalParameters.SCALE_FACTOR.select(excludes,
                 "Scale factor at natural origin",   // EPSG
                 "ScaleAtNatOrigin");                // GeoTIFf
         FALSE_EASTING  = EquidistantCylindrical.FALSE_EASTING;
@@ -313,7 +312,7 @@ public class CassiniSoldner extends MapProjection {
      *   </td></tr>
      * </table>
      */
-    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
+    public static final ParameterDescriptorGroup PARAMETERS = UniversalParameters.createDescriptorGroup(
         new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.OGC,     "Cassini_Soldner"),
             new NamedIdentifier(Citations.EPSG,    "Cassini-Soldner"),

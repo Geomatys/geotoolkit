@@ -29,7 +29,6 @@ import org.opengis.referencing.operation.CylindricalProjection;
 
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.operation.projection.Mercator;
-import org.geotoolkit.internal.referencing.Identifiers;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
 
@@ -244,7 +243,7 @@ public class PseudoMercator extends MapProjection {
         final Citation[] excludes = {
             Citations.ESRI, Citations.NETCDF, Citations.GEOTIFF, Citations.PROJ4
         };
-        PARAMETERS = Identifiers.createDescriptorGroup(new ReferenceIdentifier[] {
+        PARAMETERS = UniversalParameters.createDescriptorGroup(new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.EPSG, "Popular Visualisation Pseudo Mercator"),
             new IdentifierCode (Citations.EPSG,  1024),
             sameNameAs(Citations.GEOTOOLKIT, Mercator1SP.PARAMETERS)

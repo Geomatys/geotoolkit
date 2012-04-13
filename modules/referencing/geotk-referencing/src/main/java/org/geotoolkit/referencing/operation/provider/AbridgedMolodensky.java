@@ -30,7 +30,7 @@ import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.operation.transform.MolodenskyTransform;
 import org.geotoolkit.resources.Vocabulary;
 
-import static org.geotoolkit.internal.referencing.Identifiers.createDescriptorGroup;
+import static org.geotoolkit.referencing.operation.provider.UniversalParameters.createDescriptorGroup;
 
 
 /**

@@ -29,7 +29,6 @@ import org.opengis.referencing.operation.PlanarProjection;
 
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.referencing.NamedIdentifier;
-import org.geotoolkit.internal.referencing.Identifiers;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
 
@@ -158,18 +157,18 @@ public class Stereographic extends MapProjection {
      * Parameters creation, which must be done before to initialize the {@link #PARAMETERS} field.
      */
     static {
-        CENTRAL_MERIDIAN = Identifiers.CENTRAL_MERIDIAN.select(null,
+        CENTRAL_MERIDIAN = UniversalParameters.CENTRAL_MERIDIAN.select(null,
                 "Longitude of natural origin",       // EPSG
                 "central_meridian",                  // OGC
                 "Central_Meridian",                  // ESRI
                 "longitude_of_projection_origin",    // NetCDF
                 "ProjCenterLong");                   // GeoTIFF
-        LATITUDE_OF_ORIGIN = Identifiers.LATITUDE_OF_ORIGIN.select(null,
+        LATITUDE_OF_ORIGIN = UniversalParameters.LATITUDE_OF_ORIGIN.select(null,
                 "Latitude of natural origin",        // EPSG
                 "latitude_of_origin",                // OGC
                 "Latitude_Of_Origin",                // ESRI
                 "ProjCenterLat");                    // GeoTIFF
-        SCALE_FACTOR = Identifiers.SCALE_FACTOR.select(false, null, null, null,
+        SCALE_FACTOR = UniversalParameters.SCALE_FACTOR.select(false, null, null, null,
                 "Scale factor at natural origin",    // EPSG
                 "scale_factor_at_projection_origin", // NetCDF
                 "ScaleAtNatOrigin");                 // GeoTIFF
@@ -320,7 +319,7 @@ public class Stereographic extends MapProjection {
      *   </td></tr>
      * </table>
      */
-    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
+    public static final ParameterDescriptorGroup PARAMETERS = UniversalParameters.createDescriptorGroup(
         new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.OGC,     "Stereographic"),
             new NamedIdentifier(Citations.ESRI,    "Stereographic"),

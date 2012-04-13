@@ -42,10 +42,9 @@ import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.referencing.operation.MathTransformProvider;
 import org.geotoolkit.referencing.operation.transform.GeocentricTransform;
 import org.geotoolkit.referencing.operation.transform.GeocentricAffineTransform;
-import org.geotoolkit.internal.referencing.Identifiers;
 
 import static java.util.Collections.singletonMap;
-import static org.geotoolkit.internal.referencing.Identifiers.createDescriptor;
+import static org.geotoolkit.referencing.operation.provider.UniversalParameters.createDescriptor;
 
 
 /**
@@ -509,7 +508,7 @@ public class PositionVector7Param extends MathTransformProvider {
      * Creates a parameters group using the 7 parameters.
      */
     static ParameterDescriptorGroup createDescriptorGroup(final int code, final String name, final String legacyName) {
-        return Identifiers.createDescriptorGroup(new ReferenceIdentifier[] {
+        return UniversalParameters.createDescriptorGroup(new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.EPSG, name),
             new NamedIdentifier(Citations.EPSG, legacyName),
             new NamedIdentifier(Citations.EPSG, "Bursa-Wolf"),

@@ -29,7 +29,6 @@ import org.opengis.referencing.ReferenceIdentifier;
 
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.referencing.NamedIdentifier;
-import org.geotoolkit.internal.referencing.Identifiers;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
 
@@ -88,7 +87,7 @@ public class Orthographic extends MapProjection {
      */
     @Deprecated
     public static final ParameterDescriptor<Double> LONGITUDE_OF_CENTRE =
-            Identifiers.CENTRAL_MERIDIAN.select(null,
+            UniversalParameters.CENTRAL_MERIDIAN.select(null,
                 "Longitude of natural origin",      // EPSG
                 "central_meridian",                 // OGC
                 "Longitude_Of_Center",              // ESRI
@@ -108,7 +107,7 @@ public class Orthographic extends MapProjection {
      */
     @Deprecated
     public static final ParameterDescriptor<Double> LATITUDE_OF_CENTRE =
-            Identifiers.LATITUDE_OF_ORIGIN.select(null,
+            UniversalParameters.LATITUDE_OF_ORIGIN.select(null,
                 "Latitude of natural origin",    // EPSG
                 "latitude_of_origin",            // OGC
                 "Latitude_Of_Center",            // ESRI
@@ -128,7 +127,7 @@ public class Orthographic extends MapProjection {
      */
     @Deprecated
     public static final ParameterDescriptor<Double> SCALE_FACTOR =
-            Identifiers.SCALE_FACTOR.select(false, null, new Citation[] {
+            UniversalParameters.SCALE_FACTOR.select(false, null, new Citation[] {
                 Citations.NETCDF // NetCDF 4.3 doesn't have this parameter.
             }, null,
                 "Scale factor at natural origin",   // EPSG
@@ -310,7 +309,7 @@ public class Orthographic extends MapProjection {
      *   </td></tr>
      * </table>
      */
-    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
+    public static final ParameterDescriptorGroup PARAMETERS = UniversalParameters.createDescriptorGroup(
         new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.OGC,     "Orthographic"),
             new NamedIdentifier(Citations.EPSG,    "Orthographic"),

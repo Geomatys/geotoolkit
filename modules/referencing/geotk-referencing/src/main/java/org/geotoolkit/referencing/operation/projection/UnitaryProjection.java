@@ -53,7 +53,7 @@ import org.geotoolkit.util.Deprecable;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.collection.WeakHashSet;
-import org.geotoolkit.internal.referencing.Identifiers;
+import org.geotoolkit.referencing.operation.provider.UniversalParameters;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
@@ -64,7 +64,7 @@ import static java.lang.Math.*;
 import static java.lang.Double.*;
 import static org.geotoolkit.math.XMath.xorSign;
 import static org.geotoolkit.util.Utilities.hash;
-import static org.geotoolkit.internal.referencing.Identifiers.*;
+import static org.geotoolkit.referencing.operation.provider.UniversalParameters.*;
 import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
 import static org.geotoolkit.parameter.Parameters.getOrCreate;
 import static org.geotoolkit.referencing.operation.provider.MapProjection.SEMI_MAJOR;
@@ -1141,8 +1141,8 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
                 final ParameterDescriptor<Double> param, final ParameterValueGroup group)
                 throws ParameterNotFoundException
         {
-            if (param instanceof Identifiers) {
-                final ParameterDescriptor<?> descriptor = ((Identifiers) param).find(expected);
+            if (param instanceof UniversalParameters) {
+                final ParameterDescriptor<?> descriptor = ((UniversalParameters) param).find(expected);
                 if (descriptor != null) {
                     final double value = org.geotoolkit.parameter.Parameters.doubleValue(descriptor, group);
                     if (!isNaN(value)) {
@@ -1241,8 +1241,8 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
         static void set(final Collection<GeneralParameterDescriptor> expected,
                 ParameterDescriptor<?> descriptor, final ParameterValueGroup group, double value)
         {
-            if (descriptor instanceof Identifiers) {
-                descriptor = ((Identifiers) descriptor).find(expected);
+            if (descriptor instanceof UniversalParameters) {
+                descriptor = ((UniversalParameters) descriptor).find(expected);
                 if (descriptor == null) {
                     return;
                 }

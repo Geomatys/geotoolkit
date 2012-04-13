@@ -29,7 +29,6 @@ import org.opengis.referencing.operation.CylindricalProjection;
 
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.referencing.NamedIdentifier;
-import org.geotoolkit.internal.referencing.Identifiers;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
 
@@ -93,7 +92,7 @@ public class TransverseMercator extends MapProjection {
      */
     @Deprecated
     public static final ParameterDescriptor<Double> CENTRAL_MERIDIAN =
-            Identifiers.CENTRAL_MERIDIAN.select(null,
+            UniversalParameters.CENTRAL_MERIDIAN.select(null,
                 "Longitude of natural origin",    // EPSG
                 "central_meridian",               // OGC
                 "Central_Meridian",               // ESRI
@@ -127,7 +126,7 @@ public class TransverseMercator extends MapProjection {
      */
     @Deprecated
     public static final ParameterDescriptor<Double> SCALE_FACTOR =
-            Identifiers.SCALE_FACTOR.select(null,
+            UniversalParameters.SCALE_FACTOR.select(null,
                 "Scale factor at natural origin",   // EPSG
                 "scale_factor_at_central_meridian", // NetCDF
                 "ScaleAtNatOrigin");                // GeoTIFF
@@ -313,7 +312,7 @@ public class TransverseMercator extends MapProjection {
      *   </td></tr>
      * </table>
      */
-    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
+    public static final ParameterDescriptorGroup PARAMETERS = UniversalParameters.createDescriptorGroup(
         new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.OGC,      "Transverse_Mercator"),
             new NamedIdentifier(Citations.EPSG,     "Transverse Mercator"),
@@ -539,7 +538,7 @@ public class TransverseMercator extends MapProjection {
             final Citation[] excludes = {
                 Citations.ESRI, Citations.NETCDF, Citations.GEOTIFF, Citations.PROJ4
             };
-            PARAMETERS = Identifiers.createDescriptorGroup(
+            PARAMETERS = UniversalParameters.createDescriptorGroup(
                 new ReferenceIdentifier[] {
                     new NamedIdentifier(Citations.EPSG, "Transverse Mercator (South Orientated)"),
                     new IdentifierCode (Citations.EPSG,  9808),

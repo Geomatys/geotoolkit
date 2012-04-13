@@ -28,7 +28,6 @@ import org.opengis.referencing.ReferenceIdentifier;
 
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.referencing.NamedIdentifier;
-import org.geotoolkit.internal.referencing.Identifiers;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
 
@@ -98,7 +97,7 @@ public class AlbersEqualArea extends MapProjection {
      */
     @Deprecated
     public static final ParameterDescriptor<Double> CENTRAL_MERIDIAN =
-            Identifiers.CENTRAL_MERIDIAN.select(null,
+            UniversalParameters.CENTRAL_MERIDIAN.select(null,
                 "Longitude of false origin",     // EPSG
                 "central_meridian",              // OGC
                 "Central_Meridian",              // ESRI
@@ -123,7 +122,7 @@ public class AlbersEqualArea extends MapProjection {
      */
     @Deprecated
     public static final ParameterDescriptor<Double> LATITUDE_OF_ORIGIN =
-            Identifiers.LATITUDE_OF_ORIGIN.select(null,
+            UniversalParameters.LATITUDE_OF_ORIGIN.select(null,
                 "Latitude of false origin",      // EPSG
                 "latitude_of_origin",            // OGC
                 "Latitude_Of_Origin",            // ESRI
@@ -172,7 +171,7 @@ public class AlbersEqualArea extends MapProjection {
      */
     @Deprecated
     public static final ParameterDescriptor<Double> FALSE_EASTING =
-            Identifiers.FALSE_EASTING.select(null,
+            UniversalParameters.FALSE_EASTING.select(null,
                 "Easting at false origin",  // EPSG
                 "FalseEasting");            // GeoTIFF
 
@@ -189,7 +188,7 @@ public class AlbersEqualArea extends MapProjection {
      */
     @Deprecated
     public static final ParameterDescriptor<Double> FALSE_NORTHING =
-            Identifiers.FALSE_NORTHING.select(null,
+            UniversalParameters.FALSE_NORTHING.select(null,
                 "Northing at false origin", // EPSG
                 "FalseNorthing");           // GeoTIFF
 
@@ -366,7 +365,7 @@ public class AlbersEqualArea extends MapProjection {
      *   </td></tr>
      * </table>
      */
-    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
+    public static final ParameterDescriptorGroup PARAMETERS = UniversalParameters.createDescriptorGroup(
         new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.OGC,     "Albers_Conic_Equal_Area"),
             new NamedIdentifier(Citations.EPSG,    "Albers Equal Area"),

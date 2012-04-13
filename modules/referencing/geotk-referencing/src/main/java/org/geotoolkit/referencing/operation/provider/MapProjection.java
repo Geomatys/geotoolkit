@@ -37,9 +37,8 @@ import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.operation.MathTransformProvider;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.internal.referencing.Identifiers;
 
-import static org.geotoolkit.internal.referencing.Identifiers.createDescriptor;
+import static org.geotoolkit.referencing.operation.provider.UniversalParameters.createDescriptor;
 /*
  * Do not import UnitaryProjection, and do not use it neither except as fully-qualified names
  * only in javadoc comments. As of Java 6 update 10, using UnitaryProjection seems to confuse
@@ -199,7 +198,7 @@ public abstract class MapProjection extends MathTransformProvider {
              * looking for RECTIFIED_GRID_ANGLE.
              */
             new NamedIdentifier[] {
-                sameNameAs(Citations.ESRI, Identifiers.RECTIFIED_GRID_ANGLE)
+                sameNameAs(Citations.ESRI, UniversalParameters.RECTIFIED_GRID_ANGLE)
             },
             0, -360, +360, NonSI.DEGREE_ANGLE, false);
 

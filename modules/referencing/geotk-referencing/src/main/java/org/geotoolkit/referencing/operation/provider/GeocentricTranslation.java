@@ -28,7 +28,6 @@ import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.referencing.datum.BursaWolfParameters;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.internal.referencing.Identifiers;
 
 
 /**
@@ -205,7 +204,7 @@ public class GeocentricTranslation extends PositionVector7Param {
      * </table>
      */
     @SuppressWarnings("hiding")
-    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
+    public static final ParameterDescriptorGroup PARAMETERS = UniversalParameters.createDescriptorGroup(
         new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.EPSG, "Geocentric translations (geog2D domain)"),
             new NamedIdentifier(Citations.EPSG, "Geocentric Translations"), // Legacy name

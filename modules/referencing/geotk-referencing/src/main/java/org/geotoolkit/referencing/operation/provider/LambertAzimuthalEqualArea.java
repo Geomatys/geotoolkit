@@ -26,7 +26,6 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.ReferenceIdentifier;
 
 import org.geotoolkit.referencing.NamedIdentifier;
-import org.geotoolkit.internal.referencing.Identifiers;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
 
@@ -99,7 +98,7 @@ public class LambertAzimuthalEqualArea extends MapProjection {
      */
     @Deprecated
     public static final ParameterDescriptor<Double> LONGITUDE_OF_CENTRE =
-            Identifiers.CENTRAL_MERIDIAN.select(null, null, null, new String[] {
+            UniversalParameters.CENTRAL_MERIDIAN.select(null, null, null, new String[] {
                 "Spherical longitude of origin"}, // EPSG (deprecated - was used by EPSG:9821 only)
                 "Longitude of natural origin",    // EPSG
                 "longitude_of_center",            // OGC
@@ -120,7 +119,7 @@ public class LambertAzimuthalEqualArea extends MapProjection {
      */
     @Deprecated
     public static final ParameterDescriptor<Double> LATITUDE_OF_CENTRE =
-            Identifiers.LATITUDE_OF_ORIGIN.select(null, null, null, new String[] {
+            UniversalParameters.LATITUDE_OF_ORIGIN.select(null, null, null, new String[] {
                 "Spherical latitude of origin"},  // EPSG (deprecated - was used by EPSG:9821 only)
                 "Latitude of natural origin",     // EPSG
                 "latitude_of_center",             // OGC
@@ -291,7 +290,7 @@ public class LambertAzimuthalEqualArea extends MapProjection {
      *   </td></tr>
      * </table>
      */
-    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
+    public static final ParameterDescriptorGroup PARAMETERS = UniversalParameters.createDescriptorGroup(
         new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.OGC,     "Lambert_Azimuthal_Equal_Area"),
             new NamedIdentifier(Citations.EPSG,    "Lambert Azimuthal Equal Area"),

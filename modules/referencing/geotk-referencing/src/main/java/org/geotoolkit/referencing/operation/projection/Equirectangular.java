@@ -32,7 +32,7 @@ import org.geotoolkit.referencing.operation.transform.Parameterized;
 import org.geotoolkit.referencing.operation.provider.EquidistantCylindrical;
 
 import static java.lang.Math.*;
-import static org.geotoolkit.internal.referencing.Identifiers.*;
+import static org.geotoolkit.referencing.operation.provider.UniversalParameters.*;
 
 
 /**

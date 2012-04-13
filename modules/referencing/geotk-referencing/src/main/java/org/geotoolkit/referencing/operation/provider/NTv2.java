@@ -25,7 +25,6 @@ import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.Transformation;
 
-import org.geotoolkit.internal.referencing.Identifiers;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
@@ -109,7 +108,7 @@ public class NTv2 extends MathTransformProvider {
      *   </td></tr>
      * </table>
      */
-    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
+    public static final ParameterDescriptorGroup PARAMETERS = UniversalParameters.createDescriptorGroup(
         new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.EPSG, "NTv2"),
             new IdentifierCode (Citations.EPSG,  9615)
