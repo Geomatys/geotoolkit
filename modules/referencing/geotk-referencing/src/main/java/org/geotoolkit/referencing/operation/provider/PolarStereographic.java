@@ -43,13 +43,13 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * <p>The following table summarizes the parameters recognized by this provider.
  * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
  * <blockquote><p><b>Operation name:</b> {@code Polar_Stereographic}
- * <br><b>Area of use:</b> <font size="-1">(union of CRS domains of validity from EPSG database)</font></p>
+ * <br><b>Area of use:</b> <font size="-1">(union of CRS domains of validity in EPSG database)</font></p>
  * <blockquote><table class="compact">
  *   <tr><td><b>in latitudes:</b></td><td class="onright">90°00.0′S</td><td>to</td><td class="onright">90°00.0′N</td></tr>
  *   <tr><td><b>in longitudes:</b></td><td class="onright">180°00.0′W</td><td>to</td><td class="onright">180°00.0′E</td></tr>
  * </table></blockquote>
  * <table class="geotk">
- *   <tr><th>Parameter Name</th><th>Default value</th></tr>
+ *   <tr><th>Parameter name</th><th>Default value</th></tr>
  *   <tr><td>{@code semi_major}</td><td></td></tr>
  *   <tr><td>{@code semi_minor}</td><td></td></tr>
  *   <tr><td>{@code roll_longitude}</td><td>false</td></tr>
@@ -304,13 +304,13 @@ public class PolarStereographic extends Stereographic {
      * <p>The following table summarizes the parameters recognized by this provider.
      * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
      * <blockquote><p><b>Operation name:</b> {@code Polar Stereographic (variant B)}
-     * <br><b>Area of use:</b> <font size="-1">(union of CRS domains of validity from EPSG database)</font></p>
+     * <br><b>Area of use:</b> <font size="-1">(union of CRS domains of validity in EPSG database)</font></p>
      * <blockquote><table class="compact">
      *   <tr><td><b>in latitudes:</b></td><td class="onright">90°00.0′S</td><td>to</td><td class="onright">90°00.0′N</td></tr>
      *   <tr><td><b>in longitudes:</b></td><td class="onright">180°00.0′W</td><td>to</td><td class="onright">180°00.0′E</td></tr>
      * </table></blockquote>
      * <table class="geotk">
-     *   <tr><th>Parameter Name</th><th>Default value</th></tr>
+     *   <tr><th>Parameter name</th><th>Default value</th></tr>
      *   <tr><td>{@code semi_major}</td><td></td></tr>
      *   <tr><td>{@code semi_minor}</td><td></td></tr>
      *   <tr><td>{@code roll_longitude}</td><td>false</td></tr>
@@ -515,7 +515,7 @@ public class PolarStereographic extends Stereographic {
      * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
      * <blockquote><p><b>Operation name:</b> {@code Stereographic_North_Pole}</p>
      * <table class="geotk">
-     *   <tr><th>Parameter Name</th><th>Default value</th></tr>
+     *   <tr><th>Parameter name</th><th>Default value</th></tr>
      *   <tr><td>{@code Semi_Major}</td><td></td></tr>
      *   <tr><td>{@code Semi_Minor}</td><td></td></tr>
      *   <tr><td>{@code roll_longitude}</td><td>false</td></tr>
@@ -703,7 +703,7 @@ public class PolarStereographic extends Stereographic {
      * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
      * <blockquote><p><b>Operation name:</b> {@code Stereographic_South_Pole}</p>
      * <table class="geotk">
-     *   <tr><th>Parameter Name</th><th>Default value</th></tr>
+     *   <tr><th>Parameter name</th><th>Default value</th></tr>
      *   <tr><td>{@code Semi_Major}</td><td></td></tr>
      *   <tr><td>{@code Semi_Minor}</td><td></td></tr>
      *   <tr><td>{@code roll_longitude}</td><td>false</td></tr>

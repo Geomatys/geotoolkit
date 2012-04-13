@@ -48,7 +48,7 @@ import org.geotoolkit.referencing.operation.MathTransformProvider;
  * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
  * <blockquote><p><b>Operation name:</b> {@code NTv2}</p>
  * <table class="geotk">
- *   <tr><th>Parameter Name</th><th>Default value</th></tr>
+ *   <tr><th>Parameter name</th><th>Default value</th></tr>
  *   <tr><td>{@code Latitude and longitude difference file}</td><td></td></tr>
  * </table></blockquote>
  * <!-- END OF PARAMETERS -->

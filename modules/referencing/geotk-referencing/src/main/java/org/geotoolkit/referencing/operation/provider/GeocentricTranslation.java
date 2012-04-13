@@ -52,7 +52,7 @@ import org.geotoolkit.internal.referencing.Identifiers;
  * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
  * <blockquote><p><b>Operation name:</b> {@code Geocentric translations (geog2D domain)}</p>
  * <table class="geotk">
- *   <tr><th>Parameter Name</th><th>Default value</th></tr>
+ *   <tr><th>Parameter name</th><th>Default value</th></tr>
  *   <tr><td>{@code dx}</td><td>0 metres</td></tr>
  *   <tr><td>{@code dy}</td><td>0 metres</td></tr>
  *   <tr><td>{@code dz}</td><td>0 metres</td></tr>

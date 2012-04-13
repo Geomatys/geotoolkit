@@ -44,7 +44,7 @@ import org.geotoolkit.resources.Errors;
  * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
  * <blockquote><p><b>Operation name:</b> {@code France geocentric interpolation}</p>
  * <table class="geotk">
- *   <tr><th>Parameter Name</th><th>Default value</th></tr>
+ *   <tr><th>Parameter name</th><th>Default value</th></tr>
  *   <tr><td>{@code Geocentric translation file}</td><td>{@code "gr3df97a.txt"}</td></tr>
  * </table></blockquote>
  * <!-- END OF PARAMETERS -->

@@ -46,13 +46,13 @@ import static org.geotoolkit.internal.referencing.Identifiers.createDescriptor;
  * <p>The following table summarizes the parameters recognized by this provider.
  * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
  * <blockquote><p><b>Operation name:</b> {@code New_Zealand_Map_Grid}
- * <br><b>Area of use:</b> <font size="-1">(union of CRS domains of validity from EPSG database)</font></p>
+ * <br><b>Area of use:</b> <font size="-1">(union of CRS domains of validity in EPSG database)</font></p>
  * <blockquote><table class="compact">
  *   <tr><td><b>in latitudes:</b></td><td class="onright">47°24.0′S</td><td>to</td><td class="onright">34°00.0′S</td></tr>
  *   <tr><td><b>in longitudes:</b></td><td class="onright">166°19.8′E</td><td>to</td><td class="onright">178°36.0′E</td></tr>
  * </table></blockquote>
  * <table class="geotk">
- *   <tr><th>Parameter Name</th><th>Default value</th></tr>
+ *   <tr><th>Parameter name</th><th>Default value</th></tr>
  *   <tr><td>{@code semi_major}</td><td>6378388 metres</td></tr>
  *   <tr><td>{@code semi_minor}</td><td>6356911.9461279465 metres</td></tr>
  *   <tr><td>{@code roll_longitude}</td><td>false</td></tr>

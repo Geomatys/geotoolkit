@@ -51,7 +51,7 @@ import static org.geotoolkit.parameter.MatrixParameterDescriptors.DEFAULT_MATRIX
  * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
  * <blockquote><p><b>Operation name:</b> {@code Affine}</p>
  * <table class="geotk">
- *   <tr><th>Parameter Name</th><th>Default value</th></tr>
+ *   <tr><th>Parameter name</th><th>Default value</th></tr>
  *   <tr><td>{@code num_row}</td><td>3</td></tr>
  *   <tr><td>{@code num_col}</td><td>3</td></tr>
  *   <tr><td>{@code elt_0_0}</td><td>1</td></tr>
