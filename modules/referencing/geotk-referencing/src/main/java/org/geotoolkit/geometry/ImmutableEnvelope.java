@@ -97,10 +97,10 @@ public final class ImmutableEnvelope extends ArrayEnvelope implements Serializab
      * Builds a two-dimensional envelope with the specified bounds.
      *
      * @param crs  The coordinate reference system, or {@code null} if none.
-     * @param xmin The minimal value for the first ordinate.
-     * @param xmax The maximal value for the first ordinate.
-     * @param ymin The minimal value for the second ordinate.
-     * @param ymax The maximal value for the second ordinate.
+     * @param xmin The lower value for the first ordinate.
+     * @param xmax The upper value for the first ordinate.
+     * @param ymin The lower value for the second ordinate.
+     * @param ymax The upper value for the second ordinate.
      * @throws MismatchedDimensionException If the dimension of the given CRS is not equals to 2.
      */
     public ImmutableEnvelope(final CoordinateReferenceSystem crs, final double xmin,
