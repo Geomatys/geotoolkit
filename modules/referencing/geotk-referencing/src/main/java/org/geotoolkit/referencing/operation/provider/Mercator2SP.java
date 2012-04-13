@@ -29,7 +29,6 @@ import org.opengis.referencing.ReferenceIdentifier;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.operation.projection.Mercator;
 import org.geotoolkit.internal.referencing.DeprecatedName;
-import org.geotoolkit.internal.referencing.Identifiers;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
 
@@ -45,13 +44,13 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * <p>The following table summarizes the parameters recognized by this provider.
  * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
  * <blockquote><p><b>Operation name:</b> {@code Mercator_2SP}
- * <br><b>Area of use:</b> <font size="-1">(union of CRS domains of validity from EPSG database)</font></p>
+ * <br><b>Area of use:</b> <font size="-1">(union of CRS domains of validity in EPSG database)</font></p>
  * <blockquote><table class="compact">
  *   <tr><td><b>in latitudes:</b></td><td class="onright">55°57.0′S</td><td>to</td><td class="onright">47°06.6′N</td></tr>
  *   <tr><td><b>in longitudes:</b></td><td class="onright">157°24.6′W</td><td>to</td><td class="onright">170°53.4′E</td></tr>
  * </table></blockquote>
  * <table class="geotk">
- *   <tr><th>Parameter Name</th><th>Default value</th></tr>
+ *   <tr><th>Parameter name</th><th>Default value</th></tr>
  *   <tr><td>{@code semi_major}</td><td></td></tr>
  *   <tr><td>{@code semi_minor}</td><td></td></tr>
  *   <tr><td>{@code roll_longitude}</td><td>false</td></tr>
@@ -152,26 +151,26 @@ public class Mercator2SP extends MapProjection {
      * Parameters creation, which must be done before to initialize the {@link #PARAMETERS} field.
      */
     static {
-        CENTRAL_MERIDIAN = Identifiers.CENTRAL_MERIDIAN.select(null,
+        CENTRAL_MERIDIAN = UniversalParameters.CENTRAL_MERIDIAN.select(null,
                 "Longitude of natural origin",    // EPSG
                 "central_meridian",               // OGC
                 "Central_Meridian",               // ESRI
                 "longitude_of_projection_origin", // NetCDF
                 "NatOriginLong");                 // GeoTIFF
-        LATITUDE_OF_ORIGIN = Identifiers.LATITUDE_OF_ORIGIN.select(null,
+        LATITUDE_OF_ORIGIN = UniversalParameters.LATITUDE_OF_ORIGIN.select(null,
                 "Latitude of natural origin",     // EPSG
                 "latitude_of_origin",             // OGC
                 "Latitude_Of_Origin",             // ESRI
                 "NatOriginLat");                  // GeoTIFF
-        STANDARD_PARALLEL = Identifiers.STANDARD_PARALLEL_1.select(true, null, null, null,
+        STANDARD_PARALLEL = UniversalParameters.STANDARD_PARALLEL_1.select(true, null, null, null,
                 "Latitude of 1st standard parallel", // EPSG
                 "standard_parallel_1",               // OGC
                 "Standard_Parallel_1",               // ESRI
-                "standard_parallel[1]");             // NetCDF
-        FALSE_EASTING = Identifiers.FALSE_EASTING.select(null,
+                "standard_parallel");                // NetCDF
+        FALSE_EASTING = UniversalParameters.FALSE_EASTING.select(null,
                 "False easting",    // EPSG
                 "FalseEasting");    // GeoTIFF
-        FALSE_NORTHING = Identifiers.FALSE_NORTHING.select(null,
+        FALSE_NORTHING = UniversalParameters.FALSE_NORTHING.select(null,
                 "False northing",   // EPSG
                 "FalseNorthing");   // GeoTIFF
     }
@@ -200,6 +199,7 @@ public class Mercator2SP extends MapProjection {
      *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>semi_major</code></td></tr>
      *       <tr><td><b>Alias:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>Semi-major axis</code></td></tr>
      *       <tr><td></td><td class="onright"><code>ESRI</code>:</td><td class="onleft"><code>Semi_Major</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>NetCDF</code>:</td><td class="onleft"><code>semi_major_axis</code></td></tr>
      *       <tr><td></td><td class="onright"><code>GeoTIFF</code>:</td><td class="onleft"><code>SemiMajor</code></td></tr>
      *       <tr><td></td><td class="onright"><code>PROJ4</code>:</td><td class="onleft"><code>a</code></td></tr>
      *     </table>
@@ -215,6 +215,7 @@ public class Mercator2SP extends MapProjection {
      *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>semi_minor</code></td></tr>
      *       <tr><td><b>Alias:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>Semi-minor axis</code></td></tr>
      *       <tr><td></td><td class="onright"><code>ESRI</code>:</td><td class="onleft"><code>Semi_Minor</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>NetCDF</code>:</td><td class="onleft"><code>semi_minor_axis</code></td></tr>
      *       <tr><td></td><td class="onright"><code>GeoTIFF</code>:</td><td class="onleft"><code>SemiMinor</code></td></tr>
      *       <tr><td></td><td class="onright"><code>PROJ4</code>:</td><td class="onleft"><code>b</code></td></tr>
      *     </table>
@@ -241,7 +242,7 @@ public class Mercator2SP extends MapProjection {
      *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>standard_parallel_1</code></td></tr>
      *       <tr><td><b>Alias:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>Latitude of 1st standard parallel</code></td></tr>
      *       <tr><td></td><td class="onright"><code>ESRI</code>:</td><td class="onleft"><code>Standard_Parallel_1</code></td></tr>
-     *       <tr><td></td><td class="onright"><code>NetCDF</code>:</td><td class="onleft"><code>standard_parallel[1]</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>NetCDF</code>:</td><td class="onleft"><code>standard_parallel</code></td></tr>
      *       <tr><td></td><td class="onright"><code>GeoTIFF</code>:</td><td class="onleft"><code>StdParallel1</code></td></tr>
      *       <tr><td></td><td class="onright"><code>PROJ4</code>:</td><td class="onleft"><code>lat_1</code></td></tr>
      *     </table>
@@ -322,7 +323,7 @@ public class Mercator2SP extends MapProjection {
      *   </td></tr>
      * </table>
      */
-    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
+    public static final ParameterDescriptorGroup PARAMETERS = UniversalParameters.createDescriptorGroup(
         new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.OGC,    "Mercator_2SP"),
             new NamedIdentifier(Citations.EPSG,   "Mercator (variant B)"), // Starting from 7.6

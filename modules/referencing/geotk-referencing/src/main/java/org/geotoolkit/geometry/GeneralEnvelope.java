@@ -139,8 +139,8 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
     /**
      * Constructs one-dimensional envelope defined by a range of values.
      *
-     * @param min The minimal value.
-     * @param max The maximal value.
+     * @param min The lower value.
+     * @param max The upper value.
      */
     public GeneralEnvelope(final double min, final double max) {
         super(min, max);
@@ -149,8 +149,8 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
     /**
      * Constructs a envelope defined by two positions.
      *
-     * @param  minDP Minimum ordinate values.
-     * @param  maxDP Maximum ordinate values.
+     * @param  minDP Lower ordinate values.
+     * @param  maxDP Upper ordinate values.
      * @throws MismatchedDimensionException if the two positions don't have the same dimension.
      */
     public GeneralEnvelope(final double[] minDP, final double[] maxDP) {

@@ -26,8 +26,8 @@ import org.opengis.referencing.operation.Matrix;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.ComparisonMode;
-import org.geotoolkit.internal.referencing.Identifiers;
 import org.geotoolkit.referencing.operation.matrix.Matrix2;
+import org.geotoolkit.referencing.operation.provider.UniversalParameters;
 
 import static java.lang.Math.*;
 import static org.geotoolkit.util.Utilities.hash;
@@ -37,7 +37,7 @@ import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.
 
 
 /**
- * Krovak Oblique Conformal Conic projection (EPSG code 9819). See the
+ * <cite>Krovak Oblique Conformal Conic</cite> projection (EPSG code 9819). See the
  * <A HREF="http://www.posc.org/Epicentre.2_2/DataModel/ExamplesofUsage/eu_cs34e2.html">Krovak on POSC</A>
  * for an overview. See any of the following providers for a list of programmatic parameters:
  * <p>
@@ -156,7 +156,7 @@ public class Krovak extends UnitaryProjection {
         double pseudoStandardParallel;
         switch (parameters.standardParallels.length) {
             default: {
-                throw unknownParameter(Identifiers.STANDARD_PARALLEL_2);
+                throw unknownParameter(UniversalParameters.STANDARD_PARALLEL_2);
             }
             case 0: {
                 pseudoStandardParallel = PSEUDO_STANDARD_PARALLEL.getDefaultValue();

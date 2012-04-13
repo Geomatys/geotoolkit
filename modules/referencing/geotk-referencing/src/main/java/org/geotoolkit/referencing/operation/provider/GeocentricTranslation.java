@@ -28,7 +28,6 @@ import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.referencing.datum.BursaWolfParameters;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.internal.referencing.Identifiers;
 
 
 /**
@@ -52,7 +51,7 @@ import org.geotoolkit.internal.referencing.Identifiers;
  * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
  * <blockquote><p><b>Operation name:</b> {@code Geocentric translations (geog2D domain)}</p>
  * <table class="geotk">
- *   <tr><th>Parameter Name</th><th>Default value</th></tr>
+ *   <tr><th>Parameter name</th><th>Default value</th></tr>
  *   <tr><td>{@code dx}</td><td>0 metres</td></tr>
  *   <tr><td>{@code dy}</td><td>0 metres</td></tr>
  *   <tr><td>{@code dz}</td><td>0 metres</td></tr>
@@ -205,7 +204,7 @@ public class GeocentricTranslation extends PositionVector7Param {
      * </table>
      */
     @SuppressWarnings("hiding")
-    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
+    public static final ParameterDescriptorGroup PARAMETERS = UniversalParameters.createDescriptorGroup(
         new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.EPSG, "Geocentric translations (geog2D domain)"),
             new NamedIdentifier(Citations.EPSG, "Geocentric Translations"), // Legacy name

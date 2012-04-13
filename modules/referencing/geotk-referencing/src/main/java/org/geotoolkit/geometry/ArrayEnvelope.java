@@ -80,8 +80,8 @@ class ArrayEnvelope extends AbstractEnvelope implements Serializable {
     /**
      * Constructs one-dimensional envelope defined by a range of values.
      *
-     * @param min The minimal value.
-     * @param max The maximal value.
+     * @param min The lower value.
+     * @param max The upper value.
      */
     public ArrayEnvelope(final double min, final double max) {
         ordinates = new double[] {min, max};
@@ -90,10 +90,10 @@ class ArrayEnvelope extends AbstractEnvelope implements Serializable {
     /**
      * Builds a two-dimensional envelope with the specified bounds.
      *
-     * @param xmin The minimal value for the first ordinate.
-     * @param xmax The maximal value for the first ordinate.
-     * @param ymin The minimal value for the second ordinate.
-     * @param ymax The maximal value for the second ordinate.
+     * @param xmin The lower value for the first ordinate.
+     * @param xmax The upper value for the first ordinate.
+     * @param ymin The lower value for the second ordinate.
+     * @param ymax The upper value for the second ordinate.
      */
     public ArrayEnvelope(final double xmin, final double xmax, final double ymin, final double ymax) {
         ordinates = new double[] {
@@ -104,16 +104,11 @@ class ArrayEnvelope extends AbstractEnvelope implements Serializable {
     /**
      * Constructs a envelope defined by two positions.
      *
-     * @param  minDP Minimum ordinate values.
-     * @param  maxDP Maximum ordinate values.
+     * @param  minDP Lower ordinate values.
+     * @param  maxDP Upper ordinate values.
      * @throws MismatchedDimensionException if the two positions don't have the same dimension.
-     * @throws IllegalArgumentException if an ordinate value in the minimum point is not
-     *         less than or equal to the corresponding ordinate value in the maximum point
-     *         (except for {@linkplain RangeMeaning#WRAPAROUND wraparound} axis).
      */
-    public ArrayEnvelope(final double[] minDP, final double[] maxDP)
-            throws IllegalArgumentException
-    {
+    public ArrayEnvelope(final double[] minDP, final double[] maxDP) {
         ensureNonNull("minDP", minDP);
         ensureNonNull("maxDP", maxDP);
         ensureSameDimension(minDP.length, maxDP.length);

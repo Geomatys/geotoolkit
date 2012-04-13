@@ -18,10 +18,12 @@
 package org.geotoolkit.referencing.adapters;
 
 import java.util.Set;
+import java.util.HashSet;
 
 import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.util.NoSuchIdentifierException;
@@ -60,48 +62,79 @@ public final strictfp class NetcdfNameTest {
      */
     @Test
     public void compareNames() throws NoSuchIdentifierException {
+        final Set<String> netcdfParameterNames = new HashSet<String>();
         final MathTransformFactory factory = FactoryFinder.getMathTransformFactory(
                 new Hints(Hints.MATH_TRANSFORM_FACTORY, DefaultMathTransformFactory.class));
         final MathTransformFactory netcdfFactory = new NetcdfTransformFactory();
         for (final OperationMethod method : factory.getAvailableMethods(null)) {
-            String name = IdentifiedObjects.getName(method, Citations.NETCDF);
-            if (name != null) {
-                final ParameterValueGroup netcdfParam = netcdfFactory.getDefaultParameters(name);
-                assertNameEquals(name, netcdfParam.getDescriptor(), method);
+            final String methodName = IdentifiedObjects.getName(method, Citations.NETCDF);
+            if (methodName != null) {
+                /*
+                 * The Geotk operation parameter names were assigned on the assumption that the
+                 * NetCDF Stereographic projection uses USGS formulas rather than EPSG ones.
+                 * However the GeoAPI NetCDF wrappers still declare the EPSG parameter names
+                 * as the closest available match. Since Geotk supports both formulas as two
+                 * different kind of projections ("Stereographic" and "ObliqueStereographic")
+                 * we can not compare the EPSG parameter names since the set of NetCDF and EPSG
+                 * parameter names are non-empty in different Geotk providers.
+                 */
+                final boolean skipEPSG = methodName.equals("Stereographic");
+                final ParameterValueGroup netcdfParam = netcdfFactory.getDefaultParameters(methodName);
+                assertNameEquals(methodName, netcdfParam.getDescriptor(), method, skipEPSG);
+                netcdfParameterNames.clear();
+                for (final GeneralParameterValue netcdfValue : netcdfParam.values()) {
+                    assertTrue(methodName, netcdfParameterNames.add(IdentifiedObjects.getName(netcdfValue.getDescriptor(), Citations.NETCDF)));
+                }
                 for (final GeneralParameterDescriptor param : method.getParameters().descriptors()) {
-                    name = IdentifiedObjects.getName(param, Citations.NETCDF);
-                    if (name != null) try {
-                        final ParameterValue<?> netcdfValue = netcdfParam.parameter(name);
-                        assertNameEquals(name, netcdfValue.getDescriptor(), param);
-                    } catch (ParameterNotFoundException e) {
-                        System.out.println("WARNING: " + e.getLocalizedMessage());
+                    final String name = IdentifiedObjects.getName(param, Citations.NETCDF);
+                    if (name != null) {
+                        if (!name.equals("semi_major_axis") && !name.equals("semi_minor_axis")) try {
+                            final ParameterValue<?> netcdfValue = netcdfParam.parameter(name);
+                            assertTrue(methodName, netcdfParameterNames.remove(IdentifiedObjects.getName(netcdfValue.getDescriptor(), Citations.NETCDF)));
+                            assertNameEquals(methodName, netcdfValue.getDescriptor(), param, skipEPSG);
+                        } catch (ParameterNotFoundException e) {
+                            System.out.println("WARNING: " + methodName + ": " + e.getLocalizedMessage());
+                        }
                     }
                 }
+                assertTrue(netcdfParameterNames.remove("earth_radius"));
+                assertTrue(netcdfParameterNames.toString(), netcdfParameterNames.isEmpty());
             }
         }
     }
 
     /**
      * Ensures that the NetCDF, OGC and EPSG names of the given objects are equal.
+     *
+     * @param message The message to show in case of failure.
+     * @param netcdf  The NetCDF object from which to get the expected names.
+     * @param geotk   The Geotk object from which to get the names.
      */
-    private static void assertNameEquals(final String name, final IdentifiedObject expected,
-            final IdentifiedObject actual)
+    private static void assertNameEquals(final String message, final IdentifiedObject netcdf,
+            final IdentifiedObject geotk, final boolean skipEPSG)
     {
-        assertNameEquals(name, expected, actual, Citations.NETCDF);
-        assertNameEquals(name, expected, actual, Citations.OGC);
-//      assertNameEquals(name, expected, actual, Citations.EPSG);
+        assertNameEquals(message, netcdf, geotk, Citations.NETCDF, false);
+        assertNameEquals(message, netcdf, geotk, Citations.OGC,    false);
+        assertNameEquals(message, netcdf, geotk, Citations.EPSG,   skipEPSG);
     }
 
     /**
      * Ensures that the name of the given objects, for the given authority, are equal.
+     *
+     * @param message   The message to show in case of failure.
+     * @param netcdf    The NetCDF object from which to get the expected names.
+     * @param geotk     The Geotk object from which to get the names.
+     * @param authority The authority of the names to compare.
      */
-    private static void assertNameEquals(final String name, final IdentifiedObject expected,
-            final IdentifiedObject actual, final Citation authority)
+    private static void assertNameEquals(final String message, final IdentifiedObject netcdf,
+            final IdentifiedObject geotk, final Citation authority, final boolean skipEPSG)
     {
-        final Set<String> n1 = IdentifiedObjects.getNames(expected, authority);
-        final Set<String> n2 = IdentifiedObjects.getNames(actual,   authority);
-        assertFalse(name, n1.isEmpty());
-        assertFalse(name, n2.isEmpty());
-        assertTrue (name + " " + n1 + " " + n2, n2.containsAll(n1));
+        final Set<String> n1 = IdentifiedObjects.getNames(netcdf, authority);
+        final Set<String> n2 = IdentifiedObjects.getNames(geotk,  authority);
+        assertFalse (message, n1.isEmpty());
+        assertEquals(message, n2.isEmpty(), skipEPSG);
+        if (!skipEPSG) {
+            assertTrue(message + ": expected some or all of " + n1 + " but got " + n2, n2.containsAll(n1));
+        }
     }
 }

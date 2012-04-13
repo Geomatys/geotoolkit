@@ -44,15 +44,15 @@ import org.geotoolkit.referencing.operation.provider.HotineObliqueMercator;
 
 import static java.lang.Math.*;
 import static java.lang.Double.*;
-import static org.geotoolkit.internal.referencing.Identifiers.*;
 import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
+import static org.geotoolkit.referencing.operation.provider.UniversalParameters.*;
 import static org.geotoolkit.referencing.operation.provider.ObliqueMercator.AZIMUTH;
 import static org.geotoolkit.referencing.operation.provider.ObliqueMercator.LATITUDE_OF_CENTRE;
 import static org.geotoolkit.referencing.operation.provider.ObliqueMercator.LONGITUDE_OF_CENTRE;
 
 
 /**
- * Oblique Mercator projection (EPSG code 9815). See the
+ * <cite>Oblique Mercator</cite> projection (EPSG codes 9812, 9815). See the
  * <A HREF="http://mathworld.wolfram.com/MercatorProjection.html">Mercator projection on MathWorld</A>
  * for an overview. See any of the following providers for a list of programmatic parameters:
  * <p>

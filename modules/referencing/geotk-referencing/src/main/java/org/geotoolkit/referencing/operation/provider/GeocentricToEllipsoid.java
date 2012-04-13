@@ -33,6 +33,7 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.geotoolkit.referencing.operation.MathTransformProvider;
 import org.geotoolkit.referencing.operation.transform.GeocentricTransform;
 import org.geotoolkit.internal.referencing.MathTransformDecorator;
+
 import static org.geotoolkit.parameter.Parameters.*;
 
 
@@ -53,7 +54,7 @@ import static org.geotoolkit.parameter.Parameters.*;
  * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
  * <blockquote><p><b>Operation name:</b> {@code Geocentric_To_Ellipsoid}</p>
  * <table class="geotk">
- *   <tr><th>Parameter Name</th><th>Default value</th></tr>
+ *   <tr><th>Parameter name</th><th>Default value</th></tr>
  *   <tr><td>{@code semi_major}</td><td></td></tr>
  *   <tr><td>{@code semi_minor}</td><td></td></tr>
  *   <tr><td>{@code dim}</td><td>3</td></tr>

@@ -37,13 +37,13 @@ import org.geotoolkit.referencing.operation.matrix.Matrix2;
 import static java.lang.Math.*;
 import static java.lang.Double.*;
 import static org.geotoolkit.parameter.Parameters.getOrCreate;
-import static org.geotoolkit.internal.referencing.Identifiers.*;
 import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
+import static org.geotoolkit.referencing.operation.provider.UniversalParameters.*;
 import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters.ensureLatitudeInRange;
 
 
 /**
- * Albers Equal Area Projection (EPSG code 9822). See the
+ * <cite>Albers Equal Area</cite> projection (EPSG code 9822). See the
  * <A HREF="http://mathworld.wolfram.com/AlbersEqual-AreaConicProjection.html">Albers Equal-Area
  * Conic projection on MathWorld</A> for an overview. See any of the following providers for a
  * list of programmatic parameters:

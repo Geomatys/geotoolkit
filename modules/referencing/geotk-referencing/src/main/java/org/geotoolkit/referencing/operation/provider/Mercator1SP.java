@@ -31,7 +31,6 @@ import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.operation.projection.Mercator;
 import org.geotoolkit.internal.referencing.DeprecatedName;
-import org.geotoolkit.internal.referencing.Identifiers;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
 
@@ -49,13 +48,13 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * <p>The following table summarizes the parameters recognized by this provider.
  * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
  * <blockquote><p><b>Operation name:</b> {@code Mercator_1SP}
- * <br><b>Area of use:</b> <font size="-1">(union of CRS domains of validity from EPSG database)</font></p>
+ * <br><b>Area of use:</b> <font size="-1">(union of CRS domains of validity in EPSG database)</font></p>
  * <blockquote><table class="compact">
  *   <tr><td><b>in latitudes:</b></td><td class="onright">85°00.0′S</td><td>to</td><td class="onright">85°00.0′N</td></tr>
  *   <tr><td><b>in longitudes:</b></td><td class="onright">180°00.0′W</td><td>to</td><td class="onright">180°00.0′E</td></tr>
  * </table></blockquote>
  * <table class="geotk">
- *   <tr><th>Parameter Name</th><th>Default value</th></tr>
+ *   <tr><th>Parameter name</th><th>Default value</th></tr>
  *   <tr><td>{@code semi_major}</td><td></td></tr>
  *   <tr><td>{@code semi_minor}</td><td></td></tr>
  *   <tr><td>{@code roll_longitude}</td><td>false</td></tr>
@@ -295,25 +294,25 @@ public class Mercator1SP extends MapProjection {
     public static final ParameterDescriptorGroup PARAMETERS;
     static {
         final Citation[] excludes = new Citation[] {Citations.ESRI, Citations.NETCDF};
-        CENTRAL_MERIDIAN = Identifiers.CENTRAL_MERIDIAN.select(excludes,
+        CENTRAL_MERIDIAN = UniversalParameters.CENTRAL_MERIDIAN.select(excludes,
                 "Longitude of natural origin",      // EPSG
                 "central_meridian",                 // OGC
                 "NatOriginLong");                   // GeoTIFF
-        LATITUDE_OF_ORIGIN = Identifiers.LATITUDE_OF_ORIGIN.select(excludes,
+        LATITUDE_OF_ORIGIN = UniversalParameters.LATITUDE_OF_ORIGIN.select(excludes,
                 "Latitude of natural origin",       // EPSG
                 "latitude_of_origin",               // OGC
                 "NatOriginLat");                    // GeoTIFF
-        SCALE_FACTOR = Identifiers.SCALE_FACTOR.select(excludes,
+        SCALE_FACTOR = UniversalParameters.SCALE_FACTOR.select(excludes,
                 "Scale factor at natural origin",   // EPSG
                 "ScaleAtNatOrigin");                // GeoTIFF
-        FALSE_EASTING = Identifiers.FALSE_EASTING.select(excludes,
+        FALSE_EASTING = UniversalParameters.FALSE_EASTING.select(excludes,
                 "False easting",                    // EPSG
                 "FalseEasting");                    // GeoTIFF
-        FALSE_NORTHING = Identifiers.FALSE_NORTHING.select(excludes,
+        FALSE_NORTHING = UniversalParameters.FALSE_NORTHING.select(excludes,
                 "False northing",                   // EPSG
                 "FalseNorthing");                   // GeoTIFF
 
-        PARAMETERS = Identifiers.createDescriptorGroup(
+        PARAMETERS = UniversalParameters.createDescriptorGroup(
         new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.OGC,     "Mercator_1SP"),
             new NamedIdentifier(Citations.EPSG,    "Mercator (variant A)"), // Starting from 7.6

@@ -29,7 +29,6 @@ import org.opengis.referencing.operation.CylindricalProjection;
 
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.referencing.NamedIdentifier;
-import org.geotoolkit.internal.referencing.Identifiers;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
 
@@ -45,13 +44,13 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * <p>The following table summarizes the parameters recognized by this provider.
  * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
  * <blockquote><p><b>Operation name:</b> {@code Transverse_Mercator}
- * <br><b>Area of use:</b> <font size="-1">(union of CRS domains of validity from EPSG database)</font></p>
+ * <br><b>Area of use:</b> <font size="-1">(union of CRS domains of validity in EPSG database)</font></p>
  * <blockquote><table class="compact">
  *   <tr><td><b>in latitudes:</b></td><td class="onright">80°00.0′S</td><td>to</td><td class="onright">84°00.0′N</td></tr>
  *   <tr><td><b>in longitudes:</b></td><td class="onright">180°00.0′W</td><td>to</td><td class="onright">180°00.0′E</td></tr>
  * </table></blockquote>
  * <table class="geotk">
- *   <tr><th>Parameter Name</th><th>Default value</th></tr>
+ *   <tr><th>Parameter name</th><th>Default value</th></tr>
  *   <tr><td>{@code semi_major}</td><td></td></tr>
  *   <tr><td>{@code semi_minor}</td><td></td></tr>
  *   <tr><td>{@code roll_longitude}</td><td>false</td></tr>
@@ -93,7 +92,7 @@ public class TransverseMercator extends MapProjection {
      */
     @Deprecated
     public static final ParameterDescriptor<Double> CENTRAL_MERIDIAN =
-            Identifiers.CENTRAL_MERIDIAN.select(null,
+            UniversalParameters.CENTRAL_MERIDIAN.select(null,
                 "Longitude of natural origin",    // EPSG
                 "central_meridian",               // OGC
                 "Central_Meridian",               // ESRI
@@ -127,7 +126,7 @@ public class TransverseMercator extends MapProjection {
      */
     @Deprecated
     public static final ParameterDescriptor<Double> SCALE_FACTOR =
-            Identifiers.SCALE_FACTOR.select(null,
+            UniversalParameters.SCALE_FACTOR.select(null,
                 "Scale factor at natural origin",   // EPSG
                 "scale_factor_at_central_meridian", // NetCDF
                 "ScaleAtNatOrigin");                // GeoTIFF
@@ -188,6 +187,7 @@ public class TransverseMercator extends MapProjection {
      *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>semi_major</code></td></tr>
      *       <tr><td><b>Alias:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>Semi-major axis</code></td></tr>
      *       <tr><td></td><td class="onright"><code>ESRI</code>:</td><td class="onleft"><code>Semi_Major</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>NetCDF</code>:</td><td class="onleft"><code>semi_major_axis</code></td></tr>
      *       <tr><td></td><td class="onright"><code>GeoTIFF</code>:</td><td class="onleft"><code>SemiMajor</code></td></tr>
      *       <tr><td></td><td class="onright"><code>PROJ4</code>:</td><td class="onleft"><code>a</code></td></tr>
      *     </table>
@@ -203,6 +203,7 @@ public class TransverseMercator extends MapProjection {
      *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>semi_minor</code></td></tr>
      *       <tr><td><b>Alias:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>Semi-minor axis</code></td></tr>
      *       <tr><td></td><td class="onright"><code>ESRI</code>:</td><td class="onleft"><code>Semi_Minor</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>NetCDF</code>:</td><td class="onleft"><code>semi_minor_axis</code></td></tr>
      *       <tr><td></td><td class="onright"><code>GeoTIFF</code>:</td><td class="onleft"><code>SemiMinor</code></td></tr>
      *       <tr><td></td><td class="onright"><code>PROJ4</code>:</td><td class="onleft"><code>b</code></td></tr>
      *     </table>
@@ -311,7 +312,7 @@ public class TransverseMercator extends MapProjection {
      *   </td></tr>
      * </table>
      */
-    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
+    public static final ParameterDescriptorGroup PARAMETERS = UniversalParameters.createDescriptorGroup(
         new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.OGC,      "Transverse_Mercator"),
             new NamedIdentifier(Citations.EPSG,     "Transverse Mercator"),
@@ -379,13 +380,13 @@ public class TransverseMercator extends MapProjection {
      * <p>The following table summarizes the parameters recognized by this provider.
      * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
      * <blockquote><p><b>Operation name:</b> {@code Transverse Mercator (South Orientated)}
-     * <br><b>Area of use:</b> <font size="-1">(union of CRS domains of validity from EPSG database)</font></p>
+     * <br><b>Area of use:</b> <font size="-1">(union of CRS domains of validity in EPSG database)</font></p>
      * <blockquote><table class="compact">
      *   <tr><td><b>in latitudes:</b></td><td class="onright">34°51.0′S</td><td>to</td><td class="onright">16°59.4′S</td></tr>
      *   <tr><td><b>in longitudes:</b></td><td class="onright">11°36.0′E</td><td>to</td><td class="onright">32°54.0′E</td></tr>
      * </table></blockquote>
      * <table class="geotk">
-     *   <tr><th>Parameter Name</th><th>Default value</th></tr>
+     *   <tr><th>Parameter name</th><th>Default value</th></tr>
      *   <tr><td>{@code semi_major}</td><td></td></tr>
      *   <tr><td>{@code semi_minor}</td><td></td></tr>
      *   <tr><td>{@code roll_longitude}</td><td>false</td></tr>
@@ -537,7 +538,7 @@ public class TransverseMercator extends MapProjection {
             final Citation[] excludes = {
                 Citations.ESRI, Citations.NETCDF, Citations.GEOTIFF, Citations.PROJ4
             };
-            PARAMETERS = Identifiers.createDescriptorGroup(
+            PARAMETERS = UniversalParameters.createDescriptorGroup(
                 new ReferenceIdentifier[] {
                     new NamedIdentifier(Citations.EPSG, "Transverse Mercator (South Orientated)"),
                     new IdentifierCode (Citations.EPSG,  9808),

@@ -31,7 +31,7 @@ import static java.lang.Math.*;
 
 
 /**
- * Oblique Stereographic projection (EPSG code 9809).
+ * <cite>Oblique Stereographic</cite> projection (EPSG code 9809).
  * The formulas used below are not from the EPSG, but rather those of the
  * "<cite>Oblique Stereographic Alternative</cite>" in the {@code libproj4} package
  * written by Gerald Evenden. His work is acknowledged here and greatly appreciated.

@@ -39,13 +39,13 @@ import org.geotoolkit.referencing.operation.provider.LambertConformal2SP;
 import static java.lang.Math.*;
 import static java.lang.Double.*;
 import static org.geotoolkit.parameter.Parameters.getOrCreate;
-import static org.geotoolkit.internal.referencing.Identifiers.*;
 import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
+import static org.geotoolkit.referencing.operation.provider.UniversalParameters.*;
 import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters.ensureLatitudeInRange;
 
 
 /**
- * Lambert Conical Conformal Projection (EPSG codes 9801, 9802, 9803). See the
+ * <cite>Lambert Conical Conformal</cite> projection (EPSG codes 9801, 9802, 9803). See the
  * <A HREF="http://mathworld.wolfram.com/LambertConformalConicProjection.html">Lambert conformal
  * conic projection on MathWorld</A> for an overview. See any of the following providers for a
  * list of programmatic parameters:

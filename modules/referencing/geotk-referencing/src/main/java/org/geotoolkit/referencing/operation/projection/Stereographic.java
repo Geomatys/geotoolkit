@@ -38,7 +38,7 @@ import static org.geotoolkit.referencing.operation.provider.ObliqueStereographic
 
 
 /**
- * Stereographic Projection. See the
+ * <cite>Stereographic</cite> projection. See the
  * <A HREF="http://mathworld.wolfram.com/StereographicProjection.html">Stereographic projection on
  * MathWorld</A> for an overview. See any of the following providers for a list of programmatic
  * parameters:

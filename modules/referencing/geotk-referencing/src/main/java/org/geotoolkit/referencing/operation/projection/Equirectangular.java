@@ -32,12 +32,12 @@ import org.geotoolkit.referencing.operation.transform.Parameterized;
 import org.geotoolkit.referencing.operation.provider.EquidistantCylindrical;
 
 import static java.lang.Math.*;
-import static org.geotoolkit.internal.referencing.Identifiers.*;
+import static org.geotoolkit.referencing.operation.provider.UniversalParameters.*;
 
 
 /**
- * Equidistant Cylindrical projection (EPSG codes 1028, 1029, 9842, 9823). See the
- * <A HREF="http://mathworld.wolfram.com/CylindricalEquidistantProjection.html">Cylindrical
+ * <cite>Equidistant Cylindrical</cite> projection (EPSG codes 1028, 1029, <del>9842</del>, <del>9823</del>).
+ * See the <A HREF="http://mathworld.wolfram.com/CylindricalEquidistantProjection.html">Cylindrical
  * Equidistant projection on MathWorld</A> for an overview. See any of the following providers
  * for a list of programmatic parameters:
  * <p>

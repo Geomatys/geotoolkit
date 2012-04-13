@@ -25,7 +25,6 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.ReferenceIdentifier;
 
 import org.geotoolkit.referencing.NamedIdentifier;
-import org.geotoolkit.internal.referencing.Identifiers;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
 
@@ -39,7 +38,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
  * <blockquote><p><b>Operation name:</b> {@code Plate_Carree}</p>
  * <table class="geotk">
- *   <tr><th>Parameter Name</th><th>Default value</th></tr>
+ *   <tr><th>Parameter name</th><th>Default value</th></tr>
  *   <tr><td>{@code semi_major}</td><td></td></tr>
  *   <tr><td>{@code semi_minor}</td><td></td></tr>
  *   <tr><td>{@code roll_longitude}</td><td>false</td></tr>
@@ -163,7 +162,7 @@ public class PlateCarree extends EquidistantCylindrical {
      * </table>
      */
     @SuppressWarnings("hiding")
-    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
+    public static final ParameterDescriptorGroup PARAMETERS = UniversalParameters.createDescriptorGroup(
         new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.OGC,  "Plate_Carree"),
             new NamedIdentifier(Citations.EPSG, "Pseudo Plate Carree"),
@@ -173,7 +172,8 @@ public class PlateCarree extends EquidistantCylindrical {
         }, new Citation[] { // Authorities to exclude from the parameter descriptors.
             Citations.GEOTIFF, Citations.PROJ4
         }, new ParameterDescriptor<?>[] {
-            SEMI_MAJOR,     SEMI_MINOR,
+            sameParameterAs(EquidistantCylindrical.PARAMETERS, "semi_major"),
+            sameParameterAs(EquidistantCylindrical.PARAMETERS, "semi_minor"),
             ROLL_LONGITUDE, CENTRAL_MERIDIAN,
             FALSE_EASTING,  FALSE_NORTHING
         });

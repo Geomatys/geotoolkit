@@ -30,7 +30,6 @@ import org.opengis.referencing.ReferenceIdentifier;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.operation.projection.Equirectangular;
-import org.geotoolkit.internal.referencing.Identifiers;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
 
@@ -57,13 +56,13 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * <p>The following table summarizes the parameters recognized by this provider.
  * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
  * <blockquote><p><b>Operation name:</b> {@code Equidistant_Cylindrical}
- * <br><b>Area of use:</b> <font size="-1">(union of CRS domains of validity from EPSG database)</font></p>
+ * <br><b>Area of use:</b> <font size="-1">(union of CRS domains of validity in EPSG database)</font></p>
  * <blockquote><table class="compact">
  *   <tr><td><b>in latitudes:</b></td><td class="onright">90°00.0′S</td><td>to</td><td class="onright">90°00.0′N</td></tr>
  *   <tr><td><b>in longitudes:</b></td><td class="onright">180°00.0′W</td><td>to</td><td class="onright">180°00.0′E</td></tr>
  * </table></blockquote>
  * <table class="geotk">
- *   <tr><th>Parameter Name</th><th>Default value</th></tr>
+ *   <tr><th>Parameter name</th><th>Default value</th></tr>
  *   <tr><td>{@code semi_major}</td><td></td></tr>
  *   <tr><td>{@code semi_minor}</td><td></td></tr>
  *   <tr><td>{@code roll_longitude}</td><td>false</td></tr>
@@ -146,32 +145,6 @@ public class EquidistantCylindrical extends MapProjection {
      */
     @Deprecated
     public static final ParameterDescriptor<Double> FALSE_NORTHING;
-
-    /**
-     * Parameters creation, which must be done before to initialize the {@link #PARAMETERS} field.
-     */
-    static {
-        final Citation[] excludes = new Citation[] {Citations.NETCDF};
-        CENTRAL_MERIDIAN = Identifiers.CENTRAL_MERIDIAN.select(null, null, excludes, new String[] {
-                "Longitude of false origin"},        // EPSG (deprecated - was used by EPSG:9842 only)
-                "Longitude of natural origin",       // EPSG
-                "central_meridian",                  // OGC
-                "Central_Meridian",                  // ESRI
-                "ProjCenterLong");                   // GeoTIFF
-        LATITUDE_OF_ORIGIN = Identifiers.LATITUDE_OF_ORIGIN.select(null, null, excludes, new String[] {
-                "Latitude of natural origin"},       // EPSG (deprecated - was used by EPSG:9842 and 9823)
-                "Latitude of 1st standard parallel", // EPSG
-                "latitude_of_origin",                // OGC
-                "Standard_Parallel_1",               // ESRI
-                "ProjCenterLat");                    // GeoTIFF
-        // Following are the same than Mercator1SP except for the exclusion list.
-        FALSE_EASTING = Identifiers.FALSE_EASTING.select(excludes,
-                "False easting",                     // EPSG
-                "FalseEasting");                     // GeoTIFF
-        FALSE_NORTHING = Identifiers.FALSE_NORTHING.select(excludes,
-                "False northing",                    // EPSG
-                "FalseNorthing");                    // GeoTIFF
-    }
 
     /**
      * The group of all parameters expected by this coordinate operation.
@@ -305,8 +278,29 @@ public class EquidistantCylindrical extends MapProjection {
      *   </td></tr>
      * </table>
      */
-    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
-        new ReferenceIdentifier[] {
+    public static final ParameterDescriptorGroup PARAMETERS;
+    static {
+        final Citation[] excludes = new Citation[] {Citations.NETCDF};
+        CENTRAL_MERIDIAN = UniversalParameters.CENTRAL_MERIDIAN.select(null, null, excludes, new String[] {
+                "Longitude of false origin"},        // EPSG (deprecated - was used by EPSG:9842 only)
+                "Longitude of natural origin",       // EPSG
+                "central_meridian",                  // OGC
+                "Central_Meridian",                  // ESRI
+                "ProjCenterLong");                   // GeoTIFF
+        LATITUDE_OF_ORIGIN = UniversalParameters.LATITUDE_OF_ORIGIN.select(null, null, excludes, new String[] {
+                "Latitude of natural origin"},       // EPSG (deprecated - was used by EPSG:9842 and 9823)
+                "Latitude of 1st standard parallel", // EPSG
+                "latitude_of_origin",                // OGC
+                "Standard_Parallel_1",               // ESRI
+                "ProjCenterLat");                    // GeoTIFF
+        // Following are the same than Mercator1SP except for the exclusion list.
+        FALSE_EASTING = UniversalParameters.FALSE_EASTING.select(excludes,
+                "False easting",                     // EPSG
+                "FalseEasting");                     // GeoTIFF
+        FALSE_NORTHING = UniversalParameters.FALSE_NORTHING.select(excludes,
+                "False northing",                    // EPSG
+                "FalseNorthing");                    // GeoTIFF
+        PARAMETERS = UniversalParameters.createDescriptorGroup(new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.OGC,     "Equidistant_Cylindrical"),
             new NamedIdentifier(Citations.EPSG,    "Equidistant Cylindrical"),
             new NamedIdentifier(Citations.EPSG,    "Equidistant Cylindrical (Spherical)"),
@@ -321,11 +315,12 @@ public class EquidistantCylindrical extends MapProjection {
             new NamedIdentifier(Citations.PROJ4,    "eqc"),
             new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
                                 Vocabulary.Keys.EQUIDISTANT_CYLINDRICAL_PROJECTION))
-        }, null, new ParameterDescriptor<?>[] {
+        }, excludes, new ParameterDescriptor<?>[] {
             SEMI_MAJOR,       SEMI_MINOR, ROLL_LONGITUDE,
             CENTRAL_MERIDIAN, LATITUDE_OF_ORIGIN,
             FALSE_EASTING,    FALSE_NORTHING
         });
+    }
 
     /**
      * Constructs a new provider.

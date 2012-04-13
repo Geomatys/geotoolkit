@@ -37,7 +37,7 @@ import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Errors;
 
 import static org.geotoolkit.parameter.Parameters.*;
-import static org.geotoolkit.internal.referencing.Identifiers.createDescriptorGroup;
+import static org.geotoolkit.referencing.operation.provider.UniversalParameters.createDescriptorGroup;
 import static org.geotoolkit.referencing.operation.transform.EarthGravitationalModel.*;
 
 
@@ -50,7 +50,7 @@ import static org.geotoolkit.referencing.operation.transform.EarthGravitationalM
  * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
  * <blockquote><p><b>Operation name:</b> {@code Ellipsoid_To_Geoid}</p>
  * <table class="geotk">
- *   <tr><th>Parameter Name</th><th>Default value</th></tr>
+ *   <tr><th>Parameter name</th><th>Default value</th></tr>
  *   <tr><td>{@code Datum}</td><td>{@code "WGS84"}</td></tr>
  *   <tr><td>{@code Order}</td><td>180</td></tr>
  * </table></blockquote>

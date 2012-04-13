@@ -34,7 +34,7 @@ import org.geotoolkit.util.XArrays;
 
 
 /**
- * An utility class for the separation of {@linkplain ConcatenatedTransform concatenation} of
+ * A utility class for the separation of {@linkplain ConcatenatedTransform concatenation} of
  * {@linkplain PassThroughTransform pass through transforms}. Given an arbitrary
  * {@linkplain MathTransform math transform}, this utility class will returns a new math transform
  * that operates only of a given set of source dimensions. For example if the supplied

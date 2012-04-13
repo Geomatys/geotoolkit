@@ -220,7 +220,7 @@ public final class ProjectionParametersJavadoc extends JavadocUpdater {
         lines.add("For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>");
         lines.add("<blockquote><p><b>Operation name:</b> {@code " + group.getName().getCode() + (validity != null ? "}" : "}</p>"));
         if (validity != null) {
-            lines.add("<br><b>Area of use:</b> <font size=\"-1\">(union of CRS domains of validity from EPSG database)</font></p>");
+            lines.add("<br><b>Area of use:</b> <font size=\"-1\">(union of CRS domains of validity in EPSG database)</font></p>");
             lines.add("<blockquote><table class=\"compact\">");
             lines.add("  <tr><td><b>in latitudes:</b></td><td class=\"onright\">" +
                     new Latitude(validity.getSouthBoundLatitude()) + "</td><td>to</td><td class=\"onright\">" +
@@ -231,7 +231,7 @@ public final class ProjectionParametersJavadoc extends JavadocUpdater {
             lines.add("</table></blockquote>");
         }
         lines.add("<table class=\"geotk\">");
-        lines.add("  <tr><th>Parameter Name</th><th>Default value</th></tr>");
+        lines.add("  <tr><th>Parameter name</th><th>Default value</th></tr>");
         for (final GeneralParameterDescriptor gp : group.descriptors()) {
             final ParameterDescriptor<?> param = (ParameterDescriptor<?>) gp;
             lines.add("  <tr><td>{@code " + param.getName().getCode() + "}</td>" +

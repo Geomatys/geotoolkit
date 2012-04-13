@@ -28,9 +28,9 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.ReferenceIdentifier;
 
 import org.geotoolkit.referencing.NamedIdentifier;
-import org.geotoolkit.internal.referencing.Identifiers;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import static org.geotoolkit.internal.referencing.Identifiers.createDescriptor;
+
+import static org.geotoolkit.referencing.operation.provider.UniversalParameters.createDescriptor;
 
 
 /**
@@ -46,13 +46,13 @@ import static org.geotoolkit.internal.referencing.Identifiers.createDescriptor;
  * <p>The following table summarizes the parameters recognized by this provider.
  * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
  * <blockquote><p><b>Operation name:</b> {@code New_Zealand_Map_Grid}
- * <br><b>Area of use:</b> <font size="-1">(union of CRS domains of validity from EPSG database)</font></p>
+ * <br><b>Area of use:</b> <font size="-1">(union of CRS domains of validity in EPSG database)</font></p>
  * <blockquote><table class="compact">
  *   <tr><td><b>in latitudes:</b></td><td class="onright">47°24.0′S</td><td>to</td><td class="onright">34°00.0′S</td></tr>
  *   <tr><td><b>in longitudes:</b></td><td class="onright">166°19.8′E</td><td>to</td><td class="onright">178°36.0′E</td></tr>
  * </table></blockquote>
  * <table class="geotk">
- *   <tr><th>Parameter Name</th><th>Default value</th></tr>
+ *   <tr><th>Parameter name</th><th>Default value</th></tr>
  *   <tr><td>{@code semi_major}</td><td>6378388 metres</td></tr>
  *   <tr><td>{@code semi_minor}</td><td>6356911.9461279465 metres</td></tr>
  *   <tr><td>{@code roll_longitude}</td><td>false</td></tr>
@@ -182,18 +182,18 @@ public class NewZealandMapGrid extends MapProjection {
                 sameNameAs(Citations.GEOTIFF, MapProjection.SEMI_MINOR),
                 sameNameAs(Citations.PROJ4,   MapProjection.SEMI_MINOR)
             }, 6378388.0*(1-1/297.0), 0.0, Double.POSITIVE_INFINITY, SI.METRE, true);
-        CENTRAL_MERIDIAN = Identifiers.CENTRAL_MERIDIAN.select(true, 173.0, excludes, null,
+        CENTRAL_MERIDIAN = UniversalParameters.CENTRAL_MERIDIAN.select(true, 173.0, excludes, null,
                 "Longitude of natural origin",  // EPSG
                 "central_meridian",             // OGC
                 "NatOriginLong");               // GeoTIFF
-        LATITUDE_OF_ORIGIN = Identifiers.LATITUDE_OF_ORIGIN.select(true, -41.0, excludes, null,
+        LATITUDE_OF_ORIGIN = UniversalParameters.LATITUDE_OF_ORIGIN.select(true, -41.0, excludes, null,
                 "Latitude of natural origin",   // EPSG
                 "latitude_of_origin",           // OGC
                 "NatOriginLat");                // GeoTIFF
-        FALSE_EASTING = Identifiers.FALSE_EASTING.select(true, 2510000.0, excludes, null,
+        FALSE_EASTING = UniversalParameters.FALSE_EASTING.select(true, 2510000.0, excludes, null,
                 "False easting",                // EPSG
                 "FalseEasting");                // GeoTIFF
-        FALSE_NORTHING = Identifiers.FALSE_NORTHING.select(true, 6023150.0, excludes, null,
+        FALSE_NORTHING = UniversalParameters.FALSE_NORTHING.select(true, 6023150.0, excludes, null,
                 "False northing",               // EPSG
                 "FalseNorthing");               // GeoTIFF
     }
@@ -317,7 +317,7 @@ public class NewZealandMapGrid extends MapProjection {
      *   </td></tr>
      * </table>
      */
-    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
+    public static final ParameterDescriptorGroup PARAMETERS = UniversalParameters.createDescriptorGroup(
         new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.OGC,     "New_Zealand_Map_Grid"),
             new NamedIdentifier(Citations.EPSG,    "New Zealand Map Grid"),

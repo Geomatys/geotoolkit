@@ -30,12 +30,12 @@ import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 
-import org.geotoolkit.internal.referencing.Identifiers;
 import org.geotoolkit.referencing.operation.matrix.Matrix2;
 import org.geotoolkit.referencing.operation.provider.Mercator1SP;
 import org.geotoolkit.referencing.operation.provider.Mercator2SP;
 import org.geotoolkit.referencing.operation.provider.PseudoMercator;
 import org.geotoolkit.referencing.operation.provider.MillerCylindrical;
+import org.geotoolkit.referencing.operation.provider.UniversalParameters;
 
 import static java.lang.Math.*;
 import static java.lang.Double.*;
@@ -43,7 +43,7 @@ import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.
 
 
 /**
- * Mercator Cylindrical Projection (EPSG codes 9804, 9805). See the
+ * <cite>Mercator Cylindrical</cite> projection (EPSG codes 9804, 9805, 1026, 1024, <del>9841</del>). See the
  * <A HREF="http://mathworld.wolfram.com/MercatorProjection.html">Mercator projection on MathWorld</A>
  * for an overview. See any of the following providers for a list of programmatic parameters:
  * <p>
@@ -142,7 +142,7 @@ public class Mercator extends UnitaryProjection {
         switch (parameters.standardParallels.length) {
             default: {
                 // A "standard_parallel_2" argument is presents.
-                throw unknownParameter(Identifiers.STANDARD_PARALLEL_2);
+                throw unknownParameter(UniversalParameters.STANDARD_PARALLEL_2);
             }
             case 0: {
                 // No standard parallel. Instead, uses the scale factor explicitly provided.

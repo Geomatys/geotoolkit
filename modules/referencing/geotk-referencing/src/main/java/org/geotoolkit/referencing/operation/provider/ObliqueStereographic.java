@@ -19,13 +19,11 @@ package org.geotoolkit.referencing.operation.provider;
 
 import net.jcip.annotations.Immutable;
 
-import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.ReferenceIdentifier;
 
 import org.geotoolkit.referencing.NamedIdentifier;
-import org.geotoolkit.internal.referencing.Identifiers;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
 
@@ -41,13 +39,13 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * <p>The following table summarizes the parameters recognized by this provider.
  * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
  * <blockquote><p><b>Operation name:</b> {@code Oblique_Stereographic}
- * <br><b>Area of use:</b> <font size="-1">(union of CRS domains of validity from EPSG database)</font></p>
+ * <br><b>Area of use:</b> <font size="-1">(union of CRS domains of validity in EPSG database)</font></p>
  * <blockquote><table class="compact">
  *   <tr><td><b>in latitudes:</b></td><td class="onright">32°18.6′N</td><td>to</td><td class="onright">54°52.2′N</td></tr>
  *   <tr><td><b>in longitudes:</b></td><td class="onright">69°03.0′W</td><td>to</td><td class="onright">42°22.8′E</td></tr>
  * </table></blockquote>
  * <table class="geotk">
- *   <tr><th>Parameter Name</th><th>Default value</th></tr>
+ *   <tr><th>Parameter name</th><th>Default value</th></tr>
  *   <tr><td>{@code semi_major}</td><td></td></tr>
  *   <tr><td>{@code semi_minor}</td><td></td></tr>
  *   <tr><td>{@code roll_longitude}</td><td>false</td></tr>
@@ -249,11 +247,10 @@ public class ObliqueStereographic extends Stereographic {
     @SuppressWarnings("hiding")
     public static final ParameterDescriptorGroup PARAMETERS;
     static {
-        final Citation[] excludes = new Citation[] {Citations.NETCDF};
         CENTRAL_MERIDIAN   = CassiniSoldner.CENTRAL_MERIDIAN;
         LATITUDE_OF_ORIGIN = CassiniSoldner.LATITUDE_OF_ORIGIN;
 
-        PARAMETERS = Identifiers.createDescriptorGroup(new ReferenceIdentifier[] {
+        PARAMETERS = UniversalParameters.createDescriptorGroup(new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.OGC,     "Oblique_Stereographic"),
             new NamedIdentifier(Citations.EPSG,    "Oblique Stereographic"),
             new NamedIdentifier(Citations.EPSG,    "Roussilhe"),
@@ -264,7 +261,9 @@ public class ObliqueStereographic extends Stereographic {
             new NamedIdentifier(Citations.PROJ4,   "sterea"),
             sameNameAs(Citations.GEOTOOLKIT, Stereographic.PARAMETERS)
         }, null, new ParameterDescriptor<?>[] {
-            SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
+            sameParameterAs(EquidistantCylindrical.PARAMETERS, "semi_major"),
+            sameParameterAs(EquidistantCylindrical.PARAMETERS, "semi_minor"),
+            ROLL_LONGITUDE,
             CENTRAL_MERIDIAN, LATITUDE_OF_ORIGIN,
             Orthographic.SCALE_FACTOR,
             EquidistantCylindrical.FALSE_EASTING,

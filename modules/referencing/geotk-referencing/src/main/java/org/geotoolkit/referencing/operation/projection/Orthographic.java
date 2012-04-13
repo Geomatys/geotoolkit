@@ -38,7 +38,7 @@ import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
 
 
 /**
- * Orthographic Projection. See the
+ * <cite>Orthographic</cite> projection. See the
  * <A HREF="http://mathworld.wolfram.com/OrthographicProjection.html">Orthographic projection on
  * MathWorld</A> for an overview. See any of the following providers for a list of programmatic
  * parameters:

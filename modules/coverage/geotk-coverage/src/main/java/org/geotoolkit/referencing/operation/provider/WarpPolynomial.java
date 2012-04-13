@@ -38,7 +38,7 @@ import org.geotoolkit.referencing.operation.MathTransformProvider;
 import org.geotoolkit.referencing.operation.transform.WarpTransform2D;
 
 import static org.geotoolkit.parameter.Parameters.*;
-import static org.geotoolkit.internal.referencing.Identifiers.createDescriptorGroup;
+import static org.geotoolkit.referencing.operation.provider.UniversalParameters.createDescriptorGroup;
 
 
 /**
@@ -51,7 +51,7 @@ import static org.geotoolkit.internal.referencing.Identifiers.createDescriptorGr
  * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
  * <blockquote><p><b>Operation name:</b> {@code WarpPolynomial}</p>
  * <table class="geotk">
- *   <tr><th>Parameter Name</th><th>Default value</th></tr>
+ *   <tr><th>Parameter name</th><th>Default value</th></tr>
  *   <tr><td>{@code degree}</td><td>2</td></tr>
  *   <tr><td>{@code xCoeffs}</td><td></td></tr>
  *   <tr><td>{@code yCoeffs}</td><td></td></tr>

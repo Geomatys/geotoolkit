@@ -30,7 +30,6 @@ import org.opengis.referencing.operation.CylindricalProjection;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.DefaultReferenceIdentifier;
 import org.geotoolkit.referencing.operation.projection.Mercator;
-import org.geotoolkit.internal.referencing.Identifiers;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
 
@@ -60,7 +59,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
  * <blockquote><p><b>Operation name:</b> {@code Miller_Cylindrical}</p>
  * <table class="geotk">
- *   <tr><th>Parameter Name</th><th>Default value</th></tr>
+ *   <tr><th>Parameter name</th><th>Default value</th></tr>
  *   <tr><td>{@code semi_major}</td><td></td></tr>
  *   <tr><td>{@code semi_minor}</td><td></td></tr>
  *   <tr><td>{@code roll_longitude}</td><td>false</td></tr>
@@ -258,18 +257,18 @@ public class MillerCylindrical extends MapProjection {
     public static final ParameterDescriptorGroup PARAMETERS;
     static {
         final Citation[] excludes = new Citation[] {Citations.EPSG, Citations.ESRI, Citations.NETCDF};
-        LONGITUDE_OF_CENTRE = Identifiers.CENTRAL_MERIDIAN.select(excludes,
+        LONGITUDE_OF_CENTRE = UniversalParameters.CENTRAL_MERIDIAN.select(excludes,
                 "longitude_of_center", // OGC
                 "ProjCenterLong");     // GeoTIFF
-        LATITUDE_OF_CENTRE = Identifiers.LATITUDE_OF_ORIGIN.select(false, null, excludes, null,
+        LATITUDE_OF_CENTRE = UniversalParameters.LATITUDE_OF_ORIGIN.select(false, null, excludes, null,
                 "latitude_of_center",  // OGC
                 "ProjCenterLat");      // GeoTIFF
-        FALSE_EASTING = Identifiers.FALSE_EASTING.select(excludes,
+        FALSE_EASTING = UniversalParameters.FALSE_EASTING.select(excludes,
                 "FalseEasting");       // GeoTIFF
-        FALSE_NORTHING = Identifiers.FALSE_NORTHING.select(excludes,
+        FALSE_NORTHING = UniversalParameters.FALSE_NORTHING.select(excludes,
                 "FalseNorthing");      // GeoTIFF
 
-        PARAMETERS = Identifiers.createDescriptorGroup(new ReferenceIdentifier[] {
+        PARAMETERS = UniversalParameters.createDescriptorGroup(new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.OGC,     "Miller_Cylindrical"),
             new NamedIdentifier(Citations.IGNF,    "Miller_Cylindrical_Sphere"),
             new DefaultReferenceIdentifier(Citations.IGNF, "IGNF", "PRC9901"),

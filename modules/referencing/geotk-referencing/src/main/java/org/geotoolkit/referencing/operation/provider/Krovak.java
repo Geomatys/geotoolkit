@@ -28,7 +28,6 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.ReferenceIdentifier;
 
 import org.geotoolkit.referencing.NamedIdentifier;
-import org.geotoolkit.internal.referencing.Identifiers;
 import org.geotoolkit.internal.referencing.DeprecatedName;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
@@ -45,13 +44,13 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * <p>The following table summarizes the parameters recognized by this provider.
  * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
  * <blockquote><p><b>Operation name:</b> {@code Krovak}
- * <br><b>Area of use:</b> <font size="-1">(union of CRS domains of validity from EPSG database)</font></p>
+ * <br><b>Area of use:</b> <font size="-1">(union of CRS domains of validity in EPSG database)</font></p>
  * <blockquote><table class="compact">
  *   <tr><td><b>in latitudes:</b></td><td class="onright">47°44.4′N</td><td>to</td><td class="onright">51°03.0′N</td></tr>
  *   <tr><td><b>in longitudes:</b></td><td class="onright">12°05.4′E</td><td>to</td><td class="onright">22°33.6′E</td></tr>
  * </table></blockquote>
  * <table class="geotk">
- *   <tr><th>Parameter Name</th><th>Default value</th></tr>
+ *   <tr><th>Parameter name</th><th>Default value</th></tr>
  *   <tr><td>{@code semi_major}</td><td></td></tr>
  *   <tr><td>{@code semi_minor}</td><td></td></tr>
  *   <tr><td>{@code roll_longitude}</td><td>false</td></tr>
@@ -188,25 +187,25 @@ public class Krovak extends MapProjection {
      */
     static {
         final Citation[] excludes = new Citation[] {Citations.NETCDF};
-        LONGITUDE_OF_CENTRE = Identifiers.CENTRAL_MERIDIAN.select(true, 42.5 - 17.66666666666667, excludes, null,
+        LONGITUDE_OF_CENTRE = UniversalParameters.CENTRAL_MERIDIAN.select(true, 42.5 - 17.66666666666667, excludes, null,
                 "Longitude of origin",           // EPSG
                 "longitude_of_center",           // OGC
                 "Longitude_Of_Center",           // ESRI
                 "CenterLong");                   // GeoTIFF
-        LATITUDE_OF_CENTRE = Identifiers.LATITUDE_OF_ORIGIN.select(true, 49.5, excludes, null,
+        LATITUDE_OF_CENTRE = UniversalParameters.LATITUDE_OF_ORIGIN.select(true, 49.5, excludes, null,
                 "Latitude of projection centre", // EPSG
                 "latitude_of_center",            // OGC
                 "Latitude_Of_Center",            // ESRI
                 "CenterLat");                    // GeoTIFF
-        AZIMUTH = Identifiers.AZIMUTH.select(true, 30.28813972222222, excludes, null,
+        AZIMUTH = UniversalParameters.AZIMUTH.select(true, 30.28813972222222, excludes, null,
                 "Co-latitude of cone axis",      // EPSG
                 "azimuth",                       // OGC
                 "AzimuthAngle");                 // GeoTIFF
-        PSEUDO_STANDARD_PARALLEL = Identifiers.STANDARD_PARALLEL_1.select(true, 78.5, excludes, null,
+        PSEUDO_STANDARD_PARALLEL = UniversalParameters.STANDARD_PARALLEL_1.select(true, 78.5, excludes, null,
                 "Latitude of pseudo standard parallel",     // EPSG
                 "pseudo_standard_parallel_1",               // OGC
                 "Pseudo_Standard_Parallel_1");              // ESRI
-        SCALE_FACTOR = Identifiers.SCALE_FACTOR.select(true, 0.9999, excludes, null,
+        SCALE_FACTOR = UniversalParameters.SCALE_FACTOR.select(true, 0.9999, excludes, null,
                 "Scale factor on pseudo standard parallel", // EPSG
                 "ScaleAtCenter");                           // GeoTIFF
         // Following are the same than Mercator1SP except for the exclusion list.
@@ -422,7 +421,7 @@ public class Krovak extends MapProjection {
      *   </td></tr>
      * </table>
      */
-    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
+    public static final ParameterDescriptorGroup PARAMETERS = UniversalParameters.createDescriptorGroup(
         new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.OGC,        "Krovak"),
             new NamedIdentifier(Citations.EPSG,       "Krovak"), // Starting from EPSG version 7.6

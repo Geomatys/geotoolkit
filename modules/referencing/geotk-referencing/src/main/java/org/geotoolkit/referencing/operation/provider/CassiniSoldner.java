@@ -28,7 +28,6 @@ import org.opengis.referencing.ReferenceIdentifier;
 
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.referencing.NamedIdentifier;
-import org.geotoolkit.internal.referencing.Identifiers;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
 
@@ -44,13 +43,13 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * <p>The following table summarizes the parameters recognized by this provider.
  * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
  * <blockquote><p><b>Operation name:</b> {@code Cassini_Soldner}
- * <br><b>Area of use:</b> <font size="-1">(union of CRS domains of validity from EPSG database)</font></p>
+ * <br><b>Area of use:</b> <font size="-1">(union of CRS domains of validity in EPSG database)</font></p>
  * <blockquote><table class="compact">
  *   <tr><td><b>in latitudes:</b></td><td class="onright">18°36.0′S</td><td>to</td><td class="onright">52°40.8′N</td></tr>
  *   <tr><td><b>in longitudes:</b></td><td class="onright">62°04.8′W</td><td>to</td><td class="onright">178°52.2′E</td></tr>
  * </table></blockquote>
  * <table class="geotk">
- *   <tr><th>Parameter Name</th><th>Default value</th></tr>
+ *   <tr><th>Parameter name</th><th>Default value</th></tr>
  *   <tr><td>{@code semi_major}</td><td></td></tr>
  *   <tr><td>{@code semi_minor}</td><td></td></tr>
  *   <tr><td>{@code roll_longitude}</td><td>false</td></tr>
@@ -155,17 +154,17 @@ public class CassiniSoldner extends MapProjection {
      */
     static {
         final Citation[] excludes = new Citation[] {Citations.NETCDF};
-        CENTRAL_MERIDIAN = Identifiers.CENTRAL_MERIDIAN.select(excludes,
+        CENTRAL_MERIDIAN = UniversalParameters.CENTRAL_MERIDIAN.select(excludes,
                 "Longitude of natural origin",      // EPSG
                 "central_meridian",                 // OGC
                 "Central_Meridian",                 // ESRI
                 "NatOriginLong");                   // GeoTIFF
-        LATITUDE_OF_ORIGIN = Identifiers.LATITUDE_OF_ORIGIN.select(excludes,
+        LATITUDE_OF_ORIGIN = UniversalParameters.LATITUDE_OF_ORIGIN.select(excludes,
                 "Latitude of natural origin",       // EPSG
                 "latitude_of_origin",               // OGC
                 "Latitude_Of_Origin",               // ESRI
                 "NatOriginLat");                    // GeoTIFF
-        SCALE_FACTOR = Identifiers.SCALE_FACTOR.select(excludes,
+        SCALE_FACTOR = UniversalParameters.SCALE_FACTOR.select(excludes,
                 "Scale factor at natural origin",   // EPSG
                 "ScaleAtNatOrigin");                // GeoTIFf
         FALSE_EASTING  = EquidistantCylindrical.FALSE_EASTING;
@@ -313,7 +312,7 @@ public class CassiniSoldner extends MapProjection {
      *   </td></tr>
      * </table>
      */
-    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
+    public static final ParameterDescriptorGroup PARAMETERS = UniversalParameters.createDescriptorGroup(
         new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.OGC,     "Cassini_Soldner"),
             new NamedIdentifier(Citations.EPSG,    "Cassini-Soldner"),
@@ -325,7 +324,9 @@ public class CassiniSoldner extends MapProjection {
             new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
                                 Vocabulary.Keys.CASSINI_SOLDNER_PROJECTION))
         }, null, new ParameterDescriptor<?>[] {
-            SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
+            sameParameterAs(EquidistantCylindrical.PARAMETERS, "semi_major"),
+            sameParameterAs(EquidistantCylindrical.PARAMETERS, "semi_minor"),
+            ROLL_LONGITUDE,
             CENTRAL_MERIDIAN, LATITUDE_OF_ORIGIN, SCALE_FACTOR,
             FALSE_EASTING, FALSE_NORTHING
         });

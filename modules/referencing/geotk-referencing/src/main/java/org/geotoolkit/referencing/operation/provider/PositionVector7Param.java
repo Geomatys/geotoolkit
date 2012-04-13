@@ -42,10 +42,9 @@ import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.referencing.operation.MathTransformProvider;
 import org.geotoolkit.referencing.operation.transform.GeocentricTransform;
 import org.geotoolkit.referencing.operation.transform.GeocentricAffineTransform;
-import org.geotoolkit.internal.referencing.Identifiers;
 
 import static java.util.Collections.singletonMap;
-import static org.geotoolkit.internal.referencing.Identifiers.createDescriptor;
+import static org.geotoolkit.referencing.operation.provider.UniversalParameters.createDescriptor;
 
 
 /**
@@ -66,7 +65,7 @@ import static org.geotoolkit.internal.referencing.Identifiers.createDescriptor;
  * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
  * <blockquote><p><b>Operation name:</b> {@code Position Vector transformation (geog2D domain)}</p>
  * <table class="geotk">
- *   <tr><th>Parameter Name</th><th>Default value</th></tr>
+ *   <tr><th>Parameter name</th><th>Default value</th></tr>
  *   <tr><td>{@code dx}</td><td>0 metres</td></tr>
  *   <tr><td>{@code dy}</td><td>0 metres</td></tr>
  *   <tr><td>{@code dz}</td><td>0 metres</td></tr>
@@ -509,7 +508,7 @@ public class PositionVector7Param extends MathTransformProvider {
      * Creates a parameters group using the 7 parameters.
      */
     static ParameterDescriptorGroup createDescriptorGroup(final int code, final String name, final String legacyName) {
-        return Identifiers.createDescriptorGroup(new ReferenceIdentifier[] {
+        return UniversalParameters.createDescriptorGroup(new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.EPSG, name),
             new NamedIdentifier(Citations.EPSG, legacyName),
             new NamedIdentifier(Citations.EPSG, "Bursa-Wolf"),

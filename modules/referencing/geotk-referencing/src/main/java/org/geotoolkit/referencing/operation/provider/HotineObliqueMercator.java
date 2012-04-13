@@ -26,7 +26,6 @@ import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.referencing.ReferenceIdentifier;
 
 import org.geotoolkit.referencing.NamedIdentifier;
-import org.geotoolkit.internal.referencing.Identifiers;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
 
@@ -46,13 +45,13 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * <p>The following table summarizes the parameters recognized by this provider.
  * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
  * <blockquote><p><b>Operation name:</b> {@code Hotine_Oblique_Mercator}
- * <br><b>Area of use:</b> <font size="-1">(union of CRS domains of validity from EPSG database)</font></p>
+ * <br><b>Area of use:</b> <font size="-1">(union of CRS domains of validity in EPSG database)</font></p>
  * <blockquote><table class="compact">
  *   <tr><td><b>in latitudes:</b></td><td class="onright">0°51.0′N</td><td>to</td><td class="onright">60°20.4′N</td></tr>
  *   <tr><td><b>in longitudes:</b></td><td class="onright">141°00.0′W</td><td>to</td><td class="onright">119°18.0′E</td></tr>
  * </table></blockquote>
  * <table class="geotk">
- *   <tr><th>Parameter Name</th><th>Default value</th></tr>
+ *   <tr><th>Parameter name</th><th>Default value</th></tr>
  *   <tr><td>{@code semi_major}</td><td></td></tr>
  *   <tr><td>{@code semi_minor}</td><td></td></tr>
  *   <tr><td>{@code roll_longitude}</td><td>false</td></tr>
@@ -284,7 +283,7 @@ public class HotineObliqueMercator extends ObliqueMercator {
      * </table>
      */
     @SuppressWarnings("hiding")
-    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
+    public static final ParameterDescriptorGroup PARAMETERS = UniversalParameters.createDescriptorGroup(
         new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.OGC,     "Hotine_Oblique_Mercator"),
             new NamedIdentifier(Citations.EPSG,    "Hotine Oblique Mercator (variant A)"), // Starting from 7.6
@@ -298,7 +297,9 @@ public class HotineObliqueMercator extends ObliqueMercator {
             new NamedIdentifier(Citations.GEOTOOLKIT, "Rectified Skew Orthomorphic (RSO)"), // Legacy EPSG
                      sameNameAs(Citations.GEOTOOLKIT, ObliqueMercator.PARAMETERS)
         }, null, new ParameterDescriptor<?>[] {
-            SEMI_MAJOR,          SEMI_MINOR, ROLL_LONGITUDE,
+            sameParameterAs(EquidistantCylindrical.PARAMETERS, "semi_major"),
+            sameParameterAs(EquidistantCylindrical.PARAMETERS, "semi_minor"),
+            ROLL_LONGITUDE,
             LONGITUDE_OF_CENTRE, LATITUDE_OF_CENTRE,
             AZIMUTH,             RECTIFIED_GRID_ANGLE,
             SCALE_FACTOR,
@@ -332,7 +333,7 @@ public class HotineObliqueMercator extends ObliqueMercator {
      * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
      * <blockquote><p><b>Operation name:</b> {@code Hotine_Oblique_Mercator_Two_Point_Natural_Origin}</p>
      * <table class="geotk">
-     *   <tr><th>Parameter Name</th><th>Default value</th></tr>
+     *   <tr><th>Parameter name</th><th>Default value</th></tr>
      *   <tr><td>{@code Semi_Major}</td><td></td></tr>
      *   <tr><td>{@code Semi_Minor}</td><td></td></tr>
      *   <tr><td>{@code roll_longitude}</td><td>false</td></tr>
@@ -555,7 +556,7 @@ public class HotineObliqueMercator extends ObliqueMercator {
         public static final ParameterDescriptorGroup PARAMETERS;
         static {
             final List<GeneralParameterDescriptor> param = ObliqueMercator.TwoPoint.PARAMETERS.descriptors();
-            PARAMETERS = Identifiers.createDescriptorGroup(
+            PARAMETERS = UniversalParameters.createDescriptorGroup(
                 new ReferenceIdentifier[] {
                     new NamedIdentifier(Citations.ESRI, "Hotine_Oblique_Mercator_Two_Point_Natural_Origin"),
                     sameNameAs(Citations.GEOTOOLKIT, HotineObliqueMercator.PARAMETERS)

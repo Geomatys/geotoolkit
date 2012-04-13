@@ -28,8 +28,8 @@
         <tr class="sectionHead"><th colspan="6"><a name="map-projections">Map projections</a></th></tr>
         <tr class="sectionTail"><th>EPSG</th><th>OGC</th><th>ESRI</th><th>NetCDF</th><th>GeoTIFF</th><th>PROJ4</th></tr>
         <tr class="groupName"><td><a href="../../apidocs/org/geotoolkit/referencing/operation/provider/AlbersEqualArea.html">Albers Equal Area</a></td><td><em>Albers_Conic_Equal_Area</em></td><td>Albers<br>Albers_Equal_Area_Conic</td><td>AlbersEqualArea</td><td>CT_AlbersEqualArea</td><td>aea</td></tr>
-          <tr class="groupHead"><td><li>Semi-major axis</li></td><td><li><em>semi_major</em></li></td><td colspan="2"><li>Semi_Major</li></td><td><li>SemiMajor</li></td><td><li>a</li></td></tr>
-          <tr><td><li>Semi-minor axis</li></td><td><li><em>semi_minor</em></li></td><td colspan="2"><li>Semi_Minor</li></td><td><li>SemiMinor</li></td><td><li>b</li></td></tr>
+          <tr class="groupHead"><td><li>Semi-major axis</li></td><td><li><em>semi_major</em></li></td><td><li>Semi_Major</li></td><td><li>semi_major_axis</li></td><td><li>SemiMajor</li></td><td><li>a</li></td></tr>
+          <tr><td><li>Semi-minor axis</li></td><td><li><em>semi_minor</em></li></td><td><li>Semi_Minor</li></td><td><li>semi_minor_axis</li></td><td><li>SemiMinor</li></td><td><li>b</li></td></tr>
           <tr><td><li>Longitude of false origin</li></td><td><li><em>central_meridian</em></li></td><td><li>Central_Meridian</li></td><td><li>longitude_of_central_meridian</li></td><td><li>NatOriginLong</li></td><td><li>lon_0</li></td></tr>
           <tr><td><li>Latitude of false origin</li></td><td><li><em>latitude_of_origin</em></li></td><td><li>Latitude_Of_Origin</li></td><td><li>latitude_of_projection_origin</li></td><td><li>NatOriginLat</li></td><td><li>lat_0</li></td></tr>
           <tr><td><li>Latitude of 1st standard parallel</li></td><td><li><em>standard_parallel_1</em></li></td><td><li>Standard_Parallel_1</li></td><td><li>standard_parallel[1]</li></td><td><li>StdParallel1</li></td><td><li>lat_1</li></td></tr>
@@ -97,8 +97,8 @@
           <tr><td><li>False easting</li></td><td><li><em>false_easting</em></li></td><td colspan="2"><li>False_Easting</li></td><td><li>FalseEasting</li></td><td><li>x_0</li></td></tr>
           <tr class="groupTail"><td><li>False northing</li></td><td><li><em>false_northing</em></li></td><td colspan="2"><li>False_Northing</li></td><td><li>FalseNorthing</li></td><td><li>y_0</li></td></tr>
         <tr class="groupName"><td><a href="../../apidocs/org/geotoolkit/referencing/operation/provider/LambertAzimuthalEqualArea.html">Lambert Azimuthal Equal Area</a><br>Lambert Azimuthal Equal Area (Spherical)</td><td colspan="2"><em>Lambert_Azimuthal_Equal_Area</em>  <font size="-1" color="MediumSlateBlue">(ESRI: same name)</font></td><td>LambertAzimuthalEqualArea</td><td>CT_LambertAzimEqualArea</td><td>laea</td></tr>
-          <tr class="groupHead"><td><li>Semi-major axis</li></td><td><li><em>semi_major</em></li></td><td colspan="2"><li>Semi_Major</li></td><td><li>SemiMajor</li></td><td><li>a</li></td></tr>
-          <tr><td><li>Semi-minor axis</li></td><td><li><em>semi_minor</em></li></td><td colspan="2"><li>Semi_Minor</li></td><td><li>SemiMinor</li></td><td><li>b</li></td></tr>
+          <tr class="groupHead"><td><li>Semi-major axis</li></td><td><li><em>semi_major</em></li></td><td><li>Semi_Major</li></td><td><li>semi_major_axis</li></td><td><li>SemiMajor</li></td><td><li>a</li></td></tr>
+          <tr><td><li>Semi-minor axis</li></td><td><li><em>semi_minor</em></li></td><td><li>Semi_Minor</li></td><td><li>semi_minor_axis</li></td><td><li>SemiMinor</li></td><td><li>b</li></td></tr>
           <tr><td><li>Latitude of natural origin<br><del>Spherical latitude of origin</del></li></td><td><li><em>latitude_of_center</em></li></td><td><li>Latitude_Of_Origin</li></td><td><li>latitude_of_projection_origin</li></td><td><li>ProjCenterLat</li></td><td><li>lat_0</li></td></tr>
           <tr><td><li>Longitude of natural origin<br><del>Spherical longitude of origin</del></li></td><td><li><em>longitude_of_center</em></li></td><td><li>Central_Meridian</li></td><td><li>longitude_of_projection_origin</li></td><td><li>ProjCenterLong</li></td><td><li>lon_0</li></td></tr>
           <tr><td><li>False easting</li></td><td><li><em>false_easting</em></li></td><td><li>False_Easting</li></td><td><li>false_easting</li></td><td><li>FalseEasting</li></td><td><li>x_0</li></td></tr>
@@ -112,8 +112,8 @@
           <tr><td><li>False easting</li></td><td colspan="3"><li><em>false_easting</em></li></td><td><li>FalseEasting</li></td><td><li>x_0</li></td></tr>
           <tr class="groupTail"><td><li>False northing</li></td><td colspan="3"><li><em>false_northing</em></li></td><td><li>FalseNorthing</li></td><td><li>y_0</li></td></tr>
         <tr class="groupName"><td><a href="../../apidocs/org/geotoolkit/referencing/operation/provider/LambertConformal2SP.html">Lambert Conic Conformal (2SP)</a></td><td><em>Lambert_Conformal_Conic_2SP</em></td><td>Lambert_Conformal_Conic</td><td>LambertConformal</td><td>CT_LambertConfConic_2SP<br>CT_LambertConfConic</td><td>lcc</td></tr>
-          <tr class="groupHead"><td><li>Semi-major axis</li></td><td><li><em>semi_major</em></li></td><td colspan="2"><li>Semi_Major</li></td><td><li>SemiMajor</li></td><td><li>a</li></td></tr>
-          <tr><td><li>Semi-minor axis</li></td><td><li><em>semi_minor</em></li></td><td colspan="2"><li>Semi_Minor</li></td><td><li>SemiMinor</li></td><td><li>b</li></td></tr>
+          <tr class="groupHead"><td><li>Semi-major axis</li></td><td><li><em>semi_major</em></li></td><td><li>Semi_Major</li></td><td><li>semi_major_axis</li></td><td><li>SemiMajor</li></td><td><li>a</li></td></tr>
+          <tr><td><li>Semi-minor axis</li></td><td><li><em>semi_minor</em></li></td><td><li>Semi_Minor</li></td><td><li>semi_minor_axis</li></td><td><li>SemiMinor</li></td><td><li>b</li></td></tr>
           <tr><td><li>Longitude of false origin</li></td><td><li><em>central_meridian</em></li></td><td><li>Central_Meridian</li></td><td><li>longitude_of_central_meridian</li></td><td><li>FalseOriginLong</li></td><td><li>lon_0</li></td></tr>
           <tr><td><li>Latitude of false origin</li></td><td><li><em>latitude_of_origin</em></li></td><td><li>Latitude_Of_Origin</li></td><td><li>latitude_of_projection_origin</li></td><td><li>FalseOriginLat</li></td><td><li>lat_0</li></td></tr>
           <tr><td><li>Latitude of 1st standard parallel</li></td><td><li><em>standard_parallel_1</em></li></td><td><li>Standard_Parallel_1</li></td><td><li>standard_parallel[1]</li></td><td><li>StdParallel1</li></td><td><li>lat_1</li></td></tr>
@@ -139,9 +139,9 @@
           <tr><td><li>False easting</li></td><td colspan="3"><li><em>false_easting</em></li></td><td><li>FalseEasting</li></td><td><li>x_0</li></td></tr>
           <tr class="groupTail"><td><li>False northing</li></td><td colspan="3"><li><em>false_northing</em></li></td><td><li>FalseNorthing</li></td><td><li>y_0</li></td></tr>
         <tr class="groupName"><td><a href="../../apidocs/org/geotoolkit/referencing/operation/provider/Mercator2SP.html">Mercator (variant B)</a><br><del>Mercator (2SP)</del></td><td><em>Mercator_2SP</em></td><td>Mercator</td><td>Mercator</td><td>CT_Mercator</td><td>merc</td></tr>
-          <tr class="groupHead"><td><li>Semi-major axis</li></td><td><li><em>semi_major</em></li></td><td colspan="2"><li>Semi_Major</li></td><td><li>SemiMajor</li></td><td><li>a</li></td></tr>
-          <tr><td><li>Semi-minor axis</li></td><td><li><em>semi_minor</em></li></td><td colspan="2"><li>Semi_Minor</li></td><td><li>SemiMinor</li></td><td><li>b</li></td></tr>
-          <tr><td><li>Latitude of 1st standard parallel</li></td><td><li><em>standard_parallel_1</em></li></td><td><li>Standard_Parallel_1</li></td><td><li>standard_parallel[1]</li></td><td><li>StdParallel1</li></td><td><li>lat_1</li></td></tr>
+          <tr class="groupHead"><td><li>Semi-major axis</li></td><td><li><em>semi_major</em></li></td><td><li>Semi_Major</li></td><td><li>semi_major_axis</li></td><td><li>SemiMajor</li></td><td><li>a</li></td></tr>
+          <tr><td><li>Semi-minor axis</li></td><td><li><em>semi_minor</em></li></td><td><li>Semi_Minor</li></td><td><li>semi_minor_axis</li></td><td><li>SemiMinor</li></td><td><li>b</li></td></tr>
+          <tr><td><li>Latitude of 1st standard parallel</li></td><td><li><em>standard_parallel_1</em></li></td><td><li>Standard_Parallel_1</li></td><td><li>standard_parallel</li></td><td><li>StdParallel1</li></td><td><li>lat_1</li></td></tr>
           <tr><td><li>Latitude of natural origin</li></td><td><li><em>latitude_of_origin</em></li></td><td><li>Latitude_Of_Origin</li></td><td><li>latitude_of_projection_origin</li></td><td><li>NatOriginLat</li></td><td><li>lat_0</li></td></tr>
           <tr><td><li>Longitude of natural origin</li></td><td><li><em>central_meridian</em></li></td><td><li>Central_Meridian</li></td><td><li>longitude_of_projection_origin</li></td><td><li>NatOriginLong</li></td><td><li>lon_0</li></td></tr>
           <tr><td><li>False easting</li></td><td><li><em>false_easting</em></li></td><td><li>False_Easting</li></td><td><li>false_easting</li></td><td><li>FalseEasting</li></td><td><li>x_0</li></td></tr>
@@ -179,8 +179,8 @@
           <tr><td><li>False easting</li></td><td><li><em>false_easting</em></li></td><td colspan="2"><li>False_Easting</li></td><td><li>FalseEasting</li></td><td><li>x_0</li></td></tr>
           <tr class="groupTail"><td><li>False northing</li></td><td><li><em>false_northing</em></li></td><td colspan="2"><li>False_Northing</li></td><td><li>FalseNorthing</li></td><td><li>y_0</li></td></tr>
         <tr class="groupName"><td><a href="../../apidocs/org/geotoolkit/referencing/operation/provider/Orthographic.html">Orthographic</a></td><td><em>Orthographic</em></td><td>Orthographic</td><td>Orthographic</td><td>CT_Orthographic</td><td>ortho</td></tr>
-          <tr class="groupHead"><td><li>Semi-major axis</li></td><td><li><em>semi_major</em></li></td><td colspan="2"><li>Semi_Major</li></td><td><li>SemiMajor</li></td><td><li>a</li></td></tr>
-          <tr><td><li>Semi-minor axis</li></td><td><li><em>semi_minor</em></li></td><td colspan="2"><li>Semi_Minor</li></td><td><li>SemiMinor</li></td><td><li>b</li></td></tr>
+          <tr class="groupHead"><td><li>Semi-major axis</li></td><td><li><em>semi_major</em></li></td><td><li>Semi_Major</li></td><td><li>semi_major_axis</li></td><td><li>SemiMajor</li></td><td><li>a</li></td></tr>
+          <tr><td><li>Semi-minor axis</li></td><td><li><em>semi_minor</em></li></td><td><li>Semi_Minor</li></td><td><li>semi_minor_axis</li></td><td><li>SemiMinor</li></td><td><li>b</li></td></tr>
           <tr><td><li>Longitude of natural origin</li></td><td><li><em>central_meridian</em></li></td><td><li>Longitude_Of_Center</li></td><td><li>longitude_of_projection_origin</li></td><td><li>ProjCenterLong</li></td><td><li>lon_0</li></td></tr>
           <tr><td><li>Latitude of natural origin</li></td><td><li><em>latitude_of_origin</em></li></td><td><li>Latitude_Of_Center</li></td><td><li>latitude_of_projection_origin</li></td><td><li>ProjCenterLat</li></td><td><li>lat_0</li></td></tr>
           <tr><td><li>Scale factor at natural origin</li></td><td><li><em>scale_factor</em></li></td><td colspan="2"><li>Scale_Factor</li></td><td><li>ScaleAtNatOrigin</li></td><td><li>k</li></td></tr>
@@ -222,8 +222,8 @@
           <tr><td><li>False easting</li></td><td colspan="5"><li><em>false_easting</em></li></td></tr>
           <tr class="groupTail"><td><li>False northing</li></td><td colspan="5"><li><em>false_northing</em></li></td></tr>
         <tr class="groupName"><td></td><td><a href="../../apidocs/org/geotoolkit/referencing/operation/provider/Stereographic.html"><em>Stereographic</em></a></td><td>Stereographic</td><td>Stereographic</td><td>CT_Stereographic</td><td>stere</td></tr>
-          <tr class="groupHead"><td></td><td><li><em>semi_major</em></li></td><td colspan="2"><li>Semi_Major</li></td><td><li>SemiMajor</li></td><td><li>a</li></td></tr>
-          <tr><td></td><td><li><em>semi_minor</em></li></td><td colspan="2"><li>Semi_Minor</li></td><td><li>SemiMinor</li></td><td><li>b</li></td></tr>
+          <tr class="groupHead"><td></td><td><li><em>semi_major</em></li></td><td><li>Semi_Major</li></td><td><li>semi_major_axis</li></td><td><li>SemiMajor</li></td><td><li>a</li></td></tr>
+          <tr><td></td><td><li><em>semi_minor</em></li></td><td><li>Semi_Minor</li></td><td><li>semi_minor_axis</li></td><td><li>SemiMinor</li></td><td><li>b</li></td></tr>
           <tr><td></td><td><li><em>central_meridian</em></li></td><td><li>Central_Meridian</li></td><td><li>longitude_of_projection_origin</li></td><td><li>ProjCenterLong</li></td><td><li>lon_0</li></td></tr>
           <tr><td></td><td><li><em>latitude_of_origin</em></li></td><td><li>Latitude_Of_Origin</li></td><td><li>latitude_of_projection_origin</li></td><td><li>ProjCenterLat</li></td><td><li>lat_0</li></td></tr>
           <tr><td></td><td><li><em>scale_factor</em></li></td><td><li>Scale_Factor</li></td><td><li>scale_factor_at_projection_origin</li></td><td><li>ScaleAtNatOrigin</li></td><td><li>k</li></td></tr>
@@ -246,8 +246,8 @@
           <tr><td colspan="2"></td><td colspan="4"><li><em>False_Easting</em></li></td></tr>
           <tr class="groupTail"><td colspan="2"></td><td colspan="4"><li><em>False_Northing</em></li></td></tr>
         <tr class="groupName"><td><a href="../../apidocs/org/geotoolkit/referencing/operation/provider/TransverseMercator.html">Transverse Mercator</a><br>Gauss-Kruger<br>Gauss-Boaga<br>TM</td><td><em>Transverse_Mercator</em></td><td>Transverse_Mercator<br>Gauss_Kruger</td><td>TransverseMercator</td><td>CT_TransverseMercator</td><td>tmerc</td></tr>
-          <tr class="groupHead"><td><li>Semi-major axis</li></td><td><li><em>semi_major</em></li></td><td colspan="2"><li>Semi_Major</li></td><td><li>SemiMajor</li></td><td><li>a</li></td></tr>
-          <tr><td><li>Semi-minor axis</li></td><td><li><em>semi_minor</em></li></td><td colspan="2"><li>Semi_Minor</li></td><td><li>SemiMinor</li></td><td><li>b</li></td></tr>
+          <tr class="groupHead"><td><li>Semi-major axis</li></td><td><li><em>semi_major</em></li></td><td><li>Semi_Major</li></td><td><li>semi_major_axis</li></td><td><li>SemiMajor</li></td><td><li>a</li></td></tr>
+          <tr><td><li>Semi-minor axis</li></td><td><li><em>semi_minor</em></li></td><td><li>Semi_Minor</li></td><td><li>semi_minor_axis</li></td><td><li>SemiMinor</li></td><td><li>b</li></td></tr>
           <tr><td><li>Longitude of natural origin</li></td><td><li><em>central_meridian</em></li></td><td><li>Central_Meridian</li></td><td><li>longitude_of_central_meridian</li></td><td><li>NatOriginLong</li></td><td><li>lon_0</li></td></tr>
           <tr><td><li>Latitude of natural origin</li></td><td><li><em>latitude_of_origin</em></li></td><td><li>Latitude_Of_Origin</li></td><td><li>latitude_of_projection_origin</li></td><td><li>NatOriginLat</li></td><td><li>lat_0</li></td></tr>
           <tr><td><li>Scale factor at natural origin</li></td><td><li><em>scale_factor</em></li></td><td><li>Scale_Factor</li></td><td><li>scale_factor_at_central_meridian</li></td><td><li>ScaleAtNatOrigin</li></td><td><li>k</li></td></tr>

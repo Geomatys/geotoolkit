@@ -30,7 +30,7 @@ import static java.lang.Math.*;
 
 
 /**
- * The USGS equatorial case of the {@linkplain Stereographic stereographic} projection.
+ * The USGS equatorial case of the {@linkplain Stereographic} projection.
  * This is a special case of oblique stereographic projection for a latitude of origin
  * set to 0&deg;.
  *

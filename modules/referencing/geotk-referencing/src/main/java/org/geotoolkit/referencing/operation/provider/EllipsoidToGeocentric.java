@@ -40,7 +40,6 @@ import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.operation.MathTransformProvider;
 import org.geotoolkit.referencing.operation.transform.GeocentricTransform;
 import org.geotoolkit.internal.referencing.MathTransformDecorator;
-import org.geotoolkit.internal.referencing.Identifiers;
 
 import static org.geotoolkit.parameter.Parameters.*;
 
@@ -62,7 +61,7 @@ import static org.geotoolkit.parameter.Parameters.*;
  * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
  * <blockquote><p><b>Operation name:</b> {@code Ellipsoid_To_Geocentric}</p>
  * <table class="geotk">
- *   <tr><th>Parameter Name</th><th>Default value</th></tr>
+ *   <tr><th>Parameter name</th><th>Default value</th></tr>
  *   <tr><td>{@code semi_major}</td><td></td></tr>
  *   <tr><td>{@code semi_minor}</td><td></td></tr>
  *   <tr><td>{@code dim}</td><td>3</td></tr>
@@ -181,7 +180,7 @@ public class EllipsoidToGeocentric extends MathTransformProvider {
      * Constructs the parameters group.
      */
     static ParameterDescriptorGroup createDescriptorGroup(final String ogc) {
-        return Identifiers.createDescriptorGroup(new ReferenceIdentifier[] {
+        return UniversalParameters.createDescriptorGroup(new ReferenceIdentifier[] {
                 new NamedIdentifier(Citations.OGC,  ogc),
                 new NamedIdentifier(Citations.EPSG, "Geographic/geocentric conversions"),
                 new IdentifierCode (Citations.EPSG, 9602),

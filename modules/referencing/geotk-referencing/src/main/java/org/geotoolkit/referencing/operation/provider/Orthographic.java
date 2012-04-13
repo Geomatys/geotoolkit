@@ -29,7 +29,6 @@ import org.opengis.referencing.ReferenceIdentifier;
 
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.referencing.NamedIdentifier;
-import org.geotoolkit.internal.referencing.Identifiers;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
 
@@ -46,7 +45,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * For a more detailed parameter list, see the {@link #PARAMETERS} constant.</p>
  * <blockquote><p><b>Operation name:</b> {@code Orthographic}</p>
  * <table class="geotk">
- *   <tr><th>Parameter Name</th><th>Default value</th></tr>
+ *   <tr><th>Parameter name</th><th>Default value</th></tr>
  *   <tr><td>{@code semi_major}</td><td></td></tr>
  *   <tr><td>{@code semi_minor}</td><td></td></tr>
  *   <tr><td>{@code roll_longitude}</td><td>false</td></tr>
@@ -88,7 +87,7 @@ public class Orthographic extends MapProjection {
      */
     @Deprecated
     public static final ParameterDescriptor<Double> LONGITUDE_OF_CENTRE =
-            Identifiers.CENTRAL_MERIDIAN.select(null,
+            UniversalParameters.CENTRAL_MERIDIAN.select(null,
                 "Longitude of natural origin",      // EPSG
                 "central_meridian",                 // OGC
                 "Longitude_Of_Center",              // ESRI
@@ -108,7 +107,7 @@ public class Orthographic extends MapProjection {
      */
     @Deprecated
     public static final ParameterDescriptor<Double> LATITUDE_OF_CENTRE =
-            Identifiers.LATITUDE_OF_ORIGIN.select(null,
+            UniversalParameters.LATITUDE_OF_ORIGIN.select(null,
                 "Latitude of natural origin",    // EPSG
                 "latitude_of_origin",            // OGC
                 "Latitude_Of_Center",            // ESRI
@@ -128,7 +127,7 @@ public class Orthographic extends MapProjection {
      */
     @Deprecated
     public static final ParameterDescriptor<Double> SCALE_FACTOR =
-            Identifiers.SCALE_FACTOR.select(false, null, new Citation[] {
+            UniversalParameters.SCALE_FACTOR.select(false, null, new Citation[] {
                 Citations.NETCDF // NetCDF 4.3 doesn't have this parameter.
             }, null,
                 "Scale factor at natural origin",   // EPSG
@@ -186,6 +185,7 @@ public class Orthographic extends MapProjection {
      *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>semi_major</code></td></tr>
      *       <tr><td><b>Alias:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>Semi-major axis</code></td></tr>
      *       <tr><td></td><td class="onright"><code>ESRI</code>:</td><td class="onleft"><code>Semi_Major</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>NetCDF</code>:</td><td class="onleft"><code>semi_major_axis</code></td></tr>
      *       <tr><td></td><td class="onright"><code>GeoTIFF</code>:</td><td class="onleft"><code>SemiMajor</code></td></tr>
      *       <tr><td></td><td class="onright"><code>PROJ4</code>:</td><td class="onleft"><code>a</code></td></tr>
      *     </table>
@@ -201,6 +201,7 @@ public class Orthographic extends MapProjection {
      *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>semi_minor</code></td></tr>
      *       <tr><td><b>Alias:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>Semi-minor axis</code></td></tr>
      *       <tr><td></td><td class="onright"><code>ESRI</code>:</td><td class="onleft"><code>Semi_Minor</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>NetCDF</code>:</td><td class="onleft"><code>semi_minor_axis</code></td></tr>
      *       <tr><td></td><td class="onright"><code>GeoTIFF</code>:</td><td class="onleft"><code>SemiMinor</code></td></tr>
      *       <tr><td></td><td class="onright"><code>PROJ4</code>:</td><td class="onleft"><code>b</code></td></tr>
      *     </table>
@@ -308,7 +309,7 @@ public class Orthographic extends MapProjection {
      *   </td></tr>
      * </table>
      */
-    public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
+    public static final ParameterDescriptorGroup PARAMETERS = UniversalParameters.createDescriptorGroup(
         new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.OGC,     "Orthographic"),
             new NamedIdentifier(Citations.EPSG,    "Orthographic"),
