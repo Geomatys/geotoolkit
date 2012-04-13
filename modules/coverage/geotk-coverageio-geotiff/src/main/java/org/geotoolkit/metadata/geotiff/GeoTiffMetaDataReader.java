@@ -19,19 +19,16 @@ package org.geotoolkit.metadata.geotiff;
 import java.util.logging.Level;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.logging.Logger;
 import javax.imageio.metadata.IIOMetadata;
 
-import javax.media.jai.WarpAffine;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
 import org.geotoolkit.referencing.operation.builder.LocalizationGrid;
-import org.geotoolkit.referencing.operation.transform.WarpTransform2D;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.logging.Logging;
 
@@ -251,10 +248,24 @@ public final class GeoTiffMetaDataReader {
     private Rectangle readBounds() throws IOException {
         final Rectangle rect = new Rectangle();
         
-        final Node width = getNodeByNumber(imgFileDir, ImageWidth);
-        rect.width = readTiffShorts(getNodeByLocalName(width, TAG_GEOTIFF_SHORTS))[0];
+        final Node width = getNodeByNumber(imgFileDir, ImageWidth);        
+        //value can be stored in a short field
+        Node widthNode = getNodeByLocalName(width, TAG_GEOTIFF_SHORTS);
+        if(widthNode != null) rect.width = readTiffShorts(widthNode)[0];        
+        //can be in a long field
+        if(widthNode == null) widthNode = getNodeByLocalName(width, TAG_GEOTIFF_LONGS);
+        if(widthNode != null) rect.width = (int) readTiffLongs(widthNode)[0];        
+        if(widthNode == null) throw new IOException("Could not find tiff image width value");
+        
+        
         final Node height = getNodeByNumber(imgFileDir, ImageLenght);
-        rect.height = readTiffShorts(getNodeByLocalName(height, TAG_GEOTIFF_SHORTS))[0];
+        //value can be stored in a short field
+        Node heightNode = getNodeByLocalName(height, TAG_GEOTIFF_SHORTS);
+        if(heightNode != null) rect.height = readTiffShorts(heightNode)[0];        
+        //can be in a long field
+        if(heightNode == null) heightNode = getNodeByLocalName(height, TAG_GEOTIFF_LONGS);
+        if(heightNode != null) rect.height = (int) readTiffLongs(heightNode)[0];        
+        if(heightNode == null) throw new IOException("Could not find tiff image height value");
 
         return rect;
     }
