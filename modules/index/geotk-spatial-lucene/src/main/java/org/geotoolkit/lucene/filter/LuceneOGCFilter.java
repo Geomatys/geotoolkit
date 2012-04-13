@@ -21,10 +21,6 @@ import java.util.BitSet;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.measure.converter.UnitConverter;
-import javax.measure.unit.Unit;
-
-import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import java.util.*;
 
@@ -38,25 +34,21 @@ import org.apache.lucene.search.DocIdSet;
 import org.apache.lucene.util.DocIdBitSet;
 
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.geometry.Envelopes;
 import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.index.tree.io.DefaultTreeVisitor;
 import org.geotoolkit.index.tree.io.TreeVisitor;
 import org.geotoolkit.lucene.tree.NamedEnvelope;
 import org.geotoolkit.lucene.tree.TreeIndexReaderWrapper;
-import org.geotoolkit.measure.Units;
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.logging.Logging;
 
+import static org.geotoolkit.lucene.LuceneUtils.*;
+        
 import org.opengis.filter.Filter;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.spatial.*;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.util.FactoryException;
+import org.opengis.geometry.Envelope;
 
 /**
  * Wrap an OGC filter object in a Lucene filter.
@@ -107,7 +99,7 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter {
         if (reader instanceof TreeIndexReaderWrapper) {
             final TreeIndexReaderWrapper wrapper = (TreeIndexReaderWrapper)reader;
             final Tree tree = wrapper.getrTree();
-            final List<org.opengis.geometry.Envelope> results = new ArrayList<org.opengis.geometry.Envelope>();
+            final List<Envelope> results = new ArrayList<Envelope>();
             final TreeVisitor treeVisitor = new DefaultTreeVisitor(results);
             if (tree != null) {
                 if (filter instanceof DistanceBufferOperator) {
@@ -115,42 +107,15 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter {
                         reverse = true;
                     }
                     final DistanceBufferOperator sp = (DistanceBufferOperator)filter;
-                    final double distance           = sp.getDistance();
                     if (sp.getExpression2() instanceof Literal) {
                         final Literal lit = (Literal) sp.getExpression2();
                         if (lit.getValue() instanceof Geometry) {
-                            final Geometry geom     = (Geometry) lit.getValue();
-                            final Envelope jtsBound = geom.getEnvelopeInternal();
-
-                            final String epsgCode   = SRIDGenerator.toSRS(geom.getSRID(), SRIDGenerator.Version.V1);
-                            try {
-                                final CoordinateReferenceSystem geomCRS = CRS.decode(epsgCode);
-                                GeneralEnvelope bound = new GeneralEnvelope(geomCRS);
-                                bound.setRange(0, jtsBound.getMinX(), jtsBound.getMaxX());
-                                bound.setRange(1, jtsBound.getMinY(), jtsBound.getMaxY());
-
-                                // reproject to cartesian CRS
-                                bound = (GeneralEnvelope) Envelopes.transform(bound, tree.getCrs());
-
-                                // add the reprojected distance
-                                final String strUnit = sp.getDistanceUnits();
-                                final Unit unit = Units.valueOf(strUnit);
-                                final UnitConverter converter = unit.getConverterTo(tree.getCrs().getCoordinateSystem().getAxis(0).getUnit());
-                                final double rdistance = converter.convert(distance);
-                                final double minx = bound.getLower(0) - rdistance;
-                                final double miny = bound.getLower(1) - rdistance;
-                                final double maxx = bound.getUpper(0) + rdistance;
-                                final double maxy = bound.getUpper(1) + rdistance;
-                                bound.setRange(0, minx, maxx);
-                                bound.setRange(1, miny, maxy);
-
-                                tree.search(bound, treeVisitor);
-                                treeSearch = true;
-                            } catch (FactoryException ex) {
-                                LOGGER.log(Level.WARNING, "Factory exception while getting filter geometry crs", ex);
-                            } catch (TransformException ex) {
-                                LOGGER.log(Level.WARNING, "Transform exception while reprojecting filter geometry", ex);
-                            }
+                            
+                            // reproject to cartesian CRS
+                            final GeneralEnvelope bound =  getExtendedReprojectedEnvelope((Geometry) lit.getValue(), tree.getCrs(), sp.getDistanceUnits(), sp.getDistance());
+                            tree.search(bound, treeVisitor);
+                            treeSearch = true;
+                            
                         } else {
                             LOGGER.log(Level.WARNING, "Not a geometry for literal:{0} (class: {1})", new Object[]{lit.getValue(), lit.getValue().getClass().getName()});
                         }
@@ -167,45 +132,28 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter {
                     final BinarySpatialOperator sp = (BinarySpatialOperator)filter;
                     if (sp.getExpression2() instanceof Literal) {
                         final Literal lit = (Literal) sp.getExpression2();
+                        final Envelope boundFilter;
                         if (lit.getValue() instanceof Geometry) {
-                            final Geometry geom     = (Geometry) lit.getValue();
-                            final Envelope jtsBound = geom.getEnvelopeInternal();
-                            final String epsgCode   = SRIDGenerator.toSRS(geom.getSRID(), SRIDGenerator.Version.V1);
-                            try {
-                                final CoordinateReferenceSystem geomCRS = CRS.decode(epsgCode);
-                                GeneralEnvelope bound = new GeneralEnvelope(geomCRS);
-                                bound.setRange(0, jtsBound.getMinX(), jtsBound.getMaxX());
-                                bound.setRange(1, jtsBound.getMinY(), jtsBound.getMaxY());
 
-                                // reproject to cartesian CRS
-                                bound = (GeneralEnvelope) Envelopes.transform(bound, tree.getCrs());
-
-                                tree.search(bound, treeVisitor);
-                                treeSearch = true;
-                            } catch (FactoryException ex) {
-                                LOGGER.log(Level.WARNING, "Factory exception while getting filter geometry crs", ex);
-                            } catch (TransformException ex) {
-                                LOGGER.log(Level.WARNING, "Transform exception while reprojecting filter geometry", ex);
-                            }
-                        } else if (lit.getValue() instanceof org.opengis.geometry.Envelope){
-                            final org.opengis.geometry.Envelope env =  (org.opengis.geometry.Envelope) lit.getValue();
-                            try {
-                                org.opengis.geometry.Envelope bound = Envelopes.transform(env, tree.getCrs());
-                                tree.search(bound, treeVisitor);
-                                treeSearch = true;
-                            } catch (TransformException ex) {
-                                LOGGER.log(Level.WARNING, "Transform exception while reprojecting filter geometry", ex);
-                            }
+                            boundFilter = getReprojectedEnvelope((Geometry) lit.getValue(), tree.getCrs());
+                            
+                        } else if (lit.getValue() instanceof Envelope){
+                            
+                            boundFilter = getReprojectedEnvelope((Envelope) lit.getValue(), tree.getCrs());
+                            
                         } else {
+                            boundFilter = null;
                             LOGGER.log(Level.WARNING, "Not a geometry for literal:{0} (class: {1})", new Object[]{lit.getValue(), lit.getValue().getClass().getName()});
                         }
+                        tree.search(boundFilter, treeVisitor);
+                        treeSearch = true;
                     } else {
                         LOGGER.log(Level.WARNING, "Not a literal for spatial filter:{0}", sp.getExpression2());
                     }
                 } else {
-                    LOGGER.log(Level.WARNING, "not a bin spatial op:{0}", filter.getClass().getName());
+                    LOGGER.log(Level.WARNING, "not a spatial operator:{0}", filter.getClass().getName());
                 }
-                for (org.opengis.geometry.Envelope result : results) {
+                for (Envelope result : results) {
                     treeMatching.add(((NamedEnvelope) result).getId());
                 }
             } else {
