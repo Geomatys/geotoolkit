@@ -17,8 +17,6 @@
 package org.geotoolkit.lucene.tree;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Map;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.FieldSelector;
@@ -42,7 +40,7 @@ public class TreeIndexReaderWrapper extends IndexReader {
         this.reader = reader;
         this.rTree  = rTree;
         this.envelopeOnly = envelopeOnly;
-        this.readerFinishedListeners = new ArrayList<ReaderFinishedListener>();
+        //this.readerFinishedListeners = new ArrayList<ReaderFinishedListener>();
     }
     
     /**
@@ -177,8 +175,8 @@ public class TreeIndexReaderWrapper extends IndexReader {
      * {@inheritDoc }
      */
     @Override
-    public Collection<String> getFieldNames(FieldOption fo) {
-        return reader.getFieldNames(fo);
+    public FieldInfos getFieldInfos() {
+        return reader.getFieldInfos();
     }
     
     /**

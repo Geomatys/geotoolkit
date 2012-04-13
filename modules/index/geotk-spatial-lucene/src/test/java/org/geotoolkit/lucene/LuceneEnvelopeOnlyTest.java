@@ -127,8 +127,8 @@ public class LuceneEnvelopeOnlyTest {
         //creating tree (R-Tree)------------------------------------------------
         rTree = TreeFactory.createStarRTree(10, treeCrs, nodefactory);
 
-        final Analyzer analyzer = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_35);
-        IndexWriterConfig config = new IndexWriterConfig(org.apache.lucene.util.Version.LUCENE_35, analyzer);
+        final Analyzer analyzer = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_36);
+        IndexWriterConfig config = new IndexWriterConfig(org.apache.lucene.util.Version.LUCENE_36, analyzer);
         Directory FSDirectory = new SimpleFSDirectory(directory);
         final IndexWriter writer = new IndexWriter(FSDirectory, config);
         fillTestData(writer, rTree);
@@ -2792,8 +2792,8 @@ public class LuceneEnvelopeOnlyTest {
     public void QueryAndSpatialFilterAfterRemoveTest() throws Exception {
 
         // we remove a document
-        final Analyzer analyzer = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_35);
-        IndexWriterConfig config = new IndexWriterConfig(org.apache.lucene.util.Version.LUCENE_35, analyzer);
+        final Analyzer analyzer = new StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_36);
+        IndexWriterConfig config = new IndexWriterConfig(org.apache.lucene.util.Version.LUCENE_36, analyzer);
         Directory FSDirectory = new SimpleFSDirectory(directory);
         IndexWriter writer = new IndexWriter(FSDirectory, config);
 
@@ -2837,7 +2837,7 @@ public class LuceneEnvelopeOnlyTest {
 
         // re-add the document
 
-        config = new IndexWriterConfig(org.apache.lucene.util.Version.LUCENE_35, analyzer);
+        config = new IndexWriterConfig(org.apache.lucene.util.Version.LUCENE_36, analyzer);
         FSDirectory = new SimpleFSDirectory(directory);
         writer = new IndexWriter(FSDirectory, config);
 
