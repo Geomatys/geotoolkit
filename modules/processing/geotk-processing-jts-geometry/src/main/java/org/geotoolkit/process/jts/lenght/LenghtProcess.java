@@ -17,11 +17,14 @@
 package org.geotoolkit.process.jts.lenght;
 
 import com.vividsolutions.jts.geom.Geometry;
+
 import org.geotoolkit.process.AbstractProcess;
+
 import org.opengis.parameter.ParameterValueGroup;
 
 import static org.geotoolkit.process.jts.lenght.LenghtDescriptor.*;
 import static org.geotoolkit.parameter.Parameters.*;
+
 /**
  * @author Quentin Boileau (Geomatys)
  * @module pending
@@ -37,7 +40,7 @@ public class LenghtProcess extends AbstractProcess {
 
         final Geometry geom1 = value(GEOM, inputParameters);
 
-        final Double result = (Double) geom1.getLength();
+        final double result = geom1.getLength();
 
         getOrCreate(RESULT, outputParameters).setValue(result);
     }

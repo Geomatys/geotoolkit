@@ -81,14 +81,13 @@ public class CoversTest extends AbstractProcessTest {
         //result
         final Boolean result = (Boolean) proc.call().parameter("result").getValue();
 
-
         final Boolean expected = geom1.covers(geom2);
 
         assertTrue(expected.equals(result));
     }
 
     @Test
-    public void testCoversCRS() throws NoSuchIdentifierException, ProcessException {
+    public void testCoversCRS() throws NoSuchIdentifierException, ProcessException, FactoryException, TransformException {
 
         GeometryFactory fact = new GeometryFactory();
 
@@ -103,24 +102,13 @@ public class CoversTest extends AbstractProcessTest {
 
         final Geometry geom1 = fact.createPolygon(ring, null);
 
-        CoordinateReferenceSystem crs1 = null;
-        try {
-            crs1 = CRS.decode("EPSG:4326");
-            JTS.setCRS(geom1, crs1);
-        } catch (FactoryException ex) {
-            Logger.getLogger(UnionProcess.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
+        final CoordinateReferenceSystem crs1 = CRS.decode("EPSG:4326");
+        JTS.setCRS(geom1, crs1);
 
         Geometry geom2 = fact.createPoint(new Coordinate(5, 5));
 
-        CoordinateReferenceSystem crs2 = null;
-        try {
-            crs2 = CRS.decode("EPSG:2154");
-            JTS.setCRS(geom2, crs2);
-        } catch (FactoryException ex) {
-            Logger.getLogger(UnionProcess.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        CoordinateReferenceSystem crs2= CRS.decode("EPSG:2154");
+        JTS.setCRS(geom2, crs2);
 
         // Process
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("jts", "covers");
@@ -133,15 +121,8 @@ public class CoversTest extends AbstractProcessTest {
         //result
         final Boolean result = (Boolean) proc.call().parameter("result").getValue();
 
-        MathTransform mt = null;
-        try {
-            mt = CRS.findMathTransform(crs2, crs1);
-            geom2 = JTS.transform(geom2, mt);
-        } catch (FactoryException ex) {
-            Logger.getLogger(UnionProcess.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (TransformException ex) {
-            Logger.getLogger(UnionProcess.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        final MathTransform mt = CRS.findMathTransform(crs2, crs1);
+        geom2 = JTS.transform(geom2, mt);
         final Boolean expected = geom1.covers(geom2);
 
         assertTrue(expected.equals(result));

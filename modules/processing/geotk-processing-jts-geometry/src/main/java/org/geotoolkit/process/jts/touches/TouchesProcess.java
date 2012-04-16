@@ -16,19 +16,20 @@
  */
 package org.geotoolkit.process.jts.touches;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.vividsolutions.jts.geom.Geometry;
+
 import org.geotoolkit.process.jts.JTSProcessingUtils;
-import org.geotoolkit.process.jts.intersects.IntersectsProcess;
+import org.geotoolkit.process.AbstractProcess;
+import org.geotoolkit.process.ProcessException;
+
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-import com.vividsolutions.jts.geom.Geometry;
-import org.geotoolkit.process.AbstractProcess;
 import org.opengis.parameter.ParameterValueGroup;
 
 import static org.geotoolkit.process.jts.touches.TouchesDescriptor.*;
 import static org.geotoolkit.parameter.Parameters.*;
+
 /**
  * Compute if the first geometry touch the second one.
  * The process ensure that two geometries are into the same CoordinateReferenceSystem.
@@ -42,7 +43,7 @@ public class TouchesProcess extends AbstractProcess {
     }
 
     @Override
-    protected void execute() {
+    protected void execute() throws ProcessException {
 
         try {
 
@@ -51,18 +52,18 @@ public class TouchesProcess extends AbstractProcess {
 
             // ensure geometries are in the same CRS
             final CoordinateReferenceSystem resultCRS = JTSProcessingUtils.getCommonCRS(geom1, geom2);
-            if(JTSProcessingUtils.isConversionNeeded(geom1, geom2)) {
+            if (JTSProcessingUtils.isConversionNeeded(geom1, geom2)) {
                 geom2 = JTSProcessingUtils.convertToCRS(geom2, resultCRS);
             }
 
-            final Boolean result = (Boolean) geom1.touches(geom2);
+            final boolean result = geom1.touches(geom2);
 
             getOrCreate(RESULT, outputParameters).setValue(result);
 
         } catch (FactoryException ex) {
-            Logger.getLogger(IntersectsProcess.class.getName()).log(Level.WARNING, null, ex);
+            throw new ProcessException(null, this, ex);
         } catch (TransformException ex) {
-            Logger.getLogger(IntersectsProcess.class.getName()).log(Level.WARNING, null, ex);
+            throw new ProcessException(null, this, ex);
         }
     }
 

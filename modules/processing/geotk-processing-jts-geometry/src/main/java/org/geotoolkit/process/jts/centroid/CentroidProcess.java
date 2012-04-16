@@ -16,19 +16,21 @@
  */
 package org.geotoolkit.process.jts.centroid;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.geotoolkit.geometry.jts.JTS;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
+
 import org.geotoolkit.process.AbstractProcess;
+import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.process.ProcessException;
+
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.FactoryException;
 
 import static org.geotoolkit.process.jts.centroid.CentroidDescriptor.*;
 import static org.geotoolkit.parameter.Parameters.*;
-import org.opengis.util.FactoryException;
+
 /**
  * Compute input geometry centroid.
  * The returned point keep input geometry CRS.
@@ -42,7 +44,7 @@ public class CentroidProcess extends AbstractProcess{
     }
 
     @Override
-    protected void execute() {
+    protected void execute() throws ProcessException {
         try {
             final Geometry geom = value(GEOM, inputParameters);
 
@@ -54,9 +56,9 @@ public class CentroidProcess extends AbstractProcess{
             getOrCreate(RESULT_GEOM, outputParameters).setValue(result);
 
         } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(CentroidProcess.class.getName()).log(Level.WARNING, null, ex);
+            throw new ProcessException(null, this, ex);
         } catch (FactoryException ex) {
-            Logger.getLogger(CentroidProcess.class.getName()).log(Level.WARNING, null, ex);
+            throw new ProcessException(null, this, ex);
         }
     }
 

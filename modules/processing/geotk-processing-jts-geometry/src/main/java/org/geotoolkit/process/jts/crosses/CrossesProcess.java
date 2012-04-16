@@ -16,19 +16,20 @@
  */
 package org.geotoolkit.process.jts.crosses;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.vividsolutions.jts.geom.Geometry;
+
 import org.geotoolkit.process.jts.JTSProcessingUtils;
-import org.geotoolkit.process.jts.covers.CoversProcess;
+import org.geotoolkit.process.ProcessException;
+import org.geotoolkit.process.AbstractProcess;
+
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-import com.vividsolutions.jts.geom.Geometry;
-import org.geotoolkit.process.AbstractProcess;
 import org.opengis.parameter.ParameterValueGroup;
 
 import static org.geotoolkit.process.jts.crosses.CrossesDescriptor.*;
 import static org.geotoolkit.parameter.Parameters.*;
+
 /**
  * Compute if the first geometry cross the second one.
  * The process ensure that two geometries are into the same CoordinateReferenceSystem.
@@ -42,7 +43,7 @@ public class CrossesProcess extends AbstractProcess{
     }
 
     @Override
-    protected void execute() {
+    protected void execute() throws ProcessException {
 
        try {
 
@@ -51,7 +52,7 @@ public class CrossesProcess extends AbstractProcess{
 
             // ensure geometries are in the same CRS
             final CoordinateReferenceSystem resultCRS = JTSProcessingUtils.getCommonCRS(geom1, geom2);
-            if(JTSProcessingUtils.isConversionNeeded(geom1, geom2)){
+            if (JTSProcessingUtils.isConversionNeeded(geom1, geom2)) {
                 geom2 = JTSProcessingUtils.convertToCRS(geom2, resultCRS);
             }
 
@@ -60,9 +61,9 @@ public class CrossesProcess extends AbstractProcess{
             getOrCreate(RESULT, outputParameters).setValue(result);
 
         } catch (FactoryException ex) {
-            Logger.getLogger(CoversProcess.class.getName()).log(Level.WARNING, null, ex);
+            throw new ProcessException(null, this, ex);
         } catch (TransformException ex) {
-            Logger.getLogger(CoversProcess.class.getName()).log(Level.WARNING, null, ex);
+            throw new ProcessException(null, this, ex);
         }
     }
 

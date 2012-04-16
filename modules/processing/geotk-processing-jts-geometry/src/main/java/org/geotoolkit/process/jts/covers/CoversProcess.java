@@ -16,18 +16,20 @@
  */
 package org.geotoolkit.process.jts.covers;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.geotoolkit.process.jts.JTSProcessingUtils;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import com.vividsolutions.jts.geom.Geometry;
+
+import org.geotoolkit.process.jts.JTSProcessingUtils;
+import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.AbstractProcess;
+
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 
 import static org.geotoolkit.process.jts.covers.CoversDescriptor.*;
 import static org.geotoolkit.parameter.Parameters.*;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.util.FactoryException;
+
 /**
  * Compute if the first geometry covers the second one.
  * The process ensure that two geometries are into the same CoordinateReferenceSystem.
@@ -41,7 +43,7 @@ public class CoversProcess extends AbstractProcess {
     }
 
     @Override
-    protected void execute() {
+    protected void execute() throws ProcessException {
 
         try {
 
@@ -59,9 +61,9 @@ public class CoversProcess extends AbstractProcess {
             getOrCreate(RESULT, outputParameters).setValue(result);
 
         } catch (FactoryException ex) {
-            Logger.getLogger(CoversProcess.class.getName()).log(Level.WARNING, null, ex);
+            throw new ProcessException(null, this, ex);
         } catch (TransformException ex) {
-            Logger.getLogger(CoversProcess.class.getName()).log(Level.WARNING, null, ex);
+            throw new ProcessException(null, this, ex);
         }
     }
 

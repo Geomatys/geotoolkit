@@ -17,17 +17,19 @@
 package org.geotoolkit.process.jts.convexhull;
 
 import com.vividsolutions.jts.geom.Geometry;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.process.AbstractProcess;
-import org.opengis.parameter.ParameterValueGroup;
+import org.geotoolkit.process.ProcessException;
 
+import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.FactoryException;
+
 import static org.geotoolkit.process.jts.convexhull.ConvexHullDescriptor.*;
 import static org.geotoolkit.parameter.Parameters.*;
-import org.opengis.util.FactoryException;
+
 /**
  * Compute input geometry convex hull.
  * The returned convexHull geometry keep input geometry CoordinateReferenceSystem.
@@ -41,7 +43,7 @@ public class ConvexHullProcess extends AbstractProcess {
     }
 
     @Override
-    protected void execute() {
+    protected void execute() throws ProcessException {
 
         try {
             final Geometry geom = value(GEOM, inputParameters);
@@ -54,9 +56,9 @@ public class ConvexHullProcess extends AbstractProcess {
             getOrCreate(RESULT_GEOM, outputParameters).setValue(result);
 
         } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(ConvexHullProcess.class.getName()).log(Level.WARNING, null, ex);
+            throw new ProcessException(null, this, ex);
         } catch (FactoryException ex) {
-            Logger.getLogger(ConvexHullProcess.class.getName()).log(Level.WARNING, null, ex);
+            throw new ProcessException(null, this, ex);
         }
     }
 

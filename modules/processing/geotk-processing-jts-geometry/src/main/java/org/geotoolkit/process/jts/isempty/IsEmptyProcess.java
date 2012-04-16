@@ -17,11 +17,14 @@
 package org.geotoolkit.process.jts.isempty;
 
 import com.vividsolutions.jts.geom.Geometry;
+
 import org.geotoolkit.process.AbstractProcess;
+
 import org.opengis.parameter.ParameterValueGroup;
 
 import static org.geotoolkit.process.jts.isempty.IsEmptyDescriptor.*;
 import static org.geotoolkit.parameter.Parameters.*;
+
 /**
  * @author Quentin Boileau (Geomatys)
  * @module pending
@@ -37,7 +40,7 @@ public class IsEmptyProcess extends AbstractProcess {
 
         final Geometry geom1 = value(GEOM, inputParameters);
 
-        final Boolean result = (Boolean) geom1.isEmpty();
+        final boolean result = geom1.isEmpty();
 
         getOrCreate(RESULT, outputParameters).setValue(result);
     }

@@ -16,18 +16,20 @@
  */
 package org.geotoolkit.process.jts.coveredby;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.geotoolkit.process.jts.JTSProcessingUtils;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import com.vividsolutions.jts.geom.Geometry;
+
+import org.geotoolkit.process.jts.JTSProcessingUtils;
 import org.geotoolkit.process.AbstractProcess;
+import org.geotoolkit.process.ProcessException;
+
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 
 import static org.geotoolkit.process.jts.coveredby.CoveredByDescriptor.*;
 import static org.geotoolkit.parameter.Parameters.*;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.util.FactoryException;
+
 /**
  * Compute if the first geometry is coveredBy the second one.
  * The process ensure that two geometries are into the same CoordinateReferenceSystem.
@@ -41,7 +43,7 @@ public class CoveredByProcess extends AbstractProcess {
     }
 
     @Override
-    protected void execute() {
+    protected void execute() throws ProcessException {
 
         try {
 
@@ -50,7 +52,7 @@ public class CoveredByProcess extends AbstractProcess {
 
             // ensure geometries are in the same CRS
             final CoordinateReferenceSystem resultCRS = JTSProcessingUtils.getCommonCRS(geom1, geom2);
-            if(JTSProcessingUtils.isConversionNeeded(geom1, geom2)) {
+            if (JTSProcessingUtils.isConversionNeeded(geom1, geom2)) {
                 geom2 = JTSProcessingUtils.convertToCRS(geom2, resultCRS);
             }
 
@@ -59,9 +61,9 @@ public class CoveredByProcess extends AbstractProcess {
             getOrCreate(RESULT, outputParameters).setValue(result);
 
         } catch (FactoryException ex) {
-            Logger.getLogger(CoveredByProcess.class.getName()).log(Level.WARNING, null, ex);
+            throw new ProcessException(null, this, ex);
         } catch (TransformException ex) {
-            Logger.getLogger(CoveredByProcess.class.getName()).log(Level.WARNING, null, ex);
+            throw new ProcessException(null, this, ex);
         }
     }
 

@@ -22,6 +22,7 @@ import org.opengis.parameter.ParameterValueGroup;
 
 import static org.geotoolkit.process.jts.area.AreaDescriptor.*;
 import static org.geotoolkit.parameter.Parameters.*;
+
 /**
  * @author Quentin Boileau (Geomatys)
  * @module pending
@@ -37,7 +38,7 @@ public class AreaProcess extends AbstractProcess {
 
         final Geometry geom = value(GEOM, inputParameters);
 
-        final Double result = geom.getArea();
+        final double result = geom.getArea();
 
         getOrCreate(RESULT, outputParameters).setValue(result);
     }

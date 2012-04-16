@@ -16,32 +16,27 @@
  */
 package org.geotoolkit.process.jts.envelope;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.process.jts.union.UnionProcess;
-import org.geotoolkit.referencing.CRS;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.util.FactoryException;
-import org.geotoolkit.process.ProcessException;
-import org.opengis.util.NoSuchIdentifierException;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
+import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.process.ProcessDescriptor;
+import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.process.jts.AbstractProcessTest;
-
-import org.opengis.parameter.ParameterValueGroup;
-
+import org.geotoolkit.referencing.CRS;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
-import static org.junit.Assert.*;
+import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.FactoryException;
+import org.opengis.util.NoSuchIdentifierException;
 
 /**
  * JUnit test of ConvexHull process
- * @author Quentin Boileau
- * @module pending
+ *
+ * @author Quentin Boileau @module pending
  */
 public class EnvelopeTest extends AbstractProcessTest {
 
@@ -64,13 +59,8 @@ public class EnvelopeTest extends AbstractProcessTest {
                 });
 
         final Geometry geom = fact.createPolygon(ring, null);
-        CoordinateReferenceSystem crs1 = null;
-        try {
-            crs1 = CRS.decode("EPSG:4326");
-            JTS.setCRS(geom, crs1);
-        } catch (FactoryException ex) {
-            Logger.getLogger(UnionProcess.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        final CoordinateReferenceSystem crs1 = CRS.decode("EPSG:4326");
+        JTS.setCRS(geom, crs1);
 
         // Process
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("jts", "envelope");
@@ -81,7 +71,6 @@ public class EnvelopeTest extends AbstractProcessTest {
 
         //result
         final Geometry result = (Geometry) proc.call().parameter("result_geom").getValue();
-
 
         final Geometry expected = geom.getEnvelope();
 
