@@ -36,6 +36,11 @@ import org.opengis.coverage.grid.RectifiedGrid;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+
+import static org.geotoolkit.parameter.Parameters.*;
+import org.geotoolkit.process.ProcessException;
+import static org.geotoolkit.process.coverage.tiling.TilingDescriptor.*;
+import org.geotoolkit.util.ArgumentChecks;
 /**
  *
  * @author Johann Sorel (Geomatys)
@@ -44,27 +49,22 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public final class TilingProcess extends AbstractProcess {
 
     TilingProcess(final ParameterValueGroup input) {
-        super(TilingDescriptor.INSTANCE,input);
+        super(INSTANCE,input);
     }
 
     @Override
-    protected void execute() {
-        if (inputParameters == null) {
-            fireFailEvent(new ProcessEvent(this,
-                    "Input parameters not set.",0,
-                    new NullPointerException("Input parameters not set.")));
-        }
-
+    protected void execute() throws ProcessException {
+        ArgumentChecks.ensureNonNull("inputParameters", inputParameters);
+        
         final Object input;
-        final ImageReader imgReader = (ImageReader) inputParameters.parameter(TilingDescriptor.IN_SOURCE_READER.getName().getCode()).getValue();
+        final ImageReader imgReader = value(IN_SOURCE_READER, inputParameters);
         if (imgReader != null) {
             input = imgReader;
         } else {
-            input = (File) inputParameters.parameter(TilingDescriptor.IN_SOURCE_FILE.getName().getCode()).getValue();
+            input = value(IN_SOURCE_FILE, inputParameters);
         }
-        final File output = (File) inputParameters.parameter(TilingDescriptor.IN_TILES_FOLDER.getName().getCode()).getValue();
-        AffineTransform gridtoCRS = (AffineTransform)
-                inputParameters.parameter(TilingDescriptor.IN_GRID_TO_CRS.getName().getCode()).getValue();
+        final File output = value(IN_TILES_FOLDER, inputParameters);
+        AffineTransform gridtoCRS = value(IN_GRID_TO_CRS, inputParameters);
 
         if (!output.exists()) {
             output.mkdirs();
@@ -96,11 +96,10 @@ public final class TilingProcess extends AbstractProcess {
             params.setTileWritingPolicy(TileWritingPolicy.WRITE_NEWS_ONLY);
             final TileManager tileManager = builder.writeFromInput(input, params);
 
-            outputParameters.parameter(TilingDescriptor.OUT_TILE_MANAGER.getName().getCode()).setValue(tileManager);
-            outputParameters.parameter(TilingDescriptor.OUT_CRS.getName().getCode()).setValue(crs);
-            fireStartEvent(new ProcessEvent(this));
+            getOrCreate(OUT_TILE_MANAGER, outputParameters).setValue(tileManager);
+            getOrCreate(OUT_CRS, outputParameters).setValue(crs);
         } catch (Exception ex) {
-            fireFailEvent(new ProcessEvent(this, ex.getLocalizedMessage(), 0, ex));
+            throw new ProcessException(null, this, ex);
         }
     }
 

@@ -31,15 +31,18 @@ import org.geotoolkit.display2d.service.ViewDef;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.process.AbstractProcess;
-import org.geotoolkit.process.ProcessEvent;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.util.ArgumentChecks;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+
+import static org.geotoolkit.parameter.Parameters.*;
+import static org.geotoolkit.process.coverage.pyramid.MapcontextPyramidDescriptor.*;
 /**
  * Create a pyramid in the given PyramidalModel.
  * If a pyramid with the given CRS already exist it will be reused.
@@ -52,34 +55,24 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public final class MapcontextPyramidProcess extends AbstractProcess {
 
     MapcontextPyramidProcess(final ParameterValueGroup input) {
-        super(MapcontextPyramidDescriptor.INSTANCE,input);
+        super(INSTANCE,input);
     }
 
     @Override
     protected void execute() throws ProcessException {
-        if (inputParameters == null) {
-            fireFailEvent(new ProcessEvent(this,
-                    "Input parameters not set.",0,
-                    new NullPointerException("Input parameters not set.")));
-        }
+        ArgumentChecks.ensureNonNull("inputParameters", inputParameters);
 
-        final MapContext context = (MapContext) inputParameters.parameter(
-                MapcontextPyramidDescriptor.IN_MAPCONTEXT.getName().getCode()).getValue();
-        final Envelope envelope = (Envelope) inputParameters.parameter(
-                MapcontextPyramidDescriptor.IN_EXTENT.getName().getCode()).getValue();
-        final Dimension tileSize = (Dimension) inputParameters.parameter(
-                MapcontextPyramidDescriptor.IN_TILE_SIZE.getName().getCode()).getValue();
-        final double[] scales = (double[]) inputParameters.parameter(
-                MapcontextPyramidDescriptor.IN_SCALES.getName().getCode()).getValue();
-        final PyramidalModel container = (PyramidalModel) inputParameters.parameter(
-                MapcontextPyramidDescriptor.IN_CONTAINER.getName().getCode()).getValue();
+        final MapContext context = value(IN_MAPCONTEXT, inputParameters);
+        final Envelope envelope = value(IN_EXTENT, inputParameters);
+        final Dimension tileSize = value(IN_TILE_SIZE, inputParameters);
+        final double[] scales = value(IN_SCALES, inputParameters);
+        final PyramidalModel container = value(IN_CONTAINER, inputParameters);
 
         Hints hints = null;
         try{
-            hints = (Hints) inputParameters.parameter(
-                MapcontextPyramidDescriptor.IN_HINTS.getName().getCode()).getValue();
+            hints = value(IN_HINTS, inputParameters);
         } catch (ParameterNotFoundException ex) {
-            // TODO: expliquer pourquoi on ignore l'exception.
+            // Get the hint parameter if exist, otherwise keep it to null.
         }
 
         final CanvasDef canvasDef = new CanvasDef(new Dimension(1, 1), null);

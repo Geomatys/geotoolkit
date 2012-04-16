@@ -29,9 +29,8 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.AbstractProcess;
-import org.geotoolkit.process.ProcessEvent;
+import org.geotoolkit.process.ProcessException;
 
 import org.opengis.coverage.SampleDimensionType;
 import org.opengis.feature.Feature;
@@ -42,6 +41,9 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
+
+import static org.geotoolkit.parameter.Parameters.*;
+import static org.geotoolkit.process.coverage.coveragetofeatures.CoverageToFeaturesDescriptor.*;
 
 /**
  * Process CoverageToFeature create a collection of Feature based on a coverage layer.
@@ -56,37 +58,38 @@ import org.opengis.referencing.operation.TransformException;
  * @author Quentin Boileau
  * @module pending
  */
-public class CoverageToFeatures extends AbstractProcess {
+public class CoverageToFeaturesProcess extends AbstractProcess {
 
 
     /**
      * Default constructor
      */
-    public CoverageToFeatures(final ParameterValueGroup input) {
-        super(CoverageToFeaturesDescriptor.INSTANCE,input);
+    public CoverageToFeaturesProcess(final ParameterValueGroup input) {
+        super(INSTANCE,input);
     }
 
     /**
      *  {@inheritDoc }
      */
     @Override
-    protected void execute() {
+    protected void execute() throws ProcessException{
         try {
-            GridCoverageReader reader = Parameters.value(CoverageToFeaturesDescriptor.READER_IN, inputParameters);
-            GridCoverage2D coverage = (GridCoverage2D) reader.read(0, null);
-            GeneralGridGeometry gridGeom = reader.getGridGeometry(0);
+            final GridCoverageReader reader = value(READER_IN, inputParameters);
+            final GridCoverage2D coverage = (GridCoverage2D) reader.read(0, null);
+            final GeneralGridGeometry gridGeom = reader.getGridGeometry(0);
 
             final CoverageToFeatureCollection resultFeatureList =
-                    new CoverageToFeatureCollection(reader, gridGeom.getGridRange(), coverage, gridGeom);
+                    new CoverageToFeatureCollection(reader, gridGeom.getExtent(), coverage, gridGeom);
 
-            outputParameters.parameter(CoverageToFeaturesDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
+            getOrCreate(FEATURE_OUT, outputParameters).setValue(resultFeatureList);
         } catch (CoverageStoreException ex) {
-            fireFailEvent(new ProcessEvent(this, null,0, ex));
+            throw new ProcessException(null, this, ex);
         }
     }
 
     /**
      * Create the new FeatureType from the coverage and the reader.
+     * 
      * @param coverage
      * @param reader
      * @return the FeatureType of Features
@@ -106,7 +109,7 @@ public class CoverageToFeatures extends AbstractProcess {
         if (coverage.getSampleDimension(0).getSampleDimensionType() == SampleDimensionType.REAL_32BITS) {
             type = 1; //Float
         } else if (coverage.getSampleDimension(0).getSampleDimensionType() == SampleDimensionType.REAL_64BITS) {
-            type = 2; //double
+            type = 2; //Double
         } else {
             type = 3; //Int
         }
@@ -132,6 +135,7 @@ public class CoverageToFeatures extends AbstractProcess {
 
     /**
      * Create a Feature with a cell coordinate (x,y).
+     * 
      * @param type the FeatureType
      * @param x
      * @param y

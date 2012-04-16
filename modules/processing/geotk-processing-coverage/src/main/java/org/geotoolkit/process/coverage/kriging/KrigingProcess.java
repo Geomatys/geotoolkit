@@ -33,9 +33,8 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.AbstractProcess;
-import org.geotoolkit.process.ProcessEvent;
+import org.geotoolkit.process.ProcessException;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
@@ -43,6 +42,10 @@ import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
+
+import static org.geotoolkit.parameter.Parameters.*;
+import static org.geotoolkit.process.coverage.kriging.KrigingDescriptor.*;
 
 /**
  *
@@ -52,15 +55,15 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public class KrigingProcess extends AbstractProcess {
 
     KrigingProcess(final ParameterValueGroup input) {
-        super(KrigingDescriptor.INSTANCE,input);
+        super(INSTANCE,input);
     }
 
     @Override
-    protected void execute() {
-        final CoordinateReferenceSystem crs = Parameters.value(KrigingDescriptor.IN_CRS, inputParameters);
-        final double step                   = Parameters.value(KrigingDescriptor.IN_STEP, inputParameters);
-        final DirectPosition[] coords       = Parameters.value(KrigingDescriptor.IN_POINTS, inputParameters);
-        final Dimension maxDim              = Parameters.value(KrigingDescriptor.IN_DIMENSION, inputParameters);
+    protected void execute() throws ProcessException{
+        final CoordinateReferenceSystem crs = value(IN_CRS, inputParameters);
+        final double step                   = value(IN_STEP, inputParameters);
+        final DirectPosition[] coords       = value(IN_POINTS, inputParameters);
+        final Dimension maxDim              = value(IN_DIMENSION, inputParameters);
 
         //calculate the envelope
         double minx = Double.POSITIVE_INFINITY;
@@ -106,8 +109,7 @@ public class KrigingProcess extends AbstractProcess {
         try {
             computed = ob.interpole(x, y, z);
         } catch (Exception ex) {
-            fireFailEvent(new ProcessEvent(this, ex.getMessage(),0, ex));
-            return;
+            throw new ProcessException(null, this, ex);
         }
         final double[] cx = ob.getXs();
         final double[] cy = ob.getYs();
@@ -119,7 +121,7 @@ public class KrigingProcess extends AbstractProcess {
         env.setCoordinateReferenceSystem(crs);
 
         final GridCoverage2D coverage = toCoverage(computed, cx, cy, env);
-        Parameters.getOrCreate(KrigingDescriptor.OUT_COVERAGE, outputParameters).setValue(coverage);
+        getOrCreate(OUT_COVERAGE, outputParameters).setValue(coverage);
 
 
         //create the isolines //////////////////////////////////////////////////
@@ -139,8 +141,7 @@ public class KrigingProcess extends AbstractProcess {
         } catch(Exception ex) {
             //this task rais some IllegalStateExceptio
             //TODO, fix objective analysis
-            fireStartEvent(new ProcessEvent(this, "Creating isolines geometries failed",0, ex));
-            return;
+            throw new ProcessException("Creating isolines geometries failed", this, ex);
         }
 
         final GeometryFactory GF = new GeometryFactory();
@@ -171,7 +172,7 @@ public class KrigingProcess extends AbstractProcess {
             col.add(f);
         }
 
-        Parameters.getOrCreate(KrigingDescriptor.OUT_LINES, outputParameters).setValue(col);
+        getOrCreate(OUT_LINES, outputParameters).setValue(col);
     }
 
     private static GridCoverage2D toCoverage(final double[] computed, final double[] xs, final double[] ys,

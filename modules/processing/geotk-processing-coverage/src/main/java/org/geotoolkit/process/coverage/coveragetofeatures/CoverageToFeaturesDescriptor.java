@@ -89,6 +89,6 @@ public final class CoverageToFeaturesDescriptor extends AbstractProcessDescripto
      */
     @Override
     public Process createProcess(final ParameterValueGroup input) {
-        return new CoverageToFeatures(input);
+        return new CoverageToFeaturesProcess(input);
     }
 }

@@ -35,13 +35,16 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.process.AbstractProcess;
-import org.geotoolkit.process.ProcessEvent;
+import org.geotoolkit.process.ProcessException;
+import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.NumberRange;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 
+import static org.geotoolkit.parameter.Parameters.*;
+import static org.geotoolkit.process.coverage.coveragetovector.CoverageToVectorDescriptor.*;
 /**
  * Process to extract Polygon from a coverage.
  *
@@ -64,7 +67,7 @@ public class CoverageToVectorProcess extends AbstractProcess {
     private final Block block = new Block();
 
     CoverageToVectorProcess(final ParameterValueGroup input) {
-        super(CoverageToVectorDescriptor.INSTANCE,input);
+        super(INSTANCE,input);
     }
 
     public Geometry[] toPolygon(GridCoverage2D coverage, final NumberRange[] ranges, final int band)
@@ -393,16 +396,12 @@ public class CoverageToVectorProcess extends AbstractProcess {
     }
 
     @Override
-    protected void execute() {
-        if (inputParameters == null) {
-            fireFailEvent(new ProcessEvent(this,
-                    "Input parameters not set.",0,
-                    new NullPointerException("Input parameters not set.")));
-        }
+    protected void execute() throws ProcessException{
+        ArgumentChecks.ensureNonNull("inputParameters", inputParameters);
 
-        final GridCoverage2D coverage = (GridCoverage2D) inputParameters.parameter(CoverageToVectorDescriptor.COVERAGE.getName().getCode()).getValue();
-        final NumberRange[] ranges = (NumberRange[]) inputParameters.parameter(CoverageToVectorDescriptor.RANGES.getName().getCode()).getValue();
-        Integer band = (Integer) inputParameters.parameter(CoverageToVectorDescriptor.BAND.getName().getCode()).getValue();
+        final GridCoverage2D coverage = value(COVERAGE, inputParameters);
+        final NumberRange[] ranges = value(RANGES, inputParameters);
+        Integer band = value(BAND, inputParameters);
         if(band == null) {
             band = 0;
         }
@@ -411,16 +410,16 @@ public class CoverageToVectorProcess extends AbstractProcess {
         try {
             result = toPolygon(coverage, ranges, 0);
         } catch (IOException ex) {
-            fireFailEvent(new ProcessEvent(this, null,0, ex));
+            throw new ProcessException(null, this, ex);
         } catch (TransformException ex) {
-            fireFailEvent(new ProcessEvent(this, null,0, ex));
+            throw new ProcessException(null, this, ex);
         }
 
         //avoid memory use
         buffers = null;
         polygons.clear();
 
-        outputParameters.parameter(CoverageToVectorDescriptor.GEOMETRIES.getName().getCode()).setValue(result);
+        getOrCreate(GEOMETRIES, outputParameters).setValue(result);
     }
 
     private static class NaNRange extends NumberRange{
@@ -433,7 +432,6 @@ public class CoverageToVectorProcess extends AbstractProcess {
         public boolean contains(final Number number) throws IllegalArgumentException {
             return Double.isNaN(number.doubleValue());
         }
-
     }
 
 }
