@@ -131,6 +131,8 @@ public final class MapcontextPyramidProcess extends AbstractProcess {
                         mosaic.getGridSize(), mosaic.getTileSize(), scale);
 
                 container.writeTiles(pyramid.getId(), mosaic.getId(), image, true);
+                
+                getOrCreate(OUT_CONTAINER, outputParameters).setValue(container);
             }
 
         } catch (DataStoreException ex) {

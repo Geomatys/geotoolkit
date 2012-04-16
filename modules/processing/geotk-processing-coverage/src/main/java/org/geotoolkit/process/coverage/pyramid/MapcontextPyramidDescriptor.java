@@ -89,9 +89,12 @@ public final class MapcontextPyramidDescriptor extends AbstractProcessDescriptor
             new DefaultParameterDescriptorGroup(NAME+"InputParameters",
                 IN_MAPCONTEXT,IN_EXTENT,IN_TILE_SIZE,IN_SCALES,IN_CONTAINER,IN_HINTS);
 
-
+    public static final ParameterDescriptor<PyramidalModel> OUT_CONTAINER =
+            new DefaultParameterDescriptor<PyramidalModel>("outContainer",
+            "The container which will receive the tiles.",PyramidalModel.class,null,true);
+    
     public static final ParameterDescriptorGroup OUTPUT_DESC =
-            new DefaultParameterDescriptorGroup(NAME+"OutputParameters");
+            new DefaultParameterDescriptorGroup(NAME+"OutputParameters", OUT_CONTAINER);
     
     public static final ProcessDescriptor INSTANCE = new MapcontextPyramidDescriptor();
 
