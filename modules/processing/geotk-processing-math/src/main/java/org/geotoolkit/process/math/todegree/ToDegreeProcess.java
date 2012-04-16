@@ -26,26 +26,25 @@ import static org.geotoolkit.parameter.Parameters.*;
  * @author Quentin Boileau (Geomatys)
  * @module pending
  */
-public class ToDegreeProcess extends AbstractProcess{
-    
-    public ToDegreeProcess(final ParameterValueGroup input){
+public class ToDegreeProcess extends AbstractProcess {
+
+    public ToDegreeProcess(final ParameterValueGroup input) {
         super(INSTANCE,input);
     }
-    
+
     @Override
-    public ParameterValueGroup call() {
-        
-        final double first = value(FIRST_NUMBER, inputParameters);   
-        
+    protected void execute() {
+
+        final double first = value(FIRST_NUMBER, inputParameters);
+
         Double result = 0.0;
         try{
             result = Math.toDegrees(first);
-        }catch(Exception e){
+        }catch(Exception e) {
             fireFailEvent(new ProcessEvent(this, e.getMessage(),0, e));
         }
-        
-        getOrCreate(RESULT_NUMBER, outputParameters).setValue(result);  
-        return outputParameters;
+
+        getOrCreate(RESULT_NUMBER, outputParameters).setValue(result);
     }
-    
+
 }

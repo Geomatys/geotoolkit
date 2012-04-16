@@ -43,15 +43,12 @@ public class AffineTransform extends AbstractProcess {
      *  {@inheritDoc }
      */
     @Override
-    public ParameterValueGroup call() {
-        fireStartEvent(new ProcessEvent(this));
+    protected void execute() {
         final FeatureCollection<Feature> inputFeatureList = Parameters.value(AffineTransformDescriptor.FEATURE_IN, inputParameters);
         final java.awt.geom.AffineTransform transform = Parameters.value(AffineTransformDescriptor.TRANSFORM_IN, inputParameters);
-        
+
         final FeatureCollection<Feature> resultFeatureList = new AffineTransformFeatureCollection(inputFeatureList, transform);
 
         outputParameters.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
-        fireEndEvent(new ProcessEvent(this, null, 100));
-        return outputParameters;
-    } 
+    }
 }

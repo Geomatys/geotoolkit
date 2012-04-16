@@ -39,32 +39,31 @@ import static org.geotoolkit.parameter.Parameters.*;
  * @module pending
  */
 public class MapfileFilterToOGCFilterProcess extends AbstractProcess{
-    
+
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
     private static final FilterFactory FF = new DefaultFilterFactory2();
-        
+
     public MapfileFilterToOGCFilterProcess(final ParameterValueGroup input){
         super(INSTANCE, input);
     }
-    
+
     @Override
-    public ParameterValueGroup call() throws ProcessException{        
+    protected void execute() throws ProcessException {
         final String text  = value(IN_TEXT, inputParameters);
-        final Expression ref  = value(IN_REFERENCE, inputParameters);       
-        final List<Token> tokens = MapfileExpressionTokenizer.toTokens(text);        
+        final Expression ref  = value(IN_REFERENCE, inputParameters);
+        final List<Token> tokens = MapfileExpressionTokenizer.toTokens(text);
         final Object result = parse(ref, tokens);
         getOrCreate(OUT_OGC, outputParameters).setValue(result);
-        return outputParameters;
     }
-    
+
     private Object parse(final Expression ref,final List<Token> tokens) throws ProcessException{
-        
+
         int index = 0;
         Object result = null;
-        
+
         while(index < tokens.size()){
             Token token = tokens.get(index);
-            
+
             if("(".equals(token.value)){
                 //a block, find the block end ad parse it's content
                 index++;
@@ -83,7 +82,7 @@ public class MapfileFilterToOGCFilterProcess extends AbstractProcess{
                 if(!"]".equals(v)){
                     throw new ProcessException("Was expecting a ']' but was : "+v, this, null);
                 }
-                
+
                 index++;
                 result = FF.property(propName);
 
@@ -106,7 +105,7 @@ public class MapfileFilterToOGCFilterProcess extends AbstractProcess{
                 //and equality test
                 //left side
                 final Expression left = (Expression) result;
-                
+
                 //right side
                 index++;
                 final Expression right;
@@ -124,42 +123,42 @@ public class MapfileFilterToOGCFilterProcess extends AbstractProcess{
                     right = (Expression) parse(null,content);
                     index++;
                 }
-                
+
                 result = FF.equals(left, right);
-                
+
             }else if("and".equalsIgnoreCase(token.value)){
                 //and operand
                 //left side
                 final Filter left = (Filter) result;
-                
+
                 //right side
                 index++;
                 final List<Token> content = tokens.subList(index, tokens.size());
                 final Filter right = (Filter) parse(null,content);
-                
+
                 index = tokens.size();
                 result = FF.and(left, right);
-                
+
             }else if("or".equalsIgnoreCase(token.value)){
                 //or operand
                 //left side
                 final Filter left = (Filter) result;
-                
+
                 //right side
                 index++;
                 final List<Token> content = tokens.subList(index, tokens.size());
                 final Filter right = (Filter) parse(null,content);
-                
+
                 index = tokens.size();
                 result = FF.or(left,right);
-                
+
             }else{
                 index++;
-                String text = token.value;                
+                String text = token.value;
                 if(text.startsWith("\"") || text.startsWith("'")){
                     text = text.substring(1, text.length()-1);
                 }
-                
+
                 final Expression literal = toExpression(text);
                 //a single value
                 if(ref != null){
@@ -171,10 +170,10 @@ public class MapfileFilterToOGCFilterProcess extends AbstractProcess{
                 }
             }
         }
-        
+
         return result;
     }
-    
+
     /**
      * Parse string and replace encapsulated property names
      */
@@ -182,23 +181,23 @@ public class MapfileFilterToOGCFilterProcess extends AbstractProcess{
         if(text.startsWith("\"") || text.startsWith("'")){
             text = text.substring(1, text.length()-1);
         }
-        
+
         final List<Expression> parts = new ArrayList<Expression>();
         while(true){
             final int from = text.indexOf('[');
             final int end = text.indexOf(']');
-            
-            
-            if(from >= 0){                
+
+
+            if(from >= 0){
                 if(from > 0){
                     final String before = text.substring(0, from);
                     parts.add(FF.literal(before));
                 }
-                
+
                 final String propName = text.substring(from+1, end);
                 parts.add(FF.property(propName));
                 text = text.substring(end+1);
-                
+
             }else if(text.length()>0 || parts.isEmpty()){
                 parts.add(FF.literal(text));
                 break;
@@ -206,7 +205,7 @@ public class MapfileFilterToOGCFilterProcess extends AbstractProcess{
                 break;
             }
         }
-        
+
         //concatenate expressions
         while(parts.size()>1){
             final Expression exp1 = parts.remove(0);
@@ -214,10 +213,10 @@ public class MapfileFilterToOGCFilterProcess extends AbstractProcess{
             final Expression concat = FF.function("strConcat", exp1, exp2);
             parts.add(0,concat);
         }
-        
+
         return parts.get(0);
     }
-    
+
     /**
      * @return int, token index of the closing current block
      */
@@ -235,8 +234,8 @@ public class MapfileFilterToOGCFilterProcess extends AbstractProcess{
                 }
             }
         }
-        
+
         return -1;
     }
-    
+
 }

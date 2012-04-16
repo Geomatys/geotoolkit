@@ -30,36 +30,34 @@ import static org.geotoolkit.process.jts.centroid.CentroidDescriptor.*;
 import static org.geotoolkit.parameter.Parameters.*;
 import org.opengis.util.FactoryException;
 /**
- * Compute input geometry centroid. 
+ * Compute input geometry centroid.
  * The returned point keep input geometry CRS.
  * @author Quentin Boileau (Geomatys)
  * @module pending
  */
 public class CentroidProcess extends AbstractProcess{
-    
-    public CentroidProcess(final ParameterValueGroup input){
+
+    public CentroidProcess(final ParameterValueGroup input) {
         super(INSTANCE,input);
     }
-    
+
     @Override
-    public ParameterValueGroup call() {
+    protected void execute() {
         try {
-            final Geometry geom = value(GEOM, inputParameters);  
-           
+            final Geometry geom = value(GEOM, inputParameters);
+
             final CoordinateReferenceSystem geomCRS = JTS.findCoordinateReferenceSystem(geom);
-            
+
             final Point result = geom.getCentroid();
             JTS.setCRS(result, geomCRS);
-            
-            getOrCreate(RESULT_GEOM, outputParameters).setValue(result); 
-            
+
+            getOrCreate(RESULT_GEOM, outputParameters).setValue(result);
+
         } catch (NoSuchAuthorityCodeException ex) {
             Logger.getLogger(CentroidProcess.class.getName()).log(Level.WARNING, null, ex);
         } catch (FactoryException ex) {
             Logger.getLogger(CentroidProcess.class.getName()).log(Level.WARNING, null, ex);
         }
-        
-        return outputParameters;
     }
-    
+
 }

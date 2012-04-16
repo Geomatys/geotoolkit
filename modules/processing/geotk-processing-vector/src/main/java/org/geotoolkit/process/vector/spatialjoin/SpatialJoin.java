@@ -68,7 +68,7 @@ public class SpatialJoin extends AbstractProcess {
      *  {@inheritDoc }
      */
     @Override
-    public ParameterValueGroup call() {
+    protected void execute() {
         fireStartEvent(new ProcessEvent(this));
         final FeatureCollection<Feature> sourceFeatureList = Parameters.value(SpatialJoinDescriptor.FEATURE_IN, inputParameters);
         final FeatureCollection<Feature> targetFeatureList = Parameters.value(SpatialJoinDescriptor.FEATURE_TARGET, inputParameters);
@@ -78,24 +78,23 @@ public class SpatialJoin extends AbstractProcess {
                 new SpatialJoinFeatureCollection(sourceFeatureList, targetFeatureList, method);
 
         outputParameters.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
-        fireEndEvent(new ProcessEvent(this,null,100));
-        return outputParameters;
+        fireEndEvent(new ProcessEvent(this, null, 100));
     }
 
     /**
      * This function join target Feature with another Feature form a source FeatureCollection.
-     * 
+     *
      * If boolean <code>method</code> is true, the method used is Intersect, else it's Nearest.
-     * 
+     *
      * If there is no Feature which Intersect the target Geometry, the return Feature
      * will have "joined attributes" set to null.
-     * 
+     *
      * If there is more than one result for Nearest method
      * (many Feature at the same distance), we use the first returned.
-     * 
+     *
      * If there is more than one result for Intersect method , we use the Feature
      * with the biggest intersection area with target Geometry.
-     * 
+     *
      * @param target the target Feature
      * @param newType the concatenated FeatureType
      * @param sourceFC the source FeatureCollection
@@ -149,7 +148,7 @@ public class SpatialJoin extends AbstractProcess {
                     Logger.getLogger(SpatialJoin.class.getName()).log(Level.WARNING, null, ex);
                     return null;
                 }
-                
+
                 featureOutArray = new ArrayList<Feature>(featureOut);
 
                 if (method) {//intersect method
@@ -268,14 +267,14 @@ public class SpatialJoin extends AbstractProcess {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.copy(targetType);
         ftb.setName(targetType.getName().getLocalPart() + "_" + sourceType.getName().getLocalPart());
-        
+
         //each source descriptor
         final Iterator<PropertyDescriptor> iteSource = sourceType.getDescriptors().iterator();
         while (iteSource.hasNext()) {
 
             final PropertyDescriptor sourceDesc = iteSource.next();
 
-            //add all descriptors but geometry 
+            //add all descriptors but geometry
             if (!(sourceDesc instanceof GeometryDescriptor)) {
 
                 property = (AttributeType) sourceDesc.getType();

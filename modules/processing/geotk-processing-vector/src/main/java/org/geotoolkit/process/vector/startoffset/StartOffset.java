@@ -47,15 +47,14 @@ public class StartOffset extends AbstractProcess {
      *  {@inheritDoc }
      */
     @Override
-    public ParameterValueGroup call() {
+    protected void execute() {
         fireStartEvent(new ProcessEvent(this));
         final FeatureCollection<Feature> inputFeatureList = Parameters.value(StartOffsetDescriptor.FEATURE_IN, inputParameters);
         final int offset = Parameters.value(StartOffsetDescriptor.OFFSET_IN, inputParameters);
-        
+
         final FeatureCollection resultFeatureList = GenericStartIndexFeatureIterator.wrap(inputFeatureList, offset);
 
         outputParameters.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
         fireEndEvent(new ProcessEvent(this,null,100));
-        return outputParameters;
     }
 }

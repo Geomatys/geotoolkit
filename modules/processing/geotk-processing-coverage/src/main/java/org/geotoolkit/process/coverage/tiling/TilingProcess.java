@@ -41,14 +41,14 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public final class TilingProcess extends AbstractProcess{
+public final class TilingProcess extends AbstractProcess {
 
-    TilingProcess(final ParameterValueGroup input){
+    TilingProcess(final ParameterValueGroup input) {
         super(TilingDescriptor.INSTANCE,input);
     }
 
     @Override
-    public ParameterValueGroup call() {
+    protected void execute() {
         if (inputParameters == null) {
             fireFailEvent(new ProcessEvent(this,
                     "Input parameters not set.",0,
@@ -66,7 +66,7 @@ public final class TilingProcess extends AbstractProcess{
         AffineTransform gridtoCRS = (AffineTransform)
                 inputParameters.parameter(TilingDescriptor.IN_GRID_TO_CRS.getName().getCode()).getValue();
 
-        if(!output.exists()){
+        if (!output.exists()) {
             output.mkdirs();
         }
 
@@ -76,15 +76,15 @@ public final class TilingProcess extends AbstractProcess{
             reader.setInput(input);
             final SpatialMetadata coverageMetadata = reader.getCoverageMetadata(0);
             CoordinateReferenceSystem crs = coverageMetadata.getInstanceForType(CoordinateReferenceSystem.class);
-            if(gridtoCRS == null){
+            if(gridtoCRS == null) {
                 final RectifiedGrid grid = coverageMetadata.getInstanceForType(RectifiedGrid.class);
-                try{
+                try {
                     gridtoCRS = MetadataHelper.INSTANCE.getAffineTransform(grid, null);
-                }catch(Exception ex){ 
+                } catch(Exception ex) {
                     /*silent exit, not a georeferenced coverage*/
                 }
             }
-            
+
             final MosaicBuilder builder = new MosaicBuilder();
             builder.setTileSize(new Dimension(512, 512));
             builder.setGridToCRS(gridtoCRS);
@@ -95,16 +95,13 @@ public final class TilingProcess extends AbstractProcess{
             final MosaicImageWriteParam params = new MosaicImageWriteParam();
             params.setTileWritingPolicy(TileWritingPolicy.WRITE_NEWS_ONLY);
             final TileManager tileManager = builder.writeFromInput(input, params);
-            
+
             outputParameters.parameter(TilingDescriptor.OUT_TILE_MANAGER.getName().getCode()).setValue(tileManager);
             outputParameters.parameter(TilingDescriptor.OUT_CRS.getName().getCode()).setValue(crs);
             fireStartEvent(new ProcessEvent(this));
         } catch (Exception ex) {
-            fireFailEvent(new ProcessEvent(this, ex.getLocalizedMessage(),0, ex));
-            return outputParameters;
+            fireFailEvent(new ProcessEvent(this, ex.getLocalizedMessage(), 0, ex));
         }
-
-        return outputParameters;
     }
 
 }

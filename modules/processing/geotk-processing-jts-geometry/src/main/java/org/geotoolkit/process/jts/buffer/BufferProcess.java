@@ -36,52 +36,50 @@ import org.opengis.util.FactoryException;
  * @author Quentin Boileau (Geomatys)
  * @module pending
  */
-public class BufferProcess extends AbstractProcess{
-    
-    public BufferProcess(final ParameterValueGroup input){
+public class BufferProcess extends AbstractProcess {
+
+    public BufferProcess(final ParameterValueGroup input) {
         super(INSTANCE,input);
     }
-    
+
     @Override
-    public ParameterValueGroup call() {
+    protected void execute() {
         try {
-            final Geometry geom = value(GEOM, inputParameters);  
+            final Geometry geom = value(GEOM, inputParameters);
             final double distance = value(DISTANCE, inputParameters);
-            
+
             int segments = 0;
-            if(value(SEGMENTS, inputParameters) != null){
-                segments = value(SEGMENTS, inputParameters);  
+            if(value(SEGMENTS, inputParameters) != null) {
+                segments = value(SEGMENTS, inputParameters);
             }
-            
+
             int endStyle = 0;
-            if(value(ENDSTYLE, inputParameters) != null){
-                 endStyle = value(ENDSTYLE, inputParameters);   
+            if(value(ENDSTYLE, inputParameters) != null) {
+                 endStyle = value(ENDSTYLE, inputParameters);
             }
-            
+
             final CoordinateReferenceSystem geomCRS = JTS.findCoordinateReferenceSystem(geom);
-            
+
             Geometry result = new GeometryFactory().buildGeometry(Collections.EMPTY_LIST);
-            
-            if(segments > 0){
-                if(endStyle != 0){
+
+            if (segments > 0) {
+                if (endStyle != 0) {
                      result = geom.buffer(distance, segments, endStyle);
-                }else{
+                } else {
                      result = geom.buffer(distance, segments);
                 }
-            }else{
+            } else {
                 result = geom.buffer(distance);
             }
-         
+
             JTS.setCRS(result, geomCRS);
-            getOrCreate(RESULT_GEOM, outputParameters).setValue(result); 
-           
+            getOrCreate(RESULT_GEOM, outputParameters).setValue(result);
+
         } catch (NoSuchAuthorityCodeException ex) {
             Logger.getLogger(BufferProcess.class.getName()).log(Level.WARNING, null, ex);
         } catch (FactoryException ex) {
             Logger.getLogger(BufferProcess.class.getName()).log(Level.WARNING, null, ex);
         }
-        
-        return outputParameters;
     }
-    
+
 }

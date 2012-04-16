@@ -45,8 +45,7 @@ public class ExtendFeature extends AbstractProcess {
      *  {@inheritDoc }
      */
     @Override
-    public ParameterValueGroup call() {
-        fireStartEvent(new ProcessEvent(this));
+    protected void execute() {
         final FeatureCollection<Feature> inputFeatureList = Parameters.value(ExtendFeatureDescriptor.FEATURE_IN, inputParameters);
         final GenericExtendFeatureIterator.FeatureExtend extension = Parameters.value(ExtendFeatureDescriptor.EXTEND_IN, inputParameters);
         final Hints hints = Parameters.value(ExtendFeatureDescriptor.HINTS_IN, inputParameters);
@@ -54,7 +53,5 @@ public class ExtendFeature extends AbstractProcess {
         final FeatureCollection resultFeatureList = GenericExtendFeatureIterator.wrap(inputFeatureList, extension, hints);
 
         outputParameters.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
-        fireEndEvent(new ProcessEvent(this,null,100));
-        return outputParameters;
     }
 }

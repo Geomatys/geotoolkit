@@ -53,12 +53,12 @@ import org.opengis.util.FactoryException;
  * If the simplification accuracy is more than geometry envelope width or height
  * and the simplification behavior boolean is true, the returned geometry will be null.
  * The used unit for the accuracy is meters.
- * 
+ *
  * @author Quentin Boileau
  * @module pending
  */
 public class DouglasPeucker extends AbstractProcess {
-    
+
     /**
      * Default constructor
      */
@@ -70,8 +70,7 @@ public class DouglasPeucker extends AbstractProcess {
      *  {@inheritDoc }
      */
     @Override
-    public ParameterValueGroup call() {
-        fireStartEvent(new ProcessEvent(this));
+    protected void execute() {
         final FeatureCollection<Feature> inputFeatureList = Parameters.value(DouglasPeuckerDescriptor.FEATURE_IN, inputParameters);
         final double inputAccuracy = Parameters.value(DouglasPeuckerDescriptor.ACCURACY_IN, inputParameters).doubleValue();
         final boolean inputBehavior = Parameters.value(DouglasPeuckerDescriptor.DEL_SMALL_GEO_IN, inputParameters);
@@ -81,8 +80,6 @@ public class DouglasPeucker extends AbstractProcess {
                 new DouglasPeuckerFeatureCollection(inputFeatureList, inputAccuracy, inputBehavior, inputLenient);
 
         outputParameters.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
-        fireEndEvent(new ProcessEvent(this,null,100));
-        return outputParameters;
     }
 
     /**
@@ -128,7 +125,7 @@ public class DouglasPeucker extends AbstractProcess {
                 if (convertEnvelope.getWidth() < accuracy && convertEnvelope.getHeight() < accuracy) {
                     //In this case, if behavior boolean is true, we return null for the feature
                     //else we set the geometry feature to null
-                    if(behavior){
+                    if(behavior) {
                         return null;
                     }else{
                         resultFeature.getProperty(property.getName()).setValue(new GeometryFactory().buildGeometry(Collections.EMPTY_LIST));

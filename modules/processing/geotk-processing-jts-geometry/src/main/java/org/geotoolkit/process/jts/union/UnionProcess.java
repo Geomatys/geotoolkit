@@ -40,36 +40,36 @@ import org.opengis.util.FactoryException;
  * @author Quentin Boileau (Geomatys)
  * @module pending
  */
-public class UnionProcess extends AbstractProcess{
-    
-    public UnionProcess(final ParameterValueGroup input){
+public class UnionProcess extends AbstractProcess {
+
+    public UnionProcess(final ParameterValueGroup input) {
         super(INSTANCE,input);
     }
-    
+
     @Override
-    public ParameterValueGroup call() {
-       
+    protected void execute() {
+
         try {
-            
-            Geometry geom1 = value(GEOM1, inputParameters); 
-            Geometry geom2 = value(GEOM2, inputParameters); 
-            
+
+            Geometry geom1 = value(GEOM1, inputParameters);
+            Geometry geom2 = value(GEOM2, inputParameters);
+
             Geometry result = new GeometryFactory().buildGeometry(Collections.emptyList());
-            
+
             // ensure geometries are in the same CRS
             final CoordinateReferenceSystem resultCRS = JTSProcessingUtils.getCommonCRS(geom1, geom2);
-            if(JTSProcessingUtils.isConversionNeeded(geom1, geom2)){
+            if(JTSProcessingUtils.isConversionNeeded(geom1, geom2)) {
                 geom2 = JTSProcessingUtils.convertToCRS(geom2, resultCRS);
             }
-            
+
             result = (Geometry) geom1.union(geom2);
-            if(resultCRS != null){
+            if(resultCRS != null) {
                 JTS.setCRS(result, resultCRS);
             }
-            
-            
-            getOrCreate(RESULT_GEOM, outputParameters).setValue(result); 
-            
+
+
+            getOrCreate(RESULT_GEOM, outputParameters).setValue(result);
+
         } catch (MismatchedDimensionException ex) {
             Logger.getLogger(UnionProcess.class.getName()).log(Level.WARNING, null, ex);
         } catch (TransformException ex) {
@@ -79,8 +79,6 @@ public class UnionProcess extends AbstractProcess{
         } catch (FactoryException ex) {
             Logger.getLogger(UnionProcess.class.getName()).log(Level.WARNING, null, ex);
         }
-        
-         return outputParameters;
     }
-    
+
 }

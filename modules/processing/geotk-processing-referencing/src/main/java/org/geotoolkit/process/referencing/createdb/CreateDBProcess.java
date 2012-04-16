@@ -25,7 +25,7 @@ import org.opengis.util.FactoryException;
 
 /**
  * Create an EPSG database.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class CreateDBProcess extends AbstractProcess {
@@ -36,7 +36,7 @@ public class CreateDBProcess extends AbstractProcess {
     }
 
     @Override
-    public ParameterValueGroup call() {
+    protected void execute() {
         if (inputParameters == null) {
             fireFailEvent(new ProcessEvent(this,
                     "Input parameters not set.",0,
@@ -46,7 +46,7 @@ public class CreateDBProcess extends AbstractProcess {
         final String dbURL      = (String) inputParameters.parameter(CreateDBDescriptor.DBURL.getName().getCode()).getValue();
         final String user       = (String) inputParameters.parameter(CreateDBDescriptor.USER.getName().getCode()).getValue();
         final String password   = (String) inputParameters.parameter(CreateDBDescriptor.PASSWORD.getName().getCode()).getValue();
-                
+
         final EpsgInstaller installer = new EpsgInstaller();
         installer.setDatabase(dbURL, user, password);
         try {
@@ -54,10 +54,6 @@ public class CreateDBProcess extends AbstractProcess {
         } catch (FactoryException ex) {
             fireFailEvent(new ProcessEvent(this,"create epsg db",0.5f,ex));
         }
-        
-        fireEndEvent(new ProcessEvent(this));
-
-        return outputParameters;
     }
 
 }

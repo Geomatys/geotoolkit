@@ -35,32 +35,30 @@ import static org.geotoolkit.parameter.Parameters.*;
  * @author Quentin Boileau (Geomatys)
  * @module pending
  */
-public class EnvelopeProcess extends AbstractProcess{
-    
-    public EnvelopeProcess(final ParameterValueGroup input){
+public class EnvelopeProcess extends AbstractProcess {
+
+    public EnvelopeProcess(final ParameterValueGroup input) {
         super(INSTANCE,input);
     }
-    
+
     @Override
-    public ParameterValueGroup call() {
-        
+    protected void execute() {
+
          try {
-            final Geometry geom = value(GEOM, inputParameters); 
-            
+            final Geometry geom = value(GEOM, inputParameters);
+
             final CoordinateReferenceSystem geomCRS = JTS.findCoordinateReferenceSystem(geom);
-            
+
             final Geometry result =  geom.getEnvelope();
             JTS.setCRS(result, geomCRS);
-            
-            getOrCreate(RESULT_GEOM, outputParameters).setValue(result); 
-            
+
+            getOrCreate(RESULT_GEOM, outputParameters).setValue(result);
+
         } catch (NoSuchAuthorityCodeException ex) {
             Logger.getLogger(ConvexHullProcess.class.getName()).log(Level.WARNING, null, ex);
         } catch (FactoryException ex) {
             Logger.getLogger(ConvexHullProcess.class.getName()).log(Level.WARNING, null, ex);
         }
-        
-        return outputParameters;
     }
-    
+
 }

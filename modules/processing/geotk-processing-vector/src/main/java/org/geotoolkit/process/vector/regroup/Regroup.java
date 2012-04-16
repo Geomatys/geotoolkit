@@ -63,7 +63,7 @@ public class Regroup extends AbstractProcess {
      *  {@inheritDoc }
      */
     @Override
-    public ParameterValueGroup call() {
+    protected void execute() {
         fireStartEvent(new ProcessEvent(this));
         final FeatureCollection<Feature> inputFeatureList = Parameters.value(RegroupDescriptor.FEATURE_IN, inputParameters);
         final String inputAttributeName = Parameters.value(RegroupDescriptor.REGROUP_ATTRIBUTE, inputParameters);
@@ -73,7 +73,6 @@ public class Regroup extends AbstractProcess {
 
         outputParameters.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
         fireEndEvent(new ProcessEvent(this, null,100));
-        return outputParameters;
     }
 
     /**
@@ -87,7 +86,7 @@ public class Regroup extends AbstractProcess {
 
         AttributeDescriptorBuilder descBuilder;
         AttributeTypeBuilder typeBuilder;
-        
+
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
 
         ftb.copy(oldFeatureType);
@@ -121,20 +120,20 @@ public class Regroup extends AbstractProcess {
                     listToRemove.add(desc.getName().getLocalPart());
                 }
             } else {//other properties
-                
-                if(regroupAttribute != null){
+
+                if(regroupAttribute != null) {
                      //if it's a different property than we wanted
                     if (!(desc.getName().getLocalPart().equals(regroupAttribute))) {
                         listToRemove.add(desc.getName().getLocalPart());
                     }
-                    
+
                 // If regroup attribut is null, we return a feature with only one geometry
                 }else{
                     listToRemove.add(desc.getName().getLocalPart());
                 }
             }
         }
-        
+
         ftb.setDefaultGeometry(geometryName);
         for (String delPropertyDesc : listToRemove) {
             ftb.remove(delPropertyDesc);
@@ -182,10 +181,10 @@ public class Regroup extends AbstractProcess {
         }
         Feature resultFeature = null;
         //In case
-        if(regroupAttribute == null && attributeValue == null){
+        if(regroupAttribute == null && attributeValue == null) {
             resultFeature = FeatureUtilities.defaultFeature(newFeatureType, "groupedGeometryFeature");
             resultFeature.getProperty(geometryName).setValue(regroupGeometry);
-             
+
         }else{
             //result feature
             resultFeature = FeatureUtilities.defaultFeature(newFeatureType, regroupAttribute + "-" + attributeValue);
@@ -206,9 +205,9 @@ public class Regroup extends AbstractProcess {
     static Collection<Object> getAttributeValues(final String regroupAttribute, final FeatureCollection<Feature> featureList) {
 
         final Collection<Object> values = new ArrayList<Object>();
-        
-        if(regroupAttribute != null){
-            
+
+        if(regroupAttribute != null) {
+
             final FeatureIterator<Feature> featureIter = featureList.iterator();
             try {
                 while (featureIter.hasNext()) {
@@ -231,7 +230,7 @@ public class Regroup extends AbstractProcess {
                 featureIter.close();
             }
         }
-        
+
         return values;
     }
 }

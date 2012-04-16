@@ -45,18 +45,18 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * If a pyramid with the given CRS already exist it will be reused.
  * If a mosaic at the given scale exist it will be used.
  * Missing tiles in the mosaic will be generated.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public final class MapcontextPyramidProcess extends AbstractProcess{
+public final class MapcontextPyramidProcess extends AbstractProcess {
 
-    MapcontextPyramidProcess(final ParameterValueGroup input){
+    MapcontextPyramidProcess(final ParameterValueGroup input) {
         super(MapcontextPyramidDescriptor.INSTANCE,input);
     }
 
     @Override
-    public ParameterValueGroup call() throws ProcessException{
+    protected void execute() throws ProcessException {
         if (inputParameters == null) {
             fireFailEvent(new ProcessEvent(this,
                     "Input parameters not set.",0,
@@ -73,48 +73,50 @@ public final class MapcontextPyramidProcess extends AbstractProcess{
                 MapcontextPyramidDescriptor.IN_SCALES.getName().getCode()).getValue();
         final PyramidalModel container = (PyramidalModel) inputParameters.parameter(
                 MapcontextPyramidDescriptor.IN_CONTAINER.getName().getCode()).getValue();
-        
+
         Hints hints = null;
         try{
             hints = (Hints) inputParameters.parameter(
                 MapcontextPyramidDescriptor.IN_HINTS.getName().getCode()).getValue();
-        }catch(ParameterNotFoundException ex){}
-        
+        } catch (ParameterNotFoundException ex) {
+            // TODO: expliquer pourquoi on ignore l'exception.
+        }
+
         final CanvasDef canvasDef = new CanvasDef(new Dimension(1, 1), null);
         final ViewDef viewDef = new ViewDef(envelope);
         final SceneDef sceneDef = new SceneDef(context,hints);
-        
+
         //find if we already have a pyramid in the given CRS
         Pyramid pyramid = null;
         final CoordinateReferenceSystem crs = envelope.getCoordinateReferenceSystem();
-        try{
-            for(Pyramid candidate : container.getPyramidSet().getPyramids()){
-                if(CRS.equalsApproximatively(crs, candidate.getCoordinateReferenceSystem())){
+        try {
+            for (Pyramid candidate : container.getPyramidSet().getPyramids()) {
+                if (CRS.equalsApproximatively(crs, candidate.getCoordinateReferenceSystem())) {
                     pyramid = candidate;
                     break;
                 }
             }
-            
-            if(pyramid == null){
+
+            if (pyramid == null) {
                 //we didn't find a pyramid, create one
                 pyramid = container.createPyramid(crs);
             }
-            
+
             //generate each mosaic
-            for(final double scale : scales){
+            for (final double scale : scales) {
                 final double gridWidth  = envelope.getSpan(0) / (scale*tileSize.width);
                 final double gridHeight = envelope.getSpan(1) / (scale*tileSize.height);
-                
+
                 //those parameters can change if another mosaic already exist
                 Point2D upperleft = new Point2D.Double(envelope.getMinimum(0), envelope.getMaximum(1));
                 Dimension tileDim = tileSize;
                 Dimension gridSize = new Dimension( (int)(gridWidth+0.5), (int)(gridHeight+0.5));
-                
+
                 //check if we already have a mosaic at this scale
                 GridMosaic mosaic = null;
                 int index = 0;
-                for(double sc : pyramid.getScales()){
-                    if(sc == scale){
+                for (double sc : pyramid.getScales()) {
+                    if (sc == scale) {
                         mosaic = pyramid.getMosaic(index);
                         //this mosaic definition replaces the given one
                         upperleft = mosaic.getUpperLeftCorner();
@@ -124,27 +126,25 @@ public final class MapcontextPyramidProcess extends AbstractProcess{
                     }
                     index++;
                 }
-                
-                if(mosaic == null){
+
+                if (mosaic == null) {
                     //create a new mosaic
-                    mosaic = container.createMosaic(pyramid.getId(), 
+                    mosaic = container.createMosaic(pyramid.getId(),
                         gridSize, tileDim, upperleft, scale);
                 }
-                
+
                 final RenderedImage image = DefaultPortrayalService.prepareImage(
-                        canvasDef, sceneDef, viewDef, 
+                        canvasDef, sceneDef, viewDef,
                         mosaic.getGridSize(), mosaic.getTileSize(), scale);
-                
+
                 container.writeTiles(pyramid.getId(), mosaic.getId(), image, true);
             }
-            
-        }catch(DataStoreException ex){
+
+        } catch (DataStoreException ex) {
             throw new ProcessException(ex.getMessage(), this, ex);
-        }catch(PortrayalException ex){
+        } catch (PortrayalException ex) {
             throw new ProcessException(ex.getMessage(), this, ex);
         }
-        
-        return outputParameters;
     }
-    
+
 }

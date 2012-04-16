@@ -45,15 +45,14 @@ public class SortBy extends AbstractProcess {
      *  {@inheritDoc }
      */
     @Override
-    public ParameterValueGroup call() {
+    protected void execute() {
         fireStartEvent(new ProcessEvent(this));
         final FeatureCollection<Feature> inputFeatureList = Parameters.value(SortByDescriptor.FEATURE_IN, inputParameters);
         final org.opengis.filter.sort.SortBy[] sorter = Parameters.value(SortByDescriptor.SORTER_IN, inputParameters);
-        
+
         final FeatureCollection resultFeatureList = GenericSortByFeatureIterator.wrap(inputFeatureList, sorter);
 
         outputParameters.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
         fireEndEvent(new ProcessEvent(this,null,100));
-        return outputParameters;
     }
 }

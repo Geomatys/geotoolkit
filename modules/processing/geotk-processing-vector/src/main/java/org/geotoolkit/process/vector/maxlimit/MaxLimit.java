@@ -44,15 +44,14 @@ public class MaxLimit extends AbstractProcess {
      *  {@inheritDoc }
      */
     @Override
-    public ParameterValueGroup call() {
+    protected void execute() {
         fireStartEvent(new ProcessEvent(this));
         final FeatureCollection<Feature> inputFeatureList = Parameters.value(MaxLimitDescriptor.FEATURE_IN, inputParameters);
         final int max = Parameters.value(MaxLimitDescriptor.MAX_IN, inputParameters);
-        
+
         final FeatureCollection resultFeatureList = GenericMaxFeatureIterator.wrap(inputFeatureList, max);
 
         outputParameters.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
         fireEndEvent(new ProcessEvent(this,null,100));
-        return outputParameters;
     }
 }

@@ -74,9 +74,8 @@ public class Nearest extends AbstractProcess {
      *  {@inheritDoc }
      */
     @Override
-    public ParameterValueGroup call() throws ProcessException{
+    protected void execute() throws ProcessException {
         try {
-            fireStartEvent(new ProcessEvent(this));
             final FeatureCollection<Feature> inputFeatureList = Parameters.value(NearestDescriptor.FEATURE_IN, inputParameters);
             final Geometry interGeom = Parameters.value(NearestDescriptor.GEOMETRY_IN, inputParameters);
 
@@ -84,26 +83,15 @@ public class Nearest extends AbstractProcess {
                     new NearestFeatureCollection(inputFeatureList.subCollection(nearestQuery(inputFeatureList, interGeom)));
 
             outputParameters.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
-            fireEndEvent(new ProcessEvent(this, null,100));
-            return outputParameters;
 
-        } catch (NoSuchAuthorityCodeException ex) {
-            fireFailEvent(new ProcessEvent(this, null,0, ex));
-            throw new ProcessException(ex.getMessage(), this, ex);
         } catch (FactoryException ex) {
-            fireFailEvent(new ProcessEvent(this, null,0, ex));
             throw new ProcessException(ex.getMessage(), this, ex);
         } catch (DataStoreException ex) {
-            fireFailEvent(new ProcessEvent(this, null,0, ex));
-            throw new ProcessException(ex.getMessage(), this, ex);
-        } catch (MismatchedDimensionException ex) {
-            fireFailEvent(new ProcessEvent(this, null,0, ex));
             throw new ProcessException(ex.getMessage(), this, ex);
         } catch (TransformException ex) {
-            fireFailEvent(new ProcessEvent(this, null,0, ex));
             throw new ProcessException(ex.getMessage(), this, ex);
         }
-        
+
     }
 
     /**
@@ -137,7 +125,7 @@ public class Nearest extends AbstractProcess {
 
                         //re-project feature geometry into input geometry CRS
                         featureGeom = VectorProcessUtils.repojectGeometry(geomCrs, featureGeomCRS, featureGeom);
-                        
+
                         final double computedDist = geom.distance((Geometry) property.getValue());
 
                         if (computedDist < dist) {

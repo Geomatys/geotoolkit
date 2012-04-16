@@ -71,8 +71,7 @@ public class Buffer extends AbstractProcess {
      *  {@inheritDoc }
      */
     @Override
-    public ParameterValueGroup call() {
-        fireStartEvent(new ProcessEvent(this));
+    protected void execute() {
         final FeatureCollection<Feature> inputFeatureList = Parameters.value(BufferDescriptor.FEATURE_IN, inputParameters);
         final double inputDistance = Parameters.value(BufferDescriptor.DISTANCE_IN, inputParameters).doubleValue();
         final boolean inputLenient = Parameters.value(BufferDescriptor.LENIENT_TRANSFORM_IN, inputParameters);
@@ -81,8 +80,6 @@ public class Buffer extends AbstractProcess {
                 new BufferFeatureCollection(inputFeatureList, inputDistance, inputLenient);
 
         outputParameters.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
-        fireEndEvent(new ProcessEvent(this,null,100));
-        return outputParameters;
     }
 
     /**
@@ -98,18 +95,18 @@ public class Buffer extends AbstractProcess {
      * @throws MismatchedDimensionException
      * @throws TransformException
      */
-    static Feature makeBuffer(final Feature oldFeature, final FeatureType newType, final double distance, final Boolean lenient) 
+    static Feature makeBuffer(final Feature oldFeature, final FeatureType newType, final double distance, final Boolean lenient)
             throws FactoryException, MismatchedDimensionException, TransformException {
 
         final CoordinateReferenceSystem originalCRS;
-        
+
         if (oldFeature.getType().getCoordinateReferenceSystem() != null) {
             originalCRS = oldFeature.getType().getCoordinateReferenceSystem();
         } else {
             final Geometry geom = (Geometry) oldFeature.getDefaultGeometryProperty().getValue();
             originalCRS = JTS.findCoordinateReferenceSystem(geom);
         }
-        
+
         final GeographicCRS longLatCRS = DefaultGeographicCRS.WGS84;
         final MathTransform mtToLongLatCRS = CRS.findMathTransform(originalCRS, longLatCRS, lenient);
 

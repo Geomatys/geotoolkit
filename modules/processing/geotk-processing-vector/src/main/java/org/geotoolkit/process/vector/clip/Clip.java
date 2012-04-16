@@ -48,7 +48,7 @@ import org.opengis.util.FactoryException;
  * @module pending
  */
 public class Clip extends AbstractProcess {
-    
+
     private static final GeometryFactory GF = new GeometryFactory();
 
     /**
@@ -62,16 +62,13 @@ public class Clip extends AbstractProcess {
      *  {@inheritDoc }
      */
     @Override
-    public ParameterValueGroup call() {
-        fireStartEvent(new ProcessEvent(this));
+    protected void execute() {
         final FeatureCollection<Feature> inputFeatureList = Parameters.value(ClipDescriptor.FEATURE_IN, inputParameters);
         final FeatureCollection<Feature> inputFeatureClippingList = Parameters.value(ClipDescriptor.FEATURE_CLIP, inputParameters);
 
         final FeatureCollection resultFeatureList = new ClipFeatureCollection(inputFeatureList,inputFeatureClippingList);
 
         outputParameters.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
-        fireEndEvent(new ProcessEvent(this,null,100));
-        return outputParameters;
     }
 
     /**
@@ -84,13 +81,13 @@ public class Clip extends AbstractProcess {
      * @throws MismatchedDimensionException
      * @throws TransformException
      */
-    public static Feature clipFeature(final Feature oldFeature, final FeatureType newType, final FeatureCollection<Feature> featureClippingList) 
+    public static Feature clipFeature(final Feature oldFeature, final FeatureType newType, final FeatureCollection<Feature> featureClippingList)
             throws FactoryException, MismatchedDimensionException, TransformException {
 
         final Feature resultFeature = FeatureUtilities.defaultFeature(newType, oldFeature.getIdentifier().getID());
 
         for (Property property : oldFeature.getProperties()) {
-            
+
             //for each Geometry in the oldFeature
             if (property.getDescriptor() instanceof GeometryDescriptor) {
 
@@ -103,11 +100,11 @@ public class Clip extends AbstractProcess {
                 final List<Geometry> bufferInterGeometries = new ArrayList<Geometry>();
                 final FeatureIterator<Feature> clipIterator = featureClippingList.iterator();
                 try{
-                    while(clipIterator.hasNext()){
+                    while(clipIterator.hasNext()) {
                         final Feature clipFeature = clipIterator.next();
                         for (Property clipFeatureProperty : clipFeature.getProperties()) {
                             if (clipFeatureProperty.getDescriptor() instanceof GeometryDescriptor) {
-                                
+
                                 Geometry clipGeom = (Geometry) clipFeatureProperty.getValue();
                                 final GeometryDescriptor clipGeomDesc = (GeometryDescriptor) clipFeatureProperty.getDescriptor();
                                 final CoordinateReferenceSystem clipGeomCRS = clipGeomDesc.getCoordinateReferenceSystem();
@@ -120,15 +117,15 @@ public class Clip extends AbstractProcess {
                                 //if an intersection geometry exist, store it into a buffer Collection
                                 if (interGeometry != null) {
                                     bufferInterGeometries.add(interGeometry);
-                                }                                 
+                                }
                             }
                         }
-                    }  
+                    }
                 }
                 finally{
                     clipIterator.close();
                 }
-               
+
                 //if the feature intersect one of the feature clipping list
                 final int size = bufferInterGeometries.size();
 
@@ -136,7 +133,7 @@ public class Clip extends AbstractProcess {
                     resultFeature.getProperty(property.getName()).setValue(bufferInterGeometries.get(0));
                 }else if (size > 1) {
                     final Geometry[] bufferArray = bufferInterGeometries.toArray(new Geometry[bufferInterGeometries.size()]);
-                    
+
                     //create a GeometryCollection with all the intersections
                     final GeometryCollection resultGeometry = GF.createGeometryCollection(bufferArray);
 

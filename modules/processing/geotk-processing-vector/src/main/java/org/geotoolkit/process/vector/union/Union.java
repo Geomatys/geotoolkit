@@ -54,7 +54,7 @@ import org.opengis.util.FactoryException;
  * But only one Geometry (intersection Geometry between two Features from each Collection)
  * Feature ID will be formed with the two Features ID which intersects. Or if the Feature Geometry haven't
  * intersection with the other FeatureCollection Geometry, he keep all of his attributes.
- * 
+ *
  * @author Quentin Boileau
  * @module pending
  */
@@ -71,19 +71,18 @@ public class Union extends AbstractProcess {
      *  {@inheritDoc }
      */
     @Override
-    public ParameterValueGroup call() {
+    protected void execute() {
         fireStartEvent(new ProcessEvent(this));
         final FeatureCollection<Feature> inputFeatureList = Parameters.value(UnionDescriptor.FEATURE_IN, inputParameters);
         final FeatureCollection<Feature> unionFeatureList = Parameters.value(UnionDescriptor.FEATURE_UNION, inputParameters);
         final String inputGeometryName = Parameters.value(UnionDescriptor.INPUT_GEOMETRY_NAME, inputParameters);
         final String unionGeometryName = Parameters.value(UnionDescriptor.UNION_GEOMETRY_NAME, inputParameters);
 
-        
+
         final FeatureCollection resultFeatureList = new UnionFeatureCollection(inputFeatureList, unionFeatureList, inputGeometryName, unionGeometryName);
 
         outputParameters.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
         fireEndEvent(new ProcessEvent(this, null,100));
-        return outputParameters;
     }
 
     /**
@@ -104,7 +103,7 @@ public class Union extends AbstractProcess {
             final String inputGeomName, final String unionGeomName, final boolean firstPass, final Set<String> featureList)
             throws TransformException, FactoryException {
 
-        
+
         final FeatureCollection<Feature> resultFeatureList =
                 DataUtilities.collection(inputFeature.getIdentifier().getID(), newFeatureType);
 
@@ -120,7 +119,7 @@ public class Union extends AbstractProcess {
                 }
             }
         }
-        
+
         Geometry remainingGeometry = inputGeometry;
         boolean isIntersected = false;
         //Check if each union Features intersect inputFeature. if yes, create a new Feature which is union of both
@@ -130,7 +129,7 @@ public class Union extends AbstractProcess {
                 final Feature unionFeature = unionIter.next();
 
                 String featureID = null;
-                
+
                 //Invert ID order for the second pass (firstpass "inputID U unionID", second pass "unionID U inputID")
                 if (firstPass) {
                     featureID = inputFeature.getIdentifier().getID() + "-" + unionFeature.getIdentifier().getID();
@@ -146,7 +145,7 @@ public class Union extends AbstractProcess {
                 //Else we add the resutl Feature to resultFeatureList
                 if (resultFeature != null) {
                     isIntersected = true;
-                    
+
                     resultFeatureList.add(resultFeature);
                     Geometry intersectGeom =  (Geometry) resultFeature.getDefaultGeometryProperty().getValue();
                     remainingGeometry = remainingGeometry.difference(intersectGeom);
@@ -156,8 +155,8 @@ public class Union extends AbstractProcess {
             unionIter.close();
         }
 
-        
-        //If remaining Geometry is empty and isIntersecting boolean is false, mean the geometry 
+
+        //If remaining Geometry is empty and isIntersecting boolean is false, mean the geometry
         if (remainingGeometry.isEmpty() && !isIntersected) {
             final Feature remainingFeature = FeatureUtilities.defaultFeature(newFeatureType, inputFeature.getIdentifier().getID());
             //Copy none Geometry attributes
@@ -173,11 +172,11 @@ public class Union extends AbstractProcess {
             }
             resultFeatureList.add(remainingFeature);
 
-            
+
         //Create a remaining Feature with the inputGeometry
         }
-        
-        if(!(remainingGeometry.isEmpty())){
+
+        if(!(remainingGeometry.isEmpty())) {
             final Feature remainingFeature = FeatureUtilities.defaultFeature(newFeatureType, inputFeature.getIdentifier().getID());
             //Copy none Geometry attributes
             for (Property inputProperty : inputFeature.getProperties()) {
@@ -193,7 +192,7 @@ public class Union extends AbstractProcess {
             }
              resultFeatureList.add(remainingFeature);
         }
-           
+
 
         final Collection<Feature> featureToRemove = new ArrayList<Feature>();
         /* Check if created features are already present in featureList.
@@ -232,10 +231,10 @@ public class Union extends AbstractProcess {
     private static Feature unionFeatureToFeature(final Feature inputFeature, final Feature unionFeature, final FeatureType newFeatureType,
             final String inputGeomName, final String unionGeomName, final String featureID, final boolean firstPass) throws FactoryException,
             TransformException {
-        
-       
+
+
         final Geometry intersectGeometry = VectorProcessUtils.intersectionFeatureToFeature(inputFeature, unionFeature, inputGeomName, unionGeomName);
-        
+
         if (!intersectGeometry.isEmpty()) {
 
             final Feature resultFeature = FeatureUtilities.defaultFeature(newFeatureType, featureID);
@@ -320,7 +319,7 @@ public class Union extends AbstractProcess {
                         }
                     }
                 }
-                if(!isExistDesc){
+                if(!isExistDesc) {
                     ftb.add(targetDesc);
                 }
             }

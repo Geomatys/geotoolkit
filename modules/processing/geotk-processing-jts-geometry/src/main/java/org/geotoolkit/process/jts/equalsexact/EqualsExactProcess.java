@@ -31,47 +31,45 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 /**
  * Compute if two input geometries are equalExact.
- * The process ensure that two geometries are into the same CoordinateReferenceSystem. * 
+ * The process ensure that two geometries are into the same CoordinateReferenceSystem. *
  * @author Quentin Boileau (Geomatys)
  * @module pending
  */
-public class EqualsExactProcess extends AbstractProcess{
-    
-    public EqualsExactProcess(final ParameterValueGroup input){
+public class EqualsExactProcess extends AbstractProcess {
+
+    public EqualsExactProcess(final ParameterValueGroup input) {
         super(INSTANCE,input);
     }
-    
+
     @Override
-    public ParameterValueGroup call() {
+    protected void execute() {
         try {
-            final Geometry geom1 = value(GEOM1, inputParameters); 
+            final Geometry geom1 = value(GEOM1, inputParameters);
             Geometry geom2 = value(GEOM2, inputParameters);
-            
+
              // ensure geometries are in the same CRS
             final CoordinateReferenceSystem resultCRS = JTSProcessingUtils.getCommonCRS(geom1, geom2);
-            if(JTSProcessingUtils.isConversionNeeded(geom1, geom2)){
+            if(JTSProcessingUtils.isConversionNeeded(geom1, geom2)) {
                 geom2 = JTSProcessingUtils.convertToCRS(geom2, resultCRS);
             }
-            
+
             Boolean result = false;
-            
-            if(value(TOLERANCE, inputParameters) != null){
+
+            if(value(TOLERANCE, inputParameters) != null) {
                 final Double tolerance = value(TOLERANCE, inputParameters);
                 result = (Boolean) geom1.equalsExact(geom2,tolerance);
-                
+
             }else{
                 result = (Boolean) geom1.equalsExact(geom2);
             }
-            
-            getOrCreate(RESULT, outputParameters).setValue(result); 
-            
+
+            getOrCreate(RESULT, outputParameters).setValue(result);
+
         } catch (TransformException ex) {
             Logger.getLogger(EqualsExactProcess.class.getName()).log(Level.WARNING, null, ex);
         } catch (FactoryException ex) {
             Logger.getLogger(EqualsExactProcess.class.getName()).log(Level.WARNING, null, ex);
         }
-        
-        return outputParameters;
     }
-    
+
 }

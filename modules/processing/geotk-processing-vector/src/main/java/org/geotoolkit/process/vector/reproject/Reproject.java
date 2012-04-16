@@ -45,15 +45,14 @@ public class Reproject extends AbstractProcess {
      *  {@inheritDoc }
      */
     @Override
-    public ParameterValueGroup call() {
+    protected void execute() {
         fireStartEvent(new ProcessEvent(this));
         final FeatureCollection<Feature> inputFeatureList = Parameters.value(ReprojectDescriptor.FEATURE_IN, inputParameters);
         final CoordinateReferenceSystem targetCRS = Parameters.value(ReprojectDescriptor.CRS_IN, inputParameters);
-      
+
         final FeatureCollection resultFeatureList = GenericReprojectFeatureIterator.wrap(inputFeatureList, targetCRS);
-    
+
         outputParameters.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
         fireEndEvent(new ProcessEvent(this,null,100));
-        return outputParameters;
     }
 }

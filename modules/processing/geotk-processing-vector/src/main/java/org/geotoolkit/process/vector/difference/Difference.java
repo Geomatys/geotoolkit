@@ -56,16 +56,13 @@ public class Difference extends AbstractProcess {
      *  {@inheritDoc }
      */
     @Override
-    public ParameterValueGroup call() {
-        fireStartEvent(new ProcessEvent(this));
+    protected void execute() {
         final FeatureCollection<Feature> inputFeatureList = Parameters.value(DifferenceDescriptor.FEATURE_IN, inputParameters);
         final FeatureCollection<Feature> inputFeatureClippingList = Parameters.value(DifferenceDescriptor.FEATURE_DIFF, inputParameters);
 
         final FeatureCollection resultFeatureList = new DifferenceFeatureCollection(inputFeatureList, inputFeatureClippingList);
 
         outputParameters.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
-        fireEndEvent(new ProcessEvent(this, null, 100));
-        return outputParameters;
     }
 
     /**
@@ -107,7 +104,7 @@ public class Difference extends AbstractProcess {
 
                                 //re-project clipping geometry into input Feature geometry CRS
                                 diffGeom = VectorProcessUtils.repojectGeometry(inputGeomCRS, diffGeomCRS, diffGeom);
-                                
+
                                 final Geometry diffGeometry =
                                         VectorProcessUtils.geometryDifference(resultGeometry, diffGeom);
 

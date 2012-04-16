@@ -53,16 +53,13 @@ public class ConvexHull extends AbstractProcess {
      *  {@inheritDoc }
      */
     @Override
-    public ParameterValueGroup call() {
-        fireStartEvent(new ProcessEvent(this));
+    protected void execute() {
         final FeatureCollection<Feature> inputFeatureList = Parameters.value(ConvexHullDescriptor.FEATURE_IN, inputParameters);
         final String geometryName = Parameters.value(ConvexHullDescriptor.GEOMETRY_NAME, inputParameters);
 
         final Geometry hull = computeConvexHull(inputFeatureList, geometryName);
 
         outputParameters.parameter(ConvexHullDescriptor.GEOMETRY_OUT.getName().getCode()).setValue(hull);
-        fireEndEvent(new ProcessEvent(this,null,100));
-        return outputParameters;
     }
 
     /**
@@ -90,7 +87,7 @@ public class ConvexHull extends AbstractProcess {
                         final GeometryDescriptor desc = (GeometryDescriptor) property.getDescriptor();
                         if (desc.getName().getLocalPart().equals(geometryName)) {
                             crs = desc.getCoordinateReferenceSystem();
-                            
+
                             final Geometry tmpGeom = (Geometry) property.getValue();
                             convexHull = convexHull.union(tmpGeom);
                             convexHull = convexHull.convexHull();

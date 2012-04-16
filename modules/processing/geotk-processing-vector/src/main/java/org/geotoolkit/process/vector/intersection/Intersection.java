@@ -50,8 +50,7 @@ public class Intersection extends AbstractProcess {
      *  {@inheritDoc }
      */
     @Override
-    public ParameterValueGroup call() {
-        fireStartEvent(new ProcessEvent(this));
+    protected void execute() {
         final FeatureCollection<Feature> inputFeatureList = Parameters.value(IntersectionDescriptor.FEATURE_IN, inputParameters);
         final FeatureCollection<Feature> inputFeatureIntersectionList = Parameters.value(IntersectionDescriptor.FEATURE_INTER, inputParameters);
         final String inputGeometryName = Parameters.value(IntersectionDescriptor.GEOMETRY_NAME, inputParameters);
@@ -59,8 +58,6 @@ public class Intersection extends AbstractProcess {
         final FeatureCollection resultFeatureList = new IntersectionFeatureCollection(inputFeatureList, inputFeatureIntersectionList, inputGeometryName);
 
         outputParameters.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
-        fireEndEvent(new ProcessEvent(this, null, 100));
-        return outputParameters;
     }
 
     /**
@@ -73,7 +70,7 @@ public class Intersection extends AbstractProcess {
     public static FeatureCollection intersetFeature(final Feature oldFeature, final FeatureType newType,
             final FeatureCollection<Feature> featureClippingList, final String geometryName)
             throws FactoryException, MismatchedDimensionException, TransformException, ProcessException {
-        
+
         return VectorProcessUtils.intersectionFeatureToColl(oldFeature, featureClippingList, geometryName);
     }
 }

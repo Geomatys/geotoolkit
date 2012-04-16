@@ -26,21 +26,20 @@ import static org.geotoolkit.parameter.Parameters.*;
  * @author Quentin Boileau (Geomatys)
  * @module pending
  */
-public class LenghtProcess extends AbstractProcess{
-    
-    public LenghtProcess(final ParameterValueGroup input){
+public class LenghtProcess extends AbstractProcess {
+
+    public LenghtProcess(final ParameterValueGroup input) {
         super(INSTANCE,input);
     }
-    
+
     @Override
-    public ParameterValueGroup call() {
-        
-        final Geometry geom1 = value(GEOM, inputParameters); 
-        
+    protected void execute() {
+
+        final Geometry geom1 = value(GEOM, inputParameters);
+
         final Double result = (Double) geom1.getLength();
-        
-        getOrCreate(RESULT, outputParameters).setValue(result); 
-        return outputParameters;
+
+        getOrCreate(RESULT, outputParameters).setValue(result);
     }
-    
+
 }

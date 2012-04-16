@@ -49,19 +49,19 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Johann Sorel (geomatys)
  * @module pending
  */
-public class KrigingProcess extends AbstractProcess{
+public class KrigingProcess extends AbstractProcess {
 
     KrigingProcess(final ParameterValueGroup input) {
         super(KrigingDescriptor.INSTANCE,input);
     }
-    
+
     @Override
-    public ParameterValueGroup call() {
+    protected void execute() {
         final CoordinateReferenceSystem crs = Parameters.value(KrigingDescriptor.IN_CRS, inputParameters);
         final double step                   = Parameters.value(KrigingDescriptor.IN_STEP, inputParameters);
         final DirectPosition[] coords       = Parameters.value(KrigingDescriptor.IN_POINTS, inputParameters);
         final Dimension maxDim              = Parameters.value(KrigingDescriptor.IN_DIMENSION, inputParameters);
-        
+
         //calculate the envelope
         double minx = Double.POSITIVE_INFINITY;
         double miny = Double.POSITIVE_INFINITY;
@@ -69,21 +69,21 @@ public class KrigingProcess extends AbstractProcess{
         double maxx = Double.NEGATIVE_INFINITY;
         double maxy = Double.NEGATIVE_INFINITY;
         double maxz = Double.NEGATIVE_INFINITY;
-        
+
         //organise values in a table
         final int s = coords.length;
         final double[] x = new double[s];
         final double[] y = new double[s];
         final double[] z = new double[s];
-        
-        for(int i=0;i<s;i++){
+
+        for(int i=0;i<s;i++) {
             final double cx = coords[i].getOrdinate(0);
             final double cy = coords[i].getOrdinate(1);
             final double cz = coords[i].getOrdinate(2);
             x[i] = cx;
             y[i] = cy;
             z[i] = cz;
-            
+
             if(cx<minx) minx = cx;
             if(cx>maxx) maxx = cx;
             if(cy<miny) miny = cy;
@@ -91,56 +91,56 @@ public class KrigingProcess extends AbstractProcess{
             if(cz<minz) minz = cz;
             if(cz>maxz) maxz = cz;
         }
-                
+
         final Rectangle2D rect = new Rectangle2D.Double(minx,miny,maxx-minx,maxy-miny);
-        
+
         final Dimension dim = new Dimension(s*s, s*s);
         //limit size to 200
-        if(maxDim != null){
-            if(dim.height > maxDim.height) dim.height = maxDim.height;
-            if(dim.width > maxDim.width)   dim.width  = maxDim.width;
+        if (maxDim != null) {
+            if (dim.height > maxDim.height) dim.height = maxDim.height;
+            if (dim.width > maxDim.width)   dim.width  = maxDim.width;
         }
-        
+
         final ObjectiveAnalysis ob = new ObjectiveAnalysis(rect, dim);
         final double[] computed;
-        try{
+        try {
             computed = ob.interpole(x, y, z);
-        }catch(Exception ex){
+        } catch (Exception ex) {
             fireFailEvent(new ProcessEvent(this, ex.getMessage(),0, ex));
-            return outputParameters;
+            return;
         }
         final double[] cx = ob.getXs();
         final double[] cy = ob.getYs();
-        
-        
+
+
         //create the coverage //////////////////////////////////////////////////
         final GeneralEnvelope env = new GeneralEnvelope(
                 new Rectangle2D.Double(cx[0], cy[0], cx[cx.length-1]-cx[0], cy[cy.length-1]-cy[0]));
         env.setCoordinateReferenceSystem(crs);
-        
+
         final GridCoverage2D coverage = toCoverage(computed, cx, cy, env);
         Parameters.getOrCreate(KrigingDescriptor.OUT_COVERAGE, outputParameters).setValue(coverage);
-        
-        
+
+
         //create the isolines //////////////////////////////////////////////////
-        if(step <= 0){
+        if (step <= 0) {
             //do not generate isolines
-            return outputParameters;
+            return;
         }
-        
+
         final double[] palier = new double[(int)((maxz-minz)/step)];
-        for(int i=0;i<palier.length;i++){
+        for(int i=0;i<palier.length;i++) {
             palier[i] = minz + i*step;
         }
-        
+
         final Map<Point3d,List<Coordinate>> steps;
-        try{
+        try {
             steps = ob.doContouring(cx, cy, computed, palier);
-        } catch(Exception ex){
+        } catch(Exception ex) {
             //this task rais some IllegalStateExceptio
             //TODO, fix objective analysis
             fireStartEvent(new ProcessEvent(this, "Creating isolines geometries failed",0, ex));
-            return outputParameters;
+            return;
         }
 
         final GeometryFactory GF = new GeometryFactory();
@@ -150,14 +150,14 @@ public class KrigingProcess extends AbstractProcess{
         ftb.add("value", Double.class);
         ftb.setDefaultGeometry("geometry");
         final FeatureType type = ftb.buildFeatureType();
-        
+
         final FeatureCollection col = DataUtilities.collection("id", type);
         int inc = 0;
 
-        for(final Point3d p : steps.keySet()){
+        for (final Point3d p : steps.keySet()) {
             final List<Coordinate> cshps = steps.get(p);
 
-            if(cshps.get(0).x > cshps.get(cshps.size()-1).x){
+            if (cshps.get(0).x > cshps.get(cshps.size()-1).x) {
                 //the coordinates are going left, reverse order
                 Collections.reverse(cshps);
             }
@@ -170,20 +170,19 @@ public class KrigingProcess extends AbstractProcess{
             f.getProperty("value").setValue(value);
             col.add(f);
         }
-        
+
         Parameters.getOrCreate(KrigingDescriptor.OUT_LINES, outputParameters).setValue(col);
-        return outputParameters;
     }
-    
+
     private static GridCoverage2D toCoverage(final double[] computed, final double[] xs, final double[] ys,
-            final Envelope env){
+            final Envelope env) {
 
         final float[][] matrix = new float[xs.length][ys.length];
 
         //TODO find why the matrice is inverted. the envelope ? lines are corrects
         //flip the matrix on y axi
-        for(int column=0;column<xs.length;column++){
-            for(int row=0;row<ys.length;row++){
+        for (int column=0;column<xs.length;column++) {
+            for (int row=0;row<ys.length;row++) {
                 //matrix[row][column] = (float)computed[column + row * xs.length];
                 matrix[ (ys.length-row-1) ][column] = (float)computed[column + row * xs.length];
             }
@@ -192,5 +191,5 @@ public class KrigingProcess extends AbstractProcess{
         final GridCoverageFactory gcf = new GridCoverageFactory();
         return gcf.create("catgrid",matrix, env);
     }
-    
+
 }

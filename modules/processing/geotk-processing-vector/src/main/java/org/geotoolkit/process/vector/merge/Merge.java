@@ -60,17 +60,14 @@ public class Merge extends AbstractProcess {
      *  {@inheritDoc }
      */
     @Override
-    public ParameterValueGroup call() {
-        fireStartEvent(new ProcessEvent(this));
+    protected void execute() {
         final FeatureCollection[] inputFeaturesList = Parameters.value(MergeDescriptor.FEATURES_IN, inputParameters);
-        
+
         final FeatureCollection firstFC = inputFeaturesList[0];
 
         final FeatureCollection resultFeatureList = new MergeFeatureCollection(inputFeaturesList,firstFC);
 
         outputParameters.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
-        fireEndEvent(new ProcessEvent(this, null,100));
-        return outputParameters;
     }
 
     /**
@@ -84,14 +81,14 @@ public class Merge extends AbstractProcess {
     static Feature mergeFeature(final Feature feature,final FeatureType newFeatureType, final Map<Name, ObjectConverter> conversionMap)
             throws NonconvertibleObjectException {
 
-        if(conversionMap == null){
+        if(conversionMap == null) {
             return feature;
         }
 
         final Feature mergedFeature = FeatureUtilities.defaultFeature(newFeatureType, feature.getIdentifier().getID());
 
         for (Map.Entry<Name,ObjectConverter> entry : conversionMap.entrySet()) {
-            if(entry.getValue() == null){
+            if(entry.getValue() == null) {
                 mergedFeature.getProperty(entry.getKey()).setValue(feature.getProperty(entry.getKey()).getValue());
             }else{
                 mergedFeature.getProperty(entry.getKey()).setValue(entry.getValue().convert(feature.getProperty(entry.getKey()).getValue()));
@@ -113,25 +110,25 @@ public class Merge extends AbstractProcess {
     */
     static Map<Name, ObjectConverter> createConversionMap (final FeatureType input, final FeatureType toConvert) throws NonconvertibleObjectException{
 
-        if(input.equals(toConvert)){
+        if(input.equals(toConvert)) {
             return null;
         }
         final Map<Name, ObjectConverter> map = new HashMap<Name, ObjectConverter>();
 
         for (PropertyDescriptor toConvertDesc : toConvert.getDescriptors()) {
-            for(PropertyDescriptor inputDesc : input.getDescriptors()){
+            for(PropertyDescriptor inputDesc : input.getDescriptors()) {
 
                 //same property name
-                if(toConvertDesc.getName().equals(inputDesc.getName())){
+                if(toConvertDesc.getName().equals(inputDesc.getName())) {
 
                     final Class inputClass = inputDesc.getType().getBinding();
                     final Class toConvertClass = toConvertDesc.getType().getBinding();
-                    if(toConvertClass.equals(inputClass)){
+                    if(toConvertClass.equals(inputClass)) {
                         //same name and same type
                         map.put(toConvertDesc.getName(), null);
                     }else{
                         //same name but different type
-                        if(toConvertDesc instanceof GeometryDescriptor){
+                        if(toConvertDesc instanceof GeometryDescriptor) {
                            map.put(toConvertDesc.getName(), new GeomConverter(toConvertClass, inputClass));
                         }else{
                             map.put(toConvertDesc.getName(), ConverterRegistry.system().converter(toConvertClass, inputClass));
@@ -160,7 +157,7 @@ public class Merge extends AbstractProcess {
          * @param source
          * @param target
          */
-        public GeomConverter(final Class source, final Class target){
+        public GeomConverter(final Class source, final Class target) {
             sourceClass = source;
             targetClass = target;
         }

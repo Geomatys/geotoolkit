@@ -28,7 +28,7 @@ import org.opengis.feature.type.FeatureType;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
- * Apply a mask to a FeatureCollection FeatureType. 
+ * Apply a mask to a FeatureCollection FeatureType.
  * @author Quentin Boileau
  * @module pending
  */
@@ -45,15 +45,14 @@ public class Retype extends AbstractProcess {
      *  {@inheritDoc }
      */
     @Override
-    public ParameterValueGroup call() {
+    protected void execute() {
         fireStartEvent(new ProcessEvent(this));
         final FeatureCollection<Feature> inputFeatureList = Parameters.value(RetypeDescriptor.FEATURE_IN, inputParameters);
         final FeatureType mask = Parameters.value(RetypeDescriptor.MASK_IN, inputParameters);
-        
+
         final FeatureCollection resultFeatureList = GenericRetypeFeatureIterator.wrap(inputFeatureList, mask);
 
         outputParameters.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
-        fireEndEvent(new ProcessEvent(this,null,100));
-        return outputParameters;
+        fireEndEvent(new ProcessEvent(this, null, 100));
     }
 }

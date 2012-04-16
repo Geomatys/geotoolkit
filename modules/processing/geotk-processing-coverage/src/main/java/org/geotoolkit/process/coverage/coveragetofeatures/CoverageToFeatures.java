@@ -70,9 +70,8 @@ public class CoverageToFeatures extends AbstractProcess {
      *  {@inheritDoc }
      */
     @Override
-    public ParameterValueGroup call() {
+    protected void execute() {
         try {
-            fireStartEvent(new ProcessEvent(this));
             GridCoverageReader reader = Parameters.value(CoverageToFeaturesDescriptor.READER_IN, inputParameters);
             GridCoverage2D coverage = (GridCoverage2D) reader.read(0, null);
             GeneralGridGeometry gridGeom = reader.getGridGeometry(0);
@@ -81,12 +80,9 @@ public class CoverageToFeatures extends AbstractProcess {
                     new CoverageToFeatureCollection(reader, gridGeom.getGridRange(), coverage, gridGeom);
 
             outputParameters.parameter(CoverageToFeaturesDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
-            fireEndEvent(new ProcessEvent(this,null,100));
         } catch (CoverageStoreException ex) {
             fireFailEvent(new ProcessEvent(this, null,0, ex));
         }
-        
-        return outputParameters;
     }
 
     /**
