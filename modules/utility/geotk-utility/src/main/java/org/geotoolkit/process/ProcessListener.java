@@ -22,7 +22,10 @@ import java.util.EventListener;
 
 /**
  * Receives general indications of {@linkplain Process process} progress and events indicating
- * start, completion or failure.
+ * start, completion or failure. For any {@linkplain Process#addListener registered listeners},
+ * the {@link Process#call()} method shall invoke at least the {@link #started started} and
+ * {@link #completed completed} or {@link #failed failed} methods (mandatory). Calls to the
+ * {@link #progressing progressing} are optional but recommended.
  *
  * @author Johann Sorel (Geomatys)
  * @version 3.19

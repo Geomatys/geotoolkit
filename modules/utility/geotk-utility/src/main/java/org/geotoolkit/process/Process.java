@@ -28,6 +28,11 @@ import org.opengis.parameter.ParameterValueGroup;
  * {@code Process} instances are created by {@link ProcessDescriptor} and can be executed in an
  * {@link ExecutorService}.
  *
+ * {@section Event notifications}
+ * All {@code Process} implementations <strong>must</strong> notify all their {@link ProcessListener}s
+ * when the {@link #call()} method is starting and when it is terminating, either successfully or on
+ * failure.
+ *
  * @author Johann Sorel (Geomatys)
  * @version 3.19
  *
@@ -46,9 +51,9 @@ public interface Process extends Callable<ParameterValueGroup> {
     ProcessDescriptor getDescriptor();
 
     /**
-     * Returns the input values given to the {@link ProcessDescriptor#createProcess(ParameterValueGroup)}
-     * method. The {@linkplain ParameterValueGroup#getDescriptor() descriptor} of those parameters is the
-     * instance returned by {@link ProcessDescriptor#getInputDescriptor()}.
+     * Returns the input values given to the {@link ProcessDescriptor#createProcess(ParameterValueGroup)} method.
+     * The {@linkplain ParameterValueGroup#getDescriptor() descriptor} of those parameters is the instance returned by
+     * <code>{@linkplain #getDescriptor()}.{@linkplain ProcessDescriptor#getInputDescriptor() getInputDescriptor()}</code>.
      *
      * @return The input parameter values (never {@code null}).
      *
@@ -59,18 +64,32 @@ public interface Process extends Callable<ParameterValueGroup> {
 
     /**
      * Executes the process and returns the output in a new {@link ParameterValueGroup}. The
-     * {@linkplain ParameterValueGroup#getDescriptor() descriptor} of those parameters is the
-     * instance returned by {@link ProcessDescriptor#getOutputDescriptor()}.
-     * <p>
-     * While not mandatory, it is recommended that the returned parameter group contains a
-     * {@link ProcessStep} instance assigned to the {@link ProcessDescriptor#PROCESS_STEP}
-     * parameter.
+     * {@linkplain ParameterValueGroup#getDescriptor() descriptor} of those parameters is the instance returned by
+     * <code>{@linkplain #getDescriptor()}.{@linkplain ProcessDescriptor#getOutputDescriptor() getOutputDescriptor()}</code>.
+     * Some details about the work which has been performed (processing date, reports, <i>etc.</i>)
+     * may be included as a {@link ProcessStep} instance associated to the
+     * {@link ProcessDescriptor#PROCESS_STEP} parameter descriptor.
      *
      * {@note Returning a parameter object may sound strange, since parameters are usually for
      *        input values rather than output values. Note however that ISO 19115 do the same,
      *        since the <code>ProcessStep</code> outputs is a collection of <code>Source</code>
      *        objects. In both cases, the outputs may be used as inputs in the next step of a
      *        process chain.}
+     *
+     * {@section Event notifications}
+     * For any {@linkplain #addListener registered listeners}, this method shall invoke the
+     * following methods. Note that some notification events are mandatory for any {@code Process}
+     * implementations.
+     * <p>
+     * <ul>
+     *   <li>{@link ProcessListener#started(ProcessEvent)} at the beginning of this {@code call()}
+     *       method (<strong>mandatory</strong>).</li>
+     *   <li>{@link ProcessListener#progressing(ProcessEvent)} during process execution (optional).</li>
+     *   <li>When this {@code call()} method is about to exit (<strong>mandatory</strong>):<ul>
+     *     <li>{@link ProcessListener#completed(ProcessEvent)} on success, or</li>
+     *     <li>{@link ProcessListener#failed(ProcessEvent)} if an error occurred.</li></ul>
+     *   </li>
+     * </ul>
      *
      * @return The computation results as an parameter value groups.
      * @throws ProcessException if the process failed.
