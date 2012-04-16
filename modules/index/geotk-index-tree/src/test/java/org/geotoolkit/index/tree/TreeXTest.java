@@ -19,13 +19,13 @@ package org.geotoolkit.index.tree;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.geotoolkit.filter.SpatialFilterType;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.index.tree.io.DefaultTreeVisitor;
 import org.geotoolkit.index.tree.io.TreeVisitor;
 import org.geotoolkit.index.tree.io.TreeX;
 import org.geotoolkit.index.tree.nodefactory.TreeNodeFactory;
 import org.geotoolkit.index.tree.star.StarRTree;
-import org.geotoolkit.filter.SpatialFilterType;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
@@ -58,17 +58,13 @@ public class TreeXTest extends TreeTest{
     public void testContains(){
         List<Envelope> listRef = new ArrayList<Envelope>();
         final GeneralEnvelope geTemp = new GeneralEnvelope(DefaultEngineeringCRS.CARTESIAN_3D);
-        for(int z = 0; z<=200; z+=20){
-            for(int y = 0; y<=200; y+=20){
-                    geTemp.setEnvelope(195, y-5, z-5, 205, y+5, z+5);
-                    listRef.add(new GeneralEnvelope(geTemp));
-            }
-        }
-        geTemp.setEnvelope(180, -10, -10, 210, 210, 210);
+        geTemp.setEnvelope(115, 135, 35, 125, 145, 45);
+        listRef.add(new GeneralEnvelope(geTemp));
+        geTemp.setEnvelope(116, 136, 36, 124, 144, 44);
         TreeX.search(tree, geTemp, SpatialFilterType.CONTAINS, defVisit);
         assertTrue(compareList(listRef, listSearch));
         listSearch.clear();
-        geTemp.setEnvelope(-10, 97, -10, 210, 104, 210);
+        geTemp.setEnvelope(tree.getRoot().getBoundary());
         TreeX.search(tree, geTemp, SpatialFilterType.CONTAINS, defVisit);
         assertTrue(listSearch.isEmpty());
     }
@@ -98,13 +94,17 @@ public class TreeXTest extends TreeTest{
     public void testWithin(){
         List<Envelope> listRef = new ArrayList<Envelope>();
         final GeneralEnvelope geTemp = new GeneralEnvelope(DefaultEngineeringCRS.CARTESIAN_3D);
-        geTemp.setEnvelope(115, 135, 35, 125, 145, 45);
-        listRef.add(new GeneralEnvelope(geTemp));
-        geTemp.setEnvelope(116, 136, 36, 124, 144, 44);
+        for(int z = 0; z<=200; z+=20){
+            for(int y = 0; y<=200; y+=20){
+                    geTemp.setEnvelope(195, y-5, z-5, 205, y+5, z+5);
+                    listRef.add(new GeneralEnvelope(geTemp));
+            }
+        }
+        geTemp.setEnvelope(180, -10, -10, 210, 210, 210);
         TreeX.search(tree, geTemp, SpatialFilterType.WITHIN, defVisit);
         assertTrue(compareList(listRef, listSearch));
         listSearch.clear();
-        geTemp.setEnvelope(tree.getRoot().getBoundary());
+        geTemp.setEnvelope(-10, 97, -10, 210, 104, 210);
         TreeX.search(tree, geTemp, SpatialFilterType.WITHIN, defVisit);
         assertTrue(listSearch.isEmpty());
     }
@@ -162,6 +162,10 @@ public class TreeXTest extends TreeTest{
         assertTrue(compareList(listRef, listSearch));
         listSearch.clear();
         geTemp.setEnvelope(145, -10, -10, 155, 210, 210);
+        TreeX.search(tree, geTemp, SpatialFilterType.OVERLAPS, defVisit);
+        assertTrue(listSearch.isEmpty());
+        listSearch.clear();
+        geTemp.setEnvelope(145, -10, -10, 165, 210, 210);
         TreeX.search(tree, geTemp, SpatialFilterType.OVERLAPS, defVisit);
         assertTrue(listSearch.isEmpty());
     }
