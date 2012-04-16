@@ -90,6 +90,49 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
     private static final long serialVersionUID = -4608976443553166518L;
 
     /**
+     * The operation parameter descriptor for the {@linkplain
+     * org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#semiMajor
+     * semi major} parameter value. Valid values range is (0 &hellip; &infin;). This parameter
+     * is mandatory and has no default value.
+     */
+    public static final UniversalParameters SEMI_MAJOR = new UniversalParameters(new NamedIdentifier[] {
+            new NamedIdentifier(OGC,     "semi_major"),
+            new NamedIdentifier(EPSG,    "Semi-major axis"), // EPSG does not specifically define this parameter
+            new NamedIdentifier(ESRI,    "Semi_Major"),
+            new NamedIdentifier(NETCDF,  "semi_major_axis"),
+            new NamedIdentifier(GEOTIFF, "SemiMajor"),
+            new NamedIdentifier(PROJ4,   "a")
+        }, Double.NaN, 0, Double.POSITIVE_INFINITY, SI.METRE, true);
+
+    /**
+     * The operation parameter descriptor for the {@linkplain
+     * org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#semiMinor
+     * semi minor} parameter value. Valid values range is (0 &hellip; &infin;). This parameter
+     * is mandatory and has no default value.
+     */
+    public static final UniversalParameters SEMI_MINOR = new UniversalParameters(new NamedIdentifier[] {
+            new NamedIdentifier(OGC,     "semi_minor"),
+            new NamedIdentifier(EPSG,    "Semi-minor axis"), // EPSG does not specifically define this parameter
+            new NamedIdentifier(ESRI,    "Semi_Minor"),
+            new NamedIdentifier(NETCDF,  "semi_minor_axis"),
+            new NamedIdentifier(GEOTIFF, "SemiMinor"),
+            new NamedIdentifier(PROJ4,   "b")
+        }, Double.NaN, 0, Double.POSITIVE_INFINITY, SI.METRE, true);
+
+    /**
+     * The operation parameter descriptor for whatever the projection should roll longitude.
+     * If {@code true}, then the value of (<var>longitude</var> - {@linkplain
+     * org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#centralMeridian
+     * central meridian}) will be rolled to the [-180 &hellip; 180)&deg; range before the projection
+     * is applied. If {@code false}, then longitude rolling is never applied. If not provided, then
+     * the default behavior is to roll longitude only if the central meridian is different than zero.
+     * <p>
+     * This is a Geotk-specific parameter.
+     */
+    public static final ParameterDescriptor<Boolean> ROLL_LONGITUDE = new DefaultParameterDescriptor<>(
+            GEOTOOLKIT, "roll_longitude", Boolean.class, null, null, null, null, null, false);
+
+    /**
      * The identifiers for the {@linkplain
      * org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#centralMeridian
      * central meridian} parameter. Valid values range is from -180 to 180&deg;.
@@ -138,6 +181,10 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
     /**
      * The operation parameter descriptor for the standard parallel 1 parameter value.
      * Valid values range is from -90 to 90&deg;. This parameter is optional.
+     *
+     * <p><b>EPSG description:</b> For a conic projection with two standard parallels, this is the
+     * latitude of intersection of the cone with the ellipsoid that is nearest the pole. Scale is
+     * true along this parallel.</p>
      */
     public static final UniversalParameters STANDARD_PARALLEL_1;
 
@@ -184,6 +231,10 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
     /**
      * The operation parameter descriptor for the standard parallel 2 parameter value.
      * Valid values range is from -90 to 90&deg;. This parameter is optional.
+     *
+     * <p><b>EPSG description:</b> For a conic projection with two standard parallels, this is the
+     * latitude of intersection of the cone with the ellipsoid that is furthest from the pole.
+     * Scale is true along this parallel.</p>
      */
     public static final UniversalParameters STANDARD_PARALLEL_2 = new UniversalParameters(new NamedIdentifier[] {
             new NamedIdentifier(OGC,     "standard_parallel_2"),
@@ -233,6 +284,10 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
     /**
      * The operation parameter descriptor for the {@code azimuth} parameter value.
      * This parameter is mandatory and have no default value.
+     *
+     * <p><b>EPSG description:</b> The azimuthal direction (north zero, east of north being positive)
+     * of the great circle which is the centre line of an oblique projection. The azimuth is given at
+     * the projection center.</p>
      */
     public static final UniversalParameters AZIMUTH = new UniversalParameters(new NamedIdentifier[] {
             new NamedIdentifier(OGC,      "azimuth"),
@@ -245,7 +300,11 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
     /**
      * The operation parameter descriptor for the {@code rectifiedGridAngle} parameter value.
      * This is an optional parameter with valid values ranging from -360 to 360&deg;.
-     * The default value is the azimuth.
+     * The default value is the {@linkplain #AZIMUTH azimuth}.
+     *
+     * <p><b>EPSG description:</b> The angle at the natural origin of an oblique projection
+     * through which the natural coordinate reference system is rotated to make the projection
+     * north axis parallel with true north.</p>
      */
     public static final UniversalParameters RECTIFIED_GRID_ANGLE = new UniversalParameters(new NamedIdentifier[] {
             new NamedIdentifier(Citations.OGC,      "rectified_grid_angle"),
@@ -275,6 +334,28 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
             new NamedIdentifier(GEOTIFF, "ScaleAtCenter"),
             new NamedIdentifier(PROJ4,   "k")
         }, 1, 0, Double.POSITIVE_INFINITY, Unit.ONE, true);
+
+    /**
+     * The operation parameter descriptor for the ESRI {@code "X_Scale"} parameter value.
+     * Valid values range is unrestricted. This parameter is optional and its default value is 1.
+     * <p>
+     * This is an ESRI-specific parameter, but its usage could be extended to any projection.
+     * The choice to allow this parameter or not is taken on a projection-by-projection basis.
+     */
+    public static final UniversalParameters X_SCALE = new UniversalParameters(new NamedIdentifier[] {
+            new NamedIdentifier(ESRI, "X_Scale")
+        }, 1, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Unit.ONE, false);
+
+    /**
+     * The operation parameter descriptor for the ESRI {@code "Y_Scale"} parameter value.
+     * Valid values range is unrestricted. This parameter is optional and its default value is 1.
+     * <p>
+     * This is an ESRI-specific parameter, but its usage could be extended to any projection.
+     * The choice to allow this parameter or not is taken on a projection-by-projection basis.
+     */
+    public static final UniversalParameters Y_SCALE = new UniversalParameters(new NamedIdentifier[] {
+            new NamedIdentifier(ESRI, "Y_Scale")
+        }, 1, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Unit.ONE, false);
 
     /**
      * The identifiers for the {@linkplain
@@ -571,15 +652,16 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
      * Special rules:
      * <ul>
      *   <li>The first entry in the {@code identifiers} array is the
-     *       {@linkplain ParameterDescriptorGroup#getName primary name}.</li>
-     *   <li>If a an entry do not implements the {@link GenericName} interface, it is
-     *       an {@linkplain ParameterDescriptorGroup#getIdentifiers identifiers}.</li>
+     *       {@linkplain ParameterDescriptorGroup#getName() primary name}.</li>
+     *   <li>If an identifier does not implements the {@link GenericName} interface, it is
+     *       used as an {@linkplain ParameterDescriptorGroup#getIdentifiers identifiers}.</li>
      *   <li>All others are {@linkplain ParameterDescriptorGroup#getAlias aliases}.</li>
      * </ul>
      * <p>
-     * <b>Note:</b> This method may modify in-place the given array. Do not pass a cached array.
+     * <b>Note:</b> This method may modify in-place the given parameters array.
+     * Do not pass a cached array.
      *
-     * @param  identifiers  The operation identifiers. Most contains at least one entry.
+     * @param  identifiers  The operation identifiers. Must contains at least one entry.
      * @param  excludes     The authorities to exclude from all parameters, or {@code null} if none.
      * @param  parameters   The set of parameters, or {@code null} or an empty array if none.
      * @return The descriptor for the given identifiers.
