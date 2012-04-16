@@ -86,6 +86,13 @@ public class WCSCapabilitiesType implements GetCapabilitiesResponse {
     /**
      * build a full new Capabilities document version 1.0.0.
      */
+    public WCSCapabilitiesType(final String updateSequence) {
+        this(null, null, null, updateSequence);
+    }
+    
+    /**
+     * build a full new Capabilities document version 1.0.0.
+     */
     public WCSCapabilitiesType(final ServiceType service, final WCSCapabilityType capability, 
             final ContentMetadata contentMetadata, final String updateSequence) {
         this.service         = service;

@@ -88,8 +88,8 @@ public class WFSCapabilitiesType extends CapabilitiesBaseType implements WFSResp
 
     }
 
-    public WFSCapabilitiesType(final String version) {
-        super(version);
+    public WFSCapabilitiesType(final String version, final String updateSequence) {
+        super(version, updateSequence);
     }
 
     public WFSCapabilitiesType(final String version, final ServiceIdentification si, final ServiceProvider sp, final OperationsMetadata om, 

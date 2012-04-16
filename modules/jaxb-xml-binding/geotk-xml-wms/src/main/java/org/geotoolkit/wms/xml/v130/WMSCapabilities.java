@@ -82,6 +82,13 @@ public class WMSCapabilities extends AbstractWMSCapabilities {
     /**
      * Build a new WMSCapabilities object.
      */
+    public WMSCapabilities(final String version, final String updateSequence) {
+        this(null, null, version, updateSequence);
+    }
+    
+    /**
+     * Build a new WMSCapabilities object.
+     */
     public WMSCapabilities(final Service service, final Capability capability, 
             final String version, final String updateSequence) {
         this.capability     = capability;
