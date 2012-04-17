@@ -196,6 +196,25 @@
           </execution>
         </executions>
       </plugin>
+
+      <!-- Create the example file. -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <configuration>
+          <target>
+            <ant dir="src/main/openoffice"/>
+          </target>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>site</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 </project>

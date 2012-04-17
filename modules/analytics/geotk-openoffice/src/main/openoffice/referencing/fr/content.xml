@@ -1,0 +1,2376 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<office:document-content xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0" xmlns:draw="urn:oasis:names:tc:opendocument:xmlns:drawing:1.0" xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:meta="urn:oasis:names:tc:opendocument:xmlns:meta:1.0" xmlns:number="urn:oasis:names:tc:opendocument:xmlns:datastyle:1.0" xmlns:presentation="urn:oasis:names:tc:opendocument:xmlns:presentation:1.0" xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0" xmlns:chart="urn:oasis:names:tc:opendocument:xmlns:chart:1.0" xmlns:dr3d="urn:oasis:names:tc:opendocument:xmlns:dr3d:1.0" xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns:form="urn:oasis:names:tc:opendocument:xmlns:form:1.0" xmlns:script="urn:oasis:names:tc:opendocument:xmlns:script:1.0" xmlns:ooo="http://openoffice.org/2004/office" xmlns:ooow="http://openoffice.org/2004/writer" xmlns:oooc="http://openoffice.org/2004/calc" xmlns:dom="http://www.w3.org/2001/xml-events" xmlns:xforms="http://www.w3.org/2002/xforms" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rpt="http://openoffice.org/2005/report" xmlns:of="urn:oasis:names:tc:opendocument:xmlns:of:1.2" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:grddl="http://www.w3.org/2003/g/data-view#" xmlns:tableooo="http://openoffice.org/2009/table" xmlns:field="urn:openoffice:names:experimental:ooo-ms-interop:xmlns:field:1.0" xmlns:formx="urn:openoffice:names:experimental:ooxml-odf-interop:xmlns:form:1.0" xmlns:css3t="http://www.w3.org/TR/css3-text/" office:version="1.2">
+ <office:scripts/>
+ <office:font-face-decls>
+  <style:font-face style:name="Cumberland" svg:font-family="Cumberland, &apos;Courier New&apos;, &apos;Bitstream Vera Sans Mono&apos;, Courier, &apos;Lucida Sans Typewriter&apos;, &apos;Lucida Typewriter&apos;, Monaco, Monospaced" style:font-family-generic="modern" style:font-pitch="fixed"/>
+  <style:font-face style:name="Arial Unicode MS" svg:font-family="&apos;Arial Unicode MS&apos;" style:font-pitch="variable"/>
+  <style:font-face style:name="Tahoma" svg:font-family="Tahoma" style:font-pitch="variable"/>
+  <style:font-face style:name="Arial" svg:font-family="Arial" style:font-family-generic="swiss" style:font-pitch="variable"/>
+  <style:font-face style:name="Arial Unicode MS1" svg:font-family="&apos;Arial Unicode MS&apos;" style:font-family-generic="system" style:font-pitch="variable"/>
+  <style:font-face style:name="Tahoma1" svg:font-family="Tahoma" style:font-family-generic="system" style:font-pitch="variable"/>
+ </office:font-face-decls>
+ <office:automatic-styles>
+  <style:style style:name="co1" style:family="table-column">
+   <style:table-column-properties fo:break-before="auto" style:column-width="3.251cm"/>
+  </style:style>
+  <style:style style:name="co2" style:family="table-column">
+   <style:table-column-properties fo:break-before="auto" style:column-width="2.267cm"/>
+  </style:style>
+  <style:style style:name="co3" style:family="table-column">
+   <style:table-column-properties fo:break-before="auto" style:column-width="3.099cm"/>
+  </style:style>
+  <style:style style:name="ro1" style:family="table-row">
+   <style:table-row-properties style:row-height="0.801cm" fo:break-before="auto" style:use-optimal-row-height="false"/>
+  </style:style>
+  <style:style style:name="ro2" style:family="table-row">
+   <style:table-row-properties style:row-height="0.452cm" fo:break-before="auto" style:use-optimal-row-height="true"/>
+  </style:style>
+  <style:style style:name="ro3" style:family="table-row">
+   <style:table-row-properties style:row-height="0.487cm" fo:break-before="auto" style:use-optimal-row-height="true"/>
+  </style:style>
+  <style:style style:name="ro4" style:family="table-row">
+   <style:table-row-properties style:row-height="2.842cm" fo:break-before="auto" style:use-optimal-row-height="false"/>
+  </style:style>
+  <style:style style:name="ro5" style:family="table-row">
+   <style:table-row-properties style:row-height="0.6cm" fo:break-before="auto" style:use-optimal-row-height="false"/>
+  </style:style>
+  <style:style style:name="ro6" style:family="table-row">
+   <style:table-row-properties style:row-height="0.51cm" fo:break-before="auto" style:use-optimal-row-height="true"/>
+  </style:style>
+  <style:style style:name="ro7" style:family="table-row">
+   <style:table-row-properties style:row-height="2.605cm" fo:break-before="auto" style:use-optimal-row-height="false"/>
+  </style:style>
+  <style:style style:name="ta1" style:family="table" style:master-page-name="Default">
+   <style:table-properties table:display="true" style:writing-mode="lr-tb"/>
+  </style:style>
+  <number:number-style style:name="N2">
+   <number:number number:decimal-places="2" number:min-integer-digits="1"/>
+  </number:number-style>
+  <number:number-style style:name="N3">
+   <number:number number:decimal-places="0" number:min-integer-digits="1" number:grouping="true"/>
+  </number:number-style>
+  <number:number-style style:name="N4">
+   <number:number number:decimal-places="2" number:min-integer-digits="1" number:grouping="true"/>
+  </number:number-style>
+  <number:percentage-style style:name="N11">
+   <number:number number:decimal-places="2" number:min-integer-digits="1"/>
+   <number:text>%</number:text>
+  </number:percentage-style>
+  <style:style style:name="ce1" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="0.06pt solid #000080" fo:background-color="#9999cc" style:text-align-source="fix" style:repeat-content="false" fo:border-left="0.06pt solid #000080" fo:border-right="none" style:shadow="#808080 0.176cm 0.176cm" fo:border-top="0.06pt solid #000080" style:vertical-align="middle"/>
+   <style:paragraph-properties fo:text-align="end" fo:margin-left="0cm"/>
+   <style:text-properties fo:color="#e6e6ff" fo:font-size="13pt" fo:font-weight="bold"/>
+  </style:style>
+  <style:style style:name="ce2" style:family="table-cell" style:parent-style-name="Default">
+   <style:text-properties fo:font-style="italic"/>
+  </style:style>
+  <style:style style:name="ce3" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="none" fo:background-color="#e6e6ff" style:text-align-source="fix" style:repeat-content="false" fo:border-left="none" fo:border-right="none" fo:border-top="0.99pt solid #000080"/>
+   <style:paragraph-properties fo:text-align="center" fo:margin-left="0cm"/>
+   <style:text-properties fo:font-weight="bold"/>
+  </style:style>
+  <style:style style:name="ce4" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="0.06pt solid #000080" fo:background-color="#e6e6ff" style:text-align-source="fix" style:repeat-content="false" fo:border-left="none" fo:border-right="none" fo:border-top="none"/>
+   <style:paragraph-properties fo:text-align="center" fo:margin-left="0cm"/>
+  </style:style>
+  <style:style style:name="ce5" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:background-color="#ffffcc" style:text-align-source="fix" style:repeat-content="false"/>
+   <style:paragraph-properties fo:text-align="end" fo:margin-left="0cm"/>
+  </style:style>
+  <style:style style:name="ce6" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="0.06pt solid #000080" fo:background-color="#9999cc" fo:border-left="none" fo:border-right="0.06pt solid #000080" style:shadow="#808080 0.176cm 0.176cm" fo:border-top="0.06pt solid #000080" style:vertical-align="middle"/>
+   <style:text-properties fo:color="#e6e6ff" fo:font-size="11pt" fo:font-style="italic" fo:font-weight="bold"/>
+  </style:style>
+  <style:style style:name="ce7" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="none" fo:background-color="#ccccff" style:text-align-source="fix" style:repeat-content="false" fo:border-left="0.51pt solid #000080" fo:border-right="none" style:shadow="#808080 0.176cm 0.176cm" fo:border-top="0.51pt solid #000080"/>
+   <style:paragraph-properties fo:text-align="end" fo:margin-left="0cm"/>
+   <style:text-properties fo:font-weight="bold"/>
+  </style:style>
+  <style:style style:name="ce8" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="0.51pt solid #000080" fo:background-color="#ccccff" style:text-align-source="fix" style:repeat-content="false" fo:border-left="0.51pt solid #000080" fo:border-right="none" style:shadow="#808080 0.176cm 0.176cm" fo:border-top="none"/>
+   <style:paragraph-properties fo:text-align="end" fo:margin-left="0cm"/>
+   <style:text-properties fo:font-weight="bold"/>
+  </style:style>
+  <style:style style:name="ce9" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="none" fo:background-color="#e6e6ff" style:text-align-source="value-type" style:repeat-content="false" fo:border-left="none" fo:border-right="none" fo:border-top="0.99pt solid #000080"/>
+   <style:paragraph-properties fo:margin-left="0cm"/>
+   <style:text-properties fo:font-weight="bold"/>
+  </style:style>
+  <style:style style:name="ce10" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="0.06pt solid #000080" fo:background-color="#9999cc" fo:border-left="none" fo:border-right="none" style:shadow="#808080 0.176cm 0.176cm" fo:border-top="0.06pt solid #000080" style:vertical-align="middle"/>
+   <style:text-properties fo:color="#e6e6ff" fo:font-size="13pt"/>
+  </style:style>
+  <style:style style:name="ce11" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="none" fo:background-color="#e6e6ff" style:text-align-source="fix" style:repeat-content="false" fo:border-left="none" fo:border-right="0.51pt solid #000080" style:shadow="#808080 0.176cm 0.176cm" fo:border-top="0.51pt solid #000080"/>
+   <style:paragraph-properties fo:text-align="start" fo:margin-left="0.212cm"/>
+   <style:text-properties fo:font-style="italic"/>
+  </style:style>
+  <style:style style:name="ce12" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="none" fo:background-color="#e6e6ff" style:text-align-source="fix" style:repeat-content="false" fo:border-left="none" fo:border-right="0.51pt solid #000080" style:shadow="#808080 0.176cm 0.176cm" fo:border-top="none"/>
+   <style:paragraph-properties fo:text-align="start" fo:margin-left="0.212cm"/>
+   <style:text-properties fo:font-style="italic"/>
+  </style:style>
+  <style:style style:name="ce13" style:family="table-cell" style:parent-style-name="Default" style:data-style-name="N2">
+   <style:table-cell-properties fo:border-bottom="none" fo:background-color="#e6e6ff" fo:border-left="0.51pt solid #000080" fo:border-right="none" style:shadow="#808080 0.176cm 0.176cm" fo:border-top="0.06pt solid #9999cc"/>
+   <style:text-properties fo:color="#999999"/>
+  </style:style>
+  <style:style style:name="ce14" style:family="table-cell" style:parent-style-name="Default" style:data-style-name="N2">
+   <style:table-cell-properties fo:border-bottom="0.51pt solid #000080" fo:background-color="#e6e6ff" fo:border-left="0.51pt solid #000080" fo:border-right="none" style:shadow="#808080 0.176cm 0.176cm" fo:border-top="none"/>
+   <style:text-properties fo:color="#999999"/>
+  </style:style>
+  <style:style style:name="ce15" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="none" fo:background-color="#e6e6ff" style:text-align-source="fix" style:repeat-content="false" fo:border-left="0.06pt solid #4c4c4c" fo:border-right="0.06pt solid #4c4c4c" fo:border-top="0.99pt solid #000080"/>
+   <style:paragraph-properties fo:text-align="center" fo:margin-left="0cm"/>
+   <style:text-properties fo:font-weight="bold"/>
+  </style:style>
+  <style:style style:name="ce16" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="0.06pt solid #000080" fo:background-color="#e6e6ff" style:text-align-source="fix" style:repeat-content="false" fo:border-left="0.06pt solid #4c4c4c" fo:border-right="none" fo:border-top="none"/>
+   <style:paragraph-properties fo:text-align="center" fo:margin-left="0cm"/>
+  </style:style>
+  <style:style style:name="ce17" style:family="table-cell" style:parent-style-name="Default" style:data-style-name="N110">
+   <style:table-cell-properties fo:border-bottom="none" fo:border-left="0.06pt solid #4c4c4c" fo:border-right="none" fo:border-top="none"/>
+  </style:style>
+  <style:style style:name="ce18" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="none" fo:background-color="#ffff99" style:text-align-source="fix" style:repeat-content="false" fo:border-left="none" fo:border-right="none" style:shadow="#808080 0.176cm 0.176cm" fo:border-top="0.51pt solid #000080"/>
+   <style:paragraph-properties fo:text-align="start" fo:margin-left="0.212cm"/>
+  </style:style>
+  <style:style style:name="ce19" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="0.51pt solid #000080" fo:background-color="#ffff99" style:text-align-source="fix" style:repeat-content="false" fo:border-left="none" fo:border-right="none" style:shadow="#808080 0.176cm 0.176cm" fo:border-top="none"/>
+   <style:paragraph-properties fo:text-align="start" fo:margin-left="0.212cm"/>
+  </style:style>
+  <style:style style:name="ce20" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="none" fo:background-color="#e6e6ff" fo:border-left="none" fo:border-right="none" style:shadow="#808080 0.176cm 0.176cm" fo:border-top="0.06pt solid #000080"/>
+   <style:text-properties fo:font-style="italic"/>
+  </style:style>
+  <style:style style:name="ce21" style:family="table-cell" style:parent-style-name="Default" style:data-style-name="N2">
+   <style:table-cell-properties fo:border-bottom="none" fo:background-color="#e6e6ff" fo:border-left="none" fo:border-right="0.06pt solid #9999cc" style:shadow="#808080 0.176cm 0.176cm" fo:border-top="0.06pt solid #9999cc"/>
+   <style:text-properties fo:color="#999999"/>
+  </style:style>
+  <style:style style:name="ce22" style:family="table-cell" style:parent-style-name="Default" style:data-style-name="N2">
+   <style:table-cell-properties fo:border-bottom="0.51pt solid #000080" fo:background-color="#e6e6ff" fo:border-left="none" fo:border-right="0.06pt solid #9999cc" style:shadow="#808080 0.176cm 0.176cm" fo:border-top="none"/>
+   <style:text-properties fo:color="#999999"/>
+  </style:style>
+  <style:style style:name="ce23" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="none" fo:background-color="#e6e6ff" style:text-align-source="fix" style:repeat-content="false" fo:border-left="none" fo:border-right="0.06pt solid #4c4c4c" fo:border-top="0.99pt solid #000080"/>
+   <style:paragraph-properties fo:text-align="center" fo:margin-left="0cm"/>
+  </style:style>
+  <style:style style:name="ce24" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="0.06pt solid #000080" fo:background-color="#e6e6ff" style:text-align-source="fix" style:repeat-content="false" fo:border-left="none" fo:border-right="0.06pt solid #4c4c4c" fo:border-top="none"/>
+   <style:paragraph-properties fo:text-align="center" fo:margin-left="0cm"/>
+  </style:style>
+  <style:style style:name="ce25" style:family="table-cell" style:parent-style-name="Default" style:data-style-name="N110">
+   <style:table-cell-properties fo:border-bottom="none" fo:border-left="none" fo:border-right="0.06pt solid #4c4c4c" fo:border-top="none"/>
+  </style:style>
+  <style:style style:name="ce26" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="none" fo:background-color="#e6e6ff" style:text-align-source="fix" style:repeat-content="false" fo:border-left="none" fo:border-right="0.51pt solid #000080" style:shadow="#808080 0.176cm 0.176cm" fo:border-top="0.51pt solid #000080"/>
+   <style:paragraph-properties fo:text-align="start" fo:margin-left="0.212cm"/>
+  </style:style>
+  <style:style style:name="ce27" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="0.51pt solid #000080" fo:background-color="#e6e6ff" style:text-align-source="fix" style:repeat-content="false" fo:border-left="none" fo:border-right="0.51pt solid #000080" style:shadow="#808080 0.176cm 0.176cm" fo:border-top="none"/>
+   <style:paragraph-properties fo:text-align="start" fo:margin-left="0.212cm"/>
+  </style:style>
+  <style:style style:name="ce28" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="none" fo:background-color="#e6e6ff" style:text-align-source="fix" style:repeat-content="false" fo:border-left="none" fo:border-right="none" style:shadow="#808080 0.176cm 0.176cm" fo:border-top="0.06pt solid #9999cc"/>
+   <style:paragraph-properties fo:text-align="end" fo:margin-left="0cm"/>
+  </style:style>
+  <style:style style:name="ce29" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="0.51pt solid #000080" fo:background-color="#e6e6ff" style:text-align-source="fix" style:repeat-content="false" fo:border-left="none" fo:border-right="none" style:shadow="#808080 0.176cm 0.176cm" fo:border-top="none"/>
+   <style:paragraph-properties fo:text-align="end" fo:margin-left="0cm"/>
+  </style:style>
+  <style:style style:name="ce30" style:family="table-cell" style:parent-style-name="Default" style:data-style-name="N4"/>
+  <style:style style:name="ce31" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="0.06pt solid #000080" fo:background-color="#9999cc" fo:border-left="none" fo:border-right="0.06pt solid #000080" style:shadow="#808080 0.176cm 0.176cm" fo:border-top="0.06pt solid #000080" style:vertical-align="middle"/>
+   <style:text-properties fo:color="#e6e6ff" fo:font-size="13pt"/>
+  </style:style>
+  <style:style style:name="ce32" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="none" fo:background-color="#e6e6ff" style:text-align-source="fix" style:repeat-content="false" fo:border-left="none" fo:border-right="0.51pt solid #000080" style:shadow="#808080 0.176cm 0.176cm" fo:border-top="0.06pt solid #9999cc"/>
+   <style:paragraph-properties fo:text-align="end" fo:margin-left="0cm"/>
+  </style:style>
+  <style:style style:name="ce33" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="0.51pt solid #000080" fo:background-color="#e6e6ff" style:text-align-source="fix" style:repeat-content="false" fo:border-left="none" fo:border-right="0.51pt solid #000080" style:shadow="#808080 0.176cm 0.176cm" fo:border-top="none"/>
+   <style:paragraph-properties fo:text-align="end" fo:margin-left="0cm"/>
+  </style:style>
+  <style:style style:name="ce34" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="none" fo:background-color="#e6e6ff" fo:border-left="none" fo:border-right="none" fo:border-top="0.99pt solid #000080"/>
+  </style:style>
+  <style:style style:name="ce35" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties style:text-align-source="fix" style:repeat-content="false" fo:wrap-option="wrap" style:vertical-align="middle"/>
+   <style:paragraph-properties fo:text-align="justify"/>
+   <style:text-properties fo:font-size="8pt" fo:font-style="normal"/>
+  </style:style>
+  <style:style style:name="ce36" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="none" fo:background-color="#ccccff" style:text-align-source="fix" style:repeat-content="false" fo:border-left="0.06pt solid #000080" fo:border-right="none" style:shadow="#808080 0.176cm 0.176cm" fo:border-top="0.06pt solid #000080" style:vertical-align="middle"/>
+   <style:paragraph-properties fo:text-align="end" fo:margin-left="0cm"/>
+   <style:text-properties fo:font-weight="bold"/>
+  </style:style>
+  <style:style style:name="ce37" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="none" fo:background-color="#e6e6ff" style:text-align-source="fix" style:repeat-content="false" fo:border-left="none" fo:border-right="none" fo:border-top="0.99pt solid #000080" style:vertical-align="middle"/>
+   <style:paragraph-properties fo:text-align="center" fo:margin-left="0cm"/>
+   <style:text-properties fo:font-weight="bold"/>
+  </style:style>
+  <style:style style:name="ce38" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:background-color="#ffff99" style:text-align-source="fix" style:repeat-content="false"/>
+   <style:paragraph-properties fo:text-align="end" fo:margin-left="0cm"/>
+  </style:style>
+  <style:style style:name="ce39" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties style:text-align-source="fix" style:repeat-content="false"/>
+   <style:paragraph-properties fo:text-align="end" fo:margin-left="0cm"/>
+  </style:style>
+  <style:style style:name="ce40" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="none" fo:background-color="#e6e6ff" style:text-align-source="fix" style:repeat-content="false" fo:border-left="none" fo:border-right="0.99pt solid #000080" fo:border-top="0.99pt solid #000080" style:vertical-align="middle"/>
+   <style:paragraph-properties fo:text-align="center" fo:margin-left="0cm"/>
+   <style:text-properties fo:font-weight="bold"/>
+  </style:style>
+  <style:style style:name="ce41" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="0.06pt solid #000080" fo:background-color="#e6e6ff" style:text-align-source="fix" style:repeat-content="false" fo:border-left="none" fo:border-right="none" fo:border-top="none"/>
+   <style:paragraph-properties fo:text-align="center" fo:margin-left="0cm"/>
+   <style:text-properties fo:font-weight="normal"/>
+  </style:style>
+  <style:style style:name="ce42" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:background-color="#ffff99" style:text-align-source="fix" style:repeat-content="false" fo:wrap-option="wrap"/>
+   <style:paragraph-properties fo:text-align="start" fo:margin-left="0.318cm"/>
+   <style:text-properties style:use-window-font-color="true" style:text-outline="false" style:text-line-through-style="none" style:font-name="Cumberland" fo:font-size="10pt" fo:font-style="normal" fo:text-shadow="none" style:text-underline-style="none" fo:font-weight="normal" style:text-underline-mode="continuous" style:text-overline-mode="continuous" style:text-line-through-mode="continuous" style:font-name-asian="Arial Unicode MS" style:font-size-asian="10pt" style:language-asian="zxx" style:country-asian="none" style:font-style-asian="normal" style:font-weight-asian="normal" style:font-name-complex="Tahoma" style:font-size-complex="10pt" style:language-complex="zxx" style:country-complex="none" style:font-style-complex="normal" style:font-weight-complex="normal" style:text-emphasize="none" style:font-relief="none"/>
+  </style:style>
+  <style:style style:name="ce43" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="none" fo:background-color="#ffff99" style:text-align-source="fix" style:repeat-content="false" fo:border-left="none" fo:border-right="none" style:shadow="#808080 0.176cm 0.176cm" fo:border-top="0.06pt solid #000080" style:vertical-align="middle"/>
+   <style:paragraph-properties fo:text-align="start" fo:margin-left="0.212cm"/>
+  </style:style>
+  <style:style style:name="ce44" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="none" fo:background-color="#e6e6ff" style:text-align-source="value-type" style:repeat-content="false" fo:border-left="none" fo:border-right="none" fo:border-top="0.99pt solid #000080" style:vertical-align="middle"/>
+   <style:paragraph-properties fo:margin-left="0cm"/>
+   <style:text-properties fo:font-weight="bold"/>
+  </style:style>
+  <style:style style:name="ce45" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="0.06pt solid #333333" fo:background-color="#e6e6ff" style:text-align-source="fix" style:repeat-content="false" fo:border-left="0.06pt solid #333333" fo:border-right="0.06pt solid #333333" fo:border-top="none"/>
+   <style:paragraph-properties fo:text-align="center" fo:margin-left="0cm"/>
+   <style:text-properties fo:font-weight="normal"/>
+  </style:style>
+  <style:style style:name="ce46" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="none" style:text-align-source="fix" style:repeat-content="false" fo:border-left="0.06pt solid #333333" fo:border-right="0.06pt solid #333333" fo:border-top="none"/>
+   <style:paragraph-properties fo:text-align="start" fo:margin-left="0.353cm"/>
+  </style:style>
+  <style:style style:name="ce47" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="none" fo:background-color="#e6e6ff" style:text-align-source="fix" style:repeat-content="false" fo:border-left="none" fo:border-right="0.06pt solid #000080" style:shadow="#808080 0.176cm 0.176cm" fo:border-top="0.06pt solid #000080" style:vertical-align="middle"/>
+   <style:paragraph-properties fo:text-align="start" fo:margin-left="0.212cm"/>
+  </style:style>
+  <style:style style:name="ce48" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="none" fo:background-color="#e6e6ff" style:text-align-source="fix" style:repeat-content="false" fo:border-left="0.06pt solid #4c4c4c" fo:border-right="0.06pt solid #4c4c4c" fo:border-top="0.99pt solid #000080" style:vertical-align="middle"/>
+   <style:paragraph-properties fo:text-align="center" fo:margin-left="0cm"/>
+   <style:text-properties fo:font-weight="bold"/>
+  </style:style>
+  <style:style style:name="ce49" style:family="table-cell" style:parent-style-name="Default" style:data-style-name="N110">
+   <style:table-cell-properties fo:border-bottom="none" fo:border-left="0.06pt solid #333333" fo:border-right="none" fo:border-top="none"/>
+  </style:style>
+  <style:style style:name="ce50" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="0.06pt solid #000080" fo:background-color="#e6e6ff" fo:border-left="none" fo:border-right="none" fo:border-top="none"/>
+  </style:style>
+  <style:style style:name="ce51" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties style:text-align-source="fix" style:repeat-content="false"/>
+   <style:paragraph-properties fo:text-align="start" fo:margin-left="0.353cm"/>
+  </style:style>
+  <style:style style:name="ce52" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="none" fo:background-color="#e6e6ff" style:text-align-source="fix" style:repeat-content="false" fo:border-left="none" fo:border-right="0.06pt solid #4c4c4c" fo:border-top="0.99pt solid #000080" style:vertical-align="middle"/>
+   <style:paragraph-properties fo:text-align="center" fo:margin-left="0cm"/>
+  </style:style>
+  <style:style style:name="ce53" style:family="table-cell" style:parent-style-name="Default" style:data-style-name="N110">
+   <style:table-cell-properties fo:border-bottom="none" fo:border-left="none" fo:border-right="0.06pt solid #333333" fo:border-top="none"/>
+  </style:style>
+  <style:style style:name="ce54" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="none" style:text-align-source="fix" style:repeat-content="false" fo:border-left="none" fo:border-right="0.06pt solid #333333" fo:border-top="none"/>
+   <style:paragraph-properties fo:text-align="start" fo:margin-left="0.353cm"/>
+  </style:style>
+  <style:style style:name="ce55" style:family="table-cell" style:parent-style-name="Default" style:data-style-name="N3">
+   <style:table-cell-properties fo:background-color="#ffff66"/>
+  </style:style>
+  <style:style style:name="ce56" style:family="table-cell" style:parent-style-name="Default" style:data-style-name="N4">
+   <style:text-properties fo:language="en" fo:country="US" style:language-asian="en" style:country-asian="US" style:language-complex="en" style:country-complex="US"/>
+  </style:style>
+  <style:style style:name="ce57" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="none" fo:background-color="#e6e6ff" fo:border-left="none" fo:border-right="none" fo:border-top="0.99pt solid #000080" style:vertical-align="middle"/>
+  </style:style>
+  <style:style style:name="ce58" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="none" fo:background-color="#e6e6ff" fo:border-left="0.99pt solid #000080" fo:border-right="none" fo:border-top="0.99pt solid #000080"/>
+  </style:style>
+  <style:style style:name="ce59" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="0.06pt solid #000080" fo:background-color="#e6e6ff" style:text-align-source="fix" style:repeat-content="false" fo:border-left="0.06pt solid #333333" fo:border-right="none" fo:border-top="none"/>
+   <style:paragraph-properties fo:text-align="center" fo:margin-left="0cm"/>
+  </style:style>
+  <style:style style:name="ce60" style:family="table-cell" style:parent-style-name="Default" style:data-style-name="N4">
+   <style:table-cell-properties fo:border-bottom="none" fo:border-left="0.06pt solid #333333" fo:border-right="0.06pt solid #333333" fo:border-top="none"/>
+  </style:style>
+  <style:style style:name="ce61" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="none" fo:background-color="#e6e6ff" fo:border-left="none" fo:border-right="0.99pt solid #000080" fo:border-top="0.99pt solid #000080"/>
+  </style:style>
+  <style:style style:name="ce62" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="0.06pt solid #000080" fo:background-color="#e6e6ff" style:text-align-source="fix" style:repeat-content="false" fo:border-left="none" fo:border-right="0.06pt solid #333333" fo:border-top="none"/>
+   <style:paragraph-properties fo:text-align="center" fo:margin-left="0cm"/>
+  </style:style>
+  <style:style style:name="ce63" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties style:text-align-source="fix" style:repeat-content="false" fo:wrap-option="wrap" style:vertical-align="middle"/>
+   <style:paragraph-properties fo:text-align="justify"/>
+   <style:text-properties fo:font-size="8pt"/>
+  </style:style>
+  <style:style style:name="ce64" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="0.06pt solid #000080" fo:background-color="#ccccff" style:text-align-source="fix" style:repeat-content="false" fo:border-left="0.06pt solid #000080" fo:border-right="none" style:shadow="#808080 0.176cm 0.176cm" fo:border-top="none"/>
+   <style:paragraph-properties fo:text-align="end" fo:margin-left="0cm"/>
+   <style:text-properties fo:font-weight="bold"/>
+  </style:style>
+  <style:style style:name="ce65" style:family="table-cell" style:parent-style-name="Default" style:data-style-name="N3"/>
+  <style:style style:name="ce66" style:family="table-cell" style:parent-style-name="Default" style:data-style-name="N3">
+   <style:map style:condition="cell-content()&gt;=2*[$Distances.$A$10]" style:apply-style-name="Outside" style:base-cell-address="Distances.A82"/>
+  </style:style>
+  <style:style style:name="ce67" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="0.06pt solid #000080" fo:background-color="#ffff99" style:text-align-source="fix" style:repeat-content="false" fo:border-left="none" fo:border-right="none" style:shadow="#808080 0.176cm 0.176cm" fo:border-top="none"/>
+   <style:paragraph-properties fo:text-align="start" fo:margin-left="0.212cm"/>
+  </style:style>
+  <style:style style:name="ce68" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:border-bottom="0.06pt solid #000080" fo:background-color="#e6e6ff" style:text-align-source="fix" style:repeat-content="false" fo:border-left="none" fo:border-right="0.06pt solid #000080" style:shadow="#808080 0.176cm 0.176cm" fo:border-top="none"/>
+   <style:paragraph-properties fo:text-align="start" fo:margin-left="0.212cm"/>
+  </style:style>
+  <style:style style:name="ce69" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties fo:background-color="#ccccff" style:text-align-source="fix" style:repeat-content="false"/>
+   <style:paragraph-properties fo:text-align="center" fo:margin-left="0cm"/>
+   <style:text-properties fo:font-weight="bold"/>
+  </style:style>
+  <style:style style:name="ce70" style:family="table-cell" style:parent-style-name="Default" style:data-style-name="N11"/>
+  <style:style style:name="T1" style:family="text">
+   <style:text-properties fo:font-size="8pt" fo:font-weight="normal"/>
+  </style:style>
+ </office:automatic-styles>
+ <office:body>
+  <office:spreadsheet>
+   <table:table table:name="Série" table:style-name="ta1" table:print="false">
+    <table:table-column table:style-name="co1" table:number-columns-repeated="6" table:default-cell-style-name="Default"/>
+    <table:table-row table:style-name="ro1">
+     <table:table-cell table:style-name="ce1" office:value-type="string">
+      <text:p>Exemple 1:</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce6" office:value-type="string" table:number-columns-spanned="5" table:number-rows-spanned="1">
+      <text:p>Transformation d&apos;une séries de coordonnées entre deux systèmes de références</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:number-columns-repeated="3" table:style-name="ce10"/>
+     <table:covered-table-cell table:style-name="ce31"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro2">
+     <table:table-cell table:number-columns-repeated="6"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro2">
+     <table:table-cell table:style-name="ce2" office:value-type="string" table:number-columns-spanned="6" table:number-rows-spanned="1">
+      <text:p>Editez les valeurs dans les cellules jaunes pour constater les changements dans les valeurs calculées.</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:number-columns-repeated="5"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:style-name="ce2" office:value-type="string" table:number-columns-spanned="5" table:number-rows-spanned="1">
+      <text:p>Les codes EPSG sont décrits dans une base de données qui peut être téléchargée gratuitement:</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:number-columns-repeated="4"/>
+     <table:table-cell office:value-type="string">
+      <text:p>
+       <text:a xlink:href="http://www.epsg.org/">http://www.epsg.org</text:a>
+      </text:p>
+     </table:table-cell>
+    </table:table-row>
+    <table:table-row table:style-name="ro2">
+     <table:table-cell table:style-name="ce2"/>
+     <table:table-cell table:number-columns-repeated="5"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro2">
+     <table:table-cell table:number-columns-repeated="6"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro2">
+     <table:table-cell table:number-columns-repeated="2"/>
+     <table:table-cell table:style-name="ce7" office:value-type="string">
+      <text:p>SRC source:</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce18" office:value-type="string">
+      <text:p>EPSG:4326</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce26" table:formula="of:=ORG.OPENGIS.OPENOFFICE.REFERENCING.GETDESCRIPTION([.D7])" office:value-type="string" office:string-value="WGS 84" table:number-columns-spanned="2" table:number-rows-spanned="1">
+      <text:p>WGS 84</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:style-name="ce26"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro2">
+     <table:table-cell table:number-columns-repeated="2"/>
+     <table:table-cell table:style-name="ce8" office:value-type="string">
+      <text:p>SRC destination:</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce19" office:value-type="string">
+      <text:p>EPSG:2984</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce27" table:formula="of:=ORG.OPENGIS.OPENOFFICE.REFERENCING.GETDESCRIPTION([.D8])" office:value-type="string" office:string-value="RGNC 1991 / Lambert New Caledonia" table:number-columns-spanned="2" table:number-rows-spanned="1">
+      <text:p>RGNC 1991 / Lambert New Caledonia</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:style-name="ce27"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro2">
+     <table:table-cell table:number-columns-repeated="6"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro2">
+     <table:table-cell/>
+     <table:table-cell table:style-name="ce7" office:value-type="string">
+      <text:p>Utilisation:</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce11" table:formula="of:=ORG.OPENGIS.OPENOFFICE.REFERENCING.GETSCOPE([.D8])" office:value-type="string" office:string-value="Large and medium scale topographic mapping and engineering survey." table:number-columns-spanned="4" table:number-rows-spanned="1">
+      <text:p>Large and medium scale topographic mapping and engineering survey.</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:number-columns-repeated="3" table:style-name="ce20"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro2">
+     <table:table-cell/>
+     <table:table-cell table:style-name="ce8" office:value-type="string">
+      <text:p>Région:</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce12" table:formula="of:=ORG.OPENGIS.OPENOFFICE.REFERENCING.GETVALIDAREA([.D8])" office:value-type="string" office:string-value="New Caledonia - onshore and offshore. Isle de Pins, Loyalty Islands, Huon Islands, Belep archipelago, Chesterfield Islands, and Walpole." table:number-columns-spanned="4" table:number-rows-spanned="1">
+      <text:p>New Caledonia - onshore and offshore. Isle de Pins, Loyalty Islands, Huon Islands, Belep archipelago, Chesterfield Islands, and Walpole.</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:number-columns-repeated="3"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro2">
+     <table:table-cell table:number-columns-repeated="2"/>
+     <table:table-cell table:style-name="ce13" table:number-matrix-columns-spanned="2" table:number-matrix-rows-spanned="2" table:formula="of:=ORG.OPENGIS.OPENOFFICE.REFERENCING.GETBOUNDINGBOX([.D8])" office:value-type="float" office:value="-17.26">
+      <text:p>-17,26</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce21" office:value-type="float" office:value="157.09">
+      <text:p>157,09</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce28" table:number-matrix-columns-spanned="1" table:number-matrix-rows-spanned="2" table:formula="of:=ORG.GEOTOOLKIT.OPENOFFICE.REFERENCING.GETTEXTLATITUDE([.C12:.C13];&quot;D°MM&apos;&quot;)" office:value-type="string" office:string-value="17°16&apos;S">
+      <text:p>17°16&apos;S</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce32" table:number-matrix-columns-spanned="1" table:number-matrix-rows-spanned="2" table:formula="of:=ORG.GEOTOOLKIT.OPENOFFICE.REFERENCING.GETTEXTLONGITUDE([.D12:.D13];&quot;D°MM&apos;&quot;)" office:value-type="string" office:string-value="157°05&apos;E">
+      <text:p>157°05&apos;E</text:p>
+     </table:table-cell>
+    </table:table-row>
+    <table:table-row table:style-name="ro2">
+     <table:table-cell table:number-columns-repeated="2"/>
+     <table:table-cell table:style-name="ce14" office:value-type="float" office:value="-23.46">
+      <text:p>-23,46</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce22" office:value-type="float" office:value="173.89">
+      <text:p>173,89</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce29" office:value-type="string" office:string-value="23°28&apos;S">
+      <text:p>23°28&apos;S</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce33" office:value-type="string" office:string-value="173°53&apos;E">
+      <text:p>173°53&apos;E</text:p>
+     </table:table-cell>
+    </table:table-row>
+    <table:table-row table:style-name="ro2" table:number-rows-repeated="2">
+     <table:table-cell table:number-columns-repeated="6"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro2">
+     <table:table-cell table:style-name="ce3" office:value-type="string" table:number-columns-spanned="2" table:number-rows-spanned="1">
+      <text:p>Coordonnées géographiques</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:style-name="ce9"/>
+     <table:table-cell table:style-name="ce15" office:value-type="string" table:number-columns-spanned="2" table:number-rows-spanned="1">
+      <text:p>Coordonnées sources</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:style-name="ce23"/>
+     <table:table-cell table:style-name="ce3" office:value-type="string" table:number-columns-spanned="2" table:number-rows-spanned="1">
+      <text:p>Coordonnées destinations</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:style-name="ce34"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro2">
+     <table:table-cell table:style-name="ce4" office:value-type="string">
+      <text:p>Latitude</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce4" office:value-type="string">
+      <text:p>Longitude</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce16" table:formula="of:=ORG.OPENGIS.OPENOFFICE.REFERENCING.GETAXIS([.$D$7];1)" office:value-type="string" office:string-value="Geodetic latitude">
+      <text:p>Geodetic latitude</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce24" table:formula="of:=ORG.OPENGIS.OPENOFFICE.REFERENCING.GETAXIS([.$D$7];2)" office:value-type="string" office:string-value="Geodetic longitude">
+      <text:p>Geodetic longitude</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce4" table:formula="of:=ORG.OPENGIS.OPENOFFICE.REFERENCING.GETAXIS([.$D$8];1)" office:value-type="string" office:string-value="Easting">
+      <text:p>Easting</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce4" table:formula="of:=ORG.OPENGIS.OPENOFFICE.REFERENCING.GETAXIS([.$D$8];2)" office:value-type="string" office:string-value="Northing">
+      <text:p>Northing</text:p>
+     </table:table-cell>
+    </table:table-row>
+    <table:table-row table:style-name="ro2">
+     <table:table-cell table:style-name="ce5" office:value-type="string">
+      <text:p>21°35.143&apos;S</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce5" office:value-type="string">
+      <text:p>168°06.385&apos;E</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce17" table:number-matrix-columns-spanned="2" table:number-matrix-rows-spanned="6" table:formula="of:=ORG.GEOTOOLKIT.OPENOFFICE.REFERENCING.GETVALUEANGLE([.A18:.B23]; &quot;D°MM.mmm&quot;)" office:value-type="float" office:value="-21.5857166666667">
+      <text:p>-21,585717</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce25" office:value-type="float" office:value="168.106416666667">
+      <text:p>168,106417</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce30" table:number-matrix-columns-spanned="2" table:number-matrix-rows-spanned="6" table:formula="of:=ORG.OPENGIS.OPENOFFICE.REFERENCING.GETTRANSFORMEDCOORDINATES([.C18:.D23];[.$D$7];[.$D$8])" office:value-type="float" office:value="618118.071964584">
+      <text:p>618 118,07</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce30" office:value-type="float" office:value="288978.035668459">
+      <text:p>288 978,04</text:p>
+     </table:table-cell>
+    </table:table-row>
+    <table:table-row table:style-name="ro2">
+     <table:table-cell table:style-name="ce5" office:value-type="string">
+      <text:p>21°35.837&apos;S</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce5" office:value-type="string">
+      <text:p>168°06.450&apos;E</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce17" office:value-type="float" office:value="-21.5972833333333">
+      <text:p>-21,597283</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce25" office:value-type="float" office:value="168.1075">
+      <text:p>168,107500</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce30" office:value-type="float" office:value="618212.979398846">
+      <text:p>618 212,98</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce30" office:value-type="float" office:value="287696.008104095">
+      <text:p>287 696,01</text:p>
+     </table:table-cell>
+    </table:table-row>
+    <table:table-row table:style-name="ro2">
+     <table:table-cell table:style-name="ce5" office:value-type="string">
+      <text:p>20°45.422&apos;S</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce5" office:value-type="string">
+      <text:p>167°04.388&apos;E</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce17" office:value-type="float" office:value="-20.7570333333333">
+      <text:p>-20,757033</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce25" office:value-type="float" office:value="167.073133333333">
+      <text:p>167,073133</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce30" office:value-type="float" office:value="511754.560393287">
+      <text:p>511 754,56</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce30" office:value-type="float" office:value="381811.315436322">
+      <text:p>381 811,32</text:p>
+     </table:table-cell>
+    </table:table-row>
+    <table:table-row table:style-name="ro2">
+     <table:table-cell table:style-name="ce5" office:value-type="string">
+      <text:p>20°45.629&apos;S</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce5" office:value-type="string">
+      <text:p>167°05.599&apos;E</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce17" office:value-type="float" office:value="-20.7604833333333">
+      <text:p>-20,760483</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce25" office:value-type="float" office:value="167.093316666667">
+      <text:p>167,093317</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce30" office:value-type="float" office:value="513853.71831551">
+      <text:p>513 853,72</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce30" office:value-type="float" office:value="381414.791427636">
+      <text:p>381 414,79</text:p>
+     </table:table-cell>
+    </table:table-row>
+    <table:table-row table:style-name="ro2">
+     <table:table-cell table:style-name="ce5" office:value-type="string">
+      <text:p>20°45.521&apos;S</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce5" office:value-type="string">
+      <text:p>167°06.336&apos;E</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce17" office:value-type="float" office:value="-20.7586833333333">
+      <text:p>-20,758683</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce25" office:value-type="float" office:value="167.1056">
+      <text:p>167,105600</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce30" office:value-type="float" office:value="515134.244794807">
+      <text:p>515 134,24</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce30" office:value-type="float" office:value="381605.078276532">
+      <text:p>381 605,08</text:p>
+     </table:table-cell>
+    </table:table-row>
+    <table:table-row table:style-name="ro2">
+     <table:table-cell table:style-name="ce5" office:value-type="string">
+      <text:p>20°46.641&apos;S</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce5" office:value-type="string">
+      <text:p>167°07.813&apos;E</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce17" office:value-type="float" office:value="-20.77735">
+      <text:p>-20,777350</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce25" office:value-type="float" office:value="167.130216666667">
+      <text:p>167,130217</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce30" office:value-type="float" office:value="517682.773079647">
+      <text:p>517 682,77</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce30" office:value-type="float" office:value="379520.110202169">
+      <text:p>379 520,11</text:p>
+     </table:table-cell>
+    </table:table-row>
+   </table:table>
+   <table:table table:name="Multi SRC" table:style-name="ta1" table:print="false">
+    <table:table-column table:style-name="co3" table:default-cell-style-name="ce42"/>
+    <table:table-column table:style-name="co3" table:default-cell-style-name="ce46"/>
+    <table:table-column table:style-name="co3" table:default-cell-style-name="ce51"/>
+    <table:table-column table:style-name="co3" table:default-cell-style-name="ce54"/>
+    <table:table-column table:style-name="co3" table:default-cell-style-name="ce56"/>
+    <table:table-column table:style-name="co3" table:default-cell-style-name="ce30"/>
+    <table:table-column table:style-name="co3" table:number-columns-repeated="2" table:default-cell-style-name="Default"/>
+    <table:table-row table:style-name="ro1">
+     <table:table-cell table:style-name="ce1" office:value-type="string">
+      <text:p>Exemple 2:</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce6" office:value-type="string" table:number-columns-spanned="5" table:number-rows-spanned="1">
+      <text:p>Faire correspondre deux points dont l&apos;un utilise un SRC inconnu</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:number-columns-repeated="3" table:style-name="ce10"/>
+     <table:covered-table-cell table:style-name="ce31"/>
+     <table:table-cell table:number-columns-repeated="2"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro2">
+     <table:table-cell table:style-name="Default" table:number-columns-repeated="6"/>
+     <table:table-cell table:number-columns-repeated="2"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro4">
+     <table:table-cell table:style-name="ce35" office:value-type="string" table:number-columns-spanned="6" table:number-rows-spanned="1">
+      <text:p>Problème (cas réel): Nous disposons d&apos;une séries de points exprimés en coordonnées UTM, mais le chercheur n&apos;a pas noté de quel système UTM il s&apos;agit. Peut-être ignorait-il qu&apos;il en existe une dizaine pour la seule zone 58 sud. Par chance, nous possédons aussi les coordonnées géographiques pour l&apos;un de ces points. Nous avons énuméré dans la colonne jaune ci-dessous les codes de différents systèmes de référence des coordonnées (SRC). A l’aide d’une simple formule TRANSFORM.COORD recopiée autant de fois que nécessaire, nous avons transformé la même coordonnée géographique selon tous ces SRC. La dernière colonne calcule la distance orthodromique entre ces coordonnées transformées et la coordonnée attendue. On trouve ainsi une correspondance avec le SRC « IGN53 Maré / UTM zone 58S ».</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:number-columns-repeated="5" table:style-name="Default"/>
+     <table:table-cell table:number-columns-repeated="2"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro2" table:number-rows-repeated="2">
+     <table:table-cell table:style-name="Default" table:number-columns-repeated="6"/>
+     <table:table-cell table:number-columns-repeated="2"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro5">
+     <table:table-cell table:style-name="ce36" office:value-type="string">
+      <text:p>SRC source:</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce43" office:value-type="string">
+      <text:p>EPSG:4326</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce47" table:formula="of:=ORG.OPENGIS.OPENOFFICE.REFERENCING.GETDESCRIPTION([.B6])" office:value-type="string" office:string-value="WGS 84" table:number-columns-spanned="2" table:number-rows-spanned="1">
+      <text:p>WGS 84</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:style-name="ce47"/>
+     <table:table-cell table:style-name="Default" table:number-columns-repeated="2"/>
+     <table:table-cell table:number-columns-repeated="2"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro2">
+     <table:table-cell table:style-name="Default" table:number-columns-repeated="6"/>
+     <table:table-cell table:number-columns-repeated="2"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro5">
+     <table:table-cell table:style-name="ce37" office:value-type="string" table:number-columns-spanned="2" table:number-rows-spanned="1">
+      <text:p>Coordonnées géographiques</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:style-name="ce44"/>
+     <table:table-cell table:style-name="ce48" office:value-type="string" table:number-columns-spanned="2" table:number-rows-spanned="1">
+      <text:p>Coordonnées sources</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:style-name="ce52"/>
+     <table:table-cell table:style-name="ce37" office:value-type="string" table:number-columns-spanned="2" table:number-rows-spanned="1">
+      <text:p>Selon SRC inconnu
+       <text:s/>
+       <text:span text:style-name="T1">(présumé UTM)</text:span>
+      </text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:style-name="ce57"/>
+     <table:table-cell table:number-columns-repeated="2"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:style-name="ce4" office:value-type="string">
+      <text:p>Latitude</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce4" office:value-type="string">
+      <text:p>Longitude</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce16" table:formula="of:=ORG.OPENGIS.OPENOFFICE.REFERENCING.GETAXIS([.$B$6];1)" office:value-type="string" office:string-value="Geodetic latitude">
+      <text:p>Geodetic latitude</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce24" table:formula="of:=ORG.OPENGIS.OPENOFFICE.REFERENCING.GETAXIS([.$B$6];2)" office:value-type="string" office:string-value="Geodetic longitude">
+      <text:p>Geodetic longitude</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce4" office:value-type="string">
+      <text:p>Easting (m)</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce4" office:value-type="string">
+      <text:p>Northing (m)</text:p>
+     </table:table-cell>
+     <table:table-cell table:number-columns-repeated="2"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro2">
+     <table:table-cell table:style-name="ce38" office:value-type="string">
+      <text:p>21°35.837&apos;S</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce38" office:value-type="string">
+      <text:p>168°06.450&apos;E</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce49" table:number-matrix-columns-spanned="2" table:number-matrix-rows-spanned="1" table:formula="of:=ORG.GEOTOOLKIT.OPENOFFICE.REFERENCING.GETVALUEANGLE([.A10:.B10]; &quot;D°MM.mmm&quot;)" office:value-type="float" office:value="-21.5972833333333">
+      <text:p>-21,597283</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce53" office:value-type="float" office:value="168.1075">
+      <text:p>168,107500</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce55" office:value-type="float" office:value="822023">
+      <text:p>822 023</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce55" office:value-type="float" office:value="7608649">
+      <text:p>7 608 649</text:p>
+     </table:table-cell>
+     <table:table-cell table:number-columns-repeated="2"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro2">
+     <table:table-cell table:style-name="ce39" table:number-columns-repeated="2"/>
+     <table:table-cell table:style-name="Default" table:number-columns-repeated="4"/>
+     <table:table-cell table:number-columns-repeated="2"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro2">
+     <table:table-cell table:style-name="Default" table:number-columns-repeated="6"/>
+     <table:table-cell table:style-name="ce39"/>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro2" table:number-rows-repeated="2">
+     <table:table-cell table:style-name="Default" table:number-columns-repeated="6"/>
+     <table:table-cell table:number-columns-repeated="2"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro5">
+     <table:table-cell table:style-name="ce40" office:value-type="string" table:number-columns-spanned="4" table:number-rows-spanned="1">
+      <text:p>SRC destination</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:number-columns-repeated="3" table:style-name="Default"/>
+     <table:table-cell table:style-name="ce37" office:value-type="string" table:number-columns-spanned="2" table:number-rows-spanned="1">
+      <text:p>Coordonnées destinations</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:style-name="ce34"/>
+     <table:table-cell table:style-name="ce58"/>
+     <table:table-cell table:style-name="ce61"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro2">
+     <table:table-cell table:style-name="ce41" office:value-type="string">
+      <text:p>Code</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce45" office:value-type="string" table:number-columns-spanned="3" table:number-rows-spanned="1">
+      <text:p>Description</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:number-columns-repeated="2" table:style-name="ce50"/>
+     <table:table-cell table:style-name="ce4" table:number-matrix-columns-spanned="2" table:number-matrix-rows-spanned="1" table:formula="of:=[.E9:.F9]" office:value-type="string" office:string-value="Easting (m)">
+      <text:p>Easting (m)</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce4" office:value-type="string" office:string-value="Northing (m)">
+      <text:p>Northing (m)</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce59" office:value-type="string">
+      <text:p>Distance (m)</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce62" office:value-type="string">
+      <text:p>Précision (m)</text:p>
+     </table:table-cell>
+    </table:table-row>
+    <table:table-row table:style-name="ro6">
+     <table:table-cell office:value-type="string">
+      <text:p>EPSG:2995</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ORG.OPENGIS.OPENOFFICE.REFERENCING.GETDESCRIPTION([.A17])" office:value-type="string" office:string-value="IGN53 Mare / UTM zone 58S" table:number-columns-spanned="3" table:number-rows-spanned="1">
+      <text:p>IGN53 Mare / UTM zone 58S</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:number-columns-repeated="2"/>
+     <table:table-cell table:number-matrix-columns-spanned="2" table:number-matrix-rows-spanned="1" table:formula="of:=ORG.OPENGIS.OPENOFFICE.REFERENCING.GETTRANSFORMEDCOORDINATES([.$C$10:.$D$10];[.$B$6];[.A17])" office:value-type="float" office:value="822022.050132211">
+      <text:p>822 022,05</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="7608651.34107331">
+      <text:p>7 608 651,34</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce60" table:formula="of:=ORG.GEOTOOLKIT.OPENOFFICE.REFERENCING.GETORTHODROMICDISTANCE([.E17:.F17];[.E$10:.F$10];[.A17])" office:value-type="float" office:value="2.52420969630687">
+      <text:p>2,52</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce60" table:formula="of:=ORG.OPENGIS.OPENOFFICE.REFERENCING.GETACCURACY([.$B$6];[.A17])" office:value-type="float" office:value="2">
+      <text:p>2,00</text:p>
+     </table:table-cell>
+    </table:table-row>
+    <table:table-row table:style-name="ro6">
+     <table:table-cell office:value-type="string">
+      <text:p>EPSG:2981</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ORG.OPENGIS.OPENOFFICE.REFERENCING.GETDESCRIPTION([.A18])" office:value-type="string" office:string-value="IGN56 Lifou / UTM zone 58S" table:number-columns-spanned="3" table:number-rows-spanned="1">
+      <text:p>IGN56 Lifou / UTM zone 58S</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:number-columns-repeated="2"/>
+     <table:table-cell table:number-matrix-columns-spanned="2" table:number-matrix-rows-spanned="1" table:formula="of:=ORG.OPENGIS.OPENOFFICE.REFERENCING.GETTRANSFORMEDCOORDINATES([.$C$10:.$D$10];[.$B$6];[.A18])" office:value-type="float" office:value="822077.847682829">
+      <text:p>822 077,85</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="7608753.01222804">
+      <text:p>7 608 753,01</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce60" table:formula="of:=ORG.GEOTOOLKIT.OPENOFFICE.REFERENCING.GETORTHODROMICDISTANCE([.E18:.F18];[.E$10:.F$10];[.A18])" office:value-type="float" office:value="117.483874377467">
+      <text:p>117,48</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce60" table:formula="of:=ORG.OPENGIS.OPENOFFICE.REFERENCING.GETACCURACY([.$B$6];[.A18])" office:value-type="float" office:value="1">
+      <text:p>1,00</text:p>
+     </table:table-cell>
+    </table:table-row>
+    <table:table-row table:style-name="ro6">
+     <table:table-cell office:value-type="string">
+      <text:p>EPSG:3060</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ORG.OPENGIS.OPENOFFICE.REFERENCING.GETDESCRIPTION([.A19])" office:value-type="string" office:string-value="IGN72 Grande Terre / UTM zone 58S" table:number-columns-spanned="3" table:number-rows-spanned="1">
+      <text:p>IGN72 Grande Terre / UTM zone 58S</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:number-columns-repeated="2"/>
+     <table:table-cell table:number-matrix-columns-spanned="2" table:number-matrix-rows-spanned="1" table:formula="of:=ORG.OPENGIS.OPENOFFICE.REFERENCING.GETTRANSFORMEDCOORDINATES([.$C$10:.$D$10];[.$B$6];[.A19])" office:value-type="float" office:value="821435.604702611">
+      <text:p>821 435,60</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="7608197.32290849">
+      <text:p>7 608 197,32</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce60" table:formula="of:=ORG.GEOTOOLKIT.OPENOFFICE.REFERENCING.GETORTHODROMICDISTANCE([.E19:.F19];[.E$10:.F$10];[.A19])" office:value-type="float" office:value="740.325114546074">
+      <text:p>740,33</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce60" table:formula="of:=ORG.OPENGIS.OPENOFFICE.REFERENCING.GETACCURACY([.$B$6];[.A19])" office:value-type="float" office:value="2">
+      <text:p>2,00</text:p>
+     </table:table-cell>
+    </table:table-row>
+    <table:table-row table:style-name="ro6">
+     <table:table-cell office:value-type="string">
+      <text:p>EPSG:2998</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ORG.OPENGIS.OPENOFFICE.REFERENCING.GETDESCRIPTION([.A20])" office:value-type="string" office:string-value="NEA74 Noumea / UTM zone 58S" table:number-columns-spanned="3" table:number-rows-spanned="1">
+      <text:p>NEA74 Noumea / UTM zone 58S</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:number-columns-repeated="2"/>
+     <table:table-cell table:number-matrix-columns-spanned="2" table:number-matrix-rows-spanned="1" table:formula="of:=ORG.OPENGIS.OPENOFFICE.REFERENCING.GETTRANSFORMEDCOORDINATES([.$C$10:.$D$10];[.$B$6];[.A20])" office:value-type="float" office:value="821434.138542961">
+      <text:p>821 434,14</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="7608198.58546998">
+      <text:p>7 608 198,59</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce60" table:formula="of:=ORG.GEOTOOLKIT.OPENOFFICE.REFERENCING.GETORTHODROMICDISTANCE([.E20:.F20];[.E$10:.F$10];[.A20])" office:value-type="float" office:value="740.719843971172">
+      <text:p>740,72</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce60" table:formula="of:=ORG.OPENGIS.OPENOFFICE.REFERENCING.GETACCURACY([.$B$6];[.A20])" office:value-type="float" office:value="1">
+      <text:p>1,00</text:p>
+     </table:table-cell>
+    </table:table-row>
+    <table:table-row table:style-name="ro6">
+     <table:table-cell office:value-type="string">
+      <text:p>EPSG:2133</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ORG.OPENGIS.OPENOFFICE.REFERENCING.GETDESCRIPTION([.A21])" office:value-type="string" office:string-value="NZGD2000 / UTM zone 58S" table:number-columns-spanned="3" table:number-rows-spanned="1">
+      <text:p>NZGD2000 / UTM zone 58S</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:number-columns-repeated="2"/>
+     <table:table-cell table:number-matrix-columns-spanned="2" table:number-matrix-rows-spanned="1" table:formula="of:=ORG.OPENGIS.OPENOFFICE.REFERENCING.GETTRANSFORMEDCOORDINATES([.$C$10:.$D$10];[.$B$6];[.A21])" office:value-type="float" office:value="821772.306570528">
+      <text:p>821 772,31</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="7608533.05272541">
+      <text:p>7 608 533,05</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce60" table:formula="of:=ORG.GEOTOOLKIT.OPENOFFICE.REFERENCING.GETORTHODROMICDISTANCE([.E21:.F21];[.E$10:.F$10];[.A21])" office:value-type="float" office:value="275.965178354192">
+      <text:p>275,97</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce60" table:formula="of:=ORG.OPENGIS.OPENOFFICE.REFERENCING.GETACCURACY([.$B$6];[.A21])" office:value-type="float" office:value="1">
+      <text:p>1,00</text:p>
+     </table:table-cell>
+    </table:table-row>
+    <table:table-row table:style-name="ro6">
+     <table:table-cell office:value-type="string">
+      <text:p>EPSG:27258</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ORG.OPENGIS.OPENOFFICE.REFERENCING.GETDESCRIPTION([.A22])" office:value-type="string" office:string-value="NZGD49 / UTM zone 58S" table:number-columns-spanned="3" table:number-rows-spanned="1">
+      <text:p>NZGD49 / UTM zone 58S</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:number-columns-repeated="2"/>
+     <table:table-cell table:number-matrix-columns-spanned="2" table:number-matrix-rows-spanned="1" table:formula="of:=ORG.OPENGIS.OPENOFFICE.REFERENCING.GETTRANSFORMEDCOORDINATES([.$C$10:.$D$10];[.$B$6];[.A22])" office:value-type="float" office:value="821764.587557625">
+      <text:p>821 764,59</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="7608287.70377517">
+      <text:p>7 608 287,70</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce60" table:formula="of:=ORG.GEOTOOLKIT.OPENOFFICE.REFERENCING.GETORTHODROMICDISTANCE([.E22:.F22];[.E$10:.F$10];[.A22])" office:value-type="float" office:value="443.80733027132">
+      <text:p>443,81</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce60" table:formula="of:=ORG.OPENGIS.OPENOFFICE.REFERENCING.GETACCURACY([.$B$6];[.A22])" office:value-type="float" office:value="4">
+      <text:p>4,00</text:p>
+     </table:table-cell>
+    </table:table-row>
+    <table:table-row table:style-name="ro6">
+     <table:table-cell office:value-type="string">
+      <text:p>EPSG:2997</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ORG.OPENGIS.OPENOFFICE.REFERENCING.GETDESCRIPTION([.A23])" office:value-type="string" office:string-value="ST71 Belep / UTM zone 58S" table:number-columns-spanned="3" table:number-rows-spanned="1">
+      <text:p>ST71 Belep / UTM zone 58S</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:number-columns-repeated="2"/>
+     <table:table-cell table:number-matrix-columns-spanned="2" table:number-matrix-rows-spanned="1" table:formula="of:=ORG.OPENGIS.OPENOFFICE.REFERENCING.GETTRANSFORMEDCOORDINATES([.$C$10:.$D$10];[.$B$6];[.A23])" office:value-type="float" office:value="821500.729926428">
+      <text:p>821 500,73</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="7608191.43248415">
+      <text:p>7 608 191,43</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce60" table:formula="of:=ORG.GEOTOOLKIT.OPENOFFICE.REFERENCING.GETORTHODROMICDISTANCE([.E23:.F23];[.E$10:.F$10];[.A23])" office:value-type="float" office:value="693.748626893724">
+      <text:p>693,75</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce60" table:formula="of:=ORG.OPENGIS.OPENOFFICE.REFERENCING.GETACCURACY([.$B$6];[.A23])" office:value-type="float" office:value="1">
+      <text:p>1,00</text:p>
+     </table:table-cell>
+    </table:table-row>
+    <table:table-row table:style-name="ro6">
+     <table:table-cell office:value-type="string">
+      <text:p>EPSG:2996</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ORG.OPENGIS.OPENOFFICE.REFERENCING.GETDESCRIPTION([.A24])" office:value-type="string" office:string-value="ST84 Ile des Pins / UTM zone 58S" table:number-columns-spanned="3" table:number-rows-spanned="1">
+      <text:p>ST84 Ile des Pins / UTM zone 58S</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:number-columns-repeated="2"/>
+     <table:table-cell table:number-matrix-columns-spanned="2" table:number-matrix-rows-spanned="1" table:formula="of:=ORG.OPENGIS.OPENOFFICE.REFERENCING.GETTRANSFORMEDCOORDINATES([.$C$10:.$D$10];[.$B$6];[.A24])" office:value-type="float" office:value="821435.900619669">
+      <text:p>821 435,90</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="7608196.76237296">
+      <text:p>7 608 196,76</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce60" table:formula="of:=ORG.GEOTOOLKIT.OPENOFFICE.REFERENCING.GETORTHODROMICDISTANCE([.E24:.F24];[.E$10:.F$10];[.A24])" office:value-type="float" office:value="740.432385716008">
+      <text:p>740,43</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce60" table:formula="of:=ORG.OPENGIS.OPENOFFICE.REFERENCING.GETACCURACY([.$B$6];[.A24])" office:value-type="float" office:value="10">
+      <text:p>10,00</text:p>
+     </table:table-cell>
+    </table:table-row>
+    <table:table-row table:style-name="ro6">
+     <table:table-cell office:value-type="string">
+      <text:p>EPSG:2983</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ORG.OPENGIS.OPENOFFICE.REFERENCING.GETDESCRIPTION([.A25])" office:value-type="string" office:string-value="ST87 Ouvea / UTM zone 58S" table:number-columns-spanned="3" table:number-rows-spanned="1">
+      <text:p>ST87 Ouvea / UTM zone 58S</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:number-columns-repeated="2"/>
+     <table:table-cell table:number-matrix-columns-spanned="2" table:number-matrix-rows-spanned="1" table:formula="of:=ORG.OPENGIS.OPENOFFICE.REFERENCING.GETTRANSFORMEDCOORDINATES([.$C$10:.$D$10];[.$B$6];[.A25])" office:value-type="float" office:value="821789.041646222">
+      <text:p>821 789,04</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="7608441.6990401">
+      <text:p>7 608 441,70</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce60" table:formula="of:=ORG.GEOTOOLKIT.OPENOFFICE.REFERENCING.GETORTHODROMICDISTANCE([.E25:.F25];[.E$10:.F$10];[.A25])" office:value-type="float" office:value="312.3112879305">
+      <text:p>312,31</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce60" table:formula="of:=ORG.OPENGIS.OPENOFFICE.REFERENCING.GETACCURACY([.$B$6];[.A25])" office:value-type="float" office:value="1">
+      <text:p>1,00</text:p>
+     </table:table-cell>
+    </table:table-row>
+    <table:table-row table:style-name="ro6">
+     <table:table-cell office:value-type="string">
+      <text:p>EPSG:32358</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ORG.OPENGIS.OPENOFFICE.REFERENCING.GETDESCRIPTION([.A26])" office:value-type="string" office:string-value="WGS 72 / UTM zone 58S" table:number-columns-spanned="3" table:number-rows-spanned="1">
+      <text:p>WGS 72 / UTM zone 58S</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:number-columns-repeated="2"/>
+     <table:table-cell table:number-matrix-columns-spanned="2" table:number-matrix-rows-spanned="1" table:formula="of:=ORG.OPENGIS.OPENOFFICE.REFERENCING.GETTRANSFORMEDCOORDINATES([.$C$10:.$D$10];[.$B$6];[.A26])" office:value-type="float" office:value="821756.177187647">
+      <text:p>821 756,18</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="7608529.93233919">
+      <text:p>7 608 529,93</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce60" table:formula="of:=ORG.GEOTOOLKIT.OPENOFFICE.REFERENCING.GETORTHODROMICDISTANCE([.E26:.F26];[.E$10:.F$10];[.A26])" office:value-type="float" office:value="291.927000916971">
+      <text:p>291,93</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce60" table:formula="of:=ORG.OPENGIS.OPENOFFICE.REFERENCING.GETACCURACY([.$B$6];[.A26])" office:value-type="float" office:value="2">
+      <text:p>2,00</text:p>
+     </table:table-cell>
+    </table:table-row>
+    <table:table-row table:style-name="ro6">
+     <table:table-cell office:value-type="string">
+      <text:p>EPSG:32558</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ORG.OPENGIS.OPENOFFICE.REFERENCING.GETDESCRIPTION([.A27])" office:value-type="string" office:string-value="WGS 72BE / UTM zone 58S" table:number-columns-spanned="3" table:number-rows-spanned="1">
+      <text:p>WGS 72BE / UTM zone 58S</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:number-columns-repeated="2"/>
+     <table:table-cell table:number-matrix-columns-spanned="2" table:number-matrix-rows-spanned="1" table:formula="of:=ORG.OPENGIS.OPENOFFICE.REFERENCING.GETTRANSFORMEDCOORDINATES([.$C$10:.$D$10];[.$B$6];[.A27])" office:value-type="float" office:value="821748.741928908">
+      <text:p>821 748,74</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="7608532.50984588">
+      <text:p>7 608 532,51</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce60" table:formula="of:=ORG.GEOTOOLKIT.OPENOFFICE.REFERENCING.GETORTHODROMICDISTANCE([.E27:.F27];[.E$10:.F$10];[.A27])" office:value-type="float" office:value="297.710086947727">
+      <text:p>297,71</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce60" table:formula="of:=ORG.OPENGIS.OPENOFFICE.REFERENCING.GETACCURACY([.$B$6];[.A27])" office:value-type="float" office:value="2">
+      <text:p>2,00</text:p>
+     </table:table-cell>
+    </table:table-row>
+    <table:table-row table:style-name="ro6">
+     <table:table-cell office:value-type="string">
+      <text:p>EPSG:32758</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ORG.OPENGIS.OPENOFFICE.REFERENCING.GETDESCRIPTION([.A28])" office:value-type="string" office:string-value="WGS 84 / UTM zone 58S" table:number-columns-spanned="3" table:number-rows-spanned="1">
+      <text:p>WGS 84 / UTM zone 58S</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:number-columns-repeated="2"/>
+     <table:table-cell table:number-matrix-columns-spanned="2" table:number-matrix-rows-spanned="1" table:formula="of:=ORG.OPENGIS.OPENOFFICE.REFERENCING.GETTRANSFORMEDCOORDINATES([.$C$10:.$D$10];[.$B$6];[.A28])" office:value-type="float" office:value="821772.306600876">
+      <text:p>821 772,31</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="7608533.0542067">
+      <text:p>7 608 533,05</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce60" table:formula="of:=ORG.GEOTOOLKIT.OPENOFFICE.REFERENCING.GETORTHODROMICDISTANCE([.E28:.F28];[.E$10:.F$10];[.A28])" office:value-type="float" office:value="275.96452956407">
+      <text:p>275,96</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce60" table:formula="of:=ORG.OPENGIS.OPENOFFICE.REFERENCING.GETACCURACY([.$B$6];[.A28])" office:value-type="float" office:value="0">
+      <text:p>0,00</text:p>
+     </table:table-cell>
+    </table:table-row>
+   </table:table>
+   <table:table table:name="Distances" table:style-name="ta1" table:print="false">
+    <table:table-column table:style-name="co1" table:default-cell-style-name="ce66"/>
+    <table:table-column table:style-name="co1" table:default-cell-style-name="ce65"/>
+    <table:table-column table:style-name="co1" table:number-columns-repeated="2" table:default-cell-style-name="ce30"/>
+    <table:table-column table:style-name="co2" table:default-cell-style-name="ce70"/>
+    <table:table-column table:style-name="co2" table:default-cell-style-name="Default"/>
+    <table:table-row table:style-name="ro1">
+     <table:table-cell table:style-name="ce1" office:value-type="string">
+      <text:p>Exemple 3:</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce6" office:value-type="string" table:number-columns-spanned="5" table:number-rows-spanned="1">
+      <text:p>Calculs de distances orthodromiques</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:number-columns-repeated="3" table:style-name="ce10"/>
+     <table:covered-table-cell table:style-name="ce31"/>
+    </table:table-row>
+    <table:table-row table:style-name="ro2">
+     <table:table-cell table:style-name="Default" table:number-columns-repeated="5"/>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro7">
+     <table:table-cell table:style-name="ce63" office:value-type="string" table:number-columns-spanned="6" table:number-rows-spanned="1">
+      <text:p>Cet exemple calcule des distances à partir du méridien central d&apos;une projection UTM. Elles sont estimées d’après la relation de Pythagore (sujette aux déformations induites par la projection cartographique) et d’après un calcul de distance orthodromique (plus précis). La différence est calculée en utilisant la distance orthodromique comme référence. Cet exemple montre que l’erreur d’une distance calculée par la relation de Pythagore est faible tant que l’on reste à l’intérieur d’une zone UTM, et s’accroît à mesure que l’on s’éloigne. Les valeurs en rouge sont en dehors de la zone UTM (rappel: ces zones n&apos;ont « que » 6° de largeur).</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:number-columns-repeated="4" table:style-name="Default"/>
+     <table:covered-table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro2">
+     <table:table-cell table:style-name="ce39"/>
+     <table:table-cell table:style-name="Default" table:number-columns-repeated="4"/>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro2">
+     <table:table-cell table:style-name="Default" table:number-columns-repeated="5"/>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro2">
+     <table:table-cell table:style-name="ce64" office:value-type="string">
+      <text:p>SRC:</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce67" office:value-type="string">
+      <text:p>EPSG:32758</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce68" table:formula="of:=ORG.OPENGIS.OPENOFFICE.REFERENCING.GETDESCRIPTION([.B6])" office:value-type="string" office:string-value="WGS 84 / UTM zone 58S" table:number-columns-spanned="2" table:number-rows-spanned="1">
+      <text:p>WGS 84 / UTM zone 58S</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:style-name="ce68"/>
+     <table:table-cell table:style-name="Default"/>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro2" table:number-rows-repeated="2">
+     <table:table-cell table:style-name="Default" table:number-columns-repeated="5"/>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro2">
+     <table:table-cell table:style-name="ce4" office:value-type="string">
+      <text:p>False Easting</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce4" office:value-type="string">
+      <text:p>False Northing</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="Default" table:number-columns-repeated="3"/>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro2">
+     <table:table-cell table:style-name="ce65" table:formula="of:=ORG.OPENGIS.OPENOFFICE.REFERENCING.GETPARAMETER([.$B$6];[.A9])" office:value-type="float" office:value="500000">
+      <text:p>500 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ORG.OPENGIS.OPENOFFICE.REFERENCING.GETPARAMETER([.$B$6];[.B9])" office:value-type="float" office:value="10000000">
+      <text:p>10 000 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="Default" table:number-columns-repeated="3"/>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro2">
+     <table:table-cell table:style-name="Default" table:number-columns-repeated="2"/>
+     <table:table-cell table:style-name="ce69" office:value-type="string" table:number-columns-spanned="2" table:number-rows-spanned="1">
+      <text:p>Distance (km)</text:p>
+     </table:table-cell>
+     <table:covered-table-cell table:style-name="Default"/>
+     <table:table-cell table:style-name="Default"/>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro2">
+     <table:table-cell table:style-name="ce4" table:formula="of:=ORG.OPENGIS.OPENOFFICE.REFERENCING.GETAXIS([.$B$6];1)" office:value-type="string" office:string-value="Easting">
+      <text:p>Easting</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce4" table:formula="of:=ORG.OPENGIS.OPENOFFICE.REFERENCING.GETAXIS([.$B$6];2)" office:value-type="string" office:string-value="Northing">
+      <text:p>Northing</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce4" office:value-type="string">
+      <text:p>Cartésienne</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce4" office:value-type="string">
+      <text:p>Orthodromique</text:p>
+     </table:table-cell>
+     <table:table-cell table:style-name="ce4" office:value-type="string">
+      <text:p>Différence</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A10]" office:value-type="float" office:value="500000">
+      <text:p>500 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B10]" office:value-type="float" office:value="10000000">
+      <text:p>10 000 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A13:.B13];[.A$10:.B$10]))/1000" office:value-type="float" office:value="0">
+      <text:p>0,00</text:p>
+     </table:table-cell>
+     <table:table-cell table:number-matrix-columns-spanned="1" table:number-matrix-rows-spanned="69" table:formula="of:=ORG.GEOTOOLKIT.OPENOFFICE.REFERENCING.GETORTHODROMICDISTANCE([.A13:.B81];[.A$10:.B$10];[.B$6])/1000" office:value-type="float" office:value="0">
+      <text:p>0,00</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C13]-[.D13])/[.D13]" office:value-type="percentage" office:value="0">
+      <text:p>#DIV/0 !</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A13]+50000" office:value-type="float" office:value="550000">
+      <text:p>550 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B13]+100000" office:value-type="float" office:value="10100000">
+      <text:p>10 100 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A14:.B14];[.A$10:.B$10]))/1000" office:value-type="float" office:value="111.80339887499">
+      <text:p>111,80</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="111.846983896085">
+      <text:p>111,85</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C14]-[.D14])/[.D14]" office:value-type="percentage" office:value="0.000389684366779573">
+      <text:p>0,04%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A14]+50000" office:value-type="float" office:value="600000">
+      <text:p>600 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B14]+100000" office:value-type="float" office:value="10200000">
+      <text:p>10 200 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A15:.B15];[.A$10:.B$10]))/1000" office:value-type="float" office:value="223.606797749979">
+      <text:p>223,61</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="223.687042409609">
+      <text:p>223,69</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C15]-[.D15])/[.D15]" office:value-type="percentage" office:value="0.000358736289620771">
+      <text:p>0,04%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A15]+50000" office:value-type="float" office:value="650000">
+      <text:p>650 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B15]+100000" office:value-type="float" office:value="10300000">
+      <text:p>10 300 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A16:.B16];[.A$10:.B$10]))/1000" office:value-type="float" office:value="335.410196624968">
+      <text:p>335,41</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="335.513250280283">
+      <text:p>335,51</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C16]-[.D16])/[.D16]" office:value-type="percentage" office:value="0.000307152266649952">
+      <text:p>0,03%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A16]+50000" office:value-type="float" office:value="700000">
+      <text:p>700 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B16]+100000" office:value-type="float" office:value="10400000">
+      <text:p>10 400 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A17:.B17];[.A$10:.B$10]))/1000" office:value-type="float" office:value="447.213595499958">
+      <text:p>447,21</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="447.318682490314">
+      <text:p>447,32</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C17]-[.D17])/[.D17]" office:value-type="percentage" office:value="0.000234926450581911">
+      <text:p>0,02%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A17]+50000" office:value-type="float" office:value="750000">
+      <text:p>750 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B17]+100000" office:value-type="float" office:value="10500000">
+      <text:p>10 500 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A18:.B18];[.A$10:.B$10]))/1000" office:value-type="float" office:value="559.016994374947">
+      <text:p>559,02</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="559.096414380552">
+      <text:p>559,10</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C18]-[.D18])/[.D18]" office:value-type="percentage" office:value="0.000142050643792212">
+      <text:p>0,01%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A18]+50000" office:value-type="float" office:value="800000">
+      <text:p>800 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B18]+100000" office:value-type="float" office:value="10600000">
+      <text:p>10 600 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A19:.B19];[.A$10:.B$10]))/1000" office:value-type="float" office:value="670.820393249937">
+      <text:p>670,82</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="670.839521760522">
+      <text:p>670,84</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C19]-[.D19])/[.D19]" office:value-type="percentage" office:value="0.0000285142868963533">
+      <text:p>0,00%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A19]+50000" office:value-type="float" office:value="850000">
+      <text:p>850 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B19]+100000" office:value-type="float" office:value="10700000">
+      <text:p>10 700 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A20:.B20];[.A$10:.B$10]))/1000" office:value-type="float" office:value="782.623792124926">
+      <text:p>782,62</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="782.541081010335">
+      <text:p>782,54</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C20]-[.D20])/[.D20]" office:value-type="percentage" office:value="0.000105695555924902">
+      <text:p>0,01%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A20]+50000" office:value-type="float" office:value="900000">
+      <text:p>900 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B20]+100000" office:value-type="float" office:value="10800000">
+      <text:p>10 800 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A21:.B21];[.A$10:.B$10]))/1000" office:value-type="float" office:value="894.427190999916">
+      <text:p>894,43</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="894.194169172451">
+      <text:p>894,19</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C21]-[.D21])/[.D21]" office:value-type="percentage" office:value="0.000260594214879008">
+      <text:p>0,03%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A21]+50000" office:value-type="float" office:value="950000">
+      <text:p>950 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B21]+100000" office:value-type="float" office:value="10900000">
+      <text:p>10 900 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A22:.B22];[.A$10:.B$10]))/1000" office:value-type="float" office:value="1006.23058987491">
+      <text:p>1 006,23</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="1005.79186403134">
+      <text:p>1 005,79</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C22]-[.D22])/[.D22]" office:value-type="percentage" office:value="0.000436199435745864">
+      <text:p>0,04%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A22]+50000" office:value-type="float" office:value="1000000">
+      <text:p>1 000 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B22]+100000" office:value-type="float" office:value="11000000">
+      <text:p>11 000 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A23:.B23];[.A$10:.B$10]))/1000" office:value-type="float" office:value="1118.0339887499">
+      <text:p>1 118,03</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="1117.32724417901">
+      <text:p>1 117,33</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C23]-[.D23])/[.D23]" office:value-type="percentage" office:value="0.000632531404352977">
+      <text:p>0,06%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A23]+50000" office:value-type="float" office:value="1050000">
+      <text:p>1 050 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B23]+100000" office:value-type="float" office:value="11100000">
+      <text:p>11 100 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A24:.B24];[.A$10:.B$10]))/1000" office:value-type="float" office:value="1229.83738762488">
+      <text:p>1 229,84</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="1228.79338906455">
+      <text:p>1 228,79</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C24]-[.D24])/[.D24]" office:value-type="percentage" office:value="0.000849612774304189">
+      <text:p>0,08%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A24]+50000" office:value-type="float" office:value="1100000">
+      <text:p>1 100 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B24]+100000" office:value-type="float" office:value="11200000">
+      <text:p>11 200 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A25:.B25];[.A$10:.B$10]))/1000" office:value-type="float" office:value="1341.64078649987">
+      <text:p>1 341,64</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="1340.18337902558">
+      <text:p>1 340,18</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C25]-[.D25])/[.D25]" office:value-type="percentage" office:value="0.00108746869801902">
+      <text:p>0,11%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A25]+50000" office:value-type="float" office:value="1150000">
+      <text:p>1 150 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B25]+100000" office:value-type="float" office:value="11300000">
+      <text:p>11 300 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A26:.B26];[.A$10:.B$10]))/1000" office:value-type="float" office:value="1453.44418537486">
+      <text:p>1 453,44</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="1451.49029529975">
+      <text:p>1 451,49</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C26]-[.D26])/[.D26]" office:value-type="percentage" office:value="0.00134612686108877">
+      <text:p>0,13%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A26]+50000" office:value-type="float" office:value="1200000">
+      <text:p>1 200 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B26]+100000" office:value-type="float" office:value="11400000">
+      <text:p>11 400 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A27:.B27];[.A$10:.B$10]))/1000" office:value-type="float" office:value="1565.24758424985">
+      <text:p>1 565,25</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="1562.70722001433">
+      <text:p>1 562,71</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C27]-[.D27])/[.D27]" office:value-type="percentage" office:value="0.00162561752002216">
+      <text:p>0,16%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A27]+50000" office:value-type="float" office:value="1250000">
+      <text:p>1 250 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B27]+100000" office:value-type="float" office:value="11500000">
+      <text:p>11 500 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A28:.B28];[.A$10:.B$10]))/1000" office:value-type="float" office:value="1677.05098312484">
+      <text:p>1 677,05</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="1673.82723615167">
+      <text:p>1 673,83</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C28]-[.D28])/[.D28]" office:value-type="percentage" office:value="0.00192597354347">
+      <text:p>0,19%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A28]+50000" office:value-type="float" office:value="1300000">
+      <text:p>1 300 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B28]+100000" office:value-type="float" office:value="11600000">
+      <text:p>11 600 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A29:.B29];[.A$10:.B$10]))/1000" office:value-type="float" office:value="1788.85438199983">
+      <text:p>1 788,85</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="1784.84342748852">
+      <text:p>1 784,84</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C29]-[.D29])/[.D29]" office:value-type="percentage" office:value="0.00224723045704532">
+      <text:p>0,22%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A29]+50000" office:value-type="float" office:value="1350000">
+      <text:p>1 350 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B29]+100000" office:value-type="float" office:value="11700000">
+      <text:p>11 700 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A30:.B30];[.A$10:.B$10]))/1000" office:value-type="float" office:value="1900.65778087482">
+      <text:p>1 900,66</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="1895.74887850687">
+      <text:p>1 895,75</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C30]-[.D30])/[.D30]" office:value-type="percentage" office:value="0.00258942649187669">
+      <text:p>0,26%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A30]+50000" office:value-type="float" office:value="1400000">
+      <text:p>1 400 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B30]+100000" office:value-type="float" office:value="11800000">
+      <text:p>11 800 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A31:.B31];[.A$10:.B$10]))/1000" office:value-type="float" office:value="2012.46117974981">
+      <text:p>2 012,46</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="2006.53667427285">
+      <text:p>2 006,54</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C31]-[.D31])/[.D31]" office:value-type="percentage" office:value="0.00295260263763243">
+      <text:p>0,30%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A31]+50000" office:value-type="float" office:value="1450000">
+      <text:p>1 450 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B31]+100000" office:value-type="float" office:value="11900000">
+      <text:p>11 900 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A32:.B32];[.A$10:.B$10]))/1000" office:value-type="float" office:value="2124.2645786248">
+      <text:p>2 124,26</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="2117.19990028262">
+      <text:p>2 117,20</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C32]-[.D32])/[.D32]" office:value-type="percentage" office:value="0.00333680269928283">
+      <text:p>0,33%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A32]+50000" office:value-type="float" office:value="1500000">
+      <text:p>1 500 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B32]+100000" office:value-type="float" office:value="12000000">
+      <text:p>12 000 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A33:.B33];[.A$10:.B$10]))/1000" office:value-type="float" office:value="2236.06797749979">
+      <text:p>2 236,07</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="2227.73164226863">
+      <text:p>2 227,73</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C33]-[.D33])/[.D33]" office:value-type="percentage" office:value="0.00374207335973051">
+      <text:p>0,37%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A33]+50000" office:value-type="float" office:value="1550000">
+      <text:p>1 550 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B33]+100000" office:value-type="float" office:value="12100000">
+      <text:p>12 100 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A34:.B34];[.A$10:.B$10]))/1000" office:value-type="float" office:value="2347.87137637478">
+      <text:p>2 347,87</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="2338.12498596338">
+      <text:p>2 338,12</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C34]-[.D34])/[.D34]" office:value-type="percentage" office:value="0.00416846424802292">
+      <text:p>0,42%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A34]+50000" office:value-type="float" office:value="1600000">
+      <text:p>1 600 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B34]+100000" office:value-type="float" office:value="12200000">
+      <text:p>12 200 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A35:.B35];[.A$10:.B$10]))/1000" office:value-type="float" office:value="2459.67477524977">
+      <text:p>2 459,67</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="2448.37301681357">
+      <text:p>2 448,37</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C35]-[.D35])/[.D35]" office:value-type="percentage" office:value="0.00461602801476384">
+      <text:p>0,46%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A35]+50000" office:value-type="float" office:value="1650000">
+      <text:p>1 650 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B35]+100000" office:value-type="float" office:value="12300000">
+      <text:p>12 300 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A36:.B36];[.A$10:.B$10]))/1000" office:value-type="float" office:value="2571.47817412476">
+      <text:p>2 571,48</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="2558.46881963599">
+      <text:p>2 558,47</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C36]-[.D36])/[.D36]" office:value-type="percentage" office:value="0.00508482041638501">
+      <text:p>0,51%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A36]+50000" office:value-type="float" office:value="1700000">
+      <text:p>1 700 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B36]+100000" office:value-type="float" office:value="12400000">
+      <text:p>12 400 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A37:.B37];[.A$10:.B$10]))/1000" office:value-type="float" office:value="2683.28157299975">
+      <text:p>2 683,28</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="2668.40547820367">
+      <text:p>2 668,41</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C37]-[.D37])/[.D37]" office:value-type="percentage" office:value="0.00557490041059747">
+      <text:p>0,56%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A37]+50000" office:value-type="float" office:value="1750000">
+      <text:p>1 750 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B37]+100000" office:value-type="float" office:value="12500000">
+      <text:p>12 500 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A38:.B38];[.A$10:.B$10]))/1000" office:value-type="float" office:value="2795.08497187474">
+      <text:p>2 795,08</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="2778.17607474575">
+      <text:p>2 778,18</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C38]-[.D38])/[.D38]" office:value-type="percentage" office:value="0.00608633026635469">
+      <text:p>0,61%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A38]+50000" office:value-type="float" office:value="1800000">
+      <text:p>1 800 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B38]+100000" office:value-type="float" office:value="12600000">
+      <text:p>12 600 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A39:.B39];[.A$10:.B$10]))/1000" office:value-type="float" office:value="2906.88837074973">
+      <text:p>2 906,89</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="2887.77368933863">
+      <text:p>2 887,77</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C39]-[.D39])/[.D39]" office:value-type="percentage" office:value="0.00661917569290999">
+      <text:p>0,66%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A39]+50000" office:value-type="float" office:value="1850000">
+      <text:p>1 850 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B39]+100000" office:value-type="float" office:value="12700000">
+      <text:p>12 700 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A40:.B40];[.A$10:.B$10]))/1000" office:value-type="float" office:value="3018.69176962472">
+      <text:p>3 018,69</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="2997.19139915655">
+      <text:p>2 997,19</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C40]-[.D40])/[.D40]" office:value-type="percentage" office:value="0.00717350599438541">
+      <text:p>0,72%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A40]+50000" office:value-type="float" office:value="1900000">
+      <text:p>1 900 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B40]+100000" office:value-type="float" office:value="12800000">
+      <text:p>12 800 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A41:.B41];[.A$10:.B$10]))/1000" office:value-type="float" office:value="3130.49516849971">
+      <text:p>3 130,50</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="3106.42227753693">
+      <text:p>3 106,42</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C41]-[.D41])/[.D41]" office:value-type="percentage" office:value="0.00774939425874284">
+      <text:p>0,77%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A41]+50000" office:value-type="float" office:value="1950000">
+      <text:p>1 950 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B41]+100000" office:value-type="float" office:value="12900000">
+      <text:p>12 900 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A42:.B42];[.A$10:.B$10]))/1000" office:value-type="float" office:value="3242.2985673747">
+      <text:p>3 242,30</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="3215.45939279773">
+      <text:p>3 215,46</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C42]-[.D42])/[.D42]" office:value-type="percentage" office:value="0.00834691759351101">
+      <text:p>0,83%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A42]+50000" office:value-type="float" office:value="2000000">
+      <text:p>2 000 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B42]+100000" office:value-type="float" office:value="13000000">
+      <text:p>13 000 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A43:.B43];[.A$10:.B$10]))/1000" office:value-type="float" office:value="3354.10196624968">
+      <text:p>3 354,10</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="3324.29580671813">
+      <text:p>3 324,30</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C43]-[.D43])/[.D43]" office:value-type="percentage" office:value="0.00896615742537753">
+      <text:p>0,90%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A43]+50000" office:value-type="float" office:value="2050000">
+      <text:p>2 050 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B43]+100000" office:value-type="float" office:value="13100000">
+      <text:p>13 100 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A44:.B44];[.A$10:.B$10]))/1000" office:value-type="float" office:value="3465.90536512467">
+      <text:p>3 465,91</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="3432.92457255788">
+      <text:p>3 432,92</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C44]-[.D44])/[.D44]" office:value-type="percentage" office:value="0.00960719988736156">
+      <text:p>0,96%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A44]+50000" office:value-type="float" office:value="2100000">
+      <text:p>2 100 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B44]+100000" office:value-type="float" office:value="13200000">
+      <text:p>13 200 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A45:.B45];[.A$10:.B$10]))/1000" office:value-type="float" office:value="3577.70876399966">
+      <text:p>3 577,71</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="3541.33873243936">
+      <text:p>3 541,34</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C45]-[.D45])/[.D45]" office:value-type="percentage" office:value="0.0102701363264534">
+      <text:p>1,03%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A45]+50000" office:value-type="float" office:value="2150000">
+      <text:p>2 150 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B45]+100000" office:value-type="float" office:value="13300000">
+      <text:p>13 300 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A46:.B46];[.A$10:.B$10]))/1000" office:value-type="float" office:value="3689.51216287465">
+      <text:p>3 689,51</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="3649.53131384461">
+      <text:p>3 649,53</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C46]-[.D46])/[.D46]" office:value-type="percentage" office:value="0.0109550639772217">
+      <text:p>1,10%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A46]+50000" office:value-type="float" office:value="2200000">
+      <text:p>2 200 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B46]+100000" office:value-type="float" office:value="13400000">
+      <text:p>13 400 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A47:.B47];[.A$10:.B$10]))/1000" office:value-type="float" office:value="3801.31556174964">
+      <text:p>3 801,32</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="3757.49532487812">
+      <text:p>3 757,50</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C47]-[.D47])/[.D47]" office:value-type="percentage" office:value="0.0116620868644581">
+      <text:p>1,17%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A47]+50000" office:value-type="float" office:value="2250000">
+      <text:p>2 250 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B47]+100000" office:value-type="float" office:value="13500000">
+      <text:p>13 500 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A48:.B48];[.A$10:.B$10]))/1000" office:value-type="float" office:value="3913.11896062463">
+      <text:p>3 913,12</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="3865.22374780332">
+      <text:p>3 865,22</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C48]-[.D48])/[.D48]" office:value-type="percentage" office:value="0.0123913170223403">
+      <text:p>1,24%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A48]+50000" office:value-type="float" office:value="2300000">
+      <text:p>2 300 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B48]+100000" office:value-type="float" office:value="13600000">
+      <text:p>13 600 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A49:.B49];[.A$10:.B$10]))/1000" office:value-type="float" office:value="4024.92235949962">
+      <text:p>4 024,92</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="3972.70953015964">
+      <text:p>3 972,71</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C49]-[.D49])/[.D49]" office:value-type="percentage" office:value="0.0131428761513014">
+      <text:p>1,31%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A49]+50000" office:value-type="float" office:value="2350000">
+      <text:p>2 350 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B49]+100000" office:value-type="float" office:value="13700000">
+      <text:p>13 700 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A50:.B50];[.A$10:.B$10]))/1000" office:value-type="float" office:value="4136.72575837461">
+      <text:p>4 136,73</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="4079.94557248254">
+      <text:p>4 079,95</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C50]-[.D50])/[.D50]" office:value-type="percentage" office:value="0.0139168978809503">
+      <text:p>1,39%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A50]+50000" office:value-type="float" office:value="2400000">
+      <text:p>2 400 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B50]+100000" office:value-type="float" office:value="13800000">
+      <text:p>13 800 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A51:.B51];[.A$10:.B$10]))/1000" office:value-type="float" office:value="4248.5291572496">
+      <text:p>4 248,53</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="4186.92471124835">
+      <text:p>4 186,92</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C51]-[.D51])/[.D51]" office:value-type="percentage" office:value="0.0147135308728497">
+      <text:p>1,47%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A51]+50000" office:value-type="float" office:value="2450000">
+      <text:p>2 450 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B51]+100000" office:value-type="float" office:value="13900000">
+      <text:p>13 900 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A52:.B52];[.A$10:.B$10]))/1000" office:value-type="float" office:value="4360.33255612459">
+      <text:p>4 360,33</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="4293.63969509904">
+      <text:p>4 293,64</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C52]-[.D52])/[.D52]" office:value-type="percentage" office:value="0.0155329430882797">
+      <text:p>1,55%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A52]+50000" office:value-type="float" office:value="2500000">
+      <text:p>2 500 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B52]+100000" office:value-type="float" office:value="14000000">
+      <text:p>14 000 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A53:.B53];[.A$10:.B$10]))/1000" office:value-type="float" office:value="4472.13595499958">
+      <text:p>4 472,14</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="4400.08315159995">
+      <text:p>4 400,08</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C53]-[.D53])/[.D53]" office:value-type="percentage" office:value="0.0163753276738484">
+      <text:p>1,64%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A53]+50000" office:value-type="float" office:value="2550000">
+      <text:p>2 550 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B53]+100000" office:value-type="float" office:value="14100000">
+      <text:p>14 100 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A54:.B54];[.A$10:.B$10]))/1000" office:value-type="float" office:value="4583.93935387457">
+      <text:p>4 583,94</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="4506.24754064805">
+      <text:p>4 506,25</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C54]-[.D54])/[.D54]" office:value-type="percentage" office:value="0.0172409110963644">
+      <text:p>1,72%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A54]+50000" office:value-type="float" office:value="2600000">
+      <text:p>2 600 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B54]+100000" office:value-type="float" office:value="14200000">
+      <text:p>14 200 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A55:.B55];[.A$10:.B$10]))/1000" office:value-type="float" office:value="4695.74275274956">
+      <text:p>4 695,74</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="4612.12508903572">
+      <text:p>4 612,13</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C55]-[.D55])/[.D55]" office:value-type="percentage" office:value="0.0181299644089497">
+      <text:p>1,81%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A55]+50000" office:value-type="float" office:value="2650000">
+      <text:p>2 650 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B55]+100000" office:value-type="float" office:value="14300000">
+      <text:p>14 300 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A56:.B56];[.A$10:.B$10]))/1000" office:value-type="float" office:value="4807.54615162455">
+      <text:p>4 807,55</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="4717.70769838389">
+      <text:p>4 717,71</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C56]-[.D56])/[.D56]" office:value-type="percentage" office:value="0.0190428188824488">
+      <text:p>1,90%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A56]+50000" office:value-type="float" office:value="2700000">
+      <text:p>2 700 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B56]+100000" office:value-type="float" office:value="14400000">
+      <text:p>14 400 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A57:.B57];[.A$10:.B$10]))/1000" office:value-type="float" office:value="4919.34955049954">
+      <text:p>4 919,35</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="4822.98681539472">
+      <text:p>4 822,99</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C57]-[.D57])/[.D57]" office:value-type="percentage" office:value="0.0199798877320656">
+      <text:p>2,00%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A57]+50000" office:value-type="float" office:value="2750000">
+      <text:p>2 750 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B57]+100000" office:value-type="float" office:value="14500000">
+      <text:p>14 500 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A58:.B58];[.A$10:.B$10]))/1000" office:value-type="float" office:value="5031.15294937453">
+      <text:p>5 031,15</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="4927.95324871733">
+      <text:p>4 927,95</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C58]-[.D58])/[.D58]" office:value-type="percentage" office:value="0.0209416963693928">
+      <text:p>2,09%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A58]+50000" office:value-type="float" office:value="2800000">
+      <text:p>2 800 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B58]+100000" office:value-type="float" office:value="14600000">
+      <text:p>14 600 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A59:.B59];[.A$10:.B$10]))/1000" office:value-type="float" office:value="5142.95634824952">
+      <text:p>5 142,96</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="5032.59691006104">
+      <text:p>5 032,60</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C59]-[.D59])/[.D59]" office:value-type="percentage" office:value="0.0219289246011042">
+      <text:p>2,19%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A59]+50000" office:value-type="float" office:value="2850000">
+      <text:p>2 850 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B59]+100000" office:value-type="float" office:value="14700000">
+      <text:p>14 700 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A60:.B60];[.A$10:.B$10]))/1000" office:value-type="float" office:value="5254.75974712451">
+      <text:p>5 254,76</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="5136.90644764594">
+      <text:p>5 136,91</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C60]-[.D60])/[.D60]" office:value-type="percentage" office:value="0.0229424656025373">
+      <text:p>2,29%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A60]+50000" office:value-type="float" office:value="2900000">
+      <text:p>2 900 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B60]+100000" office:value-type="float" office:value="14800000">
+      <text:p>14 800 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A61:.B61];[.A$10:.B$10]))/1000" office:value-type="float" office:value="5366.56314599949">
+      <text:p>5 366,56</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="5240.86872636907">
+      <text:p>5 240,87</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C61]-[.D61])/[.D61]" office:value-type="percentage" office:value="0.0239835084969797">
+      <text:p>2,40%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A61]+50000" office:value-type="float" office:value="2950000">
+      <text:p>2 950 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B61]+100000" office:value-type="float" office:value="14900000">
+      <text:p>14 900 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A62:.B62];[.A$10:.B$10]))/1000" office:value-type="float" office:value="5478.36654487449">
+      <text:p>5 478,37</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="5344.4680893175">
+      <text:p>5 344,47</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C62]-[.D62])/[.D62]" office:value-type="percentage" office:value="0.0250536542307393">
+      <text:p>2,51%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A62]+50000" office:value-type="float" office:value="3000000">
+      <text:p>3 000 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B62]+100000" office:value-type="float" office:value="15000000">
+      <text:p>15 000 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A63:.B63];[.A$10:.B$10]))/1000" office:value-type="float" office:value="5590.16994374947">
+      <text:p>5 590,17</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="5447.68530674988">
+      <text:p>5 447,69</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C63]-[.D63])/[.D63]" office:value-type="percentage" office:value="0.0261550785290501">
+      <text:p>2,62%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A63]+50000" office:value-type="float" office:value="3050000">
+      <text:p>3 050 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B63]+100000" office:value-type="float" office:value="15100000">
+      <text:p>15 100 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A64:.B64];[.A$10:.B$10]))/1000" office:value-type="float" office:value="5701.97334262446">
+      <text:p>5 701,97</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="5550.49607740496">
+      <text:p>5 550,50</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C64]-[.D64])/[.D64]" office:value-type="percentage" office:value="0.0272907616016774">
+      <text:p>2,73%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A64]+50000" office:value-type="float" office:value="3100000">
+      <text:p>3 100 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B64]+100000" office:value-type="float" office:value="15200000">
+      <text:p>15 200 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A65:.B65];[.A$10:.B$10]))/1000" office:value-type="float" office:value="5813.77674149945">
+      <text:p>5 813,78</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="5652.86888712932">
+      <text:p>5 652,87</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C65]-[.D65])/[.D65]" office:value-type="percentage" office:value="0.0284648127495923">
+      <text:p>2,85%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A65]+50000" office:value-type="float" office:value="3150000">
+      <text:p>3 150 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B65]+100000" office:value-type="float" office:value="15300000">
+      <text:p>15 300 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A66:.B66];[.A$10:.B$10]))/1000" office:value-type="float" office:value="5925.58014037444">
+      <text:p>5 925,58</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="5754.76194276443">
+      <text:p>5 754,76</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C66]-[.D66])/[.D66]" office:value-type="percentage" office:value="0.0296829302947605">
+      <text:p>2,97%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A66]+50000" office:value-type="float" office:value="3200000">
+      <text:p>3 200 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B66]+100000" office:value-type="float" office:value="15400000">
+      <text:p>15 400 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A67:.B67];[.A$10:.B$10]))/1000" office:value-type="float" office:value="6037.38353924943">
+      <text:p>6 037,38</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="5856.11877240508">
+      <text:p>5 856,12</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C67]-[.D67])/[.D67]" office:value-type="percentage" office:value="0.0309530550675472">
+      <text:p>3,10%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A67]+50000" office:value-type="float" office:value="3250000">
+      <text:p>3 250 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B67]+100000" office:value-type="float" office:value="15500000">
+      <text:p>15 500 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A68:.B68];[.A$10:.B$10]))/1000" office:value-type="float" office:value="6149.18693812442">
+      <text:p>6 149,19</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="5956.86189810049">
+      <text:p>5 956,86</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C68]-[.D68])/[.D68]" office:value-type="percentage" office:value="0.0322863016322835">
+      <text:p>3,23%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A68]+50000" office:value-type="float" office:value="3300000">
+      <text:p>3 300 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B68]+100000" office:value-type="float" office:value="15600000">
+      <text:p>15 600 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A69:.B69];[.A$10:.B$10]))/1000" office:value-type="float" office:value="6260.99033699941">
+      <text:p>6 260,99</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="6056.88371693643">
+      <text:p>6 056,88</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C69]-[.D69])/[.D69]" office:value-type="percentage" office:value="0.0336982893517097">
+      <text:p>3,37%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A69]+50000" office:value-type="float" office:value="3350000">
+      <text:p>3 350 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B69]+100000" office:value-type="float" office:value="15700000">
+      <text:p>15 700 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A70:.B70];[.A$10:.B$10]))/1000" office:value-type="float" office:value="6372.7937358744">
+      <text:p>6 372,79</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="6156.03333235612">
+      <text:p>6 156,03</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C70]-[.D70])/[.D70]" office:value-type="percentage" office:value="0.0352110509829425">
+      <text:p>3,52%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A70]+50000" office:value-type="float" office:value="3400000">
+      <text:p>3 400 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B70]+100000" office:value-type="float" office:value="15800000">
+      <text:p>15 800 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A71:.B71];[.A$10:.B$10]))/1000" office:value-type="float" office:value="6484.59713474939">
+      <text:p>6 484,60</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="6254.09750423088">
+      <text:p>6 254,10</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C71]-[.D71])/[.D71]" office:value-type="percentage" office:value="0.0368557782098189">
+      <text:p>3,69%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A71]+50000" office:value-type="float" office:value="3450000">
+      <text:p>3 450 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B71]+100000" office:value-type="float" office:value="15900000">
+      <text:p>15 900 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A72:.B72];[.A$10:.B$10]))/1000" office:value-type="float" office:value="6596.40053362438">
+      <text:p>6 596,40</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="6350.77305693975">
+      <text:p>6 350,77</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C72]-[.D72])/[.D72]" office:value-type="percentage" office:value="0.0386767838312566">
+      <text:p>3,87%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A72]+50000" office:value-type="float" office:value="3500000">
+      <text:p>3 500 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B72]+100000" office:value-type="float" office:value="16000000">
+      <text:p>16 000 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A73:.B73];[.A$10:.B$10]))/1000" office:value-type="float" office:value="6708.20393249937">
+      <text:p>6 708,20</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="6445.62689862666">
+      <text:p>6 445,63</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C73]-[.D73])/[.D73]" office:value-type="percentage" office:value="0.0407372375103901">
+      <text:p>4,07%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A73]+50000" office:value-type="float" office:value="3550000">
+      <text:p>3 550 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B73]+100000" office:value-type="float" office:value="16100000">
+      <text:p>16 100 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A74:.B74];[.A$10:.B$10]))/1000" office:value-type="float" office:value="6820.00733137436">
+      <text:p>6 820,01</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="6538.03814221577">
+      <text:p>6 538,04</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C74]-[.D74])/[.D74]" office:value-type="percentage" office:value="0.0431274922270534">
+      <text:p>4,31%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A74]+50000" office:value-type="float" office:value="3600000">
+      <text:p>3 600 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B74]+100000" office:value-type="float" office:value="16200000">
+      <text:p>16 200 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A75:.B75];[.A$10:.B$10]))/1000" office:value-type="float" office:value="6931.81073024935">
+      <text:p>6 931,81</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="6627.11457327199">
+      <text:p>6 627,11</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C75]-[.D75])/[.D75]" office:value-type="percentage" office:value="0.0459771977092775">
+      <text:p>4,60%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A75]+50000" office:value-type="float" office:value="3650000">
+      <text:p>3 650 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B75]+100000" office:value-type="float" office:value="16300000">
+      <text:p>16 300 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A76:.B76];[.A$10:.B$10]))/1000" office:value-type="float" office:value="7043.61412912434">
+      <text:p>7 043,61</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="6711.5728925346">
+      <text:p>6 711,57</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C76]-[.D76])/[.D76]" office:value-type="percentage" office:value="0.0494729390422143">
+      <text:p>4,95%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A76]+50000" office:value-type="float" office:value="3700000">
+      <text:p>3 700 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B76]+100000" office:value-type="float" office:value="16400000">
+      <text:p>16 400 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A77:.B77];[.A$10:.B$10]))/1000" office:value-type="float" office:value="7155.41752799933">
+      <text:p>7 155,42</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="6789.5691940506">
+      <text:p>6 789,57</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C77]-[.D77])/[.D77]" office:value-type="percentage" office:value="0.0538838803306256">
+      <text:p>5,39%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A77]+50000" office:value-type="float" office:value="3750000">
+      <text:p>3 750 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B77]+100000" office:value-type="float" office:value="16500000">
+      <text:p>16 500 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A78:.B78];[.A$10:.B$10]))/1000" office:value-type="float" office:value="7267.22092687432">
+      <text:p>7 267,22</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="6858.4646369922">
+      <text:p>6 858,46</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C78]-[.D78])/[.D78]" office:value-type="percentage" office:value="0.059598804035152">
+      <text:p>5,96%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A78]+50000" office:value-type="float" office:value="3800000">
+      <text:p>3 800 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B78]+100000" office:value-type="float" office:value="16600000">
+      <text:p>16 600 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A79:.B79];[.A$10:.B$10]))/1000" office:value-type="float" office:value="7379.02432574931">
+      <text:p>7 379,02</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="6914.51607561596">
+      <text:p>6 914,52</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C79]-[.D79])/[.D79]" office:value-type="percentage" office:value="0.0671787070929572">
+      <text:p>6,72%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A79]+50000" office:value-type="float" office:value="3850000">
+      <text:p>3 850 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B79]+100000" office:value-type="float" office:value="16700000">
+      <text:p>16 700 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A80:.B80];[.A$10:.B$10]))/1000" office:value-type="float" office:value="7490.8277246243">
+      <text:p>7 490,83</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="6952.50594675713">
+      <text:p>6 952,51</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C80]-[.D80])/[.D80]" office:value-type="percentage" office:value="0.0774284527031954">
+      <text:p>7,74%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row table:style-name="ro3">
+     <table:table-cell table:formula="of:=[.A80]+50000" office:value-type="float" office:value="3900000">
+      <text:p>3 900 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=[.B80]+100000" office:value-type="float" office:value="16800000">
+      <text:p>16 800 000</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=SQRT(SUMXMY2([.A81:.B81];[.A$10:.B$10]))/1000" office:value-type="float" office:value="7602.63112349929">
+      <text:p>7 602,63</text:p>
+     </table:table-cell>
+     <table:table-cell office:value-type="float" office:value="6965.40615446528">
+      <text:p>6 965,41</text:p>
+     </table:table-cell>
+     <table:table-cell table:formula="of:=ABS([.C81]-[.D81])/[.D81]" office:value-type="percentage" office:value="0.0914842515860327">
+      <text:p>9,15%</text:p>
+     </table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+   </table:table>
+  </office:spreadsheet>
+ </office:body>
+</office:document-content>
