@@ -42,8 +42,8 @@ import static java.util.jar.Pack200.Packer;
  * @phase package
  * @description Creates a .oxt package for OpenOffice addins
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.09
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.20
  *
  * @since 3.09 (derived from 2.2)
  */
@@ -214,7 +214,7 @@ public class UnoPkg extends AbstractMojo implements FilenameFilter {
                 }
                 if (packer != null && name.endsWith(".jar")) {
                     name = name.substring(0, name.length()-3) + "pack";
-                    final JarFile jar = new JarFile(file);
+                    final JarFile jar = new FilteredJarFile(file);
                     out.putNextEntry(new ZipEntry(name));
                     packer.pack(jar, out);
                     out.closeEntry();
