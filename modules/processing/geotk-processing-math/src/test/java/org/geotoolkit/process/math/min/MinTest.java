@@ -34,7 +34,6 @@ import static org.junit.Assert.*;
  */
 public class MinTest extends AbstractProcessTest{
 
-   
 
     public MinTest() {
         super("min");

@@ -34,7 +34,6 @@ import static org.junit.Assert.*;
  */
 public class TanTest extends AbstractProcessTest{
 
-   
 
     public TanTest() {
         super("tan");
@@ -56,7 +55,6 @@ public class TanTest extends AbstractProcessTest{
         //result
         final Double result = (Double) proc.call().parameter("result").getValue();
 
-       
         assertEquals(0.7445, result.doubleValue(), 0.0001);
     }
     

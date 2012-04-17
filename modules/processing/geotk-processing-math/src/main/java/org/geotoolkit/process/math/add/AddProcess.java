@@ -40,7 +40,7 @@ public class AddProcess extends AbstractProcess {
         final double first = value(FIRST_NUMBER, inputParameters);
         final double second = value(SECOND_NUMBER, inputParameters);
 
-        final Double result = first + second;
+        final double result = first + second;
 
         getOrCreate(RESULT_NUMBER, outputParameters).setValue(result);
     }

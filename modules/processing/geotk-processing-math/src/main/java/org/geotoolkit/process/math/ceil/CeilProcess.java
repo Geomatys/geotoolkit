@@ -39,7 +39,7 @@ public class CeilProcess extends AbstractProcess{
 
         final double first = value(FIRST_NUMBER, inputParameters);
 
-        Double result = Math.ceil(first);
+        final double result = Math.ceil(first);
         getOrCreate(RESULT_NUMBER, outputParameters).setValue(result);
     }
 

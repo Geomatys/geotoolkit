@@ -37,13 +37,7 @@ public class TanProcess extends AbstractProcess {
 
         final double first = value(FIRST_NUMBER, inputParameters);
 
-        Double result = 0.0;
-        try {
-            result = Math.tan(first);
-        } catch(Exception e) {
-            fireFailEvent(new ProcessEvent(this, e.getMessage(), 0, e));
-        }
-
+        final double result  = Math.tan(first);
         getOrCreate(RESULT_NUMBER, outputParameters).setValue(result);
     }
 

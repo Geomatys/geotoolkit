@@ -34,7 +34,6 @@ import static org.junit.Assert.*;
  */
 public class ToDegreeTest extends AbstractProcessTest{
 
-   
 
     public ToDegreeTest() {
         super("toDegree");

@@ -38,7 +38,7 @@ public class CosProcess extends AbstractProcess{
 
         final double first = value(FIRST_NUMBER, inputParameters);
 
-        Double result = Math.cos(first);
+        final double result = Math.cos(first);
         getOrCreate(RESULT_NUMBER, outputParameters).setValue(result);
     }
 

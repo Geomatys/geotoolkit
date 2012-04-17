@@ -41,7 +41,7 @@ public class AvgProcess extends AbstractProcess {
             sum += set[i].doubleValue();
         }
 
-        Double result = sum / set.length;
+        final double result = sum / set.length;
 
         getOrCreate(RESULT_NUMBER, outputParameters).setValue(result);
     }

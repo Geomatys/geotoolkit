@@ -45,7 +45,7 @@ public class MedianProcess extends AbstractProcess {
 
         //index of the median
         int indexMedian = ((list.size()+1)/2)-1;
-        Double median = 0.0;
+        double median = 0.0;
 
         if(list.size()%2 == 0) {
             median = (list.get(indexMedian) + list.get(indexMedian+1))/2;//avg of index and index +1

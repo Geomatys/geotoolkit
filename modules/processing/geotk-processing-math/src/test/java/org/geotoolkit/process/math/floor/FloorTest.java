@@ -34,7 +34,6 @@ import static org.junit.Assert.*;
  */
 public class FloorTest extends AbstractProcessTest{
 
-   
 
     public FloorTest() {
         super("floor");
@@ -56,7 +55,6 @@ public class FloorTest extends AbstractProcessTest{
         //result
         final Double result = (Double) proc.call().parameter("result").getValue();
 
-       
         assertEquals(new Double(24.0), result);
     }
     

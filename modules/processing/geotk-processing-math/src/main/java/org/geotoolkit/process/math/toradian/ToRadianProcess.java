@@ -37,13 +37,7 @@ public class ToRadianProcess extends AbstractProcess{
 
         final double first = value(FIRST_NUMBER, inputParameters);
 
-        Double result = 0.0;
-        try{
-            result = Math.toRadians(first);
-        }catch(Exception e) {
-            fireFailEvent(new ProcessEvent(this, e.getMessage(),0, e));
-        }
-
+        final double result = Math.toRadians(first);
         getOrCreate(RESULT_NUMBER, outputParameters).setValue(result);
     }
 

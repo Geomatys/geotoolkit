@@ -37,7 +37,7 @@ public class AbsoluteProcess extends AbstractProcess {
 
         final double first = value(FIRST_NUMBER, inputParameters);
 
-        Double result = Math.abs(first);
+        final double result = Math.abs(first);
 
         getOrCreate(RESULT_NUMBER, outputParameters).setValue(result);
     }

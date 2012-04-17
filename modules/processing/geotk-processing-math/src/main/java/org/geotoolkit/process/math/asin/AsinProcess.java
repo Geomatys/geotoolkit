@@ -38,7 +38,7 @@ public class AsinProcess extends AbstractProcess{
 
         final double first = value(FIRST_NUMBER, inputParameters);
 
-        Double result = Math.asin(first);
+        final double result = Math.asin(first);
         getOrCreate(RESULT_NUMBER, outputParameters).setValue(result);
     }
 

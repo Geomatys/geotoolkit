@@ -37,7 +37,7 @@ public class RoundProcess extends AbstractProcess{
 
         final double first = value(FIRST_NUMBER, inputParameters);
 
-        long result = Math.round(first);
+        final long result = Math.round(first);
 
         getOrCreate(RESULT_NUMBER, outputParameters).setValue(result);
     }

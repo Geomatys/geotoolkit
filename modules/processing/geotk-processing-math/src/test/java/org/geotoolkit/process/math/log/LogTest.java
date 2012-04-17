@@ -35,7 +35,6 @@ import static org.junit.Assert.*;
 public class LogTest extends AbstractProcessTest{
 
    
-
     public LogTest() {
         super("log");
     }
@@ -56,7 +55,6 @@ public class LogTest extends AbstractProcessTest{
         //result
         final Double result = (Double) proc.call().parameter("result").getValue();
 
-       
         assertEquals(2.6837, result.doubleValue(), 0.0001);
     }
     

@@ -34,7 +34,6 @@ import static org.junit.Assert.*;
  */
 public class DivideTest extends AbstractProcessTest{
 
-   
 
     public DivideTest() {
         super("divide");
@@ -58,7 +57,6 @@ public class DivideTest extends AbstractProcessTest{
         //result
         final Double result = (Double) proc.call().parameter("result").getValue();
 
-       
         assertEquals(2.123, result.doubleValue(),0.001);
     }
     

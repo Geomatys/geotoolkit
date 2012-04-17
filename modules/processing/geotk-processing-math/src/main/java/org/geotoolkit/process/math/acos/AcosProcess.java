@@ -38,7 +38,7 @@ public class AcosProcess extends AbstractProcess {
 
         final double first = value(FIRST_NUMBER, inputParameters);
 
-        Double result = Math.acos(first);
+        final double result = Math.acos(first);
         getOrCreate(RESULT_NUMBER, outputParameters).setValue(result);
     }
 

@@ -33,7 +33,6 @@ import static org.junit.Assert.*;
  * @module pending
  */
 public class SubstractTest extends AbstractProcessTest{
-
    
 
     public SubstractTest() {
@@ -55,7 +54,7 @@ public class SubstractTest extends AbstractProcessTest{
         in.parameter("second").setValue(second);
         final org.geotoolkit.process.Process proc = desc.createProcess(in);
 
-        //Features out
+        //out
         final Double result = (Double) proc.call().parameter("result").getValue();
 
         //Test

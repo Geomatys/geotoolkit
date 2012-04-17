@@ -38,7 +38,7 @@ public class FloorProcess extends AbstractProcess {
 
         final double first = value(FIRST_NUMBER, inputParameters);
 
-        Double result = Math.floor(first);
+        final double result = Math.floor(first);
 
         getOrCreate(RESULT_NUMBER, outputParameters).setValue(result);
     }

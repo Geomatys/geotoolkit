@@ -33,7 +33,6 @@ import static org.junit.Assert.*;
  * @module pending
  */
 public class PowerTest extends AbstractProcessTest{
-
    
 
     public PowerTest() {
@@ -57,7 +56,6 @@ public class PowerTest extends AbstractProcessTest{
 
         //result
         final Double result = (Double) proc.call().parameter("result").getValue();
-
        
         assertEquals(60.867, result.doubleValue(), 0.001);
     }

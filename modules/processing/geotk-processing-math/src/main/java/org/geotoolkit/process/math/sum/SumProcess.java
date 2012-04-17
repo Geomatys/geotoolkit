@@ -36,7 +36,7 @@ public class SumProcess extends AbstractProcess {
 
         final Double[] set = value(SET, inputParameters);
 
-        Double sum = 0.0;
+        double sum = 0.0;
         for(int i=0; i<set.length; i++) {
             sum += set[i].doubleValue();
         }

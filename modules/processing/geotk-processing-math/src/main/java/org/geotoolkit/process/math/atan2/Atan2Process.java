@@ -39,7 +39,7 @@ public class Atan2Process extends AbstractProcess{
         final double first = value(FIRST_NUMBER, inputParameters);
         final double second = value(SECOND_NUMBER, inputParameters);
 
-        Double result = Math.atan2(second, first);
+        final double result = Math.atan2(second, first);
         getOrCreate(RESULT_NUMBER, outputParameters).setValue(result);
     }
 

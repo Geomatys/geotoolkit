@@ -38,7 +38,7 @@ public class PowerProcess extends AbstractProcess {
         final double first = value(FIRST_NUMBER, inputParameters);
         final double second = value(SECOND_NUMBER, inputParameters);
 
-        Double result = Math.pow(first, second);
+        final double result = Math.pow(first, second);
 
         getOrCreate(RESULT_NUMBER, outputParameters).setValue(result);
     }

@@ -36,9 +36,9 @@ public class MaxProcess extends AbstractProcess {
 
         final Double[] set = value(SET, inputParameters);
 
-        Double max = Math.max(set[0], set[1]);
+        double max = Math.max(set[0].doubleValue(), set[1].doubleValue());
         for (int i=1; i<set.length; i++) {
-            max = Math.max(max.doubleValue(), set[i].doubleValue());
+            max = Math.max(max, set[i].doubleValue());
         }
 
         getOrCreate(RESULT_NUMBER, outputParameters).setValue(max);
