@@ -142,6 +142,11 @@ public class CapabilitiesBaseType implements AbstractCapabilitiesBase {
     public String getUpdateSequence() {
         return updateSequence;
     }
+    
+    public void setUpdateSequence(final String updateSequence) {
+        this.updateSequence = updateSequence;
+    }
+
 
     /**
      * Verify that this entry is identical to the specified object.
