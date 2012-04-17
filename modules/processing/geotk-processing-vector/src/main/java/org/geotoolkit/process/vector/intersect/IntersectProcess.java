@@ -14,29 +14,30 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.process.vector.affinetransform;
+package org.geotoolkit.process.vector.intersect;
+
+import com.vividsolutions.jts.geom.Geometry;
 
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.AbstractProcess;
-import org.geotoolkit.process.ProcessEvent;
-import org.geotoolkit.process.vector.VectorDescriptor;
 
 import org.opengis.feature.Feature;
 import org.opengis.parameter.ParameterValueGroup;
 
+import static org.geotoolkit.process.vector.intersect.IntersectDescriptor.*;
+import static org.geotoolkit.parameter.Parameters.*;
 /**
- * Apply an affine transformation to all FeatureCollection geometries
+ * This process return all Features from a FeatureCollection that intersect a geometry.
  * @author Quentin Boileau
  * @module pending
  */
-public class AffineTransform extends AbstractProcess {
+public class IntersectProcess extends AbstractProcess {
 
     /**
      * Default constructor
      */
-    public AffineTransform(final ParameterValueGroup input) {
-        super(AffineTransformDescriptor.INSTANCE,input);
+    public IntersectProcess(final ParameterValueGroup input) {
+        super(INSTANCE,input);
     }
 
     /**
@@ -44,11 +45,11 @@ public class AffineTransform extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection<Feature> inputFeatureList = Parameters.value(AffineTransformDescriptor.FEATURE_IN, inputParameters);
-        final java.awt.geom.AffineTransform transform = Parameters.value(AffineTransformDescriptor.TRANSFORM_IN, inputParameters);
+        final FeatureCollection<Feature> inputFeatureList   = value(FEATURE_IN, inputParameters);
+        final Geometry interGeom                            = value(GEOMETRY_IN, inputParameters);
 
-        final FeatureCollection<Feature> resultFeatureList = new AffineTransformFeatureCollection(inputFeatureList, transform);
+        final FeatureCollection resultFeatureList = new IntersectFeatureCollection(inputFeatureList, interGeom);
 
-        outputParameters.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
+        getOrCreate(FEATURE_OUT, outputParameters).setValue(resultFeatureList);
     }
 }

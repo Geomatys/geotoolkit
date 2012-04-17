@@ -30,12 +30,9 @@ import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.process.ProcessEvent;
 import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.process.vector.VectorDescriptor;
 import org.geotoolkit.process.vector.intersect.IntersectDescriptor;
 import org.geotoolkit.process.vector.nearest.NearestDescriptor;
 
@@ -49,36 +46,37 @@ import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import static org.geotoolkit.process.vector.spatialjoin.SpatialJoinDescriptor.*;
+import static org.geotoolkit.parameter.Parameters.*;
+
 /**
  * Process return the target FeatureCollection with source FeatureCollection attributes.
  * The link between target and source depend of method used (Intersect or Nearest).
  * @author Quentin Boileau
  * @module pending
  */
-public class SpatialJoin extends AbstractProcess {
+public class SpatialJoinProcess extends AbstractProcess {
 
     /**
      * Default constructor
      */
-    public SpatialJoin(final ParameterValueGroup input) {
-        super(SpatialJoinDescriptor.INSTANCE, input);
+    public SpatialJoinProcess(final ParameterValueGroup input) {
+        super(INSTANCE, input);
     }
 
     /**
      *  {@inheritDoc }
-     */
+     */ 
     @Override
     protected void execute() {
-        fireStartEvent(new ProcessEvent(this));
-        final FeatureCollection<Feature> sourceFeatureList = Parameters.value(SpatialJoinDescriptor.FEATURE_IN, inputParameters);
-        final FeatureCollection<Feature> targetFeatureList = Parameters.value(SpatialJoinDescriptor.FEATURE_TARGET, inputParameters);
-        final boolean method = Parameters.value(SpatialJoinDescriptor.INTERSECT, inputParameters);
+        final FeatureCollection<Feature> sourceFeatureList = value(FEATURE_IN, inputParameters);
+        final FeatureCollection<Feature> targetFeatureList = value(FEATURE_TARGET, inputParameters);
+        final boolean method = value(INTERSECT, inputParameters);
 
         final FeatureCollection resultFeatureList =
-                new SpatialJoinFeatureCollection(sourceFeatureList, targetFeatureList, method);
+                new SpatialJoinFeatureCollection(sourceFeatureList, targetFeatureList, method); 
 
-        outputParameters.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
-        fireEndEvent(new ProcessEvent(this, null, 100));
+        getOrCreate(FEATURE_OUT, outputParameters).setValue(resultFeatureList);
     }
 
     /**
@@ -107,7 +105,7 @@ public class SpatialJoin extends AbstractProcess {
         Feature resultFeature = FeatureUtilities.defaultFeature(newType, target.getIdentifier().getID());
 
         //copy target Feature
-        for (Property targetProperty : target.getProperties()) {
+        for (final Property targetProperty : target.getProperties()) {
             resultFeature.getProperty(targetProperty.getName()).setValue(targetProperty.getValue());
         }
 
@@ -117,7 +115,7 @@ public class SpatialJoin extends AbstractProcess {
         ArrayList<Feature> featureOutArray;
 
         //for each target feature geometry
-        for (Property property : target.getProperties()) {
+        for (final Property property : target.getProperties()) {
             if (property.getDescriptor() instanceof GeometryDescriptor) {
                 final Geometry targetGeometry = (Geometry) property.getValue();
                 final GeometryDescriptor geomDesc = (GeometryDescriptor) property.getDescriptor();
@@ -145,7 +143,7 @@ public class SpatialJoin extends AbstractProcess {
                 try {
                     featureOut = (FeatureCollection<Feature>) proc.call().parameter("feature_out").getValue();
                 } catch (ProcessException ex) {
-                    Logger.getLogger(SpatialJoin.class.getName()).log(Level.WARNING, null, ex);
+                    Logger.getLogger(SpatialJoinProcess.class.getName()).log(Level.WARNING, null, ex);
                     return null;
                 }
 
@@ -192,12 +190,12 @@ public class SpatialJoin extends AbstractProcess {
                 source.getIdentifier().getID());
 
         //copy target Feature
-        for (Property targetProperty : target.getProperties()) {
+        for (final Property targetProperty : target.getProperties()) {
             resultFeature.getProperty(targetProperty.getName()).setValue(targetProperty.getValue());
         }
 
         //copy source Feature except geometry descriptor
-        for (Property sourceProperty : source.getProperties()) {
+        for (final Property sourceProperty : source.getProperties()) {
             if (!(sourceProperty.getDescriptor() instanceof GeometryDescriptor)) {
                 resultFeature.getProperty(sourceProperty.getName().getLocalPart() + "_"
                         + source.getType().getName().getLocalPart()).setValue(sourceProperty.getValue());
@@ -223,7 +221,7 @@ public class SpatialJoin extends AbstractProcess {
         try{
             while (iter.hasNext()) {
                 final Feature feature = iter.next();
-                for (Property property : feature.getProperties()) {
+                for (final Property property : feature.getProperties()) {
                     if (property.getDescriptor() instanceof GeometryDescriptor) {
 
                         final Geometry geom = (Geometry) property.getValue();

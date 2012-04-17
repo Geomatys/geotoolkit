@@ -14,31 +14,32 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.process.vector.retype;
+package org.geotoolkit.process.vector.extendfeature;
 
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.memory.GenericRetypeFeatureIterator;
-import org.geotoolkit.parameter.Parameters;
+import org.geotoolkit.data.memory.GenericExtendFeatureIterator;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.process.AbstractProcess;
-import org.geotoolkit.process.ProcessEvent;
 import org.geotoolkit.process.vector.VectorDescriptor;
 
 import org.opengis.feature.Feature;
-import org.opengis.feature.type.FeatureType;
 import org.opengis.parameter.ParameterValueGroup;
 
+import static org.geotoolkit.process.vector.extendfeature.ExtendFeatureDescriptor.*;
+import static org.geotoolkit.parameter.Parameters.*;
+
 /**
- * Apply a mask to a FeatureCollection FeatureType.
+ * Adding on the fly attributes of Feature contents.
  * @author Quentin Boileau
  * @module pending
  */
-public class Retype extends AbstractProcess {
+public class ExtendFeatureProcess extends AbstractProcess {
 
     /**
      * Default constructor
      */
-    public Retype(final ParameterValueGroup input) {
-        super(RetypeDescriptor.INSTANCE,input);
+    public ExtendFeatureProcess(final ParameterValueGroup input) {
+        super(INSTANCE,input);
     }
 
     /**
@@ -46,13 +47,12 @@ public class Retype extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        fireStartEvent(new ProcessEvent(this));
-        final FeatureCollection<Feature> inputFeatureList = Parameters.value(RetypeDescriptor.FEATURE_IN, inputParameters);
-        final FeatureType mask = Parameters.value(RetypeDescriptor.MASK_IN, inputParameters);
+        final FeatureCollection<Feature> inputFeatureList           = value(FEATURE_IN, inputParameters);
+        final GenericExtendFeatureIterator.FeatureExtend extension  = value(EXTEND_IN, inputParameters);
+        final Hints hints                                           = value(HINTS_IN, inputParameters);
 
-        final FeatureCollection resultFeatureList = GenericRetypeFeatureIterator.wrap(inputFeatureList, mask);
+        final FeatureCollection resultFeatureList = GenericExtendFeatureIterator.wrap(inputFeatureList, extension, hints);
 
-        outputParameters.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
-        fireEndEvent(new ProcessEvent(this, null, 100));
+        getOrCreate(FEATURE_OUT, outputParameters).setValue(resultFeatureList);
     }
 }

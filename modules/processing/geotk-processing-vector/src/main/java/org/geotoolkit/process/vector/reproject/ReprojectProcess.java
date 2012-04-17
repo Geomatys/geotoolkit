@@ -18,27 +18,27 @@ package org.geotoolkit.process.vector.reproject;
 
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.memory.GenericReprojectFeatureIterator;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.AbstractProcess;
-import org.geotoolkit.process.ProcessEvent;
-import org.geotoolkit.process.vector.VectorDescriptor;
 
 import org.opengis.feature.Feature;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
+import static org.geotoolkit.process.vector.reproject.ReprojectDescriptor.*;
+import static org.geotoolkit.parameter.Parameters.*;
 
 /**
  * Re-project a FeatureCollection into a target CoordinateReferenceSystem
  * @author Quentin Boileau
  * @module pending
  */
-public class Reproject extends AbstractProcess {
+public class ReprojectProcess extends AbstractProcess {
 
     /**
      * Default constructor
      */
-    public Reproject(final ParameterValueGroup input) {
-        super(ReprojectDescriptor.INSTANCE,input);
+    public ReprojectProcess(final ParameterValueGroup input) {
+        super(INSTANCE,input);
     }
 
     /**
@@ -46,13 +46,11 @@ public class Reproject extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        fireStartEvent(new ProcessEvent(this));
-        final FeatureCollection<Feature> inputFeatureList = Parameters.value(ReprojectDescriptor.FEATURE_IN, inputParameters);
-        final CoordinateReferenceSystem targetCRS = Parameters.value(ReprojectDescriptor.CRS_IN, inputParameters);
+        final FeatureCollection<Feature> inputFeatureList   = value(FEATURE_IN, inputParameters);
+        final CoordinateReferenceSystem targetCRS           = value(CRS_IN, inputParameters);
 
         final FeatureCollection resultFeatureList = GenericReprojectFeatureIterator.wrap(inputFeatureList, targetCRS);
 
-        outputParameters.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
-        fireEndEvent(new ProcessEvent(this,null,100));
+        getOrCreate(FEATURE_OUT, outputParameters).setValue(resultFeatureList);
     }
 }

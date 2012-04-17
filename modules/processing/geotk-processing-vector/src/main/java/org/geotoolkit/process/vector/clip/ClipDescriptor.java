@@ -80,6 +80,6 @@ public final class ClipDescriptor extends VectorDescriptor {
      */
     @Override
     public Process createProcess(final ParameterValueGroup input) {
-        return new Clip(input);
+        return new ClipProcess(input);
     }
 }

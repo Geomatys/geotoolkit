@@ -82,7 +82,7 @@ public class UnionFeatureCollection extends WrapFeatureCollection {
 
         // Create the new FeatureType which concatenate two FeatureCollection FeatureType but with only one geometry
         // (inputGeomName)
-        this.newFeatureType = Union.mergeType(inputFC.getFeatureType(), unionFC.getFeatureType(), this.inputGeomName, geometryCRS);
+        this.newFeatureType = UnionProcess.mergeType(inputFC.getFeatureType(), unionFC.getFeatureType(), this.inputGeomName, geometryCRS);
 
     }
 
@@ -106,9 +106,9 @@ public class UnionFeatureCollection extends WrapFeatureCollection {
     private FeatureCollection modify2(final Feature original, final boolean firstPass, final Set<String> featureList) {
         try {
             if (firstPass) {
-                return Union.unionFeatureToFC(original, newFeatureType, unionFC, inputGeomName, unionGeomName, firstPass, featureList);
+                return UnionProcess.unionFeatureToFC(original, newFeatureType, unionFC, inputGeomName, unionGeomName, firstPass, featureList);
             } else {
-                return Union.unionFeatureToFC(original, newFeatureType, getOriginalFeatureCollection(), unionGeomName, inputGeomName, firstPass, featureList);
+                return UnionProcess.unionFeatureToFC(original, newFeatureType, getOriginalFeatureCollection(), unionGeomName, inputGeomName, firstPass, featureList);
             }
 
         } catch (TransformException ex) {

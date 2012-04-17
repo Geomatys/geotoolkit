@@ -23,8 +23,6 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Polygon;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.FeatureCollection;
@@ -46,10 +44,10 @@ import static org.junit.Assert.*;
 
 /**
  * JUnit test of clip with a FeatureCollection process
- * @author Quentin Boileau
- * @module pending
+ *
+ * @author Quentin Boileau @module pending
  */
-public class DifferenceTest extends AbstractProcessTest{
+public class DifferenceTest extends AbstractProcessTest {
 
     private static SimpleFeatureBuilder sfb;
     private static GeometryFactory geometryFactory;
@@ -59,9 +57,8 @@ public class DifferenceTest extends AbstractProcessTest{
         super("difference");
     }
 
-
     @Test
-    public void testDifference() throws ProcessException, NoSuchIdentifierException{
+    public void testDifference() throws ProcessException, NoSuchIdentifierException, FactoryException {
 
         // Inputs
         final FeatureCollection<?> featureList = buildFeatureList();
@@ -110,15 +107,9 @@ public class DifferenceTest extends AbstractProcessTest{
         return sft;
     }
 
-    private static FeatureCollection<?> buildFeatureList() {
+    private static FeatureCollection<?> buildFeatureList() throws FactoryException {
 
-        try {
-            type = createSimpleType();
-        } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(DifferenceTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FactoryException ex) {
-            Logger.getLogger(DifferenceTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        type = createSimpleType();
 
         final FeatureCollection<Feature> featureList = DataUtilities.collection("", type);
 
@@ -208,15 +199,9 @@ public class DifferenceTest extends AbstractProcessTest{
         return featureList;
     }
 
-    private static FeatureCollection<?> buildFeatureClip() {
-        
-         try {
-            type = createSimpleType();
-        } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(DifferenceTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FactoryException ex) {
-            Logger.getLogger(DifferenceTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    private static FeatureCollection<?> buildFeatureClip() throws FactoryException {
+
+        type = createSimpleType();
 
         final FeatureCollection<Feature> featureList = DataUtilities.collection("", type);
 
@@ -285,19 +270,13 @@ public class DifferenceTest extends AbstractProcessTest{
         sfb.set("position", geometryFactory.createPolygon(ring, null));
         myFeature4 = sfb.buildFeature("id-14");
         featureList.add(myFeature4);
-        
+
         return featureList;
     }
 
-    private static FeatureCollection<?> buildResultList() {
+    private static FeatureCollection<?> buildResultList() throws FactoryException {
 
-        try {
-            type = createSimpleResultType();
-        } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(DifferenceTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FactoryException ex) {
-            Logger.getLogger(DifferenceTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        type = createSimpleResultType();
 
         final FeatureCollection<Feature> featureList = DataUtilities.collection("", type);
 
@@ -344,7 +323,7 @@ public class DifferenceTest extends AbstractProcessTest{
         myFeature3 = sfb.buildFeature("id-03");
         featureList.add(myFeature3);
 
-       Feature myFeature4;
+        Feature myFeature4;
         ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(3.0, 6.0),

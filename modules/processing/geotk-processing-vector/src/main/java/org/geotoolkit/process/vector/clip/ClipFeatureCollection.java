@@ -67,7 +67,7 @@ public class ClipFeatureCollection extends WrapFeatureCollection {
     protected Feature modify(final Feature original) {
         try {
             
-            return Clip.clipFeature(original, newFeatureType, clippingList);
+            return ClipProcess.clipFeature(original, newFeatureType, clippingList);
 
         } catch (FactoryException ex) {
             throw new DataStoreRuntimeException(ex);

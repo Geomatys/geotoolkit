@@ -86,6 +86,6 @@ public final class RegroupDescriptor extends VectorDescriptor {
      */
     @Override
     public Process createProcess(final ParameterValueGroup input) {
-        return new Regroup(input);
+        return new RegroupProcess(input);
     }
 }

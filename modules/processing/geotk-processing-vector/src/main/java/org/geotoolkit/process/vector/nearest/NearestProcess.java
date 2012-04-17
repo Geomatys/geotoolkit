@@ -31,11 +31,8 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.AbstractProcess;
-import org.geotoolkit.process.ProcessEvent;
 import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.process.vector.VectorDescriptor;
 import org.geotoolkit.process.vector.VectorProcessUtils;
 import org.geotoolkit.storage.DataStoreException;
 
@@ -47,17 +44,19 @@ import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.identity.Identifier;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+
+import static org.geotoolkit.process.vector.nearest.NearestDescriptor.*;
+import static org.geotoolkit.parameter.Parameters.*;
 
 /**
  * Process return the nearest Feature(s) form a FeatureCollection to a geometry
  * @author Quentin Boileau
  * @module pending
  */
-public class Nearest extends AbstractProcess {
+public class NearestProcess extends AbstractProcess {
 
     private static final FilterFactory2 FF = (FilterFactory2) FactoryFinder.getFilterFactory(
             new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
@@ -65,10 +64,9 @@ public class Nearest extends AbstractProcess {
     /**
      * Default constructor
      */
-    public Nearest(final ParameterValueGroup input) {
-        super(NearestDescriptor.INSTANCE,input);
+    public NearestProcess(final ParameterValueGroup input) {
+        super(INSTANCE,input);
     }
-
 
     /**
      *  {@inheritDoc }
@@ -76,22 +74,21 @@ public class Nearest extends AbstractProcess {
     @Override
     protected void execute() throws ProcessException {
         try {
-            final FeatureCollection<Feature> inputFeatureList = Parameters.value(NearestDescriptor.FEATURE_IN, inputParameters);
-            final Geometry interGeom = Parameters.value(NearestDescriptor.GEOMETRY_IN, inputParameters);
+            final FeatureCollection<Feature> inputFeatureList   = value(FEATURE_IN, inputParameters);
+            final Geometry interGeom                            = value(GEOMETRY_IN, inputParameters);
 
             final FeatureCollection resultFeatureList =
                     new NearestFeatureCollection(inputFeatureList.subCollection(nearestQuery(inputFeatureList, interGeom)));
 
-            outputParameters.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
+            getOrCreate(FEATURE_OUT, outputParameters).setValue(resultFeatureList);
 
         } catch (FactoryException ex) {
-            throw new ProcessException(ex.getMessage(), this, ex);
+            throw new ProcessException(null, this, ex);
         } catch (DataStoreException ex) {
-            throw new ProcessException(ex.getMessage(), this, ex);
+            throw new ProcessException(null, this, ex);
         } catch (TransformException ex) {
-            throw new ProcessException(ex.getMessage(), this, ex);
+            throw new ProcessException(null, this, ex);
         }
-
     }
 
     /**
@@ -116,7 +113,7 @@ public class Nearest extends AbstractProcess {
         try {
             while (iter.hasNext()) {
                 final Feature feature = iter.next();
-                for (Property property : feature.getProperties()) {
+                for (final Property property : feature.getProperties()) {
                     if (property.getDescriptor() instanceof GeometryDescriptor) {
 
                         Geometry featureGeom = (Geometry) property.getValue();

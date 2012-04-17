@@ -78,6 +78,6 @@ public final class FilterDescriptor extends VectorDescriptor {
      */
     @Override
     public Process createProcess(final ParameterValueGroup input) {
-        return new org.geotoolkit.process.vector.filter.Filter(input);
+        return new org.geotoolkit.process.vector.filter.FilterProcess(input);
     }
 }

@@ -101,7 +101,6 @@ public class NearestTest extends AbstractProcessTest{
 
         type = createSimpleType();
         
-
         final FeatureCollection<Feature> featureList = DataUtilities.collection("nearest", type);
 
         final Feature feature1 = FeatureUtilities.defaultFeature(type, "id-1");

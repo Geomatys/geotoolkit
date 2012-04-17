@@ -97,6 +97,6 @@ public final class BufferDescriptor extends VectorDescriptor {
      */
     @Override
     public Process createProcess(final ParameterValueGroup input) {
-        return new Buffer(input);
+        return new BufferProcess(input);
     }
 }

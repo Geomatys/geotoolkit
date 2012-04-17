@@ -26,8 +26,6 @@ import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.Polygon;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.FeatureCollection;
@@ -49,10 +47,10 @@ import static org.junit.Assert.*;
 
 /**
  * JUnit test of merge process
- * @author Quentin Boileau
- * @module pending
+ *
+ * @author Quentin Boileau @module pending
  */
-public class MergeTest extends AbstractProcessTest{
+public class MergeTest extends AbstractProcessTest {
 
     private static SimpleFeatureBuilder sfb;
     private static final GeometryFactory geometryFactory = new GeometryFactory();
@@ -62,23 +60,20 @@ public class MergeTest extends AbstractProcessTest{
         super("merge");
     }
 
-
     /**
-     * Merge Test with 4 FeatureCollection.
-     * 1 - base FeatureCollection
-     * 2 - FeatureCollection with same FeatureType as base
-     * 3 - FeatureCollection with some attribute like base and with conversion needed
-     * 4 - FeatureCollection with none attribute like base
+     * Merge Test with 4 FeatureCollection. 1 - base FeatureCollection 2 - FeatureCollection with same FeatureType as
+     * base 3 - FeatureCollection with some attribute like base and with conversion needed 4 - FeatureCollection with
+     * none attribute like base
      */
     @Test
-    public void testMerge() throws ProcessException, NoSuchIdentifierException {
+    public void testMerge() throws ProcessException, NoSuchIdentifierException, FactoryException {
 
         // Inputs
         final FeatureCollection<?> featureList1 = buildFeatureList1();
         final FeatureCollection<?> featureList2 = buildFeatureList2();
         final FeatureCollection<?> featureList3 = buildFeatureList3();
         final FeatureCollection<?> featureList4 = buildFeatureList4();
-        
+
         FeatureCollection[] FCList = new FeatureCollection[4];
         FCList[0] = featureList1;
         FCList[1] = featureList2;
@@ -138,15 +133,9 @@ public class MergeTest extends AbstractProcessTest{
         return sft;
     }
 
-    private static FeatureCollection<?> buildFeatureList1() {
+    private static FeatureCollection<?> buildFeatureList1() throws FactoryException {
 
-        try {
-            type = createSimpleType();
-        } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(MergeTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FactoryException ex) {
-            Logger.getLogger(MergeTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        type = createSimpleType();
 
         final FeatureCollection<Feature> featureList = DataUtilities.collection("", type);
 
@@ -214,16 +203,9 @@ public class MergeTest extends AbstractProcessTest{
         return featureList;
     }
 
-    private static FeatureCollection<?> buildFeatureList2() {
+    private static FeatureCollection<?> buildFeatureList2() throws FactoryException {
 
-        try {
-            type = createSimpleType();
-        } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(MergeTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FactoryException ex) {
-            Logger.getLogger(MergeTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
+        type = createSimpleType();
         final FeatureCollection<Feature> featureList = DataUtilities.collection("", type);
 
 
@@ -240,12 +222,12 @@ public class MergeTest extends AbstractProcessTest{
                 new Coordinate[]{
                     new Coordinate(1.0, 6.0), //nothing
                     new Coordinate(3.0, 6.0), //intersection with a point
-                    new Coordinate(3.5, 3.5)  //intersection with a polygon
+                    new Coordinate(3.5, 3.5) //intersection with a polygon
                 });
         sfb = new SimpleFeatureBuilder(type);
         sfb.set("name", "feature11");
         sfb.set("geom1", geometryFactory.createPolygon(ring, null));
-        sfb.set("geom2",multPt);
+        sfb.set("geom2", multPt);
         myFeature1 = sfb.buildFeature("id-11");
         featureList.add(myFeature1);
 
@@ -289,15 +271,9 @@ public class MergeTest extends AbstractProcessTest{
         return featureList;
     }
 
-    private static FeatureCollection<?> buildFeatureList3() {
+    private static FeatureCollection<?> buildFeatureList3() throws FactoryException {
 
-        try {
-            type = createSimpleType2();
-        } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(MergeTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FactoryException ex) {
-            Logger.getLogger(MergeTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        type = createSimpleType2();
 
         final FeatureCollection<Feature> featureList = DataUtilities.collection("", type);
 
@@ -315,13 +291,13 @@ public class MergeTest extends AbstractProcessTest{
                 new Coordinate[]{
                     new Coordinate(1.0, 6.0), //nothing
                     new Coordinate(3.0, 6.0), //intersection with a point
-                    new Coordinate(3.5, 3.5)  //intersection with a polygon
+                    new Coordinate(3.5, 3.5) //intersection with a polygon
                 });
         sfb = new SimpleFeatureBuilder(type);
         sfb.set("name", 21);
         sfb.set("color", "grey");
         sfb.set("geom1", geometryFactory.createPolygon(ring, null));
-        sfb.set("geom3",multPt);
+        sfb.set("geom3", multPt);
         myFeature1 = sfb.buildFeature("id-21");
         featureList.add(myFeature1);
 
@@ -367,15 +343,9 @@ public class MergeTest extends AbstractProcessTest{
         return featureList;
     }
 
-    private static FeatureCollection<?> buildFeatureList4() {
+    private static FeatureCollection<?> buildFeatureList4() throws FactoryException {
 
-        try {
-            type = createSimpleType3();
-        } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(MergeTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FactoryException ex) {
-            Logger.getLogger(MergeTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        type = createSimpleType3();
 
         final FeatureCollection<Feature> featureList = DataUtilities.collection("", type);
 
@@ -431,16 +401,10 @@ public class MergeTest extends AbstractProcessTest{
         return featureList;
     }
 
-    private static FeatureCollection<?> buildResultList() {
+    private static FeatureCollection<?> buildResultList() throws FactoryException {
 
 
-        try {
-            type = createSimpleType();
-        } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(MergeTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FactoryException ex) {
-            Logger.getLogger(MergeTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        type = createSimpleType();
 
         final FeatureCollection<Feature> featureList = DataUtilities.collection("", type);
 
@@ -516,14 +480,14 @@ public class MergeTest extends AbstractProcessTest{
                 });
         multPt = geometryFactory.createMultiPoint(
                 new Coordinate[]{
-                    new Coordinate(1.0, 6.0), 
-                    new Coordinate(3.0, 6.0), 
-                    new Coordinate(3.5, 3.5)  
+                    new Coordinate(1.0, 6.0),
+                    new Coordinate(3.0, 6.0),
+                    new Coordinate(3.5, 3.5)
                 });
         sfb = new SimpleFeatureBuilder(type);
         sfb.set("name", "feature11");
         sfb.set("geom1", geometryFactory.createPolygon(ring, null));
-        sfb.set("geom2",multPt);
+        sfb.set("geom2", multPt);
         myFeature1 = sfb.buildFeature("id-11");
         featureList.add(myFeature1);
 
@@ -573,7 +537,7 @@ public class MergeTest extends AbstractProcessTest{
         sfb = new SimpleFeatureBuilder(type);
         sfb.set("name", "21");
         sfb.set("geom1", geometryFactory.createPolygon(ring, null));
-        sfb.set("geom2",null);
+        sfb.set("geom2", null);
         myFeature1 = sfb.buildFeature("id-21");
         featureList.add(myFeature1);
 

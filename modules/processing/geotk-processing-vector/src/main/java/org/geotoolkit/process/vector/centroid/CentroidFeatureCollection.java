@@ -56,6 +56,6 @@ public class CentroidFeatureCollection extends WrapFeatureCollection {
      */
     @Override
     protected Feature modify(final Feature original) {
-        return Centroid.changeFeature(original, newFeatureType);
+        return CentroidProcess.changeFeature(original, newFeatureType);
     }
 }

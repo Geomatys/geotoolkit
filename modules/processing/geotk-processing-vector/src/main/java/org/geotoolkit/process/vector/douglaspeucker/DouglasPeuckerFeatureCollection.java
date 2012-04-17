@@ -71,7 +71,7 @@ public class DouglasPeuckerFeatureCollection extends WrapFeatureCollection {
     @Override
     public Feature modify(final Feature original) throws DataStoreRuntimeException {
         try {
-            return DouglasPeucker.simplifyFeature(original, inputAccuracy, inputBehavior, inputLenient);
+            return DouglasPeuckerProcess.simplifyFeature(original, inputAccuracy, inputBehavior, inputLenient);
         } catch (FactoryException ex) {
             throw new DataStoreRuntimeException(ex);
         } catch (MismatchedDimensionException ex) {

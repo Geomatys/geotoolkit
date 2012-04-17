@@ -19,17 +19,12 @@ package org.geotoolkit.process.vector.buffer;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
-import javax.measure.quantity.Length;
 import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
 
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.AbstractProcess;
-import org.geotoolkit.process.ProcessEvent;
-import org.geotoolkit.process.vector.VectorDescriptor;
 import org.geotoolkit.process.vector.VectorProcessUtils;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
@@ -46,6 +41,9 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
+import static org.geotoolkit.process.vector.buffer.BufferDescriptor.*;
+import static org.geotoolkit.parameter.Parameters.*;
+
 /**
  * Process buffer, create a buffer around Feature's geometry and
  * store it into a result Feature. Inputs process parameters :
@@ -58,13 +56,13 @@ import org.opengis.util.FactoryException;
  * @author Quentin Boileau
  * @module pending
  */
-public class Buffer extends AbstractProcess {
+public class BufferProcess extends AbstractProcess {
 
     /**
      * Default constructor
      */
-    public Buffer(final ParameterValueGroup input) {
-        super(BufferDescriptor.INSTANCE,input);
+    public BufferProcess(final ParameterValueGroup input) {
+        super(INSTANCE,input);
     }
 
     /**
@@ -72,19 +70,19 @@ public class Buffer extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection<Feature> inputFeatureList = Parameters.value(BufferDescriptor.FEATURE_IN, inputParameters);
-        final double inputDistance = Parameters.value(BufferDescriptor.DISTANCE_IN, inputParameters).doubleValue();
-        final boolean inputLenient = Parameters.value(BufferDescriptor.LENIENT_TRANSFORM_IN, inputParameters);
+        final FeatureCollection<Feature> inputFeatureList   = value(FEATURE_IN, inputParameters);
+        final double inputDistance                          = value(DISTANCE_IN, inputParameters).doubleValue();
+        final boolean inputLenient                          = value(LENIENT_TRANSFORM_IN, inputParameters);
 
         final FeatureCollection resultFeatureList =
                 new BufferFeatureCollection(inputFeatureList, inputDistance, inputLenient);
-
-        outputParameters.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
+        
+        getOrCreate(FEATURE_OUT, outputParameters).setValue(resultFeatureList);
     }
 
     /**
      * Apply buffer algorithm to the Feature geometry and store the resulting geometry
-     * into a new Feature
+     * into a new Feature.
      * @param oldFeature
      * @param newType
      * @param distance

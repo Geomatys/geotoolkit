@@ -21,10 +21,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.AbstractProcess;
-import org.geotoolkit.process.ProcessEvent;
-import org.geotoolkit.process.vector.VectorDescriptor;
 import org.geotoolkit.process.vector.VectorProcessUtils;
 
 import org.opengis.feature.Feature;
@@ -37,19 +34,22 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
+import static org.geotoolkit.process.vector.difference.DifferenceDescriptor.*;
+import static org.geotoolkit.parameter.Parameters.*;
+
 /**
  * Process to compute difference between two FeatureCollection
  * It is usually called "Spatial NOT", because it distracts the geometries from a FeatureCollection.
  * @author Quentin Boileau
  * @module pending
  */
-public class Difference extends AbstractProcess {
+public class DifferenceProcess extends AbstractProcess {
 
     /**
      * Default constructor
      */
-    public Difference(final ParameterValueGroup input) {
-        super(DifferenceDescriptor.INSTANCE,input);
+    public DifferenceProcess(final ParameterValueGroup input) {
+        super(INSTANCE,input);
     }
 
     /**
@@ -57,12 +57,12 @@ public class Difference extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection<Feature> inputFeatureList = Parameters.value(DifferenceDescriptor.FEATURE_IN, inputParameters);
-        final FeatureCollection<Feature> inputFeatureClippingList = Parameters.value(DifferenceDescriptor.FEATURE_DIFF, inputParameters);
+        final FeatureCollection<Feature> inputFeatureList           = value(FEATURE_IN, inputParameters);
+        final FeatureCollection<Feature> inputFeatureClippingList   = value(FEATURE_DIFF, inputParameters);
 
         final FeatureCollection resultFeatureList = new DifferenceFeatureCollection(inputFeatureList, inputFeatureClippingList);
 
-        outputParameters.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
+        getOrCreate(FEATURE_OUT, outputParameters).setValue(resultFeatureList);
     }
 
     /**

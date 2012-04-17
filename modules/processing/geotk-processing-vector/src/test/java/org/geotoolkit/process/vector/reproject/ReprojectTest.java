@@ -25,9 +25,6 @@ import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiPoint;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.factory.Hints;
@@ -49,10 +46,10 @@ import static org.junit.Assert.*;
 
 /**
  * JUnit test of Reproject process
- * @author Quentin Boileau
- * @module pending
+ *
+ * @author Quentin Boileau @module pending
  */
-public class ReprojectTest extends AbstractProcessTest{
+public class ReprojectTest extends AbstractProcessTest {
 
     private static SimpleFeatureBuilder sfb;
     private static final GeometryFactory geometryFactory = new GeometryFactory();
@@ -62,9 +59,8 @@ public class ReprojectTest extends AbstractProcessTest{
         super("reproject");
     }
 
-   
     @Test
-    public void testReprojection() throws  FactoryException, ProcessException, NoSuchIdentifierException {
+    public void testReprojection() throws FactoryException, ProcessException, NoSuchIdentifierException {
         Hints.putSystemDefault(Hints.LENIENT_DATUM_SHIFT, Boolean.TRUE);
         // Inputs
         final FeatureCollection<?> featureList = buildFeatureList();
@@ -78,7 +74,7 @@ public class ReprojectTest extends AbstractProcessTest{
 
         //FeatureCollection out
         final FeatureCollection<Feature> resultFC = (FeatureCollection<Feature>) proc.call().parameter("feature_out").getValue();
-       
+
         assertEquals(featureList.getID(), resultFC.getID());
         assertEquals(resultFC.size(), resultFC.size());
     }
@@ -95,15 +91,9 @@ public class ReprojectTest extends AbstractProcessTest{
         return sft;
     }
 
-    private static FeatureCollection<?> buildFeatureList() {
+    private static FeatureCollection<?> buildFeatureList() throws FactoryException {
 
-        try {
-            type = createSimpleType();
-        } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(ReprojectTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FactoryException ex) {
-            Logger.getLogger(ReprojectTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        type = createSimpleType();
 
         final FeatureCollection<Feature> featureList = DataUtilities.collection("", type);
 

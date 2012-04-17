@@ -79,6 +79,6 @@ public final class IntersectDescriptor extends VectorDescriptor {
      */
     @Override
     public Process createProcess(final ParameterValueGroup input) {
-        return new Intersect(input);
+        return new IntersectProcess(input);
     }
 }

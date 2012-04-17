@@ -30,10 +30,7 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.AbstractProcess;
-import org.geotoolkit.process.ProcessEvent;
-import org.geotoolkit.process.vector.VectorDescriptor;
 import org.geotoolkit.process.vector.VectorProcessUtils;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
@@ -47,6 +44,9 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
+import static org.geotoolkit.process.vector.union.UnionDescriptor.*;
+import static org.geotoolkit.parameter.Parameters.*;
+
 /**
  * Process compute union between two FeatureCollection
  * It is usually called "Spatial OR".
@@ -58,13 +58,13 @@ import org.opengis.util.FactoryException;
  * @author Quentin Boileau
  * @module pending
  */
-public class Union extends AbstractProcess {
+public class UnionProcess extends AbstractProcess {
 
     /**
      * Default constructor
      */
-    public Union(final ParameterValueGroup input) {
-        super(UnionDescriptor.INSTANCE, input);
+    public UnionProcess(final ParameterValueGroup input) {
+        super(INSTANCE, input);
     }
 
     /**
@@ -72,17 +72,14 @@ public class Union extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        fireStartEvent(new ProcessEvent(this));
-        final FeatureCollection<Feature> inputFeatureList = Parameters.value(UnionDescriptor.FEATURE_IN, inputParameters);
-        final FeatureCollection<Feature> unionFeatureList = Parameters.value(UnionDescriptor.FEATURE_UNION, inputParameters);
-        final String inputGeometryName = Parameters.value(UnionDescriptor.INPUT_GEOMETRY_NAME, inputParameters);
-        final String unionGeometryName = Parameters.value(UnionDescriptor.UNION_GEOMETRY_NAME, inputParameters);
-
+        final FeatureCollection<Feature> inputFeatureList   = value(FEATURE_IN, inputParameters);
+        final FeatureCollection<Feature> unionFeatureList   = value(FEATURE_UNION, inputParameters);
+        final String inputGeometryName                      = value(INPUT_GEOMETRY_NAME, inputParameters);
+        final String unionGeometryName                      = value(UNION_GEOMETRY_NAME, inputParameters);
 
         final FeatureCollection resultFeatureList = new UnionFeatureCollection(inputFeatureList, unionFeatureList, inputGeometryName, unionGeometryName);
 
-        outputParameters.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
-        fireEndEvent(new ProcessEvent(this, null,100));
+        getOrCreate(FEATURE_OUT, outputParameters).setValue(resultFeatureList);
     }
 
     /**
@@ -112,7 +109,7 @@ public class Union extends AbstractProcess {
          * and united intersections. if return nothing we have all the geometry feature, else we add the difference
          */
         Geometry inputGeometry = new GeometryFactory().buildGeometry(Collections.EMPTY_LIST);
-        for (Property inputProperty : inputFeature.getProperties()) {
+        for (final Property inputProperty : inputFeature.getProperties()) {
             if (inputProperty.getDescriptor() instanceof GeometryDescriptor) {
                 if (inputProperty.getName().getLocalPart().equals(inputGeomName)) {
                     inputGeometry = (Geometry) inputProperty.getValue();
@@ -160,7 +157,7 @@ public class Union extends AbstractProcess {
         if (remainingGeometry.isEmpty() && !isIntersected) {
             final Feature remainingFeature = FeatureUtilities.defaultFeature(newFeatureType, inputFeature.getIdentifier().getID());
             //Copy none Geometry attributes
-            for (Property inputProperty : inputFeature.getProperties()) {
+            for (final Property inputProperty : inputFeature.getProperties()) {
                 if (!(inputProperty.getDescriptor() instanceof GeometryDescriptor)) {
                     remainingFeature.getProperty(inputProperty.getName()).setValue(inputProperty.getValue());
                 }
@@ -179,7 +176,7 @@ public class Union extends AbstractProcess {
         if(!(remainingGeometry.isEmpty())) {
             final Feature remainingFeature = FeatureUtilities.defaultFeature(newFeatureType, inputFeature.getIdentifier().getID());
             //Copy none Geometry attributes
-            for (Property inputProperty : inputFeature.getProperties()) {
+            for (final Property inputProperty : inputFeature.getProperties()) {
                 if (!(inputProperty.getDescriptor() instanceof GeometryDescriptor)) {
                     remainingFeature.getProperty(inputProperty.getName()).setValue(inputProperty.getValue());
                 }
@@ -199,7 +196,7 @@ public class Union extends AbstractProcess {
          * If yes, we delete them from the returning FeatureCollection
          * else we add them into the featureList
          */
-        for (Feature createdFeature : resultFeatureList) {
+        for (final Feature createdFeature : resultFeatureList) {
             final String createdFeatureID = createdFeature.getIdentifier().getID();
             if (featureList.contains(createdFeatureID)) {
                 featureToRemove.add(createdFeature);
@@ -240,13 +237,13 @@ public class Union extends AbstractProcess {
             final Feature resultFeature = FeatureUtilities.defaultFeature(newFeatureType, featureID);
 
             //copy none Geometry attributes
-            for (Property unionProperty : unionFeature.getProperties()) {
+            for (final Property unionProperty : unionFeature.getProperties()) {
                 if (!(unionProperty.getDescriptor() instanceof GeometryDescriptor)) {
                     resultFeature.getProperty(unionProperty.getName()).setValue(unionProperty.getValue());
                 }
             }
 
-            for (Property inputProperty : inputFeature.getProperties()) {
+            for (final Property inputProperty : inputFeature.getProperties()) {
                 if (!(inputProperty.getDescriptor() instanceof GeometryDescriptor)) {
                     resultFeature.getProperty(inputProperty.getName()).setValue(inputProperty.getValue());
                 }

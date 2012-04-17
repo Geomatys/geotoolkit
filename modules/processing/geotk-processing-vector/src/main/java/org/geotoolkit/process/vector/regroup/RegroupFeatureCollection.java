@@ -61,7 +61,7 @@ public class RegroupFeatureCollection extends WrapFeatureCollection {
         super(originalFC);
         this.regroupAttribute = regroupAttribute;
         this.geometryName = geometryName;
-        this.newFeatureType = Regroup.regroupFeatureType(originalFC.getFeatureType(), geometryName, regroupAttribute);
+        this.newFeatureType = RegroupProcess.regroupFeatureType(originalFC.getFeatureType(), geometryName, regroupAttribute);
     }
 
     /**
@@ -91,10 +91,10 @@ public class RegroupFeatureCollection extends WrapFeatureCollection {
             if(attributeValue != null){
                 final FeatureCollection<Feature> fiteredFC = (FeatureCollection<Feature>) 
                         super.getOriginalFeatureCollection().subCollection(filter(attributeValue));
-                return Regroup.regroupFeature(regroupAttribute, attributeValue, newFeatureType, geometryName, fiteredFC);
+                return RegroupProcess.regroupFeature(regroupAttribute, attributeValue, newFeatureType, geometryName, fiteredFC);
             }else{
                 //In this case the request is Regroup.regroupFeature(null, null, newFeatureType, geometryName, originalFC);
-                return Regroup.regroupFeature(regroupAttribute, attributeValue, newFeatureType, geometryName, 
+                return RegroupProcess.regroupFeature(regroupAttribute, attributeValue, newFeatureType, geometryName, 
                         (FeatureCollection<Feature>)super.getOriginalFeatureCollection());
             }
 
@@ -114,7 +114,7 @@ public class RegroupFeatureCollection extends WrapFeatureCollection {
      * @return a Collection of Objects
      */
     private Collection<Object> getAttributeValues() {
-        return Regroup.getAttributeValues(regroupAttribute, (FeatureCollection<Feature>) super.getOriginalFeatureCollection());
+        return RegroupProcess.getAttributeValues(regroupAttribute, (FeatureCollection<Feature>) super.getOriginalFeatureCollection());
     }
 
     /**

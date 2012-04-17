@@ -18,9 +18,6 @@ package org.geotoolkit.process.vector.buffer;
 
 import com.vividsolutions.jts.geom.Geometry;
 
-import javax.measure.quantity.Length;
-import javax.measure.unit.Unit;
-
 import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.memory.WrapFeatureCollection;
@@ -72,7 +69,7 @@ public class BufferFeatureCollection extends WrapFeatureCollection {
     @Override
     public Feature modify(final Feature original) throws DataStoreRuntimeException {
         try {
-            return Buffer.makeBuffer(original, newFeatureType, inputDistance, inputLenient);
+            return BufferProcess.makeBuffer(original, newFeatureType, inputDistance, inputLenient);
         } catch (FactoryException ex) {
             throw new DataStoreRuntimeException(ex);
         } catch (MismatchedDimensionException ex) {

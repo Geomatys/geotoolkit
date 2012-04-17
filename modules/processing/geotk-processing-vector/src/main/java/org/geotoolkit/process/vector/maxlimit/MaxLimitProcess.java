@@ -18,26 +18,26 @@ package org.geotoolkit.process.vector.maxlimit;
 
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.memory.GenericMaxFeatureIterator;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.AbstractProcess;
-import org.geotoolkit.process.ProcessEvent;
-import org.geotoolkit.process.vector.VectorDescriptor;
 
 import org.opengis.feature.Feature;
 import org.opengis.parameter.ParameterValueGroup;
+
+import static org.geotoolkit.process.vector.maxlimit.MaxLimitDescriptor.*;
+import static org.geotoolkit.parameter.Parameters.*;
 
 /**
  * Limit a FeatureCollection returns to a maximum
  * @author Quentin Boileau
  * @module pending
  */
-public class MaxLimit extends AbstractProcess {
+public class MaxLimitProcess extends AbstractProcess {
 
     /**
      * Default constructor
      */
-    public MaxLimit(final ParameterValueGroup input) {
-        super(MaxLimitDescriptor.INSTANCE,input);
+    public MaxLimitProcess(final ParameterValueGroup input) {
+        super(INSTANCE,input);
     }
 
     /**
@@ -45,13 +45,11 @@ public class MaxLimit extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        fireStartEvent(new ProcessEvent(this));
-        final FeatureCollection<Feature> inputFeatureList = Parameters.value(MaxLimitDescriptor.FEATURE_IN, inputParameters);
-        final int max = Parameters.value(MaxLimitDescriptor.MAX_IN, inputParameters);
+        final FeatureCollection<Feature> inputFeatureList   = value(FEATURE_IN, inputParameters);
+        final int max                                       = value(MAX_IN, inputParameters);
 
         final FeatureCollection resultFeatureList = GenericMaxFeatureIterator.wrap(inputFeatureList, max);
-
-        outputParameters.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
-        fireEndEvent(new ProcessEvent(this,null,100));
+        
+        getOrCreate(FEATURE_OUT, outputParameters).setValue(resultFeatureList);
     }
 }

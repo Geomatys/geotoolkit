@@ -14,30 +14,29 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.process.vector.filter;
+package org.geotoolkit.process.vector.affinetransform;
 
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.memory.GenericFilterFeatureIterator;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.AbstractProcess;
-import org.geotoolkit.process.ProcessEvent;
-import org.geotoolkit.process.vector.VectorDescriptor;
 
 import org.opengis.feature.Feature;
 import org.opengis.parameter.ParameterValueGroup;
 
+import static org.geotoolkit.process.vector.affinetransform.AffineTransformDescriptor.*;
+import static org.geotoolkit.parameter.Parameters.*;
+
 /**
- * Adding on the fly attributes of Feature contents.
+ * Apply an affine transformation to all FeatureCollection geometries
  * @author Quentin Boileau
  * @module pending
  */
-public class Filter extends AbstractProcess {
+public class AffineTransformProcess extends AbstractProcess {
 
     /**
      * Default constructor
      */
-    public Filter(final ParameterValueGroup input) {
-        super(FilterDescriptor.INSTANCE,input);
+    public AffineTransformProcess(final ParameterValueGroup input) {
+        super(INSTANCE,input);
     }
 
     /**
@@ -45,11 +44,11 @@ public class Filter extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection<Feature> inputFeatureList = Parameters.value(FilterDescriptor.FEATURE_IN, inputParameters);
-        final org.opengis.filter.Filter filter = Parameters.value(FilterDescriptor.FILTER_IN, inputParameters);
+        final FeatureCollection<Feature> inputFeatureList   = value(FEATURE_IN, inputParameters);
+        final java.awt.geom.AffineTransform transform       = value(TRANSFORM_IN, inputParameters);
 
-        final FeatureCollection resultFeatureList = GenericFilterFeatureIterator.wrap(inputFeatureList, filter);
-
-        outputParameters.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
+        final FeatureCollection<Feature> resultFeatureList = new AffineTransformFeatureCollection(inputFeatureList, transform);
+        
+        getOrCreate(FEATURE_OUT, outputParameters).setValue(resultFeatureList);
     }
 }

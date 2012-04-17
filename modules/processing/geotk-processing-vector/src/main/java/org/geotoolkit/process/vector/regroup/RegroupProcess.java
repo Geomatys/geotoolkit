@@ -30,10 +30,7 @@ import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.AbstractProcess;
-import org.geotoolkit.process.ProcessEvent;
-import org.geotoolkit.process.vector.VectorDescriptor;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
@@ -44,19 +41,22 @@ import org.opengis.feature.type.GeometryType;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
 
+import static org.geotoolkit.process.vector.regroup.RegroupDescriptor.*;
+import static org.geotoolkit.parameter.Parameters.*;
+
 /**
  * Regroup features and there geometries on a specify attribute name. Each different values of this
  * attribute generate a Feature.
  * @author Quentin Boileau
  * @module pending
  */
-public class Regroup extends AbstractProcess {
+public class RegroupProcess extends AbstractProcess {
 
     /**
      * Default constructor
      */
-    public Regroup(final ParameterValueGroup input) {
-        super(RegroupDescriptor.INSTANCE,input);
+    public RegroupProcess(final ParameterValueGroup input) {
+        super(INSTANCE,input);
     }
 
     /**
@@ -64,15 +64,13 @@ public class Regroup extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        fireStartEvent(new ProcessEvent(this));
-        final FeatureCollection<Feature> inputFeatureList = Parameters.value(RegroupDescriptor.FEATURE_IN, inputParameters);
-        final String inputAttributeName = Parameters.value(RegroupDescriptor.REGROUP_ATTRIBUTE, inputParameters);
-        final String inputGeometryName = Parameters.value(RegroupDescriptor.GEOMETRY_NAME, inputParameters);
+        final FeatureCollection<Feature> inputFeatureList   = value(FEATURE_IN, inputParameters);
+        final String inputAttributeName                     = value(REGROUP_ATTRIBUTE, inputParameters);
+        final String inputGeometryName                      = value(GEOMETRY_NAME, inputParameters);
 
         final FeatureCollection resultFeatureList = new RegroupFeatureCollection(inputFeatureList, inputAttributeName, inputGeometryName);
 
-        outputParameters.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
-        fireEndEvent(new ProcessEvent(this, null,100));
+        getOrCreate(FEATURE_OUT, outputParameters).setValue(resultFeatureList);
     }
 
     /**
@@ -135,7 +133,7 @@ public class Regroup extends AbstractProcess {
         }
 
         ftb.setDefaultGeometry(geometryName);
-        for (String delPropertyDesc : listToRemove) {
+        for (final String delPropertyDesc : listToRemove) {
             ftb.remove(delPropertyDesc);
         }
 
@@ -166,7 +164,7 @@ public class Regroup extends AbstractProcess {
                 if (geometryName == null) {
                     geometryName = feature.getDefaultGeometryProperty().getName().getLocalPart();
                 }
-                for (Property property : feature.getProperties()) {
+                for (final Property property : feature.getProperties()) {
                     //if property is a geometry
                     if (property.getDescriptor() instanceof GeometryDescriptor) {
                         //if it's the property we needed
@@ -213,7 +211,7 @@ public class Regroup extends AbstractProcess {
                 while (featureIter.hasNext()) {
                     final Feature feature = featureIter.next();
 
-                    for (Property property : feature.getProperties()) {
+                    for (final Property property : feature.getProperties()) {
                         //if property is not a geometry
                         if (!(property.getDescriptor() instanceof GeometryDescriptor)) {
                             //it's the property we needed

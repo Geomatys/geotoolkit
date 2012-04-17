@@ -14,33 +14,33 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.process.vector.startoffset;
+package org.geotoolkit.process.vector.sort;
 
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.memory.GenericSortByFeatureIterator;
-import org.geotoolkit.data.memory.GenericStartIndexFeatureIterator;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.AbstractProcess;
-import org.geotoolkit.process.ProcessEvent;
 import org.geotoolkit.process.vector.VectorDescriptor;
 
 import org.opengis.feature.Feature;
-import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 
+import static org.geotoolkit.process.vector.sort.SortByDescriptor.*;
+import static org.geotoolkit.parameter.Parameters.*;
+
 /**
- * Start FeatureCollection iteration at given offset
+ * Sort a FeatureCollection.
  * @see org.geotoolkit.data.memory.GenericSortByFeatureIterator
  * @author Quentin Boileau
  * @module pending
  */
-public class StartOffset extends AbstractProcess {
+public class SortByProcess extends AbstractProcess {
 
     /**
      * Default constructor
      */
-    public StartOffset(final ParameterValueGroup input) {
-        super(StartOffsetDescriptor.INSTANCE,input);
+    public SortByProcess(final ParameterValueGroup input) {
+        super(INSTANCE, input);
     }
 
     /**
@@ -48,13 +48,12 @@ public class StartOffset extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        fireStartEvent(new ProcessEvent(this));
-        final FeatureCollection<Feature> inputFeatureList = Parameters.value(StartOffsetDescriptor.FEATURE_IN, inputParameters);
-        final int offset = Parameters.value(StartOffsetDescriptor.OFFSET_IN, inputParameters);
+        final FeatureCollection<Feature> inputFeatureList   = Parameters.value(FEATURE_IN, inputParameters);
+        final org.opengis.filter.sort.SortBy[] sorter       = Parameters.value(SORTER_IN, inputParameters);
 
-        final FeatureCollection resultFeatureList = GenericStartIndexFeatureIterator.wrap(inputFeatureList, offset);
+        final FeatureCollection resultFeatureList = GenericSortByFeatureIterator.wrap(inputFeatureList, sorter);
 
+        getOrCreate(FEATURE_OUT, outputParameters).setValue(resultFeatureList);
         outputParameters.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
-        fireEndEvent(new ProcessEvent(this,null,100));
     }
 }

@@ -66,6 +66,6 @@ public final class CentroidDescriptor extends VectorDescriptor {
      */
     @Override
     public Process createProcess(final ParameterValueGroup input) {
-        return new Centroid(input);
+        return new CentroidProcess(input);
     }
 }

@@ -23,15 +23,16 @@ import java.util.Collections;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.AbstractProcess;
-import org.geotoolkit.process.ProcessEvent;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
+import static org.geotoolkit.process.vector.convexhull.ConvexHullDescriptor.*;
+import static org.geotoolkit.parameter.Parameters.*;
 
 /**
  * Compute the convex hull from a FeatureCollection. An optional parameter
@@ -40,13 +41,13 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Quentin Boileau
  * @module pending
  */
-public class ConvexHull extends AbstractProcess {
+public class ConvexHullProcess extends AbstractProcess {
 
     /**
      * Default constructor
      */
-    public ConvexHull(final ParameterValueGroup input) {
-        super(ConvexHullDescriptor.INSTANCE,input);
+    public ConvexHullProcess(final ParameterValueGroup input) {
+        super(INSTANCE,input);
     }
 
     /**
@@ -54,12 +55,12 @@ public class ConvexHull extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection<Feature> inputFeatureList = Parameters.value(ConvexHullDescriptor.FEATURE_IN, inputParameters);
-        final String geometryName = Parameters.value(ConvexHullDescriptor.GEOMETRY_NAME, inputParameters);
+        final FeatureCollection<Feature> inputFeatureList   = value(FEATURE_IN, inputParameters);
+        final String geometryName                           = value(GEOMETRY_NAME, inputParameters);
 
         final Geometry hull = computeConvexHull(inputFeatureList, geometryName);
 
-        outputParameters.parameter(ConvexHullDescriptor.GEOMETRY_OUT.getName().getCode()).setValue(hull);
+        getOrCreate(GEOMETRY_OUT, outputParameters).setValue(hull);
     }
 
     /**

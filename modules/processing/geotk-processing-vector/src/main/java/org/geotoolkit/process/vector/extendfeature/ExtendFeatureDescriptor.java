@@ -87,6 +87,6 @@ public final class ExtendFeatureDescriptor extends VectorDescriptor {
      */
     @Override
     public Process createProcess(final ParameterValueGroup input) {
-        return new ExtendFeature(input);
+        return new ExtendFeatureProcess(input);
     }
 }

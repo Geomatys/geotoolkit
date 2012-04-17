@@ -26,10 +26,7 @@ import java.util.List;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.AbstractProcess;
-import org.geotoolkit.process.ProcessEvent;
-import org.geotoolkit.process.vector.VectorDescriptor;
 import org.geotoolkit.process.vector.VectorProcessUtils;
 
 import org.opengis.feature.Feature;
@@ -42,20 +39,23 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
+import static org.geotoolkit.process.vector.clip.ClipDescriptor.*;
+import static org.geotoolkit.parameter.Parameters.*;
+
 /**
  * Process to clip a FeatureCollection using another FeatureCollection
  * @author Quentin Boileau
  * @module pending
  */
-public class Clip extends AbstractProcess {
+public class ClipProcess extends AbstractProcess {
 
     private static final GeometryFactory GF = new GeometryFactory();
 
     /**
      * Default constructor
      */
-    public Clip(final ParameterValueGroup input) {
-        super(ClipDescriptor.INSTANCE, input);
+    public ClipProcess(final ParameterValueGroup input) {
+        super(INSTANCE, input);
     }
 
     /**
@@ -63,12 +63,12 @@ public class Clip extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection<Feature> inputFeatureList = Parameters.value(ClipDescriptor.FEATURE_IN, inputParameters);
-        final FeatureCollection<Feature> inputFeatureClippingList = Parameters.value(ClipDescriptor.FEATURE_CLIP, inputParameters);
+        final FeatureCollection<Feature> inputFeatureList           = value(FEATURE_IN, inputParameters);
+        final FeatureCollection<Feature> inputFeatureClippingList   = value(FEATURE_CLIP, inputParameters);
 
         final FeatureCollection resultFeatureList = new ClipFeatureCollection(inputFeatureList,inputFeatureClippingList);
 
-        outputParameters.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
+        getOrCreate(FEATURE_OUT, outputParameters).setValue(resultFeatureList);
     }
 
     /**

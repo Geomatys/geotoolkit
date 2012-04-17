@@ -79,6 +79,6 @@ public final class RetypeDescriptor extends VectorDescriptor {
      */
     @Override
     public Process createProcess(final ParameterValueGroup input) {
-        return new Retype(input);
+        return new RetypeProcess(input);
     }
 }

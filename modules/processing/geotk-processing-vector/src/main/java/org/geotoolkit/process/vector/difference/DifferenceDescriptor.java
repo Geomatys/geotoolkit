@@ -80,6 +80,6 @@ public final class DifferenceDescriptor extends VectorDescriptor {
      */
     @Override
     public Process createProcess(final ParameterValueGroup input) {
-        return new Difference(input);
+        return new DifferenceProcess(input);
     }
 }

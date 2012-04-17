@@ -78,7 +78,7 @@ public class MergeFeatureCollection extends WrapFeatureCollection {
      */
     protected Feature modify2(final Feature feature, final Map<Name,ObjectConverter> map) {
         try {
-            return Merge.mergeFeature(feature, newFeatureType, map);
+            return MergeProcess.mergeFeature(feature, newFeatureType, map);
         } catch (NonconvertibleObjectException ex) {
             throw new DataStoreRuntimeException(ex);
         }
@@ -124,7 +124,7 @@ public class MergeFeatureCollection extends WrapFeatureCollection {
             if(nbFC > 0){
                 nextFC = fcList[0];
                 ite = nextFC.iterator();
-                conversionMap = Merge.createConversionMap(newFeatureType, nextFC.getFeatureType());
+                conversionMap = MergeProcess.createConversionMap(newFeatureType, nextFC.getFeatureType());
             }else{
                 nextFC = null;
                 ite = null;
@@ -197,7 +197,7 @@ public class MergeFeatureCollection extends WrapFeatureCollection {
                             fcIter++;
                             nextFC = fcList[fcIter];
                             ite = nextFC.iterator();
-                            conversionMap = Merge.createConversionMap(newFeatureType, nextFC.getFeatureType());
+                            conversionMap = MergeProcess.createConversionMap(newFeatureType, nextFC.getFeatureType());
 
                             
                         } catch (NonconvertibleObjectException ex) {

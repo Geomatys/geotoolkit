@@ -28,9 +28,6 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.feature.FeatureTypeBuilder;
@@ -51,10 +48,10 @@ import static org.junit.Assert.*;
 
 /**
  * JUnit test of Regroup process
- * @author Quentin Boileau
- * @module pending
+ *
+ * @author Quentin Boileau @module pending
  */
-public class RegroupTest extends AbstractProcessTest{
+public class RegroupTest extends AbstractProcessTest {
 
     private static SimpleFeatureBuilder sfb;
     private static final GeometryFactory GF = new GeometryFactory();
@@ -64,36 +61,8 @@ public class RegroupTest extends AbstractProcessTest{
         super("regroup");
     }
 
-    //No attribut
     @Test
-    public void testRegroupDefault() throws ProcessException, NoSuchIdentifierException{
-
-        // Inputs
-        final FeatureCollection<?> featureList = buildFeatureList();
-        // Process
-        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "regroup");
-
-        ParameterValueGroup in = desc.getInputDescriptor().createValue();
-        in.parameter("feature_in").setValue(featureList);
-        in.parameter("geometry_name").setValue("geom1");
-        org.geotoolkit.process.Process proc = desc.createProcess(in);
-
-        //Features out
-        final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.call().parameter("feature_out").getValue();
-
-        /*for (Feature feature : featureListOut) {
-            System.out.println(feature);
-        }*/
-        //Expected Features out
-        /*final FeatureCollection<?> featureListResult = buildResultList2();
-        assertEquals(featureListOut.getFeatureType(), featureListResult.getFeatureType());
-        assertEquals(featureListOut.getID(), featureListResult.getID());
-        assertEquals(featureListOut.size(), featureListResult.size());
-        assertTrue(featureListOut.containsAll(featureListResult));*/
-    }
-    
-    @Test
-    public void testRegroupDefaultGeometry() throws ProcessException, NoSuchIdentifierException{
+    public void testRegroupDefaultGeometry() throws ProcessException, NoSuchIdentifierException, FactoryException {
 
         // Inputs
         final FeatureCollection<?> featureList = buildFeatureList();
@@ -117,7 +86,7 @@ public class RegroupTest extends AbstractProcessTest{
     }
 
     @Test
-    public void testRegroupGeometrySelected() throws ProcessException, NoSuchIdentifierException{
+    public void testRegroupGeometrySelected() throws ProcessException, NoSuchIdentifierException, FactoryException {
 
         // Inputs
         final FeatureCollection<?> featureList = buildFeatureList();
@@ -140,8 +109,6 @@ public class RegroupTest extends AbstractProcessTest{
         assertEquals(featureListOut.size(), featureListResult.size());
         assertTrue(featureListOut.containsAll(featureListResult));
     }
-    
-    
 
     private static SimpleFeatureType createSimpleType() throws NoSuchAuthorityCodeException, FactoryException {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
@@ -180,16 +147,9 @@ public class RegroupTest extends AbstractProcessTest{
         return sft;
     }
 
-    
-    private static FeatureCollection<?> buildFeatureList() {
+    private static FeatureCollection<?> buildFeatureList() throws FactoryException {
 
-        try {
-            type = createSimpleType();
-        } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(RegroupTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FactoryException ex) {
-            Logger.getLogger(RegroupTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        type = createSimpleType();
 
         final FeatureCollection<Feature> featureList = DataUtilities.collection("", type);
 
@@ -281,7 +241,7 @@ public class RegroupTest extends AbstractProcessTest{
         Feature myFeature5;
         ring = GF.createLinearRing(
                 new Coordinate[]{
-                   new Coordinate(6.0, 7.0),
+                    new Coordinate(6.0, 7.0),
                     new Coordinate(6.0, 8.0),
                     new Coordinate(7.0, 8.0),
                     new Coordinate(7.0, 7.0),
@@ -304,7 +264,7 @@ public class RegroupTest extends AbstractProcessTest{
         Feature myFeature6;
         ring = GF.createLinearRing(
                 new Coordinate[]{
-                     new Coordinate(15.0, 10.0),
+                    new Coordinate(15.0, 10.0),
                     new Coordinate(15.0, 11.0),
                     new Coordinate(16.0, 11.0),
                     new Coordinate(16.0, 10.0),
@@ -322,31 +282,22 @@ public class RegroupTest extends AbstractProcessTest{
         sfb.set("height", "2");
         sfb.set("type", "church");
         sfb.set("geom1", GF.createPolygon(ring, null));
-        sfb.set("geom2",GF.createPolygon(ring2, null));
+        sfb.set("geom2", GF.createPolygon(ring2, null));
         myFeature6 = sfb.buildFeature("id-06");
         featureList.add(myFeature6);
 
         return featureList;
     }
 
-  
+    private static FeatureCollection<?> buildResultList1() throws FactoryException {
 
-    private static FeatureCollection<?> buildResultList1() {
-
-
-        try {
-            type = createSimpleResultType();
-        } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(RegroupTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FactoryException ex) {
-            Logger.getLogger(RegroupTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        type = createSimpleResultType();
 
         final FeatureCollection<Feature> featureList = DataUtilities.collection("", type);
 
 
         Feature myFeature1;
-       LinearRing ring = GF.createLinearRing(
+        LinearRing ring = GF.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(5.0, 6.0),
                     new Coordinate(5.0, 7.0),
@@ -356,7 +307,7 @@ public class RegroupTest extends AbstractProcessTest{
                 });
         sfb = new SimpleFeatureBuilder(type);
         sfb.set("height", 3);
-        sfb.set("geom1",GF.createPolygon(ring, null));
+        sfb.set("geom1", GF.createPolygon(ring, null));
         myFeature1 = sfb.buildFeature("height-3");
         featureList.add(myFeature1);
 
@@ -381,14 +332,14 @@ public class RegroupTest extends AbstractProcessTest{
         Polygon poly2 = GF.createPolygon(ring2, null);
         sfb = new SimpleFeatureBuilder(type);
         sfb.set("height", 9);
-        sfb.set("geom1", GF.createMultiPolygon(new Polygon[]{poly1,poly2}));
+        sfb.set("geom1", GF.createMultiPolygon(new Polygon[]{poly1, poly2}));
         myFeature2 = sfb.buildFeature("height-9");
         featureList.add(myFeature2);
 
         Feature myFeature3;
         ring = GF.createLinearRing(
                 new Coordinate[]{
-                     new Coordinate(15.0, 10.0),
+                    new Coordinate(15.0, 10.0),
                     new Coordinate(15.0, 11.0),
                     new Coordinate(16.0, 11.0),
                     new Coordinate(16.0, 10.0),
@@ -415,35 +366,28 @@ public class RegroupTest extends AbstractProcessTest{
         Polygon poly3 = GF.createPolygon(ring2, null);
         sfb = new SimpleFeatureBuilder(type);
         sfb.set("height", 2);
-        sfb.set("geom1", GF.createMultiPolygon(new Polygon[]{poly1,poly2,poly3}));
+        sfb.set("geom1", GF.createMultiPolygon(new Polygon[]{poly1, poly2, poly3}));
         myFeature3 = sfb.buildFeature("height-2");
         featureList.add(myFeature3);
 
 
-        
+
 
         return featureList;
     }
 
-     private static FeatureCollection<?> buildResultList2() {
+    private static FeatureCollection<?> buildResultList2() throws FactoryException {
 
-
-        try {
-            type = createSimpleResultType2();
-        } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(RegroupTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FactoryException ex) {
-            Logger.getLogger(RegroupTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        type = createSimpleResultType2();
 
         final FeatureCollection<Feature> featureList = DataUtilities.collection("", type);
 
 
         Feature myFeature1;
-        Point pt1 = GF.createPoint(new Coordinate(3,6));
-        Point pt2 = GF.createPoint(new Coordinate(4,7));
-        Point pt3 = GF.createPoint(new Coordinate(5,4));
-        Point pt4 = GF.createPoint(new Coordinate(5.5,6.5));
+        Point pt1 = GF.createPoint(new Coordinate(3, 6));
+        Point pt2 = GF.createPoint(new Coordinate(4, 7));
+        Point pt3 = GF.createPoint(new Coordinate(5, 4));
+        Point pt4 = GF.createPoint(new Coordinate(5.5, 6.5));
         LineString line1 = GF.createLineString(
                 new Coordinate[]{
                     new Coordinate(8.0, 0.0),
@@ -464,15 +408,15 @@ public class RegroupTest extends AbstractProcessTest{
                     new Coordinate(7.4, 0.6),
                     new Coordinate(9.0, 3.0)
                 });
-        GeometryCollection collec = GF.createGeometryCollection(new Geometry[]{pt1,pt2,pt3,pt4,line1,line2,line3,line4});
+        GeometryCollection collec = GF.createGeometryCollection(new Geometry[]{pt1, pt2, pt3, pt4, line1, line2, line3, line4});
         sfb = new SimpleFeatureBuilder(type);
         sfb.set("type", "office");
-        sfb.set("geom2",collec);
+        sfb.set("geom2", collec);
         myFeature1 = sfb.buildFeature("type-office");
         featureList.add(myFeature1);
 
         Feature myFeature2;
-        pt1 = GF.createPoint(new Coordinate(3.5,3.5));
+        pt1 = GF.createPoint(new Coordinate(3.5, 3.5));
         LinearRing ring = GF.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(8.0, 0.0),
@@ -483,19 +427,18 @@ public class RegroupTest extends AbstractProcessTest{
         Polygon poly = GF.createPolygon(ring, null);
         sfb = new SimpleFeatureBuilder(type);
         sfb.set("type", "church");
-        sfb.set("geom2", GF.createGeometryCollection(new Geometry[]{pt1,poly}));
+        sfb.set("geom2", GF.createGeometryCollection(new Geometry[]{pt1, poly}));
         myFeature2 = sfb.buildFeature("type-church");
         featureList.add(myFeature2);
 
         Feature myFeature3;
-      
+
         sfb = new SimpleFeatureBuilder(type);
         sfb.set("type", "post office");
-        sfb.set("geom2", GF.createPoint(new Coordinate(10,5)));
+        sfb.set("geom2", GF.createPoint(new Coordinate(10, 5)));
         myFeature3 = sfb.buildFeature("type-post office");
         featureList.add(myFeature3);
 
         return featureList;
     }
-
 }

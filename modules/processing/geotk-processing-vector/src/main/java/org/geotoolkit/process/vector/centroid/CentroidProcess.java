@@ -14,17 +14,13 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.process.vector.differencegeometry;
+package org.geotoolkit.process.vector.centroid;
 
 import com.vividsolutions.jts.geom.Geometry;
 
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.AbstractProcess;
-import org.geotoolkit.process.ProcessEvent;
-import org.geotoolkit.process.vector.VectorDescriptor;
-import org.geotoolkit.process.vector.VectorProcessUtils;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
@@ -32,18 +28,21 @@ import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
 
+import static org.geotoolkit.process.vector.centroid.CentroidDescriptor.*;
+import static org.geotoolkit.parameter.Parameters.*;
+
 /**
- * Process to clip the difference with a FeatureCollection using a geometry
+ * Process to extract geometry centroid from a FeatureCollection.
  * @author Quentin Boileau
  * @module pending
  */
-public class DifferenceGeometry extends AbstractProcess {
+public class CentroidProcess extends AbstractProcess {
 
     /**
-     * Default constructor
+     * Default Constructor
      */
-    public DifferenceGeometry(final ParameterValueGroup input) {
-        super(DifferenceGeometryDescriptor.INSTANCE,input);
+    public CentroidProcess(final ParameterValueGroup input) {
+        super(INSTANCE,input);
     }
 
     /**
@@ -51,36 +50,29 @@ public class DifferenceGeometry extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection<Feature> inputFeatureList = Parameters.value(DifferenceGeometryDescriptor.FEATURE_IN, inputParameters);
-        final Geometry inputDifferenceGeometry = Parameters.value(DifferenceGeometryDescriptor.DIFF_GEOMETRY_IN, inputParameters);
+        final FeatureCollection<Feature> inputFeatureList = value(FEATURE_IN, inputParameters);
 
-        final FeatureCollection resultFeatureList =
-                new DifferenceGeometryFeatureCollection(inputFeatureList,inputDifferenceGeometry);
-
-        outputParameters.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
+        final FeatureCollection resultFeatureList = new CentroidFeatureCollection(inputFeatureList);
+        
+        getOrCreate(FEATURE_OUT, outputParameters).setValue(resultFeatureList);
     }
 
     /**
-     * Clip difference the feature with the Geometry
+     * Create a new Feature with centroid
      * @param oldFeature Feature
      * @param newType the new FeatureType for the Feature
-     * @param geometry th geometry
      * @return Feature
      */
-    public static Feature clipFeature(final Feature oldFeature, final FeatureType newType, final Geometry geometry) {
+    public static Feature changeFeature(final Feature oldFeature, final FeatureType newType) {
 
+        //create result feature based on the new feature type and th input feature
         final Feature resultFeature = FeatureUtilities.defaultFeature(newType, oldFeature.getIdentifier().getID());
 
-
         for (Property property : oldFeature.getProperties()) {
+            //if the propperty is a geometry
             if (property.getDescriptor() instanceof GeometryDescriptor) {
-                final Geometry diffGeometry = VectorProcessUtils.geometryDifference((Geometry) property.getValue(), geometry);
-
-                if(diffGeometry != null) {
-                    resultFeature.getProperty(property.getName()).setValue(diffGeometry);
-                }else{
-                    return null;
-                }
+                final Geometry inputFeatureGeometry = (Geometry) property.getValue();
+                resultFeature.getProperty(property.getName()).setValue(inputFeatureGeometry.getCentroid());
             } else {
                 resultFeature.getProperty(property.getName()).setValue(property.getValue());
             }

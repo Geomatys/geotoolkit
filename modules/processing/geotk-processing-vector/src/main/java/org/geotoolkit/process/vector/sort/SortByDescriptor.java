@@ -77,6 +77,6 @@ public final class SortByDescriptor extends VectorDescriptor {
      */
     @Override
     public Process createProcess(final ParameterValueGroup input) {
-        return new SortBy(input);
+        return new SortByProcess(input);
     }
 }

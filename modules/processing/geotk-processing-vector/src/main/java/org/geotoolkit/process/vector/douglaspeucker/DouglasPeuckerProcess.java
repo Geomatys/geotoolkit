@@ -22,17 +22,12 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
 
 import java.util.Collections;
-import javax.measure.quantity.Length;
 import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
 
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.AbstractProcess;
-import org.geotoolkit.process.ProcessEvent;
-import org.geotoolkit.process.vector.VectorDescriptor;
 import org.geotoolkit.process.vector.VectorProcessUtils;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
@@ -48,6 +43,9 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
+import static org.geotoolkit.process.vector.douglaspeucker.DouglasPeuckerDescriptor.*;
+import static org.geotoolkit.parameter.Parameters.*;
+
 /**
  * Process to simplify geometry contained into a Features.
  * If the simplification accuracy is more than geometry envelope width or height
@@ -57,13 +55,13 @@ import org.opengis.util.FactoryException;
  * @author Quentin Boileau
  * @module pending
  */
-public class DouglasPeucker extends AbstractProcess {
+public class DouglasPeuckerProcess extends AbstractProcess {
 
     /**
      * Default constructor
      */
-    public DouglasPeucker(final ParameterValueGroup input) {
-        super(DouglasPeuckerDescriptor.INSTANCE,input);
+    public DouglasPeuckerProcess(final ParameterValueGroup input) {
+        super(INSTANCE,input);
     }
 
     /**
@@ -71,15 +69,15 @@ public class DouglasPeucker extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection<Feature> inputFeatureList = Parameters.value(DouglasPeuckerDescriptor.FEATURE_IN, inputParameters);
-        final double inputAccuracy = Parameters.value(DouglasPeuckerDescriptor.ACCURACY_IN, inputParameters).doubleValue();
-        final boolean inputBehavior = Parameters.value(DouglasPeuckerDescriptor.DEL_SMALL_GEO_IN, inputParameters);
-        final boolean inputLenient = Parameters.value(DouglasPeuckerDescriptor.LENIENT_TRANSFORM_IN, inputParameters);
+        final FeatureCollection<Feature> inputFeatureList   = value(FEATURE_IN, inputParameters);
+        final double inputAccuracy                          = value(ACCURACY_IN, inputParameters).doubleValue();
+        final boolean inputBehavior                         = value(DEL_SMALL_GEO_IN, inputParameters);
+        final boolean inputLenient                          = value(LENIENT_TRANSFORM_IN, inputParameters);
 
         final FeatureCollection resultFeatureList =
                 new DouglasPeuckerFeatureCollection(inputFeatureList, inputAccuracy, inputBehavior, inputLenient);
 
-        outputParameters.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
+        getOrCreate(FEATURE_OUT, outputParameters).setValue(resultFeatureList);
     }
 
     /**

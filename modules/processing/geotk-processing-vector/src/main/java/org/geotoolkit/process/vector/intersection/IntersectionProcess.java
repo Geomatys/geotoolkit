@@ -17,11 +17,8 @@
 package org.geotoolkit.process.vector.intersection;
 
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.AbstractProcess;
-import org.geotoolkit.process.ProcessEvent;
 import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.process.vector.VectorDescriptor;
 import org.geotoolkit.process.vector.VectorProcessUtils;
 
 import org.opengis.feature.Feature;
@@ -31,19 +28,22 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
+import static org.geotoolkit.process.vector.intersection.IntersectionDescriptor.*;
+import static org.geotoolkit.parameter.Parameters.*;
+
 /**
  * Generate a FeatureCollection where each Feature are the intersections of the two input
  * FeatureCollection's geometries.It is usually called "Spatial AND".
  * @author Quentin Boileau
  * @module pending
  */
-public class Intersection extends AbstractProcess {
+public class IntersectionProcess extends AbstractProcess {
 
     /**
      * Default constructor
      */
-    public Intersection(final ParameterValueGroup input) {
-        super(IntersectionDescriptor.INSTANCE,input);
+    public IntersectionProcess(final ParameterValueGroup input) {
+        super(INSTANCE,input);
     }
 
     /**
@@ -51,13 +51,13 @@ public class Intersection extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection<Feature> inputFeatureList = Parameters.value(IntersectionDescriptor.FEATURE_IN, inputParameters);
-        final FeatureCollection<Feature> inputFeatureIntersectionList = Parameters.value(IntersectionDescriptor.FEATURE_INTER, inputParameters);
-        final String inputGeometryName = Parameters.value(IntersectionDescriptor.GEOMETRY_NAME, inputParameters);
+        final FeatureCollection<Feature> inputFeatureList               = value(FEATURE_IN, inputParameters);
+        final FeatureCollection<Feature> inputFeatureIntersectionList   = value(FEATURE_INTER, inputParameters);
+        final String inputGeometryName                                  = value(GEOMETRY_NAME, inputParameters);
 
         final FeatureCollection resultFeatureList = new IntersectionFeatureCollection(inputFeatureList, inputFeatureIntersectionList, inputGeometryName);
 
-        outputParameters.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
+        getOrCreate(FEATURE_OUT, outputParameters).setValue(resultFeatureList);
     }
 
     /**

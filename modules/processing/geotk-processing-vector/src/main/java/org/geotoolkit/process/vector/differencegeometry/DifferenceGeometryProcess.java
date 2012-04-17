@@ -14,16 +14,13 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.process.vector.clipgeometry;
+package org.geotoolkit.process.vector.differencegeometry;
 
 import com.vividsolutions.jts.geom.Geometry;
 
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.AbstractProcess;
-import org.geotoolkit.process.ProcessEvent;
-import org.geotoolkit.process.vector.VectorDescriptor;
 import org.geotoolkit.process.vector.VectorProcessUtils;
 
 import org.opengis.feature.Feature;
@@ -32,18 +29,21 @@ import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
 
+import static org.geotoolkit.process.vector.differencegeometry.DifferenceGeometryDescriptor.*;
+import static org.geotoolkit.parameter.Parameters.*;
+
 /**
- * Process to clip a FeatureCollection using a geometry
+ * Process to clip the difference with a FeatureCollection using a geometry
  * @author Quentin Boileau
  * @module pending
  */
-public class ClipGeometry extends AbstractProcess {
+public class DifferenceGeometryProcess extends AbstractProcess {
 
     /**
      * Default constructor
      */
-    public ClipGeometry(final ParameterValueGroup input) {
-        super(ClipGeometryDescriptor.INSTANCE,input);
+    public DifferenceGeometryProcess(final ParameterValueGroup input) {
+        super(INSTANCE,input);
     }
 
     /**
@@ -51,34 +51,34 @@ public class ClipGeometry extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection<Feature> inputFeatureList = Parameters.value(ClipGeometryDescriptor.FEATURE_IN, inputParameters);
-        final Geometry inputClippingGeometry = Parameters.value(ClipGeometryDescriptor.CLIP_GEOMETRY_IN, inputParameters);
+        final FeatureCollection<Feature> inputFeatureList   = value(FEATURE_IN, inputParameters);
+        final Geometry inputDifferenceGeometry              = value(DIFF_GEOMETRY_IN, inputParameters);
 
-        final FeatureCollection resultFeatureList = new ClipGeometryFeatureCollection(inputFeatureList,inputClippingGeometry);
+        final FeatureCollection resultFeatureList =
+                new DifferenceGeometryFeatureCollection(inputFeatureList,inputDifferenceGeometry);
 
-        outputParameters.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
+        getOrCreate(FEATURE_OUT, outputParameters).setValue(resultFeatureList);
     }
 
     /**
-     * Clip the feature with the Geometry Clipping
+     * Clip difference the feature with the Geometry
      * @param oldFeature Feature
      * @param newType the new FeatureType for the Feature
+     * @param geometry th geometry
      * @return Feature
      */
-    public static Feature clipFeature(final Feature oldFeature, final FeatureType newType, final Geometry clipGeometry) {
+    public static Feature clipFeature(final Feature oldFeature, final FeatureType newType, final Geometry geometry) {
 
         final Feature resultFeature = FeatureUtilities.defaultFeature(newType, oldFeature.getIdentifier().getID());
 
 
         for (Property property : oldFeature.getProperties()) {
             if (property.getDescriptor() instanceof GeometryDescriptor) {
-                final Geometry interGeometry = VectorProcessUtils.geometryIntersection((Geometry) property.getValue(), clipGeometry);
+                final Geometry diffGeometry = VectorProcessUtils.geometryDifference((Geometry) property.getValue(), geometry);
 
-                //test clipping
-                if (interGeometry != null) {
-
-                    resultFeature.getProperty(property.getName()).setValue(interGeometry);
-                } else {
+                if(diffGeometry != null) {
+                    resultFeature.getProperty(property.getName()).setValue(diffGeometry);
+                }else{
                     return null;
                 }
             } else {

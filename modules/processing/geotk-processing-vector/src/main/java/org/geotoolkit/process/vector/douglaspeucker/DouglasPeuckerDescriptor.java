@@ -106,6 +106,6 @@ public final class DouglasPeuckerDescriptor extends VectorDescriptor {
      */
     @Override
     public Process createProcess(final ParameterValueGroup input) {
-        return new DouglasPeucker(input);
+        return new DouglasPeuckerProcess(input);
     }
 }

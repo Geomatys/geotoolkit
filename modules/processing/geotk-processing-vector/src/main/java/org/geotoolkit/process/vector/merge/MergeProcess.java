@@ -25,21 +25,20 @@ import java.util.Map;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.memory.mapping.MappingUtils;
 import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.AbstractProcess;
-import org.geotoolkit.process.ProcessEvent;
-import org.geotoolkit.process.vector.VectorDescriptor;
 import org.geotoolkit.util.converter.ConverterRegistry;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.util.converter.ObjectConverter;
-import org.opengis.feature.Feature;
 
+import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
-
 import org.opengis.parameter.ParameterValueGroup;
+
+import static org.geotoolkit.process.vector.merge.MergeDescriptor.*;
+import static org.geotoolkit.parameter.Parameters.*;
 
 /**
  * Merge many FeatureCollection in one. The fist FeatureCollection found in the input Collection
@@ -47,13 +46,13 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Quentin Boileau
  * @module pending
  */
-public class Merge extends AbstractProcess {
+public class MergeProcess extends AbstractProcess {
 
     /**
      * Default constructor
      */
-    public Merge(final ParameterValueGroup input) {
-        super(MergeDescriptor.INSTANCE, input);
+    public MergeProcess(final ParameterValueGroup input) {
+        super(INSTANCE, input);
     }
 
     /**
@@ -61,13 +60,12 @@ public class Merge extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection[] inputFeaturesList = Parameters.value(MergeDescriptor.FEATURES_IN, inputParameters);
-
+        final FeatureCollection[] inputFeaturesList = value(FEATURES_IN, inputParameters);
         final FeatureCollection firstFC = inputFeaturesList[0];
 
         final FeatureCollection resultFeatureList = new MergeFeatureCollection(inputFeaturesList,firstFC);
 
-        outputParameters.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
+        getOrCreate(FEATURE_OUT, outputParameters).setValue(resultFeatureList);
     }
 
     /**
@@ -87,7 +85,7 @@ public class Merge extends AbstractProcess {
 
         final Feature mergedFeature = FeatureUtilities.defaultFeature(newFeatureType, feature.getIdentifier().getID());
 
-        for (Map.Entry<Name,ObjectConverter> entry : conversionMap.entrySet()) {
+        for (final Map.Entry<Name,ObjectConverter> entry : conversionMap.entrySet()) {
             if(entry.getValue() == null) {
                 mergedFeature.getProperty(entry.getKey()).setValue(feature.getProperty(entry.getKey()).getValue());
             }else{
@@ -115,8 +113,8 @@ public class Merge extends AbstractProcess {
         }
         final Map<Name, ObjectConverter> map = new HashMap<Name, ObjectConverter>();
 
-        for (PropertyDescriptor toConvertDesc : toConvert.getDescriptors()) {
-            for(PropertyDescriptor inputDesc : input.getDescriptors()) {
+        for (final PropertyDescriptor toConvertDesc : toConvert.getDescriptors()) {
+            for(final PropertyDescriptor inputDesc : input.getDescriptors()) {
 
                 //same property name
                 if(toConvertDesc.getName().equals(inputDesc.getName())) {

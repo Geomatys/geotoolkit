@@ -14,31 +14,30 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.process.vector.intersect;
-
-import com.vividsolutions.jts.geom.Geometry;
+package org.geotoolkit.process.vector.filter;
 
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.parameter.Parameters;
+import org.geotoolkit.data.memory.GenericFilterFeatureIterator;
 import org.geotoolkit.process.AbstractProcess;
-import org.geotoolkit.process.ProcessEvent;
-import org.geotoolkit.process.vector.VectorDescriptor;
 
 import org.opengis.feature.Feature;
 import org.opengis.parameter.ParameterValueGroup;
 
+import static org.geotoolkit.process.vector.filter.FilterDescriptor.*;
+import static org.geotoolkit.parameter.Parameters.*;
+
 /**
- * This process return all Features from a FeatureCollection that intersect a geometry.
+ * Adding on the fly attributes of Feature contents.
  * @author Quentin Boileau
  * @module pending
  */
-public class Intersect extends AbstractProcess {
+public class FilterProcess extends AbstractProcess {
 
     /**
      * Default constructor
      */
-    public Intersect(final ParameterValueGroup input) {
-        super(IntersectDescriptor.INSTANCE,input);
+    public FilterProcess(final ParameterValueGroup input) {
+        super(INSTANCE,input);
     }
 
     /**
@@ -46,11 +45,11 @@ public class Intersect extends AbstractProcess {
      */
     @Override
     protected void execute() {
-        final FeatureCollection<Feature> inputFeatureList = Parameters.value(IntersectDescriptor.FEATURE_IN, inputParameters);
-        final Geometry interGeom = Parameters.value(IntersectDescriptor.GEOMETRY_IN, inputParameters);
+        final FeatureCollection<Feature> inputFeatureList   = value(FEATURE_IN, inputParameters);
+        final org.opengis.filter.Filter filter              = value(FILTER_IN, inputParameters);
 
-        final FeatureCollection resultFeatureList = new IntersectFeatureCollection(inputFeatureList, interGeom);
+        final FeatureCollection resultFeatureList = GenericFilterFeatureIterator.wrap(inputFeatureList, filter);
 
-        outputParameters.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
+        getOrCreate(FEATURE_OUT, outputParameters).setValue(resultFeatureList);
     }
 }
