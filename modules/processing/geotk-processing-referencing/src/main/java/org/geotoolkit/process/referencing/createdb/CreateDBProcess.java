@@ -18,10 +18,12 @@ package org.geotoolkit.process.referencing.createdb;
 
 import java.io.File;
 import org.geotoolkit.process.AbstractProcess;
-import org.geotoolkit.process.ProcessEvent;
+import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.referencing.factory.epsg.EpsgInstaller;
+import org.geotoolkit.util.ArgumentChecks;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.FactoryException;
+import static org.geotoolkit.process.referencing.createdb.CreateDBDescriptor.*;
 
 /**
  * Create an EPSG database.
@@ -32,27 +34,23 @@ public class CreateDBProcess extends AbstractProcess {
 
 
     CreateDBProcess(final ParameterValueGroup input) {
-        super(CreateDBDescriptor.INSTANCE,input);
+        super(INSTANCE,input);
     }
 
     @Override
-    protected void execute() {
-        if (inputParameters == null) {
-            fireFailEvent(new ProcessEvent(this,
-                    "Input parameters not set.",0,
-                    new NullPointerException("Input parameters not set.")));
-        }
-
-        final String dbURL      = (String) inputParameters.parameter(CreateDBDescriptor.DBURL.getName().getCode()).getValue();
-        final String user       = (String) inputParameters.parameter(CreateDBDescriptor.USER.getName().getCode()).getValue();
-        final String password   = (String) inputParameters.parameter(CreateDBDescriptor.PASSWORD.getName().getCode()).getValue();
+    protected void execute() throws ProcessException {
+        ArgumentChecks.ensureNonNull("inputParameters", inputParameters);
+       
+        final String dbURL      = (String) inputParameters.parameter(DBURL.getName().getCode()).getValue();
+        final String user       = (String) inputParameters.parameter(USER.getName().getCode()).getValue();
+        final String password   = (String) inputParameters.parameter(PASSWORD.getName().getCode()).getValue();
 
         final EpsgInstaller installer = new EpsgInstaller();
         installer.setDatabase(dbURL, user, password);
         try {
             installer.call();
         } catch (FactoryException ex) {
-            fireFailEvent(new ProcessEvent(this,"create epsg db",0.5f,ex));
+            throw  new ProcessException(null, this, ex);
         }
     }
 
