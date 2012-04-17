@@ -165,7 +165,7 @@ public final strictfp class ImageWorkerTest extends SampleImageTestBase {
         worker.setImage(original);
         worker.maskBackground(new double[][] {{255}}, null);
         assertNotSame(original, image = worker.image);
-        assertCurrentChecksumEquals("maskBackground(255,null)", 1873283205L);
+        assertCurrentChecksumEquals("maskBackground(255,null)", 1873283205L, 2745681538L);
         showCurrentImage("maskBackground(255,null)");
     }
 

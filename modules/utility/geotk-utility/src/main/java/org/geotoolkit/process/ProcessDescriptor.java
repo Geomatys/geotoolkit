@@ -104,14 +104,14 @@ public interface ProcessDescriptor extends Processing {
     ParameterDescriptorGroup getInputDescriptor();
 
     /**
-     * Returns a description of the output parameters. The {@linkplain ParameterValueGroup parameter
-     * values} include output data (for example the output images) and optionally some metadata
-     * related to those outputs (for example statistics).
+     * Returns a description of the output parameters.
+     * This is the descriptor of the parameter values returned by {@link Process#call()}.
+     * Those {@linkplain ParameterValueGroup parameter values} include output data
+     * (for example the output images) and optionally some metadata related to those outputs
+     * (for example statistics).
      * <p>
      * While not mandatory, it is recommended that the returned descriptor contains the
      * {@link #PROCESS_STEP} parameter.
-     * <p>
-     * This is the descriptor of the parameter values returned by {@link Process#call()}.
      *
      * @return Description of the output parameters.
      *

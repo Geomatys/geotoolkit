@@ -17,9 +17,6 @@
  */
 package org.geotoolkit.referencing.operation.provider;
 
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
-import javax.measure.unit.NonSI;
 import java.util.NoSuchElementException;
 import net.jcip.annotations.Immutable;
 
@@ -35,10 +32,8 @@ import org.opengis.referencing.operation.Projection;
 
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.operation.MathTransformProvider;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
-import static org.geotoolkit.referencing.operation.provider.UniversalParameters.createDescriptor;
 /*
  * Do not import UnitaryProjection, and do not use it neither except as fully-qualified names
  * only in javadoc comments. As of Java 6 update 10, using UnitaryProjection seems to confuse
@@ -80,17 +75,7 @@ public abstract class MapProjection extends MathTransformProvider {
      * descriptor(String)}</code> instead.
      */
     @Deprecated
-    public static final ParameterDescriptor<Double> SEMI_MAJOR = createDescriptor(
-            new NamedIdentifier[] {
-                new NamedIdentifier(Citations.OGC,     "semi_major"),
-                new NamedIdentifier(Citations.EPSG,    "Semi-major axis"),
-                // EPSG does not specifically define the above parameter
-                new NamedIdentifier(Citations.ESRI,    "Semi_Major"),
-                new NamedIdentifier(Citations.NETCDF,  "semi_major_axis"),
-                new NamedIdentifier(Citations.GEOTIFF, "SemiMajor"),
-                new NamedIdentifier(Citations.PROJ4,   "a")
-            },
-            Double.NaN, 0, Double.POSITIVE_INFINITY, SI.METRE, true);
+    public static final ParameterDescriptor<Double> SEMI_MAJOR = UniversalParameters.SEMI_MAJOR;
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -102,17 +87,7 @@ public abstract class MapProjection extends MathTransformProvider {
      * descriptor(String)}</code> instead.
      */
     @Deprecated
-    public static final ParameterDescriptor<Double> SEMI_MINOR = createDescriptor(
-            new NamedIdentifier[] {
-                new NamedIdentifier(Citations.OGC,     "semi_minor"),
-                new NamedIdentifier(Citations.EPSG,    "Semi-minor axis"),
-                // EPSG does not specifically define the above parameter
-                new NamedIdentifier(Citations.ESRI,    "Semi_Minor"),
-                new NamedIdentifier(Citations.NETCDF,  "semi_minor_axis"),
-                new NamedIdentifier(Citations.GEOTIFF, "SemiMinor"),
-                new NamedIdentifier(Citations.PROJ4,   "b")
-            },
-            Double.NaN, 0, Double.POSITIVE_INFINITY, SI.METRE, true);
+    public static final ParameterDescriptor<Double> SEMI_MINOR = UniversalParameters.SEMI_MINOR;
 
     /**
      * The operation parameter descriptor for whatever the projection should roll longitude.
@@ -130,8 +105,7 @@ public abstract class MapProjection extends MathTransformProvider {
      * descriptor(String)}</code> instead.
      */
     @Deprecated
-    public static final ParameterDescriptor<Boolean> ROLL_LONGITUDE = new DefaultParameterDescriptor<Boolean>(
-            Citations.GEOTOOLKIT, "roll_longitude", Boolean.class, null, null, null, null, null, false);
+    public static final ParameterDescriptor<Boolean> ROLL_LONGITUDE = UniversalParameters.ROLL_LONGITUDE;
 
     /**
      * The operation parameter descriptor for the ESRI {@code "X_Scale"} parameter value.
@@ -146,11 +120,7 @@ public abstract class MapProjection extends MathTransformProvider {
      * descriptor(String)}</code> instead.
      */
     @Deprecated
-    public static final ParameterDescriptor<Double> X_SCALE = createDescriptor(
-            new NamedIdentifier[] {
-                new NamedIdentifier(Citations.ESRI, "X_Scale")
-            },
-            1, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Unit.ONE, false);
+    public static final ParameterDescriptor<Double> X_SCALE = UniversalParameters.X_SCALE;
 
     /**
      * The operation parameter descriptor for the ESRI {@code "Y_Scale"} parameter value.
@@ -165,11 +135,7 @@ public abstract class MapProjection extends MathTransformProvider {
      * descriptor(String)}</code> instead.
      */
     @Deprecated
-    public static final ParameterDescriptor<Double> Y_SCALE = createDescriptor(
-            new NamedIdentifier[] {
-                new NamedIdentifier(Citations.ESRI, "Y_Scale")
-            },
-            1, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Unit.ONE, false);
+    public static final ParameterDescriptor<Double> Y_SCALE = UniversalParameters.Y_SCALE;
 
     /**
      * The operation parameter descriptor for the ESRI {@code "XY_Plane_Rotation"} parameter value.
@@ -186,21 +152,10 @@ public abstract class MapProjection extends MathTransformProvider {
      * descriptor(String)}</code> instead.
      */
     @Deprecated
-    public static final ParameterDescriptor<Double> XY_PLANE_ROTATION = createDescriptor(
-            /*
-             * The descriptors defined in this class are ordinary descriptors instead than the
-             * special Identifiers subclass because there is no need to manage aliases for them.
-             * This is especially important for XY_PLANE_ROTATION because it shares the same name
-             * than RECTIFIED_GRID_ANGLE (used in ObliqueMercator), and we don't want those
-             * parameters to be confused. Defining this descriptor as an ordinary one force
-             * UnitaryProjection.Parameters to check for strict equality when looking for
-             * XY_PLANE_ROTATION, while the relaxed check (by name only) is allowed when
-             * looking for RECTIFIED_GRID_ANGLE.
-             */
-            new NamedIdentifier[] {
-                sameNameAs(Citations.ESRI, UniversalParameters.RECTIFIED_GRID_ANGLE)
-            },
-            0, -360, +360, NonSI.DEGREE_ANGLE, false);
+    public static final ParameterDescriptor<Double> XY_PLANE_ROTATION =
+            UniversalParameters.RECTIFIED_GRID_ANGLE.select(false, 0.0, new Citation[] {
+                Citations.EPSG, Citations.OGC, Citations.NETCDF, Citations.GEOTIFF, Citations.PROJ4
+            }, null);
 
     /**
      * Returns the name of the given authority declared in the given parameter descriptor.
