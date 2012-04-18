@@ -67,9 +67,9 @@ import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.
  * like in the example below:
  *
  * {@preformat wkt
- *     PROJCS["S-JTSK (Ferro) / Krovak",
+ *   PROJCS["S-JTSK (Ferro) / Krovak",
  *       GEOCS[...],
- *     PROJECTION["Krovak"]
+ *     PROJECTION["Krovak"],
  *     PARAMETER["semi_major", 6377397.155],
  *     PARAMETER["semi_minor", 6356078.963],
  *     UNIT["metre", 1],

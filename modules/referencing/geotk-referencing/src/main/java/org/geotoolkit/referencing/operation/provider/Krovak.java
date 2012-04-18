@@ -59,11 +59,11 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  *   <tr><td>{@code azimuth}</td><td>30.28813972222222°</td></tr>
  *   <tr><td>{@code pseudo_standard_parallel_1}</td><td>78.5°</td></tr>
  *   <tr><td>{@code scale_factor}</td><td>0.9999</td></tr>
+ *   <tr><td>{@code false_easting}</td><td>0 metres</td></tr>
+ *   <tr><td>{@code false_northing}</td><td>0 metres</td></tr>
  *   <tr><td>{@code X_Scale}</td><td>1</td></tr>
  *   <tr><td>{@code Y_Scale}</td><td>1</td></tr>
  *   <tr><td>{@code XY_Plane_Rotation}</td><td>0°</td></tr>
- *   <tr><td>{@code false_easting}</td><td>0 metres</td></tr>
- *   <tr><td>{@code false_northing}</td><td>0 metres</td></tr>
  * </table></blockquote>
  * <!-- END OF PARAMETERS -->
  *
@@ -353,6 +353,38 @@ public class Krovak extends MapProjection {
      *   </td></tr>
      *   <tr><td>
      *     <table class="compact">
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>false_easting</code></td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>False easting</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>ESRI</code>:</td><td class="onleft"><code>False_Easting</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>GeoTIFF</code>:</td><td class="onleft"><code>FalseEasting</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>PROJ4</code>:</td><td class="onleft"><code>x_0</code></td></tr>
+     *     </table>
+     *   </td><td>
+     *     <table class="compact">
+     *       <tr><td><b>Type:</b></td><td>{@code Double}</td></tr>
+     *       <tr><td><b>Obligation:</b></td><td>mandatory</td></tr>
+     *       <tr><td><b>Value range:</b></td><td>(-∞ … ∞) metres</td></tr>
+     *       <tr><td><b>Default value:</b></td><td>0 metres</td></tr>
+     *     </table>
+     *   </td></tr>
+     *   <tr><td>
+     *     <table class="compact">
+     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>false_northing</code></td></tr>
+     *       <tr><td><b>Alias:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>False northing</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>ESRI</code>:</td><td class="onleft"><code>False_Northing</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>GeoTIFF</code>:</td><td class="onleft"><code>FalseNorthing</code></td></tr>
+     *       <tr><td></td><td class="onright"><code>PROJ4</code>:</td><td class="onleft"><code>y_0</code></td></tr>
+     *     </table>
+     *   </td><td>
+     *     <table class="compact">
+     *       <tr><td><b>Type:</b></td><td>{@code Double}</td></tr>
+     *       <tr><td><b>Obligation:</b></td><td>mandatory</td></tr>
+     *       <tr><td><b>Value range:</b></td><td>(-∞ … ∞) metres</td></tr>
+     *       <tr><td><b>Default value:</b></td><td>0 metres</td></tr>
+     *     </table>
+     *   </td></tr>
+     *   <tr><td>
+     *     <table class="compact">
      *       <tr><td><b>Name:</b></td><td class="onright"><code>ESRI</code>:</td><td class="onleft"><code>X_Scale</code></td></tr>
      *     </table>
      *   </td><td>
@@ -387,38 +419,6 @@ public class Krovak extends MapProjection {
      *       <tr><td><b>Default value:</b></td><td>0°</td></tr>
      *     </table>
      *   </td></tr>
-     *   <tr><td>
-     *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>false_easting</code></td></tr>
-     *       <tr><td><b>Alias:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>False easting</code></td></tr>
-     *       <tr><td></td><td class="onright"><code>ESRI</code>:</td><td class="onleft"><code>False_Easting</code></td></tr>
-     *       <tr><td></td><td class="onright"><code>GeoTIFF</code>:</td><td class="onleft"><code>FalseEasting</code></td></tr>
-     *       <tr><td></td><td class="onright"><code>PROJ4</code>:</td><td class="onleft"><code>x_0</code></td></tr>
-     *     </table>
-     *   </td><td>
-     *     <table class="compact">
-     *       <tr><td><b>Type:</b></td><td>{@code Double}</td></tr>
-     *       <tr><td><b>Obligation:</b></td><td>mandatory</td></tr>
-     *       <tr><td><b>Value range:</b></td><td>(-∞ … ∞) metres</td></tr>
-     *       <tr><td><b>Default value:</b></td><td>0 metres</td></tr>
-     *     </table>
-     *   </td></tr>
-     *   <tr><td>
-     *     <table class="compact">
-     *       <tr><td><b>Name:</b></td><td class="onright"><code>OGC</code>:</td><td class="onleft"><code>false_northing</code></td></tr>
-     *       <tr><td><b>Alias:</b></td><td class="onright"><code>EPSG</code>:</td><td class="onleft"><code>False northing</code></td></tr>
-     *       <tr><td></td><td class="onright"><code>ESRI</code>:</td><td class="onleft"><code>False_Northing</code></td></tr>
-     *       <tr><td></td><td class="onright"><code>GeoTIFF</code>:</td><td class="onleft"><code>FalseNorthing</code></td></tr>
-     *       <tr><td></td><td class="onright"><code>PROJ4</code>:</td><td class="onleft"><code>y_0</code></td></tr>
-     *     </table>
-     *   </td><td>
-     *     <table class="compact">
-     *       <tr><td><b>Type:</b></td><td>{@code Double}</td></tr>
-     *       <tr><td><b>Obligation:</b></td><td>mandatory</td></tr>
-     *       <tr><td><b>Value range:</b></td><td>(-∞ … ∞) metres</td></tr>
-     *       <tr><td><b>Default value:</b></td><td>0 metres</td></tr>
-     *     </table>
-     *   </td></tr>
      * </table>
      */
     public static final ParameterDescriptorGroup PARAMETERS = UniversalParameters.createDescriptorGroup(
@@ -437,8 +437,8 @@ public class Krovak extends MapProjection {
             ROLL_LONGITUDE,
             LATITUDE_OF_CENTRE, LONGITUDE_OF_CENTRE,
             AZIMUTH, PSEUDO_STANDARD_PARALLEL, SCALE_FACTOR,
-            X_SCALE, Y_SCALE, XY_PLANE_ROTATION,
-            FALSE_EASTING, FALSE_NORTHING
+            FALSE_EASTING, FALSE_NORTHING,
+            X_SCALE, Y_SCALE, XY_PLANE_ROTATION
         });
 
     /**
