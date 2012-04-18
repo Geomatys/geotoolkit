@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book [
+  <!ENTITY % book.entities SYSTEM "../book.entities">
+  %book.entities;
+]>
+<chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
+      xmlns:xlink = "http://www.w3.org/1999/xlink">
+
+<title>GeoAPI</title>
+  <para>
+    Le projet <link xlink:href="http://www.geoapi.org">GeoAPI</link> offre un ensemble d’interfaces
+    Java pour les applications géo-spatiales. Ces interfaces suivent de très près les spécifications
+    de l’<acronym>OGC</acronym>, tout en les interprétant et en les adaptant de manière à répondre
+    aux attentes des développeurs Java — par exemple les conventions de nommage.
+    Ces interfaces bénéficient à la fois aux applications clientes et aux bibliothèques:
+  </para>
+
+  <itemizedlist>
+    <listitem><para>
+      Les développeurs des applications clientes bénéficient d’une plus grande base de connaissances disponible sur internet
+      (due aux nombreuses publications en lien avec les standards de l’OGC), ainsi que d’une inter-opérabilité accrue.
+      L’inter-opérabilité est facilitée par une meilleure séparation entre les applications qui <emphasis>appellent</emphasis> les fonctions de GeoAPI,
+      et les bibliothèques qui <emphasis>implémentent</emphasis> GeoAPI. Il s’agit d’une séparation similaire à celle qu’offrent les interfaces
+      <link xlink:href="http://docs.oracle.com/javase/7/docs/technotes/guides/jdbc/"><acronym>JDBC</acronym></link>
+      (<foreignphrase>Java Database Connectivity</foreignphrase>) du Java standard.
+      En utilisant l’<acronym>API</acronym> des interfaces, les développeurs peuvent faire abstraction de l’implémentation sous-jacente.
+      Par exemple ils peuvent utiliser les bibliothèques <link xlink:href="http://www.geoapi.org/geoapi-proj4/index.html">Proj.4</link>
+      ou Geotoolkit.org sans qu’il ne leur soit nécessaire de changer leurs programmes.
+    </para></listitem>
+    <listitem><para>
+      Les développeurs des bibliothèques héritent de l’expertise des auteurs des spécifications, via les modèles que représentent les interfaces.
+      GeoAPI fournit aussi un cadre dans lequel les développeurs peuvent implémenter en priorité les fonctionnalité qui leurs sont le plus nécessaires,
+      tout en ayant des points où raccrocher les développements futurs.
+      Par exemple les clients peuvent appeler une fonction de GeoAPI même si elle n’est pas encore supportée par la bibliothèque,
+      quitte à obtenir une valeur nulle en attendant qu’une nouvelle version de la bibliothèque retourne une valeur intéressante.
+    </para></listitem>
+  </itemizedlist>
+
+<section>
+  <title>Des spécifications aux interfaces</title>
+  <para>
+    Les standards de l’<acronym>OGC</acronym> étant définis par des moyens bien éprouvés en génie logiciel,
+    il est possible de générer automatiquement des interfaces Java à l’aide d’outils relativement répandus.
+    Une des approches les plus utilisées est de transformer les schémas <acronym>XSD</acronym>
+    en interfaces Java à l’aide de l’utilitaire de ligne de commande <command>xjc</command>.
+    Cet utilitaire étant disponible en standard avec la plupart des distributions du Java
+    (il fait partie des outils de <link xlink:href="http://jaxb.java.net"><acronym>JAXB</acronym></link>),
+    cette approche est choisie par plusieurs projets sur internet.
+    D’autres approches utilisent des outils intégrés à l’environnement de développement Eclipse, ou
+    prennent comme point de départ les schémas <acronym>UML</acronym> plutôt que <acronym>XSD</acronym>.
+  </para>
+  <para>
+    Une approche similaire avait été tentée dans les débuts du projet GeoAPI, mais a été rapidement abandonnée.
+    Une approche manuelle a fini par s’imposer pour les raisons suivantes:
+  </para>
+</section>
+</chapter>

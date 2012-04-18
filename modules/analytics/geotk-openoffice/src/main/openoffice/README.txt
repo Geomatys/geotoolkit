@@ -7,6 +7,9 @@ Instead, we applied the following step:
   * We excluded the "Configuration2" directory, because it contains only empty subdirectories or
     empty files. We also removed the corresponding entry from the "META-INF/manifest.xml" file.
 
+  * Compression of PNG images in the "Thumbnails" directory has been improved using the 'optipng'
+    command-line tool.
+
   * We reformatted every XML files, then changed the indentation from 4 spaces to 1 space.
     The reformatting is needed because the whole XML contents were initially on a single line,
     which do not work well with 'diff' tools, including the versioning system itself.
