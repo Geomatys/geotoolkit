@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.net.URL;
 import java.util.Map;
 import org.geotoolkit.client.AbstractServerFactory;
+import org.geotoolkit.client.map.CachedPyramidSet;
 import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.coverage.CoverageStoreFactory;
 import org.geotoolkit.feature.FeatureUtilities;
@@ -46,7 +47,7 @@ public class StaticGoogleServerFactory extends AbstractServerFactory implements 
 
     public static final ParameterDescriptorGroup PARAMETERS =
             new DefaultParameterDescriptorGroup("GSParameters",
-                URL,MAPTYPE,SECURITY,IMAGE_CACHE);
+                URL,MAPTYPE,SECURITY,IMAGE_CACHE,NIO_QUERIES);
     
     @Override
     public ParameterDescriptorGroup getParametersDescriptor() {
@@ -69,7 +70,15 @@ public class StaticGoogleServerFactory extends AbstractServerFactory implements 
             cacheImage = Boolean.TRUE.equals(val.getValue());
         }catch(ParameterNotFoundException ex){}
         
-        return new StaticGoogleMapsServer(url,key,security,cacheImage);
+        final StaticGoogleMapsServer server = new StaticGoogleMapsServer(url,key,security,cacheImage);
+        
+        try{
+            final ParameterValue val = params.parameter(NIO_QUERIES.getName().getCode());
+            boolean useNIO = Boolean.TRUE.equals(val.getValue());
+            server.setUserProperty(CachedPyramidSet.PROPERTY_NIO, useNIO);
+        }catch(ParameterNotFoundException ex){}
+        
+        return server;
     }
 
     @Override

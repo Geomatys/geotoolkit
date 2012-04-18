@@ -77,10 +77,13 @@ public class MapTilingDemo {
         Envelope env = context.getBounds();
 
         env = CRS.transform(env, CRS.decode("EPSG:3857"));
-        double[] scales = new double[3];
-        scales[0] = env.getSpan(0) / 256;
-        scales[1] = scales[0] / 2;
-        scales[2] = scales[1] / 2;
+        final int nbscale = 6;
+        double[] scales = new double[nbscale];
+        scales[0] = env.getSpan(0) / 256 ;
+        for(int i=1;i<nbscale;i++){
+            scales[i] = scales[i-1] /2;
+        }
+        
 
         input.parameter("context").setValue(context);
         input.parameter("extent").setValue(env);

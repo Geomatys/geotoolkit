@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.net.URL;
 import java.util.Map;
 import org.geotoolkit.client.AbstractServerFactory;
+import org.geotoolkit.client.map.CachedPyramidSet;
 import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.coverage.CoverageStoreFactory;
 import org.geotoolkit.feature.FeatureUtilities;
@@ -43,10 +44,10 @@ public class OSMTMSServerFactory extends AbstractServerFactory implements Covera
      */
     public static final ParameterDescriptor<Integer> MAX_ZOOM_LEVEL =
             new DefaultParameterDescriptor<Integer>("maxZoomLevel","Maximum zoom level",Integer.class,18,true);
-
+    
     public static final ParameterDescriptorGroup PARAMETERS =
             new DefaultParameterDescriptorGroup("OSMTMSParameters",
-                URL,MAX_ZOOM_LEVEL,SECURITY,IMAGE_CACHE);
+                URL,MAX_ZOOM_LEVEL,SECURITY,IMAGE_CACHE,NIO_QUERIES);
     
     @Override
     public ParameterDescriptorGroup getParametersDescriptor() {
@@ -69,7 +70,15 @@ public class OSMTMSServerFactory extends AbstractServerFactory implements Covera
             cacheImage = Boolean.TRUE.equals(val.getValue());
         }catch(ParameterNotFoundException ex){}
         
-        return new OSMTileMapServer(url,security,zoom,cacheImage);
+        final OSMTileMapServer server = new OSMTileMapServer(url,security,zoom,cacheImage);
+        
+        try{
+            final ParameterValue val = params.parameter(NIO_QUERIES.getName().getCode());
+            boolean useNIO = Boolean.TRUE.equals(val.getValue());
+            server.setUserProperty(CachedPyramidSet.PROPERTY_NIO, useNIO);
+        }catch(ParameterNotFoundException ex){}
+        
+        return server;
     }
 
     @Override

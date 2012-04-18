@@ -18,6 +18,7 @@ package org.geotoolkit.client;
 
 import java.net.URI;
 import java.net.URL;
+import java.util.Map;
 import org.geotoolkit.security.ClientSecurity;
 
 
@@ -45,5 +46,26 @@ public interface Server {
      * @return ClientSecurity used by this server. never null.
      */
     ClientSecurity getClientSecurity();
+    
+    
+    /**
+     * Store a value for this server in a hashmap using the given key.
+     * @param key
+     * @param value  
+     */
+    void setUserProperty(String key,Object value);
+
+    /**
+     * Get a stored value knowing the key.
+     * @param key
+     * @return user property object , can be null
+     */
+    Object getUserProperty(String key);
+
+    /**
+     * @return map of all user properties.
+     *          This is the live map.
+     */
+    Map<String,Object> getUserProperties();
     
 }

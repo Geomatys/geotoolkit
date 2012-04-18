@@ -20,6 +20,7 @@ import java.net.URLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.List;
@@ -43,6 +44,7 @@ public abstract class AbstractServer implements Server{
     protected final URL serverURL;
     protected final ClientSecurity securityManager;
     
+    private final Map<String,Object> parameters = new HashMap<String,Object>();    
     private String sessionId = null;
 
     public AbstractServer(URL serverURL) {
@@ -82,6 +84,30 @@ public abstract class AbstractServer implements Server{
     @Override
     public ClientSecurity getClientSecurity() {
         return securityManager;
+    }
+    
+     /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void setUserProperty(final String key,final Object value){
+        parameters.put(key, value);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Object getUserProperty(final String key){
+        return parameters.get(key);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Map<String, Object> getUserProperties() {
+        return parameters;
     }
     
     /**

@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.net.URL;
 import java.util.Map;
 import org.geotoolkit.client.AbstractServerFactory;
+import org.geotoolkit.client.map.CachedPyramidSet;
 import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.coverage.CoverageStoreFactory;
 import org.geotoolkit.feature.FeatureUtilities;
@@ -47,7 +48,7 @@ public class WMTSServerFactory extends AbstractServerFactory implements Coverage
 
     public static final ParameterDescriptorGroup PARAMETERS =
             new DefaultParameterDescriptorGroup("WMTSParameters",
-                URL,VERSION,IMAGE_CACHE);
+                URL,VERSION,IMAGE_CACHE,NIO_QUERIES);
     
     @Override
     public ParameterDescriptorGroup getParametersDescriptor() {
@@ -70,7 +71,15 @@ public class WMTSServerFactory extends AbstractServerFactory implements Coverage
             cacheImage = Boolean.TRUE.equals(val.getValue());
         }catch(ParameterNotFoundException ex){}
         
-        return new WebMapTileServer(url,security,version,null,cacheImage);
+        final WebMapTileServer server = new WebMapTileServer(url,security,version,null,cacheImage);
+        
+        try{
+            final ParameterValue val = params.parameter(NIO_QUERIES.getName().getCode());
+            boolean useNIO = Boolean.TRUE.equals(val.getValue());
+            server.setUserProperty(CachedPyramidSet.PROPERTY_NIO, useNIO);
+        }catch(ParameterNotFoundException ex){}
+        
+        return server;
     }
 
     @Override

@@ -19,6 +19,7 @@ package org.geotoolkit.wmsc;
 import java.net.URL;
 import org.geotoolkit.client.AbstractServerFactory;
 import org.geotoolkit.client.Server;
+import org.geotoolkit.client.map.CachedPyramidSet;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
@@ -37,7 +38,7 @@ import org.opengis.parameter.ParameterValueGroup;
 public class WMSCServerFactory extends AbstractServerFactory{
     
     public static final ParameterDescriptorGroup PARAMETERS = 
-            new DefaultParameterDescriptorGroup("WMSCParameters", URL,SECURITY,IMAGE_CACHE);
+            new DefaultParameterDescriptorGroup("WMSCParameters", URL,SECURITY,IMAGE_CACHE,NIO_QUERIES);
     
     @Override
     public ParameterDescriptorGroup getParametersDescriptor() {
@@ -59,7 +60,15 @@ public class WMSCServerFactory extends AbstractServerFactory{
             cacheImage = Boolean.TRUE.equals(val.getValue());
         }catch(ParameterNotFoundException ex){}
         
-        return new WebMapServerCached(url,security,cacheImage);
+        final WebMapServerCached server = new WebMapServerCached(url,security,cacheImage);
+        
+        try{
+            final ParameterValue val = params.parameter(NIO_QUERIES.getName().getCode());
+            boolean useNIO = Boolean.TRUE.equals(val.getValue());
+            server.setUserProperty(CachedPyramidSet.PROPERTY_NIO, useNIO);
+        }catch(ParameterNotFoundException ex){}
+        
+        return server;
     }
     
 }

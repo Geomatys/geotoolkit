@@ -17,6 +17,7 @@
 package org.geotoolkit.client.map;
 
 import java.awt.Point;
+import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -31,10 +32,12 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
 import org.geotoolkit.client.Request;
 import org.geotoolkit.client.Server;
 import org.geotoolkit.coverage.*;
@@ -57,23 +60,32 @@ import org.jboss.netty.handler.codec.http.*;
  */
 public abstract class CachedPyramidSet extends DefaultPyramidSet {
 
+    /**
+     * Boolean property used on tiled servers to force using NIO connections.
+     * default value is false, rely on standard IO.
+     */
+    public static final String PROPERTY_NIO = "nio_query";
+    
     protected static final Logger LOGGER = Logging.getLogger(CachedPyramidSet.class);
 
-    private static final ClientBootstrap BOOTSTRAP;
-
-    static {
-        BOOTSTRAP = new ClientBootstrap(
+    //NIO netty bootstrap.
+    private static ClientBootstrap BOOTSTRAP;
+    static synchronized ClientBootstrap getBootstrap(){
+        if(BOOTSTRAP == null){
+            BOOTSTRAP = new ClientBootstrap(
                 new NioClientSocketChannelFactory(
                 Executors.newCachedThreadPool(),
                 Executors.newCachedThreadPool()));
-        BOOTSTRAP.setOption("keepAlive", true);
-        BOOTSTRAP.setOption("tcpNoDelay", true);
-        BOOTSTRAP.setOption("reuseAddress", true);
-        BOOTSTRAP.setOption("connectTimeoutMillis", 30000);
-        
-        //TODO release the bootstrap resources on application close. bootstrap.releaseExternalResources();
+            BOOTSTRAP.setOption("keepAlive", true);
+            BOOTSTRAP.setOption("tcpNoDelay", true);
+            BOOTSTRAP.setOption("reuseAddress", true);
+            BOOTSTRAP.setOption("connectTimeoutMillis", 30000);
+            //TODO release the bootstrap resources on application close. bootstrap.releaseExternalResources();
+        }
+        return BOOTSTRAP;
     }
-
+    
+    
     /**
      * Cache the last queried tiles
      */
@@ -159,8 +171,6 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
 
     public BlockingQueue<Object> getTiles(GridMosaic mosaic, Collection<? extends Point> locations, Map hints) throws DataStoreException {
 
-
-
         if (!cacheImages || !useURLQueries) {
             //can not optimize a non url server
             return AbstractGridMosaic.getTiles(mosaic, locations, hints);
@@ -176,7 +186,7 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
             //we can optimize only if there is no security
             return AbstractGridMosaic.getTiles(mosaic, locations, hints);
         }
-
+        
         final URL url = server.getURL();
         final String protocol = url.getProtocol();
 
@@ -224,9 +234,21 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
             return queue;
         }
 
-        ////////////////////////////////////////////////////////////////////////
-        // USE NIO TO QUERY EVERYTHING IN PARALLAL /////////////////////////////
-        ////////////////////////////////////////////////////////////////////////
+        final boolean useNIO = Boolean.TRUE.equals(server.getUserProperty(PROPERTY_NIO));
+        if(useNIO){
+            queryUsingNIO(url, queue, downloadList);
+        }else{
+            queryUsingIO(url, queue, downloadList);
+        }
+        
+        return queue;        
+    }
+    
+    /**
+     * Use Netty NIO to download tiles. 
+     */
+    private void queryUsingNIO(final URL url, final CancellableQueue queue, 
+            final List<ImagePack> downloadList){
 
         final String host = url.getHost();
         final int port = (url.getPort() == -1) ? url.getDefaultPort() : url.getPort();
@@ -250,14 +272,15 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
                 }
             }
         };
-        
+
         final Map<Integer, ImagePack> PACK_MAP = new ConcurrentHashMap<Integer, ImagePack>();
-        
+
         // Set up the event pipeline factory.
-        BOOTSTRAP.setPipelineFactory(new TilePipelineFactory(queue, latch, PACK_MAP));
-        
+        final ClientBootstrap boot = getBootstrap();
+        boot.setPipelineFactory(new TilePipelineFactory(queue, latch, PACK_MAP));
+
         for (final ImagePack pack : downloadList) {
-            final ChannelFuture future = BOOTSTRAP.connect(new InetSocketAddress(host, port));
+            final ChannelFuture future = boot.connect(new InetSocketAddress(host, port));
 
             future.addListener(new ChannelFutureListener() {
 
@@ -281,7 +304,48 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
             });
         }
 
-        return queue;
+    }
+    
+    /**
+     * Use standard java IO with a thread pool.
+     */
+    private void queryUsingIO(final URL url, final CancellableQueue queue, 
+            final List<ImagePack> downloadList){
+        
+        final ExecutorService es = Executors.newFixedThreadPool(3);        
+        final CountDownLatch latch = new CountDownLatch(downloadList.size()) {
+            @Override
+            public void countDown() {
+                super.countDown();
+                if (getCount() <= 0) {
+                    try {
+                        //put a custom object, this is used in the iterator 
+                        //to detect the end.
+                        queue.put(GridMosaic.END_OF_QUEUE);
+                    } catch (InterruptedException ex) {
+                        LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+                    }
+                }
+            }
+        };
+        
+        for(final ImagePack pack : downloadList){
+            es.submit(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        queue.offer(pack.readNow());
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    } catch (DataStoreException ex) {
+                        ex.printStackTrace();
+                    } finally {
+                        latch.countDown();
+                    }
+                }
+            });
+        }
+        
     }
 
     /**
@@ -305,6 +369,11 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
             return requestPath;
         }
 
+        public TileReference readNow() throws DataStoreException, IOException{
+            final TileReference ref = mosaic.getTile(pt.x, pt.y, null);
+            return ref;
+        }
+        
         public TileReference getTile() {
             if(img == null){
                 try {
