@@ -91,10 +91,10 @@ public abstract class AbstractParameter extends FormattableObject
     /**
      * Ensures that the given value is valid according the specified parameter descriptor.
      * This convenience method ensures that {@code value} is assignable to the
-     * {@linkplain ParameterDescriptor#getValueClass expected class}, is between the
-     * {@linkplain ParameterDescriptor#getMinimumValue minimum} and
-     * {@linkplain ParameterDescriptor#getMaximumValue maximum} values and is one of the
-     * {@linkplain ParameterDescriptor#getValidValues set of valid values}.
+     * {@linkplain ParameterDescriptor#getValueClass() expected class}, is between the
+     * {@linkplain ParameterDescriptor#getMinimumValue() minimum} and
+     * {@linkplain ParameterDescriptor#getMaximumValue() maximum} values and is one of the
+     * {@linkplain ParameterDescriptor#getValidValues() set of valid values}.
      * If the value fails any of those tests, then an exception is thrown.
      * <p>
      * This method is similar to {@link Parameters#isValid(ParameterValue)} except that the

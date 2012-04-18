@@ -59,11 +59,25 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  *     Class<? extends T> valueClass = parameter.getDescriptor().getValueClass();
  * }
  *
+ * {@section Implementation note for subclasses}
+ * Except for the constructors, the {@link #equals(Object)} and the {@link #hashCode()} methods,
+ * all read and write operations ultimately delegates to the following methods:
+ * <p>
+ * <ul>
+ *   <li>All getter methods will invoke {@link #getValue()} and - if needed - {@link #getUnit()},
+ *       then performs their processing on the values returned by those methods.</li>
+ *   <li>All setter methods will first convert (if needed) and verify the argument validity,
+ *       then pass the values to the {@link #setSafeValue(Object, Unit)} method.</li>
+ * </ul>
+ * <p>
+ * Consequently, the above-cited methods provide single points that subclasses can override
+ * for modifying the behavior of all getter and setter methods.
+ *
  * @param <T> The value type.
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Jody Garnett (Refractions)
- * @version 3.05
+ * @version 3.20
  *
  * @see DefaultParameterDescriptor
  * @see ParameterGroup
@@ -78,12 +92,16 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
     private static final long serialVersionUID = -5837826787089486776L;
 
     /**
-     * The value.
+     * The value, or {@code null} if undefined. Except for the constructors, the
+     * {@link #equals(Object)} and the {@link #hashCode()} methods, this field is
+     * read only by {@link #getValue()} and written by {@link #setSafeValue(Object, Unit)}.
      */
     private T value;
 
     /**
-     * The unit of measure for the value, or {@code null} if it doesn't apply.
+     * The unit of measure for the value, or {@code null} if it doesn't apply. Except for the
+     * constructors, the {@link #equals(Object)} and the {@link #hashCode()} methods, this field
+     * is read only by {@link #getValue()} and written by {@link #setSafeValue(Object, Unit)}.
      */
     private Unit<?> unit;
 
@@ -117,10 +135,12 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
     }
 
     /**
-     * Constructs a parameter from the specified name and value. This convenience
-     * constructor creates a {@link DefaultParameterDescriptor} object. But if such
-     * an object is available, then the preferred way to get a {@code ParameterValue}
-     * is to invoke {@link ParameterDescriptor#createValue}.
+     * Constructs a parameter from the specified name and value.
+     *
+     * {@section Proposed alternative}
+     * This convenience constructor creates a {@link DefaultParameterDescriptor} object. But
+     * if such descriptor is available, then the preferred way to get a {@code ParameterValue}
+     * is to invoke {@link ParameterDescriptor#createValue()}.
      *
      * @param  name  The parameter name.
      * @param  value The parameter value.
@@ -137,10 +157,12 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
     }
 
     /**
-     * Constructs a parameter from the specified name and value. This convenience
-     * constructor creates a {@link DefaultParameterDescriptor} object. But if such
-     * an object is available, then the preferred way to get a {@code ParameterValue}
-     * is to invoke {@link ParameterDescriptor#createValue}.
+     * Constructs a parameter from the specified name, value and unit.
+     *
+     * {@section Proposed alternative}
+     * This convenience constructor creates a {@link DefaultParameterDescriptor} object. But
+     * if such descriptor is available, then the preferred way to get a {@code ParameterValue}
+     * is to invoke {@link ParameterDescriptor#createValue()}.
      *
      * @param name  The parameter name.
      * @param value The parameter value.
@@ -172,10 +194,12 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
     }
 
     /**
-     * Constructs a parameter from the specified code list. This convenience
-     * constructor creates a {@link DefaultParameterDescriptor} object. But if
-     * such an object is available, then the preferred way to get a {@code ParameterValue}
-     * is to invoke {@link ParameterDescriptor#createValue}.
+     * Constructs a parameter from the specified code list.
+     *
+     * {@section Proposed alternative}
+     * This convenience constructor creates a {@link DefaultParameterDescriptor} object. But
+     * if such descriptor is available, then the preferred way to get a {@code ParameterValue}
+     * is to invoke {@link ParameterDescriptor#createValue()}.
      *
      * @param  <T>   The parameter type.
      * @param  name  The parameter name.
@@ -185,9 +209,7 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
      *
      * @since 2.5
      */
-    public static <T extends CodeList<T>> Parameter<T> create(
-            final String name, final Class<T> type, final T value)
-    {
+    public static <T extends CodeList<T>> Parameter<T> create(final String name, final Class<T> type, final T value) {
         final ParameterDescriptor<T> descriptor = new DefaultParameterDescriptor<>(name, null, type, null, true);
         final Parameter<T> parameter = new Parameter<>(descriptor);
         parameter.value = value;
@@ -217,11 +239,15 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
      * then this method returns {@code null}. Note that "no unit" doesn't means
      * "dimensionless".
      *
+     * {@section Implementation note for subclasses}
+     * All getter methods which need unit information will invoke this {@code getUnit()} method.
+     * Subclasses can override this method if they need to compute the unit dynamically.
+     *
      * @return The unit of measure, or {@code null} if none.
      *
      * @see #doubleValue()
      * @see #doubleValueList()
-     * @see #getValue
+     * @see #getValue()
      */
     @Override
     public Unit<?> getUnit() {
@@ -230,7 +256,7 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
 
     /**
      * Returns the numeric value of the coordinate operation parameter in the specified unit
-     * of measure. This convenience method apply unit conversion on the fly as needed.
+     * of measure. This convenience method applies unit conversions on the fly as needed.
      *
      * @param  unit The unit of measure for the value to be returned.
      * @return The numeric value represented by this parameter after conversion to type
@@ -239,13 +265,13 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
      * @throws InvalidParameterTypeException if the value is not a numeric type.
      * @throws IllegalStateException if the value is not defined and there is no default value.
      *
-     * @see #getUnit
+     * @see #getUnit()
      * @see #setValue(double,Unit)
      * @see #doubleValueList(Unit)
      */
     @Override
     public double doubleValue(final Unit<?> unit) throws IllegalArgumentException, IllegalStateException {
-        final Unit<?> actual = this.unit;
+        final Unit<?> actual = getUnit();
         if (actual == null) {
             throw unitlessParameter(descriptor);
         }
@@ -262,26 +288,27 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
     }
 
     /**
-     * Returns the numeric value of the coordinate operation parameter with its
-     * associated {@linkplain #getUnit unit of measure}.
+     * Returns the numeric value represented by this operation parameter.
+     * The units of measurement are specified by {@link #getUnit()}.
      *
      * @return The numeric value represented by this parameter after conversion to type {@code double}.
      * @throws InvalidParameterTypeException if the value is not a numeric type.
      * @throws IllegalStateException if the value is not defined and there is no default value.
      *
-     * @see #getUnit
+     * @see #getUnit()
      * @see #setValue(double)
      * @see #doubleValueList()
      */
     @Override
     public double doubleValue() throws IllegalStateException {
-        final T value = this.value;
+        final T value = getValue();
         if (value instanceof Number) {
             return ((Number) value).doubleValue();
         }
         final String name = getName(descriptor);
         if (value == null) {
             // This is the kind of exception expected by org.geotoolkit.io.wkt.Formatter.
+            // If a default value existed, it should has been copied by the constructor or setter methods.
             throw new IllegalStateException(Errors.format(Errors.Keys.NO_PARAMETER_$1, name));
         }
         // Reminder: the following is a specialization of IllegalStateException.
@@ -297,13 +324,16 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
      * @throws IllegalStateException if the value is not defined and there is no default value.
      *
      * @see #setValue(int)
-     * @see #intValueList
+     * @see #intValueList()
      */
     @Override
     public int intValue() throws IllegalStateException {
-        final T value = this.value;
+        final T value = getValue();
         if (value instanceof Number) {
-            return ((Number) value).intValue();
+            final int integer = ((Number) value).intValue();
+            if (integer == ((Number) value).doubleValue()) {
+                return integer;
+            }
         }
         final String name = getName(descriptor);
         if (value == null) {
@@ -324,7 +354,7 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
      */
     @Override
     public boolean booleanValue() throws IllegalStateException {
-        final T value = this.value;
+        final T value = getValue();
         if (value instanceof Boolean) {
             return ((Boolean) value).booleanValue();
         }
@@ -343,12 +373,12 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
      * @throws InvalidParameterTypeException if the value is not a string.
      * @throws IllegalStateException if the value is not defined and there is no default value.
      *
-     * @see #getValue
+     * @see #getValue()
      * @see #setValue(Object)
      */
     @Override
     public String stringValue() throws IllegalStateException {
-        final T value = this.value;
+        final T value = getValue();
         if (value instanceof CharSequence) {
             return value.toString();
         }
@@ -370,13 +400,13 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
      * @throws InvalidParameterTypeException if the value is not an array of {@code double}s.
      * @throws IllegalStateException if the value is not defined and there is no default value.
      *
-     * @see #getUnit
+     * @see #getUnit()
      * @see #setValue(double[],Unit)
      * @see #doubleValue(Unit)
      */
     @Override
     public double[] doubleValueList(final Unit<?> unit) throws IllegalArgumentException, IllegalStateException {
-        final Unit<?> actual = this.unit;
+        final Unit<?> actual = getUnit();
         if (actual == null) {
             throw unitlessParameter(descriptor);
         }
@@ -406,13 +436,13 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
      * @throws InvalidParameterTypeException if the value is not an array of {@code double}s.
      * @throws IllegalStateException if the value is not defined and there is no default value.
      *
-     * @see #getUnit
+     * @see #getUnit()
      * @see #setValue(Object)
      * @see #doubleValue()
      */
     @Override
     public double[] doubleValueList() throws IllegalStateException {
-        final T value = this.value;
+        final T value = getValue();
         if (value instanceof double[]) {
             return (double[]) value;
         }
@@ -432,11 +462,11 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
      * @throws IllegalStateException if the value is not defined and there is no default value.
      *
      * @see #setValue(Object)
-     * @see #intValue
+     * @see #intValue()
      */
     @Override
     public int[] intValueList() throws IllegalStateException {
-        final T value = this.value;
+        final T value = getValue();
         if (value instanceof int[]) {
             return (int[]) value;
         }
@@ -457,12 +487,12 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
      * @throws InvalidParameterTypeException if the value is not a reference to a file or an URI.
      * @throws IllegalStateException if the value is not defined and there is no default value.
      *
-     * @see #getValue
+     * @see #getValue()
      * @see #setValue(Object)
      */
     @Override
     public URI valueFile() throws IllegalStateException {
-        final T value = this.value;
+        final T value = getValue();
         if (value instanceof URI) {
             return (URI) value;
         }
@@ -496,6 +526,10 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
      * {@code int[]}. If no value has been set, then this method returns the
      * {@linkplain ParameterDescriptor#getDefaultValue() default value} (which may be null).
      *
+     * {@section Implementation note for subclasses}
+     * All getter methods will invoke this {@code getValue()} method. Subclasses can override
+     * this method if they need to compute the value dynamically.
+     *
      * @return The parameter value as an object, or {@code null} if no value has been set and
      *         there is no default value.
      *
@@ -508,6 +542,8 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
 
     /**
      * Sets the parameter value as a floating point and its associated unit.
+     * The default implementation verifies the argument validity, then invokes
+     * {@link #setSafeValue(Object, Unit)}.
      *
      * @param  value The parameter value.
      * @param  unit The unit for the specified value.
@@ -543,13 +579,13 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
          * Really store the original value, not the converted one, because we store the given
          * unit as well. Conversions will be applied on the fly by the getter method if needed.
          */
-        this.value = descriptor.getValueClass().cast(value);
-        this.unit  = unit;
+        setSafeValue(descriptor.getValueClass().cast(value), unit);
     }
 
     /**
-     * Sets the parameter value as a floating point.
-     * The unit, if any, stay unchanged.
+     * Sets the parameter value as a floating point. The unit, if any, stay unchanged.
+     * The default implementation verifies the argument validity, then invokes
+     * {@link #setSafeValue(Object, Unit)}.
      *
      * @param value The parameter value.
      * @throws InvalidParameterValueException if the floating point type is inappropriate for this
@@ -560,72 +596,89 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
      * @see #doubleValue()
      */
     @Override
+    @SuppressWarnings("unchecked") // Safe because type was checked by the constructor.
     public void setValue(final double value) throws InvalidParameterValueException {
-        final Double check = value;
-        @SuppressWarnings("unchecked") // Checked by constructor.
-        final ParameterDescriptor<T> descriptor = (ParameterDescriptor<T>) this.descriptor;
-        this.value = ensureValidValue(descriptor, check);
+        setSafeValue(ensureValidValue((ParameterDescriptor<T>) descriptor, Double.valueOf(value)), unit);
+        // Really 'unit', not 'getUnit()' since units are not expected to be involved in this method.
+        // We just want the current unit setting to be unchanged.
     }
 
     /**
-     * Sets the parameter value as an integer.
+     * Sets the parameter value as an integer. The default implementation performs a
+     * choice based on the {@linkplain ParameterDescriptor#getValueClass() value class}:
+     * <p>
+     * <ul>
+     *   <li>If the value type is {@code Float.class} or {@code Double.class},
+     *       then this method delegates to {@link #setValue(double)}.</li>
+     *   <li>Otherwise this method verifies the argument validity, then
+     *       invokes {@link #setSafeValue(Object, Unit)}.</li>
+     * </ul>
      *
      * @param  value The parameter value.
      * @throws InvalidParameterValueException if the integer type is inappropriate for this parameter,
      *         or if the value is illegal for some other reason (for example a value out of range).
      *
-     * @see #intValue
+     * @see #intValue()
      */
     @Override
     public void setValue(final int value) throws InvalidParameterValueException {
         @SuppressWarnings("unchecked") // Checked by constructor.
         final ParameterDescriptor<T> descriptor = (ParameterDescriptor<T>) this.descriptor;
         final Class<T> type = descriptor.getValueClass();
-        if (type == Double.class || type == Double.TYPE) {
+        if (type == Double.class || type == Float.class) {
             setValue((double) value);
-            return;
+        } else {
+            setSafeValue(ensureValidValue(descriptor, Integer.valueOf(value)), unit);
+            // Really 'unit', not 'getUnit()' since we don't expect units in this context.
+            // We just want the current unit setting to be unchanged as a paranoiac safety.
         }
-        final Integer check = value;
-        this.value = ensureValidValue(descriptor, check);
     }
 
     /**
      * Sets the parameter value as a boolean.
+     * The default implementation verifies the argument validity, then invokes
+     * {@link #setSafeValue(Object, Unit)}.
      *
      * @param  value The parameter value.
      * @throws InvalidParameterValueException if the boolean type is inappropriate for this parameter.
      *
-     * @see #booleanValue
+     * @see #booleanValue()
      */
     @Override
+    @SuppressWarnings("unchecked") // Safe because type was checked by the constructor.
     public void setValue(final boolean value) throws InvalidParameterValueException {
-        @SuppressWarnings("unchecked") // Checked by constructor.
-        final ParameterDescriptor<T> descriptor = (ParameterDescriptor<T>) this.descriptor;
-        final Boolean check = Boolean.valueOf(value);
-        this.value = ensureValidValue(descriptor, check);
+        setSafeValue(ensureValidValue(((ParameterDescriptor<T>) descriptor), Boolean.valueOf(value)), unit);
+        // Really 'unit', not 'getUnit()' since we don't expect units in this context.
+        // We just want the current unit setting to be unchanged as a paranoiac safety.
     }
 
     /**
      * Sets the parameter value as an object. The object type is typically a {@link Double},
      * {@link Integer}, {@link Boolean}, {@link String}, {@link URI}, {@code double[]}
      * or {@code int[]}.
+     * <p>
+     * The default implementation verifies the argument validity, then invokes
+     * {@link #setSafeValue(Object, Unit)}.
      *
-     * @param  value The parameter value.
+     * @param  value The parameter value, or {@code null} to restore the default value.
      * @throws InvalidParameterValueException if the type of {@code value} is inappropriate
      *         for this parameter, or if the value is illegal for some other reason (for example
      *         the value is numeric and out of range).
      *
-     * @see #getValue
+     * @see #getValue()
      */
     @Override
+    @SuppressWarnings("unchecked") // Safe because type was checked by the constructor.
     public void setValue(final Object value) throws InvalidParameterValueException {
-        @SuppressWarnings("unchecked") // Checked by constructor.
-        final ParameterDescriptor<T> descriptor = (ParameterDescriptor<T>) this.descriptor;
-        this.value = ensureValidValue(descriptor, value);
+        setSafeValue(ensureValidValue((ParameterDescriptor<T>) descriptor, value), unit);
+        // Really 'unit', not 'getUnit()' since we don't expect units in this context.
+        // We just want the current unit setting to be unchanged as a paranoiac safety.
     }
 
     /**
      * Sets the parameter value as an array of floating point and their associated unit.
+     * The default implementation verifies the argument validity, then invokes
+     * {@link #setSafeValue(Object, Unit)}.
      *
      * @param  values The parameter values.
      * @param  unit The unit for the specified value.
@@ -634,9 +687,7 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
      *         of range).
      */
     @Override
-    public void setValue(double[] values, final Unit<?> unit)
-            throws InvalidParameterValueException
-    {
+    public void setValue(double[] values, final Unit<?> unit) throws InvalidParameterValueException {
         ensureNonNull("unit", unit);
         @SuppressWarnings("unchecked") // Checked by constructor.
         final ParameterDescriptor<T> descriptor = (ParameterDescriptor<T>) this.descriptor;
@@ -658,7 +709,21 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
         for (int i=0; i<converted.length; i++) {
             converted[i] = converter.convert(converted[i]);
         }
-        this.value = ensureValidValue(descriptor, converted);
+        setSafeValue(ensureValidValue(descriptor, converted), unit);
+    }
+
+    /**
+     * Invoked by all {@code setXXX(…)} methods after the argument has been verified to be safe.
+     * Subclasses can override this method if they want to perform more processing on the value
+     * before its storage, or to be notified about value changes.
+     *
+     * @param value The new parameter value, or {@code null} for removing the value currently set.
+     * @param unit  The unit associated to the new parameter value, or {@code null}.
+     *
+     * @since 3.20
+     */
+    protected void setSafeValue(final T value, final Unit<?> unit) {
+        this.value = value;
         this.unit  = unit;
     }
 
