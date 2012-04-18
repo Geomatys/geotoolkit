@@ -39,6 +39,7 @@ import org.opengis.referencing.datum.Ellipsoid;
 import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.internal.jaxb.referencing.SecondDefiningParameter;
 import org.geotoolkit.internal.jaxb.gco.Measure;
+import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.measure.Units;
 import org.geotoolkit.measure.CoordinateFormat;
 import org.geotoolkit.referencing.NamedIdentifier;
@@ -63,10 +64,10 @@ import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
  * its minor axis. An ellipsoid requires two defining parameters:
  * <p>
  * <ul>
- *   <li>{@linkplain #getSemiMajorAxis semi-major axis} and
- *       {@linkplain #getInverseFlattening inverse flattening}, or</li>
- *   <li>{@linkplain #getSemiMajorAxis semi-major axis} and
- *       {@linkplain #getSemiMinorAxis semi-minor axis}.</li>
+ *   <li>{@linkplain #getSemiMajorAxis() semi-major axis} and
+ *       {@linkplain #getInverseFlattening() inverse flattening}, or</li>
+ *   <li>{@linkplain #getSemiMajorAxis() semi-major axis} and
+ *       {@linkplain #getSemiMinorAxis() semi-minor axis}.</li>
  * </ul>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
@@ -184,7 +185,7 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
      * The equatorial radius. This field should be considered as final.
      * It is modified only by JAXB at unmarshalling time.
      *
-     * @see #getSemiMajorAxis
+     * @see #getSemiMajorAxis()
      */
     private double semiMajorAxis;
 
@@ -192,7 +193,7 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
      * The polar radius. This field should be considered as final.
      * It is modified only by JAXB at unmarshalling time.
      *
-     * @see #getSemiMinorAxis
+     * @see #getSemiMinorAxis()
      */
     private double semiMinorAxis;
 
@@ -201,7 +202,7 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
      * if the ellipsoid is a sphere. This field should be considered as final.
      * It is modified only by JAXB at unmarshalling time.
      *
-     * @see #getInverseFlattening
+     * @see #getInverseFlattening()
      */
     private double inverseFlattening;
 
@@ -209,7 +210,7 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
      * Tells if the Inverse Flattening is definitive for this ellipsoid. This field
      * should be considered as final. It is modified only by JAXB at unmarshalling time.
      *
-     * @see #isIvfDefinitive
+     * @see #isIvfDefinitive()
      */
     private boolean ivfDefinitive;
 
@@ -427,8 +428,8 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
     }
 
     /**
-     * Returns the linear unit of the {@linkplain #getSemiMajorAxis semi-major}
-     * and {@linkplain #getSemiMinorAxis semi-minor} axis values.
+     * Returns the linear unit of the {@linkplain #getSemiMajorAxis() semi-major}
+     * and {@linkplain #getSemiMinorAxis() semi-minor} axis values.
      *
      * @return The axis linear unit.
      */
@@ -439,7 +440,7 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
 
     /**
      * Length of the semi-major axis of the ellipsoid. This is the
-     * equatorial radius in {@linkplain #getAxisUnit axis linear unit}.
+     * equatorial radius in {@linkplain #getAxisUnit() axis linear unit}.
      *
      * @return Length of semi-major axis.
      */
@@ -472,13 +473,25 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
 
     /**
      * Length of the semi-minor axis of the ellipsoid. This is the
-     * polar radius in {@linkplain #getAxisUnit axis linear unit}.
+     * polar radius in {@linkplain #getAxisUnit() axis linear unit}.
      *
      * @return Length of semi-minor axis.
      */
     @Override
     public double getSemiMinorAxis() {
         return semiMinorAxis;
+    }
+
+    /**
+     * Returns the radius of a hypothetical sphere having the same surface than this ellipsoid.
+     * The radius is expressed in {@linkplain #getAxisUnit() axis linear unit}.
+     *
+     * @return The radius of a sphere having the same surface than this ellipsoid.
+     *
+     * @since 3.20
+     */
+    public double getAuthalicRadius() {
+        return CRSUtilities.getAuthalicRadius(getSemiMajorAxis(), getSemiMinorAxis());
     }
 
     /**
@@ -517,7 +530,7 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
      * asked. This distinction can be important to avoid floating-point rounding errors.
      *
      * @return {@code true} if the {@linkplain #getInverseFlattening inverse flattening} is
-     *         definitive, or {@code false} if the {@linkplain #getSemiMinorAxis polar radius}
+     *         definitive, or {@code false} if the {@linkplain #getSemiMinorAxis() polar radius}
      *         is definitive.
      */
     @Override
@@ -594,7 +607,7 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
 
     /**
      * {@code true} if the ellipsoid is degenerate and is actually a sphere. The sphere is
-     * completely defined by the {@linkplain #getSemiMajorAxis semi-major axis}, which is the
+     * completely defined by the {@linkplain #getSemiMajorAxis() semi-major axis}, which is the
      * radius of the sphere.
      *
      * @return {@code true} if the ellipsoid is degenerate and is actually a sphere.
@@ -710,7 +723,7 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
         if (abs(x1-x2) <= LEPS && abs(y1-y2) <= LEPS) {
             return 0; // Coordinate points are equals
         }
-        if (abs(y1)<=LEPS && abs(y2)<=LEPS) {
+        if (abs(y1) <= LEPS && abs(y2) <= LEPS) {
             return abs(x1-x2) * getSemiMajorAxis(); // Points are on the equator.
         }
         // At least one input ordinate is NaN.

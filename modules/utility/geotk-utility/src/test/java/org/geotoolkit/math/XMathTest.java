@@ -28,7 +28,7 @@ import static org.junit.Assert.*;
  * Tests the {@link XMath} static methods.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.15
+ * @version 3.20
  *
  * @since 2.5
  */
@@ -58,6 +58,24 @@ public final strictfp class XMathTest {
     public void testPow10() {
         for (int i=-304; i<=304; i++) {
             assertEquals(Double.parseDouble("1E"+i), pow10(i), 0);
+        }
+    }
+
+    /**
+     * Tests the {@link XMath#atanh(double)} method in the [-1 … +1] range.
+     *
+     * @since 3.20
+     */
+    @Test
+    public void testAtanh() {
+        for (int i=-10; i<=10; i++) {
+            final double x = 0.1 * i;
+            final double y = atanh(x);
+            switch (i) {
+                case -10: assertEquals(Double.NEGATIVE_INFINITY, y, EPS); break;
+                default:  assertEquals(x, Math.tanh(y),             EPS); break;
+                case +10: assertEquals(Double.POSITIVE_INFINITY, y, EPS); break;
+            }
         }
     }
 
