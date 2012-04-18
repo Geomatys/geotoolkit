@@ -1,0 +1,134 @@
+/*
+ *    Geotoolkit.org - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2012, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2012, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
+package org.geotoolkit.referencing.operation.provider;
+
+import java.util.Map;
+import net.jcip.annotations.Immutable;
+
+import org.opengis.util.GenericName;
+import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.parameter.ParameterDescriptor;
+import org.opengis.parameter.GeneralParameterDescriptor;
+import org.opengis.parameter.ParameterNotFoundException;
+
+import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
+
+
+/**
+ * Map projection parameters, with special processing for alternative ways to express the
+ * ellipsoid axis length and the standard parallels. Those alternative ways are non-standard;
+ * when a value is set to such alternative parameter, the value is translated to standard
+ * parameter values as soon as possible.
+ * <p>
+ * The non-standard parameters are:
+ * <p>
+ * <ul>
+ *   <li>{@code "earth_radius"} and {@code "inverse_flattening"}, which are mapped to the
+ *       {@link UniversalParameters#SEMI_MAJOR} and {@link UniversalParameters#SEMI_MINOR}
+ *       parameters.</li>
+ *   <li>{@code "standard_parallel"} with an array value of 1 or 2 elements, which is mapped to
+ *       {@link UniversalParameters#STANDARD_PARALLEL_1} and
+ *       {@link UniversalParameters#STANDARD_PARALLEL_2}</li>
+ * </ul>
+ * <p>
+ * The main purpose of this class is to supported transparently the NetCDF ways to express
+ * some parameter values.
+ *
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.20
+ *
+ * @see <a href="http://www.unidata.ucar.edu/software/netcdf-java/reference/StandardCoordinateTransforms.html">NetCDF projection parameters</a>
+ *
+ * @since 3.20
+ * @module
+ */
+@Immutable
+final class MapProjectionDescriptor extends DefaultParameterDescriptorGroup {
+    /**
+     * For cross-version compatibility.
+     */
+    private static final long serialVersionUID = -9142116135803309453L;
+
+    /**
+     * The parameter name for the Earth radius.
+     */
+    static final String EARTH_RADIUS = "earth_radius";
+
+    /**
+     * The parameter name for inverse flattening.
+     */
+    static final String INVERSE_FLATTENING = "inverse_flattening";
+
+    /**
+     * The parameter name for the standard parallels.
+     */
+    static final String STANDARD_PARALLEL = "standard_parallel";
+
+    /**
+     * {@code true} if the {@code "standard_parallel"} parameter name is present.
+     */
+    final boolean hasStandardParallel;
+
+    /**
+     * Creates a new parameter descriptor from the given properties and parameters.
+     */
+    MapProjectionDescriptor(final Map<String,?> properties, final ParameterDescriptor<?>... parameters) {
+        super(properties, parameters);
+        for (final ParameterDescriptor<?> param : parameters) {
+            for (final GenericName name : param.getAlias()) {
+                if (name.tip().toString().equals(STANDARD_PARALLEL)) {
+                    hasStandardParallel = true;
+                    return;
+                }
+            }
+        }
+        hasStandardParallel = false;
+    }
+
+    /**
+     * Returns the parameter descriptor for the given name. If the given name is one of the
+     * "invisible" parameters, returns a descriptor for that parameter without adding it to
+     * the list of parameter values.
+     *
+     * @param  name The case insensitive name of the parameter to search for.
+     * @return The parameter for the given name.
+     * @throws ParameterNotFoundException if there is no parameter for the given name.
+     */
+    @Override
+    public GeneralParameterDescriptor descriptor(String name) throws ParameterNotFoundException {
+        name = name.trim();
+        if (name.equalsIgnoreCase(EARTH_RADIUS)) {
+            return UniversalParameters.EARTH_RADIUS;
+        }
+        if (name.equalsIgnoreCase(INVERSE_FLATTENING)) {
+            return UniversalParameters.INVERSE_FLATTENING;
+        }
+        if (!hasStandardParallel && name.equalsIgnoreCase(STANDARD_PARALLEL)) {
+            return UniversalParameters.STANDARD_PARALLEL;
+        }
+        return super.descriptor(name);
+    }
+
+    /**
+     * Returns the parameter group implementation which can handle the "invisible" parameters.
+     */
+    @Override
+    public ParameterValueGroup createValue() {
+        return new MapProjectionParameters(this);
+    }
+}
