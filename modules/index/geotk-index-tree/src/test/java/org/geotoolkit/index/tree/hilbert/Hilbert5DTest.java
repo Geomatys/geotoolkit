@@ -17,17 +17,13 @@
  */
 package org.geotoolkit.index.tree.hilbert;
 
-/**Test Hilbert curve creation in dimension 5.
+/**
+ * Test Hilbert curve creation in dimension 5.
  *
  * @author Rémi Marechal(Géomatys).
  */
 public class Hilbert5DTest extends HilbertTest{
     public Hilbert5DTest() {
         super(5);
-    }
-
-    @Override
-    public void order5Test(){
-//        java heap space
     }
 }

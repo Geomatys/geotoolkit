@@ -18,6 +18,9 @@
 package org.geotoolkit.index.tree.hilbert;
 
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.concurrent.ArrayBlockingQueue;
 
 /**To generate Hilbert curve in n-dimension space in n-order.
  *
@@ -34,6 +37,9 @@ public class Hilbert {
     int compteurPathBis = 0;
     boolean[] currentSign;
     final int l;
+    int[] addToOrdinate;
+    boolean[]addToSign;
+    final LinkedList<int[]> ordinateFifo = new LinkedList<int[]>();
 
     /**Create an Hilbert object to generate appropriate Hilbert curve in n-dimension space.
      *
@@ -62,6 +68,54 @@ public class Hilbert {
         return (int) Math.round(Math.log(nbCells)/(dimension*LN2));
     }
 
+    {
+//    /**Compute an dimension index array.
+//     * Array represent ordinate path followed by Hilbert curve.
+//     *
+//     * @param currentlyTab dimension index array to iterate.
+//     * @param remainingOrder current Hilbert order during iteration.
+//     * @param addToOrdinate Hilbert ordinate path result.
+//     * @param addToSign sign following by Hilbert curve path.
+//     * @return dimension index array.
+//     */
+//    private void iteratePath(final int[] currentlyTab,  final int remainingOrder,
+//                             final int[] addToOrdinate, final boolean[]addToSign) {
+//        int curTabi;
+//        if (remainingOrder == 1) {
+//            for(int i = 0;i<l;i++){
+//                curTabi = currentlyTab[i];
+//                addToOrdinate[compteurPathBis] = curTabi;
+//                addToSign[compteurPathBis] = currentSign[curTabi];
+//                currentSign[curTabi]=!currentSign[curTabi];
+//                compteurPathBis++;
+//            }
+//            return;
+//        }
+//        final int size = (2<<(dimension*remainingOrder-1))-1;
+//        assert addToOrdinate.length >= size : "addToOrdinate table is not enought longer : "+addToOrdinate.length+" expected min longer : "+size;
+//        assert addToSign.length >= size     : "addToSign table is not enought longer     : "+addToSign.length+" expected min longer : "+size;
+//        int operande,compteurJoint = 0;
+//        int[] tabTemp;
+//        for (int j = 0; j<l; j++) {
+//            for(int i = 0;i<((j!=l-1&&j!=0)?2:1);i++){
+//                operande = basicPath[j];
+//                tabTemp = currentlyTab.clone();
+//                oLogic(tabTemp, operande);
+//                iteratePath(tabTemp, remainingOrder-1, addToOrdinate, addToSign);
+//                if(j != l-1){
+//                    curTabi = currentlyTab[compteurJoint];
+//                    addToOrdinate[compteurPathBis] = curTabi;
+//                    currentSign[curTabi] = !currentSign[curTabi];
+//                    addToSign[compteurPathBis] = currentSign[curTabi];
+//                    compteurPathBis++;
+//                    compteurJoint++;
+//                }
+//            }
+//            if(j!=l-2&&j!=0)j++;
+//        }
+//    }
+    }//don't delete
+
     /**Compute an dimension index array.
      * Array represent ordinate path followed by Hilbert curve.
      *
@@ -71,12 +125,15 @@ public class Hilbert {
      * @param addToSign sign following by Hilbert curve path.
      * @return dimension index array.
      */
-    private void iteratePath(final int[] currentlyTab,  final int remainingOrder,
-                             final int[] addToOrdinate, final boolean[]addToSign) {
+    private void iteratePath(final int[] currentlyTab,  final int remainingOrder) {//currently tab remaining order
         int curTabi;
+        int[]curt;
+        ordinateFifo.add(currentlyTab.clone());
         if (remainingOrder == 1) {
+            curt = ordinateFifo.pollLast();
             for(int i = 0;i<l;i++){
-                curTabi = currentlyTab[i];
+//                curTabi = currentlyTab[i];
+                curTabi = curt[i];
                 addToOrdinate[compteurPathBis] = curTabi;
                 addToSign[compteurPathBis] = currentSign[curTabi];
                 currentSign[curTabi]=!currentSign[curTabi];
@@ -92,21 +149,81 @@ public class Hilbert {
         for (int j = 0; j<l; j++) {
             for(int i = 0;i<((j!=l-1&&j!=0)?2:1);i++){
                 operande = basicPath[j];
-                tabTemp = currentlyTab.clone();
+//                tabTemp = currentlyTab.clone();
+                tabTemp = ordinateFifo.peekLast().clone();
                 oLogic(tabTemp, operande);
-                iteratePath(tabTemp, remainingOrder-1, addToOrdinate, addToSign);
+                iteratePath(tabTemp, remainingOrder-1);//queue.push
                 if(j != l-1){
-                    curTabi = currentlyTab[compteurJoint];
+//                    curTabi = currentlyTab[compteurJoint];
+                    curTabi = ordinateFifo.peekLast()[compteurJoint];
                     addToOrdinate[compteurPathBis] = curTabi;
                     currentSign[curTabi] = !currentSign[curTabi];
                     addToSign[compteurPathBis] = currentSign[curTabi];
                     compteurPathBis++;
                     compteurJoint++;
+                }else{
+                    ordinateFifo.removeLast();
                 }
             }
             if(j!=l-2&&j!=0)j++;
         }
     }
+
+    {
+//    /**Compute an dimension index array.
+//     * Array represent ordinate path followed by Hilbert curve.
+//     *
+//     * @param currentlyTab dimension index array to iterate.
+//     * @param remainingOrder current Hilbert order during iteration.
+//     * @param addToOrdinate Hilbert ordinate path result.
+//     * @param addToSign sign following by Hilbert curve path.
+//     * @return dimension index array.
+//     */
+//    private void iteratePath(final int[] currentlyTab,  final int remainingOrder) {//currently tab remaining order
+//        int curTabi;
+//        int[]curt;
+//        ordinateFifo.add(currentlyTab.clone());
+//        if (remainingOrder == 1) {
+//            curt = ordinateFifo.pollLast();
+//            for(int i = 0;i<l;i++){
+////                curTabi = currentlyTab[i];
+//                curTabi = curt[i];
+//                addToOrdinate[compteurPathBis] = curTabi;
+//                addToSign[compteurPathBis] = currentSign[curTabi];
+//                currentSign[curTabi]=!currentSign[curTabi];
+//                compteurPathBis++;
+//            }
+//            return;
+//        }
+//        final int size = (2<<(dimension*remainingOrder-1))-1;
+//        assert addToOrdinate.length >= size : "addToOrdinate table is not enought longer : "+addToOrdinate.length+" expected min longer : "+size;
+//        assert addToSign.length >= size     : "addToSign table is not enought longer     : "+addToSign.length+" expected min longer : "+size;
+//        int operande,compteurJoint = 0;
+//        int[] tabTemp;
+//        for (int j = 0; j<l; j++) {
+//            for(int i = 0;i<((j!=l-1&&j!=0)?2:1);i++){
+//                operande = basicPath[j];
+////                tabTemp = currentlyTab.clone();
+//                tabTemp = ordinateFifo.peekLast().clone();
+//                oLogic(tabTemp, operande);
+//                iteratePath(tabTemp, remainingOrder-1);//queue.push
+//                if(j != l-1){
+////                    curTabi = currentlyTab[compteurJoint];
+//                    curTabi = ordinateFifo.peekLast()[compteurJoint];
+//                    addToOrdinate[compteurPathBis] = curTabi;
+//                    currentSign[curTabi] = !currentSign[curTabi];
+//                    addToSign[compteurPathBis] = currentSign[curTabi];
+//                    compteurPathBis++;
+//                    compteurJoint++;
+//                }else{
+//                    ordinateFifo.removeLast();
+//                }
+//            }
+//            if(j!=l-2&&j!=0)j++;
+//        }
+//    }
+
+    }//do not delete
 
     /**Operation on all tab values ordinate.
      *
@@ -149,9 +266,10 @@ public class Hilbert {
         System.arraycopy(departure.clone(), 0, coordinates, 0, dimension);
         int destPos = dimension;
         final int size = (2<<getOrder()*dimension-1)-1;
-        final int[] addToOrdinate = new int[size];
-        final boolean[] addToSign = new boolean[size];
-        iteratePath(basicPath, getOrder(), addToOrdinate, addToSign);
+        addToOrdinate = new int[size];
+        addToSign = new boolean[size];
+        iteratePath(basicPath, getOrder());
+        System.out.println(Arrays.toString(addToOrdinate));
         for(int i = 0; i<size; i++){
             final int val = (addToSign[i])?1:-1;
             final int dim = addToOrdinate[i];

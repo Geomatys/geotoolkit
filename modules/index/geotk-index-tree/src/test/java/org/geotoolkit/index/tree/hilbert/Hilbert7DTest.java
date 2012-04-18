@@ -18,12 +18,12 @@
 package org.geotoolkit.index.tree.hilbert;
 
 /**
- * Test Hilbert curve creation in dimension 2.
+ * Test Hilbert curve creation in dimension 7.
  *
  * @author Rémi Marechal(Geomatys).
  */
-public class Hilbert2DTest extends HilbertTest{
-    public Hilbert2DTest() {
-        super(2);
+public class Hilbert7DTest extends HilbertTest{
+    public Hilbert7DTest() {
+        super(7);
     }
 }

@@ -17,9 +17,10 @@
  */
 package org.geotoolkit.index.tree.hilbert;
 
-/**Test Hilbert curve creation in dimension 4.
+/**
+ * Test Hilbert curve creation in dimension 4.
  *
- * @author Rémi Marechal(Géomatys).
+ * @author Rémi Marechal(Geomatys).
  */
 public class Hilbert4DTest extends HilbertTest{
     public Hilbert4DTest() {
