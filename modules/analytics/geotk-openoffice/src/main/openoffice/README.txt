@@ -3,6 +3,10 @@ To make the files more suitable to a versioning system, we did not committed the
 Instead, we applied the following step:
 
   * We unzipped the LibreOffice/OpenOffice.org documents, each document in its own directory.
+
+  * We excluded the "Configuration2" directory, because it contains only empty subdirectories or
+    empty files. We also removed the corresponding entry from the "META-INF/manifest.xml" file.
+
   * We reformatted every XML files, then changed the indentation from 4 spaces to 1 space.
     The reformatting is needed because the whole XML contents were initially on a single line,
     which do not work well with 'diff' tools, including the versioning system itself.

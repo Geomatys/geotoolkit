@@ -54,7 +54,7 @@ GridCoverage2D newGC = factory.create(
       </question>
       <answer>
         <p>When using the Java Image I/O API, this kind of information can be stored in an
-        <code><a href="http://download.oracle.com/javase/6/docs/api/javax/imageio/metadata/IIOMetadata.html">IIOMetadata</a></code>
+        <code><a href="http://docs.oracle.com/javase/7/docs/api/javax/imageio/metadata/IIOMetadata.html">IIOMetadata</a></code>
         object. The Geotk project defines a format-neutral
         <a href="../../apidocs/org/geotoolkit/image/io/metadata/SpatialMetadataFormat.html#default-formats">spatial format</a>
         as a subset of the ISO 19115-2 metadata standard with few additions. If the NetCDF file
@@ -94,7 +94,7 @@ chooser.showOpenDialog(null);</source>
         <p>Some file formats like NetCDF do not contain color information. In such case, the color palette
         (a gray scale by default) is applied by the <code>ImageReader</code>. That color palette is scaled
         from the minimal value to the maximal value, which need to be provided by the image reader in an
-        <code><a href="http://download.oracle.com/javase/6/docs/api/javax/imageio/metadata/IIOMetadata.html">IIOMetadata</a></code>
+        <code><a href="http://docs.oracle.com/javase/7/docs/api/javax/imageio/metadata/IIOMetadata.html">IIOMetadata</a></code>
         object. If this information is missing, then the color palette will be scaled for an arbitrary
         range, typically much too large resulting in all useful values looking the same color.</p>
 
