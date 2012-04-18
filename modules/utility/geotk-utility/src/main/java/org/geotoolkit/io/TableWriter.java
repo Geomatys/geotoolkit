@@ -28,6 +28,7 @@ import javax.swing.text.StyleConstants;
 import net.jcip.annotations.ThreadSafe;
 
 import org.geotoolkit.util.Strings;
+import org.geotoolkit.util.XArrays;
 import org.geotoolkit.lang.Decorator;
 
 
@@ -189,7 +190,7 @@ public class TableWriter extends FilterWriter {
      * Maximum width for each columns. This array length must
      * be equal to the number of columns in this table.
      */
-    private int[] width = new int[0];
+    private int[] width = XArrays.EMPTY_INT;
 
     /**
      * The column separator.

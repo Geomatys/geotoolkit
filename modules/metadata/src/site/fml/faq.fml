@@ -17,7 +17,7 @@
         Java names or ISO/OGC names), then it is possible to implement a single engine accessing
         any kind of metadata and let the Java Virtual Machine implements the GeoAPI interfaces
         on-the-fly, using the
-        <code><a href="http://java.sun.com/javase/6/docs/api/java/lang/reflect/Proxy.html">java.lang.reflect.Proxy</a></code>
+        <code><a href="http://docs.oracle.com/javase/7/docs/api/java/lang/reflect/Proxy.html">java.lang.reflect.Proxy</a></code>
         class. See the <code>Proxy</code> javadoc for details, keeping in mind that the ISO/OGC name
         of a <code>java.lang.Class</code> or <code>java.lang.reflect.Method</code> object can be
         obtained as below:</p>

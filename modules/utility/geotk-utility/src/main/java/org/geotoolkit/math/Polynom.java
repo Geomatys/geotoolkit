@@ -21,6 +21,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 import static java.lang.Math.*;
 
+import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.converter.Classes;
 
 
@@ -50,11 +51,6 @@ public class Polynom implements Serializable {
     private static final long serialVersionUID = 6825019711186108990L;
 
     /**
-     * The array when no real roots can be computed.
-     */
-    private static final double[] NO_REAL_ROOT = new double[0];
-
-    /**
      * The coefficients for the polynomial equation.
      */
     private final double[] c;
@@ -75,7 +71,7 @@ public class Polynom implements Serializable {
             // Empty on purpose.
         }
         if (n == 0) {
-            this.c = NO_REAL_ROOT;
+            this.c = XArrays.EMPTY_DOUBLE;
         } else {
             this.c = new double[n];
             System.arraycopy(c, 0, this.c, 0, n);
@@ -135,7 +131,7 @@ public class Polynom implements Serializable {
             };
         } else {
             // Two complex conjugate roots
-            return NO_REAL_ROOT;
+            return XArrays.EMPTY_DOUBLE;
         }
     }
 
@@ -225,7 +221,7 @@ public class Polynom implements Serializable {
             // Empty on purpose.
         }
         switch (n) {
-            case 0:  return NO_REAL_ROOT;
+            case 0:  return XArrays.EMPTY_DOUBLE;
             case 1:  return new double[] {-c[0]/c[1]};
             case 2:  return quadraticRoots(c[0], c[1], c[2]);
             case 3:  return cubicRoots(c[0], c[1], c[2], c[3]);

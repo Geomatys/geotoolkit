@@ -25,6 +25,7 @@ import javax.vecmath.MismatchedSizeException;
 
 import org.geotoolkit.io.X364;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.internal.InternalUtilities;
 
@@ -124,7 +125,7 @@ public abstract class InteractiveConsole implements Runnable {
      * be the character in the {@link #closingBrackets} array at the same index
      * than the opening bracket.
      */
-    private char[] openingBrackets = new char[0];
+    private char[] openingBrackets = XArrays.EMPTY_CHAR;
 
     /**
      * List of caracters acceptable as closing bracket.

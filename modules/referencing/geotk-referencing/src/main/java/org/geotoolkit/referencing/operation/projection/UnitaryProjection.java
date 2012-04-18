@@ -63,14 +63,9 @@ import static java.lang.Math.*;
 import static java.lang.Double.*;
 import static org.geotoolkit.math.XMath.xorSign;
 import static org.geotoolkit.util.Utilities.hash;
-import static org.geotoolkit.referencing.operation.provider.UniversalParameters.*;
 import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
 import static org.geotoolkit.parameter.Parameters.getOrCreate;
-import static org.geotoolkit.referencing.operation.provider.MapProjection.SEMI_MAJOR;
-import static org.geotoolkit.referencing.operation.provider.MapProjection.SEMI_MINOR;
-import static org.geotoolkit.referencing.operation.provider.MapProjection.ROLL_LONGITUDE;
-import static org.geotoolkit.referencing.operation.provider.MapProjection.X_SCALE;
-import static org.geotoolkit.referencing.operation.provider.MapProjection.Y_SCALE;
+import static org.geotoolkit.referencing.operation.provider.UniversalParameters.*;
 import static org.geotoolkit.referencing.operation.provider.MapProjection.XY_PLANE_ROTATION;
 
 
@@ -783,11 +778,6 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
         };
 
         /**
-         * An empty array for parameters having no standard parallels.
-         */
-        private static final double[] EMPTY = new double[0];
-
-        /**
          * Length of semi-major axis, in metres. This is named <var>a</var> or <var>R</var>
          * (Radius in spherical cases) in Snyder.
          *
@@ -910,7 +900,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
             yScale            = doubleValue(expected, Y_SCALE,             values);
             xyPlaneRotation   = doubleValue(expected, XY_PLANE_ROTATION,   values);
             switch ((isNaN(standardParallel1) ? 0 : 1) | (isNaN(standardParallel2) ? 0 : 2)) {
-                case  0: standardParallels = EMPTY; break;
+                case  0: standardParallels = XArrays.EMPTY_DOUBLE; break;
                 case  1: standardParallels = new double[] {standardParallel1}; break;
                 case  2: standardParallels = new double[] {standardParallel2}; break;
                 case  3: standardParallels = new double[] {standardParallel1, standardParallel2}; break;

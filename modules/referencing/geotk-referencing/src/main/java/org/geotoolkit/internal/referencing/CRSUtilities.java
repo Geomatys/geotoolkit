@@ -39,6 +39,9 @@ import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.measure.Measure;
 import org.geotoolkit.resources.Errors;
 
+import static java.lang.Math.*;
+import static org.geotoolkit.math.XMath.atanh;
+
 
 /**
  * A set of static methods working on OpenGIS&reg;
@@ -50,10 +53,14 @@ import org.geotoolkit.resources.Errors;
  * in any future release.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @since 2.0
  * @module
+ *
+ * @todo Move {@link #getStandardGeographicCRS2D} out of this class, and move the definition
+ *       of {@link CRS#getHorizontalCRS} in this class. It should allow us to get ride of
+ *       most of Geotk dependencies.
  */
 public final class CRSUtilities extends Static {
     /**
@@ -68,6 +75,27 @@ public final class CRSUtilities extends Static {
      * Do not allow creation of instances of this class.
      */
     private CRSUtilities() {
+    }
+
+    /**
+     * Returns the radius of a hypothetical sphere having the same surface than the ellipsoid
+     * specified by the given axis length.
+     *
+     * @param  a The semi-major axis length.
+     * @param  b The semi-minor axis length.
+     * @return The radius of a sphere having the same surface than the specified ellipsoid.
+     *
+     * @see org.geotoolkit.referencing.datum.DefaultEllipsoid#getAuthalicRadius()
+     *
+     * @since 3.20
+     */
+    public static double getAuthalicRadius(final double a, final double b) {
+        if (a == b) {
+            return a;
+        }
+        final double f = 1 - b/a;
+        final double e = sqrt(2*f - f*f);
+        return sqrt(0.5 * (a*a + b*b*atanh(e)/e));
     }
 
     /**

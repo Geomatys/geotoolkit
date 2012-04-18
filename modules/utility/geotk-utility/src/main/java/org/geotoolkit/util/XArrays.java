@@ -33,7 +33,7 @@ import org.geotoolkit.lang.Static;
  * arrays and do not copy anything if the given array already has the requested length.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.17
+ * @version 3.20
  *
  * @see Arrays
  *
@@ -41,6 +41,70 @@ import org.geotoolkit.lang.Static;
  * @module
  */
 public final class XArrays extends Static {
+    /**
+     * An empty array of {@code double} primitive type.
+     * Such arrays are immutable and can be safely shared.
+     *
+     * @since 3.20
+     */
+    public static final double[] EMPTY_DOUBLE = new double[0];
+
+    /**
+     * An empty array of {@code float} primitive type.
+     * Such arrays are immutable and can be safely shared.
+     *
+     * @since 3.20
+     */
+    public static final float[] EMPTY_FLOAT = new float[0];
+
+    /**
+     * An empty array of {@code long} primitive type.
+     * Such arrays are immutable and can be safely shared.
+     *
+     * @since 3.20
+     */
+    public static final long[] EMPTY_LONG = new long[0];
+
+    /**
+     * An empty array of {@code int} primitive type.
+     * Such arrays are immutable and can be safely shared.
+     *
+     * @since 3.20
+     */
+    public static final int[] EMPTY_INT = new int[0];
+
+    /**
+     * An empty array of {@code short} primitive type.
+     * Such arrays are immutable and can be safely shared.
+     *
+     * @since 3.20
+     */
+    public static final short[] EMPTY_SHORT = new short[0];
+
+    /**
+     * An empty array of {@code byte} primitive type.
+     * Such arrays are immutable and can be safely shared.
+     *
+     * @since 3.20
+     */
+    public static final byte[] EMPTY_BYTE = new byte[0];
+
+    /**
+     * An empty array of {@code char} primitive type.
+     * Such arrays are immutable and can be safely shared.
+     *
+     * @since 3.20
+     */
+    public static final char[] EMPTY_CHAR = new char[0];
+
+    /**
+     * An empty array of {@code boolean} primitive type.
+     * Such arrays are immutable and can be safely shared.
+     *
+     * @since 3.20
+     */
+    public static final boolean[] EMPTY_BOOLEAN = new boolean[0];
+
     /**
      * Do not allow instantiation of this class.
      */
@@ -88,7 +152,15 @@ public final class XArrays extends Static {
      * @see Arrays#copyOf(double[],int)
      */
     public static double[] resize(final double[] array, final int length) {
-        return (array == null || array.length == length) ? array : Arrays.copyOf(array, length);
+        if (array != null) {
+            if (length == 0) {
+                return EMPTY_DOUBLE;
+            }
+            if (array.length != length) {
+                return Arrays.copyOf(array, length);
+            }
+        }
+        return array;
     }
 
     /**
@@ -103,7 +175,15 @@ public final class XArrays extends Static {
      * @see Arrays#copyOf(float[],int)
      */
     public static float[] resize(final float[] array, final int length) {
-        return (array == null || array.length == length) ? array : Arrays.copyOf(array, length);
+        if (array != null) {
+            if (length == 0) {
+                return EMPTY_FLOAT;
+            }
+            if (array.length != length) {
+                return Arrays.copyOf(array, length);
+            }
+        }
+        return array;
     }
 
     /**
@@ -118,7 +198,15 @@ public final class XArrays extends Static {
      * @see Arrays#copyOf(long[],int)
      */
     public static long[] resize(final long[] array, final int length) {
-        return (array == null || array.length == length) ? array : Arrays.copyOf(array, length);
+        if (array != null) {
+            if (length == 0) {
+                return EMPTY_LONG;
+            }
+            if (array.length != length) {
+                return Arrays.copyOf(array, length);
+            }
+        }
+        return array;
     }
 
     /**
@@ -133,7 +221,15 @@ public final class XArrays extends Static {
      * @see Arrays#copyOf(int[],int)
      */
     public static int[] resize(final int[] array, final int length) {
-        return (array == null || array.length == length) ? array : Arrays.copyOf(array, length);
+        if (array != null) {
+            if (length == 0) {
+                return EMPTY_INT;
+            }
+            if (array.length != length) {
+                return Arrays.copyOf(array, length);
+            }
+        }
+        return array;
     }
 
     /**
@@ -148,7 +244,15 @@ public final class XArrays extends Static {
      * @see Arrays#copyOf(short[],int)
      */
     public static short[] resize(final short[] array, final int length) {
-        return (array == null || array.length == length) ? array : Arrays.copyOf(array, length);
+        if (array != null) {
+            if (length == 0) {
+                return EMPTY_SHORT;
+            }
+            if (array.length != length) {
+                return Arrays.copyOf(array, length);
+            }
+        }
+        return array;
     }
 
     /**
@@ -163,7 +267,15 @@ public final class XArrays extends Static {
      * @see Arrays#copyOf(byte[],int)
      */
     public static byte[] resize(final byte[] array, final int length) {
-        return (array == null || array.length == length) ? array : Arrays.copyOf(array, length);
+        if (array != null) {
+            if (length == 0) {
+                return EMPTY_BYTE;
+            }
+            if (array.length != length) {
+                return Arrays.copyOf(array, length);
+            }
+        }
+        return array;
     }
 
    /**
@@ -178,7 +290,15 @@ public final class XArrays extends Static {
      * @see Arrays#copyOf(char[],int)
     */
     public static char[] resize(final char[] array, final int length) {
-        return (array == null || array.length == length) ? array : Arrays.copyOf(array, length);
+        if (array != null) {
+            if (length == 0) {
+                return EMPTY_CHAR;
+            }
+            if (array.length != length) {
+                return Arrays.copyOf(array, length);
+            }
+        }
+        return array;
     }
 
     /**
@@ -193,7 +313,15 @@ public final class XArrays extends Static {
      * @see Arrays#copyOf(boolean[],int)
      */
     public static boolean[] resize(final boolean[] array, final int length) {
-        return (array == null || array.length == length) ? array : Arrays.copyOf(array, length);
+        if (array != null) {
+            if (length == 0) {
+                return EMPTY_BOOLEAN;
+            }
+            if (array.length != length) {
+                return Arrays.copyOf(array, length);
+            }
+        }
+        return array;
     }
 
     /**

@@ -592,7 +592,7 @@ public class GeneralMatrix extends GMatrix implements XMatrix {
             numRow++;
             assert numData % numRow == 0 : numData;
         }
-        data = (data != null) ? XArrays.resize(data, numData) : new double[0];
+        data = (data != null) ? XArrays.resize(data, numData) : XArrays.EMPTY_DOUBLE;
         return new GeneralMatrix(numRow, numData/numRow, data);
     }
 

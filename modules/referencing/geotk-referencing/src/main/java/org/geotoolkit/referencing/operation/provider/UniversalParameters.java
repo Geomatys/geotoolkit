@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Arrays;
 import javax.measure.unit.SI;
 import javax.measure.unit.NonSI;
@@ -90,10 +91,15 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
     private static final long serialVersionUID = -4608976443553166518L;
 
     /**
-     * The operation parameter descriptor for the {@linkplain
-     * org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#semiMajor
-     * semi major} parameter value. Valid values range is (0 &hellip; &infin;). This parameter
-     * is mandatory and has no default value.
+     * All known names for the
+     * {@linkplain org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#semiMajor
+     * semi major} parameter. This parameter is mandatory and has no default value.
+     * The range of valid values is (0 &hellip; &infin;).
+     * <p>
+     * Some names for this parameter are {@code "Semi-major axis"}, {@code "semi_major"},
+     * {@code "SemiMajor"} and {@code "a"}.
+     *
+     * @see org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#semiMajor
      */
     public static final UniversalParameters SEMI_MAJOR = new UniversalParameters(new NamedIdentifier[] {
             new NamedIdentifier(OGC,     "semi_major"),
@@ -105,10 +111,15 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
         }, Double.NaN, 0, Double.POSITIVE_INFINITY, SI.METRE, true);
 
     /**
-     * The operation parameter descriptor for the {@linkplain
-     * org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#semiMinor
-     * semi minor} parameter value. Valid values range is (0 &hellip; &infin;). This parameter
-     * is mandatory and has no default value.
+     * All known names for the
+     * {@linkplain org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#semiMinor
+     * semi minor} parameter. This parameter is mandatory and has no default value.
+     * The range of valid values is (0 &hellip; &infin;).
+     * <p>
+     * Some names for this parameter are {@code "Semi-minor axis"}, {@code "semi_minor"},
+     * {@code "SemiMinor"} and {@code "b"}.
+     *
+     * @see org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#semiMinor
      */
     public static final UniversalParameters SEMI_MINOR = new UniversalParameters(new NamedIdentifier[] {
             new NamedIdentifier(OGC,     "semi_minor"),
@@ -120,7 +131,25 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
         }, Double.NaN, 0, Double.POSITIVE_INFINITY, SI.METRE, true);
 
     /**
-     * The operation parameter descriptor for whatever the projection should roll longitude.
+     * All known names for the Earth radius parameter.
+     * This is used in some NetCDF files instead of {@link #SEMI_MAJOR} and {@link #SEMI_MINOR}.
+     * This is not a standard parameter.
+     */
+    static final ParameterDescriptor<Double> EARTH_RADIUS = createDescriptor(new NamedIdentifier[] {
+            new NamedIdentifier(NETCDF, MapProjectionDescriptor.EARTH_RADIUS)
+        }, Double.NaN, 0.0, Double.POSITIVE_INFINITY, SI.METRE, false);
+
+    /**
+     * All known names for the inverse flattening parameter.
+     * This is used in some NetCDF files instead of {@link #SEMI_MINOR}.
+     * This is not a standard parameter.
+     */
+    static final ParameterDescriptor<Double> INVERSE_FLATTENING = createDescriptor(new NamedIdentifier[] {
+            new NamedIdentifier(NETCDF, MapProjectionDescriptor.INVERSE_FLATTENING)
+        }, Double.NaN, 0.0, Double.POSITIVE_INFINITY, Unit.ONE, false);
+
+    /**
+     * All known names for the parameter that specify whatever a projection should roll longitude.
      * If {@code true}, then the value of (<var>longitude</var> - {@linkplain
      * org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#centralMeridian
      * central meridian}) will be rolled to the [-180 &hellip; 180)&deg; range before the projection
@@ -133,16 +162,22 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
             GEOTOOLKIT, "roll_longitude", Boolean.class, null, null, null, null, null, false);
 
     /**
-     * The identifiers for the {@linkplain
-     * org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#centralMeridian
-     * central meridian} parameter. Valid values range is from -180 to 180&deg;.
-     * <p>
+     * All known names for the
+     * {@linkplain org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#centralMeridian
+     * central meridian} parameter.
      * This parameter is mandatory - meaning that it appears in {@linkplain ParameterValueGroup
      * parameter value group} even if the user didn't set it explicitly - and its default value
-     * is 0&deg;.
+     * is 0&deg;. The range of valid values is [-180 &hellip; 180]&deg;.
+     * <p>
+     * Some names for this parameter are {@code "Longitude of origin"},
+     * {@code "Longitude of false origin"}, {@code "Longitude of natural origin"},
+     * {@code "Spherical longitude of origin"}, {@code "Longitude of projection centre"},
+     * {@code "Longitude_Of_Center"}, {@code "longitude_of_projection_origin"},
+     * {@code "central_meridian"}, {@code "longitude_of_central_meridian"},
+     * {@code "NatOriginLong"}, {@code "FalseOriginLong"}, {@code "ProjCenterLong"},
+     * {@code "CenterLong"} and {@code "lon_0"}.
      *
-     * {@note ESRI uses <code>"Longitude_Of_Center"</code> in orthographic, not to be
-     *        confused with <code>"Longitude_Of_Center"</code> in oblique mercator.}
+     * @see org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#centralMeridian
      */
     public static final UniversalParameters CENTRAL_MERIDIAN = new UniversalParameters(new NamedIdentifier[] {
             new NamedIdentifier(OGC,     "central_meridian"),
@@ -166,25 +201,42 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
         }, 0, -180, 180, NonSI.DEGREE_ANGLE, true);
 
     /**
-     * The identifiers for the {@linkplain
-     * org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#latitudeOfOrigin
-     * latitude of origin} parameter. Valid values range is from -90 to 90&deg;.
-     * <p>
+     * All known names for the
+     * {@linkplain org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#latitudeOfOrigin
+     * latitude of origin} parameter.
      * This parameter is mandatory - meaning that it appears in {@linkplain ParameterValueGroup
      * parameter value group} even if the user didn't set it explicitly - and its default value
-     * is 0&deg;.
+     * is 0&deg;. The range of valid values is [-90 &hellip; 90]&deg;.
+     * <p>
+     * Some names for this parameter are {@code "Latitude of false origin"},
+     * {@code "Latitude of natural origin"}, {@code "Spherical latitude of origin"},
+     * {@code "Latitude of projection centre"}, {@code "latitude_of_center"},
+     * {@code "latitude_of_projection_origin"}, {@code "latitude_of_origin"},
+     * {@code "NatOriginLat"}, {@code "FalseOriginLat"}, {@code "ProjCenterLat"}, {@code "CenterLat"}
+     * and @code "lat_0"}.
      *
-     * {@note ESRI uses <code>"Latitude_Of_Center"</code> in orthographic.}
+     * @see org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#latitudeOfOrigin
      */
     public static final UniversalParameters LATITUDE_OF_ORIGIN;
 
     /**
-     * The operation parameter descriptor for the standard parallel 1 parameter value.
-     * Valid values range is from -90 to 90&deg;. This parameter is optional.
+     * All known names for the standard parallels parameter, as an array of 1 or 2 elements.
+     * This is used in some NetCDF files instead of {@link #STANDARD_PARALLEL_1} and
+     * {@link #STANDARD_PARALLEL_2}. This is not a standard parameter.
+     */
+    static final ParameterDescriptor<double[]> STANDARD_PARALLEL;
+
+    /**
+     * All known names for the standard parallel 1 parameter.
+     * This parameter is optional. The range of valid values is [-90 &hellip; 90]&deg;.
      *
-     * <p><b>EPSG description:</b> For a conic projection with two standard parallels, this is the
-     * latitude of intersection of the cone with the ellipsoid that is nearest the pole. Scale is
-     * true along this parallel.</p>
+     * <blockquote><b>EPSG description:</b> For a conic projection with two standard parallels,
+     * this is the latitude of intersection of the cone with the ellipsoid that is nearest the pole.
+     * Scale is true along this parallel.</blockquote>
+     * <p>
+     * Some names for this parameter are {@code "Latitude of standard parallel"},
+     * {@code "Latitude of pseudo standard parallel"}, {@code "standard_parallel_1"},
+     * {@code "pseudo_standard_parallel_1"}, {@code "StdParallel1"} and {@code "lat_1"}.
      */
     public static final UniversalParameters STANDARD_PARALLEL_1;
 
@@ -197,6 +249,7 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
     static {
         final NamedIdentifier esri = new NamedIdentifier(ESRI, "Standard_Parallel_1");
         final NamedIdentifier epsg = new NamedIdentifier(EPSG, "Latitude of 1st standard parallel");
+        final NamedIdentifier nc   = new NamedIdentifier(NETCDF, MapProjectionDescriptor.STANDARD_PARALLEL);
 
         LATITUDE_OF_ORIGIN = new UniversalParameters(new NamedIdentifier[] {
             new NamedIdentifier(OGC,     "latitude_of_origin"),
@@ -215,26 +268,31 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
             new NamedIdentifier(PROJ4,   "lat_0")
         }, 0, -90, 90, NonSI.DEGREE_ANGLE, true);
 
+        STANDARD_PARALLEL = new DefaultParameterDescriptor<double[]>(Collections.singletonMap(NAME_KEY, nc),
+            double[].class, null, null, null, null, NonSI.DEGREE_ANGLE, false);
+
         STANDARD_PARALLEL_1 = new UniversalParameters(new NamedIdentifier[] {
             new NamedIdentifier(OGC,     "standard_parallel_1"),
             new NamedIdentifier(OGC,     "pseudo_standard_parallel_1"),
             new NamedIdentifier(EPSG,    "Latitude of standard parallel"), epsg,
             new NamedIdentifier(EPSG,    "Latitude of pseudo standard parallel"),
             new NamedIdentifier(ESRI,    "Pseudo_Standard_Parallel_1"), esri,
-            new NamedIdentifier(NETCDF,  "standard_parallel[1]"),
-            new NamedIdentifier(NETCDF,  "standard_parallel"), // Because this parameter is an array.
+            new NamedIdentifier(NETCDF,  "standard_parallel[1]"), nc, // Because this parameter is an array.
             new NamedIdentifier(GEOTIFF, "StdParallel1"),
             new NamedIdentifier(PROJ4,   "lat_1")
         }, Double.NaN, -90, 90, NonSI.DEGREE_ANGLE, false);
     }
 
     /**
-     * The operation parameter descriptor for the standard parallel 2 parameter value.
-     * Valid values range is from -90 to 90&deg;. This parameter is optional.
+     * All known names for the standard parallel 2 parameter.
+     * This parameter is optional. The range of valid values is [-90 &hellip; 90]&deg;.
      *
-     * <p><b>EPSG description:</b> For a conic projection with two standard parallels, this is the
-     * latitude of intersection of the cone with the ellipsoid that is furthest from the pole.
-     * Scale is true along this parallel.</p>
+     * <blockquote><b>EPSG description:</b> For a conic projection with two standard parallels,
+     * this is the latitude of intersection of the cone with the ellipsoid that is furthest from
+     * the pole. Scale is true along this parallel.</blockquote>
+     * <p>
+     * Some names for this parameter are {@code "Latitude of 2nd standard parallel"},
+     * {@code "standard_parallel_2"}, {@code "StdParallel2"} and {@code "lat_2"}.
      */
     public static final UniversalParameters STANDARD_PARALLEL_2 = new UniversalParameters(new NamedIdentifier[] {
             new NamedIdentifier(OGC,     "standard_parallel_2"),
@@ -246,48 +304,51 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
         }, Double.NaN, -90, 90, NonSI.DEGREE_ANGLE, false);
 
     /**
-     * The operation parameter descriptor for the {@code latitudeOf1stPoint} parameter value.
-     * Valid values range is from -90 to 90&deg;. This parameter is mandatory and have no
-     * default value.
+     * All known names for the {@code latitudeOf1stPoint} parameter.
+     * This parameter is mandatory and has no default value.
+     * The range of valid values is [-90 &hellip; 90]&deg;.
      */
     public static final UniversalParameters LAT_OF_1ST_POINT = new UniversalParameters(new NamedIdentifier[] {
             new NamedIdentifier(Citations.ESRI, "Latitude_Of_1st_Point")
         }, Double.NaN, -90, 90, NonSI.DEGREE_ANGLE, true);
 
     /**
-     * The operation parameter descriptor for the {@code longitudeOf1stPoint} parameter value.
-     * Valid values range is from -180 to 180&deg;. This parameter is mandatory and have no
-     * default value.
+     * All known names for the {@code longitudeOf1stPoint} parameter.
+     * This parameter is mandatory and has no default value.
+     * The range of valid values is [-180 &hellip; 180]&deg;.
      */
     public static final UniversalParameters LONG_OF_1ST_POINT = new UniversalParameters(new NamedIdentifier[] {
             new NamedIdentifier(Citations.ESRI, "Longitude_Of_1st_Point")
         }, Double.NaN, -180, 180, NonSI.DEGREE_ANGLE, true);
 
     /**
-     * The operation parameter descriptor for the {@code latitudeOf2ndPoint} parameter value.
-     * Valid values range is from -90 to 90&deg;. This parameter is mandatory and have no
-     * default value.
+     * All known names for the {@code latitudeOf2ndPoint} parameter.
+     * This parameter is mandatory and has no default value.
+     * The range of valid values is [-90 &hellip; 90]&deg;.
      */
     public static final UniversalParameters LAT_OF_2ND_POINT = new UniversalParameters(new NamedIdentifier[] {
             new NamedIdentifier(Citations.ESRI, "Latitude_Of_2nd_Point")
         }, Double.NaN, -90, 90, NonSI.DEGREE_ANGLE, true);
 
     /**
-     * The operation parameter descriptor for the {@code longitudeOf2ndPoint} parameter value.
-     * Valid values range is from -180 to 180&deg;. This parameter is mandatory and have no
-     * default value.
+     * All known names for the {@code longitudeOf2ndPoint} parameter.
+     * This parameter is mandatory and has no default value.
+     * The range of valid values is [-180 &hellip; 180]&deg;.
      */
     public static final UniversalParameters LONG_OF_2ND_POINT = new UniversalParameters(new NamedIdentifier[] {
             new NamedIdentifier(Citations.ESRI, "Longitude_Of_2nd_Point")
         }, Double.NaN, -180, 180, NonSI.DEGREE_ANGLE, true);
 
     /**
-     * The operation parameter descriptor for the {@code azimuth} parameter value.
-     * This parameter is mandatory and have no default value.
+     * All known names for the {@code azimuth} parameter.
+     * This parameter is mandatory and has no default value.
      *
-     * <p><b>EPSG description:</b> The azimuthal direction (north zero, east of north being positive)
-     * of the great circle which is the centre line of an oblique projection. The azimuth is given at
-     * the projection center.</p>
+     * <blockquote><b>EPSG description:</b> The azimuthal direction (north zero, east of north
+     * being positive) of the great circle which is the centre line of an oblique projection.
+     * The azimuth is given at the projection center.</blockquote>
+     * <p>
+     * Some names for this parameter are {@code "Azimuth of initial line"},
+     * {@code "Co-latitude of cone axis"}, {@code "azimuth"} and {@code "AzimuthAngle"}.
      */
     public static final UniversalParameters AZIMUTH = new UniversalParameters(new NamedIdentifier[] {
             new NamedIdentifier(OGC,      "azimuth"),
@@ -298,13 +359,17 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
         }, Double.NaN, -360, 360, NonSI.DEGREE_ANGLE, true);
 
     /**
-     * The operation parameter descriptor for the {@code rectifiedGridAngle} parameter value.
-     * This is an optional parameter with valid values ranging from -360 to 360&deg;.
-     * The default value is the {@linkplain #AZIMUTH azimuth}.
+     * All known names for the {@code rectifiedGridAngle} parameter.
+     * This is an optional parameter with valid values ranging [-360 &hellip; 360]&deg;.
+     * The default value is the value of the {@linkplain #AZIMUTH azimuth} parameter.
      *
-     * <p><b>EPSG description:</b> The angle at the natural origin of an oblique projection
+     * <blockquote><b>EPSG description:</b> The angle at the natural origin of an oblique projection
      * through which the natural coordinate reference system is rotated to make the projection
-     * north axis parallel with true north.</p>
+     * north axis parallel with true north.</blockquote>
+     * <p>
+     * Some names for this parameter are {@code "Angle from Rectified to Skew Grid"},
+     * {@code "rectified_grid_angle"}, {@code "RectifiedGridAngle"} and
+     * {@code "XY_Plane_Rotation"}.
      */
     public static final UniversalParameters RECTIFIED_GRID_ANGLE = new UniversalParameters(new NamedIdentifier[] {
             new NamedIdentifier(Citations.OGC,      "rectified_grid_angle"),
@@ -314,13 +379,20 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
         }, Double.NaN, -360, 360, NonSI.DEGREE_ANGLE, false);
 
     /**
-     * The identifiers for the {@linkplain
-     * org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#scaleFactor
-     * scale factor} parameter. Valid values range is from 0 to infinity.
-     * <p>
+     * All known names for the
+     * {@linkplain org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#scaleFactor
+     * scale factor} parameter.
      * This parameter is mandatory - meaning that it appears in {@linkplain ParameterValueGroup
      * parameter value group} even if the user didn't set it explicitly - and its default value
-     * is 1.
+     * is 1. The range of valid values is (0 &hellip; &infin;).
+     * <p>
+     * Some names for this parameter are {@code "Scale factor at natural origin"},
+     * {@code "Scale factor on initial line"}, {@code "Scale factor on pseudo standard parallel"},
+     * {@code "scale_factor"}, {@code "scale_factor_at_projection_origin"},
+     * {@code "scale_factor_at_central_meridian"}, {@code "ScaleAtNatOrigin"},
+     * {@code "ScaleAtCenter"} and {@code "k"}.
+     *
+     * @see org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#scaleFactor
      */
     public static final UniversalParameters SCALE_FACTOR = new UniversalParameters(new NamedIdentifier[] {
             new NamedIdentifier(OGC,     "scale_factor"),
@@ -336,10 +408,14 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
         }, 1, 0, Double.POSITIVE_INFINITY, Unit.ONE, true);
 
     /**
-     * The operation parameter descriptor for the ESRI {@code "X_Scale"} parameter value.
-     * Valid values range is unrestricted. This parameter is optional and its default value is 1.
+     * All known names for the {@code "X_Scale"} parameter.
+     * This parameter is optional and its default value is 1.
+     * The range of valid values is unrestricted (but value 0 is not recommended).
+     * In particular, negative values can be used for reverting the axis orientation.
      * <p>
-     * This is an ESRI-specific parameter, but its usage could be extended to any projection.
+     * This is an ESRI-specific parameter, sometime used instead of {@code "AXIS"} elements
+     * in <cite>Well Known Text</cite> for resolving axis orientation (especially for the
+     * {@linkplain Krovak} projection). However its usage could be extended to any projection.
      * The choice to allow this parameter or not is taken on a projection-by-projection basis.
      */
     public static final UniversalParameters X_SCALE = new UniversalParameters(new NamedIdentifier[] {
@@ -347,10 +423,14 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
         }, 1, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Unit.ONE, false);
 
     /**
-     * The operation parameter descriptor for the ESRI {@code "Y_Scale"} parameter value.
-     * Valid values range is unrestricted. This parameter is optional and its default value is 1.
+     * All known names for the {@code "Y_Scale"} parameter.
+     * This parameter is optional and its default value is 1.
+     * The range of valid values is unrestricted (but value 0 is not recommended).
+     * In particular, negative values can be used for reverting the axis orientation.
      * <p>
-     * This is an ESRI-specific parameter, but its usage could be extended to any projection.
+     * This is an ESRI-specific parameter, sometime used instead of {@code "AXIS"} elements
+     * in <cite>Well Known Text</cite> for resolving axis orientation (especially for the
+     * {@linkplain Krovak} projection). However its usage could be extended to any projection.
      * The choice to allow this parameter or not is taken on a projection-by-projection basis.
      */
     public static final UniversalParameters Y_SCALE = new UniversalParameters(new NamedIdentifier[] {
@@ -358,13 +438,18 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
         }, 1, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Unit.ONE, false);
 
     /**
-     * The identifiers for the {@linkplain
-     * org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#falseEasting
-     * false easting} parameter. Valid values range is unrestricted.
-     * <p>
+     * All known names for the
+     * {@linkplain org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#falseEasting
+     * false easting} parameter.
      * This parameter is mandatory - meaning that it appears in {@linkplain ParameterValueGroup
      * parameter value group} even if the user didn't set it explicitly - and its default value
-     * is 0 metres.
+     * is 0 metres. The range of valid values is unrestricted.
+     * <p>
+     * Some names for this parameter are {@code "Easting at false origin"},
+     * {@code "Easting at projection centre"}, {@code "false_easting"}, {@code "FalseEasting"},
+     * {@code "FalseOriginEasting"} and {@code "x_0"}.
+     *
+     * @see org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#falseEasting
      */
     public static final UniversalParameters FALSE_EASTING = new UniversalParameters(new NamedIdentifier[] {
             new NamedIdentifier(OGC,     "false_easting"),
@@ -379,13 +464,18 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
         }, 0, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, SI.METRE, true);
 
     /**
-     * The identifiers for the {@linkplain
-     * org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#falseNorthing
-     * false northing} parameter. Valid values range is unrestricted.
-     * <p>
+     * All known names for the
+     * {@linkplain org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#falseNorthing
+     * false northing} parameter.
      * This parameter is mandatory - meaning that it appears in {@linkplain ParameterValueGroup
      * parameter value group} even if the user didn't set it explicitly - and its default value
-     * is 0 metres.
+     * is 0 metres. The range of valid values is unrestricted.
+     * <p>
+     * Some names for this parameter are {@code "Northing at false origin"},
+     * {@code "Northing at projection centre"}, {@code "false_northing"}, {@code "FalseNorthing"},
+     * {@code "FalseOriginNorthing"} and {@code "y_0"}.
+     *
+     * @see org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#falseNorthing
      */
     public static final UniversalParameters FALSE_NORTHING = new UniversalParameters(new NamedIdentifier[] {
             new NamedIdentifier(OGC,     "false_northing"),
@@ -685,7 +775,7 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
                 boolean forAlias = false;
                 boolean modified = false;
                 Object[] aliases;
-                do { // Executed exactly twice: once for identifier, than once for aliases.
+                do { // Executed exactly twice: once for identifier, then once for aliases.
                     final String key = forAlias ? ALIAS_KEY : IDENTIFIERS_KEY;
                     aliases = (Object[]) properties.get(key);
                     if (aliases != null) {

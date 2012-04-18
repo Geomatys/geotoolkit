@@ -48,6 +48,7 @@ import org.opengis.coverage.PaletteInterpretation;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
 
+import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.MeasurementRange;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
@@ -113,7 +114,7 @@ public class ColorRamp implements Serializable {
     /**
      * The colors to paint as ARGB values (never {@code null}).
      */
-    private int[] colors = new int[0];
+    private int[] colors = XArrays.EMPTY_INT;
 
     /**
      * {@code true} if colors should be interpolated.
@@ -329,7 +330,7 @@ public class ColorRamp implements Serializable {
      */
     private Color[][] setColors(int[] newColors, Map<Integer,Color> share) {
         if (newColors == null) {
-            newColors = new int[0];
+            newColors = XArrays.EMPTY_INT;
         }
         final int[] oldColors = colors;
         colors = newColors;

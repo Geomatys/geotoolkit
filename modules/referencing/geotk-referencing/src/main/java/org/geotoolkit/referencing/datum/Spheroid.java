@@ -33,7 +33,7 @@ import static java.lang.Math.*;
  * {@link #orthodromicDistance} method.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.00
+ * @version 3.20
  *
  * @since 2.0
  * @module
@@ -110,5 +110,21 @@ final class Spheroid extends DefaultEllipsoid {
             // Note: the assertion fails for illegal latitudes (i.e. abs(y1)>90° or abs(y2)>90°).
         }
         return distance;
+    }
+
+    /**
+     * Eccentricity of a sphere is always zero.
+     */
+    @Override
+    public double getEccentricity() {
+        return 0;
+    }
+
+    /**
+     * This ellipsoid is already a sphere, so returns its radius directly.
+     */
+    @Override
+    public double getAuthalicRadius() {
+        return getSemiMajorAxis();
     }
 }

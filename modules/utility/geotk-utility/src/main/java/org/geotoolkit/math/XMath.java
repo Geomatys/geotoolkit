@@ -205,6 +205,21 @@ public final class XMath extends Static {
     }
 
     /**
+     * Returns the inverse hyperbolic tangent of the given value.
+     * This is the inverse of the {@linkplain Math#tanh(double) tanh} method.
+     *
+     * @param  x The value for which to compute the inverse hyperbolic tangent.
+     * @return The inverse hyperbolic tangent of the given value.
+     *
+     * @see Math#tanh(double)
+     *
+     * @since 3.20
+     */
+    public static double atanh(final double x) {
+        return 0.5 * Math.log1p(2*x / (1-x));
+    }
+
+    /**
      * Returns {@code true} if the given value is positive, <em>excluding</em> negative zero.
      * Special cases:
      * <p>
@@ -475,6 +490,7 @@ public final class XMath extends Static {
      * @deprecated This method is inefficient, and the work to do about rounding error is
      *             a bit too much implementation specific anyway.
      */
+    @Deprecated
     public static double roundIfAlmostInteger(final double value, int maxULP) {
         double target = Math.rint(value);
         if (value != target) {
@@ -636,7 +652,7 @@ next:           while (true) {
      */
     public static int[] divisors(int number) {
         if (number == 0) {
-            return new int[0];
+            return XArrays.EMPTY_INT;
         }
         number = Math.abs(number);
         int[] divisors = new int[16];
@@ -712,7 +728,7 @@ next:           while (true) {
      */
     public static int[] commonDivisors(final int... numbers) {
         if (numbers.length == 0) {
-            return new int[0];
+            return XArrays.EMPTY_INT;
         }
         /*
          * Get the smallest value. We will compute the divisors only for this value,

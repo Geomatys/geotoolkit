@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<office:document-meta xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:meta="urn:oasis:names:tc:opendocument:xmlns:meta:1.0" xmlns:ooo="http://openoffice.org/2004/office" xmlns:grddl="http://www.w3.org/2003/g/data-view#" office:version="1.2">
+ <office:meta>
+  <meta:generator>LibreOffice/3.4$Unix LibreOffice_project/340m1$Build-302</meta:generator>
+  <meta:initial-creator>Martin Desruisseaux</meta:initial-creator>
+  <meta:creation-date>2005-07-28T13:50:36</meta:creation-date>
+  <dc:creator>Martin Desruisseaux</dc:creator>
+  <dc:date>2011-10-04T12:21:48</dc:date>
+  <dc:language>fr-FR</dc:language>
+  <meta:editing-cycles>35</meta:editing-cycles>
+  <meta:editing-duration>PT5H35M57S</meta:editing-duration>
+  <meta:document-statistic meta:table-count="3" meta:cell-count="530" meta:object-count="0"/>
+  <meta:user-defined meta:name="Info 1"/>
+  <meta:user-defined meta:name="Info 2"/>
+  <meta:user-defined meta:name="Info 3"/>
+  <meta:user-defined meta:name="Info 4"/>
+ </office:meta>
+</office:document-meta>

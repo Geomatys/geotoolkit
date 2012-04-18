@@ -31,8 +31,8 @@ import static org.geotoolkit.referencing.datum.DefaultEllipsoid.*;
 /**
  * Tests the {@link DefaultEllipsoid} class.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.20
  *
  * @since 2.1
  */
@@ -112,5 +112,15 @@ public final strictfp class EllipsoidTest extends ReferencingTestBase {
             final double distance = s.orthodromicDistance(x1, y1, x2, y2);
             assertTrue("Range of legal values", distance >= 0 && distance <= circumference);
         }
+    }
+
+    /**
+     * Tests the {@link DefaultEllipsoid#getAuthalicRadius()} method.
+     *
+     * @since 3.20
+     */
+    public void testAuthalicRadius() {
+        assertEquals("WGS84",  6371007, DefaultEllipsoid.WGS84 .getAuthalicRadius(), 0.5);
+        assertEquals("SPHERE", 6371000, DefaultEllipsoid.SPHERE.getAuthalicRadius(), 0.0);
     }
 }

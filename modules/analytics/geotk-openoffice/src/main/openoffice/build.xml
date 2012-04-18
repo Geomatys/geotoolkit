@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<project name="openoffice" default="demo">
+  <target name="demo">
+    <property name="target.site" value="../../../target/site"/>
+    <mkdir dir="${target.site}/fr/downloads"/>
+    <zip basedir="referencing/fr" destfile="${target.site}/fr/downloads/referencing.ods" encoding="UTF-8" level="9"/>
+  </target>
+</project>
