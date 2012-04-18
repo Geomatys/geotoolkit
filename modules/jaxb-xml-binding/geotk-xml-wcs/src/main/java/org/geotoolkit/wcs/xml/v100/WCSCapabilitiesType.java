@@ -173,8 +173,14 @@ public class WCSCapabilitiesType implements GetCapabilitiesResponse {
     /**
      * Gets the value of the updateSequence property.
      */
+    @Override
     public String getUpdateSequence() {
         return updateSequence;
+    }
+    
+    @Override
+    public void setUpdateSequence(final String updateSequence) {
+        this.updateSequence = updateSequence;
     }
 
     @Override

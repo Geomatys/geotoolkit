@@ -24,5 +24,9 @@ package org.geotoolkit.wcs.xml;
 public interface GetCapabilitiesResponse extends WCSResponse {
 
     Content getContents();
+    
+    String getUpdateSequence();
+    
+    void setUpdateSequence(final String updateSequence);
 
 }
