@@ -27,6 +27,7 @@ import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.AxisDirection;
 
+import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.resources.Errors;
 
@@ -154,7 +155,7 @@ public class GeneralDirectPosition extends AbstractDirectPosition implements Ser
     public GeneralDirectPosition(final String wkt) throws NumberFormatException, IllegalArgumentException {
         double[] ordinates = parse(wkt);
         if (ordinates == null) {
-            ordinates = new double[0];
+            ordinates = XArrays.EMPTY_DOUBLE;
         }
         this.ordinates = ordinates;
     }

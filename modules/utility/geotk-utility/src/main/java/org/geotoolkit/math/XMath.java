@@ -636,7 +636,7 @@ next:           while (true) {
      */
     public static int[] divisors(int number) {
         if (number == 0) {
-            return new int[0];
+            return XArrays.EMPTY_INT;
         }
         number = Math.abs(number);
         int[] divisors = new int[16];
@@ -712,7 +712,7 @@ next:           while (true) {
      */
     public static int[] commonDivisors(final int... numbers) {
         if (numbers.length == 0) {
-            return new int[0];
+            return XArrays.EMPTY_INT;
         }
         /*
          * Get the smallest value. We will compute the divisors only for this value,
