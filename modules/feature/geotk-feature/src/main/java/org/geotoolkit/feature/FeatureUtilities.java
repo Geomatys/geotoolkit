@@ -650,7 +650,7 @@ public final class FeatureUtilities {
                 
                 for(final Property prop : properties){
                     final ParameterValueGroup subGroup = target.addGroup(desc.getName().getCode());                    
-                    fill(subGroup,(ComplexAttribute)prop);                    
+                    fill((ComplexAttribute)prop,subGroup);                    
                 }
             }            
         }
