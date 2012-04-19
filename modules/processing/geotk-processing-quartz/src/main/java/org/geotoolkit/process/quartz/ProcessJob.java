@@ -42,6 +42,7 @@ public class ProcessJob implements Job{
     public static final String KEY_FACTORY_ID = "factoryID";
     public static final String KEY_PROCESS_ID = "processID";
     public static final String KEY_PARAMETERS = "processParams";
+    public static final String KEY_PROCESS    = "processObj";
     
     @Override
     public void execute(final JobExecutionContext jec) throws JobExecutionException {
@@ -50,6 +51,7 @@ public class ProcessJob implements Job{
         final Object objFactoryId = parameters.get(KEY_FACTORY_ID);
         final Object objProcessId = parameters.get(KEY_PROCESS_ID);
         final Object objProcessParams = parameters.get(KEY_PARAMETERS);
+        final Object objProcess = parameters.get(KEY_PROCESS);
         
         if(!(objFactoryId instanceof String)){
             throw new JobExecutionException("Factory id is not String, value found : " + objFactoryId);
@@ -60,21 +62,25 @@ public class ProcessJob implements Job{
         if(!(objProcessParams instanceof ParameterValueGroup)){
             throw new JobExecutionException("Parameters is not an ISO parameter, value found : " + objProcessParams);
         }
+         if(objProcess != null && !(objProcess instanceof Process)){
+            throw new JobExecutionException("Process object is invalid, value found : " + objProcess);
+        }
         
         final String factoryId = (String) objFactoryId;
         final String processId = (String) objProcessId;
-        final ParameterValueGroup params = (ParameterValueGroup) objProcessParams;        
-        final ProcessDescriptor desc;
+        final ParameterValueGroup params = (ParameterValueGroup) objProcessParams;    
+        Process process = (Process) objProcess;
         
-        try{
-            desc = ProcessFinder.getProcessDescriptor(factoryId, processId);
-        }catch(NoSuchIdentifierException ex){
-            throw new JobExecutionException("Process not found for id : " + objFactoryId+"."+objProcessId);
+        if(process == null){
+            final ProcessDescriptor desc;
+            try{
+                desc = ProcessFinder.getProcessDescriptor(factoryId, processId);
+            }catch(NoSuchIdentifierException ex){
+                throw new JobExecutionException("Process not found for id : " + objFactoryId+"."+objProcessId);
+            }
+            process = desc.createProcess(params);
         }
-        
-        
         final StoreExceptionMonitor monitor = new StoreExceptionMonitor();
-        final Process process = desc.createProcess(params);       
         process.addListener(monitor);
         
         //set the result int he context, for listener that might want it.
@@ -114,6 +120,5 @@ public class ProcessJob implements Job{
         }
         
     }
-    
     
 }
