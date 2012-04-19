@@ -63,9 +63,7 @@ public interface Process extends Callable<ParameterValueGroup> {
     ParameterValueGroup getInput();
 
     /**
-     * Executes the process and returns the output in a new {@link ParameterValueGroup}. The
-     * {@linkplain ParameterValueGroup#getDescriptor() descriptor} of those parameters is the instance returned by
-     * <code>{@linkplain #getDescriptor()}.{@linkplain ProcessDescriptor#getOutputDescriptor() getOutputDescriptor()}</code>.
+     * Executes the process and returns the output in a new {@link ParameterValueGroup}.
      * Some details about the work which has been performed (processing date, reports, <i>etc.</i>)
      * may be included as a {@link ProcessStep} instance associated to the
      * {@link ProcessDescriptor#PROCESS_STEP} parameter descriptor.
@@ -76,18 +74,26 @@ public interface Process extends Callable<ParameterValueGroup> {
      *        objects. In both cases, the outputs may be used as inputs in the next step of a
      *        process chain.}
      *
-     * {@section Event notifications}
-     * For any {@linkplain #addListener registered listeners}, this method shall invoke the
-     * following methods. Note that some notification events are mandatory for any {@code Process}
-     * implementations.
+     * The following relations shall hold:
      * <p>
      * <ul>
-     *   <li>{@link ProcessListener#started(ProcessEvent)} at the beginning of this {@code call()}
-     *       method (<strong>mandatory</strong>).</li>
-     *   <li>{@link ProcessListener#progressing(ProcessEvent)} during process execution (optional).</li>
-     *   <li>When this {@code call()} method is about to exit (<strong>mandatory</strong>):<ul>
-     *     <li>{@link ProcessListener#completed(ProcessEvent)} on success, or</li>
-     *     <li>{@link ProcessListener#failed(ProcessEvent)} if an error occurred.</li></ul>
+     *   <li>The {@linkplain ParameterValueGroup#getDescriptor() descriptor} of the returned parameters is the same instance than
+     *   <code>{@linkplain #getDescriptor()}.{@linkplain ProcessDescriptor#getOutputDescriptor() getOutputDescriptor()}</code>.</li>
+     *   <li>When the process is {@linkplain ProcessListener#completed completed}, the {@link ProcessEvent#getOutput()} value shall
+     *       be the same than the return value of this {@code call()} method.</li>
+     * </ul>
+     *
+     * {@section Event notifications}
+     * For any {@linkplain #addListener registered listeners}, this method shall invoke the
+     * following methods. Note that all notification events except {@code progressing} are
+     * mandatory for all {@code Process} implementations.
+     * <p>
+     * <ul>
+     *   <li>{@link ProcessListener#started(ProcessEvent) started} (<em>mandatory</em>) at the beginning of this {@code call()} method;</li>
+     *   <li>{@link ProcessListener#progressing(ProcessEvent) progressing} (<em>optional</em>) during the process execution;</li>
+     *   <li>When this {@code call()} method is about to exit, exactly <strong>one</strong> of the following:<ul>
+     *     <li>{@link ProcessListener#completed(ProcessEvent) completed} on success, or</li>
+     *     <li>{@link ProcessListener#failed(ProcessEvent) failed} if an error occurred.</li></ul>
      *   </li>
      * </ul>
      *

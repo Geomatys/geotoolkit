@@ -50,6 +50,7 @@
  *     param.parameter("someParam1").setValue(myValue1);
  *     param.parameter("someParam2").setValue(myValue2);
  *     // etc. for all other parameter values...
+ *
  *     Process process = desc.create(param);
  *     process.addListener(new ProgressPrinter());
  *     Future<ParameterValueGroup> task = executor.submit(process);
@@ -59,7 +60,7 @@
  *
  * @author Johann Sorel (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @see org.opengis.metadata.lineage.Processing
  * @see java.util.concurrent.ExecutorService
