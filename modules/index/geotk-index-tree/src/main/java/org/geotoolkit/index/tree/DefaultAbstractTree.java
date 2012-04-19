@@ -57,14 +57,14 @@ public abstract class DefaultAbstractTree implements Tree{
         ArgumentChecks.ensureStrictlyPositive("Create Tree : maxElements", nbMaxElement);
         CoordinateReferenceSystem currentlyCrs = null;
         int tempOrdinate = 0;
-        if(crs instanceof CompoundCRS){
-            for(CoordinateReferenceSystem ccrrss : ((CompoundCRS)crs).getComponents()){
+        if(crs instanceof CompoundCRS) {
+            for(CoordinateReferenceSystem ccrrss : ((CompoundCRS)crs).getComponents()) {
                 final CoordinateSystem cs = ccrrss.getCoordinateSystem();
-                if((cs instanceof CartesianCS) || (cs instanceof SphericalCS) || (cs instanceof EllipsoidalCS)){
+                if((cs instanceof CartesianCS) || (cs instanceof SphericalCS) || (cs instanceof EllipsoidalCS)) {
                     currentlyCrs = ccrrss;
                     break;
                 }
-                tempOrdinate+=cs.getDimension();
+                tempOrdinate += cs.getDimension();
             }
             if(currentlyCrs == null) throw new IllegalArgumentException("Tree constructor compoundCrs: "
                                         + "Cartesian, Spherical, or Ellipsoidal CoordinateSystem not find "+crs);
@@ -72,16 +72,16 @@ public abstract class DefaultAbstractTree implements Tree{
             currentlyCrs = crs;
         }
         final CoordinateSystem cs = currentlyCrs.getCoordinateSystem();
-        if(!(cs instanceof CartesianCS)&&!(cs instanceof SphericalCS)&&!(cs instanceof EllipsoidalCS)){
-            throw new IllegalArgumentException("Tree constructor : invalid crs, it isn't Cartesian, Spherical, or Ellipsoidal "+cs);
-        }
-        final boolean isCartesian = (cs instanceof CartesianCS)?true:false;
+        if( !(cs instanceof CartesianCS) && !(cs instanceof SphericalCS) && !(cs instanceof EllipsoidalCS))
+            throw new IllegalArgumentException("Tree constructor : invalid crs, it isn't Cartesian, Spherical, or Ellipsoidal "+ cs);
+
+        final boolean isCartesian = (cs instanceof CartesianCS) ? true : false;
         spatialDimension = cs.getDimension();
         dims = new int[spatialDimension];
         double radius = 0;
         CoordinateSystemAxis csa;
         AxisDirection ad;
-        for(int i = 0;i<spatialDimension;i++){
+        for(int i = 0; i<spatialDimension; i++) {
             csa = cs.getAxis(i);
             ad = csa.getDirection();
             if(ad.compareTo(AxisDirection.EAST) == 0 || ad.compareTo(AxisDirection.WEST) == 0){
@@ -92,39 +92,39 @@ public abstract class DefaultAbstractTree implements Tree{
                 dims[2] = i + tempOrdinate;
             }
         }
-        if(isCartesian){
+        if (isCartesian) {
             Unit unit = cs.getAxis(dims[0]-tempOrdinate).getUnit();
-            for(int i = 1;i<spatialDimension;i++){
+            for (int i = 1; i<spatialDimension; i++) {
                 if(!unit.equals(cs.getAxis(dims[i]-tempOrdinate).getUnit()))
                     throw new IllegalArgumentException("axis "+i+"from cartesian space is not in same Unit from other axis"
                                                       +"expected : "+unit+" find : "+cs.getAxis(dims[i]-tempOrdinate).getUnit());
             }
-            switch(spatialDimension){
-                case 2 : this.calculator = new Calculator2D(dims);break;
-                case 3 : this.calculator = new Calculator3D(dims);break;
+            switch (spatialDimension) {
+                case 2 : this.calculator = new Calculator2D(dims); break;
+                case 3 : this.calculator = new Calculator3D(dims); break;
                 default : throw new IllegalArgumentException("CoordinateSystem dimension from CRS is not conform");
             }
         }else{
-            if(cs instanceof EllipsoidalCS){
+            if (cs instanceof EllipsoidalCS) {
                 final Ellipsoid ell = ((GeodeticDatum)((SingleCRS)currentlyCrs).getDatum()).getEllipsoid();
                 double semiMinorAxis = ell.getSemiMinorAxis();
                 double semiMajorAxis = ell.getSemiMajorAxis();
-                semiMinorAxis*=semiMinorAxis;
-                semiMajorAxis*=semiMajorAxis;
+                semiMinorAxis *= semiMinorAxis;
+                semiMajorAxis *= semiMajorAxis;
                 final double e = (semiMajorAxis - semiMinorAxis)/semiMajorAxis;
-                radius = Math.sqrt(semiMajorAxis/2+semiMinorAxis/4*Math.log((1+e)/(1-e))/e);
+                radius = Math.sqrt(semiMajorAxis/2 + semiMinorAxis/4 * Math.log((1+e)/(1-e)) /e);
             }
-            if(!cs.getAxis(dims[0]-tempOrdinate).getUnit().equals(cs.getAxis(dims[1]-tempOrdinate).getUnit()))
+            if (!cs.getAxis(dims[0]-tempOrdinate).getUnit().equals(cs.getAxis(dims[1]-tempOrdinate).getUnit()))
                 throw new IllegalArgumentException("longitude and latitude are not in same unit."
-                                                    +"longitude unit : "+cs.getAxis(dims[0]-tempOrdinate).getUnit()
-                                                    +"latitude unit : "+cs.getAxis(dims[1]-tempOrdinate).getUnit());
-            switch(spatialDimension){
-                case 2 : this.calculator = new GeoCalculator2D(radius, dims);break;
-                case 3 : this.calculator = new GeoCalculator3D(radius, dims);break;
+                                                    +"longitude unit : "+ cs.getAxis(dims[0]-tempOrdinate).getUnit()
+                                                    +"latitude unit : " + cs.getAxis(dims[1]-tempOrdinate).getUnit());
+            switch (spatialDimension) {
+                case 2  : this.calculator = new GeoCalculator2D(radius, dims); break;
+                case 3  : this.calculator = new GeoCalculator3D(radius, dims); break;
                 default : throw new IllegalArgumentException("CoordinateSystem dimension from CRS is not conform");
             }
         }
-        this.nodefactory = nodefactory;
+        this.nodefactory  = nodefactory;
         this.nbMaxElement = nbMaxElement;
         this.crs = crs;
     }
@@ -188,8 +188,8 @@ public abstract class DefaultAbstractTree implements Tree{
      * {@inheritDoc}
      */
     @Override
-    public void insertAll(Iterator<? extends Envelope> itr){
-        while(itr.hasNext()){
+    public void insertAll(Iterator<? extends Envelope> itr) {
+        while(itr.hasNext()) {
             insert((Envelope)itr.next());
         }
     }
@@ -198,8 +198,8 @@ public abstract class DefaultAbstractTree implements Tree{
      * {@inheritDoc}
      */
     @Override
-    public void deleteAll(Iterator<? extends Envelope> itr){
-        while(itr.hasNext()){
+    public void deleteAll(Iterator<? extends Envelope> itr) {
+        while(itr.hasNext()) {
             delete((Envelope)itr.next());
         }
     }
@@ -208,8 +208,8 @@ public abstract class DefaultAbstractTree implements Tree{
      * {@inheritDoc}
      */
     @Override
-    public void removeAll(Iterator<? extends Envelope> itr){
-        while(itr.hasNext()){
+    public void removeAll(Iterator<? extends Envelope> itr) {
+        while(itr.hasNext()) {
             remove((Envelope)itr.next());
         }
     }
@@ -218,7 +218,7 @@ public abstract class DefaultAbstractTree implements Tree{
      * {@inheritDoc}
      */
     @Override
-    public void clear(){
+    public void clear() {
         setRoot(null);
     }
 
@@ -241,14 +241,14 @@ public abstract class DefaultAbstractTree implements Tree{
      * {@inheritDoc}
      */
     @Override
-    public Envelope getExtent(){
-        return (getRoot() == null)?null:getRoot().getBoundary();
+    public Envelope getExtent() {
+        return (getRoot() == null) ? null : getRoot().getBoundary();
     }
 
     /**
      * @return used ordinate sequence.
      */
-    public int[]getDims(){
+    public int[]getDims() {
         return dims;
     }
 }

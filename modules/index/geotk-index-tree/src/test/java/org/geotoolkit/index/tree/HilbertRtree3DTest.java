@@ -22,7 +22,6 @@ import java.util.List;
 import org.geotoolkit.index.tree.hilbert.HilbertRTree;
 import org.geotoolkit.index.tree.nodefactory.TreeNodeFactory;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
-import org.junit.Test;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 
@@ -30,11 +29,10 @@ import org.opengis.referencing.operation.TransformException;
  *
  * @author Rémi Marechal (Geomatys).
  */
-public class HilbertRtree3DTest extends SpatialTreeTest{
+public class HilbertRtree3DTest extends SpatialTreeTest {
 
     public HilbertRtree3DTest() throws TransformException {
-        super(new HilbertRTree(4, 2, DefaultEngineeringCRS.CARTESIAN_3D, /*DefaultCalculator.CALCULATOR_3D,*/ TreeNodeFactory.DEFAULT_FACTORY)/*,
-                                     DefaultEngineeringCRS.CARTESIAN_3D*/);
+        super(new HilbertRTree(4, 2, DefaultEngineeringCRS.CARTESIAN_3D, TreeNodeFactory.DEFAULT_FACTORY));
     }
 
     /**

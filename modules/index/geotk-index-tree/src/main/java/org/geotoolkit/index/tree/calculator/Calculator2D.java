@@ -47,8 +47,8 @@ public class Calculator2D extends Calculator {
 
         @Override
         public int compare(Node o1, Node o2) {
-            java.lang.Double x1 = new java.lang.Double(o1.getBoundary().getLowerCorner().getOrdinate(dims[0]));
-            java.lang.Double x2 = new java.lang.Double(o2.getBoundary().getLowerCorner().getOrdinate(dims[0]));
+            final java.lang.Double x1 = new java.lang.Double(o1.getBoundary().getLowerCorner().getOrdinate(dims[0]));
+            final java.lang.Double x2 = new java.lang.Double(o2.getBoundary().getLowerCorner().getOrdinate(dims[0]));
             return x1.compareTo(x2);
         }
     };
@@ -62,8 +62,8 @@ public class Calculator2D extends Calculator {
 
         @Override
         public int compare(Node o1, Node o2) {
-            java.lang.Double y1 = new java.lang.Double(o1.getBoundary().getLowerCorner().getOrdinate(dims[1]));
-            java.lang.Double y2 = new java.lang.Double(o2.getBoundary().getLowerCorner().getOrdinate(dims[1]));
+            final java.lang.Double y1 = new java.lang.Double(o1.getBoundary().getLowerCorner().getOrdinate(dims[1]));
+            final java.lang.Double y2 = new java.lang.Double(o2.getBoundary().getLowerCorner().getOrdinate(dims[1]));
             return y1.compareTo(y2);
         }
     };
@@ -77,8 +77,8 @@ public class Calculator2D extends Calculator {
 
         @Override
         public int compare(Envelope o1, Envelope o2) {
-            java.lang.Double x1 = new java.lang.Double(o1.getLowerCorner().getOrdinate(dims[0]));
-            java.lang.Double x2 = new java.lang.Double(o2.getLowerCorner().getOrdinate(dims[0]));
+            final java.lang.Double x1 = new java.lang.Double(o1.getLowerCorner().getOrdinate(dims[0]));
+            final java.lang.Double x2 = new java.lang.Double(o2.getLowerCorner().getOrdinate(dims[0]));
             return x1.compareTo(x2);
         }
     };
@@ -92,8 +92,8 @@ public class Calculator2D extends Calculator {
 
         @Override
         public int compare(Envelope o1, Envelope o2) {
-            java.lang.Double y1 = new java.lang.Double(o1.getLowerCorner().getOrdinate(dims[1]));
-            java.lang.Double y2 = new java.lang.Double(o2.getLowerCorner().getOrdinate(dims[1]));
+            final java.lang.Double y1 = new java.lang.Double(o1.getLowerCorner().getOrdinate(dims[1]));
+            final java.lang.Double y2 = new java.lang.Double(o2.getLowerCorner().getOrdinate(dims[1]));
             return y1.compareTo(y2);
         }
     };
@@ -107,8 +107,8 @@ public class Calculator2D extends Calculator {
 
         @Override
         public int compare(Node o1, Node o2) {
-            java.lang.Double x1 = new java.lang.Double(o1.getBoundary().getUpperCorner().getOrdinate(dims[0]));
-            java.lang.Double x2 = new java.lang.Double(o2.getBoundary().getUpperCorner().getOrdinate(dims[0]));
+            final java.lang.Double x1 = new java.lang.Double(o1.getBoundary().getUpperCorner().getOrdinate(dims[0]));
+            final java.lang.Double x2 = new java.lang.Double(o2.getBoundary().getUpperCorner().getOrdinate(dims[0]));
             return x1.compareTo(x2);
         }
     };
@@ -122,8 +122,8 @@ public class Calculator2D extends Calculator {
 
         @Override
         public int compare(Node o1, Node o2) {
-            java.lang.Double y1 = new java.lang.Double(o1.getBoundary().getUpperCorner().getOrdinate(dims[1]));
-            java.lang.Double y2 = new java.lang.Double(o2.getBoundary().getUpperCorner().getOrdinate(dims[1]));
+            final java.lang.Double y1 = new java.lang.Double(o1.getBoundary().getUpperCorner().getOrdinate(dims[1]));
+            final java.lang.Double y2 = new java.lang.Double(o2.getBoundary().getUpperCorner().getOrdinate(dims[1]));
             return y1.compareTo(y2);
         }
     };
@@ -137,8 +137,8 @@ public class Calculator2D extends Calculator {
 
         @Override
         public int compare(Envelope o1, Envelope o2) {
-            java.lang.Double x1 = new java.lang.Double(o1.getUpperCorner().getOrdinate(dims[0]));
-            java.lang.Double x2 = new java.lang.Double(o2.getUpperCorner().getOrdinate(dims[0]));
+            final java.lang.Double x1 = new java.lang.Double(o1.getUpperCorner().getOrdinate(dims[0]));
+            final java.lang.Double x2 = new java.lang.Double(o2.getUpperCorner().getOrdinate(dims[0]));
             return x1.compareTo(x2);
         }
     };
@@ -152,8 +152,8 @@ public class Calculator2D extends Calculator {
 
         @Override
         public int compare(Envelope o1, Envelope o2) {
-            java.lang.Double y1 = new java.lang.Double(o1.getUpperCorner().getOrdinate(dims[1]));
-            java.lang.Double y2 = new java.lang.Double(o2.getUpperCorner().getOrdinate(dims[1]));
+            final java.lang.Double y1 = new java.lang.Double(o1.getUpperCorner().getOrdinate(dims[1]));
+            final java.lang.Double y2 = new java.lang.Double(o2.getUpperCorner().getOrdinate(dims[1]));
             return y1.compareTo(y2);
         }
     };
@@ -168,8 +168,8 @@ public class Calculator2D extends Calculator {
     @Override
     public double getSpace(final Envelope envelop) {
         double result = 1;
-        for(int i = 0,l = dims.length;i<l;i++){
-            result*=envelop.getSpan(dims[i]);
+        for(int i = 0, l=dims.length; i<l; i++) {
+            result *= envelop.getSpan(dims[i]);
         }
         return result;
     }
@@ -180,8 +180,8 @@ public class Calculator2D extends Calculator {
     @Override
     public double getEdge(final Envelope envelop) {
         double result = 0;
-        for(int i = 0,l = dims.length;i<l;i++){
-            result+=envelop.getSpan(dims[i]);
+        for(int i = 0,l = dims.length; i<l; i++) {
+            result += envelop.getSpan(dims[i]);
         }
         return 2*result;
     }
@@ -201,12 +201,12 @@ public class Calculator2D extends Calculator {
     public double getDistance(final DirectPosition positionA, final DirectPosition positionB) {
         final int l = dims.length;
         double[] tab = new double[l];
-        for(int i = 0;i<l;i++){
+        for(int i = 0; i<l; i++) {
             tab[i] = positionB.getOrdinate(dims[i]) - positionA.getOrdinate(dims[i]);
         }
         double result = 0;
-        for(int i = 0;i<l;i++){
-            result+=(tab[i]*tab[i]);
+        for(int i = 0; i<l; i++){
+            result += (tab[i]*tab[i]);
         }
         return Math.sqrt(result);
     }
@@ -246,41 +246,29 @@ public class Calculator2D extends Calculator {
         if (lowerOrUpper) {
             if (nodeOrGE) {
                 switch (index) {
-                    case 0:
-                        return nodeComparatorXLow;
-                    case 1:
-                        return nodeComparatorYLow;
-                    default:
-                        throw new IllegalStateException("no comparator finded");
+                    case 0  : return nodeComparatorXLow;
+                    case 1  : return nodeComparatorYLow;
+                    default : throw new IllegalStateException("no comparator finded");
                 }
             } else {
                 switch (index) {
-                    case 0:
-                        return gEComparatorXLow;
-                    case 1:
-                        return gEComparatorYLow;
-                    default:
-                        throw new IllegalStateException("no comparator finded");
+                    case 0  : return gEComparatorXLow;
+                    case 1  : return gEComparatorYLow;
+                    default : throw new IllegalStateException("no comparator finded");
                 }
             }
         } else {
             if (nodeOrGE) {
                 switch (index) {
-                    case 0:
-                        return nodeComparatorXUpp;
-                    case 1:
-                        return nodeComparatorYUpp;
-                    default:
-                        throw new IllegalStateException("no comparator finded");
+                    case 0  : return nodeComparatorXUpp;
+                    case 1  : return nodeComparatorYUpp;
+                    default : throw new IllegalStateException("no comparator finded");
                 }
             } else {
                 switch (index) {
-                    case 0:
-                        return gEComparatorXUpp;
-                    case 1:
-                        return gEComparatorYUpp;
-                    default:
-                        throw new IllegalStateException("no comparator finded");
+                    case 0  : return gEComparatorXUpp;
+                    case 1  : return gEComparatorYUpp;
+                    default : throw new IllegalStateException("no comparator finded");
                 }
             }
         }
@@ -366,9 +354,7 @@ public class Calculator2D extends Calculator {
      */
     public int[] getHilbCoord(final Node candidate, final DirectPosition dPt, final Envelope envelop, final int hilbertOrder) {
         ArgumentChecks.ensureNonNull("DirectPosition dPt : ", dPt);
-        if (!new GeneralEnvelope(envelop).contains(dPt)) {
-            throw new IllegalArgumentException("Point is out of this node boundary");
-        }
+        if (!new GeneralEnvelope(envelop).contains(dPt)) throw new IllegalArgumentException("Point is out of this node boundary");
         double div = 2<<(hilbertOrder-1);
         final double divX = envelop.getSpan(dims[0]) / div;
         final double divY = envelop.getSpan(dims[1]) / div;
@@ -387,9 +373,7 @@ public class Calculator2D extends Calculator {
         ArgumentChecks.ensureNonNull("impossible to define Hilbert coordinate with null entry", entry);
         final DirectPosition ptCE = getMedian(entry);
         final GeneralEnvelope bound = new GeneralEnvelope(candidate.getBoundary());
-        if (! bound.contains(ptCE)) {
-            throw new IllegalArgumentException("entry is out of this node boundary");
-        }
+        if (! bound.contains(ptCE)) throw new IllegalArgumentException("entry is out of this node boundary");
         final Calculator calc = candidate.getTree().getCalculator();
         final int order = (Integer) candidate.getUserProperty("hilbertOrder");
         if (calc.getSpace(bound) <= 0) {

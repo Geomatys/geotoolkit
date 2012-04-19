@@ -52,8 +52,8 @@ public class SpatioTemporalTreeTest extends TreeTest{
     private static final CoordinateReferenceSystem TEMPORALCRS = DefaultTemporalCRS.JAVA;
     Tree tree;
     CoordinateReferenceSystem crs;
-    List<GeneralEnvelope>lData = new ArrayList<GeneralEnvelope>();
-    List<List<GeneralEnvelope>> lResult = new ArrayList<List<GeneralEnvelope>>();
+    final List<GeneralEnvelope>lData = new ArrayList<GeneralEnvelope>();
+    final List<List<GeneralEnvelope>> lResult = new ArrayList<List<GeneralEnvelope>>();
     int[] dims;
     int indexTemp;
     public SpatioTemporalTreeTest() {
@@ -98,19 +98,19 @@ public class SpatioTemporalTreeTest extends TreeTest{
     @Test
     public void testHilbert(){
         CoordinateReferenceSystem crsCompound = new DefaultCompoundCRS("compoundCrs", new CoordinateReferenceSystem[] { TEMPORALCRS, CARTESIAN_2DCRS});
-        Tree hilbertA = new HilbertRTree(4, 2, crsCompound, NODEFACTORY);
+        final Tree hilbertA = new HilbertRTree(4, 2, crsCompound, NODEFACTORY);
         setTree(hilbertA);
         test();
         crsCompound = new DefaultCompoundCRS("compoundCrs", new CoordinateReferenceSystem[] { GEOCENTRIC_2DCRS, TEMPORALCRS});
-        Tree hilbertB = new HilbertRTree(4, 2, crsCompound, NODEFACTORY);
+        final Tree hilbertB = new HilbertRTree(4, 2, crsCompound, NODEFACTORY);
         setTree(hilbertB);
         test();
         crsCompound = new DefaultCompoundCRS("compoundCrs", new CoordinateReferenceSystem[] { TEMPORALCRS, CARTESIAN_3DCRS});
-        Tree hilbertC = new HilbertRTree(4, 2, crsCompound, NODEFACTORY);
+        final Tree hilbertC = new HilbertRTree(4, 2, crsCompound, NODEFACTORY);
         setTree(hilbertC);
         test();
         crsCompound = new DefaultCompoundCRS("compoundCrs", new CoordinateReferenceSystem[] { GEOCENTRIC_3DCRS, TEMPORALCRS});
-        Tree hilbertD = new HilbertRTree(4, 2, crsCompound, NODEFACTORY);
+        final Tree hilbertD = new HilbertRTree(4, 2, crsCompound, NODEFACTORY);
         setTree(hilbertD);
         test();
     }
@@ -118,19 +118,19 @@ public class SpatioTemporalTreeTest extends TreeTest{
     @Test
     public void testStar(){
         CoordinateReferenceSystem crsCompound = new DefaultCompoundCRS("compoundCrs", new CoordinateReferenceSystem[] { TEMPORALCRS, CARTESIAN_2DCRS});
-        Tree starRTreeA = new StarRTree(4, crsCompound, NODEFACTORY);
+        final Tree starRTreeA = new StarRTree(4, crsCompound, NODEFACTORY);
         setTree(starRTreeA);
         test();
         crsCompound = new DefaultCompoundCRS("compoundCrs", new CoordinateReferenceSystem[] { GEOCENTRIC_2DCRS, TEMPORALCRS});
-        Tree starRTreeB = new StarRTree(4, crsCompound, NODEFACTORY);
+        final Tree starRTreeB = new StarRTree(4, crsCompound, NODEFACTORY);
         setTree(starRTreeB);
         test();
         crsCompound = new DefaultCompoundCRS("compoundCrs", new CoordinateReferenceSystem[] { TEMPORALCRS, CARTESIAN_3DCRS});
-        Tree starRTreeC = new StarRTree(4, crsCompound, NODEFACTORY);
+        final Tree starRTreeC = new StarRTree(4, crsCompound, NODEFACTORY);
         setTree(starRTreeC);
         test();
         crsCompound = new DefaultCompoundCRS("compoundCrs", new CoordinateReferenceSystem[] { GEOCENTRIC_3DCRS, TEMPORALCRS});
-        Tree starRTreeD = new StarRTree(4, crsCompound, NODEFACTORY);
+        final Tree starRTreeD = new StarRTree(4, crsCompound, NODEFACTORY);
         setTree(starRTreeD);
         test();
     }
@@ -138,19 +138,19 @@ public class SpatioTemporalTreeTest extends TreeTest{
     @Test
     public void testBasic(){
         CoordinateReferenceSystem crsCompound = new DefaultCompoundCRS("compoundCrs", new CoordinateReferenceSystem[] { TEMPORALCRS, CARTESIAN_2DCRS});
-        Tree basicA = new BasicRTree(4, crsCompound, SplitCase.QUADRATIC, TreeNodeFactory.DEFAULT_FACTORY);
+        final Tree basicA = new BasicRTree(4, crsCompound, SplitCase.QUADRATIC, TreeNodeFactory.DEFAULT_FACTORY);
         setTree(basicA);
         test();
         crsCompound = new DefaultCompoundCRS("compoundCrs", new CoordinateReferenceSystem[] { GEOCENTRIC_2DCRS, TEMPORALCRS});
-        Tree basicB = new BasicRTree(4, crsCompound, SplitCase.QUADRATIC, TreeNodeFactory.DEFAULT_FACTORY);
+        final Tree basicB = new BasicRTree(4, crsCompound, SplitCase.QUADRATIC, TreeNodeFactory.DEFAULT_FACTORY);
         setTree(basicB);
         test();
         crsCompound = new DefaultCompoundCRS("compoundCrs", new CoordinateReferenceSystem[] { TEMPORALCRS, CARTESIAN_3DCRS});
-        Tree basicC = new BasicRTree(4, crsCompound, SplitCase.QUADRATIC, TreeNodeFactory.DEFAULT_FACTORY);
+        final Tree basicC = new BasicRTree(4, crsCompound, SplitCase.QUADRATIC, TreeNodeFactory.DEFAULT_FACTORY);
         setTree(basicC);
         test();
         crsCompound = new DefaultCompoundCRS("compoundCrs", new CoordinateReferenceSystem[] { GEOCENTRIC_3DCRS, TEMPORALCRS});
-        Tree basicD = new BasicRTree(4, crsCompound, SplitCase.QUADRATIC, TreeNodeFactory.DEFAULT_FACTORY);
+        final Tree basicD = new BasicRTree(4, crsCompound, SplitCase.QUADRATIC, TreeNodeFactory.DEFAULT_FACTORY);
         setTree(basicD);
         test();
     }
@@ -160,7 +160,7 @@ public class SpatioTemporalTreeTest extends TreeTest{
         initAreaSearch(areaSearch1, 0, 9);
         final List<Envelope> listSearch = new ArrayList<Envelope>();
         final List<Envelope> listRef = new ArrayList<Envelope>();
-        TreeVisitor tv = new DefaultTreeVisitor(listSearch);
+        final TreeVisitor tv = new DefaultTreeVisitor(listSearch);
         listRef.addAll(lResult.get(0));
         tree.search(areaSearch1, tv);
         assertTrue(compareList(listSearch, listRef));
@@ -182,9 +182,8 @@ public class SpatioTemporalTreeTest extends TreeTest{
         assertTrue(compareList(listSearch, listRef));
     }
 
-    public void initAreaSearch(final GeneralEnvelope area, final double tBeg, final double tEnd){
+    public void initAreaSearch(final GeneralEnvelope area, final double tBeg, final double tEnd) {
         area.setEnvelope(tree.getRoot().getBoundary());
         area.setRange(indexTemp, tBeg, tEnd);
     }
-
 }

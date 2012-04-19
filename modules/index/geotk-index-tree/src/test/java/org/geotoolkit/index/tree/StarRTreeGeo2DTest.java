@@ -26,7 +26,7 @@ import org.opengis.referencing.operation.TransformException;
  *
  * @author Rémi Marechal (Geomatys).
  */
-public class StarRTreeGeo2DTest extends SpatialTreeTest{
+public class StarRTreeGeo2DTest extends SpatialTreeTest {
 
     public StarRTreeGeo2DTest() throws TransformException {
         super(new StarRTree(4, DefaultGeographicCRS.WGS84, TreeNodeFactory.DEFAULT_FACTORY));

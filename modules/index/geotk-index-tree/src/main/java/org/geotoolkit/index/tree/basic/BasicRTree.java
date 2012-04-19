@@ -64,16 +64,12 @@ public class BasicRTree extends DefaultAbstractTree {
      * {@inheritDoc}
      */
     @Override
-    public void search(final Envelope regionSearch, final TreeVisitor visitor) throws IllegalArgumentException{
+    public void search(final Envelope regionSearch, final TreeVisitor visitor) throws IllegalArgumentException {
         ArgumentChecks.ensureNonNull("search : region search", regionSearch);
         ArgumentChecks.ensureNonNull("search : result", visitor);
-        if(!CRS.equalsIgnoreMetadata(crs, regionSearch.getCoordinateReferenceSystem())){
-            throw new MismatchedReferenceSystemException();
-        }
+        if(!CRS.equalsIgnoreMetadata(crs, regionSearch.getCoordinateReferenceSystem())) throw new MismatchedReferenceSystemException();
         final Node root = getRoot();
-        if (root != null) {
-            nodeSearch(root, regionSearch, visitor);
-        }
+        if (root != null) nodeSearch(root, regionSearch, visitor);
     }
 
     /**
@@ -82,9 +78,7 @@ public class BasicRTree extends DefaultAbstractTree {
     @Override
     public void insert(final Envelope entry) throws IllegalArgumentException {
         ArgumentChecks.ensureNonNull("insert : entry", entry);
-        if(!CRS.equalsIgnoreMetadata(crs, entry.getCoordinateReferenceSystem())){
-            throw new MismatchedReferenceSystemException();
-        }
+        if(!CRS.equalsIgnoreMetadata(crs, entry.getCoordinateReferenceSystem())) throw new MismatchedReferenceSystemException();
         super.eltCompteur++;
         final Node root = getRoot();
         final int dim = entry.getDimension();
@@ -104,13 +98,9 @@ public class BasicRTree extends DefaultAbstractTree {
     @Override
     public void delete(final Envelope entry) throws IllegalArgumentException {
         ArgumentChecks.ensureNonNull("delete : entry", entry);
-        if(!CRS.equalsIgnoreMetadata(crs, entry.getCoordinateReferenceSystem())){
-            throw new MismatchedReferenceSystemException();
-        }
+        if(!CRS.equalsIgnoreMetadata(crs, entry.getCoordinateReferenceSystem())) throw new MismatchedReferenceSystemException();
         final Node root = getRoot();
-        if (root != null) {
-            deleteNode(root, entry);
-        }
+        if (root != null) deleteNode(root, entry);
     }
 
     /**
@@ -119,13 +109,9 @@ public class BasicRTree extends DefaultAbstractTree {
     @Override
     public void remove(final Envelope entry) throws IllegalArgumentException {
         ArgumentChecks.ensureNonNull("remove : entry", entry);
-        if(!CRS.equalsIgnoreMetadata(crs, entry.getCoordinateReferenceSystem())){
-            throw new MismatchedReferenceSystemException();
-        }
+        if(!CRS.equalsIgnoreMetadata(crs, entry.getCoordinateReferenceSystem())) throw new MismatchedReferenceSystemException();
         final Node root = getRoot();
-        if (root != null) {
-            removeNode(root, entry);
-        }
+        if (root != null) removeNode(root, entry);
     }
 
     /**
@@ -222,7 +208,7 @@ public class BasicRTree extends DefaultAbstractTree {
                         final Node nodeB = children.get(j);
                         if(new GeneralEnvelope(nodeA.getBoundary()).intersects(nodeB.getBoundary(), false)
                                 && nodeA.isLeaf() && nodeB.isLeaf()
-                                &&nodeA.getEntries().size()>1 && nodeB.getEntries().size()>1){
+                                && nodeA.getEntries().size()>1 && nodeB.getEntries().size()>1){
                             branchGrafting(nodeA, nodeB);
                         }
                     }
@@ -268,28 +254,24 @@ public class BasicRTree extends DefaultAbstractTree {
      * @throws IllegalArgumentException if nodeA or nodeB, and their subnodes, don't contains some {@code Entry}.
      */
     private static void branchGrafting(final Node nodeA, final Node nodeB ) throws IllegalArgumentException {
-        if(!nodeA.isLeaf() || !nodeB.isLeaf()){
-            throw new IllegalArgumentException("branchGrafting : not leaf");
-        }
+        if(!nodeA.isLeaf() || !nodeB.isLeaf()) throw new IllegalArgumentException("branchGrafting : not leaf");
         final List<Envelope> listGlobale = new ArrayList<Envelope>(nodeA.getEntries());
         listGlobale.addAll(new ArrayList<Envelope>(nodeB.getEntries()));
         nodeA.getEntries().clear();
         nodeB.getEntries().clear();
-        if(listGlobale.isEmpty()){
-            throw new IllegalArgumentException("branchGrafting : empty list");
-        }
+        if(listGlobale.isEmpty()) throw new IllegalArgumentException("branchGrafting : empty list");
         final DefaultAbstractTree tree = (DefaultAbstractTree)nodeA.getTree();
         final int[]dims = tree.getDims();
         final GeneralEnvelope globalE = new GeneralEnvelope(listGlobale.get(0));
         final int size = listGlobale.size();
-        for(int i = 1;i<size; i++){
+        for(int i = 1;i<size; i++) {
             globalE.add(listGlobale.get(i));
         }
         double lengthDimRef = -1;
         int indexSplit = -1;
-        for(int i = 0, l = dims.length; i<l; i++){
+        for(int i = 0, l = dims.length; i<l; i++) {
             double lengthDimTemp = globalE.getSpan(dims[i]);
-            if(lengthDimTemp>lengthDimRef){
+            if(lengthDimTemp>lengthDimRef) {
                 lengthDimRef = lengthDimTemp;
                 indexSplit = i;
             }
@@ -304,11 +286,11 @@ public class BasicRTree extends DefaultAbstractTree {
         int index =-1;
         final int size04 = (int)((size*0.4 >= 1) ? size*0.4 : 1);
         for(int cut = size04; cut < size-size04; cut++){
-            for(int i = 1; i<cut;i++){
+            for(int i = 1; i<cut; i++) {
                 envA.add(listGlobale.get(i));
             }
             envB = new GeneralEnvelope(listGlobale.get(cut));
-            for(int i = cut+1; i<size;i++){
+            for(int i = cut+1; i<size; i++){
                 envB.add(listGlobale.get(i));
             }
             double overLapsTemp = calc.getOverlaps(envA, envB);
@@ -317,10 +299,10 @@ public class BasicRTree extends DefaultAbstractTree {
                 index = cut;
             }
         }
-        for(int i = 0; i<index;i++){
+        for(int i = 0; i<index; i++) {
             nodeA.getEntries().add(listGlobale.get(i));
         }
-        for(int i = index; i<size;i++){
+        for(int i = index; i<size; i++) {
             nodeB.getEntries().add(listGlobale.get(i));
         }
     }
@@ -335,10 +317,7 @@ public class BasicRTree extends DefaultAbstractTree {
      */
     private static List<Node> splitNode(final Node candidate) throws IllegalArgumentException {
         ArgumentChecks.ensureNonNull("splitNode : candidate", candidate);
-        if (DefaultTreeUtils.countElements(candidate) < 2) {
-            throw new IllegalArgumentException("not enought elements within " + candidate + " to split.");
-        }
-
+        if (DefaultTreeUtils.countElements(candidate) < 2) throw new IllegalArgumentException("not enought elements within " + candidate + " to split.");
         final int dim = candidate.getBoundary().getDimension();
         final Tree tree = candidate.getTree();
         final Calculator calc = tree.getCalculator();
@@ -346,17 +325,9 @@ public class BasicRTree extends DefaultAbstractTree {
         boolean leaf = candidate.isLeaf();
         List<?> ls;
         Object s1, s2;
-
-        if (leaf) {
-            ls = candidate.getEntries();
-            s1 = ls.get(0);
-            s2 = ls.get(1);
-        } else {
-            ls = candidate.getChildren();
-            s1 = ls.get(0);
-            s2 = ls.get(1);
-        }
-
+        ls = (leaf) ? candidate.getEntries() : candidate.getChildren();
+        s1 = ls.get(0);
+        s2 = ls.get(1);
         double refValue = 0;
         double tempValue;
         int index1 = 0;
@@ -411,33 +382,22 @@ public class BasicRTree extends DefaultAbstractTree {
         Envelope r1Temp, r2Temp;
         Envelope boundS1, boundS2;
         Node result1, result2;
-
-        if(leaf){
-            boundS1 = ((Envelope)s1);
-            boundS2 = ((Envelope)s2);
-        }else{
-            boundS1 = ((Node)s1).getBoundary();
-            boundS2 = ((Node)s2).getBoundary();
-        }
+        boundS1 = (leaf) ? ((Envelope)s1) : ((Node)s1).getBoundary();
+        boundS2 = (leaf) ? ((Envelope)s2) : ((Node)s2).getBoundary();
         double[] tabS1 = new double[2*dim];
         double[] tabS2 = new double[2*dim];
-        for(int i = 0; i<dim;i++){
+        for(int i = 0; i<dim;i++) {
             tabS1[i] = boundS1.getLowerCorner().getOrdinate(i);
             tabS2[i] = boundS2.getLowerCorner().getOrdinate(i);
         }
-        for(int i = 0; i<dim;i++){
-            tabS1[i] = boundS1.getUpperCorner().getOrdinate(i);
-            tabS2[i] = boundS2.getUpperCorner().getOrdinate(i);
+        for(int i = 0; i<dim;i++) {
+            tabS1[i+dim-1] = boundS1.getUpperCorner().getOrdinate(i);
+            tabS2[i+dim-1] = boundS2.getUpperCorner().getOrdinate(i);
         }
-
-        if(leaf){
-            result1 = tree.createNode(tree, null, null, UnmodifiableArrayList.wrap((Envelope) s1), tabS1);
-            result2 = tree.createNode(tree, null, null, UnmodifiableArrayList.wrap((Envelope) s2), tabS2);
-        }else{
-            result1 = tree.createNode(tree, null, UnmodifiableArrayList.wrap((Node) s1), null, tabS1);
-            result2 = tree.createNode(tree, null, UnmodifiableArrayList.wrap((Node) s2), null, tabS2);
-        }
-
+        result1 = (leaf) ? tree.createNode(tree, null, null, UnmodifiableArrayList.wrap((Envelope) s1), tabS1)
+                         : tree.createNode(tree, null, UnmodifiableArrayList.wrap((Node) s1), null, tabS1);
+        result2 = (leaf) ? tree.createNode(tree, null, null, UnmodifiableArrayList.wrap((Envelope) s2), tabS2)
+                         : tree.createNode(tree, null, UnmodifiableArrayList.wrap((Node) s2), null, tabS2);
         double demimaxE = maxElmnts / 3;
         demimaxE = Math.max(demimaxE, 1);
 
@@ -446,7 +406,6 @@ public class BasicRTree extends DefaultAbstractTree {
                             : DefaultTreeUtils.getEnveloppeMin(UnmodifiableArrayList.wrap(((Node) s1).getBoundary(), ((Node)ent).getBoundary()));
             r2Temp = (leaf) ? DefaultTreeUtils.getEnveloppeMin(UnmodifiableArrayList.wrap((Envelope)s2, (Envelope)ent))
                             : DefaultTreeUtils.getEnveloppeMin(UnmodifiableArrayList.wrap(((Node) s2).getBoundary(), ((Node)ent).getBoundary()));
-
 
             double area1 = calc.getSpace(r1Temp);
             double area2 = calc.getSpace(r2Temp);
@@ -512,12 +471,12 @@ public class BasicRTree extends DefaultAbstractTree {
 
         if(!leaf){
             final List<Node> lR1 = result1.getChildren();
-            if(lR1.size() == 1){
+            if(lR1.size() == 1) {
                 result1 = lR1.get(0);
                 result1.setParent(null);
             }
             final List<Node> lR2 = result2.getChildren();
-            if(lR2.size() == 1){
+            if(lR2.size() == 1) {
                 result2 = lR2.get(0);
                 result2.setParent(null);
             }
@@ -558,9 +517,7 @@ public class BasicRTree extends DefaultAbstractTree {
             }else{
                 for(Node no : candidate.getChildren()){
                     final boolean removed = deleteNode(no, entry);
-                    if(removed){
-                        return true;
-                    }
+                    if(removed) return true;
                 }
             }
         }
@@ -602,9 +559,7 @@ public class BasicRTree extends DefaultAbstractTree {
             }else{
                 for(Node no : candidate.getChildren()){
                     final boolean removed = removeNode(no, entry);
-                    if(removed){
-                        return true;
-                    }
+                    if(removed) return true;
                 }
             }
         }
@@ -623,28 +578,26 @@ public class BasicRTree extends DefaultAbstractTree {
         final List<Node> children = candidate.getChildren();
         final DefaultAbstractTree tree = ((DefaultAbstractTree)candidate.getTree());
         final List<Envelope> reinsertList = new ArrayList<Envelope>();
-        for(int i = children.size()-1;i>=0;i--){
+        for(int i = children.size()-1; i>=0; i--) {
             final Node child = children.get(i);
             final List<Envelope> childList = child.getEntries();
             final int siz = childList.size();
-            if(child.isEmpty()){
+            if (child.isEmpty()) {
                 children.remove(i);
-            }else if(child.getChildren().size() ==1){
+            } else if (child.getChildren().size() == 1) {
                 final Node n = children.remove(i);
-                for(Node n2d : n.getChildren()){
+                for(Node n2d : n.getChildren()) {
                     n2d.setParent(candidate);
                 }
                 children.addAll(n.getChildren());
-            }else if(child.isLeaf()&&siz<=tree.getMaxElements()/3){
+            } else if(child.isLeaf()&&siz<=tree.getMaxElements()/3) {
                 reinsertList.addAll(childList);
                 tree.setElementsNumber(tree.getElementsNumber()-siz);
                 children.remove(i);
             }
         }
-        if(candidate.getParent()!=null){
-            trim((Node)candidate.getParent());
-        }
-        for(Envelope ent : reinsertList){
+        if(candidate.getParent()!=null) trim((Node)candidate.getParent());
+        for(Envelope ent : reinsertList) {
             tree.insert(ent);
         }
     }
@@ -666,24 +619,15 @@ public class BasicRTree extends DefaultAbstractTree {
         ArgumentChecks.ensureNonNull("chooseSubtree : Envelope entry", entry);
         final Calculator calc = candidate.getTree().getCalculator();
         final List<Node> children = candidate.getChildren();
-        if (children.isEmpty()) {
-            throw new IllegalArgumentException("chooseSubtree : ln is empty");
-        }
-
-        if (children.size() == 1) {
-            return children.get(0);
-        }
-
+        if (children.isEmpty()) throw new IllegalArgumentException("chooseSubtree : ln is empty");
+        if (children.size() == 1) return children.get(0);
         Node n = children.get(0);
-
         for (Node nod : children) {
-            if (new GeneralEnvelope(nod.getBoundary()).contains(entry, true)) {
-                return nod;
-            }
+            if (new GeneralEnvelope(nod.getBoundary()).contains(entry, true)) return nod;
         }
 
         final List<Envelope> lGE = new ArrayList<Envelope>();
-        for(Node dn : children){
+        for(Node dn : children) {
             lGE.add(dn.getBoundary());
         }
         double area = calc.getSpace(DefaultTreeUtils.getEnveloppeMin(lGE));
@@ -715,12 +659,8 @@ public class BasicRTree extends DefaultAbstractTree {
     @Override
     public Node createNode(Tree tree, Node parent, List<Node> listChildren, List<Envelope> listEntries, double... coordinates) {
         final int ddim = coordinates.length;
-        if((ddim % 2) != 0){
-            throw new IllegalArgumentException("coordinate dimension is not correct");
-        }
-        if(ddim == 0){
-            return nodefactory.createNode(tree, parent, null, null,listChildren, listEntries);
-        }
+        if((ddim % 2) != 0) throw new IllegalArgumentException("coordinate dimension is not correct");
+        if(ddim == 0) return nodefactory.createNode(tree, parent, null, null,listChildren, listEntries);
         final int dim = coordinates.length/2;
         final double[] dp1Coords = new double[dim];
         final double[] dp2Coords = new double[dim];

@@ -41,23 +41,23 @@ public final class TreeX {
      * @param visitor
      * @see SpatialFilterType
      */
-    public static void search(final Tree tree, final Envelope regionSearch, final SpatialFilterType logicFilter, final TreeVisitor visitor){
+    public static void search(final Tree tree, final Envelope regionSearch, final SpatialFilterType logicFilter, final TreeVisitor visitor) {
         final List<Envelope> listSearch = new ArrayList<Envelope>();
         final GeneralEnvelope areaSearch = new GeneralEnvelope(regionSearch);
         TreeVisitor defVisitor = new DefaultTreeVisitor(listSearch);
         switch(logicFilter){
             case INTERSECTS : {
                 tree.search(regionSearch, visitor);
-            }break;
+            } break;
             case BBOX : {
                 tree.search(regionSearch, visitor);
-            }break;
+            } break;
             case CONTAINS : {
                 tree.search(areaSearch, defVisitor);
                 for(Envelope env : listSearch){
                     if(new GeneralEnvelope(env).contains(areaSearch, true))visitor.visit(env);
                 }
-            }break;
+            } break;
             case DISJOINT : {
                 tree.search(areaSearch, defVisitor);
                 final List<Envelope> listRef = new ArrayList<Envelope>();
@@ -72,20 +72,20 @@ public final class TreeX {
                     }
                     if(!find)visitor.visit(envRef);
                 }
-            }break;
+            } break;
             case WITHIN : {
                 tree.search(areaSearch, defVisitor);
                 for(Envelope env : listSearch){
                     if(areaSearch.contains(env, true))visitor.visit(env);
                 }
-            }break;
+            } break;
             case TOUCHES : {
                 tree.search(areaSearch, defVisitor);
                 for(Envelope env : listSearch){
                     final GeneralEnvelope ge = new GeneralEnvelope(env);
                     if(ge.intersects(areaSearch, true)&&!ge.intersects(areaSearch, false))visitor.visit(env);
                 }
-            }break;
+            } break;
 
             case EQUALS : {
                 tree.search(areaSearch, defVisitor);
@@ -93,14 +93,14 @@ public final class TreeX {
                     final GeneralEnvelope ge = new GeneralEnvelope(env);
                     if(ge.equals(areaSearch, 1E-9, true))visitor.visit(env);
                 }
-            }break;
+            } break;
             case OVERLAPS : {
                 tree.search(areaSearch, defVisitor);
                 for(Envelope env : listSearch){
                     final GeneralEnvelope ge = new GeneralEnvelope(env);
                     if(ge.intersects(areaSearch, false)&&!ge.contains(areaSearch, true)&&!areaSearch.contains(ge, true))visitor.visit(env);
                 }
-            }break;
+            } break;
             default : throw new IllegalStateException("not implemented yet");
         }
     }

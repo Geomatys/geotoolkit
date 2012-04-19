@@ -45,13 +45,8 @@ public abstract class TreeTest {
         ArgumentChecks.ensureNonNull("compareList : listA", listA);
         ArgumentChecks.ensureNonNull("compareList : listB", listB);
 
-        if (listA.isEmpty() && listB.isEmpty()) {
-            return true;
-        }
-
-        if (listA.size() != listB.size()) {
-            return false;
-        }
+        if (listA.isEmpty() && listB.isEmpty()) return true;
+        if (listA.size() != listB.size()) return false;
 
         boolean shapequals = false;
         for (Envelope shs : listA) {
@@ -61,9 +56,7 @@ public abstract class TreeTest {
                     break;
                 }
             }
-            if (!shapequals) {
-                return false;
-            }
+            if (!shapequals) return false;
             shapequals = false;
         }
         return true;
@@ -76,17 +69,15 @@ public abstract class TreeTest {
      */
     public static GeneralEnvelope createEntry(final DirectPosition position) {
         final double[] coord = position.getCoordinate();
-        int length = coord.length;
-        double[] coordLow = new double[length];
-        double[] coordUpp = new double[length];
+        final int length = coord.length;
+        final double[] coordLow = new double[length];
+        final double[] coordUpp = new double[length];
         for (int i = 0; i < length; i++) {
             coordLow[i] = coord[i] - (Math.random() * 5 + 5);
             coordUpp[i] = coord[i] + (Math.random() * 5 + 5);
         }
         final CoordinateReferenceSystem crs = position.getCoordinateReferenceSystem();
-        if (crs == null) {
-            return new GeneralEnvelope(new GeneralDirectPosition(coordLow), new GeneralDirectPosition(coordUpp));
-        }
+        if (crs == null) return new GeneralEnvelope(new GeneralDirectPosition(coordLow), new GeneralDirectPosition(coordUpp));
         final GeneralDirectPosition dpLow = new GeneralDirectPosition(crs);
         final GeneralDirectPosition dpUpp = new GeneralDirectPosition(crs);
         for (int i = 0; i < length; i++) {

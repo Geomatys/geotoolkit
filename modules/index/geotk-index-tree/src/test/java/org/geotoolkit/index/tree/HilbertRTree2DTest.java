@@ -33,8 +33,7 @@ import org.opengis.referencing.operation.TransformException;
 public class HilbertRTree2DTest extends SpatialTreeTest {
 
     public HilbertRTree2DTest() throws IllegalArgumentException, TransformException {
-        super(new HilbertRTree(4, 2, DefaultEngineeringCRS.CARTESIAN_2D, /*DefaultCalculator.CALCULATOR_2D,*/ TreeNodeFactory.DEFAULT_FACTORY)/*,
-                                     DefaultEngineeringCRS.CARTESIAN_2D*/);
+        super(new HilbertRTree(4, 2, DefaultEngineeringCRS.CARTESIAN_2D, TreeNodeFactory.DEFAULT_FACTORY));
     }
 
     /**

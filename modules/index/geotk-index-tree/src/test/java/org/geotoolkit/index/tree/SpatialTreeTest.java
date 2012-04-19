@@ -23,9 +23,6 @@ import java.util.List;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.index.tree.io.DefaultTreeVisitor;
-import org.geotoolkit.index.tree.nodefactory.TreeNodeFactory;
-import org.geotoolkit.index.tree.star.StarRTree;
-import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 import org.geotoolkit.util.ArgumentChecks;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
@@ -61,8 +58,8 @@ public abstract class SpatialTreeTest extends TreeTest{
         final CoordinateSystem cs = crs.getCoordinateSystem();
         minMax = new double[2*dimension];
         final DirectPosition centerEntry = new GeneralDirectPosition(crs);
-        if(cs instanceof CartesianCS){
-            for(int l = 0;l<2*dimension;l+=2){
+        if (cs instanceof CartesianCS) {
+            for(int l = 0; l<2*dimension; l+=2) {
                 minMax[l] = -1500;
                 minMax[l+1] = 1500;
             }
@@ -74,23 +71,23 @@ public abstract class SpatialTreeTest extends TreeTest{
                 }
                 lData.add(createEntry(centerEntry));
             }
-        }else if(cs instanceof EllipsoidalCS){
+        } else if (cs instanceof EllipsoidalCS) {
             minMax[0] = -180;
             minMax[1] = 180;
             minMax[2] = -90;
             minMax[3] = 90;
-            for (int i = 0; i < 3000; i++) {
-                centerEntry.setOrdinate(0, (Math.random()-0.5)*2*170);//max value -10 because envelops width and height.
-                centerEntry.setOrdinate(1, (Math.random()-0.5)*2*80);
-                if(cs.getDimension()>2){
+            for (int i = 0; i<3000; i++) {
+                centerEntry.setOrdinate(0, (Math.random()-0.5) * 2*170);
+                centerEntry.setOrdinate(1, (Math.random()-0.5) * 2*80);
+                if(cs.getDimension()>2) {
                     centerEntry.setOrdinate(2, Math.random()*8800);
                     minMax[4] = -8800;
                     minMax[5] = 8800;
                 }
                 lData.add(createEntry(centerEntry));
             }
-        }else{
-            throw new IllegalArgumentException("invalid crs, Coordinate system type :"+cs.getClass() +" is not supported");
+        } else {
+            throw new IllegalArgumentException("invalid crs, Coordinate system type :"+ cs.getClass() +" is not supported");
         }
         insert();
     }

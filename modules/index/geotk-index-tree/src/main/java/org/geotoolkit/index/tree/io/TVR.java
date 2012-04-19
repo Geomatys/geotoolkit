@@ -23,27 +23,27 @@ package org.geotoolkit.index.tree.io;
  */
 public final class TVR {
 
-    private static final TreeVisitorResult CONTINUE = TreeVisitorResult.CONTINUE;
+    private static final TreeVisitorResult CONTINUE      = TreeVisitorResult.CONTINUE;
     private static final TreeVisitorResult SKIP_SIBLINGS = TreeVisitorResult.SKIP_SIBLINGS;
-    private static final TreeVisitorResult SKIP_SUBTREE = TreeVisitorResult.SKIP_SUBTREE;
-    private static final TreeVisitorResult TERMINATE = TreeVisitorResult.TERMINATE;
+    private static final TreeVisitorResult SKIP_SUBTREE  = TreeVisitorResult.SKIP_SUBTREE;
+    private static final TreeVisitorResult TERMINATE     = TreeVisitorResult.TERMINATE;
 
     private TVR() {
     }
 
-    public static boolean isContinue(final TreeVisitorResult tvr){
+    public static boolean isContinue(final TreeVisitorResult tvr) {
         return tvr == CONTINUE;
     }
 
-    public static boolean isSkipSibling(final TreeVisitorResult tvr){
+    public static boolean isSkipSibling(final TreeVisitorResult tvr) {
         return tvr == SKIP_SIBLINGS;
     }
 
-    public static boolean isSkipSubTree(final TreeVisitorResult tvr){
+    public static boolean isSkipSubTree(final TreeVisitorResult tvr) {
         return tvr == SKIP_SUBTREE;
     }
 
-    public static boolean isTerminate(final TreeVisitorResult tvr){
+    public static boolean isTerminate(final TreeVisitorResult tvr) {
         return tvr == TERMINATE;
     }
 }

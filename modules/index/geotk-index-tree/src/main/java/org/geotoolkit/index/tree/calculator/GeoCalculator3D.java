@@ -60,10 +60,10 @@ public class GeoCalculator3D extends GeoCalculator{
             final int dim = 2<<((Integer) candidate.getUserProperty("hilbertOrder"))-1;
             if (getSpace(bound) <= 0) {
                 final int nbCells2D = 2<<(2*order-1);
-                if(getEdge(bound)<= 0){
+                if (getEdge(bound) <= 0) {
                     int index = -1;
-                    for(int i = 0; i<3; i++){
-                        if(bound.getSpan(i) > 0){
+                    for (int i = 0; i<3; i++) {
+                        if (bound.getSpan(i) > 0) {
                             index = i;break;
                         }
                     }
@@ -71,7 +71,7 @@ public class GeoCalculator3D extends GeoCalculator{
                     final double valMin = bound.getLowerCorner().getOrdinate(index);
                     final DirectPosition dpt = new GeneralDirectPosition(crs);
                     for(int i = 1; i<2*nbCells2D; i+= 2){
-                        for(int j = 0; j<bound.getDimension(); j++){
+                        for (int j = 0; j<bound.getDimension(); j++) {
                             if(j!=index)dpt.setOrdinate(j, bound.getMedian(j));
                         }
                         dpt.setOrdinate(index, valMin + i * fract);
@@ -86,17 +86,17 @@ public class GeoCalculator3D extends GeoCalculator{
 
                 }else{
                     int index = -1;
-                    for(int i = 0; i<3; i++){
-                        if(bound.getSpan(i)<=0){
+                    for (int i = 0; i<3; i++) {
+                        if (bound.getSpan(i) <= 0) {
                             index = i;break;
                         }
                     }
                     int[][] tabHV = new int[dim][dim];
                     int  d0, d1;
                     switch(index){
-                        case 0 : d0 = 1;d1 = 2; break;//defined on yz plan
-                        case 1 : d0 = 0;d1 = 2; break;//defined on xz
-                        case 2 : d0 = 0; d1 = 1;break;//defined on xy
+                        case 0  : d0 = 1; d1 = 2; break;//defined on yz plan
+                        case 1  : d0 = 0; d1 = 2; break;//defined on xz
+                        case 2  : d0 = 0; d1 = 1; break;//defined on xy
                         default : throw new IllegalStateException("invalid no space index : "+index);
                     }
                     listOfCentroidChild.addAll(createPath(candidate, order, d0, d1));
@@ -160,17 +160,17 @@ public class GeoCalculator3D extends GeoCalculator{
         final int hy = (hdy <= 1) ? 0 : 1;
         final int hz = (hdz <= 1) ? 0 : 1;
 
-        if(calc.getSpace(envelop) <= 0){
+        if (calc.getSpace(envelop) <= 0) {
             int index = -1;
-            for(int i = 0; i<3; i++){
-                if(envelop.getSpan(i)<=0){
+            for (int i = 0; i<3; i++) {
+                if (envelop.getSpan(i) <= 0) {
                     index = i;break;
                 }
             }
-            switch(index){
-                case 0 : return new int[]{hy, hz};
-                case 1 : return new int[]{hx, hz};
-                case 2 : return new int[]{hx, hy};
+            switch (index) {
+                case 0  : return new int[]{hy, hz};
+                case 1  : return new int[]{hx, hz};
+                case 2  : return new int[]{hx, hy};
                 default : throw new IllegalStateException("hilbertCoord not find");
             }
         }else{
@@ -187,30 +187,24 @@ public class GeoCalculator3D extends GeoCalculator{
         final DirectPosition ptCE = getMedian(entry);
         final GeneralEnvelope bound = new GeneralEnvelope(candidate.getBoundary());
         final int order = (Integer) candidate.getUserProperty("hilbertOrder");
-        if (! bound.contains(ptCE)) {
-            throw new IllegalArgumentException("entry is out of this node boundary");
-        }
-        if(getSpace(bound)<= 0){
-            if(getEdge(bound)<=0){
-                final int nbCells = (int) (Math.pow(2, 2 * order));
+        if (! bound.contains(ptCE)) throw new IllegalArgumentException("entry is out of this node boundary");
+        if (getSpace(bound) <= 0) {
+            if (getEdge(bound) <= 0) {
+                final int nbCells = 2 << 2*order-1;
                 int index = -1;
-                for(int i = 0, d = bound.getDimension();i<d;i++){
-                    if(bound.getSpan(i)>0){
-                        index = i;
-                        break;
+                for (int i = 0, d = bound.getDimension(); i<d; i++) {
+                    if (bound.getSpan(i) > 0) {
+                        index = i; break;
                     }
                 }
                 final double fract = bound.getSpan(index) / nbCells;
                 final double lenght = Math.abs(bound.getLowerCorner().getOrdinate(index) - ptCE.getOrdinate(index));
                 int result = (int) (lenght / fract);
-                if (result == nbCells) {
-                    result--;
-                }
+                if (result == nbCells) result--;
                 return result;
             }
             int[] hCoord = getHilbCoord(candidate, ptCE, bound, order);
             return ((int[][]) candidate.getUserProperty("tabHV"))[hCoord[0]][hCoord[1]];
-
         }
         int[] hCoord = getHilbCoord(candidate, ptCE, bound, order);
         return ((int[][][]) candidate.getUserProperty("tabHV"))[hCoord[0]][hCoord[1]][hCoord[2]];

@@ -89,13 +89,9 @@ public class HilbertRTree extends DefaultAbstractTree {
     public void search(final Envelope regionSearch, final TreeVisitor visitor) throws IllegalArgumentException {
         ArgumentChecks.ensureNonNull("search : region search", regionSearch);
         ArgumentChecks.ensureNonNull("search : visitor", visitor);
-        if(!CRS.equalsIgnoreMetadata(crs, regionSearch.getCoordinateReferenceSystem())){
-            throw new MismatchedReferenceSystemException();
-        }
+        if(!CRS.equalsIgnoreMetadata(crs, regionSearch.getCoordinateReferenceSystem())) throw new MismatchedReferenceSystemException();
         final Node root = getRoot();
-        if (!root.isEmpty() && root != null) {
-            searchHilbertNode(root, regionSearch, visitor);
-        }
+        if (!root.isEmpty() && root != null) searchHilbertNode(root, regionSearch, visitor);
     }
 
     /**
@@ -104,9 +100,7 @@ public class HilbertRTree extends DefaultAbstractTree {
     @Override
     public void insert(final Envelope entry) throws IllegalArgumentException{
         ArgumentChecks.ensureNonNull("insert : entry", entry);
-        if(!CRS.equalsIgnoreMetadata(crs, entry.getCoordinateReferenceSystem())){
-            throw new MismatchedReferenceSystemException();
-        }
+        if(!CRS.equalsIgnoreMetadata(crs, entry.getCoordinateReferenceSystem())) throw new MismatchedReferenceSystemException();
         super.eltCompteur++;
         final Node root = getRoot();
         final int dim = entry.getDimension();
@@ -126,9 +120,7 @@ public class HilbertRTree extends DefaultAbstractTree {
     @Override
     public void delete(final Envelope entry) throws IllegalArgumentException {
         ArgumentChecks.ensureNonNull("delete : entry", entry);
-        if(!CRS.equalsIgnoreMetadata(crs, entry.getCoordinateReferenceSystem())){
-            throw new MismatchedReferenceSystemException();
-        }
+        if(!CRS.equalsIgnoreMetadata(crs, entry.getCoordinateReferenceSystem())) throw new MismatchedReferenceSystemException();
         deleteHilbertNode(getRoot(), entry);
     }
 
@@ -138,9 +130,7 @@ public class HilbertRTree extends DefaultAbstractTree {
     @Override
     public void remove(final Envelope entry) throws IllegalArgumentException {
         ArgumentChecks.ensureNonNull("remove : entry", entry);
-        if(!CRS.equalsIgnoreMetadata(crs, entry.getCoordinateReferenceSystem())){
-            throw new MismatchedReferenceSystemException();
-        }
+        if(!CRS.equalsIgnoreMetadata(crs, entry.getCoordinateReferenceSystem())) throw new MismatchedReferenceSystemException();
         removeHilbertNode(getRoot(), entry);
     }
 
@@ -242,7 +232,7 @@ public class HilbertRTree extends DefaultAbstractTree {
         if (candidate.isLeaf()) {
             final GeneralEnvelope cB = new GeneralEnvelope(candidate.getBoundary());
             if ((!cB.contains(entry, true))) {
-                List<Envelope> lS = new ArrayList<Envelope>();
+                final List<Envelope> lS = new ArrayList<Envelope>();
                 searchHilbertNode(candidate, cB, new DefaultTreeVisitor(lS));
                 lS.add(entry);
                 Envelope envelope = getEnveloppeMin(lS);
@@ -253,7 +243,6 @@ public class HilbertRTree extends DefaultAbstractTree {
                 }
             } else {
                 chooseSubtree(candidate, entry).getEntries().add(entry);
-
             }
         } else {
             insertNode(chooseSubtree(candidate, entry), entry);
@@ -271,16 +260,11 @@ public class HilbertRTree extends DefaultAbstractTree {
         boolean cleaf = candidate.isLeaf();
         int cHO = (Integer) candidate.getUserProperty(PROP_HO);
         final Calculator calc = candidate.getTree().getCalculator();
-        if (candidate.getChildren().size() < 2 && !cleaf) {
-            throw new IllegalStateException("impossible to split node with lesser two subnode");
-        }
+        if (candidate.getChildren().size() < 2 && !cleaf) throw new IllegalStateException("impossible to split node with lesser two subnode");
         if (cleaf && (cHO < ((HilbertRTree) candidate.getTree()).getHilbertOrder())) {
-
             final List<Envelope> lS = new ArrayList<Envelope>();
             searchHilbertNode(candidate, candidate.getBoundary(), new DefaultTreeVisitor(lS));
-            if (lS.isEmpty()) {
-                throw new IllegalStateException("impossible to increase Hilbert order of a empty Node");
-            }
+            if (lS.isEmpty()) throw new IllegalStateException("impossible to increase Hilbert order of a empty Node");
             final Envelope boundT = getEnveloppeMin(lS);
             calc.createBasicHL(candidate, cHO + 1, boundT);
             for (Envelope sh : lS) {
@@ -341,19 +325,8 @@ public class HilbertRTree extends DefaultAbstractTree {
         for (int indOrg = 0; indOrg < dim; indOrg++) {
             bulkTemp = 0;
             for (int left_or_right = 0; left_or_right < 2; left_or_right++) {
-                if (isLeaf) {
-                    if (left_or_right == 0) {
-                        comp = calc.sortFrom(indOrg, true, false);
-                    } else {
-                        comp = calc.sortFrom(indOrg, false, false);
-                    }
-                } else {
-                    if (left_or_right == 0) {
-                        comp = calc.sortFrom(indOrg, true, true);
-                    } else {
-                        comp = calc.sortFrom(indOrg, false, true);
-                    }
-                }
+                comp = (isLeaf) ? ((left_or_right == 0) ? calc.sortFrom(indOrg, true, false) : calc.sortFrom(indOrg, false, false))
+                                : ((left_or_right == 0) ? calc.sortFrom(indOrg, true, true)  : calc.sortFrom(indOrg, false, true));
                 Collections.sort(eltList, comp);
                 for (int cut = demiSize, sdem = size - demiSize; cut <= sdem; cut++) {
                     splitListA.clear();
@@ -446,19 +419,8 @@ public class HilbertRTree extends DefaultAbstractTree {
         int cut2;
         Comparator comp;
         for (int lu = 0; lu < 2; lu++) {
-            if (isLeaf) {
-                if (lu == 0) {
-                    comp = calc.sortFrom(splitIndex, true, false);
-                } else {
-                    comp = calc.sortFrom(splitIndex, false, false);
-                }
-            } else {
-                if (lu == 0) {
-                    comp = calc.sortFrom(splitIndex, true, true);
-                } else {
-                    comp = calc.sortFrom(splitIndex, false, true);
-                }
-            }
+            comp = (isLeaf) ? ((lu == 0) ? calc.sortFrom(splitIndex, true, false) : calc.sortFrom(splitIndex, false, false))
+                            : ((lu == 0) ? calc.sortFrom(splitIndex, true, true)  : calc.sortFrom(splitIndex, false, true));
             Collections.sort(eltList, comp);
 
             for (int cut = demiSize; cut <= size - demiSize; cut++) {
@@ -516,37 +478,19 @@ public class HilbertRTree extends DefaultAbstractTree {
                 }
             }
         }
-
-        if (isLeaf) {
-            if (lower_or_upper == 0) {
-                comp = calc.sortFrom(splitIndex, true, false);
-            } else {
-                comp = calc.sortFrom(splitIndex, false, false);
-            }
-        } else {
-            if (lower_or_upper == 0) {
-                comp = calc.sortFrom(splitIndex, true, true);
-            } else {
-                comp = calc.sortFrom(splitIndex, false, true);
-            }
-        }
+        comp = (isLeaf) ? ((lower_or_upper == 0) ? calc.sortFrom(splitIndex, true, false) : calc.sortFrom(splitIndex, false, false))
+                        : ((lower_or_upper == 0) ? calc.sortFrom(splitIndex, true, true)  : calc.sortFrom(splitIndex, false, true));
         Collections.sort(eltList, comp);
-
         for (int i = 0; i < index; i++) {
             splitListA.add(eltList.get(i));
         }
         for (int i = index; i < size; i++) {
             splitListB.add(eltList.get(i));
         }
-
-        if (isLeaf) {
-            return UnmodifiableArrayList.wrap(tree.createNode(tree, null, null, splitListA),
-                                              tree.createNode(tree, null, null, splitListB));
-        } else {
-            final Node resultA = (Node) ((splitListA.size() == 1) ? splitListA.get(0) : tree.createNode(tree, null, splitListA, null));
-            final Node resultB = (Node) ((splitListB.size() == 1) ? splitListB.get(0) : tree.createNode(tree, null, splitListB, null));
-            return UnmodifiableArrayList.wrap(resultA, resultB);
-        }
+        if (isLeaf) return UnmodifiableArrayList.wrap(tree.createNode(tree, null, null, splitListA), tree.createNode(tree, null, null, splitListB));
+        final Node resultA = (Node) ((splitListA.size() == 1) ? splitListA.get(0) : tree.createNode(tree, null, splitListA, null));
+        final Node resultB = (Node) ((splitListB.size() == 1) ? splitListB.get(0) : tree.createNode(tree, null, splitListB, null));
+        return UnmodifiableArrayList.wrap(resultA, resultB);
     }
 
     /**
@@ -560,20 +504,14 @@ public class HilbertRTree extends DefaultAbstractTree {
      */
     public static Node chooseSubtree(final Node candidate, final Envelope entry) {
         ArgumentChecks.ensureNonNull("impossible to choose subtree with entry null", entry);
-        if (candidate.isLeaf() && candidate.isFull()) {
-            throw new IllegalStateException("impossible to choose subtree in overflow node");
-        }
+        if (candidate.isLeaf() && candidate.isFull()) throw new IllegalStateException("impossible to choose subtree in overflow node");
         Calculator calc = candidate.getTree().getCalculator();
         if (candidate.isLeaf()) {
-            if ((Integer) candidate.getUserProperty(PROP_HO) < 1) {
-                return candidate.getChildren().get(0);
-            }
+            if ((Integer) candidate.getUserProperty(PROP_HO) < 1) return candidate.getChildren().get(0);
             int index;
             index = calc.getHVOfEntry(candidate, entry);
             for (Node nod : candidate.getChildren()) {
-                if (index <= ((Integer) (nod.getUserProperty("hilbertValue"))) && !nod.isFull()) {
-                    return nod;
-                }
+                if (index <= ((Integer) (nod.getUserProperty("hilbertValue"))) && !nod.isFull()) return nod;
             }
             return candidate.getChildren().get(findAnotherCell(index, candidate));
         } else {
@@ -623,17 +561,13 @@ public class HilbertRTree extends DefaultAbstractTree {
                     }
                     return listOverZero.get(indexZero);
                 }
-                if (index == -1) {
-                    throw new IllegalStateException("chooseSubTree : no subLeaf find");
-                }
+                if (index == -1) throw new IllegalStateException("chooseSubTree : no subLeaf find");
                 return childrenList.get(index);
             }
 
             for (Node no : childrenList) {
                 final GeneralEnvelope ge = new GeneralEnvelope(no.getBoundary());
-                if (ge.contains(entry, true)) {
-                    return no;
-                }
+                if (ge.contains(entry, true)) return no;
             }
 
             double enlargRef = -1;
@@ -665,11 +599,7 @@ public class HilbertRTree extends DefaultAbstractTree {
      * @return index of another subnode.
      */
     private static int findAnotherCell(int index, final Node candidate) {
-        if (!candidate.isLeaf()) {
-            throw new IllegalArgumentException("impossible to find another leaf in Node which isn't LEAF tree");
-        }
-//        ArgumentChecks.ensureBetween("index to find another leaf is out of required limit",
-//                0, (int) Math.pow(2, ((Integer)  candidate.getUserProperty("hilbertOrder") * candidate.getTree().getCrs().getCoordinateSystem().getDimension())), index);
+        if (!candidate.isLeaf()) throw new IllegalArgumentException("impossible to find another leaf in Node which isn't LEAF tree");
         final List<Node> listCells = candidate.getChildren();
         int siz = listCells.size();
         boolean oneTime = false;
@@ -680,9 +610,7 @@ public class HilbertRTree extends DefaultAbstractTree {
                 break;
             }
             if (i == siz - 1) {
-                if (oneTime) {
-                    throw new IllegalStateException("will be able to split");
-                }
+                if (oneTime) throw new IllegalStateException("will be able to split");
                 oneTime = true;
                 i = -1;
             }
@@ -783,7 +711,6 @@ public class HilbertRTree extends DefaultAbstractTree {
      * @param candidate {@code Node} to begin condense.
      */
     public static void trim(final Node candidate) throws IllegalArgumentException{
-
         if (!candidate.isLeaf()) {
             final List<Node> children = candidate.getChildren();
             for (int i = children.size() - 1; i >= 0; i--) {
@@ -814,10 +741,7 @@ public class HilbertRTree extends DefaultAbstractTree {
                 }
             }
         }
-
-        if (candidate.getParent() != null) {
-            trim(candidate.getParent());
-        }
+        if (candidate.getParent() != null) trim(candidate.getParent());
     }
 
     /**

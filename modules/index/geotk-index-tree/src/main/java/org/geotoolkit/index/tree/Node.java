@@ -36,27 +36,23 @@ public abstract class Node {
     protected Tree tree;
     private final EventListenerList listenerList = new EventListenerList();
     private Map<String, Object> userProperties;
-    
+
     /**
      * @param key
      * @return user property for given key
      */
     public Object getUserProperty(final String key) {
-        if (userProperties == null) {
-            return null;
-        }
+        if (userProperties == null) return null;
         return userProperties.get(key);
     }
 
     /**Add user property with key access.
-     * 
-     * @param key 
+     *
+     * @param key
      * @param value Object will be stocked.
      */
     public void setUserProperty(final String key, final Object value) {
-        if (userProperties == null) {
-            userProperties = new HashMap<String, Object>();
-        }
+        if (userProperties == null) userProperties = new HashMap<String, Object>();
         userProperties.put(key, value);
     }
 
@@ -67,73 +63,67 @@ public abstract class Node {
     public void removeListener(PropertyChangeListener l) {
         listenerList.remove(PropertyChangeListener.class, l);
     }
-    
+
     protected void fireCollectionEvent() {
-
         final PropertyChangeListener[] listeners = listenerList.getListeners(PropertyChangeListener.class);
-
         for (PropertyChangeListener l : listeners) {
             l.propertyChange(null);
         }
     }
-    
+
     /**
      * Affect a {@code Node} boundary.
      */
     public void setBound(Envelope bound){
-        if(bound == null){
-            boundary = null;
-        }else{
-            boundary = new GeneralEnvelope(bound);
-        }
+        boundary = (bound == null) ? null : new GeneralEnvelope(bound);
     }
-    
+
     /**<blockquote><font size=-1>
-     * <strong>NOTE: Null value can be return.</strong> 
+     * <strong>NOTE: Null value can be return.</strong>
      * </font></blockquote>
-     * 
+     *
      * @return {@code Node} boundary without re-computing sub-node boundary.
      */
     public Envelope getBound(){
         return this.boundary;
     }
-    
+
     /**Affect a new {@code Node} parent.
-     * 
+     *
      * @param parent {@code Node} parent pointer.
      */
     public abstract void setParent(Node parent);
-    
+
     /**
      * @return subNodes.
      */
     public abstract List<Node> getChildren();
-    
+
     /**A leaf is a {@code Node} at extremity of {@code Tree} which contains only entries.
-     * 
+     *
      * @return true if it is a leaf else false (branch).
      */
     public abstract boolean isLeaf();
-    
+
     /**
      * @return true if {@code Node} contains nothing else false.
      */
     public abstract boolean isEmpty();
-    
+
     /**
      * @return true if node elements number equals or overflow max elements
-     *         number autorized by {@code Tree} else false. 
+     *         number autorized by {@code Tree} else false.
      */
     public abstract boolean isFull();
-    
+
     /**
      * <blockquote><font size=-1>
-     * <strong>NOTE: if boundary is null, method re-compute all subnode boundary.</strong> 
+     * <strong>NOTE: if boundary is null, method re-compute all subnode boundary.</strong>
      * </font></blockquote>
      * @return boundary.
      */
     public abstract Envelope getBoundary();
-    
+
     /**
      * @return entries.
      */
@@ -148,5 +138,5 @@ public abstract class Node {
      * @return {@code Tree} pointer.
      */
     public abstract Tree getTree();
-    
+
 }

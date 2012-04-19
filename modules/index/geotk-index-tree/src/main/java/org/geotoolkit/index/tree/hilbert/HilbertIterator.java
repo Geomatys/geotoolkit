@@ -20,12 +20,13 @@ package org.geotoolkit.index.tree.hilbert;
 import java.util.Arrays;
 import java.util.Iterator;
 
-/**Iterator which follow multi-dimensionnal Hilbert curve.
+/**
+ * Iterator which follow multi-dimensionnal Hilbert curve.
  *
  * @author Rémi Marechal        (Geomatys).
  * @author Martin Desruisseaux  (Geomatys).
  */
-public class HilbertIterator implements Iterator<int[]>{
+public class HilbertIterator implements Iterator<int[]> {
 
     private final HilbertIterator subOrder;
     private final boolean[] sign;
@@ -67,7 +68,7 @@ public class HilbertIterator implements Iterator<int[]>{
         this.hilbertOrder = hilbertOrder;
         this.dimension = dimension;
         nbCells = 2 << (dimension*hilbertOrder - 1);
-        modulo = 2<<dimension-1;
+        modulo = 2 << dimension-1;
         l = modulo - 1;
         ordinates = generateBasicOrd(dimension-1, new int[]{dimension-1,dimension-2,dimension-1});
         if(superParent){
@@ -105,14 +106,14 @@ public class HilbertIterator implements Iterator<int[]>{
      * @param operande current ordinate.
      */
     private int oLogic(int val, final int operande){
-        return Math.abs((val + operande)%dimension);
+        return Math.abs((val + operande) % dimension);
     }
 
     /**
      * @return true if next iterate exit else false.
      */
     private boolean hasNextOperande() {
-        if (subOrder == null)return currentPos < l;
+        if (subOrder == null) return currentPos < l;
         return (compteurJoin < l || subOrder.hasNextOperande());
     }
 
@@ -123,7 +124,7 @@ public class HilbertIterator implements Iterator<int[]>{
         if (hilbertOrder == 1) {
             ordinate = ordinates[currentPos];
             currentPos++;
-            if(sign!=null){
+            if(sign != null) {
                 signVal = sign[ordinate];
                 sign[ordinate] = !sign[ordinate];
             }
@@ -131,9 +132,9 @@ public class HilbertIterator implements Iterator<int[]>{
             if (subOrder.hasNextOperande()) {
                 subOrder.nextOperande();
                 ordinate = oLogic(subOrder.ordinate, ordinates[currentPos]);
-                if(sign!=null){
+                if(sign != null) {
                     sign[ordinate] = !sign[ordinate];
-                    signVal = (joinInf%modulo==0)?sign[ordinate]:!sign[ordinate];
+                    signVal = (joinInf%modulo==0) ? sign[ordinate] : !sign[ordinate];
                 }
                 joinInf++;
             } else {
@@ -142,17 +143,15 @@ public class HilbertIterator implements Iterator<int[]>{
                 joinInf = 1;
                 if (currentPos > 0 && currentPos < l-1) {
                     oneTime = !oneTime;
-                    if(oneTime)currentPos += (currentPos != l-2) ? 2 : 1;
+                    if(oneTime) currentPos += (currentPos != l-2) ? 2 : 1;
                 } else {
                     currentPos++;
                 }
-                if(sign!=null){
+                if(sign != null) {
                     sign[ordinate] = !sign[ordinate];
                     signVal = sign[ordinate];
                 }
-                if (compteurJoin < l+1) {
-                    subOrder.rewind();
-                }
+                if (compteurJoin < l+1) subOrder.rewind();
             }
         }
     }
@@ -168,7 +167,7 @@ public class HilbertIterator implements Iterator<int[]>{
             return coordinates.clone();
         }
         nextOperande();
-        currentSign = (signVal)?1:-1;
+        currentSign = (signVal) ? 1 : -1;
         coordinates[ordinate] += currentSign;
         return coordinates.clone();
     }
@@ -180,13 +179,13 @@ public class HilbertIterator implements Iterator<int[]>{
         currentPos = compteurJoin = 0;
         oneTime = true;
         joinInf = 1;
-        if(sign!=null)Arrays.fill(sign, true);
-        if(subOrder!=null)subOrder.rewind();
+        if(sign != null) Arrays.fill(sign, true);
+        if(subOrder != null) subOrder.rewind();
     }
 
     @Override
     public void remove() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Not used.");
     }
 
     /**

@@ -36,7 +36,7 @@ import org.opengis.geometry.Envelope;
  *
  * @author Rémi Maréchal (Geomatys).
  */
-public class TreeXTest extends TreeTest{
+public class TreeXTest extends TreeTest {
 
     List<Envelope> listSearch = new ArrayList<Envelope>();
     TreeVisitor defVisit = new DefaultTreeVisitor(listSearch);
@@ -44,9 +44,9 @@ public class TreeXTest extends TreeTest{
 
     public TreeXTest() {
         final GeneralEnvelope geTemp = new GeneralEnvelope(DefaultEngineeringCRS.CARTESIAN_3D);
-        for(int z = 0; z<=200; z+=20){
-            for(int y = 0; y<=200; y+=20){
-                for(int x = 0; x<=200; x+=20){
+        for(int z = 0; z<=200; z+=20) {
+            for(int y = 0; y<=200; y+=20) {
+                for(int x = 0; x<=200; x+=20) {
                     geTemp.setEnvelope(x-5, y-5, z-5, x+5, y+5, z+5);
                     tree.insert(new GeneralEnvelope(geTemp));
                 }
@@ -55,8 +55,8 @@ public class TreeXTest extends TreeTest{
     }
 
     @Test
-    public void testContains(){
-        List<Envelope> listRef = new ArrayList<Envelope>();
+    public void testContains() {
+        final List<Envelope> listRef = new ArrayList<Envelope>();
         final GeneralEnvelope geTemp = new GeneralEnvelope(DefaultEngineeringCRS.CARTESIAN_3D);
         geTemp.setEnvelope(115, 135, 35, 125, 145, 45);
         listRef.add(new GeneralEnvelope(geTemp));
@@ -70,12 +70,12 @@ public class TreeXTest extends TreeTest{
     }
 
     @Test
-    public void testDisjoint(){
-        List<Envelope> listRef = new ArrayList<Envelope>();
+    public void testDisjoint() {
+        final List<Envelope> listRef = new ArrayList<Envelope>();
         final GeneralEnvelope geTemp = new GeneralEnvelope(DefaultEngineeringCRS.CARTESIAN_3D);
-        for(int z = 0; z<=100; z+=20){
-            for(int y = 0; y<=200; y+=20){
-                for(int x = 0; x<=200; x+=20){
+        for(int z = 0; z<=100; z+=20) {
+            for(int y = 0; y<=200; y+=20) {
+                for(int x = 0; x<=200; x+=20) {
                     geTemp.setEnvelope(x-5, y-5, z-5, x+5, y+5, z+5);
                     listRef.add(new GeneralEnvelope(geTemp));
                 }
@@ -91,11 +91,11 @@ public class TreeXTest extends TreeTest{
     }
 
     @Test
-    public void testWithin(){
-        List<Envelope> listRef = new ArrayList<Envelope>();
+    public void testWithin() {
+        final List<Envelope> listRef = new ArrayList<Envelope>();
         final GeneralEnvelope geTemp = new GeneralEnvelope(DefaultEngineeringCRS.CARTESIAN_3D);
-        for(int z = 0; z<=200; z+=20){
-            for(int y = 0; y<=200; y+=20){
+        for(int z = 0; z<=200; z+=20) {
+            for(int y = 0; y<=200; y+=20) {
                     geTemp.setEnvelope(195, y-5, z-5, 205, y+5, z+5);
                     listRef.add(new GeneralEnvelope(geTemp));
             }
@@ -110,12 +110,12 @@ public class TreeXTest extends TreeTest{
     }
 
     @Test
-    public void testTouches(){
-        List<Envelope> listRef = new ArrayList<Envelope>();
+    public void testTouches() {
+        final List<Envelope> listRef = new ArrayList<Envelope>();
         final GeneralEnvelope geTemp = new GeneralEnvelope(DefaultEngineeringCRS.CARTESIAN_3D);
-        for(int z = 0; z<=200; z+=20){
-            for(int y = 0; y<=200; y+=20){
-                for(int x = 140; x<=160; x+=20){
+        for(int z = 0; z<=200; z+=20) {
+            for(int y = 0; y<=200; y+=20) {
+                for(int x = 140; x<=160; x+=20) {
                     geTemp.setEnvelope(x-5, y-5, z-5, x+5, y+5, z+5);
                     listRef.add(new GeneralEnvelope(geTemp));
                 }
@@ -131,8 +131,8 @@ public class TreeXTest extends TreeTest{
     }
 
     @Test
-    public void testEquals(){
-        List<Envelope> listRef = new ArrayList<Envelope>();
+    public void testEquals() {
+        final List<Envelope> listRef = new ArrayList<Envelope>();
         final GeneralEnvelope geTemp = new GeneralEnvelope(DefaultEngineeringCRS.CARTESIAN_3D);
         geTemp.setEnvelope(115, 135, 35, 125, 145, 45);
         listRef.add(new GeneralEnvelope(geTemp));
@@ -146,8 +146,8 @@ public class TreeXTest extends TreeTest{
     }
 
     @Test
-    public void testOverlaps(){
-        List<Envelope> listRef = new ArrayList<Envelope>();
+    public void testOverlaps() {
+        final List<Envelope> listRef = new ArrayList<Envelope>();
         final GeneralEnvelope geTemp = new GeneralEnvelope(DefaultEngineeringCRS.CARTESIAN_3D);
         for(int z = 0; z<=200; z+=20){
             for(int y = 0; y<=200; y+=20){

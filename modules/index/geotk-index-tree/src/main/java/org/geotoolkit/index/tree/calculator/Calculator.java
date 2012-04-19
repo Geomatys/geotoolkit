@@ -23,7 +23,7 @@ import java.util.List;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import static org.geotoolkit.index.tree.DefaultTreeUtils.getMedian;
 import org.geotoolkit.index.tree.Node;
-import org.geotoolkit.index.tree.hilbert.Hilbert;
+import org.geotoolkit.index.tree.hilbert.HilbertIterator;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
@@ -131,7 +131,7 @@ public abstract class Calculator {
      */
     public abstract int getHVOfEntry(final Node candidate, final Envelope entry);
 
-    public int[]getDims(){
+    public int[] getDims() {
         return dims;
     }
 
@@ -146,23 +146,26 @@ public abstract class Calculator {
         final DirectPosition median = getMedian(bound);
         final int spaceDimension = dims.length;
         final List<DirectPosition> path = new ArrayList<DirectPosition>();
-        final int[] generalPath = Hilbert.createPath(spaceDimension, order);
+
+        final HilbertIterator hIt = new HilbertIterator(order, spaceDimension);
+
         final double[] spans = new double[spaceDimension];
-        for(int i = 0; i<spaceDimension;i++){
-            spans[i] = bound.getSpan(dims[i])/(2<<(order-1));
+        for(int i = 0; i<spaceDimension; i++) {
+            spans[i] = bound.getSpan(dims[i]) / (2<<(order-1));
         }
         final double[] coords = new double[spaceDimension];
-        for(int i = 0;i<spaceDimension;i++){
+        for(int i = 0; i<spaceDimension; i++) {
             coords[i] = bound.getMinimum(dims[i]) + spans[i]/2;
         }
-        for(int i = 0,l=generalPath.length; i<=l-spaceDimension; i+=spaceDimension){
-            final DirectPosition dptemp = new GeneralDirectPosition(median);
-            for(int j = 0;j<spaceDimension;j++){
-                dptemp.setOrdinate(dims[j], coords[j]+spans[j]*generalPath[i+j]);
+        final DirectPosition dptemp = new GeneralDirectPosition(median);
+        int[] coordinate;
+        while (hIt.hasNext()) {
+            coordinate = hIt.next();
+            for(int i=0; i<spaceDimension; i++) {
+                dptemp.setOrdinate(dims[i], coords[i] + spans[i]*coordinate[i]);
             }
-            path.add(dptemp);
+            path.add(new GeneralDirectPosition(dptemp));
         }
         return path;
     }
-
 }

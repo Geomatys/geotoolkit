@@ -27,7 +27,7 @@ import org.junit.Test;
  * <strong>NOTE: test is possible if dimension*order &lt; 30.({@code int} size limit value).</strong>
  * </font></blockquote>
  *
- * @author Rémi Marechal(Géomatys).
+ * @author Rémi Marechal(Geomatys).
  */
 public abstract class HilbertTest {
 
@@ -88,18 +88,18 @@ public abstract class HilbertTest {
      *
      * @param order Hilbert curve order.
      */
-    private void orderNTest(final int order){
-        if(dimension*order>30)return;
+    private void orderNTest(final int order) {
+        if (dimension*order > 30) return;
         hilbertIterator = new HilbertIterator(order, dimension);
         validPath = new BitSet(2<<dimension*order-1);
-        int length = 2<<order-1;
-        while(hilbertIterator.hasNext()){
+        int length = 2 << order-1;
+        while (hilbertIterator.hasNext()) {
             int[] coords = hilbertIterator.next();
             int val = coords[0];
-            assert(coords[0]<2E9) : ("coordinate more longer");
-            for(int j = 1;j<dimension;j++){
-                assert(coords[j]<2E9) : ("coordinate more longer");
-                val+=coords[j]*length;
+            assert (coords[0] < 2E9) : ("coordinate more longer");
+            for (int j=1; j<dimension; j++) {
+                assert (coords[j]<2E9) : ("coordinate more longer");
+                val += coords[j]*length;
             }
             validPath.set(val, true);
         }
@@ -109,9 +109,9 @@ public abstract class HilbertTest {
     /**
      * Verify all bitset table box.
      */
-    private void validPath(){
-        for(int j = 0,l=validPath.length();j<l;j++){
-            assertTrue(validPath.get(j));
+    private void validPath() {
+        for(int j = 0, l=validPath.length(); j<l; j++) {
+            assertTrue (validPath.get(j));
         }
     }
 }

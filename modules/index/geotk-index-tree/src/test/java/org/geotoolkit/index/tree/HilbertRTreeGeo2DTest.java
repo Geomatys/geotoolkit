@@ -29,7 +29,7 @@ import org.opengis.referencing.operation.TransformException;
  *
  * @author Rémi Marechal (Geomatys).
  */
-public class HilbertRTreeGeo2DTest extends SpatialTreeTest{
+public class HilbertRTreeGeo2DTest extends SpatialTreeTest {
 
     public HilbertRTreeGeo2DTest() throws TransformException {
         super(new HilbertRTree(4,3, DefaultGeographicCRS.WGS84, TreeNodeFactory.DEFAULT_FACTORY));

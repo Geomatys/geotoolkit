@@ -27,7 +27,7 @@ import org.opengis.referencing.operation.TransformException;
  *
  * @author Rémi Marechal (Geomatys).
  */
-public class BasicRTreeGeo3DTest extends SpatialTreeTest{
+public class BasicRTreeGeo3DTest extends SpatialTreeTest {
 
     public BasicRTreeGeo3DTest() throws TransformException {
         super(new BasicRTree(4, DefaultGeographicCRS.WGS84_3D, SplitCase.QUADRATIC, TreeNodeFactory.DEFAULT_FACTORY));

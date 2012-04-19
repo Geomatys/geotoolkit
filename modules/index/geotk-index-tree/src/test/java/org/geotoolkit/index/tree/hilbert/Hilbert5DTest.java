@@ -22,7 +22,7 @@ package org.geotoolkit.index.tree.hilbert;
  *
  * @author Rémi Marechal(Géomatys).
  */
-public class Hilbert5DTest extends HilbertTest{
+public class Hilbert5DTest extends HilbertTest {
     public Hilbert5DTest() {
         super(5);
     }

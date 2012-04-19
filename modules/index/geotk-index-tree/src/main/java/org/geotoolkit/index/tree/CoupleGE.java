@@ -119,9 +119,7 @@ public class CoupleGE implements Couple<GeneralEnvelope> {
      * @return user property for given key
      */
     public Object getUserProperty(final String key) {
-        if (userProperties == null) {
-            return null;
-        }
+        if (userProperties == null) return null;
         return userProperties.get(key);
     }
 
@@ -132,9 +130,7 @@ public class CoupleGE implements Couple<GeneralEnvelope> {
      * @param value Object will be stocked.
      */
     public void setUserProperty(final String key, final Object value) {
-        if (userProperties == null) {
-            userProperties = new HashMap<String, Object>();
-        }
+        if (userProperties == null) userProperties = new HashMap<String, Object>();
         userProperties.put(key, value);
     }
 }

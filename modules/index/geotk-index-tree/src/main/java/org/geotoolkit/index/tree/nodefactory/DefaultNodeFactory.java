@@ -28,7 +28,7 @@ import org.opengis.geometry.Envelope;
  *
  * @author Rémi Maréchal (Geomatys)
  */
-class DefaultNodeFactory implements NodeFactory{
+class DefaultNodeFactory implements NodeFactory {
 
     /**
      * {@inheritDoc }
@@ -37,5 +37,5 @@ class DefaultNodeFactory implements NodeFactory{
     public Node createNode(final Tree tree, final Node parent, final DirectPosition lowerCorner, final DirectPosition upperCorner, final List<Node> children, final List<Envelope> entries) {
         return new DefaultNode(tree, parent, lowerCorner, upperCorner, children, entries);
     }
-    
+
 }

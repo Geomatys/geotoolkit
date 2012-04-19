@@ -25,7 +25,7 @@ import org.opengis.geometry.Envelope;
  *
  * @author Rémi Maréchal (Geomatys).
  */
-public class DefaultTreeVisitor implements TreeVisitor{
+public class DefaultTreeVisitor implements TreeVisitor {
 
     final Collection<Envelope>resultList;
     public DefaultTreeVisitor(final Collection<Envelope> resultList) {

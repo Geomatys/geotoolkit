@@ -25,7 +25,7 @@ import org.opengis.geometry.Envelope;
  *
  * @author Rémi Maréchal (Geomatys).
  */
-public interface TreeVisitor{
+public interface TreeVisitor {
     TreeVisitorResult filter(Node node);
     TreeVisitorResult visit(Envelope element);
 }
