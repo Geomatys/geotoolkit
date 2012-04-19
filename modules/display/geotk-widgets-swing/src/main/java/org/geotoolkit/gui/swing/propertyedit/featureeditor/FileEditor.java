@@ -17,6 +17,7 @@
 package org.geotoolkit.gui.swing.propertyedit.featureeditor;
 
 import java.awt.BorderLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -66,6 +67,7 @@ public class FileEditor implements JFeatureOutLine.PropertyEditor {
             panel.add(BorderLayout.CENTER, component);
             panel.add(BorderLayout.EAST, chooseButton);
             chooseButton.addActionListener(this);
+            chooseButton.setMargin(new Insets(0, 0, 0, 0));
         }
 
         @Override

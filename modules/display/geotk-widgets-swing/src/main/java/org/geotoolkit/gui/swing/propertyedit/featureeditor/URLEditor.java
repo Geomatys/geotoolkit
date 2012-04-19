@@ -17,6 +17,7 @@
 package org.geotoolkit.gui.swing.propertyedit.featureeditor;
 
 import java.awt.BorderLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -70,6 +71,7 @@ public class URLEditor implements JFeatureOutLine.PropertyEditor {
             panel.add(BorderLayout.CENTER, component);
             panel.add(BorderLayout.EAST, chooseButton);
             chooseButton.addActionListener(this);
+            chooseButton.setMargin(new Insets(0, 0, 0, 0));
         }
 
         @Override
@@ -91,7 +93,7 @@ public class URLEditor implements JFeatureOutLine.PropertyEditor {
             try {
                 return new URL(str);
             } catch (MalformedURLException ex) {
-                Logger.getLogger(URLEditor.class.getName()).log(Level.WARNING, null, ex);
+                Logger.getLogger(URLEditor.class.getName()).log(Level.FINER, null, ex);
                 return null;
             }
         }
