@@ -50,7 +50,7 @@ public class ReaderWriterTest {
         fil.deleteOnExit();
         for (int j = -120; j <= 120; j += 4) {
             for (int i = -200; i <= 200; i += 4) {
-                final GeneralEnvelope ge = new GeneralEnvelope(DefaultEngineeringCRS.CARTESIAN_3D);
+                final TestedEnvelope3D ge = new TestedEnvelope3D(DefaultEngineeringCRS.CARTESIAN_3D);
                 ge.setEnvelope(i, j, 20, i, j, 20);
                 lData.add(ge);
             }
@@ -160,16 +160,8 @@ public class ReaderWriterTest {
      * Affect Hilbert RTree on two tree test.
      */
     private void setHilbertRTree() throws TransformException {
-        treeRef  = TreeFactory.createHilbertRTree(4, 2, DefaultEngineeringCRS.CARTESIAN_2D, TreeNodeFactory.DEFAULT_FACTORY);
-        treeTest = TreeFactory.createHilbertRTree(4, 2, DefaultEngineeringCRS.CARTESIAN_2D, TreeNodeFactory.DEFAULT_FACTORY);
-        lData.clear();
-        for (int j = -120; j <= 120; j += 4) {
-            for (int i = -200; i <= 200; i += 4) {
-                final GeneralEnvelope ge = new GeneralEnvelope(DefaultEngineeringCRS.CARTESIAN_2D);
-                ge.setEnvelope(i, j, i, j);
-                lData.add(ge);
-            }
-        }
+        treeRef  = TreeFactory.createHilbertRTree(4, 2, DefaultEngineeringCRS.CARTESIAN_3D, TreeNodeFactory.DEFAULT_FACTORY);
+        treeTest = TreeFactory.createHilbertRTree(4, 2, DefaultEngineeringCRS.CARTESIAN_3D, TreeNodeFactory.DEFAULT_FACTORY);
         insert();
     }
 
@@ -258,7 +250,7 @@ public class ReaderWriterTest {
         ArgumentChecks.ensureNonNull("getLeaf : listLeaf", listLeaf);
         if (node.isLeaf()) {
             listLeaf.add(node);
-        }else{
+        } else {
             for (Node nod : node.getChildren()) {
                 getLeaf(nod, listLeaf);
             }
@@ -280,13 +272,9 @@ public class ReaderWriterTest {
         ArgumentChecks.ensureNonNull("compareListLeaf : listTreeRef", listTreeRef);
         ArgumentChecks.ensureNonNull("compareListLeaf : listTreeTest", listTreeTest);
 
-        if (listTreeRef.isEmpty() && listTreeTest.isEmpty()) {
-            return true;
-        }
+        if (listTreeRef.isEmpty() && listTreeTest.isEmpty()) return true;
+        if (listTreeRef.size() != listTreeTest.size()) return false;
 
-        if (listTreeRef.size() != listTreeTest.size()) {
-            return false;
-        }
         boolean test = false;
         for (Node nod : listTreeRef) {
             for (Node no : listTreeTest) {
@@ -295,9 +283,7 @@ public class ReaderWriterTest {
                     break;
                 }
             }
-            if (!test) {
-                return false;
-            }
+            if (!test) return false;
             test = false;
         }
         return true;
@@ -318,12 +304,10 @@ public class ReaderWriterTest {
     private boolean compareLeaf(final Node nodeA, final Node nodeB) {
         ArgumentChecks.ensureNonNull("compareLeaf : nodeA", nodeA);
         ArgumentChecks.ensureNonNull("compareLeaf : nodeB", nodeB);
-        if (!nodeA.isLeaf() || !nodeB.isLeaf()) {
-            throw new IllegalArgumentException("compareLeaf : you must compare two leaf");
-        }
-        if (!new GeneralEnvelope(nodeA.getBoundary()).equals(nodeB.getBoundary(), 1E-9, false)) {
-            return false;
-        }
+
+        if (!nodeA.isLeaf() || !nodeB.isLeaf()) throw new IllegalArgumentException("compareLeaf : you must compare two leaf");
+        if (!new GeneralEnvelope(nodeA.getBoundary()).equals(nodeB.getBoundary(), 1E-9, false)) return false;
+
         final List<Envelope> listA = new ArrayList<Envelope>();
         final List<Envelope> listB = new ArrayList<Envelope>();
 
@@ -362,26 +346,18 @@ public class ReaderWriterTest {
         ArgumentChecks.ensureNonNull("compareList : listA", listA);
         ArgumentChecks.ensureNonNull("compareList : listB", listB);
 
-        if (listA.size() != listB.size()) {
-            return false;
-        }
-
-        if (listA.isEmpty() && listB.isEmpty()) {
-            return true;
-        }
+        if (listA.size() != listB.size()) return false;
+        if (listA.isEmpty() && listB.isEmpty()) return true;
 
         boolean shapequals = false;
         for (Envelope eshs : listA) {
             final GeneralEnvelope shs = new GeneralEnvelope(eshs);
-
             for (Envelope shr : listB) {
                 if (shs.equals(shr, 1E-9, false)) {
                     shapequals = true;
                 }
             }
-            if (!shapequals) {
-                return false;
-            }
+            if (!shapequals) return false;
             shapequals = false;
         }
         return true;
