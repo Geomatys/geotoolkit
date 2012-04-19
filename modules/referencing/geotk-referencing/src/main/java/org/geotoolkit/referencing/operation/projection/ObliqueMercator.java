@@ -44,6 +44,7 @@ import org.geotoolkit.referencing.operation.provider.HotineObliqueMercator;
 
 import static java.lang.Math.*;
 import static java.lang.Double.*;
+import static org.geotoolkit.math.XMath.atanh;
 import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
 import static org.geotoolkit.referencing.operation.provider.UniversalParameters.*;
 import static org.geotoolkit.referencing.operation.provider.ObliqueMercator.AZIMUTH;
@@ -569,7 +570,7 @@ public class ObliqueMercator extends UnitaryProjection {
             } else {
                 y = atan2((S * cosgamma0 + V * singamma0), dV_dλ);
             }
-            x = 0.5 * log((1-U) / (1+U));
+            x = atanh(-U); // = 0.5 * log((1-U) / (1+U));
             if (derivate) {
                 final double m10, m11;
                 final double dQ_dφ = -B * Q * dtsfn_dφ(φ, sinφ, cos(φ));

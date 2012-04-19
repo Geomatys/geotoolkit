@@ -207,6 +207,13 @@ public final class XMath extends Static {
     /**
      * Returns the inverse hyperbolic tangent of the given value.
      * This is the inverse of the {@linkplain Math#tanh(double) tanh} method.
+     * The range of input values is [-1…1]. Special cases:
+     * <p>
+     * </ul>
+     *   <li>For <var>x</var> = NaN, this method returns {@linkplain Double#NaN NaN}.</li>
+     *   <li>For <var>x</var> = -1, this method returns {@linkplain Double#NEGATIVE_INFINITY negative infinity}.</li>
+     *   <li>For <var>x</var> = +1, this method returns {@linkplain Double#POSITIVE_INFINITY positive infinity}.</li>
+     * </ul>
      *
      * @param  x The value for which to compute the inverse hyperbolic tangent.
      * @return The inverse hyperbolic tangent of the given value.
@@ -216,6 +223,10 @@ public final class XMath extends Static {
      * @since 3.20
      */
     public static double atanh(final double x) {
+        /*
+         * The classical formulas is log((1+x)/(1-x))/2, but the following is more
+         * accurate if the (1+x)/(1-x) ratio is close to 1, i.e. if x is close to 0.
+         */
         return 0.5 * Math.log1p(2*x / (1-x));
     }
 
