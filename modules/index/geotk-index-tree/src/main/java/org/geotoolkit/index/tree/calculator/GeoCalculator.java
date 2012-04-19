@@ -52,9 +52,9 @@ public abstract class GeoCalculator extends Calculator{
         public int compare(Node o1, Node o2) {
             final DirectPosition o1LC = o1.getBoundary().getLowerCorner();
             final DirectPosition o2LC = o2.getBoundary().getLowerCorner();
-            final java.lang.Double x1 = new java.lang.Double(o1LC.getOrdinate(dims[0])*TO_RAD*cos(TO_RAD*o1LC.getOrdinate(dims[1])));
-            final java.lang.Double x2 = new java.lang.Double(o2LC.getOrdinate(dims[0])*TO_RAD*cos(TO_RAD*o1LC.getOrdinate(dims[1])));
-            return x1.compareTo(x2);
+            final double λ1 = o1LC.getOrdinate(dims[0])*TO_RAD*cos(TO_RAD*o1LC.getOrdinate(dims[1]));
+            final double λ2 = o2LC.getOrdinate(dims[0])*TO_RAD*cos(TO_RAD*o1LC.getOrdinate(dims[1]));
+            return Double.compare(λ1, λ2);
         }
     };
     /**
@@ -67,9 +67,9 @@ public abstract class GeoCalculator extends Calculator{
 
         @Override
         public int compare(Node o1, Node o2) {
-            final java.lang.Double y1 = new java.lang.Double(TO_RAD*o1.getBoundary().getLowerCorner().getOrdinate(dims[1]));
-            final java.lang.Double y2 = new java.lang.Double(TO_RAD*o2.getBoundary().getLowerCorner().getOrdinate(dims[1]));
-            return y1.compareTo(y2);
+            final double φ1 = TO_RAD*o1.getBoundary().getLowerCorner().getOrdinate(dims[1]);
+            final double φ2 = TO_RAD*o2.getBoundary().getLowerCorner().getOrdinate(dims[1]);
+            return Double.compare(φ1, φ2);
         }
     };
 
@@ -83,9 +83,9 @@ public abstract class GeoCalculator extends Calculator{
 
         @Override
         public int compare(Node o1, Node o2) {
-            final java.lang.Double y1 = new java.lang.Double(TO_RAD*o1.getBoundary().getLowerCorner().getOrdinate(dims[2]));
-            final java.lang.Double y2 = new java.lang.Double(TO_RAD*o2.getBoundary().getLowerCorner().getOrdinate(dims[2]));
-            return y1.compareTo(y2);
+            final double h1 = TO_RAD*o1.getBoundary().getLowerCorner().getOrdinate(dims[2]);
+            final double h2 = TO_RAD*o2.getBoundary().getLowerCorner().getOrdinate(dims[2]);
+            return Double.compare(h1, h2);
         }
     };
 
@@ -102,9 +102,9 @@ public abstract class GeoCalculator extends Calculator{
         public int compare(Envelope o1, Envelope o2) {
             final DirectPosition o1LC = o1.getLowerCorner();
             final DirectPosition o2LC = o2.getLowerCorner();
-            final java.lang.Double x1 = new java.lang.Double(TO_RAD*o1LC.getOrdinate(dims[0])*cos(TO_RAD*o1LC.getOrdinate(dims[1])));
-            final java.lang.Double x2 = new java.lang.Double(TO_RAD*o2LC.getOrdinate(dims[0])*cos(TO_RAD*o1LC.getOrdinate(dims[1])));
-            return x1.compareTo(x2);
+            final double λ1 = TO_RAD*o1LC.getOrdinate(dims[0])*cos(TO_RAD*o1LC.getOrdinate(dims[1]));
+            final double λ2 = TO_RAD*o2LC.getOrdinate(dims[0])*cos(TO_RAD*o1LC.getOrdinate(dims[1]));
+            return Double.compare(λ1, λ2);
         }
     };
     /**
@@ -117,9 +117,9 @@ public abstract class GeoCalculator extends Calculator{
 
         @Override
         public int compare(Envelope o1, Envelope o2) {
-            final java.lang.Double y1 = new java.lang.Double(TO_RAD*o1.getLowerCorner().getOrdinate(dims[1]));
-            final java.lang.Double y2 = new java.lang.Double(TO_RAD*o2.getLowerCorner().getOrdinate(dims[1]));
-            return y1.compareTo(y2);
+            final double φ1 = TO_RAD*o1.getLowerCorner().getOrdinate(dims[1]);
+            final double φ2 = TO_RAD*o2.getLowerCorner().getOrdinate(dims[1]);
+            return Double.compare(φ1, φ2);
         }
     };
     /**
@@ -132,9 +132,9 @@ public abstract class GeoCalculator extends Calculator{
 
         @Override
         public int compare(Envelope o1, Envelope o2) {
-            final java.lang.Double y1 = new java.lang.Double(TO_RAD*o1.getLowerCorner().getOrdinate(dims[2]));
-            final java.lang.Double y2 = new java.lang.Double(TO_RAD*o2.getLowerCorner().getOrdinate(dims[2]));
-            return y1.compareTo(y2);
+            final double h1 = TO_RAD*o1.getLowerCorner().getOrdinate(dims[2]);
+            final double h2 = TO_RAD*o2.getLowerCorner().getOrdinate(dims[2]);
+            return Double.compare(h1, h2);
         }
     };
     /**
@@ -149,9 +149,9 @@ public abstract class GeoCalculator extends Calculator{
         public int compare(Node o1, Node o2) {
             final DirectPosition o1UC = o1.getBoundary().getUpperCorner();
             final DirectPosition o2UC = o2.getBoundary().getUpperCorner();
-            final java.lang.Double x1 = new java.lang.Double(TO_RAD*o1UC.getOrdinate(dims[0])*cos(TO_RAD*o1UC.getOrdinate(dims[1])));
-            final java.lang.Double x2 = new java.lang.Double(TO_RAD*o2UC.getOrdinate(dims[0])*cos(TO_RAD*o1UC.getOrdinate(dims[1])));
-            return x1.compareTo(x2);
+            final double λ1 = TO_RAD*o1UC.getOrdinate(dims[0])*cos(TO_RAD*o1UC.getOrdinate(dims[1]));
+            final double λ2 = TO_RAD*o2UC.getOrdinate(dims[0])*cos(TO_RAD*o1UC.getOrdinate(dims[1]));
+            return Double.compare(λ1, λ2);
         }
     };
     /**
@@ -164,9 +164,9 @@ public abstract class GeoCalculator extends Calculator{
 
         @Override
         public int compare(Node o1, Node o2) {
-            final java.lang.Double y1 = new java.lang.Double(TO_RAD*o1.getBoundary().getUpperCorner().getOrdinate(dims[1]));
-            final java.lang.Double y2 = new java.lang.Double(TO_RAD*o2.getBoundary().getUpperCorner().getOrdinate(dims[1]));
-            return y1.compareTo(y2);
+            final double φ1 = TO_RAD*o1.getBoundary().getUpperCorner().getOrdinate(dims[1]);
+            final double φ2 = TO_RAD*o2.getBoundary().getUpperCorner().getOrdinate(dims[1]);
+            return Double.compare(φ1, φ2);
         }
     };
     /**
@@ -179,9 +179,9 @@ public abstract class GeoCalculator extends Calculator{
 
         @Override
         public int compare(Node o1, Node o2) {
-            final java.lang.Double y1 = new java.lang.Double(TO_RAD*o1.getBoundary().getUpperCorner().getOrdinate(dims[2]));
-            final java.lang.Double y2 = new java.lang.Double(TO_RAD*o2.getBoundary().getUpperCorner().getOrdinate(dims[2]));
-            return y1.compareTo(y2);
+            final double h1 = TO_RAD*o1.getBoundary().getUpperCorner().getOrdinate(dims[2]);
+            final double h2 = TO_RAD*o2.getBoundary().getUpperCorner().getOrdinate(dims[2]);
+            return Double.compare(h1, h2);
         }
     };
     /**
@@ -196,9 +196,9 @@ public abstract class GeoCalculator extends Calculator{
         public int compare(Envelope o1, Envelope o2) {
             final DirectPosition o1UC = o1.getUpperCorner();
             final DirectPosition o2UC = o2.getUpperCorner();
-            final java.lang.Double x1 = new java.lang.Double(TO_RAD*o1UC.getOrdinate(dims[0])*cos(TO_RAD*o1UC.getOrdinate(dims[1])));
-            final java.lang.Double x2 = new java.lang.Double(TO_RAD*o2UC.getOrdinate(dims[0])*cos(TO_RAD*o1UC.getOrdinate(dims[1])));
-            return x1.compareTo(x2);
+            final double λ1 = TO_RAD*o1UC.getOrdinate(dims[0])*cos(TO_RAD*o1UC.getOrdinate(dims[1]));
+            final double λ2 = TO_RAD*o2UC.getOrdinate(dims[0])*cos(TO_RAD*o1UC.getOrdinate(dims[1]));
+            return Double.compare(λ1, λ2);
         }
     };
     /**
@@ -211,9 +211,9 @@ public abstract class GeoCalculator extends Calculator{
 
         @Override
         public int compare(Envelope o1, Envelope o2) {
-            final java.lang.Double y1 = new java.lang.Double(TO_RAD*o1.getUpperCorner().getOrdinate(dims[1]));
-            final java.lang.Double y2 = new java.lang.Double(TO_RAD*o2.getUpperCorner().getOrdinate(dims[1]));
-            return y1.compareTo(y2);
+            final double φ1 = TO_RAD*o1.getUpperCorner().getOrdinate(dims[1]);
+            final double φ2 = TO_RAD*o2.getUpperCorner().getOrdinate(dims[1]);
+            return Double.compare(φ1, φ2);
         }
     };
     /**
@@ -226,9 +226,9 @@ public abstract class GeoCalculator extends Calculator{
 
         @Override
         public int compare(Envelope o1, Envelope o2) {
-            final java.lang.Double y1 = new java.lang.Double(TO_RAD*o1.getUpperCorner().getOrdinate(dims[2]));
-            final java.lang.Double y2 = new java.lang.Double(TO_RAD*o2.getUpperCorner().getOrdinate(dims[2]));
-            return y1.compareTo(y2);
+            final double h1 = TO_RAD*o1.getUpperCorner().getOrdinate(dims[2]);
+            final double h2 = TO_RAD*o2.getUpperCorner().getOrdinate(dims[2]);
+            return Double.compare(h1, h2);
         }
     };
 

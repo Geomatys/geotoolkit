@@ -45,9 +45,9 @@ public class Calculator3D extends Calculator {
 
         @Override
         public int compare(Node o1, Node o2) {
-            final java.lang.Double x1 = new java.lang.Double(o1.getBoundary().getLowerCorner().getOrdinate(dims[0]));
-            final java.lang.Double x2 = new java.lang.Double(o2.getBoundary().getLowerCorner().getOrdinate(dims[0]));
-            return x1.compareTo(x2);
+            final double x1 = o1.getBoundary().getLowerCorner().getOrdinate(dims[0]);
+            final double x2 = o2.getBoundary().getLowerCorner().getOrdinate(dims[0]);
+            return Double.compare(x1, x2);
         }
     };
 
@@ -58,9 +58,9 @@ public class Calculator3D extends Calculator {
 
         @Override
         public int compare(Node o1, Node o2) {
-            final java.lang.Double y1 = new java.lang.Double(o1.getBoundary().getLowerCorner().getOrdinate(dims[1]));
-            final java.lang.Double y2 = new java.lang.Double(o2.getBoundary().getLowerCorner().getOrdinate(dims[1]));
-            return y1.compareTo(y2);
+            final double y1 = o1.getBoundary().getLowerCorner().getOrdinate(dims[1]);
+            final double y2 = o2.getBoundary().getLowerCorner().getOrdinate(dims[1]);
+            return Double.compare(y1, y2);
         }
     };
 
@@ -71,9 +71,9 @@ public class Calculator3D extends Calculator {
 
         @Override
         public int compare(Node o1, Node o2) {
-            final java.lang.Double y1 = new java.lang.Double(o1.getBoundary().getLowerCorner().getOrdinate(2));
-            final java.lang.Double y2 = new java.lang.Double(o2.getBoundary().getLowerCorner().getOrdinate(2));
-            return y1.compareTo(y2);
+            final double z1 = o1.getBoundary().getLowerCorner().getOrdinate(2);
+            final double z2 = o2.getBoundary().getLowerCorner().getOrdinate(2);
+            return Double.compare(z1, z2);
         }
     };
 
@@ -84,9 +84,9 @@ public class Calculator3D extends Calculator {
 
         @Override
         public int compare(Envelope o1, Envelope o2) {
-            final java.lang.Double x1 = new java.lang.Double(o1.getLowerCorner().getOrdinate(dims[0]));
-            final java.lang.Double x2 = new java.lang.Double(o2.getLowerCorner().getOrdinate(dims[0]));
-            return x1.compareTo(x2);
+            final double x1 = o1.getLowerCorner().getOrdinate(dims[0]);
+            final double x2 = o2.getLowerCorner().getOrdinate(dims[0]);
+            return Double.compare(x1, x2);
         }
     };
 
@@ -97,9 +97,9 @@ public class Calculator3D extends Calculator {
 
         @Override
         public int compare(Envelope o1, Envelope o2) {
-            final java.lang.Double y1 = new java.lang.Double(o1.getLowerCorner().getOrdinate(dims[1]));
-            final java.lang.Double y2 = new java.lang.Double(o2.getLowerCorner().getOrdinate(dims[1]));
-            return y1.compareTo(y2);
+            final double y1 = o1.getLowerCorner().getOrdinate(dims[1]);
+            final double y2 = o2.getLowerCorner().getOrdinate(dims[1]);
+            return Double.compare(y1, y2);
         }
     };
 
@@ -110,9 +110,9 @@ public class Calculator3D extends Calculator {
 
         @Override
         public int compare(Envelope o1, Envelope o2) {
-            final java.lang.Double y1 = new java.lang.Double(o1.getLowerCorner().getOrdinate(dims[2]));
-            final java.lang.Double y2 = new java.lang.Double(o2.getLowerCorner().getOrdinate(dims[2]));
-            return y1.compareTo(y2);
+            final double z1 = o1.getLowerCorner().getOrdinate(dims[2]);
+            final double z2 = o2.getLowerCorner().getOrdinate(dims[2]);
+            return Double.compare(z1, z2);
         }
     };
 
@@ -123,9 +123,9 @@ public class Calculator3D extends Calculator {
 
         @Override
         public int compare(Node o1, Node o2) {
-            final java.lang.Double x1 = new java.lang.Double(o1.getBoundary().getUpperCorner().getOrdinate(dims[0]));
-            final java.lang.Double x2 = new java.lang.Double(o2.getBoundary().getUpperCorner().getOrdinate(dims[0]));
-            return x1.compareTo(x2);
+            final double x1 = o1.getBoundary().getUpperCorner().getOrdinate(dims[0]);
+            final double x2 = o2.getBoundary().getUpperCorner().getOrdinate(dims[0]);
+            return Double.compare(x1, x2);
         }
     };
 
@@ -136,9 +136,9 @@ public class Calculator3D extends Calculator {
 
         @Override
         public int compare(Node o1, Node o2) {
-            final java.lang.Double y1 = new java.lang.Double(o1.getBoundary().getUpperCorner().getOrdinate(dims[1]));
-            final java.lang.Double y2 = new java.lang.Double(o2.getBoundary().getUpperCorner().getOrdinate(dims[1]));
-            return y1.compareTo(y2);
+            final double y1 = o1.getBoundary().getUpperCorner().getOrdinate(dims[1]);
+            final double y2 = o2.getBoundary().getUpperCorner().getOrdinate(dims[1]);
+            return Double.compare(y1, y2);
         }
     };
 
@@ -149,9 +149,9 @@ public class Calculator3D extends Calculator {
 
         @Override
         public int compare(Node o1, Node o2) {
-            final java.lang.Double y1 = new java.lang.Double(o1.getBoundary().getUpperCorner().getOrdinate(dims[2]));
-            final java.lang.Double y2 = new java.lang.Double(o2.getBoundary().getUpperCorner().getOrdinate(dims[2]));
-            return y1.compareTo(y2);
+            final double z1 = o1.getBoundary().getUpperCorner().getOrdinate(dims[2]);
+            final double z2 = o2.getBoundary().getUpperCorner().getOrdinate(dims[2]);
+            return Double.compare(z1, z2);
         }
     };
 
@@ -162,9 +162,9 @@ public class Calculator3D extends Calculator {
 
         @Override
         public int compare(Envelope o1, Envelope o2) {
-            final java.lang.Double x1 = new java.lang.Double(o1.getUpperCorner().getOrdinate(dims[0]));
-            final java.lang.Double x2 = new java.lang.Double(o2.getUpperCorner().getOrdinate(dims[0]));
-            return x1.compareTo(x2);
+            final double x1 = o1.getUpperCorner().getOrdinate(dims[0]);
+            final double x2 = o2.getUpperCorner().getOrdinate(dims[0]);
+            return Double.compare(x1, x2);
         }
     };
 
@@ -175,9 +175,9 @@ public class Calculator3D extends Calculator {
 
         @Override
         public int compare(Envelope o1, Envelope o2) {
-            final java.lang.Double y1 = new java.lang.Double(o1.getUpperCorner().getOrdinate(dims[1]));
-            final java.lang.Double y2 = new java.lang.Double(o2.getUpperCorner().getOrdinate(dims[1]));
-            return y1.compareTo(y2);
+            final double y1 = o1.getUpperCorner().getOrdinate(dims[1]);
+            final double y2 = o2.getUpperCorner().getOrdinate(dims[1]);
+            return Double.compare(y1, y2);
         }
     };
 
@@ -188,9 +188,9 @@ public class Calculator3D extends Calculator {
 
         @Override
         public int compare(Envelope o1, Envelope o2) {
-            final java.lang.Double y1 = new java.lang.Double(o1.getUpperCorner().getOrdinate(dims[2]));
-            final java.lang.Double y2 = new java.lang.Double(o2.getUpperCorner().getOrdinate(dims[2]));
-            return y1.compareTo(y2);
+            final double z1 = o1.getUpperCorner().getOrdinate(dims[2]);
+            final double z2 = o2.getUpperCorner().getOrdinate(dims[2]);
+            return Double.compare(z1, z2);
         }
     };
 
@@ -346,7 +346,7 @@ public class Calculator3D extends Calculator {
                     final double valMin = bound.getLowerCorner().getOrdinate(index);
                     final DirectPosition dpt = new GeneralDirectPosition(crs);
                     for(int i = 1; i<2*nbCells2D; i+= 2) {
-                        for(int j = 0; j<bound.getDimension(); j++) {
+                        for(int j = 0, spacedim = bound.getDimension(); j<spacedim; j++) {
                             if (j!=index) dpt.setOrdinate(j, bound.getMedian(j));
                         }
                         dpt.setOrdinate(index, valMin + i * fract);
