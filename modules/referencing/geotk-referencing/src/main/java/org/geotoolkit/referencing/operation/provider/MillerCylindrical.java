@@ -279,7 +279,7 @@ public class MillerCylindrical extends MapProjection {
             SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
             LATITUDE_OF_CENTRE, LONGITUDE_OF_CENTRE,
             FALSE_EASTING, FALSE_NORTHING
-        });
+        }, MapProjectionDescriptor.ADD_EARTH_RADIUS);
     }
 
     /**

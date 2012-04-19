@@ -188,7 +188,7 @@ public class EllipsoidToGeocentric extends MathTransformProvider {
                                     Vocabulary.Keys.GEOCENTRIC_TRANSFORM))
             }, null, new ParameterDescriptor<?>[] {
                 SEMI_MAJOR, SEMI_MINOR, DIM
-            });
+            }, MapProjectionDescriptor.ADD_EARTH_RADIUS);
     }
 
     /**

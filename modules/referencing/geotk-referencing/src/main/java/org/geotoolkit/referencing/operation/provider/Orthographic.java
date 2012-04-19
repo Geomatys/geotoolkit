@@ -325,7 +325,7 @@ public class Orthographic extends MapProjection {
             SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
             LONGITUDE_OF_CENTRE, LATITUDE_OF_CENTRE,
             SCALE_FACTOR, FALSE_EASTING, FALSE_NORTHING
-        });
+        }, MapProjectionDescriptor.ADD_EARTH_RADIUS);
 
     /**
      * Constructs a new provider.

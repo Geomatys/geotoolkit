@@ -329,7 +329,7 @@ public class CassiniSoldner extends MapProjection {
             ROLL_LONGITUDE,
             CENTRAL_MERIDIAN, LATITUDE_OF_ORIGIN, SCALE_FACTOR,
             FALSE_EASTING, FALSE_NORTHING
-        });
+        }, MapProjectionDescriptor.ADD_EARTH_RADIUS);
 
     /**
      * Constructs a new provider.

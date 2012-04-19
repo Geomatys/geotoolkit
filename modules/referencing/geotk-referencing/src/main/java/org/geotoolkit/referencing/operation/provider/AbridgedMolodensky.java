@@ -262,7 +262,7 @@ public class AbridgedMolodensky extends Molodensky {
             TGT_SEMI_MAJOR, TGT_SEMI_MINOR,
             AXIS_LENGTH_DIFFERENCE,
             FLATTENING_DIFFERENCE
-        });
+        }, 0);
 
     /**
      * Constructs a provider.

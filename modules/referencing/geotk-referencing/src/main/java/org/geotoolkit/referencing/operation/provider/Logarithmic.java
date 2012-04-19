@@ -132,7 +132,7 @@ public class Logarithmic extends MathTransformProvider {
                 new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(Vocabulary.Keys.LOGARITHMIC))
             }, null, new ParameterDescriptor<?>[] {
                 BASE, OFFSET
-            });
+            }, 0);
 
     /**
      * Creates a provider for logarithmic transforms.

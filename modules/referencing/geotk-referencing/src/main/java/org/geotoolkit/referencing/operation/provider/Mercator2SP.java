@@ -338,7 +338,7 @@ public class Mercator2SP extends MapProjection {
             SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
             STANDARD_PARALLEL, LATITUDE_OF_ORIGIN, CENTRAL_MERIDIAN,
             FALSE_EASTING, FALSE_NORTHING
-        });
+        }, MapProjectionDescriptor.ADD_EARTH_RADIUS);
 
     /**
      * Constructs a new provider.

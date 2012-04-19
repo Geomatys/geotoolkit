@@ -27,6 +27,8 @@ import org.geotoolkit.parameter.FloatParameter;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 
 import static org.geotoolkit.referencing.operation.provider.UniversalParameters.*;
+import static org.geotoolkit.referencing.operation.provider.MapProjectionDescriptor.ADD_EARTH_RADIUS;
+import static org.geotoolkit.referencing.operation.provider.MapProjectionDescriptor.ADD_STANDARD_PARALLEL;
 
 
 /**
@@ -52,7 +54,12 @@ final class MapProjectionParameters extends ParameterGroup {
     private static final long serialVersionUID = -6801091012335717139L;
 
     /**
-     * The earth radius parameter.
+     * The earth radius parameter. This parameter is computed automatically from the
+     * {@code "semi_major"} and {@code "semi_minor"}, unless it was explicitely set.
+     * If this parameter is explicitly set, then the given value is also given to the
+     * semi-major and semi-minor axis lengths.
+     *
+     * @see org.geotoolkit.referencing.datum.DefaultEllipsoid#getAuthalicRadius()
      */
     private final class EarthRadius extends FloatParameter {
         /**
@@ -82,7 +89,7 @@ final class MapProjectionParameters extends ParameterGroup {
         }
 
         /**
-         * Invoked when a new parameter value is set. This method set both axis length
+         * Invoked when a new parameter value is set. This method sets both axis length
          * to the given radius.
          */
         @Override
@@ -94,9 +101,53 @@ final class MapProjectionParameters extends ParameterGroup {
     }
 
     /**
-     * {@code true} if the {@code "standard_parallel"} parameter name is present.
+     * The inverse flattening parameter. This parameter is computed automatically from the
+     * {@code "semi_major"} and {@code "semi_minor"}, unless it was explicitely set. If this
+     * parameter is explicitly set, then the given value is used for computing the semi-minor
+     * axis length.
+     *
+     * @todo In current implementation, this will work only if the semi-major axis length is
+     *       set before the inverse flattening.
      */
-    private final boolean hasStandardParallel;
+    private final class InverseFlattening extends FloatParameter {
+        /**
+         * For cross-version compatibility. Actually instances of this class
+         * are not expected to be serialized, but we try to be a bit safer here.
+         */
+        private static final long serialVersionUID = 4490056024453509851L;
+
+        /**
+         * Creates a new parameter.
+         */
+        InverseFlattening() {
+            super(UniversalParameters.INVERSE_FLATTENING);
+        }
+
+        /**
+         * Invoked when the parameter value is requested. If the inverse flattening has not been
+         * explicitely defined, computes if from the ellipsoid axis length.
+         */
+        @Override
+        public double doubleValue() {
+            double value = super.doubleValue();
+            if (Double.isNaN(value)) {
+                final double semiMajorAxis = get(SEMI_MAJOR);
+                final double semiMinorAxis = get(SEMI_MINOR);
+                value = semiMajorAxis / (semiMajorAxis - semiMinorAxis);
+            }
+            return value;
+        }
+
+        /**
+         * Invoked when a new parameter value is set.
+         * This method compute the semi-minor axis length from the given value.
+         */
+        @Override
+        public void setValue(final double value) {
+            super.setValue(value); // Also perform argument check.
+            set(SEMI_MINOR, get(SEMI_MAJOR)*(1 - 1/value));
+        }
+    }
 
     /**
      * The {@link EarthRadius} parameter instance, created when first needed.
@@ -114,24 +165,24 @@ final class MapProjectionParameters extends ParameterGroup {
     private transient ParameterValue<Double> standardParallel;
 
     /**
-     * Creates a new parameter value group.
+     * Creates a new parameter value group. An instance of {@link MapProjectionDescriptor}
+     * is mandatory, because some method in this class will need to cast the descriptor.
      */
     MapProjectionParameters(final MapProjectionDescriptor descriptor) {
         super(descriptor);
-        hasStandardParallel = descriptor.hasStandardParallel;
     }
 
     /**
      * Returns the value associated to the given parameter descriptor.
      */
-    double get(final ParameterDescriptor<Double> parameter) {
+    final double get(final ParameterDescriptor<Double> parameter) {
         return Parameters.doubleValue(parameter, this);
     }
 
     /**
      * Sets the value associated to the given parameter descriptor.
      */
-    void set(final ParameterDescriptor<Double> parameter, final double value) {
+    final void set(final ParameterDescriptor<Double> parameter, final double value) {
         Parameters.getOrCreate(parameter, this).setValue(value);
     }
 
@@ -147,25 +198,32 @@ final class MapProjectionParameters extends ParameterGroup {
     @Override
     public ParameterValue<?> parameter(String name) throws ParameterNotFoundException {
         name = name.trim();
-        ParameterValue<?> value;
-        if (name.equalsIgnoreCase(MapProjectionDescriptor.EARTH_RADIUS)) {
-            value = earthRadius;
-            if (value == null) {
-                value = earthRadius = new EarthRadius();
+        final int supplement = ((MapProjectionDescriptor) getDescriptor()).supplement;
+        if ((supplement & ADD_EARTH_RADIUS) != 0) {
+            if (name.equalsIgnoreCase(MapProjectionDescriptor.EARTH_RADIUS)) {
+                ParameterValue<?> value = earthRadius;
+                if (value == null) {
+                    value = earthRadius = new EarthRadius();
+                }
+                return value;
             }
-        } else if (name.equalsIgnoreCase(MapProjectionDescriptor.INVERSE_FLATTENING)) {
-            value = inverseFlattening;
-            if (value == null) {
-                // TODO
+            if (name.equalsIgnoreCase(MapProjectionDescriptor.INVERSE_FLATTENING)) {
+                ParameterValue<?> value = inverseFlattening;
+                if (value == null) {
+                    value = inverseFlattening = new InverseFlattening();
+                }
+                return value;
             }
-        } else if (!hasStandardParallel && name.equalsIgnoreCase(MapProjectionDescriptor.STANDARD_PARALLEL)) {
-            value = standardParallel;
-            if (value == null) {
-                // TODO
-            }
-        } else {
-            value = super.parameter(name);
         }
-        return value;
+        if ((supplement & ADD_STANDARD_PARALLEL) != 0) {
+            if (name.equalsIgnoreCase(MapProjectionDescriptor.STANDARD_PARALLEL)) {
+                ParameterValue<?> value = standardParallel;
+                if (value == null) {
+                    // TODO
+                }
+                return value;
+            }
+        }
+        return super.parameter(name);
     }
 }

@@ -439,7 +439,7 @@ public class Krovak extends MapProjection {
             AZIMUTH, PSEUDO_STANDARD_PARALLEL, SCALE_FACTOR,
             FALSE_EASTING, FALSE_NORTHING,
             X_SCALE, Y_SCALE, XY_PLANE_ROTATION
-        });
+        }, MapProjectionDescriptor.ADD_EARTH_RADIUS);
 
     /**
      * Constructs a new provider.

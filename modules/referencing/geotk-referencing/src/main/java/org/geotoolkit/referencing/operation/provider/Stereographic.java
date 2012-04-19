@@ -336,7 +336,7 @@ public class Stereographic extends MapProjection {
             SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
             CENTRAL_MERIDIAN, LATITUDE_OF_ORIGIN, SCALE_FACTOR,
             FALSE_EASTING, FALSE_NORTHING
-        });
+        }, MapProjectionDescriptor.ADD_EARTH_RADIUS);
 
     /**
      * Constructs a new provider.

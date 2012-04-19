@@ -332,7 +332,7 @@ public class Mercator1SP extends MapProjection {
             MapProjection.SEMI_MINOR, ROLL_LONGITUDE,
             LATITUDE_OF_ORIGIN, CENTRAL_MERIDIAN, SCALE_FACTOR,
             FALSE_EASTING, FALSE_NORTHING
-        });
+        }, MapProjectionDescriptor.ADD_EARTH_RADIUS);
     }
 
     /**

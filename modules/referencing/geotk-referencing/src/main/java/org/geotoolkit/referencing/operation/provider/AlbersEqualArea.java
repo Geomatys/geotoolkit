@@ -383,7 +383,8 @@ public class AlbersEqualArea extends MapProjection {
             CENTRAL_MERIDIAN,    LATITUDE_OF_ORIGIN,
             STANDARD_PARALLEL_1, STANDARD_PARALLEL_2,
             FALSE_EASTING,       FALSE_NORTHING
-        });
+        }, MapProjectionDescriptor.ADD_EARTH_RADIUS |
+           MapProjectionDescriptor.ADD_STANDARD_PARALLEL);
 
     /**
      * Constructs a new provider.

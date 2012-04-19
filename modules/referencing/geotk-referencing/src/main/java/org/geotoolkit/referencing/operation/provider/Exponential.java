@@ -131,7 +131,7 @@ public class Exponential extends MathTransformProvider {
                 new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(Vocabulary.Keys.EXPONENTIAL))
             }, null, new ParameterDescriptor<?>[] {
                 BASE, SCALE
-            });
+            }, 0);
 
     /**
      * Creates a provider for logarithmic transforms.

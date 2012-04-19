@@ -264,7 +264,7 @@ public class PolarStereographic extends Stereographic {
                 CENTRAL_MERIDIAN, LATITUDE_OF_ORIGIN, SCALE_FACTOR,
                 Mercator1SP.FALSE_EASTING,
                 Mercator1SP.FALSE_NORTHING
-            });
+            }, MapProjectionDescriptor.ADD_EARTH_RADIUS);
     }
 
     /**
@@ -491,7 +491,7 @@ public class PolarStereographic extends Stereographic {
                     CENTRAL_MERIDIAN, STANDARD_PARALLEL,
                     sameParameterAs(PseudoMercator.PARAMETERS, "false_easting"),
                     sameParameterAs(PseudoMercator.PARAMETERS, "false_northing"),
-                });
+                }, MapProjectionDescriptor.ADD_EARTH_RADIUS);
         }
 
         /**
@@ -679,7 +679,7 @@ public class PolarStereographic extends Stereographic {
                     sameParameterAs(LambertConformal2SP     .PARAMETERS, "scale_factor"),
                     sameParameterAs(ObliqueMercator.TwoPoint.PARAMETERS, "false_easting"),
                     sameParameterAs(ObliqueMercator.TwoPoint.PARAMETERS, "false_northing"),
-                });
+                }, MapProjectionDescriptor.ADD_EARTH_RADIUS);
         }
 
         /**
@@ -868,7 +868,7 @@ public class PolarStereographic extends Stereographic {
                     sameParameterAs(North.PARAMETERS, "scale_factor"),
                     sameParameterAs(North.PARAMETERS, "false_easting"),
                     sameParameterAs(North.PARAMETERS, "false_northing"),
-                });
+                }, MapProjectionDescriptor.ADD_EARTH_RADIUS);
         }
 
         /**
