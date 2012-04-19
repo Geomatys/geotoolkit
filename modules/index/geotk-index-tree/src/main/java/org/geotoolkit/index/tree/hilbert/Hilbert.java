@@ -269,7 +269,6 @@ public class Hilbert {
         addToOrdinate = new int[size];
         addToSign = new boolean[size];
         iteratePath(basicPath, getOrder());
-        System.out.println(Arrays.toString(addToOrdinate));
         for(int i = 0; i<size; i++){
             final int val = (addToSign[i])?1:-1;
             final int dim = addToOrdinate[i];
