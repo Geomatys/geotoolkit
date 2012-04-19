@@ -31,6 +31,7 @@ import org.junit.Test;
  */
 public abstract class HilbertTest {
 
+    final boolean brid = true;
     final int dimension;
     BitSet validPath;
     Iterator<int[]> hilbertIterator;
@@ -89,7 +90,8 @@ public abstract class HilbertTest {
      * @param order Hilbert curve order.
      */
     private void orderNTest(final int order) {
-        if (dimension*order > 30) return;
+        int valMax = (brid) ? 24 : 30;
+        if (dimension*order > valMax) return;
         hilbertIterator = new HilbertIterator(order, dimension);
         validPath = new BitSet(2<<dimension*order-1);
         int length = 2 << order-1;
