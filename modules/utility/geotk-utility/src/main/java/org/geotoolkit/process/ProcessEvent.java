@@ -24,7 +24,7 @@ import org.geotoolkit.util.SimpleInternationalString;
 
 
 /**
- * Event send by a running {@linkplain Process process} to its {@linkplain ProcessListener listeners}.
+ * Event sent by a running {@linkplain Process process} to its {@linkplain ProcessListener listeners}.
  * This event contains an optional user-friendly {@linkplain #getTask() task description} together
  * with the {@linkplain #getProgress() task progression} as a percentage. In addition the event can
  * contains one of the following:
