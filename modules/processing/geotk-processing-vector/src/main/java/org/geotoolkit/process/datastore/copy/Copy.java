@@ -63,9 +63,9 @@ public class Copy extends AbstractProcess {
      */
     @Override
     protected void execute() throws ProcessException {
-        
+
         fireProcessStarted("Starting copy.");
-        
+
         final Map sourceDSparams    = value(SOURCE_STORE_PARAMS,  inputParameters);
         final Map targetDSparams    = value(TARGET_STORE_PARAMS,  inputParameters);
         final Boolean eraseParam    = value(ERASE,                inputParameters);
@@ -154,7 +154,7 @@ public class Copy extends AbstractProcess {
         final float size = names.size();
         int inc = 0;
         for (Name n : names) {
-            fireProgressing("Copying "+n+".", (int)((inc*100f)/size));
+            fireProgressing("Copying "+n+".", (int)((inc*100f)/size), false);
             try {
                 insert(n, sourceDS, targetDS, eraseParam);
             } catch (DataStoreException ex) {
@@ -162,7 +162,7 @@ public class Copy extends AbstractProcess {
             }
             inc++;
         }
-        
+
         fireProcessCompleted("Copy successful.");
     }
 
