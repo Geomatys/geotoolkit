@@ -305,7 +305,15 @@ public class MemoryDataStore extends AbstractDataStore{
 
             //copy the feature
             final Feature copy = FeatureUtilities.copy(f,candidateId);
-
+            
+            //force crs definition on each geometry
+            for(Property prop : copy.getProperties()){
+                Object value = prop.getValue();
+                if(value instanceof Geometry && prop.getDescriptor() instanceof GeometryDescriptor){
+                    JTS.setCRS((Geometry)value, ((GeometryDescriptor)prop.getDescriptor()).getCoordinateReferenceSystem() );
+                }
+            }
+            
             grp.features.put(candidateId, copy);
             addedIds.add(new DefaultFeatureId(candidateId));
         }
