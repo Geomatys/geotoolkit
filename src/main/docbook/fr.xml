@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE book [
+  <!ENTITY % book.entities SYSTEM "book.entities">
+  %book.entities;
+]>
+<book xmlns="http://docbook.org/ns/docbook" version="5.0"
+      xmlns:xi    = "http://www.w3.org/2001/XInclude"
+      xmlns:xlink = "http://www.w3.org/1999/xlink">
+
+  <info>
+    <title>Le livre rouge de Geotoolkit.org</title>
+    <orgname class="informal">Geotoolkit.org</orgname>
+    <author>
+      <personname>
+        <firstname>Johann</firstname>
+        <surname>Sorel</surname>
+      </personname>
+    </author>
+    <abstract><para>
+      Tout sur geotoolkit.org
+    </para></abstract>
+    <keywordset>
+      <keyword>Geotoolkit.org</keyword> <keyword>Geotk</keyword> <keyword>GeoAPI</keyword>
+      <keyword>OGC</keyword> <keyword>geospatial</keyword>
+    </keywordset>
+  </info>
+
+  <xi:include href="fr/introduction.xml"/>
+
+</book>
