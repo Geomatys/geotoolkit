@@ -90,11 +90,12 @@ public class FileCoverageStore extends AbstractCoverageStore{
 
             final String fullName = candidate.getName();
             final int idx = fullName.lastIndexOf('.');
-            final String name = fullName.substring(0, idx);
+            final String filename = fullName.substring(0, idx);
             final String nmsp = getDefaultNamespace();
+            final Name name = new DefaultName(nmsp,filename);
             final FileCoverageReference previous = names.put(
-                    new DefaultName(nmsp,name), 
-                    new FileCoverageReference(candidate));
+                    name, 
+                    new FileCoverageReference(this,name,candidate));
             
             if(previous != null){
                 getLogger().log(Level.WARNING, "Several files with name : "+name+" exist in folder :" + root.getPath());

@@ -69,11 +69,21 @@ public class CoverageSQLStore extends CoverageDatabase implements CoverageStore{
         }
         
         @Override
+        public Name getName() {
+            return name;
+        }
+
+        @Override
+        public CoverageStore getStore() {
+            return CoverageSQLStore.this;
+        }
+        
+        @Override
         public GridCoverageReader createReader() throws DataStoreException {
             final LayerCoverageReader reader = CoverageSQLStore.this.createGridCoverageReader(name.getLocalPart());
             return reader;
         }
-        
+
     }
     
 }

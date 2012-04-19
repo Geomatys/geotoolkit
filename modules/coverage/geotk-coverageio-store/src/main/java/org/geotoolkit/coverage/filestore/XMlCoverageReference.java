@@ -22,12 +22,10 @@ import java.awt.image.RenderedImage;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
-import org.geotoolkit.coverage.CoverageReference;
-import org.geotoolkit.coverage.GridMosaic;
-import org.geotoolkit.coverage.Pyramid;
-import org.geotoolkit.coverage.PyramidalModel;
+import org.geotoolkit.coverage.*;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.storage.DataStoreException;
+import org.opengis.feature.type.Name;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -37,10 +35,25 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class XMlCoverageReference implements CoverageReference, PyramidalModel{
 
+    private final XMLCoverageStore store;
+    private final Name name;
     private final XMLPyramidSet set;
-
-    public XMlCoverageReference(XMLPyramidSet set) {
+    
+    
+    public XMlCoverageReference(XMLCoverageStore store, Name name, XMLPyramidSet set) {
+        this.store = store;
+        this.name = name;
         this.set = set;
+    }
+    
+    @Override
+    public Name getName() {
+        return name;
+    }
+
+    @Override
+    public XMLCoverageStore getStore() {
+        return store;
     }
     
     @Override

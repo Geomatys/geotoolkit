@@ -18,6 +18,7 @@ package org.geotoolkit.coverage;
 
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.storage.DataStoreException;
+import org.opengis.feature.type.Name;
 
 /**
  *
@@ -25,6 +26,20 @@ import org.geotoolkit.storage.DataStoreException;
  * @module pending
  */
 public interface CoverageReference {
+    
+    /**
+     * Name of the coverage. act as an identifier in the coverage store
+     * 
+     * @return Name
+     */
+    Name getName();
+    
+    /**
+     * Get the coverage store this coverage comes from.
+     * 
+     * @return CoverageStore, can be null if coverage has a different kind of source.
+     */
+    CoverageStore getStore();
     
     /**
      * Get a new reader for this coverage.

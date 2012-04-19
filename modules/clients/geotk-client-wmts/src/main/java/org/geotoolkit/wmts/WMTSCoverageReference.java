@@ -33,10 +33,24 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class WMTSCoverageReference implements CoverageReference, PyramidalModel{
 
+    private final WebMapTileServer server;
+    private final Name name;
     private final PyramidSet set;
     
     WMTSCoverageReference(WebMapTileServer server, Name name, boolean cacheImage){
+        this.server = server;
+        this.name = name; 
         set = new WMTSPyramidSet(server, name.getLocalPart(), cacheImage);
+    }
+
+    @Override
+    public Name getName() {
+        return name;
+    }
+
+    @Override
+    public CoverageStore getStore() {
+        return server;
     }
     
     @Override

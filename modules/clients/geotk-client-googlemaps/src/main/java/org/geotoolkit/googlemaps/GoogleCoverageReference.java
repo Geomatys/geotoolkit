@@ -33,10 +33,25 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class GoogleCoverageReference implements CoverageReference, PyramidalModel{
 
-    private final PyramidSet set;
+    private final StaticGoogleMapsServer server;
+    private final GoogleMapsPyramidSet set;
+    private final Name name;
     
     GoogleCoverageReference(final StaticGoogleMapsServer server, final Name name,boolean cacheImage) throws DataStoreException{
+        this.server = server;
         this.set = new GoogleMapsPyramidSet(server, name.getLocalPart(),cacheImage);
+        this.name = name;
+    }
+    
+    
+    @Override
+    public Name getName() {
+        return name;
+    }
+
+    @Override
+    public CoverageStore getStore() {
+        return server;
     }
     
     @Override
