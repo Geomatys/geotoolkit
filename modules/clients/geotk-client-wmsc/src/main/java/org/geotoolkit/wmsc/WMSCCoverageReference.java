@@ -34,10 +34,24 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class WMSCCoverageReference implements CoverageReference, PyramidalModel{
 
+    private final WebMapServerCached server;
+    private final Name name;
     private final PyramidSet set;
     
     WMSCCoverageReference(WebMapServerCached server, Name name, boolean cacheImage) throws CapabilitiesException{
+        this.server = server;
+        this.name = name;
         set = new WMSCPyramidSet(server, name.getLocalPart(), cacheImage);
+    }
+
+    @Override
+    public Name getName() {
+        return name;
+    }
+
+    @Override
+    public WebMapServerCached getStore() {
+        return server;
     }
     
     @Override

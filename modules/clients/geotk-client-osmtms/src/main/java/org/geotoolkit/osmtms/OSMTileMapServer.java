@@ -76,8 +76,8 @@ public class OSMTileMapServer extends AbstractServer implements CoverageStore{
             final int maxZoomLevel, boolean cacheImage) {
         super(serverURL,security);
         this.maxZoomLevel = maxZoomLevel;
-        pyramidSet = new OSMTMSPyramidSet(this,maxZoomLevel,cacheImage);
         this.name = new DefaultName(serverURL.toString(),"main");
+        pyramidSet = new OSMTMSPyramidSet(this,maxZoomLevel,cacheImage);
     }
 
     public PyramidSet getPyramidSet(){
@@ -106,7 +106,7 @@ public class OSMTileMapServer extends AbstractServer implements CoverageStore{
     @Override
     public CoverageReference getCoverageReference(Name name) throws DataStoreException {
         if(DefaultName.match(this.name, name)){
-            return new OSMTMSCoverageReference(this);
+            return new OSMTMSCoverageReference(this,name);
         }
         throw new DataStoreException("No coverage for name : " + name);
     }

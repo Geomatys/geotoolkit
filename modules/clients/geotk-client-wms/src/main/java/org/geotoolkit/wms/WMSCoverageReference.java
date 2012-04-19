@@ -17,6 +17,7 @@
 package org.geotoolkit.wms;
 
 import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.opengis.feature.type.Name;
 
@@ -33,6 +34,16 @@ public class WMSCoverageReference implements CoverageReference{
     public WMSCoverageReference(WebMapServer server, Name name){
         this.name = name;
         this.server = server;
+    }
+
+    @Override
+    public Name getName() {
+        return name;
+    }
+
+    @Override
+    public CoverageStore getStore() {
+        return server;
     }
     
     @Override

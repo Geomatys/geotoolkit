@@ -22,6 +22,7 @@ import java.awt.image.RenderedImage;
 import org.geotoolkit.coverage.*;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.storage.DataStoreException;
+import org.opengis.feature.type.Name;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -32,9 +33,21 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public class OSMTMSCoverageReference implements CoverageReference, PyramidalModel{
 
     private final OSMTileMapServer server;
+    private final Name name;
     
-    OSMTMSCoverageReference(OSMTileMapServer server){
+    OSMTMSCoverageReference(OSMTileMapServer server, Name name){
         this.server = server;
+        this.name = name;
+    }
+
+    @Override
+    public Name getName() {
+        return name;
+    }
+
+    @Override
+    public CoverageStore getStore() {
+        return server;
     }
     
     @Override
