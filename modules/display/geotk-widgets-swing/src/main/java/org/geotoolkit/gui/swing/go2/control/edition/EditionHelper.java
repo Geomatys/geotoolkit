@@ -966,13 +966,11 @@ public class EditionHelper {
         final String geoStr = fl.getCollection().getFeatureType().getGeometryDescriptor().getLocalName();
         final Expression geomField = FF.property(geoStr);
 
-        final CoordinateReferenceSystem dataCrs = fl.getCollection().getFeatureType().getCoordinateReferenceSystem();
-
-        final Geometry dataPoly = JTS.transform(poly, CRS.findMathTransform(map.getCanvas().getObjectiveCRS(), dataCrs,true));
-        dataPoly.setSRID(SRIDGenerator.toSRID(dataCrs, SRIDGenerator.Version.V1));
+        final Geometry dataPoly = poly;
+        JTS.setCRS(dataPoly, map.getCanvas().getObjectiveCRS());
 
         final Expression geomData = FF.literal(dataPoly);
-        final Filter f = FF.intersects(geomField, geomData);
+        final Filter f = FF.intersects(geomData,geomField);
 
         return f;
     }
