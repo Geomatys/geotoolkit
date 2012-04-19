@@ -66,6 +66,11 @@ public final class WMSUtilities {
 
         if(stack != null){
             final String srid = IdentifiedObjects.lookupIdentifier(crs, true);
+            if(srid == null){
+                //current crs has no knowned id, we can ask the server for this crs
+                return false;
+            }
+            
             //start by the most accurate layer
             for(int i=stack.length-1; i>=0; i--){
                 for (String str : stack[i].getCRS()) {
