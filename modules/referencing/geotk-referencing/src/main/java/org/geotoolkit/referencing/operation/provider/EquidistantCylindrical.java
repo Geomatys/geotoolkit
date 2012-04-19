@@ -319,7 +319,7 @@ public class EquidistantCylindrical extends MapProjection {
             SEMI_MAJOR,       SEMI_MINOR, ROLL_LONGITUDE,
             CENTRAL_MERIDIAN, LATITUDE_OF_ORIGIN,
             FALSE_EASTING,    FALSE_NORTHING
-        });
+        }, MapProjectionDescriptor.ADD_EARTH_RADIUS);
     }
 
     /**

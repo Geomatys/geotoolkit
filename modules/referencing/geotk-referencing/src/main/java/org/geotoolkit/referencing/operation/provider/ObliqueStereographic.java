@@ -268,7 +268,7 @@ public class ObliqueStereographic extends Stereographic {
             Orthographic.SCALE_FACTOR,
             EquidistantCylindrical.FALSE_EASTING,
             EquidistantCylindrical.FALSE_NORTHING
-        });
+        }, MapProjectionDescriptor.ADD_EARTH_RADIUS);
     }
 
     /**

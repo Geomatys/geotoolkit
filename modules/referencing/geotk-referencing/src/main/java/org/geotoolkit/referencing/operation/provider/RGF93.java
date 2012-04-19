@@ -105,7 +105,7 @@ public class RGF93 extends MathTransformProvider {
             new IdentifierCode (Citations.EPSG,  9655)
         }, null, new ParameterDescriptor<?>[] {
             TRANSLATION_FILE
-        });
+        }, 0);
 
     /**
      * Constructs a provider.

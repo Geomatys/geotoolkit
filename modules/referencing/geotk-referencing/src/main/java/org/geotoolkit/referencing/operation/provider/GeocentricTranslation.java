@@ -214,7 +214,7 @@ public class GeocentricTranslation extends PositionVector7Param {
             SRC_SEMI_MAJOR, SRC_SEMI_MINOR,
             TGT_SEMI_MAJOR, TGT_SEMI_MINOR,
             SRC_DIM, TGT_DIM
-        });
+        }, 0);
 
     /**
      * Constructs the provider.

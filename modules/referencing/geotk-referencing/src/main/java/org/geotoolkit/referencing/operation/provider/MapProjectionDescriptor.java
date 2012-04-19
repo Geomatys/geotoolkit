@@ -20,7 +20,6 @@ package org.geotoolkit.referencing.operation.provider;
 import java.util.Map;
 import net.jcip.annotations.Immutable;
 
-import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.GeneralParameterDescriptor;
@@ -80,24 +79,28 @@ final class MapProjectionDescriptor extends DefaultParameterDescriptorGroup {
     static final String STANDARD_PARALLEL = "standard_parallel";
 
     /**
-     * {@code true} if the {@code "standard_parallel"} parameter name is present.
+     * A constant for the {@linkplain UniversalParameters#createDescriptorGroup factory method}
+     * method which indicate that the {@link #EARTH_RADIUS} parameter needs to be added.
      */
-    final boolean hasStandardParallel;
+    static final int ADD_EARTH_RADIUS = 1;
+
+    /**
+     * A constant for the {@linkplain UniversalParameters#createDescriptorGroup factory method}
+     * method which indicate that the {@link #STANDARD_PARALLEL} parameter needs to be added.
+     */
+    static final int ADD_STANDARD_PARALLEL = 2;
+
+    /**
+     * Bitwise combination of {@code ADD_*} constants indicating which dynamic parameters to add.
+     */
+    final int supplement;
 
     /**
      * Creates a new parameter descriptor from the given properties and parameters.
      */
-    MapProjectionDescriptor(final Map<String,?> properties, final ParameterDescriptor<?>... parameters) {
+    MapProjectionDescriptor(final Map<String,?> properties, final ParameterDescriptor<?>[] parameters, final int supplement) {
         super(properties, parameters);
-        for (final ParameterDescriptor<?> param : parameters) {
-            for (final GenericName name : param.getAlias()) {
-                if (name.tip().toString().equals(STANDARD_PARALLEL)) {
-                    hasStandardParallel = true;
-                    return;
-                }
-            }
-        }
-        hasStandardParallel = false;
+        this.supplement = supplement;
     }
 
     /**
@@ -112,14 +115,18 @@ final class MapProjectionDescriptor extends DefaultParameterDescriptorGroup {
     @Override
     public GeneralParameterDescriptor descriptor(String name) throws ParameterNotFoundException {
         name = name.trim();
-        if (name.equalsIgnoreCase(EARTH_RADIUS)) {
-            return UniversalParameters.EARTH_RADIUS;
+        if ((supplement & ADD_EARTH_RADIUS) != 0) {
+            if (name.equalsIgnoreCase(EARTH_RADIUS)) {
+                return UniversalParameters.EARTH_RADIUS;
+            }
+            if (name.equalsIgnoreCase(INVERSE_FLATTENING)) {
+                return UniversalParameters.INVERSE_FLATTENING;
+            }
         }
-        if (name.equalsIgnoreCase(INVERSE_FLATTENING)) {
-            return UniversalParameters.INVERSE_FLATTENING;
-        }
-        if (!hasStandardParallel && name.equalsIgnoreCase(STANDARD_PARALLEL)) {
-            return UniversalParameters.STANDARD_PARALLEL;
+        if ((supplement & ADD_STANDARD_PARALLEL) != 0) {
+            if (name.equalsIgnoreCase(STANDARD_PARALLEL)) {
+                return UniversalParameters.STANDARD_PARALLEL;
+            }
         }
         return super.descriptor(name);
     }

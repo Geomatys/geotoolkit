@@ -451,7 +451,7 @@ public class Molodensky extends MathTransformProvider {
                 TGT_SEMI_MAJOR, TGT_SEMI_MINOR,
                 AXIS_LENGTH_DIFFERENCE,
                 FLATTENING_DIFFERENCE
-            });
+            }, 0);
 
     /**
      * The providers for all combinations between 2D and 3D cases. Array length is 4.

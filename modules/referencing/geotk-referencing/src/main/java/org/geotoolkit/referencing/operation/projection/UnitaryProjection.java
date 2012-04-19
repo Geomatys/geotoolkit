@@ -61,6 +61,7 @@ import org.geotoolkit.referencing.operation.transform.AbstractMathTransform2D;
 
 import static java.lang.Math.*;
 import static java.lang.Double.*;
+import static org.geotoolkit.math.XMath.atanh;
 import static org.geotoolkit.math.XMath.xorSign;
 import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
@@ -677,8 +678,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
          * zero, thus producing NaN.
          */
         final double esinφ = excentricity * sinφ;
-        return (1 - excentricitySquared) *
-                (sinφ / (1 - esinφ*esinφ) - (0.5 / excentricity) * log((1-esinφ) / (1+esinφ)));
+        return (1 - excentricitySquared) * (sinφ / (1 - esinφ*esinφ) + atanh(esinφ)/excentricity);
     }
 
     /**

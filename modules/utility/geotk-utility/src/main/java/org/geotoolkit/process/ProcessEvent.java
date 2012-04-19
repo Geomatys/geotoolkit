@@ -19,17 +19,27 @@ package org.geotoolkit.process;
 
 import java.util.EventObject;
 import org.opengis.util.InternationalString;
+import org.opengis.parameter.ParameterValueGroup;
 import org.geotoolkit.util.SimpleInternationalString;
 
 
 /**
- * Event send by a running {@linkplain Process process} to its {@linkplain ProcessListener listeners}.
+ * Event sent by a running {@linkplain Process process} to its {@linkplain ProcessListener listeners}.
  * This event contains an optional user-friendly {@linkplain #getTask() task description} together
- * with the {@linkplain #getProgress() task progression} as a percentage. An optional
- * {@linkplain #getException() exception} can also be specified if case of error or warning.
+ * with the {@linkplain #getProgress() task progression} as a percentage. In addition the event can
+ * contains one of the following:
+ * <p>
+ * <ul>
+ *   <li>A {@link ParameterValueGroup} which contain either the final calculation result when
+ *       the process {@linkplain ProcessListener#completed completed}, or intermediate values
+ *       while the process is still {@linkplain ProcessListener#progressing progressing}.</li>
+ *   <li>An {@link Exception} which describe either the fatal error why the process
+ *       {@linkplain ProcessListener#failed failed}, or non-fatal warnings while the process
+ *       is still {@linkplain ProcessListener#progressing progressing}.</li>
+ * </ul>
  *
  * @author Johann Sorel (Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @since 3.19
  * @module
@@ -54,6 +64,14 @@ public class ProcessEvent extends EventObject {
     private final float progress;
 
     /**
+     * An intermediate calculation or the final result to be returned by {@link #getOutput()},
+     * or {@code null} if none.
+     *
+     * @since 3.20
+     */
+    private final ParameterValueGroup output;
+
+    /**
      * An error or warning that occurred while executing the task, or {@code null} if none.
      * The exception is considered fatal if this {@code ProcessEvent} was given to the
      * {@link ProcessListener#failed(ProcessEvent)} method. Otherwise the exception is
@@ -68,7 +86,11 @@ public class ProcessEvent extends EventObject {
      * @param source The source of this event.
      */
     public ProcessEvent(final Process source){
-        this(source, null, Float.NaN, null);
+        super(source);
+        this.progress  = Float.NaN;
+        this.task      = null;
+        this.exception = null;
+        this.output    = null;
     }
 
     /**
@@ -79,7 +101,30 @@ public class ProcessEvent extends EventObject {
      * @param progress  The progress as a number between 0 and 100, or {@link Float#NaN} if undetermined.
      */
     public ProcessEvent(final Process source, final CharSequence task, final float progress) {
-        this(source, task, progress, null);
+        super(source);
+        this.progress  = progress;
+        this.task      = SimpleInternationalString.wrap(task);
+        this.exception = null;
+        this.output    = null;
+    }
+
+    /**
+     * Creates a new event with the given source, task, progress and output.
+     * The output may be an intermediate calculation, or the final result.
+     *
+     * @param source    The source of this event.
+     * @param task      A message that describe the task under execution, or {@code null} if none.
+     * @param progress  The progress as a number between 0 and 100, or {@link Float#NaN} if undetermined.
+     * @param output    The output (intermediate calculation of final result), or {@code null} if none.
+     *
+     * @since 3.20
+     */
+    public ProcessEvent(final Process source, final CharSequence task, final float progress, final ParameterValueGroup output) {
+        super(source);
+        this.progress  = progress;
+        this.task      = SimpleInternationalString.wrap(task);
+        this.exception = null;
+        this.output    = output;
     }
 
     /**
@@ -92,9 +137,10 @@ public class ProcessEvent extends EventObject {
      */
     public ProcessEvent(final Process source, final CharSequence task, final float progress, final Exception exception) {
         super(source);
-        this.progress = progress;
-        this.task = SimpleInternationalString.wrap(task);
+        this.progress  = progress;
+        this.task      = SimpleInternationalString.wrap(task);
         this.exception = exception;
+        this.output    = null;
     }
 
     /**
@@ -124,6 +170,28 @@ public class ProcessEvent extends EventObject {
      */
     public float getProgress() {
         return progress;
+    }
+
+    /**
+     * Returns the output, which may be an intermediate calculation or the final result.
+     * More specifically:
+     * <p>
+     * <ul>
+     *   <li>If the event has been given to {@link ProcessListener#progressing(ProcessEvent)}
+     *       then the output (if non-null) is an intermediate calculation.</li>
+     *   <li>If the event has been given to {@link ProcessListener#completed(ProcessEvent)}
+     *       then the output is the same final result than the one returned by
+     *       {@link Process#call()}.</li>
+     * </ul>
+     *
+     * @return The intermediate calculation (when {@linkplain ProcessListener#progressing progressing})
+     *         or the final result (when {@linkplain ProcessListener#completed completed}),
+     *         or {@code null} if none.
+     *
+     * @since 3.20
+     */
+    public ParameterValueGroup getOutput() {
+        return output;
     }
 
     /**

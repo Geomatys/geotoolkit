@@ -518,7 +518,7 @@ public class PositionVector7Param extends MathTransformProvider {
             SRC_SEMI_MAJOR, SRC_SEMI_MINOR,
             TGT_SEMI_MAJOR, TGT_SEMI_MINOR,
             SRC_DIM, TGT_DIM
-        });
+        }, 0);
     }
 
     /**

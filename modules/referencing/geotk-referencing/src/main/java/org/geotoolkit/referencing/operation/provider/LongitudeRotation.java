@@ -112,7 +112,7 @@ public class LongitudeRotation extends MathTransformProvider {
                 new IdentifierCode (Citations.EPSG,  9601)
             }, null, new ParameterDescriptor<?>[] {
                 OFFSET
-            });
+            }, 0);
 
     /**
      * Constructs a provider with default parameters.

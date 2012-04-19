@@ -304,7 +304,7 @@ public class HotineObliqueMercator extends ObliqueMercator {
             AZIMUTH,             RECTIFIED_GRID_ANGLE,
             SCALE_FACTOR,
             FALSE_EASTING,       FALSE_NORTHING
-        });
+        }, MapProjectionDescriptor.ADD_EARTH_RADIUS);
 
     /**
      * Constructs a new provider.
@@ -560,7 +560,8 @@ public class HotineObliqueMercator extends ObliqueMercator {
                 new ReferenceIdentifier[] {
                     new NamedIdentifier(Citations.ESRI, "Hotine_Oblique_Mercator_Two_Point_Natural_Origin"),
                     sameNameAs(Citations.GEOTOOLKIT, HotineObliqueMercator.PARAMETERS)
-            }, null, param.toArray(new ParameterDescriptor<?>[param.size()]));
+            }, null, param.toArray(new ParameterDescriptor<?>[param.size()]),
+            MapProjectionDescriptor.ADD_EARTH_RADIUS);
         }
 
         /**

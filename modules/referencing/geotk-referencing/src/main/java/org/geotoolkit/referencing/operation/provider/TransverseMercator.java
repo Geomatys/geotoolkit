@@ -332,7 +332,7 @@ public class TransverseMercator extends MapProjection {
             SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,
             CENTRAL_MERIDIAN, LATITUDE_OF_ORIGIN,
             SCALE_FACTOR, FALSE_EASTING, FALSE_NORTHING
-        });
+        }, MapProjectionDescriptor.ADD_EARTH_RADIUS);
 
     /**
      * Constructs a new provider.
@@ -552,7 +552,7 @@ public class TransverseMercator extends MapProjection {
                 SCALE_FACTOR,
                 sameParameterAs(PseudoMercator.PARAMETERS, "false_easting"),
                 sameParameterAs(PseudoMercator.PARAMETERS, "false_northing")
-            });
+            }, MapProjectionDescriptor.ADD_EARTH_RADIUS);
         }
 
         /**

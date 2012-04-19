@@ -114,7 +114,7 @@ public class NTv2 extends MathTransformProvider {
             new IdentifierCode (Citations.EPSG,  9615)
         }, null, new ParameterDescriptor<?>[] {
             DIFFERENCE_FILE
-        });
+        }, 0);
 
     /**
      * Constructs a provider.

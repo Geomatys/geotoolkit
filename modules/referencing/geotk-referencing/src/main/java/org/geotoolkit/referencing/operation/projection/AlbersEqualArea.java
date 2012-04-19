@@ -36,6 +36,7 @@ import org.geotoolkit.referencing.operation.matrix.Matrix2;
 
 import static java.lang.Math.*;
 import static java.lang.Double.*;
+import static org.geotoolkit.math.XMath.atanh;
 import static org.geotoolkit.parameter.Parameters.getOrCreate;
 import static org.geotoolkit.internal.InternalUtilities.epsilonEqual;
 import static org.geotoolkit.referencing.operation.provider.UniversalParameters.*;
@@ -205,7 +206,7 @@ public class AlbersEqualArea extends UnitaryProjection {
             }
             c = m1*m1 + n*q1;
             ρ0 = sqrt(c - n * qsfn(sin(latitudeOfOrigin))) / n;
-            ec = 1 - 0.5*(1-excentricitySquared) * log((1-excentricity) / (1+excentricity)) / excentricity;
+            ec = 1 + (1-excentricitySquared) * atanh(excentricity) / excentricity;
         }
         this.n = n;
         /*
@@ -465,14 +466,13 @@ public class AlbersEqualArea extends UnitaryProjection {
             return φ;
         }
         for (int i=0; i<MAXIMUM_ITERATIONS; i++) {
-            final double sinpi = sin(φ);
-            final double cospi = cos(φ);
-            final double con   = excentricity * sinpi;
-            final double com   = 1.0 - con*con;
-            final double dphi  = 0.5 * com*com / cospi *
-                    (qs/tone_es - sinpi/com + 0.5/excentricity * log((1-con) / (1+con)));
-            φ += dphi;
-            if (abs(dphi) <= ITERATION_TOLERANCE) {
+            final double sinφ  = sin(φ);
+            final double cosφ  = cos(φ);
+            final double esinφ = excentricity * sinφ;
+            final double com   = 1.0 - esinφ*esinφ;
+            final double dφ    = 0.5 * com*com/cosφ * (qs/tone_es - sinφ/com - atanh(esinφ)/excentricity);
+            φ += dφ;
+            if (abs(dφ) <= ITERATION_TOLERANCE) {
                 return φ;
             }
         }

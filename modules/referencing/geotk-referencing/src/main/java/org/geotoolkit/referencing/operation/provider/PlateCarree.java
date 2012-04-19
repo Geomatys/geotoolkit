@@ -176,7 +176,7 @@ public class PlateCarree extends EquidistantCylindrical {
             sameParameterAs(EquidistantCylindrical.PARAMETERS, "semi_minor"),
             ROLL_LONGITUDE, CENTRAL_MERIDIAN,
             FALSE_EASTING,  FALSE_NORTHING
-        });
+        }, MapProjectionDescriptor.ADD_EARTH_RADIUS);
 
     /**
      * Constructs a new provider.

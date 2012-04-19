@@ -33,6 +33,7 @@ import org.opengis.parameter.ParameterNotFoundException;
 import org.geotoolkit.referencing.operation.matrix.Matrix2;
 
 import static java.lang.Math.*;
+import static org.geotoolkit.math.XMath.atanh;
 import static org.geotoolkit.referencing.operation.provider.TransverseMercator.*;
 
 
@@ -466,8 +467,8 @@ public class TransverseMercator extends CassiniOrMercator {
              * Using Snyder's equation for calculating y, instead of the one used in Proj4.
              * Potential problems when y and x = 90 degrees, but behaves ok in tests.
              */
-            final double y = atan2(tanφ, cosλ);     // Snyder 8-3
-            final double x = 0.5 * log((1+b) / (1-b));  // Snyder 8-1
+            final double y = atan2(tanφ, cosλ); // Snyder 8-3
+            final double x = atanh(b);          // Snyder 8-1
             Matrix derivative = null;
             if (derivate) {
                 final double sct  = cosλ*cosλ + tanφ*tanφ;

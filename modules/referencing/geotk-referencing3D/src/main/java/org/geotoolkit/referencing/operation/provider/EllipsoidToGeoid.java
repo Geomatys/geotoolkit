@@ -135,7 +135,7 @@ public class EllipsoidToGeoid extends MathTransformProvider {
             new NamedIdentifier(Citations.GEOTOOLKIT, "Ellipsoid_To_Geoid")
         }, null, new ParameterDescriptor<?>[] {
             DATUM, ORDER
-        });
+        }, 0);
 
     /**
      * Constructs a provider.

@@ -147,7 +147,7 @@ public class NADCON extends MathTransformProvider {
         }, null, new ParameterDescriptor<?>[] {
             LAT_DIFF_FILE,
             LONG_DIFF_FILE
-        });
+        }, 0);
 
     /**
      * Constructs a provider.

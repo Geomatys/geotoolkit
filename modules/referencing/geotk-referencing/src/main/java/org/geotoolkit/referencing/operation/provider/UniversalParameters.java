@@ -754,10 +754,12 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
      * @param  identifiers  The operation identifiers. Must contains at least one entry.
      * @param  excludes     The authorities to exclude from all parameters, or {@code null} if none.
      * @param  parameters   The set of parameters, or {@code null} or an empty array if none.
+     * @param  supplement   Non-standard dynamic parameters to add as bitwise combination of
+     *                      {@link MapProjectionDescriptor}, or 0 if none.
      * @return The descriptor for the given identifiers.
      */
     static ParameterDescriptorGroup createDescriptorGroup(final ReferenceIdentifier[] identifiers,
-            final Citation[] excludes, final ParameterDescriptor<?>[] parameters)
+            final Citation[] excludes, final ParameterDescriptor<?>[] parameters, final int supplement)
     {
         if (excludes != null) {
             final Map<String,Object> properties = new HashMap<String,Object>();
@@ -805,7 +807,9 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
                 properties.clear();
             }
         }
-        return new DefaultParameterDescriptorGroup(toMap(identifiers), parameters);
+        final Map<String,Object> properties = toMap(identifiers);
+        return (supplement == 0) ? new DefaultParameterDescriptorGroup(properties, parameters) :
+                new MapProjectionDescriptor(properties, parameters, supplement);
     }
 
     /**

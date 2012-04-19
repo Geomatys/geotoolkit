@@ -248,7 +248,7 @@ public class WarpPolynomial extends MathTransformProvider {
             new NamedIdentifier(Citations.GEOTOOLKIT, "WarpPolynomial")
         }, null, new ParameterDescriptor<?>[] {
             DEGREE, X_COEFFS, Y_COEFFS, PRE_SCALE_X, PRE_SCALE_Y, POST_SCALE_X, POST_SCALE_Y
-        });
+        }, 0);
 
     /**
      * Creates a provider for warp transforms.

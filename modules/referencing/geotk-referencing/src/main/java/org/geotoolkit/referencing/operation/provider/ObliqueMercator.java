@@ -401,7 +401,7 @@ public class ObliqueMercator extends MapProjection {
             LONGITUDE_OF_CENTRE, LATITUDE_OF_CENTRE,
             AZIMUTH, RECTIFIED_GRID_ANGLE, SCALE_FACTOR,
             FALSE_EASTING, FALSE_NORTHING
-        });
+        }, MapProjectionDescriptor.ADD_EARTH_RADIUS);
 
     /**
      * Constructs a new provider.
@@ -674,7 +674,7 @@ public class ObliqueMercator extends MapProjection {
                 LAT_OF_2ND_POINT,    LONG_OF_2ND_POINT,
                 LATITUDE_OF_CENTRE,  SCALE_FACTOR,
                 FALSE_EASTING,       FALSE_NORTHING
-            });
+            }, MapProjectionDescriptor.ADD_EARTH_RADIUS);
 
         /**
          * Constructs a new provider.

@@ -8,24 +8,28 @@
 
 <title>GeoAPI</title>
   <para>
-    Le projet <link xlink:href="http://www.geoapi.org">GeoAPI</link> offre un ensemble d’interfaces
-    Java pour les applications géo-spatiales. Ces interfaces suivent de très près les spécifications
-    de l’<acronym>OGC</acronym>, tout en les interprétant et en les adaptant de manière à répondre
-    aux attentes des développeurs Java — par exemple les conventions de nommage.
+    Le projet <link xlink:href="http://www.geoapi.org">GeoAPI</link> offre un ensemble d’interfaces Java pour les applications géo-spatiales.
+    Dans une séries de paquets <literal>org.opengis.*</literal>, GeoAPI &geoapi-release; définit des structures représentant des méta-données,
+    des systèmes de référence des coordonnées, ainsi que des opérations effectuant des projections cartographiques.
+    Dans une partie qui n’est pas encore standardisée — dénommée <foreignphrase>pending</foreignphrase> — GeoAPI définit des structures
+    représentant des images géo-référencées, des géométries, des filtres pouvant s’appliquer à des requêtes, et d’autres fonctionnalités.
+    Ces interfaces suivent de très près les spécifications de l’<acronym>OGC</acronym>, tout en les interprétant et en les adaptant
+    de manière à répondre aux attentes des développeurs Java — par exemple en se conformant aux conventions de nommage.
     Ces interfaces bénéficient à la fois aux applications clientes et aux bibliothèques:
   </para>
 
   <itemizedlist>
     <listitem><para>
       Les développeurs des applications clientes bénéficient d’une plus grande base de connaissances disponible sur internet
-      (due aux nombreuses publications en lien avec les standards de l’OGC), ainsi que d’une inter-opérabilité accrue.
-      L’inter-opérabilité est facilitée par une meilleure séparation entre les applications qui <emphasis>appellent</emphasis> les fonctions de GeoAPI,
+      (due aux nombreuses publications en lien avec les standards de l’OGC), ainsi que d’une interopérabilité accrue.
+      L’interopérabilité est facilitée par une meilleure séparation entre les applications qui <emphasis>appellent</emphasis> les fonctions de GeoAPI,
       et les bibliothèques qui <emphasis>implémentent</emphasis> GeoAPI. Il s’agit d’une séparation similaire à celle qu’offrent les interfaces
       <link xlink:href="http://docs.oracle.com/javase/7/docs/technotes/guides/jdbc/"><acronym>JDBC</acronym></link>
       (<foreignphrase>Java Database Connectivity</foreignphrase>) du Java standard.
       En utilisant l’<acronym>API</acronym> des interfaces, les développeurs peuvent faire abstraction de l’implémentation sous-jacente.
-      Par exemple ils peuvent utiliser les bibliothèques <link xlink:href="http://www.geoapi.org/geoapi-proj4/index.html">Proj.4</link>
-      ou Geotoolkit.org sans qu’il ne leur soit nécessaire de changer leurs programmes.
+      Par exemple ils peuvent effectuer des projections cartographiques à l’aide des bibliothèques
+      <link xlink:href="http://www.geoapi.org/geoapi-proj4/index.html">Proj.4</link> ou Geotoolkit.org
+      sans nécessité de changer leurs programmes.
     </para></listitem>
     <listitem><para>
       Les développeurs des bibliothèques héritent de l’expertise des auteurs des spécifications, via les modèles que représentent les interfaces.
@@ -41,17 +45,17 @@
   <para>
     Les standards de l’<acronym>OGC</acronym> étant définis par des moyens bien éprouvés en génie logiciel,
     il est possible de générer automatiquement des interfaces Java à l’aide d’outils relativement répandus.
-    Une des approches les plus utilisées est de transformer les schémas <acronym>XSD</acronym>
-    en interfaces Java à l’aide de l’utilitaire de ligne de commande <command>xjc</command>.
-    Cet utilitaire étant disponible en standard avec la plupart des distributions du Java
+    Une des approches les plus utilisées est de transformer les <link xlink:href="http://schemas.opengis.net/gml/&gml-version;/">schémas <acronym>XSD</acronym></link>
+    en interfaces Java à l’aide de l’utilitaire en ligne de commande <command>xjc</command>.
+    Cet utilitaire étant fournit avec la plupart des distributions du Java
     (il fait partie des outils de <link xlink:href="http://jaxb.java.net"><acronym>JAXB</acronym></link>),
-    cette approche est choisie par plusieurs projets sur internet.
+    cette approche est choisie par plusieurs projets que l’on trouve sur internet.
     D’autres approches utilisent des outils intégrés à l’environnement de développement Eclipse, ou
     prennent comme point de départ les schémas <acronym>UML</acronym> plutôt que <acronym>XSD</acronym>.
   </para>
   <para>
     Une approche similaire avait été tentée dans les débuts du projet GeoAPI, mais a été rapidement abandonnée.
-    Une approche manuelle a fini par s’imposer pour les raisons suivantes:
+    Nous avons privilégié une approche manuelle pour les raisons suivantes:
   </para>
 </section>
 </chapter>
