@@ -23,9 +23,12 @@ import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
+import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.util.XArrays;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
+import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -55,6 +58,16 @@ public class CoverageSQLStoreFactory extends AbstractCoverageStoreFactory{
                     AbstractCoverageStoreFactory.IDENTIFIER.getName().getCode(),
                     AbstractCoverageStoreFactory.IDENTIFIER.getRemarks(), String.class,NAME,true);
 
+    public static final ParameterDescriptorGroup PARAMETERS;
+    static {
+        GeneralParameterDescriptor[] params = CoverageDatabase.PARAMETERS.descriptors()
+                .toArray(new GeneralParameterDescriptor[0]);
+        params = XArrays.concatenate(new GeneralParameterDescriptor[]{IDENTIFIER},params);
+        
+        PARAMETERS = new DefaultParameterDescriptorGroup(
+                CoverageDatabase.PARAMETERS.getName().getCode(), params);
+    }
+    
     @Override
     public Identification getIdentification() {
         return IDENTIFICATION;
@@ -67,7 +80,7 @@ public class CoverageSQLStoreFactory extends AbstractCoverageStoreFactory{
 
     @Override
     public ParameterDescriptorGroup getParametersDescriptor() {
-        return CoverageDatabase.PARAMETERS;
+        return PARAMETERS;
     }
 
     @Override
