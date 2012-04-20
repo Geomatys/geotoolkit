@@ -28,6 +28,8 @@ import javax.imageio.ImageReader;
 import org.geotoolkit.coverage.AbstractCoverageStore;
 import org.geotoolkit.coverage.AbstractCoverageStoreFactory;
 import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.coverage.CoverageStoreFactory;
+import org.geotoolkit.coverage.CoverageStoreFinder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.parameter.Parameters;
@@ -48,10 +50,15 @@ public class FileCoverageStore extends AbstractCoverageStore{
     private final Map<Name,FileCoverageReference> names = new HashMap<Name, FileCoverageReference>();
     
     FileCoverageStore(ParameterValueGroup params) throws URISyntaxException{
-        super(Parameters.value(AbstractCoverageStoreFactory.NAMESPACE, params));
+        super(params);
         rootPath = (URL) params.parameter(XMLCoverageStoreFactory.PATH.getName().getCode()).getValue();
         root = new File(rootPath.toURI());
         visit(root);
+    }
+
+    @Override
+    public CoverageStoreFactory getFactory() {
+        return CoverageStoreFinder.getFactory(FileCoverageStoreFactory.NAME);
     }
     
     /**

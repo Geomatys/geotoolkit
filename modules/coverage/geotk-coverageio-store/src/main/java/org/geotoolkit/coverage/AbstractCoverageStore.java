@@ -19,9 +19,11 @@ package org.geotoolkit.coverage;
 
 import java.util.Collection;
 import java.util.logging.Logger;
+import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.feature.type.Name;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * Uncomplete implementation of a coveragestore.
@@ -37,8 +39,12 @@ public abstract class AbstractCoverageStore implements CoverageStore{
     private final Logger Logger = Logging.getLogger(getClass().getPackage().getName());
 
     private final String defaultNamespace;
-
-    protected AbstractCoverageStore(final String namespace) {
+    protected final ParameterValueGroup parameters;
+    
+    protected AbstractCoverageStore(final ParameterValueGroup params) {
+        this.parameters = params;
+        String namespace = Parameters.value(AbstractCoverageStoreFactory.NAMESPACE, params);
+        
         if (namespace == null) {
             defaultNamespace = "http://geotoolkit.org";
         } else if (namespace.equals(NO_NAMESPACE)) {
@@ -46,6 +52,11 @@ public abstract class AbstractCoverageStore implements CoverageStore{
         } else {
             defaultNamespace = namespace;
         }
+    }
+
+    @Override
+    public ParameterValueGroup getConfiguration() {
+        return parameters;
     }
 
     protected String getDefaultNamespace() {

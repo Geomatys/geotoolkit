@@ -152,8 +152,8 @@ public class WebMapServer extends AbstractServer implements CoverageStore{
     }
 
     @Override
-    public ServerFactory getFactory() {
-        return ServerFinder.getFactory(WMSServerFactory.NAME);
+    public WMSServerFactory getFactory() {
+        return (WMSServerFactory)ServerFinder.getFactory(WMSServerFactory.NAME);
     }
     
     /**

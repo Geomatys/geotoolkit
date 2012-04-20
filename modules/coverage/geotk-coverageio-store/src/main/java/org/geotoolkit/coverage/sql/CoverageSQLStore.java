@@ -20,6 +20,8 @@ import java.util.HashSet;
 import java.util.Set;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageStore;
+import org.geotoolkit.coverage.CoverageStoreFactory;
+import org.geotoolkit.coverage.CoverageStoreFinder;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.storage.DataStoreException;
@@ -36,10 +38,23 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class CoverageSQLStore extends CoverageDatabase implements CoverageStore{
 
+    private final ParameterValueGroup parameters;
+    
     public CoverageSQLStore(ParameterValueGroup parameters) {
         super(parameters);
+        this.parameters = parameters;
     }
 
+    @Override
+    public ParameterValueGroup getConfiguration(){
+        return parameters;
+    }
+
+    @Override
+    public CoverageStoreFactory getFactory() {
+        return CoverageStoreFinder.getFactory(CoverageSQLStoreFactory.NAME);
+    }
+    
     @Override
     public Set<Name> getNames() throws DataStoreException {
         final Set<String> layers = getLayers().result();

@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.Set;
 import org.geotoolkit.client.AbstractServer;
 import org.geotoolkit.client.ServerFactory;
+import org.geotoolkit.client.ServerFinder;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.coverage.PyramidSet;
@@ -89,8 +90,8 @@ public class OSMTileMapServer extends AbstractServer implements CoverageStore{
     }
         
     @Override
-    public ServerFactory getFactory() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public OSMTMSServerFactory getFactory() {
+        return (OSMTMSServerFactory)ServerFinder.getFactory(OSMTMSServerFactory.NAME);
     }
 
     public boolean getCacheImage(){

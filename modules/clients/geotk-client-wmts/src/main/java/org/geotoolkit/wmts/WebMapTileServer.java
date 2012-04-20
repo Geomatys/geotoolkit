@@ -25,7 +25,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.client.AbstractServer;
-import org.geotoolkit.client.ServerFactory;
 import org.geotoolkit.client.ServerFinder;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageStore;
@@ -121,8 +120,8 @@ public class WebMapTileServer extends AbstractServer implements CoverageStore{
     }
     
     @Override
-    public ServerFactory getFactory() {
-        return ServerFinder.getFactory(WMTSServerFactory.NAME);
+    public WMTSServerFactory getFactory() {
+        return (WMTSServerFactory)ServerFinder.getFactory(WMTSServerFactory.NAME);
     }
     
     /**

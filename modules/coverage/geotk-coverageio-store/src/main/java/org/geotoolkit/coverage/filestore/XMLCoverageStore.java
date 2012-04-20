@@ -25,10 +25,10 @@ import java.util.Set;
 import java.util.logging.Level;
 import javax.xml.bind.JAXBException;
 import org.geotoolkit.coverage.AbstractCoverageStore;
-import org.geotoolkit.coverage.AbstractCoverageStoreFactory;
 import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.coverage.CoverageStoreFactory;
+import org.geotoolkit.coverage.CoverageStoreFinder;
 import org.geotoolkit.feature.DefaultName;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.type.Name;
 import org.opengis.parameter.ParameterValueGroup;
@@ -46,10 +46,15 @@ public class XMLCoverageStore extends AbstractCoverageStore{
     private final Map<Name,XMlCoverageReference> names = new HashMap<Name, XMlCoverageReference>();
     
     XMLCoverageStore(ParameterValueGroup params) throws URISyntaxException{
-        super(Parameters.value(AbstractCoverageStoreFactory.NAMESPACE, params));
+        super(params);
         rootPath = (URL) params.parameter(XMLCoverageStoreFactory.PATH.getName().getCode()).getValue();
         root = new File(rootPath.toURI());
         explore();
+    }
+
+    @Override
+    public CoverageStoreFactory getFactory() {
+        return CoverageStoreFinder.getFactory(XMLCoverageStoreFactory.NAME);
     }
     
     /**

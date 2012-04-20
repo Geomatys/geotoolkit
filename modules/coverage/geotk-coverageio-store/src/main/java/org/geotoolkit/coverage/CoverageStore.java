@@ -19,6 +19,7 @@ package org.geotoolkit.coverage;
 import java.util.Set;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.type.Name;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  *
@@ -26,6 +27,20 @@ import org.opengis.feature.type.Name;
  * @module pending
  */
 public interface CoverageStore {
+    
+    /**
+     * Get the parameters used to initialize this source from it's factory.
+     * 
+     * @return source configuration parameters
+     */
+    ParameterValueGroup getConfiguration();
+    
+    /**
+     * Get the factory which created this source.
+     * 
+     * @return this source original factory
+     */
+    CoverageStoreFactory getFactory();
     
     /**
      * Get a collection of all available coverage names.

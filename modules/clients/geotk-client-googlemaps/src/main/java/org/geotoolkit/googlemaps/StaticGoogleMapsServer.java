@@ -89,8 +89,8 @@ public class StaticGoogleMapsServer extends AbstractServer implements CoverageSt
     }
 
     @Override
-    public ServerFactory getFactory() {
-        return ServerFinder.getFactory(StaticGoogleServerFactory.NAME);
+    public StaticGoogleServerFactory getFactory() {
+        return (StaticGoogleServerFactory) ServerFinder.getFactory(StaticGoogleServerFactory.NAME);
     }
     
     public String getKey(){
