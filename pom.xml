@@ -800,6 +800,7 @@
         <configuration>
           <sourceDirectory>${basedir}/src/main/docbook</sourceDirectory>
           <targetDirectory>${basedir}/target/site/book</targetDirectory>
+          <xhtmlCustomization>src/main/docbook/book.xsl</xhtmlCustomization>
           <xincludeSupported>true</xincludeSupported>
           <htmlStylesheet>book.css</htmlStylesheet>
         </configuration>
