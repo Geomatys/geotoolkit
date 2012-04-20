@@ -432,7 +432,7 @@ public class DefaultParameterDescriptor<T> extends AbstractParameterDescriptor
     @Override
     @SuppressWarnings("unchecked")
     public ParameterValue<T> createValue() {
-        if (valueClass == Double.class && unit == null) {
+        if (valueClass == Double.class) {
             return (ParameterValue<T>) new FloatParameter((ParameterDescriptor<Double>) this);
         }
         return new Parameter<>(this);

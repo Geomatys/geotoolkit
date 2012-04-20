@@ -21,7 +21,7 @@
  * An explanation for this package is provided in the {@linkplain org.opengis.referencing.operation OpenGIS&reg; javadoc}.
  * The remaining discussion on this page is specific to the Geotk implementation.
  * <p>
- * This package provides an ISO 19111 {@link org.geotoolkit.referencing.operation.AbstractCoordinateOperation
+ * This package provides an ISO 19111 {@linkplain org.geotoolkit.referencing.operation.AbstractCoordinateOperation
  * Coordinate Operation implementation} and support classes. The actual transform work is performed by the
  * following sub-packages, but most users will not need to deal with them directly:
  * <p>

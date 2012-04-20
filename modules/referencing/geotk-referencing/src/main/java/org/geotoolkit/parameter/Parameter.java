@@ -101,7 +101,7 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
     /**
      * The unit of measure for the value, or {@code null} if it doesn't apply. Except for the
      * constructors, the {@link #equals(Object)} and the {@link #hashCode()} methods, this field
-     * is read only by {@link #getValue()} and written by {@link #setSafeValue(Object, Unit)}.
+     * is read only by {@link #getUnit()} and written by {@link #setSafeValue(Object, Unit)}.
      */
     private Unit<?> unit;
 
@@ -291,7 +291,14 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
      * Returns the numeric value represented by this operation parameter.
      * The units of measurement are specified by {@link #getUnit()}.
      *
+     * {@note The behavior of this method is slightly different than the equivalent method in
+     * the <code>FloatParameter</code> class, since this method throws an exception instead than
+     * returning <code>NaN</code> if no value has been explicitely set. This method behaves that
+     * way for consistency will other methods defined in this class, since all of them except
+     * <code>getValue()</code> throw an exception in such case.}
+     *
      * @return The numeric value represented by this parameter after conversion to type {@code double}.
+     *         This method returns {@link Double#NaN} only if such "value" has been explicitely set.
      * @throws InvalidParameterTypeException if the value is not a numeric type.
      * @throws IllegalStateException if the value is not defined and there is no default value.
      *

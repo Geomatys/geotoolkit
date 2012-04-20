@@ -35,7 +35,6 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterNotFoundException;
-import org.opengis.parameter.InvalidParameterTypeException;
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.metadata.Identifier;
 
@@ -77,7 +76,7 @@ import org.geotoolkit.naming.DefaultNameSpace;
  *
  * @author Jody Garnett (Refractions)
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.18
+ * @version 3.20
  *
  * @since 2.1
  * @module
@@ -788,13 +787,28 @@ public final class Parameters extends Static {
     }
 
     /**
-     * Ensures that the specified parameter is set. The {@code value} is set if and only if
-     * no value were already set by the user for the given {@code name}.
+     * Ensures that a value is set for the parameter of the specified name. This method returns
+     * {@code true} if the parameter value <i>has been</i> or <i>should be</i> changed (depending
+     * on the {@code force} argument value), or {@code false} otherwise.
+     * More specifically this method performs the following steps:
      * <p>
-     * The {@code force} argument said what to do if the named parameter is already set. If the
-     * value matches, nothing is done in all case. If there is a mismatch and {@code force} is
-     * {@code true}, then the parameter is overridden with the specified {@code value}. Otherwise,
-     * the parameter is left unchanged but a warning is logged at {@link Level#FINE}.
+     * <ul>
+     *   <li>If the parameter for the given name has no value, unconditionally assign the given
+     *       value to that parameter and returns {@code true}.</li>
+     *   <li>Otherwise, compare the current parameter value with the specified value.
+     *       If the values are approximatively equal, do nothing and return {@code false}.</li>
+     *   <li>Otherwise there is a choice:
+     *     <ul>
+     *       <li>If the {@code force} argument is {@code true}, overwrite the current parameter
+     *           value with the given value.</li>
+     *       <li>Otherwise left the parameter value unchanged but log a warning.</li>
+     *     </ul>
+     *     Then return {@code true}.</li>
+     * </ul>
+     * <p>
+     * This method can used when the same parameter value may be specified more than once
+     * (for example from different sources of information), and we want to ensure that all
+     * those values are consistent, without treating mismatches as fatal errors.
      *
      * @param parameters The set of projection parameters.
      * @param name       The parameter name to set.
@@ -802,46 +816,30 @@ public final class Parameters extends Static {
      * @param unit       The value unit.
      * @param force      {@code true} for forcing the parameter to the specified {@code value}
      *                   is case of mismatch.
-     * @return {@code true} if the were a mismatch, or {@code false} if the parameters can be
-     *         used with no change.
+     * @return {@code true} if the were a mismatch (in which case the value has been updated if
+     *         the {@code force} argument is {@code true}), or {@code false} if the parameter
+     *         has been left unchanged.
+     * @throws ParameterNotFoundException If no parameter of the given name has been found.
      *
      * @category update
      */
-    public static boolean ensureSet(final ParameterValueGroup parameters,
-            final String name, final double value, final Unit<?> unit, final boolean force)
+    public static boolean ensureSet(final ParameterValueGroup parameters, final String name,
+            final double value, final Unit<?> unit, boolean force) throws ParameterNotFoundException
     {
-        final ParameterValue<?> parameter;
+        final ParameterValue<?> parameter = parameters.parameter(name);
         try {
-            parameter = parameters.parameter(name);
-        } catch (ParameterNotFoundException ignore) {
-            /*
-             * Parameter not found. This exception should not occurs most of the time.
-             * If it occurs, we will not try to set the parameter here, but the same
-             * exception is likely to occurs at MathTransform creation time. The later
-             * is the expected place for this exception, so we will let it happen there.
-             */
-            return false;
-        }
-        try {
-            if (Math.abs(parameter.doubleValue(unit) / value - 1) <= EPS) {
+            final double current = parameter.doubleValue(unit);
+            if (Math.abs(current / value - 1) <= EPS) {
                 return false;
             }
-        } catch (InvalidParameterTypeException exception) {
-            /*
-             * The parameter is not a floating point value. Don't try to set it. An exception is
-             * likely to be thrown at MathTransform creation time, which is the expected place.
-             */
-            return false;
+            if (Double.isNaN(current)) {
+                force = true;
+            }
         } catch (IllegalStateException exception) {
-            /*
-             * No value were set for this parameter, and there is no default value.
-             */
-            parameter.setValue(value, unit);
-            return true;
+            // No value was set for this parameter, and there is no default value.
+            force = true;
         }
-        /*
-         * A value was set, but is different from the expected value.
-         */
+        // A value was set, but is different than the expected value.
         if (force) {
             parameter.setValue(value, unit);
         } else {

@@ -17,10 +17,15 @@
  */
 package org.geotoolkit.referencing.operation.provider;
 
+import javax.measure.unit.Unit;
+
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterNotFoundException;
 
+import org.geotoolkit.util.XArrays;
+import org.geotoolkit.resources.Errors;
+import org.geotoolkit.parameter.Parameter;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.parameter.ParameterGroup;
 import org.geotoolkit.parameter.FloatParameter;
@@ -55,9 +60,8 @@ final class MapProjectionParameters extends ParameterGroup {
 
     /**
      * The earth radius parameter. This parameter is computed automatically from the
-     * {@code "semi_major"} and {@code "semi_minor"}, unless it was explicitely set.
-     * If this parameter is explicitly set, then the given value is also given to the
-     * semi-major and semi-minor axis lengths.
+     * {@code "semi_major"} and {@code "semi_minor"}. When explicitely set, this parameter
+     * value is also assigned to the {@code "semi_major"} and {@code "semi_minor"} axis lengths.
      *
      * @see org.geotoolkit.referencing.datum.DefaultEllipsoid#getAuthalicRadius()
      */
@@ -72,20 +76,18 @@ final class MapProjectionParameters extends ParameterGroup {
          * Creates a new parameter.
          */
         EarthRadius() {
-            super(UniversalParameters.EARTH_RADIUS);
+            super(EARTH_RADIUS);
         }
 
         /**
-         * Invoked when the parameter value is requested. If the earth radius has not been
-         * explicitely defined, returns the authalic radius.
+         * Invoked when the parameter value is requested. Unconditionally computes
+         * the authalic radius. If an Earth radius has been explicitely specified,
+         * the result will be the same unless the user overwrote it with explicit
+         * semi-major or semi-minor axis length.
          */
         @Override
         public double doubleValue() {
-            double value = super.doubleValue();
-            if (Double.isNaN(value)) {
-                value = CRSUtilities.getAuthalicRadius(get(SEMI_MAJOR), get(SEMI_MINOR));
-            }
-            return value;
+            return CRSUtilities.getAuthalicRadius(get(SEMI_MAJOR), get(SEMI_MINOR));
         }
 
         /**
@@ -93,21 +95,22 @@ final class MapProjectionParameters extends ParameterGroup {
          * to the given radius.
          */
         @Override
-        public void setValue(final double value) {
-            super.setValue(value); // Also perform argument check.
-            set(SEMI_MAJOR, value);
-            set(SEMI_MINOR, value);
+        public void setValue(final double value, final Unit<?> unit) {
+            super.setValue(value, unit); // Perform argument check.
+            set(SEMI_MAJOR, value, unit);
+            set(SEMI_MINOR, value, unit);
         }
     }
 
     /**
      * The inverse flattening parameter. This parameter is computed automatically from the
-     * {@code "semi_major"} and {@code "semi_minor"}, unless it was explicitely set. If this
-     * parameter is explicitly set, then the given value is used for computing the semi-minor
-     * axis length.
+     * {@code "semi_major"} and {@code "semi_minor"}. When explicitly set, this parameter
+     * value is used for computing the semi-minor axis length.
      *
      * @todo In current implementation, this will work only if the semi-major axis length is
      *       set before the inverse flattening.
+     *
+     * @see org.geotoolkit.referencing.datum.DefaultEllipsoid#getInverseFlattening()
      */
     private final class InverseFlattening extends FloatParameter {
         /**
@@ -120,22 +123,19 @@ final class MapProjectionParameters extends ParameterGroup {
          * Creates a new parameter.
          */
         InverseFlattening() {
-            super(UniversalParameters.INVERSE_FLATTENING);
+            super(INVERSE_FLATTENING);
         }
 
         /**
-         * Invoked when the parameter value is requested. If the inverse flattening has not been
-         * explicitely defined, computes if from the ellipsoid axis length.
+         * Invoked when the parameter value is requested. Unconditionally computes the inverse
+         * flattening from the ellipsoid axis lengths. Note that the result will be slightly
+         * different than the specified value because of rounding errors.
          */
         @Override
         public double doubleValue() {
-            double value = super.doubleValue();
-            if (Double.isNaN(value)) {
-                final double semiMajorAxis = get(SEMI_MAJOR);
-                final double semiMinorAxis = get(SEMI_MINOR);
-                value = semiMajorAxis / (semiMajorAxis - semiMinorAxis);
-            }
-            return value;
+            final double semiMajorAxis = get(SEMI_MAJOR);
+            final double semiMinorAxis = get(SEMI_MINOR);
+            return semiMajorAxis / (semiMajorAxis - semiMinorAxis);
         }
 
         /**
@@ -143,9 +143,76 @@ final class MapProjectionParameters extends ParameterGroup {
          * This method compute the semi-minor axis length from the given value.
          */
         @Override
-        public void setValue(final double value) {
-            super.setValue(value); // Also perform argument check.
-            set(SEMI_MINOR, get(SEMI_MAJOR)*(1 - 1/value));
+        public void setValue(final double value, final Unit<?> unit) {
+            super.setValue(value, unit); // Perform argument check.
+            final ParameterValue<?> semiMajor;
+            try {
+                semiMajor = Parameters.getOrCreate(SEMI_MAJOR, MapProjectionParameters.this);
+            } catch (IllegalStateException e) {
+                // Semi-major axis is not yet defined.
+                // Ignore - we will try to compute gain later.
+                return;
+            }
+            set(SEMI_MINOR, semiMajor.doubleValue()*(1 - 1/value), semiMajor.getUnit());
+        }
+    }
+
+    /**
+     * The standard parallel parameter as an array of {@code double}. This parameter is computed
+     * automatically from the {@code "standard_parallel_1"} and {@code "standard_parallel_1"}
+     * parameters. When explicitely set, the parameter elements are given to the above-cited
+     * parameters.
+     */
+    private final class StandardParallel extends Parameter<double[]> {
+        /**
+         * For cross-version compatibility. Actually instances of this class
+         * are not expected to be serialized, but we try to be a bit safer here.
+         */
+        private static final long serialVersionUID = -1379566730374843040L;
+
+        /**
+         * Creates a new parameter.
+         */
+        StandardParallel() {
+            super(STANDARD_PARALLEL);
+        }
+
+        /**
+         * Invoked when the parameter value is requested. Unconditionally computes the array
+         * from the {@code "standard_parallel_1"} and {@code "standard_parallel_1"} parameters.
+         */
+        @Override
+        public double[] getValue() {
+            final double standardParallel1 = get(STANDARD_PARALLEL_1);
+            final double standardParallel2 = get(STANDARD_PARALLEL_2);
+            if (Double.isNaN(standardParallel2)) {
+                return Double.isNaN(standardParallel1) ? XArrays.EMPTY_DOUBLE : new double[] {standardParallel1};
+            }
+            return new double[] {standardParallel1, standardParallel2};
+        }
+
+        /**
+         * Invoked when a new parameter value is set. This method assign the array elements
+         * to @code "standard_parallel_1"} and {@code "standard_parallel_1"} parameters.
+         */
+        @Override
+        @SuppressWarnings("fallthrough")
+        protected void setSafeValue(final double[] value, final Unit<?> unit) {
+            double standardParallel1 = Double.NaN;
+            double standardParallel2 = Double.NaN;
+            if (value != null) {
+                switch (value.length) {
+                    default: {
+                        throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$1,
+                                MapProjectionDescriptor.STANDARD_PARALLEL));
+                    }
+                    case 2: standardParallel2 = value[1]; // Fallthrough
+                    case 1: standardParallel1 = value[0]; // Fallthrough
+                    case 0: break;
+                }
+            }
+            set(STANDARD_PARALLEL_1, standardParallel1, unit);
+            set(STANDARD_PARALLEL_2, standardParallel2, unit);
         }
     }
 
@@ -162,7 +229,7 @@ final class MapProjectionParameters extends ParameterGroup {
     /**
      * The {@link StandardParallel} parameter instance, created when first needed.
      */
-    private transient ParameterValue<Double> standardParallel;
+    private transient ParameterValue<double[]> standardParallel;
 
     /**
      * Creates a new parameter value group. An instance of {@link MapProjectionDescriptor}
@@ -182,8 +249,8 @@ final class MapProjectionParameters extends ParameterGroup {
     /**
      * Sets the value associated to the given parameter descriptor.
      */
-    final void set(final ParameterDescriptor<Double> parameter, final double value) {
-        Parameters.getOrCreate(parameter, this).setValue(value);
+    final void set(final ParameterDescriptor<Double> parameter, final double value, final Unit<?> unit) {
+        Parameters.getOrCreate(parameter, this).setValue(value, unit);
     }
 
     /**
@@ -219,7 +286,7 @@ final class MapProjectionParameters extends ParameterGroup {
             if (name.equalsIgnoreCase(MapProjectionDescriptor.STANDARD_PARALLEL)) {
                 ParameterValue<?> value = standardParallel;
                 if (value == null) {
-                    // TODO
+                    value = standardParallel = new StandardParallel();
                 }
                 return value;
             }

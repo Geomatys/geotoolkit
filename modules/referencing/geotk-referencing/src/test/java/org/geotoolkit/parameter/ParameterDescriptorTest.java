@@ -29,8 +29,8 @@ import static javax.measure.unit.SI.*;
 /**
  * Tests the {@link DefaultParameterDescriptor} class.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.20
  *
  * @since 2.1
  */
@@ -54,9 +54,7 @@ public final strictfp class ParameterDescriptorTest extends ParameterTestBase {
      */
     @Test
     public void testDoubleType() {
-        ParameterDescriptor<Double> descriptor;
-        ParameterValue<Double>      parameter;
-
+        final ParameterDescriptor<Double> descriptor;
         descriptor = DefaultParameterDescriptor.create("Test", 12, 4, 20, METRE);
         assertEquals("name",         "Test",               descriptor.getName().getCode());
         assertEquals("unit",         METRE,                descriptor.getUnit());
@@ -65,8 +63,20 @@ public final strictfp class ParameterDescriptorTest extends ParameterTestBase {
         assertEquals("minimum",      Double.valueOf( 4.0), descriptor.getMinimumValue());
         assertEquals("maximum",      Double.valueOf(20.0), descriptor.getMaximumValue());
         validate(descriptor);
+        assertEquals("DefaultParameterDescriptor[\"Test\", mandatory, class=Double, " +
+                "valid=[4.0 … 20.0], default=12.0, unit=m]", descriptor.toString());
 
-        parameter  = descriptor.createValue();
+        assertEquals(     Parameter.class, testDoubleValue(new Parameter<>(descriptor)));
+        assertEquals(FloatParameter.class, testDoubleValue(descriptor.createValue()));
+    }
+
+    /**
+     * Helper method for {@link #testDoubleType()}. This method tests a parameter value
+     * associated to the descriptor of the above test.
+     *
+     * @return The class of the given parameter, for convenience.
+     */
+    private static Class<?> testDoubleValue(final ParameterValue<Double> parameter) {
         assertEquals("value",    Double.valueOf(12), parameter.getValue());
         assertEquals("intValue", 12,                 parameter.intValue());
         assertEquals("unit",     METRE,              parameter.getUnit());
@@ -112,7 +122,6 @@ public final strictfp class ParameterDescriptorTest extends ParameterTestBase {
         } catch (IllegalArgumentException exception) {
             // This is the expected exception.
         }
-        assertEquals("DefaultParameterDescriptor[\"Test\", mandatory, class=Double, " +
-                "valid=[4.0 … 20.0], default=12.0, unit=m]", descriptor.toString());
+        return parameter.getClass();
     }
 }
