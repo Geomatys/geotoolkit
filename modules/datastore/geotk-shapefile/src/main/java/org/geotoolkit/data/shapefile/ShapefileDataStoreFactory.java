@@ -37,6 +37,13 @@ import org.geotoolkit.data.shapefile.indexed.IndexType;
 
 import com.vividsolutions.jts.geom.Geometry;
 
+import java.util.Collections;
+import org.geotoolkit.data.AbstractDataStoreFactory;
+import org.geotoolkit.metadata.iso.DefaultIdentifier;
+import org.geotoolkit.metadata.iso.citation.DefaultCitation;
+import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
+import org.opengis.metadata.Identifier;
+import org.opengis.metadata.identification.Identification;
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -62,6 +69,21 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class ShapefileDataStoreFactory extends AbstractFileDataStoreFactory implements FileDataStoreFactory {
 
+    /** factory identification **/
+    public static final String NAME = "shapefile";
+    public static final DefaultServiceIdentification IDENTIFICATION;
+    static {
+        IDENTIFICATION = new DefaultServiceIdentification();
+        final Identifier id = new DefaultIdentifier(NAME);
+        final DefaultCitation citation = new DefaultCitation(NAME);
+        citation.setIdentifiers(Collections.singleton(id));
+        IDENTIFICATION.setCitation(citation);
+    }
+    
+    public static final ParameterDescriptor<String> IDENTIFIER = new DefaultParameterDescriptor<String>(
+                    AbstractDataStoreFactory.IDENTIFIER.getName().getCode(),
+                    AbstractDataStoreFactory.IDENTIFIER.getRemarks(), String.class,NAME,true);
+    
     public static final String ENCODING = "UTF-8";
     public static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.shapefile");
     
@@ -92,9 +114,14 @@ public class ShapefileDataStoreFactory extends AbstractFileDataStoreFactory impl
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new DefaultParameterDescriptorGroup("ShapefileParameters",
-                URLP,NAMESPACE,MEMORY_MAPPED,CREATE_SPATIAL_INDEX,DBFCHARSET,LOAD_QIX);
+                IDENTIFIER,URLP,NAMESPACE,MEMORY_MAPPED,CREATE_SPATIAL_INDEX,DBFCHARSET,LOAD_QIX);
 
     public ShapefileDataStoreFactory(){
+    }
+
+    @Override
+    public Identification getIdentification() {
+        return IDENTIFICATION;
     }
 
     /**

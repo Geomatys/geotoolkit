@@ -17,14 +17,20 @@
 package org.geotoolkit.sos;
 
 import java.net.URL;
+import java.util.Collections;
 import org.geotoolkit.client.AbstractServerFactory;
 import org.geotoolkit.client.Server;
+import org.geotoolkit.metadata.iso.DefaultIdentifier;
+import org.geotoolkit.metadata.iso.citation.DefaultCitation;
+import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.sos.xml.SOSVersion;
 import org.geotoolkit.storage.DataStoreException;
+import org.opengis.metadata.Identifier;
+import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.*;
 
 /**
@@ -35,6 +41,21 @@ import org.opengis.parameter.*;
  */
 public class SOSServerFactory extends AbstractServerFactory{
 
+    /** factory identification **/
+    public static final String NAME = "sos";
+    public static final DefaultServiceIdentification IDENTIFICATION;
+    static {
+        IDENTIFICATION = new DefaultServiceIdentification();
+        final Identifier id = new DefaultIdentifier(NAME);
+        final DefaultCitation citation = new DefaultCitation(NAME);
+        citation.setIdentifiers(Collections.singleton(id));
+        IDENTIFICATION.setCitation(citation);
+    }
+    
+    public static final ParameterDescriptor<String> IDENTIFIER = new DefaultParameterDescriptor<String>(
+                    AbstractServerFactory.IDENTIFIER.getName().getCode(),
+                    AbstractServerFactory.IDENTIFIER.getRemarks(), String.class,NAME,true);
+    
     /**
      * Version, Mandatory.
      */
@@ -42,7 +63,12 @@ public class SOSServerFactory extends AbstractServerFactory{
             new DefaultParameterDescriptor<SOSVersion>("version","Server version",SOSVersion.class,SOSVersion.v100,true);
     
     public static final ParameterDescriptorGroup PARAMETERS = 
-            new DefaultParameterDescriptorGroup("SOSParameters", URL,VERSION,SECURITY);
+            new DefaultParameterDescriptorGroup("SOSParameters", IDENTIFIER,URL,VERSION,SECURITY);
+
+    @Override
+    public Identification getIdentification() {
+        return IDENTIFICATION;
+    }
     
     @Override
     public ParameterDescriptorGroup getParametersDescriptor() {

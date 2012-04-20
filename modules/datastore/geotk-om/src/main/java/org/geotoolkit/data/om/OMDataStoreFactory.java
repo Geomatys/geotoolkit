@@ -17,8 +17,13 @@
 
 package org.geotoolkit.data.om;
 
+import org.geotoolkit.metadata.iso.DefaultIdentifier;
+import org.geotoolkit.metadata.iso.citation.DefaultCitation;
+import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
+import org.opengis.metadata.Identifier;
 import java.util.Collections;
 import org.geotoolkit.parameter.Parameters;
+import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
 import org.apache.commons.dbcp.BasicDataSource;
 
@@ -48,6 +53,21 @@ import static org.geotoolkit.jdbc.JDBCDataStoreFactory.*;
  */
 public class OMDataStoreFactory extends AbstractDataStoreFactory {
 
+    /** factory identification **/
+    public static final String NAME = "om";
+    public static final DefaultServiceIdentification IDENTIFICATION;
+    static {
+        IDENTIFICATION = new DefaultServiceIdentification();
+        final Identifier id = new DefaultIdentifier(NAME);
+        final DefaultCitation citation = new DefaultCitation(NAME);
+        citation.setIdentifiers(Collections.singleton(id));
+        IDENTIFICATION.setCitation(citation);
+    }
+    
+    public static final ParameterDescriptor<String> IDENTIFIER = new DefaultParameterDescriptor<String>(
+                    AbstractDataStoreFactory.IDENTIFIER.getName().getCode(),
+                    AbstractDataStoreFactory.IDENTIFIER.getRemarks(), String.class,NAME,true);
+    
     /**
      * Parameter for database port
      */
@@ -99,9 +119,14 @@ public class OMDataStoreFactory extends AbstractDataStoreFactory {
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new DefaultParameterDescriptorGroup("OMParameters",
-                DBTYPE,HOST,PORT,DATABASE,USER,PASSWD,NAMESPACE, SGBDTYPE, DERBYURL);
+                IDENTIFIER,DBTYPE,HOST,PORT,DATABASE,USER,PASSWD,NAMESPACE, SGBDTYPE, DERBYURL);
 
     private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.data.om");
+
+    @Override
+    public Identification getIdentification() {
+        return IDENTIFICATION;
+    }
     
     /**
      * {@inheritDoc }

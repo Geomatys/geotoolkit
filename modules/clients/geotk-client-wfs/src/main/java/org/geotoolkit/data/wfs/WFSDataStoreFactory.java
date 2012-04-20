@@ -19,17 +19,23 @@ package org.geotoolkit.data.wfs;
 
 import java.io.Serializable;
 import java.net.URL;
+import java.util.Collections;
 import java.util.Map;
 import org.geotoolkit.client.AbstractServerFactory;
 import org.geotoolkit.client.ServerFactory;
 import org.geotoolkit.data.AbstractDataStoreFactory;
 import org.geotoolkit.data.DataStore;
+import org.geotoolkit.metadata.iso.DefaultIdentifier;
+import org.geotoolkit.metadata.iso.citation.DefaultCitation;
+import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.wfs.xml.WFSVersion;
+import org.opengis.metadata.Identifier;
+import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.*;
 
 /**
@@ -40,6 +46,21 @@ import org.opengis.parameter.*;
  */
 public class WFSDataStoreFactory extends AbstractDataStoreFactory implements ServerFactory{
 
+    /** factory identification **/
+    public static final String NAME = "wfs";
+    public static final DefaultServiceIdentification IDENTIFICATION;
+    static {
+        IDENTIFICATION = new DefaultServiceIdentification();
+        final Identifier id = new DefaultIdentifier(NAME);
+        final DefaultCitation citation = new DefaultCitation(NAME);
+        citation.setIdentifiers(Collections.singleton(id));
+        IDENTIFICATION.setCitation(citation);
+    }
+    
+    public static final ParameterDescriptor<String> IDENTIFIER = new DefaultParameterDescriptor<String>(
+                    AbstractServerFactory.IDENTIFIER.getName().getCode(),
+                    AbstractServerFactory.IDENTIFIER.getRemarks(), String.class,NAME,true);
+    
     /**
      * Version, Mandatory.
      */
@@ -53,8 +74,13 @@ public class WFSDataStoreFactory extends AbstractDataStoreFactory implements Ser
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new DefaultParameterDescriptorGroup("WFSParameters",
-                AbstractServerFactory.URL, VERSION, AbstractServerFactory.SECURITY, POST_REQUEST);
+                IDENTIFIER, AbstractServerFactory.URL, VERSION, AbstractServerFactory.SECURITY, POST_REQUEST);
 
+    @Override
+    public Identification getIdentification() {
+        return IDENTIFICATION;
+    }
+    
     /**
      * {@inheritDoc }
      */

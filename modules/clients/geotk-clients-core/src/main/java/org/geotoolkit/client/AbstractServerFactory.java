@@ -19,6 +19,7 @@ package org.geotoolkit.client;
 
 import java.io.Serializable;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Map;
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.feature.FeatureUtilities;
@@ -41,6 +42,13 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public abstract class AbstractServerFactory extends Factory implements ServerFactory {
 
+    /**
+     * Identifier, Mandatory.
+     * Subclasses should redeclared this parameter with a different default value.
+     */
+    public static final ParameterDescriptor<String> IDENTIFIER =
+            new DefaultParameterDescriptor<String>("identifier","Factory identifier.",String.class,null,true);
+    
     /**
      * Server URL, Mandatory.
      */
@@ -95,7 +103,9 @@ public abstract class AbstractServerFactory extends Factory implements ServerFac
      * {@inheritDoc }
      */
     @Override
-    public Server create(final Map<String, ? extends Serializable> params) throws DataStoreException {
+    public Server create(Map<String, ? extends Serializable> params) throws DataStoreException {
+        params = forceIdentifier(params);
+        
         final ParameterValueGroup prm = FeatureUtilities.toParameter(params,getParametersDescriptor());
         if(prm == null){
             return null;
@@ -111,7 +121,9 @@ public abstract class AbstractServerFactory extends Factory implements ServerFac
      * {@inheritDoc }
      */
     @Override
-    public boolean canProcess(final Map<String, ? extends Serializable> params) {
+    public boolean canProcess(Map<String, ? extends Serializable> params) {
+        params = forceIdentifier(params);
+        
         final ParameterValueGroup prm = FeatureUtilities.toParameter(params,getParametersDescriptor());
         if(prm == null){
             return false;
@@ -150,5 +162,20 @@ public abstract class AbstractServerFactory extends Factory implements ServerFac
         result.setPass(Boolean.TRUE);
         return result;
     }
-
+    
+    /**
+     * Set the identifier parameter in the map if not present.
+     */
+    private Map<String,Serializable> forceIdentifier(Map params){
+        
+        if(!params.containsKey(IDENTIFIER.getName().getCode())){
+            //identifier is not specified, force it
+            final ParameterDescriptorGroup desc = getParametersDescriptor();
+            params = new HashMap<String, Serializable>(params);
+            final Object value = ((ParameterDescriptor)desc.descriptor(IDENTIFIER.getName().getCode())).getDefaultValue();
+            params.put(IDENTIFIER.getName().getCode(), (Serializable)value);
+        }
+        return params;
+    }
+    
 }

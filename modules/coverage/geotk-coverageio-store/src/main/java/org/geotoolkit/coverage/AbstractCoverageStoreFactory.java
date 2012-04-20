@@ -17,6 +17,7 @@
 package org.geotoolkit.coverage;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.feature.FeatureUtilities;
@@ -38,6 +39,13 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public abstract class AbstractCoverageStoreFactory extends Factory implements CoverageStoreFactory {
 
+    /**
+     * Identifier, Mandatory.
+     * Subclasses should redeclared this parameter with a different default value.
+     */
+    public static final ParameterDescriptor<String> IDENTIFIER =
+            new DefaultParameterDescriptor<String>("identifier","Factory identifier.",String.class,null,true);
+    
     /** parameter for namespace of the coveragestore */
     public static final ParameterDescriptor<String> NAMESPACE =
              new DefaultParameterDescriptor<String>("namespace","Namespace prefix",String.class,null,false);
@@ -65,7 +73,9 @@ public abstract class AbstractCoverageStoreFactory extends Factory implements Co
      * {@inheritDoc }
      */
     @Override
-    public CoverageStore create(final Map<String, ? extends Serializable> params) throws DataStoreException {
+    public CoverageStore create(Map<String, ? extends Serializable> params) throws DataStoreException {
+        params = forceIdentifier(params);
+        
         final ParameterValueGroup prm = FeatureUtilities.toParameter(params,getParametersDescriptor());
         if(prm == null){
             return null;
@@ -81,7 +91,9 @@ public abstract class AbstractCoverageStoreFactory extends Factory implements Co
      * {@inheritDoc }
      */
     @Override
-    public CoverageStore createNew(final Map<String, ? extends Serializable> params) throws DataStoreException {
+    public CoverageStore createNew(Map<String, ? extends Serializable> params) throws DataStoreException {
+        params = forceIdentifier(params);
+        
         final ParameterValueGroup prm = FeatureUtilities.toParameter(params,getParametersDescriptor());
         if(prm == null){
             return null;
@@ -97,7 +109,9 @@ public abstract class AbstractCoverageStoreFactory extends Factory implements Co
      * {@inheritDoc }
      */
     @Override
-    public boolean canProcess(final Map<String, ? extends Serializable> params) {
+    public boolean canProcess(Map<String, ? extends Serializable> params) {
+        params = forceIdentifier(params);
+        
         final ParameterValueGroup prm = FeatureUtilities.toParameter(params,getParametersDescriptor());
         if(prm == null){
             return false;
@@ -136,5 +150,19 @@ public abstract class AbstractCoverageStoreFactory extends Factory implements Co
         result.setPass(Boolean.TRUE);
         return result;
     }
-
+    
+    /**
+     * Set the identifier parameter in the map if not present.
+     */
+    private Map<String,Serializable> forceIdentifier(Map params){
+        
+        if(!params.containsKey(IDENTIFIER.getName().getCode())){
+            //identifier is not specified, force it
+            final ParameterDescriptorGroup desc = getParametersDescriptor();
+            params = new HashMap<String, Serializable>(params);
+            final Object value = ((ParameterDescriptor)desc.descriptor(IDENTIFIER.getName().getCode())).getDefaultValue();
+            params.put(IDENTIFIER.getName().getCode(), (Serializable)value);
+        }
+        return params;
+    }
 }

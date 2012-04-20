@@ -16,9 +16,14 @@
  */
 package org.geotoolkit.data.csv;
 
+import org.geotoolkit.data.AbstractDataStoreFactory;
 import org.geotoolkit.data.DataStoreFinder;
 import org.geotoolkit.data.FileDataStoreFactory;
 import org.geotoolkit.data.folder.AbstractFolderDataStoreFactory;
+import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
+import org.geotoolkit.parameter.DefaultParameterDescriptor;
+import org.opengis.metadata.identification.Identification;
+import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 
 /**
@@ -29,11 +34,24 @@ import org.opengis.parameter.ParameterDescriptorGroup;
  */
 public class CSVFolderDataStoreFactory extends AbstractFolderDataStoreFactory{
     
+    /** factory identification **/
+    public static final DefaultServiceIdentification IDENTIFICATION = derivateIdentification(CSVDataStoreFactory.IDENTIFICATION);
+    public static final String NAME = IDENTIFICATION.getCitation().getTitle().toString();
+    
+    public static final ParameterDescriptor<String> IDENTIFIER = new DefaultParameterDescriptor<String>(
+                    AbstractDataStoreFactory.IDENTIFIER.getName().getCode(),
+                    AbstractDataStoreFactory.IDENTIFIER.getRemarks(), String.class,NAME,true);
+    
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR = 
-            createDescriptor("CSV",CSVDataStoreFactory.PARAMETERS_DESCRIPTOR);
+            derivateDescriptor(IDENTIFIER,CSVDataStoreFactory.PARAMETERS_DESCRIPTOR);
     
     public CSVFolderDataStoreFactory(){
         super(PARAMETERS_DESCRIPTOR);
+    }
+
+    @Override
+    public Identification getIdentification() {
+        return IDENTIFICATION;
     }
     
     @Override

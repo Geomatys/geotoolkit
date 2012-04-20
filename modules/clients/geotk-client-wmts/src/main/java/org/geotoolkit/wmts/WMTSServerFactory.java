@@ -18,18 +18,24 @@ package org.geotoolkit.wmts;
 
 import java.io.Serializable;
 import java.net.URL;
+import java.util.Collections;
 import java.util.Map;
 import org.geotoolkit.client.AbstractServerFactory;
 import org.geotoolkit.client.map.CachedPyramidSet;
 import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.coverage.CoverageStoreFactory;
 import org.geotoolkit.feature.FeatureUtilities;
+import org.geotoolkit.metadata.iso.DefaultIdentifier;
+import org.geotoolkit.metadata.iso.citation.DefaultCitation;
+import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.wmts.xml.WMTSVersion;
+import org.opengis.metadata.Identifier;
+import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.*;
 
 /**
@@ -40,6 +46,21 @@ import org.opengis.parameter.*;
  */
 public class WMTSServerFactory extends AbstractServerFactory implements CoverageStoreFactory{
     
+    /** factory identification **/
+    public static final String NAME = "wmts";
+    public static final DefaultServiceIdentification IDENTIFICATION;
+    static {
+        IDENTIFICATION = new DefaultServiceIdentification();
+        final Identifier id = new DefaultIdentifier(NAME);
+        final DefaultCitation citation = new DefaultCitation(NAME);
+        citation.setIdentifiers(Collections.singleton(id));
+        IDENTIFICATION.setCitation(citation);
+    }
+    
+    public static final ParameterDescriptor<String> IDENTIFIER = new DefaultParameterDescriptor<String>(
+                    AbstractServerFactory.IDENTIFIER.getName().getCode(),
+                    AbstractServerFactory.IDENTIFIER.getRemarks(), String.class,NAME,true);
+    
     /**
      * Mandatory - the serveur verion
      */
@@ -48,7 +69,12 @@ public class WMTSServerFactory extends AbstractServerFactory implements Coverage
 
     public static final ParameterDescriptorGroup PARAMETERS =
             new DefaultParameterDescriptorGroup("WMTSParameters",
-                URL,VERSION,IMAGE_CACHE,NIO_QUERIES);
+                IDENTIFIER,URL,VERSION,IMAGE_CACHE,NIO_QUERIES);
+
+    @Override
+    public Identification getIdentification() {
+        return IDENTIFICATION;
+    }
     
     @Override
     public ParameterDescriptorGroup getParametersDescriptor() {

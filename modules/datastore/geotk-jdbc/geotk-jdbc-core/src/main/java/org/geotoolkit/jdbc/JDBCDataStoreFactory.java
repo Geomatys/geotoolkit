@@ -52,10 +52,6 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public abstract class JDBCDataStoreFactory extends AbstractDataStoreFactory {
 
-    /** parameter for database type */
-    public static final ParameterDescriptor<String> DBTYPE =
-             new DefaultParameterDescriptor<String>("dbtype","Type",String.class,null,true);
-
     /** parameter for database host */
     public static final ParameterDescriptor<String> HOST =
              new DefaultParameterDescriptor<String>("host","Host",String.class,"localhost",true);
@@ -126,12 +122,7 @@ public abstract class JDBCDataStoreFactory extends AbstractDataStoreFactory {
             }
         }
         
-        Object value = params.parameter(DBTYPE.getName().toString()).getValue();
-        if(value != null && value instanceof String){
-            return value.toString().equals(getDatabaseID());
-        }else{
-            return false;
-        }
+        return valid;
     }
 
     @Override

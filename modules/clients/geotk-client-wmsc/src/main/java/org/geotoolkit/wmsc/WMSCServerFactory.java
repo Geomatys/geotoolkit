@@ -17,13 +17,21 @@
 package org.geotoolkit.wmsc;
 
 import java.net.URL;
+import java.util.Collections;
 import org.geotoolkit.client.AbstractServerFactory;
 import org.geotoolkit.client.Server;
 import org.geotoolkit.client.map.CachedPyramidSet;
+import org.geotoolkit.metadata.iso.DefaultIdentifier;
+import org.geotoolkit.metadata.iso.citation.DefaultCitation;
+import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
+import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.DataStoreException;
+import org.opengis.metadata.Identifier;
+import org.opengis.metadata.identification.Identification;
+import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValue;
@@ -37,8 +45,28 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class WMSCServerFactory extends AbstractServerFactory{
     
+    /** factory identification **/
+    public static final String NAME = "wmsc";
+    public static final DefaultServiceIdentification IDENTIFICATION;
+    static {
+        IDENTIFICATION = new DefaultServiceIdentification();
+        final Identifier id = new DefaultIdentifier(NAME);
+        final DefaultCitation citation = new DefaultCitation(NAME);
+        citation.setIdentifiers(Collections.singleton(id));
+        IDENTIFICATION.setCitation(citation);
+    }
+    
+    public static final ParameterDescriptor<String> IDENTIFIER = new DefaultParameterDescriptor<String>(
+                    AbstractServerFactory.IDENTIFIER.getName().getCode(),
+                    AbstractServerFactory.IDENTIFIER.getRemarks(), String.class,NAME,true);
+    
     public static final ParameterDescriptorGroup PARAMETERS = 
-            new DefaultParameterDescriptorGroup("WMSCParameters", URL,SECURITY,IMAGE_CACHE,NIO_QUERIES);
+            new DefaultParameterDescriptorGroup("WMSCParameters", IDENTIFIER,URL,SECURITY,IMAGE_CACHE,NIO_QUERIES);
+
+    @Override
+    public Identification getIdentification() {
+        return IDENTIFICATION;
+    }
     
     @Override
     public ParameterDescriptorGroup getParametersDescriptor() {

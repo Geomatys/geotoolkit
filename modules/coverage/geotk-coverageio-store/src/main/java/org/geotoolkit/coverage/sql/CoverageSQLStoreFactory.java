@@ -16,9 +16,17 @@
  */
 package org.geotoolkit.coverage.sql;
 
+import java.util.Collections;
 import org.geotoolkit.coverage.AbstractCoverageStoreFactory;
 import org.geotoolkit.coverage.CoverageStore;
+import org.geotoolkit.metadata.iso.DefaultIdentifier;
+import org.geotoolkit.metadata.iso.citation.DefaultCitation;
+import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
+import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.storage.DataStoreException;
+import org.opengis.metadata.Identifier;
+import org.opengis.metadata.identification.Identification;
+import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -32,6 +40,26 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class CoverageSQLStoreFactory extends AbstractCoverageStoreFactory{
 
+    /** factory identification **/
+    public static final String NAME = "coverage-sql";
+    public static final DefaultServiceIdentification IDENTIFICATION;
+    static {
+        IDENTIFICATION = new DefaultServiceIdentification();
+        final Identifier id = new DefaultIdentifier(NAME);
+        final DefaultCitation citation = new DefaultCitation(NAME);
+        citation.setIdentifiers(Collections.singleton(id));
+        IDENTIFICATION.setCitation(citation);
+    }
+    
+    public static final ParameterDescriptor<String> IDENTIFIER = new DefaultParameterDescriptor<String>(
+                    AbstractCoverageStoreFactory.IDENTIFIER.getName().getCode(),
+                    AbstractCoverageStoreFactory.IDENTIFIER.getRemarks(), String.class,NAME,true);
+
+    @Override
+    public Identification getIdentification() {
+        return IDENTIFICATION;
+    }
+    
     @Override
     public String getDescription() {
         return "Coverage-SQL store";
