@@ -22,12 +22,16 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import org.geotoolkit.client.AbstractServer;
+import org.geotoolkit.client.ServerFactory;
+import org.geotoolkit.client.ServerFinder;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.type.Name;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * Client for google static maps.
@@ -55,10 +59,7 @@ public class StaticGoogleMapsServer extends AbstractServer implements CoverageSt
         names.add(DefaultName.valueOf("{http://google.com}"+GetMapRequest.TYPE_TERRAIN));
         LAYER_NAMES = Collections.unmodifiableSet(names);
     }
-    
-    private final String key;
-    private final boolean cacheImage;
-    
+        
     /**
      * Builds a google maps server with the default google server address.
      */
@@ -78,13 +79,26 @@ public class StaticGoogleMapsServer extends AbstractServer implements CoverageSt
     
     public StaticGoogleMapsServer(final URL serverURL, final String key, 
             final ClientSecurity security, boolean cacheImage) {
-        super(serverURL,security);
-        this.key = key;
-        this.cacheImage = cacheImage;
+        super(create(StaticGoogleServerFactory.PARAMETERS, serverURL, security));
+        Parameters.getOrCreate(StaticGoogleServerFactory.MAPTYPE, parameters).setValue(key);
+        Parameters.getOrCreate(StaticGoogleServerFactory.IMAGE_CACHE, parameters).setValue(cacheImage);
     }
-        
+    
+    public StaticGoogleMapsServer(ParameterValueGroup params) {
+        super(params);
+    }
+
+    @Override
+    public ServerFactory getFactory() {
+        return ServerFinder.getFactory(StaticGoogleServerFactory.NAME);
+    }
+    
     public String getKey(){
-        return key;
+        return Parameters.value(StaticGoogleServerFactory.MAPTYPE, parameters);
+    }
+    
+    public boolean getCacheImage(){
+        return Parameters.value(StaticGoogleServerFactory.IMAGE_CACHE, parameters);
     }
     
     /**
@@ -101,7 +115,7 @@ public class StaticGoogleMapsServer extends AbstractServer implements CoverageSt
 
     @Override
     public CoverageReference getCoverageReference(Name name) throws DataStoreException {
-        return new GoogleCoverageReference(this,name,cacheImage);
+        return new GoogleCoverageReference(this,name,getCacheImage());
     }
 
     @Override

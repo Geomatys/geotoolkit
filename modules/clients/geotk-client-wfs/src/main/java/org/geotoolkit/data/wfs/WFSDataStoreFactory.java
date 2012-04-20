@@ -18,7 +18,6 @@
 package org.geotoolkit.data.wfs;
 
 import java.io.Serializable;
-import java.net.URL;
 import java.util.Collections;
 import java.util.Map;
 import org.geotoolkit.client.AbstractServerFactory;
@@ -30,8 +29,6 @@ import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
-import org.geotoolkit.parameter.Parameters;
-import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.wfs.xml.WFSVersion;
 import org.opengis.metadata.Identifier;
@@ -112,16 +109,7 @@ public class WFSDataStoreFactory extends AbstractDataStoreFactory implements Ser
 
     @Override
     public WebFeatureServer create(ParameterValueGroup params) throws DataStoreException {
-        final URL url = (URL)Parameters.getOrCreate(AbstractServerFactory.URL, params).getValue();
-        final WFSVersion version = (WFSVersion)Parameters.getOrCreate(VERSION, params).getValue();
-        final boolean usePost = (Boolean)Parameters.getOrCreate(POST_REQUEST, params).getValue();
-        ClientSecurity security = null;
-        try{
-            final ParameterValue val = params.parameter(AbstractServerFactory.SECURITY.getName().getCode());
-            security = (ClientSecurity) val.getValue();
-        }catch(ParameterNotFoundException ex){}
-        
-        return new WebFeatureServer(url,security,version,usePost);
+        return new WebFeatureServer(params);
     }
 
 }

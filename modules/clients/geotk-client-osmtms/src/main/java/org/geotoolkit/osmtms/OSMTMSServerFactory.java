@@ -17,7 +17,6 @@
 package org.geotoolkit.osmtms;
 
 import java.io.Serializable;
-import java.net.URL;
 import java.util.Collections;
 import java.util.Map;
 import org.geotoolkit.client.AbstractServerFactory;
@@ -30,8 +29,6 @@ import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
-import org.geotoolkit.parameter.Parameters;
-import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
@@ -82,21 +79,8 @@ public class OSMTMSServerFactory extends AbstractServerFactory implements Covera
 
     @Override
     public OSMTileMapServer create(ParameterValueGroup params) throws DataStoreException {
-        final URL url = (URL)Parameters.getOrCreate(URL, params).getValue();
-        final int zoom = (Integer)Parameters.getOrCreate(MAX_ZOOM_LEVEL, params).getValue();
-        ClientSecurity security = null;
-        try{
-            final ParameterValue val = params.parameter(SECURITY.getName().getCode());
-            security = (ClientSecurity) val.getValue();
-        }catch(ParameterNotFoundException ex){}
         
-        boolean cacheImage = false;
-        try{
-            final ParameterValue val = params.parameter(IMAGE_CACHE.getName().getCode());
-            cacheImage = Boolean.TRUE.equals(val.getValue());
-        }catch(ParameterNotFoundException ex){}
-        
-        final OSMTileMapServer server = new OSMTileMapServer(url,security,zoom,cacheImage);
+        final OSMTileMapServer server = new OSMTileMapServer(params);
         
         try{
             final ParameterValue val = params.parameter(NIO_QUERIES.getName().getCode());

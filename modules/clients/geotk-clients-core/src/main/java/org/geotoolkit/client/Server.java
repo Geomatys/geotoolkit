@@ -20,6 +20,7 @@ import java.net.URI;
 import java.net.URL;
 import java.util.Map;
 import org.geotoolkit.security.ClientSecurity;
+import org.opengis.parameter.ParameterValueGroup;
 
 
 /**
@@ -30,6 +31,20 @@ import org.geotoolkit.security.ClientSecurity;
  * @module pending
  */
 public interface Server {
+    
+    /**
+     * Get the parameters used to initialize this source from it's factory.
+     * 
+     * @return source configuration parameters
+     */
+    ParameterValueGroup getConfiguration();
+    
+    /**
+     * Get the factory which created this source.
+     * 
+     * @return this source original factory
+     */
+    ServerFactory getFactory();
     
     /**
      * @return the server url as an {@link URI}, or {@code null} il the uri syntax

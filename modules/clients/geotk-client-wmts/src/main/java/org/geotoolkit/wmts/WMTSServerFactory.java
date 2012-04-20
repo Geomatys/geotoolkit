@@ -17,7 +17,6 @@
 package org.geotoolkit.wmts;
 
 import java.io.Serializable;
-import java.net.URL;
 import java.util.Collections;
 import java.util.Map;
 import org.geotoolkit.client.AbstractServerFactory;
@@ -30,8 +29,6 @@ import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
-import org.geotoolkit.parameter.Parameters;
-import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.wmts.xml.WMTSVersion;
 import org.opengis.metadata.Identifier;
@@ -83,21 +80,7 @@ public class WMTSServerFactory extends AbstractServerFactory implements Coverage
 
     @Override
     public WebMapTileServer create(ParameterValueGroup params) throws DataStoreException {
-        final URL url = (URL)Parameters.getOrCreate(URL, params).getValue();
-        final WMTSVersion version = (WMTSVersion)Parameters.getOrCreate(VERSION, params).getValue();
-        ClientSecurity security = null;
-        try{
-            final ParameterValue val = params.parameter(SECURITY.getName().getCode());
-            security = (ClientSecurity) val.getValue();
-        }catch(ParameterNotFoundException ex){}
-        
-        boolean cacheImage = false;
-        try{
-            final ParameterValue val = params.parameter(IMAGE_CACHE.getName().getCode());
-            cacheImage = Boolean.TRUE.equals(val.getValue());
-        }catch(ParameterNotFoundException ex){}
-        
-        final WebMapTileServer server = new WebMapTileServer(url,security,version,null,cacheImage);
+        final WebMapTileServer server = new WebMapTileServer(params);
         
         try{
             final ParameterValue val = params.parameter(NIO_QUERIES.getName().getCode());

@@ -64,7 +64,7 @@ public abstract class AbstractServerFactory extends Factory implements ServerFac
      * Cache images in memory, Optional.
      */
     public static final ParameterDescriptor<Boolean> IMAGE_CACHE =
-            new DefaultParameterDescriptor<Boolean>("imagecache", "Cache images in memory", Boolean.class,null,false);
+            new DefaultParameterDescriptor<Boolean>("imagecache", "Cache images in memory", Boolean.class,false,false);
     /**
      * Use NIO when possible for queries, Optional.
      */

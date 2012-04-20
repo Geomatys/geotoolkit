@@ -26,6 +26,8 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.client.AbstractServer;
+import org.geotoolkit.client.ServerFactory;
+import org.geotoolkit.client.ServerFinder;
 import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
@@ -36,6 +38,7 @@ import org.geotoolkit.data.session.Session;
 import org.geotoolkit.data.wfs.v110.*;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.SchemaException;
+import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.logging.Logging;
@@ -49,6 +52,7 @@ import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.geometry.Envelope;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * WFS server, used to aquiere capabilites and requests objects.
@@ -60,40 +64,55 @@ public class WebFeatureServer extends AbstractServer implements DataStore{
 
     private static final Logger LOGGER = Logging.getLogger(WebFeatureServer.class);
 
-    private final WFSVersion version;
     private WFSCapabilitiesType capabilities;
     private WFSDataStore store = null; //created when needed
-    private final boolean usePost;
 
     public WebFeatureServer(final URL serverURL, final String version) {
         this(serverURL,null,version);
     }
     
     public WebFeatureServer(final URL serverURL, final ClientSecurity security, final String version) {
-        super(serverURL,security);
+        super(create(WFSDataStoreFactory.PARAMETERS_DESCRIPTOR, serverURL, security));
         if(version.equals("1.1.0")){
-            this.version = WFSVersion.v110;
+            Parameters.getOrCreate(WFSDataStoreFactory.VERSION, parameters).setValue(WFSVersion.v110);
         }else{
             throw new IllegalArgumentException("unkonwed version : "+ version);
         }
+        Parameters.getOrCreate(WFSDataStoreFactory.POST_REQUEST, parameters).setValue(false);
         this.capabilities = null;
-        this.usePost = false;
     }
     
     public WebFeatureServer(final URL serverURL, final ClientSecurity security, final WFSVersion version, final boolean usePost) {
-        super(serverURL,security);
-        this.version = version;
+        super(create(WFSDataStoreFactory.PARAMETERS_DESCRIPTOR, serverURL, security));
         if(version == null){
             throw new IllegalArgumentException("unkonwed version : "+ version);
         }
+        Parameters.getOrCreate(WFSDataStoreFactory.VERSION, parameters).setValue(version);
+        Parameters.getOrCreate(WFSDataStoreFactory.POST_REQUEST, parameters).setValue(usePost);
         this.capabilities = null;
-        this.usePost = usePost;
+    }
+    
+    public WebFeatureServer(final ParameterValueGroup params) {
+        super(params);
+    }
+
+    @Override
+    public ServerFactory getFactory() {
+        return ServerFinder.getFactory(WFSDataStoreFactory.NAME);
+    }
+    
+    public WFSVersion getVersion(){
+        return Parameters.value(WFSDataStoreFactory.VERSION, parameters);
+    }
+    
+    public boolean getUsePost(){
+        return Parameters.value(WFSDataStoreFactory.POST_REQUEST, parameters);
     }
     
     private synchronized DataStore getStore() {
         if(store == null){
             try {
-                store = new WFSDataStore(serverURL.toURI(), usePost);
+                store = new WFSDataStore(serverURL.toURI(), getUsePost());
             } catch (MalformedURLException ex) {
                 LOGGER.log(Level.WARNING, ex.getMessage(), ex);
             } catch (URISyntaxException ex) {
@@ -116,7 +135,7 @@ public class WebFeatureServer extends AbstractServer implements DataStore{
             @Override
             public void run() {
                 try {
-                    capabilities = WFSBindingUtilities.unmarshall(createGetCapabilities().getURL(), version);
+                    capabilities = WFSBindingUtilities.unmarshall(createGetCapabilities().getURL(), getVersion());
                 } catch (Exception ex) {
                     capabilities = null;
                     try {
@@ -142,21 +161,14 @@ public class WebFeatureServer extends AbstractServer implements DataStore{
     }
 
     /**
-     * @return WFSVersion : currently used version for this server
-     */
-    public WFSVersion getVersion() {
-        return version;
-    }
-
-    /**
      * Create a getCapabilities request.
      * @return GetCapabilitiesRequest : getCapabilities request.
      */
     public GetCapabilitiesRequest createGetCapabilities() {
 
-        switch (version) {
+        switch (getVersion()) {
             case v110:
-                return new GetCapabilities110(serverURL.toString(),securityManager);
+                return new GetCapabilities110(serverURL.toString(),getClientSecurity());
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -167,9 +179,9 @@ public class WebFeatureServer extends AbstractServer implements DataStore{
      * @return DescribeFeatureTypeRequest : describe feature request.
      */
     public DescribeFeatureTypeRequest createDescribeFeatureType(){
-        switch (version) {
+        switch (getVersion()) {
             case v110:
-                return new DescribeFeatureType110(serverURL.toString(),securityManager);
+                return new DescribeFeatureType110(serverURL.toString(),getClientSecurity());
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -180,9 +192,9 @@ public class WebFeatureServer extends AbstractServer implements DataStore{
      * @return GetFeatureRequest : get feature request.
      */
     public GetFeatureRequest createGetFeature(){
-        switch (version) {
+        switch (getVersion()) {
             case v110:
-                return new GetFeature110(serverURL.toString(),securityManager);
+                return new GetFeature110(serverURL.toString(),getClientSecurity());
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -193,16 +205,16 @@ public class WebFeatureServer extends AbstractServer implements DataStore{
      * @return TransactionRequest : transaction request.
      */
     public TransactionRequest createTransaction(){
-        switch (version) {
+        switch (getVersion()) {
             case v110:
-                return new Transaction110(serverURL.toString(),securityManager);
+                return new Transaction110(serverURL.toString(),getClientSecurity());
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
     }
 
     public Insert createInsertElement(){
-        switch (version) {
+        switch (getVersion()) {
             case v110:
                 return new Insert110();
             default:
@@ -211,7 +223,7 @@ public class WebFeatureServer extends AbstractServer implements DataStore{
     }
 
     public Update createUpdateElement(){
-        switch (version) {
+        switch (getVersion()) {
             case v110:
                 return new Update110();
             default:
@@ -220,7 +232,7 @@ public class WebFeatureServer extends AbstractServer implements DataStore{
     }
 
     public Delete createDeleteElement(){
-        switch (version) {
+        switch (getVersion()) {
             case v110:
                 return new Delete110();
             default:
@@ -229,7 +241,7 @@ public class WebFeatureServer extends AbstractServer implements DataStore{
     }
 
     public Native createNativeElement(){
-        switch (version) {
+        switch (getVersion()) {
             case v110:
                 return new Native110();
             default:

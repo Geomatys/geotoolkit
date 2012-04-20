@@ -82,21 +82,7 @@ public class StaticGoogleServerFactory extends AbstractServerFactory implements 
 
     @Override
     public StaticGoogleMapsServer create(ParameterValueGroup params) throws DataStoreException {
-        final URL url = (URL)Parameters.getOrCreate(URL, params).getValue();
-        final String key = (String)Parameters.getOrCreate(MAPTYPE, params).getValue();
-        ClientSecurity security = null;
-        try{
-            final ParameterValue val = params.parameter(SECURITY.getName().getCode());
-            security = (ClientSecurity) val.getValue();
-        }catch(ParameterNotFoundException ex){}
-        
-        boolean cacheImage = false;
-        try{
-            final ParameterValue val = params.parameter(IMAGE_CACHE.getName().getCode());
-            cacheImage = Boolean.TRUE.equals(val.getValue());
-        }catch(ParameterNotFoundException ex){}
-        
-        final StaticGoogleMapsServer server = new StaticGoogleMapsServer(url,key,security,cacheImage);
+        final StaticGoogleMapsServer server = new StaticGoogleMapsServer(params);
         
         try{
             final ParameterValue val = params.parameter(NIO_QUERIES.getName().getCode());

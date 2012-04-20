@@ -21,6 +21,8 @@ import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.client.AbstractServer;
+import org.geotoolkit.client.ServerFactory;
+import org.geotoolkit.client.ServerFinder;
 import org.geotoolkit.csw.v202.DescribeRecord202;
 import org.geotoolkit.csw.v202.GetCapabilities202;
 import org.geotoolkit.csw.v202.GetDomain202;
@@ -31,6 +33,7 @@ import org.geotoolkit.csw.v202.Transaction202;
 import org.geotoolkit.csw.xml.AbstractCapabilities;
 import org.geotoolkit.csw.xml.CSWBindingUtilities;
 import org.geotoolkit.csw.xml.CSWVersion;
+import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.logging.Logging;
@@ -50,10 +53,6 @@ public class CatalogServicesServer extends AbstractServer {
      */
     private static final Logger LOGGER = Logging.getLogger(CatalogServicesServer.class);
     /**
-     * Version of this csw server
-     */
-    private final CSWVersion version;
-    /**
      * Stored capabilities object that can be updated by calling {@link CatalogServicesServer.updateGetCapabilities}
      */
     private AbstractCapabilities capabilities;
@@ -68,14 +67,14 @@ public class CatalogServicesServer extends AbstractServer {
      * @throws IllegalStateException throws an exception if the capabilities cannot be resolved for serverUrl
      */
     public CatalogServicesServer(final URL serverURL) throws IllegalStateException{
-        super(serverURL);
+        super(create(CSWServerFactory.PARAMETERS, serverURL, null));
         final AbstractCapabilities capa = getCapabilities();
         if(capa == null){
             throw new IllegalStateException("Cannot get Capabilities document from the server "+serverURL.toString());
         }
         final String v = capa.getVersion();
         try {
-            this.version = CSWVersion.fromCode(v);
+            parameters.parameter(CSWServerFactory.VERSION.getName().getCode()).setValue(CSWVersion.fromCode(v));
         } catch (IllegalArgumentException ex) {
             throw new IllegalStateException("unknown CSW version : " + v);
         }
@@ -95,9 +94,14 @@ public class CatalogServicesServer extends AbstractServer {
     }
     
     public CatalogServicesServer(final URL serverURL, final ClientSecurity security, final CSWVersion version) {
-        super(serverURL,security);
+        super(create(CSWServerFactory.PARAMETERS, serverURL, security));
         ArgumentChecks.ensureNonNull("version", version);
-        this.version = version;
+        parameters.parameter(CSWServerFactory.VERSION.getName().getCode()).setValue(version);
+    }
+
+    @Override
+    public ServerFactory getFactory() {
+        return ServerFinder.getFactory(CSWServerFactory.NAME);
     }
 
     private static CSWVersion toVersion(final String version){
@@ -112,7 +116,7 @@ public class CatalogServicesServer extends AbstractServer {
      * Returns the currently used version for this server
      */
     public CSWVersion getVersion() {
-        return version;
+        return Parameters.value(CSWServerFactory.VERSION,parameters);
     }
 
     /**
@@ -120,9 +124,9 @@ public class CatalogServicesServer extends AbstractServer {
      */
     public DescribeRecordRequest createDescribeRecord() {
 
-        switch (version) {
+        switch (getVersion()) {
             case v202:
-                return new DescribeRecord202(serverURL.toString(),securityManager);
+                return new DescribeRecord202(serverURL.toString(),getClientSecurity());
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -135,9 +139,9 @@ public class CatalogServicesServer extends AbstractServer {
      */
     public GetCapabilitiesRequest createGetCapabilities() {
 
-        switch (version) {
+        switch (getVersion()) {
             case v202:
-                return new GetCapabilities202(serverURL.toString(),securityManager);
+                return new GetCapabilities202(serverURL.toString(),getClientSecurity());
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -148,9 +152,9 @@ public class CatalogServicesServer extends AbstractServer {
      */
     public GetDomainRequest createGetDomain() {
 
-        switch (version) {
+        switch (getVersion()) {
             case v202:
-                return new GetDomain202(serverURL.toString(),securityManager);
+                return new GetDomain202(serverURL.toString(),getClientSecurity());
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -161,9 +165,9 @@ public class CatalogServicesServer extends AbstractServer {
      */
     public GetRecordByIdRequest createGetRecordById() {
 
-        switch (version) {
+        switch (getVersion()) {
             case v202:
-                return new GetRecordById202(serverURL.toString(),securityManager);
+                return new GetRecordById202(serverURL.toString(),getClientSecurity());
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -174,9 +178,9 @@ public class CatalogServicesServer extends AbstractServer {
      */
     public GetRecordsRequest createGetRecords() {
 
-        switch (version) {
+        switch (getVersion()) {
             case v202:
-                return new GetRecords202(serverURL.toString(),securityManager);
+                return new GetRecords202(serverURL.toString(),getClientSecurity());
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -187,9 +191,9 @@ public class CatalogServicesServer extends AbstractServer {
      */
     public HarvestRequest createHarvest() {
 
-        switch (version) {
+        switch (getVersion()) {
             case v202:
-                return new Harvest202(serverURL.toString(),securityManager);
+                return new Harvest202(serverURL.toString(),getClientSecurity());
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -200,9 +204,9 @@ public class CatalogServicesServer extends AbstractServer {
      */
     public TransactionRequest createTransaction() {
 
-        switch (version) {
+        switch (getVersion()) {
             case v202:
-                return new Transaction202(serverURL.toString(),securityManager);
+                return new Transaction202(serverURL.toString(),getClientSecurity());
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }

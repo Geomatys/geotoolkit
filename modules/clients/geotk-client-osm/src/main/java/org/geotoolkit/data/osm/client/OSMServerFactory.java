@@ -76,15 +76,7 @@ public class OSMServerFactory extends AbstractServerFactory{
 
     @Override
     public Server create(ParameterValueGroup params) throws DataStoreException {
-        final URL url = (URL)Parameters.getOrCreate(URL, params).getValue();
-        final OSMVersion version = (OSMVersion)Parameters.getOrCreate(VERSION, params).getValue();
-        ClientSecurity security = null;
-        try{
-            final ParameterValue val = params.parameter(SECURITY.getName().getCode());
-            security = (ClientSecurity) val.getValue();
-        }catch(ParameterNotFoundException ex){}
-        
-        return new OpenStreetMapServer(url,security,version);
+        return new OpenStreetMapServer(params);
     }
     
 }

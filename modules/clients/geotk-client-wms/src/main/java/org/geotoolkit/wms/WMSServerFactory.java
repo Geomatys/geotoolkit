@@ -81,15 +81,7 @@ public class WMSServerFactory extends AbstractServerFactory implements CoverageS
 
     @Override
     public WebMapServer create(ParameterValueGroup params) throws DataStoreException {
-        final URL url = (URL)Parameters.getOrCreate(URL, params).getValue();
-        final WMSVersion version = (WMSVersion)Parameters.getOrCreate(VERSION, params).getValue();
-        ClientSecurity security = null;
-        try{
-            final ParameterValue val = params.parameter(SECURITY.getName().getCode());
-            security = (ClientSecurity) val.getValue();
-        }catch(ParameterNotFoundException ex){}
-        
-        return new WebMapServer(url,security,version,null);
+        return new WebMapServer(params);
     }
 
     @Override

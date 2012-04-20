@@ -25,9 +25,12 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.client.AbstractServer;
+import org.geotoolkit.client.ServerFactory;
+import org.geotoolkit.client.ServerFinder;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.logging.Logging;
@@ -38,6 +41,7 @@ import org.geotoolkit.wmts.xml.WMTSVersion;
 import org.geotoolkit.wmts.xml.v100.Capabilities;
 import org.geotoolkit.wmts.xml.v100.LayerType;
 import org.opengis.feature.type.Name;
+import org.opengis.parameter.ParameterValueGroup;
 
 
 /**
@@ -50,8 +54,6 @@ public class WebMapTileServer extends AbstractServer implements CoverageStore{
 
     private static final Logger LOGGER = Logging.getLogger(WebMapTileServer.class);
 
-    private final WMTSVersion version;
-    private final boolean cacheImage;
     private Capabilities capabilities;
     private Set<Name> names = null;
 
@@ -108,10 +110,19 @@ public class WebMapTileServer extends AbstractServer implements CoverageStore{
      */
     public WebMapTileServer(final URL serverURL, final ClientSecurity security, 
             final WMTSVersion version, final Capabilities capabilities, boolean cacheImage) {
-        super(serverURL,security);
-        this.version = version;
+        super(create(WMTSServerFactory.PARAMETERS, serverURL, security));
+        Parameters.getOrCreate(WMTSServerFactory.VERSION, parameters).setValue(version);
+        Parameters.getOrCreate(WMTSServerFactory.IMAGE_CACHE, parameters).setValue(cacheImage);
         this.capabilities = capabilities;
-        this.cacheImage = cacheImage;
+    }
+
+    public WebMapTileServer(ParameterValueGroup param){
+        super(param);
+    }
+    
+    @Override
+    public ServerFactory getFactory() {
+        return ServerFinder.getFactory(WMTSServerFactory.NAME);
     }
     
     /**
@@ -128,7 +139,7 @@ public class WebMapTileServer extends AbstractServer implements CoverageStore{
             @Override
             public void run() {
                 try {
-                    capabilities = WMTSBindingUtilities.unmarshall(createGetCapabilities().getURL(), version);
+                    capabilities = WMTSBindingUtilities.unmarshall(createGetCapabilities().getURL(), getVersion());
                 } catch (Exception ex) {
                     capabilities = null;
                     try {
@@ -158,18 +169,22 @@ public class WebMapTileServer extends AbstractServer implements CoverageStore{
      * Returns the request version.
      */
     public WMTSVersion getVersion() {
-        return version;
+        return Parameters.value(WMTSServerFactory.VERSION, parameters);
     }
 
+    public boolean getImageCache(){
+        return Parameters.value(WMTSServerFactory.IMAGE_CACHE, parameters);
+    }
+    
     /**
      * Returns the request object, in the version chosen.
      *
      * @throws IllegalArgumentException if the version requested is not supported.
      */
     public GetTileRequest createGetTile() {
-        switch (version) {
+        switch (getVersion()) {
             case v100:
-                return new GetTile100(serverURL.toString(),securityManager);
+                return new GetTile100(serverURL.toString(),getClientSecurity());
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -181,9 +196,9 @@ public class WebMapTileServer extends AbstractServer implements CoverageStore{
      * @throws IllegalArgumentException if the version requested is not supported.
      */
     public GetCapabilitiesRequest createGetCapabilities() {
-        switch (version) {
+        switch (getVersion()) {
             case v100:
-                return new GetCapabilities100(serverURL.toString(),securityManager);
+                return new GetCapabilities100(serverURL.toString(),getClientSecurity());
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -210,7 +225,7 @@ public class WebMapTileServer extends AbstractServer implements CoverageStore{
     @Override
     public CoverageReference getCoverageReference(Name name) throws DataStoreException {
         if(getNames().contains(name)){
-            return new WMTSCoverageReference(this,name,cacheImage);
+            return new WMTSCoverageReference(this,name,getImageCache());
         }
         throw new DataStoreException("No layer for name : " + name);
     }

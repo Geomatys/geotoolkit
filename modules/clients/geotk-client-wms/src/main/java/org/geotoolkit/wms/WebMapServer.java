@@ -25,9 +25,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.client.AbstractServer;
 import org.geotoolkit.client.CapabilitiesException;
+import org.geotoolkit.client.ServerFactory;
+import org.geotoolkit.client.ServerFinder;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.logging.Logging;
@@ -44,6 +47,7 @@ import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
 import org.geotoolkit.wms.xml.WMSBindingUtilities;
 import org.geotoolkit.wms.xml.WMSVersion;
 import org.opengis.feature.type.Name;
+import org.opengis.parameter.ParameterValueGroup;
 
 
 /**
@@ -63,7 +67,6 @@ public class WebMapServer extends AbstractServer implements CoverageStore{
      */
     private static final long TIMEOUT_GETCAPS = 20000L;
 
-    private final WMSVersion version;
     private AbstractWMSCapabilities capabilities;
     private Set<Name> names = null;
 
@@ -139,11 +142,20 @@ public class WebMapServer extends AbstractServer implements CoverageStore{
      */
     public WebMapServer(final URL serverURL, final ClientSecurity security, 
             final WMSVersion version, final AbstractWMSCapabilities capabilities) {
-        super(serverURL,security);
-        this.version = version;
+        super(create(WMSServerFactory.PARAMETERS, serverURL, security));
+        Parameters.getOrCreate(WMSServerFactory.VERSION, parameters).setValue(version);
         this.capabilities = capabilities;
     }
 
+    public WebMapServer(ParameterValueGroup params) {
+        super(params);
+    }
+
+    @Override
+    public ServerFactory getFactory() {
+        return ServerFinder.getFactory(WMSServerFactory.NAME);
+    }
+    
     /**
      * {@inheritDoc}
      */
@@ -207,7 +219,7 @@ public class WebMapServer extends AbstractServer implements CoverageStore{
 
                 try {
                     System.out.println(getCaps.getURL());
-                    capabilities = WMSBindingUtilities.unmarshall(getCaps.getResponseStream(), version);
+                    capabilities = WMSBindingUtilities.unmarshall(getCaps.getResponseStream(), getVersion());
                 } catch (Exception ex) {
                     capabilities = null;
                     try {
@@ -249,7 +261,7 @@ public class WebMapServer extends AbstractServer implements CoverageStore{
      * @return 
      */
     public WMSVersion getVersion() {
-        return version;
+        return Parameters.value(WMSServerFactory.VERSION, parameters);
     }
 
     /**
@@ -259,11 +271,11 @@ public class WebMapServer extends AbstractServer implements CoverageStore{
      * @throws IllegalArgumentException if the version requested is not supported.
      */
     public GetMapRequest createGetMap() {
-        switch (version) {
+        switch (getVersion()) {
             case v111:
-                return new GetMap111(serverURL.toString(),securityManager);
+                return new GetMap111(serverURL.toString(),getClientSecurity());
             case v130:
-                return new GetMap130(serverURL.toString(),securityManager);
+                return new GetMap130(serverURL.toString(),getClientSecurity());
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -276,11 +288,11 @@ public class WebMapServer extends AbstractServer implements CoverageStore{
      * @throws IllegalArgumentException if the version requested is not supported.
      */
     public GetCapabilitiesRequest createGetCapabilities() {
-        switch (version) {
+        switch (getVersion()) {
             case v111:
-                return new GetCapabilities111(serverURL.toString(),securityManager);
+                return new GetCapabilities111(serverURL.toString(),getClientSecurity());
             case v130:
-                return new GetCapabilities130(serverURL.toString(),securityManager);
+                return new GetCapabilities130(serverURL.toString(),getClientSecurity());
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -293,11 +305,11 @@ public class WebMapServer extends AbstractServer implements CoverageStore{
      * @throws IllegalArgumentException if the version requested is not supported.
      */
     public GetLegendRequest createGetLegend(){
-        switch (version) {
+        switch (getVersion()) {
             case v111:
-                return new GetLegend111(serverURL.toString(),securityManager);
+                return new GetLegend111(serverURL.toString(),getClientSecurity());
             case v130:
-                return new GetLegend130(serverURL.toString(),securityManager);
+                return new GetLegend130(serverURL.toString(),getClientSecurity());
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -310,11 +322,11 @@ public class WebMapServer extends AbstractServer implements CoverageStore{
      * @throws IllegalArgumentException if the version requested is not supported.
      */
     public GetFeatureInfoRequest createGetFeatureInfo() {
-        switch (version) {
+        switch (getVersion()) {
             case v111:
-                return new GetFeatureInfo111(serverURL.toString(),securityManager);
+                return new GetFeatureInfo111(serverURL.toString(),getClientSecurity());
             case v130:
-                return new GetFeatureInfo130(serverURL.toString(),securityManager);
+                return new GetFeatureInfo130(serverURL.toString(),getClientSecurity());
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -373,7 +385,7 @@ public class WebMapServer extends AbstractServer implements CoverageStore{
     public String toString() {
         final StringBuilder sb = new StringBuilder("WebMapServer[");
         sb.append("serverUrl: ").append(serverURL).append(", ")
-          .append("version: ").append(version).append("]");
+          .append("version: ").append(getVersion()).append("]");
         return sb.toString();
     }
 }

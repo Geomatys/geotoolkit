@@ -22,6 +22,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.Unmarshaller;
 import org.geotoolkit.client.AbstractServer;
+import org.geotoolkit.client.ServerFactory;
+import org.geotoolkit.client.ServerFinder;
+import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.wps.v100.DescribeProcess100;
@@ -29,6 +32,7 @@ import org.geotoolkit.wps.v100.Execute100;
 import org.geotoolkit.wps.v100.GetCapabilities100;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
 import org.geotoolkit.wps.xml.v100.WPSCapabilitiesType;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * WPS server, used to aquiere capabilites and requests process.
@@ -39,7 +43,6 @@ public class WebProcessingServer extends AbstractServer{
     
     private static final Logger LOGGER = Logging.getLogger(WebProcessingServer.class);
     
-    private final WPSVersion version;
     private WPSCapabilitiesType capabilities;
     
     /**
@@ -74,9 +77,9 @@ public class WebProcessingServer extends AbstractServer{
      * @param version 
      */  
    public WebProcessingServer(final URL serverURL, final ClientSecurity security, final String version) {
-       super(serverURL, security);
+        super(create(WPSServerFactory.PARAMETERS, serverURL, security));
        if (version.equals("1.0.0")) {
-           this.version = WPSVersion.v100;
+            Parameters.getOrCreate(WPSServerFactory.VERSION, parameters).setValue(WPSVersion.v100);
        } else {
            throw new IllegalArgumentException("Unkonwed version : " + version);
        }
@@ -89,19 +92,28 @@ public class WebProcessingServer extends AbstractServer{
      * @param version 
      */  
    public WebProcessingServer(final URL serverURL, final ClientSecurity security, final WPSVersion version) {
-        super(serverURL, security);
-        this.version = version;
+        super(create(WPSServerFactory.PARAMETERS, serverURL, security));
         if (version == null) {
             throw new IllegalArgumentException("Unkonwed version : " + version);
         }
+        Parameters.getOrCreate(WPSServerFactory.VERSION, parameters).setValue(version);
         this.capabilities = null;
+    }
+
+    public WebProcessingServer(ParameterValueGroup params) {
+        super(params);
+    }
+
+    @Override
+    public ServerFactory getFactory() {
+        return ServerFinder.getFactory(WPSServerFactory.NAME);
     }
     
     /**
      * @return WPSVersion : currently used version for this server
      */
     public WPSVersion getVersion() {
-        return version;
+        return Parameters.value(WPSServerFactory.VERSION, parameters);
     }
     
     /**
@@ -150,9 +162,9 @@ public class WebProcessingServer extends AbstractServer{
      */
     public GetCapabilitiesRequest createGetCapabilities() {
 
-        switch (version) {
+        switch (getVersion()) {
             case v100:
-                return new GetCapabilities100(serverURL.toString(),securityManager);
+                return new GetCapabilities100(serverURL.toString(),getClientSecurity());
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -163,9 +175,9 @@ public class WebProcessingServer extends AbstractServer{
      * @return DescribeProcessRequest : describe process request.
      */
     public DescribeProcessRequest createDescribeProcess(){
-        switch (version) {
+        switch (getVersion()) {
             case v100:
-                return new DescribeProcess100(serverURL.toString(),securityManager);
+                return new DescribeProcess100(serverURL.toString(),getClientSecurity());
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -176,9 +188,9 @@ public class WebProcessingServer extends AbstractServer{
      * @return ExecuteRequest : execute request.
      */
     public ExecuteRequest createExecute(){
-        switch (version) {
+        switch (getVersion()) {
             case v100:
-                return new Execute100(serverURL.toString(),securityManager);
+                return new Execute100(serverURL.toString(),getClientSecurity());
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }

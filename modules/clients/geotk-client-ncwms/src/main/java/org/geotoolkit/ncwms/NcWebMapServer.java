@@ -103,10 +103,10 @@ public class NcWebMapServer extends WebMapServer{
         switch (getVersion()) {
             
             case v111:
-                return new NcGetMap111(getURI().toString(),securityManager);
+                return new NcGetMap111(getURI().toString(),getClientSecurity());
                 
             case v130:
-                return new NcGetMap130(getURI().toString(),securityManager);
+                return new NcGetMap130(getURI().toString(),getClientSecurity());
                 
             default:
                 throw new IllegalArgumentException("Version was not defined");
@@ -122,10 +122,10 @@ public class NcWebMapServer extends WebMapServer{
         switch (getVersion()) {
             
             case v111:
-                return new NcGetLegend111(getURI().toString(),securityManager);
+                return new NcGetLegend111(getURI().toString(),getClientSecurity());
                 
             case v130:
-                return new NcGetLegend130(getURI().toString(),securityManager);
+                return new NcGetLegend130(getURI().toString(),getClientSecurity());
                 
             default:
                 throw new IllegalArgumentException("Version was not defined");
@@ -142,10 +142,10 @@ public class NcWebMapServer extends WebMapServer{
         switch (getVersion()) {
             
             case v111:
-                return new NcGetFeatureInfo111(getURI().toString(),securityManager);
+                return new NcGetFeatureInfo111(getURI().toString(),getClientSecurity());
                 
             case v130:
-                return new NcGetFeatureInfo130(getURI().toString(),securityManager);
+                return new NcGetFeatureInfo130(getURI().toString(),getClientSecurity());
                 
             default:
                 throw new IllegalArgumentException("Version was not defined");
@@ -199,10 +199,10 @@ public class NcWebMapServer extends WebMapServer{
         switch (getVersion()) {
             
             case v111:
-                return new NcGetTimeseries111(getURI().toString(),securityManager);
+                return new NcGetTimeseries111(getURI().toString(),getClientSecurity());
                 
             case v130:
-                return new NcGetTimeseries130(getURI().toString(),securityManager);
+                return new NcGetTimeseries130(getURI().toString(),getClientSecurity());
                 
             default:
                 throw new IllegalArgumentException("Version was not defined");

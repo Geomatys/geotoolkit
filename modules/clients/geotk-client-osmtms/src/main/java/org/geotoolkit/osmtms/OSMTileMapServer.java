@@ -20,14 +20,17 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.Set;
 import org.geotoolkit.client.AbstractServer;
+import org.geotoolkit.client.ServerFactory;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.coverage.PyramidSet;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.osmtms.model.OSMTMSPyramidSet;
+import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.type.Name;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * Represent a Tile Map Server instance.
@@ -38,7 +41,6 @@ import org.opengis.feature.type.Name;
 public class OSMTileMapServer extends AbstractServer implements CoverageStore{
     
     private final OSMTMSPyramidSet pyramidSet;
-    private final int maxZoomLevel;
     private final Name name;
     
     /**
@@ -74,12 +76,27 @@ public class OSMTileMapServer extends AbstractServer implements CoverageStore{
      */
     public OSMTileMapServer(final URL serverURL, final ClientSecurity security,
             final int maxZoomLevel, boolean cacheImage) {
-        super(serverURL,security);
-        this.maxZoomLevel = maxZoomLevel;
+        super(create(OSMTMSServerFactory.PARAMETERS, serverURL, security));
+        Parameters.getOrCreate(OSMTMSServerFactory.MAX_ZOOM_LEVEL, parameters).setValue(maxZoomLevel);
         this.name = new DefaultName(serverURL.toString(),"main");
         pyramidSet = new OSMTMSPyramidSet(this,maxZoomLevel,cacheImage);
     }
 
+    public OSMTileMapServer(ParameterValueGroup params){
+        super(params);
+        this.name = new DefaultName(serverURL.toString(),"main");
+        pyramidSet = new OSMTMSPyramidSet(this,getMaxZoomLevel(),getCacheImage());
+    }
+        
+    @Override
+    public ServerFactory getFactory() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public boolean getCacheImage(){
+        return Parameters.value(OSMTMSServerFactory.IMAGE_CACHE, parameters);
+    }
+    
     public PyramidSet getPyramidSet(){
         return pyramidSet;
     }
@@ -88,14 +105,14 @@ public class OSMTileMapServer extends AbstractServer implements CoverageStore{
      * @return maximum scale level available on this server.
      */
     public int getMaxZoomLevel() {
-        return maxZoomLevel;
+        return Parameters.value(OSMTMSServerFactory.MAX_ZOOM_LEVEL, parameters);
     }
 
     /**
      * Returns the request object.
      */
     public GetTileRequest createGetTile() {
-        return new DefaultGetTile(serverURL.toString(),securityManager);
+        return new DefaultGetTile(serverURL.toString(),getClientSecurity());
     }
 
     @Override

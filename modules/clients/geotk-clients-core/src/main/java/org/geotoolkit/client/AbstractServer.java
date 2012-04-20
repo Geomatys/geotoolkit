@@ -26,10 +26,13 @@ import java.util.logging.Logger;
 import java.util.List;
 import java.util.Map;
 
+import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.security.DefaultClientSecurity;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.logging.Logging;
+import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * Default implementation of a Server.
@@ -41,20 +44,26 @@ public abstract class AbstractServer implements Server{
 
     private static final Logger LOGGER = Logging.getLogger(AbstractServer.class);
     
+    protected final ParameterValueGroup parameters;
     protected final URL serverURL;
-    protected final ClientSecurity securityManager;
     
-    private final Map<String,Object> parameters = new HashMap<String,Object>();    
+    private final Map<String,Object> userProperties = new HashMap<String,Object>();    
     private String sessionId = null;
 
-    public AbstractServer(URL serverURL) {
-        this(serverURL,null);
+
+    public AbstractServer(final ParameterValueGroup params) {
+        this.parameters = params;
+        this.serverURL = Parameters.value(AbstractServerFactory.URL,params);
+        ArgumentChecks.ensureNonNull("server url", serverURL);        
     }
 
-    public AbstractServer(final URL serverURL, final ClientSecurity securityManager) {
-        ArgumentChecks.ensureNonNull("server url", serverURL);
-        this.serverURL = serverURL;
-        this.securityManager = (securityManager == null) ?  DefaultClientSecurity.NO_SECURITY : securityManager;
+    @Override
+    public ParameterValueGroup getConfiguration() {
+        if(parameters != null){
+            //defensive copy
+            return parameters.clone();
+        }
+        return null;
     }
     
     /**
@@ -83,7 +92,8 @@ public abstract class AbstractServer implements Server{
      */
     @Override
     public ClientSecurity getClientSecurity() {
-        return securityManager;
+        final ClientSecurity securityManager = Parameters.value(AbstractServerFactory.SECURITY,parameters); 
+        return (securityManager == null) ?  DefaultClientSecurity.NO_SECURITY : securityManager;
     }
     
      /**
@@ -91,7 +101,7 @@ public abstract class AbstractServer implements Server{
      */
     @Override
     public void setUserProperty(final String key,final Object value){
-        parameters.put(key, value);
+        userProperties.put(key, value);
     }
 
     /**
@@ -99,7 +109,7 @@ public abstract class AbstractServer implements Server{
      */
     @Override
     public Object getUserProperty(final String key){
-        return parameters.get(key);
+        return userProperties.get(key);
     }
 
     /**
@@ -107,7 +117,7 @@ public abstract class AbstractServer implements Server{
      */
     @Override
     public Map<String, Object> getUserProperties() {
-        return parameters;
+        return userProperties;
     }
     
     /**
@@ -131,5 +141,13 @@ public abstract class AbstractServer implements Server{
                 }
             }
         }
+    }
+    
+    protected static ParameterValueGroup create(final ParameterDescriptorGroup desc,
+            final URL url, final ClientSecurity security){
+        final ParameterValueGroup param = desc.createValue();
+        param.parameter(AbstractServerFactory.URL.getName().getCode()).setValue(url);
+        param.parameter(AbstractServerFactory.SECURITY.getName().getCode()).setValue(security);
+        return param;
     }
 }

@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.wcs;
 
-import java.net.URL;
 import java.util.Collections;
 import org.geotoolkit.client.AbstractServerFactory;
 import org.geotoolkit.client.Server;
@@ -25,8 +24,6 @@ import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
-import org.geotoolkit.parameter.Parameters;
-import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.wcs.xml.WCSVersion;
 import org.opengis.metadata.Identifier;
@@ -77,15 +74,7 @@ public class WCSServerFactory extends AbstractServerFactory{
 
     @Override
     public Server create(ParameterValueGroup params) throws DataStoreException {
-        final URL url = (URL)Parameters.getOrCreate(URL, params).getValue();
-        final WCSVersion version = (WCSVersion)Parameters.getOrCreate(VERSION, params).getValue();
-        ClientSecurity security = null;
-        try{
-            final ParameterValue val = params.parameter(SECURITY.getName().getCode());
-            security = (ClientSecurity) val.getValue();
-        }catch(ParameterNotFoundException ex){}
-        
-        return new WebCoverageServer(url,security,version);
+        return new WebCoverageServer(params);
     }
     
 }
