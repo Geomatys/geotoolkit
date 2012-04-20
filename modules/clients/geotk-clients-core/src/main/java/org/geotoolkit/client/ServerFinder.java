@@ -28,6 +28,7 @@ import org.geotoolkit.factory.FactoryRegistry;
 import org.geotoolkit.internal.LazySet;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.logging.Logging;
+import org.opengis.metadata.Identifier;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -263,6 +264,25 @@ public final class ServerFinder{
         return availableStores.iterator();
     }
 
+    /**
+     * Search factories for one which identifier is the given value.
+     * @param identifier
+     * @return ServerFactory or null if factory not found.
+     */
+    public static ServerFactory getFactory(String identifier){
+        final Iterator<ServerFactory> ite = getAllFactories();
+        while(ite.hasNext()){
+            final ServerFactory candidate = ite.next();
+            for(final Identifier id : candidate.getIdentification().getCitation().getIdentifiers()){
+                if(id.getCode().equalsIgnoreCase(identifier)){
+                    return candidate;
+                }
+            }
+        }
+        
+        return null;
+    }
+    
     /**
      * Returns the service registry. The registry will be created the first time
      * this method is invoked.
