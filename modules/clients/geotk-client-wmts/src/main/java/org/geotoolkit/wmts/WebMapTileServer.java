@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.client.AbstractServer;
+import org.geotoolkit.client.AbstractServerFactory;
 import org.geotoolkit.client.ServerFinder;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageStore;
@@ -172,7 +173,7 @@ public class WebMapTileServer extends AbstractServer implements CoverageStore{
     }
 
     public boolean getImageCache(){
-        return Parameters.value(WMTSServerFactory.IMAGE_CACHE, parameters);
+        return (Boolean)Parameters.getOrCreate(AbstractServerFactory.IMAGE_CACHE, parameters).getValue();
     }
     
     /**

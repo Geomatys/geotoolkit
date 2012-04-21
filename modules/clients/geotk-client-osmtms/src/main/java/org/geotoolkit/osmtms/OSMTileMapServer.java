@@ -20,7 +20,6 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.Set;
 import org.geotoolkit.client.AbstractServer;
-import org.geotoolkit.client.ServerFactory;
 import org.geotoolkit.client.ServerFinder;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageStore;
@@ -95,7 +94,7 @@ public class OSMTileMapServer extends AbstractServer implements CoverageStore{
     }
 
     public boolean getCacheImage(){
-        return Parameters.value(OSMTMSServerFactory.IMAGE_CACHE, parameters);
+        return (Boolean)Parameters.getOrCreate(OSMTMSServerFactory.IMAGE_CACHE, parameters).getValue();
     }
     
     public PyramidSet getPyramidSet(){

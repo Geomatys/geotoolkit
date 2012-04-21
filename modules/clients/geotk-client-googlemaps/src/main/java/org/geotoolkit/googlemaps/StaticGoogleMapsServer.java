@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import org.geotoolkit.client.AbstractServer;
-import org.geotoolkit.client.ServerFactory;
+import org.geotoolkit.client.AbstractServerFactory;
 import org.geotoolkit.client.ServerFinder;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageStore;
@@ -98,7 +98,7 @@ public class StaticGoogleMapsServer extends AbstractServer implements CoverageSt
     }
     
     public boolean getCacheImage(){
-        return Parameters.value(StaticGoogleServerFactory.IMAGE_CACHE, parameters);
+        return (Boolean)Parameters.getOrCreate(AbstractServerFactory.IMAGE_CACHE, parameters).getValue();
     }
     
     /**
