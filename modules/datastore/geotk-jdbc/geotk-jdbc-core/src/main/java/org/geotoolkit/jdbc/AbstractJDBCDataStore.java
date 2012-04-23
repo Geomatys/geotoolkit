@@ -33,6 +33,7 @@ import org.geotoolkit.jdbc.dialect.SQLDialect;
 import org.opengis.feature.FeatureFactory;
 import org.opengis.feature.type.FeatureTypeFactory;
 import org.opengis.filter.FilterFactory;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  *
@@ -70,13 +71,8 @@ public abstract class AbstractJDBCDataStore extends AbstractDataStore implements
      */
     protected int fetchSize;
 
-
-    public AbstractJDBCDataStore() {
-        this(null);
-    }
-
-    public AbstractJDBCDataStore(final String namespace) {
-        super(namespace);
+    public AbstractJDBCDataStore(final ParameterValueGroup params) {
+        super(params);
     }
 
     /**

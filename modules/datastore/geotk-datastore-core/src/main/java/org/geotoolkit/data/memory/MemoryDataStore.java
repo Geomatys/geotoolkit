@@ -17,6 +17,7 @@
 
 package org.geotoolkit.data.memory;
 
+import org.geotoolkit.data.DataStoreFactory;
 import org.geotoolkit.factory.Hints;
 import com.vividsolutions.jts.geom.Geometry;
 import java.util.ArrayList;
@@ -150,6 +151,15 @@ public class MemoryDataStore extends AbstractDataStore{
         singleTypeLock = false;
     }
 
+    /**
+     * Memory datastore has no factory
+     * @return null
+     */
+    @Override
+    public DataStoreFactory getFactory() {
+        return null;
+    }
+    
     /**
      * Create a memory datastore with a single type.
      *

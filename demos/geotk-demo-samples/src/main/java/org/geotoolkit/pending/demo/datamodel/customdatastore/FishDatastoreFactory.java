@@ -2,9 +2,6 @@
 
 package org.geotoolkit.pending.demo.datamodel.customdatastore;
 
-import java.net.URISyntaxException;
-import java.net.URL;
-
 import java.util.Collections;
 import org.geotoolkit.data.AbstractDataStoreFactory;
 import org.geotoolkit.data.AbstractFileDataStoreFactory;
@@ -60,15 +57,7 @@ public class FishDatastoreFactory extends AbstractFileDataStoreFactory{
 
     @Override
     public DataStore create(ParameterValueGroup params) throws DataStoreException {
-
-        URL url = (URL) params.parameter(URLP.getName().toString()).getValue();
-        String namespace = (String) params.parameter(NAMESPACE.getName().toString()).getValue();
-        
-        try {
-            return new FishDataStore(url, namespace);
-        } catch (URISyntaxException ex) {
-            throw new DataStoreException(ex);
-        }
+        return new FishDataStore(params);
     }
 
     @Override

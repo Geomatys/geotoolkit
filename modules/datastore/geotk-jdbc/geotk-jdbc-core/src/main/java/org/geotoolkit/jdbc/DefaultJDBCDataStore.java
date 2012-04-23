@@ -36,6 +36,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
 
+import org.geotoolkit.data.DataStoreFactory;
+import org.geotoolkit.data.DataStoreFinder;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.jdbc.fid.PrimaryKey;
 import org.geotoolkit.jdbc.fid.PrimaryKeyColumn;
@@ -88,6 +90,7 @@ import org.opengis.filter.Filter;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.geometry.Envelope;
+import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -107,9 +110,16 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
     private final DataBaseModel dbmodel = new DataBaseModel(this);
     private final QueryCapabilities capabilities = new DefaultQueryCapabilities(true, new String[]{Query.GEOTK_QOM, CUSTOM_SQL});
     final SQLQueryBuilder queryBuilder = new SQLQueryBuilder(this);
+    private final String factoryId;
 
-    DefaultJDBCDataStore(final String namespace){
-        super(namespace);
+    DefaultJDBCDataStore(final ParameterValueGroup params,final String factoryId){
+        super(params);
+        this.factoryId =factoryId;
+    }
+
+    @Override
+    public DataStoreFactory getFactory() {
+        return DataStoreFinder.getFactory(factoryId);
     }
 
     @Override

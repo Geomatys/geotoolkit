@@ -53,7 +53,7 @@ public class DBFReadingTest extends AbstractReadingTests{
 
         final File file = new File("src/test/resources/org/geotoolkit/data/dbf/sample.dbf");
         final String ns = "http://test.com";
-        store = new DbaseFileDataStore(file, ns, "dbfstore");
+        store = new DbaseFileDataStore(file, ns);
 
         for(Name n : store.getNames()){
             FeatureType ft = store.getFeatureType(n);
@@ -65,7 +65,7 @@ public class DBFReadingTest extends AbstractReadingTests{
         final AttributeTypeBuilder buildAtt = new AttributeTypeBuilder();
         final AttributeDescriptorBuilder buildDesc = new AttributeDescriptorBuilder();
         
-        Name name = new DefaultName("http://test.com", "dbfstore");
+        Name name = new DefaultName("http://test.com", "sample");
         builder.reset();
         builder.setName(name);
         

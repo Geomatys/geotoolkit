@@ -20,10 +20,12 @@ package org.geotoolkit.data.csv;
 import com.vividsolutions.jts.geom.Geometry;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.geotoolkit.data.AbstractModelTests;
 import org.geotoolkit.data.DataStore;
+import org.geotoolkit.storage.DataStoreException;
 
 /**
  *
@@ -36,7 +38,7 @@ public class CSVModelTest extends AbstractModelTests{
     private final List<Class> geometries = new ArrayList<Class>();
     private final List<Class> attributs = new ArrayList<Class>();
 
-    public CSVModelTest() throws IOException{
+    public CSVModelTest() throws IOException, MalformedURLException, DataStoreException{
         geometries.add(Geometry.class);
         attributs.add(String.class);
         attributs.add(Integer.class);
@@ -44,7 +46,7 @@ public class CSVModelTest extends AbstractModelTests{
 
         File f = File.createTempFile("temp", "csv");
         f.deleteOnExit();
-        store = new CSVDataStore(f, "http://geotoolkit.org", "csvstore", ';');
+        store = new CSVDataStore(f, "http://geotoolkit.org", ';');
     }
 
     @Override

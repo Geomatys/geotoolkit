@@ -20,6 +20,9 @@ import java.io.IOException;
 
 import java.util.Collections;
 import org.geotoolkit.data.AbstractDataStoreFactory;
+import org.geotoolkit.data.DataStoreFactory;
+import org.geotoolkit.data.DataStoreFinder;
+import org.geotoolkit.jdbc.DefaultJDBCDataStore;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.jdbc.JDBCDataStore;
 import org.geotoolkit.jdbc.JDBCDataStoreFactory;

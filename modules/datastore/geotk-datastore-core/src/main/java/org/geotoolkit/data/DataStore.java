@@ -37,6 +37,7 @@ import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.geometry.Envelope;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * A Datastore is a storage object which manage a serie of FeatureTypes.
@@ -52,6 +53,20 @@ import org.opengis.geometry.Envelope;
  */
 public interface DataStore {
 
+    /**
+     * Get the parameters used to initialize this source from it's factory.
+     * 
+     * @return source configuration parameters
+     */
+    ParameterValueGroup getConfiguration();
+    
+    /**
+     * Get the factory which created this source.
+     * 
+     * @return this source original factory
+     */
+    DataStoreFactory getFactory();
+    
     /**
      * Create a session, that session may be synchrone or asynchrone.
      * If you choose it to be synchrone, every changes made in the session are directly

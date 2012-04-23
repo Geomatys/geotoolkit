@@ -192,7 +192,7 @@ public class SMLDataStoreFactory extends AbstractDataStoreFactory {
             dataSource.setAccessToUnderlyingConnectionAllowed(true);
 
             final ManageableDataSource source = new DBCPDataSource(dataSource);
-            return new SMLDataStore(source);
+            return new SMLDataStore(params,source);
         } catch (IOException ex) {
             throw new DataStoreException(ex);
         }

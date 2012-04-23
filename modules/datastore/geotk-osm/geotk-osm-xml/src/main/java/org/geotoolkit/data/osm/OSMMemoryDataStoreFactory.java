@@ -90,7 +90,7 @@ public class OSMMemoryDataStoreFactory extends AbstractFileDataStoreFactory {
         }
         final String name = path.substring(slash, dot);
         try {
-            return new OSMMemoryDataStore(IOUtilities.toFile(url, null));
+            return new OSMMemoryDataStore(params,IOUtilities.toFile(url, null));
         } catch (Exception ex) {
             throw new DataStoreException(ex);
         }

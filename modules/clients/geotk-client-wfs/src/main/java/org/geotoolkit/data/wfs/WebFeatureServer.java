@@ -26,7 +26,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.client.AbstractServer;
-import org.geotoolkit.client.ServerFactory;
 import org.geotoolkit.client.ServerFinder;
 import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.FeatureReader;
@@ -97,8 +96,8 @@ public class WebFeatureServer extends AbstractServer implements DataStore{
     }
 
     @Override
-    public ServerFactory getFactory() {
-        return ServerFinder.getFactory(WFSDataStoreFactory.NAME);
+    public WFSDataStoreFactory getFactory() {
+        return (WFSDataStoreFactory)ServerFinder.getFactory(WFSDataStoreFactory.NAME);
     }
     
     public WFSVersion getVersion(){

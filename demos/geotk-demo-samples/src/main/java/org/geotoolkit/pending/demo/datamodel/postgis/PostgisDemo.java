@@ -5,6 +5,7 @@ import org.geotoolkit.data.DataStoreFinder;
 import org.geotoolkit.data.postgis.PostgisNGDataStoreFactory;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataStoreException;
+import org.opengis.feature.type.Name;
 import org.opengis.parameter.ParameterValueGroup;
 
 public class PostgisDemo {
@@ -21,6 +22,11 @@ public class PostgisDemo {
         Parameters.getOrCreate(PostgisNGDataStoreFactory.PASSWD, parameters).setValue("secret");
         
         final DataStore store = DataStoreFinder.get(parameters);
+        
+        for(Name n : store.getNames()){
+            System.out.println(store.getFeatureType(n));
+        }
+        
     }
 
 }

@@ -17,13 +17,10 @@
 
 package org.geotoolkit.data.gpx;
 
-import java.io.IOException;
-import java.net.URL;
 import java.util.Collections;
 import org.geotoolkit.data.AbstractDataStoreFactory;
 import org.geotoolkit.data.AbstractFileDataStoreFactory;
 import org.geotoolkit.data.DataStore;
-import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
@@ -80,20 +77,7 @@ public class GPXDataStoreFactory extends AbstractFileDataStoreFactory {
 
     @Override
     public DataStore create(final ParameterValueGroup params) throws DataStoreException {
-        final URL url = (URL) params.parameter(URLP.getName().toString()).getValue();
-                
-        final String path = url.toString();
-        final int slash = Math.max(0, path.lastIndexOf('/') + 1);
-        int dot = path.indexOf('.', slash);
-        if (dot < 0) {
-            dot = path.length();
-        }
-        final String name = path.substring(slash, dot);
-        try {
-            return new GPXDataStore(IOUtilities.toFile(url, null));
-        } catch (IOException ex) {
-            throw new DataStoreException(ex);
-        }
+        return new GPXDataStore(params);
     }
 
     @Override

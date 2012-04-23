@@ -197,7 +197,7 @@ public class OMDataStoreFactory extends AbstractDataStoreFactory {
             dataSource.setAccessToUnderlyingConnectionAllowed(true);
 
             final ManageableDataSource source = new DBCPDataSource(dataSource);
-            return new OMDataStore(source);
+            return new OMDataStore(params,source);
         } catch (IOException ex) {
             throw new DataStoreException(ex);
         }

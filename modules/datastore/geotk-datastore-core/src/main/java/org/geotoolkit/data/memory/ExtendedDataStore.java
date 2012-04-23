@@ -27,6 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.geotoolkit.data.AbstractDataStore;
 import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.DataStoreFactory;
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
@@ -47,6 +48,7 @@ import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.geometry.Envelope;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * Wraps a datastore and store additional queries which will be made available
@@ -62,9 +64,19 @@ public final class ExtendedDataStore extends AbstractDataStore{
     private final DataStore wrapped;
 
     public ExtendedDataStore(final DataStore wrapped) {
-        super(NO_NAMESPACE);
+        super(null);
         ArgumentChecks.ensureNonNull("datastore", wrapped);
         this.wrapped = wrapped;
+    }
+
+    @Override
+    public ParameterValueGroup getConfiguration() {
+        return wrapped.getConfiguration();
+    }
+
+    @Override
+    public DataStoreFactory getFactory() {
+        return wrapped.getFactory();
     }
 
     public Set<Name> getQueryNames() {

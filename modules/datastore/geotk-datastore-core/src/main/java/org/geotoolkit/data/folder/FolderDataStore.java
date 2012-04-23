@@ -27,8 +27,8 @@ import java.util.Set;
 import java.util.logging.Level;
 
 import org.geotoolkit.data.AbstractDataStore;
-import org.geotoolkit.data.AbstractFileDataStoreFactory;
 import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.DataStoreFactory;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.FileDataStoreFactory;
@@ -68,7 +68,7 @@ public class FolderDataStore extends AbstractDataStore{
     private Map<Name,DataStore> stores = null;
     
     public FolderDataStore(final ParameterValueGroup params, final AbstractFolderDataStoreFactory factory){
-        super(Parameters.value(AbstractFileDataStoreFactory.NAMESPACE, params));
+        super(params);
         this.folderParameters = params;
         this.folderFactory = factory;
         this.singleFileFactory = this.folderFactory.getSingleFileFactory();
@@ -83,6 +83,11 @@ public class FolderDataStore extends AbstractDataStore{
                     .setValue(folderParameters.parameter(pdesc.getName().getCode()).getValue());
         }
         
+    }
+
+    @Override
+    public DataStoreFactory getFactory() {
+        return folderFactory;
     }
     
     @Override

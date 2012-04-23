@@ -51,6 +51,7 @@ import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.geometry.jts.transform.GeometryScaleTransformer;
+import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.logging.Logging;
 
@@ -65,6 +66,8 @@ import org.opengis.filter.Id;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.geometry.Envelope;
+import org.opengis.parameter.ParameterNotFoundException;
+import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -90,9 +93,22 @@ public abstract class AbstractDataStore implements DataStore{
     private final Logger Logger = Logging.getLogger(getClass().getPackage().getName());
 
     private final Set<StorageListener> listeners = new HashSet<StorageListener>();
-    private final String defaultNamespace;
+    protected final ParameterValueGroup parameters;
+    protected String defaultNamespace;
 
-    protected AbstractDataStore(final String namespace) {
+    protected AbstractDataStore(final ParameterValueGroup params) {
+        
+        this.parameters = params;
+        String namespace = null;
+        if(params != null){
+            try{
+                namespace = (String)Parameters.getOrCreate(AbstractDataStoreFactory.NAMESPACE, params).getValue();
+            }catch(ParameterNotFoundException ex){
+                //ignore this error, factory might not necesarly have a namespace parameter
+                //example : gpx
+            }
+        }
+        
         if (namespace == null) {
             defaultNamespace = "http://geotoolkit.org";
         } else if (namespace.equals(NO_NAMESPACE)) {
@@ -102,6 +118,11 @@ public abstract class AbstractDataStore implements DataStore{
         }
     }
 
+    @Override
+    public ParameterValueGroup getConfiguration() {
+        return parameters;
+    }
+    
     protected String getDefaultNamespace() {
         return defaultNamespace;
     }

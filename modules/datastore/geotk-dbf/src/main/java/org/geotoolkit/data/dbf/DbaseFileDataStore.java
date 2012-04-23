@@ -21,11 +21,15 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
 import org.geotoolkit.data.AbstractDataStore;
+import org.geotoolkit.data.DataStoreFactory;
+import org.geotoolkit.data.DataStoreFinder;
 import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
@@ -38,6 +42,7 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.simple.DefaultSimpleFeature;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
@@ -47,6 +52,7 @@ import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * DBF DataStore, holds a single feature type.
@@ -64,12 +70,42 @@ public class DbaseFileDataStore extends AbstractDataStore{
 
     private SimpleFeatureType featureType;
 
-    public DbaseFileDataStore(final File f, final String namespace, final String name){
-        super(namespace);
-        this.file = f;
-        this.name = name;
+    public DbaseFileDataStore(final File f, final String namespace) throws MalformedURLException, DataStoreException{
+        this(toParameters(f, namespace));
+    }
+    
+    public DbaseFileDataStore(final ParameterValueGroup params) throws DataStoreException{
+        super(params);
+        
+        final URL url = (URL) params.parameter(DbaseDataStoreFactory.URLP.getName().toString()).getValue();
+        try {
+            this.file = new File(url.toURI());
+        } catch (URISyntaxException ex) {
+            throw new DataStoreException(ex);
+        }
+                
+        final String path = url.toString();
+        final int slash = Math.max(0, path.lastIndexOf('/') + 1);
+        int dot = path.indexOf('.', slash);
+        if (dot < 0) {
+            dot = path.length();
+        }
+        this.name = path.substring(slash, dot);
     }
 
+    private static ParameterValueGroup toParameters(final File f, 
+            final String namespace) throws MalformedURLException{
+        final ParameterValueGroup params = DbaseDataStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
+        Parameters.getOrCreate(DbaseDataStoreFactory.URLP, params).setValue(f.toURL());
+        Parameters.getOrCreate(DbaseDataStoreFactory.NAMESPACE, params).setValue(namespace);
+        return params;
+    }
+
+    @Override
+    public DataStoreFactory getFactory() {
+        return DataStoreFinder.getFactory(DbaseDataStoreFactory.NAME);
+    }
+    
     private synchronized void checkExist() throws DataStoreException{
         if(featureType != null) return;
 

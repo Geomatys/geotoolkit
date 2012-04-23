@@ -17,14 +17,10 @@
 
 package org.geotoolkit.data.csv;
 
-import java.io.IOException;
-import java.net.URL;
-
 import java.util.Collections;
 import org.geotoolkit.data.AbstractDataStoreFactory;
 import org.geotoolkit.data.AbstractFileDataStoreFactory;
 import org.geotoolkit.data.DataStore;
-import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
@@ -88,26 +84,7 @@ public class CSVDataStoreFactory extends AbstractFileDataStoreFactory {
 
     @Override
     public DataStore create(final ParameterValueGroup params) throws DataStoreException {
-        final URL url = (URL) params.parameter(URLP.getName().toString()).getValue();
-        String namespace = (String) params.parameter(NAMESPACE.getName().toString()).getValue();
-        final char separator = (Character) params.parameter(SEPARATOR.getName().toString()).getValue();
-        
-        if(namespace == null){
-            namespace = "http://geotoolkit.org";
-        }
-        
-        final String path = url.toString();
-        final int slash = Math.max(0, path.lastIndexOf('/') + 1);
-        int dot = path.indexOf('.', slash);
-        if (dot < 0) {
-            dot = path.length();
-        }
-        final String name = path.substring(slash, dot);
-        try {
-            return new CSVDataStore(IOUtilities.toFile(url, null), namespace, name, separator);
-        } catch (IOException ex) {
-            throw new DataStoreException(ex);
-        }
+        return new CSVDataStore(params);
     }
 
     @Override

@@ -134,7 +134,7 @@ public abstract class JDBCDataStoreFactory extends AbstractDataStoreFactory {
             namespace = "http://geotoolkit.org";
         }
 
-        final JDBCDataStore dataStore = new DefaultJDBCDataStore(namespace);
+        final JDBCDataStore dataStore = new DefaultJDBCDataStore(params,getDatabaseID());
 
         // dialect
         final SQLDialect dialect = createSQLDialect(dataStore);

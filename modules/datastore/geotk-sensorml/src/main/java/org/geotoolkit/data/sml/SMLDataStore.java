@@ -36,6 +36,8 @@ import java.util.Set;
 import java.util.logging.Level;
 
 import org.geotoolkit.data.AbstractDataStore;
+import org.geotoolkit.data.DataStoreFactory;
+import org.geotoolkit.data.DataStoreFinder;
 import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.FeatureReader;
@@ -63,6 +65,7 @@ import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
+import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -148,10 +151,15 @@ public class SMLDataStore extends AbstractDataStore {
 
     private final QueryCapabilities capabilities = new DefaultQueryCapabilities(false);
     
-    public SMLDataStore(final ManageableDataSource source) {
-        super(null);
+    public SMLDataStore(final ParameterValueGroup params, final ManageableDataSource source) {
+        super(params);
         this.source = source;
         initTypes();
+    }
+
+    @Override
+    public DataStoreFactory getFactory() {
+        return DataStoreFinder.getFactory(SMLDataStoreFactory.NAME);
     }
 
     public Connection getConnection() throws SQLException {

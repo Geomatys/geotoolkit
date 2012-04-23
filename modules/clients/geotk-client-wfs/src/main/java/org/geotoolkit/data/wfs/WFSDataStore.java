@@ -40,6 +40,8 @@ import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.client.Request;
 
 import org.geotoolkit.data.AbstractDataStore;
+import org.geotoolkit.data.DataStoreFactory;
+import org.geotoolkit.data.DataStoreFinder;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.FeatureReader;
@@ -185,6 +187,11 @@ public class WFSDataStore extends AbstractDataStore{
 
         }
 
+    }
+
+    @Override
+    public DataStoreFactory getFactory() {
+        return DataStoreFinder.getFactory(WFSDataStoreFactory.NAME);
     }
 
     @Override
