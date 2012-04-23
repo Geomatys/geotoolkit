@@ -69,13 +69,27 @@ public class AllowedValues {
         
     }
     
+    public AllowedValues(final AllowedValues that){
+        if (that != null && that.valueOrRange != null) {
+            this.valueOrRange = new ArrayList<Object>();
+            for (Object obj : that.valueOrRange) {
+                if (obj instanceof RangeType) {
+                    this.valueOrRange.add(new RangeType((RangeType)obj));
+                } else if (obj instanceof ValueType) {
+                    this.valueOrRange.add(new ValueType((ValueType)obj));
+                } else {
+                    // should not happen
+                    throw new IllegalArgumentException("only accept value or range object");
+                }
+            }
+        }
+    }
+    
     /**
      *  Build an allowed value.
      */
     public AllowedValues(final List<Object> valueOrRange){
-        
         this.valueOrRange = valueOrRange;
-        
     }
     
     /**

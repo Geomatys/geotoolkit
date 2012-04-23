@@ -62,6 +62,12 @@ public class DCP implements AbstractDCP {
         
     }
     
+    public DCP(final DCP that){
+        if (that != null && that.http != null) { 
+            this.http = new HTTP(that.http);
+        }
+    }
+    
     /**
      * Build a new DCP.
      */

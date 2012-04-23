@@ -57,6 +57,12 @@ public class ValueType {
     ValueType(){
     }
     
+    public ValueType(final ValueType that){
+        if (that != null) {
+            this.value = that.value;
+        }
+    }
+    
     /**
      * Build a new Value.
      */

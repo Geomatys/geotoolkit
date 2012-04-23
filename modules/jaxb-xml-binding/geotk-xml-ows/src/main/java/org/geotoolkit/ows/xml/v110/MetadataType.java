@@ -86,6 +86,21 @@ public class MetadataType implements AbstractMetadata {
     public MetadataType() {
 
     }
+    
+    public MetadataType(final MetadataType that) {
+        if (that != null) {
+            this.href    = that.href;
+            this.type    = that.type;
+            this.actuate = that.actuate;
+            this.arcrole = that.arcrole;
+            this.role    = that.role;
+            this.show    = that.show;
+            this.title   = that.title;
+            this.about   = that.about;
+            // can not clone this attribute
+            this.abstractMetaData = that.abstractMetaData;
+        }
+    }
 
     public MetadataType(final String href) {
         this.href = href;

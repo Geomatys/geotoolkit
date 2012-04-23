@@ -66,6 +66,13 @@ public class DomainMetadataType {
         
     }
     
+    public DomainMetadataType(final DomainMetadataType that){
+        if (that != null) {
+            this.reference = that.reference;
+            this.value     = that.value;
+        }
+    }
+    
     /**
      * Build a new Domaint metadata.
      */

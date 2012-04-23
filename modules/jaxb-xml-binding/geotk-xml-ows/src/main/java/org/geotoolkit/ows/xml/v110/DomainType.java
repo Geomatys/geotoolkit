@@ -57,6 +57,13 @@ public class DomainType extends UnNamedDomainType implements AbstractDomain {
     DomainType(){
     }
     
+    public DomainType(final DomainType that){
+        super(that);
+        if (that != null) {
+            this.name = that.name;
+        }
+    }
+    
     /**
      * Build a new Domain with the specified name.
      */

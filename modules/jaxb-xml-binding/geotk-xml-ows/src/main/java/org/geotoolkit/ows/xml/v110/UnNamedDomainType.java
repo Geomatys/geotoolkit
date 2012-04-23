@@ -99,9 +99,44 @@ public class UnNamedDomainType {
         
     }
     
-    /**
-     * Empty constructor used by JAXB.
-     */
+    public UnNamedDomainType(final UnNamedDomainType that) {
+        if (that != null) {
+            if (that.allowedValues != null) {
+                this.allowedValues   = new AllowedValues(that.allowedValues);
+            }
+            if (that.anyValue != null) {
+                this.anyValue        = new AnyValue(that.anyValue);
+            }
+            if (that.dataType != null) {
+                this.dataType        = new DomainMetadataType(that.dataType);
+            }
+            if (that.defaultValue != null) {
+                this.defaultValue    = new ValueType(that.defaultValue);
+            }
+            if (that.meaning != null) {
+                this.meaning         = new DomainMetadataType(that.meaning);
+            }
+            if (that.metadata != null) {
+                this.metadata        = new ArrayList<MetadataType>();
+                for (MetadataType m : that.metadata) {
+                    this.metadata.add(new MetadataType(m));
+                }
+            }
+            if (that.noValues != null) {
+                this.noValues        = that.noValues;
+            }
+            if (that.referenceSystem != null) {
+                this.referenceSystem = new DomainMetadataType(that.referenceSystem);
+            }
+            if (that.uom != null) {
+                this.uom             = new DomainMetadataType(that.uom);
+            }
+            if (that.valuesReference != null) {
+                this.valuesReference = new ValuesReference(that.valuesReference);
+            }
+        }
+    }
+    
     public UnNamedDomainType(final AnyValue anyValue) {
         if (anyValue == null) {
             this.anyValue = new AnyValue();
@@ -110,9 +145,6 @@ public class UnNamedDomainType {
         }
     }
 
-    /**
-     * Empty constructor used by JAXB.
-     */
     public UnNamedDomainType(final AllowedValues value) {
         this.allowedValues = value;
     }

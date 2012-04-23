@@ -95,6 +95,12 @@ public class DCPTypeType {
 
     }
 
+    public DCPTypeType(final DCPTypeType that) {
+        if (that != null && that.http != null) {
+            this.http = new HTTP(that.http);
+        }
+    }
+    
     public DCPTypeType(final HTTP http) {
         this.http = http;
     }
@@ -167,6 +173,22 @@ public class DCPTypeType {
         public HTTP() {
 
         }
+        
+        public HTTP(final HTTP that) {
+            if (that != null && that.getOrPost != null) {
+                this.getOrPost = new ArrayList<Object>();
+                for (Object o : that.getOrPost) {
+                    if (o instanceof Post) {
+                        this.getOrPost.add(new Post((Post)o));
+                    } else if (o instanceof Get) {
+                        this.getOrPost.add(new Get((Get)o));
+                    } else {
+                        // should not happen
+                        throw new IllegalArgumentException("DCPtype must only contains GET or POST object");
+                    }
+                }
+            }
+        }
 
         public HTTP(final Get get, final Post post) {
             this.getOrPost = new ArrayList<Object>();
@@ -236,6 +258,11 @@ public class DCPTypeType {
 
             }
 
+            public Get(final Get that) {
+                if (that != null && that.onlineResource != null)
+                this.onlineResource = new OnlineResourceType(that.onlineResource);
+            }
+            
             public Get(final OnlineResourceType or) {
                 this.onlineResource = or;
             }
@@ -276,6 +303,12 @@ public class DCPTypeType {
 
             public Post() {
 
+            }
+            
+            public Post(final Post that) {
+                if (that != null && that.onlineResource != null) {
+                    this.onlineResource = new OnlineResourceType(that.onlineResource);
+                }
             }
 
             public Post(final OnlineResourceType or) {
