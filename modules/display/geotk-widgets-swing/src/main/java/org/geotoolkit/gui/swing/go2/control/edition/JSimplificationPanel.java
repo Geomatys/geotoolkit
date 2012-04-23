@@ -21,12 +21,14 @@ import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
 import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.geotoolkit.data.memory.mapping.MappingUtils;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.feature.Feature;
+import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 
@@ -88,9 +90,11 @@ public class JSimplificationPanel extends javax.swing.JPanel {
         
         try{
             final CoordinateReferenceSystem mapCRS = map.getCanvas().getObjectiveCRS2D();
-            final CoordinateReferenceSystem dataCRS = original.getDefaultGeometryProperty().getDescriptor().getCoordinateReferenceSystem();
+            final GeometryDescriptor desc = original.getDefaultGeometryProperty().getDescriptor();
+            final CoordinateReferenceSystem dataCRS = desc.getCoordinateReferenceSystem();
             Geometry geom = (Geometry) original.getDefaultGeometryProperty().getValue();
             geom = (Geometry) geom.clone();
+            final Class clazz = desc.getType().getBinding();
             
             if(mapCrs){
                 //reproject geometry in map crs for simplification
@@ -113,6 +117,9 @@ public class JSimplificationPanel extends javax.swing.JPanel {
                 final MathTransform trs = CRS.findMathTransform(mapCRS,dataCRS,true);
                 current = JTS.transform(current, trs);
             }
+            
+            //ensure geometry type is preserved
+            current = MappingUtils.convertType(current, clazz);
             
             guiError.setText("");
             return true;
