@@ -480,6 +480,7 @@ public class JFeatureOutLine extends Outline{
 
     public static List<JFeatureOutLine.PropertyEditor> createDefaultEditorList(){
         final List<JFeatureOutLine.PropertyEditor> lst = new ArrayList<JFeatureOutLine.PropertyEditor>();
+        lst.add(new ChoiceEditor());
         lst.add(new BooleanEditor());
         lst.add(new CRSEditor());
         lst.add(new CharsetEditor());

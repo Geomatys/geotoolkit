@@ -45,9 +45,10 @@ import org.geotoolkit.filter.visitor.FilterAttributeExtractor;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.CRS;
 
-import org.opengis.feature.type.Name;
-import org.opengis.feature.type.PropertyDescriptor;
-import org.opengis.feature.type.GeometryType;
+import org.opengis.feature.type.*;
+import org.opengis.parameter.GeneralParameterDescriptor;
+import org.opengis.parameter.ParameterDescriptor;
+import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.BinaryComparisonOperator;
 import org.opengis.filter.Filter;
@@ -58,10 +59,6 @@ import org.opengis.feature.Property;
 import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.feature.type.AttributeType;
-import org.opengis.feature.type.FeatureType;
-import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -77,10 +74,9 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import java.util.Collection;
-import org.opengis.feature.type.*;
-import org.opengis.parameter.GeneralParameterDescriptor;
-import org.opengis.parameter.ParameterDescriptor;
-import org.opengis.parameter.ParameterDescriptorGroup;
+import org.geotoolkit.factory.FactoryFinder;
+import org.opengis.filter.FilterFactory;
+import org.opengis.filter.expression.Function;
 
 /**
  * Utility methods for working against the FeatureType interface.
@@ -1303,6 +1299,18 @@ public final class FeatureTypeUtilities {
             atb.setName(desc.getName().getCode());
             atb.setDescription(desc.getRemarks());
             atb.setBinding(desc.getValueClass());
+            final Set validValues = desc.getValidValues();
+            if(validValues != null && !validValues.isEmpty()){
+                final FilterFactory ff = FactoryFinder.getFilterFactory(null);
+                final List<Expression> values = new ArrayList<Expression>();
+                values.add(ff.property("."));
+                for(Object obj : validValues){
+                    values.add(ff.literal(obj));
+                }
+                final Function in = ff.function("in", values.toArray(new Expression[values.size()]));
+                atb.addRestriction(ff.equals(in, ff.literal(true)));
+            }            
+            
             final AttributeType at = atb.buildType();
             
             return at;
