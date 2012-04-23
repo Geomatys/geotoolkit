@@ -18,6 +18,7 @@
 package org.geotoolkit.feature;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -267,6 +268,14 @@ public class AttributeTypeBuilder {
         return length;
     }
 
+    public void setRestrictions(List<Filter> restrictions){
+        this.restrictions = restrictions;
+    }
+
+    public List<Filter> getRestrictions() {
+        return restrictions;
+    }
+    
     public void addRestriction(final Filter restriction) {
         restrictions().add(restriction);
     }
