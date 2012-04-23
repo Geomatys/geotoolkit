@@ -70,6 +70,19 @@ public class OperationType extends AbstractOperation {
      OperationType() {
      }
 
+    public OperationType(final OperationType that) {
+        if (that != null) {
+            if (that.format != null) {
+                this.format  = new ArrayList<String>(that.format);
+            }
+            if (that.dcpType != null) {
+                for (final DCPType element : that.dcpType) {
+                    this.dcpType.add(new DCPType(element));
+                }
+            }
+        }
+    }
+     
     /**
      * Build a new Contact person primary object.
      */

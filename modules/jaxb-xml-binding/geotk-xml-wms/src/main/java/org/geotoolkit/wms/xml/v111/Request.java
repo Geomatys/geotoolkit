@@ -58,6 +58,32 @@ public class Request extends AbstractRequest {
     public Request() {
 
     }
+    
+    public Request(final Request that) {
+        if (that != null) {
+            if (that.getCapabilities != null) {
+                this.getCapabilities  = new GetCapabilities(that.getCapabilities);
+            }
+            if (that.describeLayer != null) {
+                this.describeLayer    = new DescribeLayer(that.describeLayer);
+            }
+            if (that.getFeatureInfo != null) {
+                this.getFeatureInfo   = new GetFeatureInfo(that.getFeatureInfo);
+            }
+            if (that.getLegendGraphic != null) {
+                this.getLegendGraphic = new GetLegendGraphic(that.getLegendGraphic);
+            }
+            if (that.getMap != null) {
+                this.getMap           = new GetMap(that.getMap);
+            }
+            if (that.getStyles != null) {
+                this.getStyles        = new GetStyles(that.getStyles);
+            }
+            if (that.putStyles != null) {
+                this.putStyles        = new PutStyles(that.putStyles);
+            }
+        }
+    }
 
     public Request(final GetCapabilities getCapabilities, final GetMap getMap, final GetFeatureInfo getFeatureInfo, final DescribeLayer describeLayer, final GetLegendGraphic getLegendGraphic,
             final GetStyles getStyles, final PutStyles putStyles) {
