@@ -189,6 +189,7 @@ public class ShapefileDataStoreFactory extends AbstractFileDataStoreFactory impl
      */
     @Override
     public DataStore create(final ParameterValueGroup params) throws DataStoreException {
+        checkCanProcessWithError(params);
 
         URL url = (URL) params.parameter(URLP.getName().toString()).getValue();
         Boolean isMemoryMapped = (Boolean) params.parameter(MEMORY_MAPPED.getName().toString()).getValue();

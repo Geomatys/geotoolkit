@@ -74,6 +74,7 @@ public class WCSServerFactory extends AbstractServerFactory{
 
     @Override
     public Server create(ParameterValueGroup params) throws DataStoreException {
+        checkCanProcessWithError(params);
         return new WebCoverageServer(params);
     }
     

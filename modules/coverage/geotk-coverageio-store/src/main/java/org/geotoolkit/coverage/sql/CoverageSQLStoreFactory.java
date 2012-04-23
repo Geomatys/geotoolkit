@@ -85,6 +85,7 @@ public class CoverageSQLStoreFactory extends AbstractCoverageStoreFactory{
 
     @Override
     public CoverageStore create(ParameterValueGroup params) throws DataStoreException {
+        checkCanProcessWithError(params);
         return new CoverageSQLStore(params);
     }
 

@@ -29,9 +29,11 @@ import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.metadata.quality.ConformanceResult;
+import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.InvalidParameterValueException;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -144,6 +146,12 @@ public abstract class AbstractServerFactory extends Factory implements ServerFac
             return false;
         }
         
+        //check identifier value is exist
+        final boolean validId = checkIdentifier(params);
+        if(!validId){
+            return false;
+        }
+        
         final ParameterDescriptorGroup desc = getParametersDescriptor();
         if(!desc.getName().getCode().equalsIgnoreCase(params.getDescriptor().getName().getCode())){
             return false;
@@ -176,6 +184,37 @@ public abstract class AbstractServerFactory extends Factory implements ServerFac
             params.put(IDENTIFIER.getName().getCode(), (Serializable)value);
         }
         return params;
+    }
+            
+    /**
+     * Check if the Identifier parameter exist.
+     * if it exist, it must be set to 'value' otherwise return false.
+     * if not present, return true;
+     * @return 
+     */
+    protected boolean checkIdentifier(final ParameterValueGroup params){
+        final String expectedId = ((ParameterDescriptor<String>)getParametersDescriptor()
+                .descriptor(IDENTIFIER.getName().getCode())).getDefaultValue();
+        
+        for(GeneralParameterValue val : params.values()){
+            if(val.getDescriptor().getName().getCode().equals(IDENTIFIER.getName().getCode())){
+                final Object candidate = ((ParameterValue)val).getValue();
+                return expectedId.equals(candidate);
+            }
+        }
+        
+        return true;
+    }
+    
+    /**
+     * @see #checkIdentifier(org.opengis.parameter.ParameterValueGroup) 
+     * @throws DataStoreException if identifier is not valid
+     */
+    protected void checkCanProcessWithError(final ParameterValueGroup params) throws DataStoreException{
+        final boolean valid = canProcess(params);
+        if(!valid){
+            throw new DataStoreException("Parameter values not supported by this factory.");
+        }
     }
     
 }

@@ -170,6 +170,7 @@ public class OMDataStoreFactory extends AbstractDataStoreFactory {
 
     @Override
     public DataStore create(final ParameterValueGroup params) throws DataStoreException {
+        checkCanProcessWithError(params);
         try{
             //create a datasource
             final BasicDataSource dataSource = new BasicDataSource();

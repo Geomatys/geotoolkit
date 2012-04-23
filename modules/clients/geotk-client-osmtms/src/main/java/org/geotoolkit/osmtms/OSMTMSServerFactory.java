@@ -79,6 +79,7 @@ public class OSMTMSServerFactory extends AbstractServerFactory implements Covera
 
     @Override
     public OSMTileMapServer create(ParameterValueGroup params) throws DataStoreException {
+        checkCanProcessWithError(params);
         
         final OSMTileMapServer server = new OSMTileMapServer(params);
         

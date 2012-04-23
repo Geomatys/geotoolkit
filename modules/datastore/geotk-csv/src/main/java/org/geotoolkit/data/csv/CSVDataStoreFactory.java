@@ -84,6 +84,7 @@ public class CSVDataStoreFactory extends AbstractFileDataStoreFactory {
 
     @Override
     public DataStore create(final ParameterValueGroup params) throws DataStoreException {
+        checkCanProcessWithError(params);
         return new CSVDataStore(params);
     }
 

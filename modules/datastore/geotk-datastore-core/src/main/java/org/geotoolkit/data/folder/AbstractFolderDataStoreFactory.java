@@ -103,6 +103,7 @@ public abstract class AbstractFolderDataStoreFactory extends AbstractDataStoreFa
 
     @Override
     public DataStore create(ParameterValueGroup params) throws DataStoreException {
+        checkCanProcessWithError(params);
         final FolderDataStore store = new FolderDataStore(params,this);
         return store;
     }

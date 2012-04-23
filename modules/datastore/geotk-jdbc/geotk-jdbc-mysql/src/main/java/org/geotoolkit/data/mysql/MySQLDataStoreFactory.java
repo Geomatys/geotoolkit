@@ -120,6 +120,7 @@ public class MySQLDataStoreFactory extends JDBCDataStoreFactory {
     @Override
     public JDBCDataStore create(final ParameterValueGroup params)
         throws DataStoreException {
+        checkCanProcessWithError(params);
         JDBCDataStore dataStore = super.create(params);
 
         final MySQLDialect dialect;

@@ -74,6 +74,7 @@ public class IGNRMServerFactory extends AbstractServerFactory{
 
     @Override
     public Server create(ParameterValueGroup params) throws DataStoreException {
+        checkCanProcessWithError(params);
         final URL url = (URL)Parameters.getOrCreate(URL, params).getValue();
         ClientSecurity security = null;
         try{

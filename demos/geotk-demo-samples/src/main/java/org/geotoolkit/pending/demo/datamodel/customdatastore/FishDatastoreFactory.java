@@ -57,6 +57,7 @@ public class FishDatastoreFactory extends AbstractFileDataStoreFactory{
 
     @Override
     public DataStore create(ParameterValueGroup params) throws DataStoreException {
+        checkCanProcessWithError(params);
         return new FishDataStore(params);
     }
 

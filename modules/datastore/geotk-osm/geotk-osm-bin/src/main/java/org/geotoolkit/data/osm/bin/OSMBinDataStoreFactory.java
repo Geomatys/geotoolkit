@@ -96,6 +96,7 @@ public class OSMBinDataStoreFactory extends AbstractFileDataStoreFactory{
      */
     @Override
     public DataStore create(final ParameterValueGroup params) throws DataStoreException {
+        checkCanProcessWithError(params);
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

@@ -82,6 +82,7 @@ public class StaticGoogleServerFactory extends AbstractServerFactory implements 
 
     @Override
     public StaticGoogleMapsServer create(ParameterValueGroup params) throws DataStoreException {
+        checkCanProcessWithError(params);
         final StaticGoogleMapsServer server = new StaticGoogleMapsServer(params);
         
         try{

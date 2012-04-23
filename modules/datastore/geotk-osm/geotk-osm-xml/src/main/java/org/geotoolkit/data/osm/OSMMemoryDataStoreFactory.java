@@ -80,6 +80,7 @@ public class OSMMemoryDataStoreFactory extends AbstractFileDataStoreFactory {
 
     @Override
     public DataStore create(final ParameterValueGroup params) throws DataStoreException {
+        checkCanProcessWithError(params);
         final URL url = (URL) params.parameter(URLP.getName().toString()).getValue();
                 
         final String path = url.toString();

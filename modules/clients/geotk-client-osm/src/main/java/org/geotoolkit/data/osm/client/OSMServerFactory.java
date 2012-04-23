@@ -76,6 +76,7 @@ public class OSMServerFactory extends AbstractServerFactory{
 
     @Override
     public Server create(ParameterValueGroup params) throws DataStoreException {
+        checkCanProcessWithError(params);
         return new OpenStreetMapServer(params);
     }
     

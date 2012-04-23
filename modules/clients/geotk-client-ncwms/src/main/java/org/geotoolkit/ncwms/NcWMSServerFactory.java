@@ -77,6 +77,7 @@ public class NcWMSServerFactory extends AbstractServerFactory{
 
     @Override
     public Server create(ParameterValueGroup params) throws DataStoreException {
+        checkCanProcessWithError(params);
         final URL url = (URL)Parameters.getOrCreate(URL, params).getValue();
         final WMSVersion version = (WMSVersion)Parameters.getOrCreate(VERSION, params).getValue();
         ClientSecurity security = null;

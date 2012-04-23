@@ -80,6 +80,7 @@ public class WMTSServerFactory extends AbstractServerFactory implements Coverage
 
     @Override
     public WebMapTileServer create(ParameterValueGroup params) throws DataStoreException {
+        checkCanProcessWithError(params);
         final WebMapTileServer server = new WebMapTileServer(params);
         
         try{

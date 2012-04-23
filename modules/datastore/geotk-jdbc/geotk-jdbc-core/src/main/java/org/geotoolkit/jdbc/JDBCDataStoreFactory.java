@@ -127,6 +127,7 @@ public abstract class JDBCDataStoreFactory extends AbstractDataStoreFactory {
 
     @Override
     public JDBCDataStore create(final ParameterValueGroup params) throws DataStoreException {
+        checkCanProcessWithError(params);
         // namespace
         String namespace = (String) params.parameter(NAMESPACE.getName().toString()).getValue();
 

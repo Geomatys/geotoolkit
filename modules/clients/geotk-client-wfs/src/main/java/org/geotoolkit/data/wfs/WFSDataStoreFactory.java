@@ -109,6 +109,7 @@ public class WFSDataStoreFactory extends AbstractDataStoreFactory implements Ser
 
     @Override
     public WebFeatureServer create(ParameterValueGroup params) throws DataStoreException {
+        checkCanProcessWithError(params);
         return new WebFeatureServer(params);
     }
 

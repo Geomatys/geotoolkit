@@ -74,6 +74,7 @@ public class WPSServerFactory extends AbstractServerFactory{
 
     @Override
     public Server create(ParameterValueGroup params) throws DataStoreException {
+        checkCanProcessWithError(params);
         return new WebProcessingServer(params);
     }
     

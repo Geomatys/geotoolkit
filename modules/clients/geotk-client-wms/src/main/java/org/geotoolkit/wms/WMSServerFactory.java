@@ -81,6 +81,7 @@ public class WMSServerFactory extends AbstractServerFactory implements CoverageS
 
     @Override
     public WebMapServer create(ParameterValueGroup params) throws DataStoreException {
+        checkCanProcessWithError(params);
         return new WebMapServer(params);
     }
 
