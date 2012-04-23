@@ -71,14 +71,14 @@ public class HilbertIterator implements Iterator<int[]> {
         modulo = 2 << dimension-1;
         l = modulo - 1;
         ordinates = generateBasicOrd(dimension-1, new int[]{dimension-1,dimension-2,dimension-1});
-        if(superParent){
+        if (superParent) {
             sign = new boolean[dimension];
             Arrays.fill(sign, true);
-        }else{
+        } else {
             sign = null;
         }
         coordinates = new int[dimension];
-        subOrder = (hilbertOrder != 1)?new HilbertIterator(hilbertOrder-1, dimension, false):null;
+        subOrder = (hilbertOrder != 1) ? new HilbertIterator(hilbertOrder-1, dimension, false) : null;
     }
 
     /**
@@ -89,7 +89,7 @@ public class HilbertIterator implements Iterator<int[]> {
      * @return order 1 Hilbert curve path.
      */
     private int[] generateBasicOrd(int remainingDim, int[] currentlyPath) {
-        if (remainingDim == 1)return currentlyPath;
+        if (remainingDim == 1) return currentlyPath;
         final int length = currentlyPath.length;
         final int size = 2*length+1;
         final int[] path = new int[size];
@@ -105,11 +105,13 @@ public class HilbertIterator implements Iterator<int[]> {
      * @param val current sub-order ordinate.
      * @param operande current ordinate.
      */
-    private int oLogic(int val, final int operande){
+    private int oLogic(int val, final int operande) {
         return Math.abs((val + operande) % dimension);
     }
 
     /**
+     * Return true if next Hilbert iteration is possible.
+     *
      * @return true if next iterate exit else false.
      */
     private boolean hasNextOperande() {
@@ -124,7 +126,7 @@ public class HilbertIterator implements Iterator<int[]> {
         if (hilbertOrder == 1) {
             ordinate = ordinates[currentPos];
             currentPos++;
-            if(sign != null) {
+            if (sign != null) {
                 signVal = sign[ordinate];
                 sign[ordinate] = !sign[ordinate];
             }
@@ -132,9 +134,9 @@ public class HilbertIterator implements Iterator<int[]> {
             if (subOrder.hasNextOperande()) {
                 subOrder.nextOperande();
                 ordinate = oLogic(subOrder.ordinate, ordinates[currentPos]);
-                if(sign != null) {
+                if (sign != null) {
                     sign[ordinate] = !sign[ordinate];
-                    signVal = (joinInf%modulo==0) ? sign[ordinate] : !sign[ordinate];
+                    signVal = (joinInf % modulo == 0) ? sign[ordinate] : !sign[ordinate];
                 }
                 joinInf++;
             } else {
@@ -147,7 +149,7 @@ public class HilbertIterator implements Iterator<int[]> {
                 } else {
                     currentPos++;
                 }
-                if(sign != null) {
+                if (sign != null) {
                     sign[ordinate] = !sign[ordinate];
                     signVal = sign[ordinate];
                 }
@@ -157,12 +159,14 @@ public class HilbertIterator implements Iterator<int[]> {
     }
 
 /**
+ * Return next Hilbert curve point coordinates.
+ *
  * @return next Hilbert curve point coordinates.
  */
     @Override
     public int[] next() {
         compteurCells++;
-        if(firstTime){
+        if (firstTime) {
             firstTime = false;
             return coordinates.clone();
         }
@@ -179,8 +183,8 @@ public class HilbertIterator implements Iterator<int[]> {
         currentPos = compteurJoin = 0;
         oneTime = true;
         joinInf = 1;
-        if(sign != null) Arrays.fill(sign, true);
-        if(subOrder != null) subOrder.rewind();
+        if (sign != null) Arrays.fill(sign, true);
+        if (subOrder != null) subOrder.rewind();
     }
 
     @Override
@@ -189,10 +193,13 @@ public class HilbertIterator implements Iterator<int[]> {
     }
 
     /**
+     * Returns true if a next Hilbert curve point will be able to compute else false.
+     * In other words if {@link HilbertIterator#next() }.
+     * 
      * @return true if a next point will be able to compute else false.
      */
     @Override
     public boolean hasNext() {
-        return compteurCells<nbCells;
+        return compteurCells < nbCells;
     }
 }
