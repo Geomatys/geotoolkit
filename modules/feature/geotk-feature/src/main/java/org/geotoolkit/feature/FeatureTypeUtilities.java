@@ -1301,7 +1301,7 @@ public final class FeatureTypeUtilities {
             
             final AttributeTypeBuilder atb = new AttributeTypeBuilder();
             atb.setName(desc.getName().getCode());
-            atb.setDescription(String.valueOf(desc.getRemarks()));
+            atb.setDescription(desc.getRemarks());
             atb.setBinding(desc.getValueClass());
             final AttributeType at = atb.buildType();
             

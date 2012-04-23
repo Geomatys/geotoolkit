@@ -111,7 +111,7 @@ public class AttributeTypeBuilder {
     /**
      * string description
      */
-    private String description;
+    private CharSequence description;
     /**
      * identifiable flag
      */
@@ -235,11 +235,11 @@ public class AttributeTypeBuilder {
         return crs;
     }
 
-    public void setDescription(final String description) {
+    public void setDescription(final CharSequence description) {
         this.description = description;
     }
 
-    public String getDescription() {
+    public CharSequence getDescription() {
         return description;
     }
 
@@ -346,7 +346,11 @@ public class AttributeTypeBuilder {
     }
     
     private InternationalString description() {
-        return description != null ? new SimpleInternationalString(description) : null;
+        if(description instanceof InternationalString){
+            return (InternationalString) description;
+        }
+        
+        return description != null ? new SimpleInternationalString(description.toString()) : null;
     }
 
     private List<Filter> restrictions() {

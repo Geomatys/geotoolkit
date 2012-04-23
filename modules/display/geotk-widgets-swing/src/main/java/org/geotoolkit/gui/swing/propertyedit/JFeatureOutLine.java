@@ -30,7 +30,6 @@ import javax.swing.*;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.tree.TreePath;
-import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.*;
 import org.geotoolkit.gui.swing.resource.IconBundle;
@@ -47,6 +46,7 @@ import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.feature.type.PropertyType;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.util.InternationalString;
 
 /**
  * Property editor, can edit Feature/Complex attribut or single properties.
@@ -367,7 +367,8 @@ public class JFeatureOutLine extends Outline{
             final Object userObject = node.getUserObject();
 
             if(userObject instanceof Property){
-                String tooltip = DefaultName.toJCRExtendedForm( ((Property) node.getUserObject()).getName());
+                final InternationalString i18n = ((Property) node.getUserObject()).getDescriptor().getType().getDescription();
+                String tooltip = String.valueOf(i18n);
                 tooltip += " ("+Classes.getShortName(((Property) node.getUserObject()).getType().getBinding()) +")";
                 return tooltip;
             }else{
