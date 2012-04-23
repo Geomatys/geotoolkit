@@ -116,7 +116,7 @@ public class CatalogServicesServer extends AbstractServer {
      * Returns the currently used version for this server
      */
     public CSWVersion getVersion() {
-        return Parameters.value(CSWServerFactory.VERSION,parameters);
+        return CSWVersion.fromCode(Parameters.value(CSWServerFactory.VERSION, parameters));
     }
 
     /**

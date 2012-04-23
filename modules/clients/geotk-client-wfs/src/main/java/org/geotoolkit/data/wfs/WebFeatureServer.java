@@ -101,7 +101,7 @@ public class WebFeatureServer extends AbstractServer implements DataStore{
     }
     
     public WFSVersion getVersion(){
-        return Parameters.value(WFSDataStoreFactory.VERSION, parameters);
+        return WFSVersion.fromCode(Parameters.value(WFSDataStoreFactory.VERSION, parameters));
     }
     
     public boolean getUsePost(){

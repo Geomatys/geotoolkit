@@ -16,7 +16,11 @@
  */
 package org.geotoolkit.sos;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.geotoolkit.client.AbstractServerFactory;
 import org.geotoolkit.client.Server;
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
@@ -56,8 +60,22 @@ public class SOSServerFactory extends AbstractServerFactory{
     /**
      * Version, Mandatory.
      */
-    public static final ParameterDescriptor<SOSVersion> VERSION =
-            new DefaultParameterDescriptor<SOSVersion>("version","Server version",SOSVersion.class,SOSVersion.v100,true);
+    public static final ParameterDescriptor<String> VERSION;
+    static{
+        final String code = "version";
+        final CharSequence remarks = I18N_VERSION;
+        final Map<String,Object> params = new HashMap<String, Object>();
+        params.put(DefaultParameterDescriptor.NAME_KEY, code);
+        params.put(DefaultParameterDescriptor.REMARKS_KEY, remarks);
+        final List<String> validValues =  new ArrayList<String>();
+        for(SOSVersion version : SOSVersion.values()){
+            validValues.add(version.getCode());
+        }
+        
+        VERSION = new DefaultParameterDescriptor<String>(params, String.class, 
+                validValues.toArray(new String[validValues.size()]), 
+                SOSVersion.v100.getCode(), null, null, null, true);
+    }
     
     public static final ParameterDescriptorGroup PARAMETERS = 
             new DefaultParameterDescriptorGroup("SOSParameters", IDENTIFIER,URL,VERSION,SECURITY);

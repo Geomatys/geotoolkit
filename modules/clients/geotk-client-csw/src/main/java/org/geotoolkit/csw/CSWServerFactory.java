@@ -17,7 +17,11 @@
 package org.geotoolkit.csw;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.geotoolkit.client.AbstractServerFactory;
 import org.geotoolkit.client.Server;
 import org.geotoolkit.csw.xml.CSWVersion;
@@ -59,8 +63,22 @@ public class CSWServerFactory extends AbstractServerFactory{
     /**
      * Version, Mandatory.
      */
-    public static final ParameterDescriptor<CSWVersion> VERSION =
-            new DefaultParameterDescriptor<CSWVersion>("version","Server version",CSWVersion.class,CSWVersion.v202,true);
+    public static final ParameterDescriptor<String> VERSION;
+    static{
+        final String code = "version";
+        final CharSequence remarks = I18N_VERSION;
+        final Map<String,Object> params = new HashMap<String, Object>();
+        params.put(DefaultParameterDescriptor.NAME_KEY, code);
+        params.put(DefaultParameterDescriptor.REMARKS_KEY, remarks);
+        final List<String> validValues =  new ArrayList<String>();
+        for(CSWVersion version : CSWVersion.values()){
+            validValues.add(version.getCode());
+        }
+        
+        VERSION = new DefaultParameterDescriptor<String>(params, String.class, 
+                validValues.toArray(new String[validValues.size()]), 
+                CSWVersion.v202.getCode(), null, null, null, true);
+    }
     
     public static final ParameterDescriptorGroup PARAMETERS = 
             new DefaultParameterDescriptorGroup("CSWParameters", IDENTIFIER,URL,VERSION,SECURITY);

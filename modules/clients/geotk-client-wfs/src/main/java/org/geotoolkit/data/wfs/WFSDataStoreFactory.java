@@ -18,7 +18,10 @@
 package org.geotoolkit.data.wfs;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.geotoolkit.client.AbstractServerFactory;
 import org.geotoolkit.client.ServerFactory;
@@ -30,6 +33,7 @@ import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.util.ResourceInternationalString;
 import org.geotoolkit.wfs.xml.WFSVersion;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
@@ -61,13 +65,29 @@ public class WFSDataStoreFactory extends AbstractDataStoreFactory implements Ser
     /**
      * Version, Mandatory.
      */
-    public static final ParameterDescriptor<WFSVersion> VERSION =
-            new DefaultParameterDescriptor<WFSVersion>("version","Server version",WFSVersion.class,WFSVersion.v110,true);
+    public static final ParameterDescriptor<String> VERSION;
+    static{
+        final String code = "version";
+        final CharSequence remarks = AbstractServerFactory.I18N_VERSION;
+        final Map<String,Object> params = new HashMap<String, Object>();
+        params.put(DefaultParameterDescriptor.NAME_KEY, code);
+        params.put(DefaultParameterDescriptor.REMARKS_KEY, remarks);
+        final List<String> validValues =  new ArrayList<String>();
+        for(WFSVersion version : WFSVersion.values()){
+            validValues.add(version.getCode());
+        }
+        
+        VERSION = new DefaultParameterDescriptor<String>(params, String.class, 
+                validValues.toArray(new String[validValues.size()]), 
+                WFSVersion.v110.getCode(), null, null, null, true);
+    }
     /**
      * Optional -post request
      */
     public static final ParameterDescriptor<Boolean> POST_REQUEST =
-            new DefaultParameterDescriptor<Boolean>("post request","post request",Boolean.class,false,false);    
+            new DefaultParameterDescriptor<Boolean>("post",
+                    new ResourceInternationalString("org/geotoolkit/wfs/bundle", "post"),
+                    Boolean.class,false,false);    
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new DefaultParameterDescriptorGroup("WFSParameters",

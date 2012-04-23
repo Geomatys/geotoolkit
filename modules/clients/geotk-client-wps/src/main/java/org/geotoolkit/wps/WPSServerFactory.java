@@ -16,7 +16,11 @@
  */
 package org.geotoolkit.wps;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.geotoolkit.client.AbstractServerFactory;
 import org.geotoolkit.client.Server;
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
@@ -25,6 +29,7 @@ import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.wps.WebProcessingServer.WPSVersion;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.*;
@@ -55,9 +60,22 @@ public class WPSServerFactory extends AbstractServerFactory{
     /**
      * Version, Mandatory.
      */
-    public static final ParameterDescriptor<WebProcessingServer.WPSVersion> VERSION =
-            new DefaultParameterDescriptor<WebProcessingServer.WPSVersion>("version","Server version",
-            WebProcessingServer.WPSVersion.class,WebProcessingServer.WPSVersion.v100,true);
+    public static final ParameterDescriptor<String> VERSION;
+    static{
+        final String code = "version";
+        final CharSequence remarks = I18N_VERSION;
+        final Map<String,Object> params = new HashMap<String, Object>();
+        params.put(DefaultParameterDescriptor.NAME_KEY, code);
+        params.put(DefaultParameterDescriptor.REMARKS_KEY, remarks);
+        final List<String> validValues =  new ArrayList<String>();
+        for(WPSVersion version : WPSVersion.values()){
+            validValues.add(version.getCode());
+        }
+        
+        VERSION = new DefaultParameterDescriptor<String>(params, String.class, 
+                validValues.toArray(new String[validValues.size()]), 
+                WPSVersion.v100.getCode(), null, null, null, true);
+    }
     
     public static final ParameterDescriptorGroup PARAMETERS = 
             new DefaultParameterDescriptorGroup("WPSParameters", IDENTIFIER, URL,VERSION,SECURITY);

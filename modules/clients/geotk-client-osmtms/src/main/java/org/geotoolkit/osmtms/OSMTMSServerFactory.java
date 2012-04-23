@@ -30,6 +30,7 @@ import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.util.ResourceInternationalString;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.*;
@@ -61,7 +62,9 @@ public class OSMTMSServerFactory extends AbstractServerFactory implements Covera
      * Mandatory - the serveur max zoom level
      */
     public static final ParameterDescriptor<Integer> MAX_ZOOM_LEVEL =
-            new DefaultParameterDescriptor<Integer>("maxZoomLevel","Maximum zoom level",Integer.class,18,true);
+            new DefaultParameterDescriptor<Integer>("maxZoomLevel",
+                    new ResourceInternationalString("org/geotoolkit/osmtms/bundle", "maxZoomLevel"),
+                    Integer.class,18,true);
     
     public static final ParameterDescriptorGroup PARAMETERS =
             new DefaultParameterDescriptorGroup("OSMTMSParameters",

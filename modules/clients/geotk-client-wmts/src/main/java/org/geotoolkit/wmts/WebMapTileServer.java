@@ -169,7 +169,7 @@ public class WebMapTileServer extends AbstractServer implements CoverageStore{
      * Returns the request version.
      */
     public WMTSVersion getVersion() {
-        return Parameters.value(WMTSServerFactory.VERSION, parameters);
+        return WMTSVersion.getVersion(Parameters.value(WMTSServerFactory.VERSION, parameters));
     }
 
     public boolean getImageCache(){

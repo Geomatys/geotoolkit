@@ -16,8 +16,11 @@
  */
 package org.geotoolkit.data.osm.client;
 
-import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.geotoolkit.client.AbstractServerFactory;
 import org.geotoolkit.client.Server;
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
@@ -25,8 +28,6 @@ import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
-import org.geotoolkit.parameter.Parameters;
-import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
@@ -58,8 +59,22 @@ public class OSMServerFactory extends AbstractServerFactory{
     /**
      * Version, Mandatory.
      */
-    public static final ParameterDescriptor<OSMVersion> VERSION =
-            new DefaultParameterDescriptor<OSMVersion>("version","Server version",OSMVersion.class,OSMVersion.v060,true);
+    public static final ParameterDescriptor<String> VERSION;
+    static{
+        final String code = "version";
+        final CharSequence remarks = I18N_VERSION;
+        final Map<String,Object> params = new HashMap<String, Object>();
+        params.put(DefaultParameterDescriptor.NAME_KEY, code);
+        params.put(DefaultParameterDescriptor.REMARKS_KEY, remarks);
+        final List<String> validValues =  new ArrayList<String>();
+        for(OSMVersion version : OSMVersion.values()){
+            validValues.add(version.getCode());
+        }
+        
+        VERSION = new DefaultParameterDescriptor<String>(params, String.class, 
+                validValues.toArray(new String[validValues.size()]), 
+                OSMVersion.v060.getCode(), null, null, null, true);
+    }
     
     public static final ParameterDescriptorGroup PARAMETERS = 
             new DefaultParameterDescriptorGroup("OSMParameters", IDENTIFIER,URL,VERSION,SECURITY);

@@ -68,7 +68,7 @@ public class SensorObservationServiceServer extends AbstractServer {
      * Returns the currently used version for this server
      */
     public SOSVersion getVersion() {
-        return Parameters.value(SOSServerFactory.VERSION, parameters);
+        return SOSVersion.fromCode(Parameters.value(SOSServerFactory.VERSION, parameters));
     }
 
     /**

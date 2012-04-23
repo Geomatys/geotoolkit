@@ -143,7 +143,7 @@ public class WebMapServer extends AbstractServer implements CoverageStore{
     public WebMapServer(final URL serverURL, final ClientSecurity security, 
             final WMSVersion version, final AbstractWMSCapabilities capabilities) {
         super(create(WMSServerFactory.PARAMETERS, serverURL, security));
-        Parameters.getOrCreate(WMSServerFactory.VERSION, parameters).setValue(version);
+        Parameters.getOrCreate(WMSServerFactory.VERSION, parameters).setValue(version.getCode());
         this.capabilities = capabilities;
     }
 
@@ -261,7 +261,7 @@ public class WebMapServer extends AbstractServer implements CoverageStore{
      * @return 
      */
     public WMSVersion getVersion() {
-        return Parameters.value(WMSServerFactory.VERSION, parameters);
+        return WMSVersion.getVersion(Parameters.value(WMSServerFactory.VERSION, parameters));
     }
 
     /**

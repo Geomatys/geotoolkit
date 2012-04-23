@@ -17,8 +17,10 @@
 package org.geotoolkit.wms;
 
 import java.io.Serializable;
-import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.geotoolkit.client.AbstractServerFactory;
 import org.geotoolkit.coverage.CoverageStore;
@@ -29,8 +31,6 @@ import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
-import org.geotoolkit.parameter.Parameters;
-import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.wms.xml.WMSVersion;
 import org.opengis.metadata.Identifier;
@@ -63,8 +63,23 @@ public class WMSServerFactory extends AbstractServerFactory implements CoverageS
     /**
      * Version, Mandatory.
      */
-    public static final ParameterDescriptor<WMSVersion> VERSION =
-            new DefaultParameterDescriptor<WMSVersion>("version","Server version",WMSVersion.class,WMSVersion.v130,true);
+    public static final ParameterDescriptor<String> VERSION;
+            
+    static{
+        final String code = "version";
+        final CharSequence remarks = I18N_VERSION;
+        final Map<String,Object> params = new HashMap<String, Object>();
+        params.put(DefaultParameterDescriptor.NAME_KEY, code);
+        params.put(DefaultParameterDescriptor.REMARKS_KEY, remarks);
+        final List<String> validValues =  new ArrayList<String>();
+        for(WMSVersion version : WMSVersion.values()){
+            validValues.add(version.getCode());
+        }
+        
+        VERSION = new DefaultParameterDescriptor<String>(params, String.class, 
+                validValues.toArray(new String[validValues.size()]), 
+                WMSVersion.v130.getCode(), null, null, null, true);
+    }
     
     public static final ParameterDescriptorGroup PARAMETERS = 
             new DefaultParameterDescriptorGroup("WMSParameters", IDENTIFIER,URL,VERSION,SECURITY);

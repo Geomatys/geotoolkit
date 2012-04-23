@@ -50,6 +50,11 @@ public enum CSWVersion {
                 return candidat;
             }
         }
+        
+        try{
+            return CSWVersion.valueOf(v);
+        }catch(IllegalArgumentException ex){/*we tryed*/}
+        
         throw new IllegalArgumentException(v);
     }
 }

@@ -17,7 +17,10 @@
 package org.geotoolkit.wmts;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.geotoolkit.client.AbstractServerFactory;
 import org.geotoolkit.client.map.CachedPyramidSet;
@@ -61,9 +64,24 @@ public class WMTSServerFactory extends AbstractServerFactory implements Coverage
     /**
      * Mandatory - the serveur verion
      */
-    public static final ParameterDescriptor<WMTSVersion> VERSION =
-            new DefaultParameterDescriptor<WMTSVersion>("version","Serveur version",WMTSVersion.class,WMTSVersion.v100,true);
-
+    public static final ParameterDescriptor<String> VERSION;
+    static{
+        final String code = "version";
+        final CharSequence remarks = I18N_VERSION;
+        final Map<String,Object> params = new HashMap<String, Object>();
+        params.put(DefaultParameterDescriptor.NAME_KEY, code);
+        params.put(DefaultParameterDescriptor.REMARKS_KEY, remarks);
+        final List<String> validValues =  new ArrayList<String>();
+        for(WMTSVersion version : WMTSVersion.values()){
+            validValues.add(version.getCode());
+        }
+        
+        VERSION = new DefaultParameterDescriptor<String>(params, String.class, 
+                validValues.toArray(new String[validValues.size()]), 
+                WMTSVersion.v100.getCode(), null, null, null, true);
+    }
+    
+    
     public static final ParameterDescriptorGroup PARAMETERS =
             new DefaultParameterDescriptorGroup("WMTSParameters",
                 IDENTIFIER,URL,VERSION,IMAGE_CACHE,NIO_QUERIES);

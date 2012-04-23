@@ -79,7 +79,7 @@ public class OpenStreetMapServer extends AbstractServer{
     public OpenStreetMapServer(final URL url, final ClientSecurity security, final OSMVersion version){
         super(create(OSMServerFactory.PARAMETERS, url, security));
         ArgumentChecks.ensureNonNull("version", version);
-        Parameters.getOrCreate(OSMServerFactory.VERSION, parameters).setValue(version);
+        Parameters.getOrCreate(OSMServerFactory.VERSION, parameters).setValue(version.getCode());
     }
     
     public OpenStreetMapServer(final ParameterValueGroup params){
@@ -92,7 +92,7 @@ public class OpenStreetMapServer extends AbstractServer{
     }
 
     public OSMVersion getVersion(){
-        return Parameters.value(OSMServerFactory.VERSION, parameters);
+        return OSMVersion.getVersion(Parameters.value(OSMServerFactory.VERSION, parameters));
     }
     
     public Api getCapabilities(){

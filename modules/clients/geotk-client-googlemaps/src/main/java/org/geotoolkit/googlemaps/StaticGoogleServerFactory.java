@@ -17,8 +17,10 @@
 package org.geotoolkit.googlemaps;
 
 import java.io.Serializable;
-import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.geotoolkit.client.AbstractServerFactory;
 import org.geotoolkit.client.map.CachedPyramidSet;
@@ -30,9 +32,8 @@ import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
-import org.geotoolkit.parameter.Parameters;
-import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.util.ResourceInternationalString;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.*;
@@ -63,9 +64,24 @@ public class StaticGoogleServerFactory extends AbstractServerFactory implements 
     /**
      * Mandatory - the map type
      */
-    public static final ParameterDescriptor<String> MAPTYPE =
-            new DefaultParameterDescriptor<String>("mapType","Map type",String.class,GetMapRequest.TYPE_ROADMAP,true);
-
+    public static final ParameterDescriptor<String> MAPTYPE;
+    static{
+        final String code = "mapType";
+        final CharSequence remarks = new ResourceInternationalString("org/geotoolkit/googlemaps/bundle", "mapType");
+        final Map<String,Object> params = new HashMap<String, Object>();
+        params.put(DefaultParameterDescriptor.NAME_KEY, code);
+        params.put(DefaultParameterDescriptor.REMARKS_KEY, remarks);
+        final List<String> validValues =  new ArrayList<String>();
+        validValues.add(GetMapRequest.TYPE_HYBRID);
+        validValues.add(GetMapRequest.TYPE_ROADMAP);
+        validValues.add(GetMapRequest.TYPE_SATELLITE);
+        validValues.add(GetMapRequest.TYPE_TERRAIN);
+        
+        MAPTYPE = new DefaultParameterDescriptor<String>(params, String.class, 
+                validValues.toArray(new String[validValues.size()]), 
+                GetMapRequest.TYPE_ROADMAP, null, null, null, true);
+    }
+    
     public static final ParameterDescriptorGroup PARAMETERS =
             new DefaultParameterDescriptorGroup("GSParameters",
                 IDENTIFIER,URL,MAPTYPE,SECURITY,IMAGE_CACHE,NIO_QUERIES);

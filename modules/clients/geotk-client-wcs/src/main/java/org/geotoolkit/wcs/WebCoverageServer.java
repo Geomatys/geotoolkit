@@ -83,7 +83,7 @@ public class WebCoverageServer extends AbstractServer {
      * Returns the currently used version for this server
      */
     public WCSVersion getVersion() {
-        return Parameters.value(WCSServerFactory.VERSION, parameters);
+        return WCSVersion.fromCode(Parameters.value(WCSServerFactory.VERSION, parameters));
     }
     
     /**

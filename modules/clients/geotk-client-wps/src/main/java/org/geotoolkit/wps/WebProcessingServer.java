@@ -60,6 +60,29 @@ public class WebProcessingServer extends AbstractServer{
             return code;
         }
         
+        /**
+         * Get the version enum from the string code.
+         *
+         * @param version
+         * @return The enum which matches with the given string.
+         * @throws IllegalArgumentException if the enum class does not contain any enum types
+         *                                  for the given string value.
+         */
+        public static WPSVersion getVersion(final String version) {
+            for (WPSVersion vers : values()) {
+                if (vers.getCode().equals(version)) {
+                    return vers;
+                }
+            }
+
+            try{
+                return WPSVersion.valueOf(version);
+            }catch(IllegalArgumentException ex){}
+
+            throw new IllegalArgumentException("The given string \""+ version +"\" is not " +
+                    "a known version.");
+        }
+        
     }
     
    /**
@@ -113,7 +136,7 @@ public class WebProcessingServer extends AbstractServer{
      * @return WPSVersion : currently used version for this server
      */
     public WPSVersion getVersion() {
-        return Parameters.value(WPSServerFactory.VERSION, parameters);
+        return WPSVersion.getVersion(Parameters.value(WPSServerFactory.VERSION, parameters));
     }
     
     /**

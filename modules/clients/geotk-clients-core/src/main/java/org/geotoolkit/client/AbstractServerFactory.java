@@ -28,6 +28,7 @@ import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.util.ResourceInternationalString;
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.InvalidParameterValueException;
@@ -35,6 +36,7 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.util.InternationalString;
 
 /**
  * Abstract Server factory.
@@ -45,33 +47,48 @@ import org.opengis.parameter.ParameterValueGroup;
 public abstract class AbstractServerFactory extends Factory implements ServerFactory {
 
     /**
+     * commonly used translation for version parameters.
+     */
+    public static final InternationalString I18N_VERSION = new ResourceInternationalString("org/geotoolkit/client/bundle","version");
+    
+    /**
      * Identifier, Mandatory.
      * Subclasses should redeclared this parameter with a different default value.
      */
     public static final ParameterDescriptor<String> IDENTIFIER =
-            new DefaultParameterDescriptor<String>("identifier","Factory identifier.",String.class,null,true);
+            new DefaultParameterDescriptor<String>("identifier",
+                    new ResourceInternationalString("org/geotoolkit/client/bundle", "identifier"),
+                    String.class,null,true);
     
     /**
      * Server URL, Mandatory.
      */
     public static final ParameterDescriptor<URL> URL =
-            new DefaultParameterDescriptor<URL>("url","Server url",URL.class,null,true);
+            new DefaultParameterDescriptor<URL>("url",
+                    new ResourceInternationalString("org/geotoolkit/client/bundle", "url"),
+                    URL.class,null,true);
     /**
      * Security, Optional.
      */
     public static final ParameterDescriptor<ClientSecurity> SECURITY =
-            new DefaultParameterDescriptor<ClientSecurity>("security","Server security",ClientSecurity.class,null,false);
+            new DefaultParameterDescriptor<ClientSecurity>("security",
+                    new ResourceInternationalString("org/geotoolkit/client/bundle", "security"),
+                    ClientSecurity.class,null,false);
     
     /**
      * Cache images in memory, Optional.
      */
     public static final ParameterDescriptor<Boolean> IMAGE_CACHE =
-            new DefaultParameterDescriptor<Boolean>("imagecache", "Cache images in memory", Boolean.class,false,false);
+            new DefaultParameterDescriptor<Boolean>("imagecache", 
+                    new ResourceInternationalString("org/geotoolkit/client/bundle", "imageCache"),
+                    Boolean.class,false,false);
     /**
      * Use NIO when possible for queries, Optional.
      */
     public static final ParameterDescriptor<Boolean> NIO_QUERIES =
-            new DefaultParameterDescriptor<Boolean>("useNIO","Use NIO parallal queries when possible.",Boolean.class,Boolean.FALSE,false);
+            new DefaultParameterDescriptor<Boolean>("nio",
+                    new ResourceInternationalString("org/geotoolkit/client/bundle", "nio"),
+                    Boolean.class,Boolean.FALSE,false);
     
     /** 
      * Default Implementation abuses the naming convention.
