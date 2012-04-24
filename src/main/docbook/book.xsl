@@ -11,7 +11,8 @@
 
   <!--
        Following is copied from "http://docbook.sourceforge.net/release/xsl/current/xhtml/component.xsl".
-       Only the lines identified by a comment have been modified.
+       Only the lines identified by a comment have been modified.  This file is used only for building
+       the web site and is not included in the Geotk distributions.
   -->
 
   <xsl:template name="component.title">
@@ -27,7 +28,6 @@
         <xsl:when test="ancestor::sect2">3</xsl:when>
         <xsl:when test="ancestor::sect1">2</xsl:when>
         <xsl:when test="ancestor::sect0">1</xsl:when>   <!-- Added -->
-        <xsl:when test="ancestor::chapter">0</xsl:when> <!-- Added -->
         <xsl:otherwise>0</xsl:otherwise>  <!-- Was 1, changed to 0 -->
       </xsl:choose>
     </xsl:variable>
