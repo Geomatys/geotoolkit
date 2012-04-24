@@ -24,10 +24,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.text.ParseException;
 import javax.swing.tree.TreeModel;
+import javax.measure.unit.SI;
 
 import org.opengis.metadata.citation.Role;
 import org.opengis.metadata.citation.ResponsibleParty;
 import org.opengis.metadata.citation.PresentationForm;
+import org.opengis.metadata.identification.TopicCategory;
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.test.Depend;
@@ -36,6 +38,8 @@ import org.geotoolkit.gui.swing.tree.TreeNode;
 import org.geotoolkit.gui.swing.tree.TreeFormat;
 import org.geotoolkit.gui.swing.tree.DefaultTreeModel;
 import org.geotoolkit.util.SimpleInternationalString;
+import org.geotoolkit.metadata.iso.content.DefaultBand;
+import org.geotoolkit.metadata.iso.content.DefaultImageDescription;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
 import org.geotoolkit.metadata.iso.identification.DefaultKeywords;
@@ -43,7 +47,6 @@ import org.geotoolkit.metadata.iso.identification.DefaultDataIdentification;
 import org.geotoolkit.metadata.iso.lineage.DefaultProcessing;
 
 import org.junit.*;
-import org.opengis.metadata.identification.TopicCategory;
 import static org.geotoolkit.test.Assert.*;
 
 
@@ -51,7 +54,7 @@ import static org.geotoolkit.test.Assert.*;
  * Tests {@link PropertyTree}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @since 3.00
  */
@@ -65,6 +68,17 @@ public final strictfp class PropertyTreeTest {
      */
     private static TreeNode parse(final String text) throws ParseException {
         return new TreeFormat().parseObject(text);
+    }
+
+    /**
+     * Creates a band for the given minimum and maximum wavelengths, in centimetres.
+     */
+    private static DefaultBand createBand(final double min, final double max) {
+        final DefaultBand band = new DefaultBand();
+        band.setMinValue(min);
+        band.setMaxValue(max);
+        band.setUnits(SI.CENTIMETRE);
+        return band;
     }
 
     /**
@@ -253,6 +267,31 @@ public final strictfp class PropertyTreeTest {
             "        └───Cited Responsible Parties\n" +
             "            └───Role\n" +
             "                └───author\n", tree.toString());
+    }
+
+    /**
+     * Tests a band specified by a range of wavelength. The main purpose of this method is to test
+     * the {@code PropertyTree.getTitleForSpecialCases(Object)} method. The result of that method
+     * is the summary that appears on the right side of [1] and [2].
+     *
+     * @since 3.20
+     */
+    @Test
+    public void testTitleForSpecialCases() {
+        final DefaultImageDescription image = new DefaultImageDescription();
+        image.getDimensions().add(createBand(0.25, 0.26));
+        image.getDimensions().add(createBand(0.28, 0.29));
+        assertMultilinesEquals(
+                "Image Description\n" +
+                "└───Dimensions\n" +
+                "    ├───[1] Band ‒ [0.25 … 0.26] cm\n" +
+                "    │   ├───Units……………………………………………… cm\n" +
+                "    │   ├───Max Value…………………………………… 0,26\n" +
+                "    │   └───Min Value…………………………………… 0,25\n" +
+                "    └───[2] Band ‒ [0.28 … 0.29] cm\n" +
+                "        ├───Units……………………………………………… cm\n" +
+                "        ├───Max Value…………………………………… 0,29\n" +
+                "        └───Min Value…………………………………… 0,28\n", image.toString());
     }
 
     /**
