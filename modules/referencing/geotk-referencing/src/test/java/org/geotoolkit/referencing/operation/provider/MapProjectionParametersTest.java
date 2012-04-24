@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.referencing.operation.provider;
 
+import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 
 import org.junit.Test;
@@ -68,5 +69,48 @@ public final strictfp class MapProjectionParametersTest {
         assertEquals(298.257, parameters.parameter("inverse_flattening").doubleValue(), 0.001);
         assertEquals(6378137, parameters.parameter("semi_major")        .doubleValue(), 0.5);
         assertEquals(6356752, parameters.parameter("semi_minor")        .doubleValue(), 0.5);
+    }
+
+    /**
+     * Tests the inverse flattening dynamic parameter set after the semi-major axis length.
+     * This method tests actually the semi-major parameter capability to compute the inverse
+     * flattening.
+     */
+    @Test
+    public void testSemiMajor() {
+        final ParameterValueGroup parameters = LambertConformal2SP.PARAMETERS.createValue();
+        parameters.parameter("inverse_flattening").setValue(298.257223563);
+        assertNull(parameters.parameter("semi_major").getValue());
+        assertNull(parameters.parameter("semi_minor").getValue());
+        parameters.parameter("semi_major").setValue(6378137.000); // WGS84
+        assertEquals(298.257, parameters.parameter("inverse_flattening").doubleValue(), 0.001);
+        assertEquals(6378137, parameters.parameter("semi_major")        .doubleValue(), 0.5);
+        assertEquals(6356752, parameters.parameter("semi_minor")        .doubleValue(), 0.5);
+    }
+
+    /**
+     * Tests the standard parallel dynamic parameter.
+     */
+    @Test
+    public void testStandardParallel() {
+        final ParameterValueGroup parameters = LambertConformal2SP.PARAMETERS.createValue();
+        final ParameterValue<?> p  = parameters.parameter("standard_parallel"  );
+        final ParameterValue<?> p1 = parameters.parameter("standard_parallel_1");
+        final ParameterValue<?> p2 = parameters.parameter("standard_parallel_2");
+        assertSame(p,  parameters.parameter("standard_parallel"  ));
+        assertSame(p1, parameters.parameter("standard_parallel_1"));
+        assertSame(p2, parameters.parameter("standard_parallel_2"));
+
+        /* Empty */      assertArrayEquals(new double[] {     }, p.doubleValueList(), 0.0);
+        p1.setValue(40); assertArrayEquals(new double[] {40   }, p.doubleValueList(), 0.0);
+        p2.setValue(60); assertArrayEquals(new double[] {40,60}, p.doubleValueList(), 0.0);
+
+        p.setValue(new double[] {30,40});
+        assertEquals(30, p1.doubleValue(), 0.0);
+        assertEquals(40, p2.doubleValue(), 0.0);
+
+        p.setValue(new double[] {45});
+        assertEquals(45,         p1.doubleValue(), 0.0);
+        assertEquals(Double.NaN, p2.doubleValue(), 0.0);
     }
 }

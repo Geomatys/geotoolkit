@@ -32,10 +32,13 @@ import java.text.ParseException;
 import javax.swing.tree.TreeNode;
 
 import org.opengis.util.CodeList;
+import org.opengis.util.GenericName;
 import org.opengis.util.InternationalString;
 import org.opengis.metadata.Identifier;
+import org.opengis.metadata.content.Band;
 
 import org.geotoolkit.util.Strings;
+import org.geotoolkit.util.MeasurementRange;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.converter.Numbers;
 import org.geotoolkit.util.collection.CheckedContainer;
@@ -90,7 +93,7 @@ final class PropertyTree {
      * @since 3.19
      */
     private static final Class<?>[] TITLE_TYPES = {
-        InternationalString.class, CharSequence.class, CodeList.class, Object.class
+        GenericName.class, InternationalString.class, CharSequence.class, CodeList.class, Object.class
     };
 
     /**
@@ -477,7 +480,10 @@ final class PropertyTree {
                 type = standard.getInterface(type);
             }
             buffer.append(Strings.camelCaseToSentence(Classes.getShortName(type)));
-            String title = getTitle(asMap.values());
+            String title = getTitleForSpecialCases(value);
+            if (title == null) {
+                title = getTitle(asMap.values());
+            }
             if (title != null) {
                 boolean exceed = title.length() > TITLE_LIMIT;
                 if (exceed) {
@@ -535,9 +541,41 @@ final class PropertyTree {
     }
 
     /**
+     * Tries to figure out a title for the given metadata object, handling only special cases.
+     * This method is invoked before the generic {@link #getTitle(Collection)} method below.
+     *
+     * @param  metadata The metadata object to examine.
+     * @return A string representation, or {@code null} if there is no special case for this object.
+     *
+     * @since 3.20
+     */
+    private static String getTitleForSpecialCases(final Object metadata) {
+        if (metadata instanceof Band) {
+            final Band band = (Band) metadata;
+            if (band.getSequenceIdentifier() == null) {
+                // If the band contains an identifier, we will let the default 'getTitle'
+                // method do its work. Only if there is no band identifier, we will try
+                // to produce something better than the default 'getTitle' work.
+                final Double min = band.getMinValue();
+                final Double max = band.getMaxValue();
+                if (min != null || max != null) {
+                    return new MeasurementRange<Double>(Double.class, min, true, max, true, band.getUnits()).toString();
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
      * Tries to figure out a title for the given metadata (represented as a the values
      * of a Map) and appends that title to the given buffer. If no title can be found,
      * return {@code null}.
+     *
+     * {@note An other strategy would be to define a <code>toShortString()</code> method
+     * in abstract metadata and let subclasses implement the behavior they want. However
+     * I'm not yet sure if feature deserves public API, since it is specific to the tree
+     * formating. Furthermore we may want to ensure the same formatting for every metadata
+     * implementation.}
      *
      * @param  values The values of the metadata for which to append a title.
      * @return The title, or {@code null} if none were found.
@@ -549,7 +587,10 @@ final class PropertyTree {
             for (final Object element : values) {
                 if (baseType.isInstance(element)) {
                     String name;
-                    if (element instanceof InternationalString) {
+                    if (element instanceof GenericName) {
+                        final InternationalString i18n = ((GenericName) element).toInternationalString();
+                        name = (i18n != null) ? i18n.toString(locale) : element.toString();
+                    } else if (element instanceof InternationalString) {
                         name = ((InternationalString) element).toString(locale);
                     } else if (element instanceof CodeList<?>) {
                         name = CodeLists.localize((CodeList<?>) element, locale);

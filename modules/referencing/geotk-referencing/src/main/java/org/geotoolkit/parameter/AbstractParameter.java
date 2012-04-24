@@ -47,7 +47,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 
 /**
- * Abstract parameter value or group of parameter values.
+ * The root class of {@link ParameterValue} and {@link ParameterValueGroup} implementations.
  *
  * @author Martin Desruisseaux (IRD)
  * @version 3.00
@@ -221,10 +221,11 @@ public abstract class AbstractParameter extends FormattableObject
 
     /**
      * Returns a string representation of this parameter. The default implementation delegates
-     * the work to {@link #write(TableWriter) }, which should be overridden by subclasses.
+     * the work to {@link #write(TableWriter)}. Subclass can override the later method instead
+     * than {@code toString()}.
      */
     @Override
-    public final String toString() {
+    public String toString() {
         final TableWriter table = new TableWriter(null, 1);
         table.setMultiLinesCells(true);
         try {

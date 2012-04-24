@@ -32,7 +32,6 @@ import javax.measure.converter.UnitConverter;
 import javax.measure.converter.ConversionException;
 
 import org.opengis.util.CodeList;
-import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.InvalidParameterTypeException;
 import org.opengis.parameter.InvalidParameterValueException;
@@ -85,7 +84,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * @since 2.0
  * @module
  */
-public class Parameter<T> extends AbstractParameter implements ParameterValue<T> {
+public class Parameter<T> extends AbstractParameterValue<T> {
     /**
      * Serial number for inter-operability with different versions.
      */
@@ -101,7 +100,7 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
     /**
      * The unit of measure for the value, or {@code null} if it doesn't apply. Except for the
      * constructors, the {@link #equals(Object)} and the {@link #hashCode()} methods, this field
-     * is read only by {@link #getValue()} and written by {@link #setSafeValue(Object, Unit)}.
+     * is read only by {@link #getUnit()} and written by {@link #setSafeValue(Object, Unit)}.
      */
     private Unit<?> unit;
 
@@ -225,15 +224,6 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
     }
 
     /**
-     * Returns the abstract definition of this parameter.
-     */
-    @Override
-    @SuppressWarnings("unchecked") // Type checked by the constructor.
-    public ParameterDescriptor<T> getDescriptor() {
-        return (ParameterDescriptor<T>) super.getDescriptor();
-    }
-
-    /**
      * Returns the unit of measure of the {@linkplain #doubleValue() parameter value}.
      * If the parameter value has no unit (for example because it is a {@link String} type),
      * then this method returns {@code null}. Note that "no unit" doesn't means
@@ -291,7 +281,14 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
      * Returns the numeric value represented by this operation parameter.
      * The units of measurement are specified by {@link #getUnit()}.
      *
+     * {@note The behavior of this method is slightly different than the equivalent method in
+     * the <code>FloatParameter</code> class, since this method throws an exception instead than
+     * returning <code>NaN</code> if no value has been explicitely set. This method behaves that
+     * way for consistency will other methods defined in this class, since all of them except
+     * <code>getValue()</code> throw an exception in such case.}
+     *
      * @return The numeric value represented by this parameter after conversion to type {@code double}.
+     *         This method returns {@link Double#NaN} only if such "value" has been explicitely set.
      * @throws InvalidParameterTypeException if the value is not a numeric type.
      * @throws IllegalStateException if the value is not defined and there is no default value.
      *
@@ -725,6 +722,7 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
     protected void setSafeValue(final T value, final Unit<?> unit) {
         this.value = value;
         this.unit  = unit;
+        fireValueChanged();
     }
 
     /**
@@ -765,7 +763,6 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
      * Returns a clone of this parameter.
      */
     @Override
-    @SuppressWarnings("unchecked")
     public Parameter<T> clone() {
         return (Parameter<T>) super.clone();
     }

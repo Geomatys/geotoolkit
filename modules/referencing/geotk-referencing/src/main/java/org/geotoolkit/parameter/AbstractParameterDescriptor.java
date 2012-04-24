@@ -36,7 +36,10 @@ import static org.geotoolkit.util.Utilities.hash;
 
 
 /**
- * Abstract definition of a parameter or group of parameters used by an operation method.
+ * The root class of {@link org.opengis.parameter.ParameterDescriptor} and
+ * {@link org.opengis.parameter.ParameterDescriptorGroup} implementations.
+ * Subclasses provide abstract definition of a parameter or group of parameters
+ * used by an operation method.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.18

@@ -330,7 +330,7 @@ public final class XArrays extends Static {
      * the {@code array} reference unchanged. Otherwise this method creates a new array.
      * In every cases, the given array is never modified.
      *
-     * @param <E>     The type of array elements.
+     * @param <E>     The array type.
      * @param array   Array from which to remove elements.
      * @param first   Index of the first element to remove from the given {@code array}.
      * @param length  Number of elements to remove.
@@ -352,8 +352,8 @@ public final class XArrays extends Static {
     /**
      * Returns an array containing the same elements than the given array except for
      * the given range. If the {@code length} argument is 0, then this method returns
-     * the {@code array} reference unchanged. Otherwise this method creates a new array.
-     * In every cases, the given array is never modified.
+     * the {@code array} reference unchanged (except if empty). Otherwise this method
+     * creates a new array. In every cases, the given array is never modified.
      *
      * @param <E>     The type of array elements.
      * @param array   Array from which to remove elements.
@@ -369,8 +369,8 @@ public final class XArrays extends Static {
     /**
      * Returns an array containing the same elements than the given array except for
      * the given range. If the {@code length} argument is 0, then this method returns
-     * the {@code array} reference unchanged. Otherwise this method creates a new array.
-     * In every cases, the given array is never modified.
+     * the {@code array} reference unchanged (except if empty). Otherwise this method
+     * creates a new array. In every cases, the given array is never modified.
      *
      * @param array   Array from which to remove elements.
      * @param first   Index of the first element to remove from the given {@code array}.
@@ -379,14 +379,14 @@ public final class XArrays extends Static {
      *                removed elements, or {@code array} if {@code length} is 0.
      */
     public static double[] remove(final double[] array, final int first, final int length) {
-        return doRemove(array, first, length);
+        return (first == 0 && length == array.length) ? EMPTY_DOUBLE : doRemove(array, first, length);
     }
 
     /**
      * Returns an array containing the same elements than the given array except for
      * the given range. If the {@code length} argument is 0, then this method returns
-     * the {@code array} reference unchanged. Otherwise this method creates a new array.
-     * In every cases, the given array is never modified.
+     * the {@code array} reference unchanged (except if empty). Otherwise this method
+     * creates a new array. In every cases, the given array is never modified.
      *
      * @param array   Array from which to remove elements.
      * @param first   Index of the first element to remove from the given {@code array}.
@@ -395,14 +395,14 @@ public final class XArrays extends Static {
      *                removed elements, or {@code array} if {@code length} is 0.
      */
     public static float[] remove(final float[] array, final int first, final int length) {
-        return doRemove(array, first, length);
+        return (first == 0 && length == array.length) ? EMPTY_FLOAT : doRemove(array, first, length);
     }
 
     /**
      * Returns an array containing the same elements than the given array except for
      * the given range. If the {@code length} argument is 0, then this method returns
-     * the {@code array} reference unchanged. Otherwise this method creates a new array.
-     * In every cases, the given array is never modified.
+     * the {@code array} reference unchanged (except if empty). Otherwise this method
+     * creates a new array. In every cases, the given array is never modified.
      *
      * @param array   Array from which to remove elements.
      * @param first   Index of the first element to remove from the given {@code array}.
@@ -411,14 +411,14 @@ public final class XArrays extends Static {
      *                removed elements, or {@code array} if {@code length} is 0.
      */
     public static long[] remove(final long[] array, final int first, final int length) {
-        return doRemove(array, first, length);
+        return (first == 0 && length == array.length) ? EMPTY_LONG : doRemove(array, first, length);
     }
 
     /**
      * Returns an array containing the same elements than the given array except for
      * the given range. If the {@code length} argument is 0, then this method returns
-     * the {@code array} reference unchanged. Otherwise this method creates a new array.
-     * In every cases, the given array is never modified.
+     * the {@code array} reference unchanged (except if empty). Otherwise this method
+     * creates a new array. In every cases, the given array is never modified.
      *
      * @param array   Array from which to remove elements.
      * @param first   Index of the first element to remove from the given {@code array}.
@@ -427,14 +427,14 @@ public final class XArrays extends Static {
      *                removed elements, or {@code array} if {@code length} is 0.
      */
     public static int[] remove(final int[] array, final int first, final int length) {
-        return doRemove(array, first, length);
+        return (first == 0 && length == array.length) ? EMPTY_INT : doRemove(array, first, length);
     }
 
     /**
      * Returns an array containing the same elements than the given array except for
      * the given range. If the {@code length} argument is 0, then this method returns
-     * the {@code array} reference unchanged. Otherwise this method creates a new array.
-     * In every cases, the given array is never modified.
+     * the {@code array} reference unchanged (except if empty). Otherwise this method
+     * creates a new array. In every cases, the given array is never modified.
      *
      * @param array   Array from which to remove elements.
      * @param first   Index of the first element to remove from the given {@code array}.
@@ -443,14 +443,14 @@ public final class XArrays extends Static {
      *                removed elements, or {@code array} if {@code length} is 0.
      */
     public static short[] remove(final short[] array, final int first, final int length) {
-        return doRemove(array, first, length);
+        return (first == 0 && length == array.length) ? EMPTY_SHORT : doRemove(array, first, length);
     }
 
     /**
      * Returns an array containing the same elements than the given array except for
      * the given range. If the {@code length} argument is 0, then this method returns
-     * the {@code array} reference unchanged. Otherwise this method creates a new array.
-     * In every cases, the given array is never modified.
+     * the {@code array} reference unchanged (except if empty). Otherwise this method
+     * creates a new array. In every cases, the given array is never modified.
      *
      * @param array   Array from which to remove elements.
      * @param first   Index of the first element to remove from the given {@code array}.
@@ -459,14 +459,14 @@ public final class XArrays extends Static {
      *                removed elements, or {@code array} if {@code length} is 0.
      */
     public static byte[] remove(final byte[] array, final int first, final int length) {
-        return doRemove(array, first, length);
+        return (first == 0 && length == array.length) ? EMPTY_BYTE : doRemove(array, first, length);
     }
 
     /**
      * Returns an array containing the same elements than the given array except for
      * the given range. If the {@code length} argument is 0, then this method returns
-     * the {@code array} reference unchanged. Otherwise this method creates a new array.
-     * In every cases, the given array is never modified.
+     * the {@code array} reference unchanged (except if empty). Otherwise this method
+     * creates a new array. In every cases, the given array is never modified.
      *
      * @param array   Array from which to remove elements.
      * @param first   Index of the first element to remove from the given {@code array}.
@@ -475,14 +475,14 @@ public final class XArrays extends Static {
      *                removed elements, or {@code array} if {@code length} is 0.
      */
     public static char[] remove(final char[] array, final int first, final int length) {
-        return doRemove(array, first, length);
+        return (first == 0 && length == array.length) ? EMPTY_CHAR : doRemove(array, first, length);
     }
 
     /**
      * Returns an array containing the same elements than the given array except for
      * the given range. If the {@code length} argument is 0, then this method returns
-     * the {@code array} reference unchanged. Otherwise this method creates a new array.
-     * In every cases, the given array is never modified.
+     * the {@code array} reference unchanged (except if empty). Otherwise this method
+     * creates a new array. In every cases, the given array is never modified.
      *
      * @param array   Array from which to remove elements.
      * @param first   Index of the first element to remove from the given {@code array}.
@@ -491,7 +491,7 @@ public final class XArrays extends Static {
      *                removed elements, or {@code array} if {@code length} is 0.
      */
     public static boolean[] remove(final boolean[] array, final int first, final int length) {
-        return doRemove(array, first, length);
+        return (first == 0 && length == array.length) ? EMPTY_BOOLEAN : doRemove(array, first, length);
     }
 
     /**

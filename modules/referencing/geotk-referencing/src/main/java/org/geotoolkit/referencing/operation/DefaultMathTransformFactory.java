@@ -34,6 +34,8 @@ import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterNotFoundException;
+import org.opengis.parameter.InvalidParameterTypeException;
 import org.opengis.referencing.datum.Ellipsoid;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -406,10 +408,19 @@ public class DefaultMathTransformFactory extends ReferencingFactory implements M
          * parameters (because they duplicate datum information).
          */
         final Ellipsoid ellipsoid = CRSUtilities.getHeadGeoEllipsoid(baseCRS);
-        if (ellipsoid != null) {
+        if (ellipsoid != null) try {
             final Unit<Length> axisUnit = ellipsoid.getAxisUnit();
             Parameters.ensureSet(parameters, "semi_major", ellipsoid.getSemiMajorAxis(), axisUnit, false);
             Parameters.ensureSet(parameters, "semi_minor", ellipsoid.getSemiMinorAxis(), axisUnit, false);
+        } catch (ParameterNotFoundException e) {
+            /*
+             * Parameter not found. This exception should not occurs most of the time.
+             * If it occurs, we will not try to set the parameter here, but the same
+             * exception is likely to occurs at MathTransform creation time. The later
+             * is the expected place for this exception, so we will let it happen there.
+             */
+        } catch (InvalidParameterTypeException e) {
+            // Similar than above.
         }
         MathTransform baseToDerived = createParameterizedTransform(parameters);
         final Variables localVariables = getLocalVariables();

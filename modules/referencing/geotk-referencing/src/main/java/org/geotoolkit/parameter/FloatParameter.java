@@ -24,7 +24,6 @@ import java.net.URI;
 import javax.measure.unit.Unit;
 import javax.measure.converter.ConversionException;
 
-import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.InvalidParameterTypeException;
 import org.opengis.parameter.InvalidParameterValueException;
@@ -55,8 +54,8 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * <ul>
  *   <li>All getter methods will invoke {@link #doubleValue()} and - if needed - {@link #getUnit()},
  *       then performs their processing on the values returned by those methods.</li>
- *   <li>All setter methods will first convert (if needed) and verify the argument validity,
- *       then pass the values to the {@link #setValue(double)} method.</li>
+ *   <li>All setter methods will first check the argument validity,
+ *       then pass the values to the {@link #setValue(double, Unit)} method.</li>
  * </ul>
  * <p>
  * Consequently, the above-cited methods provide single points that subclasses can override
@@ -71,7 +70,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * @since 2.0
  * @module
  */
-public class FloatParameter extends AbstractParameter implements ParameterValue<Double> {
+public class FloatParameter extends AbstractParameterValue<Double> {
     /**
      * Serial number for inter-operability with different versions.
      */
@@ -80,9 +79,16 @@ public class FloatParameter extends AbstractParameter implements ParameterValue<
     /**
      * The value, or {@code NaN} if undefined. Except for the constructors, the
      * {@link #equals(Object)} and the {@link #hashCode()} methods, this field is
-     * read only by {@link #doubleValue()} and written by {@link #setValue(double)}.
+     * read only by {@link #doubleValue()} and written by {@link #setValue(double, Unit)}.
      */
     private double value;
+
+    /**
+     * The unit of measure for the value, or {@code null} if it doesn't apply. Except for the
+     * constructors, the {@link #equals(Object)} and the {@link #hashCode()} methods, this field
+     * is read only by {@link #getUnit()} and written by {@link #setValue(double, Unit)}.
+     */
+    private Unit<?> unit;
 
     /**
      * Constructs a parameter from the specified descriptor.
@@ -99,6 +105,7 @@ public class FloatParameter extends AbstractParameter implements ParameterValue<
                     Errors.Keys.ILLEGAL_CLASS_$2, type, expected));
         }
         value = defaultValue(descriptor);
+        unit  = descriptor.getUnit();
     }
 
     /**
@@ -124,17 +131,8 @@ public class FloatParameter extends AbstractParameter implements ParameterValue<
     }
 
     /**
-     * Returns the abstract definition of this parameter.
-     */
-    @Override
-    @SuppressWarnings("unchecked") // Type should has been checked by the constructor.
-    public ParameterDescriptor<Double> getDescriptor() {
-        return (ParameterDescriptor<Double>) descriptor;
-    }
-
-    /**
      * Returns the unit of measure of the {@linkplain #doubleValue() parameter value}.
-     * The default implementation always delegates to {@link ParameterDescriptor#getUnit()}.
+     * The default value is {@link ParameterDescriptor#getUnit()}.
      *
      * {@section Implementation note for subclasses}
      * All getter methods which need unit information will invoke this {@code getUnit()} method.
@@ -144,7 +142,7 @@ public class FloatParameter extends AbstractParameter implements ParameterValue<
      */
     @Override
     public Unit<?> getUnit() {
-        return ((ParameterDescriptor<?>) descriptor).getUnit();
+        return unit;
     }
 
     /**
@@ -311,56 +309,66 @@ public class FloatParameter extends AbstractParameter implements ParameterValue<
 
     /**
      * Sets the parameter value as a floating point and its associated unit.
-     * The default implementation converts the given value to this parameter
-     * {@linkplain #getUnit() unit}, then invokes {@link #setValue(double)}.
-     *
-     * @param  value The parameter value.
-     * @param  unit The unit for the specified value.
-     * @throws InvalidParameterValueException if the value is illegal for some reason
-     *         (for example a value out of range).
-     */
-    @Override
-    public void setValue(double value, final Unit<?> unit) throws InvalidParameterValueException {
-        ensureNonNull("unit", unit);
-        @SuppressWarnings("unchecked") // Checked by constructor.
-        final ParameterDescriptor<Double> descriptor = (ParameterDescriptor<Double>) this.descriptor;
-        final Unit<?> thisUnit = descriptor.getUnit();
-        if (thisUnit == null) {
-            throw unitlessParameter(descriptor);
-        }
-        final int expectedID = getUnitMessageID(thisUnit);
-        if (getUnitMessageID(unit) != expectedID) {
-            throw new IllegalArgumentException(Errors.format(expectedID, unit));
-        }
-        try {
-            value = unit.getConverterToAny(thisUnit).convert(value);
-        } catch (ConversionException e) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.INCOMPATIBLE_UNIT_$1, unit), e);
-        }
-        setValue(value);
-    }
-
-    /**
-     * Sets the parameter value as a floating point. The default implementation verifies
-     * the argument validity, then stores the given value.
+     * The default implementation verifies the arguments validity, then stores the given values.
      *
      * {@section Implementation note for subclasses}
      * This method is invoked by all other {@code setXXX(…)} methods. Subclasses can override
      * this method if they want to perform more processing on the value before its storage,
      * or to be notified about value changes.
      *
+     * @param  value The parameter value.
+     * @param  unit The new unit of measurement.
+     * @throws InvalidParameterValueException if the value is illegal for some reason
+     *         (for example a value out of range).
+     */
+    @Override
+    public void setValue(final double value, final Unit<?> unit) throws InvalidParameterValueException {
+        double converted = value;
+        @SuppressWarnings("unchecked") // Checked by constructor.
+        final ParameterDescriptor<Double> descriptor = (ParameterDescriptor<Double>) this.descriptor;
+        final Unit<?> targetUnit = descriptor.getUnit();
+        if (targetUnit != unit) {
+            if (targetUnit == null) {
+                throw unitlessParameter(descriptor);
+            } else {
+                ensureNonNull("unit", unit);
+                final int expectedID = getUnitMessageID(targetUnit);
+                if (getUnitMessageID(unit) != expectedID) {
+                    throw new InvalidParameterValueException(Errors.format(expectedID, unit),
+                            descriptor.getName().getCode(), value);
+                }
+                try {
+                    converted = unit.getConverterToAny(targetUnit).convert(value);
+                } catch (ConversionException e) {
+                    throw new IllegalArgumentException(Errors.format(Errors.Keys.INCOMPATIBLE_UNIT_$1, unit), e);
+                }
+            }
+        }
+        /*
+         * Really store the original value, not the converted one, because we store the given
+         * unit as well. Conversions will be applied on the fly by the getter method if needed.
+         */
+        if (Double.isNaN(value)) {
+            this.value = defaultValue(descriptor);
+        } else {
+            ensureValidValue(descriptor, converted);
+            this.value = value;
+        }
+        this.unit = unit; // Store only after successful validation.
+        fireValueChanged();
+    }
+
+    /**
+     * Sets the parameter value as a floating point.
+     * The default implementation delegates to {@link #setValue(double, Unit)}.
+     *
      * @param value The parameter value.
      * @throws InvalidParameterValueException if the value is illegal for some reason
      *         (for example a value out of range).
      */
     @Override
-    public void setValue(double value) throws InvalidParameterValueException {
-        @SuppressWarnings("unchecked") // Checked by constructor.
-        final ParameterDescriptor<Double> descriptor = (ParameterDescriptor<Double>) this.descriptor;
-        if (Double.isNaN(value)) {
-            value = defaultValue(descriptor);
-        }
-        this.value = ensureValidValue(descriptor, Double.valueOf(value));
+    public void setValue(final double value) throws InvalidParameterValueException {
+        setValue(value, unit);
     }
 
     /**
@@ -405,7 +413,7 @@ public class FloatParameter extends AbstractParameter implements ParameterValue<
         } else if (value instanceof Number) {
             number = ((Number) value).doubleValue();
         } else {
-            throw new InvalidParameterTypeException(getClassTypeError(), getName(descriptor));
+            throw new InvalidParameterValueException(getClassTypeError(), getName(descriptor), value);
         }
         setValue(number);
     }
@@ -420,7 +428,7 @@ public class FloatParameter extends AbstractParameter implements ParameterValue<
         if (values.length == 1) {
             setValue(values[0], unit);
         } else {
-            throw new InvalidParameterTypeException(getClassTypeError(), getName(descriptor));
+            throw new InvalidParameterValueException(getClassTypeError(), getName(descriptor), values);
         }
     }
 

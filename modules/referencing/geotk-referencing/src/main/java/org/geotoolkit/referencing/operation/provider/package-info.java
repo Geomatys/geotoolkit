@@ -23,17 +23,8 @@
  * This package is provided mostly for documentation purpose, since the javadoc of each provider
  * lists the operation names, identifiers (e.g. EPSG codes) and parameters. The preferred way to
  * get a provider is to use the {@link org.opengis.referencing.operation.MathTransformFactory} class.
- * <p>
- * Providers are registered in the following file, which may appears in any JAR file. See
- * the {@linkplain org.geotoolkit.factory factory} package for more information about how to
- * manage providers registered in such files.
  *
- * {@preformat text
- *     META-INF/services/org.geotoolkit.referencing.operation.MathTransformProvider
- * }
- *
- *
- * {@section Parameters}
+ * {@section Standard parameters}
  *
  * Each provider declares a single {@link org.opengis.parameter.ParameterDescriptorGroup} constant
  * named {@code PARAMETERS}. Each group describes all the parameters expected by an operation method.
@@ -50,6 +41,27 @@
  * For example the <cite>false easting</cite> parameter is usually called {@code "false_easting"}
  * by OGC, while EPSG uses various names like "<cite>False easting</cite>" or "<cite>Easting at
  * false origin</cite>".
+ *
+ * {@section Dynamic parameters}
+ *
+ * A few non-standard parameters are defined for compatibility reasons,
+ * but delegates their work to standard parameters. Those dynamic parameters are not listed in the
+ * {@linkplain org.opengis.referencing.parameter.ParameterValueGroup#values() parameter values}.
+ * Dynamic parameters are:
+ * <p>
+ * <ul>
+ *   <li>{@code "earth_radius"}, which copy its value to the {@code "semi_major"} and
+ *       {@code "semi_minor"} parameter values.</li>
+ *   <li>{@code "inverse_flattening"}, which compute the {@code "semi_minor"} value from
+ *       the {@code "semi_major"} parameter value.</li>
+ *   <li>{@code "standard_parallel"} expecting an array of type {@code double[]}, which copy
+ *       its elements to the {@code "standard_parallel_1"} and {@code "standard_parallel_2"}
+ *       parameter scalar values.</li>
+ * </ul>
+ * <p>
+ * The main purpose of those dynamic parameters is to support some less commonly used conventions
+ * without duplicating the most commonly used conventions. The alternative ways are used in NetCDF
+ * files for example, which often use spherical models instead than ellipsoidal ones.
  *
  * {@section Mandatory and optional parameters}
  *
@@ -92,6 +104,7 @@
  *
  * @see <a href="{@docRoot}/../modules/referencing/operation-parameters.html">Geotk coordinate operations matrix</a>
  * @see <a href="http://www.remotesensing.org/geotiff/proj_list">Projections list on RemoteSensing.org</a>
+ * @see org.geotoolkit.referencing.operation.MathTransformProvider
  *
  * @since 3.00
  * @level advanced

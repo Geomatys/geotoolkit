@@ -390,7 +390,7 @@ public class MatrixParameters extends ParameterGroup implements ParameterDescrip
                 if (matrixValues == null) {
                     matrixValues = new ParameterValue[numRow][];
                 }
-                if (matrixValues[row] == null ){
+                if (matrixValues[row] == null) {
                     matrixValues[row] = new ParameterValue[numCol];
                 }
                 matrixValues[row][col] = new FloatParameter(descriptor, element);

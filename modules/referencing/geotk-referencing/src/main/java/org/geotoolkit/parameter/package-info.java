@@ -17,27 +17,46 @@
  */
 
 /**
- * {@linkplain org.geotoolkit.parameter.Parameter Parameter} implementations. An explanation for this
- * package is provided in the {@linkplain org.opengis.parameter OpenGIS&reg; javadoc}. The remaining
- * discussion on this page is specific to the Geotk implementation.
+ * {@linkplain org.geotoolkit.parameter.extended by DefaultParameterDescriptor Parameter descriptor}
+ * and {@linkplain org.geotoolkit.parameter.Parameter parameter value} implementations. An explanation
+ * for this package is provided in the {@linkplain org.opengis.parameter OpenGIS&reg; javadoc}.
+ * The remaining discussion on this page is specific to the Geotk implementation.
  * <p>
- * The starting point is often {@link org.opengis.parameter.ParameterDescriptorGroup}.
- * Operation implementations need to defines one. Operation usages typically invoke its
- * {@link org.opengis.parameter.ParameterDescriptorGroup#createValue createValue} method
- * and fill the returned object with parameter values. This Geotk package provides the
- * following implementations:
+ * The starting point is often {@link org.geotoolkit.parameter.extended by DefaultParameterDescriptorGroup}.
+ * Operation implementations need to defines one, for example as below:
+ *
+ * {@preformat java
+ *   // Creates a parameter named "dimension" with valid values
+ *   // ranging from 0 to 3 inclusive and a default value of 2.
+ *   ParameterDescriptor<Integer> dimension = DefaultParameterDescriptor.create("dimension", 2, 0, 3);
+ *   // Creates a parameter named "distance" with valid values ranging
+ *   // from 0 to 100 kilometres inclusive and no default value (NaN).
+ *   ParameterDescriptor<Double> distance = DefaultParameterDescriptor.create("distance", Double.NaN, 0.0, 100.0, SI.KILOMETER);
+ *   // Creates the group of parameters named "MyOperation".
+ *   ParameterDescriptorGroup myOperation = new DefaultParameterDescriptorGroup("MyOperation", dimension, distance);
+ * }
+ *
+ * Operation usages typically invoke the
+ * {@link org.opengis.parameter.ParameterDescriptorGroup#createValue()} method on the above
+ * {@code parameters} instance, and fill the returned object with parameter values. Example:
+ *
+ * {@preformat java
+ *     ParameterValueGroup group = myOperation.createValue();
+ *     group.parameter("dimension").setValue(3);
+ *     group.parameter("distance").setValue(200.0, SI.METRE);
+ * }
+ *
+ * <p>This Geotk package provides the following implementations:</p>
  *
  * <ul>
- *   <li><p>{@link org.geotoolkit.parameter.DefaultParameterDescriptorGroup} for the general case.</p></li>
- *   <li><P>{@link org.geotoolkit.parameter.ImagingParameterDescriptors} for wrappers around
- *       {@linkplain javax.media.jai.ParameterListDescriptor Java Advanced Imaging's parameters}.</p></li>
- *   <li><p>{@link org.geotoolkit.parameter.MatrixParameterDescriptors} for matrix parameters,
+ *   <li>{@link org.geotoolkit.parameter.DefaultParameterDescriptorGroup} for the general case.</li>
+ *   <li>{@link org.geotoolkit.parameter.MatrixParameterDescriptors} for matrix parameters,
  *       including the number of rows and columns. The total number of parameters in this group
- *       vary according the number of rows and columns.</p></li>
+ *       vary according the number of rows and columns.</li>
  * </ul>
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.20
  *
  * @since 2.0
  * @module

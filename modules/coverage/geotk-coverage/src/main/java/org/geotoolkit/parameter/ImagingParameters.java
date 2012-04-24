@@ -196,7 +196,7 @@ public class ImagingParameters extends AbstractParameter implements ParameterVal
 
     /**
      * Creates and fills the {@link #values} list. Note: this method must creates elements
-     * inconditionnally and most not requires synchronization for proper working of the
+     * unconditionally and most not require synchronization for proper working of the
      * {@link #clone} method.
      *
      * @return The array which is backing {@link #values}. This array is returned only in order

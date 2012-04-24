@@ -114,7 +114,7 @@ public class SizeFields extends JComponent implements ChangeListener {
     }
 
     /**
-     * Adds a litener to notify of changes.
+     * Adds a listener to notify of changes.
      *
      * @param listener The listener to add.
      */
@@ -123,7 +123,7 @@ public class SizeFields extends JComponent implements ChangeListener {
     }
 
     /**
-     * Removes a litener.
+     * Removes a listener.
      *
      * @param listener The listener to remove.
      */
@@ -132,13 +132,13 @@ public class SizeFields extends JComponent implements ChangeListener {
     }
 
     /**
-     * Invoked everytime a change in width or height occurs. This method is public
+     * Invoked every time a change in width or height occurs. This method is public
      * as an implementation side-effect, but should never be invoked directly.
      *
      * @param event The change event.
      */
     @Override
-    public void stateChanged(ChangeEvent event) {
+    public void stateChanged(final ChangeEvent event) {
         // TODO: If we want to link the change of width and height, do it here.
         if (!isAdjusting) {
             fireStateChanged();

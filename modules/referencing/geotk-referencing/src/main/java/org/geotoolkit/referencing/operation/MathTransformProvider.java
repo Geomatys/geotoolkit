@@ -50,15 +50,18 @@ import static org.geotoolkit.referencing.IdentifiedObjects.EMPTY_IDENTIFIER_ARRA
 /**
  * An {@linkplain DefaultOperationMethod operation method} capable to create a
  * {@linkplain MathTransform math transform} from set of {@linkplain GeneralParameterValue
- * parameter values}. Implementations of this class should be listed in the following file:
+ * parameter values}. Implementations of this class should be listed in the following file
+ * (see the {@linkplain org.geotoolkit.factory factory package} for more information about
+ * how to manage providers registered in such files):
  *
  * {@preformat text
  *     META-INF/services/org.geotoolkit.referencing.operation.MathTransformProvider
  * }
  *
- * The {@linkplain DefaultMathTransformFactory default math transform factory} will parse this
- * file in order to get all available providers on a system. If this file is bundle in many JAR
- * files, the factory will read all of them.
+ * The {@linkplain DefaultMathTransformFactory default math transform factory} will parse the
+ * above files in all JAR files in order to get all available providers on a system. In Geotk,
+ * most providers are defined in the {@linkplain org.geotoolkit.referencing.operation.provider
+ * provider sub-package}.
  *
  * @author Martin Desruisseaux (IRD)
  * @version 3.01
@@ -68,6 +71,7 @@ import static org.geotoolkit.referencing.IdentifiedObjects.EMPTY_IDENTIFIER_ARRA
  * @module
  *
  * @see org.geotoolkit.referencing.operation.provider
+ * @see org.geotoolkit.factory
  */
 @Immutable
 public abstract class MathTransformProvider extends DefaultOperationMethod {

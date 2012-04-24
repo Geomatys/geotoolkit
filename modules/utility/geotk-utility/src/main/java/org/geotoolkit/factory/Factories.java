@@ -25,11 +25,11 @@ import java.io.IOException;
 import java.awt.RenderingHints; // For javadoc
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.event.EventListenerList;
 
 import org.geotoolkit.lang.Configuration;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.lang.Debug;
+import org.geotoolkit.internal.Listeners;
 
 
 /**
@@ -59,8 +59,9 @@ public final class Factories extends Static {
      * Object to inform about hints changes.
      * We use the Swing utility listener list since it is lightweight and thread-safe.
      * Note that it doesn't involve any dependency to the remaining of Swing library.
+     * (Note: this assumption may change with JDK8 modularization)
      */
-    private static final EventListenerList LISTENERS = new EventListenerList();
+    private static ChangeListener[] listeners;
 
     /**
      * Do not allow instantiation of this class.
@@ -82,11 +83,8 @@ public final class Factories extends Static {
      *
      * @param listener The listener to add.
      */
-    public static void addChangeListener(final ChangeListener listener) {
-        synchronized (LISTENERS) {
-            removeChangeListener(listener); // Ensure singleton.
-            LISTENERS.add(ChangeListener.class, listener);
-        }
+    public static synchronized void addChangeListener(final ChangeListener listener) {
+        listeners = Listeners.addListener(listener, listeners);
     }
 
     /**
@@ -95,10 +93,8 @@ public final class Factories extends Static {
      *
      * @param listener The listener to remove.
      */
-    public static void removeChangeListener(final ChangeListener listener) {
-        synchronized (LISTENERS) {
-            LISTENERS.remove(ChangeListener.class, listener);
-        }
+    public static synchronized void removeChangeListener(final ChangeListener listener) {
+        listeners = Listeners.removeListener(listener, listeners);
     }
 
     /**
@@ -110,13 +106,11 @@ public final class Factories extends Static {
      * @param source The source of this event.
      */
     static void fireConfigurationChanged(final Class<?> source) {
-        final ChangeEvent event = new ChangeEvent(source);
-        final Object[] listeners = LISTENERS.getListenerList();
-        for (int i=0; i<listeners.length; i+=2) {
-            if (listeners[i] == ChangeListener.class) {
-                ((ChangeListener) listeners[i+1]).stateChanged(event);
-            }
+        final ChangeListener[] list;
+        synchronized (Factories.class) {
+            list = listeners;
         }
+        Listeners.fireChanged(source, list);
     }
 
     /**
