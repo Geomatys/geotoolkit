@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Objects;
+import java.lang.reflect.Field;
 
 import org.opengis.metadata.Identifier;
 import org.opengis.parameter.ParameterValue;
@@ -53,7 +54,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * {@link ParameterValueGroup}, if those instances contain different values of one or more
  * {@link ParameterValue}s which suitably distinguish among those groups.
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Jody Garnett (Refractions)
  * @version 3.17
  *
@@ -77,16 +78,12 @@ public class ParameterGroup extends AbstractParameter implements ParameterValueG
 
     /**
      * The {@linkplain #values() parameter values} for this group.
-     *
-     * {@note Consider this field as final. This field is not final
-     *        only in order to allow the clone method to work.}
      */
-    private ArrayList<GeneralParameterValue> values;
+    private final ArrayList<GeneralParameterValue> values;
 
     /**
-     * A view of {@link #values} as an immutable list. Will be constructed only when first
-     * needed. Note that while this list may be immutable, <strong>elements</strong> in this
-     * list stay modifiable. The goal is to allows the following idiom:
+     * A view of {@link #values} as an checked list. Will be constructed only when first needed.
+     * Note that elements can be added in this list and modified. Example:
      *
      * {@preformat java
      *     values().get(i).setValue(myValue);
@@ -426,7 +423,15 @@ public class ParameterGroup extends AbstractParameter implements ParameterValueG
     @SuppressWarnings("unchecked")
     public ParameterGroup clone() {
         final ParameterGroup copy = (ParameterGroup) super.clone();
-        copy.values = (ArrayList<GeneralParameterValue>) copy.values.clone();
+        try {
+            // Set the 'provider' field using reflection, because this field is final. This is
+            // a legal usage for cloning according Field.set(...) documentation in J2SE 1.5.
+            final Field field = ParameterGroup.class.getDeclaredField("values");
+            field.setAccessible(true);
+            field.set(copy, values.clone());
+        } catch (ReflectiveOperationException cause) {
+            throw new AssertionError(cause);
+        }
         for (int i=copy.values.size(); --i>=0;) {
             copy.values.set(i, copy.values.get(i).clone());
         }

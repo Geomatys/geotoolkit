@@ -709,7 +709,7 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
      * <ul>
      *   <li><p>If {@code true}, then the descriptor created by this method is flagged as
      *   <cite>mandatory</cite>, meaning that it will always appear in the list of parameter values
-     *   that a user shall provides. However the value will be initialized with the given default
+     *   that a user shall provide. However the value will be initialized with the given default
      *   value (if different than {@linkplain Double#NaN NaN}), so the user may not needs to supply
      *   explicitly a value.</p></li>
      *
@@ -731,7 +731,7 @@ public final class UniversalParameters extends DefaultParameterDescriptor<Double
             final double minimum, final double maximum, final Unit<?> unit, final boolean required)
     {
         return DefaultParameterDescriptor.create(toMap(identifiers),
-                defaultValue, minimum, maximum, unit, required);
+                    defaultValue, minimum, maximum, unit, required);
     }
 
     /**

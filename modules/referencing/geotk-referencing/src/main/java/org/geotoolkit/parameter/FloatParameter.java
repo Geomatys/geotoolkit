@@ -24,7 +24,6 @@ import java.net.URI;
 import javax.measure.unit.Unit;
 import javax.measure.converter.ConversionException;
 
-import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.InvalidParameterTypeException;
 import org.opengis.parameter.InvalidParameterValueException;
@@ -71,7 +70,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * @since 2.0
  * @module
  */
-public class FloatParameter extends AbstractParameter implements ParameterValue<Double> {
+public class FloatParameter extends AbstractParameterValue<Double> {
     /**
      * Serial number for inter-operability with different versions.
      */
@@ -129,15 +128,6 @@ public class FloatParameter extends AbstractParameter implements ParameterValue<
     public FloatParameter(final ParameterDescriptor<Double> descriptor, final double value) {
         this(descriptor);
         setValue(value);
-    }
-
-    /**
-     * Returns the abstract definition of this parameter.
-     */
-    @Override
-    @SuppressWarnings("unchecked") // Type should has been checked by the constructor.
-    public ParameterDescriptor<Double> getDescriptor() {
-        return (ParameterDescriptor<Double>) descriptor;
     }
 
     /**
@@ -365,6 +355,7 @@ public class FloatParameter extends AbstractParameter implements ParameterValue<
             this.value = value;
         }
         this.unit = unit; // Store only after successful validation.
+        fireValueChanged();
     }
 
     /**

@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.referencing.operation.provider;
 
-import javax.measure.unit.SI;
 import net.jcip.annotations.Immutable;
 
 import org.opengis.metadata.citation.Citation;
@@ -29,8 +28,6 @@ import org.opengis.referencing.ReferenceIdentifier;
 
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.metadata.iso.citation.Citations;
-
-import static org.geotoolkit.referencing.operation.provider.UniversalParameters.createDescriptor;
 
 
 /**
@@ -170,18 +167,8 @@ public class NewZealandMapGrid extends MapProjection {
      */
     static {
         final Citation[] excludes = new Citation[] {Citations.ESRI, Citations.NETCDF};
-        SEMI_MAJOR = createDescriptor(new NamedIdentifier[] {
-                sameNameAs(Citations.OGC,     MapProjection.SEMI_MAJOR),
-                sameNameAs(Citations.EPSG,    MapProjection.SEMI_MAJOR),
-                sameNameAs(Citations.GEOTIFF, MapProjection.SEMI_MAJOR),
-                sameNameAs(Citations.PROJ4,   MapProjection.SEMI_MAJOR)
-            }, 6378388.0, 0.0, Double.POSITIVE_INFINITY, SI.METRE, true);
-        SEMI_MINOR = createDescriptor(new NamedIdentifier[] {
-                sameNameAs(Citations.OGC,     MapProjection.SEMI_MINOR),
-                sameNameAs(Citations.EPSG,    MapProjection.SEMI_MINOR),
-                sameNameAs(Citations.GEOTIFF, MapProjection.SEMI_MINOR),
-                sameNameAs(Citations.PROJ4,   MapProjection.SEMI_MINOR)
-            }, 6378388.0*(1-1/297.0), 0.0, Double.POSITIVE_INFINITY, SI.METRE, true);
+        SEMI_MAJOR = UniversalParameters.SEMI_MAJOR.select(true, 6378388.0, excludes, null);
+        SEMI_MINOR = UniversalParameters.SEMI_MINOR.select(true, 6378388.0*(1-1/297.0), excludes, null);
         CENTRAL_MERIDIAN = UniversalParameters.CENTRAL_MERIDIAN.select(true, 173.0, excludes, null,
                 "Longitude of natural origin",  // EPSG
                 "central_meridian",             // OGC

@@ -47,7 +47,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 
 /**
- * A parameter group for {@linkplain Matrix matrix} elements. The amount of
+ * A parameter group for {@link Matrix} elements. The amount of
  * {@linkplain FloatParameter parameter values} is extensible, i.e. it can
  * grown or shrink according the value of {@code "num_row"} and {@code "num_col"}
  * parameters. The parameters format may vary according the information provided to

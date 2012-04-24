@@ -22,7 +22,6 @@ import java.util.Objects;
 import javax.measure.unit.Unit;
 import javax.media.jai.ParameterList;
 
-import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.InvalidParameterTypeException;
 import org.opengis.parameter.InvalidParameterValueException;
@@ -34,13 +33,13 @@ import org.geotoolkit.resources.Errors;
 /**
  * A particular parameter in a JAI's {@link ParameterList}.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.20
  *
  * @since 2.2
  * @module
  */
-final class ImagingParameter<T> extends AbstractParameter implements ParameterValue<T> {
+final class ImagingParameter<T> extends AbstractParameterValue<T> {
     /**
      * Serial number for inter-operability with different versions.
      */
@@ -68,15 +67,6 @@ final class ImagingParameter<T> extends AbstractParameter implements ParameterVa
                                                  final ParameterList parameters)
     {
         return new ImagingParameter<>(descriptor, parameters);
-    }
-
-    /**
-     * Returns the abstract definition of this parameter.
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public ParameterDescriptor<T> getDescriptor() {
-        return (ParameterDescriptor<T>) super.getDescriptor();
     }
 
     /**
@@ -277,6 +267,7 @@ final class ImagingParameter<T> extends AbstractParameter implements ParameterVa
         } catch (ClassCastException exception) {
             throw invalidType(exception);
         }
+        fireValueChanged();
     }
 
     /**
@@ -293,6 +284,7 @@ final class ImagingParameter<T> extends AbstractParameter implements ParameterVa
         } catch (ClassCastException exception) {
             throw invalidType(exception);
         }
+        fireValueChanged();
     }
 
     /**
@@ -306,6 +298,7 @@ final class ImagingParameter<T> extends AbstractParameter implements ParameterVa
         } catch (ClassCastException exception) {
             throw invalidType(exception);
         }
+        fireValueChanged();
     }
 
     /**
@@ -321,6 +314,7 @@ final class ImagingParameter<T> extends AbstractParameter implements ParameterVa
         } catch (ClassCastException exception) {
             throw invalidType(exception);
         }
+        fireValueChanged();
     }
 
     /**

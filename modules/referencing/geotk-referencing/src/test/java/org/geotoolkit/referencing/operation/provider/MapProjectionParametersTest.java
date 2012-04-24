@@ -72,6 +72,23 @@ public final strictfp class MapProjectionParametersTest {
     }
 
     /**
+     * Tests the inverse flattening dynamic parameter set after the semi-major axis length.
+     * This method tests actually the semi-major parameter capability to compute the inverse
+     * flattening.
+     */
+    @Test
+    public void testSemiMajor() {
+        final ParameterValueGroup parameters = LambertConformal2SP.PARAMETERS.createValue();
+        parameters.parameter("inverse_flattening").setValue(298.257223563);
+        assertNull(parameters.parameter("semi_major").getValue());
+        assertNull(parameters.parameter("semi_minor").getValue());
+        parameters.parameter("semi_major").setValue(6378137.000); // WGS84
+        assertEquals(298.257, parameters.parameter("inverse_flattening").doubleValue(), 0.001);
+        assertEquals(6378137, parameters.parameter("semi_major")        .doubleValue(), 0.5);
+        assertEquals(6356752, parameters.parameter("semi_minor")        .doubleValue(), 0.5);
+    }
+
+    /**
      * Tests the standard parallel dynamic parameter.
      */
     @Test

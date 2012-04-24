@@ -18,6 +18,8 @@
 package org.geotoolkit.referencing.operation.provider;
 
 import javax.measure.unit.Unit;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterDescriptor;
@@ -31,6 +33,7 @@ import org.geotoolkit.parameter.ParameterGroup;
 import org.geotoolkit.parameter.FloatParameter;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 
+import org.geotoolkit.parameter.AbstractParameterValue;
 import static org.geotoolkit.referencing.operation.provider.UniversalParameters.*;
 import static org.geotoolkit.referencing.operation.provider.MapProjectionDescriptor.ADD_EARTH_RADIUS;
 import static org.geotoolkit.referencing.operation.provider.MapProjectionDescriptor.ADD_STANDARD_PARALLEL;
@@ -107,12 +110,9 @@ final class MapProjectionParameters extends ParameterGroup {
      * {@code "semi_major"} and {@code "semi_minor"}. When explicitly set, this parameter
      * value is used for computing the semi-minor axis length.
      *
-     * @todo In current implementation, this will work only if the semi-major axis length is
-     *       set before the inverse flattening.
-     *
      * @see org.geotoolkit.referencing.datum.DefaultEllipsoid#getInverseFlattening()
      */
-    private final class InverseFlattening extends FloatParameter {
+    private final class InverseFlattening extends FloatParameter implements ChangeListener {
         /**
          * For cross-version compatibility. Actually instances of this class
          * are not expected to be serialized, but we try to be a bit safer here.
@@ -127,6 +127,14 @@ final class MapProjectionParameters extends ParameterGroup {
         }
 
         /**
+         * Returns the semi-major parameter, which is needed by this parameter value for
+         * computing the semi-minor parameter.
+         */
+        private AbstractParameterValue<?> semiMajor() {
+            return (AbstractParameterValue<?>) parameter("semi_major");
+        }
+
+        /**
          * Invoked when the parameter value is requested. Unconditionally computes the inverse
          * flattening from the ellipsoid axis lengths. Note that the result will be slightly
          * different than the specified value because of rounding errors.
@@ -135,16 +143,38 @@ final class MapProjectionParameters extends ParameterGroup {
         public double doubleValue() {
             final double semiMajorAxis = get(SEMI_MAJOR);
             final double semiMinorAxis = get(SEMI_MINOR);
-            return semiMajorAxis / (semiMajorAxis - semiMinorAxis);
+            double ivf = semiMajorAxis / (semiMajorAxis - semiMinorAxis);
+            if (Double.isNaN(ivf)) {
+                ivf = super.doubleValue();
+            }
+            return ivf;
         }
 
         /**
-         * Invoked when a new parameter value is set.
-         * This method compute the semi-minor axis length from the given value.
+         * Invoked when a new parameter value is set. This method computes the semi-minor
+         * axis length from the given value. It will also register a listener in case the
+         * semi-major axis length is updated after this method call.
          */
         @Override
         public void setValue(final double value, final Unit<?> unit) {
+            final boolean wasNull = Double.isNaN(super.doubleValue());
             super.setValue(value, unit); // Perform argument check.
+            if (Double.isNaN(value)) {
+                if (!wasNull) {
+                    semiMajor().removeChangeListener(this);
+                }
+            } else {
+                if (wasNull) {
+                    semiMajor().addChangeListener(this);
+                }
+                update(value);
+            }
+        }
+
+        /**
+         * Computes the semi-minor axis length from the given inverse flattening value.
+         */
+        private void update(final double value) {
             final ParameterValue<?> semiMajor;
             try {
                 semiMajor = Parameters.getOrCreate(SEMI_MAJOR, MapProjectionParameters.this);
@@ -154,6 +184,15 @@ final class MapProjectionParameters extends ParameterGroup {
                 return;
             }
             set(SEMI_MINOR, semiMajor.doubleValue()*(1 - 1/value), semiMajor.getUnit());
+        }
+
+        /**
+         * Invoked when the semi-major axis value changed. This method recomputes
+         * the semi-minor axis length from the ellipsoid.
+         */
+        @Override
+        public void stateChanged(final ChangeEvent event) {
+            update(super.doubleValue());
         }
     }
 

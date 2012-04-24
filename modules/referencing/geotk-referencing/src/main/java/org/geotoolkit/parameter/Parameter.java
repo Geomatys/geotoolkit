@@ -33,7 +33,6 @@ import javax.measure.converter.UnitConverter;
 import javax.measure.converter.ConversionException;
 
 import org.opengis.util.CodeList;
-import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.InvalidParameterTypeException;
 import org.opengis.parameter.InvalidParameterValueException;
@@ -85,7 +84,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * @since 2.0
  * @module
  */
-public class Parameter<T> extends AbstractParameter implements ParameterValue<T> {
+public class Parameter<T> extends AbstractParameterValue<T> {
     /**
      * Serial number for inter-operability with different versions.
      */
@@ -222,15 +221,6 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
     private String getClassTypeError() {
         return Errors.format(Errors.Keys.ILLEGAL_OPERATION_FOR_VALUE_CLASS_$1,
                ((ParameterDescriptor<?>) descriptor).getValueClass());
-    }
-
-    /**
-     * Returns the abstract definition of this parameter.
-     */
-    @Override
-    @SuppressWarnings("unchecked") // Type checked by the constructor.
-    public ParameterDescriptor<T> getDescriptor() {
-        return (ParameterDescriptor<T>) super.getDescriptor();
     }
 
     /**
@@ -732,6 +722,7 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
     protected void setSafeValue(final T value, final Unit<?> unit) {
         this.value = value;
         this.unit  = unit;
+        fireValueChanged();
     }
 
     /**
@@ -772,7 +763,6 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
      * Returns a clone of this parameter.
      */
     @Override
-    @SuppressWarnings("unchecked")
     public Parameter<T> clone() {
         return (Parameter<T>) super.clone();
     }
