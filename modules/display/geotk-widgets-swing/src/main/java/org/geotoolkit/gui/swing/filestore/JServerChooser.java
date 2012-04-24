@@ -112,6 +112,9 @@ public class JServerChooser extends javax.swing.JPanel {
         jPanel1 = new javax.swing.JPanel();
         guiEditPane = new javax.swing.JPanel();
 
+        guiSplit.setDividerLocation(240);
+        guiSplit.setDividerSize(2);
+
         guiList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(guiList);
 
@@ -123,7 +126,7 @@ public class JServerChooser extends javax.swing.JPanel {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(guiEditPane, javax.swing.GroupLayout.DEFAULT_SIZE, 295, Short.MAX_VALUE)
+            .addComponent(guiEditPane, javax.swing.GroupLayout.DEFAULT_SIZE, 317, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

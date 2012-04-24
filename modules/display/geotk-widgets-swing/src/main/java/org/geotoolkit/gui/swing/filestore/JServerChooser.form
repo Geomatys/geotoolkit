@@ -27,6 +27,10 @@
   </Layout>
   <SubComponents>
     <Container class="javax.swing.JSplitPane" name="guiSplit">
+      <Properties>
+        <Property name="dividerLocation" type="int" value="240"/>
+        <Property name="dividerSize" type="int" value="2"/>
+      </Properties>
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout"/>
       <SubComponents>
@@ -59,7 +63,7 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="guiEditPane" alignment="0" pref="295" max="32767" attributes="0"/>
+                  <Component id="guiEditPane" alignment="0" pref="317" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">

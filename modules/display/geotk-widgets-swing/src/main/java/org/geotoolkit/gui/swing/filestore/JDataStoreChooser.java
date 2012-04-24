@@ -117,6 +117,9 @@ public class JDataStoreChooser extends javax.swing.JPanel {
         guiEditPane = new javax.swing.JPanel();
         guiCreateNew = new javax.swing.JCheckBox();
 
+        guiSplit.setDividerLocation(240);
+        guiSplit.setDividerSize(2);
+
         guiList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(guiList);
 
@@ -132,9 +135,9 @@ public class JDataStoreChooser extends javax.swing.JPanel {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(12, 12, 12)
-                .addComponent(guiCreateNew, javax.swing.GroupLayout.DEFAULT_SIZE, 271, Short.MAX_VALUE)
+                .addComponent(guiCreateNew, javax.swing.GroupLayout.DEFAULT_SIZE, 293, Short.MAX_VALUE)
                 .addContainerGap())
-            .addComponent(guiEditPane, javax.swing.GroupLayout.DEFAULT_SIZE, 295, Short.MAX_VALUE)
+            .addComponent(guiEditPane, javax.swing.GroupLayout.DEFAULT_SIZE, 317, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
