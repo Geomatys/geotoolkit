@@ -66,19 +66,22 @@ public class XMLCoverageStore extends AbstractCoverageStore{
             root.mkdirs();
         }
         
-        for(File f : root.listFiles()){
-            if(f.isDirectory() || !f.getName().toLowerCase().endsWith(".xml")){
-                continue;
-            }
-            
-            //try to parse the file
-            try {
-                final XMLPyramidSet set = XMLPyramidSet.read(f);
-                final Name name = new DefaultName(getDefaultNamespace(), set.getId());
-                final XMlCoverageReference ref = new XMlCoverageReference(this,name,set);
-                names.put(name, ref);
-            } catch (JAXBException ex) {
-                getLogger().log(Level.FINE, "file is not a pyramid : {0}", f.getPath());
+        final File[] childs = root.listFiles();
+        if(childs != null){
+            for(File f : childs){
+                if(f.isDirectory() || !f.getName().toLowerCase().endsWith(".xml")){
+                    continue;
+                }
+
+                //try to parse the file
+                try {
+                    final XMLPyramidSet set = XMLPyramidSet.read(f);
+                    final Name name = new DefaultName(getDefaultNamespace(), set.getId());
+                    final XMlCoverageReference ref = new XMlCoverageReference(this,name,set);
+                    names.put(name, ref);
+                } catch (JAXBException ex) {
+                    getLogger().log(Level.FINE, "file is not a pyramid : {0}", f.getPath());
+                }
             }
         }
     }
