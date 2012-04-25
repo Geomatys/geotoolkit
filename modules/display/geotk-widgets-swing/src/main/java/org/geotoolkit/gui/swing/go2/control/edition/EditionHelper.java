@@ -49,10 +49,10 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
+import org.geotoolkit.data.memory.GenericFilterFeatureIterator;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.propertyedit.JFeatureOutLine;
 import org.geotoolkit.map.FeatureMapLayer;
@@ -293,13 +293,33 @@ public class EditionHelper {
         FeatureIterator<Feature> fi = null;
         try {
             final Polygon geo = mousePositionToGeometry(mx, my);
-            final Filter flt = toFilter(geo, editedLayer);
-            editgeoms = (FeatureCollection<Feature>) editedLayer.getCollection().subCollection(
-                    QueryBuilder.filtered(editedLayer.getCollection().getFeatureType().getName(), flt));
+            Filter flt = toFilter(geo, editedLayer);
+            QueryBuilder qb = new QueryBuilder(editedLayer.getCollection().getFeatureType().getName());
+            //we filter in the map CRS
+            qb.setCRS(map.getCanvas().getObjectiveCRS2D());
+            editgeoms = (FeatureCollection<Feature>) editedLayer.getCollection().subCollection(qb.buildQuery());
 
+            //we filter ourself since we want the filter to occure after the reprojection
+            editgeoms = GenericFilterFeatureIterator.wrap(editgeoms, flt);
+                        
             fi = editgeoms.iterator();
             if (fi.hasNext()) {
                 Feature sf = fi.next();
+                
+                //get the original, in it's data crs                
+                flt = FF.id(Collections.singleton(sf.getIdentifier()));
+                sf = null;
+                fi.close();
+                
+                qb.reset();
+                qb.setTypeName(editedLayer.getCollection().getFeatureType().getName());
+                qb.setFilter(flt);
+                editgeoms = (FeatureCollection<Feature>) editedLayer.getCollection().subCollection(qb.buildQuery());
+                fi = editgeoms.iterator();
+                if (fi.hasNext()){
+                    sf = fi.next();
+                }
+                
                 return sf;
             }
         }catch(Exception ex){
@@ -967,7 +987,7 @@ public class EditionHelper {
         final Expression geomField = FF.property(geoStr);
 
         final Geometry dataPoly = poly;
-        JTS.setCRS(dataPoly, map.getCanvas().getObjectiveCRS());
+        JTS.setCRS(dataPoly, map.getCanvas().getObjectiveCRS2D());
 
         final Expression geomData = FF.literal(dataPoly);
         final Filter f = FF.intersects(geomData,geomField);
@@ -1010,6 +1030,11 @@ public class EditionHelper {
 
     public void sourceModifyFeature(final Feature feature, final Geometry geo, boolean reprojectToDataCRS){
 
+        if(feature == null || geo == null){
+            //nothing to do
+            return;
+        }
+        
         final String ID = feature.getIdentifier().getID();
 
         ensureNonNull("geometry", geo);
