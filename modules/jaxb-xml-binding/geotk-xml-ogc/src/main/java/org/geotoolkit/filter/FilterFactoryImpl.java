@@ -158,7 +158,27 @@ public class FilterFactoryImpl implements FilterFactory2 {
     }
 
     public And and(final Filter f, final Filter g) {
-        return new AndType(f, g);
+        final List<Filter> filterList = new ArrayList<Filter>();
+        boolean factorized = false;
+        // factorize OR filter
+        if (g instanceof And) {
+            factorized = true;
+            filterList.addAll(((And)g).getChildren());
+        } else {
+            filterList.add(g);
+        }
+        if (f instanceof And) {
+            factorized = true;
+            filterList.addAll(((And)f).getChildren());
+        } else {
+            filterList.add(f);
+        }
+        
+        if (factorized) {
+            return new AndType(filterList.toArray());
+        } else {
+            return new AndType(f, g);
+        }
     }
 
     public And and(final List<Filter> f) {
