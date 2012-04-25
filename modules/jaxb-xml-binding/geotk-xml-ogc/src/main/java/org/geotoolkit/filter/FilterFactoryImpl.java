@@ -25,10 +25,7 @@ import com.vividsolutions.jts.geom.Polygon;
 // J2SE dependencies
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Logger;
 
 // Geotoolkit dependencies
@@ -169,11 +166,31 @@ public class FilterFactoryImpl implements FilterFactory2 {
     }
 
     public Or or(final Filter f, final Filter g) {
-        return new OrType(f, g);
+        final List<Filter> filterList = new ArrayList<Filter>();
+        boolean factorized = false;
+        // factorize OR filter
+        if (g instanceof Or) {
+            factorized = true;
+            filterList.addAll(((Or)g).getChildren());
+        } else {
+            filterList.add(g);
+        }
+        if (f instanceof Or) {
+            factorized = true;
+            filterList.addAll(((Or)f).getChildren());
+        } else {
+            filterList.add(f);
+        }
+        
+        if (factorized) {
+            return new OrType(filterList.toArray());
+        } else {
+            return new OrType(f, g);
+        }
     }
 
-    public Or or(final List<Filter> f) {
-        return new OrType(f);
+    public Or or(final List<Filter> filterList) {
+        return new OrType(filterList.toArray());
     }
 
     public Not not(final Filter f) {

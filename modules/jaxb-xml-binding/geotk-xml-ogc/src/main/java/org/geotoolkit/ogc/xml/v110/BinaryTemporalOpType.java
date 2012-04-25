@@ -17,7 +17,6 @@
 package org.geotoolkit.ogc.xml.v110;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -25,7 +24,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.AbstractTimeComplexType;
-import org.geotoolkit.gml.xml.v311.AbstractTimeGeometricPrimitiveType;
 import org.geotoolkit.gml.xml.v311.AbstractTimeObjectType;
 import org.geotoolkit.gml.xml.v311.AbstractTimePrimitiveType;
 import org.geotoolkit.gml.xml.v311.TimeInstantType;
@@ -65,7 +63,6 @@ public class BinaryTemporalOpType extends TemporalOpsType {
 
     @XmlElements({
         //@XmlElement(name = "TimeTopologyComplex", namespace = "http://www.opengis.net/gml", type = TimeTopologyComplexType.class),
-        @XmlElement(name = "AbstractTimeGeometricPrimitive", namespace = "http://www.opengis.net/gml", type = AbstractTimeGeometricPrimitiveType.class),
         //@XmlElement(name = "TimeEdge", namespace = "http://www.opengis.net/gml", type = TimeEdgeType.class),
         @XmlElement(name = "AbstractTimeObject", namespace = "http://www.opengis.net/gml", type = AbstractTimeObjectType.class),
         @XmlElement(name = "TimePeriod", namespace = "http://www.opengis.net/gml", type = TimePeriodType.class),
@@ -99,7 +96,7 @@ public class BinaryTemporalOpType extends TemporalOpsType {
     }
     
     /**
-     * Gets the value of the abstractTimeObjectOrAbstractTimePrimitiveOrAbstractTimeTopologyPrimitive property.
+     * Gets the value of the rest property.
      */
     public List<Object> getRest() {
         if (rest == null) {
