@@ -1012,10 +1012,19 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
     private transient NameFactory nameFactory;
 
     /**
-     * The creator, used at metadata creation time for avoiding to declare
-     * the same creator more than once.
+     * The contact, used at metadata creation time for avoiding to construct identical objects
+     * more than once.
+     *
+     * <p>The point of contact is stored in two places. The semantic of those two methods is not
+     * strictly identical, but the distinction is not used in NetCDF file.</p>
+     * <ul>
+     *   <li>{@link DefaultMetadata#getContacts()}</li>
+     *   <li>{@link DefaultDataIdentification#getPointOfContacts()}</li>
+     * </ul>
+     * <p>An object very similar is used as the creator. The point of contact and the creator
+     * are practically identical except for their role attribute.</p>
      */
-    private transient ResponsibleParty creator;
+    private transient ResponsibleParty pointOfContact;
 
     /**
      * Creates a new <cite>NetCDF to ISO</cite> mapper for the given file. While this constructor
@@ -1363,7 +1372,7 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
      * Creates a {@code ResponsibleParty} element if at least one of the name, email or URL
      * attributes is defined.
      * <p>
-     * Implementation note: this method tries to reuse the existing {@link #creator} instance,
+     * Implementation note: this method tries to reuse the existing {@link #pointOfContact} instance,
      * or part of it, if it is suitable.
      *
      * @param  keys  The group of attribute names to use for fetching the values.
@@ -1375,8 +1384,8 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
      * @see #CONTRIBUTOR
      * @see #PUBLISHER
      */
-    private ResponsibleParty createResponsibleParty(final Group group, final Responsible keys)
-            throws IOException
+    private ResponsibleParty createResponsibleParty(final Group group, final Responsible keys,
+            final boolean isPointOfContact) throws IOException
     {
         final String individualName   = getStringValue(group, keys.NAME);
         final String organisationName = getStringValue(group, keys.INSTITUTION);
@@ -1387,9 +1396,9 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
         }
         Role role = CodeLists.valueOf(Role.class, getStringValue(group, keys.ROLE));
         if (role == null) {
-            role = keys.DEFAULT_ROLE;
+            role = isPointOfContact ? Role.POINT_OF_CONTACT : keys.DEFAULT_ROLE;
         }
-        ResponsibleParty party    = creator;
+        ResponsibleParty party    = pointOfContact;
         Contact          contact  = null;
         Address          address  = null;
         OnlineResource   resource = null;
@@ -1436,7 +1445,7 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
 
     /**
      * Creates a {@code Citation} element if at least one of the required attributes
-     * is non-null. This method will reuse the {@link #creator} field, if non-null.
+     * is non-null. This method will reuse the {@link #pointOfContact} field, if non-null.
      *
      * @param identifier The citation {@code <gmd:identifier> attribute.
      * @throws IOException If an I/O operation was necessary but failed.
@@ -1456,9 +1465,6 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
         final Date   modified   = getDateValue(DATE_MODIFIED);
         final Date   issued     = getDateValue(DATE_ISSUED);
         final String references = getStringValue(REFERENCES);
-        if (title == null && identifier == null && creation == null && modified == null && issued == null && references == null) {
-            return null;
-        }
         final DefaultCitation citation = new DefaultCitation(title);
         if (identifier != null) {
             citation.getIdentifiers().add(identifier);
@@ -1466,27 +1472,27 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
         if (creation != null) citation.getDates().add(new DefaultCitationDate(creation, DateType.CREATION));
         if (modified != null) citation.getDates().add(new DefaultCitationDate(modified, DateType.REVISION));
         if (issued   != null) citation.getDates().add(new DefaultCitationDate(issued,   DateType.PUBLICATION));
-        if (creator != null) {
-            // Same contact than the creator, except for the role.
+        if (pointOfContact != null) {
+            // Same responsible party than the contact, except for the role.
             final DefaultResponsibleParty np = new DefaultResponsibleParty(Role.ORIGINATOR);
-            np.setIndividualName  (creator.getIndividualName());
-            np.setOrganisationName(creator.getOrganisationName());
-            np.setContactInfo     (creator.getContactInfo());
+            np.setIndividualName  (pointOfContact.getIndividualName());
+            np.setOrganisationName(pointOfContact.getOrganisationName());
+            np.setContactInfo     (pointOfContact.getContactInfo());
             citation.getCitedResponsibleParties().add(np);
         }
         for (final Group group : groups) {
-            final ResponsibleParty contributor = createResponsibleParty(group, CONTRIBUTOR);
-            if (contributor != null && contributor != creator) {
+            final ResponsibleParty contributor = createResponsibleParty(group, CONTRIBUTOR, false);
+            if (contributor != null && contributor != pointOfContact) {
                 addIfAbsent(citation.getCitedResponsibleParties(), contributor);
             }
         }
         citation.setOtherCitationDetails(wrap(references));
-        return citation;
+        return citation.isEmpty() ? null : citation;
     }
 
     /**
      * Creates a {@code DataIdentification} element if at least one of the required attributes
-     * is non-null. This method will reuse the {@link #creator} field, if non-null.
+     * is non-null. This method will reuse the {@link #pointOfContact} field, if non-null.
      *
      * @param identifier The citation {@code <gmd:identifier> attribute.
      * @param publisher  The publisher names, built by the caller in an opportunist way.
@@ -1542,7 +1548,7 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
         final String   summary  = getStringValue(SUMMARY);
         final String   purpose  = getStringValue(PURPOSE);
         if (identification == null) {
-            if (citation==null && summary==null && purpose==null && project==null && publisher==null && creator==null) {
+            if (citation==null && summary==null && purpose==null && project==null && publisher==null && pointOfContact==null) {
                 return null;
             }
             identification = new DefaultDataIdentification();
@@ -1550,8 +1556,8 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
         identification.setCitation(citation);
         identification.setAbstract(wrap(summary));
         identification.setPurpose (wrap(purpose));
-        if (creator != null) {
-            identification.getPointOfContacts().add(creator);
+        if (pointOfContact != null) {
+            identification.getPointOfContacts().add(pointOfContact);
         }
         addKeywords(identification, project,   "project"); // Not necessarily the same string than PROJECT.
         addKeywords(identification, publisher, "dataCenter");
@@ -1846,8 +1852,8 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
      */
     protected Band createSampleDimension(final VariableSimpleIF variable) throws IOException {
         final DefaultBand band = new DefaultBand();
-        final String name = variable.getShortName();
-        if (name != null) {
+        String name = variable.getShortName();
+        if (name != null && !(name = name.trim()).isEmpty()) {
             if (nameFactory == null) {
                 nameFactory = FactoryFinder.getNameFactory(null);
             }
@@ -1858,8 +1864,8 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
             band.setSequenceIdentifier(nameFactory.createMemberName(null, name,
                     nameFactory.createTypeName(null, type.toString())));
         }
-        final String descriptor = variable.getDescription();
-        if (descriptor != null && !descriptor.equals(name)) {
+        String descriptor = variable.getDescription();
+        if (descriptor != null && !(descriptor = descriptor.trim()).isEmpty() && !descriptor.equals(name)) {
             band.setDescriptor(wrap(descriptor));
         }
 //TODO: Can't store the units, because the Band interface restricts it to length.
@@ -1931,11 +1937,11 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
          * the THREDDS attributes if no information was found in global attributes.
          */
         for (final Group group : groups) {
-            final ResponsibleParty party = createResponsibleParty(group, CREATOR);
-            if (party != null && party != creator) {
+            final ResponsibleParty party = createResponsibleParty(group, CREATOR, true);
+            if (party != null && party != pointOfContact) {
                 addIfAbsent(metadata.getContacts(), party);
-                if (creator == null) {
-                    creator = party;
+                if (pointOfContact == null) {
+                    pointOfContact = party;
                 }
             }
         }
@@ -1946,7 +1952,7 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
         Set<InternationalString> publisher = null;
         DefaultDistribution distribution   = null;
         for (final Group group : groups) {
-            final ResponsibleParty party = createResponsibleParty(group, PUBLISHER);
+            final ResponsibleParty party = createResponsibleParty(group, PUBLISHER, false);
             if (party != null) {
                 if (distribution == null) {
                     distribution = new DefaultDistribution();

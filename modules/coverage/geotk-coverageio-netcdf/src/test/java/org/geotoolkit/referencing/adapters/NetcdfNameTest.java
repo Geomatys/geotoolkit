@@ -18,7 +18,10 @@
 package org.geotoolkit.referencing.adapters;
 
 import java.util.Set;
+import java.util.Map;
 import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Arrays;
 
 import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterValue;
@@ -62,6 +65,22 @@ public final strictfp class NetcdfNameTest {
      */
     @Test
     public void compareNames() throws NoSuchIdentifierException {
+        /*
+         * Extra-parameters declared by Geotk while not handled by the NetCDF library.  Those
+         * parameters can be handled by Geotk, so we keep them. However we maintain this list
+         * so we know what those parameters are, and in order to be notified if the situation
+         * change in a future NetCDF version  (in which case the Geotk library may need to be
+         * updated).
+         */
+        final Map<String,Set<String>> extraParameterNames = new HashMap<>();
+        assertNull(extraParameterNames.put("Mercator", new HashSet<>(Arrays.asList(
+                "latitude_of_projection_origin"))));
+        assertNull(extraParameterNames.put("Orthographic", new HashSet<>(Arrays.asList(
+                "false_easting", "false_northing"))));
+        /*
+         * 'netcdfParameterNames' will contain the names provided by the NetcdfTransformFactory.
+         * We use this factory as the reference implementation.
+         */
         final Set<String> netcdfParameterNames = new HashSet<>();
         final MathTransformFactory factory = FactoryFinder.getMathTransformFactory(
                 new Hints(Hints.MATH_TRANSFORM_FACTORY, DefaultMathTransformFactory.class));
@@ -92,8 +111,19 @@ public final strictfp class NetcdfNameTest {
                             final ParameterValue<?> netcdfValue = netcdfParam.parameter(name);
                             assertTrue(methodName, netcdfParameterNames.remove(IdentifiedObjects.getName(netcdfValue.getDescriptor(), Citations.NETCDF)));
                             assertNameEquals(methodName, netcdfValue.getDescriptor(), param, skipEPSG);
-                        } catch (ParameterNotFoundException e) {
-                            System.out.println("WARNING: " + methodName + ": " + e.getLocalizedMessage());
+                        } catch (ParameterNotFoundException exception) {
+                            /*
+                             * If the parameter has not been found, ensure that this exception
+                             * is known. The set of known exceptions is defined at the begining
+                             * of this method.
+                             */
+                            final Set<String> expected = extraParameterNames.get(methodName);
+                            if (expected == null || !expected.remove(name)) {
+                                throw exception;
+                            }
+                            if (expected.isEmpty()) {
+                                assertSame(expected, extraParameterNames.remove(methodName));
+                            }
                         }
                     }
                 }
@@ -101,6 +131,8 @@ public final strictfp class NetcdfNameTest {
                 assertTrue(netcdfParameterNames.toString(), netcdfParameterNames.isEmpty());
             }
         }
+        assertTrue("Some parameters were not expected to be supported by the NetCDF library:\n"
+                + extraParameterNames, extraParameterNames.isEmpty());
     }
 
     /**

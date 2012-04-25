@@ -18,12 +18,15 @@
 package org.geotoolkit.image.io.plugin;
 
 import java.util.List;
-import java.util.Collection;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.io.IOException;
 import javax.imageio.IIOException;
 import ucar.nc2.NetcdfFile;
 
 import org.opengis.metadata.Metadata;
+import org.opengis.metadata.citation.Role;
+import org.opengis.metadata.citation.ResponsibleParty;
 import org.opengis.metadata.content.ContentInformation;
 import org.opengis.metadata.content.CoverageDescription;
 import org.opengis.metadata.content.RangeDimension;
@@ -35,6 +38,7 @@ import org.opengis.metadata.identification.Keywords;
 import org.opengis.metadata.extent.Extent;
 import org.opengis.metadata.extent.TemporalExtent;
 import org.opengis.metadata.extent.VerticalExtent;
+import org.opengis.metadata.maintenance.ScopeCode;
 import org.opengis.temporal.Instant;
 import org.opengis.wrapper.netcdf.NetcdfMetadataTest;
 
@@ -59,6 +63,14 @@ import static org.geotoolkit.test.Commons.getSingleton;
 public final strictfp class NetcdfTranscoderTest extends NetcdfMetadataTest {
     /**
      * {@code true} if this instance is running an integration test.
+     * <p>
+     * <ul>
+     *   <li>If {@code false} (the usual value), the metadata will be constructed directly by a
+     *       {@link NetcdfTranscoder} instance.</li>
+     *   <li>If {@code true}, the metadata will be constructed by an {@link ImageCoverageReader},
+     *       which will itself use a {@link NetcdfTranscoder} under the hood and will add more
+     *       information.</li>
+     * </ul>
      */
     private boolean integrationTest;
 
@@ -89,6 +101,16 @@ public final strictfp class NetcdfTranscoderTest extends NetcdfMetadataTest {
     }
 
     /**
+     * Verifies the hard-coded constants.
+     */
+    private static void verifyConstants(final Metadata metadata) {
+        assertEquals("metadataStandardName", "ISO 19115-2 Geographic Information - Metadata Part 2 Extensions for imagery and gridded data",
+                metadata.getMetadataStandardName());
+        assertEquals("metadataStandardVersion", "ISO 19115-2:2009(E)",
+                metadata.getMetadataStandardVersion());
+    }
+
+    /**
      * Tests a file that contains THREDDS metadata. This method inherits the tests defined in
      * GeoAPI, and adds some additional tests for attributes parsed by Geotk but not GeoAPI.
      *
@@ -98,7 +120,27 @@ public final strictfp class NetcdfTranscoderTest extends NetcdfMetadataTest {
     @Override
     public void testTHREDDS() throws IOException {
         super.testTHREDDS();
-        assertEquals("crm_v1", metadata.getFileIdentifier());
+        verifyConstants(metadata);
+        assertEquals("fileIdentifier", "crm_v1",
+                metadata.getFileIdentifier());
+        assertEquals("hierarchyLevel", new HashSet<>(Arrays.asList(ScopeCode.DATASET, ScopeCode.SERVICE)),
+                metadata.getHierarchyLevels());
+        /*
+         * Metadata / Contact.
+         */
+        final ResponsibleParty contact = getSingleton(metadata.getContacts());
+        assertEquals("identificationInfo.citation.citedResponsibleParty.individualName", "David Neufeld",
+                contact.getIndividualName());
+        assertEquals("identificationInfo.citation.citedResponsibleParty.contactInfo.address.electronicMailAddress", "xxxxx.xxxxxxx@noaa.gov",
+                getSingleton(contact.getContactInfo().getAddress().getElectronicMailAddresses()));
+        assertSame("identificationInfo.citation.citedResponsibleParty.role", Role.POINT_OF_CONTACT,
+                contact.getRole());
+        /*
+         * Metadata / Data Identification.
+         */
+        final DataIdentification identification = (DataIdentification) getSingleton(metadata.getIdentificationInfo());
+        assertSame("identificationInfo.pointOfContact", contact,
+                getSingleton(identification.getPointOfContacts()));
         /*
          * Metadata / Grid Spatial Representation.
          */
@@ -111,10 +153,10 @@ public final strictfp class NetcdfTranscoderTest extends NetcdfMetadataTest {
         assertEquals(Double .valueOf(8.332899328159992E-4), axis.get(0).getResolution());
         assertEquals(Double .valueOf(8.332465368190813E-4), axis.get(1).getResolution());
         /*
-         * Metadata / Quality.
+         * Metadata / Quality / Lineage.
          */
-        assertEquals("xyz2grd -R-80/-64/40/48 -I3c -Gcrm_v1.grd",
-                getSingleton(metadata.getDataQualityInfo()).getLineage().getStatement().toString());
+        assertEquals("dataQualityInfo.lineage.statement", "xyz2grd -R-80/-64/40/48 -I3c -Gcrm_v1.grd",
+                String.valueOf(getSingleton(metadata.getDataQualityInfo()).getLineage().getStatement()));
     }
 
     /**
@@ -127,24 +169,42 @@ public final strictfp class NetcdfTranscoderTest extends NetcdfMetadataTest {
     @Override
     public void testNCEP() throws IOException {
         super.testNCEP();
+        verifyConstants(metadata);
+        assertSame("hierarchyLevel", ScopeCode.DATASET,
+                getSingleton(metadata.getHierarchyLevels()));
+        /*
+         * Metadata / Contact
+         */
+        final ResponsibleParty contact = getSingleton(metadata.getContacts());
+        assertEquals("identificationInfo.citation.citedResponsibleParty.individualName", "NOAA/NWS/NCEP",
+                contact.getIndividualName());
+        assertSame("identificationInfo.citation.citedResponsibleParty.role", Role.POINT_OF_CONTACT,
+                contact.getRole());
         /*
          * Metadata / Data Identification.
          */
         final DataIdentification identification = (DataIdentification) getSingleton(metadata.getIdentificationInfo());
-        assertSame(SpatialRepresentationType.GRID, getSingleton(identification.getSpatialRepresentationTypes()));
-        assertEquals("Freely available", getSingleton(getSingleton(identification.getResourceConstraints()).getUseLimitations()).toString());
+        assertSame("identificationInfo.pointOfContact", contact,
+                getSingleton(identification.getPointOfContacts()));
+        assertSame("identificationInfo.spatialRepresentationType", SpatialRepresentationType.GRID,
+                getSingleton(identification.getSpatialRepresentationTypes()));
+        assertEquals("identificationInfo.resourceConstraints.useLimitation", "Freely available",
+                String.valueOf(getSingleton(getSingleton(identification.getResourceConstraints()).getUseLimitations())));
         /*
-         * Metadata / Quality.
+         * Metadata / Quality / Lineage.
          */
         assertEquals("2003-04-07 12:12:50 - created by gribtocdl              "
                    + "2005-09-26T21:50:00 - edavis - add attributes for dataset discovery",
-                   getSingleton(metadata.getDataQualityInfo()).getLineage().getStatement().toString());
+                   String.valueOf(getSingleton(metadata.getDataQualityInfo()).getLineage().getStatement()));
         /*
          * Metadata / Data Identification / Keywords.
          */
         final Keywords keywords = getSingleton(identification.getDescriptiveKeywords());
-        assertEquals("GCMD Science Keywords", keywords.getThesaurusName().getTitle().toString());
-        assertEquals("EARTH SCIENCE > Oceans > Ocean Temperature > Sea Surface Temperature", getSingleton(keywords.getKeywords()).toString());
+        assertEquals("identificationInfo.descriptiveKeywords.thesaurusName", "GCMD Science Keywords",
+                String.valueOf(keywords.getThesaurusName().getTitle()));
+        assertEquals("identificationInfo.descriptiveKeywords.keyword",
+                "EARTH SCIENCE > Oceans > Ocean Temperature > Sea Surface Temperature",
+                String.valueOf(getSingleton(keywords.getKeywords())));
         /*
          * Metadata / Data Identification / Vertical Extent.
          */
@@ -161,6 +221,19 @@ public final strictfp class NetcdfTranscoderTest extends NetcdfMetadataTest {
     }
 
     /**
+     * Same test than {@link #testNCEP()}, but now reading through a {@link ImageCoverageReader}.
+     * This is an integration test.
+     *
+     * @throws IOException If the test file can not be read.
+     * @throws CoverageStoreException Should never happen.
+     */
+    @Test
+    public void testIntegratedNCEP() throws IOException, CoverageStoreException {
+        integrationTest = true;
+        testNCEP();
+    }
+
+    /**
      * Tests the Landsat file (binary format).
      *
      * @throws IOException If the test file can not be read.
@@ -169,6 +242,12 @@ public final strictfp class NetcdfTranscoderTest extends NetcdfMetadataTest {
     @Override
     public void testLandsat() throws IOException {
         super.testLandsat();
+        verifyConstants(metadata);
+        assertSame("hierarchyLevel", ScopeCode.DATASET,
+                getSingleton(metadata.getHierarchyLevels()));
+        /*
+         * Metadata / Content information / Range dimension.
+         */
         final ContentInformation content = getSingleton(metadata.getContentInfo());
         assertInstanceOf("ContentInformation", CoverageDescription.class, content);
         final RangeDimension band = getSingleton(((CoverageDescription) content).getDimensions());
@@ -177,15 +256,56 @@ public final strictfp class NetcdfTranscoderTest extends NetcdfMetadataTest {
     }
 
     /**
-     * Same test than {@link #testNCEP()}, but now reading through a {@link ImageCoverageReader}.
+     * Tests the "Current Icing Product" file (binary format).
+     *
+     * @throws IOException If the test file can not be read.
+     */
+    @Test
+    @Override
+    public void testCIP() throws IOException {
+        super.testCIP();
+        verifyConstants(metadata);
+        assertSame("hierarchyLevel", ScopeCode.DATASET,
+                getSingleton(metadata.getHierarchyLevels()));
+        /*
+         * Metadata / Contact.
+         */
+        final ResponsibleParty contact = getSingleton(metadata.getContacts());
+            assertEquals("identificationInfo.citation.citedResponsibleParty.organisationName", "UCAR",
+                    String.valueOf(contact.getOrganisationName()));
+            assertEquals("identificationInfo.citation.citedResponsibleParty.role", Role.POINT_OF_CONTACT,
+                    contact.getRole());
+        /*
+         * Metadata / Data Identification.
+         */
+        final DataIdentification identification = (DataIdentification) getSingleton(metadata.getIdentificationInfo());
+        assertSame  (contact, getSingleton(identification.getPointOfContacts()));
+        /*
+         * Metadata / Content information / Range dimension.
+         */
+        final ContentInformation content = getSingleton(metadata.getContentInfo());
+        assertInstanceOf("ContentInformation", CoverageDescription.class, content);
+        final RangeDimension band = getSingleton(((CoverageDescription) content).getDimensions());
+        assertEquals("long_name attribute:", "Current Icing Product", String.valueOf(band.getDescriptor()));
+        assertEquals("NetCDF variable name:", "CIP", String.valueOf(band.getSequenceIdentifier()));
+        /*
+         * Metadata / Quality / Lineage.
+         */
+        assertEquals("dataQualityInfo.lineage.statement", "U.S. National Weather Service - NCEP (WMC)",
+                String.valueOf(getSingleton(metadata.getDataQualityInfo()).getLineage().getStatement()));
+    }
+
+    /**
+     * Same test than {@link #testCIP()}, but now reading through a {@link ImageCoverageReader}.
      * This is an integration test.
      *
      * @throws IOException If the test file can not be read.
      * @throws CoverageStoreException Should never happen.
      */
     @Test
-    public void testGridCoverageReader() throws IOException, CoverageStoreException {
+    @Ignore
+    public void testIntegratedCIP() throws IOException, CoverageStoreException {
         integrationTest = true;
-        testNCEP();
+        testCIP();
     }
 }
