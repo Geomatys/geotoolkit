@@ -17,6 +17,7 @@
 
 package org.geotoolkit.process;
 
+import java.util.concurrent.CancellationException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.metadata.quality.ConformanceResult;
 import org.geotoolkit.parameter.Parameters;
@@ -36,6 +37,8 @@ public abstract class AbstractProcess implements Process {
     protected final ProcessDescriptor descriptor;
     protected final ParameterValueGroup outputParameters;
     protected ParameterValueGroup inputParameters;
+    
+    volatile boolean isCanceled = false;
 
     public AbstractProcess(final ProcessDescriptor desc, final ParameterValueGroup input) {
         ensureNonNull("descriptor", desc);
@@ -59,7 +62,7 @@ public abstract class AbstractProcess implements Process {
     public ParameterValueGroup getInput() {
         return inputParameters;
     }
-
+    
     /**
      * {@linkplain #execute() Executes} the process and returns the {@linkplain #outputParameters
      * output parameters}. This method takes care of invoking the
@@ -93,7 +96,26 @@ public abstract class AbstractProcess implements Process {
         }
         return outputParameters;
     }
+    
+    /**
+     * {@linkplain #cancelProcess() CancelProcess} set the {@code isCanceled} flag to {@code true}. 
+     * The {@code isCanceled} flag is used by the process to know if someone ask for his cancelation. 
+     * Long process should when they can check the {@code isCanceled} flag through the {@link #isCanceled() isCanceled} method.
+     * If a process see his {@code isCanceled} flag to {@code true} he should throw an {@link CancellationException exception}.
+     */
+    public void cancelProcess(){
+        isCanceled = true;
+    }
 
+    /**
+     * Return the {@code isCanceled} flag value. 
+     * 
+     * @return {@code isCanceled} flag value.
+     */
+    public boolean isCanceled(){
+        return isCanceled;
+    }
+    
     /**
      * Immediately performs the action of this process. This method is invoked by the {@link #call()}
      * method after any {@linkplain #addListener(ProcessListener) registered listeners} have been
