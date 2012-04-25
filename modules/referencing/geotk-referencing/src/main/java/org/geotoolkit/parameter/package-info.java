@@ -17,23 +17,22 @@
  */
 
 /**
- * {@linkplain org.geotoolkit.parameter.extended by DefaultParameterDescriptor Parameter descriptor}
+ * {@linkplain org.geotoolkit.parameter.DefaultParameterDescriptor Parameter descriptor}
  * and {@linkplain org.geotoolkit.parameter.Parameter parameter value} implementations. An explanation
  * for this package is provided in the {@linkplain org.opengis.parameter OpenGIS&reg; javadoc}.
  * The remaining discussion on this page is specific to the Geotk implementation.
  * <p>
- * The starting point is often {@link org.geotoolkit.parameter.extended by DefaultParameterDescriptorGroup}.
- * Operation implementations need to defines one, for example as below:
+ * The starting point is often {@link org.geotoolkit.parameter.DefaultParameterDescriptorGroup}.
+ * Operation implementations need to defines one. The following example creates a group of two
+ * parameters. The first parameter accepts integers ranging from 0 to 3 inclusive, with a default
+ * value of 2. The second parameter accepts real numbers ranging from 0 to 100 kilometres inclusive,
+ * with no default value:
  *
  * {@preformat java
- *   // Creates a parameter named "dimension" with valid values
- *   // ranging from 0 to 3 inclusive and a default value of 2.
- *   ParameterDescriptor<Integer> dimension = DefaultParameterDescriptor.create("dimension", 2, 0, 3);
- *   // Creates a parameter named "distance" with valid values ranging
- *   // from 0 to 100 kilometres inclusive and no default value (NaN).
- *   ParameterDescriptor<Double> distance = DefaultParameterDescriptor.create("distance", Double.NaN, 0.0, 100.0, SI.KILOMETER);
  *   // Creates the group of parameters named "MyOperation".
- *   ParameterDescriptorGroup myOperation = new DefaultParameterDescriptorGroup("MyOperation", dimension, distance);
+ *   ParameterDescriptorGroup myOperation = new DefaultParameterDescriptorGroup("MyOperation",
+ *           DefaultParameterDescriptor.create("dimension", 2, 0, 3),
+ *           DefaultParameterDescriptor.create("distance", Double.NaN, 0, 100, SI.KILOMETER));
  * }
  *
  * Operation usages typically invoke the

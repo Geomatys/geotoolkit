@@ -72,15 +72,18 @@
       comme dans <classname role="OGC">MD_Identifier</classname>. Ces préfixes jouent le rôle des noms de paquets en Java.
       GeoAPI adapte cette pratique en utilisant des noms d’interfaces sans préfixes,
       et en plaçant ces interfaces dans des paquets correspondants aux préfixes mais avec des noms plus descriptifs.
-      Ainsi la classe <classname role="OGC">MD_Identifier</classname> de l’<acronym>OGC</acronym> devient
-      l’interface <classname role="GeoAPI">Identifier</classname> dans le paquet <literal>org.opengis.metadata</literal>.
       Occasionnellement nous changeons aussi les noms, par exemple pour éviter des acronymes
       ou pour se conformer à une convention établie telle que <foreignphrase>Java beans</foreignphrase>.
-      Ainsi la classe <classname role="OGC">SC_CRS</classname> de l’<acronym>OGC</acronym> devient l’interface <classname role="GeoAPI">CoordinateReferenceSystem</classname>,
-      et l’association <function role="OGC">usesDatum</function> devient une méthode <function role="GeoAPI">getDatum()</function> —
-      et non pas « <function>getUsesDatum()</function> » comme aurait fait un outil de conversion automatique.
-      Nous ne laissons pas des programmes appliquer aveuglement des règles qui ignorent les conventions de la communauté dont on traduit les schémas.
-    </para></listitem>
+      </para>
+      <informalexample><para><emphasis role="bold">Exemple:</emphasis>
+        la classe <classname role="OGC">MD_Identifier</classname> de l’<acronym>OGC</acronym> devient
+        l’interface <classname role="GeoAPI">Identifier</classname> dans le paquet <literal>org.opengis.metadata</literal>.
+        La classe <classname role="OGC">SC_CRS</classname> de l’<acronym>OGC</acronym> devient l’interface <classname role="GeoAPI">CoordinateReferenceSystem</classname>,
+        et l’association <function role="OGC">usesDatum</function> devient une méthode <function role="GeoAPI">getDatum()</function> —
+        et non pas « <function>getUsesDatum()</function> » comme aurait fait un outil de conversion automatique.
+        Nous ne laissons pas des programmes appliquer aveuglement des règles qui ignorent les conventions de la communauté dont on traduit les schémas.
+      </para></informalexample>
+    </listitem>
     <listitem><para>
       Les standards contiennent parfois des structures qui n’ont pas d’équivalent direct en Java,
       notamment les unions telles qu’on peut trouver en C/C++.
@@ -89,25 +92,35 @@
       Les décisions se font au cas-par-cas en fonction de l’analyse des besoins.
     </para></listitem>
     <listitem><para>
-      Plusieurs spécifications se chevauchent. Par exemple le standard ISO 19115, qui définit des structures de méta-données,
-      s’aventure aussi à décrire quelques structures représentant les systèmes de références des coordonnées (<acronym>CRS</acronym>).
-      Or ces derniers sont le sujet à part entière d’un autre standard: ISO 19111.
-      D’ailleurs le standard ISO 19111:2007 stipule, dans sa section 3, qu’il réutilise tous les éléments
-      de ISO 19115 à l’exclusion de <classname role="OGC">MD_CRS</classname> et de ses composantes.
-      Les interfaces de GeoAPI réduisent la redondance en appliquant à l’ensemble du projet l’exclusion recommandée par ISO 19111.
-    </para></listitem>
+      Plusieurs spécifications se chevauchent. GeoAPI effectue un travail d’intégration en remplaçant certaines
+      structures qui font doublons par des références vers les structures équivalentes du standard qui les définies le mieux.
+      </para>
+      <informalexample><para><emphasis role="bold">Exemple:</emphasis>
+        Le standard ISO 19115, qui définit des structures de méta-données,
+        s’aventure aussi à décrire quelques structures représentant les systèmes de références des coordonnées (<acronym>CRS</acronym>).
+        Or ces derniers sont le sujet à part entière d’un autre standard: ISO 19111.
+        D’ailleurs le standard ISO 19111:2007 stipule, dans sa section 3, qu’il réutilise tous les éléments
+        de ISO 19115 à l’exclusion de <classname role="OGC">MD_CRS</classname> et de ses composantes.
+        Les interfaces de GeoAPI réduisent la redondance en appliquant à l’ensemble du projet l’exclusion recommandée par ISO 19111.
+      </para></informalexample>
+    </listitem>
     <listitem><para>
       Certains standards ont vu leur complexité s’accroître pour des raisons historiques plutôt que techniques,
-      liées au processus de standardisation. Par exemple le standard ISO 19115-2 est une extension du standard
-      ISO 19115-1 ajoutant des structures de méta-données d’images. Ces méta-données ont été définies dans un
-      standard séparé parce qu’elles n’ont pas été prêtes à temps pour la publication de la première partie du standard.
-      Comme il n’était pas possible, pour des raisons administratives, d’ajouter des attributs dans les classes déjà publiées,
-      les nouveaux attributs ont été ajoutées dans une sous-classe portant quasiment le même nom.
-      Ainsi, le standard ISO 19115-2 définit une classe <classname role="OGC">MI_Band</classname> qui étend la
-      classe <classname role="OGC">MD_Band</classname> du standard ISO 19115-1 en y ajoutant les attributs qui
-      auraient dus apparaître directement dans la classe parente s’ils avaient été prêts à temps.
-      Dans GeoAPI, nous avons choisis de « réparer » ces anomalies en fusionnant ces deux classes en une seule interface.
-    </para></listitem>
+      liées au processus de standardisation. GeoAPI réduit la dette technique en concevant les interfaces comme
+      si chaque élément avait pu être intégrée à sa place, sans les contraintes liées à l’ordre chronologique
+      dans lequel les standards ont été publiés.
+      </para>
+      <informalexample><para><emphasis role="bold">Exemple:</emphasis>
+        Le standard ISO 19115-2 est une extension du standard ISO 19115-1 ajoutant des structures de méta-données d’images.
+        Ces méta-données ont été définies dans un standard séparé parce qu’elles n’ont pas été prêtes à temps pour la publication de la première partie du standard.
+        Comme il n’était pas possible, pour des raisons administratives, d’ajouter des attributs dans les classes déjà publiées,
+        les nouveaux attributs ont été ajoutées dans une sous-classe portant quasiment le même nom.
+        Ainsi, le standard ISO 19115-2 définit une classe <classname role="OGC">MI_Band</classname> qui étend la
+        classe <classname role="OGC">MD_Band</classname> du standard ISO 19115-1 en y ajoutant les attributs qui
+        auraient du apparaître directement dans la classe parente s’ils avaient été prêts à temps.
+        Dans GeoAPI, nous avons choisis de « réparer » ces anomalies en fusionnant ces deux classes en une seule interface.
+      </para></informalexample>
+    </listitem>
   </itemizedlist>
 
 </section>

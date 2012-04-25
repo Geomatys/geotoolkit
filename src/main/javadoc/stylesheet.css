@@ -31,10 +31,6 @@ h1 { font-size: 145% }
 /*
  * Following is specific to the Geotk project.
  */
-p {
-  text-align: justify;
-}
-
 /*
  * Table without vertical space between rows, a little bit of space between columns,
  * a light background color and a header with a darker background color. The header
