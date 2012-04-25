@@ -108,7 +108,9 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
             //the crs is defined on the feature type
             final CoordinateSequenceMathTransformer trs =
                     new CoordinateSequenceMathTransformer(CRS.findMathTransform(original, targetCRS, true));
-            return new GeometryCSTransformer(trs);
+            GeometryCSTransformer ts = new GeometryCSTransformer(trs);
+            ts.setCoordinateReferenceSystem(targetCRS);
+            return ts;
         }else{
             return null;
         }
@@ -353,6 +355,7 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
                                             new CoordinateSequenceMathTransformer(CRS.findMathTransform(original, targetCRS, true));
                                     final GeometryCSTransformer transformer = new GeometryCSTransformer(trs);
                                     Geometry geom = transformer.transform((Geometry) value);
+                                    JTS.setCRS(geom, targetCRS);
                                     geom.setSRID(SRIDGenerator.toSRID(targetCRS, SRIDGenerator.Version.V1));
                                     values[i] = geom;
                                 } catch (Exception e) {

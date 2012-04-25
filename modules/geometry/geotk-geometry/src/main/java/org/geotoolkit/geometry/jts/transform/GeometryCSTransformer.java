@@ -117,7 +117,7 @@ public class GeometryCSTransformer implements GeometryTransformer{
 
         //set the new one to be the target crs
         if (crs != null) {
-            JTS.setCRS(g, crs);
+            JTS.setCRS(transformed, crs);
         }
         
         return transformed;

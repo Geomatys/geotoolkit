@@ -18,6 +18,7 @@
 package org.geotoolkit.data.iterator;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
@@ -54,6 +55,7 @@ import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.LenientFeatureFactory;
+import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.transform.GeometryTransformer;
 import org.geotoolkit.geometry.jts.transform.GeometryScaleTransformer;
 import org.geotoolkit.referencing.CRS;
@@ -76,6 +78,7 @@ import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.sort.SortOrder;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Tests of the different iterators.
@@ -388,7 +391,9 @@ public class GenericIteratorTest extends TestCase{
         Query query = qb.buildQuery();
         FeatureReader reader = collection.getSession().getDataStore().getFeatureReader(query);
 
-        FeatureReader retyped = GenericReprojectFeatureIterator.wrap(reader, CRS.decode("EPSG:4326"), new Hints());
+        final CoordinateReferenceSystem targetCRS = CRS.decode("EPSG:4326");
+        
+        FeatureReader retyped = GenericReprojectFeatureIterator.wrap(reader, targetCRS, new Hints());
         assertEquals(reprojectedType,retyped.getFeatureType());
 
         Feature f;
@@ -396,14 +401,17 @@ public class GenericIteratorTest extends TestCase{
         f = retyped.next();
         assertEquals(3, f.getProperties().size());
         assertEquals(GF.createPoint(new Coordinate(0, 3)).toString(), f.getProperty("att_geom").getValue().toString());
+        assertEquals(targetCRS,JTS.findCoordinateReferenceSystem((Geometry)f.getProperty("att_geom").getValue()));
 
         f = retyped.next();
         assertEquals(3, f.getProperties().size());
         assertEquals(GF.createPoint(new Coordinate(0, 1)).toString(), f.getProperty("att_geom").getValue().toString());
+        assertEquals(targetCRS,JTS.findCoordinateReferenceSystem((Geometry)f.getProperty("att_geom").getValue()));
 
         f = retyped.next();
         assertEquals(3, f.getProperties().size());
         assertEquals(GF.createPoint(new Coordinate(0, 2)).toString(), f.getProperty("att_geom").getValue().toString());
+        assertEquals(targetCRS,JTS.findCoordinateReferenceSystem((Geometry)f.getProperty("att_geom").getValue()));
 
 
         //check has next do not iterate
