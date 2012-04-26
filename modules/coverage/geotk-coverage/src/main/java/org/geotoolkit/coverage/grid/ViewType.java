@@ -84,6 +84,8 @@ public enum ViewType {
      * that are incompatible with {@linkplain IndexColorModel index color model} (e.g. 32 bits
      * integer). This view is always exclusive with {@link #GEOPHYSICS}.
      *
+     * @see org.opengis.metadata.content.CoverageContentType#IMAGE
+     *
      * @since 2.5
      */
     PACKED(false, false, false),
@@ -99,13 +101,15 @@ public enum ViewType {
      * contains <cite>Sea Surface Temperature</cite> (SST) data packed as 8 bits integers and
      * convertible to degrees Celsius using the following formula: <var>temperature</var> =
      * <var>pixel_value</var> &times; 0.15 - 3. A conversion to RGB space would lose this
-     * relationship, and any oceanographical calculation accidentaly performed on this space
+     * relationship, and any oceanographical calculation accidentally performed on this space
      * would produce wrong results.
      * <p>
      * Interpolations other than {@linkplain InterpolationNearest nearest neighbor} are not
      * allowed, because some special values are often used as pad values for missing data. An
      * interpolation between a "real" value (for example a value convertible to the above-cited
      * SST) and "pad" value would produce a wrong result.
+     *
+     * @see org.opengis.metadata.content.CoverageContentType#IMAGE
      */
     RENDERED(false, false, false),
 
@@ -128,6 +132,8 @@ public enum ViewType {
      * <p>
      * Conversions to RGB color space is not allowed. All computations (including
      * interpolations) must be performed in this geophysics space.
+     *
+     * @see org.opengis.metadata.content.CoverageContentType#PHYSICAL_MEASUREMENT
      */
     GEOPHYSICS(true, false, false),
 
