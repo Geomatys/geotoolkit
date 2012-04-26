@@ -17,6 +17,7 @@
 package org.geotoolkit.gui.swing.propertyedit.featureeditor;
 
 import java.awt.BorderLayout;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
@@ -40,36 +41,53 @@ public class StringEditor implements JFeatureOutLine.PropertyEditor {
     @Override
     public TableCellEditor getEditor(PropertyType property) {
         w.property = property;
+        r.update();
         return w;
     }
 
     @Override
     public TableCellRenderer getRenderer(PropertyType property) {
         r.property = property;
+        r.update();
         return r.getRenderer();
     }
 
     private static class StringRW extends TableCellEditorRenderer {
 
-        private final JTextField component = new JTextField();
+        private final JTextField textField = new JTextField();
+        private final JPasswordField passwordField = new JPasswordField();
+        private JTextField current = null;
 
         private StringRW() {
             panel.setLayout(new BorderLayout());
-            panel.add(BorderLayout.CENTER, component);
+            panel.add(BorderLayout.CENTER, textField);
+        }
+        
+        private void update(){
+            panel.removeAll();
+            if(property != null && property.getName().getLocalPart().startsWith("pass")){
+                panel.add(BorderLayout.CENTER, passwordField);
+                current = passwordField;
+            }else{
+                panel.add(BorderLayout.CENTER, textField);
+                current = textField;
+            }
         }
 
         @Override
         protected void prepare() {
+            update();
             if (value instanceof String) {
-                component.setText((String) value);
+                current.setText((String) value);
             }else{
-                component.setText("");
+                current.setText("");
             }
         }
 
         @Override
         public Object getCellEditorValue() {
-            return component.getText();
+            update();
+            return current.getText();
         }
     }
 }

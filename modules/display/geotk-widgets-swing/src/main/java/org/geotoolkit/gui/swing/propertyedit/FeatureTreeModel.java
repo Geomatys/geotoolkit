@@ -96,6 +96,9 @@ public class FeatureTreeModel extends DefaultTreeModel{
             //we must replace the descriptor by a real property
             final Property prop = FeatureUtilities.defaultProperty(desc);
             node.setUserObject(prop);
+            //update the feature
+            final ComplexAttribute parent = getParent(node);
+            ((Collection)parent.getValue()).add(prop);
             nodeChanged(node);
 
         }else{

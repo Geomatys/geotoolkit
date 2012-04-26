@@ -425,16 +425,11 @@ private void jButton3ActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_j
 
 private void openCoverageStoreChooser(ActionEvent evt) {//GEN-FIRST:event_openCoverageStoreChooser
         try {
-            final List<CoverageStore> stores = JCoverageStoreChooser.showDialog();
+            final List<MapLayer> layers = JCoverageStoreChooser.showLayerDialog(null);
             
-            for(CoverageStore store : stores){
-                if(store == null) continue;
-                
-                final List<MapLayer> layers = JLayerChooser.showDialog(store);
-                for(MapLayer layer : layers){
-                    if(layer == null) continue;                    
-                    guiContextTree.getContext().layers().add(layer);                    
-                }
+            for(MapLayer layer : layers){
+                if(layer == null) continue;                    
+                guiContextTree.getContext().layers().add(layer);                    
             }   
             
         } catch (DataStoreException ex) {
@@ -447,17 +442,12 @@ private void openCoverageStoreChooser(ActionEvent evt) {//GEN-FIRST:event_openCo
 private void openDataStoreChooser(ActionEvent evt) {//GEN-FIRST:event_openDataStoreChooser
 
         try {
-            final List<DataStore> stores = JDataStoreChooser.showDialog();
+            final List<MapLayer> layers = JDataStoreChooser.showLayerDialog(null);
             
-            for(DataStore store : stores){
-                if(store == null) continue;
-                
-                final List<MapLayer> layers = JLayerChooser.showDialog(store);
-                for(MapLayer layer : layers){
-                    if(layer == null) continue;                    
-                    guiContextTree.getContext().layers().add(layer);                    
-                }
-            }   
+            for(MapLayer layer : layers){
+                if(layer == null) continue;                    
+                guiContextTree.getContext().layers().add(layer);                    
+            }
             
         } catch (DataStoreException ex) {
             Logger.getLogger(JMap2DFrame.class.getName()).log(Level.SEVERE, null, ex);
@@ -468,20 +458,12 @@ private void openDataStoreChooser(ActionEvent evt) {//GEN-FIRST:event_openDataSt
 private void openServerChooser(ActionEvent evt) {//GEN-FIRST:event_openServerChooser
 
     try {
-        final List<Server> stores = JServerChooser.showDialog();
-
-        for (Server server : stores) {
+        final List<MapLayer> layers = JServerChooser.showLayerDialog(null);
             
-            if(server instanceof DataStore || server instanceof CoverageStore){
-                final List<MapLayer> layers = JLayerChooser.showDialog(server);
-                for (MapLayer layer : layers) {
-                    if (layer == null) {
-                        continue;
-                    }
-                    guiContextTree.getContext().layers().add(layer);
-                }
-            }            
-        }
+        for(MapLayer layer : layers){
+            if(layer == null) continue;                    
+            guiContextTree.getContext().layers().add(layer);                    
+        } 
 
     } catch (DataStoreException ex) {
         Logger.getLogger(JMap2DFrame.class.getName()).log(Level.SEVERE, null, ex);

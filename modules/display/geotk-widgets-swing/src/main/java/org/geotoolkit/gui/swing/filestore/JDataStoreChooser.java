@@ -17,6 +17,7 @@
 package org.geotoolkit.gui.swing.filestore;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -26,6 +27,8 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JDialog;
@@ -41,7 +44,9 @@ import org.geotoolkit.data.DataStoreFactory;
 import org.geotoolkit.data.DataStoreFinder;
 import org.geotoolkit.gui.swing.propertyedit.JFeatureOutLine;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.util.logging.Logging;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -54,6 +59,8 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class JDataStoreChooser extends javax.swing.JPanel {
 
+    private static final Logger LOGGER = Logging.getLogger(JDataStoreChooser.class);
+    
     private static final Comparator<DataStoreFactory> SORTER = new Comparator<DataStoreFactory>() {
         @Override
         public int compare(DataStoreFactory o1, DataStoreFactory o2) {
@@ -62,6 +69,7 @@ public class JDataStoreChooser extends javax.swing.JPanel {
     };
     
     private final JFeatureOutLine guiEditor = new JFeatureOutLine();
+    private final JLayerChooser chooser = new JLayerChooser();
     
     public JDataStoreChooser() {
         initComponents();
@@ -84,8 +92,20 @@ public class JDataStoreChooser extends javax.swing.JPanel {
                 guiEditor.setEdited(param);
             }
         });
+        setLayerSelectionVisible(false);
     }
 
+    public void setLayerSelectionVisible(boolean visible){
+        if(visible){
+            guiSplit.setRightComponent(guiLayerSplit);
+            guiLayerSplit.setLeftComponent(guiConfig);
+            guiLayerSplit.setRightComponent(chooser);
+            guiLayerSplit.setDividerLocation(260);
+        }else{
+            guiSplit.setRightComponent(guiConfig);
+        }
+    }
+    
     public DataStore getDataStore() throws DataStoreException{
         final DataStoreFactory factory = (DataStoreFactory) guiList.getSelectedValue();
         
@@ -101,6 +121,10 @@ public class JDataStoreChooser extends javax.swing.JPanel {
         }
     }
     
+    public List<MapLayer> getSelectedLayers() throws DataStoreException{
+        return chooser.getLayers();
+    }
+    
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -110,15 +134,22 @@ public class JDataStoreChooser extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        guiLayerSplit = new javax.swing.JSplitPane();
         guiSplit = new javax.swing.JSplitPane();
         jScrollPane1 = new javax.swing.JScrollPane();
         guiList = new javax.swing.JList();
-        jPanel1 = new javax.swing.JPanel();
+        guiConfig = new javax.swing.JPanel();
         guiEditPane = new javax.swing.JPanel();
         guiCreateNew = new javax.swing.JCheckBox();
+        guiConnect = new javax.swing.JButton();
+        guiInfoLabel = new javax.swing.JTextField();
 
-        guiSplit.setDividerLocation(240);
-        guiSplit.setDividerSize(2);
+        guiLayerSplit.setDividerSize(5);
+
+        guiSplit.setDividerLocation(220);
+        guiSplit.setDividerSize(5);
+
+        jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
         guiList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(guiList);
@@ -129,44 +160,78 @@ public class JDataStoreChooser extends javax.swing.JPanel {
 
         guiCreateNew.setText(MessageBundle.getString("createNew"));
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(12, 12, 12)
-                .addComponent(guiCreateNew, javax.swing.GroupLayout.DEFAULT_SIZE, 293, Short.MAX_VALUE)
-                .addContainerGap())
-            .addComponent(guiEditPane, javax.swing.GroupLayout.DEFAULT_SIZE, 317, Short.MAX_VALUE)
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addComponent(guiEditPane, javax.swing.GroupLayout.DEFAULT_SIZE, 344, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        guiConnect.setText("Connect");
+        guiConnect.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                guiConnectActionPerformed(evt);
+            }
+        });
+
+        guiInfoLabel.setEditable(false);
+
+        javax.swing.GroupLayout guiConfigLayout = new javax.swing.GroupLayout(guiConfig);
+        guiConfig.setLayout(guiConfigLayout);
+        guiConfigLayout.setHorizontalGroup(
+            guiConfigLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(guiConfigLayout.createSequentialGroup()
                 .addComponent(guiCreateNew)
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(guiInfoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 229, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(guiConnect))
+            .addComponent(guiEditPane, javax.swing.GroupLayout.DEFAULT_SIZE, 422, Short.MAX_VALUE)
+        );
+        guiConfigLayout.setVerticalGroup(
+            guiConfigLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, guiConfigLayout.createSequentialGroup()
+                .addComponent(guiEditPane, javax.swing.GroupLayout.DEFAULT_SIZE, 332, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(guiConfigLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(guiCreateNew)
+                    .addComponent(guiConnect)
+                    .addComponent(guiInfoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
-        guiSplit.setRightComponent(jPanel1);
+        guiSplit.setRightComponent(guiConfig);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(guiSplit, javax.swing.GroupLayout.DEFAULT_SIZE, 559, Short.MAX_VALUE)
+            .addComponent(guiSplit, javax.swing.GroupLayout.DEFAULT_SIZE, 685, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(guiSplit, javax.swing.GroupLayout.DEFAULT_SIZE, 383, Short.MAX_VALUE)
+            .addComponent(guiSplit, javax.swing.GroupLayout.DEFAULT_SIZE, 366, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
+
+private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guiConnectActionPerformed
+        
+        DataStore store = null;
+        try {
+            chooser.setSource(null);
+            store = getDataStore();
+            chooser.setSource(store);
+            guiInfoLabel.setForeground(Color.GREEN);
+            guiInfoLabel.setText("ok");
+        } catch (DataStoreException ex) {
+            guiInfoLabel.setForeground(Color.RED);
+            guiInfoLabel.setText(""+ex.getMessage());
+            LOGGER.log(Level.WARNING, ex.getMessage(),ex);
+        }
+    
+}//GEN-LAST:event_guiConnectActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel guiConfig;
+    private javax.swing.JButton guiConnect;
     private javax.swing.JCheckBox guiCreateNew;
     private javax.swing.JPanel guiEditPane;
+    private javax.swing.JTextField guiInfoLabel;
+    private javax.swing.JSplitPane guiLayerSplit;
     private javax.swing.JList guiList;
     private javax.swing.JSplitPane guiSplit;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 
@@ -207,8 +272,26 @@ public class JDataStoreChooser extends javax.swing.JPanel {
      * @throws DataStoreException 
      */
     public static List<DataStore> showDialog(List<JFeatureOutLine.PropertyEditor> editors) throws DataStoreException{
+        return showDialog(editors, false);
+    }
+    
+    /**
+     * Display a modal dialog choosing layers.
+     * 
+     * @param editors : additional FeatureOutline editors
+     * @return
+     * @throws DataStoreException 
+     */
+    public static List<MapLayer> showLayerDialog(List<JFeatureOutLine.PropertyEditor> editors) throws DataStoreException{
+        return showDialog(editors, true);
+    }
+    
+    private static List showDialog(List<JFeatureOutLine.PropertyEditor> editors, boolean layerVisible) throws DataStoreException{
         final JDataStoreChooser chooser = new JDataStoreChooser();
-        chooser.guiEditor.getEditors().addAll(editors);
+        if(editors != null){
+            chooser.guiEditor.getEditors().addAll(editors);
+        }
+        chooser.setLayerSelectionVisible(layerVisible);
         final JDialog dialog = new JDialog();
         
         final AtomicBoolean openAction = new AtomicBoolean(false);
@@ -233,16 +316,19 @@ public class JDataStoreChooser extends javax.swing.JPanel {
         dialog.setVisible(true);
         
         if(openAction.get()){
-            final DataStore store = chooser.getDataStore();
-            if(store == null){
-                return Collections.EMPTY_LIST;
+            if(layerVisible){
+                return chooser.getSelectedLayers();
             }else{
-                return Collections.singletonList(store);
+                final DataStore store = chooser.getDataStore();
+                if(store == null){
+                    return Collections.EMPTY_LIST;
+                }else{
+                    return Collections.singletonList(store);
+                }
             }
         }else{
             return Collections.EMPTY_LIST;
         }
-        
     }
     
 }
