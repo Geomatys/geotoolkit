@@ -36,50 +36,58 @@ import org.geotoolkit.util.ArgumentChecks;
  * @author Martin Desruisseaux (Geomatys).
  */
 public class RasterBasedIterator extends PixelIterator {
+
     /**
-     * Raster which is followed by Iterator.
+     * Current raster which is followed by Iterator.
      */
-    private final Raster raster;
+    protected Raster currentRaster;
 
     /**
      * Number of raster band .
      */
-    private final int numBand;
+    protected int numBand;
 
     /**
-     * The X coordinate of the upper-left pixel of this Raster.
+     * The X coordinate of the upper-left pixel of this current raster.
      */
-    private final int minX;
+    protected int minX;
 
     /**
-     * The Y coordinate of the upper-left pixel of this Raster.
+     * The Y coordinate of the upper-left pixel of this current raster.
      */
-    private final int minY;
+    protected int minY;
 
     /**
-     * The X coordinate of the bottom-right pixel of this Raster.
+     * The X coordinate of the bottom-right pixel of this current raster.
      */
-    private final int maxX;
+    protected int maxX;
 
     /**
-     * The Y coordinate of the bottom-right pixel of this Raster.
+     * The Y coordinate of the bottom-right pixel of this current raster.
      */
-    private final int maxY;
+    protected int maxY;
 
     /**
-     * Current X pixel coordinate in raster.
+     * Current X pixel coordinate in this current raster.
      */
-    private int x;
+    protected int x;
 
     /**
-     * Current Y pixel coordinate in raster.
+     * Current Y pixel coordinate in this current raster.
      */
-    private int y;
+    protected int y;
 
     /**
-     * Current band position in raster.
+     * Current band position in this current raster.
      */
-    private int band;
+    protected int band;
+
+    /**
+     * Default constructor to daughter classes.
+     */
+    protected RasterBasedIterator(){
+        super();
+    }
 
     /**
      * Create raster iterator to follow from its minX and minY coordinates.
@@ -89,14 +97,15 @@ public class RasterBasedIterator extends PixelIterator {
     public RasterBasedIterator(final Raster raster) {
         super();
         ArgumentChecks.ensureNonNull("Raster : ", raster);
-        this.raster   = raster;
+        this.currentRaster = raster;
         this.numBand  = raster.getNumBands();
-        this.minX     = raster.getMinX();
-        x = minX;
-        this.minY     = raster.getMinY();
-        y = minY;
-        this.maxY     = minY + raster.getHeight();
-        this.maxX     = minX + raster.getWidth();
+        this.minX = raster.getMinX();
+        this.minY = raster.getMinY();
+        this.x    = minX;
+        this.y    = minY;
+        this.maxY = minY + raster.getHeight();
+        this.maxX = minX + raster.getWidth();
+        this.band = -1;
     }
 
     /**
@@ -108,7 +117,7 @@ public class RasterBasedIterator extends PixelIterator {
         super();
         ArgumentChecks.ensureNonNull("Raster : ", raster);
         ArgumentChecks.ensureNonNull("sub Area iteration : ", subArea);
-        this.raster     = raster;
+        this.currentRaster     = raster;
         final int minx  = raster.getMinX();
         final int miny  = raster.getMinY();
         final int maxx  = minx + raster.getWidth();
@@ -124,6 +133,7 @@ public class RasterBasedIterator extends PixelIterator {
         throw new IllegalArgumentException("invalid subArea coordinate no intersection between it and raster"+raster+subArea);
         x  = this.minX;
         y  = this.minY;
+        this.band = -1;
     }
 
     /**
@@ -165,7 +175,7 @@ public class RasterBasedIterator extends PixelIterator {
      */
     @Override
     public int getSample() {
-        return raster.getSample(x, y, band);
+        return currentRaster.getSample(x, y, band);
     }
 
     /**
@@ -173,7 +183,7 @@ public class RasterBasedIterator extends PixelIterator {
      */
     @Override
     public float getSampleFloat() {
-        return raster.getSampleFloat(x, y, band);
+        return currentRaster.getSampleFloat(x, y, band);
     }
 
     /**
@@ -181,7 +191,7 @@ public class RasterBasedIterator extends PixelIterator {
      */
     @Override
     public double getSampleDouble() {
-        return raster.getSampleDouble(x, y, band);
+        return currentRaster.getSampleDouble(x, y, band);
     }
 
     /**
@@ -189,6 +199,6 @@ public class RasterBasedIterator extends PixelIterator {
      */
     @Override
     public void rewind() {
-        band = 0; x = minX; y = minY;
+        band = -1; x = minX; y = minY;
     }
 }

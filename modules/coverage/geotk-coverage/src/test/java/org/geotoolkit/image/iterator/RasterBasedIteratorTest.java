@@ -31,113 +31,126 @@ import org.junit.Test;
  *
  * @author Rémi Marechal (Geomatys).
  */
-public class RasterBasedIteratorTest {
+public abstract class RasterBasedIteratorTest {
 
-    private int numBand;
-    private int width;
-    private int height;
-    private int dataType = DataBuffer.TYPE_INT;
-    private int minX;
-    private int minY;
+    protected int numBand;
+    protected int width;
+    protected int height;
+    protected int dataType = DataBuffer.TYPE_INT;
+    protected int minx;
+    protected int miny;
+    protected int[] tabRef, tabTest;
 
-    WritableRaster raster;
-    PixelIterator sampleIterator;
+    protected WritableRaster rasterTest;
+    protected PixelIterator pixIterator;
 
     public RasterBasedIteratorTest() {
 
     }
+
+    protected abstract void setPixelIterator(final Raster raster, final Rectangle subArea);
 
     /**
      * Test if iterator transverse all raster positions with different minX and maxY coordinates.
      * Also test rewind function.
      */
     @Test
-    public void differentMinTest() {
-        numBand = 3;
+    public void differentMinRasterTest() {
         width = 10;
         height = 10;
-        minX = 0;
-        minY = 0;
-        raster = Raster.createBandedRaster(dataType, width, height, numBand, new Point(minX, minY));
-        fillRaster();
-        sampleIterator = new RasterBasedIterator(raster);
-        final int[] tabA = getIterate();
-
-        minX = 3;
-        minY = 5;
-        raster = Raster.createBandedRaster(dataType, width, height, numBand, new Point(minX, minY));
-        fillRaster();
-        sampleIterator = new RasterBasedIterator(raster);
-        final int[] tabB = getIterate();
-        assertTrue(compareTab(tabA, tabB));
-
-        minX = -3;
-        minY = 5;
-        raster = Raster.createBandedRaster(dataType, width, height, numBand, new Point(minX, minY));
-        fillRaster();
-        sampleIterator = new RasterBasedIterator(raster);
-        final int[] tabC = getIterate();
-        assertTrue(compareTab(tabB, tabC));
-
-        minX = 3;
-        minY = -5;
-        raster = Raster.createBandedRaster(dataType, width, height, numBand, new Point(minX, minY));
-        fillRaster();
-        sampleIterator = new RasterBasedIterator(raster);
-        final int[] tabD = getIterate();
-        assertTrue(compareTab(tabC, tabD));
-
-        minX = -3;
-        minY = -5;
-        raster = Raster.createBandedRaster(dataType, width, height, numBand, new Point(minX, minY));
-        fillRaster();
-        sampleIterator = new RasterBasedIterator(raster);
-        final int[] tabE = getIterate();
-        assertTrue(compareTab(tabD, tabE));
-
-        sampleIterator.rewind();
-        final int[] tabF = getIterate();
-        assertTrue(compareTab(tabE, tabF));
-    }
-
-    /**
-     * Affect appropriate value for rectangle test.
-     */
-    private void setRasterRectTest() {
+        minx = 0;
+        miny = 0;
         numBand = 3;
-        width = 20;
-        height = 10;
-        minX = 5;
-        minY = 7;
-        raster = Raster.createBandedRaster(dataType, width, height, numBand, new Point(minX, minY));
-        fillRaster();
+        tabTest = new int[width*height*numBand];
+        setRasterTest(minx, miny, width, height, numBand, null);
+//        DefaultRenderedImageIterator dfrii = new DefaultRenderedImageIterator(rasterTest);
+        setPixelIterator(rasterTest, null);
+        int comp = 0;
+        while (pixIterator.next()) {
+            tabTest[comp] = pixIterator.getSample();
+            comp++;
+        }
+        assertTrue(compareTab(tabTest, tabRef));
+
+        minx = 3;
+        minx = 5;
+        setRasterTest(minx, miny, width, height, numBand, null);
+//        dfrii = new DefaultRenderedImageIterator(rasterTest);
+        setPixelIterator(rasterTest, null);
+        comp = 0;
+        while (pixIterator.next()) {
+            tabTest[comp] = pixIterator.getSample();
+            comp++;
+        }
+        assertTrue(compareTab(tabTest, tabRef));
+
+        minx = -3;
+        miny = 5;
+        setRasterTest(minx, miny, width, height, numBand, null);
+//        dfrii = new DefaultRenderedImageIterator(rasterTest);
+        setPixelIterator(rasterTest, null);
+        comp = 0;
+        while (pixIterator.next()) {
+            tabTest[comp] = pixIterator.getSample();
+            comp++;
+        }
+        assertTrue(compareTab(tabTest, tabRef));
+
+        minx = 3;
+        miny = -5;
+        setRasterTest(minx, miny, width, height, numBand, null);
+//        dfrii = new DefaultRenderedImageIterator(rasterTest);
+        setPixelIterator(rasterTest, null);
+        comp = 0;
+        while (pixIterator.next()) {
+            tabTest[comp] = pixIterator.getSample();
+            comp++;
+        }
+        assertTrue(compareTab(tabTest, tabRef));
+
+        minx = -3;
+        miny = -5;
+        setRasterTest(minx, miny, width, height, numBand, null);
+//        dfrii = new DefaultRenderedImageIterator(rasterTest);
+        setPixelIterator(rasterTest, null);
+        comp = 0;
+        while (pixIterator.next()) {
+            tabTest[comp] = pixIterator.getSample();
+            comp++;
+        }
+        assertTrue(compareTab(tabTest, tabRef));
+
+        pixIterator.rewind();
+        comp = 0;
+        while (pixIterator.next()) {
+            tabTest[comp] = pixIterator.getSample();
+            comp++;
+        }
+        assertTrue(compareTab(tabTest, tabRef));
     }
+
 
     /**
      * Test if iterator transverse expected value in define area.
      * Area is defined on upper left raster corner.
      */
     @Test
-    public void rectUpperLeftTest() {
-        setRasterRectTest();
-        final Rectangle rect = new Rectangle(4, 6, 5, 4);
-        sampleIterator = new RasterBasedIterator(raster, rect);
+    public void rectUpperLeftRasterTest() {
+        final Rectangle subArea = new Rectangle(4, 6, 5, 4);
+        numBand = 3;
+        width = 20;
+        height = 10;
+        minx = 5;
+        miny = 7;
+        setRasterTest(minx, miny, width, height, numBand, subArea);
+//        final DefaultRenderedImageIterator dfrii = new DefaultRenderedImageIterator(rasterTest, subArea);
+        setPixelIterator(rasterTest, subArea);
         int comp = 0;
-        final int[] tabA = new int[36];
-        for (int y = 7; y<10; y++) {
-            for (int x = 5; x<9; x++) {
-                for (int b = 0; b < numBand; b++) {
-                    tabA[comp] = b + 3*((x-5) + 20*(y-7));
-                    comp++;
-                }
-            }
+        while (pixIterator.next()) {
+            tabTest[comp] = pixIterator.getSample();
+            comp++;
         }
-        final int[] tabB = new int[36];
-        int comp2 = 0;
-        do {
-            tabB[comp2++] = sampleIterator.getSample();
-        } while(sampleIterator.next());
-        assertTrue(compareTab(tabA, tabB));
+        assertTrue(compareTab(tabTest, tabRef));
     }
 
     /**
@@ -145,26 +158,22 @@ public class RasterBasedIteratorTest {
      * Area is defined on upper right raster corner.
      */
     @Test
-    public void rectUpperRightTest() {
-        setRasterRectTest();
-        final Rectangle rect = new Rectangle(16, 6, 10, 6);
-        sampleIterator = new RasterBasedIterator(raster, rect);
+    public void rectUpperRightRasterTest() {
+        final Rectangle subArea = new Rectangle(16, 6, 10, 6);
+        numBand = 3;
+        width = 20;
+        height = 10;
+        minx = 5;
+        miny = 7;
+        setRasterTest(minx, miny, width, height, numBand, subArea);
+//        final DefaultRenderedImageIterator dfrii = new DefaultRenderedImageIterator(rasterTest, subArea);
+        setPixelIterator(rasterTest, subArea);
         int comp = 0;
-        final int[] tabA = new int[135];
-        for (int y = 7; y<12; y++) {
-            for (int x = 16; x<25; x++) {
-                for (int b = 0; b < numBand; b++) {
-                    tabA[comp] = b + 3*((x-5) + 20*(y-7));
-                    comp++;
-                }
-            }
+        while (pixIterator.next()) {
+            tabTest[comp] = pixIterator.getSample();
+            comp++;
         }
-        final int[] tabB = new int[135];
-        int comp2 = 0;
-        do {
-            tabB[comp2++] = sampleIterator.getSample();
-        } while(sampleIterator.next());
-        assertTrue(compareTab(tabA, tabB));
+        assertTrue(compareTab(tabTest, tabRef));
     }
 
     /**
@@ -172,26 +181,22 @@ public class RasterBasedIteratorTest {
      * Area is defined on lower right raster corner.
      */
     @Test
-    public void rectLowerRightTest() {
-        setRasterRectTest();
-        final Rectangle rect = new Rectangle(14, 10, 15, 9);
-        sampleIterator = new RasterBasedIterator(raster, rect);
+    public void rectLowerRightRasterTest() {
+        final Rectangle subArea = new Rectangle(14, 10, 15, 9);
+        numBand = 3;
+        width = 20;
+        height = 10;
+        minx = 5;
+        miny = 7;
+        setRasterTest(minx, miny, width, height, numBand, subArea);
+//        final DefaultRenderedImageIterator dfrii = new DefaultRenderedImageIterator(rasterTest, subArea);
+        setPixelIterator(rasterTest, subArea);
         int comp = 0;
-        final int[] tabA = new int[264];
-        for (int y = 10; y<17; y++) {
-            for (int x = 14; x<25; x++) {
-                for (int b = 0; b < numBand; b++) {
-                    tabA[comp] = b + 3*((x-5) + 20*(y-7));
-                    comp++;
-                }
-            }
+        while (pixIterator.next()) {
+            tabTest[comp] = pixIterator.getSample();
+            comp++;
         }
-        final int[] tabB = new int[264];
-        int comp2 = 0;
-        do {
-            tabB[comp2++] = sampleIterator.getSample();
-        } while(sampleIterator.next());
-        assertTrue(compareTab(tabA, tabB));
+        assertTrue(compareTab(tabTest, tabRef));
     }
 
     /**
@@ -199,26 +204,22 @@ public class RasterBasedIteratorTest {
      * Area is defined on lower left raster corner.
      */
     @Test
-    public void rectLowerLeftTest() {
-        setRasterRectTest();
-        final Rectangle rect = new Rectangle(2, 12, 10, 6);
-        sampleIterator = new RasterBasedIterator(raster, rect);
+    public void rectLowerLeftRasterTest() {
+        final Rectangle subArea = new Rectangle(2, 12, 10, 6);
+        numBand = 3;
+        width = 20;
+        height = 10;
+        minx = 5;
+        miny = 7;
+        setRasterTest(minx, miny, width, height, numBand, subArea);
+//        final DefaultRenderedImageIterator dfrii = new DefaultRenderedImageIterator(rasterTest, subArea);
+        setPixelIterator(rasterTest, subArea);
         int comp = 0;
-        final int[] tabA = new int[126];
-        for (int y = 12; y<17; y++) {
-            for (int x = 5; x<12; x++) {
-                for (int b = 0; b < numBand; b++) {
-                    tabA[comp] = b + 3*((x-5) + 20*(y-7));
-                    comp++;
-                }
-            }
+        while (pixIterator.next()) {
+            tabTest[comp] = pixIterator.getSample();
+            comp++;
         }
-        final int[] tabB = new int[126];
-        int comp2 = 0;
-        do {
-            tabB[comp2++] = sampleIterator.getSample();
-        } while(sampleIterator.next());
-        assertTrue(compareTab(tabA, tabB));
+        assertTrue(compareTab(tabTest, tabRef));
     }
 
     /**
@@ -227,25 +228,21 @@ public class RasterBasedIteratorTest {
      */
     @Test
     public void rasterContainsRectTest() {
-        setRasterRectTest();
-        final Rectangle rect = new Rectangle(10, 9, 11, 6);
-        sampleIterator = new RasterBasedIterator(raster, rect);
+        final Rectangle subArea = new Rectangle(10, 9, 11, 6);
+        numBand = 3;
+        width = 20;
+        height = 10;
+        minx = 5;
+        miny = 7;
+        setRasterTest(minx, miny, width, height, numBand, subArea);
+//        final DefaultRenderedImageIterator dfrii = new DefaultRenderedImageIterator(rasterTest, subArea);
+        setPixelIterator(rasterTest, subArea);
         int comp = 0;
-        final int[] tabA = new int[198];
-        for (int y = 9; y<15; y++) {
-            for (int x = 10; x<21; x++) {
-                for (int b = 0; b < numBand; b++) {
-                    tabA[comp] = b + 3*((x-5) + 20*(y-7));
-                    comp++;
-                }
-            }
+        while (pixIterator.next()) {
+            tabTest[comp] = pixIterator.getSample();
+            comp++;
         }
-        final int[] tabB = new int[198];
-        int comp2 = 0;
-        do {
-            tabB[comp2++] = sampleIterator.getSample();
-        } while(sampleIterator.next());
-        assertTrue(compareTab(tabA, tabB));
+        assertTrue(compareTab(tabTest, tabRef));
     }
 
     /**
@@ -254,36 +251,39 @@ public class RasterBasedIteratorTest {
      */
     @Test
     public void rectContainsRasterTest() {
-        setRasterRectTest();
-        final Rectangle rect = new Rectangle(2, 3, 25, 17);
-        sampleIterator = new RasterBasedIterator(raster, rect);
+        final Rectangle subArea = new Rectangle(2, 3, 25, 17);
+        numBand = 3;
+        width = 20;
+        height = 10;
+        minx = 5;
+        miny = 7;
+        setRasterTest(minx, miny, width, height, numBand, subArea);
+//        final DefaultRenderedImageIterator dfrii = new DefaultRenderedImageIterator(rasterTest, subArea);
+        setPixelIterator(rasterTest, subArea);
         int comp = 0;
-        final int[] tabA = new int[600];
-        for (int y = 7; y<17; y++) {
-            for (int x = 5; x<25; x++) {
-                for (int b = 0; b < numBand; b++) {
-                    tabA[comp] = b + 3*((x-5) + 20*(y-7));
-                    comp++;
-                }
-            }
+        while (pixIterator.next()) {
+            tabTest[comp] = pixIterator.getSample();
+            comp++;
         }
-        final int[] tabB = new int[600];
-        int comp2 = 0;
-        do {
-            tabB[comp2++] = sampleIterator.getSample();
-        } while(sampleIterator.next());
-        assertTrue(compareTab(tabA, tabB));
+        assertTrue(compareTab(tabTest, tabRef));
     }
 
     /**
      * Test catching exception with rectangle which don't intersect raster area.
      */
     @Test
-    public void unappropriateRectTest() {
-        final Rectangle rect = new Rectangle(7, 20, 25, 17);
+    public void unappropriateRectRasterTest() {
+        final Rectangle subArea = new Rectangle(-17, -20, 5, 15);
+        numBand = 3;
+        width = 20;
+        height = 10;
+        minx = 5;
+        miny = 7;
+        setRasterTest(minx, miny, width, height, numBand, subArea);
         boolean testTry = false;
         try{
-            sampleIterator = new RasterBasedIterator(raster, rect);
+//            final DefaultRenderedImageIterator dfrii = new DefaultRenderedImageIterator(rasterTest, subArea);
+            setPixelIterator(rasterTest, subArea);
         }catch(Exception e){
             testTry = true;
         }
@@ -292,40 +292,45 @@ public class RasterBasedIteratorTest {
 
 
     /**
-     * Fill raster with appropriate test value.
+     * Create and fill an appropriate Raster for tests.
      */
-    private void fillRaster() {
+    private void setRasterTest(int minx, int miny, int width, int height, int numband, Rectangle subArea) {
         int comp = 0;
-        for (int y = 0; y<height; y++) {
-            for (int x = 0; x<width; x++) {
-                for (int b = 0; b<numBand; b++) {
-                    raster.setSample(minX + x, minY + y, b, comp);
+        rasterTest = Raster.createBandedRaster(DataBuffer.TYPE_INT, width, height, numband, new Point(minx, miny));
+        for (int y = miny; y<miny + height; y++) {
+            for (int x = minx; x<minx + width; x++) {
+                for (int b = 0; b<numband; b++) {
+                    rasterTest.setSample(x, y, b, comp);
                     comp++;
                 }
             }
         }
-    }
 
-    /**
-     * Returns integer table which represent all values obtained by raster iterate.
-     *
-     * @return integer table which represent all values obtained by raster iterate.
-     */
-    private int[] getIterate() {
-        int sIcomp = 0;
-        int[] tab = new int[numBand * width * height];
-        for (int y = minY; y<minY+height; y++) {
-            for (int x = minX; x<minX+width; x++) {
-                for (int n = 0; n<numBand; n++) {
-                    assertTrue(sampleIterator.getX() == x);
-                    assertTrue(sampleIterator.getY() == y);
-                    tab[sIcomp] = sampleIterator.getSample();
-                    if (++sIcomp == 300) assertFalse(sampleIterator.next());
-                    else assertTrue(sampleIterator.next());
+        int mx, my, w,h;
+        if (subArea == null) {
+            mx = minx;
+            my = miny;
+            w = width;
+            h = height;
+
+        } else {
+            mx = Math.max(minx, subArea.x);
+            my = Math.max(miny, subArea.y);
+            w  = Math.min(minx + width, subArea.x + subArea.width) - mx;
+            h  = Math.min(miny + height, subArea.y + subArea.height) - my;
+        }
+        final int length = w * h * numband;
+        tabRef = new int[length];
+        tabTest = new int[length];
+        comp = 0;
+        for (int y = my; y<my + h; y++) {
+            for (int x = mx; x<mx + w; x++) {
+                for (int b = 0; b<numband; b++) {
+                    tabRef[comp] = b + numband * ((x-minx) + (y-miny) * width);
+                    comp++;
                 }
             }
         }
-        return tab;
     }
 
     /**
@@ -335,7 +340,7 @@ public class RasterBasedIteratorTest {
      * @param tabB table resulting raster iterate.
      * @return true if tables are identical.
      */
-    private boolean compareTab(int[] tabA, int[] tabB) {
+    protected boolean compareTab(int[] tabA, int[] tabB) {
         int length = tabA.length;
         if (length != tabB.length) return false;
         for (int i = 0; i<length; i++) {
