@@ -47,7 +47,6 @@ import org.opengis.filter.identity.FeatureId;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
-import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 
 import static org.geotoolkit.data.folder.AbstractFolderDataStoreFactory.*;
@@ -76,7 +75,7 @@ public class FolderDataStore extends AbstractDataStore{
         final ParameterDescriptorGroup desc = singleFileFactory.getParametersDescriptor();
         singleFileDefaultParameters = desc.createValue();
         for(GeneralParameterDescriptor pdesc : desc.descriptors()){
-            if(pdesc == URLP){
+            if(pdesc == URLP || pdesc.getName().getCode().equals(IDENTIFIER.getName().getCode())) {
                 continue;
             }
             Parameters.getOrCreate((ParameterDescriptor)pdesc, singleFileDefaultParameters)
@@ -124,13 +123,12 @@ public class FolderDataStore extends AbstractDataStore{
         }else{
             //test the file
             final ParameterValueGroup params = singleFileDefaultParameters.clone();
-            final ParameterValue<URL> urlparam = URLP.createValue();
             try {
-                urlparam.setValue(candidate.toURI().toURL());
+                Parameters.getOrCreate(URLP, params)
+                    .setValue(candidate.toURI().toURL());
             } catch (MalformedURLException ex) {
                 getLogger().log(Level.FINE, ex.getLocalizedMessage(),ex);
             }
-            params.values().add(urlparam);
             if(singleFileFactory.canProcess(params)){
                 try {
                     final DataStore fileDS = singleFileFactory.create(params);
