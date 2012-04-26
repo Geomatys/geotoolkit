@@ -314,7 +314,7 @@ public class TreeFormat extends Format {
     }
 
     /**
-     * Creates a string from the given string representation, or returns {@code null} if an
+     * Creates a tree from the given string representation, or returns {@code null} if an
      * error occurred while parsing the tree.
      * <p>
      * The default implementation delegates to {@link #parseObject(String)}.

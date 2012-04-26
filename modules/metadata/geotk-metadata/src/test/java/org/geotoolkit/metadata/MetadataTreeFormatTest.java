@@ -51,7 +51,7 @@ import static org.geotoolkit.test.Assert.*;
 
 
 /**
- * Tests {@link PropertyTree}.
+ * Tests {@link MetadataTreeFormat}.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.20
@@ -59,7 +59,7 @@ import static org.geotoolkit.test.Assert.*;
  * @since 3.00
  */
 @Depend(MetadataStandard.class)
-public final strictfp class PropertyTreeTest {
+public final strictfp class MetadataTreeFormatTest {
     /**
      * Creates a tree from the given string representation. Each node must have at least one
      * {@code '─'} character (unicode 2500) in front of it. The number of spaces and drawing
@@ -113,7 +113,7 @@ public final strictfp class PropertyTreeTest {
     @Test
     public void testTreeTable() {
         final DefaultCitation citation = createCitation();
-        final PropertyTree pt = new PropertyTree(citation.getStandard());
+        final MetadataTreeFormat pt = new MetadataTreeFormat(citation.getStandard());
         final String text = Trees.toString(pt.asTreeTable(citation));
         assertMultilinesEquals(
             "Citation\n" +
@@ -233,7 +233,7 @@ public final strictfp class PropertyTreeTest {
 
     /**
      * Tests a tree of metadata in which no {@link CharSequence} can be found for
-     * generating the node label. The {@link PropertyTree#getTitle} method should
+     * generating the node label. The {@link MetadataTreeFormat#getTitle} method should
      * fallback on the code list.
      *
      * @since 3.18
@@ -271,7 +271,7 @@ public final strictfp class PropertyTreeTest {
 
     /**
      * Tests a band specified by a range of wavelength. The main purpose of this method is to test
-     * the {@code PropertyTree.getTitleForSpecialCases(Object)} method. The result of that method
+     * the {@code MetadataTreeFormat.getTitleForSpecialCases(Object)} method. The result of that method
      * is the summary that appears on the right side of [1] and [2].
      *
      * @since 3.20
@@ -342,5 +342,21 @@ public final strictfp class PropertyTreeTest {
             "        ├───[1]……………………… Apple\n" +
             "        ├───[2]……………………… Orange\n" +
             "        └───[3]……………………… Kiwi\n", identification.toString());
+    }
+
+    /**
+     * Tests the methods from the {@link java.text.Format} class.
+     *
+     * @throws ParseException If the parsing failed.
+     *
+     * @since 3.20
+     */
+    @Test
+    public void testFormatAndParse() throws ParseException {
+        final DefaultCitation citation = createCitation();
+        final MetadataTreeFormat    format   = new MetadataTreeFormat(citation.getStandard());
+        final DefaultCitation parsed   = (DefaultCitation) format.parseObject(format.format(citation));
+        assertNotSame(citation, parsed);
+        assertEquals (citation, parsed);
     }
 }

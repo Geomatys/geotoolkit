@@ -26,8 +26,11 @@ import java.util.Locale;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
+import java.text.Format;
 import java.text.DateFormat;
 import java.text.NumberFormat;
+import java.text.FieldPosition;
+import java.text.ParsePosition;
 import java.text.ParseException;
 import javax.swing.tree.TreeNode;
 
@@ -38,6 +41,7 @@ import org.opengis.metadata.Identifier;
 import org.opengis.metadata.content.Band;
 
 import org.geotoolkit.util.Strings;
+import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.MeasurementRange;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.converter.Numbers;
@@ -47,6 +51,7 @@ import org.geotoolkit.gui.swing.tree.TreeTableNode;
 import org.geotoolkit.gui.swing.tree.NamedTreeNode;
 import org.geotoolkit.gui.swing.tree.MutableTreeNode;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
+import org.geotoolkit.gui.swing.tree.TreeFormat;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.internal.InternalUtilities;
 import org.geotoolkit.internal.CodeLists;
@@ -56,23 +61,25 @@ import static org.geotoolkit.metadata.AbstractMetadata.LOGGER;
 
 
 /**
- * Represents the metadata property as a tree made from {@linkplain TreeNode tree nodes}.
+ * Builds tree or tree-table representations of metadata. The root of the tree and each children
+ * are {@link TreeNode} or {@link TreeTableNode} objects. The node labels are formatted according
+ * the {@link Locale} argument given at construction time.
+ * <p>
  * Note that while {@link TreeNode} is defined in the {@link javax.swing.tree} package,
  * it can be seen as a data structure independent of Swing.
- * <p>
- * This class is called {@code PropertyTree} because it may implements
- * {@link javax.swing.tree.TreeModel} in some future Geotk implementation.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.20
  *
  * @since 2.4
  * @module
- *
- * @todo It may make sense to refactor this class as a subclass of {@link java.text.Format}
- *       and make it public.
  */
-final class PropertyTree {
+public class MetadataTreeFormat extends Format {
+    /**
+     * For cross-version compatibility.
+     */
+    private static final long serialVersionUID = -3603011614118221049L;
+
     /**
      * The character used for formating number when enumerating the elements of a collection.
      */
@@ -97,41 +104,37 @@ final class PropertyTree {
     };
 
     /**
-     * The expected standard implemented by the metadata.
+     * The standard implemented by the metadata to represent as trees.
      */
-    private final MetadataStandard standard;
+    protected final MetadataStandard standard;
 
     /**
      * The locale to use for {@linkplain InternationalString international string} formatting.
+     * By default, this is the locale for the {@linkplain Locale.Category#DISPLAY display} category.
      */
-    private final Locale locale;
+    protected final Locale displayLocale;
 
     /**
      * The locale to use for {@linkplain Date date} and {@linkplain Number number} formatting.
+     * By default, this is the locale for the {@linkplain Locale.Category#FORMAT format} category.
      */
-    private final Locale formatLocale;
+    protected final Locale formatLocale;
 
     /**
-     * The object to use for formatting numbers.
-     * Will be created only when first needed.
+     * The object to use for formatting numbers, dates and trees. Will be created only when first
+     * needed. We declare the generic {@link Format} type in order to avoid too early class loading.
      */
-    private transient NumberFormat numberFormat;
-
-    /**
-     * The object to use for formatting dates.
-     * Will be created only when first needed.
-     */
-    private transient DateFormat dateFormat;
+    private transient Format numberFormat, dateFormat, treeFormat;
 
     /**
      * Creates a new tree builder using the default locale.
      *
      * @param standard The expected standard implemented by the metadata.
      */
-    public PropertyTree(final MetadataStandard standard) {
-        this.standard     = standard;
-        this.locale       = Locale.getDefault();
-        this.formatLocale = locale; // JDK7 allows a different value.
+    public MetadataTreeFormat(final MetadataStandard standard) {
+        this.standard      = standard;
+        this.displayLocale = Locale.getDefault();
+        this.formatLocale  = displayLocale; // JDK7 allows a different value.
     }
 
     /**
@@ -141,19 +144,69 @@ final class PropertyTree {
      * @param locale   The locale to use for {@linkplain Date date}, {@linkplain Number number}
      *                 and {@linkplain InternationalString international string} formatting.
      */
-    public PropertyTree(final MetadataStandard standard, final Locale locale) {
-        this.standard     = standard;
-        this.locale       = locale;
-        this.formatLocale = locale;
+    public MetadataTreeFormat(final MetadataStandard standard, final Locale locale) {
+        this.standard      = standard;
+        this.displayLocale = locale;
+        this.formatLocale  = locale;
     }
 
 
     // ---------------------- PARSING -------------------------------------------------------------
 
     /**
+     * Creates a metadata from the given string representation, or returns {@code null} if an
+     * error occurred while parsing the tree.
+     * <p>
+     * The default implementation delegates to {@link #parseObject(String)}.
+     *
+     * @param  text The string representation of the tree to parse.
+     * @param  pos  The position when to start the parsing.
+     * @return The parsed tree as a metadata object, or {@code null} if the given tree can not be parsed.
+     */
+    @Override
+    public Object parseObject(String text, final ParsePosition pos) {
+        final int base = pos.getIndex();
+        text = text.substring(base);
+        try {
+            final Object metadata = parseObject(text);
+            pos.setIndex(base + text.length());
+            return metadata;
+        } catch (ParseException e) {
+            pos.setErrorIndex(base + e.getErrorOffset());
+            return null;
+        }
+    }
+
+    /**
+     * Creates a metadata from the given string representation. The default implementation
+     * {@linkplain TreeFormat#parseObject(String) converts the given string representation
+     * to tree nodes}, then invokes {@link #parse(TreeNode, Object)} with a null {@code metadata}
+     * object.
+     * <p>
+     * Note that in current implementation, there is a very limited amount of types that the
+     * {@link #parse(TreeNode, Object) parse} method can recognize when the {@code metadata}
+     * argument is null. Users may need to override the {@code parse} method in order to create
+     * a non-null value for the {@code metadata} argument.
+     *
+     * @param  text The string representation of the tree to parse.
+     * @return The parsed tree as a metadata object.
+     * @throws ParseException If an error occurred while parsing the tree.
+     */
+    @Override
+    public Object parseObject(final String text) throws ParseException {
+        return parse(getFormat(TreeFormat.class).parseObject(text), null);
+    }
+
+    /**
      * Fetches values from every nodes of the given tree except the root, and puts them in
-     * the given metadata object. The value of the root node is ignored (it is typically
-     * just the name of the metadata class).
+     * the given metadata object. The value of the root node is ignored, unless the given
+     * {@code metadata} argument is {@code null}.
+     * <p>
+     * If the given metadata object is {@code null}, then this method will try to instantiate
+     * a new metadata object from the name of the root tree node. For example if the current
+     * {@linkplain #standard} is {@link MetadataStandard#ISO_19115} and the name of the given
+     * root node is {@code "Metadata"}, then the default implementation will instantiate a new
+     * {@link org.geotoolkit.metadata.iso.DefaultMetadata} object.
      * <p>
      * If the given metadata object already contains property values, then the parsing will be
      * merged with the existing values: attributes not defined in the tree will be left unchanged,
@@ -161,10 +214,19 @@ final class PropertyTree {
      * entries.
      *
      * @param  node     The node from which to fetch the values.
-     * @param  metadata The metadata where to store the values.
-     * @throws ParseException If a value can not be stored in the given metadata object.
+     * @param  metadata The metadata where to store the values, or {@code null} for creating a new one.
+     * @return The given {@code metadata} object, or a new instance if the given metadata was null.
+     * @throws ParseException If the given {@code metadata} argument is null and its type can not
+     *         be inferred, or if a value can not be stored in the metadata object.
      */
-    final void parse(final TreeNode node, final Object metadata) throws ParseException {
+    public Object parse(final TreeNode node, Object metadata) throws ParseException {
+        if (metadata == null) {
+            Object name = node;
+            if (node instanceof NamedTreeNode) {
+                name = ((NamedTreeNode) node).getName();
+            }
+            metadata = newInstance(standard.getImplementation(getTypeForName(name.toString())));
+        }
         final Class<?> type = metadata.getClass();
         final PropertyAccessor accessor = standard.getAccessorOptional(type);
         if (accessor == null) {
@@ -172,13 +234,14 @@ final class PropertyTree {
         }
         final int duplicated = parse(node, type, metadata, null, accessor);
         if (duplicated != 0) {
-            final LogRecord record = Errors.getResources(locale).getLogRecord(
+            final LogRecord record = Errors.getResources(displayLocale).getLogRecord(
                     Level.WARNING, Errors.Keys.DUPLICATED_VALUES_COUNT_$1, duplicated);
-            record.setSourceClassName("AbstractMetadata"); // This is the public API.
+            record.setSourceClassName("MetadataTreeFormat");
             record.setSourceMethodName("parse");
             record.setLoggerName(LOGGER.getName());
             LOGGER.log(record);
         }
+        return metadata;
     }
 
     /**
@@ -286,9 +349,9 @@ final class PropertyTree {
                     if (value == null) {
                         final String s = c.toString();
                         if (Number.class.isAssignableFrom(childType)) {
-                            value = getNumberFormat().parse(s);
+                            value = getFormat(NumberFormat.class).parse(s);
                         } else if (Date.class.isAssignableFrom(childType)) {
-                            value = getDateFormat().parse(s);
+                            value = getFormat(DateFormat.class).parse(s);
                         } else {
                             value = s;
                         }
@@ -352,31 +415,52 @@ final class PropertyTree {
 
 
     /**
+     * Writes a graphical representation of the specified metadata in the given buffer. The default
+     * implementation {@linkplain #asTree(Object) gets a tree representation} of the given metadata,
+     * then {@linkplain TreeFormat#format(Object, StringBuffer, FieldPosition) formats the tree}.
+     *
+     * @param  metadata    The metadata to format.
+     * @param  toAppendTo  Where to format the metadata.
+     * @param  pos         Ignored in current implementation.
+     * @return             The given buffer, returned for convenience.
+     */
+    @Override
+    public StringBuffer format(final Object metadata, final StringBuffer toAppendTo, final FieldPosition pos) {
+        ArgumentChecks.ensureNonNull("metadata", metadata);
+        return getFormat(TreeFormat.class).format(asTree(metadata), toAppendTo, pos);
+    }
+
+    /**
      * Creates a tree for the specified metadata.
+     *
+     * @param  metadata The metadata to format.
+     * @return A tree representation of the given metadata.
      */
     public MutableTreeNode asTree(final Object metadata) {
-        final String name = Classes.getShortName(standard.getInterface(metadata.getClass()));
-        final DefaultMutableTreeNode root = new NamedTreeNode(localize(name), metadata);
+        final Class<?> type = standard.getInterface(metadata.getClass());
+        final DefaultMutableTreeNode root = new NamedTreeNode(formatElementName(type, null), metadata);
         append(root, metadata, 0);
         return root;
     }
 
-
     /**
-     * Creates a tree table for the specified metadata.
+     * Creates a tree-table for the specified metadata.
+     *
+     * @param  metadata The metadata to format.
+     * @return A tree-table representation of the given metadata.
      *
      * @since 3.19
      */
     public TreeTableNode asTreeTable(final Object metadata) {
-        final String name = Classes.getShortName(standard.getInterface(metadata.getClass()));
-        final PropertyTreeNode root = new PropertyTreeNode(localize(name), metadata);
+        final Class<?> type = standard.getInterface(metadata.getClass());
+        final PropertyTreeNode root = new PropertyTreeNode(formatElementName(type, null), metadata);
         append(root, metadata, 0);
         return root;
     }
 
     /**
      * Appends the specified value to a branch. The value may be a metadata
-     * (treated {@linkplain AbstractMetadata#asMap as a Map} - see below),
+     * (treated {@linkplain AbstractMetadata#asMap() as a Map} - see below),
      * a collection or a singleton.
      * <p>
      * Map or metadata are constructed as a sub tree where every nodes is a
@@ -433,13 +517,13 @@ final class PropertyTree {
              */
             final String valueAsText;
             if (value instanceof CodeList<?>) {
-                valueAsText = localize((CodeList<?>) value);
+                valueAsText = formatCodeList((CodeList<?>) value);
             } else if (value instanceof Date) {
-                valueAsText = getDateFormat().format((Date) value);
+                valueAsText = getFormat(DateFormat.class).format((Date) value);
             } else if (value instanceof Number) {
-                valueAsText = format((Number) value);
+                valueAsText = formatNumber((Number) value);
             } else if (value instanceof InternationalString) {
-                valueAsText = ((InternationalString) value).toString(locale);
+                valueAsText = ((InternationalString) value).toString(displayLocale);
             } else {
                 valueAsText = String.valueOf(value);
             }
@@ -454,7 +538,7 @@ final class PropertyTree {
                     branch.setUserObject(value);
                     return;
                 }
-                child = new PropertyTreeNode(format(number), valueAsText, value);
+                child = new PropertyTreeNode(formatNumber(number), valueAsText, value);
             } else {
                 // TODO: actually we could have an AssertionError here if the user value is a
                 // CharSequence begining with [number]. This is an issue only for the parser.
@@ -470,15 +554,15 @@ final class PropertyTree {
          * the map key. There is often only one value for a map key, but not always;
          * some are collections, which are formatted as many childs for the same key.
          */
+        Class<?> type = value.getClass();
+        if (standard.isMetadata(type)) {
+            type = standard.getInterface(type);
+        }
         DefaultMutableTreeNode addTo = branch;
         if (number != 0) {
             // String formatted below must comply with the isCollectionElement(...) condition.
             final StringBuilder buffer = new StringBuilder(32);
-            buffer.append(OPEN_BRACKET).append(format(number)).append(CLOSE_BRACKET).append(' ');
-            Class<?> type = value.getClass();
-            if (standard.isMetadata(type)) {
-                type = standard.getInterface(type);
-            }
+            buffer.append(OPEN_BRACKET).append(formatNumber(number)).append(CLOSE_BRACKET).append(' ');
             buffer.append(Strings.camelCaseToSentence(Classes.getShortName(type)));
             String title = getTitleForSpecialCases(value);
             if (title == null) {
@@ -502,8 +586,8 @@ final class PropertyTree {
         for (final Map.Entry<?,?> entry : asMap.entrySet()) {
             final Object element = entry.getValue();
             if (!ignore(element)) {
-                final String name = localize((String) entry.getKey());
-                assert !isCollectionElement(name) : name;
+                final CharSequence name = formatElementName(type, (String) entry.getKey());
+                assert !isCollectionElement(name.toString()) : name;
                 final DefaultMutableTreeNode child = (branch instanceof PropertyTreeNode) ?
                         new PropertyTreeNode(name, element) : new NamedTreeNode(name, element);
                 append(child, element, 0);
@@ -589,11 +673,11 @@ final class PropertyTree {
                     String name;
                     if (element instanceof GenericName) {
                         final InternationalString i18n = ((GenericName) element).toInternationalString();
-                        name = (i18n != null) ? i18n.toString(locale) : element.toString();
+                        name = (i18n != null) ? i18n.toString(displayLocale) : element.toString();
                     } else if (element instanceof InternationalString) {
-                        name = ((InternationalString) element).toString(locale);
+                        name = ((InternationalString) element).toString(displayLocale);
                     } else if (element instanceof CodeList<?>) {
-                        name = CodeLists.localize((CodeList<?>) element, locale);
+                        name = CodeLists.localize((CodeList<?>) element, displayLocale);
                     } else {
                         name = element.toString();
                     }
@@ -644,30 +728,38 @@ final class PropertyTree {
     }
 
     /**
-     * Returns the date format instance, creating it when first needed.
+     * Returns a format of the given type.
+     *
+     * @param  <T>  The compile type of the {@code type} argument.
+     * @param  type The formatter type.
+     * @return A formatter of the given type.
      */
-    private DateFormat getDateFormat() {
-        if (dateFormat == null) {
-            dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, formatLocale);
+    @SuppressWarnings("unchecked")
+    private <T extends Format> T getFormat(final Class<T> type) {
+        final String name = type.getSimpleName();
+        Format format;
+        // The JDK7 branch uses "String in switch" below.
+             if (name.equals("DateFormat"))   format = dateFormat;
+        else if (name.equals("NumberFormat")) format = numberFormat;
+        else if (name.equals("TreeFormat"))   format = treeFormat;
+        else throw new AssertionError(type);
+        if (format == null) {
+                 if (name.equals("DateFormat"))   format = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, formatLocale);
+            else if (name.equals("NumberFormat")) format = NumberFormat.getNumberInstance(formatLocale);
+            else if (name.equals("TreeFormat"))   format = new TreeFormat();
+            else throw new AssertionError(type);
         }
-        return dateFormat;
+        return (T) format;
     }
 
     /**
-     * Returns the number format instance, creating it when first needed.
+     * Formats a human-readable string from the given number.
+     *
+     * @param  value The number to format.
+     * @return A string representation of the given value for the {@linkplain #formatLocale}.
      */
-    private NumberFormat getNumberFormat() {
-        if (numberFormat == null) {
-            numberFormat = NumberFormat.getNumberInstance(formatLocale);
-        }
-        return numberFormat;
-    }
-
-    /**
-     * Formats the specified number.
-     */
-    private String format(final Number value) {
-        final NumberFormat format = getNumberFormat();
+    protected String formatNumber(final Number value) {
+        final NumberFormat format = getFormat(NumberFormat.class);
         if (Numbers.isInteger(value.getClass())) {
             format.setMaximumFractionDigits(0);
         } else {
@@ -709,13 +801,37 @@ final class PropertyTree {
     }
 
     /**
-     * Localize the specified property name. In current version, this is merely
-     * a hook for future development. For now we reformat the programmatic name.
-     * <p>
-     * NOTE: If we localize the name, then we must find some way to allow the reverse
-     * association in the {@link #parse(AbstractMetadata, TreeNode)} method.
+     * Formats a human-readable string from given code list. The default implementation
+     * derives the string from the programmatic name.
+     *
+     * @param  code The code to format.
+     * @return A string representation of the given code.
      */
-    private String localize(String name) {
+    protected String formatCodeList(final CodeList<?> code) {
+        return code.name().trim().replace('_', ' ').toLowerCase(displayLocale);
+    }
+
+    /**
+     * Formats a human-readable string from the given class or property name. The given string is
+     * either a {@linkplain Classes#getShortName(Class) short class name}, or a property name
+     * using the {@linkplain KeyNamePolicy#JAVABEANS_PROPERTY Java Beans convention}.
+     * <p>
+     * The default implementation converts the given string to a sentence by inserting spaces
+     * before the upper case letters. Subclasses can override this method for customizing the
+     * output, including localization.
+     * <p>
+     * <b>NOTE:</b> Names converted in a way different than the default implementation may not
+     * be recognized by the {@link #parse(TreeNode, Object)} method.
+     *
+     * @param  parent The interface that contain the property to format.
+     * @param  name The <cite>Java beans</cite> name of the property to format,
+     *              or {@code null} for providing a label for the interface itself.
+     * @return The label, as a {@link String} or {@link InternationalString} instance.
+     */
+    protected CharSequence formatElementName(final Class<?> parent, String name) {
+        if (name == null) {
+            name = Classes.getShortName(parent);
+        }
         name = name.trim();
         final int length = name.length();
         if (length != 0) {
@@ -752,10 +868,21 @@ final class PropertyTree {
     }
 
     /**
-     * Localize the specified property name. In current version, this is merely
-     * a hook for future development.  For now we reformat the programmatic name.
+     * Returns the interface type for the given name. This method is invoked by
+     * {@link #parseObject(String)} for parsing the name of the root node.
+     *
+     * @param  name The root node name.
+     * @return The interface of the root node.
+     * @throws ParseException If the given name is unknown.
+     *
+     * @since 3.20
      */
-    private String localize(final CodeList<?> code) {
-        return code.name().trim().replace('_', ' ').toLowerCase(locale);
+    private Class<?> getTypeForName(final String name) throws ParseException {
+        if (standard == MetadataStandard.ISO_19115) {
+            // The JDK7 branch uses "String in switch" below.
+            if (name.equals("Metadata")) return org.opengis.metadata.Metadata.class;
+            if (name.equals("Citation")) return org.opengis.metadata.citation.Citation.class;
+        }
+        throw new ParseException(Errors.format(Errors.Keys.UNKNOWN_TYPE_$1, name), 0);
     }
 }

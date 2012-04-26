@@ -186,13 +186,13 @@ public final class MetadataStandard {
     private final Map<Class<?>,Class<?>> implementations;
 
     /**
-     * Shared pool of {@link PropertyTree} instances, once for each thread
+     * Shared pool of {@link MetadataTreeFormat} instances, once for each thread
      * (in order to avoid the need for thread synchronization).
      */
-    private final ThreadLocal<PropertyTree> treeBuilders = new ThreadLocal<PropertyTree>() {
+    private final ThreadLocal<MetadataTreeFormat> treeBuilders = new ThreadLocal<MetadataTreeFormat>() {
         @Override
-        protected PropertyTree initialValue() {
-            return new PropertyTree(MetadataStandard.this);
+        protected MetadataTreeFormat initialValue() {
+            return new MetadataTreeFormat(MetadataStandard.this);
         }
     };
 
@@ -688,7 +688,7 @@ public final class MetadataStandard {
      * @see AbstractMetadata#asTree()
      */
     public TreeModel asTree(final Object metadata) throws ClassCastException {
-        final PropertyTree builder = treeBuilders.get();
+        final MetadataTreeFormat builder = treeBuilders.get();
         return new DefaultTreeModel(builder.asTree(metadata), true);
     }
 

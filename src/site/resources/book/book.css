@@ -2,6 +2,12 @@
  * Style for the Geotoolkit.org documentation
  * generated from the docbook files.
  */
+div.informalexample {
+  margin-left:  1.25cm;
+  margin-right: 1.5cm;
+  font-size: smaller;
+}
+
 p {
   text-align: justify;
 }
