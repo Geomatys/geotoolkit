@@ -18,7 +18,7 @@
 package org.geotoolkit.image.iterator;
 
 import java.awt.Point;
-import java.awt.geom.Rectangle2D;
+import java.awt.Rectangle;
 import java.awt.image.DataBuffer;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
@@ -27,7 +27,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 /**
- * Test RasterBasedIterator.
+ * Test RasterBasedIterator class.
  *
  * @author Rémi Marechal (Geomatys).
  */
@@ -49,7 +49,7 @@ public class RasterBasedIteratorTest {
 
     /**
      * Test if iterator transverse all raster positions with different minX and maxY coordinates.
-     * Also test rewind fonction.
+     * Also test rewind function.
      */
     @Test
     public void differentMinTest() {
@@ -120,7 +120,7 @@ public class RasterBasedIteratorTest {
     @Test
     public void rectUpperLeftTest() {
         setRasterRectTest();
-        final Rectangle2D rect = new Rectangle2D.Double(4, 6, 5, 4);
+        final Rectangle rect = new Rectangle(4, 6, 5, 4);
         sampleIterator = new RasterBasedIterator(raster, rect);
         int comp = 0;
         final int[] tabA = new int[36];
@@ -134,7 +134,9 @@ public class RasterBasedIteratorTest {
         }
         final int[] tabB = new int[36];
         int comp2 = 0;
-        while (sampleIterator.hasNext()) tabB[comp2++] = sampleIterator.nextSample();
+        do {
+            tabB[comp2++] = sampleIterator.getSample();
+        } while(sampleIterator.next());
         assertTrue(compareTab(tabA, tabB));
     }
 
@@ -145,7 +147,7 @@ public class RasterBasedIteratorTest {
     @Test
     public void rectUpperRightTest() {
         setRasterRectTest();
-        final Rectangle2D rect = new Rectangle2D.Double(16, 6, 10, 6);
+        final Rectangle rect = new Rectangle(16, 6, 10, 6);
         sampleIterator = new RasterBasedIterator(raster, rect);
         int comp = 0;
         final int[] tabA = new int[135];
@@ -159,7 +161,9 @@ public class RasterBasedIteratorTest {
         }
         final int[] tabB = new int[135];
         int comp2 = 0;
-        while (sampleIterator.hasNext()) tabB[comp2++] = sampleIterator.nextSample();
+        do {
+            tabB[comp2++] = sampleIterator.getSample();
+        } while(sampleIterator.next());
         assertTrue(compareTab(tabA, tabB));
     }
 
@@ -170,7 +174,7 @@ public class RasterBasedIteratorTest {
     @Test
     public void rectLowerRightTest() {
         setRasterRectTest();
-        final Rectangle2D rect = new Rectangle2D.Double(14, 10, 15, 9);
+        final Rectangle rect = new Rectangle(14, 10, 15, 9);
         sampleIterator = new RasterBasedIterator(raster, rect);
         int comp = 0;
         final int[] tabA = new int[264];
@@ -184,7 +188,9 @@ public class RasterBasedIteratorTest {
         }
         final int[] tabB = new int[264];
         int comp2 = 0;
-        while (sampleIterator.hasNext()) tabB[comp2++] = sampleIterator.nextSample();
+        do {
+            tabB[comp2++] = sampleIterator.getSample();
+        } while(sampleIterator.next());
         assertTrue(compareTab(tabA, tabB));
     }
 
@@ -195,7 +201,7 @@ public class RasterBasedIteratorTest {
     @Test
     public void rectLowerLeftTest() {
         setRasterRectTest();
-        final Rectangle2D rect = new Rectangle2D.Double(2, 12, 10, 6);
+        final Rectangle rect = new Rectangle(2, 12, 10, 6);
         sampleIterator = new RasterBasedIterator(raster, rect);
         int comp = 0;
         final int[] tabA = new int[126];
@@ -209,18 +215,20 @@ public class RasterBasedIteratorTest {
         }
         final int[] tabB = new int[126];
         int comp2 = 0;
-        while (sampleIterator.hasNext()) tabB[comp2++] = sampleIterator.nextSample();
+        do {
+            tabB[comp2++] = sampleIterator.getSample();
+        } while(sampleIterator.next());
         assertTrue(compareTab(tabA, tabB));
     }
 
     /**
      * Test if iterator transverse expected value in define area.
-     * Area is within raster's area.
+     * Area is within raster area.
      */
     @Test
     public void rasterContainsRectTest() {
         setRasterRectTest();
-        final Rectangle2D rect = new Rectangle2D.Double(10, 9, 11, 6);
+        final Rectangle rect = new Rectangle(10, 9, 11, 6);
         sampleIterator = new RasterBasedIterator(raster, rect);
         int comp = 0;
         final int[] tabA = new int[198];
@@ -234,18 +242,20 @@ public class RasterBasedIteratorTest {
         }
         final int[] tabB = new int[198];
         int comp2 = 0;
-        while (sampleIterator.hasNext()) tabB[comp2++] = sampleIterator.nextSample();
+        do {
+            tabB[comp2++] = sampleIterator.getSample();
+        } while(sampleIterator.next());
         assertTrue(compareTab(tabA, tabB));
     }
 
     /**
      * Test if iterator transverse expected value in define area.
-     * Area contains all raster's area.
+     * Area contains all raster area.
      */
     @Test
     public void rectContainsRasterTest() {
         setRasterRectTest();
-        final Rectangle2D rect = new Rectangle2D.Double(2, 3, 25, 17);
+        final Rectangle rect = new Rectangle(2, 3, 25, 17);
         sampleIterator = new RasterBasedIterator(raster, rect);
         int comp = 0;
         final int[] tabA = new int[600];
@@ -259,7 +269,9 @@ public class RasterBasedIteratorTest {
         }
         final int[] tabB = new int[600];
         int comp2 = 0;
-        while (sampleIterator.hasNext()) tabB[comp2++] = sampleIterator.nextSample();
+        do {
+            tabB[comp2++] = sampleIterator.getSample();
+        } while(sampleIterator.next());
         assertTrue(compareTab(tabA, tabB));
     }
 
@@ -268,7 +280,7 @@ public class RasterBasedIteratorTest {
      */
     @Test
     public void unappropriateRectTest() {
-        final Rectangle2D rect = new Rectangle2D.Double(7, 20, 25, 17);
+        final Rectangle rect = new Rectangle(7, 20, 25, 17);
         boolean testTry = false;
         try{
             sampleIterator = new RasterBasedIterator(raster, rect);
@@ -280,7 +292,7 @@ public class RasterBasedIteratorTest {
 
 
     /**
-     * Fill raster with apppropriate test value.
+     * Fill raster with appropriate test value.
      */
     private void fillRaster() {
         int comp = 0;
@@ -295,7 +307,9 @@ public class RasterBasedIteratorTest {
     }
 
     /**
-     * @return int table which represent all values obtained by raster iterate.
+     * Returns integer table which represent all values obtained by raster iterate.
+     *
+     * @return integer table which represent all values obtained by raster iterate.
      */
     private int[] getIterate() {
         int sIcomp = 0;
@@ -303,20 +317,19 @@ public class RasterBasedIteratorTest {
         for (int y = minY; y<minY+height; y++) {
             for (int x = minX; x<minX+width; x++) {
                 for (int n = 0; n<numBand; n++) {
-                    assertTrue(sampleIterator.nextX() == x);
-                    assertTrue(sampleIterator.nextY() == y);
-                    assertTrue(sampleIterator.hasNext());
-                    tab[sIcomp] = sampleIterator.nextSample();
-                    sIcomp++;
+                    assertTrue(sampleIterator.getX() == x);
+                    assertTrue(sampleIterator.getY() == y);
+                    tab[sIcomp] = sampleIterator.getSample();
+                    if (++sIcomp == 300) assertFalse(sampleIterator.next());
+                    else assertTrue(sampleIterator.next());
                 }
             }
         }
-        assertFalse(sampleIterator.hasNext());
         return tab;
     }
 
     /**
-     * Compare 2 int table.
+     * Compare 2 integer table.
      *
      * @param tabA table resulting raster iterate.
      * @param tabB table resulting raster iterate.

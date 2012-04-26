@@ -17,20 +17,20 @@
  */
 package org.geotoolkit.image.iterator;
 
-import java.awt.geom.Rectangle2D;
+import java.awt.Rectangle;
 import java.awt.image.Raster;
 import org.geotoolkit.util.ArgumentChecks;
 
 /**
  * An Iterator for traversing anyone raster from anyone type.
  * <p>
- * Iteration begin to follow raster's band, next, raster's x coordinates
- * and to finish raster's y coordinates.
+ * Iteration begin to follow raster band, next, raster x coordinates
+ * and to finish raster y coordinates.
  * <p>
  * Iteration follow this scheme :
- * raster's band --&lt; raster's x coordinates --&lt; raster's y coordinates.
+ * raster band --&lt; raster x coordinates --&lt; raster y coordinates.
  *
- * Moreother iterator traversing a read-only raster in top-to-bottom, left-to-right order.
+ * Moreover iterator traversing a read-only raster in top-to-bottom, left-to-right order.
  *
  * @author Rémi Marechal       (Geomatys).
  * @author Martin Desruisseaux (Geomatys).
@@ -42,47 +42,47 @@ public class RasterBasedIterator extends PixelIterator {
     private final Raster raster;
 
     /**
-     * Raster's band number.
+     * Number of raster band .
      */
     private final int numBand;
 
     /**
-     * The X coordinate of the upper-left pixel of this Raster's first iteration.
+     * The X coordinate of the upper-left pixel of this Raster.
      */
     private final int minX;
 
     /**
-     * The Y coordinate of the upper-left pixel of this Raster's first iteration.
+     * The Y coordinate of the upper-left pixel of this Raster.
      */
     private final int minY;
 
     /**
-     * The X coordinate of the bottom-right pixel of this Raster's last iteration.
+     * The X coordinate of the bottom-right pixel of this Raster.
      */
     private final int maxX;
 
     /**
-     * The X coordinate of the bottom-right pixel of this Raster's last iteration.
+     * The Y coordinate of the bottom-right pixel of this Raster.
      */
     private final int maxY;
 
     /**
      * Current X pixel coordinate in raster.
      */
-    private int currentlyXpos;
+    private int x;
 
     /**
      * Current Y pixel coordinate in raster.
      */
-    private int currentlyYpos;
+    private int y;
 
     /**
      * Current band position in raster.
      */
-    private int currentlyBandpos;
+    private int band;
 
     /**
-     * Create raster's iterator to follow from its minX and minY coordinates.
+     * Create raster iterator to follow from its minX and minY coordinates.
      *
      * @param raster will be followed by this iterator.
      */
@@ -92,88 +92,96 @@ public class RasterBasedIterator extends PixelIterator {
         this.raster   = raster;
         this.numBand  = raster.getNumBands();
         this.minX     = raster.getMinX();
-        currentlyXpos = minX;
+        x = minX;
         this.minY     = raster.getMinY();
-        currentlyYpos = minY;
+        y = minY;
         this.maxY     = minY + raster.getHeight();
         this.maxX     = minX + raster.getWidth();
     }
 
     /**
-     * Create raster's iterator to follow from minX, minY raster and rectangle2D intersection coordinate.
+     * Create raster iterator to follow from minX, minY raster and rectangle2D intersection coordinate.
      *
      * @param raster will be followed by this iterator.
      */
-    public RasterBasedIterator(final Raster raster, final Rectangle2D subArea) {
+    public RasterBasedIterator(final Raster raster, final Rectangle subArea) {
         super();
         ArgumentChecks.ensureNonNull("Raster : ", raster);
         ArgumentChecks.ensureNonNull("sub Area iteration : ", subArea);
-        this.raster    = raster;
-        final int minx = raster.getMinX();
-        final int miny = raster.getMinY();
-        final int maxx = minx + raster.getWidth();
-        final int maxy = miny + raster.getHeight();
-
-        if(!subArea.intersects(new Rectangle2D.Double(minx, miny, maxx, maxy)))
+        this.raster     = raster;
+        final int minx  = raster.getMinX();
+        final int miny  = raster.getMinY();
+        final int maxx  = minx + raster.getWidth();
+        final int maxy  = miny + raster.getHeight();
+        final int sminx = subArea.x;
+        final int sminy = subArea.y;
+        this.numBand    = raster.getNumBands();
+        this.minX       =  Math.max(sminx, minx);
+        this.minY       =  Math.max(sminy, miny);
+        this.maxX       =  Math.min(sminx + subArea.width, maxx);
+        this.maxY       =  Math.min(sminy + subArea.height, maxy);
+        if(minX > maxX || minY > maxY)
         throw new IllegalArgumentException("invalid subArea coordinate no intersection between it and raster"+raster+subArea);
+        x  = this.minX;
+        y  = this.minY;
+    }
 
-        this.numBand   = raster.getNumBands();
-        this.minX      = (int) Math.max(subArea.getMinX(), minx);
-        this.minY      = (int) Math.max(subArea.getMinY(), miny);
-        this.maxX      = (int) Math.min(subArea.getMaxX(), maxx);
-        this.maxY      = (int) Math.min(subArea.getMaxY(), maxy);
-        currentlyXpos  = this.minX;
-        currentlyYpos  = this.minY;
+    /**
+     * To follow iterator like this pattern :
+     * band position --&lt; X position --&lt; Y position.
+     *
+     * {@inheritDoc }.
+     */
+    @Override
+    public boolean next() {
+        if (++band == numBand) {
+            band = 0;
+            if (++x == maxX) {
+                x = minX;
+                return (++y != maxY);
+            }
+        }
+        return true;
     }
 
     /**
      * {@inheritDoc }.
      */
     @Override
-    public boolean hasNext() {
-        return currentlyYpos != maxY;
+    public int getX() {
+        return x;
     }
 
     /**
      * {@inheritDoc }.
      */
     @Override
-    public int nextX() {
-        return currentlyXpos;
+    public int getY() {
+        return y;
     }
 
     /**
      * {@inheritDoc }.
      */
     @Override
-    public int nextY() {
-        return currentlyYpos;
+    public int getSample() {
+        return raster.getSample(x, y, band);
     }
 
     /**
      * {@inheritDoc }.
      */
     @Override
-    public int nextSample() {
-        final int val = raster.getSample(currentlyXpos, currentlyYpos, currentlyBandpos);
-        increment();
-        return val;
+    public float getSampleFloat() {
+        return raster.getSampleFloat(x, y, band);
     }
 
     /**
      * {@inheritDoc }.
      */
     @Override
-    public float nextSampleFloat() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public double nextSampleDouble() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public double getSampleDouble() {
+        return raster.getSampleDouble(x, y, band);
     }
 
     /**
@@ -181,22 +189,6 @@ public class RasterBasedIterator extends PixelIterator {
      */
     @Override
     public void rewind() {
-        currentlyBandpos = 0;
-        currentlyXpos = minX;
-        currentlyYpos = minY;
-    }
-
-    /**
-     * To follow iterator like this pattern :
-     * band position --&lt; X position --&lt; Y position.
-     */
-    private void increment() {
-        if (++currentlyBandpos == numBand) {
-            currentlyBandpos = 0;
-            if (++currentlyXpos == maxX) {
-                currentlyXpos = minX;
-                currentlyYpos++;
-            }
-        }
+        band = 0; x = minX; y = minY;
     }
 }

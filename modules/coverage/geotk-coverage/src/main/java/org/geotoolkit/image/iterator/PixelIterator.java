@@ -18,12 +18,12 @@
 package org.geotoolkit.image.iterator;
 
 /**
- * Define standar iterator for image pixel.
+ * Define standard iterator for image pixel.
  *
  * Iteration order is define in sub-classes implementation.
- * However iteration beging by Bands.
+ * However iteration begging by Bands.
  *
- * Moreother comportement not specify if iterator exceed image limits.
+ * Moreover comportment not specify if iterator exceed image limits.
  *
  * @author Rémi Marechal       (Geomatys).
  * @author Martin Desruisseaux (Geomatys).
@@ -34,11 +34,12 @@ public abstract class PixelIterator {
     }
 
     /**
-     * Returns true if the iteration has more pixel(in other words if {@link PixelIterator#nextSample() } is possible).
+     * Returns true if the iteration has more pixel(in other words if {@link PixelIterator#nextSample() } is possible)
+     * and move forward iterator.
      *
      * @return true if next value exist else false.
      */
-    public abstract boolean hasNext();
+    public abstract boolean next();
 
 
     /**
@@ -46,40 +47,48 @@ public abstract class PixelIterator {
      *
      * @return X iterator position.
      */
-    public abstract int nextX();
+    public abstract int getX();
 
     /**
      * Returns next Y iterator coordinate without move forward it.
      *
      * @return Y iterator position.
      */
-    public abstract int nextY();
+    public abstract int getY();
 
     /**
-     * Returns the next integer value from iteration and move forward it.
+     * Returns the next integer value from iteration.
      *
      * @return the next integer value.
      */
-    public abstract int nextSample();
+    public abstract int getSample();
 
     /**
-     * Returns the next float value from iteration and move forward it.
+     * Returns the next float value from iteration.
      *
      * @return the next float value.
      */
-    public abstract float nextSampleFloat();
+    public abstract float getSampleFloat();
 
     /**
-     * Returns the next double value from iteration and move forward it.
+     * Returns the next double value from iteration.
      *
      * @return the next double value.
      */
-    public abstract double nextSampleDouble();
+    public abstract double getSampleDouble();
 
     /**
-     * Initialize iterator.
+     * Initializes iterator.
      * Carry back iterator at its initial position like iterator is just build.
      */
     public abstract void rewind();
 
+    //next pour avancer return true ou false fin iteration mm idee jdbc
+    //nextsample->getsample
+    //iterator fonctionne renderedImage
+
+    //2 implementation
+
+    //iterator 1 raster apre lotre
+    //iterator ligne rowMajor
 }

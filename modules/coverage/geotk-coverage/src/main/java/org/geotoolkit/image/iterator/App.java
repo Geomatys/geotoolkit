@@ -53,8 +53,8 @@ public class App {
 
         int sIcomp = 0;
         int[] tab = new int[numBand * width];
-        while (sI.hasNext()) {
-            tab[sIcomp] = sI.nextSample();
+        while (sI.next()) {
+            tab[sIcomp] = sI.getSample();
             sIcomp++;
             if (sIcomp == numBand * width) {
                 System.out.println(Arrays.toString(tab));
