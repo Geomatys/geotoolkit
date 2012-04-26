@@ -19,11 +19,11 @@ package org.geotoolkit.metadata;
 
 import org.geotoolkit.gui.swing.tree.NamedTreeNode;
 import org.geotoolkit.gui.swing.tree.TreeTableNode;
-import static org.geotoolkit.metadata.PropertyTree.*;
+import static org.geotoolkit.metadata.MetadataTreeFormat.*;
 
 
 /**
- * A node in a {@link PropertyTree}, used only if the user asked for a tree table instead than
+ * A node in a {@link MetadataTreeFormat}, used only if the user asked for a tree table instead than
  * an ordinary tree. The tree table is made of two columns:
  * <p>
  * <ul>
@@ -32,7 +32,7 @@ import static org.geotoolkit.metadata.PropertyTree.*;
  * </ul>
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @since 3.19
  * @module
@@ -55,7 +55,7 @@ final class PropertyTreeNode extends NamedTreeNode implements TreeTableNode {
      * @param name The node name to be returned by {@link #toString()}.
      * @param userObject an Object provided by the user that constitutes the node's data
      */
-    PropertyTreeNode(final String name, final Object value) {
+    PropertyTreeNode(final CharSequence name, final Object value) {
         super(name, value);
     }
 
