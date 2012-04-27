@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.EnumSet;
 import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.Collection;
 import java.util.logging.Level;
 import java.io.IOException;
@@ -1773,25 +1775,39 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
     }
 
     /**
-     * Creates a {@code <gmd:contentInfo>} element from all applicable NetCDF attributes.
+     * Creates a {@code <gmd:contentInfo>} elements from all applicable NetCDF attributes.
      *
      * @return The content information.
      * @throws IOException If an I/O operation was necessary but failed.
      */
-    private CoverageDescription createContentInfo() throws IOException {
+    private Collection<DefaultCoverageDescription> createContentInfo() throws IOException {
+        final Map<List<ucar.nc2.Dimension>, DefaultCoverageDescription> contents = new HashMap<>(4);
         final String processingLevel = getStringValue(PROCESSING_LEVEL);
-        final DefaultCoverageDescription content;
-        if (processingLevel != null) {
-            content = new DefaultImageDescription();
-            ((DefaultImageDescription) content).setProcessingLevelCode(new DefaultIdentifier(processingLevel));
-        } else {
-            content = new DefaultCoverageDescription();
-        }
         final List<? extends VariableIF> variables = file.getVariables();
         for (final VariableSimpleIF variable : variables) {
             if (!NetcdfVariable.isCoverage(variable, variables)) {
                 // Same exclusion criterion than the one applied in NetcdfImageReader.getImageNames().
                 continue;
+            }
+            /*
+             * Instantiate a CoverageDescription for each distinct set of NetCDF dimensions
+             * (e.g. longitude,latitude,time). This separation is based on the fact that a
+             * coverage has only one domain for every range of values.
+             */
+            final List<ucar.nc2.Dimension> vardim = variable.getDimensions();
+            DefaultCoverageDescription content = contents.get(vardim);
+            if (content == null) {
+                /*
+                 * If there is some NetCDF attributes that can be stored only in the ImageDescription
+                 * subclass, instantiate that subclass. Otherwise instantiate the more generic class.
+                 */
+                if (processingLevel != null) {
+                    content = new DefaultImageDescription();
+                    ((DefaultImageDescription) content).setProcessingLevelCode(new DefaultIdentifier(processingLevel));
+                } else {
+                    content = new DefaultCoverageDescription();
+                }
+                contents.put(vardim, content);
             }
             content.getDimensions().add(createSampleDimension(variable));
             final Object[] names    = getSequence(variable, FLAG_NAMES,    false);
@@ -1810,7 +1826,7 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
                 }
             }
         }
-        return content;
+        return contents.values();
     }
 
     /**
@@ -1861,6 +1877,8 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
             for (int i=variable.getShape().length; --i>=0;) {
                 type.append("[]");
             }
+            // TODO: should be band.setName(...) with ISO 19115:2011.
+            // Sequence identifiers are supposed to be numbers only.
             band.setSequenceIdentifier(nameFactory.createMemberName(null, name,
                     nameFactory.createTypeName(null, type.toString())));
         }
@@ -1982,7 +2000,7 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
         if (identification != null) {
             metadata.getIdentificationInfo().add(identification);
         }
-        metadata.getContentInfo().add(createContentInfo());
+        metadata.setContentInfo(createContentInfo());
         /*
          * Add the dimension information, if any. This metadata node
          * is built from the NetCDF CoordinateSystem objects.
