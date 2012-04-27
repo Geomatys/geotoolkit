@@ -230,6 +230,10 @@ public class PostGISDialect extends AbstractSQLDialect {
                 res = Math.min(ress[0], ress[1]);
             }
         }
+        if(Double.isInfinite(res)){
+            res = Double.MAX_VALUE;
+        }
+        
         
         final CoordinateReferenceSystem crs = gatt.getCoordinateReferenceSystem();
         final int dimensions = (crs == null) ? 2 : crs.getCoordinateSystem().getDimension();
