@@ -149,6 +149,8 @@ public class JCoverageStoreChooser extends javax.swing.JPanel {
         guiSplit.setDividerLocation(240);
         guiSplit.setDividerSize(5);
 
+        jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
         guiList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(guiList);
 
