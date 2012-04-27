@@ -54,7 +54,7 @@ public class PostgisNGDataStoreFactoryTest extends JDBCTestSupport {
         params.put(USER.getName().toString(), db.getProperty(USER.getName().toString()));
         params.put(PASSWD.getName().toString(), db.getProperty(PASSWD.getName().toString()));
         
-        params.put(IDENTIFIER.getName().toString(), factory.getDatabaseID());
+        params.put(IDENTIFIER.getName().toString(), "postgis");
 
         assertTrue(factory.canProcess(params));
         JDBCDataStore store = (JDBCDataStore) factory.create(params);
