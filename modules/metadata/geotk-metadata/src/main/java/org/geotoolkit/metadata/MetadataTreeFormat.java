@@ -65,8 +65,32 @@ import static org.geotoolkit.metadata.AbstractMetadata.LOGGER;
  * are {@link TreeNode} or {@link TreeTableNode} objects. The node labels are formatted according
  * the {@link Locale} argument given at construction time.
  * <p>
- * Note that while {@link TreeNode} is defined in the {@link javax.swing.tree} package,
- * it can be seen as a data structure independent of Swing.
+ * This class offers two families of methods, listed in two rows below. The {@code Object} type
+ * stands for any metadata object compliant with the {@link MetadataStandard} specified at
+ * construction time.
+ * <p>
+ * <table>
+ *   <tr><th></th><th>Parsing</th><th>Formatting</th></tr>
+ *   <tr><td><b>Between {@link String} and metadata:</b></td>
+ *     <td>{@link #parseObject(String)} ⇒ {@link Object}</td>
+ *     <td>{@link #format(Object)} ⇒ {@link String}</td></tr>
+ *   <tr><td><b>Between {@link TreeNode} and metadata:</b></td>
+ *     <td>{@link #parse(TreeNode)} ⇒ {@link Object}</td>
+ *     <td>{@link #asTree(Object)} ⇒ {@link TreeNode}</td></tr>
+ * </table>
+ * <p>
+ * The methods performing conversions between {@link String} and metadata objects are part of the
+ * {@link Format} contract. They work by converting between {@link String} and {@link TreeNode}
+ * using {@link TreeFormat}, then delegating to the second family of methods defined in this class
+ * for the conversions between {@link TreeNode} and metadata object. This second family of methods
+ * is specific to this {@code MetadataTreeFormat} class.
+ *
+ * {@note The <code>TreeNode</code> interface is defined in the <code>javax.swing.tree</code>
+ *        package. However it can be used as a data structure independent of Swing.}
+ *
+ * {@section Subclassing}
+ * This class provides some protected methods than subclasses can override in order to control
+ * the parsing and formatting processes.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.20
@@ -180,13 +204,11 @@ public class MetadataTreeFormat extends Format {
     /**
      * Creates a metadata from the given string representation. The default implementation
      * {@linkplain TreeFormat#parseObject(String) converts the given string representation
-     * to tree nodes}, then invokes {@link #parse(TreeNode, Object)} with a null {@code metadata}
-     * object.
+     * to tree nodes}, then invokes {@link #parse(TreeNode)}.
      * <p>
-     * Note that in current implementation, there is a very limited amount of types that the
-     * {@link #parse(TreeNode, Object) parse} method can recognize when the {@code metadata}
-     * argument is null. Users may need to override the {@code parse} method in order to create
-     * a non-null value for the {@code metadata} argument.
+     * Note that in current implementation, there is a very limited amount of names that the
+     * {@link #getTypeForName(String)} method can recognize. Users may need to override the
+     * {@code getTypeForName} method in order to parse their metadata.
      *
      * @param  text The string representation of the tree to parse.
      * @return The parsed tree as a metadata object.
@@ -194,45 +216,56 @@ public class MetadataTreeFormat extends Format {
      */
     @Override
     public Object parseObject(final String text) throws ParseException {
-        return parse(getFormat(TreeFormat.class).parseObject(text), null);
+        return parse(getFormat(TreeFormat.class).parseObject(text));
+    }
+
+    /**
+     * Creates a metadata from the values in every nodes of the given tree. The metadata object
+     * type is inferred by the {@linkplain NamedTreeNode name} of the given root node.
+     * For example if the current {@linkplain #standard} is {@link MetadataStandard#ISO_19115}
+     * and the name of the given root node is {@code "Metadata"}, then the default implementation
+     * will instantiate a new {@link org.geotoolkit.metadata.iso.DefaultMetadata} object.
+     * <p>
+     * Note that in current implementation, there is a very limited amount of names that the
+     * {@link #getTypeForName(String)} method can recognize. Users may need to override the
+     * {@code getTypeForName} method in order to parse their metadata.
+     *
+     * @param  node The node from which to fetch the values.
+     * @return The parsed tree as a metadata object.
+     * @throws ParseException If the given {@code metadata} argument is null and its type can not
+     *         be inferred, or if a value can not be stored in the metadata object.
+     */
+    public Object parse(final TreeNode node) throws ParseException {
+        Object name = node;
+        if (node instanceof NamedTreeNode) {
+            name = ((NamedTreeNode) node).getName();
+        }
+        final Object metadata = newInstance(standard.getImplementation(getTypeForName(name.toString())));
+        parse(node, metadata);
+        return metadata;
     }
 
     /**
      * Fetches values from every nodes of the given tree except the root, and puts them in
-     * the given metadata object. The value of the root node is ignored, unless the given
-     * {@code metadata} argument is {@code null}.
-     * <p>
-     * If the given metadata object is {@code null}, then this method will try to instantiate
-     * a new metadata object from the name of the root tree node. For example if the current
-     * {@linkplain #standard} is {@link MetadataStandard#ISO_19115} and the name of the given
-     * root node is {@code "Metadata"}, then the default implementation will instantiate a new
-     * {@link org.geotoolkit.metadata.iso.DefaultMetadata} object.
+     * the given metadata object. The value of the root node is ignored.
      * <p>
      * If the given metadata object already contains property values, then the parsing will be
      * merged with the existing values: attributes not defined in the tree will be left unchanged,
      * and collections will be augmented with new entries without change in the previously existing
      * entries.
      *
-     * @param  node     The node from which to fetch the values.
-     * @param  metadata The metadata where to store the values, or {@code null} for creating a new one.
-     * @return The given {@code metadata} object, or a new instance if the given metadata was null.
+     * @param  node The node from which to fetch the values.
+     * @param  destination The metadata where to store the values, or {@code null} for creating a new one.
      * @throws ParseException If the given {@code metadata} argument is null and its type can not
      *         be inferred, or if a value can not be stored in the metadata object.
      */
-    public Object parse(final TreeNode node, Object metadata) throws ParseException {
-        if (metadata == null) {
-            Object name = node;
-            if (node instanceof NamedTreeNode) {
-                name = ((NamedTreeNode) node).getName();
-            }
-            metadata = newInstance(standard.getImplementation(getTypeForName(name.toString())));
-        }
-        final Class<?> type = metadata.getClass();
+    final void parse(final TreeNode node, final Object destination) throws ParseException {
+        final Class<?> type = destination.getClass();
         final PropertyAccessor accessor = standard.getAccessorOptional(type);
         if (accessor == null) {
             throw new ParseException(Errors.format(Errors.Keys.UNKNOWN_TYPE_$1, type), 0);
         }
-        final int duplicated = parse(node, type, metadata, null, accessor);
+        final int duplicated = parse(node, type, destination, null, accessor);
         if (duplicated != 0) {
             final LogRecord record = Errors.getResources(displayLocale).getLogRecord(
                     Level.WARNING, Errors.Keys.DUPLICATED_VALUES_COUNT_$1, duplicated);
@@ -241,7 +274,6 @@ public class MetadataTreeFormat extends Format {
             record.setLoggerName(LOGGER.getName());
             LOGGER.log(record);
         }
-        return metadata;
     }
 
     /**
@@ -872,7 +904,10 @@ public class MetadataTreeFormat extends Format {
 
     /**
      * Returns the interface type for the given name. This method is invoked by
-     * {@link #parseObject(String)} for parsing the name of the root node.
+     * {@link #parse(TreeNode)} for inferring the metadata type from the name of the root node.
+     * For example if the current {@linkplain #standard} is {@link MetadataStandard#ISO_19115}
+     * and the name of the given root node is {@code "Metadata"}, then this method returns
+     * the {@link org.opengis.metadata.Metadata} interface.
      *
      * @param  name The root node name.
      * @return The interface of the root node.
@@ -880,7 +915,7 @@ public class MetadataTreeFormat extends Format {
      *
      * @since 3.20
      */
-    private Class<?> getTypeForName(final String name) throws ParseException {
+    protected Class<?> getTypeForName(final String name) throws ParseException {
         if (standard == MetadataStandard.ISO_19115) {
             switch (name) {
                 case "Metadata": return org.opengis.metadata.Metadata.class;

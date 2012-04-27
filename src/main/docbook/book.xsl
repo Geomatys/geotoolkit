@@ -44,4 +44,16 @@
       </xsl:apply-templates>
     </xsl:element>
   </xsl:template>
+
+
+  <!--
+       Following should work according "http://lists.oasis-open.org/archives/docbook-apps/201204/msg00107.html".
+       But the template seems to never match...
+       Docbkx customization is described at "http://docbkx-tools.sourceforge.net/advanced.html".
+  -->
+
+  <xsl:template match="classname[@role = 'OGC']" mode="class.value">
+    <xsl:value-of select="'OGC'"/>
+  </xsl:template>
+
 </xsl:stylesheet>
