@@ -83,12 +83,24 @@ public abstract class PixelIterator {
      */
     public abstract void rewind();
 
-    //next pour avancer return true ou false fin iteration mm idee jdbc
-    //nextsample->getsample
-    //iterator fonctionne renderedImage
+    /**
+     * Write integer value at current iterator position.
+     *
+     * @param value : integer to write.
+     */
+    public abstract void setSample(final int value);
 
-    //2 implementation
+    /**
+     * Write float value at current iterator position.
+     *
+     * @param value : float to write.
+     */
+    public abstract void setSampleFloat(final float value);
 
-    //iterator 1 raster apre lotre
-    //iterator ligne rowMajor
+    /**
+     * Write double value at current iterator position.
+     *
+     * @param value : double to write.
+     */
+    public abstract void setSampleDouble(final double value);
 }

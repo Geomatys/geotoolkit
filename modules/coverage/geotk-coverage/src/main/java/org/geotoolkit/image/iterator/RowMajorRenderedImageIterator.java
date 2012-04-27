@@ -24,7 +24,7 @@ import java.awt.image.RenderedImage;
 /**
  * An Iterator for traversing anyone rendered Image.
  * <p>
- * Iteration transverse each pixel from rendered image source line per line.
+ * Iteration transverse each pixel from rendered image or raster source line per line.
  * <p>
  * Iteration follow this scheme :
  * tiles band --&lt; tiles x coordinates --&lt; next X tile position in rendered image tiles array
@@ -34,7 +34,7 @@ import java.awt.image.RenderedImage;
  *
  * Code example :
  * {@code
- *                  final DefaultRenderedImageIterator dRII = new DefaultRenderedImageIterator(renderedImage);
+ *                  final RowMajorRenderedImageIterator dRII = new RowMajorRenderedImageIterator(renderedImage);
  *                  while (dRII.next()) {
  *                      dRii.getSample();
  *                  }
@@ -45,11 +45,6 @@ import java.awt.image.RenderedImage;
  */
 public class RowMajorRenderedImageIterator extends RasterBasedIterator {
 
-//    /**
-//     * Current raster which is followed by Iterator.
-//     */
-//    private Raster currentRaster;
-
     /**
      * true if raster constructor is used else false.
      */
@@ -59,26 +54,6 @@ public class RowMajorRenderedImageIterator extends RasterBasedIterator {
      * RenderedImage which is followed by Iterator.
      */
     private RenderedImage renderedImage;
-
-//    /**
-//     * Number of raster bands .
-//     */
-//    private int numBand;
-//
-//    /**
-//     * The X coordinate of the upper-left pixel of current Raster.
-//     */
-//    private int minX;
-//
-//    /**
-//     * The X coordinate of the bottom-right pixel of current Raster.
-//     */
-//    private int maxX;
-//
-//    /**
-//     * The Y coordinate of the bottom-right pixel of current Raster.
-//     */
-//    private int maxY;
 
     /**
      * The X index coordinate of the upper-left tile of this rendered image.
@@ -119,21 +94,6 @@ public class RowMajorRenderedImageIterator extends RasterBasedIterator {
      * The Y index coordinate of the sub-Area bottom-right corner.
      */
     private int subAreaMaxY;
-//
-//    /**
-//     * Current X pixel coordinate in current rendered image raster.
-//     */
-//    private int x;
-//
-//    /**
-//     * Current Y pixel coordinate in current rendered image raster.
-//     */
-//    private int y;
-//
-//    /**
-//     * Current band position in current rendered image raster.
-//     */
-//    private int band;
 
     /**
      * Current x tile position in rendered image tile array.
@@ -257,46 +217,6 @@ public class RowMajorRenderedImageIterator extends RasterBasedIterator {
         }
         return true;
     }
-
-//    /**
-//     * {@inheritDoc }.
-//     */
-//    @Override
-//    public int getX() {
-//        return x;
-//    }
-//
-//    /**
-//     * {@inheritDoc }.
-//     */
-//    @Override
-//    public int getY() {
-//        return y;
-//    }
-//
-//    /**
-//     * {@inheritDoc }.
-//     */
-//    @Override
-//    public int getSample() {
-//        return currentRaster.getSample(x, y, band);
-//    }
-//
-//    /**
-//     * {@inheritDoc }.
-//     */
-//    @Override
-//    public float getSampleFloat() {
-//        return currentRaster.getSample(x, y, band);
-//    }
-//
-//    /**
-//     * {@inheritDoc }.
-//     */
-//    @Override
-//    public double getSampleDouble() {
-//        return currentRaster.getSample(x, y, band);
-//    }
 
     /**
      * {@inheritDoc }.

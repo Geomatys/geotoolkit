@@ -35,7 +35,7 @@ import org.geotoolkit.util.ArgumentChecks;
  * @author Rémi Marechal       (Geomatys).
  * @author Martin Desruisseaux (Geomatys).
  */
-public class RasterBasedIterator extends PixelIterator {
+public abstract class RasterBasedIterator extends PixelIterator {
 
     /**
      * Current raster which is followed by Iterator.
@@ -94,7 +94,7 @@ public class RasterBasedIterator extends PixelIterator {
      *
      * @param raster will be followed by this iterator.
      */
-    public RasterBasedIterator(final Raster raster) {
+    protected RasterBasedIterator(final Raster raster) {
         super();
         ArgumentChecks.ensureNonNull("Raster : ", raster);
         this.currentRaster = raster;
@@ -113,7 +113,7 @@ public class RasterBasedIterator extends PixelIterator {
      *
      * @param raster will be followed by this iterator.
      */
-    public RasterBasedIterator(final Raster raster, final Rectangle subArea) {
+    protected RasterBasedIterator(final Raster raster, final Rectangle subArea) {
         super();
         ArgumentChecks.ensureNonNull("Raster : ", raster);
         ArgumentChecks.ensureNonNull("sub Area iteration : ", subArea);
@@ -200,5 +200,29 @@ public class RasterBasedIterator extends PixelIterator {
     @Override
     public void rewind() {
         band = -1; x = minX; y = minY;
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public void setSample(int value) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public void setSampleFloat(float value) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public void setSampleDouble(double value) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

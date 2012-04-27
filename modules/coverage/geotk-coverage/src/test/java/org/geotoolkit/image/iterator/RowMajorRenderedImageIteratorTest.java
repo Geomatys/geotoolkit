@@ -21,6 +21,7 @@ import java.awt.Rectangle;
 import java.awt.image.BandedSampleModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.Raster;
+import java.awt.image.RenderedImage;
 import javax.media.jai.TiledImage;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
@@ -44,8 +45,7 @@ public class RowMajorRenderedImageIteratorTest extends RasterBasedIteratorTest {
         for(int y = miny, ly = miny+height; y<ly; y++){
             for(int x = minx, lx = minx + width; x<lx; x++){
                 for(int b = 0; b<numBand; b++){
-                    renderedImage.setSample(x, y, b, comp);
-                    comp++;
+                    renderedImage.setSample(x, y, b, comp++);
                 }
             }
         }
@@ -105,9 +105,7 @@ public class RowMajorRenderedImageIteratorTest extends RasterBasedIteratorTest {
 
                     for (int x = depX; x<endX; x++) {
                         for (int b = 0; b<numBand; b++) {
-//                            System.out.println(comp+" : "+(b + numBand * ((x-depX) + tilesWidth*tileX + width * ((y-depY) + tilesHeight*tileY))));
-                            tabRef[comp] =  b + numBand * ((x-depX) + tilesWidth*tileX + width * ((y-depY) + tilesHeight*tileY));
-                            comp++;
+                            tabRef[comp++] =  b + numBand * ((x-depX) + tilesWidth*tileX + width * ((y-depY) + tilesHeight*tileY));
                         }
                     }
                 }
@@ -128,13 +126,10 @@ public class RowMajorRenderedImageIteratorTest extends RasterBasedIteratorTest {
         int tilesWidth = 10;
         int tilesHeight = 5;
         setRenderedImgTest(minx, miny, width, height, tilesWidth, tilesHeight, 3, null);
-        pixIterator = new RowMajorRenderedImageIterator(renderedImage);
+        setPixelIterator(renderedImage);
 
         int comp = 0;
-        while (pixIterator.next()) {
-            tabTest[comp] = pixIterator.getSample();
-            comp++;
-        }
+        while (pixIterator.next()) tabTest[comp++] = pixIterator.getSample();
         assertTrue(compareTab(tabTest, tabRef));
 
         minx = 1;
@@ -144,23 +139,16 @@ public class RowMajorRenderedImageIteratorTest extends RasterBasedIteratorTest {
         tilesWidth = 10;
         tilesHeight = 5;
         setRenderedImgTest(minx, miny, width, height, tilesWidth, tilesHeight, 3, null);
-        pixIterator = new RowMajorRenderedImageIterator(renderedImage);
+        setPixelIterator(renderedImage);
 
         comp = 0;
-        while (pixIterator.next()) {
-            tabTest[comp] = pixIterator.getSample();
-            comp++;
-        }
+        while (pixIterator.next()) tabTest[comp++] = pixIterator.getSample();
         assertTrue(compareTab(tabTest, tabRef));
 
         pixIterator.rewind();
         comp = 0;
-        while (pixIterator.next()) {
-            tabTest[comp] = pixIterator.getSample();
-            comp++;
-        }
+        while (pixIterator.next()) tabTest[comp++] = pixIterator.getSample();
         assertTrue(compareTab(tabTest, tabRef));
-
     }
 
     /**
@@ -177,13 +165,10 @@ public class RowMajorRenderedImageIteratorTest extends RasterBasedIteratorTest {
         final int tilesWidth = 10;
         final int tilesHeight = 5;
         setRenderedImgTest(minx, miny, width, height, tilesWidth, tilesHeight, 3, rect);
-        pixIterator = new RowMajorRenderedImageIterator(renderedImage,rect);
+        setPixelIterator(renderedImage, rect);
 
         int comp = 0;
-        while (pixIterator.next()) {
-            tabTest[comp] = pixIterator.getSample();
-            comp++;
-        }
+        while (pixIterator.next()) tabTest[comp++] = pixIterator.getSample();
         assertTrue(compareTab(tabTest, tabRef));
     }
 
@@ -201,13 +186,10 @@ public class RowMajorRenderedImageIteratorTest extends RasterBasedIteratorTest {
         final int tilesWidth = 10;
         final int tilesHeight = 5;
         setRenderedImgTest(minx, miny, width, height, tilesWidth, tilesHeight, 3, rect);
-        pixIterator = new RowMajorRenderedImageIterator(renderedImage,rect);
+        setPixelIterator(renderedImage, rect);
 
         int comp = 0;
-        while (pixIterator.next()) {
-            tabTest[comp] = pixIterator.getSample();
-            comp++;
-        }
+        while (pixIterator.next()) tabTest[comp++] = pixIterator.getSample();
         assertTrue(compareTab(tabTest, tabRef));
     }
 
@@ -225,13 +207,10 @@ public class RowMajorRenderedImageIteratorTest extends RasterBasedIteratorTest {
         final int tilesWidth = 10;
         final int tilesHeight = 5;
         setRenderedImgTest(minx, miny, width, height, tilesWidth, tilesHeight, 3, rect);
-        pixIterator = new RowMajorRenderedImageIterator(renderedImage,rect);
+        setPixelIterator(renderedImage, rect);
 
         int comp = 0;
-        while (pixIterator.next()) {
-            tabTest[comp] = pixIterator.getSample();
-            comp++;
-        }
+        while (pixIterator.next()) tabTest[comp++] = pixIterator.getSample();
         assertTrue(compareTab(tabTest, tabRef));
     }
 
@@ -249,13 +228,10 @@ public class RowMajorRenderedImageIteratorTest extends RasterBasedIteratorTest {
         final int tilesWidth = 10;
         final int tilesHeight = 5;
         setRenderedImgTest(minx, miny, width, height, tilesWidth, tilesHeight, 3, rect);
-        pixIterator = new RowMajorRenderedImageIterator(renderedImage,rect);
+        setPixelIterator(renderedImage, rect);
 
         int comp = 0;
-        while (pixIterator.next()) {
-            tabTest[comp] = pixIterator.getSample();
-            comp++;
-        }
+        while (pixIterator.next()) tabTest[comp++] = pixIterator.getSample();
         assertTrue(compareTab(tabTest, tabRef));
     }
 
@@ -273,13 +249,10 @@ public class RowMajorRenderedImageIteratorTest extends RasterBasedIteratorTest {
         final int tilesWidth = 10;
         final int tilesHeight = 5;
         setRenderedImgTest(minx, miny, width, height, tilesWidth, tilesHeight, 3, rect);
-        pixIterator = new RowMajorRenderedImageIterator(renderedImage,rect);
+        setPixelIterator(renderedImage, rect);
 
         int comp = 0;
-        while (pixIterator.next()) {
-            tabTest[comp] = pixIterator.getSample();
-            comp++;
-        }
+        while (pixIterator.next()) tabTest[comp++] = pixIterator.getSample();
         assertTrue(compareTab(tabTest, tabRef));
     }
 
@@ -297,13 +270,10 @@ public class RowMajorRenderedImageIteratorTest extends RasterBasedIteratorTest {
         final int tilesWidth = 10;
         final int tilesHeight = 5;
         setRenderedImgTest(minx, miny, width, height, tilesWidth, tilesHeight, 3, rect);
-        pixIterator = new RowMajorRenderedImageIterator(renderedImage,rect);
+        setPixelIterator(renderedImage, rect);
 
         int comp = 0;
-        while (pixIterator.next()) {
-            tabTest[comp] = pixIterator.getSample();
-            comp++;
-        }
+        while (pixIterator.next()) tabTest[comp++] = pixIterator.getSample();
         assertTrue(compareTab(tabTest, tabRef));
     }
 
@@ -315,17 +285,31 @@ public class RowMajorRenderedImageIteratorTest extends RasterBasedIteratorTest {
         final Rectangle rect = new Rectangle(-100, -50, 5, 17);
         boolean testTry = false;
         try{
-            pixIterator = new RowMajorRenderedImageIterator(renderedImage,rect);
+            setPixelIterator(renderedImage, rect);
         }catch(Exception e){
             testTry = true;
         }
         assertTrue(testTry);
     }
 
+    @Override
+    protected void setPixelIterator(Raster raster) {
+        super.pixIterator = new RowMajorRenderedImageIterator(raster);
+    }
+
+    @Override
+    protected void setPixelIterator(RenderedImage renderedImage) {
+        super.pixIterator = new RowMajorRenderedImageIterator(renderedImage);
+    }
 
     @Override
     protected void setPixelIterator(Raster raster, Rectangle subArea) {
-        pixIterator = (subArea == null) ? new RowMajorRenderedImageIterator(raster) : new RowMajorRenderedImageIterator(raster, subArea);
+        super.pixIterator = new RowMajorRenderedImageIterator(raster, subArea);
+    }
+
+    @Override
+    protected void setPixelIterator(RenderedImage renderedImage, Rectangle subArea) {
+        super.pixIterator = new RowMajorRenderedImageIterator(renderedImage, subArea);
     }
 
 }

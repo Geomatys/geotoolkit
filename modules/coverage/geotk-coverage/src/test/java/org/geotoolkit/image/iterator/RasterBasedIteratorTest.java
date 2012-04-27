@@ -21,8 +21,8 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.DataBuffer;
 import java.awt.image.Raster;
+import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
@@ -48,14 +48,16 @@ public abstract class RasterBasedIteratorTest {
 
     }
 
+    protected abstract void setPixelIterator(final Raster raster);
     protected abstract void setPixelIterator(final Raster raster, final Rectangle subArea);
-
+    protected abstract void setPixelIterator(final RenderedImage renderedImage);
+    protected abstract void setPixelIterator(final RenderedImage renderedImage, final Rectangle subArea);
     /**
      * Test if iterator transverse all raster positions with different minX and maxY coordinates.
      * Also test rewind function.
      */
     @Test
-    public void differentMinRasterTest() {
+    public void differentMinRasterReadTest() {
         width = 10;
         height = 10;
         minx = 0;
@@ -63,8 +65,7 @@ public abstract class RasterBasedIteratorTest {
         numBand = 3;
         tabTest = new int[width*height*numBand];
         setRasterTest(minx, miny, width, height, numBand, null);
-//        DefaultRenderedImageIterator dfrii = new DefaultRenderedImageIterator(rasterTest);
-        setPixelIterator(rasterTest, null);
+        setPixelIterator(rasterTest);
         int comp = 0;
         while (pixIterator.next()) {
             tabTest[comp] = pixIterator.getSample();
@@ -75,8 +76,7 @@ public abstract class RasterBasedIteratorTest {
         minx = 3;
         minx = 5;
         setRasterTest(minx, miny, width, height, numBand, null);
-//        dfrii = new DefaultRenderedImageIterator(rasterTest);
-        setPixelIterator(rasterTest, null);
+        setPixelIterator(rasterTest);
         comp = 0;
         while (pixIterator.next()) {
             tabTest[comp] = pixIterator.getSample();
@@ -87,8 +87,7 @@ public abstract class RasterBasedIteratorTest {
         minx = -3;
         miny = 5;
         setRasterTest(minx, miny, width, height, numBand, null);
-//        dfrii = new DefaultRenderedImageIterator(rasterTest);
-        setPixelIterator(rasterTest, null);
+        setPixelIterator(rasterTest);
         comp = 0;
         while (pixIterator.next()) {
             tabTest[comp] = pixIterator.getSample();
@@ -99,8 +98,7 @@ public abstract class RasterBasedIteratorTest {
         minx = 3;
         miny = -5;
         setRasterTest(minx, miny, width, height, numBand, null);
-//        dfrii = new DefaultRenderedImageIterator(rasterTest);
-        setPixelIterator(rasterTest, null);
+        setPixelIterator(rasterTest);
         comp = 0;
         while (pixIterator.next()) {
             tabTest[comp] = pixIterator.getSample();
@@ -111,8 +109,7 @@ public abstract class RasterBasedIteratorTest {
         minx = -3;
         miny = -5;
         setRasterTest(minx, miny, width, height, numBand, null);
-//        dfrii = new DefaultRenderedImageIterator(rasterTest);
-        setPixelIterator(rasterTest, null);
+        setPixelIterator(rasterTest);
         comp = 0;
         while (pixIterator.next()) {
             tabTest[comp] = pixIterator.getSample();
@@ -135,7 +132,7 @@ public abstract class RasterBasedIteratorTest {
      * Area is defined on upper left raster corner.
      */
     @Test
-    public void rectUpperLeftRasterTest() {
+    public void rectUpperLeftRasterReadTest() {
         final Rectangle subArea = new Rectangle(4, 6, 5, 4);
         numBand = 3;
         width = 20;
@@ -143,7 +140,6 @@ public abstract class RasterBasedIteratorTest {
         minx = 5;
         miny = 7;
         setRasterTest(minx, miny, width, height, numBand, subArea);
-//        final DefaultRenderedImageIterator dfrii = new DefaultRenderedImageIterator(rasterTest, subArea);
         setPixelIterator(rasterTest, subArea);
         int comp = 0;
         while (pixIterator.next()) {
@@ -158,7 +154,7 @@ public abstract class RasterBasedIteratorTest {
      * Area is defined on upper right raster corner.
      */
     @Test
-    public void rectUpperRightRasterTest() {
+    public void rectUpperRightRasterReadTest() {
         final Rectangle subArea = new Rectangle(16, 6, 10, 6);
         numBand = 3;
         width = 20;
@@ -166,7 +162,6 @@ public abstract class RasterBasedIteratorTest {
         minx = 5;
         miny = 7;
         setRasterTest(minx, miny, width, height, numBand, subArea);
-//        final DefaultRenderedImageIterator dfrii = new DefaultRenderedImageIterator(rasterTest, subArea);
         setPixelIterator(rasterTest, subArea);
         int comp = 0;
         while (pixIterator.next()) {
@@ -181,7 +176,7 @@ public abstract class RasterBasedIteratorTest {
      * Area is defined on lower right raster corner.
      */
     @Test
-    public void rectLowerRightRasterTest() {
+    public void rectLowerRightRasterReadTest() {
         final Rectangle subArea = new Rectangle(14, 10, 15, 9);
         numBand = 3;
         width = 20;
@@ -189,7 +184,6 @@ public abstract class RasterBasedIteratorTest {
         minx = 5;
         miny = 7;
         setRasterTest(minx, miny, width, height, numBand, subArea);
-//        final DefaultRenderedImageIterator dfrii = new DefaultRenderedImageIterator(rasterTest, subArea);
         setPixelIterator(rasterTest, subArea);
         int comp = 0;
         while (pixIterator.next()) {
@@ -204,7 +198,7 @@ public abstract class RasterBasedIteratorTest {
      * Area is defined on lower left raster corner.
      */
     @Test
-    public void rectLowerLeftRasterTest() {
+    public void rectLowerLeftRasterReadTest() {
         final Rectangle subArea = new Rectangle(2, 12, 10, 6);
         numBand = 3;
         width = 20;
@@ -212,7 +206,6 @@ public abstract class RasterBasedIteratorTest {
         minx = 5;
         miny = 7;
         setRasterTest(minx, miny, width, height, numBand, subArea);
-//        final DefaultRenderedImageIterator dfrii = new DefaultRenderedImageIterator(rasterTest, subArea);
         setPixelIterator(rasterTest, subArea);
         int comp = 0;
         while (pixIterator.next()) {
@@ -227,7 +220,7 @@ public abstract class RasterBasedIteratorTest {
      * Area is within raster area.
      */
     @Test
-    public void rasterContainsRectTest() {
+    public void rasterContainsRectReadTest() {
         final Rectangle subArea = new Rectangle(10, 9, 11, 6);
         numBand = 3;
         width = 20;
@@ -235,7 +228,6 @@ public abstract class RasterBasedIteratorTest {
         minx = 5;
         miny = 7;
         setRasterTest(minx, miny, width, height, numBand, subArea);
-//        final DefaultRenderedImageIterator dfrii = new DefaultRenderedImageIterator(rasterTest, subArea);
         setPixelIterator(rasterTest, subArea);
         int comp = 0;
         while (pixIterator.next()) {
@@ -250,7 +242,7 @@ public abstract class RasterBasedIteratorTest {
      * Area contains all raster area.
      */
     @Test
-    public void rectContainsRasterTest() {
+    public void rectContainsRasterReadTest() {
         final Rectangle subArea = new Rectangle(2, 3, 25, 17);
         numBand = 3;
         width = 20;
@@ -258,7 +250,6 @@ public abstract class RasterBasedIteratorTest {
         minx = 5;
         miny = 7;
         setRasterTest(minx, miny, width, height, numBand, subArea);
-//        final DefaultRenderedImageIterator dfrii = new DefaultRenderedImageIterator(rasterTest, subArea);
         setPixelIterator(rasterTest, subArea);
         int comp = 0;
         while (pixIterator.next()) {
@@ -272,7 +263,7 @@ public abstract class RasterBasedIteratorTest {
      * Test catching exception with rectangle which don't intersect raster area.
      */
     @Test
-    public void unappropriateRectRasterTest() {
+    public void unappropriateRectRasterReadTest() {
         final Rectangle subArea = new Rectangle(-17, -20, 5, 15);
         numBand = 3;
         width = 20;
@@ -282,7 +273,6 @@ public abstract class RasterBasedIteratorTest {
         setRasterTest(minx, miny, width, height, numBand, subArea);
         boolean testTry = false;
         try{
-//            final DefaultRenderedImageIterator dfrii = new DefaultRenderedImageIterator(rasterTest, subArea);
             setPixelIterator(rasterTest, subArea);
         }catch(Exception e){
             testTry = true;

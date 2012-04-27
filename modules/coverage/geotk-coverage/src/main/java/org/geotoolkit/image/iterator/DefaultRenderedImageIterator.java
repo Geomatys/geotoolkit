@@ -20,12 +20,11 @@ package org.geotoolkit.image.iterator;
 import java.awt.Rectangle;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
-import org.geotoolkit.util.ArgumentChecks;
 
 /**
  * An Iterator for traversing anyone rendered Image.
  * <p>
- * Iteration transverse each tiles(raster) from rendered image source one by one in order.
+ * Iteration transverse each tiles(raster) from rendered image or raster source one by one in order.
  * Iteration to follow tiles(raster) begin by raster bands, next, raster x coordinates,
  * and to finish raster y coordinates.
  * <p>
@@ -47,44 +46,15 @@ import org.geotoolkit.util.ArgumentChecks;
  */
 public class DefaultRenderedImageIterator extends RasterBasedIterator {
 
-//    /**
-//     * Current raster which is followed by Iterator.
-//     */
-//    private Raster currentRaster;
-
     /**
      * true if raster constructor is used else false.
      */
-    private final boolean raster;
+    protected final boolean raster;
+
     /**
      * RenderedImage which is followed by Iterator.
      */
     private RenderedImage renderedImage;
-//
-//    /**
-//     * Number of raster bands .
-//     */
-//    private int numBand;
-//
-//    /**
-//     * The X coordinate of the upper-left pixel of current Raster.
-//     */
-//    private int minX;
-//
-//    /**
-//     * The Y coordinate of the upper-left pixel of current Raster.
-//     */
-//    private int minY;
-//
-//    /**
-//     * The X coordinate of the bottom-right pixel of current Raster.
-//     */
-//    private int maxX;
-//
-//    /**
-//     * The Y coordinate of the bottom-right pixel of current Raster.
-//     */
-//    private int maxY;
 
     /**
      * The X index coordinate of the upper-left tile of this rendered image.
@@ -125,21 +95,6 @@ public class DefaultRenderedImageIterator extends RasterBasedIterator {
      * The Y index coordinate of the sub-Area bottom-right corner.
      */
     private int subAreaMaxY;
-
-//    /**
-//     * Current X pixel coordinate in current rendered image raster.
-//     */
-//    private int x;
-//
-//    /**
-//     * Current Y pixel coordinate in current rendered image raster.
-//     */
-//    private int y;
-//
-//    /**
-//     * Current band position in current rendered image raster.
-//     */
-//    private int band;
 
     /**
      * Current x tile position in rendered image tile array.
@@ -222,27 +177,6 @@ public class DefaultRenderedImageIterator extends RasterBasedIterator {
     public DefaultRenderedImageIterator(final Raster raster) {
         super(raster);
         this.raster = true;
-//        ArgumentChecks.ensureNonNull("Raster : ", raster);
-//        this.raster = true;
-//        this.currentRaster   = raster;
-//        this.renderedImage = null;
-//        this.minX     = raster.getMinX();
-//        this.minY     = raster.getMinY();
-//        x = minX;
-//        y = minY;
-//        this.numBand  = raster.getNumBands();
-//        this.maxY     = minY + raster.getHeight();
-//        this.maxX     = minX + raster.getWidth();
-//        //rect attributs
-//        this.subAreaMinX = minX;
-//        this.subAreaMinY = minY;
-//        this.subAreaMaxX = this.maxX;
-//        this.subAreaMaxY = this.maxY;
-//        //initialize attributs to first iteration
-//        tMaxX = tMaxY = 1;
-//        tMinX = tX = 0;
-//        tMinY = tY = 0;//band a -1
-//        this.band = -1;
     }
 
     /**
@@ -253,33 +187,6 @@ public class DefaultRenderedImageIterator extends RasterBasedIterator {
     public DefaultRenderedImageIterator(final Raster raster, final Rectangle subArea) {
         super(raster, subArea);
         this.raster = true;
-//        ArgumentChecks.ensureNonNull("Raster : ", raster);
-//        ArgumentChecks.ensureNonNull("sub Area iteration : ", subArea);
-//        this.currentRaster = raster;
-//        this.renderedImage = null;
-//        //rect attributs
-//        this.subAreaMinX = subArea.x;
-//        this.subAreaMinY = subArea.y;
-//        this.subAreaMaxX = subAreaMinX + subArea.width;
-//        this.subAreaMaxY = subAreaMinY + subArea.height;
-//        final int minx   = raster.getMinX();
-//        final int miny   = raster.getMinY();
-//        final int maxx   = minx + raster.getWidth();
-//        final int maxy   = miny + raster.getHeight();
-//        this.numBand     = raster.getNumBands();
-//        this.minX        =  Math.max(subAreaMinX, minx);
-//        this.minY        =  Math.max(subAreaMinY, miny);
-//        this.maxX        =  Math.min(subAreaMaxX, maxx);
-//        this.maxY        =  Math.min(subAreaMaxY, maxy);
-//        if(minX > maxX || this.y > maxY)
-//        throw new IllegalArgumentException("invalid subArea coordinate no intersection between it and raster"+raster+subArea);
-//        //initialize attributs to first iteration
-//        tMaxX = tMaxY = 1;
-//        tMinX = tX    = 0;
-//        tMinY = tY    = 0;
-//        this.band = -1;
-//        x  = this.minX;
-//        y  = this.minY;
     }
 
     /**
@@ -298,7 +205,8 @@ public class DefaultRenderedImageIterator extends RasterBasedIterator {
                         if(++tY == tMaxY) return false;
                     }
                     //initialize from new tile(raster).
-                    currentRaster = renderedImage.getTile(tX, tY);
+//                    currentRaster = renderedImage.getTile(tX, tY);
+                    updateCurrentRaster(tX, tY);
                     final int cRMinX = currentRaster.getMinX();
                     final int cRMinY = currentRaster.getMinY();
                     this.minX = this.x = Math.max(subAreaMinX, cRMinX);
@@ -311,46 +219,13 @@ public class DefaultRenderedImageIterator extends RasterBasedIterator {
         }
         return true;
     }
-//
-//    /**
-//     * {@inheritDoc }.
-//     */
-//    @Override
-//    public int getX() {
-//        return x;
-//    }
-//
-//    /**
-//     * {@inheritDoc }.
-//     */
-//    @Override
-//    public int getY() {
-//        return y;
-//    }
-//
-//    /**
-//     * {@inheritDoc }.
-//     */
-//    @Override
-//    public int getSample() {
-//        return currentRaster.getSample(x, y, band);
-//    }
-//
-//    /**
-//     * {@inheritDoc }.
-//     */
-//    @Override
-//    public float getSampleFloat() {
-//        return currentRaster.getSampleFloat(x, y, band);
-//    }
-//
-//    /**
-//     * {@inheritDoc }.
-//     */
-//    @Override
-//    public double getSampleDouble() {
-//        return currentRaster.getSampleDouble(x, y, band);
-//    }
+
+    /**
+     * Update current raster from tiles array coordinates.
+     */
+    protected void updateCurrentRaster(int tileX, int tileY){
+        currentRaster = renderedImage.getTile(tileX, tileY);
+    }
 
     /**
      * {@inheritDoc }.
