@@ -118,7 +118,19 @@ public abstract class AbstractProcessDescriptor implements ProcessDescriptor {
         public Citation getAuthority() {
             return factoryId.getCitation();
         }
+    }
 
+    /**
+     * ToString that return "autority.processName".
+     * @return 
+     */
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append(id.getAuthority().getTitle().toString());
+        sb.append(".");
+        sb.append(id.getCode());
+        return sb.toString();
     }
 
 }
