@@ -187,6 +187,13 @@ public class FolderDataStore extends AbstractDataStore{
     }
 
     @Override
+    public boolean isWritable(Name typeName) throws DataStoreException {
+        typeCheck(typeName);
+        final DataStore store = stores.get(typeName);
+        return store.isWritable(typeName);
+    }
+
+    @Override
     public QueryCapabilities getQueryCapabilities() {
         throw new UnsupportedOperationException("Not supported yet.");
     }

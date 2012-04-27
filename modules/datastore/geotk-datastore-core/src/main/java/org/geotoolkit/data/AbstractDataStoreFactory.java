@@ -31,6 +31,7 @@ import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.InvalidParameterValueException;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -183,8 +184,14 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
      * @return 
      */
     protected boolean checkIdentifier(final ParameterValueGroup params){
-        final String expectedId = ((ParameterDescriptor<String>)getParametersDescriptor()
+        final String expectedId;
+        try{
+            expectedId = ((ParameterDescriptor<String>)getParametersDescriptor()
                 .descriptor(IDENTIFIER.getName().getCode())).getDefaultValue();
+        }catch(ParameterNotFoundException ex){
+            //this datastore factory does not declare a identifier id
+            return true;
+        }
         
         for(GeneralParameterValue val : params.values()){
             if(val.getDescriptor().getName().getCode().equals(IDENTIFIER.getName().getCode())){
