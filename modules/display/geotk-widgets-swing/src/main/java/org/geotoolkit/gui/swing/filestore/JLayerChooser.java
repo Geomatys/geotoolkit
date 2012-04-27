@@ -25,7 +25,9 @@ import com.vividsolutions.jts.geom.Polygon;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.FlowLayout;
+import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -260,7 +262,7 @@ public class JLayerChooser extends javax.swing.JPanel {
     }
     
     
-    private static class NameCellRenderer extends DefaultListCellRenderer{
+    private class NameCellRenderer extends DefaultListCellRenderer{
 
         @Override
         public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
@@ -275,10 +277,11 @@ public class JLayerChooser extends javax.swing.JPanel {
             
             if(value instanceof FeatureType){
                 final FeatureType ft = (FeatureType) value;
+                final DataStore store = (DataStore) getSource();
                 
                 final GeometryDescriptor desc = ft.getGeometryDescriptor();
                 if(desc != null){
-                    final ImageIcon icon;
+                    ImageIcon icon;
                     final Class binding = desc.getType().getBinding();
                     if(Point.class.isAssignableFrom(binding)){
                         icon = IconBundle.getIcon("16_single_point");
@@ -295,6 +298,26 @@ public class JLayerChooser extends javax.swing.JPanel {
                     }else{
                         icon = IconBundle.EMPTY_ICON_16;
                     }
+                    
+                    boolean editable = false;
+                    try {
+                        if(store.isWritable(ft.getName())){
+                            editable = true;
+                        }
+                    } catch (DataStoreException ex) {}
+                    
+                    if(!editable){
+                        final BufferedImage img = new BufferedImage(
+                                                        icon.getIconWidth(),
+                                                        icon.getIconHeight(),
+                                                        BufferedImage.TYPE_INT_ARGB);
+                        final Graphics2D g = img.createGraphics();
+                        g.drawImage(icon.getImage(), 0, 0, null);
+                        final ImageIcon lock = IconBundle.getIcon("16_small_lock");
+                        g.drawImage(lock.getImage(), 0, 0, null);
+                        icon = new ImageIcon(img);
+                    }
+                    
                     lbl.setIcon(icon);
                 }
                 
