@@ -110,7 +110,7 @@ final class DomainOfLayerTable extends SingletonTable<DomainOfLayerEntry> {
         if (endTime != null) {
             endTime = new Date(endTime.getTime());
         }
-        final Envelope2D bbox = new Envelope2D(((SpatialDatabase) getDatabase()).horizontalCRS, west, east, south, north);
+        final Envelope2D bbox = new Envelope2D(((SpatialDatabase) getDatabase()).horizontalCRS, west, south, east-west, north-south);
         return new DomainOfLayerEntry(identifier,
                 (startTime != null || endTime != null) ? new DateRange(startTime, endTime) : null, bbox,
                 (xResolution>0 || yResolution>0) ? new DoubleDimension2D(xResolution, yResolution) : null, null);
