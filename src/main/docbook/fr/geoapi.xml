@@ -41,6 +41,49 @@
   </itemizedlist>
 
 <section>
+  <title>Historique</title>
+  <para>
+    En 2001, le consortium <foreignphrase>Open GIS</foreignphrase> (l’ancien nom du consortium <foreignphrase>Open Geospatial</foreignphrase>) publia la spécification d’implémentation
+    <link xlink:href="http://www.opengeospatial.org/standards/ct"><acronym>OGC</acronym> 01-009: <foreignphrase>Coordinate Transformation Services</foreignphrase></link>.
+    Cette spécification, élaborée par <foreignphrase>Computer Aided Development Corporation</foreignphrase> (<acronym>Cadcorp</acronym>), était accompagnée d’interfaces
+    <acronym>COM</acronym>, <acronym>CORBA</acronym> et Java. À cette époque, la vague des services web n’avait pas encore éclipsé les interfaces de programmation classiques.
+    Les interfaces de l’<acronym>OGC</acronym> anticipaient tout de même un monde connecté en réseau,
+    mais misaient plutôt — dans le cas du Java — sur la technologie <acronym>RMI</acronym> (<foreignphrase>Remote Method Invocation</foreignphrase>).
+    Bien que le projet GeoAPI n’existait pas encore, nous désignons rétrospectivement ces interfaces historiques sous le nom de
+    « <link xlink:href="http://www.geoapi.org/0.1/index.html">GeoAPI 0.1</link> ».
+    Ces interfaces utilisaient déjà le nom de paquet <literal>org.opengis</literal>, qui sera adopté par GeoAPI.
+  </para>
+  <para>
+    En 2002, des développeurs de projets libres ont lancé un <link xlink:href="http://web.archive.org/web/20030509104308/http://digitalearth.org/story/2002/10/10/55046/206">appel
+    à la création d’un <acronym>API</acronym> géo-spatial</link>. La proposition initiale suscita l’intérêt d’au moins cinq projets libres.
+    Le projet fut créé sur <link xlink:href="http://sourceforge.net/projects/geoapi/">SourceForge</link>,
+    qui héberge depuis lors le code source dans un <link xlink:href="http://www.geoapi.org/source-repository.html">dépôt Subversion</link>.
+    Le projet pris le nom de « GeoAPI » à ce moment là, et utilisa les interfaces de la spécification <acronym>OGC</acronym> 01-009 comme point de départ.
+  </para>
+  <para>
+    Quelques mois plus tard, l’<acronym>OGC</acronym> lança le projet
+    <link xlink:href="http://www.opengeospatial.org/standards/go"><acronym>GO-1</acronym>: <foreignphrase>Geographic Objects</foreignphrase></link>,
+    qui poursuivait des buts similaires à GeoAPI. Entre-temps, l’OGC avait abandonné certaines de leur spécifications à la faveur des normes <acronym>ISO</acronym>.
+    GeoAPI et <acronym>GO-1</acronym> ont joint leurs efforts pour une refonte des interfaces de GeoAPI en les basant sur ces nouvelles normes ISO.
+    La première mouture, <link xlink:href="http://www.geoapi.org/1.0/index.html">GeoAPI 1.0</link>, a servit de point de départ
+    aux premières ébauches de la spécification <acronym>OGC</acronym> 03-064 du groupe de travail <acronym>GO-1</acronym>.
+    La version finale de cette spécification est devenue un standard <acronym>OGC</acronym> en 2005, et
+    <link xlink:href="http://www.geoapi.org/2.0/index.html">GeoAPI 2.0</link> a été publiée à cette occasion.
+  </para>
+  <para>
+    Le projet <acronym>GO-1</acronym> était porté essentiellement par une compagnie nommée <foreignphrase>Polexis</foreignphrase>.
+    Son rachat par <foreignphrase>Sys Technology</foreignphrase> et le changement de priorités des nouveaux propriétaires
+    ont causé l’arrêt des travaux de <acronym>GO-1</acronym>, et par ricochet un ralentissement des développements de GeoAPI.
+    Afin de reprendre les développements, un nouveau groupe de travail « GeoAPI 3.0 » a été créé à l’<acronym>OGC</acronym>.
+    Ce groupe a réduit les ambitions par rapport à GeoAPI 2.0 en se concentrant sur les interfaces les plus stables,
+    et en plaçant les autres — notamment les géométries — dans un module nommé « <link xlink:href="http://www.geoapi.org/geoapi-pending/index.html">pending</link> »,
+    pour considérations futures. <link xlink:href="http://www.geoapi.org/3.0/index.html">GeoAPI 3.0</link> est devenu un
+    <link xlink:href="http://www.opengeospatial.org/standards/geoapi">standard <acronym>OGC</acronym></link> en 2011.
+    Cette version a été la première à être déployée dans le <link xlink:href="http://search.maven.org/#search|ga|1|geoapi">dépôt central de Maven</link>.
+  </para>
+</section>
+
+<section>
   <title>Des spécifications aux interfaces</title>
   <para>
     Les standards de l’<acronym>OGC</acronym> étant définis par des moyens bien éprouvés en génie logiciel,
