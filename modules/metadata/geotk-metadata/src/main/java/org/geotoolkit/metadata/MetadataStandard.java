@@ -751,7 +751,7 @@ public final class MetadataStandard {
      * @throws UnmodifiableMetadataException if the target metadata is unmodifiable,
      *         or if at least one setter method was required but not found.
      *
-     * @see ModifiableMetadata#clone
+     * @see ModifiableMetadata#clone()
      */
     public void shallowCopy(final Object source, final Object target, final boolean skipNulls)
             throws ClassCastException, UnmodifiableMetadataException
@@ -820,7 +820,7 @@ public final class MetadataStandard {
      * @throws ClassCastException if the metadata object doesn't implement a metadata
      *         interface of the expected package.
      *
-     * @see AbstractMetadata#hashCode
+     * @see AbstractMetadata#hashCode()
      */
     public int hashCode(final Object metadata) throws ClassCastException {
         return getAccessor(metadata.getClass()).hashCode(metadata);
@@ -834,7 +834,7 @@ public final class MetadataStandard {
      * @throws ClassCastException if the metadata object doesn't implement a metadata
      *         interface of the expected package.
      *
-     * @see AbstractMetadata#toString
+     * @see AbstractMetadata#toString()
      */
     public String toString(final Object metadata) throws ClassCastException {
         return Trees.toString(asTreeTable(metadata));

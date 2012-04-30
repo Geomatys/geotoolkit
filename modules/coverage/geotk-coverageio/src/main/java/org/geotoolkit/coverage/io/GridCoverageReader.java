@@ -35,11 +35,13 @@ import org.w3c.dom.Node;
 import org.opengis.metadata.Metadata;
 import org.opengis.metadata.acquisition.AcquisitionInformation;
 import org.opengis.metadata.content.ImageDescription;
+import org.opengis.metadata.content.ContentInformation;
 import org.opengis.metadata.identification.DataIdentification;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.metadata.identification.Resolution;
 import org.opengis.metadata.quality.DataQuality;
 import org.opengis.metadata.spatial.Georectified;
+import org.opengis.metadata.spatial.SpatialRepresentation;
 import org.opengis.metadata.extent.Extent;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.coverage.grid.GridCoverage;
@@ -365,52 +367,69 @@ public abstract class GridCoverageReader extends GridCoverageStore {
                 }
             }
         }
-        final List<? extends GenericName> coverageNames = getCoverageNames();
-        final int numCoverages = coverageNames.size();
-        for (int i=0; i<numCoverages; i++) {
-            final SpatialMetadata coverageMetadata = getCoverageMetadata(i);
-            if (coverageMetadata != null) {
-                final ImageDescription description = coverageMetadata.getInstanceForType(ImageDescription.class);
-                if (description != null) {
-                    metadata.getContentInfo().add(description);
-                }
-                final Georectified rectified = coverageMetadata.getInstanceForType(Georectified.class);
-                if (rectified != null) {
-                    metadata.getSpatialRepresentationInfo().add(rectified);
-                }
-            }
-            if (computeResolutions || computeExtents) {
-                /*
-                 * Resolution along the horizontal axes only, ignoring all other axes.
-                 */
-                final GeneralGridGeometry gg = getGridGeometry(i);
-                if (computeResolutions) {
-                    final Measure m = CRSUtilities.getHorizontalResolution(
-                            gg.getCoordinateReferenceSystem(), gg.getResolution());
-                    if (m != null) {
-                        final DefaultResolution resolution = new DefaultResolution();
-                        resolution.setDistance(m.doubleValue()); // TODO: take unit in account.
-                        if (resolutions == null) {
-                            resolutions = new LinkedHashSet<Resolution>();
+        /*
+         * Check if we should complete the content info and the spatial representation info.
+         * If the plugin-provided metadata declare explicitly such information, we will not
+         * compute them in this method (the plugin information will have precedence).
+         */
+        final Collection<ContentInformation>    contentInfo = metadata.getContentInfo();
+        final Collection<SpatialRepresentation> spatialInfo = metadata.getSpatialRepresentationInfo();
+        final boolean computeContent = (contentInfo != null) && contentInfo.isEmpty();
+        final boolean computeSpatial = (spatialInfo != null) && spatialInfo.isEmpty();
+        if (computeContent || computeSpatial || computeResolutions || computeExtents) {
+            final List<? extends GenericName> coverageNames = getCoverageNames();
+            final int numCoverages = coverageNames.size();
+            for (int i=0; i<numCoverages; i++) {
+                if (computeContent || computeSpatial) {
+                    final SpatialMetadata coverageMetadata = getCoverageMetadata(i);
+                    if (coverageMetadata != null) {
+                        if (computeContent) {
+                            final ImageDescription description = coverageMetadata.getInstanceForType(ImageDescription.class);
+                            if (description != null) {
+                                contentInfo.add(description);
+                            }
                         }
-                        resolutions.add(resolution);
+                        if (computeSpatial) {
+                            final Georectified rectified = coverageMetadata.getInstanceForType(Georectified.class);
+                            if (rectified != null) {
+                                metadata.getSpatialRepresentationInfo().add(rectified);
+                            }
+                        }
                     }
                 }
-                /*
-                 * Horizontal, vertical and temporal extents. The horizontal extents is
-                 * represented as a geographic bounding box, which may require a reprojection.
-                 */
-                if (computeExtents && gg.isDefined(GeneralGridGeometry.ENVELOPE)) {
-                    if (extent == null) {
-                        extent = new UniqueExtents();
+                if (computeResolutions || computeExtents) {
+                    /*
+                    * Resolution along the horizontal axes only, ignoring all other axes.
+                    */
+                    final GeneralGridGeometry gg = getGridGeometry(i);
+                    if (computeResolutions) {
+                        final Measure m = CRSUtilities.getHorizontalResolution(
+                                gg.getCoordinateReferenceSystem(), gg.getResolution());
+                        if (m != null) {
+                            final DefaultResolution resolution = new DefaultResolution();
+                            resolution.setDistance(m.doubleValue()); // TODO: take unit in account.
+                            if (resolutions == null) {
+                                resolutions = new LinkedHashSet<Resolution>();
+                            }
+                            resolutions.add(resolution);
+                        }
                     }
-                    try {
-                        extent.addElements(gg.getEnvelope());
-                    } catch (TransformException e) {
-                        // Not a big deal if we fail. We will just let the identification section unchanged.
-                        if (!failed) {
-                            failed = true; // Log only once.
-                            Logging.recoverableException(LOGGER, GridCoverageReader.class, "getMetadata", e);
+                    /*
+                    * Horizontal, vertical and temporal extents. The horizontal extents is
+                    * represented as a geographic bounding box, which may require a reprojection.
+                    */
+                    if (computeExtents && gg.isDefined(GeneralGridGeometry.ENVELOPE)) {
+                        if (extent == null) {
+                            extent = new UniqueExtents();
+                        }
+                        try {
+                            extent.addElements(gg.getEnvelope());
+                        } catch (TransformException e) {
+                            // Not a big deal if we fail. We will just let the identification section unchanged.
+                            if (!failed) {
+                                failed = true; // Log only once.
+                                Logging.recoverableException(LOGGER, GridCoverageReader.class, "getMetadata", e);
+                            }
                         }
                     }
                 }

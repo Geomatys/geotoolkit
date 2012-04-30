@@ -425,7 +425,7 @@ public class CoordinateChooser extends JComponent implements Dialog {
     }
 
     /**
-     * Same as {@link Math#min(double, double}, except that the {@code floor}
+     * Same as {@link Math#max(double, double}, except that the {@code floor}
      * argument is returned if the {@code value} argument is {@code NaN}.
      */
     private static double max(final double floor, final double value) {
@@ -475,10 +475,11 @@ public class CoordinateChooser extends JComponent implements Dialog {
      * @param area The new geographic area of interest.
      */
     public void setGeographicArea(final Rectangle2D area) {
-        xmin.setValue(new Longitude(max(Longitude.MIN_VALUE, area.getMinX())));
-        xmax.setValue(new Longitude(min(Longitude.MAX_VALUE, area.getMaxX())));
-        ymin.setValue(new  Latitude(max( Latitude.MIN_VALUE, area.getMinY())));
-        ymax.setValue(new  Latitude(min( Latitude.MAX_VALUE, area.getMaxY())));
+        // We allow [-360…360]° range, since the [0…360]° range is sometime used.
+        xmin.setValue(new Longitude(max(2*Longitude.MIN_VALUE, area.getMinX())));
+        xmax.setValue(new Longitude(min(2*Longitude.MAX_VALUE, area.getMaxX())));
+        ymin.setValue(new  Latitude(max(   Latitude.MIN_VALUE, area.getMinY())));
+        ymax.setValue(new  Latitude(min(   Latitude.MAX_VALUE, area.getMaxY())));
     }
 
     /**

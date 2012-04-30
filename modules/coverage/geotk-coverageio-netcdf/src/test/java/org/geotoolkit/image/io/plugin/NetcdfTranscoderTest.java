@@ -20,6 +20,8 @@ package org.geotoolkit.image.io.plugin;
 import java.util.List;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Collection;
+import java.util.Iterator;
 import java.io.IOException;
 import javax.imageio.IIOException;
 import ucar.nc2.NetcdfFile;
@@ -32,8 +34,8 @@ import org.opengis.metadata.content.CoverageDescription;
 import org.opengis.metadata.content.RangeDimension;
 import org.opengis.metadata.spatial.Dimension;
 import org.opengis.metadata.spatial.GridSpatialRepresentation;
-import org.opengis.metadata.spatial.SpatialRepresentationType;
 import org.opengis.metadata.identification.DataIdentification;
+import org.opengis.metadata.identification.KeywordType;
 import org.opengis.metadata.identification.Keywords;
 import org.opengis.metadata.extent.Extent;
 import org.opengis.metadata.extent.TemporalExtent;
@@ -186,8 +188,6 @@ public final strictfp class NetcdfTranscoderTest extends NetcdfMetadataTest {
         final DataIdentification identification = (DataIdentification) getSingleton(metadata.getIdentificationInfo());
         assertSame("identificationInfo.pointOfContact", contact,
                 getSingleton(identification.getPointOfContacts()));
-        assertSame("identificationInfo.spatialRepresentationType", SpatialRepresentationType.GRID,
-                getSingleton(identification.getSpatialRepresentationTypes()));
         assertEquals("identificationInfo.resourceConstraints.useLimitation", "Freely available",
                 String.valueOf(getSingleton(getSingleton(identification.getResourceConstraints()).getUseLimitations())));
         /*
@@ -200,6 +200,8 @@ public final strictfp class NetcdfTranscoderTest extends NetcdfMetadataTest {
          * Metadata / Data Identification / Keywords.
          */
         final Keywords keywords = getSingleton(identification.getDescriptiveKeywords());
+        assertSame("identificationInfo.descriptiveKeywords.type", KeywordType.THEME,
+                keywords.getType());
         assertEquals("identificationInfo.descriptiveKeywords.thesaurusName", "GCMD Science Keywords",
                 String.valueOf(keywords.getThesaurusName().getTitle()));
         assertEquals("identificationInfo.descriptiveKeywords.keyword",
@@ -218,11 +220,32 @@ public final strictfp class NetcdfTranscoderTest extends NetcdfMetadataTest {
         final TemporalExtent text = getSingleton(extent.getTemporalElements());
         final Instant instant = (Instant) text.getExtent();
         // Can not test at this time, since it requires the geotk-temporal module.
+        /*
+         * Metadata / Content information / Range dimension.
+         */
+        final Collection<? extends ContentInformation> content = metadata.getContentInfo();
+        assertEquals("contentInfo.size", 2, content.size());
+        final Iterator<? extends ContentInformation> it = content.iterator();
+        assertTrue("contentInfo.hasNext", it.hasNext());
+        RangeDimension band = getSingleton(((CoverageDescription) it.next()).getDimensions());
+        assertEquals("contentInfo[0].dimension.sequenceIdentifier", "grid_number",
+                String.valueOf(band.getSequenceIdentifier()));
+        assertEquals("contentInfo[0].dimension.descriptor", "GRIB-1 catalogued grid numbers",
+                String.valueOf(band.getDescriptor()));
+
+        assertTrue("contentInfo.hasNext", it.hasNext());
+        band = getSingleton(((CoverageDescription) it.next()).getDimensions());
+        assertEquals("contentInfo[1].dimension.sequenceIdentifier", "SST",
+                String.valueOf(band.getSequenceIdentifier()));
+        assertEquals("contentInfo[1].dimension.descriptor", "Sea temperature",
+                String.valueOf(band.getDescriptor()));
+        assertFalse("contentInfo.hasNext", it.hasNext());
     }
 
     /**
      * Same test than {@link #testNCEP()}, but now reading through a {@link ImageCoverageReader}.
-     * This is an integration test.
+     * This is an integration test, with some additional metadata which were added by the coverage
+     * reader.
      *
      * @throws IOException If the test file can not be read.
      * @throws CoverageStoreException Should never happen.
@@ -231,6 +254,16 @@ public final strictfp class NetcdfTranscoderTest extends NetcdfMetadataTest {
     public void testIntegratedNCEP() throws IOException, CoverageStoreException {
         integrationTest = true;
         testNCEP();
+        /*
+         * Metadata / Grid Spatial Representation.
+         */
+        final GridSpatialRepresentation spatial = (GridSpatialRepresentation) getSingleton(metadata.getSpatialRepresentationInfo());
+        final List<? extends Dimension> axis = spatial.getAxisDimensionProperties();
+        assertEquals(Integer.valueOf(3), spatial.getNumberOfDimensions());
+        assertEquals(3, axis.size());
+        assertEquals(Integer.valueOf(73), axis.get(0).getDimensionSize());
+        assertEquals(Integer.valueOf(73), axis.get(1).getDimensionSize());
+        assertEquals(Integer.valueOf( 1), axis.get(2).getDimensionSize());
     }
 
     /**

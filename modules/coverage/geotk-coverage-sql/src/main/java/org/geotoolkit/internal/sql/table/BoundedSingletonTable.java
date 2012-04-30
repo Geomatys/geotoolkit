@@ -31,6 +31,7 @@ import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.coverage.sql.CoverageEnvelope;
+import org.geotoolkit.referencing.datum.DefaultTemporalDatum;
 
 
 /**
@@ -219,7 +220,7 @@ public abstract class BoundedSingletonTable<E extends Entry> extends SingletonTa
                  * TODO: Revisit if we find some way to specify 'infinity' with future JDBC drivers.
                  */
                 if (tMin == null) {
-                    tMin = ((SpatialDatabase) getDatabase()).temporalCRS.getDatum().getOrigin();
+                    tMin = DefaultTemporalDatum.JULIAN.getOrigin();
                 }
                 if (tMax == null) {
                     tMax = new Date();

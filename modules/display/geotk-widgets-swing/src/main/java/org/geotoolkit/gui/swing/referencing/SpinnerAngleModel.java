@@ -78,7 +78,7 @@ final class SpinnerAngleModel extends AbstractSpinnerModel implements Serializab
      * Initial minimum and maximum values are chosen according the {@code value} type:
      * <p>
      * <table>
-     *   <tr><td>{@link Longitude}&nbsp;</td> <td>-180° to 180°</td></tr>
+     *   <tr><td>{@link Longitude}&nbsp;</td> <td>-360° to 360°</td></tr>
      *   <tr><td>{@link Latitude}&nbsp;</td>  <td>-90° to 90°</td>  </tr>
      *   <tr><td>{@link Angle}&nbsp;</td>     <td>0° to 360°</td>   </tr>
      * </table>
@@ -89,8 +89,8 @@ final class SpinnerAngleModel extends AbstractSpinnerModel implements Serializab
     public SpinnerAngleModel(final Angle value) {
         this.value = value;
         if (value instanceof Longitude) {
-            minimum  = Longitude.MIN_VALUE;
-            maximum  = Longitude.MAX_VALUE;
+            minimum  = 2*Longitude.MIN_VALUE;
+            maximum  = 2*Longitude.MAX_VALUE;
         } else if (value instanceof Latitude) {
             minimum  = Latitude.MIN_VALUE;
             maximum  = Latitude.MAX_VALUE;
