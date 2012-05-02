@@ -43,17 +43,57 @@ import java.awt.image.RenderedImage;
  * @author Rémi Marechal       (Geomatys).
  * @author Martin Desruisseaux (Geomatys).
  */
-public class RowMajorRenderedImageIterator extends RasterBasedIterator {
-
-    /**
-     * true if raster constructor is used else false.
-     */
-    private final boolean raster;
+class RowMajorIterator extends PixelIterator{
 
     /**
      * RenderedImage which is followed by Iterator.
      */
     private RenderedImage renderedImage;
+
+    /**
+     * Current raster which is followed by Iterator.
+     */
+    protected Raster currentRaster;
+
+    /**
+     * Number of raster band .
+     */
+    protected int numBand;
+
+    /**
+     * The X coordinate of the upper-left pixel of this current raster.
+     */
+    protected int minX;
+
+    /**
+     * The Y coordinate of the upper-left pixel of this current raster.
+     */
+    protected int minY;
+
+    /**
+     * The X coordinate of the bottom-right pixel of this current raster.
+     */
+    protected int maxX;
+
+    /**
+     * The Y coordinate of the bottom-right pixel of this current raster.
+     */
+    protected int maxY;
+
+    /**
+     * Current X pixel coordinate in this current raster.
+     */
+    protected int x;
+
+    /**
+     * Current Y pixel coordinate in this current raster.
+     */
+    protected int y;
+
+    /**
+     * Current band position in this current raster.
+     */
+    protected int band;
 
     /**
      * The X index coordinate of the upper-left tile of this rendered image.
@@ -109,9 +149,8 @@ public class RowMajorRenderedImageIterator extends RasterBasedIterator {
      *
      * @param renderedImage : image which will be follow by iterator.
      */
-    public RowMajorRenderedImageIterator(RenderedImage renderedImage) {
+    RowMajorIterator(RenderedImage renderedImage) {
         this.renderedImage = renderedImage;
-        this.raster = false;
         //rect attributs
         this.subAreaMinX = renderedImage.getMinX();
         this.subAreaMinY = renderedImage.getMinY();
@@ -135,9 +174,8 @@ public class RowMajorRenderedImageIterator extends RasterBasedIterator {
      * @param subArea : Rectangle which represent image sub area iteration.
      * @throws IllegalArgumentException if subArea don't intersect image.
      */
-    public RowMajorRenderedImageIterator(final RenderedImage renderedImage, final Rectangle subArea) {
+    RowMajorIterator(final RenderedImage renderedImage, final Rectangle subArea) {
         this.renderedImage = renderedImage;
-        this.raster = false;
         //rect attributs
         this.subAreaMinX = subArea.x;
         this.subAreaMinY = subArea.y;
@@ -150,7 +188,7 @@ public class RowMajorRenderedImageIterator extends RasterBasedIterator {
         final int maxIAY = Math.min(renderedImage.getMinY() + renderedImage.getHeight(), subAreaMaxY);
         //intersection test
         if (minIAX > maxIAX || minIAY > maxIAY)
-        throw new IllegalArgumentException("invalid subArea coordinate no intersection between it and RenderedImage"+renderedImage+subArea);
+            throw new IllegalArgumentException("invalid subArea coordinate no intersection between it and RenderedImage"+renderedImage+subArea);
         //tiles attributs
         final int rITWidth   = renderedImage.getTileWidth();
         final int rITHeight  = renderedImage.getTileHeight();
@@ -167,31 +205,10 @@ public class RowMajorRenderedImageIterator extends RasterBasedIterator {
     }
 
     /**
-     * Create raster iterator to follow from its minX and minY coordinates.
-     *
-     * @param raster will be followed by this iterator.
-     */
-    public RowMajorRenderedImageIterator(final Raster raster) {
-        super(raster);
-        this.raster = true;
-    }
-
-    /**
-     * Create raster iterator to follow from minX, minY raster and rectangle2D intersection coordinate.
-     *
-     * @param raster will be followed by this iterator.
-     */
-    public RowMajorRenderedImageIterator(final Raster raster, final Rectangle subArea) {
-        super(raster, subArea);
-        this.raster = true;
-    }
-
-    /**
      * {@inheritDoc }.
      */
     @Override
     public boolean next() {
-        if (raster) return super.next();
         if (++band == numBand) {
             band = 0;
             if (++x == maxX) {
@@ -201,14 +218,14 @@ public class RowMajorRenderedImageIterator extends RasterBasedIterator {
                     if (++y == maxY) {
                         if(++tY == tMaxY) return false;
                         //initialize from new tile(raster) after tiles Y move.
-                        currentRaster = renderedImage.getTile(tX, tY);
+                        updateCurrentRaster(tX, tY);
                         final int cRMinY = currentRaster.getMinY();
                         this.y = Math.max(subAreaMinY, cRMinY);
                         this.maxY = Math.min(subAreaMaxY, cRMinY + currentRaster.getHeight());
                     }
                 }
                 //initialize from new tile(raster) after tiles X move.
-                currentRaster = renderedImage.getTile(tX, tY);
+                updateCurrentRaster(tX, tY);
                 final int cRMinX = currentRaster.getMinX();
                 this.minX = this.x = Math.max(subAreaMinX, cRMinX);
                 this.maxX = Math.min(subAreaMaxX, cRMinX + currentRaster.getWidth());
@@ -219,17 +236,94 @@ public class RowMajorRenderedImageIterator extends RasterBasedIterator {
     }
 
     /**
+     * Update current raster from tiles array coordinates.
+     *
+     * @param tileX current X coordinate from rendered image tiles array.
+     * @param tileY current Y coordinate from rendered image tiles array.
+     */
+    protected void updateCurrentRaster(int tileX, int tileY){
+        currentRaster = renderedImage.getTile(tileX, tileY);
+    }
+
+    /**
      * {@inheritDoc }.
      */
     @Override
     public void rewind() {
-        if(raster) {
-            super.rewind();
-        } else {
-            this.x    = this.y    = this.band    = 0;
-            this.maxX = this.maxY = this.numBand = 1;
-            this.tX = tMaxX - 1;
-            this.tY = tMinY - 1;
-        }
+        this.x    = this.y    = this.band    = 0;
+        this.maxX = this.maxY = this.numBand = 1;
+        this.tX = tMaxX - 1;
+        this.tY = tMinY - 1;
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public int getX() {
+        return x;
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public int getY() {
+        return y;
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public int getSample() {
+        return currentRaster.getSample(x, y, band);
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public float getSampleFloat() {
+        return currentRaster.getSampleFloat(x, y, band);
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public double getSampleDouble() {
+        return currentRaster.getSampleDouble(x, y, band);
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public void setSample(int value) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public void setSampleFloat(float value) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public void setSampleDouble(double value) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public void close() {
     }
 }

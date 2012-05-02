@@ -18,27 +18,32 @@
 package org.geotoolkit.image.iterator;
 
 import java.awt.Rectangle;
-import java.awt.image.BandedSampleModel;
-import java.awt.image.DataBuffer;
-import java.awt.image.Raster;
-import java.awt.image.RenderedImage;
+import java.awt.image.*;
 import javax.media.jai.TiledImage;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 /**
- * Test DefaultRenderedImageIterator class.
+ * Test RowMajorRenderedImageIterator class.
  *
  * @author Rémi Marechal (Geomatys).
  */
-public class DefaultRenderedImageIteratorTest extends RasterBasedIteratorTest {
-
+public class RowMajorIteratorTest {
     TiledImage renderedImage;
-    int tilesWidth;
-    int tilesHeight;
+    protected int tilesWidth;
+    protected int tilesHeight;
+    protected int numBand;
+    protected int width;
+    protected int height;
+    protected int dataType = DataBuffer.TYPE_INT;
+    protected int minx;
+    protected int miny;
+    protected int[] tabRef, tabTest;
 
-    public DefaultRenderedImageIteratorTest() {
+    protected WritableRaster rasterTest;
+    protected PixelIterator pixIterator;
 
+    public RowMajorIteratorTest() {
     }
 
     protected void setRenderedImgTest(int minx, int miny, int width, int height, int tilesWidth, int tilesHeight, int numBand, Rectangle areaIterate) {
@@ -67,7 +72,7 @@ public class DefaultRenderedImageIteratorTest extends RasterBasedIteratorTest {
             minIY = Math.max(cULY, miny);
             maxIX = Math.min(cBRX, minx + width);
             maxIY = Math.min(cBRY, miny + height);
-            tabLenght = Math.abs((maxIX-minIX)*(maxIY-minIY)) * numBand;
+            tabLenght = Math.abs((maxIX-minIX)*(maxIY-minIY)) *numBand;
             tileMinX = (minIX - minx) / tilesWidth;
             tileMinY = (minIY - miny) / tilesHeight;
             tileMaxX = (maxIX - minx) / tilesWidth;
@@ -86,30 +91,33 @@ public class DefaultRenderedImageIteratorTest extends RasterBasedIteratorTest {
         for (int tileY = tileMinY; tileY<tileMaxY; tileY++) {
             rastminY = tileY * tilesHeight;
             rastmaxY = rastminY + tilesHeight;
-            for (int tileX = tileMinX; tileX<tileMaxX; tileX++) {
-                //tile by tile
-                rastminX = tileX * tilesWidth;
-                rastmaxX = rastminX + tilesWidth;
-                if (areaIterate == null) {
-                    depX = rastminX;
-                    depY = rastminY;
-                    endX = rastmaxX;
-                    endY = rastmaxY;
-                } else {
-                    depX = Math.max(rastminX, minIX);
-                    depY = Math.max(rastminY, minIY);
-                    endX = Math.min(rastmaxX, maxIX);
-                    endY = Math.min(rastmaxY, maxIY);
-                }
+            if (areaIterate == null) {
+                depY = rastminY;
+                endY = rastmaxY;
+            } else {
+                depY = Math.max(rastminY, minIY);
+                endY = Math.min(rastmaxY, maxIY);
+            }
 
-                for (int y = depY; y<endY; y++) {
+            for (int y = depY; y<endY; y++) {
+                for (int tileX = tileMinX; tileX<tileMaxX; tileX++) {
+                    //tile by tile
+                    rastminX = tileX * tilesWidth;
+                    rastmaxX = rastminX + tilesWidth;
+                    if (areaIterate == null) {
+                        depX = rastminX;
+                        endX = rastmaxX;
+                    } else {
+                        depX = Math.max(rastminX, minIX);
+                        endX = Math.min(rastmaxX, maxIX);
+                    }
+
                     for (int x = depX; x<endX; x++) {
                         for (int b = 0; b<numBand; b++) {
                             tabRef[comp++] =  b + numBand * ((x-depX) + tilesWidth*tileX + width * ((y-depY) + tilesHeight*tileY));
                         }
                     }
                 }
-
             }
         }
     }
@@ -119,7 +127,7 @@ public class DefaultRenderedImageIteratorTest extends RasterBasedIteratorTest {
      * Also test rewind function.
      */
     @Test
-    public void transversingAllReadTest() {
+    public void transversingAllTest() {
         minx = 0;
         miny = 0;
         width = 100;
@@ -238,7 +246,7 @@ public class DefaultRenderedImageIteratorTest extends RasterBasedIteratorTest {
 
     /**
      * Test if iterator transverse expected value in define area.
-     * Area is within image area.
+     * Area is within raster area.
      */
     @Test
     public void imageContainsRectTest() {
@@ -259,7 +267,7 @@ public class DefaultRenderedImageIteratorTest extends RasterBasedIteratorTest {
 
     /**
      * Test if iterator transverse expected value in define area.
-     * Area contains all image area.
+     * Area contains all raster area.
      */
     @Test
     public void rectContainsImageTest() {
@@ -294,34 +302,27 @@ public class DefaultRenderedImageIteratorTest extends RasterBasedIteratorTest {
     }
 
     /**
-     * {@inheritDoc }.
+     * Compare 2 integer table.
+     *
+     * @param tabA table resulting raster iterate.
+     * @param tabB table resulting raster iterate.
+     * @return true if tables are identical.
      */
-    @Override
-    protected void setPixelIterator(Raster raster) {
-        super.pixIterator = new DefaultRenderedImageIterator(raster);
+    protected boolean compareTab(int[] tabA, int[] tabB) {
+        int length = tabA.length;
+        if (length != tabB.length) return false;
+        for (int i = 0; i<length; i++) {
+            if (tabA[i] != tabB[i]) return false;
+        }
+        return true;
     }
 
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
     protected void setPixelIterator(RenderedImage renderedImage) {
-        super.pixIterator = new DefaultRenderedImageIterator(renderedImage);
+        pixIterator = PixelIteratorFactory.createRowMajorIterator(renderedImage);
     }
 
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    protected void setPixelIterator(final Raster raster, final Rectangle subArea) {
-        super.pixIterator = new DefaultRenderedImageIterator(raster, subArea);
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
     protected void setPixelIterator(RenderedImage renderedImage, Rectangle subArea) {
-        super.pixIterator = new DefaultRenderedImageIterator(renderedImage, subArea);
+        pixIterator = PixelIteratorFactory.createRowMajorIterator(renderedImage, subArea);
     }
+
 }

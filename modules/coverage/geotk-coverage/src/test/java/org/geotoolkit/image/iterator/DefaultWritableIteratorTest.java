@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.image.iterator;
 
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.*;
 import javax.media.jai.TiledImage;
@@ -28,11 +29,11 @@ import org.junit.Test;
  *
  * @author Rémi Marechal (Geomatys).
  */
-public class DefaultWritableRIIteratorTest extends DefaultRenderedImageIteratorTest {
+public class DefaultWritableIteratorTest extends DefaultIteratorTest {
 
 
 
-    public DefaultWritableRIIteratorTest() {
+    public DefaultWritableIteratorTest() {
 
     }
 
@@ -264,11 +265,56 @@ public class DefaultWritableRIIteratorTest extends DefaultRenderedImageIteratorT
     }
 
     /**
+     * Test catching exception if rasters haven't got same criterion.
+     */
+    @Test
+    public void unappropriateRasterTest() {
+        final Raster rasterRead = Raster.createBandedRaster(dataType, 20, 10, 3, new Point(0,0));
+        final WritableRaster rasterWrite = Raster.createBandedRaster(dataType, 200, 100, 30, new Point(3,1));
+        boolean test = false;
+        try {
+            final DefaultWritableIterator iter = new DefaultWritableIterator(rasterRead, rasterWrite);
+        } catch(Exception e) {
+            test = true;
+        }
+        assertTrue(test);
+    }
+
+    /**
+     * Test catching exception if rendered images haven't got same criterion.
+     */
+    @Test
+    public void unappropriateRenderedImageTest(){
+        final BandedSampleModel sampleMR = new BandedSampleModel(DataBuffer.TYPE_INT, 100, 50, 3);
+        final RenderedImage rendReadImage = new TiledImage(0, 0, 1000, 500, 0, 0, sampleMR, null);
+
+        BandedSampleModel sampleMW = new BandedSampleModel(DataBuffer.TYPE_INT, 100, 50, 3);
+        WritableRenderedImage rendWriteImage = new TiledImage(0, 0, 100, 500, 15, 25, sampleMW, null);
+        boolean test = false;
+        try {
+            final DefaultWritableIterator iter = new DefaultWritableIterator(rendReadImage, rendWriteImage);
+        } catch(Exception e) {
+            test = true;
+        }
+        assertTrue(test);
+
+        test = false;
+        sampleMW = new BandedSampleModel(DataBuffer.TYPE_INT, 10, 5, 3);
+        rendWriteImage = new TiledImage(0, 0, 1000, 500, 0, 0, sampleMW, null);
+        try {
+            final DefaultWritableIterator iter = new DefaultWritableIterator(rendReadImage, rendWriteImage);
+        } catch(Exception e) {
+            test = true;
+        }
+        assertTrue(test);
+    }
+
+    /**
      * {@inheritDoc }.
      */
     @Override
     protected void setPixelIterator(Raster raster) {
-        super.pixIterator = new DefaultWritableRIIterator(raster, (WritableRaster)raster);
+        super.pixIterator = PixelIteratorFactory.createDefaultWriteableIterator(raster, (WritableRaster)raster);
     }
 
     /**
@@ -276,7 +322,7 @@ public class DefaultWritableRIIteratorTest extends DefaultRenderedImageIteratorT
      */
     @Override
     protected void setPixelIterator(RenderedImage renderedImage) {
-        super.pixIterator = new DefaultWritableRIIterator(renderedImage, (WritableRenderedImage)renderedImage);
+        super.pixIterator = PixelIteratorFactory.createDefaultWriteableIterator(renderedImage, (WritableRenderedImage)renderedImage);
     }
 
     /**
@@ -284,7 +330,7 @@ public class DefaultWritableRIIteratorTest extends DefaultRenderedImageIteratorT
      */
     @Override
     protected void setPixelIterator(final Raster raster, final Rectangle subArea) {
-        super.pixIterator = new DefaultWritableRIIterator(raster, (WritableRaster)raster, subArea);
+        super.pixIterator = PixelIteratorFactory.createDefaultWriteableIterator(raster, (WritableRaster)raster, subArea);
     }
 
     /**
@@ -292,6 +338,6 @@ public class DefaultWritableRIIteratorTest extends DefaultRenderedImageIteratorT
      */
     @Override
     protected void setPixelIterator(RenderedImage renderedImage, Rectangle subArea) {
-        super.pixIterator = new DefaultWritableRIIterator(renderedImage, (WritableRenderedImage)renderedImage, subArea);
+        super.pixIterator = PixelIteratorFactory.createDefaultWriteableIterator(renderedImage, (WritableRenderedImage)renderedImage, subArea);
     }
 }

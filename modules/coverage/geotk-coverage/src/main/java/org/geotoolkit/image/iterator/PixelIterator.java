@@ -86,21 +86,29 @@ public abstract class PixelIterator {
     /**
      * Write integer value at current iterator position.
      *
-     * @param value : integer to write.
+     * @param value integer to write.
      */
     public abstract void setSample(final int value);
 
     /**
      * Write float value at current iterator position.
      *
-     * @param value : float to write.
+     * @param value float to write.
      */
     public abstract void setSampleFloat(final float value);
 
     /**
      * Write double value at current iterator position.
      *
-     * @param value : double to write.
+     * @param value double to write.
      */
     public abstract void setSampleDouble(final double value);
+
+    /**
+     * To release last tiles iteration from writable rendered image tiles array.
+     * if this method is invoked in read-only iterator, method is idempotent (has no effect).
+     */
+    public abstract void close();
+
+    
 }
