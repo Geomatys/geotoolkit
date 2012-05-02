@@ -33,17 +33,17 @@
   <!-- =========================================================== -->
   <!--     Developers and Contributors                             -->
   <!-- =========================================================== -->
-    <developers>
+     <developers>
         <developer>
-          <name>Quentin Boileau</name>
-          <id>qboileau</id>
-          <email>quentin.boileau@gmail.com</email>
-          <organization>Geomatys</organization>
-          <organizationUrl>http://www.geomatys.fr/</organizationUrl>
-          <timezone>+1</timezone>
-          <roles>
-            <role>Developer</role>
-          </roles>
+            <name>Quentin Boileau</name>
+            <id>qboileau</id>
+            <email>quentin.boileau@geomatys.com</email>
+            <organization>Geomatys</organization>
+            <organizationUrl>http://www.geomatys.com/</organizationUrl>
+            <timezone>+1</timezone>
+            <roles>
+                <role>Developer</role>
+            </roles>
         </developer>
     </developers>
 

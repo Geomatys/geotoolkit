@@ -36,8 +36,9 @@
     <developer>
       <name>Quentin Boileau</name>
       <id>qboileau</id>
-      <email>quentin.boileau@gmail.com</email>
+      <email>quentin.boileau@geomatys.com</email>
       <organization>Geomatys</organization>
+      <organizationUrl>http://www.geomatys.com/</organizationUrl>
       <roles>
         <role>Developer</role>
       </roles>
