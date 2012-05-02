@@ -32,6 +32,7 @@ import org.geotoolkit.security.DefaultClientSecurity;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -92,7 +93,12 @@ public abstract class AbstractServer implements Server{
      */
     @Override
     public ClientSecurity getClientSecurity() {
-        final ClientSecurity securityManager = Parameters.value(AbstractServerFactory.SECURITY,parameters); 
+        ClientSecurity securityManager = null;
+        try {
+            securityManager = Parameters.value(AbstractServerFactory.SECURITY,parameters); 
+        } catch (ParameterNotFoundException ex) {
+            // do nothing
+        }
         return (securityManager == null) ?  DefaultClientSecurity.NO_SECURITY : securityManager;
     }
     
@@ -147,7 +153,9 @@ public abstract class AbstractServer implements Server{
             final URL url, final ClientSecurity security){
         final ParameterValueGroup param = desc.createValue();
         param.parameter(AbstractServerFactory.URL.getName().getCode()).setValue(url);
-        param.parameter(AbstractServerFactory.SECURITY.getName().getCode()).setValue(security);
+        if (security != null) {
+            Parameters.getOrCreate(AbstractServerFactory.SECURITY, param).setValue(security);
+        }
         return param;
     }
 }

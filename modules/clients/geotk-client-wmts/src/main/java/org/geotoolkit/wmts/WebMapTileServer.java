@@ -111,7 +111,7 @@ public class WebMapTileServer extends AbstractServer implements CoverageStore{
     public WebMapTileServer(final URL serverURL, final ClientSecurity security, 
             final WMTSVersion version, final Capabilities capabilities, boolean cacheImage) {
         super(create(WMTSServerFactory.PARAMETERS, serverURL, security));
-        Parameters.getOrCreate(WMTSServerFactory.VERSION, parameters).setValue(version);
+        Parameters.getOrCreate(WMTSServerFactory.VERSION, parameters).setValue(version.getCode());
         Parameters.getOrCreate(WMTSServerFactory.IMAGE_CACHE, parameters).setValue(cacheImage);
         this.capabilities = capabilities;
     }
