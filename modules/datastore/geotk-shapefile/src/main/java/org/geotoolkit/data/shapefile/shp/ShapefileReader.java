@@ -376,15 +376,40 @@ public class ShapefileReader implements Closeable{
      * @return The length of the record transfered in bytes
      */
     public int transferTo(final ShapefileWriter writer, final int recordNum, final double[] bounds) throws IOException {
-
+        
         buffer.position(this.toBufferOffset(record.end));
         buffer.order(ByteOrder.BIG_ENDIAN);
 
         buffer.getInt(); // record number
-        final int rl = buffer.getInt();
-        final int mark = buffer.position();
-        final int len = rl * 2;
+        final int recordLenght = buffer.getInt();
+        final int len = recordLenght * 2;
 
+        if (!buffer.isReadOnly() && !useMemoryMappedBuffer) {
+            // capacity is less than required for the record
+            // copy the old into the newly allocated
+            if (buffer.capacity() < len + 8) {
+                this.currentOffset += buffer.position();
+                final ByteBuffer old = buffer;
+                // ensure enough capacity for one more record header
+                buffer = ensureCapacity(buffer, len + 8, useMemoryMappedBuffer);
+                buffer.put(old);
+                fill(buffer, channel);
+                buffer.position(0);
+            } else
+            // remaining is less than record length
+            // compact the remaining data and read again,
+            // allowing enough room for one more record header
+            if (buffer.remaining() < len + 8) {
+                this.currentOffset += buffer.position();
+                buffer.compact();
+                fill(buffer, channel);
+                buffer.position(0);
+            }
+        }
+        
+        final int mark = buffer.position();
+                
+        
         buffer.order(ByteOrder.LITTLE_ENDIAN);
         final ShapeType recordType = ShapeType.forID(buffer.getInt());
 
@@ -399,10 +424,10 @@ public class ShapefileReader implements Closeable{
 
         // write header to shp and shx
         headerTransfer.position(0);
-        headerTransfer.putInt(recordNum).putInt(rl).position(0);
+        headerTransfer.putInt(recordNum).putInt(recordLenght).position(0);
         writer.shpChannel.write(headerTransfer);
         headerTransfer.putInt(0, writer.offset).position(0);
-        writer.offset += rl + 4;
+        writer.offset += recordLenght + 4;
         writer.shx.getChannel().write(headerTransfer);
 
         // reset to mark and limit at end of record, then write
