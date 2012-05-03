@@ -27,6 +27,7 @@ import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.util.ResourceInternationalString;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
@@ -66,8 +67,13 @@ public class GPXDataStoreFactory extends AbstractFileDataStoreFactory {
     }
 
     @Override
-    public String getDescription() {
-        return "GPX files (*.gpx)";
+    public CharSequence getDescription() {
+        return new ResourceInternationalString("org/geotoolkit/gpx/bundle", "datastoreDescription");
+    }
+
+    @Override
+    public CharSequence getDisplayName() {
+        return new ResourceInternationalString("org/geotoolkit/gpx/bundle", "datastoreTitle");
     }
 
     @Override

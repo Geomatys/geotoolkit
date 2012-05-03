@@ -64,7 +64,7 @@ public class JDataStoreChooser extends javax.swing.JPanel {
     private static final Comparator<DataStoreFactory> SORTER = new Comparator<DataStoreFactory>() {
         @Override
         public int compare(DataStoreFactory o1, DataStoreFactory o2) {
-            return o1.getDisplayName().compareTo(o2.getDisplayName());
+            return o1.getDisplayName().toString().compareTo(o2.getDisplayName().toString());
         }
     };
     

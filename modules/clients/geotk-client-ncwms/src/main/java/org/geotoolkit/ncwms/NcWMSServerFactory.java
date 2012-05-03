@@ -32,6 +32,7 @@ import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.util.ResourceInternationalString;
 import org.geotoolkit.wms.xml.WMSVersion;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
@@ -91,6 +92,16 @@ public class NcWMSServerFactory extends AbstractServerFactory{
     @Override
     public ParameterDescriptorGroup getParametersDescriptor() {
         return PARAMETERS;
+    }
+
+    @Override
+    public CharSequence getDisplayName() {
+        return new ResourceInternationalString("org/geotoolkit/ncwms/bundle", "serverTitle");
+    }
+
+    @Override
+    public CharSequence getDescription() {
+        return new ResourceInternationalString("org/geotoolkit/ncwms/bundle", "serverDescription");
     }
 
     @Override

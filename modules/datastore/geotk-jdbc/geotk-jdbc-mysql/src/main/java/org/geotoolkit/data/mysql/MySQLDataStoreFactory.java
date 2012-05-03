@@ -32,6 +32,7 @@ import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
+import org.geotoolkit.util.ResourceInternationalString;
 
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
@@ -103,13 +104,13 @@ public class MySQLDataStoreFactory extends JDBCDataStoreFactory {
     }
 
     @Override
-    public String getDisplayName() {
-        return "MySQL";
+    public CharSequence getDisplayName() {
+        return new ResourceInternationalString("org/geotoolkit/mysql/bundle", "datastoreTitle");
     }
 
     @Override
-    public String getDescription() {
-        return "MySQL Database";
+    public CharSequence getDescription() {
+        return new ResourceInternationalString("org/geotoolkit/mysql/bundle", "datastoreDescription");
     }
 
     @Override

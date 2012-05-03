@@ -102,6 +102,17 @@ public abstract class AbstractFolderDataStoreFactory extends AbstractDataStoreFa
     }
 
     @Override
+    public CharSequence getDescription() {
+        return super.getDisplayName();
+    }
+
+    @Override
+    public CharSequence getDisplayName() {
+        return super.getDisplayName();
+    }
+
+    
+    @Override
     public DataStore create(ParameterValueGroup params) throws DataStoreException {
         checkCanProcessWithError(params);
         final FolderDataStore store = new FolderDataStore(params,this);

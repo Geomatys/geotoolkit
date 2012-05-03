@@ -97,6 +97,16 @@ public class StaticGoogleServerFactory extends AbstractServerFactory implements 
     }
 
     @Override
+    public CharSequence getDescription() {
+        return new ResourceInternationalString("org/geotoolkit/googlemaps/bundle", "coverageDescription");
+    }
+
+    @Override
+    public CharSequence getDisplayName() {
+        return new ResourceInternationalString("org/geotoolkit/googlemaps/bundle", "coverageTitle");
+    }
+
+    @Override
     public StaticGoogleMapsServer create(ParameterValueGroup params) throws DataStoreException {
         checkCanProcessWithError(params);
         final StaticGoogleMapsServer server = new StaticGoogleMapsServer(params);

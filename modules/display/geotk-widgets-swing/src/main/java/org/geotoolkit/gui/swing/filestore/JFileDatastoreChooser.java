@@ -80,7 +80,7 @@ public class JFileDatastoreChooser extends javax.swing.JSplitPane {
         final Iterator<FileDataStoreFactory> ite = DataStoreFinder.getAvailableFactories(FileDataStoreFactory.class);
         while(ite.hasNext()){
             final FileDataStoreFactory fact = ite.next();
-            final String name = fact.getDescription();
+            final String name = fact.getDescription().toString();
             final String[] exts = fact.getFileExtensions();            
             final FileFilter filter = new DefaultFileFilter("*"+exts[0], name){
                 @Override

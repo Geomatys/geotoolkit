@@ -42,6 +42,7 @@ import org.geotoolkit.data.AbstractDataStoreFactory;
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
+import org.geotoolkit.util.ResourceInternationalString;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.metadata.quality.ConformanceResult;
@@ -136,8 +137,8 @@ public class ShapefileDataStoreFactory extends AbstractFileDataStoreFactory impl
      * {@inheritDoc }
      */
     @Override
-    public String getDisplayName() {
-        return "Shapefile";
+    public CharSequence getDisplayName() {
+        return new ResourceInternationalString("org/geotoolkit/shapefile/bundle", "datastoreTitle");
     }
 
     /**
@@ -148,8 +149,8 @@ public class ShapefileDataStoreFactory extends AbstractFileDataStoreFactory impl
      *         supported by this datastore.
      */
     @Override
-    public String getDescription() {
-        return "ESRI(tm) Shapefiles (*.shp)";
+    public CharSequence getDescription() {
+        return new ResourceInternationalString("org/geotoolkit/shapefile/bundle", "datastoreDescription");
     }
 
     /**

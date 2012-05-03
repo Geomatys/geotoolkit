@@ -44,6 +44,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
 import static org.geotoolkit.jdbc.JDBCDataStoreFactory.*;
+import org.geotoolkit.util.ResourceInternationalString;
 
 /**
  *
@@ -132,8 +133,13 @@ public class OMDataStoreFactory extends AbstractDataStoreFactory {
      * {@inheritDoc }
      */
     @Override
-    public String getDescription() {
-        return "OGC Observation And Measurement datastore factory";
+    public CharSequence getDescription() {
+        return new ResourceInternationalString("org/geotoolkit/om/bundle", "datastoreDescription");
+    }
+
+    @Override
+    public CharSequence getDisplayName() {
+        return new ResourceInternationalString("org/geotoolkit/om/bundle", "datastoreTitle");
     }
 
     /**

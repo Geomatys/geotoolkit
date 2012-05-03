@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.feature.FeatureUtilities;
+import org.geotoolkit.internal.jaxb.gco.InternationalStringAdapter;
 import org.geotoolkit.metadata.iso.quality.DefaultConformanceResult;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.Parameters;
@@ -61,7 +62,7 @@ public abstract class AbstractCoverageStoreFactory extends Factory implements Co
      * @return return display name based on class name
      */
     @Override
-    public String getDisplayName() {
+    public CharSequence getDisplayName() {
         String name = this.getClass().getName();
 
         name = name.substring(name.lastIndexOf('.')+1);

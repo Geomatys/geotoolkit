@@ -22,6 +22,7 @@ import org.geotoolkit.data.FileDataStoreFactory;
 import org.geotoolkit.data.folder.AbstractFolderDataStoreFactory;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
+import org.geotoolkit.util.ResourceInternationalString;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -60,8 +61,15 @@ public class ShapefileFolderDataStoreFactory extends AbstractFolderDataStoreFact
     }
 
     @Override
-    public String getDescription() {
-        return "Folder of Shapefiles";
+    public CharSequence getDescription() {
+        return new ResourceInternationalString("org/geotoolkit/shapefile/bundle", "datastoreFolderDescription");
     }
+
+    @Override
+    public CharSequence getDisplayName() {
+        return new ResourceInternationalString("org/geotoolkit/shapefile/bundle", "datastoreFolderTitle");
+    }
+    
+    
     
 }

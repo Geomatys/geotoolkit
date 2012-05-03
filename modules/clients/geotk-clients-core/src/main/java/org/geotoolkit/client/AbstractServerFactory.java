@@ -99,7 +99,7 @@ public abstract class AbstractServerFactory extends Factory implements ServerFac
      * @return return display name based on class name
      */
     @Override
-    public String getDisplayName() {
+    public CharSequence getDisplayName() {
         String name = this.getClass().getName();
 
         name = name.substring(name.lastIndexOf('.')+1);
@@ -114,7 +114,7 @@ public abstract class AbstractServerFactory extends Factory implements ServerFac
      * @return return display name
      */
     @Override
-    public String getDescription() {
+    public CharSequence getDescription() {
         return getDisplayName();
     }
     

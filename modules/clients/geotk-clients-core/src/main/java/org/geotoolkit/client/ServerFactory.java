@@ -67,24 +67,24 @@ public interface ServerFactory {
      * Name suitable for display to end user.
      *
      * <p>
-     * A non localized display name for this server type.
+     * A display name for this server type, in multiple languages.
      * </p>
      *
      * @return A short name suitable for display in a user interface.
      */
-    String getDisplayName();
+    CharSequence getDisplayName();
 
     /**
      * Describe the nature of the datasource constructed by this factory.
      *
      * <p>
-     * A non localized description of this data store type.
+     * A description of this data store type in multiple languages.
      * </p>
      *
      * @return A human readable description that is suitable for inclusion in a
      *         list of available datasources.
      */
-    String getDescription();
+    CharSequence getDescription();
 
     /**
      * Metadata about the required Parameters (for createServer).

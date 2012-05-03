@@ -34,6 +34,7 @@ import org.geotoolkit.metadata.iso.quality.DefaultConformanceResult;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.parameter.Parameters;
+import org.geotoolkit.util.ResourceInternationalString;
 
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
@@ -127,9 +128,16 @@ public class SMLDataStoreFactory extends AbstractDataStoreFactory {
      * {@inheritDoc }
      */
     @Override
-    public String getDescription() {
-        return "OGC Sensor Markup Language datastore factory";
+    public CharSequence getDescription() {
+        return new ResourceInternationalString("org/geotoolkit/sml/bundle", "datastoreDescription");
     }
+
+    @Override
+    public CharSequence getDisplayName() {
+        return new ResourceInternationalString("org/geotoolkit/sml/bundle", "datastoreTitle");
+    }
+    
+    
 
     /**
      * {@inheritDoc }

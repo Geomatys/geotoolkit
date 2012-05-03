@@ -27,6 +27,7 @@ import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
+import org.geotoolkit.util.ResourceInternationalString;
 
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
@@ -71,8 +72,13 @@ public class OSMBinDataStoreFactory extends AbstractFileDataStoreFactory{
      * {@inheritDoc }
      */
     @Override
-    public String getDescription() {
-        return "Open Street Map binary files (*.obm)";
+    public CharSequence getDescription() {
+        return new ResourceInternationalString("org/geotoolkit/osm_bin/bundle", "datastoreDescription");
+    }
+
+    @Override
+    public CharSequence getDisplayName() {
+        return new ResourceInternationalString("org/geotoolkit/osm_bin/bundle", "datastoreTitle");
     }
 
     /**

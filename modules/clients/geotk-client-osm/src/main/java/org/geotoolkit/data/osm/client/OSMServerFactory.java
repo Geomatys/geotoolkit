@@ -29,6 +29,7 @@ import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.util.ResourceInternationalString;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.*;
@@ -89,6 +90,17 @@ public class OSMServerFactory extends AbstractServerFactory{
         return PARAMETERS;
     }
 
+    @Override
+    public CharSequence getDescription() {
+        return new ResourceInternationalString("org/geotoolkit/osm/bundle", "serverDescription");
+    }
+
+    @Override
+    public CharSequence getDisplayName() {
+        return new ResourceInternationalString("org/geotoolkit/osm/bundle", "serverTitle");
+    }
+
+    
     @Override
     public Server create(ParameterValueGroup params) throws DataStoreException {
         checkCanProcessWithError(params);

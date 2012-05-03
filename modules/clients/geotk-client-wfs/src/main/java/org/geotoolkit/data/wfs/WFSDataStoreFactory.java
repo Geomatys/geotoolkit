@@ -102,9 +102,16 @@ public class WFSDataStoreFactory extends AbstractDataStoreFactory implements Ser
      * {@inheritDoc }
      */
     @Override
-    public String getDescription() {
-        return "OGC Web Feature Service datastore factory";
+    public CharSequence getDescription() {
+        return new ResourceInternationalString("org/geotoolkit/wfs/bundle", "datastoreDescription");
     }
+
+    @Override
+    public CharSequence getDisplayName() {
+        return new ResourceInternationalString("org/geotoolkit/wfs/bundle", "datastoreTitle");
+    }
+    
+    
 
     /**
      * {@inheritDoc }

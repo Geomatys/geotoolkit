@@ -32,6 +32,7 @@ import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.util.ResourceInternationalString;
 import org.geotoolkit.wms.xml.WMSVersion;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
@@ -94,6 +95,16 @@ public class WMSServerFactory extends AbstractServerFactory implements CoverageS
         return PARAMETERS;
     }
 
+    @Override
+    public CharSequence getDescription() {
+        return new ResourceInternationalString("org/geotoolkit/wms/bundle", "coverageDescription");
+    }
+
+    @Override
+    public CharSequence getDisplayName() {
+        return new ResourceInternationalString("org/geotoolkit/wms/bundle", "coverageTitle");
+    }
+    
     @Override
     public WebMapServer create(ParameterValueGroup params) throws DataStoreException {
         checkCanProcessWithError(params);

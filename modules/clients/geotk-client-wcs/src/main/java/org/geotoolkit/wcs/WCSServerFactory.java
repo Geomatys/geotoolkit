@@ -29,6 +29,7 @@ import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.util.ResourceInternationalString;
 import org.geotoolkit.wcs.xml.WCSVersion;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
@@ -88,6 +89,16 @@ public class WCSServerFactory extends AbstractServerFactory{
     @Override
     public ParameterDescriptorGroup getParametersDescriptor() {
         return PARAMETERS;
+    }
+
+    @Override
+    public CharSequence getDescription() {
+        return new ResourceInternationalString("org/geotoolkit/wcs/bundle", "serverDescription");
+    }
+
+    @Override
+    public CharSequence getDisplayName() {
+        return new ResourceInternationalString("org/geotoolkit/wcs/bundle", "serverTitle");
     }
 
     @Override

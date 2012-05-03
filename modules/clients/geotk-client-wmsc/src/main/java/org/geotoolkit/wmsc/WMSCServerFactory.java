@@ -29,6 +29,7 @@ import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.util.ResourceInternationalString;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
@@ -71,6 +72,16 @@ public class WMSCServerFactory extends AbstractServerFactory{
     @Override
     public ParameterDescriptorGroup getParametersDescriptor() {
         return PARAMETERS;
+    }
+
+    @Override
+    public CharSequence getDescription() {
+        return new ResourceInternationalString("org/geotoolkit/wmsc/bundle", "serverDescription");
+    }
+
+    @Override
+    public CharSequence getDisplayName() {
+        return new ResourceInternationalString("org/geotoolkit/wmsc/bundle", "serverTitle");
     }
 
     @Override

@@ -64,7 +64,7 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
      * @return return display name based on class name
      */
     @Override
-    public String getDisplayName() {
+    public CharSequence getDisplayName() {
         String name = this.getClass().getName();
 
         name = name.substring(name.lastIndexOf('.')+1);
@@ -72,6 +72,11 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
             name = name.substring(0, name.length() - 7);
         }
         return name;
+    }
+
+    @Override
+    public CharSequence getDescription() {
+        return getDisplayName();
     }
 
     /**

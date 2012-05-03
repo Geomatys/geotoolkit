@@ -27,6 +27,7 @@ import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.util.ResourceInternationalString;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
@@ -72,8 +73,13 @@ public class XMLCoverageStoreFactory extends AbstractCoverageStoreFactory{
     }
     
     @Override
-    public String getDescription() {
-        return "Xml coverage store";
+    public CharSequence getDescription() {
+        return new ResourceInternationalString("org/geotoolkit/coverage/bundle", "coverageXMLDescription");
+    }
+
+    @Override
+    public CharSequence getDisplayName() {
+        return new ResourceInternationalString("org/geotoolkit/coverage/bundle", "coverageXMLTitle");
     }
 
     @Override

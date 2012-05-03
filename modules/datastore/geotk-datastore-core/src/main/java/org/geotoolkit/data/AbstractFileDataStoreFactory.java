@@ -65,6 +65,17 @@ public abstract class AbstractFileDataStoreFactory extends AbstractDataStoreFact
 
     }
 
+    @Override
+    public CharSequence getDescription() {
+        return super.getDescription();
+    }
+
+    @Override
+    public CharSequence getDisplayName() {
+        return super.getDisplayName();
+    }
+
+    
     /**
      * {@inheritDoc }
      */

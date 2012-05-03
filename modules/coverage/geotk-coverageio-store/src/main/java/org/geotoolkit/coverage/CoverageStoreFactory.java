@@ -93,24 +93,24 @@ public interface CoverageStoreFactory {
      * Name suitable for display to end user.
      *
      * <p>
-     * A non localized display name for this data store type.
+     * A display name for this data store type with severals traductions.
      * </p>
      *
-     * @return A short name suitable for display in a user interface.
+     * @return A short name suitable for display in a user interface. Must be an International string.
      */
-    String getDisplayName();
+    CharSequence getDisplayName();
 
     /**
      * Describe the nature of the datasource constructed by this factory.
      *
      * <p>
-     * A non localized description of this data store type.
+     * A description of this data store type with severals traductions.
      * </p>
      *
      * @return A human readable description that is suitable for inclusion in a
      *         list of available datasources.
      */
-    String getDescription();
+    CharSequence getDescription();
 
     /**
      * Metadata about the required Parameters (for createCoverageStore).

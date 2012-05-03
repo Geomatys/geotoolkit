@@ -34,6 +34,7 @@ import org.geotoolkit.jdbc.dialect.PreparedStatementSQLDialect;
 import org.geotoolkit.jdbc.dialect.SQLDialect;
 import org.geotoolkit.metadata.iso.quality.DefaultConformanceResult;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
+import org.geotoolkit.util.ResourceInternationalString;
 
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.ParameterDescriptor;
@@ -101,8 +102,13 @@ public abstract class JDBCDataStoreFactory extends AbstractDataStoreFactory {
              new DefaultParameterDescriptor<Integer>("Connection timeout","number of seconds the connection pool wait for login",Integer.class,20,false);
 
     @Override
-    public String getDisplayName() {
-        return getDescription();
+    public CharSequence getDisplayName() {
+        return super.getDescription();
+    }
+
+    @Override
+    public CharSequence getDescription() {
+        return super.getDescription();
     }
 
     @Override

@@ -64,7 +64,7 @@ public class JCoverageStoreChooser extends javax.swing.JPanel {
     private static final Comparator<CoverageStoreFactory> SORTER = new Comparator<CoverageStoreFactory>() {
         @Override
         public int compare(CoverageStoreFactory o1, CoverageStoreFactory o2) {
-            return o1.getDisplayName().compareTo(o2.getDisplayName());
+            return o1.getDisplayName().toString().compareTo(o2.getDisplayName().toString());
         }
     };
     

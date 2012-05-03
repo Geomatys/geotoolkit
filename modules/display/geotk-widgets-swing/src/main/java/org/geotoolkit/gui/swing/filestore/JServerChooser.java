@@ -64,7 +64,7 @@ public class JServerChooser extends javax.swing.JPanel {
     private static final Comparator<ServerFactory> SORTER = new Comparator<ServerFactory>() {
         @Override
         public int compare(ServerFactory o1, ServerFactory o2) {
-            return o1.getDisplayName().compareTo(o2.getDisplayName());
+            return o1.getDisplayName().toString().compareTo(o2.getDisplayName().toString());
         }
     };
     

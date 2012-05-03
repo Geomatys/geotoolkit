@@ -81,6 +81,16 @@ public class OSMTMSServerFactory extends AbstractServerFactory implements Covera
     }
 
     @Override
+    public CharSequence getDisplayName() {
+        return new ResourceInternationalString("org/geotoolkit/osmtms/bundle", "coverageTitle");
+    }
+
+    @Override
+    public CharSequence getDescription() {
+        return new ResourceInternationalString("org/geotoolkit/osmtms/bundle", "coverageDescription");
+    }
+
+    @Override
     public OSMTileMapServer create(ParameterValueGroup params) throws DataStoreException {
         checkCanProcessWithError(params);
         

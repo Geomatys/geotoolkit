@@ -29,6 +29,7 @@ import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
+import org.geotoolkit.util.ResourceInternationalString;
 
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
@@ -101,13 +102,13 @@ public class PostgisNGDataStoreFactory extends JDBCDataStoreFactory {
     }
 
     @Override
-    public String getDisplayName() {
-        return "PostGIS NG";
+    public CharSequence getDisplayName() {
+        return new ResourceInternationalString("org/geotoolkit/postgis/bundle", "datastoreTitle");
     }
 
     @Override
-    public String getDescription() {
-        return "PostGIS Database";
+    public CharSequence getDescription() {
+        return new ResourceInternationalString("org/geotoolkit/postgis/bundle", "datastoreDescription");
     }
 
     @Override

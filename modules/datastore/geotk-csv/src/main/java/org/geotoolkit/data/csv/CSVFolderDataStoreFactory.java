@@ -22,6 +22,7 @@ import org.geotoolkit.data.FileDataStoreFactory;
 import org.geotoolkit.data.folder.AbstractFolderDataStoreFactory;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
+import org.geotoolkit.util.ResourceInternationalString;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -58,10 +59,14 @@ public class CSVFolderDataStoreFactory extends AbstractFolderDataStoreFactory{
     public FileDataStoreFactory getSingleFileFactory() {
         return DataStoreFinder.getAllFactories(CSVDataStoreFactory.class).next();
     }
+    
+    @Override
+    public CharSequence getDescription() {
+        return new ResourceInternationalString("org/geotoolkit/csv/bundle", "datastoreFolderDescription");
+    }
 
     @Override
-    public String getDescription() {
-        return "Folder of CSV files";
+    public CharSequence getDisplayName() {
+        return new ResourceInternationalString("org/geotoolkit/csv/bundle", "datastoreFolderTitle");
     }
-    
 }
