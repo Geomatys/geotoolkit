@@ -122,7 +122,12 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         }
     }
 
-
+    @Override
+    protected StatefullContextParams getStatefullParameters(final RenderingContext2D context){
+        params.update(context);
+        return params;
+    }
+    
     /**
      * {@inheritDoc }
      */
@@ -584,7 +589,10 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         }
 
         //add reprojection -----------------------------------------------------
-        qb.setCRS(renderingContext.getObjectiveCRS2D());
+        //we don't reproject, the reprojection may produce curves but JTS can not represent those.
+        //so we generate those curves in java2d shapes by doing the transformation ourself.
+        //TODO wait for a new geometry implementation
+        //qb.setCRS(renderingContext.getObjectiveCRS2D());
 
         //set the acumulated hints
         qb.setHints(queryHints);

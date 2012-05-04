@@ -60,8 +60,9 @@ public class StatefullContextParams<T extends MapLayer> {
     }
 
     public void update(final RenderingContext2D context){
-        objectiveCRS = context.getObjectiveCRS2D();
-        displayCRS = context.getDisplayCRS();
+        this.context = context;
+        this.objectiveCRS = context.getObjectiveCRS2D();
+        this.displayCRS = context.getDisplayCRS();
 
         final AffineTransform2D objtoDisp = context.getObjectiveToDisplay();
         if(!objtoDisp.equals(objectiveToDisplay)){

@@ -36,14 +36,13 @@ import javax.swing.JPanel;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display2d.canvas.DefaultRenderingContext2D;
-import org.geotoolkit.display2d.primitive.DefaultProjectedGeometry;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
-import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-
+import org.geotoolkit.display2d.container.statefull.StatefullContextParams;
+import org.geotoolkit.display2d.container.statefull.StatefullProjectedGeometry;
 import org.geotoolkit.gui.swing.go2.JMap2D;
-
 import org.geotoolkit.util.logging.Logging;
+
 import org.opengis.referencing.operation.TransformException;
 
 /**
@@ -146,8 +145,12 @@ public abstract class AbstractGeometryDecoration extends JPanel implements MapDe
         //prepare datas for geometry painting
         for(final Geometry geo : geometries){
             if(geo == null) continue;
-            final DefaultProjectedGeometry projected = new DefaultProjectedGeometry(geo);
-            projected.setObjToDisplay(new AffineTransform2D(objToDisp));
+            
+            final StatefullContextParams params = new StatefullContextParams(null, null);            
+            final StatefullProjectedGeometry projected = new StatefullProjectedGeometry(params);
+            params.update(context);
+            projected.setDataGeometry(geo, null);
+            
             try {
                 paintGeometry(g2,context, projected);
             } catch (TransformException ex) {

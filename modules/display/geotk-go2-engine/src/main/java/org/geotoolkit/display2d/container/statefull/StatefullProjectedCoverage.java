@@ -20,7 +20,6 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
-import com.vividsolutions.jts.geom.Polygon;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -111,7 +110,8 @@ public class StatefullProjectedCoverage implements ProjectedCoverage {
                 Logger.getLogger(StatefullProjectedCoverage.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-            border = new StatefullProjectedGeometry(params, Polygon.class, createGeometry(env));
+            border = new StatefullProjectedGeometry(params);
+            border.setDataGeometry(createGeometry(env),env.getCoordinateReferenceSystem());
         }
         return border;
     }

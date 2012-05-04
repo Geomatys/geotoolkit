@@ -39,11 +39,11 @@ import java.util.logging.Level;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.DefaultRenderingContext2D;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.primitive.DefaultProjectedGeometry;
+import org.geotoolkit.display2d.container.statefull.StatefullContextParams;
+import org.geotoolkit.display2d.container.statefull.StatefullProjectedGeometry;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.gui.swing.go2.control.edition.EditionHelper.EditionGeometry;
 import org.geotoolkit.gui.swing.go2.decoration.AbstractGeometryDecoration;
-import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 
 import org.opengis.referencing.operation.TransformException;
 
@@ -96,8 +96,11 @@ public final class EditionDecoration extends AbstractGeometryDecoration {
 
         if(nodeSelection.numHole < 0){
             final Coordinate coord = geo.getCoordinates()[nodeSelection.selectedNode[0]];
-            final DefaultProjectedGeometry projected = new DefaultProjectedGeometry(new GeometryFactory().createPoint(coord));
-            projected.setObjToDisplay(new AffineTransform2D(objToDisp));
+            
+            final StatefullContextParams params = new StatefullContextParams(null, null);            
+            final StatefullProjectedGeometry projected = new StatefullProjectedGeometry(params);
+            params.update(context);
+            projected.setDataGeometry(new GeometryFactory().createPoint(coord), null);
             try {
                 final Point p = (Point) projected.getDisplayGeometryJTS();
                 final double[] crds = new double[]{p.getX(),p.getY()};

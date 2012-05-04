@@ -73,7 +73,7 @@ public class DefaultProjectedObject<T> implements ProjectedObject {
 
     public void clearDataCache(){
         for(StatefullProjectedGeometry sg : geometries.values()){
-            sg.setObjectiveGeometry(null);
+            sg.clearAll();
         }
     }
 
@@ -95,18 +95,18 @@ public class DefaultProjectedObject<T> implements ProjectedObject {
 
         StatefullProjectedGeometry proj = geometries.get(name);
         if(proj == null){
-            final Geometry geom = getGeometryObjective(name);
-            proj = new StatefullProjectedGeometry(params, Geometry.class, geom);
+            proj = new StatefullProjectedGeometry(params);
             geometries.put(name, proj);
-        }else{
-            //check that the geometry is set
-            if(proj.getObjectiveGeometryJTS() == null){
-                proj.setObjectiveGeometry(getGeometryObjective(name));
-            }
+        }        
+        
+        //check that the geometry is set
+        if(!proj.isSet()){
+            proj.setDataGeometry(GO2Utilities.getGeometry(candidate, name),null);
         }
+        
         return proj;
     }
-
+    
     /**
      * Returns the geometry is objective crs.
      * @param name
