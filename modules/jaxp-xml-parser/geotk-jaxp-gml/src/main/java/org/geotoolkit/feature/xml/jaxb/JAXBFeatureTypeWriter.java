@@ -20,14 +20,20 @@ package org.geotoolkit.feature.xml.jaxb;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.namespace.QName;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.geotoolkit.feature.xml.Utils;
 import org.geotoolkit.feature.xml.XmlFeatureTypeWriter;
 import org.geotoolkit.xml.MarshallerPool;
+import org.geotoolkit.xml.Namespaces;
 import org.geotoolkit.xsd.xml.v2001.ComplexContent;
 import org.geotoolkit.xsd.xml.v2001.ExplicitGroup;
 import org.geotoolkit.xsd.xml.v2001.ExtensionType;
@@ -40,6 +46,8 @@ import org.geotoolkit.xsd.xml.v2001.XSDMarshallerPool;
 
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.PropertyDescriptor;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 /**
  *
@@ -54,7 +62,10 @@ public class JAXBFeatureTypeWriter implements XmlFeatureTypeWriter {
 
     private static final QName FEATURE_NAME = new QName("http://www.opengis.net/gml", "_Feature");
 
-
+    private int lastUnknowPrefix = 0;
+    
+    private final Map<String, String> unknowNamespaces = new HashMap<String, String>();
+    
     public JAXBFeatureTypeWriter(){
     }
 
@@ -100,6 +111,35 @@ public class JAXBFeatureTypeWriter implements XmlFeatureTypeWriter {
                 POOL.release(marshaller);
             }
         }
+    }
+    
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Node writeToElement(final FeatureType feature) throws JAXBException, ParserConfigurationException {
+
+        final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        // then we have to create document-loader:
+        factory.setNamespaceAware(false);
+        final DocumentBuilder loader = factory.newDocumentBuilder();
+
+        // creating a new DOM-document...
+        final Document document = loader.newDocument();
+
+        final Schema schema = getSchemaFromFeatureType(feature);
+        Marshaller marshaller = null;
+        try {
+            marshaller = POOL.acquireMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, false);
+            marshaller.marshal(schema, document);
+        } finally {
+            if (marshaller != null) {
+                POOL.release(marshaller);
+            }
+        }
+        return document.getDocumentElement();
     }
 
     /**
@@ -167,6 +207,41 @@ public class JAXBFeatureTypeWriter implements XmlFeatureTypeWriter {
         final ExtensionType extension = new ExtensionType(FEATURE_NAME, sequence);
         final ComplexContent content  = new ComplexContent(extension);
         schema.addComplexType(new TopLevelComplexType(typeName, content));
+    }
+    
+    
+     /**
+     * Returns the prefix for the given namespace.
+     *
+     * @param namespace The namespace for which we want the prefix.
+     */
+    private JAXBFeatureTypeWriter.Prefix getPrefix(final String namespace) {
+        String prefix = Namespaces.getPreferredPrefix(namespace, null);
+        boolean unknow = false;
+        if (prefix == null) {
+            prefix = unknowNamespaces.get(namespace);
+            if (prefix == null) {
+                prefix = "ns" + lastUnknowPrefix;
+                lastUnknowPrefix++;
+                unknow = true;
+                unknowNamespaces.put(namespace, prefix);
+            }
+        }
+        return new JAXBFeatureTypeWriter.Prefix(unknow, prefix);
+    }
+
+
+    /**
+     * Inner class for handling prefix and if it is already known.
+     */
+    private final class Prefix {
+        public boolean unknow;
+        public String prefix;
+
+        public Prefix(final boolean unknow, final String prefix) {
+            this.prefix = prefix;
+            this.unknow = unknow;
+        }
     }
 
 }
