@@ -25,6 +25,30 @@
     </keywordset>
   </info>
 
+<figure> <title>GeoToolkit</title>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="fr/images/Troll.jpg" format="jpg"></imagedata>
+    </imageobject>
+  </mediaobject>
+</figure>
+
+<figure> <title>Architecture de GeoToolkit</title>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="fr/images/schema_complet.png" format="png"></imagedata>
+    </imageobject>
+    <textobject>
+      <phrase> Architecture de Geotoolkit
+      </phrase>
+    </textobject>
+  </mediaobject>
+</figure>
+
   <xi:include href="fr/introduction.xml"/>
+  
+  <xi:include href="fr/ressources.xml"/>
+  
+  <xi:include href="fr/data.xml"/>
 
 </book>
