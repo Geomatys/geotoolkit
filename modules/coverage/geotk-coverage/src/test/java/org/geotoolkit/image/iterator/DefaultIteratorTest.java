@@ -258,6 +258,53 @@ public class DefaultIteratorTest {
     }
 
     /**
+     * Test if iterator transverse expected values from x y coordinates define by moveTo method.
+     */
+    @Test
+    public void moveToRasterTest() {
+        numBand = 3;
+        width = 20;
+        height = 10;
+        minx = 5;
+        miny = 7;
+        setRasterTest(minx, miny, width, height, numBand, null);
+        setPixelIterator(rasterTest);
+        final int mX = 17;
+        final int mY = 15;
+        pixIterator.moveTo(mX, mY);
+        final int indexCut = ((mY-miny)*width + mX - minx)*numBand;
+        final int lenght = tabRef.length-indexCut;
+        tabTest = new int[lenght];
+        int[] tabTemp = new int[lenght];
+        System.arraycopy(tabRef.clone(), indexCut, tabTemp, 0, lenght);
+        tabRef = tabTemp.clone();
+        int comp = 0;
+        while (pixIterator.next()) tabTest[comp++] = pixIterator.getSample();
+        assertTrue(compareTab(tabTest, tabRef));
+    }
+
+    /**
+     * Test catching exception with x, y moveTo method coordinates out of raster boundary.
+     */
+    @Test
+    public void unappropriateMoveToRasterTest() {
+        numBand = 3;
+        width = 20;
+        height = 10;
+        minx = 5;
+        miny = 7;
+        setRasterTest(minx, miny, width, height, numBand, null);
+        setPixelIterator(rasterTest);
+        boolean testTry = false;
+        try{
+            pixIterator.moveTo(2, 3);
+        }catch(Exception e){
+            testTry = true;
+        }
+        assertTrue(testTry);
+    }
+
+    /**
      * Test catching exception with rectangle which don't intersect raster area.
      */
     @Test
@@ -288,12 +335,10 @@ public class DefaultIteratorTest {
         for (int y = miny; y<miny + height; y++) {
             for (int x = minx; x<minx + width; x++) {
                 for (int b = 0; b<numband; b++) {
-                    rasterTest.setSample(x, y, b, comp);
-                    comp++;
+                    rasterTest.setSample(x, y, b, comp++);
                 }
             }
         }
-
         int mx, my, w,h;
         if (subArea == null) {
             mx = minx;
@@ -314,8 +359,7 @@ public class DefaultIteratorTest {
         for (int y = my; y<my + h; y++) {
             for (int x = mx; x<mx + w; x++) {
                 for (int b = 0; b<numband; b++) {
-                    tabRef[comp] = b + numband * ((x-minx) + (y-miny) * width);
-                    comp++;
+                    tabRef[comp++] = b + numband * ((x-minx) + (y-miny) * width);
                 }
             }
         }
@@ -327,9 +371,9 @@ public class DefaultIteratorTest {
         renderedImage = new TiledImage(minx, miny, width, height, minx+tilesWidth, miny+tilesHeight, sampleM, null);
 
         int comp = 0;
-        for(int y = miny, ly = miny+height; y<ly; y++){
-            for(int x = minx, lx = minx + width; x<lx; x++){
-                for(int b = 0; b<numBand; b++){
+        for (int y = miny, ly = miny+height; y<ly; y++) {
+            for (int x = minx, lx = minx + width; x<lx; x++) {
+                for (int b = 0; b<numBand; b++) {
                     renderedImage.setSample(x, y, b, comp++);
                 }
             }
@@ -568,6 +612,60 @@ public class DefaultIteratorTest {
         boolean testTry = false;
         try{
             setPixelIterator(renderedImage, rect);
+        }catch(Exception e){
+            testTry = true;
+        }
+        assertTrue(testTry);
+    }
+
+    /**
+     * Test if iterator transverse expected values from x y coordinates define by moveTo method.
+     */
+    @Test
+    public void moveToRITest() {
+        minx = 0;
+        miny = 0;
+        width = 100;
+        height = 50;
+        tilesWidth = 10;
+        tilesHeight = 5;
+        numBand = 3;
+        final int tileBulk = tilesHeight*tilesWidth*numBand;
+        setRenderedImgTest(minx, miny, width, height, tilesWidth, tilesHeight, numBand, null);
+        setPixelIterator(renderedImage);
+        final int mX = 17;
+        final int mY = 15;
+        final int ity = (mY-miny) / tilesHeight;
+        final int itx = (mX-minx) / tilesWidth;
+        pixIterator.moveTo(mX, mY);
+        final int indexCut = ity*10*tileBulk+itx*tileBulk+((mY-ity*tilesHeight)*tilesWidth + (mX-itx*tilesWidth))*numBand;
+        final int lenght = tabRef.length-indexCut;
+        tabTest = new int[lenght];
+        int[] tabTemp = new int[lenght];
+        System.arraycopy(tabRef.clone(), indexCut, tabTemp, 0, lenght);
+        tabRef = tabTemp.clone();
+        int comp = 0;
+        while (pixIterator.next()) tabTest[comp++] = pixIterator.getSample();
+        assertTrue(compareTab(tabTest, tabRef));
+    }
+
+    /**
+     * Test catching exception with x, y moveTo method coordinates out of raster boundary.
+     */
+    @Test
+    public void unappropriateMoveToRITest() {
+        minx = 0;
+        miny = 0;
+        width = 100;
+        height = 50;
+        tilesWidth = 10;
+        tilesHeight = 5;
+        numBand = 3;
+        setRenderedImgTest(minx, miny, width, height, tilesWidth, tilesHeight, numBand, null);
+        setPixelIterator(renderedImage);
+        boolean testTry = false;
+        try{
+            pixIterator.moveTo(102, 53);
         }catch(Exception e){
             testTry = true;
         }

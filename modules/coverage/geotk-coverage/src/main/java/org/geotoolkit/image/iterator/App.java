@@ -18,6 +18,7 @@
 package org.geotoolkit.image.iterator;
 
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.image.DataBuffer;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
@@ -31,36 +32,38 @@ public class App {
 
     public static void main( String[] args ) {
 
-//        int numBand = 3;
-//        int width = 10;
-//        int height = 10;
-//        int dataType = DataBuffer.TYPE_INT;
-//        int minX = 2;
-//        int minY = 5;
-//
-//        WritableRaster raster = Raster.createBandedRaster(dataType, width, height, numBand, new Point(minX, minY));
-//        int comp = 0;
-//        for (int y = 0; y<height; y++) {
-//            for (int x = 0; x<width; x++) {
-//                for (int b = 0; b<numBand; b++) {
-//                    raster.setSample(minX+x, minY+y, b, comp);
-//                    comp++;
-//                }
-//            }
-//        }
-//
-//        final PixelIterator sI = new RasterBasedIterator(raster);
-//
-//        int sIcomp = 0;
-//        int[] tab = new int[numBand * width];
-//        while (sI.next()) {
-//            tab[sIcomp] = sI.getSample();
-//            sIcomp++;
-//            if (sIcomp == numBand * width) {
-//                System.out.println(Arrays.toString(tab));
-//                sIcomp = 0;
-//            }
-//        }
+        int numBand = 3;
+        int width = 10;
+        int height = 10;
+        int dataType = DataBuffer.TYPE_INT;
+        int minX = 0;
+        int minY = 0;
+        Rectangle subArea = new Rectangle(8, 4, 5, 2);
+        WritableRaster raster = Raster.createBandedRaster(dataType, width, height, numBand, new Point(minX, minY));
+        int comp = 0;
+        for (int y = 0; y<height; y++) {
+            for (int x = 0; x<width; x++) {
+                for (int b = 0; b<numBand; b++) {
+                    raster.setSample(minX+x, minY+y, b, comp);
+                    comp++;
+                }
+            }
+        }
+
+        final PixelIterator sI = new DefaultRasterIntIterator(raster, subArea);
+        int w = Math.min(subArea.x+subArea.width,  minX+width)  - Math.max(subArea.x, minX);
+        int h = Math.min(subArea.y+subArea.height, minY+height) - Math.max(subArea.y, minY);
+        int sIcomp = 0;
+        int[] tab = new int[numBand * w * h];
+        while (sI.next()) {
+            if(sIcomp ==11){
+                System.out.println("");
+            }
+            tab[sIcomp++] = sI.getSample();
+
+        }
+        System.out.println("size = "+tab.length);
+        System.out.println(Arrays.toString(tab));
 
     }
 }

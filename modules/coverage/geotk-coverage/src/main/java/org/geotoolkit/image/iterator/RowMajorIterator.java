@@ -34,7 +34,7 @@ import java.awt.image.RenderedImage;
  *
  * Code example :
  * {@code
- *                  final RowMajorRenderedImageIterator dRII = new RowMajorRenderedImageIterator(renderedImage);
+ *                  final RowMajorIterator dRII = new RowMajorIterator(renderedImage);
  *                  while (dRII.next()) {
  *                      dRii.getSample();
  *                  }
@@ -147,7 +147,7 @@ class RowMajorIterator extends PixelIterator{
     /**
      * Create row-major rendered image iterator.
      *
-     * @param renderedImage : image which will be follow by iterator.
+     * @param renderedImage image which will be follow by iterator.
      */
     RowMajorIterator(RenderedImage renderedImage) {
         this.renderedImage = renderedImage;
@@ -170,8 +170,8 @@ class RowMajorIterator extends PixelIterator{
     /**
      * Create row-major rendered image iterator.
      *
-     * @param renderedImage : image which will be follow by iterator.
-     * @param subArea : Rectangle which represent image sub area iteration.
+     * @param renderedImage image which will be follow by iterator.
+     * @param subArea Rectangle which represent image sub area iteration.
      * @throws IllegalArgumentException if subArea don't intersect image.
      */
     RowMajorIterator(final RenderedImage renderedImage, final Rectangle subArea) {
@@ -220,7 +220,7 @@ class RowMajorIterator extends PixelIterator{
                         //initialize from new tile(raster) after tiles Y move.
                         updateCurrentRaster(tX, tY);
                         final int cRMinY = currentRaster.getMinY();
-                        this.y = Math.max(subAreaMinY, cRMinY);
+                        this.minY = this.y = Math.max(subAreaMinY, cRMinY);
                         this.maxY = Math.min(subAreaMaxY, cRMinY + currentRaster.getHeight());
                     }
                 }
@@ -325,5 +325,36 @@ class RowMajorIterator extends PixelIterator{
      */
     @Override
     public void close() {
+    }
+
+    @Override
+    public void moveTo(int x, int y) {
+        final int riMinX = renderedImage.getMinX();
+        final int riMinY = renderedImage.getMinY();
+        if (x < riMinX || x>= riMinX+renderedImage.getWidth()
+        ||  y < riMinY || x>= riMinY+renderedImage.getHeight())
+            throw new IllegalArgumentException("coordinate out of rendered image boundary"+renderedImage+x+y);
+        boolean update = false;
+        if (x < minX || x >= maxX) {
+            tX = (x - riMinX) / renderedImage.getTileWidth() + renderedImage.getMinTileX();
+            update = true;
+        }
+        if (y < riMinY || y >= maxY) {
+            tY = (y - riMinY) / renderedImage.getTileHeight() + renderedImage.getMinTileY();
+            update = true;
+        }
+        if (update) {
+            updateCurrentRaster(tX, tY);
+            final int cRMinX = currentRaster.getMinX();
+            final int cRMinY = currentRaster.getMinY();
+            this.minX = this.x = Math.max(subAreaMinX, cRMinX);
+            this.maxX = Math.min(subAreaMaxX, cRMinX + currentRaster.getWidth());
+            this.minY = this.y = Math.max(subAreaMinY, cRMinY);
+            this.maxY = Math.min(subAreaMaxY, cRMinY + currentRaster.getHeight());
+            this.numBand = currentRaster.getNumBands();
+        }
+        this.x = x;
+        this.y = y;
+        this.band = -1;
     }
 }

@@ -36,7 +36,7 @@ import java.awt.image.WritableRenderedImage;
  *
  * Code example :
  * {@code
- *                  final RowMajorWritableRIIterator dWRII = new RowMajorWritableRIIterator(renderedImage);
+ *                  final RowMajorWritableIterator dWRII = new RowMajorWritableIterator(renderedImage);
  *                  while (dWRII.next()) {
  *                      dWRII.setSample(int value);
  *                  }

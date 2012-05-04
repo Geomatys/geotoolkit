@@ -127,8 +127,8 @@ public class DefaultWritableIteratorTest extends DefaultIteratorTest {
     private void fillGoodTabRef(int minx, int miny, int width, int height, int tilesWidth, int tilesHeight, int numBand, Rectangle areaIterate) {
         int depy = Math.max(miny, areaIterate.y);
         int depx = Math.max(minx, areaIterate.x);
-        int endy = Math.min(miny+height, areaIterate.y+areaIterate.height);
-        int endx = Math.min(minx+width, areaIterate.x+areaIterate.width);
+        int endy = Math.min(miny + height, areaIterate.y + areaIterate.height);
+        int endx = Math.min(minx + width, areaIterate.x + areaIterate.width);
         int mody, modx, x2, y2, pos;
         for(int y = depy; y<endy; y++){
             for(int x = depx; x<endx; x++){

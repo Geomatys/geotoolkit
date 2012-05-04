@@ -18,7 +18,10 @@
 package org.geotoolkit.image.iterator;
 
 import java.awt.Rectangle;
-import java.awt.image.*;
+import java.awt.image.BandedSampleModel;
+import java.awt.image.DataBuffer;
+import java.awt.image.RenderedImage;
+import java.awt.image.WritableRaster;
 import javax.media.jai.TiledImage;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
@@ -281,6 +284,66 @@ public class RowMajorIteratorTest {
         setRenderedImgTest(minx, miny, width, height, tilesWidth, tilesHeight, 3, rect);
         setPixelIterator(renderedImage, rect);
 
+        int comp = 0;
+        while (pixIterator.next()) tabTest[comp++] = pixIterator.getSample();
+        assertTrue(compareTab(tabTest, tabRef));
+    }
+
+    /**
+     * Test if iterator transverse expected value in define area.
+     * Area contains all raster area.
+     */
+    @Test
+    public void moveToTest() {
+        minx = 0;
+        miny = 0;
+        width = 100;
+        height = 50;
+        tilesWidth = 10;
+        tilesHeight = 5;
+        numBand = 3;
+        setRenderedImgTest(minx, miny, width, height, tilesWidth, tilesHeight, numBand, null);
+        setPixelIterator(renderedImage);
+        final int mX = 15;
+        final int mY = 26;
+        final int indexCut = (mY*width + mX) * numBand;
+        final int lenght = width*height*numBand - indexCut;
+        pixIterator.moveTo(mX, mY);
+
+        tabTest = new int[lenght];
+        int[] tabTemp = new int[lenght];
+        System.arraycopy(tabRef.clone(), indexCut, tabTemp, 0, lenght);
+        tabRef = tabTemp;
+        int comp = 0;
+        while (pixIterator.next()) tabTest[comp++] = pixIterator.getSample();
+        assertTrue(compareTab(tabTest, tabRef));
+    }
+
+    /**
+     * Test if iterator transverse expected value in define area.
+     * Area contains all raster area.
+     */
+    @Test
+    public void moveToTest2() {
+        minx = -17;
+        miny = 12;
+        width = 100;
+        height = 50;
+        tilesWidth = 10;
+        tilesHeight = 5;
+        numBand = 3;
+        setRenderedImgTest(minx, miny, width, height, tilesWidth, tilesHeight, numBand, null);
+        setPixelIterator(renderedImage);
+        final int mX = 57;
+        final int mY = 26;
+        final int indexCut = ((mY-miny)*width + (mX-minx)) * numBand;
+        final int lenght = width*height*numBand - indexCut;
+        pixIterator.moveTo(mX, mY);
+
+        tabTest = new int[lenght];
+        int[] tabTemp = new int[lenght];
+        System.arraycopy(tabRef.clone(), indexCut, tabTemp, 0, lenght);
+        tabRef = tabTemp;
         int comp = 0;
         while (pixIterator.next()) tabTest[comp++] = pixIterator.getSample();
         assertTrue(compareTab(tabTest, tabRef));

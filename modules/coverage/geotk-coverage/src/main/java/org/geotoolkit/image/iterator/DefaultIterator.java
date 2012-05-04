@@ -154,15 +154,15 @@ class DefaultIterator extends PixelIterator {
     DefaultIterator(final Raster raster) {
         ArgumentChecks.ensureNonNull("Raster : ", raster);
         this.currentRaster = raster;
-        this.numBand  = raster.getNumBands();
-        this.minX = raster.getMinX();
-        this.minY = raster.getMinY();
-        this.x    = minX;
-        this.y    = minY;
-        this.maxY = minY + raster.getHeight();
-        this.maxX = minX + raster.getWidth();
-        this.band = -1;
-        this.tX   = this.tY = 0;
+        this.numBand       = raster.getNumBands();
+        this.minX  = raster.getMinX();
+        this.minY  = raster.getMinY();
+        this.x     = minX;
+        this.y     = minY;
+        this.maxY  = minY + raster.getHeight();
+        this.maxX  = minX + raster.getWidth();
+        this.band  = -1;
+        this.tX    = this.tY    = 0;
         this.tMaxX = this.tMaxY = 1;
     }
 
@@ -174,7 +174,7 @@ class DefaultIterator extends PixelIterator {
     DefaultIterator(final Raster raster, final Rectangle subArea) {
         ArgumentChecks.ensureNonNull("Raster : ", raster);
         ArgumentChecks.ensureNonNull("sub Area iteration : ", subArea);
-        this.currentRaster     = raster;
+        this.currentRaster = raster;
         final int minx  = raster.getMinX();
         final int miny  = raster.getMinY();
         final int maxx  = minx + raster.getWidth();
@@ -191,7 +191,7 @@ class DefaultIterator extends PixelIterator {
         x  = this.minX;
         y  = this.minY;
         this.band = -1;
-        tX = tY = 0;
+        tX  = tY  = 0;
         tMaxX = tMaxY = 1;
     }
 
@@ -273,13 +273,6 @@ class DefaultIterator extends PixelIterator {
                     }
                     //initialize from new tile(raster).
                     updateCurrentRaster(tX, tY);
-                    final int cRMinX = currentRaster.getMinX();
-                    final int cRMinY = currentRaster.getMinY();
-                    this.minX = this.x = Math.max(subAreaMinX, cRMinX);
-                    this.y = Math.max(subAreaMinY, cRMinY);
-                    this.maxX = Math.min(subAreaMaxX, cRMinX + currentRaster.getWidth());
-                    this.maxY = Math.min(subAreaMaxY, cRMinY + currentRaster.getHeight());
-                    this.numBand = currentRaster.getNumBands();
                 }
             }
         }
@@ -294,6 +287,13 @@ class DefaultIterator extends PixelIterator {
      */
     protected void updateCurrentRaster(int tileX, int tileY){
         currentRaster = renderedImage.getTile(tileX, tileY);
+        final int cRMinX   = currentRaster.getMinX();
+        final int cRMinY   = currentRaster.getMinY();
+        this.minX = this.x = Math.max(subAreaMinX, cRMinX);
+        this.minY = this.y             = Math.max(subAreaMinY, cRMinY);
+        this.maxX          = Math.min(subAreaMaxX, cRMinX + currentRaster.getWidth());
+        this.maxY          = Math.min(subAreaMaxY, cRMinY + currentRaster.getHeight());
+        this.numBand       = currentRaster.getNumBands();
     }
 
     /**
@@ -382,5 +382,31 @@ class DefaultIterator extends PixelIterator {
      */
     @Override
     public void close() {
+    }
+
+    @Override
+    public void moveTo(final int x, final int y) {
+        if (renderedImage != null) {
+            final int riMinX = renderedImage.getMinX();
+            final int riMinY = renderedImage.getMinY();
+            if (x < riMinX || x >= riMinX+renderedImage.getWidth()
+            ||  y < riMinY || x >= riMinY+renderedImage.getHeight())
+                throw new IllegalArgumentException("coordinate out of rendered image boundary"+renderedImage+x+y);
+            boolean update = false;
+            if (x < minX || x >= maxX) {
+                tX = (x - riMinX)/renderedImage.getTileWidth() + renderedImage.getMinTileX();
+                update = true;
+            }
+            if (y < riMinY || y >= maxY) {
+                tY = (y - riMinY)/renderedImage.getTileHeight() + renderedImage.getMinTileY();
+                update = true;
+            }
+            if (update) updateCurrentRaster(tX, tY);
+        }
+        if (x < minX || x >= maxX || y < minY || y >= maxY)
+            throw new IllegalArgumentException("coordinate out of raster boundary"+currentRaster+x+y);
+        this.x = x;
+        this.y = y;
+        this.band = -1;
     }
 }

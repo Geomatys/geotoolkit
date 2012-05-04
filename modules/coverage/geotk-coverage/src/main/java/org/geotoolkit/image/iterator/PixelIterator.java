@@ -110,5 +110,22 @@ public abstract class PixelIterator {
      */
     public abstract void close();
 
-    
+    /**
+     * Move forward iterator cursor at x, y coordinates. Cursor is automatically
+     * positioned just before first band index.
+     *
+     * User must call next() method before get() or set() method. Code example :
+     * {@code
+     *       PixelIterator.moveTo(x, y);
+     *       while (PixelIterator.next()) {
+     *            PixelIterator.getSample();//for example
+     *       }
+     * }
+     *
+     * MoveTo method is configure to use while loop after moveTo call.
+     *
+     * @param x the x coordinate cursor position.
+     * @param y the y coordinate cursor position.
+     */
+    public abstract void moveTo(int x, int y);
 }
