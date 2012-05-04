@@ -42,9 +42,9 @@ import org.opengis.observation.sampling.SamplingPoint;
  * @author Guilhem Legal
  * @module pending
  */
-@XmlRootElement( name="SamplingPoint" )
+@XmlRootElement(name="SamplingPoint")
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", namespace="http://www.opengis.net/sampling/1.0")
+@XmlType(name = "SamplingPointType", namespace="http://www.opengis.net/sampling/1.0")
 @XmlSeeAlso({PointType.class})
 public class SamplingPointType extends SamplingFeatureType implements SamplingPoint {
     
