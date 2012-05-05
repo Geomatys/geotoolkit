@@ -17,9 +17,9 @@
 package org.geotoolkit.display3d.container;
 
 import com.ardor3d.annotation.MainThread;
-import com.ardor3d.extension.model.collada.ColladaImporter;
+import com.ardor3d.extension.model.collada.jdom.ColladaImporter;
+import com.ardor3d.extension.model.collada.jdom.data.ColladaStorage;
 import com.ardor3d.framework.Scene;
-import com.ardor3d.image.Image;
 import com.ardor3d.image.Texture;
 import com.ardor3d.image.util.AWTImageLoader;
 import com.ardor3d.intersection.PickResults;
@@ -39,18 +39,13 @@ import com.ardor3d.renderer.state.ZBufferState;
 import com.ardor3d.scenegraph.controller.ComplexSpatialController;
 import com.ardor3d.scenegraph.Node;
 import com.ardor3d.scenegraph.extension.Skybox;
-import com.ardor3d.scenegraph.hint.DataMode;
-import com.ardor3d.scenegraph.hint.LightCombineMode;
 import com.ardor3d.util.GameTaskQueue;
 import com.ardor3d.util.GameTaskQueueManager;
 import com.ardor3d.util.TextureManager;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Collection;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.geotoolkit.display3d.canvas.A3DCanvas;
 import org.geotoolkit.display3d.primitive.A3DGraphic;
@@ -136,11 +131,12 @@ public final class A3DContainer implements Scene, GraphicsContainer<A3DGraphic> 
 
 
 
-    public Node createDynamicNode() throws MalformedURLException{
+    public Node createDynamicNode() throws IOException{
         final Node group = new Node("planes");
         group.setTranslation(0, 200, 0);
 
-        final Node plane1 = ColladaImporter.readColladaScene("/models/mirage.dae");
+        final ColladaStorage storage = new ColladaImporter().load("/models/mirage.dae");
+        final Node plane1 = storage.getScene();
         plane1.setRotation(new Matrix3().fromAngleNormalAxis(Math.PI * -0.5, new Vector3(1, 0, 0)));
         plane1.setScale(0.2,0.2,0.2);
 
@@ -232,7 +228,7 @@ public final class A3DContainer implements Scene, GraphicsContainer<A3DGraphic> 
     @Override
     public boolean renderUnto(final Renderer renderer) {
         // Execute renderQueue item
-        GameTaskQueueManager.getManager().getQueue(GameTaskQueue.RENDER).execute();
+        GameTaskQueueManager.getManager(A3DCanvas.GEOTK_MANAGER).getQueue(GameTaskQueue.RENDER).execute();
 
         renderer.draw(root);
 //        Debugger.drawNormals(root, renderer);
@@ -302,29 +298,17 @@ public final class A3DContainer implements Scene, GraphicsContainer<A3DGraphic> 
      * Builds the sky box.
      */
     private static Skybox buildSkyBox() {
-        Skybox skybox = new Skybox("skybox", 10,10,10);
+        final Skybox skybox = new Skybox("skybox", 10,10,10);
 
         final String name = "mystic";
         final String dir = "/images/skybox/"+name+"/";
 
-        final Texture north = TextureManager.load(
-                A3DContainer.class.getResource(dir + name+"_north.jpg"),
-                Texture.MinificationFilter.BilinearNearestMipMap, Image.Format.Guess, true);
-        final Texture south = TextureManager.load(
-                A3DContainer.class.getResource(dir + name+"_south.jpg"),
-                Texture.MinificationFilter.BilinearNearestMipMap, Image.Format.Guess, true);
-        final Texture east = TextureManager.load(
-                A3DContainer.class.getResource(dir + name+"_east.jpg"),
-                Texture.MinificationFilter.BilinearNearestMipMap, Image.Format.Guess, true);
-        final Texture west = TextureManager.load(
-                A3DContainer.class.getResource(dir + name+"_west.jpg"),
-                Texture.MinificationFilter.BilinearNearestMipMap, Image.Format.Guess, true);
-        final Texture up = TextureManager.load(
-                A3DContainer.class.getResource(dir + name+"_up.jpg"),
-                Texture.MinificationFilter.BilinearNearestMipMap, Image.Format.Guess, true);
-        final Texture down = TextureManager.load(
-                A3DContainer.class.getResource(dir + name+"_down.jpg"),
-                Texture.MinificationFilter.BilinearNearestMipMap, Image.Format.Guess, true);
+        final Texture north     = TextureManager.load(dir + name+"_north.jpg", Texture.MinificationFilter.BilinearNearestMipMap, true);
+        final Texture south     = TextureManager.load(dir + name+"_south.jpg", Texture.MinificationFilter.BilinearNearestMipMap, true);
+        final Texture east      = TextureManager.load(dir + name+"_east.jpg", Texture.MinificationFilter.BilinearNearestMipMap, true);
+        final Texture west      = TextureManager.load(dir + name+"_west.jpg", Texture.MinificationFilter.BilinearNearestMipMap, true);
+        final Texture up        = TextureManager.load(dir + name+"_up.jpg", Texture.MinificationFilter.BilinearNearestMipMap, true);
+        final Texture down      = TextureManager.load(dir + name+"_down.jpg", Texture.MinificationFilter.BilinearNearestMipMap, true);
 
         skybox.setTexture(Skybox.Face.North, north);
         skybox.setTexture(Skybox.Face.West, west);

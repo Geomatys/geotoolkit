@@ -121,7 +121,7 @@ public class A3DController implements Updater,CanvasController3D {
         logicalLayer.checkTriggers(tpf);
 
         // Execute updateQueue item
-        GameTaskQueueManager.getManager().getQueue(GameTaskQueue.UPDATE).execute();
+        GameTaskQueueManager.getManager(A3DCanvas.GEOTK_MANAGER).getQueue(GameTaskQueue.UPDATE).execute();
 
         Camera camera = getCamera();
         synchronized (updateLocation) {

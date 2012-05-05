@@ -29,42 +29,27 @@ import com.ardor3d.scenegraph.Spatial;
 import com.ardor3d.scenegraph.hint.LightCombineMode;
 import com.ardor3d.scenegraph.shape.Tube;
 import com.ardor3d.util.geom.BufferUtils;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.MultiLineString;
-import com.vividsolutions.jts.geom.MultiPoint;
-import com.vividsolutions.jts.geom.MultiPolygon;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.geom.*;
 import java.nio.FloatBuffer;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
-
-import org.geotoolkit.data.collection.FeatureCollection;
-import org.geotoolkit.data.collection.FeatureIterator;
-import org.geotoolkit.data.FeatureSource;
-
+import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.data.FeatureIterator;
+import org.geotoolkit.data.memory.GenericReprojectFeatureIterator;
+import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.display3d.canvas.A3DCanvas;
 import org.geotoolkit.display3d.controller.LocationSensitiveGraphic;
 import org.geotoolkit.display3d.geom.DefaultPolygonMesh;
 import org.geotoolkit.display3d.primitive.A3DGraphic;
 import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.geotoolkit.geometry.DefaultBoundingBox;
-import org.geotoolkit.geometry.jts.GeometryCoordinateSequenceTransformer;
 import org.geotoolkit.map.ElevationModel;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.collection.Cache;
 import org.geotoolkit.util.logging.Logging;
-
+import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 
@@ -186,13 +171,13 @@ public class FeatureLayerNode extends A3DGraphic implements LocationSensitiveGra
     
     @Override
     public void update(final ReadOnlyVector3 cameraPosition) {
-        final FeatureSource<SimpleFeatureType,SimpleFeature> source = layer.getFeatureSource();
+        final FeatureCollection source = layer.getCollection();
 
         final DefaultBoundingBox bb = new DefaultBoundingBox(layer.getBounds());
         bb.setRange(0, cameraPosition.getX()-SEARCH_EXTENT, cameraPosition.getX()+SEARCH_EXTENT);
         bb.setRange(1, cameraPosition.getZ()-SEARCH_EXTENT, cameraPosition.getZ()+SEARCH_EXTENT);
 
-        final Filter f = FF.bbox(FF.property(source.getSchema().getGeometryDescriptor().getLocalName()),bb);
+        final Filter f = FF.bbox(FF.property(source.getFeatureType().getGeometryDescriptor().getLocalName()),bb);
 //            Filter f = FF.dwithin(FF.property(source.getSchema().getGeometryDescriptor().getLocalName()),
 //                    FF.literal(new Coordinate(cameraPosition.getX(), cameraPosition.getZ())), searchExtent, "");
 
@@ -203,10 +188,8 @@ public class FeatureLayerNode extends A3DGraphic implements LocationSensitiveGra
     private void loadArea(final Filter filter){
         final List<String> exactList = new ArrayList<String>();
 
-        final GeometryCoordinateSequenceTransformer dataToObjectiveTransformer = new GeometryCoordinateSequenceTransformer();
-
         //HACK TO ENABLE 3D
-        final Class geoClass = layer.getFeatureSource().getSchema().getGeometryDescriptor().getType().getBinding();
+        final Class geoClass = layer.getCollection().getFeatureType().getGeometryDescriptor().getType().getBinding();
 
         if(geoClass.equals(Point.class) || geoClass.equals(MultiPoint.class)){
             System.out.println("3d point");
@@ -223,20 +206,13 @@ public class FeatureLayerNode extends A3DGraphic implements LocationSensitiveGra
 
 
 
-        final FeatureSource<SimpleFeatureType,SimpleFeature> source = layer.getFeatureSource();
-        try {
-            dataToObjectiveTransformer.setMathTransform(
-                    CRS.findMathTransform(source.getSchema().getCoordinateReferenceSystem(),
-                    canvas.getController().getObjectiveCRS(),true));
+        FeatureCollection collection = layer.getCollection();
+        
+        try {            
+            collection = collection.subCollection(QueryBuilder.filtered(collection.getFeatureType().getName(), filter));
+            collection = GenericReprojectFeatureIterator.wrap(collection, canvas.getObjectiveCRS());
 
-            final FeatureCollection<SimpleFeatureType, SimpleFeature> collection;
-            if(filter != null){
-                collection = source.getFeatures(filter);
-            }else{
-                collection = source.getFeatures();
-            }
-
-            final FeatureIterator<SimpleFeature> ite = collection.features();
+            final FeatureIterator ite = collection.iterator();
 
             final ColorRGBA isolineColor = new ColorRGBA(0,0.5f,0,1);
             final ReadOnlyColorRGBA pointColor = ColorRGBA.RED;
@@ -245,8 +221,8 @@ public class FeatureLayerNode extends A3DGraphic implements LocationSensitiveGra
 
             try{
                 while(ite.hasNext()){
-                    final SimpleFeature sf = ite.next();
-                    final String id = sf.getID();
+                    final Feature sf = ite.next();
+                    final String id = sf.getIdentifier().getID();
 
                     exactList.add(id);
 
@@ -286,13 +262,13 @@ public class FeatureLayerNode extends A3DGraphic implements LocationSensitiveGra
                     }else{
                         minz = model.getBaseOffset().evaluate(sf, Float.class);
                         maxz = minz +1;
-                        if(sf.getAttribute("Z_MAX") != null){
-                            maxz = Float.valueOf(sf.getAttribute("Z_MAX").toString());
+                        if(sf.getProperty("Z_MAX") != null){
+                            maxz = Float.valueOf(sf.getProperty("Z_MAX").toString());
                         }
                     }
 
                     //feature is not in cache or has been removed, load it
-                    final Geometry geom = dataToObjectiveTransformer.transform((Geometry) sf.getDefaultGeometry());
+                    final Geometry geom = (Geometry) ((SimpleFeature)sf).getDefaultGeometry();
 
                     if(geom instanceof Polygon){
                         obj = new DefaultPolygonMesh((Polygon)geom,0,1);

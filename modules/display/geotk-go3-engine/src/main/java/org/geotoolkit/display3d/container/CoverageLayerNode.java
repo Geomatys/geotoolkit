@@ -18,8 +18,8 @@ package org.geotoolkit.display3d.container;
 
 import com.ardor3d.bounding.BoundingBox;
 import com.ardor3d.image.Image;
-import com.ardor3d.image.Image.Format;
 import com.ardor3d.image.Texture;
+import com.ardor3d.image.TextureStoreFormat;
 import com.ardor3d.image.util.AWTImageLoader;
 import com.ardor3d.math.Matrix3;
 import com.ardor3d.math.Vector3;
@@ -29,25 +29,20 @@ import com.ardor3d.scenegraph.Mesh;
 import com.ardor3d.scenegraph.Node;
 import com.ardor3d.scenegraph.shape.Quad;
 import com.ardor3d.util.TextureManager;
-
 import java.awt.image.RenderedImage;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.display3d.canvas.A3DCanvas;
 import org.geotoolkit.display3d.primitive.A3DGraphic;
 import org.geotoolkit.map.CoverageMapLayer;
-import org.geotoolkit.referencing.CRS;
-
 import org.geotoolkit.util.logging.Logging;
-import org.opengis.util.FactoryException;
-import org.opengis.referencing.operation.TransformException;
+import org.opengis.geometry.Envelope;
 
 /**
  *
@@ -75,52 +70,60 @@ public class CoverageLayerNode extends A3DGraphic{
 //        loader.setPriority(Thread.MIN_PRIORITY);
 //        loader.start();
 
-        attachChild(buildQuad());
+        Mesh mesh = buildQuad();
+        if(mesh != null){
+            attachChild(mesh);
+        }
+        
+        
 
 //        UpdateThread.nodes.put(this, new double[3]);
     }
 
     private Mesh buildQuad(){
 
-        org.opengis.geometry.Envelope env = layer.getCoverageReader().getCoverageBounds();
-        try {
-            env = CRS.transform(env, canvas.getObjectiveCRS());
-        } catch (TransformException ex) {
-            LOGGER.log(Level.WARNING, null, ex);
-        }
+//        org.opengis.geometry.Envelope env = layer.getCoverageReader().getMetadata().CoverageBounds();
+//        try {
+//            env = CRS.transform(env, canvas.getObjectiveCRS());
+//        } catch (TransformException ex) {
+//            LOGGER.log(Level.WARNING, null, ex);
+//        }
 
-        final Quad back = new Quad("quadPlan",env.getSpan(0), env.getSpan(1));
-        back.setTranslation(env.getMinimum(0) + env.getSpan(0)/2, 0, env.getMinimum(1) + env.getSpan(1)/2);
-        back.setRotation(new Matrix3().fromAngleNormalAxis(Math.PI * -0.5, new Vector3(1, 0, 0)));
-        back.setModelBound(new BoundingBox());
-        back.updateModelBound();
+        
 
         try {
-            final GridCoverage2D coverage = layer.getCoverageReader().read(null);
+            final GridCoverage2D coverage = (GridCoverage2D)layer.getCoverageReader().read(0,null);
             final RenderedImage img = coverage.getRenderedImage();
             final Image image = AWTImageLoader.makeArdor3dImage(img, false);
 
+            final Envelope env = coverage.getEnvelope();
+            
+            final Quad back = new Quad("quadPlan",env.getSpan(0), env.getSpan(1));
+            back.setTranslation(env.getMinimum(0) + env.getSpan(0)/2, 0, env.getMinimum(1) + env.getSpan(1)/2);
+            back.setRotation(new Matrix3().fromAngleNormalAxis(Math.PI * -0.5, new Vector3(1, 0, 0)));
+            back.setModelBound(new BoundingBox());
+            back.updateModelBound();
+            
+            
             // Add a texture to the box.
             final TextureState ts = new TextureState();
             ts.setTexture(TextureManager.loadFromImage(image, Texture.MinificationFilter.Trilinear,
-                    Format.Guess, true));
+                    TextureStoreFormat.GuessNoCompressedFormat));
             back.setRenderState(ts);
 
 //            // Add a material to the box, to show both vertex color and lighting/shading.
 //            final MaterialState ms = new MaterialState();
 //            ms.setColorMaterial(ColorMaterial.Diffuse);
 //            box.setRenderState(ms);
+            
+            return back;
 
-        } catch (FactoryException ex) {
-            LOGGER.log(Level.WARNING, null, ex);
-        } catch (TransformException ex) {
-            LOGGER.log(Level.WARNING, null, ex);
-        } catch (IOException ex) {
+        } catch (CoverageStoreException ex) {
             LOGGER.log(Level.WARNING, null, ex);
         }
 
-        return back;
-
+        
+        return null;
     }
 
     @Override
