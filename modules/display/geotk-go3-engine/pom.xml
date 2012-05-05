@@ -57,11 +57,6 @@
     <dependencies>
         <dependency>
             <groupId>com.ardor3d</groupId>
-            <artifactId>ardor3d-lwjgl</artifactId>
-            <version>${ardor.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.ardor3d</groupId>
             <artifactId>ardor3d-jogl</artifactId>
             <version>${ardor.version}</version>
         </dependency>

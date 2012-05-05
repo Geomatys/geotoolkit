@@ -19,8 +19,8 @@ package org.geotoolkit.display3d.canvas;
 import com.ardor3d.framework.Canvas;
 import com.ardor3d.framework.CanvasRenderer;
 import com.ardor3d.framework.DisplaySettings;
-import com.ardor3d.framework.lwjgl.LwjglAwtCanvas;
-import com.ardor3d.framework.lwjgl.LwjglCanvasRenderer;
+import com.ardor3d.framework.jogl.JoglAwtCanvas;
+import com.ardor3d.framework.jogl.JoglCanvasRenderer;
 import com.ardor3d.input.Key;
 import com.ardor3d.input.MouseCursor;
 import com.ardor3d.input.MouseManager;
@@ -34,16 +34,15 @@ import java.awt.Dimension;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.logging.Logger;
+import javax.media.opengl.GLCanvas;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import org.geotoolkit.display.canvas.AbstractCanvas;
-import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.container.AbstractContainer;
 import org.geotoolkit.display3d.container.A3DContainer;
 import org.geotoolkit.display3d.controller.A3DController;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.util.logging.Logging;
-import org.lwjgl.LWJGLException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 
@@ -63,13 +62,13 @@ public class A3DCanvas extends AbstractCanvas{
     private final A3DContainer container = new A3DContainer(this);
     private final A3DController controller;
     private final JScrollPane swingPane;
-    private final LwjglAwtCanvas canvas;
+    private final JoglAwtCanvas canvas;
     private CoordinateReferenceSystem objectiveCRS;
 
-    public A3DCanvas(final CoordinateReferenceSystem objectiveCRS, final Hints hints) throws LWJGLException{
+    public A3DCanvas(final CoordinateReferenceSystem objectiveCRS, final Hints hints) {
         super(hints);
         this.objectiveCRS = objectiveCRS;
-        this.canvas = initContext();
+        this.canvas = (JoglAwtCanvas) initContext();
         this.controller = new A3DController(this, logicalLayer);
         this.controller.init();
 
@@ -123,16 +122,16 @@ public class A3DCanvas extends AbstractCanvas{
         return swingPane;
     }
 
-    public LwjglAwtCanvas getNativeCanvas(){
+    public JoglAwtCanvas getNativeCanvas(){
         return canvas;
     }
 
-    private LwjglAwtCanvas initContext() throws LWJGLException{
+    private GLCanvas initContext() {
 //        refresher.addUpdater(controller);
 
-        LwjglCanvasRenderer renderer = new LwjglCanvasRenderer(container);
+        JoglCanvasRenderer renderer = new JoglCanvasRenderer(container);
         final DisplaySettings settings = new DisplaySettings(1, 1, 0, 0, 0, 32, 0, 4, false, false);
-        final LwjglAwtCanvas canvas = new LwjglAwtCanvas(settings,renderer);
+        final JoglAwtCanvas canvas = new JoglAwtCanvas(settings,renderer);
         canvas.setSize(new Dimension(100, 100));
         canvas.setPreferredSize(new Dimension(1,1));
         canvas.setVisible(true);

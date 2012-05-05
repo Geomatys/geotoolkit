@@ -17,7 +17,6 @@
 package org.geotoolkit.gui.swing.go3.control;
 
 import javax.swing.JToolBar;
-
 import org.geotoolkit.display3d.canvas.A3DCanvas;
 import org.geotoolkit.gui.swing.go3.control.navigation.CameraSpeedSlider;
 import org.geotoolkit.gui.swing.go3.control.navigation.SceneScalingSlider;

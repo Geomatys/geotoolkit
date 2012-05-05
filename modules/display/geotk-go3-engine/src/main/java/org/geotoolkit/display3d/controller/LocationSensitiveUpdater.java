@@ -18,13 +18,8 @@ package org.geotoolkit.display3d.controller;
 
 import com.ardor3d.math.Vector3;
 import com.ardor3d.math.type.ReadOnlyVector3;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.geotoolkit.display3d.container.A3DContainer;
 import org.geotoolkit.util.logging.Logging;
 

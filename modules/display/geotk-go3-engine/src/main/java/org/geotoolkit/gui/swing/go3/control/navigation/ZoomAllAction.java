@@ -18,7 +18,6 @@ package org.geotoolkit.gui.swing.go3.control.navigation;
 
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
-
 import org.geotoolkit.display3d.canvas.A3DCanvas;
 import org.geotoolkit.map.MapContext;
 

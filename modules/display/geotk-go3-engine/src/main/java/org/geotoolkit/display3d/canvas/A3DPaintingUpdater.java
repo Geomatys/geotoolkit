@@ -17,7 +17,7 @@
 package org.geotoolkit.display3d.canvas;
 
 import com.ardor3d.framework.Updater;
-import com.ardor3d.framework.lwjgl.LwjglAwtCanvas;
+import com.ardor3d.framework.jogl.JoglAwtCanvas;
 import com.ardor3d.util.Timer;
 import java.lang.ref.WeakReference;
 import java.util.concurrent.CountDownLatch;
@@ -36,18 +36,18 @@ public class A3DPaintingUpdater extends Thread {
     private static final Logger LOGGER = Logging.getLogger(A3DPaintingUpdater.class);
 
     private final Timer timer = new Timer();
-    private final WeakReference<LwjglAwtCanvas> canvasRef;
+    private final WeakReference<JoglAwtCanvas> canvasRef;
     private final Updater updater;
 
-    public A3DPaintingUpdater(final LwjglAwtCanvas canvas, final Updater updater) {
-        canvasRef = new WeakReference<LwjglAwtCanvas>(canvas);
+    public A3DPaintingUpdater(final JoglAwtCanvas canvas, final Updater updater) {
+        canvasRef = new WeakReference<JoglAwtCanvas>(canvas);
         this.updater = updater;
     }
 
     @Override
     public void run() {
         while (true) {
-            final LwjglAwtCanvas canvas = canvasRef.get();
+            final JoglAwtCanvas canvas = canvasRef.get();
             if (canvas == null) {
                 //canvas isn't referenced anywhere, we let this thread dye
                 break;

@@ -18,7 +18,7 @@ package org.geotoolkit.display3d.controller;
 
 import com.ardor3d.annotation.MainThread;
 import com.ardor3d.framework.Updater;
-import com.ardor3d.framework.lwjgl.LwjglAwtCanvas;
+import com.ardor3d.framework.jogl.JoglAwtCanvas;
 import com.ardor3d.input.logical.LogicalLayer;
 import com.ardor3d.math.Vector3;
 import com.ardor3d.renderer.Camera;
@@ -27,9 +27,7 @@ import com.ardor3d.util.GameTaskQueue;
 import com.ardor3d.util.GameTaskQueueManager;
 import com.ardor3d.util.ReadOnlyTimer;
 import com.ardor3d.util.stat.StatCollector;
-
 import org.geotoolkit.display3d.canvas.A3DCanvas;
-
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
@@ -90,7 +88,7 @@ public class A3DController implements Updater,CanvasController3D {
     }
 
     private Camera getCamera(){
-        LwjglAwtCanvas nativ = canvas.getNativeCanvas();
+        JoglAwtCanvas nativ = canvas.getNativeCanvas();
         if(nativ != null && nativ.getCanvasRenderer() != null){
             return nativ.getCanvasRenderer().getCamera();
         }
