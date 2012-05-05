@@ -43,6 +43,7 @@ import org.geotoolkit.client.Server;
 import org.geotoolkit.client.ServerFactory;
 import org.geotoolkit.client.ServerFinder;
 import org.geotoolkit.gui.swing.propertyedit.JFeatureOutLine;
+import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.DataStoreException;
@@ -237,6 +238,17 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
                 final String txt = "<html><b>"+factory.getDisplayName()+"</b><br/>"
                         + "<font size=\"0.5em\"><i>&nbsp&nbsp&nbsp "+factory.getDescription()+"</i></font></html>";
                 lbl.setText(txt);
+                
+                if(factory.getDisplayName().toString().toLowerCase().contains("google")){
+                    lbl.setIcon(IconBundle.getIcon("24_google"));
+                }else if(factory.getDisplayName().toString().toLowerCase().contains("osm")){
+                    lbl.setIcon(IconBundle.getIcon("24_osm"));
+                }else if(factory.getDisplayName().toString().toLowerCase().contains("ign")){
+                    lbl.setIcon(IconBundle.getIcon("24_ign"));
+                }else{
+                    lbl.setIcon(IconBundle.getIcon("24_ogc"));
+                }
+                
             }
             
             return lbl;
