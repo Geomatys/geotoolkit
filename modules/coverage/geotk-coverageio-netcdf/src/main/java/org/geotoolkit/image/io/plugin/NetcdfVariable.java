@@ -65,6 +65,11 @@ import static ucar.nc2.constants.CDM.SCALE_FACTOR;
  */
 final class NetcdfVariable {
     /**
+     * Minimal number of dimension for accepting a variable as a coverage variable.
+     */
+    static final int MIN_DIMENSION = 2;
+
+    /**
      * The {@value} attribute name (complete {@link ucar.nc2.constants.CF}).
      */
     static final String
@@ -378,8 +383,8 @@ scan:   for (int i=0; i<missingCount; i++) {
      * This method checks for the following conditions:
      * <p>
      * <ul>
-     *   <li>Images require at least 2 dimensions. They may have more dimensions,
-     *       in which case a slice will be taken later.</li>
+     *   <li>Images require at least {@value #MIN_DIMENSION} dimensions of size greater than 1.
+     *       They may have more dimensions, in which case a slice will be taken later.</li>
      *   <li>Exclude axes. Axes are often already excluded by the above condition
      *       because axis are usually 1-dimensional, but some axes are 2-dimensional
      *       (e.g. a localization grid).</li>
@@ -395,7 +400,13 @@ scan:   for (int i=0; i<missingCount; i++) {
      *         {@link NetcdfImageReader#getImageNames()} method.
      */
     static boolean isCoverage(final VariableSimpleIF variable, final List<? extends VariableIF> variables) {
-        if (variable.getRank() >= 2 && VALID_TYPES.contains(variable.getDataType())) {
+        int numVectors = 0; // Number of dimension having more than 1 value.
+        for (final int length : variable.getShape()) {
+            if (length >= 2) { // This value '2' is not necessarily MIN_DIMENSION.
+                numVectors++;
+            }
+        }
+        if (numVectors >= MIN_DIMENSION && VALID_TYPES.contains(variable.getDataType())) {
             final String name = variable.getShortName();
             for (final VariableIF var : variables) {
                 if (var != variable) {

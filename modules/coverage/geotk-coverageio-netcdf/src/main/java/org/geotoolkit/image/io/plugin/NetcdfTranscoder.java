@@ -2012,7 +2012,9 @@ public class NetcdfTranscoder extends MetadataTranscoder<Metadata> {
                 ds.enhance(mode);
             }
             for (final CoordinateSystem cs : ds.getCoordinateSystems()) {
-                metadata.getSpatialRepresentationInfo().add(createSpatialRepresentationInfo(cs));
+                if (cs.getRankDomain() >= NetcdfVariable.MIN_DIMENSION && cs.getRankRange() >= NetcdfVariable.MIN_DIMENSION) {
+                    metadata.getSpatialRepresentationInfo().add(createSpatialRepresentationInfo(cs));
+                }
             }
         }
         return metadata;
