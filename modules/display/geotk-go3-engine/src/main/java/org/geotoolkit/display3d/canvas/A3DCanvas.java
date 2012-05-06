@@ -130,7 +130,7 @@ public class A3DCanvas extends AbstractCanvas{
 //        refresher.addUpdater(controller);
 
         JoglCanvasRenderer renderer = new JoglCanvasRenderer(container);
-        final DisplaySettings settings = new DisplaySettings(1, 1, 0, 0, 0, 32, 0, 4, false, false);
+        final DisplaySettings settings = new DisplaySettings(1, 1, 32, 0, 0, 32, 0, 4, false, false);
         final JoglAwtCanvas canvas = new JoglAwtCanvas(settings,renderer);
         canvas.setSize(new Dimension(100, 100));
         canvas.setPreferredSize(new Dimension(1,1));
