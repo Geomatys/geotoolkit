@@ -49,7 +49,7 @@ import org.geotoolkit.internal.ReferenceQueueConsumer;
  *
  * {@section Optimizing memory use in factory implementations}
  * The {@code WeakHashSet} class has a {@link #get} method that is not part of the {@link java.util.Set}
- * interface. This {@code get} method retrieves an entry from this set that is equal to the supplied
+ * interface. This {@code get} method retrieves an entry from this set that is equals to the supplied
  * object. The {@link #unique} method combines a {@code get} followed by a {@code add} operation if
  * the specified object was not in the set. This is similar in spirit to the {@link String#intern}
  * method. The following example shows a convenient way to use {@code WeakHashSet} as an internal
@@ -146,7 +146,7 @@ public class WeakHashSet<E> extends AbstractSet<E> implements CheckedCollection<
 
     /**
      * The next size value at which to resize. This value should
-     * be <code>{@link #table}.length*{@link #loadFactor}</code>.
+     * be <code>{@link #table}.length*{@link #LOAD_FACTOR}</code>.
      */
     private int threshold;
 
@@ -208,34 +208,28 @@ public class WeakHashSet<E> extends AbstractSet<E> implements CheckedCollection<
         assert valid() : count;
         final Entry[] table = this.table;
         final int i = toRemove.hash % table.length;
-        /*
-         * Index 'i' may not be valid if the reference 'toRemove'
-         * has been already removed in a previous rehash.
-         */
-        if (i < table.length) {
-            Entry prev = null;
-            Entry e = table[i];
-            while (e != null) {
-                if (e == toRemove) {
-                    if (prev != null) {
-                        prev.next = e.next;
-                    } else {
-                        table[i] = e.next;
-                    }
-                    count--;
-                    assert valid();
-                    /*
-                     * If the number of elements has dimunished significatively, rehash the table.
-                     * We can't continue the loop pass that point, since 'e' is no longer valid.
-                     */
-                    if (count <= threshold/4) {
-                        this.table = rehash("remove");
-                    }
-                    return;
+        Entry prev = null;
+        Entry e = table[i];
+        while (e != null) {
+            if (e == toRemove) {
+                if (prev != null) {
+                    prev.next = e.next;
+                } else {
+                    table[i] = e.next;
                 }
-                prev = e;
-                e = e.next;
+                count--;
+                assert valid();
+                /*
+                 * If the number of elements has dimunished significatively, rehash the table.
+                 * We can't continue the loop pass that point, since 'e' is no longer valid.
+                 */
+                if (count <= threshold/4) {
+                    this.table = rehash("remove");
+                }
+                return;
             }
+            prev = e;
+            e = e.next;
         }
         assert valid();
         /*
@@ -250,7 +244,7 @@ public class WeakHashSet<E> extends AbstractSet<E> implements CheckedCollection<
      *
      * @param  caller The method invoking this one. User for logging purpose only.
      * @return The new table array. This is actually the value of the {@link #table} field, but is
-     *         returned as a paranoic safety for making sure that the caller use the table we just
+     *         returned as a paranoiac safety for making sure that the caller uses the table we just
      *         created (in case of synchronization bug).
      */
     private Entry[] rehash(final String caller) {
@@ -264,9 +258,9 @@ public class WeakHashSet<E> extends AbstractSet<E> implements CheckedCollection<
         final Entry[] table = newEntryTable(capacity);
         threshold = Math.round(capacity * LOAD_FACTOR);
         for (int i=0; i<oldTable.length; i++) {
-            for (Entry old=oldTable[i]; old!=null;) {
-                final Entry e = old;
-                old = old.next; // We keep 'next' right now because its value will change.
+            for (Entry next=oldTable[i]; next!=null;) {
+                final Entry e = next;
+                next = next.next; // We keep 'next' right now because its value will change.
                 final int index = e.hash % table.length;
                 e.next = table[index];
                 table[index] = e;
@@ -291,7 +285,7 @@ public class WeakHashSet<E> extends AbstractSet<E> implements CheckedCollection<
      * compares it to {@link #count}. If the check fails, the number of elements is corrected (if
      * we didn't, an {@link AssertionError} would be thrown for every operations after the first
      * error, which make debugging more difficult). The set is otherwise unchanged, which should
-     * help to get similar behaviour as if assertions hasn't been turned on.
+     * help to get similar behavior as if assertions hasn't been turned on.
      */
     private boolean valid() {
         int n = 0;
@@ -343,13 +337,13 @@ public class WeakHashSet<E> extends AbstractSet<E> implements CheckedCollection<
     }
 
     /**
-     * Returns an object equal to the specified object, if present. If
-     * this set doesn't contains any object equal to {@code object},
+     * Returns an object equals to the specified object, if present. If
+     * this set doesn't contains any object equals to {@code object},
      * then this method returns {@code null}.
      *
      * @param <T> The type of the element to get.
      * @param object The element to get.
-     * @return An element equal to the given one if already presents in the set,
+     * @return An element equals to the given one if already presents in the set,
      *         or {@code null} otherwise.
      *
      * @see #unique(Object)
@@ -370,7 +364,7 @@ public class WeakHashSet<E> extends AbstractSet<E> implements CheckedCollection<
     }
 
     /**
-     * Returns an object equal to {@code object} if such an object already exist in this
+     * Returns an object equals to {@code object} if such an object already exist in this
      * {@code WeakHashSet}. Otherwise, adds {@code object} to this {@code WeakHashSet}.
      * This method is equivalents to the following code:
      *
@@ -388,7 +382,7 @@ public class WeakHashSet<E> extends AbstractSet<E> implements CheckedCollection<
      *
      * @param <T> The type of the element to get.
      * @param object The element to get or to add in the set if not already presents.
-     * @return An element equal to the given one if already presents in the set,
+     * @return An element equals to the given one if already presents in the set,
      *         or the given {@code object} otherwise.
      */
     public synchronized <T extends E> T unique(final T object) {
@@ -407,9 +401,9 @@ public class WeakHashSet<E> extends AbstractSet<E> implements CheckedCollection<
      *
      * @param objects
      *          On input, the objects to add to this set if not already present. On output,
-     *          elements that are {@linkplain Object#equals equal}, but where every reference
-     *          to an instance already presents in this set has been replaced by a reference
-     *          to the existing instance.
+     *          elements that are {@linkplain Object#equals(Object) equal}, but where every
+     *          reference to an instance already presents in this set has been replaced by
+     *          a reference to the existing instance.
      */
     public synchronized void uniques(final E[] objects) {
         for (int i=0; i<objects.length; i++) {
@@ -424,7 +418,7 @@ public class WeakHashSet<E> extends AbstractSet<E> implements CheckedCollection<
     /** The "intern" operation.  */  private static final int INTERN = +2;
 
     /**
-     * Returns an object equal to {@code obj} if such an object already exist in this
+     * Returns an object equals to {@code obj} if such an object already exist in this
      * {@code WeakHashSet}. Otherwise, add {@code obj} to this {@code WeakHashSet}.
      * This method is equivalents to the following code:
      *
@@ -446,8 +440,8 @@ public class WeakHashSet<E> extends AbstractSet<E> implements CheckedCollection<
         assert valid() : count;
         if (obj != null) {
             /*
-             * Check if {@code obj} is already contained in this
-             * {@code WeakHashSet}. If yes, returns the element.
+             * Check if the object is already contained in this
+             * WeakHashSet. If yes, return the existing element.
              */
             Entry[] table = this.table;
             final int hash = (isArray ? Utilities.deepHashCode(obj) : obj.hashCode()) & 0x7FFFFFFF;
