@@ -93,6 +93,7 @@ import static org.geotoolkit.metadata.AbstractMetadata.LOGGER;
  * the parsing and formatting processes.
  *
  * @author Martin Desruisseaux (Geomatys)
+ * @author Mehdi Sidhoum (Geomatys)
  * @version 3.20
  *
  * @since 2.4
@@ -556,6 +557,12 @@ public class MetadataTreeFormat extends Format {
                 valueAsText = formatNumber((Number) value);
             } else if (value instanceof InternationalString) {
                 valueAsText = ((InternationalString) value).toString(displayLocale);
+            } else if (value instanceof Locale) {
+                // We have no way to determine if the Locale is for a language, a script, a country
+                // or all of them. However in ISO 19115, most Locale instances stand for a language.
+                // The Locale.getDisplayName(...) method gives precedence to the language, with the
+                // script, country and variant between parentheses if present.
+                valueAsText = ((Locale) value).getDisplayName(displayLocale);
             } else {
                 valueAsText = String.valueOf(value);
             }
