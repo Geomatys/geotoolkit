@@ -66,7 +66,7 @@ import org.geotoolkit.internal.ReferenceQueueConsumer;
  * is not expected to be used in a highly concurrent environment.
  * <p>
  * Note that this class is <strong>not</strong> a cache, because the entries are discarded
- * as soon as the garbage collector determines that they are no longuer in use. If caching
+ * as soon as the garbage collector determines that they are no longer in use. If caching
  * service are wanted, or if concurrency are wanted, consider using {@link Cache} instead.
  *
  * @param <K> The class of key elements.
@@ -377,7 +377,7 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
      * the number of elements is corrected (if we didn't, an {@link AssertionError}
      * would be thrown for every operations after the first error,  which make
      * debugging more difficult). The set is otherwise unchanged, which should
-     * help to get similar behaviour as if assertions hasn't been turned on.
+     * help to get similar behavior as if assertions hasn't been turned on.
      */
     private boolean valid() {
         if (!Thread.holdsLock(this)) {
