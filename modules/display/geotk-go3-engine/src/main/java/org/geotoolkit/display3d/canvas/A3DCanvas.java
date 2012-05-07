@@ -37,12 +37,14 @@ import com.ardor3d.renderer.state.CullState;
 import com.ardor3d.scenegraph.Line;
 import com.ardor3d.scenegraph.Node;
 import com.ardor3d.scenegraph.hint.LightCombineMode;
+import com.ardor3d.util.GameTaskQueue;
 import com.ardor3d.util.GameTaskQueueManager;
 import com.ardor3d.util.geom.BufferUtils;
 import java.awt.Dimension;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.nio.FloatBuffer;
+import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.measure.unit.NonSI;
 import javax.media.opengl.GLCanvas;
@@ -125,13 +127,13 @@ public class A3DCanvas extends AbstractCanvas{
         this.objectiveCRS = crs;
         objTo3D = null; //clear cache
         
-        updateBasePlan();
+        getTaskQueueManager().getQueue(GameTaskQueue.UPDATE).enqueue(new PlanUpdateTask());
     }
 
     public synchronized void setPlanView(boolean planView) {
         this.planView = planView;
         objTo3D = null; //clear cache
-        updateBasePlan();
+        getTaskQueueManager().getQueue(GameTaskQueue.UPDATE).enqueue(new PlanUpdateTask());
     }
 
     public synchronized boolean isPlanView() {
@@ -255,74 +257,78 @@ public class A3DCanvas extends AbstractCanvas{
         return canvas;
     }
     
-    /**
-     * Update the base plan.
-     */
-    private void updateBasePlan(){
-        if(basePlan != null){
-            basePlan.removeFromParent();
+    private class PlanUpdateTask implements Callable{
+
+        @Override
+        public Object call() throws Exception {
+            if(basePlan != null){
+                basePlan.removeFromParent();
+            }
+
+            basePlan = new Node("plan");
+            basePlan.getSceneHints().setLightCombineMode(LightCombineMode.Off);
+
+            try{
+                final MathTransform wgsToObj = CRS.findMathTransform(DefaultGeographicCRS.WGS84_3D, getObjectiveCRS());
+                final MathTransform objTo3D = getObjectiveTo3DSpace();
+                final MathTransform wgsTo3D = MathTransforms.concatenate(wgsToObj, objTo3D);
+
+                int step = 10;
+                final float width = 1f;
+
+                //create a world grid
+                final FloatBuffer verts = BufferUtils.createVector3Buffer( 
+                        ((360/step)+1) * (180/step) * 6 //meridian lines
+                        +
+                        ((360/step)+1) * (180/step) * 6 //parallale lines
+                        );
+                final float[] buffer = new float[6];        
+                for(int lon=-180;lon<=180;lon+=step){
+                    for(int lat=-90;lat<90;lat+=step){
+                        buffer[0] = lon;
+                        buffer[1] = lat;
+                        buffer[2] = 0;
+                        buffer[3] = lon;
+                        buffer[4] = lat+step;
+                        buffer[5] = 0;
+                        wgsTo3D.transform(buffer, 0, buffer, 0, 2);
+                        verts.put(buffer);
+                    }
+                }
+                for(int lat=-90;lat<=90;lat+=step){
+                    for(int lon=-180;lon<180;lon+=step){
+                        buffer[0] = lon;
+                        buffer[1] = lat;
+                        buffer[2] = 0;
+                        buffer[3] = lon+step;
+                        buffer[4] = lat;
+                        buffer[5] = 0;
+                        wgsTo3D.transform(buffer, 0, buffer, 0, 2);
+                        verts.put(buffer);
+                    }
+                }
+
+
+                final Line line = new Line("Lines", verts, null, null, null);
+                line.getMeshData().setIndexMode(IndexMode.Lines);
+                line.setLineWidth(width);
+                line.setDefaultColor(ColorRGBA.GRAY);
+                line.setModelBound(new BoundingBox());
+                line.updateModelBound();
+                final CullState cullFrontFace = new CullState();
+                cullFrontFace.setEnabled(true);
+                cullFrontFace.setCullFace(CullState.Face.Back);
+                line.setRenderState(cullFrontFace);
+
+                basePlan.attachChild(line);
+                getA3DContainer().getScene().attachChild(basePlan);
+            }catch(Exception ex){
+                ex.printStackTrace();
+            }
+            
+            return null;
         }
         
-        basePlan = new Node("plan");
-        basePlan.getSceneHints().setLightCombineMode(LightCombineMode.Off);
-
-        try{
-            final MathTransform wgsToObj = CRS.findMathTransform(DefaultGeographicCRS.WGS84_3D, getObjectiveCRS());
-            final MathTransform objTo3D = getObjectiveTo3DSpace();
-            final MathTransform wgsTo3D = MathTransforms.concatenate(wgsToObj, objTo3D);
-
-            int step = 10;
-            final float width = 1f;
-
-            //create a world grid
-            final FloatBuffer verts = BufferUtils.createVector3Buffer( 
-                    ((360/step)+1) * (180/step) * 6 //meridian lines
-                    +
-                    ((360/step)+1) * (180/step) * 6 //parallale lines
-                    );
-            final float[] buffer = new float[6];        
-            for(int lon=-180;lon<=180;lon+=step){
-                for(int lat=-90;lat<90;lat+=step){
-                    buffer[0] = lon;
-                    buffer[1] = lat;
-                    buffer[2] = 0;
-                    buffer[3] = lon;
-                    buffer[4] = lat+step;
-                    buffer[5] = 0;
-                    wgsTo3D.transform(buffer, 0, buffer, 0, 2);
-                    verts.put(buffer);
-                }
-            }
-            for(int lat=-90;lat<=90;lat+=step){
-                for(int lon=-180;lon<180;lon+=step){
-                    buffer[0] = lon;
-                    buffer[1] = lat;
-                    buffer[2] = 0;
-                    buffer[3] = lon+step;
-                    buffer[4] = lat;
-                    buffer[5] = 0;
-                    wgsTo3D.transform(buffer, 0, buffer, 0, 2);
-                    verts.put(buffer);
-                }
-            }
-
-
-            final Line line = new Line("Lines", verts, null, null, null);
-            line.getMeshData().setIndexMode(IndexMode.Lines);
-            line.setLineWidth(width);
-            line.setDefaultColor(ColorRGBA.GRAY);
-            line.setModelBound(new BoundingBox());
-            line.updateModelBound();
-            final CullState cullFrontFace = new CullState();
-            cullFrontFace.setEnabled(true);
-            cullFrontFace.setCullFace(CullState.Face.Back);
-            line.setRenderState(cullFrontFace);
-
-            basePlan.attachChild(line);
-            getA3DContainer().getScene().attachChild(basePlan);
-        }catch(Exception ex){
-            ex.printStackTrace();
-        }
     }
-    
+        
 }
