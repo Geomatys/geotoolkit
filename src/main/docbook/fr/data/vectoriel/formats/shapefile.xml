@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!DOCTYPE book [
-  <!ENTITY % book.entities SYSTEM "../../../book.entities">
+  <!ENTITY % book.entities SYSTEM "../../../../book.entities">
   %book.entities;
 ]>
 <chapter xmlns="http://docbook.org/ns/docbook" version="5.0"

@@ -10,7 +10,7 @@
     <title>Service IGN RM</title>
     
     <para>
-        Code source complet :
+        <title>Code source complet</title> :
     </para>
     <para>
         <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/file/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/clients/ignrm/IGNClientDemo.java">

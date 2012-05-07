@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book [
+  <!ENTITY % book.entities SYSTEM "../../../book.entities">
+  %book.entities;
+]>
+<chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xlink = "http://www.w3.org/1999/xlink">
+          
+    <title>
+        Custom Graphic Objects
+    </title>
+    
+    <para>
+        <title>Code source complet  : </title>
+        <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/file/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/customgraphic/GraphicDemo.java">
+            <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/customgraphic/GraphicDemo.java</acronym>
+        </link>        
+    </para>
+    
+    <para>
+        <title>Quand utiliser un objet graphique ?</title>
+        <para>
+            Les objets graphiques peuvent être utilisés pour n'importe quoi, dessiner un fond ou un logo par dessus la carte par exemple.
+        </para>
+        <para>
+            Ces objets sont généralement sans aucune relation avec les Feature ou Coverage du modèle.
+        </para>
+    </para>
+    
+    <para>
+        
+        <title>Comment en créer ?</title>
+        
+
+        Dans le cas du moteur <emphasis>GO2</emphasis> l'objet doit être une instance de <emphasis>GraphicJ2D</emphasis>. Une classe abstraite : <emphasis>AbstractGraphicJ2D</emphasis> se chargera de la plupart des méthodes et n'en laissera que deux à implémenter.
+        <para>
+            <code>
+                <literallayout>
+                    public void paint(RenderingContext2D context);
+                </literallayout>
+            </code>
+        </para>
+        
+        Celle-ci est appelée par le canvas au moment de dessiner. Un objet <emphasis>Java2D Graphics2D<emphasis> ainsi que des méthodes utilitaires peuvent être trouvé sur l'objet <emphasis>RenderingContext2D</emphasis>.
+        <para>
+            <code>
+                <literallayout>
+                    public List&lt;Graphic&gt; getGraphicAt(RenderingContext context, SearchArea mask, VisitFilter filter, List&lt;Graphic&gt; graphics);
+                </literallayout>
+            </code>
+        </para>
+        Celle ci est appelée quand lors d'une requête d'intersection sur le canvas. Si le graphique est sélectionnable et touche la zone donnée alors il doit s'ajouter à la liste donnée en paramètre et la renvoyer.
+        
+        <para>
+            Une fois que vous avez un GraphicJ2D, il peut être ajouté dans le canvas comme ceci :
+            <para>
+                <code>
+                    <literallayout>
+                        canvas.getContainer().add(graphic); 
+                    </literallayout>
+                </code>
+            </para> 
+        </para>   
+    </para>
+    
+</chapter>

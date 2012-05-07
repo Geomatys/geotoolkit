@@ -78,7 +78,7 @@
             <emphasis>DatastoreFinder</emphasis> permet de les récupérer rapidement.
         </para>
         <para>
-            Code source complet :
+            <title>Code source complet  :</title>
             <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/file/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/ListAllFactoriesDemo.java">
                 <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/ListAllFactoriesDemo.java</acronym>
             </link>
@@ -90,7 +90,7 @@
         <title>Datastore </title>
     
         <para> 
-            code source complet : 
+            <title>Code source complet : <title>
             <simplelist>
                 <member>
                     <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/file/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/MemoryDataStoreDemo.java">
