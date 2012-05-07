@@ -33,7 +33,6 @@ import com.ardor3d.renderer.state.ZBufferState;
 import com.ardor3d.scenegraph.Node;
 import com.ardor3d.scenegraph.extension.Skybox;
 import com.ardor3d.util.GameTaskQueue;
-import com.ardor3d.util.GameTaskQueueManager;
 import com.ardor3d.util.TextureManager;
 import org.geotoolkit.display3d.canvas.A3DCanvas;
 import org.geotoolkit.map.MapContext;
@@ -144,7 +143,7 @@ public final class A3DContainer implements Scene {
     @Override
     public boolean renderUnto(final Renderer renderer) {
         // Execute renderQueue item
-        GameTaskQueueManager.getManager(A3DCanvas.GEOTK_MANAGER).getQueue(GameTaskQueue.RENDER).execute();
+        canvas.getTaskQueueManager().getQueue(GameTaskQueue.RENDER).execute();
         renderer.draw(root);
         return true;
     }

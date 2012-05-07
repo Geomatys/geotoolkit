@@ -37,11 +37,13 @@ import com.ardor3d.renderer.state.CullState;
 import com.ardor3d.scenegraph.Line;
 import com.ardor3d.scenegraph.Node;
 import com.ardor3d.scenegraph.hint.LightCombineMode;
+import com.ardor3d.util.GameTaskQueueManager;
 import com.ardor3d.util.geom.BufferUtils;
 import java.awt.Dimension;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.nio.FloatBuffer;
+import java.util.concurrent.atomic.AtomicInteger;
 import javax.measure.unit.NonSI;
 import javax.media.opengl.GLCanvas;
 import org.geotoolkit.display.canvas.AbstractCanvas;
@@ -65,7 +67,9 @@ import org.opengis.util.FactoryException;
  */
 public class A3DCanvas extends AbstractCanvas{
 
-    public static final String GEOTK_MANAGER = "geotk";
+    //generate a single queue manager id for each instance of canvas.
+    private static final AtomicInteger ID_INC = new AtomicInteger();
+    private final String queueManagerID = "geotk-ardor3d-"+ID_INC.incrementAndGet();
 
     private final LogicalLayer logicalLayer = new LogicalLayer();
     private final A3DContainer container = new A3DContainer(this);
@@ -176,6 +180,11 @@ public class A3DCanvas extends AbstractCanvas{
         return controller;
     }
 
+    /**
+     * Container holds all nodes displayed in the canvas.
+     * Use the TaskQueur
+     * @return A3DContainer
+     */
     public A3DContainer getA3DContainer() {
         return container;
     }
@@ -185,10 +194,24 @@ public class A3DCanvas extends AbstractCanvas{
         return null;
     }
 
+    /**
+     * @return AWT component to add in your frame.
+     */
     public JoglAwtCanvas getComponent(){
         return canvas;
     }
 
+    /**
+     * Default task queue manager for this canvas.
+     * Whenever there is a need to modify the scene ALWAYS do it in
+     * this queue manager, the scene modification while occure at the appropriate
+     * time in the rendering life cycle.
+     * @return GameTaskQueueManager
+     */
+    public GameTaskQueueManager getTaskQueueManager(){
+        return GameTaskQueueManager.getManager(queueManagerID);
+    }
+    
     private GLCanvas initContext() {
 
         final JoglCanvasRenderer renderer = new JoglCanvasRenderer(container);

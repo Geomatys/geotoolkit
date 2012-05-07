@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Johann Sorel
+ *    (C) 2009-2012, Johann Sorel
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -24,7 +24,6 @@ import com.ardor3d.math.Vector3;
 import com.ardor3d.renderer.Camera;
 import com.ardor3d.util.Constants;
 import com.ardor3d.util.GameTaskQueue;
-import com.ardor3d.util.GameTaskQueueManager;
 import com.ardor3d.util.ReadOnlyTimer;
 import com.ardor3d.util.stat.StatCollector;
 import org.geotoolkit.display3d.canvas.A3DCanvas;
@@ -114,7 +113,7 @@ public class A3DController implements Updater,CanvasController3D {
         logicalLayer.checkTriggers(tpf);
 
         // Execute updateQueue item
-        GameTaskQueueManager.getManager(A3DCanvas.GEOTK_MANAGER).getQueue(GameTaskQueue.UPDATE).execute();
+        canvas.getTaskQueueManager().getQueue(GameTaskQueue.UPDATE).execute();
 
         Camera camera = getCamera();
         synchronized (updateLocation) {
