@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Johann Sorel
+ *    (C) 2009-2012, Johann Sorel
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,39 +14,19 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.display3d.primitive;
+package org.geotoolkit.display3d.container;
 
-import com.ardor3d.scenegraph.Node;
 import org.geotoolkit.display3d.canvas.A3DCanvas;
-import org.opengis.display.primitive.Graphic;
+import org.geotoolkit.map.MapLayer;
 
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
- * @module pending
  */
-public abstract class A3DGraphic extends Node implements Graphic{
+public class MapLayerNode<T extends MapLayer> extends MapItemNode<T> {
 
-    protected final A3DCanvas canvas;
-    protected boolean visible = true;
-
-    protected A3DGraphic(final A3DCanvas canvas){
-        this.canvas = canvas;
+    public MapLayerNode(A3DCanvas canvas, T mapitem) {
+        super(canvas, mapitem);
     }
-
-    @Override
-    public boolean isVisible() {
-        return visible;
-    }
-
-    @Override
-    public void setVisible(final boolean visible) {
-        this.visible = visible;
-    }
-
-    @Override
-    public void dispose() {
-        removeFromParent();
-    }
-
+    
 }

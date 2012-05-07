@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Johann Sorel
+ *    (C) 2009-2012, Johann Sorel
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,49 +16,35 @@
  */
 package org.geotoolkit.display3d.container;
 
-import com.ardor3d.annotation.MainThread;
-import com.ardor3d.extension.model.collada.jdom.ColladaImporter;
-import com.ardor3d.extension.model.collada.jdom.data.ColladaStorage;
 import com.ardor3d.framework.Scene;
 import com.ardor3d.image.Texture;
 import com.ardor3d.image.util.AWTImageLoader;
 import com.ardor3d.intersection.PickResults;
 import com.ardor3d.light.DirectionalLight;
 import com.ardor3d.math.ColorRGBA;
-import com.ardor3d.math.Matrix3;
 import com.ardor3d.math.Ray3;
 import com.ardor3d.math.Vector3;
-import com.ardor3d.math.type.ReadOnlyVector3;
 import com.ardor3d.renderer.Camera;
 import com.ardor3d.renderer.Renderer;
 import com.ardor3d.renderer.queue.RenderBucketType;
-import com.ardor3d.renderer.state.CullState;
 import com.ardor3d.renderer.state.LightState;
 import com.ardor3d.renderer.state.WireframeState;
 import com.ardor3d.renderer.state.ZBufferState;
 import com.ardor3d.scenegraph.Node;
-import com.ardor3d.scenegraph.controller.ComplexSpatialController;
 import com.ardor3d.scenegraph.extension.Skybox;
 import com.ardor3d.util.GameTaskQueue;
 import com.ardor3d.util.GameTaskQueueManager;
 import com.ardor3d.util.TextureManager;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.logging.Level;
 import org.geotoolkit.display3d.canvas.A3DCanvas;
-import org.geotoolkit.display3d.primitive.A3DGraphic;
 import org.geotoolkit.map.MapContext;
-import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.util.ArgumentChecks;
 import org.opengis.display.canvas.Canvas;
-import org.opengis.display.container.ContainerListener;
-import org.opengis.display.container.GraphicsContainer;
-import org.opengis.geometry.Envelope;
 
 /**
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
-public final class A3DContainer implements Scene, GraphicsContainer<A3DGraphic> {
+public final class A3DContainer implements Scene {
 
     static {
         //register image loaders
@@ -70,10 +56,11 @@ public final class A3DContainer implements Scene, GraphicsContainer<A3DGraphic> 
     private final Node scene = new Node("scene");
     private final Skybox skybox = buildSkyBox();
 
-    private ContextNode contextNode = null;
+    private MapItemNode contextNode = null;
     private MapContext context = null;
 
     public A3DContainer(final A3DCanvas canvas) {
+        ArgumentChecks.ensureNonNull("canvas", canvas);
         this.canvas = canvas;
 
         // Zbuffer -------------------------------------------------------------
@@ -117,118 +104,48 @@ public final class A3DContainer implements Scene, GraphicsContainer<A3DGraphic> 
         // Skybox --------------------------------------------------------------
         root.attachChild(skybox);
         root.attachChild(scene);
-
-//        try {
-//            scene.attachChild(createDynamicNode());
-//        } catch (MalformedURLException ex) {
-//            ex.printStackTrace();
-//        }
-
     }
 
-
-
-    public Node createDynamicNode() throws IOException{
-        final Node group = new Node("planes");
-        group.setTranslation(0, 200, 0);
-
-        final ColladaStorage storage = new ColladaImporter().load("/models/mirage.dae");
-        final Node plane1 = storage.getScene();
-        plane1.setRotation(new Matrix3().fromAngleNormalAxis(Math.PI * -0.5, new Vector3(1, 0, 0)));
-        plane1.setScale(0.2,0.2,0.2);
-
-        group.attachChild(plane1);
-
-        group.addController(new ComplexSpatialController<Node>(){
-
-            double rayon = 3000;
-            double step = Math.PI;
-            double angle = 0;
-
-            @Override
-            public void update(double time, Node caller) {
-                angle += step*time/10f;
-                if(angle >= Math.PI*2){
-                    angle -= Math.PI*2;
-                }
-//                reactor.forceRespawn();
-                Matrix3 rt = new Matrix3().fromAngleNormalAxis(Math.PI-angle, new Vector3(0, 1, 0));
-                caller.setRotation(rt);
-                caller.setTranslation(Math.cos(angle)*rayon, 500, Math.sin(angle)*rayon);
-//                caller.updateWorldTransform(true);
-            }
-        });
-
-//        group.getSceneHints().setLightCombineMode(LightCombineMode.Off);
-
-        final CullState cullFrontFace = new CullState();
-        cullFrontFace.setEnabled(true);
-        cullFrontFace.setCullFace(CullState.Face.Back);
-        group.setRenderState(cullFrontFace);
-
-        return group;
+    /**
+     * @return Root node of the scene
+     */
+    public Node getRoot() {
+        return root;
     }
 
-
-
-
-
-    private double translateX = 0;
-    private double translateY = 0;
-    private double scaling = 1f;
-
-
-    public ReadOnlyVector3 correctLocation(final Vector3 vect){
-        Vector3 corrected = new Vector3(vect);
-        corrected.setX(corrected.getX()/scaling +translateX);
-        corrected.setZ(corrected.getZ()/scaling +translateY);
-        return corrected;
+    /**
+     * @return Scene node
+     */
+    public Node getScene(){
+        return scene;
     }
-
+    
+    /**
+     * @return currently rendered mapcontext
+     */
     public MapContext getContext() {
         return context;
     }
 
-    public void setContext(final MapContext context, final boolean loadAll) {
+    /**
+     * @return set rendered map context
+     */
+    public void setContext(final MapContext context) {
         this.context = context;
 
         if(contextNode != null){
             contextNode.removeFromParent();
         }
 
-        contextNode = new ContextNode(canvas, context, loadAll);
-        try {
-            Envelope env = context.getBounds();
-            translateX = env.getMedian(0);
-            translateY = env.getMedian(1);
-            contextNode.setTranslation(-translateX*scaling,0,-translateY*scaling);
-
-        } catch (IOException ex) {
-            Logging.getLogger(A3DContainer.class).log(Level.WARNING, null, ex);
-        }
+        contextNode = new MapItemNode(canvas, context);
         scene.attachChild(contextNode);
     }
 
-    public void setScaling(final double scaling) {
-        this.scaling = scaling;
-    }
-
-    public Node getRoot() {
-        return root;
-    }
-
-    public Node getScene(){
-        return scene;
-    }
-
-    @MainThread
     @Override
     public boolean renderUnto(final Renderer renderer) {
         // Execute renderQueue item
         GameTaskQueueManager.getManager(A3DCanvas.GEOTK_MANAGER).getQueue(GameTaskQueue.RENDER).execute();
-
         renderer.draw(root);
-//        Debugger.drawNormals(root, renderer);
         return true;
     }
 
@@ -238,58 +155,13 @@ public final class A3DContainer implements Scene, GraphicsContainer<A3DGraphic> 
         return null;
     }
 
-    @Override
     public Canvas getCanvas() {
         return canvas;
     }
 
-    @Override
-    public Envelope getGraphicsEnvelope() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Collection<A3DGraphic> graphics() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void addContainerListener(final ContainerListener arg0) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void removeContainerListener(final ContainerListener arg0) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void dispose() {
-    }
-
     public void update(final Camera camera, final double tpf, final boolean b) {
-        if(scene.getScale().getX() != scaling){
-            scene.setScale(scaling);
-        }
-        
         skybox.setTranslation(camera.getLocation());
     }
-
-
-    /**
-     * Setup fog.
-     */
-//    private FogState buildFog() {
-//        final FogState fogState = new FogState();
-//        fogState.setDensity(1.0f);
-//        fogState.setEnabled(true);
-//        fogState.setColor(new ColorRGBA(1.0f, 1.0f, 1.0f, 1.0f));
-//        fogState.setEnd((float) farPlane);
-//        fogState.setStart((float) farPlane / 10.0f);
-//        fogState.setDensityFunction(FogState.DensityFunction.Linear);
-//        fogState.setQuality(FogState.Quality.PerVertex);
-//        return fogState;
-//    }
 
     /**
      * Builds the sky box.

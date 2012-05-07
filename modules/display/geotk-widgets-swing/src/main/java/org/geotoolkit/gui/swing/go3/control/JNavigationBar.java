@@ -19,11 +19,11 @@ package org.geotoolkit.gui.swing.go3.control;
 import javax.swing.JToolBar;
 import org.geotoolkit.display3d.canvas.A3DCanvas;
 import org.geotoolkit.gui.swing.go3.control.navigation.CameraSpeedSlider;
-import org.geotoolkit.gui.swing.go3.control.navigation.SceneScalingSlider;
+import org.geotoolkit.gui.swing.go3.control.navigation.PlanViewAction;
 import org.geotoolkit.gui.swing.go3.control.navigation.ZoomAllAction;
 
 /**
- * JMap2DControlBar is a JPanel to handle Navigation state for an Ardor3D map
+ * JToolBar to handle Navigation state for an Ardor3D map
  * ZoomIn/Out, pan, selection, refresh ...
  *
  * @author johann Sorel (Puzzle-GIS)
@@ -31,11 +31,10 @@ import org.geotoolkit.gui.swing.go3.control.navigation.ZoomAllAction;
  */
 public class JNavigationBar extends JToolBar {
 
+    private final PlanViewAction actionPlanView = new PlanViewAction();
     private final ZoomAllAction actionZoomAll = new ZoomAllAction();
     private final CameraSpeedSlider cameraSpeed = new CameraSpeedSlider();
-    private final SceneScalingSlider scaling = new SceneScalingSlider();
-
-    private A3DCanvas map = null;
+    private A3DCanvas canvas = null;
 
     /**
      * Creates a new instance of JMap2DControlBar
@@ -49,20 +48,20 @@ public class JNavigationBar extends JToolBar {
      * @param pane : related Map2D or null
      */
     public JNavigationBar(final A3DCanvas pane) {
+        add(actionPlanView);
         add(actionZoomAll);
         add(cameraSpeed);
-        add(scaling);
-        setMap(pane);
+        setCanvas(pane);
     }
 
     /**
      * set the related Map2D
      * @param map2d : related Map2D
      */
-    public void setMap(final A3DCanvas map2d) {
-        map = map2d;
-        actionZoomAll.setMap(map);
-        cameraSpeed.setMap(map);
-        scaling.setMap(map);
+    public void setCanvas(final A3DCanvas map2d) {
+        canvas = map2d;
+        actionZoomAll.setCanvas(canvas);
+        actionPlanView.setCanvas(canvas);
+        cameraSpeed.setMap(canvas);
     }
 }

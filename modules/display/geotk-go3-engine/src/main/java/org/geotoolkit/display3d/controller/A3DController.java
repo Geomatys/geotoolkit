@@ -44,7 +44,6 @@ public class A3DController implements Updater,CanvasController3D {
     private final LogicalLayer logicalLayer;
     //variable to update camera on next canvas update
     private final Vector3 updateLocation = new Vector3(0, 0, 0);
-    private final LocationSensitiveUpdater locationUpdater;
     private final CameraControl controller;
 
 
@@ -52,10 +51,6 @@ public class A3DController implements Updater,CanvasController3D {
         this.canvas = canvas;
         this.logicalLayer = logicalLayer;
         controller = CameraControl.setupTriggers(logicalLayer, new Vector3(0, 1, 0), true);
-
-        locationUpdater = new  LocationSensitiveUpdater(canvas.getContainer2());
-        locationUpdater.setPriority(Thread.MIN_PRIORITY);
-        locationUpdater.start();
     }
 
     @Override
@@ -88,7 +83,7 @@ public class A3DController implements Updater,CanvasController3D {
     }
 
     private Camera getCamera(){
-        JoglAwtCanvas nativ = canvas.getNativeCanvas();
+        JoglAwtCanvas nativ = canvas.getComponent();
         if(nativ != null && nativ.getCanvasRenderer() != null){
             return nativ.getCanvasRenderer().getCamera();
         }
@@ -149,13 +144,12 @@ public class A3DController implements Updater,CanvasController3D {
 
 
         if(camera != null){
-            locationUpdater.updateCameraLocation(camera.getLocation());
-            canvas.getContainer2().update(camera,tpf,true);
+            canvas.getA3DContainer().update(camera,tpf,true);
         }
 
 
         /** Update controllers/render states/transforms/bounds for rootNode. */
-        canvas.getContainer2().getRoot().updateGeometricState(timer.getTimePerFrame(), true);
+        canvas.getA3DContainer().getRoot().updateGeometricState(timer.getTimePerFrame(), true);
     }
 
     @Override
@@ -176,11 +170,6 @@ public class A3DController implements Updater,CanvasController3D {
     @Override
     public CoordinateReferenceSystem getObjectiveCRS() {
         return canvas.getObjectiveCRS();
-    }
-
-    @Override
-    public void addLocationSensitiveGraphic(final LocationSensitiveGraphic graphic, final double distance) {
-        locationUpdater.put(graphic, distance);
     }
 
 }

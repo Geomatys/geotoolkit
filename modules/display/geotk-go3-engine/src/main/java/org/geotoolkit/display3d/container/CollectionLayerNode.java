@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Johann Sorel
+ *    (C) 2009-2012, Johann Sorel
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,17 +14,19 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.display3d.controller;
+package org.geotoolkit.display3d.container;
 
-import com.ardor3d.math.type.ReadOnlyVector3;
+import org.geotoolkit.display3d.canvas.A3DCanvas;
+import org.geotoolkit.map.CollectionMapLayer;
 
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
- * @module pending
  */
-public interface LocationSensitiveGraphic {
+public class CollectionLayerNode<T extends CollectionMapLayer> extends MapLayerNode<T> {
 
-    void update(ReadOnlyVector3 cameraPosition);
-
+    public CollectionLayerNode(A3DCanvas canvas, T mapitem) {
+        super(canvas, mapitem);
+    }
+    
 }

@@ -14,32 +14,40 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.gui.swing.go3.control;
+package org.geotoolkit.gui.swing.go3.control.navigation;
 
-import javax.swing.JPanel;
+import java.awt.event.ActionEvent;
+import javax.swing.AbstractAction;
 import org.geotoolkit.display3d.canvas.A3DCanvas;
+import org.geotoolkit.gui.swing.resource.IconBundle;
+
 
 /**
- *
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
-public class JCoordinateBar extends JPanel{
+public class PlanViewAction extends AbstractAction {
 
-    private A3DCanvas map;
-
-    public JCoordinateBar() {
+    public PlanViewAction() {
+        super("PV");
+        putValue(SMALL_ICON, IconBundle.getIcon("16_3d_planview"));
     }
 
-    public void setMap(final A3DCanvas map) {
-        this.map = map;
+    private A3DCanvas canvas = null;
 
+    @Override
+    public void actionPerformed(final ActionEvent arg0) {
+        if (canvas != null) {
+            canvas.setPlanView(!canvas.isPlanView());
+        }
     }
 
-    public A3DCanvas getMap() {
-        return map;
+    public A3DCanvas getCanvas() {
+        return canvas;
     }
 
-
-
+    public void setCanvas(final A3DCanvas map) {
+        this.canvas = map;
+        setEnabled(map != null);
+    }
 }

@@ -16,42 +16,41 @@
  */
 package org.geotoolkit.gui.swing.go3.control.navigation;
 
-import javax.swing.JSlider;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
+import java.awt.event.ActionEvent;
+import javax.swing.AbstractAction;
 import org.geotoolkit.display3d.canvas.A3DCanvas;
+import org.geotoolkit.gui.swing.resource.IconBundle;
+import org.geotoolkit.map.MapContext;
+
 
 /**
- *
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
-public class SceneScalingSlider extends JSlider{
+public class ZoomAllAction extends AbstractAction {
 
-    private A3DCanvas map = null;
-
-    public SceneScalingSlider() {
-        super(1, 100);
-
-        addChangeListener(new ChangeListener() {
-
-            @Override
-            public void stateChanged(ChangeEvent arg0) {
-                if(map != null){
-                    map.getContainer2().setScaling(SceneScalingSlider.this.getValue()/100d);
-                }
-            }
-        });
-
+    public ZoomAllAction() {
+        super("ZA");
+        putValue(SMALL_ICON, IconBundle.getIcon("16_zoom_all"));
     }
 
-    public void setMap(final A3DCanvas map) {
-        this.map = map;
+    private A3DCanvas canvas = null;
+
+    @Override
+    public void actionPerformed(final ActionEvent arg0) {
+        if (canvas != null) {
+            MapContext context = canvas.getA3DContainer().getContext();
+            if(context == null) return;
+            canvas.getController().setCameraPosition(0, 20, 0);
+        }
     }
 
-    public A3DCanvas getMap() {
-        return map;
+    public A3DCanvas getCanvas() {
+        return canvas;
     }
 
-
+    public void setCanvas(final A3DCanvas map) {
+        this.canvas = map;
+        setEnabled(map != null);
+    }
 }

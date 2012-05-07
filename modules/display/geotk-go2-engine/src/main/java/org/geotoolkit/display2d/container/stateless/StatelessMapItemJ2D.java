@@ -214,7 +214,6 @@ public class StatelessMapItemJ2D<T extends MapItem> extends AbstractGraphicJ2D i
             for(final MapItem child : event.getItems()){
                 final GraphicJ2D gj2d = parseChild(child, item.items().indexOf(child));
                 itemGraphics.put(child, gj2d);
-                parseChild(child, item.items().indexOf(child));
             }
             //change other layers indexes
             final List<MapItem> children = item.items();

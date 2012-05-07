@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Johann Sorel
+ *    (C) 2009-2012, Johann Sorel
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.display3d.canvas;
 
+import com.ardor3d.bounding.BoundingBox;
 import com.ardor3d.framework.Canvas;
 import com.ardor3d.framework.CanvasRenderer;
 import com.ardor3d.framework.DisplaySettings;
@@ -30,21 +31,33 @@ import com.ardor3d.input.awt.AwtKeyboardWrapper;
 import com.ardor3d.input.awt.AwtMouseManager;
 import com.ardor3d.input.awt.AwtMouseWrapper;
 import com.ardor3d.input.logical.*;
+import com.ardor3d.math.ColorRGBA;
+import com.ardor3d.renderer.IndexMode;
+import com.ardor3d.renderer.state.CullState;
+import com.ardor3d.scenegraph.Line;
+import com.ardor3d.scenegraph.Node;
+import com.ardor3d.scenegraph.hint.LightCombineMode;
+import com.ardor3d.util.geom.BufferUtils;
 import java.awt.Dimension;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.util.logging.Logger;
+import java.nio.FloatBuffer;
+import javax.measure.unit.NonSI;
 import javax.media.opengl.GLCanvas;
-import javax.swing.JComponent;
-import javax.swing.JScrollPane;
 import org.geotoolkit.display.canvas.AbstractCanvas;
 import org.geotoolkit.display.container.AbstractContainer;
 import org.geotoolkit.display3d.container.A3DContainer;
 import org.geotoolkit.display3d.controller.A3DController;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.crs.*;
+import org.geotoolkit.referencing.operation.MathTransforms;
+import org.geotoolkit.util.ArgumentChecks;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.VerticalCRS;
+import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 
 /**
  * @author Johann Sorel (Puzzle-GIS)
@@ -53,41 +66,38 @@ import org.opengis.referencing.operation.TransformException;
 public class A3DCanvas extends AbstractCanvas{
 
     public static final String GEOTK_MANAGER = "geotk";
-    
-    private static final Logger LOGGER = Logging.getLogger(A3DCanvas.class);
-
-    public static final String CAMERA_POSITION = "camera_position";
 
     private final LogicalLayer logicalLayer = new LogicalLayer();
     private final A3DContainer container = new A3DContainer(this);
     private final A3DController controller;
-    private final JScrollPane swingPane;
     private final JoglAwtCanvas canvas;
+    
+    //objective coordinate reference system
+    //all datas are transformed toward this crs
     private CoordinateReferenceSystem objectiveCRS;
+    private MathTransform objTo3D;
+    
+    //display a globe or a plan view
+    private boolean planView = true;
+    
+    //a grid plan over the world
+    private Node basePlan = null;
 
-    public A3DCanvas(final CoordinateReferenceSystem objectiveCRS, final Hints hints) {
+    public A3DCanvas(final Hints hints) {
         super(hints);
-        this.objectiveCRS = objectiveCRS;
+        this.objectiveCRS = DefaultGeographicCRS.WGS84;
         this.canvas = (JoglAwtCanvas) initContext();
         this.controller = new A3DController(this, logicalLayer);
         this.controller.init();
 
-        this.swingPane = new JScrollPane(canvas);
-        this.swingPane.setBorder(null);
-        this.swingPane.setWheelScrollingEnabled(false);
-        this.swingPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
-        this.swingPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        this.swingPane.addComponentListener(new ComponentAdapter() {
+        canvas.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
-
-                CanvasRenderer canvasRenderer = canvas.getCanvasRenderer();
+                final CanvasRenderer canvasRenderer = canvas.getCanvasRenderer();
 
                 if (canvasRenderer.getCamera() != null) {
-                    System.out.println("resized");
                     // tell our camera the correct new size
                     canvasRenderer.getCamera().resize(canvas.getWidth(), canvas.getHeight());
-
                     // keep our aspect ratio the same.
                     canvasRenderer.getCamera().setFrustumPerspective(45.0,
                             canvas.getWidth() / (float) canvas.getHeight(), 1, 5000);
@@ -95,21 +105,78 @@ public class A3DCanvas extends AbstractCanvas{
             }
         });
 
-        Thread updater = new A3DPaintingUpdater(canvas, controller);
-        updater.setPriority(Thread.MAX_PRIORITY);
-        updater.start();
+        final WeakFrameHandler handler = WeakFrameHandler.getInstance();
+        handler.addUpdater(controller);
+        handler.addCanvas(canvas);
+        
+        setPlanView(false);
     }
 
+    public synchronized CoordinateReferenceSystem getObjectiveCRS() {
+        return objectiveCRS;
+    }
+    
     public synchronized void setObjectiveCRS(final CoordinateReferenceSystem crs) throws TransformException {
-        throw new TransformException("You are not allowed to change CRS after creation on 3D canvas");
+        ArgumentChecks.ensureNonNull("crs", crs);
+        this.objectiveCRS = crs;
+        objTo3D = null; //clear cache
+        
+        updateBasePlan();
     }
 
+    public synchronized void setPlanView(boolean planView) {
+        this.planView = planView;
+        objTo3D = null; //clear cache
+        updateBasePlan();
+    }
+
+    public synchronized boolean isPlanView() {
+        return planView;
+    }
+
+    /**
+     * Return the current mathtransform from objectiveCRS to displayCRS
+     * if the canvas is in planar view then the transform is identify otherwise
+     * a transformation to geocentric is applied.
+     */
+    public MathTransform getObjectiveTo3DSpace() throws FactoryException{
+        if(objTo3D != null){
+            return objTo3D;
+        }
+        
+        CoordinateReferenceSystem targetCRS;
+        if(planView){
+            VerticalCRS vertical = CRS.getVerticalCRS(objectiveCRS);
+            if(vertical == null){
+                vertical = DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT;
+                targetCRS = new DefaultCompoundCRS("obj+vertical", objectiveCRS, vertical);
+            }else{
+                targetCRS = objectiveCRS;
+            }
+            
+            if(!targetCRS.getCoordinateSystem().getAxis(0).getUnit().equals(NonSI.DEGREE_ANGLE)){
+                //scale the projection
+                final MathTransform scaletrs = MathTransforms.linear(3, 1d/1000000d, 0);
+                targetCRS = new DefaultDerivedCRS("rescaled-projected", targetCRS, scaletrs, targetCRS.getCoordinateSystem());
+            }
+            
+        }else{
+            targetCRS = DefaultGeocentricCRS.CARTESIAN;
+            //rescale metric projection
+            final MathTransform scaletrs = MathTransforms.linear(3, 1d/1000000d, 0);
+            targetCRS = new DefaultDerivedCRS("rescaled-geocentric", targetCRS, scaletrs, targetCRS.getCoordinateSystem());
+        }
+        
+        objTo3D = CRS.findMathTransform(objectiveCRS, targetCRS);
+        return objTo3D;
+    }
+    
     @Override
     public A3DController getController() {
         return controller;
     }
 
-    public A3DContainer getContainer2() {
+    public A3DContainer getA3DContainer() {
         return container;
     }
 
@@ -118,22 +185,17 @@ public class A3DCanvas extends AbstractCanvas{
         return null;
     }
 
-    public JComponent getComponent(){
-        return swingPane;
-    }
-
-    public JoglAwtCanvas getNativeCanvas(){
+    public JoglAwtCanvas getComponent(){
         return canvas;
     }
 
     private GLCanvas initContext() {
-//        refresher.addUpdater(controller);
 
-        JoglCanvasRenderer renderer = new JoglCanvasRenderer(container);
-        final DisplaySettings settings = new DisplaySettings(1, 1, 32, 0, 0, 32, 0, 4, false, false);
+        final JoglCanvasRenderer renderer = new JoglCanvasRenderer(container);
+        final DisplaySettings settings = new DisplaySettings(100, 100, 32, 0, 0, 32, 0, 4, false, false);
         final JoglAwtCanvas canvas = new JoglAwtCanvas(settings,renderer);
         canvas.setSize(new Dimension(100, 100));
-        canvas.setPreferredSize(new Dimension(1,1));
+        canvas.setPreferredSize(new Dimension(100,100));
         canvas.setVisible(true);
 
         final MouseManager manager = new AwtMouseManager(canvas);
@@ -167,13 +229,77 @@ public class A3DCanvas extends AbstractCanvas{
             }
             }));
 
-//        refresher.addCanvas(canvas);
-
         return canvas;
     }
+    
+    /**
+     * Update the base plan.
+     */
+    private void updateBasePlan(){
+        if(basePlan != null){
+            basePlan.removeFromParent();
+        }
+        
+        basePlan = new Node("plan");
+        basePlan.getSceneHints().setLightCombineMode(LightCombineMode.Off);
 
-    public CoordinateReferenceSystem getObjectiveCRS() {
-        return objectiveCRS;
+        try{
+            final MathTransform wgsToObj = CRS.findMathTransform(DefaultGeographicCRS.WGS84_3D, getObjectiveCRS());
+            final MathTransform objTo3D = getObjectiveTo3DSpace();
+            final MathTransform wgsTo3D = MathTransforms.concatenate(wgsToObj, objTo3D);
+
+            int step = 10;
+            final float width = 1f;
+
+            //create a world grid
+            final FloatBuffer verts = BufferUtils.createVector3Buffer( 
+                    ((360/step)+1) * (180/step) * 6 //meridian lines
+                    +
+                    ((360/step)+1) * (180/step) * 6 //parallale lines
+                    );
+            final float[] buffer = new float[6];        
+            for(int lon=-180;lon<=180;lon+=step){
+                for(int lat=-90;lat<90;lat+=step){
+                    buffer[0] = lon;
+                    buffer[1] = lat;
+                    buffer[2] = 0;
+                    buffer[3] = lon;
+                    buffer[4] = lat+step;
+                    buffer[5] = 0;
+                    wgsTo3D.transform(buffer, 0, buffer, 0, 2);
+                    verts.put(buffer);
+                }
+            }
+            for(int lat=-90;lat<=90;lat+=step){
+                for(int lon=-180;lon<180;lon+=step){
+                    buffer[0] = lon;
+                    buffer[1] = lat;
+                    buffer[2] = 0;
+                    buffer[3] = lon+step;
+                    buffer[4] = lat;
+                    buffer[5] = 0;
+                    wgsTo3D.transform(buffer, 0, buffer, 0, 2);
+                    verts.put(buffer);
+                }
+            }
+
+
+            final Line line = new Line("Lines", verts, null, null, null);
+            line.getMeshData().setIndexMode(IndexMode.Lines);
+            line.setLineWidth(width);
+            line.setDefaultColor(ColorRGBA.GRAY);
+            line.setModelBound(new BoundingBox());
+            line.updateModelBound();
+            final CullState cullFrontFace = new CullState();
+            cullFrontFace.setEnabled(true);
+            cullFrontFace.setCullFace(CullState.Face.Back);
+            line.setRenderState(cullFrontFace);
+
+            basePlan.attachChild(line);
+            getA3DContainer().getScene().attachChild(basePlan);
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
     }
-
+    
 }
