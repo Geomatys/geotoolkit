@@ -127,10 +127,15 @@ public abstract class AbstractProcessDescriptor implements ProcessDescriptor {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
-        sb.append(id.getAuthority().getTitle().toString());
-        sb.append(".");
-        sb.append(id.getCode());
+        sb.append("Authority : ");
+        sb.append(id.getAuthority().getTitle().toString()).append("\n");
+        sb.append("Name      : ");
+        sb.append(id.getCode()).append("\n");
+        sb.append(inputDesc.toString());
+        sb.append(outputdesc.toString());
         return sb.toString();
+        
     }
 
+    
 }
