@@ -189,7 +189,7 @@ public class GeometryCSTransformer implements GeometryTransformer{
         return csTransformer.transform(sequence,minpoints);
     }
     
-    private CoordinateSequence ensureClosed(final CoordinateSequence sequence){
+    public static CoordinateSequence ensureClosed(final CoordinateSequence sequence){
         final Coordinate first = sequence.getCoordinate(0);
         final int lastIndex = sequence.size()-1;
         if(!first.equals2D(sequence.getCoordinate(lastIndex))){
