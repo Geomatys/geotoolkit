@@ -270,7 +270,7 @@ public class WKTFormat extends Format {
     }
 
     /**
-     * Returns the convention for formatting WKT entities.
+     * Returns the convention for parsing and formatting WKT entities.
      * The default value is {@link Convention#OGC}.
      *
      * @return The convention to use for formatting WKT entities (never {@code null}).
@@ -286,7 +286,7 @@ public class WKTFormat extends Format {
     }
 
     /**
-     * Sets the convention for formatting WKT entities.
+     * Sets the convention for parsing and formatting WKT entities.
      * The convention given to this method can not be null.
      *
      * @param convention The new convention to use for formatting WKT entities.
@@ -297,6 +297,7 @@ public class WKTFormat extends Format {
         ArgumentChecks.ensureNonNull("convention", convention);
         this.convention = convention;
         updateFormatter(formatter);
+        updateParser();
     }
 
     /**
@@ -332,6 +333,7 @@ public class WKTFormat extends Format {
     public void setAuthority(final Citation authority) {
         this.authority = authority;
         updateFormatter(formatter);
+        // No need to update the parser.
     }
 
     /**
@@ -342,6 +344,17 @@ public class WKTFormat extends Format {
     private void updateFormatter(final Formatter formatter) {
         if (formatter != null) {
             formatter.setConvention(convention, authority);
+        }
+    }
+
+    /**
+     * Updates the parser convention according the current state of this {@code WKTFormat}.
+     */
+    private void updateParser() {
+        if (parser instanceof ReferencingParser) {
+            final ReferencingParser parser = (ReferencingParser) this.parser;
+            parser.setForcedAngularUnit((convention != null) ? convention.forcedAngularUnit : null);
+            parser.setAxisIgnored(convention == Convention.ESRI);
         }
     }
 
@@ -539,6 +552,7 @@ public class WKTFormat extends Format {
     private Parser getParser() {
         if (parser == null) {
             parser = new ReferencingParser(symbols, (Hints) null);
+            updateParser();
         }
         return parser;
     }

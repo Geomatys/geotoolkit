@@ -42,7 +42,7 @@ import org.geotoolkit.internal.coverage.ColorPalette;
  * <p>
  * <ul>
  *   <li>A {@link String} as an ordinary label.</li>
- *   <li>A {@link Gradiant} as the name of a color palette. The colors are fetched
+ *   <li>A {@link ColorPalette} as the name of a color palette. The colors are fetched
  *       using the {@link PaletteFactory} given at construction time.</li>
  *   <li>A uniform (usually opaque) {@link Color}.</li>
  * </ul>
@@ -158,7 +158,7 @@ final class PaletteCellRenderer extends DefaultListCellRenderer implements Table
 
     /**
      * Configures this component for rendering the given value. If the value is an instance of
-     * {@link Gradiant}, then this method will loads the colors using the palette factory when
+     * {@link ColorPalette}, then this method will loads the colors using the palette factory when
      * first needed. If the colors can not be loaded, then a warning message is logged and a
      * gray scale color palette is used.
      * <p>
@@ -172,8 +172,8 @@ final class PaletteCellRenderer extends DefaultListCellRenderer implements Table
     private void configure(final JComponent component, final Object value, final boolean isSelected) {
         final Object oldValue = currentSelection;
         currentSelection = value;
-        final boolean isGradiant = (value instanceof ColorPalette);
-        paintColors = isGradiant || (value instanceof Color);
+        final boolean isColorPalette = (value instanceof ColorPalette);
+        paintColors = isColorPalette || (value instanceof Color);
         if (paintColors) {
             final Color background, foreground;
             if (!isSelected) {
@@ -193,7 +193,7 @@ final class PaletteCellRenderer extends DefaultListCellRenderer implements Table
             if (!value.equals(oldValue)) {
                 setText(null);
                 final Color[] colors;
-                if (isGradiant) {
+                if (isColorPalette) {
                     colors = ((ColorPalette) value).getColors(factory);
                 } else {
                     colors = new Color[] {(Color) value};

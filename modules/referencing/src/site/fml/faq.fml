@@ -200,11 +200,11 @@ if (AbstractIdentifiedObject.nameMatches(method, AlbersEqualArea.PARAMETERS)) {
 
         <p>If the collection of identifiers is empty, the most effective fix is to make sure that
         the WKT contains an <code>AUTHORITY</code> declaration. If this is not possible, then the
-        <code>org.geotoolkit.referencing.CRS</code> class contains some <code>lookupIdentifier(…)</code>
+        <code>org.geotoolkit.referencing.IdentifiedObjects</code> class contains some <code>lookupIdentifier(…)</code>
         convenience methods which may help. Example:</p>
 
 <blockquote><pre>CoordinateReferenceSystem myCRS = ...;
-String identifier = CRS.lookupIdentifier(Citations.EPSG, myCRS, true);
+String identifier = IdentifiedObjects.lookupIdentifier(Citations.EPSG, myCRS, true);
 if (identifier != null) {
     System.out.println("The EPSG code has been found: " + identifier);
 }</pre></blockquote>
@@ -232,7 +232,7 @@ if (identifier != null) {
         <code>"EPSG:4326"</code> are provided. An easy way to build the full URN is to use the code
         below:</p>
 
-<blockquote><pre>String urn = CRS.lookupIdentifier(Citations.URN_OGC, myCRS, false);</pre></blockquote>
+<blockquote><pre>String urn = IdentifiedObjects.lookupIdentifier(Citations.URN_OGC, myCRS, false);</pre></blockquote>
 
       <p>The boolean argument can be set to <code>true</code> for allowing a database scan (see the
       FAQ item above), and the authority can also be <code>HTTP_OGC</code> for a URL of the form
@@ -243,11 +243,11 @@ if (identifier != null) {
 
     <faq id="lookupReliability">
       <question>
-        Can I rely on <code>CRS.lookupEpsgCode(…)</code> to work correctly as the inverse of <code>CRS.decode(…)</code>?
+        Can I rely on <code>IdentifiedObjects.lookupEpsgCode(…)</code> to work correctly as the inverse of <code>CRS.decode(…)</code>?
       </question>
       <answer>
         <p>For CRS created from the EPSG database, usually yes. Note however that
-        <code>CRS.getDeclaredIdentifier(…)</code> is cheaper and insensitive to the details of
+        <code>IdentifiedObjects.getIdentifier(…)</code> is cheaper and insensitive to the details of
         CRS definition, since it never query the database. But it works only if the CRS declares
         explicitly its code, which is the case for CRS created from the EPSG database or parsed
         from a <cite>Well Known Text</cite> (WKT) having an <code>AUTHORITY</code> element. The
@@ -272,8 +272,7 @@ if (identifier != null) {
         represent the same logical CRS. This is because they are associated to different metadata
         (name, identifiers, scope, domain of validity, remarks). In order to test if two CRS are
         functionally equivalent, use
-        <code><a href="../../apidocs/org/geotoolkit/referencing/CRS.html#equalsIgnoreMetadata(java.lang.Object, java.lang.Object)">equalsIgnoreMetadata(Object,
-        Object)</a></code>.</p>
+        <code><a href="../../apidocs/org/geotoolkit/referencing/CRS.html#equalsIgnoreMetadata(java.lang.Object, java.lang.Object)">CRS.equalsIgnoreMetadata(Object, Object)</a></code>.</p>
       </answer>
     </faq>
 
@@ -411,6 +410,43 @@ factory = AuthorityFactoryFinder.getCRSAuthorityFactory("EPSG", hints);</pre></l
     </faq>
 
 
+    <faq id="parameterUnits">
+      <question>
+        I just used the WKT of a well-known authority and my transformed coordinates are still wrong!
+      </question>
+      <answer>
+        <p>The <cite>Well Known Text</cite> (WKT) specification has been interpreted in different ways by different implementors.
+        One subtle issue is the angular units of prime meridian. The WKT specification clary states "<cite>If the <code>PRIMEM</code>
+        clause occurs inside a <code>GEOGCS</code>, then the longitude units will match those of the geographic coordinate system</cite>"
+        <sup>(<a href="http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html#PRIMEM">source</a>)</sup>.
+        However ESRI and GDAL among others unconditionally use decimal degrees, ignoring this part of the WKT specification.
+        This problem can be identified by WKT inspection as in the following example:</p>
+
+<blockquote><pre>PROJCS["Lambert II étendu",
+  GEOGCS["Nouvelle Triangulation Française",
+    …,
+    PRIMEM["Paris", 2.337229167],
+    UNIT["grad", 0.01570796326794897]]
+  PROJECTION["Lambert_Conformal_Conic_1SP"],
+  PARAMETER["latitude_of_origin", 46.8],
+  …]</pre></blockquote>
+
+        <p>The Paris prime meridian is located at approximatively 2.597 gradians from Greenwich, which is 2.337 degrees.
+        From this fact, we can see that the above WKT uses decimal degrees despite its <code>UNIT["grad"]</code> declaration.
+        This mismatch applies also to the parameter value, which declare 46.8° in the above example while the official value
+        is 52 gradians. By default, Geotk interprets those angular values as gradians when parsing such WKT, resulting in
+        thousands of kilometres error. In order to get the intended result, there is a choice:</p>
+        <ul>
+          <li>Replace <code>UNIT["grad", 0.01570796326794897]</code> by <code>UNIT["degree", 0.017453292519943295]</code>,
+          which ensure that Geotk, GDAL and ESRI understand that WKT in the same way.</li>
+
+          <li>Or ask explicitely Geotk to parse the WKT using the ESRI or GDAL conventions, using the
+          <code><a href="../../apidocs/org/geotoolkit/io/wkt/Convention.html">Convention</a></code> enumeration.</li>
+        </ul>
+      </answer>
+    </faq>
+
+
     <faq id="slightDifferences">
       <question>
         I get slightly different results depending on the environment I’m running in.
@@ -453,8 +489,8 @@ factory = AuthorityFactoryFinder.getCRSAuthorityFactory("EPSG", hints);</pre></l
   </part>
 
 
-  <part id="setup">
-    <title>Configuration</title>
+  <part id="authority-factory">
+    <title>Authority factories</title>
     <faq id="JavaDB">
       <question>
         How to fix the "<cite>No suitable driver found for jdbc:derby</cite>" exception?
@@ -473,6 +509,25 @@ factory = AuthorityFactoryFinder.getCRSAuthorityFactory("EPSG", hints);</pre></l
         Glassfish or Tomcat, make sure that the Derby dependency does <strong>not</strong> appear
         in the WAR file. <strong>This is the opposite of what one may intuitively think</strong>.
         See the <a href="geotk-epsg-javadb">geotk-epsg-javadb</a> module for more explanation.</p>
+      </answer>
+    </faq>
+
+
+    <faq id="datasource">
+      <question>
+        How do I specify connection parameters to my own database?
+      </question>
+      <answer>
+        <p>The easiest way is to specify the connection parameters using the Swing widget provided
+        by the <code><a href="../utility/geotk-setup/index.html">geotk-setup</a></code> module.
+        Alternatively, the connection parameters can also be specified programmatically in
+        database-specific implementation of <code>javax.sql.DataSource</code> (for example
+        <code>org.postgresql.ds.PGSimpleDataSource</code> for PostgreSQL database). Then, put
+        the following code at some application initialization point, before any Geotk
+        referencing code is invoked:</p>
+
+<blockquote><pre>DataSource ds = new MyDataSource(…);
+Hints.putSystemDefault(Hints.EPSG_DATA_SOURCE, ds);</pre></blockquote>
       </answer>
     </faq>
 
@@ -509,23 +564,53 @@ factory = AuthorityFactoryFinder.getCRSAuthorityFactory("EPSG", hints);</pre></l
     </faq>
 
 
-    <faq id="datasource">
+    <faq id="custom-factory">
       <question>
-        How do I specify connection parameters to my own database?
+        How do I define my own authority factory?
       </question>
       <answer>
-        <p>The easiest way is to specify the connection parameters using the Swing widget provided
-        by the <code><a href="../utility/geotk-setup/index.html">geotk-setup</a></code> module.
-        Alternatively, the connection parameters can also be specified programmatically in
-        database-specific implementation of <code>javax.sql.DataSource</code> (for example
-        <code>org.postgresql.ds.PGSimpleDataSource</code> for PostgreSQL database). Then, put
-        the following code at some application initialization point, before any Geotk
-        referencing code is invoked:</p>
+        <p>Custom authority factories can be provided in a similar way than the embedded EPSG factory,
+        with a little bit of coding. First, create a class like below (replace "<code>mypackage</code>"
+        and "<code>MyFactory</code>" by whatever names is appropriate for the new factory):</p>
 
-<blockquote><pre>DataSource ds = new MyDataSource(…);
-Hints.putSystemDefault(Hints.EPSG_DATA_SOURCE, ds);</pre></blockquote>
+<blockquote><pre>package mypackage;
+
+import java.io.IOException;
+import org.opengis.referencing.crs.CRSAuthorityFactory;
+import org.geotoolkit.referencing.factory.CachingAuthorityFactory;
+import org.geotoolkit.referencing.factory.wkt.PropertyAuthorityFactory;
+import org.geotoolkit.metadata.iso.citation.DefaultCitation;
+
+public class MyFactory extends CachingAuthorityFactory implements CRSAuthorityFactory {
+     public MyFactory() throws IOException {
+         this(null);
+     }
+
+     public MyFactory(final Hints hints) throws IOException {
+         super(new PropertyAuthorityFactory(hints, MyFactory.class.getResource("MyFactoy.properties"), new DefaultCitation("MyFactory")););
+     }
+}</pre></blockquote>
+
+        <p>Then, create a "<code>MyFactory.properties</code>" file in the same directory than the
+        "<code>MyFactory.class</code>" file. The property file shall contain <var>authority code</var>
+        = <var>WKT definition</var> pairs as in the example below (WKT strings have been abridged for simplicity):</p>
+
+<blockquote><pre><b>LAMB93</b>=PROJCS["Lambert 93", …, AUTHORITY["MyAuthority","LAMB93"]]
+<b>LAMBE</b>=PROJCS["Lambert II étendu", …, AUTHORITY["MyAuthority","LAMBE"]]
+</pre></blockquote>
+
+        <p>Finally, create a "<code>META-INF/services/org.opengis.referencing.crs.CRSAuthorityFactory</code>"
+        file with the following line:</p>
+
+<blockquote><pre>mypackage.MyFactory</pre></blockquote>
+
+        <p>Thats all. From that point, an instance of <code>MyFactory</code> can be fetched by calls to
+        <code>AuthorityFactoryFinder.getCRSAuthorityFactory("MyFactory", null)</code>, and CRS instances
+        can be fetched by calls to <code>CRS.decode("MyAuthority:<var>code</var>")</code>.</p>
       </answer>
     </faq>
+
+
     <faq id="indexes">
       <question>
         Queries against my EPSG database are slow.

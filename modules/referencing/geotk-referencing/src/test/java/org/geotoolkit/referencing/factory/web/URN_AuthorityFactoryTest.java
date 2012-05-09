@@ -174,8 +174,8 @@ public final strictfp class URN_AuthorityFactoryTest extends ReferencingTestBase
     @Test
     public void testLookup() throws FactoryException {
         final CRSAuthorityFactory factory = getCRSAuthorityFactory("URN:OGC:DEF", null);
-        assertTrue("The correct working of CRS.lookupIdentifier(authority, crs) requires that " +
-                   "the URN_AuthorityFactory can been found from the Citations.URN_OGC constant.",
+        assertTrue("The correct working of IdentifiedObjects.lookupIdentifier(authority, crs) requires " +
+                   "that the URN_AuthorityFactory can been found from the Citations.URN_OGC constant.",
                    Citations.identifierMatches(factory.getAuthority(), Citations.URN_OGC));
         assertTrue(factory instanceof AbstractAuthorityFactory);
 

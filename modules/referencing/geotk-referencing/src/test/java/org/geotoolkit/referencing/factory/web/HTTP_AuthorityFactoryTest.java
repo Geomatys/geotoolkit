@@ -194,8 +194,8 @@ public final strictfp class HTTP_AuthorityFactoryTest extends ReferencingTestBas
     @Test
     public void testLookup() throws FactoryException {
         final CRSAuthorityFactory factory = getCRSAuthorityFactory("http://www.opengis.net", null);
-        assertTrue("The correct working of CRS.lookupIdentifier(authority, crs) requires that " +
-                   "the URN_AuthorityFactory can been found from the Citations.URN_OGC constant.",
+        assertTrue("The correct working of IdentifiedObjects.lookupIdentifier(authority, crs) requires " +
+                   "that the URN_AuthorityFactory can been found from the Citations.URN_OGC constant.",
                    Citations.identifierMatches(factory.getAuthority(), Citations.HTTP_OGC));
         assertTrue(factory instanceof AbstractAuthorityFactory);
 

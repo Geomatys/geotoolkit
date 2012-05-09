@@ -36,7 +36,7 @@ import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
  *
  * {@preformat java
  *     CoordinateReferenceSystem crs = CRS.decode("EPSG:4326");
- *     String identifier = CRS.lookupIdentifier(Citations.URN_OGC, crs);
+ *     String identifier = IdentifiedObjects.lookupIdentifier(Citations.URN_OGC, crs);
  * }
  *
  * would produce {@code "EPSG:4326"}, while we want {@code "urn:ogc:def:crs:epsg:7.1:4326"}.

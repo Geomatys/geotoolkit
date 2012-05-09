@@ -6,8 +6,8 @@
 -- ============  NOTE ON APPARENT POSTGIS ERROR  ============
 -- ==========================================================
 -- The PostGIS "spatial_ref_sys" table seems to have an error in declaration of Lambert projections
--- used in France. The prime meridian (Paris) should be declared in gradiants, not degrees, because
--- gradiants is the unit declared in the UNIT["grad",0.01570796326794897] element. Consequently the
+-- used in France.  The prime meridian (Paris) should be declared in gradians, not degrees, because
+-- gradians is the unit declared in the UNIT["grad",0.01570796326794897] element.  Consequently the
 -- value for PRIMEM["Paris"] should be 2.5969213, not 2.33722917. This apply to EPSG:27572 and other
 -- CRS similar to it.
 --

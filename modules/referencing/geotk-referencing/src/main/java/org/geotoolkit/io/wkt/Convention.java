@@ -17,6 +17,9 @@
  */
 package org.geotoolkit.io.wkt;
 
+import javax.measure.unit.Unit;
+import javax.measure.quantity.Angle;
+
 import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.operation.OperationMethod;
@@ -25,6 +28,8 @@ import org.opengis.referencing.operation.CoordinateOperation;
 import org.geotoolkit.lang.Debug;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
+
+import static javax.measure.unit.NonSI.DEGREE_ANGLE;
 
 
 /**
@@ -57,7 +62,7 @@ public enum Convention {
      *
      * @see Citations#OGC
      */
-    OGC(false),
+    OGC(null, false),
 
     /**
      * The <A HREF="http://www.epsg.org">European Petroleum Survey Group</A> convention.
@@ -65,23 +70,24 @@ public enum Convention {
      *
      * @see Citations#EPSG
      */
-    EPSG(false),
+    EPSG(null, false),
 
     /**
      * The <A HREF="http://www.esri.com">ESRI</A> convention.
-     * This convention differs from other conventions in three aspects:
+     * This convention differs from other conventions in four aspects:
      * <p>
      * <ul>
-     *   <li>The units of {@code PRIMEM} elements are always degrees, no matter the units of
-     *       the enclosing {@code GEOGCS} element.</li>
+     *   <li>The angular units of {@code PRIMEM} and {@code PARAMETER} elements are always degrees,
+     *       no matter the units of the enclosing {@code GEOGCS} element.</li>
      *   <li>The {@code AXIS} elements are ignored at parsing time.</li>
      *   <li>Unit names use American spelling instead than the international ones
      *       (e.g. "<cite>meter</cite>" instead than "<cite>metre</cite>").</li>
+     *   <li>At parsing time, the {@code AXIS} elements are ignored.</li>
      * </ul>
      *
      * @see Citations#ESRI
      */
-    ESRI(true),
+    ESRI(DEGREE_ANGLE, true),
 
     /**
      * The <A HREF="http://www.oracle.com">Oracle</A> convention.
@@ -98,7 +104,7 @@ public enum Convention {
      *
      * @see Citations#ORACLE
      */
-    ORACLE(true),
+    ORACLE(null, true),
 
     /**
      * The <A HREF="http://www.unidata.ucar.edu/software/netcdf-java">NetCDF</A> convention.
@@ -106,7 +112,7 @@ public enum Convention {
      *
      * @see Citations#NETCDF
      */
-    NETCDF(false),
+    NETCDF(null, false),
 
     /**
      * The <A HREF="http://www.remotesensing.org/geotiff/geotiff.html">GeoTIFF</A> convention.
@@ -114,7 +120,7 @@ public enum Convention {
      *
      * @see Citations#GEOTIFF
      */
-    GEOTIFF(false),
+    GEOTIFF(null, false),
 
     /**
      * The <A HREF="http://trac.osgeo.org/proj/">Proj.4</A> convention.
@@ -122,13 +128,13 @@ public enum Convention {
      * Other differences are:
      * <p>
      * <ul>
-     *   <li>The units of {@code PRIMEM} elements are always degrees, no matter the units of
-     *       the enclosing {@code GEOGCS} element.</li>
+     *   <li>The angular units of {@code PRIMEM} and {@code PARAMETER} elements are always degrees,
+     *       no matter the units of the enclosing {@code GEOGCS} element.</li>
      * </ul>
      *
      * @see Citations#PROJ4
      */
-    PROJ4(false),
+    PROJ4(DEGREE_ANGLE, false),
 
     /**
      * A special convention for formatting objects as stored internally by Geotk. In the majority
@@ -141,7 +147,17 @@ public enum Convention {
      * @see Formatter#isInternalWKT()
      */
     @Debug
-    INTERNAL(false);
+    INTERNAL(null, false);
+
+    /**
+     * If non-null, forces {@code PRIMEM} and {@code PARAMETER} angular units to this field
+     * value instead than inferring it from the context. The standard value is {@code null},
+     * which mean that the angular units are inferred from the context as required by the
+     * <a href="http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html#PRIMEM">WKT specification</a>.
+     *
+     * @see ReferencingParser#getForcedAngularUnit()
+     */
+    public final Unit<Angle> forcedAngularUnit;
 
     /**
      * {@code true} if the convention uses US unit names instead of the international names.
@@ -158,7 +174,8 @@ public enum Convention {
     /**
      * Creates a new enum.
      */
-    private Convention(final boolean unitUS) {
+    private Convention(final Unit<Angle> angularUnit, final boolean unitUS) {
+        this.forcedAngularUnit = angularUnit;
         this.unitUS = unitUS;
     }
 
