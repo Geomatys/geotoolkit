@@ -128,10 +128,11 @@ public class DefaultByteIterator extends PixelIterator{
     private byte[][] currentDataArray;
 
     int dataCursor;
-    int numBanks;
+    int maxBanks;
     int rasterWidth;
     int cursorStep;
     int baseCursor;
+    int indexStep;
 
 
 
@@ -140,14 +141,14 @@ public class DefaultByteIterator extends PixelIterator{
         assert (databuf.getDataType() == DataBuffer.TYPE_BYTE) : "raster datas or not Byte type"+databuf;
         this.currentRaster = raster;
         this.currentDataArray = ((DataBufferByte)databuf).getBankData();
-        this.numBanks = ((DataBufferByte)databuf).getSize();
+        this.maxBanks = ((DataBufferByte)databuf).getSize();
         this.rasterWidth = raster.getWidth();
         this.numBand = raster.getNumBands();
 
         //init
         this.minX = 0;
         this.minY = 0;
-        this.maxX = rasterWidth;
+        this.maxX = this.indexStep = rasterWidth;
         this.maxY = raster.getHeight();
 
         this.band = -1;
@@ -178,15 +179,18 @@ public class DefaultByteIterator extends PixelIterator{
         final int rasterMinY = raster.getMinY();
         this.minX = Math.max(subAreaMinX, rasterMinX) - rasterMinX;
         this.minY = Math.max(subAreaMinY, rasterMinY) - rasterMinY;
-        this.maxX = Math.min(subAreaMaxX, rasterMinX + raster.getWidth()) - rasterMinX;
+        this.maxX = Math.min(subAreaMaxX, rasterMinX + raster.getWidth())  - rasterMinX;
         this.maxY = Math.min(subAreaMaxY, rasterMinY + raster.getHeight()) - rasterMinY;
         if(minX > maxX || minY > maxY)
             throw new IllegalArgumentException("invalid subArea coordinate no intersection between it and raster"+raster+subArea);
-        this.numBanks = (maxY-1)*rasterWidth+maxX;
+        this.maxBanks = maxX + (maxY-1) * rasterWidth;//index of last banks
+        this.tY = this.tX = 0;
+        this.tMaxX = this.tMaxY = 1;
 
         //step
         cursorStep = rasterWidth - (maxX-minX);
         dataCursor = baseCursor = minX + minY * rasterWidth;
+        this.indexStep = baseCursor + maxX-minX;
         this.band = -1;
     }
 
@@ -203,45 +207,63 @@ public class DefaultByteIterator extends PixelIterator{
         this.tMaxX = tMinX + renderedImage.getNumXTiles();
         this.tMaxY = tMinY + renderedImage.getNumYTiles();
         //initialize attributs to first iteration
-        this.numBand = this.maxX = this.maxY = 1;
+        this.numBand = this.maxX = this.maxY = this.maxBanks = 1;
         this.tY = tMinY;
         this.tX = tMinX - 1;
     }
 
+
     public DefaultByteIterator(final RenderedImage renderedImage, final Rectangle subArea) {
-        this.currentRaster = currentRaster;
+
         this.renderedImage = renderedImage;
-        this.numBand = numBand;
-        this.minX = minX;
-        this.minY = minY;
-        this.maxX = maxX;
-        this.maxY = maxY;
-        this.x = x;
-        this.y = y;
-        this.band = band;
-        this.tMinX = tMinX;
-        this.tMinY = tMinY;
-        this.tMaxX = tMaxX;
-        this.tMaxY = tMaxY;
-        this.subAreaMinX = subAreaMinX;
-        this.subAreaMinY = subAreaMinY;
-        this.subAreaMaxX = subAreaMaxX;
-        this.subAreaMaxY = subAreaMaxY;
-        this.tX = tX;
-        this.tY = tY;
+
+        //rect attributs
+        this.subAreaMinX = subArea.x;
+        this.subAreaMinY = subArea.y;
+        this.subAreaMaxX = this.subAreaMinX + subArea.width;
+        this.subAreaMaxY = this.subAreaMinY + subArea.height;
+
+        final int rimx = renderedImage.getMinX();
+        final int rimy = renderedImage.getMinY();
+        final int mtx = renderedImage.getMinTileX();
+        final int mty = renderedImage.getMinTileY();
+
+        final int mix = Math.max(subAreaMinX, rimx) - rimx;
+        final int miy = Math.max(subAreaMinY, rimy) - rimy;
+        final int max = Math.min(subAreaMaxX, rimx + renderedImage.getWidth())  - rimx;
+        final int may = Math.min(subAreaMaxY, rimy + renderedImage.getHeight()) - rimy;
+        //ajout throw
+        final int tw = renderedImage.getTileWidth();
+        final int th = renderedImage.getTileHeight();
+
+        //tiles attributs
+        this.tMinX = mix / tw + mtx;
+        this.tMinY = miy / th + mty;
+        this.tMaxX = max / tw + mtx;
+        this.tMaxY = may / th + mty;
+
+        //initialize attributs to first iteration
+        this.numBand = this.maxX = this.maxY = this.maxBanks = 1;
+        this.tY = tMinY;
+        this.tX = tMinX - 1;
     }
 
     @Override
     public boolean next() {
         if (++band == numBand) {
             band = 0;
-            if (++dataCursor == numBanks) {
+            if (++dataCursor == maxBanks) {
                 if (++tX == tMaxX) {
                     tX = tMinX;
                     if(++tY == tMaxY) return false;
                 }
-            } else if (dataCursor % rasterWidth % maxX == 0) {
-                dataCursor += cursorStep;
+                //updatecurrentRaster
+                updateCurrentRaster(tX, tY);
+            } else {
+                if (dataCursor == indexStep) {
+                    dataCursor += cursorStep;
+                    indexStep += rasterWidth;
+                }
             }
         }
         return true;
@@ -254,15 +276,26 @@ public class DefaultByteIterator extends PixelIterator{
      * @param tileY current Y coordinate from rendered image tiles array.
      */
     protected void updateCurrentRaster(int tileX, int tileY){
+        //update raster
         final Raster raster = renderedImage.getTile(tileX, tileY);
         final int cRMinX   = raster.getMinX();
         final int cRMinY   = raster.getMinY();
-        this.minX    = Math.max(subAreaMinX, cRMinX);
-        this.minY    = Math.max(subAreaMinY, cRMinY);
-        this.maxX    = Math.min(subAreaMaxX, cRMinX + raster.getWidth());
-        this.maxY    = Math.min(subAreaMaxY, cRMinY + raster.getHeight());
-        this.numBand = raster.getNumBands();
+        this.rasterWidth = raster.getWidth();
         this.currentDataArray = ((DataBufferByte)raster.getDataBuffer()).getBankData();
+
+        //update min max from subArea and raster boundary
+        this.minX    = Math.max(subAreaMinX, cRMinX) - cRMinX;
+        this.minY    = Math.max(subAreaMinY, cRMinY) - cRMinY;
+        this.maxX    = Math.min(subAreaMaxX, cRMinX + raster.getWidth()) - cRMinX;
+        this.maxY    = Math.min(subAreaMaxY, cRMinY + raster.getHeight()) - cRMinY;
+        this.numBand = raster.getNumBands();
+        this.maxBanks = maxX + (maxY-1) * rasterWidth;//index of last banks
+
+        //step
+        cursorStep = rasterWidth - (maxX-minX);
+        dataCursor = baseCursor = minX + minY * rasterWidth;
+        this.indexStep = baseCursor + maxX-minX;
+        this.band = 0;
     }
 
     @Override
@@ -292,8 +325,19 @@ public class DefaultByteIterator extends PixelIterator{
 
     @Override
     public void rewind() {
-        band = -1;
-        dataCursor = 0;
+        //initialize attributs like first iteration
+        if (renderedImage == null) {
+            band = -1;
+            tX = tY = 0;
+            tMaxX = tMaxY = 1;
+            this.dataCursor = baseCursor;
+            this.indexStep = baseCursor + maxX-minX;
+        } else {
+            this.numBand = this.maxX = this.maxY = this.maxBanks = 1;
+            this.dataCursor = this.band = 0;
+            this.tY = tMinY;
+            this.tX = tMinX - 1;
+        }
     }
 
     @Override
