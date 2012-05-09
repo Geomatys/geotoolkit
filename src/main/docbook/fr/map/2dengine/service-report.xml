@@ -4,7 +4,7 @@
   <!ENTITY % book.entities SYSTEM "../../../book.entities">
   %book.entities;
 ]>
-<chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
+<section xmlns="http://docbook.org/ns/docbook" version="5.0"
          xmlns:xlink = "http://www.w3.org/1999/xlink">
           
     <title>
@@ -31,7 +31,7 @@
             <title>Accueil de iReport 3.7.4</title>
             <mediaobject>
                 <imageobject>
-                    <imagedata fileref="../../images/capture-ireport_3.7.4.png" format="png"></imagedata>
+                    <imagedata fileref="../images/capture-ireport_3.7.4.png" format="png"></imagedata>
                 </imageobject>
                 <textobject>
                     <phrase> Accueil de iReport 3.7.4
@@ -45,36 +45,36 @@
             <link xlink:href="http://jasperforge.org//website/ireportwebsite/IR%20Website/ir_documentation.html?header=project&amp;target=ireport">ici.</link>
         </para>
         
-        <para>
+        <section>
             <title>Les champs</title>
-
-            Lors de la création d'un rapport, deux type d'informations seront utilisés lors de la génération :
-            <orderedlist>
-                <listitem>Parameters</listitem>
-                <listitem>Fields</listitem>
-            </orderedlist>
-            Lorsque l'on aura fini d'établir notre rapport, les paramètres seront donnés avec un objet Map, et les champs seront transformés en FeatureType .
-        </para>
+            <para>
+                Lors de la création d'un rapport, deux type d'informations seront utilisés lors de la génération :
+                <orderedlist>
+                    <listitem>Parameters</listitem>
+                    <listitem>Fields</listitem>
+                </orderedlist>
+                Lorsque l'on aura fini d'établir notre rapport, les paramètres seront donnés avec un objet Map, et les champs seront transformés en FeatureType .
+            </para>
         
-        <figure> 
-            <title>Champs source</title>
-            <mediaobject>
-                <imageobject>
-                    <imagedata fileref="../../images/reportfields.png" format="png"></imagedata>
-                </imageobject>
-                <textobject>
-                    <phrase> Champs source
-                    </phrase>
-                </textobject>
-            </mediaobject>
-        </figure>
+            <figure> 
+                <title>Champs source</title>
+                <mediaobject>
+                    <imageobject>
+                        <imagedata fileref="../images/reportfields.png" format="png"></imagedata>
+                    </imageobject>
+                    <textobject>
+                        <phrase> Champs source
+                        </phrase>
+                    </textobject>
+                </mediaobject>
+            </figure>
         
-        <para>
-            seront transformés dans le FeatureType : 
-        </para>
-        <para>
-            <code>
-                <literallayout>
+            <para>
+                seront transformés dans le FeatureType : 
+            </para>
+            <para>
+                <programlisting>
+                
                     ╔═════════════╤══════╤══════╤═══════════╤═══════════════╤══════╤════════════╗
                     ║ name        │  min │  max │  nillable │  type         │  CRS │  UserData  ║
                     ╟─────────────┼──────┼──────┼───────────┼───────────────┼──────┼────────────╢
@@ -88,124 +88,130 @@
                     ║ table8      │ 1    │ 1    │ true      │ JRDataSource  │      │            ║
                     ║ minimap     │ 1    │ 1    │ true      │ MapDef        │      │            ║
                     ╚═════════════╧══════╧══════╧═══════════╧═══════════════╧══════╧════════════╝
-                </literallayout>
-            </code>
-        </para>
-        <para>
-            Si l'on regarde les binding du FeatureType, on voit MapDef, ChartDef, LegendDef ... 
-        </para>
-        <para>
-            Ce sont des types de champ que GeotoolKit peut reconnaître.
-        </para>
-        <para>
-            Pour définir ces types, on doit éditer la classe du champ dans IReport : 
-        </para>
+                </programlisting>
+            </para>
+            <para>
+                Si l'on regarde les binding du FeatureType, on voit MapDef, ChartDef, LegendDef ... 
+            </para>
+            <para>
+                Ce sont des types de champ que GeotoolKit peut reconnaître.
+            </para>
+            <para>
+                Pour définir ces types, on doit éditer la classe du champ dans IReport : 
+            </para>
         
-        <figure> 
-            <title>Champs de définition de classe</title>
-            <mediaobject>
-                <imageobject>
-                    <imagedata fileref="../../images/service-report_Field_Class.png" format="png"></imagedata>
-                </imageobject>
-                <textobject>
-                    <phrase> Champs de définition de classe
-                    </phrase>
-                </textobject>
-            </mediaobject>
-        </figure>
+            <figure> 
+                <title>Champs de définition de classe</title>
+                <mediaobject>
+                    <imageobject>
+                        <imagedata fileref="../images/service-report_Field_Class.png" format="png"></imagedata>
+                    </imageobject>
+                    <textobject>
+                        <phrase> Champs de définition de classe
+                        </phrase>
+                    </textobject>
+                </mediaobject>
+            </figure>
         
-        <para>
-            La liste des champs reconnus est :
-            <itemizedlist>
-                <listitem>org.geotoolkit.report.graphic.map.MapDef</listitem>
-                <listitem>org.geotoolkit.report.graphic.chart.ChartDef</listitem>
-                <listitem>org.geotoolkit.report.graphic.legend.LegendDef</listitem>
-                <listitem>org.geotoolkit.report.graphic.scalebar.ScaleBarDef</listitem>
-                <listitem>org.geotoolkit.report.graphic.northarrow.NorthArrowDef</listitem>
-            </itemizedlist>
-            Pour les types legend, scalebar et north arrow, il est nécessaire d'indiquer à quelle carte le type se rapporte. Cette information se définit dans les propriétés du champ :
-        </para>
+            <para>
+                La liste des champs reconnus est :
+                <itemizedlist>
+                    <listitem>org.geotoolkit.report.graphic.map.MapDef</listitem>
+                    <listitem>org.geotoolkit.report.graphic.chart.ChartDef</listitem>
+                    <listitem>org.geotoolkit.report.graphic.legend.LegendDef</listitem>
+                    <listitem>org.geotoolkit.report.graphic.scalebar.ScaleBarDef</listitem>
+                    <listitem>org.geotoolkit.report.graphic.northarrow.NorthArrowDef</listitem>
+                </itemizedlist>
+                Pour les types legend, scalebar et north arrow, il est nécessaire d'indiquer à quelle carte le type se rapporte. Cette information se définit dans les propriétés du champ :
+            </para>
         
-        <figure> 
-            <title>Fenêtre de propriétés du champs</title>
-            <mediaobject>
-                <imageobject>
-                    <imagedata fileref="../../images/service-report_properties.png" format="png"></imagedata>
-                </imageobject>
-                <textobject>
-                    <phrase> Fenêtre de propriétés du champs
-                    </phrase>
-                </textobject>
-            </mediaobject>
-        </figure>
+            <figure> 
+                <title>Fenêtre de propriétés du champs</title>
+                <mediaobject>
+                    <imageobject>
+                        <imagedata fileref="../images/service-report_properties.png" format="png"></imagedata>
+                    </imageobject>
+                    <textobject>
+                        <phrase> Fenêtre de propriétés du champs
+                        </phrase>
+                    </textobject>
+                </mediaobject>
+            </figure>
+        </section>
+        <section>
         
-        <para>
             <title>Report detail</title>
-            <literallayout>
-                Les classes ci-dessus sont des sous-classes de net.sf.jasperreports.engine.JRRenderable.
+            <para>
+                <literallayout>
+                    Les classes ci-dessus sont des sous-classes de net.sf.jasperreports.engine.JRRenderable.
 
-                JasperReport a défini JRRenderable spécialement pour le cas comme celui-ci, cela nous permet d'utiliser les capacités du moteur de rendu directement dans JasperReports.
+                    JasperReport a défini JRRenderable spécialement pour le cas comme celui-ci, cela nous permet d'utiliser les capacités du moteur de rendu directement dans JasperReports.
 
-                Lors de la génération du rapport, JasperReport va déléguer le travail de dessin au JRRenderable, et indirectement à notre moteur de rendu.
+                    Lors de la génération du rapport, JasperReport va déléguer le travail de dessin au JRRenderable, et indirectement à notre moteur de rendu.
 
-                Chaque champ JRRenderable doit être déclaré comme une image :
-            </literallayout>
-        </para>
+                    Chaque champ JRRenderable doit être déclaré comme une image :
+                </literallayout>
+            </para>
         
-        <figure> 
-            <title>Propriétés du champs</title>
-            <mediaobject>
-                <imageobject>
-                    <imagedata fileref="../../images/service-report_detailclass.png" format="png"></imagedata>
-                </imageobject>
-                <textobject>
-                    <phrase> Propriétés du champs
-                    </phrase>
-                </textobject>
-            </mediaobject>
-        </figure>
+            <figure> 
+                <title>Propriétés du champs</title>
+                <mediaobject>
+                    <imageobject>
+                        <imagedata fileref="../images/service-report_detailclass.png" format="png"></imagedata>
+                    </imageobject>
+                    <textobject>
+                        <phrase> Propriétés du champs
+                        </phrase>
+                    </textobject>
+                </mediaobject>
+            </figure>
+        </section>
     </section>
     
     <section>
         <title>JasperReportService</title>
         
-        <para>
+        <example>
             <title>Code source complet  :</title>
-            <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/file/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/ReportDemo.java">
-                <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/ReportDemo.java</acronym>
-            </link> 
-            <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/file/tip/demos/geotk-demo-samples/src/main/resources/data/report/simpleReport.jrxml">
-                <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/resources/data/report/simpleReport.jrxml</acronym>
-            </link>
-            <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/file/tip/demos/geotk-demo-samples/src/main/resources/data/report/complexReport.jrxml">
-                <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/resources/data/report/complexReport.jrxml</acronym>
-            </link>
-        </para>
+            <para>
+                <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/file/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/ReportDemo.java">
+                    <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/ReportDemo.java</acronym>
+                </link> 
+            </para>
+            <para>
+                <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/file/tip/demos/geotk-demo-samples/src/main/resources/data/report/simpleReport.jrxml">
+                    <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/resources/data/report/simpleReport.jrxml</acronym>
+                </link>
+            </para> 
+            <para>
+                <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/file/tip/demos/geotk-demo-samples/src/main/resources/data/report/complexReport.jrxml">
+                    <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/resources/data/report/complexReport.jrxml</acronym>
+                </link>
+            </para>
+        </example>
         
         <para>
             resources/data/report/complexReport.jrxml
             
             <orderedlist>
                 <listitem>
-                    <title>
-                        Parser le template
-                    </title>
-                    <code>
-                        <literallayout>
-                            final File template = ...
-                            final Entry&lt;JasperReport,FeatureType&gt; entry = JasperReportService.prepareTemplate(template);
-                            final JasperReport report = entry.getKey();
-                            final FeatureType type = entry.getValue();
-                        </literallayout>
-                    </code>
+                    Parser le template
+                        
+                    <programlisting>
+                        
+                        final File template = ...
+                        final Entry&lt;JasperReport,FeatureType&gt; entry = JasperReportService.prepareTemplate(template);
+                        final JasperReport report = entry.getKey();
+                        final FeatureType type = entry.getValue();
+                    </programlisting>
                     <para>
                         Cette étape va générer le FeatureType associé au template.
                     </para>   
                 </listitem>
                 <listitem>
-                    <title>
-                        Préparer les données
-                    </title>
+                    
+                    Préparer les données
+                        
                     <para>
                         <para>
                             Cette partie dépend entièrement de votre template.
@@ -222,13 +228,12 @@
                     </para>  
                 </listitem>
                 <listitem>
-                    <title>Générer le rapport</title>
-                    <code>
-                        <literallayout>
-                            final OutputDef output = new OutputDef(JasperReportService.MIME_PDF, new File("atlas.pdf"));
-                            JasperReportService.generateReport(report, featureCollection, parameters, output);
-                        </literallayout>
-                    </code>
+                    Générer le rapport
+                    <programlisting>
+                        
+                        final OutputDef output = new OutputDef(JasperReportService.MIME_PDF, new File("atlas.pdf"));
+                        JasperReportService.generateReport(report, featureCollection, parameters, output);
+                    </programlisting>
                     <para>
                         Cette étape peut être plus ou moins longue et utiliser plus ou de mémoire en fonction de la complexité du rapport et la quantité de donnée a traiter.
                     </para>
@@ -237,4 +242,4 @@
         </para>
     </section>
 
-</chapter>
+</section>

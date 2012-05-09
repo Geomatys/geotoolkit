@@ -4,10 +4,10 @@
   <!ENTITY % book.entities SYSTEM "../../../book.entities">
   %book.entities;
 ]>
-<chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
+<section xmlns="http://docbook.org/ns/docbook" version="5.0"
          xmlns:xlink = "http://www.w3.org/1999/xlink">
           
-    <title> Datastore</title>
+    <title>Datastore</title>
     
     <para>
         Dès lors que l'on peut créer des 
@@ -55,7 +55,7 @@
             <title>Structure des datastores</title>
             <mediaobject>
                 <imageobject>
-                    <imagedata fileref="../../images/new_structure.png" format="png"></imagedata>
+                    <imagedata fileref="../images/new_structure.png" format="png"></imagedata>
                 </imageobject>
                 <textobject>
                     <phrase> Structure des datastores
@@ -77,20 +77,20 @@
             cela permet la découverte automatique de nouvelles implémentations. La classe utilitaire 
             <emphasis>DatastoreFinder</emphasis> permet de les récupérer rapidement.
         </para>
-        <para>
-            <title>Code source complet  :</title>
+        <example>
+            <title>Code source complet : </title>
             <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/file/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/ListAllFactoriesDemo.java">
                 <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/ListAllFactoriesDemo.java</acronym>
             </link>
         
-        </para>
+        </example>
     </section>
     
     <section> 
         <title>Datastore </title>
     
-        <para> 
-            <title>Code source complet : <title>
+        <example> 
+            <title>Code source complet : </title>
             <simplelist>
                 <member>
                     <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/file/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/MemoryDataStoreDemo.java">
@@ -112,7 +112,7 @@
             
                 </member>
             </simplelist>
-        </para>
+        </example>
     
         <para>
             Le Datastore est l'élément de base de stockage pour les features. Il est responsable du stockage sur disque (shapefile, gpx,...), 
@@ -122,14 +122,14 @@
     
         <para> 
             Pour obtenir un datastore, on peut le créer directement ou utiliser le DataStoreFinder :
-            </para><para>
-            <code><literallayout>
-                final Map&lt;String, Serializable&gt; parameters = new HashMap&lt;String, Serializable&lt;();
-                parameters.put("url", GPXDemo.class.getResource("/data/sampleGPX.gpx"));
+        </para>
+        <programlisting>
+            final Map&lt;String, Serializable&gt; parameters = new HashMap&lt;String, Serializable&lt;();
+            parameters.put("url", GPXDemo.class.getResource("/data/sampleGPX.gpx"));
  
-                final DataStore store = DataStoreFinder.getDataStore(parameters);
-                </literallayout>
-            </code>
+            final DataStore store = DataStoreFinder.getDataStore(parameters);
+        </programlisting>
+        <para>
             Il est recommandé d'utiliser le DataStoreFinder car celui ci passe par des fabriques et peut potentiellement retourner un datastore déjà existant. Les datastores sont des objets concurrents et peuvent être utilisés par plusieurs threads à la fois. 
         </para>
     </section>
@@ -164,7 +164,7 @@
             <title>Requête sur un datastore</title>
             <mediaobject>
                 <imageobject>
-                    <imagedata fileref="../../images/query.png" format="png"></imagedata>
+                    <imagedata fileref="../images/query.png" format="png"></imagedata>
                 </imageobject>
                 <textobject>
                     <phrase> Requête sur un datastore
@@ -172,15 +172,15 @@
                 </textobject>
             </mediaobject>
         </figure>
-        <code>
-        <literallayout>
+        <programlisting>
+<!--        -->
             final QueryBuilder qb = new QueryBuilder(typeName);
             qb.setCRS(CRS.decode("EPSG:3395"));
             qb.setProperties(new String[]{"the_geom","LONG_NAME","SQKM"});
             qb.setFilter(FF.equals(FF.property("CURR_TYPE"), FF.literal("Norwegian Krone")));
             final Query query = qb.buildQuery();
-            </literallayout>
-        </code>
+<!--            -->
+        </programlisting>
     </section>
         
     <section>
@@ -210,5 +210,5 @@
             L'itérateur loguera un message d'erreur avec son stack de création s'il n'a pas été fermé au moment où le ramasse-miette le supprimera.
         </warning>
     </section>
-</chapter>
+</section>
     

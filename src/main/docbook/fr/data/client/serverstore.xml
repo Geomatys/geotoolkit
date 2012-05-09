@@ -4,7 +4,7 @@
   <!ENTITY % book.entities SYSTEM "../../../book.entities">
   %book.entities;
 ]>
-<chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
+<section xmlns="http://docbook.org/ns/docbook" version="5.0"
          xmlns:xlink = "http://www.w3.org/1999/xlink">
              
     <title>ServerStore</title>
@@ -38,16 +38,14 @@
             <emphasis>ServerFinder</emphasis> permet de les récupérer rapidement.
         </para>
         
-        <para>
-            <title>Code source complet</title> :
-        </para>
-        <para>
+        <example>
+            <title>Code source complet : </title>
             <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/file/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/clients/ListAllFactoriesDemo.java">
                 <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/clients/ListAllFactoriesDemo.java</acronym>
             </link>
         
-        </para>
+        </example>
         
     </section>
     
-</chapter>
+</section>

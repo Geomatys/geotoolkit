@@ -4,7 +4,8 @@
   <!ENTITY % book.entities SYSTEM "../../book.entities">
   %book.entities;
 ]>
-<chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
+<section xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xi    = "http://www.w3.org/2001/XInclude"
          xmlns:xlink = "http://www.w3.org/1999/xlink">
           
     <title>
@@ -145,4 +146,18 @@
             </simplelist>
         </para>
     </section>
-</chapter>
+    
+    <xi:include href="vectoriel/datastore.xml"/>
+    
+    <xi:include href="vectoriel/geometry-jts.xml"/>
+    
+    <xi:include href="vectoriel/featuretype.xml"/>
+    
+    <xi:include href="vectoriel/feature.xml"/>
+    
+    <xi:include href="vectoriel/filter-expression.xml"/>
+    
+    <xi:include href="vectoriel/filter-cql.xml"/>
+    
+    <xi:include href="vectoriel/formats.xml"/>
+</section>

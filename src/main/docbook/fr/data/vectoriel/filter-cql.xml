@@ -4,7 +4,7 @@
   <!ENTITY % book.entities SYSTEM "../../../book.entities">
   %book.entities;
 ]>
-<chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
+<section xmlns="http://docbook.org/ns/docbook" version="5.0"
          xmlns:xlink = "http://www.w3.org/1999/xlink">
              
     <title>filter-cql</title> 
@@ -20,23 +20,23 @@
     <section>
         <title>Exemples</title>
                  
-        <para>
-            <title>Code source complet</title> :
+        <example>
+            <title>Code source complet : </title>
             <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/file/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/filter/CQLDemo.java">
                 <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/filter/CQLDemo.java</acronym>
             </link>
         
-        </para>
+        </example>
         <para>
             La manipulation de cette syntaxe se fait avec la classe CQL. 
         </para>
         <para>
             Pour convertir de CQL vers Filter :
         </para>
-        <para>
-            <code>
-                <literallayer>
-                    Filter f = CQL.toFilter("ATTR1 < 10 AND ATTR2 < 2 OR ATTR3 > 10");
+        <example>
+            <programlisting>
+                
+                    Filter f = CQL.toFilter("ATTR1 &lt; 10 AND ATTR2 &lt; 2 OR ATTR3 &gt; 10");
                     Filter f = CQL.toFilter("NAME = 'New York' ");
                     Filter f = CQL.toFilter("NAME LIKE 'New%' ");
                     Filter f = CQL.toFilter("NAME IS NULL");
@@ -49,17 +49,17 @@
                     Expression e = CQL.toExpression("QUANTITY * 2");
                     Expression e = CQL.toExpression("strConcat(NAME, 'suffix')");
                     List filters = CQL.toFilterList("NAME IS NULL;BBOX(SHAPE, 10,20,30,40);INCLUDE");
-                </literallayer>
-            </code>
-        </para>
+                
+            </programlisting>
+        </example>
         <para>Pour convertir de Filter vers CQL :</para>
-        <para>
-            <code>
-                <literallayer>            	
+        <example>
+            <programlisting>
+                            	
                     String cqlfilter = CQL.toCQL(filter);
                     String cqlexpression = CQL.toCQL(FF.literal("hello"));
-                </literallayer>
-            </code>
-        </para>
+                
+            </programlisting>
+        </example>
     </section>
-</chapter>
+</section>

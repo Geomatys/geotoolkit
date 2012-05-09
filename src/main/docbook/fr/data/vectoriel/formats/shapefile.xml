@@ -4,7 +4,7 @@
   <!ENTITY % book.entities SYSTEM "../../../../book.entities">
   %book.entities;
 ]>
-<chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
+<section xmlns="http://docbook.org/ns/docbook" version="5.0"
          xmlns:xlink = "http://www.w3.org/1999/xlink">
              
     <title>Format shapefile</title>
@@ -22,19 +22,17 @@
         C'est le format vecteur fichier le plus utilisé dans les SIG. Il ne permet de stocker qu'un seul FeatureType.
     </para>
     
-    <para>
+    <example>
         <title>
             Exemple
         </title>
-        <para>
-            <code>
-                <literallayout>
+            <programlisting>
+                
                     final Map&lt;String,Serializable&gt; map = new HashMap&lt;String, Serializable&gt;();
                     map.put("url", ShapefileDemo.class.getResource("/data/world/Countries.shp"));
   
                     final DataStore store = DataStoreFinder.getDataStore(map);
-                </literallayout>
-            </code>
-        </para>
-    </para>
-</chapter>
+                
+            </programlisting>
+    </example>
+</section>

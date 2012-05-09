@@ -4,21 +4,21 @@
   <!ENTITY % book.entities SYSTEM "../../../book.entities">
   %book.entities;
 ]>
-<chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
+<section xmlns="http://docbook.org/ns/docbook" version="5.0"
          xmlns:xlink = "http://www.w3.org/1999/xlink">
           
     <title>
         Custom Graphic Builder
     </title>
     
-    <para>
+    <example>
         <title>Code source complet  : </title>
         <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/file/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/customgraphicbuilder/GraphicBuilderDemo.java">
             <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/customgraphicbuilder/GraphicBuilderDemo.java</acronym>
         </link>        
-    </para>
+    </example>
     
-    <para>
+    <section>
         <title>Quand utiliser un graphic builder ?</title>
         <para>
             Les 
@@ -34,9 +34,9 @@
             <emphasis>GO2</emphasis> va chercher des objets de type 
             <emphasis>GraphicJ2D</emphasis>. S'il ne peut pas en trouver, c'est le style standard de la couche qui sera utilisé. Cette approche permet d'avoir différents GraphicBuilder pour différents moteurs de rendu (2D ou 3D à l'avenir).
         </para>
-    </para>
+    </section>
     
-    <para>
+    <section>
         
         <title>Comment en créer un ?</title>        
 
@@ -44,31 +44,20 @@
         <para>
             Une pour définir le type d'objet graphique qu'elle génère :
         </para>
-        <para>
-            <code>
-                <literallayout>
+       
+            <programlisting>
                     public Class&lt;GraphicJ2D&gt; getGraphicType();
-                </literallayout>
-            </code>
-        </para>
+            </programlisting>
         
         Et une pour créer les objets : 
-        <para>
-            <code>
-                <literallayout>
+            <programlisting>
                     public Collection&lt;GraphicJ2D&gt; createGraphics(MapLayer layer, Canvas canvas);
-                </literallayout>
-            </code>
-        </para>
+            </programlisting>
         
         Une fois que vous avez un GraphicBuilder, il ne reste plus qu'à l'affecter à la couche de données : 
-        <para>
-            <code>
-                <literallayout>
+            <programlisting>
                     coverageLayer.graphicBuilders().add(new MyGraphicBuilder());
-                </literallayout>
-            </code>
-        </para>  
-    </para>
+            </programlisting>
+    </section>
     
-</chapter>
+</section>

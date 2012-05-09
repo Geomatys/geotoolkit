@@ -4,7 +4,8 @@
   <!ENTITY % book.entities SYSTEM "../../book.entities">
   %book.entities;
 ]>
-<chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
+<section xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xi    = "http://www.w3.org/2001/XInclude"
          xmlns:xlink = "http://www.w3.org/1999/xlink">
           
     <title>
@@ -29,7 +30,7 @@
             le modèle plus généraliste et permettre sa réutilisation par d'autre mode de stockage une 
             nouvelle interface CoverageStore est en court d'élaboration dans Geotoolkit-pending. Ce nouveau
             modèle est expliqué plus en détail 
-            <ulink url="coverage/coveragestore.xml">ici</ulink>.
+            <ulink url="coverage/coveragestore">ici</ulink>.
         </para>
     </section>
     
@@ -40,10 +41,17 @@
         <para>
             La manipulation d'un coverage ce fait en utilisant :
 
-<itemizedlist>
-            <listitem><ulink url="coverage/coveragereader">CoverageReader : pour la lecture</ulink></listitem>
-            <listitem>CoverageWriter : pour l'ecriture </listitem>
+            <itemizedlist>
+                <listitem>
+                    <ulink url="coverage/coveragereader">CoverageReader : pour la lecture</ulink>
+                </listitem>
+                <listitem>CoverageWriter : pour l'ecriture </listitem>
             </itemizedlist>
         </para>
     </section>
-</chapter>
+    
+    <xi:include href="coverage/coveragestore.xml"/>
+    
+    <xi:include href="coverage/coveragereader.xml"/>
+    
+</section>

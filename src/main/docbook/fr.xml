@@ -28,7 +28,7 @@
 <figure> <title>GeoToolkit</title>
   <mediaobject>
     <imageobject>
-      <imagedata fileref="fr/images/Troll.jpg" format="jpg"></imagedata>
+      <imagedata fileref="../images/Troll.jpg" format="jpg"></imagedata>
     </imageobject>
   </mediaobject>
 </figure>
@@ -36,7 +36,7 @@
 <figure> <title>Architecture de GeoToolkit</title>
   <mediaobject>
     <imageobject>
-      <imagedata fileref="fr/images/schema_complet.png" format="png"></imagedata>
+      <imagedata fileref="../images/schema_complet.png" format="png"></imagedata>
     </imageobject>
     <textobject>
       <phrase> Architecture de Geotoolkit
@@ -49,6 +49,14 @@
   
   <xi:include href="fr/ressources.xml"/>
   
-  <xi:include href="fr/data.xml"/>
+  <xi:include href="fr/data.xml"/>  
+  
+  <xi:include href="fr/map.xml"/>
+  
+  <xi:include href="fr/process.xml"/>
+  
+  <xi:include href="fr/swing.xml"/>
+  
+  
 
 </book>

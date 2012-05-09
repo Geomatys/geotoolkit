@@ -4,7 +4,7 @@
   <!ENTITY % book.entities SYSTEM "../../../book.entities">
   %book.entities;
 ]>
-<chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
+<section xmlns="http://docbook.org/ns/docbook" version="5.0"
          xmlns:xlink = "http://www.w3.org/1999/xlink">
              
     <title>
@@ -40,7 +40,7 @@
             <title>Architecture des interfaces</title>
             <mediaobject>
                 <imageobject>
-                    <imagedata fileref="../../images/org.opengis.feature.type.png" format="png"></imagedata>
+                    <imagedata fileref="../images/org.opengis.feature.type.png" format="png"></imagedata>
                 </imageobject>
                 <textobject>
                     <phrase> Architecture des interfaces
@@ -53,7 +53,7 @@
             <title>Classe FeatureType</title>
             <mediaobject>
                 <imageobject>
-                    <imagedata fileref="../../images/simple.GIF" format="gif"></imagedata>
+                    <imagedata fileref="../images/simple.GIF" format="gif"></imagedata>
                 </imageobject>
                 <textobject>
                     <phrase> Classe FeatureType
@@ -92,12 +92,12 @@
     
     <section>
         <title>FeatureTypeBuilder</title>
-        <para>
-            <title>Code source complet</title> :
+        <example>
+            <title>Code source complet : </title>
             <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/file/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/FeatureTypeBuilderDemo.java">
                 <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/FeatureTypeBuilderDemo.java</acronym>
             </link>        
-        </para>
+        </example>
         <para>
             La manière par défaut de procéder pour créer un FeatureType est d'utiliser une <emphasis>FeatureTypeFactory</emphasis> toutefois ceci est très verbeux.
         </para>
@@ -106,9 +106,8 @@
         <para>
             On procède par ajout, en spécifiant le nom de l'attribut que l'on souhaite, son type et éventuellement dans le cas de geometrie, la projection.
         </para>
-        <para>
-            <code>
-                <literallayout>
+            <programlisting>
+                
                     final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
                     ftb.setName("Fish");
                     ftb.add("name", String.class);
@@ -118,17 +117,15 @@
                     ftb.add("direction", Float.class);
                     ftb.setDefaultGeometry("lastPosition");
                     final SimpleFeatureType sft = ftb.buildSimpleFeatureType();
-                </literallayout>
-            </code>
-        </para>
+                
+            </programlisting>
 
         <para>
             Une attention particulière à été portée sur les différentes méthode toString() afin de simplifier le debuggage.
         </para>
 
-        <para>
-            <code>
-                <literallayout>
+            <programlisting>
+                
                     DefaultSimpleFeatureType Fish identified extends Feature
                     ╔══════════════════╤══════╤══════╤═══════════╤════════════╤═══════════╤═══════════╗
                     ║ name             │  min │  max │  nillable │  type      │  CRS      │  UserData ║
@@ -141,13 +138,12 @@
                     ╚══════════════════╧══════╧══════╧═══════════╧════════════╧═══════════╧═══════════╝
                     crs=EPSG:WGS 84 / World Mercator
 
-                </literallayout>
-            </code>
-        </para>
+                
+            </programlisting>
 
         <para>
             Un exemple de création d'un type complexe est aussi présent dans le code source complet.
         </para>
 
     </section>
-</chapter>
+</section>

@@ -5,10 +5,19 @@
   %book.entities;
 ]>
 <chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xi    = "http://www.w3.org/2001/XInclude"
          xmlns:xlink = "http://www.w3.org/1999/xlink">
           
     <title>
         Map
     </title>
     
-    </chapter>
+    <xi:include href="map/mapcontext.xml"/>
+    
+    <xi:include href="map/symbology.xml"/>
+    
+    <xi:include href="map/engine.xml"/>
+    
+    <xi:include href="map/2dengine.xml"/>
+    
+</chapter>

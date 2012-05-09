@@ -4,7 +4,8 @@
   <!ENTITY % book.entities SYSTEM "../../book.entities">
   %book.entities;
 ]>
-<chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
+<section xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xi    = "http://www.w3.org/2001/XInclude"
          xmlns:xlink = "http://www.w3.org/1999/xlink">
           
     <title>
@@ -49,45 +50,54 @@
         <para>
             Les sécurités peuvent être combinées en utilisant :
         </para>
-        <para>
-            <code>
-                <literallayout>
-                    ClientSecurityStack.wrap(security1, security2, ...);
-                </literallayout>
-            </code>
-        </para>
+        <programlisting>
+            ClientSecurityStack.wrap(security1, security2, ...);
+        </programlisting>
     </section>
     
     <section>
         <title>Clients</title>
-        
-        <simpleList>
-            <member>CSW</member>
+        <para>
+            <simplelist>
+                <member>CSW</member>
 
-            <member>OSM</member>
+                <member>OSM</member>
 
-            <member>OSM-TMS</member>
+                <member>OSM-TMS</member>
 
-            <member>SOS</member>
+                <member>SOS</member>
 
-            <member>WCS</member>
+                <member>WCS</member>
 
-            <member>WFS</member>
+                <member>WFS</member>
 
-            <member>WMS</member>
+                <member>WMS</member>
 
-            <member>WMS-C</member>
+                <member>WMS-C</member>
 
-            <member>ncWMS</member>
+                <member>ncWMS</member>
 
-            <member>WMTS</member>
+                <member>WMTS</member>
 
-            <member>WPS</member>
+                <member>WPS</member>
 
-            <member>IGN RM</member>
+                <member>IGN RM</member>
 
-            <member>Google Static Maps</member>
-            
-        </simpleList>
+                <member>Google Static Maps</member>            
+            </simplelist>
+        </para>
     </section>
-</chapter>
+    
+    <xi:include href="client/serverstore.xml"/>
+    
+    <xi:include href="client/csw.xml"/>
+    
+    <xi:include href="client/ignrm.xml"/>
+    
+    <xi:include href="client/osmtms.xml"/>
+    
+    <xi:include href="client/sos.xml"/>
+    
+    <xi:include href="client/wms.xml"/>
+    
+</section>

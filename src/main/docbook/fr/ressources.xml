@@ -47,16 +47,16 @@
                 Une fois celui-ci installé, les sources peuvent être récupérées avec la commande suivante :
             </para>
             
-            <code>
+            <programlisting>
                 hg clone http://hg.geotoolkit.org/geotoolkit-pending geotk-pending
-            </code>
+            </programlisting>
             
             <para>
                 La mise à jour se fait avec la commande :
             </para>
-            <code>
+            <programlisting>
                 hg pull -u
-            </code>           
+            </programlisting>           
             
         </section>
         
@@ -115,9 +115,9 @@
         
         <para> Une fois ceux ci installés, la compilation se fait avec la commande :
         </para>
-        <code>	
+        <programlisting>	
             mvn clean install -DskipTests
-        </code>
+        </programlisting>
         <para>
             Le temps de compilation varie selon la machine utilisée et votre connexion internet. La première compilation est plus longue pour récupérer les différents paquets dont elle a besoin. Comptez une trentaine de minute pour la première compilation.
         </para>

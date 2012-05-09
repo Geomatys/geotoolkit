@@ -4,7 +4,7 @@
   <!ENTITY % book.entities SYSTEM "../../../book.entities">
   %book.entities;
 ]>
-<chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
+<section xmlns="http://docbook.org/ns/docbook" version="5.0"
          xmlns:xlink = "http://www.w3.org/1999/xlink">
     <title>Filter-expression</title>
     
@@ -37,7 +37,7 @@
             <title>Structure des filtres</title>
             <mediaobject>
                 <imageobject>
-                    <imagedata fileref="../../images/org.opengis.filter.png" format="png"></imagedata>
+                    <imagedata fileref="../images/org.opengis.filter.png" format="png"></imagedata>
                 </imageobject>
                 <textobject>
                     <phrase> Structure des filtres
@@ -56,7 +56,7 @@
             <title>Opérateurs spatiaux des filtres</title>
             <mediaobject>
                 <imageobject>
-                    <imagedata fileref="../../images/org.opengis.filter.spatial.png" format="png"></imagedata>
+                    <imagedata fileref="../images/org.opengis.filter.spatial.png" format="png"></imagedata>
                 </imageobject>
                 <textobject>
                     <phrase> Opérateurs spatiaux des filtres
@@ -65,8 +65,8 @@
             </mediaobject>
         </figure>
         
-        <para>
-            Exemple :
+        <example>
+           <title>Exemple :</title>
             <simplelist>
                 <member>
                     <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/file/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/filter/FilterDemo.java">
@@ -79,7 +79,8 @@
                     </link>
                 </member>
             </simplelist>
-        </para>
+        </example>
+        
     </section>
     
     <section>
@@ -89,7 +90,7 @@
             <title>Expressions des filtres</title>
             <mediaobject>
                 <imageobject>
-                    <imagedata fileref="../../images/org.opengis.filter.expression.png" format="png"></imagedata>
+                    <imagedata fileref="../images/org.opengis.filter.expression.png" format="png"></imagedata>
                 </imageobject>
                 <textobject>
                     <phrase> Expression des filtres
@@ -116,4 +117,4 @@
             </itemizedlist>
         </para>
     </section>
-</chapter>
+</section>

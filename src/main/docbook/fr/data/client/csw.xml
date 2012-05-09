@@ -4,20 +4,18 @@
   <!ENTITY % book.entities SYSTEM "../../../book.entities">
   %book.entities;
 ]>
-<chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
+<section xmlns="http://docbook.org/ns/docbook" version="5.0"
          xmlns:xlink = "http://www.w3.org/1999/xlink">
              
     <title>Service CSW</title>
     
-    <para>
-        <title>Code source complet</title> :
-    </para>
-    <para>
+    <example>
+        <title>Code source complet : </title>
         <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/file/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/clients/csw/CSWClientDemo.java">
             <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/clients/csw/CSWClientDemo.java </acronym>
         </link>
         
-    </para>
+    </example>
         
     <para>
         <emphasis>Catalog Web Server (CSW)</emphasis> est un service de l'OGC fait pour renvoyer des métadonnées.
@@ -28,9 +26,7 @@
             
     </para>
     
-    <para>
-        <code>
-            <literallayout>
+        <programlisting>
                 final MarshallerPool pool = CSWMarshallerPool.getInstance();
                 Unmarshaller um = null;
   
@@ -128,8 +124,6 @@
                 if (um != null) {
                 pool.release(um);
                 }
-            </literallayout>
-        </code>
-    </para>
+        </programlisting>
             
-</chapter>
+</section>

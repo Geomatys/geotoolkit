@@ -4,7 +4,7 @@
   <!ENTITY % book.entities SYSTEM "../../book.entities">
   %book.entities;
 ]>
-<chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
+<section xmlns="http://docbook.org/ns/docbook" version="5.0"
          xmlns:xlink = "http://www.w3.org/1999/xlink">
           
     <title>
@@ -25,19 +25,19 @@
     <section>
         <title>Récupération des registry et des descriptions des processus.</title>
             
-        <para>
+        <example>
             <title>Code source complet  : </title>
             <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/file/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/FindProcessDemo.java">
                 <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/FindProcessDemo.java</acronym>
             </link>        
-        </para>
+        </example>
         <para>
             Pour récupérer la liste des Registry de processus, il faut utiliser la methode getProcessFactories de la classe utilitaire ProcessFinder.    
         </para>
-        <para>
+        <example>
             <title>Liste des registry / factory</title>
-            <code>
-                <literallayout>
+            <programlisting>
+                
                     //Itérateur sur la liste des registry de processus.
                     final Iterator&lt;ProcessingRegistry&gt; registryIter = ProcessFinder.getProcessFactories();
  
@@ -45,32 +45,32 @@
                     while (registryIter.hasNext()) {
                     final ProcessingRegistry registry = registryIter.next(); 
                     }
-                </literallayout>
-            </code>
-        </para>
+                
+            </programlisting>
+        </example>
         
         <para>
             Si l'on connait le nom du registry on peut également le récupérer directement sans passer par la liste des registry. 
         </para>
         
-        <para>
+        <example>
             <title>Registry seul</title>
-            <code>
-                <literallayout>
+            <programlisting>
+                
                     //Récupération de la registry math.
                     final ProcessingRegistry registry = ProcessFinder.getProcessFactory("math");
-                </literallayout>
-            </code>
-        </para>
+                
+            </programlisting>
+        </example>
         
         <para>
             Une fois que l'on a une registry on peut appeler différentes méthodes dessus :
         </para>
         
-        <para>
+        <example>
             <title>Registry méthodes</title>
-            <code>
-                <literallayout>
+            <programlisting>
+                
                     //Récupération du nom de la registry.
                     final String registryName = registry.getIdentification().getCitation().getTitle().toString();
  
@@ -82,10 +82,10 @@
  
                     //Récupération de la description d'un process en particulier. 
                     final ProcessDescriptor cosProcessDescriptor = registry.getDescriptor("cos");
-                </literallayout>
-            </code>
-        </para>
+                
+            </programlisting>
+        </example>
         
     </section>
     
-</chapter>
+</section>

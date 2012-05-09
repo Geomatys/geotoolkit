@@ -4,19 +4,17 @@
   <!ENTITY % book.entities SYSTEM "../../../book.entities">
   %book.entities;
 ]>
-<chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
+<section xmlns="http://docbook.org/ns/docbook" version="5.0"
          xmlns:xlink = "http://www.w3.org/1999/xlink">
              
     <title>Sensor Observation Service</title>
     
-    <para>
-        <title>Code source complet</title> :
-    </para>
-    <para>
+    <example>
+        <title>Code source complet : </title>
         <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/file/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/clients/sos/SOSClientDemo.java">
             <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/clients/sos/SOSClientDemo.java  </acronym>
         </link>        
-    </para>
+    </example>
 
     <para>
         <emphasis>Sensor Observation Service (SOS)</emphasis> est un service de l'OGC pour renvoyer des données de capteurs.
@@ -26,10 +24,10 @@
         <link xlink:href="http://www.opengeospatial.org/standards/sos">http://www.opengeospatial.org/standards/sos</link>
     </para>
 
-    <para>
+    <example>
         <title>Exemple</title>
-        <code>
-            <literallayout>
+        <programlisting>
+            
                 final MarshallerPool pool = SOSMarshallerPool.getInstance();
                 Unmarshaller um = null;
  
@@ -104,7 +102,7 @@
                 if (um != null) {
                 pool.release(um);
                 }
-            </literallayout>
-        </code>
-    </para>
-</chapter>
+            
+        </programlisting>
+    </example>
+</section>

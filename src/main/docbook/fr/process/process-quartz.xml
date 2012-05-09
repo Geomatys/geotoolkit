@@ -4,7 +4,7 @@
   <!ENTITY % book.entities SYSTEM "../../book.entities">
   %book.entities;
 ]>
-<chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
+<section xmlns="http://docbook.org/ns/docbook" version="5.0"
          xmlns:xlink = "http://www.w3.org/1999/xlink">
           
     <title>
@@ -25,53 +25,47 @@
     <section>
         <title>Utilisation</title>
             
-        <para>
+        <example>
             <title>Code source complet  : </title>
             <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/file/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/QuartzDemo.java">
                 <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/QuartzDemo.java</acronym>
             </link>        
-        </para>
+        </example>
         
         <para>
             Le principe est de réutiliser l'ordonnance de votre application, ici on va en créer un :
         </para>
-        <para>
-            <code>
-                <literallayout>
+            <programlisting>
+                
                     final SchedulerFactory factory = new StdSchedulerFactory();
                     final Scheduler scheduler = factory.getScheduler();
                     scheduler.start();
-                </literallayout>
-            </code>
-        </para>
+                
+            </programlisting>
         
         <para>
             On crée ensuite l'ensemble des paramètres qui seront donnés au processus.
         </para>
-        <para>
-            <code>
-                <literallayout>
+            <programlisting>
+                
                     final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("mymaths", "add");
                     final ParameterValueGroup input = desc.getInputDescriptor().createValue();
                     input.parameter("first").setValue(15d);
                     input.parameter("second").setValue(5d);
                     final ProcessJobDetail detail = new ProcessJobDetail("mymaths", "add", input);
-                </literallayout>
-            </code>
-        </para>
+                
+            </programlisting>
         
         <para>
             Et on configure l’exécution de la tâche, ci-dessous celle ci s’exécutera un total de 5 fois toutes les 500ms.
         </para>
         
-        <para>
-            <code>
-                <literallayout>
+            <programlisting>
+                
                     SimpleTrigger trigger = new SimpleTriggerImpl(UUID.randomUUID().toString(),5, 500);
                     scheduler.scheduleJob(detail, trigger);
-                </literallayout>
-            </code>
-        </para>
+                
+            </programlisting>
         
         <para>
             Quartz permet bien entendu d'être plus minutieux dans l’exécution des tâches.
@@ -80,4 +74,4 @@
         </para>
     </section>
     
-    </chapter>
+    </section>

@@ -4,7 +4,7 @@
   <!ENTITY % book.entities SYSTEM "../../book.entities">
   %book.entities;
 ]>
-<chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
+<section xmlns="http://docbook.org/ns/docbook" version="5.0"
          xmlns:xlink = "http://www.w3.org/1999/xlink">
           
     <title>
@@ -72,12 +72,12 @@
     <section>
         <title>Création</title>
         
-        <para>
-            <title>Code source complet</title> :
+        <example>
+            <title>Code source complet : </title>
             <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/file/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/mapmodel/MapContextDemo.java">
                 <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/mapmodel/MapContextDemo.java</acronym>
             </link>        
-        </para>
+        </example>
         
         <para>
             A l'exception des couches spécifiques, 
@@ -90,9 +90,8 @@
             Voici un exemple de création d'un MapContext avec différents types de couches :
         </para>
 
-        <para>
-            <code>
-                <literallayout>
+            <programlisting>
+                
                     //create a map context
                     final MapContext context = MapBuilder.createContext();
  
@@ -117,18 +116,17 @@
  
                     //check the result
                     JMap2DFrame.show(context);
-                </literallayout>
-            </code>
-        </para>
+                
+            </programlisting>
         
         <para>Il est aussi possible de créer une arborescence plutot qu'une liste. Les éléments utilisés pour symbolizer des noeuds sont des 
             <emphasis>MapItem</emphasis>.
         </para>
     
-        <para>
+        <example>
             <title>Exemple :</title>
-            <code>
-                <literallayout>
+            <programlisting>
+                
                     final MapItem bggroup = MapBuilder.createItem();
                     bggroup.setDescription(SF.description("Background", ""));
                     final MapItem datagroup = MapBuilder.createItem();
@@ -140,8 +138,8 @@
   
                     context.items().add(bggroup);
                     context.items().add(datagroup);
-                </literallayout>
-            </code>
-        </para>
+                
+            </programlisting>
+        </example>
     </section>
-</chapter>
+</section>

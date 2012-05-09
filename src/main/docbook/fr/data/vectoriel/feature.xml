@@ -4,16 +4,16 @@
   <!ENTITY % book.entities SYSTEM "../../../book.entities">
   %book.entities;
 ]>
-<chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
+<section xmlns="http://docbook.org/ns/docbook" version="5.0"
          xmlns:xlink = "http://www.w3.org/1999/xlink">
     <title>Feature</title>
              
-    <para>
-        <title>Code source complet</title> :
+    <example>
+        <title>Code source complet : </title>
         <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/file/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/FeatureDemo.java">
             <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/FeatureDemo.java</acronym>
         </link>        
-    </para>
+    </example>
     <para>
         Il existe trois façons des créer des Features.
         <itemizedlist>
@@ -29,9 +29,7 @@
         <para>
             Cette méthode est la méthode par défaut, efficace mais elle peut demander beaucoup d'efforts lorsque l'on souhaite avoir un Feature valide rapidement.
         </para>
-        <para>
-            <code>
-                <literallayout>
+            <programlisting>
                     final Object[] values = new Object[]{
                     "placide",
                     12,
@@ -41,9 +39,7 @@
                     };
 
                     final Feature feature = FF.createSimpleFeature(values, type, "id-0");
-                </literallayout>
-            </code>
-        </para>
+            </programlisting>
         <para>
             Elle requiert de créer les valeurs à l'avance dans un tableau, et dans le cas de types complexes cela peut devenir fastidieux.
         </para>
@@ -61,16 +57,12 @@
         <para>
             Pour obtenir l'une ou l'autre : 
         </para>
-        <para>
-            <code>
-                <literallayout>
+            <programlisting>
                     FeatureFactory LFF = FactoryFinder.getFeatureFactory(
                     new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
                     FeatureFactory VFF = FactoryFinder.getFeatureFactory(
                     new Hints(Hints.FEATURE_FACTORY, ValidatingFeatureFactory.class));
-                </literallayout>
-            </code>
-        </para>
+            </programlisting>
         <para>
             Dans l'utilisation quotidienne, on utilise la LenientFeatureFactory et lorsqu'une validation est nécessaire on appelle la méthode 
             <emphasis>validate</emphasis> sur le Feature.
@@ -84,8 +76,8 @@
             La relation entre le Feature et le FeatureType étant homogène, cela rend le code simple a comprendre.
         </para>
         <para>
-            <code>
-                <literallayout>
+            <programlisting>
+                
                     final SimpleFeatureBuilder sfb = new SimpleFeatureBuilder(type);
                     sfb.set("name", "placide");
                     sfb.set("lenght", 12);
@@ -93,8 +85,8 @@
                     sfb.set("lastPositionDate", new Date());
                     sfb.set("direction", 56.498f);
                     final Feature feature = sfb.buildFeature("id-0");
-                </literallayout>
-            </code>
+                
+            </programlisting>
         </para>
         <para>
             Si aucune fabrique n'est fournie au builder, c'est la LenientFeatureFactory qui est utilisée.
@@ -109,17 +101,15 @@
         <para>
             Une façon rapide d'obtenir un Feature à partir d'un FeatureType sans travail de notre coté, cet utilitaire utilise la LenientFeatureFactory.
         </para>
-        <para>
-            <code>
-                <literallayout>
+            <programlisting>
+                
                     final Feature feature = FeatureUtilities.defaultFeature(type, "id-0");
                     feature.getProperty("name").setValue("placide");
                     feature.getProperty("lenght").setValue(12);
                     feature.getProperty("lastPosition").setValue(GF.createPoint(new Coordinate(-10, 23)));
                     feature.getProperty("lastPositionDate").setValue(new Date());
                     feature.getProperty("direction").setValue(56.498f);
-                </literallayout>
-            </code>
-        </para>
+                
+            </programlisting>
     </section>
-</chapter>
+</section>

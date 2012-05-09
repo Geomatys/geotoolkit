@@ -4,21 +4,21 @@
   <!ENTITY % book.entities SYSTEM "../../../book.entities">
   %book.entities;
 ]>
-<chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
+<section xmlns="http://docbook.org/ns/docbook" version="5.0"
          xmlns:xlink = "http://www.w3.org/1999/xlink">
           
     <title>
-        Custom Graphic Builder
+        Custom decoration
     </title>
     
-    <para>
+    <example>
         <title>Code source complet  : </title>
         <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/file/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/customgraphicbuilder/GraphicBuilderDemo.java">
             <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/customgraphicbuilder/GraphicBuilderDemo.java</acronym>
         </link>        
-    </para>
+    </example>
     
-    <para>
+    <section>
         <title>Quand utiliser une décoration ?</title>
         Les décorations ne sont disponibles qu'avec le composant de carte swing : 
         <emphasis>JMap2D</emphasis>. Une décoration n'est rien de plus qu'un composant swing placé par dessus la carte.
@@ -31,24 +31,25 @@
             </title>
             <mediaobject>
                 <imageobject>
-                    <imagedata fileref="../../images/boussoleneo.png" format="png"></imagedata>
+                    <imagedata fileref="../images/boussoleneo.png" format="png"></imagedata>
                 </imageobject>
                 
                 <imageobject>
-                    <imagedata fileref="../../images/scalebar.png" format="png"></imagedata>
+                    <imagedata fileref="../images/scalebar.png" format="png"></imagedata>
                 </imageobject>
             </mediaobject>
         </figure>
-    </para>
+    </section>
     
-    <para>
+    <section>
         <title>Comment en créer ?</title>
+        <para>
         Il est possible d'implémenter l'interface 
         <emphasis>MapDecoration</emphasis> ou alors d'étendre 
-        <emphasis>AbstractMapDecoration</emphasis> qui s'occupera de gérer la plupart des méthodes.
-    </para>
+        <emphasis>AbstractMapDecoration</emphasis> qui s'occupera de gérer la plupart des méthodes.</para>
+    </section>
     
-    <para>
+    <section>
         <title>Faire un rendu comme si on était sur la carte</title>
         <para>   
             Une possibilité intéressante des décorations est de dessiner comme s'il s'agissait du canvas de la carte et ainsi de récupérer toute les transformations mathématiques.
@@ -60,9 +61,7 @@
         <para>
             En supposant que vous avez surchargé la méthode <emphasis>paintComponant</emphasis> de votre décoration :
         </para>
-        <para>
-            <code>
-                <literallayout>
+            <programlisting>
                     @Override
                     protected void paintComponent(Graphics g) {
                     super.paintComponent(g);
@@ -75,9 +74,7 @@
                     context.switchToObjectiveCRS();
                     // and paint like in a graphic object
                     }
-                </literallayout>
-            </code>
-        </para>
-        </para>
+            </programlisting>
+        </section>
         
-        </chapter>
+        </section>

@@ -4,26 +4,25 @@
   <!ENTITY % book.entities SYSTEM "../../../../book.entities">
   %book.entities;
 ]>
-<chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
+<section xmlns="http://docbook.org/ns/docbook" version="5.0"
          xmlns:xlink = "http://www.w3.org/1999/xlink">
              
     <title>Format PostGIS</title>
              
-    <para>
-        <title>Code source complet</title> :
+    <example>
+        <title>Code source complet : </title>
         <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/file/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/postgis/PostgisDemo.java">
             <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/postgis/PostgisDemo.java</acronym>
         </link>
         
-    </para>
+    </example>
         
     <para>PostGIS est l'extension spatiale de PostgreSQL.</para>
 
     <para>C'est aussi le mode de stockage SIG en base de données le plus utilisé.</para>
         
-    <para>
-        <code>
-            <literallayout>
+        <programlisting>
+            
                 final ParameterValueGroup parameters = PostgisNGDataStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
                 Parameters.getOrCreate(PostgisNGDataStoreFactory.HOST, parameters).setValue("hote");
                 Parameters.getOrCreate(PostgisNGDataStoreFactory.PORT, parameters).setValue(5432);
@@ -32,7 +31,6 @@
                 Parameters.getOrCreate(PostgisNGDataStoreFactory.PASSWD, parameters).setValue("secret");
          
                 final DataStore store = DataStoreFinder.getDataStore(parameters);
-            </literallayout>
-        </code>
-    </para>
-</chapter>
+            
+        </programlisting>
+</section>

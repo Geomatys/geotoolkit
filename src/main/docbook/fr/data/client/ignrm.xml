@@ -4,19 +4,18 @@
   <!ENTITY % book.entities SYSTEM "../../../book.entities">
   %book.entities;
 ]>
-<chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
+<section xmlns="http://docbook.org/ns/docbook" version="5.0"
          xmlns:xlink = "http://www.w3.org/1999/xlink">
              
     <title>Service IGN RM</title>
     
-    <para>
-        <title>Code source complet</title> :
-    </para>
-    <para>
+    <example>
+        <title>Code source complet : </title>
+    
         <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/file/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/clients/ignrm/IGNClientDemo.java">
             <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/clients/ignrm/IGNClientDemo.java </acronym>
         </link>        
-    </para>
+    </example>
     
     <para>
         L'Institut Géographique National (IGN) de France fournit un certain nombre de services conformément à la directive européenne 
@@ -44,12 +43,12 @@
         </itemizedlist>
     </para>
             
-    <para>
+    <example>
         <title>
             Exemple
         </title>
-        <code>
-            <literallayout>
+        <programlisting>
+            
                 //referer parameter
                 final ClientSecurity refererInfo = new RefererClientSecurity("http://localhost/");
          
@@ -70,10 +69,10 @@
                 final MapContext context = MapBuilder.createContext();       
                 context.layers().add(layer);
                 JMap2DFrame.show(context);
-            </literallayout>
-        </code>
-    </para>
+            
+        </programlisting>
+    </example>
             
             
-</chapter>
+</section>
             
