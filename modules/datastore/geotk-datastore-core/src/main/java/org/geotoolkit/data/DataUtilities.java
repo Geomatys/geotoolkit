@@ -163,8 +163,8 @@ public class DataUtilities {
             }
         }finally{
             
-            writer.close();
-            
+            //close reader before the writer to ensure no more read lock might still exist
+            //if we write on the same source
             DataStoreRuntimeException e = null;
             //todo must close safely both iterator
             if(ite instanceof Closeable){
@@ -174,7 +174,8 @@ public class DataUtilities {
                     e = new DataStoreRuntimeException(ex);
                 }
             }
-
+            
+            writer.close();
             
             if(e != null){
                 throw e;
