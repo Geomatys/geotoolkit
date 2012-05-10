@@ -23,7 +23,7 @@ import java.sql.SQLException;
 import javax.sql.DataSource;
 
 import org.opengis.util.FactoryException;
-import org.geotoolkit.internal.sql.HSQL;
+import org.geotoolkit.internal.sql.Dialect;
 
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.internal.sql.DefaultDataSource;
@@ -69,7 +69,7 @@ public final strictfp class AutomaticInstallationTest {
         DriverManager.deregisterDriver(derbyDriver);
         try {
             final String url = ThreadedEpsgFactory.getDefaultURL();
-            assertTrue(url, url.startsWith(HSQL.PROTOCOL));
+            assertTrue(url, url.startsWith(Dialect.HSQL.protocol));
         } finally {
             DriverManager.registerDriver(derbyDriver);
         }

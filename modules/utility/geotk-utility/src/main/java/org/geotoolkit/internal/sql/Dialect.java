@@ -17,21 +17,33 @@
  */
 package org.geotoolkit.internal.sql;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.sql.Driver;
 import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.sql.DatabaseMetaData;
+import java.sql.Connection;
+import java.sql.Statement;
+import java.sql.SQLException;
+import java.sql.SQLNonTransientException;
 import java.util.Enumeration;
+import java.util.Properties;
 import java.util.Locale;
 
 import org.geotoolkit.util.XArrays;
+import org.geotoolkit.util.ArgumentChecks;
 
 
 /**
  * The SQL dialect used by a connection.
+ * This class defines also a few driver-specific operations.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.18
+ * @version 3.20
  *
  * @since 3.00
  * @module
@@ -40,14 +52,35 @@ public enum Dialect {
     /**
      * The database is presumed to use ANSI SQL syntax.
      */
-    ANSI(null, null),
+    ANSI(null, null, null),
 
     /**
      * The database uses Derby syntax. This is ANSI, with some constraints that PostgreSQL
      * doesn't have (for example column with {@code UNIQUE} constraint must explicitly be
      * specified as {@code NOT NULL}).
      */
-    DERBY("org.apache.derby.", "jdbc:derby:"),
+    DERBY("org.apache.derby.jdbc.EmbeddedDriver", "jdbc:derby:", new String[] {
+            "directory", "memory", "classpath", "jar"})
+    {
+        /**
+         * Shutdowns the Derby database using the given URL.
+         */
+        @Override
+        public void shutdown(final Connection connection, String databaseURL, final boolean setReadOnly) throws SQLException {
+            super.shutdown(connection, databaseURL, setReadOnly); // Close the connection.
+            final int p = databaseURL.indexOf(';');
+            if (p >= 0) {
+                // Trim the parameters, especially ";create=true".
+                databaseURL = databaseURL.substring(0, p);
+            }
+            databaseURL += ";shutdown=true";
+            try {
+                DriverManager.getConnection(databaseURL).close();
+            } catch (SQLException e) {
+                // This is the expected exception.
+            }
+        }
+    },
 
     /**
      * The database uses HSQL syntax. This is ANSI, but does not allow {@code INSERT}
@@ -56,7 +89,43 @@ public enum Dialect {
      *
      * @since 3.10
      */
-    HSQL("org.hsqldb.", org.geotoolkit.internal.sql.HSQL.PROTOCOL),
+    HSQL("org.hsqldb.jdbcDriver", "jdbc:hsqldb:", new String[] {"file", "mem"}) {
+        /**
+         * Shutdowns the HSQL database using the given connection if non-null, or using a new
+         * connection created from the given URL otherwise. Note that is {@code setReadOnly}
+         * is {@code true}, then {@code databaseURL} needs to be non-null.
+         */
+        @Override
+        public void shutdown(Connection connection, final String databaseURL, final boolean setReadOnly) throws SQLException {
+            if (connection == null) {
+                ArgumentChecks.ensureNonNull("databaseURL", databaseURL);
+                connection = DefaultDataSource.log(DriverManager.getConnection(databaseURL), Dialect.class);
+            }
+            try (Statement stmt = connection.createStatement()) {
+                stmt.execute(setReadOnly ? "SHUTDOWN COMPACT" : "SHUTDOWN");
+            } finally {
+                connection.close();
+            }
+            if (setReadOnly) {
+                final File path = getFile(databaseURL);
+                if (path != null) try {
+                    final File file = new File(path.getParentFile(), path.getName() + ".properties");
+                    final Properties properties;
+                    try (InputStream propertyIn = new FileInputStream(file)) {
+                        properties = new Properties();
+                        properties.load(propertyIn);
+                    }
+                    if (!"true".equals(properties.put("readonly", "true"))) {
+                        try (OutputStream out = new FileOutputStream(file)) {
+                            properties.store(out, "HSQL database configuration");
+                        }
+                    }
+                } catch (IOException e) {
+                    throw new SQLNonTransientException(e);
+                }
+            }
+        }
+    },
 
     /**
      * The database uses PostgreSQL syntax. This is ANSI, but provided an a separated
@@ -65,7 +134,7 @@ public enum Dialect {
      * While enums were introduced in PostgreSQL 8.3, we require PostgreSQL 8.4
      * because we need the {@code CAST ... WITH INOUT} feature.
      */
-    POSTGRESQL("org.postgresql.", "jdbc:postgresql:") {
+    POSTGRESQL("org.postgresql.Driver", "jdbc:postgresql:", null) {
         @Override
         public boolean isEnumSupported(final DatabaseMetaData metadata) throws SQLException {
             final int version = metadata.getDatabaseMajorVersion();
@@ -83,12 +152,12 @@ public enum Dialect {
      *
      * @since 3.18
      */
-    ORACLE("oracle.jdbc.driver.", "jdbc:oracle:"),
+    ORACLE("oracle.jdbc.driver.OracleDriver", "jdbc:oracle:", null),
 
     /**
      * The database uses Access SQL syntax.
      */
-    ACCESS(null, null);
+    ACCESS(null, null, null);
 
     /**
      * The list of dialect to try to recognize. This is the list of all available dialects
@@ -98,21 +167,30 @@ public enum Dialect {
     private static final Dialect[] SPECIFIC = XArrays.remove(values(), ANSI.ordinal(), 1);
 
     /**
-     * The prefix of package name, or {@code null} if unknown.
+     * The driver class name, or {@code null} if unknown.
      */
-    private final String baseDriverName;
+    public final String driverClass;
 
     /**
-     * The base JDBC URL, or {@code null} if unknown.
+     * The prefix of the JDBC URL, or {@code null} if unknown.
+     * If non-null, this string begins with {@code "jdbc:"} and ends with {@code ":"}.
      */
-    private final String baseURL;
+    public final String protocol;
+
+    /**
+     * The sub-protocols, or {@code null} if none. If non-null, then the first protocol
+     * shall be the file protocol, and the second protocol (if any) the memory protocol.
+     * The strings shall not have training {@code ':'}.
+     */
+    private final String[] subProtocols;
 
     /**
      * Creates a new dialect enum.
      */
-    private Dialect(final String baseDriverName, final String baseURL) {
-        this.baseDriverName = baseDriverName;
-        this.baseURL = baseURL;
+    private Dialect(final String driverClass, final String protocol, final String[] subProtocols) {
+        this.driverClass  = driverClass;
+        this.protocol     = protocol;
+        this.subProtocols = subProtocols;
     }
 
     /**
@@ -147,13 +225,93 @@ public enum Dialect {
     public static Dialect forURL(final String databaseURL) {
         if (databaseURL != null) {
             for (final Dialect candidate : SPECIFIC) {
-                final String baseURL = candidate.baseURL;
+                final String baseURL = candidate.protocol;
                 if (baseURL != null && databaseURL.regionMatches(true, 0, baseURL, 0, baseURL.length())) {
                     return candidate;
                 }
             }
         }
         return null;
+    }
+
+    /**
+     * Constructs the full path to a database in the given directory.
+     * The {@linkplain File#getName() name} of the given {@code path} shall be the
+     * database name (without extension), and the {@linkplain File#getParentFile() parent}
+     * of the {@code path} shall be the directory where the database is saved.
+     *
+     * @param  path The path (without extension) to the database.
+     * @return The URL.
+     * @throws SQLException If the database doesn't support local database.
+     */
+    public final String createURL(final File path) throws SQLException {
+        if (subProtocols == null) {
+            throw new SQLException();
+        }
+        // We do not use File.toURI() because HSQL doesn't seem to
+        // expect an encoded URL (e.g. "%20" instead of spaces).}
+        final StringBuilder url = new StringBuilder(protocol).append(subProtocols[0]).append(':');
+        final String p = path.getAbsolutePath().replace(File.separatorChar, '/');
+        if (!p.startsWith("/")) {
+            url.append('/');
+        }
+        return url.append(p).toString();
+    }
+
+    /**
+     * Given a database URL, gets the path to the database.
+     * This is the converse of {@link #createURL(File)}.
+     *
+     * @param  databaseURL The database URL.
+     * @return The path, or {@code null} if the given URL is not recognized.
+     */
+    public final File getFile(final String databaseURL) {
+        int offset = protocol.length();
+        if (databaseURL != null && databaseURL.regionMatches(true, 0, protocol, 0, offset)) {
+            if (subProtocols != null) {
+                final int s = databaseURL.indexOf(':', offset);
+                if (s >= 0) {
+                    final String p = databaseURL.substring(offset, s);
+                    for (int i=0; i<subProtocols.length; i++) {
+                        if (p.equalsIgnoreCase(subProtocols[i])) {
+                            if (i != 0) {
+                                // As per 'subProtocols' javadoc, only the first sub-protocol
+                                // is the file protocol. All other sub-protocols are ignored.
+                                // In particular, the second sub-protocol is the "memory" one,
+                                // which can not be mapped to a file.
+                                return null;
+                            }
+                            offset = s + 1;
+                        }
+                    }
+                }
+            }
+            return new File(databaseURL.substring(offset));
+        }
+        return null;
+    }
+
+    /**
+     * Returns {@code true} if the driver for this {@code Dialect} is found in the set
+     * of {@linkplain DriverManager#getDrivers() registered drivers}. This method may
+     * conservatively returns {@code false} if the registration state can not be determined.
+     *
+     * @return {@code true} if the driver for this {@code Dialect} is registered.
+     *
+     * @since 3.10
+     */
+    public final boolean isDriverRegistered() {
+        if (driverClass != null) {
+            final int stop = driverClass.lastIndexOf('.')+1;
+            final Enumeration<Driver> drivers = DriverManager.getDrivers();
+            while (drivers.hasMoreElements()) {
+                final Driver drv = drivers.nextElement();
+                if (drv.getClass().getName().regionMatches(0, driverClass, 0, stop)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -194,24 +352,18 @@ public enum Dialect {
     }
 
     /**
-     * Returns {@code true} if the driver for this {@code Dialect} is found in the set
-     * of {@linkplain DriverManager#getDrivers() registered drivers}. This method may
-     * conservatively returns {@code false} if the registration state can not be determined.
+     * Closes the given connection (if non-null) and shutdowns the database.
+     * The boolean arguments specify some optional operations that can be applied before or after
+     * the shutdown, and will be ignored by database that do not support those operations.
      *
-     * @return {@code true} if the driver for this {@code Dialect} is registered.
-     *
-     * @since 3.10
+     * @param  connection  The connection to use for shutting down the database, or {@code null} if unavailable.
+     * @param  databaseURL The URL to the database, or {@code null} if unavailable.
+     * @param  setReadOnly {@code true} for setting the database in read-only mode after shutdown.
+     * @throws SQLException
      */
-    public boolean isDriverRegistered() {
-        if (baseDriverName != null) {
-            final Enumeration<Driver> drivers = DriverManager.getDrivers();
-            while (drivers.hasMoreElements()) {
-                final Driver drv = drivers.nextElement();
-                if (drv.getClass().getName().startsWith(baseDriverName)) {
-                    return true;
-                }
-            }
+    public void shutdown(Connection connection, String databaseURL, boolean setReadOnly) throws SQLException {
+        if (connection != null) {
+            connection.close();
         }
-        return false;
     }
 }

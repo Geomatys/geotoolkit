@@ -39,7 +39,6 @@ import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Descriptions;
 import org.geotoolkit.internal.sql.DefaultDataSource;
 import org.geotoolkit.internal.sql.Dialect;
-import org.geotoolkit.internal.sql.HSQL;
 import org.geotoolkit.util.NullArgumentException;
 
 import static org.geotoolkit.internal.referencing.CRSUtilities.EPSG_VERSION;
@@ -297,19 +296,12 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
      *
      * @see org.geotoolkit.internal.sql.DefaultDataSource#shutdown()
      */
-    private static void shutdown(final Connection connection, final String databaseURL)
-            throws SQLException, IOException
-    {
-        final File hsqldb = HSQL.getFile(databaseURL);
-        if (hsqldb != null) {
-            HSQL.shutdown(connection, true);
-        }
-        connection.close();
-        if (Dialect.forURL(databaseURL) == Dialect.DERBY) {
-            DefaultDataSource.shutdownDerby(databaseURL);
-        }
-        if (hsqldb != null) {
-            HSQL.setReadOnly(hsqldb);
+    private static void shutdown(final Connection connection, final String databaseURL) throws SQLException {
+        final Dialect dialect = Dialect.forURL(databaseURL);
+        if (dialect != null) {
+            dialect.shutdown(connection, databaseURL, true);
+        } else {
+            connection.close();
         }
     }
 

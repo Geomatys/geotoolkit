@@ -28,7 +28,7 @@ import org.opengis.referencing.crs.CompoundCRS;
 import org.opengis.referencing.crs.GeographicCRS;
 
 import org.geotoolkit.test.TestData;
-import org.geotoolkit.internal.sql.HSQL;
+import org.geotoolkit.internal.sql.Dialect;
 import org.geotoolkit.internal.io.Installation;
 
 import org.junit.*;
@@ -100,20 +100,20 @@ public final strictfp class EpsgInstallerTest {
     public void testCreationOnHSQL() throws FactoryException, SQLException, IOException {
         try {
             // Need explicit registration as of HSQL 1.8.0.10.
-            Class.forName(HSQL.DRIVER_CLASS);
+            Class.forName(Dialect.HSQL.driverClass);
         } catch (ClassNotFoundException e) {
-            throw new TypeNotPresentException(HSQL.DRIVER_CLASS, e);
+            throw new TypeNotPresentException(Dialect.HSQL.driverClass, e);
         }
         final EpsgInstaller installer = new EpsgInstaller();
         if (true) {
-            installer.setDatabase(HSQL.PROTOCOL + "mem:EPSG");
+            installer.setDatabase(Dialect.HSQL.protocol + "mem:EPSG");
             final EpsgInstaller.Result result = installer.call();
             assertTrue(result.numRows > 0);
         } else {
             final File directory = new File(Installation.TESTS.validDirectory(true), "CRS");
             try {
                 final File dbpath = new File(directory, "EPSG");
-                final String databaseURL = HSQL.createURL(dbpath);
+                final String databaseURL = Dialect.HSQL.createURL(dbpath);
                 installer.setDatabase(databaseURL);
                 assertFalse("Database exists?", installer.exists());
                 final EpsgInstaller.Result result = installer.call();
@@ -134,7 +134,7 @@ public final strictfp class EpsgInstallerTest {
                     final HsqlDialectEpsgFactory factory = new HsqlDialectEpsgFactory(null, connection);
                     assertTrue(factory.createCoordinateReferenceSystem("4326") instanceof GeographicCRS);
                     assertTrue(factory.createCoordinateReferenceSystem("7402") instanceof CompoundCRS);
-                    HSQL.shutdown(connection, false);
+                    Dialect.HSQL.shutdown(connection, null, false);
                     factory.dispose(false);
                 }
             } finally {

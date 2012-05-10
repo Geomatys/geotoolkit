@@ -23,6 +23,7 @@ import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import org.geotoolkit.internal.sql.Dialect;
 import org.geotoolkit.io.X364;
 import org.geotoolkit.util.Version;
 import org.geotoolkit.util.Strings;
@@ -100,8 +101,8 @@ final class VersionAction {
                     }
                     case 0: {
                         header = "Embedded Database";
-                        Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
-                        final Driver d = DriverManager.getDriver("jdbc:derby:");
+                        Class.forName(Dialect.DERBY.driverClass);
+                        final Driver d = DriverManager.getDriver(Dialect.DERBY.protocol);
                         result = Loggings.getResources(locale).getString(
                                 Loggings.Keys.JDBC_DRIVER_VERSION_$3, "Derby",
                                 d.getMajorVersion(), d.getMinorVersion());

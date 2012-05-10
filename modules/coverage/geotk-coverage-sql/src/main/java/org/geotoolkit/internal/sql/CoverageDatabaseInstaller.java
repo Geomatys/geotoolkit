@@ -252,7 +252,7 @@ public class CoverageDatabaseInstaller extends ScriptRunner {
     }
 
     /**
-     * Executes the given SQL statement. This method may modifies the SQL script if enums, roles
+     * Executes the given SQL statement. This method may modify the SQL script if enums, roles
      * or languages should not be created. Note that this method is invoked only for the scripts
      * provided in the {@code geotk-coverage-sql} package; the PostGIS and EPSG scripts use their
      * one installer and consequently are unaffected by the changes performed by this method.
@@ -264,7 +264,7 @@ public class CoverageDatabaseInstaller extends ScriptRunner {
      */
     @Override
     protected int execute(final StringBuilder sql) throws SQLException, IOException {
-        final CreateStatement create = CreateStatement.parse(sql);
+        final CreateStatementType create = CreateStatementType.fromSQL(sql);
         if (create != null) switch (create) {
             case ROLE:     if (!createRoles)    return 0; else break;
             case LANGUAGE: if (!createLanguage) return 0; else break;

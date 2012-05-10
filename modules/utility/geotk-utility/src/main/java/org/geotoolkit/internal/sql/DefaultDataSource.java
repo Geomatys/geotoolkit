@@ -179,40 +179,10 @@ public class DefaultDataSource implements DataSource {
      */
     public void shutdown() {
         final Dialect dialect = Dialect.forURL(url);
-        if (dialect != null) switch (dialect) {
-            case HSQL: {
-                try (Connection c = getConnection()) {
-                    HSQL.shutdown(c, false);
-                } catch (SQLException e) {
-                    Logging.unexpectedException(LOGGER, DefaultDataSource.class, "shutdown", e);
-                }
-                break;
-            }
-            case DERBY: {
-                shutdownDerby(url);
-                break;
-            }
-        }
-    }
-
-    /**
-     * Shutdowns the Derby database represented by the given URL.
-     *
-     * @param url The URL of the Derby database to shutdown.
-     *
-     * @since 3.10
-     */
-    public static void shutdownDerby(String url) {
-        final int p = url.indexOf(';');
-        if (p >= 0) {
-            // Trim the parameters, especially ";create=true".
-            url = url.substring(0, p);
-        }
-        url += ";shutdown=true";
-        try {
-            DriverManager.getConnection(url).close();
+        if (dialect != null) try {
+            dialect.shutdown(null, url, false);
         } catch (SQLException e) {
-            // This is the expected exception.
+            Logging.unexpectedException(LOGGER, DefaultDataSource.class, "shutdown", e);
         }
     }
 

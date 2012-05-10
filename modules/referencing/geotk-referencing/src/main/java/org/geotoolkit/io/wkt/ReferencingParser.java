@@ -287,6 +287,9 @@ public class ReferencingParser extends MathTransformParser {
      *
      * @param angularUnit The new angular unit, or {@code null} for restoring the default behavior.
      *
+     * @see Convention#ESRI
+     * @see Convention#PROJ4
+     *
      * @since 3.20
      */
     public void setForcedAngularUnit(final Unit<Angle> angularUnit) {

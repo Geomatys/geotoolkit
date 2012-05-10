@@ -55,7 +55,6 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.JNDI;
-import org.geotoolkit.internal.sql.HSQL;
 import org.geotoolkit.internal.sql.Dialect;
 import org.geotoolkit.internal.sql.DefaultDataSource;
 import org.geotoolkit.internal.io.Installation;
@@ -330,7 +329,7 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
              * the default one.
              */
             try {
-                Class.forName(HSQL.DRIVER_CLASS);
+                Class.forName(Dialect.HSQL.driverClass);
                 directory = new File(directory, "HSQL");
                 driver = "hsqldb";
                 create = false;
