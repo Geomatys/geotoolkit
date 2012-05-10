@@ -8,7 +8,7 @@ syntax: regexp
 \.DS_Store$
 \.git$
 ^tmp$
-.log
+\.log$
 
 # old svn files
 \.svn$
@@ -21,6 +21,6 @@ nbactions.xml
 nbproject
 
 # Intellij files
-.iml
-.ipr
-.iws
+\.iml$
+\.ipr$
+\.iws$
