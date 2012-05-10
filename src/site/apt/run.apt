@@ -65,12 +65,8 @@ Running Geotoolkit.org
 * Running modules beyond GeoAPI 3.0
 
   If the coverage or display modules are also used, then Geotk requires also the
-  {{{http://java.net/projects/jai/}Java Advanced Imaging}} library
-  ({{{http://download.java.net/media/jai/builds/release/}download}}).
+  {{{http://www.oracle.com/technetwork/java/current-142188.html}Java Advanced Imaging}} library.
   Note that this library is pre-installed on MacOS X.
-
-  While not mandatory, installation of the {{{http://jai-imageio-core.dev.java.net/}Image I/O for JAI}}
-  library is also recommended ({{{http://download.java.net/media/jai-imageio/builds/release/}download}}).
 
 
 ** Maven configuration

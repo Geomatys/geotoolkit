@@ -63,7 +63,7 @@
   <para>
     Quelques mois plus tard, l’<acronym>OGC</acronym> lança le projet
     <link xlink:href="http://www.opengeospatial.org/standards/go"><acronym>GO-1</acronym>: <foreignphrase>Geographic Objects</foreignphrase></link>,
-    qui poursuivait des buts similaires à GeoAPI. Entre-temps, l’OGC avait abandonné certaines de leur spécifications à la faveur des normes <acronym>ISO</acronym>.
+    qui poursuivait des buts similaires à ceux de GeoAPI. Entre-temps, l’OGC avait abandonné certaines de leur spécifications en faveur des normes <acronym>ISO</acronym>.
     GeoAPI et <acronym>GO-1</acronym> ont joint leurs efforts pour une refonte des interfaces de GeoAPI en les basant sur ces nouvelles normes ISO.
     La première mouture, <link xlink:href="http://www.geoapi.org/1.0/index.html">GeoAPI 1.0</link>, a servit de point de départ
     aux premières ébauches de la spécification <acronym>OGC</acronym> 03-064 du groupe de travail <acronym>GO-1</acronym>.
@@ -72,7 +72,7 @@
   </para>
   <para>
     Le projet <acronym>GO-1</acronym> était porté essentiellement par une compagnie nommée <foreignphrase>Polexis</foreignphrase>.
-    Son rachat par <foreignphrase>Sys Technology</foreignphrase> et le changement de priorités des nouveaux propriétaires
+    Son rachat par <foreignphrase>Sys Technology</foreignphrase> et le changement de priorité des nouveaux propriétaires
     ont causé l’arrêt des travaux de <acronym>GO-1</acronym>, et par ricochet un ralentissement des développements de GeoAPI.
     Afin de reprendre les développements, un nouveau groupe de travail « GeoAPI 3.0 » a été créé à l’<acronym>OGC</acronym>.
     Ce groupe a réduit les ambitions par rapport à GeoAPI 2.0 en se concentrant sur les interfaces les plus stables,
@@ -122,7 +122,7 @@
     <listitem><para>
       Les standards de l’<acronym>OGC</acronym> utilisent des conventions de nommage qui sont différentes de celles du Java.
       En particulier les noms de presque toutes les classes de l’<acronym>OGC</acronym> commencent par un préfixe de deux lettres,
-      comme dans <classname role="OGC">MD_Identifier</classname>. Ces préfixes jouent le rôle des noms de paquets en Java.
+      comme dans <classname role="OGC">MD_Identifier</classname>. Ces préfixes jouent le même rôle que les noms de paquets en Java.
       GeoAPI adapte cette pratique en utilisant des noms d’interfaces sans préfixes,
       et en plaçant ces interfaces dans des paquets correspondants aux préfixes mais avec des noms plus descriptifs.
       Occasionnellement nous changeons aussi les noms, par exemple pour éviter des acronymes
@@ -188,7 +188,7 @@
         les nouveaux attributs ont été ajoutées dans une sous-classe portant quasiment le même nom.
         Ainsi, le standard ISO 19115-2 définit une classe <classname role="OGC">MI_Band</classname> qui étend la
         classe <classname role="OGC">MD_Band</classname> du standard ISO 19115-1 en y ajoutant les attributs qui
-        auraient du apparaître directement dans la classe parente s’ils avaient été prêts à temps.
+        auraient dû apparaître directement dans la classe parente s’ils avaient été prêts à temps.
         Dans GeoAPI, nous avons choisis de « réparer » ces anomalies en fusionnant ces deux classes en une seule interface.
       </para></informalexample>
     </listitem>
@@ -198,6 +198,45 @@
     Les écarts par rapport aux normes sont documentés dans chaque classe et chaque méthode concernées.
     Chaque mention d’un écart est aussi recopiée dans <link xlink:href="&geoapi-javadoc;/departures.html">une page unique</link>,
     pour donner une vue d’ensemble.
+  </para>
+</section>
+
+<section>
+  <title>Conventions</title>
+  <para>
+    Pour chaque classe, méthode et constante définie à partir d’un standard <acronym>OGC</acronym> ou <acronym>ISO</acronym>,
+    GeoAPI indique sa provenance à l’aide d’annotations définies dans le paquet <literal>org.opengis.annotation</literal>.
+    En particulier l’annotation <classname role="GeoAPI">@UML</classname> indique le standard, le nom de l’élément dans ce standard ainsi
+    que son niveau d’obligation. Par exemple dans l’extrait de code suivant, la première annotation <classname role="GeoAPI">@UML</classname>
+    indique que l’interface Java qui la suit (<classname role="GeoAPI">ProjectedCRS</classname>) est définie à partir du type
+    <classname role="OGC">SC_ProjectedCRS</classname> du standard ISO 19111.
+  </para>
+
+  <example>
+    <title>Une interface annotée avec <classname role="ProjectedCRS">@UML</classname></title>
+    <programlisting language="Java">package org.opengis.referencing.crs;
+
+/**
+ * <foreignphrase>A 2D coordinate reference system used to approximate the shape of the earth on a planar surface.</foreignphrase>
+ */
+<emphasis role="bold">@UML(specification = ISO_19111,
+     identifier     = "SC_ProjectedCRS")</emphasis>
+public interface ProjectedCRS extends GeneralDerivedCRS {
+    /**
+     * <foreignphrase>Returns the coordinate system, which must be Cartesian.</foreignphrase>
+     */
+<emphasis role="bold">    @UML(obligation    = MANDATORY,
+         specification = ISO_19111,
+         identifier    = "coordinateSystem")</emphasis>
+    CartesianCS getCoordinateSystem();
+}</programlisting>
+  </example>
+
+  <para>
+    Cet exemple contient une second annotation <classname role="GeoAPI">@UML</classname>, appliquée cette fois à la méthode
+    <classname role="GeoAPI">getCoordinateSystem()</classname>. Cette seconde annotation indique que la méthode est définie
+    à partir de l’association <classname role="OGC">coordinateSystem</classname> du standard ISO 19111, et que cette association
+    est obligatoire — ce qui, traduit en Java, signifie que la méthode n’est pas autorisée à retourner la valeur <literal>null</literal>.
   </para>
 
 </section>

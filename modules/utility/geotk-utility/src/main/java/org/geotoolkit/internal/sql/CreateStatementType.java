@@ -21,15 +21,16 @@ import org.geotoolkit.util.Strings;
 
 
 /**
- * The type of a SQL {@code CREATE} statement.
+ * The type of a SQL {@code CREATE} statement. The {@link #fromSQL(CharSequence)}
+ * method tries to infer the enum from a given SQL statement.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.16
+ * @version 3.20
  *
  * @since 3.16
  * @module
  */
-public enum CreateStatement {
+public enum CreateStatementType {
     /**
      * A {@code CREATE ... SCHEMA} statement.
      */
@@ -69,13 +70,13 @@ public enum CreateStatement {
     ROLE;
 
     /**
-     * If the given statement is a {@code CREATE} statement (in upper cases), returns it.
+     * If the given SQL statement is a {@code CREATE} statement (in upper cases), returns it.
      * Otherwise returns {@code null}.
      *
      * @param  statement The SQL statement to parse, <strong>in upper cases</strong>.
      * @return The type of the SQL {@code CREATE} statement, or {@code null} if none.
      */
-    public static CreateStatement parse(final CharSequence statement) {
+    public static CreateStatementType fromSQL(final CharSequence statement) {
         final int length = statement.length();
         for (int i=0; i<length; i++) {
             char c = statement.charAt(i);
@@ -87,7 +88,7 @@ public enum CreateStatement {
                 if (Strings.regionMatches(statement, i, "CREATE") && (i += 6) < length &&
                         Character.isWhitespace(statement.charAt(i)))
                 {
-                    for (final CreateStatement candidate : values()) {
+                    for (final CreateStatementType candidate : values()) {
                         final int p = Strings.indexOf(statement, candidate.name(), i);
                         if (p >= 0 && Character.isWhitespace(statement.charAt(p-1))) {
                             return candidate;

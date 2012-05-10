@@ -19,9 +19,10 @@ package org.geotoolkit.referencing.factory.epsg;
 
 import java.util.Map;
 import java.sql.Connection;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.internal.sql.HSQL;
 
 
 /**
@@ -31,12 +32,20 @@ import org.geotoolkit.internal.sql.HSQL;
  * programmatically here.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.10
+ * @version 3.20
  *
  * @since 3.10 (derived from 2.2)
  * @module
  */
 final class HsqlDialectEpsgFactory extends AnsiDialectEpsgFactory {
+    /**
+     * The regular expression pattern for searching the "FROM (" clause.
+     * This is the pattern for the opening parenthesis.
+     */
+    private static final Pattern OPENING_PATTERN =
+            Pattern.compile("\\s+FROM\\s*\\(",
+            Pattern.CASE_INSENSITIVE);
+
     /**
      * Constructs an authority factory using the given connection.
      */
@@ -53,9 +62,38 @@ final class HsqlDialectEpsgFactory extends AnsiDialectEpsgFactory {
 
     /**
      * If the query contains a {@code "FROM ("} expression, remove the parenthesis.
+     *
+     * @param  query The SQL statement to adapt.
+     * @return The The adapted SQL statement, or {@code query} if no change was needed.
      */
     @Override
-    public String adaptSQL(final String query) {
-        return HSQL.adaptSQL(super.adaptSQL(query));
+    public String adaptSQL(String query) {
+        query = super.adaptSQL(query);
+        final Matcher matcher = OPENING_PATTERN.matcher(query);
+        if (matcher.find()) {
+            final int opening = matcher.end()-1;
+            final int length  = query.length();
+            int closing = opening;
+            for (int count=0; ; closing++) {
+                if (closing >= length) {
+                    // Should never happen with well formed SQL statement.
+                    // If it happen anyway, don't change anything and let
+                    // the HSQL driver produces a "syntax error" message.
+                    return query;
+                }
+                switch (query.charAt(closing)) {
+                    case '(': count++; break;
+                    case ')': count--; break;
+                    default : continue;
+                }
+                if (count == 0) {
+                    break;
+                }
+            }
+            query = query.substring(0,         opening) +
+                    query.substring(opening+1, closing) +
+                    query.substring(closing+1);
+        }
+        return query;
     }
 }

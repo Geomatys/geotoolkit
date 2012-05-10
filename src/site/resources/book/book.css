@@ -53,3 +53,9 @@ table tr td.separator {
   border-bottom-color: lightgray;
   background-color: #F4F8FF;
 }
+
+pre.programlisting {
+  border-style: solid;
+  border-width: 1pt;
+  padding: 9pt;
+}

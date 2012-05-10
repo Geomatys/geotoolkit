@@ -99,7 +99,7 @@ import static org.geotoolkit.referencing.datum.DefaultVerticalDatum.getVerticalD
  *
  * @author Rémi Eve (IRD)
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @see <A HREF="http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html">Well Know Text specification</A>
  * @see <A HREF="http://home.gdal.org/projects/opengis/wktproblems.html">OGC WKT Coordinate System Issues</A>
@@ -143,6 +143,17 @@ public class ReferencingParser extends MathTransformParser {
      * coordinate reference systems}.
      */
     private final CRSFactory crsFactory;
+
+    /**
+     * If non-null, forces {@code PRIMEM} and {@code PARAMETER} angular units to the given value
+     * instead than inferring it from the context. This field is occasionally set to
+     * {@code NonSI.DEGREE_ANGLE} for compatibility with ESRI softwares.
+     * <p>
+     * Note that this value does not apply to {@code AXIS} elements.
+     *
+     * @since 3.20
+     */
+    private Unit<Angle> forcedAngularUnit;
 
     /**
      * {@code true} if ISO axis identifiers should be used instead than the one defined
@@ -253,6 +264,37 @@ public class ReferencingParser extends MathTransformParser {
             }
         }
         this.directions = directions;
+    }
+
+    /**
+     * If non-null, forces {@code PRIMEM} and {@code PARAMETER} angular units to the returned
+     * value instead than inferring it from the context. The default value is {@code null},
+     * which mean that the angular units are inferred from the context as required by the
+     * <a href="http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html#PRIMEM">WKT specification</a>.
+     *
+     * @return The angular unit, or {@code null} for inferring it from the context.
+     *
+     * @since 3.20
+     */
+    public Unit<Angle> getForcedAngularUnit() {
+        return forcedAngularUnit;
+    }
+
+    /**
+     * If non-null, forces {@code PRIMEM} and {@code PARAMETER} angular units to the given
+     * value instead than inferring it from the context. This property is occasionally set
+     * to {@link javax.measure.unit.NonSI#DEGREE_ANGLE} for compatibility with ESRI and GDAL
+     * softwares. Note that this value does not apply to {@code AXIS} elements.
+     *
+     * @param angularUnit The new angular unit, or {@code null} for restoring the default behavior.
+     *
+     * @see Convention#ESRI
+     * @see Convention#PROJ4
+     *
+     * @since 3.20
+     */
+    public void setForcedAngularUnit(final Unit<Angle> angularUnit) {
+        forcedAngularUnit = angularUnit;
     }
 
     /**
@@ -588,9 +630,12 @@ public class ReferencingParser extends MathTransformParser {
      * @return The {@code "PRIMEM"} element as a {@link PrimeMeridian} object.
      * @throws ParseException if the {@code "PRIMEM"} element can't be parsed.
      */
-    private PrimeMeridian parsePrimem(final Element parent, final Unit<Angle> angularUnit)
+    private PrimeMeridian parsePrimem(final Element parent, Unit<Angle> angularUnit)
             throws ParseException
     {
+        if (forcedAngularUnit != null) {
+            angularUnit = forcedAngularUnit;
+        }
         final Element   element = parent.pullElement("PRIMEM");
         final String       name = element.pullString("name");
         final double  longitude = element.pullDouble("longitude");
@@ -1026,10 +1071,11 @@ public class ReferencingParser extends MathTransformParser {
         GeographicCRS           geoCRS = parseGeoGCS(element);
         Ellipsoid            ellipsoid = geoCRS.getDatum().getEllipsoid();
         Unit<Length>        linearUnit = parseUnit(element, METRE);
-        Unit<Angle>        angularUnit = geoCRS.getCoordinateSystem().getAxis(0).getUnit().asType(Angle.class);
-        ParameterValueGroup projection = parseProjection(element, ellipsoid, linearUnit, angularUnit);
-        CoordinateSystemAxis     axis0 = parseAxis(element, linearUnit, false);
-        CoordinateSystemAxis     axis1 = null;
+        ParameterValueGroup projection = parseProjection(element, ellipsoid, linearUnit,
+                (forcedAngularUnit != null) ? forcedAngularUnit :
+                geoCRS.getCoordinateSystem().getAxis(0).getUnit().asType(Angle.class));
+        CoordinateSystemAxis axis0 = parseAxis(element, linearUnit, false);
+        CoordinateSystemAxis axis1 = null;
         try {
             if (axis0 != null) {
                 axis1 = parseAxis(element, linearUnit, true);

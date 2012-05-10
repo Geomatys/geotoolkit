@@ -24,6 +24,7 @@ import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.cs.CartesianCS;
 import org.opengis.referencing.cs.AxisDirection;
+import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
@@ -537,5 +538,39 @@ public final strictfp class WKTFormatTest {
             "  AXIS[“λ”, EAST],\n" +
             "  AXIS[“φ”, NORTH]]"),
             crs.toWKT(Convention.ESRI, 2));
+    }
+
+    /**
+     * Tests the parsing and formatting of a WKT using ESRI conventions.
+     *
+     * @throws ParseException Should never happen.
+     *
+     * @since 3.20
+     */
+    @Test
+    public void testEsriConvention() throws ParseException {
+        final WKTFormat wktFormat = new WKTFormat();
+        ProjectedCRS crs = (ProjectedCRS) wktFormat.parseObject(ParserTest.IGNF_LAMBE);
+        ParserTest.verifyLambertII(crs, false);
+        /*
+         * Now force the angular unit to degrees, and test again.
+         */
+        wktFormat.setConvention(Convention.ESRI);
+        crs = (ProjectedCRS) wktFormat.parseObject(ParserTest.IGNF_LAMBE);
+        ParserTest.verifyLambertII(crs, true);
+        /*
+         * When formatting using ESRI conventions, the angles shall be in degrees.
+         */
+        String wkt = wktFormat.format(crs);
+        assertTrue(wkt, wkt.contains("PRIMEM[\"Paris\", 2.337229167"));
+        assertTrue(wkt, wkt.contains("PARAMETER[\"latitude_of_origin\", 46.8"));
+        /*
+         * When formatting using OGC conventions, the angles shall be in gradians
+         * (in the particular case of this CRS).
+         */
+        wktFormat.setConvention(Convention.OGC);
+        wkt = wktFormat.format(crs);
+        assertTrue(wkt, wkt.contains("PRIMEM[\"Paris\", 2.59692129"));
+        assertTrue(wkt, wkt.contains("PARAMETER[\"latitude_of_origin\", 52.0"));
     }
 }

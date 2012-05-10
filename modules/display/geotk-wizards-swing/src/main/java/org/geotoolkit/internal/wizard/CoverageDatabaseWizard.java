@@ -63,6 +63,7 @@ import org.geotoolkit.internal.io.Installation;
 import org.geotoolkit.internal.sql.PostgisInstaller;
 import org.geotoolkit.coverage.sql.CoverageDatabase;
 import org.geotoolkit.internal.sql.CoverageDatabaseInstaller;
+import org.geotoolkit.internal.sql.Dialect;
 import org.geotoolkit.internal.swing.DocumentChangeListener;
 import org.geotoolkit.referencing.factory.epsg.EpsgInstaller;
 
@@ -359,7 +360,7 @@ public final class CoverageDatabaseWizard extends AbstractWizard {
         /*
          * Show the logging panel now.
          */
-        final JXLoginPane login = new JXLoginPane(new JDBCLoginService("org.postgresql.Driver", url));
+        final JXLoginPane login = new JXLoginPane(new JDBCLoginService(Dialect.POSTGRESQL.driverClass, url));
         login.setUserName(admin.getText());
         login.setPreferredSize(new Dimension(400, 300));
         switch (JXLoginPane.showLoginDialog((JComponent) settings.get(CONFIRM), login)) {

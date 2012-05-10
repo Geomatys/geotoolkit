@@ -784,7 +784,7 @@ public class OperationJAI extends Operation2D {
                  * Create a new sample dimension. Note that we use a null title, not the same
                  * title than the original sample dimension, because the new sample dimension
                  * may be quite different. For example the original sample dimension may be
-                 * about "Temperature" in °C units, and the new one about "Gradiant magnitude
+                 * about "Temperature" in °C units, and the new one about "Gradient magnitude
                  * of Temperature" in °C/km units. The GridSampleDimension constructor will
                  * infers the title from what looks like the "main" category.
                  */

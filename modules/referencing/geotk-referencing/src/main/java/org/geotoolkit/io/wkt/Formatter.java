@@ -545,7 +545,10 @@ public class Formatter {
                 if (contextUnit!=null && unit.isCompatible(contextUnit)) {
                     unit = contextUnit;
                 } else {
-                    contextUnit = angularUnit;
+                    contextUnit = convention.forcedAngularUnit;
+                    if (contextUnit == null) {
+                        contextUnit = angularUnit;
+                    }
                     if (contextUnit!=null && unit.isCompatible(contextUnit)) {
                         unit = contextUnit;
                     }
@@ -801,7 +804,7 @@ public class Formatter {
      * The linear unit for formatting measures, or {@code null} for the "natural" unit of each
      * WKT element.
      *
-     * @return The unit for measure. Default value is {@code null}.
+     * @return The unit for linear measurement. Default value is {@code null}.
      */
     public Unit<Length> getLinearUnit() {
         return linearUnit;
@@ -822,11 +825,11 @@ public class Formatter {
     }
 
     /**
-     * The angular unit for formatting measures, or {@code null} for the "natural" unit of
-     * each WKT element. This value is set for example by "GEOGCS", which force its enclosing
-     * "PRIMEM" to take the same units than itself.
+     * The angular unit for formatting measures, or {@code null} for the "natural" unit of each WKT
+     * element. This value is set for example when parsing the "{@code GEOGCS}" element, in which
+     * case the enclosed "{@code PRIMEM}" element shall use the unit of the enclosing "{@code GEOGCS}".
      *
-     * @return The unit for measure. Default value is {@code null}.
+     * @return The unit for angle measurement. Default value is {@code null}.
      */
     public Unit<Angle> getAngularUnit() {
         return angularUnit;

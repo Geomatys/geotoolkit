@@ -58,7 +58,7 @@ public final class ColorPalette implements Serializable {
     private transient Color[] colors;
 
     /**
-     * Creates a new {@code Gradiant} for the given color palette name.
+     * Creates a new {@code ColorPalette} for the given color palette name.
      *
      * @param paletteName The color palette name.
      */

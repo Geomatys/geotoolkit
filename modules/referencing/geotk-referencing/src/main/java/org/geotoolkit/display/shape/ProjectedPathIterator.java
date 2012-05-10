@@ -81,6 +81,12 @@ final class ProjectedPathIterator extends Point2D.Double implements PathIterator
     private transient double λ, φ;
 
     /**
+     * The ordinate values of the last "move to" operation, both as original ordinates
+     * (λ,φ) and projected ordinates (x,y).
+     */
+    private transient double λ0, φ0, x0, y0;
+
+    /**
      * Derivative of the previous iteration step, or {@code null} if none.
      */
     private transient Matrix derivative;
@@ -89,6 +95,11 @@ final class ProjectedPathIterator extends Point2D.Double implements PathIterator
      * Control points computed by {@link #transformSegment}.
      */
     private transient double ctrlx1, ctrly1, ctrlx2, ctrly2;
+
+    /**
+     * {@code true} if the next call to the {@code currentSegment} shall return {@code SEG_CLOSE}.
+     */
+    private transient boolean isClosing;
 
     /**
      * Creates a new path iterator which will apply the given transform on the
@@ -113,7 +124,7 @@ final class ProjectedPathIterator extends Point2D.Double implements PathIterator
      */
     @Override
     public boolean isDone() {
-        return iterator.isDone();
+        return !isClosing && iterator.isDone();
     }
 
     /**
@@ -121,7 +132,9 @@ final class ProjectedPathIterator extends Point2D.Double implements PathIterator
      */
     @Override
     public void next() {
-        iterator.next();
+        if (!isClosing) {
+            iterator.next();
+        }
     }
 
     /**
@@ -168,13 +181,33 @@ final class ProjectedPathIterator extends Point2D.Double implements PathIterator
     @Override
     @SuppressWarnings("fallthrough")
     public int currentSegment(final double[] coords) {
+        if (isClosing) {
+            isClosing = false;
+            return SEG_CLOSE;
+        }
         int type = iterator.currentSegment(coords);
         try {
             switch (type) {
-                case SEG_CLOSE:                         break;
-                case SEG_MOVETO:  transform(coords, 1); break;
+                case SEG_MOVETO: {
+                    λ0 = coords[0];
+                    φ0 = coords[1];
+                    transform(coords, 1);
+                    x0 = coords[0];
+                    y0 = coords[1];
+                    break;
+                }
                 case SEG_QUADTO:  transform(coords, 2); break;
                 case SEG_CUBICTO: transform(coords, 3); break;
+                case SEG_CLOSE: {
+                    if (x0 == x && y0 == y) {
+                        break;
+                    } else {
+                        isClosing = true;
+                        coords[0] = λ0;
+                        coords[1] = φ0;
+                    }
+                    // Fall through
+                }
                 case SEG_LINETO: {
                     final double x1 = x;
                     final double y1 = y;
@@ -213,6 +246,10 @@ final class ProjectedPathIterator extends Point2D.Double implements PathIterator
     @Override
     @SuppressWarnings("fallthrough")
     public int currentSegment(final float[] coords) {
+        if (isClosing) {
+            isClosing = false;
+            return SEG_CLOSE;
+        }
         // Following block is for debugging purpose only. Set the condition to 'true' in order
         // to delegates to the method using full 'double' precision. This is sometime useful
         // for making sure that the results are the same.
@@ -231,10 +268,26 @@ final class ProjectedPathIterator extends Point2D.Double implements PathIterator
         int type = iterator.currentSegment(coords);
         try {
             switch (type) {
-                case SEG_CLOSE:                         break;
-                case SEG_MOVETO:  transform(coords, 1); break;
+                case SEG_MOVETO: {
+                    λ0 = coords[0];
+                    φ0 = coords[1];
+                    transform(coords, 1);
+                    x0 = coords[0];
+                    y0 = coords[1];
+                    break;
+                }
                 case SEG_QUADTO:  transform(coords, 2); break;
                 case SEG_CUBICTO: transform(coords, 3); break;
+                case SEG_CLOSE: {
+                    if (x0 == x && y0 == y) {
+                        break;
+                    } else {
+                        isClosing = true;
+                        coords[0] = (float) λ0;
+                        coords[1] = (float) φ0;
+                    }
+                    // Fall through
+                }
                 case SEG_LINETO: {
                     final double x1 = x;
                     final double y1 = y;

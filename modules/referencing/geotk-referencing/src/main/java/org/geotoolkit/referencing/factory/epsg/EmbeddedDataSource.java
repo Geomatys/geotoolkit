@@ -18,13 +18,12 @@ package org.geotoolkit.referencing.factory.epsg;
 
 import java.util.Map;
 import java.util.HashMap;
-import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLNonTransientException;
 
-import org.geotoolkit.internal.sql.HSQL;
+import org.geotoolkit.internal.sql.Dialect;
 import org.geotoolkit.internal.sql.DefaultDataSource;
 
 
@@ -118,11 +117,9 @@ final class EmbeddedDataSource extends DefaultDataSource {
                 final EpsgInstaller installer = new EpsgInstaller();
                 try {
                     installer.call(new EpsgScriptRunner(connection));
-                    final File hsqldb = HSQL.getFile(url);
-                    if (hsqldb != null) {
-                        HSQL.shutdown(connection, true);
-                        connection.close();
-                        HSQL.setReadOnly(hsqldb);
+                    final Dialect dialect = Dialect.forURL(url);
+                    if (dialect == Dialect.HSQL) {
+                        dialect.shutdown(connection, url, true);
                         return false;
                     }
                 } catch (IOException exception) {
