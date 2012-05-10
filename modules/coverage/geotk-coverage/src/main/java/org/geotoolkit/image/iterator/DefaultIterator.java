@@ -170,6 +170,8 @@ class DefaultIterator extends PixelIterator {
      * Create raster iterator to follow from minX, minY raster and rectangle intersection coordinate.
      *
      * @param raster will be followed by this iterator.
+     * @param subArea {@code Rectangle} which define read iterator area.
+     * @throws IllegalArgumentException if subArea don't intersect raster boundary.
      */
     DefaultIterator(final Raster raster, final Rectangle subArea) {
         ArgumentChecks.ensureNonNull("Raster : ", raster);
@@ -202,6 +204,7 @@ class DefaultIterator extends PixelIterator {
      */
     DefaultIterator(final RenderedImage renderedImage) {
         super();
+        ArgumentChecks.ensureNonNull("RenderedImage : ", renderedImage);
         this.renderedImage = renderedImage;
         //rect attributs
         this.subAreaMinX = renderedImage.getMinX();
@@ -223,11 +226,13 @@ class DefaultIterator extends PixelIterator {
      * Create default rendered image iterator.
      *
      * @param renderedImage image which will be follow by iterator.
-     * @param subArea Rectangle which represent image sub area iteration.
-     * @throws IllegalArgumentException if subArea don't intersect image.
+     * @param subArea {@code Rectangle} which represent image sub area iteration.
+     * @throws IllegalArgumentException if subArea don't intersect image boundary.
      */
     DefaultIterator(final RenderedImage renderedImage, final Rectangle subArea) {
         super();
+        ArgumentChecks.ensureNonNull("RenderedImage : ", renderedImage);
+        ArgumentChecks.ensureNonNull("sub Area iteration : ", subArea);
         this.renderedImage = renderedImage;
         //rect attributs
         this.subAreaMinX = subArea.x;
@@ -286,11 +291,11 @@ class DefaultIterator extends PixelIterator {
      * @param tileY current Y coordinate from rendered image tiles array.
      */
     protected void updateCurrentRaster(int tileX, int tileY){
-        currentRaster = renderedImage.getTile(tileX, tileY);
+        currentRaster      = renderedImage.getTile(tileX, tileY);
         final int cRMinX   = currentRaster.getMinX();
         final int cRMinY   = currentRaster.getMinY();
         this.minX = this.x = Math.max(subAreaMinX, cRMinX);
-        this.minY = this.y             = Math.max(subAreaMinY, cRMinY);
+        this.minY = this.y = Math.max(subAreaMinY, cRMinY);
         this.maxX          = Math.min(subAreaMaxX, cRMinX + currentRaster.getWidth());
         this.maxY          = Math.min(subAreaMaxY, cRMinY + currentRaster.getHeight());
         this.numBand       = currentRaster.getNumBands();

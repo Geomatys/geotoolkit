@@ -319,7 +319,7 @@ public class DefaultIteratorTest {
         boolean testTry = false;
         try{
             setPixelIterator(rasterTest, subArea);
-        }catch(Exception e){
+        }catch(IllegalArgumentException e){
             testTry = true;
         }
         assertTrue(testTry);
@@ -609,10 +609,17 @@ public class DefaultIteratorTest {
     @Test
     public void unappropriateRectTest() {
         final Rectangle rect = new Rectangle(-100, -50, 5, 17);
+        minx = 0;
+        miny = 0;
+        width = 100;
+        height = 50;
+        tilesWidth = 10;
+        tilesHeight = 5;
+        setRenderedImgTest(minx, miny, width, height, tilesWidth, tilesHeight, 3, rect);
         boolean testTry = false;
         try{
             setPixelIterator(renderedImage, rect);
-        }catch(Exception e){
+        }catch(IllegalArgumentException e){
             testTry = true;
         }
         assertTrue(testTry);
@@ -666,7 +673,7 @@ public class DefaultIteratorTest {
         boolean testTry = false;
         try{
             pixIterator.moveTo(102, 53);
-        }catch(Exception e){
+        }catch(IllegalArgumentException e){
             testTry = true;
         }
         assertTrue(testTry);

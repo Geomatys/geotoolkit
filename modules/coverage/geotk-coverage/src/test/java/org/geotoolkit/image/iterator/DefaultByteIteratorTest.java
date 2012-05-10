@@ -21,6 +21,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.*;
 import javax.media.jai.TiledImage;
+import org.geotoolkit.test.Assert;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
@@ -616,9 +617,70 @@ public class DefaultByteIteratorTest {
     public void unappropriateRectTest() {
         final Rectangle rect = new Rectangle(-100, -50, 5, 17);
         boolean testTry = false;
+        minx = 0;
+        miny = 0;
+        width = 100;
+        height = 50;
+        tilesWidth = 10;
+        tilesHeight = 5;
+        setRenderedImgTest(minx, miny, width, height, tilesWidth, tilesHeight, 3, rect);
         try{
             setPixelIterator(renderedImage, rect);
-        }catch(Exception e){
+        }catch(IllegalArgumentException e){
+            testTry = true;
+        }
+        assertTrue(testTry);
+    }
+
+    /**
+     * Test if iterator transverse expected values from x y coordinates define by moveTo method.
+     */
+    @Test
+    public void moveToRITest() {
+        minx = 0;
+        miny = 0;
+        width = 100;
+        height = 50;
+        tilesWidth = 10;
+        tilesHeight = 5;
+        numBand = 3;
+        final int tileBulk = tilesHeight*tilesWidth*numBand;
+        setRenderedImgTest(minx, miny, width, height, tilesWidth, tilesHeight, numBand, null);
+        setPixelIterator(renderedImage);
+        final int mX = 17;
+        final int mY = 15;
+        final int ity = (mY-miny) / tilesHeight;
+        final int itx = (mX-minx) / tilesWidth;
+        pixIterator.moveTo(mX, mY);
+        final int indexCut = ity*10*tileBulk+itx*tileBulk+((mY-ity*tilesHeight)*tilesWidth + (mX-itx*tilesWidth))*numBand;
+        final int lenght = tabRef.length-indexCut;
+        tabTest = new byte[lenght];
+        byte[] tabTemp = new byte[lenght];
+        System.arraycopy(tabRef.clone(), indexCut, tabTemp, 0, lenght);
+        tabRef = tabTemp.clone();
+        int comp = 0;
+        while (pixIterator.next()) tabTest[comp++] = (byte) pixIterator.getSample();
+        assertTrue(compareTab(tabTest, tabRef));
+    }
+
+    /**
+     * Test catching exception with x, y moveTo method coordinates out of raster boundary.
+     */
+    @Test
+    public void unappropriateMoveToRITest() {
+        minx = 0;
+        miny = 0;
+        width = 100;
+        height = 50;
+        tilesWidth = 10;
+        tilesHeight = 5;
+        numBand = 3;
+        setRenderedImgTest(minx, miny, width, height, tilesWidth, tilesHeight, numBand, null);
+        setPixelIterator(renderedImage);
+        boolean testTry = false;
+        try{
+            pixIterator.moveTo(102, 53);
+        }catch(IllegalArgumentException e){
             testTry = true;
         }
         assertTrue(testTry);

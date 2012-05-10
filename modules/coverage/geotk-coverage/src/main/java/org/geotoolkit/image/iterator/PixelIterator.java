@@ -126,6 +126,7 @@ public abstract class PixelIterator {
      *
      * @param x the x coordinate cursor position.
      * @param y the y coordinate cursor position.
+     * @throws IllegalArgumentException if coordinates are out of iteration area boundary.
      */
     public abstract void moveTo(int x, int y);
 }
