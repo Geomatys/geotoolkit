@@ -160,10 +160,13 @@ public class CoverageDatabaseInstaller extends ScriptRunner {
 
     /**
      * If the given value is null or empty, returns the default value.
+     * Otherwise if the given value is different than the default value, quote it.
      */
-    private static String ensureNonNull(String value, String defaultValue) {
+    private static String ensureNonNull(String value, String defaultValue, final String quote) {
         if (value == null || (value = value.trim()).isEmpty()) {
             value = defaultValue;
+        } else if (!value.equals(defaultValue)) {
+            value = quote + value + quote;
         }
         return value;
     }
@@ -178,9 +181,11 @@ public class CoverageDatabaseInstaller extends ScriptRunner {
      * @throws FactoryException If an error occurred during the installation of the EPSG database.
      */
     public int install() throws IOException, SQLException, FactoryException {
-        user   = ensureNonNull(user,   USER);
-        admin  = ensureNonNull(admin,  ADMINISTRATOR);
-        schema = ensureNonNull(schema, SCHEMA);
+        final DatabaseMetaData md = getConnection().getMetaData();
+        final String quote = md.getIdentifierQuoteString();
+        user   = ensureNonNull(user,   USER,          quote);
+        admin  = ensureNonNull(admin,  ADMINISTRATOR, quote);
+        schema = ensureNonNull(schema, SCHEMA,        quote);
         /*
          * Creates users and language.
          */
@@ -219,11 +224,9 @@ public class CoverageDatabaseInstaller extends ScriptRunner {
          */
         progress(80, SCHEMA);
         n += runFile("coverages-create.sql");
-        final DatabaseMetaData md = getConnection().getMetaData();
         if (dialect == Dialect.POSTGRESQL) {
             String database = new Host(md.getURL()).path;
             if (database != null) {
-                final String quote = md.getIdentifierQuoteString();
                 n = run("ALTER DATABASE " + quote + database + quote + " SET search_path=public, " +
                         schema + ", " + METADATA_SCHEMA + ", " + PostgisInstaller.DEFAULT_SCHEMA + END_OF_STATEMENT + '\n' +
                         "COMMENT ON DATABASE " + quote + database + quote + " IS 'Geotoolkit.org source of coverages.'" + END_OF_STATEMENT);
