@@ -18,6 +18,7 @@ package org.geotoolkit.process.jts.buffer;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.operation.buffer.BufferOp;
 
 import java.util.Collections;
 
@@ -56,7 +57,7 @@ public class BufferProcess extends AbstractProcess {
                 segments = value(SEGMENTS, inputParameters);
             }
 
-            int endStyle = 0;
+            int endStyle = 2;
             if(value(ENDSTYLE, inputParameters) != null) {
                  endStyle = value(ENDSTYLE, inputParameters);
             }

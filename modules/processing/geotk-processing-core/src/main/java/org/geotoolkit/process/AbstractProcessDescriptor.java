@@ -31,6 +31,7 @@ import static org.geotoolkit.util.ArgumentChecks.*;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @author Quentin Boileau (Geomatys)
  * @module pending
  */
 public abstract class AbstractProcessDescriptor implements ProcessDescriptor {
@@ -121,8 +122,7 @@ public abstract class AbstractProcessDescriptor implements ProcessDescriptor {
     }
 
     /**
-     * ToString that return "autority.processName".
-     * @return 
+     * @return process authority and name. Also table of process inputs and outputs.
      */
     @Override
     public String toString() {
