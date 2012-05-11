@@ -73,6 +73,36 @@
       <artifactId>geotk-xml-ows</artifactId>
       <version>${project.version}</version>
     </dependency>
+    
+    <!-- 
+        Provided dependencies for converters 
+    -->
+    
+    <dependency>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-jaxp-core</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-jaxp-gml</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+     <dependency>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-processing-core</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-coverageio</artifactId>
+      <version>3.x-SNAPSHOT</version>
+      <scope>provided</scope>
+    </dependency>
+   
   </dependencies>
 
 </project>
