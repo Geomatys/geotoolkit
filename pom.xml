@@ -60,8 +60,8 @@
   </scm>
 
   <ciManagement>
-    <system>hudson</system>
-    <url>http://hudson.geomatys.com/job/Geotoolkit-pending/</url>
+    <system>jenkins</system>
+    <url>http://jenkins.geomatys.com/job/Geotoolkit-pending/</url>
   </ciManagement>
 
   <issueManagement>
@@ -709,17 +709,6 @@
         </executions>
       </plugin>
     </plugins>
-
-    <!-- ======================================================= -->
-    <!--     Required extension for deployment.                  -->
-    <!-- ======================================================= -->
-    <extensions>
-      <extension>
-        <groupId>org.apache.maven.wagon</groupId>
-        <artifactId>wagon-webdav</artifactId>
-        <version>1.0-beta-2</version>
-      </extension>
-    </extensions>
   </build>
 
 
@@ -758,12 +747,12 @@
     <site>
       <id>geotoolkit</id>
       <name>Geotoolkit-pending web site</name>
-      <url>file://var/wwww/pending.geotoolkit.org/</url>
+      <url>file:///var/wwww/pending.geotoolkit.org</url>
     </site>
     <repository>
        <id>geotoolkit</id>
        <name>Geotoolkit binaries</name>
-       <url>file://var/wwww/maven.geotoolkit.org/</url>
+       <url>file:///var/wwww/maven.geotoolkit.org</url>
        <uniqueVersion>false</uniqueVersion>
     </repository>
   </distributionManagement>
