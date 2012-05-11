@@ -17,16 +17,12 @@
 package org.geotoolkit.wps;
 
 import java.io.StringWriter;
-import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import org.geotoolkit.ows.xml.v110.CodeType;
-import org.geotoolkit.wps.v100.DescribeProcess100;
 import org.geotoolkit.wps.v100.Execute100;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
-import org.geotoolkit.wps.xml.v100.DescribeProcess;
 import org.geotoolkit.wps.xml.v100.Execute;
 import org.junit.Test;
 import static org.junit.Assert.*;
