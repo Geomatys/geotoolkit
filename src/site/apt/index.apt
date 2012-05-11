@@ -75,7 +75,7 @@ The Geotoolkit.org library
 
   The {{{./download.html}download page}} explains in detail how to obtain pre-compiled binaries of
   Geotk either from the {{{http://maven.geotoolkit.org/}Maven\ 2 repository}} or from the
-  {{{http://hudson.geomatys.com/job/Geotoolkit/}automated build page}}. The
+  {{{http://jenkins.geomatys.com/job/Geotoolkit/}automated build page}}. The
   Maven\ 2 repository enables projects which use that built tool to declare a dependency on
   Geotk and have Maven automatically find and download the required binary archives. The
   automated build page provides bundles which group several Geotk modules into a single JAR

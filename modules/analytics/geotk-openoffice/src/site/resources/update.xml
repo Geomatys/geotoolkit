@@ -3,7 +3,7 @@
   <identifier value="org.geotoolkit.openoffice"/>
   <version value="3.19.1"/> <!-- For testing purpose before the 3.20 release -->
   <update-download>
-    <src xlink:href="http://hudson.geomatys.com/job/Geotoolkit/lastSuccessfulBuild/artifact/modules/analytics/geotk-openoffice/target/geotk-3.x-SNAPSHOT.oxt"/>
+    <src xlink:href="http://jenkins.geomatys.com/job/Geotoolkit/lastSuccessfulBuild/artifact/modules/analytics/geotk-openoffice/target/geotk-3.x-SNAPSHOT.oxt"/>
   </update-download>
   <publisher>
     <name lang="en" xlink:href="http://www.geotoolkit.org/modules/analytics/geotk-openoffice/index.html">Geotoolkit.org</name>
