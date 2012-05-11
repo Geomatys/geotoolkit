@@ -747,12 +747,12 @@
     <site>
       <id>geotoolkit</id>
       <name>Geotoolkit-pending web site</name>
-      <url>file:///var/wwww/pending.geotoolkit.org</url>
+      <url>file:///var/www/pending.geotoolkit.org</url>
     </site>
     <repository>
        <id>geotoolkit</id>
        <name>Geotoolkit binaries</name>
-       <url>file:///var/wwww/maven.geotoolkit.org</url>
+       <url>file:///var/www/maven.geotoolkit.org</url>
        <uniqueVersion>false</uniqueVersion>
     </repository>
   </distributionManagement>
