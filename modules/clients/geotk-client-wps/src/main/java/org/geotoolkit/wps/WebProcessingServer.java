@@ -413,8 +413,14 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
                                     
                                 } catch (NonconvertibleObjectException ex) {
                                     
-                                    converter = WPSIO.getConverter(clazz, WPSIO.IOType.INPUT, WPSIO.FormChoice.LITERAL, null, null, null);
-                                    if (converter == null) {
+                                    try{
+                                        converter = WPSIO.getConverter(clazz, WPSIO.IOType.INPUT, WPSIO.FormChoice.LITERAL, null, null, null);
+                                        if (converter == null) {
+                                            LOGGER.log(Level.WARNING, "Can't find the converter for the default input value.", ex);
+                                            supportedIO = false;
+                                            break;
+                                        }
+                                    }catch(NonconvertibleObjectException e){
                                         LOGGER.log(Level.WARNING, "Can't find the converter for the default input value.", ex);
                                         supportedIO = false;
                                         break;
