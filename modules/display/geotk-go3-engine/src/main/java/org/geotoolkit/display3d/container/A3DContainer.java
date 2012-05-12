@@ -34,6 +34,9 @@ import com.ardor3d.scenegraph.Node;
 import com.ardor3d.scenegraph.extension.Skybox;
 import com.ardor3d.util.GameTaskQueue;
 import com.ardor3d.util.TextureManager;
+import com.ardor3d.util.resource.ResourceSource;
+import com.ardor3d.util.resource.URLResourceSource;
+import java.net.URL;
 import org.geotoolkit.display3d.canvas.A3DCanvas;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.util.ArgumentChecks;
@@ -167,23 +170,38 @@ public final class A3DContainer implements Scene {
      */
     private static Skybox buildSkyBox() {
         final Skybox skybox = new Skybox("skybox", 10,10,10);
-
-        final String name = "mystic";
+        
+        final String name = "space";
         final String dir = "/images/skybox/"+name+"/";
 
-        final Texture north     = TextureManager.load(dir + name+"_north.jpg", Texture.MinificationFilter.BilinearNearestMipMap, true);
-        final Texture south     = TextureManager.load(dir + name+"_south.jpg", Texture.MinificationFilter.BilinearNearestMipMap, true);
-        final Texture east      = TextureManager.load(dir + name+"_east.jpg", Texture.MinificationFilter.BilinearNearestMipMap, true);
-        final Texture west      = TextureManager.load(dir + name+"_west.jpg", Texture.MinificationFilter.BilinearNearestMipMap, true);
-        final Texture up        = TextureManager.load(dir + name+"_up.jpg", Texture.MinificationFilter.BilinearNearestMipMap, true);
-        final Texture down      = TextureManager.load(dir + name+"_down.jpg", Texture.MinificationFilter.BilinearNearestMipMap, true);
+        final Texture single = TextureManager.load(
+                new URLResourceSource(A3DContainer.class.getResource(dir + name+".jpg")), 
+                Texture.MinificationFilter.BilinearNearestMipMap, true);
+//        final Texture north = TextureManager.load(
+//                new URLResourceSource(A3DContainer.class.getResource(dir + name+".jpg")), 
+//                Texture.MinificationFilter.BilinearNearestMipMap, true);
+//        final Texture south = TextureManager.load(
+//                new URLResourceSource(A3DContainer.class.getResource(dir + name+"_south.jpg")), 
+//                Texture.MinificationFilter.BilinearNearestMipMap, true);
+//        final Texture east  = TextureManager.load(
+//                new URLResourceSource(A3DContainer.class.getResource(dir + name+"_east.jpg")),  
+//                Texture.MinificationFilter.BilinearNearestMipMap, true);
+//        final Texture west  = TextureManager.load(
+//                new URLResourceSource(A3DContainer.class.getResource(dir + name+"_west.jpg")), 
+//                Texture.MinificationFilter.BilinearNearestMipMap, true);
+//        final Texture up    = TextureManager.load(
+//                new URLResourceSource(A3DContainer.class.getResource(dir + name+"_up.jpg")), 
+//                Texture.MinificationFilter.BilinearNearestMipMap, true);
+//        final Texture down  = TextureManager.load(
+//                new URLResourceSource(A3DContainer.class.getResource(dir + name+"_down.jpg")), 
+//                Texture.MinificationFilter.BilinearNearestMipMap, true);
 
-        skybox.setTexture(Skybox.Face.North, north);
-        skybox.setTexture(Skybox.Face.West, west);
-        skybox.setTexture(Skybox.Face.South, south);
-        skybox.setTexture(Skybox.Face.East, east);
-        skybox.setTexture(Skybox.Face.Up, up);
-        skybox.setTexture(Skybox.Face.Down, down);
+        skybox.setTexture(Skybox.Face.North, single);
+        skybox.setTexture(Skybox.Face.West, single);
+        skybox.setTexture(Skybox.Face.South, single);
+        skybox.setTexture(Skybox.Face.East, single);
+        skybox.setTexture(Skybox.Face.Up, single);
+        skybox.setTexture(Skybox.Face.Down, single);
 
         return skybox;
     }
