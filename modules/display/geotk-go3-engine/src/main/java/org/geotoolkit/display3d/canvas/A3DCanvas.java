@@ -57,9 +57,11 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.*;
 import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.util.ArgumentChecks;
+import org.opengis.display.canvas.CanvasController;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.VerticalCRS;
 import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
@@ -81,7 +83,8 @@ public class A3DCanvas extends AbstractCanvas{
     //objective coordinate reference system
     //all datas are transformed toward this crs
     private CoordinateReferenceSystem objectiveCRS;
-    private MathTransform objTo3D;
+    private MathTransform objToDisp;
+    private MathTransform dispToObj;
     
     //display a globe or a plan view
     private boolean planView = true;
@@ -91,7 +94,7 @@ public class A3DCanvas extends AbstractCanvas{
 
     public A3DCanvas(final Hints hints) {
         super(hints);
-        this.objectiveCRS = DefaultGeographicCRS.WGS84;
+        this.objectiveCRS = DefaultGeographicCRS.WGS84_3D;
         this.canvas = (JoglAwtCanvas) initContext();
         this.controller = new A3DController(this, logicalLayer);
         this.controller.init();
@@ -118,21 +121,43 @@ public class A3DCanvas extends AbstractCanvas{
         setPlanView(false);
     }
 
+    /**
+     * 
+     * @return CoordinateReferenceSystem. always 3 dimensional crs.
+     */
     public synchronized CoordinateReferenceSystem getObjectiveCRS() {
         return objectiveCRS;
     }
     
-    public synchronized void setObjectiveCRS(final CoordinateReferenceSystem crs) throws TransformException {
+    /**
+     * Set the canvas Objective CRS, if no vertical crs is defined then an
+     * Elipsoidal axis is automaticly added.
+     * 
+     * @param crs
+     * @throws TransformException 
+     */
+    public synchronized void setObjectiveCRS(CoordinateReferenceSystem crs) throws TransformException {
         ArgumentChecks.ensureNonNull("crs", crs);
+        
+        VerticalCRS vertical = CRS.getVerticalCRS(crs);
+        if(vertical == null){
+            crs = new DefaultCompoundCRS("compound+vertical", crs, DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT);
+        }
+        
+        
         this.objectiveCRS = crs;
-        objTo3D = null; //clear cache
+        //clear cache
+        objToDisp = null; 
+        dispToObj = null;
         
         getTaskQueueManager().getQueue(GameTaskQueue.UPDATE).enqueue(new PlanUpdateTask());
     }
 
     public synchronized void setPlanView(boolean planView) {
         this.planView = planView;
-        objTo3D = null; //clear cache
+        //clear cache
+        objToDisp = null; 
+        dispToObj = null;
         getTaskQueueManager().getQueue(GameTaskQueue.UPDATE).enqueue(new PlanUpdateTask());
     }
 
@@ -146,19 +171,13 @@ public class A3DCanvas extends AbstractCanvas{
      * a transformation to geocentric is applied.
      */
     public MathTransform getObjectiveTo3DSpace() throws FactoryException{
-        if(objTo3D != null){
-            return objTo3D;
+        if(objToDisp != null){
+            return objToDisp;
         }
         
         CoordinateReferenceSystem targetCRS;
         if(planView){
-            VerticalCRS vertical = CRS.getVerticalCRS(objectiveCRS);
-            if(vertical == null){
-                vertical = DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT;
-                targetCRS = new DefaultCompoundCRS("obj+vertical", objectiveCRS, vertical);
-            }else{
-                targetCRS = objectiveCRS;
-            }
+            targetCRS = objectiveCRS;
             
             if(!targetCRS.getCoordinateSystem().getAxis(0).getUnit().equals(NonSI.DEGREE_ANGLE)){
                 //scale the projection
@@ -173,15 +192,27 @@ public class A3DCanvas extends AbstractCanvas{
             targetCRS = new DefaultDerivedCRS("rescaled-geocentric", targetCRS, scaletrs, targetCRS.getCoordinateSystem());
         }
         
-        objTo3D = CRS.findMathTransform(objectiveCRS, targetCRS);
-        return objTo3D;
+        objToDisp = CRS.findMathTransform(objectiveCRS, targetCRS);
+        return objToDisp;
     }
     
-    @Override
-    public A3DController getController() {
+    public MathTransform get3DSpaceToObjective() throws FactoryException, NoninvertibleTransformException{
+        if(dispToObj == null){
+            dispToObj = getObjectiveTo3DSpace().inverse();
+        }
+        
+        return dispToObj;
+    }
+    
+    public A3DController get3DController() {
         return controller;
     }
 
+    @Override
+    public CanvasController getController() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
     /**
      * Container holds all nodes displayed in the canvas.
      * Use the TaskQueur

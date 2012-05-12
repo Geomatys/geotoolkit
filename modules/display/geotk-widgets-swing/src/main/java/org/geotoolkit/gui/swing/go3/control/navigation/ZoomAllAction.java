@@ -41,7 +41,7 @@ public class ZoomAllAction extends AbstractAction {
         if (canvas != null) {
             MapContext context = canvas.getA3DContainer().getContext();
             if(context == null) return;
-            canvas.getController().setCameraPosition(0, 20, 0);
+            //canvas.getController().setCameraPosition(0, 20, 0);
         }
     }
 

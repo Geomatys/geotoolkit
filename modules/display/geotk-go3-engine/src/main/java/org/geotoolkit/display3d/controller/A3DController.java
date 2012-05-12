@@ -27,61 +27,45 @@ import com.ardor3d.util.GameTaskQueue;
 import com.ardor3d.util.ReadOnlyTimer;
 import com.ardor3d.util.stat.StatCollector;
 import org.geotoolkit.display3d.canvas.A3DCanvas;
-import org.opengis.geometry.DirectPosition;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.util.InternationalString;
 
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
-public class A3DController implements Updater,CanvasController3D {
+public class A3DController implements Updater {
 
     private final A3DCanvas canvas;
     private final LogicalLayer logicalLayer;
-    //variable to update camera on next canvas update
-    private final Vector3 updateLocation = new Vector3(0, 0, 0);
-    private final CameraControl controller;
+    private ActionController actionController;
 
 
     public A3DController(final A3DCanvas canvas, final LogicalLayer logicalLayer) {
         this.canvas = canvas;
         this.logicalLayer = logicalLayer;
-        controller = CameraControl.setupTriggers(logicalLayer, new Vector3(0, 1, 0), true);
+        setController(new DefaultActionController(canvas));
     }
 
-    @Override
-    public double[] getCameraPosition() {
-        Camera cam = getCamera();
-
-        if(cam != null){
-            double[] coords = new double[3];
-            coords[0] = cam.getLocation().getX();
-            coords[1] = cam.getLocation().getY();
-            coords[2] = cam.getLocation().getZ();
-            return coords;
+    public synchronized void setController(final ActionController controller) {
+        if(actionController != null){
+            //uninstall previous controller
+            actionController.uninstall(logicalLayer);
         }
-
-        return null;
-    }
-
-    @Override
-    public void setCameraPosition(final double x, final double y, final double z) {
-        synchronized(updateLocation){
-            updateLocation.setX(x);
-            updateLocation.setY(y);
-            updateLocation.setZ(z);
+        
+        actionController = controller;
+        
+        if(actionController != null){
+            //install new one
+            actionController.install(logicalLayer);
         }
+        
     }
 
-    @Override
-    public void setCameraSpeed(final double speed) {
-        controller.setMoveSpeed(speed);
+    public synchronized ActionController getActionController() {
+        return actionController;
     }
 
-    private Camera getCamera(){
+    public Camera getCamera(){
         JoglAwtCanvas nativ = canvas.getComponent();
         if(nativ != null && nativ.getCanvasRenderer() != null){
             return nativ.getCanvasRenderer().getCamera();
@@ -115,60 +99,43 @@ public class A3DController implements Updater,CanvasController3D {
         // Execute updateQueue item
         canvas.getTaskQueueManager().getQueue(GameTaskQueue.UPDATE).execute();
 
-        Camera camera = getCamera();
-        synchronized (updateLocation) {
-
-            if(camera != null && camera != lastCamera){
-                lastCamera = camera;
-                camera.setFrustumPerspective(
-                    45.0,
-                    (float) camera.getWidth()/ (float) camera.getHeight(),
-                    1,
-                    100000);
-                camera.lookAt(new Vector3(0, 0, 0), Vector3.UNIT_Y);
+        final Camera camera = getCamera();
+        
+        final ActionController controller = getActionController();
+        if(controller != null)
+        try{
+            final Vector3 cameraPosition = controller.getCamera3DSpacePosition();
+            final Vector3 cameraDirection = controller.getCamera3DSpaceDirection();
+            final Vector3 cameraUpAxis = controller.getCamera3DSpaceUpAxis();
+                        
+            if(camera != null){
+                //set camera frustrum if camera changed
+                if(camera != lastCamera){
+                    lastCamera = camera;
+                    camera.setFrustumPerspective(
+                        45.0,
+                        (float) camera.getWidth()/ (float) camera.getHeight(),
+                        1,
+                        100000);
+                    camera.lookAt(new Vector3(0, 0, 0), Vector3.UNIT_Y);
+                }
+                
+                //update camera properties
+                camera.setLocation(cameraPosition);
+                camera.lookAt(cameraDirection, cameraUpAxis);
+                
             }
-
-
-            if ((updateLocation.getX() != 0 ||
-                    updateLocation.getY() != 0 ||
-                    updateLocation.getZ() != 0) &&
-                    camera != null) {
-                camera.setLocation(updateLocation);
-                updateLocation.setX(0);
-                updateLocation.setY(0);
-                updateLocation.setZ(0);
-            }
-
+        }catch(Exception ex){
+            ex.printStackTrace();
         }
-
+        
 
         if(camera != null){
             canvas.getA3DContainer().update(camera,tpf,true);
         }
 
-
         /** Update controllers/render states/transforms/bounds for rootNode. */
         canvas.getA3DContainer().getRoot().updateGeometricState(timer.getTimePerFrame(), true);
-    }
-
-    @Override
-    public void setTitle(final InternationalString arg0) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void setCenter(final DirectPosition arg0) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void setObjectiveCRS(final CoordinateReferenceSystem arg0) throws TransformException {
-        canvas.setObjectiveCRS(arg0);
-    }
-
-    @Override
-    public CoordinateReferenceSystem getObjectiveCRS() {
-        return canvas.getObjectiveCRS();
     }
 
 }

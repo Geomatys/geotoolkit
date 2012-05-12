@@ -38,7 +38,7 @@ public class CameraSpeedSlider extends JSlider{
             @Override
             public void stateChanged(ChangeEvent arg0) {
                 if(map != null){
-                    map.getController().setCameraSpeed(CameraSpeedSlider.this.getValue());
+                    //map.getController().setCameraSpeed(CameraSpeedSlider.this.getValue());
                 }
             }
         });
