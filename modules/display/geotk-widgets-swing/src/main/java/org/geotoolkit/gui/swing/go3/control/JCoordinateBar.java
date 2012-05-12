@@ -16,10 +16,13 @@
  */
 package org.geotoolkit.gui.swing.go3.control;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import org.geotoolkit.display3d.canvas.A3DCanvas;
 import org.geotoolkit.gui.swing.referencing.AuthorityCodesComboBox;
@@ -43,8 +46,29 @@ public class JCoordinateBar extends JPanel{
     private A3DCanvas canvas;
 
     public JCoordinateBar() {
-        add(guiCRS);
+        setLayout(new GridBagLayout());
         
+        
+        int x =0;
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.fill = GridBagConstraints.BOTH;
+        constraints.anchor = GridBagConstraints.WEST;
+        constraints.gridwidth = 1;
+        constraints.gridheight = GridBagConstraints.REMAINDER;
+        constraints.weightx = 0.0;
+        constraints.weighty = 1.0;
+        constraints.gridy = 0;
+
+
+        constraints.fill = GridBagConstraints.BOTH;
+        constraints.weightx = 1;
+        constraints.gridx = x++;
+        add(new JLabel(),constraints);
+                
+        constraints.weightx = 0;
+        constraints.gridx = x++;
+        add(guiCRS,constraints);
+                
         final PropertyChangeListener propListener = new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {

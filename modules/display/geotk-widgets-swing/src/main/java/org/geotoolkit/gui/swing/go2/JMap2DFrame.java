@@ -37,19 +37,8 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.stream.ImageOutputStream;
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JToolBar;
+import javax.swing.*;
 import javax.swing.JToolBar.Separator;
-import javax.swing.SwingConstants;
-import javax.swing.WindowConstants;
 
 import org.geotoolkit.client.Server;
 import org.geotoolkit.coverage.CoverageStore;
@@ -110,7 +99,7 @@ public class JMap2DFrame extends javax.swing.JFrame {
     private final JMap2D guiMap;
     private final JContextTree guiContextTree;
     
-    private JMap2DFrame(final MapContext context, Hints hints) {
+    protected JMap2DFrame(final MapContext context, Hints hints) {
         initComponents();        
 
         guiContextTree = (JContextTree) jScrollPane1;
@@ -220,10 +209,8 @@ public class JMap2DFrame extends javax.swing.JFrame {
         buttonGroup1 = new ButtonGroup();
         AxisProportions = new ButtonGroup();
         jSplitPane1 = new JSplitPane();
+        panTabs = new JTabbedPane();
         panGeneral = new JPanel();
-        guiCoordBar = new JCoordinateBar();
-        panTree = new JPanel();
-        jScrollPane1 = new JContextTree();
         jPanel1 = new JPanel();
         jToolBar1 = new JToolBar();
         jButton3 = new JButton();
@@ -235,6 +222,9 @@ public class JMap2DFrame extends javax.swing.JFrame {
         jSeparator3 = new Separator();
         guiEditBar = new JEditionBar();
         guiConfigBar = new JConfigBar();
+        guiCoordBar = new JCoordinateBar();
+        panTree = new JPanel();
+        jScrollPane1 = new JContextTree();
         jMenuBar1 = new JMenuBar();
         jMenu1 = new JMenu();
         jMenuItem4 = new JMenuItem();
@@ -249,19 +239,6 @@ public class JMap2DFrame extends javax.swing.JFrame {
         jSplitPane1.setDividerLocation(200);
 
         panGeneral.setLayout(new BorderLayout());
-
-        guiCoordBar.setFloatable(false);
-        panGeneral.add(guiCoordBar, BorderLayout.PAGE_END);
-
-        jSplitPane1.setRightComponent(panGeneral);
-
-        panTree.setPreferredSize(new Dimension(100, 300));
-        panTree.setLayout(new BorderLayout());
-        panTree.add(jScrollPane1, BorderLayout.CENTER);
-
-        jSplitPane1.setLeftComponent(panTree);
-
-        getContentPane().add(jSplitPane1, BorderLayout.CENTER);
 
         jPanel1.setLayout(new GridBagLayout());
 
@@ -322,7 +299,22 @@ public class JMap2DFrame extends javax.swing.JFrame {
         gridBagConstraints.fill = GridBagConstraints.BOTH;
         jPanel1.add(guiConfigBar, gridBagConstraints);
 
-        getContentPane().add(jPanel1, BorderLayout.NORTH);
+        panGeneral.add(jPanel1, BorderLayout.NORTH);
+
+        guiCoordBar.setFloatable(false);
+        panGeneral.add(guiCoordBar, BorderLayout.PAGE_END);
+
+        panTabs.addTab("2D", panGeneral);
+
+        jSplitPane1.setRightComponent(panTabs);
+
+        panTree.setPreferredSize(new Dimension(100, 300));
+        panTree.setLayout(new BorderLayout());
+        panTree.add(jScrollPane1, BorderLayout.CENTER);
+
+        jSplitPane1.setLeftComponent(panTree);
+
+        getContentPane().add(jSplitPane1, BorderLayout.CENTER);
 
         jMenu1.setText("File");
 
@@ -521,6 +513,7 @@ private void openServerChooser(ActionEvent evt) {//GEN-FIRST:event_openServerCho
     private JSplitPane jSplitPane1;
     private JToolBar jToolBar1;
     private JPanel panGeneral;
+    protected JTabbedPane panTabs;
     private JPanel panTree;
     // End of variables declaration//GEN-END:variables
 
