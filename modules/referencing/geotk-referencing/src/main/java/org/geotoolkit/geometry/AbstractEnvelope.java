@@ -199,6 +199,20 @@ public abstract class AbstractEnvelope implements Envelope {
     }
 
     /**
+     * If the range meaning of the given axis is "wraparound", returns the spanning of that axis.
+     * Otherwise returns {@link Double#NaN}.
+     *
+     * @param  axis The axis for which to get the spanning.
+     * @return The spanning of the given axis.
+     */
+    static double getSpan(final CoordinateSystemAxis axis) {
+        if (axis != null && RangeMeaning.WRAPAROUND.equals(axis.getRangeMeaning())) {
+            return axis.getMaximumValue() - axis.getMinimumValue();
+        }
+        return Double.NaN;
+    }
+
+    /**
      * Returns {@code true} if the given value is negative, without checks for {@code NaN}.
      * This method should be invoked only when the number is known to not be {@code NaN},
      * otherwise the safer {@link org.geotoolkit.math.XMath#isNegative(double)} method shall
@@ -661,8 +675,11 @@ public abstract class AbstractEnvelope implements Envelope {
                 } else if (sp1) {
                     // If this envelope does not span the anti-meridian but the given envelope
                     // does, we don't contain the given envelope except in the special case
-                    // where this envelope expands to infinities.
-                    if (min0 == Double.NEGATIVE_INFINITY && max0 == Double.POSITIVE_INFINITY) {
+                    // where the envelope spanning is equals or greater than the axis spanning
+                    // (including the case where this envelope expands to infinities).
+                    if ((min0 == Double.NEGATIVE_INFINITY && max0 == Double.POSITIVE_INFINITY) ||
+                        (max0 - min0 >= getSpan(getAxis(getCoordinateReferenceSystem(), i))))
+                    {
                         continue;
                     }
                 }

@@ -410,36 +410,34 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
      * This method performs two steps:
      *
      * <ol>
-     *   <li><p>Ensure that the envelope is contained in the {@linkplain CoordinateSystem
+     *   <li>Ensure that the envelope is contained in the {@linkplain CoordinateSystem
      *   coordinate system} domain. If some ordinates are out of range, then there is a choice
      *   depending on the {@linkplain CoordinateSystemAxis#getRangeMeaning range meaning}:
      *   <ul>
-     *     <li>If {@linkplain RangeMeaning#EXACT EXACT} (typically <em>latitudes</em> ordinates),
+     *     <li>If {@link RangeMeaning#EXACT} (typically <em>latitudes</em> ordinates), then
      *     values greater than the {@linkplain CoordinateSystemAxis#getMaximumValue maximum value}
      *     are replaced by the maximum, and values smaller than the
      *     {@linkplain CoordinateSystemAxis#getMinimumValue minimum value}
      *     are replaced by the minimum.</li>
      *
-     *     <li>If {@linkplain RangeMeaning#WRAPAROUND WRAPAROUND} (typically <em>longitudes</em>
-     *     ordinates), a multiple of the range (e.g. 360° for longitudes) is added or subtracted.
-     *     If a value stay out of range after this correction, then the ordinates are set to the
-     *     full [{@linkplain CoordinateSystemAxis#getMinimumValue minimum} &hellip;
-     *     {@linkplain CoordinateSystemAxis#getMaximumValue maximum}] range.
-     *     See the example below.</li>
-     *   </ul>
-     *   </p></li>
-     *   <li><p>If {@code crsDomain} is {@code true}, then the envelope from the previous step
+     *     <li>If {@link RangeMeaning#WRAPAROUND} (typically <em>longitudes</em> ordinates),
+     *     then a multiple of the range (e.g. 360° for longitudes) is added or subtracted.
+     *     Example:
+     *     <ul>
+     *       <li>Longitude range of [185 … 190]° is converted to [-175 … -170]°.</li>
+     *       <li>Longitude range of [175 … 185]° is converted to [175 … -175]°.
+     *           See <cite>Spanning the anti-meridian of a Geographic CRS</cite> in the
+     *           class javadoc for more information about the meaning of such range.</li>
+     *     </ul></li>
+     *   </ul></li>
+     *   <li>If {@code crsDomain} is {@code true}, then the envelope from the previous step
      *   is intersected with the CRS {@linkplain CoordinateReferenceSystem#getDomainOfValidity
-     *   domain of validity}, if any.
-     *   </p></li>
+     *   domain of validity}, if any.</li>
      * </ol>
-     *
-     * <b>Example:</b> A longitude range of [185° &hellip; 190°] is equivalent to [-175° &hellip; -170°].
-     * But [175° &hellip; 185°] would be equivalent to [175° &hellip; -175°], which is likely to mislead
-     * <code>Envelope</code> users since the lower bounds is numerically greater than the upper bounds.
-     * Reordering as [-175° &hellip; 175°] would interchange the meaning of what is "inside" and "outside"
-     * the envelope. So this implementation conservatively expands the range to [-180° &hellip; 180°]
-     * in order to ensure that the validated envelope fully contains the original envelope.
+     * <p>
+     * This method is useful before to project an envelope. For example some projections may produce
+     * {@link Double#NaN} numbers if given a latitude value greater than 90°. This is also useful
+     * before to compute the union or intersection of envelopes.
      *
      * @param  useDomainOfCRS {@code true} if the envelope should be restricted to
      *         the CRS <cite>domain of validity</cite> in addition to the CS domain.
@@ -465,27 +463,26 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
                 } else if (RangeMeaning.WRAPAROUND.equals(rm)) {
                     final double length = maximum - minimum;
                     if (length > 0 && length < Double.POSITIVE_INFINITY) {
-                        final double offset = Math.floor((ordinates[i] - minimum) / length) * length;
-                        if (offset != 0) {
-                            ordinates[i] -= offset;
-                            ordinates[j] -= offset;
-                            changed = true;
-                        }
-                        if (ordinates[j] > maximum) {
-                            ordinates[i] = minimum; // See method Javadoc
-                            ordinates[j] = maximum;
-                            changed = true;
+                        final double o1 = Math.floor((ordinates[i] - minimum) / length) * length;
+                        final double o2 = Math.floor((ordinates[j] - minimum) / length) * length;
+                        if (o1 != 0) {ordinates[i] -= o1; changed = true;}
+                        if (o2 != 0) {ordinates[j] -= o2; changed = true;}
+                        if (ordinates[i] == ordinates[j] && o1 != o2) {
+                            // This happen for example if we transformed [0 … 360]° into [0 … 0]°
+                            // The special case [0 … -0]° is understood by GeneralEnvelope as a
+                            // range spanning all the world.
+                            ordinates[i] = +0.0;
+                            ordinates[j] = -0.0;
                         }
                     }
                 }
             }
             if (useDomainOfCRS) {
-                final Envelope domain = Envelopes.getDomainOfValidity(crs);
+                Envelope domain = Envelopes.getDomainOfValidity(crs);
                 if (domain != null) {
+                    final GeneralEnvelope original = new GeneralEnvelope(this);
                     final CoordinateReferenceSystem domainCRS = domain.getCoordinateReferenceSystem();
-                    if (domainCRS == null) {
-                        intersect(domain);
-                    } else {
+                    if (!equalsIgnoreMetadata(crs, domainCRS, false)) {
                         /*
                          * The domain may have fewer dimensions than this envelope (typically only
                          * the ones relative to horizontal dimensions).  We can rely on directions
@@ -495,17 +492,19 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
                         final CoordinateSystem domainCS = domainCRS.getCoordinateSystem();
                         final int domainDimension = domainCS.getDimension();
                         for (int i=0; i<domainDimension; i++) {
-                            final double minimum = domain.getMinimum(i);
-                            final double maximum = domain.getMaximum(i);
                             final AxisDirection direction = domainCS.getAxis(i).getDirection();
                             for (int j=0; j<dimension; j++) {
                                 if (direction.equals(cs.getAxis(j).getDirection())) {
-                                    final int k = j + dimension;
-                                    if (ordinates[j] < minimum) ordinates[j] = minimum;
-                                    if (ordinates[k] > maximum) ordinates[k] = maximum;
+                                    ordinates[j]           = domain.getMinimum(i);
+                                    ordinates[j+dimension] = domain.getMaximum(i);
                                 }
                             }
                         }
+                        domain = original;
+                    }
+                    intersect(domain);
+                    if (!changed) {
+                        changed = !equals(original, 0, false);
                     }
                 }
             }
@@ -1066,11 +1065,28 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
                  *                     └─┘                └─────────┘
                  */
                 switch (intersect) {
-                    case 0: // Fall through
-                    case 3: ordinates[i] = ordinates[i+dim] = Double.NaN; break;
-                    case 2: if (min1 > min0) ordinates[i    ] = min1; break;
-                    case 1: if (max1 < max0) ordinates[i+dim] = max1; break;
                     default: throw new AssertionError(intersect);
+                    case 1: if (max1 < max0) ordinates[i+dim] = max1; break;
+                    case 2: if (min1 > min0) ordinates[i    ] = min1; break;
+                    case 3: // Fall through
+                    case 0: {
+                        // Before to declare the intersection as invalid, verify if the envelope
+                        // actually span the whole Earth. In such case, the intersection is a no-
+                        // operation (or a copy operation).
+                        double min = Double.NaN;
+                        double max = Double.NaN;
+                        final double csSpan = getSpan(getAxis(crs, i));
+                        if (span1 >= csSpan) {
+                            min = min0;
+                            max = max0;
+                        } else if (span0 >= csSpan) {
+                            min = min1;
+                            max = max1;
+                        }
+                        ordinates[i]     = min;
+                        ordinates[i+dim] = max;
+                        break;
+                    }
                 }
                 continue;
             }
