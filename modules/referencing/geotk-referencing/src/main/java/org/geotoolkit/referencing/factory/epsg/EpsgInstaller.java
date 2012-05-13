@@ -226,9 +226,15 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
      * explicitly a {@linkplain ThreadedEpsgFactory#CONFIGURATION_FILE configuration file}
      * after the database creation.
      *
-     * @param schema The schema where to create the tables, or {@code null} if none.
+     * @param schema The schema where to create the tables, or {@code null} or an empty string if none.
      */
-    public synchronized void setSchema(final String schema) {
+    public synchronized void setSchema(String schema) {
+        if (schema != null) {
+            schema = schema.trim();
+            if (schema.isEmpty()) {
+                schema = null;
+            }
+        }
         this.schema = schema;
     }
 
@@ -409,8 +415,7 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
             log.setSourceClassName(EpsgInstaller.class.getName());
             log.setLoggerName(ThreadedEpsgFactory.LOGGER.getName());
             ThreadedEpsgFactory.LOGGER.log(log);
-            runner.setMaxRowsPerInsert(100);
-            for (String script : EpsgScriptRunner.SCRIPTS) {
+            for (String script : runner.getScriptFiles()) {
                 script += ".sql";
                 final InputStream in = EpsgScriptRunner.class.getResourceAsStream(script);
                 if (in == null) {

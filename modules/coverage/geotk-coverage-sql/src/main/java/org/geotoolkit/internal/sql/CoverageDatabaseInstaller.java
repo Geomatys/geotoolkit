@@ -85,7 +85,7 @@ public class CoverageDatabaseInstaller extends ScriptRunner {
      *
      * @since 3.14
      */
-    private final boolean supportsEnum;
+    private final boolean supportsEnumType;
 
     /**
      * {@code true} if the {@code CREATE TRUSTED PROCEDURAL LANGUAGE 'plpgsql'}
@@ -93,7 +93,7 @@ public class CoverageDatabaseInstaller extends ScriptRunner {
      *
      * @since 3.16
      */
-    private final boolean createLanguage;
+    private final boolean needsCreateLanguage;
 
     /**
      * {@code true} if the "geoadmin" and "geouser" roles should be created.
@@ -143,8 +143,8 @@ public class CoverageDatabaseInstaller extends ScriptRunner {
             throw new UnsupportedOperationException(dialect.toString());
         }
         final DatabaseMetaData metadata = connection.getMetaData();
-        createLanguage = dialect.needsCreateLanguage(metadata);
-        supportsEnum = dialect.isEnumSupported(metadata);
+        needsCreateLanguage = dialect.needsCreateLanguage(metadata);
+        supportsEnumType    = dialect.supportsEnumType(metadata);
         setEncoding("UTF-8");
     }
 
@@ -270,11 +270,11 @@ public class CoverageDatabaseInstaller extends ScriptRunner {
         final CreateStatementType create = CreateStatementType.fromSQL(sql);
         if (create != null) switch (create) {
             case ROLE:     if (!createRoles)    return 0; else break;
-            case LANGUAGE: if (!createLanguage) return 0; else break;
+            case LANGUAGE: if (!needsCreateLanguage) return 0; else break;
             case CAST:     // Fall through
-            case ENUM:     if (!supportsEnum)   return 0; else break;
+            case ENUM:     if (!supportsEnumType)   return 0; else break;
             case TABLE: {
-                if (!supportsEnum) {
+                if (!supportsEnumType) {
                     for (final String e : ENUMS) {
                         Strings.replace(sql, e, "varchar");
                     }
@@ -285,7 +285,7 @@ public class CoverageDatabaseInstaller extends ScriptRunner {
         /*
          * We can't add comments on enum, since they were not created.
          */
-        if (!supportsEnum && Strings.regionMatches(sql, 0, "COMMENT ON TYPE")) {
+        if (!supportsEnumType && Strings.regionMatches(sql, 0, "COMMENT ON TYPE")) {
             return 0;
         }
         Strings.replace(sql, USER,          user);

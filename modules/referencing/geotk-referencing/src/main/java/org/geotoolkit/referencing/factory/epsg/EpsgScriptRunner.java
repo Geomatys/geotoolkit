@@ -22,12 +22,15 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.geotoolkit.util.Strings;
+import org.geotoolkit.internal.sql.Dialect;
 import org.geotoolkit.internal.sql.ScriptRunner;
+import org.geotoolkit.internal.sql.CreateStatementType;
 
 
 /**
@@ -43,10 +46,10 @@ import org.geotoolkit.internal.sql.ScriptRunner;
 final class EpsgScriptRunner extends ScriptRunner {
     /**
      * The embedded SQL scripts to execute for creating the EPSG database, in that order.
-     * The {@code ".sql"} suffix is omitted.
+     * The {@code ".sql"} suffix is omitted. The {@code "Grant"} script must be last.
      */
-    static final String[] SCRIPTS = {
-        "Tables", "Data", "Extensions", "FKeys", "Indexes"
+    private static final String[] SCRIPTS = {
+        "Tables", "Data", "Extensions", "FKeys", "Indexes", "Grant" // "Grant" must be last.
     };
 
     /**
@@ -63,7 +66,7 @@ final class EpsgScriptRunner extends ScriptRunner {
     /**
      * {@code true} if the database supports the {@code "COMMIT"} instruction.
      */
-    private final boolean supportsCommit;
+    private final boolean supportsCommitStatement;
 
     /**
      * {@code true} if the database supports schema.
@@ -71,12 +74,19 @@ final class EpsgScriptRunner extends ScriptRunner {
     private final boolean supportsSchemas;
 
     /**
-     * The maximum number of rows per {@code INSERT} statement. Should be modified only when
-     * reading the files modified by the {@code geotk-epsg-pack} module, otherwise we assume
-     * that the user know what he is doing. This is used because attempts to insert too many
-     * rows with a single statement on Derby database cause a {@link StackTraceOverflow}.
+     * {@code true} if the database supports "{@code GRANT USAGE ON SCHEMA}" statements.
      */
-    private int maxRowsPerInsert;
+    private final boolean supportsGrantOnSchemas;
+
+    /**
+     * {@code true} if the database supports "{@code GRANT SELECT ON TABLE}" statements.
+     */
+    private final boolean supportsGrantOnTables;
+
+    /**
+     * The maximum number of rows per {@code INSERT} statement.
+     */
+    private final int maxRowsPerInsert;
 
     /**
      * {@code true} if the Pilcrow character (¶ - decimal code 182) should be replaced by
@@ -84,7 +94,7 @@ final class EpsgScriptRunner extends ScriptRunner {
      * does not support the {@code REPLACE(column, CHAR(182), CHAR(10))} SQL statement,
      * but accepts LF.
      */
-    private final boolean replaceParagraphs;
+    private final boolean replacePilcrow;
 
     /**
      * Non-null if there is SQL statements to skip. This is the case of
@@ -125,34 +135,35 @@ final class EpsgScriptRunner extends ScriptRunner {
         } else {
             skip = Pattern.compile(REPLACE_STATEMENT, Pattern.CASE_INSENSITIVE).matcher("");
         }
-        replaceParagraphs = false; // Never supported for now.
-        switch (dialect) {
+        replacePilcrow          = false; // Never supported for now.
+        supportsGrantOnTables   = dialect.supportsGrantStatement (metadata, CreateStatementType.TABLE);
+        supportsGrantOnSchemas  = dialect.supportsGrantStatement (metadata, CreateStatementType.SCHEMA);
+        supportsCommitStatement = dialect.supportsCommitStatement(metadata);
+        maxRowsPerInsert        = dialect.maxRowsPerInsert       (metadata);
+        if (dialect == Dialect.HSQL) {
             /*
              * HSQLDB doesn't seem to support the {@code UNIQUE} keyword in {@code CREATE TABLE}
              * statements. In addition, we must declare explicitly that we want the tables to be
              * cached on disk. Finally, HSQL expects "CHR" to be spelled "CHAR".
              */
-            case HSQL: {
-                replacements.put("CREATE TABLE", "CREATE CACHED TABLE");
-                replacements.put("UNIQUE", "");
-                replacements.put("CHR", "CHAR");
-                supportsCommit = true;
-                maxRowsPerInsert = 1;
-                break;
-            }
-            case DERBY:
-            case POSTGRESQL: {
-                supportsCommit = false;
-                break;
-            }
-            default: {
-                supportsCommit = true;
-                break;
-            }
+            replacements.put("CREATE TABLE", "CREATE CACHED TABLE");
+            replacements.put("UNIQUE", "");
+            replacements.put("CHR", "CHAR");
         }
         // Note: the same condition is also coded in EpsgInstaller.getSchema(...).
         supportsSchemas = metadata.supportsSchemasInTableDefinitions() &&
                           metadata.supportsSchemasInDataManipulation();
+    }
+
+    /**
+     * Returns the script files to execute. Note that this method may returns a direct
+     * reference to the internal array. Consequently the returned array must not be modified.
+     */
+    final String[] getScriptFiles() {
+        if (supportsGrantOnTables) {
+            return SCRIPTS;
+        }
+        return Arrays.copyOf(SCRIPTS, SCRIPTS.length - 1);
     }
 
     /**
@@ -190,6 +201,9 @@ final class EpsgScriptRunner extends ScriptRunner {
          * EmbeddedDataSource.createIfEmpty(Connection).
          */
         execute(new StringBuilder("CREATE SCHEMA ").append(schema));
+        if (supportsGrantOnSchemas) {
+            execute(new StringBuilder("GRANT USAGE ON SCHEMA ").append(schema).append(" TO PUBLIC"));
+        }
         /*
          * Setup the map which will be used for renaming the table names.
          */
@@ -216,17 +230,6 @@ final class EpsgScriptRunner extends ScriptRunner {
     }
 
     /**
-     * Set the maximum number of rows per {@code INSERT} statement, provided that it was
-     * not already set. This method can be invoked only once. It does nothing if the value
-     * has already been set (for example by the constructor).
-     */
-    final void setMaxRowsPerInsert(final int max) {
-        if (maxRowsPerInsert == 0) {
-            maxRowsPerInsert = max;
-        }
-    }
-
-    /**
      * Modifies the SQL statement before to execute it, or omit unsupported statements.
      *
      * @throws SQLException If an error occurred while executing the SQL statement.
@@ -234,7 +237,7 @@ final class EpsgScriptRunner extends ScriptRunner {
      */
     @Override
     protected int execute(final StringBuilder sql) throws SQLException, IOException {
-        if (!supportsCommit) {
+        if (!supportsCommitStatement) {
             if (Strings.equalsIgnoreCase("COMMIT", sql)) {
                 return 0;
             }
@@ -244,7 +247,7 @@ final class EpsgScriptRunner extends ScriptRunner {
                 return 0;
             }
         }
-        if (replaceParagraphs) {
+        if (replacePilcrow) {
             Strings.replace(sql, "\u00B6", "\n");
         }
         if (maxRowsPerInsert != 0 && Strings.startsWith(sql, "INSERT INTO", true)) {
