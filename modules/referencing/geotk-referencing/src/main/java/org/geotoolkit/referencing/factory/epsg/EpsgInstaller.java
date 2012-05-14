@@ -169,8 +169,8 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
      * <p>
      * If the given scripts were downloaded from
      * <a href="http://www.epsg.org">www.epsg.org</a>, then consider adding the
-     * <a href="http://hg.geotoolkit.org/geotoolkit/raw-file/tip/modules/referencing/geotk-epsg/src/main/resources/org/geotoolkit/referencing/factory/epsg/Indexes.sql">Indexes.sql</a>
-     * file in the scripts directory, for performance raisons.
+     * <a href="http://hg.geotoolkit.org/geotoolkit/files/tip/modules/referencing/geotk-epsg/src/main/resources/org/geotoolkit/referencing/factory/epsg/Indexes.sql">Indexes.sql</a>
+     * file in the scripts directory, for performance reasons.
      * <p>
      * If a user and password were previously defined, they are left unchanged.
      *
