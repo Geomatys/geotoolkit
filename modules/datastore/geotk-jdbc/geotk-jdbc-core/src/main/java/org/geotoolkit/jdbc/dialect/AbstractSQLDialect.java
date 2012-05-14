@@ -130,6 +130,8 @@ import static org.geotoolkit.util.ArgumentChecks.*;
 public abstract class AbstractSQLDialect implements SQLDialect{
     protected static final Logger LOGGER = Logging.getLogger(SQLDialect.class);
 
+    protected final Map<Integer, CoordinateReferenceSystem> CRS_CACHE = new HashMap<Integer, CoordinateReferenceSystem>();
+    
     /**
      * The basic filter capabilities all databases should have
      */
@@ -441,14 +443,19 @@ public abstract class AbstractSQLDialect implements SQLDialect{
      */
     @Override
     public CoordinateReferenceSystem createCRS(final int srid, final Connection cx) throws SQLException {
-        try {
-            return CRS.decode("EPSG:" + srid);
-        } catch(Exception e) {
-            if(LOGGER.isLoggable(Level.FINE)) {
-                LOGGER.log(Level.FINE, "Could not decode " + srid + " using the built-in EPSG database", e);
+        CoordinateReferenceSystem crs = CRS_CACHE.get(srid);
+        if (crs == null) {
+            try {
+                crs = CRS.decode("EPSG:" + srid);
+                CRS_CACHE.put(srid, crs);
+            } catch(Exception e) {
+                if(LOGGER.isLoggable(Level.FINE)) {
+                    LOGGER.log(Level.FINE, "Could not decode " + srid + " using the built-in EPSG database", e);
+                }
+                return null;
             }
-            return null;
         }
+        return crs;
     }
 
     /**

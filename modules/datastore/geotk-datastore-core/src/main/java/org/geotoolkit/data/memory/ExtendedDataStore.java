@@ -61,6 +61,8 @@ public final class ExtendedDataStore extends AbstractDataStore{
 
     private final Map<Name,Query> queries = new ConcurrentHashMap<Name, Query>();
     
+    private final Map<Name,FeatureType> featureTypes = new ConcurrentHashMap<Name, FeatureType>();
+    
     private final DataStore wrapped;
 
     public ExtendedDataStore(final DataStore wrapped) {
@@ -90,10 +92,12 @@ public final class ExtendedDataStore extends AbstractDataStore{
     public void addQuery(final Query query){
         ArgumentChecks.ensureNonNull("query name", query.getTypeName());
         queries.put(query.getTypeName(), query);
+        featureTypes.clear();
     }
 
     public void removeQuery(final Name name){
         queries.remove(name);
+        featureTypes.clear();
     }
 
     @Override
@@ -117,6 +121,7 @@ public final class ExtendedDataStore extends AbstractDataStore{
             throw new DataStoreException("Type for name "+typeName +" is a stred query, it can not be updated.");
         }
         wrapped.updateSchema(typeName, featureType);
+        featureTypes.clear();
     }
 
     @Override
@@ -125,14 +130,20 @@ public final class ExtendedDataStore extends AbstractDataStore{
             removeQuery(typeName);
         }
         wrapped.deleteSchema(typeName);
+        featureTypes.clear();
     }
 
     @Override
     public FeatureType getFeatureType(final Name typeName) throws DataStoreException {
         if(getQueryNames().contains(typeName)){
+            // return from cache when available
+            if (featureTypes.containsKey(typeName)) return featureTypes.get(typeName);
+            
             final Query original = getQuery(typeName);
             try {
-                return wrapped.getFeatureType(original);
+                final FeatureType ft = wrapped.getFeatureType(original);
+                featureTypes.put(typeName, ft);
+                return ft;
             } catch (SchemaException ex) {
                 throw new DataStoreException(ex);
             }

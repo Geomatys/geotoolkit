@@ -495,10 +495,9 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
         final String sql = stmt.getStatement();
         
         try {
-            final SimpleFeatureType sft = (SimpleFeatureType) getFeatureType(query);
-            final PrimaryKey pk = new NullPrimaryKey(sft.getTypeName());
+            final PrimaryKey pk = new NullPrimaryKey(query.getTypeName().getLocalPart());
             final Connection cx = getDataSource().getConnection();
-            final JDBCFeatureReader reader = new JDBCFeatureReader(sql, cx, this, null, sft, pk, null);
+            final JDBCFeatureReader reader = new JDBCFeatureReader(sql, cx, this, query.getTypeName(), null, pk, null);
             return reader;
         } catch (SchemaException ex) {
             throw new DataStoreException(ex);
