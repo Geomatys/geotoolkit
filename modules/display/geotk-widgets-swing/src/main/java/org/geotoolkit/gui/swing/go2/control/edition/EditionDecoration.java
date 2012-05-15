@@ -33,7 +33,6 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Shape;
-import java.awt.geom.AffineTransform;
 import java.util.logging.Level;
 
 import org.geotoolkit.display2d.GO2Utilities;
@@ -77,9 +76,8 @@ public final class EditionDecoration extends AbstractGeometryDecoration {
     }
 
     @Override
-    protected void paintComponent(final Graphics2D g2, final DefaultRenderingContext2D context,
-            final AffineTransform objToDisp) {
-        super.paintComponent(g2, context, objToDisp);
+    protected void paintComponent(final Graphics2D g2, final DefaultRenderingContext2D context) {
+        super.paintComponent(g2, context);
 
         //paint the selected node
         if(nodeSelection == null) return;

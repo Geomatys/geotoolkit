@@ -131,24 +131,23 @@ public abstract class AbstractGeometryDecoration extends JPanel implements MapDe
         final J2DCanvas canvas = (J2DCanvas) candidate;
         canvas.prepareContext(context,(Graphics2D) g.create(), null);
         objToDisp = context.getObjectiveToDisplay();
-
         if (objToDisp == null) return;
 
         final Graphics2D g2 = context.getGraphics();
 
-        paintComponent(g2, context, objToDisp);
+        paintComponent(g2, context);
     }
 
-    protected void paintComponent(final Graphics2D g2, final DefaultRenderingContext2D context,
-            final AffineTransform objToDisp){
+    protected void paintComponent(final Graphics2D g2, final DefaultRenderingContext2D context){
 
+        final StatefullContextParams params = new StatefullContextParams(null, null);            
+        final StatefullProjectedGeometry projected = new StatefullProjectedGeometry(params);
+        params.update(context);
+        
         //prepare datas for geometry painting
         for(final Geometry geo : geometries){
             if(geo == null) continue;
             
-            final StatefullContextParams params = new StatefullContextParams(null, null);            
-            final StatefullProjectedGeometry projected = new StatefullProjectedGeometry(params);
-            params.update(context);
             projected.setDataGeometry(geo, null);
             
             try {

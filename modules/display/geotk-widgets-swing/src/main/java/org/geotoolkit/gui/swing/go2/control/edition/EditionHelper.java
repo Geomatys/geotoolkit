@@ -86,28 +86,6 @@ public class EditionHelper {
                                                 new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
     public static final Coordinate[] EMPTY_COORDINATE_ARRAY = new Coordinate[0];
 
-    public static class EditionContext{
-        public Feature feature = null;
-        public Geometry geometry = null;
-        public final List<Geometry> subGeometries =  new ArrayList<Geometry>();
-        public int subGeometryIndex = -1;
-        public int[] nodes = null;
-        public final List<Coordinate> coords = new ArrayList<Coordinate>();
-        public boolean modified = false;
-        public boolean added = false;
-
-        public void reset(){
-            feature = null;
-            geometry = null;
-            subGeometries.clear();
-            subGeometryIndex = -1;
-            nodes = null;
-            modified = false;
-            added = false;
-            coords.clear();
-        }
-    }
-
     public static class EditionGeometry{
 
         public Geometry geometry = null;
@@ -419,82 +397,6 @@ public class EditionHelper {
         }
     }
 
-    /**
-     * grab a node in the given geometry.
-     * int[0] == subgeometry index
-     * int[1] == grabbed coordinate index
-     * int[2] == grabbed coordinate index
-     * there might be two coordinate grab in the case of polygon last point
-     */
-    public int[] grabGeometryNode(final Geometry geo, final int mx, final int my) {
-        final int[] indexes = new int[]{-1,-1,-1};
-
-        try{
-            //transform our mouse in a geometry
-            final Geometry mouseGeo = mousePositionToGeometry(mx, my);
-
-            for (int i=0,n=geo.getNumGeometries(); i<n; i++) {
-                final Geometry subgeo = geo.getGeometryN(i);
-
-                if (subgeo.intersects(mouseGeo)) {
-                    //this geometry intersect the mouse
-                    indexes[0] = i;
-
-                    final Coordinate[] coos = subgeo.getCoordinates();
-                    for (int j=0,m=coos.length; j<m; j++) {
-                        final Coordinate coo = coos[j];
-                        final Point p = createPoint(coo);
-                        if (p.intersects(mouseGeo)) {
-
-                            if ((j==0 || j==m-1) && (geo instanceof Polygon || geo instanceof MultiPolygon)) {
-                                //first and last coordinate index are the same point
-                                indexes[1] = 0;
-                                indexes[2] = m-1;
-                            } else {
-                                //coordinate is in the middle of the geometry
-                                indexes[1] = j;
-                                indexes[2] = j;
-                            }
-                        }
-                    }
-                    break;
-                }
-
-            }
-        }catch(final Exception ex){
-            LOGGER.log(Level.WARNING, ex.getLocalizedMessage(),ex);
-        }
-
-        return indexes;
-    }
-
-    public void dragGeometryNode(final EditionContext context, final int mx, final int my) {
-        final Coordinate mouseCoord = toCoord(mx, my);
-
-        final Geometry subgeo = context.subGeometries.get(0);
-        if(subgeo == null) return;
-
-        final int[] nodeIndexes = context.nodes;
-        if(nodeIndexes == null) return;
-
-        context.modified = true;
-
-        if(context.geometry instanceof Point){
-            Point pt = (Point) context.geometry;
-            pt.getCoordinate().x = mouseCoord.x;
-            pt.getCoordinate().y = mouseCoord.y;
-        }else{
-            for (int index : nodeIndexes) {
-                subgeo.getCoordinates()[index].x = mouseCoord.x;
-                subgeo.getCoordinates()[index].y = mouseCoord.y;
-            }
-        }
-
-
-        subgeo.geometryChanged();
-        context.geometry.geometryChanged();
-    }
-
     public void moveGeometry(final Geometry geo, final int dx, final int dy) {
 
         try{
@@ -543,7 +445,6 @@ public class EditionHelper {
         geo.geometryChanged();
 
     }
-
 
     public Geometry insertNode(final Polygon geo, final int mx, final int my) {
         try{
@@ -967,6 +868,7 @@ public class EditionHelper {
                     map.getCanvas().getObjectiveCRS(), true);
 
             geom = JTS.transform(geom, trs);
+            JTS.setCRS(geom, map.getCanvas().getObjectiveCRS());
             return geom;
         }catch(final Exception ex){
             LOGGER.log(Level.WARNING, ex.getLocalizedMessage(),ex);
@@ -1067,10 +969,6 @@ public class EditionHelper {
 
     }
     
-    public void sourceModifyFeature(final Feature feature, final Geometry geo){
-        sourceModifyFeature(feature, geo, true);
-    }
-
     public void sourceRemoveFeature(final Feature feature){
         sourceRemoveFeature(feature.getIdentifier().getID());
     }

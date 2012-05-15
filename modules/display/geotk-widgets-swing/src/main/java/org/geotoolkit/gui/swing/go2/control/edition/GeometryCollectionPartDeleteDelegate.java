@@ -77,7 +77,7 @@ public class GeometryCollectionPartDeleteDelegate extends AbstractFeatureEdition
                 decoration.setGeometries(Collections.singleton(this.geometry));
             }
         } else if (button == MouseEvent.BUTTON3 && geometry != null) {
-            helper.sourceModifyFeature(feature, geometry);
+            helper.sourceModifyFeature(feature, geometry, true);
             reset();
         }
     }

@@ -111,7 +111,7 @@ public class MultiLinePartCreationDelegate extends AbstractFeatureEditionDelegat
                 resetCurrentCreation();
             }else{
                 //finish editing the feature
-                helper.sourceModifyFeature(feature, geometry);
+                helper.sourceModifyFeature(feature, geometry, true);
                 reset();
             }
         }
