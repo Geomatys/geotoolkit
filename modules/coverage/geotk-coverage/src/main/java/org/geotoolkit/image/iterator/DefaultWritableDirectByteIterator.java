@@ -44,7 +44,7 @@ import java.awt.image.*;
  * @author Rémi Marechal       (Geomatys).
  * @author Martin Desruisseaux (Geomatys).
  */
-public class DefaultWritableByteIterator extends DefaultByteIterator{
+public class DefaultWritableDirectByteIterator extends DefaultDirectByteIterator{
 
     /**
      * Raster which is followed by iterator and wherein caller write.
@@ -78,7 +78,7 @@ public class DefaultWritableByteIterator extends DefaultByteIterator{
      * @param writableRaster raster which is followed by this write-only iterator and wherein value is writing.
      * @throws IllegalArgumentException if raster and writable raster dimensions are not conform.
      */
-    public DefaultWritableByteIterator(final Raster raster, final WritableRaster writableRaster) {
+    public DefaultWritableDirectByteIterator(final Raster raster, final WritableRaster writableRaster) {
         super(raster);
         checkRasters(raster, writableRaster);
         this.currentWritableRaster = writableRaster;
@@ -92,7 +92,7 @@ public class DefaultWritableByteIterator extends DefaultByteIterator{
      * @param subArea        Rectangle which represent raster sub area, wherein move read and write iterator.
      * @throws IllegalArgumentException if raster and writable raster dimensions are not conform.
      */
-    public DefaultWritableByteIterator(final Raster raster, final WritableRaster writableRaster, final Rectangle subArea) {
+    public DefaultWritableDirectByteIterator(final Raster raster, final WritableRaster writableRaster, final Rectangle subArea) {
         super(raster, subArea);
         checkRasters(raster, writableRaster);
         this.currentWritableRaster = writableRaster;
@@ -106,7 +106,7 @@ public class DefaultWritableByteIterator extends DefaultByteIterator{
      * @throws IllegalArgumentException if renderedImage and writable renderedImage dimensions are not conform.
      * @throws IllegalArgumentException if renderedImage and writable renderedImage tiles configurations are not conform.
      */
-    public DefaultWritableByteIterator(final RenderedImage renderedImage, final WritableRenderedImage writableRI) {
+    public DefaultWritableDirectByteIterator(final RenderedImage renderedImage, final WritableRenderedImage writableRI) {
         super(renderedImage);
         checkRenderedImage(renderedImage, writableRI);
         this.writableRenderedImage = writableRI;
@@ -121,7 +121,7 @@ public class DefaultWritableByteIterator extends DefaultByteIterator{
      * @throws IllegalArgumentException if renderedImage and writable renderedImage dimensions are not conform.
      * @throws IllegalArgumentException if renderedImage and writable renderedImage tiles configurations are not conform.
      */
-    public DefaultWritableByteIterator(final RenderedImage renderedImage, final WritableRenderedImage writableRI, final Rectangle subArea) {
+    public DefaultWritableDirectByteIterator(final RenderedImage renderedImage, final WritableRenderedImage writableRI, final Rectangle subArea) {
         super(renderedImage, subArea);
         checkRenderedImage(renderedImage, writableRI);
         this.writableRenderedImage = writableRI;
@@ -144,7 +144,8 @@ public class DefaultWritableByteIterator extends DefaultByteIterator{
     /**
      * Verify Rendered image conformity.
      */
-    private void checkRenderedImage(final RenderedImage renderedImage, final WritableRenderedImage writableRI){
+    private void checkRenderedImage(final RenderedImage renderedImage, final WritableRenderedImage writableRI) {
+        //image dimensions
         if (renderedImage.getMinX()   != writableRI.getMinX()
          || renderedImage.getMinY()   != writableRI.getMinY()
          || renderedImage.getWidth()  != writableRI.getWidth()
@@ -155,6 +156,7 @@ public class DefaultWritableByteIterator extends DefaultByteIterator{
         final int wrimty = writableRI.getMinTileY();
         final int rimtx = writableRI.getMinTileX();
         final int rimty = writableRI.getMinTileY();
+        //tiles dimensions
         if (rimtx != wrimtx
          || rimty != wrimty
          || renderedImage.getNumXTiles() != writableRI.getNumXTiles()
@@ -164,6 +166,7 @@ public class DefaultWritableByteIterator extends DefaultByteIterator{
          || renderedImage.getTileHeight() != writableRI.getTileHeight()
          || renderedImage.getTileWidth()  != writableRI.getTileWidth())
             throw new IllegalArgumentException("rendered image and writable rendered image tiles configuration are not conform"+renderedImage+writableRI);
+        //data type
         if (renderedImage.getTile(rimtx, rimty).getDataBuffer().getDataType() != writableRI.getTile(wrimtx, wrimty).getDataBuffer().getDataType())
             throw new IllegalArgumentException("rendered image and writable rendered image haven't got same datas type");
     }
@@ -188,14 +191,6 @@ public class DefaultWritableByteIterator extends DefaultByteIterator{
     @Override
     public void close() {
         writableRenderedImage.releaseWritableTile(prectX, prectY);
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public void rewind() {
-        super.rewind();
     }
 
     /**

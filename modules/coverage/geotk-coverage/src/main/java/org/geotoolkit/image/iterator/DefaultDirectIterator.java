@@ -19,13 +19,12 @@ package org.geotoolkit.image.iterator;
 
 import java.awt.Rectangle;
 import java.awt.image.DataBuffer;
-import java.awt.image.DataBufferByte;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import org.geotoolkit.util.ArgumentChecks;
 
 /**
- * An Iterator for traversing anyone rendered Image which contains only Byte type data.
+ * An Iterator for traversing anyone rendered Image.
  * <p>
  * Iteration transverse each tiles(raster) from rendered image or raster source one by one in order.
  * Iteration to follow tiles(raster) begin by raster bands, next, raster x coordinates,
@@ -35,7 +34,7 @@ import org.geotoolkit.util.ArgumentChecks;
  * tiles band --&lt; tiles x coordinates --&lt; tiles y coordinates --&lt; next rendered image tiles.
  *
  * Moreover iterator traversing a read-only each rendered image tiles(raster) in top-to-bottom, left-to-right order.
- * Furthermore iterator directly read in data table contains in raster {@code DataBuffer}.
+ * Furthermore iterator directly read in data table within raster {@code DataBuffer}.
  *
  * Code example :
  * {@code
@@ -48,111 +47,7 @@ import org.geotoolkit.util.ArgumentChecks;
  * @author Rémi Marechal       (Geomatys).
  * @author Martin Desruisseaux (Geomatys).
  */
-public class DefaultByteIterator extends PixelIterator{
-
-    /**
-     * Current raster which is followed by Iterator.
-     */
-    private Raster currentRaster;
-
-    /**
-     * RenderedImage which is followed by Iterator.
-     */
-    private RenderedImage renderedImage;
-
-    /**
-     * Number of raster band .
-     */
-    private int numBand;
-
-    /**
-     * The X coordinate of the upper-left pixel of this current raster.
-     */
-    private int minX;
-
-    /**
-     * The Y coordinate of the upper-left pixel of this current raster.
-     */
-    private int minY;
-
-    /**
-     * The X coordinate of the bottom-right pixel of this current raster.
-     */
-    private int maxX;
-
-    /**
-     * The Y coordinate of the bottom-right pixel of this current raster.
-     */
-    private int maxY;
-
-    /**
-     * Current band position in this current raster.
-     */
-    protected int band;
-
-    /**
-     * The X index coordinate of the upper-left tile of this rendered image.
-     */
-    private int tMinX;
-
-    /**
-     * The Y index coordinate of the upper-left tile of this rendered image.
-     */
-    private int tMinY;
-
-    /**
-     * The X index coordinate of the bottom-right tile of this rendered image.
-     */
-    private int tMaxX;
-
-    /**
-     * The Y index coordinate of the bottom-right tile of this rendered image.
-     */
-    private int tMaxY;
-
-    /**
-     * The X coordinate of the sub-Area upper-left corner.
-     */
-    private int subAreaMinX;
-
-    /**
-     * The Y coordinate of the sub-Area upper-left corner.
-     */
-    private int subAreaMinY;
-
-    /**
-     * The X index coordinate of the sub-Area bottom-right corner.
-     */
-    private int subAreaMaxX;
-
-    /**
-     * The Y index coordinate of the sub-Area bottom-right corner.
-     */
-    private int subAreaMaxY;
-
-    /**
-     * Current x tile position in rendered image tile array.
-     */
-    private int tX;
-    /**
-     * Current y tile position in rendered image tile array.
-     */
-    private int tY;
-
-    /**
-     * Current raster data table.
-     */
-    private byte[][] currentDataArray;
-
-    /**
-     * Cursor position of current raster data.
-     */
-    protected int dataCursor;
-
-    /**
-     * Maximum iteration value from current raster.
-     */
-    private int maxBanks;
+abstract class DefaultDirectIterator extends PixelIterator{
 
     /**
      * Current raster width.
@@ -176,19 +71,24 @@ public class DefaultByteIterator extends PixelIterator{
      */
     private int indexStep;
 
+    /**
+     * Cursor position of current raster data.
+     */
+    protected int dataCursor;
+
+    /**
+     * Maximum iteration value from current raster.
+     */
+    protected int maxBanks;
 
     /**
      * Create raster iterator to follow from its minX and minY coordinates.
      *
      * @param raster will be followed by this iterator.
      */
-    public DefaultByteIterator(final Raster raster) {
+    protected DefaultDirectIterator(final Raster raster) {
         ArgumentChecks.ensureNonNull("Raster : ", raster);
-        final DataBuffer databuf = raster.getDataBuffer();
-        assert (databuf.getDataType() == DataBuffer.TYPE_BYTE) : "raster datas or not Byte type"+databuf;
         this.currentRaster = raster;
-        this.currentDataArray = ((DataBufferByte)databuf).getBankData();
-        this.maxBanks = ((DataBufferByte)databuf).getSize();
         this.rasterWidth = raster.getWidth();
         this.numBand = raster.getNumBands();
 
@@ -197,6 +97,8 @@ public class DefaultByteIterator extends PixelIterator{
         this.minY = 0;
         this.maxX = this.indexStep = rasterWidth;
         this.maxY = raster.getHeight();
+
+        this.maxBanks =  rasterWidth*maxY;
 
         this.band = -1;
         this.dataCursor = 0;
@@ -212,13 +114,10 @@ public class DefaultByteIterator extends PixelIterator{
      * @param subArea {@code Rectangle} which define read iterator area.
      * @throws IllegalArgumentException if subArea don't intersect raster boundary.
      */
-    public DefaultByteIterator(final Raster raster, final Rectangle subArea) {
+    protected DefaultDirectIterator(final Raster raster, final Rectangle subArea) {
         ArgumentChecks.ensureNonNull("Raster : ", raster);
         ArgumentChecks.ensureNonNull("sub Area iteration : ", subArea);
         //data attributs
-        final DataBuffer databuf = raster.getDataBuffer();
-        assert (databuf.getDataType() == DataBuffer.TYPE_BYTE) : "raster data or not Byte type"+databuf;
-        this.currentDataArray = ((DataBufferByte)databuf).getBankData();
         this.currentRaster = raster;
         this.numBand = raster.getNumBands();
         this.rasterWidth = raster.getWidth();
@@ -254,7 +153,7 @@ public class DefaultByteIterator extends PixelIterator{
      *
      * @param renderedImage image which will be follow by iterator.
      */
-    public DefaultByteIterator(final RenderedImage renderedImage) {
+    protected DefaultDirectIterator(final RenderedImage renderedImage) {
         ArgumentChecks.ensureNonNull("RenderedImage : ", renderedImage);
         this.renderedImage = renderedImage;
         //rect attributs
@@ -282,7 +181,7 @@ public class DefaultByteIterator extends PixelIterator{
      * @param subArea {@code Rectangle} which represent image sub area iteration.
      * @throws IllegalArgumentException if subArea don't intersect image boundary.
      */
-    public DefaultByteIterator(final RenderedImage renderedImage, final Rectangle subArea) {
+    protected DefaultDirectIterator(final RenderedImage renderedImage, final Rectangle subArea) {
         ArgumentChecks.ensureNonNull("RenderedImage : ", renderedImage);
         ArgumentChecks.ensureNonNull("sub Area iteration : ", subArea);
         this.renderedImage = renderedImage;
@@ -335,14 +234,12 @@ public class DefaultByteIterator extends PixelIterator{
                     tX = tMinX;
                     if(++tY == tMaxY) return false;
                 }
-                //updatecurrentRaster
                 updateCurrentRaster(tX, tY);
-            } else {
-                if (dataCursor == indexStep) {
-                    dataCursor += cursorStep;
-                    indexStep += rasterWidth;
-                }
+            } else if (dataCursor == indexStep) {
+                dataCursor += cursorStep;
+                indexStep += rasterWidth;
             }
+
         }
         return true;
     }
@@ -359,7 +256,6 @@ public class DefaultByteIterator extends PixelIterator{
         final int cRMinX   = currentRaster.getMinX();
         final int cRMinY   = currentRaster.getMinY();
         this.rasterWidth = currentRaster.getWidth();
-        this.currentDataArray = ((DataBufferByte)currentRaster.getDataBuffer()).getBankData();
 
         //update min max from subArea and raster boundary
         this.minX    = Math.max(subAreaMinX, cRMinX) - cRMinX;
@@ -398,30 +294,6 @@ public class DefaultByteIterator extends PixelIterator{
      * {@inheritDoc }.
      */
     @Override
-    public int getSample() {
-        return currentDataArray[band][dataCursor];
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public float getSampleFloat() {
-        return currentDataArray[band][dataCursor];
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public double getSampleDouble() {
-        return currentDataArray[band][dataCursor];
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
     public void rewind() {
         //initialize attributs like first iteration
         if (renderedImage == null) {
@@ -436,26 +308,6 @@ public class DefaultByteIterator extends PixelIterator{
             this.tY = tMinY;
             this.tX = tMinX - 1;
         }
-    }
-
-    @Override
-    public void setSample(int value) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void setSampleFloat(float value) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void setSampleDouble(double value) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void close() {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     /**

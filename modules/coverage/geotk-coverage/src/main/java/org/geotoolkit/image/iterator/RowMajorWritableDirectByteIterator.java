@@ -47,7 +47,7 @@ import java.awt.image.WritableRenderedImage;
  * @author Rémi Marechal       (Geomatys).
  * @author Martin Desruisseaux (Geomatys).
  */
-class RowMajorWritableByteIterator extends RowMajorByteIterator{
+class RowMajorWritableDirectByteIterator extends RowMajorDirectByteIterator{
 
     /**
      * Current last x tile position in rendered image tile array.
@@ -77,7 +77,7 @@ class RowMajorWritableByteIterator extends RowMajorByteIterator{
      * @throws IllegalArgumentException if renderedImage and writable renderedImage dimensions are not conform.
      * @throws IllegalArgumentException if renderedImage and writable renderedImage tiles configurations are not conform.
      */
-    RowMajorWritableByteIterator(final RenderedImage renderedImage, final WritableRenderedImage writableRI) {
+    RowMajorWritableDirectByteIterator(final RenderedImage renderedImage, final WritableRenderedImage writableRI) {
         super(renderedImage);
         checkRenderedImage(renderedImage, writableRI);
         this.writableRenderedImage = writableRI;
@@ -92,7 +92,7 @@ class RowMajorWritableByteIterator extends RowMajorByteIterator{
      * @throws IllegalArgumentException if renderedImage and writable renderedImage dimensions are not conform.
      * @throws IllegalArgumentException if renderedImage and writable renderedImage tiles configurations are not conform.
      */
-    RowMajorWritableByteIterator(final RenderedImage renderedImage, final WritableRenderedImage writableRI, final Rectangle subArea) {
+    RowMajorWritableDirectByteIterator(final RenderedImage renderedImage, final WritableRenderedImage writableRI, final Rectangle subArea) {
         super(renderedImage, subArea);
         checkRenderedImage(renderedImage, writableRI);
         this.writableRenderedImage = writableRI;

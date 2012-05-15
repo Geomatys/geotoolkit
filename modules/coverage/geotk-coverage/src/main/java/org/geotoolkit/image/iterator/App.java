@@ -50,20 +50,20 @@ public class App {
             }
         }
 
-        final PixelIterator sI = new DefaultRasterIntIterator(raster, subArea);
-        int w = Math.min(subArea.x+subArea.width,  minX+width)  - Math.max(subArea.x, minX);
-        int h = Math.min(subArea.y+subArea.height, minY+height) - Math.max(subArea.y, minY);
-        int sIcomp = 0;
-        int[] tab = new int[numBand * w * h];
-        while (sI.next()) {
-            if(sIcomp ==11){
-                System.out.println("");
-            }
-            tab[sIcomp++] = sI.getSample();
-
-        }
-        System.out.println("size = "+tab.length);
-        System.out.println(Arrays.toString(tab));
+//        final PixelIterator sI = new DefaultRasterIntIterator(raster, subArea);
+//        int w = Math.min(subArea.x+subArea.width,  minX+width)  - Math.max(subArea.x, minX);
+//        int h = Math.min(subArea.y+subArea.height, minY+height) - Math.max(subArea.y, minY);
+//        int sIcomp = 0;
+//        int[] tab = new int[numBand * w * h];
+//        while (sI.next()) {
+//            if(sIcomp ==11){
+//                System.out.println("");
+//            }
+//            tab[sIcomp++] = sI.getSample();
+//
+//        }
+//        System.out.println("size = "+tab.length);
+//        System.out.println(Arrays.toString(tab));
 
     }
 }

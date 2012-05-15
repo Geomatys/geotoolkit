@@ -46,42 +46,7 @@ import org.geotoolkit.util.ArgumentChecks;
  * @author Martin Desruisseaux (Geomatys).
  */
 class DefaultIterator extends PixelIterator {
-
-    /**
-     * Current raster which is followed by Iterator.
-     */
-    protected Raster currentRaster;
-
-    /**
-     * RenderedImage which is followed by Iterator.
-     */
-    private RenderedImage renderedImage;
-
-    /**
-     * Number of raster band .
-     */
-    protected int numBand;
-
-    /**
-     * The X coordinate of the upper-left pixel of this current raster.
-     */
-    protected int minX;
-
-    /**
-     * The Y coordinate of the upper-left pixel of this current raster.
-     */
-    protected int minY;
-
-    /**
-     * The X coordinate of the bottom-right pixel of this current raster.
-     */
-    protected int maxX;
-
-    /**
-     * The Y coordinate of the bottom-right pixel of this current raster.
-     */
-    protected int maxY;
-
+  
     /**
      * Current X pixel coordinate in this current raster.
      */
@@ -91,60 +56,6 @@ class DefaultIterator extends PixelIterator {
      * Current Y pixel coordinate in this current raster.
      */
     protected int y;
-
-    /**
-     * Current band position in this current raster.
-     */
-    protected int band;
-
-    /**
-     * The X index coordinate of the upper-left tile of this rendered image.
-     */
-    private int tMinX;
-
-    /**
-     * The Y index coordinate of the upper-left tile of this rendered image.
-     */
-    private int tMinY;
-
-    /**
-     * The X index coordinate of the bottom-right tile of this rendered image.
-     */
-    private int tMaxX;
-
-    /**
-     * The Y index coordinate of the bottom-right tile of this rendered image.
-     */
-    private int tMaxY;
-
-    /**
-     * The X coordinate of the sub-Area upper-left corner.
-     */
-    private int subAreaMinX;
-
-    /**
-     * The Y coordinate of the sub-Area upper-left corner.
-     */
-    private int subAreaMinY;
-
-    /**
-     * The X index coordinate of the sub-Area bottom-right corner.
-     */
-    private int subAreaMaxX;
-
-    /**
-     * The Y index coordinate of the sub-Area bottom-right corner.
-     */
-    private int subAreaMaxY;
-
-    /**
-     * Current x tile position in rendered image tile array.
-     */
-    private int tX;
-    /**
-     * Current y tile position in rendered image tile array.
-     */
-    private int tY;
 
     /**
      * Create raster iterator to follow from its minX and minY coordinates.

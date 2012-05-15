@@ -19,8 +19,6 @@ package org.geotoolkit.image.iterator;
 
 import java.awt.Rectangle;
 import java.awt.image.DataBuffer;
-import java.awt.image.DataBufferByte;
-import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import org.geotoolkit.util.ArgumentChecks;
 
@@ -35,7 +33,7 @@ import org.geotoolkit.util.ArgumentChecks;
  *
  * Moreover iterator traversing a read-only each rendered image tiles(raster) in top-to-bottom, left-to-right order.
  *
- * Furthermore iterator is only appropriate to iterate on Byte data type.
+ * Furthermore iterator directly read in data table within raster {@code DataBuffer}.
  *
  * Code example :
  * {@code
@@ -48,101 +46,96 @@ import org.geotoolkit.util.ArgumentChecks;
  * @author Rémi Marechal       (Geomatys).
  * @author Martin Desruisseaux (Geomatys).
  */
-class RowMajorByteIterator extends PixelIterator{
+abstract class RowMajorDirectIterator extends PixelIterator {
 
-    /**
-     * Current raster which is followed by Iterator.
-     */
-    private Raster currentRaster;
-
-    /**
-     * RenderedImage which is followed by Iterator.
-     */
-    private RenderedImage renderedImage;
-
-    /**
-     * Number of raster band .
-     */
-    private int numBand;
-
-    /**
-     * The X coordinate of the upper-left pixel of this current raster.
-     */
-    private int minX;
-
-    /**
-     * The Y coordinate of the upper-left pixel of this current raster.
-     */
-    private int minY;
-
-    /**
-     * The X coordinate of the bottom-right pixel of this current raster.
-     */
-    private int maxX;
-
-    /**
-     * The Y coordinate of the bottom-right pixel of this current raster.
-     */
-    private int maxY;
-
-    /**
-     * Current band position in this current raster.
-     */
-    protected int band;
-
-    /**
-     * The X index coordinate of the upper-left tile of this rendered image.
-     */
-    private int tMinX;
-
-    /**
-     * The Y index coordinate of the upper-left tile of this rendered image.
-     */
-    private int tMinY;
-
-    /**
-     * The X index coordinate of the bottom-right tile of this rendered image.
-     */
-    private int tMaxX;
-
-    /**
-     * The Y index coordinate of the bottom-right tile of this rendered image.
-     */
-    private int tMaxY;
-
-    /**
-     * The X coordinate of the sub-Area upper-left corner.
-     */
-    private int subAreaMinX;
-
-    /**
-     * The Y coordinate of the sub-Area upper-left corner.
-     */
-    private int subAreaMinY;
-
-    /**
-     * The X index coordinate of the sub-Area bottom-right corner.
-     */
-    private int subAreaMaxX;
-
-    /**
-     * The Y index coordinate of the sub-Area bottom-right corner.
-     */
-    private int subAreaMaxY;
-
-    /**
-     * Current x tile position in rendered image tile array.
-     */
-    private int tX;
-    /**
-     * Current y tile position in rendered image tile array.
-     */
-    private int tY;
-
-    /**
-     * Current raster data table.
-     */
-    private byte[][] currentDataArray;
+//    /**
+//     * Current raster which is followed by Iterator.
+//     */
+//    protected Raster currentRaster;
+//
+//    /**
+//     * RenderedImage which is followed by Iterator.
+//     */
+//    private RenderedImage renderedImage;
+//
+//    /**
+//     * Number of raster band .
+//     */
+//    private int numBand;
+//
+//    /**
+//     * The X coordinate of the upper-left pixel of this current raster.
+//     */
+//    private int minX;
+//
+//    /**
+//     * The Y coordinate of the upper-left pixel of this current raster.
+//     */
+//    private int minY;
+//
+//    /**
+//     * The X coordinate of the bottom-right pixel of this current raster.
+//     */
+//    private int maxX;
+//
+//    /**
+//     * The Y coordinate of the bottom-right pixel of this current raster.
+//     */
+//    private int maxY;
+//
+//    /**
+//     * Current band position in this current raster.
+//     */
+//    protected int band;
+//
+//    /**
+//     * The X index coordinate of the upper-left tile of this rendered image.
+//     */
+//    private int tMinX;
+//
+//    /**
+//     * The Y index coordinate of the upper-left tile of this rendered image.
+//     */
+//    private int tMinY;
+//
+//    /**
+//     * The X index coordinate of the bottom-right tile of this rendered image.
+//     */
+//    private int tMaxX;
+//
+//    /**
+//     * The Y index coordinate of the bottom-right tile of this rendered image.
+//     */
+//    private int tMaxY;
+//
+//    /**
+//     * The X coordinate of the sub-Area upper-left corner.
+//     */
+//    private int subAreaMinX;
+//
+//    /**
+//     * The Y coordinate of the sub-Area upper-left corner.
+//     */
+//    private int subAreaMinY;
+//
+//    /**
+//     * The X index coordinate of the sub-Area bottom-right corner.
+//     */
+//    private int subAreaMaxX;
+//
+//    /**
+//     * The Y index coordinate of the sub-Area bottom-right corner.
+//     */
+//    private int subAreaMaxY;
+//
+//    /**
+//     * Current x tile position in rendered image tile array.
+//     */
+//    private int tX;
+//    /**
+//     * Current y tile position in rendered image tile array.
+//     */
+//    private int tY;
 
     /**
      * Cursor position of current raster data.
@@ -164,7 +157,7 @@ class RowMajorByteIterator extends PixelIterator{
      *
      * @param renderedImage image which will be follow by iterator.
      */
-    RowMajorByteIterator(final RenderedImage renderedImage) {
+    RowMajorDirectIterator(final RenderedImage renderedImage) {
         ArgumentChecks.ensureNonNull("RenderedImage : ", renderedImage);
         this.renderedImage = renderedImage;
         //rect attributs
@@ -192,7 +185,7 @@ class RowMajorByteIterator extends PixelIterator{
      * @param subArea {@code Rectangle} which represent image sub area iteration.
      * @throws IllegalArgumentException if subArea don't intersect image boundary.
      */
-    RowMajorByteIterator(final RenderedImage renderedImage, final Rectangle subArea) {
+    RowMajorDirectIterator(final RenderedImage renderedImage, final Rectangle subArea) {
         ArgumentChecks.ensureNonNull("RenderedImage : ", renderedImage);
         ArgumentChecks.ensureNonNull("sub Area iteration : ", subArea);
         this.renderedImage = renderedImage;
@@ -268,7 +261,7 @@ class RowMajorByteIterator extends PixelIterator{
         final int cRMinX   = currentRaster.getMinX();
         final int cRMinY   = currentRaster.getMinY();
         this.rasterWidth = currentRaster.getWidth();
-        this.currentDataArray = ((DataBufferByte)currentRaster.getDataBuffer()).getBankData();
+        //this.currentDataArray = ((DataBufferByte)currentRaster.getDataBuffer()).getBankData();
 
         //update min max from subArea and raster boundary
         this.minX    = Math.max(subAreaMinX, cRMinX) - cRMinX;
@@ -303,64 +296,11 @@ class RowMajorByteIterator extends PixelIterator{
      * {@inheritDoc }.
      */
     @Override
-    public int getSample() {
-        return currentDataArray[band][dataCursor];
-    }
-
-    @Override
-    public float getSampleFloat() {
-        return currentDataArray[band][dataCursor];
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public double getSampleDouble() {
-        return currentDataArray[band][dataCursor];
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
     public void rewind() {
         this.numBand = this.maxX = this.maxY = 1;
         this.dataCursor = this.band = 0;
         this.tY = tMinY;
         this.tX = tMinX - 1;
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public void setSample(int value) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public void setSampleFloat(float value) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public void setSampleDouble(double value) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public void close() {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     /**

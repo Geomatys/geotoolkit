@@ -280,7 +280,7 @@ public class RowMajorWritableByteIteratorTest extends RowMajorByteIteratorTest{
         WritableRenderedImage rendWriteImage = new TiledImage(0, 0, 100, 500, 15, 25, sampleMW, null);
         //test : different image dimension.
         try {
-            final RowMajorWritableByteIterator iter = new RowMajorWritableByteIterator(rendReadImage, rendWriteImage);
+            final RowMajorWritableDirectByteIterator iter = new RowMajorWritableDirectByteIterator(rendReadImage, rendWriteImage);
             Assert.fail("test should had failed");
         } catch(IllegalArgumentException e) {
             //ok
@@ -289,7 +289,7 @@ public class RowMajorWritableByteIteratorTest extends RowMajorByteIteratorTest{
         sampleMW = new BandedSampleModel(DataBuffer.TYPE_BYTE, 10, 5, 3);
         rendWriteImage = new TiledImage(0, 0, 1000, 500, 0, 0, sampleMW, null);
         try {
-            final RowMajorWritableByteIterator iter = new RowMajorWritableByteIterator(rendReadImage, rendWriteImage);
+            final RowMajorWritableDirectByteIterator iter = new RowMajorWritableDirectByteIterator(rendReadImage, rendWriteImage);
             Assert.fail("test should had failed");
         } catch(IllegalArgumentException e) {
             //ok
@@ -298,7 +298,7 @@ public class RowMajorWritableByteIteratorTest extends RowMajorByteIteratorTest{
         sampleMW = new BandedSampleModel(DataBuffer.TYPE_INT, 100, 50, 3);
         rendWriteImage = new TiledImage(0, 0, 1000, 500, 0, 0, sampleMW, null);
         try {
-            final RowMajorWritableByteIterator iter = new RowMajorWritableByteIterator(rendReadImage, rendWriteImage);
+            final RowMajorWritableDirectByteIterator iter = new RowMajorWritableDirectByteIterator(rendReadImage, rendWriteImage);
             Assert.fail("test should had failed");
         } catch(IllegalArgumentException e) {
             //ok

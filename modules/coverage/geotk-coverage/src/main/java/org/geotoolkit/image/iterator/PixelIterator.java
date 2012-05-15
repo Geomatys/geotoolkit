@@ -17,6 +17,9 @@
  */
 package org.geotoolkit.image.iterator;
 
+import java.awt.image.Raster;
+import java.awt.image.RenderedImage;
+
 /**
  * Define standard iterator for image pixel.
  *
@@ -30,6 +33,95 @@ package org.geotoolkit.image.iterator;
  */
 public abstract class PixelIterator {
 
+    /**
+     * Current raster which is followed by Iterator.
+     */
+    protected Raster currentRaster;
+
+    /**
+     * RenderedImage which is followed by Iterator.
+     */
+    protected RenderedImage renderedImage;
+
+    /**
+     * Number of raster band .
+     */
+    protected int numBand;
+
+    /**
+     * The X coordinate of the upper-left pixel of this current raster.
+     */
+    protected int minX;
+
+    /**
+     * The Y coordinate of the upper-left pixel of this current raster.
+     */
+    protected int minY;
+
+    /**
+     * The X coordinate of the bottom-right pixel of this current raster.
+     */
+    protected int maxX;
+
+    /**
+     * The Y coordinate of the bottom-right pixel of this current raster.
+     */
+    protected int maxY;
+
+    /**
+     * Current band position in this current raster.
+     */
+    protected int band;
+
+    /**
+     * The X index coordinate of the upper-left tile of this rendered image.
+     */
+    protected int tMinX;
+
+    /**
+     * The Y index coordinate of the upper-left tile of this rendered image.
+     */
+    protected int tMinY;
+
+    /**
+     * The X index coordinate of the bottom-right tile of this rendered image.
+     */
+    protected int tMaxX;
+
+    /**
+     * The Y index coordinate of the bottom-right tile of this rendered image.
+     */
+    protected int tMaxY;
+
+    /**
+     * The X coordinate of the sub-Area upper-left corner.
+     */
+    protected int subAreaMinX;
+
+    /**
+     * The Y coordinate of the sub-Area upper-left corner.
+     */
+    protected int subAreaMinY;
+
+    /**
+     * The X index coordinate of the sub-Area bottom-right corner.
+     */
+    protected int subAreaMaxX;
+
+    /**
+     * The Y index coordinate of the sub-Area bottom-right corner.
+     */
+    protected int subAreaMaxY;
+
+    /**
+     * Current x tile position in rendered image tile array.
+     */
+    protected int tX;
+    /**
+     * Current y tile position in rendered image tile array.
+     */
+    protected int tY;
+
     protected PixelIterator() {
     }
 
@@ -40,7 +132,6 @@ public abstract class PixelIterator {
      * @return true if next value exist else false.
      */
     public abstract boolean next();
-
 
     /**
      * Returns next X iterator coordinate without move forward it.

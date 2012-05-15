@@ -275,7 +275,7 @@ public class DefaultWritableByteIteratorTest extends DefaultByteIteratorTest{
         WritableRaster rasterWrite = Raster.createBandedRaster(DataBuffer.TYPE_BYTE, 200, 100, 30, new Point(3,1));
         //test : different raster dimension.
         try {
-            final DefaultWritableByteIterator iter = new DefaultWritableByteIterator(rasterRead, rasterWrite);
+            final DefaultWritableDirectByteIterator iter = new DefaultWritableDirectByteIterator(rasterRead, rasterWrite);
             Assert.fail("test should had failed");
         } catch(IllegalArgumentException e) {
             //ok
@@ -283,7 +283,7 @@ public class DefaultWritableByteIteratorTest extends DefaultByteIteratorTest{
         //test : different datas type.
         rasterWrite = Raster.createBandedRaster(DataBuffer.TYPE_INT, 20, 10, 3, new Point(0,0));
         try {
-            final DefaultWritableByteIterator iter = new DefaultWritableByteIterator(rasterRead, rasterWrite);
+            final DefaultWritableDirectByteIterator iter = new DefaultWritableDirectByteIterator(rasterRead, rasterWrite);
             Assert.fail("test should had failed");
         } catch(IllegalArgumentException e) {
             //ok
@@ -302,7 +302,7 @@ public class DefaultWritableByteIteratorTest extends DefaultByteIteratorTest{
         WritableRenderedImage rendWriteImage = new TiledImage(0, 0, 100, 500, 15, 25, sampleMW, null);
         //test : different image dimension.
         try {
-            final DefaultWritableByteIterator iter = new DefaultWritableByteIterator(rendReadImage, rendWriteImage);
+            final DefaultWritableDirectByteIterator iter = new DefaultWritableDirectByteIterator(rendReadImage, rendWriteImage);
             Assert.fail("test should had failed");
         } catch(IllegalArgumentException e) {
             //ok
@@ -311,7 +311,7 @@ public class DefaultWritableByteIteratorTest extends DefaultByteIteratorTest{
         sampleMW = new BandedSampleModel(DataBuffer.TYPE_BYTE, 10, 5, 3);
         rendWriteImage = new TiledImage(0, 0, 1000, 500, 0, 0, sampleMW, null);
         try {
-            final DefaultWritableByteIterator iter = new DefaultWritableByteIterator(rendReadImage, rendWriteImage);
+            final DefaultWritableDirectByteIterator iter = new DefaultWritableDirectByteIterator(rendReadImage, rendWriteImage);
             Assert.fail("test should had failed");
         } catch(IllegalArgumentException e) {
             //ok
@@ -320,7 +320,7 @@ public class DefaultWritableByteIteratorTest extends DefaultByteIteratorTest{
         sampleMW = new BandedSampleModel(DataBuffer.TYPE_INT, 100, 50, 3);
         rendWriteImage = new TiledImage(0, 0, 1000, 500, 0, 0, sampleMW, null);
         try {
-            final DefaultWritableByteIterator iter = new DefaultWritableByteIterator(rendReadImage, rendWriteImage);
+            final DefaultWritableDirectByteIterator iter = new DefaultWritableDirectByteIterator(rendReadImage, rendWriteImage);
             Assert.fail("test should had failed");
         } catch(IllegalArgumentException e) {
             //ok
