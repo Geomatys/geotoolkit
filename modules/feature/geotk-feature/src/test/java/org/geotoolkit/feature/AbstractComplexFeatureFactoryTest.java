@@ -1,6 +1,19 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ *    Geotoolkit.org - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2011-2012, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2011-2012, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
  */
 package org.geotoolkit.feature;
 
@@ -18,10 +31,11 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.type.*;
 
 /**
- *
+ * A class which extends {@link AbstracSimpleFeatureFactoryTest} to test complex feature creation.
+ * The class owns methods to check for complex attributes and complex features creation.
  * @author Alexis Manin
  */
-public abstract class AbstractComplexFeatureFactoryTest extends AbstractFeatureFactoryTest /*
+public abstract class AbstractComplexFeatureFactoryTest extends AbstractSimpleFeatureFactoryTest /*
  * implements FeatureFactoryTest
  */ {
 
@@ -37,8 +51,8 @@ public abstract class AbstractComplexFeatureFactoryTest extends AbstractFeatureF
         System.out.println("ComplexAttribute creation test");
 
         //complex type creation
-        Name strNm = new DefaultName("string");
-        Name fNm = new DefaultName("featureTypeName");
+        Name strNm = new MocName("string");
+        Name fNm = new MocName("featureTypeName");
         AttributeType attrType = getFeatureTypeFactory().createAttributeType(strNm, String.class, false, false, null, null, null);
         AttributeDescriptor descriptor = getFeatureTypeFactory().createAttributeDescriptor(attrType, strNm, 0, Integer.MAX_VALUE, false, "line");        
         List<PropertyDescriptor> attrList = new ArrayList<PropertyDescriptor>();
@@ -87,9 +101,9 @@ public abstract class AbstractComplexFeatureFactoryTest extends AbstractFeatureF
      */
     @Test
     public void testCreateComplexFeature() {
-        Name nm = new DefaultName("point");
-        Name strNm = new DefaultName("string");
-        Name fNm = new DefaultName("featureTypeName");
+        Name nm = new MocName("point");
+        Name strNm = new MocName("string");
+        Name fNm = new MocName("featureTypeName");
         
         //types and descriptors
         GeometryType geoType = getFeatureTypeFactory().createGeometryType(nm, DirectPosition2D .class, null, true, false, null, null, null);
@@ -125,7 +139,8 @@ public abstract class AbstractComplexFeatureFactoryTest extends AbstractFeatureF
         assertNotNull(feature.getProperty("string").getValue());
         assertEquals("line1", feature.getProperty("string").getValue());
 
-        //test validation is disabled
+        //validation test is disabled
+        
 //        try {
 //            feature.getProperty("String").setValue(null);
 //            if (validating) {

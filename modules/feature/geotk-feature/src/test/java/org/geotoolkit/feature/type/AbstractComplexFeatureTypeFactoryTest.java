@@ -1,24 +1,42 @@
+/*
+ *    Geotoolkit.org - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2011-2012, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2011-2012, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
 package org.geotoolkit.feature.type;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.feature.MocName;
 import org.geotoolkit.geometry.DirectPosition2D;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.feature.type.*;
 
 /**
- *
+ * A class which extends from {@link FeatureTypeFactoryTest} to test a {@link FeatureTypeFactory} for complex features type creation.
+ * Test creation of complex attributes/feature types 
  * @author Alexis MANIN
  */
-public abstract class AbstractComplexFeatureTypeFactoryTest extends AbstractFeatureTypeFactoryTest{
+public abstract class AbstractComplexFeatureTypeFactoryTest extends AbstractSimpleFeatureTypeFactoryTest{
 
     @Test
     public void testCreateComplexType() {
-        Name nm = new DefaultName("point");
-        Name strNm = new DefaultName("String");
-        Name ctNm = new DefaultName("complexTypeName");
+        Name nm = new MocName("point");
+        Name strNm = new MocName("String");
+        Name ctNm = new MocName("complexTypeName");
 
         //types and descriptors
         GeometryType geoType = getFeatureTypeFactory().createGeometryType(nm, DirectPosition2D.class, null, true, false, null, null, null);
@@ -42,9 +60,9 @@ public abstract class AbstractComplexFeatureTypeFactoryTest extends AbstractFeat
     @Test
     @Override
     public void createFeatureType() {
-        Name nm = new DefaultName("point");
-        Name strNm = new DefaultName("String");
-        Name fNm = new DefaultName("featureTypeName");
+        Name nm = new MocName("point");
+        Name strNm = new MocName("String");
+        Name fNm = new MocName("featureTypeName");
 
         //types and descriptors
         GeometryType geoType = getFeatureTypeFactory().createGeometryType(nm, DirectPosition2D.class, null, true, false, null, null, null);

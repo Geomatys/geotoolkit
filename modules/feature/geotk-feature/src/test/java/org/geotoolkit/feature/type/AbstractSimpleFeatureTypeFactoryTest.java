@@ -6,19 +6,23 @@ package org.geotoolkit.feature.type;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.feature.MocName;
 import org.geotoolkit.geometry.DirectPosition2D;
 import static org.junit.Assert.*;
 import org.junit.*;
 import org.opengis.feature.type.*;
 
 /**
+ * A class to test {@link FeatureTypeFactory} methods (only for simple features).
  *
+ * Test creation of attributes and association types as descriptors. Also test geometry type & simple feature type creation 
+ * 
  * @author Alexis MANIN
+ *
  */
-public abstract class AbstractFeatureTypeFactoryTest {
+public abstract class AbstractSimpleFeatureTypeFactoryTest {
 
-    public AbstractFeatureTypeFactoryTest() {
+    public AbstractSimpleFeatureTypeFactoryTest() {
     }
 
     @BeforeClass
@@ -37,6 +41,11 @@ public abstract class AbstractFeatureTypeFactoryTest {
     public void tearDown() {
     }
 
+    /**
+     * A function which return the current used feature type factory
+     *
+     * @return the feature type factory to use for tests
+     */
     public abstract FeatureTypeFactory getFeatureTypeFactory();
 
     @Test
@@ -51,7 +60,7 @@ public abstract class AbstractFeatureTypeFactoryTest {
     @Test
     public void testCreateAttributeType() {
         System.out.println("AttributeType creation test");
-        Name nm = new DefaultName("bouh");
+        Name nm = new MocName("bouh");
         AttributeType res = getFeatureTypeFactory().createAttributeType(nm, String.class, true, false, null, null, null);
         assertNotNull("AttributeType creation failed", res);
         assertNotNull("AttributeType name not set", res.getName());
@@ -64,7 +73,7 @@ public abstract class AbstractFeatureTypeFactoryTest {
     @Test
     public void testCreateGeometryType() {
         System.out.println("GeometryType creation test");
-        Name nm = new DefaultName("bouh");
+        Name nm = new MocName("bouh");
         AttributeType res = getFeatureTypeFactory().createGeometryType(nm, DirectPosition2D.class, null, true, false, null, null, null);
         assertNotNull("GeometryType creation failed", res);
         assertNotNull("GeometryType name not set", res.getName());
@@ -78,8 +87,8 @@ public abstract class AbstractFeatureTypeFactoryTest {
     @Test
     public void testCreateAssociationType() {
         System.out.println("AssociationType creation test");
-        Name nm = new DefaultName("lines");
-        Name asNm = new DefaultName("Association");
+        Name nm = new MocName("lines");
+        Name asNm = new MocName("Association");
         AttributeType attrType = getFeatureTypeFactory().createAttributeType(nm, String.class, true, false, null, null, null);
         AssociationType asType = getFeatureTypeFactory().createAssociationType(asNm, attrType, false, null, null, null);
         assertNotNull("AssociationType creation failed", asType);
@@ -92,8 +101,8 @@ public abstract class AbstractFeatureTypeFactoryTest {
     @Test
     public void testCreateAttributeDescriptor() {
         System.out.println("Attribute descriptor creation test");
-        Name nm = new DefaultName("lines");
-        Name adNm = new DefaultName("lines descriptor");
+        Name nm = new MocName("lines");
+        Name adNm = new MocName("lines descriptor");
         AttributeType attrType = getFeatureTypeFactory().createAttributeType(nm, String.class, true, false, null, null, null);
         AttributeDescriptor res = getFeatureTypeFactory().createAttributeDescriptor(attrType, adNm, 1, 1, false, "defaultvalueishere");
         assertNotNull("Attribute descriptor not set", res);
@@ -107,8 +116,8 @@ public abstract class AbstractFeatureTypeFactoryTest {
     @Test
     public void testCreateGeometryDescriptor() {
         System.out.println("Geometry descriptor creation test");
-        Name nm = new DefaultName("geometry");
-        Name gdNm = new DefaultName("geomatry descriptor");
+        Name nm = new MocName("geometry");
+        Name gdNm = new MocName("geomatry descriptor");
         AttributeType attrType = getFeatureTypeFactory().createAttributeType(nm, DirectPosition2D.class, true, false, null, null, null);
         AttributeDescriptor res = getFeatureTypeFactory().createAttributeDescriptor(attrType, gdNm, 0, Integer.MAX_VALUE, true, null);
         assertNotNull("Geometry descriptor not set", res);
@@ -121,9 +130,9 @@ public abstract class AbstractFeatureTypeFactoryTest {
     @Test
     public void testCreateAssociationDescriptor() {
         System.out.println("Association descriptor creation test");
-        Name nm = new DefaultName("lines");
-        Name asNm = new DefaultName("Association");
-        Name adNm = new DefaultName("descriptor");
+        Name nm = new MocName("lines");
+        Name asNm = new MocName("Association");
+        Name adNm = new MocName("descriptor");
         AttributeType attrType = getFeatureTypeFactory().createAttributeType(nm, String.class, true, false, null, null, null);
         AssociationType asType = getFeatureTypeFactory().createAssociationType(asNm, attrType, false, null, null, null);
         AssociationDescriptor res = getFeatureTypeFactory().createAssociationDescriptor(asType, adNm, 1, 1, false);
@@ -139,9 +148,9 @@ public abstract class AbstractFeatureTypeFactoryTest {
     @Test
     public void createSimpleFeatureType() {
         System.out.println("Simple feature type creation test");
-        Name nm = new DefaultName("point");
-        Name strNm = new DefaultName("String");
-        Name fNm = new DefaultName("featureTypeName");
+        Name nm = new MocName("point");
+        Name strNm = new MocName("String");
+        Name fNm = new MocName("featureTypeName");
         //types and descriptors
         GeometryType geoType = getFeatureTypeFactory().createGeometryType(nm, DirectPosition2D.class, null, true, false, null, null, null);
         GeometryDescriptor geoDesc = getFeatureTypeFactory().createGeometryDescriptor(geoType, nm, 1, 1, true, null);
@@ -169,9 +178,9 @@ public abstract class AbstractFeatureTypeFactoryTest {
 
     @Test
     public void createFeatureType() {
-        Name nm = new DefaultName("point");
-        Name strNm = new DefaultName("String");
-        Name fNm = new DefaultName("featureTypeName");
+        Name nm = new MocName("point");
+        Name strNm = new MocName("String");
+        Name fNm = new MocName("featureTypeName");
 
         //types and descriptors
         GeometryType geoType = getFeatureTypeFactory().createGeometryType(nm, DirectPosition2D.class, null, true, false, null, null, null);

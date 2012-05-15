@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.geotoolkit.feature;
 
 import org.geotoolkit.feature.type.DefaultFeatureTypeFactory;
@@ -10,14 +6,14 @@ import org.opengis.feature.type.FeatureTypeFactory;
 
 /**
  *
- * @author geoadmin
+ * @author Alexis MANIN
  */
-public class LeniantFeatureFactoryTest extends AbstractComplexFeatureFactoryTest{
+public class LenientFeatureFactoryTest extends AbstractComplexFeatureFactoryTest{
 
     private static final LenientFeatureFactory FF = new LenientFeatureFactory();
     protected static final DefaultFeatureTypeFactory FTF = new DefaultFeatureTypeFactory();
     
-    public LeniantFeatureFactoryTest() {
+    public LenientFeatureFactoryTest() {
         super(false);
     }   
     

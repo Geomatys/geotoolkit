@@ -1,6 +1,19 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ *    Geotoolkit.org - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2011-2012, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2011-2012, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
  */
 package org.geotoolkit.feature;
 
@@ -15,32 +28,49 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.type.*;
 
 /**
- *
+ * A class to test methods from a FeatureFactory, only supports simple features.
+ * A boolean must be given to the constructor to say if we test a validating featureFactory (boolean to true) or not (boolean to false).
+ * The class tests simple/geometry attribute creation, as association and simple feature creation.
  * @author Alexis MANIN
  */
-public abstract class AbstractFeatureFactoryTest {
+public abstract class AbstractSimpleFeatureFactoryTest {
 
+    /**
+     * A boolean to tell if we test a validating or a lenient factory.
+     */
     protected final boolean validating;
 
-    public AbstractFeatureFactoryTest(boolean validating) {
+    public AbstractSimpleFeatureFactoryTest(boolean validating) {
         this.validating = validating;
     }
 
+    /**
+     * A function which return the current used feature factory
+     *
+     * @return the feature factory to use for tests
+     */
     public abstract FeatureFactory getFeatureFactory();
 
+    /**
+     * A function which return the current used feature type factory
+     *
+     * @return the feature type factory to use for tests
+     */
     public abstract FeatureTypeFactory getFeatureTypeFactory();
 
     /**
-     * Test of createAssociation method, of class AbstractFeatureFactory.
+     * Test of Association creation method, of class AbstractFeatureFactory.
      */
     @Test
     public void testCreateAssociation() {
+        //initialisation
         System.out.println("Association creation test");
-        Name nm = new DefaultName("point");
-        Name finalNm = new DefaultName("pointAsso");
+        Name nm = new MocName("point");
+        Name finalNm = new MocName("pointAsso");
         String id = "id-0";
         Object value = new DirectPosition2D(50, 60);
 
+        //prepare association creation
         AttributeType type = getFeatureTypeFactory().createAttributeType(nm, DirectPosition2D.class, true, false, null, null, null);
         AttributeDescriptor descriptor = getFeatureTypeFactory().createAttributeDescriptor(type, nm, 1, 1, false, new DirectPosition2D(0, 0));
         Attribute attr = getFeatureFactory().createAttribute(value, descriptor, id);
@@ -48,6 +78,7 @@ public abstract class AbstractFeatureFactoryTest {
         AssociationDescriptor asDescriptor = getFeatureTypeFactory().createAssociationDescriptor(asType, finalNm, 1, 1, false);
         Association asso = getFeatureFactory().createAssociation(attr, asDescriptor);
 
+        //Tests
         assertEquals("Association name does not match", asso.getName(), finalNm);
         assertEquals("Association value does not match", asso.getValue(), attr);
         assertEquals("Association type does not match", asso.getType(), asType);
@@ -55,14 +86,14 @@ public abstract class AbstractFeatureFactoryTest {
     }
 
     /**
-     * Test of createAttribute method, of class AbstractFeatureFactory.
+     * Test of Attribute creation method, of class AbstractFeatureFactory.
      */
     @Test
     public void testCreateSimpleAttribute() {
         System.out.println("Simple Attribute creation test");
         Object value = new DirectPosition2D(50, 60);
-        Name nm = new DefaultName("point");
-        Name finalNm = new DefaultName("pointAsso");
+        Name nm = new MocName("point");
+        Name finalNm = new MocName("pointAsso");
         String id = "id-0";
 
         AttributeType type = getFeatureTypeFactory().createAttributeType(nm, DirectPosition2D.class, true, false, null, null, null);
@@ -76,13 +107,13 @@ public abstract class AbstractFeatureFactoryTest {
     }
 
     /**
-     * Test of createGeometryAttribute method, of class AbstractFeatureFactory.
+     * Test of GeometryAttribute creation method, of class AbstractFeatureFactory.
      */
     @Test
     public void testCreateGeometryAttribute() {
         System.out.println("GeometryAttribute creation test");
         Object value = new DirectPosition2D(50, 60);
-        Name nm = new DefaultName("point");
+        Name nm = new MocName("point");
         String id = "id-0";
 
         GeometryType type = getFeatureTypeFactory().createGeometryType(nm, DirectPosition2D.class, null, true, false, null, null, null);
@@ -103,12 +134,12 @@ public abstract class AbstractFeatureFactoryTest {
     @Test
     public void testCreateSimpleFeature() {
         System.out.println("SimpleFeature creation test");
-        Name nm = new DefaultName("point");
-        Name strNm = new DefaultName("String");
+        Name nm = new MocName("point");
+        Name strNm = new MocName("String");
         Object geomValue = new DirectPosition2D(50, 60);
 
         //types and descriptors
-        GeometryType geoType = getFeatureTypeFactory().createGeometryType(nm, DirectPosition2D .class, null, true, false, null, null, null);
+        GeometryType geoType = getFeatureTypeFactory().createGeometryType(nm, DirectPosition2D.class, null, true, false, null, null, null);
         GeometryDescriptor geoDesc = getFeatureTypeFactory().createGeometryDescriptor(geoType, nm, 1, 1, true, null);
         AttributeType type = getFeatureTypeFactory().createAttributeType(strNm, String.class, true, false, null, null, null);
         AttributeDescriptor descriptor = getFeatureTypeFactory().createAttributeDescriptor(type, strNm, 1, 1, false, "line");
@@ -118,15 +149,15 @@ public abstract class AbstractFeatureFactoryTest {
 
         //properties
         final Collection<Property> properties = new ArrayList<Property>();
-        GeometryAttribute geomAttr = getFeatureFactory().createGeometryAttribute(geomValue, geoDesc, "id-geom", null); 
+        GeometryAttribute geomAttr = getFeatureFactory().createGeometryAttribute(geomValue, geoDesc, "id-geom", null);
         properties.add(getFeatureFactory().createAttribute("line1", descriptor, null));
-        properties.add(geomAttr);        
+        properties.add(geomAttr);
 
         //feature creation
         FeatureType fType = getFeatureTypeFactory().createSimpleFeatureType(nm, descList, geoDesc, false, null, null, null);
         final Feature feature = getFeatureFactory().createFeature(properties, fType, "id_0");
         feature.setDefaultGeometryProperty(geomAttr);
-        
+
         //Tests
         assertTrue(feature instanceof SimpleFeature);
 
@@ -137,7 +168,7 @@ public abstract class AbstractFeatureFactoryTest {
         assertEquals(geomValue, feature.getDefaultGeometryProperty().getValue());
 
         try {
-            ((SimpleFeature)feature).setAttribute(strNm, null);
+            ((SimpleFeature) feature).setAttribute(strNm, null);
             if (validating) {
                 fail("Validating Factory has not checked the value insertion");
             }
