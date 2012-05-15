@@ -41,7 +41,9 @@ import javax.media.jai.NullOpImage;
 import javax.media.jai.OpImage;
 import javax.media.jai.RenderedOp;
 
+import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
@@ -135,10 +137,16 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         boolean isReprojected = false;
         final CoordinateReferenceSystem coverageCRS = dataCoverage.getCoordinateReferenceSystem();
         try{
+            final CoordinateReferenceSystem targetCRS = renderingContext.getObjectiveCRS2D();
             final CoordinateReferenceSystem candidate2D = CRSUtilities.getCRS2D(coverageCRS);
-            if(!CRS.equalsIgnoreMetadata(candidate2D,renderingContext.getObjectiveCRS2D()) ){
+            if(!CRS.equalsIgnoreMetadata(candidate2D,targetCRS) ){
+                
+                final GridGeometry2D gridgeom = new GridGeometry2D(
+                        new GeneralGridEnvelope(renderingContext.getPaintingDisplayBounds(), 2),
+                        renderingContext.getPaintingObjectiveBounds2D());
+                
                 isReprojected = true;
-                dataCoverage = (GridCoverage2D) Operations.DEFAULT.resample(dataCoverage, renderingContext.getObjectiveCRS2D());
+                dataCoverage = (GridCoverage2D) Operations.DEFAULT.resample(dataCoverage, targetCRS, gridgeom, null);
             }
         } catch (CoverageProcessingException ex) {
             monitor.exceptionOccured(ex, Level.WARNING);
