@@ -96,9 +96,9 @@ Downloading Geotoolkit.org Binaries
 
     * {{{http://download.geotoolkit.org/}Releases download area}}
 
-    * {{{http://jenkins.geomatys.com/job/Geotoolkit/}Nightly builds}}
+    * {{{http://jenkins.geotoolkit.org/job/Geotoolkit/}Nightly builds}}
 
-    * {{{http://jenkins.geomatys.com/job/Geotoolkit-pending/}Nightly builds of pending classes}}
+    * {{{http://jenkins.geotoolkit.org/job/Geotoolkit-pending/}Nightly builds of pending classes}}
 
   Serveral bundles are available, each one providing successively more functionality.
   The JAR files included in each bundle are listed below (see the

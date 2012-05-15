@@ -69,7 +69,7 @@
 
   <ciManagement>
     <system>jenkins</system>
-    <url>http://jenkins.geomatys.com/job/Geotoolkit/</url>
+    <url>http://jenkins.geotoolkit.org/job/Geotoolkit/</url>
   </ciManagement>
 
   <issueManagement>
