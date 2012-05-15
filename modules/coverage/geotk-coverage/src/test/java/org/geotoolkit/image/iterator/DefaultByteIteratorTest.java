@@ -21,7 +21,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.*;
 import javax.media.jai.TiledImage;
-import org.geotoolkit.test.Assert;
+import org.junit.Assert;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
@@ -152,6 +152,29 @@ public class DefaultByteIteratorTest {
         assertTrue(compareTab(tabTest, tabRef));
     }
 
+    /**
+     * Test if getX() getY() iterator methods are conform from raster.
+     */
+    @Test
+    public void getXYRasterTest() {
+        numBand = 3;
+        width = 16;
+        height = 16;
+        minx = 5;
+        miny = 7;
+        setRasterTest(minx, miny, width, height, numBand, null);
+        setPixelIterator(rasterTest);
+        for (int y = miny; y<miny + height; y++) {
+            for (int x = minx; x<minx + width; x++) {
+                pixIterator.next();
+                assertTrue(pixIterator.getX() == x);
+                assertTrue(pixIterator.getY() == y);
+                for (int b = 0; b<numBand-1; b++) {
+                    pixIterator.next();
+                }
+            }
+        }
+    }
 
     /**
      * Test if iterator transverse expected value in define area.
@@ -379,8 +402,6 @@ public class DefaultByteIteratorTest {
             }
         }
 
-
-
         int cULX, cULY, cBRX, cBRY, minIX = 0, minIY = 0, maxIX = 0, maxIY = 0;
         int tileMinX, tileMinY, tileMaxX, tileMaxY;
         int rastminY, rastminX, rastmaxY, rastmaxX, depX, depY, endX, endY, tabLenght;
@@ -441,7 +462,7 @@ public class DefaultByteIteratorTest {
     }
 
     /**
-     * Test if iterator transverse all raster positions with different minX and maxY coordinates.
+     * Test if iterator transverse all image renderer tiles (raster) positions with different minX and maxY coordinates.
      * Also test rewind function.
      */
     @Test
@@ -483,8 +504,38 @@ public class DefaultByteIteratorTest {
     }
 
     /**
+     * Test if getX() getY() iterator methods are conform from rendered image.
+     */
+    @Test
+    public void getXYImageTest() {
+        minx = 0;
+        miny = 0;
+        width = 100;
+        height = 50;
+        tilesWidth = 10;
+        tilesHeight = 5;
+        numBand = 3;
+        setRenderedImgTest(minx, miny, width, height, tilesWidth, tilesHeight, numBand, null);
+        setPixelIterator(renderedImage);
+        for (int ty = 0; ty<height/tilesHeight; ty++) {
+            for (int tx = 0; tx<width/tilesWidth; tx++) {
+                for (int y = 0; y<tilesHeight; y++) {
+                    for (int x = 0; x<tilesWidth; x++) {
+                        pixIterator.next();
+                        assertTrue(pixIterator.getX() == tx*tilesWidth+x+minx);
+                        assertTrue(pixIterator.getY() == ty*tilesHeight+y+miny);
+                        for (int b = 0; b<numBand-1; b++) {
+                            pixIterator.next();
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * Test if iterator transverse expected value in define area.
-     * Area is defined on upper left raster corner.
+     * Area is defined on upper left rendered image corner.
      */
     @Test
     public void rectUpperLeftTest() {
@@ -507,7 +558,7 @@ public class DefaultByteIteratorTest {
 
     /**
      * Test if iterator transverse expected value in define area.
-     * Area is defined on upper right raster corner.
+     * Area is defined on upper right rendered image corner.
      */
     @Test
     public void rectUpperRightTest() {
@@ -528,7 +579,7 @@ public class DefaultByteIteratorTest {
 
     /**
      * Test if iterator transverse expected value in define area.
-     * Area is defined on lower right raster corner.
+     * Area is defined on lower right rendered image corner.
      */
     @Test
     public void rectLowerRightTest() {
@@ -549,7 +600,7 @@ public class DefaultByteIteratorTest {
 
     /**
      * Test if iterator transverse expected value in define area.
-     * Area is defined on lower left raster corner.
+     * Area is defined on lower left rendered image corner.
      */
     @Test
     public void rectLowerLeftTest() {
@@ -616,7 +667,6 @@ public class DefaultByteIteratorTest {
     @Test
     public void unappropriateRectTest() {
         final Rectangle rect = new Rectangle(-100, -50, 5, 17);
-        boolean testTry = false;
         minx = 0;
         miny = 0;
         width = 100;
@@ -626,10 +676,10 @@ public class DefaultByteIteratorTest {
         setRenderedImgTest(minx, miny, width, height, tilesWidth, tilesHeight, 3, rect);
         try{
             setPixelIterator(renderedImage, rect);
+            Assert.fail("test should had failed");
         }catch(IllegalArgumentException e){
-            testTry = true;
+            //ok
         }
-        assertTrue(testTry);
     }
 
     /**
@@ -677,13 +727,12 @@ public class DefaultByteIteratorTest {
         numBand = 3;
         setRenderedImgTest(minx, miny, width, height, tilesWidth, tilesHeight, numBand, null);
         setPixelIterator(renderedImage);
-        boolean testTry = false;
         try{
             pixIterator.moveTo(102, 53);
+            Assert.fail("test should had failed");
         }catch(IllegalArgumentException e){
-            testTry = true;
+            //ok
         }
-        assertTrue(testTry);
     }
 
     /**
@@ -706,28 +755,28 @@ public class DefaultByteIteratorTest {
      * {@inheritDoc }.
      */
     protected void setPixelIterator(Raster raster) {
-        pixIterator = new DefaultByteIterator(raster);
+        pixIterator = PixelIteratorFactory.createDefaultIterator(raster);
     }
 
     /**
      * {@inheritDoc }.
      */
     protected void setPixelIterator(RenderedImage renderedImage) {
-        pixIterator = new DefaultByteIterator(renderedImage);
+        pixIterator = PixelIteratorFactory.createDefaultIterator(renderedImage);
     }
 
     /**
      * {@inheritDoc }.
      */
     protected void setPixelIterator(final Raster raster, final Rectangle subArea) {
-        pixIterator = new DefaultByteIterator(raster, subArea);
+        pixIterator = PixelIteratorFactory.createDefaultIterator(raster, subArea);
     }
 
     /**
      * {@inheritDoc }.
      */
     protected void setPixelIterator(RenderedImage renderedImage, Rectangle subArea) {
-        pixIterator = new DefaultByteIterator(renderedImage, subArea);
+        pixIterator = PixelIteratorFactory.createDefaultIterator(renderedImage, subArea);
     }
 
 }

@@ -18,15 +18,13 @@
 package org.geotoolkit.image.iterator;
 
 import java.awt.Rectangle;
-import java.awt.image.Raster;
-import java.awt.image.RenderedImage;
-import java.awt.image.WritableRaster;
-import java.awt.image.WritableRenderedImage;
+import java.awt.image.*;
 
 /**
  * An Iterator for traversing anyone rendered Image.
  * <p>
  * Iteration transverse each tiles(raster) from rendered image or raster source one by one in order.
+ * Rendered Image or raster source must contains Byte type data.
  * Iteration to follow tiles(raster) begin by raster bands, next, raster x coordinates,
  * and to finish raster y coordinates.
  * <p>
@@ -37,16 +35,16 @@ import java.awt.image.WritableRenderedImage;
  *
  * Code example :
  * {@code
- *                  final DefaultWritableRIIterator dWRII = new DefaultWritableRIIterator(renderedImage);
- *                  while (dWRII.next()) {
- *                      dWRII.setSample(int value);
+ *                  final DefaultWritableByteIterator dWBI = new DefaultWritableByteIterator(renderedImage);
+ *                  while (dWBI.next()) {
+ *                      dWBI.setSample(int value);
  *                  }
  * }
  *
  * @author Rémi Marechal       (Geomatys).
  * @author Martin Desruisseaux (Geomatys).
  */
-class DefaultWritableIterator extends DefaultIterator {
+public class DefaultWritableByteIterator extends DefaultByteIterator{
 
     /**
      * Raster which is followed by iterator and wherein caller write.
@@ -69,13 +67,18 @@ class DefaultWritableIterator extends DefaultIterator {
     private int prectY;
 
     /**
+     * Current writable raster data table.
+     */
+    private byte[][] currentWritableDataArray;
+
+    /**
      * Create an appropriate iterator to read and write in a raster.
      *
      * @param raster         raster which is followed by read-only iterator.
      * @param writableRaster raster which is followed by this write-only iterator and wherein value is writing.
      * @throws IllegalArgumentException if raster and writable raster dimensions are not conform.
      */
-    DefaultWritableIterator(final Raster raster, final WritableRaster writableRaster) {
+    public DefaultWritableByteIterator(final Raster raster, final WritableRaster writableRaster) {
         super(raster);
         checkRasters(raster, writableRaster);
         this.currentWritableRaster = writableRaster;
@@ -89,7 +92,7 @@ class DefaultWritableIterator extends DefaultIterator {
      * @param subArea        Rectangle which represent raster sub area, wherein move read and write iterator.
      * @throws IllegalArgumentException if raster and writable raster dimensions are not conform.
      */
-    DefaultWritableIterator(final Raster raster, final WritableRaster writableRaster, final Rectangle subArea) {
+    public DefaultWritableByteIterator(final Raster raster, final WritableRaster writableRaster, final Rectangle subArea) {
         super(raster, subArea);
         checkRasters(raster, writableRaster);
         this.currentWritableRaster = writableRaster;
@@ -103,7 +106,7 @@ class DefaultWritableIterator extends DefaultIterator {
      * @throws IllegalArgumentException if renderedImage and writable renderedImage dimensions are not conform.
      * @throws IllegalArgumentException if renderedImage and writable renderedImage tiles configurations are not conform.
      */
-    DefaultWritableIterator(final RenderedImage renderedImage, final WritableRenderedImage writableRI) {
+    public DefaultWritableByteIterator(final RenderedImage renderedImage, final WritableRenderedImage writableRI) {
         super(renderedImage);
         checkRenderedImage(renderedImage, writableRI);
         this.writableRenderedImage = writableRI;
@@ -118,7 +121,7 @@ class DefaultWritableIterator extends DefaultIterator {
      * @throws IllegalArgumentException if renderedImage and writable renderedImage dimensions are not conform.
      * @throws IllegalArgumentException if renderedImage and writable renderedImage tiles configurations are not conform.
      */
-    DefaultWritableIterator(final RenderedImage renderedImage, final WritableRenderedImage writableRI, Rectangle subArea) {
+    public DefaultWritableByteIterator(final RenderedImage renderedImage, final WritableRenderedImage writableRI, final Rectangle subArea) {
         super(renderedImage, subArea);
         checkRenderedImage(renderedImage, writableRI);
         this.writableRenderedImage = writableRI;
@@ -134,6 +137,8 @@ class DefaultWritableIterator extends DefaultIterator {
          || readableRaster.getHeight()   != writableRaster.getHeight()
          || readableRaster.getNumBands() != writableRaster.getNumBands())
          throw new IllegalArgumentException("raster and writable raster are not in same dimension"+readableRaster+writableRaster);
+        if (readableRaster.getDataBuffer().getDataType() != writableRaster.getDataBuffer().getDataType())
+            throw new IllegalArgumentException("raster and writable raster haven't got same datas type");
     }
 
     /**
@@ -146,7 +151,6 @@ class DefaultWritableIterator extends DefaultIterator {
          || renderedImage.getHeight() != writableRI.getHeight()
          || renderedImage.getSampleModel().getNumBands() != writableRI.getSampleModel().getNumBands())
          throw new IllegalArgumentException("rendered image and writable rendered image dimensions are not conform"+renderedImage+writableRI);
-
         final int wrimtx = writableRI.getMinTileX();
         final int wrimty = writableRI.getMinTileY();
         final int rimtx = writableRI.getMinTileX();
@@ -168,43 +172,12 @@ class DefaultWritableIterator extends DefaultIterator {
      * {@inheritDoc }.
      */
     @Override
-    public void rewind(){
-        currentWritableRaster = null;
-        super.rewind();
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public void setSample(int value) {
-        currentWritableRaster.setSample(x, y, band, value);
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public void setSampleFloat(float value) {
-        currentWritableRaster.setSample(x, y, band, value);
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public void setSampleDouble(double value) {
-        currentWritableRaster.setSample(x, y, band, value);
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
     protected void updateCurrentRaster(int tileX, int tileY) {
         super.updateCurrentRaster(tileX, tileY);
         if (currentWritableRaster != null) writableRenderedImage.releaseWritableTile(prectX, prectY);
         this.currentWritableRaster = writableRenderedImage.getWritableTile(tileX, tileY);
+        currentWritableRaster = writableRenderedImage.getWritableTile(tileX, tileY);
+        currentWritableDataArray = ((DataBufferByte) currentWritableRaster.getDataBuffer()).getBankData();
         prectX = tileX;
         prectY = tileY;
     }
@@ -214,6 +187,39 @@ class DefaultWritableIterator extends DefaultIterator {
      */
     @Override
     public void close() {
-         writableRenderedImage.releaseWritableTile(prectX, prectY);
+        writableRenderedImage.releaseWritableTile(prectX, prectY);
     }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public void rewind() {
+        super.rewind();
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public void setSample(int value) {
+        currentWritableDataArray[band][dataCursor] = (byte) value;
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public void setSampleDouble(double value) {
+        currentWritableDataArray[band][dataCursor] = (byte) value;
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public void setSampleFloat(float value) {
+        currentWritableDataArray[band][dataCursor] = (byte) value;
+    }
+
 }

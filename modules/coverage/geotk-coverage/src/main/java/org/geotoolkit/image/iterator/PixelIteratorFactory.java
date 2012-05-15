@@ -18,13 +18,10 @@
 package org.geotoolkit.image.iterator;
 
 import java.awt.Rectangle;
-import java.awt.image.Raster;
-import java.awt.image.RenderedImage;
-import java.awt.image.WritableRaster;
-import java.awt.image.WritableRenderedImage;
+import java.awt.image.*;
 
 /**
- * Create some appropriate iterator.
+ * Create an appropriate iterator.
  *
  * @author Rémi Marechal (Geomatys).
  */
@@ -37,9 +34,12 @@ public final class PixelIteratorFactory {
      * Create and return an adapted default raster iterator.
      *
      * @param raster   {@link Raster} will be traveled by iterator.
-     * @return adapted {@link DefaultRenderedImageIterator}.
+     * @return adapted {@link PixelIterator}.
      */
     public static PixelIterator createDefaultIterator(final Raster raster) {
+        if (raster.getDataBuffer().getDataType() == DataBuffer.TYPE_BYTE)
+            return new DefaultByteIterator(raster);
+
         return new DefaultIterator(raster);
     }
 
@@ -48,9 +48,11 @@ public final class PixelIteratorFactory {
      *
      * @param raster      {@link Raster} will be traveled by iterator from it's sub-area.
      * @param subReadArea {@link Rectangle} which define raster read area.
-     * @return adapted    {@link DefaultRenderedImageIterator}.
+     * @return adapted    {@link PixelIterator}.
      */
     public static PixelIterator createDefaultIterator(final Raster raster, final Rectangle subReadArea) {
+        if (raster.getDataBuffer().getDataType() == DataBuffer.TYPE_BYTE)
+            return new DefaultByteIterator(raster, subReadArea);
         return new DefaultIterator(raster, subReadArea);
     }
 
@@ -58,9 +60,11 @@ public final class PixelIteratorFactory {
      * Create and return an adapted default read-only rendered image iterator.
      *
      * @param renderedImage {@link RenderedImage} will be traveled by iterator.
-     * @return adapted      {@link DefaultRenderedImageIterator}.
+     * @return adapted      {@link PixelIterator}.
      */
     public static PixelIterator createDefaultIterator(final RenderedImage renderedImage) {
+        if (renderedImage.getTile(renderedImage.getMinTileX(), renderedImage.getMinTileY()).getDataBuffer().getDataType()
+             == DataBuffer.TYPE_BYTE) return new DefaultByteIterator(renderedImage);
         return new DefaultIterator(renderedImage);
     }
 
@@ -69,9 +73,11 @@ public final class PixelIteratorFactory {
      *
      * @param renderedImage {@link RenderedImage} will be traveled by iterator from it's sub-area.
      * @param subReadArea   {@link Rectangle} which define rendered image read area.
-     * @return adapted      {@link DefaultRenderedImageIterator}.
+     * @return adapted      {@link PixelIterator}.
      */
     public static PixelIterator createDefaultIterator(final RenderedImage renderedImage, final Rectangle subReadArea) {
+        if (renderedImage.getTile(renderedImage.getMinTileX(), renderedImage.getMinTileY()).getDataBuffer().getDataType()
+             == DataBuffer.TYPE_BYTE) return new DefaultByteIterator(renderedImage, subReadArea);
         return new DefaultIterator(renderedImage, subReadArea);
     }
 
@@ -80,9 +86,11 @@ public final class PixelIteratorFactory {
      *
      * @param raster          {@link Raster} will be traveled by read-only iterator.
      * @param writeableRaster {@link WritableRaster} raster wherein value is set (write).
-     * @return adapted        {@link DefaultWritableRIIterator} .
+     * @return adapted        {@link PixelIterator} .
      */
     public static PixelIterator createDefaultWriteableIterator(final Raster raster, final WritableRaster writeableRaster) {
+        if (raster.getDataBuffer().getDataType() == DataBuffer.TYPE_BYTE)
+            return new DefaultWritableByteIterator(raster, writeableRaster);
         return new DefaultWritableIterator(raster, writeableRaster);
     }
 
@@ -93,9 +101,11 @@ public final class PixelIteratorFactory {
      * @param raster          {@link Raster} will be traveled by read-only iterator.
      * @param writeableRaster {@link WritableRaster} raster wherein value is set (write).
      * @param subReadArea     {@link Rectangle} which define raster read and write area.
-     * @return adapted        {@link DefaultWritableRIIterator}.
+     * @return adapted        {@link PixelIterator}.
      */
     public static PixelIterator createDefaultWriteableIterator(final Raster raster, final WritableRaster writeableRaster, final Rectangle subReadArea) {
+        if (raster.getDataBuffer().getDataType() == DataBuffer.TYPE_BYTE)
+            return new DefaultWritableByteIterator(raster, writeableRaster, subReadArea);
         return new DefaultWritableIterator(raster, writeableRaster, subReadArea);
     }
 
@@ -104,9 +114,11 @@ public final class PixelIteratorFactory {
      *
      * @param renderedImage         {@link RenderedImage} will be traveled by iterator.
      * @param writableRenderedImage {@link WritableRenderedImage} rendered image wherein value is set (write).
-     * @return adapted              {@link DefaultWritableRIIterator}.
+     * @return adapted              {@link PixelIterator}.
      */
     public static PixelIterator createDefaultWriteableIterator(final RenderedImage renderedImage, final WritableRenderedImage writableRenderedImage) {
+        if (renderedImage.getTile(renderedImage.getMinTileX(), renderedImage.getMinTileY()).getDataBuffer().getDataType()
+             == DataBuffer.TYPE_BYTE) return new DefaultWritableByteIterator(renderedImage, writableRenderedImage);
         return new DefaultWritableIterator(renderedImage, writableRenderedImage);
     }
 
@@ -116,20 +128,27 @@ public final class PixelIteratorFactory {
      * @param renderedImage         {@link RenderedImage} will be traveled by iterator from it's sub-area.
      * @param writableRenderedImage {@link WritableRenderedImage} rendered image wherein value is set (write).
      * @param subReadArea           {@link Rectangle} which define rendered image read and write area.
-     * @return adapted              {@link DefaultWritableRIIterator}.
+     * @return adapted              {@link PixelIterator}.
      */
     public static PixelIterator createDefaultWriteableIterator(final RenderedImage renderedImage, final WritableRenderedImage writableRenderedImage, final Rectangle subReadArea) {
+        if (renderedImage.getTile(renderedImage.getMinTileX(), renderedImage.getMinTileY()).getDataBuffer().getDataType()
+             == DataBuffer.TYPE_BYTE) return new DefaultWritableByteIterator(renderedImage, writableRenderedImage, subReadArea);
         return new DefaultWritableIterator(renderedImage, writableRenderedImage, subReadArea);
     }
+
+
+    ////////////////////////////// Row Major Iterator ////////////////////////////
 
     /**
      * Create and return an adapted Row Major read-only rendered image iterator.
      * RowMajor : iterator move forward line per line one by one in downward order.
      *
      * @param renderedImage {@link RenderedImage} will be traveled by iterator.
-     * @return adapted      {@link RowMajorRenderedImageIterator}.
+     * @return adapted      {@link PixelIterator}.
      */
     public static PixelIterator createRowMajorIterator(final RenderedImage renderedImage) {
+        if (renderedImage.getTile(renderedImage.getMinTileX(), renderedImage.getMinTileY()).getDataBuffer().getDataType()
+             == DataBuffer.TYPE_BYTE) return new RowMajorByteIterator(renderedImage);
         return new RowMajorIterator(renderedImage);
     }
 
@@ -139,9 +158,11 @@ public final class PixelIteratorFactory {
      *
      * @param renderedImage {@link RenderedImage} will be traveled by iterator from it's sub-area.
      * @param subReadArea   {@link Rectangle} which define rendered image read-only area.
-     * @return adapted      {@link RowMajorRenderedImageIterator}.
+     * @return adapted      {@link PixelIterator}.
      */
     public static PixelIterator createRowMajorIterator(final RenderedImage renderedImage, final Rectangle subReadArea) {
+        if (renderedImage.getTile(renderedImage.getMinTileX(), renderedImage.getMinTileY()).getDataBuffer().getDataType()
+             == DataBuffer.TYPE_BYTE) return new RowMajorByteIterator(renderedImage, subReadArea);
         return new RowMajorIterator(renderedImage, subReadArea);
     }
 
@@ -151,9 +172,11 @@ public final class PixelIteratorFactory {
      *
      * @param renderedImage         {@link RenderedImage} will be traveled by iterator.
      * @param writableRenderedImage {@link WritableRenderedImage}  rendered image wherein value is set (write).
-     * @return adapted              {@link RowMajorWritableRIIterator}.
+     * @return adapted              {@link PixelIterator}.
      */
     public static PixelIterator createRowMajorWriteableIterator(final RenderedImage renderedImage, final WritableRenderedImage writableRenderedImage) {
+        if (renderedImage.getTile(renderedImage.getMinTileX(), renderedImage.getMinTileY()).getDataBuffer().getDataType()
+             == DataBuffer.TYPE_BYTE) return new RowMajorWritableByteIterator(renderedImage, writableRenderedImage);
         return new RowMajorWritableIterator(renderedImage, writableRenderedImage);
     }
 
@@ -164,9 +187,11 @@ public final class PixelIteratorFactory {
      * @param renderedImage         {@link RenderedImage} will be traveled by iterator from it's sub-area.
      * @param writableRenderedImage {@link WritableRenderedImage}  rendered image wherein value is set (write).
      * @param subReadArea           {@link Rectangle} which define rendered image read and write area.
-     * @return adapted              {@link RowMajorWritableRIIterator}.
+     * @return adapted              {@link PixelIterator}.
      */
     public static PixelIterator createRowMajorWriteableIterator(final RenderedImage renderedImage, final WritableRenderedImage writableRenderedImage, final Rectangle subReadArea) {
+        if (renderedImage.getTile(renderedImage.getMinTileX(), renderedImage.getMinTileY()).getDataBuffer().getDataType()
+             == DataBuffer.TYPE_BYTE) return new RowMajorWritableByteIterator(renderedImage, writableRenderedImage, subReadArea);
         return new RowMajorWritableIterator(renderedImage, writableRenderedImage, subReadArea);
     }
 }

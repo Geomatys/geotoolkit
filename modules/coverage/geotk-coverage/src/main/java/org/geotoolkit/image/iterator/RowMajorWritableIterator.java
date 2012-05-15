@@ -25,7 +25,7 @@ import java.awt.image.WritableRenderedImage;
 /**
  * An Iterator for traversing anyone rendered Image.
  * <p>
- * Iteration transverse each pixel from rendered image or raster source line per line.
+ * Iteration transverse each pixel from rendered image source line per line.
  * <p>
  *
  * Iteration follow this scheme :
