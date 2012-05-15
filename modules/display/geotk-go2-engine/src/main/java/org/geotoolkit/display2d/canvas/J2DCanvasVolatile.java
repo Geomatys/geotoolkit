@@ -84,7 +84,7 @@ public class J2DCanvasVolatile extends J2DCanvas{
      * Resize the volatile image, this will set to null the buffer.
      * A new one will be created when repaint is called.
      */
-    public synchronized void resize(final Dimension dim){
+    public synchronized void resize(Dimension dim){
         if(this.dim == null){
             //first time we affect the size
             this.dim = dim;
@@ -105,6 +105,13 @@ public class J2DCanvasVolatile extends J2DCanvas{
             return;
         }
 
+        //ensure dimension is valid
+        if(dim.width<=0 || dim.height<=0){
+            dim = new Dimension(dim);
+            if(dim.width<=0)dim.width=1;
+            if(dim.height<=0)dim.height=1;
+        }
+        
         this.dim = dim;
         setDisplayBounds(new Rectangle(dim));
         buffer0 = null;
