@@ -170,7 +170,7 @@ public abstract class AbstractFeatureFactory implements FeatureFactory {
     @Override
     public SimpleFeature createSimpleFeature(final Object[] array, final SimpleFeatureType type, final String id) {
         if (type.isAbstract()) {
-            throw new IllegalArgumentException("Cannot create an feature of an abstract FeatureType " + type.getTypeName());
+            throw new IllegalArgumentException("Cannot create a feature of an abstract FeatureType " + type.getTypeName());
         }
         return new DefaultSimpleFeature(type, FF.featureId(id), array, validating);
     }
@@ -181,7 +181,7 @@ public abstract class AbstractFeatureFactory implements FeatureFactory {
     @Override
     public SimpleFeature createSimpleFeature(final Object[] array, final AttributeDescriptor descriptor, final String id) {
         if (descriptor.getType().isAbstract()) {
-            throw new IllegalArgumentException("Cannot create an feature of an abstract FeatureType " + descriptor.getType().getName());
+            throw new IllegalArgumentException("Cannot create a feature of an abstract FeatureType " + descriptor.getType().getName());
         }
         return new DefaultSimpleFeature(descriptor, FF.featureId(id), array, validating);
     }
