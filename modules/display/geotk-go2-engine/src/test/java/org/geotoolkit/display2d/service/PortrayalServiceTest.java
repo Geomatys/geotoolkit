@@ -315,7 +315,7 @@ public class PortrayalServiceTest {
         raster.getPixel(359, 359, pixel);   assertArrayEquals(white, pixel);
         raster.getPixel(0, 359, pixel);     assertArrayEquals(white, pixel);
         raster.getPixel(180, 0, pixel);     assertArrayEquals(red, pixel);
-        raster.getPixel(180, 359, pixel);   assertArrayEquals(red, pixel);
+        raster.getPixel(180, 358, pixel);   assertArrayEquals(red, pixel);
         raster.getPixel(0, 180, pixel);     assertArrayEquals(white, pixel);
         raster.getPixel(359, 180, pixel);   assertArrayEquals(white, pixel);
 
