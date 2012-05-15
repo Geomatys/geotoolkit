@@ -1,105 +1,104 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-
+<!DOCTYPE html>
 <html>
   <head>
     <title>Installation d'un composant Geotoolkit.org pour LibreOffice/OpenOffice.org</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   </head>
   <body>
     <h1>Installation d'un composant Geotoolkit.org pour LibreOffice/OpenOffice.org</h1>
-    <p align="justify">Cette page décrit les outils nécessaires au fonctionnement de l'extension
+    <p align="justify">Cette page dÃ©crit les outils nÃ©cessaires au fonctionnement de l'extension
     Geotk pour <a href="http://www.libreoffice.org">LibreOffice</a> ou <a href="http://fr.openoffice.org">OpenOffice.org</a>,
-    ainsi que les étapes à suivre pour installer cette extension.
-    La <A HREF="index.html">page d'introduction</A> donne un aperçu des fonctionnalités apportées.
-    Le <A HREF="referencing.html">guide de l'utilisateur</A> décrit chacune de ces fonctions.<p>
+    ainsi que les Ã©tapes Ã  suivre pour installer cette extension.
+    La <A HREF="index.html">page d'introduction</A> donne un aperÃ§u des fonctionnalitÃ©s apportÃ©es.
+    Le <A HREF="referencing.html">guide de l'utilisateur</A> dÃ©crit chacune de ces fonctions.<p>
 
     <p>Contenue cette page:</p>
     <ul>
-      <li><a href="#requirements">Pré-requis</a></li>
-      <li><a href="#download">Téléchargement</a></li>
+      <li><a href="#requirements">PrÃ©-requis</a></li>
+      <li><a href="#download">TÃ©lÃ©chargement</a></li>
       <li><a href="#install">Installation</a></li>
-      <li><a href="#troubleshooting">Résolution de problèmes</a></li>
+      <li><a href="#troubleshooting">RÃ©solution de problÃ¨mes</a></li>
     </ul>
 
     <p>&nbsp</p>
-    <h2><a name="requirements">Pré-requis</a></h2>
+    <h2><a name="requirements">PrÃ©-requis</a></h2>
     <table border="1" cellpadding="6" bgcolor="ghostwhite">
     <tr bgcolor="lightblue">
       <th nowrap>Logiciel</th>
-      <th nowrap>Téléchargement</th>
+      <th nowrap>TÃ©lÃ©chargement</th>
     </tr>
     <tr>
-      <td nowrap><b>OpenOffice.org</b><br>version 3.1 ou ultérieure</td>
+      <td nowrap><b>OpenOffice.org</b><br>version 3.1 ou ultÃ©rieure</td>
       <td><A HREF="http://download.openoffice.org/">http://download.openoffice.org/</A></td>
     </tr>
     <tr>
-      <td nowrap><b>Java Runtime Environment (JRE)</b><br>version 6 ou ultérieure</td>
+      <td nowrap><b>Java Runtime Environment (JRE)</b><br>version 6 ou ultÃ©rieure</td>
       <td nowrap><A HREF="http://www.oracle.com/technetwork/java/javase/downloads/">http://www.oracle.com/technetwork/java/javase/downloads/</A></td>
     </table>
 
     <p>&nbsp</p>
-    <h2><a name="download">Téléchargement</a></h2>
+    <h2><a name="download">TÃ©lÃ©chargement</a></h2>
     <table border="1" cellpadding="6" bgcolor="ghostwhite">
     <tr bgcolor="lightblue">
       <th nowrap>Composante</th>
       <th nowrap>Nom du fichier</th>
-      <th nowrap>Téléchargement</th>
+      <th nowrap>TÃ©lÃ©chargement</th>
     </tr>
     <tr>
       <td><b><cite>Add-in</cite> Geotk pour OpenOffice</b></td>
       <td><code>geotk.oxt</code></td>
-      <td><a href="http://jenkins.geomatys.com/job/Geotoolkit/lastSuccessfulBuild/artifact/modules/analytics/geotk-openoffice/target/geotk-3.x-SNAPSHOT.oxt">Télécharger</a></td>
+      <td><a href="http://jenkins.geomatys.com/job/Geotoolkit/lastSuccessfulBuild/artifact/modules/analytics/geotk-openoffice/target/geotk-3.x-SNAPSHOT.oxt">TÃ©lÃ©charger</a></td>
     </tr>
     <tr>
       <td><b>Exemple de feuille de calcul</b></td>
       <td><code>referencing.ods</code></td>
-      <td><a href="downloads/referencing.ods">Télécharger</a></td>
+      <td><a href="downloads/referencing.ods">TÃ©lÃ©charger</a></td>
     </tr>
     </table>
 
     <p>&nbsp;</p>
     <h2><a name="install">Installation de l'extension</a></h2>
-    <p align="justify">Avant d'installer l'extension Geotk, il peut être utile de configurer
-    OpenOffice afin que celui-ci sache où se trouve le JRE du Java. Cette configuration s'effectue
-    dans le menu <cite>Outils</cite>, <cite>Options</cite>. Dans la boîte de dialogue qui s'affiche,
-    sélectionner <cite>Java</cite>. Si aucun environnement Java n'apparaît dans la liste, appuyer sur
-    le bouton <cite>Ajouter</cite> et sélectionner le répertoire où un environnement Java est installé.</p>
+    <p align="justify">Avant d'installer l'extension Geotk, il peut Ãªtre utile de configurer
+    OpenOffice afin que celui-ci sache oÃ¹ se trouve le JRE du Java. Cette configuration s'effectue
+    dans le menu <cite>Outils</cite>, <cite>Options</cite>. Dans la boÃ®te de dialogue qui s'affiche,
+    sÃ©lectionner <cite>Java</cite>. Si aucun environnement Java n'apparaÃ®t dans la liste, appuyer sur
+    le bouton <cite>Ajouter</cite> et sÃ©lectionner le rÃ©pertoire oÃ¹ un environnement Java est installÃ©.</p>
 
-    <center><img src="images/install_java.png" alt="Répertoire d'installation du Java"></center>
+    <center><img src="images/install_java.png" alt="RÃ©pertoire d'installation du Java"></center>
 
-    <p align="justify">Après avoir téléchargé le fichier <code>geotk-openoffice.oxt</code>, lancer le tableur
+    <p align="justify">AprÃ¨s avoir tÃ©lÃ©chargÃ© le fichier <code>geotk-openoffice.oxt</code>, lancer le tableur
     d'Open Office (<cite>Calc</cite>). Aller dans <cite>Outils</cite>, <cite>Gestionnaire de packages</cite>.
-    Sélectionner <cite>Mes packages</cite> dans la colonne <cite>Package</cite> et appuyer sur le bouton
+    SÃ©lectionner <cite>Mes packages</cite> dans la colonne <cite>Package</cite> et appuyer sur le bouton
     <cite>Ajouter</cite>.</p>
 
     <center><img src="images/install_geotk.png" alt="Gestionnaire de packages"></center>
 
-    <p align="justify">Aller dans le répertoire où se trouve le fichier <code>geotk-openoffice.oxt</code>
-    téléchargé et sélectionnez le, puis appuyer sur le bouton <cite>Ouvrir</cite>. Après que l'extension ait
-    été installé vous pouvez fermer la boite de dialogue <cite>Package Manager</cite>. À présent l'installation
-    de l'extension Geotk pour OpenOffice est terminée, mais il peut être nécessaire de redémarrer
-    OpenOffice.org pour qu'elle soit prise en compte. Si un icône de démarrage rapide apparaît dans la barre des
-    tâches, il doit être fermé lui aussi avant de relancer OpenOffice.org.</p>
+    <p align="justify">Aller dans le rÃ©pertoire oÃ¹ se trouve le fichier <code>geotk-openoffice.oxt</code>
+    tÃ©lÃ©chargÃ© et sÃ©lectionnez le, puis appuyer sur le bouton <cite>Ouvrir</cite>. AprÃ¨s que l'extension ait
+    Ã©tÃ© installÃ© vous pouvez fermer la boite de dialogue <cite>Package Manager</cite>. Ã€ prÃ©sent l'installation
+    de l'extension Geotk pour OpenOffice est terminÃ©e, mais il peut Ãªtre nÃ©cessaire de redÃ©marrer
+    OpenOffice.org pour qu'elle soit prise en compte. Si un icÃ´ne de dÃ©marrage rapide apparaÃ®t dans la barre des
+    tÃ¢ches, il doit Ãªtre fermÃ© lui aussi avant de relancer OpenOffice.org.</p>
 
 
     <p>&nbsp</p>
     <table align="center" width="75%" border="1" cellpadding="15" bgcolor="moccasin"><tr><td>
     <h3><center>NOTE</center></h3><p align="justify">
-    La première fois qu'une des fonctions de Geotk est exécutée dans le tableur d'OpenOffice,
-    un délai de plusieurs secondes peut s'écouler avant que ce dernier ne rende la main. Ce délai
-    est causé par la création d'une copie de la base de données EPSG dans le répertoire utilisateur
-    de la machine cliente. Cette base de données contient les définitions de plus de 3000 systèmes
-    de référence des coordonnées et est indispensable au fonctionnement de l'extension Geotk. Cette
-    opération d'écriture n'est toutefois exécutée qu'une seule fois.
+    La premiÃ¨re fois qu'une des fonctions de Geotk est exÃ©cutÃ©e dans le tableur d'OpenOffice,
+    un dÃ©lai de plusieurs secondes peut s'Ã©couler avant que ce dernier ne rende la main. Ce dÃ©lai
+    est causÃ© par la crÃ©ation d'une copie de la base de donnÃ©es EPSG dans le rÃ©pertoire utilisateur
+    de la machine cliente. Cette base de donnÃ©es contient les dÃ©finitions de plus de 3000 systÃ¨mes
+    de rÃ©fÃ©rence des coordonnÃ©es et est indispensable au fonctionnement de l'extension Geotk. Cette
+    opÃ©ration d'Ã©criture n'est toutefois exÃ©cutÃ©e qu'une seule fois.
     </p></td></tr></table>
 
 
     <p>&nbsp</p>
-    <h2><a name="troubleshooting">Résolution de problèmes</a></h2>
-    <p align="justify">Si l'exécution des formules fournit par l'extension Geotk ne produit que le
-    résultat <code>#VALEUR!</code>, alors il est possible qu'une erreur survienne lors de l'exécution.
-    Plus de détails peuvent être obtenue en ouvrant le fichier <code>jre/lib/logging.properties</code>
-    avec un quelconque éditeur de texte, et en remplaçant la ligne suivante:</p>
+    <h2><a name="troubleshooting">RÃ©solution de problÃ¨mes</a></h2>
+    <p align="justify">Si l'exÃ©cution des formules fournit par l'extension Geotk ne produit que le
+    rÃ©sultat <code>#VALEUR!</code>, alors il est possible qu'une erreur survienne lors de l'exÃ©cution.
+    Plus de dÃ©tails peuvent Ãªtre obtenue en ouvrant le fichier <code>jre/lib/logging.properties</code>
+    avec un quelconque Ã©diteur de texte, et en remplaÃ§ant la ligne suivante:</p>
 
     <blockquote><pre>handlers= java.util.logging.ConsoleHandler</pre></blockquote>
 
@@ -107,11 +106,11 @@
 
     <blockquote><pre>handlers= java.util.logging.ConsoleHandler, java.util.logging.FileHandler</pre></blockquote>
 
-    <p align="justify">Par défaut (il est possible de paramétrer plus finement), un fichier avec l'extension
-    <code>.log</code> sera créé dans le répertoire de l'utilisateur. Ce fichier au format XML contient des
-    informations sur le déroulement de l'exécution du programme. Les événements de classe
-    <code>org.geotoolkit.openoffice</code> contiennent des informations se rapportant plus spécifiquement au
-    pont Geotk-OpenOffice. La section <cite>Message</cite> contient quelques détails sur la cause de
+    <p align="justify">Par dÃ©faut (il est possible de paramÃ©trer plus finement), un fichier avec l'extension
+    <code>.log</code> sera crÃ©Ã© dans le rÃ©pertoire de l'utilisateur. Ce fichier au format XML contient des
+    informations sur le dÃ©roulement de l'exÃ©cution du programme. Les Ã©vÃ©nements de classe
+    <code>org.geotoolkit.openoffice</code> contiennent des informations se rapportant plus spÃ©cifiquement au
+    pont Geotk-OpenOffice. La section <cite>Message</cite> contient quelques dÃ©tails sur la cause de
     l'erreur.</p>
   </body>
 </html>
