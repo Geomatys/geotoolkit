@@ -29,7 +29,8 @@ import org.geotoolkit.lang.Static;
  * List some namespaces URLs used by JAXB when (un)marshalling.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.07
+ * @author Quentin Boileau (Geomatys)
+ * @version 3.20
  *
  * @since 3.00
  * @module
@@ -139,6 +140,7 @@ public final class Namespaces extends Static {
         p.put(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,                "xsi");
         p.put("http://www.w3.org/2004/02/skos/core#",                    "skos");
         p.put("http://www.w3.org/1999/02/22-rdf-syntax-ns#",              "rdf");
+        p.put("http://www.w3.org/1998/Math/MathML",                       "mml");
         p.put("http://www.opengis.net/sensorML/1.0",                     "sml1");
         p.put("http://www.opengis.net/sensorML/1.0.1",                    "sml");
         p.put("http://www.opengis.net/swe/1.0",                          "swe1");
