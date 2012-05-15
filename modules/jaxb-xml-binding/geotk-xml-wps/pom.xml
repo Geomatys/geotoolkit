@@ -73,6 +73,11 @@
       <artifactId>geotk-xml-ows</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-xml-mathml</artifactId>
+      <version>${project.version}</version>
+    </dependency>
     
     <!-- 
         Provided dependencies for converters 

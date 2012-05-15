@@ -17,23 +17,20 @@
 package org.geotoolkit.wps.converters;
 
 import com.vividsolutions.jts.geom.Geometry;
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.*;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.feature.FeatureTypeBuilder;
@@ -41,17 +38,16 @@ import org.geotoolkit.feature.type.DefaultFeatureType;
 import org.geotoolkit.feature.type.DefaultGeometryType;
 import org.geotoolkit.feature.type.DefaultPropertyDescriptor;
 import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.mathml.xml.*;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.util.converter.ConverterRegistry;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.util.converter.ObjectConverter;
 import org.geotoolkit.wps.converters.inputs.AbstractInputConverter;
-import org.geotoolkit.wps.converters.outputs.complex.AbstractComplexOutputConverter;
 import org.geotoolkit.wps.io.WPSIO;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
 import org.geotoolkit.wps.xml.v100.InputReferenceType;
-import org.geotoolkit.xml.MarshallerPool;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
 import org.opengis.feature.type.GeometryDescriptor;
@@ -317,6 +313,12 @@ public class WPSConvertersUtils {
         return converter.convert(parameters);
     }
 
+    /**
+     * Return an Input {@link InputStream stream} of a reference using POST method. 
+     * @param reference
+     * @return
+     * @throws NonconvertibleObjectException 
+     */
     private static InputStream postReferenceRequest(final InputReferenceType reference) throws NonconvertibleObjectException {
 
         String href = null;
@@ -376,6 +378,15 @@ public class WPSConvertersUtils {
         return stream;
     }
     
+    /**
+     * Reach and unMarshall the body of a request.
+     * 
+     * @param reference
+     * @return
+     * @throws UnsupportedEncodingException
+     * @throws JAXBException
+     * @throws MalformedURLException 
+     */
     private static Object getReferenceBody(final InputReferenceType reference) 
             throws UnsupportedEncodingException, JAXBException, MalformedURLException {
         
@@ -404,6 +415,13 @@ public class WPSConvertersUtils {
         return obj;
     }
     
+    /**
+     * Format an INPUT/OUTPUT format for errors messages.
+     * @param mime
+     * @param encoding
+     * @param schema
+     * @return 
+     */
     public static String dataFormatToString(final String mime, final String encoding, final String schema) {
          final StringBuilder builder = new StringBuilder();
         final String begin = "[";
@@ -425,5 +443,74 @@ public class WPSConvertersUtils {
        
         builder.append(end);
         return builder.toString();
+    }
+    
+    /**
+     * Extract the fist MathML MTable object.
+     * @param mathExp
+     * @return 
+     */
+    public static Mtable findMtable(List<Object> mathExp){
+        
+        for (Object object : mathExp) {
+            if (object instanceof JAXBElement) {
+                final JAXBElement element = (JAXBElement) object;
+                if (element.getValue() instanceof Mtable) {
+                    return (Mtable) element.getValue();
+                } else if(element.getValue() instanceof Mrow) {
+                    final Mrow mrow = (Mrow) element.getValue();
+                    return findMtable(mrow.getMathExpression());
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Extact rows of an {@link Mtable table}.
+     * @param table
+     * @return 
+     */
+    public static List<Mtr> getRows(final Mtable table) {
+        final List<Mtr> rows = new ArrayList<Mtr>();
+
+        final List<JAXBElement<?>> jaxbRows = table.getTableRowExpression();
+
+        for (JAXBElement<?> jaxbRow : jaxbRows) {
+            if (jaxbRow.getValue() instanceof Mtr && jaxbRow.getValue() != null) {
+                rows.add((Mtr) jaxbRow.getValue());
+            }
+        }
+        return rows;
+    }
+    
+    /**
+     * Extact double value of cell of a {@link Mtr row}.
+     * @param row
+     * @return 
+     */
+    public static double[] getCells (final Mtr row) {
+        final List<Double> cells = new ArrayList<Double>();
+        final List<JAXBElement<TableCellExpression>> tableCellExpressionList = row.getTableCellExpression();
+        
+        for (JAXBElement<TableCellExpression> jAXBElement : tableCellExpressionList) {
+            final TableCellExpression tableCellExpression = jAXBElement.getValue();
+            final List<Object> objects = tableCellExpression.getMathExpression();
+            
+            for (Object object : objects) {
+                final JAXBElement element = (JAXBElement) object;
+                if (element.getValue() instanceof Mn && element.getValue() != null) {
+                    final Mn mn = (Mn) element.getValue();
+                    final String value = (String) mn.getContent().get(0);
+                    cells.add(Double.valueOf(value));
+                }
+            }
+        }
+        final double[] cellsArray = new double[cells.size()];
+        for (int i = 0; i < cells.size(); i++) {
+            cellsArray[i] = cells.get(i).doubleValue();
+        }
+        
+        return cellsArray;
     }
 }

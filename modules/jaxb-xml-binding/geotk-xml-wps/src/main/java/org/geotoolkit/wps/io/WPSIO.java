@@ -218,9 +218,9 @@ public final class WPSIO {
         /**
          * AffineTransform.
          */
-        SUPPORT.add(new WPSSupport(AffineTransform.class, IOType.INPUT, FormChoice.LITERAL, StringToAffineTransformConverter.getInstance(), true));
-        SUPPORT.add(new WPSSupport(AffineTransform.class, IOType.OUTPUT, FormChoice.LITERAL, null, true));
-        SUPPORT.add(new WPSSupport(AffineTransform.class, IOType.OUTPUT, FormChoice.REFERENCE, LiteralsToReferenceConverter.getInstance(), WPSMimeType.TEXT_PLAIN.val(), Encoding.UTF8, null, true));
+        SUPPORT.add(new WPSSupport(AffineTransform.class, IOType.INPUT, FormChoice.COMPLEX, ComplexToAffineTransformConverter.getInstance(), WPSMimeType.TEXT_XML.val(), Encoding.UTF8, Schema.MATHML_3, true));
+        SUPPORT.add(new WPSSupport(AffineTransform.class, IOType.INPUT, FormChoice.REFERENCE, ReferenceToAffineTransformConverter.getInstance(), WPSMimeType.TEXT_XML.val(), Encoding.UTF8, Schema.MATHML_3, true));
+        //SUPPORT.add(new WPSSupport(AffineTransform.class, IOType.OUTPUT, FormChoice.REFERENCE, LiteralsToReferenceConverter.getInstance(), WPSMimeType.TEXT_PLAIN.val(), Encoding.UTF8, null, true));
 
         /**
          * CoordinateReferenceSystem.
@@ -621,7 +621,8 @@ public final class WPSIO {
     public static enum Schema {
 
         OGC_FEATURE_3_1_1("http://schemas.opengis.net/gml/3.1.1/base/feature.xsd"),
-        ORC_GML_3_1_1("http://schemas.opengis.net/gml/3.1.1/base/gml.xsd");
+        ORC_GML_3_1_1("http://schemas.opengis.net/gml/3.1.1/base/gml.xsd"),
+        MATHML_3("http://www.w3.org/Math/XMLSchema/mathml3/mathml3.xsd");
         public final String schema;
 
         private Schema(final String schema) {

@@ -25,6 +25,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Map;
+import java.util.UUID;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.wps.converters.inputs.AbstractInputConverter;
 
@@ -64,23 +65,13 @@ public final class ReferenceToFileConverter extends AbstractInputConverter {
         InputStream in = null;
         FileOutputStream out = null;
         try {
-            final URL u = new URL((String) source.get(IN_STREAM));
-            final URLConnection uc = u.openConnection();
-            final String contentType = uc.getContentType();
-            final int contentLength = uc.getContentLength();
 
             in = (InputStream) source.get(IN_STREAM);
-
-            // get filename from the path
-            String filename = u.getFile();
-            filename = filename.substring(filename.lastIndexOf('/') + 1);
-            int dotPos = filename.lastIndexOf(".");
-            int size = filename.length();
-            String name = filename.substring(0, dotPos);
-            String ext = filename.substring(dotPos + 1, size);
-
+            
+            final String fileName = UUID.randomUUID().toString();
+            final String suffix = "tmp";
             //Create a temp file
-            file = File.createTempFile(name, ext); //TODO create file in WPS temp directory
+            file = File.createTempFile(fileName, suffix); //TODO create file in WPS temp directory
             out = new FileOutputStream(file);
 
             //copy

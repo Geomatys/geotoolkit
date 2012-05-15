@@ -63,7 +63,7 @@ public final class ComplexToFeatureConverter extends AbstractInputConverter {
 
         final List<Object> data = (List<Object>) source.get(IN_DATA);
 
-        if (data.size() > 1) {
+        if (data != null && data.size() > 1) {
             throw new NonconvertibleObjectException("Invalid data input : Only one Feature expected.");
         }
 
