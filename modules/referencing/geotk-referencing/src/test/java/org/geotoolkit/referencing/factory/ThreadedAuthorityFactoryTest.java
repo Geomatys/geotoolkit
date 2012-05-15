@@ -119,7 +119,7 @@ public final strictfp class ThreadedAuthorityFactoryTest {
 
     /**
      * Sleeps and ensures that the sleep time did not exceeded the timeout. The sleep time could
-     * be greater if the test machine is under heavy load (for example a Hudson server), in which
+     * be greater if the test machine is under heavy load (for example a Jenkins server), in which
      * case we will cancel the test without failure.
      */
     private static void sleepWithoutExceedingTimeout(final long previousTime, final long waitTime) throws InterruptedException {

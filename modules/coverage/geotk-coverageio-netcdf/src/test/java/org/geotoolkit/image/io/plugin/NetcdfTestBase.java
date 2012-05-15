@@ -34,7 +34,7 @@ import org.geotoolkit.test.Depend;
  * Base class (when possible) for testing various NetCDF files.
  * Those tests require large test files. For more information, see:
  * <p>
- * <a href="http://hg.geotoolkit.org/geotoolkit/raw-file/tip/modules/coverage/geotk-coverage-sql/src/test/resources/Tests/README.html">About large test files</a>
+ * <a href="http://hg.geotoolkit.org/geotoolkit/files/tip/modules/coverage/geotk-coverage-sql/src/test/resources/Tests/README.html">About large test files</a>
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.20

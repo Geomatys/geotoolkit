@@ -270,6 +270,8 @@ CREATE TABLE "Series" (
     "comments"   character varying
 );
 
+ALTER SEQUENCE "seq_Series" OWNED BY "Series"."identifier";
+
 ALTER TABLE "Series" OWNER TO geoadmin;
 GRANT ALL ON TABLE "Series" TO geoadmin;
 GRANT SELECT ON TABLE "Series" TO PUBLIC;

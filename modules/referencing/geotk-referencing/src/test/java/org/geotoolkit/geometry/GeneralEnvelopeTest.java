@@ -195,6 +195,52 @@ public final strictfp class GeneralEnvelopeTest {
     }
 
     /**
+     * Tests the {@link GeneralEnvelope#reduceToDomain(boolean)} method.
+     *
+     * @since 3.20
+     */
+    private void testReduceToDomain(final boolean useDomainOfCRS) {
+        GeneralEnvelope e = create(-100, -100, +100, +100);
+        assertTrue(e.reduceToDomain(useDomainOfCRS));
+        assertEnvelopeEquals(e, -100, -90, +100, +90);
+
+        e = create(185, 10, 190, 20);
+        assertTrue(e.reduceToDomain(useDomainOfCRS));
+        assertEnvelopeEquals(e, -175, 10, -170, 20);
+
+        e = create(175, 10, 185, 20);
+        assertTrue(e.reduceToDomain(useDomainOfCRS));
+        assertEnvelopeEquals(e, 175, 10, -175, 20);
+
+        e = create(0, 10, 360, 20);
+        assertTrue(e.reduceToDomain(useDomainOfCRS));
+        assertEquals("Expect positive zero", Double.doubleToLongBits(+0.0), Double.doubleToLongBits(e.getLower(0)));
+        assertEquals("Expect negative zero", Double.doubleToLongBits(-0.0), Double.doubleToLongBits(e.getUpper(0)));
+    }
+
+    /**
+     * Tests the {@link GeneralEnvelope#reduceToDomain(boolean)} method,
+     * reducing to the Coordinate System domain.
+     *
+     * @since 3.20
+     */
+    @Test
+    public void testReduceToCSDomain() {
+        testReduceToDomain(false);
+    }
+
+    /**
+     * Tests the {@link GeneralEnvelope#reduceToDomain(boolean)} method,
+     * reducing to the Coordinate Reference System domain.
+     *
+     * @since 3.20
+     */
+    @Test
+    public void testReduceToCRSDomain() {
+        testReduceToDomain(true);
+    }
+
+    /**
      * Tests the {@link GeneralEnvelope#intersect(Envelope)} and
      * {@link Envelope2D#createIntersection(Rectangle2D)} methods.
      *

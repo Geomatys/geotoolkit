@@ -595,7 +595,7 @@ public final strictfp class CRS_WithEpsgTest extends ReferencingTestBase {
         CoordinateReferenceSystem targetCRS = CRS.decode("EPSG:4326");
         MathTransform tr;
         try {
-            tr = CRS.findMathTransform(sourceCRS, targetCRS);
+            CRS.findMathTransform(sourceCRS, targetCRS);
             fail("No conversion from EPSG:4327 to EPSG:4326 should be allowed because the units " +
                  "conversion from DMS to degrees is not linear. Note that this exception may be " +
                  "removed in a future version if we implement non-linear unit conversions.");

@@ -40,7 +40,8 @@ import org.geotoolkit.util.ArgumentChecks;
 
 /**
  * The SQL dialect used by a connection.
- * This class defines also a few driver-specific operations.
+ * This class defines also a few driver-specific operations that can not (to our knowledge)
+ * be inferred from the {@link DatabaseMetaData}.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.20
@@ -80,6 +81,13 @@ public enum Dialect {
                 // This is the expected exception.
             }
         }
+
+        /*
+         * We do not implement supportsGrantStatement(DatabaseMetaData, CreateStatementType) for now.
+         * However if we choose to do so in a future version, then this method should alway returns
+         * 'false' for schemas, and 'true' for tables only if the "derby.database.sqlAuthorization"
+         * property is set to 'TRUE'.
+         */
     },
 
     /**
@@ -90,6 +98,22 @@ public enum Dialect {
      * @since 3.10
      */
     HSQL("org.hsqldb.jdbcDriver", "jdbc:hsqldb:", new String[] {"file", "mem"}) {
+        /**
+         * HSQLDB accepts only one row per {@code INSERT} statement.
+         */
+        @Override
+        public int maxRowsPerInsert(final DatabaseMetaData metadata) {
+            return 1;
+        }
+
+        /**
+         * The HSQL database supports the {@code "COMMIT"} statement.
+         */
+        @Override
+        public boolean supportsCommitStatement(final DatabaseMetaData metadata) {
+            return true;
+        }
+
         /**
          * Shutdowns the HSQL database using the given connection if non-null, or using a new
          * connection created from the given URL otherwise. Note that is {@code setReadOnly}
@@ -144,7 +168,7 @@ public enum Dialect {
      */
     POSTGRESQL("org.postgresql.Driver", "jdbc:postgresql:", null) {
         @Override
-        public boolean isEnumSupported(final DatabaseMetaData metadata) throws SQLException {
+        public boolean supportsEnumType(final DatabaseMetaData metadata) throws SQLException {
             final int version = metadata.getDatabaseMajorVersion();
             return (version == 8) ? metadata.getDatabaseMinorVersion() >= 4 : version >= 8;
         }
@@ -152,6 +176,11 @@ public enum Dialect {
         @Override
         public boolean needsCreateLanguage(final DatabaseMetaData metadata) throws SQLException {
             return metadata.getDatabaseMajorVersion() < 9;
+        }
+
+        @Override
+        public boolean supportsGrantStatement(final DatabaseMetaData metadata, final CreateStatementType type) {
+            return true;
         }
     },
 
@@ -332,8 +361,54 @@ public enum Dialect {
      *
      * @since 3.14
      */
-    public boolean isEnumSupported(final DatabaseMetaData metadata) throws SQLException {
+    public boolean supportsEnumType(final DatabaseMetaData metadata) throws SQLException {
         return false;
+    }
+
+    /**
+     * Returns {@code true} if the database supports "{@code GRANT}" statements.
+     *
+     * @param  metadata The database metadata
+     * @param  type The type of object for which to verify {@code GRANT} support.
+     * @return {@code true} if the database supports {@code "GRANT"} statements.
+     * @throws SQLException If an error occurred while querying the metadata.
+     *
+     * @since 3.20
+     */
+    public boolean supportsGrantStatement(final DatabaseMetaData metadata, final CreateStatementType type)
+            throws SQLException
+    {
+        return false;
+    }
+
+    /**
+     * Returns {@code true} if the database supports the {@code "COMMIT"} statements.
+     *
+     * @param  metadata The database metadata
+     * @return {@code true} if the database supports {@code "COMMIT"} statement.
+     * @throws SQLException If an error occurred while querying the metadata.
+     *
+     * @since 3.20
+     */
+    public boolean supportsCommitStatement(final DatabaseMetaData metadata) throws SQLException {
+        return false;
+    }
+
+    /**
+     * Returns the maximum number of rows allowed per {@code "INSERTS"} statement.
+     * This method returns 1 if the database does not support multi-rows insertion.
+     * For other database, this method returns an arbitrary "reasonable" value, since
+     * attempts to insert too many rows with a single statement on Derby database cause
+     * a {@link StackOverflowError}.
+     *
+     * @param  metadata The database metadata
+     * @return Maximal number of rows per {@code "INSERT"} statements.
+     * @throws SQLException If an error occurred while querying the metadata.
+     *
+     * @since 3.20
+     */
+    public int maxRowsPerInsert(final DatabaseMetaData metadata) throws SQLException {
+        return 100; // Arbitrary value choosen from empirical trials.
     }
 
     /**

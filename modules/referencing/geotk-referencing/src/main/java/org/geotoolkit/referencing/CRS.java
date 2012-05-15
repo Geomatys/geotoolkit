@@ -1264,10 +1264,10 @@ compare:    for (final SingleCRS component : actualComponents) {
     // there is no advantage to reference one more class.
 
     /**
-     * Transforms the given envelope to the specified CRS. If the given envelope is null, or the
-     * {@linkplain Envelope#getCoordinateReferenceSystem envelope CRS} is null, or the given
-     * target CRS is null, or the transform {@linkplain MathTransform#isIdentity is identity},
-     * then the envelope is returned unchanged. Otherwise a new transformed envelope is returned.
+     * Transforms the given envelope to the specified CRS. If any argument is null, or if the
+     * {@linkplain Envelope#getCoordinateReferenceSystem() envelope CRS} is null or the same
+     * instance than the given target CRS, then the given envelope is returned unchanged.
+     * Otherwise a new transformed envelope is returned.
      * <p>
      * See {@link Envelopes#transform(Envelope, CoordinateReferenceSystem)} for more information.
      * This method delegates its work to the above-cited {@code Envelopes} class and is defined
@@ -1275,8 +1275,7 @@ compare:    for (final SingleCRS component : actualComponents) {
      *
      * @param  envelope The envelope to transform (may be {@code null}).
      * @param  targetCRS The target CRS (may be {@code null}).
-     * @return A new transformed envelope, or directly {@code envelope}
-     *         if no transformation was required.
+     * @return A new transformed envelope, or directly {@code envelope} if no change was required.
      * @throws TransformException If a transformation was required and failed.
      *
      * @category transform

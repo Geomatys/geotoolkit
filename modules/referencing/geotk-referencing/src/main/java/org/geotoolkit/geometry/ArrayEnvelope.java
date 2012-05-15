@@ -21,7 +21,6 @@ import java.util.Arrays;
 import java.io.Serializable;
 import java.awt.geom.Rectangle2D;
 
-import org.opengis.referencing.cs.RangeMeaning;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.Envelope;

@@ -620,7 +620,7 @@ public class MyFactory extends CachingAuthorityFactory implements CRSAuthorityFa
         created by the EPSG SQL scripts. If the EPSG database has been created by direct execution
         of those SQL scripts rather than by the Geotk
         <code><a href="../../apidocs/org/geotoolkit/referencing/factory/epsg/EpsgInstaller.html">EpsgInstaller</a></code>, then the Geotk
-        <a href="http://hg.geotoolkit.org/geotoolkit/raw-file/tip/modules/referencing/geotk-epsg/src/main/resources/org/geotoolkit/referencing/factory/epsg/Indexes.sql">Indexes.sql</a>
+        <a href="http://hg.geotoolkit.org/geotoolkit/files/tip/modules/referencing/geotk-epsg/src/main/resources/org/geotoolkit/referencing/factory/epsg/Indexes.sql">Indexes.sql</a>
         script needs to be executed after the database installation. Note that this is done
         automatically if the EPSG database has been created by the above-cited <code>EpsgInstaller</code></p>
       </answer>

@@ -14,9 +14,6 @@ Performing a Geotoolkit.org release
 
   * Maven, Ant, Java and the Java compiler shall be available on the path.
 
-  * The <<<.m2/settings.xml>>> file shall contain connection information
-    to the <<<dav:http://maven.geotoolkit.org/>>> server.
-
   * A clone of <<<http://hg.geotoolkit.org/geotoolkit>>> must be available in a directory named <<<public>>>.
 
   * The <<<{{{./setup.sh}public/build/src/site/resources/release/setup.sh}}>>> script shall have

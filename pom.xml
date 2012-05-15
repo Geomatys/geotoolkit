@@ -68,8 +68,8 @@
   </scm>
 
   <ciManagement>
-    <system>hudson</system>
-    <url>http://hudson.geomatys.com/job/Geotoolkit/</url>
+    <system>jenkins</system>
+    <url>http://jenkins.geotoolkit.org/job/Geotoolkit/</url>
   </ciManagement>
 
   <issueManagement>

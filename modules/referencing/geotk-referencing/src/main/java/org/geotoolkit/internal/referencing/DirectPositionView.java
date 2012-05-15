@@ -21,6 +21,7 @@ import java.util.Arrays;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.UnmodifiableGeometryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.geotoolkit.geometry.AbstractDirectPosition;
 
 
 /**
@@ -88,11 +89,15 @@ public final class DirectPositionView implements DirectPosition {
 
     /**
      * Returns the ordinate at the given index.
-     * <strong>This implementation does not check index validity</strong>.
+     * <strong>This implementation does not check index validity</strong>,
+     * unless assertions are enabled.
+     *
+     * @param dim The dimension of the ordinate to get fetch.
      */
     @Override
-    public double getOrdinate(final int dimension) {
-        return ordinates[dimension - offset];
+    public double getOrdinate(final int dim) {
+        assert dim >= 0 && dim < dimension : dim;
+        return ordinates[offset + dim];
     }
 
     /**
@@ -109,5 +114,13 @@ public final class DirectPositionView implements DirectPosition {
     @Override
     public DirectPosition getDirectPosition() {
         return this;
+    }
+
+    /**
+     * Returns a string representation of this direct position for debugging purpose.
+     */
+    @Override
+    public String toString() {
+        return AbstractDirectPosition.toString(this);
     }
 }

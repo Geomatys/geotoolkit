@@ -57,6 +57,7 @@ public final strictfp class EpsgInstallerTest {
     public void testCreationOnDerby() throws FactoryException, SQLException {
         final EpsgInstaller installer = new EpsgInstaller();
         installer.setDatabase("jdbc:derby:memory:EPSG;create=true");
+        boolean success = false;
         try {
             assertFalse("Database exists?", installer.exists());
             final EpsgInstaller.Result result = installer.call();
@@ -67,20 +68,28 @@ public final strictfp class EpsgInstallerTest {
              * Now test the creation of a few CRS objects from it.
              */
             final Connection connection = DriverManager.getConnection("jdbc:derby:memory:EPSG");
-            final AnsiDialectEpsgFactory factory = new AnsiDialectEpsgFactory(null, connection);
-            factory.setSchema("EPSG", true);
-            factory.useOriginalTableNames();
-            assertTrue(factory.createCoordinateReferenceSystem("4326") instanceof GeographicCRS);
-            assertTrue(factory.createCoordinateReferenceSystem("7402") instanceof CompoundCRS);
-            factory.dispose(false);
-            connection.close();
+            try {
+                final AnsiDialectEpsgFactory factory = new AnsiDialectEpsgFactory(null, connection);
+                factory.setSchema("EPSG", true);
+                factory.useOriginalTableNames();
+                assertTrue(factory.createCoordinateReferenceSystem("4326") instanceof GeographicCRS);
+                assertTrue(factory.createCoordinateReferenceSystem("7402") instanceof CompoundCRS);
+                factory.dispose(false);
+            } finally {
+                connection.close();
+            }
+            success = true;
         } finally {
             try {
                 DriverManager.getConnection("jdbc:derby:memory:EPSG;shutdown=true");
                 fail("Expected a SQLException.");
             } catch (SQLException e) {
                 // This is the expected exception.
-                assertEquals("08006", e.getSQLState());
+                if (success) {
+                    // Perform this check only in case of success, in order to avoid
+                    // hiding the failure cause if an exception occurred in the test.
+                    assertEquals(e.getLocalizedMessage(), "08006", e.getSQLState());
+                }
             }
         }
     }

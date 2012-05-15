@@ -376,7 +376,7 @@ public abstract strictfp class AnnotationsTestBase extends TestBase {
                  * annotated).
                  */
                 if (xmlElem == null) {
-                    // Note: lines with the "[WARNING]" string are highlighted by Hudson.
+                    // Note: lines with the "[WARNING]" string are highlighted by Jenkins.
                     warning("[WARNING] Missing @XmlElement annotation for ");
                     continue;
                 }

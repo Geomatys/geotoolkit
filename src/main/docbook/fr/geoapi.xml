@@ -198,11 +198,12 @@
     Les écarts par rapport aux normes sont documentés dans chaque classe et chaque méthode concernées.
     Chaque mention d’un écart est aussi recopiée dans <link xlink:href="&geoapi-javadoc;/departures.html">une page unique</link>,
     pour donner une vue d’ensemble.
+    Enfin, la correspondance entre les standards et les interfaces de GeoAPI n'étant pas toujours directe,
+    elle est explicitée par une annotation décrite dans la section suivante.
   </para>
-</section>
 
 <section>
-  <title>Conventions</title>
+  <title>Annotation <classname role="GeoAPI">@UML</classname></title>
   <para>
     Pour chaque classe, méthode et constante définie à partir d’un standard <acronym>OGC</acronym> ou <acronym>ISO</acronym>,
     GeoAPI indique sa provenance à l’aide d’annotations définies dans le paquet <literal>org.opengis.annotation</literal>.
@@ -214,20 +215,20 @@
 
   <example>
     <title>Une interface annotée avec <classname role="ProjectedCRS">@UML</classname></title>
-    <programlisting language="Java">package org.opengis.referencing.crs;
+    <programlisting language="java"><phrase role="hl-keyword">package</phrase> org.opengis.referencing.crs;
 
-/**
- * <foreignphrase>A 2D coordinate reference system used to approximate the shape of the earth on a planar surface.</foreignphrase>
- */
-<emphasis role="bold">@UML(specification = ISO_19111,
-     identifier     = "SC_ProjectedCRS")</emphasis>
-public interface ProjectedCRS extends GeneralDerivedCRS {
-    /**
-     * <foreignphrase>Returns the coordinate system, which must be Cartesian.</foreignphrase>
-     */
-<emphasis role="bold">    @UML(obligation    = MANDATORY,
+<phrase role="hl-tag">/**
+ * A 2D coordinate reference system used to approximate the shape of the earth on a planar surface.
+ */</phrase>
+<phrase role="hl-emphase">@UML(specification = ISO_19111,
+     identifier = "SC_ProjectedCRS")</phrase>
+<phrase role="hl-keyword">public interface</phrase> ProjectedCRS <phrase role="hl-keyword">extends</phrase> GeneralDerivedCRS {
+<phrase role="hl-tag">    /**
+     * Returns the coordinate system, which must be Cartesian.
+     */</phrase>
+<phrase role="hl-emphase">    @UML(obligation = MANDATORY,
          specification = ISO_19111,
-         identifier    = "coordinateSystem")</emphasis>
+         identifier = "coordinateSystem")</phrase>
     CartesianCS getCoordinateSystem();
 }</programlisting>
   </example>
@@ -239,5 +240,6 @@ public interface ProjectedCRS extends GeneralDerivedCRS {
     est obligatoire — ce qui, traduit en Java, signifie que la méthode n’est pas autorisée à retourner la valeur <literal>null</literal>.
   </para>
 
+</section>
 </section>
 </chapter>

@@ -169,8 +169,8 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
      * <p>
      * If the given scripts were downloaded from
      * <a href="http://www.epsg.org">www.epsg.org</a>, then consider adding the
-     * <a href="http://hg.geotoolkit.org/geotoolkit/raw-file/tip/modules/referencing/geotk-epsg/src/main/resources/org/geotoolkit/referencing/factory/epsg/Indexes.sql">Indexes.sql</a>
-     * file in the scripts directory, for performance raisons.
+     * <a href="http://hg.geotoolkit.org/geotoolkit/files/tip/modules/referencing/geotk-epsg/src/main/resources/org/geotoolkit/referencing/factory/epsg/Indexes.sql">Indexes.sql</a>
+     * file in the scripts directory, for performance reasons.
      * <p>
      * If a user and password were previously defined, they are left unchanged.
      *
@@ -226,9 +226,15 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
      * explicitly a {@linkplain ThreadedEpsgFactory#CONFIGURATION_FILE configuration file}
      * after the database creation.
      *
-     * @param schema The schema where to create the tables, or {@code null} if none.
+     * @param schema The schema where to create the tables, or {@code null} or an empty string if none.
      */
-    public synchronized void setSchema(final String schema) {
+    public synchronized void setSchema(String schema) {
+        if (schema != null) {
+            schema = schema.trim();
+            if (schema.isEmpty()) {
+                schema = null;
+            }
+        }
         this.schema = schema;
     }
 
@@ -417,8 +423,7 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
             log.setSourceClassName(EpsgInstaller.class.getName());
             log.setLoggerName(ThreadedEpsgFactory.LOGGER.getName());
             ThreadedEpsgFactory.LOGGER.log(log);
-            runner.setMaxRowsPerInsert(100);
-            for (String script : EpsgScriptRunner.SCRIPTS) {
+            for (String script : runner.getScriptFiles()) {
                 script += ".sql";
                 final InputStream in = EpsgScriptRunner.class.getResourceAsStream(script);
                 if (in == null) {

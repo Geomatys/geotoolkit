@@ -59,3 +59,25 @@ pre.programlisting {
   border-width: 1pt;
   padding: 9pt;
 }
+
+/*
+ * Syntax highlighting. We share some of the same names used by the net.sf.xslthl:xslthl Maven plugin.
+ * We don't use the plugin directly because we want case-by-case control on the elements, for example
+ * in order to differentiate GeoAPI classes from Geotk classes.
+ */
+span.hl-tag {
+  font-style: italic;
+  color: teal;
+}
+
+span.hl-annotation {
+  color: slateGray;
+}
+
+span.hl-keyword {
+  font-weight: bold;
+}
+
+span.hl-emphase {
+  background-color: #FFFF80;
+}
