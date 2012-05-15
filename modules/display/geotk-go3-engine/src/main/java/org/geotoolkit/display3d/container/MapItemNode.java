@@ -17,9 +17,7 @@
 package org.geotoolkit.display3d.container;
 
 import java.beans.PropertyChangeEvent;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import org.geotoolkit.display3d.canvas.A3DCanvas;
 import org.geotoolkit.display3d.primitive.A3DGraphic;
 import org.geotoolkit.map.*;
@@ -32,10 +30,12 @@ import org.geotoolkit.util.collection.CollectionChangeEvent;
  */
 public class MapItemNode<T extends MapItem> extends A3DGraphic implements ItemListener{
 
+    private static final DefaultMapLayerGraphicBuilder DEFAULT_BUILDER = new DefaultMapLayerGraphicBuilder();
+    
     private final ItemListener.Weak listener = new ItemListener.Weak(this);
     
     //childs
-    private final Map<MapItem, A3DGraphic> itemGraphics = new HashMap<MapItem, A3DGraphic>();    
+    private final Map<MapItem, Collection<A3DGraphic>> itemGraphics = new HashMap<MapItem, Collection<A3DGraphic>>();    
     private final T mapitem;
 
     public MapItemNode(final A3DCanvas canvas, final T mapitem) {
@@ -58,24 +58,24 @@ public class MapItemNode<T extends MapItem> extends A3DGraphic implements ItemLi
         }
     }
     
-    protected A3DGraphic parseChild(final MapItem child){
+    protected void parseChild(final MapItem child){
 
-        final A3DGraphic graphic;
-        if (child instanceof FeatureMapLayer){
-            graphic = new FeatureLayerNode(canvas, (FeatureMapLayer)child);
-        }else if (child instanceof CollectionMapLayer){
-            graphic = new CollectionLayerNode(canvas, (CollectionMapLayer)child);
-        }else if (child instanceof CoverageMapLayer){
-            graphic = new CoverageLayerNode(canvas, (CoverageMapLayer)child);
-        }else if(child instanceof MapLayer){
-            graphic = new MapLayerNode(canvas, (MapLayer)child);
+        final Collection<A3DGraphic> graphics;
+        if(child instanceof MapLayer){
+            //check if the layer has its own graphic builder
+            final MapLayer layer = (MapLayer) child;
+            GraphicBuilder gb = layer.getGraphicBuilder(A3DGraphic.class);
+            if(gb == null){
+                gb = DEFAULT_BUILDER;
+            }
+            graphics = gb.createGraphics(layer, canvas);
+            
         }else{
-            graphic = new MapItemNode(canvas, child);
+            graphics = Collections.singleton((A3DGraphic)new MapItemNode(canvas,child));
         }
-
-        getChildren().add(graphic);
-        itemGraphics.put(child, graphic);
-        return graphic;
+        
+        getChildren().addAll(graphics);
+        itemGraphics.put(child, graphics);
     }
     
     @Override
@@ -88,9 +88,11 @@ public class MapItemNode<T extends MapItem> extends A3DGraphic implements ItemLi
             }
         }else if(CollectionChangeEvent.ITEM_REMOVED == type){
             for(final MapItem child : event.getItems()){
-                final A3DGraphic gra = itemGraphics.get(child);
+                final Collection<A3DGraphic> gra = itemGraphics.get(child);
                 if(gra != null){
-                    gra.dispose();
+                    for(A3DGraphic g : gra){
+                        g.dispose();
+                    }
                 }
                 //remove the graphic
                 itemGraphics.remove(child);

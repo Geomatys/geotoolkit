@@ -27,6 +27,7 @@ import com.ardor3d.math.Vector3;
 import com.ardor3d.renderer.Camera;
 import com.ardor3d.renderer.Renderer;
 import com.ardor3d.renderer.queue.RenderBucketType;
+import com.ardor3d.renderer.state.CullState;
 import com.ardor3d.renderer.state.LightState;
 import com.ardor3d.renderer.state.WireframeState;
 import com.ardor3d.renderer.state.ZBufferState;
@@ -96,16 +97,17 @@ public final class A3DContainer implements Scene {
         root.setRenderState(wireframeState);
         root.getSceneHints().setRenderBucketType(RenderBucketType.Opaque);
 
-        // ---------------------------------------------------------------------
-//        final CullState cullFrontFace = new CullState();
-//        cullFrontFace.setEnabled(true);
-//        cullFrontFace.setCullFace(CullState.Face.None);
-//        root.setRenderState(cullFrontFace);
-//        root.setRenderState(buildFog());
+        //--------------------------------------------------------------------
+        final CullState cullFrontFace = new CullState();
+        cullFrontFace.setEnabled(true);
+        cullFrontFace.setCullFace(CullState.Face.Back);
+        root.setRenderState(cullFrontFace);
+        //root.setRenderState(buildFog());
 
         // Skybox --------------------------------------------------------------
         root.attachChild(skybox);
         root.attachChild(scene);
+        
     }
 
     /**
@@ -134,7 +136,7 @@ public final class A3DContainer implements Scene {
      */
     public void setContext(final MapContext context) {
         this.context = context;
-
+        
         if(contextNode != null){
             contextNode.removeFromParent();
         }

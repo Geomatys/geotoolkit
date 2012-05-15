@@ -31,9 +31,12 @@ import com.ardor3d.input.awt.AwtKeyboardWrapper;
 import com.ardor3d.input.awt.AwtMouseManager;
 import com.ardor3d.input.awt.AwtMouseWrapper;
 import com.ardor3d.input.logical.*;
+import com.ardor3d.light.PointLight;
 import com.ardor3d.math.ColorRGBA;
+import com.ardor3d.math.Vector3;
 import com.ardor3d.renderer.IndexMode;
 import com.ardor3d.renderer.state.CullState;
+import com.ardor3d.renderer.state.LightState;
 import com.ardor3d.scenegraph.Line;
 import com.ardor3d.scenegraph.Node;
 import com.ardor3d.scenegraph.hint.LightCombineMode;
@@ -297,7 +300,7 @@ public class A3DCanvas extends AbstractCanvas{
             }
 
             basePlan = new Node("plan");
-            basePlan.getSceneHints().setLightCombineMode(LightCombineMode.Off);
+            //basePlan.getSceneHints().setLightCombineMode(LightCombineMode.Off);
 
             try{
                 final MathTransform wgsToObj = CRS.findMathTransform(DefaultGeographicCRS.WGS84_3D, getObjectiveCRS());
@@ -356,6 +359,21 @@ public class A3DCanvas extends AbstractCanvas{
             }catch(Exception ex){
                 ex.printStackTrace();
             }
+            
+//            /** Set up a basic, default light. */
+//            PointLight light = new PointLight();
+//            light.setDiffuse(new ColorRGBA(0.75f, 0.75f, 0.75f, 0.75f));
+//            light.setAmbient(new ColorRGBA(0.5f, 0.5f, 0.5f, 1.0f));
+//            light.setLocation(new Vector3(100, 100, 100));
+//            light.setEnabled(true);
+//
+//            /** Attach the light to a lightState and the lightState to rootNode. */
+//            LightState _lightState = new LightState();
+//            _lightState.setEnabled(true);
+//            _lightState.attach(light);
+//            getA3DContainer().getRoot().setRenderState(_lightState);
+            
+            
             
             return null;
         }

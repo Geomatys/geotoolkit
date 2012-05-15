@@ -25,12 +25,12 @@ import org.opengis.display.primitive.Graphic;
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
-public abstract class A3DGraphic extends Node implements Graphic{
+public class A3DGraphic extends Node implements Graphic{
 
     protected final A3DCanvas canvas;
     protected boolean visible = true;
 
-    protected A3DGraphic(final A3DCanvas canvas){
+    public A3DGraphic(final A3DCanvas canvas){
         this.canvas = canvas;
     }
 
