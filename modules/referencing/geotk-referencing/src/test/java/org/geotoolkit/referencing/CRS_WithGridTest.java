@@ -17,10 +17,12 @@
  */
 package org.geotoolkit.referencing;
 
+import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.internal.io.Installation;
+import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.DirectPosition2D;
 
 import org.geotoolkit.test.Depend;
@@ -36,7 +38,7 @@ import static org.geotoolkit.referencing.Commons.*;
  * Tests the combination of EPSG database with grids like NADCON.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.20
  *
  * @since 3.00
  */
@@ -52,9 +54,9 @@ public final strictfp class CRS_WithGridTest extends ReferencingTestBase {
         assumeTrue(Installation.NADCON.directory(true).isDirectory());
         assumeTrue(isEpsgFactoryAvailable());
 
-        MathTransform tr;
-        DirectPosition2D sourcePt, targetPt;
-        CoordinateReferenceSystem sourceCRS, targetCRS;
+        final MathTransform tr;
+        final DirectPosition2D sourcePt, targetPt;
+        final CoordinateReferenceSystem sourceCRS, targetCRS;
 
         sourceCRS = CRS.decode("EPSG:26769"); // NAD27 Idaho, in feets.
         targetCRS = CRS.decode("EPSG:26969"); // NAD83 Idaho, in metres.
@@ -65,5 +67,31 @@ public final strictfp class CRS_WithGridTest extends ReferencingTestBase {
 
         assertEquals(356671.38, targetPt.x, 1E-2);
         assertEquals( 12183.11, targetPt.y, 1E-2);
+    }
+
+    /**
+     * Tests a transform from "<cite>Réseau Géodésique Français 1993</cite>" to
+     * "<cite>Nouvelle Triangulation Française (Paris)</cite>". This transform uses
+     * the inverse of a datum shift grid.
+     *
+     * @throws Exception Should not happen.
+     *
+     * @since 3.20
+     */
+    @Test
+    public void testNTF() throws Exception {
+        assumeTrue(Installation.NADCON.directory(true).isDirectory());
+        assumeTrue(isEpsgFactoryAvailable());
+
+        final CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:2154");  // Réseau Géodésique Français 1993
+        final CoordinateReferenceSystem targetCRS = CRS.decode("EPSG:27582"); // Nouvelle Triangulation Française (Paris)
+        final GeneralEnvelope source = new GeneralEnvelope("BOX2D(-2000000 4000000, 2000000 4000000)");
+        source.setCoordinateReferenceSystem(sourceCRS);
+        final Envelope target = CRS.transform(source, targetCRS);
+
+        assertEquals(-2033792.23, target.getMinimum(0), 1E-2);
+        assertEquals( 1976167.67, target.getMaximum(0), 1E-2);
+        assertEquals( -458155.31, target.getMinimum(1), 1E-2);
+        assertEquals( -426020.22, target.getMaximum(1), 1E-2);
     }
 }
