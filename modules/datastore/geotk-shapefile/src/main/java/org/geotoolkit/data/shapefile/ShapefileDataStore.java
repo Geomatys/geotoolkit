@@ -312,7 +312,7 @@ public class ShapefileDataStore extends AbstractDataStore{
         final CoordinateReferenceSystem reproject = query.getCoordinateSystemReproject();
         final boolean read3D = (reproject==null || (reproject != null && CRS.getVerticalCRS(reproject)!=null));
 
-        if (query.getSortBy() != null) {
+        if (!QueryBuilder.isNaturalSortBy(query.getSortBy())) {
             throw new DataStoreException("The ShapeFileDatastore does not support sortby query");
         }
         // gather attributes needed by the query tool, they will be used by the

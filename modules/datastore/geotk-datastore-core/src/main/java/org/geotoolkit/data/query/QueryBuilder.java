@@ -300,4 +300,23 @@ public final class QueryBuilder {
         return builder.buildQuery();
     }
 
+    /**
+     * 
+     * @param sortBy array or null
+     * @return true is the given array of sort by operand is equal to natural sort by
+     */
+    public static boolean isNaturalSortBy(SortBy[] sortBy){
+        if(sortBy == null || sortBy.length == 0){
+            return true;
+        }
+        
+        for(SortBy sb : sortBy){
+            if(sb != SortBy.NATURAL_ORDER){
+                return false;
+            }
+        }
+        
+        return true;
+    }
+    
 }

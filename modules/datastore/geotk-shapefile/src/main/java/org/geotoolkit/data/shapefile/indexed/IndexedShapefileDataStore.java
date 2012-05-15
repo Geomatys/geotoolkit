@@ -197,7 +197,6 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
         final SimpleFeatureType originalSchema = getFeatureType();
         final Name              queryTypeName = query.getTypeName();
         final Name[]            queryPropertyNames = query.getPropertyNames();
-        final SortBy[]          querySortBy = query.getSortBy();
         final Hints             queryHints = query.getHints();
         final double[]          queryRes = query.getResolution();
         Filter                  queryFilter = query.getFilter();
@@ -209,7 +208,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
         if (queryFilter == Filter.EXCLUDE){
             return GenericEmptyFeatureIterator.createReader(originalSchema);
         }
-        if (querySortBy != null && querySortBy.length > 0) {
+        if (!QueryBuilder.isNaturalSortBy(query.getSortBy())) {
             throw new DataStoreException("The ShapeFileDatastore does not support sortby query");
         }
 
