@@ -954,6 +954,7 @@ public class EditionHelper {
                 if(reprojectToDataCRS){
                     geom = JTS.transform(geo, 
                             CRS.findMathTransform(map.getCanvas().getObjectiveCRS(), dataCrs,true));
+                    JTS.setCRS(geom, dataCrs);
                 }else{
                     geom = geo;
                 }
