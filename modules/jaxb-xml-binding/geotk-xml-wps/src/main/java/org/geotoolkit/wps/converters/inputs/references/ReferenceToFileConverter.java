@@ -16,25 +16,21 @@
  */
 package org.geotoolkit.wps.converters.inputs.references;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.Map;
 import java.util.UUID;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
-import org.geotoolkit.wps.converters.inputs.AbstractInputConverter;
+import org.geotoolkit.wps.xml.v100.ReferenceType;
 
 /**
  * Implementation of ObjectConverter to convert a reference into a File.
  *
  * @author Quentin Boileau (Geomatys).
  */
-public final class ReferenceToFileConverter extends AbstractInputConverter {
+public final class ReferenceToFileConverter extends AbstractReferenceInputConverter {
 
     private static ReferenceToFileConverter INSTANCE;
 
@@ -59,14 +55,14 @@ public final class ReferenceToFileConverter extends AbstractInputConverter {
      * @return File.
      */
     @Override
-    public File convert(final Map<String, Object> source) throws NonconvertibleObjectException {
+    public File convert(final ReferenceType source) throws NonconvertibleObjectException {
 
         File file;
         InputStream in = null;
         FileOutputStream out = null;
         try {
 
-            in = (InputStream) source.get(IN_STREAM);
+            in = getInputStreamFromReference(source);
             
             final String fileName = UUID.randomUUID().toString();
             final String suffix = "tmp";

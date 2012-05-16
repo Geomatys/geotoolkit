@@ -19,22 +19,22 @@ package org.geotoolkit.wps.converters.inputs.references;
 import java.awt.geom.AffineTransform;
 import java.io.InputStream;
 import java.util.List;
-import java.util.Map;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import org.geotoolkit.mathml.xml.Mtable;
 import org.geotoolkit.mathml.xml.Mtr;
+import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
-import org.geotoolkit.wps.converters.inputs.AbstractInputConverter;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
+import org.geotoolkit.wps.xml.v100.ReferenceType;
 
 /**
  *
  * @author Quentin Boileau (Geomatys).
  */
-public class ReferenceToAffineTransformConverter extends AbstractInputConverter {
+public class ReferenceToAffineTransformConverter extends AbstractReferenceInputConverter {
 
     private static ReferenceToAffineTransformConverter INSTANCE;
 
@@ -54,9 +54,10 @@ public class ReferenceToAffineTransformConverter extends AbstractInputConverter 
     }
 
     @Override
-    public Object convert(Map<String, Object> source) throws NonconvertibleObjectException {
-         final String mime = (String) source.get(IN_MIME) != null ? (String) source.get(IN_MIME) : WPSMimeType.TEXT_XML.val();
-        final InputStream stream = (InputStream) source.get(IN_STREAM);
+    public Object convert(final ReferenceType source) throws NonconvertibleObjectException {
+        
+        final String mime = source.getMimeType() != null ? source.getMimeType() : WPSMimeType.TEXT_XML.val();
+        final InputStream stream = getInputStreamFromReference(source);
 
         if (mime.equalsIgnoreCase(WPSMimeType.TEXT_XML.val()) || mime.equalsIgnoreCase(WPSMimeType.APP_GML.val())
                 || mime.equalsIgnoreCase(WPSMimeType.TEXT_GML.val())) {
@@ -81,6 +82,9 @@ public class ReferenceToAffineTransformConverter extends AbstractInputConverter 
     }
     
     private AffineTransform bindToAffineTransform(final Object object) throws NonconvertibleObjectException {
+        
+        ArgumentChecks.ensureNonNull("object", object);
+        
         AffineTransform affineTransform = null;
         if (object instanceof org.geotoolkit.mathml.xml.Math) {
             final org.geotoolkit.mathml.xml.Math math = (org.geotoolkit.mathml.xml.Math) object;

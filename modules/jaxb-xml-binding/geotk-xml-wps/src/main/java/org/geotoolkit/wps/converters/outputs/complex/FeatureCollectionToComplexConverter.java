@@ -68,7 +68,7 @@ public final class FeatureCollectionToComplexConverter extends AbstractComplexOu
         if (data == null) {
             throw new NonconvertibleObjectException("The output data should be defined.");
         }
-        if (!(source.get(OUT_DATA) instanceof FeatureCollection)) {
+        if (!(data instanceof FeatureCollection)) {
             throw new NonconvertibleObjectException("The requested output data is not an instance of FeatureCollection.");
         }
         

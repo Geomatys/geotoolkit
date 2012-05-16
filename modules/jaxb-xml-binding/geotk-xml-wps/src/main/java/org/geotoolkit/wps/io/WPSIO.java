@@ -199,6 +199,14 @@ public final class WPSIO {
             }
         }*/
         
+         /**
+         * AffineTransform.
+         */
+        SUPPORT.add(new WPSSupport(AffineTransform.class, IOType.INPUT, FormChoice.COMPLEX, ComplexToAffineTransformConverter.getInstance(), WPSMimeType.TEXT_XML.val(), Encoding.UTF8, Schema.MATHML_3, true));
+        SUPPORT.add(new WPSSupport(AffineTransform.class, IOType.INPUT, FormChoice.REFERENCE, ReferenceToAffineTransformConverter.getInstance(), WPSMimeType.TEXT_XML.val(), Encoding.UTF8, Schema.MATHML_3, true));
+        //SUPPORT.add(new WPSSupport(AffineTransform.class, IOType.OUTPUT, FormChoice.REFERENCE, LiteralsToReferenceConverter.getInstance(), WPSMimeType.TEXT_PLAIN.val(), Encoding.UTF8, null, true));
+        
+        
         SUPPORT.add(new WPSSupport(Number.class, IOType.OUTPUT, FormChoice.REFERENCE, LiteralsToReferenceConverter.getInstance(), WPSMimeType.TEXT_PLAIN.val(), Encoding.UTF8, null, true));
         SUPPORT.add(new WPSSupport(String.class, IOType.OUTPUT, FormChoice.REFERENCE, LiteralsToReferenceConverter.getInstance(), WPSMimeType.TEXT_PLAIN.val(), Encoding.UTF8, null, true));
         SUPPORT.add(new WPSSupport(Double.class, IOType.OUTPUT, FormChoice.REFERENCE, LiteralsToReferenceConverter.getInstance(), WPSMimeType.TEXT_PLAIN.val(), Encoding.UTF8, null, true));
@@ -214,13 +222,6 @@ public final class WPSIO {
         SUPPORT.add(new WPSSupport(Unit.class, IOType.INPUT, FormChoice.LITERAL, StringToUnitConverter.getInstance(), true));
         SUPPORT.add(new WPSSupport(Unit.class, IOType.OUTPUT, FormChoice.LITERAL, null, true));
         SUPPORT.add(new WPSSupport(Unit.class, IOType.OUTPUT, FormChoice.REFERENCE, LiteralsToReferenceConverter.getInstance(), WPSMimeType.TEXT_PLAIN.val(), Encoding.UTF8, null, true));
-
-        /**
-         * AffineTransform.
-         */
-        SUPPORT.add(new WPSSupport(AffineTransform.class, IOType.INPUT, FormChoice.COMPLEX, ComplexToAffineTransformConverter.getInstance(), WPSMimeType.TEXT_XML.val(), Encoding.UTF8, Schema.MATHML_3, true));
-        SUPPORT.add(new WPSSupport(AffineTransform.class, IOType.INPUT, FormChoice.REFERENCE, ReferenceToAffineTransformConverter.getInstance(), WPSMimeType.TEXT_XML.val(), Encoding.UTF8, Schema.MATHML_3, true));
-        //SUPPORT.add(new WPSSupport(AffineTransform.class, IOType.OUTPUT, FormChoice.REFERENCE, LiteralsToReferenceConverter.getInstance(), WPSMimeType.TEXT_PLAIN.val(), Encoding.UTF8, null, true));
 
         /**
          * CoordinateReferenceSystem.
@@ -318,6 +319,18 @@ public final class WPSIO {
         return supports;
     }
 
+    public static WPSSupport getDefaultSupport(final Class clazz, final IOType ioType, final FormChoice dataType) {
+        final List<WPSSupport> supports = getSupports(clazz, ioType, dataType);
+        if (!supports.isEmpty()) {
+            for (WPSSupport wPSSupport : supports) {
+                if (wPSSupport.isDefaultIO()) {
+                    return wPSSupport;
+                }
+            }
+        } 
+        return null;
+    }
+    
     /**
      * Check if a class is supported in INPUT.
      *

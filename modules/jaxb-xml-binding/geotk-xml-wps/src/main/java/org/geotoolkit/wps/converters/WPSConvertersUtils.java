@@ -17,20 +17,9 @@
 package org.geotoolkit.wps.converters;
 
 import com.vividsolutions.jts.geom.Geometry;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLDecoder;
 import java.util.List;
 import java.util.*;
 import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.feature.FeatureTypeBuilder;
@@ -39,15 +28,18 @@ import org.geotoolkit.feature.type.DefaultGeometryType;
 import org.geotoolkit.feature.type.DefaultPropertyDescriptor;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.mathml.xml.*;
+import org.geotoolkit.ows.xml.v110.DomainMetadataType;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.util.converter.ConverterRegistry;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.util.converter.ObjectConverter;
-import org.geotoolkit.wps.converters.inputs.AbstractInputConverter;
+import org.geotoolkit.wps.converters.outputs.complex.AbstractComplexOutputConverter;
+import org.geotoolkit.wps.converters.outputs.references.AbstractReferenceOutputConverter;
 import org.geotoolkit.wps.io.WPSIO;
-import org.geotoolkit.wps.xml.WPSMarshallerPool;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
 import org.geotoolkit.wps.xml.v100.InputReferenceType;
+import org.geotoolkit.wps.xml.v100.OutputReferenceType;
+import org.geotoolkit.wps.xml.v100.ReferenceType;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
 import org.opengis.feature.type.GeometryDescriptor;
@@ -181,15 +173,11 @@ public class WPSConvertersUtils {
      * Get an convert data from a reference for an expected binding
      *
      * @param expectedClass
-     * @param inputObject
-     * @param schema
-     * @param mime
-     * @param encoding
-     * @param inputID
+     * @param complex
      * @return
      * @throws CstlServiceException
      */
-    public static Object convertFromComplex(final Class expectedClass, final ComplexDataType complex) throws NonconvertibleObjectException {
+    public static Object convertFromComplex(final ComplexDataType complex, final Class expectedClass) throws NonconvertibleObjectException {
 
         final String mime = complex.getMimeType();
         final String encoding = complex.getEncoding();
@@ -208,101 +196,62 @@ public class WPSConvertersUtils {
             }
         }
         
-        final Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put(AbstractInputConverter.IN_DATA, content);
-        parameters.put(AbstractInputConverter.IN_MIME, mime);
-        parameters.put(AbstractInputConverter.IN_SCHEMA, schema);
-        parameters.put(AbstractInputConverter.IN_ENCODING, encoding);
-
         final ObjectConverter converter = WPSIO.getConverter(expectedClass, WPSIO.IOType.INPUT, WPSIO.FormChoice.COMPLEX, mime, encoding, schema);
 
         if (converter == null) {
             throw new NonconvertibleObjectException("Input complex not supported, no converter found.");
         }
 
-        return converter.convert(parameters);
+        return converter.convert(complex);
     }
 
     /**
-     * Get an convert data from a reference for an expected binding
-     *
-     * @param expectedClass
-     * @param inputObject
-     * @param schema
+     * Get an convert an object int a {@link ComplexDataType complex}.
+     * 
+     * @param object
      * @param mime
      * @param encoding
-     * @param inputID
+     * @param schema
+     * @param storageDirectory
+     * @param storageURL
      * @return
-     * @throws CstlServiceException
+     * @throws NonconvertibleObjectException 
      */
-//    public static ComplexDataType convertToComplex(final Object object, final ComplexDataType complex, final Class clazz)
-//            throws NonconvertibleObjectException {
-//        
-//        ComplexDataType complex = null;
-//        
-//        final Map<String, Object> parameters = new HashMap<String, Object>();
-//        parameters.put(AbstractComplexOutputConverter.OUT_DATA, outputValue);
-//        parameters.put(AbstractComplexOutputConverter.OUT_TMP_DIR_PATH, WPSUtils.getTempDirectoryPath());
-//        parameters.put(AbstractComplexOutputConverter.OUT_TMP_DIR_URL, WPSUtils.getTempDirectoryURL(serviceURL));
-//        parameters.put(AbstractComplexOutputConverter.OUT_ENCODING, requestedOutput.getEncoding());
-//        parameters.put(AbstractComplexOutputConverter.OUT_MIME, requestedOutput.getMimeType());
-//        parameters.put(AbstractComplexOutputConverter.OUT_SCHEMA, requestedOutput.getSchema());
-//
-//        final ObjectConverter converter = WPSIO.getConverter(outClass, WPSIO.IOType.OUTPUT, WPSIO.FormChoice.COMPLEX,
-//                requestedOutput.getMimeType(), requestedOutput.getEncoding(), requestedOutput.getSchema());
-//        if (converter == null) {
-//            throw new CstlServiceException("Output complex not supported, no converter found.",
-//                    OPERATION_NOT_SUPPORTED, outputIdentifier);
-//        }
-//
-//         data.setComplexData((ComplexDataType) converter.convert(parameters));
-//    }
+    public static ComplexDataType convertToComplex(final Object object, final String mime, final String encoding, final String schema,
+            final String storageDirectory, final String storageURL)
+            throws NonconvertibleObjectException {
+        
+        final Map<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put(AbstractComplexOutputConverter.OUT_DATA, object);
+        parameters.put(AbstractComplexOutputConverter.OUT_TMP_DIR_PATH, storageDirectory);
+        parameters.put(AbstractComplexOutputConverter.OUT_TMP_DIR_URL, storageURL);
+        parameters.put(AbstractComplexOutputConverter.OUT_ENCODING, encoding);
+        parameters.put(AbstractComplexOutputConverter.OUT_MIME, mime);
+        parameters.put(AbstractComplexOutputConverter.OUT_SCHEMA, schema);
+
+        
+        final ObjectConverter converter = WPSIO.getConverter(object.getClass(), WPSIO.IOType.OUTPUT, WPSIO.FormChoice.COMPLEX,
+                mime, encoding, schema);
+        if (converter == null) {
+            throw new NonconvertibleObjectException("Output complex not supported, no converter found.");
+        }
+
+        return (ComplexDataType) converter.convert(parameters);
+    }
+    
     /**
      * Get an convert data from a reference for an expected binding
      *
-     * @param href
-     * @param method
-     * @param mime
-     * @param encoding
-     * @param schema
+     * @param reference
      * @param expectedClass
      * @return an object
      * @throws NonconvertibleObjectException if something went wrong
      */
-    public static Object convertFromReference(final InputReferenceType reference, final Class expectedClass) throws NonconvertibleObjectException {
+    public static Object convertFromReference(final ReferenceType reference, final Class expectedClass) throws NonconvertibleObjectException {
 
         final String mime = reference.getMimeType();
         final String encoding = reference.getEncoding();
         final String schema = reference.getSchema();
-        final String method = reference.getMethod() != null ? reference.getMethod() : "GET";
-
-        InputStream stream = null;
-
-        if (method.equalsIgnoreCase("GET")) {
-
-            String href = reference.getHref();
-
-            try {
-                href = URLDecoder.decode(reference.getHref(), "UTF-8");
-                final URL url = new URL(href);
-                stream = url.openStream();
-
-            } catch (UnsupportedEncodingException ex) {
-                throw new NonconvertibleObjectException("Invalid reference href.", ex);
-            } catch (IOException ex) {
-                throw new NonconvertibleObjectException("Can't reach the reference data.", ex);
-            }
-
-        } else if (method.equalsIgnoreCase("POST")) {
-
-            stream = postReferenceRequest(reference);
-        }
-
-        final Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put(AbstractInputConverter.IN_STREAM, stream);
-        parameters.put(AbstractInputConverter.IN_MIME, mime);
-        parameters.put(AbstractInputConverter.IN_SCHEMA, schema);
-        parameters.put(AbstractInputConverter.IN_ENCODING, encoding);
 
         final ObjectConverter converter = WPSIO.getConverter(expectedClass, WPSIO.IOType.INPUT, WPSIO.FormChoice.REFERENCE, mime, encoding, schema);
 
@@ -310,109 +259,83 @@ public class WPSConvertersUtils {
             throw new NonconvertibleObjectException("Input reference not supported, no converter found.");
         }
 
-        return converter.convert(parameters);
+        return converter.convert(reference);
     }
 
     /**
-     * Return an Input {@link InputStream stream} of a reference using POST method. 
-     * @param reference
-     * @return
+     * Get an convert an object int a {@link ReferenceType reference}.
+     * 
+     * @param object
+     * @param mime
+     * @param encoding
+     * @param schema
+     * @param storageDirectory
+     * @param storageURL
+     * @param iotype the io type requested (INPUT/OUTPUT)
+     * @return an {@link InputReferenceType input reference} if ioType is set to INPUT, or an {@link OutputReferenceType output reference} otherwise.
      * @throws NonconvertibleObjectException 
      */
-    private static InputStream postReferenceRequest(final InputReferenceType reference) throws NonconvertibleObjectException {
+    public static ReferenceType convertToReference(final Object object, final String mime, final String encoding, final String schema,
+            final String storageDirectory, final String storageURL, final WPSIO.IOType iotype) throws NonconvertibleObjectException {
+        
+        final Map<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put(AbstractReferenceOutputConverter.OUT_DATA, object);
+        parameters.put(AbstractReferenceOutputConverter.OUT_TMP_DIR_PATH, storageDirectory);
+        parameters.put(AbstractReferenceOutputConverter.OUT_TMP_DIR_URL, storageURL);
+        parameters.put(AbstractReferenceOutputConverter.OUT_ENCODING, encoding);
+        parameters.put(AbstractReferenceOutputConverter.OUT_MIME, mime);
+        parameters.put(AbstractReferenceOutputConverter.OUT_SCHEMA, schema);
+        parameters.put(AbstractReferenceOutputConverter.OUT_IOTYPE, iotype.toString());
 
-        String href = null;
-        try {
-            href = URLDecoder.decode(reference.getHref(), "UTF-8");
-        } catch (UnsupportedEncodingException ex) {
-            throw new NonconvertibleObjectException("Invalid reference href.", ex);
+        final ObjectConverter converter = WPSIO.getConverter(object.getClass(), WPSIO.IOType.OUTPUT, WPSIO.FormChoice.COMPLEX,
+                mime, encoding, schema);
+        if (converter == null) {
+            throw new NonconvertibleObjectException("Output complex not supported, no converter found.");
         }
 
-        
-        final List<InputReferenceType.Header> headers = reference.getHeader();
-
-        InputStream stream = null;
-        OutputStream requestOS = null;
-        Marshaller marshaller = null;
-        
-        try {
-            final Object body = getReferenceBody(reference);
-            if (body == null) {
-                throw new NonconvertibleObjectException("No reference body found for the POST request.");
-            }
-            
-            marshaller = WPSMarshallerPool.getInstance().acquireMarshaller();
-            
-            // Make request
-            final URLConnection conec = new URL(href).openConnection();
-            conec.setConnectTimeout(60);
-            conec.setDoOutput(true);
-            conec.setRequestProperty("content-type", "text/xml");
-            for (final InputReferenceType.Header header : headers) {
-                conec.addRequestProperty(header.getKey(), header.getValue());
-            }
-            
-            // Write request content
-            requestOS = conec.getOutputStream();
-            marshaller.marshal(body, requestOS);
-
-            // Parse the response
-            stream = conec.getInputStream();
-            
-        } catch (JAXBException ex) {
-            throw new NonconvertibleObjectException("The requested body is not supported.", ex);
-        } catch (IOException ex) {
-            throw new NonconvertibleObjectException("Can't reach the reference URL or the reference body URL.", ex);
-        } finally {
-            if (marshaller != null) {
-                WPSMarshallerPool.getInstance().release(marshaller);
-            }
-            if (requestOS != null) {
-                try {
-                    requestOS.close();
-                } catch (IOException ex) {
-                    throw new NonconvertibleObjectException("Can't close the output stream.", ex);
-                }
-            }
-        }
-        return stream;
+        return (ReferenceType) converter.convert(parameters);
     }
     
     /**
-     * Reach and unMarshall the body of a request.
-     * 
-     * @param reference
+     * Create the DomaineMetaData object for a literal
+     *
+     * @param clazz
      * @return
-     * @throws UnsupportedEncodingException
-     * @throws JAXBException
-     * @throws MalformedURLException 
+     * @throws CstlServiceException
      */
-    private static Object getReferenceBody(final InputReferenceType reference) 
-            throws UnsupportedEncodingException, JAXBException, MalformedURLException {
-        
-        Object obj = null;
-        
-        if ( reference.getBody() != null ) {
-            obj = reference.getBody();
-            
-        } else if (reference.getBodyReference() != null) {
-            
-            final String href = reference.getBodyReference().getHref();
-            
-            Unmarshaller unmarshaller = null;
-            try {
-                unmarshaller = WPSMarshallerPool.getInstance().acquireUnmarshaller();
-                final URL url = new URL(URLDecoder.decode(href, "UTF-8"));
-                
-                obj = unmarshaller.unmarshal(url);
-                
-            } finally {
-                if (unmarshaller != null) {
-                    WPSMarshallerPool.getInstance().release(unmarshaller);
-                }
-            }
+    public static DomainMetadataType createDataType(final Class clazz) {
+
+
+        if (clazz.equals(Double.class)) {
+            return new DomainMetadataType("Double", "http://www.w3.org/TR/xmlschema-2/#double");
+
+        } else if (clazz.equals(Float.class)) {
+            return new DomainMetadataType("Float", "http://www.w3.org/TR/xmlschema-2/#float");
+
+        } else if (clazz.equals(Boolean.class)) {
+            return new DomainMetadataType("Boolean", "http://www.w3.org/TR/xmlschema-2/#boolean");
+
+        } else if (clazz.equals(Integer.class)) {
+            return new DomainMetadataType("Integer", "http://www.w3.org/TR/xmlschema-2/#integer");
+
+        } else if (clazz.equals(Long.class)) {
+            return new DomainMetadataType("Long", "http://www.w3.org/TR/xmlschema-2/#long");
+
+        } else if (clazz.equals(String.class) || WPSIO.isSupportedInputClass(clazz) || WPSIO.isSupportedOutputClass(clazz)) {
+            return new DomainMetadataType("String", "http://www.w3.org/TR/xmlschema-2/#string");
+
+        } else {
+           return null;
         }
-        return obj;
+    }
+    
+    public static String getDataTypeString(final Class clazz) {
+        String ref = createDataType(clazz).getReference();;
+        
+        if (ref == null) {
+            ref = "http://www.w3.org/TR/xmlschema-2/#string";
+        }
+        return ref;
     }
     
     /**

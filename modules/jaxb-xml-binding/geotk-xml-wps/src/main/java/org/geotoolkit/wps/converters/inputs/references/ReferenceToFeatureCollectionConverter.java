@@ -19,15 +19,14 @@ package org.geotoolkit.wps.converters.inputs.references;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.util.Map;
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.feature.xml.XmlFeatureReader;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
-import org.geotoolkit.wps.converters.inputs.AbstractInputConverter;
 import org.geotoolkit.wps.io.WPSMimeType;
+import org.geotoolkit.wps.xml.v100.ReferenceType;
 import org.opengis.util.FactoryException;
 
 /**
@@ -35,7 +34,7 @@ import org.opengis.util.FactoryException;
  *
  * @author Quentin Boileau (Geomatys).
  */
-public final class ReferenceToFeatureCollectionConverter extends AbstractInputConverter {
+public final class ReferenceToFeatureCollectionConverter extends AbstractReferenceInputConverter {
 
     private static ReferenceToFeatureCollectionConverter INSTANCE;
 
@@ -60,11 +59,10 @@ public final class ReferenceToFeatureCollectionConverter extends AbstractInputCo
      * @return FeatureCollection.
      */
     @Override
-    public FeatureCollection convert(final Map<String, Object> source) throws NonconvertibleObjectException {
+    public FeatureCollection convert(final ReferenceType source) throws NonconvertibleObjectException {
 
-
-        final String mime = (String) source.get(IN_MIME) != null ? (String) source.get(IN_MIME) : WPSMimeType.TEXT_XML.val();
-        final InputStream stream = (InputStream) source.get(IN_STREAM);
+        final String mime = source.getMimeType() != null ? source.getMimeType() : WPSMimeType.TEXT_XML.val();
+        final InputStream stream = getInputStreamFromReference(source);
 
         //XML
         if (mime.equalsIgnoreCase(WPSMimeType.TEXT_XML.val())
@@ -97,7 +95,7 @@ public final class ReferenceToFeatureCollectionConverter extends AbstractInputCo
             // SHP
         } else if (mime.equalsIgnoreCase(WPSMimeType.APP_SHP.val())
                 || mime.equalsIgnoreCase(WPSMimeType.APP_OCTET.val())) {
-            return null; 
+            return null;
 //            try {
 //                Hints.putSystemDefault(Hints.LENIENT_DATUM_SHIFT, Boolean.TRUE);
 //                final Map<String, Serializable> parameters = new HashMap<String, Serializable>();

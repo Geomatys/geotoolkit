@@ -19,21 +19,20 @@ package org.geotoolkit.wps.converters.inputs.references;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageInputStream;
 import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
-import org.geotoolkit.wps.converters.inputs.AbstractInputConverter;
+import org.geotoolkit.wps.xml.v100.ReferenceType;
 
 /**
  * Implementation of ObjectConverter to convert a reference into a GridCoverageReader.
  *
  * @author Quentin Boileau (Geomatys).
  */
-public final class ReferenceToGridCoverageReaderConverter extends AbstractInputConverter {
+public final class ReferenceToGridCoverageReaderConverter extends AbstractReferenceInputConverter {
 
     private static ReferenceToGridCoverageReaderConverter INSTANCE;
 
@@ -58,9 +57,9 @@ public final class ReferenceToGridCoverageReaderConverter extends AbstractInputC
      * @return GridCoverageReader.
      */
     @Override
-    public GridCoverageReader convert(final Map<String, Object> source) throws NonconvertibleObjectException {
+    public GridCoverageReader convert(final ReferenceType source) throws NonconvertibleObjectException {
 
-        final InputStream stream = (InputStream) source.get(IN_STREAM);
+        final InputStream stream = getInputStreamFromReference(source);
         GridCoverageReader reader = null;
         ImageInputStream imageStream = null;
         try {

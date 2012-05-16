@@ -24,8 +24,11 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import org.geotoolkit.gml.JTStoGeometry;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.geotoolkit.wps.io.WPSIO;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
+import org.geotoolkit.wps.xml.v100.InputReferenceType;
 import org.geotoolkit.wps.xml.v100.OutputReferenceType;
+import org.geotoolkit.wps.xml.v100.ReferenceType;
 import org.opengis.util.FactoryException;
 
 /**
@@ -51,7 +54,7 @@ public class GeometryToReferenceConverter extends AbstractReferenceOutputConvert
      * {@inheritDoc}
      */
     @Override
-    public OutputReferenceType convert(final Map<String,Object> source) throws NonconvertibleObjectException {
+    public ReferenceType convert(final Map<String,Object> source) throws NonconvertibleObjectException {
         
         if (source.get(OUT_TMP_DIR_PATH) == null) {
             throw new NonconvertibleObjectException("The output directory should be defined.");
@@ -66,7 +69,18 @@ public class GeometryToReferenceConverter extends AbstractReferenceOutputConvert
             throw new NonconvertibleObjectException("The geometry is not an JTS geometry.");
         }
         
-        final OutputReferenceType reference = new OutputReferenceType();
+        final WPSIO.IOType ioType = WPSIO.IOType.valueOf((String) source.get(OUT_IOTYPE));
+        ReferenceType reference = null ;
+        
+        if (ioType.equals(WPSIO.IOType.INPUT)) {
+            reference = new InputReferenceType();
+        } else {
+            reference = new OutputReferenceType();
+        }
+
+        reference.setMimeType((String) source.get(OUT_MIME));
+        reference.setEncoding((String) source.get(OUT_ENCODING));
+        reference.setSchema((String) source.get(OUT_SCHEMA));
         
         reference.setMimeType((String) source.get(OUT_MIME));
         reference.setEncoding((String) source.get(OUT_ENCODING));

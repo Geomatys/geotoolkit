@@ -14,13 +14,12 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.wps.converters.inputs;
+package org.geotoolkit.wps.converters.inputs.complex;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
-import java.util.Map;
 import javax.xml.bind.JAXBException;
 import org.geotoolkit.feature.xml.XmlFeatureReader;
 import org.geotoolkit.feature.xml.XmlFeatureTypeReader;
@@ -28,47 +27,31 @@ import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.util.converter.SimpleConverter;
+import org.geotoolkit.wps.xml.v100.ComplexDataType;
 import org.opengis.feature.type.FeatureType;
 
 /**
- * An abstract class to define the source and target class used by all input converter.
- * 
+ *
  * @author Quentin Boileau (Geomatys).
  */
-public abstract class AbstractInputConverter extends SimpleConverter<Map<String, Object>, Object> {
-
-    public static final String IN_DATA      = "inData";
-    public static final String IN_MIME      = "inMime";
-    public static final String IN_SCHEMA    = "inSchema";
-    public static final String IN_ENCODING  = "inEncoding";
-    public static final String IN_STREAM    = "inStream";
+public abstract class AbstractComplexInputConverter extends SimpleConverter<ComplexDataType, Object> {
 
     @Override
-    public Class<? super Map<String, Object>> getSourceClass() {
-        return Map.class;
+    public Class<? super ComplexDataType> getSourceClass() {
+        return ComplexDataType.class;
     }
 
     @Override
-    public Class<? extends Object> getTargetClass() {
-        return Object.class;
-    }
+    public abstract Class<? extends Object> getTargetClass();
 
     /**
-     * Convert the data from source Map into the requested {@code Object}. 
-     * The {@code source} Map contain : 
-     * <ul>
-     *      <li>inData : data object from complex input.</li>
-     *      <li>inHref : the url to the data in reference case.</li>
-     *      <li>inMime : mime type of the data like text/xml, ...</li>
-     *      <li>inEncoding : is the data requires a schema</li>
-     *      <li>encoding : the data encoding like UTF8, ...</li>
-     * </ul>
-     * @param source
-     * @return the converted inData into the specialized converter output object.
-     * @throws NonconvertibleObjectException if an error occurs durring the convertion processing.
+     * Convert a {@link ComplexDataType complex} into the requested {@code Object}. 
+     * @param source ReferenceType 
+     * @return Object
+     * @throws NonconvertibleObjectException 
      */
     @Override
-    public abstract Object convert(Map<String, Object> source) throws NonconvertibleObjectException;
+    public abstract Object convert(final ComplexDataType source) throws NonconvertibleObjectException;
     
     /**
      * Get the JAXPStreamFeatureReader to read feature. If there is a schema defined, the JAXPStreamFeatureReader will
@@ -80,12 +63,12 @@ public abstract class AbstractInputConverter extends SimpleConverter<Map<String,
      * @throws JAXBException
      * @throws IOException
      */
-    protected XmlFeatureReader getFeatureReader(final Map<String, Object> source) throws MalformedURLException, JAXBException, IOException {
+    protected XmlFeatureReader getFeatureReader(final ComplexDataType source) throws MalformedURLException, JAXBException, IOException {
         
         JAXPStreamFeatureReader featureReader = new JAXPStreamFeatureReader();
         try {
             final XmlFeatureTypeReader xsdReader = new JAXBFeatureTypeReader();
-            final String schema = (String) source.get(IN_SCHEMA);
+            final String schema = source.getSchema();
 
             if (schema != null) {
                 final URL schemaURL = new URL(schema);

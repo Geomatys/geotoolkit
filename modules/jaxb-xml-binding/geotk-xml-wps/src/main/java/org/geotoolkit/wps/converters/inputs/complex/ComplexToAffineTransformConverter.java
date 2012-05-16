@@ -18,17 +18,17 @@ package org.geotoolkit.wps.converters.inputs.complex;
 
 import java.awt.geom.AffineTransform;
 import java.util.List;
-import java.util.Map;
-import org.geotoolkit.mathml.xml.*;
+import org.geotoolkit.mathml.xml.Mtable;
+import org.geotoolkit.mathml.xml.Mtr;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
-import org.geotoolkit.wps.converters.inputs.AbstractInputConverter;
+import org.geotoolkit.wps.xml.v100.ComplexDataType;
 
 /**
  * 
  * @author Quentin Boileau (Geomatys).
  */
-public class ComplexToAffineTransformConverter  extends AbstractInputConverter {
+public class ComplexToAffineTransformConverter  extends AbstractComplexInputConverter {
 
     private static ComplexToAffineTransformConverter INSTANCE;
 
@@ -48,9 +48,9 @@ public class ComplexToAffineTransformConverter  extends AbstractInputConverter {
     }
 
     @Override
-    public Object convert(final Map<String, Object> source) throws NonconvertibleObjectException {
+    public Object convert(final ComplexDataType source) throws NonconvertibleObjectException {
         
-        final List<Object> datas = (List<Object>) source.get(IN_DATA);
+        final List<Object> datas = source.getContent();
         
         if (datas != null && datas.size() > 1) {
             throw new NonconvertibleObjectException("Invalid data input : Only one element expected.");
@@ -60,7 +60,7 @@ public class ComplexToAffineTransformConverter  extends AbstractInputConverter {
         
         final Object data = datas.get(0);
         
-        if (data instanceof org.geotoolkit.mathml.xml.Math) {
+        if (data != null && data instanceof org.geotoolkit.mathml.xml.Math) {
             final org.geotoolkit.mathml.xml.Math math = (org.geotoolkit.mathml.xml.Math) data;
             final List<Object> mathExp = math.getMathExpression();
             if (mathExp != null && !mathExp.isEmpty()) {

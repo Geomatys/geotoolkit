@@ -22,7 +22,10 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.UUID;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.geotoolkit.wps.io.WPSIO;
+import org.geotoolkit.wps.xml.v100.InputReferenceType;
 import org.geotoolkit.wps.xml.v100.OutputReferenceType;
+import org.geotoolkit.wps.xml.v100.ReferenceType;
 
 /**
  * Implementation of ObjectConverter to convert a {@code String}, {@code Number}, {@code Boolean} into a {@link OutputReferenceType reference}.
@@ -44,7 +47,7 @@ public class LiteralsToReferenceConverter extends AbstractReferenceOutputConvert
     }
 
     @Override
-    public OutputReferenceType convert(Map<String, Object> source) throws NonconvertibleObjectException {
+    public ReferenceType convert(Map<String, Object> source) throws NonconvertibleObjectException {
         
         if (source.get(OUT_TMP_DIR_PATH) == null) {
             throw new NonconvertibleObjectException("The output directory should be defined.");
@@ -56,7 +59,18 @@ public class LiteralsToReferenceConverter extends AbstractReferenceOutputConvert
             throw new NonconvertibleObjectException("The output data should be defined.");
         }
         
-        final OutputReferenceType reference = new OutputReferenceType();
+        final WPSIO.IOType ioType = WPSIO.IOType.valueOf((String) source.get(OUT_IOTYPE));
+        ReferenceType reference = null ;
+        
+        if (ioType.equals(WPSIO.IOType.INPUT)) {
+            reference = new InputReferenceType();
+        } else {
+            reference = new OutputReferenceType();
+        }
+
+        reference.setMimeType((String) source.get(OUT_MIME));
+        reference.setEncoding((String) source.get(OUT_ENCODING));
+        reference.setSchema((String) source.get(OUT_SCHEMA));
 
         reference.setMimeType("text/plain");
         reference.setEncoding("UTF-8");

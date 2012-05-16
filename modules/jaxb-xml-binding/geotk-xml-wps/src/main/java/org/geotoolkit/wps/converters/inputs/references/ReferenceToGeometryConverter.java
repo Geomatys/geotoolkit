@@ -18,18 +18,15 @@ package org.geotoolkit.wps.converters.inputs.references;
 
 import com.vividsolutions.jts.geom.Geometry;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Map;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import org.geotoolkit.gml.GeometrytoJTS;
 import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
-import org.geotoolkit.wps.converters.inputs.AbstractInputConverter;
 import org.geotoolkit.wps.io.WPSMimeType;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
+import org.geotoolkit.wps.xml.v100.ReferenceType;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
 
@@ -38,7 +35,7 @@ import org.opengis.util.FactoryException;
  *
  * @author Quentin Boileau (Geomatys).
  */
-public final class ReferenceToGeometryConverter extends AbstractInputConverter {
+public final class ReferenceToGeometryConverter extends AbstractReferenceInputConverter {
 
     private static ReferenceToGeometryConverter INSTANCE;
 
@@ -63,10 +60,10 @@ public final class ReferenceToGeometryConverter extends AbstractInputConverter {
      * @return Geometry.
      */
     @Override
-    public Geometry convert(final Map<String, Object> source) throws NonconvertibleObjectException {
+    public Geometry convert(final ReferenceType source) throws NonconvertibleObjectException {
 
-        final String mime = (String) source.get(IN_MIME) != null ? (String) source.get(IN_MIME) : WPSMimeType.TEXT_XML.val();
-        final InputStream stream = (InputStream) source.get(IN_STREAM);
+        final String mime = source.getMimeType() != null ? source.getMimeType() : WPSMimeType.TEXT_XML.val();
+        final InputStream stream = getInputStreamFromReference(source);
 
         if (mime.equalsIgnoreCase(WPSMimeType.TEXT_XML.val()) || mime.equalsIgnoreCase(WPSMimeType.APP_GML.val())
                 || mime.equalsIgnoreCase(WPSMimeType.TEXT_GML.val())) {
@@ -75,7 +72,7 @@ public final class ReferenceToGeometryConverter extends AbstractInputConverter {
             try {
                 unmarsh = WPSMarshallerPool.getInstance().acquireUnmarshaller();
                 Object value = unmarsh.unmarshal(stream);
-                if (value instanceof JAXBElement) {
+                if (value != null && value instanceof JAXBElement) {
                     value = ((JAXBElement) value).getValue();
                 }
                 return GeometrytoJTS.toJTS((AbstractGeometryType) value);

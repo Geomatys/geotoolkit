@@ -57,7 +57,7 @@ public final class GeometryArrayToComplexConverter extends AbstractComplexOutput
         if (data == null) {
             throw new NonconvertibleObjectException("The output data should be defined.");
         }
-        if (!(source.get(OUT_DATA) instanceof Geometry[])) {
+        if (!(data instanceof Geometry[])) {
             throw new NonconvertibleObjectException("The requested output data is not an instance of Geometry array.");
         }
         

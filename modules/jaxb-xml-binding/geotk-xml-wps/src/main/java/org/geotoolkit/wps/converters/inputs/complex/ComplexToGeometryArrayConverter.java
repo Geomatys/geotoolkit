@@ -20,11 +20,10 @@ package org.geotoolkit.wps.converters.inputs.complex;
 import com.vividsolutions.jts.geom.Geometry;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import org.geotoolkit.gml.GeometrytoJTS;
 import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
-import org.geotoolkit.wps.converters.inputs.AbstractInputConverter;
+import org.geotoolkit.wps.xml.v100.ComplexDataType;
 import org.opengis.util.FactoryException;
 
 /**
@@ -32,7 +31,7 @@ import org.opengis.util.FactoryException;
  * 
  * @author Quentin Boileau (Geomatys).
  */
-public final class ComplexToGeometryArrayConverter extends AbstractInputConverter {
+public final class ComplexToGeometryArrayConverter extends AbstractComplexInputConverter {
 
     private static ComplexToGeometryArrayConverter INSTANCE;
 
@@ -56,13 +55,13 @@ public final class ComplexToGeometryArrayConverter extends AbstractInputConverte
      * @return Geometry array.
      */
     @Override
-    public Geometry[] convert(final Map<String,Object> source) throws NonconvertibleObjectException {
+    public Geometry[] convert(final ComplexDataType source) throws NonconvertibleObjectException {
 
         try {                
-            final List<Object> data = (List<Object>) source.get(IN_DATA);
+            final List<Object> data = source.getContent();
             if(!data.isEmpty()){
                 final List<Geometry> geoms = new ArrayList<Geometry>();
-                for(int i = 0; i<source.size(); i++){
+                for(int i = 0; i<data.size(); i++){
                     geoms.add(GeometrytoJTS.toJTS((AbstractGeometryType) data.get(i)));
                 }
                 return geoms.toArray(new Geometry[geoms.size()]);

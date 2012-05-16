@@ -21,12 +21,13 @@ import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.util.converter.SimpleConverter;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
 import org.geotoolkit.wps.xml.v100.OutputReferenceType;
+import org.geotoolkit.wps.xml.v100.ReferenceType;
 
 /**
  *
  * @author Quentin Boileau (Geomatys).
  */
-public abstract class AbstractReferenceOutputConverter extends SimpleConverter<Map<String, Object>, OutputReferenceType> {
+public abstract class AbstractReferenceOutputConverter extends SimpleConverter<Map<String, Object>, ReferenceType> {
 
     public static final String OUT_DATA      = "outData";
     public static final String OUT_MIME      = "outMime";
@@ -34,6 +35,7 @@ public abstract class AbstractReferenceOutputConverter extends SimpleConverter<M
     public static final String OUT_ENCODING  = "outEncoding";
     public static final String OUT_TMP_DIR_PATH = "outTempDirectoryPath";
     public static final String OUT_TMP_DIR_URL = "outTempDirectoryUrl";
+    public static final String OUT_IOTYPE     = "outIOType";
 
     @Override
     public Class<? super Map<String, Object>> getSourceClass() {
@@ -41,8 +43,8 @@ public abstract class AbstractReferenceOutputConverter extends SimpleConverter<M
     }
 
     @Override
-    public Class<? extends OutputReferenceType> getTargetClass() {
-        return OutputReferenceType.class;
+    public Class<? extends ReferenceType> getTargetClass() {
+        return ReferenceType.class;
     }
 
 
@@ -62,5 +64,5 @@ public abstract class AbstractReferenceOutputConverter extends SimpleConverter<M
      * @throws NonconvertibleObjectException if an error occurs durring the convertion processing.
      */
     @Override
-    public abstract OutputReferenceType convert(final Map<String, Object> source) throws NonconvertibleObjectException;
+    public abstract ReferenceType convert(final Map<String, Object> source) throws NonconvertibleObjectException;
 }

@@ -59,7 +59,7 @@ public final class FeatureTypeToComplexConverter extends AbstractComplexOutputCo
         if (data == null) {
             throw new NonconvertibleObjectException("The output data should be defined.");
         }
-        if (!(source.get(OUT_DATA) instanceof FeatureType)) {
+        if (!(data instanceof FeatureType)) {
             throw new NonconvertibleObjectException("The requested output data is not an instance of FeatureType.");
         }
         final ComplexDataType complex = new ComplexDataType();

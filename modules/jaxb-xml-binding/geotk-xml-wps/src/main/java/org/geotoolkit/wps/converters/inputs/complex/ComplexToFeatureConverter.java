@@ -19,13 +19,12 @@ package org.geotoolkit.wps.converters.inputs.complex;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.List;
-import java.util.Map;
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.feature.xml.XmlFeatureReader;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
-import org.geotoolkit.wps.converters.inputs.AbstractInputConverter;
+import org.geotoolkit.wps.xml.v100.ComplexDataType;
 import org.opengis.feature.Feature;
 import org.opengis.util.FactoryException;
 
@@ -34,7 +33,7 @@ import org.opengis.util.FactoryException;
  *
  * @author Quentin Boileau (Geomatys).
  */
-public final class ComplexToFeatureConverter extends AbstractInputConverter {
+public final class ComplexToFeatureConverter extends AbstractComplexInputConverter {
 
     private static ComplexToFeatureConverter INSTANCE;
 
@@ -58,10 +57,10 @@ public final class ComplexToFeatureConverter extends AbstractInputConverter {
      * @return Feature
      */
     @Override
-    public Feature convert(final Map<String, Object> source) throws NonconvertibleObjectException {
+    public Feature convert(final ComplexDataType source) throws NonconvertibleObjectException {
 
 
-        final List<Object> data = (List<Object>) source.get(IN_DATA);
+        final List<Object> data = source.getContent();
 
         if (data != null && data.size() > 1) {
             throw new NonconvertibleObjectException("Invalid data input : Only one Feature expected.");
