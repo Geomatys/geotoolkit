@@ -240,7 +240,9 @@ public abstract class GridCoverageStoreParam implements Serializable {
         } else {
             ge = new GeneralEnvelope(env);
         }
-        ge.reduceToDomain(false);
+        if (ge.reduceToDomain(false)) {
+            ge.reorderCorners();
+        }
         return ge;
     }
 
