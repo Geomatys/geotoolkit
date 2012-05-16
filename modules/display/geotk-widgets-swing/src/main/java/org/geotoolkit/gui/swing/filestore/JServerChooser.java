@@ -21,27 +21,22 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
+import java.awt.image.BufferedImage;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.AbstractAction;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JToolBar;
+import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.geotoolkit.client.Server;
 import org.geotoolkit.client.ServerFactory;
 import org.geotoolkit.client.ServerFinder;
+import org.geotoolkit.coverage.CoverageStoreFactory;
+import org.geotoolkit.data.DataStoreFactory;
+import org.geotoolkit.data.FileDataStoreFactory;
+import org.geotoolkit.data.folder.AbstractFolderDataStoreFactory;
+import org.geotoolkit.data.folder.FolderDataStore;
 import org.geotoolkit.gui.swing.propertyedit.JFeatureOutLine;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
@@ -49,6 +44,7 @@ import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.logging.Logging;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
+import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -83,6 +79,7 @@ public class JServerChooser extends javax.swing.JPanel {
         }
         Collections.sort(factories, SORTER);
         
+        guiList.setHighlighters(HighlighterFactory.createAlternateStriping() );
         guiList.setModel(new ListComboBoxModel(factories));
         guiList.setCellRenderer(new FactoryCellRenderer());
         guiList.addListSelectionListener(new ListSelectionListener() {
@@ -134,24 +131,17 @@ public class JServerChooser extends javax.swing.JPanel {
 
         guiLayerSplit = new javax.swing.JSplitPane();
         guiSplit = new javax.swing.JSplitPane();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        guiList = new javax.swing.JList();
         guiConfig = new javax.swing.JPanel();
         guiEditPane = new javax.swing.JPanel();
         guiInfoLabel = new javax.swing.JTextField();
         guiConnect = new javax.swing.JButton();
+        scr = new javax.swing.JScrollPane();
+        guiList = new org.jdesktop.swingx.JXList();
 
         guiLayerSplit.setDividerSize(5);
 
         guiSplit.setDividerLocation(240);
         guiSplit.setDividerSize(5);
-
-        jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-
-        guiList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jScrollPane1.setViewportView(guiList);
-
-        guiSplit.setLeftComponent(jScrollPane1);
 
         guiEditPane.setLayout(new java.awt.BorderLayout());
 
@@ -169,7 +159,7 @@ public class JServerChooser extends javax.swing.JPanel {
         guiConfigLayout.setHorizontalGroup(
             guiConfigLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, guiConfigLayout.createSequentialGroup()
-                .addComponent(guiInfoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 325, Short.MAX_VALUE)
+                .addComponent(guiInfoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 327, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(guiConnect))
             .addComponent(guiEditPane, javax.swing.GroupLayout.DEFAULT_SIZE, 401, Short.MAX_VALUE)
@@ -177,7 +167,7 @@ public class JServerChooser extends javax.swing.JPanel {
         guiConfigLayout.setVerticalGroup(
             guiConfigLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, guiConfigLayout.createSequentialGroup()
-                .addComponent(guiEditPane, javax.swing.GroupLayout.DEFAULT_SIZE, 368, Short.MAX_VALUE)
+                .addComponent(guiEditPane, javax.swing.GroupLayout.DEFAULT_SIZE, 370, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(guiConfigLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(guiInfoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -185,6 +175,17 @@ public class JServerChooser extends javax.swing.JPanel {
         );
 
         guiSplit.setRightComponent(guiConfig);
+
+        scr.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
+        guiList.setModel(new javax.swing.AbstractListModel() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public Object getElementAt(int i) { return strings[i]; }
+        });
+        scr.setViewportView(guiList);
+
+        guiSplit.setLeftComponent(scr);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -194,7 +195,7 @@ public class JServerChooser extends javax.swing.JPanel {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(guiSplit, javax.swing.GroupLayout.DEFAULT_SIZE, 402, Short.MAX_VALUE)
+            .addComponent(guiSplit)
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -221,40 +222,10 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
     private javax.swing.JPanel guiEditPane;
     private javax.swing.JTextField guiInfoLabel;
     private javax.swing.JSplitPane guiLayerSplit;
-    private javax.swing.JList guiList;
+    private org.jdesktop.swingx.JXList guiList;
     private javax.swing.JSplitPane guiSplit;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane scr;
     // End of variables declaration//GEN-END:variables
-
-
-    private static class FactoryCellRenderer extends DefaultListCellRenderer{
-
-        @Override
-        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-            final JLabel lbl = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-            
-            if(value instanceof ServerFactory){
-                final ServerFactory factory = (ServerFactory) value;
-                final String txt = "<html><b>"+factory.getDisplayName()+"</b><br/>"
-                        + "<font size=\"0.5em\" color=\"#8f8f8f\"><i>&nbsp&nbsp&nbsp "+factory.getDescription()+"</i></font></html>";
-                lbl.setText(txt);
-                
-                if(factory.getDisplayName().toString().toLowerCase().contains("google")){
-                    lbl.setIcon(IconBundle.getIcon("24_google"));
-                }else if(factory.getDisplayName().toString().toLowerCase().contains("osm")){
-                    lbl.setIcon(IconBundle.getIcon("24_osm"));
-                }else if(factory.getDisplayName().toString().toLowerCase().contains("ign")){
-                    lbl.setIcon(IconBundle.getIcon("24_ign"));
-                }else{
-                    lbl.setIcon(IconBundle.getIcon("24_ogc"));
-                }
-                
-            }
-            
-            return lbl;
-        }
-        
-    }
     
     /**
      * Display a modal dialog.
@@ -331,6 +302,81 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
         }else{
             return Collections.EMPTY_LIST;
         }
+    }
+    
+    static class FactoryCellRenderer extends DefaultListCellRenderer{
+
+        @Override
+        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+            final JLabel lbl = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+            
+            String name = "";
+            String desc = "";
+            
+            if(value instanceof ServerFactory){
+                final ServerFactory factory = (ServerFactory) value;
+                name = String.valueOf(factory.getDisplayName());
+                desc = String.valueOf(factory.getDescription());
+            }else if(value instanceof DataStoreFactory){
+                final DataStoreFactory factory = (DataStoreFactory) value;
+                name = String.valueOf(factory.getDisplayName());
+                desc = String.valueOf(factory.getDescription());
+            }else if(value instanceof CoverageStoreFactory){
+                final CoverageStoreFactory factory = (CoverageStoreFactory) value;
+                name = String.valueOf(factory.getDisplayName());
+                desc = String.valueOf(factory.getDescription());
+            }
+            
+            final String txt = "<html><b>"+name+"</b><br/>"
+                        + "<font size=\"0.5em\"><i>&nbsp&nbsp&nbsp "+desc+"</i></font></html>";
+            lbl.setText(txt);
+            lbl.setIcon(findIcon(value));   
+            
+            return lbl;
+        }
+        
+    }
+    
+    private static final ImageIcon EMPTY_24 = new ImageIcon(new BufferedImage(24, 24, BufferedImage.TYPE_INT_ARGB));
+    
+    private static ImageIcon findIcon(Object candidate){
+     
+        ImageIcon icon = EMPTY_24;
+        String name = "";
+        if(candidate instanceof ServerFactory){
+            name = ((ServerFactory)candidate).getDisplayName().toString().toLowerCase();
+            icon = IconBundle.getIcon("24_server");
+        }else if(candidate instanceof CoverageStoreFactory){
+            name = ((CoverageStoreFactory)candidate).getDisplayName().toString().toLowerCase();
+            icon = IconBundle.getIcon("24_folder_img");
+        }else if(candidate instanceof DataStoreFactory){
+            name = ((DataStoreFactory)candidate).getDisplayName().toString().toLowerCase();
+            icon = IconBundle.getIcon("24_store");
+        }
+        
+        final String classname = candidate.getClass().getName().toLowerCase();
+        
+        //knowned cases
+        if(name.contains("google")){
+            icon = IconBundle.getIcon("24_google");
+        }else if(name.contains("osm")){
+            icon = IconBundle.getIcon("24_osm");
+        }else if(name.contains("ign")){
+            icon = IconBundle.getIcon("24_ign");
+        }else if(name.contains("ogc")){
+            icon = IconBundle.getIcon("24_ogc");
+        }else if(classname.contains("coveragesql")){
+            icon = IconBundle.getIcon("24_database");
+        }else if(classname.contains("post")){
+            icon = IconBundle.getIcon("24_database");
+        }else if(candidate instanceof AbstractFolderDataStoreFactory){
+            icon = IconBundle.getIcon("24_folder_doc");
+        }else if(candidate instanceof FileDataStoreFactory){
+            icon = IconBundle.getIcon("24_doc");
+        }
+        
+        
+        return icon;
     }
     
 }

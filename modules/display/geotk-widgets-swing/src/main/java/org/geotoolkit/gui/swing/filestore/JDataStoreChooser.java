@@ -18,7 +18,6 @@ package org.geotoolkit.gui.swing.filestore;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
@@ -30,10 +29,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.AbstractAction;
-import javax.swing.DefaultListCellRenderer;
 import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
@@ -42,12 +38,14 @@ import javax.swing.event.ListSelectionListener;
 import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.DataStoreFactory;
 import org.geotoolkit.data.DataStoreFinder;
+import org.geotoolkit.gui.swing.filestore.JServerChooser.FactoryCellRenderer;
 import org.geotoolkit.gui.swing.propertyedit.JFeatureOutLine;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.logging.Logging;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
+import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -82,8 +80,9 @@ public class JDataStoreChooser extends javax.swing.JPanel {
         }
         Collections.sort(factories, SORTER);
         
+        guiList.setHighlighters(HighlighterFactory.createAlternateStriping() );        
         guiList.setModel(new ListComboBoxModel(factories));
-        guiList.setCellRenderer(new CoverageStoreFactoryCellRenderer());
+        guiList.setCellRenderer(new FactoryCellRenderer());
         guiList.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
@@ -136,25 +135,18 @@ public class JDataStoreChooser extends javax.swing.JPanel {
 
         guiLayerSplit = new javax.swing.JSplitPane();
         guiSplit = new javax.swing.JSplitPane();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        guiList = new javax.swing.JList();
         guiConfig = new javax.swing.JPanel();
         guiEditPane = new javax.swing.JPanel();
         guiCreateNew = new javax.swing.JCheckBox();
         guiConnect = new javax.swing.JButton();
         guiInfoLabel = new javax.swing.JTextField();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        guiList = new org.jdesktop.swingx.JXList();
 
         guiLayerSplit.setDividerSize(5);
 
-        guiSplit.setDividerLocation(220);
+        guiSplit.setDividerLocation(240);
         guiSplit.setDividerSize(5);
-
-        jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-
-        guiList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jScrollPane1.setViewportView(guiList);
-
-        guiSplit.setLeftComponent(jScrollPane1);
 
         guiEditPane.setLayout(new java.awt.BorderLayout());
 
@@ -176,15 +168,15 @@ public class JDataStoreChooser extends javax.swing.JPanel {
             .addGroup(guiConfigLayout.createSequentialGroup()
                 .addComponent(guiCreateNew)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(guiInfoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 229, Short.MAX_VALUE)
+                .addComponent(guiInfoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 248, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(guiConnect))
-            .addComponent(guiEditPane, javax.swing.GroupLayout.DEFAULT_SIZE, 422, Short.MAX_VALUE)
+            .addComponent(guiEditPane, javax.swing.GroupLayout.DEFAULT_SIZE, 440, Short.MAX_VALUE)
         );
         guiConfigLayout.setVerticalGroup(
             guiConfigLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, guiConfigLayout.createSequentialGroup()
-                .addComponent(guiEditPane, javax.swing.GroupLayout.DEFAULT_SIZE, 332, Short.MAX_VALUE)
+                .addComponent(guiEditPane, javax.swing.GroupLayout.DEFAULT_SIZE, 334, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(guiConfigLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(guiCreateNew)
@@ -194,6 +186,17 @@ public class JDataStoreChooser extends javax.swing.JPanel {
 
         guiSplit.setRightComponent(guiConfig);
 
+        jScrollPane2.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
+        guiList.setModel(new javax.swing.AbstractListModel() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public Object getElementAt(int i) { return strings[i]; }
+        });
+        jScrollPane2.setViewportView(guiList);
+
+        guiSplit.setLeftComponent(jScrollPane2);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -202,7 +205,7 @@ public class JDataStoreChooser extends javax.swing.JPanel {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(guiSplit, javax.swing.GroupLayout.DEFAULT_SIZE, 366, Short.MAX_VALUE)
+            .addComponent(guiSplit)
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -230,29 +233,11 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
     private javax.swing.JPanel guiEditPane;
     private javax.swing.JTextField guiInfoLabel;
     private javax.swing.JSplitPane guiLayerSplit;
-    private javax.swing.JList guiList;
+    private org.jdesktop.swingx.JXList guiList;
     private javax.swing.JSplitPane guiSplit;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     // End of variables declaration//GEN-END:variables
 
-
-    private static class CoverageStoreFactoryCellRenderer extends DefaultListCellRenderer{
-
-        @Override
-        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-            final JLabel lbl = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-            
-            if(value instanceof DataStoreFactory){
-                final DataStoreFactory factory = (DataStoreFactory) value;
-                final String txt = "<html><b>"+factory.getDisplayName()+"</b><br/>"
-                        + "<font size=\"0.5em\"><i>&nbsp&nbsp&nbsp "+factory.getDescription()+"</i></font></html>";
-                lbl.setText(txt);
-            }
-            
-            return lbl;
-        }
-        
-    }
     
     /**
      * Display a modal dialog.

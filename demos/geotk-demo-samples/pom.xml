@@ -157,6 +157,11 @@
             <artifactId>geotk-gpx</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.geotoolkit.pending</groupId>
+            <artifactId>geotk-csv</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <!--OM -->
         <dependency>

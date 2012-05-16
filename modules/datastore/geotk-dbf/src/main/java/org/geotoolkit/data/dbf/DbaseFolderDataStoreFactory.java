@@ -68,7 +68,7 @@ public class DbaseFolderDataStoreFactory extends AbstractFolderDataStoreFactory{
 
     @Override
     public CharSequence getDisplayName() {
-        return new ResourceInternationalString("org/geotoolkit/dbf/bundle", "databaseFolderDescription");
+        return new ResourceInternationalString("org/geotoolkit/dbf/bundle", "databaseFolderTitle");
     }
     
     
