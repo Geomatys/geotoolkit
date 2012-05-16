@@ -31,6 +31,8 @@ import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.ows.xml.v110.BoundingBoxType;
 import org.geotoolkit.ows.xml.v110.CodeType;
 import org.geotoolkit.security.ClientSecurity;
+import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
 import org.geotoolkit.wps.xml.v100.DataInputsType;
@@ -59,6 +61,9 @@ public abstract class AbstractExecute extends AbstractRequest implements Execute
     protected boolean status;
     protected List<WPSOutput> outputs;
     protected List<AbstractWPSInput> inputs;
+    
+    protected String storageDirectory;
+    protected String storageURL;
 
     /**
      * Constructor, initialize status, lineage and storage to false and output form to "document"
@@ -189,13 +194,39 @@ public abstract class AbstractExecute extends AbstractRequest implements Execute
         this.inputs = inputs;
     }
 
+    @Override
+    public String getStorageDirectory() {
+        return storageDirectory;
+    }
+
+    @Override
+    public void setStorageDirectory(String path) {
+        this.storageDirectory = path;
+    }
+
+    @Override
+    public String getStorageURL() {
+        return storageURL;
+    }
+
+    @Override
+    public void setStorageURL(String url) {
+        this.storageURL = url;
+    }
+
+    
     /**
      * {@inheritDoc }
      */
     @Override
     public InputStream getResponseStream() throws IOException {
 
-        final Execute request = makeRequest();
+        final Execute request;
+        try {
+            request = makeRequest();
+        } catch (NonconvertibleObjectException ex) {
+           throw new IOException("Error during inputs/outputs conversion.", ex);
+        }
 
         final URL url = new URL(serverURL);
         URLConnection conec = url.openConnection();
@@ -222,7 +253,12 @@ public abstract class AbstractExecute extends AbstractRequest implements Execute
         return security.decrypt(conec.getInputStream());
     }
 
-    public Execute makeRequest() {
+    /**
+     * Create the {@link Execute execute} request object for a process.
+     * @return execute request
+     * @throws NonconvertibleObjectException if an error occurs during inputs conversion.
+     */
+    public Execute makeRequest() throws NonconvertibleObjectException {
         final Execute request = new Execute();
         request.setService("WPS");
         request.setVersion(version);
@@ -315,7 +351,7 @@ public abstract class AbstractExecute extends AbstractRequest implements Execute
      * @param in
      * @return
      */
-    private DataInputsType getDataInputs() {
+    private DataInputsType getDataInputs() throws NonconvertibleObjectException {
 
         final DataInputsType input = new DataInputsType();
 
@@ -360,21 +396,19 @@ public abstract class AbstractExecute extends AbstractRequest implements Execute
      * @param in
      * @return
      */
-    private InputType getInputComplex(final WPSInputComplex in) {
+    private InputType getInputComplex(final WPSInputComplex in) throws NonconvertibleObjectException {
 
         final InputType inputType = new InputType();
 
         final DataType datatype = new DataType();
-        final ComplexDataType complex = new ComplexDataType();
-        complex.setEncoding(in.getEncoding());
-        complex.setMimeType(in.getMime());
-        complex.setSchema(in.getSchema());
+        final String echoding  = in.getEncoding();
+        final String mime      = in.getMime();
+        final String schema    = in.getSchema();
         final Object inputData = in.getData();
-        if (inputData instanceof Collection) {
-            complex.getContent().addAll((Collection) inputData);
-        } else {
-            complex.getContent().add(inputData);
-        }
+        
+        //Try to convert the complex input.
+        final ComplexDataType complex = WPSConvertersUtils.convertToComplex(inputData, mime, echoding, schema, storageDirectory, storageURL);
+        
         datatype.setComplexData(complex);
         inputType.setData(datatype);
         inputType.setIdentifier(new CodeType(in.getIdentifier()));

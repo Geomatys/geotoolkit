@@ -50,6 +50,7 @@ import org.geotoolkit.util.converter.ConverterRegistry;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.util.converter.ObjectConverter;
 import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.wps.converters.WPSConvertersUtils;
 import org.geotoolkit.wps.io.WPSIO;
 import org.geotoolkit.wps.v100.DescribeProcess100;
 import org.geotoolkit.wps.v100.Execute100;
@@ -81,6 +82,9 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
     private final Map<String, ProcessDescriptor> descriptors = new HashMap<String, ProcessDescriptor>();
     private boolean isDescriptorsRequested = false;
     private WPSCapabilitiesType capabilities;
+    
+    private String storageDirectory;
+    private String storageURL;
 
     /**
      * Static enumeration of WPS server versions.
@@ -180,6 +184,22 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
         return WPSVersion.getVersion(Parameters.value(WPSServerFactory.VERSION, parameters));
     }
 
+    public String getStorageDirectory() {
+        return storageDirectory;
+    }
+
+    public void setStorageDirectory(String storageDirectory) {
+        this.storageDirectory = storageDirectory;
+    }
+
+    public String getStorageURL() {
+        return storageURL;
+    }
+
+    public void setStorageURL(String storageURL) {
+        this.storageURL = storageURL;
+    }
+    
     /**
      * @return WPSCapabilitiesType : WPS server capabilities
      */
@@ -327,7 +347,7 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
     }
 
     @Override
-    public ProcessDescriptor getDescriptor(String name) throws NoSuchIdentifierException {
+    public ProcessDescriptor getDescriptor(final String name) throws NoSuchIdentifierException {
         checkDescriptors();
         final ProcessDescriptor desc = descriptors.get(name);
         if (desc == null) {
@@ -525,68 +545,91 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
         }
     }
 
-
+    /**
+     * Make a WPS Execute request from {@link ParameterValueGroup values}.
+     * 
+     * @param inputs
+     * @param descriptor
+     * @param inputTypes
+     * @return
+     * @throws ProcessException 
+     */
     public Execute createRequest(final ParameterValueGroup inputs, final ProcessDescriptor descriptor,
-            final Map<String, String> inputTypes) {
+            final Map<String, String> inputTypes) throws ProcessException {
+        
+        try {
+           
+            final List<GeneralParameterDescriptor> inputParamDesc = inputs.getDescriptor().descriptors();
+            final List<GeneralParameterDescriptor> outputParamDesc = descriptor.getOutputDescriptor().descriptors();
 
-        final List<GeneralParameterDescriptor> inputParamDesc = inputs.getDescriptor().descriptors();
-        final List<GeneralParameterDescriptor> outputParamDesc = descriptor.getOutputDescriptor().descriptors();
+            final List<AbstractWPSInput> wpsIN = new ArrayList<AbstractWPSInput>();
+            final List<WPSOutput> wpsOUT = new ArrayList<WPSOutput>();
 
-        final List<AbstractWPSInput> wpsIN = new ArrayList<AbstractWPSInput>();
-        final List<WPSOutput> wpsOUT = new ArrayList<WPSOutput>();
+            /*
+             * INPUTS
+             */
+            for (final GeneralParameterDescriptor inputGeneDesc : inputParamDesc) {
+                if (inputGeneDesc instanceof ParameterDescriptor) {
+                    final ParameterDescriptor inputDesc = (ParameterDescriptor) inputGeneDesc;
 
-        /*
-         * INPUTS
-         */
-        for (final GeneralParameterDescriptor inputGeneDesc : inputParamDesc) {
-            if (inputGeneDesc instanceof ParameterDescriptor) {
-                final ParameterDescriptor inputDesc = (ParameterDescriptor) inputGeneDesc;
-
-                final String inputIdentifier = inputDesc.getName().getCode();
-                final String type = inputTypes.get(inputIdentifier);
-                final Class inputClazz = inputDesc.getValueClass();
-                final Object value = inputs.parameter(inputIdentifier).getValue();
-                final String unit = inputDesc.getUnit() != null ? inputDesc.getUnit().toString() : null;
-                
-                if ("literal".equals(type)) {
-                    wpsIN.add(new WPSInputLiteral(inputIdentifier, value.toString(), inputClazz.getSimpleName(), unit));
+                    final String inputIdentifier = inputDesc.getName().getCode();
+                    final String type = inputTypes.get(inputIdentifier);
+                    final Class inputClazz = inputDesc.getValueClass();
+                    final Object value = inputs.parameter(inputIdentifier).getValue();
+                    final String unit = inputDesc.getUnit() != null ? inputDesc.getUnit().toString() : null;
                     
-                } else if ("bbox".equals(type)) {
-                    final Envelope envelop = (Envelope) value;
-                    final String crs = envelop.getCoordinateReferenceSystem().getName().getCode();
-                    final int dim = envelop.getDimension();
-                    
-                    final List<Double> lower = new ArrayList<Double>();
-                    final List<Double> upper = new ArrayList<Double>(); 
-                    for (int i = 0; i < dim; i++) {
-                        lower.add(Double.valueOf(envelop.getLowerCorner().getOrdinate(i)));
-                        upper.add(Double.valueOf(envelop.getUpperCorner().getOrdinate(i)));
+                    if ("literal".equals(type)) {
+                        wpsIN.add(new WPSInputLiteral(inputIdentifier, String.valueOf(value), WPSConvertersUtils.getDataTypeString(inputClazz), unit));
+                        
+                    } else if ("bbox".equals(type)) {
+                        final Envelope envelop = (Envelope) value;
+                        final String crs = envelop.getCoordinateReferenceSystem().getName().getCode();
+                        final int dim = envelop.getDimension();
+                        
+                        final List<Double> lower = new ArrayList<Double>();
+                        final List<Double> upper = new ArrayList<Double>(); 
+                        for (int i = 0; i < dim; i++) {
+                            lower.add(Double.valueOf(envelop.getLowerCorner().getOrdinate(i)));
+                            upper.add(Double.valueOf(envelop.getUpperCorner().getOrdinate(i)));
+                        }
+                        
+                        wpsIN.add(new WPSInputBoundingBox(inputIdentifier,lower, upper, crs, dim));
+                        
+                    } else if ("complex".equals(type)) {
+                        //get the defaults mimeType/encoding/schema for the requested input class.
+                        final WPSIO.WPSSupport support = WPSIO.getDefaultSupport(inputClazz, WPSIO.IOType.OUTPUT, WPSIO.FormChoice.COMPLEX);
+                        if (support != null) {
+                            final String mime = support.getMime();
+                            final String encoding = support.getEncoding().getValue();
+                            final String schema = support.getSchema().getValue();
+                            wpsIN.add(new WPSInputComplex(inputIdentifier, value, inputClazz, encoding, schema, mime));
+                        }
                     }
-                    
-                    wpsIN.add(new WPSInputBoundingBox(inputIdentifier,lower, upper, crs, dim));
-                    
-                } else if ("complex".equals(type)) {
-                    //TODO
                 }
             }
-        }
 
-        /*
-         * OUPTUTS
-         */
-        for (final GeneralParameterDescriptor outputGeneDesc : outputParamDesc) {
-            if (outputGeneDesc instanceof ParameterDescriptor) {
-                final ParameterDescriptor outputDesc = (ParameterDescriptor) outputGeneDesc;
-                
-                wpsOUT.add(new WPSOutput(outputDesc.getName().getCode()));
+            /*
+             * OUPTUTS
+             */
+            for (final GeneralParameterDescriptor outputGeneDesc : outputParamDesc) {
+                if (outputGeneDesc instanceof ParameterDescriptor) {
+                    final ParameterDescriptor outputDesc = (ParameterDescriptor) outputGeneDesc;
+                    
+                    wpsOUT.add(new WPSOutput(outputDesc.getName().getCode()));
+                }
             }
-        }
 
-        final Execute100 exec100 = new Execute100(serverURL.toString(), null);
-        exec100.setIdentifier(descriptor.getIdentifier().getCode());
-        exec100.setInputs(wpsIN);
-        exec100.setOutputs(wpsOUT);
-        return exec100.makeRequest();
+            final Execute100 exec100 = new Execute100(serverURL.toString(), null);
+            exec100.setIdentifier(descriptor.getIdentifier().getCode());
+            exec100.setInputs(wpsIN);
+            exec100.setOutputs(wpsOUT);
+            exec100.setStorageDirectory(storageDirectory);
+            exec100.setStorageURL(storageURL);
+            return exec100.makeRequest();
+            
+        } catch (NonconvertibleObjectException ex) {
+            throw new ProcessException("Error during conversion step.", null, ex);
+        }
     }
 
     /**
@@ -677,12 +720,23 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
                 final ParameterDescriptor outDesc = (ParameterDescriptor) descriptor.getOutputDescriptor().descriptor(output.getIdentifier().getValue());
                 final Class clazz = outDesc.getValueClass();
                 
+                /*
+                 * Reference
+                 */
                 if (output.getReference() != null) {
-                    //TODO support reference outputs 
+                    
+                    try {
+                        outputs.parameter(output.getIdentifier().getValue()).setValue(WPSConvertersUtils.convertFromReference(output.getReference(), clazz));
+                    } catch (NonconvertibleObjectException ex) {
+                        throw new ProcessException(null, null, ex);
+                    }
+                    
                 } else {
                     final DataType outputType = output.getData();
                     
-                    //BBox
+                    /*
+                    * BBOX
+                    */
                     if (outputType.getBoundingBoxData() != null) {
                         try {
                             final BoundingBoxType bbox = outputType.getBoundingBoxData();
@@ -701,16 +755,20 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
                             throw new ProcessException(null, null, ex);
                         } 
                         
-                    //Complex
+                    /*
+                    * Complex
+                    */
                     } else if (outputType.getComplexData() != null) {
-                        //TODO
-                        final ComplexDataType outputComplex = outputType.getComplexData();
-                        final List<Object> data = outputComplex.getContent();
-                        final String mime = outputComplex.getMimeType();
-                        final String encoding = outputComplex.getEncoding();
-                        final String schema = outputComplex.getSchema();
                         
-                    //Literal
+                        try {
+                            outputs.parameter(output.getIdentifier().getValue()).setValue(WPSConvertersUtils.convertFromComplex(outputType.getComplexData(), clazz));
+                        } catch (NonconvertibleObjectException ex) {
+                            throw new ProcessException(null, null, ex);
+                        }
+                        
+                    /*
+                    * Literal
+                    */
                     } else if (outputType.getLiteralData() != null) {
                         try {
                             final LiteralDataType outputLiteral = outputType.getLiteralData();

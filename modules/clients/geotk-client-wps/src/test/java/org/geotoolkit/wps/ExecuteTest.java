@@ -16,18 +16,25 @@
  */
 package org.geotoolkit.wps;
 
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.Point;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.StringUtilities;
+import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.wps.v100.Execute100;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
 import org.geotoolkit.wps.xml.v100.Execute;
 import org.junit.Test;
 import static org.junit.Assert.*;
-
+import org.opengis.util.FactoryException;
 
 /**
  * Testing class for GetCapabilities requests of WPS client, in version 1.0.0.
@@ -35,52 +42,63 @@ import static org.junit.Assert.*;
  * @author Quentin Boileau
  */
 public class ExecuteTest {
-    public ExecuteTest() {}
 
-   
-    @Test 
-   public void testRequestAndMarshall(){
+    public ExecuteTest() {
+    }
+
+    @Test
+    public void testRequestAndMarshall() {
         try {
-            List<Double> corner = new ArrayList<Double>();
+            final List<Double> corner = new ArrayList<Double>();
             corner.add(10.0);
             corner.add(10.0);
-            
-            List<AbstractWPSInput> inputs = new ArrayList<AbstractWPSInput>();
+
+            final GeometryFactory gf = new GeometryFactory();
+            final Point point = gf.createPoint(new Coordinate(0.0, 0.0));
+            JTS.setCRS(point, CRS.decode("EPSG:4326"));
+
+            final List<AbstractWPSInput> inputs = new ArrayList<AbstractWPSInput>();
             inputs.add(new WPSInputLiteral("literal", "10"));
             inputs.add(new WPSInputBoundingBox("bbox", corner, corner, "EPSG:4326", 2));
-            inputs.add(new WPSInputComplex("complex", null));
+            inputs.add(new WPSInputComplex("complex", point, Geometry.class));
             inputs.add(new WPSInputReference("reference", "http://link.to/reference/"));
-            
-            List<WPSOutput> outputs = new ArrayList<WPSOutput>();
+
+            final List<WPSOutput> outputs = new ArrayList<WPSOutput>();
             outputs.add(new WPSOutput("output"));
-            
-            final Execute100 exec100 = new Execute100("http://test.com",null);
+
+            final Execute100 exec100 = new Execute100("http://test.com", null);
             exec100.setIdentifier("identifier");
             exec100.setInputs(inputs);
             exec100.setOutputs(outputs);
-            
+
             final Execute request = exec100.makeRequest();
             assertEquals("WPS", request.getService());
             assertEquals("1.0.0", request.getVersion());
-            assertEquals(request.getIdentifier().getValue(),"identifier");
-            
+            assertEquals(request.getIdentifier().getValue(), "identifier");
+
             final StringWriter stringWriter = new StringWriter();
             final Marshaller marshaller = WPSMarshallerPool.getInstance().acquireMarshaller();
-            marshaller.marshal(request,stringWriter);
-           
+            marshaller.marshal(request, stringWriter);
+
             String result = StringUtilities.removeXmlns(stringWriter.toString());
             String expected = expectedRequest();
             assertEquals(expected, result);
+
+        } catch (FactoryException ex) {
+            fail(ex.getLocalizedMessage());
+            return;
+        } catch (NonconvertibleObjectException ex) {
+            fail(ex.getLocalizedMessage());
+            return;
         } catch (JAXBException ex) {
             fail(ex.getLocalizedMessage());
             return;
         }
-   }
-    
-   private static String expectedRequest(){
-       
-       String str = 
-               "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
+    }
+
+    private static String expectedRequest() {
+
+        String str = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
                 +"<wps:Execute version=\"1.0.0\" service=\"WPS\" >\n"
                 +"    <ows:Identifier>identifier</ows:Identifier>\n"
                 +"    <wps:DataInputs>\n"
@@ -102,7 +120,11 @@ public class ExecuteTest {
                 +"        <wps:Input>\n"
                 +"            <ows:Identifier>complex</ows:Identifier>\n"
                 +"            <wps:Data>\n"
-                +"                <wps:ComplexData/>\n"
+                +"                <wps:ComplexData>\n"
+                +"                    <gml:Point srsName=\"urn:ogc:def:crs:epsg:7.9:4326\">\n"
+                +"                        <gml:pos srsName=\"EPSG:4326\" srsDimension=\"2\">0.0 0.0</gml:pos>\n"
+                +"                    </gml:Point>\n"
+                +"                </wps:ComplexData>\n"
                 +"            </wps:Data>\n"
                 +"        </wps:Input>\n"
                 +"        <wps:Input>\n"
@@ -118,7 +140,7 @@ public class ExecuteTest {
                 +"        </wps:ResponseDocument>\n"
                 +"    </wps:ResponseForm>\n"
                 +"</wps:Execute>\n";
-      
-      return str;  
-   }
+
+        return str;
+    }
 }
