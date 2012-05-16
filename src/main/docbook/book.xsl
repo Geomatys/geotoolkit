@@ -5,9 +5,14 @@
      This file solves the issue of docbook using the <h2> elements
      both for chapter and for the first level of sections heading.
      ============================================================= -->
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+<xsl:stylesheet xmlns:xsl    = "http://www.w3.org/1999/XSL/Transform"
+                xmlns:d      = "http://docbook.org/ns/docbook"
+                xmlns:xslthl = "http://xslthl.sf.net"
+                xmlns        = "http://www.w3.org/1999/xhtml"
+                exclude-result-prefixes="xslthl d" version="1.0">
   <!-- Symbolic URN specific to docbkx-maven-plugin -->
   <xsl:import href="urn:docbkx:stylesheet/docbook.xsl"/>
+  <xsl:import href="urn:docbkx:stylesheet/highlight.xsl"/>
 
   <!--
        Following is copied from "http://docbook.sourceforge.net/release/xsl/current/xhtml/component.xsl".
@@ -43,6 +48,26 @@
         <xsl:with-param name="allow-anchors" select="1"/>
       </xsl:apply-templates>
     </xsl:element>
+  </xsl:template>
+
+  <!--
+       Syntax highlighting partially copied from the "docbook/xhtml-1_1/highlight.xsl" file
+       in the "net/sf/docbook/docbook-xsl/docbook-xsl-ns-resources.zip" archive, then edited.
+  -->
+  <xsl:template match="xslthl:string" mode="xslthl">
+    <span class="hl-string">
+      <xsl:apply-templates mode="xslthl"/>
+    </span>
+  </xsl:template>
+  <xsl:template match="xslthl:annotation" mode="xslthl">
+    <span class="hl-annotation">
+      <xsl:apply-templates mode="xslthl"/>
+    </span>
+  </xsl:template>
+  <xsl:template match="xslthl:doccomment|xslthl:doctype" mode="xslthl">
+    <span class="hl-doccomment">
+      <xsl:apply-templates mode="xslthl"/>
+    </span>
   </xsl:template>
 
 
