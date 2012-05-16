@@ -1073,8 +1073,7 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
                         // Before to declare the intersection as invalid, verify if the envelope
                         // actually span the whole Earth. In such case, the intersection is a no-
                         // operation (or a copy operation).
-                        double min = Double.NaN;
-                        double max = Double.NaN;
+                        final double min, max;
                         final double csSpan = getSpan(getAxis(crs, i));
                         if (span1 >= csSpan) {
                             min = min0;
@@ -1082,6 +1081,9 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
                         } else if (span0 >= csSpan) {
                             min = min1;
                             max = max1;
+                        } else {
+                            min = Double.NaN;
+                            max = Double.NaN;
                         }
                         ordinates[i]     = min;
                         ordinates[i+dim] = max;

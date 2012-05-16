@@ -512,8 +512,7 @@ public abstract class AbstractEnvelope implements Envelope {
             return true;
         }
         for (int i=0; i<dimension; i++) {
-            final double span = getSpan(i);
-            if (!(span > 0)) { // Use '!' in order to catch NaN
+            if (!(getSpan(i) > 0)) { // Use '!' in order to catch NaN
                 return true;
             }
         }
@@ -663,25 +662,19 @@ public abstract class AbstractEnvelope implements Envelope {
                  *  └─────────────┘          ────┘  └────                      └─┘
                  *  minCnd                          minCnd
                  */
-                // sp1=true if the small rectangle in above pictures spans the anti-meridian.
-                final boolean sp1 = isNegativeUnsafe(max1 - min1);
-                if (!sp1) {
+                // (max1-min1) is negative if the small rectangle in above pictures spans the anti-meridian.
+                if (!isNegativeUnsafe(max1 - min1) || isNegativeUnsafe(max0 - min0)) {
                     // Not the excluded case, go to next dimension.
                     continue;
                 }
-                if (isNegativeUnsafe(max0 - min0)) {
-                    // Not the excluded case, go to next dimension.
+                // If this envelope does not span the anti-meridian but the given envelope
+                // does, we don't contain the given envelope except in the special case
+                // where the envelope spanning is equals or greater than the axis spanning
+                // (including the case where this envelope expands to infinities).
+                if ((min0 == Double.NEGATIVE_INFINITY && max0 == Double.POSITIVE_INFINITY) ||
+                    (max0 - min0 >= getSpan(getAxis(getCoordinateReferenceSystem(), i))))
+                {
                     continue;
-                } else if (sp1) {
-                    // If this envelope does not span the anti-meridian but the given envelope
-                    // does, we don't contain the given envelope except in the special case
-                    // where the envelope spanning is equals or greater than the axis spanning
-                    // (including the case where this envelope expands to infinities).
-                    if ((min0 == Double.NEGATIVE_INFINITY && max0 == Double.POSITIVE_INFINITY) ||
-                        (max0 - min0 >= getSpan(getAxis(getCoordinateReferenceSystem(), i))))
-                    {
-                        continue;
-                    }
                 }
             } else if (minCondition != maxCondition) {
                 /*       maxCnd                     !maxCnd

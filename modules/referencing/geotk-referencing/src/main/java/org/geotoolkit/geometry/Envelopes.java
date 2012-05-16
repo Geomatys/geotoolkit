@@ -171,7 +171,7 @@ public final class Envelopes extends Static {
                     }
                     envelope = transform(operation, envelope);
                 }
-                assert envelope.getCoordinateReferenceSystem() == targetCRS;
+                assert AbstractEnvelope.equalsIgnoreMetadata(targetCRS, envelope.getCoordinateReferenceSystem(), true);
             }
         }
         return envelope;
