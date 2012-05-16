@@ -83,7 +83,7 @@ public class Concept implements Serializable {
     private String value;
 
     @XmlElement(namespace="http://www.w3.org/2000/01/rdf-schema#")
-    private String label;
+    private List<Value> label;
     
     @XmlElement(namespace="http://semantic-web.at/ontologies/csw.owl#")
     private Boolean hierarchyRoot;
@@ -476,6 +476,52 @@ public class Concept implements Serializable {
         this.prefLabel = prefLabel;
     }
 
+    /**
+     * @return the label
+     */
+    public List<Value> getLabel() {
+        if (label == null) {
+            this.label = new ArrayList<Value>();
+        }
+        return label;
+    }
+
+    public String getLabel(final String language) {
+        if (label != null) {
+            for (Value v: label) {
+                if (v.getLang() != null &&
+                    v.getLang().equalsIgnoreCase(language)) {
+                    return v.getValue();
+                } else if (v.getLang() == null && language == null) {
+                    return v.getValue();
+                }
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * @param label the label to set
+     */
+    @Deprecated
+    public void setLabel(final String label) {
+        if (this.label == null) {
+            this.label = new ArrayList<Value>();
+        }
+        this.label.add(new Value(label));
+    }
+    
+    public void addLabel(final Value label) {
+        if (this.label == null) {
+            this.label = new ArrayList<Value>();
+        }
+        this.label.add(label);
+    }
+    
+    public void setLabel(final List<Value> label) {
+        this.label = label;
+    }
+    
     public List<Value> getAltLabel() {
         if (altLabel == null) {
             altLabel = new ArrayList<Value>();
@@ -675,20 +721,6 @@ public class Concept implements Serializable {
      */
     public void setValue(final String value) {
         this.value = value;
-    }
-
-    /**
-     * @return the label
-     */
-    public String getLabel() {
-        return label;
-    }
-
-    /**
-     * @param label the label to set
-     */
-    public void setLabel(final String label) {
-        this.label = label;
     }
 
     /**
