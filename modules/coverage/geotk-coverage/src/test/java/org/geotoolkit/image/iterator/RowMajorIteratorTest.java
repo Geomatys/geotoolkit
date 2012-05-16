@@ -20,8 +20,8 @@ package org.geotoolkit.image.iterator;
 import java.awt.Rectangle;
 import java.awt.image.BandedSampleModel;
 import java.awt.image.DataBuffer;
+import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
-import java.awt.image.WritableRaster;
 import javax.media.jai.TiledImage;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
@@ -31,24 +31,90 @@ import org.junit.Test;
  *
  * @author Rémi Marechal (Geomatys).
  */
-public class RowMajorIteratorTest {
-    TiledImage renderedImage;
-    protected int tilesWidth;
-    protected int tilesHeight;
-    protected int numBand;
-    protected int width;
-    protected int height;
-    protected int dataType = DataBuffer.TYPE_INT;
-    protected int minx;
-    protected int miny;
-    protected int[] tabRef, tabTest;
+public class RowMajorIteratorTest extends IteratorTest {
 
-    protected WritableRaster rasterTest;
-    protected PixelIterator pixIterator;
+    protected int dataType = DataBuffer.TYPE_INT;
+    protected int[] tabRef, tabTest;
 
     public RowMajorIteratorTest() {
     }
 
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public void differentMinRasterReadTest() {
+        //no test about raster for this iterator
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public void rectContainsRasterReadTest() {
+        //no test about raster for this iterator
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public void rectLowerLeftRasterReadTest() {
+        //no test about raster for this iterator
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public void rectLowerRightRasterReadTest() {
+        //no test about raster for this iterator
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public void rectUpperLeftRasterReadTest() {
+        //no test about raster for this iterator
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public void rectUpperRightRasterReadTest() {
+        //no test about raster for this iterator
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public void rasterContainsRectReadTest() {
+        //no test about raster for this iterator
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public void unappropriateRectRasterTest() {
+        //no test about raster for this iterator
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public void unappropriateMoveToRasterTest() {
+        //no test about raster for this iterator
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
     protected void setRenderedImgTest(int minx, int miny, int width, int height, int tilesWidth, int tilesHeight, int numBand, Rectangle areaIterate) {
         final BandedSampleModel sampleM = new BandedSampleModel(DataBuffer.TYPE_INT, tilesWidth, tilesHeight, numBand);
         renderedImage = new TiledImage(minx, miny, width, height, minx+tilesWidth, miny+tilesHeight, sampleM, null);
@@ -126,172 +192,7 @@ public class RowMajorIteratorTest {
     }
 
     /**
-     * Test if iterator transverse all raster positions with different minX and maxY coordinates.
-     * Also test rewind function.
-     */
-    @Test
-    public void transversingAllTest() {
-        minx = 0;
-        miny = 0;
-        width = 100;
-        height = 50;
-        tilesWidth = 10;
-        tilesHeight = 5;
-        setRenderedImgTest(minx, miny, width, height, tilesWidth, tilesHeight, 3, null);
-        setPixelIterator(renderedImage);
-
-        int comp = 0;
-        while (pixIterator.next()) tabTest[comp++] = pixIterator.getSample();
-        assertTrue(compareTab(tabTest, tabRef));
-
-        minx = 1;
-        miny = -50;
-        width = 100;
-        height = 50;
-        tilesWidth = 10;
-        tilesHeight = 5;
-        setRenderedImgTest(minx, miny, width, height, tilesWidth, tilesHeight, 3, null);
-        setPixelIterator(renderedImage);
-
-        comp = 0;
-        while (pixIterator.next()) tabTest[comp++] = pixIterator.getSample();
-        assertTrue(compareTab(tabTest, tabRef));
-
-        pixIterator.rewind();
-        comp = 0;
-        while (pixIterator.next()) tabTest[comp++] = pixIterator.getSample();
-        assertTrue(compareTab(tabTest, tabRef));
-    }
-
-    /**
-     * Test if iterator transverse expected value in define area.
-     * Area is defined on upper left raster corner.
-     */
-    @Test
-    public void rectUpperLeftTest() {
-        final Rectangle rect = new Rectangle(-10, -20, 40, 30);
-        minx = 0;
-        miny = 0;
-        width = 100;
-        height = 50;
-        tilesWidth = 10;
-        tilesHeight = 5;
-        setRenderedImgTest(minx, miny, width, height, tilesWidth, tilesHeight, 3, rect);
-        setPixelIterator(renderedImage, rect);
-
-        int comp = 0;
-        while (pixIterator.next()) tabTest[comp++] = pixIterator.getSample();
-        assertTrue(compareTab(tabTest, tabRef));
-    }
-
-    /**
-     * Test if iterator transverse expected value in define area.
-     * Area is defined on upper right raster corner.
-     */
-    @Test
-    public void rectUpperRightTest() {
-        final Rectangle rect = new Rectangle(80, -20, 30, 50);
-        minx = 0;
-        miny = 0;
-        width = 100;
-        height = 50;
-        tilesWidth = 10;
-        tilesHeight = 5;
-        setRenderedImgTest(minx, miny, width, height, tilesWidth, tilesHeight, 3, rect);
-        setPixelIterator(renderedImage, rect);
-
-        int comp = 0;
-        while (pixIterator.next()) tabTest[comp++] = pixIterator.getSample();
-        assertTrue(compareTab(tabTest, tabRef));
-    }
-
-    /**
-     * Test if iterator transverse expected value in define area.
-     * Area is defined on lower right raster corner.
-     */
-    @Test
-    public void rectLowerRightTest() {
-        final Rectangle rect = new Rectangle(80, 30, 50, 50);
-        minx = 0;
-        miny = 0;
-        width = 100;
-        height = 50;
-        tilesWidth = 10;
-        tilesHeight = 5;
-        setRenderedImgTest(minx, miny, width, height, tilesWidth, tilesHeight, 3, rect);
-        setPixelIterator(renderedImage, rect);
-
-        int comp = 0;
-        while (pixIterator.next()) tabTest[comp++] = pixIterator.getSample();
-        assertTrue(compareTab(tabTest, tabRef));
-    }
-
-    /**
-     * Test if iterator transverse expected value in define area.
-     * Area is defined on lower left raster corner.
-     */
-    @Test
-    public void rectLowerLeftTest() {
-        final Rectangle rect = new Rectangle(-20, 30, 50, 50);
-        minx = 0;
-        miny = 0;
-        width = 100;
-        height = 50;
-        tilesWidth = 10;
-        tilesHeight = 5;
-        setRenderedImgTest(minx, miny, width, height, tilesWidth, tilesHeight, 3, rect);
-        setPixelIterator(renderedImage, rect);
-
-        int comp = 0;
-        while (pixIterator.next()) tabTest[comp++] = pixIterator.getSample();
-        assertTrue(compareTab(tabTest, tabRef));
-    }
-
-    /**
-     * Test if iterator transverse expected value in define area.
-     * Area is within raster area.
-     */
-    @Test
-    public void imageContainsRectTest() {
-        final Rectangle rect = new Rectangle(20, 10, 70, 30);
-        minx = 0;
-        miny = 0;
-        width = 100;
-        height = 50;
-        tilesWidth = 10;
-        tilesHeight = 5;
-        setRenderedImgTest(minx, miny, width, height, tilesWidth, tilesHeight, 3, rect);
-        setPixelIterator(renderedImage, rect);
-
-        int comp = 0;
-        while (pixIterator.next()) tabTest[comp++] = pixIterator.getSample();
-        assertTrue(compareTab(tabTest, tabRef));
-    }
-
-    /**
-     * Test if iterator transverse expected value in define area.
-     * Area contains all raster area.
-     */
-    @Test
-    public void rectContainsImageTest() {
-        final Rectangle rect = new Rectangle(-10, -10, 150, 80);
-        minx = 0;
-        miny = 0;
-        width = 100;
-        height = 50;
-        tilesWidth = 10;
-        tilesHeight = 5;
-        setRenderedImgTest(minx, miny, width, height, tilesWidth, tilesHeight, 3, rect);
-        setPixelIterator(renderedImage, rect);
-
-        int comp = 0;
-        while (pixIterator.next()) tabTest[comp++] = pixIterator.getSample();
-        assertTrue(compareTab(tabTest, tabRef));
-    }
-
-    /**
-     * Test if iterator transverse expected value in define area.
-     * Area contains all raster area.
+     * Test if iterator transverse expected value from moveTo(x, y) method.
      */
     @Test
     public void moveToTest() {
@@ -320,8 +221,7 @@ public class RowMajorIteratorTest {
     }
 
     /**
-     * Test if iterator transverse expected value in define area.
-     * Area contains all raster area.
+     * Test if iterator transverse expected value from moveTo(x, y) method.
      */
     @Test
     public void moveToTest2() {
@@ -350,21 +250,6 @@ public class RowMajorIteratorTest {
     }
 
     /**
-     * Test catching exception with rectangle which don't intersect raster area.
-     */
-    @Test
-    public void unappropriateRectTest() {
-        final Rectangle rect = new Rectangle(-100, -50, 5, 17);
-        boolean testTry = false;
-        try{
-            setPixelIterator(renderedImage, rect);
-        }catch(Exception e){
-            testTry = true;
-        }
-        assertTrue(testTry);
-    }
-
-    /**
      * Compare 2 integer table.
      *
      * @param tabA table resulting raster iterate.
@@ -380,9 +265,11 @@ public class RowMajorIteratorTest {
         return true;
     }
 
+
     /**
      * {@inheritDoc }.
      */
+    @Override
     protected void setPixelIterator(RenderedImage renderedImage) {
         pixIterator = PixelIteratorFactory.createRowMajorIterator(renderedImage);
     }
@@ -390,8 +277,48 @@ public class RowMajorIteratorTest {
     /**
      * {@inheritDoc }.
      */
+    @Override
     protected void setPixelIterator(RenderedImage renderedImage, Rectangle subArea) {
         pixIterator = PixelIteratorFactory.createRowMajorIterator(renderedImage, subArea);
     }
 
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    protected void setRasterTest(int minx, int miny, int width, int height, int numBand, Rectangle subArea) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    protected void setPixelIterator(Raster raster) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    protected void setPixelIterator(Raster raster, Rectangle subArea) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    protected void setTabTestValue(int index, double value) {
+        tabTest[index] = (int) value;
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    protected boolean compareTab() {
+        return compareTab(tabRef, tabTest);
+    }
 }
