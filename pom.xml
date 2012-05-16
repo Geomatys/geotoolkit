@@ -785,12 +785,18 @@
         <artifactId>docbkx-maven-plugin</artifactId>
         <inherited>false</inherited>
         <dependencies>
-          <dependency>
+          <dependency> <!-- XHTML generation -->
             <groupId>net.sf.docbook</groupId>
             <artifactId>docbook-xml</artifactId>
             <version>5.0-all</version>
             <classifier>resources</classifier>
             <type>zip</type>
+            <scope>runtime</scope>
+          </dependency>
+          <dependency> <!-- Syntax highlighting -->
+            <groupId>net.sf.xslthl</groupId>
+            <artifactId>xslthl</artifactId>
+            <version>2.0.2</version>
             <scope>runtime</scope>
           </dependency>
         </dependencies>
@@ -800,6 +806,7 @@
           <xhtmlCustomization>src/main/docbook/book.xsl</xhtmlCustomization>
           <xincludeSupported>true</xincludeSupported>
           <htmlStylesheet>book.css</htmlStylesheet>
+          <highlightSource>true</highlightSource>
         </configuration>
         <executions>
           <execution>

@@ -410,39 +410,38 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
      * This method performs two steps:
      *
      * <ol>
-     *   <li>Ensure that the envelope is contained in the {@linkplain CoordinateSystem
+     *   <li><p>First, ensure that the envelope is contained in the {@linkplain CoordinateSystem
      *   coordinate system} domain. If some ordinates are out of range, then there is a choice
-     *   depending on the {@linkplain CoordinateSystemAxis#getRangeMeaning range meaning}:
+     *   depending on the {@linkplain CoordinateSystemAxis#getRangeMeaning() range meaning}:</p>
      *   <ul>
-     *     <li>If {@link RangeMeaning#EXACT} (typically <em>latitudes</em> ordinates), then
-     *     values greater than the {@linkplain CoordinateSystemAxis#getMaximumValue maximum value}
-     *     are replaced by the maximum, and values smaller than the
-     *     {@linkplain CoordinateSystemAxis#getMinimumValue minimum value}
-     *     are replaced by the minimum.</li>
+     *     <li>If {@link RangeMeaning#EXACT} (typically <em>latitudes</em> ordinates), then values
+     *       greater than the {@linkplain CoordinateSystemAxis#getMaximumValue() maximum value} are
+     *       replaced by the maximum, and values smaller than the
+     *       {@linkplain CoordinateSystemAxis#getMinimumValue() minimum value} are replaced by the minimum.</li>
      *
      *     <li>If {@link RangeMeaning#WRAPAROUND} (typically <em>longitudes</em> ordinates),
-     *     then a multiple of the range (e.g. 360° for longitudes) is added or subtracted.
-     *     Example:
-     *     <ul>
-     *       <li>Longitude range of [185 … 190]° is converted to [-175 … -170]°.</li>
-     *       <li>Longitude range of [175 … 185]° is converted to [175 … -175]°.
-     *           See <cite>Spanning the anti-meridian of a Geographic CRS</cite> in the
-     *           class javadoc for more information about the meaning of such range.</li>
-     *     </ul></li>
+     *       then a multiple of the range (e.g. 360° for longitudes) is added or subtracted.
+     *       For example the [185 … 190]° longitude range is converted to [-175 … -170]°, and
+     *       the [175 … 185]° longitude range is converted to [175 … -175]°.
+     *       See <cite>Spanning the anti-meridian of a Geographic CRS</cite> in the
+     *       class javadoc for more information about the meaning of such range.</li>
      *   </ul></li>
-     *   <li>If {@code crsDomain} is {@code true}, then the envelope from the previous step
-     *   is intersected with the CRS {@linkplain CoordinateReferenceSystem#getDomainOfValidity
-     *   domain of validity}, if any.</li>
+     *   <li><p>If {@code crsDomain} is {@code true}, then the envelope from the previous step
+     *   is intersected with the CRS {@linkplain CoordinateReferenceSystem#getDomainOfValidity()
+     *   domain of validity}, if any.</p></li>
      * </ol>
-     * <p>
-     * This method is useful before to project an envelope. For example some projections may produce
-     * {@link Double#NaN} numbers if given a latitude value greater than 90°. This is also useful
-     * before to compute the union or intersection of envelopes.
+     *
+     * This method is useful before to project an envelope, since some projections may produce
+     * {@link Double#NaN} numbers when given an ordinate value out of bounds. Note however that
+     * if the envelope is spanning the anti-meridian, then some {@linkplain #getLower(int) lower}
+     * ordinate values may become greater than {@linkplain #getUpper(int) upper} ordinate values
+     * even if it was not the case before this method call. If this is not acceptable, consider
+     * invoking {@link #reorderCorners()} after this method call.
      *
      * @param  useDomainOfCRS {@code true} if the envelope should be restricted to
      *         the CRS <cite>domain of validity</cite> in addition to the CS domain.
-     * @return {@code true} if this envelope has been modified, or {@code false} if no change
-     *         was done.
+     * @return {@code true} if this envelope has been modified as a result of this method call,
+     *         or {@code false} if no change was done.
      *
      * @since 3.11 (derived from 2.5)
      */
@@ -461,18 +460,27 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
                     if (ordinates[i] < minimum) {ordinates[i] = minimum; changed = true;}
                     if (ordinates[j] > maximum) {ordinates[j] = maximum; changed = true;}
                 } else if (RangeMeaning.WRAPAROUND.equals(rm)) {
-                    final double length = maximum - minimum;
-                    if (length > 0 && length < Double.POSITIVE_INFINITY) {
-                        final double o1 = Math.floor((ordinates[i] - minimum) / length) * length;
-                        final double o2 = Math.floor((ordinates[j] - minimum) / length) * length;
-                        if (o1 != 0) {ordinates[i] -= o1; changed = true;}
-                        if (o2 != 0) {ordinates[j] -= o2; changed = true;}
-                        if (ordinates[i] == ordinates[j] && o1 != o2) {
-                            // This happen for example if we transformed [0 … 360]° into [0 … 0]°
-                            // The special case [0 … -0]° is understood by GeneralEnvelope as a
-                            // range spanning all the world.
-                            ordinates[i] = +0.0;
-                            ordinates[j] = -0.0;
+                    final double csSpan = maximum - minimum;
+                    if (csSpan > 0 && csSpan < Double.POSITIVE_INFINITY) {
+                        double o1 = ordinates[i];
+                        double o2 = ordinates[j];
+                        if (o1 <= minimum && o2 >= maximum) {
+                            // Avoid replacing [-180 … +180]° by [-180 … -180]°.
+                            changed |= (o1 != minimum || o2 != maximum);
+                            ordinates[i] = minimum;
+                            ordinates[j] = maximum;
+                        } else {
+                            o1 = Math.floor((o1 - minimum) / csSpan) * csSpan;
+                            o2 = Math.floor((o2 - minimum) / csSpan) * csSpan;
+                            if (o1 != 0) {ordinates[i] -= o1; changed = true;}
+                            if (o2 != 0) {ordinates[j] -= o2; changed = true;}
+                            if (ordinates[i] == ordinates[j] && o1 != o2) {
+                                // This happen for example if we transformed [0 … 360]° into [0 … 0]°
+                                // The special case [0 … -0]° is understood by GeneralEnvelope as a
+                                // range spanning all the world.
+                                ordinates[i] = +0.0;
+                                ordinates[j] = -0.0;
+                            }
                         }
                     }
                 }
@@ -505,6 +513,45 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
                     intersect(domain);
                     if (!changed) {
                         changed = !equals(original, 0, false);
+                    }
+                }
+            }
+        }
+        return changed;
+    }
+
+    /**
+     * Tries to use a {@linkplain #getLower(int) lower} &lt; {@linkplain #getUpper(int) upper}
+     * relationship for the ordinate values in every dimension. If an upper ordinate value is
+     * less than a lower ordinate value, this this method will shift that upper ordinate by
+     * some multiple of the axis span (typically 360° of longitude). This operation is applied
+     * only on axes having {@link RangeMeaning#WRAPAROUND}.
+     * <p>
+     * This method is sometime useful before to compute the {@linkplain #add(Envelope) union}
+     * or {@linkplain #intersect(Envelope) intersection} of envelopes.
+     *
+     * @return {@code true} if this envelope has been modified as a result of this method call,
+     *         or {@code false} if no change was done.
+     *
+     * @since 3.20
+     */
+    public boolean reorderCorners() {
+        boolean changed = false;
+        final CoordinateReferenceSystem crs = this.crs;
+        if (crs != null) {
+            final int dimension = ordinates.length >>> 1;
+            for (int i=0; i<dimension; i++) {
+                final int j = i+dimension;
+                final double lower = ordinates[i];
+                final double upper = ordinates[j];
+                final double span  = upper - lower;
+                if (isNegative(span)) {
+                    final double csSpan = getSpan(crs.getCoordinateSystem().getAxis(i));
+                    if (csSpan > 0 && csSpan < Double.POSITIVE_INFINITY) {
+                        changed = true;
+                        ordinates[j] = (span != 0) ?
+                                upper - Math.floor(span / csSpan) * csSpan :
+                                upper + csSpan;
                     }
                 }
             }
@@ -648,21 +695,31 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
     }
 
     /**
-     * Returns a new envelope that encompass only some dimensions of this envelope.
-     * This method copies this envelope ordinates into a new envelope, beginning at
-     * dimension {@code lower} and extending to dimension {@code upper-1}.
-     * Thus the dimension of the sub-envelope is {@code upper-lower}.
+     * Returns an envelope that encompass only some dimensions of this envelope.
+     * This method performs the following choice:
+     *
+     * <ul>
+     *   <li><p>If the given {@code lower} and {@code upper} arguments are equal to 0 and this
+     *     {@linkplain #getDimension() envelope dimension} respectively, then this method returns
+     *     {@code this}. Note that in such case, the {@linkplain #getCoordinateReferenceSystem() CRS}
+     *     (if non-null) is still valid.</p></li>
+     *   <li><p>Otherwise, this method copies the ordinate values from this envelope into a new
+     *     envelope, beginning at dimension {@code lower} and extending to dimension {@code upper-1}.
+     *     The {@linkplain #getCoordinateReferenceSystem() CRS} of the new envelope is initialized
+     *     to {@code null}. This method does not compute a new CRS because it may not be needed,
+     *     or the new CRS may be already known by the caller.</p></li>
+     * </ul>
      *
      * @param  lower The first dimension to copy, inclusive.
      * @param  upper The last  dimension to copy, exclusive.
-     * @return The sub-envelope.
+     * @return The sub-envelope of dimension {@code upper-lower}, which may be {@code this}.
      * @throws IndexOutOfBoundsException if an index is out of bounds.
      */
     public GeneralEnvelope getSubEnvelope(final int lower, final int upper)
             throws IndexOutOfBoundsException
     {
         final int curDim = ordinates.length >>> 1;
-        final int newDim = upper-lower;
+        final int newDim = upper - lower;
         if (lower<0 || lower>curDim) {
             throw new IndexOutOfBoundsException(Errors.format(
                     Errors.Keys.ILLEGAL_ARGUMENT_$2, "lower", lower));
@@ -670,6 +727,9 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
         if (newDim<0 || upper>curDim) {
             throw new IndexOutOfBoundsException(Errors.format(
                     Errors.Keys.ILLEGAL_ARGUMENT_$2, "upper", upper));
+        }
+        if (newDim == curDim) {
+            return this;
         }
         final GeneralEnvelope envelope = new GeneralEnvelope(newDim);
         System.arraycopy(ordinates, lower,        envelope.ordinates, 0,      newDim);
@@ -685,12 +745,16 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
      * @param  upper The last  dimension to omit, exclusive.
      * @return The sub-envelope.
      * @throws IndexOutOfBoundsException if an index is out of bounds.
+     *
+     * @deprecated The implementation of this method was broken. Since this method was not
+     * used anymore (which explain why we didn't noticed its bug), it will be removed.
      */
+    @Deprecated
     public GeneralEnvelope getReducedEnvelope(final int lower, final int upper)
             throws IndexOutOfBoundsException
     {
         final int curDim = ordinates.length >>> 1;
-        final int rmvDim = upper-lower;
+        final int rmvDim = upper - lower;
         if (lower<0 || lower>curDim) {
             throw new IndexOutOfBoundsException(Errors.format(
                     Errors.Keys.ILLEGAL_ARGUMENT_$2, "lower", lower));

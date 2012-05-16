@@ -225,7 +225,7 @@ public final strictfp class GeneralEnvelopeTest {
      * @since 3.20
      */
     @Test
-    public void testReduceToCSDomain() {
+    public void testReduceToDomainOfCS() {
         testReduceToDomain(false);
     }
 
@@ -236,8 +236,28 @@ public final strictfp class GeneralEnvelopeTest {
      * @since 3.20
      */
     @Test
-    public void testReduceToCRSDomain() {
+    public void testReduceToDomainOfCRS() {
         testReduceToDomain(true);
+    }
+
+    /**
+     * Tests the {@link GeneralEnvelope#reorderCorners()}.
+     *
+     * @since 3.20
+     */
+    @Test
+    public void testReorderCorners() {
+        GeneralEnvelope e = create(-100, -10, +100, +10);
+        assertFalse(e.reorderCorners());
+        assertEnvelopeEquals(e, -100, -10, +100, +10);
+
+        e = create(30, -10, -60, 10);
+        assertTrue(e.reorderCorners());
+        assertEnvelopeEquals(e, 30, -10, 300, 10);
+
+        e = create(0.0, -10, -0.0, 10);
+        assertTrue(e.reorderCorners());
+        assertEnvelopeEquals(e, 0, -10, 360, 10);
     }
 
     /**

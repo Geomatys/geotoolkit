@@ -46,7 +46,11 @@ import org.geotoolkit.internal.LazySet;
  *
  * @since 2.4
  * @module
+ *
+ * @deprecated Deprecated together with {@link GridCoverageFactory}.
+ * Will wait for a GeoAPI interface before to provide a new factory finder.
  */
+@Deprecated
 public final class CoverageFactoryFinder extends Static {
     /**
      * The service registry for this manager.

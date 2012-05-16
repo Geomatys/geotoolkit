@@ -802,8 +802,13 @@ public abstract class AbstractEnvelope implements Envelope {
     }
 
     /**
-     * Returns a {@link Rectangle2D} with the same bounds then this {@code Envelope}.
+     * Returns a {@link Rectangle2D} with the {@linkplain #getMinimum(int) minimum}
+     * and {@linkplain #getMaximum(int) maximum} values of this {@code Envelope}.
      * This envelope must be two-dimensional before this method is invoked.
+     *
+     * {@section Spanning the anti-meridian of a Geographic CRS}
+     * If this envelope spans the anti-meridian, then the longitude dimension will be
+     * extended to full range of its coordinate system axis (typically [-180 … 180]°).
      *
      * @return This envelope as a two-dimensional rectangle.
      * @throws IllegalStateException if this envelope is not two-dimensional.
@@ -817,8 +822,8 @@ public abstract class AbstractEnvelope implements Envelope {
                     Errors.Keys.NOT_TWO_DIMENSIONAL_$1, dimension));
         }
         return XRectangle2D.createFromExtremums(
-                getLower(0), getLower(1),
-                getUpper(0), getUpper(1));
+                getMinimum(0), getMinimum(1),
+                getMaximum(0), getMaximum(1));
     }
 
     /**
