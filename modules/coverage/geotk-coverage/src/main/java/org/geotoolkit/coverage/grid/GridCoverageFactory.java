@@ -96,8 +96,11 @@ import org.geotoolkit.resources.Errors;
  *
  * @since 2.1
  * @module
+ *
+ * @deprecated Replaced by {@link GridCoverageBuilder}.
  */
 @ThreadSafe
+@Deprecated
 public class GridCoverageFactory extends Factory {
     /**
      * Whatever we should use {@link GridCoverageBuilder}. As of Geotk 3.20, we use the builder
