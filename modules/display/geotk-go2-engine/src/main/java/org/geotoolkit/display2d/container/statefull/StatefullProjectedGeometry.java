@@ -71,15 +71,17 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
 
     public StatefullProjectedGeometry(final StatefullProjectedGeometry copy){
         this.params = copy.params;
+        this.dataToObjective = copy.dataToObjective;
+        this.dataToDisplay = copy.dataToDisplay;
         this.dataGeometryJTS = copy.dataGeometryJTS;
         this.dataGeometryISO = copy.dataGeometryISO;
         this.dataShape       = copy.dataShape;
         this.objectiveGeometryJTS = copy.objectiveGeometryJTS;
         this.objectiveGeometryISO = copy.objectiveGeometryISO;
         this.objectiveShape       = copy.objectiveShape;
-        this.displayGeometryJTS = copy.displayGeometryJTS;
-        this.displayGeometryISO = copy.displayGeometryISO;
-        this.displayShape       = copy.displayShape;
+        this.displayGeometryJTS = null;
+        this.displayGeometryISO = null;
+        this.displayShape       = null;
     }
 
     public void setDataGeometry(final com.vividsolutions.jts.geom.Geometry geom, CoordinateReferenceSystem dataCRS){
