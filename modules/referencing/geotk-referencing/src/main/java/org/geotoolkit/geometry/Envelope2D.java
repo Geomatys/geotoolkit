@@ -627,6 +627,9 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
                 if (!isNegativeUnsafe(span1) || isNegativeUnsafe(span0)) {
                     continue;
                 }
+                if (span0 >= AbstractEnvelope.getSpan(getAxis(getCoordinateReferenceSystem(), i))) {
+                    continue;
+                }
             } else if (minCondition != maxCondition) {
                 if (isNegative(span0) && isPositive(span1)) {
                     continue;
@@ -761,7 +764,16 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
                     if (max0 >= min1) {max = max0; intersect |= 2;}
                 }
                 if (intersect == 0 || intersect == 3) {
-                    continue; // Leave ordinate values to NaN
+                    final double csSpan = AbstractEnvelope.getSpan(getAxis(crs, i));
+                    if (span1 >= csSpan) {
+                        min = min0;
+                        max = max0;
+                    } else if (span0 >= csSpan) {
+                        min = min1;
+                        max = max1;
+                    } else {
+                        continue; // Leave ordinate values to NaN
+                    }
                 }
             }
             inter.setRange(i, min, max);
@@ -778,6 +790,7 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
      * @param rect The rectangle to add to this envelope.
      * @return The union of the given rectangle with this envelope.
      */
+    @Override
     public Envelope2D createUnion(final Rectangle2D rect) {
         final Envelope2D union = (Envelope2D) clone();
         union.add(rect);
