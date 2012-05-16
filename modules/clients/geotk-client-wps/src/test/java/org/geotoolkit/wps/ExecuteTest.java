@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.wps.v100.Execute100;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
 import org.geotoolkit.wps.xml.v100.Execute;
@@ -67,8 +68,9 @@ public class ExecuteTest {
             final Marshaller marshaller = WPSMarshallerPool.getInstance().acquireMarshaller();
             marshaller.marshal(request,stringWriter);
            
+            String result = StringUtilities.removeXmlns(stringWriter.toString());
             String expected = expectedRequest();
-            assertEquals(expected, stringWriter.toString());
+            assertEquals(expected, result);
         } catch (JAXBException ex) {
             fail(ex.getLocalizedMessage());
             return;
@@ -79,7 +81,7 @@ public class ExecuteTest {
        
        String str = 
                "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
-                +"<wps:Execute version=\"1.0.0\" service=\"WPS\" xmlns:wps=\"http://www.opengis.net/wps/1.0.0\" xmlns:ows=\"http://www.opengis.net/ows/1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ns5=\"http://www.w3.org/1998/Math/MathML\">\n"
+                +"<wps:Execute version=\"1.0.0\" service=\"WPS\" >\n"
                 +"    <ows:Identifier>identifier</ows:Identifier>\n"
                 +"    <wps:DataInputs>\n"
                 +"        <wps:Input>\n"

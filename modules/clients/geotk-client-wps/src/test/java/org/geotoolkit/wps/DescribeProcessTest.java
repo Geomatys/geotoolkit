@@ -24,6 +24,7 @@ import java.util.List;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import org.geotoolkit.ows.xml.v110.CodeType;
+import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.wps.v100.DescribeProcess100;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
 import org.geotoolkit.wps.xml.v100.DescribeProcess;
@@ -92,14 +93,15 @@ public class DescribeProcessTest {
             final Marshaller marshaller = WPSMarshallerPool.getInstance().acquireMarshaller();
             marshaller.marshal(request,stringWriter);
             
+            String result = StringUtilities.removeXmlns(stringWriter.toString());
             final String expectedMarshalledRequest = 
                     "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
-                    + "<wps:DescribeProcess version=\"1.0.0\" service=\"WPS\" xmlns:wps=\"http://www.opengis.net/wps/1.0.0\" xmlns:ows=\"http://www.opengis.net/ows/1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ns5=\"http://www.w3.org/1998/Math/MathML\">\n"
+                    + "<wps:DescribeProcess version=\"1.0.0\" service=\"WPS\" >\n"
                     + "    <ows:Identifier>identifier1</ows:Identifier>\n"
                     + "    <ows:Identifier>identifier2</ows:Identifier>\n"
                     + "    <ows:Identifier>identifier3</ows:Identifier>\n"
                     + "</wps:DescribeProcess>\n";
-            assertEquals(expectedMarshalledRequest, stringWriter.toString()); 
+            assertEquals(expectedMarshalledRequest, result); 
         } catch (JAXBException ex) {
             fail(ex.getLocalizedMessage());
             return;
