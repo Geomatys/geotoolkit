@@ -127,7 +127,7 @@ public class TextSymbolizerTest {
         final CanvasDef canvasdef = new CanvasDef(new Dimension(360, 180), Color.WHITE);
         
         final BufferedImage buffer = DefaultPortrayalService.portray(canvasdef, scenedef, viewdef);
-        ImageIO.write(buffer, "PNG", new File("test.png"));
+        //ImageIO.write(buffer, "PNG", new File("test.png"));
         
         //we expect to have a blue label at the center of the image
         final int[] pixel = new int[4];

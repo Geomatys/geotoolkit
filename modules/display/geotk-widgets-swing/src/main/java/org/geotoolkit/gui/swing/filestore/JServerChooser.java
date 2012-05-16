@@ -236,7 +236,7 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
             if(value instanceof ServerFactory){
                 final ServerFactory factory = (ServerFactory) value;
                 final String txt = "<html><b>"+factory.getDisplayName()+"</b><br/>"
-                        + "<font size=\"0.5em\"><i>&nbsp&nbsp&nbsp "+factory.getDescription()+"</i></font></html>";
+                        + "<font size=\"0.5em\" color=\"#8f8f8f\"><i>&nbsp&nbsp&nbsp "+factory.getDescription()+"</i></font></html>";
                 lbl.setText(txt);
                 
                 if(factory.getDisplayName().toString().toLowerCase().contains("google")){
