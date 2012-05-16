@@ -132,7 +132,7 @@ public class Bvar {
      * 
      */
     @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "", propOrder = {
+    @XmlType(name = "BvarSemanticsType", propOrder = {
         "ci",
         "semantics",
         "annotationOrAnnotationXml"

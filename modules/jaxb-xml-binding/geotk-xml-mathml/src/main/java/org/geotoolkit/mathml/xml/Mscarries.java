@@ -714,7 +714,7 @@ public class Mscarries {
      * 
      */
     @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "", propOrder = {
+    @XmlType(name = "MscarriesSemanticsType", propOrder = {
         "apply",
         "bind",
         "ci",
