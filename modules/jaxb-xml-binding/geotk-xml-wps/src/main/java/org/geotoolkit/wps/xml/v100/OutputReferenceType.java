@@ -46,7 +46,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "OutputReferenceType")
-public class OutputReferenceType {
+public class OutputReferenceType implements ReferenceType {
 
     @XmlAttribute(required = true)
     @XmlSchemaType(name = "anyURI")
