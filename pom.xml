@@ -472,7 +472,7 @@
 
     <plugins>
       <!-- =======================================================
-               Build: Compilation.
+               Compile Java source files
 
            Note: experimentation suggests that <debug>false</..>
            is equivalent to <compilerArgument>-g:source,lines</..>
@@ -496,7 +496,7 @@
 
 
       <!-- =======================================================
-               Build: Resources.
+               Copy resource files
            ======================================================= -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -515,7 +515,7 @@
 
 
       <!-- =======================================================
-               Build: JAR packaging.
+               JAR packaging
            ======================================================= -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -549,7 +549,7 @@
 
 
       <!-- =======================================================
-               Build: Tests.
+               Execute tests
            ======================================================= -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -562,7 +562,28 @@
 
 
       <!-- =======================================================
-               Build: Web site.
+               Remove previous snapshots from the local repository
+           ======================================================= -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>remove-old-artifacts</id>
+            <goals>
+              <goal>remove-project-artifact</goal>
+            </goals>
+            <configuration>
+              <removeAll>false</removeAll> <!-- Remove only snapshots of this project version. -->
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+
+
+      <!-- =======================================================
+               Build the web site
            ======================================================= -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -584,7 +605,7 @@
 
 
             <!-- =======================================================
-                     Build: Web site: Javadoc.
+                     Build the Javadoc to be published on the web site
                  ======================================================= -->
             <plugin>
               <groupId>org.apache.maven.plugins</groupId>
