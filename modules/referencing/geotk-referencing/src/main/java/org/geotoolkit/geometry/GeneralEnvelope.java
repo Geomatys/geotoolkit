@@ -520,12 +520,13 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
         return changed;
     }
 
+    // Note: As of JDK 1.6.0_31, using {@linkplain #getLower(int)} in the first line crash the
+    // Javadoc tools, maybe because getLower/getUpper are defined in a non-public parent class.
     /**
-     * Tries to use a {@linkplain #getLower(int) lower} &lt; {@linkplain #getUpper(int) upper}
-     * relationship for the ordinate values in every dimension. If an upper ordinate value is
-     * less than a lower ordinate value, this this method will shift that upper ordinate by
-     * some multiple of the axis span (typically 360° of longitude). This operation is applied
-     * only on axes having {@link RangeMeaning#WRAPAROUND}.
+     * Tries to use a <var>lower</var> &lt; <var>upper</var> relationship for the ordinate values
+     * in every dimension. If a upper ordinate value is less than a lower ordinate value, then this
+     * method will shift that upper ordinate by some multiple of the axis span (typically 360° of
+     * longitude). This operation is applied only on axes having {@link RangeMeaning#WRAPAROUND}.
      * <p>
      * This method is sometime useful before to compute the {@linkplain #add(Envelope) union}
      * or {@linkplain #intersect(Envelope) intersection} of envelopes.
