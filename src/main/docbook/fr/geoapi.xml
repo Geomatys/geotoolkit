@@ -9,7 +9,7 @@
 <title>GeoAPI</title>
   <para>
     Le projet <link xlink:href="http://www.geoapi.org">GeoAPI</link> offre un ensemble d’interfaces Java pour les applications géo-spatiales.
-    Dans une séries de paquets <literal>org.opengis.*</literal>, GeoAPI &geoapi-release; définit des structures représentant des méta-données,
+    Dans une séries de paquets <literal role="GeoAPI">org.opengis.*</literal>, GeoAPI &geoapi-release; définit des structures représentant des méta-données,
     des systèmes de référence des coordonnées, ainsi que des opérations effectuant des projections cartographiques.
     Dans une partie qui n’est pas encore standardisée — dénommée <foreignphrase>pending</foreignphrase> — GeoAPI définit des structures
     représentant des images géo-référencées, des géométries, des filtres pouvant s’appliquer à des requêtes, et d’autres fonctionnalités.
@@ -51,7 +51,7 @@
     mais misaient plutôt — dans le cas du Java — sur la technologie <acronym>RMI</acronym> (<foreignphrase>Remote Method Invocation</foreignphrase>).
     Bien que le projet GeoAPI n’existait pas encore, nous désignons rétrospectivement ces interfaces historiques sous le nom de
     « <link xlink:href="http://www.geoapi.org/0.1/index.html">GeoAPI 0.1</link> ».
-    Ces interfaces utilisaient déjà le nom de paquet <literal>org.opengis</literal>, qui sera adopté par GeoAPI.
+    Ces interfaces utilisaient déjà le nom de paquet <literal role="GeoAPI">org.opengis</literal>, qui sera adopté par GeoAPI.
   </para>
   <para>
     En 2002, des développeurs de projets libres ont lancé un <link xlink:href="http://web.archive.org/web/20030509104308/http://digitalearth.org/story/2002/10/10/55046/206">appel
@@ -131,7 +131,7 @@
       <informalexample><para>
         <emphasis role="bold">Exemple:</emphasis>
         la classe <classname role="OGC">MD_Identifier</classname> de l’<acronym>OGC</acronym> devient
-        l’interface <classname role="GeoAPI">Identifier</classname> dans le paquet <literal>org.opengis.metadata</literal>.
+        l’interface <classname role="GeoAPI">Identifier</classname> dans le paquet <literal role="GeoAPI">org.opengis.metadata</literal>.
         La classe <classname role="OGC">SC_CRS</classname> de l’<acronym>OGC</acronym> devient l’interface <classname role="GeoAPI">CoordinateReferenceSystem</classname>,
         et l’association <function role="OGC">usesDatum</function> devient une méthode <function role="GeoAPI">getDatum()</function> —
         et non pas « <function>getUsesDatum()</function> » comme aurait fait un outil de conversion automatique.
@@ -204,10 +204,10 @@
   </para>
 
 <section>
-  <title>Annotation <classname role="GeoAPI">@UML</classname></title>
+  <title>Annotation <classname>@UML</classname></title>
   <para>
     Pour chaque classe, méthode et constante définie à partir d’un standard <acronym>OGC</acronym> ou <acronym>ISO</acronym>,
-    GeoAPI indique sa provenance à l’aide d’annotations définies dans le paquet <literal>org.opengis.annotation</literal>.
+    GeoAPI indique sa provenance à l’aide d’annotations définies dans le paquet <literal role="GeoAPI">org.opengis.annotation</literal>.
     En particulier l’annotation <classname role="GeoAPI">@UML</classname> indique le standard, le nom de l’élément dans ce standard ainsi
     que son niveau d’obligation. Par exemple dans l’extrait de code suivant:
   </para>
@@ -227,7 +227,7 @@
   </itemizedlist>
 
   <example>
-    <title>Une interface annotée avec <classname role="ProjectedCRS">@UML</classname></title>
+    <title>Une interface annotée avec <classname>@UML</classname></title>
     <programlisting language="java">package org.opengis.referencing.crs;
 
 /**

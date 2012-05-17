@@ -61,6 +61,21 @@ pre.programlisting {
 }
 
 /*
+ * OGC/ISO, GeoAPI and Geotk legend.
+ */
+code.OGC {
+  color: MediumBlue;
+}
+
+code.GeoAPI {
+  color: Green;
+}
+
+code.Geotk {
+  color: SaddleBrown;
+}
+
+/*
  * Syntax highlighting.
  */
 span.hl-string {
