@@ -20,6 +20,7 @@ import java.awt.Dimension;
 import java.awt.geom.Point2D;
 import java.awt.image.RenderedImage;
 import org.geotoolkit.coverage.*;
+import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.wmts.model.WMTSPyramidSet;
@@ -54,8 +55,10 @@ public class WMTSCoverageReference implements CoverageReference, PyramidalModel{
     }
     
     @Override
-    public GridCoverageReader createReader() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public GridCoverageReader createReader() throws CoverageStoreException {
+        final PyramidalModelReader reader = new PyramidalModelReader();
+        reader.setInput(this);
+        return reader;
     }
 
     @Override

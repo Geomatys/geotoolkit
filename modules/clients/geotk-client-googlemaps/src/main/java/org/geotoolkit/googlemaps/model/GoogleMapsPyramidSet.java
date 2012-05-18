@@ -30,6 +30,7 @@ import org.geotoolkit.coverage.PyramidSet;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.googlemaps.GetMapRequest;
+import org.geotoolkit.googlemaps.GoogleCoverageReference;
 import org.geotoolkit.googlemaps.StaticGoogleMapsServer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.storage.DataStoreException;
@@ -82,11 +83,13 @@ public class GoogleMapsPyramidSet extends CachedPyramidSet{
         }
     }
     
+    private final GoogleCoverageReference ref;
     private final String mapType;
     
-    public GoogleMapsPyramidSet(final StaticGoogleMapsServer server, final String mapType, final boolean cacheImage) throws DataStoreException{
-        super(server,true,cacheImage);
-        this.mapType = mapType;
+    public GoogleMapsPyramidSet(final GoogleCoverageReference ref, final boolean cacheImage) throws DataStoreException{
+        super(ref.getStore(),true,cacheImage);
+        this.ref = ref;
+        this.mapType = ref.getName().getLocalPart();
         
         final int maxScale;        
         if (GetMapRequest.TYPE_HYBRID.equalsIgnoreCase(mapType)) {
@@ -137,7 +140,7 @@ public class GoogleMapsPyramidSet extends CachedPyramidSet{
     public Request getTileRequest(GridMosaic mosaic, int col, int row, Map hints) throws DataStoreException {
         final int zoom = ((GoogleMapsMosaic)mosaic).getScaleLevel();
         
-        final GetMapRequest request = getServer().createGetMap();
+        final GetMapRequest request = ref.createGetMap();
         
         Object format = hints.get(PyramidSet.HINT_FORMAT);
         if(format == null){

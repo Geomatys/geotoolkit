@@ -40,6 +40,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.geometry.Envelope2D;
@@ -426,7 +427,7 @@ public class WMSCoverageReference implements CoverageReference{
     }
     
     @Override
-    public synchronized GridCoverageReader createReader() {
+    public synchronized GridCoverageReader createReader() throws CoverageStoreException{
         if(reader == null){
             reader = new WMSCoverageReader(this);
         }

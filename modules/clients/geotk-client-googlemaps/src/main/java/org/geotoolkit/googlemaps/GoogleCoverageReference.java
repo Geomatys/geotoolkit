@@ -20,6 +20,7 @@ import java.awt.Dimension;
 import java.awt.geom.Point2D;
 import java.awt.image.RenderedImage;
 import org.geotoolkit.coverage.*;
+import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.googlemaps.model.GoogleMapsPyramidSet;
 import org.geotoolkit.storage.DataStoreException;
@@ -39,10 +40,9 @@ public class GoogleCoverageReference implements CoverageReference, PyramidalMode
     
     GoogleCoverageReference(final StaticGoogleMapsServer server, final Name name,boolean cacheImage) throws DataStoreException{
         this.server = server;
-        this.set = new GoogleMapsPyramidSet(server, name.getLocalPart(),cacheImage);
         this.name = name;
+        this.set = new GoogleMapsPyramidSet(this,cacheImage);
     }
-    
     
     @Override
     public Name getName() {
@@ -50,13 +50,19 @@ public class GoogleCoverageReference implements CoverageReference, PyramidalMode
     }
 
     @Override
-    public CoverageStore getStore() {
+    public StaticGoogleMapsServer getStore() {
         return server;
     }
     
+    public GetMapRequest createGetMap() {
+        return new DefaultGetMap(server,name.getLocalPart());
+    }
+    
     @Override
-    public GridCoverageReader createReader() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public GridCoverageReader createReader() throws CoverageStoreException {
+        final PyramidalModelReader reader = new PyramidalModelReader();
+        reader.setInput(this);
+        return reader;
     }
 
     @Override

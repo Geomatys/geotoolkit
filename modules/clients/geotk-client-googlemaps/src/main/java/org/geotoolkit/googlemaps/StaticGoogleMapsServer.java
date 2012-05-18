@@ -80,7 +80,6 @@ public class StaticGoogleMapsServer extends AbstractServer implements CoverageSt
     public StaticGoogleMapsServer(final URL serverURL, final String key, 
             final ClientSecurity security, boolean cacheImage) {
         super(create(StaticGoogleServerFactory.PARAMETERS, serverURL, security));
-        Parameters.getOrCreate(StaticGoogleServerFactory.MAPTYPE, parameters).setValue(key);
         Parameters.getOrCreate(StaticGoogleServerFactory.IMAGE_CACHE, parameters).setValue(cacheImage);
     }
     
@@ -92,29 +91,18 @@ public class StaticGoogleMapsServer extends AbstractServer implements CoverageSt
     public StaticGoogleServerFactory getFactory() {
         return (StaticGoogleServerFactory) ServerFinder.getFactory(StaticGoogleServerFactory.NAME);
     }
-    
-    public String getKey(){
-        return Parameters.value(StaticGoogleServerFactory.MAPTYPE, parameters);
-    }
-    
+        
     public boolean getCacheImage(){
         return (Boolean)Parameters.getOrCreate(AbstractServerFactory.IMAGE_CACHE, parameters).getValue();
     }
     
-    /**
-     * Returns the map request object.
-     */
-    public GetMapRequest createGetMap() {
-        return new DefaultGetMap(this,getKey());
-    }
-
     @Override
     public Set<Name> getNames() {
         return LAYER_NAMES;
     }
 
     @Override
-    public CoverageReference getCoverageReference(Name name) throws DataStoreException {
+    public GoogleCoverageReference getCoverageReference(Name name) throws DataStoreException {
         return new GoogleCoverageReference(this,name,getCacheImage());
     }
 

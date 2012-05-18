@@ -21,6 +21,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.geotoolkit.storage.DataStoreException;
 import org.junit.Test;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
@@ -41,10 +42,12 @@ public class GetMapTest {
      * Ensures the generate URL contain all parameters.
      */
     @Test
-    public void testRequestStructure() throws NoSuchAuthorityCodeException, FactoryException, TransformException {
+    public void testRequestStructure() throws NoSuchAuthorityCodeException, FactoryException, TransformException, DataStoreException {
         
-        final StaticGoogleMapsServer gmserver = new StaticGoogleMapsServer();        
-        final GetMapRequest request = gmserver.createGetMap();
+        final StaticGoogleMapsServer gmserver = new StaticGoogleMapsServer();
+        final GoogleCoverageReference ref = gmserver.getCoverageReference(gmserver.getNames().iterator().next());
+        
+        final GetMapRequest request = ref.createGetMap();
         
         final GeneralDirectPosition pos = new GeneralDirectPosition(DefaultGeographicCRS.WGS84);
         pos.setOrdinate(0, 45);

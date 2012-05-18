@@ -17,10 +17,7 @@
 package org.geotoolkit.googlemaps;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import org.geotoolkit.client.AbstractServerFactory;
 import org.geotoolkit.client.map.CachedPyramidSet;
@@ -61,30 +58,10 @@ public class StaticGoogleServerFactory extends AbstractServerFactory implements 
                     AbstractServerFactory.IDENTIFIER.getName().getCode(),
                     AbstractServerFactory.IDENTIFIER.getRemarks(), String.class,NAME,true);
     
-    /**
-     * Mandatory - the map type
-     */
-    public static final ParameterDescriptor<String> MAPTYPE;
-    static{
-        final String code = "mapType";
-        final CharSequence remarks = new ResourceInternationalString("org/geotoolkit/googlemaps/bundle", "mapType");
-        final Map<String,Object> params = new HashMap<String, Object>();
-        params.put(DefaultParameterDescriptor.NAME_KEY, code);
-        params.put(DefaultParameterDescriptor.REMARKS_KEY, remarks);
-        final List<String> validValues =  new ArrayList<String>();
-        validValues.add(GetMapRequest.TYPE_HYBRID);
-        validValues.add(GetMapRequest.TYPE_ROADMAP);
-        validValues.add(GetMapRequest.TYPE_SATELLITE);
-        validValues.add(GetMapRequest.TYPE_TERRAIN);
-        
-        MAPTYPE = new DefaultParameterDescriptor<String>(params, String.class, 
-                validValues.toArray(new String[validValues.size()]), 
-                GetMapRequest.TYPE_ROADMAP, null, null, null, true);
-    }
     
     public static final ParameterDescriptorGroup PARAMETERS =
             new DefaultParameterDescriptorGroup("GSParameters",
-                IDENTIFIER,URL,MAPTYPE,SECURITY,IMAGE_CACHE,NIO_QUERIES);
+                IDENTIFIER,URL,SECURITY,IMAGE_CACHE,NIO_QUERIES);
 
     @Override
     public Identification getIdentification() {
