@@ -280,12 +280,22 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
      * @return Geometry
      */
     private static PreparedGeometry toGeometry(final Envelope env){
+        
+        double minX = env.getMinimum(0);
+        double minY = env.getMinimum(1);
+        double maxX = env.getMaximum(0);
+        double maxY = env.getMaximum(1);
+        if(Double.isNaN(minX) || Double.isInfinite(minX)) minX = Double.MIN_VALUE;
+        if(Double.isNaN(minY) || Double.isInfinite(minY)) minY = Double.MIN_VALUE;
+        if(Double.isNaN(maxX) || Double.isInfinite(maxX)) maxX = Double.MAX_VALUE;
+        if(Double.isNaN(maxY) || Double.isInfinite(maxY)) maxY = Double.MAX_VALUE;
+        
         final Coordinate[] coords = new Coordinate[5];
-        coords[0] = new Coordinate(env.getMinimum(0), env.getMinimum(1));
-        coords[1] = new Coordinate(env.getMinimum(0), env.getMaximum(1));
-        coords[2] = new Coordinate(env.getMaximum(0), env.getMaximum(1));
-        coords[3] = new Coordinate(env.getMaximum(0), env.getMinimum(1));
-        coords[4] = new Coordinate(env.getMinimum(0), env.getMinimum(1));
+        coords[0] = new Coordinate(minX, minY);
+        coords[1] = new Coordinate(minX, maxY);
+        coords[2] = new Coordinate(maxX, maxY);
+        coords[3] = new Coordinate(maxX, minY);
+        coords[4] = new Coordinate(minX, minY);
         final LinearRing ring = GEOMETRY_FACTORY.createLinearRing(coords);
         Geometry geom = GEOMETRY_FACTORY.createPolygon(ring, EMPTY_RINGS);
         return PREPARED_FACTORY.create(geom);
