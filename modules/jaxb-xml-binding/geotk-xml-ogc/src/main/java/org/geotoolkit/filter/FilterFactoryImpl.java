@@ -880,8 +880,8 @@ public class FilterFactoryImpl implements FilterFactory2 {
 
             // an envelope
             if (coord.length == 5) {
-                final DirectPositionType lowerCorner = new DirectPositionType(coord[0].x, coord[1].y);
-                final DirectPositionType upperCorner = new DirectPositionType(coord[2].x, coord[0].y);
+                final DirectPositionType lowerCorner = new DirectPositionType(coord[0].y, coord[0].x);
+                final DirectPositionType upperCorner = new DirectPositionType(coord[2].y, coord[2].x);
                 result = new EnvelopeType(null, lowerCorner, upperCorner, "EPSG:4326");
             }
         } else if (geom instanceof Point){
