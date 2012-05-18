@@ -103,7 +103,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
             return;
         }
         
-        final Pyramid pyramid = findOptimalPyramid(pyramidSet, canvasEnv.getCoordinateReferenceSystem());
+        final Pyramid pyramid = CoverageUtilities.findPyramid(pyramidSet, canvasEnv.getCoordinateReferenceSystem());
                 
         if(pyramid == null){
             //no reliable pyramid
@@ -138,7 +138,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
             return;
         }
 
-        final GridMosaic mosaic = findOptimalMosaic(pyramid, wantedResolution, tolerance, wantedEnv);
+        final GridMosaic mosaic = CoverageUtilities.findMosaic(pyramid, wantedResolution, tolerance, wantedEnv,100);
         if(mosaic == null){
             //no reliable mosaic
             return;
@@ -162,8 +162,6 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
         final double tileSpanY = scale * tileSize.height;
         final int gridWidth = gridSize.width;
         final int gridHeight = gridSize.height;
-        final double tileWidth = tileSize.width;
-        final double tileHeight = tileSize.height;
 
         //find all the tiles we need --------------------------------------
 
@@ -338,68 +336,5 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
         }
         
     }
-        
-    private static Pyramid findOptimalPyramid(final PyramidSet set, final CoordinateReferenceSystem crs){
-        
-        Pyramid result = null;
-        for(Pyramid pyramid : set.getPyramids()){
-            
-            if(result == null){
-                result = pyramid;
-            }
-            
-            if(CRS.equalsApproximatively(pyramid.getCoordinateReferenceSystem(),crs)){
-                //we found a pyramid for this crs
-                result = pyramid;
-                break;
-            }
-            
-        }
-        
-        return result;
-    }
     
-    private static GridMosaic findOptimalMosaic(final Pyramid pyramid, final double resolution, 
-            final double tolerance, final Envelope env){
-        
-        GridMosaic result = null;        
-        final double[] scales = pyramid.getScales();
-        
-        for(int i=0;i<scales.length;i++){
-            final double scale = scales[i];            
-                        
-            final GridMosaic candidate = pyramid.getMosaic(i);            
-            if(result == null){
-                result = candidate;
-            }
-            
-            //check if it will not requiere too much tiles
-            final Dimension tileSize = candidate.getTileSize();
-            double nbtileX = env.getSpan(0) / (tileSize.width*scale);
-            double nbtileY = env.getSpan(1) / (tileSize.height*scale);
-            
-            //if the envelope has some NaN, we presume it's a square
-            if(Double.isNaN(nbtileX) || Double.isInfinite(nbtileX)){
-                nbtileX = nbtileY;
-            }else if(Double.isNaN(nbtileY) || Double.isInfinite(nbtileY)){
-                nbtileY = nbtileX;
-            }
-            
-            if(nbtileX*nbtileY > 100){
-                //we haven't reach the best resolution, it would requiere
-                //too much tiles, we use the previous scale level
-                break;
-            }
-            
-            result = candidate;
-            
-            if( (scale * (1-tolerance)) < resolution){                      
-                //we found the most accurate resolution
-                break;
-            }           
-        }
-                
-        return result;
-    }
-        
 }

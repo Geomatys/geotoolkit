@@ -23,6 +23,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import org.geotoolkit.coverage.*;
+import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.type.Name;
@@ -57,8 +58,10 @@ public class XMlCoverageReference implements CoverageReference, PyramidalModel{
     }
     
     @Override
-    public GridCoverageReader createReader() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public GridCoverageReader createReader() throws CoverageStoreException {
+        final PyramidalModelReader reader = new PyramidalModelReader();
+        reader.setInput(this);
+        return reader;
     }
 
     @Override
