@@ -8,12 +8,12 @@ import org.opengis.feature.type.FeatureTypeFactory;
  *
  * @author Alexis MANIN
  */
-public class LenientFeatureFactoryTest extends AbstractComplexFeatureFactoryTest{
+public class LenientFeatureTest extends AbstractComplexFeatureTest{
 
-    private static final LenientFeatureFactory FF = new LenientFeatureFactory();
+    protected static final LenientFeatureFactory FF = new LenientFeatureFactory();
     protected static final DefaultFeatureTypeFactory FTF = new DefaultFeatureTypeFactory();
     
-    public LenientFeatureFactoryTest() {
+    public LenientFeatureTest() {
         super(false);
     }   
     

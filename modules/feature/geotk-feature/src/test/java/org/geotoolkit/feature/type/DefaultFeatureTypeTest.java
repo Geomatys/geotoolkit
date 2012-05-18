@@ -10,11 +10,11 @@ import org.opengis.feature.type.FeatureTypeFactory;
  *
  * @author geoadmin
  */
-public class DefaultFeatureTypeFactoryTest extends AbstractComplexFeatureTypeFactoryTest {
+public class DefaultFeatureTypeTest extends AbstractComplexFeatureTypeTest {
 
     protected static final DefaultFeatureTypeFactory FTF = new DefaultFeatureTypeFactory();
     
-    public DefaultFeatureTypeFactoryTest(){
+    public DefaultFeatureTypeTest(){
         
     }
     

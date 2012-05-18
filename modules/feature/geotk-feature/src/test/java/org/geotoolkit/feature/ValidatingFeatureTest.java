@@ -12,12 +12,12 @@ import org.opengis.feature.type.FeatureTypeFactory;
  *
  * @author Alexis Manin
  */
-public class ValidatingFeatureFactoryTest extends AbstractComplexFeatureFactoryTest {
+public class ValidatingFeatureTest extends AbstractComplexFeatureTest {
     
     private static final ValidatingFeatureFactory FF = new ValidatingFeatureFactory();
     protected static final DefaultFeatureTypeFactory FTF = new DefaultFeatureTypeFactory();
     
-    public ValidatingFeatureFactoryTest() {
+    public ValidatingFeatureTest() {
         super(true);
     } 
     
