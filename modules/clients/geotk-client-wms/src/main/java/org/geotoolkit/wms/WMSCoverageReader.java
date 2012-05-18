@@ -43,6 +43,7 @@ import org.geotoolkit.util.logging.Logging;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.GenericName;
 import org.opengis.util.NameFactory;
@@ -101,11 +102,15 @@ public class WMSCoverageReader extends GridCoverageReader{
     }
 
     @Override
-    public GridCoverage read(final int index, final GridCoverageReadParam param) throws CoverageStoreException, CancellationException {
+    public GridCoverage read(final int index, GridCoverageReadParam param) throws CoverageStoreException, CancellationException {
         if(index != 0){
             throw new CoverageStoreException("Invalid Image index.");
         }
 
+        if(param == null){
+            param = new GridCoverageReadParam();
+        }
+        
         final int[] desBands = param.getDestinationBands();
         final int[] sourceBands = param.getSourceBands();
         if(desBands != null || sourceBands != null){
@@ -188,6 +193,7 @@ public class WMSCoverageReader extends GridCoverageReader{
             final GridCoverageBuilder gcb = new GridCoverageBuilder();
             gcb.setName(ref.getCombinedLayerNames());
             gcb.setRenderedImage(image);
+            gcb.setPixelAnchor(PixelInCell.CELL_CORNER);
             gcb.setGridToCRS(gridToCRS);
             gcb.setCoordinateReferenceSystem(crs2d);
             return gcb.build();
@@ -197,10 +203,12 @@ public class WMSCoverageReader extends GridCoverageReader{
         } catch (TransformException ex) {
             throw new CoverageStoreException(ex.getMessage(), ex);
         } finally {
-            try {
-                stream.close();
-            } catch (IOException ex) {
-                throw new CoverageStoreException(ex.getMessage(), ex);
+            if(stream != null){
+                try {
+                    stream.close();
+                } catch (IOException ex) {
+                    throw new CoverageStoreException(ex.getMessage(), ex);
+                }
             }
         }
         
