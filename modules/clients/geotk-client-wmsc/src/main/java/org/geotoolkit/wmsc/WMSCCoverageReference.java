@@ -23,6 +23,7 @@ import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.coverage.*;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.wms.WMSCoverageReference;
 import org.geotoolkit.wmsc.model.WMSCPyramidSet;
 import org.opengis.feature.type.Name;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -32,33 +33,26 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class WMSCCoverageReference implements CoverageReference, PyramidalModel{
+public class WMSCCoverageReference extends WMSCoverageReference implements PyramidalModel{
 
-    private final WebMapServerCached server;
-    private final Name name;
     private final PyramidSet set;
     
-    WMSCCoverageReference(WebMapServerCached server, Name name, boolean cacheImage) throws CapabilitiesException{
-        this.server = server;
-        this.name = name;
-        set = new WMSCPyramidSet(server, name.getLocalPart(), cacheImage);
-    }
-
-    @Override
-    public Name getName() {
-        return name;
-    }
-
-    @Override
-    public WebMapServerCached getStore() {
-        return server;
+    public WMSCCoverageReference(final WebMapServerCached server, 
+            final Name name) throws CapabilitiesException{
+        super(server, name);
+        set = new WMSCPyramidSet(server, name.getLocalPart());
     }
     
     @Override
-    public GridCoverageReader createReader() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public WebMapServerCached getStore() {
+        return getStore();
     }
-
+    
+    @Override
+    public synchronized GridCoverageReader createReader() {
+        throw new UnsupportedOperationException("Not implemented yet.");
+    }
+    
     @Override
     public PyramidSet getPyramidSet() throws DataStoreException {
         return set;

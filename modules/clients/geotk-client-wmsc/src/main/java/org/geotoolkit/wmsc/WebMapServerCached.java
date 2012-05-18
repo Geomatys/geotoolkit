@@ -90,10 +90,14 @@ public class WebMapServerCached extends WebMapServer implements CoverageStore{
     @Override
     public CoverageReference getCoverageReference(Name name) throws DataStoreException {
         try {
-            return new WMSCCoverageReference(this, name, cacheImage);
+            return new WMSCCoverageReference(this, name);
         } catch (CapabilitiesException ex) {
             throw new DataStoreException(ex.getMessage(), ex);
         }
+    }
+
+    public boolean isCacheImage() {
+        return cacheImage;
     }
 
     @Override

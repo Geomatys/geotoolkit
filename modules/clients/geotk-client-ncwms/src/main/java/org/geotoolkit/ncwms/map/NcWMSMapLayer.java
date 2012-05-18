@@ -23,18 +23,9 @@ import java.awt.Dimension;
 import java.awt.geom.Point2D;
 
 import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotoolkit.ncwms.NcGetFeatureInfoRequest;
-import org.geotoolkit.ncwms.NcGetLegendRequest;
-import org.geotoolkit.ncwms.NcGetMapRequest;
-import org.geotoolkit.ncwms.NcGetMetadataMinMaxRequest;
-import org.geotoolkit.ncwms.NcGetMetadataRequest;
-import org.geotoolkit.ncwms.NcGetTimeseriesRequest;
-import org.geotoolkit.ncwms.NcGetTransectRequest;
-import org.geotoolkit.ncwms.NcGetVerticalProfileRequest;
-import org.geotoolkit.ncwms.NcWMSCommonRequest;
+import org.geotoolkit.ncwms.NcWMSCoverageReference;
 import org.geotoolkit.ncwms.NcWebMapServer;
 import org.geotoolkit.wms.GetMapRequest;
-import org.geotoolkit.wms.WebMapServer;
 import org.geotoolkit.wms.map.WMSMapLayer;
 
 import org.opengis.geometry.Envelope;
@@ -50,360 +41,143 @@ import org.opengis.util.FactoryException;
  */
 public class NcWMSMapLayer extends WMSMapLayer {
     
-    /**
-     * The image opacity.
-     * <br/><br/>
-     * Parameter key: OPACITY
-     * <br/><br/>
-     * Possible values: Integer between 0 and 100 inclusive
-     * <br/><br/>
-     * 0 = fully transparent, 100 = fully opaque (default). Only applies to image
-     * formats that support partial pixel transparency (e.g. PNG). This parameter
-     * is redundant if the client application can set image opacity (e.g. Google 
-     * Earth). 
-     * 
-     */
-    private Integer ncOpacity = null;
+    private static NcWMSCoverageReference toReference(final NcWebMapServer server, final String... layers) {
+        return new NcWMSCoverageReference(server, layers);
+    }
     
-    /**
-     * The color scale range.
-     * <br/><br/>
-     * Parameter key: COLORSCALERANGE
-     * <br/><br/>
-     * Possible values: "auto" or "min,max"
-     * <br/><br/>
-     * COLORSCALERANGE omitted: (default) Default scale range used (this is to 
-     * allow backward compatibility with standards WMS clients, particularly 
-     * tiling clients: it ensures that the same color scale range is used for 
-     * each tile). COLORSCALERANGE=min,max: The extremes of the color scale are 
-     * set to min and max (in the native units of the variable in question). 
-     * COLORSCALERANGE=auto: ncWMS sets the scale range to the min and max values 
-     * of the generated image (i.e. maximum contrast stretch). See 
-     * <a target="_blank" href="http://www.resc.rdg.ac.uk/trac/ncWMS/wiki/ColorScaleRange">ColorScaleRange</a>
-     * for more discussion of how ncWMS handles color ranges. 
-     * 
-     */
-    //private String colorScaleRange = null;
+    public NcWMSMapLayer(final NcWebMapServer server, final String... layers) {
+        super(toReference(server, layers));
+    }
     
-    /**
-     * The number of color bands in the palette.
-     * <br/><br/>  
-     * Parameter key: NUMCOLORBANDS
-     * <br/><br/>
-     * Possible values: Any positive integer up to and including 254
-     * <br/><br/>
-     * Setting this to a relatively low number (e.g. 10) will produce obvious 
-     * color banding, giving the appearance of contour lines. Default value is 
-     * 254. 
-     * 
-     */
-    private Integer numColorBands = null;    
-    
-    /**
-     * Choose from a linear or logarithmic color scale
-     * <br/><br/>
-     * Parameter key: LOGSCALE
-     * <br/><br/>
-     * Possible values: true or false
-     * <br/><br/>
-     * Set true to use a logarithmic spacing between the min and max of the color
-     * scale range. This is particularly useful where data values vary over several
-     * orders of magnitude in an image (common in biological parameters). LOGSCALE
-     * cannot be set true if the color scale range includes zero or negative 
-     * values. Default is false. 
-     * 
-     */
-    private Boolean logScale = null;
-
-    public NcWMSMapLayer(final WebMapServer server, final String... layers) {
-        super(server, layers);
+    @Override
+    public NcWMSCoverageReference getCoverageReference(){
+        return (NcWMSCoverageReference) super.getCoverageReference();
     }
     
     /**
-     * Sets the image opacity.
-     * 
-     * @param opacity the image opacity to set.
+     * @deprecated use getCoverageReference() methods
      */
     public void setOpacity(final Integer opacity) {
-        this.ncOpacity = opacity;
-        
-        if (opacity != null)
-            setOpacity(opacity.doubleValue());
+        getCoverageReference().setOpacity(opacity);
     } 
 
     /**
-     * Gets the number of color bands in the palette.
-     * 
-     * @return the number of color bands in the palette.
+     * @deprecated use getCoverageReference() methods
      */
     public Integer getNumColorBands() {
-        return numColorBands;
+        return getCoverageReference().getNumColorBands();
     }
 
     /**
-     * Sets the number of color bands in the palette.
-     * 
-     * @param numColorBands the number of color bands in the palette.
+     * @deprecated use getCoverageReference() methods
      */
     public void setNumColorBands(Integer numColorBands) {
-        this.numColorBands = numColorBands;
+        getCoverageReference().setNumColorBands(numColorBands);
     }
 
     /**
-     * Gets the choice from a linear or logarithmic color scale.
-     * 
-     * @return if we choose a logarithmic color scale or not.
+     * @deprecated use getCoverageReference() methods
      */
     public Boolean isLogScale() {
-        return logScale;
+        return getCoverageReference().isLogScale();
     }
 
     /**
-     * Sets the choice from a linear or logarithmic color scale.
-     * 
-     * @param logScale The choice of using a logarithmic color scale or not.
+     * @deprecated use getCoverageReference() methods
      */
     public void setLogScale(Boolean logScale) {
-        this.logScale = logScale;
+        getCoverageReference().setLogScale(logScale);
     }
     
-    
-    
-    /********************* Queries functions **********************************/
-    
     /**
-     * {@inheritdoc}
+     * @deprecated use getCoverageReference() methods
      */
     @Override
     public void prepareQuery(final GetMapRequest request, final GeneralEnvelope env,
             final Dimension dim, final Point2D pickCoord) throws TransformException,
             FactoryException{
-        super.prepareQuery(request, env, dim, pickCoord);   
-        prepareNcWMSCommonRequest((NcGetMapRequest) request);       
+        getCoverageReference().prepareQuery(request, env, dim, pickCoord);     
     }
-    
+        
     /**
-     * Sets ncWMS common request parameters.
-     * @param request the current request.
-     */
-    private void prepareNcWMSCommonRequest(final NcWMSCommonRequest request) {        
-        request.setOpacity(ncOpacity);        
-        request.setNumColorBands(numColorBands);
-        request.setLogScale(logScale);
-    }
-    
-    /**
-     * {@inheritDoc }
+     * @deprecated use getCoverageReference() methods
      */
     @Override
     public URL query(final Envelope env, final Dimension rect) throws MalformedURLException, 
     TransformException, FactoryException {
-        final NcGetMapRequest request = ((NcWebMapServer) getServer()).createGetMap();
-        prepareQuery(request, new GeneralEnvelope(env), rect, null);         
-        return request.getURL();
+        return getCoverageReference().query(env, rect);
     }    
 
     /**
-     * {@inheritDoc }
+     * @deprecated use getCoverageReference() methods
      */
     @Override
     public URL queryFeatureInfo(final Envelope env, final Dimension rect, int x,
             int y, final String[] queryLayers, final String infoFormat, 
             final int featureCount) throws TransformException, FactoryException,
             MalformedURLException {
-        final NcGetFeatureInfoRequest request = ((NcWebMapServer) getServer()).createGetFeatureInfo();
-        prepareGetFeatureInfoRequest(request, env, rect, x, y, queryLayers, infoFormat, featureCount);               
-        return request.getURL();
+        return getCoverageReference().queryFeatureInfo(env, rect, x, y, queryLayers, infoFormat, featureCount);
     }
     
     /**
-     * {@inheritDoc }
+     * @deprecated use getCoverageReference() methods
      */
     @Override
     public URL queryLegend(final Dimension rect, final String format, final String rule, 
             final Double scale) throws MalformedURLException {
-        
-        final NcGetLegendRequest request = ((NcWebMapServer) getServer()).createGetLegend();
-        prepareGetLegendRequest(request, rect, format, rule, scale);
-        
-        /*
-         * The STYLES parameter of the Getmap request is defined like this: 
-         * [style_name]/[palette_name] so we split the string and retrieve the value
-         * of the PALETTE parameter.
-         * 
-         */
-        if (getStyles() != null && getStyles().length > 0) {
-            if (getStyles()[0].contains("/") && getStyles()[0].split("/").length == 2) {
-                final String palette = getStyles()[0].split("/")[1];
-                request.setPalette(palette);
-            }            
-        }
-        
-        prepareNcWMSCommonRequest(request);
-        
-        return request.getURL();
+        return getCoverageReference().queryLegend(rect, format, rule, scale);
     }
-    
+        
     /**
-     * Add mandatory parameters to the request objects.
-     * 
-     * @param request The GetMetadata request object.
-     * @param item Th type of the request. Possible values
-     * are 'menu', 'layerDetails', 'timesteps', 'minmax', 'animationTimesteps'
-     */
-    private void prepareQueryMetadata(final NcGetMetadataRequest request, 
-            final String item) {        
-        request.setItem(item);
-        request.setLayerName(getLayerNames()[0]);        
-    }
-    
-    /**
-     * Generates a GetMetadata?item=layerDetails URL.
-     * 
-     * @return the request URL.
-     * @throws MalformedURLException 
+     * @deprecated use getCoverageReference() methods
      */
     public URL queryMetadataLayerDetails() throws MalformedURLException {
-        final NcGetMetadataRequest request = ((NcWebMapServer) getServer()).createGetMetadata();
-        prepareQueryMetadata(request, "layerDetails");
-        request.setTime(dimensions().get("TIME"));
-        return request.getURL();
+        return getCoverageReference().queryMetadataLayerDetails();
     }
     
     /**
-     * Generates a GetMetadata?item=animationTimesteps URL.
-     * 
-     * @param start The start date of the animation.
-     * @param end The end date of the animation.
-     * @return the request URL.
-     * @throws MalformedURLException 
+     * @deprecated use getCoverageReference() methods
      */
     public URL queryMetadataAnimationTimesteps(final String  start, final String end) throws MalformedURLException {
-        final NcGetMetadataRequest request = ((NcWebMapServer) getServer()).createGetMetadata();
-        prepareQueryMetadata(request, "animationTimesteps");
-        request.setStart(start);
-        request.setEnd(end);
-        return request.getURL();
+        return getCoverageReference().queryMetadataAnimationTimesteps(start, end);
     }
     
     /**
-     * Generates a GetMetadata?item=timesteps URL.
-     * 
-     * @return the request URL.
-     * @throws MalformedURLException 
+     * @deprecated use getCoverageReference() methods
      */
     public URL queryMetadataTimesteps() throws MalformedURLException {
-        final NcGetMetadataRequest request = ((NcWebMapServer) getServer()).createGetMetadata();
-        prepareQueryMetadata(request, "timesteps");
-        request.setDay(dimensions().get("TIME"));
-        return request.getURL();
+        return getCoverageReference().queryMetadataTimesteps();
     }
     
     /**
-     * Generates a GetMetadata?item=minmax URL.
-     * ex: http://behemoth.nerc-essc.ac.uk/ncWMS/wms?
-     * request=GetMetadata
-     * &item=minmax
-     * &bbox=9.125%2C53.17499923706055%2C30.291667938232%2C65.875
-     * &crs=EPSG%3A4326
-     * &width=50
-     * &height=50
-     * &layers=BALTIC_BEST_EST%2Fuvel
-     * &elevation=-4
-     * &time=2011-07-24T00%3A00%3A00.000Z
-     * 
-     * @return the request URL.
-     * @throws MalformedURLException 
+     * @deprecated use getCoverageReference() methods
      */
     public URL queryMetadataMinmax(final String crsCode, final String bbox, final String width, final String height) throws MalformedURLException {
-        final NcGetMetadataMinMaxRequest request = ((NcWebMapServer) getServer()).createGetMetadataMinMax();
-        prepareQueryMetadata(request, "minmax");
-        request.setTime(dimensions().get("TIME"));
-        request.setElevation(dimensions().get("ELEVATION"));  
-        request.setCrs(crsCode); 
-        request.setBbox(bbox); 
-        request.setWidth(width); 
-        request.setHeight(height);      
-        
-        return request.getURL();
+        return getCoverageReference().queryMetadataMinmax(crsCode, bbox, width, height);
     }
     
     /**
-     * Generates a GetTransect URL.
-     * 
-     * @param crsCode           A crs code.
-     * @param lineString        Coordinates of a line: x1%y1,x2%y2 ....
-     * @param outputFormat      The mimetype of the output format. Possible values: image/png, text/xml ...
-     * @return the request URL.
-     * @throws MalformedURLException 
+     * @deprecated use getCoverageReference() methods
      */
     public URL queryTransect(final String crsCode, final String lineString, 
             final String outputFormat) throws MalformedURLException {
-        final NcGetTransectRequest request = ((NcWebMapServer) getServer()).createGetTransect();
-        
-        // Mandatory
-        request.setLayer(getLayerNames()[0]);
-        request.setCrs(crsCode);
-        request.setFormat(outputFormat);
-        request.setLineString(lineString);        
-        
-        // Optional
-        request.setTime(dimensions().get("TIME"));
-        request.setElevation(dimensions().get("ELEVATION"));
-        
-        return request.getURL();
+        return getCoverageReference().queryTransect(crsCode, lineString, outputFormat);
     }
     
     /**
-     * Generates a GetVerticalProfile URL.
-     * 
-     * @param crsCode       A crs code.
-     * @param x             The X coordinate of a point
-     * @param y             The Y coordinate of a point
-     * @param outputFormat  The mimetype of the output format.Possible values: image/png ...
-     * @return the request URL.
-     * @throws MalformedURLException 
+     * @deprecated use getCoverageReference() methods
      */
     public URL queryVerticalProfile(final String crsCode, float x, float y, 
             final String outputFormat) throws MalformedURLException {
-        final NcGetVerticalProfileRequest request = ((NcWebMapServer) getServer()).createGetVerticalProfile();
-        
-        // Mandatory
-        request.setLayer(getLayerNames()[0]);
-        request.setCrs(crsCode);
-        request.setFormat(outputFormat);
-        request.setPoint(x + " " + y);     
-        
-        // Optional
-        request.setTime(dimensions().get("TIME"));
-        
-        return request.getURL();
+        return getCoverageReference().queryVerticalProfile(crsCode, x, y, outputFormat);
     }
     
     /**
-     * Generates a GetVerticalProfile URL.
-     * 
-     * @param crsCode       A crs code.
-     * @param x             The X coordinate of a point
-     * @param y             The Y coordinate of a point
-     * @param outputFormat  The mimetype of the output format.Possible values: image/png ...
-     * @param dateBegin     The period date begin
-     * @param dateEnd       The period date end
-     * @return the request URL.
-     * @throws MalformedURLException 
+     * @deprecated use getCoverageReference() methods
      */
     public URL queryTimeseries(final Envelope env, final Dimension rect, int x,
             int y, final String infoFormat, 
             final String dateBegin, final String dateEnd) throws MalformedURLException, TransformException, FactoryException {
-        final NcGetTimeseriesRequest request = ((NcWebMapServer) getServer()).createGetTimeseries();
-        
-        final String[] layer = new String[]{getLayerNames()[0]};
-        prepareGetFeatureInfoRequest(request, env, rect, x, y, layer, infoFormat, 0);
-        
-        // Mandatory
-        request.setDateBegin(dateBegin);
-        request.setDateEnd(dateEnd);
-        
-        return request.getURL();
+        return getCoverageReference().queryTimeseries(env, rect, x, y, infoFormat, dateBegin, dateEnd);
     }
 }

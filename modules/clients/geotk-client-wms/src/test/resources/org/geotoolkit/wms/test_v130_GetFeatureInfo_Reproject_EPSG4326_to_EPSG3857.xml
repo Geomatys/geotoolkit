@@ -118,12 +118,6 @@
             <wms:Title>Mock Base Layer</wms:Title>
             <wms:Abstract>description</wms:Abstract>
             <wms:CRS>EPSG:4326</wms:CRS>
-            <wms:CRS>CRS:84</wms:CRS>
-            <wms:CRS>EPSG:3395</wms:CRS>
-            <wms:CRS>EPSG:27571</wms:CRS>
-            <wms:CRS>EPSG:27572</wms:CRS>
-            <wms:CRS>EPSG:27573</wms:CRS>
-            <wms:CRS>EPSG:27574</wms:CRS>
             <wms:EX_GeographicBoundingBox>
                 <wms:westBoundLongitude>-180.0</wms:westBoundLongitude>
                 <wms:eastBoundLongitude>180.0</wms:eastBoundLongitude>
@@ -132,19 +126,13 @@
             </wms:EX_GeographicBoundingBox>
             
             <wms:Layer queryable="1">
-                <wms:Name>BlueMarble</wms:Name>
-                <wms:Title>BlueMarble</wms:Title>
+                <wms:Name>test</wms:Name>
+                <wms:Title>test</wms:Title>
                 <wms:Abstract></wms:Abstract>
                 <wms:KeywordList>
                     <wms:Keyword></wms:Keyword>
                 </wms:KeywordList>
                 <wms:CRS>EPSG:4326</wms:CRS>
-                <wms:CRS>CRS:84</wms:CRS>
-                <wms:CRS>EPSG:3395</wms:CRS>
-                <wms:CRS>EPSG:27571</wms:CRS>
-                <wms:CRS>EPSG:27572</wms:CRS>
-                <wms:CRS>EPSG:27573</wms:CRS>
-                <wms:CRS>EPSG:27574</wms:CRS>
                 <wms:EX_GeographicBoundingBox>
                     <wms:westBoundLongitude>-179.99999999999784</wms:westBoundLongitude>
                     <wms:eastBoundLongitude>180.00000000000225</wms:eastBoundLongitude>

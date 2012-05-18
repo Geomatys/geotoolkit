@@ -126,8 +126,8 @@
             <LatLonBoundingBox minx="-180.0" miny="-90.0" maxx="180.0" maxy="90.0"/>
             
             <Layer queryable="1">
-                <Name>layer4D</Name>
-                <Title>layer4D</Title>
+                <Name>BlueMarble</Name>
+                <Title>BlueMarble</Title>
                 <Abstract></Abstract>
                 <KeywordList>
                     <Keyword></Keyword>

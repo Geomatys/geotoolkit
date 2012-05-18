@@ -132,8 +132,8 @@
             </wms:EX_GeographicBoundingBox>
             
             <wms:Layer queryable="1">
-                <wms:Name>layer4D</wms:Name>
-                <wms:Title>layer4D</wms:Title>
+                <wms:Name>BlueMarble</wms:Name>
+                <wms:Title>BlueMarble</wms:Title>
                 <wms:Abstract></wms:Abstract>
                 <wms:KeywordList>
                     <wms:Keyword></wms:Keyword>

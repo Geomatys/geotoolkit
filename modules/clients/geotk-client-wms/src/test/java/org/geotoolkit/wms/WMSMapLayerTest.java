@@ -17,11 +17,17 @@
 
 package org.geotoolkit.wms;
 
+import org.geotoolkit.wms.v111.GetLegend111;
+import org.geotoolkit.wms.v130.GetFeatureInfo130;
+import org.geotoolkit.wms.v130.GetLegend130;
+import org.geotoolkit.xml.MarshallerPool;
+import javax.xml.bind.Unmarshaller;
+import org.geotoolkit.wms.xml.WMSMarshallerPool;
+import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
 import java.net.URL;
 import java.awt.Dimension;
 import java.net.MalformedURLException;
 import javax.xml.bind.JAXBException;
-import org.geotoolkit.client.CapabilitiesException;
 
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
@@ -33,7 +39,6 @@ import org.geotoolkit.wms.v111.GetFeatureInfo111;
 import org.junit.Test;
 
 import org.opengis.referencing.NoSuchAuthorityCodeException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
@@ -67,7 +72,7 @@ public class WMSMapLayerTest {
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
 
-        final String query = layer.query(env, new Dimension(800, 600)).toString();
+        final String query = layer.getCoverageReference().query(env, new Dimension(800, 600)).toString();
         assertTrue( query.substring(query.indexOf("SRS")).startsWith("SRS=EPSG:4326"));
         assertTrue( query.substring(query.indexOf("BBOX")).startsWith("BBOX=-180.0,-90.0,180.0,90.0"));
     }
@@ -86,7 +91,7 @@ public class WMSMapLayerTest {
         env.setRange(0, -90, 90);
         env.setRange(1, -180, 180);
 
-        final String query = layer.query(env, new Dimension(800, 600)).toString();
+        final String query = layer.getCoverageReference().query(env, new Dimension(800, 600)).toString();
         assertTrue( query.substring(query.indexOf("SRS")).startsWith("SRS=EPSG:4326"));
         assertTrue( query.substring(query.indexOf("BBOX")).startsWith("BBOX=-180.0,-90.0,180.0,90.0"));
     }
@@ -104,7 +109,7 @@ public class WMSMapLayerTest {
         env.setRange(0, -882900.0, 844300.0); // Lat
         env.setRange(1, 1974600.0, 3701800.0); // Lon
 
-        final String query = layer.query(env, new Dimension(800, 600)).toString();
+        final String query = layer.getCoverageReference().query(env, new Dimension(800, 600)).toString();
         assertTrue( query.substring(query.indexOf("SRS")).startsWith("SRS=EPSG:32761"));
         assertTrue( query.substring(query.indexOf("BBOX")).startsWith("BBOX=1974600.0,-882900.0,3701800.0,844300.0"));
     }
@@ -123,7 +128,7 @@ public class WMSMapLayerTest {
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
 
-        final String query = layer.query(env, new Dimension(800, 600)).toString();
+        final String query = layer.getCoverageReference().query(env, new Dimension(800, 600)).toString();
         assertTrue( query.substring(query.indexOf("CRS")).startsWith("CRS=CRS:84"));
         assertTrue( query.substring(query.indexOf("BBOX")).startsWith("BBOX=-180.0,-90.0,180.0,90.0"));
     }
@@ -142,7 +147,7 @@ public class WMSMapLayerTest {
         env.setRange(0, -90, 90);
         env.setRange(1, -180, 180);
 
-        final String query = layer.query(env, new Dimension(800, 600)).toString();
+        final String query = layer.getCoverageReference().query(env, new Dimension(800, 600)).toString();
         assertTrue( query.substring(query.indexOf("CRS")).startsWith("CRS=EPSG:4326"));
         assertTrue( query.substring(query.indexOf("BBOX")).startsWith("BBOX=-90.0,-180.0,90.0,180.0"));
     }
@@ -160,7 +165,7 @@ public class WMSMapLayerTest {
         env.setRange(0, -882900.0, 844300.0); // Lat
         env.setRange(1, 1974600.0, 3701800.0); // Lon
 
-        final String query = layer.query(env, new Dimension(800, 600)).toString();
+        final String query = layer.getCoverageReference().query(env, new Dimension(800, 600)).toString();
         assertTrue( query.substring(query.indexOf("CRS")).startsWith("CRS=EPSG:32761"));
         assertTrue( query.substring(query.indexOf("BBOX")).startsWith("BBOX=-882900.0,1974600.0,844300.0,3701800.0"));
     }
@@ -174,24 +179,29 @@ public class WMSMapLayerTest {
      * @throws FactoryException
      */
     @Test
-    public void test_v111_GetFeatureInfo_EPSG4326() throws NoSuchAuthorityCodeException,
-            FactoryException, MalformedURLException, TransformException {
+    public void test_v111_GetFeatureInfo_EPSG4326() throws Exception {
 
-        final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v111);
+        //test capabilities
+        final MarshallerPool pool = WMSMarshallerPool.getInstance();
+        final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
+        final AbstractWMSCapabilities capa;
+        try{
+            capa = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapServer.class.getResource(
+                    "/org/geotoolkit/wms/test_v111_GetFeatureInfo_EPSG4326.xml"));
+        }finally{
+            pool.release(unmarshaller);
+        }
+        
+        final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v111,capa);
 
-        final WMSMapLayer layer = new WMSMapLayer(server, "test"){
-            @Override
-            protected boolean supportCRS(CoordinateReferenceSystem crs) throws FactoryException {
-                return true;
-            }
-        };
+        final WMSMapLayer layer = new WMSMapLayer(server, "test");
 
         final GeneralEnvelope env = new GeneralEnvelope(CRS.decode("EPSG:4326"));
         env.setRange(0, -90, 90);
         env.setRange(1, -180, 180);
         final Dimension rect = new Dimension(360, 180);
 
-        final URL url = layer.queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1);
+        final URL url = layer.getCoverageReference().queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1);
 
         final String sUrl = url.toString();
         assertTrue(sUrl.startsWith("http://test.com?"));
@@ -217,24 +227,29 @@ public class WMSMapLayerTest {
      * @throws FactoryException
      */
     @Test
-    public void test_v130_GetFeatureInfo_EPSG4326() throws NoSuchAuthorityCodeException,
-            FactoryException, MalformedURLException, TransformException {
+    public void test_v130_GetFeatureInfo_EPSG4326() throws Exception {
 
-        final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v130);
+        //test capabilities
+        final MarshallerPool pool = WMSMarshallerPool.getInstance();
+        final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
+        final AbstractWMSCapabilities capa;
+        try{
+            capa = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapServer.class.getResource(
+                    "/org/geotoolkit/wms/test_v130_GetFeatureInfo_EPSG4326.xml"));
+        }finally{
+            pool.release(unmarshaller);
+        }
+        
+        final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v130, capa);
 
-        final WMSMapLayer layer = new WMSMapLayer(server, "test"){
-            @Override
-            protected boolean supportCRS(CoordinateReferenceSystem crs) throws FactoryException {
-                return true;
-            }
-        };
+        final WMSMapLayer layer = new WMSMapLayer(server, "test");
 
         final GeneralEnvelope env = new GeneralEnvelope(CRS.decode("EPSG:4326"));
         env.setRange(0, -90, 90);
         env.setRange(1, -180, 180);
         final Dimension rect = new Dimension(360, 180);
 
-        final URL url = layer.queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1);
+        final URL url = layer.getCoverageReference().queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1);
 
         final String sUrl = url.toString();
         assertTrue(sUrl.startsWith("http://test.com?"));
@@ -260,24 +275,29 @@ public class WMSMapLayerTest {
      * @throws FactoryException
      */
     @Test
-    public void test_v130_GetFeatureInfo_CRS84() throws NoSuchAuthorityCodeException,
-            FactoryException, MalformedURLException, TransformException {
+    public void test_v130_GetFeatureInfo_CRS84() throws Exception {
 
-        final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v130);
+        //test capabilities
+        final MarshallerPool pool = WMSMarshallerPool.getInstance();
+        final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
+        final AbstractWMSCapabilities capa;
+        try{
+            capa = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapServer.class.getResource(
+                    "/org/geotoolkit/wms/test_v130_GetFeatureInfo_CRS84.xml"));
+        }finally{
+            pool.release(unmarshaller);
+        }
+        
+        final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v130,capa);
 
-        final WMSMapLayer layer = new WMSMapLayer(server, "test"){
-            @Override
-            protected boolean supportCRS(CoordinateReferenceSystem crs) throws FactoryException {
-                return true;
-            }
-        };
+        final WMSMapLayer layer = new WMSMapLayer(server, "test");
 
         final GeneralEnvelope env = new GeneralEnvelope(CRS.decode("CRS:84"));
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
         final Dimension rect = new Dimension(360, 180);
 
-        final URL url = layer.queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1);
+        final URL url = layer.getCoverageReference().queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1);
 
         final String sUrl = url.toString();
         assertTrue(sUrl.startsWith("http://test.com?"));
@@ -303,29 +323,30 @@ public class WMSMapLayerTest {
      * @throws FactoryException
      */
     @Test
-    public void test_v111_GetFeatureInfo_Reproject_EPSG4326_to_CRS84() throws NoSuchAuthorityCodeException,
-            FactoryException, MalformedURLException, TransformException {
+    public void test_v111_GetFeatureInfo_Reproject_EPSG4326_to_CRS84() throws Exception {
 
-        final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v111);
-
-        final WMSMapLayer layer = new WMSMapLayer(server, "test"){
-            @Override
-            protected boolean supportCRS(CoordinateReferenceSystem crs) throws FactoryException {
-                return false;
-            }
-            @Override
-            protected CoordinateReferenceSystem findOriginalCRS() throws FactoryException {
-                return CRS.decode("EPSG:4326");
-            }
-        };
-        layer.setUseLocalReprojection(true);
+        //test capabilities
+        final MarshallerPool pool = WMSMarshallerPool.getInstance();
+        final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
+        final AbstractWMSCapabilities capa;
+        try{
+            capa = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapServer.class.getResource(
+                    "/org/geotoolkit/wms/test_v111_GetFeatureInfo_Reproject_EPSG4326_to_CRS84.xml"));
+        }finally{
+            pool.release(unmarshaller);
+        }
+        
+        final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v111,capa);
+        
+        final WMSMapLayer layer = new WMSMapLayer(server, "test");
+        layer.getCoverageReference().setUseLocalReprojection(true);
 
         final GeneralEnvelope env = new GeneralEnvelope(CRS.decode("CRS:84"));
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
         final Dimension rect = new Dimension(360, 180);
 
-        final URL url = layer.queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1);
+        final URL url = layer.getCoverageReference().queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1);
 
         final String sUrl = url.toString();
         assertTrue(sUrl.startsWith("http://test.com?"));
@@ -351,29 +372,30 @@ public class WMSMapLayerTest {
      * @throws FactoryException
      */
     @Test
-    public void test_v130_GetFeatureInfo_Reproject_EPSG4326_to_CRS84() throws NoSuchAuthorityCodeException,
-            FactoryException, MalformedURLException, TransformException {
+    public void test_v130_GetFeatureInfo_Reproject_EPSG4326_to_CRS84() throws Exception {
 
-        final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v130);
+        //test capabilities
+        final MarshallerPool pool = WMSMarshallerPool.getInstance();
+        final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
+        final AbstractWMSCapabilities capa;
+        try{
+            capa = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapServer.class.getResource(
+                    "/org/geotoolkit/wms/test_v130_GetFeatureInfo_Reproject_EPSG4326_to_CRS84.xml"));
+        }finally{
+            pool.release(unmarshaller);
+        }
+        
+        final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v130,capa);
 
-        final WMSMapLayer layer = new WMSMapLayer(server, "test"){
-            @Override
-            protected boolean supportCRS(CoordinateReferenceSystem crs) throws FactoryException {
-                return false;
-            }
-            @Override
-            protected CoordinateReferenceSystem findOriginalCRS() throws FactoryException {
-                return CRS.decode("EPSG:4326");
-            }
-        };
-        layer.setUseLocalReprojection(true);
+        final WMSMapLayer layer = new WMSMapLayer(server, "test");
+        layer.getCoverageReference().setUseLocalReprojection(true);
 
         final GeneralEnvelope env = new GeneralEnvelope(CRS.decode("CRS:84"));
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
         final Dimension rect = new Dimension(360, 180);
 
-        final URL url = layer.queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1);
+        final URL url = layer.getCoverageReference().queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1);
 
         final String sUrl = url.toString();
         assertTrue(sUrl.startsWith("http://test.com?"));
@@ -399,22 +421,23 @@ public class WMSMapLayerTest {
      * @throws FactoryException
      */
     @Test
-    public void test_v111_GetFeatureInfo_Reproject_CRS84_to_EPSG3857() throws NoSuchAuthorityCodeException,
-            FactoryException, MalformedURLException, TransformException {
+    public void test_v111_GetFeatureInfo_Reproject_CRS84_to_EPSG3857() throws Exception {
 
-        final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v111);
+        //test capabilities
+        final MarshallerPool pool = WMSMarshallerPool.getInstance();
+        final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
+        final AbstractWMSCapabilities capa;
+        try{
+            capa = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapServer.class.getResource(
+                    "/org/geotoolkit/wms/test_v111_GetFeatureInfo_Reproject_CRS84_to_EPSG3857.xml"));
+        }finally{
+            pool.release(unmarshaller);
+        }
+        
+        final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v111,capa);
 
-        final WMSMapLayer layer = new WMSMapLayer(server, "test"){
-            @Override
-            protected boolean supportCRS(CoordinateReferenceSystem crs) throws FactoryException {
-                return false;
-            }
-            @Override
-            protected CoordinateReferenceSystem findOriginalCRS() throws FactoryException,CapabilitiesException {
-                return CRS.decode("CRS:84");
-            }
-        };
-        layer.setUseLocalReprojection(true);
+        final WMSMapLayer layer = new WMSMapLayer(server, "test");
+        layer.getCoverageReference().setUseLocalReprojection(true);
 
         final GeneralEnvelope env = new GeneralEnvelope(CRS.decode("EPSG:3857"));
         env.setRange(0, -2.0037507067162E7, 2.0037507067162E7);
@@ -422,7 +445,7 @@ public class WMSMapLayerTest {
         
         final Dimension rect = new Dimension(512, 512);
 
-        final URL url = layer.queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1);
+        final URL url = layer.getCoverageReference().queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1);
 
         final String sUrl = url.toString();
         
@@ -449,29 +472,30 @@ public class WMSMapLayerTest {
      * @throws FactoryException
      */
     @Test
-    public void test_v130_GetFeatureInfo_Reproject_CRS84_to_EPSG3857() throws NoSuchAuthorityCodeException,
-            FactoryException, MalformedURLException, TransformException {
+    public void test_v130_GetFeatureInfo_Reproject_CRS84_to_EPSG3857() throws Exception {
 
-        final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v130);
+        //test capabilities
+        final MarshallerPool pool = WMSMarshallerPool.getInstance();
+        final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
+        final AbstractWMSCapabilities capa;
+        try{
+            capa = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapServer.class.getResource(
+                    "/org/geotoolkit/wms/test_v130_GetFeatureInfo_Reproject_CRS84_to_EPSG3857.xml"));
+        }finally{
+            pool.release(unmarshaller);
+        }
+        
+        final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v130,capa);
 
-        final WMSMapLayer layer = new WMSMapLayer(server, "test"){
-            @Override
-            protected boolean supportCRS(CoordinateReferenceSystem crs) throws FactoryException {
-                return false;
-            }
-            @Override
-            protected CoordinateReferenceSystem findOriginalCRS() throws FactoryException {
-                return CRS.decode("CRS:84");
-            }
-        };
-        layer.setUseLocalReprojection(true);
+        final WMSMapLayer layer = new WMSMapLayer(server, "test");
+        layer.getCoverageReference().setUseLocalReprojection(true);
 
         final GeneralEnvelope env = new GeneralEnvelope(CRS.decode("EPSG:3857"));
         env.setRange(0, -2.0037507067162E7, 2.0037507067162E7);
         env.setRange(1, -2.0037507067162E7, 2.0037507067162E7);
         final Dimension rect = new Dimension(512, 512);
 
-        final URL url = layer.queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1);
+        final URL url = layer.getCoverageReference().queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1);
 
         final String sUrl = url.toString();        
         assertTrue(sUrl.startsWith("http://test.com?"));
@@ -497,22 +521,24 @@ public class WMSMapLayerTest {
      * @throws FactoryException
      */
     @Test
-    public void test_v111_GetFeatureInfo_Reproject_EPSG4326_to_EPSG3857() throws NoSuchAuthorityCodeException,
-            FactoryException, MalformedURLException, TransformException {
+    public void test_v111_GetFeatureInfo_Reproject_EPSG4326_to_EPSG3857() throws Exception {
 
-        final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v111);
+        //test capabilities
+        final MarshallerPool pool = WMSMarshallerPool.getInstance();
+        final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
+        final AbstractWMSCapabilities capa;
+        try{
+            capa = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapServer.class.getResource(
+                    "/org/geotoolkit/wms/test_v111_GetFeatureInfo_Reproject_EPSG4326_to_EPSG3857.xml"));
+        }finally{
+            pool.release(unmarshaller);
+        }
+        
+        
+        final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v111, capa);
 
-        final WMSMapLayer layer = new WMSMapLayer(server, "test"){
-            @Override
-            protected boolean supportCRS(CoordinateReferenceSystem crs) throws FactoryException {
-                return false;
-            }
-            @Override
-            protected CoordinateReferenceSystem findOriginalCRS() throws FactoryException {
-                return CRS.decode("EPSG:4326");
-            }
-        };
-        layer.setUseLocalReprojection(true);
+        final WMSMapLayer layer = new WMSMapLayer(server, "test");
+        layer.getCoverageReference().setUseLocalReprojection(true);
 
         final GeneralEnvelope env = new GeneralEnvelope(CRS.decode("EPSG:3857"));
         //-2.0037507067162E7,-2.0037507067162E7,2.0037507067162E7,2.0037507067162E7
@@ -520,7 +546,7 @@ public class WMSMapLayerTest {
         env.setRange(1, -2.0037507067162E7, 2.0037507067162E7);
         final Dimension rect = new Dimension(512, 512);
 
-        final URL url = layer.queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1);
+        final URL url = layer.getCoverageReference().queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1);
 
         final String sUrl = url.toString();
         assertTrue(sUrl.startsWith("http://test.com?"));
@@ -546,29 +572,30 @@ public class WMSMapLayerTest {
      * @throws FactoryException
      */
     @Test
-    public void test_v130_GetFeatureInfo_Reproject_EPSG4326_to_EPSG3857() throws NoSuchAuthorityCodeException,
-            FactoryException, MalformedURLException, TransformException {
+    public void test_v130_GetFeatureInfo_Reproject_EPSG4326_to_EPSG3857() throws Exception {
 
-        final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v130);
+        //test capabilities
+        final MarshallerPool pool = WMSMarshallerPool.getInstance();
+        final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
+        final AbstractWMSCapabilities capa;
+        try{
+            capa = (AbstractWMSCapabilities) unmarshaller.unmarshal(MockWebMapServer.class.getResource(
+                    "/org/geotoolkit/wms/test_v130_GetFeatureInfo_Reproject_EPSG4326_to_EPSG3857.xml"));
+        }finally{
+            pool.release(unmarshaller);
+        }
+        
+        final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v130,capa);
 
-        final WMSMapLayer layer = new WMSMapLayer(server, "test"){
-            @Override
-            protected boolean supportCRS(CoordinateReferenceSystem crs) throws FactoryException {
-                return false;
-            }
-            @Override
-            protected CoordinateReferenceSystem findOriginalCRS() throws FactoryException {
-                return CRS.decode("EPSG:4326");
-            }
-        };
-        layer.setUseLocalReprojection(true);
+        final WMSMapLayer layer = new WMSMapLayer(server, "test");
+        layer.getCoverageReference().setUseLocalReprojection(true);
 
         final GeneralEnvelope env = new GeneralEnvelope(CRS.decode("EPSG:3857"));
         env.setRange(0, -2.0037507067162E7, 2.0037507067162E7);
         env.setRange(1, -2.0037507067162E7, 2.0037507067162E7);
         final Dimension rect = new Dimension(512, 512);
         
-        final URL url = layer.queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1);
+        final URL url = layer.getCoverageReference().queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1);
 
         final String sUrl = url.toString();
         assertTrue(sUrl.startsWith("http://test.com?"));
@@ -592,24 +619,24 @@ public class WMSMapLayerTest {
     @Test
     public void test_v111_GetLegendGraphic() throws MalformedURLException {
         
-        final WMSMapLayer layer = new WMSMapLayer(SERVER_111, "test");
-        layer.setStyles("test");
-        layer.setExceptionsFormat("application/test");
-        layer.setStyles("test");
-        layer.setSldVersion("3.3.3");
-        layer.dimensions().put("TIME", "20-20-20T20:20:20Z");
-        layer.dimensions().put("ELEVATION", "500");
-        layer.dimensions().put("DIMRANGE", "-50,50");
+        final WMSMapLayer layer = new WMSMapLayer(SERVER_111, "BlueMarble");
+        layer.getCoverageReference().setStyles("test");
+        layer.getCoverageReference().setExceptionsFormat("application/test");
+        layer.getCoverageReference().setStyles("test");
+        layer.getCoverageReference().setSldVersion("3.3.3");
+        layer.getCoverageReference().dimensions().put("TIME", "20-20-20T20:20:20Z");
+        layer.getCoverageReference().dimensions().put("ELEVATION", "500");
+        layer.getCoverageReference().dimensions().put("DIMRANGE", "-50,50");
         
         final Dimension rect = new Dimension(140, 20);
-        final URL url = layer.queryLegend(rect, "image/gif", "test", 2500.0);
+        final URL url = layer.getCoverageReference().queryLegend(rect, "image/gif", "test", 2500.0);
         final String sUrl = url.toString();
         assertTrue(sUrl.contains("SERVICE=WMS"));
         assertTrue(sUrl.contains("VERSION=1.1.1"));
         assertTrue(sUrl.contains("REQUEST=GetLegendGraphic"));
         assertTrue(sUrl.contains("FORMAT=image/gif"));
         assertTrue(sUrl.contains("EXCEPTIONS=application/test"));
-        assertTrue(sUrl.contains("LAYER=test"));
+        assertTrue(sUrl.contains("LAYER=BlueMarble"));
         assertTrue(sUrl.contains("STYLE=test"));
         assertTrue(sUrl.contains("WIDTH=140"));
         assertTrue(sUrl.contains("HEIGHT=20"));
@@ -629,24 +656,24 @@ public class WMSMapLayerTest {
     @Test
     public void test_v130_GetLegendGraphic() throws MalformedURLException {
         
-        final WMSMapLayer layer = new WMSMapLayer(SERVER_130, "test");
-        layer.setStyles("test");
-        layer.setExceptionsFormat("application/test");
-        layer.setStyles("test");
-        layer.setSldVersion("3.3.3");
-        layer.dimensions().put("TIME", "20-20-20T20:20:20Z");
-        layer.dimensions().put("ELEVATION", "500");
-        layer.dimensions().put("DIMRANGE", "-50,50");
+        final WMSMapLayer layer = new WMSMapLayer(SERVER_130, "BlueMarble");
+        layer.getCoverageReference().setStyles("test");
+        layer.getCoverageReference().setExceptionsFormat("application/test");
+        layer.getCoverageReference().setStyles("test");
+        layer.getCoverageReference().setSldVersion("3.3.3");
+        layer.getCoverageReference().dimensions().put("TIME", "20-20-20T20:20:20Z");
+        layer.getCoverageReference().dimensions().put("ELEVATION", "500");
+        layer.getCoverageReference().dimensions().put("DIMRANGE", "-50,50");
         
         final Dimension rect = new Dimension(140, 20);
-        final URL url = layer.queryLegend(rect, "image/gif", "test", 2500.0);
+        final URL url = layer.getCoverageReference().queryLegend(rect, "image/gif", "test", 2500.0);
         final String sUrl = url.toString();
         assertTrue(sUrl.contains("SERVICE=WMS"));
         assertTrue(sUrl.contains("VERSION=1.3.0"));
         assertTrue(sUrl.contains("REQUEST=GetLegendGraphic"));
         assertTrue(sUrl.contains("FORMAT=image/gif"));
         assertTrue(sUrl.contains("EXCEPTIONS=application/test"));
-        assertTrue(sUrl.contains("LAYER=test"));
+        assertTrue(sUrl.contains("LAYER=BlueMarble"));
         assertTrue(sUrl.contains("STYLE=test"));
         assertTrue(sUrl.contains("WIDTH=140"));
         assertTrue(sUrl.contains("HEIGHT=20"));

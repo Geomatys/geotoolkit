@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.ncwms;
 
+import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,7 +24,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.geotoolkit.client.AbstractServerFactory;
-import org.geotoolkit.client.Server;
+import org.geotoolkit.coverage.CoverageStore;
+import org.geotoolkit.coverage.CoverageStoreFactory;
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
@@ -44,7 +46,7 @@ import org.opengis.parameter.*;
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
-public class NcWMSServerFactory extends AbstractServerFactory{
+public class NcWMSServerFactory extends AbstractServerFactory implements CoverageStoreFactory{
         
     /** factory identification **/
     public static final String NAME = "ncWMS";
@@ -105,7 +107,7 @@ public class NcWMSServerFactory extends AbstractServerFactory{
     }
 
     @Override
-    public Server create(ParameterValueGroup params) throws DataStoreException {
+    public NcWebMapServer create(ParameterValueGroup params) throws DataStoreException {
         checkCanProcessWithError(params);
         final URL url = (URL)Parameters.getOrCreate(URL, params).getValue();
         final WMSVersion version = (WMSVersion)Parameters.getOrCreate(VERSION, params).getValue();
@@ -116,6 +118,21 @@ public class NcWMSServerFactory extends AbstractServerFactory{
         }catch(ParameterNotFoundException ex){}
         
         return new NcWebMapServer(url,security,version,null);
+    }
+
+    @Override
+    public NcWebMapServer create(Map<String, ? extends Serializable> params) throws DataStoreException {
+        return (NcWebMapServer) super.create(params);
+    }
+    
+    @Override
+    public CoverageStore createNew(Map<String, ? extends Serializable> params) throws DataStoreException {
+        throw new DataStoreException("Can not create new ncWMS coverage store.");
+    }
+
+    @Override
+    public CoverageStore createNew(ParameterValueGroup params) throws DataStoreException {
+        throw new DataStoreException("Can not create new ncWMS coverage store.");
     }
     
 }

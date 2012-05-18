@@ -27,9 +27,11 @@ import org.geotoolkit.ncwms.v130.NcGetLegend130;
 import org.geotoolkit.ncwms.v130.NcGetMap130;
 import org.geotoolkit.ncwms.v130.NcGetTimeseries130;
 import org.geotoolkit.security.ClientSecurity;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
 import org.geotoolkit.wms.xml.WMSVersion;
 import org.geotoolkit.wms.WebMapServer;
+import org.opengis.feature.type.Name;
 
 
 /**
@@ -94,6 +96,15 @@ public class NcWebMapServer extends WebMapServer{
         super(wms.getURL(), wms.getVersion(), cap);
     }
    
+    @Override
+    public NcWMSCoverageReference getCoverageReference(Name name) throws DataStoreException {
+        if(getNames().contains(name)){
+            return new NcWMSCoverageReference(this,name);
+        }
+        throw new DataStoreException("No layer for name : " + name);
+    }
+
+    
     /**
      * {@inheritDoc }
      */
@@ -132,7 +143,6 @@ public class NcWebMapServer extends WebMapServer{
         }
     }
 
-    
     /**
      * {@inheritDoc }
      */

@@ -16,11 +16,13 @@
  */
 package org.geotoolkit.wmsc;
 
+import java.io.Serializable;
 import java.net.URL;
 import java.util.Collections;
+import java.util.Map;
 import org.geotoolkit.client.AbstractServerFactory;
-import org.geotoolkit.client.Server;
 import org.geotoolkit.client.map.CachedPyramidSet;
+import org.geotoolkit.coverage.CoverageStoreFactory;
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
@@ -44,7 +46,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
-public class WMSCServerFactory extends AbstractServerFactory{
+public class WMSCServerFactory extends AbstractServerFactory implements CoverageStoreFactory{
     
     /** factory identification **/
     public static final String NAME = "wmsc";
@@ -85,7 +87,7 @@ public class WMSCServerFactory extends AbstractServerFactory{
     }
 
     @Override
-    public Server create(ParameterValueGroup params) throws DataStoreException {
+    public WebMapServerCached create(ParameterValueGroup params) throws DataStoreException {
         checkCanProcessWithError(params);
         final URL url = (URL)Parameters.getOrCreate(URL, params).getValue();
         ClientSecurity security = null;
@@ -109,6 +111,21 @@ public class WMSCServerFactory extends AbstractServerFactory{
         }catch(ParameterNotFoundException ex){}
         
         return server;
+    }
+
+    @Override
+    public WebMapServerCached create(Map<String, ? extends Serializable> params) throws DataStoreException {
+        return (WebMapServerCached) super.create(params);
+    }
+
+    @Override
+    public WebMapServerCached createNew(Map<String, ? extends Serializable> params) throws DataStoreException {
+        throw new DataStoreException("Can not create new WMSC coverage store.");
+    }
+
+    @Override
+    public WebMapServerCached createNew(ParameterValueGroup params) throws DataStoreException {
+        throw new DataStoreException("Can not create new WMSC coverage store.");
     }
     
 }

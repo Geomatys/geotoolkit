@@ -16,8 +16,12 @@
  */
 package org.geotoolkit.wmsc.map;
 
+import org.geotoolkit.client.CapabilitiesException;
+import org.geotoolkit.wms.map.WMSGraphicBuilder;
 import org.geotoolkit.wms.map.WMSMapLayer;
+import org.geotoolkit.wmsc.WMSCCoverageReference;
 import org.geotoolkit.wmsc.WebMapServerCached;
+import org.opengis.feature.type.Name;
 
 /**
  *
@@ -26,17 +30,17 @@ import org.geotoolkit.wmsc.WebMapServerCached;
  */
 public class WMSCMapLayer extends WMSMapLayer{
     
+    private static WMSCCoverageReference toReference(final WebMapServerCached server, final Name name) throws CapabilitiesException{
+        return new WMSCCoverageReference(server, name);
+    }
+    
     /**
-     * 
      * @param server
      * @param layer : only one layer possible in wms-c
      */
-    public WMSCMapLayer(final WebMapServerCached server, final String layer) {
-        super(server, layer);
-        
-        //replace wms graphic builder by wms-c builder
-        graphicBuilders().clear();
-        graphicBuilders().add(WMSCGraphicBuilder.INSTANCE);
+    public WMSCMapLayer(final WebMapServerCached server, final Name name) throws CapabilitiesException {
+        super(toReference(server, name));
+        graphicBuilders().add(WMSGraphicBuilder.INSTANCE);
     }
     
 }
