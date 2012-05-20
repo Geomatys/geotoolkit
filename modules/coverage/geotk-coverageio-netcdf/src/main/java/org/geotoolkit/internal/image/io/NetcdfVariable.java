@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.image.io.plugin;
+package org.geotoolkit.internal.image.io;
 
 import java.awt.image.DataBuffer;
 import java.util.EnumSet;
@@ -63,16 +63,16 @@ import static ucar.nc2.constants.CDM.SCALE_FACTOR;
  * @since 3.08 (derived from 2.4)
  * @module
  */
-final class NetcdfVariable {
+public final class NetcdfVariable {
     /**
      * Minimal number of dimension for accepting a variable as a coverage variable.
      */
-    static final int MIN_DIMENSION = 2;
+    public static final int MIN_DIMENSION = 2;
 
     /**
      * The {@value} attribute name (complete {@link ucar.nc2.constants.CF}).
      */
-    static final String
+    public static final String
             VALID_MIN     = "valid_min",
             VALID_MAX     = "valid_max",
             VALID_RANGE   = "valid_range";
@@ -132,6 +132,8 @@ final class NetcdfVariable {
      * Extracts metadata from the specified variable using UCAR's API. This approach suffers
      * from rounding errors and is unable to get the missing values. Use this constructor
      * only for comparing our own results with the results from the UCAR's API.
+     *
+     * @param variable The variable to extract metadata from.
      */
     public NetcdfVariable(final EnhanceScaleMissing variable) {
         if (variable instanceof VariableIF) {
@@ -276,9 +278,11 @@ scan:   for (int i=0; i<missingCount; i++) {
     /**
      * Sets the scale and offset from the given variable, using UCAR API.
      *
+     * @param variable The variable to extract metadata from.
+     *
      * @since 3.15
      */
-    final void setTransferFunction(final EnhanceScaleMissing variable) {
+    public void setTransferFunction(final EnhanceScaleMissing variable) {
         offset =  fixRoundingError(variable.convertScaleOffsetMissing(0.0));
         scale  =  fixRoundingError(variable.convertScaleOffsetMissing(1.0) - offset);
     }
@@ -289,9 +293,13 @@ scan:   for (int i=0; i<missingCount; i++) {
      * invalid (the NetCDF library seems to set the range to maximal floating point values
      * when the range is actually not specified).
      *
+     * @param  variable The variable from which to check the fill values.
+     * @return {@code true} if there is a collision between the fill values of the given variable
+     *         and this variable.
+     *
      * @since 3.14
      */
-    final boolean hasCollisions(final EnhanceScaleMissing variable) {
+    public boolean hasCollisions(final EnhanceScaleMissing variable) {
         if (fillValues != null) {
             for (final double fillValue : fillValues) {
                 if (!variable.isInvalidData(fillValue)) {
@@ -363,7 +371,7 @@ scan:   for (int i=0; i<missingCount; i++) {
      *
      * @see NetcdfImageReader#getRawDataType
      */
-    static int getRawDataType(final VariableIF variable) {
+    public static int getRawDataType(final VariableIF variable) {
         final DataType type = variable.getDataType();
         if (type != null) switch (type) {
             case BOOLEAN: // Fall through
@@ -399,7 +407,7 @@ scan:   for (int i=0; i<missingCount; i++) {
      * @return {@code true} if the specified variable can be returned from the
      *         {@link NetcdfImageReader#getImageNames()} method.
      */
-    static boolean isCoverage(final VariableSimpleIF variable, final List<? extends VariableIF> variables) {
+    public static boolean isCoverage(final VariableSimpleIF variable, final List<? extends VariableIF> variables) {
         int numVectors = 0; // Number of dimension having more than 1 value.
         for (final int length : variable.getShape()) {
             if (length >= 2) { // This value '2' is not necessarily MIN_DIMENSION.
@@ -430,6 +438,8 @@ scan:   for (int i=0; i<missingCount; i++) {
      * function ({@link #scale}=1 and {@link #offset}=0) and missing values represented by NaN
      * (maybe after a replacement performed by the image reader - so we can not test here this
      * last condition).
+     *
+     * @return {@code true} if this variable seems to be geophysics.
      *
      * @since 3.19
      */

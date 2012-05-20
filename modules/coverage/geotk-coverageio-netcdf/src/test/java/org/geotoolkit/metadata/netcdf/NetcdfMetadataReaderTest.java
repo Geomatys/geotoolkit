@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.image.io.plugin;
+package org.geotoolkit.metadata.netcdf;
 
 import java.util.Map;
 import java.util.Arrays;
@@ -35,13 +35,14 @@ import org.opengis.wrapper.netcdf.NetcdfMetadataTest;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 
+import org.geotoolkit.image.io.plugin.NetcdfImageReader;
 import org.junit.*;
 import static org.opengis.test.Assert.*;
 import static org.geotoolkit.test.Commons.getSingleton;
 
 
 /**
- * Tests using the {@link NetcdfTranscoder} class. This class inherits the tests from the
+ * Tests using the {@link NetcdfMetadataReader} class. This class inherits the tests from the
  * {@code geoapi-netcdf} module, and adds a some additional assertions for attributes not
  * parsed by the GeoAPI demo code.
  *
@@ -50,15 +51,15 @@ import static org.geotoolkit.test.Commons.getSingleton;
  *
  * @since 3.20
  */
-public final strictfp class NetcdfTranscoderTest extends NetcdfMetadataTest {
+public final strictfp class NetcdfMetadataReaderTest extends NetcdfMetadataTest {
     /**
      * {@code true} if this instance is running an integration test.
      * <p>
      * <ul>
      *   <li>If {@code false} (the usual value), the metadata will be constructed directly by a
-     *       {@link NetcdfTranscoder} instance.</li>
+     *       {@link NetcdfMetadata} instance.</li>
      *   <li>If {@code true}, the metadata will be constructed by an {@link ImageCoverageReader},
-     *       which will itself use a {@link NetcdfTranscoder} under the hood and will add more
+     *       which will itself use a {@link NetcdfMetadata} under the hood and will add more
      *       information.</li>
      * </ul>
      */
@@ -86,7 +87,7 @@ public final strictfp class NetcdfTranscoderTest extends NetcdfMetadataTest {
             throw new IIOException(e.getLocalizedMessage(), e);
         }
         // Bellow is the "normal" test.
-        final NetcdfTranscoder ncISO = new NetcdfTranscoder(file, null);
+        final NetcdfMetadataReader ncISO = new NetcdfMetadataReader(file, null);
         return ncISO.readMetadata();
     }
 
