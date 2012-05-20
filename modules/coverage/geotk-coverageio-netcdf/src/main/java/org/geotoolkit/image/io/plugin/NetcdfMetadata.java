@@ -38,6 +38,7 @@ import ucar.nc2.NetcdfFile;
 import ucar.nc2.Variable;
 import ucar.nc2.VariableIF;
 import ucar.nc2.VariableSimpleIF;
+import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.dataset.CoordinateSystem;
 import ucar.nc2.dataset.CoordSysBuilderIF;
 import ucar.nc2.dataset.EnhanceScaleMissing;
@@ -53,6 +54,7 @@ import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.image.io.metadata.MetadataAccessor;
 import org.geotoolkit.image.io.metadata.ReferencingBuilder;
+import org.geotoolkit.internal.image.io.NetcdfVariable;
 import org.geotoolkit.internal.image.io.SampleMetadataFormat;
 import org.geotoolkit.internal.image.io.DiscoveryAccessor;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
@@ -60,11 +62,11 @@ import org.geotoolkit.internal.image.io.GridDomainAccessor;
 import org.geotoolkit.internal.referencing.AxisDirections;
 import org.geotoolkit.referencing.adapters.NetcdfAxis;
 import org.geotoolkit.referencing.adapters.NetcdfCRS;
+import org.geotoolkit.metadata.netcdf.NetcdfMetadataReader;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.collection.BackingStoreException;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
-import ucar.nc2.dataset.NetcdfDataset;
 
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.ISO_FORMAT_NAME;
@@ -74,7 +76,7 @@ import static ucar.nc2.constants.CF.GRID_MAPPING;
 
 /**
  * Metadata from NetCDF file. This implementation assumes that the NetCDF file follows the
- * <A HREF="http://www.cfconventions.org/">CF Metadata conventions</A>.
+ * <a href="http://www.cfconventions.org">CF Metadata conventions</a>.
  *
  * {@section Limitation}
  * Current implementation retains only the first {@linkplain CoordinateSystem coordinate system}
@@ -578,7 +580,7 @@ final class NetcdfMetadata extends SpatialMetadata {
                 }
                 final Metadata metadata;
                 try {
-                    metadata = new NetcdfTranscoder((NetcdfFile) isoMetadata, this).readMetadata();
+                    metadata = new NetcdfMetadataReader((NetcdfFile) isoMetadata, this).readMetadata();
                 } catch (IOException e) {
                     throw new BackingStoreException(e); // Will be handled by GridCoverageReader.
                 }

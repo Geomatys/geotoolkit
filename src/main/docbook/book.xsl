@@ -5,11 +5,16 @@
      This file solves the issue of docbook using the <h2> elements
      both for chapter and for the first level of sections heading.
      ============================================================= -->
-<xsl:stylesheet xmlns:xsl    = "http://www.w3.org/1999/XSL/Transform"
+<xsl:stylesheet xmlns        = "http://www.w3.org/1999/xhtml"
+                xmlns:xsl    = "http://www.w3.org/1999/XSL/Transform"
                 xmlns:d      = "http://docbook.org/ns/docbook"
+                xmlns:db     = "http://docbook.org/ns/docbook"
+                xmlns:ng     = "http://docbook.org/docbook-ng"
+                xmlns:exsl   = "http://exslt.org/common"
+                xmlns:exslt  = "http://exslt.org/common"
                 xmlns:xslthl = "http://xslthl.sf.net"
-                xmlns        = "http://www.w3.org/1999/xhtml"
-                exclude-result-prefixes="xslthl d" version="1.0">
+                exclude-result-prefixes="d db ng exsl exslt xslthl" version="1.0">
+
   <!-- Symbolic URN specific to docbkx-maven-plugin -->
   <xsl:import href="urn:docbkx:stylesheet/docbook.xsl"/>
   <xsl:import href="urn:docbkx:stylesheet/highlight.xsl"/>
@@ -19,7 +24,6 @@
        Only the lines identified by a comment have been modified.  This file is used only for building
        the web site and is not included in the Geotk distributions.
   -->
-
   <xsl:template name="component.title">
     <xsl:param name="node" select="."/>
     <xsl:variable name="level">
@@ -50,6 +54,7 @@
     </xsl:element>
   </xsl:template>
 
+
   <!--
        Syntax highlighting partially copied from the "docbook/xhtml-1_1/highlight.xsl" file
        in the "net/sf/docbook/docbook-xsl/docbook-xsl-ns-resources.zip" archive, then edited.
@@ -72,13 +77,16 @@
 
 
   <!--
-       Following should work according "http://lists.oasis-open.org/archives/docbook-apps/201204/msg00107.html".
-       But the template seems to never match...
-       Docbkx customization is described at "http://docbkx-tools.sourceforge.net/advanced.html".
+       Map "OGC", "GeoAPI" and "Geotk" roles to CSS styles
+       for <classname>, <function> and <literal> elements.
   -->
-
-  <xsl:template match="classname[@role = 'OGC']" mode="class.value">
-    <xsl:value-of select="'OGC'"/>
-  </xsl:template>
+  <xsl:template match="d:classname[@role = 'OGC']"    mode="class.value"> <xsl:value-of select="'OGC'"   /> </xsl:template>
+  <xsl:template match="d:classname[@role = 'GeoAPI']" mode="class.value"> <xsl:value-of select="'GeoAPI'"/> </xsl:template>
+  <xsl:template match="d:classname[@role = 'Geotk']"  mode="class.value"> <xsl:value-of select="'Geotk'" /> </xsl:template>
+  <xsl:template match= "d:function[@role = 'OGC']"    mode="class.value"> <xsl:value-of select="'OGC'"   /> </xsl:template>
+  <xsl:template match= "d:function[@role = 'GeoAPI']" mode="class.value"> <xsl:value-of select="'GeoAPI'"/> </xsl:template>
+  <xsl:template match= "d:function[@role = 'Geotk']"  mode="class.value"> <xsl:value-of select="'Geotk'" /> </xsl:template>
+  <xsl:template match=  "d:literal[@role = 'GeoAPI']" mode="class.value"> <xsl:value-of select="'GeoAPI'"/> </xsl:template>
+  <xsl:template match=  "d:literal[@role = 'Geotk']"  mode="class.value"> <xsl:value-of select="'Geotk'" /> </xsl:template>
 
 </xsl:stylesheet>

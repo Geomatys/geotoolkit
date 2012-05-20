@@ -1,0 +1,21 @@
+                             ------------------------------
+                                        Overview
+                             ------------------------------
+
+
+Coverage I/O for NetCDF
+
+  Provides support for the NetCDF format as wrappers around the {{{http://www.unidata.ucar.edu/software/netcdf-java}UCAR NetCDF library}}.
+  For basic usage, users don't need to know about the details of this module. Just having the <<<geotk-coverageio-netcdf>>>
+  module on the classpath is sufficient for allowing <<<ImageCoverageReader>>> to recognize the NetCDF format.
+  For more advanced users wanting to override some default behavior, this module provides public classes
+  distributed in many different packages:
+
+    * <<<org.geotoolkit.metadata.netcdf>>> contains classes for building ISO metadata objects from the
+      {{{http://www.cfconventions.org}CF-compliant}} attributes in a NetCDF file, or for writing those
+      attributes from an ISO metadata object.
+
+    * <<<org.geotoolkit.referencing.adapters>>> contains wrapper around the NetCDF <<<CoordinateSystem>>> object.
+
+    * <<<org.geotoolkit.image.io.plugin>>> contains the <<<NetcdfImageReader>>> and <<<NetcdfImageWriter>>>
+      classes, which use all the above for handling NetCDF as gridded data.
