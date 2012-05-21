@@ -147,6 +147,7 @@ public class WMTSMosaic implements GridMosaic{
         sb.append("   scale = ").append(getScale());
         sb.append("   gridSize[").append(getGridSize().width).append(',').append(getGridSize().height).append(']');
         sb.append("   tileSize[").append(getTileSize().width).append(',').append(getTileSize().height).append(']');
+        sb.append("   ").append(getEnvelope());
         return sb.toString();
     }
 
