@@ -32,7 +32,6 @@
 package org.geotoolkit.feature;
 
 import java.util.*;
-import org.geotoolkit.geometry.DirectPosition2D;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.feature.*;
@@ -47,7 +46,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * simple/geometry attribute creation, as association and simple feature
  * creation.
  *
- * @author Alexis MANIN
+ * @author Alexis MANIN (geomatys)
  */
 public abstract class AbstractSimpleFeatureTest {
 
@@ -80,15 +79,15 @@ public abstract class AbstractSimpleFeatureTest {
      */
     @Test
     public void testCreateSimpleAttribute() {
-        FeatureFactory FF = getFeatureFactory();
-        final Object value = new DirectPosition2D(50, 60);
-        final Name nm = new MocName("point");
-        final Name finalNm = new MocName("pointAsso");
+        final FeatureFactory FF = getFeatureFactory();
+        final Object value = new MockDirectPosition2D(50, 60);
+        final Name nm = new MockName("point");
+        final Name finalNm = new MockName("pointAsso");
         final String id = "id-0";
         final FeatureTypeFactory FTF = getFeatureTypeFactory();
 
-        final AttributeType type = FTF.createAttributeType(nm, DirectPosition2D.class, true, false, null, null, null);
-        final AttributeDescriptor descriptor = FTF.createAttributeDescriptor(type, finalNm, 1, 1, false, new DirectPosition2D(0, 0));
+        final AttributeType type = FTF.createAttributeType(nm, MockDirectPosition2D.class, true, false, null, null, null);
+        final AttributeDescriptor descriptor = FTF.createAttributeDescriptor(type, finalNm, 1, 1, false, new MockDirectPosition2D(0, 0));
 
         final Attribute attr = FF.createAttribute(value, descriptor, id);
         //tests
@@ -109,9 +108,9 @@ public abstract class AbstractSimpleFeatureTest {
         //Nillable
         assertFalse("The data should not be nillable", attr.isNillable());
         //writing test
-        attr.setValue(new DirectPosition2D(0, 0));
+        attr.setValue(new MockDirectPosition2D(0, 0));
         assertNotNull("setValue() method has not worked", attr.getValue());
-        assertEquals("setValue() method has not worked", new DirectPosition2D(0, 0), attr.getValue());
+        assertEquals("setValue() method has not worked", new MockDirectPosition2D(0, 0), attr.getValue());
 
     }
 
@@ -121,18 +120,18 @@ public abstract class AbstractSimpleFeatureTest {
      */
     @Test
     public void testCreateGeometryAttribute() {
-        FeatureFactory FF = getFeatureFactory();
-        final Object value = new DirectPosition2D(50, 60);
-        final Name nm = new MocName("point");
+        final FeatureFactory FF = getFeatureFactory();
+        final Object value = new MockDirectPosition2D(50, 60);
+        final Name nm = new MockName("point");
         final String id = "id-0";
         final Map crsInfo = new HashMap<String, String>();
         crsInfo.put("name", "myCRS");
         crsInfo.put("first", "one");
         crsInfo.put("second", "two");
-        final CoordinateReferenceSystem curCRS = new MocCRS(crsInfo);
+        final CoordinateReferenceSystem curCRS = new MockCRS(crsInfo);
         final FeatureTypeFactory FTF = getFeatureTypeFactory();
 
-        final GeometryType type = FTF.createGeometryType(nm, DirectPosition2D.class, curCRS, true, false, null, null, null);
+        final GeometryType type = FTF.createGeometryType(nm, MockDirectPosition2D.class, curCRS, true, false, null, null, null);
         final GeometryDescriptor desc = FTF.createGeometryDescriptor(type, nm, 1, 1, false, null);
 
         final GeometryAttribute attr = FF.createGeometryAttribute(value, desc, id, curCRS);
@@ -155,9 +154,9 @@ public abstract class AbstractSimpleFeatureTest {
         //bounding
         //assertNotNull("Geometry envelope should never be null", attr.getBounds());
         //writing test
-        attr.setValue(new DirectPosition2D(0, 0));
+        attr.setValue(new MockDirectPosition2D(0, 0));
         assertNotNull("setValue() method has not worked", attr.getValue());
-        assertEquals("setValue() method has not worked", new DirectPosition2D(0, 0), attr.getValue());
+        assertEquals("setValue() method has not worked", new MockDirectPosition2D(0, 0), attr.getValue());
     }
 
     /**
@@ -167,16 +166,16 @@ public abstract class AbstractSimpleFeatureTest {
     @Test
     public void testCreateAssociation() {
         //initialisation
-        FeatureFactory FF = getFeatureFactory();
-        final Name nm = new MocName("point");
-        final Name finalNm = new MocName("pointAsso");
+        final FeatureFactory FF = getFeatureFactory();
+        final Name nm = new MockName("point");
+        final Name finalNm = new MockName("pointAsso");
         final String id = "id-0";
-        final Object value = new DirectPosition2D(50, 60);
+        final Object value = new MockDirectPosition2D(50, 60);
         final FeatureTypeFactory FTF = getFeatureTypeFactory();
 
         //prepare association creation
-        final AttributeType type = FTF.createAttributeType(nm, DirectPosition2D.class, true, false, null, null, null);
-        final AttributeDescriptor descriptor = FTF.createAttributeDescriptor(type, nm, 1, 1, false, new DirectPosition2D(0, 0));
+        final AttributeType type = FTF.createAttributeType(nm, MockDirectPosition2D.class, true, false, null, null, null);
+        final AttributeDescriptor descriptor = FTF.createAttributeDescriptor(type, nm, 1, 1, false, new MockDirectPosition2D(0, 0));
         final Attribute attr = FF.createAttribute(value, descriptor, id);
         final AssociationType asType = FTF.createAssociationType(nm, type, false, null, null, null);
         final AssociationDescriptor asDescriptor = FTF.createAssociationDescriptor(asType, finalNm, 1, 1, false);
@@ -202,7 +201,7 @@ public abstract class AbstractSimpleFeatureTest {
         assertNotNull("Attribute type has not been set", asso.getRelatedType());
         assertEquals("Attribute is not correct", type, asso.getRelatedType());
         //writing test
-        final Object newValue = new DirectPosition2D(51, 51);
+        final Object newValue = new MockDirectPosition2D(51, 51);
         final Attribute attr2 = FF.createAttribute(newValue, descriptor, "id-1");
         asso.setValue(attr2);
         assertNotNull("Association setValue() method has not worked", asso.getValue());
@@ -216,14 +215,14 @@ public abstract class AbstractSimpleFeatureTest {
      */
     @Test
     public void testCreateSimpleFeature() {
-        FeatureFactory FF = getFeatureFactory();
-        final Name nm = new MocName("point");
-        final Name strNm = new MocName("String");
-        Object geomValue = new DirectPosition2D(50, 60);
+        final FeatureFactory FF = getFeatureFactory();
+        final Name nm = new MockName("point");
+        final Name strNm = new MockName("String");
+        Object geomValue = new MockDirectPosition2D(50, 60);
         final FeatureTypeFactory FTF = getFeatureTypeFactory();
 
         //types and descriptors
-        final GeometryType geoType = FTF.createGeometryType(nm, DirectPosition2D.class, null, true, false, null, null, null);
+        final GeometryType geoType = FTF.createGeometryType(nm, MockDirectPosition2D.class, null, true, false, null, null, null);
         final GeometryDescriptor geoDesc = FTF.createGeometryDescriptor(geoType, nm, 1, 1, true, null);
         final AttributeType type = FTF.createAttributeType(strNm, String.class, true, false, null, null, null);
         final AttributeDescriptor descriptor = FTF.createAttributeDescriptor(type, strNm, 1, 1, false, "line");
@@ -244,11 +243,11 @@ public abstract class AbstractSimpleFeatureTest {
         //feature creation, check for insertion of same id values.
         final Feature feature = FF.createFeature(properties, fType, "id_0");
         feature.setDefaultGeometryProperty(geomAttr);
-        
+
         //Tests
         assertNotNull("feature is NULL", feature);
         assertTrue(feature instanceof SimpleFeature);
-        SimpleFeature simpleFeature = (SimpleFeature)feature;
+        SimpleFeature simpleFeature = (SimpleFeature) feature;
         //Name
         assertNotNull("Name is NULL", feature.getIdentifier());
         assertEquals("Name is not right", "id_0", feature.getIdentifier().toString());
@@ -277,11 +276,14 @@ public abstract class AbstractSimpleFeatureTest {
             if (!validating) {
                 fail("Lenient Factory should not check for property validity");
             }
-        }        
-        try {
-            feature.validate();
-            fail("The validation test should have returned an exception cause we have a null value in a non nillable attribute");
-        } catch (Exception e) {
+        }
+
+        if (!validating) {
+            try {
+                feature.validate();
+                fail("The validation test should have returned an exception cause we have a null value in a non nillable attribute");
+            } catch (Exception e) {
+            }
         }
         
         //insert a value whose id is already referenced
@@ -292,18 +294,18 @@ public abstract class AbstractSimpleFeatureTest {
         } catch (Exception e) {
         }
         feature.getProperties().remove(same_id_attr);
-        
-        //writing tests
-        feature.getProperty(nm).setValue(new DirectPosition2D(13, 37));
-        assertNotNull("Property setValue() method has not worked", feature.getProperty(nm).getValue());
-        assertEquals("Property setValue() method has not worked", new DirectPosition2D(13, 37), feature.getProperty(nm).getValue());
 
-        geomAttr = FF.createGeometryAttribute(new DirectPosition2D(0, 0), geoDesc, "Geo", null);
+        //writing tests
+        feature.getProperty(nm).setValue(new MockDirectPosition2D(13, 37));
+        assertNotNull("Property setValue() method has not worked", feature.getProperty(nm).getValue());
+        assertEquals("Property setValue() method has not worked", new MockDirectPosition2D(13, 37), feature.getProperty(nm).getValue());
+
+        geomAttr = FF.createGeometryAttribute(new MockDirectPosition2D(0, 0), geoDesc, "Geo", null);
         feature.setDefaultGeometryProperty(geomAttr);
         assertNotNull("setDefaultGeometryProperty() has not worked", feature.getDefaultGeometryProperty());
-        assertEquals("setDefaultGeometryProperty() has not worked", new DirectPosition2D(0, 0), feature.getDefaultGeometryProperty().getValue());
+        assertEquals("setDefaultGeometryProperty() has not worked", new MockDirectPosition2D(0, 0), feature.getDefaultGeometryProperty().getValue());
 
-        geomValue = new DirectPosition2D(19, 19);
+        geomValue = new MockDirectPosition2D(19, 19);
         simpleFeature.setDefaultGeometry(geomValue);
         assertNotNull("setDefaultGeometry() method has not worked", feature.getDefaultGeometryProperty());
         assertEquals("setDefaultGeometry() method has not worked", geomValue, feature.getDefaultGeometryProperty().getValue());
@@ -317,33 +319,28 @@ public abstract class AbstractSimpleFeatureTest {
         //insertion via a list
         final List<Object> insert = new ArrayList<Object>(2);
         insert.add("insertion");
-        insert.add(new DirectPosition2D(1337, 1337));
+        insert.add(new MockDirectPosition2D(1337, 1337));
         simpleFeature.setAttributes(insert);
         assertNotNull("setAttributes() method has not worked", simpleFeature.getAttributes());
         assertArrayEquals("setAttributes() method has not worked", insert.toArray(), simpleFeature.getAttributes().toArray());
         //insertion via an array
         insert.clear();
         insert.add("insertion2");
-        insert.add(new DirectPosition2D(0, 0));
+        insert.add(new MockDirectPosition2D(0, 0));
         simpleFeature.setAttributes(insert.toArray());
         assertNotNull("setAttributes() method has not worked", simpleFeature.getAttributes());
         assertArrayEquals("setAttributes() method has not worked", insert.toArray(), simpleFeature.getAttributes().toArray());
 
-        //check that if we try to get or set an attribute which does not exist, we rise an exception.
-        try {
-            simpleFeature.getAttribute("non_existant");            
-            fail("No exception catched for bad name parameter on method getAttribute()");
-        } catch (Exception e) {
-        }
+        //check that if we try to get or set an attribute which does not exist, it returns null.
+        assertNull(simpleFeature.getAttribute("non_existant"));
+
         try {
             simpleFeature.setAttribute("non_existant", "value");
             fail("No exception catched for bad name parameter on method setAttribute()");
         } catch (Exception e) {
         }
-        try {
-            simpleFeature.getProperty("non_existant");            
-            fail("No exception catched for bad name parameter on method getAttribute()");
-        } catch (Exception e) {
-        }
+        assertNull("Trying to access non existant value, method getProperty should have returned null", feature.getProperty("non_existant"));
+        Name tmpName = new MockName("non-existant");
+        assertNull("Trying to access non existant value, method getProperty should have returned null", feature.getProperty(tmpName));
     }
 }

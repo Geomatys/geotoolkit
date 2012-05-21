@@ -35,9 +35,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.geotoolkit.feature.MocCRS;
-import org.geotoolkit.feature.MocName;
-import org.geotoolkit.geometry.DirectPosition2D;
+import org.geotoolkit.feature.MockCRS;
+import org.geotoolkit.feature.MockDirectPosition2D;
+import org.geotoolkit.feature.MockName;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.feature.type.*;
@@ -48,7 +48,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * for complex features type creation. Test creation of complex
  * attributes/feature types
  *
- * @author Alexis MANIN
+ * @author Alexis MANIN (geomatys)
  */
 public abstract class AbstractComplexFeatureTypeTest extends AbstractSimpleFeatureTypeTest {
 
@@ -58,18 +58,18 @@ public abstract class AbstractComplexFeatureTypeTest extends AbstractSimpleFeatu
      */
     @Test
     public void testCreateComplexType() {
-        final Name name = new MocName("point");
-        final Name strName = new MocName("String");
-        final Name ctName = new MocName("complexTypeName");
+        final Name name = new MockName("point");
+        final Name strName = new MockName("String");
+        final Name ctName = new MockName("complexTypeName");
         final Map crsInfo = new HashMap<String, String>();
         crsInfo.put("name", "myCRS");
         crsInfo.put("first", "one");
         crsInfo.put("second", "two");
-        final CoordinateReferenceSystem curCRS = new MocCRS(crsInfo);
+        final CoordinateReferenceSystem curCRS = new MockCRS(crsInfo);
         final FeatureTypeFactory FTF = getFeatureTypeFactory();
 
         //types and descriptors
-        final GeometryType geoType = FTF.createGeometryType(name, DirectPosition2D.class, curCRS, true, true, null, null, null);
+        final GeometryType geoType = FTF.createGeometryType(name, MockDirectPosition2D.class, curCRS, true, true, null, null, null);
         final GeometryDescriptor geoDesc = FTF.createGeometryDescriptor(geoType, name, 1, 1, true, null);
         final AttributeType attrType = FTF.createAttributeType(strName, String.class, true, false, null, null, null);
         final AttributeDescriptor descriptor = FTF.createAttributeDescriptor(attrType, strName, 0, Integer.MAX_VALUE, false, "line");
@@ -79,10 +79,11 @@ public abstract class AbstractComplexFeatureTypeTest extends AbstractSimpleFeatu
         descList.add(geoDesc);
         descList.add(desc_doublon);
         
-        //create object to test, should raise an exception cause we have to descriptors withe the same name
+        //create object to test, should raise an exception cause we have two descriptors with the same name
         ComplexType res;
         try {
-        res = FTF.createComplexType(ctName, descList, true, false, null, attrType, descriptionSample);
+            res = FTF.createComplexType(ctName, descList, true, false, null, attrType, descriptionSample);
+            fail("We can't create a complexType with multiple descriptors with the same name");
         } catch (Exception e) {
             
         }
@@ -117,7 +118,7 @@ public abstract class AbstractComplexFeatureTypeTest extends AbstractSimpleFeatu
             res.getDescriptor("non-existant");
         } catch (Exception e) {
         }
-        Name tmpName = new MocName("non-existant");
+        Name tmpName = new MockName("non-existant");
         try {
             res.getDescriptor(tmpName);
         } catch (Exception e) {
@@ -130,13 +131,13 @@ public abstract class AbstractComplexFeatureTypeTest extends AbstractSimpleFeatu
      */
     @Test
     public void createFeatureType() {
-        final Name name = new MocName("point");
-        final Name strName = new MocName("String");
-        final Name fName = new MocName("featureTypeName");
+        final Name name = new MockName("point");
+        final Name strName = new MockName("String");
+        final Name fName = new MockName("featureTypeName");
         final FeatureTypeFactory FTF = getFeatureTypeFactory();
 
         //types and descriptors
-        final GeometryType geoType = FTF.createGeometryType(name, DirectPosition2D.class, null, true, false, null, null, null);
+        final GeometryType geoType = FTF.createGeometryType(name, MockDirectPosition2D.class, null, true, false, null, null, null);
         final GeometryDescriptor geoDesc = FTF.createGeometryDescriptor(geoType, name, 1, 1, true, null);
         final AttributeType attrType = FTF.createAttributeType(strName, String.class, true, false, null, null, null);
         final AttributeDescriptor descriptor = FTF.createAttributeDescriptor(attrType, strName, 0, Integer.MAX_VALUE, false, "line");
@@ -169,7 +170,7 @@ public abstract class AbstractComplexFeatureTypeTest extends AbstractSimpleFeatu
             res.getDescriptor("non-existant");
         } catch (Exception e) {
         }
-        Name tmpName = new MocName("non-existant");
+        Name tmpName = new MockName("non-existant");
         try {
             res.getDescriptor(tmpName);
         } catch (Exception e) {

@@ -30,6 +30,7 @@ import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureValidationUtilities;
 import org.geotoolkit.feature.SimpleIllegalAttributeException;
 import org.geotoolkit.io.TableWriter;
+import org.opengis.feature.Attribute;
 
 import org.opengis.feature.GeometryAttribute;
 import org.opengis.feature.IllegalAttributeException;
@@ -288,8 +289,18 @@ public abstract class AbstractSimpleFeature extends AbstractFeature<List<Propert
         final List<Property> properties = getProperties();
         final SimpleFeatureType type = getFeatureType();
 
-        for (int i=0,n=type.getAttributeCount(); i<n; i++) {
+        for (int i=0,n=type.getAttributeCount(); i<n; i++) {            
             final AttributeDescriptor descriptor = type.getDescriptor(i);
+            //check for attribute identifier
+//            if(properties.get(i) instanceof Attribute){
+//                Attribute toTest = (Attribute)properties.get(i);
+//                for(int j = i+1 ; j < n ; j++){
+//                    if(properties.get(j) instanceof Attribute){
+//                        if(toTest.getIdentifier().equals(((Attribute)properties.get(j)).getIdentifier()))
+//                            throw new IllegalAttributeException(descriptor, toTest, "We can't have two attributes with the same identifier");
+//                    }
+//                }
+//            }
             FeatureValidationUtilities.validate(descriptor, properties.get(i).getValue());
         }
     }

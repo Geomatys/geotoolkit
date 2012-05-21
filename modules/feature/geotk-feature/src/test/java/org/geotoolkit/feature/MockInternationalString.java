@@ -50,7 +50,7 @@ import org.geotoolkit.util.collection.XCollections;
  * @module
  */
 @ThreadSafe
-public class MocInternationalString extends AbstractInternationalString implements Serializable {
+public class MockInternationalString extends AbstractInternationalString implements Serializable {
     
     private String defaultVar;
     /**
@@ -74,7 +74,7 @@ public class MocInternationalString extends AbstractInternationalString implemen
      * Creates an initially empty international string. Localized strings can been added
      * using one of {@link #add add(...)} methods.
      */
-    public MocInternationalString() {
+    public MockInternationalString() {
         localeMap = Collections.emptyMap();
     }
 
@@ -87,7 +87,7 @@ public class MocInternationalString extends AbstractInternationalString implemen
      *
      * @param string The string in no specific locale, or {@code null} if none.
      */
-    public MocInternationalString(final String string) {
+    public MockInternationalString(final String string) {
         if (string != null) {
             localeMap = Collections.singletonMap(null, string);
         } else {
@@ -104,7 +104,7 @@ public class MocInternationalString extends AbstractInternationalString implemen
      *
      * @since 3.00
      */
-    public MocInternationalString(final Map<Locale,String> strings) {
+    public MockInternationalString(final Map<Locale,String> strings) {
         if (XCollections.isNullOrEmpty(strings)) {
             localeMap = Collections.emptyMap();
         } else {
@@ -390,7 +390,7 @@ public class MocInternationalString extends AbstractInternationalString implemen
     @Override
     public boolean equals(final Object object) {
         if (object != null && object.getClass() == getClass()) {
-            final MocInternationalString that = (MocInternationalString) object;
+            final MockInternationalString that = (MockInternationalString) object;
             return Utilities.equals(this.localeMap, that.localeMap);
         }
         return false;

@@ -18,9 +18,9 @@ import org.opengis.util.InternationalString;
  *
  * @author geoadmin
  */
-public class MocCS implements CoordinateSystem {
+public class MockCS implements CoordinateSystem {
     
-    public MocCS(){
+    public MockCS(){
     }
 
     @Override

@@ -34,7 +34,6 @@ package org.geotoolkit.feature;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import org.geotoolkit.geometry.DirectPosition2D;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.feature.*;
@@ -46,9 +45,9 @@ import org.opengis.feature.type.*;
  * feature creation. The class owns methods to check for complex attributes and
  * complex features creation.
  *
- * @author Alexis Manin
+ * @author Alexis Manin (Geomatys)
  */
-public abstract class AbstractComplexFeatureTest extends AbstractSimpleFeatureTest  {
+public abstract class AbstractComplexFeatureTest extends AbstractSimpleFeatureTest {
 
     public AbstractComplexFeatureTest(boolean validate) {
         super(validate);
@@ -60,10 +59,10 @@ public abstract class AbstractComplexFeatureTest extends AbstractSimpleFeatureTe
      */
     @Test
     public void testCreateComplexAttribute() {
-        FeatureFactory FF = getFeatureFactory();
+        final FeatureFactory FF = getFeatureFactory();
         //complex type creation
-        final Name strName = new MocName("string");
-        final Name fName = new MocName("featureTypeName");
+        final Name strName = new MockName("string");
+        final Name fName = new MockName("featureTypeName");
         final AttributeType attrType = getFeatureTypeFactory().createAttributeType(strName, String.class, true, false, null, null, null);
         final AttributeDescriptor descriptor = getFeatureTypeFactory().createAttributeDescriptor(attrType, strName, 0, Integer.MAX_VALUE, false, "line");
         final List<PropertyDescriptor> attrList = new ArrayList<PropertyDescriptor>();
@@ -97,7 +96,7 @@ public abstract class AbstractComplexFeatureTest extends AbstractSimpleFeatureTe
         assertNotNull("Attribute value is NULL", cmplxAtr.getValue());
         assertEquals("Attribute value doesn't match", properties, cmplxAtr.getValue());
         //writing tests
-        final Collection<Property> properties2 = new ArrayList<Property>();        
+        final Collection<Property> properties2 = new ArrayList<Property>();
         properties2.add(FF.createAttribute("line1b", descriptor, "id-0"));
         properties2.add(FF.createAttribute("line2b", descriptor, "id-1"));
         properties2.add(FF.createAttribute("line3b", descriptor, "id-2"));
@@ -113,7 +112,7 @@ public abstract class AbstractComplexFeatureTest extends AbstractSimpleFeatureTe
             }
         }
         ComplexAttribute complex = (ComplexAttribute) cmplxAtr;
-        
+
         //test insertion of a value which owns an id already referenced into the feature
         try {
             complex.getProperties().add(FF.createAttribute("lineSup", descriptor, "id-1"));
@@ -121,29 +120,13 @@ public abstract class AbstractComplexFeatureTest extends AbstractSimpleFeatureTe
             fail("Validate() method did not detect that we have two attributes with the same identifiant");
         } catch (Exception e) {
         }
-        
+
         //access to non existant name
-        try {
-            complex.getProperty("non_existant");
-            fail("No exception catched for bad name parameter on method getProperty()");
-        } catch (Exception e) {
-        }
-        try {
-            complex.getProperties("non_existant");
-            fail("No exception catched for bad name parameter on method getProperties()");
-        } catch (Exception e) {
-        }
-        Name tmpName = new MocName("non-existant");
-        try {
-            complex.getProperty(tmpName);
-            fail("No exception catched for bad name parameter on method getProperty()");
-        } catch (Exception e) {
-        }
-        try {
-            complex.getProperties(tmpName);
-            fail("No exception catched for bad name parameter on method getProperties()");
-        } catch (Exception e) {
-        }
+        assertNull("Trying to access non existant value, method getProperty should have returned null", complex.getProperty("non_existant"));
+        assertTrue("Trying to access non existant value, method getProperties should have returned an empty list", complex.getProperties("non_existant").isEmpty());
+        Name tmpName = new MockName("non-existant");
+        assertNull("Trying to access non existant value, method getProperty should have returned null", complex.getProperty(tmpName));
+        assertTrue("Trying to access non existant value, method getProperties should have returned an empty list", complex.getProperties(tmpName).isEmpty());
     }
 
     /**
@@ -152,13 +135,13 @@ public abstract class AbstractComplexFeatureTest extends AbstractSimpleFeatureTe
      */
     @Test
     public void testCreateComplexFeature() {
-        FeatureFactory FF = getFeatureFactory();
-        final Name name = new MocName("point");
-        final Name strName = new MocName("string");
-        final Name fName = new MocName("featureTypeName");
+        final FeatureFactory FF = getFeatureFactory();
+        final Name name = new MockName("point");
+        final Name strName = new MockName("string");
+        final Name fName = new MockName("featureTypeName");
 
         //types and descriptors
-        final GeometryType geoType = getFeatureTypeFactory().createGeometryType(name, DirectPosition2D.class, null, true, false, null, null, null);
+        final GeometryType geoType = getFeatureTypeFactory().createGeometryType(name, MockDirectPosition2D.class, null, true, false, null, null, null);
         final GeometryDescriptor geoDesc = getFeatureTypeFactory().createGeometryDescriptor(geoType, name, 1, 1, true, null);
 
         final AttributeType attrType = getFeatureTypeFactory().createAttributeType(strName, String.class, true, false, null, null, null);
@@ -171,7 +154,7 @@ public abstract class AbstractComplexFeatureTest extends AbstractSimpleFeatureTe
         final FeatureType type = getFeatureTypeFactory().createFeatureType(fName, descList, geoDesc, false, null, null, null);
 
         //attributes creation
-        final Object geomValue = new DirectPosition2D(50, 60);
+        final Object geomValue = new MockDirectPosition2D(50, 60);
 
         final Collection<Property> properties = new ArrayList<Property>();
         properties.add(FF.createGeometryAttribute(geomValue, type.getGeometryDescriptor(), "id-0", null));
@@ -245,26 +228,11 @@ public abstract class AbstractComplexFeatureTest extends AbstractSimpleFeatureTe
             assertEquals("feature setValue() method has not worked", ((Property) ((ArrayList) properties2).get(i)).getValue(), tmp[i].getValue());
         }
 
-        try {
-            feature.getProperty("non_existant");
-            fail("No exception catched for bad name parameter on method getProperty()");
-        } catch (Exception e) {
-        }
-        try {
-            feature.getProperties("non_existant");
-            fail("No exception catched for bad name parameter on method getProperties()");
-        } catch (Exception e) {
-        }
-        Name tmpName = new MocName("non-existant");
-        try {
-            feature.getProperty(tmpName);
-            fail("No exception catched for bad name parameter on method getProperty()");
-        } catch (Exception e) {
-        }
-        try {
-            feature.getProperties(tmpName);
-            fail("No exception catched for bad name parameter on method getProperties()");
-        } catch (Exception e) {
-        }
+        //access test (to non existant attribute)
+        assertNull("Trying to access non existant value, method getProperty should have returned null", feature.getProperty("non_existant"));
+        assertTrue("Trying to access non existant value, method getProperties should have returned an empty list", feature.getProperties("non_existant").isEmpty());
+        Name tmpName = new MockName("non-existant");
+        assertNull("Trying to access non existant value, method getProperty should have returned null", feature.getProperty(tmpName));
+        assertTrue("Trying to access non existant value, method getProperties should have returned an empty list", feature.getProperties(tmpName).isEmpty());
     }
 }

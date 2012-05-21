@@ -36,14 +36,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.geotoolkit.feature.MocCRS;
-import org.geotoolkit.feature.MocInternationalString;
-import org.geotoolkit.feature.MocName;
-import org.geotoolkit.geometry.DirectPosition2D;
-import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.geotoolkit.feature.MockCRS;
+import org.geotoolkit.feature.MockDirectPosition2D;
+import org.geotoolkit.feature.MockInternationalString;
+import org.geotoolkit.feature.MockName;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.feature.type.*;
+import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -53,15 +53,15 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * Test creation of attributes and association types as descriptors. Also test
  * geometry type & simple feature type creation
  *
- * @author Alexis MANIN
+ * @author Alexis MANIN (geomatys)
  *
  */
 public abstract class AbstractSimpleFeatureTypeTest  {
     
-    MocInternationalString descriptionSample;
+    MockInternationalString descriptionSample;
 
     public AbstractSimpleFeatureTypeTest() {
-        descriptionSample = new MocInternationalString("mock");
+        descriptionSample = new MockInternationalString("mock");
     }
 
     /**
@@ -77,8 +77,8 @@ public abstract class AbstractSimpleFeatureTypeTest  {
      */
     @Test
     public void testCreateAttributeType() {
-        final Name name = new MocName("bouh");
-        final Name name2 = new MocName("bouh2");
+        final Name name = new MockName("objectName");
+        final Name name2 = new MockName("objectName2");
         final FeatureTypeFactory FTF = getFeatureTypeFactory();
         
         AttributeType res = FTF.createAttributeType(name, String.class, true, false, null, null, null);
@@ -86,7 +86,7 @@ public abstract class AbstractSimpleFeatureTypeTest  {
         assertNotNull("AttributeType creation failed", res);
         //name
         assertNotNull("AttributeType name not set", res.getName());
-        assertEquals("AttributeType name does not match", res.getName().toString(), "bouh");
+        assertEquals("AttributeType name does not match", res.getName().toString(), "objectName");
         assertTrue("AttributeType is not identified (but should be)", res.isIdentified());
         //abstraction
         assertFalse("AttributeType set abstract while it's not true", res.isAbstract());
@@ -101,7 +101,7 @@ public abstract class AbstractSimpleFeatureTypeTest  {
         assertEquals("Parent type is wrong", res, res2.getSuper());
         //Name
         assertNotNull("AttributeType name not set", res2.getName());
-        assertEquals("AttributeType name does not match", "bouh2", res2.getName().toString());
+        assertEquals("AttributeType name does not match", "objectName2", res2.getName().toString());
         //other
         assertFalse("AttributeType is identified (and should not)", res2.isIdentified());
         assertTrue("AttributeType is not set abstract while it's true", res2.isAbstract());
@@ -118,13 +118,13 @@ public abstract class AbstractSimpleFeatureTypeTest  {
     public void testCreateSchema() {
         final FeatureTypeFactory FTF = getFeatureTypeFactory();
         
-        final Schema test = FTF.createSchema("bouh");
+        final Schema test = FTF.createSchema("objectName");
         assertNotNull("Schema creation failed", test);
         //URI
         assertNotNull("Schema URI is null", test.getURI());
-        assertEquals("Schema URI is not the one expected", "bouh", test.getURI());
+        assertEquals("Schema URI is not the one expected", "objectName", test.getURI());
         //writing test
-        Name name = new MocName("bouh");
+        Name name = new MockName("objectName");
         AttributeType type = FTF.createAttributeType(name, String.class, true, false, null, null, null);
         test.put(name, type);
         assertNotNull("Schema put() method has not worked", test.get(name));
@@ -138,42 +138,43 @@ public abstract class AbstractSimpleFeatureTypeTest  {
      */
     @Test
     public void testCreateGeometryType() {
-        final Name name = new MocName("bouh");
-        final Name name2 = new MocName("bouh2");
+        final Name name = new MockName("objectName");
+        final Name name2 = new MockName("objectName2");
         final Map crsInfo = new HashMap<String, String>();
         crsInfo.put("name", "myCRS");
         crsInfo.put("first", "one");
         crsInfo.put("second", "two");
-        final CoordinateReferenceSystem curCRS = new MocCRS(crsInfo);        
+        final CoordinateReferenceSystem curCRS = new MockCRS(crsInfo);        
         final FeatureTypeFactory FTF = getFeatureTypeFactory();
         
-        final GeometryType res = FTF.createGeometryType(name, DirectPosition2D.class, curCRS, true, false, null, null, null);
+        final GeometryType res = FTF.createGeometryType(name, MockDirectPosition2D.class, curCRS, true, false, null, null, null);
         assertNotNull("GeometryType creation failed", res);
         //Name
         assertNotNull("GeometryType name not set", res.getName());
-        assertEquals("GeometryType name does not match", res.getName().toString(), "bouh");
+        assertEquals("GeometryType name does not match", res.getName().toString(), "objectName");
         //id
         assertTrue("GeometryType is not identified (but should be)", res.isIdentified());
         //abstract
         assertFalse("GeometryType set abstract while it's not true", res.isAbstract());
         //class binding
-        assertEquals("GeometryType does not bind the right class", DirectPosition2D.class, res.getBinding());
+        assertEquals("GeometryType does not bind the right class", MockDirectPosition2D.class, res.getBinding());
         //CRS
         assertNotNull("CRS has not been set", res.getCoordinateReferenceSystem());
         assertEquals("CRS is wrong", curCRS, res.getCoordinateReferenceSystem());
 
-        final AttributeType res2 = FTF.createGeometryType(name2, GeneralDirectPosition.class, null, false, true, null, res, descriptionSample);
+        //second object to test
+        final AttributeType res2 = FTF.createGeometryType(name2, DirectPosition.class, null, false, true, null, res, descriptionSample);
         assertNotNull("AttributeType creation failed", res2);
         //parent
         assertNotNull("Parent has not been set", res2.getSuper());
         assertEquals("Parent type is wrong", res, res2.getSuper());
         //Name
         assertNotNull("AttributeType name not set", res2.getName());
-        assertEquals("AttributeType name does not match", "bouh2", res2.getName().toString());
+        assertEquals("AttributeType name does not match", "objectName2", res2.getName().toString());
         //other
         assertFalse("AttributeType is identified (and should not)", res2.isIdentified());
         assertTrue("AttributeType is not set abstract while it's true", res2.isAbstract());
-        assertEquals("AttributeType does not bind the right class", GeneralDirectPosition.class, res2.getBinding());
+        assertEquals("AttributeType does not bind the right class", DirectPosition.class, res2.getBinding());
         //description
         assertNotNull("Attribute description is NULL", res2.getDescription());
         assertEquals("Attribute description is wrong", descriptionSample.toString(), res2.getDescription().toString());
@@ -186,10 +187,10 @@ public abstract class AbstractSimpleFeatureTypeTest  {
      */
     @Test
     public void testCreateAssociationType() {
-        final Name name = new MocName("lines");
-        final Name name2 = new MocName("lines2");
-        final Name asName = new MocName("Association");
-        final Name asName2 = new MocName("Association2");        
+        final Name name = new MockName("lines");
+        final Name name2 = new MockName("lines2");
+        final Name asName = new MockName("Association");
+        final Name asName2 = new MockName("Association2");        
         final FeatureTypeFactory FTF = getFeatureTypeFactory();
         
         final AttributeType attrType = FTF.createAttributeType(name, String.class, true, false, null, null, null);
@@ -206,6 +207,7 @@ public abstract class AbstractSimpleFeatureTypeTest  {
         //abstraction
         assertTrue("Association must be marked as abstract", asType.isAbstract());
 
+        //second object to test
         final AttributeType attrType2 = FTF.createAttributeType(name2, String.class, true, false, null, null, null);
         final AssociationType asType2 = FTF.createAssociationType(asName2, attrType2, false, null, asType, descriptionSample);
         assertNotNull("AssociationType creation failed", asType2);
@@ -231,8 +233,8 @@ public abstract class AbstractSimpleFeatureTypeTest  {
      */
     @Test
     public void testCreateAttributeDescriptor() {
-        final Name name = new MocName("lines");
-        final Name adName = new MocName("lines descriptor");
+        final Name name = new MockName("lines");
+        final Name adName = new MockName("lines descriptor");
         final FeatureTypeFactory FTF = getFeatureTypeFactory();
         
         final AttributeType attrType = FTF.createAttributeType(name, String.class, true, false, null, null, null);
@@ -252,8 +254,8 @@ public abstract class AbstractSimpleFeatureTypeTest  {
         assertNotNull("Attribute default value not set", res.getDefaultValue());
         assertEquals("Attribute default value does not match", res.getDefaultValue(), "defaultvalueishere");
 
+        //second object to test
         final AttributeDescriptor res2 = FTF.createAttributeDescriptor(attrType, adName, 666, 7777, true, null);
-
         assertNotNull("Attribute descriptor not set", res2);
         //type
         assertNotNull("Related type not set", res2.getType());
@@ -274,11 +276,11 @@ public abstract class AbstractSimpleFeatureTypeTest  {
      */
     @Test
     public void testCreateGeometryDescriptor() {
-        final Name name = new MocName("geometry");
-        final Name gdName = new MocName("geomatry descriptor");
+        final Name name = new MockName("geometry");
+        final Name gdName = new MockName("geomatry descriptor");
         final FeatureTypeFactory FTF = getFeatureTypeFactory();
         
-        final GeometryType attrType = FTF.createGeometryType(name, DirectPosition2D.class, null, true, false, null, null, null);
+        final GeometryType attrType = FTF.createGeometryType(name, MockDirectPosition2D.class, null, true, false, null, null, null);
         
         final AttributeDescriptor res = FTF.createGeometryDescriptor(attrType, gdName, 0, Integer.MAX_VALUE, true, null);
         
@@ -296,7 +298,8 @@ public abstract class AbstractSimpleFeatureTypeTest  {
         //occurrences
         assertTrue("Geometry occurrences are wrong", res.getMinOccurs() == 0 && res.getMaxOccurs() == Integer.MAX_VALUE);
 
-        final AttributeDescriptor res2 = FTF.createAttributeDescriptor(attrType, gdName, 4, 13, false, new DirectPosition2D(0, 0));
+        //second object to test
+        final AttributeDescriptor res2 = FTF.createAttributeDescriptor(attrType, gdName, 4, 13, false, new MockDirectPosition2D(0, 0));
         assertNotNull("Attribute descriptor not set", res2);
         //type
         assertNotNull("Related type not set", res2.getType());
@@ -307,7 +310,7 @@ public abstract class AbstractSimpleFeatureTypeTest  {
         //default value
         assertFalse("Trigger for nillable default value have to be set to false here", res2.isNillable());
         assertNotNull("Attribute default value can't be null here", res2.getDefaultValue());
-        assertEquals("Default value des not match", new DirectPosition2D(0, 0), res2.getDefaultValue());
+        assertEquals("Default value des not match", new MockDirectPosition2D(0, 0), res2.getDefaultValue());
         //occurrences
         assertTrue("Attribute occurrences are wrong", res2.getMinOccurs() == 4 && res2.getMaxOccurs() == 13);
     }
@@ -318,9 +321,9 @@ public abstract class AbstractSimpleFeatureTypeTest  {
      */
     @Test
     public void testCreateAssociationDescriptor() {
-        final Name name = new MocName("lines");
-        final Name asName = new MocName("Association");
-        final Name adName = new MocName("descriptor");
+        final Name name = new MockName("lines");
+        final Name asName = new MockName("Association");
+        final Name adName = new MockName("descriptor");
         final FeatureTypeFactory FTF = getFeatureTypeFactory();
         
         final AttributeType attrType = FTF.createAttributeType(name, String.class, true, false, null, null, null);
@@ -341,6 +344,7 @@ public abstract class AbstractSimpleFeatureTypeTest  {
         //occurrences
         assertTrue("Geometry occurrences are wrong", res.getMinOccurs() == 1 && res.getMaxOccurs() == 1);
 
+        //second object to test
         final AssociationDescriptor res2 = FTF.createAssociationDescriptor(asType, adName, 2, 19, false);
         assertNotNull("Attribute descriptor not set", res2);
         //type
@@ -361,13 +365,13 @@ public abstract class AbstractSimpleFeatureTypeTest  {
      */
     @Test
     public void createSimpleFeatureType() {
-        final Name name = new MocName("point");
-        final Name strName = new MocName("String");
-        final Name fName = new MocName("featureTypeName");
+        final Name name = new MockName("point");
+        final Name strName = new MockName("String");
+        final Name fName = new MockName("featureTypeName");
         final FeatureTypeFactory FTF = getFeatureTypeFactory();
         
         //types and descriptors
-        final GeometryType geoType = FTF.createGeometryType(name, DirectPosition2D.class, null, true, false, null, null, null);
+        final GeometryType geoType = FTF.createGeometryType(name, MockDirectPosition2D.class, null, true, false, null, null, null);
         final GeometryDescriptor geoDesc = FTF.createGeometryDescriptor(geoType, name, 1, 1, true, null);
         final AttributeType type = FTF.createAttributeType(strName, String.class, true, false, null, null, null);
         final AttributeDescriptor descriptor = FTF.createAttributeDescriptor(type, strName, 1, 1, false, "line");
@@ -403,7 +407,7 @@ public abstract class AbstractSimpleFeatureTypeTest  {
             fType.getDescriptor("non-existant");
         } catch (Exception e) {
         }
-        Name tmpName = new MocName("non-existant");
+        Name tmpName = new MockName("non-existant");
         try {
             fType.getDescriptor(tmpName);
         } catch (Exception e) {

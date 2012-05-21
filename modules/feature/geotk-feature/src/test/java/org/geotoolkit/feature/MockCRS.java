@@ -13,11 +13,11 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *
  * @author geoadmin
  */
-public class MocCRS extends AbstractCRS{
+public class MockCRS extends AbstractCRS{
     
-    public MocCRS(Map<String, ?> map){
+    public MockCRS(Map<String, ?> map){
 
-        super(map, new MocCS());
+        super(map, new MockCS());
     }
     
     @Override

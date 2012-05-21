@@ -26,7 +26,7 @@ import org.opengis.feature.type.Name;
  * A simple implementation of interface Name we need for running tests.
  * @author Alexis MANIN
  */
-public class MocName implements Name, Serializable {
+public class MockName implements Name, Serializable {
 
     /**
      * Namespace / scope
@@ -44,11 +44,11 @@ public class MocName implements Name, Serializable {
      *
      * @param local The local part of the name.
      */
-    public MocName(final String local) {
+    public MockName(final String local) {
         this(null, local);
     }
 
-    public MocName(final QName qname) {
+    public MockName(final QName qname) {
         this(qname.getNamespaceURI(), qname.getLocalPart());
     }
 
@@ -59,7 +59,7 @@ public class MocName implements Name, Serializable {
      * @param local The local part of the name.
      *
      */
-    public MocName(final String namespace, final String local) {
+    public MockName(final String namespace, final String local) {
         this(namespace, ":", local);
     }
 
@@ -70,7 +70,7 @@ public class MocName implements Name, Serializable {
      * @param local The local part of the name.
      *
      */
-    public MocName(final String namespace, final String separator, final String local) {
+    public MockName(final String namespace, final String separator, final String local) {
         this.namespace = namespace;
         this.separator = separator;
         this.local = local;
@@ -129,7 +129,7 @@ public class MocName implements Name, Serializable {
         }
 
         if (obj instanceof Name) {
-            final MocName other = (MocName) obj;
+            final MockName other = (MockName) obj;
             if (!Utilities.equals(this.namespace, other.getNamespaceURI())) {
                 return false;
             }
