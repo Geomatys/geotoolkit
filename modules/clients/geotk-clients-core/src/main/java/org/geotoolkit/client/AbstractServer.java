@@ -136,7 +136,11 @@ public abstract class AbstractServer implements Server{
     protected void applySessionId(final URLConnection conec) {
         if (sessionId != null) {
             conec.setRequestProperty("Cookie", sessionId);
-        } else {
+        } 
+    }
+    
+    protected void readSessionId(final URLConnection conec) {
+        if (sessionId == null) {
             final Map<String, List<String>> headers = conec.getHeaderFields();
             for (String key : headers.keySet()) {
                 for (String value : headers.get(key)) {
