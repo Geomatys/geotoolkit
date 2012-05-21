@@ -42,7 +42,7 @@ public class SensorObservationServiceServer extends AbstractServer {
     public SensorObservationServiceServer(final URL serverURL, final ClientSecurity security, final String version) {
         super(create(SOSServerFactory.PARAMETERS, serverURL, security));
         if (version.equals("1.0.0")){
-            Parameters.getOrCreate(SOSServerFactory.VERSION, parameters).setValue(SOSVersion.v100);
+            Parameters.getOrCreate(SOSServerFactory.VERSION, parameters).setValue(version);
         } else {
             throw new IllegalArgumentException("unkonwed version : "+ version);
         }
