@@ -18,7 +18,6 @@
 package org.geotoolkit.image.iterator;
 
 import java.awt.Rectangle;
-import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
 import org.geotoolkit.util.ArgumentChecks;
 
@@ -28,114 +27,17 @@ import org.geotoolkit.util.ArgumentChecks;
  * Iteration transverse each pixel from rendered image or raster source line per line.
  * <p>
  * Iteration follow this scheme :
- * tiles band --&lt; tiles x coordinates --&lt; next X tile position in rendered image tiles array
- * --&lt; current tiles y coordinates --&lt; next Y tile position in rendered image tiles array.
+ * tiles band --&gt; tiles x coordinates --&gt; next X tile position in rendered image tiles array
+ * --&gt; current tiles y coordinates --&gt; next Y tile position in rendered image tiles array.
  *
  * Moreover iterator traversing a read-only each rendered image tiles(raster) in top-to-bottom, left-to-right order.
  *
  * Furthermore iterator directly read in data table within raster {@code DataBuffer}.
  *
- * Code example :
- * {@code
- *                  final RowMajorIterator dRII = new RowMajorIterator(renderedImage);
- *                  while (dRII.next()) {
- *                      dRii.getSample();
- *                  }
- * }
- *
  * @author Rémi Marechal       (Geomatys).
  * @author Martin Desruisseaux (Geomatys).
  */
 abstract class RowMajorDirectIterator extends PixelIterator {
-
-//    /**
-//     * Current raster which is followed by Iterator.
-//     */
-//    protected Raster currentRaster;
-//
-//    /**
-//     * RenderedImage which is followed by Iterator.
-//     */
-//    private RenderedImage renderedImage;
-//
-//    /**
-//     * Number of raster band .
-//     */
-//    private int numBand;
-//
-//    /**
-//     * The X coordinate of the upper-left pixel of this current raster.
-//     */
-//    private int minX;
-//
-//    /**
-//     * The Y coordinate of the upper-left pixel of this current raster.
-//     */
-//    private int minY;
-//
-//    /**
-//     * The X coordinate of the bottom-right pixel of this current raster.
-//     */
-//    private int maxX;
-//
-//    /**
-//     * The Y coordinate of the bottom-right pixel of this current raster.
-//     */
-//    private int maxY;
-//
-//    /**
-//     * Current band position in this current raster.
-//     */
-//    protected int band;
-//
-//    /**
-//     * The X index coordinate of the upper-left tile of this rendered image.
-//     */
-//    private int tMinX;
-//
-//    /**
-//     * The Y index coordinate of the upper-left tile of this rendered image.
-//     */
-//    private int tMinY;
-//
-//    /**
-//     * The X index coordinate of the bottom-right tile of this rendered image.
-//     */
-//    private int tMaxX;
-//
-//    /**
-//     * The Y index coordinate of the bottom-right tile of this rendered image.
-//     */
-//    private int tMaxY;
-//
-//    /**
-//     * The X coordinate of the sub-Area upper-left corner.
-//     */
-//    private int subAreaMinX;
-//
-//    /**
-//     * The Y coordinate of the sub-Area upper-left corner.
-//     */
-//    private int subAreaMinY;
-//
-//    /**
-//     * The X index coordinate of the sub-Area bottom-right corner.
-//     */
-//    private int subAreaMaxX;
-//
-//    /**
-//     * The Y index coordinate of the sub-Area bottom-right corner.
-//     */
-//    private int subAreaMaxY;
-//
-//    /**
-//     * Current x tile position in rendered image tile array.
-//     */
-//    private int tX;
-//    /**
-//     * Current y tile position in rendered image tile array.
-//     */
-//    private int tY;
 
     /**
      * Cursor position of current raster data.
@@ -160,18 +62,19 @@ abstract class RowMajorDirectIterator extends PixelIterator {
     RowMajorDirectIterator(final RenderedImage renderedImage) {
         ArgumentChecks.ensureNonNull("RenderedImage : ", renderedImage);
         this.renderedImage = renderedImage;
+
         //rect attributs
         this.subAreaMinX = renderedImage.getMinX();
         this.subAreaMinY = renderedImage.getMinY();
         this.subAreaMaxX = this.subAreaMinX + renderedImage.getWidth();
         this.subAreaMaxY = this.subAreaMinY + renderedImage.getHeight();
+
         //tiles attributs
         this.tMinX = renderedImage.getMinTileX();
         this.tMinY = renderedImage.getMinTileY();
-        assert (renderedImage.getTile(tMinX, tMinY).getDataBuffer().getDataType() == DataBuffer.TYPE_BYTE)
-               : "renderedImage datas or not Byte type";
         this.tMaxX = tMinX + renderedImage.getNumXTiles();
         this.tMaxY = tMinY + renderedImage.getNumYTiles();
+
         //initialize attributs to first iteration
         this.numBand = this.maxX = this.maxY = 1;
         this.tY = tMinY;
@@ -217,9 +120,6 @@ abstract class RowMajorDirectIterator extends PixelIterator {
         this.tMaxX = max / tw + mtx;
         this.tMaxY = may / th + mty;
 
-        assert (renderedImage.getTile(tMinX, tMinY).getDataBuffer().getDataType() == DataBuffer.TYPE_BYTE)
-               : "renderedImage datas or not Byte type";
-
         //initialize attributs to first iteration
         this.numBand = this.maxX = this.maxY = 1;
         this.tY = tMinY;
@@ -261,7 +161,6 @@ abstract class RowMajorDirectIterator extends PixelIterator {
         final int cRMinX   = currentRaster.getMinX();
         final int cRMinY   = currentRaster.getMinY();
         this.rasterWidth = currentRaster.getWidth();
-        //this.currentDataArray = ((DataBufferByte)currentRaster.getDataBuffer()).getBankData();
 
         //update min max from subArea and raster boundary
         this.minX    = Math.max(subAreaMinX, cRMinX) - cRMinX;
@@ -280,7 +179,7 @@ abstract class RowMajorDirectIterator extends PixelIterator {
     @Override
     public int getX() {
         final int minx = (renderedImage == null) ? currentRaster.getMinX() : renderedImage.getMinX();
-        return minx + (tX-tMinX)*rasterWidth + dataCursor%rasterWidth;
+        return minx + (tX-tMinX) * rasterWidth + dataCursor % rasterWidth;
     }
 
     /**
@@ -289,7 +188,7 @@ abstract class RowMajorDirectIterator extends PixelIterator {
     @Override
     public int getY() {
         final int miny = (renderedImage == null) ? currentRaster.getMinY() : renderedImage.getMinY();
-        return miny + (tY-tMinY)*currentRaster.getHeight() + dataCursor/rasterWidth;
+        return miny + (tY-tMinY) * currentRaster.getHeight() + dataCursor/rasterWidth;
     }
 
     /**
@@ -321,6 +220,8 @@ abstract class RowMajorDirectIterator extends PixelIterator {
         this.row -= currentRaster.getMinY();
         this.dataCursor = x;
         this.dataCursor -= currentRaster.getMinX();
-        this.dataCursor += row * rasterWidth;
+        final int step = row * rasterWidth;
+        this.dataCursor += step;
+        this.maxX += step;
     }
 }

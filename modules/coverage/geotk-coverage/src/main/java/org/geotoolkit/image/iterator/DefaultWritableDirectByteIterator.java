@@ -29,7 +29,7 @@ import java.awt.image.*;
  * and to finish raster y coordinates.
  * <p>
  * Iteration follow this scheme :
- * tiles band --&lt; tiles x coordinates --&lt; tiles y coordinates --&lt; next rendered image tiles.
+ * tiles band --&gt; tiles x coordinates --&gt; tiles y coordinates --&gt; next rendered image tiles.
  *
  * Moreover iterator traversing a write or read each rendered image tiles(raster) in top-to-bottom, left-to-right order.
  *
@@ -131,12 +131,14 @@ public class DefaultWritableDirectByteIterator extends DefaultDirectByteIterator
      * Verify raster conformity.
      */
     private void checkRasters(final Raster readableRaster, final WritableRaster writableRaster){
+        //raster dimension
         if (readableRaster.getMinX()     != writableRaster.getMinX()
          || readableRaster.getMinY()     != writableRaster.getMinY()
          || readableRaster.getWidth()    != writableRaster.getWidth()
          || readableRaster.getHeight()   != writableRaster.getHeight()
          || readableRaster.getNumBands() != writableRaster.getNumBands())
          throw new IllegalArgumentException("raster and writable raster are not in same dimension"+readableRaster+writableRaster);
+        //raster data type
         if (readableRaster.getDataBuffer().getDataType() != writableRaster.getDataBuffer().getDataType())
             throw new IllegalArgumentException("raster and writable raster haven't got same datas type");
     }

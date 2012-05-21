@@ -31,7 +31,7 @@ import java.awt.image.RenderedImage;
  * and to finish raster y coordinates.
  * <p>
  * Iteration follow this scheme :
- * tiles band --&lt; tiles x coordinates --&lt; tiles y coordinates --&lt; next rendered image tiles.
+ * tiles band --&gt; tiles x coordinates --&gt; tiles y coordinates --&gt; next rendered image tiles.
  *
  * Moreover iterator traversing a read-only each rendered image tiles(raster) in top-to-bottom, left-to-right order.
  * Furthermore iterator directly read in data table within raster {@code DataBuffer}.
@@ -74,6 +74,8 @@ class DefaultDirectByteIterator extends DefaultDirectIterator {
      */
     DefaultDirectByteIterator(final RenderedImage renderedImage) {
         super(renderedImage);
+        assert (renderedImage.getTile(tMinX, tMinY).getDataBuffer().getDataType() == DataBuffer.TYPE_BYTE)
+               : "renderedImage datas or not Byte type";
     }
 
     /**
@@ -99,6 +101,8 @@ class DefaultDirectByteIterator extends DefaultDirectIterator {
      */
     DefaultDirectByteIterator(final RenderedImage renderedImage, final Rectangle subArea) {
         super(renderedImage, subArea);
+        assert (renderedImage.getTile(tMinX, tMinY).getDataBuffer().getDataType() == DataBuffer.TYPE_BYTE)
+               : "renderedImage datas or not Byte type";
     }
 
     /**

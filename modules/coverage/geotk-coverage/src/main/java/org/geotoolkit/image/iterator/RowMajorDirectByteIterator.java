@@ -18,6 +18,7 @@
 package org.geotoolkit.image.iterator;
 
 import java.awt.Rectangle;
+import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
 import java.awt.image.RenderedImage;
 
@@ -27,8 +28,8 @@ import java.awt.image.RenderedImage;
  * Iteration transverse each pixel from rendered image or raster source line per line.
  * <p>
  * Iteration follow this scheme :
- * tiles band --&lt; tiles x coordinates --&lt; next X tile position in rendered image tiles array
- * --&lt; current tiles y coordinates --&lt; next Y tile position in rendered image tiles array.
+ * tiles band --&gt; tiles x coordinates --&gt; next X tile position in rendered image tiles array
+ * --&gt; current tiles y coordinates --&gt; next Y tile position in rendered image tiles array.
  *
  * Moreover iterator traversing a read-only each rendered image tiles(raster) in top-to-bottom, left-to-right order.
  *
@@ -59,6 +60,8 @@ public class RowMajorDirectByteIterator extends RowMajorDirectIterator {
      */
     public RowMajorDirectByteIterator(RenderedImage renderedImage) {
         super(renderedImage);
+        assert (renderedImage.getTile(tMinX, tMinY).getDataBuffer().getDataType() == DataBuffer.TYPE_BYTE)
+               : "renderedImage datas or not Byte type";
     }
 
     /**
@@ -70,6 +73,8 @@ public class RowMajorDirectByteIterator extends RowMajorDirectIterator {
      */
     public RowMajorDirectByteIterator(RenderedImage renderedImage, Rectangle subArea) {
         super(renderedImage, subArea);
+        assert (renderedImage.getTile(tMinX, tMinY).getDataBuffer().getDataType() == DataBuffer.TYPE_BYTE)
+               : "renderedImage datas or not Byte type";
     }
 
     /**

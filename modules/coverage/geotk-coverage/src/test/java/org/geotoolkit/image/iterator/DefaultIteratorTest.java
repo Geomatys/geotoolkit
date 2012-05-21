@@ -19,17 +19,18 @@ package org.geotoolkit.image.iterator;
 
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.image.*;
+import java.awt.image.BandedSampleModel;
+import java.awt.image.DataBuffer;
+import java.awt.image.Raster;
+import java.awt.image.RenderedImage;
 import javax.media.jai.TiledImage;
-import static org.junit.Assert.assertTrue;
-import org.junit.Test;
 
 /**
- * Test DefaultRenderedImageIterator class.
+ * Some Basic core tests about Iterator.
  *
  * @author Rémi Marechal (Geomatys).
  */
-public class DefaultIteratorTest extends IteratorTest {
+public class DefaultIteratorTest extends DefaultTest {
 
     protected int dataType = DataBuffer.TYPE_INT;
     protected int[] tabRef, tabTest;
@@ -38,37 +39,8 @@ public class DefaultIteratorTest extends IteratorTest {
 
     }
 
-    //////////////////Raster tests///////////////////
-
     /**
-     * Test if iterator transverse expected values from x y coordinates define by moveTo method.
-     */
-    @Test
-    public void moveToRasterTest() {
-        numBand = 3;
-        width = 20;
-        height = 10;
-        minx = 5;
-        miny = 7;
-        setRasterTest(minx, miny, width, height, numBand, null);
-        setPixelIterator(rasterTest);
-        final int mX = 17;
-        final int mY = 15;
-        pixIterator.moveTo(mX, mY);
-        final int indexCut = ((mY-miny)*width + mX - minx)*numBand;
-        final int lenght = tabRef.length-indexCut;
-        tabTest = new int[lenght];
-        int[] tabTemp = new int[lenght];
-        System.arraycopy(tabRef.clone(), indexCut, tabTemp, 0, lenght);
-        tabRef = tabTemp.clone();
-        int comp = 0;
-        while (pixIterator.next()) tabTest[comp++] = pixIterator.getSample();
-        assertTrue(compareTab(tabTest, tabRef));
-    }
-
-
-    /**
-     * Create and fill an appropriate Raster for tests.
+     * {@inheritDoc }.
      */
     @Override
     protected void setRasterTest(int minx, int miny, int width, int height, int numband, Rectangle subArea) {
@@ -108,6 +80,9 @@ public class DefaultIteratorTest extends IteratorTest {
     }
 
     /////////////////Rendered Image tests/////////////
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     protected void setRenderedImgTest(int minx, int miny, int width, int height, int tilesWidth, int tilesHeight, int numBand, Rectangle areaIterate) {
         final BandedSampleModel sampleM = new BandedSampleModel(DataBuffer.TYPE_INT, tilesWidth, tilesHeight, numBand);
@@ -183,41 +158,10 @@ public class DefaultIteratorTest extends IteratorTest {
     }
 
     /**
-     * Test if iterator transverse expected values from x y coordinates define by moveTo method.
-     */
-    @Test
-    public void moveToRITest() {
-        minx = 0;
-        miny = 0;
-        width = 100;
-        height = 50;
-        tilesWidth = 10;
-        tilesHeight = 5;
-        numBand = 3;
-        final int tileBulk = tilesHeight*tilesWidth*numBand;
-        setRenderedImgTest(minx, miny, width, height, tilesWidth, tilesHeight, numBand, null);
-        setPixelIterator(renderedImage);
-        final int mX = 17;
-        final int mY = 15;
-        final int ity = (mY-miny) / tilesHeight;
-        final int itx = (mX-minx) / tilesWidth;
-        pixIterator.moveTo(mX, mY);
-        final int indexCut = ity*10*tileBulk+itx*tileBulk+((mY-ity*tilesHeight)*tilesWidth + (mX-itx*tilesWidth))*numBand;
-        final int lenght = tabRef.length-indexCut;
-        tabTest = new int[lenght];
-        int[] tabTemp = new int[lenght];
-        System.arraycopy(tabRef.clone(), indexCut, tabTemp, 0, lenght);
-        tabRef = tabTemp.clone();
-        int comp = 0;
-        while (pixIterator.next()) tabTest[comp++] = pixIterator.getSample();
-        assertTrue(compareTab(tabTest, tabRef));
-    }
-
-    /**
      * Compare 2 integer table.
      *
-     * @param tabA table resulting raster iterate.
-     * @param tabB table resulting raster iterate.
+     * @param tabA table resulting iterate.
+     * @param tabB table resulting iterate.
      * @return true if tables are identical.
      */
     protected boolean compareTab(int[] tabA, int[] tabB) {
@@ -261,13 +205,30 @@ public class DefaultIteratorTest extends IteratorTest {
         pixIterator = PixelIteratorFactory.createDefaultIterator(renderedImage, subArea);
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     protected void setTabTestValue(int index, double value) {
         tabTest[index] = (int)value;
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     protected boolean compareTab() {
         return compareTab(tabRef, tabTest);
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    protected void setMoveToRITabs(int indexCut, int length) {
+        tabTest = new int[length];
+        int[] tabTemp = new int[length];
+        System.arraycopy(tabRef.clone(), indexCut, tabTemp, 0, length);
+        tabRef = tabTemp.clone();
     }
 }

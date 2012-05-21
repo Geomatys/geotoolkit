@@ -24,15 +24,13 @@ import java.awt.image.DataBuffer;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import javax.media.jai.TiledImage;
-import static org.junit.Assert.assertTrue;
-import org.junit.Test;
 
 /**
  * Test DefaultByteIterator class.
  *
  * @author Rémi Marechal (Geomatys).
  */
-public class DefaultByteIteratorTest extends IteratorTest{
+public class DefaultByteIteratorTest extends DefaultTest{
 
     byte[] tabRef, tabTest;
 
@@ -43,7 +41,6 @@ public class DefaultByteIteratorTest extends IteratorTest{
     //////////////////Raster tests///////////////////
     /**
      * {@inheritDoc}.
-     * Create and fill an appropriate {@code Raster} for tests with byte type data.
      */
     @Override
     protected void setRasterTest(int minx, int miny, int width, int height, int numBand, Rectangle subArea) {
@@ -86,7 +83,6 @@ public class DefaultByteIteratorTest extends IteratorTest{
 
     /**
      *{@inheritDoc }.
-     * Create and fill an appropriate {@code RenderedImage} for tests with byte type data.
      */
     @Override
     protected void setRenderedImgTest(int minx, int miny, int width, int height, int tilesWidth, int tilesHeight, int numBand, Rectangle areaIterate) {
@@ -220,121 +216,6 @@ public class DefaultByteIteratorTest extends IteratorTest{
     }
 
     /**
-     * Test if getX() getY() iterator methods are conform from raster.
-     */
-    @Test
-    public void getXYRasterTest() {
-        numBand = 3;
-        width = 16;
-        height = 16;
-        minx = 5;
-        miny = 7;
-        setRasterTest(minx, miny, width, height, numBand, null);
-        setPixelIterator(rasterTest);
-        for (int y = miny; y<miny + height; y++) {
-            for (int x = minx; x<minx + width; x++) {
-                pixIterator.next();
-                assertTrue(pixIterator.getX() == x);
-                assertTrue(pixIterator.getY() == y);
-                for (int b = 0; b<numBand-1; b++) {
-                    pixIterator.next();
-                }
-            }
-        }
-    }
-
-    /**
-     * Test if iterator transverse expected values from x y coordinates define by moveTo method.
-     */
-    @Test
-    public void moveToRasterTest() {
-        numBand = 3;
-        width = 16;
-        height = 16;
-        minx = 5;
-        miny = 7;
-        setRasterTest(minx, miny, width, height, numBand, null);
-        setPixelIterator(rasterTest);
-        final int mX = 17;
-        final int mY = 15;
-        pixIterator.moveTo(mX, mY);
-        final int indexCut = ((mY-miny)*width + mX - minx)*numBand;
-        final int lenght = tabRef.length-indexCut;
-        tabTest = new byte[lenght];
-        byte[] tabTemp = new byte[lenght];
-        System.arraycopy(tabRef.clone(), indexCut, tabTemp, 0, lenght);
-        tabRef = tabTemp.clone();
-        int comp = 0;
-        while (pixIterator.next()) tabTest[comp++] = (byte) pixIterator.getSample();
-        assertTrue(compareTab(tabTest, tabRef));
-    }
-
-    //////////////////////imageRenderer test/////////////////////////
-
-    /**
-     * Test if getX() getY() iterator methods are conform from rendered image.
-     */
-    @Test
-    public void getXYImageTest() {
-        minx = 0;
-        miny = 0;
-        width = 100;
-        height = 50;
-        tilesWidth = 10;
-        tilesHeight = 5;
-        numBand = 3;
-        setRenderedImgTest(minx, miny, width, height, tilesWidth, tilesHeight, numBand, null);
-        setPixelIterator(renderedImage);
-        for (int ty = 0; ty<height/tilesHeight; ty++) {
-            for (int tx = 0; tx<width/tilesWidth; tx++) {
-                for (int y = 0; y<tilesHeight; y++) {
-                    for (int x = 0; x<tilesWidth; x++) {
-                        pixIterator.next();
-                        assertTrue(pixIterator.getX() == tx*tilesWidth+x+minx);
-                        assertTrue(pixIterator.getY() == ty*tilesHeight+y+miny);
-                        for (int b = 0; b<numBand-1; b++) {
-                            pixIterator.next();
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Test if iterator transverse expected values from x y coordinates define by moveTo method.
-     */
-    @Test
-    public void moveToRITest() {
-        minx = 0;
-        miny = 0;
-        width = 100;
-        height = 50;
-        tilesWidth = 10;
-        tilesHeight = 5;
-        numBand = 3;
-        final int tileBulk = tilesHeight*tilesWidth*numBand;
-        setRenderedImgTest(minx, miny, width, height, tilesWidth, tilesHeight, numBand, null);
-        setPixelIterator(renderedImage);
-        final int mX = 17;
-        final int mY = 15;
-
-
-        final int ity = (mY-miny) / tilesHeight;
-        final int itx = (mX-minx) / tilesWidth;
-        pixIterator.moveTo(mX, mY);
-        final int indexCut = ity*10*tileBulk+itx*tileBulk+((mY-ity*tilesHeight)*tilesWidth + (mX-itx*tilesWidth))*numBand;
-        final int lenght = tabRef.length-indexCut;
-        tabTest = new byte[lenght];
-        byte[] tabTemp = new byte[lenght];
-        System.arraycopy(tabRef.clone(), indexCut, tabTemp, 0, lenght);
-        tabRef = tabTemp.clone();
-        int comp = 0;
-        while (pixIterator.next()) tabTest[comp++] = (byte) pixIterator.getSample();//settabtest
-        assertTrue(compareTab(tabTest, tabRef));
-    }
-
-    /**
      * Compare 2 integer table.
      *
      * @param tabA table resulting raster iterate.
@@ -348,5 +229,16 @@ public class DefaultByteIteratorTest extends IteratorTest{
             if (tabA[i] != tabB[i]) return false;
         }
         return true;
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    protected void setMoveToRITabs(int indexCut, int length) {
+        tabTest = new byte[length];
+        byte[] tabTemp = new byte[length];
+        System.arraycopy(tabRef.clone(), indexCut, tabTemp, 0, length);
+        tabRef = tabTemp.clone();
     }
 }

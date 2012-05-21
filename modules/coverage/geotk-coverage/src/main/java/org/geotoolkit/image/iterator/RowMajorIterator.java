@@ -21,13 +21,15 @@ import java.awt.Rectangle;
 import java.awt.image.RenderedImage;
 
 /**
+ * {@inheritDoc }
+ *
  * An Iterator for traversing anyone rendered Image.
  * <p>
  * Iteration transverse each pixel from rendered image or raster source line per line.
  * <p>
  * Iteration follow this scheme :
- * tiles band --&lt; tiles x coordinates --&lt; next X tile position in rendered image tiles array
- * --&lt; current tiles y coordinates --&lt; next Y tile position in rendered image tiles array.
+ * tiles band --&gt; tiles x coordinates --&gt; next X tile position in rendered image tiles array
+ * --&gt; current tiles y coordinates --&gt; next Y tile position in rendered image tiles array.
  *
  * Moreover iterator traversing a read-only each rendered image tiles(raster) in top-to-bottom, left-to-right order.
  *
@@ -44,41 +46,6 @@ import java.awt.image.RenderedImage;
  */
 class RowMajorIterator extends PixelIterator{
 
-//    /**
-//     * RenderedImage which is followed by Iterator.
-//     */
-//    private RenderedImage renderedImage;
-//
-//    /**
-//     * Current raster which is followed by Iterator.
-//     */
-//    protected Raster currentRaster;
-//
-//    /**
-//     * Number of raster band .
-//     */
-//    protected int numBand;
-//
-//    /**
-//     * The X coordinate of the upper-left pixel of this current raster.
-//     */
-//    protected int minX;
-//
-//    /**
-//     * The Y coordinate of the upper-left pixel of this current raster.
-//     */
-//    protected int minY;
-//
-//    /**
-//     * The X coordinate of the bottom-right pixel of this current raster.
-//     */
-//    protected int maxX;
-//
-//    /**
-//     * The Y coordinate of the bottom-right pixel of this current raster.
-//     */
-//    protected int maxY;
-
     /**
      * Current X pixel coordinate in this current raster.
      */
@@ -88,60 +55,6 @@ class RowMajorIterator extends PixelIterator{
      * Current Y pixel coordinate in this current raster.
      */
     protected int y;
-//
-//    /**
-//     * Current band position in this current raster.
-//     */
-//    protected int band;
-//
-//    /**
-//     * The X index coordinate of the upper-left tile of this rendered image.
-//     */
-//    private int tMinX;
-//
-//    /**
-//     * The Y index coordinate of the upper-left tile of this rendered image.
-//     */
-//    private int tMinY;
-//
-//    /**
-//     * The X index coordinate of the bottom-right tile of this rendered image.
-//     */
-//    private int tMaxX;
-//
-//    /**
-//     * The Y index coordinate of the bottom-right tile of this rendered image.
-//     */
-//    private int tMaxY;
-//
-//    /**
-//     * The X coordinate of the sub-Area upper-left corner.
-//     */
-//    private int subAreaMinX;
-//
-//    /**
-//     * The Y coordinate of the sub-Area upper-left corner.
-//     */
-//    private int subAreaMinY;
-//
-//    /**
-//     * The X index coordinate of the sub-Area bottom-right corner.
-//     */
-//    private int subAreaMaxX;
-//
-//    /**
-//     * The Y index coordinate of the sub-Area bottom-right corner.
-//     */
-//    private int subAreaMaxY;
-//
-//    /**
-//     * Current x tile position in rendered image tile array.
-//     */
-//    private int tX;
-//    /**
-//     * Current y tile position in rendered image tile array.
-//     */
-//    private int tY;
 
     /**
      * Create row-major rendered image iterator.

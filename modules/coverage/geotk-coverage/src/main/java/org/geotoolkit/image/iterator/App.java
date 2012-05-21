@@ -19,10 +19,12 @@ package org.geotoolkit.image.iterator;
 
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.image.BandedSampleModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 import java.util.Arrays;
+import javax.media.jai.TiledImage;
 
 /**
  *
@@ -48,6 +50,26 @@ public class App {
                     comp++;
                 }
             }
+        }
+
+        final BandedSampleModel sampleM = new BandedSampleModel(DataBuffer.TYPE_BYTE, /*tilesWidth*/5, /*tilesHeight*/5, 3);
+        TiledImage renderedImage = new TiledImage(0, 0, 10, 10, 0, 0, sampleM, null);
+
+        PixelIterator pixIt = PixelIteratorFactory.createRowMajorIterator(renderedImage);
+
+        int val = 0;
+
+        for(int y = 0; y<10; y++){
+            for(int x = 0; x<10; x++){
+                for(int b = 0; b <3;b++){
+                    renderedImage.setSample(x, y, b, val);
+                }
+                val++;
+            }
+        }
+
+        while (pixIt.next()) {
+            System.out.println(pixIt.getSample());
         }
 
 //        final PixelIterator sI = new DefaultRasterIntIterator(raster, subArea);

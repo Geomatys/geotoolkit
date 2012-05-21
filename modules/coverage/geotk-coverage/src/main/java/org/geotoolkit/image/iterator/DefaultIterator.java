@@ -30,7 +30,7 @@ import org.geotoolkit.util.ArgumentChecks;
  * and to finish raster y coordinates.
  * <p>
  * Iteration follow this scheme :
- * tiles band --&lt; tiles x coordinates --&lt; tiles y coordinates --&lt; next rendered image tiles.
+ * tiles band --&gt; tiles x coordinates --&gt; tiles y coordinates --&gt; next rendered image tiles.
  *
  * Moreover iterator traversing a read-only each rendered image tiles(raster) in top-to-bottom, left-to-right order.
  *
@@ -46,7 +46,7 @@ import org.geotoolkit.util.ArgumentChecks;
  * @author Martin Desruisseaux (Geomatys).
  */
 class DefaultIterator extends PixelIterator {
-  
+
     /**
      * Current X pixel coordinate in this current raster.
      */

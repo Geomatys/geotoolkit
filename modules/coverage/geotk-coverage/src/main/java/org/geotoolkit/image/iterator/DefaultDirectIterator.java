@@ -18,7 +18,6 @@
 package org.geotoolkit.image.iterator;
 
 import java.awt.Rectangle;
-import java.awt.image.DataBuffer;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import org.geotoolkit.util.ArgumentChecks;
@@ -31,7 +30,7 @@ import org.geotoolkit.util.ArgumentChecks;
  * and to finish raster y coordinates.
  * <p>
  * Iteration follow this scheme :
- * tiles band --&lt; tiles x coordinates --&lt; tiles y coordinates --&lt; next rendered image tiles.
+ * tiles band --&gt; tiles x coordinates --&gt; tiles y coordinates --&gt; next rendered image tiles.
  *
  * Moreover iterator traversing a read-only each rendered image tiles(raster) in top-to-bottom, left-to-right order.
  * Furthermore iterator directly read in data table within raster {@code DataBuffer}.
@@ -56,13 +55,13 @@ abstract class DefaultDirectIterator extends PixelIterator{
 
     /**
      * Step value to move forward in iteration.
-     * @see DefaultByteIterator#next()
+     * @see DefaultDirectIterator#next()
      */
     private int cursorStep;
 
     /**
      * First iteration position.
-     * @see DefaultByteIterator#rewind()
+     * @see DefaultDirectIterator#rewind()
      */
     private int baseCursor;
 
@@ -164,8 +163,7 @@ abstract class DefaultDirectIterator extends PixelIterator{
         //tiles attributs
         this.tMinX = renderedImage.getMinTileX();
         this.tMinY = renderedImage.getMinTileY();
-        assert (renderedImage.getTile(tMinX, tMinY).getDataBuffer().getDataType() == DataBuffer.TYPE_BYTE)
-               : "renderedImage datas or not Byte type";
+
         this.tMaxX = tMinX + renderedImage.getNumXTiles();
         this.tMaxY = tMinY + renderedImage.getNumYTiles();
         //initialize attributs to first iteration
@@ -212,9 +210,6 @@ abstract class DefaultDirectIterator extends PixelIterator{
         this.tMinY = miy / th + mty;
         this.tMaxX = max / tw + mtx;
         this.tMaxY = may / th + mty;
-
-        assert (renderedImage.getTile(tMinX, tMinY).getDataBuffer().getDataType() == DataBuffer.TYPE_BYTE)
-               : "renderedImage datas or not Byte type";
 
         //initialize attributs to first iteration
         this.numBand = this.maxX = this.maxY = this.maxBanks = 1;

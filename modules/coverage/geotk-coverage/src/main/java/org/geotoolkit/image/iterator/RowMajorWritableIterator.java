@@ -29,8 +29,8 @@ import java.awt.image.WritableRenderedImage;
  * <p>
  *
  * Iteration follow this scheme :
- * tiles band --&lt; tiles x coordinates --&lt; next X tile position in rendered image tiles array
- * --&lt; current tiles y coordinates --&lt; next Y tile position in rendered image tiles array.
+ * tiles band --&gt; tiles x coordinates --&gt; next X tile position in rendered image tiles array
+ * --&gt; current tiles y coordinates --&gt; next Y tile position in rendered image tiles array.
  *
  * Moreover iterator traversing a write or read each rendered image tiles(raster) in top-to-bottom, left-to-right order.
  *

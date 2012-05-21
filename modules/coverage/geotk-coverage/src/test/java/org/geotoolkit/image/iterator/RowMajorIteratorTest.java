@@ -20,95 +20,20 @@ package org.geotoolkit.image.iterator;
 import java.awt.Rectangle;
 import java.awt.image.BandedSampleModel;
 import java.awt.image.DataBuffer;
-import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import javax.media.jai.TiledImage;
-import static org.junit.Assert.assertTrue;
-import org.junit.Test;
 
 /**
  * Test RowMajorRenderedImageIterator class.
  *
  * @author Rémi Marechal (Geomatys).
  */
-public class RowMajorIteratorTest extends IteratorTest {
+public class RowMajorIteratorTest extends RowMajorTest {
 
     protected int dataType = DataBuffer.TYPE_INT;
     protected int[] tabRef, tabTest;
 
     public RowMajorIteratorTest() {
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public void differentMinRasterReadTest() {
-        //no test about raster for this iterator
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public void rectContainsRasterReadTest() {
-        //no test about raster for this iterator
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public void rectLowerLeftRasterReadTest() {
-        //no test about raster for this iterator
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public void rectLowerRightRasterReadTest() {
-        //no test about raster for this iterator
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public void rectUpperLeftRasterReadTest() {
-        //no test about raster for this iterator
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public void rectUpperRightRasterReadTest() {
-        //no test about raster for this iterator
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public void rasterContainsRectReadTest() {
-        //no test about raster for this iterator
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public void unappropriateRectRasterTest() {
-        //no test about raster for this iterator
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public void unappropriateMoveToRasterTest() {
-        //no test about raster for this iterator
     }
 
     /**
@@ -192,64 +117,6 @@ public class RowMajorIteratorTest extends IteratorTest {
     }
 
     /**
-     * Test if iterator transverse expected value from moveTo(x, y) method.
-     */
-    @Test
-    public void moveToTest() {
-        minx = 0;
-        miny = 0;
-        width = 100;
-        height = 50;
-        tilesWidth = 10;
-        tilesHeight = 5;
-        numBand = 3;
-        setRenderedImgTest(minx, miny, width, height, tilesWidth, tilesHeight, numBand, null);
-        setPixelIterator(renderedImage);
-        final int mX = 15;
-        final int mY = 26;
-        final int indexCut = (mY*width + mX) * numBand;
-        final int lenght = width*height*numBand - indexCut;
-        pixIterator.moveTo(mX, mY);
-
-        tabTest = new int[lenght];
-        int[] tabTemp = new int[lenght];
-        System.arraycopy(tabRef.clone(), indexCut, tabTemp, 0, lenght);
-        tabRef = tabTemp;
-        int comp = 0;
-        while (pixIterator.next()) tabTest[comp++] = pixIterator.getSample();
-        assertTrue(compareTab(tabTest, tabRef));
-    }
-
-    /**
-     * Test if iterator transverse expected value from moveTo(x, y) method.
-     */
-    @Test
-    public void moveToTest2() {
-        minx = -17;
-        miny = 12;
-        width = 100;
-        height = 50;
-        tilesWidth = 10;
-        tilesHeight = 5;
-        numBand = 3;
-        setRenderedImgTest(minx, miny, width, height, tilesWidth, tilesHeight, numBand, null);
-        setPixelIterator(renderedImage);
-        final int mX = 57;
-        final int mY = 26;
-        final int indexCut = ((mY-miny)*width + (mX-minx)) * numBand;
-        final int lenght = width*height*numBand - indexCut;
-        pixIterator.moveTo(mX, mY);
-
-        tabTest = new int[lenght];
-        int[] tabTemp = new int[lenght];
-        System.arraycopy(tabRef.clone(), indexCut, tabTemp, 0, lenght);
-        tabRef = tabTemp;
-        int comp = 0;
-        while (pixIterator.next()) tabTest[comp++] = pixIterator.getSample();
-        assertTrue(compareTab(tabTest, tabRef));
-    }
-
-    /**
      * Compare 2 integer table.
      *
      * @param tabA table resulting raster iterate.
@@ -286,30 +153,6 @@ public class RowMajorIteratorTest extends IteratorTest {
      * {@inheritDoc }.
      */
     @Override
-    protected void setRasterTest(int minx, int miny, int width, int height, int numBand, Rectangle subArea) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    protected void setPixelIterator(Raster raster) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    protected void setPixelIterator(Raster raster, Rectangle subArea) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
     protected void setTabTestValue(int index, double value) {
         tabTest[index] = (int) value;
     }
@@ -320,5 +163,13 @@ public class RowMajorIteratorTest extends IteratorTest {
     @Override
     protected boolean compareTab() {
         return compareTab(tabRef, tabTest);
+    }
+
+    @Override
+    protected void setMoveToRITabs(int indexCut, int length) {
+        tabTest = new int[length];
+        int[] tabTemp = new int[length];
+        System.arraycopy(tabRef.clone(), indexCut, tabTemp, 0, length);
+        tabRef = tabTemp;
     }
 }
