@@ -204,11 +204,14 @@ public class Utils {
     public static QName getQNameFromType(final Class binding) {
         if (binding != null) {
             final QName result;
-             if (Geometry.class.isAssignableFrom(binding)) {
+            if (Geometry.class.isAssignableFrom(binding)) {
                 result = GEOMETRY_NAME_BINDING.get(binding);
                 if (result == null) {
                     return new QName("http://www.opengis.net/gml", "GeometryPropertyType");
                 }
+            // maybe we can find a better way to handle Enum. for now we set a String value
+            } else if (binding.isEnum()){
+                result = new QName("http://www.w3.org/2001/XMLSchema", "string");
             } else {
                 result = NAME_BINDING.get(binding);
             }
