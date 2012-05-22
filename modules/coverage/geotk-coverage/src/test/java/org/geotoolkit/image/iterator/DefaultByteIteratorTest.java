@@ -22,7 +22,6 @@ import java.awt.Rectangle;
 import java.awt.image.BandedSampleModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.Raster;
-import java.awt.image.RenderedImage;
 import javax.media.jai.TiledImage;
 
 /**
@@ -30,7 +29,7 @@ import javax.media.jai.TiledImage;
  *
  * @author Rémi Marechal (Geomatys).
  */
-public class DefaultByteIteratorTest extends DefaultTest{
+public class DefaultByteIteratorTest extends DefaultReadTest{
 
     byte[] tabRef, tabTest;
 
@@ -38,7 +37,7 @@ public class DefaultByteIteratorTest extends DefaultTest{
 
     }
 
-    //////////////////Raster tests///////////////////
+    ///////////////////////////////Raster tests/////////////////////////////////
     /**
      * {@inheritDoc}.
      */
@@ -171,38 +170,6 @@ public class DefaultByteIteratorTest extends DefaultTest{
      * {@inheritDoc }.
      */
     @Override
-    protected void setPixelIterator(Raster raster) {
-        pixIterator = PixelIteratorFactory.createDefaultIterator(raster);
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    protected void setPixelIterator(RenderedImage renderedImage) {
-        pixIterator = PixelIteratorFactory.createDefaultIterator(renderedImage);
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    protected void setPixelIterator(final Raster raster, final Rectangle subArea) {
-        pixIterator = PixelIteratorFactory.createDefaultIterator(raster, subArea);
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    protected void setPixelIterator(RenderedImage renderedImage, Rectangle subArea) {
-        pixIterator = PixelIteratorFactory.createDefaultIterator(renderedImage, subArea);
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
     protected void setTabTestValue(int index, double value) {
         tabTest[index] = (byte) value;
     }
@@ -213,22 +180,6 @@ public class DefaultByteIteratorTest extends DefaultTest{
     @Override
     protected boolean compareTab() {
         return compareTab(tabRef, tabTest);
-    }
-
-    /**
-     * Compare 2 integer table.
-     *
-     * @param tabA table resulting raster iterate.
-     * @param tabB table resulting raster iterate.
-     * @return true if tables are identical.
-     */
-    protected boolean compareTab(byte[] tabA, byte[] tabB) {
-        int length = tabA.length;
-        if (length != tabB.length) return false;
-        for (int i = 0; i<length; i++) {
-            if (tabA[i] != tabB[i]) return false;
-        }
-        return true;
     }
 
     /**

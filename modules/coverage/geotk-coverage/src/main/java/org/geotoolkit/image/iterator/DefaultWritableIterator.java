@@ -37,7 +37,7 @@ import java.awt.image.WritableRenderedImage;
  *
  * Code example :
  * {@code
- *                  final DefaultWritableRIIterator dWRII = new DefaultWritableRIIterator(renderedImage);
+ *                  final DefaultWritableIterator dWRII = new DefaultWritableIterator(renderedImage);
  *                  while (dWRII.next()) {
  *                      dWRII.setSample(int value);
  *                  }
@@ -128,29 +128,34 @@ class DefaultWritableIterator extends DefaultIterator {
      * Verify raster conformity.
      */
     private void checkRasters(final Raster readableRaster, final WritableRaster writableRaster){
+        //raster dimension
         if (readableRaster.getMinX()     != writableRaster.getMinX()
          || readableRaster.getMinY()     != writableRaster.getMinY()
          || readableRaster.getWidth()    != writableRaster.getWidth()
          || readableRaster.getHeight()   != writableRaster.getHeight()
          || readableRaster.getNumBands() != writableRaster.getNumBands())
          throw new IllegalArgumentException("raster and writable raster are not in same dimension"+readableRaster+writableRaster);
+        //raster data type
+        if (readableRaster.getDataBuffer().getDataType() != writableRaster.getDataBuffer().getDataType())
+            throw new IllegalArgumentException("raster and writable raster haven't got same datas type");
     }
 
     /**
      * Verify Rendered image conformity.
      */
-    private void checkRenderedImage(final RenderedImage renderedImage, final WritableRenderedImage writableRI){
+    private void checkRenderedImage(final RenderedImage renderedImage, final WritableRenderedImage writableRI) {
+        //image dimensions
         if (renderedImage.getMinX()   != writableRI.getMinX()
          || renderedImage.getMinY()   != writableRI.getMinY()
          || renderedImage.getWidth()  != writableRI.getWidth()
          || renderedImage.getHeight() != writableRI.getHeight()
          || renderedImage.getSampleModel().getNumBands() != writableRI.getSampleModel().getNumBands())
          throw new IllegalArgumentException("rendered image and writable rendered image dimensions are not conform"+renderedImage+writableRI);
-
         final int wrimtx = writableRI.getMinTileX();
         final int wrimty = writableRI.getMinTileY();
         final int rimtx = writableRI.getMinTileX();
         final int rimty = writableRI.getMinTileY();
+        //tiles dimensions
         if (rimtx != wrimtx
          || rimty != wrimty
          || renderedImage.getNumXTiles() != writableRI.getNumXTiles()
@@ -160,6 +165,7 @@ class DefaultWritableIterator extends DefaultIterator {
          || renderedImage.getTileHeight() != writableRI.getTileHeight()
          || renderedImage.getTileWidth()  != writableRI.getTileWidth())
             throw new IllegalArgumentException("rendered image and writable rendered image tiles configuration are not conform"+renderedImage+writableRI);
+        //data type
         if (renderedImage.getTile(rimtx, rimty).getDataBuffer().getDataType() != writableRI.getTile(wrimtx, wrimty).getDataBuffer().getDataType())
             throw new IllegalArgumentException("rendered image and writable rendered image haven't got same datas type");
     }

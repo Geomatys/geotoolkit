@@ -17,6 +17,9 @@
  */
 package org.geotoolkit.image.iterator;
 
+import java.awt.Rectangle;
+import java.awt.image.Raster;
+import java.awt.image.RenderedImage;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
@@ -25,9 +28,9 @@ import org.junit.Test;
  *
  * @author Rémi Marechal (Geomatys).
  */
-public abstract class DefaultTest extends IteratorTest{
+public abstract class DefaultReadTest extends IteratorTest{
 
-    protected DefaultTest() {
+    protected DefaultReadTest() {
     }
 
     /**
@@ -37,6 +40,38 @@ public abstract class DefaultTest extends IteratorTest{
      * @param length new {@code tabRef} length.
      */
     protected abstract void setMoveToRITabs(final int indexCut, final int length);
+
+     /**
+     * {@inheritDoc }.
+     */
+    @Override
+    protected void setPixelIterator(Raster raster) {
+        pixIterator = PixelIteratorFactory.createDefaultIterator(raster);
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    protected void setPixelIterator(RenderedImage renderedImage) {
+        pixIterator = PixelIteratorFactory.createDefaultIterator(renderedImage);
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    protected void setPixelIterator(final Raster raster, final Rectangle subArea) {
+        pixIterator = PixelIteratorFactory.createDefaultIterator(raster, subArea);
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    protected void setPixelIterator(RenderedImage renderedImage, Rectangle subArea) {
+        pixIterator = PixelIteratorFactory.createDefaultIterator(renderedImage, subArea);
+    }
 
 
     ///////////////////////////////Raster Tests/////////////////////////////////

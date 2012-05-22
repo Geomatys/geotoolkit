@@ -20,7 +20,6 @@ package org.geotoolkit.image.iterator;
 import java.awt.Rectangle;
 import java.awt.image.*;
 import javax.media.jai.TiledImage;
-import org.junit.Assert;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
@@ -29,102 +28,12 @@ import org.junit.Test;
  *
  * @author Rémi Marechal (Geomatys).
  */
-public class RowMajorWritableByteIteratorTest extends WritableIteratorTest {
+public class RowMajorWritableByteIteratorTest extends RowMajorWritableTest {
 
     byte[] tabRef, tabTest;
 
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public void differentMinRasterReadTest() {
-        //no test about raster for this iterator.
-    }
 
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public void rectContainsRasterReadTest() {
-        //no test about raster for this iterator.
-    }
 
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public void rectLowerLeftRasterReadTest() {
-        //no test about raster for this iterator.
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public void rectLowerRightRasterReadTest() {
-        //no test about raster for this iterator.
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public void rectUpperLeftRasterReadTest() {
-        //no test about raster for this iterator.
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public void rectUpperRightRasterReadTest() {
-        //no test about raster for this iterator.
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public void rasterContainsRectReadTest() {
-        //no test about raster for this iterator.
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public void unappropriateRectRasterTest() {
-        //no test about raster for this iterator.
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public void unappropriateMoveToRasterTest() {
-        //no test about raster for this iterator.
-    }
-
-    @Override
-    protected void setRasterTest(int minx, int miny, int width, int height, int numBand, Rectangle subArea) {
-        //no test about raster for this iterator.
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    protected void setPixelIterator(RenderedImage renderedImage) {
-        pixIterator = PixelIteratorFactory.createRowMajorWriteableIterator(renderedImage, (WritableRenderedImage)renderedImage);
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    protected void setPixelIterator(RenderedImage renderedImage, Rectangle subArea) {
-        pixIterator = PixelIteratorFactory.createRowMajorWriteableIterator(renderedImage, (WritableRenderedImage)renderedImage, subArea);
-    }
 
     /**
      * {@inheritDoc }.
@@ -217,16 +126,6 @@ public class RowMajorWritableByteIteratorTest extends WritableIteratorTest {
     }
 
     @Override
-    protected void setPixelIterator(Raster raster) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    protected void setPixelIterator(Raster raster, Rectangle subArea) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
     protected void setTabTestValue(int index, double value) {
         tabTest[index] = (byte) value;
     }
@@ -244,13 +143,7 @@ public class RowMajorWritableByteIteratorTest extends WritableIteratorTest {
         return DataBuffer.TYPE_BYTE;
     }
 
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    protected PixelIterator getWritableIterator(RenderedImage renderedImage, WritableRenderedImage writableRenderedImage) {
-        return PixelIteratorFactory.createRowMajorWriteableIterator(renderedImage, writableRenderedImage);
-    }
+
 
     /**
      * Test if iterator transverse all rasters positions from image with different minX and maxY coordinates.
@@ -343,19 +236,14 @@ public class RowMajorWritableByteIteratorTest extends WritableIteratorTest {
         }
     }
 
-    /**
-     * Compare 2 integer table.
-     *
-     * @param tabA table resulting raster iterate.
-     * @param tabB table resulting raster iterate.
-     * @return true if tables are identical.
-     */
-    protected boolean compareTab(byte[] tabA, byte[] tabB) {
-        int length = tabA.length;
-        if (length != tabB.length) return false;
-        for (int i = 0; i<length; i++) {
-            if (tabA[i] != tabB[i]) return false;
-        }
-        return true;
+    @Override
+    protected void setTabRefValue(int index, double value) {
+        tabRef[index] = (byte) value;
+    }
+
+    @Override
+    protected void createTable(int length) {
+        tabRef = new byte[length];
+        tabTest = new byte[length];
     }
 }

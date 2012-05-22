@@ -124,7 +124,6 @@ class RowMajorIterator extends PixelIterator{
         if (++band == numBand) {
             band = 0;
             if (++x == maxX) {
-                x = minX;
                 if (++tX == tMaxX) {
                     tX = tMinX;
                     if (++y == maxY) {
@@ -246,25 +245,16 @@ class RowMajorIterator extends PixelIterator{
         if (x < riMinX || x>= riMinX+renderedImage.getWidth()
         ||  y < riMinY || x>= riMinY+renderedImage.getHeight())
             throw new IllegalArgumentException("coordinate out of rendered image boundary"+renderedImage+x+y);
-        boolean update = false;
-        if (x < minX || x >= maxX) {
-            tX = (x - riMinX) / renderedImage.getTileWidth() + renderedImage.getMinTileX();
-            update = true;
-        }
-        if (y < riMinY || y >= maxY) {
-            tY = (y - riMinY) / renderedImage.getTileHeight() + renderedImage.getMinTileY();
-            update = true;
-        }
-        if (update) {
-            updateCurrentRaster(tX, tY);
-            final int cRMinX = currentRaster.getMinX();
-            final int cRMinY = currentRaster.getMinY();
-            this.minX = this.x = Math.max(subAreaMinX, cRMinX);
-            this.maxX = Math.min(subAreaMaxX, cRMinX + currentRaster.getWidth());
-            this.minY = this.y = Math.max(subAreaMinY, cRMinY);
-            this.maxY = Math.min(subAreaMaxY, cRMinY + currentRaster.getHeight());
-            this.numBand = currentRaster.getNumBands();
-        }
+        tX = (x - riMinX) / renderedImage.getTileWidth() + renderedImage.getMinTileX();
+        tY = (y - riMinY) / renderedImage.getTileHeight() + renderedImage.getMinTileY();
+        updateCurrentRaster(tX, tY);
+        final int cRMinX = currentRaster.getMinX();
+        final int cRMinY = currentRaster.getMinY();
+        this.minX = this.x = Math.max(subAreaMinX, cRMinX);
+        this.maxX = Math.min(subAreaMaxX, cRMinX + currentRaster.getWidth());
+        this.minY = this.y = Math.max(subAreaMinY, cRMinY);
+        this.maxY = Math.min(subAreaMaxY, cRMinY + currentRaster.getHeight());
+        this.numBand = currentRaster.getNumBands();
         this.x = x;
         this.y = y;
         this.band = -1;

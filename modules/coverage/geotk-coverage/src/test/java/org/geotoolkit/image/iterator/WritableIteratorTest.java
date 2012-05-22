@@ -57,15 +57,31 @@ public abstract class WritableIteratorTest extends IteratorTest{
     protected abstract int getDataBufferType();
 
     /**
-     * Return "writable" {@code PixelIterator}.
+     * Return "writable" {@code PixelIterator} adapted for {@code RenderedImage}.
      *
      * @param renderedImage {@code RenderedImage} which is followed by read only iterator.
      * @param writableRenderedImage {@code RenderedImage} which is followed by write only iterator.
      * @see #unappropriateRenderedImageTest().
      * @return "writable" {@code PixelIterator}.
      */
-    protected abstract PixelIterator getWritableIterator(RenderedImage renderedImage,
+    protected abstract PixelIterator getWritableRIIterator(RenderedImage renderedImage,
                                     WritableRenderedImage writableRenderedImage);
+
+    /**
+     * Fill reference table use to valid tests.
+     * Affect value at index in test table.
+     *
+     * @param index table index.
+     * @param value to insert in reference table.
+     */
+    protected abstract void setTabRefValue(int index, double value);
+
+    /**
+     * Create appropriate table about "writable" tests.
+     *
+     * @param length tests tables length.
+     */
+    protected abstract void createTable(int length);
 
     public WritableIteratorTest() {
     }
@@ -91,7 +107,7 @@ public abstract class WritableIteratorTest extends IteratorTest{
         setPixelIterator(renderedImage);
         int comp = 0;
         while (pixIterator.next()) {
-            setTabTestValue(comp++, pixIterator.getSample());
+            setTabTestValue(comp++, pixIterator.getSampleDouble());
         }
         assertTrue(compareTab());
     }
@@ -117,7 +133,7 @@ public abstract class WritableIteratorTest extends IteratorTest{
         setPixelIterator(renderedImage);
         int comp = 0;
         while (pixIterator.next()) {
-            setTabTestValue(comp++, pixIterator.getSample());
+            setTabTestValue(comp++, pixIterator.getSampleDouble());
         }
         assertTrue(compareTab());
     }
@@ -143,7 +159,7 @@ public abstract class WritableIteratorTest extends IteratorTest{
         setPixelIterator(renderedImage);
         int comp = 0;
         while (pixIterator.next()) {
-            setTabTestValue(comp++, pixIterator.getSample());
+            setTabTestValue(comp++, pixIterator.getSampleDouble());
         }
         assertTrue(compareTab());
     }
@@ -169,7 +185,7 @@ public abstract class WritableIteratorTest extends IteratorTest{
         setPixelIterator(renderedImage);
         int comp = 0;
         while (pixIterator.next()) {
-            setTabTestValue(comp++, pixIterator.getSample());
+            setTabTestValue(comp++, pixIterator.getSampleDouble());
         }
         assertTrue(compareTab());
     }
@@ -195,7 +211,7 @@ public abstract class WritableIteratorTest extends IteratorTest{
         setPixelIterator(renderedImage);
         int comp = 0;
         while (pixIterator.next()) {
-            setTabTestValue(comp++, pixIterator.getSample());
+            setTabTestValue(comp++, pixIterator.getSampleDouble());
         }
         assertTrue(compareTab());
     }
@@ -221,7 +237,7 @@ public abstract class WritableIteratorTest extends IteratorTest{
         setPixelIterator(renderedImage);
         int comp = 0;
         while (pixIterator.next()) {
-            setTabTestValue(comp++, pixIterator.getSample());
+            setTabTestValue(comp++, pixIterator.getSampleDouble());
         }
         assertTrue(compareTab());
     }
@@ -237,18 +253,20 @@ public abstract class WritableIteratorTest extends IteratorTest{
 
         BandedSampleModel sampleMW = new BandedSampleModel(dataType, 100, 50, 3);
         WritableRenderedImage rendWriteImage = new TiledImage(0, 0, 100, 500, 15, 25, sampleMW, null);
+
         //test : different image dimension.
         try {
-            getWritableIterator(rendReadImage, rendWriteImage);
+            getWritableRIIterator(rendReadImage, rendWriteImage);
             Assert.fail("test should had failed");
         } catch(IllegalArgumentException e) {
             //ok
         }
+
         //test : different tiles dimension.
         sampleMW = new BandedSampleModel(dataType, 10, 5, 3);
         rendWriteImage = new TiledImage(0, 0, 1000, 500, 0, 0, sampleMW, null);
         try {
-            getWritableIterator(rendReadImage, rendWriteImage);
+            getWritableRIIterator(rendReadImage, rendWriteImage);
             Assert.fail("test should had failed");
         } catch(IllegalArgumentException e) {
             //ok
@@ -259,11 +277,10 @@ public abstract class WritableIteratorTest extends IteratorTest{
         sampleMW = new BandedSampleModel(dataTypeTest, 100, 50, 3);
         rendWriteImage = new TiledImage(0, 0, 1000, 500, 0, 0, sampleMW, null);
         try {
-            getWritableIterator(rendReadImage, rendWriteImage);
+            getWritableRIIterator(rendReadImage, rendWriteImage);
             Assert.fail("test should had failed");
         } catch(IllegalArgumentException e) {
             //ok
         }
     }
-
 }

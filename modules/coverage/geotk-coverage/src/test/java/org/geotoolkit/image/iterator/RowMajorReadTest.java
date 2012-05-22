@@ -19,6 +19,7 @@ package org.geotoolkit.image.iterator;
 
 import java.awt.Rectangle;
 import java.awt.image.Raster;
+import java.awt.image.RenderedImage;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
@@ -27,9 +28,9 @@ import org.junit.Test;
  *
  * @author Rémi Marechal (Geomatys).
  */
-public abstract class RowMajorTest extends IteratorTest {
+public abstract class RowMajorReadTest extends IteratorTest {
 
-    protected RowMajorTest() {
+    protected RowMajorReadTest() {
     }
 
     /**
@@ -118,6 +119,22 @@ public abstract class RowMajorTest extends IteratorTest {
     @Override
     protected void setPixelIterator(Raster raster) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    protected void setPixelIterator(RenderedImage renderedImage) {
+        pixIterator = PixelIteratorFactory.createRowMajorIterator(renderedImage);
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    protected void setPixelIterator(RenderedImage renderedImage, Rectangle subArea) {
+        pixIterator = PixelIteratorFactory.createRowMajorIterator(renderedImage, subArea);
     }
 
     /**

@@ -22,7 +22,6 @@ import java.awt.Rectangle;
 import java.awt.image.BandedSampleModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.Raster;
-import java.awt.image.RenderedImage;
 import javax.media.jai.TiledImage;
 
 /**
@@ -30,7 +29,7 @@ import javax.media.jai.TiledImage;
  *
  * @author Rémi Marechal (Geomatys).
  */
-public class DefaultIteratorTest extends DefaultTest {
+public class DefaultIteratorTest extends DefaultReadTest {
 
     protected int dataType = DataBuffer.TYPE_INT;
     protected int[] tabRef, tabTest;
@@ -155,54 +154,6 @@ public class DefaultIteratorTest extends DefaultTest {
 
             }
         }
-    }
-
-    /**
-     * Compare 2 integer table.
-     *
-     * @param tabA table resulting iterate.
-     * @param tabB table resulting iterate.
-     * @return true if tables are identical.
-     */
-    protected boolean compareTab(int[] tabA, int[] tabB) {
-        int length = tabA.length;
-        if (length != tabB.length) return false;
-        for (int i = 0; i<length; i++) {
-            if (tabA[i] != tabB[i]) return false;
-        }
-        return true;
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    protected void setPixelIterator(Raster raster) {
-        pixIterator = PixelIteratorFactory.createDefaultIterator(raster);
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    protected void setPixelIterator(RenderedImage renderedImage) {
-        pixIterator = PixelIteratorFactory.createDefaultIterator(renderedImage);
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    protected void setPixelIterator(final Raster raster, final Rectangle subArea) {
-        pixIterator = PixelIteratorFactory.createDefaultIterator(raster, subArea);
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    protected void setPixelIterator(RenderedImage renderedImage, Rectangle subArea) {
-        pixIterator = PixelIteratorFactory.createDefaultIterator(renderedImage, subArea);
     }
 
     /**

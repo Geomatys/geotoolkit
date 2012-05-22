@@ -18,41 +18,67 @@
 package org.geotoolkit.image.iterator;
 
 import java.awt.Rectangle;
-import java.awt.image.BandedSampleModel;
-import java.awt.image.DataBuffer;
+import java.awt.image.*;
 import javax.media.jai.TiledImage;
 
 /**
- * Test RowMajorByteIterator class.
+ * Test RowMajorWritableFloatIterator class.
  *
  * @author Rémi Marechal (Geomatys).
  */
-public class RowMajorByteIteratorTest extends RowMajorReadTest{
+public class RowMajorWritableFloatIteratorTest extends RowMajorWritableTest {
 
-    byte[] tabRef, tabTest;
+    float[] tabRef, tabTest;
 
-    /**
-     * {@inheritDoc }.
-     */
+    @Override
+    protected void fillGoodTabRef(int minx, int miny, int width, int height, int tilesWidth, int tilesHeight, int numBand, Rectangle areaIterate) {
+        int depy = Math.max(miny, areaIterate.y);
+        int depx = Math.max(minx, areaIterate.x);
+        int endy = Math.min(miny + height, areaIterate.y + areaIterate.height);
+        int endx = Math.min(minx + width, areaIterate.x + areaIterate.width);
+        int pos;
+        for(int y = depy; y<endy; y++){
+            for(int x = depx; x<endx; x++){
+                for(int b = 0; b<numBand; b++){
+                    pos = (x-minx + (width * (y-miny))) * numBand+b;
+                    tabRef[pos] = -1;
+                }
+            }
+        }
+    }
+
+    @Override
+    protected int getDataBufferType() {
+        return DataBuffer.TYPE_FLOAT;
+    }
+
+    @Override
+    protected void setTabTestValue(int index, double value) {
+        tabTest[index] = (float) value;
+    }
+
+    @Override
+    protected boolean compareTab() {
+        return compareTab(tabRef, tabTest);
+    }
+
     @Override
     protected void setRenderedImgTest(int minx, int miny, int width, int height, int tilesWidth, int tilesHeight, int numBand, Rectangle areaIterate) {
-        final BandedSampleModel sampleM = new BandedSampleModel(DataBuffer.TYPE_BYTE, tilesWidth, tilesHeight, numBand);
-        renderedImage = new TiledImage(minx, miny, width, height, minx+tilesWidth, miny+tilesHeight, sampleM, null);//on decalle l'index des tiles de 1
+        final BandedSampleModel sampleM = new BandedSampleModel(DataBuffer.TYPE_FLOAT, tilesWidth, tilesHeight, numBand);
+        renderedImage = new TiledImage(minx, miny, width, height, minx+tilesWidth, miny+tilesHeight, sampleM, null);
 
-        int comp = 0;
+        int comp;
         int nbrTX = width/tilesWidth;
         int nbrTY = height/tilesHeight;
         int val;
         for(int j = 0;j<nbrTY;j++){
             for(int i = 0; i<nbrTX;i++){
-                val = -128;
+                val = 0;
                 for (int y = miny+j*tilesHeight, ly = y+tilesHeight; y<ly; y++) {
                     for (int x = minx+i*tilesWidth, lx = x + tilesWidth; x<lx; x++) {
                         for (int b = 0; b<numBand; b++) {
-                            renderedImage.setSample(x, y, b, val);
-                            comp++;
+                            renderedImage.setSample(x, y, b, val++-32000);
                         }
-                        val++;
                     }
                 }
             }
@@ -83,9 +109,8 @@ public class RowMajorByteIteratorTest extends RowMajorReadTest{
             tabLenght = width*height*numBand;
         }
 
-//        tabRef  = new byte[tabLenght];
-        tabRef = new byte[tabLenght];
-        tabTest = new byte[tabLenght];
+        tabRef  = new float[tabLenght];
+        tabTest = new float[tabLenght];
         comp = 0;
         for (int tileY = tileMinY; tileY<tileMaxY; tileY++) {
             rastminY = tileY * tilesHeight;
@@ -112,9 +137,8 @@ public class RowMajorByteIteratorTest extends RowMajorReadTest{
                     }
 
                     for (int x = depX; x<endX; x++) {
-                        final byte value = (byte)(x-depX + (y-depY) * tilesWidth - 128);
                         for (int b = 0; b<numBand; b++) {
-                            tabRef[comp++] =  value;
+                            tabRef[comp++] =  b + (x-depX + (y-depY) * tilesWidth) * numBand - 32000;
                         }
                     }
                 }
@@ -122,30 +146,14 @@ public class RowMajorByteIteratorTest extends RowMajorReadTest{
         }
     }
 
-    /**
-     * {@inheritDoc }.
-     */
     @Override
-    protected void setTabTestValue(int index, double value) {
-        tabTest[index] = (byte)value;
+    protected void setTabRefValue(int index, double value) {
+        tabRef[index] = (float) value;
     }
 
-    /**
-     * {@inheritDoc }.
-     */
     @Override
-    protected boolean compareTab() {
-        return compareTab(tabRef, tabTest);
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    protected void setMoveToRITabs(int indexCut, int length) {
-        tabTest = new byte[length];
-        byte[] tabTemp = new byte[length];
-        System.arraycopy(tabRef.clone(), indexCut, tabTemp, 0, length);
-        tabRef = tabTemp;
+    protected void createTable(int length) {
+        tabRef = new float[length];
+        tabTest = new float[length];
     }
 }

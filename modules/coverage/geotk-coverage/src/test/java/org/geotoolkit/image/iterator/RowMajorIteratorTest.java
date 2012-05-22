@@ -20,7 +20,6 @@ package org.geotoolkit.image.iterator;
 import java.awt.Rectangle;
 import java.awt.image.BandedSampleModel;
 import java.awt.image.DataBuffer;
-import java.awt.image.RenderedImage;
 import javax.media.jai.TiledImage;
 
 /**
@@ -28,9 +27,8 @@ import javax.media.jai.TiledImage;
  *
  * @author Rémi Marechal (Geomatys).
  */
-public class RowMajorIteratorTest extends RowMajorTest {
+public class RowMajorIteratorTest extends RowMajorReadTest {
 
-    protected int dataType = DataBuffer.TYPE_INT;
     protected int[] tabRef, tabTest;
 
     public RowMajorIteratorTest() {
@@ -117,39 +115,6 @@ public class RowMajorIteratorTest extends RowMajorTest {
     }
 
     /**
-     * Compare 2 integer table.
-     *
-     * @param tabA table resulting raster iterate.
-     * @param tabB table resulting raster iterate.
-     * @return true if tables are identical.
-     */
-    protected boolean compareTab(int[] tabA, int[] tabB) {
-        int length = tabA.length;
-        if (length != tabB.length) return false;
-        for (int i = 0; i<length; i++) {
-            if (tabA[i] != tabB[i]) return false;
-        }
-        return true;
-    }
-
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    protected void setPixelIterator(RenderedImage renderedImage) {
-        pixIterator = PixelIteratorFactory.createRowMajorIterator(renderedImage);
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    protected void setPixelIterator(RenderedImage renderedImage, Rectangle subArea) {
-        pixIterator = PixelIteratorFactory.createRowMajorIterator(renderedImage, subArea);
-    }
-
-    /**
      * {@inheritDoc }.
      */
     @Override
@@ -165,6 +130,9 @@ public class RowMajorIteratorTest extends RowMajorTest {
         return compareTab(tabRef, tabTest);
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     protected void setMoveToRITabs(int indexCut, int length) {
         tabTest = new int[length];

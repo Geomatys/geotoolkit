@@ -29,125 +29,12 @@ import org.junit.Test;
  *
  * @author Rémi Marechal (Geomatys).
  */
-public class RowMajorWritableIteratorTest extends WritableIteratorTest {
+public class RowMajorWritableIteratorTest extends RowMajorWritableTest {
 
-    private final int dataType = DataBuffer.TYPE_INT;
     private int[] tabRef, tabTest;
 
     public RowMajorWritableIteratorTest() {
 
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public void differentMinRasterReadTest() {
-        //no test about raster for this iterator.
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public void rectContainsRasterReadTest() {
-        //no test about raster for this iterator.
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public void rectLowerLeftRasterReadTest() {
-        //no test about raster for this iterator.
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public void rectLowerRightRasterReadTest() {
-        //no test about raster for this iterator.
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public void rectUpperLeftRasterReadTest() {
-        //no test about raster for this iterator.
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public void rectUpperRightRasterReadTest() {
-        //no test about raster for this iterator.
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public void rasterContainsRectReadTest() {
-        //no test about raster for this iterator.
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public void unappropriateRectRasterTest() {
-        //no test about raster for this iterator.
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public void unappropriateMoveToRasterTest() {
-        //no test about raster for this iterator.
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    protected void setRasterTest(int minx, int miny, int width, int height, int numBand, Rectangle subArea) {
-        //no test about raster for this iterator.
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    protected void setPixelIterator(RenderedImage renderedImage) {
-        pixIterator = PixelIteratorFactory.createRowMajorWriteableIterator(renderedImage, (WritableRenderedImage)renderedImage);
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    protected void setPixelIterator(RenderedImage renderedImage, Rectangle subArea) {
-        pixIterator = PixelIteratorFactory.createRowMajorWriteableIterator(renderedImage, (WritableRenderedImage)renderedImage, subArea);
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    protected void setPixelIterator(Raster raster) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    protected void setPixelIterator(Raster raster, Rectangle subArea) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     /**
@@ -336,27 +223,14 @@ public class RowMajorWritableIteratorTest extends WritableIteratorTest {
         }
     }
 
-    /**
-     * {@inheritDoc }.
-     */
     @Override
-    protected PixelIterator getWritableIterator(RenderedImage renderedImage, WritableRenderedImage writableRenderedImage) {
-        return PixelIteratorFactory.createRowMajorWriteableIterator(renderedImage, writableRenderedImage);
+    protected void setTabRefValue(int index, double value) {
+        tabRef[index] = (int) value;
     }
 
-    /**
-     * Compare 2 integer table.
-     *
-     * @param tabA table resulting raster iterate.
-     * @param tabB table resulting raster iterate.
-     * @return true if tables are identical.
-     */
-    protected boolean compareTab(int[] tabA, int[] tabB) {
-        int length = tabA.length;
-        if (length != tabB.length) return false;
-        for (int i = 0; i<length; i++) {
-            if (tabA[i] != tabB[i]) return false;
-        }
-        return true;
+    @Override
+    protected void createTable(int length) {
+        tabRef = new int[length];
+        tabTest = new int[length];
     }
 }

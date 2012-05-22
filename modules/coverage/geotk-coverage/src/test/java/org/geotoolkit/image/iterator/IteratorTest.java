@@ -180,7 +180,7 @@ public abstract class IteratorTest {
         setPixelIterator(rasterTest);
         int comp = 0;
         while (pixIterator.next()) {
-            setTabTestValue(comp++, pixIterator.getSample());
+            setTabTestValue(comp++, pixIterator.getSampleDouble());
         }
         assertTrue(compareTab());
 
@@ -190,7 +190,7 @@ public abstract class IteratorTest {
         setPixelIterator(rasterTest);
         comp = 0;
         while (pixIterator.next()) {
-            setTabTestValue(comp++, pixIterator.getSample());
+            setTabTestValue(comp++, pixIterator.getSampleDouble());
         }
         assertTrue(compareTab());
 
@@ -200,7 +200,7 @@ public abstract class IteratorTest {
         setPixelIterator(rasterTest);
         comp = 0;
         while (pixIterator.next()) {
-            setTabTestValue(comp++, pixIterator.getSample());
+            setTabTestValue(comp++, pixIterator.getSampleDouble());
         }
         assertTrue(compareTab());
 
@@ -210,7 +210,7 @@ public abstract class IteratorTest {
         setPixelIterator(rasterTest);
         comp = 0;
         while (pixIterator.next()) {
-            setTabTestValue(comp++, pixIterator.getSample());
+            setTabTestValue(comp++, pixIterator.getSampleDouble());
         }
         assertTrue(compareTab());
 
@@ -220,14 +220,14 @@ public abstract class IteratorTest {
         setPixelIterator(rasterTest);
         comp = 0;
         while (pixIterator.next()) {
-            setTabTestValue(comp++, pixIterator.getSample());
+            setTabTestValue(comp++, pixIterator.getSampleDouble());
         }
         assertTrue(compareTab());
 
         pixIterator.rewind();
         comp = 0;
         while (pixIterator.next()) {
-            setTabTestValue(comp++, pixIterator.getSample());
+            setTabTestValue(comp++, pixIterator.getSampleDouble());
         }
         assertTrue(compareTab());
     }
@@ -248,7 +248,7 @@ public abstract class IteratorTest {
         setPixelIterator(rasterTest, subArea);
         int comp = 0;
         while (pixIterator.next()) {
-            setTabTestValue(comp++, pixIterator.getSample());
+            setTabTestValue(comp++, pixIterator.getSampleDouble());
         }
         assertTrue(compareTab());
     }
@@ -269,7 +269,7 @@ public abstract class IteratorTest {
         setPixelIterator(rasterTest, subArea);
         int comp = 0;
         while (pixIterator.next()) {
-            setTabTestValue(comp++, pixIterator.getSample());
+            setTabTestValue(comp++, pixIterator.getSampleDouble());
         }
         assertTrue(compareTab());
     }
@@ -290,7 +290,7 @@ public abstract class IteratorTest {
         setPixelIterator(rasterTest, subArea);
         int comp = 0;
         while (pixIterator.next()) {
-            setTabTestValue(comp++, pixIterator.getSample());
+            setTabTestValue(comp++, pixIterator.getSampleDouble());
         }
         assertTrue(compareTab());
     }
@@ -311,7 +311,7 @@ public abstract class IteratorTest {
         setPixelIterator(rasterTest, subArea);
         int comp = 0;
         while (pixIterator.next()) {
-            setTabTestValue(comp++, pixIterator.getSample());
+            setTabTestValue(comp++, pixIterator.getSampleDouble());
         }
         assertTrue(compareTab());
     }
@@ -332,14 +332,14 @@ public abstract class IteratorTest {
         setPixelIterator(rasterTest, subArea);
         int comp = 0;
         while (pixIterator.next()) {
-            setTabTestValue(comp++, pixIterator.getSample());
+            setTabTestValue(comp++, pixIterator.getSampleDouble());
         }
         assertTrue(compareTab());
 
         pixIterator.rewind();
         comp = 0;
         while (pixIterator.next()) {
-            setTabTestValue(comp++, pixIterator.getSample());
+            setTabTestValue(comp++, pixIterator.getSampleDouble());
         }
         assertTrue(compareTab());
     }
@@ -360,7 +360,7 @@ public abstract class IteratorTest {
         setPixelIterator(rasterTest, subArea);
         int comp = 0;
         while (pixIterator.next()) {
-            setTabTestValue(comp++, pixIterator.getSample());
+            setTabTestValue(comp++, pixIterator.getSampleDouble());
         }
         assertTrue(compareTab());
     }
@@ -426,7 +426,7 @@ public abstract class IteratorTest {
 
         int comp = 0;
         while (pixIterator.next()) {
-            setTabTestValue(comp++, pixIterator.getSample());
+            setTabTestValue(comp++, pixIterator.getSampleDouble());
         }
         assertTrue(compareTab());
 
@@ -441,14 +441,14 @@ public abstract class IteratorTest {
 
         comp = 0;
         while (pixIterator.next()) {
-            setTabTestValue(comp++, pixIterator.getSample());
+            setTabTestValue(comp++, pixIterator.getSampleDouble());
         }
         assertTrue(compareTab());
 
         pixIterator.rewind();
         comp = 0;
         while (pixIterator.next()) {
-            setTabTestValue(comp++, pixIterator.getSample());
+            setTabTestValue(comp++, pixIterator.getSampleDouble());
         }
         assertTrue(compareTab());
     }
@@ -472,7 +472,7 @@ public abstract class IteratorTest {
 
         int comp = 0;
         while (pixIterator.next()) {
-            setTabTestValue(comp++, pixIterator.getSample());
+            setTabTestValue(comp++, pixIterator.getSampleDouble());
         }
         assertTrue(compareTab());
     }
@@ -495,7 +495,7 @@ public abstract class IteratorTest {
 
         int comp = 0;
         while (pixIterator.next()) {
-            setTabTestValue(comp++, pixIterator.getSample());
+            setTabTestValue(comp++, pixIterator.getSampleDouble());
         }
         assertTrue(compareTab());
     }
@@ -518,7 +518,7 @@ public abstract class IteratorTest {
 
         int comp = 0;
         while (pixIterator.next()) {
-            setTabTestValue(comp++, pixIterator.getSample());
+            setTabTestValue(comp++, pixIterator.getSampleDouble());
         }
         assertTrue(compareTab());
     }
@@ -541,7 +541,7 @@ public abstract class IteratorTest {
 
         int comp = 0;
         while (pixIterator.next()) {
-            setTabTestValue(comp++, pixIterator.getSample());
+            setTabTestValue(comp++, pixIterator.getSampleDouble());
         }
         assertTrue(compareTab());
     }
@@ -564,7 +564,7 @@ public abstract class IteratorTest {
 
         int comp = 0;
         while (pixIterator.next()) {
-            setTabTestValue(comp++, pixIterator.getSample());
+            setTabTestValue(comp++, pixIterator.getSampleDouble());
         }
         assertTrue(compareTab());
     }
@@ -587,7 +587,7 @@ public abstract class IteratorTest {
 
         int comp = 0;
         while (pixIterator.next()) {
-            setTabTestValue(comp++, pixIterator.getSample());
+            setTabTestValue(comp++, pixIterator.getSampleDouble());
         }
         assertTrue(compareTab());
     }
@@ -633,5 +633,85 @@ public abstract class IteratorTest {
         }catch(IllegalArgumentException e){
             //ok
         }
+    }
+
+    /**
+     * Compare 2 integer table.
+     *
+     * @param tabA table resulting raster iterate.
+     * @param tabB table resulting raster iterate.
+     * @return true if tables are identical.
+     */
+    protected boolean compareTab(int[] tabA, int[] tabB) {
+        int length = tabA.length;
+        if (length != tabB.length) return false;
+        for (int i = 0; i<length; i++) {
+            if (tabA[i] != tabB[i]) return false;
+        }
+        return true;
+    }
+
+    /**
+     * Compare 2 integer table.
+     *
+     * @param tabA table resulting raster iterate.
+     * @param tabB table resulting raster iterate.
+     * @return true if tables are identical.
+     */
+    protected boolean compareTab(double[] tabA, double[] tabB) {
+        int length = tabA.length;
+        if (length != tabB.length) return false;
+        for (int i = 0; i<length; i++) {
+            if (tabA[i] != tabB[i]) return false;
+        }
+        return true;
+    }
+
+    /**
+     * Compare 2 integer table.
+     *
+     * @param tabA table resulting raster iterate.
+     * @param tabB table resulting raster iterate.
+     * @return true if tables are identical.
+     */
+    protected boolean compareTab(float[] tabA, float[] tabB) {
+        int length = tabA.length;
+        if (length != tabB.length) return false;
+        for (int i = 0; i<length; i++) {
+            if (tabA[i] != tabB[i]) return false;
+        }
+        return true;
+    }
+
+    /**
+     * Compare 2 integer table.
+     *
+     * @param tabA table resulting raster iterate.
+     * @param tabB table resulting raster iterate.
+     * @return true if tables are identical.
+     */
+    protected boolean compareTab(short[] tabA, short[] tabB) {
+        int length = tabA.length;
+        if (length != tabB.length) return false;
+        for (int i = 0; i<length; i++) {
+            if (tabA[i] != tabB[i]) return false;
+        }
+        return true;
+    }
+
+    /**
+     * Compare 2 integer table.
+     *
+     * @param tabA table resulting raster iterate.
+     * @param tabB table resulting raster iterate.
+     * @return true if tables are identical.
+     */
+    protected boolean compareTab(byte[] tabA, byte[] tabB) {
+        int length = tabA.length;
+        if (length != tabB.length) return false;
+        for (int i = 0; i<length; i++) {
+            if (tabA[i] != tabB[i]) return false;
+        }
+        return true;
     }
 }
