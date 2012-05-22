@@ -30,6 +30,7 @@ import java.nio.file.Path;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.io.TemporaryFile;
 import org.geotoolkit.internal.image.io.Formats;
+import org.geotoolkit.resources.Errors;
 
 
 /**
@@ -108,6 +109,10 @@ public abstract class FileImageWriter extends StreamImageWriter {
     protected File getOutputFile() throws IOException {
         if (outputFile != null) {
             return outputFile;
+        }
+        final Object output = this.output;
+        if (output == null) {
+            throw new IllegalStateException(getErrorResources().getString(Errors.Keys.NO_IMAGE_OUTPUT));
         }
         if (output instanceof String) {
             outputFile = new File((String) output);
