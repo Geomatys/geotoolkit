@@ -110,6 +110,10 @@ public class GetCapabilitiesType implements GetCapabilities {
             return service;
         }
     }
+    
+    public void setService(final String value) {
+        this.service = value;
+    }
 
     /**
      * Gets the value of the version property.
@@ -123,6 +127,10 @@ public class GetCapabilitiesType implements GetCapabilities {
         }
     }
 
+    public void setVersion(final String value) {
+        this.version = value;
+    }
+    
     /**
      * Gets the value of the updateSequence property.
      */

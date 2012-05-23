@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.filter.FilterVisitor;
 
 
 /**
@@ -51,9 +52,7 @@ import javax.xml.bind.annotation.XmlType;
     "expression",
     "any"
 })
-public class BBOXType
-    extends SpatialOpsType
-{
+public class BBOXType extends SpatialOpsType {
 
     @XmlElementRef(name = "expression", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
     private JAXBElement<?> expression;
@@ -114,4 +113,13 @@ public class BBOXType
         this.any = value;
     }
 
+    @Override
+    public boolean evaluate(final Object object) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Object accept(final FilterVisitor visitor, final Object extraData) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

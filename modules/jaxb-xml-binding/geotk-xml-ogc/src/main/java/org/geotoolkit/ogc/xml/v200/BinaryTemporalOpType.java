@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.filter.FilterVisitor;
 
 
 /**
@@ -56,9 +57,7 @@ import javax.xml.bind.annotation.XmlType;
     "expression",
     "any"
 })
-public class BinaryTemporalOpType
-    extends TemporalOpsType
-{
+public class BinaryTemporalOpType extends TemporalOpsType {
 
     @XmlElement(name = "ValueReference", required = true)
     private String valueReference;
@@ -145,4 +144,11 @@ public class BinaryTemporalOpType
         this.any = value;
     }
 
+    public boolean evaluate(final Object object) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Object accept(final FilterVisitor visitor, final Object extraData) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

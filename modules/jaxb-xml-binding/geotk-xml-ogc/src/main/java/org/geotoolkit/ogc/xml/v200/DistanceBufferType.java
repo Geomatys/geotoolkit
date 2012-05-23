@@ -19,13 +19,10 @@
 package org.geotoolkit.ogc.xml.v200;
 
 import javax.xml.bind.JAXBElement;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAnyElement;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementRef;
-import javax.xml.bind.annotation.XmlType;
-
+import javax.xml.bind.annotation.*;
+import org.geotoolkit.gml.xml.v321.AbstractGeometryType;
+import org.opengis.filter.FilterVisitor;
+import org.opengis.filter.expression.Expression;
 
 /**
  * <p>Java class for DistanceBufferType complex type.
@@ -54,9 +51,7 @@ import javax.xml.bind.annotation.XmlType;
     "any",
     "distance"
 })
-public class DistanceBufferType
-    extends SpatialOpsType
-{
+public class DistanceBufferType extends SpatialOpsType {
 
     @XmlElementRef(name = "expression", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
     private JAXBElement<?> expression;
@@ -65,6 +60,27 @@ public class DistanceBufferType
     @XmlElement(name = "Distance", required = true)
     private MeasureType distance;
 
+    @XmlTransient
+    private static final org.geotoolkit.gml.xml.v321.ObjectFactory gmlFactory = new org.geotoolkit.gml.xml.v321.ObjectFactory();
+    
+    @XmlTransient
+    private static final ObjectFactory factory = new ObjectFactory();
+    
+    public DistanceBufferType() {
+        
+    }
+            
+    /**
+     * build a new Distance buffer
+     */
+    public DistanceBufferType(final String propertyName, final AbstractGeometryType geometry, final double distance, final String unit) {
+        if (propertyName != null) {
+            this.expression = factory.createValueReference(propertyName);
+        }
+        this.distance       = new MeasureType(distance, unit);
+        this.any            = geometry;
+    }
+    
     /**
      * Gets the value of the expression property.
      * 
@@ -127,10 +143,16 @@ public class DistanceBufferType
      *     {@link MeasureType }
      *     
      */
-    public MeasureType getDistance() {
+    public MeasureType getDistanceType() {
         return distance;
     }
 
+    public double getDistance() {
+        if (distance != null)
+            return distance.getValue();
+        return 0.0;
+    }
+    
     /**
      * Sets the value of the distance property.
      * 
@@ -141,6 +163,36 @@ public class DistanceBufferType
      */
     public void setDistance(MeasureType value) {
         this.distance = value;
+    }
+    
+    public String getDistanceUnits() {
+        if (distance != null)
+            return distance.getUom();
+        return null;
+    }
+    
+    public Expression getExpression1() {
+        if (expression != null && expression.getValue() instanceof Expression) {
+            return (Expression)expression.getValue();
+        }
+        return null;
+    }
+
+    public Expression getExpression2() {
+        if (any instanceof Expression) {
+            return (Expression) any;
+        }
+        return null;
+    }
+    
+    @Override
+    public boolean evaluate(final Object object) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Object accept(final FilterVisitor visitor, final Object extraData) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

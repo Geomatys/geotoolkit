@@ -23,6 +23,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.Version;
+import org.geotoolkit.wfs.xml.BaseRequest;
 
 
 /**
@@ -57,7 +60,7 @@ import javax.xml.bind.annotation.XmlType;
     DescribeFeatureTypeType.class,
     DropStoredQuery.class
 })
-public abstract class BaseRequestType {
+public abstract class BaseRequestType implements BaseRequest {
 
     @XmlAttribute(required = true)
     private String service;
@@ -65,6 +68,16 @@ public abstract class BaseRequestType {
     private String version;
     @XmlAttribute
     private String handle;
+    
+    public BaseRequestType() {
+
+    }
+
+    public BaseRequestType(final String service, final String version, final String handle) {
+        this.service = service;
+        this.version = version;
+        this.handle  = handle;
+    }
 
     /**
      * Gets the value of the service property.
@@ -90,7 +103,7 @@ public abstract class BaseRequestType {
      *     {@link String }
      *     
      */
-    public void setService(String value) {
+    public void setService(final String value) {
         this.service = value;
     }
 
@@ -102,12 +115,11 @@ public abstract class BaseRequestType {
      *     {@link String }
      *     
      */
-    public String getVersion() {
-        if (version == null) {
-            return "2.0.0";
-        } else {
-            return version;
-        }
+    public Version getVersion() {
+        if (version != null) {
+            return new Version(version);
+        } 
+        return null;
     }
 
     /**
@@ -118,7 +130,7 @@ public abstract class BaseRequestType {
      *     {@link String }
      *     
      */
-    public void setVersion(String value) {
+    public void setVersion(final String value) {
         this.version = value;
     }
 
@@ -142,8 +154,45 @@ public abstract class BaseRequestType {
      *     {@link String }
      *     
      */
-    public void setHandle(String value) {
+    public void setHandle(final String value) {
         this.handle = value;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append(']');
+        if (handle != null) {
+            sb.append("handle=").append(handle).append('\n');
+        }
+        if (version != null) {
+            sb.append("version=").append(version).append('\n');
+        }
+        if (service != null) {
+            sb.append("service=").append(service).append('\n');
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof BaseRequestType) {
+            final BaseRequestType that = (BaseRequestType) object;
+            return  Utilities.equals(this.handle, that.handle) &&
+                    Utilities.equals(this.service, that.service) &&
+                    Utilities.equals(this.version, that.version);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 73 * hash + (this.service != null ? this.service.hashCode() : 0);
+        hash = 73 * hash + (this.version != null ? this.version.hashCode() : 0);
+        hash = 73 * hash + (this.handle != null ? this.handle.hashCode() : 0);
+        return hash;
+    }
 }

@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.filter.FilterVisitor;
 
 
 /**
@@ -54,9 +55,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "PropertyIsLikeType", propOrder = {
     "expression"
 })
-public class PropertyIsLikeType
-    extends ComparisonOpsType
-{
+public class PropertyIsLikeType extends ComparisonOpsType {
 
     @XmlElementRef(name = "expression", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
     private List<JAXBElement<?>> expression;
@@ -66,6 +65,31 @@ public class PropertyIsLikeType
     private String singleChar;
     @XmlAttribute(required = true)
     private String escapeChar;
+
+    /**
+     * An empty constructor used by JAXB.
+     */
+    public PropertyIsLikeType() {
+        
+    }
+    
+    /**
+     *Build a new Property is like operator
+     */
+    public PropertyIsLikeType(final String expr, final String pattern, final String wildcard, final String singleChar, final String escape) {
+        this.escapeChar = escape;
+        this.expression = new ArrayList<JAXBElement<?>>();
+        if (expr != null) {
+            final ObjectFactory factory = new ObjectFactory();
+            this.expression.add(factory.createValueReference(expr));
+        }
+        this.singleChar   = singleChar;
+        this.wildCard     = wildcard;
+        if (pattern != null) {
+            final ObjectFactory factory = new ObjectFactory();
+            this.expression.add(factory.createLiteral(new LiteralType(pattern)));
+        }
+    }
 
     /**
      * Gets the value of the expression property.
@@ -171,4 +195,13 @@ public class PropertyIsLikeType
         this.escapeChar = value;
     }
 
+    @Override
+    public boolean evaluate(final Object object) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Object accept(final FilterVisitor visitor, final Object extraData) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

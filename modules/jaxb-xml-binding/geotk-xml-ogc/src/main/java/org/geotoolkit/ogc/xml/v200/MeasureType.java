@@ -54,6 +54,18 @@ public class MeasureType {
     private String uom;
 
     /**
+     * An empty constructor used by JAXB
+     */
+    public MeasureType() {
+        
+    }
+    
+    public MeasureType(final double value, final String units) {
+        this.value = value;
+        this.uom = units;
+    }
+    
+    /**
      * Gets the value of the value property.
      * 
      */

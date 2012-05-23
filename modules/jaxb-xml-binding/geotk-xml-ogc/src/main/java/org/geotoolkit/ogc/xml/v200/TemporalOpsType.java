@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.filter.Filter;
 
 
 /**
@@ -45,7 +46,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlSeeAlso({
     BinaryTemporalOpType.class
 })
-public abstract class TemporalOpsType {
+public abstract class TemporalOpsType implements Filter {
 
 
 }

@@ -25,6 +25,7 @@ import org.geotoolkit.util.Versioned;
  */
 public interface RequestBase extends Versioned {
 
-    public String getService();
+    String getService();
 
+    void setService(final String value);
 }

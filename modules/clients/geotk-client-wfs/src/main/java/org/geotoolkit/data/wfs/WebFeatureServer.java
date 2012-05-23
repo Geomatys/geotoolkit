@@ -134,7 +134,7 @@ public class WebFeatureServer extends AbstractServer implements DataStore{
             @Override
             public void run() {
                 try {
-                    capabilities = WFSBindingUtilities.unmarshall(createGetCapabilities().getURL(), getVersion());
+                    capabilities = (WFSCapabilitiesType) WFSBindingUtilities.unmarshall(createGetCapabilities().getURL(), getVersion());
                 } catch (Exception ex) {
                     capabilities = null;
                     try {

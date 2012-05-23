@@ -24,6 +24,7 @@ import java.util.List;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.filter.DefaultLiteral;
+import org.geotoolkit.filter.binaryspatial.UnreprojectedLooseBBox;
 import org.geotoolkit.filter.binaryspatial.LooseBBox;
 
 import org.opengis.filter.And;
@@ -236,9 +237,11 @@ public class DuplicatingFilterVisitor implements FilterVisitor, ExpressionVisito
             Literal l = (Literal)visit(exp2,extraData);
             final Object obj = l.getValue();
             if(obj instanceof BoundingBox){
-                if(filter instanceof LooseBBox){
+                if (filter instanceof UnreprojectedLooseBBox) {
+                    return new UnreprojectedLooseBBox((PropertyName)exp1, new DefaultLiteral<BoundingBox>((BoundingBox) obj));
+                } else if (filter instanceof LooseBBox) {
                     return new LooseBBox((PropertyName)exp1, new DefaultLiteral<BoundingBox>((BoundingBox) obj));
-                }else{
+                } else {
                     return getFactory(extraData).bbox(exp1, (BoundingBox) obj);
                 }
             }else{

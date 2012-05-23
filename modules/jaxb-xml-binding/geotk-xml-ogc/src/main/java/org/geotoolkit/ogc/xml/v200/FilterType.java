@@ -21,11 +21,7 @@ package org.geotoolkit.ogc.xml.v200;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.JAXBElement;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementRef;
-import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.*;
 
 
 /**
@@ -75,6 +71,42 @@ public class FilterType
     @XmlElementRef(name = "_Id", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
     private List<JAXBElement<? extends AbstractIdType>> id;
 
+    /**
+     * a transient factory to build JAXBelement
+     */
+    @XmlTransient
+    private static ObjectFactory FACTORY = new ObjectFactory();
+    
+    public FilterType() {
+        
+    }
+    /**
+     * build a new FilterType with the specified logical operator
+     */
+    public FilterType(final Object obj) {
+        
+        // comparison operator
+        if (obj instanceof ComparisonOpsType) {
+            this.comparisonOps = createComparisonOps((ComparisonOpsType) obj);
+            
+        // logical operator    
+        } else if (obj instanceof LogicOpsType) {
+            this.logicOps = createLogicOps((LogicOpsType) obj);
+            
+        // spatial operator    
+        } else if (obj instanceof SpatialOpsType) {
+            this.spatialOps = createSpatialOps((SpatialOpsType) obj);
+
+        // id operator
+        } else if (obj instanceof AbstractIdType) {
+            this.id = new ArrayList<JAXBElement<? extends AbstractIdType>>();
+            this.id.add(createIdOps((AbstractIdType) obj));
+
+        } else {
+            throw new IllegalArgumentException("This kind of object is not allowed:" + obj.getClass().getSimpleName());
+        }
+    }
+    
     /**
      * Gets the value of the comparisonOps property.
      * 
@@ -325,4 +357,116 @@ public class FilterType
         return this.id;
     }
 
+    public static JAXBElement<? extends ComparisonOpsType> createComparisonOps(final ComparisonOpsType operator) {
+        
+        if (operator instanceof PropertyIsLessThanOrEqualToType) {
+            return FACTORY.createPropertyIsLessThanOrEqualTo((PropertyIsLessThanOrEqualToType) operator);
+        } else if (operator instanceof PropertyIsLessThanType) {
+            return FACTORY.createPropertyIsLessThan((PropertyIsLessThanType) operator);
+        } else if (operator instanceof PropertyIsGreaterThanOrEqualToType) {
+            return FACTORY.createPropertyIsGreaterThanOrEqualTo((PropertyIsGreaterThanOrEqualToType) operator);
+        } else if (operator instanceof PropertyIsNotEqualToType) {
+            return FACTORY.createPropertyIsNotEqualTo((PropertyIsNotEqualToType) operator);
+        } else if (operator instanceof PropertyIsGreaterThanType) {
+            return FACTORY.createPropertyIsGreaterThan((PropertyIsGreaterThanType) operator);
+        } else if (operator instanceof PropertyIsEqualToType) {
+            return FACTORY.createPropertyIsEqualTo((PropertyIsEqualToType) operator);
+        } else if (operator instanceof PropertyIsNullType) {
+            return FACTORY.createPropertyIsNull((PropertyIsNullType) operator);
+        } else if (operator instanceof PropertyIsBetweenType) {
+            return FACTORY.createPropertyIsBetween((PropertyIsBetweenType) operator);
+        } else if (operator instanceof PropertyIsLikeType) {
+            return FACTORY.createPropertyIsLike((PropertyIsLikeType) operator);
+        } else if (operator instanceof ComparisonOpsType) {
+            return FACTORY.createComparisonOps((ComparisonOpsType) operator);
+        } else return null;
+    }
+    
+    public static JAXBElement<? extends LogicOpsType> createLogicOps(final LogicOpsType operator) {
+        
+        if (operator instanceof OrType) {
+            return FACTORY.createOr((OrType) operator);
+        } else if (operator instanceof NotType) {
+            return FACTORY.createNot((NotType) operator);
+        } else if (operator instanceof AndType) {
+            return FACTORY.createAnd((AndType) operator);
+        } else if (operator instanceof LogicOpsType) {
+            return FACTORY.createLogicOps((LogicOpsType) operator);
+        } else return null;
+    }
+    
+    public static JAXBElement<? extends SpatialOpsType> createSpatialOps(final SpatialOpsType operator) {
+        
+        if (operator instanceof BeyondType) {
+            return FACTORY.createBeyond((BeyondType) operator);
+        } else if (operator instanceof DWithinType) {
+            return FACTORY.createDWithin((DWithinType) operator);
+        } else if (operator instanceof BBOXType) {
+            return FACTORY.createBBOX((BBOXType) operator);
+        } else if (operator instanceof ContainsType) {
+            return FACTORY.createContains((ContainsType) operator);
+        } else if (operator instanceof CrossesType) {
+            return FACTORY.createCrosses((CrossesType) operator);
+        } else if (operator instanceof DisjointType) {
+            return FACTORY.createDisjoint((DisjointType) operator);
+        } else if (operator instanceof EqualsType) {
+            return FACTORY.createEquals((EqualsType) operator);
+        } else if (operator instanceof IntersectsType) {
+            return FACTORY.createIntersects((IntersectsType) operator);
+        } else if (operator instanceof OverlapsType) {
+            return FACTORY.createOverlaps((OverlapsType) operator);
+        } else if (operator instanceof TouchesType) {
+            return FACTORY.createTouches((TouchesType) operator);
+        } else if (operator instanceof WithinType) {
+            return FACTORY.createWithin((WithinType) operator);
+        } else if (operator instanceof SpatialOpsType) {
+            return FACTORY.createSpatialOps((SpatialOpsType) operator);
+        } else {
+            return null;
+        }
+    }
+    
+    public static JAXBElement<? extends TemporalOpsType> createTemporalOps(final TemporalOpsType operator) {
+        
+        if (operator instanceof TimeAfterType) {
+            return FACTORY.createAfter((TimeAfterType) operator);
+        } else if (operator instanceof TimeAnyInteractsType) {
+            return FACTORY.createAnyInteracts((TimeAnyInteractsType) operator);
+        } else if (operator instanceof TimeBeforeType) {
+            return FACTORY.createBefore((TimeBeforeType) operator);
+        } else if (operator instanceof TimeBeginsType) {
+            return FACTORY.createBegins((TimeBeginsType) operator);
+        } else if (operator instanceof TimeBegunByType) {
+            return FACTORY.createBegunBy((TimeBegunByType) operator);
+        } else if (operator instanceof TimeDuringType) {
+            return FACTORY.createDuring((TimeDuringType) operator);
+        } else if (operator instanceof TimeEndedByType) {
+            return FACTORY.createEndedBy((TimeEndedByType) operator);
+        } else if (operator instanceof TimeEndsType) {
+            return FACTORY.createEnds((TimeEndsType) operator);
+        } else if (operator instanceof TimeMeetsType) {
+            return FACTORY.createMeets((TimeMeetsType) operator);
+        } else if (operator instanceof TimeMetByType) {
+            return FACTORY.createMetBy((TimeMetByType) operator);
+        } else if (operator instanceof TimeOverlappedByType) {
+            return FACTORY.createOverlappedBy((TimeOverlappedByType) operator);
+        } else if (operator instanceof TimeContainsType) {
+            return FACTORY.createTContains((TimeContainsType) operator);
+        } else if (operator instanceof TimeEqualsType) {
+            return FACTORY.createTEquals((TimeEqualsType) operator);
+        } else if (operator instanceof TimeOverlapsType) {
+            return FACTORY.createTOverlaps((TimeOverlapsType) operator);
+        } else {
+            return null;
+        }
+    }
+    
+    public static JAXBElement<? extends AbstractIdType> createIdOps(final AbstractIdType operator) {
+
+        if (operator instanceof ResourceIdType) {
+            return FACTORY.createResourceId((ResourceIdType) operator);
+        } else {
+            return FACTORY.createId(operator);
+        }
+    }
 }

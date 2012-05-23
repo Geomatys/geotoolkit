@@ -70,7 +70,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.filter.FilterUtilities;
-import org.geotoolkit.filter.binaryspatial.LooseBBox;
+import org.geotoolkit.filter.binaryspatial.UnreprojectedLooseBBox;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.StyleUtilities;
 
@@ -89,6 +89,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 
 import static org.geotoolkit.display2d.GO2Utilities.*;
+import org.geotoolkit.filter.binaryspatial.LooseBBox;
 
 /**
  * Single object to represent a complete feature map layer.
@@ -383,7 +384,11 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         //}else{
         //make a bbox filter
         if(geomAttName != null){
-            filter = new LooseBBox(FILTER_FACTORY.property(geomAttName),new DefaultLiteral<BoundingBox>(bbox));
+            if (layerCRS != null) {
+                filter = new UnreprojectedLooseBBox(FILTER_FACTORY.property(geomAttName),new DefaultLiteral<BoundingBox>(bbox));
+            } else {
+                filter = new LooseBBox(FILTER_FACTORY.property(geomAttName),new DefaultLiteral<BoundingBox>(bbox));
+            }
         }else{
             filter = Filter.EXCLUDE;
         }

@@ -25,6 +25,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ogc.xml.v100.FilterCapabilities;
+import org.geotoolkit.wfs.xml.WFSCapabilities;
+import org.geotoolkit.wfs.xml.WFSResponse;
 
 
 /**
@@ -59,7 +61,7 @@ import org.geotoolkit.ogc.xml.v100.FilterCapabilities;
     "filterCapabilities"
 })
 @XmlRootElement(name = "WFS_Capabilities")
-public class WFSCapabilitiesType {
+public class WFSCapabilitiesType implements WFSResponse, WFSCapabilities {
 
     @XmlElement(name = "Service", required = true)
     private ServiceType service;

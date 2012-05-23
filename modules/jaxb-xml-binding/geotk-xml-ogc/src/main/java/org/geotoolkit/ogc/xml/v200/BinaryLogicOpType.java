@@ -26,6 +26,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.filter.BinaryLogicOperator;
+import org.opengis.filter.Filter;
+import org.opengis.filter.FilterVisitor;
 
 
 /**
@@ -51,9 +54,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "BinaryLogicOpType", propOrder = {
     "comparisonOpsOrSpatialOpsOrTemporalOps"
 })
-public class BinaryLogicOpType
-    extends LogicOpsType
-{
+public class BinaryLogicOpType extends LogicOpsType implements BinaryLogicOperator {
 
     @XmlElementRefs({
         @XmlElementRef(name = "comparisonOps", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class),
@@ -66,6 +67,39 @@ public class BinaryLogicOpType
     })
     private List<JAXBElement<?>> comparisonOpsOrSpatialOpsOrTemporalOps;
 
+    public BinaryLogicOpType() {
+        
+    }
+    /**
+      * Build a new Binary logic operator 
+      */
+     public BinaryLogicOpType(final Object... operators) {
+         this.comparisonOpsOrSpatialOpsOrTemporalOps = new ArrayList<JAXBElement<?>>();
+         
+         for (Object obj: operators) {
+
+             if(obj instanceof JAXBElement){
+                 obj = ((JAXBElement)obj).getValue();
+             }
+
+             // comparison operator
+             if (obj instanceof ComparisonOpsType)  {
+                 this.comparisonOpsOrSpatialOpsOrTemporalOps.add(FilterType.createComparisonOps((ComparisonOpsType)obj));
+                 
+             // logical operator    
+             } else if (obj instanceof LogicOpsType) {
+                 this.comparisonOpsOrSpatialOpsOrTemporalOps.add(FilterType.createLogicOps((LogicOpsType)obj));
+             
+             // spatial operator    
+             } else if (obj instanceof SpatialOpsType) {
+                 this.comparisonOpsOrSpatialOpsOrTemporalOps.add(FilterType.createSpatialOps((SpatialOpsType) obj));
+             
+             } else {
+                 throw new IllegalArgumentException("This kind of object is not allowed:" + obj.getClass().getSimpleName());
+             }
+         }
+         
+     }
     /**
      * Gets the value of the comparisonOpsOrSpatialOpsOrTemporalOps property.
      * 
@@ -140,4 +174,19 @@ public class BinaryLogicOpType
         return this.comparisonOpsOrSpatialOpsOrTemporalOps;
     }
 
+    public List<Filter> getChildren() {
+        List<Filter> result = new ArrayList<Filter>();
+        for (JAXBElement jb: getComparisonOpsOrSpatialOpsOrTemporalOps()) {
+            result.add((Filter)jb.getValue());
+        }
+        return result;
+    }
+    
+    public boolean evaluate(final Object object) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Object accept(final FilterVisitor visitor, final Object extraData) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

@@ -108,7 +108,7 @@ public class WfsXMLBindingTest {
         // TEST with WFSBindingUtilities
 
         is = WfsXMLBindingTest.class.getResourceAsStream("/org/geotoolkit/wfs/v110/capabilities.xml");
-        result = WFSBindingUtilities.unmarshall(is, WFSVersion.v110);
+        result = (WFSCapabilitiesType) WFSBindingUtilities.unmarshall(is, WFSVersion.v110);
         assertEquals(expResult.getFeatureTypeList().getFeatureType(), result.getFeatureTypeList().getFeatureType());
         assertEquals(expResult.getFeatureTypeList(), result.getFeatureTypeList());
         

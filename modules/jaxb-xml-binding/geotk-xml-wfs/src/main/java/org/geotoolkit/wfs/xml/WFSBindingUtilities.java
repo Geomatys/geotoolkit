@@ -31,7 +31,6 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Source;
 
 import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.wfs.xml.v110.WFSCapabilitiesType;
 import org.geotoolkit.xml.MarshallerPool;
 
 import org.opengis.metadata.citation.OnlineResource;
@@ -47,21 +46,22 @@ import org.xml.sax.InputSource;
 public class WFSBindingUtilities {
 
 
-     public static WFSCapabilitiesType unmarshall(final Object source, final WFSVersion version) throws JAXBException{
+     public static WFSCapabilities unmarshall(final Object source, final WFSVersion version) throws JAXBException{
 
          final MarshallerPool pool = WFSMarshallerPool.getInstance();
          Unmarshaller unMarshaller = null;
          try {
              switch(version){
                  case v110 : break;
+                 case v200 : break;
                  default: throw new IllegalArgumentException("unknonwed version");
              }
              unMarshaller = pool.acquireUnmarshaller();
              final Object unmarshalled = unmarshall(source, unMarshaller);
              if (unmarshalled instanceof JAXBElement) {
-                 return (WFSCapabilitiesType) ((JAXBElement)unmarshalled).getValue();
+                 return (WFSCapabilities) ((JAXBElement)unmarshalled).getValue();
              } else {
-                return (WFSCapabilitiesType) unmarshalled;
+                return (WFSCapabilities) unmarshalled;
              }
          } finally {
              if (unMarshaller != null) {
@@ -70,7 +70,7 @@ public class WFSBindingUtilities {
          }
      }
 
-     private static final Object unmarshall(final Object source, final Unmarshaller unMarshaller)
+     private static Object unmarshall(final Object source, final Unmarshaller unMarshaller)
             throws JAXBException{
         if(source instanceof File){
             return unMarshaller.unmarshal( (File)source );

@@ -21,6 +21,7 @@ package org.geotoolkit.gml.xml.v321;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.geometry.DirectPosition;
 
 
 /**
@@ -50,13 +51,64 @@ import javax.xml.bind.annotation.XmlType;
     "pos",
     "coordinates"
 })
-public class PointType
-    extends AbstractGeometricPrimitiveType
-{
+public class PointType extends AbstractGeometricPrimitiveType {
 
     private DirectPositionType pos;
     private CoordinatesType coordinates;
 
+/**
+     * An empty constructor used by JAXB.
+     */
+    PointType() {}
+
+    /**
+     * Build a new Point with the specified identifier and DirectPositionType
+     *
+     * @param id The identifier of the point.
+     * @param pos A direcPosition locating the point.
+     */
+    public PointType(final String id, final DirectPosition pos) {
+        super.setId(id);
+        this.pos = (pos instanceof DirectPositionType) ? (DirectPositionType)pos : new DirectPositionType(pos);
+        if (this.pos.srsName == null) {
+            this.pos.setSrsName(getSrsName());
+        }
+    }
+
+    /**
+     * Build a new Point with the specified DirectPositionType
+     *
+     * @param pos A direcPosition locating the point.
+     */
+    public PointType(final DirectPosition pos) {
+        this.pos = (pos instanceof DirectPositionType) ? (DirectPositionType)pos : new DirectPositionType(pos, true);
+        if (this.pos.srsName == null) {
+            this.pos.setSrsName(getSrsName());
+        }
+    }
+
+    /**
+     * Build a new Point with the specified DirectPositionType
+     *
+     * @param pos A direcPosition locating the point.
+     * @param srsInfo if true the srs information will be applied to the directPosition
+     */
+    public PointType(final DirectPosition pos, final boolean srsInfo) {
+        this.pos = (pos instanceof DirectPositionType) ? (DirectPositionType)pos : new DirectPositionType(pos, srsInfo);
+        if (this.pos.srsName == null) {
+            this.pos.setSrsName(getSrsName());
+        }
+    }
+
+    /**
+     * Build a point Type with the specified coordinates.
+     *
+     * @param coordinates a list of coordinates.
+     */
+    public PointType(final CoordinatesType coordinates) {
+        this.coordinates = coordinates;
+    }
+    
     /**
      * Gets the value of the pos property.
      * 

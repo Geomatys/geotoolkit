@@ -26,6 +26,10 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ogc.xml.v110.PropertyNameType;
+import org.opengis.filter.BinaryComparisonOperator;
+import org.opengis.filter.FilterVisitor;
+import org.opengis.filter.expression.Expression;
 
 
 /**
@@ -53,9 +57,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "BinaryComparisonOpType", propOrder = {
     "expression"
 })
-public class BinaryComparisonOpType
-    extends ComparisonOpsType
-{
+public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryComparisonOperator {
 
     @XmlElementRef(name = "expression", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
     private List<JAXBElement<?>> expression;
@@ -64,6 +66,39 @@ public class BinaryComparisonOpType
     @XmlAttribute
     private MatchActionType matchAction;
 
+    private static final ObjectFactory FACTORY = new ObjectFactory();
+    
+    /**
+     * Empty constructor used by JAXB
+     */
+    public BinaryComparisonOpType() {
+        
+    }
+    
+    /**
+     * Build a new Binary comparison operator
+     */
+    public BinaryComparisonOpType(final List<JAXBElement<?>> expression, final Boolean matchCase) {
+        this.expression = expression;
+        this.matchCase = matchCase;
+    }
+
+    /**
+     * Build a new Binary comparison operator
+     */
+    public BinaryComparisonOpType(final LiteralType literal, final String propertyName, final Boolean matchCase) {
+        if (this.expression == null) {
+            this.expression = new ArrayList<JAXBElement<?>>();
+        }
+        if (propertyName != null) {
+            this.expression.add(FACTORY.createValueReference(propertyName));
+        }
+        if (literal != null) {
+            this.expression.add(FACTORY.createLiteral(literal));
+        }
+        this.matchCase = matchCase;
+    }
+    
     /**
      * Gets the value of the expression property.
      * 
@@ -104,7 +139,7 @@ public class BinaryComparisonOpType
      *     {@link Boolean }
      *     
      */
-    public boolean isMatchCase() {
+    public boolean isMatchingCase() {
         if (matchCase == null) {
             return true;
         } else {
@@ -150,6 +185,40 @@ public class BinaryComparisonOpType
      */
     public void setMatchAction(MatchActionType value) {
         this.matchAction = value;
+    }
+    
+    @Override
+    public boolean evaluate(final Object object) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Object accept(final FilterVisitor visitor, final Object extraData) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Expression getExpression1() {
+        for (JAXBElement<?> elem : getExpression()) {
+            final Object value = elem.getValue();
+            if (value instanceof String) {
+                return new PropertyNameType((String) value);
+            }
+            if (value instanceof PropertyNameType) {
+                return (PropertyNameType) value;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Expression getExpression2() {
+        for (JAXBElement<?> elem : getExpression()) {
+            if (elem.getValue() instanceof org.geotoolkit.ogc.xml.v110.LiteralType) {
+                return (org.geotoolkit.ogc.xml.v110.LiteralType)elem.getValue();
+            }
+        }
+        return null;
     }
 
 }

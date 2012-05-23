@@ -22,7 +22,8 @@ package org.geotoolkit.wfs.xml;
  * @module pending
  */
 public enum WFSVersion {
-    v110("1.1.0");
+    v110("1.1.0"),
+    v200("2.0.0");
 
     private final String code;
 

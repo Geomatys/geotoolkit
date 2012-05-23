@@ -121,6 +121,10 @@ public class DescribeCoverageType implements DescribeCoverage {
     public String getService() {
         return this.service;
     }
+    
+    public void setService(final String value) {
+        this.service = value;
+    }
 
     /**
      * Return the version of the service.
@@ -131,6 +135,10 @@ public class DescribeCoverageType implements DescribeCoverage {
             return new Version(version);
         }
         return null;
+    }
+    
+    public void setVersion(final String value) {
+        this.version = value;
     }
 
     @Override

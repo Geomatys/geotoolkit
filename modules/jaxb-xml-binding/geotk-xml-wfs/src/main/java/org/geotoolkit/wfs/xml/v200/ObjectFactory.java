@@ -290,8 +290,8 @@ public class ObjectFactory {
      * Create an instance of {@link PropertyType.ValueReference }
      * 
      */
-    public PropertyType.ValueReference createPropertyTypeValueReference() {
-        return new PropertyType.ValueReference();
+    public ValueReference createValueReference() {
+        return new ValueReference();
     }
 
     /**

@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
+import org.geotoolkit.wfs.xml.DescribeFeatureType;
 
 
 /**
@@ -64,7 +65,7 @@ import javax.xml.namespace.QName;
     "typeName"
 })
 @XmlRootElement(name = "DescribeFeatureType")
-public class DescribeFeatureTypeType extends BaseRequestType {
+public class DescribeFeatureTypeType extends BaseRequestType implements DescribeFeatureType {
 
     @XmlElement(name = "TypeName")
     private List<QName> typeName;

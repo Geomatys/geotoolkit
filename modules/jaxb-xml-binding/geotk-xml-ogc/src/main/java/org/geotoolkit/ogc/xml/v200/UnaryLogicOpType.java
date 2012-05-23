@@ -26,6 +26,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.filter.Filter;
+import org.opengis.filter.FilterVisitor;
 
 
 /**
@@ -59,9 +61,7 @@ import javax.xml.bind.annotation.XmlType;
     "function",
     "id"
 })
-public class UnaryLogicOpType
-    extends LogicOpsType
-{
+public class UnaryLogicOpType extends LogicOpsType {
 
     @XmlElementRef(name = "comparisonOps", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
     private JAXBElement<? extends ComparisonOpsType> comparisonOps;
@@ -77,6 +77,40 @@ public class UnaryLogicOpType
     @XmlElementRef(name = "_Id", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
     private List<JAXBElement<? extends AbstractIdType>> id;
 
+    /**
+     * An empty constructor used by JAXB
+     */
+     public UnaryLogicOpType() {
+         
+     }
+     
+     /**
+      * Build a new Binary logic operator 
+      */
+     public UnaryLogicOpType(final Object obj) {
+         
+         // comparison operator
+         if (obj instanceof ComparisonOpsType) {
+             this.comparisonOps = FilterType.createComparisonOps((ComparisonOpsType) obj);
+
+         // logical operator    
+         } else if (obj instanceof LogicOpsType) {
+             this.logicOps = FilterType.createLogicOps((LogicOpsType) obj);
+
+         // spatial operator    
+         } else if (obj instanceof SpatialOpsType) {
+             this.spatialOps = FilterType.createSpatialOps((SpatialOpsType) obj);
+             
+        // temporal operator    
+         } else if (obj instanceof TemporalOpsType) {
+             this.temporalOps = FilterType.createTemporalOps((TemporalOpsType) obj);
+
+         } else {
+             throw new IllegalArgumentException("This kind of object is not allowed:" + obj.getClass().getSimpleName());
+         }
+         
+     }
+     
     /**
      * Gets the value of the comparisonOps property.
      * 
@@ -326,5 +360,30 @@ public class UnaryLogicOpType
         }
         return this.id;
     }
+    
+     /**
+     * implements geoAPI interface
+     * 
+     * @return 
+     */
+    public Filter getFilter() {
+        if (comparisonOps != null)
+            return comparisonOps.getValue();
+        else if (logicOps != null)
+            return logicOps.getValue();
+        else if (spatialOps != null)
+            return spatialOps.getValue();
+        else if (spatialOps != null)
+            return temporalOps.getValue();
+        else return null;
+        
+    }
 
+    public boolean evaluate(final Object object) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Object accept(final FilterVisitor visitor, final Object extraData) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

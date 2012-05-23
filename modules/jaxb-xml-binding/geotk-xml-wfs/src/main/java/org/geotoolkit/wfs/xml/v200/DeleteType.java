@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 import org.geotoolkit.ogc.xml.v200.FilterType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -106,4 +107,37 @@ public class DeleteType extends AbstractTransactionActionType {
         this.typeName = value;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("[DeleteType]\n");
+        if (filter != null) {
+            sb.append("filter").append(filter).append('\n');
+        }
+        if (typeName != null) {
+            sb.append("typeName").append(typeName).append('\n');
+        }
+        return sb.toString();
+    }
+    
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        
+        if (obj instanceof DeleteType) {
+            DeleteType that = (DeleteType) obj;
+            return Utilities.equals(this.filter, that.filter) &&
+                   Utilities.equals(this.typeName, that.typeName);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 13 * hash + (this.filter != null ? this.filter.hashCode() : 0);
+        hash = 13 * hash + (this.typeName != null ? this.typeName.hashCode() : 0);
+        return hash;
+    }
 }

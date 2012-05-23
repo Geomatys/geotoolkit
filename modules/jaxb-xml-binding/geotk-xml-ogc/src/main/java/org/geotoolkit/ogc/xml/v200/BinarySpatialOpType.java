@@ -25,6 +25,8 @@ import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.filter.FilterVisitor;
+import org.opengis.filter.expression.Expression;
 
 
 /**
@@ -56,9 +58,7 @@ import javax.xml.bind.annotation.XmlType;
     "expression",
     "any"
 })
-public class BinarySpatialOpType
-    extends SpatialOpsType
-{
+public class BinarySpatialOpType extends SpatialOpsType {
 
     @XmlElement(name = "ValueReference", required = true)
     private String valueReference;
@@ -67,6 +67,21 @@ public class BinarySpatialOpType
     @XmlAnyElement(lax = true)
     private Object any;
 
+     /**
+     * An empty constructor used by JAXB
+     */
+    public BinarySpatialOpType() {
+        
+    }
+    
+    /**
+     * Build a new Binary spatial operator
+     */
+    public BinarySpatialOpType(final String propertyName, final Object geometry) {
+        this.valueReference   = propertyName;
+        this.any = geometry;
+        
+    }
     /**
      * Gets the value of the valueReference property.
      * 
@@ -143,6 +158,22 @@ public class BinarySpatialOpType
      */
     public void setAny(Object value) {
         this.any = value;
+    }
+
+     public Expression getExpression1() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Expression getExpression2() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
+    public boolean evaluate(final Object object) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Object accept(final FilterVisitor visitor, final Object extraData) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

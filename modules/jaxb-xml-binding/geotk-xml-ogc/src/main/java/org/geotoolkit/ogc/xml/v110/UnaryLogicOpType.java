@@ -67,12 +67,6 @@ public class UnaryLogicOpType extends LogicOpsType {
     private JAXBElement<? extends LogicOpsType> logicOps;
 
     /**
-     * an transient ogc factory to build JAXBelement
-     */
-    @XmlTransient
-    private ObjectFactory factory = new ObjectFactory();
-    
-    /**
      * An empty constructor used by JAXB
      */
      public UnaryLogicOpType() {
@@ -101,6 +95,7 @@ public class UnaryLogicOpType extends LogicOpsType {
          }
          
      }
+     
     /**
      * Gets the value of the comparisonOps property.
      */

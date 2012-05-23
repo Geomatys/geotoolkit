@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.filter.FilterVisitor;
 
 
 /**
@@ -48,9 +49,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "PropertyIsNullType", propOrder = {
     "expression"
 })
-public class PropertyIsNullType
-    extends ComparisonOpsType
-{
+public class PropertyIsNullType extends ComparisonOpsType {
 
     @XmlElementRef(name = "expression", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
     private JAXBElement<?> expression;
@@ -85,4 +84,13 @@ public class PropertyIsNullType
         this.expression = ((JAXBElement<?> ) value);
     }
 
+    @Override
+    public boolean evaluate(final Object object) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Object accept(final FilterVisitor visitor, final Object extraData) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -107,4 +108,42 @@ public class Abstract {
         this.lang = value;
     }
 
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof Abstract) {
+            final Abstract that = (Abstract) object;
+
+            return Utilities.equals(this.lang, that.lang) &&
+                   Utilities.equals(this.value, that.value);
+            }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 37 * hash + (this.value != null ? this.value.hashCode() : 0);
+        hash = 37 * hash + (this.lang != null ? this.lang.hashCode() : 0);
+        return hash;
+    }
+
+   
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder("[Abstract]\n");
+        if(lang != null) {
+            s.append("lang:").append(lang).append('\n');
+        }
+        if (value != null) {
+            s.append("value:").append(value).append('\n');
+        }
+        return s.toString();
+    }
 }

@@ -80,24 +80,13 @@ public class DistanceBufferType extends SpatialOpsType {
     private DistanceType distance;
 
     @XmlTransient
-    private ObjectFactory factory = new ObjectFactory();
+    private static final ObjectFactory factory = new ObjectFactory();
+    
     /**
      * An empty constructor used by JAXB
      */
     public DistanceBufferType() {
         
-    }
-
-    public void setAbstractGeometry(final JAXBElement<? extends AbstractGeometryType> abstractGeometry) {
-        this.abstractGeometry = abstractGeometry;
-    }
-
-    public void setDistance(final DistanceType distance) {
-        this.distance = distance;
-    }
-
-    public void setPropertyName(final PropertyNameType propertyName) {
-        this.propertyName = propertyName;
     }
 
     /**
@@ -146,6 +135,19 @@ public class DistanceBufferType extends SpatialOpsType {
         }
         return null;
     }
+    
+    public void setAbstractGeometry(final JAXBElement<? extends AbstractGeometryType> abstractGeometry) {
+        this.abstractGeometry = abstractGeometry;
+    }
+
+    public void setDistance(final DistanceType distance) {
+        this.distance = distance;
+    }
+
+    public void setPropertyName(final PropertyNameType propertyName) {
+        this.propertyName = propertyName;
+    }
+
     
     /**
      * Gets the value of the propertyName property.
