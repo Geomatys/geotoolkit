@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.Date;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
@@ -64,6 +65,7 @@ import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.geotoolkit.util.Converters;
 import org.geotoolkit.util.StringUtilities;
 
@@ -188,6 +190,10 @@ public class CSVDataStore extends AbstractDataStore{
                           type = Double.class;
                       } else if ("string".equalsIgnoreCase(name)) {
                           type = String.class;
+                      } else if ("date".equalsIgnoreCase(name)) {
+                          type = Date.class;
+                      } else if ("boolean".equalsIgnoreCase(name)) {
+                          type = Boolean.class;
                       }else{
                           try {
                               //check if it's a geometry type
@@ -242,6 +248,10 @@ public class CSVDataStore extends AbstractDataStore{
                 sb.append("Double");
             }else if(clazz.equals(String.class)){
                 sb.append("String");
+            }else if(clazz.equals(Date.class)){
+                sb.append("Date");
+            }else if(clazz.equals(Boolean.class)){
+                sb.append("boolean");
             }else if(Geometry.class.isAssignableFrom(clazz)){
                 GeometryDescriptor gd = (GeometryDescriptor) desc;
                 try {
@@ -596,7 +606,14 @@ public class CSVDataStore extends AbstractDataStore{
                     }else if(att instanceof GeometryDescriptor){
                         str = wktWriter.write((Geometry) value);
                     }else{
-                        str = Converters.convert(value, String.class);
+                        
+                        if(value instanceof Date){
+                            str = TemporalUtilities.toISO8601((Date)value);
+                        }else if(value instanceof Boolean){
+                            str = ((Boolean)value).toString();
+                        }else{
+                            str = Converters.convert(value, String.class);
+                        }
                     }
                     writer.append(str);
                     if (i != n-1) {
