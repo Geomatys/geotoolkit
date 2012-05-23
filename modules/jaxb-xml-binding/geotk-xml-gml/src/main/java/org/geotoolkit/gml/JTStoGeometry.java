@@ -444,7 +444,7 @@ public final class JTStoGeometry {
      * @return <code>true</code> for valid Geometry, <code>false</code> else.
      */
     private static void isValideGeometry(final CoordinateReferenceSystem crs) {
-        if (crs.getCoordinateSystem().getDimension() != 2) {
+        if (crs == null || crs.getCoordinateSystem() == null || crs.getCoordinateSystem().getDimension() != 2) {
             throw new IllegalArgumentException("This service support only 2D JTS Geometry.");
         }
     }
