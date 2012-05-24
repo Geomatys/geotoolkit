@@ -58,7 +58,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * @module
  */
 public class NetcdfAxis extends NetcdfIdentifiedObject implements CoordinateSystemAxis,
-        DiscreteCoordinateSystemAxis
+        DiscreteCoordinateSystemAxis // Parameterized type is impractical here.
 {
     /**
      * The NetCDF coordinate axis wrapped by this {@code NetcdfAxis} instance.
@@ -177,6 +177,22 @@ public class NetcdfAxis extends NetcdfIdentifiedObject implements CoordinateSyst
     @Override
     public double getMaximumValue() {
         return axis.getMaxValue();
+    }
+
+    /**
+     * Returns the type of ordinate values.
+     *
+     * @sine 3.20
+     */
+    @Override
+    public Class<?> getElementType() {
+        if (axis instanceof CoordinateAxis1DTime) {
+            return Date.class;
+        } else if (axis.isNumeric()) {
+            return Double.class;
+        } else {
+            return String.class;
+        }
     }
 
     /**

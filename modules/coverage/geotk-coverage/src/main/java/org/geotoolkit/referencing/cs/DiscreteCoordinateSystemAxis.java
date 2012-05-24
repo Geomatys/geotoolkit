@@ -18,6 +18,7 @@
 package org.geotoolkit.referencing.cs;
 
 import org.geotoolkit.util.Range;
+import org.geotoolkit.util.collection.CheckedContainer;
 
 
 /**
@@ -30,8 +31,11 @@ import org.geotoolkit.util.Range;
  * However this interface is defined as a more convenient way to access irregular ordinate values
  * on independent axes, for example a list of time instants on the temporal axis.}
  *
+ * @param  <T> The type of axis ordinates. This is typically {@link Integer}, {@link Float},
+ *         {@link Double}, {@link java.util.Date} or {@link String}.
+ *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.15
+ * @version 3.20
  *
  * @see org.opengis.referencing.cs.CoordinateSystemAxis
  * @see org.opengis.coverage.grid.GridGeometry#getGridToCRS()
@@ -39,7 +43,7 @@ import org.geotoolkit.util.Range;
  * @since 3.15
  * @module
  */
-public interface DiscreteCoordinateSystemAxis {
+public interface DiscreteCoordinateSystemAxis<T extends Comparable<? super T>> extends CheckedContainer<T> {
     /**
      * Returns the number of ordinate values.
      *
@@ -57,7 +61,7 @@ public interface DiscreteCoordinateSystemAxis {
      * @throws IndexOutOfBoundsException If the given index is outside the
      *         [0 &hellip; {@linkplain #length() length}-1] range.
      */
-    Comparable<?> getOrdinateAt(int index) throws IndexOutOfBoundsException;
+    Comparable<T> getOrdinateAt(int index) throws IndexOutOfBoundsException;
 
     /**
      * Returns the range of ordinate values at the given index. The {@linkplain Range#getMinValue()
@@ -74,5 +78,5 @@ public interface DiscreteCoordinateSystemAxis {
      *         [0 &hellip; {@linkplain #length() length}-1] range.
      * @throws UnsupportedOperationException if the axis is not numeric.
      */
-    Range<?> getOrdinateRangeAt(int index) throws IndexOutOfBoundsException, UnsupportedOperationException;
+    Range<T> getOrdinateRangeAt(int index) throws IndexOutOfBoundsException, UnsupportedOperationException;
 }

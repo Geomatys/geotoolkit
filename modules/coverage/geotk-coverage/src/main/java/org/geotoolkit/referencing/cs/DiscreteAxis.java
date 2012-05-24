@@ -40,13 +40,13 @@ import org.geotoolkit.util.NumberRange;
  * are better to be in strictly increasing or decreasing order (this is not verified).
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.15
+ * @version 3.20
  *
  * @since 3.15
  * @module
  */
 @Decorator(CoordinateSystemAxis.class)
-final class DiscreteAxis implements CoordinateSystemAxis, DiscreteCoordinateSystemAxis, Serializable {
+final class DiscreteAxis implements CoordinateSystemAxis, DiscreteCoordinateSystemAxis<Double>, Serializable {
     /**
      * For cross-version compatibility.
      */
@@ -153,6 +153,16 @@ final class DiscreteAxis implements CoordinateSystemAxis, DiscreteCoordinateSyst
     @Override
     public int length() {
         return ordinates.length;
+    }
+
+    /**
+     * Returns the type of ordinate values.
+     *
+     * @since 3.20
+     */
+    @Override
+    public Class<Double> getElementType() {
+        return Double.class;
     }
 
     /**
