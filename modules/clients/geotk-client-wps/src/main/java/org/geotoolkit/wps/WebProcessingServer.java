@@ -51,6 +51,7 @@ import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.util.converter.ObjectConverter;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
+import org.geotoolkit.wps.converters.WPSObjectConverter;
 import org.geotoolkit.wps.io.WPSIO;
 import org.geotoolkit.wps.v100.DescribeProcess100;
 import org.geotoolkit.wps.v100.Execute100;
@@ -427,28 +428,23 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
                                     unit = Unit.valueOf(inputUom.getDefault().getUOM().getValue());
                                 }
                                 
-                                ObjectConverter converter = null;
+                                WPSObjectConverter converter = null;
                                 try {
-                                    converter = ConverterRegistry.system().converter(String.class, clazz);
-                                    
-                                } catch (NonconvertibleObjectException ex) {
-                                    
-                                    try{
-                                        converter = WPSIO.getConverter(clazz, WPSIO.IOType.INPUT, WPSIO.FormChoice.LITERAL, null, null, null);
-                                        if (converter == null) {
-                                            LOGGER.log(Level.WARNING, "Can't find the converter for the default input value.", ex);
-                                            supportedIO = false;
-                                            break;
-                                        }
-                                    }catch(NonconvertibleObjectException e){
-                                        LOGGER.log(Level.WARNING, "Can't find the converter for the default input value.", ex);
+                                    converter = WPSIO.getConverter(clazz, WPSIO.IOType.INPUT, WPSIO.FormChoice.LITERAL);
+                                    if (converter == null) {
+                                        LOGGER.log(Level.WARNING, "Can't find the converter for the default input value.");
                                         supportedIO = false;
                                         break;
                                     }
+                                } catch (NonconvertibleObjectException ex) {
+                                    LOGGER.log(Level.WARNING, "Can't find the converter for the default input value.", ex);
+                                    supportedIO = false;
+                                    break;
                                 }
+                               
                                 //At this state the converter can't be null.
                                 try {
-                                    inputDescriptors.add(new DefaultParameterDescriptor(properties, clazz, null, converter.convert(defaultValue), null, null, unit, min == 0));
+                                    inputDescriptors.add(new DefaultParameterDescriptor(properties, clazz, null, converter.convert(defaultValue, null), null, null, unit, min == 0));
                                     inputTypes.put(inputName, "literal");
                                 } catch (NonconvertibleObjectException ex2) {
                                     LOGGER.log(Level.WARNING, "Can't convert the default input value.", ex2);
@@ -597,11 +593,11 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
                         
                     } else if ("complex".equals(type)) {
                         //get the defaults mimeType/encoding/schema for the requested input class.
-                        final WPSIO.WPSSupport support = WPSIO.getDefaultSupport(inputClazz, WPSIO.IOType.OUTPUT, WPSIO.FormChoice.COMPLEX);
+                        final WPSIO.FormatSupport support = WPSIO.getDefaultFormats(inputClazz, WPSIO.IOType.OUTPUT);
                         if (support != null) {
-                            final String mime = support.getMime();
-                            final String encoding = support.getEncoding().getValue();
-                            final String schema = support.getSchema().getValue();
+                            final String mime = support.getMimeType();
+                            final String encoding = support.getEncoding();
+                            final String schema = support.getSchema();
                             wpsIN.add(new WPSInputComplex(inputIdentifier, value, inputClazz, encoding, schema, mime));
                         }
                     }
