@@ -477,7 +477,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         for(int i=0; i<atts.length; i++){
             String attName = atts[i];
             int index = attName.indexOf('/');
-            if(index >=0){
+            if(index == 0){
                 //remove all xpath filtering and indexing
                 int n = attName.indexOf('[', index+1);
                 while(n > 0){
@@ -603,7 +603,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         qb.setHints(queryHints);
         return qb.buildQuery();
     }
-
+    
     private static class GraphicIterator implements RenderingIterator{
 
         private final FeatureIterator<? extends Feature> ite;
