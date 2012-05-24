@@ -182,18 +182,36 @@ public class Utils {
         NAME_BINDING.put(Byte.class,          new QName("http://www.w3.org/2001/XMLSchema", "byte"));
 
     }
-    private static final Map<Class, QName> GEOMETRY_NAME_BINDING = new HashMap<Class, QName>();
+    
+    private static final String GML_311_NAMESPACE = "http://www.opengis.net/gml";
+    private static final String GML_321_NAMESPACE = "http://www.opengis.net/gml/3.2.1";
+    
+    private static final Map<Class, QName> GEOMETRY_NAME_BINDING_311 = new HashMap<Class, QName>();
     static {
        
-        GEOMETRY_NAME_BINDING.put(MultiPoint.class,         new QName("http://www.opengis.net/gml", "MultiPoint"));
-        GEOMETRY_NAME_BINDING.put(Point.class,              new QName("http://www.opengis.net/gml", "Point"));
-        GEOMETRY_NAME_BINDING.put(LineString.class,         new QName("http://www.opengis.net/gml", "Curve"));
-        GEOMETRY_NAME_BINDING.put(GeometryCollection.class, new QName("http://www.opengis.net/gml", "MultiGeometry"));
-        GEOMETRY_NAME_BINDING.put(MultiLineString.class,    new QName("http://www.opengis.net/gml", "CompositeCurve"));
-        GEOMETRY_NAME_BINDING.put(Envelope.class,           new QName("http://www.opengis.net/gml", "Envelope"));
-        GEOMETRY_NAME_BINDING.put(MultiPolygon.class,       new QName("http://www.opengis.net/gml", "MultiGeometry"));
-        GEOMETRY_NAME_BINDING.put(Polygon.class,            new QName("http://www.opengis.net/gml", "Polygon"));
-        GEOMETRY_NAME_BINDING.put(LinearRing.class,         new QName("http://www.opengis.net/gml", "Ring"));
+        GEOMETRY_NAME_BINDING_311.put(MultiPoint.class,         new QName(GML_311_NAMESPACE, "MultiPoint"));
+        GEOMETRY_NAME_BINDING_311.put(Point.class,              new QName(GML_311_NAMESPACE, "Point"));
+        GEOMETRY_NAME_BINDING_311.put(LineString.class,         new QName(GML_311_NAMESPACE, "Curve"));
+        GEOMETRY_NAME_BINDING_311.put(GeometryCollection.class, new QName(GML_311_NAMESPACE, "MultiGeometry"));
+        GEOMETRY_NAME_BINDING_311.put(MultiLineString.class,    new QName(GML_311_NAMESPACE, "CompositeCurve"));
+        GEOMETRY_NAME_BINDING_311.put(Envelope.class,           new QName(GML_311_NAMESPACE, "Envelope"));
+        GEOMETRY_NAME_BINDING_311.put(MultiPolygon.class,       new QName(GML_311_NAMESPACE, "MultiGeometry"));
+        GEOMETRY_NAME_BINDING_311.put(Polygon.class,            new QName(GML_311_NAMESPACE, "Polygon"));
+        GEOMETRY_NAME_BINDING_311.put(LinearRing.class,         new QName(GML_311_NAMESPACE, "Ring"));
+    }
+    
+    private static final Map<Class, QName> GEOMETRY_NAME_BINDING_321 = new HashMap<Class, QName>();
+    static {
+       
+        GEOMETRY_NAME_BINDING_321.put(MultiPoint.class,         new QName(GML_321_NAMESPACE, "MultiPoint"));
+        GEOMETRY_NAME_BINDING_321.put(Point.class,              new QName(GML_321_NAMESPACE, "Point"));
+        GEOMETRY_NAME_BINDING_321.put(LineString.class,         new QName(GML_321_NAMESPACE, "Curve"));
+        GEOMETRY_NAME_BINDING_321.put(GeometryCollection.class, new QName(GML_321_NAMESPACE, "MultiGeometry"));
+        GEOMETRY_NAME_BINDING_321.put(MultiLineString.class,    new QName(GML_321_NAMESPACE, "CompositeCurve"));
+        GEOMETRY_NAME_BINDING_321.put(Envelope.class,           new QName(GML_321_NAMESPACE, "Envelope"));
+        GEOMETRY_NAME_BINDING_321.put(MultiPolygon.class,       new QName(GML_321_NAMESPACE, "MultiGeometry"));
+        GEOMETRY_NAME_BINDING_321.put(Polygon.class,            new QName(GML_321_NAMESPACE, "Polygon"));
+        GEOMETRY_NAME_BINDING_321.put(LinearRing.class,         new QName(GML_321_NAMESPACE, "Ring"));
     }
     /**
      * Return a QName intended to be used in a xsd XML file fro mthe specified class.
@@ -201,13 +219,21 @@ public class Utils {
      * @param binding A prmitive type Class.
      * @return A QName describing the class.
      */
-    public static QName getQNameFromType(final Class binding) {
+    public static QName getQNameFromType(final Class binding, final String gmlVersion) {
         if (binding != null) {
             final QName result;
             if (Geometry.class.isAssignableFrom(binding)) {
-                result = GEOMETRY_NAME_BINDING.get(binding);
+                if ("3.2.1".equals(gmlVersion)) {
+                    result = GEOMETRY_NAME_BINDING_321.get(binding);
+                } else {
+                    result = GEOMETRY_NAME_BINDING_311.get(binding);
+                }
                 if (result == null) {
-                    return new QName("http://www.opengis.net/gml", "GeometryPropertyType");
+                    if ("3.2.1".equals(gmlVersion)) {
+                        return new QName(GML_321_NAMESPACE, "GeometryPropertyType");
+                    } else {
+                        return new QName(GML_311_NAMESPACE, "GeometryPropertyType");
+                    }
                 }
             // maybe we can find a better way to handle Enum. for now we set a String value
             } else if (binding.isEnum()){
@@ -229,7 +255,7 @@ public class Utils {
      * @param eventType An XMLEvent type.
      * @return A string representation or "UNKNOWN_EVENT_TYPE" if the integer does not correspound to an XMLEvent type.
      */
-    public final static String getEventTypeString(final int eventType) {
+    public static String getEventTypeString(final int eventType) {
         switch (eventType) {
             case XMLEvent.START_DOCUMENT:
                 return "START_DOCUMENT";

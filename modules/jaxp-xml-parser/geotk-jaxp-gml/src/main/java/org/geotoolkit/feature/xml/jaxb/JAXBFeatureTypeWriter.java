@@ -58,15 +58,25 @@ public class JAXBFeatureTypeWriter implements XmlFeatureTypeWriter {
 
     private static final MarshallerPool POOL = XSDMarshallerPool.getInstance();
 
-    private static final Import GML_IMPORT = new Import("http://www.opengis.net/gml", "http://schemas.opengis.net/gml/3.1.1/base/gml.xsd");
+    private static final Import GML_IMPORT_311 = new Import("http://www.opengis.net/gml", "http://schemas.opengis.net/gml/3.1.1/base/gml.xsd");
+    private static final Import GML_IMPORT_321 = new Import("http://www.opengis.net/gml/3.2.1", "http://schemas.opengis.net/gml/3.2.1/gml.xsd");
 
-    private static final QName FEATURE_NAME = new QName("http://www.opengis.net/gml", "_Feature");
+    private static final QName FEATURE_NAME_311 = new QName("http://www.opengis.net/gml", "_Feature");
+    
+    private static final QName FEATURE_NAME_321 = new QName("http://www.opengis.net/gml/3.2.1", "_Feature");
 
     private int lastUnknowPrefix = 0;
     
     private final Map<String, String> unknowNamespaces = new HashMap<String, String>();
     
+    private final String gmlVersion;
+    
     public JAXBFeatureTypeWriter(){
+        gmlVersion = "3.1.1";
+    }
+    
+    public JAXBFeatureTypeWriter(final String gmlVersion){
+        this.gmlVersion = gmlVersion;
     }
 
     /**
@@ -157,7 +167,11 @@ public class JAXBFeatureTypeWriter implements XmlFeatureTypeWriter {
                 i++;
             }
             schema.setTargetNamespace(typeNamespace);
-            schema.addImport(GML_IMPORT);
+            if ("3.2.1".equals(gmlVersion)) {
+                schema.addImport(GML_IMPORT_321);
+            } else {
+                schema.addImport(GML_IMPORT_311);
+            }
             for (FeatureType ftype : featureTypes) {
                 fillSchemaWithFeatureType(ftype, schema);
             }
@@ -173,7 +187,11 @@ public class JAXBFeatureTypeWriter implements XmlFeatureTypeWriter {
         if (featureType != null) {
             final String typeNamespace = featureType.getName().getNamespaceURI();
             final Schema schema = new Schema(FormChoice.QUALIFIED, typeNamespace);
-            schema.addImport(GML_IMPORT);
+            if ("3.2.1".equals(gmlVersion)) {
+                schema.addImport(GML_IMPORT_321);
+            } else {
+                schema.addImport(GML_IMPORT_311);
+            }
             fillSchemaWithFeatureType(featureType, schema);
             return schema;
         }
@@ -191,7 +209,7 @@ public class JAXBFeatureTypeWriter implements XmlFeatureTypeWriter {
         
         for(final PropertyDescriptor pdesc : featureType.getDescriptors()) {
             final String name   = pdesc.getName().getLocalPart();
-            final QName type    = Utils.getQNameFromType(pdesc.getType().getBinding());
+            final QName type    = Utils.getQNameFromType(pdesc.getType().getBinding(), gmlVersion);
             final int minOccurs = pdesc.getMinOccurs();
             final int maxOccurs = pdesc.getMaxOccurs();
             final boolean nillable = pdesc.isNillable();
@@ -203,8 +221,12 @@ public class JAXBFeatureTypeWriter implements XmlFeatureTypeWriter {
             }
             sequence.addElement(new TopLevelElement(name, type, minOccurs, maxOcc, nillable));
         }
-
-        final ExtensionType extension = new ExtensionType(FEATURE_NAME, sequence);
+        final ExtensionType extension;
+        if ("3.2.1".equals(gmlVersion)) {
+            extension = new ExtensionType(FEATURE_NAME_321, sequence);
+        } else {
+            extension = new ExtensionType(FEATURE_NAME_311, sequence);
+        }
         final ComplexContent content  = new ComplexContent(extension);
         schema.addComplexType(new TopLevelComplexType(typeName, content));
     }
