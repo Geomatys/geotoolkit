@@ -66,6 +66,8 @@ import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
 /**
  * Utility methods extracting commonly used informations from ISO 19115-2 or ISO 19123 objects.
  * Instances of ISO 19115-2 metadata are typically obtained from {@link SpatialMetadata} objects.
+ * See the <a href="SpatialMetadataFormat.html#default-formats">format description</a> for a
+ * description of the expected metadata tree.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.19
@@ -379,7 +381,7 @@ public class MetadataHelper implements Localized {
         ensureVectorsExist(vectors);
         final int dimSource = vectors.size();
         if (dimSource < 2) {
-            ensureDimensionMatch("OffsetVectors", -1, dimSource, 2);
+            ensureDimensionMatch("OffsetVectors", -1, dimSource, 2); // Exception always thrown.
         }
         final DirectPosition origin = domain.getOrigin();
         ensureMetadataExists("origin", -1, origin);

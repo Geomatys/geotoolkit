@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Objects;
 import java.io.Serializable;
+import java.awt.geom.AffineTransform;
 
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
@@ -37,15 +38,18 @@ import org.geotoolkit.referencing.operation.MathTransforms;
 /**
  * The translation to apply for different values of {@link PixelOrientation}
  * or {@link PixelInCell}. The translation are returned by a call to one of
- * the static {@code getPixelTranslation(...)} methods, where the argument is
- * either a {@code PixelOrientation} for the two-dimensional case, or a
- * {@code PixelInCell} for the <var>n</var>-dimensional case.
+ * the following static method:
  * <p>
- * This class provides also a few {@code translate(...)} convenience methods, which
- * apply the pixel translation on a given {@linkplain MathTransform math transform}.
+ * <ul>
+ *   <li>{@link #getPixelTranslation(PixelOrientation)} for the two-dimensional case</li>
+ *   <li>{@link #getPixelTranslation(PixelInCell)} for the <var>n</var>-dimensional case.</li>
+ * </ul>
+ * <p>
+ * This class provides also a few {@code translate(...)} convenience methods, which apply the
+ * pixel translation on a given {@link MathTransform} or {@link AffineTransform} instance.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.20
  *
  * @see org.geotoolkit.coverage.grid.GeneralGridGeometry#getGridToCRS(PixelInCell)
  * @see org.geotoolkit.coverage.grid.GridGeometry2D#getGridToCRS(PixelOrientation)
@@ -216,6 +220,26 @@ public final class PixelTranslation extends Static implements Serializable {
             }
         }
         return null;
+    }
+
+    /**
+     * Translates the specified affine transform according the specified pixel orientations.
+     * This method modifies the given transform in-place.
+     *
+     * @param  gridToCRS  A math transform from <cite>pixel</cite> coordinates to any CRS.
+     * @param  current    The pixel orientation of the given {@code gridToCRS} transform.
+     * @param  expected   The pixel orientation of the desired transform.
+     *
+     * @since 3.20
+     */
+    public static void translate(final AffineTransform gridToCRS,
+                                 final PixelOrientation current,
+                                 final PixelOrientation expected)
+    {
+        final PixelTranslation source = getPixelTranslation(current);
+        final PixelTranslation target = getPixelTranslation(expected);
+        gridToCRS.translate(target.dx - source.dx,
+                            target.dy - source.dy);
     }
 
     /**
