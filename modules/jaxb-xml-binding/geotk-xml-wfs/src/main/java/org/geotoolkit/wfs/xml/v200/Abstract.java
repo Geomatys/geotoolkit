@@ -56,6 +56,19 @@ public class Abstract {
     @XmlAttribute(namespace = "http://www.w3.org/XML/1998/namespace")
     private String lang;
 
+    public Abstract() {
+        
+    }
+    
+    public Abstract(final String value) {
+        this.value = value;
+    }
+    
+    public Abstract(final String value, final String lang) {
+        this.value = value;
+        this.lang  = lang;
+    }
+    
     /**
      * Gets the value of the value property.
      * 

@@ -99,6 +99,17 @@ public class KeywordsType implements AbstractKeywords {
     }
     
     /**
+     * Build a simple list of keywords without type.
+     * all the element of the list are in the parameters. 
+     */
+    public KeywordsType(final String... keywords){
+        this.keyword = new ArrayList<LanguageStringType>();
+        for (String element: keywords){
+            keyword.add(new LanguageStringType(element));
+        }
+    }
+    
+    /**
      * Gets the value of the keyword property.
      */
     public List<LanguageStringType> getKeyword() {

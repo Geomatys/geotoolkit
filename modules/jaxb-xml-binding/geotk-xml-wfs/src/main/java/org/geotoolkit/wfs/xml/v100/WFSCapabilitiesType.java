@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.wfs.xml.v100;
 
-import java.math.BigInteger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -78,8 +77,23 @@ public class WFSCapabilitiesType implements WFSResponse, WFSCapabilities {
     private String version;
     @XmlAttribute
     @XmlSchemaType(name = "nonNegativeInteger")
-    private BigInteger updateSequence;
+    private Integer updateSequence;
 
+    public WFSCapabilitiesType() {
+        
+    }
+    
+    public WFSCapabilitiesType(final String version, final String updateSequence) {
+        this.version = version;
+        if (updateSequence != null) {
+            try {
+                this.updateSequence = Integer.parseInt(updateSequence);
+            } catch (NumberFormatException ex)  {
+                throw new IllegalArgumentException("updateSequence must be an integer for WFS 1.0.0", ex);
+            }
+        }
+    }
+    
     /**
      * Gets the value of the service property.
      * 
@@ -209,7 +223,7 @@ public class WFSCapabilitiesType implements WFSResponse, WFSCapabilities {
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
     public String getUpdateSequence() {
@@ -225,10 +239,10 @@ public class WFSCapabilitiesType implements WFSResponse, WFSCapabilities {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setUpdateSequence(BigInteger value) {
+    public void setUpdateSequence(Integer value) {
         this.updateSequence = value;
     }
 

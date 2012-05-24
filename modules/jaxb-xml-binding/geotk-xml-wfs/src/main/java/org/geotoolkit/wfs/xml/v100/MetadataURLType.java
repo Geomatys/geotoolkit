@@ -74,6 +74,16 @@ public class MetadataURLType {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     private String format;
 
+    public MetadataURLType() {
+        
+    }
+    
+    public MetadataURLType(final String value, final String type, final String format) {
+        this.value  = value;
+        this.type   = type;
+        this.format = format;
+    }
+    
     /**
      * Gets the value of the value property.
      * 

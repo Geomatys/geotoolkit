@@ -29,6 +29,7 @@ import javax.xml.namespace.QName;
 import org.geotoolkit.ows.xml.v110.KeywordsType;
 import org.geotoolkit.ows.xml.v110.WGS84BoundingBoxType;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.wfs.xml.FeatureType;
 
 
 /**
@@ -85,7 +86,7 @@ import org.geotoolkit.util.Utilities;
     "metadataURL",
     "extendedDescription"
 })
-public class FeatureTypeType {
+public class FeatureTypeType implements FeatureType {
 
     @XmlElement(name = "Name", required = true)
     private QName name;
@@ -171,6 +172,13 @@ public class FeatureTypeType {
         }
         return this._abstract;
     }
+    
+    @Override
+    public void setAbstract(final String value) {
+        if (value != null) {
+            getAbstract().add(new Abstract(value));
+        }
+    }
 
     /**
      * Gets the value of the keywords property.
@@ -182,6 +190,15 @@ public class FeatureTypeType {
         return this.keywords;
     }
 
+    @Override
+    public void addKeywords(final List<String> values) {
+        if (values != null) {
+            for (String value : values) {
+                getKeywords().add(new KeywordsType(value));
+            }
+        }
+    }
+    
     /**
      * Gets the value of the defaultCRS property.
      * 
@@ -214,6 +231,10 @@ public class FeatureTypeType {
             otherCRS = new ArrayList<String>();
         }
         return this.otherCRS;
+    }
+    
+    public void setOtherCRS(final List<String> otherCRS) {
+        this.otherCRS = otherCRS;
     }
 
     /**
@@ -284,6 +305,11 @@ public class FeatureTypeType {
         return this.metadataURL;
     }
 
+    @Override
+    public void addMetadataURL(final String value, final String type, final String format) {
+        getMetadataURL().add(new MetadataURLType(value, type, format));
+    }
+    
     /**
      * Gets the value of the extendedDescription property.
      * 

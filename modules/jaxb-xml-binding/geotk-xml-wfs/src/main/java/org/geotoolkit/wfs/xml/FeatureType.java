@@ -16,12 +16,22 @@
  */
 package org.geotoolkit.wfs.xml;
 
+import java.util.List;
+
+
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public interface FeatureTypeList {
+public interface FeatureType {
     
-    void addFeatureType(final FeatureType ft);
+    void setDefaultCRS(final String CRS);
     
+    void setOtherCRS(final List<String> otherCRS);
+    
+    void setAbstract(final String value);
+    
+    void addKeywords(final List<String> values);
+    
+    void addMetadataURL(final String value, final String type, final String format);
 }
