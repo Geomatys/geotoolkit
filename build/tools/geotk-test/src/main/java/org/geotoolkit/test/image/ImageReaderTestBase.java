@@ -116,13 +116,13 @@ public abstract strictfp class ImageReaderTestBase extends ImageTestBase {
                 reader.setInput(input);
             }
             final ImageReadParam param = reader.getDefaultReadParam();
-            Rectangle region = getBounds(original);
+            Rectangle region = original.getBounds();
             if (regions) {
                 region.x     += random.nextInt(region.width);
                 region.y     += random.nextInt(region.height);
                 region.width  = random.nextInt(region.width)  + 1;
                 region.height = random.nextInt(region.height) + 1;
-                region = region.intersection(getBounds(original));
+                region = region.intersection(original.getBounds());
                 param.setSourceRegion(region);
             }
             int xSubsampling=1, ySubsampling=1;
@@ -158,16 +158,6 @@ public abstract strictfp class ImageReaderTestBase extends ImageTestBase {
         }
         this.image = fullImage;
         reader.dispose();
-    }
-
-    /**
-     * Returns the bounds of the given raster as a new rectangle.
-     *
-     * @param  raster The raster for which to get the bounds.
-     * @return The bounds of the given raster.
-     */
-    private static Rectangle getBounds(final Raster raster) {
-        return new Rectangle(raster.getMinX(), raster.getMinY(), raster.getWidth(), raster.getHeight());
     }
 
     /**

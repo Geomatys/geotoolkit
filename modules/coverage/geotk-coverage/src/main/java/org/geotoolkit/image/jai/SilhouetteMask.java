@@ -170,7 +170,7 @@ public class SilhouetteMask extends UntiledOpImage {
             background.add(SampleValues.getInstance(transferType, samples));
         }
         final SampleValues buffer = SampleValues.getInstance(transferType, source.getSampleModel().getNumBands());
-        assert ImageUtilities.getBounds(source).contains(destRect) : destRect;
+        assert source.getBounds().contains(destRect) : destRect;
         /*
          * For each background value found in the source image, sets the destination pixel to -1.
          * The same algorithm is repeated for the 4 corners, using only different iteration direction.

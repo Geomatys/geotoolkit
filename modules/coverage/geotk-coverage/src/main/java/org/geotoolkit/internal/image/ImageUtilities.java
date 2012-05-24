@@ -49,9 +49,9 @@ import static java.awt.image.DataBuffer.*;
  *
  * It may change in incompatible way in any future version.
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Simone Giannecchini (Geosolutions)
- * @version 3.00
+ * @version 3.20
  *
  * @since 1.2
  * @module
@@ -107,22 +107,15 @@ public final class ImageUtilities extends Static {
     }
 
     /**
-     * Returns the bounds of the given raster as a new rectangle.
-     *
-     * @param  raster The raster for which to get the bounds.
-     * @return The bounds of the given raster.
-     */
-    public static Rectangle getBounds(final Raster raster) {
-        return new Rectangle(raster.getMinX(), raster.getMinY(), raster.getWidth(), raster.getHeight());
-    }
-
-    /**
      * Returns the bounds of the given image as a new rectangle. Note that if the image is actually
      * and instance of {@link PlanarImage} and the caller will not modify the rectangle values,
      * then {@link PlanarImage#getBounds()} can be used instead.
      *
      * @param  image The image for which to get the bounds.
      * @return The bounds of the given image.
+     *
+     * @see Raster#getBounds()
+     * @see PlanarImage#getBounds()
      */
     public static Rectangle getBounds(final RenderedImage image) {
         return new Rectangle(image.getMinX(), image.getMinY(), image.getWidth(), image.getHeight());
@@ -577,7 +570,7 @@ public final class ImageUtilities extends Static {
      * @param value  The value to be given to every samples that are inside the given region.
      */
     public static void fill(final WritableRaster raster, Rectangle region, final Number value) {
-        final Rectangle bounds = getBounds(raster);
+        final Rectangle bounds = raster.getBounds();
         if (region.contains(bounds)) {
             fill(raster.getDataBuffer(), value);
         } else {

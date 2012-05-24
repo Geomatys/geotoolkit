@@ -37,6 +37,7 @@ import javax.media.jai.iterator.RectIterFactory;
 import org.geotoolkit.image.ImageDimension;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
+import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Disposable;
 import org.geotoolkit.util.logging.Logging;
@@ -59,7 +60,7 @@ import org.geotoolkit.resources.IndexedResourceBundle;
  * </ul>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.08
+ * @version 3.20
  *
  * @see SpatialImageReader
  *
@@ -267,8 +268,7 @@ public abstract class SpatialImageWriter extends ImageWriter implements WarningP
                     if (image.hasRaster()) {
                         bounds = image.getRaster().getBounds(); // Needs to be a clone.
                     } else {
-                        final RenderedImage i = image.getRenderedImage();
-                        bounds = new Rectangle(i.getMinX(), i.getMinY(), i.getWidth(), i.getHeight());
+                        bounds = ImageUtilities.getBounds(image.getRenderedImage());
                     }
                 }
                 final int xOffset = parameters.getSubsamplingXOffset();
