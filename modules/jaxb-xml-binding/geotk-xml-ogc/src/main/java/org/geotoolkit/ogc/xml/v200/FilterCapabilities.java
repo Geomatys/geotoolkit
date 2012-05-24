@@ -65,7 +65,7 @@ import org.opengis.filter.capability.SpatialCapabilities;
     "extendedCapabilities"
 })
 @XmlRootElement(name = "Filter_Capabilities")
-public class FilterCapabilities {
+public class FilterCapabilities implements org.opengis.filter.capability.FilterCapabilities {
 
     @XmlElement(name = "Conformance", required = true)
     private ConformanceType conformance;
@@ -267,6 +267,10 @@ public class FilterCapabilities {
         this.extendedCapabilities = value;
     }
 
+    public String getVersion() {
+        return "2.0.0";
+    }
+    
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("[FilterCapabilities]").append("\n");

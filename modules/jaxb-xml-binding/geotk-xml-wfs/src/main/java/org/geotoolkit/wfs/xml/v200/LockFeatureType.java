@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ogc.xml.v200.AbstractQueryExpressionType;
+import org.geotoolkit.wfs.xml.LockFeature;
 
 
 /**
@@ -56,7 +57,7 @@ import org.geotoolkit.ogc.xml.v200.AbstractQueryExpressionType;
 @XmlType(name = "LockFeatureType", propOrder = {
     "abstractQueryExpression"
 })
-public class LockFeatureType extends BaseRequestType {
+public class LockFeatureType extends BaseRequestType implements LockFeature {
 
     @XmlElementRef(name = "AbstractQueryExpression", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
     private List<JAXBElement<? extends AbstractQueryExpressionType>> abstractQueryExpression;

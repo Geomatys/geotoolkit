@@ -25,6 +25,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Version;
+import org.geotoolkit.wfs.xml.LockFeature;
 
 
 /**
@@ -62,7 +64,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "LockFeatureType", propOrder = {
     "lock"
 })
-public class LockFeatureType {
+public class LockFeatureType implements LockFeature {
 
     @XmlElement(name = "Lock", required = true)
     private List<LockType> lock;
@@ -113,11 +115,11 @@ public class LockFeatureType {
      *     {@link String }
      *     
      */
-    public String getVersion() {
+    public Version getVersion() {
         if (version == null) {
-            return "1.0.0";
+            return new Version("1.0.0");
         } else {
-            return version;
+            return new Version(version);
         }
     }
 
@@ -207,6 +209,14 @@ public class LockFeatureType {
      */
     public void setLockAction(AllSomeType value) {
         this.lockAction = value;
+    }
+
+    public String getHandle() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void setHandle(String value) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

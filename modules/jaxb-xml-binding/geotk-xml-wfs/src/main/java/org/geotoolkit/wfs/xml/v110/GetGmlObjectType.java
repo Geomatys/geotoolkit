@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ogc.xml.v110.GmlObjectIdType;
+import org.geotoolkit.wfs.xml.GetGmlObject;
 
 
 /**
@@ -59,7 +60,7 @@ import org.geotoolkit.ogc.xml.v110.GmlObjectIdType;
     "gmlObjectId"
 })
 @XmlRootElement(name = "GetGmlObject")
-public class GetGmlObjectType extends BaseRequestType {
+public class GetGmlObjectType extends BaseRequestType implements GetGmlObject {
 
     @XmlElement(name = "GmlObjectId", namespace = "http://www.opengis.net/ogc", required = true)
     private GmlObjectIdType gmlObjectId;

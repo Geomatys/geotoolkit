@@ -19,6 +19,10 @@ package org.geotoolkit.wfs.xml;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.namespace.QName;
+import org.geotoolkit.ows.xml.AbstractOperationsMetadata;
+import org.geotoolkit.ows.xml.AbstractServiceIdentification;
+import org.geotoolkit.ows.xml.AbstractServiceProvider;
+import org.opengis.filter.capability.FilterCapabilities;
 
 
 /**
@@ -77,6 +81,72 @@ public class WFSXmlFactory {
             }
             return new org.geotoolkit.wfs.xml.v100.FeatureTypeType(name, title, defaultCRS, bboxes);
         } else {
+            throw new IllegalArgumentException("unexpected version number:" + version);
+        }
+    }
+    
+    public Object buildBBOX(final String version, final String crsName, final double minx, final double miny, final double maxx, final double maxy) {
+        if ("2.0.0".equals(version)) {
+            return new org.geotoolkit.ows.xml.v110.WGS84BoundingBoxType(
+                       crsName,
+                       minx,
+                       miny,
+                       maxx,
+                       maxy);
+        } else if ("1.1.0".equals(version)) {
+            return new org.geotoolkit.ows.xml.v100.WGS84BoundingBoxType(
+                       crsName,
+                       minx,
+                       miny,
+                       maxx,
+                       maxy);
+        } else if ("1.0.0".equals(version)) {
+            return new org.geotoolkit.wfs.xml.v100.LatLongBoundingBoxType(minx, miny, maxx, maxy);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + version);
+        }
+    }
+    
+    public WFSCapabilities buildWFSCapabilities(final String version,  final AbstractServiceIdentification si, final AbstractServiceProvider sp, 
+            final AbstractOperationsMetadata om, FeatureTypeList ftl, final FilterCapabilities fc) {
+        
+        if ("2.0.0".equals(version)) {
+            if ((si  != null && !(si instanceof org.geotoolkit.ows.xml.v110.ServiceIdentification)) ||
+                (sp  != null &&!(sp instanceof org.geotoolkit.ows.xml.v110.ServiceProvider))        ||
+                (om  != null &&!(om instanceof org.geotoolkit.ows.xml.v110.OperationsMetadata))     ||
+                (ftl != null &&!(ftl instanceof org.geotoolkit.wfs.xml.v200.FeatureTypeListType))   ||
+                (fc  != null &&!(fc instanceof org.geotoolkit.ogc.xml.v200.FilterCapabilities))) {
+                throw new IllegalArgumentException("Bad version of object");
+            }
+            return new  org.geotoolkit.wfs.xml.v200.WFSCapabilitiesType("2.0.0", 
+                       (org.geotoolkit.ows.xml.v110.ServiceIdentification)si, 
+                       (org.geotoolkit.ows.xml.v110.ServiceProvider)      sp, 
+                       (org.geotoolkit.ows.xml.v110.OperationsMetadata)   om, 
+                       (org.geotoolkit.wfs.xml.v200.FeatureTypeListType)  ftl, 
+                       (org.geotoolkit.ogc.xml.v200.FilterCapabilities)   fc);
+        } else if ("1.1.0".equals(version)) {
+            if ((si  != null && !(si instanceof org.geotoolkit.ows.xml.v100.ServiceIdentification)) ||
+                (sp  != null && !(sp instanceof org.geotoolkit.ows.xml.v100.ServiceProvider))       ||
+                (om  != null && !(om instanceof org.geotoolkit.ows.xml.v100.OperationsMetadata))    ||
+                (ftl != null && !(ftl instanceof org.geotoolkit.wfs.xml.v110.FeatureTypeListType))  ||
+                (fc  != null && !(fc instanceof org.geotoolkit.ogc.xml.v110.FilterCapabilities))) {
+                throw new IllegalArgumentException("Bad version of object");
+            }
+            return new  org.geotoolkit.wfs.xml.v110.WFSCapabilitiesType("1.1.0", 
+                       (org.geotoolkit.ows.xml.v100.ServiceIdentification)si, 
+                       (org.geotoolkit.ows.xml.v100.ServiceProvider)      sp, 
+                       (org.geotoolkit.ows.xml.v100.OperationsMetadata)   om, 
+                       (org.geotoolkit.wfs.xml.v110.FeatureTypeListType)  ftl, 
+                       (org.geotoolkit.ogc.xml.v110.FilterCapabilities)   fc);
+        }/*  TODO not supported yet
+             else if ("1.0.0".equals(version)) {
+            return new  org.geotoolkit.wfs.xml.v100.WFSCapabilitiesType("1.0.0", 
+                       (org.geotoolkit.ows.xml.v100.ServiceIdentification)si, 
+                       (org.geotoolkit.ows.xml.v100.ServiceProvider)      sp, 
+                       (org.geotoolkit.ows.xml.v100.OperationsMetadata)   om, 
+                       (org.geotoolkit.wfs.xml.v110.FeatureTypeListType)  ftl, 
+                       (org.geotoolkit.ogc.xml.v110.FilterCapabilities)   fc);
+        } */else {
             throw new IllegalArgumentException("unexpected version number:" + version);
         }
     }
