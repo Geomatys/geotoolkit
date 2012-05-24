@@ -18,10 +18,17 @@
 
 package org.geotoolkit.ogc.xml.v200;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.namespace.QName;
+import org.opengis.filter.capability.GeometryOperand;
+import org.opengis.filter.capability.SpatialCapabilities;
+import org.opengis.filter.capability.SpatialOperators;
 
 
 /**
@@ -49,13 +56,36 @@ import javax.xml.bind.annotation.XmlType;
     "geometryOperands",
     "spatialOperators"
 })
-public class SpatialCapabilitiesType {
+public class SpatialCapabilitiesType implements SpatialCapabilities {
 
     @XmlElement(name = "GeometryOperands", required = true)
     private GeometryOperandsType geometryOperands;
     @XmlElement(name = "SpatialOperators", required = true)
     private SpatialOperatorsType spatialOperators;
 
+    /**
+     * empty constructor used by JAXB
+     */
+    public SpatialCapabilitiesType() {
+        
+    }
+    
+    /**
+     * Build a new SpatialCapabilities 
+     */
+    public SpatialCapabilitiesType(final GeometryOperand[] geometryOperands, final SpatialOperators spatial) {
+        this.geometryOperands = new GeometryOperandsType(geometryOperands);
+        this.spatialOperators = (SpatialOperatorsType) spatial;
+    }
+
+    /**
+     * Build a new SpatialCapabilities
+     */
+    public SpatialCapabilitiesType(final GeometryOperandsType geometryOperands, final SpatialOperators spatial) {
+        this.geometryOperands = geometryOperands;
+        this.spatialOperators = (SpatialOperatorsType) spatial;
+    }
+    
     /**
      * Gets the value of the geometryOperands property.
      * 
@@ -64,7 +94,7 @@ public class SpatialCapabilitiesType {
      *     {@link GeometryOperandsType }
      *     
      */
-    public GeometryOperandsType getGeometryOperands() {
+    public GeometryOperandsType getGeometryOperandsType() {
         return geometryOperands;
     }
 
@@ -80,6 +110,20 @@ public class SpatialCapabilitiesType {
         this.geometryOperands = value;
     }
 
+    /**
+     * implements SpatialCapabilities geoAPI interface 
+     * @return
+     */
+    public Collection<GeometryOperand> getGeometryOperands() {
+        List<GeometryOperand> result = new ArrayList<GeometryOperand>();
+        if (geometryOperands != null) {
+            for (GeometryOperandsType.GeometryOperand qn: geometryOperands.getGeometryOperand()) {
+                result.add(GeometryOperand.get(qn.getName().getNamespaceURI(), qn.getName().getLocalPart()));
+            }
+        }
+        return result;
+    }
+    
     /**
      * Gets the value of the spatialOperators property.
      * 

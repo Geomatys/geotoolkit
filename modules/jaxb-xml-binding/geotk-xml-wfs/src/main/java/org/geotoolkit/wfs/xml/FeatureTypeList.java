@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2011, Geomatys
+ *    (C) 2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,14 +16,10 @@
  */
 package org.geotoolkit.wfs.xml;
 
-import org.geotoolkit.ows.xml.AbstractCapabilitiesBase;
-
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public interface WFSCapabilities extends AbstractCapabilitiesBase{
-    
-    FeatureTypeList getFeatureTypeList();
+public interface FeatureTypeList {
     
 }

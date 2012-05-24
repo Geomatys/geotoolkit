@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.wfs.xml.FeatureTypeList;
 import org.geotoolkit.wfs.xml.v110.OperationsType;
 
 
@@ -51,7 +52,7 @@ import org.geotoolkit.wfs.xml.v110.OperationsType;
 @XmlType(name = "FeatureTypeListType", propOrder = {
     "featureType"
 })
-public class FeatureTypeListType {
+public class FeatureTypeListType implements FeatureTypeList {
 
     @XmlElement(name = "FeatureType", required = true)
     private List<FeatureTypeType> featureType;

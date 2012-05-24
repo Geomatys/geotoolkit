@@ -65,25 +65,40 @@ public class GeometryOperandsType {
     private List<GeometryOperandsType.GeometryOperand> geometryOperand;
 
     /**
+     * Empty constructor used by JAXB
+     */
+    public GeometryOperandsType() {
+        
+    }
+    
+    /**
+     * build a new geometry Operands object with the specified array of GeometryOperand (from geoAPI)
+     */
+    public GeometryOperandsType(org.opengis.filter.capability.GeometryOperand[] geometryOperands) {
+        if (geometryOperands == null) {
+            geometryOperands = new org.opengis.filter.capability.GeometryOperand[0];
+        }
+        geometryOperand = new ArrayList<GeometryOperand>();
+        for (org.opengis.filter.capability.GeometryOperand g: geometryOperands) {
+            geometryOperand.add(new GeometryOperand(new QName(g.getNamespaceURI(), g.getLocalPart())));
+        }
+    }
+
+    /**
+     * build a new geometry Operands object with the specified array of GeometryOperand (from geoAPI)
+     */
+    public GeometryOperandsType(List<QName> geometryOperands) {
+        if (geometryOperands == null) {
+            geometryOperands = new ArrayList<QName>();
+        }
+        this.geometryOperand = new ArrayList<GeometryOperand>();
+        for (QName qn : geometryOperands) {
+            this.geometryOperand.add(new GeometryOperand(qn));
+        }
+    }
+
+    /**
      * Gets the value of the geometryOperand property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the geometryOperand property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getGeometryOperand().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link GeometryOperandsType.GeometryOperand }
-     * 
      * 
      */
     public List<GeometryOperandsType.GeometryOperand> getGeometryOperand() {
@@ -118,6 +133,13 @@ public class GeometryOperandsType {
         @XmlAttribute(required = true)
         private QName name;
 
+        public GeometryOperand() {
+            
+        }
+        
+        public GeometryOperand(final QName name) {
+            this.name = name;
+        }
         /**
          * Gets the value of the name property.
          * 

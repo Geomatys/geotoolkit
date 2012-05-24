@@ -22,6 +22,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.filter.capability.ArithmeticOperators;
+import org.opengis.filter.capability.ComparisonOperators;
+import org.opengis.filter.capability.ScalarCapabilities;
 
 
 /**
@@ -49,13 +52,29 @@ import javax.xml.bind.annotation.XmlType;
     "logicalOperators",
     "comparisonOperators"
 })
-public class ScalarCapabilitiesType {
+public class ScalarCapabilitiesType implements ScalarCapabilities{
 
     @XmlElement(name = "LogicalOperators")
     private LogicalOperators logicalOperators;
     @XmlElement(name = "ComparisonOperators")
     private ComparisonOperatorsType comparisonOperators;
 
+    /**
+     * An empty constructor used by JAXB
+     */
+    public ScalarCapabilitiesType() {
+    }
+    
+     /**
+     *Build a new Scalar Capabilities
+     */
+    public ScalarCapabilitiesType(final ComparisonOperators comparison, final boolean logical) {
+        if (logical) {
+            this.logicalOperators = new LogicalOperators();
+        }
+        this.comparisonOperators = (ComparisonOperatorsType) comparison;
+    }
+    
     /**
      * Gets the value of the logicalOperators property.
      * 
@@ -104,4 +123,14 @@ public class ScalarCapabilitiesType {
         this.comparisonOperators = value;
     }
 
+    /**
+     * Gets the value of the arithmeticOperators property.
+     */
+    public ArithmeticOperators getArithmeticOperators() {
+        return null;
+    }
+    
+    public boolean hasLogicalOperators() {
+        return logicalOperators != null;
+    }
 }

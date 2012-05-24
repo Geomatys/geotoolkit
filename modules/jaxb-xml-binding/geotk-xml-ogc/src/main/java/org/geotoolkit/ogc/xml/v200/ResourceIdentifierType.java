@@ -58,6 +58,14 @@ public class ResourceIdentifierType {
     @XmlAttribute(required = true)
     private QName name;
 
+    public ResourceIdentifierType() {
+        
+    }
+    
+    public ResourceIdentifierType(final QName name) {
+        this.name = name;
+    }
+    
     /**
      * Gets the value of the metadata property.
      * 

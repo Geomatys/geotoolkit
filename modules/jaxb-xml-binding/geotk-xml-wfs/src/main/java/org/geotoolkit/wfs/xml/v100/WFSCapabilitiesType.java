@@ -25,6 +25,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ogc.xml.v100.FilterCapabilities;
+import org.geotoolkit.ows.xml.AbstractOperationsMetadata;
+import org.geotoolkit.ows.xml.AbstractServiceIdentification;
+import org.geotoolkit.ows.xml.AbstractServiceProvider;
 import org.geotoolkit.wfs.xml.WFSCapabilities;
 import org.geotoolkit.wfs.xml.WFSResponse;
 
@@ -209,11 +212,11 @@ public class WFSCapabilitiesType implements WFSResponse, WFSCapabilities {
      *     {@link BigInteger }
      *     
      */
-    public BigInteger getUpdateSequence() {
+    public String getUpdateSequence() {
         if (updateSequence == null) {
-            return new BigInteger("0");
+            return "0";
         } else {
-            return updateSequence;
+            return updateSequence.toString();
         }
     }
 
@@ -229,4 +232,15 @@ public class WFSCapabilitiesType implements WFSResponse, WFSCapabilities {
         this.updateSequence = value;
     }
 
+    public AbstractServiceProvider getServiceProvider() {
+        throw new UnsupportedOperationException("Not supported by this version.");
+    }
+
+    public AbstractServiceIdentification getServiceIdentification() {
+        throw new UnsupportedOperationException("Not supported by this version.");
+    }
+
+    public AbstractOperationsMetadata getOperationsMetadata() {
+        throw new UnsupportedOperationException("Not supported by this version.");
+    }
 }
