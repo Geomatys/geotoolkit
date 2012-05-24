@@ -143,19 +143,6 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
             validate();
         }
     }
-
-    /**
-     * Clear any potential cache
-     */
-    public void clearCaches(){
-        if(value != null){
-            for(Property prop : value){
-                if(prop instanceof SimpleGeometryAttribut){
-                    ((SimpleGeometryAttribut)prop).clearCache();
-                }
-            }
-        }
-    }
     
     @Override
     public List<Property> getValue() {
@@ -185,6 +172,15 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
             return;
         }
         valueArray[idx] = value;
+        
+        //clear the geometry cache if necessary
+//        if(this.value != null){
+//            Object prop = this.value.get(idx);
+//            if(prop instanceof DefaultGeometryAttribute){
+//                ((SimpleGeometryAttribut)prop).clearCache();
+//            }
+//        }
+        
     }
     
     @Override
@@ -359,12 +355,8 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
         @Override
         public void setValue(Object newValue) throws IllegalArgumentException, IllegalStateException {
             valueArray[index] = newValue;
-            bounds = null; //reset property bounds
         }
         
-        private void clearCache(){
-            bounds = null;
-        }
     }
     
 }

@@ -30,7 +30,6 @@ import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureValidationUtilities;
 import org.geotoolkit.feature.SimpleIllegalAttributeException;
 import org.geotoolkit.io.TableWriter;
-import org.opengis.feature.Attribute;
 
 import org.opengis.feature.GeometryAttribute;
 import org.opengis.feature.IllegalAttributeException;

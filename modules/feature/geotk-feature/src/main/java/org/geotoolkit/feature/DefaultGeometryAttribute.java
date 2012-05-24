@@ -34,30 +34,14 @@ import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
-import org.geotoolkit.geometry.jts.JTS;
 
+import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.util.Utilities;
 
 
 /**
- * TODO: rename to GeometricAttribute Provides ...TODO summary sentence
- * <p>
- * TODO Description
- * </p>
- * <p>
- * </p>
- * <p>
- * Example Use:
- *
- * <pre><code>
- *         GeometryAttributeType x = new GeometryAttributeType( ... );
- *         TODO code example
- * </code></pre>
- *
- * </p>
- *
- * @author Leprosy
+ * 
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
@@ -98,9 +82,10 @@ public class DefaultGeometryAttribute extends DefaultAttribute<Object,GeometryDe
      */
     @Override
     public synchronized BoundingBox getBounds() {
-        if (bounds == null) {
+        final Object val = getValue();
+        if(bounds == null){
             //we explicitly use the getValue method, since subclass can override it
-            final Object val = getValue();
+            
             //get the type crs if defined
             CoordinateReferenceSystem crs = getType().getCoordinateReferenceSystem();
 
@@ -119,15 +104,15 @@ public class DefaultGeometryAttribute extends DefaultAttribute<Object,GeometryDe
                 }
             }
 
-            final JTSEnvelope2D bbox = new JTSEnvelope2D(crs);
-            final Geometry geom = (Geometry) val;
-            if (geom != null) {
-                bbox.expandToInclude(geom.getEnvelopeInternal());
-            } else {
-                bbox.setToNull();
-            }
-            bounds = bbox;
+            bounds = new JTSEnvelope2D(crs);
         }
+        
+        if (val instanceof Geometry) {
+            ((JTSEnvelope2D)bounds).init(((Geometry)val).getEnvelopeInternal());
+        } else {
+            ((JTSEnvelope2D)bounds).setToNull();
+        }
+        
         return bounds;
     }
 
