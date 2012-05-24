@@ -18,6 +18,7 @@ package org.geotoolkit.wps.converters.inputs.complex;
 
 
 import java.util.List;
+import java.util.Map;
 import javax.xml.bind.JAXBException;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
@@ -55,7 +56,7 @@ public final class ComplexToFeatureTypeConverter extends AbstractComplexInputCon
      * @return FeatureType
      */
     @Override
-    public FeatureType convert(final ComplexDataType source) throws NonconvertibleObjectException {
+    public FeatureType convert(final ComplexDataType source, final Map<String, Object> params) throws NonconvertibleObjectException {
         
         final List<Object> data = source.getContent();
         if(data.size() > 1){

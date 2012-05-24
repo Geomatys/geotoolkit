@@ -34,7 +34,7 @@ import org.opengis.feature.type.FeatureType;
  * 
  * @author Quentin Boileau (Geomatys).
  */
-public class FeatureTypeToReferenceConverter extends AbstractReferenceOutputConverter {
+public class FeatureTypeToReferenceConverter extends AbstractReferenceOutputConverter<FeatureType> {
 
     private static FeatureTypeToReferenceConverter INSTANCE;
 
@@ -48,30 +48,27 @@ public class FeatureTypeToReferenceConverter extends AbstractReferenceOutputConv
         return INSTANCE;
     }
 
+    @Override
+    public Class<? super FeatureType> getSourceClass() {
+        return FeatureType.class; 
+    }
+    
     /**
      * {@inheritDoc}
      */
     @Override
-    public ReferenceType convert(final Map<String,Object> source) throws NonconvertibleObjectException {
+    public ReferenceType convert(final FeatureType source, final Map<String,Object> params) throws NonconvertibleObjectException {
         
-        if (source.get(OUT_TMP_DIR_PATH) == null) {
+        if (params.get(TMP_DIR_PATH) == null) {
             throw new NonconvertibleObjectException("The output directory should be defined.");
         }
         
-        final Object data = source.get(OUT_DATA);
-        
-        if (data == null) {
+        if (source == null) {
             throw new NonconvertibleObjectException("The output directory should be defined.");
         }
         
-        FeatureType ft = null;
-        if (data instanceof FeatureType) {
-            ft = (FeatureType) data;
-        } else {
-            throw new NonconvertibleObjectException("The requested output reference data is not an instance of Feature or FeatureCollection.");
-        }
         
-        final WPSIO.IOType ioType = WPSIO.IOType.valueOf((String) source.get(OUT_IOTYPE));
+        final WPSIO.IOType ioType = WPSIO.IOType.valueOf((String) params.get(IOTYPE));
         ReferenceType reference = null ;
         
         if (ioType.equals(WPSIO.IOType.INPUT)) {
@@ -80,12 +77,12 @@ public class FeatureTypeToReferenceConverter extends AbstractReferenceOutputConv
             reference = new OutputReferenceType();
         }
 
-        reference.setMimeType((String) source.get(OUT_MIME));
-        reference.setEncoding((String) source.get(OUT_ENCODING));
-        reference.setSchema((String) source.get(OUT_SCHEMA));
+        reference.setMimeType((String) params.get(MIME));
+        reference.setEncoding((String) params.get(ENCODING));
+        reference.setSchema((String) params.get(SCHEMA));
         
-        reference.setMimeType((String) source.get(OUT_MIME));
-        reference.setEncoding((String) source.get(OUT_ENCODING));
+        reference.setMimeType((String) params.get(MIME));
+        reference.setEncoding((String) params.get(ENCODING));
         
         final String randomFileName = UUID.randomUUID().toString();
         
@@ -95,14 +92,14 @@ public class FeatureTypeToReferenceConverter extends AbstractReferenceOutputConv
             final String schemaFileName = randomFileName + "_schema" + ".xsd";
             
             //create file
-            final File schemaFile = new File((String) source.get(OUT_TMP_DIR_PATH), schemaFileName);
+            final File schemaFile = new File((String) params.get(TMP_DIR_PATH), schemaFileName);
             final OutputStream schemaStream = new FileOutputStream(schemaFile);
             
             //write featureType xsd on file
             final XmlFeatureTypeWriter xmlFTWriter = new JAXBFeatureTypeWriter();
-            xmlFTWriter.write(ft, schemaStream);
+            xmlFTWriter.write(source, schemaStream);
             
-            reference.setHref((String) source.get(OUT_TMP_DIR_URL) + "/" +schemaFileName);
+            reference.setHref((String) params.get(TMP_DIR_URL) + "/" +schemaFileName);
             
         } catch (JAXBException ex) {
             throw new NonconvertibleObjectException("Can't write FeatureType into xsd schema.",ex);
@@ -112,5 +109,5 @@ public class FeatureTypeToReferenceConverter extends AbstractReferenceOutputConv
              
         return reference;
     }
-    
+
 }

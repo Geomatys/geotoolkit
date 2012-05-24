@@ -20,6 +20,7 @@ import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
@@ -28,7 +29,7 @@ import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.wps.xml.v100.ReferenceType;
 
 /**
- *
+ * 
  * @author Quentin Boileau (Geomatys).
  */
 public class ReferenceToRenderedImageConverter extends AbstractReferenceInputConverter {
@@ -56,7 +57,7 @@ public class ReferenceToRenderedImageConverter extends AbstractReferenceInputCon
      * @return RenderedImage.
      */
     @Override
-    public RenderedImage convert(final ReferenceType source) throws NonconvertibleObjectException {
+    public RenderedImage convert(final ReferenceType source, final Map<String, Object> params) throws NonconvertibleObjectException {
 
         final InputStream stream = getInputStreamFromReference(source);
 

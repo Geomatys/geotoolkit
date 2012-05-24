@@ -19,6 +19,7 @@ package org.geotoolkit.wps.converters.inputs.complex;
 
 import com.vividsolutions.jts.geom.Geometry;
 import java.util.List;
+import java.util.Map;
 import org.geotoolkit.gml.GeometrytoJTS;
 import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
@@ -55,7 +56,7 @@ public final class ComplexToGeometryConverter extends AbstractComplexInputConver
      * @return Geometry.
      */
     @Override
-    public Geometry convert(final ComplexDataType source) throws NonconvertibleObjectException {
+    public Geometry convert(final ComplexDataType source, final Map<String, Object> params) throws NonconvertibleObjectException {
 
         try {                
             final List<Object> data = source.getContent();

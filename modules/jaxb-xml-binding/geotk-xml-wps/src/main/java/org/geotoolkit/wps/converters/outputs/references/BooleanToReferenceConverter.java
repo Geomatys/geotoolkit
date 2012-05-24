@@ -28,38 +28,41 @@ import org.geotoolkit.wps.xml.v100.OutputReferenceType;
 import org.geotoolkit.wps.xml.v100.ReferenceType;
 
 /**
- * Implementation of ObjectConverter to convert a {@code String}, {@code Number}, {@code Boolean} into a {@link OutputReferenceType reference}.
+ * Implementation of ObjectConverter to convert a {@code Boolean} into a {@link OutputReferenceType reference}.
  * 
  * @author Quentin Boileau (Geomatys).
  */
-public class LiteralsToReferenceConverter extends AbstractReferenceOutputConverter {
+public class BooleanToReferenceConverter extends AbstractReferenceOutputConverter<Boolean> {
 
-    private static LiteralsToReferenceConverter INSTANCE;
+    private static BooleanToReferenceConverter INSTANCE;
 
-    private LiteralsToReferenceConverter() {
+    private BooleanToReferenceConverter() {
     }
 
-    public static synchronized LiteralsToReferenceConverter getInstance() {
+    public static synchronized BooleanToReferenceConverter getInstance() {
         if (INSTANCE == null) {
-            INSTANCE = new LiteralsToReferenceConverter();
+            INSTANCE = new BooleanToReferenceConverter();
         }
         return INSTANCE;
     }
 
     @Override
-    public ReferenceType convert(Map<String, Object> source) throws NonconvertibleObjectException {
+    public Class<? super Boolean> getSourceClass() {
+        return Boolean.class;
+    }
+    
+    @Override
+    public ReferenceType convert(final Boolean source, final Map<String, Object> params) throws NonconvertibleObjectException {
         
-        if (source.get(OUT_TMP_DIR_PATH) == null) {
+        if (params.get(TMP_DIR_PATH) == null) {
             throw new NonconvertibleObjectException("The output directory should be defined.");
         }
         
-        final Object data = source.get(OUT_DATA);
-        
-        if (data == null) {
+        if (source == null) {
             throw new NonconvertibleObjectException("The output data should be defined.");
         }
         
-        final WPSIO.IOType ioType = WPSIO.IOType.valueOf((String) source.get(OUT_IOTYPE));
+        final WPSIO.IOType ioType = WPSIO.IOType.valueOf((String) params.get(IOTYPE));
         ReferenceType reference = null ;
         
         if (ioType.equals(WPSIO.IOType.INPUT)) {
@@ -68,9 +71,9 @@ public class LiteralsToReferenceConverter extends AbstractReferenceOutputConvert
             reference = new OutputReferenceType();
         }
 
-        reference.setMimeType((String) source.get(OUT_MIME));
-        reference.setEncoding((String) source.get(OUT_ENCODING));
-        reference.setSchema((String) source.get(OUT_SCHEMA));
+        reference.setMimeType((String) params.get(MIME));
+        reference.setEncoding((String) params.get(ENCODING));
+        reference.setSchema((String) params.get(SCHEMA));
 
         reference.setMimeType("text/plain");
         reference.setEncoding("UTF-8");
@@ -80,11 +83,11 @@ public class LiteralsToReferenceConverter extends AbstractReferenceOutputConvert
         FileWriter writer = null;
         try {
             //create file
-            final File literalFile = new File((String) source.get(OUT_TMP_DIR_PATH), randomFileName);
+            final File literalFile = new File((String) params.get(TMP_DIR_PATH), randomFileName);
             writer = new FileWriter(literalFile);
-            writer.write(String.valueOf(data));
+            writer.write(String.valueOf(source));
             writer.flush();
-            reference.setHref((String) source.get(OUT_TMP_DIR_URL) + "/" + randomFileName);
+            reference.setHref((String) params.get(TMP_DIR_URL) + "/" + randomFileName);
             
         } catch (IOException ex) {
             throw new NonconvertibleObjectException("Error occure during image writing.", ex);
@@ -99,4 +102,5 @@ public class LiteralsToReferenceConverter extends AbstractReferenceOutputConvert
         }
         return reference;
     }
+
 }

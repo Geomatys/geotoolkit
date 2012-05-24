@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 import javax.xml.bind.JAXBException;
 import org.geotoolkit.feature.xml.XmlFeatureReader;
 import org.geotoolkit.feature.xml.XmlFeatureTypeReader;
@@ -27,6 +28,7 @@ import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.util.converter.SimpleConverter;
+import org.geotoolkit.wps.converters.WPSDefaultConverter;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
 import org.opengis.feature.type.FeatureType;
 
@@ -34,7 +36,7 @@ import org.opengis.feature.type.FeatureType;
  *
  * @author Quentin Boileau (Geomatys).
  */
-public abstract class AbstractComplexInputConverter extends SimpleConverter<ComplexDataType, Object> {
+public abstract class AbstractComplexInputConverter extends WPSDefaultConverter<ComplexDataType, Object> {
 
     @Override
     public Class<? super ComplexDataType> getSourceClass() {
@@ -51,7 +53,7 @@ public abstract class AbstractComplexInputConverter extends SimpleConverter<Comp
      * @throws NonconvertibleObjectException 
      */
     @Override
-    public abstract Object convert(final ComplexDataType source) throws NonconvertibleObjectException;
+    public abstract Object convert(final ComplexDataType source, Map<String, Object> params) throws NonconvertibleObjectException;
     
     /**
      * Get the JAXPStreamFeatureReader to read feature. If there is a schema defined, the JAXPStreamFeatureReader will

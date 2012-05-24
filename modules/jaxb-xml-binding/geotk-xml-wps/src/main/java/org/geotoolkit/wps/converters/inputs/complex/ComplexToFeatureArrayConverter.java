@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.feature.xml.XmlFeatureReader;
@@ -58,7 +59,7 @@ public final class ComplexToFeatureArrayConverter extends AbstractComplexInputCo
      * @return Feature array.
      */
     @Override
-    public Feature[] convert(final ComplexDataType source) throws NonconvertibleObjectException {
+    public Feature[] convert(final ComplexDataType source, final Map<String, Object> params) throws NonconvertibleObjectException {
 
         final List<Object> data = source.getContent();
 

@@ -42,7 +42,7 @@ import org.opengis.feature.type.FeatureType;
  * 
  * @author Quentin Boileau (Geomatys).
  */
-public class FeatureToReferenceConverter extends AbstractReferenceOutputConverter {
+public class FeatureToReferenceConverter extends AbstractReferenceOutputConverter<Feature> {
 
     private static FeatureToReferenceConverter INSTANCE;
 
@@ -56,33 +56,34 @@ public class FeatureToReferenceConverter extends AbstractReferenceOutputConverte
         return INSTANCE;
     }
 
+    @Override
+    public Class<? super Feature> getSourceClass() {
+        return Feature.class;
+    }
+    
     /**
      * {@inheritDoc}
      */
     @Override
-    public ReferenceType convert(final Map<String,Object> source) throws NonconvertibleObjectException {
+    public ReferenceType convert(final Feature source, final Map<String,Object> params) throws NonconvertibleObjectException {
         
         
-        if (source.get(OUT_TMP_DIR_PATH) == null) {
+        if (params.get(TMP_DIR_PATH) == null) {
             throw new NonconvertibleObjectException("The output directory should be defined.");
         }
         
-        final Object data = source.get(OUT_DATA);
-        
-        if (data == null) {
+        if (source == null) {
             throw new NonconvertibleObjectException("The output directory should be defined.");
         }
         
         FeatureType ft = null;
-        if (data instanceof Feature) {
-            ft = ((Feature) data).getType();
-        } else if (data instanceof FeatureCollection) {
-            ft = ((FeatureCollection) data).getFeatureType();
+        if (source instanceof Feature) {
+            ft = source.getType();
         } else {
-            throw new NonconvertibleObjectException("The requested output reference data is not an instance of Feature or FeatureCollection.");
+            throw new NonconvertibleObjectException("The requested output reference data is not an instance of Feature.");
         }
         
-        final WPSIO.IOType ioType = WPSIO.IOType.valueOf((String) source.get(OUT_IOTYPE));
+        final WPSIO.IOType ioType = WPSIO.IOType.valueOf((String) params.get(IOTYPE));
         ReferenceType reference = null ;
         
         if (ioType.equals(WPSIO.IOType.INPUT)) {
@@ -91,12 +92,12 @@ public class FeatureToReferenceConverter extends AbstractReferenceOutputConverte
             reference = new OutputReferenceType();
         }
 
-        reference.setMimeType((String) source.get(OUT_MIME));
-        reference.setEncoding((String) source.get(OUT_ENCODING));
-        reference.setSchema((String) source.get(OUT_SCHEMA));
+        reference.setMimeType((String) params.get(MIME));
+        reference.setEncoding((String) params.get(ENCODING));
+        reference.setSchema((String) params.get(SCHEMA));
         
-        reference.setMimeType((String) source.get(OUT_MIME));
-        reference.setEncoding((String) source.get(OUT_ENCODING));
+        reference.setMimeType((String) params.get(MIME));
+        reference.setEncoding((String) params.get(ENCODING));
                
         final String namespace = ft.getName().getURI();
         final Map <String, String> schemaLocation = new HashMap<String, String>();
@@ -109,14 +110,14 @@ public class FeatureToReferenceConverter extends AbstractReferenceOutputConverte
             final String schemaFileName = randomFileName + "_schema" + ".xsd";
             
             //create file
-            final File schemaFile = new File((String) source.get(OUT_TMP_DIR_PATH), schemaFileName);
+            final File schemaFile = new File((String) params.get(TMP_DIR_PATH), schemaFileName);
             final OutputStream schemaStream = new FileOutputStream(schemaFile);
             
             //write featureType xsd on file
             final XmlFeatureTypeWriter xmlFTWriter = new JAXBFeatureTypeWriter();
             xmlFTWriter.write(ft, schemaStream);
             
-            reference.setSchema((String) source.get(OUT_TMP_DIR_URL) + "/" +schemaFileName);
+            reference.setSchema((String) params.get(TMP_DIR_URL) + "/" +schemaFileName);
             schemaLocation.put(namespace, reference.getSchema());
             
         } catch (JAXBException ex) {
@@ -132,13 +133,13 @@ public class FeatureToReferenceConverter extends AbstractReferenceOutputConverte
             final String dataFileName = randomFileName+".xml"; 
             
             //create file
-            final File dataFile = new File((String) source.get(OUT_TMP_DIR_PATH), dataFileName);
+            final File dataFile = new File((String) params.get(TMP_DIR_PATH), dataFileName);
             final OutputStream dataStream = new FileOutputStream(dataFile);
             
             //Write feature in file
             featureWriter = new JAXPStreamFeatureWriter(schemaLocation);
-            featureWriter.write(data, dataStream);
-            reference.setHref((String) source.get(OUT_TMP_DIR_URL) + "/" +dataFileName);
+            featureWriter.write(source, dataStream);
+            reference.setHref((String) params.get(TMP_DIR_URL) + "/" +dataFileName);
             
         } catch (IOException ex) {
             throw new NonconvertibleObjectException(ex);
@@ -161,5 +162,4 @@ public class FeatureToReferenceConverter extends AbstractReferenceOutputConverte
         }
         return reference;
     }
-    
 }

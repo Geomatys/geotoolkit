@@ -33,7 +33,7 @@ import org.opengis.feature.type.FeatureType;
  * 
  * @author Quentin Boileau (Geomatys).
  */
-public final class FeatureTypeToComplexConverter extends AbstractComplexOutputConverter {
+public final class FeatureTypeToComplexConverter extends AbstractComplexOutputConverter<FeatureType> {
 
     private static FeatureTypeToComplexConverter INSTANCE;
 
@@ -47,32 +47,33 @@ public final class FeatureTypeToComplexConverter extends AbstractComplexOutputCo
         return INSTANCE;
     } 
     
+    @Override
+    public Class<? super FeatureType> getSourceClass() {
+        return FeatureType.class;
+    }
+    
     /**
      * {@inheritDoc}
      */
     @Override
-    public ComplexDataType convert(final Map<String, Object> source) throws NonconvertibleObjectException {
+    public ComplexDataType convert(final FeatureType source, final Map<String, Object> params) throws NonconvertibleObjectException {
         
         
-        final Object data = source.get(OUT_DATA);
-        
-        if (data == null) {
+        if (source == null) {
             throw new NonconvertibleObjectException("The output data should be defined.");
         }
-        if (!(data instanceof FeatureType)) {
+        if (!(source instanceof FeatureType)) {
             throw new NonconvertibleObjectException("The requested output data is not an instance of FeatureType.");
         }
         final ComplexDataType complex = new ComplexDataType();
         
-        complex.setMimeType((String) source.get(OUT_MIME));
-        complex.setEncoding((String) source.get(OUT_ENCODING));
-        
-        final FeatureType ft = (FeatureType) data;
+        complex.setMimeType((String) params.get(MIME));
+        complex.setEncoding((String) params.get(ENCODING));
         
         try {
             
             final XmlFeatureTypeWriter xmlWriter = new JAXBFeatureTypeWriter();
-            complex.getContent().add(xmlWriter.writeToElement(ft));
+            complex.getContent().add(xmlWriter.writeToElement(source));
             
         } catch (JAXBException ex) {
             throw new NonconvertibleObjectException("Can't write FeatureType into ResponseDocument.",ex);
@@ -82,7 +83,6 @@ public final class FeatureTypeToComplexConverter extends AbstractComplexOutputCo
 
        return  complex;
        
-      
     }
 }
 

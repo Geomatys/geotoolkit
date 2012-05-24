@@ -30,11 +30,9 @@ import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.mathml.xml.*;
 import org.geotoolkit.ows.xml.v110.DomainMetadataType;
 import org.geotoolkit.referencing.IdentifiedObjects;
+import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.converter.ConverterRegistry;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
-import org.geotoolkit.util.converter.ObjectConverter;
-import org.geotoolkit.wps.converters.outputs.complex.AbstractComplexOutputConverter;
-import org.geotoolkit.wps.converters.outputs.references.AbstractReferenceOutputConverter;
 import org.geotoolkit.wps.io.WPSIO;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
 import org.geotoolkit.wps.xml.v100.InputReferenceType;
@@ -134,19 +132,19 @@ public class WPSConvertersUtils {
 
         Object convertedData = null; //resulting Object
 
-        ObjectConverter<String, T> converter;//converter
+        WPSObjectConverter<String, T> converter;//converter
         try {
             //try to convert into a primitive type
-            converter = ConverterRegistry.system().converter(String.class, binding);
+            converter = new WPSObjectConverterAdapter(ConverterRegistry.system().converter(String.class, binding));
         } catch (NonconvertibleObjectException ex) {
             //try to convert with some specified converter
-            converter = WPSIO.getConverter(binding, WPSIO.IOType.INPUT, WPSIO.FormChoice.LITERAL, null, null, null);
+            converter = WPSIO.getConverter(binding, WPSIO.IOType.INPUT, WPSIO.FormChoice.LITERAL);
 
             if (converter == null) {
                 throw new NonconvertibleObjectException("Converter can't be found.");
             }
         }
-        convertedData = converter.convert(data);
+        convertedData = converter.convert(data, null);
         return convertedData;
     }
 
@@ -182,7 +180,9 @@ public class WPSConvertersUtils {
         final String mime = complex.getMimeType();
         final String encoding = complex.getEncoding();
         final String schema = complex.getSchema();
-
+        
+        WPSIO.checkSupportedFormat(expectedClass, WPSIO.IOType.INPUT, mime, encoding, schema);
+           
         final List<Object> content = complex.getContent();
         
         //remove white spaces
@@ -195,14 +195,14 @@ public class WPSConvertersUtils {
                 }
             }
         }
-        
-        final ObjectConverter converter = WPSIO.getConverter(expectedClass, WPSIO.IOType.INPUT, WPSIO.FormChoice.COMPLEX, mime, encoding, schema);
+       
+        final WPSObjectConverter converter = WPSIO.getConverter(expectedClass, WPSIO.IOType.INPUT, WPSIO.FormChoice.COMPLEX);
 
         if (converter == null) {
             throw new NonconvertibleObjectException("Input complex not supported, no converter found.");
         }
 
-        return converter.convert(complex);
+        return converter.convert(complex, null);
     }
 
     /**
@@ -221,22 +221,24 @@ public class WPSConvertersUtils {
             final String storageDirectory, final String storageURL)
             throws NonconvertibleObjectException {
         
+        ArgumentChecks.ensureNonNull("Object", object);
+        
+        WPSIO.checkSupportedFormat(object.getClass(), WPSIO.IOType.INPUT, mime, encoding, schema);
+        
         final Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put(AbstractComplexOutputConverter.OUT_DATA, object);
-        parameters.put(AbstractComplexOutputConverter.OUT_TMP_DIR_PATH, storageDirectory);
-        parameters.put(AbstractComplexOutputConverter.OUT_TMP_DIR_URL, storageURL);
-        parameters.put(AbstractComplexOutputConverter.OUT_ENCODING, encoding);
-        parameters.put(AbstractComplexOutputConverter.OUT_MIME, mime);
-        parameters.put(AbstractComplexOutputConverter.OUT_SCHEMA, schema);
+        parameters.put(WPSObjectConverter.TMP_DIR_PATH, storageDirectory);
+        parameters.put(WPSObjectConverter.TMP_DIR_URL, storageURL);
+        parameters.put(WPSObjectConverter.ENCODING, encoding);
+        parameters.put(WPSObjectConverter.MIME, mime);
+        parameters.put(WPSObjectConverter.SCHEMA, schema);
 
         
-        final ObjectConverter converter = WPSIO.getConverter(object.getClass(), WPSIO.IOType.OUTPUT, WPSIO.FormChoice.COMPLEX,
-                mime, encoding, schema);
+        final WPSObjectConverter converter = WPSIO.getConverter(object.getClass(), WPSIO.IOType.OUTPUT, WPSIO.FormChoice.COMPLEX);
         if (converter == null) {
             throw new NonconvertibleObjectException("Output complex not supported, no converter found.");
         }
 
-        return (ComplexDataType) converter.convert(parameters);
+        return (ComplexDataType) converter.convert(object, parameters);
     }
     
     /**
@@ -252,14 +254,15 @@ public class WPSConvertersUtils {
         final String mime = reference.getMimeType();
         final String encoding = reference.getEncoding();
         final String schema = reference.getSchema();
-
-        final ObjectConverter converter = WPSIO.getConverter(expectedClass, WPSIO.IOType.INPUT, WPSIO.FormChoice.REFERENCE, mime, encoding, schema);
+        WPSIO.checkSupportedFormat(expectedClass, WPSIO.IOType.INPUT, mime, encoding, schema);
+        
+        final WPSObjectConverter converter = WPSIO.getConverter(expectedClass, WPSIO.IOType.INPUT, WPSIO.FormChoice.REFERENCE);
 
         if (converter == null) {
             throw new NonconvertibleObjectException("Input reference not supported, no converter found.");
         }
 
-        return converter.convert(reference);
+        return converter.convert(reference, null);
     }
 
     /**
@@ -278,22 +281,24 @@ public class WPSConvertersUtils {
     public static ReferenceType convertToReference(final Object object, final String mime, final String encoding, final String schema,
             final String storageDirectory, final String storageURL, final WPSIO.IOType iotype) throws NonconvertibleObjectException {
         
+        ArgumentChecks.ensureNonNull("Object", object);
+        
+        WPSIO.checkSupportedFormat(object.getClass(), WPSIO.IOType.INPUT, mime, encoding, schema);
+        
         final Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put(AbstractReferenceOutputConverter.OUT_DATA, object);
-        parameters.put(AbstractReferenceOutputConverter.OUT_TMP_DIR_PATH, storageDirectory);
-        parameters.put(AbstractReferenceOutputConverter.OUT_TMP_DIR_URL, storageURL);
-        parameters.put(AbstractReferenceOutputConverter.OUT_ENCODING, encoding);
-        parameters.put(AbstractReferenceOutputConverter.OUT_MIME, mime);
-        parameters.put(AbstractReferenceOutputConverter.OUT_SCHEMA, schema);
-        parameters.put(AbstractReferenceOutputConverter.OUT_IOTYPE, iotype.toString());
+        parameters.put(WPSObjectConverter.TMP_DIR_PATH, storageDirectory);
+        parameters.put(WPSObjectConverter.TMP_DIR_URL, storageURL);
+        parameters.put(WPSObjectConverter.ENCODING, encoding);
+        parameters.put(WPSObjectConverter.MIME, mime);
+        parameters.put(WPSObjectConverter.SCHEMA, schema);
+        parameters.put(WPSObjectConverter.IOTYPE, iotype.toString());
 
-        final ObjectConverter converter = WPSIO.getConverter(object.getClass(), WPSIO.IOType.OUTPUT, WPSIO.FormChoice.COMPLEX,
-                mime, encoding, schema);
+        final WPSObjectConverter converter = WPSIO.getConverter(object.getClass(), WPSIO.IOType.OUTPUT, WPSIO.FormChoice.REFERENCE);
         if (converter == null) {
             throw new NonconvertibleObjectException("Output complex not supported, no converter found.");
         }
 
-        return (ReferenceType) converter.convert(parameters);
+        return (ReferenceType) converter.convert(object, parameters);
     }
     
     /**

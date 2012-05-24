@@ -18,6 +18,7 @@ package org.geotoolkit.wps.converters.inputs.references;
 
 import com.vividsolutions.jts.geom.Geometry;
 import java.io.InputStream;
+import java.util.Map;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -60,7 +61,7 @@ public final class ReferenceToGeometryConverter extends AbstractReferenceInputCo
      * @return Geometry.
      */
     @Override
-    public Geometry convert(final ReferenceType source) throws NonconvertibleObjectException {
+    public Geometry convert(final ReferenceType source, final Map<String, Object> params) throws NonconvertibleObjectException {
 
         final String mime = source.getMimeType() != null ? source.getMimeType() : WPSMimeType.TEXT_XML.val();
         final InputStream stream = getInputStreamFromReference(source);

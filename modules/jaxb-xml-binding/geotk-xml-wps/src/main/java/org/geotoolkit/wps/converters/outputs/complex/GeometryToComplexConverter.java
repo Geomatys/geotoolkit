@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.wps.converters.outputs.complex;
 
-
 import com.vividsolutions.jts.geom.Geometry;
 import java.util.Map;
 import org.geotoolkit.gml.JTStoGeometry;
@@ -28,56 +27,58 @@ import org.opengis.util.FactoryException;
 
 /**
  * Implementation of ObjectConverter to convert a JTS Geometry into a {@link ComplexDataType}.
- * 
+ *
  * @author Quentin Boileau
  */
-public final class GeometryToComplexConverter extends AbstractComplexOutputConverter {
+public final class GeometryToComplexConverter extends AbstractComplexOutputConverter<Geometry> {
 
     private static GeometryToComplexConverter INSTANCE;
 
-    private GeometryToComplexConverter(){
+    private GeometryToComplexConverter() {
     }
 
-    public static synchronized GeometryToComplexConverter getInstance(){
-        if(INSTANCE == null){
+    public static synchronized GeometryToComplexConverter getInstance() {
+        if (INSTANCE == null) {
             INSTANCE = new GeometryToComplexConverter();
         }
         return INSTANCE;
     }
- 
+
+    @Override
+    public Class<? super Geometry> getSourceClass() {
+        return Geometry.class;
+    }
+
     /**
      * {@inheritDoc}
      */
-     @Override
-    public ComplexDataType convert(final Map<String, Object> source) throws NonconvertibleObjectException {
-        
-         final Object data = source.get(OUT_DATA);
-        
-        if (data == null) {
+    @Override
+    public ComplexDataType convert(final Geometry source, final Map<String, Object> params) throws NonconvertibleObjectException {
+
+        if (source == null) {
             throw new NonconvertibleObjectException("The output data should be defined.");
         }
-        if (!(data instanceof Geometry)) {
+        if (!(source instanceof Geometry)) {
             throw new NonconvertibleObjectException("The requested output data is not an instance of Geometry JTS.");
         }
-         
+
         final ComplexDataType complex = new ComplexDataType();
-        
-        complex.setMimeType((String) source.get(OUT_MIME));
-        complex.setSchema((String) source.get(OUT_SCHEMA));
-        complex.setEncoding((String) source.get(OUT_ENCODING));
-        
+
+        complex.setMimeType((String) params.get(MIME));
+        complex.setSchema((String) params.get(SCHEMA));
+        complex.setEncoding((String) params.get(ENCODING));
+
         try {
-            
-            final AbstractGeometryType gmlGeom = JTStoGeometry.toGML((Geometry) data);
+
+            final AbstractGeometryType gmlGeom = JTStoGeometry.toGML(source);
             complex.getContent().add(gmlGeom);
-            
+
         } catch (NoSuchAuthorityCodeException ex) {
-           throw new NonconvertibleObjectException(ex);
+            throw new NonconvertibleObjectException(ex);
         } catch (FactoryException ex) {
             throw new NonconvertibleObjectException(ex);
         }
-      
+
         return complex;
     }
 }
-

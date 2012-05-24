@@ -19,6 +19,7 @@ package org.geotoolkit.wps.converters.inputs.references;
 import java.awt.geom.AffineTransform;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import org.geotoolkit.mathml.xml.Mtable;
@@ -54,7 +55,7 @@ public class ReferenceToAffineTransformConverter extends AbstractReferenceInputC
     }
 
     @Override
-    public Object convert(final ReferenceType source) throws NonconvertibleObjectException {
+    public Object convert(final ReferenceType source, final Map<String, Object> params) throws NonconvertibleObjectException {
         
         final String mime = source.getMimeType() != null ? source.getMimeType() : WPSMimeType.TEXT_XML.val();
         final InputStream stream = getInputStreamFromReference(source);

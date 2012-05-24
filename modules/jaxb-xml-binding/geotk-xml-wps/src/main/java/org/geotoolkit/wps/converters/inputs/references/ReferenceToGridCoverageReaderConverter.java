@@ -19,6 +19,7 @@ package org.geotoolkit.wps.converters.inputs.references;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageInputStream;
 import org.geotoolkit.coverage.io.CoverageIO;
@@ -57,7 +58,7 @@ public final class ReferenceToGridCoverageReaderConverter extends AbstractRefere
      * @return GridCoverageReader.
      */
     @Override
-    public GridCoverageReader convert(final ReferenceType source) throws NonconvertibleObjectException {
+    public GridCoverageReader convert(final ReferenceType source, final Map<String, Object> params) throws NonconvertibleObjectException {
 
         final InputStream stream = getInputStreamFromReference(source);
         GridCoverageReader reader = null;

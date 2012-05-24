@@ -18,6 +18,7 @@ package org.geotoolkit.wps.converters.inputs.complex;
 
 import java.awt.geom.AffineTransform;
 import java.util.List;
+import java.util.Map;
 import org.geotoolkit.mathml.xml.Mtable;
 import org.geotoolkit.mathml.xml.Mtr;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
@@ -48,7 +49,7 @@ public class ComplexToAffineTransformConverter  extends AbstractComplexInputConv
     }
 
     @Override
-    public Object convert(final ComplexDataType source) throws NonconvertibleObjectException {
+    public Object convert(final ComplexDataType source, Map<String, Object> params) throws NonconvertibleObjectException {
         
         final List<Object> datas = source.getContent();
         

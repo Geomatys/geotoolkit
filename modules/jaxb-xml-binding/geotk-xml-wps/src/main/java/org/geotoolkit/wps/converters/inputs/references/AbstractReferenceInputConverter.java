@@ -25,6 +25,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.util.List;
+import java.util.Map;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
@@ -35,6 +36,7 @@ import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.util.converter.SimpleConverter;
+import org.geotoolkit.wps.converters.WPSDefaultConverter;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
 import org.geotoolkit.wps.xml.v100.InputReferenceType;
 import org.geotoolkit.wps.xml.v100.OutputReferenceType;
@@ -46,7 +48,7 @@ import org.opengis.feature.type.FeatureType;
  * 
  * @author Quentin Boileau (Geomatys).
  */
-public abstract class AbstractReferenceInputConverter extends SimpleConverter<ReferenceType, Object> {
+public abstract class AbstractReferenceInputConverter extends WPSDefaultConverter<ReferenceType, Object> {
 
     @Override
     public Class<? super ReferenceType> getSourceClass() {
@@ -63,7 +65,7 @@ public abstract class AbstractReferenceInputConverter extends SimpleConverter<Re
      * @throws NonconvertibleObjectException 
      */
     @Override
-    public abstract Object convert(final ReferenceType source) throws NonconvertibleObjectException;
+    public abstract Object convert(final ReferenceType source, Map<String, Object> params) throws NonconvertibleObjectException;
    
      /**
      * Get the JAXPStreamFeatureReader to read feature. If there is a schema defined, the JAXPStreamFeatureReader will

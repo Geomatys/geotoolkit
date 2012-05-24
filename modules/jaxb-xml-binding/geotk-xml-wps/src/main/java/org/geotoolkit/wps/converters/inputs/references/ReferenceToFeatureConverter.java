@@ -19,6 +19,7 @@ package org.geotoolkit.wps.converters.inputs.references;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.util.Map;
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.feature.xml.XmlFeatureReader;
@@ -56,7 +57,7 @@ public final class ReferenceToFeatureConverter extends AbstractReferenceInputCon
     
 
     @Override
-    public Object convert(ReferenceType source) throws NonconvertibleObjectException {
+    public Object convert(ReferenceType source, final Map<String, Object> params) throws NonconvertibleObjectException {
         
         final String mime = source.getMimeType() != null ? source.getMimeType() : WPSMimeType.TEXT_XML.val();
         final InputStream stream = getInputStreamFromReference(source);

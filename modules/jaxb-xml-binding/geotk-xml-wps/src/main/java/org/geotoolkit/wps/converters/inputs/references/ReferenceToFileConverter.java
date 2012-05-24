@@ -21,6 +21,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.util.Map;
 import java.util.UUID;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.wps.xml.v100.ReferenceType;
@@ -55,7 +56,7 @@ public final class ReferenceToFileConverter extends AbstractReferenceInputConver
      * @return File.
      */
     @Override
-    public File convert(final ReferenceType source) throws NonconvertibleObjectException {
+    public File convert(final ReferenceType source, final Map<String, Object> params) throws NonconvertibleObjectException {
 
         File file;
         InputStream in = null;

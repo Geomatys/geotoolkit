@@ -19,25 +19,18 @@ package org.geotoolkit.wps.converters.outputs.complex;
 import java.util.Map;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.util.converter.SimpleConverter;
+import org.geotoolkit.wps.converters.WPSDefaultConverter;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
 
 /**
  *
  * @author Quentin Boileau (Geometry).
  */
-public abstract class AbstractComplexOutputConverter extends SimpleConverter<Map<String, Object>, ComplexDataType> {
+public abstract class AbstractComplexOutputConverter<S> extends WPSDefaultConverter<S, ComplexDataType> {
 
-    public static final String OUT_DATA      = "outData";
-    public static final String OUT_MIME      = "outMime";
-    public static final String OUT_SCHEMA    = "outSchema";
-    public static final String OUT_ENCODING  = "outEncoding";
-    public static final String OUT_TMP_DIR_PATH = "outTempDirectoryPath";
-    public static final String OUT_TMP_DIR_URL = "outTempDirectoryUrl";
 
     @Override
-    public Class<? super Map<String, Object>> getSourceClass() {
-        return Map.class;
-    }
+    public abstract Class<? super S> getSourceClass();
 
     @Override
     public Class<? extends ComplexDataType> getTargetClass() {
@@ -46,7 +39,7 @@ public abstract class AbstractComplexOutputConverter extends SimpleConverter<Map
 
     /**
      * Convert the data from source Map into {@link ComplexDataType}. 
-     * The {@code source} Map contain : 
+     * The {@code params} Map contain : 
      * <ul>
      *      <li>outData : the object to convert into {@link ComplexDataType}.</li>
      *      <li>outMime : the requested mime type for the output.</li>
@@ -56,10 +49,11 @@ public abstract class AbstractComplexOutputConverter extends SimpleConverter<Map
      *      <li>outTempDirectoryUrl : the URL path to the web accessible storage folder.</li>
      * </ul>
      * @param source
+     * @param params 
      * @return the converted outData into {@link ComplexDataType}.
      * @throws NonconvertibleObjectException if an error occurs durring the convertion processing.
      */
     @Override
-    public abstract ComplexDataType convert(final Map<String, Object> source) throws NonconvertibleObjectException;
+    public abstract ComplexDataType convert(final S source, final Map<String, Object> params) throws NonconvertibleObjectException;
     
 }

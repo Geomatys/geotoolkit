@@ -36,7 +36,7 @@ import org.opengis.util.FactoryException;
  * 
  * @author Quentin Boileau (Geomatys).
  */
-public class GeometryToReferenceConverter extends AbstractReferenceOutputConverter {
+public class GeometryToReferenceConverter extends AbstractReferenceOutputConverter<Geometry> {
 
     private static GeometryToReferenceConverter INSTANCE;
 
@@ -50,26 +50,29 @@ public class GeometryToReferenceConverter extends AbstractReferenceOutputConvert
         return INSTANCE;
     }
     
+    @Override
+    public Class<? super Geometry> getSourceClass() {
+        return Geometry.class;
+    }
+    
     /**
      * {@inheritDoc}
      */
     @Override
-    public ReferenceType convert(final Map<String,Object> source) throws NonconvertibleObjectException {
+    public ReferenceType convert(final Geometry source, final Map<String,Object> params) throws NonconvertibleObjectException {
         
-        if (source.get(OUT_TMP_DIR_PATH) == null) {
+        if (params.get(TMP_DIR_PATH) == null) {
             throw new NonconvertibleObjectException("The output directory should be defined.");
         }
         
-        final Object data = source.get(OUT_DATA);
-        
-        if (data == null) {
+        if (source == null) {
             throw new NonconvertibleObjectException("The output data should be defined.");
         }
-        if ( !(data instanceof Geometry)) {
+        if ( !(source instanceof Geometry)) {
             throw new NonconvertibleObjectException("The geometry is not an JTS geometry.");
         }
         
-        final WPSIO.IOType ioType = WPSIO.IOType.valueOf((String) source.get(OUT_IOTYPE));
+        final WPSIO.IOType ioType = WPSIO.IOType.valueOf((String) params.get(IOTYPE));
         ReferenceType reference = null ;
         
         if (ioType.equals(WPSIO.IOType.INPUT)) {
@@ -78,24 +81,24 @@ public class GeometryToReferenceConverter extends AbstractReferenceOutputConvert
             reference = new OutputReferenceType();
         }
 
-        reference.setMimeType((String) source.get(OUT_MIME));
-        reference.setEncoding((String) source.get(OUT_ENCODING));
-        reference.setSchema((String) source.get(OUT_SCHEMA));
+        reference.setMimeType((String) params.get(MIME));
+        reference.setEncoding((String) params.get(ENCODING));
+        reference.setSchema((String) params.get(SCHEMA));
         
-        reference.setMimeType((String) source.get(OUT_MIME));
-        reference.setEncoding((String) source.get(OUT_ENCODING));
-        reference.setSchema((String) source.get(OUT_SCHEMA));
+        reference.setMimeType((String) params.get(MIME));
+        reference.setEncoding((String) params.get(ENCODING));
+        reference.setSchema((String) params.get(SCHEMA));
         
         final String randomFileName = UUID.randomUUID().toString();
         Marshaller m = null;
         OutputStream geometryStream = null;
         try {
             //create file
-            final File geometryFile = new File((String) source.get(OUT_TMP_DIR_PATH), randomFileName);
+            final File geometryFile = new File((String) params.get(TMP_DIR_PATH), randomFileName);
             geometryStream = new FileOutputStream(geometryFile);
             m = WPSMarshallerPool.getInstance().acquireMarshaller();
-            m.marshal( JTStoGeometry.toGML((Geometry) data), geometryStream);
-            reference.setSchema((String) source.get(OUT_TMP_DIR_URL) + "/" +randomFileName);
+            m.marshal( JTStoGeometry.toGML(source), geometryStream);
+            reference.setHref((String) params.get(TMP_DIR_URL) + "/" +randomFileName);
             
         } catch (FactoryException ex) {
             throw new NonconvertibleObjectException("Can't convert the JTS geometry to OpenGIS.", ex);
@@ -115,5 +118,5 @@ public class GeometryToReferenceConverter extends AbstractReferenceOutputConvert
         }
         return reference;
     }
-    
+
 }

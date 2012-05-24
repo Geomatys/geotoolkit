@@ -32,7 +32,7 @@ import org.opengis.util.FactoryException;
  * 
  * @author Quentin Boileau (Geomatys).
  */
-public final class GeometryArrayToComplexConverter extends AbstractComplexOutputConverter {
+public final class GeometryArrayToComplexConverter extends AbstractComplexOutputConverter<Geometry[]> {
 
     private static GeometryArrayToComplexConverter INSTANCE;
 
@@ -46,30 +46,33 @@ public final class GeometryArrayToComplexConverter extends AbstractComplexOutput
         return INSTANCE;
     }
     
+    @Override
+    public Class<? super Geometry[]> getSourceClass() {
+        return Geometry[].class;
+    }
+    
     /**
      * {@inheritDoc}
      */
     @Override
-    public ComplexDataType convert(final Map<String, Object> source) throws NonconvertibleObjectException {
+    public ComplexDataType convert(final Geometry[] source, final Map<String, Object> params) throws NonconvertibleObjectException {
         
-        final Object data = source.get(OUT_DATA);
         
-        if (data == null) {
+        if (source == null) {
             throw new NonconvertibleObjectException("The output data should be defined.");
         }
-        if (!(data instanceof Geometry[])) {
+        if (!(source instanceof Geometry[])) {
             throw new NonconvertibleObjectException("The requested output data is not an instance of Geometry array.");
         }
         
         final ComplexDataType complex = new ComplexDataType();
         
-        complex.setMimeType((String) source.get(OUT_MIME));
-        complex.setSchema((String) source.get(OUT_SCHEMA));
-        complex.setEncoding((String) source.get(OUT_ENCODING));
+        complex.setMimeType((String) params.get(MIME));
+        complex.setSchema((String) params.get(SCHEMA));
+        complex.setEncoding((String) params.get(ENCODING));
         
-        final Geometry[] outGeom = (Geometry[]) data;
         try {
-            for(final Geometry jtsGeom : outGeom){
+            for(final Geometry jtsGeom : source){
                 final AbstractGeometryType gmlGeom = JTStoGeometry.toGML(jtsGeom);
                 complex.getContent().add(gmlGeom);
             }

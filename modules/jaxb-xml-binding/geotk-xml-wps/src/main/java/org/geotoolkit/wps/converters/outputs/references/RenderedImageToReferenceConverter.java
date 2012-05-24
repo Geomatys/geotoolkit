@@ -35,7 +35,7 @@ import org.geotoolkit.wps.xml.v100.ReferenceType;
  * 
  * @author Quentin Boileau (Geomatys).
  */
-public class RenderedImageToReferenceConverter extends AbstractReferenceOutputConverter {
+public class RenderedImageToReferenceConverter extends AbstractReferenceOutputConverter<RenderedImage> {
 
     private static RenderedImageToReferenceConverter INSTANCE;
 
@@ -48,28 +48,31 @@ public class RenderedImageToReferenceConverter extends AbstractReferenceOutputCo
         }
         return INSTANCE;
     }
+    
+    @Override
+    public Class<? super RenderedImage> getSourceClass() {
+        return RenderedImage.class;
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public ReferenceType convert(final Map<String, Object> source) throws NonconvertibleObjectException {
+    public ReferenceType convert(final RenderedImage source, final Map<String, Object> params) throws NonconvertibleObjectException {
         
-        if (source.get(OUT_TMP_DIR_PATH) == null) {
+        if (params.get(TMP_DIR_PATH) == null) {
             throw new NonconvertibleObjectException("The output directory should be defined.");
         }
         
-        final Object data = source.get(OUT_DATA);
-        
-        if (data == null) {
+        if (source == null) {
             throw new NonconvertibleObjectException("The output data should be defined.");
         }
-        if (!(data instanceof BufferedImage) && !(data instanceof RenderedImage)) {
+        if (!(source instanceof BufferedImage) && !(source instanceof RenderedImage)) {
             throw new NonconvertibleObjectException("The output data is not an instance of RenderedImage.");
         }
         
-        final WPSIO.IOType ioType = WPSIO.IOType.valueOf((String) source.get(OUT_IOTYPE));
-        ReferenceType reference = null ;
+        final WPSIO.IOType ioType = WPSIO.IOType.valueOf((String) params.get(IOTYPE));
+        ReferenceType reference = null;
         
         if (ioType.equals(WPSIO.IOType.INPUT)) {
             reference = new InputReferenceType();
@@ -77,25 +80,24 @@ public class RenderedImageToReferenceConverter extends AbstractReferenceOutputCo
             reference = new OutputReferenceType();
         }
 
-        reference.setMimeType((String) source.get(OUT_MIME));
-        reference.setEncoding((String) source.get(OUT_ENCODING));
-        reference.setSchema((String) source.get(OUT_SCHEMA));
+        reference.setMimeType((String) params.get(MIME));
+        reference.setEncoding((String) params.get(ENCODING));
+        reference.setSchema((String) params.get(SCHEMA));
 
-        final String mime = (String) source.get(OUT_MIME) != null ? (String) source.get(OUT_MIME) : "image/png";
+        final String mime = (String) params.get(MIME) != null ? (String) params.get(MIME) : "image/png";
         
         reference.setMimeType(mime);
-        reference.setEncoding((String) source.get(OUT_ENCODING));
-        reference.setSchema((String) source.get(OUT_SCHEMA));
+        reference.setEncoding((String) params.get(ENCODING));
+        reference.setSchema((String) params.get(SCHEMA));
 
         final String randomFileName = UUID.randomUUID().toString();
         ImageWriter writer = null;
         try {
             //create file
-            final File imageFile = new File((String) source.get(OUT_TMP_DIR_PATH), randomFileName);
-            final RenderedImage image = (RenderedImage) data;
-            writer = XImageIO.getWriterByMIMEType(mime, imageFile, image);
-            writer.write(image);
-            reference.setHref((String) source.get(OUT_TMP_DIR_URL) + "/" + randomFileName);
+            final File imageFile = new File((String) params.get(TMP_DIR_PATH), randomFileName);
+            writer = XImageIO.getWriterByMIMEType(mime, imageFile, source);
+            writer.write(source);
+            reference.setHref((String) params.get(TMP_DIR_URL) + "/" + randomFileName);
             
         } catch (IOException ex) {
             throw new NonconvertibleObjectException("Error occure during image writing.", ex);
@@ -107,4 +109,5 @@ public class RenderedImageToReferenceConverter extends AbstractReferenceOutputCo
         
         return reference;
     }
+
 }
