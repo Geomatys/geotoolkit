@@ -42,8 +42,11 @@ import org.opengis.util.FactoryException;
  * @author Quentin Boileau
  */
 public class ExecuteTest {
+    
+    private static String EPSG_VERSION;
 
     public ExecuteTest() {
+        EPSG_VERSION = CRS.getVersion("EPSG").toString();
     }
 
     @Test
@@ -121,7 +124,7 @@ public class ExecuteTest {
                 +"            <ows:Identifier>complex</ows:Identifier>\n"
                 +"            <wps:Data>\n"
                 +"                <wps:ComplexData>\n"
-                +"                    <gml:Point srsName=\"urn:ogc:def:crs:epsg:7.9:4326\">\n"
+                +"                    <gml:Point srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":4326\">\n"
                 +"                        <gml:pos srsName=\"EPSG:4326\" srsDimension=\"2\">0.0 0.0</gml:pos>\n"
                 +"                    </gml:Point>\n"
                 +"                </wps:ComplexData>\n"
