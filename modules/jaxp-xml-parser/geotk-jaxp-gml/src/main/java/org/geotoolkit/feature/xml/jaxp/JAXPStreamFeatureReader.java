@@ -197,11 +197,6 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                 if (reader.getAttributeCount() > 0) {
                     fid = reader.getAttributeValue(0);
                 }
-                
-                if (fid == null) {
-                    LOGGER.info("Missing feature collection id: generating a random one");
-                    fid = UUID.randomUUID().toString();
-                }
 
                 if (name.getLocalPart().equals("featureMember") || name.getLocalPart().equals("featureMembers")) {
                     continue;
@@ -220,6 +215,11 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                     final JTSEnvelope2D bounds = readBounds(srsName);
 
                 } else {
+                    if (fid == null) {
+                        LOGGER.info("Missing feature id : generating a random one");
+                        fid = UUID.randomUUID().toString();
+                    }
+                    
                     boolean find = false;
                     StringBuilder expectedFeatureType = new StringBuilder();
                     for (FeatureType ft : featureTypes) {

@@ -97,8 +97,6 @@ public class WFSDataStore extends AbstractDataStore{
     private final Map<Name,Envelope> bounds = new HashMap<Name, Envelope>();
     private final Map<String,String> prefixes = new HashMap<String, String>();
     private final boolean postRequest;
-    private Request lastRequest = null;
-    private SoftReference<FeatureCollection<Feature>> lastCollection = null;
 
 
     public WFSDataStore(final URI serverURI, final boolean postRequest) throws MalformedURLException{
@@ -315,7 +313,6 @@ public class WFSDataStore extends AbstractDataStore{
     @Override
     public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures, 
             final Hints hints) throws DataStoreException {
-        lastCollection = null;
 
         final TransactionRequest request = server.createTransaction();
         final Insert insert = server.createInsertElement();
@@ -348,7 +345,6 @@ public class WFSDataStore extends AbstractDataStore{
      */
     @Override
     public void updateFeatures(final Name groupName, final Filter filter, final Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
-        lastCollection = null;
         
         final TransactionRequest request = server.createTransaction();
         final Update update = server.createUpdateElement();
@@ -375,7 +371,6 @@ public class WFSDataStore extends AbstractDataStore{
      */
     @Override
     public void removeFeatures(final Name groupName, final Filter filter) throws DataStoreException {
-        lastCollection = null;
         
         final TransactionRequest request = server.createTransaction();
         final Delete delete = server.createDeleteElement();
@@ -447,13 +442,6 @@ public class WFSDataStore extends AbstractDataStore{
             request.setPropertyNames(query.getPropertyNames());
         }
 
-        if(request.equals(lastRequest) && lastCollection != null){
-            final FeatureCollection<Feature> col = lastCollection.get();
-            if(col != null){
-                return col;
-            }
-        }
-
         XmlFeatureReader reader = null;
         try {
             reader = new JAXPStreamFeatureReader(sft);
@@ -468,25 +456,18 @@ public class WFSDataStore extends AbstractDataStore{
             }
             final Object result = reader.read(stream);
 
-            lastRequest = request;
 
             if(result instanceof Feature){
                 final Feature sf = (Feature) result;
                 final FeatureCollection<Feature> col = DataUtilities.collection("id", sft);
                 col.add(sf);
-
-                lastCollection = new SoftReference<FeatureCollection<Feature>>(col);
-
                 return col;
             }else if(result instanceof FeatureCollection){
                 final FeatureCollection<Feature> col = (FeatureCollection<Feature>) result;
-                lastCollection = new SoftReference<FeatureCollection<Feature>>(col);
                 return col;
             }else{
                 final FeatureCollection<Feature> col = DataUtilities.collection("", sft);
-                lastCollection = new SoftReference<FeatureCollection<Feature>>(col);
                 return col;
-//                throw new IOException("unexpected type : " + result);
             }
 
         }catch (XMLStreamException ex) {
