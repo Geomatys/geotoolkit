@@ -17,6 +17,7 @@
 package org.geotoolkit.coverage.filestore;
 
 import java.io.File;
+import java.io.IOException;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -45,7 +46,11 @@ public class FileCoverageReference implements CoverageReference{
     @Override
     public GridCoverageReader createReader() throws DataStoreException{
         final ImageCoverageReader reader = new ImageCoverageReader();
-        reader.setInput(file);
+        try {
+            reader.setInput(store.createReader(file));
+        } catch (IOException ex) {
+            throw new DataStoreException(ex.getMessage(),ex);
+        }
         return reader;
     }
 

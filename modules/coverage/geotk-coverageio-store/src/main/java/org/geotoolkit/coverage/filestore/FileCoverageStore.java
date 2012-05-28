@@ -24,16 +24,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
+import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
+import javax.imageio.spi.ImageReaderSpi;
 import org.geotoolkit.coverage.AbstractCoverageStore;
-import org.geotoolkit.coverage.AbstractCoverageStoreFactory;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageStoreFactory;
 import org.geotoolkit.coverage.CoverageStoreFinder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.image.io.XImageIO;
-import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.util.XArrays;
 import org.opengis.feature.type.Name;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -46,13 +47,15 @@ import org.opengis.parameter.ParameterValueGroup;
 public class FileCoverageStore extends AbstractCoverageStore{
 
     private final File root;
+    private final String format;
     private final URL rootPath;
     private final Map<Name,FileCoverageReference> names = new HashMap<Name, FileCoverageReference>();
     
     FileCoverageStore(ParameterValueGroup params) throws URISyntaxException{
         super(params);
-        rootPath = (URL) params.parameter(XMLCoverageStoreFactory.PATH.getName().getCode()).getValue();
+        rootPath = (URL) params.parameter(FileCoverageStoreFactory.PATH.getName().getCode()).getValue();
         root = new File(rootPath.toURI());
+        format = (String) params.parameter(FileCoverageStoreFactory.TYPE.getName().getCode()).getValue();
         visit(root);
     }
 
@@ -92,7 +95,7 @@ public class FileCoverageStore extends AbstractCoverageStore{
         try {
             //don't comment this block, This raise an error if no reader for the file can be found
             //this way we are sure that the file is an image.
-            final ImageReader reader = XImageIO.getReaderBySuffix(candidate, Boolean.TRUE, Boolean.TRUE);
+            final ImageReader reader = createReader(candidate);
             reader.dispose();
 
             final String fullName = candidate.getName();
@@ -126,6 +129,33 @@ public class FileCoverageStore extends AbstractCoverageStore{
 
     @Override
     public void dispose() {
+    }
+    
+    /**
+     * Create a reader for the given file.
+     * Detect automaticaly the spi if type is set to 'AUTO'.
+     * 
+     * @param candidate
+     * @return ImageReader, never null
+     * @throws IOException if fail to create a reader.
+     */
+    ImageReader createReader(final File candidate) throws IOException{
+        final ImageReader reader;
+        if("AUTO".equals(format)){
+            reader = XImageIO.getReaderBySuffix(candidate, Boolean.TRUE, Boolean.TRUE);
+        }else{
+            final ImageReaderSpi spi = XImageIO.getReaderSpiByFormatName(format);
+            reader = spi.createReaderInstance();
+            
+            if(spi.canDecodeInput(candidate)){
+                reader.setInput(candidate);
+            }else{
+                final Object data = ImageIO.createImageInputStream(candidate);
+                reader.setInput(data);
+            }
+        }
+        
+        return reader;
     }
     
 }
