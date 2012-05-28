@@ -29,6 +29,9 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ogc.xml.v200.AbstractQueryExpressionType;
+import org.geotoolkit.wfs.xml.GetFeature;
+import org.geotoolkit.wfs.xml.Query;
+import org.geotoolkit.wfs.xml.ResultTypeType;
 
 
 /**
@@ -59,8 +62,8 @@ import org.geotoolkit.ogc.xml.v200.AbstractQueryExpressionType;
 @XmlSeeAlso({
     GetFeatureWithLockType.class
 })
-public class GetFeatureType extends BaseRequestType {
- 
+public class GetFeatureType extends BaseRequestType implements GetFeature {
+
 
     @XmlElementRef(name = "AbstractQueryExpression", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
     private List<JAXBElement<? extends AbstractQueryExpressionType>> abstractQueryExpression;
@@ -86,19 +89,6 @@ public class GetFeatureType extends BaseRequestType {
      * Gets the value of the abstractQueryExpression property.
      * 
      * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the abstractQueryExpression property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getAbstractQueryExpression().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link StoredQueryType }{@code >}
      * {@link JAXBElement }{@code <}{@link AbstractQueryExpressionType }{@code >}
@@ -112,6 +102,23 @@ public class GetFeatureType extends BaseRequestType {
             abstractQueryExpression = new ArrayList<JAXBElement<? extends AbstractQueryExpressionType>>();
         }
         return this.abstractQueryExpression;
+    }
+    
+   /**
+     * Gets the value of the query property.
+     */
+    @Override
+    public List<Query> getQuery() {
+        final List<Query> queries = new ArrayList<Query>();
+        for (JAXBElement jb : abstractQueryExpression) {
+            final Object obj = jb.getValue();
+            if (obj instanceof Query) {
+                queries.add((Query) obj);
+            } else {
+                throw new IllegalArgumentException("unexpected query type:" + obj.getClass());
+            }
+        }
+        return queries;
     }
 
     /**
@@ -146,6 +153,7 @@ public class GetFeatureType extends BaseRequestType {
      *     {@link int }
      *     
      */
+    @Override
     public int getCount() {
         return count;
     }
@@ -170,6 +178,7 @@ public class GetFeatureType extends BaseRequestType {
      *     {@link ResultTypeType }
      *     
      */
+    @Override
     public ResultTypeType getResultType() {
         if (resultType == null) {
             return ResultTypeType.RESULTS;
@@ -198,6 +207,7 @@ public class GetFeatureType extends BaseRequestType {
      *     {@link String }
      *     
      */
+    @Override
     public String getOutputFormat() {
         if (outputFormat == null) {
             return "application/gml+xml; version=3.2";
@@ -298,4 +308,8 @@ public class GetFeatureType extends BaseRequestType {
         this.resolveTimeout = value;
     }
 
+    @Override
+    public String getFeatureId() {
+        return null;
+    }
 }

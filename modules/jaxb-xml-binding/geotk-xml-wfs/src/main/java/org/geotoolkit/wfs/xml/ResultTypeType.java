@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2011, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,7 +14,9 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.wfs.xml.v110;
+
+
+package org.geotoolkit.wfs.xml;
 
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
@@ -46,7 +48,7 @@ public enum ResultTypeType {
     HITS("hits");
     private final String value;
 
-    ResultTypeType(final String v) {
+    ResultTypeType(String v) {
         value = v;
     }
 
@@ -54,7 +56,7 @@ public enum ResultTypeType {
         return value;
     }
 
-    public static ResultTypeType fromValue(final String v) {
+    public static ResultTypeType fromValue(String v) {
         for (ResultTypeType c: ResultTypeType.values()) {
             if (c.value.equals(v)) {
                 return c;

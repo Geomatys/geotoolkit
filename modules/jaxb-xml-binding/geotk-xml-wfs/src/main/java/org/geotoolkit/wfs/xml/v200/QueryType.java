@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ogc.xml.v200.AbstractAdhocQueryExpressionType;
+import org.geotoolkit.wfs.xml.Query;
 
 
 /**
@@ -46,7 +47,7 @@ import org.geotoolkit.ogc.xml.v200.AbstractAdhocQueryExpressionType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "QueryType")
-public class QueryType extends AbstractAdhocQueryExpressionType {
+public class QueryType extends AbstractAdhocQueryExpressionType  implements Query {
 
     @XmlAttribute
     @XmlSchemaType(name = "anyURI")

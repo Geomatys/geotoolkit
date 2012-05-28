@@ -42,7 +42,7 @@ import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.wfs.xml.WFSMarshallerPool;
 import org.geotoolkit.wfs.xml.v110.GetFeatureType;
 import org.geotoolkit.wfs.xml.v110.QueryType;
-import org.geotoolkit.wfs.xml.v110.ResultTypeType;
+import org.geotoolkit.wfs.xml.ResultTypeType;
 
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;

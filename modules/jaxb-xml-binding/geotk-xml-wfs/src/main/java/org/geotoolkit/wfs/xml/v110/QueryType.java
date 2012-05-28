@@ -31,6 +31,7 @@ import org.geotoolkit.util.Utilities;
 import org.geotoolkit.ogc.xml.v110.FilterType;
 import org.geotoolkit.ogc.xml.v110.FunctionType;
 import org.geotoolkit.ogc.xml.v110.SortByType;
+import org.geotoolkit.wfs.xml.Query;
 
 
 /**
@@ -71,7 +72,7 @@ import org.geotoolkit.ogc.xml.v110.SortByType;
     "filter",
     "sortBy"
 })
-public class QueryType {
+public class QueryType implements Query {
 
     @XmlElements({
         @XmlElement(name = "PropertyName", type = String.class),

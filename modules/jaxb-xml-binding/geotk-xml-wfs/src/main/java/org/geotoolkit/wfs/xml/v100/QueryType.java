@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 import org.geotoolkit.ogc.xml.v100.FilterType;
 import org.geotoolkit.ogc.xml.v100.PropertyNameType;
+import org.geotoolkit.wfs.xml.Query;
 
 
 /**
@@ -60,7 +61,7 @@ import org.geotoolkit.ogc.xml.v100.PropertyNameType;
     "propertyName",
     "filter"
 })
-public class QueryType {
+public class QueryType implements Query {
 
     @XmlElement(name = "PropertyName", namespace = "http://www.opengis.net/ogc")
     private List<PropertyNameType> propertyName;

@@ -27,6 +27,8 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.wfs.xml.GetFeature;
+import org.geotoolkit.wfs.xml.ResultTypeType;
 
 /**
  * A GetFeature element contains one or more Query elements that describe a query operation on one feature type.  
@@ -66,7 +68,7 @@ import org.geotoolkit.util.Utilities;
     "featureId"
 })
 @XmlRootElement(name = "GetFeature")
-public class GetFeatureType extends BaseRequestType {
+public class GetFeatureType extends BaseRequestType implements GetFeature {
 
     @XmlElement(name = "Query", required = true)
     private List<QueryType> query;
@@ -138,6 +140,7 @@ public class GetFeatureType extends BaseRequestType {
      *     {@link ResultTypeType }
      *     
      */
+    @Override
     public ResultTypeType getResultType() {
         if (resultType == null) {
             return ResultTypeType.RESULTS;
@@ -166,6 +169,7 @@ public class GetFeatureType extends BaseRequestType {
      *     {@link String }
      *     
      */
+    @Override
     public String getOutputFormat() {
         if (outputFormat == null) {
             return "text/xml; subtype=gml/3.1.1";
@@ -196,6 +200,14 @@ public class GetFeatureType extends BaseRequestType {
      */
     public Integer getMaxFeatures() {
         return maxFeatures;
+    }
+    
+    @Override
+    public int getCount() {
+        if (maxFeatures != null) {
+            return maxFeatures;
+        }
+        return 0;
     }
 
     /**

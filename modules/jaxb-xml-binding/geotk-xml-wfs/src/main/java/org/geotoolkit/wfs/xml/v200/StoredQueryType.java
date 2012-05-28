@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ogc.xml.v200.AbstractQueryExpressionType;
+import org.geotoolkit.wfs.xml.Query;
 
 
 /**
@@ -53,7 +54,7 @@ import org.geotoolkit.ogc.xml.v200.AbstractQueryExpressionType;
 @XmlType(name = "StoredQueryType", propOrder = {
     "parameter"
 })
-public class StoredQueryType extends AbstractQueryExpressionType {
+public class StoredQueryType extends AbstractQueryExpressionType implements Query {
 
     @XmlElement(name = "Parameter")
     private List<ParameterType> parameter;
