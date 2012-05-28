@@ -119,6 +119,7 @@ import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.FeatureType;
+import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.GeometryType;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
@@ -1337,9 +1338,15 @@ public final class GO2Utilities {
             if(type != null){
                 final Collection<SemanticType> semantics = fts.semanticTypeIdentifiers();
                 if(!semantics.isEmpty()){
-                    final GeometryType gtype = type.getGeometryDescriptor().getType();
-                    final Class ctype = gtype.getBinding();
-
+                    final GeometryDescriptor gdesc = type.getGeometryDescriptor();
+                    final Class ctype;
+                    if(gdesc == null){
+                        ctype = null;
+                    }else{
+                        final GeometryType gtype = type.getGeometryDescriptor().getType();
+                        ctype = gtype.getBinding();
+                    }
+                    
                     boolean valid = false;
 
                     for(SemanticType semantic : semantics){
