@@ -154,35 +154,40 @@ public class WFSDataStore extends AbstractDataStore{
                     sftb.add(desc);
                 }
             }
-            sftb.setDefaultGeometry(sft.getGeometryDescriptor().getLocalName());
-            sft = sftb.buildFeatureType();
-
-            final CoordinateReferenceSystem val = sft.getGeometryDescriptor().getCoordinateReferenceSystem();
-            if(val == null){
-                throw new IllegalArgumentException("CRS should not be null");
+            
+            if(sft.getGeometryDescriptor() != null){
+                sftb.setDefaultGeometry(sft.getGeometryDescriptor().getLocalName());
             }
-
+            sft = sftb.buildFeatureType();
             types.put(name, sft);
             typeNames.add(name);
 
-            //extract the bounds -----------------------------------------------
-            final WGS84BoundingBoxType bbox = ftt.getWGS84BoundingBox().get(0);
-            try {
-                final String crsVal = bbox.getCrs();
-                crs = crsVal != null ? CRS.decode(crsVal) : DefaultGeographicCRS.WGS84;
-                final GeneralEnvelope env = new GeneralEnvelope(crs);
-                final BigInteger dims = bbox.getDimensions();
-                final List<Double> upper = bbox.getUpperCorner();
-                final List<Double> lower = bbox.getLowerCorner();
-
-                //@TODO bbox should be null if there is no bbox in response.
-                if(dims == null)continue;
-                for(int i=0,n=dims.intValue();i<n;i++){
-                    env.setRange(i, lower.get(i), upper.get(i));
+            final GeometryDescriptor geomDesc = sft.getGeometryDescriptor();
+            if(geomDesc != null){
+                final CoordinateReferenceSystem val = geomDesc.getCoordinateReferenceSystem();
+                if(val == null){
+                    throw new IllegalArgumentException("CRS should not be null");
                 }
-                bounds.put(name, env);
-            } catch (FactoryException ex) {
-                getLogger().log(Level.WARNING, null, ex);
+
+                //extract the bounds -----------------------------------------------
+                final WGS84BoundingBoxType bbox = ftt.getWGS84BoundingBox().get(0);
+                try {
+                    final String crsVal = bbox.getCrs();
+                    crs = crsVal != null ? CRS.decode(crsVal) : DefaultGeographicCRS.WGS84;
+                    final GeneralEnvelope env = new GeneralEnvelope(crs);
+                    final BigInteger dims = bbox.getDimensions();
+                    final List<Double> upper = bbox.getUpperCorner();
+                    final List<Double> lower = bbox.getLowerCorner();
+
+                    //@TODO bbox should be null if there is no bbox in response.
+                    if(dims == null)continue;
+                    for(int i=0,n=dims.intValue();i<n;i++){
+                        env.setRange(i, lower.get(i), upper.get(i));
+                    }
+                    bounds.put(name, env);
+                } catch (FactoryException ex) {
+                    getLogger().log(Level.WARNING, null, ex);
+                }
             }
 
         }

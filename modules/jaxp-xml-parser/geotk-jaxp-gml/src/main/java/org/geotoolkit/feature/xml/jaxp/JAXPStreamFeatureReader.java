@@ -199,7 +199,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                 }
                 
                 if (fid == null) {
-                    LOGGER.info("Missing feature collection id: geenrating a random one");
+                    LOGGER.info("Missing feature collection id: generating a random one");
                     fid = UUID.randomUUID().toString();
                 }
 

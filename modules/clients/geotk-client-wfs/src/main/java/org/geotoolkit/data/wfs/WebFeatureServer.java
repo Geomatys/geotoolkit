@@ -71,9 +71,9 @@ public class WebFeatureServer extends AbstractServer implements DataStore{
     }
     
     public WebFeatureServer(final URL serverURL, final ClientSecurity security, final String version) {
-        super(create(WFSDataStoreFactory.PARAMETERS_DESCRIPTOR, serverURL, security));
+        this(create(WFSDataStoreFactory.PARAMETERS_DESCRIPTOR, serverURL, security));
         if(version.equals("1.1.0")){
-            Parameters.getOrCreate(WFSDataStoreFactory.VERSION, parameters).setValue(WFSVersion.v110);
+            Parameters.getOrCreate(WFSDataStoreFactory.VERSION, parameters).setValue(version);
         }else{
             throw new IllegalArgumentException("unkonwed version : "+ version);
         }
@@ -82,7 +82,7 @@ public class WebFeatureServer extends AbstractServer implements DataStore{
     }
     
     public WebFeatureServer(final URL serverURL, final ClientSecurity security, final WFSVersion version, final boolean usePost) {
-        super(create(WFSDataStoreFactory.PARAMETERS_DESCRIPTOR, serverURL, security));
+        this(create(WFSDataStoreFactory.PARAMETERS_DESCRIPTOR, serverURL, security));
         if(version == null){
             throw new IllegalArgumentException("unkonwed version : "+ version);
         }
@@ -93,6 +93,8 @@ public class WebFeatureServer extends AbstractServer implements DataStore{
     
     public WebFeatureServer(final ParameterValueGroup params) {
         super(params);
+        Parameters.getOrCreate(WFSDataStoreFactory.VERSION, parameters).setValue("1.1.0");
+        Parameters.getOrCreate(WFSDataStoreFactory.POST_REQUEST, parameters).setValue(false);
     }
 
     @Override
@@ -104,7 +106,7 @@ public class WebFeatureServer extends AbstractServer implements DataStore{
         return WFSVersion.fromCode(Parameters.value(WFSDataStoreFactory.VERSION, parameters));
     }
     
-    public boolean getUsePost(){
+    public boolean getUsePost(){        
         return Parameters.value(WFSDataStoreFactory.POST_REQUEST, parameters);
     }
     
