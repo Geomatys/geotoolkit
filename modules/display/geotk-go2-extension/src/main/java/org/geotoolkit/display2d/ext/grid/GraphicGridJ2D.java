@@ -41,7 +41,7 @@ public class GraphicGridJ2D extends AbstractGraphicJ2D{
     private final GridTemplate template;
 
     public GraphicGridJ2D(final J2DCanvas canvas, final GridTemplate template){
-        super(canvas,canvas.getObjectiveCRS());
+        super(canvas);
         ensureNonNull("template", template);
         this.template = template;
     }

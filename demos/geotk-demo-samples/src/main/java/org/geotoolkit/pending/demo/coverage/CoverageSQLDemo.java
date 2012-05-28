@@ -13,7 +13,7 @@ import org.geotoolkit.gui.swing.go2.JMap2DFrame;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
-import org.geotoolkit.parameter.Parameters;
+import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.StyleConstants;
@@ -27,6 +27,8 @@ import org.opengis.parameter.ParameterValueGroup;
 public class CoverageSQLDemo {
  
     public static void main(String[] args) throws DataStoreException {
+        Demos.init();
+        
         ParameterDescriptorGroup desc = CoverageSQLStoreFactory.PARAMETERS;
         System.out.println("desc:" + desc);
         

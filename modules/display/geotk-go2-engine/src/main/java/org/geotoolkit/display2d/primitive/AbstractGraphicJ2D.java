@@ -22,7 +22,6 @@ import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 
 import org.opengis.display.primitive.Graphic;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 
 /**
@@ -42,9 +41,9 @@ public abstract class AbstractGraphicJ2D extends AbstractReferencedGraphic2D imp
      * @throws IllegalArgumentException if {@code crs} is null or has an incompatible number of
      *         dimensions.
      */
-    protected AbstractGraphicJ2D(final J2DCanvas canvas,final CoordinateReferenceSystem crs)
+    protected AbstractGraphicJ2D(final J2DCanvas canvas)
             throws IllegalArgumentException{
-        super(canvas,crs);
+        super(canvas);
     }
 
     @Override

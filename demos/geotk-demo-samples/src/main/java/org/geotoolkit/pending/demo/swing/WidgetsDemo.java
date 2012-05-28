@@ -43,6 +43,7 @@ import org.geotoolkit.gui.swing.propertyedit.styleproperty.JSimpleStylePanel;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
+import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.pending.demo.rendering.PortrayalDemo;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.style.MutableStyle;
@@ -56,6 +57,8 @@ public class WidgetsDemo extends javax.swing.JFrame {
                                                    new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
 
     public WidgetsDemo() throws DataStoreException {
+        Demos.init();
+        
         initComponents();
 
         //link bars to the map widget ----------------------

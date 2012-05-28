@@ -1,6 +1,7 @@
 
 package org.geotoolkit.pending.demo.processing;
 
+import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
@@ -11,6 +12,7 @@ import org.opengis.util.NoSuchIdentifierException;
 public class ProcessDemo {
     
     public static void main(String[] args) throws NoSuchIdentifierException, ProcessException {
+        Demos.init();
         
         //get the description of the process we want
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("mymaths", "add");

@@ -32,7 +32,7 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="guiSelectBar" min="-2" pref="100" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="guiEditBar" pref="65" max="32767" attributes="0"/>
+                      <Component id="guiEditBar" pref="74" max="32767" attributes="0"/>
                   </Group>
                   <Component id="guiMap" pref="431" max="32767" attributes="0"/>
               </Group>

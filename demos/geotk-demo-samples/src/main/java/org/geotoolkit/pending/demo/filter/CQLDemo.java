@@ -6,16 +6,17 @@ import java.util.List;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.filter.text.cql2.CQL;
 import org.geotoolkit.filter.text.cql2.CQLException;
+import org.geotoolkit.pending.demo.Demos;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.expression.Expression;
 
 public class CQLDemo {
 
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
 
     public static void main(String[] args) throws CQLException {
-
+        Demos.init();
+        
         final String filterTxt = "name = sorel and age > 20";
         Filter filter = CQL.toFilter(filterTxt);
         System.out.println(filter);

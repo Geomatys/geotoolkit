@@ -11,6 +11,7 @@ import org.geotoolkit.gui.swing.go2.JMap2DFrame;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
+import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -22,6 +23,7 @@ public class CustomCoverageDemo {
     public static final MutableStyleFactory SF = new DefaultStyleFactory();
     
     public static void main(String[] args) {
+        Demos.init();
         
         //first create an image        
         final BufferedImage img = new BufferedImage(500, 500, BufferedImage.TYPE_INT_ARGB);        

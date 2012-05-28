@@ -40,11 +40,6 @@ import org.geotoolkit.display.canvas.AbstractReferencedCanvas2D;
  * @author Martin Desruisseaux (IRD)
  */
 public interface ReferencedGraphic extends Graphic {
-    /**
-     * The name of the {@linkplain PropertyChangeEvent property change event} fired when the
-     * canvas {@linkplain ReferencedCanvas#getObjectiveCRS objective CRS} changed.
-     */
-    public static final String OBJECTIVE_CRS_PROPERTY = "objectiveCRS";
     
     /**
      * The name of the {@linkplain PropertyChangeEvent property change event}

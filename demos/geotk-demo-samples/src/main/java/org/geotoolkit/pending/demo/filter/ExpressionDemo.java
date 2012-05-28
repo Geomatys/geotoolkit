@@ -9,6 +9,7 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.filter.function.FunctionFactory;
 import org.geotoolkit.filter.function.Functions;
 import org.geotoolkit.filter.function.math.MathFunctionFactory;
+import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.util.converter.Classes;
 import org.opengis.feature.Feature;
@@ -22,7 +23,8 @@ public class ExpressionDemo {
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
 
     public static void main(String[] args) {
-
+        Demos.init();
+        
         final FeatureCollection collection = FilterDemo.createSampleCollection();
 
         testExpression(collection, mathExpression());

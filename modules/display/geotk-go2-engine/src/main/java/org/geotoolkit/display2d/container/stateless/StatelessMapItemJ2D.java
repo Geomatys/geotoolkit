@@ -43,7 +43,6 @@ import org.geotoolkit.display2d.container.MultiThreadedRendering;
 import org.geotoolkit.display2d.container.statefull.StatefullCoverageLayerJ2D;
 import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
-import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.map.CollectionMapLayer;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
@@ -53,7 +52,6 @@ import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 
 import org.opengis.display.primitive.Graphic;
-import org.opengis.referencing.operation.TransformException;
 
 /**
  *
@@ -74,20 +72,8 @@ public class StatelessMapItemJ2D<T extends MapItem> extends AbstractGraphicJ2D i
     protected final T item;
 
     public StatelessMapItemJ2D(final J2DCanvas canvas, final T item){
-        //do not use layer crs here, to long to calculate
-        super(canvas, canvas.getObjectiveCRS2D());
-        //super(canvas, layer.getBounds().getCoordinateReferenceSystem());
+        super(canvas);
         this.item = item;
-
-        try{
-            //generic map items do not have an envelope, they act as containers
-            final GeneralEnvelope env = new GeneralEnvelope(canvas.getObjectiveCRS2D());
-            env.setRange(0, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
-            env.setRange(1, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
-            setEnvelope(env);
-        }catch(TransformException ex){
-            getLogger().log(Level.WARNING, ex.getLocalizedMessage(), ex);
-        }
 
         parseItem(this.item);
         weakListener.registerSource(item);

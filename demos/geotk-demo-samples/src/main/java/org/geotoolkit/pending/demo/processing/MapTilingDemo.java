@@ -1,9 +1,7 @@
 package org.geotoolkit.pending.demo.processing;
 
 import java.net.URL;
-import javax.imageio.ImageIO;
 import org.geotoolkit.coverage.*;
-import org.geotoolkit.lang.Setup;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.opengis.feature.type.Name;
 import java.awt.Dimension;
@@ -12,8 +10,8 @@ import java.net.MalformedURLException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import org.geotoolkit.coverage.filestore.*;
 
+import org.geotoolkit.coverage.filestore.*;
 import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.DataStoreFinder;
 import org.geotoolkit.data.FeatureCollection;
@@ -26,6 +24,7 @@ import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.style.MutableStyle;
@@ -44,8 +43,7 @@ public class MapTilingDemo {
     public static final MutableStyleFactory SF = new DefaultStyleFactory();
 
     public static void main(String[] args) throws Throwable {
-        Setup.initialize(null);
-        ImageIO.scanForPlugins();
+        Demos.init();
 
 
         //create a map context

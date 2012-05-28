@@ -24,11 +24,9 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.beans.PropertyChangeEvent;
 import java.lang.ref.SoftReference;
-import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.EventObject;
 import java.util.List;
-import java.util.logging.Level;
 
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.canvas.VisitFilter;
@@ -43,7 +41,6 @@ import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 
 import org.opengis.display.primitive.Graphic;
-import org.opengis.referencing.operation.TransformException;
 
 /**
  *
@@ -88,22 +85,11 @@ public class StatelessMapLayerJ2D<T extends MapLayer> extends StatelessMapItemJ2
     private final LayerListener.Weak weakListener = new LayerListener.Weak(ll);
     private SoftReference<Collection<? extends GraphicJ2D>> weakGraphic = null;
     
-    public StatelessMapLayerJ2D(final J2DCanvas canvas, final T layer){
-        this(canvas, layer, false);
-    }
 
-    public StatelessMapLayerJ2D(final J2DCanvas canvas, final T layer, final boolean useLayerEnv){
+    public StatelessMapLayerJ2D(final J2DCanvas canvas, final T layer){
         //do not use layer crs here, to long to calculate
         super(canvas, layer);
         weakListener.registerSource(layer);
-
-        try{
-            if (useLayerEnv) {
-                setEnvelope(layer.getBounds());
-            }
-        }catch(TransformException ex){
-            getLogger().log(Level.WARNING, ex.getLocalizedMessage(), ex);
-        }
     }
 
     @Override

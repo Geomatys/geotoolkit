@@ -69,7 +69,7 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
     private final double tolerance;
 
     public StatelessPyramidalCoverageLayerJ2D(final J2DCanvas canvas, final CoverageMapLayer layer){
-        super(canvas, layer, true);
+        super(canvas, layer);
         
         model = (PyramidalModel)layer.getCoverageReference();
         tolerance = 0.1; // in % , TODO use a flag to allow change value

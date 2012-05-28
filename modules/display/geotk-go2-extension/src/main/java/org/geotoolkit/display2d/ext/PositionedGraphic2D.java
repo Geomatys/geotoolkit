@@ -27,7 +27,6 @@ import org.geotoolkit.display.primitive.SearchArea;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.opengis.display.primitive.Graphic;
 
 /**
@@ -42,7 +41,7 @@ public abstract class PositionedGraphic2D extends AbstractGraphicJ2D{
     private Dimension minimumCanvasSize = new Dimension(0,0);
 
     public PositionedGraphic2D(final J2DCanvas canvas) {
-        super(canvas,DefaultGeographicCRS.WGS84);
+        super(canvas);
     }
 
     /**

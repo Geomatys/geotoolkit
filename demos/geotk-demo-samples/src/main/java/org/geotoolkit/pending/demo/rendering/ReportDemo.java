@@ -32,6 +32,7 @@ import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
+import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.report.FeatureCollectionDataSource;
 import org.geotoolkit.report.JasperReportService;
@@ -65,7 +66,8 @@ public class ReportDemo {
 
 
     public static void main(String[] args) throws Exception {
-
+        Demos.init();
+        
         final InputStream template = ReportDemo.class.getResourceAsStream("/data/report/complexReport.jrxml");
 
         final Entry<JasperReport,FeatureType> entry = JasperReportService.prepareTemplate(template);

@@ -2,6 +2,7 @@
 package org.geotoolkit.pending.demo.processing;
 
 import java.util.UUID;
+import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.process.quartz.ProcessJobDetail;
@@ -22,6 +23,7 @@ import org.quartz.impl.triggers.SimpleTriggerImpl;
 public class QuartzDemo {
     
     public static void main(String[] args) throws SchedulerException, NoSuchIdentifierException {
+        Demos.init();
         
         //create a quartz scheduler
         final SchedulerFactory factory = new StdSchedulerFactory();

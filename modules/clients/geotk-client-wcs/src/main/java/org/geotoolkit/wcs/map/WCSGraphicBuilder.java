@@ -30,7 +30,6 @@ import javax.imageio.ImageIO;
 
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageFactory;
-import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
@@ -90,7 +89,7 @@ final class WCSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
         private final WCSMapLayer layer;
 
         private WCSGraphic(final J2DCanvas canvas, final WCSMapLayer layer){
-            super(canvas,canvas.getObjectiveCRS2D());
+            super(canvas);
             this.layer = layer;
         }
 

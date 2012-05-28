@@ -4,12 +4,14 @@ package org.geotoolkit.pending.demo.coverage;
 import java.util.Iterator;
 import org.geotoolkit.coverage.CoverageStoreFactory;
 import org.geotoolkit.coverage.CoverageStoreFinder;
+import org.geotoolkit.pending.demo.Demos;
 import org.opengis.parameter.ParameterDescriptorGroup;
 
 
 public class ListAllFactoriesDemo {
     
     public static void main(String[] args) {
+        Demos.init();
         
         // Listing or creating new coveragestores are made through the CoverageStoreFinder utility class        
         final Iterator<CoverageStoreFactory> ite = CoverageStoreFinder.getAllFactories();

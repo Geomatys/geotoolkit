@@ -11,11 +11,13 @@ import org.geotoolkit.data.wfs.GetCapabilitiesRequest;
 import org.geotoolkit.data.wfs.GetFeatureRequest;
 import org.geotoolkit.data.wfs.WFSDataStore;
 import org.geotoolkit.data.wfs.WebFeatureServer;
+import org.geotoolkit.pending.demo.Demos;
 
 public class WFSClientDemo {
 
     public static void main(String[] args) throws MalformedURLException, URISyntaxException {
-
+        Demos.init();
+        
         final WebFeatureServer wmsServer = new WebFeatureServer(new URL("http://demo.geomatys.com/constellation/WS/wfs?"), "1.1.0");
         final GetCapabilitiesRequest getCapa = wmsServer.createGetCapabilities();
         final GetFeatureRequest getFeature = wmsServer.createGetFeature();

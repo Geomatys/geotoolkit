@@ -34,6 +34,7 @@ import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
+import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -45,7 +46,7 @@ public class PortrayalDemo {
                                                    new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
 
     public static void main(String[] args) throws DataStoreException, IOException, PortrayalException {
-        
+        Demos.init();
 
 
         //generate a map context

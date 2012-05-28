@@ -9,6 +9,7 @@ import org.geotoolkit.ignrm.Token;
 import org.geotoolkit.ignrm.TokenClientSecurity;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
+import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.security.ClientSecurityStack;
@@ -24,6 +25,7 @@ public class IGNClientDemo {
     public static final MutableStyleFactory SF = new DefaultStyleFactory();
     
     public static void main(String[] args) throws Exception {
+        Demos.init();
         
         // THIS DEMO REQUIERE ADDITIONAL CRS DEFINITIONS
         // those have been added in the module in path : 

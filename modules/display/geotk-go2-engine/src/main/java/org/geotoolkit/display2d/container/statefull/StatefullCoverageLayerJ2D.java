@@ -60,7 +60,7 @@ public class StatefullCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapL
     private CoordinateReferenceSystem lastObjectiveCRS = null;
 
     public StatefullCoverageLayerJ2D(final J2DCanvas canvas, final CoverageMapLayer layer){
-        super(canvas, layer, true);
+        super(canvas, layer);
 
         try {
             final GeneralGridGeometry ggg = layer.getCoverageReader().getGridGeometry(0);

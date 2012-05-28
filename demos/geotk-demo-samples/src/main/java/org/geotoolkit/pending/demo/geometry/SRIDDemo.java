@@ -6,6 +6,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
+import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.referencing.CRS;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -14,7 +15,8 @@ import org.opengis.util.FactoryException;
 public class SRIDDemo {
 
     public static void main(String[] args) throws NoSuchAuthorityCodeException, FactoryException {
-
+        Demos.init();
+        
         CoordinateReferenceSystem crs = CRS.decode("EPSG:3395");
 
         //converting the CRS to an integer

@@ -38,7 +38,6 @@ import java.util.Arrays;
 import java.util.Map;
 import javax.measure.unit.Unit;
 
-import org.geotoolkit.display.canvas.AbstractCanvas;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display.shape.TransformedShape;
@@ -46,7 +45,6 @@ import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
 import org.geotoolkit.util.XArrays;
 
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.operation.TransformException;
@@ -202,8 +200,8 @@ public abstract class RenderedMarks extends AbstractGraphicJ2D {
      *            a two dimensional {@link CompoundCoordinateSystem#getHeadCS headCS}.
      * @throws IllegalArgumentException if <code>cs</code> is nul.
      */
-    public RenderedMarks(final J2DCanvas canvas, final CoordinateReferenceSystem crs) {
-        super(canvas,crs);        
+    public RenderedMarks(final J2DCanvas canvas) {
+        super(canvas);        
     }
 
     /**

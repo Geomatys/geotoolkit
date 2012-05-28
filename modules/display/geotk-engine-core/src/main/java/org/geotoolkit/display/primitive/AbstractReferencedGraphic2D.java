@@ -21,20 +21,10 @@ import java.awt.Shape;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
-import java.text.FieldPosition;
-import java.text.NumberFormat;
-import java.util.Locale;
+
 import org.geotoolkit.display.canvas.AbstractReferencedCanvas2D;
-
-import org.opengis.geometry.Envelope;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.TransformException;
-
-import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.display.shape.XRectangle2D;
-import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.resources.Errors;
 
 
@@ -63,32 +53,7 @@ public abstract class AbstractReferencedGraphic2D extends AbstractReferencedGrap
      * @see #setZOrderHint
      */
     protected double zOrder = DEFAULT_Z_ORDER;
-    
-    /**
-     * The format used during the last call to {@link #getName}. We use only one instance for
-     * all graphics, since an application is likely to use only one locale. However, more locales
-     * are allowed; it will just be slower.
-     */
-    private static Format format;
-    
-    /**
-     * Convenience class for {@link RenderedLayer#getName}.
-     * This class should be immutable and thread-safe.
-     */
-    private static final class Format {
-        /** The locale of the {@link #format}. */
-        public final Locale locale;
-        
-        /** The format in the {@link #locale}. */
-        public final NumberFormat format;
-
-        /** Construct a format for the given locale. */
-        public Format(final Locale locale) {
-            this.locale = locale;
-            this.format = NumberFormat.getNumberInstance(locale);
-        }
-    }
-        
+            
     /**
      * A geometric shape that fully contains the area painted during the last
      * {@linkplain GraphicPrimitive2D#paint rendering}. This shape must be in terms of the
@@ -110,96 +75,10 @@ public abstract class AbstractReferencedGraphic2D extends AbstractReferencedGrap
     private boolean hasBoundsListeners;
 
     /**
-     * Constructs a new graphic with a default {@linkplain DefaultEngineeringCRS#GENERIC_2D
-     * generic CRS}.
-     *
-     * @see #setObjectiveCRS
-     * @see #setEnvelope
-     * @see #setTypicalCellDimension
-     * @see #setZOrderHint
+     * Constructs a new graphic.
      */
     protected AbstractReferencedGraphic2D(final AbstractReferencedCanvas2D canvas) {
-        this(canvas,DefaultEngineeringCRS.GENERIC_2D);
-    }
-
-    /**
-     * Constructs a new graphic using the specified objective CRS.
-     *
-     * @param  crs The objective coordinate reference system.
-     * @throws IllegalArgumentException if {@code crs} is null or has an incompatible number of
-     *         dimensions.
-     *
-     * @see #setObjectiveCRS
-     * @see #setEnvelope
-     * @see #setTypicalCellDimension
-     * @see #setZOrderHint
-     */
-    protected AbstractReferencedGraphic2D(final AbstractReferencedCanvas2D canvas, final CoordinateReferenceSystem crs)
-            throws IllegalArgumentException {
-        super(canvas,to2D(crs));
-    }
-
-
-    /**
-     * Work around for RFE #4093999 in Sun's bug database
-     * ("Relax constraint on placement of this()/super() call in constructors").
-     */
-    private static CoordinateReferenceSystem to2D(final CoordinateReferenceSystem crs) {
-        try {
-            return CRSUtilities.getCRS2D(crs);
-        } catch (TransformException e) {
-            throw new IllegalArgumentException(e.getLocalizedMessage());
-        }
-    }
-
-//    /**
-//     * Sets the objective coordinate refernece system for this graphic.
-//     * If the specified CRS has more than two dimensions, then it must be a
-//     * {@linkplain org.opengis.referencing.crs.CompoundCRS compound CRS} with
-//     * a two dimensional head.
-//     * @throws TransformException 
-//     */
-//    @Override
-//    protected void setObjectiveCRS(final CoordinateReferenceSystem newCRS, final CoordinateReferenceSystem oldCRS) throws TransformException {
-//        super.setObjectiveCRS(CRSUtilities.getCRS2D(newCRS), oldCRS);
-//    }
-
-    /**
-     * Set the envelope for this graphic. Subclasses should invokes this method as soon as they
-     * known their envelope.
-     */
-    @Override
-    protected void setEnvelope(final Envelope envelope) throws TransformException {
-        synchronized (getTreeLock()) {
-            super.setEnvelope(CRS.transform(envelope, getCanvas().getObjectiveCRS2D()));
-            displayBounds = XRectangle2D.INFINITY;
-        }
-    }
-
-    /**
-     * {@inheritDoc }
-     * If no name were {@linkplain #setName explicitly set}, then this method returns a default
-     * name built from the {@linkplain #getZOrderHint z order}.
-     * 
-     * @return specified name or z order if not specified
-     */
-    @Override
-    public String getName() {
-        final String name = super.getName();
-        
-        if(name != null){
-            return name;
-        }
-        
-        final Locale locale = getLocale();
-        Format f = format; // Avoid the need for synchronization.
-
-        if (f == null || !f.locale.equals(locale)) {
-            format = f = new Format(locale);
-        }
-        final StringBuffer buffer = new StringBuffer("z=");
-        return f.format.format(getZOrderHint(), buffer, new FieldPosition(0)).toString();
-        
+        super(canvas);
     }
     
     /**

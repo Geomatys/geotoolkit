@@ -7,6 +7,7 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.osmtms.OSMTileMapServer;
 import org.geotoolkit.osmtms.map.OSMTMSMapLayer;
+import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -17,6 +18,7 @@ public class OSMTMSClientDemo {
     public static final MutableStyleFactory SF = new DefaultStyleFactory();
     
     public static void main(String[] args) throws Exception {
+        Demos.init();
         
         final MapContext context = createOSMTMSContext();
         

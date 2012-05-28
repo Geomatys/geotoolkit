@@ -59,8 +59,8 @@ public abstract class AbstractTiledGraphic extends AbstractGraphicJ2D{
     
     private boolean silentErrors = false;
     
-    public AbstractTiledGraphic(final J2DCanvas canvas, final CoordinateReferenceSystem crs){
-        super(canvas, crs);
+    public AbstractTiledGraphic(final J2DCanvas canvas){
+        super(canvas);
     }
 
     public void setSilentErrors(boolean silentErrors) {

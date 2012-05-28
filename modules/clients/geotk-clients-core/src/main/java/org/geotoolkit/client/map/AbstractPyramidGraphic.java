@@ -17,11 +17,9 @@
 package org.geotoolkit.client.map;
 
 import java.awt.Dimension;
-import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.logging.Level;
 import org.geotoolkit.client.Request;
 import org.geotoolkit.coverage.GridMosaic;
@@ -63,9 +61,8 @@ public abstract class AbstractPyramidGraphic extends AbstractTiledGraphic{
      * above. it might be better to have text slightly bigger rather then N times bigger.
      * value in %.
      */
-    public AbstractPyramidGraphic(final J2DCanvas canvas, 
-            final CoordinateReferenceSystem crs, final double resolutionTolerance){
-        super(canvas, crs);
+    public AbstractPyramidGraphic(final J2DCanvas canvas,final double resolutionTolerance){
+        super(canvas);
         this.tolerance = resolutionTolerance / 100d;
     }
     

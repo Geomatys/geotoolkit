@@ -7,6 +7,7 @@ import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.feature.FeatureTypeBuilder;
+import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.type.FeatureType;
@@ -14,7 +15,8 @@ import org.opengis.feature.type.FeatureType;
 public class MemoryDataStoreDemo {
 
     public static void main(String[] args) throws DataStoreException {
-
+        Demos.init();
+        
         //create the datastore
         final MemoryDataStore store = new MemoryDataStore();
 

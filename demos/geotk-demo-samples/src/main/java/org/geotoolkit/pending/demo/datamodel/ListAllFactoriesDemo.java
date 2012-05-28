@@ -4,12 +4,14 @@ package org.geotoolkit.pending.demo.datamodel;
 import java.util.Iterator;
 import org.geotoolkit.data.DataStoreFactory;
 import org.geotoolkit.data.DataStoreFinder;
+import org.geotoolkit.pending.demo.Demos;
 import org.opengis.parameter.ParameterDescriptorGroup;
 
 
 public class ListAllFactoriesDemo {
     
     public static void main(String[] args) {
+        Demos.init();
         
         // Listing or creating new datastores are made through the DataStoreFinder utility class        
         final Iterator<DataStoreFactory> ite = DataStoreFinder.getAllFactories();

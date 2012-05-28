@@ -10,11 +10,13 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+import org.geotoolkit.pending.demo.Demos;
 
 public class JTSDemo {
 
     public static void main(String[] args) {
-
+        Demos.init();
+        
         final GeometryFactory gf = new GeometryFactory();
 
         //creating a point -----------------------------------------------

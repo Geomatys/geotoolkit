@@ -5,19 +5,20 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.index.tree.TreeFactory;
 import org.geotoolkit.index.tree.basic.SplitCase;
-import org.geotoolkit.index.tree.calculator.Calculator;
 import org.geotoolkit.index.tree.io.DefaultTreeVisitor;
-
 import org.geotoolkit.index.tree.io.TreeReader;
 import org.geotoolkit.index.tree.io.TreeVisitor;
 import org.geotoolkit.index.tree.io.TreeWriter;
 import org.geotoolkit.index.tree.nodefactory.TreeNodeFactory;
 import org.geotoolkit.index.tree.nodefactory.NodeFactory;
+import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
+
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
@@ -34,7 +35,8 @@ import org.opengis.referencing.operation.TransformException;
 public class TreeDemo {
 
     public static void main(String[] args) throws TransformException, IOException, ClassNotFoundException {
-
+        Demos.init();
+        
         /**
          * Tree creation.
          */

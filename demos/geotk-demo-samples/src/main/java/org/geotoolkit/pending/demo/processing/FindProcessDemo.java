@@ -2,6 +2,7 @@
 package org.geotoolkit.pending.demo.processing;
 
 import java.util.Iterator;
+import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.process.ProcessingRegistry;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -10,6 +11,7 @@ import org.geotoolkit.process.ProcessDescriptor;
 public class FindProcessDemo {
     
     public static void main(String[] args) {
+        Demos.init();
         
         //Get an iterator on all process factory
         final Iterator<ProcessingRegistry> factoryIte = ProcessFinder.getProcessFactories();

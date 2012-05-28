@@ -19,6 +19,7 @@ import org.geotoolkit.csw.xml.GetRecordByIdResponse;
 import org.geotoolkit.csw.xml.ResultType;
 import org.geotoolkit.csw.xml.v202.Capabilities;
 import org.geotoolkit.csw.xml.v202.GetRecordsResponseType;
+import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.xml.MarshallerPool;
 import org.opengis.metadata.Metadata;
 
@@ -29,6 +30,8 @@ import org.opengis.metadata.Metadata;
 public class CSWClientDemo {
     
     public static void main(String[] args) throws MalformedURLException, URISyntaxException, IOException, JAXBException {
+        Demos.init();
+        
         final MarshallerPool pool = CSWMarshallerPool.getInstance();
         Unmarshaller um = null;
         

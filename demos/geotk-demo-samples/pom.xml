@@ -116,6 +116,11 @@
             <artifactId>geotk-coverageio-geotiff</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.geotoolkit</groupId>
+            <artifactId>geotk-coverageio-netcdf</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <!-- processing -->
         <dependency>

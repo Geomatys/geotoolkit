@@ -634,7 +634,7 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
         private RenderingContext2D context2d;
 
         private KMLGraphic(J2DCanvas canvas, KmlMapLayer layer) {
-            super(canvas, canvas.getObjectiveCRS());
+            super(canvas);
             cache = new KmlCache(layer.kml);
         }
 

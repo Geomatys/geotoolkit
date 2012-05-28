@@ -47,6 +47,7 @@ import org.opengis.display.primitive.Graphic;
 import org.opengis.feature.Feature;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
+import org.opengis.geometry.Envelope;
 import org.opengis.geometry.Geometry;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -85,7 +86,7 @@ public class DefaultGraphicFeatureJ2D extends AbstractGraphicJ2D implements Proj
 
     
     public DefaultGraphicFeatureJ2D(final J2DCanvas canvas, final FeatureMapLayer layer, final Feature feature){
-        super(canvas,feature.getType().getCoordinateReferenceSystem());
+        super(canvas);
         this.layer = layer;
         initFeature(feature);
     }
@@ -256,6 +257,16 @@ public class DefaultGraphicFeatureJ2D extends AbstractGraphicJ2D implements Proj
 
     @Override
     public ProjectedGeometry getGeometry(final String name) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Envelope getEnvelope() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean intersects(Envelope candidateEnvelope) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

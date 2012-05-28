@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.display2d.canvas;
 
+import org.geotoolkit.display.primitive.ReferencedGraphic;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
@@ -35,7 +36,6 @@ import org.geotoolkit.display.canvas.AbstractReferencedCanvas2D;
 import org.geotoolkit.display.canvas.DefaultCanvasController2D;
 import org.geotoolkit.display.container.AbstractContainer;
 import org.geotoolkit.display.container.AbstractContainer2D;
-import org.geotoolkit.display.primitive.ReferencedGraphic;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.painter.BackgroundPainter;

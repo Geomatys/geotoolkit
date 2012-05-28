@@ -291,7 +291,7 @@ public abstract class AbstractContainer<C extends AbstractCanvas, G extends Grap
             if (canvas != this) {
                 assert !graphics.containsKey(candidate) : candidate;
                 throw new IllegalArgumentException(Errors.format(
-                            Errors.Keys.CANVAS_NOT_OWNER_$1, candidate.getName()));
+                            Errors.Keys.CANVAS_NOT_OWNER_$1, candidate.toString()));
             }
 //            assert Thread.holdsLock(candidate.getTreeLock());
             candidate.removePropertyChangeListener(graphicListener);

@@ -10,6 +10,7 @@ import java.util.Date;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
+import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.pending.demo.filter.customaccessor.Pojo;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
@@ -24,7 +25,8 @@ public class IMRFunctionDemo {
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
 
     public static void main(String[] args) {
-
+        Demos.init();
+        
         final Pojo pojo = aPOJO();
         final Feature feature = aFeature();
 

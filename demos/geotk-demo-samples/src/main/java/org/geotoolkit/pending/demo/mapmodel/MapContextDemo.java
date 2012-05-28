@@ -24,7 +24,7 @@ import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
-import org.geotoolkit.map.MapItem;
+import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
@@ -39,6 +39,8 @@ public class MapContextDemo {
                                                    new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
 
     public static void main(String[] args) throws Exception{
+        Demos.init();
+        
         //preloading parameters --------------
         WorldFileImageReader.Spi.registerDefaults(null);
         Registry.setDefaultCodecPreferences();
