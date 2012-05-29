@@ -157,6 +157,40 @@
                 <wms:Dimension name="dim_range" units="Cel" default="-3.0,40.0">-3.0,40.0</wms:Dimension>
             </wms:Layer>
             
+            <wms:Layer queryable="1">
+                <wms:Name>ns1:Sample</wms:Name>
+                <wms:Title>Sample with ns1</wms:Title>
+                <wms:Abstract></wms:Abstract>
+                <wms:KeywordList>
+                    <wms:Keyword></wms:Keyword>
+                </wms:KeywordList>
+                <wms:CRS>EPSG:3395</wms:CRS>
+                <wms:EX_GeographicBoundingBox>
+                    <wms:westBoundLongitude>-50</wms:westBoundLongitude>
+                    <wms:eastBoundLongitude>50</wms:eastBoundLongitude>
+                    <wms:southBoundLatitude>-50</wms:southBoundLatitude>
+                    <wms:northBoundLatitude>50</wms:northBoundLatitude>
+                </wms:EX_GeographicBoundingBox>
+                <wms:BoundingBox CRS="EPSG:4326" minx="-179.99999999999784" miny="-77.01047999972037" maxx="180.00000000000225" maxy="77.01048000000112" resx="0.0" resy="0.0"/>
+            </wms:Layer>
+            
+            <wms:Layer queryable="1">
+                <wms:Name>ns2:Sample</wms:Name>
+                <wms:Title>Sample with ns2</wms:Title>
+                <wms:Abstract></wms:Abstract>
+                <wms:KeywordList>
+                    <wms:Keyword></wms:Keyword>
+                </wms:KeywordList>
+                <wms:CRS>EPSG:3395</wms:CRS>
+                <wms:EX_GeographicBoundingBox>
+                    <wms:westBoundLongitude>-60</wms:westBoundLongitude>
+                    <wms:eastBoundLongitude>60</wms:eastBoundLongitude>
+                    <wms:southBoundLatitude>-60</wms:southBoundLatitude>
+                    <wms:northBoundLatitude>60</wms:northBoundLatitude>
+                </wms:EX_GeographicBoundingBox>
+                <wms:BoundingBox CRS="EPSG:4326" minx="-179.99999999999784" miny="-77.01047999972037" maxx="180.00000000000225" maxy="77.01048000000112" resx="0.0" resy="0.0"/>
+            </wms:Layer>
+            
         </wms:Layer>
     </wms:Capability>
 </wms:WMS_Capabilities>

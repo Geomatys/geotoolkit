@@ -43,6 +43,7 @@ import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
@@ -118,7 +119,7 @@ public class WMSCoverageReference implements CoverageReference{
     /**
      * The layers to request.
      */
-    private String[] layers;
+    private Name[] layers;
 
     /**
      * The styles associated to the {@link #layers}.
@@ -177,22 +178,37 @@ public class WMSCoverageReference implements CoverageReference{
     private WMSCoverageReader reader;
     private Envelope env;
     
-    public WMSCoverageReference(final WebMapServer server, final Name name) {
-        this(server,name.getLocalPart());
+    
+    public WMSCoverageReference(final WebMapServer server, String ... layers) {
+        this(server,toNames(layers));
     }
     
-    public WMSCoverageReference(final WebMapServer server, final String ... layers) {
+    public WMSCoverageReference(final WebMapServer server, final Name ... names) {
         this.server = server;
-
-        for(final String str : layers){
-            if(str != null && str.contains(",")){
-                throw new IllegalArgumentException("invalid layer, name must nor contain ',' caractere : " + str);
-            }
+        
+        if(names == null || names.length == 0){
+            throw new IllegalArgumentException("No layer name defined");
         }
         
-        this.layers = layers;
+        this.layers = names;
     }
 
+    private static Name[] toNames(String ... names){
+        if(names == null || names.length == 0){
+            return new Name[0];
+        }
+        
+        final Name[] ns = new Name[names.length];
+        for(int i=0;i<names.length;i++){
+            final String str = names[i];
+            if(str != null && str.contains(",")){
+                throw new IllegalArgumentException("invalid layer, name must not contain ',' caractere : " + str);
+            }
+            ns[i] = DefaultName.valueOf(str);
+        }
+        return ns;
+    }
+    
     /**
      * @return first layer name
      */
@@ -209,18 +225,7 @@ public class WMSCoverageReference implements CoverageReference{
      * @return array of all layer names
      */
     public Name[] getNames() throws DataStoreException{
-        final Name[] names = new Name[layers.length];
-        layerLoop:
-        for(int i=0;i<layers.length;i++){
-            for(Name n : server.getNames()){
-                if(n.getLocalPart().equals(layers[i])){
-                    names[i] = n;
-                    continue layerLoop;
-                }
-            }
-            throw new DataStoreException("Name : " + layers[i] +" not found in capabilities.");
-        }
-        return names;
+        return layers.clone();
     }
     
     @Override
@@ -234,21 +239,25 @@ public class WMSCoverageReference implements CoverageReference{
      * @param names Array of layer names.
      */
     public void setLayerNames(final String... names) {
-        this.layers = names;
+        this.layers = toNames(names);
     }
 
     /**
      * Returns the layer names.
      */
     public String[] getLayerNames() {
-        return layers.clone();
+        final String[] ns = new String[layers.length];
+        for(int i=0;i<layers.length;i++){
+            ns[i] = DefaultName.toExtendedForm(layers[i]);
+        }
+        return ns;
     }
 
     /**
      * Returns a concatenated string of all layer names, separated by comma.
      */
     public String getCombinedLayerNames() {
-        return StringUtilities.toCommaSeparatedValues((Object[])layers);
+        return StringUtilities.toCommaSeparatedValues((Object[])getLayerNames());
     }
 
     /**
@@ -437,19 +446,19 @@ public class WMSCoverageReference implements CoverageReference{
     
     /*************************  Queries functions *****************************/
     protected CoordinateReferenceSystem findOriginalCRS() throws FactoryException,CapabilitiesException {
-        return WMSUtilities.findOriginalCRS(server,layers[0]);
+        return WMSUtilities.findOriginalCRS(server,getLayerNames()[0]);
     }
 
     protected boolean supportCRS(CoordinateReferenceSystem crs2D) throws FactoryException, CapabilitiesException {
-        return WMSUtilities.supportCRS(server,layers[0],crs2D);
+        return WMSUtilities.supportCRS(server,getLayerNames()[0],crs2D);
     }
 
     protected Envelope findEnvelope() throws CapabilitiesException {
-        return WMSUtilities.findEnvelope(server,layers[0]);
+        return WMSUtilities.findEnvelope(server,getLayerNames()[0]);
     }
 
     protected Long findClosestDate(long l) throws CapabilitiesException {
-        return WMSUtilities.findClosestDate(server,layers[0],(long)l);
+        return WMSUtilities.findClosestDate(server,getLayerNames()[0],(long)l);
     }
 
     /**
@@ -651,7 +660,7 @@ public class WMSCoverageReference implements CoverageReference{
 
         request.setEnvelope(env);
         request.setDimension(rect);
-        request.setLayers(layers);
+        request.setLayers(getLayerNames());
         if (styles == null) {
             request.setStyles("");
         } else {
@@ -702,7 +711,7 @@ public class WMSCoverageReference implements CoverageReference{
         request.setDimension(rect);
         request.setFormat(format);
         request.setExceptions(exceptionsFormat);
-        request.setLayer(layers[0]);
+        request.setLayer(getLayerNames()[0]);
 
         if (styles.length > 0)
             request.setStyle(styles[0]);

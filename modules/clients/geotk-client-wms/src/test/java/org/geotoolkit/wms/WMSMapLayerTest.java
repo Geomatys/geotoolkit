@@ -685,6 +685,6 @@ public class WMSMapLayerTest {
         assertTrue(sUrl.contains("DIMRANGE=-50,50"));
         
     }
-     
+    
 
 }
