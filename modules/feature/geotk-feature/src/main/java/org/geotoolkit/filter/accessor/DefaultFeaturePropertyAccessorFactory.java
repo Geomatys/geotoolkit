@@ -192,8 +192,16 @@ public final class DefaultFeaturePropertyAccessorFactory implements PropertyAcce
 
         @Override
         public Object get(final Object object, final String xpath, final Class target) {
-            final ComplexAttribute feature = (ComplexAttribute) object;
-            return feature.getIdentifier().getID();
+            if(object instanceof ComplexAttribute){
+                final ComplexAttribute feature = (ComplexAttribute) object;
+                return feature.getIdentifier().getID();
+            }else if(object instanceof FeatureType){
+                final FeatureType ft = (FeatureType) object;
+                if(ft.isIdentified()){
+                    return true;
+                }
+            }
+            return null;
         }
 
         @Override
