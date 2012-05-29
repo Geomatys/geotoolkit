@@ -39,6 +39,7 @@ import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.filter.visitor.DuplicatingFilterVisitor;
+import org.geotoolkit.filter.visitor.SimplifyingFilterVisitor;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.referencing.CRS;
@@ -152,7 +153,7 @@ public class DefaultSession extends AbstractSession {
      * {@inheritDoc }
      */
     @Override
-    public void updateFeatures(final Name groupName, final Filter filter, final Map<? extends AttributeDescriptor,? extends Object> values) throws DataStoreException {
+    public void updateFeatures(final Name groupName, Filter filter, final Map<? extends AttributeDescriptor,? extends Object> values) throws DataStoreException {
         //will raise an error if the name doesnt exist
         store.getFeatureType(groupName);
 
@@ -165,6 +166,9 @@ public class DefaultSession extends AbstractSession {
         if(async){
             final Id modified;
 
+            final SimplifyingFilterVisitor simplifier = new SimplifyingFilterVisitor();
+            filter = (Filter) filter.accept(simplifier, null);
+            
             if(filter instanceof Id){
                 modified = FF.id( ((Id)filter).getIdentifiers());
             }else{
