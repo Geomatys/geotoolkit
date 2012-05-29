@@ -17,14 +17,18 @@
  */
 package org.geotoolkit.internal.image.io;
 
+import java.util.Locale;
 import java.awt.Rectangle;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
+import java.awt.image.SampleModel;
 import javax.imageio.ImageWriter;
 import javax.imageio.IIOImage;
 import javax.imageio.IIOParam;
+import javax.imageio.ImageWriteParam;
 import javax.imageio.metadata.IIOMetadata;
 
+import org.opengis.util.InternationalString;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.coverage.grid.RectifiedGrid;
@@ -34,6 +38,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.operation.MathTransform;
 
+import org.geotoolkit.util.Localized;
 import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.image.io.ImageMetadataException;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
@@ -62,6 +67,11 @@ import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
  * @module
  */
 public class IIOImageHelper {
+    /**
+     * The data type, as one of the {@link DataBuffer} constants.
+     */
+    public final int dataType;
+
     /**
      * The number of bands in the source image.
      * Shall be equals or greater than the length of the {@link #sourceBands} array.
@@ -94,6 +104,11 @@ public class IIOImageHelper {
      * @see #hasSubsampling()
      */
     public final int sourceXSubsampling, sourceYSubsampling;
+
+    /**
+     * The locale for formatting locale-sensitive data (never {@code null}).
+     */
+    public final Locale locale;
 
 
     // ---- The above variables were working on standard image parameters only. ----------------
@@ -155,10 +170,13 @@ public class IIOImageHelper {
             final Raster raster = image.getRaster();
             bounds   = raster.getBounds(); // Needs to be a clone.
             numBands = raster.getNumBands();
+            dataType = raster.getSampleModel().getDataType();
         } else {
             final RenderedImage raster = image.getRenderedImage();
+            final SampleModel model = raster.getSampleModel();
             bounds   = ImageUtilities.getBounds(raster);
-            numBands = raster.getSampleModel().getNumBands();
+            numBands = model.getNumBands();
+            dataType = model.getDataType();
         }
         /*
          * Examines the parameters for subsampling in lines, columns and bands. If a subsampling
@@ -193,6 +211,22 @@ public class IIOImageHelper {
             sourceXSubsampling = 1;
             sourceYSubsampling = 1;
         }
+        /*
+         * Gets the locale from the parameter if possible, or from the image writer otherwise.
+         */
+        Locale locale = null;
+        if (param instanceof ImageWriteParam) {
+            locale = ((ImageWriteParam) param).getLocale();
+        } else if (param instanceof Localized) {
+            locale = ((Localized) param).getLocale();
+        }
+        if (locale == null && writer instanceof Localized) {
+            locale = ((Localized) writer).getLocale();
+            if (locale == null) {
+                locale = Locale.getDefault();
+            }
+        }
+        this.locale = locale;
         /*
          * The code below this point were working on standard image parameters only.
          * The code below this point work on Geotk-specific metadata.
@@ -319,7 +353,21 @@ public class IIOImageHelper {
     }
 
     /**
-     * Returns the conversion from grid to CRS coordinates, or {@code null} if not yet computed.
+     * Returns the extent of grid coordinates, or {@code null} if none. This grid envelope is
+     * <strong>not</strong> adjusted for user parameters (sub-region, sub-sampling).
+     *
+     * @return The grid envelope, or {@code null} if none.
+     * @throws ImageMetadataException If an error occurred while computing the grid geometry.
+     */
+    public GridEnvelope getGridDomain() throws ImageMetadataException {
+        if (!isGridGeometryComputed) {
+            computeGridGeometry();
+        }
+        return gridDomain;
+    }
+
+    /**
+     * Returns the conversion from grid to CRS coordinates, or {@code null} if none.
      * This transform is <strong>not</strong> adjusted for user parameters (sub-region, sub-sampling).
      *
      * @return The conversion from grid to CRS coordinates, or {@code null} if none.
@@ -369,5 +417,15 @@ public class IIOImageHelper {
             }
         }
         return gridCenter;
+    }
+
+    /**
+     * Returns the given international string as a string in the current {@linkplain #locale}.
+     *
+     * @param  text The international string, or {@code null}.
+     * @return The given text as a string, or {@code null} if the given text was null.
+     */
+    public final String toString(final InternationalString text) {
+        return (text != null) ? text.toString(locale) : null;
     }
 }

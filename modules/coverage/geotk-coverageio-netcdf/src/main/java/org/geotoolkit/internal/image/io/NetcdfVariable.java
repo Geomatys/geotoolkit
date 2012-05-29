@@ -364,12 +364,17 @@ scan:   for (int i=0; i<missingCount; i++) {
     /**
      * Returns the data type which most closely represents the "raw" internal data
      * of the variable. This is the value returned by the default implementation of
-     * {@link NetcdfImageReader#getRawDataType}.
+     * {@link org.geotoolkit.image.io.plugin.NetcdfImageReader#getRawDataType(int)}.
+     * <p>
+     * There is no direct converse of this method, because the unsigned values type
+     * need to be handled in a special way (through a "_Unigned" attribute). See the
+     * {@link org.geotoolkit.image.io.plugin.NetcdfImage#createVariable} method for
+     * the main place where the converse operation is applied.
      *
      * @param  variable The variable.
      * @return The data type, or {@link DataBuffer#TYPE_UNDEFINED} if unknown.
      *
-     * @see NetcdfImageReader#getRawDataType
+     * @see org.geotoolkit.image.io.plugin.NetcdfImageReader#getRawDataType(int)
      */
     public static int getRawDataType(final VariableIF variable) {
         final DataType type = variable.getDataType();
@@ -405,7 +410,7 @@ scan:   for (int i=0; i<missingCount; i++) {
      * @param  variable The variable to test.
      * @param  variables The list of all variables from which the given variable come from.
      * @return {@code true} if the specified variable can be returned from the
-     *         {@link NetcdfImageReader#getImageNames()} method.
+     *         {@link org.geotoolkit.image.io.plugin.NetcdfImageReader#getImageNames()} method.
      */
     public static boolean isCoverage(final VariableSimpleIF variable, final List<? extends VariableIF> variables) {
         int numVectors = 0; // Number of dimension having more than 1 value.

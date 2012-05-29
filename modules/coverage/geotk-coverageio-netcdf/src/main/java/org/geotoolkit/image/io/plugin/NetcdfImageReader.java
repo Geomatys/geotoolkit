@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.image.io.plugin;
 
-import org.geotoolkit.internal.image.io.NetcdfVariable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -76,6 +75,7 @@ import org.geotoolkit.image.io.SpatialImageReadParam;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.internal.image.io.DimensionManager;
+import org.geotoolkit.internal.image.io.NetcdfVariable;
 import org.geotoolkit.referencing.adapters.NetcdfAxis;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.Workaround;
