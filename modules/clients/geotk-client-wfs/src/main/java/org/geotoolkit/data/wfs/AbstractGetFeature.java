@@ -36,6 +36,7 @@ import javax.xml.namespace.QName;
 
 import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.filter.visitor.SimplifyingFilterVisitor;
 import org.geotoolkit.ogc.xml.v110.FilterType;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.sld.xml.XMLUtilities;
@@ -185,6 +186,13 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
             requestParameters.put("NAMESPACE",sbNS.toString());
         }
 
+        Filter filter = Filter.INCLUDE;
+        if(this.filter != null && this.filter != Filter.INCLUDE){
+            final SimplifyingFilterVisitor visitor = new SimplifyingFilterVisitor();
+            filter = (Filter) this.filter.accept(visitor, null);
+        }
+        
+        
         if(filter != null && filter != Filter.INCLUDE){
             final XMLUtilities util = new XMLUtilities();
             final StringWriter writer = new StringWriter();
