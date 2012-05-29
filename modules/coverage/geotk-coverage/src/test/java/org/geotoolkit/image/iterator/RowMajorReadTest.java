@@ -18,8 +18,11 @@
 package org.geotoolkit.image.iterator;
 
 import java.awt.Rectangle;
+import java.awt.image.BandedSampleModel;
+import java.awt.image.DataBuffer;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
+import javax.media.jai.TiledImage;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
@@ -153,6 +156,62 @@ public abstract class RowMajorReadTest extends IteratorTest {
      */
     protected abstract void setMoveToRITabs(final int indexCut, final int length);
 
+    @Override
+    protected void setRenderedImgTest(int minx, int miny, int width, int height, int tilesWidth, int tilesHeight, int numBand, Rectangle areaIterate) {
+        setRenderedImgTest(this, minx, miny, width, height, tilesWidth, tilesHeight, numBand, areaIterate);
+    }
+
+    static void setRenderedImgTest(IteratorTest test, int minx, int miny, int width, int height, int tilesWidth, int tilesHeight, int numBand, Rectangle areaIterate) {
+
+        final int dataType = test.getDataBufferType();
+
+        final BandedSampleModel sampleM = new BandedSampleModel(dataType, tilesWidth, tilesHeight, numBand);
+        test.renderedImage = new TiledImage(minx, miny, width, height, minx+tilesWidth, miny+tilesHeight, sampleM, null);
+
+        double comp;
+        double valueRef = (dataType == DataBuffer.TYPE_FLOAT) ? -200.5 : 0;
+        comp = valueRef;
+        for (int y = miny, ly = miny + height; y<ly; y++) {
+            for (int x = minx, lx = minx + width; x<lx; x++) {
+                for (int b = 0; b<numBand; b++) {
+                    test.renderedImage.setSample(x, y, b, comp++);
+                }
+            }
+        }
+
+        ////////////////////remplir tabRef/////////////////
+
+        int areaMinX, areaMinY, areaMaxX, areaMaxY;
+        int tabLength;
+
+        if (areaIterate != null) {
+            //iteration area boundary
+            areaMinX = Math.max(minx, areaIterate.x);
+            areaMinY = Math.max(miny, areaIterate.y);
+            areaMaxX = Math.min(minx+width, areaIterate.x+areaIterate.width);
+            areaMaxY = Math.min(miny+height, areaIterate.y+areaIterate.height);
+            tabLength = (areaMaxX - areaMinX) * (areaMaxY - areaMinY) * numBand;
+        } else {
+            areaMinX = minx;
+            areaMinY = miny;
+            areaMaxX = minx + width;
+            areaMaxY = miny + height;
+            tabLength = width * height * numBand;
+        }
+
+        //test table cretion
+        test.createTable(tabLength);
+        comp = 0;
+        for (;areaMinY<areaMaxY;areaMinY++) {
+            for (int x = areaMinX; x<areaMaxX; x++) {
+                for (int b = 0; b<numBand; b++) {
+                    test.setTabRefValue((int) comp++, b + (x-minx)*numBand + (areaMinY-miny) * width*numBand + valueRef);
+                }
+            }
+        }
+
+    }
+
     /**
      * Test if getX() getY() iterator methods are conform from rendered image.
      */
@@ -201,7 +260,7 @@ public abstract class RowMajorReadTest extends IteratorTest {
         setMoveToRITabs(indexCut, lenght);
         int comp = 0;
         while (pixIterator.next()) {
-            setTabTestValue(comp++, pixIterator.getSample());
+            setTabTestValue(comp++, pixIterator.getSampleDouble());
         }
         assertTrue(compareTab());
     }
@@ -228,7 +287,7 @@ public abstract class RowMajorReadTest extends IteratorTest {
         setMoveToRITabs(indexCut, lenght);
         int comp = 0;
         while (pixIterator.next()) {
-            setTabTestValue(comp++, pixIterator.getSample());
+            setTabTestValue(comp++, pixIterator.getSampleDouble());
         }
         assertTrue(compareTab());
     }

@@ -49,12 +49,7 @@ public abstract class WritableIteratorTest extends IteratorTest{
     protected abstract void fillGoodTabRef(int minx, int miny, int width, int height,
                     int tilesWidth, int tilesHeight, int numBand, Rectangle areaIterate);
 
-    /**
-     * Return {@link #renderedImage} data type.
-     *
-     * @return {@link #renderedImage} data type.
-     */
-    protected abstract int getDataBufferType();
+
 
     /**
      * Return "writable" {@code PixelIterator} adapted for {@code RenderedImage}.
@@ -67,22 +62,6 @@ public abstract class WritableIteratorTest extends IteratorTest{
     protected abstract PixelIterator getWritableRIIterator(RenderedImage renderedImage,
                                     WritableRenderedImage writableRenderedImage);
 
-    /**
-     * Fill reference table use to valid tests.
-     * Affect value at index in test table.
-     *
-     * @param index table index.
-     * @param value to insert in reference table.
-     */
-    protected abstract void setTabRefValue(int index, double value);
-
-    /**
-     * Create appropriate table about "writable" tests.
-     *
-     * @param length tests tables length.
-     */
-    protected abstract void createTable(int length);
-
     public WritableIteratorTest() {
     }
 
@@ -93,8 +72,8 @@ public abstract class WritableIteratorTest extends IteratorTest{
     @Test
     public void rectUpperLeftWriteTest() {
         final Rectangle rect = new Rectangle(-10, -20, 40, 30);
-        minx = 0;
-        miny = 0;
+        minx = -2;
+        miny = 4;
         width = 100;
         height = 50;
         tilesWidth = 10;
@@ -119,8 +98,8 @@ public abstract class WritableIteratorTest extends IteratorTest{
     @Test
     public void rectUpperRightWriteTest() {
         final Rectangle rect = new Rectangle(80, -20, 30, 50);
-        minx = 0;
-        miny = 0;
+        minx = -7;
+        miny = 2;
         width = 100;
         height = 50;
         tilesWidth = 10;
@@ -145,8 +124,8 @@ public abstract class WritableIteratorTest extends IteratorTest{
     @Test
     public void rectLowerRightWriteTest() {
         final Rectangle rect = new Rectangle(80, 30, 50, 50);
-        minx = 0;
-        miny = 0;
+        minx = 3;
+        miny = -7;
         width = 100;
         height = 50;
         tilesWidth = 10;
@@ -197,8 +176,8 @@ public abstract class WritableIteratorTest extends IteratorTest{
     @Test
     public void imageContainsRectWriteTest() {
         final Rectangle rect = new Rectangle(20, 10, 70, 30);
-        minx = 0;
-        miny = 0;
+        minx = -5;
+        miny = 7;
         width = 100;
         height = 50;
         tilesWidth = 10;

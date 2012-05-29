@@ -55,30 +55,31 @@ abstract class RowMajorDirectIterator extends PixelIterator {
     private int row;
 
     /**
+     * Current raster lower X value.
+     */
+    private int cRMinX;
+
+    /**
+     * Current raster lower Y value.
+     */
+    private int cRMinY;
+
+    /**
      * Create default rendered image iterator.
      *
      * @param renderedImage image which will be follow by iterator.
      */
     RowMajorDirectIterator(final RenderedImage renderedImage) {
+        super(renderedImage);
         ArgumentChecks.ensureNonNull("RenderedImage : ", renderedImage);
         this.renderedImage = renderedImage;
 
-        //rect attributs
-        this.subAreaMinX = renderedImage.getMinX();
-        this.subAreaMinY = renderedImage.getMinY();
-        this.subAreaMaxX = this.subAreaMinX + renderedImage.getWidth();
-        this.subAreaMaxY = this.subAreaMinY + renderedImage.getHeight();
-
-        //tiles attributs
-        this.tMinX = renderedImage.getMinTileX();
-        this.tMinY = renderedImage.getMinTileY();
-        this.tMaxX = tMinX + renderedImage.getNumXTiles();
-        this.tMaxY = tMinY + renderedImage.getNumYTiles();
-
         //initialize attributs to first iteration
-        this.numBand = this.maxX = this.maxY = 1;
-        this.tY = tMinY;
-        this.tX = tMinX - 1;
+        this.row     = this.areaIterateMinY - 1;
+        this.maxY    = this.row + 1;
+        this.numBand = this.maxX = 1;
+        this.tY      = tMinY-1;
+        this.tX      = tMaxX - 1;
     }
 
     /**
@@ -89,41 +90,17 @@ abstract class RowMajorDirectIterator extends PixelIterator {
      * @throws IllegalArgumentException if subArea don't intersect image boundary.
      */
     RowMajorDirectIterator(final RenderedImage renderedImage, final Rectangle subArea) {
+        super(renderedImage, subArea);
         ArgumentChecks.ensureNonNull("RenderedImage : ", renderedImage);
         ArgumentChecks.ensureNonNull("sub Area iteration : ", subArea);
         this.renderedImage = renderedImage;
 
-        //rect attributs
-        this.subAreaMinX = subArea.x;
-        this.subAreaMinY = subArea.y;
-        this.subAreaMaxX = this.subAreaMinX + subArea.width;
-        this.subAreaMaxY = this.subAreaMinY + subArea.height;
-
-        final int rimx = renderedImage.getMinX();
-        final int rimy = renderedImage.getMinY();
-        final int mtx = renderedImage.getMinTileX();
-        final int mty = renderedImage.getMinTileY();
-
-        final int mix = Math.max(subAreaMinX, rimx) - rimx;
-        final int miy = Math.max(subAreaMinY, rimy) - rimy;
-        final int max = Math.min(subAreaMaxX, rimx + renderedImage.getWidth()) - rimx;
-        final int may = Math.min(subAreaMaxY, rimy + renderedImage.getHeight()) - rimy;
-        if(mix > max || miy > may)
-            throw new IllegalArgumentException("invalid subArea coordinates, no intersection between it and renderedImage"+renderedImage+subArea);
-
-        final int tw = renderedImage.getTileWidth();
-        final int th = renderedImage.getTileHeight();
-
-        //tiles attributs
-        this.tMinX = mix / tw + mtx;
-        this.tMinY = miy / th + mty;
-        this.tMaxX = max / tw + mtx;
-        this.tMaxY = may / th + mty;
-
         //initialize attributs to first iteration
-        this.numBand = this.maxX = this.maxY = 1;
-        this.tY = tMinY;
-        this.tX = tMinX - 1;
+        this.row     = this.areaIterateMinY - 1;
+        this.maxY    = this.row + 1;
+        this.numBand = this.maxX = 1;
+        this.tY      = tMinY-1;
+        this.tX      = tMaxX - 1;
     }
 
     /**
@@ -137,13 +114,22 @@ abstract class RowMajorDirectIterator extends PixelIterator {
                 if (++tX == tMaxX) {
                     tX = tMinX;
                     if (++row == maxY) {
-                        row = 0;
                         if (++tY == tMaxY) {
                             return false;
                         }
+                        updateCurrentRaster(tX, tY);
+                        this.cRMinY = this.currentRaster.getMinY();
+                        this.maxY   = Math.min(subAreaMaxY, cRMinY + currentRaster.getHeight());
                     }
                 }
                 updateCurrentRaster(tX, tY);
+                this.cRMinX    = currentRaster.getMinX();
+                this.minX      = Math.max(subAreaMinX, cRMinX) - cRMinX;
+                this.maxX      = Math.min(subAreaMaxX, cRMinX + rasterWidth) - cRMinX;
+                final int step = (row - cRMinY) * rasterWidth;
+                this.maxX     +=  step;
+                dataCursor     = minX + step;
+                this.numBand   = currentRaster.getNumBands();
             }
         }
         return true;
@@ -156,21 +142,8 @@ abstract class RowMajorDirectIterator extends PixelIterator {
      * @param tileY current Y coordinate from rendered image tiles array.
      */
     protected void updateCurrentRaster(int tileX, int tileY) {
-        //update raster
         this.currentRaster = renderedImage.getTile(tileX, tileY);
-        final int cRMinX   = currentRaster.getMinX();
-        final int cRMinY   = currentRaster.getMinY();
-        this.rasterWidth = currentRaster.getWidth();
-
-        //update min max from subArea and raster boundary
-        this.minX    = Math.max(subAreaMinX, cRMinX) - cRMinX;
-        this.minY    = Math.max(subAreaMinY, cRMinY) - cRMinY;
-        this.maxX    = Math.min(subAreaMaxX, cRMinX + rasterWidth) - cRMinX;
-        this.maxY    = Math.min(subAreaMaxY, cRMinY + currentRaster.getHeight()) - cRMinY;
-        this.numBand = currentRaster.getNumBands();
-        this.maxX += (minY + row ) * rasterWidth;
-        dataCursor = minX + (minY + row) * rasterWidth;
-        this.band = 0;
+        this.rasterWidth   = currentRaster.getWidth();
     }
 
     /**
@@ -179,7 +152,7 @@ abstract class RowMajorDirectIterator extends PixelIterator {
     @Override
     public int getX() {
         final int minx = (renderedImage == null) ? currentRaster.getMinX() : renderedImage.getMinX();
-        return minx + (tX-tMinX) * rasterWidth + dataCursor % rasterWidth;
+        return minx + (tX - tMinX) * rasterWidth + dataCursor % rasterWidth;
     }
 
     /**
@@ -188,7 +161,7 @@ abstract class RowMajorDirectIterator extends PixelIterator {
     @Override
     public int getY() {
         final int miny = (renderedImage == null) ? currentRaster.getMinY() : renderedImage.getMinY();
-        return miny + (tY-tMinY) * currentRaster.getHeight() + dataCursor/rasterWidth;
+        return miny + (tY - tMinY) * currentRaster.getHeight() + dataCursor/rasterWidth;
     }
 
     /**
@@ -196,10 +169,12 @@ abstract class RowMajorDirectIterator extends PixelIterator {
      */
     @Override
     public void rewind() {
-        this.numBand = this.maxX = this.maxY = 1;
+        this.maxY       = this.areaIterateMinY;
+        this.numBand    = this.maxX = 1;
         this.dataCursor = this.band = 0;
-        this.tY = tMinY;
-        this.tX = tMinX - 1;
+        this.tY         = tMinY - 1;
+        this.tX         = tMaxX - 1;
+        this.row        = this.maxY - 1;
     }
 
     /**
@@ -207,21 +182,29 @@ abstract class RowMajorDirectIterator extends PixelIterator {
      */
     @Override
     public void moveTo(int x, int y) {
+        super.moveTo(x, y);
         final int riMinX = renderedImage.getMinX();
         final int riMinY = renderedImage.getMinY();
-        if (x < riMinX || x >= riMinX + renderedImage.getWidth()
-        ||  y < riMinY || x >= riMinY + renderedImage.getHeight())
-            throw new IllegalArgumentException("coordinate out of rendered image boundary"+renderedImage+x+y);
         tX = (x - riMinX)/renderedImage.getTileWidth() + renderedImage.getMinTileX();
         tY = (y - riMinY)/renderedImage.getTileHeight() + renderedImage.getMinTileY();
+
         updateCurrentRaster(tX, tY);
-        this.band = -1;
+        this.cRMinX = currentRaster.getMinX();
+        this.cRMinY = currentRaster.getMinY();
         this.row = y;
-        this.row -= currentRaster.getMinY();
-        this.dataCursor = x;
-        this.dataCursor -= currentRaster.getMinX();
-        final int step = row * rasterWidth;
-        this.dataCursor += step;
+        final int step = (row - cRMinY) * rasterWidth;
+        this.maxX = Math.min(subAreaMaxX, cRMinX + rasterWidth) - cRMinX;
         this.maxX += step;
+
+        //initialize row
+        this.maxY = Math.min(subAreaMaxY, cRMinY + currentRaster.getHeight());
+
+        this.dataCursor = x;
+        this.dataCursor -= this.cRMinX;
+        this.dataCursor += step;
+
+        //initialize band
+        this.numBand = currentRaster.getNumBands();
+        this.band = -1;
     }
 }

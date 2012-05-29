@@ -164,6 +164,29 @@ public abstract class IteratorTest {
     protected abstract void setRenderedImgTest(int minx, int miny, int width, int height,
                         int tilesWidth, int tilesHeight, int numBand, Rectangle areaIterate);
 
+    /**
+     * Return {@link #renderedImage} or {@link #rastertest} data type.
+     *
+     * @return {@link #renderedImage} or {@link #rastertest} data type.
+     */
+    protected abstract int getDataBufferType();
+
+    /**
+     * Create appropriate table about "writable" tests.
+     *
+     * @param length tests tables length.
+     */
+    protected abstract void createTable(int length);
+
+    /**
+     * Fill reference table use to valid tests.
+     * Affect value at index in test table.
+     *
+     * @param index table index.
+     * @param value to insert in reference table.
+     */
+    protected abstract void setTabRefValue(int index, double value);
+
 ////////////////////////////////////Raster tests/////////////////////////////////
     /**
      * Test if iterator transverse all raster positions with different minX and maxY coordinates.
@@ -453,6 +476,120 @@ public abstract class IteratorTest {
         assertTrue(compareTab());
     }
 
+    /**
+     * Test if iterator transverse expected value in define area.
+     * Area is defined within upper left renderedImage tile.
+     */
+    @Test
+    public void rectUpperLeftWithinTileTest() {
+        final Rectangle rect = new Rectangle(-10, -20, 10, 30);
+        minx = -5;
+        miny = 5;
+        width = 100;
+        height = 50;
+        tilesWidth = 10;
+        tilesHeight = 5;
+        setRenderedImgTest(minx, miny, width, height, tilesWidth, tilesHeight, 3, rect);
+        setPixelIterator(renderedImage, rect);
+
+        int comp = 0;
+        while (pixIterator.next()) {
+            setTabTestValue(comp++, pixIterator.getSampleDouble());
+        }
+        assertTrue(compareTab());
+    }
+
+    /**
+     * Test if iterator transverse expected value in define area.
+     * Area is defined within upper right renderedImage tile.
+     */
+    @Test
+    public void rectUpperRightWithinTileTest() {
+        final Rectangle rect = new Rectangle(90, -20, 30, 31);
+        minx = -5;
+        miny = 7;
+        width = 100;
+        height = 50;
+        tilesWidth = 10;
+        tilesHeight = 5;
+        setRenderedImgTest(minx, miny, width, height, tilesWidth, tilesHeight, 3, rect);
+        setPixelIterator(renderedImage, rect);
+
+        int comp = 0;
+        while (pixIterator.next()) {
+            setTabTestValue(comp++, pixIterator.getSampleDouble());
+        }
+        assertTrue(compareTab());
+    }
+
+    /**
+     * Test if iterator transverse expected value in define area.
+     * Area is defined within lower right renderedImage tile.
+     */
+    @Test
+    public void rectLowerRightWithinTileTest() {
+        final Rectangle rect = new Rectangle(97, 40, 50, 50);
+        minx = 5;
+        miny = -7;
+        width = 100;
+        height = 50;
+        tilesWidth = 10;
+        tilesHeight = 5;
+        setRenderedImgTest(minx, miny, width, height, tilesWidth, tilesHeight, 3, rect);
+        setPixelIterator(renderedImage, rect);
+
+        int comp = 0;
+        while (pixIterator.next()) {
+            setTabTestValue(comp++, pixIterator.getSampleDouble());
+        }
+        assertTrue(compareTab());
+    }
+
+    /**
+     * Test if iterator transverse expected value in define area.
+     * Area is defined within lower left renderedImage tile.
+     */
+    @Test
+    public void rectLowerLeftWithinTileTest() {
+        final Rectangle rect = new Rectangle(0, 34, 5, 50);
+        minx = 2;
+        miny = -15;
+        width = 100;
+        height = 50;
+        tilesWidth = 10;
+        tilesHeight = 5;
+        setRenderedImgTest(minx, miny, width, height, tilesWidth, tilesHeight, 3, rect);
+        setPixelIterator(renderedImage, rect);
+
+        int comp = 0;
+        while (pixIterator.next()) {
+            setTabTestValue(comp++, pixIterator.getSampleDouble());
+        }
+        assertTrue(compareTab());
+    }
+
+    /**
+     * Test if iterator transverse expected value in define area.
+     * Area is within image tile.
+     */
+    @Test
+    public void imageContainsRectWithinTileTest() {
+        final Rectangle rect = new Rectangle(16, 18, 8, 3);
+        minx = -5;
+        miny = 7;
+        width = 100;
+        height = 50;
+        tilesWidth = 10;
+        tilesHeight = 5;
+        setRenderedImgTest(minx, miny, width, height, tilesWidth, tilesHeight, 3, rect);
+        setPixelIterator(renderedImage, rect);
+
+        int comp = 0;
+        while (pixIterator.next()) {
+            setTabTestValue(comp++, pixIterator.getSampleDouble());
+        }
+        assertTrue(compareTab());
+    }
 
     /**
      * Test if iterator transverse expected value in define area.
@@ -461,8 +598,8 @@ public abstract class IteratorTest {
     @Test
     public void rectUpperLeftTest() {
         final Rectangle rect = new Rectangle(-10, -20, 40, 30);
-        minx = 0;
-        miny = 0;
+        minx = -5;
+        miny = 5;
         width = 100;
         height = 50;
         tilesWidth = 10;
@@ -552,9 +689,9 @@ public abstract class IteratorTest {
      */
     @Test
     public void imageContainsRectTest() {
-        final Rectangle rect = new Rectangle(20, 10, 70, 30);
-        minx = 0;
-        miny = 0;
+        final Rectangle rect = new Rectangle(20, 10, 10, 10);
+        minx = -5;
+        miny = 7;
         width = 100;
         height = 50;
         tilesWidth = 10;
@@ -646,13 +783,15 @@ public abstract class IteratorTest {
         int length = tabA.length;
         if (length != tabB.length) return false;
         for (int i = 0; i<length; i++) {
-            if (tabA[i] != tabB[i]) return false;
+            if (tabA[i] != tabB[i]) {
+                return false;
+            }
         }
         return true;
     }
 
     /**
-     * Compare 2 integer table.
+     * Compare 2 double table.
      *
      * @param tabA table resulting raster iterate.
      * @param tabB table resulting raster iterate.
@@ -668,7 +807,7 @@ public abstract class IteratorTest {
     }
 
     /**
-     * Compare 2 integer table.
+     * Compare 2 float table.
      *
      * @param tabA table resulting raster iterate.
      * @param tabB table resulting raster iterate.
@@ -684,7 +823,7 @@ public abstract class IteratorTest {
     }
 
     /**
-     * Compare 2 integer table.
+     * Compare 2 short table.
      *
      * @param tabA table resulting raster iterate.
      * @param tabB table resulting raster iterate.
@@ -700,7 +839,7 @@ public abstract class IteratorTest {
     }
 
     /**
-     * Compare 2 integer table.
+     * Compare 2 byte table.
      *
      * @param tabA table resulting raster iterate.
      * @param tabB table resulting raster iterate.

@@ -31,7 +31,15 @@ import javax.media.jai.TiledImage;
  */
 public class DefaultByteIteratorTest extends DefaultReadTest{
 
-    byte[] tabRef, tabTest;
+    /**
+     * Table which contains expected tests results values.
+     */
+    private byte[] tabRef;
+
+    /**
+     * Table which contains tests results values.
+     */
+    private byte[] tabTest;
 
     public DefaultByteIteratorTest() {
 
@@ -43,12 +51,16 @@ public class DefaultByteIteratorTest extends DefaultReadTest{
      */
     @Override
     protected void setRasterTest(int minx, int miny, int width, int height, int numBand, Rectangle subArea) {
+        setRasterByteTest(this, minx, miny, width, height, numBand, subArea);
+    }
+
+    static void setRasterByteTest(IteratorTest test, int minx, int miny, int width, int height, int numBand, Rectangle subArea) {
         int comp = 0;
-        rasterTest = Raster.createBandedRaster(DataBuffer.TYPE_BYTE, width, height, numBand, new Point(minx, miny));
+        test.rasterTest = Raster.createBandedRaster(DataBuffer.TYPE_BYTE, width, height, numBand, new Point(minx, miny));
         for (int y = miny; y<miny + height; y++) {
             for (int x = minx; x<minx + width; x++) {
                 for (int b = 0; b<numBand; b++) {
-                    rasterTest.setSample(x, y, b, comp-128);
+                    test.rasterTest.setSample(x, y, b, comp-128);
                 }
                 comp++;
             }
@@ -59,22 +71,20 @@ public class DefaultByteIteratorTest extends DefaultReadTest{
             my = miny;
             w = width;
             h = height;
-
         } else {
             mx = Math.max(minx, subArea.x);
             my = Math.max(miny, subArea.y);
-            w  = Math.min(minx + width, subArea.x + subArea.width) - mx;
+            w  = Math.min(minx + width,  subArea.x + subArea.width) - mx;
             h  = Math.min(miny + height, subArea.y + subArea.height) - my;
         }
 
         final int length = w * h * numBand;
-        tabRef  = new byte[length];
-        tabTest = new byte[length];
+        test.createTable(length);
         comp = 0;
         for (int y = my; y<my + h; y++) {
             for (int x = mx; x<mx + w; x++) {
                 for (int b = 0; b<numBand; b++) {
-                    tabRef[comp++] = (byte) ((x-minx) + (y-miny) * width - 128);
+                    test.setTabRefValue(comp++, (x-minx) + (y-miny) * width - 128);
                 }
             }
         }
@@ -85,83 +95,93 @@ public class DefaultByteIteratorTest extends DefaultReadTest{
      */
     @Override
     protected void setRenderedImgTest(int minx, int miny, int width, int height, int tilesWidth, int tilesHeight, int numBand, Rectangle areaIterate) {
-        final BandedSampleModel sampleM = new BandedSampleModel(DataBuffer.TYPE_BYTE, tilesWidth, tilesHeight, numBand);
-        renderedImage = new TiledImage(minx, miny, width, height, minx+tilesWidth, miny+tilesHeight, sampleM, null);//on decalle l'index des tiles de 1
+        setRenderedImgByteTest(this, minx, miny, width, height, tilesWidth, tilesHeight, numBand, areaIterate);
+    }
 
-        int comp = 0;
-        int nbrTX = width/tilesWidth;
-        int nbrTY = height/tilesHeight;
-        int val;
+    static void setRenderedImgByteTest(IteratorTest test, int minx, int miny, int width, int height, int tilesWidth, int tilesHeight, int numBand, Rectangle areaIterate) {
+        final BandedSampleModel sampleM = new BandedSampleModel(DataBuffer.TYPE_BYTE, tilesWidth, tilesHeight, numBand);
+        test.renderedImage = new TiledImage(minx, miny, width, height, minx+tilesWidth, miny+tilesHeight, sampleM, null);
+
+        double comp;
+        final int nbrTX = width/tilesWidth;
+        final int nbrTY = height/tilesHeight;
+        double valueRef = -128;
         for(int j = 0;j<nbrTY;j++){
             for(int i = 0; i<nbrTX;i++){
-                val = -128;
+                comp = valueRef;
                 for (int y = miny+j*tilesHeight, ly = y+tilesHeight; y<ly; y++) {
                     for (int x = minx+i*tilesWidth, lx = x + tilesWidth; x<lx; x++) {
                         for (int b = 0; b<numBand; b++) {
-                            renderedImage.setSample(x, y, b, val);
-                            comp++;
+                            test.renderedImage.setSample(x, y, b, comp++);
                         }
-                        val++;
                     }
                 }
             }
         }
 
-        int cULX, cULY, cBRX, cBRY, minIX = 0, minIY = 0, maxIX = 0, maxIY = 0;
-        int tileMinX, tileMinY, tileMaxX, tileMaxY;
-        int rastminY, rastminX, rastmaxY, rastmaxX, depX, depY, endX, endY, tabLenght;
+        ////////////////////remplir tabRef/////////////////
+
+        int tX, tY, tMaxX, tMaxY;
+        int areaMinX = 0, areaMinY = 0, areaMaxX = 0, areaMaxY = 0;
+        int tabLength;
 
         if (areaIterate != null) {
-            cULX = areaIterate.x;
-            cULY = areaIterate.y;
-            cBRX = cULX + areaIterate.width;
-            cBRY = cULY + areaIterate.height;
-            minIX = Math.max(cULX, minx);
-            minIY = Math.max(cULY, miny);
-            maxIX = Math.min(cBRX, minx + width);
-            maxIY = Math.min(cBRY, miny + height);
-            tabLenght = Math.abs((maxIX-minIX)*(maxIY-minIY)) * numBand;
-            tileMinX = (minIX - minx) / tilesWidth;
-            tileMinY = (minIY - miny) / tilesHeight;
-            tileMaxX = (maxIX - minx) / tilesWidth;
-            tileMaxY = (maxIY - miny) / tilesHeight;
+            //iteration area boundary
+            areaMinX = Math.max(minx, areaIterate.x);
+            areaMinY = Math.max(miny, areaIterate.y);
+            areaMaxX = Math.min(minx+width, areaIterate.x+areaIterate.width);
+            areaMaxY = Math.min(miny+height, areaIterate.y+areaIterate.height);
+            tabLength = (areaMaxX - areaMinX) * (areaMaxY - areaMinY) * numBand;
+
+            //iteration tiles index
+            tX = (areaMinX-minx)/tilesWidth;
+            tY = (areaMinY-miny)/tilesHeight;
+            tMaxX = (areaMaxX-minx)/tilesWidth;
+            tMaxY = (areaMaxY-miny)/tilesHeight;
+            if (tMaxX == width/tilesWidth) tMaxX--;
+            if (tMaxY == height/tilesHeight) tMaxY--;
         } else {
-            tileMinX = tileMinY = 0;
-            tileMaxX = width/tilesWidth;
-            tileMaxY = height/tilesHeight;
-            tabLenght = width*height*numBand;
+            tX = tY = 0;
+            tMaxX = width/tilesWidth - 1;
+            tMaxY = height/tilesHeight - 1;
+            tabLength = width * height * numBand;
         }
 
-        tabRef  = new byte[tabLenght];
-        tabTest = new byte[tabLenght];
+        //test table creation
+        test.createTable(tabLength);
+
+        int rasterMinX, rasterMinY, rasterMaxX, rasterMaxY, depX, depY, endX, endY;
+
         comp = 0;
-        for (int tileY = tileMinY; tileY<tileMaxY; tileY++) {
-            rastminY = tileY * tilesHeight;
-            rastmaxY = rastminY + tilesHeight;
-            for (int tileX = tileMinX; tileX<tileMaxX; tileX++) {
-                //tile by tile
-                rastminX = tileX * tilesWidth;
-                rastmaxX = rastminX + tilesWidth;
-                if (areaIterate == null) {
-                    depX = rastminX;
-                    depY = rastminY;
-                    endX = rastmaxX;
-                    endY = rastmaxY;
+        for (;tY <= tMaxY; tY++) {
+            for (int tx = tX;tx<=tMaxX; tx++) {
+
+                //find iteration area from each tiles
+                rasterMinX = minx+tx*tilesWidth;
+                rasterMinY = miny+tY*tilesHeight;
+                rasterMaxX = rasterMinX + tilesWidth;
+                rasterMaxY = rasterMinY + tilesHeight;
+
+                //iteration area
+                if (areaIterate != null) {
+                    depX = Math.max(rasterMinX, areaMinX);
+                    depY = Math.max(rasterMinY, areaMinY);
+                    endX = Math.min(rasterMaxX, areaMaxX);
+                    endY = Math.min(rasterMaxY, areaMaxY);
                 } else {
-                    depX = Math.max(rastminX, minIX);
-                    depY = Math.max(rastminY, minIY);
-                    endX = Math.min(rastmaxX, maxIX);
-                    endY = Math.min(rastmaxY, maxIY);
+                    depX = rasterMinX;
+                    depY = rasterMinY;
+                    endX = rasterMaxX;
+                    endY = rasterMaxY;
                 }
 
-                for (int y = depY; y<endY; y++) {
-                    for (int x = depX; x<endX; x++) {
-                        for (int b = 0; b<numBand; b++) {
-                            tabRef[comp++] =  (byte) ((x-depX) + (y-depY) * tilesWidth - 128);
+                for (;depY < endY; depY++) {
+                    for (int x = depX; x < endX; x++) {
+                        for (int b = 0;b<numBand;b++) {
+                            test.setTabRefValue((int)comp++, valueRef + b + (x-rasterMinX+(depY-rasterMinY)*tilesWidth)*numBand);
                         }
                     }
                 }
-
             }
         }
     }
@@ -172,6 +192,14 @@ public class DefaultByteIteratorTest extends DefaultReadTest{
     @Override
     protected void setTabTestValue(int index, double value) {
         tabTest[index] = (byte) value;
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    protected void setTabRefValue(int index, double value) {
+        tabRef[index] = (byte) value;
     }
 
     /**
@@ -191,5 +219,22 @@ public class DefaultByteIteratorTest extends DefaultReadTest{
         byte[] tabTemp = new byte[length];
         System.arraycopy(tabRef.clone(), indexCut, tabTemp, 0, length);
         tabRef = tabTemp.clone();
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    protected int getDataBufferType() {
+        return DataBuffer.TYPE_BYTE;
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    protected void createTable(int length) {
+        tabRef  = new byte[length];
+        tabTest = new byte[length];
     }
 }

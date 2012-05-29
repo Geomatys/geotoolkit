@@ -180,11 +180,11 @@ public class DefaultWritableDirectByteIterator extends DefaultDirectByteIterator
     protected void updateCurrentRaster(int tileX, int tileY) {
         super.updateCurrentRaster(tileX, tileY);
         if (currentWritableRaster != null) writableRenderedImage.releaseWritableTile(prectX, prectY);
-        this.currentWritableRaster = writableRenderedImage.getWritableTile(tileX, tileY);
-        currentWritableRaster = writableRenderedImage.getWritableTile(tileX, tileY);
-        currentWritableDataArray = ((DataBufferByte) currentWritableRaster.getDataBuffer()).getBankData();
-        prectX = tileX;
-        prectY = tileY;
+        this.currentWritableRaster    = writableRenderedImage.getWritableTile(tileX, tileY);
+        this.currentWritableRaster    = writableRenderedImage.getWritableTile(tileX, tileY);
+        this.currentWritableDataArray = ((DataBufferByte) currentWritableRaster.getDataBuffer()).getBankData();
+        this.prectX = tileX;
+        this.prectY = tileY;
     }
 
     /**

@@ -77,6 +77,22 @@ public abstract class DefaultWritableTest extends WritableIteratorTest {
      * {@inheritDoc }.
      */
     @Override
+    protected void setRasterTest(int minx, int miny, int width, int height, int numBand, Rectangle subArea) {
+        DefaultReadTest.setRasterTest(this, minx, miny, width, height, numBand, subArea);
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    protected void setRenderedImgTest(int minx, int miny, int width, int height, int tilesWidth, int tilesHeight, int numBand, Rectangle areaIterate) {
+        DefaultReadTest.setRenderedImgTest(this, minx, miny, width, height, tilesWidth, tilesHeight, numBand, areaIterate);
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
     protected void fillGoodTabRef(int minx, int miny, int width, int height, int tilesWidth, int tilesHeight, int numBand, Rectangle areaIterate) {
         int depy = Math.max(miny, areaIterate.y);
         int depx = Math.max(minx, areaIterate.x);
@@ -96,7 +112,7 @@ public abstract class DefaultWritableTest extends WritableIteratorTest {
             }
         }
     }
-    
+
     /**
      * Test if iterator transverse all raster positions with different minX and maxY coordinates.
      * Also test rewind function.

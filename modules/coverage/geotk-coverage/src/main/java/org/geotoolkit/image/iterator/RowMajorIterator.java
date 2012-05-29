@@ -62,17 +62,8 @@ class RowMajorIterator extends PixelIterator{
      * @param renderedImage image which will be follow by iterator.
      */
     RowMajorIterator(RenderedImage renderedImage) {
+        super(renderedImage);
         this.renderedImage = renderedImage;
-        //rect attributs
-        this.subAreaMinX = renderedImage.getMinX();
-        this.subAreaMinY = renderedImage.getMinY();
-        this.subAreaMaxX = this.subAreaMinX + renderedImage.getWidth();
-        this.subAreaMaxY = this.subAreaMinY + renderedImage.getHeight();
-        //tiles attributs
-        this.tMinX = renderedImage.getMinTileX();
-        this.tMinY = renderedImage.getMinTileY();
-        this.tMaxX = tMinX + renderedImage.getNumXTiles();
-        this.tMaxY = tMinY + renderedImage.getNumYTiles();
         //initialize attributs to first iteration
         this.numBand = this.maxX = this.maxY = 1;
         this.tY = tMinY - 1;
@@ -87,29 +78,8 @@ class RowMajorIterator extends PixelIterator{
      * @throws IllegalArgumentException if subArea don't intersect image.
      */
     RowMajorIterator(final RenderedImage renderedImage, final Rectangle subArea) {
+        super(renderedImage, subArea);
         this.renderedImage = renderedImage;
-        //rect attributs
-        this.subAreaMinX = subArea.x;
-        this.subAreaMinY = subArea.y;
-        this.subAreaMaxX = this.subAreaMinX + subArea.width;
-        this.subAreaMaxY = this.subAreaMinY + subArea.height;
-        //define min max intervals
-        final int minIAX = Math.max(renderedImage.getMinX(), subAreaMinX);
-        final int minIAY = Math.max(renderedImage.getMinY(), subAreaMinY);
-        final int maxIAX = Math.min(renderedImage.getMinX() + renderedImage.getWidth(), subAreaMaxX);
-        final int maxIAY = Math.min(renderedImage.getMinY() + renderedImage.getHeight(), subAreaMaxY);
-        //intersection test
-        if (minIAX > maxIAX || minIAY > maxIAY)
-            throw new IllegalArgumentException("invalid subArea coordinate no intersection between it and RenderedImage"+renderedImage+subArea);
-        //tiles attributs
-        final int rITWidth   = renderedImage.getTileWidth();
-        final int rITHeight  = renderedImage.getTileHeight();
-        final int rIMinTileX = renderedImage.getMinTileX();
-        final int rIMinTileY = renderedImage.getMinTileY();
-        this.tMinX = minIAX / rITWidth  + rIMinTileX;
-        this.tMinY = minIAY / rITHeight + rIMinTileY;
-        this.tMaxX = maxIAX / rITWidth  + rIMinTileX;
-        this.tMaxY = maxIAY / rITHeight + rIMinTileY;
         //initialize attributs to first iteration
         this.numBand = this.maxX = this.maxY = 1;
         this.tY = tMinY - 1;
@@ -240,11 +210,9 @@ class RowMajorIterator extends PixelIterator{
 
     @Override
     public void moveTo(int x, int y) {
+        super.moveTo(x, y);
         final int riMinX = renderedImage.getMinX();
         final int riMinY = renderedImage.getMinY();
-        if (x < riMinX || x>= riMinX+renderedImage.getWidth()
-        ||  y < riMinY || x>= riMinY+renderedImage.getHeight())
-            throw new IllegalArgumentException("coordinate out of rendered image boundary"+renderedImage+x+y);
         tX = (x - riMinX) / renderedImage.getTileWidth() + renderedImage.getMinTileX();
         tY = (y - riMinY) / renderedImage.getTileHeight() + renderedImage.getMinTileY();
         updateCurrentRaster(tX, tY);
