@@ -112,7 +112,7 @@ public class GeometrytoJTS {
 
         if (gml instanceof org.geotoolkit.gml.xml.Point){
             return toJTS((org.geotoolkit.gml.xml.Point)gml, -1);
-        } else if(gml instanceof LineString){
+        } else if(gml instanceof org.geotoolkit.gml.xml.LineString){
             return toJTS((org.geotoolkit.gml.xml.LineString)gml);
         } else if(gml instanceof org.geotoolkit.gml.xml.Polygon){
             return toJTS((org.geotoolkit.gml.xml.Polygon)gml);
