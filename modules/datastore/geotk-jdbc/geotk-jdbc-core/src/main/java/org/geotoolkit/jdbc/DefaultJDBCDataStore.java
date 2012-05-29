@@ -70,6 +70,7 @@ import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
 import org.geotoolkit.filter.visitor.CapabilitiesFilterSplitter;
+import org.geotoolkit.filter.visitor.FIDFixVisitor;
 import org.geotoolkit.filter.visitor.FilterAttributeExtractor;
 import org.geotoolkit.filter.visitor.SimplifyingFilterVisitor;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
@@ -366,8 +367,14 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
         final SimpleFeatureType type = (SimpleFeatureType) getFeatureType(query.getTypeName());
         final PrimaryKey pkey = dbmodel.getPrimaryKey(query.getTypeName());
 
+        //replace any PropertyEqualsTo in true ID filters
+        Filter baseFilter = query.getFilter();
+        final FIDFixVisitor visitor = new FIDFixVisitor();
+        baseFilter = (Filter) baseFilter.accept(visitor, null);
+        
+        
         // split the filter
-        final Filter[] split = splitFilter(query.getFilter(),type);
+        final Filter[] split = splitFilter(baseFilter,type);
         final Filter preFilter = split[0];
         final Filter postFilter = split[1];
 
