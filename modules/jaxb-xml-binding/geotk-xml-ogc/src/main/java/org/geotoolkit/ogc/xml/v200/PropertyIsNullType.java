@@ -54,6 +54,13 @@ public class PropertyIsNullType extends ComparisonOpsType {
     @XmlElementRef(name = "expression", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
     private JAXBElement<?> expression;
 
+    public String getPropertyName() {
+        if (expression != null && expression.getValue() instanceof String) {
+            return (String)expression.getValue();
+        }
+        return null;
+    }
+    
     /**
      * Gets the value of the expression property.
      * 

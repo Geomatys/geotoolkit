@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.PointProperty;
 import org.geotoolkit.util.Utilities;
 
 
@@ -55,7 +56,7 @@ import org.geotoolkit.util.Utilities;
 @XmlType(name = "PointPropertyType", propOrder = {
     "point"
 })
-public class PointPropertyType {
+public class PointPropertyType implements PointProperty {
 
     @XmlElement(name = "Point")
     protected PointType point;

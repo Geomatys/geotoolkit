@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.metadata.MetadataStandard;
@@ -83,7 +84,7 @@ import org.opengis.referencing.operation.TransformException;
     AbstractGeometricPrimitiveType.class,
     AbstractGeometricAggregateType.class
 })
-public abstract class AbstractGeometryType extends AbstractGMLType implements Geometry, Expression {
+public abstract class AbstractGeometryType extends AbstractGMLType implements Geometry, Expression, AbstractGeometry {
 
     @XmlAttribute
     private String gid;

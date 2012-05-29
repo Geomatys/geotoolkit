@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.Polygon;
 
 
 /**
@@ -57,7 +58,7 @@ import javax.xml.bind.annotation.XmlType;
     "interior"
 })
 @XmlRootElement(name = "Polygon")
-public class PolygonType extends AbstractSurfaceType {
+public class PolygonType extends AbstractSurfaceType implements Polygon {
 
     @XmlElementRef(name = "exterior", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
     private JAXBElement<AbstractRingPropertyType> exterior;
@@ -89,6 +90,7 @@ public class PolygonType extends AbstractSurfaceType {
      *     {@link AbstractRingPropertyType }
      *
      */
+    @Override
     public AbstractRingPropertyType getExterior() {
         if (exterior != null) {
             return exterior.getValue();
@@ -138,6 +140,7 @@ public class PolygonType extends AbstractSurfaceType {
      *
      *
      */
+    @Override
     public List<AbstractRingPropertyType> getInterior() {
         final List<AbstractRingPropertyType> result = new ArrayList<AbstractRingPropertyType>();
         if (interior == null) {

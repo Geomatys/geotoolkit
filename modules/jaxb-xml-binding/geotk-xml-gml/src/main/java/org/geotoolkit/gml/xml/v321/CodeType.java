@@ -63,6 +63,19 @@ public class CodeType {
     @XmlSchemaType(name = "anyURI")
     private String codeSpace;
 
+    public CodeType() {
+        
+    }
+    
+    public CodeType(final String value) {
+        this.value = value;
+    }
+    
+    public CodeType(final String value, final String codeSpace) {
+        this.codeSpace = codeSpace;
+        this.value = value;
+    }
+    
     /**
      * Gets the value of the value property.
      * 

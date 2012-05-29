@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+import org.geotoolkit.gml.xml.DirectPositionList;
 
 
 /**
@@ -56,7 +57,7 @@ import javax.xml.bind.annotation.XmlValue;
 @XmlType(name = "DirectPositionListType", propOrder = {
     "value"
 })
-public class DirectPositionListType {
+public class DirectPositionListType implements DirectPositionList {
 
     @XmlValue
     private List<Double> value;

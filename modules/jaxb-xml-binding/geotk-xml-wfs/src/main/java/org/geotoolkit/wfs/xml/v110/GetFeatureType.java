@@ -125,6 +125,7 @@ public class GetFeatureType extends BaseRequestType implements GetFeature {
     /**
      * Gets the value of the query property.
      */
+    @Override
     public List<QueryType> getQuery() {
         if (query == null) {
             query = new ArrayList<QueryType>();

@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.CurveSegmentArrayProperty;
 
 
 /**
@@ -52,7 +53,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "CurveSegmentArrayPropertyType", propOrder = {
     "abstractCurveSegment"
 })
-public class CurveSegmentArrayPropertyType {
+public class CurveSegmentArrayPropertyType implements CurveSegmentArrayProperty{
 
     @XmlElementRef(name = "AbstractCurveSegment", namespace = "http://www.opengis.net/gml/3.2", type = JAXBElement.class)
     private List<JAXBElement<? extends AbstractCurveSegmentType>> abstractCurveSegment;
@@ -60,20 +61,6 @@ public class CurveSegmentArrayPropertyType {
     /**
      * Gets the value of the abstractCurveSegment property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the abstractCurveSegment property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getAbstractCurveSegment().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link GeodesicStringType }{@code >}
      * {@link JAXBElement }{@code <}{@link OffsetCurveType }{@code >}
@@ -94,11 +81,21 @@ public class CurveSegmentArrayPropertyType {
      * 
      * 
      */
-    public List<JAXBElement<? extends AbstractCurveSegmentType>> getAbstractCurveSegment() {
+    public List<JAXBElement<? extends AbstractCurveSegmentType>> getJbAbstractCurveSegment() {
         if (abstractCurveSegment == null) {
             abstractCurveSegment = new ArrayList<JAXBElement<? extends AbstractCurveSegmentType>>();
         }
         return this.abstractCurveSegment;
     }
 
+    public List<? extends AbstractCurveSegmentType> getAbstractCurveSegment() {
+        if (abstractCurveSegment == null) {
+            abstractCurveSegment = new ArrayList<JAXBElement<? extends AbstractCurveSegmentType>>();
+        }
+        List<AbstractCurveSegmentType> response = new ArrayList<AbstractCurveSegmentType>();
+        for (JAXBElement<? extends AbstractCurveSegmentType> jb : abstractCurveSegment) {
+            response.add(jb.getValue());
+        }
+        return response;
+    }
 }

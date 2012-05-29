@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.Envelope;
 
 
 /**
@@ -64,7 +65,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlSeeAlso({
     EnvelopeWithTimePeriodType.class
 })
-public class EnvelopeType {
+public class EnvelopeType implements Envelope{
 
     private DirectPositionType lowerCorner;
     private DirectPositionType upperCorner;

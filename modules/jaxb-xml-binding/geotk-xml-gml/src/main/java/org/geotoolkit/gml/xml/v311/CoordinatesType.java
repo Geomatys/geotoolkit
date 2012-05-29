@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+import org.geotoolkit.gml.xml.Coordinates;
 import org.geotoolkit.util.Utilities;
 
 
@@ -57,7 +58,7 @@ import org.geotoolkit.util.Utilities;
 @XmlType(name = "CoordinatesType", propOrder = {
     "value"
 })
-public class CoordinatesType {
+public class CoordinatesType implements Coordinates {
 
     @XmlValue
     private String value;

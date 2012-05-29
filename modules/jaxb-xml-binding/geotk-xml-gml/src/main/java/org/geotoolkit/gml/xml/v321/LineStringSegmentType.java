@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.LineStringSegment;
 
 
 /**
@@ -63,9 +64,7 @@ import javax.xml.bind.annotation.XmlType;
     "posList",
     "coordinates"
 })
-public class LineStringSegmentType
-    extends AbstractCurveSegmentType
-{
+public class LineStringSegmentType extends AbstractCurveSegmentType implements LineStringSegment {
 
     @XmlElementRefs({
         @XmlElementRef(name = "pos", namespace = "http://www.opengis.net/gml/3.2", type = JAXBElement.class),
@@ -82,19 +81,6 @@ public class LineStringSegmentType
      * Gets the value of the posOrPointPropertyOrPointRep property.
      * 
      * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the posOrPointPropertyOrPointRep property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getPosOrPointPropertyOrPointRep().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link PointPropertyType }{@code >}
      * {@link JAXBElement }{@code <}{@link DirectPositionType }{@code >}
@@ -102,11 +88,28 @@ public class LineStringSegmentType
      * 
      * 
      */
-    public List<JAXBElement<?>> getPosOrPointPropertyOrPointRep() {
+    public List<JAXBElement<?>> getRest() {
         if (posOrPointPropertyOrPointRep == null) {
             posOrPointPropertyOrPointRep = new ArrayList<JAXBElement<?>>();
         }
         return this.posOrPointPropertyOrPointRep;
+    }
+
+    /**
+     * Gets the value of the posOrPointPropertyOrPointRep property.
+     *
+     * Objects of the following type(s) are allowed in the list
+     * {@link DirectPositionType }
+     *
+     */
+    public List<DirectPositionType> getPos() {
+        final List<DirectPositionType> pos = new ArrayList<DirectPositionType>();
+        for (JAXBElement<?> jb : getRest()) {
+            if (jb.getValue() instanceof DirectPositionType) {
+                pos.add((DirectPositionType)jb.getValue());
+            }
+        }
+        return pos;
     }
 
     /**

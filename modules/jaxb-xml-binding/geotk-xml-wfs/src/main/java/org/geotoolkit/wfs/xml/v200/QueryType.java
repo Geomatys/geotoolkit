@@ -63,6 +63,7 @@ public class QueryType extends AbstractAdhocQueryExpressionType  implements Quer
      *     {@link String }
      *     
      */
+    @Override
     public String getSrsName() {
         return srsName;
     }

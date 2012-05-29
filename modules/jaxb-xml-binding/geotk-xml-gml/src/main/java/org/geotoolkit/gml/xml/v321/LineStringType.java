@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.LineString;
 
 
 /**
@@ -61,9 +62,7 @@ import javax.xml.bind.annotation.XmlType;
     "posList",
     "coordinates"
 })
-public class LineStringType
-    extends AbstractCurveType
-{
+public class LineStringType extends AbstractCurveType implements LineString {
 
     @XmlElementRefs({
         @XmlElementRef(name = "pos", namespace = "http://www.opengis.net/gml/3.2", type = JAXBElement.class),

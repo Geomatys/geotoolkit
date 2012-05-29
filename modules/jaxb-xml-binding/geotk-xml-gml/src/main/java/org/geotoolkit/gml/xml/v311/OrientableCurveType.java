@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-
+import org.geotoolkit.gml.xml.OrientableCurve;
 
 /**
  * OrientableCurve consists of a curve and an orientation. If the orientation is "+", then the OrientableCurve is identical to the baseCurve. If the orientation is "-", then the OrientableCurve is related to another _Curve with a parameterization that reverses the sense of the curve traversal.
@@ -50,9 +50,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "OrientableCurveType", propOrder = {
     "baseCurve"
 })
-public class OrientableCurveType
-    extends AbstractCurveType
-{
+public class OrientableCurveType extends AbstractCurveType implements OrientableCurve{
 
     @XmlElement(required = true)
     protected CurvePropertyType baseCurve;

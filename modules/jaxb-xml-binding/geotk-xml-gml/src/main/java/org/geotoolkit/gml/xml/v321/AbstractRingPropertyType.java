@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.AbstractRingProperty;
 
 
 /**
@@ -50,7 +51,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "AbstractRingPropertyType", propOrder = {
     "abstractRing"
 })
-public class AbstractRingPropertyType {
+public class AbstractRingPropertyType implements AbstractRingProperty {
 
     @XmlElementRef(name = "AbstractRing", namespace = "http://www.opengis.net/gml/3.2", type = JAXBElement.class)
     private JAXBElement<? extends AbstractRingType> abstractRing;
@@ -65,7 +66,7 @@ public class AbstractRingPropertyType {
      *     {@link JAXBElement }{@code <}{@link AbstractRingType }{@code >}
      *     
      */
-    public JAXBElement<? extends AbstractRingType> getAbstractRing() {
+    public JAXBElement<? extends AbstractRingType> getJbAbstractRing() {
         return abstractRing;
     }
 
@@ -83,4 +84,20 @@ public class AbstractRingPropertyType {
         this.abstractRing = ((JAXBElement<? extends AbstractRingType> ) value);
     }
 
+    /**
+     * Gets the value of the abstractRing property.
+     *
+     * @return
+     *     possible object is
+     *     {@code <}{@link AbstractRingType }{@code >}
+     *     {@code <}{@link RingType }{@code >}
+     *     {@code <}{@link LinearRingType }{@code >}
+     *
+     */
+    public AbstractRingType getAbstractRing() {
+        if (abstractRing != null) {
+            return abstractRing.getValue();
+        }
+        return null;
+    }
 }

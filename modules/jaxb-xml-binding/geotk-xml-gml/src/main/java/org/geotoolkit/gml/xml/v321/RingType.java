@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.Ring;
 
 
 /**
@@ -51,9 +52,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "RingType", propOrder = {
     "curveMember"
 })
-public class RingType
-    extends AbstractRingType
-{
+public class RingType extends AbstractRingType implements Ring {
 
     @XmlElement(required = true)
     private List<CurvePropertyType> curveMember;
@@ -63,24 +62,7 @@ public class RingType
     /**
      * Gets the value of the curveMember property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the curveMember property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getCurveMember().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
      * {@link CurvePropertyType }
-     * 
-     * 
      */
     public List<CurvePropertyType> getCurveMember() {
         if (curveMember == null) {

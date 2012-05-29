@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.AbstractCurveSegment;
 import org.geotoolkit.util.Utilities;
 
 
@@ -61,7 +62,7 @@ import org.geotoolkit.util.Utilities;
     OffsetCurveType.class,
     ArcStringByBulgeType.class
 })
-public abstract class AbstractCurveSegmentType {
+public abstract class AbstractCurveSegmentType implements AbstractCurveSegment {
 
     @XmlAttribute
     private Integer numDerivativesAtStart;

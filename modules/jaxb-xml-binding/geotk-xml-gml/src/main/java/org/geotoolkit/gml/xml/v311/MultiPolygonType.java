@@ -21,6 +21,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.MultiPolygon;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.Utilities;
 import org.opengis.filter.expression.ExpressionVisitor;
@@ -52,7 +53,7 @@ import org.opengis.filter.expression.ExpressionVisitor;
 @XmlType(name = "MultiPolygonType", propOrder = {
     "polygonMember"
 })
-public class MultiPolygonType extends AbstractGeometricAggregateType {
+public class MultiPolygonType extends AbstractGeometricAggregateType implements MultiPolygon{
 
     private List<PolygonPropertyType> polygonMember;
 

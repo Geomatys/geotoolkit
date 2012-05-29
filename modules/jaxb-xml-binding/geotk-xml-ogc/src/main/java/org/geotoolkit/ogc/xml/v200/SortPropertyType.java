@@ -22,6 +22,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.filter.expression.PropertyName;
+import org.opengis.filter.sort.SortBy;
+import org.opengis.filter.sort.SortOrder;
 
 
 /**
@@ -49,7 +52,7 @@ import javax.xml.bind.annotation.XmlType;
     "valueReference",
     "sortOrder"
 })
-public class SortPropertyType {
+public class SortPropertyType implements SortBy {
 
     @XmlElement(name = "ValueReference", required = true)
     private String valueReference;
@@ -81,15 +84,24 @@ public class SortPropertyType {
     }
 
     /**
-     * Gets the value of the sortOrder property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link SortOrderType }
-     *     
+     * Gets the value of the propertyName property.
      */
-    public SortOrderType getSortOrder() {
-        return sortOrder;
+    @Override
+    public PropertyName getPropertyName() {
+        return new org.geotoolkit.ogc.xml.v110.PropertyNameType(valueReference); // issue here
+    }
+
+    /**
+     * Gets the value of the sortOrder property.
+     */
+    @Override
+    public SortOrder getSortOrder() {
+        if (sortOrder != null && sortOrder.equals(SortOrderType.ASC))
+            return SortOrder.ASCENDING;
+        else if (sortOrder != null && sortOrder.equals(SortOrderType.DESC))
+            return SortOrder.DESCENDING;
+        else
+            return SortOrder.ASCENDING;
     }
 
     /**

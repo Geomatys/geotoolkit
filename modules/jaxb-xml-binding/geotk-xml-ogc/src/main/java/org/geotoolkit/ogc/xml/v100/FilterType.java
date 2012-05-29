@@ -24,6 +24,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.filter.Filter;
+import org.opengis.filter.FilterVisitor;
 
 
 /**
@@ -56,7 +58,7 @@ import javax.xml.bind.annotation.XmlType;
     "logicOps",
     "featureId"
 })
-public class FilterType {
+public class FilterType implements Filter {
 
     @XmlElementRef(name = "spatialOps", namespace = "http://www.opengis.net/ogc", type = JAXBElement.class)
     private JAXBElement<? extends SpatialOpsType> spatialOps;
@@ -142,4 +144,11 @@ public class FilterType {
         return this.featureId;
     }
     
+    public boolean evaluate(final Object object) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Object accept(final FilterVisitor visitor, final Object extraData) {
+        return extraData;
+    }
 }

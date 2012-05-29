@@ -94,20 +94,6 @@ public class PropertyIsLikeType extends ComparisonOpsType {
     /**
      * Gets the value of the expression property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the expression property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getExpression().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link LiteralType }{@code >}
      * {@link JAXBElement }{@code <}{@link Object }{@code >}
@@ -121,6 +107,28 @@ public class PropertyIsLikeType extends ComparisonOpsType {
             expression = new ArrayList<JAXBElement<?>>();
         }
         return this.expression;
+    }
+    
+    public String getPropertyName() {
+        if (expression != null) {
+            for (JAXBElement<?> elem : expression) {
+                if (elem.getValue() instanceof String) {
+                    return (String) elem.getValue();
+                }
+            }
+        }
+        return null;
+    }
+    
+    public LiteralType getLiteral() {
+        if (expression != null) {
+            for (JAXBElement<?> elem : expression) {
+                if (elem.getValue() instanceof LiteralType) {
+                    return (LiteralType) elem.getValue();
+                }
+            }
+        }
+        return null;
     }
 
     /**

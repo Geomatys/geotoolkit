@@ -32,6 +32,7 @@ import org.geotoolkit.ogc.xml.v110.FilterType;
 import org.geotoolkit.ogc.xml.v110.FunctionType;
 import org.geotoolkit.ogc.xml.v110.SortByType;
 import org.geotoolkit.wfs.xml.Query;
+import org.opengis.filter.sort.SortBy;
 
 
 /**
@@ -113,6 +114,10 @@ public class QueryType implements Query {
         }
         return this.propertyNameOrXlinkPropertyNameOrFunction;
     }
+    
+    public List<Object> getPropertyNames() {
+        return getPropertyNameOrXlinkPropertyNameOrFunction();
+    }
 
     /**
      * The Filter element is used to define spatial and/or non-spatial
@@ -127,6 +132,7 @@ public class QueryType implements Query {
      *     {@link FilterType }
      *     
      */
+    @Override
     public FilterType getFilter() {
         return filter;
     }
@@ -157,6 +163,7 @@ public class QueryType implements Query {
      *     {@link SortByType }
      *     
      */
+    @Override
     public SortByType getSortBy() {
         return sortBy;
     }
@@ -208,6 +215,11 @@ public class QueryType implements Query {
         }
         return this.typeName;
     }
+    
+    @Override
+    public List<QName> getTypeNames() {
+        return getTypeName();
+    }
 
     /**
      * Gets the value of the featureVersion property.
@@ -241,6 +253,7 @@ public class QueryType implements Query {
      *     {@link String }
      *     
      */
+    @Override
     public String getSrsName() {
         return srsName;
     }

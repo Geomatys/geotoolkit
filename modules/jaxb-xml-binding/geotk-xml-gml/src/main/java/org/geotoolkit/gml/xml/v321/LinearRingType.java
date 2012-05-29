@@ -26,6 +26,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.LinearRing;
+import org.opengis.filter.expression.ExpressionVisitor;
 
 
 /**
@@ -61,9 +63,7 @@ import javax.xml.bind.annotation.XmlType;
     "posList",
     "coordinates"
 })
-public class LinearRingType
-    extends AbstractRingType
-{
+public class LinearRingType extends AbstractRingType implements LinearRing {
 
     @XmlElementRefs({
         @XmlElementRef(name = "pos", namespace = "http://www.opengis.net/gml/3.2", type = JAXBElement.class),

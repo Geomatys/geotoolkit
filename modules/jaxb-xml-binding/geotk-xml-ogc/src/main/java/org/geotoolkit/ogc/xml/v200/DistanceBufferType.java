@@ -81,6 +81,13 @@ public class DistanceBufferType extends SpatialOpsType {
         this.any            = geometry;
     }
     
+    public String getPropertyName() {
+        if (expression != null && expression.getValue() instanceof String) {
+            return (String)expression.getValue();
+        }
+        return null;
+    }
+    
     /**
      * Gets the value of the expression property.
      * 

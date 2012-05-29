@@ -26,6 +26,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.namespace.QName;
+import org.geotoolkit.ogc.xml.SortBy;
+import org.opengis.filter.Filter;
 
 
 /**
@@ -69,25 +72,12 @@ public abstract class AbstractAdhocQueryExpressionType extends AbstractQueryExpr
     @XmlElementRef(name = "AbstractSortingClause", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
     private JAXBElement<?> abstractSortingClause;
     @XmlAttribute(required = true)
-    private List<String> typeNames;
+    private List<QName> typeNames;
     @XmlAttribute
     private List<String> aliases;
 
     /**
      * Gets the value of the abstractProjectionClause property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the abstractProjectionClause property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getAbstractProjectionClause().add(newItem);
-     * </pre>
-     * 
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
@@ -102,6 +92,14 @@ public abstract class AbstractAdhocQueryExpressionType extends AbstractQueryExpr
         }
         return this.abstractProjectionClause;
     }
+    
+    public List<Object> getPropertyNames() {
+        final List<Object> propertyNames = new ArrayList<Object>();
+        for (JAXBElement<?> jb : abstractProjectionClause) {
+            propertyNames.add(jb.getValue());
+        }
+        return propertyNames;
+    }
 
     /**
      * Gets the value of the abstractSelectionClause property.
@@ -114,6 +112,13 @@ public abstract class AbstractAdhocQueryExpressionType extends AbstractQueryExpr
      */
     public JAXBElement<?> getAbstractSelectionClause() {
         return abstractSelectionClause;
+    }
+    
+    public Filter getFilter() {
+        if (abstractSelectionClause != null && abstractSelectionClause.getValue() instanceof Filter) {
+            return (Filter) abstractSelectionClause.getValue();
+        }
+        return null;
     }
 
     /**
@@ -142,6 +147,14 @@ public abstract class AbstractAdhocQueryExpressionType extends AbstractQueryExpr
         return abstractSortingClause;
     }
 
+    public SortBy getSortBy() {
+        if (abstractSortingClause != null && abstractSortingClause.getValue() instanceof SortBy) {
+            return (SortBy) abstractSortingClause.getValue();
+        }
+        return null;
+    }
+
+    
     /**
      * Sets the value of the abstractSortingClause property.
      * 
@@ -158,28 +171,14 @@ public abstract class AbstractAdhocQueryExpressionType extends AbstractQueryExpr
     /**
      * Gets the value of the typeNames property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the typeNames property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getTypeNames().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link String }
+     * {@link QName }
      * 
      * 
      */
-    public List<String> getTypeNames() {
+    public List<QName> getTypeNames() {
         if (typeNames == null) {
-            typeNames = new ArrayList<String>();
+            typeNames = new ArrayList<QName>();
         }
         return this.typeNames;
     }
@@ -187,20 +186,6 @@ public abstract class AbstractAdhocQueryExpressionType extends AbstractQueryExpr
     /**
      * Gets the value of the aliases property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the aliases property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getAliases().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
      * 

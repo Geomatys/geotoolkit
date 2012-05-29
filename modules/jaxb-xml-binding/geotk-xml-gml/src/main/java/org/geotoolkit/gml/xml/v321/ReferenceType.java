@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.Reference;
 
 
 /**
@@ -51,7 +52,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ReferenceType")
-public class ReferenceType {
+public class ReferenceType implements Reference {
 
     @XmlAttribute
     private List<String> nilReason;
@@ -80,24 +81,6 @@ public class ReferenceType {
 
     /**
      * Gets the value of the nilReason property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the nilReason property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getNilReason().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
-     * 
      * 
      */
     public List<String> getNilReason() {
@@ -311,7 +294,7 @@ public class ReferenceType {
      *     {@link java.lang.Boolean }
      *     
      */
-    public boolean isOwns() {
+    public java.lang.Boolean getOwns() {
         if (owns == null) {
             return false;
         } else {

@@ -23,6 +23,8 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.MultiSurface;
+import org.opengis.filter.expression.ExpressionVisitor;
 
 
 /**
@@ -50,9 +52,7 @@ import javax.xml.bind.annotation.XmlType;
     "surfaceMember",
     "surfaceMembers"
 })
-public class MultiSurfaceType
-    extends AbstractGeometricAggregateType
-{
+public class MultiSurfaceType extends AbstractGeometricAggregateType implements MultiSurface {
 
     private List<SurfacePropertyType> surfaceMember;
     private SurfaceArrayPropertyType surfaceMembers;
@@ -60,20 +60,6 @@ public class MultiSurfaceType
     /**
      * Gets the value of the surfaceMember property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the surfaceMember property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getSurfaceMember().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link SurfacePropertyType }
      * 
@@ -110,4 +96,18 @@ public class MultiSurfaceType
         this.surfaceMembers = value;
     }
 
+    @Override
+    public Object evaluate(final Object object) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public <T> T evaluate(final Object object, final Class<T> context) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

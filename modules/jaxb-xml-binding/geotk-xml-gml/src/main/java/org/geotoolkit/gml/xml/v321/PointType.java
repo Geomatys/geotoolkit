@@ -22,6 +22,11 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 import org.opengis.geometry.DirectPosition;
+import org.opengis.geometry.UnmodifiableGeometryException;
+import org.opengis.geometry.coordinate.Position;
+import org.opengis.geometry.primitive.Bearing;
+import org.opengis.geometry.primitive.OrientablePrimitive;
+import org.opengis.geometry.primitive.Point;
 
 
 /**
@@ -51,7 +56,7 @@ import org.opengis.geometry.DirectPosition;
     "pos",
     "coordinates"
 })
-public class PointType extends AbstractGeometricPrimitiveType {
+public class PointType extends AbstractGeometricPrimitiveType implements Point,  org.geotoolkit.gml.xml.Point{
 
     private DirectPositionType pos;
     private CoordinatesType coordinates;
@@ -157,4 +162,33 @@ public class PointType extends AbstractGeometricPrimitiveType {
         this.coordinates = value;
     }
 
+    @Override
+    public DirectPosition getDirectPosition() {
+        return pos;
+    }
+
+    @Override
+    public void setDirectPosition(final DirectPosition position) throws UnmodifiableGeometryException {
+        this.pos = new DirectPositionType(position);
+    }
+
+    @Override
+    public void setPosition(final DirectPosition position) throws UnmodifiableGeometryException {
+        pos = new DirectPositionType(position);
+    }
+
+    @Override
+    public OrientablePrimitive[] getProxy() {
+        return null;
+    }
+
+    @Override
+    public PointType clone() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Bearing getBearing(final Position toPoint) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

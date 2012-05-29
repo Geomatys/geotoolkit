@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.AbstractRingProperty;
 import org.geotoolkit.util.Utilities;
 
 
@@ -50,7 +51,7 @@ import org.geotoolkit.util.Utilities;
 @XmlType(name = "AbstractRingPropertyType", propOrder = {
     "abstractRing"
 })
-public class AbstractRingPropertyType {
+public class AbstractRingPropertyType implements AbstractRingProperty {
 
     @XmlElementRef(name = "AbstractRing", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
     private JAXBElement<? extends AbstractRingType> abstractRing;

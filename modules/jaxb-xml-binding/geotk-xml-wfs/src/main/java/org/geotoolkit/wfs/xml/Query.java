@@ -17,7 +17,9 @@
 package org.geotoolkit.wfs.xml;
 
 import java.util.List;
-
+import javax.xml.namespace.QName;
+import org.geotoolkit.ogc.xml.SortBy;
+import org.opengis.filter.Filter;
 
 /**
  *
@@ -25,4 +27,13 @@ import java.util.List;
  */
 public interface Query {
     
+    String getSrsName();
+    
+    Filter getFilter();
+    
+    List<QName> getTypeNames();
+    
+    SortBy getSortBy();
+    
+    List<Object> getPropertyNames();
 }

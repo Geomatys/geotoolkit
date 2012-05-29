@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -77,7 +77,7 @@ import org.opengis.util.FactoryException;
 @XmlSeeAlso({
     EnvelopeWithTimePeriodType.class
 })
-public class EnvelopeType implements Entry, Envelope {
+public class EnvelopeType implements Entry, Envelope, org.geotoolkit.gml.xml.Envelope {
 
     private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.gml.xml.v311");
 

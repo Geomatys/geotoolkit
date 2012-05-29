@@ -74,6 +74,13 @@ public class BBOXType extends SpatialOpsType {
         return expression;
     }
 
+    public String getPropertyName() {
+        if (expression != null && expression.getValue() instanceof String) {
+            return (String)expression.getValue();
+        }
+        return null;
+    }
+    
     /**
      * Sets the value of the expression property.
      * 

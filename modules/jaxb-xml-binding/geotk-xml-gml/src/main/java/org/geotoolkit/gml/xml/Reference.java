@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.gml.xml.v311;
+package org.geotoolkit.gml.xml;
 
 import java.util.List;
 
@@ -24,7 +24,7 @@ import java.util.List;
  * @author Guilhem Legal
  * @module pending
  */
-interface Reference {
+public interface Reference {
     
     List<String> getNilReason();
 

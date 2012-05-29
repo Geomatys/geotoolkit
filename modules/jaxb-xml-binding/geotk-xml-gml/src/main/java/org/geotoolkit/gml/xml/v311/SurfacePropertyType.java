@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.SurfaceProperty;
 import org.geotoolkit.util.Utilities;
 
 
@@ -53,7 +54,7 @@ import org.geotoolkit.util.Utilities;
 @XmlType(name = "SurfacePropertyType", propOrder = {
     "abstractSurface"
 })
-public class SurfacePropertyType {
+public class SurfacePropertyType implements SurfaceProperty {
 
     @XmlElementRef(name = "AbstractSurface", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
     private JAXBElement<? extends AbstractSurfaceType> abstractSurface;

@@ -54,7 +54,7 @@ import org.geotoolkit.wfs.xml.Query;
 @XmlType(name = "StoredQueryType", propOrder = {
     "parameter"
 })
-public class StoredQueryType extends AbstractQueryExpressionType implements Query {
+public class StoredQueryType extends AbstractQueryExpressionType {
 
     @XmlElement(name = "Parameter")
     private List<ParameterType> parameter;

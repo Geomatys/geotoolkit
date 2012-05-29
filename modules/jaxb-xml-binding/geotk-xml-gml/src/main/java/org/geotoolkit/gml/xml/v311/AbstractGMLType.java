@@ -97,7 +97,9 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
     public AbstractGMLType(final AbstractGML a) {
         if (a != null) {
             this.description = a.getDescription();
-            this.descriptionReference = a.getDescriptionReference();
+            if (a.getDescriptionReference() != null) {
+                this.descriptionReference = new ReferenceType(a.getDescriptionReference()); 
+            }
             this.id = a.getId();
             this.name = a.getName();
             this.parameterName = a.getParameterName();
@@ -142,6 +144,7 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
     /**
      * Gets the value of the description reference property.    
      */
+    @Override
     public ReferenceType getDescriptionReference() {
         return descriptionReference;
     }
