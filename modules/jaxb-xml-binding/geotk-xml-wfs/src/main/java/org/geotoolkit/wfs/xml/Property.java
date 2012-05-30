@@ -16,14 +16,13 @@
  */
 package org.geotoolkit.wfs.xml;
 
-import java.util.List;
-
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public interface Transaction extends BaseRequest {
+public interface Property {
     
-    public List<Object> getTransactionAction();
+    String getLocalName();
     
+    Object getValue();
 }

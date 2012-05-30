@@ -48,6 +48,20 @@ public class FeatureIdType {
     private String fid;
 
     /**
+     * An empty constructor used by JAXB
+     */
+    public FeatureIdType() {
+        
+    }
+    
+    /**
+     * Build a new FeaturId with the specified ID
+     */
+    public FeatureIdType(final String fid) {
+        this.fid = fid;
+    }
+    
+    /**
      * Gets the value of the fid property.
      * 
      */

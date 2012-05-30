@@ -106,8 +106,10 @@ public abstract class AbstractAdhocQueryExpressionType extends AbstractQueryExpr
     
     public List<Object> getPropertyNames() {
         final List<Object> propertyNames = new ArrayList<Object>();
-        for (JAXBElement<?> jb : abstractProjectionClause) {
-            propertyNames.add(jb.getValue());
+        if (abstractProjectionClause != null) {
+            for (JAXBElement<?> jb : abstractProjectionClause) {
+                propertyNames.add(jb.getValue());
+            }
         }
         return propertyNames;
     }

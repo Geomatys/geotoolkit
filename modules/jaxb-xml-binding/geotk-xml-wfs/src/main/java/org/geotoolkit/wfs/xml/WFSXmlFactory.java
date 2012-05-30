@@ -18,6 +18,8 @@ package org.geotoolkit.wfs.xml;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.QName;
 import org.geotoolkit.ows.xml.AbstractOperationsMetadata;
@@ -159,6 +161,43 @@ public class WFSXmlFactory {
             return new org.geotoolkit.wfs.xml.v110.FeatureCollectionType(id, numberOfFeatures, timeStamp);
         } else if ("1.0.0".equals(version)) {
             return new org.geotoolkit.wfs.xml.v100.FeatureCollectionType(id);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + version);
+        }
+    }
+    
+    public TransactionResponse buildTransactionResponse(final String version, final Integer totalInserted, final Integer totalUpdated, final Integer totalDeleted, final Map<String, String> inserted) {
+        if ("2.0.0".equals(version)) {
+            org.geotoolkit.wfs.xml.v200.ActionResultsType insertResults = null;
+            if (inserted.size() > 0) {
+                final List<org.geotoolkit.wfs.xml.v200.CreatedOrModifiedFeatureType> ift = new ArrayList<org.geotoolkit.wfs.xml.v200.CreatedOrModifiedFeatureType>();
+                for (Entry<String, String> id : inserted.entrySet()) {
+                    ift.add(new org.geotoolkit.wfs.xml.v200.CreatedOrModifiedFeatureType(new org.geotoolkit.ogc.xml.v200.ResourceIdType(id.getKey()), id.getValue()));
+                }
+                insertResults = new org.geotoolkit.wfs.xml.v200.ActionResultsType(ift);
+            }
+            
+            final org.geotoolkit.wfs.xml.v200.TransactionSummaryType ts = new org.geotoolkit.wfs.xml.v200.TransactionSummaryType(totalInserted, totalUpdated, totalDeleted);
+            return new org.geotoolkit.wfs.xml.v200.TransactionResponseType(ts, null, insertResults, version);
+        } else if ("1.1.0".equals(version)) {
+            org.geotoolkit.wfs.xml.v110.InsertResultsType insertResults = null;
+            if (inserted.size() > 0) {
+                final List<org.geotoolkit.wfs.xml.v110.InsertedFeatureType> ift = new ArrayList<org.geotoolkit.wfs.xml.v110.InsertedFeatureType>();
+                for (Entry<String, String> id : inserted.entrySet()) {
+                    ift.add(new org.geotoolkit.wfs.xml.v110.InsertedFeatureType(new org.geotoolkit.ogc.xml.v110.FeatureIdType(id.getKey()), id.getValue()));
+                }
+                insertResults = new org.geotoolkit.wfs.xml.v110.InsertResultsType(ift);
+            }
+            final org.geotoolkit.wfs.xml.v110.TransactionSummaryType ts = new org.geotoolkit.wfs.xml.v110.TransactionSummaryType(totalInserted, totalUpdated, totalDeleted);
+            return new org.geotoolkit.wfs.xml.v110.TransactionResponseType(ts, null, insertResults, version);
+        } else if ("1.0.0".equals(version)) {
+            final List<org.geotoolkit.wfs.xml.v100.InsertResultType> ift = new ArrayList<org.geotoolkit.wfs.xml.v100.InsertResultType>();
+            if (inserted.size() > 0) {
+                for (Entry<String, String> id : inserted.entrySet()) {
+                    ift.add(new org.geotoolkit.wfs.xml.v100.InsertResultType(new org.geotoolkit.ogc.xml.v100.FeatureIdType(id.getKey()), id.getValue()));
+                }
+            }
+            return new org.geotoolkit.wfs.xml.v100.WFSTransactionResponseType(null, ift, version);
         } else {
             throw new IllegalArgumentException("unexpected version number:" + version);
         }

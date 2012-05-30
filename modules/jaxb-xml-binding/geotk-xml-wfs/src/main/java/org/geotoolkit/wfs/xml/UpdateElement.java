@@ -17,13 +17,22 @@
 package org.geotoolkit.wfs.xml;
 
 import java.util.List;
+import javax.xml.namespace.QName;
+import org.opengis.filter.Filter;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public interface Transaction extends BaseRequest {
+public interface UpdateElement {
     
-    public List<Object> getTransactionAction();
+    Filter getFilter();
     
+    String getInputFormat();
+    
+    String getSrsName();
+    
+    QName getTypeName();
+    
+    List<? extends Property> getProperty();
 }

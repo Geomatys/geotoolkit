@@ -71,26 +71,18 @@ public class WFSTransactionResponseType implements WFSResponse, TransactionRespo
     @XmlAttribute(required = true)
     private String version;
 
+    public WFSTransactionResponseType() {
+
+    }
+
+    public WFSTransactionResponseType(final TransactionResultType transactionResults, final List<InsertResultType> insertResults, final String version) {
+        this.transactionResult = transactionResults;
+        this.insertResult      = insertResults;
+        this.version           = version;
+    }
+    
     /**
      * Gets the value of the insertResult property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the insertResult property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getInsertResult().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link InsertResultType }
-     * 
      * 
      */
     public List<InsertResultType> getInsertResult() {

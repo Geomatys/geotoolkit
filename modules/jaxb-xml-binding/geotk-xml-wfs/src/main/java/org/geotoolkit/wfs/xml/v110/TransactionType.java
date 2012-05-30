@@ -166,6 +166,10 @@ public class TransactionType extends BaseRequestType implements Transaction {
         }
         return this.insertOrUpdateOrDelete;
     }
+    
+    public List<Object> getTransactionAction() {
+        return getInsertOrUpdateOrDelete();
+    }
 
     /**
      * Gets the value of the releaseAction property.

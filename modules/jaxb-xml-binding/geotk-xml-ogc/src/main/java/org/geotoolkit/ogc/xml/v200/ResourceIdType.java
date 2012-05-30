@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -192,4 +193,54 @@ public class ResourceIdType extends AbstractIdType {
         this.endDate = value;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[ResourceIdType]\n");
+        if (version != null) {
+           sb.append("version: ").append(version).append('\n');
+        }
+        if (previousRid != null) {
+           sb.append("previousRid: ").append(previousRid).append('\n');
+        }
+        if (rid != null) {
+            sb.append("rid: ").append(rid).append('\n');
+        }
+        if (startDate != null) {
+            sb.append("startDate: ").append(startDate).append('\n');
+        }
+        if (endDate != null) {
+            sb.append("endDate: ").append(endDate).append('\n');
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof ResourceIdType) {
+            final ResourceIdType that = (ResourceIdType) object;
+            return Utilities.equals(this.endDate,      that.endDate)        &&
+                   Utilities.equals(this.previousRid,  that.previousRid)   &&
+                   Utilities.equals(this.rid,          that.rid)   &&
+                   Utilities.equals(this.startDate,    that.startDate)   &&
+                   Utilities.equals(this.version,      that.version) ;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 19 * hash + (this.endDate != null ? this.endDate.hashCode() : 0);
+        hash = 19 * hash + (this.previousRid != null ? this.previousRid.hashCode() : 0);
+        hash = 19 * hash + (this.rid != null ? this.rid.hashCode() : 0);
+        hash = 19 * hash + (this.version != null ? this.version.hashCode() : 0);
+        hash = 19 * hash + (this.startDate != null ? this.startDate.hashCode() : 0);
+        return hash;
+    }
 }

@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 import org.geotoolkit.ogc.xml.v200.FilterType;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.wfs.xml.DeleteElement;
 
 
 /**
@@ -52,7 +53,7 @@ import org.geotoolkit.util.Utilities;
 @XmlType(name = "DeleteType", propOrder = {
     "filter"
 })
-public class DeleteType extends AbstractTransactionActionType {
+public class DeleteType extends AbstractTransactionActionType implements DeleteElement {
 
     @XmlElement(name = "Filter", namespace = "http://www.opengis.net/fes/2.0", required = true)
     private FilterType filter;

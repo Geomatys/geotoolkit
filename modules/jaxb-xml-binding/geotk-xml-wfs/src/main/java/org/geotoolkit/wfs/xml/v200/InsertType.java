@@ -27,6 +27,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.wfs.xml.IdentifierGenerationOptionType;
+import org.geotoolkit.wfs.xml.InsertElement;
 
 
 /**
@@ -53,7 +55,7 @@ import org.geotoolkit.util.Utilities;
 @XmlType(name = "InsertType", propOrder = {
     "any"
 })
-public class InsertType extends AbstractTransactionActionType {
+public class InsertType extends AbstractTransactionActionType implements InsertElement {
 
     @XmlAnyElement(lax = true)
     private List<Object> any;
@@ -72,6 +74,10 @@ public class InsertType extends AbstractTransactionActionType {
             any = new ArrayList<Object>();
         }
         return this.any;
+    }
+    
+    public List getFeature() {
+        return getAny();
     }
 
     /**
@@ -166,5 +172,9 @@ public class InsertType extends AbstractTransactionActionType {
         hash = 17 * hash + (this.inputFormat != null ? this.inputFormat.hashCode() : 0);
         hash = 17 * hash + (this.srsName != null ? this.srsName.hashCode() : 0);
         return hash;
+    }
+    
+    public IdentifierGenerationOptionType getIdgen() {
+        return null; // not implemented in 2.0.0
     }
 }

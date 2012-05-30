@@ -17,7 +17,9 @@
 package org.geotoolkit.wfs.xml.v100;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -176,6 +178,10 @@ public class TransactionType implements Transaction {
         return this.insertOrUpdateOrDelete;
     }
 
+    public List<Object> getTransactionAction() {
+        return getInsertOrUpdateOrDelete();
+    }
+    
     /**
      * Gets the value of the version property.
      * 
@@ -319,5 +325,9 @@ public class TransactionType implements Transaction {
         hash = 37 * hash + (this.insertOrUpdateOrDelete != null ? this.insertOrUpdateOrDelete.hashCode() : 0);
         hash = 37 * hash + (this.releaseAction != null ? this.releaseAction.hashCode() : 0);
         return hash;
+    }
+
+    public Map<String, String> getPrefixMapping() {
+        return new HashMap<String, String>();
     }
 }

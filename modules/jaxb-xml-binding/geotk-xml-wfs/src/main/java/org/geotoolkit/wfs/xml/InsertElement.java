@@ -22,8 +22,15 @@ import java.util.List;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public interface Transaction extends BaseRequest {
+public interface InsertElement {
+ 
+    String getHandle();
     
-    public List<Object> getTransactionAction();
+    String getInputFormat();
     
+    String getSrsName();
+    
+    IdentifierGenerationOptionType getIdgen();
+    
+    List getFeature();
 }

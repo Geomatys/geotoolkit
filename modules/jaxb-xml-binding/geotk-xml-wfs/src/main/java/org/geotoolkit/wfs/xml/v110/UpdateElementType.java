@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 import org.geotoolkit.ogc.xml.v110.FilterType;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.wfs.xml.UpdateElement;
 
 
 /**
@@ -59,7 +60,7 @@ import org.geotoolkit.util.Utilities;
     "property",
     "filter"
 })
-public class UpdateElementType {
+public class UpdateElementType implements UpdateElement {
 
     @XmlElement(name = "Property", required = true)
     private List<PropertyType> property;

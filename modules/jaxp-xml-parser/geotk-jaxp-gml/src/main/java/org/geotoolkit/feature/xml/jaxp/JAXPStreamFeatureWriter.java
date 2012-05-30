@@ -365,6 +365,12 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
      */
     private Prefix getPrefix(final String namespace) {
         String prefix = Namespaces.getPreferredPrefix(namespace, null);
+        /*
+         * temporary hack todo remove
+         */
+        if ("http://www.opengis.net/gml/3.2.1".equals(namespace)) {
+            return new Prefix(false, "gml32");
+        }
         boolean unknow = false;
         if (prefix == null) {
             prefix = unknowNamespaces.get(namespace);

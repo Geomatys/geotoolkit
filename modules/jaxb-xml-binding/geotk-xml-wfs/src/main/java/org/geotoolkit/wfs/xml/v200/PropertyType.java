@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import javax.xml.namespace.QName;
+import org.geotoolkit.wfs.xml.Property;
 import org.geotoolkit.wfs.xml.v110.ValueType;
 
 
@@ -61,7 +62,7 @@ import org.geotoolkit.wfs.xml.v110.ValueType;
     "valueReference",
     "value"
 })
-public class PropertyType {
+public class PropertyType implements Property {
 
     @XmlElement(name = "ValueReference", required = true)
     private ValueReference valueReference;
@@ -78,6 +79,12 @@ public class PropertyType {
         this.value = value;
     }
     
+    public String getLocalName() {
+        if (valueReference != null) {
+            return valueReference.getValue();
+        }
+        return null;
+    }
     /**
      * Gets the value of the valueReference property.
      * 

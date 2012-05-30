@@ -465,7 +465,10 @@ public class OGC200toGTTransformer {
             
         }*/else if(obj instanceof PropertyName){
             return visitPropertyName((PropertyName) obj);
-        }else if(obj instanceof FunctionType){
+            
+        } else if(obj instanceof String){
+            return visitPropertyName((String) obj);
+        } else if(obj instanceof FunctionType){
             final FunctionType ft = (FunctionType) obj;
             final Expression[] exps = new Expression[ft.getExpression().size()];
             
@@ -478,7 +481,7 @@ public class OGC200toGTTransformer {
             return filterFactory.function(ft.getName(), exps);
         }
         
-        throw new IllegalArgumentException("Unknowed expression element" + jax);
+        throw new IllegalArgumentException("Unknowed expression element:" + jax.getValue());
     }
     
     /**

@@ -16,14 +16,19 @@
  */
 package org.geotoolkit.wfs.xml;
 
-import java.util.List;
+import javax.xml.namespace.QName;
+import org.opengis.filter.Filter;
+
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public interface Transaction extends BaseRequest {
+public interface DeleteElement {
     
-    public List<Object> getTransactionAction();
+    Filter getFilter();
     
+    QName getTypeName();
+    
+    String getHandle();
 }

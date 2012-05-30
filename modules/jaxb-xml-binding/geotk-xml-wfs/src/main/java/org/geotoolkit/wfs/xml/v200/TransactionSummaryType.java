@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -168,6 +169,41 @@ public class TransactionSummaryType {
      */
     public void setTotalDeleted(int value) {
         this.totalDeleted = value;
+    }
+    
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("[TransactionSummaryType]\n");
+        sb.append("totalDeleted: ").append(totalDeleted).append('\n');
+        sb.append("totalInserted: ").append(totalInserted).append('\n');
+        sb.append("totalUpdated: ").append(totalUpdated ).append('\n');
+        return sb.toString();
+    }
+
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof TransactionSummaryType) {
+            final TransactionSummaryType that = (TransactionSummaryType) object;
+            return Utilities.equals(this.totalDeleted,   that.totalDeleted)  &&
+                   Utilities.equals(this.totalInserted,  that.totalInserted) &&
+                   Utilities.equals(this.totalUpdated,   that.totalUpdated);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 59 * hash + this.totalInserted;
+        hash = 59 * hash + this.totalUpdated;
+        hash = 59 * hash + this.totalDeleted;
+        return hash;
     }
 
 }

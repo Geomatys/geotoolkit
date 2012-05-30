@@ -109,21 +109,7 @@ public class TransactionType extends BaseRequestType implements Transaction {
     
     /**
      * Gets the value of the abstractTransactionAction property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the abstractTransactionAction property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getAbstractTransactionAction().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link DeleteType }{@code >}
      * {@link JAXBElement }{@code <}{@link AbstractTransactionActionType }{@code >}
@@ -141,6 +127,16 @@ public class TransactionType extends BaseRequestType implements Transaction {
         return this.abstractTransactionAction;
     }
 
+    public List<Object> getTransactionAction() {
+        final List<Object> result = new ArrayList<Object>();
+        if (abstractTransactionAction != null) {
+            for (JAXBElement<?> jb : abstractTransactionAction) {
+                result.add(jb.getValue());
+            }
+        }
+        return result;
+    }
+    
     /**
      * Gets the value of the lockId property.
      * 

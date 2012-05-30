@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -54,26 +55,16 @@ public class ActionResultsType {
     @XmlElement(name = "Feature", required = true)
     private List<CreatedOrModifiedFeatureType> feature;
 
+    public ActionResultsType() {
+        
+    }
+    
+    public ActionResultsType(final List<CreatedOrModifiedFeatureType> feature) {
+        this.feature = feature;
+    }
+    
     /**
      * Gets the value of the feature property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the feature property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getFeature().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link CreatedOrModifiedFeatureType }
-     * 
      * 
      */
     public List<CreatedOrModifiedFeatureType> getFeature() {
@@ -81,6 +72,40 @@ public class ActionResultsType {
             feature = new ArrayList<CreatedOrModifiedFeatureType>();
         }
         return this.feature;
+    }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[ActionResultsType]\n");
+        if (feature != null) {
+           sb.append("feature: ").append('\n');
+           for (CreatedOrModifiedFeatureType a : feature) {
+                sb.append(a).append('\n');
+           }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof ActionResultsType) {
+            final ActionResultsType that = (ActionResultsType) object;
+            return Utilities.equals(this.feature,   that.feature);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 83 * hash + (this.feature != null ? this.feature.hashCode() : 0);
+        return hash;
     }
 
 }

@@ -81,9 +81,7 @@ public class FeatureCollectionType extends SimpleFeatureCollectionType implement
     }
 
     public FeatureCollectionType(final Integer numberOfFeatures, final XMLGregorianCalendar timeStamp) {
-        if (numberOfFeatures != null) {
-            this.numberMatched = Integer.toString(numberOfFeatures);
-        }
+        this.numberReturned   = numberOfFeatures;
         this.timeStamp        = timeStamp;
     }
     

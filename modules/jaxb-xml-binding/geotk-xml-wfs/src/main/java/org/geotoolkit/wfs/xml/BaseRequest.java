@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wfs.xml;
 
+import java.util.Map;
 import org.geotoolkit.ows.xml.RequestBase;
 import org.geotoolkit.util.Version;
 
@@ -32,4 +33,6 @@ public interface BaseRequest extends RequestBase {
     String getHandle();
     
     void setHandle(final String value);
+    
+    Map<String, String> getPrefixMapping();
 }

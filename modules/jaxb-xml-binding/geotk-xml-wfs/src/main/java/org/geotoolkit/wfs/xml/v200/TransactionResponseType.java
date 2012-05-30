@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 import org.geotoolkit.wfs.xml.TransactionResponse;
 import org.geotoolkit.wfs.xml.WFSResponse;
 
@@ -203,6 +204,57 @@ public class TransactionResponseType implements WFSResponse, TransactionResponse
      */
     public void setVersion(String value) {
         this.version = value;
+    }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[TransactionResponseType]\n");
+        if (version != null) {
+           sb.append("version: ").append(version).append('\n');
+        }
+        if (transactionSummary != null) {
+           sb.append("transactionSummary: ").append(transactionSummary).append('\n');
+        }
+        if (replaceResults != null) {
+            sb.append("replaceResults: ").append(replaceResults).append('\n');
+        }
+        if (updateResults != null) {
+            sb.append("updateResults: ").append(updateResults).append('\n');
+        }
+        if (insertResults != null) {
+            sb.append("insertResults: ").append(insertResults).append('\n');
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof TransactionResponseType) {
+            final TransactionResponseType that = (TransactionResponseType) object;
+            return Utilities.equals(this.insertResults,      that.insertResults)        &&
+                   Utilities.equals(this.updateResults,      that.updateResults)   &&
+                   Utilities.equals(this.replaceResults,     that.replaceResults)   &&
+                   Utilities.equals(this.transactionSummary, that.transactionSummary)   &&
+                   Utilities.equals(this.version,            that.version) ;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 19 * hash + (this.transactionSummary != null ? this.transactionSummary.hashCode() : 0);
+        hash = 19 * hash + (this.updateResults != null ? this.updateResults.hashCode() : 0);
+        hash = 19 * hash + (this.replaceResults != null ? this.replaceResults.hashCode() : 0);
+        hash = 19 * hash + (this.insertResults != null ? this.insertResults.hashCode() : 0);
+        hash = 19 * hash + (this.version != null ? this.version.hashCode() : 0);
+        return hash;
     }
 
 }

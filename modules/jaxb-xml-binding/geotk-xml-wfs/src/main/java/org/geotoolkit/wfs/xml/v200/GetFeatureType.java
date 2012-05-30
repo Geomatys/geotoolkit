@@ -147,12 +147,14 @@ public class GetFeatureType extends BaseRequestType implements GetFeature {
     @Override
     public List<Query> getQuery() {
         final List<Query> queries = new ArrayList<Query>();
-        for (JAXBElement jb : abstractQueryExpression) {
-            final Object obj = jb.getValue();
-            if (obj instanceof Query) {
-                queries.add((Query) obj);
-            } else {
-                throw new IllegalArgumentException("unexpected query type:" + obj.getClass());
+        if (abstractQueryExpression != null) {
+            for (JAXBElement jb : abstractQueryExpression) {
+                final Object obj = jb.getValue();
+                if (obj instanceof Query) {
+                    queries.add((Query) obj);
+                } else {
+                    throw new IllegalArgumentException("unexpected query type:" + obj.getClass());
+                }
             }
         }
         return queries;
