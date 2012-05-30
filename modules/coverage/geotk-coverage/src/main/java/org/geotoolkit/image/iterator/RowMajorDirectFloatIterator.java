@@ -19,11 +19,11 @@ package org.geotoolkit.image.iterator;
 
 import java.awt.Rectangle;
 import java.awt.image.DataBuffer;
-import java.awt.image.DataBufferByte;
+import java.awt.image.DataBufferFloat;
 import java.awt.image.RenderedImage;
 
 /**
- * An Iterator for traversing anyone rendered Image with Byte type data.
+ * An Iterator for traversing anyone rendered Image with Float type data.
  * <p>
  * Iteration transverse each pixel from rendered image or raster source line per line.
  * <p>
@@ -37,7 +37,7 @@ import java.awt.image.RenderedImage;
  *
  * Code example :
  * {@code
- *                  final RowMajorDirectByteIterator dRII = new RowMajorDirectByteIterator(renderedImage);
+ *                  final RowMajorDirectFloatIterator dRII = new RowMajorDirectFloatIterator(renderedImage);
  *                  while (dRII.next()) {
  *                      dRii.getSample();
  *                  }
@@ -46,21 +46,21 @@ import java.awt.image.RenderedImage;
  * @author Rémi Marechal       (Geomatys).
  * @author Martin Desruisseaux (Geomatys).
  */
-public class RowMajorDirectByteIterator extends RowMajorDirectIterator {
+public class RowMajorDirectFloatIterator extends RowMajorDirectIterator {
 
     /**
      * Current raster data table.
      */
-    private byte[][] currentDataArray;
+    private float[][] currentDataArray;
 
     /**
      * Create Byte type row-major rendered image iterator.
      *
      * @param renderedImage image which will be follow by iterator.
      */
-    public RowMajorDirectByteIterator(RenderedImage renderedImage) {
+    public RowMajorDirectFloatIterator(RenderedImage renderedImage) {
         super(renderedImage);
-        assert (renderedImage.getTile(tMinX, tMinY).getDataBuffer().getDataType() == DataBuffer.TYPE_BYTE)
+        assert (renderedImage.getTile(tMinX, tMinY).getDataBuffer().getDataType() == DataBuffer.TYPE_FLOAT)
                : "renderedImage datas or not Byte type";
     }
 
@@ -71,9 +71,9 @@ public class RowMajorDirectByteIterator extends RowMajorDirectIterator {
      * @param subArea {@code Rectangle} which represent image sub area iteration.
      * @throws IllegalArgumentException if subArea don't intersect image boundary.
      */
-    public RowMajorDirectByteIterator(RenderedImage renderedImage, Rectangle subArea) {
+    public RowMajorDirectFloatIterator(RenderedImage renderedImage, Rectangle subArea) {
         super(renderedImage, subArea);
-        assert (renderedImage.getTile(tMinX, tMinY).getDataBuffer().getDataType() == DataBuffer.TYPE_BYTE)
+        assert (renderedImage.getTile(tMinX, tMinY).getDataBuffer().getDataType() == DataBuffer.TYPE_FLOAT)
                : "renderedImage datas or not Byte type";
     }
 
@@ -83,7 +83,7 @@ public class RowMajorDirectByteIterator extends RowMajorDirectIterator {
     @Override
     protected void updateCurrentRaster(int tileX, int tileY) {
         super.updateCurrentRaster(tileX, tileY);
-        this.currentDataArray = ((DataBufferByte)currentRaster.getDataBuffer()).getBankData();
+        this.currentDataArray = ((DataBufferFloat)currentRaster.getDataBuffer()).getBankData();
     }
 
     /**
@@ -91,7 +91,7 @@ public class RowMajorDirectByteIterator extends RowMajorDirectIterator {
      */
     @Override
     public int getSample() {
-        return currentDataArray[band][dataCursor];
+        return (int) currentDataArray[band][dataCursor];
     }
 
     @Override

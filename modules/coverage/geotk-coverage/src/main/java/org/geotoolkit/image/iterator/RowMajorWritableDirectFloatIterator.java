@@ -18,26 +18,28 @@
 package org.geotoolkit.image.iterator;
 
 import java.awt.Rectangle;
-import java.awt.image.Raster;
+import java.awt.image.DataBufferByte;
+import java.awt.image.DataBufferFloat;
 import java.awt.image.RenderedImage;
-import java.awt.image.WritableRaster;
 import java.awt.image.WritableRenderedImage;
 
 /**
- * An Iterator for traversing anyone rendered Image.
+ * An Iterator for traversing anyone rendered Image with Byte type data.
  * <p>
- * Iteration transverse each tiles(raster) from rendered image or raster source one by one in order.
- * Iteration to follow tiles(raster) begin by raster bands, next, raster x coordinates,
- * and to finish raster y coordinates.
+ * Iteration transverse each pixel from rendered image source line per line.
  * <p>
+ *
  * Iteration follow this scheme :
- * tiles band --&gt; tiles x coordinates --&gt; tiles y coordinates --&gt; next rendered image tiles.
+ * tiles band --&gt; tiles x coordinates --&gt; next X tile position in rendered image tiles array
+ * --&gt; current tiles y coordinates --&gt; next Y tile position in rendered image tiles array.
  *
  * Moreover iterator traversing a write or read each rendered image tiles(raster) in top-to-bottom, left-to-right order.
  *
+ * Furthermore iterator is only appropriate to iterate on Byte data type.
+ *
  * Code example :
  * {@code
- *                  final DefaultWritableIterator dWRII = new DefaultWritableIterator(renderedImage);
+ *                  final RowMajorWritableDirectFloatIterator dWRII = new RowMajorWritableDirectFloatIterator(renderedImage);
  *                  while (dWRII.next()) {
  *                      dWRII.setSample(int value);
  *                  }
@@ -46,17 +48,7 @@ import java.awt.image.WritableRenderedImage;
  * @author Rémi Marechal       (Geomatys).
  * @author Martin Desruisseaux (Geomatys).
  */
-class DefaultWritableIterator extends DefaultIterator {
-
-    /**
-     * Raster which is followed by iterator and wherein caller write.
-     */
-    private WritableRaster currentWritableRaster;
-
-    /**
-     * Rendered image which is followed by iterator and wherein caller write.
-     */
-    private WritableRenderedImage writableRenderedImage;
+public class RowMajorWritableDirectFloatIterator extends RowMajorDirectFloatIterator {
 
     /**
      * Current last x tile position in rendered image tile array.
@@ -69,48 +61,31 @@ class DefaultWritableIterator extends DefaultIterator {
     private int prectY;
 
     /**
-     * Create an appropriate iterator to read and write in a raster.
-     *
-     * @param raster         raster which is followed by read-only iterator.
-     * @param writableRaster raster which is followed by this write-only iterator and wherein value is writing.
-     * @throws IllegalArgumentException if raster and writable raster dimensions are not conform.
+     * Current writable raster data table.
      */
-    DefaultWritableIterator(final Raster raster, final WritableRaster writableRaster) {
-        super(raster);
-        checkRasters(raster, writableRaster);
-        this.currentWritableRaster = writableRaster;
-    }
+    private float[][] currentWritableDataArray;
 
     /**
-     * Create an appropriate iterator to read and write in a raster sub area.
-     *
-     * @param raster         raster which is followed by read-only iterator.
-     * @param writableRaster raster which is followed by this write-only iterator and wherein value is writing.
-     * @param subArea        Rectangle which represent raster sub area, wherein move read and write iterator.
-     * @throws IllegalArgumentException if raster and writable raster dimensions are not conform.
+     * Rendered image which is followed by iterator and wherein caller write.
      */
-    DefaultWritableIterator(final Raster raster, final WritableRaster writableRaster, final Rectangle subArea) {
-        super(raster, subArea);
-        checkRasters(raster, writableRaster);
-        this.currentWritableRaster = writableRaster;
-    }
+    private WritableRenderedImage writableRenderedImage;
 
     /**
-     * Create an appropriate iterator to read and write in a rendered image tiles by tiles.
+     * Create an appropriate iterator to read and write in a rendered image, row by row.
      *
      * @param renderedImage rendered image which is followed by read-only iterator.
      * @param writableRI    writable rendered image which is followed by this write-only iterator and wherein value is writing.
      * @throws IllegalArgumentException if renderedImage and writable renderedImage dimensions are not conform.
      * @throws IllegalArgumentException if renderedImage and writable renderedImage tiles configurations are not conform.
      */
-    DefaultWritableIterator(final RenderedImage renderedImage, final WritableRenderedImage writableRI) {
+    RowMajorWritableDirectFloatIterator(final RenderedImage renderedImage, final WritableRenderedImage writableRI) {
         super(renderedImage);
         checkRenderedImage(renderedImage, writableRI);
         this.writableRenderedImage = writableRI;
     }
 
     /**
-     * Create an appropriate iterator to read and write in a rendered image sub area, tiles by tiles.
+     * Create an appropriate iterator to read and write in a rendered image sub area, row by row.
      *
      * @param renderedImage rendered image which is followed by read-only iterator.
      * @param writableRI    writable rendered image which is followed by this write-only iterator and wherein value is writing.
@@ -118,7 +93,7 @@ class DefaultWritableIterator extends DefaultIterator {
      * @throws IllegalArgumentException if renderedImage and writable renderedImage dimensions are not conform.
      * @throws IllegalArgumentException if renderedImage and writable renderedImage tiles configurations are not conform.
      */
-    DefaultWritableIterator(final RenderedImage renderedImage, final WritableRenderedImage writableRI, Rectangle subArea) {
+    RowMajorWritableDirectFloatIterator(final RenderedImage renderedImage, final WritableRenderedImage writableRI, final Rectangle subArea) {
         super(renderedImage, subArea);
         checkRenderedImage(renderedImage, writableRI);
         this.writableRenderedImage = writableRI;
@@ -128,8 +103,8 @@ class DefaultWritableIterator extends DefaultIterator {
      * {@inheritDoc }.
      */
     @Override
-    public void rewind(){
-        currentWritableRaster = null;
+    public void rewind() {
+        currentWritableDataArray = null;
         super.rewind();
     }
 
@@ -138,15 +113,7 @@ class DefaultWritableIterator extends DefaultIterator {
      */
     @Override
     public void setSample(int value) {
-        currentWritableRaster.setSample(x, y, band, value);
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    public void setSampleFloat(float value) {
-        currentWritableRaster.setSample(x, y, band, value);
+        currentWritableDataArray[band][dataCursor] = (float) value;
     }
 
     /**
@@ -154,19 +121,27 @@ class DefaultWritableIterator extends DefaultIterator {
      */
     @Override
     public void setSampleDouble(double value) {
-        currentWritableRaster.setSample(x, y, band, value);
+        currentWritableDataArray[band][dataCursor] = (float) value;
     }
 
     /**
      * {@inheritDoc }.
      */
     @Override
+    public void setSampleFloat(float value) {
+        currentWritableDataArray[band][dataCursor] = value;
+    }
+
+    /**
+     * Update current writable raster from tiles array coordinates.
+     */
+    @Override
     protected void updateCurrentRaster(int tileX, int tileY) {
         super.updateCurrentRaster(tileX, tileY);
-        if (currentWritableRaster != null) writableRenderedImage.releaseWritableTile(prectX, prectY);
-        this.currentWritableRaster = writableRenderedImage.getWritableTile(tileX, tileY);
-        prectX = tileX;
-        prectY = tileY;
+        if (currentWritableDataArray != null) writableRenderedImage.releaseWritableTile(prectX, prectY);
+        currentWritableDataArray = ((DataBufferFloat) writableRenderedImage.getWritableTile(tileX, tileY).getDataBuffer()).getBankData();
+        this.prectX = tileX;
+        this.prectY = tileY;
     }
 
     /**

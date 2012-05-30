@@ -37,10 +37,11 @@ public final class PixelIteratorFactory {
      * @return adapted {@link PixelIterator}.
      */
     public static PixelIterator createDefaultIterator(final Raster raster) {
-        if (raster.getDataBuffer().getDataType() == DataBuffer.TYPE_BYTE)
-            return new DefaultDirectByteIterator(raster);
-
-        return new DefaultIterator(raster);
+        switch (raster.getDataBuffer().getDataType()) {
+            case DataBuffer.TYPE_BYTE  : return new DefaultDirectByteIterator(raster);
+            case DataBuffer.TYPE_FLOAT : return new DefaultDirectFloatIterator(raster);
+            default : return new DefaultIterator(raster);
+        }
     }
 
     /**
@@ -51,9 +52,11 @@ public final class PixelIteratorFactory {
      * @return adapted    {@link PixelIterator}.
      */
     public static PixelIterator createDefaultIterator(final Raster raster, final Rectangle subReadArea) {
-        if (raster.getDataBuffer().getDataType() == DataBuffer.TYPE_BYTE)
-            return new DefaultDirectByteIterator(raster, subReadArea);
-        return new DefaultIterator(raster, subReadArea);
+        switch (raster.getDataBuffer().getDataType()) {
+            case DataBuffer.TYPE_BYTE  : return new DefaultDirectByteIterator(raster, subReadArea);
+            case DataBuffer.TYPE_FLOAT : return new DefaultDirectFloatIterator(raster, subReadArea);
+            default : return new DefaultIterator(raster, subReadArea);
+        }
     }
 
     /**
@@ -63,9 +66,11 @@ public final class PixelIteratorFactory {
      * @return adapted      {@link PixelIterator}.
      */
     public static PixelIterator createDefaultIterator(final RenderedImage renderedImage) {
-        if (renderedImage.getTile(renderedImage.getMinTileX(), renderedImage.getMinTileY()).getDataBuffer().getDataType()
-             == DataBuffer.TYPE_BYTE) return new DefaultDirectByteIterator(renderedImage);
-        return new DefaultIterator(renderedImage);
+        switch (renderedImage.getTile(renderedImage.getMinTileX(), renderedImage.getMinTileY()).getDataBuffer().getDataType()) {
+            case DataBuffer.TYPE_BYTE  : return new DefaultDirectByteIterator(renderedImage);
+            case DataBuffer.TYPE_FLOAT : return new DefaultDirectFloatIterator(renderedImage);
+            default : return new DefaultIterator(renderedImage);
+        }
     }
 
     /**
@@ -76,9 +81,11 @@ public final class PixelIteratorFactory {
      * @return adapted      {@link PixelIterator}.
      */
     public static PixelIterator createDefaultIterator(final RenderedImage renderedImage, final Rectangle subReadArea) {
-        if (renderedImage.getTile(renderedImage.getMinTileX(), renderedImage.getMinTileY()).getDataBuffer().getDataType()
-             == DataBuffer.TYPE_BYTE) return new DefaultDirectByteIterator(renderedImage, subReadArea);
-        return new DefaultIterator(renderedImage, subReadArea);
+        switch (renderedImage.getTile(renderedImage.getMinTileX(), renderedImage.getMinTileY()).getDataBuffer().getDataType()) {
+            case DataBuffer.TYPE_BYTE  : return new DefaultDirectByteIterator(renderedImage, subReadArea);
+            case DataBuffer.TYPE_FLOAT : return new DefaultDirectFloatIterator(renderedImage, subReadArea);
+            default : return new DefaultIterator(renderedImage, subReadArea);
+        }
     }
 
     /**
@@ -89,9 +96,11 @@ public final class PixelIteratorFactory {
      * @return adapted        {@link PixelIterator} .
      */
     public static PixelIterator createDefaultWriteableIterator(final Raster raster, final WritableRaster writeableRaster) {
-        if (raster.getDataBuffer().getDataType() == DataBuffer.TYPE_BYTE)
-            return new DefaultWritableDirectByteIterator(raster, writeableRaster);
-        return new DefaultWritableIterator(raster, writeableRaster);
+        switch (raster.getDataBuffer().getDataType()) {
+            case DataBuffer.TYPE_BYTE  : return new DefaultWritableDirectByteIterator(raster, writeableRaster);
+            case DataBuffer.TYPE_FLOAT : return new DefaultWritableDirectFloatIterator(raster, writeableRaster);
+            default : return new DefaultWritableIterator(raster, writeableRaster);
+        }
     }
 
     /**
@@ -100,13 +109,15 @@ public final class PixelIteratorFactory {
      *
      * @param raster          {@link Raster} will be traveled by read-only iterator.
      * @param writeableRaster {@link WritableRaster} raster wherein value is set (write).
-     * @param subReadArea     {@link Rectangle} which define raster read and write area.
+     * @param subArea     {@link Rectangle} which define raster read and write area.
      * @return adapted        {@link PixelIterator}.
      */
-    public static PixelIterator createDefaultWriteableIterator(final Raster raster, final WritableRaster writeableRaster, final Rectangle subReadArea) {
-        if (raster.getDataBuffer().getDataType() == DataBuffer.TYPE_BYTE)
-            return new DefaultWritableDirectByteIterator(raster, writeableRaster, subReadArea);
-        return new DefaultWritableIterator(raster, writeableRaster, subReadArea);
+    public static PixelIterator createDefaultWriteableIterator(final Raster raster, final WritableRaster writeableRaster, final Rectangle subArea) {
+        switch (raster.getDataBuffer().getDataType()) {
+            case DataBuffer.TYPE_BYTE  : return new DefaultWritableDirectByteIterator(raster, writeableRaster, subArea);
+            case DataBuffer.TYPE_FLOAT : return new DefaultWritableDirectFloatIterator(raster, writeableRaster, subArea);
+            default : return new DefaultWritableIterator(raster, writeableRaster, subArea);
+        }
     }
 
     /**
@@ -117,9 +128,11 @@ public final class PixelIteratorFactory {
      * @return adapted              {@link PixelIterator}.
      */
     public static PixelIterator createDefaultWriteableIterator(final RenderedImage renderedImage, final WritableRenderedImage writableRenderedImage) {
-        if (renderedImage.getTile(renderedImage.getMinTileX(), renderedImage.getMinTileY()).getDataBuffer().getDataType()
-             == DataBuffer.TYPE_BYTE) return new DefaultWritableDirectByteIterator(renderedImage, writableRenderedImage);
-        return new DefaultWritableIterator(renderedImage, writableRenderedImage);
+        switch (renderedImage.getTile(renderedImage.getMinTileX(), renderedImage.getMinTileY()).getDataBuffer().getDataType()) {
+            case DataBuffer.TYPE_BYTE  : return new DefaultWritableDirectByteIterator(renderedImage, writableRenderedImage);
+            case DataBuffer.TYPE_FLOAT : return new DefaultWritableDirectFloatIterator(renderedImage, writableRenderedImage);
+            default : return new DefaultWritableIterator(renderedImage, writableRenderedImage);
+        }
     }
 
     /**
@@ -127,13 +140,15 @@ public final class PixelIteratorFactory {
      *
      * @param renderedImage         {@link RenderedImage} will be traveled by iterator from it's sub-area.
      * @param writableRenderedImage {@link WritableRenderedImage} rendered image wherein value is set (write).
-     * @param subReadArea           {@link Rectangle} which define rendered image read and write area.
+     * @param subArea               {@link Rectangle} which define rendered image read and write area.
      * @return adapted              {@link PixelIterator}.
      */
-    public static PixelIterator createDefaultWriteableIterator(final RenderedImage renderedImage, final WritableRenderedImage writableRenderedImage, final Rectangle subReadArea) {
-        if (renderedImage.getTile(renderedImage.getMinTileX(), renderedImage.getMinTileY()).getDataBuffer().getDataType()
-             == DataBuffer.TYPE_BYTE) return new DefaultWritableDirectByteIterator(renderedImage, writableRenderedImage, subReadArea);
-        return new DefaultWritableIterator(renderedImage, writableRenderedImage, subReadArea);
+    public static PixelIterator createDefaultWriteableIterator(final RenderedImage renderedImage, final WritableRenderedImage writableRenderedImage, final Rectangle subArea) {
+        switch (renderedImage.getTile(renderedImage.getMinTileX(), renderedImage.getMinTileY()).getDataBuffer().getDataType()) {
+            case DataBuffer.TYPE_BYTE  : return new DefaultWritableDirectByteIterator(renderedImage, writableRenderedImage, subArea);
+            case DataBuffer.TYPE_FLOAT : return new DefaultWritableDirectFloatIterator(renderedImage, writableRenderedImage, subArea);
+            default : return new DefaultWritableIterator(renderedImage, writableRenderedImage, subArea);
+        }
     }
 
 
@@ -147,9 +162,11 @@ public final class PixelIteratorFactory {
      * @return adapted      {@link PixelIterator}.
      */
     public static PixelIterator createRowMajorIterator(final RenderedImage renderedImage) {
-        if (renderedImage.getTile(renderedImage.getMinTileX(), renderedImage.getMinTileY()).getDataBuffer().getDataType()
-             == DataBuffer.TYPE_BYTE) return new RowMajorDirectByteIterator(renderedImage);
-        return new RowMajorIterator(renderedImage);
+        switch (renderedImage.getTile(renderedImage.getMinTileX(), renderedImage.getMinTileY()).getDataBuffer().getDataType()) {
+            case DataBuffer.TYPE_BYTE  : return new RowMajorDirectByteIterator(renderedImage);
+            case DataBuffer.TYPE_FLOAT : return new RowMajorDirectFloatIterator(renderedImage);
+            default : return new RowMajorIterator(renderedImage);
+        }
     }
 
     /**
@@ -161,9 +178,11 @@ public final class PixelIteratorFactory {
      * @return adapted      {@link PixelIterator}.
      */
     public static PixelIterator createRowMajorIterator(final RenderedImage renderedImage, final Rectangle subReadArea) {
-        if (renderedImage.getTile(renderedImage.getMinTileX(), renderedImage.getMinTileY()).getDataBuffer().getDataType()
-             == DataBuffer.TYPE_BYTE) return new RowMajorDirectByteIterator(renderedImage, subReadArea);
-        return new RowMajorIterator(renderedImage, subReadArea);
+        switch (renderedImage.getTile(renderedImage.getMinTileX(), renderedImage.getMinTileY()).getDataBuffer().getDataType()) {
+            case DataBuffer.TYPE_BYTE  : return new RowMajorDirectByteIterator(renderedImage, subReadArea);
+            case DataBuffer.TYPE_FLOAT : return new RowMajorDirectFloatIterator(renderedImage, subReadArea);
+            default : return new RowMajorIterator(renderedImage, subReadArea);
+        }
     }
 
     /**
@@ -175,9 +194,11 @@ public final class PixelIteratorFactory {
      * @return adapted              {@link PixelIterator}.
      */
     public static PixelIterator createRowMajorWriteableIterator(final RenderedImage renderedImage, final WritableRenderedImage writableRenderedImage) {
-        if (renderedImage.getTile(renderedImage.getMinTileX(), renderedImage.getMinTileY()).getDataBuffer().getDataType()
-             == DataBuffer.TYPE_BYTE) return new RowMajorWritableDirectByteIterator(renderedImage, writableRenderedImage);
-        return new RowMajorWritableIterator(renderedImage, writableRenderedImage);
+        switch (renderedImage.getTile(renderedImage.getMinTileX(), renderedImage.getMinTileY()).getDataBuffer().getDataType()) {
+            case DataBuffer.TYPE_BYTE  : return new RowMajorWritableDirectByteIterator(renderedImage, writableRenderedImage);
+            case DataBuffer.TYPE_FLOAT : return new RowMajorWritableDirectFloatIterator(renderedImage, writableRenderedImage);
+            default : return new RowMajorWritableIterator(renderedImage, writableRenderedImage);
+        }
     }
 
     /**
@@ -186,12 +207,14 @@ public final class PixelIteratorFactory {
      *
      * @param renderedImage         {@link RenderedImage} will be traveled by iterator from it's sub-area.
      * @param writableRenderedImage {@link WritableRenderedImage}  rendered image wherein value is set (write).
-     * @param subReadArea           {@link Rectangle} which define rendered image read and write area.
+     * @param subArea               {@link Rectangle} which define rendered image read and write area.
      * @return adapted              {@link PixelIterator}.
      */
-    public static PixelIterator createRowMajorWriteableIterator(final RenderedImage renderedImage, final WritableRenderedImage writableRenderedImage, final Rectangle subReadArea) {
-        if (renderedImage.getTile(renderedImage.getMinTileX(), renderedImage.getMinTileY()).getDataBuffer().getDataType()
-             == DataBuffer.TYPE_BYTE) return new RowMajorWritableDirectByteIterator(renderedImage, writableRenderedImage, subReadArea);
-        return new RowMajorWritableIterator(renderedImage, writableRenderedImage, subReadArea);
+    public static PixelIterator createRowMajorWriteableIterator(final RenderedImage renderedImage, final WritableRenderedImage writableRenderedImage, final Rectangle subArea) {
+        switch (renderedImage.getTile(renderedImage.getMinTileX(), renderedImage.getMinTileY()).getDataBuffer().getDataType()) {
+            case DataBuffer.TYPE_BYTE  : return new RowMajorWritableDirectByteIterator(renderedImage, writableRenderedImage, subArea);
+            case DataBuffer.TYPE_FLOAT : return new RowMajorWritableDirectFloatIterator(renderedImage, writableRenderedImage, subArea);
+            default : return new RowMajorWritableIterator(renderedImage, writableRenderedImage, subArea);
+        }
     }
 }

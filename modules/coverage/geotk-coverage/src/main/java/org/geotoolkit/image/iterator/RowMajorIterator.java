@@ -218,9 +218,9 @@ class RowMajorIterator extends PixelIterator{
         updateCurrentRaster(tX, tY);
         final int cRMinX = currentRaster.getMinX();
         final int cRMinY = currentRaster.getMinY();
-        this.minX = this.x = Math.max(subAreaMinX, cRMinX);
+        this.minX = Math.max(subAreaMinX, cRMinX);
         this.maxX = Math.min(subAreaMaxX, cRMinX + currentRaster.getWidth());
-        this.minY = this.y = Math.max(subAreaMinY, cRMinY);
+        this.minY = Math.max(subAreaMinY, cRMinY);
         this.maxY = Math.min(subAreaMaxY, cRMinY + currentRaster.getHeight());
         this.numBand = currentRaster.getNumBands();
         this.x = x;

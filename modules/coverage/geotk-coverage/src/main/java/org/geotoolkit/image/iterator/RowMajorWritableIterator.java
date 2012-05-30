@@ -97,34 +97,6 @@ class RowMajorWritableIterator extends RowMajorIterator {
     }
 
     /**
-     * Verify Rendered image conformity.
-     */
-    private void checkRenderedImage(final RenderedImage renderedImage, final WritableRenderedImage writableRI){
-        if (renderedImage.getMinX()   != writableRI.getMinX()
-         || renderedImage.getMinY()   != writableRI.getMinY()
-         || renderedImage.getWidth()  != writableRI.getWidth()
-         || renderedImage.getHeight() != writableRI.getHeight()
-         || renderedImage.getSampleModel().getNumBands() != writableRI.getSampleModel().getNumBands())
-         throw new IllegalArgumentException("rendered image and writable rendered image dimensions are not conform"+renderedImage+writableRI);
-
-        final int wrimtx = writableRI.getMinTileX();
-        final int wrimty = writableRI.getMinTileY();
-        final int rimtx = writableRI.getMinTileX();
-        final int rimty = writableRI.getMinTileY();
-        if (rimtx != wrimtx
-         || rimty != wrimty
-         || renderedImage.getNumXTiles() != writableRI.getNumXTiles()
-         || renderedImage.getNumYTiles() != writableRI.getNumYTiles()
-         || renderedImage.getTileGridXOffset() != writableRI.getTileGridXOffset()
-         || renderedImage.getTileGridYOffset() != writableRI.getTileGridYOffset()
-         || renderedImage.getTileHeight() != writableRI.getTileHeight()
-         || renderedImage.getTileWidth()  != writableRI.getTileWidth())
-            throw new IllegalArgumentException("rendered image and writable rendered image tiles configuration are not conform"+renderedImage+writableRI);
-        if (renderedImage.getTile(rimtx, rimty).getDataBuffer().getDataType() != writableRI.getTile(wrimtx, wrimty).getDataBuffer().getDataType())
-            throw new IllegalArgumentException("rendered image and writable rendered image haven't got same datas type");
-    }
-
-    /**
      * {@inheritDoc }.
      */
     @Override

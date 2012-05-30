@@ -114,9 +114,7 @@ abstract class RowMajorDirectIterator extends PixelIterator {
                 if (++tX == tMaxX) {
                     tX = tMinX;
                     if (++row == maxY) {
-                        if (++tY == tMaxY) {
-                            return false;
-                        }
+                        if (++tY == tMaxY) return false;
                         updateCurrentRaster(tX, tY);
                         this.cRMinY = this.currentRaster.getMinY();
                         this.maxY   = Math.min(subAreaMaxY, cRMinY + currentRaster.getHeight());
@@ -172,8 +170,8 @@ abstract class RowMajorDirectIterator extends PixelIterator {
         this.maxY       = this.areaIterateMinY;
         this.numBand    = this.maxX = 1;
         this.dataCursor = this.band = 0;
-        this.tY         = tMinY - 1;
-        this.tX         = tMaxX - 1;
+        this.tY         = this.tMinY - 1;
+        this.tX         = this.tMaxX - 1;
         this.row        = this.maxY - 1;
     }
 
@@ -183,10 +181,8 @@ abstract class RowMajorDirectIterator extends PixelIterator {
     @Override
     public void moveTo(int x, int y) {
         super.moveTo(x, y);
-        final int riMinX = renderedImage.getMinX();
-        final int riMinY = renderedImage.getMinY();
-        tX = (x - riMinX)/renderedImage.getTileWidth() + renderedImage.getMinTileX();
-        tY = (y - riMinY)/renderedImage.getTileHeight() + renderedImage.getMinTileY();
+        tX = (x - renderedImage.getMinX())/renderedImage.getTileWidth() + renderedImage.getMinTileX();
+        tY = (y - renderedImage.getMinY())/renderedImage.getTileHeight() + renderedImage.getMinTileY();
 
         updateCurrentRaster(tX, tY);
         this.cRMinX = currentRaster.getMinX();

@@ -85,7 +85,7 @@ abstract class DefaultDirectIterator extends PixelIterator{
         this.minY = 0;
         this.maxX = this.indexStep = rasterWidth;
         this.maxY = raster.getHeight();
-        this.maxBanks =  rasterWidth*maxY;
+        this.maxBanks   = rasterWidth*maxY;
         this.dataCursor = 0;
         this.cursorStep = 0;
     }
@@ -136,31 +136,10 @@ abstract class DefaultDirectIterator extends PixelIterator{
         super(renderedImage, subArea);
         this.rasterWidth = renderedImage.getTileWidth();
 
-        final int minx = renderedImage.getMinX();
-        final int miny = renderedImage.getMinY();
-
-        final int mtx = renderedImage.getMinTileX();
-        final int mty = renderedImage.getMinTileY();
-
-        final int mix = Math.max(subAreaMinX, minx) - minx;
-        final int miy = Math.max(subAreaMinY, miny) - miny;
-        final int max = Math.min(minx + renderedImage.getWidth(), subAreaMaxX) - minx;
-        final int may = Math.min(miny + renderedImage.getHeight(), subAreaMaxY) - miny;
-
-        final int tw = renderedImage.getTileWidth();
-        final int th = renderedImage.getTileHeight();
-
-        //tiles attributs
-        this.tMinX = mix / tw + mtx;
-        this.tMinY = miy / th + mty;
-        this.tMaxX = (max + tw-1) / tw + mtx;
-        this.tMaxY = (may + th - 1) / th + mty;
-
         //initialize attributs to first iteration
         this.maxBanks = 1;
         this.tY = tMinY;
         this.tX = tMinX - 1;
-
     }
 
     /**
@@ -265,11 +244,7 @@ abstract class DefaultDirectIterator extends PixelIterator{
             tY = (y - riMinY)/renderedImage.getTileHeight() + renderedImage.getMinTileY();
             updateCurrentRaster(tX, tY);
         }
-        int minx = x;
-        int miny = y;
-        minx -= currentRaster.getMinX();
-        miny -= currentRaster.getMinY();
         this.band = -1;
-        this.dataCursor = minx + miny * rasterWidth;
+        this.dataCursor = x - currentRaster.getMinX() + (y - currentRaster.getMinY()) * rasterWidth;
     }
 }

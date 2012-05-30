@@ -19,61 +19,89 @@ package org.geotoolkit.image.iterator;
 
 import java.awt.Rectangle;
 import java.awt.image.DataBuffer;
-import java.awt.image.DataBufferByte;
+import java.awt.image.DataBufferFloat;
+import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 
 /**
- * An Iterator for traversing anyone rendered Image with Byte type data.
+ * An Iterator for traversing anyone rendered Image which contains only Float type data.
  * <p>
- * Iteration transverse each pixel from rendered image or raster source line per line.
+ * Iteration transverse each tiles(raster) from rendered image or raster source one by one in order.
+ * Iteration to follow tiles(raster) begin by raster bands, next, raster x coordinates,
+ * and to finish raster y coordinates.
  * <p>
  * Iteration follow this scheme :
- * tiles band --&gt; tiles x coordinates --&gt; next X tile position in rendered image tiles array
- * --&gt; current tiles y coordinates --&gt; next Y tile position in rendered image tiles array.
+ * tiles band --&gt; tiles x coordinates --&gt; tiles y coordinates --&gt; next rendered image tiles.
  *
  * Moreover iterator traversing a read-only each rendered image tiles(raster) in top-to-bottom, left-to-right order.
- *
- * Furthermore iterator is only appropriate to iterate on Byte data type.
+ * Furthermore iterator directly read in data table within raster {@code DataBuffer}.
  *
  * Code example :
  * {@code
- *                  final RowMajorDirectByteIterator dRII = new RowMajorDirectByteIterator(renderedImage);
- *                  while (dRII.next()) {
- *                      dRii.getSample();
+ *                  final DefaultFloatIterator dBI = new DefaultFloatIterator(renderedImage);
+ *                  while (dBI.next()) {
+ *                      dBI.getSample();
  *                  }
  * }
  *
  * @author Rémi Marechal       (Geomatys).
  * @author Martin Desruisseaux (Geomatys).
  */
-public class RowMajorDirectByteIterator extends RowMajorDirectIterator {
+public class DefaultDirectFloatIterator extends DefaultDirectIterator {
 
     /**
      * Current raster data table.
      */
-    private byte[][] currentDataArray;
+    private float[][] currentDataArray;
 
     /**
-     * Create Byte type row-major rendered image iterator.
+     * Create Byte type raster iterator to follow from its minX and minY coordinates.
+     *
+     * @param raster will be followed by this iterator.
+     */
+    DefaultDirectFloatIterator(final Raster raster) {
+        super(raster);
+        final DataBuffer databuf = raster.getDataBuffer();
+        assert (databuf.getDataType() == DataBuffer.TYPE_FLOAT) : "raster datas or not Byte type"+databuf;
+        this.currentRaster = raster;
+        this.currentDataArray = ((DataBufferFloat)databuf).getBankData();
+    }
+
+    /**
+     * Create default Byte type rendered image iterator.
      *
      * @param renderedImage image which will be follow by iterator.
      */
-    public RowMajorDirectByteIterator(RenderedImage renderedImage) {
+    DefaultDirectFloatIterator(final RenderedImage renderedImage) {
         super(renderedImage);
-        assert (renderedImage.getTile(tMinX, tMinY).getDataBuffer().getDataType() == DataBuffer.TYPE_BYTE)
+        assert (renderedImage.getTile(tMinX, tMinY).getDataBuffer().getDataType() == DataBuffer.TYPE_FLOAT)
                : "renderedImage datas or not Byte type";
     }
 
     /**
-     * Create Byte type row-major rendered image iterator.
+     * Create Byte type raster iterator to follow from minX, minY raster and rectangle intersection coordinate.
+     *
+     * @param raster will be followed by this iterator.
+     * @param subArea {@code Rectangle} which define read iterator area.
+     * @throws IllegalArgumentException if subArea don't intersect raster boundary.
+     */
+    DefaultDirectFloatIterator(final Raster raster, final Rectangle subArea) {
+        super(raster, subArea);
+        final DataBuffer databuf = raster.getDataBuffer();
+        assert (databuf.getDataType() == DataBuffer.TYPE_FLOAT) : "raster data or not Byte type"+databuf;
+        this.currentDataArray = ((DataBufferFloat)databuf).getBankData();
+    }
+
+    /**
+     * Create Byte type default rendered image iterator.
      *
      * @param renderedImage image which will be follow by iterator.
      * @param subArea {@code Rectangle} which represent image sub area iteration.
      * @throws IllegalArgumentException if subArea don't intersect image boundary.
      */
-    public RowMajorDirectByteIterator(RenderedImage renderedImage, Rectangle subArea) {
+    DefaultDirectFloatIterator(final RenderedImage renderedImage, final Rectangle subArea) {
         super(renderedImage, subArea);
-        assert (renderedImage.getTile(tMinX, tMinY).getDataBuffer().getDataType() == DataBuffer.TYPE_BYTE)
+        assert (renderedImage.getTile(tMinX, tMinY).getDataBuffer().getDataType() == DataBuffer.TYPE_FLOAT)
                : "renderedImage datas or not Byte type";
     }
 
@@ -81,9 +109,9 @@ public class RowMajorDirectByteIterator extends RowMajorDirectIterator {
      * {@inheritDoc }.
      */
     @Override
-    protected void updateCurrentRaster(int tileX, int tileY) {
+    protected void updateCurrentRaster(final int tileX, final int tileY){
         super.updateCurrentRaster(tileX, tileY);
-        this.currentDataArray = ((DataBufferByte)currentRaster.getDataBuffer()).getBankData();
+        this.currentDataArray = ((DataBufferFloat)currentRaster.getDataBuffer()).getBankData();
     }
 
     /**
@@ -91,9 +119,12 @@ public class RowMajorDirectByteIterator extends RowMajorDirectIterator {
      */
     @Override
     public int getSample() {
-        return currentDataArray[band][dataCursor];
+        return (int) currentDataArray[band][dataCursor];
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public float getSampleFloat() {
         return currentDataArray[band][dataCursor];

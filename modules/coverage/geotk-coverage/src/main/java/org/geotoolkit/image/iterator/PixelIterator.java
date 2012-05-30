@@ -20,6 +20,8 @@ package org.geotoolkit.image.iterator;
 import java.awt.Rectangle;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
+import java.awt.image.WritableRaster;
+import java.awt.image.WritableRenderedImage;
 import org.geotoolkit.util.ArgumentChecks;
 
 /**
@@ -34,16 +36,6 @@ import org.geotoolkit.util.ArgumentChecks;
  * @author Martin Desruisseaux (Geomatys).
  */
 public abstract class PixelIterator {
-
-    /**
-     * Current raster which is followed by Iterator.
-     */
-    protected Raster currentRaster;
-
-    /**
-     * RenderedImage which is followed by Iterator.
-     */
-    protected RenderedImage renderedImage;
 
     /**
      * The X coordinate of the upper-left pixel of iteration area.
@@ -64,6 +56,36 @@ public abstract class PixelIterator {
      * The X coordinate of the lower-right pixel of iteration area.
      */
     protected final int areaIterateMaxY;
+
+    /**
+     * The X coordinate of the sub-Area upper-left corner.
+     */
+    final protected int subAreaMinX;
+
+    /**
+     * The Y coordinate of the sub-Area upper-left corner.
+     */
+    final protected int subAreaMinY;
+
+    /**
+     * The X index coordinate of the sub-Area bottom-right corner.
+     */
+    final protected int subAreaMaxX;
+
+    /**
+     * The Y index coordinate of the sub-Area bottom-right corner.
+     */
+    final protected int subAreaMaxY;
+
+    /**
+     * Current raster which is followed by Iterator.
+     */
+    protected Raster currentRaster;
+
+    /**
+     * RenderedImage which is followed by Iterator.
+     */
+    protected RenderedImage renderedImage;
 
     /**
      * Number of raster band .
@@ -116,26 +138,6 @@ public abstract class PixelIterator {
     protected int tMaxY;
 
     /**
-     * The X coordinate of the sub-Area upper-left corner.
-     */
-    protected int subAreaMinX;
-
-    /**
-     * The Y coordinate of the sub-Area upper-left corner.
-     */
-    protected int subAreaMinY;
-
-    /**
-     * The X index coordinate of the sub-Area bottom-right corner.
-     */
-    protected int subAreaMaxX;
-
-    /**
-     * The Y index coordinate of the sub-Area bottom-right corner.
-     */
-    protected int subAreaMaxY;
-
-    /**
      * Current x tile position in rendered image tile array.
      */
     protected int tX;
@@ -153,10 +155,10 @@ public abstract class PixelIterator {
         ArgumentChecks.ensureNonNull("Raster : ", raster);
         this.currentRaster = raster;
         this.numBand       = raster.getNumBands();
-        this.minX  = this.areaIterateMinX = raster.getMinX();
-        this.minY  = this.areaIterateMinY = raster.getMinY();
-        this.maxY  = this.areaIterateMaxX = minY + raster.getHeight();
-        this.maxX  = this.areaIterateMaxY =minX + raster.getWidth();
+        this.minX  = this.areaIterateMinX = this.subAreaMinX = raster.getMinX();
+        this.minY  = this.areaIterateMinY = this.subAreaMinY = raster.getMinY();
+        this.maxY  = this.areaIterateMaxX = this.subAreaMaxX = minY + raster.getHeight();
+        this.maxX  = this.areaIterateMaxY = this.subAreaMaxY = minX + raster.getWidth();
         this.band  = -1;
         this.tX = this.tY    = 0;
         this.tMaxX = this.tMaxY = 1;
@@ -203,20 +205,21 @@ public abstract class PixelIterator {
     PixelIterator(final RenderedImage renderedImage) {
         ArgumentChecks.ensureNonNull("RenderedImage : ", renderedImage);
         this.renderedImage = renderedImage;
+
         //rect attributs
         this.subAreaMinX = this.areaIterateMinX = renderedImage.getMinX();
         this.subAreaMinY = this.areaIterateMinY = renderedImage.getMinY();
         this.subAreaMaxX = this.areaIterateMaxX = this.subAreaMinX + renderedImage.getWidth();
         this.subAreaMaxY = this.areaIterateMaxY = this.subAreaMinY + renderedImage.getHeight();
+
         //tiles attributs
         this.tMinX = renderedImage.getMinTileX();
         this.tMinY = renderedImage.getMinTileY();
         this.tMaxX = tMinX + renderedImage.getNumXTiles();
         this.tMaxY = tMinY + renderedImage.getNumYTiles();
-        //initialize attributs to first iteration
-        this.numBand = this.maxY = this.maxX= 1;
-        this.tY = tMinY - 1;
-        this.tX = tMaxX - 1;
+
+//        //initialize attributs to first iteration
+        this.numBand = this.maxY = this.maxX = 1;
     }
 
     /**
@@ -230,16 +233,22 @@ public abstract class PixelIterator {
         ArgumentChecks.ensureNonNull("RenderedImage : ", renderedImage);
         ArgumentChecks.ensureNonNull("sub Area iteration : ", subArea);
         this.renderedImage = renderedImage;
-        //rect attributs
-        this.subAreaMinX = subArea.x;
-        this.subAreaMinY = subArea.y;
-        this.subAreaMaxX = this.subAreaMinX + subArea.width;
-        this.subAreaMaxY = this.subAreaMinY + subArea.height;
 
         final int rIminX = renderedImage.getMinX();
         final int rIminY = renderedImage.getMinY();
         final int rImaxX = rIminX + renderedImage.getWidth();
         final int rImaxY = rIminY + renderedImage.getHeight();
+
+        final int rITWidth   = renderedImage.getTileWidth();
+        final int rITHeight  = renderedImage.getTileHeight();
+        final int rIMinTileX = renderedImage.getMinTileX();
+        final int rIMinTileY = renderedImage.getMinTileY();
+
+        //rect attributs
+        this.subAreaMinX = subArea.x;
+        this.subAreaMinY = subArea.y;
+        this.subAreaMaxX = this.subAreaMinX + subArea.width;
+        this.subAreaMaxY = this.subAreaMinY + subArea.height;
 
         //areaIterate
         this.areaIterateMinX = Math.max(subAreaMinX, rIminX);
@@ -247,33 +256,18 @@ public abstract class PixelIterator {
         this.areaIterateMaxX = Math.min(subAreaMaxX, rImaxX);
         this.areaIterateMaxY = Math.min(subAreaMaxY, rImaxY);
 
-
-        //define min max intervals
-        final int minIAX = Math.max(rIminX, subAreaMinX) - rIminX;
-        final int minIAY = Math.max(rIminY, subAreaMinY) - rIminY;
-        final int maxIAX = Math.min(rImaxX, subAreaMaxX) - rIminX;
-        final int maxIAY = Math.min(rImaxY, subAreaMaxY) - renderedImage.getMinY();
-
         //intersection test
-        if (minIAX > maxIAX || minIAY > maxIAY)
+        if (areaIterateMinX > areaIterateMaxX || areaIterateMinY > areaIterateMaxY)
             throw new IllegalArgumentException("invalid subArea coordinate no intersection between it and RenderedImage"+renderedImage+subArea);
 
         //tiles attributs
-        final int rITWidth   = renderedImage.getTileWidth();
-        final int rITHeight  = renderedImage.getTileHeight();
-        final int rIMinTileX = renderedImage.getMinTileX();
-        final int rIMinTileY = renderedImage.getMinTileY();
-        this.tMinX = minIAX / rITWidth  + rIMinTileX;
-        this.tMinY = minIAY / rITHeight + rIMinTileY;
+        this.tMinX = (areaIterateMinX - rIminX) / rITWidth  + rIMinTileX;
+        this.tMinY = (areaIterateMinY - rIminY) / rITHeight + rIMinTileY;
+        this.tMaxX = (areaIterateMaxX - rIminX + rITWidth - 1)  / rITWidth  + rIMinTileX;
+        this.tMaxY = (areaIterateMaxY - rIminY + rITHeight - 1) / rITHeight + rIMinTileY;
 
-
-        this.tMaxX = (maxIAX + rITWidth - 1) / rITWidth  + rIMinTileX;
-        this.tMaxY = (maxIAY + rITHeight-1) / rITHeight + rIMinTileY;
-        this.tY = tMinY-1;
         //initialize attributs to first iteration
         this.numBand = this.maxY = this.maxX = 1;
-        this.tX = tMaxX - 1;
-
     }
 
     /**
@@ -375,5 +369,51 @@ public abstract class PixelIterator {
             ||  y < areaIterateMinY || y >= areaIterateMaxY)
                 throw new IllegalArgumentException("coordinate out of iteration area define by: "
                         +"("+areaIterateMinX+", "+areaIterateMinY+")"+" ; ("+areaIterateMaxX+", "+areaIterateMaxY+")");
+    }
+
+    /**
+     * Verify raster conformity.
+     */
+    protected void checkRasters(final Raster readableRaster, final WritableRaster writableRaster){
+        //raster dimension
+        if (readableRaster.getMinX()     != writableRaster.getMinX()
+         || readableRaster.getMinY()     != writableRaster.getMinY()
+         || readableRaster.getWidth()    != writableRaster.getWidth()
+         || readableRaster.getHeight()   != writableRaster.getHeight()
+         || readableRaster.getNumBands() != writableRaster.getNumBands())
+         throw new IllegalArgumentException("raster and writable raster are not in same dimension"+readableRaster+writableRaster);
+        //raster data type
+        if (readableRaster.getDataBuffer().getDataType() != writableRaster.getDataBuffer().getDataType())
+            throw new IllegalArgumentException("raster and writable raster haven't got same datas type");
+    }
+
+    /**
+     * Verify Rendered image conformity.
+     */
+    protected void checkRenderedImage(final RenderedImage renderedImage, final WritableRenderedImage writableRI) {
+        //image dimensions
+        if (renderedImage.getMinX()   != writableRI.getMinX()
+         || renderedImage.getMinY()   != writableRI.getMinY()
+         || renderedImage.getWidth()  != writableRI.getWidth()
+         || renderedImage.getHeight() != writableRI.getHeight()
+         || renderedImage.getSampleModel().getNumBands() != writableRI.getSampleModel().getNumBands())
+         throw new IllegalArgumentException("rendered image and writable rendered image dimensions are not conform"+renderedImage+writableRI);
+        final int wrimtx = writableRI.getMinTileX();
+        final int wrimty = writableRI.getMinTileY();
+        final int rimtx  = writableRI.getMinTileX();
+        final int rimty  = writableRI.getMinTileY();
+        //tiles dimensions
+        if (rimtx != wrimtx
+         || rimty != wrimty
+         || renderedImage.getNumXTiles() != writableRI.getNumXTiles()
+         || renderedImage.getNumYTiles() != writableRI.getNumYTiles()
+         || renderedImage.getTileGridXOffset() != writableRI.getTileGridXOffset()
+         || renderedImage.getTileGridYOffset() != writableRI.getTileGridYOffset()
+         || renderedImage.getTileHeight() != writableRI.getTileHeight()
+         || renderedImage.getTileWidth()  != writableRI.getTileWidth())
+            throw new IllegalArgumentException("rendered image and writable rendered image tiles configuration are not conform"+renderedImage+writableRI);
+        //data type
+        if (renderedImage.getTile(rimtx, rimty).getDataBuffer().getDataType() != writableRI.getTile(wrimtx, wrimty).getDataBuffer().getDataType())
+            throw new IllegalArgumentException("rendered image and writable rendered image haven't got same datas type");
     }
 }

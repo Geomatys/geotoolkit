@@ -87,6 +87,8 @@ class DefaultIterator extends PixelIterator {
      */
     DefaultIterator(final RenderedImage renderedImage) {
         super(renderedImage);
+        tX = tMinX-1;
+        tY = tMinY;
     }
 
     /**
@@ -98,6 +100,8 @@ class DefaultIterator extends PixelIterator {
      */
     DefaultIterator(final RenderedImage renderedImage, final Rectangle subArea) {
         super(renderedImage, subArea);
+        tX = tMinX-1;
+        tY = tMinY;
     }
 
     /**
@@ -111,9 +115,7 @@ class DefaultIterator extends PixelIterator {
                 if (++y == maxY) {
                     if (++tX == tMaxX) {
                         tX = tMinX;
-                        if (++tY == tMaxY) {
-                            return false;
-                        }
+                        if (++tY == tMaxY) return false;
                     }
                     //initialize from new tile(raster).
                     updateCurrentRaster(tX, tY);
