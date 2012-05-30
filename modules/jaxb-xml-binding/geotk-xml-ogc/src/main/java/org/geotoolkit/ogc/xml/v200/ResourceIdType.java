@@ -49,9 +49,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ResourceIdType")
-public class ResourceIdType
-    extends AbstractIdType
-{
+public class ResourceIdType extends AbstractIdType {
 
     @XmlAttribute(required = true)
     private String rid;
@@ -66,6 +64,14 @@ public class ResourceIdType
     @XmlSchemaType(name = "dateTime")
     private XMLGregorianCalendar endDate;
 
+    public ResourceIdType() {
+        
+    }
+    
+    public ResourceIdType(final String rid) {
+        this.rid = rid;
+    }
+    
     /**
      * Gets the value of the rid property.
      * 

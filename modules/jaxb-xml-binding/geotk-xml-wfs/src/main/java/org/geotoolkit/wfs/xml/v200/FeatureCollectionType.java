@@ -24,6 +24,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
+import org.geotoolkit.wfs.xml.WFSFeatureCollection;
+import org.geotoolkit.wfs.xml.WFSResponse;
 
 
 /**
@@ -53,9 +55,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
     "additionalObjects",
     "truncatedResponse"
 })
-public class FeatureCollectionType
-    extends SimpleFeatureCollectionType
-{
+public class FeatureCollectionType extends SimpleFeatureCollectionType implements WFSResponse, WFSFeatureCollection {
 
     private AdditionalObjects additionalObjects;
     private TruncatedResponse truncatedResponse;
@@ -76,6 +76,17 @@ public class FeatureCollectionType
     @XmlSchemaType(name = "anyURI")
     private String previous;
 
+    public FeatureCollectionType() {
+
+    }
+
+    public FeatureCollectionType(final Integer numberOfFeatures, final XMLGregorianCalendar timeStamp) {
+        if (numberOfFeatures != null) {
+            this.numberMatched = Integer.toString(numberOfFeatures);
+        }
+        this.timeStamp        = timeStamp;
+    }
+    
     /**
      * Gets the value of the additionalObjects property.
      * 

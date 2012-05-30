@@ -25,6 +25,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.Version;
+import org.geotoolkit.wfs.xml.Transaction;
 
 
 /**
@@ -66,7 +68,7 @@ import org.geotoolkit.util.Utilities;
     "lockId",
     "insertOrUpdateOrDelete"
 })
-public class TransactionType {
+public class TransactionType implements Transaction {
 
     @XmlElement(name = "LockId")
     private String lockId;
@@ -159,20 +161,6 @@ public class TransactionType {
     /**
      * Gets the value of the insertOrUpdateOrDelete property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the insertOrUpdateOrDelete property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getInsertOrUpdateOrDelete().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link NativeType }
      * {@link DeleteElementType }
@@ -196,11 +184,11 @@ public class TransactionType {
      *     {@link String }
      *     
      */
-    public String getVersion() {
+    public Version getVersion() {
         if (version == null) {
-            return "1.0.0";
+            return new Version("1.0.0");
         } else {
-            return version;
+            return new Version(version);
         }
     }
 

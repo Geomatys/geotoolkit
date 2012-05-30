@@ -64,6 +64,16 @@ public class TransactionSummaryType {
     @XmlSchemaType(name = "nonNegativeInteger")
     private int totalDeleted;
 
+    public TransactionSummaryType() {
+
+    }
+
+    public TransactionSummaryType(final Integer totalInserted, final Integer totalUpdated, final Integer totalDeleted) {
+        this.totalDeleted  = totalDeleted;
+        this.totalInserted = totalInserted;
+        this.totalUpdated  = totalUpdated;
+    }
+
     /**
      * Gets the value of the totalInserted property.
      * 

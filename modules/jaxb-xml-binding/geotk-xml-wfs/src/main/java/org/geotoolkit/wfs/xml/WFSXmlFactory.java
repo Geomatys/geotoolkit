@@ -18,6 +18,7 @@ package org.geotoolkit.wfs.xml;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.QName;
 import org.geotoolkit.ows.xml.AbstractOperationsMetadata;
 import org.geotoolkit.ows.xml.AbstractServiceIdentification;
@@ -147,6 +148,18 @@ public class WFSXmlFactory {
                        (org.geotoolkit.wfs.xml.v110.FeatureTypeListType)  ftl, 
                        (org.geotoolkit.ogc.xml.v110.FilterCapabilities)   fc);
         } */else {
+            throw new IllegalArgumentException("unexpected version number:" + version);
+        }
+    }
+    
+    public WFSFeatureCollection buildFeatureCollection(final String version, final String id, final Integer numberOfFeatures, final XMLGregorianCalendar timeStamp) {
+        if ("2.0.0".equals(version)) {
+            return new org.geotoolkit.wfs.xml.v200.FeatureCollectionType(numberOfFeatures, timeStamp);
+        } else if ("1.1.0".equals(version)) {
+            return new org.geotoolkit.wfs.xml.v110.FeatureCollectionType(id, numberOfFeatures, timeStamp);
+        } else if ("1.0.0".equals(version)) {
+            return new org.geotoolkit.wfs.xml.v100.FeatureCollectionType(id);
+        } else {
             throw new IllegalArgumentException("unexpected version number:" + version);
         }
     }

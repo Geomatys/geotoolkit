@@ -85,6 +85,43 @@ public class GetFeatureType extends BaseRequestType implements GetFeature {
     @XmlSchemaType(name = "positiveInteger")
     private int resolveTimeout = 300;
 
+    public GetFeatureType() {
+
+    }
+
+    public GetFeatureType(final String service, final String version, final String handle, final Integer maxFeatures,
+            final List<QueryType> query, final ResultTypeType resultType, final String outputformat) {
+        super(service, version, handle);
+        this.count        = maxFeatures;
+        if (query != null) {
+            this.abstractQueryExpression = new ArrayList<JAXBElement<? extends AbstractQueryExpressionType>>();
+            final ObjectFactory factory = new ObjectFactory();
+            for (QueryType q : query) {
+                this.abstractQueryExpression.add(factory.createQuery(q));
+            }
+        }
+        this.resultType   = resultType;
+        this.outputFormat = outputformat;
+    }
+
+    public GetFeatureType(final String service, final String version, final String handle, final Integer maxFeatures,
+            final String featureId, final List<QueryType> query, final ResultTypeType resultType, final String outputformat) {
+        super(service, version, handle);
+        this.count  = maxFeatures;
+        if (featureId != null) {
+            // TODO featureId?
+        }
+        this.resultType   = resultType;
+        this.outputFormat = outputformat;
+        if (query != null) {
+            this.abstractQueryExpression = new ArrayList<JAXBElement<? extends AbstractQueryExpressionType>>();
+            final ObjectFactory factory = new ObjectFactory();
+            for (QueryType q : query) {
+                this.abstractQueryExpression.add(factory.createQuery(q));
+            }
+        }
+    }
+
     /**
      * Gets the value of the abstractQueryExpression property.
      * 

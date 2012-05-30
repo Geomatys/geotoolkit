@@ -63,6 +63,14 @@ public class PropertyName {
     @XmlSchemaType(name = "positiveInteger")
     private int resolveTimeout = 300;
 
+    public PropertyName() {
+        
+    }
+    
+    public PropertyName(final QName value) {
+        this.value = value;
+    }
+    
     /**
      * Gets the value of the value property.
      * 

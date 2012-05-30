@@ -24,6 +24,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.v321.DirectPositionType;
+import org.geotoolkit.gml.xml.v321.EnvelopeType;
 import org.opengis.filter.FilterVisitor;
 
 
@@ -59,6 +61,27 @@ public class BBOXType extends SpatialOpsType {
     @XmlAnyElement(lax = true)
     private Object any;
 
+    /**
+     * An empty constructor used by JAXB
+     */
+    public BBOXType() {
+        
+    }
+    
+    /**
+     * build a new BBox with an envelope.
+     */
+    public BBOXType(final String propertyName, final double minx, final double miny, final double maxx, final double maxy, final String srs) {
+        if (propertyName != null) {
+            final ObjectFactory factory = new ObjectFactory();
+            this.expression = factory.createValueReference(propertyName);
+        }
+        DirectPositionType lower = new DirectPositionType(minx, miny);
+        DirectPositionType upper = new DirectPositionType(maxx, maxy);
+        this.any = new EnvelopeType(lower, upper, srs);
+        
+    }
+    
     /**
      * Gets the value of the expression property.
      * 

@@ -55,6 +55,14 @@ public abstract class AbstractTransactionActionType {
     @XmlAttribute
     private String handle;
 
+    public AbstractTransactionActionType() {
+        
+    }
+    
+    public AbstractTransactionActionType(final String handle) {
+        this.handle = handle;
+    }
+    
     /**
      * Gets the value of the handle property.
      * 

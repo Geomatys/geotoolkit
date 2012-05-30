@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.*;
+import org.opengis.filter.Filter;
+import org.opengis.filter.FilterVisitor;
 
 
 /**
@@ -53,9 +55,7 @@ import javax.xml.bind.annotation.*;
     "function",
     "id"
 })
-public class FilterType
-    extends AbstractSelectionClauseType
-{
+public class FilterType extends AbstractSelectionClauseType implements Filter {
 
     @XmlElementRef(name = "comparisonOps", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
     private JAXBElement<? extends ComparisonOpsType> comparisonOps;
@@ -468,5 +468,13 @@ public class FilterType
         } else {
             return FACTORY.createId(operator);
         }
+    }
+
+    public boolean evaluate(Object o) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Object accept(FilterVisitor fv, Object o) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

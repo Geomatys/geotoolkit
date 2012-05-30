@@ -59,6 +59,16 @@ public class DeleteType extends AbstractTransactionActionType {
     @XmlAttribute(required = true)
     private QName typeName;
 
+    public DeleteType() {
+
+    }
+
+    public DeleteType(final FilterType filter, final String handle, final QName typeName) {
+        super(handle);
+        this.filter   = filter;
+        this.typeName = typeName;
+    }
+    
     /**
      * Gets the value of the filter property.
      * 

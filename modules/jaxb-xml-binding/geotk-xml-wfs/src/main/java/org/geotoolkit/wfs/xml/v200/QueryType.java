@@ -18,11 +18,14 @@
 
 package org.geotoolkit.wfs.xml.v200;
 
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.namespace.QName;
+import org.geotoolkit.ogc.xml.v200.FilterType;
 import org.geotoolkit.ogc.xml.v200.AbstractAdhocQueryExpressionType;
 import org.geotoolkit.wfs.xml.Query;
 
@@ -55,6 +58,15 @@ public class QueryType extends AbstractAdhocQueryExpressionType  implements Quer
     @XmlAttribute
     private String featureVersion;
 
+    public QueryType() {
+
+    }
+
+    public QueryType(final FilterType filter, final List<QName> typeName, final String featureVersion) {
+        super(filter, typeName);
+        this.featureVersion = featureVersion;
+    }
+    
     /**
      * Gets the value of the srsName property.
      * 

@@ -76,6 +76,17 @@ public abstract class AbstractAdhocQueryExpressionType extends AbstractQueryExpr
     @XmlAttribute
     private List<String> aliases;
 
+    public AbstractAdhocQueryExpressionType() {
+
+    }
+
+    public AbstractAdhocQueryExpressionType(final FilterType filter, final List<QName> typeName) {
+        this.typeNames = typeName;
+        if (filter != null) {
+            final ObjectFactory factory = new ObjectFactory();
+            this.abstractSelectionClause = factory.createFilter(filter);
+        }
+    }
     /**
      * Gets the value of the abstractProjectionClause property.
      * 
@@ -100,7 +111,7 @@ public abstract class AbstractAdhocQueryExpressionType extends AbstractQueryExpr
         }
         return propertyNames;
     }
-
+    
     /**
      * Gets the value of the abstractSelectionClause property.
      * 

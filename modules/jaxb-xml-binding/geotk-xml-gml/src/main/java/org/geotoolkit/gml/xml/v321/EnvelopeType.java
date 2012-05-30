@@ -83,6 +83,20 @@ public class EnvelopeType implements Envelope{
     private List<String> uomLabels;
 
     /**
+     * An empty constructor used by JAXB.
+     */
+    protected EnvelopeType(){}
+
+    /**
+     * build a new envelope.
+     */
+    public EnvelopeType(final DirectPositionType lowerCorner, final DirectPositionType upperCorner, final String srsName) {
+        this.lowerCorner = lowerCorner;
+        this.upperCorner = upperCorner;
+        this.srsName     = srsName;
+    }
+
+    /**
      * Gets the value of the lowerCorner property.
      * 
      * @return

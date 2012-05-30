@@ -20,7 +20,10 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.datatype.XMLGregorianCalendar;
 import org.geotoolkit.gml.xml.v212.AbstractFeatureCollectionType;
+import org.geotoolkit.wfs.xml.WFSFeatureCollection;
+import org.geotoolkit.wfs.xml.WFSResponse;
 
 
 /**
@@ -49,11 +52,19 @@ import org.geotoolkit.gml.xml.v212.AbstractFeatureCollectionType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FeatureCollectionType")
-public class FeatureCollectionType extends AbstractFeatureCollectionType {
+public class FeatureCollectionType extends AbstractFeatureCollectionType  implements WFSResponse, WFSFeatureCollection {
 
     @XmlAttribute
     private String lockId;
 
+    public FeatureCollectionType() {
+
+    }
+
+    public FeatureCollectionType(final String fid) {
+        super(fid);
+    }
+    
     /**
      * Gets the value of the lockId property.
      * 

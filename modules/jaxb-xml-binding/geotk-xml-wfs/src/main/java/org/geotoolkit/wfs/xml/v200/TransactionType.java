@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.wfs.xml.Transaction;
 
 
 /**
@@ -57,7 +58,7 @@ import org.geotoolkit.util.Utilities;
 @XmlType(name = "TransactionType", propOrder = {
     "abstractTransactionAction"
 })
-public class TransactionType extends BaseRequestType {
+public class TransactionType extends BaseRequestType implements Transaction {
 
     @XmlElementRef(name = "AbstractTransactionAction", namespace = "http://www.opengis.net/wfs/2.0", type = JAXBElement.class)
     private List<JAXBElement<?>> abstractTransactionAction;

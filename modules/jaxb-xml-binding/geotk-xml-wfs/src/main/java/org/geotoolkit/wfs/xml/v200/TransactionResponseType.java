@@ -23,6 +23,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.wfs.xml.TransactionResponse;
+import org.geotoolkit.wfs.xml.WFSResponse;
 
 
 /**
@@ -55,7 +57,7 @@ import javax.xml.bind.annotation.XmlType;
     "updateResults",
     "replaceResults"
 })
-public class TransactionResponseType {
+public class TransactionResponseType implements WFSResponse, TransactionResponse {
 
     @XmlElement(name = "TransactionSummary", required = true)
     private TransactionSummaryType transactionSummary;
@@ -68,6 +70,17 @@ public class TransactionResponseType {
     @XmlAttribute(required = true)
     private String version;
 
+    public TransactionResponseType() {
+
+    }
+
+    public TransactionResponseType(final TransactionSummaryType transactionSummary, final ActionResultsType updateResults, final ActionResultsType insertResults, final String version) {
+        this.transactionSummary = transactionSummary;
+        this.updateResults      = updateResults;
+        this.insertResults      = insertResults;
+        this.version            = version;
+    }
+    
     /**
      * Gets the value of the transactionSummary property.
      * 
