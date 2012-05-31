@@ -23,9 +23,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.QName;
+import org.geotoolkit.ogc.xml.SortBy;
 import org.geotoolkit.ogc.xml.XMLFilter;
 import org.geotoolkit.ows.xml.*;
 import org.opengis.filter.capability.FilterCapabilities;
+import org.opengis.filter.sort.SortOrder;
 
 
 /**
@@ -386,6 +388,104 @@ public class WFSXmlFactory extends OWSXmlFactory {
             return super.buildSections("1.0.0", sections);
         } else if ("1.0.0".equals(currentVersion)) {
             return super.buildSections("1.0.0", sections);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+    
+    public Query buildQuery(final String currentVersion, final XMLFilter filter, final List<QName> typeNames, final String featureVersion, 
+            final String srsName, final SortBy sortBy, final List<String> propertyNames) {
+        if ("2.0.0".equals(currentVersion)) {
+            if (filter != null && !(filter instanceof org.geotoolkit.ogc.xml.v200.FilterType)) {
+                throw new IllegalArgumentException("unexpected object version for filter element");
+            }
+            if (sortBy != null && !(sortBy instanceof org.geotoolkit.ogc.xml.v200.SortByType)) {
+                throw new IllegalArgumentException("unexpected object version for sortBy element");
+            }
+            return new org.geotoolkit.wfs.xml.v200.QueryType((org.geotoolkit.ogc.xml.v200.FilterType) filter,
+                                                              typeNames, featureVersion, srsName,
+                                                             (org.geotoolkit.ogc.xml.v200.SortByType)sortBy,
+                                                              propertyNames);
+        } else if ("1.1.0".equals(currentVersion)) {
+            if (filter != null && !(filter instanceof org.geotoolkit.ogc.xml.v110.FilterType)) {
+                throw new IllegalArgumentException("unexpected object version for filter element");
+            }
+            if (sortBy != null && !(sortBy instanceof org.geotoolkit.ogc.xml.v110.SortByType)) {
+                throw new IllegalArgumentException("unexpected object version for sortBy element");
+            }
+            return new org.geotoolkit.wfs.xml.v110.QueryType((org.geotoolkit.ogc.xml.v110.FilterType) filter,
+                                                              typeNames, featureVersion, srsName,
+                                                             (org.geotoolkit.ogc.xml.v110.SortByType)sortBy,
+                                                              propertyNames);
+        } else if ("1.0.0".equals(currentVersion)) {
+            if (filter != null && !(filter instanceof org.geotoolkit.ogc.xml.v100.FilterType)) {
+                throw new IllegalArgumentException("unexpected object version for filter element");
+            }
+            QName typeName = null;
+            if (typeNames != null && !typeNames.isEmpty()) {
+                typeName = typeNames.get(0);
+            }
+            return new org.geotoolkit.wfs.xml.v100.QueryType((org.geotoolkit.ogc.xml.v100.FilterType) filter,
+                                                              typeName, featureVersion, propertyNames);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+    
+    public SortBy buildSortBy(final String currentVersion, final String sortByParam, final SortOrder order) {
+        if ("2.0.0".equals(currentVersion)) {
+            final List<org.geotoolkit.ogc.xml.v200.SortPropertyType> sortProperties = new ArrayList<org.geotoolkit.ogc.xml.v200.SortPropertyType>();
+            sortProperties.add(new org.geotoolkit.ogc.xml.v200.SortPropertyType(sortByParam, order));
+            return new org.geotoolkit.ogc.xml.v200.SortByType(sortProperties);
+        } else if ("1.1.0".equals(currentVersion)) {
+            final List<org.geotoolkit.ogc.xml.v110.SortPropertyType> sortProperties = new ArrayList<org.geotoolkit.ogc.xml.v110.SortPropertyType>();
+            sortProperties.add(new org.geotoolkit.ogc.xml.v110.SortPropertyType(sortByParam, order));
+            return new org.geotoolkit.ogc.xml.v110.SortByType(sortProperties);
+        } else if ("1.0.0".equals(currentVersion)) {
+            return null;
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+    
+    public XMLFilter buildBBOXFilter(final String currentVersion, String propertyName, double minx, double miny, double maxx, double maxy, String srs) {
+        if ("2.0.0".equals(currentVersion)) {
+            final  org.geotoolkit.ogc.xml.v200.BBOXType bbox = new org.geotoolkit.ogc.xml.v200.BBOXType(propertyName, minx, miny, maxx, maxy, srs);
+            return new org.geotoolkit.ogc.xml.v200.FilterType(bbox);
+        } else if ("1.1.0".equals(currentVersion)) {
+            final  org.geotoolkit.ogc.xml.v110.BBOXType bbox = new org.geotoolkit.ogc.xml.v110.BBOXType(propertyName, minx, miny, maxx, maxy, srs);
+            return new org.geotoolkit.ogc.xml.v110.FilterType(bbox);
+        } else if ("1.0.0".equals(currentVersion)) {
+            final  org.geotoolkit.ogc.xml.v100.BBOXType bbox = new org.geotoolkit.ogc.xml.v100.BBOXType(propertyName, minx, miny, maxx, maxy, srs);
+            return new org.geotoolkit.ogc.xml.v100.FilterType(bbox);
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+    
+    public GetFeature buildGetFeature(final String currentVersion, final String service, final String handle, final Integer maxFeature, final String featureId, 
+        final Query query, final ResultTypeType resultType, String outputFormat) {
+        if ("2.0.0".equals(currentVersion)) {
+            if (query != null && !(query instanceof org.geotoolkit.wfs.xml.v200.QueryType)) {
+                throw new IllegalArgumentException("unexpected object version for query element");
+            }
+            return new org.geotoolkit.wfs.xml.v200.GetFeatureType(service, currentVersion, handle, maxFeature, featureId, 
+                                                                  Arrays.asList((org.geotoolkit.wfs.xml.v200.QueryType)query),
+                                                                  resultType, outputFormat);
+        } else if ("1.1.0".equals(currentVersion)) {
+            if (query != null && !(query instanceof org.geotoolkit.wfs.xml.v110.QueryType)) {
+                throw new IllegalArgumentException("unexpected object version for query element");
+            }
+            return new org.geotoolkit.wfs.xml.v110.GetFeatureType(service, currentVersion, handle, maxFeature, featureId, 
+                                                                  Arrays.asList((org.geotoolkit.wfs.xml.v110.QueryType)query),
+                                                                  resultType, outputFormat);
+        } else if ("1.0.0".equals(currentVersion)) {
+            if (query != null && !(query instanceof org.geotoolkit.wfs.xml.v100.QueryType)) {
+                throw new IllegalArgumentException("unexpected object version for query element");
+            }
+            return new org.geotoolkit.wfs.xml.v100.GetFeatureType(service, currentVersion, handle, maxFeature, 
+                                                                  Arrays.asList((org.geotoolkit.wfs.xml.v100.QueryType)query),
+                                                                  outputFormat);
         } else {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }

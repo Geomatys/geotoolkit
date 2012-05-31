@@ -105,6 +105,21 @@ public class QueryType implements Query {
         this.typeName       = typeName;
     }
     
+    public QueryType(final FilterType filter, final List<QName> typeName, final String featureVersion, final String srsName,
+            final SortByType sortBy, final List<String> properties) {
+        this.filter         = filter;
+        this.typeName       = typeName;
+        this.featureVersion = featureVersion;
+        this.srsName        = srsName;
+        this.sortBy         = sortBy;
+        if (properties != null) {
+            if (propertyNameOrXlinkPropertyNameOrFunction == null) {
+                propertyNameOrXlinkPropertyNameOrFunction = new ArrayList<Object>();
+            }
+            this.propertyNameOrXlinkPropertyNameOrFunction.addAll(properties);
+        }
+    }
+    
     /**
      * Gets the value of the propertyNameOrXlinkPropertyNameOrFunction property.
      */

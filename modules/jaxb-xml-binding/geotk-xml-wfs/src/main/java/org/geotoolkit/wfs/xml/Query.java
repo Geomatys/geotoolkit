@@ -29,6 +29,8 @@ public interface Query {
     
     String getSrsName();
     
+    void setSrsName(String srsName);
+    
     Filter getFilter();
     
     List<QName> getTypeNames();

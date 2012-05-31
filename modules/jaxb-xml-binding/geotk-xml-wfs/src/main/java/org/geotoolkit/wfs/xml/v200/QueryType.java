@@ -18,7 +18,9 @@
 
 package org.geotoolkit.wfs.xml.v200;
 
+import java.util.ArrayList;
 import java.util.List;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -27,6 +29,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 import org.geotoolkit.ogc.xml.v200.FilterType;
 import org.geotoolkit.ogc.xml.v200.AbstractAdhocQueryExpressionType;
+import org.geotoolkit.ogc.xml.v200.SortByType;
 import org.geotoolkit.wfs.xml.Query;
 
 
@@ -67,6 +70,26 @@ public class QueryType extends AbstractAdhocQueryExpressionType  implements Quer
         this.featureVersion = featureVersion;
     }
     
+    public QueryType(final FilterType filter, final List<QName> typeName, final String featureVersion, final String srsName, 
+            final SortByType sort, final List<String> propertyNames) {
+        super(filter, typeName);
+        this.featureVersion = featureVersion;
+        this.srsName        = srsName;
+        setSortBy(sort);
+        setPropertyNames(propertyNames);
+    }
+    
+    public final void setPropertyNames(final List<String> properties) {
+        if (properties != null) {
+            if (this.abstractProjectionClause == null) {
+                this.abstractProjectionClause = new ArrayList<JAXBElement<?>>();
+            }
+            final ObjectFactory factory = new ObjectFactory();
+            for (String property : properties) {
+                this.abstractProjectionClause.add(factory.createPropertyName(new PropertyName(new QName(property))));
+            }
+        }
+    }
     /**
      * Gets the value of the srsName property.
      * 

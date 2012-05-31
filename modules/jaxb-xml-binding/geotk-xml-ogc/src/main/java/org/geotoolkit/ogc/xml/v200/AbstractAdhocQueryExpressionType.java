@@ -66,7 +66,7 @@ import org.opengis.filter.Filter;
 public abstract class AbstractAdhocQueryExpressionType extends AbstractQueryExpressionType {
 
     @XmlElementRef(name = "AbstractProjectionClause", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
-    private List<JAXBElement<?>> abstractProjectionClause;
+    protected List<JAXBElement<?>> abstractProjectionClause;
     @XmlElementRef(name = "AbstractSelectionClause", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
     private JAXBElement<?> abstractSelectionClause;
     @XmlElementRef(name = "AbstractSortingClause", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
@@ -165,6 +165,13 @@ public abstract class AbstractAdhocQueryExpressionType extends AbstractQueryExpr
             return (SortBy) abstractSortingClause.getValue();
         }
         return null;
+    }
+    
+    public final void setSortBy(final SortByType sb) {
+        if (sb != null) {
+            final ObjectFactory factory = new ObjectFactory();
+            this.abstractSortingClause = factory.createSortBy(sb);
+        }
     }
 
     

@@ -76,6 +76,18 @@ public class QueryType implements Query {
     @XmlAttribute
     private String featureVersion;
 
+    public QueryType() {
+
+    }
+
+    public QueryType(final FilterType filter, final QName typeName, final String featureVersion, final List<String> properties) {
+        this.featureVersion = featureVersion;
+        this.filter         = filter;
+        this.typeName       = typeName;
+        setPropertyNames(properties);
+    }
+    
+    
     /**
      * The PropertyName element is used to specify one or more properties 
      * of a feature whose values are to be retrieved by a Web Feature Service.  
@@ -113,6 +125,16 @@ public class QueryType implements Query {
         return (List) getPropertyName();
     }
 
+    public final void setPropertyNames(final List<String> properties) {
+        if (properties != null) {
+            if (this.propertyName == null) {
+                this.propertyName = new ArrayList<PropertyNameType>();
+            }
+            for (String property : properties) {
+                this.propertyName.add(new PropertyNameType(property));
+            }
+        }
+    }
     /**
      * 
      *  The Filter element is used to define spatial and/or non-spatial
@@ -224,6 +246,11 @@ public class QueryType implements Query {
     @Override
     public String getSrsName() {
         return null; // not implemented in 1.0.0
+    }
+    
+    @Override
+    public void setSrsName(final String srsName) {
+        // not implemented in 1.0.0
     }
 
     @Override

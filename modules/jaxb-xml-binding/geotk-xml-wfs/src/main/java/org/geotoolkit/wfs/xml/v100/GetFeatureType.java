@@ -82,7 +82,21 @@ public class GetFeatureType implements GetFeature {
     
     @XmlTransient
     private Map<String, String> prefixMapping;
-            
+       
+    public GetFeatureType() {
+
+    }
+
+    public GetFeatureType(final String service, final String version, final String handle, final Integer maxFeatures,
+            final List<QueryType> query, final String outputformat) {
+        this.service = service;
+        this.version = version;
+        this.handle = handle;
+        this.maxFeatures  = maxFeatures;
+        this.query        = query;
+        this.outputFormat = outputformat;
+    }
+
     /**
      * Gets the value of the query property.
      */
