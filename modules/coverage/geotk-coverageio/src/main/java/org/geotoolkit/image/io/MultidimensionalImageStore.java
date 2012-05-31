@@ -148,6 +148,8 @@ public interface MultidimensionalImageStore {
      *
      * @param  api The API for which to return a dimension.
      * @return The dimension assigned to the given API.
+     *
+     * @see DimensionSet#getOrCreate(DimensionSlice.API)
      */
     DimensionIdentification getDimensionForAPI(DimensionSlice.API api);
 
@@ -160,10 +162,12 @@ public interface MultidimensionalImageStore {
      * If more than one dimension is found for the given identifiers, then a
      * {@linkplain SpatialImageReader#warningOccurred warning is emitted} and
      * this method returns the first dimension matching the given identifiers.
-     * If no dimension is found, {@code null} is returned.
+     * If no dimension is found, {@code API.NONE} is returned.
      *
      * @param  identifiers The identifiers of the dimension to query.
      * @return The API assigned to the given dimension, or {@link DimensionSlice.API#NONE} if none.
+     *
+     * @see DimensionSet#getAPI(Object[])
      */
     DimensionSlice.API getAPIForDimension(Object... identifiers);
 
@@ -176,6 +180,8 @@ public interface MultidimensionalImageStore {
      * }
      *
      * @return The API for which at least one dimension has identifiers.
+     *
+     * @see DimensionSet#getAPIs()
      */
     Set<DimensionSlice.API> getAPIForDimensions();
 }

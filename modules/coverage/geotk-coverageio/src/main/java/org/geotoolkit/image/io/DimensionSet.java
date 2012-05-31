@@ -44,8 +44,10 @@ import static org.geotoolkit.image.io.DimensionSlice.API;
  * The set of {@link DimensionIdentification} instances managed by a given
  * {@link MultidimensionalImageStore} instance. This class is provided for
  * {@code MultidimensionalImageStore} implementations and usually don't need
- * to be accessed directly by users. The code snippet below gives an example
- * of implementation using a {@code DimensionSet}:
+ * to be accessed directly by users.
+ * <p>
+ * The code snippet below gives an example of {@code ImageReader} implementation
+ * using a {@code DimensionSet}:
  *
  * {@preformat java
  *     public class MyReader extends SpatialImageReader implements MultidimensionalImageStore {
@@ -195,9 +197,9 @@ public class DimensionSet extends AbstractSet<DimensionIdentification> implement
     }
 
     /**
-     * Returns {@code true} if this set contains the given dimension.
+     * Returns {@code true} if this set contains the given {@link DimensionIdentification} instance.
      *
-     * @param value The dimension to test for inclusion.
+     * @param value The {@link DimensionIdentification} to test for inclusion.
      * @return {@code true} if this set contains the given dimension.
      */
     @Override

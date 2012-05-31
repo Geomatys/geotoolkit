@@ -368,7 +368,7 @@ scan:   for (int i=0; i<missingCount; i++) {
      * <p>
      * There is no direct converse of this method, because the unsigned values type
      * need to be handled in a special way (through a "_Unigned" attribute). See the
-     * {@link org.geotoolkit.image.io.plugin.NetcdfImage#createVariable} method for
+     * {@link org.geotoolkit.image.io.plugin.NetcdfImage#createVariables} method for
      * the main place where the converse operation is applied.
      *
      * @param  variable The variable.

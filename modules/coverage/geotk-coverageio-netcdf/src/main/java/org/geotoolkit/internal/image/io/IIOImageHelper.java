@@ -92,9 +92,6 @@ public class IIOImageHelper {
     /**
      * The bands to read, or {@code null} for reading all bands.
      * The length of this array shall be equals or less than {@link #numBands}.
-     *
-     * @see #hasSourceBands()
-     * @see #getSourceBands()
      */
     private final int[] sourceBands;
 
@@ -247,43 +244,23 @@ public class IIOImageHelper {
     }
 
     /**
-     * Returns {@code true} if the {@link #sourceBands} array is non-null and is different
-     * than the default array of bands. The default source bands is all bands from the source,
-     * so this method returns {@code true} if the user asked either for a bands subset, or for
-     * bands in a different order.
+     * Returns the number of source bands to use. This number may be equals or less
+     * than the actual number of bands in the source image.
      *
-     * @return {@code true} if the source bands are different than the default set of bands to read.
+     * @return The number of source bands.
      */
-    public final boolean hasSourceBands() {
-        if (sourceBands != null) {
-            if (sourceBands.length != numBands) {
-                return true;
-            }
-            for (int i=0; i<numBands; i++) {
-                if (sourceBands[i] != i) {
-                    return true;
-                }
-            }
-        }
-        return false;
+    public final int getNumSourceBands() {
+        return (sourceBands != null) ? sourceBands.length : numBands;
     }
 
     /**
-     * Returns the source bands as a non-null array. If the user didn't specified explicitely
-     * the source bands, then this method returns the default sequence for all bands.
+     * Returns the source band at the given index.
      *
-     * @return The source bands (never {@code null}). <strong>Do not modify</strong>,
-     *         since this method does not clone the internal array.
+     * @param  i The index in the range 0 inclusive to {@link #getNumSourceBands()} exclusive.
+     * @return The source bands at the given index.
      */
-    public final int[] getSourceBands() {
-        if (sourceBands != null) {
-            return sourceBands;
-        }
-        final int[] sequence = new int[numBands];
-        for (int i=0; i<sequence.length; i++) {
-            sequence[i] = i;
-        }
-        return sequence;
+    public final int getSourceBand(final int i) {
+        return (sourceBands != null) ? sourceBands[i] : i;
     }
 
     /**

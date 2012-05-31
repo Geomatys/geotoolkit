@@ -50,6 +50,7 @@ import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
 import org.geotoolkit.internal.referencing.AxisDirections;
 import org.geotoolkit.internal.image.io.IIOImageHelper;
+import org.geotoolkit.image.io.DimensionSlice.API;
 import org.geotoolkit.image.io.ImageMetadataException;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
@@ -73,6 +74,17 @@ import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
  * @module
  */
 final class NetcdfDimension {
+    /**
+     * The default dimension index assigned to bands or images.
+     * Used only if not explicitely specified by the user.
+     */
+    private static final int BAND_DIMENSION=2, IMAGE_DIMENSION=3;
+
+    /**
+     * The Image I/O API associated to this dimension.
+     */
+    final API api;
+
     /**
      * The coordinate system axis to write in the NetCDF file.
      */
@@ -108,19 +120,39 @@ final class NetcdfDimension {
      *
      * @todo Define a 'sourceToTargetDimension' method somewhere based on the value of the
      *       derivative at the center position.
-     *
-     * @todo Take 'sourceBands' in account.
      */
     NetcdfDimension(final IIOImageHelper image, final int dimension) throws ImageMetadataException {
         axis = image.getCoordinateSystem().getAxis(dimension);
-        final int subsampling;  // The grid ordinates increment. Must be equals or greater than 1.
-        final int length;       // Number of ordinate values to write the the NetCDF file.
-        int       index;        // Grid ordinate value, from lower inclusive to lower+length×subsampling exclusive.
+        /*
+         * TODO: We use DimensionSlice.API as a matter of principle (for keeping room for future
+         * improvement), but the mapping is hard-coded for now. Futures versions may use some of
+         * the following methods:
+         *
+         *   api = DimensionSet.getAPI(dimension, axis);
+         *   api = MultidimensionalImageStore.getAPIForDimension(dimension, axis);
+         */
         switch (dimension) {
-            case X_DIMENSION: index=image.sourceRegion.x; subsampling=image.sourceXSubsampling; length=image.sourceRegion.width /subsampling; break;
-            case Y_DIMENSION: index=image.sourceRegion.y; subsampling=image.sourceYSubsampling; length=image.sourceRegion.height/subsampling; break;
-            default: {
+            case X_DIMENSION:     api=API.COLUMNS; break;
+            case Y_DIMENSION:     api=API.ROWS;    break;
+            case BAND_DIMENSION:  api=API.BANDS;   break;
+            case IMAGE_DIMENSION: api=API.IMAGES;  break;
+            default:              api=API.NONE;    break;
+        }
+        final int subsampling;  // The grid ordinates increment. Must be equals or greater than 1.
+        final int length;       // Number of ordinate values to write in the NetCDF file.
+        int       index;        // Grid ordinate value, from lower inclusive to lower+length×subsampling exclusive.
+        switch (api) {
+            case COLUMNS: index=image.sourceRegion.x; subsampling=image.sourceXSubsampling; length=image.sourceRegion.width /subsampling; break;
+            case ROWS:    index=image.sourceRegion.y; subsampling=image.sourceYSubsampling; length=image.sourceRegion.height/subsampling; break;
+            case BANDS: {
+                index       = 0;
+                length      = image.getNumSourceBands();
                 subsampling = 1;
+                break;
+            }
+            case IMAGES: {
+                // We don't know in advance how many images are going to be written.
+                // So we rely on the metadata as the best we can do for now.
                 final GridEnvelope domain = image.getGridDomain();
                 if (domain != null) {
                     index  = domain.getLow (dimension);
@@ -130,6 +162,14 @@ final class NetcdfDimension {
                     length = (axis instanceof DiscreteCoordinateSystemAxis<?>) ?
                              ((DiscreteCoordinateSystemAxis<?>) axis).length() : 1;
                 }
+                subsampling = 1;
+                break;
+            }
+            default: {
+                // For all other dimensions, presume that we will write only one slice.
+                index       = 0;
+                length      = 1;
+                subsampling = 1;
                 break;
             }
         }
@@ -143,7 +183,7 @@ final class NetcdfDimension {
             if (Number.class.isAssignableFrom(type)) {
                 ordinates = Array.factory(type, new int[] {length});
                 for (int i=0; i<length; i++) {
-                    final Comparable<?> ordinate = ds.getOrdinateAt(index);
+                    final Comparable<?> ordinate = ds.getOrdinateAt(image.getSourceBand(index));
                     ordinates.setDouble(i, ((Number) ordinate).doubleValue());
                     index += subsampling;
                 }
@@ -159,7 +199,7 @@ final class NetcdfDimension {
         if (gridToCRS == null) {
             ordinates = Array.factory(DataType.INT, new int[] {length});
             for (int i=0; i<length; i++) {
-                ordinates.setFloat(i, index);
+                ordinates.setFloat(i, image.getSourceBand(index));
                 index += subsampling;
             }
         } else {
@@ -170,7 +210,7 @@ final class NetcdfDimension {
             System.arraycopy(center, 0, source, 0, Math.min(source.length, center.length));
             try {
                 for (int i=0; i<length; i++) {
-                    source[dimension] = index;
+                    source[dimension] = image.getSourceBand(index);
                     gridToCRS.transform(source, 0, target, 0, 1);
                     ordinates.setDouble(i, target[dimension]);
                     index += subsampling;

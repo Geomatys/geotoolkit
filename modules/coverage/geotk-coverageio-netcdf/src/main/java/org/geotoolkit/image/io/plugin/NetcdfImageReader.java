@@ -1298,17 +1298,17 @@ public class NetcdfImageReader extends FileImageReader implements
         /**
          * List of legal names for NetCDF readers.
          */
-        private static final String[] NAMES = new String[] {"NetCDF", "netcdf"};
+        static final String[] NAMES = new String[] {"NetCDF", "netcdf"};
 
         /**
          * The mime types for the default {@link NetcdfImageReader} configuration.
          */
-        private static final String[] MIME_TYPES = new String[] {"application/netcdf", "application/x-netcdf"};
+        static final String[] MIME_TYPES = new String[] {"application/netcdf", "application/x-netcdf"};
 
         /**
          * Default list of file's extensions.
          */
-        private static final String[] SUFFIXES = new String[] {"nc", "ncml", "cdf", "grib", "grib1", "grib2", "grb", "grb1", "grb2", "grd"};
+        static final String[] SUFFIXES = new String[] {"nc", "ncml", "cdf", "grib", "grib1", "grib2", "grb", "grb1", "grb2", "grd"};
 
         /**
          * Constructs a default {@code NetcdfImageReader.Spi}. The fields are initialized as
