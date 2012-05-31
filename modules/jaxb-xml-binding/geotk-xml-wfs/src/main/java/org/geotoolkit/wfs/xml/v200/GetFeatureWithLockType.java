@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.wfs.xml.AllSomeType;
 
 
 /**
@@ -45,9 +46,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GetFeatureWithLockType")
-public class GetFeatureWithLockType
-    extends GetFeatureType
-{
+public class GetFeatureWithLockType extends GetFeatureType {
 
     @XmlAttribute
     @XmlSchemaType(name = "positiveInteger")

@@ -17,17 +17,12 @@
 package org.geotoolkit.wfs.xml.v100;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElements;
-import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.*;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.Version;
+import org.geotoolkit.wfs.xml.AllSomeType;
 import org.geotoolkit.wfs.xml.Transaction;
 
 
@@ -90,6 +85,9 @@ public class TransactionType implements Transaction {
     @XmlAttribute
     private AllSomeType releaseAction;
 
+    @XmlTransient
+    private Map<String, String> prefixMapping;
+    
     public TransactionType() {
 
     }
@@ -328,6 +326,13 @@ public class TransactionType implements Transaction {
     }
 
     public Map<String, String> getPrefixMapping() {
-        return new HashMap<String, String>();
+        return prefixMapping;
+    }
+    
+    /**
+     * @param prefixMapping the prefixMapping to set
+     */
+    public void setPrefixMapping(Map<String, String> prefixMapping) {
+        this.prefixMapping = prefixMapping;
     }
 }

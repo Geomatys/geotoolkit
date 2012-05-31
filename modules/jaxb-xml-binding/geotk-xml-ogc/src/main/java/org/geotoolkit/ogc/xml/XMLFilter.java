@@ -14,27 +14,17 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.wfs.xml;
+package org.geotoolkit.ogc.xml;
 
 import java.util.Map;
-import org.geotoolkit.ows.xml.RequestBase;
-import org.geotoolkit.util.Version;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public interface BaseRequest extends RequestBase {
- 
-    Version getVersion();
-     
-    void setVersion(final String value);
-    
-    String getHandle();
-    
-    void setHandle(final String value);
+public interface XMLFilter {
     
     Map<String, String> getPrefixMapping();
-    
+
     void setPrefixMapping(final Map<String, String> prefixMapping);
 }

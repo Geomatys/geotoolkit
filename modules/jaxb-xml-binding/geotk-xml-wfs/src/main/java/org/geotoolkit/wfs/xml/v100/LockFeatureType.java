@@ -16,18 +16,12 @@
  */
 package org.geotoolkit.wfs.xml.v100;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.*;
 import org.geotoolkit.util.Version;
+import org.geotoolkit.wfs.xml.AllSomeType;
 import org.geotoolkit.wfs.xml.LockFeature;
 
 
@@ -76,10 +70,25 @@ public class LockFeatureType implements LockFeature {
     private String service;
     @XmlAttribute
     @XmlSchemaType(name = "positiveInteger")
-    private BigInteger expiry;
+    private Integer expiry;
     @XmlAttribute
     private AllSomeType lockAction;
 
+    @XmlTransient
+    private Map<String, String> prefixMapping;
+    
+    public LockFeatureType() {
+
+    }
+
+    public LockFeatureType(final String service, final String version, final List<LockType> lock, final Integer expiry, final AllSomeType lockAction) {
+        this.service = service;
+        this.version = version;
+        this.expiry     = expiry;
+        this.lock       = lock;
+        this.lockAction = lockAction;
+    }
+    
     /**
      * Gets the value of the lock property.
      * 
@@ -156,10 +165,10 @@ public class LockFeatureType implements LockFeature {
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getExpiry() {
+    public Integer getExpiry() {
         return expiry;
     }
 
@@ -168,10 +177,10 @@ public class LockFeatureType implements LockFeature {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setExpiry(BigInteger value) {
+    public void setExpiry(Integer value) {
         this.expiry = value;
     }
 
@@ -208,6 +217,13 @@ public class LockFeatureType implements LockFeature {
     }
 
     public Map<String, String> getPrefixMapping() {
-        return new HashMap<String, String>();
+        return prefixMapping;
+    }
+    
+    /**
+     * @param prefixMapping the prefixMapping to set
+     */
+    public void setPrefixMapping(Map<String, String> prefixMapping) {
+        this.prefixMapping = prefixMapping;
     }
 }

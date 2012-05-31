@@ -18,12 +18,10 @@ package org.geotoolkit.ogc.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import javax.xml.bind.JAXBElement;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementRef;
-import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.*;
+import org.geotoolkit.ogc.xml.XMLFilter;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterVisitor;
 
@@ -58,7 +56,7 @@ import org.opengis.filter.FilterVisitor;
     "logicOps",
     "featureId"
 })
-public class FilterType implements Filter {
+public class FilterType implements Filter, XMLFilter {
 
     @XmlElementRef(name = "spatialOps", namespace = "http://www.opengis.net/ogc", type = JAXBElement.class)
     private JAXBElement<? extends SpatialOpsType> spatialOps;
@@ -69,6 +67,9 @@ public class FilterType implements Filter {
     @XmlElement(name = "FeatureId")
     private List<FeatureIdType> featureId;
 
+    @XmlTransient
+    private Map<String, String> prefixMapping;
+    
     /**
      * An empty constructor used by JAXB
      */
@@ -142,6 +143,20 @@ public class FilterType implements Filter {
             featureId = new ArrayList<FeatureIdType>();
         }
         return this.featureId;
+    }
+    
+     /**
+     * @return the prefixMapping
+     */
+    public Map<String, String> getPrefixMapping() {
+        return prefixMapping;
+    }
+
+    /**
+     * @param prefixMapping the prefixMapping to set
+     */
+    public void setPrefixMapping(Map<String, String> prefixMapping) {
+        this.prefixMapping = prefixMapping;
     }
     
     public boolean evaluate(final Object object) {

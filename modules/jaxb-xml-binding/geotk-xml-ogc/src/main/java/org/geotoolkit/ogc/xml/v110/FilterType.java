@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ogc.xml.XMLFilter;
 import org.geotoolkit.util.Utilities;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterVisitor;
@@ -62,7 +63,7 @@ import org.opengis.filter.FilterVisitor;
     "id"
 })
 @XmlRootElement(name = "Filter")
-public class FilterType implements Filter {
+public class FilterType implements Filter, XMLFilter {
 
     @XmlElementRef(name = "spatialOps", namespace = "http://www.opengis.net/ogc", type = JAXBElement.class)
     private JAXBElement<? extends SpatialOpsType> spatialOps;

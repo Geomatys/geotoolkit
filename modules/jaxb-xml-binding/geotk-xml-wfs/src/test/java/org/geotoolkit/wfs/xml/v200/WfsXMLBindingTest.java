@@ -33,6 +33,7 @@ import org.geotoolkit.gml.xml.v321.PointType;
 import org.geotoolkit.ogc.xml.v200.FilterType;
 import org.geotoolkit.ogc.xml.v200.PropertyIsLikeType;
 import org.geotoolkit.ows.xml.v110.WGS84BoundingBoxType;
+import org.geotoolkit.wfs.xml.AllSomeType;
 
 //Junit dependencies
 import org.geotoolkit.wfs.xml.WFSBindingUtilities;

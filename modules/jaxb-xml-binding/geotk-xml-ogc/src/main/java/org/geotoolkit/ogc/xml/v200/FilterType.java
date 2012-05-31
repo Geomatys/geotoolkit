@@ -20,8 +20,10 @@ package org.geotoolkit.ogc.xml.v200;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.*;
+import org.geotoolkit.ogc.xml.XMLFilter;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterVisitor;
 
@@ -55,7 +57,7 @@ import org.opengis.filter.FilterVisitor;
     "function",
     "id"
 })
-public class FilterType extends AbstractSelectionClauseType implements Filter {
+public class FilterType extends AbstractSelectionClauseType implements Filter, XMLFilter {
 
     @XmlElementRef(name = "comparisonOps", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
     private JAXBElement<? extends ComparisonOpsType> comparisonOps;
@@ -71,6 +73,9 @@ public class FilterType extends AbstractSelectionClauseType implements Filter {
     @XmlElementRef(name = "_Id", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
     private List<JAXBElement<? extends AbstractIdType>> id;
 
+    @XmlTransient
+    private Map<String, String> prefixMapping;
+    
     /**
      * a transient factory to build JAXBelement
      */
@@ -330,20 +335,6 @@ public class FilterType extends AbstractSelectionClauseType implements Filter {
     /**
      * Gets the value of the id property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the id property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getId().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link ResourceIdType }{@code >}
      * {@link JAXBElement }{@code <}{@link AbstractIdType }{@code >}
@@ -470,6 +461,20 @@ public class FilterType extends AbstractSelectionClauseType implements Filter {
         }
     }
 
+    /**
+     * @return the prefixMapping
+     */
+    public Map<String, String> getPrefixMapping() {
+        return prefixMapping;
+    }
+
+    /**
+     * @param prefixMapping the prefixMapping to set
+     */
+    public void setPrefixMapping(Map<String, String> prefixMapping) {
+        this.prefixMapping = prefixMapping;
+    }
+    
     public boolean evaluate(Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
