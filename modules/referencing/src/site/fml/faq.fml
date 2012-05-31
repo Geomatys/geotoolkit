@@ -503,7 +503,10 @@ factory = AuthorityFactoryFinder.getCRSAuthorityFactory("EPSG", hints);</pre></l
         is left to the users.</p>
 
         <p>If you are developing a desktop application without Maven, make sure that the
-        <code>derby.jar</code> file is presents on the classpath.</p>
+        <code>derby.jar</code> file is presents on the classpath. You may also need to add
+        the following line at the application startup time:</p>
+
+        <blockquote><pre>Class.forName("org.apache.derby.jdbc.EmbeddedDriver").newInstance();</pre></blockquote>
 
         <p>If you are developing a server application to be deployed in a container like
         Glassfish or Tomcat, make sure that the Derby dependency does <strong>not</strong> appear
