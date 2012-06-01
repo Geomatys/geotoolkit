@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.geotoolkit.data.memory.GenericEmptyFeatureIterator;
@@ -205,7 +206,8 @@ public abstract class AbstractDataStore implements DataStore{
             writer = getFeatureWriter(typeName, Filter.EXCLUDE);
             return true;
         }catch(Exception ex){
-            //catch anything, don't log it
+            //catch anything, log it
+            getLogger().log(Level.WARNING, "Type not writeable : {0}", ex.getMessage());
             return false;
         }finally{
             if(writer != null){
@@ -511,6 +513,8 @@ public abstract class AbstractDataStore implements DataStore{
             if(filter == Filter.EXCLUDE){
                 //filter that exclude everything, use optimzed reader
                 reader = GenericEmptyFeatureIterator.createReader(reader.getFeatureType());
+                //close original reader
+                reader.close();
             }else{
                 reader = GenericFilterFeatureIterator.wrap(reader, filter);
             }
@@ -526,6 +530,8 @@ public abstract class AbstractDataStore implements DataStore{
             if(max == 0){
                 //use an optimized reader
                 reader = GenericEmptyFeatureIterator.createReader(reader.getFeatureType());
+                //close original reader
+                reader.close();
             }else{
                 reader = GenericMaxFeatureIterator.wrap(reader, max);
             }
