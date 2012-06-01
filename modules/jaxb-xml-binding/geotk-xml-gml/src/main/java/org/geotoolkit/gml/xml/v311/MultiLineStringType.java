@@ -57,6 +57,15 @@ public class MultiLineStringType extends AbstractGeometricAggregateType implemen
 
     private List<LineStringPropertyType> lineStringMember;
 
+    public MultiLineStringType() {
+        
+    }
+    
+    public MultiLineStringType(final String srsName, final List<LineStringPropertyType> lineStringMember) {
+        super(srsName);
+        this.lineStringMember = lineStringMember;
+    }
+    
     /**
      * Gets the value of the lineStringMember property.
      * 

@@ -26,6 +26,8 @@ public interface AbstractGeometry {
     
     String getSrsName();
     
+    void setSrsName(final String srsName);
+    
     int getCoordinateDimension();
     
     CoordinateReferenceSystem getCoordinateReferenceSystem();

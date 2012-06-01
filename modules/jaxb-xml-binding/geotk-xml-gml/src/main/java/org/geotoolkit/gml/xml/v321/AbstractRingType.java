@@ -52,6 +52,14 @@ import org.opengis.filter.expression.ExpressionVisitor;
 })
 public abstract class AbstractRingType extends AbstractGeometryType implements AbstractRing {
 
+    public AbstractRingType() {
+        
+    }
+    
+    public AbstractRingType(final String srsName) {
+        super(srsName);
+    }
+    
     public Object evaluate(Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
     }

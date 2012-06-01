@@ -88,6 +88,18 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
     @XmlSchemaType(name = "ID")
     private String id;
 
+    /**
+     *  Empty constructor used by JAXB.
+     */
+    protected AbstractGMLType() {}
+
+    /**
+     *  Simple super constructor to initialize the entry name.
+     */
+    public AbstractGMLType(final String id) {
+        this.id = id;
+    }
+    
     @Override
     public MetadataStandard getStandard() {
         return null;

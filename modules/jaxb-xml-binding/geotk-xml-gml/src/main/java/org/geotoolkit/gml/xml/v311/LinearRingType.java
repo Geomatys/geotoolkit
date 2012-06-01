@@ -80,6 +80,15 @@ public class LinearRingType extends AbstractRingType implements LinearRing {
     private CoordinatesType coordinates;
     private List<CoordType> coord;
 
+    public LinearRingType() {
+        
+    }
+    
+    public LinearRingType(final String srsName, final DirectPositionListType posList) {
+        super(srsName);
+        this.posList = posList;
+    }
+    
     /**
      * Gets the value of the posOrPointPropertyOrPointRep property.
      * 

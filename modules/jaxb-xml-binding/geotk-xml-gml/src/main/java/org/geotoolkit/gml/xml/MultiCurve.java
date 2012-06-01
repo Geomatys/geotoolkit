@@ -22,7 +22,7 @@ import java.util.List;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public interface MultiCurve extends AbstractGeometry {
+public interface MultiCurve extends AbstractGeometricAggregate {
     
     List<? extends CurveProperty> getCurveMember();
 }

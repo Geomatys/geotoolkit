@@ -57,6 +57,15 @@ public class MultiSurfaceType extends AbstractGeometricAggregateType implements 
     private List<SurfacePropertyType> surfaceMember;
     private SurfaceArrayPropertyType surfaceMembers;
 
+    public MultiSurfaceType() {
+        
+    }
+    
+    public MultiSurfaceType(final String srsName, final List<SurfacePropertyType> surfaceMember) {
+        super(srsName);
+        this.surfaceMember = surfaceMember;
+    }
+    
     /**
      * Gets the value of the surfaceMember property.
      * 

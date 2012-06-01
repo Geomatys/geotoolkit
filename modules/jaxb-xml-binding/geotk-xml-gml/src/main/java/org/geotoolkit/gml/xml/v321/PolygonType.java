@@ -56,6 +56,22 @@ public class PolygonType extends AbstractSurfaceType implements Polygon {
     private AbstractRingPropertyType exterior;
     private List<AbstractRingPropertyType> interior;
 
+    public PolygonType() {
+
+    }
+    
+    public PolygonType(final AbstractRingType exterior, final List<? extends AbstractRingType> interiors) {
+        if (exterior != null) {
+            this.exterior = new AbstractRingPropertyType(exterior);
+        }
+        if (interiors != null) {
+            this.interior = new ArrayList<AbstractRingPropertyType>();
+            for (AbstractRingType inte : interiors) {
+                this.interior.add(new AbstractRingPropertyType(inte));
+            }
+        }
+    }
+    
     /**
      * Gets the value of the exterior property.
      * 

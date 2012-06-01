@@ -51,9 +51,14 @@ import javax.xml.bind.annotation.XmlType;
     MultiSolidType.class,
     MultiPointType.class
 })
-public abstract class AbstractGeometricAggregateType
-    extends AbstractGeometryType
-{
+public abstract class AbstractGeometricAggregateType extends AbstractGeometryType {
+    
+    public AbstractGeometricAggregateType(){
+    }
+
+    public AbstractGeometricAggregateType(final String srsName){
+        super(srsName);
+    }
 
     @XmlAttribute
     private AggregationType aggregationType;

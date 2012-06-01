@@ -16,14 +16,10 @@
  */
 package org.geotoolkit.gml.xml;
 
-import java.util.List;
-
 /**
  *
- * @author Guilhem Legal (Geomatys)
+ * @author Guilhem Legal (Geomatys) 
  */
-public interface MultiPoint extends AbstractGeometricAggregate {
-    
-    List<? extends PointProperty> getPointMember();
+public interface AbstractGeometricAggregate extends AbstractGeometry {
     
 }

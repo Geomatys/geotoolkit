@@ -86,6 +86,17 @@ public class CurvePropertyType implements CurveProperty {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String actuate;
 
+    public CurvePropertyType() {
+        
+    }
+    
+    public CurvePropertyType(final LineStringType line) {
+        if (line != null) {
+            final ObjectFactory factory = new ObjectFactory();
+            this.abstractCurve = factory.createLineString(line);
+        }
+    }
+    
     public AbstractCurveType getAbstractCurve() {
         if (abstractCurve != null) {
             return abstractCurve.getValue();

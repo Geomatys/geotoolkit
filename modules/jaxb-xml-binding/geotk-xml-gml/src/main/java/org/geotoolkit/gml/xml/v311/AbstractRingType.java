@@ -50,5 +50,12 @@ import org.geotoolkit.gml.xml.AbstractRing;
 })
 public abstract class AbstractRingType extends AbstractGeometryType implements AbstractRing {
 
+    public AbstractRingType() {
+        
+    }
+    
+    public AbstractRingType(final String srsName) {
+        super(srsName);
+    }
 
 }

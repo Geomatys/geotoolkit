@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.stream.XMLStreamException;
@@ -35,6 +36,8 @@ import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.feature.xml.Utils;
 import org.geotoolkit.feature.xml.XmlFeatureWriter;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
+import org.geotoolkit.gml.JTStoGeometry;
+import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.internal.jaxb.JTSWrapperMarshallerPool;
 import org.geotoolkit.internal.jaxb.ObjectFactory;
 import org.geotoolkit.metadata.iso.citation.Citations;
@@ -77,13 +80,16 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
      * Object factory to build a geometry.
      */
     private static final ObjectFactory OBJECT_FACTORY = new ObjectFactory();
+    
+    private static final org.geotoolkit.gml.xml.v321.ObjectFactory GML32_FACTORY = new org.geotoolkit.gml.xml.v321.ObjectFactory();
 
     protected String schemaLocation;
 
     private int lastUnknowPrefix = 0;
 
     private final Map<String, String> unknowNamespaces = new HashMap<String, String>();
-
+    
+    private final String gmlVersion = "3.1.1";
 
     public JAXPStreamFeatureWriter() {
     }
@@ -226,13 +232,27 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                         } else {
                             writer.writeStartElement(nameProperty);
                         }
-                        Geometry isoGeometry = JTSUtils.toISO((com.vividsolutions.jts.geom.Geometry) valueA, type.getCoordinateReferenceSystem());
+                        final JAXBElement element;
+                        if ("3.1.1".equals(gmlVersion)) {
+                            final Geometry isoGeometry = JTSUtils.toISO((com.vividsolutions.jts.geom.Geometry) valueA, type.getCoordinateReferenceSystem());
+                            element = OBJECT_FACTORY.buildAnyGeometry(isoGeometry);
+                        } else if ("3.2.1".equals(gmlVersion)) {
+                            AbstractGeometry gmlGeometry = null;
+                            try {
+                                gmlGeometry = JTStoGeometry.toGML(gmlVersion, (com.vividsolutions.jts.geom.Geometry) valueA);
+                            } catch (FactoryException ex) {
+                                LOGGER.log(Level.WARNING, "Factory exception when transforming JTS geometry to GML binding", ex);
+                            }
+                            element = GML32_FACTORY.buildAnyGeometry(gmlGeometry);
+                        } else {
+                            throw new IllegalArgumentException("Unexpected GML version:" + gmlVersion);
+                        }
                         Marshaller marshaller = null;
                         try {
                             marshaller = POOL.acquireMarshaller();
                             marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
                             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, false);
-                            marshaller.marshal(OBJECT_FACTORY.buildAnyGeometry(isoGeometry), writer);
+                            marshaller.marshal(element, writer);
                         } catch (JAXBException ex) {
                             LOGGER.log(Level.WARNING, "JAXB Exception while marshalling the iso geometry: " + ex.getMessage(), ex);
                         } finally {

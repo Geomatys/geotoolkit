@@ -89,6 +89,11 @@ public class GeometryToReferenceConverter extends AbstractReferenceOutputConvert
         reference.setEncoding((String) params.get(ENCODING));
         reference.setSchema((String) params.get(SCHEMA));
         
+        String gmlVersion = (String) params.get(GMLVERSION);
+        if (gmlVersion == null) {
+            gmlVersion = "3.1.1";
+        }
+        
         final String randomFileName = UUID.randomUUID().toString();
         Marshaller m = null;
         OutputStream geometryStream = null;
@@ -97,7 +102,7 @@ public class GeometryToReferenceConverter extends AbstractReferenceOutputConvert
             final File geometryFile = new File((String) params.get(TMP_DIR_PATH), randomFileName);
             geometryStream = new FileOutputStream(geometryFile);
             m = WPSMarshallerPool.getInstance().acquireMarshaller();
-            m.marshal( JTStoGeometry.toGML(source), geometryStream);
+            m.marshal( JTStoGeometry.toGML(gmlVersion, source), geometryStream);
             reference.setHref((String) params.get(TMP_DIR_URL) + "/" +randomFileName);
             
         } catch (FactoryException ex) {

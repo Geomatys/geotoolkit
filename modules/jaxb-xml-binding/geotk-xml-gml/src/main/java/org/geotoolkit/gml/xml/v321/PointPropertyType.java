@@ -85,6 +85,14 @@ public class PointPropertyType implements PointProperty {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String actuate;
 
+    public PointPropertyType() {
+
+    }
+
+    public PointPropertyType(final PointType point) {
+        this.point = point;
+    }
+    
     /**
      * Gets the value of the point property.
      * 

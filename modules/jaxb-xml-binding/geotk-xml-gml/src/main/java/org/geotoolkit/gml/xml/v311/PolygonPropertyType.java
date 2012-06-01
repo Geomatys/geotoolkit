@@ -79,6 +79,14 @@ public class PolygonPropertyType implements PolygonProperty {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     protected String actuate;
 
+    public PolygonPropertyType() {
+    
+    }
+    
+    public PolygonPropertyType(final PolygonType polygon) {
+        this.polygon = polygon;
+    }
+    
     /**
      * Gets the value of the polygon property.
      * 

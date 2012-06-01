@@ -19,6 +19,7 @@ package org.geotoolkit.wps.converters.outputs.complex;
 import com.vividsolutions.jts.geom.Geometry;
 import java.util.Map;
 import org.geotoolkit.gml.JTStoGeometry;
+import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
@@ -67,10 +68,14 @@ public final class GeometryToComplexConverter extends AbstractComplexOutputConve
         complex.setMimeType((String) params.get(MIME));
         complex.setSchema((String) params.get(SCHEMA));
         complex.setEncoding((String) params.get(ENCODING));
+        String gmlVersion = (String) params.get(GMLVERSION);
+        if (gmlVersion == null) {
+            gmlVersion = "3.1.1";
+        }
 
         try {
 
-            final AbstractGeometryType gmlGeom = JTStoGeometry.toGML(source);
+            final AbstractGeometry gmlGeom = JTStoGeometry.toGML(gmlVersion, source);
             complex.getContent().add(gmlGeom);
 
         } catch (NoSuchAuthorityCodeException ex) {

@@ -57,6 +57,15 @@ public class MultiPolygonType extends AbstractGeometricAggregateType implements 
 
     private List<PolygonPropertyType> polygonMember;
 
+    public MultiPolygonType() {
+        
+    }
+    
+    public MultiPolygonType(final String srsName, final List<PolygonPropertyType> polygonMember) {
+        super(srsName);
+        this.polygonMember = polygonMember;
+    }
+    
     /**
      * Gets the value of the polygonMember property.
      * 

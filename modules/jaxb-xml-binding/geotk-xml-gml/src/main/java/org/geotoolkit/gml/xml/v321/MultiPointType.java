@@ -57,6 +57,15 @@ public class MultiPointType extends AbstractGeometricAggregateType implements Mu
     private List<PointPropertyType> pointMember;
     private PointArrayPropertyType pointMembers;
 
+    public MultiPointType() {
+
+    }
+
+    public MultiPointType(final String srsName, final List<PointPropertyType> pointMember) {
+        super(srsName);
+        this.pointMember = pointMember;
+    }
+
     /**
      * Gets the value of the pointMember property.
      * 

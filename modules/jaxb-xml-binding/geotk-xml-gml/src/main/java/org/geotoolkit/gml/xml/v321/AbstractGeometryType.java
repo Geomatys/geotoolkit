@@ -89,6 +89,27 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
     @XmlTransient
     private Precision precision;
     
+    
+    /**
+     * empty constructor used by JAXB
+     */
+    AbstractGeometryType(){}
+
+    public AbstractGeometryType(final Integer srsDimension, final String srsName, final List<String> axisLabels, final List<String> uomLabels){
+        this.axisLabels   = axisLabels;
+        this.srsDimension = srsDimension;
+        this.srsName      = srsName;
+        this.uomLabels    = uomLabels;
+    }
+
+    public AbstractGeometryType(final String srsName) {
+        this.srsName      = srsName;
+    }
+
+    public AbstractGeometryType(final String id, final String srsName) {
+        super(id);
+        this.srsName      = srsName;
+    }
     /**
      * Gets the value of the srsName property.
      * 

@@ -72,6 +72,14 @@ public class DirectPositionListType implements DirectPositionList {
     @XmlAttribute
     private List<String> uomLabels;
 
+    public DirectPositionListType() {
+        
+    }
+    
+    public DirectPositionListType(List<Double> value) {
+        this.value = value;
+    }
+    
     /**
      * XML List based on XML Schema double type.
      * An element of this type contains a space-separated list of double values Gets the value of the value property.

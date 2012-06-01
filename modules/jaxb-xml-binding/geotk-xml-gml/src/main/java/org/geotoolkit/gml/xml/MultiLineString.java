@@ -22,7 +22,7 @@ import java.util.List;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public interface MultiLineString extends AbstractGeometry {
+public interface MultiLineString extends AbstractGeometricAggregate {
     
     List<? extends LineStringProperty> getLineStringMember();
 }

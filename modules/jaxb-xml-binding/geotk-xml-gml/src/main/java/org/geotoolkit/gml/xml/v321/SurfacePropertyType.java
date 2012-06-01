@@ -86,6 +86,16 @@ public class SurfacePropertyType implements SurfaceProperty {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String actuate;
 
+    public SurfacePropertyType() {
+        
+    }
+    
+    public SurfacePropertyType(final PolygonType polygon) {
+        if (polygon != null) {
+            final ObjectFactory factory = new ObjectFactory();
+            this.abstractSurface = factory.createPolygon(polygon);
+        }
+    }
     /**
      * Gets the value of the abstractSurface property.
      * 
