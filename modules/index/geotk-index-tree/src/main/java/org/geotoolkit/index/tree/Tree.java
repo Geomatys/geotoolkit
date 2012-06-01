@@ -71,7 +71,7 @@ public interface Tree {
      * @param Entry to delete.
      * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
      */
-    void delete(Envelope entry) throws IllegalArgumentException;
+    boolean delete(Envelope entry) throws IllegalArgumentException;
 
     /**
      * Find a {@code Envelope} (entry) into the tree and delete it.
@@ -91,7 +91,7 @@ public interface Tree {
      * @param Entry to delete.
      * @throws MismatchedReferenceSystemException if entry CRS is different from tree CRS
      */
-    void remove(Envelope entry) throws IllegalArgumentException;
+    boolean remove(Envelope entry) throws IllegalArgumentException;
 
 
     /**Find all {@code Envelope} (entry) from Iterator into the tree and delete it.

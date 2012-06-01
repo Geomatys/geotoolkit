@@ -96,22 +96,24 @@ public class BasicRTree extends DefaultAbstractTree {
      * {@inheritDoc}
      */
     @Override
-    public void delete(final Envelope entry) throws IllegalArgumentException {
+    public boolean delete(final Envelope entry) throws IllegalArgumentException {
         ArgumentChecks.ensureNonNull("delete : entry", entry);
         if(!CRS.equalsIgnoreMetadata(crs, entry.getCoordinateReferenceSystem())) throw new MismatchedReferenceSystemException();
         final Node root = getRoot();
-        if (root != null) deleteNode(root, entry);
+        if (root != null) return deleteNode(root, entry);
+        return false;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void remove(final Envelope entry) throws IllegalArgumentException {
+    public boolean remove(final Envelope entry) throws IllegalArgumentException {
         ArgumentChecks.ensureNonNull("remove : entry", entry);
         if(!CRS.equalsIgnoreMetadata(crs, entry.getCoordinateReferenceSystem())) throw new MismatchedReferenceSystemException();
         final Node root = getRoot();
-        if (root != null) removeNode(root, entry);
+        if (root != null) return removeNode(root, entry);
+        return false;
     }
 
     /**
@@ -544,7 +546,7 @@ public class BasicRTree extends DefaultAbstractTree {
                 final List<Envelope> l = candidate.getEntries();
                 boolean removed = false;
                 for(int i = l.size()-1;i>=0;i--){
-                    if(l.get(i)==entry){
+                    if(l.get(i).equals(entry)){
                         removed = true;
                         l.remove(i);
                         break;

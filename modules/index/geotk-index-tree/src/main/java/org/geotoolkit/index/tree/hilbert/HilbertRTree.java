@@ -118,20 +118,20 @@ public class HilbertRTree extends DefaultAbstractTree {
      * {@inheritDoc}
      */
     @Override
-    public void delete(final Envelope entry) throws IllegalArgumentException {
+    public boolean delete(final Envelope entry) throws IllegalArgumentException {
         ArgumentChecks.ensureNonNull("delete : entry", entry);
         if(!CRS.equalsIgnoreMetadata(crs, entry.getCoordinateReferenceSystem())) throw new MismatchedReferenceSystemException();
-        deleteHilbertNode(getRoot(), entry);
+        return deleteHilbertNode(getRoot(), entry);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void remove(final Envelope entry) throws IllegalArgumentException {
+    public boolean remove(final Envelope entry) throws IllegalArgumentException {
         ArgumentChecks.ensureNonNull("remove : entry", entry);
         if(!CRS.equalsIgnoreMetadata(crs, entry.getCoordinateReferenceSystem())) throw new MismatchedReferenceSystemException();
-        removeHilbertNode(getRoot(), entry);
+        return removeHilbertNode(getRoot(), entry);
     }
 
     /**
@@ -631,7 +631,7 @@ public class HilbertRTree extends DefaultAbstractTree {
      * @throws IllegalArgumentException if candidate or entry is null.
      * @return true if entry is find and deleted else false.
      */
-    private static void deleteHilbertNode(final Node candidate, final Envelope entry) throws IllegalArgumentException{
+    private static boolean deleteHilbertNode(final Node candidate, final Envelope entry) throws IllegalArgumentException{
         ArgumentChecks.ensureNonNull("deleteHilbertNode Node candidate : ", candidate);
         ArgumentChecks.ensureNonNull("deleteHilbertNode Envelope entry : ", entry);
         if (new GeneralEnvelope(candidate.getBoundary()).intersects(entry, true)) {
@@ -649,13 +649,16 @@ public class HilbertRTree extends DefaultAbstractTree {
                     tree.setElementsNumber(tree.getElementsNumber()-1);
                     candidate.setBound(null);
                     trim(candidate);
+                    return true;
                 }
             } else {
                 for (Node nod : candidate.getChildren().toArray(new Node[candidate.getChildren().size()])) {
-                    deleteHilbertNode(nod, entry);
+                    final  boolean removed = deleteHilbertNode(nod, entry);
+                    if (removed) return true;
                 }
             }
         }
+        return false;
     }
 
     /**
@@ -671,7 +674,7 @@ public class HilbertRTree extends DefaultAbstractTree {
      * @throws IllegalArgumentException if candidate or entry is null.
      * @return true if entry is find and deleted else false.
      */
-    private static void removeHilbertNode(final Node candidate, final Envelope entry) throws IllegalArgumentException{
+    private static boolean removeHilbertNode(final Node candidate, final Envelope entry) throws IllegalArgumentException{
         ArgumentChecks.ensureNonNull("deleteHilbertNode Node candidate : ", candidate);
         ArgumentChecks.ensureNonNull("deleteHilbertNode Envelope entry : ", entry);
         if (new GeneralEnvelope(candidate.getBoundary()).intersects(entry, true)) {
@@ -682,26 +685,29 @@ public class HilbertRTree extends DefaultAbstractTree {
                 for (Node nod : lN) {
                     l = nod.getEntries();
                     for(int i = l.size()-1;i>=0;i--){
-                        if(l.get(i)==entry){
+                        if(l.get(i).equals(entry)){
                             removed = true;
                             l.remove(i);
                             break;
                         }
                     }
-                    if(removed)break;
+                    if (removed) break;
                 }
                 if (removed) {
                     final DefaultAbstractTree tree = ((DefaultAbstractTree)candidate.getTree());
                     tree.setElementsNumber(tree.getElementsNumber()-1);
                     candidate.setBound(null);
                     trim(candidate);
+                    return true;
                 }
             } else {
                 for (Node nod : candidate.getChildren().toArray(new Node[candidate.getChildren().size()])) {
-                    removeHilbertNode(nod, entry);
+                    final boolean removed = removeHilbertNode(nod, entry);
+                    if (removed) return true;
                 }
             }
         }
+        return false;
     }
 
     /**
