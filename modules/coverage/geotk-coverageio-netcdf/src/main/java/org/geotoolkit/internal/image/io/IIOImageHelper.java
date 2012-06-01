@@ -38,7 +38,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.operation.MathTransform;
 
-import org.geotoolkit.util.Localized;
 import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.image.io.ImageMetadataException;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
@@ -214,11 +213,9 @@ public class IIOImageHelper {
         Locale locale = null;
         if (param instanceof ImageWriteParam) {
             locale = ((ImageWriteParam) param).getLocale();
-        } else if (param instanceof Localized) {
-            locale = ((Localized) param).getLocale();
         }
-        if (locale == null && writer instanceof Localized) {
-            locale = ((Localized) writer).getLocale();
+        if (locale == null) {
+            locale = writer.getLocale();
             if (locale == null) {
                 locale = Locale.getDefault();
             }

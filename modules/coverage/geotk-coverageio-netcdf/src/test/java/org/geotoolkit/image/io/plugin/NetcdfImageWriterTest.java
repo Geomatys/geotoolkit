@@ -2,8 +2,8 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009-2012, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009-2012, Geomatys
+ *    (C) 2012, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -19,34 +19,37 @@ package org.geotoolkit.image.io.plugin;
 
 import java.util.Iterator;
 import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
+import javax.imageio.ImageWriter;
+
+import org.geotoolkit.test.image.ImageWriterTestBase;
 
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
 
 
 /**
- * Tests that do not require any particular {@link NetcdfImageReader} instance.
+ * Test the {@link NetcdfImageWriter} implementation.
  *
+ * @author Johann Sorel (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.19
+ * @version 3.20
  *
- * @since 3.08
+ * @since 3.20
  *
- * @todo We should define a base class for all reader tests (a better one than
- *       {@link org.geotoolkit.test.image.ImageReaderTestBase}), and get this
+ * @todo We should define a base class for all writer tests (a better one than
+ *       {@link org.geotoolkit.test.image.ImageWriterTestBase}), and get this
  *       class to inherit the tests from the sub-class.
  */
-public final strictfp class NetcdfImageReaderTest {
+public final strictfp class NetcdfImageWriterTest {
     /**
-     * Tests the registration of the image reader in the Image I/O framework.
+     * Tests the registration of the image writer in the Image I/O framework.
      */
     @Test
     public void testRegistrationByFormatName() {
-        Iterator<ImageReader> it = ImageIO.getImageReadersByFormatName("NetCDF");
-        assertTrue("Expected a reader.", it.hasNext());
-        assertTrue(it.next() instanceof NetcdfImageReader);
-        assertFalse("Expected no more reader.", it.hasNext());
+        final Iterator<ImageWriter> it = ImageIO.getImageWritersByFormatName("NetCDF");
+        assertTrue("Expected a writer.", it.hasNext());
+        assertTrue(it.next() instanceof NetcdfImageWriter);
+        assertFalse("Expected no more writer.", it.hasNext());
     }
 
     /**
@@ -55,12 +58,12 @@ public final strictfp class NetcdfImageReaderTest {
      */
     @Test
     public void testRegistrationByMIMEType() {
-        Iterator<ImageReader> it = ImageIO.getImageReadersByMIMEType("application/netcdf");
+        final Iterator<ImageWriter> it = ImageIO.getImageWritersByMIMEType("application/netcdf");
         while (it.hasNext()) {
-            if (it.next() instanceof NetcdfImageReader) {
+            if (it.next() instanceof NetcdfImageWriter) {
                 return;
             }
         }
-        fail("Reader not found.");
+        fail("Writer not found.");
     }
 }

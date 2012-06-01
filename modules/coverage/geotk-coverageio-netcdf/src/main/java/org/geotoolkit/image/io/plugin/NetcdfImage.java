@@ -26,7 +26,6 @@ import javax.imageio.IIOException;
 import javax.imageio.ImageWriter;
 import java.awt.image.DataBuffer;
 import javax.media.jai.iterator.RectIter;
-import javax.measure.unit.Unit;
 
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
@@ -35,12 +34,12 @@ import ucar.nc2.Variable;
 import ucar.nc2.Dimension;
 import ucar.nc2.Attribute;
 import ucar.nc2.NetcdfFileWriteable;
-import ucar.nc2.constants.CDM;
 import ucar.nc2.iosp.netcdf3.N3iosp;
 
 import org.opengis.metadata.content.ImageDescription;
 import org.opengis.metadata.content.RangeDimension;
 
+import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.image.io.DimensionSlice;
 import org.geotoolkit.image.io.ImageMetadataException;
@@ -48,6 +47,7 @@ import org.geotoolkit.image.io.metadata.SampleDimension;
 import org.geotoolkit.internal.image.io.IIOImageHelper;
 import org.geotoolkit.resources.Errors;
 
+import static ucar.nc2.constants.CDM.*;
 import static org.geotoolkit.internal.image.io.NetcdfVariable.*;
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 
@@ -225,24 +225,60 @@ final class NetcdfImage extends IIOImageHelper {
              * No data are written at this stage.
              */
             final Variable var = file.addVariable(name, type, ncDimensions);
-            if (unsigned) {
-                var.addAttribute(new Attribute(CDM.UNSIGNED, "true"));
-            }
             if (longName != null) {
-                var.addAttribute(new Attribute(CDM.LONG_NAME, longName));
+                var.addAttribute(new Attribute(LONG_NAME, longName));
+            }
+            if (unsigned) {
+                var.addAttribute(new Attribute(UNSIGNED, "true"));
             }
             if (range instanceof SampleDimension) {
                 final SampleDimension sd = (SampleDimension) range;
-                final Double max    = sd.getMaxValue();
-                final Double min    = sd.getMinValue();
-                final Double offset = sd.getOffset();
-                final Double scale  = sd.getScaleFactor();
-                final Unit<?> unit  = sd.getUnits();
-                if (min    != null) var.addAttribute(new Attribute(VALID_MIN, min));
-                if (max    != null) var.addAttribute(new Attribute(VALID_MAX, max));
-                if (offset != null) var.addAttribute(new Attribute(CDM.ADD_OFFSET, offset));
-                if (scale  != null) var.addAttribute(new Attribute(CDM.SCALE_FACTOR, scale));
-                if (unit   != null) var.addAttribute(new Attribute(CDM.UNITS, String.valueOf(unit)));
+                double[] fillValues = sd.getFillSampleValues();
+                if (fillValues != null && fillValues.length == 0) {
+                    fillValues = null; // Must be null before call to XArrays.resize
+                }
+                // Special processing for the scale and offset factors, since we need to
+                // erase both of them if the transfer function is an identity transform.
+                Double scale  = sd.getScaleFactor();
+                Double offset = sd.getOffset();
+                if ((scale == null || scale == 1.0) && (offset == null || offset == 0.0)) {
+                    scale  = null;
+                    offset = null;
+                }
+                for (int k=0; k<=6; k++) {
+                    final String atn;
+                    final Object value;
+                    switch (i) {
+                        case 0: atn = VALID_MIN;     value = sd.getMinValue(); break;
+                        case 1: atn = VALID_MAX;     value = sd.getMaxValue(); break;
+                        case 2: atn = UNITS;         value = sd.getUnits();    break;
+                        case 3: atn = ADD_OFFSET;    value = offset;           break;
+                        case 4: atn = SCALE_FACTOR;  value = scale;            break;
+                        case 5: atn = MISSING_VALUE; value = fillValues;       break;
+                        case 6: atn = FILL_VALUE;    value = XArrays.resize(fillValues, 1); break;
+                        default: throw new AssertionError(i);
+                    }
+                    if (value != null) {
+                        // The numeric values shall be stored in attributes of the same type than
+                        // the variable. We will let the UCAR array do the conversion for us.
+                        final Attribute attr;
+                        if (value instanceof Number) {
+                            final Array array = Array.factory(type, new int[] {1});
+                            array.setDouble(i, ((Number) value).doubleValue());
+                            attr = new Attribute(atn, array);
+                        } else if (value instanceof double[]) {
+                            final double[] values = (double[]) value;
+                            final Array array = Array.factory(type, new int[] {values.length});
+                            for (int j=0; j<values.length; j++) {
+                                array.setDouble(i, fillValues[i]);
+                            }
+                            attr = new Attribute(atn, array);
+                        } else {
+                            attr = new Attribute(atn, value.toString());
+                        }
+                        var.addAttribute(attr);
+                    }
+                }
             }
             variables[i] = var;
         }

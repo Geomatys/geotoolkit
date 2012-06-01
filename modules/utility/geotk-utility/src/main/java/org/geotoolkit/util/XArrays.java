@@ -127,7 +127,11 @@ public final class XArrays extends Static {
      *
      *   <li><p>If the given {@code length} is equal to the length of the given {@code array},
      *       then {@code array} is returned unchanged. <strong>No copy</strong> is performed.
-     *       This behavior is what make this method different than {@link Arrays#copyOf}.</p></li>
+     *       This behavior is different than the {@link Arrays#copyOf} one.</p></li>
+     * </ul>
+     * <p>
+     * Note that if the given array is {@code null}, then this method unconditionally returns
+     * {@code null} no matter the value of the {@code length} argument.
      *
      * @param  <E> The array elements.
      * @param  array  Array to resize, or {@code null}.
@@ -144,6 +148,8 @@ public final class XArrays extends Static {
     /**
      * Returns an array containing the same elements as the given {@code array} but
      * specified {@code length}, truncating or padding with zeros if necessary.
+     * This method returns {@code null} if and only if the given array is {@code null},
+     * in which case the value of the {@code length} argument is ignored.
      *
      * @param  array  Array to resize, or {@code null}.
      * @param  length Length of the desired array.
@@ -167,6 +173,8 @@ public final class XArrays extends Static {
     /**
      * Returns an array containing the same elements as the given {@code array} but
      * specified {@code length}, truncating or padding with zeros if necessary.
+     * This method returns {@code null} if and only if the given array is {@code null},
+     * in which case the value of the {@code length} argument is ignored.
      *
      * @param  array  Array to resize, or {@code null}.
      * @param  length Length of the desired array.
@@ -190,6 +198,8 @@ public final class XArrays extends Static {
     /**
      * Returns an array containing the same elements as the given {@code array} but
      * specified {@code length}, truncating or padding with zeros if necessary.
+     * This method returns {@code null} if and only if the given array is {@code null},
+     * in which case the value of the {@code length} argument is ignored.
      *
      * @param  array  Array to resize, or {@code null}.
      * @param  length Length of the desired array.
@@ -213,6 +223,8 @@ public final class XArrays extends Static {
     /**
      * Returns an array containing the same elements as the given {@code array} but
      * specified {@code length}, truncating or padding with zeros if necessary.
+     * This method returns {@code null} if and only if the given array is {@code null},
+     * in which case the value of the {@code length} argument is ignored.
      *
      * @param  array  Array to resize, or {@code null}.
      * @param  length Length of the desired array.
@@ -236,6 +248,8 @@ public final class XArrays extends Static {
     /**
      * Returns an array containing the same elements as the given {@code array} but
      * specified {@code length}, truncating or padding with zeros if necessary.
+     * This method returns {@code null} if and only if the given array is {@code null},
+     * in which case the value of the {@code length} argument is ignored.
      *
      * @param  array  Array to resize, or {@code null}.
      * @param  length Length of the desired array.
@@ -259,6 +273,8 @@ public final class XArrays extends Static {
     /**
      * Returns an array containing the same elements as the given {@code array} but
      * specified {@code length}, truncating or padding with zeros if necessary.
+     * This method returns {@code null} if and only if the given array is {@code null},
+     * in which case the value of the {@code length} argument is ignored.
      *
      * @param  array  Array to resize, or {@code null}.
      * @param  length Length of the desired array.
@@ -282,6 +298,8 @@ public final class XArrays extends Static {
    /**
      * Returns an array containing the same elements as the given {@code array} but
      * specified {@code length}, truncating or padding with zeros if necessary.
+     * This method returns {@code null} if and only if the given array is {@code null},
+     * in which case the value of the {@code length} argument is ignored.
      *
      * @param  array  Array to resize, or {@code null}.
      * @param  length Length of the desired array.
@@ -305,6 +323,8 @@ public final class XArrays extends Static {
     /**
      * Returns an array containing the same elements as the given {@code array} but
      * specified {@code length}, truncating or padding with {@code false} if necessary.
+     * This method returns {@code null} if and only if the given array is {@code null},
+     * in which case the value of the {@code length} argument is ignored.
      *
      * @param  array  Array to resize, or {@code null}.
      * @param  length Length of the desired array.
