@@ -40,26 +40,26 @@ public class ExtractAllCoordinateReferenceSystemDemo {
         //get allcodes, the EPSG factory contain several types of object, elipsoid, datum, CoordinateSystem, ...
         //we extract each one to make some replacement, to obtain a more compact properties file
         //if you do not care about having something compact, just use the crsCodes
-        final Map<String,String> crsCodes = toWKTMap(factory, factory.getAuthorityCodes(CoordinateReferenceSystem.class));
+        final Map<String,String> allCodes = toWKTMap(factory, factory.getAuthorityCodes(CoordinateReferenceSystem.class));
         final Map<String,String> csaCodes = toWKTMap(factory, factory.getAuthorityCodes(CoordinateSystemAxis.class));
         final Map<String,String> ellipsoidCodes = toWKTMap(factory, factory.getAuthorityCodes(Ellipsoid.class));
         final Map<String,String> datumCodes = toWKTMap(factory, factory.getAuthorityCodes(Datum.class));
         final Map<String,String> pmCodes = toWKTMap(factory, factory.getAuthorityCodes(PrimeMeridian.class));
         
         //pack all objects
-        System.out.println("Compact CRS-CRS");  compact(crsCodes, crsCodes);
-        System.out.println("Compact CRS-CSA");  compact(crsCodes, csaCodes);
-        System.out.println("Compact CRS-ELLIPSOID");  compact(crsCodes, ellipsoidCodes);
-        System.out.println("Compact CRS-DATUM");compact(crsCodes, datumCodes);
-        System.out.println("Compact CRS-PM");   compact(crsCodes, pmCodes);
+        System.out.println("Compact CRS-CRS");  compact(allCodes, allCodes);
+        System.out.println("Compact CRS-DATUM");compact(allCodes, datumCodes);
+        allCodes.putAll(datumCodes);
+        System.out.println("Compact CRS-ELLIPSOID");  compact(allCodes, ellipsoidCodes);
+        allCodes.putAll(ellipsoidCodes);
+        System.out.println("Compact CRS-CSA");  compact(allCodes, csaCodes);
+        allCodes.putAll(csaCodes);
+        System.out.println("Compact CRS-PM");   compact(allCodes, pmCodes);
+        allCodes.putAll(pmCodes);
         
         //store all WKT in a property file
         final Properties values = new Properties();
-        values.putAll(crsCodes);
-        values.putAll(csaCodes);
-        values.putAll(ellipsoidCodes);
-        values.putAll(datumCodes);
-        values.putAll(pmCodes);
+        values.putAll(allCodes);
         
         //write the file
         final File file = new File("epsg.properties");
@@ -79,7 +79,7 @@ public class ExtractAllCoordinateReferenceSystemDemo {
         for(final String code : codes){
                         
             try{
-                final IdentifiedObject obj = factory.createCoordinateReferenceSystem(code);
+                final IdentifiedObject obj = factory.createObject(code);
                 final String wkt = ((FormattableObject)obj).toWKT(Convention.OGC,WKTFormat.SINGLE_LINE);
                 map.put(code, wkt);
             }catch(Exception ex){
