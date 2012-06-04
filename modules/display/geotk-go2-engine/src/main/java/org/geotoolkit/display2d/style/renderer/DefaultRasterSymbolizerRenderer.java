@@ -154,9 +154,9 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         } catch(Exception ex){
             //several kind of errors can happen here, we catch anything to avoid blocking the map component.
             monitor.exceptionOccured(
-                new IllegalStateException("Coverage is not in the requested CRS, found : " +
-                "\n"+ coverageCRS +
-                " was expecting : \n" +
+                new IllegalStateException("Coverage is not in the requested CRS, found : \n" +
+                coverageCRS +
+                "\n Was expecting : \n" +
                 renderingContext.getObjectiveCRS() +
                 "\nOriginal Cause:"+ ex.getMessage(), ex), Level.WARNING);
             return;
