@@ -26,9 +26,7 @@ import net.jcip.annotations.Immutable;
 import org.opengis.referencing.cs.VerticalCS;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
-import org.opengis.geometry.MismatchedDimensionException;
 
-import org.geotoolkit.measure.Measure;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.internal.referencing.AxisDirections;
 
@@ -169,22 +167,5 @@ public class DefaultVerticalCS extends AbstractCS implements VerticalCS {
     @Override
     protected boolean isCompatibleDirection(final AxisDirection direction) {
         return AxisDirection.UP.equals(AxisDirections.absolute(direction));
-    }
-
-    /**
-     * Computes the distance between two points.
-     *
-     * @param  coord1 Coordinates of the first point.
-     * @param  coord2 Coordinates of the second point.
-     * @return The distance between {@code coord1} and {@code coord2}.
-     * @throws MismatchedDimensionException if a coordinate doesn't have the expected dimension.
-     */
-    @Override
-    public Measure distance(final double[] coord1, final double[] coord2)
-            throws MismatchedDimensionException
-    {
-        ensureDimensionMatch("coord1", coord1);
-        ensureDimensionMatch("coord2", coord2);
-        return new Measure(Math.abs(coord1[0] - coord2[0]), getDistanceUnit());
     }
 }

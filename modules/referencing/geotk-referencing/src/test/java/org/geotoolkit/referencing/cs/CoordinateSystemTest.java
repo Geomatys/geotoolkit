@@ -166,10 +166,12 @@ public final strictfp class CoordinateSystemTest extends ReferencingTestBase {
     }
 
     /**
-     * Tests {@link AbstractCS#axisUsingUnit}.
+     * Tests {@link AbstractCS#axisUsingUnit(Unit)}.
+     *
+     * @throws ConversionException Should not happen.
      */
     @Test
-    public void testAxisUsingUnit() {
+    public void testAxisUsingUnit() throws ConversionException {
         assertNull("Should detect that no axis change is needed", PROJECTED.axisUsingUnit(METRE));
         final CoordinateSystemAxis[] axis = PROJECTED.axisUsingUnit(KILOMETRE);
         assertNotNull(axis);

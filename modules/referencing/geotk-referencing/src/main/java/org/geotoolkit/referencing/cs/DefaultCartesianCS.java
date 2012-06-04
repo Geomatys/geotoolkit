@@ -31,6 +31,8 @@ import org.opengis.referencing.cs.CartesianCS;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.geometry.MismatchedDimensionException;
 
+import org.geotoolkit.math.XMath;
+import org.geotoolkit.measure.Units;
 import org.geotoolkit.measure.Measure;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
@@ -54,7 +56,7 @@ import org.geotoolkit.referencing.IdentifiedObjects;
  * </TD></TR></TABLE>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @see DefaultAffineCS
  *
@@ -143,9 +145,15 @@ public class DefaultCartesianCS extends DefaultAffineCS implements CartesianCS {
                     DefaultCoordinateSystemAxis.DISPLAY_Y);
 
     /**
+     * The unit for measuring distance in this coordinate system, or {@code null} if none.
+     * Will be computed only when first needed.
+     */
+    private transient volatile Unit<?> distanceUnit;
+
+    /**
      * Converters from {@linkplain CoordinateSystemAxis#getUnit axis units} to
-     * {@linkplain #getDistanceUnit distance unit}. Will be constructed only when
-     * first needed.
+     * {@linkplain #getDistanceUnit() distance unit}. Will be constructed only
+     * when first needed.
      */
     private transient volatile UnitConverter[] converters;
 
@@ -316,13 +324,38 @@ public class DefaultCartesianCS extends DefaultAffineCS implements CartesianCS {
             }
             this.converters = converters;
         }
-        double sum = 0;
+        final double[] delta = new double[converters.length];
         for (int i=0; i<converters.length; i++) {
             final UnitConverter  c = converters[i];
-            final double delta = c.convert(coord1[i]) - c.convert(coord2[i]);
-            sum += delta*delta;
+            delta[i] = c.convert(coord1[i]) - c.convert(coord2[i]);
         }
-        return new Measure(Math.sqrt(sum), unit);
+        return new Measure(XMath.magnitude(delta), unit);
+    }
+
+    /**
+     * Suggests an unit for measuring distances in this coordinate system. The default
+     * implementation scans all {@linkplain CoordinateSystemAxis#getUnit() axis units},
+     * then returns the "largest" one (e.g. kilometre instead of metre).
+     *
+     * @return Suggested distance unit.
+     */
+    private Unit<?> getDistanceUnit() {
+        Unit<?> unit = distanceUnit;  // Avoid the need for synchronization.
+        if (unit == null) {
+            double maxScale = 0;
+            for (int i=getDimension(); --i>=0;) {
+                final Unit<?> candidate = getAxis(i).getUnit();
+                if (candidate != null) {
+                    final double scale = Math.abs(Units.toStandardUnit(candidate));
+                    if (scale > maxScale) {
+                        unit = candidate;
+                        maxScale = scale;
+                    }
+                }
+            }
+            distanceUnit = unit;
+        }
+        return unit;
     }
 
     /**
@@ -337,10 +370,15 @@ public class DefaultCartesianCS extends DefaultAffineCS implements CartesianCS {
      */
     @Override
     public DefaultCartesianCS usingUnit(final Unit<?> unit) throws IllegalArgumentException {
-        final CoordinateSystemAxis[] axis = axisUsingUnit(unit);
-        if (axis == null) {
+        final CoordinateSystemAxis[] axes;
+        try {
+            axes = axisUsingUnit(unit);
+        } catch (ConversionException e) {
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.INCOMPATIBLE_UNIT_$1, unit), e);
+        }
+        if (axes == null) {
             return this;
         }
-        return new DefaultCartesianCS(IdentifiedObjects.getProperties(this, null), axis);
+        return new DefaultCartesianCS(IdentifiedObjects.getProperties(this, null), axes);
     }
 }

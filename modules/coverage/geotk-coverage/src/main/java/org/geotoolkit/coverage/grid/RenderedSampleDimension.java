@@ -388,7 +388,7 @@ final class RenderedSampleDimension extends GridSampleDimension {
                 }
                 name = untitled;
                 if (numBands != 1) {
-                    name = Vocabulary.formatInternational(Vocabulary.Keys.HYPHEN_$2, name, (numBands+1));
+                    name = Vocabulary.formatInternational(Vocabulary.Keys.HYPHEN_$2, name, (b+1));
                 }
             }
             NumberRange<?> sourceRange = TypeMap.getRange(sourceType);

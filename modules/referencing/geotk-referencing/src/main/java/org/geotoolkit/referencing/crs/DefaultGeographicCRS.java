@@ -64,7 +64,7 @@ import org.geotoolkit.measure.Units;
  * </TD></TR></TABLE>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @since 1.2
  * @module
@@ -141,6 +141,23 @@ public class DefaultGeographicCRS extends AbstractSingleCRS implements Geographi
     public static final DefaultGeographicCRS SPHERE = new DefaultGeographicCRS(
             IdentifiedObjects.getProperties(DefaultGeodeticDatum.SPHERE),
             DefaultGeodeticDatum.SPHERE, DefaultEllipsoidalCS.GEODETIC_2D);
+
+    /**
+     * A coordinate reference system equivalent to this one, except for a shift in the range of
+     * longitude values. This field is computed by {@link #shiftLongitudeRange(boolean)} when
+     * first needed.
+     *
+     * @since 3.20
+     */
+    private transient DefaultGeographicCRS shifted;
+
+    /**
+     * +1 if the longitude range is positive, -1 if negative and positive, or 0 if not yet
+     * determined. This field is computed together with the {@link #shifted} field.
+     *
+     * @since 3.20
+     */
+    private transient byte longitudeRangeType;
 
     /**
      * Constructs a new object in which every attributes are set to a default value.
@@ -273,8 +290,6 @@ public class DefaultGeographicCRS extends AbstractSingleCRS implements Geographi
     public Measure distance(final double[] coord1, final double[] coord2)
             throws UnsupportedOperationException, MismatchedDimensionException
     {
-        final DefaultEllipsoidalCS cs;
-        final DefaultEllipsoid e;
         final CoordinateSystem coordinateSystem = getCoordinateSystem();
         if (!(coordinateSystem instanceof DefaultEllipsoidalCS)) {
             throw new UnsupportedImplementationException(coordinateSystem.getClass());
@@ -283,8 +298,8 @@ public class DefaultGeographicCRS extends AbstractSingleCRS implements Geographi
         if (!(ellipsoid instanceof DefaultEllipsoid)) {
             throw new UnsupportedImplementationException(ellipsoid.getClass());
         }
-        cs = (DefaultEllipsoidalCS) coordinateSystem;
-        e  = (DefaultEllipsoid)     ellipsoid;
+        final DefaultEllipsoidalCS cs = (DefaultEllipsoidalCS) coordinateSystem;
+        final DefaultEllipsoid     e  = (DefaultEllipsoid)     ellipsoid;
         if (coord1.length!=2 || coord2.length!=2 || cs.getDimension()!=2) {
             /*
              * Not yet implemented (an exception will be thrown later).
@@ -318,6 +333,44 @@ public class DefaultGeographicCRS extends AbstractSingleCRS implements Geographi
     }
 
     /**
+     * Returns a coordinate reference system with the same axes than this CRS, except that the
+     * longitude axis is shifted to a positive or negative range. This method can be used in
+     * order to shift between the [-180 … +180]° and [0 … 360]° ranges.
+     * <p>
+     * This method shifts the axis {@linkplain CoordinateSystemAxis#getMinimumValue() minimum}
+     * and {@linkplain CoordinateSystemAxis#getMaximumValue() maximum} values by a multiple of
+     * 180°, converted to the units of the axis.
+     *
+     * @param  positive {@code true} for a range of positive longitude values, or {@code false}
+     *         for a range of positive and negative longitude values.
+     * @return A coordinate reference system using the given kind of longitude range
+     *         (may be {@code this}).
+     *
+     * @see org.geotoolkit.referencing.cs.DefaultEllipsoidalCS#shiftLongitudeRange(boolean)
+     *
+     * @since 3.20
+     */
+    public synchronized DefaultGeographicCRS shiftLongitudeRange(final boolean positive) {
+        final byte requested = (byte) (positive ? +1 : -1);
+        if (longitudeRangeType == requested) {
+            return this;
+        }
+        if (longitudeRangeType == 0 || shifted == null) {
+            final DefaultEllipsoidalCS cs  = DefaultEllipsoidalCS.castOrCopy(getCoordinateSystem());
+            final DefaultEllipsoidalCS css = cs.shiftLongitudeRange(positive);
+            if (cs == css) {
+                longitudeRangeType = requested;
+                return this;
+            }
+            shifted = new DefaultGeographicCRS(IdentifiedObjects.getProperties(this, null), getDatum(), css);
+            shifted.longitudeRangeType = requested;
+            shifted.shifted = this;
+            longitudeRangeType = (byte) -requested;
+        }
+        return shifted;
+    }
+
+    /**
      * Formats the inner part of a
      * <A HREF="http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html#GEOGCS"><cite>Well
      * Known Text</cite> (WKT)</A> element.
@@ -334,9 +387,10 @@ public class DefaultGeographicCRS extends AbstractSingleCRS implements Geographi
         formatter.append(datum);
         formatter.append(datum.getPrimeMeridian());
         formatter.append(unit);
-        final int dimension = getDimension();
+        final EllipsoidalCS cs = getCoordinateSystem();
+        final int dimension = cs.getDimension();
         for (int i=0; i<dimension; i++) {
-            formatter.append(getAxis(i));
+            formatter.append(cs.getAxis(i));
         }
         if (!unit.equals(getUnit())) {
             formatter.setInvalidWKT(GeographicCRS.class);

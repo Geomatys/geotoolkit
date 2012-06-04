@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import javax.measure.converter.UnitConverter;
+import javax.measure.converter.ConversionException;
 import javax.measure.quantity.Angle;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
@@ -1211,19 +1212,17 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
     /**
      * Returns a new axis with the same properties than current axis except for the units.
      *
-     * @param newUnit The unit for the new axis.
+     * @param  newUnit The unit for the new axis.
      * @return An axis using the specified unit.
-     * @throws IllegalArgumentException If the specified unit is incompatible with the expected one.
+     * @throws ConversionException If the specified unit is incompatible with the expected one.
      */
-    final DefaultCoordinateSystemAxis usingUnit(final Unit<?> newUnit) throws IllegalArgumentException {
+    final DefaultCoordinateSystemAxis usingUnit(final Unit<?> newUnit) throws ConversionException {
         if (unit.equals(newUnit)) {
             return this;
         }
-        if (unit.isCompatible(newUnit)) {
-            return new DefaultCoordinateSystemAxis(IdentifiedObjects.getProperties(this, null),
-                       abbreviation, direction, newUnit, minimum, maximum, rangeMeaning);
-        }
-        throw new IllegalArgumentException(Errors.format(Errors.Keys.INCOMPATIBLE_UNIT_$1, newUnit));
+        final UnitConverter converter = unit.getConverterToAny(newUnit);
+        return new DefaultCoordinateSystemAxis(IdentifiedObjects.getProperties(this, null),
+                    abbreviation, direction, newUnit, converter.convert(minimum), converter.convert(maximum), rangeMeaning);
     }
 
     /**

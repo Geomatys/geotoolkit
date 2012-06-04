@@ -156,7 +156,11 @@ public class AbstractSingleCRS extends AbstractCRS implements SingleCRS {
      * CoordinateSystem#getDimension getDimension}()</code>.
      *
      * @return The dimension of this coordinate reference system.
+     *
+     * @deprecated The implementation-independent {@link CoordinateSystem#getDimension()}
+     *             method is preferred.
      */
+    @Deprecated
     public int getDimension() {
         return super.getCoordinateSystem().getDimension();
     }
@@ -169,7 +173,11 @@ public class AbstractSingleCRS extends AbstractCRS implements SingleCRS {
      * @param  dimension The zero based index of axis.
      * @return The axis at the specified dimension.
      * @throws IndexOutOfBoundsException if {@code dimension} is out of bounds.
+     *
+     * @deprecated The implementation-independent {@link CoordinateSystem#getAxis(int)}
+     *             method is preferred.
      */
+    @Deprecated
     public CoordinateSystemAxis getAxis(int dimension) throws IndexOutOfBoundsException {
         return super.getCoordinateSystem().getAxis(dimension);
     }

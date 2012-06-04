@@ -25,9 +25,6 @@ import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.cs.LinearCS;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
-import org.opengis.geometry.MismatchedDimensionException;
-
-import org.geotoolkit.measure.Measure;
 
 
 /**
@@ -118,22 +115,5 @@ public class DefaultLinearCS extends AbstractCS implements LinearCS {
     public static DefaultLinearCS castOrCopy(final LinearCS object) {
         return (object == null) || (object instanceof DefaultLinearCS)
                 ? (DefaultLinearCS) object : new DefaultLinearCS(object);
-    }
-
-    /**
-     * Computes the distance between two points.
-     *
-     * @param  coord1 Coordinates of the first point.
-     * @param  coord2 Coordinates of the second point.
-     * @return The distance between {@code coord1} and {@code coord2}.
-     * @throws MismatchedDimensionException if a coordinate doesn't have the expected dimension.
-     */
-    @Override
-    public Measure distance(final double[] coord1, final double[] coord2)
-            throws MismatchedDimensionException
-    {
-        ensureDimensionMatch("coord1", coord1);
-        ensureDimensionMatch("coord2", coord2);
-        return new Measure(Math.abs(coord1[0] - coord2[0]), getDistanceUnit());
     }
 }

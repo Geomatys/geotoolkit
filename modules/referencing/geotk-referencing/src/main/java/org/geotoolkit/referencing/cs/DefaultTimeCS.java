@@ -29,9 +29,7 @@ import org.opengis.referencing.cs.TimeCS;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.util.InternationalString;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
-import org.opengis.geometry.MismatchedDimensionException;
 
-import org.geotoolkit.measure.Measure;
 import org.geotoolkit.measure.Units;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.referencing.AxisDirections;
@@ -196,22 +194,5 @@ public class DefaultTimeCS extends AbstractCS implements TimeCS {
     @Override
     protected boolean isCompatibleUnit(final AxisDirection direction, final Unit<?> unit) {
         return SI.SECOND.isCompatible(unit);
-    }
-
-    /**
-     * Computes the time difference between two points.
-     *
-     * @param  coord1 Coordinates of the first point.
-     * @param  coord2 Coordinates of the second point.
-     * @return The time difference between {@code coord1} and {@code coord2}.
-     * @throws MismatchedDimensionException if a coordinate doesn't have the expected dimension.
-     */
-    @Override
-    public Measure distance(final double[] coord1, final double[] coord2)
-            throws MismatchedDimensionException
-    {
-        ensureDimensionMatch("coord1", coord1);
-        ensureDimensionMatch("coord2", coord2);
-        return new Measure(Math.abs(coord1[0] - coord2[0]), getDistanceUnit());
     }
 }

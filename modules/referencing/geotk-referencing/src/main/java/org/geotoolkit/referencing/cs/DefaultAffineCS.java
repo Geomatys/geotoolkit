@@ -23,6 +23,7 @@ package org.geotoolkit.referencing.cs;
 import java.util.Map;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
+import javax.measure.converter.ConversionException;
 import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.cs.AffineCS;
@@ -32,6 +33,7 @@ import org.opengis.referencing.cs.CoordinateSystemAxis;
 
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.internal.referencing.AxisDirections;
+import org.geotoolkit.resources.Errors;
 
 
 /**
@@ -212,10 +214,15 @@ public class DefaultAffineCS extends AbstractCS implements AffineCS {
      * @since 3.00
      */
     public DefaultAffineCS usingUnit(final Unit<?> unit) throws IllegalArgumentException {
-        final CoordinateSystemAxis[] axis = axisUsingUnit(unit);
-        if (axis == null) {
+        final CoordinateSystemAxis[] axes;
+        try {
+            axes = axisUsingUnit(unit);
+        } catch (ConversionException e) {
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.INCOMPATIBLE_UNIT_$1, unit), e);
+        }
+        if (axes == null) {
             return this;
         }
-        return new DefaultAffineCS(IdentifiedObjects.getProperties(this, null), axis);
+        return new DefaultAffineCS(IdentifiedObjects.getProperties(this, null), axes);
     }
 }

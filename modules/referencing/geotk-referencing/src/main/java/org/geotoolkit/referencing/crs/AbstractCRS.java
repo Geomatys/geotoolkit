@@ -163,7 +163,7 @@ public abstract class AbstractCRS extends AbstractReferenceSystem implements Coo
 
     /**
      * Computes the distance between two points. This convenience method delegates the work to
-     * the underlyling {@linkplain AbstractCS coordinate system}, if possible.
+     * the underlying {@linkplain AbstractCS coordinate system}, if possible.
      *
      * @param  coord1 Coordinates of the first point.
      * @param  coord2 Coordinates of the second point.
