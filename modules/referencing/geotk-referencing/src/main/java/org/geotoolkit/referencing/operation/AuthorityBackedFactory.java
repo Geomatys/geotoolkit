@@ -45,7 +45,7 @@ import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.referencing.operation.transform.EllipsoidalTransform;
 import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
-import org.geotoolkit.referencing.factory.OptionalFactoryOperationException;
+import org.geotoolkit.referencing.factory.NoSuchIdentifiedResource;
 import org.geotoolkit.util.collection.BackingStoreException;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Descriptions;
@@ -780,7 +780,7 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
      * @param factory The factory used in the attempt to create an operation.
      */
     private static void log(final Throwable exception, final AuthorityFactory factory) {
-        log(Level.WARNING, exception, factory, exception instanceof OptionalFactoryOperationException);
+        log(Level.WARNING, exception, factory, exception instanceof NoSuchIdentifiedResource);
     }
 
     /**

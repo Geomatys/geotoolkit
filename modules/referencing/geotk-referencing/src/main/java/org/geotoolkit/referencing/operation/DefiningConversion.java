@@ -40,9 +40,9 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * derived CRS} (including projections). This conversion has no source and target CRS, and no math
  * transform. Those elements are created by the derived CRS itself.
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Matthias Basler
- * @version 3.00
+ * @version 3.20
  *
  * @see org.opengis.referencing.operation.CoordinateOperationFactory#createDefiningConversion
  *
@@ -55,11 +55,6 @@ public class DefiningConversion extends DefaultConversion {
      * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 7399026512478064721L;
-
-    /**
-     * The parameter values.
-     */
-    private final ParameterValueGroup parameters;
 
     /**
      * Convenience constructor for creating a defining conversion with a default operation method.
@@ -123,7 +118,6 @@ public class DefiningConversion extends DefaultConversion {
                               final MathTransform   transform)
     {
         super(properties, null, null, transform, method);
-        parameters = null;
     }
 
     /**
@@ -136,14 +130,6 @@ public class DefiningConversion extends DefaultConversion {
         if (transform == null) {
             super.validate();
         }
-    }
-
-    /**
-     * Returns the parameter values.
-     */
-    @Override
-    public ParameterValueGroup getParameterValues() {
-        return (parameters != null) ? parameters.clone() : super.getParameterValues();
     }
 
     /**

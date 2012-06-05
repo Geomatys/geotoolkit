@@ -580,7 +580,7 @@ public class PositionVector7Param extends MathTransformProvider {
 
     /**
      * Concatenates the supplied transform with an "ellipsoid to geocentric" or a
-     * "geocentric to ellipsod" step, if needed.
+     * "geocentric to ellipsoid" step, if needed.
      */
     private static MathTransform concatenate(final MathTransform transform,
             final ParameterValueGroup values,

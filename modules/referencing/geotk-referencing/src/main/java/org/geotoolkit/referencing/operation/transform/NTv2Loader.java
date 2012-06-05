@@ -41,7 +41,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Descriptions;
 import org.geotoolkit.io.ContentFormatException;
 import org.geotoolkit.internal.io.IOUtilities;
-import org.geotoolkit.referencing.factory.OptionalFactoryOperationException;
+import org.geotoolkit.referencing.factory.NoSuchIdentifiedResource;
 
 import static org.geotoolkit.internal.io.Installation.NTv2;
 
@@ -188,7 +188,7 @@ final class NTv2Loader extends GridLoader {
                     "NTv2", NTv2.directory(true), "geotk-setup");
             final FactoryException ex;
             if (cause instanceof FileNotFoundException) {
-                ex = new OptionalFactoryOperationException(message, cause);
+                ex = new NoSuchIdentifiedResource(message, gridFile, cause);
             } else {
                 ex = new FactoryException(message, cause);
             }
