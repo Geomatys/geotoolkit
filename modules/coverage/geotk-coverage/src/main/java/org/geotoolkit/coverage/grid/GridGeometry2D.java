@@ -284,7 +284,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
      * PixelOrientation} argument, the translation (if any) applies to every dimensions, not just
      * the ones mapping the 2D part.
      *
-     * @param  extent   The extent of grid coordinates in a grid coverage, or {@code null} if none.
+     * @param extent    The extent of grid coordinates in a grid coverage, or {@code null} if none.
      * @param anchor    Whatever the {@code gridToCRS} transform maps
      *                  {@linkplain PixelInCell#CELL_CENTER cell center} (OGC convention) or
      *                  {@linkplain PixelInCell#CELL_CORNER cell corner} (Java2D/JAI convention).
@@ -293,7 +293,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
      * @param crs       The coordinate reference system for the "real world" coordinates, or
      *                  {@code null} if unknown. This CRS is given to the
      *                  {@linkplain #getEnvelope envelope}.
-     * @param  hints    An optional set of hints controlling the {@link DimensionFilter} to be
+     * @param hints     An optional set of hints controlling the {@link DimensionFilter} to be
      *                  used for deriving the {@link MathTransform2D} instance from the given
      *                  {@code gridToCRS} transform.
      *

@@ -23,6 +23,7 @@ import org.geotoolkit.test.referencing.ReferencingTestBase;
 import org.junit.*;
 
 import static org.geotoolkit.referencing.Assert.*;
+import static org.geotoolkit.referencing.cs.AxisRangeType.*;
 
 
 /**
@@ -35,7 +36,7 @@ import static org.geotoolkit.referencing.Assert.*;
  */
 public final strictfp class EllipsoidalTest extends ReferencingTestBase {
     /**
-     * Tests the {@link DefaultEllipsoidalCS#shiftLongitudeRange(boolean)} method.
+     * Tests the {@link DefaultEllipsoidalCS#shiftAxisRange(AxisRangeType)} method.
      */
     @Test
     public void testShiftLongitudeRange() {
@@ -43,20 +44,20 @@ public final strictfp class EllipsoidalTest extends ReferencingTestBase {
         assertEquals("longitude.minimumValue", -180.0, cs.getAxis(0).getMinimumValue(), 0.0);
         assertEquals("longitude.maximumValue", +180.0, cs.getAxis(0).getMaximumValue(), 0.0);
 
-        assertSame("Expected a no-op.", cs,  cs.shiftLongitudeRange(false));
-        final DefaultEllipsoidalCS shifted = cs.shiftLongitudeRange(true);
+        assertSame("Expected a no-op.", cs,  cs.shiftAxisRange(SPANNING_ZERO_LONGITUDE));
+        final DefaultEllipsoidalCS shifted = cs.shiftAxisRange(POSITIVE_LONGITUDE);
         assertNotSame("Expected a new CS.", cs, shifted);
         Validators.validate(shifted);
 
         assertEquals("longitude.minimumValue",      0.0, shifted.getAxis(0).getMinimumValue(), 0.0);
         assertEquals("longitude.maximumValue",    360.0, shifted.getAxis(0).getMaximumValue(), 0.0);
-        assertSame("Expected a no-op.",         shifted, shifted.shiftLongitudeRange(true));
-        assertSame("Expected the original CS.", cs,      shifted.shiftLongitudeRange(false));
-        assertSame("Expected cached instance.", shifted, cs     .shiftLongitudeRange(true));
+        assertSame("Expected a no-op.",         shifted, shifted.shiftAxisRange(POSITIVE_LONGITUDE));
+        assertSame("Expected the original CS.", cs,      shifted.shiftAxisRange(SPANNING_ZERO_LONGITUDE));
+        assertSame("Expected cached instance.", shifted, cs     .shiftAxisRange(POSITIVE_LONGITUDE));
     }
 
     /**
-     * Tests the {@link DefaultEllipsoidalCS#shiftLongitudeRange(boolean)} method
+     * Tests the {@link DefaultEllipsoidalCS#shiftAxisRange(boolean)} method
      * with grad units.
      */
     @Test
@@ -65,15 +66,15 @@ public final strictfp class EllipsoidalTest extends ReferencingTestBase {
         assertEquals("longitude.minimumValue", -200.0, cs.getAxis(0).getMinimumValue(), 0.0);
         assertEquals("longitude.maximumValue", +200.0, cs.getAxis(0).getMaximumValue(), 0.0);
 
-        assertSame("Expected a no-op.", cs,  cs.shiftLongitudeRange(false));
-        final DefaultEllipsoidalCS shifted = cs.shiftLongitudeRange(true);
+        assertSame("Expected a no-op.", cs,  cs.shiftAxisRange(SPANNING_ZERO_LONGITUDE));
+        final DefaultEllipsoidalCS shifted = cs.shiftAxisRange(POSITIVE_LONGITUDE);
         assertNotSame("Expected a new CS.", cs, shifted);
         Validators.validate(shifted);
 
         assertEquals("longitude.minimumValue",      0.0, shifted.getAxis(0).getMinimumValue(), 0.0);
         assertEquals("longitude.maximumValue",    400.0, shifted.getAxis(0).getMaximumValue(), 0.0);
-        assertSame("Expected a no-op.",         shifted, shifted.shiftLongitudeRange(true));
-        assertSame("Expected the original CS.", cs,      shifted.shiftLongitudeRange(false));
-        assertSame("Expected cached instance.", shifted, cs     .shiftLongitudeRange(true));
+        assertSame("Expected a no-op.",         shifted, shifted.shiftAxisRange(POSITIVE_LONGITUDE));
+        assertSame("Expected the original CS.", cs,      shifted.shiftAxisRange(SPANNING_ZERO_LONGITUDE));
+        assertSame("Expected cached instance.", shifted, cs     .shiftAxisRange(POSITIVE_LONGITUDE));
     }
 }

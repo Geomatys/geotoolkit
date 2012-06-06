@@ -1293,6 +1293,12 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
     final boolean equals(final DefaultCoordinateSystemAxis that,
                          final boolean compareMetadata, final boolean compareUnit)
     {
+        /*
+         * It is important to NOT compare the minimum and maximum values when we are in
+         * "ignore metadata" mode,  because we want CRS with a [-180 … +180]° longitude
+         * range to be considered equivalent, from a coordinate transformation point of
+         * view, to a CRS with a [0…360]° longitude range.
+         */
         if (compareMetadata) {
             if (!Objects.equals(this.abbreviation, that.abbreviation) ||
                 !Objects.equals(this.rangeMeaning, that.rangeMeaning) ||

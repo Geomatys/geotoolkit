@@ -84,6 +84,24 @@ public final class CRSUtilities extends Static {
     public static final String PARAMETERS_KEY = "parameters";
 
     /**
+     * Number of {@link org.geotoolkit.referencing.cs.AxisRangeType} values.
+     * This is defined in order to avoid creating a useless array of enumeration
+     * just for determining its length.
+     *
+     * @since 3.20
+     */
+    public static final int AXIS_RANGE_COUNT = 2;
+
+    /**
+     * Mask to apply on the {@link org.geotoolkit.referencing.cs.AxisRangeType} ordinate
+     * value in order to have the "opposite" enum. The opposite of {@code POSITIVE_LONGITUDE}
+     * is {@code SPANNING_ZERO_LONGITUDE}, and conversely.
+     *
+     * @since 3.20
+     */
+    public static final int AXIS_RANGE_RECIPROCAL_MASK = 1;
+
+    /**
      * Do not allow creation of instances of this class.
      */
     private CRSUtilities() {
@@ -111,46 +129,6 @@ public final class CRSUtilities extends Static {
     }
 
     /**
-     * Returns the dimension within the coordinate system of the first occurrence of an axis
-     * colinear with the specified axis. If an axis with the same
-     * {@linkplain CoordinateSystemAxis#getDirection direction} or an
-     * {@linkplain AxisDirections#opposite opposite} direction than {@code axis}
-     * occurs in the coordinate system, then the dimension of the first such occurrence
-     * is returned. That is, the value <var>k</var> such that:
-     *
-     * {@preformat java
-     *     absolute(cs.getAxis(k).getDirection()) == absolute(axis.getDirection())
-     * }
-     *
-     * is {@code true}. If no such axis occurs in this coordinate system,
-     * then {@code -1} is returned.
-     * <p>
-     * For example, {@code dimensionColinearWith(DefaultCoordinateSystemAxis.TIME)}
-     * returns the dimension number of time axis.
-     *
-     * @param  cs   The coordinate system to examine.
-     * @param  axis The axis to look for.
-     * @return The dimension number of the specified axis, or {@code -1} if none.
-     */
-    public static int dimensionColinearWith(final CoordinateSystem     cs,
-                                            final CoordinateSystemAxis axis)
-    {
-        int candidate = -1;
-        final int dimension = cs.getDimension();
-        final AxisDirection direction = AxisDirections.absolute(axis.getDirection());
-        for (int i=0; i<dimension; i++) {
-            final CoordinateSystemAxis xi = cs.getAxis(i);
-            if (direction.equals(AxisDirections.absolute(xi.getDirection()))) {
-                candidate = i;
-                if (axis.equals(xi)) {
-                    break;
-                }
-            }
-        }
-        return candidate;
-    }
-
-    /**
      * Returns the index of the first dimension in {@code fullCS} where axes colinear with
      * the {@code subCS} axes are found. If no such dimension is found, returns -1.
      *
@@ -162,7 +140,7 @@ public final class CRSUtilities extends Static {
      * @since 3.10
      */
     public static int dimensionColinearWith(final CoordinateSystem fullCS, final CoordinateSystem subCS) {
-        final int dim = dimensionColinearWith(fullCS, subCS.getAxis(0));
+        final int dim = AxisDirections.indexOf(fullCS, subCS.getAxis(0).getDirection());
         if (dim >= 0) {
             int i = subCS.getDimension();
             if (dim + i <= fullCS.getDimension()) {

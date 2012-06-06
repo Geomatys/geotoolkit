@@ -62,7 +62,7 @@ import org.geotoolkit.referencing.operation.matrix.XMatrix;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Sam Hiatt
- * @version 3.16
+ * @version 3.20
  *
  * @since 3.10 (derived from Seagis)
  * @module
@@ -74,11 +74,6 @@ final class GridGeometryEntry extends DefaultEntry {
     private static final long serialVersionUID = -3529884841649813534L;
 
     /**
-     * Small tolerance factor for comparisons of floating point values.
-     */
-    static final double EPS = 1E-8;
-
-    /**
      * The spatial reference systems. Typically many grid geometries will share the same
      * instance of {@link SpatialRefSysEntry}.
      */
@@ -88,7 +83,7 @@ final class GridGeometryEntry extends DefaultEntry {
      * The immutable grid geometry, which may be 2D, 3D or 4D. The coordinate reference system is
      * the one declared in the {@link GridGeometryTable} for that entry. The envelope must include
      * the vertical range if any. If there is a temporal dimension, then the temporal extent must be
-     * presents as well but may be invalid (the exact value will be set on an coverage-by-coverage
+     * present as well but may be invalid (the exact value will be set on an coverage-by-coverage
      * basis).
      */
     final GeneralGridGeometry geometry;
@@ -134,6 +129,14 @@ final class GridGeometryEntry extends DefaultEntry {
      * increasing order.
      */
     private final boolean verticalOrdinatesSorted;
+
+    /**
+     * {@code true} if the grid geometry needs longitude values in the [0…360]° range
+     * instead than the default [-180 … 180]° range.
+     *
+     * @since 3.20
+     */
+    private final boolean needsLongitudeShift;
 
     /**
      * Creates an entry from the given grid geometry. This constructor does not clone
@@ -196,9 +199,10 @@ final class GridGeometryEntry extends DefaultEntry {
         /*
          * Create the geometry and the envelope.
          */
-        geometry = srsEntry.createGridGeometry(size, gridToCRS, verticalOrdinates, mtFactory, true);
+        needsLongitudeShift = srsEntry.needsLongitudeShift(size, gridToCRS);
+        geometry = srsEntry.createGridGeometry(size, gridToCRS, verticalOrdinates, mtFactory, true, needsLongitudeShift);
         if (srsEntry.temporalCRS != null) {
-            spatialGeometry = srsEntry.createGridGeometry(size, gridToCRS, verticalOrdinates, mtFactory, false);
+            spatialGeometry = srsEntry.createGridGeometry(size, gridToCRS, verticalOrdinates, mtFactory, false, needsLongitudeShift);
         } else {
             spatialGeometry = geometry;
         }
@@ -229,12 +233,14 @@ final class GridGeometryEntry extends DefaultEntry {
 
     /**
      * Returns the coordinate reference system. May be up to 4-dimensional.
+     * This CRS is used by {@link GridCoverageEntry#getGridGeometry()} in order
+     * to build a {@link GeneralGridGeometry} specific to each coverage entry.
      *
      * @param includeTime {@code true} if the CRS should include the time component,
      *        or {@code false} for a spatial-only CRS.
      */
     public CoordinateReferenceSystem getSpatioTemporalCRS(final boolean includeTime) {
-        final CoordinateReferenceSystem crs = srsEntry.getSpatioTemporalCRS(includeTime);
+        final CoordinateReferenceSystem crs = srsEntry.getSpatioTemporalCRS(includeTime, needsLongitudeShift);
         assert !includeTime || crs.equals(geometry.getCoordinateReferenceSystem()) : crs;
         return crs;
     }
@@ -434,7 +440,7 @@ final class GridGeometryEntry extends DefaultEntry {
         if (Arrays.equals(verticalOrdinates, that.verticalOrdinates)) {
             final AbstractEnvelope e1 = (AbstractEnvelope) this.geometry.getEnvelope();
             final AbstractEnvelope e2 = (AbstractEnvelope) that.geometry.getEnvelope();
-            return e1.equals(e2, EPS, true);
+            return e1.equals(e2, SpatialRefSysEntry.EPS, true);
         }
         return false;
     }

@@ -106,7 +106,8 @@ public class DefaultEllipsoidalCS extends AbstractCS implements EllipsoidalCS {
 
     /**
      * A coordinate system equivalent to this one, except for a shift in the range of longitude
-     * values. This field is computed by {@link #shiftLongitudeRange(boolean)} when first needed.
+     * values. This field is computed by {@link #shiftAxisRange(AxisRangeType)} when first
+     * needed.
      *
      * @since 3.20
      */
@@ -201,7 +202,7 @@ public class DefaultEllipsoidalCS extends AbstractCS implements EllipsoidalCS {
     }
 
     /**
-     * For {@link #shiftLongitudeRange(boolean)} and {@link #usingUnit(Unit)} usage only.
+     * For {@link #shiftAxisRange(AxisRangeType)} and {@link #usingUnit(Unit)} usage only.
      */
     private DefaultEllipsoidalCS(final EllipsoidalCS parent, final CoordinateSystemAxis[] axis) {
         super(IdentifiedObjects.getProperties(parent, null), axis);
@@ -360,16 +361,28 @@ public class DefaultEllipsoidalCS extends AbstractCS implements EllipsoidalCS {
      * This method shifts the axis {@linkplain CoordinateSystemAxis#getMinimumValue() minimum}
      * and {@linkplain CoordinateSystemAxis#getMaximumValue() maximum} values by a multiple of
      * 180°, converted to the units of the axis.
+     * <p>
+     * This method does not change the meaning of ordinate values. For example a longitude of
+     * -60° still locate the same longitude in the old and the new coordinate system. But the
+     * preferred way to locate that longitude may become the 300° value if the range has been
+     * shifted to positive values.
      *
-     * @param  positive {@code true} for a range of positive longitude values, or {@code false}
-     *         for a range of positive and negative longitude values.
+     * @param  range {@link AxisRangeType#POSITIVE_LONGITUDE POSITIVE_LONGITUDE} for a range
+     *         of positive longitude values, or {@link AxisRangeType#SPANNING_ZERO_LONGITUDE
+     *         SPANNING_ZERO_LONGITUDE} for a range of positive and negative longitude values.
      * @return A coordinate system using the given kind of longitude range (may be {@code this}).
      *
-     * @see org.geotoolkit.referencing.crs.DefaultGeographicCRS#shiftLongitudeRange(boolean)
+     * @see org.geotoolkit.referencing.crs.DefaultGeographicCRS#shiftAxisRange(AxisRangeType)
      *
      * @since 3.20
      */
-    public synchronized DefaultEllipsoidalCS shiftLongitudeRange(final boolean positive) {
+    public synchronized DefaultEllipsoidalCS shiftAxisRange(final AxisRangeType range) {
+        final boolean positive;
+        switch (range) {
+            case SPANNING_ZERO_LONGITUDE: positive = false; break;
+            case POSITIVE_LONGITUDE:      positive = true;  break;
+            default: return this;
+        }
         if (longitudeConverter == null) {
             updateConverters(); // Compute 'longitudeAxis' too.
         }
@@ -410,21 +423,20 @@ public class DefaultEllipsoidalCS extends AbstractCS implements EllipsoidalCS {
     }
 
     /**
-     * Returns a new coordinate system with the same properties than the current one except for
-     * axis units.
+     * Returns a coordinate system with the same properties than the current one except for
+     * axis units. If this coordinate system already uses the given unit, then this method
+     * returns {@code this}.
      *
      * @param  unit The unit for the new axis.
-     * @return A coordinate system with axis using the specified units.
+     * @return A coordinate system with axis using the specified units, or {@code this}.
      * @throws IllegalArgumentException If the specified unit is incompatible with the expected one.
-     *
-     * @todo Current implementation can't work for 3D coordinate systems.
      *
      * @since 2.2
      */
     public DefaultEllipsoidalCS usingUnit(final Unit<?> unit) throws IllegalArgumentException {
         final CoordinateSystemAxis[] axes;
         try {
-            axes = axisUsingUnit(unit);
+            axes = axisUsingUnit(unit, Units.isLinear(unit) ? SI.RADIAN : SI.METRE);
         } catch (ConversionException e) {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.INCOMPATIBLE_UNIT_$1, unit), e);
         }

@@ -62,6 +62,7 @@ import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.internal.referencing.AxisDirections;
 import org.geotoolkit.resources.Errors;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
@@ -836,8 +837,7 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
         if (crs instanceof GeographicCRS) {
             final CoordinateSystem cs = crs.getCoordinateSystem();
             if (cs.getDimension()  >= 3) {
-                assert CRSUtilities.dimensionColinearWith(cs,
-                        DefaultCoordinateSystemAxis.ELLIPSOIDAL_HEIGHT) >= 0 : cs;
+                assert AxisDirections.indexOf(cs, AxisDirection.UP) >= 0 : cs;
                 return DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT;
             }
         }

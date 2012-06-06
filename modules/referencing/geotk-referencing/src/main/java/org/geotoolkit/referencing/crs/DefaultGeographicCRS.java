@@ -43,10 +43,12 @@ import org.geotoolkit.measure.Measure;
 import org.geotoolkit.metadata.iso.extent.DefaultExtent;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.AbstractReferenceSystem;
+import org.geotoolkit.referencing.cs.AxisRangeType;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
 import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.internal.referencing.AxisDirections;
+import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.util.UnsupportedImplementationException;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.measure.Units;
@@ -143,21 +145,13 @@ public class DefaultGeographicCRS extends AbstractSingleCRS implements Geographi
             DefaultGeodeticDatum.SPHERE, DefaultEllipsoidalCS.GEODETIC_2D);
 
     /**
-     * A coordinate reference system equivalent to this one, except for a shift in the range of
-     * longitude values. This field is computed by {@link #shiftLongitudeRange(boolean)} when
-     * first needed.
+     * Coordinate reference systems equivalent to this one, except for a shift in the range of
+     * longitude values. This field is computed by {@link #shiftAxisRange(AxisRangeType)}
+     * when first needed.
      *
      * @since 3.20
      */
-    private transient DefaultGeographicCRS shifted;
-
-    /**
-     * +1 if the longitude range is positive, -1 if negative and positive, or 0 if not yet
-     * determined. This field is computed together with the {@link #shifted} field.
-     *
-     * @since 3.20
-     */
-    private transient byte longitudeRangeType;
+    private transient DefaultGeographicCRS[] shifted;
 
     /**
      * Constructs a new object in which every attributes are set to a default value.
@@ -340,34 +334,49 @@ public class DefaultGeographicCRS extends AbstractSingleCRS implements Geographi
      * This method shifts the axis {@linkplain CoordinateSystemAxis#getMinimumValue() minimum}
      * and {@linkplain CoordinateSystemAxis#getMaximumValue() maximum} values by a multiple of
      * 180°, converted to the units of the axis.
+     * <p>
+     * This method does not change the meaning of ordinate values. For example a longitude of
+     * -60° still locate the same longitude in the old and the new coordinate system. But the
+     * preferred way to locate that longitude may become the 300° value if the range has been
+     * shifted to positive values.
      *
-     * @param  positive {@code true} for a range of positive longitude values, or {@code false}
-     *         for a range of positive and negative longitude values.
+     * @param  range {@link AxisRangeType#POSITIVE_LONGITUDE POSITIVE_LONGITUDE} for a range
+     *         of positive longitude values, or {@link AxisRangeType#SPANNING_ZERO_LONGITUDE
+     *         SPANNING_ZERO_LONGITUDE} for a range of positive and negative longitude values.
      * @return A coordinate reference system using the given kind of longitude range
      *         (may be {@code this}).
      *
-     * @see org.geotoolkit.referencing.cs.DefaultEllipsoidalCS#shiftLongitudeRange(boolean)
+     * @see org.geotoolkit.referencing.cs.DefaultEllipsoidalCS#shiftAxisRange(AxisRangeType)
+     * @see DefaultCompoundCRS#shiftAxisRange(AxisRangeType)
      *
      * @since 3.20
      */
-    public synchronized DefaultGeographicCRS shiftLongitudeRange(final boolean positive) {
-        final byte requested = (byte) (positive ? +1 : -1);
-        if (longitudeRangeType == requested) {
-            return this;
-        }
-        if (longitudeRangeType == 0 || shifted == null) {
-            final DefaultEllipsoidalCS cs  = DefaultEllipsoidalCS.castOrCopy(getCoordinateSystem());
-            final DefaultEllipsoidalCS css = cs.shiftLongitudeRange(positive);
-            if (cs == css) {
-                longitudeRangeType = requested;
-                return this;
+    public DefaultGeographicCRS shiftAxisRange(final AxisRangeType range) {
+        DefaultGeographicCRS[] shifted;
+        synchronized (this) {
+            shifted = this.shifted;
+            if (shifted == null) {
+                this.shifted = shifted = new DefaultGeographicCRS[CRSUtilities.AXIS_RANGE_COUNT];
             }
-            shifted = new DefaultGeographicCRS(IdentifiedObjects.getProperties(this, null), getDatum(), css);
-            shifted.longitudeRangeType = requested;
-            shifted.shifted = this;
-            longitudeRangeType = (byte) -requested;
         }
-        return shifted;
+        final int ordinal = range.ordinal();
+        DefaultGeographicCRS crs;
+        synchronized (shifted) {
+            crs = shifted[ordinal];
+            if (crs == null) {
+                final DefaultEllipsoidalCS oldCS = DefaultEllipsoidalCS.castOrCopy(getCoordinateSystem());
+                final DefaultEllipsoidalCS newCS = oldCS.shiftAxisRange(range);
+                if (oldCS == newCS) {
+                    crs = this;
+                } else {
+                    crs = new DefaultGeographicCRS(IdentifiedObjects.getProperties(this, null), getDatum(), newCS);
+                    crs.shifted = shifted;
+                    shifted[ordinal ^ CRSUtilities.AXIS_RANGE_RECIPROCAL_MASK] = this;
+                }
+                shifted[ordinal] = crs;
+            }
+        }
+        return crs;
     }
 
     /**

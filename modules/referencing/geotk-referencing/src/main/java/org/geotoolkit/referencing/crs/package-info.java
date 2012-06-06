@@ -40,6 +40,7 @@
  *   <tr><td nowrap>Geographic CRS:&nbsp;</td><td>
  *     {@link org.geotoolkit.referencing.crs.DefaultGeographicCRS#WGS84            WGS84},
  *     {@link org.geotoolkit.referencing.crs.DefaultGeographicCRS#WGS84_3D         WGS84_3D}
+ *     {@link org.geotoolkit.referencing.crs.DefaultGeographicCRS#SPHERE           SPHERE}
  *   </td></tr>
  *   <tr><td nowrap>Geocentric CRS:&nbsp;</td><td>
  *     {@link org.geotoolkit.referencing.crs.DefaultGeocentricCRS#CARTESIAN        CARTESIAN},

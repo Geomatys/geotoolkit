@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Objects;
 
 import org.opengis.referencing.cs.AxisDirection;
+import org.opengis.referencing.cs.CoordinateSystem;
 
 import org.geotoolkit.lang.Static;
 
@@ -32,10 +33,12 @@ import static org.opengis.referencing.cs.AxisDirection.*;
  * Utilities methods related to {@link AxisDirection}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.14
+ * @version 3.20
  *
  * @since 3.13
  * @module
+ *
+ * @todo Consider moving to a public package.
  */
 public final class AxisDirections extends Static {
     /**
@@ -150,5 +153,35 @@ public final class AxisDirections extends Static {
      */
     public static boolean isOpposite(final AxisDirection dir) {
         return Objects.equals(dir, opposite(absolute(dir)));
+    }
+
+    /**
+     * Finds the dimension of an axis having the given direction or its opposite.
+     * If more than one axis has the given direction, only the first occurrence is returned.
+     * If both the given direction and its opposite exist, then the dimension for the given
+     * direction has precedence over the opposite direction.
+     *
+     * @param  cs The coordinate system to inspect, or {@code null}.
+     * @param  direction The direction of the axis to search.
+     * @return The dimension of the axis using the given direction or its opposite, or -1 if none.
+     *
+     * @since 3.20
+     */
+    public static int indexOf(final CoordinateSystem cs, final AxisDirection direction) {
+        int fallback = -1;
+        if (cs != null) {
+            final AxisDirection opposite = opposite(direction);
+            final int dimension = cs.getDimension();
+            for (int i=0; i<dimension; i++) {
+                final AxisDirection d = cs.getAxis(i).getDirection();
+                if (direction.equals(d)) {
+                    return i;
+                }
+                if (fallback < 0 && opposite.equals(d)) {
+                    fallback = i;
+                }
+            }
+        }
+        return fallback;
     }
 }

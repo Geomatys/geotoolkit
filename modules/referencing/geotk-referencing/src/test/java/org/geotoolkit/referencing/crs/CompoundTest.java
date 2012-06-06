@@ -27,26 +27,27 @@ import static org.geotoolkit.referencing.cs.AxisRangeType.*;
 
 
 /**
- * Tests the {@link DefaultGeographicCRS} class.
+ * Tests the {@link DefaultCompoundCRS} class.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.20
  *
  * @since 3.20
  */
-public final strictfp class GeographicTest extends ReferencingTestBase {
+public final strictfp class CompoundTest extends ReferencingTestBase {
     /**
-     * Tests the {@link DefaultGeographicCRS#shiftAxisRange(AxisRangeType)} method.
+     * Tests the {@link DefaultCompoundCRS#shiftAxisRange(AxisRangeType)} method.
      */
     @Test
     public void testShiftLongitudeRange() {
-        final DefaultGeographicCRS crs = DefaultGeographicCRS.WGS84_3D;
+        final DefaultCompoundCRS crs = new DefaultCompoundCRS("Spatio-temporal",
+                DefaultGeographicCRS.WGS84_3D, DefaultTemporalCRS.JULIAN);
         CoordinateSystemAxis axis = crs.getCoordinateSystem().getAxis(0);
         assertEquals("longitude.minimumValue", -180.0, axis.getMinimumValue(), 0.0);
         assertEquals("longitude.maximumValue", +180.0, axis.getMaximumValue(), 0.0);
 
-        assertSame("Expected a no-op.", crs,  crs.shiftAxisRange(SPANNING_ZERO_LONGITUDE));
-        final DefaultGeographicCRS shifted =  crs.shiftAxisRange(POSITIVE_LONGITUDE);
+        assertSame("Expected a no-op.", crs, crs.shiftAxisRange(SPANNING_ZERO_LONGITUDE));
+        final DefaultCompoundCRS shifted =   crs.shiftAxisRange(POSITIVE_LONGITUDE);
         assertNotSame("Expected a new CRS.", crs, shifted);
         Validators.validate(shifted);
 

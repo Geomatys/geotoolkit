@@ -28,6 +28,7 @@ import org.geotoolkit.test.Depend;
 
 import static java.lang.Double.NaN;
 import static org.geotoolkit.referencing.Assert.*;
+import static org.geotoolkit.referencing.cs.AxisRangeType.*;
 import static org.geotoolkit.referencing.crs.DefaultGeographicCRS.WGS84;
 
 
@@ -272,7 +273,7 @@ public final strictfp class GeneralEnvelopeTest {
     @Test
     public void testShiftLongitudeRange() {
         GeneralEnvelope e = create(-100, -10, +100, +10);
-        e.setCoordinateReferenceSystem(WGS84.shiftLongitudeRange(true));
+        e.setCoordinateReferenceSystem(WGS84.shiftAxisRange(POSITIVE_LONGITUDE));
         assertTrue(e.reduceToDomain(false));
         assertEquals("Expected anti-meridian spanning", 260, e.getLower(0), STRICT);
         assertEquals("Expected anti-meridian spanning", 100, e.getUpper(0), STRICT);

@@ -488,18 +488,21 @@ public class AbstractCS extends AbstractIdentifiedObject implements CoordinateSy
      * Returns all axis in the specified unit. This method is used for implementation of
      * {@code usingUnit} methods in subclasses.
      *
-     * @param  unit The unit for the new axis.
-     * @return New axis using the specified unit, or {@code null} if current axis fits.
+     * @param  unit The unit for the new axes.
+     * @param  ignore {@link SI#METRE} for ignoring linear units, {@link SI#RADIAN} for ignoring
+     *         angular units, or {@code null} for none.
+     * @return New axes using the specified unit, or {@code null} if no change is needed.
      * @throws ConversionException If the specified unit is incompatible with the expected one.
      *
      * @see DefaultCartesianCS#usingUnit(Unit)
      * @see DefaultEllipsoidalCS#usingUnit(Unit)
      */
-    final CoordinateSystemAxis[] axisUsingUnit(final Unit<?> unit) throws ConversionException {
+    final CoordinateSystemAxis[] axisUsingUnit(final Unit<?> unit, final Unit<?> ignore) throws ConversionException {
         CoordinateSystemAxis[] newAxis = null;
         for (int i=0; i<axis.length; i++) {
             final CoordinateSystemAxis a = axis[i];
-            if (!unit.equals(a.getUnit())) {
+            final Unit<?> current = a.getUnit();
+            if (!unit.equals(current) && (ignore == null || !ignore.equals(unit.toSI()))) {
                 final DefaultCoordinateSystemAxis converted =
                         DefaultCoordinateSystemAxis.castOrCopy(a).usingUnit(unit);
                 if (converted != a) {
