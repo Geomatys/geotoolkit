@@ -796,8 +796,8 @@ public final class FileUtilities extends Static {
      * @param checksum Checksum object (instance of Alder32 or CRC32).
      * @throws IOException
      */
-    public static void unzip(final Object zip, final Checksum checksum) throws IOException {
-        unzip(zip, getParent(zip), checksum);
+    public static List<File> unzip(final Object zip, final Checksum checksum) throws IOException {
+        return unzip(zip, getParent(zip), checksum);
     }
 
     /**
@@ -813,7 +813,7 @@ public final class FileUtilities extends Static {
      * @param checksum Checksum object (instance of Alder32 or CRC32).
      * @throws IOException
      */
-    public static void unzip(final Object zip, final Object resource, final Checksum checksum)
+    public static List<File> unzip(final Object zip, final Object resource, final Checksum checksum)
             throws IOException {
         final BufferedInputStream buffi;
         if (checksum != null) {
@@ -822,7 +822,7 @@ public final class FileUtilities extends Static {
         } else {
             buffi = new BufferedInputStream(toInputStream(zip));
         }
-        unzipCore(buffi, resource);
+        return unzipCore(buffi, resource);
     }
 
     /**
@@ -834,12 +834,14 @@ public final class FileUtilities extends Static {
      * Must be instance of File or a String path. This argument cannot be null.
      * @throws IOException
      */
-    private static void unzipCore(final InputStream zip, final Object resource)
+    private static List<File> unzipCore(final InputStream zip, final Object resource)
             throws IOException {
 
         final byte[] data = new byte[BUFFER];
         final ZipInputStream zis = new ZipInputStream(zip);
 
+        final List<File> unzipped = new ArrayList<File>();
+        
         try {
             final String extractPath = getPath(resource);
             ZipEntry entry;
@@ -850,6 +852,7 @@ public final class FileUtilities extends Static {
                     continue;
                 }
                 file.getParentFile().mkdirs();
+                unzipped.add(file);
                 final OutputStream fos = toOutputStream(file);
                 final BufferedOutputStream dest = new BufferedOutputStream(fos, BUFFER);
                 try {
@@ -865,6 +868,8 @@ public final class FileUtilities extends Static {
         } finally {
             zis.close();
         }
+        
+        return unzipped;
     }
     
     /**

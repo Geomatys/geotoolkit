@@ -60,6 +60,7 @@
     <module>geotk-processing-coverage</module>
     <module>geotk-processing-vector</module>
     <module>geotk-processing-jts-geometry</module>
+    <module>geotk-processing-io</module>
   </modules>
 
 </project>
