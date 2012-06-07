@@ -160,7 +160,9 @@ public class WFSXmlFactory extends OWSXmlFactory {
         if ("2.0.0".equals(version)) {
             return new org.geotoolkit.wfs.xml.v200.FeatureCollectionType(numberOfFeatures, timeStamp);
         } else if ("1.1.0".equals(version)) {
-            return new org.geotoolkit.wfs.xml.v110.FeatureCollectionType(id, numberOfFeatures, timeStamp);
+            final org.geotoolkit.wfs.xml.v110.FeatureCollectionType fc = new org.geotoolkit.wfs.xml.v110.FeatureCollectionType(numberOfFeatures, timeStamp);
+            fc.setId(id);
+            return fc;
         } else if ("1.0.0".equals(version)) {
             return new org.geotoolkit.wfs.xml.v100.FeatureCollectionType(id);
         } else {
