@@ -61,6 +61,7 @@
     <module>geotk-processing-vector</module>
     <module>geotk-processing-jts-geometry</module>
     <module>geotk-processing-io</module>
+    <module>geotk-processing-metadata</module>
   </modules>
 
 </project>
