@@ -89,13 +89,15 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
 
     private final Map<String, String> unknowNamespaces = new HashMap<String, String>();
     
-    private final String gmlVersion = "3.1.1";
+    private final String gmlVersion;
 
     public JAXPStreamFeatureWriter() {
+        gmlVersion = "3.1.1";
     }
 
-    public JAXPStreamFeatureWriter(final Map<String, String> schemaLocations)  {
-         if (schemaLocations != null && schemaLocations.size() > 0) {
+    public JAXPStreamFeatureWriter(final String gmlVersion, final Map<String, String> schemaLocations)  {
+        this.gmlVersion = gmlVersion;
+        if (schemaLocations != null && schemaLocations.size() > 0) {
              final StringBuilder sb = new StringBuilder();
              for (Entry<String,String> entry : schemaLocations.entrySet()) {
                  sb.append(entry.getKey()).append(' ').append(entry.getValue()).append(' ');
@@ -105,6 +107,10 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
              }
              schemaLocation = sb.toString();
          }
+    }
+    
+    public JAXPStreamFeatureWriter(final Map<String, String> schemaLocations)  {
+         this("3.1.1", schemaLocations);
     }
 
     /**
