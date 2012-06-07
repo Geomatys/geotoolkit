@@ -406,7 +406,7 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
 
     /**
      * Restricts this envelope to the CS or CRS
-     * {@linkplain CoordinateReferenceSystem#getDomainOfValidity domain of validity}.
+     * {@linkplain CoordinateReferenceSystem#getDomainOfValidity() domain of validity}.
      * This method performs two steps:
      *
      * <ol>
@@ -434,11 +434,22 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
      *   domain of validity}, if any.</p></li>
      * </ol>
      *
+     * {@section Spanning the anti-meridian of a Geographic CRS}
      * Note that if the envelope is spanning the anti-meridian, then some {@linkplain #getLower(int)
      * lower} ordinate values may become greater than the {@linkplain #getUpper(int) upper} ordinate
      * values even if it was not the case before this method call. If this is not acceptable, consider
      * invoking {@link #reorderCorners()} after this method call.
-     * <p>
+     *
+     * {@section Choosing the range of longitude values}
+     * Geographic CRS typically have longitude values in the [-180 … +180]° range,
+     * but the [0 … 360]° range is also occasionally used. Callers need to ensure
+     * that this envelope CRS is associated to axes having the desired
+     * {@linkplain CoordinateSystemAxis#getMinimumValue() minimum} and
+     * {@linkplain CoordinateSystemAxis#getMaximumValue() maximum value}.
+     * The {@link org.geotoolkit.referencing.cs.AxisRangeType} enumeration can be used
+     * for shifting a geographic CRS to the desired range.
+     *
+     * {@section Usage}
      * This method is sometime useful before to compute the {@linkplain #add(Envelope) union}
      * or {@linkplain #intersect(Envelope) intersection} of envelopes, in order to ensure that
      * both envelopes are defined in the same domain. This method may also be invoked before
@@ -449,6 +460,9 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
      *         the CRS <cite>domain of validity</cite> in addition to the CS domain.
      * @return {@code true} if this envelope has been modified as a result of this method call,
      *         or {@code false} if no change was done.
+     *
+     * @see CoordinateReferenceSystem#getDomainOfValidity()
+     * @see org.geotoolkit.referencing.cs.AxisRangeType
      *
      * @since 3.11 (derived from 2.5)
      */

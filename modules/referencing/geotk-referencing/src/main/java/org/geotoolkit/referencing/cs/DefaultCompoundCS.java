@@ -44,7 +44,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * </TD></TR></TABLE>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.18
+ * @version 3.20
  *
  * @since 2.0
  * @module
@@ -54,15 +54,15 @@ public class DefaultCompoundCS extends AbstractCS {
     /**
      * Serial number for inter-operability with different versions.
      */
-    private static final long serialVersionUID = -5726410275278843372L;
+    private static final long serialVersionUID = -5726410275278843373L;
 
     /**
      * The coordinate systems.
      */
-    private final CoordinateSystem[] cs;
+    private final CoordinateSystem[] components;
 
     /**
-     * An immutable view of {@link #cs} as a list. Will be created only when first needed.
+     * An immutable view of {@link #components} as a list. Will be created only when first needed.
      */
     private transient List<CoordinateSystem> asList;
 
@@ -70,38 +70,38 @@ public class DefaultCompoundCS extends AbstractCS {
      * Constructs a compound coordinate system. A name for this CS will
      * be automatically constructed from the name of all specified CS.
      *
-     * @param cs The set of coordinate syztem.
+     * @param components The set of coordinate system.
      */
-    public DefaultCompoundCS(CoordinateSystem... cs) {
-        super(getName(cs=clone(cs)), getAxis(cs));
-        this.cs = cs;
+    public DefaultCompoundCS(CoordinateSystem... components) {
+        super(getName(components=clone(components)), getAxis(components));
+        this.components = components;
     }
 
     /**
      * Returns a clone of the specified array. This method would be bundle right
      * into the constructor if RFE #4093999 was fixed.
      */
-    private static CoordinateSystem[] clone(CoordinateSystem[] cs) {
-        ensureNonNull("cs", cs);
-        cs = cs.clone();
-        for (int i=0; i<cs.length; i++) {
-            ensureNonNull("cs", i, cs);
+    private static CoordinateSystem[] clone(CoordinateSystem[] components) {
+        ensureNonNull("components", components);
+        components = components.clone();
+        for (int i=0; i<components.length; i++) {
+            ensureNonNull("components", i, components);
         }
-        return cs;
+        return components;
     }
 
     /**
      * Returns the axis of all coordinate systems.
      */
-    private static CoordinateSystemAxis[] getAxis(final CoordinateSystem[] cs) {
+    private static CoordinateSystemAxis[] getAxis(final CoordinateSystem[] components) {
         int count = 0;
-        for (int i=0; i<cs.length; i++) {
-            count += cs[i].getDimension();
+        for (int i=0; i<components.length; i++) {
+            count += components[i].getDimension();
         }
         final CoordinateSystemAxis[] axis = new CoordinateSystemAxis[count];
         count = 0;
-        for (int i=0; i<cs.length; i++) {
-            final CoordinateSystem c = cs[i];
+        for (int i=0; i<components.length; i++) {
+            final CoordinateSystem c = components[i];
             final int dim = c.getDimension();
             for (int j=0; j<dim; j++) {
                 axis[count++] = c.getAxis(j);
@@ -114,16 +114,16 @@ public class DefaultCompoundCS extends AbstractCS {
     /**
      * Constructs a name from a merge of the name of all coordinate systems.
      *
-     * @param cs The coordinate systems.
+     * @param components The coordinate systems.
      * @param locale The locale for the name.
      */
-    private static String getName(final CoordinateSystem[] cs) {
+    private static String getName(final CoordinateSystem[] components) {
         final StringBuilder buffer = new StringBuilder();
-        for (int i=0; i<cs.length; i++) {
+        for (int i=0; i<components.length; i++) {
             if (buffer.length() != 0) {
                 buffer.append(" / ");
             }
-            buffer.append(cs[i].getName().getCode());
+            buffer.append(components[i].getName().getCode());
         }
         return buffer.toString();
     }
@@ -132,10 +132,24 @@ public class DefaultCompoundCS extends AbstractCS {
      * Returns all coordinate systems in this compound CS.
      *
      * @return All coordinate systems in this compound CS.
+     *
+     * @deprecated Renamed {@link #getComponents()} for consistency with {@code CompoundCRS}.
      */
-    public synchronized List<CoordinateSystem> getCoordinateSystems() {
+    @Deprecated
+    public List<CoordinateSystem> getCoordinateSystems() {
+        return getComponents();
+    }
+
+    /**
+     * Returns all coordinate systems in this compound CS.
+     *
+     * @return All coordinate systems in this compound CS.
+     *
+     * @since 3.20
+     */
+    public synchronized List<CoordinateSystem> getComponents() {
         if (asList == null) {
-            asList = Collections.unmodifiableList(Arrays.asList(cs));
+            asList = Collections.unmodifiableList(Arrays.asList(components));
         }
         return asList;
     }
@@ -156,7 +170,7 @@ public class DefaultCompoundCS extends AbstractCS {
         }
         if (object instanceof DefaultCompoundCS && super.equals(object, mode)) {
             final DefaultCompoundCS that = (DefaultCompoundCS) object;
-            return deepEquals(this.cs, that.cs, mode);
+            return deepEquals(this.components, that.components, mode);
         }
         return false;
     }

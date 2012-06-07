@@ -150,7 +150,7 @@ final class PredefinedCS extends Static implements Comparator<CoordinateSystem> 
             }
         }
         if (cs instanceof DefaultCompoundCS) {
-            final List<CoordinateSystem> components = ((DefaultCompoundCS) cs).getCoordinateSystems();
+            final List<CoordinateSystem> components = ((DefaultCompoundCS) cs).getComponents();
             final CoordinateSystem[] user = new CoordinateSystem[components.size()];
             final CoordinateSystem[] std  = new CoordinateSystem[user.length];
             for (int i=0; i<std.length; i++) {

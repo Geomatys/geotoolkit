@@ -54,6 +54,11 @@ public final strictfp class EllipsoidalTest extends ReferencingTestBase {
         assertSame("Expected a no-op.",         shifted, shifted.shiftAxisRange(POSITIVE_LONGITUDE));
         assertSame("Expected the original CS.", cs,      shifted.shiftAxisRange(SPANNING_ZERO_LONGITUDE));
         assertSame("Expected cached instance.", shifted, cs     .shiftAxisRange(POSITIVE_LONGITUDE));
+
+        assertEquals( 0, AxisRangeType.SPANNING_ZERO_LONGITUDE.indexIn(cs));
+        assertEquals(-1, AxisRangeType.SPANNING_ZERO_LONGITUDE.indexIn(shifted));
+        assertEquals(-1, AxisRangeType.POSITIVE_LONGITUDE.indexIn(cs));
+        assertEquals( 0, AxisRangeType.POSITIVE_LONGITUDE.indexIn(shifted));
     }
 
     /**
@@ -76,5 +81,10 @@ public final strictfp class EllipsoidalTest extends ReferencingTestBase {
         assertSame("Expected a no-op.",         shifted, shifted.shiftAxisRange(POSITIVE_LONGITUDE));
         assertSame("Expected the original CS.", cs,      shifted.shiftAxisRange(SPANNING_ZERO_LONGITUDE));
         assertSame("Expected cached instance.", shifted, cs     .shiftAxisRange(POSITIVE_LONGITUDE));
+
+        assertEquals( 0, AxisRangeType.SPANNING_ZERO_LONGITUDE.indexIn(cs));
+        assertEquals(-1, AxisRangeType.SPANNING_ZERO_LONGITUDE.indexIn(shifted));
+        assertEquals(-1, AxisRangeType.POSITIVE_LONGITUDE.indexIn(cs));
+        assertEquals( 0, AxisRangeType.POSITIVE_LONGITUDE.indexIn(shifted));
     }
 }

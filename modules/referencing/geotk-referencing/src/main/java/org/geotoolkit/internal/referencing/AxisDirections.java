@@ -77,20 +77,6 @@ public final class AxisDirections extends Static {
     }
 
     /**
-     * Returns the opposite direction of the given direction. The opposite direction of
-     * {@linkplain #NORTH North} is {@linkplain #SOUTH South}, and the opposite direction
-     * of {@linkplain #SOUTH South} is {@linkplain #NORTH North}. The same applies to
-     * {@linkplain #EAST East}-{@linkplain #WEST West}, {@linkplain #UP Up}-{@linkplain #DOWN Down}
-     * and {@linkplain #FUTURE Future}-{@linkplain #PAST Past}, <i>etc.</i> If the given axis
-     * direction has no opposite, then this method returns {@code null}.
-     *
-     * @param  dir The direction for which to return the opposite direction.
-     * @return The opposite direction, or {@code null} if none or unknown.
-     */
-    public static AxisDirection opposite(final AxisDirection dir) {
-        return opposites.get(dir);
-    }
-    /**
      * Returns the "absolute" direction of the given direction.
      * This "absolute" operation is similar to the {@code Math.abs(int)}
      * method in that "negative" directions like ({@link #SOUTH}, {@link #WEST},
@@ -139,6 +125,21 @@ public final class AxisDirections extends Static {
             }
         }
         return dir;
+    }
+
+    /**
+     * Returns the opposite direction of the given direction. The opposite direction of
+     * {@linkplain #NORTH North} is {@linkplain #SOUTH South}, and the opposite direction
+     * of {@linkplain #SOUTH South} is {@linkplain #NORTH North}. The same applies to
+     * {@linkplain #EAST East}-{@linkplain #WEST West}, {@linkplain #UP Up}-{@linkplain #DOWN Down}
+     * and {@linkplain #FUTURE Future}-{@linkplain #PAST Past}, <i>etc.</i> If the given axis
+     * direction has no opposite, then this method returns {@code null}.
+     *
+     * @param  dir The direction for which to return the opposite direction.
+     * @return The opposite direction, or {@code null} if none or unknown.
+     */
+    public static AxisDirection opposite(final AxisDirection dir) {
+        return opposites.get(dir);
     }
 
     /**
