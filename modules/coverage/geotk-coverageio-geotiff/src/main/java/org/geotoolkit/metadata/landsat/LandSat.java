@@ -18,7 +18,9 @@ package org.geotoolkit.metadata.landsat;
 
 import java.io.File;
 import java.io.IOException;
+import org.geotoolkit.metadata.iso.DefaultMetadata;
 import org.geotoolkit.util.FileUtilities;
+import org.opengis.metadata.Metadata;
 
 /**
  * Convinient methods to manipulate LandSat informations.
@@ -93,6 +95,23 @@ public final class LandSat {
         
         //TODO
         throw new IllegalArgumentException("not coded yet.");
+    }
+ 
+    /**
+     * Extract as much information from the landsat metadata and map it to
+     * ISO 19115-2.
+     * 
+     * @param LandSat Metadata
+     * @return ISO19115 Metadata 
+     */
+    public static Metadata toMetadata(LandSatMetaNode landsat){
+        
+        final DefaultMetadata metadata = new DefaultMetadata();
+        
+        //TODO
+        
+        
+        return metadata;
     }
     
 }
