@@ -17,17 +17,16 @@
  */
 package org.geotoolkit.image.io.plugin;
 
+import java.io.File;
 import java.io.IOException;
-import java.awt.image.Raster;
-import java.awt.image.BufferedImage;
 
 import ucar.nc2.NetcdfFile;
 import org.opengis.wrapper.netcdf.IOTestCase;
+import org.opengis.test.coverage.image.ImageReaderTestCase;
 
-import org.geotoolkit.image.io.SpatialImageReadParam;
 import org.geotoolkit.referencing.adapters.NetcdfCRSTest;
-import org.geotoolkit.test.image.ImageReaderTestBase;
 import org.geotoolkit.test.Depend;
+import org.geotoolkit.test.image.ImageTestBase;
 
 
 /**
@@ -42,17 +41,39 @@ import org.geotoolkit.test.Depend;
  * @since 3.10
  */
 @Depend(NetcdfCRSTest.class)
-public abstract strictfp class NetcdfTestBase extends ImageReaderTestBase {
+public abstract strictfp class NetcdfTestBase extends ImageReaderTestCase {
     /**
      * Default constructor for subclasses.
      */
     protected NetcdfTestBase() {
-        super(NetcdfImageReader.class);
+    }
+
+    /**
+     * Returns the file of the given name in the {@code "Geotoolkit.org/Tests"} directory.
+     * This directory contains data too big for inclusion in the source code repository.
+     * The file is tested for existence using:
+     *
+     * {@code java
+     *     assumeTrue(file.canRead());
+     * }
+     *
+     * Consequently if the file can not be read (typically because the users did not installed
+     * those data on its local directory), then the tests after the call to this method are
+     * completely skipped.
+     *
+     * @param  filename The name of the file to get, or {@code null}.
+     * @return The name of directory of the given name in the {@code "Geotoolkit.org/Tests"}
+     *         directory (never {@code null}).
+     *
+     * @since 3.20
+     */
+    protected static File getLocallyInstalledFile(final String filename) {
+        return ImageTestBase.getLocallyInstalledFile(filename);
     }
 
     /**
      * Opens the given NetCDF file. The file argument should be one of the names listed in the
-     * {@link IOUtilities} class. If a test file of the given name exists in this package, it
+     * {@link IOTestCase} class. If a test file of the given name exists in this package, it
      * will have precedence over the test file defines in the {@code geoapi-netcdf} test module.
      *
      * @param  file The file name.
@@ -67,19 +88,5 @@ public abstract strictfp class NetcdfTestBase extends ImageReaderTestBase {
                 return super.open(file);
             }
         }.open(file);
-    }
-
-    /**
-     * Reads the image using the given image reader, and returns the data as a single raster.
-     * The image is optionally shown in a widget if the {@link #viewEnabled} field is set to
-     * {@code true}.
-     */
-    final Raster read(final String method, final NetcdfImageReader reader, final int imageIndex,
-            final SpatialImageReadParam param) throws IOException
-    {
-        final BufferedImage image = reader.read(imageIndex, param);
-        this.image = image;
-        showCurrentImage(method);
-        return image.getRaster();
     }
 }

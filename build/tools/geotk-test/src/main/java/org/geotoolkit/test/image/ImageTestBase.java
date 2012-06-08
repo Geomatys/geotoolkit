@@ -125,7 +125,7 @@ public abstract strictfp class ImageTestBase extends TestBase {
      *
      * @since 3.19
      */
-    protected static File getLocallyInstalledFile(final String filename) {
+    public static File getLocallyInstalledFile(final String filename) {
         File file;
         try {
             final Class<?> c = Class.forName("org.geotoolkit.internal.io.Installation");

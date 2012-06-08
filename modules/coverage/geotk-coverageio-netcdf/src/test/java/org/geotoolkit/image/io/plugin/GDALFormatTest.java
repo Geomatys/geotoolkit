@@ -48,10 +48,13 @@ public final strictfp class GDALFormatTest extends NetcdfTestBase {
      * from the parent class, and by the tests defined in this class.
      */
     @Override
-    protected NetcdfImageReader createImageReader() throws IOException {
-        final NetcdfImageReader reader = new NetcdfImageReader(null);
-        reader.setInput(open(IOTestCase.LANDSAT));
-        return reader;
+    protected void prepareImageReader(final boolean needsInput) throws IOException {
+        if (reader == null) {
+            reader = new NetcdfImageReader(null);
+        }
+        if (needsInput) {
+            reader.setInput(open(IOTestCase.LANDSAT));
+        }
     }
 
     /**
@@ -62,7 +65,8 @@ public final strictfp class GDALFormatTest extends NetcdfTestBase {
      */
     @Test
     public void testGridGeometry() throws IOException, CoverageStoreException {
-        final NetcdfImageReader reader = createImageReader();
+        prepareImageReader(true);
+        final NetcdfImageReader reader = (NetcdfImageReader) this.reader;
         final SpatialMetadata metadata = reader.getImageMetadata(0);
         final String asTree = metadata.toString();
         /*
