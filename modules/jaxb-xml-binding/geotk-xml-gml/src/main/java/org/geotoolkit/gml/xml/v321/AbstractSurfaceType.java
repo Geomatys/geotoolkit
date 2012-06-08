@@ -53,5 +53,12 @@ import org.geotoolkit.gml.xml.AbstractSurface;
 })
 public abstract class AbstractSurfaceType extends AbstractGeometricPrimitiveType implements AbstractSurface {
 
+    public AbstractSurfaceType() {
+        
+    }
+    
+    public AbstractSurfaceType(final String srsName) {
+        super(srsName);
+    }
 
 }

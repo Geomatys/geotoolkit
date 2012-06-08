@@ -38,6 +38,7 @@ import org.geotoolkit.feature.xml.XmlFeatureWriter;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.gml.JTStoGeometry;
 import org.geotoolkit.gml.xml.AbstractGeometry;
+import org.geotoolkit.gml.xml.GMLMarshallerPool;
 import org.geotoolkit.internal.jaxb.JTSWrapperMarshallerPool;
 import org.geotoolkit.internal.jaxb.ObjectFactory;
 import org.geotoolkit.metadata.iso.citation.Citations;
@@ -74,7 +75,10 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
     /**
      * The pool of marshallers used for marshalling geometries.
      */
-    private static final MarshallerPool POOL = JTSWrapperMarshallerPool.getInstance();
+    @Deprecated
+    private static final MarshallerPool GML_31_POOL = JTSWrapperMarshallerPool.getInstance();
+    
+    private static final MarshallerPool GML_32_POOL = GMLMarshallerPool.getInstance();
 
     /**
      * Object factory to build a geometry.
@@ -90,27 +94,41 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
     private final Map<String, String> unknowNamespaces = new HashMap<String, String>();
     
     private final String gmlVersion;
+    
+    private final String wfsNamespace;
+    
+    private final String gmlNamespace;
 
     public JAXPStreamFeatureWriter() {
-        gmlVersion = "3.1.1";
+        this("3.1.1", "1.1.0", null);
     }
 
-    public JAXPStreamFeatureWriter(final String gmlVersion, final Map<String, String> schemaLocations)  {
+    public JAXPStreamFeatureWriter(final String gmlVersion, final String wfsVersion, final Map<String, String> schemaLocations)  {
         this.gmlVersion = gmlVersion;
         if (schemaLocations != null && schemaLocations.size() > 0) {
-             final StringBuilder sb = new StringBuilder();
-             for (Entry<String,String> entry : schemaLocations.entrySet()) {
-                 sb.append(entry.getKey()).append(' ').append(entry.getValue()).append(' ');
-             }
-             if(sb.length()>0){
-                sb.setLength(sb.length()-1); //remove last ' '
-             }
-             schemaLocation = sb.toString();
-         }
+            final StringBuilder sb = new StringBuilder();
+            for (Entry<String, String> entry : schemaLocations.entrySet()) {
+                sb.append(entry.getKey()).append(' ').append(entry.getValue()).append(' ');
+            }
+            if (sb.length() > 0) {
+                sb.setLength(sb.length() - 1); //remove last ' '
+            }
+            schemaLocation = sb.toString();
+        }
+        if ("2.0.0".equals(wfsVersion)) {
+            wfsNamespace = "http://www.opengis.net/wfs/2.0";
+        } else {
+            wfsNamespace = "http://www.opengis.net/wfs";
+        }
+        if ("3.2.1".equals(gmlVersion)) {
+            gmlNamespace = "http://www.opengis.net/gml/3.2.1";
+        } else {
+            gmlNamespace = Namespaces.GML;
+        }
     }
     
     public JAXPStreamFeatureWriter(final Map<String, String> schemaLocations)  {
-         this("3.1.1", schemaLocations);
+         this("3.1.1", "1.1.0", schemaLocations);
     }
 
     /**
@@ -159,19 +177,19 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
         if (namespace != null) {
             final Prefix prefix = getPrefix(namespace);
             writer.writeStartElement(prefix.prefix, localPart, namespace);
-            writer.writeAttribute("gml", Namespaces.GML, "id", feature.getIdentifier().getID());
+            writer.writeAttribute("gml", gmlNamespace, "id", feature.getIdentifier().getID());
             if (prefix.unknow && !root) {
                 writer.writeNamespace(prefix.prefix, namespace);
             }
             if (root) {
-                writer.writeNamespace("gml", Namespaces.GML);
-                if (!namespace.equals(Namespaces.GML)) {
+                writer.writeNamespace("gml", gmlNamespace);
+                if (!namespace.equals(gmlNamespace)) {
                     writer.writeNamespace(prefix.prefix, namespace);
                 }
             }
         } else {
             writer.writeStartElement(localPart);
-            writer.writeAttribute("gml", Namespaces.GML, "id", feature.getIdentifier().getID());
+            writer.writeAttribute("gml", gmlNamespace, "id", feature.getIdentifier().getID());
         }
 
         //write properties in the type order
@@ -214,8 +232,8 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                     String value = Utils.getStringValue(valueA);
                     if (value != null || (value == null && !a.isNillable())) {
 
-                        if ((nameProperty.equals("name") || nameProperty.equals("description")) && !Namespaces.GML.equals(namespaceProperty)) {
-                            namespaceProperty = Namespaces.GML;
+                        if ((nameProperty.equals("name") || nameProperty.equals("description")) && !gmlNamespace.equals(namespaceProperty)) {
+                            namespaceProperty = gmlNamespace;
                             LOGGER.warning("the property name and description of a feature must have the GML namespace");
                         }
                         if (namespaceProperty != null) {
@@ -239,17 +257,20 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                             writer.writeStartElement(nameProperty);
                         }
                         final JAXBElement element;
+                        final MarshallerPool POOL;
                         if ("3.1.1".equals(gmlVersion)) {
                             final Geometry isoGeometry = JTSUtils.toISO((com.vividsolutions.jts.geom.Geometry) valueA, type.getCoordinateReferenceSystem());
                             element = OBJECT_FACTORY.buildAnyGeometry(isoGeometry);
+                            POOL = GML_31_POOL;
                         } else if ("3.2.1".equals(gmlVersion)) {
                             AbstractGeometry gmlGeometry = null;
                             try {
-                                gmlGeometry = JTStoGeometry.toGML(gmlVersion, (com.vividsolutions.jts.geom.Geometry) valueA);
+                                gmlGeometry = JTStoGeometry.toGML(gmlVersion, (com.vividsolutions.jts.geom.Geometry) valueA,  type.getCoordinateReferenceSystem());
                             } catch (FactoryException ex) {
                                 LOGGER.log(Level.WARNING, "Factory exception when transforming JTS geometry to GML binding", ex);
                             }
                             element = GML32_FACTORY.buildAnyGeometry(gmlGeometry);
+                            POOL = GML_32_POOL;
                         } else {
                             throw new IllegalArgumentException("Unexpected GML version:" + gmlVersion);
                         }
@@ -292,14 +313,14 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
         }
 
         // the root Element
-        writer.writeStartElement("wfs", "FeatureCollection", "http://www.opengis.net/wfs");
+        writer.writeStartElement("wfs", "FeatureCollection", wfsNamespace);
         String collectionID = "";
         if (featureCollection.getID() != null) {
             collectionID = featureCollection.getID();
         }
-        writer.writeAttribute("gml", Namespaces.GML, "id", collectionID);
-        writer.writeNamespace("gml", Namespaces.GML);
-        writer.writeNamespace("wfs", "http://www.opengis.net/wfs");
+        writer.writeAttribute("gml", gmlNamespace, "id", collectionID);
+        writer.writeNamespace("gml", gmlNamespace);
+        writer.writeNamespace("wfs", wfsNamespace);
         if (schemaLocation != null && !schemaLocation.equals("")) {
             writer.writeNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
             writer.writeAttribute("xsi", "http://www.w3.org/2001/XMLSchema-instance", "schemaLocation", schemaLocation);
@@ -308,7 +329,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
         FeatureType type = featureCollection.getFeatureType();
         if (type != null && type.getName() != null) {
             String namespace = type.getName().getNamespaceURI();
-            if (namespace != null && !namespace.equals(Namespaces.GML)) {
+            if (namespace != null && !(namespace.equals(Namespaces.GML) || namespace.equals("http://www.opengis.net/gml/3.2.1"))) {
                 Prefix prefix    = getPrefix(namespace);
                 writer.writeNamespace(prefix.prefix, namespace);
             }
@@ -324,7 +345,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             while (iterator.hasNext()) {
                 final Feature f = iterator.next();
 
-                writer.writeStartElement("gml", "featureMember", Namespaces.GML);
+                writer.writeStartElement("gml", "featureMember", gmlNamespace);
                 writeFeature(f, false);
                 writer.writeEndElement();
             }
@@ -359,8 +380,8 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                     LOGGER.log(Level.WARNING, null, ex);
                 }
             }
-            streamWriter.writeStartElement("gml", "boundedBy", Namespaces.GML);
-            streamWriter.writeStartElement("gml", "Envelope", Namespaces.GML);
+            streamWriter.writeStartElement("gml", "boundedBy", gmlNamespace);
+            streamWriter.writeStartElement("gml", "Envelope", gmlNamespace);
             if (srsName != null) {
                 streamWriter.writeAttribute("srsName", srsName);
             } else {
@@ -368,13 +389,13 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             }
 
             // lower corner
-            streamWriter.writeStartElement("gml", "lowerCorner", Namespaces.GML);
+            streamWriter.writeStartElement("gml", "lowerCorner", gmlNamespace);
             String lowValue = bounds.getLowerCorner().getOrdinate(0) + " " + bounds.getLowerCorner().getOrdinate(1);
             streamWriter.writeCharacters(lowValue);
             streamWriter.writeEndElement();
 
             // upper corner
-            streamWriter.writeStartElement("gml", "upperCorner", Namespaces.GML);
+            streamWriter.writeStartElement("gml", "upperCorner", gmlNamespace);
             String uppValue = bounds.getUpperCorner().getOrdinate(0) + " " + bounds.getUpperCorner().getOrdinate(1);
             streamWriter.writeCharacters(uppValue);
             streamWriter.writeEndElement();
@@ -395,7 +416,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
          * temporary hack todo remove
          */
         if ("http://www.opengis.net/gml/3.2.1".equals(namespace)) {
-            return new Prefix(false, "gml32");
+            return new Prefix(false, "gml");
         }
         boolean unknow = false;
         if (prefix == null) {

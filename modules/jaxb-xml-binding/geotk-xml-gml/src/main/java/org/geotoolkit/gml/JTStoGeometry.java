@@ -74,9 +74,29 @@ public final class JTStoGeometry {
      * geometry or can't be injected into the {@link AbstractGeometry}.
      */
      public static AbstractGeometry toGML(final String gmlVersion, final Geometry jts) throws NoSuchAuthorityCodeException, FactoryException {
-
         final CoordinateReferenceSystem crs = JTS.findCoordinateReferenceSystem(jts);
+        return toGML(gmlVersion, jts, crs);
+        
+     }
+     
+    /**
+     * Transform A JTS geometry into GML geometry
+     *
+     * @param gmlVersion The output gml version. (actually 3.1.1 or 3.2.1 are avalable)
+     * @param jts The JTS geometry to convert.
+     *
+     * @return AbstractGeometry gml geometry.
+     * 
+     * @throws org.opengis.referencing.NoSuchAuthorityCodeException - if {@link CoordinateReferenceSystem crs} 
+     * can't be extracted from JTS geometry or can't be injected into the {@link AbstractGeometry}.
+     * @throws org.opengis.util.FactoryException - if {@link CoordinateReferenceSystem crs} can't be extracted from JTS 
+     * geometry or can't be injected into the {@link AbstractGeometry}.
+     */
+     public static AbstractGeometry toGML(final String gmlVersion, final Geometry jts, CoordinateReferenceSystem crs) throws NoSuchAuthorityCodeException, FactoryException {
 
+         if (crs == null) {
+             crs = JTS.findCoordinateReferenceSystem(jts);
+         }
         if (jts instanceof Point) {
             return toGML(gmlVersion, (Point) jts, crs);
             
@@ -409,8 +429,10 @@ public final class JTStoGeometry {
      * @return <code>true</code> for valid Geometry, <code>false</code> else.
      */
     private static void isValideGeometry(final CoordinateReferenceSystem crs) {
-        if (crs == null || crs.getCoordinateSystem() == null || crs.getCoordinateSystem().getDimension() != 2) {
-            throw new IllegalArgumentException("This service support only 2D JTS Geometry.");
+        if (crs == null || crs.getCoordinateSystem() == null) {
+            throw new IllegalArgumentException("This service support only 2D JTS Geometry (CRS null, or coordinate system null).");
+        } else if (crs.getCoordinateSystem().getDimension() != 2) {
+            throw new IllegalArgumentException("This service support only 2D JTS Geometry. (CRS dimension != 2) => " + crs.getCoordinateSystem().getDimension());
         }
     }
     /**

@@ -60,7 +60,8 @@ public class PolygonType extends AbstractSurfaceType implements Polygon {
 
     }
     
-    public PolygonType(final AbstractRingType exterior, final List<? extends AbstractRingType> interiors) {
+    public PolygonType(final String srsName, final AbstractRingType exterior, final List<? extends AbstractRingType> interiors) {
+        super(srsName);
         if (exterior != null) {
             this.exterior = new AbstractRingPropertyType(exterior);
         }
@@ -70,6 +71,10 @@ public class PolygonType extends AbstractSurfaceType implements Polygon {
                 this.interior.add(new AbstractRingPropertyType(inte));
             }
         }
+    }
+    
+    public PolygonType(final AbstractRingType exterior, final List<? extends AbstractRingType> interiors) {
+        this(null, exterior, interiors);
     }
     
     /**

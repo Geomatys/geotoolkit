@@ -69,7 +69,8 @@ public class PolygonType extends AbstractSurfaceType implements Polygon {
 
     }
     
-    public PolygonType(final AbstractRingType exterior, final List<? extends AbstractRingType> interiors) {
+    public PolygonType(final String srsName, final AbstractRingType exterior, final List<? extends AbstractRingType> interiors) {
+        super(srsName);
         ObjectFactory factory = new ObjectFactory();
         if (exterior != null) {
             this.exterior = factory.createExterior(new AbstractRingPropertyType(exterior));
@@ -80,6 +81,10 @@ public class PolygonType extends AbstractSurfaceType implements Polygon {
                 this.interior.add(factory.createInterior(new AbstractRingPropertyType(inte)));
             }
         }
+    }
+    
+    public PolygonType(final AbstractRingType exterior, final List<? extends AbstractRingType> interiors) {
+        this(null, exterior, interiors);
     }
 
     /**

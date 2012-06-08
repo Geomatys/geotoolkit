@@ -59,6 +59,14 @@ import org.opengis.geometry.primitive.Primitive;
 public abstract class AbstractGeometricPrimitiveType extends AbstractGeometryType implements Primitive {
 
 
+    public AbstractGeometricPrimitiveType() {
+        
+    }
+    
+    public AbstractGeometricPrimitiveType(final String srsName) {
+        super(srsName);
+    }
+    
     @Override
     public Object evaluate(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
