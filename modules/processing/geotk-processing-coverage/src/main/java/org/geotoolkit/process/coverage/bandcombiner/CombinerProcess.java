@@ -1,10 +1,24 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ *    Geotoolkit.org - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2005-2012, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009-2012, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
  */
 package org.geotoolkit.process.coverage.bandcombiner;
 
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.image.*;
 import javax.media.jai.JAI;
 import javax.media.jai.RasterFactory;
@@ -35,9 +49,9 @@ public class CombinerProcess extends AbstractProcess {
     protected void execute() throws ProcessException {
         ArgumentChecks.ensureNonNull("inputParameter", inputParameters);
         
-        final Object inputR = Parameters.getOrCreate(IN_RED, inputParameters);
-        final Object inputG = Parameters.getOrCreate(IN_GREEN, inputParameters);
-        final Object inputB = Parameters.getOrCreate(IN_BLUE, inputParameters);
+        final Object inputR = Parameters.getOrCreate(IN_RED, inputParameters).getValue();
+        final Object inputG = Parameters.getOrCreate(IN_GREEN, inputParameters).getValue();
+        final Object inputB = Parameters.getOrCreate(IN_BLUE, inputParameters).getValue();
         
         if(!(inputR instanceof Coverage) || !(inputG instanceof Coverage) || !(inputB instanceof Coverage)){
             throw new ProcessException("One of the input is not a coverage", this, new IllegalArgumentException());
@@ -57,8 +71,8 @@ public class CombinerProcess extends AbstractProcess {
         rgbTable[1] = ((DataBufferByte)green).getData();
         rgbTable[2] = ((DataBufferByte)blue).getData();        
         DataBuffer buffer = new DataBufferByte(rgbTable, red.getSize());
-        Raster rasterRGB = new ByteBandedRaster(null, buffer, null);
-        BufferedImage result = new BufferedImage(rasterInfo.getWidth(), rasterInfo.getHeight(), 0);
+        Raster rasterRGB = WritableRaster.createBandedRaster(buffer, rasterInfo.getWidth(), rasterInfo.getHeight(), rasterInfo.getWidth(), new int[]{0,1,2}, new int[]{0,0,0}, new Point(0, 0));
+        BufferedImage result = new BufferedImage(rasterInfo.getWidth(), rasterInfo.getHeight(), BufferedImage.TYPE_3BYTE_BGR);
         result.setData(rasterRGB);
         
         //create the coverage
