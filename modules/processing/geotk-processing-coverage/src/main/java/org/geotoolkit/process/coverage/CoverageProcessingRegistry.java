@@ -22,6 +22,7 @@ import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.process.AbstractProcessingRegistry;
+import org.geotoolkit.process.coverage.bandcombiner.CombinerDescriptor;
 import org.geotoolkit.process.coverage.coveragetofeatures.CoverageToFeaturesDescriptor;
 import org.geotoolkit.process.coverage.coveragetovector.CoverageToVectorDescriptor;
 import org.geotoolkit.process.coverage.kriging.KrigingDescriptor;
@@ -55,7 +56,8 @@ public class CoverageProcessingRegistry extends AbstractProcessingRegistry{
               TilingDescriptor.INSTANCE,
               KrigingDescriptor.INSTANCE,
               MapcontextPyramidDescriptor.INSTANCE, 
-              ExtractionDescriptor.INSTANCE);
+              ExtractionDescriptor.INSTANCE, 
+              CombinerDescriptor.INSTANCE);
     }
 
     @Override
