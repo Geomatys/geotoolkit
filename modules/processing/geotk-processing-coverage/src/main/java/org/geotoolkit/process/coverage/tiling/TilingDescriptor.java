@@ -78,7 +78,7 @@ public final class TilingDescriptor extends AbstractProcessDescriptor{
             new DefaultParameterDescriptor<TileManager>("manager","Tile manager.",TileManager.class,null,true);
 
     /**
-     * Optional - Coordinate Reference system of the tyle manager.
+     * Optional - Coordinate Reference system of the tile manager.
      */
     public static final ParameterDescriptor<CoordinateReferenceSystem> OUT_CRS =
             new DefaultParameterDescriptor<CoordinateReferenceSystem>("crs","Tile manager's coordinate reference system.",CoordinateReferenceSystem.class,null,false);
