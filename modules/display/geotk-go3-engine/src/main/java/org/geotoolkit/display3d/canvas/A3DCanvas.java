@@ -31,15 +31,11 @@ import com.ardor3d.input.awt.AwtKeyboardWrapper;
 import com.ardor3d.input.awt.AwtMouseManager;
 import com.ardor3d.input.awt.AwtMouseWrapper;
 import com.ardor3d.input.logical.*;
-import com.ardor3d.light.PointLight;
 import com.ardor3d.math.ColorRGBA;
-import com.ardor3d.math.Vector3;
 import com.ardor3d.renderer.IndexMode;
 import com.ardor3d.renderer.state.CullState;
-import com.ardor3d.renderer.state.LightState;
 import com.ardor3d.scenegraph.Line;
 import com.ardor3d.scenegraph.Node;
-import com.ardor3d.scenegraph.hint.LightCombineMode;
 import com.ardor3d.util.GameTaskQueue;
 import com.ardor3d.util.GameTaskQueueManager;
 import com.ardor3d.util.geom.BufferUtils;
@@ -112,7 +108,9 @@ public class A3DCanvas extends AbstractCanvas{
                     canvasRenderer.getCamera().resize(canvas.getWidth(), canvas.getHeight());
                     // keep our aspect ratio the same.
                     canvasRenderer.getCamera().setFrustumPerspective(45.0,
-                            canvas.getWidth() / (float) canvas.getHeight(), 1, 5000);
+                            canvas.getWidth() / (float) canvas.getHeight(), 
+                            A3DController.CAMERA_NEAR_PLAN, 
+                            A3DController.CAMERA_FAR_PLAN);
                 }
             }
         });

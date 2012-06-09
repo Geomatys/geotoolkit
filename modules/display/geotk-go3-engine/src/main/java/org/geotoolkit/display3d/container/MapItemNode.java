@@ -16,11 +16,17 @@
  */
 package org.geotoolkit.display3d.container;
 
+import com.ardor3d.bounding.BoundingBox;
+import com.ardor3d.scenegraph.Spatial;
+import com.ardor3d.scenegraph.shape.Quad;
 import java.beans.PropertyChangeEvent;
 import java.util.*;
 import org.geotoolkit.display3d.canvas.A3DCanvas;
 import org.geotoolkit.display3d.primitive.A3DGraphic;
-import org.geotoolkit.map.*;
+import org.geotoolkit.map.GraphicBuilder;
+import org.geotoolkit.map.ItemListener;
+import org.geotoolkit.map.MapItem;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 
 /**
@@ -44,6 +50,15 @@ public class MapItemNode<T extends MapItem> extends A3DGraphic implements ItemLi
 
         parseItem(mapitem);
         listener.registerSource(mapitem);
+        
+        //dummy object, ensures this node will always have a bounding box
+        //this is necessary otherwise it can cause some transformation issues.
+        final Spatial sp = new Quad("dummy", Double.MIN_VALUE, Double.MIN_VALUE);
+        attachChild(sp);
+        
+        //update bounds
+        _worldBound = new BoundingBox();
+        updateWorldBound(false);
     }
 
     public T getItem() {
@@ -74,7 +89,10 @@ public class MapItemNode<T extends MapItem> extends A3DGraphic implements ItemLi
             graphics = Collections.singleton((A3DGraphic)new MapItemNode(canvas,child));
         }
         
-        getChildren().addAll(graphics);
+        for(A3DGraphic gra : graphics){
+             attachChild(gra);
+        }
+       
         itemGraphics.put(child, graphics);
     }
     
@@ -91,6 +109,7 @@ public class MapItemNode<T extends MapItem> extends A3DGraphic implements ItemLi
                 final Collection<A3DGraphic> gra = itemGraphics.get(child);
                 if(gra != null){
                     for(A3DGraphic g : gra){
+                        detachChild(g);
                         g.dispose();
                     }
                 }

@@ -35,6 +35,9 @@ import org.geotoolkit.display3d.canvas.A3DCanvas;
  */
 public class A3DController implements Updater {
 
+    public static final double CAMERA_NEAR_PLAN = Math.nextUp(0);
+    public static final double CAMERA_FAR_PLAN = 10000;
+    
     private final A3DCanvas canvas;
     private final LogicalLayer logicalLayer;
     private ActionController actionController;
@@ -115,8 +118,8 @@ public class A3DController implements Updater {
                     camera.setFrustumPerspective(
                         45.0,
                         (float) camera.getWidth()/ (float) camera.getHeight(),
-                        1,
-                        100000);
+                        CAMERA_NEAR_PLAN,
+                        CAMERA_FAR_PLAN);
                     camera.lookAt(new Vector3(0, 0, 0), Vector3.UNIT_Y);
                 }
                 
