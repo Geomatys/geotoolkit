@@ -46,12 +46,10 @@ public class ExtractionDescriptor extends AbstractProcessDescriptor {
      * Following attributes are the keys for international description fields.
      * (See @Process_package/bundle.properties).
      */
-    public static final String IN_CODE_KEY  = "inputCode";
-    public static final String IN_DESC_KEY  = "inputDescription";
-    public static final String IN_TITLE_KEY = "inputTitle";    
-    public static final String OUT_CODE_KEY  = "outputCode";
-    public static final String OUT_DESC_KEY  = "outputDescription";
-    public static final String OUT_TITLE_KEY = "outputTitle";
+    protected static final String IN_DESC_KEY  = "inputDescription";
+    protected static final String IN_TITLE_KEY = "inputTitle";
+    protected static final String OUT_DESC_KEY  = "outputDescription";
+    protected static final String OUT_TITLE_KEY = "outputTitle";
     
     /**
      * Mandatory - Coverage to process
@@ -69,8 +67,8 @@ public class ExtractionDescriptor extends AbstractProcessDescriptor {
     
     static {
         Map<String, Object> propertiesIn = new HashMap<String, Object>();        
-        propertiesIn.put(IdentifiedObject.IDENTIFIERS_KEY, new ResourceInternationalString(BUNDLE_PATH, IN_CODE_KEY));
-        propertiesIn.put(IdentifiedObject.NAME_KEY,        new ResourceInternationalString(BUNDLE_PATH, IN_CODE_KEY));
+        propertiesIn.put(IdentifiedObject.IDENTIFIERS_KEY, "Source");
+        propertiesIn.put(IdentifiedObject.NAME_KEY,        "Source");
         propertiesIn.put(IdentifiedObject.ALIAS_KEY,       new ResourceInternationalString(BUNDLE_PATH, IN_TITLE_KEY));
         propertiesIn.put(IdentifiedObject.REMARKS_KEY,     new ResourceInternationalString(BUNDLE_PATH, IN_DESC_KEY));
         
@@ -78,10 +76,11 @@ public class ExtractionDescriptor extends AbstractProcessDescriptor {
         INPUT_DESC = new DefaultParameterDescriptorGroup(NAME+"InputParameters", IN_SOURCE);
         
         Map<String, Object> propertiesOut = new HashMap<String, Object>();                
-        propertiesOut.put(IdentifiedObject.IDENTIFIERS_KEY, new ResourceInternationalString(BUNDLE_PATH, OUT_CODE_KEY));
-        propertiesOut.put(IdentifiedObject.NAME_KEY,        new ResourceInternationalString(BUNDLE_PATH, OUT_CODE_KEY));
+        propertiesOut.put(IdentifiedObject.IDENTIFIERS_KEY, "Result");
+        propertiesOut.put(IdentifiedObject.NAME_KEY,        "Result");
         propertiesOut.put(IdentifiedObject.ALIAS_KEY,       new ResourceInternationalString(BUNDLE_PATH, OUT_TITLE_KEY));
         propertiesOut.put(IdentifiedObject.REMARKS_KEY,     new ResourceInternationalString(BUNDLE_PATH, OUT_DESC_KEY));
+        
         OUT_METADATA = new DefaultParameterDescriptor<Metadata>(propertiesOut, Metadata.class, null, null, null, null, null, true);
         OUTPUT_DESC  = new DefaultParameterDescriptorGroup(NAME + "OutputParameters", OUT_METADATA);
     }    

@@ -68,37 +68,33 @@ public class CombinerDescriptor extends AbstractProcessDescriptor {
      * Following attributes are the keys for international description fields.
      * (See @Process_package/bundle.properties).
      */
-    public static final String RED_CODE_KEY    = "redCode";
-    public static final String RED_DESC_KEY    = "redDescription";
-    public static final String RED_TITLE_KEY   = "redTitle";
-    public static final String GREEN_CODE_KEY  = "greenCode";
-    public static final String GREEN_DESC_KEY  = "greenDescription";
-    public static final String GREEN_TITLE_KEY = "greenTitle";
-    public static final String BLUE_CODE_KEY   = "blueCode";
-    public static final String BLUE_DESC_KEY   = "blueDescription";
-    public static final String BLUE_TITLE_KEY  = "blueTitle";
-    public static final String OUT_CODE_KEY    = "rgbCode";
-    public static final String OUT_DESC_KEY    = "rgbDescription";
-    public static final String OUT_TITLE_KEY   = "rgbTitle";
+    protected static final String RED_DESC_KEY    = "redDescription";
+    protected static final String RED_TITLE_KEY   = "redTitle";
+    protected static final String GREEN_DESC_KEY  = "greenDescription";
+    protected static final String GREEN_TITLE_KEY = "greenTitle";
+    protected static final String BLUE_DESC_KEY   = "blueDescription";
+    protected static final String BLUE_TITLE_KEY  = "blueTitle";
+    protected static final String OUT_DESC_KEY    = "rgbDescription";
+    protected static final String OUT_TITLE_KEY   = "rgbTitle";
     
     static {
         Map<String, Object> propertiesRed = new HashMap<String, Object>();        
-        propertiesRed.put(IdentifiedObject.IDENTIFIERS_KEY, new ResourceInternationalString(BUNDLE_PATH, RED_CODE_KEY));
-        propertiesRed.put(IdentifiedObject.NAME_KEY,        new ResourceInternationalString(BUNDLE_PATH, RED_CODE_KEY));
+        propertiesRed.put(IdentifiedObject.IDENTIFIERS_KEY, "redBand");
+        propertiesRed.put(IdentifiedObject.NAME_KEY,        "redBand");
         propertiesRed.put(IdentifiedObject.ALIAS_KEY,       new ResourceInternationalString(BUNDLE_PATH, RED_TITLE_KEY));
         propertiesRed.put(IdentifiedObject.REMARKS_KEY,     new ResourceInternationalString(BUNDLE_PATH, RED_DESC_KEY));
         IN_RED = new DefaultParameterDescriptor<Coverage>(propertiesRed, Coverage.class, null, null, null, null, null, true);
         
         Map<String, Object> propertiesGreen = new HashMap<String, Object>();        
-        propertiesGreen.put(IdentifiedObject.IDENTIFIERS_KEY, new ResourceInternationalString(BUNDLE_PATH, GREEN_CODE_KEY));
-        propertiesGreen.put(IdentifiedObject.NAME_KEY,        new ResourceInternationalString(BUNDLE_PATH, GREEN_CODE_KEY));
+        propertiesGreen.put(IdentifiedObject.IDENTIFIERS_KEY, "greenBand");
+        propertiesGreen.put(IdentifiedObject.NAME_KEY,        "greenBand");
         propertiesGreen.put(IdentifiedObject.ALIAS_KEY,       new ResourceInternationalString(BUNDLE_PATH, GREEN_TITLE_KEY));
         propertiesGreen.put(IdentifiedObject.REMARKS_KEY,     new ResourceInternationalString(BUNDLE_PATH, GREEN_DESC_KEY));
         IN_GREEN = new DefaultParameterDescriptor<Coverage>(propertiesRed, Coverage.class, null, null, null, null, null, true);
         
         Map<String, Object> propertiesBlue = new HashMap<String, Object>();        
-        propertiesBlue.put(IdentifiedObject.IDENTIFIERS_KEY, new ResourceInternationalString(BUNDLE_PATH, BLUE_CODE_KEY));
-        propertiesBlue.put(IdentifiedObject.NAME_KEY,        new ResourceInternationalString(BUNDLE_PATH, BLUE_CODE_KEY));
+        propertiesBlue.put(IdentifiedObject.IDENTIFIERS_KEY, "blueBand");
+        propertiesBlue.put(IdentifiedObject.NAME_KEY,        "blueBand");
         propertiesBlue.put(IdentifiedObject.ALIAS_KEY,       new ResourceInternationalString(BUNDLE_PATH, BLUE_TITLE_KEY));
         propertiesBlue.put(IdentifiedObject.REMARKS_KEY,     new ResourceInternationalString(BUNDLE_PATH, BLUE_DESC_KEY));
         IN_BLUE = new DefaultParameterDescriptor<Coverage>(propertiesBlue, Coverage.class, null, null, null, null, null, true);
@@ -106,8 +102,8 @@ public class CombinerDescriptor extends AbstractProcessDescriptor {
         INPUT_DESC = new DefaultParameterDescriptorGroup(NAME + "InputParameters", IN_RED, IN_GREEN, IN_BLUE);
         
         Map<String, Object> propertiesOut = new HashMap<String, Object>();                
-        propertiesOut.put(IdentifiedObject.IDENTIFIERS_KEY, new ResourceInternationalString(BUNDLE_PATH, OUT_CODE_KEY));
-        propertiesOut.put(IdentifiedObject.NAME_KEY,        new ResourceInternationalString(BUNDLE_PATH, OUT_CODE_KEY));
+        propertiesOut.put(IdentifiedObject.IDENTIFIERS_KEY, "rgbResult");
+        propertiesOut.put(IdentifiedObject.NAME_KEY,        "rgbResult");
         propertiesOut.put(IdentifiedObject.ALIAS_KEY,       new ResourceInternationalString(BUNDLE_PATH, OUT_TITLE_KEY));
         propertiesOut.put(IdentifiedObject.REMARKS_KEY,     new ResourceInternationalString(BUNDLE_PATH, OUT_DESC_KEY));
         
