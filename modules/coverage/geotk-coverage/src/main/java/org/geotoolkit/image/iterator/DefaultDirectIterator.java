@@ -72,25 +72,6 @@ abstract class DefaultDirectIterator extends PixelIterator{
     protected int maxBanks;
 
     /**
-     * Create raster iterator to follow from its minX and minY coordinates.
-     *
-     * @param raster will be followed by this iterator.
-     */
-    protected DefaultDirectIterator(final Raster raster) {
-        super(raster);
-        this.rasterWidth = raster.getWidth();
-
-        //init
-        this.minX = 0;
-        this.minY = 0;
-        this.maxX = this.indexStep = rasterWidth;
-        this.maxY = raster.getHeight();
-        this.maxBanks   = rasterWidth*maxY;
-        this.dataCursor = 0;
-        this.cursorStep = 0;
-    }
-
-    /**
      * Create raster iterator to follow from minX, minY raster and rectangle intersection coordinate.
      *
      * @param raster will be followed by this iterator.
@@ -101,28 +82,26 @@ abstract class DefaultDirectIterator extends PixelIterator{
         super(raster, subArea);
         this.rasterWidth = raster.getWidth();
 
-        final int minx = raster.getMinX();
-        final int miny = raster.getMinY();
-        this.maxBanks = (maxX-minx) + (maxY-miny-1) * rasterWidth;//index of last banks
-        this.tMaxX = this.tMaxY = 1;
+        if (subArea != null) {
+            final int minx = raster.getMinX();
+            final int miny = raster.getMinY();
+            this.maxBanks = (maxX-minx) + (maxY-miny-1) * rasterWidth;//index of last banks
+            this.tMaxX = this.tMaxY = 1;
 
-        //step
-        cursorStep = rasterWidth - (maxX-minX);
-        dataCursor = baseCursor = (areaIterateMinX-minx) + (areaIterateMinY-miny) * rasterWidth;
-        this.indexStep = baseCursor + maxX-minX;
-    }
-
-    /**
-     * Create default rendered image iterator.
-     *
-     * @param renderedImage image which will be follow by iterator.
-     */
-    protected DefaultDirectIterator(final RenderedImage renderedImage) {
-        super(renderedImage);
-        this.rasterWidth = renderedImage.getTileWidth();
-        this.maxBanks = 1;
-        this.tY = tMinY;
-        this.tX = tMinX - 1;
+            //step
+            cursorStep = rasterWidth - (maxX-minX);
+            dataCursor = baseCursor = (areaIterateMinX-minx) + (areaIterateMinY-miny) * rasterWidth;
+            this.indexStep = baseCursor + maxX-minX;
+        } else {
+            //init
+            this.minX = 0;
+            this.minY = 0;
+            this.maxX = this.indexStep = rasterWidth;
+            this.maxY = raster.getHeight();
+            this.maxBanks   = rasterWidth*maxY;
+            this.dataCursor = 0;
+            this.cursorStep = 0;
+        }
     }
 
     /**
@@ -177,10 +156,10 @@ abstract class DefaultDirectIterator extends PixelIterator{
         this.rasterWidth = currentRaster.getWidth();
 
         //update min max from subArea and raster boundary
-        this.minX    = Math.max(subAreaMinX, cRMinX) - cRMinX;
-        this.minY    = Math.max(subAreaMinY, cRMinY) - cRMinY;
-        this.maxX    = Math.min(subAreaMaxX, cRMinX + rasterWidth) - cRMinX;
-        this.maxY    = Math.min(subAreaMaxY, cRMinY + currentRaster.getHeight()) - cRMinY;
+        this.minX    = Math.max(areaIterateMinX, cRMinX) - cRMinX;
+        this.minY    = Math.max(areaIterateMinY, cRMinY) - cRMinY;
+        this.maxX    = Math.min(areaIterateMaxX, cRMinX + rasterWidth) - cRMinX;
+        this.maxY    = Math.min(areaIterateMaxY, cRMinY + currentRaster.getHeight()) - cRMinY;
         this.numBand = currentRaster.getNumBands();
         this.maxBanks = maxX + (maxY-1) * rasterWidth;//index of last banks
 

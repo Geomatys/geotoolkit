@@ -57,17 +57,6 @@ class DefaultIterator extends PixelIterator {
     protected int y;
 
     /**
-     * Create raster iterator to follow from its minX and minY coordinates.
-     *
-     * @param raster will be followed by this iterator.
-     */
-    DefaultIterator(final Raster raster) {
-        super(raster);
-        this.x = minX;
-        this.y = minY;
-    }
-
-    /**
      * Create raster iterator to follow from minX, minY raster and rectangle intersection coordinate.
      *
      * @param raster will be followed by this iterator.
@@ -76,19 +65,12 @@ class DefaultIterator extends PixelIterator {
      */
     DefaultIterator(final Raster raster, final Rectangle subArea) {
         super(raster, subArea);
+        this.minX = areaIterateMinX;
+        this.minY = areaIterateMinY;
+        this.maxX = areaIterateMaxX;
+        this.maxY = areaIterateMaxY;
         x  = this.minX;
         y  = this.minY;
-    }
-
-    /**
-     * Create default rendered image iterator.
-     *
-     * @param renderedImage image which will be follow by iterator.
-     */
-    DefaultIterator(final RenderedImage renderedImage) {
-        super(renderedImage);
-        tX = tMinX-1;
-        tY = tMinY;
     }
 
     /**
@@ -136,10 +118,10 @@ class DefaultIterator extends PixelIterator {
         this.currentRaster = this.renderedImage.getTile(tileX, tileY);
         final int cRMinX   = this.currentRaster.getMinX();
         final int cRMinY   = this.currentRaster.getMinY();
-        this.minX = this.x = Math.max(subAreaMinX, cRMinX);
-        this.minY = this.y = Math.max(subAreaMinY, cRMinY);
-        this.maxX          = Math.min(subAreaMaxX, cRMinX + currentRaster.getWidth());
-        this.maxY          = Math.min(subAreaMaxY, cRMinY + currentRaster.getHeight());
+        this.minX = this.x = Math.max(areaIterateMinX, cRMinX);
+        this.minY = this.y = Math.max(areaIterateMinY, cRMinY);
+        this.maxX          = Math.min(areaIterateMaxX, cRMinX + currentRaster.getWidth());
+        this.maxY          = Math.min(areaIterateMaxY, cRMinY + currentRaster.getHeight());
         this.numBand       = this.currentRaster.getNumBands();
     }
 

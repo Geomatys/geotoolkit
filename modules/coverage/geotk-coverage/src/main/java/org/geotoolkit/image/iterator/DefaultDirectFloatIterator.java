@@ -55,30 +55,6 @@ public class DefaultDirectFloatIterator extends DefaultDirectIterator {
     private float[][] currentDataArray;
 
     /**
-     * Create Byte type raster iterator to follow from its minX and minY coordinates.
-     *
-     * @param raster will be followed by this iterator.
-     */
-    DefaultDirectFloatIterator(final Raster raster) {
-        super(raster);
-        final DataBuffer databuf = raster.getDataBuffer();
-        assert (databuf.getDataType() == DataBuffer.TYPE_FLOAT) : "raster datas or not Byte type"+databuf;
-        this.currentRaster = raster;
-        this.currentDataArray = ((DataBufferFloat)databuf).getBankData();
-    }
-
-    /**
-     * Create default Byte type rendered image iterator.
-     *
-     * @param renderedImage image which will be follow by iterator.
-     */
-    DefaultDirectFloatIterator(final RenderedImage renderedImage) {
-        super(renderedImage);
-        assert (renderedImage.getTile(tMinX, tMinY).getDataBuffer().getDataType() == DataBuffer.TYPE_FLOAT)
-               : "renderedImage datas or not Byte type";
-    }
-
-    /**
      * Create Byte type raster iterator to follow from minX, minY raster and rectangle intersection coordinate.
      *
      * @param raster will be followed by this iterator.

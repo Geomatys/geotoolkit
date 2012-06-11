@@ -57,17 +57,6 @@ public class RowMajorDirectByteIterator extends RowMajorDirectIterator {
      * Create Byte type row-major rendered image iterator.
      *
      * @param renderedImage image which will be follow by iterator.
-     */
-    public RowMajorDirectByteIterator(RenderedImage renderedImage) {
-        super(renderedImage);
-        assert (renderedImage.getTile(tMinX, tMinY).getDataBuffer().getDataType() == DataBuffer.TYPE_BYTE)
-               : "renderedImage datas or not Byte type";
-    }
-
-    /**
-     * Create Byte type row-major rendered image iterator.
-     *
-     * @param renderedImage image which will be follow by iterator.
      * @param subArea {@code Rectangle} which represent image sub area iteration.
      * @throws IllegalArgumentException if subArea don't intersect image boundary.
      */

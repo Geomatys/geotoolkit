@@ -58,26 +58,6 @@ public abstract class PixelIterator {
     protected final int areaIterateMaxY;
 
     /**
-     * The X coordinate of the sub-Area upper-left corner.
-     */
-    final protected int subAreaMinX;
-
-    /**
-     * The Y coordinate of the sub-Area upper-left corner.
-     */
-    final protected int subAreaMinY;
-
-    /**
-     * The X index coordinate of the sub-Area bottom-right corner.
-     */
-    final protected int subAreaMaxX;
-
-    /**
-     * The Y index coordinate of the sub-Area bottom-right corner.
-     */
-    final protected int subAreaMaxY;
-
-    /**
      * Current raster which is followed by Iterator.
      */
     protected Raster currentRaster;
@@ -147,24 +127,6 @@ public abstract class PixelIterator {
     protected int tY;
 
     /**
-     * Create raster iterator to follow from its minX and minY coordinates.
-     *
-     * @param raster will be followed by this iterator.
-     */
-    PixelIterator(final Raster raster) {
-        ArgumentChecks.ensureNonNull("Raster : ", raster);
-        this.currentRaster = raster;
-        this.numBand       = raster.getNumBands();
-        this.minX  = this.areaIterateMinX = this.subAreaMinX = raster.getMinX();
-        this.minY  = this.areaIterateMinY = this.subAreaMinY = raster.getMinY();
-        this.maxY  = this.areaIterateMaxX = this.subAreaMaxX = minY + raster.getHeight();
-        this.maxX  = this.areaIterateMaxY = this.subAreaMaxY = minX + raster.getWidth();
-        this.band  = -1;
-        this.tX = this.tY    = 0;
-        this.tMaxX = this.tMaxY = 1;
-    }
-
-    /**
      * Create raster iterator to follow from minX, minY raster and rectangle intersection coordinate.
      *
      * @param raster will be followed by this iterator.
@@ -173,53 +135,33 @@ public abstract class PixelIterator {
      */
     PixelIterator(final Raster raster, final Rectangle subArea) {
         ArgumentChecks.ensureNonNull("Raster : ", raster);
-        ArgumentChecks.ensureNonNull("sub Area iteration : ", subArea);
         this.currentRaster = raster;
         final int minx  = raster.getMinX();
         final int miny  = raster.getMinY();
         final int maxx  = minx + raster.getWidth();
         final int maxy  = miny + raster.getHeight();
-        //subarea attributs
-        this.subAreaMinX = subArea.x;
-        this.subAreaMinY = subArea.y;
-        this.subAreaMaxX = subAreaMinX + subArea.width;
-        this.subAreaMaxY = subAreaMinY + subArea.height;
 
+        if (subArea != null) {
+            final int sAMX = subArea.x;
+            final int sAMY = subArea.y;
+            //intersection
+            this.minX = this.areaIterateMinX = Math.max(sAMX, minx);
+            this.minY = this.areaIterateMinY = Math.max(sAMY, miny);
+            this.maxX = this.areaIterateMaxX = Math.min(sAMX + subArea.width, maxx);
+            this.maxY = this.areaIterateMaxY = Math.min(sAMY + subArea.height, maxy);
+        } else {
+            //areaIterate
+            this.areaIterateMinX = minx;
+            this.areaIterateMinY = miny;
+            this.areaIterateMaxX = maxx;
+            this.areaIterateMaxY = maxy;
+        }
         this.numBand    = raster.getNumBands();
-        this.minX       = this.areaIterateMinX = Math.max(subAreaMinX, minx);
-        this.minY       = this.areaIterateMinY = Math.max(subAreaMinY, miny);
-        this.maxX       = this.areaIterateMaxX = Math.min(subAreaMaxX, maxx);
-        this.maxY       = this.areaIterateMaxY = Math.min(subAreaMaxY, maxy);
-        if(minX > maxX || minY > maxY)
+        if(areaIterateMinX > areaIterateMaxX || areaIterateMinY > areaIterateMaxY)
             throw new IllegalArgumentException("invalid subArea coordinate no intersection between it and raster"+raster+subArea);
         this.band = -1;
         tX = tY  = 0;
         tMaxX = tMaxY = 1;
-    }
-
-    /**
-     * Create default rendered image iterator.
-     *
-     * @param renderedImage image which will be follow by iterator.
-     */
-    PixelIterator(final RenderedImage renderedImage) {
-        ArgumentChecks.ensureNonNull("RenderedImage : ", renderedImage);
-        this.renderedImage = renderedImage;
-
-        //rect attributs
-        this.subAreaMinX = this.areaIterateMinX = renderedImage.getMinX();
-        this.subAreaMinY = this.areaIterateMinY = renderedImage.getMinY();
-        this.subAreaMaxX = this.areaIterateMaxX = this.subAreaMinX + renderedImage.getWidth();
-        this.subAreaMaxY = this.areaIterateMaxY = this.subAreaMinY + renderedImage.getHeight();
-
-        //tiles attributs
-        this.tMinX = renderedImage.getMinTileX();
-        this.tMinY = renderedImage.getMinTileY();
-        this.tMaxX = tMinX + renderedImage.getNumXTiles();
-        this.tMaxY = tMinY + renderedImage.getNumYTiles();
-
-//        //initialize attributs to first iteration
-        this.numBand = this.maxY = this.maxX = 1;
     }
 
     /**
@@ -231,7 +173,6 @@ public abstract class PixelIterator {
      */
     PixelIterator(final RenderedImage renderedImage, final Rectangle subArea) {
         ArgumentChecks.ensureNonNull("RenderedImage : ", renderedImage);
-        ArgumentChecks.ensureNonNull("sub Area iteration : ", subArea);
         this.renderedImage = renderedImage;
 
         final int rIminX = renderedImage.getMinX();
@@ -244,17 +185,21 @@ public abstract class PixelIterator {
         final int rIMinTileX = renderedImage.getMinTileX();
         final int rIMinTileY = renderedImage.getMinTileY();
 
-        //rect attributs
-        this.subAreaMinX = subArea.x;
-        this.subAreaMinY = subArea.y;
-        this.subAreaMaxX = this.subAreaMinX + subArea.width;
-        this.subAreaMaxY = this.subAreaMinY + subArea.height;
-
-        //areaIterate
-        this.areaIterateMinX = Math.max(subAreaMinX, rIminX);
-        this.areaIterateMinY = Math.max(subAreaMinY, rIminY);
-        this.areaIterateMaxX = Math.min(subAreaMaxX, rImaxX);
-        this.areaIterateMaxY = Math.min(subAreaMaxY, rImaxY);
+        if (subArea != null) {
+            final int sAMX = subArea.x;
+            final int sAMY = subArea.y;
+            //intersection
+            this.areaIterateMinX = Math.max(sAMX, rIminX);
+            this.areaIterateMinY = Math.max(sAMY, rIminY);
+            this.areaIterateMaxX = Math.min(sAMX + subArea.width, rImaxX);
+            this.areaIterateMaxY = Math.min(sAMY + subArea.height, rImaxY);
+        } else {
+            //areaIterate
+            this.areaIterateMinX = rIminX;
+            this.areaIterateMinY = rIminY;
+            this.areaIterateMaxX = rImaxX;
+            this.areaIterateMaxY = rImaxY;
+        }
 
         //intersection test
         if (areaIterateMinX > areaIterateMaxX || areaIterateMinY > areaIterateMaxY)

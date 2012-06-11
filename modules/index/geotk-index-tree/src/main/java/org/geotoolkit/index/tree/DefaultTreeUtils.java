@@ -25,7 +25,7 @@ import org.geotoolkit.util.ArgumentChecks;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 
-/**Some utils methods.
+/**Some utilities methods.
  *
  * @author Rémi Maréchal (Geomatys).
  */
@@ -169,7 +169,7 @@ public class DefaultTreeUtils {
      */
     public static double getGeneralEnvelopArea(final Envelope envelope){
         ArgumentChecks.ensureNonNull("getArea : envelop", envelope);
-        int area = 0;
+        double area = 0;
         final int dim = envelope.getDimension();
         for(int i = 0; i<dim-1; i++) {
             for(int j = i+1;j<dim;j++) {

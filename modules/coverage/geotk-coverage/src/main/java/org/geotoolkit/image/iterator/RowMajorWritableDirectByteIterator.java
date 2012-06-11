@@ -70,20 +70,6 @@ class RowMajorWritableDirectByteIterator extends RowMajorDirectByteIterator{
     private WritableRenderedImage writableRenderedImage;
 
     /**
-     * Create an appropriate iterator to read and write in a rendered image, row by row.
-     *
-     * @param renderedImage rendered image which is followed by read-only iterator.
-     * @param writableRI    writable rendered image which is followed by this write-only iterator and wherein value is writing.
-     * @throws IllegalArgumentException if renderedImage and writable renderedImage dimensions are not conform.
-     * @throws IllegalArgumentException if renderedImage and writable renderedImage tiles configurations are not conform.
-     */
-    RowMajorWritableDirectByteIterator(final RenderedImage renderedImage, final WritableRenderedImage writableRI) {
-        super(renderedImage);
-        checkRenderedImage(renderedImage, writableRI);
-        this.writableRenderedImage = writableRI;
-    }
-
-    /**
      * Create an appropriate iterator to read and write in a rendered image sub area, row by row.
      *
      * @param renderedImage rendered image which is followed by read-only iterator.

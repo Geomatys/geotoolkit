@@ -69,19 +69,6 @@ class DefaultWritableIterator extends DefaultIterator {
     private int prectY;
 
     /**
-     * Create an appropriate iterator to read and write in a raster.
-     *
-     * @param raster         raster which is followed by read-only iterator.
-     * @param writableRaster raster which is followed by this write-only iterator and wherein value is writing.
-     * @throws IllegalArgumentException if raster and writable raster dimensions are not conform.
-     */
-    DefaultWritableIterator(final Raster raster, final WritableRaster writableRaster) {
-        super(raster);
-        checkRasters(raster, writableRaster);
-        this.currentWritableRaster = writableRaster;
-    }
-
-    /**
      * Create an appropriate iterator to read and write in a raster sub area.
      *
      * @param raster         raster which is followed by read-only iterator.
@@ -93,20 +80,6 @@ class DefaultWritableIterator extends DefaultIterator {
         super(raster, subArea);
         checkRasters(raster, writableRaster);
         this.currentWritableRaster = writableRaster;
-    }
-
-    /**
-     * Create an appropriate iterator to read and write in a rendered image tiles by tiles.
-     *
-     * @param renderedImage rendered image which is followed by read-only iterator.
-     * @param writableRI    writable rendered image which is followed by this write-only iterator and wherein value is writing.
-     * @throws IllegalArgumentException if renderedImage and writable renderedImage dimensions are not conform.
-     * @throws IllegalArgumentException if renderedImage and writable renderedImage tiles configurations are not conform.
-     */
-    DefaultWritableIterator(final RenderedImage renderedImage, final WritableRenderedImage writableRI) {
-        super(renderedImage);
-        checkRenderedImage(renderedImage, writableRI);
-        this.writableRenderedImage = writableRI;
     }
 
     /**

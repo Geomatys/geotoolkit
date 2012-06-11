@@ -68,38 +68,19 @@ abstract class RowMajorDirectIterator extends PixelIterator {
      * Create default rendered image iterator.
      *
      * @param renderedImage image which will be follow by iterator.
-     */
-    RowMajorDirectIterator(final RenderedImage renderedImage) {
-        super(renderedImage);
-        ArgumentChecks.ensureNonNull("RenderedImage : ", renderedImage);
-        this.renderedImage = renderedImage;
-
-        //initialize attributs to first iteration
-        this.row     = this.areaIterateMinY - 1;
-        this.maxY    = this.row + 1;
-        this.numBand = this.maxX = 1;
-        this.tY      = tMinY-1;
-        this.tX      = tMaxX - 1;
-    }
-
-    /**
-     * Create default rendered image iterator.
-     *
-     * @param renderedImage image which will be follow by iterator.
      * @param subArea {@code Rectangle} which represent image sub area iteration.
      * @throws IllegalArgumentException if subArea don't intersect image boundary.
      */
     RowMajorDirectIterator(final RenderedImage renderedImage, final Rectangle subArea) {
         super(renderedImage, subArea);
         ArgumentChecks.ensureNonNull("RenderedImage : ", renderedImage);
-        ArgumentChecks.ensureNonNull("sub Area iteration : ", subArea);
         this.renderedImage = renderedImage;
 
         //initialize attributs to first iteration
         this.row     = this.areaIterateMinY - 1;
         this.maxY    = this.row + 1;
         this.numBand = this.maxX = 1;
-        this.tY      = tMinY-1;
+        this.tY      = tMinY - 1;
         this.tX      = tMaxX - 1;
     }
 
@@ -117,13 +98,13 @@ abstract class RowMajorDirectIterator extends PixelIterator {
                         if (++tY == tMaxY) return false;
                         updateCurrentRaster(tX, tY);
                         this.cRMinY = this.currentRaster.getMinY();
-                        this.maxY   = Math.min(subAreaMaxY, cRMinY + currentRaster.getHeight());
+                        this.maxY   = Math.min(areaIterateMaxY, cRMinY + currentRaster.getHeight());
                     }
                 }
                 updateCurrentRaster(tX, tY);
                 this.cRMinX    = currentRaster.getMinX();
-                this.minX      = Math.max(subAreaMinX, cRMinX) - cRMinX;
-                this.maxX      = Math.min(subAreaMaxX, cRMinX + rasterWidth) - cRMinX;
+                this.minX      = Math.max(areaIterateMinX, cRMinX) - cRMinX;
+                this.maxX      = Math.min(areaIterateMaxX, cRMinX + rasterWidth) - cRMinX;
                 final int step = (row - cRMinY) * rasterWidth;
                 this.maxX     +=  step;
                 dataCursor     = minX + step;
@@ -189,11 +170,11 @@ abstract class RowMajorDirectIterator extends PixelIterator {
         this.cRMinY = currentRaster.getMinY();
         this.row = y;
         final int step = (row - cRMinY) * rasterWidth;
-        this.maxX = Math.min(subAreaMaxX, cRMinX + rasterWidth) - cRMinX;
+        this.maxX = Math.min(areaIterateMaxX, cRMinX + rasterWidth) - cRMinX;
         this.maxX += step;
 
         //initialize row
-        this.maxY = Math.min(subAreaMaxY, cRMinY + currentRaster.getHeight());
+        this.maxY = Math.min(areaIterateMaxY, cRMinY + currentRaster.getHeight());
 
         this.dataCursor = x;
         this.dataCursor -= this.cRMinX;

@@ -38,9 +38,9 @@ public final class PixelIteratorFactory {
      */
     public static PixelIterator createDefaultIterator(final Raster raster) {
         switch (raster.getDataBuffer().getDataType()) {
-            case DataBuffer.TYPE_BYTE  : return new DefaultDirectByteIterator(raster);
-            case DataBuffer.TYPE_FLOAT : return new DefaultDirectFloatIterator(raster);
-            default : return new DefaultIterator(raster);
+            case DataBuffer.TYPE_BYTE  : return new DefaultDirectByteIterator(raster, null);
+            case DataBuffer.TYPE_FLOAT : return new DefaultDirectFloatIterator(raster, null);
+            default : return new DefaultIterator(raster, null);
         }
     }
 
@@ -67,9 +67,9 @@ public final class PixelIteratorFactory {
      */
     public static PixelIterator createDefaultIterator(final RenderedImage renderedImage) {
         switch (renderedImage.getTile(renderedImage.getMinTileX(), renderedImage.getMinTileY()).getDataBuffer().getDataType()) {
-            case DataBuffer.TYPE_BYTE  : return new DefaultDirectByteIterator(renderedImage);
-            case DataBuffer.TYPE_FLOAT : return new DefaultDirectFloatIterator(renderedImage);
-            default : return new DefaultIterator(renderedImage);
+            case DataBuffer.TYPE_BYTE  : return new DefaultDirectByteIterator(renderedImage, null);
+            case DataBuffer.TYPE_FLOAT : return new DefaultDirectFloatIterator(renderedImage, null);
+            default : return new DefaultIterator(renderedImage, null);
         }
     }
 
@@ -97,9 +97,9 @@ public final class PixelIteratorFactory {
      */
     public static PixelIterator createDefaultWriteableIterator(final Raster raster, final WritableRaster writeableRaster) {
         switch (raster.getDataBuffer().getDataType()) {
-            case DataBuffer.TYPE_BYTE  : return new DefaultWritableDirectByteIterator(raster, writeableRaster);
-            case DataBuffer.TYPE_FLOAT : return new DefaultWritableDirectFloatIterator(raster, writeableRaster);
-            default : return new DefaultWritableIterator(raster, writeableRaster);
+            case DataBuffer.TYPE_BYTE  : return new DefaultWritableDirectByteIterator(raster, writeableRaster, null);
+            case DataBuffer.TYPE_FLOAT : return new DefaultWritableDirectFloatIterator(raster, writeableRaster, null);
+            default : return new DefaultWritableIterator(raster, writeableRaster, null);
         }
     }
 
@@ -129,9 +129,9 @@ public final class PixelIteratorFactory {
      */
     public static PixelIterator createDefaultWriteableIterator(final RenderedImage renderedImage, final WritableRenderedImage writableRenderedImage) {
         switch (renderedImage.getTile(renderedImage.getMinTileX(), renderedImage.getMinTileY()).getDataBuffer().getDataType()) {
-            case DataBuffer.TYPE_BYTE  : return new DefaultWritableDirectByteIterator(renderedImage, writableRenderedImage);
-            case DataBuffer.TYPE_FLOAT : return new DefaultWritableDirectFloatIterator(renderedImage, writableRenderedImage);
-            default : return new DefaultWritableIterator(renderedImage, writableRenderedImage);
+            case DataBuffer.TYPE_BYTE  : return new DefaultWritableDirectByteIterator(renderedImage, writableRenderedImage, null);
+            case DataBuffer.TYPE_FLOAT : return new DefaultWritableDirectFloatIterator(renderedImage, writableRenderedImage, null);
+            default : return new DefaultWritableIterator(renderedImage, writableRenderedImage, null);
         }
     }
 
@@ -163,9 +163,9 @@ public final class PixelIteratorFactory {
      */
     public static PixelIterator createRowMajorIterator(final RenderedImage renderedImage) {
         switch (renderedImage.getTile(renderedImage.getMinTileX(), renderedImage.getMinTileY()).getDataBuffer().getDataType()) {
-            case DataBuffer.TYPE_BYTE  : return new RowMajorDirectByteIterator(renderedImage);
-            case DataBuffer.TYPE_FLOAT : return new RowMajorDirectFloatIterator(renderedImage);
-            default : return new RowMajorIterator(renderedImage);
+            case DataBuffer.TYPE_BYTE  : return new RowMajorDirectByteIterator(renderedImage, null);
+            case DataBuffer.TYPE_FLOAT : return new RowMajorDirectFloatIterator(renderedImage, null);
+            default : return new RowMajorIterator(renderedImage, null);
         }
     }
 
@@ -195,9 +195,9 @@ public final class PixelIteratorFactory {
      */
     public static PixelIterator createRowMajorWriteableIterator(final RenderedImage renderedImage, final WritableRenderedImage writableRenderedImage) {
         switch (renderedImage.getTile(renderedImage.getMinTileX(), renderedImage.getMinTileY()).getDataBuffer().getDataType()) {
-            case DataBuffer.TYPE_BYTE  : return new RowMajorWritableDirectByteIterator(renderedImage, writableRenderedImage);
-            case DataBuffer.TYPE_FLOAT : return new RowMajorWritableDirectFloatIterator(renderedImage, writableRenderedImage);
-            default : return new RowMajorWritableIterator(renderedImage, writableRenderedImage);
+            case DataBuffer.TYPE_BYTE  : return new RowMajorWritableDirectByteIterator(renderedImage, writableRenderedImage, null);
+            case DataBuffer.TYPE_FLOAT : return new RowMajorWritableDirectFloatIterator(renderedImage, writableRenderedImage, null);
+            default : return new RowMajorWritableIterator(renderedImage, writableRenderedImage, null);
         }
     }
 
