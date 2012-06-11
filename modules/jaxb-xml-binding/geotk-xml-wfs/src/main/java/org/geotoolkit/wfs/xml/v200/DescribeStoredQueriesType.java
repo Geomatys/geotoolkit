@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.wfs.xml.DescribeStoredQueries;
 
 
 /**
@@ -50,36 +51,26 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "DescribeStoredQueriesType", propOrder = {
     "storedQueryId"
 })
-public class DescribeStoredQueriesType
-    extends BaseRequestType
-{
+public class DescribeStoredQueriesType extends BaseRequestType implements DescribeStoredQueries {
 
     @XmlElement(name = "StoredQueryId")
     @XmlSchemaType(name = "anyURI")
     private List<String> storedQueryId;
 
+    public DescribeStoredQueriesType() {
+        
+    }
+    
+    public DescribeStoredQueriesType(final String service, final String version, final String handle, final List<String> storedQueryId) {
+        super(service, version, handle);
+        this.storedQueryId = storedQueryId;
+    }
+
     /**
      * Gets the value of the storedQueryId property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the storedQueryId property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getStoredQueryId().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
-     * 
-     * 
      */
+    @Override
     public List<String> getStoredQueryId() {
         if (storedQueryId == null) {
             storedQueryId = new ArrayList<String>();

@@ -492,4 +492,34 @@ public class WFSXmlFactory extends OWSXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }
     }
+    
+    public ListStoredQueries buildListStoredQueries(final String version, final String service, final String handle) {
+        if ("2.0.0".equals(version)) {
+            return new org.geotoolkit.wfs.xml.v200.ListStoredQueriesType(service, version, handle);
+            
+        } else if ("1.1.0".equals(version)) {
+            throw new IllegalArgumentException("ListStoredQueries is not available in version 1.1.0");
+            
+        } else if ("1.0.0".equals(version)) {
+            throw new IllegalArgumentException("ListStoredQueries is not available in version 1.0.0");
+            
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + version);
+        }
+    }
+    
+    public DescribeStoredQueries buildDescribeStoredQueries(final String version, final String service, final String handle, final List<String> storedQueryId) {
+        if ("2.0.0".equals(version)) {
+            return new org.geotoolkit.wfs.xml.v200.DescribeStoredQueriesType(service, version, handle, storedQueryId);
+            
+        } else if ("1.1.0".equals(version)) {
+            throw new IllegalArgumentException("DescribeStoredQueries is not available in version 1.1.0");
+            
+        } else if ("1.0.0".equals(version)) {
+            throw new IllegalArgumentException("DescribeStoredQueries is not available in version 1.0.0");
+            
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + version);
+        }
+    }
 }

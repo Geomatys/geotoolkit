@@ -92,7 +92,9 @@ public class GetFeatureType extends BaseRequestType implements GetFeature {
     public GetFeatureType(final String service, final String version, final String handle, final Integer maxFeatures,
             final List<QueryType> query, final ResultTypeType resultType, final String outputformat) {
         super(service, version, handle);
-        this.count        = maxFeatures;
+        if (maxFeatures !=  null) {
+            this.count        = maxFeatures;
+        }
         if (query != null) {
             this.abstractQueryExpression = new ArrayList<JAXBElement<? extends AbstractQueryExpressionType>>();
             final ObjectFactory factory = new ObjectFactory();
@@ -107,7 +109,9 @@ public class GetFeatureType extends BaseRequestType implements GetFeature {
     public GetFeatureType(final String service, final String version, final String handle, final Integer maxFeatures,
             final String featureId, final List<QueryType> query, final ResultTypeType resultType, final String outputformat) {
         super(service, version, handle);
-        this.count  = maxFeatures;
+        if (maxFeatures !=  null) {
+            this.count  = maxFeatures;
+        }
         if (featureId != null) {
             // TODO featureId?
         }

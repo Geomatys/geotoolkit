@@ -56,25 +56,6 @@ public class ListStoredQueriesResponseType {
 
     /**
      * Gets the value of the storedQuery property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the storedQuery property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getStoredQuery().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link StoredQueryListItemType }
-     * 
-     * 
      */
     public List<StoredQueryListItemType> getStoredQuery() {
         if (storedQuery == null) {
