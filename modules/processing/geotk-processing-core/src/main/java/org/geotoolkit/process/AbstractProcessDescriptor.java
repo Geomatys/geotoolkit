@@ -35,7 +35,7 @@ import static org.geotoolkit.util.ArgumentChecks.*;
  * @module pending
  */
 public abstract class AbstractProcessDescriptor implements ProcessDescriptor {
-
+    
     private final Identifier id;
     private final InternationalString abs;
     private final ParameterDescriptorGroup inputDesc;

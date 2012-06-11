@@ -17,19 +17,22 @@
  */
 package org.geotoolkit.process.coverage.metadataextractor;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.process.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.coverage.CoverageProcessingRegistry;
+import org.geotoolkit.util.ResourceInternationalString;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.IdentifiedObject;
 
-    
 /**
  *
  * @author Alexis Manin (Geomatys)
@@ -37,23 +40,51 @@ import org.opengis.parameter.ParameterValueGroup;
 public class ExtractionDescriptor extends AbstractProcessDescriptor {
 
     public static final String NAME = "extractor";
+    public static final String BUNDLE_PATH = "org/geotoolkit/process/coverage/metadataextractor/bundle";
+    
+    /**
+     * Following attributes are the keys for international description fields.
+     * (See @Process_package/bundle.properties).
+     */
+    public static final String IN_CODE_KEY  = "inputCode";
+    public static final String IN_DESC_KEY  = "inputDescription";
+    public static final String IN_TITLE_KEY = "inputTitle";    
+    public static final String OUT_CODE_KEY  = "outputCode";
+    public static final String OUT_DESC_KEY  = "outputDescription";
+    public static final String OUT_TITLE_KEY = "outputTitle";
     
     /**
      * Mandatory - Coverage to process
      */
-    public static final ParameterDescriptor<Object> IN_SOURCE =
-            new DefaultParameterDescriptor<Object>("source","Coverage to extract metadata.",Object.class,null,true);
+    public static final ParameterDescriptor<Object> IN_SOURCE;
     
-    public static final ParameterDescriptorGroup INPUT_DESC = new DefaultParameterDescriptorGroup(NAME + "InputParameters", IN_SOURCE);
+    public static final ParameterDescriptorGroup INPUT_DESC;
     
-        /**
+    /**
      * Mandatory - Found metadata
      */
-    public static final ParameterDescriptor<Metadata> OUT_METADATA =
-            new DefaultParameterDescriptor<Metadata>("result","Extracted metadata.",Metadata.class,null,true);
+    public static final ParameterDescriptor<Metadata> OUT_METADATA;
     
-    public static final ParameterDescriptorGroup OUTPUT_DESC =
-            new DefaultParameterDescriptorGroup(NAME + "OutputParameters", OUT_METADATA);
+    public static final ParameterDescriptorGroup OUTPUT_DESC;
+    
+    static {
+        Map<String, Object> propertiesIn = new HashMap<String, Object>();        
+        propertiesIn.put(IdentifiedObject.IDENTIFIERS_KEY, new ResourceInternationalString(BUNDLE_PATH, IN_CODE_KEY));
+        propertiesIn.put(IdentifiedObject.NAME_KEY,        new ResourceInternationalString(BUNDLE_PATH, IN_CODE_KEY));
+        propertiesIn.put(IdentifiedObject.ALIAS_KEY,       new ResourceInternationalString(BUNDLE_PATH, IN_TITLE_KEY));
+        propertiesIn.put(IdentifiedObject.REMARKS_KEY,     new ResourceInternationalString(BUNDLE_PATH, IN_DESC_KEY));
+        
+        IN_SOURCE  = new DefaultParameterDescriptor<Object>(propertiesIn, Object.class, null, null, null, null, null, true);
+        INPUT_DESC = new DefaultParameterDescriptorGroup(NAME+"InputParameters", IN_SOURCE);
+        
+        Map<String, Object> propertiesOut = new HashMap<String, Object>();                
+        propertiesOut.put(IdentifiedObject.IDENTIFIERS_KEY, new ResourceInternationalString(BUNDLE_PATH, OUT_CODE_KEY));
+        propertiesOut.put(IdentifiedObject.NAME_KEY,        new ResourceInternationalString(BUNDLE_PATH, OUT_CODE_KEY));
+        propertiesOut.put(IdentifiedObject.ALIAS_KEY,       new ResourceInternationalString(BUNDLE_PATH, OUT_TITLE_KEY));
+        propertiesOut.put(IdentifiedObject.REMARKS_KEY,     new ResourceInternationalString(BUNDLE_PATH, OUT_DESC_KEY));
+        OUT_METADATA = new DefaultParameterDescriptor<Metadata>(propertiesOut, Metadata.class, null, null, null, null, null, true);
+        OUTPUT_DESC  = new DefaultParameterDescriptorGroup(NAME + "OutputParameters", OUT_METADATA);
+    }    
     
     public static final ProcessDescriptor INSTANCE = new ExtractionDescriptor();
 
