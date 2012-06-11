@@ -62,7 +62,7 @@ public class CombinerDescriptor extends AbstractProcessDescriptor {
     
     public static final ParameterDescriptorGroup OUTPUT_DESC;
     
-    public static final String BUNDLE_PATH = "org/geotoolkit/process/coverage/metadataextractor/bundle";
+    public static final String BUNDLE_PATH = "org/geotoolkit/process/coverage/bandcombiner/bundle";
     
     /**
      * Following attributes are the keys for international description fields.
