@@ -17,7 +17,9 @@
 package org.geotoolkit.metadata.landsat;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import org.geotoolkit.metadata.iso.DefaultMetadata;
 import org.geotoolkit.util.FileUtilities;
 import org.opengis.metadata.Metadata;
@@ -33,7 +35,17 @@ public final class LandSat {
     
     public static LandSatMetaNode parseMetadata(final File file) throws IOException{
         
-        final String metaFile = FileUtilities.getStringFromFile(file);        
+        final FileInputStream stream = new FileInputStream(file);
+        try{
+            return parseMetadata(stream);
+        }finally{
+            stream.close();
+        }
+    }
+    
+    public static LandSatMetaNode parseMetadata(final InputStream stream) throws IOException{
+        
+        final String metaFile = FileUtilities.getStringFromStream(stream);        
         final String[] lines = metaFile.split("\n");
         
         
@@ -63,7 +75,8 @@ public final class LandSat {
             final String value = line.substring(separator+1).trim();
             
             if("GROUP".equalsIgnoreCase(key)){
-                final LandSatMetaNode candidate = new LandSatMetaNode(key, value);
+                //invert to have the group name as key
+                final LandSatMetaNode candidate = new LandSatMetaNode(value, key);
                 if(node != null){
                     node.add(candidate);
                 }else{
@@ -74,7 +87,7 @@ public final class LandSat {
                 
                 //end this node, check the name match, 
                 //otherwise it means the file is incorrect
-                if(!value.equalsIgnoreCase(String.valueOf(node.getValue()))){
+                if(!value.equalsIgnoreCase(String.valueOf(node.getKey()))){
                     throw new IOException("End Group line "+i+" does not match any previous group. "+ line);
                 }
                 node = (LandSatMetaNode) node.getParent();
@@ -108,7 +121,8 @@ public final class LandSat {
         
         final DefaultMetadata metadata = new DefaultMetadata();
         
-        //TODO
+        
+        
         
         
         return metadata;
