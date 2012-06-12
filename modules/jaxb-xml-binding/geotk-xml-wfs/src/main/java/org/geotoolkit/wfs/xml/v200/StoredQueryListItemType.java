@@ -65,26 +65,21 @@ public class StoredQueryListItemType {
     @XmlSchemaType(name = "anyURI")
     private String id;
 
+    public StoredQueryListItemType() {
+        
+    }
+
+    public StoredQueryListItemType(final String id, final List<Title> title, final List<QName> returnFeatureType) {
+        this.id = id;
+        this.returnFeatureType = returnFeatureType;
+        this.title = title;
+    }
+    
     /**
      * Gets the value of the title property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the title property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getTitle().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Title }
-     * 
      * 
      */
     public List<Title> getTitle() {
@@ -97,23 +92,8 @@ public class StoredQueryListItemType {
     /**
      * Gets the value of the returnFeatureType property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the returnFeatureType property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getReturnFeatureType().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link QName }
-     * 
      * 
      */
     public List<QName> getReturnFeatureType() {

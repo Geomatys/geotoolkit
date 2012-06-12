@@ -58,7 +58,7 @@ import org.w3c.dom.Element;
 @XmlType(name = "QueryExpressionTextType", propOrder = {
     "content"
 })
-public class QueryExpressionTextType {
+public class QueryExpressionTextType implements org.geotoolkit.wfs.xml.QueryExpressionText {
 
     @XmlMixed
     @XmlAnyElement
@@ -71,27 +71,25 @@ public class QueryExpressionTextType {
     @XmlAttribute
     private Boolean isPrivate;
 
+    public QueryExpressionTextType() {
+        
+    }
+    
+    public QueryExpressionTextType(final String language, final QueryType query, final List<QName> returnFeatureTypes) {
+        this.language = language;
+        this.returnFeatureTypes = returnFeatureTypes;
+        if (query != null) {
+            this.content = new ArrayList<Object>();
+            this.content.add(query);
+        }
+    }
+    
     /**
      * Gets the value of the content property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the content property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getContent().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Element }
      * {@link String }
-     * 
      * 
      */
     public List<Object> getContent() {
@@ -103,25 +101,8 @@ public class QueryExpressionTextType {
 
     /**
      * Gets the value of the returnFeatureTypes property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the returnFeatureTypes property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getReturnFeatureTypes().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link QName }
-     * 
-     * 
      */
     public List<QName> getReturnFeatureTypes() {
         if (returnFeatureTypes == null) {

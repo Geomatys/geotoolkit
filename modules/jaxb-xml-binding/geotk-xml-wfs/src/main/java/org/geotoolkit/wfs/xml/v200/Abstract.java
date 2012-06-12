@@ -49,7 +49,7 @@ import org.geotoolkit.util.Utilities;
     "value"
 })
 @XmlRootElement(name = "Abstract")
-public class Abstract {
+public class Abstract implements org.geotoolkit.wfs.xml.Abstract {
 
     @XmlValue
     private String value;

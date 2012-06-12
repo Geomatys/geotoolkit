@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.wfs.xml.ListStoredQueriesResponse;
 
 
 /**
@@ -49,11 +50,19 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "ListStoredQueriesResponseType", propOrder = {
     "storedQuery"
 })
-public class ListStoredQueriesResponseType {
+public class ListStoredQueriesResponseType implements ListStoredQueriesResponse {
 
     @XmlElement(name = "StoredQuery")
     private List<StoredQueryListItemType> storedQuery;
 
+    public ListStoredQueriesResponseType() {
+        
+    }
+    
+    public ListStoredQueriesResponseType(final List<StoredQueryListItemType> storedQuery) {
+        this.storedQuery = storedQuery;
+    }
+    
     /**
      * Gets the value of the storedQuery property.
      */

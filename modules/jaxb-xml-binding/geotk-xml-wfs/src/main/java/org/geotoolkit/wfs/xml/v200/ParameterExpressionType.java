@@ -58,7 +58,7 @@ import org.geotoolkit.ows.xml.v110.MetadataType;
     "_abstract",
     "metadata"
 })
-public class ParameterExpressionType {
+public class ParameterExpressionType implements org.geotoolkit.wfs.xml.ParameterExpression {
 
     @XmlElement(name = "Title")
     private List<Title> title;
@@ -71,27 +71,28 @@ public class ParameterExpressionType {
     @XmlAttribute(required = true)
     private QName type;
 
+    public ParameterExpressionType() {
+        
+    }
+
+    public ParameterExpressionType(final String name, final String title, final String _abstract, final QName type) {
+        this.name = name;
+        this.type = type;
+        if (title != null) {
+            this.title = new ArrayList<Title>();
+            this.title.add(new Title(title));
+        }
+        if (_abstract != null) {
+            this._abstract = new ArrayList<Abstract>();
+            this._abstract.add(new Abstract(_abstract));
+        }
+    }
+    
     /**
      * Gets the value of the title property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the title property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getTitle().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Title }
-     * 
-     * 
      */
     public List<Title> getTitle() {
         if (title == null) {
@@ -103,24 +104,8 @@ public class ParameterExpressionType {
     /**
      * Gets the value of the abstract property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the abstract property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getAbstract().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Abstract }
-     * 
-     * 
      */
     public List<Abstract> getAbstract() {
         if (_abstract == null) {
@@ -132,24 +117,8 @@ public class ParameterExpressionType {
     /**
      * Gets the value of the metadata property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the metadata property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getMetadata().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link MetadataType }
-     * 
-     * 
      */
     public List<MetadataType> getMetadata() {
         if (metadata == null) {

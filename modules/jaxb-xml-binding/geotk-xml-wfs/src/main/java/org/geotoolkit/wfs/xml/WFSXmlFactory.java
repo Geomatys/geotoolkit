@@ -557,4 +557,52 @@ public class WFSXmlFactory extends OWSXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
         }
     }
+    
+    public ListStoredQueriesResponse buildListStoredQueriesResponse(final String currentVersion, final List<StoredQueryDescription> descriptions) {
+        if ("2.0.0".equals(currentVersion)) {
+            final List<org.geotoolkit.wfs.xml.v200.StoredQueryListItemType> storedQuery = new ArrayList<org.geotoolkit.wfs.xml.v200.StoredQueryListItemType>();
+            for (StoredQueryDescription description : descriptions) {
+                final List<QName> returnTypes = new ArrayList<QName>();
+                for (QueryExpressionText queryEx : description.getQueryExpressionText()) {
+                    returnTypes.addAll(queryEx.getReturnFeatureTypes());
+                }
+                storedQuery.add(new org.geotoolkit.wfs.xml.v200.StoredQueryListItemType(description.getId(), 
+                                                            (List<org.geotoolkit.wfs.xml.v200.Title>)description.getTitle(),
+                                                            returnTypes));
+            }
+            return new org.geotoolkit.wfs.xml.v200.ListStoredQueriesResponseType(storedQuery);
+            
+        } else if ("1.1.0".equals(currentVersion)) {
+            throw new IllegalArgumentException("DropStoredQuery is not available in version 1.1.0");
+            
+        } else if ("1.0.0".equals(currentVersion)) {
+            throw new IllegalArgumentException("DropStoredQuery is not available in version 1.0.0");
+            
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+    
+    public DescribeStoredQueriesResponse buildDescribeStoredQueriesResponse(final String currentVersion, final List<StoredQueryDescription> descriptions) {
+        if ("2.0.0".equals(currentVersion)) {
+            final List<org.geotoolkit.wfs.xml.v200.StoredQueryDescriptionType> storedQuery = new ArrayList<org.geotoolkit.wfs.xml.v200.StoredQueryDescriptionType>();
+            for (StoredQueryDescription description : descriptions) {
+                if (description instanceof org.geotoolkit.wfs.xml.v200.StoredQueryDescriptionType) {
+                    storedQuery.add((org.geotoolkit.wfs.xml.v200.StoredQueryDescriptionType) description);
+                } else {
+                    throw new IllegalArgumentException("unexpected object version for StoredQueryDescription element");
+                }
+            }
+            return new org.geotoolkit.wfs.xml.v200.DescribeStoredQueriesResponseType(storedQuery);
+            
+        } else if ("1.1.0".equals(currentVersion)) {
+            throw new IllegalArgumentException("DropStoredQuery is not available in version 1.1.0");
+            
+        } else if ("1.0.0".equals(currentVersion)) {
+            throw new IllegalArgumentException("DropStoredQuery is not available in version 1.0.0");
+            
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
 }

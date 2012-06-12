@@ -33,12 +33,7 @@ import org.geotoolkit.gml.xml.v321.PointType;
 import org.geotoolkit.ogc.xml.v200.FilterType;
 import org.geotoolkit.ogc.xml.v200.PropertyIsLikeType;
 import org.geotoolkit.ows.xml.v110.WGS84BoundingBoxType;
-import org.geotoolkit.wfs.xml.AllSomeType;
-
-//Junit dependencies
-import org.geotoolkit.wfs.xml.WFSBindingUtilities;
-import org.geotoolkit.wfs.xml.WFSMarshallerPool;
-import org.geotoolkit.wfs.xml.WFSVersion;
+import org.geotoolkit.wfs.xml.*;
 import org.geotoolkit.xml.MarshallerPool;
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -190,6 +185,21 @@ public class WfsXMLBindingTest {
         final ObjectFactory factory = new ObjectFactory();
         transac.getAbstractTransactionAction().add(factory.createUpdate(update));
 
-        //marshaller.marshal(transac, System.out);
+        sw = new StringWriter();
+        marshaller.marshal(transac, sw);
+        
+        final List<StoredQueryDescription> descriptions = new ArrayList<StoredQueryDescription>();
+        final ParameterExpressionType param = new ParameterExpressionType("param1", "parameter 1", "a test parameter", new QName("http://www.w3.org/2001/XMLSchema", "string", "xs"));
+        final List<QName> types = Arrays.asList(new QName("http://test.com", "someType"));
+        final QueryType query = new QueryType(filter, types, "2.0.0");
+        final QueryExpressionTextType queryEx = new QueryExpressionTextType("urn:ogc:def:queryLanguage:OGC-WFS::WFS_QueryExpression", query, types);
+        final StoredQueryDescriptionType des1 = new StoredQueryDescriptionType("query1", "title1", "abstract1", param, queryEx);
+        descriptions.add(des1);
+        final StoredQueries storesQueries = new StoredQueries(descriptions);
+        
+        sw = new StringWriter();
+        marshaller.marshal(storesQueries, sw);
+        
+        //System.out.println(sw.toString());
     }
 }

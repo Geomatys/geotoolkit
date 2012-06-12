@@ -24,6 +24,7 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
@@ -53,6 +54,7 @@ import org.geotoolkit.wfs.xml.Query;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "QueryType")
+@XmlRootElement(name="Query")
 public class QueryType extends AbstractAdhocQueryExpressionType  implements Query {
 
     @XmlAttribute

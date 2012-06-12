@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.v110.MetadataType;
+import org.geotoolkit.wfs.xml.StoredQueryDescription;
 
 
 /**
@@ -61,7 +62,7 @@ import org.geotoolkit.ows.xml.v110.MetadataType;
     "parameter",
     "queryExpressionText"
 })
-public class StoredQueryDescriptionType {
+public class StoredQueryDescriptionType implements StoredQueryDescription {
 
     @XmlElement(name = "Title")
     private List<Title> title;
@@ -77,6 +78,35 @@ public class StoredQueryDescriptionType {
     @XmlSchemaType(name = "anyURI")
     private String id;
 
+    public StoredQueryDescriptionType() {
+        
+    }
+    
+    public StoredQueryDescriptionType(final StoredQueryDescription that) {
+        throw new UnsupportedOperationException("TODO not implemented yet");
+    }
+    
+    public StoredQueryDescriptionType(final String id, final String title, final String _abstract, final ParameterExpressionType parameter,
+            final QueryExpressionTextType queryExpressionText) {
+        this.id = id;
+        if (title != null) {
+            this.title = new ArrayList<Title>();
+            this.title.add(new Title(title));
+        }
+        if (_abstract != null) {
+            this._abstract = new ArrayList<Abstract>();
+            this._abstract.add(new Abstract(_abstract));
+        }
+        if (parameter != null) {
+            this.parameter = new ArrayList<ParameterExpressionType>();
+            this.parameter.add(parameter);
+        }
+        if (queryExpressionText != null) {
+            this.queryExpressionText = new ArrayList<QueryExpressionTextType>();
+            this.queryExpressionText.add(queryExpressionText);
+        }
+    }
+    
     /**
      * Gets the value of the title property.
      * 
