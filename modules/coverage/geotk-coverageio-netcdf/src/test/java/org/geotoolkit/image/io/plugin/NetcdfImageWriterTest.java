@@ -21,8 +21,6 @@ import java.util.Iterator;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriter;
 
-import org.geotoolkit.test.image.ImageWriterTestBase;
-
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
 
@@ -35,10 +33,6 @@ import static org.geotoolkit.test.Assert.*;
  * @version 3.20
  *
  * @since 3.20
- *
- * @todo We should define a base class for all writer tests (a better one than
- *       {@link org.geotoolkit.test.image.ImageWriterTestBase}), and get this
- *       class to inherit the tests from the sub-class.
  */
 public final strictfp class NetcdfImageWriterTest {
     /**

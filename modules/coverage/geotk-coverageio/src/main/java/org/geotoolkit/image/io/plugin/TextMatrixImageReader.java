@@ -472,7 +472,7 @@ public class TextMatrixImageReader extends TextImageReader {
         /**
          * The provider of the corresponding image writer.
          */
-        private static final String[] WRITERS = {"org.geotoolkit.image.io.plugin.TextMatrixImageWriter.Spi"};
+        private static final String[] WRITERS = {"org.geotoolkit.image.io.plugin.TextMatrixImageWriter$Spi"};
 
         /**
          * Constructs a default {@code TextMatrixImageReader.Spi}. The fields are initialized as

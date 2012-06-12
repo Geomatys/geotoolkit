@@ -38,7 +38,7 @@ import static org.geotoolkit.test.Assert.*;
  * Tests {@link TextMatrixImageWriter}.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.08
+ * @version 3.20
  *
  * @since 2.4
  */
@@ -47,25 +47,19 @@ public final strictfp class TextMatrixImageWriterTest extends TextImageWriterTes
      * Creates a new test suite.
      */
     public TextMatrixImageWriterTest() {
-        super(TextMatrixImageWriter.class);
-    }
-
-    /**
-     * The provider for the format to be tested.
-     */
-    static final strictfp class Spi extends TextMatrixImageWriter.Spi {
-        Spi() {
-            locale  = Locale.CANADA;
-            charset = Charset.forName("UTF-8");
-        }
     }
 
     /**
      * Creates a writer using the {@link Locale#CANADA}.
      */
     @Override
-    protected TextMatrixImageWriter createImageWriter() {
-        return new TextMatrixImageWriter(new Spi());
+    protected void prepareImageWriter() {
+        if (writer == null) {
+            writer = new TextMatrixImageWriter(new TextMatrixImageWriter.Spi() {{
+                locale  = Locale.CANADA;
+                charset = Charset.forName("UTF-8");
+            }});
+        }
     }
 
     /**
@@ -75,7 +69,8 @@ public final strictfp class TextMatrixImageWriterTest extends TextImageWriterTes
      */
     @Test
     public void testCreateNumberFormat() throws IOException {
-        testCreateNumberFormat(createImageWriter());
+        prepareImageWriter();
+        testCreateNumberFormat((TextMatrixImageWriter) writer);
     }
 
     /**
@@ -85,8 +80,9 @@ public final strictfp class TextMatrixImageWriterTest extends TextImageWriterTes
      */
     @Test
     public void testWrite() throws IOException {
+        prepareImageWriter();
         final IIOImage image = createImage(false);
-        final TextMatrixImageWriter writer = createImageWriter();
+        final TextMatrixImageWriter writer = (TextMatrixImageWriter) this.writer;
         try (StringWriter out = new StringWriter()) {
             writer.setOutput(out);
             writer.write(image);

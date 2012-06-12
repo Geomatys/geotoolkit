@@ -25,6 +25,7 @@ import java.awt.image.DataBuffer;
 import java.awt.image.BufferedImage;
 import java.awt.image.IndexColorModel;
 import javax.imageio.ImageTypeSpecifier;
+import javax.imageio.ImageIO;
 
 import org.opengis.test.coverage.image.ImageReaderTestCase;
 
@@ -47,6 +48,14 @@ public abstract strictfp class TextImageReaderTestBase extends ImageReaderTestCa
      * in this package have 3 significant digits, so the precision is set to the next digit.
      */
     private static final float EPS = 0.0001f;
+
+    /**
+     * Disables the creation of temporary caches on disk - use the memory instead.
+     * We don't need disk cache since we test only small images.
+     */
+    static {
+        ImageIO.setUseCache(false);
+    }
 
     /**
      * Creates a new test suite.

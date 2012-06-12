@@ -31,6 +31,7 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.awt.image.DataBuffer;
+import java.awt.image.Raster;
 import java.net.URL;
 import java.net.URI;
 import java.io.File;
@@ -149,7 +150,7 @@ import org.geotoolkit.util.logging.Logging;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Antoine Hnawia (IRD)
- * @version 3.19
+ * @version 3.20
  *
  * @see org.geotoolkit.referencing.adapters.NetcdfCRS
  *
@@ -1205,6 +1206,34 @@ public class NetcdfImageReader extends FileImageReader implements
         }
         processImageComplete();
         return image;
+    }
+
+    /**
+     * Creates a raster from the specified parameters. This method is a bit closer to the actual
+     * NetCDF model than the {@link #read(int, ImageReadParam)}, because NetCDF file usually don't
+     * provide color information.
+     *
+     * @throws IOException If an error occurred while reading the NetCDF file.
+     *
+     * @todo Current implementation delegates to {@code read(int, param)}.
+     *       Futures versions should do a more efficient work.
+     *
+     * @since 3.20
+     */
+    @Override
+    public Raster readRaster(final int imageIndex, final ImageReadParam param) throws IOException {
+        return read(imageIndex, param).getRaster();
+    }
+
+    /**
+     * Returns {@code true} since this class supports calls to
+     * {@link #readRaster(int, ImageReadParam)}.
+     *
+     * @since 3.20
+     */
+    @Override
+    public boolean canReadRaster() {
+        return true;
     }
 
     /**

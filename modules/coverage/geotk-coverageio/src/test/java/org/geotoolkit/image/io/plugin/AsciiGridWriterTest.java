@@ -36,7 +36,7 @@ import static org.geotoolkit.test.Assert.*;
  * Tests {@link AsciiGridWriter}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.08
+ * @version 3.20
  *
  * @since 3.07
  */
@@ -45,16 +45,24 @@ public final strictfp class AsciiGridWriterTest extends TextImageWriterTestBase 
      * Creates a new test suite.
      */
     public AsciiGridWriterTest() {
-        super(AsciiGridWriter.class);
     }
 
     /**
      * Creates a writer.
      */
     @Override
-    protected AsciiGridWriter createImageWriter() {
-        AsciiGridWriter.Spi spi = new AsciiGridWriter.Spi();
-        return new AsciiGridWriter(spi);
+    protected void prepareImageWriter() {
+        if (writer == null) {
+            writer = new AsciiGridWriter(new AsciiGridWriter.Spi());
+        }
+    }
+
+    /**
+     * @todo Can not run because spatial metadata are missing.
+     */
+    @Ignore
+    @Override
+    public void testOneByteBand() throws IOException {
     }
 
     /**
@@ -64,8 +72,9 @@ public final strictfp class AsciiGridWriterTest extends TextImageWriterTestBase 
      */
     @Test
     public void testWrite() throws IOException {
+        prepareImageWriter();
         final IIOImage image = createImage(true);
-        final AsciiGridWriter writer = createImageWriter();
+        final AsciiGridWriter writer = (AsciiGridWriter) this.writer;
         try (StringWriter out = new StringWriter()) {
             writer.setOutput(out);
             writer.write(image);
