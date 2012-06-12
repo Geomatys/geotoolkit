@@ -14,30 +14,16 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.wfs.xml;
+package org.geotoolkit.wfs.xml.v200;
 
-import java.util.List;
-import java.util.Map;
-
+import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.wfs.xml.DropStoredQueryResponse;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public interface GetFeature extends BaseRequest {
-    
-    List<? extends Query> getQuery();
-    
-    String getOutputFormat();
-    
-    int getCount();
-    
-    int getStartIndex();
-    
-    Map<String, String> getPrefixMapping();
-    
-    ResultTypeType getResultType();
-    
-    String getFeatureId();
+@XmlType(name = "DropStoredQueryResponseType")
+public class DropStoredQueryResponseType extends ExecutionStatusType implements DropStoredQueryResponse {
     
 }

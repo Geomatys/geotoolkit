@@ -26,6 +26,8 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ogc.xml.v200.AbstractQueryExpressionType;
+import org.geotoolkit.wfs.xml.GetPropertyValue;
+import org.geotoolkit.wfs.xml.ResolveValueType;
 import org.geotoolkit.wfs.xml.ResultTypeType;
 
 /**
@@ -55,7 +57,7 @@ import org.geotoolkit.wfs.xml.ResultTypeType;
 @XmlType(name = "GetPropertyValueType", propOrder = {
     "abstractQueryExpression"
 })
-public class GetPropertyValueType extends BaseRequestType {
+public class GetPropertyValueType extends BaseRequestType implements GetPropertyValue {
 
     @XmlElementRef(name = "AbstractQueryExpression", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
     private JAXBElement<? extends AbstractQueryExpressionType> abstractQueryExpression;
@@ -81,6 +83,41 @@ public class GetPropertyValueType extends BaseRequestType {
     @XmlAttribute
     private String outputFormat;
 
+    public GetPropertyValueType() {
+
+    }
+
+    public GetPropertyValueType(final String service, final String version, final String handle, final Integer maxFeatures,
+            final QueryType query, final ResultTypeType resultType, final String outputformat) {
+        super(service, version, handle);
+        if (maxFeatures !=  null) {
+            this.count        = maxFeatures;
+        }
+        if (query != null) {
+            final ObjectFactory factory = new ObjectFactory();
+            this.abstractQueryExpression = factory.createQuery(query);
+        }
+        this.resultType   = resultType;
+        this.outputFormat = outputformat;
+    }
+
+    public GetPropertyValueType(final String service, final String version, final String handle, final Integer maxFeatures,
+            final String featureId, final QueryType query, final ResultTypeType resultType, final String outputformat) {
+        super(service, version, handle);
+        if (maxFeatures !=  null) {
+            this.count  = maxFeatures;
+        }
+        if (featureId != null) {
+            // TODO featureId?
+        }
+        this.resultType   = resultType;
+        this.outputFormat = outputformat;
+        if (query != null) {
+            final ObjectFactory factory = new ObjectFactory();
+            this.abstractQueryExpression = factory.createQuery(query);
+        }
+    }
+    
     /**
      * Gets the value of the abstractQueryExpression property.
      * 

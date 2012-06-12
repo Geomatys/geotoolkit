@@ -81,23 +81,8 @@ public class StoredQueryDescriptionType {
      * Gets the value of the title property.
      * 
      * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the title property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getTitle().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Title }
-     * 
-     * 
      */
     public List<Title> getTitle() {
         if (title == null) {
@@ -109,24 +94,7 @@ public class StoredQueryDescriptionType {
     /**
      * Gets the value of the abstract property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the abstract property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getAbstract().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
      * {@link Abstract }
-     * 
-     * 
      */
     public List<Abstract> getAbstract() {
         if (_abstract == null) {
@@ -138,24 +106,8 @@ public class StoredQueryDescriptionType {
     /**
      * Gets the value of the metadata property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the metadata property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getMetadata().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link MetadataType }
-     * 
-     * 
      */
     public List<MetadataType> getMetadata() {
         if (metadata == null) {
@@ -167,24 +119,8 @@ public class StoredQueryDescriptionType {
     /**
      * Gets the value of the parameter property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the parameter property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getParameter().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link ParameterExpressionType }
-     * 
-     * 
      */
     public List<ParameterExpressionType> getParameter() {
         if (parameter == null) {
@@ -195,25 +131,8 @@ public class StoredQueryDescriptionType {
 
     /**
      * Gets the value of the queryExpressionText property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the queryExpressionText property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getQueryExpressionText().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link QueryExpressionTextType }
-     * 
-     * 
      */
     public List<QueryExpressionTextType> getQueryExpressionText() {
         if (queryExpressionText == null) {

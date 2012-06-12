@@ -210,6 +210,11 @@ public class GetFeatureType extends BaseRequestType implements GetFeature {
         }
         return 0;
     }
+    
+    @Override
+    public int getStartIndex() {
+        return 0;
+    }
 
     /**
      * Sets the value of the maxFeatures property.

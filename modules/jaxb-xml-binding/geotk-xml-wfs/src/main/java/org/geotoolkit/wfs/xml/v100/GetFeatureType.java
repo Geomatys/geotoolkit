@@ -255,6 +255,11 @@ public class GetFeatureType implements GetFeature {
         return 0;
     }
     
+    @Override
+    public int getStartIndex() {
+        return 0;
+    }
+    
     /**
      * @return the prefixMapping
      */

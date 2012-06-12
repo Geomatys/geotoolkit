@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.wfs.xml.DropStoredQuery;
 
 
 /**
@@ -46,14 +47,21 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
 @XmlRootElement(name = "DropStoredQuery")
-public class DropStoredQuery
-    extends BaseRequestType
-{
+public class DropStoredQueryType extends BaseRequestType implements DropStoredQuery {
 
     @XmlAttribute(required = true)
     @XmlSchemaType(name = "anyURI")
     private String id;
 
+    public DropStoredQueryType() {
+        
+    }
+    
+    public DropStoredQueryType(final String service, final String version, final String handle, final String id) {
+        super(service, version, handle);
+        this.id = id;
+    }
+    
     /**
      * Gets the value of the id property.
      * 

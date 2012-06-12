@@ -31,6 +31,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ogc.xml.v200.AbstractQueryExpressionType;
 import org.geotoolkit.wfs.xml.GetFeature;
 import org.geotoolkit.wfs.xml.Query;
+import org.geotoolkit.wfs.xml.ResolveValueType;
 import org.geotoolkit.wfs.xml.ResultTypeType;
 
 

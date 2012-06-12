@@ -114,8 +114,8 @@ public class ObjectFactory {
      * Create an instance of {@link DropStoredQuery }
      * 
      */
-    public DropStoredQuery createDropStoredQuery() {
-        return new DropStoredQuery();
+    public DropStoredQueryType createDropStoredQuery() {
+        return new DropStoredQueryType();
     }
 
     /**

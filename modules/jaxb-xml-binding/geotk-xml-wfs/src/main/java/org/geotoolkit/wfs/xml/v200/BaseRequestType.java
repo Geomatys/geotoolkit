@@ -55,7 +55,7 @@ import org.geotoolkit.wfs.xml.BaseRequest;
     GetFeatureType.class,
     ListStoredQueriesType.class,
     DescribeFeatureTypeType.class,
-    DropStoredQuery.class
+    DropStoredQueryType.class
 })
 public abstract class BaseRequestType implements BaseRequest {
 

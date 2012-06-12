@@ -16,7 +16,7 @@
  */
 
 
-package org.geotoolkit.wfs.xml.v200;
+package org.geotoolkit.wfs.xml;
 
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;

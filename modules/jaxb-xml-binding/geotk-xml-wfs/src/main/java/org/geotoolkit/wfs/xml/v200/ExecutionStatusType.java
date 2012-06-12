@@ -45,7 +45,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ExecutionStatusType")
 @XmlSeeAlso({
-    CreateStoredQueryResponseType.class
+    CreateStoredQueryResponseType.class,
+    DropStoredQueryResponseType.class
 })
 public class ExecutionStatusType {
 

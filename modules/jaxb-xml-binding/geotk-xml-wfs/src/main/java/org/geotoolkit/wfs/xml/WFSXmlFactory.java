@@ -522,4 +522,39 @@ public class WFSXmlFactory extends OWSXmlFactory {
             throw new IllegalArgumentException("unexpected version number:" + version);
         }
     }
+    
+    public GetPropertyValue buildGetPropertyValue(final String currentVersion, final String service, final String handle, final Integer maxFeature, final String featureId, 
+        final Query query, final ResultTypeType resultType, String outputFormat) {
+        if ("2.0.0".equals(currentVersion)) {
+            if (query != null && !(query instanceof org.geotoolkit.wfs.xml.v200.QueryType)) {
+                throw new IllegalArgumentException("unexpected object version for query element");
+            }
+            return new org.geotoolkit.wfs.xml.v200.GetPropertyValueType(service, currentVersion, handle, maxFeature, featureId, 
+                    (org.geotoolkit.wfs.xml.v200.QueryType)query, resultType, outputFormat);
+            
+        } else if ("1.1.0".equals(currentVersion)) {
+            throw new IllegalArgumentException("GetPropertyValue is not available in version 1.1.0");
+            
+        } else if ("1.0.0".equals(currentVersion)) {
+            throw new IllegalArgumentException("GetPropertyValue is not available in version 1.0.0");
+            
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+    
+    public DropStoredQuery buildDropStoredQuery(final String currentVersion, final String service, final String handle, final String id) {
+        if ("2.0.0".equals(currentVersion)) {
+            return new org.geotoolkit.wfs.xml.v200.DropStoredQueryType(service, currentVersion, handle, id);
+            
+        } else if ("1.1.0".equals(currentVersion)) {
+            throw new IllegalArgumentException("DropStoredQuery is not available in version 1.1.0");
+            
+        } else if ("1.0.0".equals(currentVersion)) {
+            throw new IllegalArgumentException("DropStoredQuery is not available in version 1.0.0");
+            
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
 }
