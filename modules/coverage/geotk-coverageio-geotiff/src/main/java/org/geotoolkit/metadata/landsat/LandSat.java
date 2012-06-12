@@ -25,7 +25,7 @@ import org.geotoolkit.util.FileUtilities;
 import org.opengis.metadata.Metadata;
 
 /**
- * Convinient methods to manipulate LandSat informations.
+ * Convenient methods to manipulate LandSat informations.
  * 
  * @author Johann Sorel (Geomatys)
  */

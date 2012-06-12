@@ -66,8 +66,7 @@ public class ExtractionDescriptor extends AbstractProcessDescriptor {
     public static final ParameterDescriptorGroup OUTPUT_DESC;
     
     static {
-        Map<String, Object> propertiesIn = new HashMap<String, Object>();        
-        propertiesIn.put(IdentifiedObject.IDENTIFIERS_KEY, "Source");
+        Map<String, Object> propertiesIn = new HashMap<String, Object>();
         propertiesIn.put(IdentifiedObject.NAME_KEY,        "Source");
         propertiesIn.put(IdentifiedObject.ALIAS_KEY,       new ResourceInternationalString(BUNDLE_PATH, IN_TITLE_KEY));
         propertiesIn.put(IdentifiedObject.REMARKS_KEY,     new ResourceInternationalString(BUNDLE_PATH, IN_DESC_KEY));
@@ -75,8 +74,7 @@ public class ExtractionDescriptor extends AbstractProcessDescriptor {
         IN_SOURCE  = new DefaultParameterDescriptor<Object>(propertiesIn, Object.class, null, null, null, null, null, true);
         INPUT_DESC = new DefaultParameterDescriptorGroup(NAME+"InputParameters", IN_SOURCE);
         
-        Map<String, Object> propertiesOut = new HashMap<String, Object>();                
-        propertiesOut.put(IdentifiedObject.IDENTIFIERS_KEY, "Result");
+        Map<String, Object> propertiesOut = new HashMap<String, Object>();
         propertiesOut.put(IdentifiedObject.NAME_KEY,        "Result");
         propertiesOut.put(IdentifiedObject.ALIAS_KEY,       new ResourceInternationalString(BUNDLE_PATH, OUT_TITLE_KEY));
         propertiesOut.put(IdentifiedObject.REMARKS_KEY,     new ResourceInternationalString(BUNDLE_PATH, OUT_DESC_KEY));

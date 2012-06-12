@@ -18,9 +18,7 @@
 package org.geotoolkit.process.coverage.bandcombiner;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import javax.measure.unit.Unit;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.process.AbstractProcessDescriptor;
@@ -30,7 +28,6 @@ import org.geotoolkit.process.coverage.CoverageProcessingRegistry;
 import org.geotoolkit.util.ResourceInternationalString;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.opengis.coverage.Coverage;
-import org.opengis.metadata.Metadata;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -78,32 +75,28 @@ public class CombinerDescriptor extends AbstractProcessDescriptor {
     protected static final String OUT_TITLE_KEY   = "rgbTitle";
     
     static {
-        Map<String, Object> propertiesRed = new HashMap<String, Object>();        
-        propertiesRed.put(IdentifiedObject.IDENTIFIERS_KEY, "redBand");
-        propertiesRed.put(IdentifiedObject.NAME_KEY,        "redBand");
+        Map<String, Object> propertiesRed = new HashMap<String, Object>();
+        propertiesRed.put(IdentifiedObject.NAME_KEY,        "red");
         propertiesRed.put(IdentifiedObject.ALIAS_KEY,       new ResourceInternationalString(BUNDLE_PATH, RED_TITLE_KEY));
         propertiesRed.put(IdentifiedObject.REMARKS_KEY,     new ResourceInternationalString(BUNDLE_PATH, RED_DESC_KEY));
         IN_RED = new DefaultParameterDescriptor<Coverage>(propertiesRed, Coverage.class, null, null, null, null, null, true);
         
-        Map<String, Object> propertiesGreen = new HashMap<String, Object>();        
-        propertiesGreen.put(IdentifiedObject.IDENTIFIERS_KEY, "greenBand");
-        propertiesGreen.put(IdentifiedObject.NAME_KEY,        "greenBand");
+        Map<String, Object> propertiesGreen = new HashMap<String, Object>();
+        propertiesGreen.put(IdentifiedObject.NAME_KEY,        "green");
         propertiesGreen.put(IdentifiedObject.ALIAS_KEY,       new ResourceInternationalString(BUNDLE_PATH, GREEN_TITLE_KEY));
         propertiesGreen.put(IdentifiedObject.REMARKS_KEY,     new ResourceInternationalString(BUNDLE_PATH, GREEN_DESC_KEY));
-        IN_GREEN = new DefaultParameterDescriptor<Coverage>(propertiesRed, Coverage.class, null, null, null, null, null, true);
+        IN_GREEN = new DefaultParameterDescriptor<Coverage>(propertiesGreen, Coverage.class, null, null, null, null, null, true);
         
-        Map<String, Object> propertiesBlue = new HashMap<String, Object>();        
-        propertiesBlue.put(IdentifiedObject.IDENTIFIERS_KEY, "blueBand");
-        propertiesBlue.put(IdentifiedObject.NAME_KEY,        "blueBand");
+        Map<String, Object> propertiesBlue = new HashMap<String, Object>();
+        propertiesBlue.put(IdentifiedObject.NAME_KEY,        "blue");
         propertiesBlue.put(IdentifiedObject.ALIAS_KEY,       new ResourceInternationalString(BUNDLE_PATH, BLUE_TITLE_KEY));
         propertiesBlue.put(IdentifiedObject.REMARKS_KEY,     new ResourceInternationalString(BUNDLE_PATH, BLUE_DESC_KEY));
         IN_BLUE = new DefaultParameterDescriptor<Coverage>(propertiesBlue, Coverage.class, null, null, null, null, null, true);
         
         INPUT_DESC = new DefaultParameterDescriptorGroup(NAME + "InputParameters", IN_RED, IN_GREEN, IN_BLUE);
         
-        Map<String, Object> propertiesOut = new HashMap<String, Object>();                
-        propertiesOut.put(IdentifiedObject.IDENTIFIERS_KEY, "rgbResult");
-        propertiesOut.put(IdentifiedObject.NAME_KEY,        "rgbResult");
+        Map<String, Object> propertiesOut = new HashMap<String, Object>();
+        propertiesOut.put(IdentifiedObject.NAME_KEY,        "result");
         propertiesOut.put(IdentifiedObject.ALIAS_KEY,       new ResourceInternationalString(BUNDLE_PATH, OUT_TITLE_KEY));
         propertiesOut.put(IdentifiedObject.REMARKS_KEY,     new ResourceInternationalString(BUNDLE_PATH, OUT_DESC_KEY));
         
