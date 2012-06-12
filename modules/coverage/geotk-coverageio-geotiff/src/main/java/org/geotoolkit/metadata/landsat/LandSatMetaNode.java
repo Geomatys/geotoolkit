@@ -31,7 +31,7 @@ import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 public class LandSatMetaNode extends DefaultMutableTreeNode {
 
     public LandSatMetaNode(final String key, final String value) {
-        super(new SimpleEntry<String, Object>(key, value));
+        super(new SimpleEntry<String, String>(key, value));
     }
 
     /**
@@ -74,7 +74,7 @@ public class LandSatMetaNode extends DefaultMutableTreeNode {
         return getUserObject().getKey();
     }
 
-    public Object getValue() {
+    public String getValue() {
         String value = getUserObject().getValue();
 
         if ("GROUP".equalsIgnoreCase(value)) {
