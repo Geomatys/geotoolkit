@@ -126,7 +126,12 @@ public class DefaultGeoreferenceable extends DefaultGridSpatialRepresentation im
      * @param controlPointAvailable An indication of whether or not control point(s) exists.
      * @param orientationParameterAvailable An indication of whether or not orientation parameters
      *        are available.
+     *
+     * @deprecated This constructor is somewhat arbitrary as it does not include all attributes
+     *             (especially because of revisions in new ISO standards), not so convenient and
+     *             not used in practice.
      */
+    @Deprecated
     public DefaultGeoreferenceable(final int numberOfDimensions,
                                    final List<? extends Dimension> axisDimensionsProperties,
                                    final CellGeometry cellGeometry,

@@ -113,7 +113,12 @@ public class DefaultGridSpatialRepresentation extends AbstractSpatialRepresentat
      * @param cellGeometry Identification of grid data as point or cell.
      * @param transformationParameterAvailable Indication of whether or not parameters for
      *          transformation exists.
+     *
+     * @deprecated This constructor is somewhat arbitrary as it does not include all attributes
+     *             (especially because of revisions in new ISO standards), not so convenient and
+     *             not used in practice.
      */
+    @Deprecated
     public DefaultGridSpatialRepresentation(final int numberOfDimensions,
                                             final List<? extends Dimension> axisDimensionsProperties,
                                             final CellGeometry cellGeometry,
