@@ -198,6 +198,7 @@ public final class LandSat {
         // landsat : L1_METADATA_FILE/PRODUCT_METADATA/SENSOR_ID + type
         // iso : MI_Metadata/identificationInfo/citation/title
         node1 = landsat.search("L1_METADATA_FILE","PRODUCT_METADATA","SENSOR_ID");
+        node2 = landsat.search("L1_METADATA_FILE","PRODUCT_METADATA","SPACECRAFT_ID");
         if(node1 != null){
             String title = node1.getValue();
             if(fileName != null){
@@ -216,6 +217,10 @@ public final class LandSat {
                 }
             }
 
+            if(node2 != null){
+                title = node2.getValue() +" "+title;
+            }
+            
             DefaultCitation citation = (DefaultCitation) identificationInfo.getCitation();
             if(citation == null){
                 citation = new DefaultCitation();
