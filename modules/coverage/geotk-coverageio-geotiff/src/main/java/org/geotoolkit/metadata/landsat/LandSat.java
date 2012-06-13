@@ -198,7 +198,6 @@ public final class LandSat {
         // landsat : L1_METADATA_FILE/PRODUCT_METADATA/SENSOR_ID + type
         // iso : MI_Metadata/identificationInfo/citation/title
         node1 = landsat.search("L1_METADATA_FILE","PRODUCT_METADATA","SENSOR_ID");
-        node2 = landsat.search("L1_METADATA_FILE","PRODUCT_METADATA","SPACECRAFT_ID");
         if(node1 != null){
             String title = node1.getValue();
             if(fileName != null){
@@ -215,10 +214,6 @@ public final class LandSat {
                       || fileName.contains("B70")){
                     title += " REF";
                 }
-            }
-
-            if(node2 != null){
-                title = node2.getValue() +" "+title;
             }
             
             DefaultCitation citation = (DefaultCitation) identificationInfo.getCitation();
@@ -284,6 +279,7 @@ public final class LandSat {
             aquisitionInfo.getPlatforms().add(platform);
             platform.setIdentifier(new DefaultIdentifier(node1.getValue()));
             platform.setDescription(new SimpleInternationalString(node1.getValue()));
+            platform.setCitation(new DefaultCitation(node1.getValue()));
         }
         
         
