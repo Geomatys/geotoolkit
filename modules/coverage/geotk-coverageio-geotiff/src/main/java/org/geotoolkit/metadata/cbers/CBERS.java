@@ -110,6 +110,7 @@ public class CBERS {
         metadata.getSpatialRepresentationInfo().add(spatialRep);
         metadata.getIdentificationInfo().add(identificationInfo);
         metadata.getDataQualityInfo().add(qualityInfo);
+        metadata.getAcquisitionInformation().add(acquisitionInfo);
         qualityInfo.setLineage(lineage);
         lineage.getProcessSteps().add(processStep);       
         identificationInfo.setCitation(citation);
