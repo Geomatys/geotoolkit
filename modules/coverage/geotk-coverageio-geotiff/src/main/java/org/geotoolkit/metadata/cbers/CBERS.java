@@ -18,12 +18,11 @@ package org.geotoolkit.metadata.cbers;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.util.*;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 import javax.xml.parsers.ParserConfigurationException;
-import org.geotoolkit.internal.simple.SimpleReferenceIdentifier;
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.iso.DefaultMetadata;
 import org.geotoolkit.metadata.iso.acquisition.DefaultAcquisitionInformation;
@@ -32,24 +31,19 @@ import org.geotoolkit.metadata.iso.acquisition.DefaultPlatform;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.citation.DefaultCitationDate;
 import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
-import org.geotoolkit.metadata.iso.constraint.DefaultConstraints;
 import org.geotoolkit.metadata.iso.constraint.DefaultLegalConstraints;
 import org.geotoolkit.metadata.iso.content.DefaultImageDescription;
 import org.geotoolkit.metadata.iso.content.DefaultRangeDimension;
 import org.geotoolkit.metadata.iso.extent.DefaultExtent;
 import org.geotoolkit.metadata.iso.identification.DefaultDataIdentification;
-import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.metadata.iso.lineage.DefaultAlgorithm;
 import org.geotoolkit.metadata.iso.lineage.DefaultLineage;
 import org.geotoolkit.metadata.iso.lineage.DefaultProcessStep;
 import org.geotoolkit.metadata.iso.lineage.DefaultProcessing;
 import org.geotoolkit.metadata.iso.quality.DefaultDataQuality;
 import org.geotoolkit.metadata.iso.quality.DefaultScope;
-import org.geotoolkit.metadata.iso.spatial.AbstractSpatialRepresentation;
 import org.geotoolkit.metadata.iso.spatial.DefaultDimension;
 import org.geotoolkit.metadata.iso.spatial.DefaultGeorectified;
-import org.geotoolkit.metadata.iso.spatial.DefaultGridSpatialRepresentation;
-import org.geotoolkit.naming.DefaultMemberName;
 import org.geotoolkit.temporal.object.ISODateParser;
 import org.geotoolkit.util.DomUtilities;
 import org.geotoolkit.util.SimpleInternationalString;
@@ -61,10 +55,8 @@ import org.opengis.metadata.content.CoverageContentType;
 import org.opengis.metadata.identification.CharacterSet;
 import org.opengis.metadata.identification.TopicCategory;
 import org.opengis.metadata.maintenance.ScopeCode;
-import org.opengis.metadata.spatial.CellGeometry;
 import org.opengis.metadata.spatial.Dimension;
 import org.opengis.metadata.spatial.DimensionNameType;
-import org.opengis.metadata.spatial.SpatialRepresentation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
@@ -119,14 +111,14 @@ public class CBERS {
         metadata.getIdentificationInfo().add(identificationInfo);
         metadata.getDataQualityInfo().add(qualityInfo);
         qualityInfo.setLineage(lineage);
-        lineage.getProcessSteps().add(processStep);        
-        
+        lineage.getProcessSteps().add(processStep);       
         identificationInfo.setCitation(citation);
         identificationInfo.getPointOfContacts().add(responsibleParty);
         processInfo.getSoftwareReferences().add(softwareReference);        
         processStep.setProcessingInformation(processInfo);        
         acquisitionInfo.getInstruments().add(instrument);
-        
+        acquisitionInfo.getPlatforms().add(platform);
+        platform.setCitation(new DefaultCitation("CBERS"));
         //other                
         final ISODateParser fp  = new ISODateParser();
         
@@ -362,7 +354,6 @@ public class CBERS {
             if (name != null && number != null) {
                 //acquisitionInformation/plateform/identifier : Concatenate {Satellite/name} and {Satellite/number} 
                 //acquisitionInformation/plateform/description : (defaultValue) CBERS_2B       
-                acquisitionInfo.getPlatforms().add(platform);
                 platformId = name.getTextContent() + '_' + number.getTextContent();
                 platform.setIdentifier(new DefaultIdentifier(platformId));
                 platform.setDescription(new SimpleInternationalString(platformId));
