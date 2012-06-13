@@ -89,11 +89,12 @@ public class CatalogServicesServer extends AbstractServer {
         this(serverURL,null,version);
     }
     
-    public CatalogServicesServer(final URL serverURL, final ClientSecurity security, final String version) {
-        this(serverURL, security, toVersion(version));
+    public CatalogServicesServer(final URL serverURL, final ClientSecurity security, final CSWVersion version) {
+        this(serverURL, security, version.getCode());
+        
     }
     
-    public CatalogServicesServer(final URL serverURL, final ClientSecurity security, final CSWVersion version) {
+    public CatalogServicesServer(final URL serverURL, final ClientSecurity security, final String version) {
         super(create(CSWServerFactory.PARAMETERS, serverURL, security));
         ArgumentChecks.ensureNonNull("version", version);
         parameters.parameter(CSWServerFactory.VERSION.getName().getCode()).setValue(version);
