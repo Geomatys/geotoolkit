@@ -43,7 +43,7 @@ import static org.geotoolkit.test.Commons.*;
  * Tests {@link WorldFileImageWriter}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @since 3.07
  */
@@ -58,6 +58,16 @@ public final strictfp class WorldFileImageWriterTest extends TextImageWriterTest
      * Creates a new test suite.
      */
     public WorldFileImageWriterTest() {
+    }
+
+    /**
+     * Registers world file plugins. This is necessary for running the tests
+     * inherited from {@link org.opengis.test.image.io.ImageWriterTestCase}.
+     */
+    @Before
+    public void registerPlugins() {
+        WorldFileImageReader.Spi.registerDefaults(null);
+        WorldFileImageWriter.Spi.registerDefaults(null);
     }
 
     /**
@@ -84,8 +94,9 @@ public final strictfp class WorldFileImageWriterTest extends TextImageWriterTest
     @Override
     protected void prepareImageWriter() throws IOException {
         if (writer == null) {
-            final WorldFileImageWriter.Spi spi = new WorldFileImageWriter.Spi(new TextMatrixImageWriter.Spi());
-            writer = new WorldFileImageWriter(spi);
+            final String format = TextMatrixImageReader.Spi.NAMES[0] + WorldFileImageReader.Spi.NAME_SUFFIX;
+            writer = XImageIO.getWriterByFormatName(format, null, null);
+            assertNotNull(format, writer);
         }
     }
 
@@ -98,15 +109,6 @@ public final strictfp class WorldFileImageWriterTest extends TextImageWriterTest
         final File file = (File) IOUtilities.changeExtension(mainFile, extension);
         assumeTrue(file.createNewFile());
         return file;
-    }
-
-    /**
-     * @todo Can not run because declaration of image reader is missing.
-     *       Also needs to clear temporary files.
-     */
-    @Ignore
-    @Override
-    public void testOneByteBand() throws IOException {
     }
 
     /**

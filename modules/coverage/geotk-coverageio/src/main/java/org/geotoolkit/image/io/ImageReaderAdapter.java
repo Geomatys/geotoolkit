@@ -87,12 +87,47 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * The <cite>World File</cite> format is composed of a classical image file (usually with the
  * {@code ".tiff"}, {@code ".jpg"} or {@code ".png"} extension) together with a small text file
  * containing geolocalization information (often with the {@code ".tfw"} extension) and an other
- * small text file containing projection information ({@code ".prj"} extension). This
- * {@code ImageReaderAdapter} class can be used for wrapping a TIFF image reader, augmented with
- * the parsing of TFW and PRJ files. The information fetched from those files are stored in the
- * {@link SpatialMetadata} object returned by the {@link #getImageMetadata(int)} method in this
- * class. The {@link #createMetadata(int)} protected method provides a convenient hook where to
- * fill the metadata information.
+ * small text file containing projection information ({@code ".prj"} extension).
+ * This {@code ImageReaderAdapter} class can be used for wrapping a TIFF image reader,
+ * augmented with the parsing of TFW and PRJ files, as below:
+ *
+ * {@preformat java
+ *    class MyReader extends ImageReaderAdapter {
+ *        MyReader(Spi provider) throws IOException {
+ *            super(provider);
+ *       }
+ *
+ *       // Gets the input field with a different file suffix.
+ *       private File getInputWithNewSuffix(String newSuffix) {
+ *           File file = (File) input;
+ *           String name = file.getName();
+ *           name = name.substring(0, name.lastIndexOf('.');
+ *           return new File(file.getParent(), name + suffix);
+ *       }
+ *
+ *       &#64;Override
+ *       protected Object createInput(String readerID) throws IOException {
+ *           switch (readerID) {
+ *               case "tfw": return getInputWithNewSuffix(".tfw");
+ *               case "prj": return getInputWithNewSuffix(".prj");
+ *           }
+ *           return super.createInput(readerID);
+ *       }
+ *
+ *       &#64;Override
+ *       protected SpatialMetadata createMetadata(int imageIndex) throws IOException {
+ *           SpatialMetadata metadata = super.createMetadata(imageIndex);
+ *           Object inputTFW = createInput("tfw");
+ *           if ((inputTFW instanceof File) && ((File) inputTFW).isFile()) {
+ *               // Read the "TFW" file and complete the metadata here.
+ *           }
+ *           return metadata;
+ *       }
+ *    }
+ * }
+ *
+ * The information fetched from the TFW and PRJ files are stored in the {@link SpatialMetadata}
+ * object returned by the {@link #createMetadata(int)} method.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.19
@@ -1063,14 +1098,17 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
         };
 
         /**
-         * List of legal input and output types for {@link ImageReaderAdapter}
-         * and {@link ImageWriterAdapter}.
+         * List of legal input and output types for {@link ImageReaderAdapter} and
+         * {@link ImageWriterAdapter} - except the two last elements which are
+         * different for writers.
          */
         static final Class<?>[] TYPES = new Class<?>[] {
             File.class,
             URI.class,
             URL.class,
-            String.class // To be interpreted as file path.
+            String.class, // To be interpreted as file path.
+// TODO     InputStream.class,
+// GEOTK-231 ImageInputStream.class
         };
 
         /**

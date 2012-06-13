@@ -236,10 +236,25 @@ public class WorldFileImageWriter extends ImageWriterAdapter {
          * fetched from the given format name.
          *
          * @param  format The name of the provider to use for writing the pixel values.
+         * @param  readerSpiName The fully qualified class name of a provider for a reader that
+         *         can read the files created by this writer format, or {@code null} if none.
          * @throws IllegalArgumentException If no provider is found for the given format.
+         *
+         * @since 3.20
          */
-        public Spi(final String format) throws IllegalArgumentException {
+        public Spi(final String format, final String readerSpiName) throws IllegalArgumentException {
             this(Formats.getWriterByFormatName(format, Spi.class));
+            if (readerSpiName != null) {
+                readerSpiNames = new String[] {readerSpiName};
+            }
+        }
+
+        /**
+         * @deprecated Replaced by {@link #Spi(String, String)}.
+         */
+        @Deprecated
+        public Spi(final String format) throws IllegalArgumentException {
+            this(format, null);
         }
 
         /**
@@ -393,13 +408,13 @@ public class WorldFileImageWriter extends ImageWriterAdapter {
      * Providers for common formats. Each provider needs to be a different class because
      * {@link ServiceRegistry} allows the registration of only one instance of each class.
      */
-    private static final class TIFF extends Spi {TIFF() {super("TIFF"      );}}
-    private static final class JPEG extends Spi {JPEG() {super("JPEG"      );}}
-    private static final class PNG  extends Spi { PNG() {super("PNG"       );}}
-    private static final class GIF  extends Spi { GIF() {super("GIF"       );}}
-    private static final class BMP  extends Spi { BMP() {super("BMP"       );}}
-    private static final class TXT  extends Spi { TXT() {super("matrix"    );}}
-    private static final class ASC  extends Spi { ASC() {super("ASCII-Grid");}
+    private static final class TIFF extends Spi {TIFF() {super("TIFF",       "org.geotoolkit.image.io.plugin.WorldFileImageReader$TIFF");}}
+    private static final class JPEG extends Spi {JPEG() {super("JPEG",       "org.geotoolkit.image.io.plugin.WorldFileImageReader$JPEG");}}
+    private static final class PNG  extends Spi { PNG() {super("PNG",        "org.geotoolkit.image.io.plugin.WorldFileImageReader$PNG");}}
+    private static final class GIF  extends Spi { GIF() {super("GIF",        "org.geotoolkit.image.io.plugin.WorldFileImageReader$GIF");}}
+    private static final class BMP  extends Spi { BMP() {super("BMP",        "org.geotoolkit.image.io.plugin.WorldFileImageReader$BMP");}}
+    private static final class TXT  extends Spi { TXT() {super("matrix",     "org.geotoolkit.image.io.plugin.WorldFileImageReader$TXT");}}
+    private static final class ASC  extends Spi { ASC() {super("ASCII-Grid", "org.geotoolkit.image.io.plugin.WorldFileImageReader$ASC");}
         @Override boolean exclude(final String readerID) {
             return "tfw".equalsIgnoreCase(readerID);
         }
