@@ -76,6 +76,7 @@ import org.geotoolkit.image.io.SpatialImageReadParam;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.internal.image.io.DimensionManager;
+import org.geotoolkit.internal.image.io.IIOImageHelper;
 import org.geotoolkit.internal.image.io.NetcdfVariable;
 import org.geotoolkit.referencing.adapters.NetcdfAxis;
 import org.geotoolkit.resources.Errors;
@@ -902,23 +903,28 @@ public class NetcdfImageReader extends FileImageReader implements
             final List<Variable> variables = dataset.getVariables();
             final String[] filtered = new String[variables.size()];
             int count = 0;
-            for (final VariableIF candidate : variables) {
-                if (NetcdfVariable.isCoverage(candidate, variables)) {
-                   /*
-                    * - Images require at least 2 dimensions. They may have more dimensions,
-                    *   in which case a slice will be taken later.
-                    *
-                    * - Excludes axis. They are often already excluded by the first condition
-                    *   because axis are usually 1-dimensional, but some are 2-dimensional,
-                    *   e.g. a localization grid.
-                    *
-                    * - Excludes characters, strings and structures, which can not be easily
-                    *   mapped to an image type. In addition, 2-dimensional character arrays
-                    *   are often used for annotations and we don't want to confuse them
-                    *   with images.
-                    */
-                    filtered[count++] = candidate.getShortName();
+            for (int minLength=2; minLength>=1; minLength--) {
+                for (final VariableIF candidate : variables) {
+                    if (NetcdfVariable.isCoverage(candidate, variables, minLength)) {
+                        /*
+                         * - Images require at least 2 dimensions. They may have more dimensions,
+                         *   in which case a slice will be taken later.
+                         *
+                         * - Excludes axis. They are often already excluded by the first condition
+                         *   because axis are usually 1-dimensional, but some are 2-dimensional,
+                         *   e.g. a localization grid.
+                         *
+                         * - Excludes characters, strings and structures, which can not be easily
+                         *   mapped to an image type. In addition, 2-dimensional character arrays
+                         *   are often used for annotations and we don't want to confuse them
+                         *   with images.
+                         */
+                        filtered[count++] = candidate.getShortName();
+                    }
                 }
+                if (count != 0) break;
+                // If we didn't found any variable with a length of at least 2 along
+                // 2 dimensions, try again but be less strict (require a length of 1).
             }
             variableNames = UnmodifiableArrayList.wrap(XArrays.resize(filtered, count));
         }
@@ -1085,7 +1091,7 @@ public class NetcdfImageReader extends FileImageReader implements
         final Rectangle  srcRegion = new Rectangle();
         final Rectangle destRegion = new Rectangle();
         computeRegions(param, width, height, image, srcRegion, destRegion);
-        flipVertically(param, height, srcRegion);
+        IIOImageHelper.flipVertically(param, height, srcRegion);
         final int[] dimensionSlices = getSourceIndices(param, rank);
         final Range[] ranges = new Range[rank];
         for (int i=0; i<ranges.length; i++) {
@@ -1352,6 +1358,7 @@ public class NetcdfImageReader extends FileImageReader implements
             MIMETypes       = MIME_TYPES;
             suffixes        = SUFFIXES;
             pluginClassName = "org.geotoolkit.image.io.plugin.NetcdfImageReader";
+            writerSpiNames  = new String[] {"org.geotoolkit.image.io.plugin.NetcdfImageWriter$Spi"};
             vendorName      = "Geotoolkit.org";
             version         = Version.GEOTOOLKIT.toString();
             final int length = inputTypes.length;

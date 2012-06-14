@@ -197,12 +197,12 @@ final class NetcdfImage extends IIOImageHelper {
         /*
          * Get the metadata which will be shared for all variables.
          */
-        final ImageDescription description = metadata.getInstanceForType(ImageDescription.class);
-        final List<? extends RangeDimension> ranges;
-        if (description != null) {
-            ranges = XCollections.asList(description.getDimensions());
-        } else {
-            ranges = null;
+        List<? extends RangeDimension> ranges = null;
+        if (metadata != null) {
+            final ImageDescription description = metadata.getInstanceForType(ImageDescription.class);
+            if (description != null) {
+                ranges = XCollections.asList(description.getDimensions());
+            }
         }
         final int numRanges = (ranges != null) ? ranges.size() : 0;
         for (int i=0; i<variables.length; i++) {
@@ -305,16 +305,20 @@ final class NetcdfImage extends IIOImageHelper {
          */
         Variable var = variables[0];
         final int[] shape    = var.getShape();
+        final int[] origin   = new int[shape.length];
         final int xDimension = shape.length - (X_DIMENSION + 1);
         final int yDimension = shape.length - (Y_DIMENSION + 1);
         final int width      = shape[xDimension];
         final int height     = Math.min(Math.max(1, BUFFER_SIZE / width), shape[yDimension]);
         final int capacity   = width * height;
-        shape[yDimension] = height;
+        origin[yDimension]   = shape[yDimension] - height;
+        shape [yDimension]   = height;
         Arrays.fill(shape, 0, yDimension, 1); // Set all extra dimensions (if any) to a length of 1.
-        final Array buffer = Array.factory(var.getDataType(), shape);
+        final Array buffer   = Array.factory(var.getDataType(), shape);
+        final Array flipped  = buffer.flip(yDimension);
         /*
-         * Everytime we start an iteration over a new bands, the target variable may change.
+         * Everytime we start an iteration over a new bands, the target variable may change. Then
+         * iterates over the rows in reverse order (http://jira.geotoolkit.org/browse/GEOTK-117)
          * After every iteration on a row, we will flush the buffer if it is full.
          */
         int band = 0;
@@ -335,15 +339,19 @@ final class NetcdfImage extends IIOImageHelper {
                             case DataBuffer.TYPE_FLOAT:  buffer.setFloat (index, iter.getSampleFloat());  break;
                             default:                     buffer.setInt   (index, iter.getSample());       break;
                         }
+                        index++;
                     } while (!iter.nextPixelDone());
+                    assert (index % width) == 0 : index;
                     if (index == capacity) {
-                        file.write(name, buffer);
+                        file.write(name, origin, flipped);
+                        origin[yDimension] -= height;
                         index = 0;
                     }
                 } while (!iter.nextLineDone());
                 if (index != 0) {
-                    shape[yDimension] = index;
-                    file.write(name, shape, buffer);
+                    shape [yDimension] = index / width;
+                    origin[yDimension] = height - shape[yDimension];
+                    file.write(name, new int[shape.length], flipped.section(origin, shape));
                 }
                 band++;
             } while (!iter.nextBandDone());

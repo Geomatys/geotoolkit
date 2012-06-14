@@ -187,7 +187,7 @@ public class NetcdfImageWriter extends FileImageWriter {
             // If any new dimension were added as a side effect of the NetcdfImage construction,
             // add them to the NetCDF file now. The intend is to get an error sooner if something
             // goes wrong with the NetCDF dimension creation.
-            dimensions.get(i).create(ncFile);
+            dimensions.get(i++).create(ncFile);
         }
         data.createVariables(ncFile, createRectIter(image, param));
         images.add(data);
@@ -265,11 +265,20 @@ public class NetcdfImageWriter extends FileImageWriter {
      * @module
      */
     public static final class Spi extends FileImageWriter.Spi {
+        /**
+         * Constructs a default {@code NetcdfImageWriter.Spi}. The fields are initialized as
+         * documented in the <a href="#skip-navbar_top">class javadoc</a>. Subclasses can
+         * modify those values if desired.
+         * <p>
+         * For efficiency reasons, the fields are initialized to shared arrays.
+         * Subclasses can assign new arrays, but should not modify the default array content.
+         */
         public Spi() {
             names           = NetcdfImageReader.Spi.NAMES;
             MIMETypes       = NetcdfImageReader.Spi.MIME_TYPES;
             suffixes        = NetcdfImageReader.Spi.SUFFIXES;
             pluginClassName = "org.geotoolkit.image.io.plugin.NetcdfImageWriter";
+            readerSpiNames  = new String[] {"org.geotoolkit.image.io.plugin.NetcdfImageReader$Spi"};
             vendorName      = "Geotoolkit.org";
             version         = Version.GEOTOOLKIT.toString();
             final int length = outputTypes.length;

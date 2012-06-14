@@ -161,13 +161,16 @@ public abstract class FileImageReader extends StreamImageReader {
          * (e.g. "png"), or "tmp" if there is no declared suffix. The "FIR"
          * prefix stands for "FileImageReader".
          */
-        try (InputStream in = getInputStream()) {
-            inputFile = TemporaryFile.createTempFile("FIR", Formats.getFileSuffix(originatingProvider), null);
-            isTemporary = true;
-            try (OutputStream out = new FileOutputStream(inputFile)) {
-                IOUtilities.copy(in, out);
-            }
+        final InputStream in = getInputStream();
+        inputFile = TemporaryFile.createTempFile("FIR", Formats.getFileSuffix(originatingProvider), null);
+        isTemporary = true;
+        try (OutputStream out = new FileOutputStream(inputFile)) {
+            IOUtilities.copy(in, out);
         }
+        /*
+         * Do not close the input stream, because it may be a stream explicitly specified by the user.
+         * The stream will be closed by the 'setInput', 'reset', 'close' or 'dispose' methods.
+         */
         return inputFile;
     }
 

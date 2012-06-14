@@ -186,7 +186,6 @@ public abstract class StreamImageWriter extends SpatialImageWriter {
      */
     @Override
     protected void close() throws IOException {
-        super.close();
         if (closeOnReset != null) {
             closeOnReset.close();
         }

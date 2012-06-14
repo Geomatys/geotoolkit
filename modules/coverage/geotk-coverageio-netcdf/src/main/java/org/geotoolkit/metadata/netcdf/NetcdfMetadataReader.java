@@ -941,7 +941,7 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
         final String processingLevel = getStringValue(PROCESSING_LEVEL);
         final List<? extends VariableIF> variables = file.getVariables();
         for (final VariableSimpleIF variable : variables) {
-            if (!NetcdfVariable.isCoverage(variable, variables)) {
+            if (!NetcdfVariable.isCoverage(variable, variables, 2)) {
                 // Same exclusion criterion than the one applied in NetcdfImageReader.getImageNames().
                 continue;
             }

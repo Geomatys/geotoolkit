@@ -396,8 +396,9 @@ scan:   for (int i=0; i<missingCount; i++) {
      * This method checks for the following conditions:
      * <p>
      * <ul>
-     *   <li>Images require at least {@value #MIN_DIMENSION} dimensions of size greater than 1.
-     *       They may have more dimensions, in which case a slice will be taken later.</li>
+     *   <li>Images require at least {@value #MIN_DIMENSION} dimensions of size equals or greater
+     *       than {@code minLength}. They may have more dimensions, in which case a slice will be
+     *       taken later.</li>
      *   <li>Exclude axes. Axes are often already excluded by the above condition
      *       because axis are usually 1-dimensional, but some axes are 2-dimensional
      *       (e.g. a localization grid).</li>
@@ -407,15 +408,18 @@ scan:   for (int i=0; i<missingCount; i++) {
      *       with images.</li>
      * </ul>
      *
-     * @param  variable The variable to test.
+     * @param  variable  The variable to test.
      * @param  variables The list of all variables from which the given variable come from.
+     * @param  minLength Minimal length along the dimensions.
      * @return {@code true} if the specified variable can be returned from the
      *         {@link org.geotoolkit.image.io.plugin.NetcdfImageReader#getImageNames()} method.
      */
-    public static boolean isCoverage(final VariableSimpleIF variable, final List<? extends VariableIF> variables) {
+    public static boolean isCoverage(final VariableSimpleIF variable,
+            final List<? extends VariableIF> variables, final int minLength)
+    {
         int numVectors = 0; // Number of dimension having more than 1 value.
         for (final int length : variable.getShape()) {
-            if (length >= 2) { // This value '2' is not necessarily MIN_DIMENSION.
+            if (length >= minLength) {
                 numVectors++;
             }
         }

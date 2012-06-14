@@ -18,9 +18,14 @@
 package org.geotoolkit.image.io.plugin;
 
 import java.util.Iterator;
+import java.io.File;
+import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriter;
 
+import org.opengis.test.coverage.image.ImageWriterTestCase;
+
+import org.geotoolkit.internal.io.TemporaryFile;
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
 
@@ -34,7 +39,31 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 3.20
  */
-public final strictfp class NetcdfImageWriterTest {
+public final strictfp class NetcdfImageWriterTest extends ImageWriterTestCase {
+    /**
+     * The temporary file created by the test, or {@code null} if none.
+     * This file will be deleted after each test execution.
+     */
+    private File temporaryFile;
+
+    /**
+     * Creates a new {@link NetcdfImageWriter} instance and set its output to a temporary file.
+     * The temporary file will be overwritten every time this method is invoked - so only one
+     * file shall be tested during each test execution.
+     */
+    @Override
+    protected void prepareImageWriter(final boolean optionallySetOutput) throws IOException {
+        if (writer == null) {
+            writer = new NetcdfImageWriter(null);
+        }
+        if (optionallySetOutput) {
+            if (temporaryFile == null) {
+                temporaryFile = TemporaryFile.createTempFile("geotk", ".nc", null);
+            }
+            writer.setOutput(temporaryFile);
+        }
+    }
+
     /**
      * Tests the registration of the image writer in the Image I/O framework.
      */
@@ -59,5 +88,21 @@ public final strictfp class NetcdfImageWriterTest {
             }
         }
         fail("Writer not found.");
+    }
+
+    /**
+     * Disposes the writer and deletes the temporary file (if any).
+     * This method is invoked automatically by JUnit after each test.
+     *
+     * @throws IOException In an error occurred while closing the output stream.
+     */
+    @After
+    @Override
+    public void close() throws IOException {
+        super.close();
+        if (temporaryFile != null) {
+            assertTrue(TemporaryFile.delete(temporaryFile));
+            temporaryFile = null;
+        }
     }
 }

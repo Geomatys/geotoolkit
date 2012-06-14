@@ -183,11 +183,14 @@ public abstract class FileImageWriter extends StreamImageWriter {
         outputFile = null;
         if (isTemporary) try {
             isTemporary = false;
-            try (InputStream in = new FileInputStream(file);
-                 OutputStream out = getOutputStream())
-            {
+            final OutputStream out = getOutputStream();
+            try (InputStream in = new FileInputStream(file)) {
                 IOUtilities.copy(in, out);
             }
+            out.flush();
+            // Do not close the 'out' stream. Let the super.close() method decides what
+            // it needs to close (it depends if the stream was specified by the user or
+            // created under the hood by the writer).
         } finally {
             // Delete the temporary file before to close the stream in order to make sure that
             // it is deleted even if super.close() failed. In extreme cases, this may also free

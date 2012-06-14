@@ -96,6 +96,13 @@ final class NetcdfDimension {
     private final Array ordinates;
 
     /**
+     * The type of values in the {@linkplain #ordinates} array. This field exists only because
+     * as of NetCDF 4.10, the {@link Array} API doesn't seem to provide a {@code getDataType()}
+     * method.
+     */
+    private final DataType dataType;
+
+    /**
      * The NetCDF dimension for the axis.
      * This array is created by {@link #create(NetcdfFileWriteable)}.
      */
@@ -142,8 +149,8 @@ final class NetcdfDimension {
         final int length;       // Number of ordinate values to write in the NetCDF file.
         int       index;        // Grid ordinate value, from lower inclusive to lower+length×subsampling exclusive.
         switch (api) {
-            case COLUMNS: index=image.sourceRegion.x; subsampling=image.sourceXSubsampling; length=image.sourceRegion.width /subsampling; break;
-            case ROWS:    index=image.sourceRegion.y; subsampling=image.sourceYSubsampling; length=image.sourceRegion.height/subsampling; break;
+            case COLUMNS: index=image.sourceRegion.x; subsampling=image.sourceXSubsampling; length=(image.sourceRegion.width +subsampling-1)/subsampling; break;
+            case ROWS:    index=image.sourceRegion.y; subsampling=image.sourceYSubsampling; length=(image.sourceRegion.height+subsampling-1)/subsampling; break;
             case BANDS: {
                 index       = 0;
                 length      = image.getNumSourceBands();
@@ -181,9 +188,10 @@ final class NetcdfDimension {
             final DiscreteCoordinateSystemAxis<?> ds = (DiscreteCoordinateSystemAxis<?>) axis;
             final Class<?> type = ds.getElementType();
             if (Number.class.isAssignableFrom(type)) {
-                ordinates = Array.factory(type, new int[] {length});
+                dataType = DataType.getType(type);
+                ordinates = Array.factory(dataType, new int[] {length});
                 for (int i=0; i<length; i++) {
-                    final Comparable<?> ordinate = ds.getOrdinateAt(image.getSourceBand(index));
+                    final Comparable<?> ordinate = ds.getOrdinateAt(index);
                     ordinates.setDouble(i, ((Number) ordinate).doubleValue());
                     index += subsampling;
                 }
@@ -197,20 +205,20 @@ final class NetcdfDimension {
          */
         final MathTransform gridToCRS = image.getGridToCRS();
         if (gridToCRS == null) {
-            ordinates = Array.factory(DataType.INT, new int[] {length});
+            ordinates = Array.factory(dataType = DataType.INT, new int[] {length});
             for (int i=0; i<length; i++) {
-                ordinates.setFloat(i, image.getSourceBand(index));
+                ordinates.setInt(i, index);
                 index += subsampling;
             }
         } else {
-            ordinates = Array.factory(DataType.FLOAT, new int[] {length});
+            ordinates = Array.factory(dataType = DataType.FLOAT, new int[] {length});
             final double[] center = image.getSourceRegionCenter();
             final double[] source = new double[(gridToCRS != null) ? gridToCRS.getSourceDimensions() : 2];
             final double[] target = new double[(gridToCRS != null) ? gridToCRS.getTargetDimensions() : 2];
             System.arraycopy(center, 0, source, 0, Math.min(source.length, center.length));
             try {
                 for (int i=0; i<length; i++) {
-                    source[dimension] = image.getSourceBand(index);
+                    source[dimension] = index;
                     gridToCRS.transform(source, 0, target, 0, 1);
                     ordinates.setDouble(i, target[dimension]);
                     index += subsampling;
@@ -292,7 +300,7 @@ final class NetcdfDimension {
          * Note that the values in the variable are left uninitialized.
          */
         dimension = file.addDimension(name, (int) ordinates.getSize());
-        variable  = file.addVariable(name, DataType.DOUBLE, Collections.singletonList(dimension));
+        variable  = file.addVariable(name, dataType, Collections.singletonList(dimension));
         if (!name.equals(longName)) {
             addAttribute(CDM.LONG_NAME, longName);
         }
