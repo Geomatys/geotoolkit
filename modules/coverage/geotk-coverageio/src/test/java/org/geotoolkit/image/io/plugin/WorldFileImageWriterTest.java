@@ -92,7 +92,7 @@ public final strictfp class WorldFileImageWriterTest extends TextImageWriterTest
      * Creates a writer.
      */
     @Override
-    protected void prepareImageWriter() throws IOException {
+    protected void prepareImageWriter(final boolean optionallySetOutput) throws IOException {
         if (writer == null) {
             final String format = TextMatrixImageReader.Spi.NAMES[0] + WorldFileImageReader.Spi.NAME_SUFFIX;
             writer = XImageIO.getWriterByFormatName(format, null, null);
@@ -118,7 +118,7 @@ public final strictfp class WorldFileImageWriterTest extends TextImageWriterTest
      */
     @Test
     public void testWrite() throws IOException {
-        prepareImageWriter();
+        prepareImageWriter(false);
         final IIOImage image = createImage(true);
         clearUserObjects(image.getMetadata());
         final WorldFileImageWriter writer = (WorldFileImageWriter) this.writer;

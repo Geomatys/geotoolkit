@@ -53,7 +53,7 @@ public final strictfp class TextMatrixImageWriterTest extends TextImageWriterTes
      * Creates a writer using the {@link Locale#CANADA}.
      */
     @Override
-    protected void prepareImageWriter() {
+    protected void prepareImageWriter(final boolean optionallySetOutput) {
         if (writer == null) {
             writer = new TextMatrixImageWriter(new TextMatrixImageWriter.Spi() {{
                 locale  = Locale.CANADA;
@@ -69,7 +69,7 @@ public final strictfp class TextMatrixImageWriterTest extends TextImageWriterTes
      */
     @Test
     public void testCreateNumberFormat() throws IOException {
-        prepareImageWriter();
+        prepareImageWriter(false);
         testCreateNumberFormat((TextMatrixImageWriter) writer);
     }
 
@@ -80,7 +80,7 @@ public final strictfp class TextMatrixImageWriterTest extends TextImageWriterTes
      */
     @Test
     public void testWrite() throws IOException {
-        prepareImageWriter();
+        prepareImageWriter(false);
         final IIOImage image = createImage(false);
         final TextMatrixImageWriter writer = (TextMatrixImageWriter) this.writer;
         try (StringWriter out = new StringWriter()) {

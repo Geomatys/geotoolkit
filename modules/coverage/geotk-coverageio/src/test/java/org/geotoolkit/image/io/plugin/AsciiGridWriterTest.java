@@ -51,7 +51,7 @@ public final strictfp class AsciiGridWriterTest extends TextImageWriterTestBase 
      * Creates a writer.
      */
     @Override
-    protected void prepareImageWriter() {
+    protected void prepareImageWriter(final boolean optionallySetOutput) {
         if (writer == null) {
             writer = new AsciiGridWriter(new AsciiGridWriter.Spi());
         }
@@ -72,7 +72,7 @@ public final strictfp class AsciiGridWriterTest extends TextImageWriterTestBase 
      */
     @Test
     public void testWrite() throws IOException {
-        prepareImageWriter();
+        prepareImageWriter(false);
         final IIOImage image = createImage(true);
         final AsciiGridWriter writer = (AsciiGridWriter) this.writer;
         try (StringWriter out = new StringWriter()) {
