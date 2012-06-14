@@ -63,11 +63,11 @@ public final strictfp class TextRecordImageReaderTest extends TextImageReaderTes
      * Creates a reader and sets its input if needed.
      */
     @Override
-    protected void prepareImageReader(final boolean needsInput) throws IOException {
+    protected void prepareImageReader(final boolean setInput) throws IOException {
         if (reader == null) {
             reader = new TextRecordImageReader(new Spi(true));
         }
-        if (needsInput) {
+        if (setInput) {
             reader.setInput(TestData.file(this, "records.txt"));
         }
     }

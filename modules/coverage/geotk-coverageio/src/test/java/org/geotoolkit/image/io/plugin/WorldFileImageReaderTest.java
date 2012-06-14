@@ -54,12 +54,12 @@ public final strictfp class WorldFileImageReaderTest extends TextImageReaderTest
      * Creates a reader and sets its input if needed.
      */
     @Override
-    protected void prepareImageReader(final boolean needsInput) throws IOException {
+    protected void prepareImageReader(final boolean setInput) throws IOException {
         if (reader == null) {
             WorldFileImageReader.Spi spi = new WorldFileImageReader.Spi(new TextMatrixImageReaderTest.Spi());
             reader = new WorldFileImageReader(spi);
         }
-        if (needsInput) {
+        if (setInput) {
             reader.setInput(TestData.file(this, "matrix.txt"));
         }
     }

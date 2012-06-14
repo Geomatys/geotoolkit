@@ -48,11 +48,11 @@ public final strictfp class GDALFormatTest extends NetcdfImageReaderTestBase {
      * from the parent class, and by the tests defined in this class.
      */
     @Override
-    protected void prepareImageReader(final boolean needsInput) throws IOException {
+    protected void prepareImageReader(final boolean setInput) throws IOException {
         if (reader == null) {
             reader = new NetcdfImageReader(null);
         }
-        if (needsInput) {
+        if (setInput) {
             reader.setInput(open(IOTestCase.LANDSAT));
         }
     }

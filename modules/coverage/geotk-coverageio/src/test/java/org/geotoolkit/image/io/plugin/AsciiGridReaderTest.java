@@ -53,12 +53,12 @@ public strictfp class AsciiGridReaderTest extends TextImageReaderTestBase {
      * Creates a reader and sets its input if needed.
      */
     @Override
-    protected void prepareImageReader(final boolean needsInput) throws IOException {
+    protected void prepareImageReader(final boolean setInput) throws IOException {
         if (reader == null) {
             AsciiGridReader.Spi spi = new AsciiGridReader.Spi();
             reader = new AsciiGridReader(spi);
         }
-        if (needsInput) {
+        if (setInput) {
             reader.setInput(TestData.file(this, "grid.asc"));
         }
     }

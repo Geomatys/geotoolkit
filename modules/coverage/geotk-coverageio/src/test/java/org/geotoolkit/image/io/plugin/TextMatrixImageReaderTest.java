@@ -58,11 +58,11 @@ public final strictfp class TextMatrixImageReaderTest extends TextImageReaderTes
      * Creates a reader and sets its input if needed.
      */
     @Override
-    protected void prepareImageReader(final boolean needsInput) throws IOException {
+    protected void prepareImageReader(final boolean setInput) throws IOException {
         if (reader == null) {
             reader = new TextMatrixImageReader(new Spi());
         }
-        if (needsInput) {
+        if (setInput) {
             reader.setInput(TestData.file(this, "matrix.txt"));
         }
     }

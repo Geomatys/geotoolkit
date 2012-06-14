@@ -37,9 +37,9 @@ public final strictfp class RawGridReaderTest extends AsciiGridReaderTest {
      * Creates a reader and sets its input if needed.
      */
     @Override
-    protected void prepareImageReader(final boolean needsInput) throws IOException {
+    protected void prepareImageReader(final boolean setInput) throws IOException {
         super.prepareImageReader(false);
-        if (needsInput) {
+        if (setInput) {
             reader.setInput(TestData.file(this, "grid-with-raw.asc"));
         }
     }

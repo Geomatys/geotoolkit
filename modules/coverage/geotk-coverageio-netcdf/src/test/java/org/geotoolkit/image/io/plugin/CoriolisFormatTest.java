@@ -204,12 +204,12 @@ public final strictfp class CoriolisFormatTest extends NetcdfImageReaderTestBase
      * from the parent class, and by the tests defined in this class.
      */
     @Override
-    protected void prepareImageReader(final boolean needsInput) throws IOException {
+    protected void prepareImageReader(final boolean setInput) throws IOException {
         if (reader == null) {
             NetcdfImageReader.Spi spi = new NetcdfImageReader.Spi();
             reader = new NetcdfImageReader(spi);
         }
-        if (needsInput) {
+        if (setInput) {
             reader.setInput(getTestFile());
         }
     }
