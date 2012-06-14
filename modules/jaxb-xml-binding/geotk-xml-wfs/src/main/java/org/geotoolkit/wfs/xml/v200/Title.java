@@ -121,7 +121,6 @@ public class Title implements org.geotoolkit.wfs.xml.Title {
         this.lang = value;
     }
 
-    
     /**
      * Verify if this entry is identical to specified object.
      */

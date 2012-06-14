@@ -107,9 +107,9 @@ public class CreatedOrModifiedFeatureType {
         this.handle = value;
     }
 
-     @Override
+    @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("[CreatedOrModifiedFeatureType]\n");
+        final StringBuilder sb = new StringBuilder("[CreatedOrModifiedFeatureType]\n");
         if (resourceId != null) {
            sb.append("resourceId: ").append('\n');
            for (ResourceIdType a : resourceId) {

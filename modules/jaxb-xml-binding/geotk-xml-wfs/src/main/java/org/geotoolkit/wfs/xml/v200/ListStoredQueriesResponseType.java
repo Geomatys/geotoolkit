@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 import org.geotoolkit.wfs.xml.ListStoredQueriesResponse;
 
 
@@ -73,4 +74,37 @@ public class ListStoredQueriesResponseType implements ListStoredQueriesResponse 
         return this.storedQuery;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("[ListStoredQueriesResponseType]\n");
+        if (storedQuery != null) {
+           sb.append("storedQuery: ").append('\n');
+           for (StoredQueryListItemType a : storedQuery) {
+                sb.append(a).append('\n');
+           }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof ListStoredQueriesResponseType) {
+            final ListStoredQueriesResponseType that = (ListStoredQueriesResponseType) object;
+            return Utilities.equals(this.storedQuery,   that.storedQuery);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 13 * hash + (this.storedQuery != null ? this.storedQuery.hashCode() : 0);
+        return hash;
+    }
 }

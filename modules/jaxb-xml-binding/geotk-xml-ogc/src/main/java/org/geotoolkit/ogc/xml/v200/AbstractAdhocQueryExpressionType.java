@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 import org.geotoolkit.ogc.xml.SortBy;
+import org.geotoolkit.util.Utilities;
 import org.opengis.filter.Filter;
 
 
@@ -218,4 +219,99 @@ public abstract class AbstractAdhocQueryExpressionType extends AbstractQueryExpr
         return this.aliases;
     }
 
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof AbstractAdhocQueryExpressionType && super.equals(object)) {
+            final AbstractAdhocQueryExpressionType that = (AbstractAdhocQueryExpressionType) object;
+
+            final boolean selection;
+            if (this.abstractSelectionClause == null && that.abstractSelectionClause == null) {
+                selection = true;
+            } else if (this.abstractSelectionClause != null && that.abstractSelectionClause != null) {
+                selection = Utilities.equals(this.abstractSelectionClause.getValue(), that.abstractSelectionClause.getValue());
+            } else {
+                return false;
+            }
+            
+            final boolean sorting;
+            if (this.abstractSortingClause == null && that.abstractSortingClause == null) {
+                sorting = true;
+            } else if (this.abstractSortingClause != null && that.abstractSortingClause != null) {
+                sorting = Utilities.equals(this.abstractSortingClause.getValue(), that.abstractSortingClause.getValue());
+            } else {
+                return false;
+            }
+            
+            boolean projection;
+            if (this.abstractProjectionClause == null && that.abstractProjectionClause == null) {
+                projection = true;
+            } else if (this.abstractProjectionClause != null && that.abstractProjectionClause != null) {
+                if (this.abstractProjectionClause.size() == that.abstractProjectionClause.size()) {
+                    for (int i = 0; i < this.abstractProjectionClause.size(); i++){
+                        if (!Utilities.equals(this.abstractProjectionClause.get(i), that.abstractProjectionClause.get(i))) {
+                            return false;
+                        }
+                    }
+                    projection = true;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+            
+            return projection &&
+                   selection && 
+                   sorting && 
+                   Utilities.equals(this.typeNames, that.typeNames) &&
+                   Utilities.equals(this.aliases, that.aliases);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 37 * hash + (this.abstractSortingClause != null ? this.abstractSortingClause.hashCode() : 0);
+        hash = 37 * hash + (this.abstractSelectionClause != null ? this.abstractSelectionClause.hashCode() : 0);
+        hash = 37 * hash + (this.abstractProjectionClause != null ? this.abstractProjectionClause.hashCode() : 0);
+        hash = 37 * hash + (this.typeNames != null ? this.typeNames.hashCode() : 0);
+        hash = 37 * hash + (this.aliases != null ? this.aliases.hashCode() : 0);
+        return hash;
+    }
+
+   
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder(super.toString()).append('\n');
+        if(typeNames != null) {
+            s.append("typeNames:").append(typeNames).append('\n');
+        }
+        if(aliases != null) {
+            s.append("aliases:").append('\n');
+            for (String jb : aliases) {
+                s.append(jb).append('\n');
+            }
+        }
+        if(abstractSelectionClause != null) {
+            s.append("Selection Clause:").append(abstractSelectionClause.getValue()).append('\n');
+        }
+        if(abstractProjectionClause != null) {
+            s.append("Project Clause:").append('\n');
+            for (JAXBElement jb : abstractProjectionClause) {
+                s.append(jb.getValue()).append('\n');
+            }
+        }
+        if(abstractSortingClause != null) {
+            s.append("Sorting Clause:").append(abstractSortingClause.getValue()).append('\n');
+        }
+        return s.toString();
+    }
 }

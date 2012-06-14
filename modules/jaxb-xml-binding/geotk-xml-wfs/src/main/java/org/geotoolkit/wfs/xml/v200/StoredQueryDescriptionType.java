@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.v110.MetadataType;
+import org.geotoolkit.util.Utilities;
 import org.geotoolkit.wfs.xml.StoredQueryDescription;
 
 
@@ -193,6 +194,70 @@ public class StoredQueryDescriptionType implements StoredQueryDescription {
      */
     public void setId(String value) {
         this.id = value;
+    }
+    
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof StoredQueryDescriptionType) {
+            final StoredQueryDescriptionType that = (StoredQueryDescriptionType) object;
+
+            return Utilities.equals(this._abstract, that._abstract) &&
+                   Utilities.equals(this.id, that.id) &&
+                   Utilities.equals(this.metadata, that.metadata) &&
+                   Utilities.equals(this.parameter, that.parameter) &&
+                   Utilities.equals(this.queryExpressionText, that.queryExpressionText) &&
+                   Utilities.equals(this.title, that.title);
+            }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 79 * hash + (this.id != null ? this.id.hashCode() : 0);
+        hash = 79 * hash + (this.title != null ? this.title.hashCode() : 0);
+        hash = 79 * hash + (this._abstract != null ? this._abstract.hashCode() : 0);
+        hash = 79 * hash + (this.metadata != null ? this.metadata.hashCode() : 0);
+        hash = 79 * hash + (this.parameter != null ? this.parameter.hashCode() : 0);
+        hash = 79 * hash + (this.queryExpressionText != null ? this.queryExpressionText.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder s = new StringBuilder("[StoredQueryDescriptionType]\n");
+        if(id != null) {
+            s.append("id:").append(id).append('\n');
+        }
+        if (title != null)
+            s.append("title:").append(title).append('\n');
+        if (_abstract != null)
+            s.append("_abstract:").append(_abstract).append('\n');
+        if (metadata != null) {
+            s.append("metadata:").append('\n');
+            for (MetadataType k : metadata) {
+                s.append(k).append('\n');
+            }
+        }
+       if (parameter != null) {
+            s.append("parameter:").append('\n');
+            for (ParameterExpressionType k : parameter) {
+                s.append(k).append('\n');
+            }
+        }
+        if (queryExpressionText != null) {
+            s.append("queryExpressionText:").append('\n');
+            for (QueryExpressionTextType k : queryExpressionText) {
+                s.append(k).append('\n');
+            }
+        }
+        return s.toString();
     }
 
 }

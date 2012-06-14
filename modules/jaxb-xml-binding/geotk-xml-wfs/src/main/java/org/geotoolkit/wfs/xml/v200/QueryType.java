@@ -31,6 +31,7 @@ import javax.xml.namespace.QName;
 import org.geotoolkit.ogc.xml.v200.FilterType;
 import org.geotoolkit.ogc.xml.v200.AbstractAdhocQueryExpressionType;
 import org.geotoolkit.ogc.xml.v200.SortByType;
+import org.geotoolkit.util.Utilities;
 import org.geotoolkit.wfs.xml.Query;
 
 
@@ -55,7 +56,7 @@ import org.geotoolkit.wfs.xml.Query;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "QueryType")
 @XmlRootElement(name="Query")
-public class QueryType extends AbstractAdhocQueryExpressionType  implements Query {
+public class QueryType extends AbstractAdhocQueryExpressionType implements Query {
 
     @XmlAttribute
     @XmlSchemaType(name = "anyURI")
@@ -141,4 +142,42 @@ public class QueryType extends AbstractAdhocQueryExpressionType  implements Quer
         this.featureVersion = value;
     }
 
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof QueryType && super.equals(object)) {
+            final QueryType that = (QueryType) object;
+
+            return Utilities.equals(this.featureVersion, that.featureVersion) &&
+                   Utilities.equals(this.srsName, that.srsName);
+            }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 37 * hash + (this.featureVersion != null ? this.featureVersion.hashCode() : 0);
+        hash = 37 * hash + (this.srsName != null ? this.srsName.hashCode() : 0);
+        return hash;
+    }
+
+   
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder(super.toString());
+        if(featureVersion != null) {
+            s.append("featureVersion:").append(featureVersion).append('\n');
+        }
+        if (srsName != null) {
+            s.append("srsName:").append(srsName).append('\n');
+        }
+        return s.toString();
+    }
 }

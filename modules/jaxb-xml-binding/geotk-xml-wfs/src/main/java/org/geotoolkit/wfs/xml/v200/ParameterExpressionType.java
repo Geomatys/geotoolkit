@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 import org.geotoolkit.ows.xml.v110.MetadataType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -175,4 +176,58 @@ public class ParameterExpressionType implements org.geotoolkit.wfs.xml.Parameter
         this.type = value;
     }
 
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof ParameterExpressionType) {
+            final ParameterExpressionType that = (ParameterExpressionType) object;
+
+            return Utilities.equals(this._abstract, that._abstract) &&
+                   Utilities.equals(this.name, that.name) &&
+                   Utilities.equals(this.metadata, that.metadata) &&
+                   Utilities.equals(this.type, that.type) &&
+                   Utilities.equals(this.title, that.title);
+            }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 79 * hash + (this.name != null ? this.name.hashCode() : 0);
+        hash = 79 * hash + (this.title != null ? this.title.hashCode() : 0);
+        hash = 79 * hash + (this._abstract != null ? this._abstract.hashCode() : 0);
+        hash = 79 * hash + (this.metadata != null ? this.metadata.hashCode() : 0);
+        hash = 79 * hash + (this.type != null ? this.type.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder s = new StringBuilder("[ParameterExpressionType]\n");
+        if(name != null) {
+            s.append("name:").append(name).append('\n');
+        }
+        if (title != null) {
+            s.append("title:").append(title).append('\n');
+        }
+        if (_abstract != null) {
+            s.append("_abstract:").append(_abstract).append('\n');
+        }
+        if (metadata != null) {
+            s.append("metadata:").append('\n');
+            for (MetadataType k : metadata) {
+                s.append(k).append('\n');
+            }
+        }
+        if (type != null) {
+            s.append("type:").append(type).append('\n');
+        }
+        return s.toString();
+    }
 }

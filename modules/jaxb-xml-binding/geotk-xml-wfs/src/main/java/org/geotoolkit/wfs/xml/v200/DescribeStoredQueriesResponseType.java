@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 import org.geotoolkit.wfs.xml.DescribeStoredQueriesResponse;
 
 
@@ -74,4 +75,37 @@ public class DescribeStoredQueriesResponseType implements DescribeStoredQueriesR
         return this.storedQueryDescription;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("[DescribeStoredQueriesResponseType]\n");
+        if (storedQueryDescription != null) {
+           sb.append("storedQueryDescription: ").append('\n');
+           for (StoredQueryDescriptionType a : storedQueryDescription) {
+                sb.append(a).append('\n');
+           }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof DescribeStoredQueriesResponseType) {
+            final DescribeStoredQueriesResponseType that = (DescribeStoredQueriesResponseType) object;
+            return Utilities.equals(this.storedQueryDescription,   that.storedQueryDescription);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 13 * hash + (this.storedQueryDescription != null ? this.storedQueryDescription.hashCode() : 0);
+        return hash;
+    }
 }
