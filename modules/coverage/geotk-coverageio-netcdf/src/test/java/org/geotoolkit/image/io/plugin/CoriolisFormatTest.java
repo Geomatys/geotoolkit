@@ -66,7 +66,7 @@ import static javax.measure.unit.NonSI.DEGREE_ANGLE;
  *
  * @since 3.08
  */
-public final strictfp class CoriolisFormatTest extends NetcdfTestBase {
+public final strictfp class CoriolisFormatTest extends NetcdfImageReaderTestBase {
     /**
      * The directory which contains the data used by the tests.
      *

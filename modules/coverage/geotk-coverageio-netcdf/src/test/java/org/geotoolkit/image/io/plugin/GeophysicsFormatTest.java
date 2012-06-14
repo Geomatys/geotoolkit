@@ -49,7 +49,7 @@ import static org.geotoolkit.test.Commons.*;
  *
  * @since 3.19
  */
-public final strictfp class GeophysicsFormatTest extends NetcdfTestBase {
+public final strictfp class GeophysicsFormatTest extends NetcdfImageReaderTestBase {
     /**
      * Returns the file to test, which is optional. If the test file is not present,
      * the test will be interrupted by the JUnit {@link org.junit.Assume} class.

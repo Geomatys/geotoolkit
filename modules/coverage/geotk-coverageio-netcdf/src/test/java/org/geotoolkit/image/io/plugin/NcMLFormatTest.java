@@ -34,7 +34,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 3.19 (derived from 3.16)
  */
-public final strictfp class NcMLFormatTest extends NetcdfTestBase {
+public final strictfp class NcMLFormatTest extends NetcdfImageReaderTestBase {
     /**
      * Returns the file to test, which is optional. If the test file is not present,
      * the test will be interrupted by the JUnit {@link org.junit.Assume} class.

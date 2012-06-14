@@ -17,20 +17,26 @@
  */
 package org.geotoolkit.image.io.plugin;
 
+import java.util.Iterator;
 import java.io.File;
 import java.io.IOException;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
 
 import ucar.nc2.NetcdfFile;
 import org.opengis.wrapper.netcdf.IOTestCase;
 import org.opengis.test.coverage.image.ImageReaderTestCase;
 
-import org.geotoolkit.referencing.adapters.NetcdfCRSTest;
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.test.image.ImageTestBase;
+import org.geotoolkit.referencing.adapters.NetcdfCRSTest;
+
+import org.junit.*;
+import static org.geotoolkit.test.Assert.*;
 
 
 /**
- * Base class (when possible) for testing various NetCDF files.
+ * Base class for testing read operations on various NetCDF files.
  * Those tests require large test files. For more information, see:
  * <p>
  * <a href="http://hg.geotoolkit.org/geotoolkit/files/tip/modules/coverage/geotk-coverage-sql/src/test/resources/Tests/README.html">About large test files</a>
@@ -41,11 +47,37 @@ import org.geotoolkit.test.image.ImageTestBase;
  * @since 3.10
  */
 @Depend(NetcdfCRSTest.class)
-public abstract strictfp class NetcdfTestBase extends ImageReaderTestCase {
+public abstract strictfp class NetcdfImageReaderTestBase extends ImageReaderTestCase {
     /**
      * Default constructor for subclasses.
      */
-    protected NetcdfTestBase() {
+    protected NetcdfImageReaderTestBase() {
+    }
+
+    /**
+     * Tests the registration of the image reader in the Image I/O framework.
+     */
+    @Test
+    public void testRegistrationByFormatName() {
+        Iterator<ImageReader> it = ImageIO.getImageReadersByFormatName("NetCDF");
+        assertTrue("Expected a reader.", it.hasNext());
+        assertTrue(it.next() instanceof NetcdfImageReader);
+        assertFalse("Expected no more reader.", it.hasNext());
+    }
+
+    /**
+     * Tests the registration by MIME type.
+     * Note that more than one writer may be registered.
+     */
+    @Test
+    public void testRegistrationByMIMEType() {
+        Iterator<ImageReader> it = ImageIO.getImageReadersByMIMEType("application/netcdf");
+        while (it.hasNext()) {
+            if (it.next() instanceof NetcdfImageReader) {
+                return;
+            }
+        }
+        fail("Reader not found.");
     }
 
     /**
