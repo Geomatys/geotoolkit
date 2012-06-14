@@ -317,6 +317,37 @@ public abstract class PixelIterator {
     }
 
     /**
+     * Returns the number of bands (samples per pixel) from Image or Raster within this Iterator.
+     *
+     * @return the number of bands (samples per pixel) from current raster or Image.
+     */
+    public int getNumBands() {
+        return (renderedImage == null) ? currentRaster.getNumBands()
+              : renderedImage.getTile(renderedImage.getMinTileX(), renderedImage.getMinTileY()).getNumBands();
+    }
+
+    /**
+     * Returns {@code Rectangle} which is Image or Raster boundary within this Iterator.
+     *
+     * @return {@code Rectangle} which is Image or Raster boundary within this Iterator.
+     */
+    public Rectangle getBoundary() {
+        int x, y, w, h;
+        if (renderedImage == null) {
+            x = currentRaster.getMinX();
+            y = currentRaster.getMinY();
+            w = currentRaster.getWidth();
+            h = currentRaster.getHeight();
+        } else {
+            x = renderedImage.getMinX();
+            y = renderedImage.getMinY();
+            w = renderedImage.getWidth();
+            h = renderedImage.getHeight();
+        }
+        return new Rectangle(x, y, w, h);
+    }
+
+    /**
      * Verify raster conformity.
      */
     protected void checkRasters(final Raster readableRaster, final WritableRaster writableRaster){

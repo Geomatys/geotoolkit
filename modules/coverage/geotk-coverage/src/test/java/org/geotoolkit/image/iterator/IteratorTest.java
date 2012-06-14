@@ -773,6 +773,13 @@ public abstract class IteratorTest {
     }
 
     /**
+     * Test about getNumBands methods
+     */
+    public void numBandsTest() {
+        assertTrue(pixIterator.getNumBands() == 1);
+    }
+
+    /**
      * Compare 2 integer table.
      *
      * @param tabA table resulting raster iterate.
