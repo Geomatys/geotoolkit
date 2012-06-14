@@ -97,6 +97,19 @@ public class QueryExpressionTextType implements org.geotoolkit.wfs.xml.QueryExpr
     public List<Object> getContent() {
         if (content == null) {
             content = new ArrayList<Object>();
+            
+        // remove the empty String
+        } else {
+            final List<Object> toRemove = new ArrayList<Object>();
+            for (Object obj : content) {
+                if (obj instanceof String) {
+                    final String s = ((String) obj).trim();
+                    if (s.isEmpty()) {
+                        toRemove.add(obj);
+                    }
+                }
+            }
+            this.content.removeAll(toRemove);
         }
         return this.content;
     }
@@ -176,14 +189,14 @@ public class QueryExpressionTextType implements org.geotoolkit.wfs.xml.QueryExpr
         if (object instanceof QueryExpressionTextType) {
             final QueryExpressionTextType that = (QueryExpressionTextType) object;
             boolean contentE;
-            if (this.content == null && that.content == null) {
+            if (this.getContent() == null && that.getContent() == null) {
                 contentE = true;
-            } else if (this.content != null && that.content != null){
-                if (this.content.size() == that.content.size()) {
+            } else if (this.getContent() != null && that.getContent() != null){
+                if (this.getContent().size() == that.getContent().size()) {
                     contentE = true;
                     for (int i = 0; i < 0; i++) {
-                        final Object thiso = this.content.get(i);
-                        final Object thato = that.content.get(i);
+                        final Object thiso = this.getContent().get(i);
+                        final Object thato = that.getContent().get(i);
                         if (thiso instanceof JAXBElement && thato instanceof JAXBElement) {
                             final JAXBElement thisjb = (JAXBElement)thiso;
                             final JAXBElement thatjb = (JAXBElement)thato;
@@ -214,7 +227,7 @@ public class QueryExpressionTextType implements org.geotoolkit.wfs.xml.QueryExpr
     @Override
     public int hashCode() {
         int hash = 5;
-        hash = 79 * hash + (this.content != null ? this.content.hashCode() : 0);
+        hash = 79 * hash + (this.getContent() != null ? this.getContent().hashCode() : 0);
         hash = 79 * hash + (this.isPrivate != null ? this.isPrivate.hashCode() : 0);
         hash = 79 * hash + (this.language != null ? this.language.hashCode() : 0);
         hash = 79 * hash + (this.returnFeatureTypes != null ? this.returnFeatureTypes.hashCode() : 0);
@@ -223,29 +236,29 @@ public class QueryExpressionTextType implements org.geotoolkit.wfs.xml.QueryExpr
 
     @Override
     public String toString() {
-        final StringBuilder s = new StringBuilder("[QueryExpressionTextType]\n");
+        final StringBuilder sb = new StringBuilder("[QueryExpressionTextType]\n");
         if(language != null) {
-            s.append("language:").append(language).append('\n');
+            sb.append("language:").append(language).append('\n');
         }
         if (isPrivate != null) {
-            s.append("isPrivate:").append(isPrivate).append('\n');
+            sb.append("isPrivate:").append(isPrivate).append('\n');
         }
-        if (content != null) {
-            s.append("content (").append(content.size()).append("):\n");
-            for (Object k : content) {
+        if (getContent() != null) {
+            sb.append("content (").append(getContent().size()).append("):\n");
+            for (Object k : getContent()) {
                 if (k instanceof JAXBElement) {
-                    s.append(((JAXBElement)k).getValue()).append('\n');
+                    sb.append(((JAXBElement)k).getValue()).append('\n');
                 } else {
-                    s.append(k).append('\n');
+                    sb.append(k).append('\n');
                 }
             }
         }
         if (returnFeatureTypes != null) {
-            s.append("returnFeatureTypes:").append('\n');
+            sb.append("returnFeatureTypes:").append('\n');
             for (QName k : returnFeatureTypes) {
-                s.append(k).append('\n');
+                sb.append(k).append('\n');
             }
         }
-        return s.toString();
+        return sb.toString();
     }
 }

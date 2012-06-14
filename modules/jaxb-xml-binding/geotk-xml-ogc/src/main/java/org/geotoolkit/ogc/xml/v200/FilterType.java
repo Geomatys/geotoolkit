@@ -24,6 +24,7 @@ import java.util.Map;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.*;
 import org.geotoolkit.ogc.xml.XMLFilter;
+import org.geotoolkit.util.Utilities;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterVisitor;
 
@@ -481,5 +482,93 @@ public class FilterType extends AbstractSelectionClauseType implements Filter, X
 
     public Object accept(FilterVisitor fv, Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
+    @Override
+    public String toString() {
+        final StringBuilder s = new StringBuilder("[").append(this.getClass().getSimpleName()).append(']').append('\n');
+        if (spatialOps != null) {
+            s.append("SpatialOps: ").append(spatialOps.getValue()).append('\n');
+        }
+        if (comparisonOps != null) {
+            s.append("ComparisonOps: ").append(comparisonOps.getValue()).append('\n');
+        }
+        if (logicOps != null) {
+            s.append("LogicOps: ").append(logicOps.getValue()).append('\n');
+        }
+        if (temporalOps != null) {
+            s.append("temporalOps: ").append(temporalOps.getValue()).append('\n');
+        }
+        if (extensionOps != null) {
+            s.append("extensionOps: ").append(extensionOps).append('\n');
+        }
+        if (function != null) {
+            s.append("function: ").append(function).append('\n');
+        }
+        if (id != null) {
+            s.append("id:").append('\n');
+            int i = 0;
+            for (JAXBElement<? extends AbstractIdType> jb: id) {
+                s.append("id ").append(i).append(": ").append(jb.getValue()).append('\n');
+                i++;
+            }
+        }
+        return s.toString();
+    }
+    
+    /**
+     * Verify that this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof FilterType) {
+            final FilterType that = (FilterType) object;
+            
+            boolean comp = false;
+            if (this.comparisonOps != null && that.comparisonOps != null) {
+                comp = Utilities.equals(this.comparisonOps.getValue(), that.comparisonOps.getValue());
+            } else if (this.comparisonOps == null && that.comparisonOps == null)
+                comp = true;
+            
+            boolean log = false;
+            if (this.logicOps != null && that.logicOps != null) {
+                log = Utilities.equals(this.logicOps.getValue(), that.logicOps.getValue());
+            } else if (this.logicOps == null && that.logicOps == null)
+                log = true;
+            
+            boolean spa = false;
+            if (this.spatialOps != null && that.spatialOps != null) {
+                spa = Utilities.equals(this.spatialOps.getValue(), that.spatialOps.getValue());
+            } else if (this.spatialOps == null && that.spatialOps == null) {
+                spa = true;
+            }
+            boolean temp = false;
+            if (this.temporalOps != null && that.temporalOps != null) {
+                temp = Utilities.equals(this.temporalOps.getValue(), that.temporalOps.getValue());
+            } else if (this.temporalOps == null && that.temporalOps == null) {
+                temp = true;
+            }
+            /**
+             * TODO ID
+             */
+            return  comp && spa && log && temp &&
+                    Utilities.equals(this.extensionOps, that.extensionOps) &&
+                    Utilities.equals(this.function,     that.function);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 29 * hash + (this.spatialOps != null ? this.spatialOps.hashCode() : 0);
+        hash = 29 * hash + (this.comparisonOps != null ? this.comparisonOps.hashCode() : 0);
+        hash = 29 * hash + (this.logicOps != null ? this.logicOps.hashCode() : 0);
+        hash = 29 * hash + (this.temporalOps != null ? this.temporalOps.hashCode() : 0);
+        hash = 29 * hash + (this.id != null ? this.id.hashCode() : 0);
+        return hash;
     }
 }

@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ogc.xml.v110.PropertyNameType;
+import org.geotoolkit.util.Utilities;
 import org.opengis.filter.BinaryComparisonOperator;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.expression.Expression;
@@ -102,20 +103,6 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
     /**
      * Gets the value of the expression property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the expression property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getExpression().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link LiteralType }{@code >}
      * {@link JAXBElement }{@code <}{@link Object }{@code >}
@@ -219,6 +206,67 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
             }
         }
         return null;
+    }
+    
+     public LiteralType getLiteral() {
+        for (JAXBElement<?> elem : getExpression()) {
+            if (elem.getValue() instanceof LiteralType) {
+                return (LiteralType)elem.getValue();
+            }
+        }
+        return null;
+    }
+
+    
+    @Override
+    public String toString() {
+        final StringBuilder s = new StringBuilder(super.toString());
+        s.append("MatchCase ? ").append(matchCase).append('\n');
+        if (expression != null) {
+            s.append("expression: ").append('\n');
+            for (JAXBElement<?> elem : expression) {
+                final Object value = elem.getValue();
+                s.append(value).append('\n');
+            }
+        }
+        return s.toString();
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 67 * hash + (this.expression != null ? this.expression.hashCode() : 0);
+        hash = 67 * hash + (this.matchCase != null ? this.matchCase.hashCode() : 0);
+        return hash;
+    }
+    
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof BinaryComparisonOpType) {
+            final BinaryComparisonOpType that = (BinaryComparisonOpType) obj;
+            final boolean exp;
+            if (this.expression == null && that.expression == null) {
+                exp = true;
+            } else if (this.expression != null && that.expression != null) {
+                if (this.expression.size() == that.expression.size()) {
+                    exp = true;
+                    for (int i = 0; i< this.expression.size(); i++) {
+                        if (!Utilities.equals(this.expression.get(i).getValue(), that.expression.get(i).getValue())) {
+                            return false;
+                        }
+                    }
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+            return exp && Utilities.equals(this.matchCase, that.matchCase);
+        }
+        return false;
     }
 
 }

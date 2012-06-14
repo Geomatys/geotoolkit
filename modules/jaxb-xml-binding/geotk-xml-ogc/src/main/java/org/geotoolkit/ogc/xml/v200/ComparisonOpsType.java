@@ -52,5 +52,9 @@ import org.opengis.filter.Filter;
 })
 public abstract class ComparisonOpsType implements Filter {
 
+    @Override
+    public String toString() {
+        return "class: " + this.getClass().getSimpleName() + '\n';
+    }
 
 }

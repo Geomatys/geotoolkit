@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -94,20 +95,6 @@ public class LiteralType {
     /**
      * Gets the value of the content property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the content property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getContent().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Object }
      * {@link String }
@@ -145,4 +132,35 @@ public class LiteralType {
         this.type = value;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder();
+        for (Object obj: content) {
+            s.append(obj.toString()).append(" ");
+        }
+        return s.toString();
+    }
+    
+    /**
+     * Verify that this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof LiteralType) {
+            final LiteralType that = (LiteralType) object;
+            return Utilities.equals(this.content, that.content) &&
+                   Utilities.equals(this.type,    that.type);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 31 * hash + (this.content != null ? this.content.hashCode() : 0);
+        return hash;
+    }
 }

@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 import org.opengis.filter.FilterVisitor;
 
 
@@ -211,5 +212,67 @@ public class PropertyIsLikeType extends ComparisonOpsType {
     @Override
     public Object accept(final FilterVisitor visitor, final Object extraData) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
+    /**
+     * Verify that this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof PropertyIsLikeType) {
+            final PropertyIsLikeType that = (PropertyIsLikeType) object;
+
+            boolean exp;
+            if (this.expression == null && that.expression == null) {
+                exp = true;
+            } else if (this.expression != null && that.expression != null) {
+                if (this.expression.size() == that.expression.size()) {
+                    exp = true;
+                    for (int i = 0; i< this.expression.size(); i++) {
+                        if (!Utilities.equals(this.expression.get(i).getValue(), that.expression.get(i).getValue())) {
+                            return false;
+                        }
+                    }
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+            return exp &&
+                   Utilities.equals(this.escapeChar,   that.escapeChar)   &&
+                   Utilities.equals(this.singleChar,   that.singleChar)   &&
+                   Utilities.equals(this.wildCard,     that.wildCard);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 29 * hash + (this.expression != null ? this.expression.hashCode() : 0);
+        hash = 29 * hash + (this.escapeChar != null ? this.escapeChar.hashCode() : 0);
+        hash = 29 * hash + (this.singleChar != null ? this.singleChar.hashCode() : 0);
+        hash = 29 * hash + (this.wildCard != null ? this.wildCard.hashCode() : 0);
+        return hash;
+    }
+    
+    @Override
+    public String toString() {
+        final StringBuilder s = new StringBuilder(super.toString());
+        if (expression != null) {
+            s.append("expression(").append(expression.size()).append("):\n");
+            for (JAXBElement jb : expression) {
+                s.append(jb.getValue()).append("\n");
+            }
+        }
+        
+        s.append(" escape=").append(escapeChar);
+        s.append(" single=").append(singleChar).append(" wildCard=").append(wildCard);
+        
+        return s.toString();
     }
 }

@@ -42,7 +42,9 @@ import org.opengis.filter.Filter;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ComparisonOpsType")
-@XmlSeeAlso({PropertyIsNullType.class, BinaryComparisonOpType.class, PropertyIsLikeType.class,
+@XmlSeeAlso({PropertyIsNullType.class, 
+             BinaryComparisonOpType.class, 
+             PropertyIsLikeType.class,
              PropertyIsBetweenType.class})
 public abstract class ComparisonOpsType implements Filter {
     

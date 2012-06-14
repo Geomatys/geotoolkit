@@ -130,15 +130,6 @@ public class LiteralType implements Literal {
         return null;
     }
 
-    @Override
-    public String toString() {
-        StringBuilder s = new StringBuilder();
-        for (Object obj: content) {
-            s.append(obj.toString()).append(" ");
-        }
-        return s.toString();
-    }
-
     /**
      * We assume that the list have only One Value.
      */
@@ -166,6 +157,15 @@ public class LiteralType implements Literal {
         
     }
 
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder();
+        for (Object obj: content) {
+            s.append(obj.toString()).append(" ");
+        }
+        return s.toString();
+    }
+    
     /**
      * Verify that this entry is identical to the specified object.
      */

@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 import org.opengis.filter.FilterVisitor;
 
 
@@ -99,5 +100,39 @@ public class PropertyIsNullType extends ComparisonOpsType {
     @Override
     public Object accept(final FilterVisitor visitor, final Object extraData) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
+    @Override
+    public String toString() {
+        final StringBuilder s = new StringBuilder(super.toString());
+        if (expression != null) {
+            s.append("expression: ").append(expression.getValue()).append('\n');
+        }
+        return s.toString();
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 67 * hash + (this.expression != null ? this.expression.hashCode() : 0);
+        return hash;
+    }
+    
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof PropertyIsNullType) {
+            final PropertyIsNullType that = (PropertyIsNullType) obj;
+            if (this.expression == null && that.expression == null) {
+                return true;
+            } else if (this.expression != null && that.expression != null) {
+                return Utilities.equals(this.expression.getValue(), that.expression.getValue());
+            } else {
+                return false;
+            }
+        }
+        return false;
     }
 }
