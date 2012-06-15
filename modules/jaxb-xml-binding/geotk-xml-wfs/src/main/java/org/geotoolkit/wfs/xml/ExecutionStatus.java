@@ -14,23 +14,13 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.wfs.xml.v200;
-
-import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.wfs.xml.DropStoredQueryResponse;
+package org.geotoolkit.wfs.xml;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-@XmlType(name = "DropStoredQueryResponseType")
-public class DropStoredQueryResponseType extends ExecutionStatusType implements DropStoredQueryResponse {
+public interface ExecutionStatus {
     
-    public DropStoredQueryResponseType() {
-        
-    }
-    
-    public DropStoredQueryResponseType(final String status) {
-        super(status);
-    }
+    String getStatus();
 }

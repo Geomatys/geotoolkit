@@ -20,6 +20,6 @@ package org.geotoolkit.wfs.xml;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public interface CreateStoredQueryResponse {
+public interface CreateStoredQueryResponse extends ExecutionStatus {
     
 }

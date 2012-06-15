@@ -573,10 +573,10 @@ public class WFSXmlFactory extends OWSXmlFactory {
             return new org.geotoolkit.wfs.xml.v200.ListStoredQueriesResponseType(storedQuery);
             
         } else if ("1.1.0".equals(currentVersion)) {
-            throw new IllegalArgumentException("DropStoredQuery is not available in version 1.1.0");
+            throw new IllegalArgumentException("StoredQueryListItem is not available in version 1.1.0");
             
         } else if ("1.0.0".equals(currentVersion)) {
-            throw new IllegalArgumentException("DropStoredQuery is not available in version 1.0.0");
+            throw new IllegalArgumentException("StoredQueryListItem is not available in version 1.0.0");
             
         } else {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);
@@ -596,10 +596,42 @@ public class WFSXmlFactory extends OWSXmlFactory {
             return new org.geotoolkit.wfs.xml.v200.DescribeStoredQueriesResponseType(storedQuery);
             
         } else if ("1.1.0".equals(currentVersion)) {
-            throw new IllegalArgumentException("DropStoredQuery is not available in version 1.1.0");
+            throw new IllegalArgumentException("DescribeStoredQueriesResponse is not available in version 1.1.0");
             
         } else if ("1.0.0".equals(currentVersion)) {
-            throw new IllegalArgumentException("DropStoredQuery is not available in version 1.0.0");
+            throw new IllegalArgumentException("DescribeStoredQueriesResponse is not available in version 1.0.0");
+            
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+    
+    public CreateStoredQueryResponse buildCreateStoredQueryResponse(final String currentVersion, final String status) {
+        if ("2.0.0".equals(currentVersion)) {
+            
+            return new org.geotoolkit.wfs.xml.v200.CreateStoredQueryResponseType(status);
+            
+        } else if ("1.1.0".equals(currentVersion)) {
+            throw new IllegalArgumentException("CreateStoredQueryResponse is not available in version 1.1.0");
+            
+        } else if ("1.0.0".equals(currentVersion)) {
+            throw new IllegalArgumentException("CreateStoredQueryResponse is not available in version 1.0.0");
+            
+        } else {
+            throw new IllegalArgumentException("unexpected version number:" + currentVersion);
+        }
+    }
+    
+    public DropStoredQueryResponse buildDropStoredQueryResponse(final String currentVersion, final String status) {
+        if ("2.0.0".equals(currentVersion)) {
+            
+            return new org.geotoolkit.wfs.xml.v200.DropStoredQueryResponseType(status);
+            
+        } else if ("1.1.0".equals(currentVersion)) {
+            throw new IllegalArgumentException("CreateStoredQueryResponse is not available in version 1.1.0");
+            
+        } else if ("1.0.0".equals(currentVersion)) {
+            throw new IllegalArgumentException("CreateStoredQueryResponse is not available in version 1.0.0");
             
         } else {
             throw new IllegalArgumentException("unexpected version number:" + currentVersion);

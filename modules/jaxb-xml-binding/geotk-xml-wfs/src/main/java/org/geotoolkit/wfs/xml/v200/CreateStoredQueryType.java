@@ -73,6 +73,7 @@ public class CreateStoredQueryType extends BaseRequestType implements CreateStor
      * 
      * 
      */
+    @Override
     public List<StoredQueryDescriptionType> getStoredQueryDefinition() {
         if (storedQueryDefinition == null) {
             storedQueryDefinition = new ArrayList<StoredQueryDescriptionType>();

@@ -16,10 +16,13 @@
  */
 package org.geotoolkit.wfs.xml;
 
+import java.util.List;
+
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
 public interface CreateStoredQuery extends BaseRequest {
     
+    List<? extends StoredQueryDescription> getStoredQueryDefinition();
 }

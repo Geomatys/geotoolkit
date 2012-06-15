@@ -43,5 +43,12 @@ import org.geotoolkit.wfs.xml.CreateStoredQueryResponse;
 @XmlType(name = "CreateStoredQueryResponseType")
 public class CreateStoredQueryResponseType extends ExecutionStatusType implements CreateStoredQueryResponse {
 
+    public CreateStoredQueryResponseType() {
+        
+    }
+    
+    public CreateStoredQueryResponseType(final String status) {
+        super(status);
+    }
 
 }
