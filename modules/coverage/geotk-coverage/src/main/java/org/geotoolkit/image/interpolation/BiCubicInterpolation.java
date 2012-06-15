@@ -37,7 +37,6 @@ public class BiCubicInterpolation extends Interpolation {
         super(pixelIterator);
         if (boundary.width < 4)
             throw new IllegalArgumentException("iterate object width too smaller"+boundary.width);
-        for test cubic
         if (boundary.height < 4)
             throw new IllegalArgumentException("iterate object height too smaller"+boundary.height);
     }
