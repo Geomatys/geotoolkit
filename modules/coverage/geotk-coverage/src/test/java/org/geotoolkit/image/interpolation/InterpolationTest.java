@@ -33,7 +33,7 @@ public abstract class InterpolationTest {
     /**
      * {@code PixelIterator} Iterator use to interpolate.
      */
-    protected final PixelIterator pixIterator;
+    protected PixelIterator pixIterator;
 
     /**
      * Current interpolate tested.

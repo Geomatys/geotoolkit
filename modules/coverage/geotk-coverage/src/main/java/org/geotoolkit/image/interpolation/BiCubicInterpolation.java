@@ -20,16 +20,16 @@ package org.geotoolkit.image.interpolation;
 import org.geotoolkit.image.iterator.PixelIterator;
 
 /**
- * Define Bicubic Interpolation.
- *
- * Bicubic interpolation is computed from 16 pixels at nearest integer value.
+ * Define BiCubic Interpolation.
+ * //fusion getcubic value cubic interpol+refactor interpolate.
+ * BiCubic interpolation is computed from 16 pixels at nearest integer value.
  *
  * @author Rémi Marechal (Geomatys).
  */
 public class BiCubicInterpolation extends Interpolation {
 
     /**
-     * Create an Bicubic Interpolator.
+     * Create an BiCubic Interpolator.
      *
      * @param pixelIterator Iterator used to interpolation.
      */
@@ -37,12 +37,13 @@ public class BiCubicInterpolation extends Interpolation {
         super(pixelIterator);
         if (boundary.width < 4)
             throw new IllegalArgumentException("iterate object width too smaller"+boundary.width);
+        for test cubic
         if (boundary.height < 4)
             throw new IllegalArgumentException("iterate object height too smaller"+boundary.height);
     }
 
     /**
-     * Compute bicubic interpolation
+     * Compute biCubic interpolation
      *
      * @param x pixel x coordinate.
      * @param y pixel y coordinate.
@@ -56,8 +57,16 @@ public class BiCubicInterpolation extends Interpolation {
         if (x<0) minx--;
         if (y<0) miny--;
         minx--;miny--;
+
         int debX = Math.max(minx, boundary.x);
         int debY = Math.max(miny, boundary.y);
+
+        while (debX + 4 > boundary.x + boundary.width) {
+            debX--;
+        }
+        while (debY + 4 > boundary.y + boundary.height) {
+            debY--;
+        }
         int compteur = 0;
         int bands;
         double[] data = new double[16*numBands];
@@ -87,39 +96,86 @@ public class BiCubicInterpolation extends Interpolation {
                 for (int idC = 0; idC<4;idC++) {
                     tabInteRow[idC] = tabInter[4*idRow + idC];//ya surement moy de le faire sans tabinter a voir apres test
                 }
-                tabInteCol[idRow] = cubicInterpol(tabInteRow[0], tabInteRow[1], tabInteRow[2], tabInteRow[3], (x - debX));
+                tabInteCol[idRow] = getCubicValue(debX, x, tabInteRow);
             }
-            result[n] = cubicInterpol(tabInteCol[0], tabInteCol[1], tabInteCol[2], tabInteCol[3], (y - debY));
+            result[n] = getCubicValue(debY, y, tabInteCol);
         }
         return result;
     }
 
     /**
+     * <p>Find polynomials roots from BiCubic interpolation.<br/><br/>
+     *
+     * note : return null if : - delta (discriminant)&lt;0<br/>
+     *                         - roots found are out of definition domain.</p>
+     *
+     * @param t0 f(t0) = f[0].Current position from first pixel interpolation.
+     * @param minDf minimum of definition domain.
+     * @param maxDf maximum of definition domain.
+     * @param f pixel values from t = {0, 1, 2, 3}.
+     * @return polynomial root(s).
+     */
+    double[] getCubicRoots(double t0, double minDf, double maxDf, double...f) {
+        assert (f.length == 4) : "impossible to interpolate with less or more than 4 value";
+        assert (minDf < maxDf) : "definition domain invalid";
+        final double a1 =  f[3]/3 - 3*f[2]/2 + 3*f[1]   - 11*f[0]/6;
+        final double a2 = -f[3]/2 + 2*f[2]   - 5*f[1]/2 + f[0];
+        final double a3 =  f[3]/6 - f[2]/2   + f[1]/2   - f[0]/6;
+        double delta = 4 * (a2*a2 - 3*a3*a1);
+        double x, x2;
+        if (delta > 0) {
+            x  = -(2*a2 + Math.sqrt(delta)) / a3 / 6;
+            x2 = (-2*a2 + Math.sqrt(delta)) / a3 / 6;
+            x  += t0;
+            x2 += t0;
+            if (x >= minDf && x <= maxDf) {
+                if (x2 >= minDf && x2 <= maxDf) {
+                    return new double[]{x, x2};
+                } else {
+                    return new double[]{x};
+                }
+            } else {
+                if (x2 >= minDf && x2 <= maxDf) {
+                    return new double[]{x2};
+                } else {
+                    return null;
+                }
+            }
+        } else if (delta == 0) {
+            x = -a2/a3/3 + t0;
+            if (x >= minDf && x <= maxDf) return new double[]{x};
+            return null;
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Cubic interpolation from 4 values.<br/>
-     * With always 0 &lt= t&lt= 4 <br/>
+     * With always t0 &lt= t&lt= t0 + 3 <br/>
      * <p>For example : cubic interpolation between 4 pixels.<br/>
      *
      *
-     * &nbsp;&nbsp;&nbsp;x =&nbsp;&nbsp; 0 &nbsp;1 &nbsp;2 &nbsp;3<br/>
-     * f(x) = |f0|f1|f2|f3|<br/>
-     * In this example t = x;<br/><br/>
+     * &nbsp;&nbsp;&nbsp;t =&nbsp;&nbsp; 0 &nbsp;1 &nbsp;2 &nbsp;3<br/>
+     * f(t) = |f0|f1|f2|f3|<br/>
+     * In this example t0 = 0.<br/><br/>
      *
      * Another example :<br/>
-     * &nbsp;&nbsp;&nbsp;x =&nbsp; -5 -4 -3 -2<br/>
-     * f(x) = |f0|f1|f2|f3|<br/>
-     * In this example parameter t must be equals t = x - (-5);</p>
+     * &nbsp;&nbsp;&nbsp;t =&nbsp; -5 -4 -3 -2<br/>
+     * f(t) = |f0|f1|f2|f3|<br/>
+     * In this example parameter t0 = -5.</p>
      *
-     * @param f0 pixel value from t = 0 pixel coordinate.
-     * @param f1 pixel value from t = 1 pixel coordinate.
-     * @param f2 pixel value from t = 2 pixel coordinate.
-     * @param f3 pixel value from t = 3 pixel coordinate.
-     * @param t instant of interpolation. It's currently x value sub, min x value.
+     * @param t0 f(t0) = f[0].Current position from first pixel interpolation.
+     * @param t position of interpolation.
+     * @param f pixel values from t = {0, 1, 2, 3}.
      * @return cubic interpolation at t position.
      */
-    public double cubicInterpol(double f0, double f1, double f2, double f3, double t) {
-        final double a1 =  f3/3 - 3*f2/2 + 3*f1   - 11*f0/6;
-        final double a2 = -f3/2 + 2*f2   - 5*f1/2 + f0;
-        final double a3 =  f3/6 - f2/2   + f1/2   - f0/6;
-        return f0 + t*a1 + t*t*a2 + t*t*t*a3;
+    double getCubicValue(double t0, double t, double[]f) {
+        assert (f.length == 4) : "impossible to interpolate with less or more than 4 values";
+        final double a1 =  f[3]/3 - 3*f[2]/2 + 3*f[1]   - 11*f[0]/6;
+        final double a2 = -f[3]/2 + 2*f[2]   - 5*f[1]/2 + f[0];
+        final double a3 =  f[3]/6 - f[2]/2   + f[1]/2   - f[0]/6;
+        double x = t-t0;
+        return f[0] + a1*x + a2*x*x + a3*x*x*x;
     }
 }

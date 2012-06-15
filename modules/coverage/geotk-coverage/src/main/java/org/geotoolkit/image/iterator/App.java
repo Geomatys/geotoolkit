@@ -437,30 +437,45 @@ public class App {
         int heigth = 1;
         int minx = 0;
         int miny = 0;
-        int compteur = 216;
+        int val = 216;
+        int comptab = 0;
         double[] tabTest = new double[4];
         WritableRaster rastertest = RasterFactory.createBandedRaster(DataBuffer.TYPE_DOUBLE, width, heigth, 1, new Point(0, 0));
-        for (int y = miny; y < miny + heigth; y++) {
-            for (int x = minx; x < minx + width; x++) {
-                rastertest.setSample(x, y, 0, compteur);
-                tabTest[compteur] = compteur++;
-            }
-        }
+//        for (int y = miny; y < miny + heigth; y++) {
+//            for (int x = minx; x < minx + width; x++) {
+//                rastertest.setSample(x, y, 0, val);
+//                tabTest[comptab++] = val++;
+//            }
+//        }
+
+        rastertest.setSample(0, 0, 0, 105);
+        rastertest.setSample(1, 0, 0, -10);
+        rastertest.setSample(2, 0, 0, 36);
+        rastertest.setSample(3, 0, 0, 514);
+
+        tabTest[0] = 105;
+        tabTest[1] = -10;
+        tabTest[2] = 36;
+        tabTest[3] = 514;
 
         PixelIterator pixIterator = PixelIteratorFactory.createDefaultIterator(rastertest);
 
         BiCubicInterpolation bicub = new BiCubicInterpolation(pixIterator);
 
 
-        double t0 = bicub.cubicInterpol(tabTest[0], tabTest[1], tabTest[2], tabTest[3], 0);
-        double t1 = bicub.cubicInterpol(tabTest[0], tabTest[1], tabTest[2], tabTest[3], 1);
-        double t2 = bicub.cubicInterpol(tabTest[0], tabTest[1], tabTest[2], tabTest[3], 2);
-        double t3 = bicub.cubicInterpol(tabTest[0], tabTest[1], tabTest[2], tabTest[3], 3);
+//        double t0 = bicub.cubicInterpol(tabTest[0], tabTest[1], tabTest[2], tabTest[3], 0);
+//        double t1 = bicub.cubicInterpol(tabTest[0], tabTest[1], tabTest[2], tabTest[3], 1);
+//        double t2 = bicub.cubicInterpol(tabTest[0], tabTest[1], tabTest[2], tabTest[3], 2);
+//        double t3 = bicub.cubicInterpol(tabTest[0], tabTest[1], tabTest[2], tabTest[3], 3);
 
-        System.out.println("interpol to = "+t0);
-        System.out.println("interpol t1 = "+t1);
-        System.out.println("interpol t2 = "+t2);
-        System.out.println("interpol t3 = "+t3);
+//        for (double t = 0; t<=3.0;t+=0.1) {
+//            System.out.println("interpol t"+t+" = "+bicub.cubicInterpol(tabTest[0], tabTest[1], tabTest[2], tabTest[3], t));
+//        }
+
+//        System.out.println("interpol to = "+t0);
+//        System.out.println("interpol t1 = "+t1);
+//        System.out.println("interpol t2 = "+t2);
+//        System.out.println("interpol t3 = "+t3);
 
     }
 
