@@ -40,16 +40,16 @@ import org.opengis.referencing.IdentifiedObject;
 public class ExtractionDescriptor extends AbstractProcessDescriptor {
 
     public static final String NAME = "extractor";
-    public static final String BUNDLE_PATH = "org/geotoolkit/process/coverage/metadataextractor/bundle";
+    public static final String BUNDLE_PATH = "org/geotoolkit/process/coverage/bundle";
     
     /**
      * Following attributes are the keys for international description fields.
      * (See @Process_package/bundle.properties).
      */
-    protected static final String IN_DESC_KEY  = "inputDescription";
-    protected static final String IN_TITLE_KEY = "inputTitle";
-    protected static final String OUT_DESC_KEY  = "outputDescription";
-    protected static final String OUT_TITLE_KEY = "outputTitle";
+    protected static final String IN_DESC_KEY  = "extractDescription";
+    protected static final String IN_TITLE_KEY = "inCoverageTitle";
+    protected static final String OUT_DESC_KEY  = "outMetadataDescription";
+    protected static final String OUT_TITLE_KEY = "outMetadataTitle";
     
     /**
      * Mandatory - Coverage to process

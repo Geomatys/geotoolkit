@@ -82,7 +82,7 @@ public class CBERS {
         Document doc = DomUtilities.read(cbersData);
         
         //////////////////////////////////
-       //Data initialisation           //
+       //     Data initialisation      //
       //////////////////////////////////
         
         //Dom
