@@ -27,6 +27,7 @@ import org.geotoolkit.metadata.iso.quality.DefaultConformanceResult;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.util.ResourceInternationalString;
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.InvalidParameterValueException;
@@ -46,16 +47,22 @@ import org.opengis.referencing.IdentifiedObject;
  */
 public abstract class AbstractDataStoreFactory extends Factory implements DataStoreFactory {
 
+    private static final String BUNDLE_PATH = "org/geotoolkit/data/bundle";
+    
     /**
      * Identifier, Mandatory.
      * Subclasses should redeclared this parameter with a different default value.
      */
-    public static final ParameterDescriptor<String> IDENTIFIER =
-            new DefaultParameterDescriptor<String>("identifier","Factory identifier.",String.class,null,true);
+    public static final ParameterDescriptor<String> IDENTIFIER = createDescriptor("identifier",
+                    new ResourceInternationalString(BUNDLE_PATH,"paramIdentifierAlias"),
+                    new ResourceInternationalString(BUNDLE_PATH,"paramIdentifierRemarks"),
+                    String.class,null,null,null,null,null,true);
     
     /** parameter for namespace of the datastore */
-    public static final ParameterDescriptor<String> NAMESPACE =
-             new DefaultParameterDescriptor<String>("namespace","Namespace prefix",String.class,null,false);
+    public static final ParameterDescriptor<String> NAMESPACE = createDescriptor("namespace",
+                    new ResourceInternationalString(BUNDLE_PATH,"paramNamespaceAlias"),
+                    new ResourceInternationalString(BUNDLE_PATH,"paramNamespaceRemarks"),
+                    String.class,null,null,null,null,null,false);
 
 
     /** Default Implementation abuses the naming convention.

@@ -23,6 +23,7 @@ import java.util.Collections;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.storage.DataStoreException;
 
+import org.geotoolkit.util.ResourceInternationalString;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -36,8 +37,10 @@ public abstract class AbstractFileDataStoreFactory extends AbstractDataStoreFact
     /**
      * url to the file.
      */
-    public static final ParameterDescriptor<URL> URLP =
-            new DefaultParameterDescriptor<URL>("url","url to a file",URL.class,null,true);
+    public static final ParameterDescriptor<URL> URLP = createDescriptor("url",
+                    new ResourceInternationalString("org/geotoolkit/data/bundle","paramURLAlias"),
+                    new ResourceInternationalString("org/geotoolkit/data/bundle","paramURLRemarks"),
+                    URL.class,null,null,null,null,null,true);
 
     /**
      * {@inheritDoc }
