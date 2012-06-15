@@ -23,6 +23,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -32,6 +33,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.TimeUnit;
 import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
 import org.geotoolkit.coverage.grid.GridEnvelope2D;
@@ -343,6 +345,20 @@ public class PyramidalModelReader extends GridCoverageReader{
                         throw new CoverageStoreException(ex.getMessage(),ex);
                     }finally{
                         if(reader != null){
+                            Object readerinput = reader.getInput();
+                            if(readerinput instanceof InputStream){
+                                try {
+                                    ((InputStream)readerinput).close();
+                                } catch (IOException ex) {
+                                    throw new CoverageStoreException(ex);
+                                }
+                            }else if(readerinput instanceof ImageInputStream){
+                                try {
+                                    ((ImageInputStream)readerinput).close();
+                                } catch (IOException ex) {
+                                    throw new CoverageStoreException(ex);
+                                }
+                            }
                             reader.dispose();
                         }
                     }

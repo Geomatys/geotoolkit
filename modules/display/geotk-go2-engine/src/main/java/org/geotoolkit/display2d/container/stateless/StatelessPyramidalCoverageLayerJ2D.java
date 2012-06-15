@@ -22,6 +22,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,7 +30,9 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
 import org.geotoolkit.coverage.*;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageFactory;
@@ -297,13 +300,34 @@ public class StatelessPyramidalCoverageLayerJ2D extends StatelessMapLayerJ2D<Cov
         if(input instanceof RenderedImage){
             image = (RenderedImage) input;
         }else{
-            final ImageReader reader;
+            ImageReader reader = null;
             try {
                 reader = tile.getImageReader();
                 image = reader.read(tile.getImageIndex());
             } catch (IOException ex) {
                 monitor.exceptionOccured(ex, Level.WARNING);
                 return;
+            } finally {
+                //dispose reader and substream
+                if(reader != null){
+                    Object readerinput = reader.getInput();
+                    if(readerinput instanceof InputStream){
+                        try {
+                            ((InputStream)readerinput).close();
+                        } catch (IOException ex) {
+                            monitor.exceptionOccured(ex, Level.WARNING);
+                            return;
+                        }
+                    }else if(readerinput instanceof ImageInputStream){
+                        try {
+                            ((ImageInputStream)readerinput).close();
+                        } catch (IOException ex) {
+                            monitor.exceptionOccured(ex, Level.WARNING);
+                            return;
+                        }
+                    }
+                    reader.dispose();
+                }
             }
         }
                 

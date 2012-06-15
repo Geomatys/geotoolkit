@@ -245,9 +245,12 @@ public class XMLMosaic implements GridMosaic{
         checkPosition(col, row);
         final File f = getTileFile(col, row);
         f.getParentFile().mkdirs();
+        
+        ImageOutputStream out = null;
+        ImageWriter writer = null;
         try {
-            final ImageOutputStream out = ImageIO.createImageOutputStream(f);
-            final ImageWriter writer = XImageIO.getWriterByMIMEType(
+            out = ImageIO.createImageOutputStream(f);
+            writer = XImageIO.getWriterByMIMEType(
                     getPyramid().getPyramidSet().getMimeType(), out, image);
             writer.setOutput(out);
             writer.write(image);
@@ -257,6 +260,17 @@ public class XMLMosaic implements GridMosaic{
             updateCompletionString();
         } catch (IOException ex) {
             throw new DataStoreException(ex.getMessage(),ex);
+        } finally{
+            if(writer != null){
+                writer.dispose();
+            }
+            if(out != null){
+                try {
+                    out.close();
+                } catch (IOException ex) {
+                    throw new DataStoreException(ex.getMessage(),ex);
+                }
+            }
         }
     }
     
@@ -288,24 +302,28 @@ public class XMLMosaic implements GridMosaic{
                     final File f = getTileFile(x, y);
                     f.getParentFile().mkdirs();
                     
-                    final ImageOutputStream out = ImageIO.createImageOutputStream(f);                    
-                    writer.reset();
-                    writer.setOutput(out);
-                    
-                    //write tile
-                    if(canWriteRaster){
-                        final IIOImage buffer = new IIOImage(raster, null, null);                    
-                        writer.write(buffer);
-                    }else{
-                        //encapsulate image in a buffered image with parent color model
-                        final BufferedImage buffer = new BufferedImage(
-                                image.getColorModel(), 
-                                (WritableRaster)raster, true, null);
-                        writer.write(buffer);
+                    final ImageOutputStream out = ImageIO.createImageOutputStream(f);
+                    try{
+                        writer.reset();
+                        writer.setOutput(out);
+
+                        //write tile
+                        if(canWriteRaster){
+                            final IIOImage buffer = new IIOImage(raster, null, null);                    
+                            writer.write(buffer);
+                        }else{
+                            //encapsulate image in a buffered image with parent color model
+                            final BufferedImage buffer = new BufferedImage(
+                                    image.getColorModel(), 
+                                    (WritableRaster)raster, true, null);
+                            writer.write(buffer);
+                        }
+
+                        tileExist.set(tileIndex, true);
+                        tileEmpty.set(tileIndex, false);
+                    }finally {
+                        out.close();
                     }
-                    
-                    tileExist.set(tileIndex, true);
-                    tileEmpty.set(tileIndex, false);
                 }
             }
                     
