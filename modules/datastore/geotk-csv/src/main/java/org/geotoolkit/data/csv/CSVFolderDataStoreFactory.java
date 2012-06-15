@@ -27,6 +27,8 @@ import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 
+import static org.geotoolkit.data.csv.CSVDataStore.*;
+
 /**
  * DataStore for a folder of CSV files.
  * 
@@ -62,11 +64,11 @@ public class CSVFolderDataStoreFactory extends AbstractFolderDataStoreFactory{
     
     @Override
     public CharSequence getDescription() {
-        return new ResourceInternationalString("org/geotoolkit/csv/bundle", "datastoreFolderDescription");
+        return new ResourceInternationalString(BUNDLE_PATH, "datastoreFolderDescription");
     }
 
     @Override
     public CharSequence getDisplayName() {
-        return new ResourceInternationalString("org/geotoolkit/csv/bundle", "datastoreFolderTitle");
+        return new ResourceInternationalString(BUNDLE_PATH, "datastoreFolderTitle");
     }
 }

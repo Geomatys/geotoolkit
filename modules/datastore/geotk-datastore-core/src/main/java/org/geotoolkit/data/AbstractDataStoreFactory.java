@@ -20,6 +20,7 @@ package org.geotoolkit.data;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import javax.measure.unit.Unit;
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.metadata.iso.quality.DefaultConformanceResult;
@@ -34,6 +35,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.IdentifiedObject;
 
 /**
  * A best of toolkit for DataStoreFactory implementors.
@@ -217,6 +219,21 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
         if(!valid){
             throw new DataStoreException("Parameter values not supported by this factory.");
         }
+    }
+    
+    /**
+     * Convinient method to create a parameter descriptor with an additional alias.
+     */
+    protected static <T> ParameterDescriptor<T> createDescriptor(final String name, 
+            final CharSequence alias, final CharSequence remarks, final Class<T> clazz, 
+            final T[] possibleValues, final T defaultValue, final Comparable<T> min,
+            final Comparable<T> max, final Unit unit, final boolean requiered){
+        final Map<String, Object> properties = new HashMap<String, Object>();
+        properties.put(IdentifiedObject.NAME_KEY, name);
+        properties.put(IdentifiedObject.ALIAS_KEY, alias);
+        properties.put(IdentifiedObject.REMARKS_KEY, remarks);
+        return new DefaultParameterDescriptor(properties, clazz, 
+                possibleValues, defaultValue, min, max, unit, requiered);
     }
     
 }

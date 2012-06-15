@@ -93,6 +93,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class CSVDataStore extends AbstractDataStore{
 
+    static final String BUNDLE_PATH = "org/geotoolkit/csv/bundle";
+    
     private final ReadWriteLock RWLock = new ReentrantReadWriteLock();
     private final ReadWriteLock TempLock = new ReentrantReadWriteLock();
 

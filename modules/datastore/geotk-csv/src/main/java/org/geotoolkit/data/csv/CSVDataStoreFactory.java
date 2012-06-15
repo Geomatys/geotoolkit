@@ -18,6 +18,10 @@
 package org.geotoolkit.data.csv;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import javax.measure.unit.Unit;
+
 import org.geotoolkit.data.AbstractDataStoreFactory;
 import org.geotoolkit.data.AbstractFileDataStoreFactory;
 import org.geotoolkit.data.DataStore;
@@ -34,6 +38,9 @@ import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.IdentifiedObject;
+
+import static org.geotoolkit.data.csv.CSVDataStore.*;
 
 /**
  * CSV datastore factory.
@@ -43,6 +50,9 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class CSVDataStoreFactory extends AbstractFileDataStoreFactory {
 
+    
+    
+    
     /** factory identification **/
     public static final String NAME = "csv";
     public static final DefaultServiceIdentification IDENTIFICATION;
@@ -61,8 +71,10 @@ public class CSVDataStoreFactory extends AbstractFileDataStoreFactory {
     /**
      * Optional - the separator character
      */
-    public static final ParameterDescriptor<Character> SEPARATOR =
-            new DefaultParameterDescriptor<Character>("separator","spécify the separator",Character.class,';',false);
+    public static final ParameterDescriptor<Character> SEPARATOR = createDescriptor("separator",
+                    new ResourceInternationalString(BUNDLE_PATH,"paramSeparatorAlias"),
+                    new ResourceInternationalString(BUNDLE_PATH,"paramSeparatorRemarks"),
+                    Character.class,null,';',null,null,null,false);
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new DefaultParameterDescriptorGroup("CSVParameters",
@@ -103,5 +115,5 @@ public class CSVDataStoreFactory extends AbstractFileDataStoreFactory {
     public String[] getFileExtensions() {
         return new String[] {".csv"};
     }
-
+    
 }

@@ -30,6 +30,7 @@ import javax.swing.*;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.tree.TreePath;
+import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.*;
 import org.geotoolkit.gui.swing.resource.IconBundle;
@@ -44,8 +45,10 @@ import org.opengis.feature.Property;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.feature.type.PropertyType;
+import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.util.GenericName;
 import org.opengis.util.InternationalString;
 
 /**
@@ -287,9 +290,49 @@ public class JFeatureOutLine extends Outline{
 
             final Name name;
             if(candidate instanceof Property){
-                name = ((Property)candidate).getName();
+                
+                Property prop = ((Property)candidate);
+                final PropertyDescriptor desc = prop.getDescriptor();
+                
+                if(desc != null){
+                    final Object origin = desc.getType().getUserData().get("origin");
+                    if(origin instanceof GeneralParameterDescriptor){
+                        final GeneralParameterDescriptor pd = (GeneralParameterDescriptor) origin;
+                        if(pd.getAlias() != null && !pd.getAlias().isEmpty()){
+                            final GenericName gn = pd.getAlias().iterator().next();
+                            name = new DefaultName(null, gn.toString());
+                        }else{
+                            name = prop.getName();
+                        }
+                    }else{
+                        name = prop.getName();
+                    }
+                }else{
+                    name = prop.getName();
+                }
+                
+                
             }else if(candidate instanceof PropertyDescriptor){
-                name = ((PropertyDescriptor)candidate).getName();
+                
+                final PropertyDescriptor desc = ((PropertyDescriptor)candidate);
+                
+                if(desc != null){
+                    final Object origin = desc.getType().getUserData().get("origin");
+                    if(origin instanceof GeneralParameterDescriptor){
+                        final GeneralParameterDescriptor pd = (GeneralParameterDescriptor) origin;
+                        if(pd.getAlias() != null && !pd.getAlias().isEmpty()){
+                            final GenericName gn = pd.getAlias().iterator().next();
+                            name = new DefaultName(null, gn.toInternationalString().toString());
+                        }else{
+                            name = desc.getName();
+                        }
+                    }else{
+                        name = desc.getName();
+                    }
+                }else{
+                    name = desc.getName();
+                }
+                
             }else{
                 name = null;
             }

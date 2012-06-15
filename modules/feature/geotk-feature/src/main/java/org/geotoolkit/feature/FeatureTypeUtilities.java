@@ -1286,10 +1286,24 @@ public final class FeatureTypeUtilities {
     // PARAMETERS API MAPPING OPERATIONS ///////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
     
+    /**
+     * Convert given parameter descriptor to a feature type.
+     * the original parameter descriptor will be store in the user map with key "origin"
+     * 
+     * @param descriptor
+     * @return ComplexType
+     */
     public static ComplexType toPropertyType(final ParameterDescriptorGroup descriptor){
         return (ComplexType) toPropertyType((GeneralParameterDescriptor)descriptor);
     }
     
+    /**
+     * Convert given parameter descriptor to a feature type.
+     * the original parameter descriptor will be store in the user map with key "origin"
+     * 
+     * @param descriptor
+     * @return PropertyType
+     */
     public static PropertyType toPropertyType(final GeneralParameterDescriptor descriptor){
         
         if(descriptor instanceof ParameterDescriptor){
@@ -1311,8 +1325,10 @@ public final class FeatureTypeUtilities {
                 atb.addRestriction(ff.equals(in, ff.literal(true)));
             }            
             
+            //store the original descriptor, it contain additional informations
+            //not mapped in the feature type.
             final AttributeType at = atb.buildType();
-            
+            at.getUserData().put("origin", descriptor);
             return at;
             
         }else if (descriptor instanceof ParameterDescriptorGroup){
@@ -1337,7 +1353,12 @@ public final class FeatureTypeUtilities {
                 ftb.add(adb.buildDescriptor());                
             }
             
-            return ftb.buildType();
+            ComplexType type = ftb.buildType();
+            //store the original descriptor, it contain additional informations
+            //not mapped in the feature type.
+            type.getUserData().put("origin", descriptor);
+            
+            return type;
         }else{
             throw new IllegalArgumentException("Unsupported type : " + descriptor.getClass());
         }
