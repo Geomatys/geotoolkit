@@ -476,7 +476,7 @@ public final class WPSIO {
                     formatOK = true;
                 }
             }
-            if (!formatOK) {
+            if (!formatOK && bestMatch != null) {
                 final String bestMime = bestMatch.getMimeType();
                 final String bestSchema = bestMatch.getSchema() != null ? bestMatch.getSchema() : null;
                 final String bestEncoding = bestMatch.getEncoding() != null ? bestMatch.getEncoding() : null;
