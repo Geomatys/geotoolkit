@@ -54,6 +54,14 @@ public abstract class AbstractQueryExpressionType {
     @XmlAttribute
     private String handle;
 
+    public AbstractQueryExpressionType() {
+        
+    }
+    
+    public AbstractQueryExpressionType(final String handle) {
+        this.handle = handle;
+    }
+    
     /**
      * Gets the value of the handle property.
      * 

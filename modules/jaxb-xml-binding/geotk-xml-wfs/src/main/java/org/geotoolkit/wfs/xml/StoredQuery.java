@@ -17,29 +17,14 @@
 package org.geotoolkit.wfs.xml;
 
 import java.util.List;
-import java.util.Map;
-
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public interface GetFeature extends BaseRequest {
+public interface StoredQuery {
     
-    List<? extends Query> getQuery();
-    
-    List<? extends StoredQuery> getStoredQuery();
-    
-    String getOutputFormat();
-    
-    int getCount();
-    
-    int getStartIndex();
-    
-    Map<String, String> getPrefixMapping();
-    
-    ResultTypeType getResultType();
-    
-    String getFeatureId();
-    
+    String getId();
+
+    List<? extends Parameter> getParameter();
 }

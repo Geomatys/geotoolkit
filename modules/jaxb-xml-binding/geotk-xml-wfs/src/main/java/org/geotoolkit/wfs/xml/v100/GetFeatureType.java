@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.*;
 import org.geotoolkit.util.Version;
 import org.geotoolkit.wfs.xml.GetFeature;
 import org.geotoolkit.wfs.xml.ResultTypeType;
+import org.geotoolkit.wfs.xml.StoredQuery;
 
 
 /**
@@ -290,5 +291,9 @@ public class GetFeatureType implements GetFeature {
     @Override
     public String getFeatureId() {
         return null;
+    }
+    
+    public List<? extends StoredQuery> getStoredQuery() {
+        throw new UnsupportedOperationException("Not supported in V1.0.0");
     }
 }

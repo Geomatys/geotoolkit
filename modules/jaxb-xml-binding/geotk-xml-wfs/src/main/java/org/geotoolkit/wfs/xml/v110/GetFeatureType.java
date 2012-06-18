@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.wfs.xml.GetFeature;
 import org.geotoolkit.wfs.xml.ResultTypeType;
+import org.geotoolkit.wfs.xml.StoredQuery;
 
 /**
  * A GetFeature element contains one or more Query elements that describe a query operation on one feature type.  
@@ -288,6 +289,10 @@ public class GetFeatureType extends BaseRequestType implements GetFeature {
      */
     public void setFeatureId(final String featureId) {
         this.featureId = featureId;
+    }
+    
+    public List<? extends StoredQuery> getStoredQuery() {
+        return new ArrayList();
     }
 
     @Override

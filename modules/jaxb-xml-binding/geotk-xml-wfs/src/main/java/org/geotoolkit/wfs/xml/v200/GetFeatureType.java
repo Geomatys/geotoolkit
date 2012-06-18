@@ -29,10 +29,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ogc.xml.v200.AbstractQueryExpressionType;
-import org.geotoolkit.wfs.xml.GetFeature;
-import org.geotoolkit.wfs.xml.Query;
-import org.geotoolkit.wfs.xml.ResolveValueType;
-import org.geotoolkit.wfs.xml.ResultTypeType;
+import org.geotoolkit.wfs.xml.*;
 
 
 /**
@@ -157,6 +154,29 @@ public class GetFeatureType extends BaseRequestType implements GetFeature {
                 final Object obj = jb.getValue();
                 if (obj instanceof Query) {
                     queries.add((Query) obj);
+                } else if (obj instanceof StoredQuery) {
+                    continue;
+                } else {
+                    throw new IllegalArgumentException("unexpected query type:" + obj.getClass());
+                }
+            }
+        }
+        return queries;
+    }
+    
+    /**
+     * Gets the value of the query property.
+     */
+    @Override
+    public List<StoredQuery> getStoredQuery() {
+        final List<StoredQuery> queries = new ArrayList<StoredQuery>();
+        if (abstractQueryExpression != null) {
+            for (JAXBElement jb : abstractQueryExpression) {
+                final Object obj = jb.getValue();
+                if (obj instanceof Query) {
+                    continue;
+                } else if (obj instanceof StoredQuery) {
+                    queries.add((StoredQuery) obj);
                 } else {
                     throw new IllegalArgumentException("unexpected query type:" + obj.getClass());
                 }
