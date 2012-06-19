@@ -649,7 +649,17 @@ public final class FeatureUtilities {
                 final ParameterDescriptorGroup desc = (ParameterDescriptorGroup) gpd;
                 
                 for(final Property prop : properties){
-                    final ParameterValueGroup subGroup = target.addGroup(desc.getName().getCode());                    
+                    ParameterValueGroup subGroup = null;
+                    if (desc.getMaximumOccurs() != 1) {
+                        subGroup = target.addGroup(desc.getName().getCode());     
+                    } else {
+                        if (desc.getMinimumOccurs() == 1) {
+                            subGroup = target.groups(desc.getName().getCode()).get(0);
+                        }
+                        if( subGroup == null) {
+                            subGroup = target.addGroup(desc.getName().getCode());     
+                        }
+                    }
                     fill((ComplexAttribute)prop,subGroup);                    
                 }
             }            
