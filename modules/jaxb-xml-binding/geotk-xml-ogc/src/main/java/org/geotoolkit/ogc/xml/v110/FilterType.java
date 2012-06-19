@@ -206,6 +206,23 @@ public class FilterType implements Filter, XMLFilter {
         return id;
     }
     
+    public Object getFilterObject() {
+        if (comparisonOps != null) {
+            return comparisonOps.getValue();
+        } else if (id != null && !id.isEmpty()) {
+            final List<AbstractIdType> featureId = new ArrayList<AbstractIdType>();
+            for (JAXBElement<? extends AbstractIdType> jb : id) {
+                featureId.add(jb.getValue());
+            }
+            return featureId;
+        } else if (logicOps != null) {
+            return logicOps.getValue();
+        } else if (spatialOps != null) {
+            return spatialOps.getValue();
+        }
+        return null;
+    }
+    
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder("[").append(this.getClass().getSimpleName()).append(']').append('\n');

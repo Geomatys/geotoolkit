@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ogc.xml.XMLLiteral;
 import org.geotoolkit.util.Utilities;
 import org.opengis.filter.expression.ExpressionVisitor;
 import org.opengis.filter.expression.Literal;
@@ -53,7 +54,7 @@ import org.opengis.filter.expression.Literal;
 @XmlType(name = "LiteralType", propOrder = {
     "content"
 })
-public class LiteralType implements Literal {
+public class LiteralType implements XMLLiteral {
 
     @XmlMixed
     @XmlAnyElement(lax = true)
@@ -104,10 +105,12 @@ public class LiteralType implements Literal {
      * Sets the value of the content property.
      */
     public void setContent(final Object content) {
-        if (this.content == null) {
-            this.content = new ArrayList<Object>();
+        if (content != null) {
+            if (this.content == null) {
+                this.content = new ArrayList<Object>();
+            }
+            this.content.add(content);
         }
-        this.content.add(content);
     }
     
     /**
@@ -122,7 +125,7 @@ public class LiteralType implements Literal {
      * This method return the first object of the list and cast it in String (if its possible).
      */
     public String getStringValue() {
-        if (content != null && content.size() != 0) {
+        if (content != null && !content.isEmpty()) {
             if (content.get(0) instanceof String) {
                 return (String)content.get(0);
             }
@@ -133,20 +136,23 @@ public class LiteralType implements Literal {
     /**
      * We assume that the list have only One Value.
      */
+    @Override
     public Object getValue() {
-        if (content != null && content.size() != 0) {
+        if (content != null && !content.isEmpty()) {
             return content.get(0);
         }
         return null;
     }
 
+    @Override
     public Object evaluate(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public Object evaluate(final Object object, final Class context) {
        Object literal = null;
-       if (content != null && content.size() != 0) {
+       if (content != null && !content.isEmpty()) {
             literal = content.get(0);
        } 
        

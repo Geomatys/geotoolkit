@@ -16,18 +16,17 @@
  */
 package org.geotoolkit.ogc.xml;
 
-import java.util.Map;
+import java.util.List;
+import org.opengis.filter.expression.Literal;
 
 /**
- *
  * @author Guilhem Legal (Geomatys)
  */
-public interface XMLFilter {
+public interface XMLLiteral extends Literal {
+ 
+    List<Object> getContent();
     
-
-    Object getFilterObject();
+    void setContent(final List<Object> content);
     
-    Map<String, String> getPrefixMapping();
-
-    void setPrefixMapping(final Map<String, String> prefixMapping);
+    void setContent(final Object content);
 }

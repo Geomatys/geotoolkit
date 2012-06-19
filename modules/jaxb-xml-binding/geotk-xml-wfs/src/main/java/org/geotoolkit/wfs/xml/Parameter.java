@@ -16,10 +16,17 @@
  */
 package org.geotoolkit.wfs.xml;
 
+import java.util.List;
+
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
 public interface Parameter {
     
+    List<Object> getContent();
+    
+    String getName();
+    
+    void setName(final String value);
 }

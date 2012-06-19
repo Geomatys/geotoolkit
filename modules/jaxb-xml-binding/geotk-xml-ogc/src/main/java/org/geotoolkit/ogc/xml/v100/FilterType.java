@@ -244,6 +244,19 @@ public class FilterType implements Filter, XMLFilter {
         return this.featureId;
     }
     
+    public Object getFilterObject() {
+        if (comparisonOps != null) {
+            return comparisonOps.getValue();
+        } else if (featureId != null && !featureId.isEmpty()) {
+            return featureId;
+        } else if (logicOps != null) {
+            return logicOps.getValue();
+        } else if (spatialOps != null) {
+            return spatialOps.getValue();
+        }
+        return null;
+    }
+    
      /**
      * @return the prefixMapping
      */

@@ -116,7 +116,7 @@ public class ParameterType implements Parameter {
      *     {@link String }
      *     
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 

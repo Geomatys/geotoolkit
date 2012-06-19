@@ -201,8 +201,8 @@ public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryC
     @Override
     public Expression getExpression2() {
         for (JAXBElement<?> elem : getExpression()) {
-            if (elem.getValue() instanceof org.geotoolkit.ogc.xml.v110.LiteralType) {
-                return (org.geotoolkit.ogc.xml.v110.LiteralType)elem.getValue();
+            if (elem.getValue() instanceof org.geotoolkit.ogc.xml.v200.LiteralType) {
+                return (org.geotoolkit.ogc.xml.v200.LiteralType)elem.getValue();
             }
         }
         return null;
