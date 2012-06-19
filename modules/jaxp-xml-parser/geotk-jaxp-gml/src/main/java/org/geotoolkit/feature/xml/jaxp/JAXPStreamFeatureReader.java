@@ -160,8 +160,16 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                 final StringBuilder expectedFeatureType = new StringBuilder();
 
                 if (name.getLocalPart().equals("FeatureCollection")) {
-                    return readFeatureCollection(id);
-
+                    final Object coll = readFeatureCollection(id);
+                    if (coll == null) {
+                        if (featureTypes.size() == 1) {
+                            return DataUtilities.collection(id, featureTypes.get(0));
+                        } else {
+                            return DataUtilities.collection(id, null);
+                        }
+                    }
+                    return coll;
+                        
                 } else if (name.getLocalPart().equals("Transaction")) {
                     return extractFeatureFromTransaction();
 
