@@ -112,11 +112,13 @@ public abstract class Group extends Annotated {
 
     public List<Element> getElements() {
         List<Element> result = new ArrayList<Element>();
-        for (Object obj : particle) {
-            if (obj instanceof JAXBElement) {
-                JAXBElement jb = (JAXBElement) obj;
-                if (jb.getValue() instanceof Element) {
-                    result.add((Element) jb.getValue());
+        if (particle != null) {
+            for (Object obj : particle) {
+                if (obj instanceof JAXBElement) {
+                    JAXBElement jb = (JAXBElement) obj;
+                    if (jb.getValue() instanceof Element) {
+                        result.add((Element) jb.getValue());
+                    }
                 }
             }
         }
