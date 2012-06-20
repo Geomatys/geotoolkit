@@ -41,9 +41,18 @@ public final class ProcessFinder {
 
     /**
      * Return the factory for the given authority code.
+     * @return ProcessingRegistry or null if not found
      */
     public static ProcessingRegistry getProcessFactory(final String authorityCode){
-        final Iterator<ProcessingRegistry> ite = getProcessFactories();
+        return getProcessFactory(getProcessFactories(), authorityCode);
+    }
+    
+    /**
+     * Return the factory for the given authority code.
+     * @return ProcessingRegistry or null if not found
+     */
+    public static ProcessingRegistry getProcessFactory(final Iterator<? extends ProcessingRegistry> ite, 
+            final String authorityCode){
         while(ite.hasNext()){
             final ProcessingRegistry candidate = ite.next();
             for(final Identifier id : candidate.getIdentification().getCitation().getIdentifiers()){
@@ -65,12 +74,27 @@ public final class ProcessFinder {
      */
     public static ProcessDescriptor getProcessDescriptor(String authority, 
             final String processName) throws NoSuchIdentifierException{
+        return getProcessDescriptor(getProcessFactories(), authority, processName);
+    }
+
+    /**
+     * Search for a Process descriptor in the given authority and the given name.
+     * 
+     * @param factories factories to search in
+     * @param authority
+     * @param processName
+     * @return ProcessDescriptor
+     * @throws IllegalArgumentException if description could not be found
+     */
+    public static ProcessDescriptor getProcessDescriptor(final Iterator<? extends ProcessingRegistry> factories, 
+                String authority, final String processName) throws NoSuchIdentifierException {
+        
         if(authority != null && authority.trim().isEmpty()){
             authority = null;
         }
 
         if(authority != null){
-            final ProcessingRegistry factory = getProcessFactory(authority);
+            final ProcessingRegistry factory = getProcessFactory(factories, authority);
             if(factory != null){
                 return factory.getDescriptor(processName);
             }else{
@@ -79,7 +103,6 @@ public final class ProcessFinder {
         }
 
         //try all factories
-        final Iterator<ProcessingRegistry> factories = getProcessFactories();
         while(factories.hasNext()){
             final ProcessingRegistry factory = factories.next();
             try{
@@ -89,5 +112,5 @@ public final class ProcessFinder {
 
         throw new NoSuchIdentifierException("No process for given code.", processName);
     }
-
+    
 }
