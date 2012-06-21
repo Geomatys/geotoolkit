@@ -48,10 +48,9 @@ public class BilinearInterpolation extends Interpolation {
     @Override
     public double[] interpolate(double x, double y) {
         checkInterpolate(x, y);
-        int minx = (int) x;
-        int miny = (int) y;
-        if (minx == boundary.x + boundary.width  - 1 || (x < 0 && x != boundary.x)) minx--;
-        if (miny == boundary.y + boundary.height - 1 || (y < 0 && y != boundary.y)) miny--;
+        int[] mins = getInterpolateMin(x, y, 2, 2);
+        int minx = mins[0];
+        int miny = mins[1];
         int bands;
         final double[] data = new double[4 * numBands];
         int compteur = 0;

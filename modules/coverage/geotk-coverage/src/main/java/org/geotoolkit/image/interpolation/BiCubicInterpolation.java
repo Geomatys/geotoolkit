@@ -21,12 +21,27 @@ import org.geotoolkit.image.iterator.PixelIterator;
 
 /**
  * Define BiCubic Interpolation.
- * //fusion getcubic value cubic interpol+refactor interpolate.
+ *
  * BiCubic interpolation is computed from 16 pixels at nearest integer value.
  *
  * @author Rémi Marechal (Geomatys).
  */
 public class BiCubicInterpolation extends Interpolation {
+
+    /**
+     * Table to keep all 16 pixels values used to interpolate.
+     */
+    private final double[] data;
+
+    /**
+     * Table used to compute interpolation from rows values.
+     */
+    private final double[] tabInteRow;
+
+    /**
+     * Table used to interpolate values from rows interpolation result.
+     */
+    private final double[] tabInteCol;
 
     /**
      * Create an BiCubic Interpolator.
@@ -39,10 +54,13 @@ public class BiCubicInterpolation extends Interpolation {
             throw new IllegalArgumentException("iterate object width too smaller"+boundary.width);
         if (boundary.height < 4)
             throw new IllegalArgumentException("iterate object height too smaller"+boundary.height);
+        data       = new double[16*numBands];
+        tabInteRow = new double[4];
+        tabInteCol = new double[4];
     }
 
     /**
-     * Compute biCubic interpolation
+     * Compute biCubic interpolation.
      *
      * @param x pixel x coordinate.
      * @param y pixel y coordinate.
@@ -51,24 +69,12 @@ public class BiCubicInterpolation extends Interpolation {
     @Override
     public double[] interpolate(double x, double y) {
         checkInterpolate(x, y);
-        int minx = (int) x;
-        int miny = (int) y;
-        if (x<0) minx--;
-        if (y<0) miny--;
-        minx--;miny--;
-
-        int debX = Math.max(minx, boundary.x);
-        int debY = Math.max(miny, boundary.y);
-
-        while (debX + 4 > boundary.x + boundary.width) {
-            debX--;
-        }
-        while (debY + 4 > boundary.y + boundary.height) {
-            debY--;
-        }
+        int[] deb = getInterpolateMin(x, y, 4, 4);
+        int debX = deb[0];
+        int debY = deb[1];
         int compteur = 0;
         int bands;
-        double[] data = new double[16*numBands];
+        final double[] result = new double[numBands];
         for (int idY = debY; idY < debY + 4; idY++) {
             for (int idX = debX; idX < debX + 4; idX++) {
                 pixelIterator.moveTo(idX, idY);
@@ -79,21 +85,12 @@ public class BiCubicInterpolation extends Interpolation {
                 }
             }
         }
-
-        final double[] tabInter = new double[16];
-        final double[] result = new double[numBands];
-        final double[] tabInteRow = new double[4];
-        final double[] tabInteCol = new double[4];
-
-        //build pixel band per band
+        //build pixels interpolation band per band
         for (int n = 0; n < numBands; n++) {
-            //16 value for each interpolation
-            for (int i = 0; i<16; i++) {
-                tabInter[i] = data[n + i * numBands];//get 16 values for each bands
-            }
+            //16 values for each interpolation per band
             for (int idRow = 0; idRow<4; idRow++) {
                 for (int idC = 0; idC<4;idC++) {
-                    tabInteRow[idC] = tabInter[4*idRow + idC];//ya surement moy de le faire sans tabinter a voir apres test
+                    tabInteRow[idC] = data[n + (4*idRow + idC) * numBands];
                 }
                 tabInteCol[idRow] = getCubicValue(debX, x, tabInteRow);
             }
@@ -115,12 +112,12 @@ public class BiCubicInterpolation extends Interpolation {
      * @return polynomial root(s).
      */
     double[] getCubicRoots(double t0, double minDf, double maxDf, double...f) {
-        assert (f.length == 4) : "impossible to interpolate with less or more than 4 value";
+        assert (f.length == 4) : "impossible to interpolate with less or more than 4 values";
         assert (minDf < maxDf) : "definition domain invalid";
         final double a1 =  f[3]/3 - 3*f[2]/2 + 3*f[1]   - 11*f[0]/6;
         final double a2 = -f[3]/2 + 2*f[2]   - 5*f[1]/2 + f[0];
         final double a3 =  f[3]/6 - f[2]/2   + f[1]/2   - f[0]/6;
-        double delta = 4 * (a2*a2 - 3*a3*a1);
+        final double delta = 4 * (a2*a2 - 3*a3*a1);
         double x, x2;
         if (delta > 0) {
             x  = -(2*a2 + Math.sqrt(delta)) / a3 / 6;
@@ -128,17 +125,11 @@ public class BiCubicInterpolation extends Interpolation {
             x  += t0;
             x2 += t0;
             if (x >= minDf && x <= maxDf) {
-                if (x2 >= minDf && x2 <= maxDf) {
-                    return new double[]{x, x2};
-                } else {
-                    return new double[]{x};
-                }
+                if (x2 >= minDf && x2 <= maxDf) return new double[]{x, x2};
+                return new double[]{x};
             } else {
-                if (x2 >= minDf && x2 <= maxDf) {
-                    return new double[]{x2};
-                } else {
-                    return null;
-                }
+                if (x2 >= minDf && x2 <= maxDf) return new double[]{x2};
+                return null;
             }
         } else if (delta == 0) {
             x = -a2/a3/3 + t0;
@@ -174,7 +165,7 @@ public class BiCubicInterpolation extends Interpolation {
         final double a1 =  f[3]/3 - 3*f[2]/2 + 3*f[1]   - 11*f[0]/6;
         final double a2 = -f[3]/2 + 2*f[2]   - 5*f[1]/2 + f[0];
         final double a3 =  f[3]/6 - f[2]/2   + f[1]/2   - f[0]/6;
-        double x = t-t0;
+        final double x = t-t0;
         return f[0] + a1*x + a2*x*x + a3*x*x*x;
     }
 }
