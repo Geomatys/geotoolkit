@@ -22,6 +22,8 @@ import java.net.MalformedURLException;
 import java.util.Map;
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
+import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.feature.xml.XmlFeatureReader;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.wps.converters.WPSConvertersUtils;
@@ -54,8 +56,6 @@ public final class ReferenceToFeatureConverter extends AbstractReferenceInputCon
         return Feature.class;
     }
     
-    
-
     @Override
     public Object convert(ReferenceType source, final Map<String, Object> params) throws NonconvertibleObjectException {
         
@@ -69,8 +69,21 @@ public final class ReferenceToFeatureConverter extends AbstractReferenceInputCon
             XmlFeatureReader fcollReader = null;
             try {
                 fcollReader = getFeatureReader(source);
-                final Feature fcoll = (Feature) fcollReader.read(stream);
-                return (Feature) WPSConvertersUtils.fixFeature(fcoll);
+                final FeatureCollection fcoll = (FeatureCollection) fcollReader.read(stream);
+                if (fcoll.size() == 1) {
+                    Feature feat = null;
+                    final FeatureIterator ite = fcoll.iterator();
+                    try {
+                        if (ite.hasNext()) {
+                            feat = (Feature) WPSConvertersUtils.fixFeature(ite.next());
+                        }
+                    } finally {
+                        ite.close();
+                    }
+                    return feat;
+                } else {
+                    throw new NonconvertibleObjectException("Stream contain more than one Feature.");
+                }
 
             } catch (FactoryException ex) {
                 throw new NonconvertibleObjectException("Invalid reference input : can't spread CRS.", ex);
