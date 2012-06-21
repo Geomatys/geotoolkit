@@ -405,17 +405,21 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
 
                             if (complexInput != null) {
                                 final ComplexDataCombinationType complexDefault = complexInput.getDefault();
-                                final String mime = complexDefault.getFormat().getMimeType(); 
-                                final String encoding = complexDefault.getFormat().getEncoding();
-                                final String schema = complexDefault.getFormat().getSchema();
+                                if (complexDefault != null && complexDefault.getFormat() != null) {
+                                    final String mime = complexDefault.getFormat().getMimeType(); 
+                                    final String encoding = complexDefault.getFormat().getEncoding();
+                                    final String schema = complexDefault.getFormat().getSchema();
 
-                                final Class clazz = WPSIO.findClass(WPSIO.IOType.INPUT, WPSIO.FormChoice.COMPLEX, mime, encoding, schema, null);
-                                if (clazz == null) {
+                                    final Class clazz = WPSIO.findClass(WPSIO.IOType.INPUT, WPSIO.FormChoice.COMPLEX, mime, encoding, schema, null);
+                                    if (clazz == null) {
+                                        supportedIO = false;
+                                        break;
+                                    }
+                                    inputDescriptors.add(new DefaultParameterDescriptor(properties, clazz, null, null, null, null, null, min == 0));
+                                    inputTypes.put(inputName, "complex");
+                                } else {
                                     supportedIO = false;
-                                    break;
                                 }
-                                inputDescriptors.add(new DefaultParameterDescriptor(properties, clazz, null, null, null, null, null, min == 0));
-                                inputTypes.put(inputName, "complex");
                             }
                             
                             if (literalInput != null) {
