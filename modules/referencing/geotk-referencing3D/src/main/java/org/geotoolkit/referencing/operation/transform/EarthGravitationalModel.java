@@ -342,27 +342,27 @@ public class EarthGravitationalModel extends VerticalTransform {
          * is used only in trigonometric functions (sin / cos), which roll it as we would expect.
          * Latitude is used only in trigonometric functions as well.
          */
-        final double phi      = toRadians(latitude);
-        final double sin_phi  = sin(phi);
-        final double sin2_phi = sin_phi * sin_phi;
-        final double rni      = sqrt(1.0 - esq*sin2_phi);
-        final double rn       = semiMajor / rni;
-        final double t22      = (rn + height) * cos(phi);
-        final double z1       = ((rn * (1 - esq)) + height) * sin_phi;
-        final double th       = (PI/2) - atan(z1 / t22);
-        final double y        = sin(th);
-        final double t        = cos(th);
-        final double f1       = semiMajor / hypot(t22, z1);
-        final double f2       = f1*f1;
-        final double rlam     = toRadians(longitude);
+        final double φ     = toRadians(latitude);
+        final double sinφ  = sin(φ);
+        final double sin2φ = sinφ * sinφ;
+        final double rni   = sqrt(1.0 - esq*sin2φ);
+        final double rn    = semiMajor / rni;
+        final double t22   = (rn + height) * cos(φ);
+        final double z1    = ((rn * (1 - esq)) + height) * sinφ;
+        final double th    = (PI/2) - atan(z1 / t22);
+        final double y     = sin(th);
+        final double t     = cos(th);
+        final double f1    = semiMajor / hypot(t22, z1);
+        final double f2    = f1*f1;
+        final double λ     = toRadians(longitude);
         final double gravn;
         if (isWGS84) {
-            gravn = grava * (1.0 + star * sin2_phi) / rni;
+            gravn = grava * (1.0 + star * sin2φ) / rni;
         } else {
-            gravn = grava * (1.0 + star * sin2_phi) + 0.000023461 * (sin2_phi * sin2_phi);
+            gravn = grava * (1.0 + star * sin2φ) + 0.000023461 * (sin2φ * sin2φ);
         }
-        sr[0]=0; sr[1]=sin(rlam);
-        cr[0]=1; cr[1]=cos(rlam);
+        sr[0]=0; sr[1]=sin(λ);
+        cr[0]=1; cr[1]=cos(λ);
         for (int j=2; j<=nmax; j++) {
             sr[j] = (2.0 * cr[1] * sr[j-1]) - sr[j-2];
             cr[j] = (2.0 * cr[1] * cr[j-1]) - cr[j-2];
@@ -398,7 +398,9 @@ public class EarthGravitationalModel extends VerticalTransform {
      */
     @Override
     public ParameterValueGroup getParameterValues() {
-        return new ParameterGroup(getParameterDescriptors(), new Parameter<>(ORDER, nmax));
+        return new ParameterGroup(getParameterDescriptors(),
+                new Parameter<>(DATUM, isWGS84 ? "WGS84" : "WGS72"),
+                new Parameter<>(ORDER, nmax));
     }
 
     /**

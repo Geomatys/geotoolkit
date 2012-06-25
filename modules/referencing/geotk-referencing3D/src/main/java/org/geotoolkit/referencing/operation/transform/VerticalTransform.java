@@ -21,7 +21,7 @@ import java.util.Arrays;
 import net.jcip.annotations.ThreadSafe;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.TransformException;
-import org.geotoolkit.internal.referencing.DirectPositionView;
+import org.geotoolkit.referencing.operation.matrix.Matrices;
 
 
 /**
@@ -91,8 +91,6 @@ public abstract class VerticalTransform extends AbstractMathTransform {
                             final double[] dstPts, final int dstOff,
                             final boolean derivate) throws TransformException
     {
-        final Matrix derivative = derivate ? derivative(
-                new DirectPositionView(srcPts, srcOff, getSourceDimensions())) : null;
         if (dstPts != null) {
             final double x = srcPts[srcOff  ];
             final double y = srcPts[srcOff+1];
@@ -101,7 +99,7 @@ public abstract class VerticalTransform extends AbstractMathTransform {
             dstPts[dstOff+1] = y;
             dstPts[dstOff+2] = z + heightOffset(x,y,z);
         }
-        return derivative;
+        return derivate ? Matrices.create(getTargetDimensions(), getSourceDimensions()) : null;
     }
 
     /**
