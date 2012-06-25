@@ -22,6 +22,7 @@ import java.util.Calendar;
 import java.sql.Timestamp;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLDataException;
 import java.sql.PreparedStatement;
 import java.awt.geom.Rectangle2D;
 
@@ -200,11 +201,12 @@ public abstract class BoundedSingletonTable<E extends Entry> extends SingletonTa
      * @param  lc The {@link #getLocalCache()} value.
      * @param  type The query type (mat be {@code null}).
      * @param  statement The statement to configure (never {@code null}).
-     * @throws SQLException if a SQL error occurred while configuring the statement.
+     * @throws SQLDataException If the {@linkplain #envelope} is invalid.
+     * @throws SQLException If an other kind of SQL error occurred while configuring the statement.
      */
     @Override
     protected void configure(final LocalCache lc, final QueryType type, final PreparedStatement statement)
-            throws SQLException
+            throws SQLDataException, SQLException
     {
         super.configure(lc, type, statement);
         if (byTimeRange != null) {
@@ -235,7 +237,13 @@ public abstract class BoundedSingletonTable<E extends Entry> extends SingletonTa
             if (index != 0) {
                 final Envelope2D env = new Envelope2D();
                 Rectangle2D.intersect(envelope.getHorizontalRange(), DEFAULT_LIMIT, env);
-                statement.setString(index, Envelopes.toPolygonWKT(env));
+                final String wkt;
+                try {
+                    wkt = Envelopes.toPolygonWKT(env);
+                } catch (IllegalArgumentException e) {
+                    throw new SQLDataException(e.getLocalizedMessage(), e);
+                }
+                statement.setString(index, wkt);
             }
         }
     }

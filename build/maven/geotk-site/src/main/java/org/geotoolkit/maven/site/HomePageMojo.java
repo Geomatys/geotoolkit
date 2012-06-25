@@ -111,7 +111,7 @@ public class HomePageMojo extends AbstractMojo {
                             return;
                         }
                         buffer.append(line.substring(0, s).trim())
-                              .append("\n<table><tr><td><img src=\"images/logos/Troll.jpg\" align=\"left\"/>\n");
+                              .append("\n<table><tr><td><img src=\"images/logos/FrontPage.jpg\" align=\"left\"/>\n");
                         line = line.substring(s);
                         break; // Continue the while loop since the next <div> may be on the same line.
                     }

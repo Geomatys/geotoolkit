@@ -17,6 +17,10 @@
  */
 package org.geotoolkit.util.converter;
 
+import java.util.Map;
+import java.util.Set;
+import java.util.List;
+import java.util.Collection;
 import java.io.Serializable;
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.gui.swing.tree.TreesTest;
@@ -32,7 +36,7 @@ import static org.geotoolkit.test.Assert.*;
  * registry.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.02
+ * @version 3.20
  *
  * @since 3.00
  */
@@ -297,5 +301,24 @@ public final strictfp class ConverterRegistryTest {
         converter = StringConverter.Double .INSTANCE; assertRegistered();
         converter = DateConverter  .Long   .INSTANCE; assertRegistered(); assertRegisteredTarget(Number.class);
         converter = LongConverter  .Date   .INSTANCE; assertRegistered();
+    }
+
+    /**
+     * Tests {@link ConverterRegistry#getConvertibleTypes()}.
+     *
+     * @since 3.20
+     */
+    @Test
+    public void testGetConvertibleTypes() {
+        final Map<Class<?>, Set<Class<?>>> convertibleTypes = ConverterRegistry.system().getConvertibleTypes();
+        Set<Class<?>> set = convertibleTypes.get(String.class);
+        assertNotNull("Missing converters from the String type.", set);
+        assertTrue("Missing String to Float",   set.contains(Float.class));
+        assertTrue("Missing String to Integer", set.contains(Integer.class));
+        set = convertibleTypes.get(Collection.class);
+        assertNotNull("Missing converters from the Collection type.", set);
+        assertTrue("Missing Collection to List", set.contains(List.class));
+        assertTrue("Missing Collection to Set",  set.contains(Set.class));
+        assertSame("Expected cached value", convertibleTypes, ConverterRegistry.system().getConvertibleTypes());
     }
 }

@@ -369,7 +369,7 @@ final class LayerEntry extends DefaultEntry implements Layer, Localized {
             final String name = getName();
             final SeriesTable st = getTableFactory().getTable(SeriesTable.class);
             st.setLayer(name);
-            map = Collections.unmodifiableMap(st.getEntriesMap());
+            map = XCollections.unmodifiableMap(st.getEntriesMap());
             st.release();
             series = map;
         }
@@ -1011,7 +1011,7 @@ final class LayerEntry extends DefaultEntry implements Layer, Localized {
             final GridCoverageTable table = pool.acquire();
             table.setLayerEntry(this);
             table.envelope.setAll(envelope);
-            entry = table.getEntry();
+            entry = table.envelope.isNull() ? null : table.getEntry();
             pool.release(table);
         } catch (SQLException exception) {
             throw new CoverageStoreException(exception);

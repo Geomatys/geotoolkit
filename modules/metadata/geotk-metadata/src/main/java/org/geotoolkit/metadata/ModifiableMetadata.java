@@ -283,11 +283,11 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
                 for (int i=0; i<array.length; i++) {
                     array[i] = unmodifiable(array[i]);
                 }
-                // Uses standard Java collections rather than Geotk Checked* classes,
+                // Do not use the Geotk Checked* classes
                 // since we don't need anymore synchronization or type checking.
                 collection = UnmodifiableArrayList.wrap(array);
                 if (isSet) {
-                    collection = Collections.unmodifiableSet(new LinkedHashSet<Object>(collection));
+                    collection = XCollections.unmodifiableSet(new LinkedHashSet<Object>(collection));
                 } else {
                     // Conservatively assumes a List if we are not sure to have a Set,
                     // since the list is less destructive (no removal of duplicated).

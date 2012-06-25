@@ -264,6 +264,28 @@ System.out.println("Le nom standard de la méthode " + method.getName() + " est 
 </programlisting>
   </example>
 
+  <para>
+    L’opération inverse — obtenir la classe et méthode Java d’un nom standard — est un peu plus lourde.
+    Elle nécessite la lecture du fichier <literal role="GeoAPI">class-index.properties</literal> fournit dans le
+    paquet <literal role="GeoAPI">org.opengis.annotation</literal>. L’exemple suivant lit ce fichier juste avant
+    de rechercher le nom de l’interface correspondant à <classname role="OGC">CI_Citation</classname>.
+    Toutefois les utilisateurs sont encouragés à ne lire ce fichier qu’une fois et de conserver son contenu dans
+    une cache de leur application.
+  </para>
+
+  <example>
+    <title>Obtenir une interface GeoAPI à partir d’un nom <acronym>OGC</acronym>/<acronym>ISO</acronym></title>
+    <programlisting language="java">Properties isoToGeoAPI = new Properties();
+try (InputStream in = UML.class.getResourceAsStream("class-index.properties")) {
+    isoToGeoAPI.load(in);
+}
+String isoName = "CI_Citation";
+String geoName = getProperty(isoName);
+Class&lt;?&gt;  type = Class.forName(geoName);
+System.out.println("L’interface GeoAPI du type ISO " + isoName + " est " + type);
+</programlisting>
+  </example>
+
 </section>
 </section>
 </chapter>

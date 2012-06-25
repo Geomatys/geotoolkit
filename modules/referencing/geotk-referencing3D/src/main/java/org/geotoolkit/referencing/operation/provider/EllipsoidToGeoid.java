@@ -74,9 +74,6 @@ public class EllipsoidToGeoid extends MathTransformProvider {
     /**
      * The operation parameter descriptor for the datum.
      * Valid values are {@code "WGS84"} and {@code "WGS72"}.
-     *
-     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
-     * descriptor(String)}</code> instead.
      */
     public static final ParameterDescriptor<String> DATUM = new DefaultParameterDescriptor<String>(
             Collections.singletonMap(NAME_KEY, new NamedIdentifier(Citations.GEOTOOLKIT,
@@ -86,9 +83,6 @@ public class EllipsoidToGeoid extends MathTransformProvider {
     /**
      * The operation parameter descriptor for the maximum degree and order. The default value is
      * {@value org.geotoolkit.referencing.operation.transform.EarthGravitationalModel#DEFAULT_ORDER}.
-     *
-     * @deprecated Invoke <code>{@linkplain #PARAMETERS}.{@linkplain ParameterDescriptorGroup#descriptor(String)
-     * descriptor(String)}</code> instead.
      */
     public static final ParameterDescriptor<Integer> ORDER = DefaultParameterDescriptor.create(
             Collections.singletonMap(NAME_KEY, new NamedIdentifier(Citations.GEOTOOLKIT,

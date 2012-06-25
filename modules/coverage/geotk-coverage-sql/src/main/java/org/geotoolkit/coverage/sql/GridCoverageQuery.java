@@ -101,8 +101,8 @@ final class GridCoverageQuery extends Query {
         byEndTime          = addParameter(endTime,          LIST, AVAILABLE_DATA, BOUNDING_BOX, DELETE, DELETE_ALL);
         byHorizontalExtent = addParameter(horizontalExtent, LIST, AVAILABLE_DATA, BOUNDING_BOX);
         byHorizontalExtent.setComparator("&&");
-        byHorizontalExtent.setSearchValue("GeometryFromText(?," + database.horizontalSRID + ')', LIST, AVAILABLE_DATA, BOUNDING_BOX);
-        horizontalExtent  .setFunction("EXTENT", BOUNDING_BOX);
+        byHorizontalExtent.setSearchValue("st_GeometryFromText(?," + database.horizontalSRID + ')', LIST, AVAILABLE_DATA, BOUNDING_BOX);
+        horizontalExtent  .setFunction("st_Extent", BOUNDING_BOX);
         byStartTime.setComparator("IS NULL OR <=");
         byEndTime  .setComparator("IS NULL OR >=");
     }

@@ -105,6 +105,10 @@
       Les éléments définis dans Geotoolkit.org apparaissent en brun.
       Exemple: <classname role="Geotk">DefaultEllipsoid</classname>.
     </listitem>
+    <listitem>
+      Les autres éléments, notamment ceux du Java standard, sont laissés en noir.
+      Exemple: <classname>String</classname>.
+    </listitem>
   </itemizedlist>
   <para>
     Cette convention est appliquée dans le texte, mais pas dans les cadres contenant des exemples de codes.

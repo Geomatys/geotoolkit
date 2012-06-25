@@ -353,7 +353,7 @@ ALTER TABLE ONLY "GridGeometries"
     ADD CONSTRAINT "fk_VERT_SRID" FOREIGN KEY ("verticalSRID") REFERENCES spatial_ref_sys(srid)
     ON UPDATE RESTRICT ON DELETE RESTRICT;
 
-CREATE INDEX "HorizontalExtent_index" ON "GridGeometries" USING gist ("horizontalExtent" gist_geometry_ops);
+CREATE INDEX "HorizontalExtent_index" ON "GridGeometries" USING gist ("horizontalExtent");
 COMMENT ON INDEX "HorizontalExtent_index" IS
     'Index of geometries intersecting a geographical area.';
 
@@ -389,12 +389,6 @@ COMMENT ON COLUMN "GridGeometries"."verticalOrdinates" IS
     'Z values of each of the layers of a 3D image.';
 COMMENT ON CONSTRAINT "GridGeometries_size" ON "GridGeometries" IS
     'The dimensions of the images must be positive.';
-COMMENT ON CONSTRAINT "enforce_dims_horizontalExtent" ON "GridGeometries" IS
-    'Verify that the horizontal extent has two dimensions.';
-COMMENT ON CONSTRAINT "enforce_geotype_horizontalExtent" ON "GridGeometries" IS
-    'Verify that the horizontal extent is a polygon.';
-COMMENT ON CONSTRAINT "enforce_srid_horizontalExtent" ON "GridGeometries" IS
-    'Verify that the horizontal extent is expressed according to the expected CRS.';
 COMMENT ON CONSTRAINT "enforce_srid_verticalOrdinates" ON "GridGeometries" IS
     'The vertical coordinates and their SRID must both either be null or non-null.';
 
@@ -409,7 +403,7 @@ CREATE FUNCTION "ComputeDefaultExtent"() RETURNS "trigger"
     AS $$
   BEGIN
     IF NEW."horizontalExtent" IS NULL THEN
-      NEW."horizontalExtent" := postgis.Transform(postgis.Affine(postgis.GeometryFromText(
+      NEW."horizontalExtent" := st_Transform(st_Affine(st_GeometryFromText(
         'POLYGON((0 0,0 ' || NEW."height" || ',' || NEW."width" || ' ' || NEW."height" || ',' || NEW."width" || ' 0,0 0))',
         NEW."horizontalSRID"), NEW."scaleX", NEW."shearX", NEW."shearY", NEW."scaleY", NEW."translateX", NEW."translateY"), 4326);
     END IF;
@@ -443,10 +437,10 @@ COMMENT ON TRIGGER "addDefaultExtent" ON "GridGeometries" IS
 CREATE VIEW "BoundingBoxes" AS
     SELECT "GridGeometries"."identifier", "width", "height",
            "horizontalSRID" AS "crs", "minX", "maxX", "minY", "maxY",
-           xmin("horizontalExtent") AS "west",
-           xmax("horizontalExtent") AS "east",
-           ymin("horizontalExtent") AS "south",
-           ymax("horizontalExtent") AS "north"
+           st_xmin("horizontalExtent") AS "west",
+           st_xmax("horizontalExtent") AS "east",
+           st_ymin("horizontalExtent") AS "south",
+           st_ymax("horizontalExtent") AS "north"
       FROM "GridGeometries"
  LEFT JOIN (SELECT "identifier",
        min("x") AS "minX",
@@ -609,18 +603,18 @@ COMMENT ON VIEW "Tiling" IS
 
 CREATE VIEW "DomainOfTiles" AS
     SELECT "series", "extent", "count", "tmin", "tmax",
-           xmin("horizontalExtent") AS "xmin",
-           xmax("horizontalExtent") AS "xmax",
-           ymin("horizontalExtent") AS "ymin",
-           ymax("horizontalExtent") AS "ymax",
-           xmin("geographic")       AS "west",
-           xmax("geographic")       AS "east",
-           ymin("geographic")       AS "south",
-           ymax("geographic")       AS "north"
+           st_xmin("horizontalExtent") AS "xmin",
+           st_xmax("horizontalExtent") AS "xmax",
+           st_ymin("horizontalExtent") AS "ymin",
+           st_ymax("horizontalExtent") AS "ymax",
+           st_xmin("geographic")       AS "west",
+           st_xmax("geographic")       AS "east",
+           st_ymin("geographic")       AS "south",
+           st_ymax("geographic")       AS "north"
       FROM
-   (SELECT *, postgis.Transform("horizontalExtent", 4326) AS "geographic"
+   (SELECT *, st_Transform("horizontalExtent", 4326) AS "geographic"
       FROM
-   (SELECT "series", "extent", "count", "tmin", "tmax", postgis.Affine(postgis.GeometryFromText('POLYGON((' ||
+   (SELECT "series", "extent", "count", "tmin", "tmax", st_Affine(st_GeometryFromText('POLYGON((' ||
            "xmin" || ' ' || "ymin" || ',' ||
            "xmax" || ' ' || "ymin" || ',' ||
            "xmax" || ' ' || "ymax" || ',' ||

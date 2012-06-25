@@ -23,7 +23,6 @@ import java.io.File;
 import java.io.Serializable;
 import java.io.ObjectStreamException;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -48,6 +47,7 @@ import org.opengis.referencing.crs.GeographicCRS;
 import org.geotoolkit.lang.Configuration;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.resources.Errors;
 
 
@@ -1320,7 +1320,7 @@ public class Hints extends RenderingHints {
             super(String.class);
             final Set<String> options = new TreeSet<String>(Arrays.asList(alternatives));
             this.wildcard = options.remove("*");
-            this.options  = Collections.unmodifiableSet(options);
+            this.options  = XCollections.unmodifiableSet(options);
         }
 
         /**
