@@ -127,7 +127,7 @@ final class DiscreteCompoundCRS extends DiscreteCRS<CompoundCRS> implements Comp
          * axis. Now get the list of those axes in order to build a new discrete CS. Note that
          * it would be a bug if an axis is not an instance of DiscreteCoordinateSystemAxis.
          */
-        final DiscreteCoordinateSystemAxis[] axes = new DiscreteCoordinateSystemAxis[cs.getDimension()];
+        final DiscreteCoordinateSystemAxis<?>[] axes = new DiscreteCoordinateSystemAxis<?>[cs.getDimension()];
         int count = 0;
         for (int i=0; i<components.length; i++) {
             final CoordinateSystem component = components[i].getCoordinateSystem();
@@ -135,7 +135,7 @@ final class DiscreteCompoundCRS extends DiscreteCRS<CompoundCRS> implements Comp
             for (int j=0; j<dimension; j++) {
                 if (count < axes.length) {
                     // Following cast should never fail.
-                    axes[count] = (DiscreteCoordinateSystemAxis) component.getAxis(j);
+                    axes[count] = (DiscreteCoordinateSystemAxis<?>) component.getAxis(j);
                 }
                 count++;
             }

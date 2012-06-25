@@ -28,19 +28,19 @@ import org.geotoolkit.test.TestData;
  * we use and ASCII file without data.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.08
+ * @version 3.20
  *
  * @since 3.07
  */
 public final strictfp class RawGridReaderTest extends AsciiGridReaderTest {
     /**
-     * Creates a reader.
+     * Creates a reader and sets its input if needed.
      */
     @Override
-    protected AsciiGridReader createImageReader() throws IOException {
-        AsciiGridReader.Spi spi = new AsciiGridReader.Spi();
-        final AsciiGridReader reader = new AsciiGridReader(spi);
-        reader.setInput(TestData.file(this, "grid-with-raw.asc"));
-        return reader;
+    protected void prepareImageReader(final boolean setInput) throws IOException {
+        super.prepareImageReader(false);
+        if (setInput) {
+            reader.setInput(TestData.file(this, "grid-with-raw.asc"));
+        }
     }
 }

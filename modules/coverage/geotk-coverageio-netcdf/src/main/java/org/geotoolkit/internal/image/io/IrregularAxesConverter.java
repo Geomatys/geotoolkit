@@ -138,8 +138,8 @@ public final class IrregularAxesConverter {
      *         The returned CRS implements the {@link org.opengis.coverage.grid.GridGeometry}
      *         interface.
      */
-    public ProjectedCRS canConvert(final DiscreteCoordinateSystemAxis x,
-                                   final DiscreteCoordinateSystemAxis y)
+    public ProjectedCRS canConvert(final DiscreteCoordinateSystemAxis<?> x,
+                                   final DiscreteCoordinateSystemAxis<?> y)
     {
         for (final GeographicCRS sourceCRS : SOURCES) {
             final ProjectedCRS targetCRS = canConvert(sourceCRS, x, y);
@@ -161,8 +161,8 @@ public final class IrregularAxesConverter {
      *         interface.
      */
     public ProjectedCRS canConvert(final GeographicCRS sourceCRS,
-                                   final DiscreteCoordinateSystemAxis x,
-                                   final DiscreteCoordinateSystemAxis y)
+                                   final DiscreteCoordinateSystemAxis<?> x,
+                                   final DiscreteCoordinateSystemAxis<?> y)
     {
         for (final String method : METHODS) {
             try {
@@ -201,8 +201,8 @@ public final class IrregularAxesConverter {
      * @throws TransformException If an error occurred while transforming the coordinates.
      */
     private double[] canConvert(final MathTransform tr, final int yOrdinate,
-            final DiscreteCoordinateSystemAxis yAxis,
-            final DiscreteCoordinateSystemAxis xAxis)
+            final DiscreteCoordinateSystemAxis<?> yAxis,
+            final DiscreteCoordinateSystemAxis<?> xAxis)
             throws TransformException
     {
         /*

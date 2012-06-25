@@ -193,6 +193,18 @@ public final strictfp class UnitsTest {
     }
 
     /**
+     * Tests {@link Units#isPressure}.
+     *
+     * @since 3.20
+     */
+    @Test
+    public void testIsPressure() {
+        assertFalse(isPressure(null));
+        assertFalse(isPressure(METRE));
+        assertTrue (isPressure(ATMOSPHERE));
+    }
+
+    /**
      * Tests {@link Units#toStandardUnit}.
      */
     @Test

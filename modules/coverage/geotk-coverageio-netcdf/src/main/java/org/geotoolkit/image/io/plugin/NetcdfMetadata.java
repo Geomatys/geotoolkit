@@ -580,7 +580,7 @@ final class NetcdfMetadata extends SpatialMetadata {
                 }
                 final Metadata metadata;
                 try {
-                    metadata = new NetcdfMetadataReader((NetcdfFile) isoMetadata, this).readMetadata();
+                    metadata = new NetcdfMetadataReader((NetcdfFile) isoMetadata, this).read();
                 } catch (IOException e) {
                     throw new BackingStoreException(e); // Will be handled by GridCoverageReader.
                 }

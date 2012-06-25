@@ -37,14 +37,37 @@ import org.geotoolkit.referencing.operation.MathTransforms;
 /**
  * The translation to apply for different values of {@link PixelOrientation}
  * or {@link PixelInCell}. The translation are returned by a call to one of
- * the static {@code getPixelTranslation(...)} methods, where the argument is
- * either a {@code PixelOrientation} for the two-dimensional case, or a
- * {@code PixelInCell} for the <var>n</var>-dimensional case.
+ * the following static method:
  * <p>
- * This class provides also a few {@code translate(...)} convenience methods, which
- * apply the pixel translation on a given {@linkplain MathTransform math transform}.
+ * <ul>
+ *   <li>{@link #getPixelTranslation(PixelOrientation)} for the two-dimensional case</li>
+ *   <li>{@link #getPixelTranslation(PixelInCell)} for the <var>n</var>-dimensional case.</li>
+ * </ul>
+ * <p>
+ * This class provides also a few {@code translate(...)} convenience methods, which apply the
+ * pixel translation on a given {@link MathTransform} instance.
  *
- * @author Martin Desruisseaux (IRD)
+ * {@section Example}
+ * If the following code snippet, {@code gridToCRS} is an {@link java.awt.geom.AffineTransform}
+ * from <cite>grid cell</cite> coordinates (typically pixel coordinates) to some arbitrary CRS
+ * coordinates. In this example, the transform maps pixels {@linkplain PixelOrientation#CENTER
+ * center}, while the {@linkplain PixelOrientation#UPPER_LEFT upper left} corner is desired.
+ * This code will switch the affine transform from the <cite>pixel center</cite> to
+ * <cite>upper left corner</cite> convention:
+ *
+ * {@preformat java
+ *   final AffineTransform  gridToCRS = ...;
+ *   final PixelOrientation current   = PixelOrientation.CENTER;
+ *   final PixelOrientation expected  = PixelOrientation.UPPER_LEFT;
+ *
+ *   // Switch the transform from 'current' to 'expected' convention.
+ *   final PixelTranslation source = getPixelTranslation(current);
+ *   final PixelTranslation target = getPixelTranslation(expected);
+ *   gridToCRS.translate(target.dx - source.dx,
+ *                       target.dy - source.dy);
+ * }
+ *
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.00
  *
  * @see org.geotoolkit.coverage.grid.GeneralGridGeometry#getGridToCRS(PixelInCell)

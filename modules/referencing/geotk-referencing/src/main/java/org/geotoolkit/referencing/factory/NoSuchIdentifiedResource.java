@@ -17,64 +17,53 @@
  */
 package org.geotoolkit.referencing.factory;
 
-import org.opengis.util.FactoryException;
+import org.opengis.util.NoSuchIdentifierException;
 
 
 /**
- * Thrown when an optional factory operation has been requested, and this operation is not
- * available in the current configuration. For example this exception is thrown when a
- * {@link org.geotoolkit.referencing.operation.transform.NadconTransform} has been requested
- * but the NADCON files are not installed.
+ * Thrown when a coordinate operation needs an external resource, and that resource has not been
+ * found. This exception may be thrown by coordinate operations that require a NADCON or NTv2 grid.
+ * The resource identifiers are typically the grid filenames, but those files may be located in a
+ * factory-dependent directory.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.10
+ * @version 3.20
  *
- * @since 3.10
+ * @see org.geotoolkit.referencing.operation.transform.NadconTransform
+ *
+ * @since 3.20 (derived from 3.10)
  * @module
  */
-public class OptionalFactoryOperationException extends FactoryException {
+public class NoSuchIdentifiedResource extends NoSuchIdentifierException {
     /**
      * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 7434897698526502211L;
 
     /**
-     * Construct an exception with no detail message.
-     */
-    public OptionalFactoryOperationException() {
-    }
-
-    /**
      * Construct an exception with the specified detail message.
      *
      * @param  message The detail message. The detail message is saved
      *         for later retrieval by the {@link #getMessage()} method.
+     * @param identifier The identifier of the resource which has not been found.
      */
-    public OptionalFactoryOperationException(String message) {
-        super(message);
-    }
-
-    /**
-     * Construct an exception with the specified cause.
-     *
-     * @param  cause The cause for this exception. The cause is saved
-     *         for later retrieval by the {@link #getCause()} method.
-     */
-    public OptionalFactoryOperationException(Throwable cause) {
-        super(cause.getLocalizedMessage(), cause);
+    public NoSuchIdentifiedResource(final String message, final String identifier) {
+        super(message, identifier);
     }
 
     /**
      * Construct an exception with the specified detail message and cause.
-     * The cause is the exception thrown in the underlying database
+     * The cause is the exception thrown in the underlying data store
      * (e.g. {@link java.io.IOException} or {@link java.sql.SQLException}).
      *
      * @param  message The detail message. The detail message is saved
      *         for later retrieval by the {@link #getMessage()} method.
+     * @param  identifier The identifier of the resource which has not been found.
      * @param  cause The cause for this exception. The cause is saved
      *         for later retrieval by the {@link #getCause()} method.
      */
-    public OptionalFactoryOperationException(String message, Throwable cause) {
-        super(message, cause);
+    public NoSuchIdentifiedResource(final String message, final String identifier, final Throwable cause) {
+        super(message, identifier);
+        initCause(cause);
     }
 }

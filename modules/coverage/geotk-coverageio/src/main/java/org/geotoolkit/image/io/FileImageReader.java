@@ -154,18 +154,18 @@ public abstract class FileImageReader extends StreamImageReader {
          * prefix stands for "FileImageReader".
          */
         final InputStream in = getInputStream();
+        inputFile = TemporaryFile.createTempFile("FIR", Formats.getFileSuffix(originatingProvider), null);
+        isTemporary = true;
+        final OutputStream out = new FileOutputStream(inputFile);
         try {
-            inputFile = TemporaryFile.createTempFile("FIR", Formats.getFileSuffix(originatingProvider), null);
-            isTemporary = true;
-            final OutputStream out = new FileOutputStream(inputFile);
-            try {
-                IOUtilities.copy(in, out);
-            } finally {
-                out.close();
-            }
+            IOUtilities.copy(in, out);
         } finally {
-            in.close();
+            out.close();
         }
+        /*
+         * Do not close the input stream, because it may be a stream explicitly specified by the user.
+         * The stream will be closed by the 'setInput', 'reset', 'close' or 'dispose' methods.
+         */
         return inputFile;
     }
 

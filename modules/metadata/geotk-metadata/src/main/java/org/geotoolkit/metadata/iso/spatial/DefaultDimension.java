@@ -89,9 +89,9 @@ public class DefaultDimension extends MetadataEntity implements Dimension {
     }
 
     /**
-     * Creates a dimension initialized to the given type.
+     * Creates a dimension initialized to the given type and size.
      *
-     * @param dimensionName The name of the axis.
+     * @param dimensionName The name of the axis, or {@code null} if none.
      * @param dimensionSize The number of elements along the axis.
      */
     public DefaultDimension(final DimensionNameType dimensionName, final int dimensionSize) {

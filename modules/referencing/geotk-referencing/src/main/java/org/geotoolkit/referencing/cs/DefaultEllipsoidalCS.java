@@ -24,6 +24,7 @@ import java.util.Map;
 import javax.measure.quantity.Angle;
 import javax.measure.quantity.Length;
 import javax.measure.converter.UnitConverter;
+import javax.measure.converter.ConversionException;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
@@ -39,6 +40,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.internal.referencing.AxisDirections;
+import org.geotoolkit.util.ComparisonMode;
 
 
 /**
@@ -54,7 +56,7 @@ import org.geotoolkit.internal.referencing.AxisDirections;
  * </TD></TR></TABLE>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @since 2.0
  * @module
@@ -101,6 +103,15 @@ public class DefaultEllipsoidalCS extends AbstractCS implements EllipsoidalCS {
      * Will be constructed only when first needed.
      */
     private transient UnitConverter longitudeConverter, latitudeConverter, heightConverter;
+
+    /**
+     * A coordinate system equivalent to this one, except for a shift in the range of longitude
+     * values. This field is computed by {@link #shiftAxisRange(AxisRangeType)} when first
+     * needed.
+     *
+     * @since 3.20
+     */
+    private transient DefaultEllipsoidalCS shifted;
 
     /**
      * Constructs a new object in which every attributes are set to a default value.
@@ -191,10 +202,10 @@ public class DefaultEllipsoidalCS extends AbstractCS implements EllipsoidalCS {
     }
 
     /**
-     * For {@link #usingUnit} usage only.
+     * For {@link #shiftAxisRange(AxisRangeType)} and {@link #usingUnit(Unit)} usage only.
      */
-    private DefaultEllipsoidalCS(final Map<String,?> properties, final CoordinateSystemAxis[] axis) {
-        super(properties, axis);
+    private DefaultEllipsoidalCS(final EllipsoidalCS parent, final CoordinateSystemAxis[] axis) {
+        super(IdentifiedObjects.getProperties(parent, null), axis);
     }
 
     /**
@@ -343,22 +354,95 @@ public class DefaultEllipsoidalCS extends AbstractCS implements EllipsoidalCS {
     }
 
     /**
-     * Returns a new coordinate system with the same properties than the current one except for
-     * axis units.
+     * Returns a coordinate system with the same axes than this CS, except that the longitude
+     * axis is shifted to a positive or negative range. This method can be used in order to
+     * shift between the [-180 … +180]° and [0 … 360]° ranges.
+     * <p>
+     * This method shifts the axis {@linkplain CoordinateSystemAxis#getMinimumValue() minimum}
+     * and {@linkplain CoordinateSystemAxis#getMaximumValue() maximum} values by a multiple of
+     * 180°, converted to the units of the axis.
+     * <p>
+     * This method does not change the meaning of ordinate values. For example a longitude of
+     * -60° still locate the same longitude in the old and the new coordinate system. But the
+     * preferred way to locate that longitude may become the 300° value if the range has been
+     * shifted to positive values.
+     *
+     * @param  range {@link AxisRangeType#POSITIVE_LONGITUDE POSITIVE_LONGITUDE} for a range
+     *         of positive longitude values, or {@link AxisRangeType#SPANNING_ZERO_LONGITUDE
+     *         SPANNING_ZERO_LONGITUDE} for a range of positive and negative longitude values.
+     * @return A coordinate system using the given kind of longitude range (may be {@code this}).
+     *
+     * @see org.geotoolkit.referencing.crs.DefaultGeographicCRS#shiftAxisRange(AxisRangeType)
+     *
+     * @since 3.20
+     */
+    public synchronized DefaultEllipsoidalCS shiftAxisRange(final AxisRangeType range) {
+        final boolean positive;
+        switch (range) {
+            case SPANNING_ZERO_LONGITUDE: positive = false; break;
+            case POSITIVE_LONGITUDE:      positive = true;  break;
+            default: return this;
+        }
+        if (longitudeConverter == null) {
+            updateConverters(); // Compute 'longitudeAxis' too.
+        }
+        final CoordinateSystemAxis axis = getAxis(longitudeAxis);
+        final double minimum = axis.getMinimumValue();
+        if (positive ? (minimum >= 0) : (minimum < 0)) {
+            return this;
+        }
+        if (shifted == null) {
+            // Compute the offset needed for making the range positive, then
+            // shift to a negative range if this is what the user asked for.
+            final double cycle = longitudeConverter.inverse().convert(180);
+            double offset = Math.floor(minimum/cycle + 1E-10);
+            if (!positive) offset--;
+            offset *= cycle;
+            final Unit<?> unit = axis.getUnit();
+            if (Double.isNaN(offset) || Double.isInfinite(offset)) {
+                // Should never happen unless the axis has some strange unit.
+                throw new IllegalStateException(Errors.format(Errors.Keys.UNKNOWN_UNIT_$1, unit));
+            }
+            final DefaultCoordinateSystemAxis newAxis = new DefaultCoordinateSystemAxis(
+                    IdentifiedObjects.getProperties(axis), axis.getAbbreviation(), axis.getDirection(),
+                    unit, minimum - offset, axis.getMaximumValue() - offset, axis.getRangeMeaning());
+            if (newAxis.equals(axis, ComparisonMode.BY_CONTRACT)) {
+                // This should not happen, except in some strange cases like NaN or infinite bounds
+                // (which should not occur for longitude axis).
+                shifted = this;
+            } else {
+                final CoordinateSystemAxis[] axes = new CoordinateSystemAxis[getDimension()];
+                for (int i=axes.length; --i>=0;) {
+                    axes[i] = (i != longitudeAxis) ? getAxis(i) : newAxis;
+                }
+                shifted = new DefaultEllipsoidalCS(this, axes);
+                shifted.shifted = this;
+            }
+        }
+        return shifted;
+    }
+
+    /**
+     * Returns a coordinate system with the same properties than the current one except for
+     * axis units. If this coordinate system already uses the given unit, then this method
+     * returns {@code this}.
      *
      * @param  unit The unit for the new axis.
-     * @return A coordinate system with axis using the specified units.
+     * @return A coordinate system with axis using the specified units, or {@code this}.
      * @throws IllegalArgumentException If the specified unit is incompatible with the expected one.
-     *
-     * @todo Current implementation can't work for 3D coordinate systems.
      *
      * @since 2.2
      */
     public DefaultEllipsoidalCS usingUnit(final Unit<?> unit) throws IllegalArgumentException {
-        final CoordinateSystemAxis[] axis = axisUsingUnit(unit);
-        if (axis == null) {
+        final CoordinateSystemAxis[] axes;
+        try {
+            axes = axisUsingUnit(unit, Units.isLinear(unit) ? SI.RADIAN : SI.METRE);
+        } catch (ConversionException e) {
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.INCOMPATIBLE_UNIT_$1, unit), e);
+        }
+        if (axes == null) {
             return this;
         }
-        return new DefaultEllipsoidalCS(IdentifiedObjects.getProperties(this, null), axis);
+        return new DefaultEllipsoidalCS(this, axes);
     }
 }

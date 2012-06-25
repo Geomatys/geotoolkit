@@ -25,7 +25,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Paint;
-import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.RenderedImage;
@@ -43,6 +42,7 @@ import javax.swing.SwingWorker;
 import org.geotoolkit.util.Exceptions;
 import org.geotoolkit.gui.swing.ZoomPane;
 import org.geotoolkit.resources.Vocabulary;
+import org.geotoolkit.internal.image.ImageUtilities;
 
 
 /**
@@ -422,8 +422,7 @@ public class ImagePane extends ZoomPane {
     public Rectangle2D getArea() {
         final RenderedImage rendered = this.rendered; // Protect from change in an other thread
         if (rendered != null) {
-            return new Rectangle(rendered.getMinX(),  rendered.getMinY(),
-                                 rendered.getWidth(), rendered.getHeight());
+            return ImageUtilities.getBounds(rendered);
         }
         return null;
     }

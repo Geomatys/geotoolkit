@@ -37,6 +37,7 @@ import javax.media.jai.iterator.RectIterFactory;
 import org.geotoolkit.image.ImageDimension;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
+import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Disposable;
 import org.geotoolkit.util.logging.Logging;
@@ -59,7 +60,7 @@ import org.geotoolkit.resources.IndexedResourceBundle;
  * </ul>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.08
+ * @version 3.20
  *
  * @see SpatialImageReader
  *
@@ -209,8 +210,8 @@ public abstract class SpatialImageWriter extends ImageWriter implements WarningP
     /**
      * Returns true if the methods that take an {@link IIOImage} parameter are capable of dealing
      * with a {@link Raster}. The default implementation returns {@code true} since it is assumed
-     * that subclasses will fetch pixels using the iterator returned by {@link #createRectIter
-     * createRectIter}.
+     * that subclasses will fetch pixels using the iterator returned by
+     * {@link #createRectIter(IIOImage, ImageWriteParam)}.
      */
     @Override
     public boolean canWriteRasters() {
@@ -220,7 +221,7 @@ public abstract class SpatialImageWriter extends ImageWriter implements WarningP
     /**
      * Returns the sample model to use for the destination image to be written. Note that the
      * {@linkplain SampleModel#getWidth() width} and {@linkplain SampleModel#getHeight() height}
-     * of the returned sample model are usually <strong>not</strong> valids, because they have
+     * of the returned sample model are usually <strong>not</strong> valid, because they have
      * not been adjusted for the source or destination regions.
      *
      * @param  image The image or raster to be written.
@@ -267,8 +268,7 @@ public abstract class SpatialImageWriter extends ImageWriter implements WarningP
                     if (image.hasRaster()) {
                         bounds = image.getRaster().getBounds(); // Needs to be a clone.
                     } else {
-                        final RenderedImage i = image.getRenderedImage();
-                        bounds = new Rectangle(i.getMinX(), i.getMinY(), i.getWidth(), i.getHeight());
+                        bounds = ImageUtilities.getBounds(image.getRenderedImage());
                     }
                 }
                 final int xOffset = parameters.getSubsamplingXOffset();

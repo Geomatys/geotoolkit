@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
  * Tests {@link IrregularAxesConverter}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.15
+ * @version 3.20
  *
  * @since 3.15
  */
@@ -44,7 +44,7 @@ public final strictfp class IrregularAxesConverterTest {
     /**
      * A {@link DiscreteCoordinateSystemAxis} implementation used for this test.
      */
-    private static final strictfp class Axis implements DiscreteCoordinateSystemAxis {
+    private static final strictfp class Axis implements DiscreteCoordinateSystemAxis<Double> {
         /**
          * The ordinate values.
          */
@@ -66,10 +66,18 @@ public final strictfp class IrregularAxesConverterTest {
         }
 
         /**
+        * Returns the type of ordinate values.
+        */
+        @Override
+        public Class<Double> getElementType() {
+            return Double.class;
+        }
+
+        /**
          * Returns the ordinates values at the given index.
          */
         @Override
-        public Comparable<?> getOrdinateAt(final int index) throws IndexOutOfBoundsException {
+        public Comparable<Double> getOrdinateAt(final int index) throws IndexOutOfBoundsException {
             return ordinates[index];
         }
 
@@ -77,7 +85,7 @@ public final strictfp class IrregularAxesConverterTest {
          * Not needed for this test.
          */
         @Override
-        public Range<?> getOrdinateRangeAt(int index) throws UnsupportedOperationException {
+        public Range<Double> getOrdinateRangeAt(int index) throws UnsupportedOperationException {
             throw new UnsupportedOperationException();
         }
     }

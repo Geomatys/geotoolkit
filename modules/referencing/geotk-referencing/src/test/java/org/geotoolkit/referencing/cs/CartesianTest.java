@@ -32,8 +32,8 @@ import static org.geotoolkit.referencing.Assert.*;
 /**
  * Tests the {@link DefaultCartesianCS} class.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.20
  *
  * @since 2.2
  */
@@ -48,7 +48,7 @@ public final strictfp class CartesianTest extends ReferencingTestBase {
             cs = new DefaultCartesianCS("Test",
                     DefaultCoordinateSystemAxis.LONGITUDE,
                     DefaultCoordinateSystemAxis.LATITUDE);
-            fail("Angular units should not be accepted.");
+            fail("Angular units should not be accepted for " + cs);
         } catch (IllegalArgumentException e) {
             // Expected exception: illegal angular units.
         }
@@ -63,7 +63,7 @@ public final strictfp class CartesianTest extends ReferencingTestBase {
             cs = new DefaultCartesianCS("Test",
                     DefaultCoordinateSystemAxis.SOUTHING,
                     DefaultCoordinateSystemAxis.NORTHING);
-            fail("Colinear units should not be accepted.");
+            fail("Colinear units should not be accepted for " + cs);
         } catch (IllegalArgumentException e) {
             // Expected exception: colinear axis.
         }
@@ -74,7 +74,7 @@ public final strictfp class CartesianTest extends ReferencingTestBase {
 
         try {
             cs = create(AxisDirection.NORTH_EAST, AxisDirection.EAST);
-            fail("Non-perpendicular axis should not be accepted.");
+            fail("Non-perpendicular axis should not be accepted for " + cs);
         } catch (IllegalArgumentException e) {
             // Expected exception: non-perpendicular axis.
         }
@@ -88,6 +88,7 @@ public final strictfp class CartesianTest extends ReferencingTestBase {
             cs = new DefaultCartesianCS("Test",
                     DefaultCoordinateSystemAxis.EASTING,
                     new DefaultCoordinateSystemAxis("Northing", AxisDirection.SOUTH, SI.METRE));
+            fail("Inconsistent axis should not be accepted for " + cs);
         } catch (IllegalArgumentException e) {
             // Expected exception: inconsistent direction.
         }

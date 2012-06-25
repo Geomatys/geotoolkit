@@ -74,7 +74,7 @@ class DiscreteCS implements CoordinateSystem, GridGeometry, Serializable {
      * The axes. Each elements in this array shall also implement the
      * {@link CoordinateSystemAxis} interface.
      */
-    protected final DiscreteCoordinateSystemAxis[] axes;
+    protected final DiscreteCoordinateSystemAxis<?>[] axes;
 
     /**
      * The grid envelope, created only when first needed.
@@ -134,7 +134,7 @@ class DiscreteCS implements CoordinateSystem, GridGeometry, Serializable {
             throw new IllegalArgumentException(Errors.format(
                     Errors.Keys.MISMATCHED_DIMENSION_$3, "ordinates", ordinates.length, dimension));
         }
-        axes = new DiscreteCoordinateSystemAxis[dimension];
+        axes = new DiscreteCoordinateSystemAxis<?>[dimension];
         for (int i=0; i<dimension; i++) {
             axes[i] = DiscreteReferencingFactory.createDiscreteAxis(cs.getAxis(i), ordinates[i]);
         }
@@ -146,7 +146,7 @@ class DiscreteCS implements CoordinateSystem, GridGeometry, Serializable {
      * @param cs The coordinate system to wrap.
      * @param ordinates The axes. This array is <strong>not</strong> cloned.
      */
-    DiscreteCS(final CoordinateSystem cs, final DiscreteCoordinateSystemAxis... axes) {
+    DiscreteCS(final CoordinateSystem cs, final DiscreteCoordinateSystemAxis<?>... axes) {
         this.cs = cs;
         this.axes = axes;
     }

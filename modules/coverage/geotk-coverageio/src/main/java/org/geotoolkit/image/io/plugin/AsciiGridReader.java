@@ -946,7 +946,7 @@ loop:       for (int y=0; /* stop condition inside */; y++) {
         /**
          * The provider of the corresponding image writer.
          */
-        private static final String[] WRITERS = {"org.geotoolkit.image.io.plugin.AsciiGridWriter.Spi"};
+        private static final String[] WRITERS = {"org.geotoolkit.image.io.plugin.AsciiGridWriter$Spi"};
 
         /**
          * Constructs a default {@code AsciiGridReader.Spi}. The fields are initialized as

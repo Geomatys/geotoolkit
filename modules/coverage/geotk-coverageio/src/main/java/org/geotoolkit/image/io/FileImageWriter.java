@@ -29,6 +29,7 @@ import javax.imageio.spi.ImageWriterSpi;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.io.TemporaryFile;
 import org.geotoolkit.internal.image.io.Formats;
+import org.geotoolkit.resources.Errors;
 
 
 /**
@@ -106,6 +107,10 @@ public abstract class FileImageWriter extends StreamImageWriter {
         if (outputFile != null) {
             return outputFile;
         }
+        final Object output = this.output;
+        if (output == null) {
+            throw new IllegalStateException(getErrorResources().getString(Errors.Keys.NO_IMAGE_OUTPUT));
+        }
         if (output instanceof String) {
             outputFile = new File((String) output);
             return outputFile;
@@ -171,11 +176,17 @@ public abstract class FileImageWriter extends StreamImageWriter {
         outputFile = null;
         if (isTemporary) try {
             isTemporary = false;
-            final InputStream in = new FileInputStream(file);
             final OutputStream out = getOutputStream();
-            IOUtilities.copy(in, out);
-            out.close();
-            in.close();
+            final InputStream in = new FileInputStream(file);
+            try {
+                IOUtilities.copy(in, out);
+            } finally {
+                in.close();
+            }
+            out.flush();
+            // Do not close the 'out' stream. Let the super.close() method decides what
+            // it needs to close (it depends if the stream was specified by the user or
+            // created under the hood by the writer).
         } finally {
             // Delete the temporary file before to close the stream in order to make sure that
             // it is deleted even if super.close() failed. In extreme cases, this may also free

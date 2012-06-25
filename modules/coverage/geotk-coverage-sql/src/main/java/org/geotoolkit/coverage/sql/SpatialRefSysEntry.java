@@ -22,17 +22,15 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.awt.Dimension;
+import java.awt.geom.Rectangle2D;
 import java.awt.geom.AffineTransform;
 import javax.measure.converter.ConversionException;
 
 import org.opengis.util.FactoryException;
 import org.opengis.coverage.grid.GridEnvelope;
+import org.opengis.referencing.cs.*;
+import org.opengis.referencing.crs.*;
 import org.opengis.referencing.datum.PixelInCell;
-import org.opengis.referencing.crs.CRSFactory;
-import org.opengis.referencing.crs.SingleCRS;
-import org.opengis.referencing.crs.VerticalCRS;
-import org.opengis.referencing.crs.CRSAuthorityFactory;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
@@ -45,12 +43,18 @@ import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.internal.referencing.AxisDirections;
 import org.geotoolkit.internal.sql.table.SpatialDatabase;
+import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
+import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.referencing.cs.AbstractCS;
+import org.geotoolkit.referencing.cs.AxisRangeType;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
+import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
 import org.geotoolkit.resources.Errors;
 
 
@@ -60,12 +64,18 @@ import org.geotoolkit.resources.Errors;
  * to the values declared in the PostGIS {@code "spatial_ref_sys"} table.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.15
+ * @version 3.20
  *
  * @since 3.10 (derived from Seagis)
  * @module
  */
 final class SpatialRefSysEntry {
+    /**
+     * Small tolerance factor for comparisons of floating point values.
+     * An angular value of 1E-8° is approximatively 1 millimetre on Earth.
+     */
+    static final double EPS = 1E-8;
+
     /**
      * The horizontal and vertical SRID declared in the database.
      */
@@ -140,6 +150,15 @@ final class SpatialRefSysEntry {
      * @see #toDatabaseVerticalCRS()
      */
     private MathTransform1D toDatabaseVerticalCRS;
+
+    /**
+     * The coordinate system of the {@link #horizontalCRS} using a positive range of longitude
+     * values ([0…360]°) instead than the default [-180 … 180]° range. This field is non-null
+     * only if the horizontal CRS is geographic, not projected.
+     *
+     * @since 3.20
+     */
+    private CoordinateSystem shiftedCS;
 
     /**
      * Constructs a new entry for the given SRID.
@@ -280,6 +299,21 @@ final class SpatialRefSysEntry {
             }
             toDatabaseVerticalCRS = (MathTransform1D) tr;
         }
+        /*
+         * At this point, all CRS have been initialized. Now find the longitude dimension
+         * and instantiate a coordinate system using a [0…360]° range of longitude values.
+         */
+        if (horizontalCRS instanceof GeographicCRS) {
+            final EllipsoidalCS cs = ((GeographicCRS) horizontalCRS).getCoordinateSystem();
+            final int i = AxisDirections.indexOf(cs, AxisDirection.EAST);
+            if (i >= 0) {
+                final DefaultEllipsoidalCS geotk = DefaultEllipsoidalCS.castOrCopy(cs);
+                shiftedCS = geotk.shiftAxisRange(AxisRangeType.POSITIVE_LONGITUDE);
+                if (shiftedCS == geotk) {
+                    shiftedCS = null;
+                }
+            }
+        }
     }
 
     /**
@@ -288,10 +322,28 @@ final class SpatialRefSysEntry {
      *
      * @param includeTime {@code true} if the CRS should include the time component,
      *        or {@code false} for a spatial-only CRS.
+     * @param needsLongitudeShift {@code true} if the grid geometry needs longitude
+     *        values in the [0…360]° range instead than the default [-180 … 180]° range.
      */
-    public CoordinateReferenceSystem getSpatioTemporalCRS(final boolean includeTime) {
+    public CoordinateReferenceSystem getSpatioTemporalCRS(final boolean includeTime,
+            final boolean needsLongitudeShift)
+    {
         assert uninitialized() == 0 : this;
-        return includeTime ? spatioTemporalCRS : spatialCRS;
+        CoordinateReferenceSystem crs = includeTime ? spatioTemporalCRS : spatialCRS;
+        if (needsLongitudeShift) {
+            if (crs instanceof GeographicCRS) {
+                final DefaultGeographicCRS geotk = DefaultGeographicCRS.castOrCopy((GeographicCRS) crs);
+                crs = geotk.shiftAxisRange(AxisRangeType.POSITIVE_LONGITUDE);
+                if (!includeTime) spatialCRS = geotk;
+                else       spatioTemporalCRS = geotk;
+            } else if (crs instanceof CompoundCRS) {
+                final DefaultCompoundCRS geotk = DefaultCompoundCRS.castOrCopy((CompoundCRS) crs);
+                crs = geotk.shiftAxisRange(AxisRangeType.POSITIVE_LONGITUDE);
+                if (!includeTime) spatialCRS = geotk;
+                else       spatioTemporalCRS = geotk;
+            }
+        }
+        return crs;
     }
 
     /**
@@ -330,6 +382,41 @@ final class SpatialRefSysEntry {
     }
 
     /**
+     * Returns {@code true} if the given grid geometry seems to use a longitude values in
+     * the [0…360]° range instead than the default [-180 … 180]° range.
+     *
+     * @since 3.20
+     */
+    final boolean needsLongitudeShift(final Dimension size, final AffineTransform gridToCRS) {
+        assert uninitialized() == 0 : this;
+        final CoordinateSystem shiftedCS = this.shiftedCS; // Protect from changes.
+        if (shiftedCS != null) {
+            Rectangle2D bounds = new Rectangle2D.Double(0, 0, size.width, size.height);
+            bounds = XAffineTransform.transform(gridToCRS, bounds, bounds);
+            final CoordinateSystem standardCS = horizontalCRS.getCoordinateSystem();
+            for (int i=0; i<=1; i++) {
+                final CoordinateSystemAxis standardAxis = standardCS.getAxis(i);
+                final CoordinateSystemAxis shiftedAxis  = shiftedCS .getAxis(i);
+                if (standardAxis != shiftedAxis) {
+                    final double min, max;
+                    switch (i) {
+                        case 0: min = bounds.getMinX(); max = bounds.getMaxX(); break;
+                        case 1: min = bounds.getMinY(); max = bounds.getMaxY(); break;
+                        default: throw new AssertionError(i);
+                    }
+                    if (min+EPS >= shiftedAxis .getMinimumValue() &&  // Always >= 0 for shifted axis.
+                        max+EPS >= standardAxis.getMaximumValue() &&
+                        max-EPS <= shiftedAxis .getMaximumValue())
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      * Returns a grid geometry for the given horizontal size and transform, and the given vertical
      * ordinate values. The given factory is used for creating the <cite>grid to CRS</cite>
      * transform. Dimensions are handled as below:
@@ -343,13 +430,18 @@ final class SpatialRefSysEntry {
      * </ul>
      * <p>
      * The {@link #createSpatioTemporalCRS} method must have been invoked before this method.
+     *
+     * @param includeTime {@code true} if the CRS should include the time component,
+     *        or {@code false} for a spatial-only CRS.
+     * @param needsLongitudeShift {@code true} if the grid geometry needs longitude
+     *        values in the [0…360]° range instead than the default [-180 … 180]° range.
      */
     final GeneralGridGeometry createGridGeometry(final Dimension size, final AffineTransform gridToCRS,
-            final double[] altitudes, final MathTransformFactory mtFactory, final boolean includeTime)
-            throws FactoryException
+            final double[] altitudes, final MathTransformFactory mtFactory, final boolean includeTime,
+            final boolean needsLongitudeShift) throws FactoryException
     {
         assert uninitialized() == 0 : this;
-        final CoordinateReferenceSystem crs = getSpatioTemporalCRS(includeTime);
+        final CoordinateReferenceSystem crs = getSpatioTemporalCRS(includeTime, needsLongitudeShift);
         final int dim = crs.getCoordinateSystem().getDimension();
         final int[] lower = new int[dim];
         final int[] upper = new int[dim];

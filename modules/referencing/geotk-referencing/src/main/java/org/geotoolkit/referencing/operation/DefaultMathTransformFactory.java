@@ -414,10 +414,16 @@ public class DefaultMathTransformFactory extends ReferencingFactory implements M
             Parameters.ensureSet(parameters, "semi_minor", ellipsoid.getSemiMinorAxis(), axisUnit, false);
         } catch (ParameterNotFoundException e) {
             /*
-             * Parameter not found. This exception should not occurs most of the time.
+             * Parameter not found. This exception should not occurs for map projections.
              * If it occurs, we will not try to set the parameter here, but the same
              * exception is likely to occurs at MathTransform creation time. The later
              * is the expected place for this exception, so we will let it happen there.
+             *
+             * This exception may happen for Molodenski or similar operations. Ignoring
+             * this exception for such operations is correct. The actual parameter names
+             * are "src_semi_major" and "src_semi_minor", but we don't try to set them
+             * since we have no way to set the corresponding "tgt_semi_major" and
+             * "tgt_semi_minor" parameters anyway.
              */
         } catch (InvalidParameterTypeException e) {
             // Similar than above.

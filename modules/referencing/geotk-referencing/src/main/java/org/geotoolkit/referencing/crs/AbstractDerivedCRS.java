@@ -33,7 +33,6 @@ import org.opengis.geometry.MismatchedDimensionException;
 
 import org.geotoolkit.referencing.AbstractReferenceSystem;
 import org.geotoolkit.referencing.operation.DefaultConversion;
-import org.geotoolkit.referencing.operation.DefaultProjection;  // For javadoc
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.operation.DefaultSingleOperation;
 import org.geotoolkit.referencing.operation.DefaultOperationMethod;
@@ -79,7 +78,7 @@ public class AbstractDerivedCRS extends AbstractSingleCRS implements GeneralDeri
      * <code>{@linkplain ConicProjection}.class</code>.
      * <p>
      * This is a Geotk specific property used as a hint for creating a
-     * {@linkplain DefaultProjection projection} of proper type from a
+     * {@linkplain org.geotoolkit.referencing.operation.DefaultProjection projection} of proper type from a
      * {@linkplain DefiningConversion defining conversion}. In many cases, this hint is not needed
      * since Geotk is often capable to infer it. This hint is used mostly by advanced factories
      * like the {@linkplain org.geotoolkit.referencing.factory.epsg EPSG backed} one.

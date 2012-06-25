@@ -40,8 +40,8 @@ import org.opengis.referencing.operation.OperationMethod;
 import org.opengis.referencing.operation.SingleOperation;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.io.wkt.Formatter;
+import org.geotoolkit.util.ArgumentChecks;
 
 import static org.geotoolkit.referencing.IdentifiedObjects.EMPTY_ALIAS_ARRAY;
 import static org.geotoolkit.referencing.IdentifiedObjects.EMPTY_IDENTIFIER_ARRAY;
@@ -119,9 +119,7 @@ public abstract class MathTransformProvider extends DefaultOperationMethod {
      * ("Relax constraint on placement of this()/super() call in constructors").
      */
     private static Map<String,Object> toMap(final IdentifiedObject parameters) {
-        if (parameters == null) {
-            throw new NullArgumentException("parameters");
-        }
+        ArgumentChecks.ensureNonNull("parameters", parameters);
         final Map<String,Object> properties = new HashMap<String,Object>(4);
         properties.put(NAME_KEY,        parameters.getName());
         properties.put(IDENTIFIERS_KEY, parameters.getIdentifiers().toArray(EMPTY_IDENTIFIER_ARRAY));

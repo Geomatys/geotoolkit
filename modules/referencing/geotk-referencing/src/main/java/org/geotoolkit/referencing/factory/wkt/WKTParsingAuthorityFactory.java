@@ -638,7 +638,7 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
 
         /**
          * The authority code for the WKT to be parsed. This is the code provided by the user to
-         * the {@link WKTParsingAuthorityFactory#createCoordinateReferenceSystem(String)} metohd.
+         * the {@link WKTParsingAuthorityFactory#createCoordinateReferenceSystem(String)} method.
          */
         String code;
 

@@ -40,18 +40,11 @@ import static org.geotoolkit.test.Commons.*;
  * Tests {@link TextRecordImageReader}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.08
+ * @version 3.20
  *
  * @since 3.06
  */
 public final strictfp class TextRecordImageReaderTest extends TextImageReaderTestBase {
-    /**
-     * Creates a new test suite.
-     */
-    public TextRecordImageReaderTest() {
-        super(TextRecordImageReader.class);
-    }
-
     /**
      * The provider for the format to be tested.
      */
@@ -67,11 +60,16 @@ public final strictfp class TextRecordImageReaderTest extends TextImageReaderTes
     }
 
     /**
-     * Creates a reader using the {@link Locale#CANADA}.
+     * Creates a reader and sets its input if needed.
      */
     @Override
-    protected TextRecordImageReader createImageReader() throws IOException {
-        return createImageReader(true);
+    protected void prepareImageReader(final boolean setInput) throws IOException {
+        if (reader == null) {
+            reader = new TextRecordImageReader(new Spi(true));
+        }
+        if (setInput) {
+            reader.setInput(TestData.file(this, "records.txt"));
+        }
     }
 
     /**
@@ -122,11 +120,11 @@ public final strictfp class TextRecordImageReaderTest extends TextImageReaderTes
      */
     @Test
     public void testMetadata() throws IOException {
-        final TextImageReader reader = createImageReader();
+        prepareImageReader(true);
         assertEquals(20, reader.getWidth (0));
         assertEquals(42, reader.getHeight(0));
         assertNull(reader.getStreamMetadata());
-        final SpatialMetadata metadata = reader.getImageMetadata(0);
+        final SpatialMetadata metadata = (SpatialMetadata) reader.getImageMetadata(0);
         assertNotNull(metadata);
         assertMultilinesEquals(decodeQuotes(
             SpatialMetadataFormat.FORMAT_NAME + '\n' +
@@ -150,7 +148,6 @@ public final strictfp class TextRecordImageReaderTest extends TextImageReaderTes
             "            ├───minValue=“-1.893”\n" +
             "            ├───maxValue=“31.14”\n" +
             "            └───fillSampleValues=“-9999.0”\n"), metadata.toString());
-        reader.dispose();
     }
 
     /**

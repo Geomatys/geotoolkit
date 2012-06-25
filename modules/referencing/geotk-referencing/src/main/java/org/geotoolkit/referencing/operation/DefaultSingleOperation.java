@@ -48,6 +48,7 @@ import org.geotoolkit.util.UnsupportedImplementationException;
 
 import static org.geotoolkit.util.Utilities.deepEquals;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.geotoolkit.internal.referencing.CRSUtilities.PARAMETERS_KEY;
 
 
 /**
@@ -64,7 +65,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * coordinate operation.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.18
+ * @version 3.20
  *
  * @since 2.0
  * @module
@@ -80,6 +81,13 @@ public class DefaultSingleOperation extends AbstractCoordinateOperation implemen
      * The operation method.
      */
     protected final OperationMethod method;
+
+    /**
+     * The parameter values, or {@code null} for inferring it from the math transform.
+     *
+     * @since 3.20
+     */
+    ParameterValueGroup parameters;
 
     /**
      * Constructs a new operation with the same values than the specified defining
@@ -119,6 +127,18 @@ public class DefaultSingleOperation extends AbstractCoordinateOperation implemen
         ensureNonNull("method", method);
         DefaultOperationMethod.checkDimensions(method, transform);
         this.method = method;
+        /*
+         * Undocumented property. We do not document it because parameters are usually either
+         * inferred from the MathTransform, or specified explicitely in a DefiningConversion.
+         * However there is a few cases, for example the Molodenski transform, where none of
+         * the above can apply, because the operation is implemented by a concatenation of
+         * math transform and concatenations don't have ParameterValueGroup.
+         */
+        final Object param = properties.get(PARAMETERS_KEY);
+        if (param instanceof ParameterValueGroup) {
+            parameters = (ParameterValueGroup) param;
+            // We don't clone on the assumption that the caller already cloned it.
+        }
     }
 
     /**
@@ -135,9 +155,7 @@ public class DefaultSingleOperation extends AbstractCoordinateOperation implemen
      * @param type       The minimal type as <code>{@linkplain Conversion}.class</code>,
      *                   <code>{@linkplain Projection}.class</code>, <i>etc.</i>
      *                   This method may create an instance of a subclass of {@code type}.
-     * @return A new coordinate operation of the given type.
-     *
-     * @see DefaultConversion#create(Map, CoordinateReferenceSystem, CoordinateReferenceSystem, MathTransform, OperationMethod, Class)
+     * @return A new coordinate operation, as an instance of the given type if possible.
      */
     public static CoordinateOperation create(final Map<String,?>            properties,
                                              final CoordinateReferenceSystem sourceCRS,
@@ -202,7 +220,7 @@ public class DefaultSingleOperation extends AbstractCoordinateOperation implemen
      * Returns the parameter values. The default implementation infers the parameter
      * values from the {@linkplain #transform transform}, if possible.
      *
-     * @throws UnsupportedOperationException if the parameters values can't be determined
+     * @throws UnsupportedOperationException if the parameter values can't be determined
      *         for the current math transform implementation.
      *
      * @see DefaultMathTransformFactory#createParameterizedTransform(ParameterValueGroup)
@@ -210,6 +228,9 @@ public class DefaultSingleOperation extends AbstractCoordinateOperation implemen
      */
     @Override
     public ParameterValueGroup getParameterValues() throws UnsupportedOperationException {
+        if (parameters != null) {
+            return parameters.clone();
+        }
         MathTransform mt = transform;
         while (mt != null) {
             if (mt instanceof Parameterized) {

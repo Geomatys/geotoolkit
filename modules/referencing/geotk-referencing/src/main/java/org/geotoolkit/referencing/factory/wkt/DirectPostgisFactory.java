@@ -157,11 +157,11 @@ public class DirectPostgisFactory extends WKTParsingAuthorityFactory implements 
      * Returns the authority which is responsible for the maintenance of the primary keys.
      * Note that <cite>primary keys</cite> are not necessarily the same than authority codes.
      * The primary keys are stored in the {@value #PRIMARY_KEY} column, while the authority
-     * codes are defined by the {@value #AUTHORITY_COLUMN} : {@value #CODE_COLUMN} tupples.
+     * codes are defined by the {@value #AUTHORITY_COLUMN} : {@value #CODE_COLUMN} tuples.
      * <p>
      * The default implementation returns {@link Citations#POSTGIS} in all cases.
      *
-     * @return The authority which is reponsible for the maintenance of primary keys.
+     * @return The authority which is responsible for the maintenance of primary keys.
      *
      * @see #getPrimaryKey(Class, String)
      */

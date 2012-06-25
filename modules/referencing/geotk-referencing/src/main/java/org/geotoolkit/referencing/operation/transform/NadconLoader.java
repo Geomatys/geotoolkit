@@ -35,7 +35,7 @@ import org.opengis.util.FactoryException;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Descriptions;
 import org.geotoolkit.io.ContentFormatException;
-import org.geotoolkit.referencing.factory.OptionalFactoryOperationException;
+import org.geotoolkit.referencing.factory.NoSuchIdentifiedResource;
 
 import static java.nio.channels.Channels.newChannel;
 import static org.geotoolkit.internal.io.IOUtilities.*;
@@ -167,7 +167,7 @@ abstract class NadconLoader extends GridLoader {
                     "NADCON", NADCON.directory(true), "geotk-setup");
             final FactoryException ex;
             if (cause instanceof FileNotFoundException) {
-                ex = new OptionalFactoryOperationException(message, cause);
+                ex = new NoSuchIdentifiedResource(message, rx ? longitudeGrid : latitudeGrid, cause);
             } else {
                 ex = new FactoryException(message, cause);
             }

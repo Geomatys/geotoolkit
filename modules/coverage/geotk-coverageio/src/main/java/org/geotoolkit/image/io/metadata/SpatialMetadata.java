@@ -39,6 +39,7 @@ import javax.imageio.metadata.IIOInvalidTreeException;
 import org.w3c.dom.Node;
 
 import org.opengis.coverage.grid.RectifiedGrid;
+import org.opengis.metadata.Metadata;
 import org.opengis.metadata.content.ImageDescription;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.metadata.identification.DataIdentification;
@@ -129,7 +130,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * to treat some warnings as fatal errors.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.08
+ * @version 3.20
  *
  * @see SpatialMetadataFormat
  *
@@ -379,7 +380,7 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
                  */
                 final MetadataAccessor accessor;
                 try {
-                    accessor = new MetadataAccessor(this, null, type);
+                    accessor = new MetadataAccessor(this, getMetadataFormatName(type), type);
                 } catch (NoSuchElementException e) {
                     return null; // As of method contract.
                 }
@@ -422,7 +423,7 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
         final boolean isCRS = CoordinateReferenceSystem.class.isAssignableFrom(type);
         final MetadataAccessor accessor;
         try {
-            accessor = new MetadataAccessor(this, null, path, isCRS ? null : "#auto");
+            accessor = new MetadataAccessor(this, getMetadataFormatName(type), path, isCRS ? null : "#auto");
         } catch (NoSuchElementException e) {
             return null; // As of method contract.
         }
@@ -490,7 +491,7 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
         if (list == null) {
             final MetadataAccessor accessor;
             try {
-                accessor = new MetadataAccessor(this, null, type);
+                accessor = new MetadataAccessor(this, getMetadataFormatName(type), type);
             } catch (NoSuchElementException e) {
                 return null; // As of method contract.
             }
@@ -538,7 +539,7 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
     {
         final MetadataAccessor accessor;
         try {
-            accessor = new MetadataAccessor(this, null, path, children);
+            accessor = new MetadataAccessor(this, getMetadataFormatName(type), path, children);
         } catch (NoSuchElementException e) {
             return null; // As of method contract.
         }
@@ -546,28 +547,35 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
     }
 
     /**
-     * Returns the language to use when formatting messages, or {@code null} for the
-     * default. The default implementation delegates to {@link ImageReader#getLocale} or
-     * {@link ImageWriter#getLocale} if possible, or returns {@code null} otherwise.
+     * The preferred metadata format name for {@link #getInstanceForType(Class)} methods.
+     * If the preferred metadata format is not found, then fallback on the native format.
+     * <p>
+     * We don't compute those information at construction time, because the user could
+     * subclass {@code SpatialMetadata} and modify the fields in their own constructor.
      *
-     * @return The locale for formatting messages, or {@code null}.
+     * @param  type The type of metadata object to create.
+     * @return The preferred metadata format name, or {@code null} if unknown.
+     *
+     * @since 3.20
      */
-    @Override
-    public Locale getLocale() {
-        if (owner instanceof ImageReader) {
-            return ((ImageReader) owner).getLocale();
+    private String getMetadataFormatName(final Class<?> type) {
+        final String preferred, alternate;
+        if (Metadata.class.isAssignableFrom(type)) {
+            preferred = SpatialMetadataFormat.ISO_FORMAT_NAME;
+            alternate = SpatialMetadataFormat.FORMAT_NAME;
+        } else {
+            preferred = SpatialMetadataFormat.FORMAT_NAME;
+            alternate = SpatialMetadataFormat.ISO_FORMAT_NAME;
         }
-        if (owner instanceof ImageWriter) {
-            return ((ImageWriter) owner).getLocale();
+        String fallback = nativeMetadataFormatName;
+        final String[] names = extraMetadataFormatNames;
+        if (names != null) {
+            for (final String name : names) {
+                if (preferred.equalsIgnoreCase(name)) return name;
+                if (alternate.equalsIgnoreCase(name)) fallback = name;
+            }
         }
-        return null;
-    }
-
-    /**
-     * Returns the resources for formatting error messages.
-     */
-    private IndexedResourceBundle getErrorResources() {
-        return Errors.getResources(getLocale());
+        return fallback;
     }
 
     /**
@@ -697,6 +705,31 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
      */
     public void setReadOnly(final boolean ro) {
         isReadOnly = ro;
+    }
+
+    /**
+     * Returns the language to use when formatting messages, or {@code null} for the
+     * default. The default implementation delegates to {@link ImageReader#getLocale} or
+     * {@link ImageWriter#getLocale} if possible, or returns {@code null} otherwise.
+     *
+     * @return The locale for formatting messages, or {@code null}.
+     */
+    @Override
+    public Locale getLocale() {
+        if (owner instanceof ImageReader) {
+            return ((ImageReader) owner).getLocale();
+        }
+        if (owner instanceof ImageWriter) {
+            return ((ImageWriter) owner).getLocale();
+        }
+        return null;
+    }
+
+    /**
+     * Returns the resources for formatting error messages.
+     */
+    private IndexedResourceBundle getErrorResources() {
+        return Errors.getResources(getLocale());
     }
 
     /**

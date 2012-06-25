@@ -477,8 +477,8 @@ public final class NewGridCoverageReference {
                         verticalSRID = id;
                     }
                     final CoordinateSystemAxis axis = verticalCRS.getCoordinateSystem().getAxis(0);
-                    if (axis instanceof DiscreteCoordinateSystemAxis) {
-                        final DiscreteCoordinateSystemAxis da = (DiscreteCoordinateSystemAxis) axis;
+                    if (axis instanceof DiscreteCoordinateSystemAxis<?>) {
+                        final DiscreteCoordinateSystemAxis<?> da = (DiscreteCoordinateSystemAxis<?>) axis;
                         final int length = da.length();
                         for (int i=0; i<length; i++) {
                             final Comparable<?> value = da.getOrdinateAt(i);
@@ -498,8 +498,8 @@ public final class NewGridCoverageReference {
                 final TemporalCRS temporalCRS = CRS.getTemporalCRS(crs);
                 if (temporalCRS != null) {
                     final CoordinateSystemAxis axis = temporalCRS.getCoordinateSystem().getAxis(0);
-                    if (axis instanceof DiscreteCoordinateSystemAxis) {
-                        final DiscreteCoordinateSystemAxis da = (DiscreteCoordinateSystemAxis) axis;
+                    if (axis instanceof DiscreteCoordinateSystemAxis<?>) {
+                        final DiscreteCoordinateSystemAxis<?> da = (DiscreteCoordinateSystemAxis<?>) axis;
                         DefaultTemporalCRS c = null; // To be created when first needed.
                         dateRanges = new DateRange[da.length()];
                         for (int i=0; i<dateRanges.length; i++) {
@@ -650,9 +650,8 @@ public final class NewGridCoverageReference {
             if (identifiedCRS == null) {
                 identifiedCRS = crs;
             }
-            ReferenceIdentifier id = null;
             for (final Citation authority : AUTHORITIES) {
-                id = IdentifiedObjects.getIdentifier(identifiedCRS, authority);
+                final ReferenceIdentifier id = IdentifiedObjects.getIdentifier(identifiedCRS, authority);
                 if (id != null) {
                     final String code = id.getCode();
                     if (id != null) try {

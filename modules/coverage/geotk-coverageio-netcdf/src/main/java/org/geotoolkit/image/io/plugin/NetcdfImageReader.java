@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.image.io.plugin;
 
-import org.geotoolkit.internal.image.io.NetcdfVariable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +31,7 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.awt.image.DataBuffer;
+import java.awt.image.Raster;
 import java.net.URL;
 import java.net.URI;
 import java.io.File;
@@ -76,6 +76,8 @@ import org.geotoolkit.image.io.SpatialImageReadParam;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.internal.image.io.DimensionManager;
+import org.geotoolkit.internal.image.io.IIOImageHelper;
+import org.geotoolkit.internal.image.io.NetcdfVariable;
 import org.geotoolkit.referencing.adapters.NetcdfAxis;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.Workaround;
@@ -149,7 +151,7 @@ import org.geotoolkit.util.logging.Logging;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Antoine Hnawia (IRD)
- * @version 3.19
+ * @version 3.20
  *
  * @see org.geotoolkit.referencing.adapters.NetcdfCRS
  *
@@ -263,7 +265,7 @@ public class NetcdfImageReader extends FileImageReader implements
      *
      * {@preformat java
      *     reader.setImageNames("temperature");
-     *     reader.getDimensionForAPI(API.BANDS).addDimensionId(3);
+     *     reader.getDimensionForAPI(API.BANDS).addDimensionId(2); // Zero-based index
      * }
      *
      * The following method call reads the same image than the above example,
@@ -901,23 +903,28 @@ public class NetcdfImageReader extends FileImageReader implements
             final List<Variable> variables = dataset.getVariables();
             final String[] filtered = new String[variables.size()];
             int count = 0;
-            for (final VariableIF candidate : variables) {
-                if (NetcdfVariable.isCoverage(candidate, variables)) {
-                   /*
-                    * - Images require at least 2 dimensions. They may have more dimensions,
-                    *   in which case a slice will be taken later.
-                    *
-                    * - Excludes axis. They are often already excluded by the first condition
-                    *   because axis are usually 1-dimensional, but some are 2-dimensional,
-                    *   e.g. a localization grid.
-                    *
-                    * - Excludes characters, strings and structures, which can not be easily
-                    *   mapped to an image type. In addition, 2-dimensional character arrays
-                    *   are often used for annotations and we don't want to confuse them
-                    *   with images.
-                    */
-                    filtered[count++] = candidate.getShortName();
+            for (int minLength=2; minLength>=1; minLength--) {
+                for (final VariableIF candidate : variables) {
+                    if (NetcdfVariable.isCoverage(candidate, variables, minLength)) {
+                        /*
+                         * - Images require at least 2 dimensions. They may have more dimensions,
+                         *   in which case a slice will be taken later.
+                         *
+                         * - Excludes axis. They are often already excluded by the first condition
+                         *   because axis are usually 1-dimensional, but some are 2-dimensional,
+                         *   e.g. a localization grid.
+                         *
+                         * - Excludes characters, strings and structures, which can not be easily
+                         *   mapped to an image type. In addition, 2-dimensional character arrays
+                         *   are often used for annotations and we don't want to confuse them
+                         *   with images.
+                         */
+                        filtered[count++] = candidate.getShortName();
+                    }
                 }
+                if (count != 0) break;
+                // If we didn't found any variable with a length of at least 2 along
+                // 2 dimensions, try again but be less strict (require a length of 1).
             }
             variableNames = UnmodifiableArrayList.wrap(XArrays.resize(filtered, count));
         }
@@ -1062,7 +1069,7 @@ public class NetcdfImageReader extends FileImageReader implements
             numSrcBands = bandNames.size();
             bandDimension = -1;
         } else {
-            bandDimension = findDimensionIndex(DimensionSlice.API.BANDS,  rank);
+            bandDimension = findDimensionIndex(DimensionSlice.API.BANDS, rank);
             numSrcBands = (bandDimension >= 0) ? variable.getDimension(bandDimension).getLength() : 1;
         }
         final int numDstBands = (dstBands != null) ? dstBands.length :
@@ -1084,7 +1091,7 @@ public class NetcdfImageReader extends FileImageReader implements
         final Rectangle  srcRegion = new Rectangle();
         final Rectangle destRegion = new Rectangle();
         computeRegions(param, width, height, image, srcRegion, destRegion);
-        flipVertically(param, height, srcRegion);
+        IIOImageHelper.flipVertically(param, height, srcRegion);
         final int[] dimensionSlices = getSourceIndices(param, rank);
         final Range[] ranges = new Range[rank];
         for (int i=0; i<ranges.length; i++) {
@@ -1208,6 +1215,34 @@ public class NetcdfImageReader extends FileImageReader implements
     }
 
     /**
+     * Creates a raster from the specified parameters. This method is a bit closer to the actual
+     * NetCDF model than the {@link #read(int, ImageReadParam)}, because NetCDF file usually don't
+     * provide color information.
+     *
+     * @throws IOException If an error occurred while reading the NetCDF file.
+     *
+     * @todo Current implementation delegates to {@code read(int, param)}.
+     *       Futures versions should do a more efficient work.
+     *
+     * @since 3.20
+     */
+    @Override
+    public Raster readRaster(final int imageIndex, final ImageReadParam param) throws IOException {
+        return read(imageIndex, param).getRaster();
+    }
+
+    /**
+     * Returns {@code true} since this class supports calls to
+     * {@link #readRaster(int, ImageReadParam)}.
+     *
+     * @since 3.20
+     */
+    @Override
+    public boolean canReadRaster() {
+        return true;
+    }
+
+    /**
      * Wraps a generic exception into an {@link IIOException}.
      */
     private IIOException netcdfFailure(final Exception e) throws IOException {
@@ -1256,7 +1291,6 @@ public class NetcdfImageReader extends FileImageReader implements
         variable       = null;
         variableName   = null;
         variableNames  = null;
-        dimensionManager.clear();
         try {
             if (dataset != null) {
                 dataset.close();
@@ -1265,6 +1299,16 @@ public class NetcdfImageReader extends FileImageReader implements
         } finally {
             super.close(); // Must delete the temporary file only after we closed the dataset.
         }
+    }
+
+    /**
+     * Restores the {@code ImageReader} to its initial state. This method removes the input,
+     * the locale, all listeners and any {@link DimensionSlice.API}.
+     */
+    @Override
+    public void reset() {
+        super.reset();
+        dimensionManager.clear();
     }
 
 
@@ -1298,17 +1342,17 @@ public class NetcdfImageReader extends FileImageReader implements
         /**
          * List of legal names for NetCDF readers.
          */
-        private static final String[] NAMES = new String[] {"NetCDF", "netcdf"};
+        static final String[] NAMES = new String[] {"NetCDF", "netcdf"};
 
         /**
          * The mime types for the default {@link NetcdfImageReader} configuration.
          */
-        private static final String[] MIME_TYPES = new String[] {"application/netcdf", "application/x-netcdf"};
+        static final String[] MIME_TYPES = new String[] {"application/netcdf", "application/x-netcdf"};
 
         /**
          * Default list of file's extensions.
          */
-        private static final String[] SUFFIXES = new String[] {"nc", "ncml", "cdf", "grib", "grib1", "grib2", "grb", "grb1", "grb2", "grd"};
+        static final String[] SUFFIXES = new String[] {"nc", "ncml", "cdf", "grib", "grib1", "grib2", "grb", "grb1", "grb2", "grd"};
 
         /**
          * Constructs a default {@code NetcdfImageReader.Spi}. The fields are initialized as
@@ -1323,6 +1367,7 @@ public class NetcdfImageReader extends FileImageReader implements
             MIMETypes       = MIME_TYPES;
             suffixes        = SUFFIXES;
             pluginClassName = "org.geotoolkit.image.io.plugin.NetcdfImageReader";
+            writerSpiNames  = new String[] {"org.geotoolkit.image.io.plugin.NetcdfImageWriter$Spi"};
             vendorName      = "Geotoolkit.org";
             version         = Version.GEOTOOLKIT.toString();
             final int length = inputTypes.length;

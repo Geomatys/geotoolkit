@@ -17,25 +17,7 @@
  */
 package org.geotoolkit.util.collection;
 
-import java.util.Iterator;
-import java.util.Comparator;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.TreeSet;
-import java.util.SortedSet;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.TreeMap;
-import java.util.SortedMap;
-import java.util.LinkedHashMap;
+import java.util.*;
 import java.io.Serializable;
 
 import org.geotoolkit.lang.Static;
@@ -222,13 +204,22 @@ public final class XCollections extends Static {
      * Returns the given value as a collection. Special cases:
      * <p>
      * <ul>
+     *   <li>If the value is null, then this method returns an {@linkplain Collections#emptyList() empty list}.</li>
      *   <li>If the value is an instance of {@link Collection}, then it is returned unchanged.</li>
-     *   <li>Otherwise if the value is an array of objects, then it is returned
-     *       {@linkplain Arrays#asList(Object[]) as a list}.</li>
-     *   <li>Otherwise if the value is non-null, then it is returned as a
-     *       {@linkplain Collections#singleton(Object) singleton}.</li>
-     *   <li>Otherwise this method returns an {@linkplain Collections#emptySet() empty set}.</li>
+     *   <li>If the value is an array of objects, then it is returned {@linkplain Arrays#asList(Object[]) as a list}.</li>
+     *   <li>If the value is an instance of {@link Iterable}, {@link Iterator} or {@link Enumeration}, copies the values in a new list.</li>
+     *   <li>Otherwise the value is returned as a {@linkplain Collections#singletonList(Object) singleton list}.</li>
      * </ul>
+     * <p>
+     * Note that in the {@link Iterator} and {@link Enumeration} cases, the given value object
+     * is not valid anymore after this method call since it has been used for the iteration.
+     * <p>
+     * If the returned object needs to be a list, then this method can be chained
+     * with {@link #asList(Collection)} as below:
+     *
+     * {@preformat java
+     *     List<?> list = asList(asCollection(object));
+     * }
      *
      * @param  value The value to return as a collection, or {@code null}.
      * @return The value as a collection, or wrapped in a collection (never {@code null}).
@@ -237,7 +228,7 @@ public final class XCollections extends Static {
      */
     public static Collection<?> asCollection(final Object value) {
         if (value == null) {
-            return Collections.emptySet();
+            return Collections.emptyList();
         }
         if (value instanceof Collection<?>) {
             return (Collection<?>) value;
@@ -245,7 +236,54 @@ public final class XCollections extends Static {
         if (value instanceof Object[]) {
             return Arrays.asList((Object[]) value);
         }
-        return Collections.singleton(value);
+        if (value instanceof Iterable<?>) {
+            final List<Object> list = new ArrayList<Object>();
+            for (final Object element : (Iterable<?>) value) {
+                list.add(element);
+            }
+            return list;
+        }
+        if (value instanceof Iterator<?>) {
+            final Iterator<?> it = (Iterator<?>) value;
+            final List<Object> list = new ArrayList<Object>();
+            while (it.hasNext()) {
+                list.add(it.next());
+            }
+            return list;
+        }
+        if (value instanceof Enumeration<?>) {
+            return Collections.list((Enumeration<?>) value);
+        }
+        return Collections.singletonList(value);
+    }
+
+    /**
+     * Casts o copies the given collection to a list. Special cases:
+     * <p>
+     * <ul>
+     *   <li>If the given collection is {@code null}, then this method returns {@code null}.</li>
+     *   <li>If the given collection is already a list, then it is returned unchanged.</li>
+     *   <li>Otherwise the elements are copied in a new list, which is returned.</li>
+     * </ul>
+     * <p>
+     * If the argument is not an instance of {@code Collection}, then this method can be chained
+     * with {@link #asCollection(Object)} for handling a wider range of types:
+     *
+     * {@preformat java
+     *     List<?> list = asList(asCollection(object));
+     * }
+     *
+     * @param  <T> The type of elements in the given collection.
+     * @param  collection The collection to cast or copy to a list.
+     * @return The given collection as a list, or a copy of the given collection.
+     *
+     * @since 3.20
+     */
+    public static <T> List<T> asList(final Collection<T> collection) {
+        if (collection instanceof List<?>) {
+            return (List<T>) collection;
+        }
+        return new ArrayList<T>(collection);
     }
 
     /**

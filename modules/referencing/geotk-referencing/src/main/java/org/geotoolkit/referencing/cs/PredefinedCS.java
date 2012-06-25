@@ -23,6 +23,7 @@ import java.util.Comparator;
 import java.util.Map;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
+import javax.measure.converter.ConversionException;
 
 import org.opengis.referencing.cs.*;
 
@@ -149,7 +150,7 @@ final class PredefinedCS extends Static implements Comparator<CoordinateSystem> 
             }
         }
         if (cs instanceof DefaultCompoundCS) {
-            final List<CoordinateSystem> components = ((DefaultCompoundCS) cs).getCoordinateSystems();
+            final List<CoordinateSystem> components = ((DefaultCompoundCS) cs).getComponents();
             final CoordinateSystem[] user = new CoordinateSystem[components.size()];
             final CoordinateSystem[] std  = new CoordinateSystem[user.length];
             for (int i=0; i<std.length; i++) {
@@ -193,8 +194,10 @@ final class PredefinedCS extends Static implements Comparator<CoordinateSystem> 
              * DefaultAffineCS.isCompatibleUnit(Unit).
              */
             final Unit<?> unit = axe.getUnit();
-            if (!Unit.ONE.equals(unit) && !SI.METRE.equals(unit)) {
+            if (!Unit.ONE.equals(unit) && !SI.METRE.equals(unit)) try {
                 axe = DefaultCoordinateSystemAxis.castOrCopy(axe).usingUnit(SI.METRE);
+            } catch (ConversionException e) {
+                throw new IllegalArgumentException(Errors.format(Errors.Keys.INCOMPATIBLE_UNIT_$1, SI.METRE), e);
             }
             changed |= (axe != axis[i]);
             axis[i] = axe;

@@ -618,7 +618,7 @@ public final class Numbers extends Static {
      * is usually not the same than "<cite>zero</cite>". More specifically:
      * <p>
      * <ul>
-     *   <li>If the given type is a floating point <strong>primitive</strong> type ({code float}
+     *   <li>If the given type is a floating point <strong>primitive</strong> type ({@code float}
      *       or {@code double}), then this method returns {@link Float#NaN} or {@link Double#NaN}
      *       depending on the given type.</li>
      *
@@ -635,7 +635,7 @@ public final class Numbers extends Static {
      *   <li>For all other cases, including the wrapper classes of primitive types, this method
      *       returns {@code null}.</li>
      * </ul>
-     *
+     * <p>
      * Despite being defined in the {@code Numbers} class, the scope of this method has been
      * extended to array and collection types because those types can also be seen as mathematical
      * objects.

@@ -25,7 +25,6 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 
 import org.geotoolkit.test.TestData;
-import org.geotoolkit.image.io.TextImageReader;
 import org.geotoolkit.image.io.TextImageReaderTestBase;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
@@ -39,18 +38,11 @@ import static org.geotoolkit.test.Commons.*;
  * Tests {@link TextMatrixImageReader}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.08
+ * @version 3.20
  *
  * @since 3.06
  */
 public final strictfp class TextMatrixImageReaderTest extends TextImageReaderTestBase {
-    /**
-     * Creates a new test suite.
-     */
-    public TextMatrixImageReaderTest() {
-        super(TextMatrixImageReader.class);
-    }
-
     /**
      * The provider for the format to be tested.
      */
@@ -63,13 +55,16 @@ public final strictfp class TextMatrixImageReaderTest extends TextImageReaderTes
     }
 
     /**
-     * Creates a reader using the {@link Locale#CANADA}.
+     * Creates a reader and sets its input if needed.
      */
     @Override
-    protected TextMatrixImageReader createImageReader() throws IOException {
-        final TextMatrixImageReader reader = new TextMatrixImageReader(new Spi());
-        reader.setInput(TestData.file(this, "matrix.txt"));
-        return reader;
+    protected void prepareImageReader(final boolean setInput) throws IOException {
+        if (reader == null) {
+            reader = new TextMatrixImageReader(new Spi());
+        }
+        if (setInput) {
+            reader.setInput(TestData.file(this, "matrix.txt"));
+        }
     }
 
     /**
@@ -79,11 +74,11 @@ public final strictfp class TextMatrixImageReaderTest extends TextImageReaderTes
      */
     @Test
     public void testMetadata() throws IOException {
-        final TextImageReader reader = createImageReader();
+        prepareImageReader(true);
         assertEquals(20, reader.getWidth (0));
         assertEquals(42, reader.getHeight(0));
         assertNull(reader.getStreamMetadata());
-        final SpatialMetadata metadata = reader.getImageMetadata(0);
+        final SpatialMetadata metadata = (SpatialMetadata) reader.getImageMetadata(0);
         assertNotNull(metadata);
         assertMultilinesEquals(decodeQuotes(
             SpatialMetadataFormat.FORMAT_NAME + '\n' +
@@ -93,7 +88,6 @@ public final strictfp class TextMatrixImageReaderTest extends TextImageReaderTes
             "            ├───minValue=“-1.893”\n" +
             "            ├───maxValue=“31.14”\n" +
             "            └───fillSampleValues=“-9999.0”\n"), metadata.toString());
-        reader.dispose();
     }
 
     /**

@@ -93,6 +93,7 @@ import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.Version;
 
 import static org.geotoolkit.internal.InternalUtilities.COMPARISON_THRESHOLD;
+import static org.geotoolkit.internal.referencing.CRSUtilities.PARAMETERS_KEY;
 
 
 /**
@@ -2811,6 +2812,9 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                                 parameters.parameter("tgt_semi_minor").setValue(ellipsoid.getSemiMinorAxis(), axisUnit);
                                 parameters.parameter("tgt_dim").setValue(targetCRS.getCoordinateSystem().getDimension());
                             }
+                            // Since Geotk will implement the transformation as a concatenation of
+                            // MathTransforms, it will not be able to find those parameters alone.
+                            properties.put(PARAMETERS_KEY, parameters);
                         } catch (ParameterNotFoundException exception) {
                             throw new FactoryException(Errors.format(
                                     Errors.Keys.GEOTOOLKIT_EXTENSION_REQUIRED_$1,
@@ -2830,7 +2834,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                         }
                         final MathTransform mt = factories.getMathTransformFactory().createBaseToDerived(
                                 sourceCRS, parameters, targetCRS.getCoordinateSystem());
-                        // TODO: use GeoAPI factory method once available.
+                        // TODO: use GeoAPI factory method once available (http://jira.codehaus.org/browse/GEO-216).
                         operation = DefaultSingleOperation.create(properties, sourceCRS, targetCRS, mt, method, expected);
                     }
                     returnValue = ensureSingleton(operation, returnValue, code);

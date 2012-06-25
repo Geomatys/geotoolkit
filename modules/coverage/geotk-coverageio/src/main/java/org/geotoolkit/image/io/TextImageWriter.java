@@ -243,7 +243,7 @@ public abstract class TextImageWriter extends StreamImageWriter {
                             break;
                         }
                         if (++digits > MAXIMUM_DIGITS) {
-                            return NumberFormat.getNumberInstance(locale);
+                            return createNumberFormat(locale);
                         }
                         multiple *= 10;
                     }
@@ -258,8 +258,7 @@ public abstract class TextImageWriter extends StreamImageWriter {
          * in which case 'digits' is still set to 0. In such case it is better to keep the default
          * format unchanged, since it should be generic enough.
          */
-        final NumberFormat format = (locale != null) ?
-                NumberFormat.getNumberInstance(locale) : NumberFormat.getNumberInstance();
+        final NumberFormat format = createNumberFormat(locale);
         if (digits != 0 || maximum >= DELTA_THRESHOLD) {
             format.setMaximumFractionDigits(digits);
             if (maximum < NODIGITS_THRESHOLD) {
@@ -267,6 +266,14 @@ public abstract class TextImageWriter extends StreamImageWriter {
             }
         }
         return format;
+    }
+
+    /**
+     * Returns the number format for the given locale. If the given locale is null,
+     * then the default locale is used.
+     */
+    private static NumberFormat createNumberFormat(final Locale locale) {
+        return (locale != null) ? NumberFormat.getNumberInstance(locale) : NumberFormat.getNumberInstance();
     }
 
     /**

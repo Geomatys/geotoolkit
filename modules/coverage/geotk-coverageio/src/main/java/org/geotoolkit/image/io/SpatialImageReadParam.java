@@ -86,7 +86,7 @@ import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
  * </ol>
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.15
+ * @version 3.20
  *
  * @since 3.05 (derived from 2.4)
  * @module
@@ -152,15 +152,6 @@ public class SpatialImageReadParam extends ImageReadParam implements WarningProd
      */
     public SpatialImageReadParam(final ImageReader reader) {
         this.reader = reader;
-        /*
-         * If the bands API is used for selecting slices in a extra dimension, set
-         * the default slice index to zero (see MultidimensionalImageStore javadoc).
-         */
-        if (reader instanceof MultidimensionalImageStore && ((MultidimensionalImageStore) reader)
-                .getAPIForDimensions().contains(DimensionSlice.API.BANDS))
-        {
-            sourceBands = new int[1];
-        }
     }
 
     /**

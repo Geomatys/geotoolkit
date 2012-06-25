@@ -48,7 +48,6 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.util.XArrays;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.image.io.ImageReaderAdapter.Spi.addPrefix;
@@ -62,7 +61,8 @@ import static org.geotoolkit.image.io.ImageReaderAdapter.Spi.addSpatialFormat;
  * <p>
  * The wrapped image writer is called the {@linkplain #main} writer. The output given to that
  * writer is determined by the {@link #createOutput(String)} method - it may or may not be the
- * same output than the one given to this {@code ImageWriterAdapter}.
+ * same output than the one given to this {@code ImageWriterAdapter} {@link #setOutput(Object)
+ * setOutput(Object)} method.
  * <p>
  * The amount of methods declared in this class is large, but the only new methods are:
  * <p>
@@ -684,8 +684,8 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
      *     <td>&nbsp;Same values than the {@linkplain #main} provider, suffixed by the given string.&nbsp;</td>
      *   </tr><tr>
      *     <td>&nbsp;{@link #outputTypes}&nbsp;</td>
-     *     <td>&nbsp;{@link String}, {@link File}, {@link URI}, {@link URL},
-     *         {@link ImageOutputStream}&nbsp;</td>
+     *     <td>&nbsp;{@link String}, {@link File}, {@link URI}, {@link URL}<!--,
+     *         {@link ImageOutputStream} TODO -->&nbsp;</td>
      * </tr>
      * </table>
      * <p>
@@ -703,13 +703,16 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
     public abstract static class Spi extends SpatialImageWriter.Spi {
         /**
          * List of legal input and output types for {@link ImageWriterAdapter}.
-         * The {@link ImageOutputStream} type is mandatory even if the adapter
-         * can't use it, because this type is created by {@link javax.imageio}
-         * package and we have no way to filter {@code ImageWriter} by output
-         * stream.
+         * The {@link ImageOutputStream} type is mandatory because this type is
+         * created by {@link javax.imageio} package and we have no way to filter
+         * {@code ImageWriter} by output stream.
          */
-        private static final Class<?>[] TYPES =
-                XArrays.append(ImageReaderAdapter.Spi.TYPES, ImageOutputStream.class);
+        private static final Class<?>[] TYPES = ImageReaderAdapter.Spi.TYPES; //.clone();
+//      static {
+//TODO      int n = TYPES.length;
+//GEOTK-231 TYPES[--n] = ImageOutputStream.class;
+//          TYPES[--n] = OutputStream.class;
+//      }
 
         /**
          * The provider of the writers to use for writing the pixel values.

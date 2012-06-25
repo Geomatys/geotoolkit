@@ -28,6 +28,7 @@ import org.geotoolkit.test.Depend;
 
 import static java.lang.Double.NaN;
 import static org.geotoolkit.referencing.Assert.*;
+import static org.geotoolkit.referencing.cs.AxisRangeType.*;
 import static org.geotoolkit.referencing.crs.DefaultGeographicCRS.WGS84;
 
 
@@ -247,17 +248,37 @@ public final strictfp class GeneralEnvelopeTest {
      */
     @Test
     public void testReorderCorners() {
+        // Normal envelope: no change expected.
         GeneralEnvelope e = create(-100, -10, +100, +10);
         assertFalse(e.reorderCorners());
         assertEnvelopeEquals(e, -100, -10, +100, +10);
 
+        // Anti-meridian spanning: should substitute [-180 … 180]°
         e = create(30, -10, -60, 10);
         assertTrue(e.reorderCorners());
-        assertEnvelopeEquals(e, 30, -10, 300, 10);
+        assertEnvelopeEquals(e, -180, -10, 180, 10);
 
+        // Anti-meridian spanning using positive and negative zero.
         e = create(0.0, -10, -0.0, 10);
         assertTrue(e.reorderCorners());
-        assertEnvelopeEquals(e, 0, -10, 360, 10);
+        assertEnvelopeEquals(e, -180, -10, 180, 10);
+    }
+
+    /**
+     * Tests shifting from the [-180 … 180]° to the [0 … 360]° longitude range.
+     * The anti-meridian spanning is located at 360°.
+     *
+     * @since 3.20
+     */
+    @Test
+    public void testShiftLongitudeRange() {
+        GeneralEnvelope e = create(-100, -10, +100, +10);
+        e.setCoordinateReferenceSystem(WGS84.shiftAxisRange(POSITIVE_LONGITUDE));
+        assertTrue(e.reduceToDomain(false));
+        assertEquals("Expected anti-meridian spanning", 260, e.getLower(0), STRICT);
+        assertEquals("Expected anti-meridian spanning", 100, e.getUpper(0), STRICT);
+        assertTrue(e.reorderCorners());
+        assertEnvelopeEquals(e, 0, -10, 360, +10);
     }
 
     /**

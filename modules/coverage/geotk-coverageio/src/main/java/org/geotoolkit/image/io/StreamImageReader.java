@@ -284,10 +284,10 @@ public abstract class StreamImageReader extends SpatialImageReader {
                 channel.close();
             }
             closeOnReset.close();
+            closeOnReset = null;
         }
-        channel      = null;
-        closeOnReset = null;
-        stream       = null;
+        channel = null;
+        stream  = null;
     }
 
     /**

@@ -243,10 +243,14 @@ final class IndexedPalette extends Palette {
             sm = cm.createCompatibleSampleModel(1, 1);
         } else {
             cm = ColorUtilities.getIndexColorModel(ARGB, numBands, visibleBand, -1);
-            if (packed) {
+            if (packed && numBands == 1) {
                 sm = new MultiPixelPackedSampleModel(type, 1, 1, bits);
             } else {
-                sm = new PixelInterleavedSampleModel(type, 1, 1, 1, 1, new int[1]);
+                final int[] bandOffsets = new int[numBands];
+                for (int i=1; i<bandOffsets.length; i++) {
+                    bandOffsets[i] = i;
+                }
+                sm = new PixelInterleavedSampleModel(type, 1, 1, numBands, numBands, bandOffsets);
             }
         }
         return new ImageTypeSpecifier(cm, sm);

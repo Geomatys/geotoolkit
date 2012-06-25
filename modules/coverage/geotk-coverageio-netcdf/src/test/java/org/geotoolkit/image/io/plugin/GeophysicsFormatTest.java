@@ -20,6 +20,7 @@ package org.geotoolkit.image.io.plugin;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.awt.image.RenderedImage;
 
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.referencing.operation.Matrix;
@@ -44,11 +45,11 @@ import static org.geotoolkit.test.Commons.*;
  * Tests reading a format in which the data are already geophysics.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @since 3.19
  */
-public final strictfp class GeophysicsFormatTest extends NetcdfTestBase {
+public final strictfp class GeophysicsFormatTest extends NetcdfImageReaderTestBase {
     /**
      * Returns the file to test, which is optional. If the test file is not present,
      * the test will be interrupted by the JUnit {@link org.junit.Assume} class.
@@ -65,10 +66,13 @@ public final strictfp class GeophysicsFormatTest extends NetcdfTestBase {
      * from the parent class, and by the tests defined in this class.
      */
     @Override
-    protected NetcdfImageReader createImageReader() throws IOException {
-        final NetcdfImageReader reader = new NetcdfImageReader(null);
-        reader.setInput(getTestFile());
-        return reader;
+    protected void prepareImageReader(final boolean setInput) throws IOException {
+        if (reader == null) {
+            reader = new NetcdfImageReader(null);
+        }
+        if (setInput) {
+            reader.setInput(getTestFile());
+        }
     }
 
     /**
@@ -79,7 +83,8 @@ public final strictfp class GeophysicsFormatTest extends NetcdfTestBase {
      */
     @Test
     public void testMetadata() throws IOException, CoverageStoreException {
-        final NetcdfImageReader reader = createImageReader();
+        prepareImageReader(true);
+        final NetcdfImageReader reader = (NetcdfImageReader) this.reader;
         final SpatialMetadata metadata = reader.getImageMetadata(0);
         final String asTree = metadata.toString();
         assertNotNull(metadata);
@@ -142,7 +147,6 @@ public final strictfp class GeophysicsFormatTest extends NetcdfTestBase {
             "            ├───maxValue=“30.0”\n" +
             "            ├───validSampleValues=“[-2 … 30]”\n" +
             "            └───fillSampleValues=“-99.99”\n"), asTree);
-        reader.dispose();
     }
 
     /**
@@ -153,8 +157,9 @@ public final strictfp class GeophysicsFormatTest extends NetcdfTestBase {
      */
     @Test
     public void testCoverageReader() throws IOException, CoverageStoreException {
+        prepareImageReader(true);
         final ImageCoverageReader reader = new ImageCoverageReader();
-        reader.setInput(createImageReader());
+        reader.setInput(this.reader);
         assertEquals("temp", getSingleton(reader.getCoverageNames()).toString());
         final GridCoverage2D coverage = reader.read(0, null);
         reader.dispose(); // Dispose also the NetcdfImageReader.
@@ -189,7 +194,7 @@ public final strictfp class GeophysicsFormatTest extends NetcdfTestBase {
         // If some -99.99 values have not been properly converted to NaN,
         // then this test will fail.
         //
-        image = coverage.getRenderedImage();
+        final RenderedImage image = coverage.getRenderedImage();
         assertSampleValuesInRange(-2, 30, image);
         //
         // Check the grid geometry.

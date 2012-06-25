@@ -406,7 +406,7 @@ public class AsciiGridWriter extends TextImageWriter {
         /**
          * The provider of the corresponding image reader.
          */
-        private static final String[] READERS = {"org.geotoolkit.image.io.plugin.AsciiGridReader.Spi"};
+        private static final String[] READERS = {"org.geotoolkit.image.io.plugin.AsciiGridReader$Spi"};
 
         /**
          * Constructs a default {@code AsciiGridWriter.Spi}. The fields are initialized as

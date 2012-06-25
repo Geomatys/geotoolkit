@@ -73,7 +73,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * situation, a plain {@code AbstractCS} object may be instantiated.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @see DefaultCoordinateSystemAxis
  * @see javax.measure.unit.Unit
@@ -106,12 +106,6 @@ public class AbstractCS extends AbstractIdentifiedObject implements CoordinateSy
      */
     @XmlElement
     private final CoordinateSystemAxis[] axis;
-
-    /**
-     * The unit for measuring distance in this coordinate system, or {@code null} if none.
-     * Will be computed only when first needed.
-     */
-    private transient volatile Unit<?> distanceUnit;
 
     /**
      * Constructs a new object in which every attributes are set to a default value.
@@ -443,35 +437,6 @@ public class AbstractCS extends AbstractIdentifiedObject implements CoordinateSy
     }
 
     /**
-     * Suggests an unit for measuring distances in this coordinate system. The default
-     * implementation scans all {@linkplain CoordinateSystemAxis#getUnit axis units},
-     * ignoring angular ones (this also implies ignoring {@linkplain Unit#ONE dimensionless} ones).
-     * If more than one non-angular unit is found, the default implementation returns the "largest"
-     * one (e.g. kilometre instead of metre).
-     *
-     * @return Suggested distance unit.
-     */
-    final Unit<?> getDistanceUnit() {
-        Unit<?> unit = distanceUnit;  // Avoid the need for synchronization.
-        if (unit == null) {
-            double maxScale = 0;
-            for (int i=0; i<axis.length; i++) {
-                final Unit<?> candidate = axis[i].getUnit();
-                if (candidate != null && !Units.isAngular(candidate)) {
-                    // TODO: checks the unit scale type (keeps RATIO only).
-                    final double scale = Math.abs(Units.toStandardUnit(candidate));
-                    if (unit == null || scale > maxScale) {
-                        unit = candidate;
-                        maxScale = scale;
-                    }
-                }
-            }
-            distanceUnit = unit;
-        }
-        return unit;
-    }
-
-    /**
      * Convenience method for checking object dimension validity.
      *
      * @param  name The name of the argument to check.
@@ -490,39 +455,54 @@ public class AbstractCS extends AbstractIdentifiedObject implements CoordinateSy
 
     /**
      * Computes the distance between two points. This method is not available for all coordinate
-     * systems. For example, {@linkplain DefaultEllipsoidalCS ellipsoidal CS} doesn't have
+     * systems. For example, the {@linkplain DefaultEllipsoidalCS ellipsoidal CS} doesn't have
      * sufficient information.
+     * <p>
+     * In the default Geotk implementation, this method is supported by the following class:
+     * <p>
+     * <ul>
+     *   <li>All one-dimensional coordinate systems ({@link DefaultLinearCS},
+     *       {@link DefaultVerticalCS}, {@link DefaultTimeCS}), in which case this method
+     *       returns the absolute difference between the given ordinate values.</li>
+     *   <li>{@link DefaultCartesianCS#distance(double[], double[])}.</li>
+     * </ul>
      *
      * @param  coord1 Coordinates of the first point.
      * @param  coord2 Coordinates of the second point.
      * @return The distance between {@code coord1} and {@code coord2}.
      * @throws UnsupportedOperationException if this coordinate system can't compute distances.
      * @throws MismatchedDimensionException if a coordinate doesn't have the expected dimension.
-     *
-     * @todo Provides a localized message in the exception.
      */
     public Measure distance(final double[] coord1, final double[] coord2)
             throws UnsupportedOperationException, MismatchedDimensionException
     {
-        throw new UnsupportedOperationException();
+        ensureDimensionMatch("coord1", coord1);
+        ensureDimensionMatch("coord2", coord2);
+        if (axis.length == 1) {
+            return new Measure(Math.abs(coord1[0] - coord2[0]), axis[0].getUnit());
+        }
+        throw new UnsupportedOperationException(Errors.format(Errors.Keys.UNSUPPORTED_COORDINATE_SYSTEM_$1, getClass()));
     }
 
     /**
      * Returns all axis in the specified unit. This method is used for implementation of
      * {@code usingUnit} methods in subclasses.
      *
-     * @param  unit The unit for the new axis.
-     * @return New axis using the specified unit, or {@code null} if current axis fits.
-     * @throws IllegalArgumentException If the specified unit is incompatible with the expected one.
+     * @param  unit The unit for the new axes.
+     * @param  ignore {@link SI#METRE} for ignoring linear units, {@link SI#RADIAN} for ignoring
+     *         angular units, or {@code null} for none.
+     * @return New axes using the specified unit, or {@code null} if no change is needed.
+     * @throws ConversionException If the specified unit is incompatible with the expected one.
      *
-     * @see DefaultCartesianCS#usingUnit
-     * @see DefaultEllipsoidalCS#usingUnit
+     * @see DefaultCartesianCS#usingUnit(Unit)
+     * @see DefaultEllipsoidalCS#usingUnit(Unit)
      */
-    final CoordinateSystemAxis[] axisUsingUnit(final Unit<?> unit) throws IllegalArgumentException {
+    final CoordinateSystemAxis[] axisUsingUnit(final Unit<?> unit, final Unit<?> ignore) throws ConversionException {
         CoordinateSystemAxis[] newAxis = null;
         for (int i=0; i<axis.length; i++) {
             final CoordinateSystemAxis a = axis[i];
-            if (!unit.equals(a.getUnit())) {
+            final Unit<?> current = a.getUnit();
+            if (!unit.equals(current) && (ignore == null || !ignore.equals(unit.toSI()))) {
                 final DefaultCoordinateSystemAxis converted =
                         DefaultCoordinateSystemAxis.castOrCopy(a).usingUnit(unit);
                 if (converted != a) {

@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.HashMap;
 
 import org.opengis.referencing.cs.AxisDirection;
+import org.opengis.referencing.cs.CoordinateSystem;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.util.Utilities;
@@ -32,10 +33,12 @@ import static org.opengis.referencing.cs.AxisDirection.*;
  * Utilities methods related to {@link AxisDirection}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.14
+ * @version 3.20
  *
  * @since 3.13
  * @module
+ *
+ * @todo Consider moving to a public package.
  */
 public final class AxisDirections extends Static {
     /**
@@ -74,20 +77,6 @@ public final class AxisDirections extends Static {
         }
     }
 
-    /**
-     * Returns the opposite direction of the given direction. The opposite direction of
-     * {@linkplain #NORTH North} is {@linkplain #SOUTH South}, and the opposite direction
-     * of {@linkplain #SOUTH South} is {@linkplain #NORTH North}. The same applies to
-     * {@linkplain #EAST East}-{@linkplain #WEST West}, {@linkplain #UP Up}-{@linkplain #DOWN Down}
-     * and {@linkplain #FUTURE Future}-{@linkplain #PAST Past}, <i>etc.</i> If the given axis
-     * direction has no opposite, then this method returns {@code null}.
-     *
-     * @param  dir The direction for which to return the opposite direction.
-     * @return The opposite direction, or {@code null} if none or unknown.
-     */
-    public static AxisDirection opposite(final AxisDirection dir) {
-        return opposites.get(dir);
-    }
     /**
      * Returns the "absolute" direction of the given direction.
      * This "absolute" operation is similar to the {@code Math.abs(int)}
@@ -140,6 +129,21 @@ public final class AxisDirections extends Static {
     }
 
     /**
+     * Returns the opposite direction of the given direction. The opposite direction of
+     * {@linkplain #NORTH North} is {@linkplain #SOUTH South}, and the opposite direction
+     * of {@linkplain #SOUTH South} is {@linkplain #NORTH North}. The same applies to
+     * {@linkplain #EAST East}-{@linkplain #WEST West}, {@linkplain #UP Up}-{@linkplain #DOWN Down}
+     * and {@linkplain #FUTURE Future}-{@linkplain #PAST Past}, <i>etc.</i> If the given axis
+     * direction has no opposite, then this method returns {@code null}.
+     *
+     * @param  dir The direction for which to return the opposite direction.
+     * @return The opposite direction, or {@code null} if none or unknown.
+     */
+    public static AxisDirection opposite(final AxisDirection dir) {
+        return opposites.get(dir);
+    }
+
+    /**
      * Returns {@code true} if the given direction is an "opposite" direction.
      * If this method can not determine if the given direction is an "opposite"
      * one, then it conservatively returns {@code true}.
@@ -151,5 +155,35 @@ public final class AxisDirections extends Static {
      */
     public static boolean isOpposite(final AxisDirection dir) {
         return Utilities.equals(dir, opposite(absolute(dir)));
+    }
+
+    /**
+     * Finds the dimension of an axis having the given direction or its opposite.
+     * If more than one axis has the given direction, only the first occurrence is returned.
+     * If both the given direction and its opposite exist, then the dimension for the given
+     * direction has precedence over the opposite direction.
+     *
+     * @param  cs The coordinate system to inspect, or {@code null}.
+     * @param  direction The direction of the axis to search.
+     * @return The dimension of the axis using the given direction or its opposite, or -1 if none.
+     *
+     * @since 3.20
+     */
+    public static int indexOf(final CoordinateSystem cs, final AxisDirection direction) {
+        int fallback = -1;
+        if (cs != null) {
+            final AxisDirection opposite = opposite(direction);
+            final int dimension = cs.getDimension();
+            for (int i=0; i<dimension; i++) {
+                final AxisDirection d = cs.getAxis(i).getDirection();
+                if (direction.equals(d)) {
+                    return i;
+                }
+                if (fallback < 0 && opposite.equals(d)) {
+                    fallback = i;
+                }
+            }
+        }
+        return fallback;
     }
 }

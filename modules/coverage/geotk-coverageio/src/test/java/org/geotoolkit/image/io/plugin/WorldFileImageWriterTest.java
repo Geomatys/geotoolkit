@@ -43,9 +43,11 @@ import static org.geotoolkit.test.Commons.*;
  * Tests {@link WorldFileImageWriter}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @since 3.07
+ *
+ * @see <a href="http://jira.geotoolkit.org/browse/GEOTK-232">GEOTK-232</a>
  */
 public final strictfp class WorldFileImageWriterTest extends TextImageWriterTestBase {
     /**
@@ -58,7 +60,17 @@ public final strictfp class WorldFileImageWriterTest extends TextImageWriterTest
      * Creates a new test suite.
      */
     public WorldFileImageWriterTest() {
-        super(WorldFileImageWriter.class);
+        sampleToleranceThreshold = 1E-3;
+    }
+
+    /**
+     * Registers world file plugins. This is necessary for running the tests
+     * inherited from {@link org.opengis.test.image.io.ImageWriterTestCase}.
+     */
+    @Before
+    public void registerPlugins() {
+        WorldFileImageReader.Spi.registerDefaults(null);
+        WorldFileImageWriter.Spi.registerDefaults(null);
     }
 
     /**
@@ -83,10 +95,12 @@ public final strictfp class WorldFileImageWriterTest extends TextImageWriterTest
      * Creates a writer.
      */
     @Override
-    protected WorldFileImageWriter createImageWriter() throws IOException {
-        final WorldFileImageWriter.Spi spi = new WorldFileImageWriter.Spi(new TextMatrixImageWriter.Spi());
-        final WorldFileImageWriter writer = new WorldFileImageWriter(spi);
-        return writer;
+    protected void prepareImageWriter(final boolean optionallySetOutput) throws IOException {
+        if (writer == null) {
+            final String format = TextMatrixImageReader.Spi.NAMES[0] + WorldFileImageReader.Spi.NAME_SUFFIX;
+            writer = XImageIO.getWriterByFormatName(format, null, null);
+            assertNotNull(format, writer);
+        }
     }
 
     /**
@@ -101,15 +115,26 @@ public final strictfp class WorldFileImageWriterTest extends TextImageWriterTest
     }
 
     /**
+     * Ignored for now.
+     *
+     * @see <a href="http://jira.geotoolkit.org/browse/GEOTK-232">GEOTK-232</a>
+     */
+    @Override
+    @Ignore("The TextMatrixImageWriter doesn't allocate enough space for the 'int' type.")
+    public void testOneIntBand() {
+    }
+
+    /**
      * Tests the write operation.
      *
      * @throws IOException If an error occurred while writing to the temporary file.
      */
     @Test
     public void testWrite() throws IOException {
+        prepareImageWriter(false);
         final IIOImage image = createImage(true);
         clearUserObjects(image.getMetadata());
-        final WorldFileImageWriter writer = createImageWriter();
+        final WorldFileImageWriter writer = (WorldFileImageWriter) this.writer;
         final File file = TemporaryFile.createTempFile("TEST", ".txt", null);
         File fileTFW = null, filePRJ = null;
         try {

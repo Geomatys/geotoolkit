@@ -41,17 +41,20 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 3.19 (derived from 3.16)
  */
-public final strictfp class GDALFormatTest extends NetcdfTestBase {
+public final strictfp class GDALFormatTest extends NetcdfImageReaderTestBase {
     /**
      * Creates a reader and initializes its input to the test file defined in
      * {@link #getTestFile()}. This method is invoked by each tests inherited
      * from the parent class, and by the tests defined in this class.
      */
     @Override
-    protected NetcdfImageReader createImageReader() throws IOException {
-        final NetcdfImageReader reader = new NetcdfImageReader(null);
-        reader.setInput(open(IOTestCase.LANDSAT));
-        return reader;
+    protected void prepareImageReader(final boolean setInput) throws IOException {
+        if (reader == null) {
+            reader = new NetcdfImageReader(null);
+        }
+        if (setInput) {
+            reader.setInput(open(IOTestCase.LANDSAT));
+        }
     }
 
     /**
@@ -62,7 +65,8 @@ public final strictfp class GDALFormatTest extends NetcdfTestBase {
      */
     @Test
     public void testGridGeometry() throws IOException, CoverageStoreException {
-        final NetcdfImageReader reader = createImageReader();
+        prepareImageReader(true);
+        final NetcdfImageReader reader = (NetcdfImageReader) this.reader;
         final SpatialMetadata metadata = reader.getImageMetadata(0);
         final String asTree = metadata.toString();
         /*

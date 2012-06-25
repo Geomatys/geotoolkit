@@ -406,7 +406,7 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
 
     /**
      * Restricts this envelope to the CS or CRS
-     * {@linkplain CoordinateReferenceSystem#getDomainOfValidity domain of validity}.
+     * {@linkplain CoordinateReferenceSystem#getDomainOfValidity() domain of validity}.
      * This method performs two steps:
      *
      * <ol>
@@ -414,34 +414,55 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
      *   coordinate system} domain. If some ordinates are out of range, then there is a choice
      *   depending on the {@linkplain CoordinateSystemAxis#getRangeMeaning() range meaning}:</p>
      *   <ul>
-     *     <li>If {@link RangeMeaning#EXACT} (typically <em>latitudes</em> ordinates), then values
+     *     <li><p>If {@link RangeMeaning#EXACT} (typically <em>latitudes</em> ordinates), then values
      *       greater than the {@linkplain CoordinateSystemAxis#getMaximumValue() maximum value} are
      *       replaced by the maximum, and values smaller than the
-     *       {@linkplain CoordinateSystemAxis#getMinimumValue() minimum value} are replaced by the minimum.</li>
+     *       {@linkplain CoordinateSystemAxis#getMinimumValue() minimum value} are replaced by the minimum.</p></li>
      *
-     *     <li>If {@link RangeMeaning#WRAPAROUND} (typically <em>longitudes</em> ordinates),
+     *     <li><p>If {@link RangeMeaning#WRAPAROUND} (typically <em>longitudes</em> ordinates),
      *       then a multiple of the range (e.g. 360° for longitudes) is added or subtracted.
-     *       For example the [185 … 190]° longitude range is converted to [-175 … -170]°, and
-     *       the [175 … 185]° longitude range is converted to [175 … -175]°.
+     *       Example:
+     *       <ul>
+     *         <li>the [190 … 200]° longitude range is converted to [-170 … -160]°,</li>
+     *         <li>the [170 … 200]° longitude range is converted to [+170 … -160]°.</li>
+     *       </ul>
      *       See <cite>Spanning the anti-meridian of a Geographic CRS</cite> in the
-     *       class javadoc for more information about the meaning of such range.</li>
+     *       class javadoc for more information about the meaning of such range.</p></li>
      *   </ul></li>
      *   <li><p>If {@code crsDomain} is {@code true}, then the envelope from the previous step
      *   is intersected with the CRS {@linkplain CoordinateReferenceSystem#getDomainOfValidity()
      *   domain of validity}, if any.</p></li>
      * </ol>
      *
-     * This method is useful before to project an envelope, since some projections may produce
-     * {@link Double#NaN} numbers when given an ordinate value out of bounds. Note however that
-     * if the envelope is spanning the anti-meridian, then some {@linkplain #getLower(int) lower}
-     * ordinate values may become greater than {@linkplain #getUpper(int) upper} ordinate values
-     * even if it was not the case before this method call. If this is not acceptable, consider
+     * {@section Spanning the anti-meridian of a Geographic CRS}
+     * Note that if the envelope is spanning the anti-meridian, then some {@linkplain #getLower(int)
+     * lower} ordinate values may become greater than the {@linkplain #getUpper(int) upper} ordinate
+     * values even if it was not the case before this method call. If this is not acceptable, consider
      * invoking {@link #reorderCorners()} after this method call.
+     *
+     * {@section Choosing the range of longitude values}
+     * Geographic CRS typically have longitude values in the [-180 … +180]° range,
+     * but the [0 … 360]° range is also occasionally used. Callers need to ensure
+     * that this envelope CRS is associated to axes having the desired
+     * {@linkplain CoordinateSystemAxis#getMinimumValue() minimum} and
+     * {@linkplain CoordinateSystemAxis#getMaximumValue() maximum value}.
+     * The {@link org.geotoolkit.referencing.cs.AxisRangeType} enumeration can be used
+     * for shifting a geographic CRS to the desired range.
+     *
+     * {@section Usage}
+     * This method is sometime useful before to compute the {@linkplain #add(Envelope) union}
+     * or {@linkplain #intersect(Envelope) intersection} of envelopes, in order to ensure that
+     * both envelopes are defined in the same domain. This method may also be invoked before
+     * to project an envelope, since some projections produce {@link Double#NaN} numbers when
+     * given an ordinate value out of bounds.
      *
      * @param  useDomainOfCRS {@code true} if the envelope should be restricted to
      *         the CRS <cite>domain of validity</cite> in addition to the CS domain.
      * @return {@code true} if this envelope has been modified as a result of this method call,
      *         or {@code false} if no change was done.
+     *
+     * @see CoordinateReferenceSystem#getDomainOfValidity()
+     * @see org.geotoolkit.referencing.cs.AxisRangeType
      *
      * @since 3.11 (derived from 2.5)
      */
@@ -523,37 +544,41 @@ public class GeneralEnvelope extends ArrayEnvelope implements Cloneable, Seriali
     // Note: As of JDK 1.6.0_31, using {@linkplain #getLower(int)} in the first line crash the
     // Javadoc tools, maybe because getLower/getUpper are defined in a non-public parent class.
     /**
-     * Tries to use a <var>lower</var> &lt; <var>upper</var> relationship for the ordinate values
-     * in every dimension. If a upper ordinate value is less than a lower ordinate value, then this
-     * method will shift that upper ordinate by some multiple of the axis span (typically 360° of
-     * longitude). This operation is applied only on axes having {@link RangeMeaning#WRAPAROUND}.
+     * Ensures that <var>lower</var> &lt;= <var>upper</var> for every dimensions.
+     * If a {@linkplain #getUpper(int) upper ordinate value} is less than a
+     * {@linkplain #getLower(int) lower ordinate value}, then there is a choice:
      * <p>
-     * This method is sometime useful before to compute the {@linkplain #add(Envelope) union}
-     * or {@linkplain #intersect(Envelope) intersection} of envelopes.
+     * <ul>
+     *   <li>If the axis has {@link RangeMeaning#WRAPAROUND}, then the lower ordinate value is
+     *       set to the {@linkplain CoordinateSystemAxis#getMinimumValue() axis minimum value}
+     *       and the upper ordinate value is set to the
+     *       {@linkplain CoordinateSystemAxis#getMaximumValue() axis maimum value}.</li>
+     *   <li>Otherwise an {@link IllegalStateException} is thrown.</li>
+     * </ul>
+     * <p>
+     * This method is useful when the envelope needs to be used with library that doesn't support
+     * envelopes spanning the anti-meridian.
      *
      * @return {@code true} if this envelope has been modified as a result of this method call,
      *         or {@code false} if no change was done.
+     * @throws IllegalStateException If a upper ordinate value is less than a lower ordinate
+     *         value on an axis which doesn't have the {@code WRAPAROUND} range meaning.
      *
      * @since 3.20
      */
-    public boolean reorderCorners() {
+    public boolean reorderCorners() throws IllegalStateException {
         boolean changed = false;
-        final CoordinateReferenceSystem crs = this.crs;
-        if (crs != null) {
-            final int dimension = ordinates.length >>> 1;
-            for (int i=0; i<dimension; i++) {
-                final int j = i+dimension;
-                final double lower = ordinates[i];
-                final double upper = ordinates[j];
-                final double span  = upper - lower;
-                if (isNegative(span)) {
-                    final double csSpan = getSpan(crs.getCoordinateSystem().getAxis(i));
-                    if (csSpan > 0 && csSpan < Double.POSITIVE_INFINITY) {
-                        changed = true;
-                        ordinates[j] = (span != 0) ?
-                                upper - Math.floor(span / csSpan) * csSpan :
-                                upper + csSpan;
-                    }
+        final int dimension = ordinates.length >>> 1;
+        for (int i=0; i<dimension; i++) {
+            final int j = i+dimension;
+            if (isNegative(ordinates[j] - ordinates[i])) {
+                final CoordinateSystemAxis axis = getAxis(crs, i);
+                if (axis != null && RangeMeaning.WRAPAROUND.equals(axis.getRangeMeaning())) {
+                    ordinates[i] = axis.getMinimumValue();
+                    ordinates[j] = axis.getMaximumValue();
+                    changed = true;
+                } else {
+                    throw new IllegalStateException(Errors.format(Errors.Keys.MALFORMED_ENVELOPE));
                 }
             }
         }

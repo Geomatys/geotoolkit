@@ -148,8 +148,11 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
     /**
      * The NetCDF file from which to extract ISO metadata.
      * This file is set at construction time.
+     * <p>
+     * This {@code NetcdfMetadataReader} class does <strong>not</strong> close this file.
+     * Closing this file after usage is the user responsibility.
      */
-    private final NetcdfFile file;
+    protected final NetcdfFile file;
 
     /**
      * The groups where to look for metadata, in precedence order. The first group shall be
@@ -190,9 +193,8 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
      * necessary in order to get coordinate system information.
      *
      * @param file  The NetCDF file from which to parse metadata.
-     * @param owner Typically the {@link org.geotoolkit.image.io.SpatialImageReader} or
-     *              {@link org.geotoolkit.image.io.SpatialImageWriter} object using this
-     *              transcoder, or {@code null}.
+     * @param owner Typically the {@link org.geotoolkit.image.io.SpatialImageReader} instance
+     *              using this decoder, or {@code null}.
      */
     public NetcdfMetadataReader(final NetcdfFile file, final WarningProducer owner) {
         super(owner);
@@ -940,7 +942,7 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
         final String processingLevel = getStringValue(PROCESSING_LEVEL);
         final List<? extends VariableIF> variables = file.getVariables();
         for (final VariableSimpleIF variable : variables) {
-            if (!NetcdfVariable.isCoverage(variable, variables)) {
+            if (!NetcdfVariable.isCoverage(variable, variables, 2)) {
                 // Same exclusion criterion than the one applied in NetcdfImageReader.getImageNames().
                 continue;
             }
@@ -1081,7 +1083,7 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
      * @return The ISO metadata object.
      * @throws IOException If an I/O operation was necessary but failed.
      */
-    public Metadata readMetadata() throws IOException {
+    public Metadata read() throws IOException {
         final DefaultMetadata metadata = new DefaultMetadata();
         metadata.setMetadataStandardName("ISO 19115-2 Geographic Information - Metadata Part 2 Extensions for imagery and gridded data");
         metadata.setMetadataStandardVersion("ISO 19115-2:2009(E)");

@@ -70,7 +70,7 @@ public final strictfp class SpatialImageReadParamTest {
         reader.getDimensionForAPI(BANDS).addDimensionId("depth");
         assertTrue(reader.getAPIForDimensions().contains(BANDS));
         param = reader.getDefaultReadParam();
-        assertArrayEquals(new int[1], param.getSourceBands());
+        assertNull(param.getSourceBands());
         /*
          * When a dimension is assigned to bands, the slice index
          * shall be the first band.

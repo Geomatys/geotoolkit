@@ -51,21 +51,17 @@ import static org.geotoolkit.image.io.plugin.WorldFileImageReader.Spi.NAME_SUFFI
 @Depend(TextMatrixImageReader.class)
 public final strictfp class WorldFileImageReaderTest extends TextImageReaderTestBase {
     /**
-     * Creates a new test suite.
-     */
-    public WorldFileImageReaderTest() {
-        super(WorldFileImageReader.class);
-    }
-
-    /**
-     * Creates a reader.
+     * Creates a reader and sets its input if needed.
      */
     @Override
-    protected WorldFileImageReader createImageReader() throws IOException {
-        final WorldFileImageReader.Spi spi = new WorldFileImageReader.Spi(new TextMatrixImageReaderTest.Spi());
-        final WorldFileImageReader reader = new WorldFileImageReader(spi);
-        reader.setInput(TestData.file(this, "matrix.txt"));
-        return reader;
+    protected void prepareImageReader(final boolean setInput) throws IOException {
+        if (reader == null) {
+            WorldFileImageReader.Spi spi = new WorldFileImageReader.Spi(new TextMatrixImageReaderTest.Spi());
+            reader = new WorldFileImageReader(spi);
+        }
+        if (setInput) {
+            reader.setInput(TestData.file(this, "matrix.txt"));
+        }
     }
 
     /**
@@ -75,11 +71,11 @@ public final strictfp class WorldFileImageReaderTest extends TextImageReaderTest
      */
     @Test
     public void testMetadata() throws IOException {
-        final WorldFileImageReader reader = createImageReader();
+        prepareImageReader(true);
         assertEquals(20, reader.getWidth (0));
         assertEquals(42, reader.getHeight(0));
         assertNull(reader.getStreamMetadata());
-        final SpatialMetadata metadata = reader.getImageMetadata(0);
+        final SpatialMetadata metadata = (SpatialMetadata) reader.getImageMetadata(0);
         assertNotNull(metadata);
         assertMultilinesEquals(decodeQuotes(SpatialMetadataFormat.FORMAT_NAME + '\n' +
                 "├───ImageDescription\n" +
@@ -133,7 +129,6 @@ public final strictfp class WorldFileImageReaderTest extends TextImageReaderTest
                 "    ├───numberOfDimensions=“2”\n" +
                 "    ├───centerPoint=“0.0 0.0”\n" +
                 "    └───pointInPixel=“upperLeft”"), metadata.toString());
-        reader.dispose();
     }
 
     /**

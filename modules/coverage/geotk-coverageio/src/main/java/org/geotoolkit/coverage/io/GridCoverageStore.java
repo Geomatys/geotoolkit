@@ -54,6 +54,7 @@ import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.internal.referencing.AxisDirections;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.cs.AxisRangeType;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
@@ -77,7 +78,7 @@ import static org.geotoolkit.internal.InternalUtilities.adjustForRoundingError;
  * {@linkplain #reset() reset} or {@linkplain #dispose() dispose} the reader or writer.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.16
+ * @version 3.20
  *
  * @since 3.12
  * @module
@@ -408,10 +409,12 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
             final GridCoverageStoreParam geodeticParam, final IIOParam pixelParam)
             throws CoverageStoreException
     {
+        final boolean needsLongitudeShift = AxisRangeType.POSITIVE_LONGITUDE.indexIn(
+                gridGeometry.getCoordinateReferenceSystem().getCoordinateSystem()) >= 0;
         final MathTransform2D destToExtractedGrid;
         try {
             destToExtractedGrid = geodeticToPixelCoordinates(gridGeometry,
-                    geodeticParam.getValidEnvelope(),
+                    geodeticParam.getValidEnvelope(needsLongitudeShift),
                     geodeticParam.getResolution(),
                     geodeticParam.getCoordinateReferenceSystem(),
                     pixelParam);

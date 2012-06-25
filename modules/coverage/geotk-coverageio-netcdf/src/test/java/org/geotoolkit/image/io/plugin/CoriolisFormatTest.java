@@ -53,7 +53,7 @@ import static javax.measure.unit.NonSI.DEGREE_ANGLE;
 
 /**
  * Tests using the {@code "World/Coriolis/OA_RTQCGL01_20070606_FLD_TEMP.nc"} file.
- * This test class queries many different aspects of the same file. The date are
+ * This test class queries many different aspects of the same file. The data are
  * loaded using:
  * <p>
  * <ul>
@@ -62,11 +62,11 @@ import static javax.measure.unit.NonSI.DEGREE_ANGLE;
  * </ul>
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @since 3.08
  */
-public final strictfp class CoriolisFormatTest extends NetcdfTestBase {
+public final strictfp class CoriolisFormatTest extends NetcdfImageReaderTestBase {
     /**
      * The directory which contains the data used by the tests.
      *
@@ -204,11 +204,14 @@ public final strictfp class CoriolisFormatTest extends NetcdfTestBase {
      * from the parent class, and by the tests defined in this class.
      */
     @Override
-    protected NetcdfImageReader createImageReader() throws IOException {
-        NetcdfImageReader.Spi spi = new NetcdfImageReader.Spi();
-        final NetcdfImageReader reader = new NetcdfImageReader(spi);
-        reader.setInput(getTestFile());
-        return reader;
+    protected void prepareImageReader(final boolean setInput) throws IOException {
+        if (reader == null) {
+            NetcdfImageReader.Spi spi = new NetcdfImageReader.Spi();
+            reader = new NetcdfImageReader(spi);
+        }
+        if (setInput) {
+            reader.setInput(getTestFile());
+        }
     }
 
     /**
@@ -272,7 +275,8 @@ public final strictfp class CoriolisFormatTest extends NetcdfTestBase {
      */
     @Test
     public void testMetadata() throws IOException {
-        final NetcdfImageReader reader = createImageReader();
+        prepareImageReader(true);
+        final NetcdfImageReader reader = (NetcdfImageReader) this.reader;
         assertArrayEquals(new String[] {"temperature", "pct_variance"}, reader.getImageNames().toArray());
         assertEquals(  2, reader.getNumImages(false));
         assertEquals(  1, reader.getNumBands (0));
@@ -295,7 +299,6 @@ public final strictfp class CoriolisFormatTest extends NetcdfTestBase {
             "            ├───scaleFactor=“0.0010”\n" +
             "            ├───offset=“20.0”\n" +
             "            └───transferFunctionType=“linear”"), simplify(metadata.toString()));
-        reader.dispose();
     }
 
     /**
@@ -305,7 +308,8 @@ public final strictfp class CoriolisFormatTest extends NetcdfTestBase {
      */
     @Test
     public void testMetadataTwoBands() throws IOException {
-        final NetcdfImageReader reader = createImageReader();
+        prepareImageReader(true);
+        final NetcdfImageReader reader = (NetcdfImageReader) this.reader;
         reader.setBandNames(0, "temperature", "pct_variance");
         assertEquals(  2, reader.getNumBands (0));
         assertEquals(  4, reader.getDimension(0));
@@ -336,7 +340,6 @@ public final strictfp class CoriolisFormatTest extends NetcdfTestBase {
             "            ├───fillSampleValues=“32767.0”\n" +
             "            ├───scaleFactor=“0.01”\n" +
             "            └───transferFunctionType=“linear”"), simplify(metadata.toString()));
-        reader.dispose();
     }
 
     /**
@@ -348,7 +351,8 @@ public final strictfp class CoriolisFormatTest extends NetcdfTestBase {
      */
     @Test
     public void testReadSliceThroughBandAPI() throws IOException {
-        final NetcdfImageReader reader = createImageReader();
+        prepareImageReader(true);
+        final NetcdfImageReader reader = (NetcdfImageReader) this.reader;
         assertEquals("Unexpected number of variables.",      2, reader.getNumImages(true));
         assertEquals("Expected only 1 band by default.",     1, reader.getNumBands(0));
         reader.getDimensionForAPI(DimensionSlice.API.BANDS).addDimensionId("depth");
@@ -362,12 +366,13 @@ public final strictfp class CoriolisFormatTest extends NetcdfTestBase {
          */
         final SpatialImageReadParam param = reader.getDefaultReadParam();
         param.setSourceRegion(new Rectangle(360, 260, 2, 3));
+        param.setSourceBands(new int[] {0});
         Raster data;
         /*
-         * Read data at the default band index, which is 0.
+         * Read data at the first band index, which is 0.
          */
         assertArrayEquals(new int[] {0}, param.getSourceBands());
-        data = read("testReadSliceThroughBandAPI(0)", reader, 0, param);
+        data = reader.readRaster(0, param);
         assertEquals(2, data.getWidth());
         assertEquals(3, data.getHeight());
         assertEquals(1, data.getNumBands());
@@ -377,13 +382,12 @@ public final strictfp class CoriolisFormatTest extends NetcdfTestBase {
          * Select a band and read data again.
          */
         param.setSourceBands(new int[] {1});
-        data = read("testReadSliceThroughBandAPI(1)", reader, 0, param);
+        data = reader.readRaster(0, param);
         assertEquals(2, data.getWidth());
         assertEquals(3, data.getHeight());
         assertEquals(1, data.getNumBands());
         assertArrayEquals(new int[] {5880, 5888, 6007, 6007, 6125, 6124},
                 data.getSamples(0, 0, 2, 3, 0, (int[]) null));
-        reader.dispose();
     }
 
     /**
@@ -395,7 +399,8 @@ public final strictfp class CoriolisFormatTest extends NetcdfTestBase {
      */
     @Test
     public void testReadSliceThroughImageAPI() throws IOException {
-        final NetcdfImageReader reader = createImageReader();
+        prepareImageReader(true);
+        final NetcdfImageReader reader = (NetcdfImageReader) this.reader;
         assertEquals("Unexpected number of variables.",      2, reader.getNumImages(true));
         assertEquals("Expected only 1 band by default.",     1, reader.getNumBands(0));
         reader.getDimensionForAPI(DimensionSlice.API.IMAGES).addDimensionId("depth");
@@ -414,7 +419,7 @@ public final strictfp class CoriolisFormatTest extends NetcdfTestBase {
         /*
          * Read data in the slice z0.
          */
-        data = read("testReadSliceThroughImageAPI(0)", reader, 0, param);
+        data = reader.readRaster(0, param);
         assertEquals(2, data.getWidth());
         assertEquals(3, data.getHeight());
         assertEquals(1, data.getNumBands());
@@ -423,13 +428,12 @@ public final strictfp class CoriolisFormatTest extends NetcdfTestBase {
         /*
          * Read data in the slice z1.
          */
-        data = read("testReadSliceThroughImageAPI(1)", reader, 1, param);
+        data = reader.readRaster(1, param);
         assertEquals(2, data.getWidth());
         assertEquals(3, data.getHeight());
         assertEquals(1, data.getNumBands());
         assertArrayEquals(new int[] {5880, 5888, 6007, 6007, 6125, 6124},
                 data.getSamples(0, 0, 2, 3, 0, (int[]) null));
-        reader.dispose();
     }
 
     /**

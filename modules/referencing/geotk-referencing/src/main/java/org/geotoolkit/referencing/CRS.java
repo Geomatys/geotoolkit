@@ -21,7 +21,6 @@ import java.util.Set;
 import java.util.Map;
 import java.util.List;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.StringTokenizer;
 import java.util.NoSuchElementException;
 import java.awt.geom.Point2D;
@@ -62,6 +61,7 @@ import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.internal.referencing.AxisDirections;
 import org.geotoolkit.resources.Errors;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
@@ -836,8 +836,7 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
         if (crs instanceof GeographicCRS) {
             final CoordinateSystem cs = crs.getCoordinateSystem();
             if (cs.getDimension()  >= 3) {
-                assert CRSUtilities.dimensionColinearWith(cs,
-                        DefaultCoordinateSystemAxis.ELLIPSOIDAL_HEIGHT) >= 0 : cs;
+                assert AxisDirections.indexOf(cs, AxisDirection.UP) >= 0 : cs;
                 return DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT;
             }
         }
@@ -1003,20 +1002,24 @@ compare:    for (final SingleCRS component : actualComponents) {
                 throw new IndexOutOfBoundsException(Errors.format(
                         Errors.Keys.INDEX_OUT_OF_BOUNDS_$1, lower < 0 ? lower : upper));
             }
-            while (lower != 0 || upper != dimension) {
-                final List<? extends CoordinateReferenceSystem> c = CRSUtilities.getComponents(crs);
-                if (c == null) {
-                    return null;
-                }
-                for (final Iterator<? extends CoordinateReferenceSystem> it=c.iterator(); it.hasNext();) {
-                    crs = it.next();
-                    dimension = crs.getCoordinateSystem().getDimension();
-                    if (lower < dimension) {
-                        break;
+check:      while (lower != 0 || upper != dimension) {
+                if (crs instanceof CompoundCRS) {
+                    final List<CoordinateReferenceSystem> components=((CompoundCRS) crs).getComponents();
+                    final int size = components.size();
+                    for (int i=0; i<size; i++) {
+                        crs = components.get(i);
+                        dimension = crs.getCoordinateSystem().getDimension();
+                        if (lower < dimension) {
+                            // The requested dimensions may intersect the dimension of this CRS.
+                            // The outer loop will perform the verification, and eventually go
+                            // down again in the tree of sub-components.
+                            continue check;
+                        }
+                        lower -= dimension;
+                        upper -= dimension;
                     }
-                    lower -= dimension;
-                    upper -= dimension;
                 }
+                return null;
             }
         }
         return crs;

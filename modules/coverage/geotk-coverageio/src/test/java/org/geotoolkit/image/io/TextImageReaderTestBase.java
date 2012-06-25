@@ -25,9 +25,9 @@ import java.awt.image.DataBuffer;
 import java.awt.image.BufferedImage;
 import java.awt.image.IndexColorModel;
 import javax.imageio.ImageTypeSpecifier;
-import javax.imageio.ImageReader;
+import javax.imageio.ImageIO;
 
-import org.geotoolkit.test.image.ImageReaderTestBase;
+import org.opengis.test.coverage.image.ImageReaderTestCase;
 
 import org.junit.*;
 import static java.lang.Float.NaN;
@@ -38,35 +38,30 @@ import static org.junit.Assert.*;
  * The base class for {@link TextImageReader} tests.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.16
+ * @version 3.20
  *
  * @since 3.06
  */
-public abstract strictfp class TextImageReaderTestBase extends ImageReaderTestBase {
+public abstract strictfp class TextImageReaderTestBase extends ImageReaderTestCase {
     /**
      * The precision for comparison of sample values. The values in the test files provided
      * in this package have 3 significant digits, so the precision is set to the next digit.
      */
-    protected static final float EPS = 0.0001f;
+    private static final float EPS = 0.0001f;
 
     /**
-     * Creates a new test suite for the given class.
-     *
-     * @param testing The class to be tested.
+     * Disables the creation of temporary caches on disk - use the memory instead.
+     * We don't need disk cache since we test only small images.
      */
-    protected TextImageReaderTestBase(final Class<? extends ImageReader> testing) {
-        super(testing);
+    static {
+        ImageIO.setUseCache(false);
     }
 
     /**
-     * Creates the image reader initialized to the input to read. The input
-     * content shall be the same than the {@code "test-data/matrix.txt"} file.
-     *
-     * @return The reader to test.
-     * @throws IOException If an error occurred while creating the reader.
+     * Creates a new test suite.
      */
-    @Override
-    protected abstract SpatialImageReader createImageReader() throws IOException;
+    protected TextImageReaderTestBase() {
+    }
 
     /**
      * Tests the {@link TextImageReader.Spi#canDecodeInput(Object)}.
@@ -75,15 +70,12 @@ public abstract strictfp class TextImageReaderTestBase extends ImageReaderTestBa
      */
     @Test
     public void testCanRead() throws IOException {
-        final SpatialImageReader reader = createImageReader();
+        prepareImageReader(true);
         assertTrue(reader.getOriginatingProvider().canDecodeInput(reader.getInput()));
         /*
          * Ensure that the above check did not caused the lost of data.
          */
         final BufferedImage image = reader.read(0);
-        reader.dispose();
-        this.image = image;
-        showCurrentImage("testCanRead");
 
         assertEquals(20, image.getWidth());
         assertEquals(42, image.getHeight());
@@ -98,14 +90,10 @@ public abstract strictfp class TextImageReaderTestBase extends ImageReaderTestBa
      */
     @Test
     public void testReadFile() throws IOException {
-        final SpatialImageReader reader = createImageReader();
-        final SpatialImageReadParam param = reader.getDefaultReadParam();
+        prepareImageReader(true);
+        final SpatialImageReadParam param = (SpatialImageReadParam) reader.getDefaultReadParam();
         param.setSampleConversionAllowed(SampleConversionType.REPLACE_FILL_VALUES, true);
         final BufferedImage image = reader.read(0, param);
-        reader.dispose();
-
-        this.image = image;
-        showCurrentImage("testReadFile");
 
         assertEquals(20, image.getWidth());
         assertEquals(42, image.getHeight());
@@ -131,16 +119,12 @@ public abstract strictfp class TextImageReaderTestBase extends ImageReaderTestBa
      */
     @Test
     public void testSubRegion() throws IOException {
-        final SpatialImageReader reader = createImageReader();
-        final SpatialImageReadParam param = reader.getDefaultReadParam();
+        prepareImageReader(true);
+        final SpatialImageReadParam param = (SpatialImageReadParam) reader.getDefaultReadParam();
         param.setSampleConversionAllowed(SampleConversionType.REPLACE_FILL_VALUES, true);
         param.setSourceRegion(new Rectangle(5, 10, 10, 20));
         param.setSourceSubsampling(2, 3, 1, 2);
         final BufferedImage image = reader.read(0, param);
-        reader.dispose();
-
-        this.image = image;
-        showCurrentImage("testSubRegion");
 
         assertEquals(5, image.getWidth());
         assertEquals(6, image.getHeight());
@@ -162,8 +146,8 @@ public abstract strictfp class TextImageReaderTestBase extends ImageReaderTestBa
      */
     @Test
     public void testByteType() throws IOException {
-        final SpatialImageReader reader = createImageReader();
-        final SpatialImageReadParam param = reader.getDefaultReadParam();
+        prepareImageReader(true);
+        final SpatialImageReadParam param = (SpatialImageReadParam) reader.getDefaultReadParam();
         param.setSampleConversionAllowed(SampleConversionType.REPLACE_FILL_VALUES, true);
         final byte[] RGB = new byte[256];
         for (int i=0; i<RGB.length; i++) {
@@ -177,10 +161,6 @@ public abstract strictfp class TextImageReaderTestBase extends ImageReaderTestBa
         final BufferedImage image = reader.read(0, param);
         param.setDestinationType(null);
         final BufferedImage original = reader.read(0, param);
-        reader.dispose();
-
-        this.image = image;
-        showCurrentImage("testByteType");
 
         assertEquals(IndexColorModel.class, image.getColorModel().getClass());
         assertEquals(DataBuffer.TYPE_BYTE,  image   .getSampleModel().getDataType());

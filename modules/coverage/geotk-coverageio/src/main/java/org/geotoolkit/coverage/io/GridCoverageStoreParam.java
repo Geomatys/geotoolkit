@@ -31,8 +31,10 @@ import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.cs.AxisRangeType;
 import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.internal.referencing.CRSUtilities;
 
 import static org.geotoolkit.util.ArgumentChecks.ensurePositive;
 
@@ -228,8 +230,11 @@ public abstract class GridCoverageStoreParam implements Serializable {
      * inside the coordinate system domain of validity.  This method also ensures that
      * the returned envelope is not a direct reference to the {@link #envelope} field,
      * so it is safe for modification.
+     *
+     * @param needsLongitudeShift {@code true} if the grid geometry needs longitude
+     *        values in the [0…360]° range instead than the default [-180 … +180]°.
      */
-    final GeneralEnvelope getValidEnvelope() {
+    final GeneralEnvelope getValidEnvelope(final boolean needsLongitudeShift) {
         final Envelope env = getEnvelope();
         if (env == null) {
             return null;
@@ -239,6 +244,10 @@ public abstract class GridCoverageStoreParam implements Serializable {
             ge = (GeneralEnvelope) env;
         } else {
             ge = new GeneralEnvelope(env);
+        }
+        if (needsLongitudeShift) {
+            ge.setCoordinateReferenceSystem(CRSUtilities.shiftAxisRange(
+                    ge.getCoordinateReferenceSystem(), AxisRangeType.POSITIVE_LONGITUDE));
         }
         if (ge.reduceToDomain(false)) {
             ge.reorderCorners();

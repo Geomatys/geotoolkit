@@ -203,6 +203,20 @@ public final class Units extends Static {
     }
 
     /**
+     * Returns {@code true} if the given unit is a pressure unit.
+     * Pressure units are convertible to {@link SI#PASCAL}.
+     * Those units are sometime used instead of linear units for altitude measurements.
+     *
+     * @param unit The unit to check (may be {@code null}).
+     * @return {@code true} if the given unit is non-null and a pressure unit.
+     *
+     * @since 3.20
+     */
+    public static boolean isPressure(final Unit<?> unit) {
+        return (unit != null) && unit.toSI().equals(SI.PASCAL);
+    }
+
+    /**
      * Makes sure that the specified unit is either null or a temporal unit.
      * This method is used for argument checks in constructors and setter methods.
      *

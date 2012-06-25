@@ -57,14 +57,16 @@
  *   </td></tr>
  * </table></blockquote>
  *
- * <p>Some worthy methods defined in this package are:</p>
+ * <p>Some worthy Geotk-specific methods defined in this package are:</p>
  * <ul>
- *   <li>{@link org.geotoolkit.referencing.cs.DefaultEllipsoidalCS#getLongitude}</li>
- *   <li>{@link org.geotoolkit.referencing.cs.AbstractCS#swapAndScaleAxis}</li>
+ *   <li>{@link org.geotoolkit.referencing.cs.DefaultEllipsoidalCS#getLongitude(double[])},
+ *       {@link org.geotoolkit.referencing.cs.DefaultEllipsoidalCS#getLatitude(double[]) getLatitude(double[])} and
+ *       {@link org.geotoolkit.referencing.cs.DefaultEllipsoidalCS#getHeight(double[]) getHeight(double[])}</li>
+ *   <li>{@link org.geotoolkit.referencing.cs.AbstractCS#swapAndScaleAxis AbstractCS.swapAndScaleAxis(CoordinateSystem, CoordinateSystem)}</li>
  * </ul>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.18
+ * @version 3.20
  *
  * @since 2.0
  * @module

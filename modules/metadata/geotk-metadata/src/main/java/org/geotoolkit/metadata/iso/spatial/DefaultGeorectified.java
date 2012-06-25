@@ -148,7 +148,12 @@ public class DefaultGeorectified extends DefaultGridSpatialRepresentation implem
      *          are available to test the accuracy of the georeferenced grid data.
      * @param cornerPoints The corner points.
      * @param pointInPixel The point in a pixel corresponding to the Earth location of the pixel.
+     *
+     * @deprecated This constructor is somewhat arbitrary as it does not include all attributes
+     *             (especially because of revisions in new ISO standards), not so convenient and
+     *             not used in practice.
      */
+    @Deprecated
     public DefaultGeorectified(final int numberOfDimensions,
                                final List<? extends Dimension> axisDimensionsProperties,
                                final CellGeometry cellGeometry,

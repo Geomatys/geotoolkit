@@ -54,7 +54,6 @@ import org.geotoolkit.referencing.cs.AbstractCS;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.factory.ReferencingFactoryContainer;
-import org.geotoolkit.internal.referencing.WktUtilities;
 import org.geotoolkit.measure.Units;
 import org.geotoolkit.resources.Errors;
 
@@ -973,7 +972,7 @@ public class ReferencingParser extends MathTransformParser {
             }
             element.close();
             CartesianCS cs = csFactory.createCartesianCS(properties, axis0, axis1, axis2);
-            cs = WktUtilities.replace(cs, false);
+            cs = Convention.replace(cs, false);
             return crsFactory.createGeocentricCRS(properties, datum, cs);
         } catch (FactoryException exception) {
             throw element.parseFailed(exception, null);

@@ -75,6 +75,12 @@ import static org.geotoolkit.factory.AuthorityFactoryFinder.*;
  * @see org.geotoolkit.GeoapiTest
  *
  * @since 3.19
+ *
+ * @todo For a mysterious reason, some GIGS tests are skipped by this test suite (see the XML files
+ *       in the {@code target/surefire-report} directory). We need more investigation about what is
+ *       going on. Even when no tests is skipped, some tests are incomplete. For example GIGS 2008
+ *       should fail when "gravity-related depth" is not on the list of allowed axis names - this
+ *       is not currently the case.
  */
 public final strictfp class GeoapiTest extends TestSuite implements ImplementationDetails, FactoryFilter {
     /**

@@ -296,7 +296,11 @@ scanNumber: while (++i < length) {
     }
 
     /**
-     * {@inheritDoc}
+     * Returns the length of coordinate sequence (the number of entries) in this envelope.
+     * This information is available even when the {@linkplain #getCoordinateReferenceSystem
+     * coordinate reference system} is unknown.
+     *
+     * @return The dimensionality of this envelope.
      */
     @Override
     public int getDimension() {
@@ -304,7 +308,11 @@ scanNumber: while (++i < length) {
     }
 
     /**
-     * {@inheritDoc}
+     * Returns the envelope coordinate reference system, or {@code null} if unknown.
+     * If non-null, it shall be the same as {@linkplain #getLowerCorner() lower corner}
+     * and {@linkplain #getUpperCorner() upper corner} CRS.
+     *
+     * @return The envelope CRS, or {@code null} if unknown.
      */
     @Override
     public CoordinateReferenceSystem getCoordinateReferenceSystem() {

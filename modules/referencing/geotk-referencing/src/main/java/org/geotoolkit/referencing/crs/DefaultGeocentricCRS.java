@@ -37,9 +37,7 @@ import org.geotoolkit.referencing.AbstractReferenceSystem;
 import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.referencing.cs.DefaultSphericalCS;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
-import org.geotoolkit.internal.referencing.WktUtilities;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.io.wkt.Convention;
 import org.geotoolkit.io.wkt.Formatter;
 
 
@@ -222,12 +220,8 @@ public class DefaultGeocentricCRS extends AbstractSingleCRS implements Geocentri
         formatter.append(datum);
         formatter.append(datum.getPrimeMeridian());
         formatter.append(unit);
-        CoordinateSystem cs = getCoordinateSystem();
-        if (cs instanceof CartesianCS) {
-            if (formatter.getConvention() != Convention.INTERNAL) {
-                cs = WktUtilities.replace((CartesianCS) cs, true);
-            }
-        } else {
+        final CoordinateSystem cs = formatter.getConvention().toConformCS(getCoordinateSystem());
+        if (!(cs instanceof CartesianCS)) {
             formatter.setInvalidWKT(CoordinateSystem.class);
         }
         final int dimension = cs.getDimension();

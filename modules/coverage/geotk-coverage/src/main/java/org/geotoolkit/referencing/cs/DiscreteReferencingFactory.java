@@ -92,15 +92,15 @@ public final class DiscreteReferencingFactory extends Static {
      * @param  ordinates The ordinate values. This array is <strong>not</strong> cloned.
      * @return A discrete coordinate system axis wrapping the given axis.
      */
-    public static DiscreteCoordinateSystemAxis createDiscreteAxis(CoordinateSystemAxis axis, final double... ordinates) {
+    public static DiscreteCoordinateSystemAxis<?> createDiscreteAxis(CoordinateSystemAxis axis, final double... ordinates) {
         ensureNonNull("axis", axis);
         if (canReuse(axis, ordinates)) {
-            return (DiscreteCoordinateSystemAxis) axis;
+            return (DiscreteCoordinateSystemAxis<?>) axis;
         }
         if (axis instanceof DiscreteAxis) {
             axis = ((DiscreteAxis) axis).axis;
             if (canReuse(axis, ordinates)) {
-                return (DiscreteCoordinateSystemAxis) axis;
+                return (DiscreteCoordinateSystemAxis<?>) axis;
             }
         }
         ensureNonNull("ordinates", ordinates);
@@ -212,7 +212,7 @@ public final class DiscreteReferencingFactory extends Static {
      * (i.e. the existing discrete axis will be kept unchanged).
      */
     private static boolean canReuse(final CoordinateSystemAxis axis, final double[] ordinates) {
-        if (!(axis instanceof DiscreteCoordinateSystemAxis)) {
+        if (!(axis instanceof DiscreteCoordinateSystemAxis<?>)) {
             return false;
         }
         if (ordinates != null) {
@@ -224,7 +224,7 @@ public final class DiscreteReferencingFactory extends Static {
                 // Optimized case for the DiscreteAxis case (direct array comparison).
                 return Arrays.equals(((DiscreteAxis) axis).ordinates, ordinates);
             }
-            final DiscreteCoordinateSystemAxis dx = (DiscreteCoordinateSystemAxis) axis;
+            final DiscreteCoordinateSystemAxis<?> dx = (DiscreteCoordinateSystemAxis<?>) axis;
             if (dx.length() != ordinates.length) {
                 return false;
             }
@@ -308,7 +308,7 @@ scan:   for (final CoordinateReferenceSystem component : crs.getComponents()) {
      * @return The <cite>grid to CRS</cite> transform mapping cell centers for the given axes
      *         as a matrix, or {@code null} if such matrix can not be computed.
      */
-    public static XMatrix getAffineTransform(final DiscreteCoordinateSystemAxis... axes) {
+    public static XMatrix getAffineTransform(final DiscreteCoordinateSystemAxis<?>... axes) {
         ensureNonNull("axes", axes);
         return getAffineTransform(null, axes);
     }
@@ -357,11 +357,11 @@ scan:   for (final CoordinateReferenceSystem component : crs.getComponents()) {
      */
     private static Matrix createAffineTransform(final CoordinateReferenceSystem crs) {
         final CoordinateSystem cs = crs.getCoordinateSystem();
-        final DiscreteCoordinateSystemAxis[] axes = new DiscreteCoordinateSystemAxis[cs.getDimension()];
+        final DiscreteCoordinateSystemAxis<?>[] axes = new DiscreteCoordinateSystemAxis<?>[cs.getDimension()];
         for (int i=0; i<axes.length; i++) {
             final CoordinateSystemAxis axis = cs.getAxis(i);
-            if (axis instanceof DiscreteCoordinateSystemAxis) {
-                axes[i] = (DiscreteCoordinateSystemAxis) axis;
+            if (axis instanceof DiscreteCoordinateSystemAxis<?>) {
+                axes[i] = (DiscreteCoordinateSystemAxis<?>) axis;
             }
         }
         if (crs instanceof CompoundCRS) {
@@ -382,13 +382,11 @@ scan:   for (final CoordinateReferenceSystem component : crs.getComponents()) {
      * @return The <cite>grid to CRS</cite> transform mapping cell centers for the given axes
      *         as a matrix, or {@code null} if such matrix can not be computed.
      */
-    static XMatrix getAffineTransform(final CoordinateReferenceSystem crs,
-            final DiscreteCoordinateSystemAxis[] axes)
-    {
+    static XMatrix getAffineTransform(final CoordinateReferenceSystem crs, final DiscreteCoordinateSystemAxis<?>[] axes) {
         final int dimension = axes.length;
         final XMatrix matrix = Matrices.create(dimension + 1);
         for (int i=0; i<dimension; i++) {
-            final DiscreteCoordinateSystemAxis axis = axes[i];
+            final DiscreteCoordinateSystemAxis<?> axis = axes[i];
             final int n;
             if (axis == null || (n = axis.length() - 1) < 0) {
                 // No discrete values.
@@ -452,7 +450,7 @@ scan:   for (final CoordinateReferenceSystem component : crs.getComponents()) {
      *
      * @since 3.16
      */
-    static XMatrix getAffineTransform(final CompoundCRS crs, final DiscreteCoordinateSystemAxis[] axes) {
+    static XMatrix getAffineTransform(final CompoundCRS crs, final DiscreteCoordinateSystemAxis<?>[] axes) {
         final XMatrix matrix = getAffineTransform((CoordinateReferenceSystem) crs, axes);
         if (matrix != null) {
             final int lastColumn = matrix.getNumCol() - 1;

@@ -28,7 +28,6 @@ import javax.imageio.ImageReader;
 import java.util.Iterator;
 
 import org.geotoolkit.test.TestData;
-import org.geotoolkit.image.io.TextImageReader;
 import org.geotoolkit.image.io.TextImageReaderTestBase;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
@@ -45,27 +44,23 @@ import static org.geotoolkit.test.Commons.*;
  * This class provides also a {@link #verify} static method for manual testings.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.14
+ * @version 3.20
  *
  * @since 3.07
  */
 public strictfp class AsciiGridReaderTest extends TextImageReaderTestBase {
     /**
-     * Creates a new test suite.
-     */
-    public AsciiGridReaderTest() {
-        super(AsciiGridReader.class);
-    }
-
-    /**
-     * Creates a reader.
+     * Creates a reader and sets its input if needed.
      */
     @Override
-    protected AsciiGridReader createImageReader() throws IOException {
-        AsciiGridReader.Spi spi = new AsciiGridReader.Spi();
-        final AsciiGridReader reader = new AsciiGridReader(spi);
-        reader.setInput(TestData.file(this, "grid.asc"));
-        return reader;
+    protected void prepareImageReader(final boolean setInput) throws IOException {
+        if (reader == null) {
+            AsciiGridReader.Spi spi = new AsciiGridReader.Spi();
+            reader = new AsciiGridReader(spi);
+        }
+        if (setInput) {
+            reader.setInput(TestData.file(this, "grid.asc"));
+        }
     }
 
     /**
@@ -75,11 +70,11 @@ public strictfp class AsciiGridReaderTest extends TextImageReaderTestBase {
      */
     @Test
     public void testMetadata() throws IOException {
-        final TextImageReader reader = createImageReader();
+        prepareImageReader(true);
         assertEquals(20, reader.getWidth (0));
         assertEquals(42, reader.getHeight(0));
         assertNull(reader.getStreamMetadata());
-        final SpatialMetadata metadata = reader.getImageMetadata(0);
+        final SpatialMetadata metadata = (SpatialMetadata) reader.getImageMetadata(0);
         assertNotNull(metadata);
         assertMultilinesEquals(decodeQuotes(
             SpatialMetadataFormat.FORMAT_NAME + '\n' +
@@ -133,7 +128,6 @@ public strictfp class AsciiGridReaderTest extends TextImageReaderTestBase {
             "        └───Dimension\n" +
             "            ├───fillSampleValues=“-9999.0”\n" +
             "            └───validSampleValues=“[-1.893 … 31.139999]”\n"), metadata.toString());
-        reader.dispose();
     }
 
     /**

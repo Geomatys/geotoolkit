@@ -36,7 +36,7 @@
  *     <td>&nbsp;US locale and ASCII encoding.&nbsp;</td>
  *   </tr><tr>
  *     <td>&nbsp;{@link org.geotoolkit.image.io.plugin.NetcdfImageReader}&nbsp;</td>
- *     <td>&nbsp;&nbsp;&nbsp;</td>
+ *     <td>&nbsp;{@link org.geotoolkit.image.io.plugin.NetcdfImageWriter}&nbsp;</td>
  *     <td>&nbsp;{@code netcdf}&nbsp;</td>
  *     <td>&nbsp;{@code application/netcdf}&nbsp;</td>
  *     <td>&nbsp;Assume <A HREF="http://www.cfconventions.org/">CF Metadata conventions</A>.&nbsp;</td>
@@ -95,7 +95,7 @@
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Antoine Hnawia (IRD)
- * @version 3.16
+ * @version 3.20
  *
  * @since 3.07 (derived from 1.2)
  * @module

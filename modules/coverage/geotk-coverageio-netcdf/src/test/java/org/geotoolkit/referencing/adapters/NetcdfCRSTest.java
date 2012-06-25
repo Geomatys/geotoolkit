@@ -163,8 +163,8 @@ public final strictfp class NetcdfCRSTest extends org.opengis.wrapper.netcdf.Net
              * For each axis, check the consistency of ordinate values.
              */
             final CoordinateSystemAxis axis = cs.getAxis(i);
-            assertTrue("Expected a discrete axis.", axis instanceof DiscreteCoordinateSystemAxis);
-            final DiscreteCoordinateSystemAxis discreteAxis = (DiscreteCoordinateSystemAxis) axis;
+            assertTrue("Expected a discrete axis.", axis instanceof DiscreteCoordinateSystemAxis<?>);
+            final DiscreteCoordinateSystemAxis<?> discreteAxis = (DiscreteCoordinateSystemAxis<?>) axis;
             final int n = discreteAxis.length();
             assertEquals("Unexpected number of indices.", GRID_SIZE[i], n);
             final boolean isTimeAxis = (hasTimeAxis && i == 3);

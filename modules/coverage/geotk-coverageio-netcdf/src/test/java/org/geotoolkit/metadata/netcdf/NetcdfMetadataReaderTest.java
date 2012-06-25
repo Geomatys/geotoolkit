@@ -88,7 +88,7 @@ public final strictfp class NetcdfMetadataReaderTest extends NetcdfMetadataTest 
         }
         // Bellow is the "normal" test.
         final NetcdfMetadataReader ncISO = new NetcdfMetadataReader(file, null);
-        return ncISO.readMetadata();
+        return ncISO.read();
     }
 
     /**

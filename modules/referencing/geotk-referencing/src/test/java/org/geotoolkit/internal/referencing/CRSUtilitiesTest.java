@@ -17,9 +17,10 @@
  */
 package org.geotoolkit.internal.referencing;
 
+import org.opengis.referencing.cs.AxisDirection;
+
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
-import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -29,7 +30,7 @@ import static org.junit.Assert.*;
  * Tests the {@link CRSUtilities} class.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.10
+ * @version 3.20
  *
  * @since 3.10
  */
@@ -39,9 +40,13 @@ public final strictfp class CRSUtilitiesTest {
      */
     @Test
     public void testDimensionColinearWith() {
-        assertEquals(1, CRSUtilities.dimensionColinearWith(
+        assertEquals(1, AxisDirections.indexOf(
                 DefaultGeographicCRS.WGS84_3D.getCoordinateSystem(),
-                DefaultCoordinateSystemAxis.LATITUDE));
+                AxisDirection.NORTH));
+
+        assertEquals(1, AxisDirections.indexOf(
+                DefaultGeographicCRS.WGS84_3D.getCoordinateSystem(),
+                AxisDirection.SOUTH));
 
         assertEquals(0, CRSUtilities.dimensionColinearWith(
                 DefaultGeographicCRS.WGS84_3D.getCoordinateSystem(),

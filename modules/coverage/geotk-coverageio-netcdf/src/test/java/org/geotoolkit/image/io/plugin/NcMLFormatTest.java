@@ -30,11 +30,11 @@ import static org.geotoolkit.test.Assert.*;
  * Tests reading a NcML file.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @since 3.19 (derived from 3.16)
  */
-public final strictfp class NcMLFormatTest extends NetcdfTestBase {
+public final strictfp class NcMLFormatTest extends NetcdfImageReaderTestBase {
     /**
      * Returns the file to test, which is optional. If the test file is not present,
      * the test will be interrupted by the JUnit {@link org.junit.Assume} class.
@@ -51,10 +51,13 @@ public final strictfp class NcMLFormatTest extends NetcdfTestBase {
      * from the parent class, and by the tests defined in this class.
      */
     @Override
-    protected NetcdfImageReader createImageReader() throws IOException {
-        final NetcdfImageReader reader = new NetcdfImageReader(null);
-        reader.setInput(getTestFile());
-        return reader;
+    protected void prepareImageReader(final boolean setInput) throws IOException {
+        if (reader == null) {
+            reader = new NetcdfImageReader(null);
+        }
+        if (setInput) {
+            reader.setInput(getTestFile());
+        }
     }
 
     /**
@@ -77,7 +80,8 @@ public final strictfp class NcMLFormatTest extends NetcdfTestBase {
      */
     @Test
     public void testNcML() throws IOException {
-        final NetcdfImageReader reader = createImageReader();
+        prepareImageReader(true);
+        final NetcdfImageReader reader = (NetcdfImageReader) this.reader;
         assertEquals("Unexpected number of variables.",  4, reader.getNumImages(true));
         assertEquals("Expected only 1 band by default.", 1, reader.getNumBands(0));
         assertArrayEquals("Expected the names of the variables found in the NcML file.",

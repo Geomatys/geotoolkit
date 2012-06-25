@@ -31,10 +31,14 @@ import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.crs.CompoundCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.cs.CoordinateSystem;
+import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.datum.Datum;
 
+import org.geotoolkit.referencing.IdentifiedObjects;
+import org.geotoolkit.referencing.cs.AxisRangeType;
 import org.geotoolkit.referencing.cs.DefaultCompoundCS;
 import org.geotoolkit.referencing.AbstractReferenceSystem;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
@@ -43,6 +47,7 @@ import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.internal.referencing.CRSUtilities;
 
 import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.util.Utilities.deepEquals;
@@ -57,7 +62,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * {@link CoordinateReferenceSystem}.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.19
+ * @version 3.20
  *
  * @since 1.2
  * @module
@@ -67,19 +72,28 @@ public class DefaultCompoundCRS extends AbstractCRS implements CompoundCRS {
     /**
      * Serial number for inter-operability with different versions.
      */
-    private static final long serialVersionUID = -2656710314586929286L;
+    private static final long serialVersionUID = -2656710314586929287L;
 
     /**
      * The coordinate reference systems in this compound CRS.
      * May actually be a list of {@link SingleCRS}.
      */
-    private final List<? extends CoordinateReferenceSystem> crs;
+    private final List<? extends CoordinateReferenceSystem> components;
 
     /**
      * A decomposition of the CRS list into the single elements. Computed
      * by {@link #getElements} on construction or deserialization.
      */
     private transient List<SingleCRS> singles;
+
+    /**
+     * Coordinate reference systems equivalent to this one, except for a shift in the range of
+     * longitude values. This field is computed by {@link #shiftAxisRange(AxisRangeType)}
+     * when first needed.
+     *
+     * @since 3.20
+     */
+    private transient DefaultCompoundCRS[] shifted;
 
     /**
      * Constructs a new object in which every attributes are set to a default value.
@@ -105,52 +119,22 @@ public class DefaultCompoundCRS extends AbstractCRS implements CompoundCRS {
         super(crs);
         if (crs instanceof DefaultCompoundCRS) {
             final DefaultCompoundCRS that = (DefaultCompoundCRS) crs;
-            this.crs     = that.crs;
-            this.singles = that.singles;
+            this.components = that.components;
+            this.singles    = that.singles;
         } else {
-            this.crs = copy(crs.getComponents());
+            this.components = copy(crs.getComponents());
             // 'singles' is computed by the above method call.
         }
-    }
-
-    /**
-     * Constructs a coordinate reference system from a name and two CRS.
-     *
-     * @param name The name.
-     * @param head The head CRS.
-     * @param tail The tail CRS.
-     */
-    public DefaultCompoundCRS(final String name,
-                              final CoordinateReferenceSystem head,
-                              final CoordinateReferenceSystem tail)
-    {
-        this(name, new CoordinateReferenceSystem[] {head, tail});
-    }
-
-    /**
-     * Constructs a coordinate reference system from a name and three CRS.
-     *
-     * @param name The name.
-     * @param head The head CRS.
-     * @param middle The middle CRS.
-     * @param tail The tail CRS.
-     */
-    public DefaultCompoundCRS(final String name,
-                              final CoordinateReferenceSystem head,
-                              final CoordinateReferenceSystem middle,
-                              final CoordinateReferenceSystem tail)
-    {
-        this(name, new CoordinateReferenceSystem[] {head, middle, tail});
     }
 
     /**
      * Constructs a coordinate reference system from a name.
      *
      * @param name The name.
-     * @param crs The array of coordinate reference system making this compound CRS.
+     * @param components The array of coordinate reference system making this compound CRS.
      */
-    public DefaultCompoundCRS(final String name, final CoordinateReferenceSystem[] crs) {
-        this(Collections.singletonMap(NAME_KEY, name), crs);
+    public DefaultCompoundCRS(final String name, final CoordinateReferenceSystem... components) {
+        this(Collections.singletonMap(NAME_KEY, name), components);
     }
 
     /**
@@ -159,11 +143,11 @@ public class DefaultCompoundCRS extends AbstractCRS implements CompoundCRS {
      * {@linkplain AbstractReferenceSystem#AbstractReferenceSystem(Map) super-class constructor}.
      *
      * @param properties Set of properties. Should contains at least {@code "name"}.
-     * @param crs The array of coordinate reference system making this compound CRS.
+     * @param components The array of coordinate reference system making this compound CRS.
      */
-    public DefaultCompoundCRS(final Map<String,?> properties, CoordinateReferenceSystem... crs) {
-        super(properties, createCoordinateSystem(crs));
-        this.crs = copy(Arrays.asList(crs));
+    public DefaultCompoundCRS(final Map<String,?> properties, final CoordinateReferenceSystem... components) {
+        super(properties, createCoordinateSystem(components));
+        this.components = copy(Arrays.asList(components));
         // 'singles' is computed by the above method call.
     }
 
@@ -172,16 +156,15 @@ public class DefaultCompoundCRS extends AbstractCRS implements CompoundCRS {
      * This method is a work around for RFE #4093999 in Sun's bug database
      * ("Relax constraint on placement of this()/super() call in constructors").
      */
-    private static CoordinateSystem createCoordinateSystem(final CoordinateReferenceSystem[] crs) {
-        ensureNonNull("crs", crs);
-        if (crs.length < 2) {
-            throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.NO_PARAMETER_$1, "crs[" + crs.length + ']'));
+    private static CoordinateSystem createCoordinateSystem(final CoordinateReferenceSystem[] components) {
+        ensureNonNull("components", components);
+        if (components.length < 2) {
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.TOO_FEW_ARGUMENTS_$2, 2, components.length));
         }
-        final CoordinateSystem[] cs = new CoordinateSystem[crs.length];
-        for (int i=0; i<crs.length; i++) {
-            ensureNonNull("crs", i, crs);
-            cs[i] = crs[i].getCoordinateSystem();
+        final CoordinateSystem[] cs = new CoordinateSystem[components.length];
+        for (int i=0; i<components.length; i++) {
+            ensureNonNull("crs", i, components);
+            cs[i] = components[i].getCoordinateSystem();
         }
         return new DefaultCompoundCS(cs);
     }
@@ -189,21 +172,19 @@ public class DefaultCompoundCRS extends AbstractCRS implements CompoundCRS {
     /**
      * Returns an unmodifiable copy of the given list. As a side effect, this method computes the
      * {@linkplain singles} list. If it appears that the list of {@code SingleCRS} is equal to the
-     * given list, then it is returned in other to share the same list in both {@link #crs} and
+     * given list, then it is returned in other to share the same list in both {@link #components} and
      * {@link #singles} references.
      * <p>
      * <strong>WARNING:</strong> this method is invoked by constructors <em>before</em>
-     * the {@linkplain #crs} field is set. Do not use this field.
+     * the {@linkplain #components} field is set. Do not use this field.
      */
-    private List<? extends CoordinateReferenceSystem> copy(
-            List<? extends CoordinateReferenceSystem> crs)
-    {
-        if (computeSingleCRS(crs)) {
-            crs = singles; // Shares the same list.
+    private List<? extends CoordinateReferenceSystem> copy(List<? extends CoordinateReferenceSystem> components) {
+        if (computeSingleCRS(components)) {
+            components = singles; // Shares the same list.
         } else {
-            crs = UnmodifiableArrayList.wrap(crs.toArray(new CoordinateReferenceSystem[crs.size()]));
+            components = UnmodifiableArrayList.wrap(components.toArray(new CoordinateReferenceSystem[components.size()]));
         }
-        return crs;
+        return components;
     }
 
     /**
@@ -232,7 +213,7 @@ public class DefaultCompoundCRS extends AbstractCRS implements CompoundCRS {
     @Override
     @SuppressWarnings("unchecked") // We are safe if the list is read-only.
     public List<CoordinateReferenceSystem> getComponents() {
-        return (List<CoordinateReferenceSystem>) crs;
+        return (List<CoordinateReferenceSystem>) components;
     }
 
     /**
@@ -303,19 +284,78 @@ public class DefaultCompoundCRS extends AbstractCRS implements CompoundCRS {
     }
 
     /**
+     * Returns a coordinate reference system with the same axes than this CRS, except that the
+     * longitude axis is shifted to a positive or negative range. This method can be used in
+     * order to shift between the [-180 … +180]° and [0 … 360]° ranges.
+     * <p>
+     * This method shifts the axis {@linkplain CoordinateSystemAxis#getMinimumValue() minimum}
+     * and {@linkplain CoordinateSystemAxis#getMaximumValue() maximum} values by a multiple of
+     * 180°, converted to the units of the axis.
+     * <p>
+     * This method does not change the meaning of ordinate values. For example a longitude of
+     * -60° still locate the same longitude in the old and the new coordinate system. But the
+     * preferred way to locate that longitude may become the 300° value if the range has been
+     * shifted to positive values.
+     *
+     * @param  range {@link AxisRangeType#POSITIVE_LONGITUDE POSITIVE_LONGITUDE} for a range
+     *         of positive longitude values, or {@link AxisRangeType#SPANNING_ZERO_LONGITUDE
+     *         SPANNING_ZERO_LONGITUDE} for a range of positive and negative longitude values.
+     * @return A coordinate reference system using the given kind of longitude range
+     *         (may be {@code this}).
+     *
+     * @see DefaultGeographicCRS#shiftAxisRange(AxisRangeType)
+     *
+     * @since 3.20
+     */
+    public DefaultCompoundCRS shiftAxisRange(final AxisRangeType range) {
+        DefaultCompoundCRS[] shifted;
+        synchronized (this) {
+            shifted = this.shifted;
+            if (shifted == null) {
+                this.shifted = shifted = new DefaultCompoundCRS[CRSUtilities.AXIS_RANGE_COUNT];
+            }
+        }
+        final int ordinal = range.ordinal();
+        DefaultCompoundCRS crs;
+        synchronized (shifted) {
+            crs = shifted[ordinal];
+            if (crs == null) {
+                boolean modified = false;
+                final CoordinateReferenceSystem[] cmp = components.toArray(new CoordinateReferenceSystem[components.size()]);
+                for (int i=0; i<cmp.length; i++) {
+                    final CoordinateReferenceSystem oldCRS = cmp[i];
+                    if (oldCRS instanceof GeographicCRS) {
+                        cmp[i] = DefaultGeographicCRS.castOrCopy((GeographicCRS) oldCRS).shiftAxisRange(range);
+                        modified |= (cmp[i] != oldCRS);
+                    }
+                }
+                if (modified) {
+                    crs = new DefaultCompoundCRS(IdentifiedObjects.getProperties(this, null), cmp);
+                    crs.shifted = shifted;
+                    shifted[ordinal ^ CRSUtilities.AXIS_RANGE_RECIPROCAL_MASK] = this;
+                } else {
+                    crs = this;
+                }
+                shifted[ordinal] = crs;
+            }
+        }
+        return crs;
+    }
+
+    /**
      * Computes the single CRS on deserialization.
      */
     @SuppressWarnings("unchecked")
     private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
-        if (crs instanceof CheckedContainer<?>) {
-            final Class<?> type = ((CheckedContainer<?>) crs).getElementType();
+        if (components instanceof CheckedContainer<?>) {
+            final Class<?> type = ((CheckedContainer<?>) components).getElementType();
             if (SingleCRS.class.isAssignableFrom(type)) {
-                singles = (List<SingleCRS>) crs;
+                singles = (List<SingleCRS>) components;
                 return;
             }
         }
-        computeSingleCRS(crs);
+        computeSingleCRS(components);
     }
 
     /**
@@ -336,7 +376,7 @@ public class DefaultCompoundCRS extends AbstractCRS implements CompoundCRS {
             switch (mode) {
                 case STRICT: {
                     final DefaultCompoundCRS that = (DefaultCompoundCRS) object;
-                    return Utilities.equals(this.crs, that.crs);
+                    return Utilities.equals(this.components, that.components);
                 }
                 default: {
                     final CompoundCRS that = (CompoundCRS) object;
@@ -352,7 +392,7 @@ public class DefaultCompoundCRS extends AbstractCRS implements CompoundCRS {
      */
     @Override
     protected int computeHashCode() {
-        return hash(crs, super.computeHashCode());
+        return hash(components, super.computeHashCode());
     }
 
     /**
@@ -365,7 +405,7 @@ public class DefaultCompoundCRS extends AbstractCRS implements CompoundCRS {
      */
     @Override
     public String formatWKT(final Formatter formatter) {
-        for (final CoordinateReferenceSystem element : crs) {
+        for (final CoordinateReferenceSystem element : components) {
             formatter.append(element);
         }
         return "COMPD_CS";

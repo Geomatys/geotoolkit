@@ -35,6 +35,7 @@ import org.opengis.referencing.datum.PrimeMeridian;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
+import org.opengis.test.coverage.image.ImageWriterTestCase;
 
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.test.referencing.WKT;
@@ -44,38 +45,26 @@ import org.geotoolkit.image.io.metadata.ReferencingBuilder;
 import org.geotoolkit.image.io.metadata.MetadataAccessor;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
-import org.geotoolkit.test.image.ImageWriterTestBase;
 
 import static org.junit.Assert.*;
 
 
 /**
  * The base class for {@link TextImageWriter} tests.
+ * The writers should use the {@link Locale#CANADA}.
+ * This arbitrary locale is fixed in order to keep the build locale-independent.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.09
+ * @version 3.20
  *
  * @since 3.06 (derived from 2.4)
  */
-public abstract strictfp class TextImageWriterTestBase extends ImageWriterTestBase {
+public abstract strictfp class TextImageWriterTestBase extends ImageWriterTestCase {
     /**
-     * Creates a new test suite for the given class.
-     *
-     * @param testing The class to be tested.
+     * Creates a new test suite.
      */
-    protected TextImageWriterTestBase(final Class<? extends SpatialImageWriter> testing) {
-        super(testing);
+    protected TextImageWriterTestBase() {
     }
-
-    /**
-     * Creates the image writer using the {@link Locale#CANADA}.
-     * This arbitrary locale is fixed in order to keep the build locale-independent.
-     *
-     * @return The reader to test.
-     * @throws IOException If an error occurred while creating the format.
-     */
-    @Override
-    protected abstract SpatialImageWriter createImageWriter() throws IOException;
 
     /**
      * Tests the number format. This method must be invoked explictly in sub-class,
@@ -148,7 +137,7 @@ public abstract strictfp class TextImageWriterTestBase extends ImageWriterTestBa
      * @return The image.
      * @throws IOException Should never happen.
      */
-    protected static strictfp IIOImage createImage(final boolean withNaN) throws IOException {
+    protected static IIOImage createImage(final boolean withNaN) throws IOException {
         final int width  = 8;
         final int height = 10;
         final ColorModel cm = PaletteFactory.getDefault().getContinuousPalette(

@@ -512,8 +512,8 @@ final class GridCoverageEntry extends DefaultEntry implements GridCoverageRefere
             final GridGeometryEntry geometry = getIdentifier().geometry;
             final Dimension2D resolution = geometry.getStandardResolution();
             if (resolution != null) {
-                return resolution.getWidth()  <= requested.getWidth()  + GridGeometryEntry.EPS &&
-                       resolution.getHeight() <= requested.getHeight() + GridGeometryEntry.EPS;
+                return resolution.getWidth()  <= requested.getWidth()  + SpatialRefSysEntry.EPS &&
+                       resolution.getHeight() <= requested.getHeight() + SpatialRefSysEntry.EPS;
             }
         } catch (TransformException e) {
             Logging.recoverableException(GridCoverageEntry.class, "hasEnoughResolution", e);

@@ -312,9 +312,10 @@ public class DefaultProjectedCRS extends AbstractDerivedCRS implements Projected
             formatter.append(param);
         }
         formatter.append(unit);
-        final int dimension = getDimension();
+        final CartesianCS cs = getCoordinateSystem();
+        final int dimension = cs.getDimension();
         for (int i=0; i<dimension; i++) {
-            formatter.append(getAxis(i));
+            formatter.append(cs.getAxis(i));
         }
         if (unit == null) {
             formatter.setInvalidWKT(ProjectedCRS.class);

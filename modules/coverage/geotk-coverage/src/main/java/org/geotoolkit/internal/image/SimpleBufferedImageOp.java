@@ -18,7 +18,6 @@
 package org.geotoolkit.internal.image;
 
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
@@ -119,7 +118,7 @@ public abstract class SimpleBufferedImageOp implements BufferedImageOp, Serializ
      */
     @Override
     public Rectangle2D getBounds2D(final BufferedImage src) {
-        return new Rectangle(src.getMinX(), src.getMinY(), src.getWidth(), src.getHeight());
+        return ImageUtilities.getBounds(src);
     }
 
     /**

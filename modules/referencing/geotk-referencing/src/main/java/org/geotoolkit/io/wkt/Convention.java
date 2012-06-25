@@ -17,17 +17,24 @@
  */
 package org.geotoolkit.io.wkt;
 
+import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 import javax.measure.quantity.Angle;
 
 import org.opengis.metadata.citation.Citation;
+import org.opengis.referencing.cs.CartesianCS;
+import org.opengis.referencing.cs.CoordinateSystem;
+import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.crs.GeographicCRS;
+import org.opengis.referencing.crs.GeocentricCRS;
 import org.opengis.referencing.operation.OperationMethod;
 import org.opengis.referencing.operation.CoordinateOperation;
 
 import org.geotoolkit.lang.Debug;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
+import org.geotoolkit.referencing.cs.DefaultCartesianCS;
+import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 
 import static javax.measure.unit.NonSI.DEGREE_ANGLE;
 
@@ -60,7 +67,15 @@ public enum Convention {
      * The <A HREF="http://www.opengeospatial.org">Open Geospatial consortium</A> convention.
      * This is the default convention for all WKT formatting in the Geotk library.
      *
+     * {@section Spacial case}
+     * For {@link GeocentricCRS}, this convention uses the legacy set of Cartesian axes.
+     * Those axes were defined in OGC 01-009 as <var>Other</var>,
+     * <var>{@linkplain DefaultCoordinateSystemAxis#EASTING Easting}</var> and
+     * <var>{@linkplain DefaultCoordinateSystemAxis#NORTHING Northing}</var>
+     * in metres, where the "<var>Other</var>" axis is toward prime meridian.
+     *
      * @see Citations#OGC
+     * @see #toConformCS(CoordinateSystem)
      */
     OGC(null, false),
 
@@ -68,13 +83,29 @@ public enum Convention {
      * The <A HREF="http://www.epsg.org">European Petroleum Survey Group</A> convention.
      * This convention uses the most descriptive parameter and projection names.
      *
+     * {@section Spacial case}
+     * For {@link GeocentricCRS}, this convention uses the new set of Cartesian axes.
+     * Those axes are defined in ISO 19111 as
+     * <var>{@linkplain DefaultCoordinateSystemAxis#GEOCENTRIC_X Geocentric X}</var>,
+     * <var>{@linkplain DefaultCoordinateSystemAxis#GEOCENTRIC_Y Geocentric Y}</var> and
+     * <var>{@linkplain DefaultCoordinateSystemAxis#GEOCENTRIC_Z Geocentric Z}</var> in metres.
+     *
      * @see Citations#EPSG
+     * @see #toConformCS(CoordinateSystem)
      */
-    EPSG(null, false),
+    EPSG(null, false) {
+        @Override
+        public CoordinateSystem toConformCS(CoordinateSystem cs) {
+            if (cs instanceof CartesianCS) {
+                cs = replace((CartesianCS) cs, false);
+            }
+            return cs;
+        }
+    },
 
     /**
      * The <A HREF="http://www.esri.com">ESRI</A> convention.
-     * This convention differs from other conventions in four aspects:
+     * This convention is similar to the {@link #OGC} convention except in four aspects:
      * <p>
      * <ul>
      *   <li>The angular units of {@code PRIMEM} and {@code PARAMETER} elements are always degrees,
@@ -91,7 +122,7 @@ public enum Convention {
 
     /**
      * The <A HREF="http://www.oracle.com">Oracle</A> convention.
-     * This convention differs from other conventions in three aspects:
+     * This convention is similar to the {@link #OGC} convention except in three aspects:
      * <p>
      * <ul>
      *   <li>The Bursa-Wolf parameters are inserted straight into the {@code DATUM} element,
@@ -108,7 +139,8 @@ public enum Convention {
 
     /**
      * The <A HREF="http://www.unidata.ucar.edu/software/netcdf-java">NetCDF</A> convention.
-     * This convention differs from other conventions only in parameter and projection names.
+     * This convention is similar to the {@link #OGC} convention except for parameter and
+     * projection names.
      *
      * @see Citations#NETCDF
      */
@@ -116,7 +148,8 @@ public enum Convention {
 
     /**
      * The <A HREF="http://www.remotesensing.org/geotiff/geotiff.html">GeoTIFF</A> convention.
-     * This convention differs from other conventions only in parameter and projection names.
+     * This convention is similar to the {@link #OGC} convention except for parameter and
+     * projection names.
      *
      * @see Citations#GEOTIFF
      */
@@ -147,7 +180,32 @@ public enum Convention {
      * @see Formatter#isInternalWKT()
      */
     @Debug
-    INTERNAL(null, false);
+    INTERNAL(null, false) {
+        @Override
+        public CoordinateSystem toConformCS(final CoordinateSystem cs) {
+            return cs; // Prevent any modification on the internal CS.
+        }
+
+        @Override
+        Citation createCitation() {
+            final DefaultCitation dc = new DefaultCitation("Internal WKT");
+            dc.setCitedResponsibleParties(Citations.GEOTOOLKIT.getCitedResponsibleParties());
+            dc.freeze();
+            return dc;
+        }
+    };
+
+    /**
+     * A three-dimensional Cartesian CS with the legacy set of geocentric axes.
+     * Those axes were defined in OGC 01-009 as <var>Other</var>,
+     * <var>{@linkplain DefaultCoordinateSystemAxis#EASTING Easting}</var>,
+     * <var>{@linkplain DefaultCoordinateSystemAxis#NORTHING Northing}</var>
+     * in metres, where the "Other" axis is toward prime meridian.
+     */
+    private static final DefaultCartesianCS LEGACY = new DefaultCartesianCS("Legacy",
+            new DefaultCoordinateSystemAxis("X", AxisDirection.OTHER, SI.METRE),
+            new DefaultCoordinateSystemAxis("Y", AxisDirection.EAST,  SI.METRE),
+            new DefaultCoordinateSystemAxis("Z", AxisDirection.NORTH, SI.METRE));
 
     /**
      * If non-null, forces {@code PRIMEM} and {@code PARAMETER} angular units to this field
@@ -191,20 +249,21 @@ public enum Convention {
         Citation c = citation;
         if (c == null) {
             // No need to synchronize - this is not a big deal if the field is fetched twice.
-            if (this == INTERNAL) {
-                final DefaultCitation dc = new DefaultCitation("Internal WKT");
-                dc.setCitedResponsibleParties(Citations.GEOTOOLKIT.getCitedResponsibleParties());
-                dc.freeze();
-                c = dc;
-            } else try {
-                c = (Citation) Citations.class.getField(name()).get(null);
-            } catch (Exception e) {
-                // Should never happen.
-                throw new AssertionError(e);
-            }
-            citation = c;
+            citation = c = createCitation();
         }
         return c;
+    }
+
+    /**
+     * Creates the citation. This method is overridden by the {@link #INTERNAL} enum.
+     */
+    Citation createCitation() {
+        try {
+            return (Citation) Citations.class.getField(name()).get(null);
+        } catch (Exception e) {
+            // Should never happen.
+            throw new AssertionError(e);
+        }
     }
 
     /**
@@ -245,5 +304,60 @@ public enum Convention {
             }
         }
         return defaultConvention;
+    }
+
+    /**
+     * Makes the given coordinate system conform to this convention. This method is used mostly
+     * for converting between the legacy (OGC 01-009) {@link GeocentricCRS} axis directions, and
+     * the new (ISO 19111) directions. Those directions are:
+     * <p>
+     * <ul>
+     *   <li>OGC 01-009: Other,
+     *     {@linkplain DefaultCoordinateSystemAxis#EASTING Easting},
+     *     {@linkplain DefaultCoordinateSystemAxis#NORTHING Northing}.
+     *   </li>
+     *   <li>ISO 19111:
+     *     {@linkplain DefaultCoordinateSystemAxis#GEOCENTRIC_X Geocentric X},
+     *     {@linkplain DefaultCoordinateSystemAxis#GEOCENTRIC_Y Geocentric Y},
+     *     {@linkplain DefaultCoordinateSystemAxis#GEOCENTRIC_Z Geocentric Z}.
+     *   </li>
+     * </ul>
+     *
+     * @param  cs The coordinate system.
+     * @return A coordinate system equivalent to the given one but with conform axis names,
+     *         or the given {@code cs} if no change apply to the given coordinate system.
+     *
+     * @see #OGC
+     * @see #EPSG
+     */
+    public CoordinateSystem toConformCS(CoordinateSystem cs) {
+        if (cs instanceof CartesianCS) {
+            cs = replace((CartesianCS) cs, true);
+        }
+        return cs;
+    }
+
+    /**
+     * Returns the axes to use instead of the ones in the given coordinate system.
+     * If the coordinate system axes should be used as-is, returns {@code cs}.
+     *
+     * @param  cs The coordinate system for which to compare the axis directions.
+     * @param  legacy {@code true} for replacing ISO directions by the legacy ones,
+     *         or {@code false} for the other way around.
+     * @return The axes to use instead of the ones in the given CS,
+     *         or {@code cs} if the CS axes should be used as-is.
+     */
+    static CartesianCS replace(final CartesianCS cs, final boolean legacy) {
+        final CartesianCS check = legacy ? DefaultCartesianCS.GEOCENTRIC : LEGACY;
+        final int dimension = check.getDimension();
+        if (cs.getDimension() != dimension) {
+            return cs;
+        }
+        for (int i=0; i<dimension; i++) {
+            if (!cs.getAxis(i).getDirection().equals(check.getAxis(i).getDirection())) {
+                return cs;
+            }
+        }
+        return legacy ? LEGACY : DefaultCartesianCS.GEOCENTRIC;
     }
 }

@@ -32,6 +32,7 @@ import org.opengis.referencing.operation.*;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.cs.AxisRangeType;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
@@ -57,10 +58,6 @@ import static org.geotoolkit.math.XMath.atanh;
  *
  * @since 2.0
  * @module
- *
- * @todo Move {@link #getStandardGeographicCRS2D} out of this class, and move the definition
- *       of {@link CRS#getHorizontalCRS} in this class. It should allow us to get ride of
- *       most of Geotk dependencies.
  */
 public final class CRSUtilities extends Static {
     /**
@@ -70,6 +67,36 @@ public final class CRSUtilities extends Static {
      * @see http://www.geotoolkit.org/build/tools/geotk-epsg-pack/index.html
      */
     public static final String EPSG_VERSION = "7.09";
+
+    /**
+     * The key for specifying explicitely the value to be returned by {@link #getParameterValues()}.
+     * It is usually not necessary to specify those parameters because they are inferred either from
+     * the {@link MathTransform}, or specified explicitely in a {@link DefiningConversion}. However
+     * there is a few cases, for example the Molodenski transform, where none of the above can apply,
+     * because Geotk implements those operations as a concatenation of math transforms, and such
+     * concatenations don't have {@link ParameterValueGroup}.
+     *
+     * @since 3.20
+     */
+    public static final String PARAMETERS_KEY = "parameters";
+
+    /**
+     * Number of {@link org.geotoolkit.referencing.cs.AxisRangeType} values.
+     * This is defined in order to avoid creating a useless array of enumeration
+     * just for determining its length.
+     *
+     * @since 3.20
+     */
+    public static final int AXIS_RANGE_COUNT = 2;
+
+    /**
+     * Mask to apply on the {@link org.geotoolkit.referencing.cs.AxisRangeType} ordinate
+     * value in order to have the "opposite" enum. The opposite of {@code POSITIVE_LONGITUDE}
+     * is {@code SPANNING_ZERO_LONGITUDE}, and conversely.
+     *
+     * @since 3.20
+     */
+    public static final int AXIS_RANGE_RECIPROCAL_MASK = 1;
 
     /**
      * Do not allow creation of instances of this class.
@@ -99,46 +126,6 @@ public final class CRSUtilities extends Static {
     }
 
     /**
-     * Returns the dimension within the coordinate system of the first occurrence of an axis
-     * colinear with the specified axis. If an axis with the same
-     * {@linkplain CoordinateSystemAxis#getDirection direction} or an
-     * {@linkplain AxisDirections#opposite opposite} direction than {@code axis}
-     * occurs in the coordinate system, then the dimension of the first such occurrence
-     * is returned. That is, the value <var>k</var> such that:
-     *
-     * {@preformat java
-     *     absolute(cs.getAxis(k).getDirection()) == absolute(axis.getDirection())
-     * }
-     *
-     * is {@code true}. If no such axis occurs in this coordinate system,
-     * then {@code -1} is returned.
-     * <p>
-     * For example, {@code dimensionColinearWith(DefaultCoordinateSystemAxis.TIME)}
-     * returns the dimension number of time axis.
-     *
-     * @param  cs   The coordinate system to examine.
-     * @param  axis The axis to look for.
-     * @return The dimension number of the specified axis, or {@code -1} if none.
-     */
-    public static int dimensionColinearWith(final CoordinateSystem     cs,
-                                            final CoordinateSystemAxis axis)
-    {
-        int candidate = -1;
-        final int dimension = cs.getDimension();
-        final AxisDirection direction = AxisDirections.absolute(axis.getDirection());
-        for (int i=0; i<dimension; i++) {
-            final CoordinateSystemAxis xi = cs.getAxis(i);
-            if (direction.equals(AxisDirections.absolute(xi.getDirection()))) {
-                candidate = i;
-                if (axis.equals(xi)) {
-                    break;
-                }
-            }
-        }
-        return candidate;
-    }
-
-    /**
      * Returns the index of the first dimension in {@code fullCS} where axes colinear with
      * the {@code subCS} axes are found. If no such dimension is found, returns -1.
      *
@@ -150,7 +137,7 @@ public final class CRSUtilities extends Static {
      * @since 3.10
      */
     public static int dimensionColinearWith(final CoordinateSystem fullCS, final CoordinateSystem subCS) {
-        final int dim = dimensionColinearWith(fullCS, subCS.getAxis(0));
+        final int dim = AxisDirections.indexOf(fullCS, subCS.getAxis(0).getDirection());
         if (dim >= 0) {
             int i = subCS.getDimension();
             if (dim + i <= fullCS.getDimension()) {
@@ -193,24 +180,6 @@ public final class CRSUtilities extends Static {
     }
 
     /**
-     * Returns the components of the specified CRS, or {@code null} if none.
-     * This method preserves the nested CRS hierarchy if there is one.
-     *
-     * @param  crs The coordinate reference system for which to get the components.
-     * @return The components, or {@code null} if the given CRS is not a {@link CompoundCRS}.
-     */
-    public static List<? extends CoordinateReferenceSystem> getComponents(CoordinateReferenceSystem crs) {
-        if (crs instanceof CompoundCRS) {
-            final List<? extends CoordinateReferenceSystem> components;
-            components = ((CompoundCRS) crs).getComponents();
-            if (!components.isEmpty()) {
-                return components;
-            }
-        }
-        return null;
-    }
-
-    /**
      * Returns the dimension of the first coordinate reference system of the given type. The
      * {@code type} argument must be a sub-interface of {@link CoordinateReferenceSystem}.
      * If no such dimension is found, then this method returns {@code -1}.
@@ -228,10 +197,9 @@ public final class CRSUtilities extends Static {
         if (type.isAssignableFrom(crs.getClass())) {
             return 0;
         }
-        final List<? extends CoordinateReferenceSystem> c = getComponents(crs);
-        if (c != null) {
+        if (crs instanceof CompoundCRS) {
             int offset = 0;
-            for (final CoordinateReferenceSystem ci : c) {
+            for (final CoordinateReferenceSystem ci : ((CompoundCRS) crs).getComponents()) {
                 final int index = getDimensionOf(ci, type);
                 if (index >= 0) {
                     return index + offset;
@@ -260,9 +228,8 @@ public final class CRSUtilities extends Static {
     {
         if (crs != null) {
             while (crs.getCoordinateSystem().getDimension() != 2) {
-                final List<? extends CoordinateReferenceSystem> c = getComponents(crs);
-                if (c != null) {
-                    crs = c.get(0);
+                if (crs instanceof CompoundCRS) {
+                    crs = ((CompoundCRS) crs).getComponents().get(0);
                     // Continue the loop, examining only the first component.
                 } else {
                     crs = CRS.getHorizontalCRS(crs);
@@ -410,11 +377,11 @@ public final class CRSUtilities extends Static {
      */
     public static Ellipsoid getHeadGeoEllipsoid(CoordinateReferenceSystem crs) {
         while (!(crs instanceof GeographicCRS)) {
-            final List<? extends CoordinateReferenceSystem> c = getComponents(crs);
-            if (c == null) {
+            if (crs instanceof CompoundCRS) {
+                crs = ((CompoundCRS) crs).getComponents().get(0);
+            } else {
                 return null;
             }
-            crs = c.get(0);
         }
         return ((GeographicCRS) crs).getDatum().getEllipsoid();
     }
@@ -483,5 +450,31 @@ public final class CRSUtilities extends Static {
             }
         }
         return null;
+    }
+
+    /**
+     * Delegates to the {@code shiftAxisRange} method of the appropriate class. This method is not
+     * in public API because the call to {@code castOrCopy} may involve useless objects creation.
+     * Developers are encouraged to invoke {@code castOrCopy} themselves, then replace their old
+     * reference by the new one before to invoke {@code shiftAxisRange}, because they Geotk
+     * implementations cache the result of {@code shiftAxisRange} calls.
+     *
+     * @param  crs  The CRS on which to apply the shift, or {@code null}.
+     * @param  type The desired range of ordinate values.
+     * @return The shifted CRS, or {@code crs} if no range shift applied.
+     *
+     * @since 3.20
+     */
+    public static CoordinateReferenceSystem shiftAxisRange(final CoordinateReferenceSystem crs, final AxisRangeType type) {
+        if (crs instanceof GeographicCRS) {
+            final DefaultGeographicCRS impl = DefaultGeographicCRS.castOrCopy((GeographicCRS) crs);
+            final DefaultGeographicCRS shifted = impl.shiftAxisRange(type);
+            if (shifted != impl) return shifted;
+        } else if (crs instanceof CompoundCRS) {
+            final DefaultCompoundCRS impl = DefaultCompoundCRS.castOrCopy((CompoundCRS) crs);
+            final DefaultCompoundCRS shifted = impl.shiftAxisRange(type);
+            if (shifted != impl) return shifted;
+        }
+        return crs;
     }
 }
