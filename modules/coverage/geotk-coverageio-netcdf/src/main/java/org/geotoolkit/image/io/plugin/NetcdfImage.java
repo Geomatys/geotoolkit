@@ -48,6 +48,7 @@ import org.geotoolkit.internal.image.io.IIOImageHelper;
 import org.geotoolkit.resources.Errors;
 
 import static ucar.nc2.constants.CDM.*;
+import static org.geotoolkit.math.XMath.divisors;
 import static org.geotoolkit.internal.image.io.NetcdfVariable.*;
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 
@@ -123,7 +124,11 @@ final class NetcdfImage extends IIOImageHelper {
     {
         super(writer, image, parameters);
         int bandDimension = -1;
-        dimensions = new NetcdfDimension[getCoordinateSystem().getDimension()];
+        int numDimensions = getCoordinateSystem().getDimension();
+        if (numDimensions == 2 && getNumSourceBands() > 1) {
+            numDimensions = 3; // Use the bands as the third dimension.
+        }
+        dimensions = new NetcdfDimension[numDimensions];
         for (int i=0; i<dimensions.length; i++) {
             NetcdfDimension dimension = new NetcdfDimension(this, i);
             final int existing = allDimensions.indexOf(dimension);
@@ -215,7 +220,7 @@ final class NetcdfImage extends IIOImageHelper {
             String longName = null;
             String name = (range != null) ? toString(range.getDescriptor()) : null;
             if (name == null) {
-                name = (bandDimension >= 0) ? "band_" + (i+1) : "data";
+                name = (variables.length != 1) ? "band_" + (i+1) : "data";
             } else if (!N3iosp.isValidNetcdf3ObjectName(name)) {
                 longName = name;
                 name = N3iosp.createValidNetcdf3ObjectName(name);
@@ -308,11 +313,12 @@ final class NetcdfImage extends IIOImageHelper {
         final int[] origin   = new int[shape.length];
         final int xDimension = shape.length - (X_DIMENSION + 1);
         final int yDimension = shape.length - (Y_DIMENSION + 1);
+        final int zDimension = shape.length - (bandDimension + 1);
         final int width      = shape[xDimension];
-        final int height     = Math.min(Math.max(1, BUFFER_SIZE / width), shape[yDimension]);
-        final int capacity   = width * height;
-        origin[yDimension]   = shape[yDimension] - height;
-        shape [yDimension]   = height;
+        final int height     = shape[yDimension];
+        final int bufHeight  = bufferHeight(width, height);
+        final int capacity   = width * bufHeight;
+        shape[yDimension]    = bufHeight;
         Arrays.fill(shape, 0, yDimension, 1); // Set all extra dimensions (if any) to a length of 1.
         final Array buffer   = Array.factory(var.getDataType(), shape);
         final Array flipped  = buffer.flip(yDimension);
@@ -329,6 +335,7 @@ final class NetcdfImage extends IIOImageHelper {
                     var = variables[band];
                 }
                 final String name = var.getFullNameEscaped();
+                origin[yDimension] = height - bufHeight;
                 int index = 0; // Flat index in the matrix.
                 iter.startLines();
                 if (!iter.finishedLines()) do {
@@ -344,19 +351,38 @@ final class NetcdfImage extends IIOImageHelper {
                     assert (index % width) == 0 : index;
                     if (index == capacity) {
                         file.write(name, origin, flipped);
-                        origin[yDimension] -= height;
+                        origin[yDimension] -= bufHeight;
                         index = 0;
                     }
                 } while (!iter.nextLineDone());
-                if (index != 0) {
-                    shape [yDimension] = index / width;
-                    origin[yDimension] = height - shape[yDimension];
-                    file.write(name, new int[shape.length], flipped.section(origin, shape));
-                }
+                assert index == 0 : index;
                 band++;
+                if (zDimension < origin.length) {
+                    origin[zDimension] = band;
+                }
             } while (!iter.nextBandDone());
         } catch (InvalidRangeException e) {
-            throw new IIOException(e.getLocalizedMessage(), e);
+            throw new IIOException("Invalid section: origin=" + Arrays.toString(origin)
+                    + " shape=" + Arrays.toString(shape) + " band=" + band, e);
         }
+    }
+
+    /**
+     * Suggests a height for the temporary buffer to create when writing a two-dimensional
+     * slice of a NetCDF variable of the given size. This method returns a multiple of the
+     * given height in order to avoid a dimension reduction applied by the UCAR library when
+     * the length of a dimension is 1.
+     *
+     * @param  width  The image width., in pixels.
+     * @param  height The image height, in pixels.
+     * @return Proposed buffer height, in pixels.
+     */
+    private static int bufferHeight(final int width, final int height) {
+        final int[] divisors = divisors(height);
+        int i = Arrays.binarySearch(divisors, BUFFER_SIZE / height);
+        if (i < 0) {
+            i = ~i; // Tild operator, not minus.
+        }
+        return divisors[Math.min(divisors.length-1, i)];
     }
 }

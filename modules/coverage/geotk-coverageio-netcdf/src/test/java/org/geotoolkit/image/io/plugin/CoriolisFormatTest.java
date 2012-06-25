@@ -366,9 +366,10 @@ public final strictfp class CoriolisFormatTest extends NetcdfImageReaderTestBase
          */
         final SpatialImageReadParam param = reader.getDefaultReadParam();
         param.setSourceRegion(new Rectangle(360, 260, 2, 3));
+        param.setSourceBands(new int[] {0});
         Raster data;
         /*
-         * Read data at the default band index, which is 0.
+         * Read data at the first band index, which is 0.
          */
         assertArrayEquals(new int[] {0}, param.getSourceBands());
         data = reader.readRaster(0, param);

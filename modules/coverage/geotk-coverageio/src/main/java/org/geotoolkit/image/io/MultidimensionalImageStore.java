@@ -48,7 +48,7 @@ import javax.imageio.ImageWriter;
  * <var>t</var>) dimensions, it may be useful to handle the <var>z</var> dimension as bands. After
  * the method calls below, users can select one or many elevation indices through the standard
  * {@link IIOParam#setSourceBands(int[])} API. Compared to the {@link DimensionSlice} API, it
- * allows loading more than one slice in one read operation.
+ * allows loading more than one slice in a single read operation.
  *
  * {@preformat java
  *     MultidimensionalImageStore reader = ...;
@@ -56,16 +56,12 @@ import javax.imageio.ImageWriter;
  *     bandsDimension.addDimensionId(2); // 0-based index of the third dimension.
  * }
  *
- * When a dimension is assigned to bands as in the above example, {@link SpatialImageReadParam}
- * and {@link SpatialImageWriteParam} will initialize the {@link IIOParam#sourceBands} array to
- * {@code {0}}, meaning to fetch only the first band by default. This is the desired behavior
- * since the number of bands in NetCDF files is typically large and those bands are not color
- * components. This is different than the usual {@link IIOParam} behavior which is to initialize
- * source bands to {@code null} (meaning to fetch all bands).
- *
- * {@note The rule described above is not a special case. It is a natural consequence of
- *        the fact that the default index of <strong>every</strong> dimension slice is 0.}
- *
+ * When a dimension is assigned to bands as in the above example and if no
+ * {@link IIOParam#sourceBands} array is specified, then all bands will be read.
+ * This number of bands may be large, for example in NetCDF files. Users are advised
+ * to always {@linkplain IIOParam#setSourceBands(int[]) set the source bands} when using
+ * the band API for multi-dimensional data.
+ * <p>
  * After the <var>z</var> dimension in the above example has been assigned to the bands API,
  * the bands can be used as below:
  * <p>
@@ -95,7 +91,7 @@ import javax.imageio.ImageWriter;
  * declared in this interface.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.15
+ * @version 3.20
  *
  * @see DimensionSlice
  * @see SpatialImageReader#getDimension(int)

@@ -60,9 +60,57 @@ public final strictfp class AsciiGridWriterTest extends TextImageWriterTestBase 
     /**
      * @todo Can not run because spatial metadata are missing.
      */
-    @Ignore
     @Override
+    @Ignore("Can not run because spatial metadata are missing")
     public void testOneByteBand() throws IOException {
+    }
+
+    /**
+     * @todo Can not run because spatial metadata are missing.
+     */
+    @Override
+    @Ignore("Can not run because spatial metadata are missing")
+    public void testThreeByteBands() throws IOException {
+    }
+
+    /**
+     * @todo Can not run because spatial metadata are missing.
+     */
+    @Override
+    @Ignore("Can not run because spatial metadata are missing")
+    public void testOneShortBand() throws IOException {
+    }
+
+    /**
+     * @todo Can not run because spatial metadata are missing.
+     */
+    @Override
+    @Ignore("Can not run because spatial metadata are missing")
+    public void testOneUnsignedShortBand() throws IOException {
+    }
+
+    /**
+     * @todo Can not run because spatial metadata are missing.
+     */
+    @Override
+    @Ignore("Can not run because spatial metadata are missing")
+    public void testOneIntBand() throws IOException {
+    }
+
+    /**
+     * @todo Can not run because spatial metadata are missing.
+     */
+    @Override
+    @Ignore("Can not run because spatial metadata are missing")
+    public void testOneFloatBand() throws IOException {
+    }
+
+    /**
+     * @todo Can not run because spatial metadata are missing.
+     */
+    @Override
+    @Ignore("Can not run because spatial metadata are missing")
+    public void testOneDoubleBand() throws IOException {
     }
 
     /**

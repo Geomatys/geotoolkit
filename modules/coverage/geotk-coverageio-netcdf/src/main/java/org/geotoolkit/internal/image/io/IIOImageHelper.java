@@ -92,7 +92,7 @@ public class IIOImageHelper {
      * The bands to read, or {@code null} for reading all bands.
      * The length of this array shall be equals or less than {@link #numBands}.
      */
-    private final int[] sourceBands;
+    public final int[] sourceBands;
 
     /**
      * The sub-sampling, or 1 if none.

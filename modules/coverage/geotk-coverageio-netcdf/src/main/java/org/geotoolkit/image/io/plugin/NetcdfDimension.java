@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.image.io.plugin;
 
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Collections;
 import java.io.IOException;
@@ -39,6 +40,7 @@ import ucar.nc2.constants._Coordinate;
 
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.referencing.cs.AxisDirection;
+import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
@@ -87,6 +89,8 @@ final class NetcdfDimension {
 
     /**
      * The coordinate system axis to write in the NetCDF file.
+     * This field may be {@code null} for the band dimension is this dimension is
+     * not explicitely described by the coordinate system.
      */
     private final CoordinateSystemAxis axis;
 
@@ -129,7 +133,8 @@ final class NetcdfDimension {
      *       derivative at the center position.
      */
     NetcdfDimension(final IIOImageHelper image, final int dimension) throws ImageMetadataException {
-        axis = image.getCoordinateSystem().getAxis(dimension);
+        final CoordinateSystem cs = image.getCoordinateSystem();
+        axis = (cs.getDimension() > dimension) ? cs.getAxis(dimension) : null;
         /*
          * TODO: We use DimensionSlice.API as a matter of principle (for keeping room for future
          * improvement), but the mapping is hard-coded for now. Futures versions may use some of
@@ -145,16 +150,16 @@ final class NetcdfDimension {
             case IMAGE_DIMENSION: api=API.IMAGES;  break;
             default:              api=API.NONE;    break;
         }
-        final int subsampling;  // The grid ordinates increment. Must be equals or greater than 1.
-        final int length;       // Number of ordinate values to write in the NetCDF file.
-        int       index;        // Grid ordinate value, from lower inclusive to lower+length×subsampling exclusive.
+        int[] sourceIndices = null; // Source ordinate values, or null for [index:subsampling:...]
+        int   subsampling   = 1;    // The grid ordinates increment. Must be equals or greater than 1.
+        int   length        = 1;    // Number of ordinate values to write in the NetCDF file.
+        int   index         = 0;    // Grid ordinate value, from lower inclusive to lower+length×subsampling exclusive.
         switch (api) {
             case COLUMNS: index=image.sourceRegion.x; subsampling=image.sourceXSubsampling; length=(image.sourceRegion.width +subsampling-1)/subsampling; break;
             case ROWS:    index=image.sourceRegion.y; subsampling=image.sourceYSubsampling; length=(image.sourceRegion.height+subsampling-1)/subsampling; break;
             case BANDS: {
-                index       = 0;
-                length      = image.getNumSourceBands();
-                subsampling = 1;
+                length = image.getNumSourceBands();
+                sourceIndices = image.sourceBands;
                 break;
             }
             case IMAGES: {
@@ -165,18 +170,9 @@ final class NetcdfDimension {
                     index  = domain.getLow (dimension);
                     length = domain.getSpan(dimension);
                 } else {
-                    index  = 0;
                     length = (axis instanceof DiscreteCoordinateSystemAxis<?>) ?
                              ((DiscreteCoordinateSystemAxis<?>) axis).length() : 1;
                 }
-                subsampling = 1;
-                break;
-            }
-            default: {
-                // For all other dimensions, presume that we will write only one slice.
-                index       = 0;
-                length      = 1;
-                subsampling = 1;
                 break;
             }
         }
@@ -191,6 +187,9 @@ final class NetcdfDimension {
                 dataType = DataType.getType(type);
                 ordinates = Array.factory(dataType, new int[] {length});
                 for (int i=0; i<length; i++) {
+                    if (sourceIndices != null) {
+                        index = sourceIndices[i];
+                    }
                     final Comparable<?> ordinate = ds.getOrdinateAt(index);
                     ordinates.setDouble(i, ((Number) ordinate).doubleValue());
                     index += subsampling;
@@ -204,12 +203,15 @@ final class NetcdfDimension {
          * from the axis. Try to compute them from the grid to CRS transform instead.
          */
         final MathTransform gridToCRS = image.getGridToCRS();
-        if (gridToCRS == null) {
-            ordinates = Array.factory(dataType = DataType.INT, new int[] {length});
-            for (int i=0; i<length; i++) {
-                ordinates.setInt(i, index);
-                index += subsampling;
+        if (gridToCRS == null || gridToCRS.getSourceDimensions() <= dimension) {
+            if (sourceIndices == null) {
+                sourceIndices = new int[length];
+                for (int i=0; i<length; i++) {
+                    sourceIndices[i] = index;
+                    index += subsampling;
+                }
             }
+            ordinates = Array.factory(dataType = DataType.INT, new int[] {length}, sourceIndices);
         } else {
             ordinates = Array.factory(dataType = DataType.FLOAT, new int[] {length});
             final double[] center = image.getSourceRegionCenter();
@@ -218,6 +220,9 @@ final class NetcdfDimension {
             System.arraycopy(center, 0, source, 0, Math.min(source.length, center.length));
             try {
                 for (int i=0; i<length; i++) {
+                    if (sourceIndices != null) {
+                        index = sourceIndices[i];
+                    }
                     source[dimension] = index;
                     gridToCRS.transform(source, 0, target, 0, 1);
                     ordinates.setDouble(i, target[dimension]);
@@ -239,8 +244,15 @@ final class NetcdfDimension {
      * The actual writing will happen in the {@link #write(NetcdfFileWriteable)} method.
      *
      * @param  file The UCAR NetCDF object where to write the new dimension and variable.
+     * @param  locale The locale for dimension and variable names.
      */
-    void create(final NetcdfFileWriteable file) {
+    void create(final NetcdfFileWriteable file, final Locale locale) {
+        if (axis == null) {
+            // Currently, this case occurs only when writing bands.
+            // We will need to revisit the name if more cases occur.
+            create(file, "band");
+            return;
+        }
         final String        longName  = IdentifiedObjects.getName(axis, null);
         final AxisDirection direction = axis.getDirection();
         final AxisDirection absdir    = AxisDirections.absolute(direction);
@@ -282,6 +294,7 @@ final class NetcdfDimension {
         } else {
             type = null;
             name = N3iosp.createValidNetcdf3ObjectName(longName);
+            name = (locale != null) ? name.toLowerCase(locale) : name.toLowerCase();
         }
         /*
          * 'name' has been initialized to a reasonable name for the dimension and variable to
@@ -293,14 +306,15 @@ final class NetcdfDimension {
         if (ncName != null && N3iosp.isValidNetcdf3ObjectName(ncName)) {
             name = ncName;
         } else if (longName != null && N3iosp.isValidNetcdf3ObjectName(longName)) {
-            name = longName;
+            if (!name.equalsIgnoreCase(longName)) { // 'name' may be in lower case.
+                name = longName;
+            }
         }
         /*
          * Create the variable and attach the relevant attribute value.
          * Note that the values in the variable are left uninitialized.
          */
-        dimension = file.addDimension(name, (int) ordinates.getSize());
-        variable  = file.addVariable(name, dataType, Collections.singletonList(dimension));
+        create(file, name);
         if (!name.equals(longName)) {
             addAttribute(CDM.LONG_NAME, longName);
         }
@@ -312,6 +326,14 @@ final class NetcdfDimension {
             addAttribute(CF.AXIS, type.getCFAxisName());
             addAttribute(_Coordinate.AxisType, type.name());
         }
+    }
+
+    /**
+     * Creates initially empty {@link #dimension} and {@link #variable} instances.
+     */
+    private void create(final NetcdfFileWriteable file, final String name) {
+        dimension = file.addDimension(name, (int) ordinates.getSize());
+        variable  = file.addVariable(name, dataType, Collections.singletonList(dimension));
     }
 
     /**
@@ -365,7 +387,7 @@ final class NetcdfDimension {
      */
     @Override
     public int hashCode() {
-        return axis.hashCode() ^ Utilities.deepHashCode(ordinates.getStorage());
+        return Objects.hashCode(axis) ^ Utilities.deepHashCode(ordinates.getStorage());
     }
 
     /**

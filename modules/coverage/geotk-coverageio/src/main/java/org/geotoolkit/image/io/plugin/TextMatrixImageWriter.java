@@ -25,6 +25,7 @@ import java.util.Locale;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageWriter;
 import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.metadata.IIOMetadata;
 import javax.media.jai.iterator.RectIter;
@@ -146,8 +147,8 @@ public class TextMatrixImageWriter extends TextImageWriter {
      *   {@linkplain org.geotoolkit.image.io.TextImageWriter.Spi super-class javadoc} for remaining fields</td></tr>
      * </table>
      *
-     * @author Martin Desruisseaux (IRD)
-     * @version 3.08
+     * @author Martin Desruisseaux (IRD, Geomatys)
+     * @version 3.20
      *
      * @see TextMatrixImageReader.Spi
      *
@@ -188,6 +189,17 @@ public class TextMatrixImageWriter extends TextImageWriter {
         @Override
         public String getDescription(final Locale locale) {
             return Descriptions.getResources(locale).getString(Descriptions.Keys.CODEC_MATRIX);
+        }
+
+        /**
+         * Checks if the specified image can be encoded in a text file.
+         * The default implementation returns {@code true} only if the image has only one band.
+         *
+         * @since 3.20
+         */
+        @Override
+        public boolean canEncodeImage(final ImageTypeSpecifier type) {
+            return type.getNumBands() == 1;
         }
 
         /**

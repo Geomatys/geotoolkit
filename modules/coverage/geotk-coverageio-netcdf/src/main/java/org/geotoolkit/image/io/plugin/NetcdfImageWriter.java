@@ -27,7 +27,6 @@ import java.awt.image.RenderedImage;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageWriter;
 import javax.imageio.ImageWriteParam;
-import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.metadata.IIOMetadata;
 
 import ucar.nc2.NetcdfFileWriteable;
@@ -187,7 +186,7 @@ public class NetcdfImageWriter extends FileImageWriter {
             // If any new dimension were added as a side effect of the NetcdfImage construction,
             // add them to the NetCDF file now. The intend is to get an error sooner if something
             // goes wrong with the NetCDF dimension creation.
-            dimensions.get(i++).create(ncFile);
+            dimensions.get(i++).create(ncFile, locale);
         }
         data.createVariables(ncFile, createRectIter(image, param));
         images.add(data);
@@ -294,15 +293,6 @@ public class NetcdfImageWriter extends FileImageWriter {
         @Override
         public String getDescription(Locale locale) {
             return "NetCDF image encoder";
-        }
-
-        /**
-         * Checks if the specified image can be encoded in a NetCDF file.
-         * The default implementation returns {@code true} in every cases.
-         */
-        @Override
-        public boolean canEncodeImage(final ImageTypeSpecifier type) {
-            return true;
         }
 
         /**

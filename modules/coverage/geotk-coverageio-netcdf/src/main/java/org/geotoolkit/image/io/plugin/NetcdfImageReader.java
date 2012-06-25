@@ -265,7 +265,7 @@ public class NetcdfImageReader extends FileImageReader implements
      *
      * {@preformat java
      *     reader.setImageNames("temperature");
-     *     reader.getDimensionForAPI(API.BANDS).addDimensionId(3);
+     *     reader.getDimensionForAPI(API.BANDS).addDimensionId(2); // Zero-based index
      * }
      *
      * The following method call reads the same image than the above example,
@@ -1069,7 +1069,7 @@ public class NetcdfImageReader extends FileImageReader implements
             numSrcBands = bandNames.size();
             bandDimension = -1;
         } else {
-            bandDimension = findDimensionIndex(DimensionSlice.API.BANDS,  rank);
+            bandDimension = findDimensionIndex(DimensionSlice.API.BANDS, rank);
             numSrcBands = (bandDimension >= 0) ? variable.getDimension(bandDimension).getLength() : 1;
         }
         final int numDstBands = (dstBands != null) ? dstBands.length :
@@ -1291,7 +1291,6 @@ public class NetcdfImageReader extends FileImageReader implements
         variable       = null;
         variableName   = null;
         variableNames  = null;
-        dimensionManager.clear();
         try {
             if (dataset != null) {
                 dataset.close();
@@ -1300,6 +1299,16 @@ public class NetcdfImageReader extends FileImageReader implements
         } finally {
             super.close(); // Must delete the temporary file only after we closed the dataset.
         }
+    }
+
+    /**
+     * Restores the {@code ImageReader} to its initial state. This method removes the input,
+     * the locale, all listeners and any {@link DimensionSlice.API}.
+     */
+    @Override
+    public void reset() {
+        super.reset();
+        dimensionManager.clear();
     }
 
 

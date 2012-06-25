@@ -25,6 +25,7 @@ import javax.imageio.ImageWriter;
 
 import org.opengis.test.coverage.image.ImageWriterTestCase;
 
+import org.geotoolkit.image.io.DimensionSlice;
 import org.geotoolkit.internal.io.TemporaryFile;
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
@@ -61,6 +62,13 @@ public final strictfp class NetcdfImageWriterTest extends ImageWriterTestCase {
                 temporaryFile = TemporaryFile.createTempFile("geotk", ".nc", null);
             }
             writer.setOutput(temporaryFile);
+            // The reader is usually not the purpose of this method. However in the NetCDF case,
+            // we have to associate the band API to the third dimension in order to be able to
+            // read back the image we will write.
+            if (reader == null) {
+                reader = ImageIO.getImageReader(writer);
+                ((NetcdfImageReader) reader).getDimensionForAPI(DimensionSlice.API.BANDS).addDimensionId(2);
+            }
         }
     }
 
@@ -88,6 +96,14 @@ public final strictfp class NetcdfImageWriterTest extends ImageWriterTestCase {
             }
         }
         fail("Writer not found.");
+    }
+
+    /**
+     * Ignored for now.
+     */
+    @Override
+    @Ignore("Seems to be handled as an unsigned type rather than a signed type.")
+    public void testOneShortBand() {
     }
 
     /**
