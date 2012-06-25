@@ -215,7 +215,7 @@ public class DimensionSet extends AbstractSet<DimensionIdentification> implement
     private Set<DimensionIdentification> dimensions() {
         if (dimensions == null) {
             if (identifiersMap != null) {
-                dimensions = Collections.unmodifiableSet(new LinkedHashSet<>(identifiersMap.values()));
+                dimensions = XCollections.unmodifiableSet(new LinkedHashSet<>(identifiersMap.values()));
             } else {
                 dimensions = Collections.emptySet();
             }

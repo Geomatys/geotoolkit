@@ -369,7 +369,7 @@ final class LayerEntry extends DefaultEntry implements Layer, Localized {
             final String name = getName();
             final SeriesTable st = getTableFactory().getTable(SeriesTable.class);
             st.setLayer(name);
-            map = Collections.unmodifiableMap(st.getEntriesMap());
+            map = XCollections.unmodifiableMap(st.getEntriesMap());
             st.release();
             series = map;
         }

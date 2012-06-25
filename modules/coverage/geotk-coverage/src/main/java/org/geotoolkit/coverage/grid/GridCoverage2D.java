@@ -35,7 +35,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.EnumSet;
 import java.util.Iterator;
-import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import javax.measure.unit.Unit;
@@ -64,6 +63,7 @@ import org.geotoolkit.coverage.AbstractCoverage;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.lang.Debug;
@@ -982,7 +982,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
                 }
             }
             // Assign only in successful.
-            this.viewTypes = Collections.unmodifiableSet(viewTypes);
+            this.viewTypes = XCollections.unmodifiableSet(viewTypes);
         }
         return viewTypes;
     }

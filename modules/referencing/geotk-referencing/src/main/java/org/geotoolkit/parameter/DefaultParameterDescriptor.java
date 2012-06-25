@@ -284,7 +284,7 @@ public class DefaultParameterDescriptor<T> extends AbstractParameterDescriptor
                 ensureCanCast("validValues", valueClass, value);
                 valids.add(value);
             }
-            this.validValues = Collections.unmodifiableSet(valids);
+            this.validValues = XCollections.unmodifiableSet(valids);
         } else {
             this.validValues = null;
         }

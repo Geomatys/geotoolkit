@@ -32,7 +32,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collections;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
 import net.jcip.annotations.ThreadSafe;
@@ -40,6 +39,7 @@ import net.jcip.annotations.ThreadSafe;
 import org.opengis.metadata.spatial.PixelOrientation;
 
 import org.geotoolkit.coverage.grid.ImageGeometry;
+import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.util.collection.FrequencySortedSet;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.internal.io.IOUtilities;
@@ -266,7 +266,7 @@ public abstract class TileManager implements Serializable {
                 final int n = (frequencies != null) ? frequencies[i++] : 1;
                 providers.add(tile.getImageReaderSpi(), n);
             }
-            this.providers = Collections.unmodifiableSet(providers);
+            this.providers = XCollections.unmodifiableSet(providers);
         }
         return providers;
     }

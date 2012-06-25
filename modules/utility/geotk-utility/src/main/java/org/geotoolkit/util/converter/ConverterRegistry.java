@@ -27,6 +27,7 @@ import net.jcip.annotations.ThreadSafe;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 
@@ -49,7 +50,7 @@ import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
  * multi-inheritance in interface hierarchy.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.17
+ * @version 3.20
  *
  * @since 3.00
  * @module
@@ -155,6 +156,11 @@ public class ConverterRegistry {
      * write, so a read/write lock may not be the best match here.
      */
     private final Map<ClassPair<?,?>, ObjectConverter<?,?>> converters;
+
+    /**
+     * The map to be returned by {@link #getConvertibleTypes()}, created when first needed.
+     */
+    private transient Map<Class<?>, Set<Class<?>>> convertibleTypes;
 
     /**
      * Creates an initially empty set of object converters.
@@ -311,6 +317,7 @@ public class ConverterRegistry {
         }
         if (converter != existing) {
             converters.put(key, converter);
+            convertibleTypes = null;
         }
     }
 
@@ -525,6 +532,38 @@ public class ConverterRegistry {
             best = candidate;
         }
         return (best != null) ? best.asSubclass(base) : null;
+    }
+
+    /**
+     * Returns the types of all objects than can be converted, together with their possible
+     * target types. The map returned by this method is not live - it is a "snapshot" of this
+     * registry at invocation time.
+     *
+     * @return The mapping from source to target types. Keys are source types, and values are
+     *         all possible target types for the source type.
+     *
+     * @since 3.20
+     */
+    public Map<Class<?>, Set<Class<?>>> getConvertibleTypes() {
+        synchronized (converters) {
+            if (convertibleTypes == null) {
+                final Map<Class<?>, Set<Class<?>>> mapping = new LinkedHashMap<>();
+                for (final ClassPair<?,?> pair : converters.keySet()) {
+                    Set<Class<?>> targets = mapping.get(pair.sourceClass);
+                    if (targets == null) {
+                        targets = new LinkedHashSet<>();
+                        mapping.put(pair.sourceClass, targets);
+                    }
+                    targets.add(pair.targetClass);
+                }
+                // Make the map unmodifiable.
+                for (final Map.Entry<Class<?>, Set<Class<?>>> entry : mapping.entrySet()) {
+                    entry.setValue(XCollections.unmodifiableSet(entry.getValue()));
+                }
+                convertibleTypes = XCollections.unmodifiableMap(mapping);
+            }
+        }
+        return convertibleTypes;
     }
 
     /**

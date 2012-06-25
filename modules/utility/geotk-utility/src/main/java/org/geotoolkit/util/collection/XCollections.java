@@ -167,6 +167,39 @@ public final class XCollections extends Static {
     }
 
     /**
+     * Returns a unmodifiable version of the given set. This method is different than the
+     * standard {@link Collections#unmodifiableSet(Set)} in that it tries to returns a more
+     * efficient object when there is zero or one element. <em>The set returned by this
+     * method may or may not be a view of the given set</em>. Consequently this method
+     * shall be used <strong>only</strong> if the given set will <strong>not</strong> be
+     * modified after this method call. In case of doubt, use the standard
+     * {@link Collections#unmodifiableSet(Set)} method instead.
+     *
+     * @param  <E>  The type of elements in the set.
+     * @param  set  The set to make unmodifiable, or {@code null}.
+     * @return A unmodifiable version of the given set, or {@code null} if the given set was null.
+     *
+     * @since 3.20
+     */
+    public static <E> Set<E> unmodifiableSet(Set<E> set) {
+        if (set != null) switch (set.size()) {
+            case 0: {
+                set = Collections.emptySet();
+                break;
+            }
+            case 1: {
+                set = Collections.singleton(set.iterator().next());
+                break;
+            }
+            default: {
+                set = Collections.unmodifiableSet(set);
+                break;
+            }
+        }
+        return set;
+    }
+
+    /**
      * Returns a unmodifiable version of the given map. This method is different than the
      * standard {@link Collections#unmodifiableMap(Map)} in that it tries to returns a more
      * efficient object when there is zero or one element. <em>The map returned by this

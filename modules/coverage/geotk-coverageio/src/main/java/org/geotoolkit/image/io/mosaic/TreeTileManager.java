@@ -141,7 +141,7 @@ final class TreeTileManager extends TileManager implements TreeNodeFilter {
             }
             sameInputs.add(tile);
         }
-        providers = Collections.unmodifiableSet(providers);
+        providers = XCollections.unmodifiableSet(providers);
         /*
          * Overwrites the tiles array with the same tiles, but ordered with same input firsts.
          */
@@ -412,6 +412,6 @@ final class TreeTileManager extends TileManager implements TreeNodeFilter {
         for (final Tile tile : tiles) {
             providers.add(tile.getImageReaderSpi());
         }
-        providers = Collections.unmodifiableSet(providers);
+        providers = XCollections.unmodifiableSet(providers);
     }
 }

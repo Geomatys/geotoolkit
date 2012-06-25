@@ -19,7 +19,6 @@ package org.geotoolkit.build.project.report;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.io.File;
 import java.io.IOException;
@@ -93,7 +92,7 @@ public final class ProjectionParametersReport extends OperationParametersReport 
         for (final Citation authority : authorities) {
             columns.add(getIdentifier(authority));
         }
-        columnHeaders = Collections.unmodifiableSet(columns);
+        columnHeaders = XCollections.unmodifiableSet(columns);
         categories = new Class[] {
             Projection.class,
             Conversion.class,

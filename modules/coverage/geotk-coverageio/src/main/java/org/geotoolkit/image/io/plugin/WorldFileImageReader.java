@@ -21,7 +21,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.Set;
-import java.util.EnumSet;
 import java.util.Collections;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.IIORegistry;
@@ -285,7 +284,7 @@ public class WorldFileImageReader extends ImageReaderAdapter {
         /**
          * The value to be returned by {@link #getModifiedInformation(Object)}.
          */
-        static final Set<InformationType> INFO = Collections.unmodifiableSet(EnumSet.of(InformationType.IMAGE_METADATA));
+        static final Set<InformationType> INFO = Collections.singleton(InformationType.IMAGE_METADATA);
 
         /**
          * Creates a provider which will use the given format for reading pixel values.

@@ -44,6 +44,7 @@ import org.geotoolkit.measure.AngleFormat;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.Localized;
+import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.internal.io.IOUtilities;
 
 import static org.geotoolkit.io.TableWriter.*;
@@ -761,7 +762,7 @@ header: for (int i=0; ; i++) {
     public void setAuthorities(String... authorities) {
         Set<String> copy = null;
         if (authorities != null) {
-            copy = Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList(authorities)));
+            copy = XCollections.immutableSet(authorities);
         }
         synchronized (lock) {
             scopes = copy;
