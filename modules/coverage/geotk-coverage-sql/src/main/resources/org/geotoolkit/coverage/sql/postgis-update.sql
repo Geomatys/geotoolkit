@@ -39,15 +39,6 @@ COMMENT ON COLUMN spatial_ref_sys."override" IS
 
 
 --
--- Ensures that the SRID of a geometry column is known to PostGIS.
---
-ALTER TABLE geometry_columns
-  ADD CONSTRAINT fk_srid FOREIGN KEY (srid)
-      REFERENCES spatial_ref_sys (srid) MATCH SIMPLE
-      ON UPDATE RESTRICT ON DELETE RESTRICT;
-
-
---
 -- Some vertical CRS from the EPSG database.
 --
 INSERT INTO spatial_ref_sys (srid, auth_name, auth_srid, srtext) VALUES
