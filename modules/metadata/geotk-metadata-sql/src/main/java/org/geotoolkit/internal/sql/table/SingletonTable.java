@@ -19,10 +19,12 @@ package org.geotoolkit.internal.sql.table;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLDataException;
 import java.sql.PreparedStatement;
 import java.util.Set;
 import java.util.LinkedHashSet;
 
+import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.collection.Cache;
 import org.geotoolkit.internal.sql.TypeMapper;
 import org.geotoolkit.resources.Errors;
@@ -326,7 +328,19 @@ public abstract class SingletonTable<E extends Entry> extends Table {
         final Set<E> entries = new LinkedHashSet<>();
         final LocalCache lc = getLocalCache();
         synchronized (lc) {
-            final LocalCache.Stmt ce = getStatement(lc, QueryType.LIST);
+            final LocalCache.Stmt ce;
+            try {
+                ce = getStatement(lc, QueryType.LIST);
+            } catch (SQLDataException e) {
+                /*
+                 * This happen if BoundedSingletonTable has been given an envelope filled with NaN
+                 * values, for example because it has been projected from a different CRS far from
+                 * the domain of validity. We handle such envelope as an out-of-bounds envelope,
+                 * so there is no record that intersect the requested area.
+                 */
+                Logging.recoverableException(getLogger(), getClass(), "getEntries", e);
+                return entries;
+            }
             final int[] pkIndices = getPrimaryKeyColumns();
             final int pkIndex = getPrimaryKeyColumn(pkIndices);
             try (ResultSet results = ce.statement.executeQuery()) {
@@ -361,7 +375,7 @@ public abstract class SingletonTable<E extends Entry> extends Table {
                     }
                 }
             }
-            release(lc, ce);
+            release(lc, ce); // Push back to the pool only on success.
         }
         return entries;
     }

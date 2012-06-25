@@ -1243,10 +1243,11 @@ public final class Envelopes extends Static {
      *
      * @param  envelope The envelope to format.
      * @return The envelope as a {@code POLYGON} in WKT format.
+     * @throws IllegalArgumentException if the given envelope can not be formatted.
      *
      * @see org.geotoolkit.io.wkt
      */
-    public static String toPolygonWKT(final Envelope envelope) {
+    public static String toPolygonWKT(final Envelope envelope) throws IllegalArgumentException {
         /*
          * Get the dimension, ignoring the trailing ones which have infinite values.
          */
@@ -1257,6 +1258,9 @@ public final class Envelopes extends Static {
                 break;
             }
             dimension--;
+        }
+        if (dimension < 2) {
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.EMPTY_ENVELOPE_2D));
         }
         final StringBuilder buffer = new StringBuilder("POLYGON(");
         String separator = "(";
