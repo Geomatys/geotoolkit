@@ -60,7 +60,7 @@ import javax.xml.transform.Result;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class StaxStreamWriter {
+public abstract class StaxStreamWriter extends AbstractConfigurable {
 
     protected XMLStreamWriter writer;
     

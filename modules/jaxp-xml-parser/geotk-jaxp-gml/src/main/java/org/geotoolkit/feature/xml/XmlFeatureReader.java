@@ -28,7 +28,7 @@ import org.opengis.feature.type.FeatureType;
  * @module pending
  * @author Guilhem Legal (Geomatys)
  */
-public interface XmlFeatureReader {
+public interface XmlFeatureReader extends Configurable {
 
     /**
      * Read a feature or featureCollection from the specified String XML source.

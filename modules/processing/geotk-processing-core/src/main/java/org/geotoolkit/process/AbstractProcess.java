@@ -49,7 +49,7 @@ public abstract class AbstractProcess implements Process {
 
         final ConformanceResult res = Parameters.isValid(inputParameters, inputParameters.getDescriptor());
         if (!res.pass()) {
-            throw new IllegalArgumentException("Input parameters are invalid." + res.getExplanation());
+            throw new IllegalArgumentException("Input parameters are invalid:" + res.getExplanation());
         }
     }
 

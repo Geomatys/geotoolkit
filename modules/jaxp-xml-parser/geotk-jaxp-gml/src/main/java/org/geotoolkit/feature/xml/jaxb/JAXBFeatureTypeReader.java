@@ -35,6 +35,7 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.xml.Utils;
 import org.geotoolkit.feature.xml.XmlFeatureTypeReader;
+import org.geotoolkit.xml.AbstractConfigurable;
 import org.geotoolkit.xml.MarshallerPool;
 import org.geotoolkit.xsd.xml.v2001.ComplexContent;
 import org.geotoolkit.xsd.xml.v2001.Element;
@@ -56,7 +57,7 @@ import org.w3c.dom.Node;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
+public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFeatureTypeReader {
 
     private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.feature.xml.jaxp");
     

@@ -32,7 +32,7 @@ import org.w3c.dom.Node;
  * @module pending
  * @author Guilhem Legal (Geomatys)
  */
-public interface XmlFeatureTypeWriter {
+public interface XmlFeatureTypeWriter extends Configurable {
 
     /**
      * Return an XML representation of the specified featureType.

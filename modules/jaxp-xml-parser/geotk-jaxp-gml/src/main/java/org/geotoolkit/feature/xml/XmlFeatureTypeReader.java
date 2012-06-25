@@ -30,7 +30,7 @@ import org.w3c.dom.Node;
  * @module pending
  * @author Guilhem Legal (Geomatys)
  */
-public interface XmlFeatureTypeReader {
+public interface XmlFeatureTypeReader extends Configurable {
 
     /**
      * Read a list feature type from the specified String XML (XSD) representation.

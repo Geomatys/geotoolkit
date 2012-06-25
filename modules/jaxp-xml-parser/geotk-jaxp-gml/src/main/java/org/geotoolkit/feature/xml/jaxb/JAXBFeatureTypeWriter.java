@@ -32,6 +32,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.geotoolkit.feature.xml.Utils;
 import org.geotoolkit.feature.xml.XmlFeatureTypeWriter;
+import org.geotoolkit.xml.AbstractConfigurable;
 import org.geotoolkit.xml.MarshallerPool;
 import org.geotoolkit.xml.Namespaces;
 import org.geotoolkit.xsd.xml.v2001.ComplexContent;
@@ -54,7 +55,7 @@ import org.w3c.dom.Node;
  * @author Guilhem Legal (Geomatys)
  * @author Johann Sorel (Geomatys)
  */
-public class JAXBFeatureTypeWriter implements XmlFeatureTypeWriter {
+public class JAXBFeatureTypeWriter extends AbstractConfigurable implements XmlFeatureTypeWriter {
 
     private static final MarshallerPool POOL = XSDMarshallerPool.getInstance();
 

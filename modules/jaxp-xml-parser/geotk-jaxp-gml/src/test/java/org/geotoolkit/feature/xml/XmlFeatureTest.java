@@ -226,7 +226,7 @@ public class XmlFeatureTest {
         sfb.set(i++, mpt);
         sfb.set(i++, pt);
         simpleFeatureFull = sfb.buildFeature("id-156");
-
+        
         sfb = new SimpleFeatureBuilder(simpleTypeBasic);
         sfb.set(0,"some text with words.");
         sfb.set(1,56.14d);
@@ -334,13 +334,23 @@ public class XmlFeatureTest {
     @Test
     public void testReadSimpleFeature() throws JAXBException, IOException, XMLStreamException{
         final XmlFeatureReader reader = new JAXPStreamFeatureReader(simpleTypeFull);
-        final Object obj = reader.read(XmlFeatureTest.class
+        Object obj = reader.read(XmlFeatureTest.class
                 .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeature.xml"));
         reader.dispose();
 
         assertTrue(obj instanceof SimpleFeature);
 
         SimpleFeature result = (SimpleFeature) obj;
+        assertEquals(simpleFeatureFull, result);
+        
+        final XmlFeatureReader readerGml = new JAXPStreamFeatureReader(simpleTypeFull);
+        readerGml.getProperties().put(JAXPStreamFeatureReader.BINDING_PACKAGE, "GML");
+        obj = readerGml.read(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeature.xml"));
+        reader.dispose();
+
+        assertTrue(obj instanceof SimpleFeature);
+
+        result = (SimpleFeature) obj;
         assertEquals(simpleFeatureFull, result);
     }
 
