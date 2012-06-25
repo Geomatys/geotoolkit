@@ -53,7 +53,7 @@ public final strictfp class TextMatrixImageWriterTest extends TextImageWriterTes
      * Creates a new test suite.
      */
     public TextMatrixImageWriterTest() {
-        sampleToleranceThreshold = 1E-3;
+        sampleToleranceThreshold = 1E-2;
     }
 
     /**

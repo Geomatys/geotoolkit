@@ -60,7 +60,7 @@ public final strictfp class WorldFileImageWriterTest extends TextImageWriterTest
      * Creates a new test suite.
      */
     public WorldFileImageWriterTest() {
-        sampleToleranceThreshold = 1E-3;
+        sampleToleranceThreshold = 1E-2;
     }
 
     /**
