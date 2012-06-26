@@ -27,50 +27,50 @@ import org.opengis.parameter.ParameterValueGroup;
  * @module pending
  */
 public interface CoverageStore {
-    
+
     /**
      * Get the parameters used to initialize this source from it's factory.
-     * 
+     *
      * @return source configuration parameters
      */
     ParameterValueGroup getConfiguration();
-    
+
     /**
      * Get the factory which created this source.
-     * 
+     *
      * @return this source original factory
      */
     CoverageStoreFactory getFactory();
-    
+
     /**
      * Get a collection of all available coverage names.
      * @return Set<Name> , never null, but can be empty.
      * @throws DataStoreException
      */
     Set<Name> getNames() throws DataStoreException;
-    
+
     /**
      * Get the coverage reference for the given name.
      * @param name reference name
      * @return CoverageReference
-     * @throws DataStoreException 
+     * @throws DataStoreException
      */
     CoverageReference getCoverageReference(Name name) throws DataStoreException;
-    
+
     /**
      * Create a new coverage reference.
      * The returned coverage reference might have a different namespace.
-     * 
+     *
      * @param name
      * @return CoverageReference
-     * @throws DataStoreException 
+     * @throws DataStoreException
      */
     CoverageReference create(Name name) throws DataStoreException;
-    
+
     /**
      * Dispose the coveragestore caches and underlying resources.
-     * The cocoregastore should not be used after this call or it may raise errors.
+     * The CoverageStore should not be used after this call or it may raise errors.
      */
     void dispose();
-    
+
 }

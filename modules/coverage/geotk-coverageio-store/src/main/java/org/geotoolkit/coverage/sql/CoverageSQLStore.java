@@ -30,23 +30,23 @@ import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * Wrap a coverage-sql database as a CoverageStore.
- * TODO : toporary binding waiting for CoverageStore interface to be revisited
+ * TODO : temporary binding waiting for CoverageStore interface to be revisited
  * and integrated in geotk.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class CoverageSQLStore extends CoverageDatabase implements CoverageStore{
+public class CoverageSQLStore extends CoverageDatabase implements CoverageStore {
 
     private final ParameterValueGroup parameters;
-    
+
     public CoverageSQLStore(ParameterValueGroup parameters) {
         super(parameters);
         this.parameters = parameters;
     }
 
     @Override
-    public ParameterValueGroup getConfiguration(){
+    public ParameterValueGroup getConfiguration() {
         return parameters;
     }
 
@@ -54,12 +54,12 @@ public class CoverageSQLStore extends CoverageDatabase implements CoverageStore{
     public CoverageStoreFactory getFactory() {
         return CoverageStoreFinder.getFactory(CoverageSQLStoreFactory.NAME);
     }
-    
+
     @Override
     public Set<Name> getNames() throws DataStoreException {
         final Set<String> layers = getLayers().result();
         final Set<Name> names = new HashSet<Name>(layers.size());
-        for(String layer : layers){
+        for (String layer : layers) {
             names.add(new DefaultName(layer));
         }
         return names;
@@ -74,15 +74,15 @@ public class CoverageSQLStore extends CoverageDatabase implements CoverageStore{
     public CoverageReference create(Name name) throws DataStoreException {
         throw new DataStoreException("Not supported.");
     }
-    
-    private class CoverageSQLLayerReference implements CoverageReference{
+
+    private class CoverageSQLLayerReference implements CoverageReference {
 
         private final Name name;
-        
-        private CoverageSQLLayerReference(Name name){
+
+        private CoverageSQLLayerReference(Name name) {
             this.name = name;
         }
-        
+
         @Override
         public Name getName() {
             return name;
@@ -92,7 +92,7 @@ public class CoverageSQLStore extends CoverageDatabase implements CoverageStore{
         public CoverageStore getStore() {
             return CoverageSQLStore.this;
         }
-        
+
         @Override
         public GridCoverageReader createReader() throws DataStoreException {
             final LayerCoverageReader reader = CoverageSQLStore.this.createGridCoverageReader(name.getLocalPart());
@@ -100,5 +100,5 @@ public class CoverageSQLStore extends CoverageDatabase implements CoverageStore{
         }
 
     }
-    
+
 }

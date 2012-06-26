@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -27,7 +27,7 @@ import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * Factory used to construct a CoverageStore from a set of parameters.
- * 
+ *
  * <h2>Implementation Notes</h2>
  * <p>
  * An instance of this interface should exist for all data stores which want to
@@ -53,15 +53,15 @@ import org.opengis.parameter.ParameterValueGroup;
  * The factories are never called directly by client code, instead the
  * CoverageStoreFinder class is used.
  * </p>
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public interface CoverageStoreFactory {
 
-    
+
     /**
-     * General information about this factory. 
+     * General information about this factory.
      * If a given ParameterValueGroup has an identifier parameter set, it's value must
      * be {@linkplain Identifier#getAuthority() identifier authority}, otherwise this
      * factory will not support this ParameterValueGroup.
@@ -69,7 +69,7 @@ public interface CoverageStoreFactory {
      * @return The identification of this factory.
      */
     Identification getIdentification();
-    
+
     /**
      * Test to see if the implementation is available for use.
      * This method ensures all the appropriate libraries to construct
@@ -104,7 +104,7 @@ public interface CoverageStoreFactory {
      * Describe the nature of the datasource constructed by this factory.
      *
      * <p>
-     * A description of this data store type with severals traductions.
+     * A description of this data store type with severals translations.
      * </p>
      *
      * @return A human readable description that is suitable for inclusion in a
@@ -124,25 +124,25 @@ public interface CoverageStoreFactory {
      * to by the params map.
      *
      * <p>
-     * If this datasource requires a number of parameters then this mehtod
+     * If this datasource requires a number of parameters then this method
      * should check that they are all present and that they are all valid. If
      * the datasource is a file reading data source then the extentions or
      * mime types of any files specified should be checked. For example, a
      * Shapefile datasource should check that the url param ends with shp,
-     * such tests should be case insensative.
+     * such tests should be case insensitive.
      * </p>
      *
      * @param params The full set of information needed to construct a live
      *        data source.
      *
-     * @return booean true if and only if this factory can process the resource
+     * @return boolean true if and only if this factory can process the resource
      *         indicated by the param set and all the required params are
-     *         pressent.
+     *         present.
      */
     boolean canProcess(Map<String, ? extends Serializable> params);
 
     /**
-     * @see CoverageFactory#canProcess(org.opengis.parameter.ParameterValueGroup) 
+     * @see CoverageFactory#canProcess(org.opengis.parameter.ParameterValueGroup)
      */
     boolean canProcess(ParameterValueGroup params);
 
@@ -160,12 +160,12 @@ public interface CoverageStoreFactory {
      *
      * @param params The full set of information needed to construct a live
      *        data store. Typical key values for the map include: url -
-     *        location of a resource, used by file reading datasources. 
+     *        location of a resource, used by file reading datasources.
      *
      * @return The created CoverageStore, this may be null if the required resource
-     *         was not found or if insufficent parameters were given. Note
+     *         was not found or if insufficient parameters were given. Note
      *         that canProcess() should have returned false if the problem is
-     *         to do with insuficent parameters.
+     *         to do with insufficient parameters.
      *
      * @throws IOException if there were any problems setting up (creating or
      *         connecting) the datasource.

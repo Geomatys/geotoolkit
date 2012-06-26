@@ -36,13 +36,13 @@ import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * Wrap coverage-sql as a coverage-store.
- * TODO : toporary binding waiting for CoverageStore interface to be revisited
+ * TODO : temporary binding waiting for CoverageStore interface to be revisited
  * and integrated in geotk.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class CoverageSQLStoreFactory extends AbstractCoverageStoreFactory{
+public class CoverageSQLStoreFactory extends AbstractCoverageStoreFactory {
 
     /** factory identification **/
     public static final String NAME = "coverage-sql";
@@ -53,8 +53,9 @@ public class CoverageSQLStoreFactory extends AbstractCoverageStoreFactory{
         final DefaultCitation citation = new DefaultCitation(NAME);
         citation.setIdentifiers(Collections.singleton(id));
         IDENTIFICATION.setCitation(citation);
+        IDENTIFICATION.freeze();
     }
-    
+
     public static final ParameterDescriptor<String> IDENTIFIER = new DefaultParameterDescriptor<String>(
                     AbstractCoverageStoreFactory.IDENTIFIER.getName().getCode(),
                     AbstractCoverageStoreFactory.IDENTIFIER.getRemarks(), String.class,NAME,true);
@@ -64,16 +65,16 @@ public class CoverageSQLStoreFactory extends AbstractCoverageStoreFactory{
         GeneralParameterDescriptor[] params = CoverageDatabase.PARAMETERS.descriptors()
                 .toArray(new GeneralParameterDescriptor[0]);
         params = XArrays.concatenate(new GeneralParameterDescriptor[]{IDENTIFIER},params);
-        
+
         PARAMETERS = new DefaultParameterDescriptorGroup(
                 CoverageDatabase.PARAMETERS.getName().getCode(), params);
     }
-    
+
     @Override
     public Identification getIdentification() {
         return IDENTIFICATION;
     }
-    
+
     @Override
     public CharSequence getDescription() {
         return new ResourceInternationalString("org/geotoolkit/coverage/bundle", "coverageSQLDescription");
@@ -99,5 +100,5 @@ public class CoverageSQLStoreFactory extends AbstractCoverageStoreFactory{
     public CoverageStore createNew(ParameterValueGroup params) throws DataStoreException {
         throw new DataStoreException("Not supported.");
     }
-    
+
 }

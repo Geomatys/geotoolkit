@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.Map;
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.internal.jaxb.gco.InternationalStringAdapter;
 import org.geotoolkit.metadata.iso.quality.DefaultConformanceResult;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.Parameters;
@@ -48,7 +47,7 @@ public abstract class AbstractCoverageStoreFactory extends Factory implements Co
      */
     public static final ParameterDescriptor<String> IDENTIFIER =
             new DefaultParameterDescriptor<String>("identifier","Factory identifier.",String.class,null,true);
-    
+
     /** parameter for namespace of the coveragestore */
     public static final ParameterDescriptor<String> NAMESPACE =
              new DefaultParameterDescriptor<String>("namespace","Namespace prefix",String.class,null,false);
@@ -78,7 +77,7 @@ public abstract class AbstractCoverageStoreFactory extends Factory implements Co
     @Override
     public CoverageStore create(Map<String, ? extends Serializable> params) throws DataStoreException {
         params = forceIdentifier(params);
-        
+
         final ParameterValueGroup prm = FeatureUtilities.toParameter(params,getParametersDescriptor());
         if(prm == null){
             return null;
@@ -96,7 +95,7 @@ public abstract class AbstractCoverageStoreFactory extends Factory implements Co
     @Override
     public CoverageStore createNew(Map<String, ? extends Serializable> params) throws DataStoreException {
         params = forceIdentifier(params);
-        
+
         final ParameterValueGroup prm = FeatureUtilities.toParameter(params,getParametersDescriptor());
         if(prm == null){
             return null;
@@ -114,7 +113,7 @@ public abstract class AbstractCoverageStoreFactory extends Factory implements Co
     @Override
     public boolean canProcess(Map<String, ? extends Serializable> params) {
         params = forceIdentifier(params);
-        
+
         final ParameterValueGroup prm = FeatureUtilities.toParameter(params,getParametersDescriptor());
         if(prm == null){
             return false;
@@ -134,19 +133,19 @@ public abstract class AbstractCoverageStoreFactory extends Factory implements Co
         if(params == null){
             return false;
         }
-        
+
         //check identifier value is exist
         final boolean validId = checkIdentifier(params);
         if(!validId){
             return false;
         }
-        
+
         final ParameterDescriptorGroup desc = getParametersDescriptor();
         if(!desc.getName().getCode().equalsIgnoreCase(params.getDescriptor().getName().getCode())){
             return false;
         }
-        
-        final ConformanceResult result = Parameters.isValid(params, desc);        
+
+        final ConformanceResult result = Parameters.isValid(params, desc);
         return (result != null) && Boolean.TRUE.equals(result.pass());
     }
 
@@ -159,12 +158,12 @@ public abstract class AbstractCoverageStoreFactory extends Factory implements Co
         result.setPass(Boolean.TRUE);
         return result;
     }
-    
+
     /**
      * Set the identifier parameter in the map if not present.
      */
     private Map<String,Serializable> forceIdentifier(Map params){
-        
+
         if(!params.containsKey(IDENTIFIER.getName().getCode())){
             //identifier is not specified, force it
             final ParameterDescriptorGroup desc = getParametersDescriptor();
@@ -174,30 +173,34 @@ public abstract class AbstractCoverageStoreFactory extends Factory implements Co
         }
         return params;
     }
-        
+
     /**
      * Check if the Identifier parameter exist.
      * if it exist, it must be set to 'value' otherwise return false.
      * if not present, return true;
-     * @return 
+     * @return
      */
     protected boolean checkIdentifier(final ParameterValueGroup params){
         final String expectedId = ((ParameterDescriptor<String>)getParametersDescriptor()
                 .descriptor(IDENTIFIER.getName().getCode())).getDefaultValue();
-        
+
         for(GeneralParameterValue val : params.values()){
             if(val.getDescriptor().getName().getCode().equals(IDENTIFIER.getName().getCode())){
                 final Object candidate = ((ParameterValue)val).getValue();
                 return expectedId.equals(candidate);
             }
         }
-        
+
         return true;
     }
-    
+
     /**
-     * @see #checkIdentifier(org.opengis.parameter.ParameterValueGroup) 
+     * @see #checkIdentifier(org.opengis.parameter.ParameterValueGroup)
      * @throws DataStoreException if identifier is not valid
+     *
+     * @todo The method name is misleading. It suggests that this method checks if the factory
+     *       can process despite errors, while the intend is to thrown an exception if there
+     *       is an error. "ensureCanProcess" would be a better name.
      */
     protected void checkCanProcessWithError(final ParameterValueGroup params) throws DataStoreException{
         final boolean valid = canProcess(params);
@@ -205,5 +208,5 @@ public abstract class AbstractCoverageStoreFactory extends Factory implements Co
             throw new DataStoreException("Parameter values not supported by this factory.");
         }
     }
-    
+
 }
