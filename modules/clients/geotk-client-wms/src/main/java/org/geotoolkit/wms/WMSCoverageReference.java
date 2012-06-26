@@ -16,6 +16,10 @@
  */
 package org.geotoolkit.wms;
 
+import org.geotoolkit.internal.referencing.AxisDirections;
+import org.opengis.referencing.cs.AxisDirection;
+import org.opengis.referencing.cs.CoordinateSystemAxis;
+import org.opengis.referencing.cs.CoordinateSystem;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.wms.xml.WMSVersion;
 import java.awt.geom.NoninvertibleTransformException;
@@ -638,7 +642,7 @@ public class WMSCoverageReference implements CoverageReference{
 
         if(matchCapabilitiesDates){
             final CoordinateReferenceSystem crs = env.getCoordinateReferenceSystem();
-            final int index = CRSUtilities.dimensionColinearWith(crs.getCoordinateSystem(),
+            final int index = dimensionColinearWith(crs.getCoordinateSystem(),
                     DefaultCoordinateSystemAxis.TIME);
             if(index >= 0){
                 //there is a temporal axis
@@ -786,5 +790,46 @@ public class WMSCoverageReference implements CoverageReference{
         request.setColumnIndex( (int)Math.round(pickCoord.getX()) );
         request.setRawIndex( (int)Math.round(pickCoord.getY()) );
     }
+ 
+    /**
+     * Returns the dimension within the coordinate system of the first occurrence of an axis
+     * colinear with the specified axis. If an axis with the same
+     * {@linkplain CoordinateSystemAxis#getDirection direction} or an
+     * {@linkplain AxisDirections#opposite opposite} direction than {@code axis}
+     * occurs in the coordinate system, then the dimension of the first such occurrence
+     * is returned. That is, the value <var>k</var> such that:
+     *
+     * {@preformat java
+     *     absolute(cs.getAxis(k).getDirection()) == absolute(axis.getDirection())
+     * }
+     *
+     * is {@code true}. If no such axis occurs in this coordinate system,
+     * then {@code -1} is returned.
+     * <p>
+     * For example, {@code dimensionColinearWith(DefaultCoordinateSystemAxis.TIME)}
+     * returns the dimension number of time axis.
+     *
+     * @param  cs   The coordinate system to examine.
+     * @param  axis The axis to look for.
+     * @return The dimension number of the specified axis, or {@code -1} if none.
+     */
+    public static int dimensionColinearWith(final CoordinateSystem     cs,
+                                            final CoordinateSystemAxis axis)
+    {
+        int candidate = -1;
+        final int dimension = cs.getDimension();
+        final AxisDirection direction = AxisDirections.absolute(axis.getDirection());
+        for (int i=0; i<dimension; i++) {
+            final CoordinateSystemAxis xi = cs.getAxis(i);
+            if (direction.equals(AxisDirections.absolute(xi.getDirection()))) {
+                candidate = i;
+                if (axis.equals(xi)) {
+                    break;
+                }
+            }
+        }
+        return candidate;
+    }
+
     
 }
