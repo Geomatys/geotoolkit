@@ -118,7 +118,7 @@ public final class FeatureUtilities {
             return new java.util.Date();
         }
 
-        final Coordinate crd = new Coordinate(0, 0);        
+        final Coordinate crd = new Coordinate(0, 0);
 
         if (type == Point.class) {
             final Point pt = GF.createPoint(crd);
@@ -188,7 +188,7 @@ public final class FeatureUtilities {
             }else{
                 strId = newId;
             }
-            
+
 
             final Collection<Property> properties = ga.getProperties();
             final Collection<Property> copies = new ArrayList<Property>();
@@ -329,7 +329,7 @@ public final class FeatureUtilities {
     public static Property defaultProperty(final PropertyDescriptor desc){
         return defaultProperty(desc, null);
     }
-    
+
     public static Property defaultProperty(final PropertyDescriptor desc, final String id){
         final PropertyType type = desc.getType();
 
@@ -360,7 +360,7 @@ public final class FeatureUtilities {
 
         throw new IllegalArgumentException("Unhandled type : " + type);
     }
-    
+
     public static ComplexAttribute defaultProperty(final ComplexType type){
         return defaultProperty(type, null);
     }
@@ -444,44 +444,44 @@ public final class FeatureUtilities {
         }else{
             return new WrapProperty.Property(property, desc);
         }
-        
+
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // PARAMETERS API MAPPING OPERATIONS ///////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
-    
+
     /**
      * Convert a ComplexAttribute in a parameter.
-     * 
+     *
      * @param source : attributeto convert
      * @param desc : parameter descriptor
      * @return ParameterValueGroup
      */
     public static ParameterValueGroup toParameter(final ComplexAttribute source, final ParameterDescriptorGroup desc){
-        
-        final ParameterValueGroup target = desc.createValue();        
-        fill(source,target);        
+
+        final ParameterValueGroup target = desc.createValue();
+        fill(source,target);
         return target;
     }
-    
+
     /**
      * Convert a ParameterValueGroup in a feature.
-     * 
+     *
      * @param source : parameter to convert
      * @return ComplexAttribute
      */
     public static ComplexAttribute toFeature(final ParameterValueGroup source){
-        
+
         final ComplexType ft = (ComplexType)FeatureTypeUtilities.toPropertyType(source.getDescriptor());
         final ComplexAttribute target = FeatureUtilities.defaultProperty(ft);
         fill(source,target);
-        return target;        
+        return target;
     }
-    
+
     /**
      * Convert a ComplexAttribute in a Map of values.
-     * 
+     *
      * @param source : property to convert
      * @return Map
      */
@@ -492,44 +492,44 @@ public final class FeatureUtilities {
         }
         return map;
     }
-    
+
     /**
      * Convert a ParameterValueGroup in a Map of values.
-     * 
+     *
      * @param source : parameter to convert
      * @return Map
      */
     public static Map<String,Object> toMap(final ParameterValueGroup source){
         return toMap(toFeature(source));
     }
-    
+
     /**
      * Transform a Map in a ParameterValueGroup.
      * A default parameter is first created and all key found in the map
      * that match the descriptor will be completed.
-     * 
+     *
      * @param params
      * @param desc
-     * @return 
+     * @return
      */
     public static ParameterValueGroup toParameter(final Map<String, ?> params, final ParameterDescriptorGroup desc) {
         return toParameter(params, desc, true);
     }
-    
+
     /**
      * Transform a Map in a ParameterValueGroup.
      * A default parameter is first created and all key found in the map
      * that match the descriptor will be completed.
-     * 
+     *
      * @param params
      * @param desc
-     * @param checkMandatory : will return a parameter only if all mandatory values 
+     * @param checkMandatory : will return a parameter only if all mandatory values
      *      have been found in the map.
-     * @return 
+     * @return
      */
-    public static ParameterValueGroup toParameter(final Map<String, ?> params, 
+    public static ParameterValueGroup toParameter(final Map<String, ?> params,
             final ParameterDescriptorGroup desc, final boolean checkMandatory) {
-        
+
         if(checkMandatory){
             for(GeneralParameterDescriptor de : desc.descriptors()){
                 if(de.getMinimumOccurs()>0 && !(params.containsKey(de.getName().getCode()))){
@@ -538,11 +538,11 @@ public final class FeatureUtilities {
                 }
             }
         }
-        
+
         final ParameterValueGroup parameter = desc.createValue();
 
         for(final Entry<String, ?> entry : params.entrySet()){
-            
+
             final GeneralParameterDescriptor subdesc;
             try{
                 subdesc = desc.descriptor(entry.getKey());
@@ -550,14 +550,14 @@ public final class FeatureUtilities {
                 //do nothing, the map may contain other values for other uses
                 continue;
             }
-            
+
             if(!(subdesc instanceof ParameterDescriptor)){
                 //we can not recreate value groups
                 continue;
             }
-            
+
             final ParameterDescriptor pd = (ParameterDescriptor) subdesc;
-            
+
             final ParameterValue param;
             try{
                 param = Parameters.getOrCreate(pd,parameter);
@@ -565,7 +565,7 @@ public final class FeatureUtilities {
                 //do nothing, the map may contain other values for other uses
                 continue;
             }
-            
+
             Object val = entry.getValue();
             val = Converters.convert(val, pd.getValueClass());
             param.setValue(val);
@@ -573,17 +573,17 @@ public final class FeatureUtilities {
 
         return parameter;
     }
-    
+
     private static void fill(final ParameterValueGroup source, final ComplexAttribute target){
-        
+
         final ParameterDescriptorGroup paramdesc = source.getDescriptor();
-        
+
         for(final PropertyDescriptor desc : target.getType().getDescriptors()){
-            
+
             if(desc.getType() instanceof ComplexType){
-                
+
                 try{
-                    final List<ParameterValueGroup> groups = source.groups(desc.getName().getLocalPart());                
+                    final List<ParameterValueGroup> groups = source.groups(desc.getName().getLocalPart());
                     if(groups != null){
                         for(ParameterValueGroup gr : groups){
                             final ComplexAttribute att = (ComplexAttribute) FeatureUtilities.defaultProperty(desc);
@@ -593,77 +593,100 @@ public final class FeatureUtilities {
                     }
                 }catch(Exception ex){
                     //parameter might not exist of might be a group
-                } 
-                
+                }
+
             }else if(desc.getType() instanceof AttributeType){
-                
-                try{
-                    final ParameterValue val = Parameters.getOrCreate(
-                        (ParameterDescriptor)paramdesc.descriptor(desc.getName().getLocalPart()), source);
-                    Property prop = target.getProperty(desc.getName().getLocalPart());
+                final String code = desc.getName().getLocalPart();
+                final GeneralParameterValue gpv = searchParameter(source, code);
+
+                if(gpv instanceof ParameterValue){
+                    Property prop = target.getProperty(code);
                     if(prop == null){
                         prop = FeatureUtilities.defaultProperty(desc);
+                        target.getProperties().add(prop);
                     }
-                    prop.setValue(val.getValue());
-                }catch(Exception ex){
-                    //parameter might not exist of might be a group
-                }                
+                    prop.setValue(((ParameterValue)gpv).getValue());
+                }
             }
-            
+
         }
-        
+
         for(final GeneralParameterDescriptor gpd : source.getDescriptor().descriptors()){
-            
+
             final Collection<Property> properties = target.getProperties(gpd.getName().getCode());
-            
+
             if(gpd instanceof ParameterDescriptor){
                 final ParameterDescriptor desc = (ParameterDescriptor) gpd;
-                
+
                 for(final Property prop : properties){
                     Parameters.getOrCreate(desc, source).setValue(prop.getValue());
                 }
             }else if(gpd instanceof ParameterDescriptorGroup){
                 final ParameterDescriptorGroup desc = (ParameterDescriptorGroup) gpd;
-                
+
                 for(final Property prop : properties){
-                    final ParameterValueGroup subGroup = source.addGroup(desc.getName().getCode());                    
-                    fill(subGroup,(ComplexAttribute)prop);                    
+                    final ParameterValueGroup subGroup = source.addGroup(desc.getName().getCode());
+                    fill(subGroup,(ComplexAttribute)prop);
                 }
-            }            
+            }
         }
     }
-    
+
     private static void fill(final ComplexAttribute source, final ParameterValueGroup target){
-        
+
         for(final GeneralParameterDescriptor gpd : target.getDescriptor().descriptors()){
-            
+
             final Collection<Property> properties = source.getProperties(gpd.getName().getCode());
-            
+
             if(gpd instanceof ParameterDescriptor){
                 final ParameterDescriptor desc = (ParameterDescriptor) gpd;
-                
+
                 for(final Property prop : properties){
                     Parameters.getOrCreate(desc, target).setValue(prop.getValue());
                 }
             }else if(gpd instanceof ParameterDescriptorGroup){
                 final ParameterDescriptorGroup desc = (ParameterDescriptorGroup) gpd;
-                
+
                 for(final Property prop : properties){
                     ParameterValueGroup subGroup = null;
                     if (desc.getMaximumOccurs() != 1) {
-                        subGroup = target.addGroup(desc.getName().getCode());     
+                        subGroup = target.addGroup(desc.getName().getCode());
                     } else {
                         if (desc.getMinimumOccurs() == 1) {
                             subGroup = target.groups(desc.getName().getCode()).get(0);
                         }
                         if( subGroup == null) {
-                            subGroup = target.addGroup(desc.getName().getCode());     
+                            subGroup = target.addGroup(desc.getName().getCode());
                         }
                     }
-                    fill((ComplexAttribute)prop,subGroup);                    
+                    fill((ComplexAttribute)prop,subGroup);
                 }
-            }            
+            }
         }
     }
-     
+
+    /**
+     * Equivalent to Parameters.getOrCreate but doesn't create the value if it does not exist.
+     *
+     * @param group
+     * @param code
+     * @return GeneralParameterValue
+     */
+    public static GeneralParameterValue searchParameter(final ParameterValueGroup group, final String code){
+        for(GeneralParameterValue param : group.values()){
+            if(param instanceof ParameterValue){
+                final ParameterValue pv = (ParameterValue) param;
+                if(code.equals(pv.getDescriptor().getName().getCode())){
+                    return pv;
+                }
+            }else if(param instanceof ParameterValueGroup){
+                final ParameterValueGroup pvg = (ParameterValueGroup) param;
+                if(code.equals(pvg.getDescriptor().getName().getCode())){
+                    return pvg;
+                }
+            }
+        }
+        return null;
+    }
+
 }
