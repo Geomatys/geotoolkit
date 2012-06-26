@@ -66,7 +66,7 @@ import org.geotoolkit.resources.Errors;
  * @version 3.20
  *
  * @see CoverageDatabase#createGridCoverageReader(String)
- * @see CoverageDatabase#readSlice(CoverageQuery)
+ * @see CoverageDatabase#readSlice(String, CoverageEnvelope, IIOListeners)
  * @see GridCoverageReference#read(CoverageEnvelope, IIOListeners)
  *
  * @since 3.10
@@ -326,7 +326,7 @@ public class LayerCoverageReader extends GridCoverageReader {
      * @throws CoverageStoreException If an error occurred while querying the database or reading
      *         the image.
      *
-     * @see CoverageDatabase#readSlice(CoverageQuery)
+     * @see CoverageDatabase#readSlice(String, CoverageEnvelope, IIOListeners)
      */
     public GridCoverage2D readSlice(final int index, final GridCoverageReadParam param) throws CoverageStoreException {
         ensureValidIndex(index);

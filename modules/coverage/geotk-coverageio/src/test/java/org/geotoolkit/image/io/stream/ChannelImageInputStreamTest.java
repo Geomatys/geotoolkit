@@ -176,13 +176,14 @@ public final strictfp class ChannelImageInputStreamTest {
                     assertEquals("getStreamPosition()", r.getStreamPosition(), t.getStreamPosition());
                     assertEquals("getBitOffset()",      r.getBitOffset(),      t.getBitOffset());
                 }
-            } catch (AssertionError e) {
-                System.err.println("Position:    " + position);
-                System.err.println("Bit offset:  " + bitOffset);
-                System.err.println("Byte order:  " + r.getByteOrder());
-                System.err.println("Operation:   " + operation);
-                System.err.println("Random seed: " + seed);
-                System.err.println("Exception:   " + e.getLocalizedMessage());
+            } catch (AssertionError | RuntimeException e) {
+                final PrintStream err = System.err;
+                err.println("Position:    " + position);
+                err.println("Bit offset:  " + bitOffset);
+                err.println("Byte order:  " + r.getByteOrder());
+                err.println("Operation:   " + operation);
+                err.println("Random seed: " + seed);
+                err.println("Exception:   " + e.getLocalizedMessage());
                 throw e;
             }
         }
@@ -227,12 +228,13 @@ public final strictfp class ChannelImageInputStreamTest {
                     assertEquals("getStreamPosition()", r.getStreamPosition(), t.getStreamPosition());
                     assertEquals("getBitOffset()",      r.getBitOffset(),      t.getBitOffset());
                 }
-            } catch (AssertionError e) {
-                System.err.println("Position:    " + position);
-                System.err.println("Bit offset:  " + bitOffset);
-                System.err.println("Operation:   " + operation);
-                System.err.println("Random seed: " + seed);
-                System.err.println("Exception:   " + e.getLocalizedMessage());
+            } catch (AssertionError | RuntimeException e) {
+                final PrintStream err = System.err;
+                err.println("Position:    " + position);
+                err.println("Bit offset:  " + bitOffset);
+                err.println("Operation:   " + operation);
+                err.println("Random seed: " + seed);
+                err.println("Exception:   " + e.getLocalizedMessage());
                 throw e;
             }
         }

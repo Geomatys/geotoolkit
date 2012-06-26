@@ -39,8 +39,7 @@ import org.geotoolkit.image.io.IIOListeners;
  * <p>
  * Every getter methods defined in this class return a direct reference to the objects holds
  * by {@code CoverageQuery} - the objects are not cloned. This approach makes easier to configure
- * a query by modifying directly the returned objects. Setter methods are provided for completness,
- * but typically don't need to be invoked.
+ * a query by modifying directly the returned objects.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.10
@@ -49,7 +48,12 @@ import org.geotoolkit.image.io.IIOListeners;
  *
  * @since 3.10
  * @module
+ *
+ * @deprecated Experience has shown that this class is rarely used in practice, since
+ * {@link LayerCoverageReader} is a more powerful way to get the same functionality.
+ * Consequently this class will be removed in order to simplify the API.
  */
+@Deprecated
 public class CoverageQuery {
     /**
      * The name of the layer to be requested.
@@ -115,7 +119,7 @@ public class CoverageQuery {
     /**
      * Sets the envelope of the coverage to be queried. This method is provided for completness
      * with the {@link #getEnvelope()} method, but usually don't need to be invoked since the
-     * object returne by {@code getEnvelope()} can be modified directly.
+     * object returned by {@code getEnvelope()} can be modified directly.
      *
      * @param newEnvelope The new envelope, or {@code null} for infinite bounds.
      * @throws MismatchedReferenceSystemException If the given envelope uses an incompatible CRS.
@@ -154,7 +158,7 @@ public class CoverageQuery {
     /**
      * Sets the listeners to inform about read progress. This method is provided for completness
      * with the {@link #getIIOListeners()} method, but usually don't need to be invoked since the
-     * object returne by {@code getIIOListeners()} can be modified directly.
+     * object returned by {@code getIIOListeners()} can be modified directly.
      *
      * @param newListeners The new listeners, or {@code null} for none.
      */

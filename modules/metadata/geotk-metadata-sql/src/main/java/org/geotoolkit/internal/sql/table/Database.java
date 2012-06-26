@@ -382,8 +382,10 @@ public class Database implements Localized {
      *
      * @param  key The key for the property to fetch.
      * @return The property value, or {@code null} if none and there is no default value.
+     *
+     * @see Table#getProperty(ConfigurationKey)
      */
-    final String getProperty(final ConfigurationKey key) {
+    public final String getProperty(final ConfigurationKey key) {
         String value = null;
         if (properties instanceof Properties) {
             // No need to synchronize since 'Properties' is already synchronized.
