@@ -296,7 +296,8 @@ final class DataPanel extends JComponent {
                     String url = "http://lambert93.ign.fr/fileadmin/files/" + NTv2Transform.RGF93;
                     if (ByteOrder.BIG_ENDIAN.equals(ByteOrder.nativeOrder())) {
                         final int split = url.lastIndexOf('.');
-                        url = url.substring(0, split) + "_b" + url.substring(split);
+                        url = new StringBuilder(url.length() + 2).append(url, 0, split)
+                                .append("_b").append(url, split, url.length()).toString();
                     }
                     copy(new URL(url), new File(directory, NTv2Transform.RGF93));
                     break;

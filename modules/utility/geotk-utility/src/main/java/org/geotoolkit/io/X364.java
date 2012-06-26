@@ -226,7 +226,7 @@ search:     do {
                 if (buffer == null) {
                     buffer = new StringBuilder();
                 }
-                buffer.append(text.substring(last, start));
+                buffer.append(text, last, start);
                 last = ++i; // The ++ is for skipping the END character.
             } while ((i = text.indexOf(START, i)) >= 0);
             if (buffer != null) {

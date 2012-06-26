@@ -545,13 +545,13 @@ public class TableWriter extends FilterWriter {
                 for (; length!=0; length--) {
                     switch (string.charAt(upper++)) {
                         case '\t': {
-                            buffer.append(string.substring(offset, upper-1));
+                            buffer.append(string, offset, upper-1);
                             nextColumn();
                             offset = upper;
                             break;
                         }
                         case '\r': {
-                            buffer.append(string.substring(offset, upper-1));
+                            buffer.append(string, offset, upper-1);
                             nextLine();
                             if (length!=0 && string.charAt(upper)=='\n') {
                                 upper++;
@@ -561,7 +561,7 @@ public class TableWriter extends FilterWriter {
                             break;
                         }
                         case '\n': {
-                            buffer.append(string.substring(offset, upper-1));
+                            buffer.append(string, offset, upper-1);
                             nextLine();
                             offset = upper;
                             break;
@@ -571,7 +571,7 @@ public class TableWriter extends FilterWriter {
                 length = upper-offset;
             }
             skipCR = (string.charAt(offset+length-1) == '\r');
-            buffer.append(string.substring(offset, offset+length));
+            buffer.append(string, offset, offset+length);
         }
     }
 

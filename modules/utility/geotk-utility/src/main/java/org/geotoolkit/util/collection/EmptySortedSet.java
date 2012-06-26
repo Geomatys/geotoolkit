@@ -37,6 +37,8 @@ import java.util.SortedSet;
  *
  * @since 3.10
  * @module
+ *
+ * @todo This class will be removed on the JDK8 branch.
  */
 final class EmptySortedSet<E> extends AbstractSet<E> implements SortedSet<E>, Serializable {
     /**

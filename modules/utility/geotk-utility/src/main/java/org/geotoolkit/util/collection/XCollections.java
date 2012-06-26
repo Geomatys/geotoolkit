@@ -25,7 +25,19 @@ import org.geotoolkit.lang.Static;
 
 /**
  * Static methods working on {@link Collection} objects. This is an extension to the
- * Java {@link Collections} utility class.
+ * Java {@link Collections} utility class providing:
+ * <p>
+ * <ul>
+ *   <li>Null-safe {@link #clear(Collection) clear}, {@link #isNullOrEmpty(Collection) isNullOrEmpty}
+ *       and {@link #addIfNonNull(Collection, Object) addIfNonNull} methods.</li>
+ *   <li>{@link #unmodifiableSet(Set) unmodifiableSet} and {@linkplain #unmodifiableMap(Map) unmodifiableMap}
+ *       methods slightly more compact than the standard ones when the new collection is not
+ *       required to be a view over the given collection.</li>
+ *   <li>{@link #asCollection(Object) asCollection} for wrapping arbitrary objects to list or collection.</li>
+ *   <li>List and collection {@linkplain #listComparator() comparators}.</li>
+ *   <li>{@link #copy(Collection) copy} method for taking a snapshot of an arbitrary implementation
+ *       into a stable object.</li>
+ * </ul>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.20
@@ -134,6 +146,8 @@ public final class XCollections extends Static {
      *
      * @see Collections#emptyList()
      * @see Collections#emptySet()
+     *
+     * @todo This method will be removed on the JDK8 branch.
      */
     @SuppressWarnings({"unchecked","rawtype"})
     public static <E> SortedSet<E> emptySortedSet() {

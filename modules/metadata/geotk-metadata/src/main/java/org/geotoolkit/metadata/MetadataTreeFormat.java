@@ -894,7 +894,7 @@ public class MetadataTreeFormat extends Format {
                         split--;
                     }
                     if (split > base) {
-                        buffer.append(name.substring(base, split)).append(' ');
+                        buffer.append(name, base, split).append(' ');
                         base = split;
                     }
                 }

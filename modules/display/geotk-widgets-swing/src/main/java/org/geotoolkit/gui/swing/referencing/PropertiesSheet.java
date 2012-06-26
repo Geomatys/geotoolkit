@@ -229,7 +229,7 @@ public class PropertiesSheet extends JComponent {
         boolean isQuoting = false;
         int last = 0;
         for (int i=text.indexOf(quote); i>=0; i=text.indexOf(quote, last)) {
-            buffer.append(text.substring(last, i)).append(isQuoting ? "</cite>\"" : "\"<cite>");
+            buffer.append(text, last, i).append(isQuoting ? "</cite>\"" : "\"<cite>");
             isQuoting = !isQuoting;
             last = i+1;
         }

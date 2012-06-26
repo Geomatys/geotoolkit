@@ -90,9 +90,10 @@ final class HsqlDialectEpsgFactory extends AnsiDialectEpsgFactory {
                     break;
                 }
             }
-            query = query.substring(0,         opening) +
-                    query.substring(opening+1, closing) +
-                    query.substring(closing+1);
+            query = new StringBuilder(query.length())
+                    .append(query, 0,         opening)
+                    .append(query, opening+1, closing)
+                    .append(query, closing+1, query.length()).toString();
         }
         return query;
     }

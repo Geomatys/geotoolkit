@@ -205,7 +205,7 @@ public class IndexedResourceBundle extends ResourceBundle {
             out.write(Strings.spaces(5 - number.length()));
             out.write(number);
             out.write(":\t");
-            out.write(value.substring(0, Math.min(indexCR,indexLF)));
+            out.write(value, 0, Math.min(indexCR,indexLF));
             out.write(lineSeparator);
         }
     }
