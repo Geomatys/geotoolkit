@@ -57,11 +57,11 @@ public class CatalogServicesServer extends AbstractServer {
      */
     private AbstractCapabilities capabilities;
 
-    
+
     /**
      * Creates a new instance of {@link CatalogServicesServer} without passing version argument,
      * It performs a getCapabilities request and set the version depending on the response.
-     * 
+     *
      *
      * @param serverURL {@link URL} for the server instance
      * @throws IllegalStateException throws an exception if the capabilities cannot be resolved for serverUrl
@@ -74,12 +74,12 @@ public class CatalogServicesServer extends AbstractServer {
         }
         final String v = capa.getVersion();
         try {
-            parameters.parameter(CSWServerFactory.VERSION.getName().getCode()).setValue(CSWVersion.fromCode(v));
+            parameters.parameter(CSWServerFactory.VERSION.getName().getCode()).setValue(CSWVersion.fromCode(v).getCode());
         } catch (IllegalArgumentException ex) {
             throw new IllegalStateException("unknown CSW version : " + v);
         }
     }
-    
+
     /**
      * Creates a new instance of {@link CatalogServicesServer} for serverUrl and version value
      * @param serverURL {@link URL} of the server CSW
@@ -88,12 +88,12 @@ public class CatalogServicesServer extends AbstractServer {
     public CatalogServicesServer(final URL serverURL, final String version) {
         this(serverURL,null,version);
     }
-    
+
     public CatalogServicesServer(final URL serverURL, final ClientSecurity security, final CSWVersion version) {
         this(serverURL, security, version.getCode());
-        
+
     }
-    
+
     public CatalogServicesServer(final URL serverURL, final ClientSecurity security, final String version) {
         super(create(CSWServerFactory.PARAMETERS, serverURL, security));
         ArgumentChecks.ensureNonNull("version", version);
@@ -112,7 +112,7 @@ public class CatalogServicesServer extends AbstractServer {
             throw new IllegalArgumentException("unknown version : "+ version);
         }
     }
-    
+
     /**
      * Returns the currently used version for this server
      */
