@@ -181,7 +181,7 @@ public enum X364 {
                 }
             }
             if (tmp == null) {
-                tmp = new StringBuilder();
+                tmp = new StringBuilder(24);
             }
             if (fontApplied) {
                 tmp.append("</font>");
@@ -224,13 +224,13 @@ search:     do {
                     }
                 }
                 if (buffer == null) {
-                    buffer = new StringBuilder();
+                    buffer = new StringBuilder(text.length() - last);
                 }
                 buffer.append(text, last, start);
                 last = ++i; // The ++ is for skipping the END character.
             } while ((i = text.indexOf(START, i)) >= 0);
             if (buffer != null) {
-                return buffer.append(text.substring(last)).toString();
+                return buffer.append(text, last, text.length()).toString();
             }
         }
         return text;

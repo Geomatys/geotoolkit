@@ -233,7 +233,7 @@ public class PropertiesSheet extends JComponent {
             isQuoting = !isQuoting;
             last = i+1;
         }
-        buffer.append(text.substring(last));
+        buffer.append(text, last, text.length());
     }
 
     /**

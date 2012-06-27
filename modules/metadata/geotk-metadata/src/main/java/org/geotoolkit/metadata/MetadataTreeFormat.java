@@ -877,7 +877,7 @@ public class MetadataTreeFormat extends Format {
         name = name.trim();
         final int length = name.length();
         if (length != 0) {
-            final StringBuilder buffer = new StringBuilder();
+            final StringBuilder buffer = new StringBuilder(name.length() + 8);
             buffer.append(Character.toUpperCase(name.charAt(0)));
             boolean previousIsUpper = true;
             int base = 1;
@@ -900,7 +900,7 @@ public class MetadataTreeFormat extends Format {
                 }
                 previousIsUpper = currentIsUpper;
             }
-            final String candidate = buffer.append(name.substring(base)).toString();
+            final String candidate = buffer.append(name, base, name.length()).toString();
             if (!candidate.equals(name)) {
                 // Holds a reference to this new String object only if it worth it.
                 name = candidate;

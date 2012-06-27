@@ -194,7 +194,8 @@ final class MetadataProxy<T> implements InvocationHandler {
          * conventions. If the prefix is not "is", the code below assumes "get" or "set".
          */
         final int offset = methodName.startsWith("is") ? 2 : 3; // Prefix length
-        switch (methodName.length() - offset) {
+        final int length = methodName.length();
+        switch (length - offset) {
             default: {
                 /*
                  * If there is at least 2 characters after the prefix, assume that
@@ -211,7 +212,9 @@ final class MetadataProxy<T> implements InvocationHandler {
                 /*
                  * If we have at least one character, make the first character lower-case.
                  */
-                return Character.toLowerCase(methodName.charAt(offset)) + methodName.substring(offset + 1);
+                return new StringBuilder(length - offset)
+                        .append(Character.toLowerCase(methodName.charAt(offset)))
+                        .append(methodName, offset+1, length).toString();
             }
             case 0: {
                 /*
