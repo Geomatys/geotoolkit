@@ -409,33 +409,6 @@ attmpt: while (true) {
     }
 
     /**
-     * Returns the first suffix declared in the given provider, with a leading dot.
-     * We presume that the first file suffix is the most representative one for the
-     * file format.
-     *
-     * @param  provider The provider for which to get the first file suffix.
-     * @return The first file suffix, or {@code null} if none.
-     *
-     * @since 3.20
-     */
-    public static String getFileSuffix(final ImageReaderWriterSpi provider) {
-        if (provider != null) {
-            final String[] suffixes = provider.getFileSuffixes();
-            if (suffixes != null) {
-                for (String suffix : suffixes) {
-                    if (suffix != null && !(suffix = suffix.trim()).isEmpty()) {
-                        if (suffix.charAt(0) != '.') {
-                            suffix = '.' + suffix;
-                        }
-                        return suffix;
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
      * Returns the name of the given provider, or {@code null} if the name is unknown.
      * If the provider declares many names, the longest name is selected. If many names
      * have the same length, the one having at largest number of upper-case characters is

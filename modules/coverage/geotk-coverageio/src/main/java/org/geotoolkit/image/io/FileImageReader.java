@@ -31,7 +31,6 @@ import java.nio.file.Path;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.io.TemporaryFile;
-import org.geotoolkit.internal.image.io.Formats;
 
 
 /**
@@ -162,7 +161,7 @@ public abstract class FileImageReader extends StreamImageReader {
          * prefix stands for "FileImageReader".
          */
         final InputStream in = getInputStream();
-        inputFile = TemporaryFile.createTempFile("FIR", Formats.getFileSuffix(originatingProvider), null);
+        inputFile = TemporaryFile.createTempFile("FIR", XImageIO.getFileSuffix(originatingProvider), null);
         isTemporary = true;
         try (OutputStream out = new FileOutputStream(inputFile)) {
             IOUtilities.copy(in, out);

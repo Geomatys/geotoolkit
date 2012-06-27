@@ -53,6 +53,7 @@ import org.geotoolkit.factory.Factories;
 import org.geotoolkit.resources.Errors;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import org.geotoolkit.util.logging.Logging;
 
 
 /**
@@ -781,6 +782,71 @@ public final class XImageIO extends Static {
     }
 
     /**
+     * Returns the provider of {@code ImageReader}s corresponding to the given provider of
+     * {@code ImageWriter}s, or {@code null} if none. This method performs the same work
+     * than {@link ImageIO#getImageReader(ImageWriter)}, except that it works on providers
+     * instead than reader/writer instances.
+     *
+     * @param writerSpi The provider of image writers for which to get the provider of image readers.
+     *        Can be {@code null}, in which case this method will return {@code null}.
+     * @return The provider of image readers, or {@code null} if none.
+     *
+     * @see ImageIO#getImageReader(ImageWriter)
+     * @see ImageWriterSpi#getImageReaderSpiNames()
+     *
+     * @since 3.20
+     */
+    public static ImageReaderSpi getImageReaderSpi(final ImageWriterSpi writerSpi) {
+        if (writerSpi == null) {
+            return null;
+        }
+        return (ImageReaderSpi) getSpi(writerSpi.getImageReaderSpiNames(), "getImageReaderSpi");
+    }
+
+    /**
+     * Returns the provider of {@code ImageWriter}s corresponding to the given provider of
+     * {@code ImageReader}s, or {@code null} if none. This method performs the same work
+     * than {@link ImageIO#getImageWriter(ImageReader)}, except that it works on providers
+     * instead than reader/writer instances.
+     *
+     * @param readerSpi The provider of image readers for which to get the provider of image writers.
+     *        Can be {@code null}, in which case this method will return {@code null}.
+     * @return The provider of image writers, or {@code null} if none.
+     *
+     * @see ImageIO#getImageWriter(ImageReader)
+     * @see ImageReaderSpi#getImageWriterSpiNames()
+     *
+     * @since 3.20
+     */
+    public static ImageWriterSpi getImageWriterSpi(final ImageReaderSpi readerSpi) {
+        if (readerSpi == null) {
+            return null;
+        }
+        return (ImageWriterSpi) getSpi(readerSpi.getImageWriterSpiNames(), "getImageWriterSpi");
+    }
+
+    /**
+     * Implementation of {@link #getImageReaderSpi(ImageWriterSpi)} and
+     * {@link #getImageWriterSpi(ImageReaderSpi)}.
+     */
+    private static Object getSpi(final String[] names, final String methodName) {
+        if (names != null) {
+            final IIORegistry registry = IIORegistry.getDefaultInstance();
+            for (final String name : names) {
+                try {
+                    final Object spi = registry.getServiceProviderByClass(Class.forName(name));
+                    if (spi != null) {
+                        return spi;
+                    }
+                } catch (ClassNotFoundException e) {
+                    Logging.recoverableException(XImageIO.class, methodName, e);
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
      * Returns the image reader provider for the given format name.
      *
      * @param  format The name of the provider to fetch.
@@ -802,6 +868,33 @@ public final class XImageIO extends Static {
     public static ImageWriterSpi getWriterSpiByFormatName(final String format) {
         ensureNonNull("format", format);
         return Formats.getWriterByFormatName(format, null);
+    }
+
+    /**
+     * Returns the preferred suffix declared in the given provider, with a leading dot.
+     * If the given provider is null, or if no preferred file suffix is found, then this
+     * method returns {@code null}.
+     *
+     * @param  provider The provider for which to get the first file suffix, or {@code null}.
+     * @return The first file suffix, or {@code null} if none.
+     *
+     * @since 3.20
+     */
+    public static String getFileSuffix(final ImageReaderWriterSpi provider) {
+        if (provider != null) {
+            final String[] suffixes = provider.getFileSuffixes();
+            if (suffixes != null) {
+                for (String suffix : suffixes) {
+                    if (suffix != null && !(suffix = suffix.trim()).isEmpty()) {
+                        if (suffix.charAt(0) != '.') {
+                            suffix = '.' + suffix;
+                        }
+                        return suffix;
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     /**

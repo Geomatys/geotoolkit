@@ -24,18 +24,25 @@ import java.util.Collections;
 import java.util.concurrent.Future;
 import java.util.concurrent.CancellationException;
 import java.io.IOException;
+import java.awt.geom.AffineTransform;
+import java.awt.image.RenderedImage;
+import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ImageWriterSpi;
+import javax.imageio.ImageWriter;
 
 import org.opengis.util.InternationalString;
 import org.opengis.coverage.grid.GridCoverage;
+import org.opengis.referencing.operation.MathTransform2D;
 
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.coverage.AbstractCoverage;
+import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.coverage.io.GridCoverageWriteParam;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.ImageCoverageWriter;
 import org.geotoolkit.internal.sql.table.ConfigurationKey;
+import org.geotoolkit.image.io.mosaic.Tile;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.resources.Errors;
 
@@ -77,6 +84,58 @@ public class LayerCoverageWriter extends GridCoverageWriter {
      * Will be created when first needed.
      */
     private transient GridCoverageWriter writer;
+
+    /**
+     * A specialized implementation for the {@link LayerCoverageWriter#writer} field.
+     * If the user did not specified explicitely a format, then this encoder will use
+     * the format declared in the database rather than trying to guess from the file suffix.
+     */
+    private static final class Encoder extends ImageCoverageWriter {
+        /**
+         * The provider for the image writers to be used by {@linkplain #writer}.
+         * Will be fetched in same time than {@link #writer}.
+         */
+        private final ImageWriterSpi writerSpi;
+
+        /**
+         * Creates a new encoder which will use the given format for writing images.
+         */
+        Encoder(final ImageWriterSpi writerSpi) {
+            this.writerSpi = writerSpi;
+        }
+
+        /**
+         * Creates an image writer that claim to be able to encode the given output.
+         * The image format will be the one declared in the Series table, unless the
+         * user specified explicitely an other format.
+         */
+        @Override
+        protected ImageWriter createImageWriter(final String formatName,
+                final Object output, final RenderedImage image) throws IOException
+        {
+            if (formatName == null && writerSpi.canEncodeImage(image)) {
+                return writerSpi.createWriterInstance();
+            }
+            return super.createImageWriter(formatName, output, image);
+        }
+    }
+
+    /**
+     * The provider for the image readers that can read the images encoded by the writer.
+     * Will be fetched in same time than {@link #writer}.
+     */
+    private transient ImageReaderSpi readerSpi;
+
+    /**
+     * The destination directory where to write the images.
+     * Will be created in same time than {@link #writer}.
+     */
+    private transient File directory;
+
+    /**
+     * The suffix to append to filename. This string shall contains a leading dot.
+     */
+    private transient String suffix;
 
     /**
      * Creates a new writer for the given database. The {@link #setOutput(Object)}
@@ -154,30 +213,6 @@ public class LayerCoverageWriter extends GridCoverageWriter {
     }
 
     /**
-     * Returns the preferred file suffix for the given format name. If the given format name
-     * is null, or if no preferred file suffix is found, then this method returns {@code null}.
-     */
-    private static String getFileSuffix(final String formatName) {
-        if (formatName != null) {
-            final ImageWriterSpi spi = XImageIO.getWriterSpiByFormatName(formatName);
-            if (spi != null) {
-                final String[] suffixes = spi.getFileSuffixes();
-                if (suffixes != null) {
-                    for (String suffix : suffixes) {
-                        if (!(suffix = suffix.trim()).isEmpty()) {
-                            if (!suffix.startsWith(".")) {
-                                suffix = '.' + suffix;
-                            }
-                            return suffix;
-                        }
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
      * Returns the name of the given coverage, or {@code null} if none.
      */
     private static String getName(final GridCoverage coverage) throws CoverageStoreException {
@@ -227,42 +262,54 @@ public class LayerCoverageWriter extends GridCoverageWriter {
     {
         ensureNonNull("coverages", coverages);
         ensureOutputSet();
+        if (param == null) {
+            param = new GridCoverageWriteParam();
+        }
         /*
          * Infers the image format, file suffix and target directory.
          * The current implementation takes the most frequently used
          * ones by scanning the GridCoverages and Series table.
          */
         final Layer layer = getOutput();
-        File directory = firstNonNull(layer.getImageDirectories());
-        if (directory == null) {
-            directory = new File(database.database.getProperty(ConfigurationKey.ROOT_DIRECTORY), layer.getName());
-            if (!directory.exists() && !directory.mkdirs()) {
-                throw new CoverageStoreException(Errors.format(Errors.Keys.CANT_CREATE_DIRECTORY_$1, directory));
+        if (writer == null) {
+            directory = firstNonNull(layer.getImageDirectories());
+            if (directory == null) {
+                directory = new File(database.database.getProperty(ConfigurationKey.ROOT_DIRECTORY), layer.getName());
+                if (!directory.isDirectory() && !directory.mkdirs()) {
+                    throw new CoverageStoreException(Errors.format(Errors.Keys.CANT_CREATE_DIRECTORY_$1, directory));
+                }
             }
-        }
-        if (param == null) {
-            param = new GridCoverageWriteParam();
-        }
-        String formatName = param.getFormatName();
-        if (formatName == null) {
-            formatName = firstNonNull(layer.getImageFormats());
+            String formatName = param.getFormatName();
             if (formatName == null) {
-                formatName = DEFAULT_FORMAT;
+                formatName = firstNonNull(layer.getImageFormats());
+                if (formatName == null) {
+                    formatName = DEFAULT_FORMAT;
+                }
             }
-            param.setFormatName(formatName);
+            final ImageWriterSpi writerSpi;
+            writerSpi = XImageIO.getWriterSpiByFormatName(formatName);
+            readerSpi = XImageIO.getImageReaderSpi(writerSpi);
+            if (readerSpi == null) {
+                readerSpi = XImageIO.getReaderSpiByFormatName(formatName);
+            }
+            suffix = XImageIO.getFileSuffix(writerSpi);
+            if (suffix == null) {
+                suffix = XImageIO.getFileSuffix(readerSpi);
+            }
+            writer = new Encoder(writerSpi);
         }
-        final String suffix = getFileSuffix(formatName);
         /*
          * Build a list of image files and write the images immediately. After we have built
          * the full list and written all images, insert the entries in the database.  If any
          * error occurs, we will rollback the database transaction and delete all images that
          * we created.
          */
-        final List<File> files = new ArrayList<>();
+        final List<Tile> files = new ArrayList<>();
         try {
             for (final GridCoverage coverage : coverages) {
                 final File file;
                 String filename = getName(coverage);
+                String suffix = null;
                 if (filename != null) {
                     if (suffix != null) {
                         filename += suffix;
@@ -277,22 +324,39 @@ public class LayerCoverageWriter extends GridCoverageWriter {
                 } catch (IOException e) {
                     throw new CoverageStoreException(errors().getString(Errors.Keys.CANT_WRITE_FILE_$1, DEFAULT_PREFIX), e);
                 }
-                files.add(file); // File will be deleted in case of failure.
-                if (writer == null) {
-                    writer = new ImageCoverageWriter();
+                /*
+                 * Extract the grid geometry information and store them as a "tile". Even if the
+                 * image is not really a tile, this is a convenient way to carry those information.
+                 * Write the image, then insert entries in the database only after every images have
+                 * been written. In case of failure, the images will be deleted in the catch block.
+                 */
+                final GridGeometry2D gridGeometry = GridGeometry2D.castOrCopy(coverage.getGridGeometry());
+                final MathTransform2D gridToCRS = gridGeometry.getGridToCRS2D();
+                if (!(gridToCRS instanceof AffineTransform)) {
+                    throw new CoverageStoreException(errors().getString(Errors.Keys.NON_AFFINE_TRANSFORM));
                 }
+                files.add(new Tile(readerSpi, file, 0, gridGeometry.getExtent2D()) {
+                    private static final long serialVersionUID = -9161647875115463421L;
+                    @Override public AffineTransform getGridToCRS() {
+                        return (AffineTransform) gridToCRS;
+                    }
+                });
                 writer.setOutput(file);
                 writer.write(coverage, param);
             }
             writer.reset();
             layer.addCoverageReferences(files, null);
         } catch (Throwable e) {
+            /*
+             * Operation failed - delete all image files created by this method call.
+             */
             try {
                 writer.reset(); // Ensures that the file is closed.
             } catch (Throwable s) {
                 e.addSuppressed(s);
             }
-            for (final File file : files) {
+            for (final Tile tile : files) {
+                final File file = (File) tile.getInput();
                 if (!file.delete()) {
                     Logging.getLogger(LayerCoverageWriter.class).warning(errors().getString(Errors.Keys.CANT_DELETE_FILE_$1, file));
                 }
@@ -306,7 +370,10 @@ public class LayerCoverageWriter extends GridCoverageWriter {
      * in order to force the calculation of new objects for the new output.
      */
     private void clearCache() {
-        writer = null;
+        writer    = null;
+        readerSpi = null;
+        directory = null;
+        suffix    = null;
     }
 
     /**

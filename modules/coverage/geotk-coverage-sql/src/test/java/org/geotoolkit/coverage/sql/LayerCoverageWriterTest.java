@@ -93,7 +93,7 @@ public final strictfp class LayerCoverageWriterTest extends CatalogTestBase {
      * @throws CoverageStoreException If an error occurred.
      */
     @Test
-    @Ignore("Missing GridGeometry")
+    @Ignore("Missing SRID")
     public void testDefaultWrite() throws CoverageStoreException {
         final CoverageDatabase database = getCoverageDatabase();
         final LayerCoverageWriter writer = database.createGridCoverageWriter("WriterTest");
