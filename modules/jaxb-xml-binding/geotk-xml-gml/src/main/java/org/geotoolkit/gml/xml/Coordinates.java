@@ -16,16 +16,20 @@
  */
 package org.geotoolkit.gml.xml;
 
+import java.util.List;
+
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
 public interface Coordinates {
-    
+
     String getValue();
-    
+
+    List<Double> getValues();
+
     String getCs();
-    
+
     String getTs();
-    
+
 }

@@ -109,6 +109,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
     @Override
     public void portray(final ProjectedCoverage projectedCoverage) throws PortrayalException{
 
+        try {
         double[] resolution = renderingContext.getResolution();
         final Envelope bounds = new GeneralEnvelope(renderingContext.getCanvasObjectiveBounds());
         resolution = checkResolution(resolution,bounds);
@@ -257,6 +258,9 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         }
 
         renderingContext.switchToDisplayCRS();
+        }catch (Exception e) {
+            LOGGER.warning(e.getMessage());
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////

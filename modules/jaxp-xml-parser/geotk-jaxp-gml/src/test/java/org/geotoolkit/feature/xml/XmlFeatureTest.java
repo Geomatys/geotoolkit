@@ -112,7 +112,7 @@ public class XmlFeatureTest {
     private final FeatureType complexType;
 
     private static String EPSG_VERSION;
-    
+
     public XmlFeatureTest() throws NoSuchAuthorityCodeException, FactoryException, ParseException {
 
 
@@ -226,7 +226,7 @@ public class XmlFeatureTest {
         sfb.set(i++, mpt);
         sfb.set(i++, pt);
         simpleFeatureFull = sfb.buildFeature("id-156");
-        
+
         sfb = new SimpleFeatureBuilder(simpleTypeBasic);
         sfb.set(0,"some text with words.");
         sfb.set(1,56.14d);
@@ -298,7 +298,7 @@ public class XmlFeatureTest {
         assertEquals(1, types.size());
         assertEquals(complexType, types.get(0));
     }
-    
+
     @Test
     public void testReadWfsFeatureType() throws JAXBException {
         final XmlFeatureTypeReader reader = new JAXBFeatureTypeReader();
@@ -315,7 +315,7 @@ public class XmlFeatureTest {
         temp.deleteOnExit();
         final XmlFeatureTypeWriter writer = new JAXBFeatureTypeWriter();
         writer.write(simpleTypeFull, new FileOutputStream(temp));
-        
+
         DomCompare.compare(XmlFeatureTest.class
                 .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleType.xsd"), temp);
     }
@@ -342,16 +342,83 @@ public class XmlFeatureTest {
 
         SimpleFeature result = (SimpleFeature) obj;
         assertEquals(simpleFeatureFull, result);
-        
+
         final XmlFeatureReader readerGml = new JAXPStreamFeatureReader(simpleTypeFull);
         readerGml.getProperties().put(JAXPStreamFeatureReader.BINDING_PACKAGE, "GML");
         obj = readerGml.read(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeature.xml"));
-        reader.dispose();
+        readerGml.dispose();
 
         assertTrue(obj instanceof SimpleFeature);
 
         result = (SimpleFeature) obj;
         assertEquals(simpleFeatureFull, result);
+    }
+
+    @Test
+    public void testReadSimpleFeatureOldEnc() throws JAXBException, IOException, XMLStreamException{
+
+        final XmlFeatureReader readerGml = new JAXPStreamFeatureReader(simpleTypeFull);
+        readerGml.getProperties().put(JAXPStreamFeatureReader.BINDING_PACKAGE, "GML");
+        Object obj = readerGml.read(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeatureOldEnc.xml"));
+
+        assertTrue(obj instanceof SimpleFeature);
+
+        SimpleFeature result = (SimpleFeature) obj;
+        assertEquals(simpleFeatureFull, result);
+
+        obj = readerGml.read(XmlFeatureTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeatureOldEnc2.xml"));
+
+        assertTrue(obj instanceof SimpleFeature);
+
+        result = (SimpleFeature) obj;
+        assertEquals(simpleFeatureFull, result);
+
+        // adding lineString encoding
+        obj = readerGml.read(XmlFeatureTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeatureOldEnc3.xml"));
+        readerGml.dispose();
+
+        assertTrue(obj instanceof SimpleFeature);
+
+        result = (SimpleFeature) obj;
+        assertEquals(simpleFeatureFull, result);
+
+        /*
+         * Not working with JTSWrapper binding mode for JAXP Feature Writer
+         *
+         * working for Polygon
+         * working for LineString
+         * not for point
+         */
+
+        final XmlFeatureReader reader = new JAXPStreamFeatureReader(simpleTypeFull);
+        obj = reader.read(XmlFeatureTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeatureOldEnc.xml"));
+
+        assertTrue(obj instanceof SimpleFeature);
+
+        result = (SimpleFeature) obj;
+        assertEquals(simpleFeatureFull, result);
+
+        // adding lineString encoding
+        obj = reader.read(XmlFeatureTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeatureOldEnc2.xml"));
+
+        assertTrue(obj instanceof SimpleFeature);
+
+        result = (SimpleFeature) obj;
+        assertEquals(simpleFeatureFull, result);
+
+        // adding lineString encoding
+        obj = reader.read(XmlFeatureTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeatureOldEnc3.xml"));
+        reader.dispose();
+
+        assertTrue(obj instanceof SimpleFeature);
+
+        result = (SimpleFeature) obj;
+        assertFalse(simpleFeatureFull.equals(result));
     }
 
     @Test
@@ -367,7 +434,7 @@ public class XmlFeatureTest {
         expResult = expResult.replace("EPSG_VERSION", EPSG_VERSION);
         DomCompare.compare(expResult, temp);
     }
-    
+
     @Test
     public void testWriteSimpleFeatureElement() throws JAXBException, IOException, XMLStreamException,
             DataStoreException, ParserConfigurationException, SAXException, TransformerConfigurationException, TransformerException{
@@ -375,7 +442,7 @@ public class XmlFeatureTest {
         temp.deleteOnExit();
         final ElementFeatureWriter writer = new ElementFeatureWriter();
         Element result = writer.write(simpleFeatureFull, false);
-        
+
         Source source = new DOMSource(result.getOwnerDocument());
 
         // Prepare the output file
@@ -384,8 +451,8 @@ public class XmlFeatureTest {
         // Write the DOM document to the file
         Transformer xformer = TransformerFactory.newInstance().newTransformer();
         xformer.transform(source, resultxml);
-        
-        
+
+
         String expResult = FileUtilities.getStringFromStream(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeature.xml"));
         expResult = expResult.replace("EPSG_VERSION", EPSG_VERSION);
         DomCompare.compare(expResult, temp);
@@ -427,30 +494,30 @@ public class XmlFeatureTest {
     public void testReadSimpleCollectionEmbeddedFT() throws JAXBException, IOException, XMLStreamException{
         JAXPStreamFeatureReader reader = new JAXPStreamFeatureReader();
         reader.setReadEmbeddedFeatureType(true);
-        
+
         Object obj = reader.read(XmlFeatureTest.class
                 .getResourceAsStream("/org/geotoolkit/feature/xml/featureCollectionEmbedFT.xml"));
         reader.dispose();
 
         assertTrue(obj instanceof FeatureCollection);
-        
+
         reader = new JAXPStreamFeatureReader();
         reader.setReadEmbeddedFeatureType(true);
-        
+
         obj = reader.read(XmlFeatureTest.class
                 .getResourceAsStream("/org/geotoolkit/feature/xml/featureCollectionEmbedFT2.xml"));
         reader.dispose();
 
         assertTrue(obj instanceof FeatureCollection);
-        
+
         obj = reader.read(XmlFeatureTest.class
                 .getResourceAsStream("/org/geotoolkit/feature/xml/featureCollectionEmbedFT3.xml"));
         reader.dispose();
 
         assertTrue(obj instanceof FeatureCollection);
     }
-    
-    
+
+
     @Test
     public void testWriteSimpleCollection() throws JAXBException, IOException, XMLStreamException,
             DataStoreException, ParserConfigurationException, SAXException{
@@ -463,7 +530,7 @@ public class XmlFeatureTest {
         DomCompare.compare(XmlFeatureTest.class
                 .getResourceAsStream("/org/geotoolkit/feature/xml/CollectionSimple.xml"), temp);
     }
-    
+
     @Test
     public void testWriteSimplCollectionElement() throws JAXBException, IOException, XMLStreamException,
             DataStoreException, ParserConfigurationException, SAXException, TransformerConfigurationException, TransformerException{
@@ -471,7 +538,7 @@ public class XmlFeatureTest {
         temp.deleteOnExit();
         final ElementFeatureWriter writer = new ElementFeatureWriter();
         Element result = writer.write(collectionSimple, false);
-        
+
         Source source = new DOMSource(result.getOwnerDocument());
 
         // Prepare the output file
@@ -480,8 +547,8 @@ public class XmlFeatureTest {
         // Write the DOM document to the file
         Transformer xformer = TransformerFactory.newInstance().newTransformer();
         xformer.transform(source, resultxml);
-        
-        
+
+
         String expResult = FileUtilities.getStringFromStream(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/CollectionSimple.xml"));
         expResult = expResult.replace("EPSG_VERSION", EPSG_VERSION);
         DomCompare.compare(expResult, temp);

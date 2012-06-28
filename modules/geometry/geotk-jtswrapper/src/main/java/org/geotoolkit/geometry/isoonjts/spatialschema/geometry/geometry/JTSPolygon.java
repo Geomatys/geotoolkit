@@ -41,11 +41,11 @@ import org.opengis.geometry.primitive.Primitive;
 
 @XmlType(name="PolygonType", namespace="http://www.opengis.net/gml")
 public class JTSPolygon extends JTSSurfacePatch implements Polygon, Primitive {
-    
+
     //*************************************************************************
     //  Fields
     //*************************************************************************
-    
+
     // Why the hell is this a list???
     private List spanningSurface;
 
@@ -56,7 +56,7 @@ public class JTSPolygon extends JTSSurfacePatch implements Polygon, Primitive {
     public JTSPolygon() {
         this(null, null);
     }
-    
+
     public JTSPolygon(final SurfaceBoundary boundary) {
         // We only support planar polygons
         this(boundary, null);
@@ -70,7 +70,7 @@ public class JTSPolygon extends JTSSurfacePatch implements Polygon, Primitive {
     //*************************************************************************
     //  implement the *** interface
     //*************************************************************************
-    
+
     @Override
     public int getNumDerivativesOnBoundary() {
         return 0;
@@ -81,26 +81,29 @@ public class JTSPolygon extends JTSSurfacePatch implements Polygon, Primitive {
      */
     @Override
     public com.vividsolutions.jts.geom.Geometry computeJTSPeer() {
-        SurfaceBoundary boundary = getBoundary();
-        Ring exterior = boundary.getExterior();
-        List interiors = boundary.getInteriors();
-        com.vividsolutions.jts.geom.Geometry g = ((JTSGeometry) exterior).getJTSGeometry();
-        int numHoles = (interiors != null) ? interiors.size() : 0;
-        com.vividsolutions.jts.geom.LinearRing jtsExterior = JTSUtils.GEOMETRY_FACTORY.createLinearRing(g.getCoordinates());
-        com.vividsolutions.jts.geom.LinearRing [] jtsInterior = new com.vividsolutions.jts.geom.LinearRing[numHoles];
-        for (int i=0; i<numHoles; i++) {
-            com.vividsolutions.jts.geom.Geometry g2 =
-                ((JTSGeometry) interiors.get(i)).getJTSGeometry();
-            jtsInterior[i] = JTSUtils.GEOMETRY_FACTORY.createLinearRing(g2.getCoordinates());
+        final SurfaceBoundary boundary = getBoundary();
+        final Ring exterior = boundary.getExterior();
+        final List interiors = boundary.getInteriors();
+        if (exterior != null) {
+            final com.vividsolutions.jts.geom.Geometry g = ((JTSGeometry) exterior).getJTSGeometry();
+            final int numHoles = (interiors != null) ? interiors.size() : 0;
+            final com.vividsolutions.jts.geom.LinearRing jtsExterior = JTSUtils.GEOMETRY_FACTORY.createLinearRing(g.getCoordinates());
+            final com.vividsolutions.jts.geom.LinearRing [] jtsInterior = new com.vividsolutions.jts.geom.LinearRing[numHoles];
+            for (int i=0; i<numHoles; i++) {
+                final com.vividsolutions.jts.geom.Geometry g2 =
+                    ((JTSGeometry) interiors.get(i)).getJTSGeometry();
+                jtsInterior[i] = JTSUtils.GEOMETRY_FACTORY.createLinearRing(g2.getCoordinates());
+            }
+            final com.vividsolutions.jts.geom.Polygon result =
+                JTSUtils.GEOMETRY_FACTORY.createPolygon(jtsExterior, jtsInterior);
+            final CoordinateReferenceSystem crs = getCoordinateReferenceSystem();
+            if (crs != null) {
+                final int srid = SRIDGenerator.toSRID(crs, Version.V1);
+                result.setSRID(srid);
+            }
+            return result;
         }
-        com.vividsolutions.jts.geom.Polygon result =
-            JTSUtils.GEOMETRY_FACTORY.createPolygon(jtsExterior, jtsInterior);
-        CoordinateReferenceSystem crs = getCoordinateReferenceSystem();
-        if (crs != null) {
-            final int srid = SRIDGenerator.toSRID(crs, Version.V1);
-            result.setSRID(srid);
-        }
-        return result;
+        return null;
     }
 
     /**
@@ -119,7 +122,7 @@ public class JTSPolygon extends JTSSurfacePatch implements Polygon, Primitive {
         // Why the hell is this a list???
         return spanningSurface;
     }
-    
+
     public boolean isValid() {
     	com.vividsolutions.jts.geom.Polygon poly = (com.vividsolutions.jts.geom.Polygon)
 			this.getJTSGeometry();

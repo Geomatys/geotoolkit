@@ -33,6 +33,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
@@ -59,6 +60,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class GeometrytoJTS {
 
+    private static final Logger LOGGER = Logging.getLogger(GeometrytoJTS.class);
     private static final GeometryFactory GF = new GeometryFactory();
 
     private GeometrytoJTS(){}
@@ -116,7 +118,7 @@ public class GeometrytoJTS {
             return toJTS((org.geotoolkit.gml.xml.LineString)gml);
         } else if(gml instanceof org.geotoolkit.gml.xml.Polygon){
             return toJTS((org.geotoolkit.gml.xml.Polygon)gml);
-        
+
 
         } else if(gml instanceof org.geotoolkit.gml.xml.MultiPoint){
             return toJTS((org.geotoolkit.gml.xml.MultiPoint)gml);
@@ -128,7 +130,7 @@ public class GeometrytoJTS {
             return toJTS((org.geotoolkit.gml.xml.MultiPolygon)gml);
         } else if(gml instanceof MultiSurface){
             return toJTS((MultiSurface)gml);
-        
+
         } else if(gml instanceof org.geotoolkit.gml.xml.LinearRing){
             return toJTS((org.geotoolkit.gml.xml.LinearRing)gml);
 
@@ -159,7 +161,7 @@ public class GeometrytoJTS {
         if (gmlPoint.getCoordinates() != null) {
             final String coord = gmlPoint.getCoordinates().getValue();
 
-            final StringTokenizer tokens = new StringTokenizer(coord, " ");
+            final StringTokenizer tokens = new StringTokenizer(coord, ",");
             int index = 0;
             while (tokens.hasMoreTokens()) {
                 final double value = parseDouble(tokens.nextToken());
@@ -189,7 +191,7 @@ public class GeometrytoJTS {
 
         return pt;
     }
-    
+
     public static Polygon toJTS(final org.geotoolkit.gml.xml.Polygon gml) throws FactoryException{
         final AbstractRingProperty ext = gml.getExterior();
         final List<? extends AbstractRingProperty> ints = gml.getInterior();
@@ -219,35 +221,19 @@ public class GeometrytoJTS {
         final com.vividsolutions.jts.geom.LineString ls;
         final Coordinates coord = gmlLine.getCoordinates();
         if(coord != null){
-            String s = coord.getValue();
-            final String cs;
-            if (coord.getCs() == null) {
-                cs = ",";
-            } else {
-                cs = coord.getCs();
+
+            final List<Double> values = coord.getValues();
+            final Coordinate[] coordinates = new Coordinate[values.size() / 2];
+            if (values != null && !values.isEmpty()) {
+                int cpt = 0;
+                for (int i=0; i < values.size(); i = i + 2) {
+                    coordinates[cpt] = new Coordinate(values.get(i), values.get(i + 1));
+                    cpt++;
+                }
             }
-            int csIndex = s.indexOf(cs);
-            double x1 = Double.parseDouble(s.substring(0, csIndex));
-
-            final String ts;
-            if (coord.getTs() == null) {
-                ts = " ";
-            } else {
-                ts = coord.getTs();
-            }
-
-            int tsIndex =  s.indexOf(ts, csIndex);
-            double y1 = Double.parseDouble(s.substring(csIndex + 1, tsIndex));
-
-            csIndex = s.indexOf(cs, tsIndex + 1);
-            double x2 = Double.parseDouble(s.substring(tsIndex + 1, csIndex));
-            double y2 = Double.parseDouble(s.substring(csIndex + 1));
 
             final int srid = SRIDGenerator.toSRID(crsName, Version.V1);
-            ls = GF.createLineString(new Coordinate[]{
-                new Coordinate(x1,y1),
-                new Coordinate(x2,y2)
-            });
+            ls = GF.createLineString(coordinates);
             ls.setSRID(srid);
         } else {
             final DirectPositionList dplt = gmlLine.getPosList();
@@ -350,7 +336,7 @@ public class GeometrytoJTS {
         for(int i=0,n=pos.size(); i<n; i++){
             members[i] = toJTS(pos.get(i).getPoint(), srid);
         }
-        
+
         final MultiPoint geom = GF.createMultiPoint(members);
         if (srid != -1){
             geom.setSRID(srid);
@@ -447,7 +433,7 @@ public class GeometrytoJTS {
         }else if(gml instanceof Ring){
             return toJTS((Ring)gml);
         }else{
-            Logging.getLogger(GeometrytoJTS.class).log(Level.WARNING, "Unssupported geometry type : {0}", gml);
+            LOGGER.log(Level.WARNING, "Unssupported geometry type : {0}", gml);
             return GF.createLinearRing(new Coordinate[]{new Coordinate(0, 0),new Coordinate(0, 0),
             new Coordinate(0, 0),new Coordinate(0, 0)});
         }
@@ -455,12 +441,21 @@ public class GeometrytoJTS {
     }
 
     public static LinearRing toJTS(final org.geotoolkit.gml.xml.LinearRing gml){
+        final List<Double> values;
         final DirectPositionList lst = gml.getPosList();
-        final int dim = gml.getCoordinateDimension();
+        final Coordinates cds        = gml.getCoordinates();
+        if (lst != null) {
+            values = lst.getValue();
+        } else if (cds != null) {
+            values = cds.getValues();
+        } else {
+            values = new ArrayList<Double>();
+            LOGGER.warning("no coordinates available for linear ring");
+        }
 
-        final List<Double> values = lst.getValue();
-        final List<Coordinate> coords = new ArrayList<Coordinate>();
-        
+
+        final int dim = gml.getCoordinateDimension();
+        final List<Coordinate> coords = new ArrayList<Coordinate>(dim);
         for (int i=0,n=values.size(); i<n; i+=dim) {
             coords.add( new Coordinate(values.get(i), values.get(i+1)) );
         }

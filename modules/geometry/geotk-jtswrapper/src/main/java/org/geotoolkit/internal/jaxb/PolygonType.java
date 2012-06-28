@@ -7,7 +7,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSLineString;
@@ -44,7 +43,15 @@ public class PolygonType {
 
     @XmlElement(namespace = "http://www.opengis.net/gml")
     @XmlJavaTypeAdapter(RingAdapter.class)
+    private Ring outerBoundaryIs;
+
+    @XmlElement(namespace = "http://www.opengis.net/gml")
+    @XmlJavaTypeAdapter(RingAdapter.class)
     private List<Ring> interior;
+
+    @XmlElement(namespace = "http://www.opengis.net/gml")
+    @XmlJavaTypeAdapter(RingAdapter.class)
+    private List<Ring> innerBoundaryIs;
 
     public PolygonType() {
 
@@ -105,9 +112,15 @@ public class PolygonType {
     }
 
     public JTSPolygon getJTSPolygon() {
-        if (exterior != null) {
-            ((JTSRing) exterior).setCoordinateReferenceSystem(coordinateReferenceSystem);
-            for (Primitive p : exterior.getElements()) {
+        final Ring out;
+        if (exterior !=  null) {
+            out = exterior;
+        } else {
+            out = outerBoundaryIs;
+        }
+        if (out != null) {
+            ((JTSRing) out).setCoordinateReferenceSystem(coordinateReferenceSystem);
+            for (Primitive p : out.getElements()) {
                 if (p instanceof JTSCurve) {
                     JTSCurve curve = (JTSCurve) p;
                     curve.setCoordinateReferenceSystem(coordinateReferenceSystem);
@@ -130,8 +143,14 @@ public class PolygonType {
                 }
             }
         }
-        if (interior != null) {
-            for (Ring ring : interior) {
+        List<Ring> inte;
+        if (interior !=  null) {
+            inte = interior;
+        } else {
+            inte = innerBoundaryIs;
+        }
+        if (inte != null) {
+            for (Ring ring : inte) {
                 ((JTSRing) ring).setCoordinateReferenceSystem(coordinateReferenceSystem);
                 for (Primitive p : ring.getElements()) {
                     if (p instanceof JTSCurve) {
@@ -157,9 +176,9 @@ public class PolygonType {
                 }
             }
         } else {
-            interior = new ArrayList<Ring>();
+            inte = new ArrayList<Ring>();
         }
-        final JTSPolygon result = new JTSPolygon(new JTSSurfaceBoundary(coordinateReferenceSystem, exterior, interior));
+        final JTSPolygon result = new JTSPolygon(new JTSSurfaceBoundary(coordinateReferenceSystem, out, inte));
         result.setCoordinateReferenceSystem(coordinateReferenceSystem);
         return result;
     }

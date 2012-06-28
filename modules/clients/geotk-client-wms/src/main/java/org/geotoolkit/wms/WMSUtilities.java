@@ -83,7 +83,8 @@ public final class WMSUtilities {
             throw new CapabilitiesException(
                     "Layer : "+layername+" could not be found in the getCapabilities. "
                     + "This can be caused by an incorrect layer name "
-                    + "(check case-sensitivity) or a non-compliant wms serveur.");
+                    + "(check case-sensitivity) or a non-compliant wms serveur."
+                    + "WMS server:" + server.getURL());
         }
 
         return false;

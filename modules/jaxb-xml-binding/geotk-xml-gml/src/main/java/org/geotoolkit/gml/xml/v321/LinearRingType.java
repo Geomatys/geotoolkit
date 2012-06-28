@@ -27,14 +27,13 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.LinearRing;
-import org.opengis.filter.expression.ExpressionVisitor;
 
 
 /**
  * <p>Java class for LinearRingType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="LinearRingType">
  *   &lt;complexContent>
@@ -54,8 +53,8 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "LinearRingType", propOrder = {
@@ -75,24 +74,24 @@ public class LinearRingType extends AbstractRingType implements LinearRing {
     private CoordinatesType coordinates;
 
     public LinearRingType() {
-        
+
     }
-    
+
     public LinearRingType(final String srsName, final DirectPositionListType posList) {
         super(srsName);
         this.posList = posList;
     }
-    
+
     /**
      * Gets the value of the posOrPointPropertyOrPointRep property.
-     * 
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link PointPropertyType }{@code >}
      * {@link JAXBElement }{@code <}{@link DirectPositionType }{@code >}
      * {@link JAXBElement }{@code <}{@link PointPropertyType }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<?>> getPosOrPointPropertyOrPointRep() {
         if (posOrPointPropertyOrPointRep == null) {
@@ -103,11 +102,11 @@ public class LinearRingType extends AbstractRingType implements LinearRing {
 
     /**
      * Gets the value of the posList property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DirectPositionListType }
-     *     
+     *
      */
     public DirectPositionListType getPosList() {
         return posList;
@@ -115,11 +114,11 @@ public class LinearRingType extends AbstractRingType implements LinearRing {
 
     /**
      * Sets the value of the posList property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DirectPositionListType }
-     *     
+     *
      */
     public void setPosList(DirectPositionListType value) {
         this.posList = value;
@@ -127,11 +126,11 @@ public class LinearRingType extends AbstractRingType implements LinearRing {
 
     /**
      * Gets the value of the coordinates property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CoordinatesType }
-     *     
+     *
      */
     public CoordinatesType getCoordinates() {
         return coordinates;
@@ -139,11 +138,11 @@ public class LinearRingType extends AbstractRingType implements LinearRing {
 
     /**
      * Sets the value of the coordinates property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CoordinatesType }
-     *     
+     *
      */
     public void setCoordinates(CoordinatesType value) {
         this.coordinates = value;

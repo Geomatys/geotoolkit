@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2012, Geomatys
+ *    (C) 2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,9 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-
-
-package org.geotoolkit.gml.xml.v321;
+package org.geotoolkit.internal.jaxb;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,43 +26,17 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
-import org.geotoolkit.gml.xml.Coordinates;
-import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.Utilities;
 
-
 /**
- * This type is deprecated for tuples with ordinate values that are numbers.
- * CoordinatesType is a text string, intended to be used to record an array of tuples or coordinates.
- * While it is not possible to enforce the internal structure of the string through schema validation, some optional attributes have been provided in previous versions of GML to support a description of the internal structure. These attributes are deprecated. The attributes were intended to be used as follows:
- * Decimal	symbol used for a decimal point (default="." a stop or period)
- * cs        	symbol used to separate components within a tuple or coordinate string (default="," a comma)
- * ts        	symbol used to separate tuples or coordinate strings (default=" " a space)
- * Since it is based on the XML Schema string type, CoordinatesType may be used in the construction of tables of tuples or arrays of tuples, including ones that contain mixed text and numeric values.
  *
- * <p>Java class for CoordinatesType complex type.
- *
- * <p>The following schema fragment specifies the expected content contained within this class.
- *
- * <pre>
- * &lt;complexType name="CoordinatesType">
- *   &lt;simpleContent>
- *     &lt;extension base="&lt;http://www.w3.org/2001/XMLSchema>string">
- *       &lt;attribute name="decimal" type="{http://www.w3.org/2001/XMLSchema}string" default="." />
- *       &lt;attribute name="cs" type="{http://www.w3.org/2001/XMLSchema}string" default="," />
- *       &lt;attribute name="ts" type="{http://www.w3.org/2001/XMLSchema}string" default=" " />
- *     &lt;/extension>
- *   &lt;/simpleContent>
- * &lt;/complexType>
- * </pre>
- *
- *
+ * @author Guilhem Legal (Geomatys)
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CoordinatesType", propOrder = {
     "value"
 })
-public class CoordinatesType implements Coordinates {
+public class CoordinatesType {
 
     @XmlValue
     private String value;
@@ -74,6 +46,35 @@ public class CoordinatesType implements Coordinates {
     private String cs;
     @XmlAttribute
     private String ts;
+
+    /**
+     * An empty constructor used by JAXB
+     */
+    CoordinatesType() {}
+
+    /**
+     * build a new coordinate with the specified values.
+     *
+     * @param value   A list of coordinates coma space separated.
+     * @param cs      Symbol used to separate components within a tuple or coordinate string (default="," a comma)
+     * @param decimal Symbol used for a decimal point (default="." a stop or period)
+     * @param ts      symbol used to separate tuples or coordinate strings (default=" " a space)
+     */
+    public CoordinatesType(final String value, final String cs, final String decimal, final String ts) {
+        this.value   = value;
+        this.cs      = cs;
+        this.ts      = ts;
+        this.decimal = decimal;
+    }
+
+    /**
+     * build a new coordinate with the specified values.
+     *
+     * @param value a list of coordinates coma space separated.
+     */
+    public CoordinatesType(final String value) {
+        this.value = value;
+    }
 
     /**
      * Gets the value of the value property.
@@ -95,11 +96,10 @@ public class CoordinatesType implements Coordinates {
      *     {@link String }
      *
      */
-    public void setValue(String value) {
+    public void setValue(final String value) {
         this.value = value;
     }
 
-    @Override
     public List<Double> getValues() {
         final String curentTs;
         if (ts == null) {
@@ -136,7 +136,6 @@ public class CoordinatesType implements Coordinates {
         return values;
     }
 
-
     /**
      * Gets the value of the decimal property.
      *
@@ -146,11 +145,10 @@ public class CoordinatesType implements Coordinates {
      *
      */
     public String getDecimal() {
-        if (decimal == null) {
+        /*if (decimal == null) {
             return ".";
-        } else {
-            return decimal;
-        }
+        } else {*/
+        return decimal;
     }
 
     /**
@@ -161,7 +159,7 @@ public class CoordinatesType implements Coordinates {
      *     {@link String }
      *
      */
-    public void setDecimal(String value) {
+    public void setDecimal(final String value) {
         this.decimal = value;
     }
 
@@ -174,11 +172,10 @@ public class CoordinatesType implements Coordinates {
      *
      */
     public String getCs() {
-        if (cs == null) {
+        /*if (cs == null) {
             return ",";
-        } else {
-            return cs;
-        }
+        } else {*/
+        return cs;
     }
 
     /**
@@ -189,7 +186,7 @@ public class CoordinatesType implements Coordinates {
      *     {@link String }
      *
      */
-    public void setCs(String value) {
+    public void setCs(final String value) {
         this.cs = value;
     }
 
@@ -202,11 +199,10 @@ public class CoordinatesType implements Coordinates {
      *
      */
     public String getTs() {
-        if (ts == null) {
+        /*if (ts == null) {
             return " ";
-        } else {
-            return ts;
-        }
+        } else {*/
+        return ts;
     }
 
     /**
@@ -217,7 +213,7 @@ public class CoordinatesType implements Coordinates {
      *     {@link String }
      *
      */
-    public void setTs(String value) {
+    public void setTs(final String value) {
         this.ts = value;
     }
 

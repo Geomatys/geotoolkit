@@ -12,8 +12,6 @@ package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive;
 import java.util.Collections;
 import java.util.Set;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -49,7 +47,7 @@ import org.opengis.geometry.complex.Composite;
  * position attribute. The only exception to this is if the {@code Point}
  * has been subclassed to provide additional non-geometric information such as
  * symbology.
- * 
+ *
  * @author SYS Technologies
  * @author crossley
  * @author cdillard
@@ -153,7 +151,7 @@ public class JTSPoint extends AbstractJTSGeometry implements Point {
     public void setPosition(final DirectPosition position) throws UnmodifiableGeometryException {
         setDirectPosition(position);
     }
-    
+
     /**
      * {@inheritDoc }
      */
