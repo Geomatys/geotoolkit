@@ -20,6 +20,7 @@ options {
    NODE_SCOPE_HOOK=true; //JJTree generates calls to two user-defined parser methods on the entry and exit of every node scope
    NODE_DEFAULT_VOID=true;
    MULTI=false;
+   JAVA_UNICODE_ESCAPE = true;
 
    BUILD_NODE_FILES=false; // Generate sample implementations for SimpleNode and any other nodes used in the grammar
    NODE_PACKAGE="org.geotoolkit.filter.text.generated.parsers";
