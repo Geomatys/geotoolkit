@@ -22,10 +22,13 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
@@ -54,21 +57,21 @@ import org.opengis.util.InternationalString;
 /**
  * Property editor, can edit Feature/Complex attribut or single properties.
  * Additionaly Parameter can be edited since their model is close.
- * 
+ *
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
 public class JFeatureOutLine extends Outline{
-    
+
     public static interface PropertyEditor{
-        
+
         boolean canHandle(PropertyType candidate);
-        
+
         TableCellEditor getEditor(PropertyType type);
-        
+
         TableCellRenderer getRenderer(PropertyType type);
     }
-    
+
     private static final ImageIcon ICON_ADD = IconBundle.getIcon("16_smallgray");
     private static final ImageIcon ICON_REMOVE = IconBundle.getIcon("16_smallgreen");
     private static final ImageIcon ICON_OCC_ADD = IconBundle.getIcon("16_occurence_add");
@@ -78,7 +81,7 @@ public class JFeatureOutLine extends Outline{
     private final JFeatureOutLine.PropertyRowModel rowModel = new JFeatureOutLine.PropertyRowModel();
     private FeatureTreeModel treeModel = null;
     private Property edited = null;
-    
+
     public JFeatureOutLine(){
         setRenderDataProvider(new JFeatureOutLine.PropertyDataProvider());
         setShowHorizontalLines(false);
@@ -88,15 +91,36 @@ public class JFeatureOutLine extends Outline{
         getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         editors.addAll(createDefaultEditorList());
     }
-    
+
     /**
      * Set the property to display in this component.
      */
     public void setEdited(final Property property){
         this.edited = property;
         treeModel = new FeatureTreeModel(property);
+
+        if(SwingUtilities.isEventDispatchThread()){
+            updateModel(treeModel, property);
+        }else{
+            try {
+                SwingUtilities.invokeAndWait(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateModel(treeModel, property);
+                    }
+                });
+            } catch (InterruptedException ex) {
+                Logger.getLogger(JFeatureOutLine.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (InvocationTargetException ex) {
+                Logger.getLogger(JFeatureOutLine.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+    }
+
+    private void updateModel(final FeatureTreeModel treeModel,final Property prop){
         setModel(DefaultOutlineModel.createOutlineModel(treeModel, rowModel));
-        setRootVisible(!(property instanceof ComplexAttribute));
+        setRootVisible(!(prop instanceof ComplexAttribute));
         getColumnModel().getColumn(0).setHeaderValue(" ");
         getColumnModel().getColumn(0).setResizable(true);
         getColumnModel().getColumn(1).setResizable(true);
@@ -104,14 +128,14 @@ public class JFeatureOutLine extends Outline{
         getColumnModel().getColumn(2).setMaxWidth(26);
         getColumnModel().getColumn(2).setResizable(false);
     }
-    
+
     /**
      * Get the property displayed in this component.
      */
     public Property getEdited(){
         return edited;
     }
-    
+
     /**
      * Set the property to display in this component. Parameters are not the
      * natural model expected, but since Parameters are close to Features. An
@@ -130,7 +154,7 @@ public class JFeatureOutLine extends Outline{
     public ParameterValueGroup getEditedAsParameter(final ParameterDescriptorGroup desc) {
         return FeatureUtilities.toParameter((ComplexAttribute) edited, desc);
     }
-    
+
     /**
      * @return live list of property editors.
      */
@@ -150,19 +174,19 @@ public class JFeatureOutLine extends Outline{
         if(obj instanceof Property){
             type = ((Property)obj).getType();
         }
-        
+
         if(column == 1){
             final JFeatureOutLine.PropertyEditor edit = getEditor(type);
             if(edit != null){
                 return edit.getEditor(type);
             }
         }
-        
+
         //fallback on default java editor.
         final Class c = type.getBinding();
         return getDefaultEditor(c);
     }
-    
+
     private JFeatureOutLine.PropertyEditor getEditor(PropertyType type){
         if(type != null){
             for(JFeatureOutLine.PropertyEditor edit : editors){
@@ -194,24 +218,24 @@ public class JFeatureOutLine extends Outline{
         if(obj instanceof Property){
             type = ((Property)obj).getType();
         }
-        
+
         if(column == 1 && type != null){
             final JFeatureOutLine.PropertyEditor edit = getEditor(type);
             if(edit != null){
                 return edit.getRenderer(type);
             }
         }
-        
-        //fallback on default java editor.        
+
+        //fallback on default java editor.
         final Object value = getValueAt(row, column);
         if(value instanceof Geometry || value instanceof org.opengis.geometry.Geometry){
             return new JFeatureOutLine.GeometryCellRenderer();
         }
         return super.getCellRenderer(row, column);
     }
-    
+
     private class PropertyRowModel implements RowModel{
-        
+
         @Override
         public int getColumnCount() {
             return 2;
@@ -271,9 +295,9 @@ public class JFeatureOutLine extends Outline{
         public String getColumnName(final int i) {
             return "";
         }
-        
+
     }
-    
+
     private static class PropertyDataProvider implements RenderDataProvider {
 
         @Override
@@ -286,14 +310,14 @@ public class JFeatureOutLine extends Outline{
             final MutableTreeNode node = (MutableTreeNode) o;
             final Object candidate = node.getUserObject();
 
-            
+
 
             final Name name;
             if(candidate instanceof Property){
-                
+
                 Property prop = ((Property)candidate);
                 final PropertyDescriptor desc = prop.getDescriptor();
-                
+
                 if(desc != null){
                     final Object origin = desc.getType().getUserData().get("origin");
                     if(origin instanceof GeneralParameterDescriptor){
@@ -310,12 +334,12 @@ public class JFeatureOutLine extends Outline{
                 }else{
                     name = prop.getName();
                 }
-                
-                
+
+
             }else if(candidate instanceof PropertyDescriptor){
-                
+
                 final PropertyDescriptor desc = ((PropertyDescriptor)candidate);
-                
+
                 if(desc != null){
                     final Object origin = desc.getType().getUserData().get("origin");
                     if(origin instanceof GeneralParameterDescriptor){
@@ -332,7 +356,7 @@ public class JFeatureOutLine extends Outline{
                 }else{
                     name = desc.getName();
                 }
-                
+
             }else{
                 name = null;
             }
@@ -392,7 +416,7 @@ public class JFeatureOutLine extends Outline{
 
             return null;
         }
-        
+
         @Override
         public javax.swing.Icon getIcon(final Object o) {
             final MutableTreeNode node = (MutableTreeNode) o;
@@ -401,7 +425,7 @@ public class JFeatureOutLine extends Outline{
                 return IconBundle.EMPTY_ICON;
             }else{
                 return IconBundle.EMPTY_ICON;
-            }            
+            }
         }
 
         @Override
@@ -417,7 +441,7 @@ public class JFeatureOutLine extends Outline{
             }else{
                 return null;
             }
-            
+
         }
 
         @Override
@@ -469,9 +493,9 @@ public class JFeatureOutLine extends Outline{
     }
 
     public Component getActionComponent(final JFeatureOutLine outline, final Object value) {
-        
+
         final DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
-        
+
         if(node == null){
             return new JLabel();
         }
@@ -502,7 +526,7 @@ public class JFeatureOutLine extends Outline{
             final Property prop = (Property) obj;
             final PropertyDescriptor desc = prop.getDescriptor();
 
-            if(desc != null && desc.getMinOccurs() == 0){                
+            if(desc != null && desc.getMinOccurs() == 0){
                 final int max = desc.getMaxOccurs();
                 final ImageIcon icon = (max>1) ? ICON_OCC_REMOVE : ICON_REMOVE;
                 final JButton butRemove = new JButton(icon);
@@ -535,7 +559,7 @@ public class JFeatureOutLine extends Outline{
         lst.add(new EnumEditor());
         return lst;
     }
-    
+
     public static void show(final Property candidate){
         final JDialog dialog = new JDialog();
         final JFeatureOutLine outline = new JFeatureOutLine();
