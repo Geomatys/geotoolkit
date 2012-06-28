@@ -18,18 +18,24 @@
 package org.geotoolkit.image.classification;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.geotoolkit.util.ArgumentChecks;
 
 /**
- * Define and compute two sort of data classifications.<br/>
+ * <p>Define and compute two sort of data classifications.<br/>
  * Quantile classification.<br/>
  * Quantile classification is the most basic classification.<br/>
- * Algorithm divide in some equal parts(at best, if its possible) all organized data.<br/><br/>
+ * Algorithm divide in some equal parts(at best, if its possible) all ascending organized data.<br/><br/>
  * Jenks classification.<br/>
- * Jenks classification test all divide made possibilities.<br/>
- * For each case algorithm compute "intra classes variance"(SBCM) and "inter classes variance"(SDAM).<br/>
- * Kept solution is the one that difference between them is largest.
+ * Jenks method is the most effective, but also most costly in computing terms.<br/>
+ * For each case, in first time,  the algorithm computes the "intra-class variance"
+ * ie the average of the variances of each of the classes.<br/>
+ * A second step, consist to calculates the "inter-class variance",
+ * ie the variance of each of the generated classes.<br/>
+ * The aim is thus to minimize the "intra-class variance" so that each
+ * elements group has generated individuals who "look at best"
+ * and maximize the "inter-class variance" in order to obtain the most dissimilar classes possible.</p>
  *
  * @author Rémi Marechal (Geomatys).
  */
@@ -61,7 +67,7 @@ public class Classification {
      * Jenks classification.<br/><br/>
      *
      * Note : if "classNumber" parameter equal 1, the 2 classification made add
-     * in result list only one increasing order class.</p>
+     * in result list only one ascending order class.</p>
      *
      * @param data table will be classified.
      * @param classNumber class number.
@@ -84,7 +90,7 @@ public class Classification {
      * Class data from quantile method.
      */
     public void computeQuantile() {
-        organizeData();
+        Arrays.sort(data);
         if (classNumber == 1) {
             classList.add(data);
             return;
@@ -109,7 +115,7 @@ public class Classification {
      * Class data from Jenks method.
      */
     public void computeJenks() {
-        organizeData();
+        Arrays.sort(data);
         if (classNumber == 1) {
             classList.add(data);
             return;
@@ -179,7 +185,6 @@ public class Classification {
                 result[compteur++] = data[j];
             }
             classList.add(result);
-            //next table begin index.
             min = max;
         }
     }
@@ -214,22 +219,6 @@ public class Classification {
             variance += var;
         }
         return variance /= length;
-    }
-
-    /**
-     * Organize values from lesser to higher value.
-     */
-    private void organizeData() {
-        double temp;
-        for (int j = 0; j<dataLength; j++) {
-            for(int i = 0; i<dataLength-1; i++) {
-                if (data[i] > data[i+1]) {
-                    temp = data[i];
-                    data[i] = data[i+1];
-                    data[i+1] = temp;
-                }
-            }
-        }
     }
 
     /**

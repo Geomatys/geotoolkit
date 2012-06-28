@@ -48,8 +48,8 @@ public class ClassificationTest {
     }
 
     /**
-     * Test la méthode de classification par Quantile.
-     * Test avec un nombre impair d'éléments et un regroupement en 1 classe.
+     * Test about Quantile classification.
+     * Test with odd table value and 1 class.
      */
     @Test
     public void quantileI1Test() {
@@ -110,7 +110,6 @@ public class ClassificationTest {
        assertTrue(compareTab(result.get(3), new double[]{47, 56, 58}));
     }
 
-
     /**
      * Test about Quantile classification.
      * Test with even table value and 2 class.
@@ -160,8 +159,8 @@ public class ClassificationTest {
     }
 
     /**
-     * Test la méthode de classification de Jenks.
-     * Test avec un nombre impair d'éléments et un regroupement en 1 classe.
+     * Test about Jenks classification.
+     * Test with odd table value and 1 class.
      */
     @Test
     public void jenksI1Test() {
@@ -174,7 +173,7 @@ public class ClassificationTest {
     }
 
     /**
-     * Test about Quantile classification.
+     * Test about Jenks classification.
      * Test with odd table value and 2 class.
      */
     @Test
@@ -189,7 +188,7 @@ public class ClassificationTest {
     }
 
     /**
-     * Test about Quantile classification.
+     * Test about Jenks classification.
      * Test with odd table value and 3 class.
      */
     @Test
@@ -206,7 +205,7 @@ public class ClassificationTest {
     }
 
     /**
-     * Test about Quantile classification.
+     * Test about Jenks classification.
      * Test with odd table value and 4 class.
      */
     @Test
@@ -224,7 +223,7 @@ public class ClassificationTest {
 
 
     /**
-     * Test about Quantile classification.
+     * Test about Jenks classification.
      * Test with even table value and 2 class.
      */
     @Test
@@ -239,7 +238,7 @@ public class ClassificationTest {
     }
 
     /**
-     * Test about Quantile classification.
+     * Test about Jenks classification.
      * Test with even table value and 3 class.
      */
     @Test
@@ -255,7 +254,7 @@ public class ClassificationTest {
     }
 
     /**
-     * Test about Quantile classification.
+     * Test about Jenks classification.
      * Test with even table value and 4 class.
      */
     @Test

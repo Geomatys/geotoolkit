@@ -113,4 +113,25 @@ public abstract class Interpolation {
     public int getNumBands(){
         return numBands;
     }
+
+    /**
+     * <p>Return Interpolation object.<br/><br/>
+     *
+     * Note : if lanczos interpolation is doesn't choose lanczosWindow integer has no impact.</p>
+     *
+     * @param pixelIterator Iterator which iterate to compute interpolation.
+     * @param interpolationCase case of interpolation.
+     * @param lanczosWindow only use about Lanczos interpolation.
+     * @return interpolation asked by caller.
+     * @see LanczosInterpolation#LanczosInterpolation(org.geotoolkit.image.iterator.PixelIterator, int)
+     */
+    public static Interpolation create(PixelIterator pixelIterator, InterpolationCase interpolationCase, int lanczosWindow){
+        switch (interpolationCase) {
+            case NEIGHBOR : return new NeighborInterpolation(pixelIterator);
+            case BILINEAR : return new BilinearInterpolation(pixelIterator);
+            case BICUBIC  : return new BiCubicInterpolation(pixelIterator);
+            case LANCZOS  : return new LanczosInterpolation(pixelIterator, lanczosWindow);
+            default       : throw  new IllegalArgumentException("interpolation not supported yet");
+        }
+    }
 }
