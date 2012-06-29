@@ -116,8 +116,8 @@ public class DefaultPortrayalService implements PortrayalService{
     static final Map<String,String> MIME_CACHE = new ConcurrentHashMap<String, String>();
 
     private DefaultPortrayalService(){}
-    
-    
+
+
     /**
      * Portray a gridcoverage using amplitute windarrows/cercles
      *
@@ -310,18 +310,30 @@ public class DefaultPortrayalService implements PortrayalService{
      * The image will be divided in the same number of tiles and size as the mosaic.
      * Unlike a call to a portray method, the returned rendered image will be calculated
      * progressively.
-     * 
+     *
      * @param mosaic
      * @param def
      * @param sceneDef
      * @param viewDef
-     * @return 
+     * @return RenderedImage , never null
      */
-    public static RenderedImage prepareImage(final CanvasDef canvasDef, final SceneDef sceneDef, final ViewDef viewDef, 
-            final Dimension gridSize, final Dimension tileSize, final double scale) throws PortrayalException{        
+    public static RenderedImage prepareImage(final CanvasDef canvasDef, final SceneDef sceneDef, final ViewDef viewDef,
+            final Dimension gridSize, final Dimension tileSize, final double scale) throws PortrayalException{
         return new PortrayalRenderedImage(canvasDef, sceneDef, viewDef, gridSize, tileSize, scale);
     }
-    
+
+    /**
+     * Manipulate a MapContext as if it was an ARGB coverage of infinite resolution.
+     *
+     * @param canvasDef
+     * @param sceneDef
+     * @param viewDef
+     * @return GridCoverageReader, never null
+     */
+    public static GridCoverageReader asCoverageReader(final SceneDef sceneDef){
+        return new PortrayalCoverageReader(sceneDef);
+    }
+
     ////////////////////////////////////////////////////////////////////////////
     // PAINTING IN A STREAM or OUTPUT //////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
@@ -505,8 +517,8 @@ public class DefaultPortrayalService implements PortrayalService{
         final GridCoverageReadParam readParam = new GridCoverageReadParam();
         readParam.setEnvelope(viewDef.getEnvelope());
         readParam.setResolution(resolution);
-        
-        try{            
+
+        try{
             GridCoverage2D coverage = (GridCoverage2D)reader.read(0, readParam);
             final RenderedImage image = coverage.getRenderedImage();
 
@@ -533,7 +545,7 @@ public class DefaultPortrayalService implements PortrayalService{
 
     /**
      * Write a coverage using the canvas, view and output definition.
-     * 
+     *
      * @param coverage : coverage to write
      * @param canvasDef : canvas definition
      * @param viewDef : view definition
@@ -559,14 +571,14 @@ public class DefaultPortrayalService implements PortrayalService{
             //no related java type, incorrect mime type
             throw new PortrayalException("No java type found for mime type : " + mimeType);
         }
-        
+
 
         //get a writer
         GridCoverageWriter writer = WRITER_CACHE.getAndSet(null);
         if(writer == null){
             writer = new ImageCoverageWriter();
         }
-        
+
         try{
             final GridCoverageWriteParam writeParam = new GridCoverageWriteParam();
             writeParam.setEnvelope(env);
@@ -757,7 +769,7 @@ public class DefaultPortrayalService implements PortrayalService{
         }else{
             writer = XImageIO.getWriterByMIMEType(mime, outputDef.getOutput(), image);
         }
-        
+
         ImageOutputStream stream = null;
         try{
             final ImageWriteParam param = writer.getDefaultWriteParam();
@@ -782,13 +794,13 @@ public class DefaultPortrayalService implements PortrayalService{
                     param.setCompressionQuality(compression);
                 }
             }
-            
+
             //TODO is this useless ?
             param.setDestinationType(new ImageTypeSpecifier(image.getColorModel(), image.getSampleModel()));
 
             Object output = outputDef.getOutput();
             final ImageWriterSpi spi = writer.getOriginatingProvider();
-            
+
             if (!ImageIOUtilities.isValidType(spi.getOutputTypes(), output)) {
                 stream = ImageIO.createImageOutputStream(output);
                 output = stream;
@@ -849,7 +861,7 @@ public class DefaultPortrayalService implements PortrayalService{
     }
 
     /**
-     * @see #rectifyColorModel(java.awt.image.ColorModel, java.lang.String) 
+     * @see #rectifyColorModel(java.awt.image.ColorModel, java.lang.String)
      */
     public static RenderedImage rectifyImageColorModel(RenderedImage img, final String mime){
         final ColorModel cm = img.getColorModel();
@@ -867,7 +879,7 @@ public class DefaultPortrayalService implements PortrayalService{
     }
 
     /**
-     * 
+     *
      * @param image
      * @return String containing a technical description of the image.
      */
@@ -881,5 +893,5 @@ public class DefaultPortrayalService implements PortrayalService{
         sb.append("SampleModel : ").append(image.getSampleModel()).append('\n');
         return sb.toString();
     }
-    
+
 }
