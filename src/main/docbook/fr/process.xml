@@ -7,137 +7,36 @@
 <chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
          xmlns:xi    = "http://www.w3.org/2001/XInclude"
          xmlns:xlink = "http://www.w3.org/1999/xlink">
-          
-    <title>
+
+    <title ooclass="chapiterTitle">
         Process
     </title>
-    
+
     <section>
         <title>Qu'est ce qu'un process ?</title>
         <para>
             Un process (ou processus), est un traitement effectué sur des données. Ces traitements peuvent être plus ou moins complexes, avec la possibilité de les chaîner pour des applications particulières.
         </para>
+        <para> Geotoolkit contient plusieurs type de process organiser par modules permettant des
+            traitements basiques. </para>
         <para>
-            Geotoolkit supporte plusieurs type de process sur différents types de données. Les plus simples étant les process du module Math qui proposent l'application de fonctions mathématiques comme cos, tan, avg, ceil, ... etc.
+            On y trouve donc les modules suivant :
         </para>
-        <para>
-            Et d'autres plus complexes comme ceux du module Coverage et Vector traitant les couches raster et vectoriel.
-        </para>
-        <para>
-            Dans geotoolkit, un process est défini par  :
-            <itemizedlist>
-                <listitem> Une registry ou factory cf fr-process-registry.</listitem>
-                <listitem> Une description (liste des entrées-sorties du process).</listitem>
-                <listitem> Le traitement en lui même.</listitem>
-            </itemizedlist>
-        </para>
+        <itemizedlist>
+            <listitem><emphasis role="bold">Math</emphasis> : contient des fonctions mathématiques tel que cos(), add(), avg(), ceil(), ...</listitem>
+            <listitem><emphasis role="bold">JTS Geometry</emphasis> : permet d'appeler les fonctions de la  librairie JTS sur des geometries (buffer, contain, intersect, ...)</listitem>
+            <listitem><emphasis role="bold">Vector</emphasis> : permet de réaliser des oppérations sur les données vecoriel de features (centroid, merge, spacialJoin, ...) </listitem>
+            <listitem><emphasis role="bold">Referencing</emphasis> : contient pour le moment seulement un processus de création de base de donnée EPSG.</listitem>
+            <listitem><emphasis role="bold">Coverage</emphasis> : contient des fonctions pour la création de pyramide et de tuillage.</listitem>
+            <listitem><emphasis role="bold">IO</emphasis> : contient des traitements sur des fichiers (suppression, createTempFile, unpackFile, ...).</listitem>
+            <listitem><emphasis role="bold">Metadata</emphasis> : contient des traitements sur des metadonnées (merge, ...).</listitem>
+        </itemizedlist>
     </section>
-    
-    <section>
-        <title>Utilisation des processus</title>
-        <para>
-            Exemple complet de l'utilisation d'un processus complexe comme Union :
-        </para>
-        
-        <example>
-            <title>Code source complet  : </title>
-            <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/file/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/UnionDemo.java">
-                <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/UnionDemo.java</acronym>
-            </link>        
-        </example>
-        <para>
-            Pour utiliser un processus, il faut commencer par récupérer sa description. Pour cela, on utilise la classe utilitaire ProcessFinder qui a des méthodes pour récupérer les registry des process et leurs descriptions.
-        </para>
-        <example>
-            <title>Récupération de la description d'un process</title>
-            <programlisting>
-                
-                    //Récupération de la description du process union appartenant à la factory vector.
-                    final ProcessDescriptor descriptor = ProcessFinder.getProcessDescriptor("vector", "union");
-                
-            </programlisting>
-        </example>
-        <para>
-            Une fois que l'on a sa description, il suffit de passer des valeurs aux paramètres d'entrées.
-        </para>
-        <example>            
-            <title>Paramètres d'entrées</title>
-            <programlisting>
-                
-                    //Récupération des paramètres d'entrées
-                    final ParameterValueGroup input = descriptor.getInputDescriptor().createValue();
- 
-                    //Set des paramètres
-                    input.parameter("feature_in").setValue(featureCollection1);
-                    input.parameter("feature_union").setValue(featureCollection2);
-                    input.parameter("input_geometry_name").setValue("geom1");
-                
-            </programlisting>
-        </example>
-        
-        <para>
-            Lorsque les paramètres d'entrées sont définis, il reste à lancer le processus et à récupérer les paramètres de sorties.
-        </para>
-        
-        <example>
-            <title>Lancement processus + Récupération sorties</title>
-            <programlisting>
-                
-                
-                    //Création du processus
-                    final Process process = descriptor.createProcess(in);
-  
-                    //Récupération de la sortie feature_out
-                    final FeatureCollection&lt;Feature&gt; featuresOut = (FeatureCollection&lt;Feature&gt;);
-                    process.call().parameter("feature_out").getValue();
-                
-            </programlisting>
-        </example>
-        
-        <section>
-            <title>Enregistrement des processus</title>
 
-            Il est possible de découvrir quels sont les processus disponibles et aussi d'en enregistrer de nouveaux.
-            <para>
-                Consulter la page : process-registry
-            </para>
-        </section>
-        
-        <section>
-            <title>Execution programmée des tâches</title>
-        
-            Un module est disponible permettant l'execution de tâches en utilisant l'api Quartz.
-            <para>
-                Consulter la page : process-quartz
-            </para>
-        </section>
-        
-        <section>
-            <title>Execution en ligne de commande</title>
-        
-            A la manière des outils gdalinfo et ogr2ogr , les process GeotoolKit sont utilisables en ligne de commande.
-            <para>
-                Consulter la page : process-shell
-            </para>
-        </section>
-        
-        <section>
-            <title>Utilisation dans OpenOffice et LibreOffice</title>
+    <xi:include href="process/process-create.xml"/>
 
-            Bien que ne s'appuyant pas directement sur les process, un certain nombre d'operations sont utilisables dans les tableurs LibreOffice et OpenOffice.
-            <para>
-                Consulter la page : process-xoffice 
-            </para>
-        </section>
-        
-    </section>
-    
-    <xi:include href="process/process-registry.xml"/>
-    
-    <xi:include href="process/process-quartz.xml"/>
-    
-    <xi:include href="process/process-shell.xml"/>
-    
-    <xi:include href="process/process-xoffice.xml"/>
-    
+    <xi:include href="process/process-using.xml"/>
+
+    <xi:include href="process/process-tools.xml"/>
+
 </chapter>

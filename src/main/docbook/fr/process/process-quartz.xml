@@ -6,72 +6,78 @@
 ]>
 <section xmlns="http://docbook.org/ns/docbook" version="5.0"
          xmlns:xlink = "http://www.w3.org/1999/xlink">
-          
+
     <title>
         Process Quartz
     </title>
-    
+
     <section>
         <title>Qu'est-ce que Quartz ?</title>
         <para>
-            Dans certaine applications, il peut être intéressant/nécessaire d'effectuer une tache en parallèle ou à des moments bien précis.On utilise alors des ordonnanceurs afin que notre tâche se répète toute les X minutes ou tous les jours à 4 heures du matin. Quartz n'est autre que l'ordonnanceur Java le plus utilisé.
+            Dans certaine applications, il peut être intéressant/nécessaire d'effectuer une tache en parallèle ou à des moments bien précis. On utilise alors des ordonnanceurs
+            afin que notre tâche se répète toute les X minutes ou tous les jours à 4 heures du matin. Quartz n'est autre que l'ordonnanceur Java le plus utilisé.
         </para>
         <para>
-            Pour plus de détail sur l'API Quartz, consulter le site officiel : 
+            Geotoolkit met donc à disposition la possibilité d'exécuter des process comme étant une tâche Quartz.
+        </para>
+        <para>
+            Pour plus de détail sur l'API Quartz, consulter le site officiel :
             <link xlink:href="http://www.quartz-scheduler.org/">Quartz scheduler</link>
         </para>
     </section>
-        
+
     <section>
         <title>Utilisation</title>
-            
+
         <example>
             <title>Code source complet  : </title>
-            <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/file/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/QuartzDemo.java">
+            <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/QuartzDemo.java">
                 <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/QuartzDemo.java</acronym>
-            </link>        
+            </link>
         </example>
-        
+
         <para>
             Le principe est de réutiliser l'ordonnance de votre application, ici on va en créer un :
         </para>
+        <example>
+            <title>Création du sheduler</title>
             <programlisting>
-                
-                    final SchedulerFactory factory = new StdSchedulerFactory();
-                    final Scheduler scheduler = factory.getScheduler();
-                    scheduler.start();
-                
+    final SchedulerFactory factory = new StdSchedulerFactory();
+    final Scheduler scheduler = factory.getScheduler();
+    scheduler.start();
             </programlisting>
-        
+        </example>
         <para>
             On crée ensuite l'ensemble des paramètres qui seront donnés au processus.
         </para>
+        <example>
+            <title>Création du process</title>
             <programlisting>
-                
-                    final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("mymaths", "add");
-                    final ParameterValueGroup input = desc.getInputDescriptor().createValue();
-                    input.parameter("first").setValue(15d);
-                    input.parameter("second").setValue(5d);
-                    final ProcessJobDetail detail = new ProcessJobDetail("mymaths", "add", input);
-                
+    final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("demo", "addition");
+    final ParameterValueGroup input = desc.getInputDescriptor().createValue();
+    input.parameter("first").setValue(15d);
+    input.parameter("second").setValue(5d);
+    final org.geotoolkit.process.Process process = desc.createProcess(input);
+    final ProcessJobDetail detail = new ProcessJobDetail(process);
             </programlisting>
-        
+        </example>
         <para>
             Et on configure l’exécution de la tâche, ci-dessous celle ci s’exécutera un total de 5 fois toutes les 500ms.
         </para>
-        
+        <example>
+            <title>Lancement des tâches</title>
             <programlisting>
-                
-                    SimpleTrigger trigger = new SimpleTriggerImpl(UUID.randomUUID().toString(),5, 500);
-                    scheduler.scheduleJob(detail, trigger);
-                
+    SimpleTrigger trigger = new SimpleTriggerImpl(UUID.randomUUID().toString(),5, 500);
+    scheduler.scheduleJob(detail, trigger);
             </programlisting>
-        
+        </example>
         <para>
             Quartz permet bien entendu d'être plus minutieux dans l’exécution des tâches.
 
-            L'élément important ici est l'objet <emphasis>ProcessJobDetail</emphasis> qui étend la class <emphasis>JobDetail</emphasis> de Quartz ce qui nous permet t'utiliser des process geotoolkit de façon indifférenciée avec les classes Quartz.
+            L'élément important ici est l'objet <link xlink:href="http://pending.geotoolkit.org/apidocs/org/geotoolkit/process/quartz/ProcessJobDetail.html"> ProcessJobDetail </link>
+            qui étend la class <link xlink:href="http://quartz-scheduler.org/api/2.1.5/org/quartz/impl/JobDetailImpl.html"> JobDetail </link>de Quartz ce qui nous permet t'utiliser
+            des process geotoolkit de façon indifférenciée avec les classes Quartz.
         </para>
     </section>
-    
-    </section>
+
+</section>

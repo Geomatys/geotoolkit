@@ -1,0 +1,410 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book [
+  <!ENTITY % book.entities SYSTEM "../../book.entities">
+  %book.entities;
+]>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xlink = "http://www.w3.org/1999/xlink">
+
+    <title>
+        Créer son processus
+    </title>
+
+    <para>
+        Pour créer nouveau traitement il faut implémenter trois choses :
+    </para>
+
+    <itemizedlist>
+        <listitem> La registry contenant le traitement.</listitem>
+        <listitem> La description du nouveau traitement.</listitem>
+        <listitem> Le traitement en lui même.</listitem>
+    </itemizedlist>
+
+    <section>
+        <title>La registry</title>
+        <para>
+            Les registry sont utilisés dans le module processing de Geotoolkit pour organiser les processus réalisant le même type de traitement. Par exemple, la registry "math"
+            contient uniquement des processus de calcul, la registry vector des processus travaillant sur des couches vectorielles ... etc.
+        </para>
+        <para>
+            Chaque registry contient donc une liste d'instance de description des processus qu'elle possede. On peut ainsi récupérer la description d'un process précis facilement.
+        </para>
+        <example>
+            <title>Code complet de création d'une registry</title>
+            <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/registry/DemoProcessRegistry.java" >
+                geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/registry/DemoProcessRegistry.java
+            </link>
+        </example>
+
+        <para>
+            Pour créer sa propre factory, il suffit d'étendre la classe
+            <link xlink:href="http://pending.geotoolkit.org/apidocs/org/geotoolkit/process/AbstractProcessingRegistry.html">AbstractProcessingRegistry</link> et de redéfinir la méthode getIdentification()
+            permetant d'identifier de manière unique notre registry.
+            L'idenification d'une regisry ce faire par le biais d'un objet <link xlink:href="http://www.geoapi.org/snapshot/javadoc/org/opengis/metadata/identification/Identification.html">Identification</link>
+            comme dans l'exemple suivant.
+        </para>
+
+        <example>
+            <title>Identification d'une Registry</title>
+            <programlisting>
+    public static final String NAME = "demo"; //Nom unique de notre registry
+    public static final DefaultServiceIdentification IDENTIFICATION; //Objet Idenfication
+
+    static {
+        IDENTIFICATION = new DefaultServiceIdentification();
+        final Identifier id = new DefaultIdentifier(NAME);
+        final DefaultCitation citation = new DefaultCitation(NAME);
+        citation.setIdentifiers(Collections.singleton(id));
+        IDENTIFICATION.setCitation(citation);
+    }
+
+        @Override
+    public Identification getIdentification() {
+        return IDENTIFICATION;
+    }
+            </programlisting>
+        </example>
+
+        <para>
+            Il faut ensuite initialiser notre Registry avec la liste des traitements (processus) qu'elle contient. Ce doit être une liste d'<emphasis role="bold">instance</emphasis> des descripteur de chaque processus.
+            Le moyen le plus simple étant que chaque descripteur implémente le design pattern singleton. Et lors de l'ajout d'un process, on ajoute son descripteur à l'initialisation de la
+            registry. L'exemple suivant montre ce principe.
+        </para>
+
+        <example>
+            <title>Identification d'une Registry</title>
+            <programlisting>
+    public DemoProcessRegistry() {
+        super(AddDescriptor.INSTANCE, SubDescriptor.INSTANCE, MultDesciptor.INSTANCE, ...);
+    }
+            </programlisting>
+        </example>
+
+        <para>
+            On peux également rendre cette initialisation dynamique en listant les processus disponible dans un fichier META-INF/service et un Iterateur donné par la class ServiceRegistry sur
+            l'interface ProcessDescriptor comme dans l'exemple suivant. Il faut pour cela que les constructeurs des descripteur soit publique.
+        </para>
+
+        <example>
+            <title>Identification d'une Registry</title>
+            <programlisting>
+    public MyProcessRegistry() {
+        super( findDescriptors() );
+    }
+
+    // find all ProcessDescriptor in META-INF/service directories
+    private static synchronized ProcessDescriptor[] findDescriptors() {
+        final Iterator&lt;ProcessDescriptor&gt; ite = ServiceRegistry.lookupProviders(ProcessDescriptor.class);
+        final List&lt;ProcessDescriptor&gt; descriptors = new ArrayList&lt;ProcessDescriptor&gt;();
+        while (ite.hasNext()) {
+            descriptors.add(ite.next());
+        }
+
+        return descriptors.toArray(new ProcessDescriptor[descriptors.size()]);
+    }
+            </programlisting>
+        </example>
+
+        <para>
+            Pour finir avec la création de notre registry, il faut la déclarer notre classe dans un fichier org.geotoolkit.process.ProcessingRegistry dans un dossier resources/META-INF/service de notre module.
+            Ceci permet à la classe utilitaire  <link xlink:href="http://pending.geotoolkit.org/apidocs/org/geotoolkit/process/ProcessFinder.html"> ProcessFinder </link> de retrouver notre
+            Registry et tous les processus qu'elle contient.
+        </para>
+    </section>
+
+    <section>
+        <title>La description</title>
+
+        <para>
+            La création d'un process passe par sa définition ou description. Cette description doit contenir l'ensemble des entrées / sorties de notre processus, ainsi que son nom
+            et quelque phrase décrivant sont travail. Il doit aussi permettre d'instancier le traitement en lui même en lui passant les paramètres d'entrées.
+        </para>
+
+        <example>
+            <title>Code complet de création d'un ProcessDescriptor pour une Addition</title>
+            <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/registry/AddDescriptor.java" >
+                geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/registry/AddDesciptor.java
+            </link>
+        </example>
+
+        <para>
+            Pour la gestion des entrées et des sorties, on utilise dans Geotoolkit les <link xlink:href="http://www.geoapi.org/snapshot/javadoc/org/opengis/parameter/GeneralParameterDescriptor.html">GeneralParameterDescriptor</link>
+            qui est a l'origine un élément de la norme ISO_19111.
+        </para>
+
+        <section xml:id="parameters">
+            <title>ParametersDesciptor et ParametersValue</title>
+            <para>
+                La description des entrées et des sorties ce fait par la création de <link xlink:href="http://www.geoapi.org/snapshot/javadoc/org/opengis/parameter/ParameterDescriptorGroup.html">ParameterDescriptorGroup</link>
+                qui regroupe un ensemble de GeneralParameterDescriptor.
+                Ces même GeneralParameterDesciptor peuvent être des sous ParameterDescriptorGroup ou des <link xlink:href="http://www.geoapi.org/snapshot/javadoc/org/opengis/parameter/ParameterDescriptor.html">ParameterDescriptor</link>
+                décrivant un paramètre simple.
+            </para>
+            <para>
+                Le pseudo diagramme de classe suivante montre la hiérarchie des classes et des interfaces qui définisent les GeneralParameterDescriptor.
+            </para>
+
+            <figure>
+                <title>Classes et interfaces de description de paramètres</title>
+                <mediaobject>
+                    <imageobject>
+                        <imagedata fileref="../images/org.opengis.parameter.GeneralParameterDescriptor.png" format="png"></imagedata>
+                    </imageobject>
+                    <textobject>
+                        <phrase> Classes et interfaces de description de paramètres </phrase>
+                    </textobject>
+                </mediaobject>
+            </figure>
+
+            <para>
+                Pour créer des ParameterDescriptor ou des ParameterDescriptorGroup, on utilise les implémentations par défaut de Geotoolkit
+                <link xlink:href="http://www.geotoolkit.org/apidocs/org/geotoolkit/parameter/DefaultParameterDescriptor.html">DefaultParameterDescriptor</link> et
+                <link xlink:href="http://www.geotoolkit.org/apidocs/org/geotoolkit/parameter/DefaultParameterDescriptorGroup.html">DefaultParameterDescriptorgourp</link>.
+            </para>
+
+            <para>
+                Dans l'exemple suivant, on créer les paramètres d'entrée d'un processus simple réalisant l'addition de deux nombres. Il y a donc deux ParameterDescriptor correspondant
+                à chaque nombre en entrée et un ParameterDescriptorGroup pour les regroupers en tant qu'entrée (INPUT).
+            </para>
+
+            <example>
+                <title>Description des entrées</title>
+                <programlisting>
+    //Premier nombre de type Double
+    public static final ParameterDescriptor&lt;Double&gt; FIRST_NUMBER = new DefaultParameterDescriptor("first", "first number", Double.class, null, true);
+
+    //Deuxieme nombre de type Double
+    public static final ParameterDescriptor&lt;Double&gt; SECOND_NUMBER = new DefaultParameterDescriptor("second", "second number", Double.class, null, true);
+
+    //Groupe d'entrée.
+    public static final ParameterDescriptorGroup INPUT_DESC = new DefaultParameterDescriptorGroup("InputParameters", new GeneralParameterDescriptor[]{FIRST_NUMBER, SECOND_NUMBER});
+                </programlisting>
+            </example>
+
+            <para>
+                DefaultParameterDescriptor possede plusieurs constructeur suivant les informations sur le paramètre voulu. Dans l'exemple précedent, on construit nos nombre en leurs donnant
+                dans l'ordre :
+            </para>
+            <itemizedlist>
+                <listitem> Un nom unique. "first"</listitem>
+                <listitem> Un description "Fisrt number"</listitem>
+                <listitem> Leurs classe de binding. "Double.class"</listitem>
+                <listitem> Leur valeur par defaut. "null"</listitem>
+                <listitem> Un Boolean disant si le paramètre est opionnel. "Double.class"</listitem>
+            </itemizedlist>
+
+            <para>
+                Mais on peux également, donner la multipicité pour chaque paramètres, des alias, leurs unités ou la liste des valeurs autorisées. Pour plus d'information ce référer à la Javadoc de
+                <link xlink:href="http://www.geotoolkit.org/apidocs/org/geotoolkit/parameter/DefaultParameterDescriptor.html">DefaultParameterDescriptor</link> et
+                <link xlink:href="http://www.geotoolkit.org/apidocs/org/geotoolkit/parameter/DefaultParameterDescriptorGroup.html">DefaultParameterDescriptorgourp</link>.
+                Ces informations sont utilisées lors de la création des paramètres d'entrer pour vérifier les valeurs inserer.
+            </para>
+
+            <para>
+                On peux aussi avoir des traductions pour les descriptions de parametres et la desciption du process comme sur la démo. Pour cela il faut créer des bundles et dans le dossier resources,
+                et créer des objets ResourceInternationalString avec la clé définie par une traduction.
+                Dans le cas des parametres, il faut construire une Map de "properties" comme dans l'exemple suivant.
+            </para>
+
+             <example>
+                <title>Description d'une entrée avec bundle de traduction</title>
+                <programlisting>
+    public static final ParameterDescriptor&lt;Double&gt; FIRST_NUMBER;
+    static {
+        final Map&lt;String, Object&gt; propertiesFirst = new HashMap&lt;String, Object&gt;();
+        propertiesFirst.put(IdentifiedObject.NAME_KEY,        "first");
+        propertiesFirst.put(IdentifiedObject.REMARKS_KEY,     new ResourceInternationalString(BUNDLE, ADD_FIRST));
+        FIRST_NUMBER = new DefaultParameterDescriptor&lt;Double&gt;(propertiesFirst, Double.class, null, null, null, null, null, true);
+    }
+                </programlisting>
+            </example>
+
+            <para>
+                Par la suite lorsque on voudra créer les valeurs des paramètres d'entrer pour les donner à notre processus, il suffira de d'appeler la méthode createValue() sur le ParameterDescriptorGroup
+                représentant les entrées du processus. Cette méthode retournera alors un ParameterValueGroup construit à partir des ParameterDescriptor.
+            </para>
+
+            <figure>
+                <title>Classes et interfaces de valeurs de paramètres</title>
+                <mediaobject>
+                    <imageobject>
+                        <imagedata fileref="../images/org.opengis.parameter.GeneralParameterValue.png" format="png"></imagedata>
+                    </imageobject>
+                    <textobject>
+                        <phrase> Classes et interfaces de valeurs de paramètres </phrase>
+                    </textobject>
+                </mediaobject>
+            </figure>
+        </section>
+
+        <para>
+            Il ne reste plus pour finir le descripteur qu'à implémenter le constructeur avec l'identification et la description du process ainsi que ses entrées/sorties
+            et redéfinir la méhode createProcess() comme dans l'exemple suivant.
+        </para>
+
+        <example>
+            <title>Description des entrées</title>
+            <programlisting>
+        /**Process name : addition */
+        public static final String NAME = "addition";
+        public static final String ABSRACT = "Adds two double.";
+
+        private AddDescriptor() {
+            super(NAME,                                 //Nom du traitement.
+                DemoProcessRegistry.IDENTIFICATION,     //Identification de la registry a laquel il appartient.
+                new SimpleInternationalString(ABSRACT), //Description de ce que réalise le traitement.
+                INPUT_DESC,                             //ParametereDescriptorGroup des entrées.
+                OUTPUT_DESC);                           //ParametereDescriptorGroup des sorties.
+        }
+
+        @Override
+        public Process createProcess(final ParameterValueGroup input) {
+            return new AddProcess(input); // création d'un nouveau traitement avec les paramètres d'entrées.
+        }
+            </programlisting>
+        </example>
+    </section>
+
+    <section>
+        <title>Le traitement</title>
+
+        <example>
+            <title>Code complet du Process Addition</title>
+            <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/registry/AddProcess.java" >
+                geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/processing/registry/AddProcess.java
+            </link>
+        </example>
+
+        <para>
+            Pour finir il ne reste plus qu'à implémener le processus en lui même réalisant le traitement des données en entrées.
+            Pour cela il faut créer une classe étendant <link xlink:href="http://pending.geotoolkit.org/apidocs/org/geotoolkit/process/AbstractProcess.html"> AbstractProcess </link>.
+            Il y a alors une seule méthode à définir, la méthode execute(). C'est cette méthode qui fait le traitement des données après avoir récupérer les paramètres d'entrée et qui
+            retourne les resultats des traitements dans les paramètres de sortie du processus.
+        </para>
+
+        <para>
+            Le code suivant contient le traitement effectuer par le process Addition de démonstration.
+        </para>
+
+
+        <example>
+            <title>Code d'exécution du Process addition</title>
+            <programlisting>
+    //Récupération des paramètres d'entrées
+    final double first = (Double) inputParameters.parameter(AddDescriptor.FIRST_NUMBER.getName().getCode()).getValue();
+    final double second = (Double) inputParameters.parameter(AddDescriptor.SECOND_NUMBER.getName().getCode()).getValue();
+
+    //Calcul du résultat
+    Double result = first + second;
+
+    //Injection du résultat dans le paramètre de sortie.
+    outputParameters.parameter(AddDescriptor.RESULT_NUMBER.getName().getCode()).setValue(result);
+            </programlisting>
+        </example>
+
+        <para>
+            La récupéation et l'injection des données depuis les paramètres d'entrées/sorties peux ce faire plus simplement grâce aux méthode utilitaires
+            contenu dans la classe <link xlink:href="http://www.geotoolkit.org/apidocs/org/geotoolkit/parameter/Parameters.html"> Parameters </link>.
+        </para>
+
+        <example>
+            <title>Méthodes de récupération des valeurs en entrées et d'injection des valeurs en sorties.</title>
+            <programlisting>
+     //Entrées //
+    //Méthode 1 : nom du paramètre en "dur" (à éviter)
+    final double first = (Double) inputParameters.parameter("first").getValue();
+
+    //Méhode 2 : nom du paramètre récupérer depuis le ParameterDesciptor
+    final double first = (Double) inputParameters.parameter(AddDescriptor.FIRST_NUMBER.getName().getCode()).getValue();
+
+    //Méhode 3 : en utilisant la class utilitaire Parameters
+    final double first = (Double) Parameters.value(AddDescriptor.FIRST_NUMBER, inputParameters);
+
+
+    //Sorties//
+    //Méthode 1 : nom du paramètre en "dur" (à éviter)
+    outputParameters.parameter("result").setValue(result);
+
+    //Méthode 1 :  nom du paramètre récupérer depuis le ParameterDesciptor
+    outputParameters.parameter(AddDescriptor.RESULT_NUMBER.getName().getCode()).setValue(result);
+
+    //Méthode 1 : en utilisant la class utilitaire Parameters
+    Parameters.getOrCreate(AddDescriptor.RESULT_NUMBER, outputParameters).setValue(result);
+            </programlisting>
+        </example>
+
+        <section>
+            <title>Gestion des énévements et des exceptions</title>
+            <section>
+                <title>Les énévements</title>
+                <para>
+                    Sur un objet Process, on a accès à plusieurs méthodes permetant d'attacher des écouteurs à celui-ci, qui permettent de donner des informations sur
+                    le déroulement de du traitement.
+                    Ces écouteurs doivent implémener l'interface <link xlink:href="http://www.geotoolkit.org/apidocs/org/geotoolkit/process/ProcessListener.html"> ProcessListener </link>
+                    qui définit quatres méthodes avec en paramètre <link xlink:href="http://www.geotoolkit.org/apidocs/org/geotoolkit/process/ProcessEvent.html"> ProcessEvent </link> :
+                </para>
+                <itemizedlist>
+                    <listitem> started(ProcessEvent event) : démarrage du processus</listitem>
+                    <listitem> progressing(ProcessEvent event) : évolution du traitement (10%, 50%, ...)</listitem>
+                    <listitem> completed(ProcessEvent event) : traitement fini</listitem>
+                    <listitem> failed(ProcessEvent event) : erreur lors du traitement</listitem>
+                </itemizedlist>
+
+                <para>
+                    Les énévements started et completed sont lancé automatiquement lors de l'appel à la méthode call() (Voir <xref linkend="execProcess"/>).
+                    L'énévement failed est lui aussi lancer automatiquement lorsque la méhode execute d'un process lance une exception.
+                    L'énévements progressing est quand à lui à la charge du développeur et doit être lancer par le biai de la méthode
+                    <link xlink:href="http://pending.geotoolkit.org/apidocs/org/geotoolkit/process/AbstractProcess.html#fireProgressing">fireProgressing()</link>
+                    lorsqu'une progression peux être calculer. On peux également fournir des résultats intermédiaire lors du lancement de l'énévement progressing.
+                    Cette énévement n'est pas obligatoir, mais il est préféable de l'implémenter pour les traitements longs.
+                </para>
+
+                <example>
+                    <title>Exemple de traitement long avec mise à jours de la progression</title>
+                    <programlisting>
+        for(int i = 0; i&lt;nbLoop; i++)  {
+            // ... traitement
+            float progress = (float) i / nbLoop;
+            fireProgressing("Progress : ", progress*100f, false);
+        }
+                    </programlisting>
+                </example>
+            </section>
+
+            <section>
+                <title>Arrêt inopiné d'un processus</title>
+                <para>
+                    L'execution d'un processus peux également être arréter en plein milieu d'un traitement seulement si celui-ci le permet. Pour cela, le programme doit
+                    regarder l'état d'un boolean pour continuer le traitement. Si l'état du processus est "canceled" le processus doit alors lancer une CancellationException.
+                </para>
+
+                <example>
+                    <title>Exemple d'implementation d'arrêt d'un processus</title>
+                    <programlisting>
+        for(int i = 0; i&lt;nbLoop; i++)  {
+
+            // regarde l'état du process à chaque itération.
+            if(isCanceled()){
+                    throw new CancellationException("Processus canceled");
+            }
+
+            // traitement
+        }
+                    </programlisting>
+                </example>
+            </section>
+
+            <section>
+                <title>Gestion des exceptions</title>
+                <para>
+                    Les exceptions lancés par les différents traitements d'un processus doivent être encapsulé dans des <link xlink:href="http://www.geotoolkit.org/apidocs/org/geotoolkit/process/ProcessException.html"> ProcessException </link>
+                    pour être remonté dans l'appel de la méthode call() mais aussi pour lancer l'événement processFailed(). Sauf pour les <link xlink:href="http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/CancellationException.html"> CancellationException</link>
+                    qui sont utilisées pour l'arrêt d'un processus.
+                </para>
+            </section>
+        </section>
+
+    </section>
+
+</section>

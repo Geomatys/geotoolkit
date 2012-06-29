@@ -12,7 +12,8 @@
     </title>
 
     <para>
-        Une partie des processus sont exécutables en ligne de commande. Ces outils servent principalement dans les environnements dépourvus d'interface utilisateur, mais peuvent aussi bien être utilisés pour faire du traitement en fond de plan.
+        Une partie des processus sont exécutables en ligne de commande. Ces outils servent principalement dans les environnements dépourvus d'interface utilisateur,
+        mais peuvent aussi bien être utilisés pour faire du traitement en fond de plan.
     </para>
     <para>
         Trois outils sont disponibles :
@@ -30,8 +31,7 @@
             <section>
                 <title>Précompilé</title>
                 <para>
-                    Dans le
-                    <link xlink:href="http://jenkins.geomatys.com">dépôt Jenkins</link>,
+                    Dans le <link xlink:href="http://jenkins.geotoolkit.org">dépôt Jenkins</link>,
                     aller dans le projet geotoolkit-pending et prendre l'archive
                     <emphasis>geotk-shell.zip</emphasis>
                 </para>
@@ -74,7 +74,8 @@
             <listitem>
                 Outil CRS
                 <para>
-                    Le cas d'utilisation le plus courant est l'affichage de la définition d'un système de référence des coordonnées (CRS) au format Well Known Text (WKT). L'exemple ci-dessous affiche la définition du CRS pour le code EPSG 27573.
+                    Le cas d'utilisation le plus courant est l'affichage de la définition d'un système de référence des coordonnées (CRS) au format Well Known Text (WKT).
+                    L'exemple ci-dessous affiche la définition du CRS pour le code EPSG 27573.
                 </para>
 
                 <example>
@@ -106,7 +107,8 @@
 
                 <para>
                     La commande
-                    <emphasis>transform</emphasis> affiche la transformation entre les deux CRS indiqués (note: il ne s'agit pas d'une option mais d'une commande, ce qui explique qu'il n'y ait pas de tirets avant le nom de commande. Nous appliquons la même idée que les commandes SVN par exemple).
+                    <emphasis>transform</emphasis> affiche la transformation entre les deux CRS indiqués (note: il ne s'agit pas d'une option mais d'une commande, ce qui
+                    explique qu'il n'y ait pas de tirets avant le nom de commande. Nous appliquons la même idée que les commandes SVN par exemple).
                 </para>
                 <example>
                     <title>CRS transform EPSG:27573 EPSG:4326</title>

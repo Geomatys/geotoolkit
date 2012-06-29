@@ -131,6 +131,8 @@ public abstract class AbstractProcessDescriptor implements ProcessDescriptor {
         sb.append(id.getAuthority().getTitle().toString()).append("\n");
         sb.append("Name      : ");
         sb.append(id.getCode()).append("\n");
+        sb.append("Abstract : ");
+        sb.append(abs.toString()).append("\n");
         sb.append(inputDesc.toString());
         sb.append(outputdesc.toString());
         return sb.toString();

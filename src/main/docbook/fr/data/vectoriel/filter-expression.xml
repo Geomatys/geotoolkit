@@ -7,7 +7,7 @@
 <section xmlns="http://docbook.org/ns/docbook" version="5.0"
          xmlns:xlink = "http://www.w3.org/1999/xlink">
     <title>Filter-expression</title>
-    
+
     <section>
         <title>Spécifications</title>
         <para>
@@ -16,24 +16,24 @@
         <itemizedlist>
             <listitem>Ce sont des objets sensibles à leur contexte, autrement dit ils ne s'utilisent pas seuls, on les utilise contre quelque chose.
             </listitem>
-            <listitem>Les deux types disposent d'une méthode 
+            <listitem>Les deux types disposent d'une méthode
                 <emphasis>evaluate</emphasis> prenant un object en paramètre.
             </listitem>
-            <listitem>Tous deux sont créés en utilisant une 
+            <listitem>Tous deux sont créés en utilisant une
                 <emphasis>FilterFactory</emphasis>.
             </listitem>
         </itemizedlist>
         <para>
-            Ce qui différencie le filter d'une expression est le résultat retourné par l'évaluation. Le filtre retourne un boolean alors qu'une expression peut renvoyer n'importe quoi. 
+            Ce qui différencie le filter d'une expression est le résultat retourné par l'évaluation. Le filtre retourne un boolean alors qu'une expression peut renvoyer n'importe quoi.
         </para>
     </section>
-    
+
     <section>
-        
+
         <title>Filter</title>
         <para>Les filtres sont là pour définir les contraintes lors des requêtes ou des traitements. Cela permet par exemple de ne sélectionner que les Feature doit l'attribut 'pays' est égal à 'France'.</para>
-   
-        <figure> 
+
+        <figure>
             <title>Structure des filtres</title>
             <mediaobject>
                 <imageobject>
@@ -50,9 +50,9 @@
         </para>
         <para>
             Les filtres incluent aussi une certaine quantité d'opérateurs spatiaux, comme les tests d'intersections ou d’égalité géométrique.
-        </para> 
-        
-        <figure> 
+        </para>
+
+        <figure>
             <title>Opérateurs spatiaux des filtres</title>
             <mediaobject>
                 <imageobject>
@@ -64,29 +64,29 @@
                 </textobject>
             </mediaobject>
         </figure>
-        
+
         <example>
            <title>Exemple :</title>
             <simplelist>
                 <member>
-                    <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/file/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/filter/FilterDemo.java">
+                    <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/filter/FilterDemo.java">
                         <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/filter/FilterDemo.java</acronym>
                     </link>
                 </member>
                 <member>
-                    <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/file/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/filterJavascriptFunctionDemo.java">
+                    <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/filter/JavascriptFunctionDemo.java">
                         <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/filter/JavascriptFunctionDemo.java</acronym>
                     </link>
                 </member>
             </simplelist>
         </example>
-        
+
     </section>
-    
+
     <section>
         <title>Expressions</title>
-        
-        <figure> 
+
+        <figure>
             <title>Expressions des filtres</title>
             <mediaobject>
                 <imageobject>
@@ -98,7 +98,7 @@
                 </textobject>
             </mediaobject>
         </figure>
-        
+
         <para>
             On peut classer les expressions en quatre types :
             <itemizedlist>
@@ -112,7 +112,7 @@
                     <emphasis>Function :</emphasis> des opérations qui peuvent traiter tout et n'importe quoi, c'est une mécanisme extensible et donc on peut ajouter nos propres fonctions.
                 </listitem>
                 <listitem>
-                    <emphasis>Other :</emphasis> quelques opérations mathématiques classiques sont disponibles. 
+                    <emphasis>Other :</emphasis> quelques opérations mathématiques classiques sont disponibles.
                 </listitem>
             </itemizedlist>
         </para>

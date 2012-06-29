@@ -10,15 +10,9 @@
   <info>
     <title>Le livre rouge de Geotoolkit.org</title>
     <orgname class="informal">Geotoolkit.org</orgname>
-    <author>
-      <personname>
-        <firstname>Johann</firstname>
-        <surname>Sorel</surname>
-      </personname>
-    </author>
-    <abstract><para>
+    <para>
       Tout sur geotoolkit.org
-    </para></abstract>
+    </para>
     <keywordset>
       <keyword>Geotoolkit.org</keyword> <keyword>Geotk</keyword> <keyword>GeoAPI</keyword>
       <keyword>OGC</keyword> <keyword>geospatial</keyword>
@@ -46,17 +40,17 @@
 </figure>
 
   <xi:include href="fr/introduction.xml"/>
-  
+
   <xi:include href="fr/ressources.xml"/>
-  
-  <xi:include href="fr/data.xml"/>  
-  
+
+  <xi:include href="fr/data.xml"/>
+
   <xi:include href="fr/map.xml"/>
-  
+
   <xi:include href="fr/process.xml"/>
-  
+
   <xi:include href="fr/swing.xml"/>
-  
-  
+
+
 
 </book>

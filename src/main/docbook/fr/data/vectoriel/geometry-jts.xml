@@ -55,7 +55,7 @@
         </title>
         <example>
             <title>Code source complet : </title>
-            <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/file/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/geometry/JTSDemo.java">
+            <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/geometry/JTSDemo.java">
                 <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/geometry/JTSDemo.java</acronym>
             </link>        
         </example>
@@ -169,7 +169,7 @@
         <title>SRID</title>
         <example>
             <title>Code source complet : </title>
-            <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/file/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/geometry/SRIDDemo.java">
+            <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/geometry/SRIDDemo.java">
                 <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/geometry/SRIDDemo.java</acronym>
             </link>        
         </example>
