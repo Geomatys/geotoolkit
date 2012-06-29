@@ -36,6 +36,11 @@ public abstract class InterpolationTest {
     protected PixelIterator pixIterator;
 
     /**
+     * Tested {@code RenderedImage}.
+     */
+    TiledImage renderedImage;
+
+    /**
      * Current interpolate tested.
      */
     protected Interpolation interpol;
@@ -45,7 +50,7 @@ public abstract class InterpolationTest {
      */
     public InterpolationTest() {
         final BandedSampleModel sampleM = new BandedSampleModel(DataBuffer.TYPE_DOUBLE, 3, 3, 1);
-        TiledImage renderedImage = new TiledImage(-1, -1, 3, 3, -1, -1, sampleM, null);
+        renderedImage = new TiledImage(-1, -1, 3, 3, -1, -1, sampleM, null);
         double val = 0;
         for (int y = -1; y < 2; y++) {
             for (int x = -1; x < 2; x++) {

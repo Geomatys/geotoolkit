@@ -72,7 +72,7 @@ public abstract class Interpolation {
     protected void checkInterpolate(double x, double y) {
         final int mx = boundary.x;
         final int my = boundary.y;
-        if (x < mx || x > mx + boundary.width || y < my || y > my + boundary.height)
+        if (x < mx || x >= mx + boundary.width || y < my || y >= my + boundary.height)
             throw new IllegalArgumentException("coordinates out of iterate area boundary : "+boundary);
     }
 
@@ -91,7 +91,13 @@ public abstract class Interpolation {
         int miny = (int) y;
         if (x<0) minx--;
         if (y<0) miny--;
-        minx--;miny--;
+        //ajust area interpolation on x, y center.
+        for (int i = 0; i<width/2-1;i++) {
+            minx--;
+        }
+        for (int i = 0; i<height/2-1;i++) {
+            miny--;
+        }
 
         int debX = Math.max(minx, boundary.x);
         int debY = Math.max(miny, boundary.y);
@@ -103,6 +109,15 @@ public abstract class Interpolation {
             debY--;
         }
         return new int[]{debX, debY};
+    }
+
+    /**
+     * Returns {@code Rectangle} which is Image or Raster boundary within this Interpolator.
+     *
+     * @return {@code Rectangle} which is Image or Raster boundary within this Interpolator.
+     */
+    Rectangle getBoundary() {
+        return boundary;
     }
 
     /**

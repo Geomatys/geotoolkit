@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.image.interpolation;
 
+import java.awt.Rectangle;
 import java.awt.image.WritableRenderedImage;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
@@ -31,7 +32,7 @@ import org.opengis.referencing.operation.TransformException;
  * @author Rémi Marechal       (Geomatys).
  * @author Martin Desruisseaux (Geomatys).
  */
-public class InterpolTransform {
+public class Resample {
 
     /**
      * Transform multi-dimensional point (in our case pixel coordinate) from target image
@@ -56,6 +57,27 @@ public class InterpolTransform {
     private final int numBands;
 
     /**
+     * Minimum inclusive pixel index from source iterate source object in X direction.
+     */
+    private final int minSourceX;
+
+    /**
+     * Maximum inclusive pixel index from source iterate source object in X direction.
+     */
+    private final int maxSourceX;
+
+    /**
+     * Minimum inclusive pixel index from source iterate source object in Y direction.
+     */
+    private final int minSourceY;
+
+    /**
+     * Maximum inclusive pixel index from source iterate source object in Y direction.
+     */
+    private final int maxSourceY;
+
+
+    /**
      * Fill destination image from interpolation of source pixels.<br/>
      * Source pixel is obtained from invert transformation of destination pixel coordinates.
      *
@@ -64,13 +86,18 @@ public class InterpolTransform {
      * @param interpol Interpolation use to interpolate source image pixels.
      * @throws NoninvertibleTransformException if it is impossible to invert {@code MathTransform} parameter.
      */
-    public InterpolTransform(MathTransform mathTransform, WritableRenderedImage imageDest, Interpolation interpol) throws NoninvertibleTransformException {
+    public Resample(MathTransform mathTransform, WritableRenderedImage imageDest, Interpolation interpol) throws NoninvertibleTransformException {
         this.numBands = interpol.getNumBands();
         assert(numBands == imageDest.getWritableTile(imageDest.getMinTileX(), imageDest.getMinTileY()).getNumBands())
                 : "destination image numbands different from source image numbands";
         this.invertMathTransform = mathTransform.inverse();
         this.imageDest = imageDest;
         this.interpol = interpol;
+        Rectangle bound = interpol.getBoundary();
+        minSourceX = bound.x;
+        minSourceY = bound.y;
+        maxSourceX = minSourceX + bound.width  - 1;
+        maxSourceY = minSourceY + bound.height - 1;
     }
 
     /**
@@ -83,7 +110,9 @@ public class InterpolTransform {
      */
     private double[] getSourcePixelValue(double x, double y) throws TransformException {
         double[] srcCoords = new double[2];
-        invertMathTransform.transform(new double[]{x, y}, 0, srcCoords, 0, 1);
+        invertMathTransform.transform(new double[]{x, y, 1}, 0, srcCoords, 0, 1);
+        if (srcCoords[0]<minSourceX||srcCoords[0]>maxSourceX
+          ||srcCoords[1]<minSourceY||srcCoords[1]>maxSourceY) return null;
         return interpol.interpolate(srcCoords[0], srcCoords[1]);
     }
 
@@ -94,13 +123,25 @@ public class InterpolTransform {
         final PixelIterator destIterator = PixelIteratorFactory.createDefaultWriteableIterator(imageDest, imageDest);
         int band;
         double[] destPixValue;
+        int compDebug = 0;
         while (destIterator.next()) {
             band = 0;
-            destPixValue = getSourcePixelValue(destIterator.getX(), destIterator.getY());
-            while (band++ != numBands) {
-                destIterator.setSampleDouble(destPixValue[band-1]);
-                destIterator.next();
+            int getx = destIterator.getX();
+            int gety = destIterator.getY();
+            if(compDebug==15){
+                System.out.println("");
             }
+            destPixValue = getSourcePixelValue(destIterator.getX(), destIterator.getY());
+            if (destPixValue == null) {
+                while (++band != numBands) destIterator.next();
+            } else {
+                destIterator.setSampleDouble(destPixValue[0]);
+                while (++band != numBands) {
+                    destIterator.next();
+                    destIterator.setSampleDouble(destPixValue[band]);
+                }
+            }
+            compDebug++;
         }
     }
 }

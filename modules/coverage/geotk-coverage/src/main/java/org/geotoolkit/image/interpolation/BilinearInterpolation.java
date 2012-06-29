@@ -92,7 +92,9 @@ public class BilinearInterpolation extends Interpolation {
             throw new IllegalArgumentException("impossible to effectuate a bilinear interpolation area = "+new Rectangle(minx, miny, maxX-minx, maxY-miny));
         final double pixmix = pixX - minx;
         final double mixpix = maxX - pixX;
-        double result  = ((maxY-pixY)*(mixpix * iVal[0] + pixmix * iVal[1]) + (pixY-miny) * (mixpix * iVal[2] + pixmix * iVal[3]));
-        return result /= ((maxY - miny) * (maxX - minx));
+        final double wid = maxX-minx;
+        final double r2 = (mixpix*iVal[2] + pixmix*iVal[3])/wid;
+        final double r1 = (mixpix*iVal[0] + pixmix*iVal[1])/wid;
+        return ((pixY-miny) * r2 + (maxY-pixY) * r1) / (maxY-miny);
     }
 }
