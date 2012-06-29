@@ -1,5 +1,5 @@
 
-package org.geotoolkit.pending.demo.processing.factory;
+package org.geotoolkit.pending.demo.processing.registry;
 
 import java.util.Collections;
 
@@ -12,12 +12,12 @@ import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 
 /**
- * The factory is registered in META-INF/
+ * The Registry is registered in META-INF/
  */
-public class MathProcessFactory extends AbstractProcessingRegistry{
-    
-    /** factory name **/
-    public static final String NAME = "mymaths";
+public class DemoProcessRegistry extends AbstractProcessingRegistry {
+
+    /** registry name **/
+    public static final String NAME = "demo";
     public static final DefaultServiceIdentification IDENTIFICATION;
 
     static {
@@ -28,13 +28,13 @@ public class MathProcessFactory extends AbstractProcessingRegistry{
         IDENTIFICATION.setCitation(citation);
     }
 
-    public MathProcessFactory() {
+    public DemoProcessRegistry() {
         super(AddDescriptor.INSTANCE);
     }
-    
+
     @Override
     public Identification getIdentification() {
         return IDENTIFICATION;
     }
-    
+
 }
