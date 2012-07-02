@@ -107,6 +107,7 @@
     <module>geotk-xml-xacml</module>
     <module>geotk-xml-skos</module>
     <module>geotk-xml-mathml</module>
+    <module>geotk-xml-providers</module>
   </modules>
 
 </project>
