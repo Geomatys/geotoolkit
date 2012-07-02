@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.jdbc.reverse;
+package org.geotoolkit.feature.type;
 
 import java.util.List;
 import org.opengis.feature.type.AttributeType;
@@ -27,7 +27,7 @@ import org.opengis.feature.type.PropertyDescriptor;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-interface ModifiableType extends ComplexType {
+public interface ModifiableType extends ComplexType {
 
     void changeProperty(int index, PropertyDescriptor desc);
 
@@ -35,5 +35,5 @@ interface ModifiableType extends ComplexType {
 
     @Override
     List<PropertyDescriptor> getDescriptors();
-    
+
 }

@@ -14,11 +14,10 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.jdbc.reverse;
+package org.geotoolkit.feature.type;
 
 import java.util.Collection;
 import java.util.List;
-import org.geotoolkit.feature.type.DefaultFeatureTypeFactory;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.AttributeType;
@@ -32,17 +31,18 @@ import org.opengis.util.InternationalString;
 
 /**
  * Factory creating modifiable ComplexTypes.
+ * This can be used when creating recursive types.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-class ModifiableFeatureTypeFactory extends DefaultFeatureTypeFactory {
+public class ModifiableFeatureTypeFactory extends DefaultFeatureTypeFactory {
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public ComplexType createComplexType(final Name name, final Collection schema, 
+    public ComplexType createComplexType(final Name name, final Collection schema,
             final boolean isIdentifiable, final boolean isAbstract, final List restrictions,
             final AttributeType superType, final InternationalString description) {
         return new ModifiableComplexType(name, schema, isIdentifiable,
@@ -53,7 +53,7 @@ class ModifiableFeatureTypeFactory extends DefaultFeatureTypeFactory {
      * {@inheritDoc }
      */
     @Override
-    public FeatureType createFeatureType(final Name name, final Collection<PropertyDescriptor> schema, 
+    public FeatureType createFeatureType(final Name name, final Collection<PropertyDescriptor> schema,
             final GeometryDescriptor defaultGeometry, final boolean isAbstract, final List<Filter> restrictions,
             final AttributeType superType, final InternationalString description) {
         return new ModifiableFeaturetype(name, schema, defaultGeometry,
@@ -64,7 +64,7 @@ class ModifiableFeatureTypeFactory extends DefaultFeatureTypeFactory {
      * {@inheritDoc }
      */
     @Override
-    public SimpleFeatureType createSimpleFeatureType(final Name name, final List<AttributeDescriptor> schema, 
+    public SimpleFeatureType createSimpleFeatureType(final Name name, final List<AttributeDescriptor> schema,
             final GeometryDescriptor defaultGeometry, final boolean isAbstract,
             final List<Filter> restrictions, final AttributeType superType, final InternationalString description) {
         return new ModifiableSimpleFeaturetype(name, schema, defaultGeometry,

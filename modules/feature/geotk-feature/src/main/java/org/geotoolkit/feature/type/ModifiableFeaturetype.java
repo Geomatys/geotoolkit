@@ -14,11 +14,10 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.jdbc.reverse;
+package org.geotoolkit.feature.type;
 
+import java.util.Collection;
 import java.util.List;
-import org.geotoolkit.feature.simple.DefaultSimpleFeatureType;
-import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.Name;
@@ -27,16 +26,17 @@ import org.opengis.filter.Filter;
 import org.opengis.util.InternationalString;
 
 /**
- * SimpleFeatureType with modifiable properties.
+ * FeatureType with modifiable properties.
+ * This can be used when creating recursive types.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-class ModifiableSimpleFeaturetype extends DefaultSimpleFeatureType implements ModifiableType {
+public class ModifiableFeaturetype extends DefaultFeatureType implements ModifiableType {
 
     private AttributeType parent;
-    
-    public ModifiableSimpleFeaturetype(final Name name, final List<AttributeDescriptor> schema, 
+
+    public ModifiableFeaturetype(final Name name, final Collection<PropertyDescriptor> schema,
             final GeometryDescriptor defaultGeometry, final boolean isAbstract,
             final List<Filter> restrictions, final AttributeType superType, final InternationalString description) {
         super(name, schema, defaultGeometry, isAbstract, restrictions, superType, description);
@@ -45,14 +45,13 @@ class ModifiableSimpleFeaturetype extends DefaultSimpleFeatureType implements Mo
     @Override
     public void changeProperty(final int index, PropertyDescriptor desc) {
         descriptors[index] = desc;
-        types[index] = (AttributeType) desc.getType();
     }
 
     @Override
     public List<PropertyDescriptor> getDescriptors() {
         return descriptorsList;
     }
-    
+
     @Override
     public void changeParent(AttributeType parent) {
         this.parent = parent;
