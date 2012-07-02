@@ -39,7 +39,7 @@ import static org.geotoolkit.util.ArgumentChecks.*;
 
 /**
  * Factory to create small glyph used in map or application legends.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
@@ -175,7 +175,7 @@ public class DefaultGlyphService {
         return dim;
     }
 
-    public static Dimension glyphPreferredSize(final FeatureTypeStyle style, Dimension dim, final MapLayer layer){        
+    public static Dimension glyphPreferredSize(final FeatureTypeStyle style, Dimension dim, final MapLayer layer){
 
         for(Rule symbol : style.rules()){
             dim = glyphPreferredSize(symbol, dim, layer);

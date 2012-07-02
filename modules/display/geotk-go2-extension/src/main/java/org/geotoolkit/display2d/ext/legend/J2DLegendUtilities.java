@@ -33,6 +33,7 @@ import org.geotoolkit.display2d.ext.BackgroundTemplate;
 import org.geotoolkit.display2d.ext.BackgroundUtilities;
 import org.geotoolkit.display2d.service.DefaultGlyphService;
 import org.geotoolkit.map.MapContext;
+import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
 
 import org.geotoolkit.style.MutableFeatureTypeStyle;
@@ -65,7 +66,7 @@ public class J2DLegendUtilities {
      * @param template  : north arrow template
      * @throws org.geotoolkit.display.exception.PortrayalException
      */
-    public static void paintLegend(final MapContext context,
+    public static void paintLegend(final MapItem context,
                               Graphics2D g2d,
                               final Rectangle bounds,
                               final LegendTemplate template) throws PortrayalException{
@@ -80,8 +81,10 @@ public class J2DLegendUtilities {
 
         if(template == null){
             //no template generate a glyph
-            for(MapLayer layer : context.layers()){
-                DefaultGlyphService.render(layer.getStyle(), bounds, g2d, layer);
+            for(MapItem layer : context.items()){
+                if(layer instanceof MapLayer){
+                    DefaultGlyphService.render( ((MapLayer)layer).getStyle(), bounds, g2d, (MapLayer)layer);
+                }
             }
             return;
         }
@@ -116,9 +119,13 @@ public class J2DLegendUtilities {
 
         g2d.translate(X, Y);
 
-        final List<MapLayer> layers = context.layers();
+        final List<MapItem> layers = context.items();
         for(int l=0,n=layers.size();l<n;l++){
-            final MapLayer layer = layers.get(l);
+            if(!(layers.get(l) instanceof MapLayer)){
+                continue;
+            }
+
+            final MapLayer layer = (MapLayer) layers.get(l);
             final MutableStyle style = layer.getStyle();
 
             if(style == null) continue;
@@ -257,17 +264,20 @@ public class J2DLegendUtilities {
     }
 
 
-    public static Dimension estimate(final Graphics2D g, final MapContext context, final LegendTemplate template, final boolean considerBackground){
+    public static Dimension estimate(final Graphics2D g, final MapItem mapitem, final LegendTemplate template, final boolean considerBackground){
         final Dimension dim = new Dimension(0, 0);
-        if(context == null) return dim;
+        if(mapitem == null) return dim;
 
         if(template == null){
             //fallback on glyph size
-            for(MapLayer layer : context.layers()){
-                final Dimension preferred = DefaultGlyphService.glyphPreferredSize(layer.getStyle(), dim, layer);
-                if(preferred != null){
-                    if(preferred.width > dim.width) dim.width = preferred.width;
-                    if(preferred.height > dim.height) dim.height = preferred.height;
+            for(MapItem childItem : mapitem.items()){
+                if(childItem instanceof MapLayer){
+                    final MapLayer ml = (MapLayer) childItem;
+                    final Dimension preferred = DefaultGlyphService.glyphPreferredSize(ml.getStyle(), dim, ml);
+                    if(preferred != null){
+                        if(preferred.width > dim.width) dim.width = preferred.width;
+                        if(preferred.height > dim.height) dim.height = preferred.height;
+                    }
                 }
             }
             checkMinimumSize(dim);
@@ -280,9 +290,13 @@ public class J2DLegendUtilities {
         final int ruleFontHeight = ruleFontMetric.getHeight();
         final Dimension glyphSize = template.getGlyphSize();
 
-        final List<MapLayer> layers = context.layers();
-        for(int l=0,n=layers.size();l<n;l++){
-            final MapLayer layer = layers.get(l);
+        final List<MapItem> childItems = mapitem.items();
+        for(int l=0,n=childItems.size();l<n;l++){
+            if(!(childItems.get(l) instanceof MapLayer)){
+                continue;
+            }
+
+            final MapLayer layer = (MapLayer) childItems.get(l);
             final MutableStyle style = layer.getStyle();
 
             if(style == null) continue;
