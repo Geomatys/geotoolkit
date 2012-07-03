@@ -112,7 +112,8 @@ public class FileCoverageStore extends AbstractCoverageStore{
             }
             
 
-        } catch (IOException ex) {
+        } catch (Exception ex) {
+            //Exception type is not specified cause we can get IOException as IllegalArgumentException.
         }
     }
     

@@ -144,7 +144,7 @@ public final class DataStoreFinder{
      * object.
      *
      * @param parameters
-     *            A parameter value group with all requiered configuration.
+     *            A parameter value group with all required configuration.
      *
      * @return The first datasource which claims to process the required
      *         resource, returns null if none can be found.
