@@ -21,6 +21,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -33,38 +34,28 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "mapItem",
-    "mapLayer"
+    "mapItems"
 })
 @XmlRootElement(name = "MapItem")
 public class MapItem {
-    @XmlElement(name = "MapItem")
-    private List<MapItem> mapItem = new ArrayList<MapItem>();
-
-    @XmlElement(name = "MapLayer")
-    private List<MapLayer> mapLayer = new ArrayList<MapLayer>();
+    @XmlElements({
+        @XmlElement(name = "MapItem", type = MapItem.class),
+        @XmlElement(name = "MapLayer", type = MapLayer.class)
+    })
+    private List<MapItem> mapItems = new ArrayList<MapItem>();
 
     MapItem() {
     }
 
-    public MapItem(final List<MapItem> mapItem, final List<MapLayer> mapLayer) {
-        this.mapItem = mapItem;
-        this.mapLayer = mapLayer;
+    public MapItem(final List<MapItem> mapItems) {
+        this.mapItems = mapItems;
     }
 
-    public List<MapItem> getMapItem() {
-        return mapItem;
+    public List<MapItem> getMapItems() {
+        return mapItems;
     }
 
-    public void setMapItem(final List<MapItem> mapItem) {
-        this.mapItem = mapItem;
-    }
-
-    public List<MapLayer> getMapLayer() {
-        return mapLayer;
-    }
-
-    public void setMapLayer(final List<MapLayer> mapLayer) {
-        this.mapLayer = mapLayer;
+    public void setMapItem(final List<MapItem> mapItems) {
+        this.mapItems = mapItems;
     }
 }

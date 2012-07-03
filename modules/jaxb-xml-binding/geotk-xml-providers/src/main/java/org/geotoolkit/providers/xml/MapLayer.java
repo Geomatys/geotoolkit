@@ -34,7 +34,7 @@ import javax.xml.bind.annotation.XmlType;
     "styleReference"
 })
 @XmlRootElement(name = "MapLayer")
-public class MapLayer {
+public class MapLayer extends MapItem {
     @XmlElement(name = "providerReference", required = true)
     private ProviderReference providerReference;
 

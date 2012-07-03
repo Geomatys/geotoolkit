@@ -19,7 +19,7 @@ package org.geotoolkit.providers.xml;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -77,15 +77,17 @@ public class ProvidersXmlTest {
      */
     @Test
     public void testMarshalling() throws JAXBException {
-        final List<MapLayer> mapLayers2 = Arrays.asList(
-                new MapLayer(new ProviderReference("postgis_test:my_otherlayer"), new StyleReference("my_otherstyle")),
-                new MapLayer(new ProviderReference("coverage:my_thirdlayer"), new StyleReference("my_newstyle"))
-        );
-        final List<MapItem> mapItems = Arrays.asList(new MapItem(null, mapLayers2), new MapItem(null, null));
+        final List<MapItem> mapLayers2 = new ArrayList<MapItem>();
+        mapLayers2.add(new MapLayer(new ProviderReference("postgis_test:my_otherlayer"), new StyleReference("my_otherstyle")));
+        mapLayers2.add(new MapLayer(new ProviderReference("coverage:my_thirdlayer"), new StyleReference("my_newstyle")));
 
-        final List<MapLayer> mapLayers = Arrays.asList(
-                new MapLayer(new ProviderReference("postgis_test:my_layer"), new StyleReference("my_style")));
-        final MapItem mapItem = new MapItem(mapItems, mapLayers);
+        final List<MapItem> mapItems = new ArrayList<MapItem>();
+        mapItems.add(new MapItem(mapLayers2));
+
+        final MapLayer ml = new MapLayer(new ProviderReference("postgis_test:my_layer"), new StyleReference("my_style"));
+        mapItems.add(new MapItem());
+        mapItems.add(ml);
+        final MapItem mapItem = new MapItem(mapItems);
         final MapContext mapContext = new MapContext(mapItem);
 
         final StringWriter sw = new StringWriter();
@@ -116,20 +118,21 @@ public class ProvidersXmlTest {
         assertTrue(result instanceof MapContext);
 
         final MapContext mc = (MapContext)result;
-        final MapLayer ml0 = mc.getMapItem().getMapItem().get(0).getMapLayer().get(0);
+        final List<MapItem> mapItems = mc.getMapItem().getMapItems();
+        assertNotNull(mapItems);
+        assertFalse(mapItems.isEmpty());
+        assertEquals(3, mapItems.size());
+
+        final MapLayer ml0 = (MapLayer) mapItems.get(0).getMapItems().get(0);
         assertEquals("postgis_test:my_otherlayer", ml0.getProviderReference().getValue());
         assertEquals("my_otherstyle", ml0.getStyleReference().getValue());
 
-        final MapLayer ml1 = mc.getMapItem().getMapItem().get(0).getMapLayer().get(1);
+        final MapLayer ml1 = (MapLayer) mapItems.get(0).getMapItems().get(1);
         assertEquals("coverage:my_thirdlayer", ml1.getProviderReference().getValue());
         assertEquals("my_newstyle", ml1.getStyleReference().getValue());
 
-        final List<MapLayer> mapLayers = mc.getMapItem().getMapLayer();
-        assertNotNull(mapLayers);
-        assertFalse(mapLayers.isEmpty());
-        assertEquals(1, mapLayers.size());
-        assertEquals("postgis_test:my_layer", mapLayers.get(0).getProviderReference().getValue());
-        assertEquals("my_style", mapLayers.get(0).getStyleReference().getValue());
+        assertEquals("postgis_test:my_layer", ((MapLayer)mapItems.get(2)).getProviderReference().getValue());
+        assertEquals("my_style", ((MapLayer)mapItems.get(2)).getStyleReference().getValue());
     }
 
     @After
