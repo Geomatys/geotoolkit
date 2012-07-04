@@ -82,7 +82,7 @@ public final class ServerFinder{
      * object.
      *
      * @param params
-     *            A Map object which contains a defenition of the resource to
+     *            A Map object which contains a definition of the resource to
      *            connect to.
      *
      * @return The first server which claims to process the required
@@ -114,7 +114,7 @@ public final class ServerFinder{
                 try {
                     isAvailable = fac.availability().pass();
                 } catch (Throwable t) {
-                    LOGGER.log(Level.WARNING, "Difficulity checking if " + fac.getDisplayName() + " is available:" + t, t);
+                    LOGGER.log(Level.WARNING, "Difficulty checking if " + fac.getDisplayName() + " is available:" + t, t);
                     // Protect against Servers that don't carefully code
                     // isAvailable
                     continue;

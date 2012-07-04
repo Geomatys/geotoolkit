@@ -57,6 +57,11 @@
           <artifactId>geotk-xml-sld</artifactId>
           <version>${project.version}</version>
       </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>geotk-clients-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
 
 </project>
