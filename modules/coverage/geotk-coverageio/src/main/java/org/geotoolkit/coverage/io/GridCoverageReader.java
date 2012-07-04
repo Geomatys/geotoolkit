@@ -264,7 +264,7 @@ public abstract class GridCoverageReader extends GridCoverageStore {
      */
     private static DefaultMetadata createMetadata(final IIOMetadata streamMetadata) throws CoverageStoreException {
         if (streamMetadata != null) try {
-            if (XArrays.containsIgnoreCase(streamMetadata.getExtraMetadataFormatNames(), ISO_FORMAT_NAME)) {
+            if (XArrays.contains(streamMetadata.getExtraMetadataFormatNames(), ISO_FORMAT_NAME)) {
                 final Node root = streamMetadata.getAsTree(ISO_FORMAT_NAME);
                 if (root instanceof IIOMetadataNode) {
                     final Object userObject = ((IIOMetadataNode) root).getUserObject();

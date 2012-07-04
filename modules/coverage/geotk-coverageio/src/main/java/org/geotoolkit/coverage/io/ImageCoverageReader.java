@@ -220,7 +220,7 @@ public class ImageCoverageReader extends GridCoverageReader {
      *
      * @since 3.20
      */
-    protected final GridCoverageFactory coverageFactory;
+    private final GridCoverageFactory coverageFactory;
 
     /**
      * The name factory to use for building {@link GenericName} instances.
