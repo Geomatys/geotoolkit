@@ -28,6 +28,7 @@ import javax.imageio.ImageTypeSpecifier;
 import net.jcip.annotations.Immutable;
 
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.NullArgumentException;
 
 
@@ -108,11 +109,7 @@ public abstract class Palette {
     protected Palette(final PaletteFactory factory, final String name,
                       final int numBands, final int visibleBand)
     {
-        if (factory == null) {
-            // Can't use factory.getErrorResources() here.
-            throw new NullArgumentException(Errors.format(
-                    Errors.Keys.NULL_ARGUMENT_$1, "factory"));
-        }
+        ArgumentChecks.ensureNonNull("factory", factory); // Can't use factory.getErrorResources() here.
         if (name == null) {
             throw new NullArgumentException(factory.getErrorResources().getString(
                     Errors.Keys.NULL_ARGUMENT_$1, "name"));

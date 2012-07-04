@@ -69,12 +69,12 @@ import static org.geotoolkit.metadata.AbstractMetadata.LOGGER;
  * stands for any metadata object compliant with the {@link MetadataStandard} specified at
  * construction time.
  * <p>
- * <table>
+ * <table border="1">
  *   <tr><th></th><th>Parsing</th><th>Formatting</th></tr>
- *   <tr><td><b>Between {@link String} and metadata:</b></td>
+ *   <tr><td>Between {@link String} and metadata:</td>
  *     <td>{@link #parseObject(String)} ⇒ {@link Object}</td>
  *     <td>{@link #format(Object)} ⇒ {@link String}</td></tr>
- *   <tr><td><b>Between {@link TreeNode} and metadata:</b></td>
+ *   <tr><td>Between {@link TreeNode} and metadata:</td>
  *     <td>{@link #parse(TreeNode)} ⇒ {@link Object}</td>
  *     <td>{@link #asTree(Object)} ⇒ {@link TreeNode}</td></tr>
  * </table>
@@ -89,8 +89,19 @@ import static org.geotoolkit.metadata.AbstractMetadata.LOGGER;
  *        package. However it can be used as a data structure independent of Swing.}
  *
  * {@section Subclassing}
- * This class provides some protected methods than subclasses can override in order to control
- * the parsing and formatting processes.
+ * This class provides some protected methods that subclasses can override in order to control
+ * the parsing and formatting processes:
+ * <p>
+ * <table>
+ * <tr><th>Formating</th><th>Parsing</th></tr>
+ * <tr><td><ul>
+ *   <li>{@link #formatElementName(Class, String)}</li>
+ *   <li>{@link #formatCodeList(CodeList)}</li>
+ *   <li>{@link #formatNumber(Number)}</li>
+ * </ul></td>
+ * <td><ul>
+ *   <li>{@link #getTypeForName(String)}</li>
+ * </ul></td></tr></table>
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Mehdi Sidhoum (Geomatys)

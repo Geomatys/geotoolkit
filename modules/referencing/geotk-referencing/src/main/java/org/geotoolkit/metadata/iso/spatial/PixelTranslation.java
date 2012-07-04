@@ -155,12 +155,12 @@ public final class PixelTranslation extends Static implements Serializable {
     public static PixelOrientation getPixelOrientation(final PixelInCell anchor)
             throws IllegalArgumentException
     {
-        if (PixelInCell.CELL_CENTER.equals(anchor)) {
-            return CENTER;
-        } else if (PixelInCell.CELL_CORNER.equals(anchor)) {
-            return UPPER_LEFT;
-        } else if (anchor == null) {
+        if (anchor == null) {
             return null;
+        } else if (anchor.equals(PixelInCell.CELL_CENTER)) {
+            return CENTER;
+        } else if (anchor.equals(PixelInCell.CELL_CORNER)) {
+            return UPPER_LEFT;
         } else {
             throw new IllegalArgumentException(Errors.format(
                     Errors.Keys.ILLEGAL_ARGUMENT_$2, "anchor", anchor));

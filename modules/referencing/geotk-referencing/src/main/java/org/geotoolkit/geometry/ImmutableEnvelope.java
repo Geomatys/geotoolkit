@@ -49,8 +49,13 @@ public final class ImmutableEnvelope extends ArrayEnvelope implements Serializab
 
     /**
      * Creates an immutable envelope with the values of the given envelope.
+     * This envelope can be used when the envelope is known to not be an instance of
+     * {@code ImmutableEnvelope}. In case of doubt, consider using {@link #castOrCopy(Envelope)}
+     * instead.
      *
      * @param envelope The envelope to copy.
+     *
+     * @see #castOrCopy(Envelope)
      */
     public ImmutableEnvelope(final Envelope envelope) {
         super(envelope);
