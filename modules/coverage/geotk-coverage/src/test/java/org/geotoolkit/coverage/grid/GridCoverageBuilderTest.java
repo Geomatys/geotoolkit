@@ -18,8 +18,8 @@
 package org.geotoolkit.coverage.grid;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
 import java.io.IOException;
-import org.opengis.geometry.Envelope;
 import org.geotoolkit.geometry.Envelope2D;
 import org.junit.*;
 
@@ -30,7 +30,7 @@ import static org.junit.Assert.*;
  * Tests the {@link GridCoverageBuilder} class.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.20
  *
  * @since 2.1
  */
@@ -61,8 +61,12 @@ public final strictfp class GridCoverageBuilderTest extends GridCoverageTestBase
         builder.setRenderedImage(SampleCoverage.SST.raster());
         coverage = builder.getGridCoverage2D();
         SampleCoverage.SST.verifyGridGeometry(coverage, 0);
-        assertTrue ("Expected ViewType.PACKED", coverage.getViewTypes().contains(ViewType.PACKED));
-        assertFalse("Expected ViewType.PACKED", coverage.getViewTypes().contains(ViewType.GEOPHYSICS));
+        assertTrue  ("Expected ViewType.PACKED", coverage.getViewTypes().contains(ViewType.PACKED));
+        assertFalse ("Expected ViewType.PACKED", coverage.getViewTypes().contains(ViewType.GEOPHYSICS));
+        assertEquals("Wrong scale factor for X", 0.1, builder.getAffineGridToCRS().getScaleX(), 1E-10);
+        final Graphics2D gr = (Graphics2D) builder.createGraphics(true);
+        assertEquals("Wrong scale factor for X", 10, gr.getTransform().getScaleX(), 1E-10);
+        gr.dispose();
         show(coverage);
     }
 
