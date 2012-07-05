@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.geotoolkit.data.StorageContentEvent;
 import org.geotoolkit.data.StorageManagementEvent;
 import org.geotoolkit.display2d.container.stateless.StatelessCollectionLayerJ2D.RenderingIterator;
@@ -128,7 +130,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         params.update(context);
         return params;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -145,16 +147,16 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
 
         //first extract the valid rules at this scale
         final List<Rule> validRules = getValidRules(renderingContext,item,item.getCollection().getFeatureType());
-        
+
         //we perform a first check on the style to see if there is at least
         //one valid rule at this scale, if not we just continue.
         if(validRules.isEmpty()){
             return;
         }
-        
+
         //extract the used names
         final Set<String> names = propertiesNames(validRules);
-        
+
         final FeatureCollection<Feature> candidates;
         try {
             //optimize
@@ -163,10 +165,10 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
             renderingContext.getMonitor().exceptionOccured(ex, Level.WARNING);
             return;
         }
-        
+
         //get the expected result type
         final FeatureType expected = candidates.getFeatureType();
-        
+
         //calculate optimized rules and included filter + expressions
         final CachedRule[] rules = toCachedRules(validRules, expected);
 
@@ -318,7 +320,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
      * Creates an optimal query to send to the datastore, knowing which properties are knowned and
      * the appropriate bounding box to filter.
      */
-    protected static Query prepareQuery(final RenderingContext2D renderingContext, final FeatureMapLayer layer, 
+    protected static Query prepareQuery(final RenderingContext2D renderingContext, final FeatureMapLayer layer,
             final Set<String> styleRequieredAtts, final List<Rule> rules) throws PortrayalException{
 
         final FeatureCollection<? extends Feature> fs            = layer.getCollection();
@@ -478,31 +480,32 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
             String attName = atts[i];
             int index = attName.indexOf('/');
             if(index == 0){
-                //remove all xpath filtering and indexing
-                int n = attName.indexOf('[', index+1);
-                while(n > 0){
-                    int d = attName.indexOf(']', n);
-                    if(d>0){
-                        attName = attName.substring(index, n)+attName.substring(d+1);
-                    }else{
+
+                //remove all xpath elements
+                attName = attName.substring(1); //remove first slash
+                final Pattern pattern = Pattern.compile("(\\{[^\\{\\}]*\\})|(\\[[^\\[\\]]*\\])|/{1}");
+                final Matcher matcher = pattern.matcher(attName);
+
+                final StringBuilder sb = new StringBuilder();
+                int position = 0;
+                while (matcher.find()) {
+                    final String match = matcher.group();
+                    sb.append(attName.substring(position, matcher.start()));
+                    position = matcher.end();
+
+                    if(match.charAt(0) == '/'){
+                        //we don't query precisely sub elements
+                        position = attName.length();
                         break;
+                    }else if(match.charAt(0) == '{'){
+                        sb.append(match);
+                    }else if(match.charAt(0) == '['){
+                        //strip indexes or xpath searches
                     }
-                    n = attName.indexOf('[', index+1);
                 }
+                sb.append(attName.substring(position));
+                atts[i] = sb.toString();
 
-                //looks like we have a path
-                int nextOcc = attName.indexOf('/', index+1);
-                int startBracket = attName.indexOf('{', index+1);
-                int endBracket = attName.indexOf('}', index+1);
-                if(nextOcc> startBracket && nextOcc<endBracket){
-                    //in a qname, ignore this slash
-                    nextOcc = attName.indexOf('/', endBracket+1);
-                }
-
-                if(endBracket > index){
-                    //this is a path, reduce it
-                    atts[i] = attName.substring(index+1, nextOcc);
-                }
             }
         }
 
@@ -512,7 +515,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         } catch (SchemaException ex) {
             throw new PortrayalException(ex);
         }
-        
+
         //combine the filter with rule filters----------------------------------
         if(rules != null){
             List<Filter> rulefilters = new ArrayList<Filter>();
@@ -551,8 +554,8 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
                 }
             }
         }
-        
-        
+
+
         //optimize the filter---------------------------------------------------
         filter = FilterUtilities.prepare(filter,Feature.class,expected);
 
@@ -603,7 +606,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         qb.setHints(queryHints);
         return qb.buildQuery();
     }
-    
+
     private static class GraphicIterator implements RenderingIterator{
 
         private final FeatureIterator<? extends Feature> ite;
