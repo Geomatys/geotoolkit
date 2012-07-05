@@ -35,27 +35,27 @@ import org.opengis.style.Mark;
 
 /**
  * Cached Mark.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public class CachedMark extends Cache<Mark>{
 
     private static final WellKnownMarkFactory WKMF = new WellKnownMarkFactory();
-    
+
     //IDS for cache map
     private Shape cachedWKN = null;
-    
+
     private final CachedStrokeSimple cachedStroke;
     private final CachedFill cachedFill;
-    
-    
+
+
     private CachedMark(final Mark mark){
         super(mark);
         cachedStroke = (CachedStrokeSimple) CachedStroke.cache(mark.getStroke());
         cachedFill = CachedFill.cache(mark.getFill());
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -70,11 +70,11 @@ public class CachedMark extends Cache<Mark>{
             cachedWKN = null;
             requieredAttributs = EMPTY_ATTRIBUTS;
             isStatic = true;
-        }    
-        
+        }
+
         if(!cachedStroke.isStatic()) isStatic = false;
         if(!cachedFill.isStatic()) isStatic = false;
-        
+
         if(cachedFill.isStaticVisible() == VisibilityState.UNVISIBLE &&
            cachedStroke.isStaticVisible() == VisibilityState.UNVISIBLE &&
            styleElement.getExternalMark() == null ){
@@ -85,34 +85,34 @@ public class CachedMark extends Cache<Mark>{
             isStatic = true;
             isStaticVisible = VisibilityState.UNVISIBLE;
         }
-        
+
         isNotEvaluated = false;
     }
-    
+
     private boolean evaluateMark(){
-        
+
         final Expression expWKN = styleElement.getWellKnownName();
         boolean isWKN = false;
-        
+
         if(expWKN == null){
             isWKN = false;
         }else if(GO2Utilities.isStatic(expWKN)){
-            
+
             try {
                 cachedWKN = WKMF.getShape(null, expWKN, null);
             } catch (Exception ex) {
                 LOGGER.log(Level.WARNING, ex.getLocalizedMessage(),ex);
             }
-            
+
             //we return false, invalid marker
-            if(cachedWKN == null){                
+            if(cachedWKN == null){
                 isStaticVisible = VisibilityState.UNVISIBLE;
                 return false;
             }
-            
-            //this style is visible 
+
+            //this style is visible
             if(isStaticVisible == VisibilityState.NOT_DEFINED) isStaticVisible = VisibilityState.VISIBLE;
-            
+
             isWKN = true;
         }else{
             //this style visibility is dynamic
@@ -121,10 +121,10 @@ public class CachedMark extends Cache<Mark>{
             GO2Utilities.getRequieredAttributsName(expWKN,requieredAttributs);
             isWKN = true;
         }
-        
-        
+
+
         final ExternalMark external = styleElement.getExternalMark();
-        
+
         if(!isWKN && external != null){
             //no well knowned mark but an external mark
             return true;
@@ -134,29 +134,29 @@ public class CachedMark extends Cache<Mark>{
             isStatic = true;
             return false;
         }
-        
+
         return true;
-        
+
     }
-    
+
     public boolean isValid(){
         evaluate();
         return styleElement.getWellKnownName()!= null || styleElement.getExternalMark() != null ;
     }
-        
+
     public BufferedImage getImage(final Object candidate, final Float size, final RenderingHints hints){
         evaluate();
-                
+
         final Expression wkn = styleElement.getWellKnownName();
         final ExternalMark external = styleElement.getExternalMark();
-        
+
         int j2dSize = 16;
         float margin = 0;
         int maxWidth = 0;
         int center = 0;
-        
+
         Shape candidateWKN = cachedWKN;
-        
+
         if(candidateWKN == null){
             try {
                 candidateWKN = WKMF.getShape(null, wkn, candidate);
@@ -164,17 +164,19 @@ public class CachedMark extends Cache<Mark>{
                 LOGGER.log(Level.WARNING, ex.getLocalizedMessage(),ex);
             }
         }
-        
+
         if(wkn != null || external != null){
             j2dSize = (size != null) ? size.intValue() : 16;
+            if(j2dSize <0) j2dSize = 0;
             margin = cachedStroke.getMargin(candidate,1);
             maxWidth = (int)(margin+0.5f)+ j2dSize ;
             center = maxWidth/2  ;
         }
-        
-        
+
+        if(maxWidth < 1)maxWidth =1;
+
         if(candidateWKN != null){
-            
+
             BufferedImage buffer = new BufferedImage( maxWidth , maxWidth, BufferedImage.TYPE_INT_ARGB);
             Graphics2D g2 = (Graphics2D) buffer.getGraphics();
             if(hints != null) g2.setRenderingHints(hints);
@@ -203,14 +205,14 @@ public class CachedMark extends Cache<Mark>{
             g2.dispose();
 
             return buffer;
-            
+
         }else if(external != null){
             return createImage(external, j2dSize, hints);
         }
-        
+
         return null;
     }
-    
+
     private BufferedImage createImage(final ExternalMark external, final int j2dSize, final RenderingHints hints){
         final String format = external.getFormat();
         final Icon icon = external.getInlineContent();
@@ -235,7 +237,7 @@ public class CachedMark extends Cache<Mark>{
                 float maxwidth = width / aspect;
 
                 BufferedImage buffer2 = new BufferedImage( (int)(maxwidth+0.5f), (int)(j2dSize+0.5f), BufferedImage.TYPE_INT_ARGB);
-                Graphics2D g = (Graphics2D) buffer2.getGraphics();  
+                Graphics2D g = (Graphics2D) buffer2.getGraphics();
                  if(hints != null) g.setRenderingHints(hints);
                 g.drawImage(buffer, 0, 0,buffer2.getWidth(), buffer2.getHeight(), 0, 0, width, height,null);
                 g.dispose();
@@ -251,15 +253,15 @@ public class CachedMark extends Cache<Mark>{
         }
         return null;
     }
-    
+
     /**
      * {@inheritDoc }
      */
     @Override
     public boolean isVisible(final Object candidate) {
         evaluate();
-        
-        
+
+
         if(isStaticVisible == VisibilityState.VISIBLE){
             //visible whatever feature we have
             return true;
@@ -268,7 +270,7 @@ public class CachedMark extends Cache<Mark>{
             return false;
         }else{
             //dynamic visibility
-            //a markis allways visible, 
+            //a markis allways visible,
             //expect if while evaluating no valid graphic where found
             return true;
         }
@@ -277,5 +279,5 @@ public class CachedMark extends Cache<Mark>{
     public static CachedMark cache(final Mark mark){
         return new CachedMark(mark);
     }
-    
+
 }

@@ -82,7 +82,7 @@ public class CachedRasterSymbolizer extends CachedSymbolizer<RasterSymbolizer>{
         final Expression opacity = styleElement.getOpacity();
         if(GO2Utilities.isStatic(opacity)){
             Float j2dOpacity = GO2Utilities.evaluate(opacity, null, Float.class, 1f);
-            if(j2dOpacity == 0) return false; //-------------------------------------------------OUT NO NEED TO PAINT
+            if(j2dOpacity <= 0) return false; //-------------------------------------------------OUT NO NEED TO PAINT
             j2dComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, j2dOpacity.floatValue());
         }
 

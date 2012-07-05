@@ -36,7 +36,7 @@ import static org.geotoolkit.style.StyleConstants.*;
 /**
  * The cached simple stroke work for strokes that have
  * only a paint or a color defined.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
@@ -209,14 +209,14 @@ public class CachedStrokeSimple extends CachedStroke{
             strokeStatic = false;
             GO2Utilities.getRequieredAttributsName(expWidth,requieredAttributs);
         }
-        
+
         // line cap and join---------------------------------------------
         if(cachedWidth <= 2.5f){
             //line cap and join are invisible under this size
             candidateCap = BasicStroke.CAP_SQUARE;
             candidateJoin = BasicStroke.JOIN_MITER;
-        }else{ 
-            if(GO2Utilities.isStatic(expLineCap)){            
+        }else{
+            if(GO2Utilities.isStatic(expLineCap)){
                 final String cap = GO2Utilities.evaluate(expLineCap, null, String.class, STROKE_CAP_BUTT_STRING);
                 if (STROKE_CAP_BUTT_STRING.equalsIgnoreCase(cap))        candidateCap = BasicStroke.CAP_BUTT;
                 else if (STROKE_CAP_SQUARE_STRING.equalsIgnoreCase(cap)) candidateCap = BasicStroke.CAP_SQUARE;
@@ -226,7 +226,7 @@ public class CachedStrokeSimple extends CachedStroke{
                 strokeStatic = false;
                 GO2Utilities.getRequieredAttributsName(expLineCap,requieredAttributs);
             }
-            
+
             if(GO2Utilities.isStatic(expLineJoin)){
                 final String join = GO2Utilities.evaluate(expLineJoin, null, String.class, STROKE_JOIN_BEVEL_STRING);
                 if (STROKE_JOIN_BEVEL_STRING.equalsIgnoreCase(join))       candidateJoin = BasicStroke.JOIN_BEVEL;
@@ -244,7 +244,10 @@ public class CachedStrokeSimple extends CachedStroke{
         if(!Float.isNaN(candidateOffset)) cachedDashOffset = (candidateOffset>0) ? candidateOffset : 0;
         if(candidateCap != -1) cachedCap = candidateCap;
         if(candidateJoin != -1) cachedJoin = candidateJoin;
-        if(!Float.isNaN(candidateWidth)) cachedWidth = candidateWidth;
+        if(!Float.isNaN(candidateWidth)){
+            cachedWidth = candidateWidth;
+            if(cachedWidth<0) cachedWidth = 0f;
+        }
 
         //if static we can can cache the stroke directly----------------------
         if(strokeStatic){
@@ -267,7 +270,7 @@ public class CachedStrokeSimple extends CachedStroke{
     @Override
     public float getMargin(final Object candidate, final float coeff){
         evaluate();
-        
+
         if(Float.isNaN(cachedWidth)){
             final Expression expWidth = styleElement.getWidth();
             if(candidate == null){
@@ -283,7 +286,7 @@ public class CachedStrokeSimple extends CachedStroke{
 
     /**
      * Get the java2D Composite for the given feature.
-     * 
+     *
      * @param candidate : evaluate paint with the given feature
      * @return Java2D Composite
      */
@@ -307,7 +310,7 @@ public class CachedStrokeSimple extends CachedStroke{
 
     /**
      * Get the java2D Paint for the given feature.
-     * 
+     *
      * @param candidate : evaluate paint with the given feature
      * @param x : start X position of the fill area
      * @param y : start Y position of the fill area
@@ -344,6 +347,9 @@ public class CachedStrokeSimple extends CachedStroke{
         if(Float.isNaN(candidateWidth)){
             final Expression expWidth = styleElement.getWidth();
             candidateWidth = GO2Utilities.evaluate(expWidth, candidate, Float.class, 1f);
+            if(candidateWidth < 0){
+                candidateWidth = 0f;
+            }
         }
 
         return candidateWidth;
@@ -351,7 +357,7 @@ public class CachedStrokeSimple extends CachedStroke{
 
     /**
      * Get the java2D Stroke for the given feature.
-     * 
+     *
      * @param candidate : evaluate stroke with the given feature
      * @param coeff : use to adjust stroke size, if in display unit value equals 1
      * @return Java2D Stroke
@@ -397,6 +403,9 @@ public class CachedStrokeSimple extends CachedStroke{
             if(Float.isNaN(candidateWidth)){
                 final Expression expWidth = styleElement.getWidth();
                 candidateWidth = GO2Utilities.evaluate(expWidth, candidate, Float.class, 1f);
+                if(candidateWidth < 0){
+                    candidateWidth = 0f;
+                }
             }
 
             if (candidateDashes != null){
@@ -433,7 +442,7 @@ public class CachedStrokeSimple extends CachedStroke{
             if(cachedComposite == null){
                 final Expression opacity = styleElement.getOpacity();
                 Float j2dOpacity = GO2Utilities.evaluate(opacity, candidate, Float.class, 1f);
-                if(j2dOpacity == 0) return false;
+                if(j2dOpacity <= 0) return false;
             }
 
             //test dynamic paint
@@ -446,7 +455,7 @@ public class CachedStrokeSimple extends CachedStroke{
                 } else {
                     //or it's a normal plain inside
                     Color color = GO2Utilities.evaluate(expColor, null, Color.class, Color.BLACK);
-                    if(color.getAlpha() == 0) return false;
+                    if(color.getAlpha() <= 0) return false;
                 }
             }
 
@@ -454,9 +463,8 @@ public class CachedStrokeSimple extends CachedStroke{
             if(Float.isNaN(cachedWidth)){
                 final Expression expWidth = styleElement.getWidth();
                 Float j2dWidth = GO2Utilities.evaluate(expWidth, candidate, Float.class, 1f);
-                if(j2dWidth == 0) return false;
+                if(j2dWidth <= 0) return false;
             }
-
 
             return true;
         }
