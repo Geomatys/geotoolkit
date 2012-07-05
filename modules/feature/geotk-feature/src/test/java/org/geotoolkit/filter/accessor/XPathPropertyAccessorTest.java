@@ -65,16 +65,44 @@ public class XPathPropertyAccessorTest {
         assertEquals("toto19", ((Attribute)lst.get(0)).getValue());
         assertEquals("toto41", ((Attribute)lst.get(1)).getValue());
 
+        //access on multiple different namespaces
+        exp = "/attCpx/attString";
+        xpath = JaxenFeatureXPath.create(exp);
+        lst = xpath.selectNodes(CX_FEATURE);
+
+        assertEquals(7, lst.size());
+        assertEquals("toto19", ((Attribute)lst.get(0)).getValue());
+        assertEquals("marcel1", ((Attribute)lst.get(1)).getValue());
+        assertEquals("marcel5", ((Attribute)lst.get(2)).getValue());
+        assertEquals("toto41", ((Attribute)lst.get(3)).getValue());
+        assertEquals("marcel2", ((Attribute)lst.get(4)).getValue());
+        assertEquals("marcel3", ((Attribute)lst.get(5)).getValue());
+        assertEquals("marcel5", ((Attribute)lst.get(6)).getValue());
+
         // sub path attribut ///////////////////////////////////////////////////
 
         exp = "/{http://test.com}attCpx[{http://test2.com}attString='marcel2']";
         xpath = JaxenFeatureXPath.create(exp);
         lst = xpath.selectNodes(CX_FEATURE);
-
         assertEquals(1, lst.size());
-        final Iterator<Property> ite = CX_FEATURE.getProperties("attCpx").iterator();
+        Iterator<Property> ite = CX_FEATURE.getProperties("attCpx").iterator();
         ite.next();
         assertEquals(ite.next(), lst.get(0));
+
+        //same without namespace
+        exp = "/attCpx[attString='marcel2']";
+        xpath = JaxenFeatureXPath.create(exp);
+        lst = xpath.selectNodes(CX_FEATURE);
+        assertEquals(1, lst.size());
+        ite = CX_FEATURE.getProperties("attCpx").iterator();
+        ite.next();
+        assertEquals(ite.next(), lst.get(0));
+
+        // numerique value filter test /////////////////////////////////////////
+        exp = "/attCpx[attDouble=45]";
+        xpath = JaxenFeatureXPath.create(exp);
+        lst = xpath.selectNodes(CX_FEATURE);
+        assertEquals(2, lst.size());
 
     }
 
