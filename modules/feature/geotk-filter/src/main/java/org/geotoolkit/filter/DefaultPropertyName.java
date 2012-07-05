@@ -60,8 +60,16 @@ public class DefaultPropertyName extends AbstractExpression implements PropertyN
      */
     @Override
     public Object evaluate(final Object candidate) {
+
+        final Class cs;
+        if(candidate == null){
+            cs = Object.class;
+        }else{
+            cs = candidate.getClass();
+        }
+
         Entry<Class,PropertyAccessor> copy = lastAccessor;
-        if (copy != null && copy.getKey().equals(candidate.getClass())) {
+        if (copy != null && copy.getKey().equals(cs)) {
             final PropertyAccessor access = copy.getValue();
             if (access != null) {
                 return access.get( candidate, property, null );
@@ -69,8 +77,8 @@ public class DefaultPropertyName extends AbstractExpression implements PropertyN
             return null;
         }
 
-        final PropertyAccessor accessor = Accessors.getAccessor(candidate.getClass(),property, null);
-        copy = new SimpleEntry<Class, PropertyAccessor>(candidate.getClass(),accessor);
+        final PropertyAccessor accessor = Accessors.getAccessor(cs,property, null);
+        copy = new SimpleEntry<Class, PropertyAccessor>(cs,accessor);
         lastAccessor = copy;
     	if (accessor == null) {
             return null;
