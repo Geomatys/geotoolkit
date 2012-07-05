@@ -47,6 +47,7 @@ import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
 
 import static org.junit.Assert.*;
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 
 
 /**
@@ -95,7 +96,7 @@ public abstract strictfp class TextImageWriterTestBase extends ImageWriterTestCa
      * Creates dummy metadata for the image to be returned by {@link #createImage()}.
      */
     private static IIOMetadata createMetadata() {
-        final IIOMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null));
+        final IIOMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME));
         final GridDomainAccessor domain = new GridDomainAccessor(metadata);
         domain.setOrigin(-500, 400);
         domain.addOffsetVector(100, 0);
@@ -180,6 +181,6 @@ public abstract strictfp class TextImageWriterTestBase extends ImageWriterTestCa
      * This is used for forcing recreation of objects, for testing this creation process.
      */
     private static void clearUserObject(final IIOMetadata metadata, final Class<? extends IdentifiedObject> type) {
-        new MetadataAccessor(metadata, SpatialMetadataFormat.FORMAT_NAME, type).setUserObject(null);
+        new MetadataAccessor(metadata, SpatialMetadataFormat.GEOTK_FORMAT_NAME, type).setUserObject(null);
     }
 }

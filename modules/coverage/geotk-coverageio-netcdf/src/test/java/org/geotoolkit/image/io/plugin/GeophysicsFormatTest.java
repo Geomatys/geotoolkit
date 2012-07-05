@@ -33,12 +33,12 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
-import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
 import static org.geotoolkit.test.Commons.*;
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 
 
 /**
@@ -89,7 +89,7 @@ public final strictfp class GeophysicsFormatTest extends NetcdfImageReaderTestBa
         final String asTree = metadata.toString();
         assertNotNull(metadata);
         assertMultilinesEquals(decodeQuotes(
-            SpatialMetadataFormat.FORMAT_NAME + '\n' +
+            GEOTK_FORMAT_NAME + '\n' +
             "├───RectifiedGridDomain\n" +
             "│   ├───origin=“6.0 81.0 55.0 73.0”\n" +
             "│   ├───Limits\n" +

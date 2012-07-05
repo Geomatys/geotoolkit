@@ -38,6 +38,7 @@ import org.geotoolkit.metadata.iso.content.DefaultImageDescription;
 import org.junit.*;
 
 import static org.geotoolkit.test.Assert.*;
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 
 
 /**
@@ -63,7 +64,7 @@ public final strictfp class SpatialMetadataTest {
      */
     @Test
     public void testImageDescription() {
-        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null));
+        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME));
         /*
          * Write a few data using the accessor.
          */
@@ -104,7 +105,7 @@ public final strictfp class SpatialMetadataTest {
      */
     @Test
     public void testInstrument() {
-        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getStreamInstance(null));
+        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getStreamInstance(GEOTK_FORMAT_NAME));
         MetadataAccessor accessor = new MetadataAccessor(metadata, null, "AcquisitionMetadata/Platform/Instruments", "Instrument");
         accessor.selectChild(accessor.appendChild());
         accessor.setAttribute("type", "Currentmeter");
@@ -148,7 +149,7 @@ public final strictfp class SpatialMetadataTest {
      */
     @Test
     public void testRectifiedGrid() {
-        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null));
+        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME));
         /*
          * Write a few data using the accessor.
          */
@@ -182,20 +183,19 @@ public final strictfp class SpatialMetadataTest {
      */
     @Test
     public void testInexistentNode() {
-        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null));
+        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME));
         metadata.setReadOnly(true);
         assertNull("SpatialMetadata can not return an instance of an inexistent node " +
                    "if it was not allowed to create the missing nodes.",
                    metadata.getListForType(SampleDimension.class));
-        assertMultilinesEquals("No node should have been created.",
-                SpatialMetadataFormat.FORMAT_NAME, metadata.toString());
+        assertMultilinesEquals("No node should have been created.", GEOTK_FORMAT_NAME, metadata.toString());
         /*
          * Now allow the creation of empty nodes.
          */
         metadata.setReadOnly(false);
         assertTrue(metadata.getListForType(SampleDimension.class).isEmpty());
         assertNull(metadata.getInstanceForType(SampleDimension.class));
-        assertMultilinesEquals(SpatialMetadataFormat.FORMAT_NAME + "\n" +
+        assertMultilinesEquals(GEOTK_FORMAT_NAME + "\n" +
             "└───ImageDescription\n" +
             "    └───Dimensions\n",
             metadata.toString());
@@ -209,7 +209,7 @@ public final strictfp class SpatialMetadataTest {
      */
     @Test
     public void testEmpty() {
-        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getStreamInstance(null));
+        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getStreamInstance(GEOTK_FORMAT_NAME));
         final DataIdentification identification = metadata.getInstanceForType(DataIdentification.class);
         assertTrue(identification.getExtents().isEmpty());
         assertTrue(identification.getSpatialResolutions().isEmpty());

@@ -29,6 +29,7 @@ import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
 
 import static org.junit.Assert.*;
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 
 
 /**
@@ -117,7 +118,7 @@ public strictfp class NullImageReader extends SpatialImageReader {
      */
     @Override
     public SpatialMetadata createMetadata(final int imageIndex) throws IOException {
-        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null), this, null);
+        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME), this, null);
         final DimensionAccessor accessor = new DimensionAccessor(metadata);
         accessor.selectChild(accessor.appendChild());
         accessor.setValueRange(minimum * scale + offset, maximum * scale + offset);

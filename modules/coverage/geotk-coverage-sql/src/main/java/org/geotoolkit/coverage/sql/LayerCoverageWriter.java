@@ -257,14 +257,11 @@ public class LayerCoverageWriter extends GridCoverageWriter {
      * @see Layer#addCoverageReferences(Collection, CoverageDatabaseController)
      */
     @Override
-    public void write(final Iterable<? extends GridCoverage> coverages, GridCoverageWriteParam param)
+    public void write(final Iterable<? extends GridCoverage> coverages, final GridCoverageWriteParam param)
             throws CoverageStoreException, CancellationException
     {
         ensureNonNull("coverages", coverages);
         ensureOutputSet();
-        if (param == null) {
-            param = new GridCoverageWriteParam();
-        }
         /*
          * Infers the image format, file suffix and target directory.
          * The current implementation takes the most frequently used
@@ -279,7 +276,7 @@ public class LayerCoverageWriter extends GridCoverageWriter {
                     throw new CoverageStoreException(Errors.format(Errors.Keys.CANT_CREATE_DIRECTORY_$1, directory));
                 }
             }
-            String formatName = param.getFormatName();
+            String formatName = (param != null) ? param.getFormatName() : null;
             if (formatName == null) {
                 formatName = firstNonNull(layer.getImageFormats());
                 if (formatName == null) {

@@ -81,6 +81,7 @@ import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.referencing.operation.MathTransforms;
 
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
 
 
@@ -537,12 +538,11 @@ public class ImageCoverageReader extends GridCoverageReader {
     private static SpatialMetadata getSpatialMetadata(final ImageReader imageReader, final int index)
             throws IOException
     {
-        final IIOMetadata metadata = imageReader.getImageMetadata(index,
-                SpatialMetadataFormat.FORMAT_NAME, METADATA_NODES);
+        final IIOMetadata metadata = imageReader.getImageMetadata(index, GEOTK_FORMAT_NAME, METADATA_NODES);
         if (metadata instanceof SpatialMetadata) {
             return (SpatialMetadata) metadata;
         } else if (metadata != null) {
-            return new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null), imageReader, metadata);
+            return new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME), imageReader, metadata);
         } else {
             return null;
         }
@@ -787,7 +787,7 @@ public class ImageCoverageReader extends GridCoverageReader {
             if (metadata instanceof SpatialMetadata) {
                 return (SpatialMetadata) metadata;
             } else if (metadata != null) {
-                return new SpatialMetadata(SpatialMetadataFormat.getStreamInstance(null), imageReader, metadata);
+                return new SpatialMetadata(SpatialMetadataFormat.getStreamInstance(GEOTK_FORMAT_NAME), imageReader, metadata);
             } else {
                 return null;
             }
@@ -818,7 +818,7 @@ public class ImageCoverageReader extends GridCoverageReader {
             if (metadata instanceof SpatialMetadata) {
                 return (SpatialMetadata) metadata;
             } else if (metadata != null) {
-                return new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null), imageReader, metadata);
+                return new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME), imageReader, metadata);
             } else {
                 return null;
             }

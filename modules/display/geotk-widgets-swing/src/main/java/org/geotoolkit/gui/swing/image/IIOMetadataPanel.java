@@ -44,6 +44,8 @@ import org.geotoolkit.image.io.metadata.MetadataTreeTable;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.internal.swing.ComboBoxRenderer;
 
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
+
 
 /**
  * A panel showing the content of an {@link IIOMetadata} instance. This panel contains three parts:
@@ -52,7 +54,7 @@ import org.geotoolkit.internal.swing.ComboBoxRenderer;
  *  <li>At the top, a field allowing to select which metadata to display:
  *   <ul>
  *    <li>The metadata format, typically
- *        {@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#FORMAT_NAME} or
+ *        {@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#GEOTK_FORMAT_NAME} or
  *        {@value javax.imageio.metadata.IIOMetadataFormatImpl#standardMetadataFormatName}.
  *    </li>
  *    <li>The metadata part to display: <cite>stream</cite> metadata or one of the
@@ -97,7 +99,7 @@ import org.geotoolkit.internal.swing.ComboBoxRenderer;
 public class IIOMetadataPanel extends JComponent {
     /**
      * The choices of metadata format. Typical choices are
-     * {@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#FORMAT_NAME} and
+     * {@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#GEOTK_FORMAT_NAME} and
      * {@value javax.imageio.metadata.IIOMetadataFormatImpl#standardMetadataFormatName}.
      */
     private final DefaultComboBoxModel<Object> formatChoices;
@@ -491,14 +493,14 @@ public class IIOMetadataPanel extends JComponent {
 
     /**
      * Adds to this panel the description of
-     * {@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#FORMAT_NAME} and
+     * {@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#GEOTK_FORMAT_NAME} and
      * {@value javax.imageio.metadata.IIOMetadataFormatImpl#standardMetadataFormatName} formats.
      * The descriptions contain no metadata value, only the name of the nodes together with a few
      * additional information (type, valid values, <i>etc.</i>).
      */
     public void addDefaultMetadataFormats() {
-        addMetadataFormat(SpatialMetadataFormat.getStreamInstance(null),
-                          SpatialMetadataFormat.getImageInstance (null));
+        addMetadataFormat(SpatialMetadataFormat.getStreamInstance(GEOTK_FORMAT_NAME),
+                          SpatialMetadataFormat.getImageInstance (GEOTK_FORMAT_NAME));
         addMetadataFormat(null, IIOMetadataFormatImpl.getStandardFormatInstance());
     }
 }

@@ -59,7 +59,6 @@ import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.image.io.mosaic.MosaicImageWriter;
 import org.geotoolkit.image.io.metadata.ReferencingBuilder;
-import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.referencing.operation.transform.WarpFactory;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
@@ -71,6 +70,7 @@ import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.resources.Errors;
 
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 
 
 /**
@@ -690,7 +690,7 @@ public class ImageCoverageWriter extends GridCoverageWriter {
         final ImageTypeSpecifier imageType = ImageTypeSpecifier.createFromRenderedImage(image);
         final IIOMetadata streamMetadata = isFirst ? imageWriter.getDefaultStreamMetadata(imageParam) : null;
         final IIOMetadata imageMetadata  = imageWriter.getDefaultImageMetadata(imageType, imageParam);
-        if (XArrays.contains(imageMetadata.getMetadataFormatNames(), SpatialMetadataFormat.FORMAT_NAME)) {
+        if (XArrays.contains(imageMetadata.getMetadataFormatNames(), GEOTK_FORMAT_NAME)) {
             CoordinateReferenceSystem crs = null;
             Envelope env = null;
             double[] res = null;

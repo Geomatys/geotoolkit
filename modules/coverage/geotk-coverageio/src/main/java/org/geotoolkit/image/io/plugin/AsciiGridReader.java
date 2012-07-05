@@ -60,6 +60,8 @@ import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.util.Version;
 import org.geotoolkit.resources.Errors;
 
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
+
 
 /**
  * Reader for the ASCII Grid format. As the "ASCII" name implies, the data files are read in
@@ -522,7 +524,7 @@ readLine:   while (true) {
         }
         final double[] origin = new double[] {xll, yll + scaleX * (height - (yCenter ? 1 : 0))};
         final double[] bounds = new double[] {xll + scaleY * (width - (xCenter ? 1 : 0)), yll};
-        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null), this, null);
+        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME), this, null);
         final GridDomainAccessor domain = new GridDomainAccessor(metadata);
         domain.setOrigin(origin);
         domain.addOffsetVector(scaleX, 0);
@@ -964,6 +966,7 @@ loop:       for (int y=0; /* stop condition inside */; y++) {
             version         = Version.GEOTOOLKIT.toString();
             locale          = Locale.US;
             charset         = Charset.forName("US-ASCII");
+            nativeStreamMetadataFormatName = null; // No stream metadata.
         }
 
         /**

@@ -33,7 +33,7 @@ import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.image.io.metadata.MetadataAccessor;
 
-import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.FORMAT_NAME;
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 
 
 /**
@@ -67,7 +67,7 @@ public final class DimensionAccessor extends MetadataAccessor {
      *        sub-class is recommended, but not mandatory.
      */
     public DimensionAccessor(final IIOMetadata metadata) {
-        super(metadata, FORMAT_NAME, "ImageDescription/Dimensions", "Dimension");
+        super(metadata, GEOTK_FORMAT_NAME, "ImageDescription/Dimensions", "Dimension");
     }
 
     /**

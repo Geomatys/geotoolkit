@@ -40,6 +40,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
 import static org.geotoolkit.test.Commons.*;
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 
 
 /**
@@ -58,7 +59,7 @@ public final strictfp class MetadataProxyTest {
      */
     @Test
     public void testImageDescription() {
-        final SpatialMetadata  metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null));
+        final SpatialMetadata  metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME));
         final MetadataAccessor accessor = new MetadataAccessor(metadata, null, "ImageDescription", null);
         final ImageDescription proxy    = accessor.newProxyInstance(ImageDescription.class);
         /*
@@ -98,7 +99,7 @@ public final strictfp class MetadataProxyTest {
      */
     @Test
     public void testImageQualityCode() {
-        final SpatialMetadata  metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null));
+        final SpatialMetadata  metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME));
         final MetadataAccessor accessor = new MetadataAccessor(metadata, null, "ImageDescription", null);
         final MetadataAccessor qualityA = new MetadataAccessor(metadata, null, "ImageDescription/ImageQualityCode", null);
         qualityA.setAttribute("code",      "okay");
@@ -122,7 +123,7 @@ public final strictfp class MetadataProxyTest {
      */
     @Test
     public void testKeywords() {
-        final SpatialMetadata  metadata = new SpatialMetadata(SpatialMetadataFormat.getStreamInstance(null));
+        final SpatialMetadata  metadata = new SpatialMetadata(SpatialMetadataFormat.getStreamInstance(GEOTK_FORMAT_NAME));
         final MetadataAccessor accessor = new MetadataAccessor(metadata, null,
                 "DiscoveryMetadata/DescriptiveKeywords", "DescriptiveKeywordsEntry");
         accessor.selectChild(accessor.appendChild());
@@ -162,7 +163,7 @@ public final strictfp class MetadataProxyTest {
      */
     @Test
     public void testDimensionList() {
-        final SpatialMetadata  metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null));
+        final SpatialMetadata  metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME));
         final MetadataAccessor accessor = new MetadataAccessor(metadata, null, "ImageDescription/Dimensions", "Dimension");
         final List<SampleDimension> dimensions = accessor.newProxyList(SampleDimension.class);
         for (int i=1; i<=4; i++) {
@@ -198,7 +199,7 @@ public final strictfp class MetadataProxyTest {
      */
     @Test
     public void testDimensions() {
-        final SpatialMetadata  metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null));
+        final SpatialMetadata  metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME));
         final MetadataAccessor accessor = new MetadataAccessor(metadata, null, "ImageDescription/Dimensions", "Dimension");
         for (int i=1; i<=4; i++) {
             accessor.selectChild(accessor.appendChild());
@@ -241,7 +242,7 @@ public final strictfp class MetadataProxyTest {
      */
     @Test
     public void testSpatialResolution() {
-        final SpatialMetadata  metadata = new SpatialMetadata(SpatialMetadataFormat.getStreamInstance(null));
+        final SpatialMetadata  metadata = new SpatialMetadata(SpatialMetadataFormat.getStreamInstance(GEOTK_FORMAT_NAME));
         final MetadataAccessor accessor = new MetadataAccessor(metadata, null, "DiscoveryMetadata/SpatialResolution", null);
         accessor.setAttribute("distance", 40);
         /*
@@ -267,7 +268,7 @@ public final strictfp class MetadataProxyTest {
      */
     @Test
     public void testRectifiedGrid() {
-        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null));
+        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME));
         final MetadataAccessor rootAccessor = new MetadataAccessor(metadata, null, "RectifiedGridDomain", null);
         rootAccessor.setAttribute("origin", -180.0, 90.0);
         MetadataAccessor accessor = new MetadataAccessor(rootAccessor, "Limits", null);

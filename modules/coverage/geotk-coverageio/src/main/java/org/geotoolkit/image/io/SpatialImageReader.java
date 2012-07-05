@@ -58,6 +58,7 @@ import org.geotoolkit.internal.image.io.Warnings;
 import static org.geotoolkit.image.io.SampleConversionType.*;
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 
 
 /**
@@ -1268,15 +1269,17 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
      *     <th>Value</th>
      *   </tr><tr>
      *     <td>&nbsp;{@link #nativeStreamMetadataFormatName}&nbsp;</td>
-     *     <td>&nbsp;{@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#FORMAT_NAME}&nbsp;</td>
+     *     <td>&nbsp;{@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#GEOTK_FORMAT_NAME}&nbsp;</td>
      *   </tr><tr>
      *     <td>&nbsp;{@link #nativeImageMetadataFormatName}&nbsp;</td>
-     *     <td>&nbsp;{@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#FORMAT_NAME}&nbsp;</td>
+     *     <td>&nbsp;{@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#GEOTK_FORMAT_NAME}&nbsp;</td>
      * </tr>
      * </table>
      * <p>
      * All other fields are left to their default values ({@code null} or {@code false}).
      * Subclasses are responsible for initializing those fields.
+     * Some subclasses may also restore the {@link #nativeStreamMetadataFormatName} to
+     * {@code null} if they do not support stream metadata.
      *
      * @author Martin Desruisseaux (Geomatys)
      * @version 3.07
@@ -1294,14 +1297,14 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
          * Subclasses can assign new arrays, but should not modify the default array content.
          */
         protected Spi() {
-            nativeStreamMetadataFormatName = SpatialMetadataFormat.FORMAT_NAME;
-            nativeImageMetadataFormatName  = SpatialMetadataFormat.FORMAT_NAME;
+            nativeStreamMetadataFormatName = GEOTK_FORMAT_NAME;
+            nativeImageMetadataFormatName  = GEOTK_FORMAT_NAME;
         }
 
         /**
          * Returns {@code true} if this provider supports the {@linkplain SpatialMetadataFormat
          * spatial metadata format}. This method checks if a native or extra metadata format
-         * named {@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#FORMAT_NAME}
+         * named {@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#GEOTK_FORMAT_NAME}
          * is declared. This is the case by default unless sublcasses modified the values of
          * the {@code xxxFormatName} fields.
          *
@@ -1319,8 +1322,7 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
                 nativeFormat = nativeImageMetadataFormatName;
                 extraFormats = extraImageMetadataFormatNames;
             }
-            return SpatialMetadataFormat.FORMAT_NAME.equals(nativeFormat) ||
-                    XArrays.contains(extraFormats, SpatialMetadataFormat.FORMAT_NAME);
+            return GEOTK_FORMAT_NAME.equals(nativeFormat) || XArrays.contains(extraFormats, GEOTK_FORMAT_NAME);
         }
 
         /**
@@ -1332,8 +1334,8 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
          */
         @Override
         public IIOMetadataFormat getStreamMetadataFormat(final String formatName) {
-            if (SpatialMetadataFormat.FORMAT_NAME.equals(formatName) && isSpatialMetadataSupported(true)) {
-                return SpatialMetadataFormat.getStreamInstance(null);
+            if (GEOTK_FORMAT_NAME.equals(formatName) && isSpatialMetadataSupported(true)) {
+                return SpatialMetadataFormat.getStreamInstance(GEOTK_FORMAT_NAME);
             }
             return super.getStreamMetadataFormat(formatName);
         }
@@ -1347,8 +1349,8 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
          */
         @Override
         public IIOMetadataFormat getImageMetadataFormat(final String formatName) {
-            if (SpatialMetadataFormat.FORMAT_NAME.equals(formatName) && isSpatialMetadataSupported(true)) {
-                return SpatialMetadataFormat.getImageInstance(null);
+            if (SpatialMetadataFormat.GEOTK_FORMAT_NAME.equals(formatName) && isSpatialMetadataSupported(true)) {
+                return SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME);
             }
             return super.getStreamMetadataFormat(formatName);
         }

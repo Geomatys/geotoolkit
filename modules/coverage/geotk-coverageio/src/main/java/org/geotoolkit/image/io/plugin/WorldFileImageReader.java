@@ -47,6 +47,8 @@ import org.geotoolkit.io.wkt.PrjFiles;
 import org.geotoolkit.util.Version;
 import org.geotoolkit.util.logging.Logging;
 
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
+
 
 /**
  * Reader for the <cite>World File</cite> format. This reader wraps an other image reader
@@ -221,7 +223,7 @@ public class WorldFileImageReader extends ImageReaderAdapter {
              */
             if (gridToCRS != null || crs != null) {
                 if (metadata == null) {
-                    metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null), this, null);
+                    metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME), this, null);
                 }
                 if (gridToCRS != null) {
                     final int width  = getWidth (imageIndex);
@@ -292,10 +294,12 @@ public class WorldFileImageReader extends ImageReaderAdapter {
          * @param main The provider of the readers to use for reading the pixel values.
          */
         public Spi(final ImageReaderSpi main) {
-            super(main, NAME_SUFFIX);
+            super(main);
             pluginClassName = "org.geotoolkit.image.io.plugin.WorldFileImageReader";
             vendorName      = "Geotoolkit.org";
             version         = Version.GEOTOOLKIT.toString();
+            addFormatNameSuffix(NAME_SUFFIX);
+            addSpatialFormat(false, true);
         }
 
         /**
@@ -304,23 +308,23 @@ public class WorldFileImageReader extends ImageReaderAdapter {
          * fetched from the given format name.
          *
          * @param  format The name of the provider to use for reading the pixel values.
+         * @throws IllegalArgumentException If no provider is found for the given format.
+         */
+        public Spi(final String format) throws IllegalArgumentException {
+            this(Formats.getReaderByFormatName(format, Spi.class));
+        }
+
+        /**
+         * Creates a provider which will use the given format for reading pixel values.
+         *
+         * @param  format The name of the provider to use for reading the pixel values.
          * @param  writerSpiName The fully qualified class name of a provider for a writer that
          *         can write the files expected by this reader format, or {@code null} if none.
          * @throws IllegalArgumentException If no provider is found for the given format.
          */
-        public Spi(final String format, final String writerSpiName) throws IllegalArgumentException {
-            this(Formats.getReaderByFormatName(format, Spi.class));
-            if (writerSpiName != null) {
-                writerSpiNames = new String[] {writerSpiName};
-            }
-        }
-
-        /**
-         * @deprecated Replaced by {@link #Spi(String, String)}.
-         */
-        @Deprecated
-        public Spi(final String format) throws IllegalArgumentException {
-            this(format, null);
+        Spi(final String format, final String writerSpiName) throws IllegalArgumentException {
+            this(format);
+            writerSpiNames = new String[] {writerSpiName};
         }
 
         /**
@@ -521,7 +525,7 @@ public class WorldFileImageReader extends ImageReaderAdapter {
     }
     private static final class Records extends Spi {
         Records() {
-            super("records", null);
+            super("records");
         }
         @Override boolean exclude(final String readerID) {
             return "tfw".equalsIgnoreCase(readerID);

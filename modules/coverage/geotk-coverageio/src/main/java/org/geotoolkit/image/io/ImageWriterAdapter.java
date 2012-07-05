@@ -50,8 +50,7 @@ import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.util.converter.Classes;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
-import static org.geotoolkit.image.io.ImageReaderAdapter.Spi.addPrefix;
-import static org.geotoolkit.image.io.ImageReaderAdapter.Spi.addSpatialFormat;
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 
 
 /**
@@ -273,22 +272,25 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
      * Returns a metadata object containing default values for encoding a stream of images.
      * The default implementation returns the union of the metadata formats declared by the
      * {@linkplain #main} writer, and the Geotk
-     * {@linkplain SpatialMetadataFormat#getStreamInstance stream metadata format}.
+     * {@linkplain SpatialMetadataFormat#getStreamInstance(String) stream metadata format}.
      * <p>
      * Subclasses can override the {@link #writeStreamMetadata(IIOMetadata)} method
      * for writing those metadata to the output.
      */
     @Override
     public SpatialMetadata getDefaultStreamMetadata(final ImageWriteParam param) {
-        return new SpatialMetadata(SpatialMetadataFormat.getStreamInstance(null), this,
-                main.getDefaultStreamMetadata(unwrap(param)));
+        final IIOMetadata metadata = main.getDefaultStreamMetadata(unwrap(param));
+        if (metadata == null && !isSpatialMetadataSupported(true)) {
+            return null;
+        }
+        return new SpatialMetadata(SpatialMetadataFormat.getStreamInstance(GEOTK_FORMAT_NAME), this, metadata);
     }
 
     /**
      * Returns a metadata object containing default values for encoding an image of the given type.
      * The default implementation returns the union of the metadata formats declared by the
      * {@linkplain #main} writer, and the Geotk
-     * {@linkplain SpatialMetadataFormat#getImageInstance image metadata format}.
+     * {@linkplain SpatialMetadataFormat#getImageInstance(String) image metadata format}.
      * <p>
      * Subclasses can override the {@link #writeImageMetadata(IIOMetadata, int, ImageWriteParam)}
      * method for writing those metadata to the output.
@@ -297,8 +299,11 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
     public SpatialMetadata getDefaultImageMetadata(final ImageTypeSpecifier imageType,
                                                    final ImageWriteParam    param)
     {
-        return new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null), this,
-                main.getDefaultImageMetadata(imageType, unwrap(param)));
+        final IIOMetadata metadata = main.getDefaultImageMetadata(imageType, unwrap(param));
+        if (metadata == null && !isSpatialMetadataSupported(false)) {
+            return null;
+        }
+        return new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME), this, metadata);
     }
 
     /**
@@ -660,7 +665,7 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
      * a filename, like {@link File} or {@link URL}, rather than the usual
      * {@linkplain #STANDARD_OUTPUT_TYPE standard output type}. The {@link #names names} and
      * {@link #MIMETypes MIMETypes} fields are set to the values of the wrapped provider,
-     * suffixed with the string given at construction time.
+     * suffixed with the string given to the {@link #addFormatNameSuffix(String)} method.
      * <p>
      * <b>Example:</b> An {@code ImageWriterAdapter} wrapping the {@code "tiff"} image writer
      * with the {@code "-wf"} suffix will have the {@code "tiff-wf"} format name and the
@@ -726,22 +731,6 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
         final boolean acceptStream;
 
         /**
-         * @deprecated Specify a suffix.
-         */
-        @Deprecated
-        protected Spi(final ImageWriterSpi main) {
-            this(main, "");
-        }
-
-        /**
-         * @deprecated Specify a suffix.
-         */
-        @Deprecated
-        protected Spi(final String format) {
-            this(format, "");
-        }
-
-        /**
          * Creates an {@code ImageWriterAdapter.Spi} wrapping the given provider. The fields are
          * initialized as documented in the <a href="#skip-navbar_top">class javadoc</a>. It is up
          * to the subclass to initialize all other instance variables in order to provide working
@@ -751,14 +740,9 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
          * Subclasses can assign new arrays, but should not modify the default array content.
          *
          * @param main The provider of the writers to use for writing the pixel values.
-         * @param formatNameSuffix The suffix to append to {@linkplain #getFormatNames()
-         *        format names} and {@linkplain #getMIMETypes() MIME types}.
-         *
-         * @since 3.20
          */
-        protected Spi(final ImageWriterSpi main, String formatNameSuffix) {
+        protected Spi(final ImageWriterSpi main) {
             ensureNonNull("main", main);
-            ensureNonNull("formatNameSuffix", formatNameSuffix);
             this.main   = main;
             names       = main.getFormatNames();
             suffixes    = main.getFileSuffixes();
@@ -768,13 +752,9 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
             supportsStandardImageMetadataFormat  = main.isStandardImageMetadataFormatSupported();
             nativeStreamMetadataFormatName       = main.getNativeStreamMetadataFormatName();
             nativeImageMetadataFormatName        = main.getNativeImageMetadataFormatName();
-            extraStreamMetadataFormatNames       = addSpatialFormat(main.getExtraStreamMetadataFormatNames());
-            extraImageMetadataFormatNames        = addSpatialFormat(main.getExtraImageMetadataFormatNames());
+            extraStreamMetadataFormatNames       = main.getExtraStreamMetadataFormatNames();
+            extraImageMetadataFormatNames        = main.getExtraImageMetadataFormatNames();
             acceptStream = Classes.isAssignableTo(ImageOutputStream.class, main.getOutputTypes());
-            formatNameSuffix = formatNameSuffix.trim();
-            if (!formatNameSuffix.isEmpty()) {
-                addPrefix(names, MIMETypes, formatNameSuffix);
-            }
         }
 
         /**
@@ -783,14 +763,38 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
          * fetched from the given format name.
          *
          * @param  format The name of the provider to use for writing the pixel values.
-         * @param  suffix The suffix to append to {@linkplain #getFormatNames() format names} and
-         *                {@linkplain #getMIMETypes() MIME types}.
          * @throws IllegalArgumentException If no provider is found for the given format.
+         */
+        protected Spi(final String format) {
+            this(Formats.getWriterByFormatName(format, Spi.class));
+        }
+
+        /**
+         * Adds the given suffix to all {@linkplain #names format names} and
+         * {@linkplain #MIMETypes MIME types}. Subclasses should invoke this
+         * method in their constructor.
+         *
+         * @param suffix The suffix to append to format names and MIME types.
          *
          * @since 3.20
          */
-        protected Spi(final String format, final String suffix) throws IllegalArgumentException {
-            this(Formats.getWriterByFormatName(format, Spi.class), suffix);
+        protected void addFormatNameSuffix(final String suffix) {
+            ImageReaderAdapter.Spi.addFormatNameSuffix(names, MIMETypes, suffix);
+        }
+
+        /**
+         * Adds the {@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#GEOTK_FORMAT_NAME}
+         * format to the list of extra stream or metadata format names, if not already present. This
+         * method does nothing if the format is already listed as the native or an extra format.
+         *
+         * @param stream {@code true} for adding the spatial format to the list of stream formats.
+         * @param image  {@code true} for adding the spatial format to the list of image formats.
+         *
+         * @since 3.20
+         */
+        protected void addSpatialFormat(final boolean stream, final boolean image) {
+            if (stream) extraStreamMetadataFormatNames = ImageReaderAdapter.Spi.addSpatialFormat(nativeStreamMetadataFormatName, extraStreamMetadataFormatNames);
+            if (image)  extraImageMetadataFormatNames  = ImageReaderAdapter.Spi.addSpatialFormat(nativeImageMetadataFormatName,  extraImageMetadataFormatNames);
         }
 
         /**
@@ -806,8 +810,8 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
          */
         @Override
         public IIOMetadataFormat getStreamMetadataFormat(final String formatName) {
-            if (SpatialMetadataFormat.FORMAT_NAME.equals(formatName) && isSpatialMetadataSupported(true)) {
-                return SpatialMetadataFormat.getStreamInstance(null);
+            if (GEOTK_FORMAT_NAME.equals(formatName) && isSpatialMetadataSupported(true)) {
+                return SpatialMetadataFormat.getStreamInstance(GEOTK_FORMAT_NAME);
             }
             return main.getStreamMetadataFormat(formatName);
         }
@@ -817,8 +821,8 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
          */
         @Override
         public IIOMetadataFormat getImageMetadataFormat(final String formatName) {
-            if (SpatialMetadataFormat.FORMAT_NAME.equals(formatName) && isSpatialMetadataSupported(false)) {
-                return SpatialMetadataFormat.getImageInstance(null);
+            if (GEOTK_FORMAT_NAME.equals(formatName) && isSpatialMetadataSupported(false)) {
+                return SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME);
             }
             return main.getImageMetadataFormat(formatName);
         }

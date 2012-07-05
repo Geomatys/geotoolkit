@@ -426,6 +426,7 @@ public class AsciiGridWriter extends TextImageWriter {
             locale          = Locale.US;
             charset         = Charset.forName("US-ASCII");
             lineSeparator   = "\n";
+            nativeStreamMetadataFormatName = null; // No stream metadata.
         }
 
         /**

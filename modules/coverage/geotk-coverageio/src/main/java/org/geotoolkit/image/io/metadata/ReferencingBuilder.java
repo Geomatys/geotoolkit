@@ -52,7 +52,7 @@ import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.naming.DefaultNameSpace;
 import org.geotoolkit.lang.Builder;
 
-import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.FORMAT_NAME;
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 
 
 /**
@@ -60,7 +60,7 @@ import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.FORMAT_NAME
  * {@link MetadataAccessor} for reading and writing the attribute values in the
  * {@link IIOMetadata} object given at construction time. By default, this class
  * uses an accessor for the {@code "RectifiedGridDomain/CoordinateReferenceSystem"}
- * node of the {@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#FORMAT_NAME}
+ * node of the {@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#GEOTK_FORMAT_NAME}
  * format. However a different accessor can be given to the constructor.
  *
  * {@note This class exists because we do not use the reflection mechanism like what we do for
@@ -151,7 +151,7 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
      *         contains a node for the element to fetch.
      */
     public ReferencingBuilder(final IIOMetadata metadata) throws NoSuchElementException {
-        this(new MetadataAccessor(metadata, FORMAT_NAME, "RectifiedGridDomain/CoordinateReferenceSystem", null));
+        this(new MetadataAccessor(metadata, GEOTK_FORMAT_NAME, "RectifiedGridDomain/CoordinateReferenceSystem", null));
     }
 
     /**

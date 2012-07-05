@@ -29,11 +29,11 @@ import org.geotoolkit.test.TestData;
 import org.geotoolkit.image.io.TextImageReader;
 import org.geotoolkit.image.io.TextImageReaderTestBase;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
-import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
 import static org.geotoolkit.test.Commons.*;
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 
 
 /**
@@ -127,7 +127,7 @@ public final strictfp class TextRecordImageReaderTest extends TextImageReaderTes
         final SpatialMetadata metadata = (SpatialMetadata) reader.getImageMetadata(0);
         assertNotNull(metadata);
         assertMultilinesEquals(decodeQuotes(
-            SpatialMetadataFormat.FORMAT_NAME + '\n' +
+            GEOTK_FORMAT_NAME + '\n' +
             "├───RectifiedGridDomain\n" +
             "│   ├───origin=“-19000.0 12690.0”\n" +
             "│   ├───OffsetVectors\n" +

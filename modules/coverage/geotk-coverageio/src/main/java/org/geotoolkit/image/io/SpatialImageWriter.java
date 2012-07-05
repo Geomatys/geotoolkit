@@ -45,6 +45,8 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Locales;
 import org.geotoolkit.resources.IndexedResourceBundle;
 
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
+
 
 /**
  * Base class for writers of spatial (usually geographic) data.
@@ -69,14 +71,14 @@ import org.geotoolkit.resources.IndexedResourceBundle;
  */
 public abstract class SpatialImageWriter extends ImageWriter implements WarningProducer, Disposable {
     /**
-     * Index of the image in process of being written. This convenience index is reset to 0
-     * by {@link #close} method.
+     * Index of the image in process of being written.
+     * This convenience index is reset to 0 by the {@link #close()} method.
      */
     int imageIndex;
 
     /**
-     * Index of the ithumbnail in process of being written. This convenience index
-     * is reset to 0 by {@link #close} method.
+     * Index of the thumbnail in process of being written.
+     * This convenience index is reset to 0 by the {@link #close()} method.
      */
     private int thumbnailIndex;
 
@@ -88,6 +90,25 @@ public abstract class SpatialImageWriter extends ImageWriter implements WarningP
     protected SpatialImageWriter(final Spi provider) {
         super(provider);
         availableLocales = Locales.getAvailableLocales();
+    }
+
+    /**
+     * Returns {@code true} if this writer supports the {@linkplain SpatialMetadataFormat
+     * spatial metadata format}. This method checks if a native or extra metadata format
+     * named {@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#GEOTK_FORMAT_NAME}
+     * is declared in the {@linkplain #originatingProvider originating provider}.
+     *
+     * @param  stream {@code true} for testing stream metadata, or {@code false} for testing
+     *         image metadata.
+     * @return {@code true} if the writer declares to support the spatial metadata format.
+     *
+     * @see Spi#isSpatialMetadataSupported(boolean)
+     *
+     * @since 3.20
+     */
+    final boolean isSpatialMetadataSupported(final boolean stream) {
+        final ImageWriterSpi spi = originatingProvider;
+        return (spi instanceof Spi) && ((Spi) spi).isSpatialMetadataSupported(stream);
     }
 
     /**
@@ -121,7 +142,9 @@ public abstract class SpatialImageWriter extends ImageWriter implements WarningP
     /**
      * Returns a metadata object containing default values for encoding a stream of images.
      * The default implementation returns an instance of {@link SpatialMetadata} using
-     * the {@linkplain SpatialMetadataFormat#getStreamInstance stream format}.
+     * the {@linkplain SpatialMetadataFormat#getStreamInstance(String) stream format} if the
+     * {@linkplain #getOriginatingProvider() originating provider} declares supporting that
+     * format, or {@code null} otherwise.
      *
      * @param param Parameters that will be used to encode the image (in cases where
      *              it may affect the structure of the metadata), or {@code null}.
@@ -129,13 +152,18 @@ public abstract class SpatialImageWriter extends ImageWriter implements WarningP
      */
     @Override
     public SpatialMetadata getDefaultStreamMetadata(final ImageWriteParam param) {
-        return new SpatialMetadata(SpatialMetadataFormat.getStreamInstance(null), this, null);
+        if (!isSpatialMetadataSupported(true)) {
+            return null;
+        }
+        return new SpatialMetadata(SpatialMetadataFormat.getStreamInstance(GEOTK_FORMAT_NAME), this, null);
     }
 
     /**
      * Returns a metadata object containing default values for encoding an image of the given
      * type. The default implementation returns an instance of {@link SpatialMetadata} using
-     * the {@linkplain SpatialMetadataFormat#getImageInstance image format}.
+     * the {@linkplain SpatialMetadataFormat#getImageInstance(String) image format} if the
+     * {@linkplain #getOriginatingProvider() originating provider} declares supporting that
+     * format, or {@code null} otherwise.
      *
      * @param imageType The format of the image to be written later.
      * @param param Parameters that will be used to encode the image (in cases where
@@ -146,7 +174,10 @@ public abstract class SpatialImageWriter extends ImageWriter implements WarningP
     public SpatialMetadata getDefaultImageMetadata(final ImageTypeSpecifier imageType,
                                                    final ImageWriteParam    param)
     {
-        return new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null), this, null);
+        if (!isSpatialMetadataSupported(false)) {
+            return null;
+        }
+        return new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME), this, null);
     }
 
     /**
@@ -167,7 +198,7 @@ public abstract class SpatialImageWriter extends ImageWriter implements WarningP
         if (inData == null) {
             return null;
         }
-        final SpatialMetadataFormat format = SpatialMetadataFormat.getStreamInstance(null);
+        final SpatialMetadataFormat format = SpatialMetadataFormat.getStreamInstance(GEOTK_FORMAT_NAME);
         if (inData instanceof SpatialMetadata) {
             final SpatialMetadata sp = (SpatialMetadata) inData;
             if (format.equals(sp.format)) {
@@ -197,7 +228,7 @@ public abstract class SpatialImageWriter extends ImageWriter implements WarningP
         if (inData == null) {
             return null;
         }
-        final SpatialMetadataFormat format = SpatialMetadataFormat.getImageInstance(null);
+        final SpatialMetadataFormat format = SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME);
         if (inData instanceof SpatialMetadata) {
             final SpatialMetadata sp = (SpatialMetadata) inData;
             if (format.equals(sp.format)) {
@@ -524,15 +555,17 @@ public abstract class SpatialImageWriter extends ImageWriter implements WarningP
      *     <th>Value</th>
      *   </tr><tr>
      *     <td>&nbsp;{@link #nativeStreamMetadataFormatName}&nbsp;</td>
-     *     <td>&nbsp;{@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#FORMAT_NAME}&nbsp;</td>
+     *     <td>&nbsp;{@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#GEOTK_FORMAT_NAME}&nbsp;</td>
      *   </tr><tr>
      *     <td>&nbsp;{@link #nativeImageMetadataFormatName}&nbsp;</td>
-     *     <td>&nbsp;{@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#FORMAT_NAME}&nbsp;</td>
+     *     <td>&nbsp;{@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#GEOTK_FORMAT_NAME}&nbsp;</td>
      * </tr>
      * </table>
      * <p>
      * All other fields are left to their default values ({@code null} or {@code false}).
      * Subclasses are responsible for initializing those fields.
+     * Some subclasses may also restore the {@link #nativeStreamMetadataFormatName} to
+     * {@code null} if they do not support stream metadata.
      *
      * @author Martin Desruisseaux (Geomatys)
      * @version 3.07
@@ -550,20 +583,22 @@ public abstract class SpatialImageWriter extends ImageWriter implements WarningP
          * Subclasses can assign new arrays, but should not modify the default array content.
          */
         protected Spi() {
-            nativeStreamMetadataFormatName = SpatialMetadataFormat.FORMAT_NAME;
-            nativeImageMetadataFormatName  = SpatialMetadataFormat.FORMAT_NAME;
+            nativeStreamMetadataFormatName = GEOTK_FORMAT_NAME;
+            nativeImageMetadataFormatName  = GEOTK_FORMAT_NAME;
         }
 
         /**
          * Returns {@code true} if this provider supports the {@linkplain SpatialMetadataFormat
          * spatial metadata format}. This method checks if a native or extra metadata format
-         * named {@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#FORMAT_NAME}
+         * named {@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#GEOTK_FORMAT_NAME}
          * is declared. This is the case by default unless sublcasses modified the values of
          * the {@code xxxFormatName} fields.
          *
          * @param  stream {@code true} for testing stream metadata, or {@code false} for testing
          *         image metadata.
          * @return {@code true} if the provider declares to support the spatial metadata format.
+         *
+         * @see SpatialImageWriter#isSpatialMetadataSupported(boolean)
          */
         final boolean isSpatialMetadataSupported(final boolean stream) {
             final String   nativeFormat;
@@ -575,8 +610,7 @@ public abstract class SpatialImageWriter extends ImageWriter implements WarningP
                 nativeFormat = nativeImageMetadataFormatName;
                 extraFormats = extraImageMetadataFormatNames;
             }
-            return SpatialMetadataFormat.FORMAT_NAME.equals(nativeFormat) ||
-                    XArrays.contains(extraFormats, SpatialMetadataFormat.FORMAT_NAME);
+            return GEOTK_FORMAT_NAME.equals(nativeFormat) || XArrays.contains(extraFormats, GEOTK_FORMAT_NAME);
         }
 
         /**
@@ -588,8 +622,8 @@ public abstract class SpatialImageWriter extends ImageWriter implements WarningP
          */
         @Override
         public IIOMetadataFormat getStreamMetadataFormat(final String formatName) {
-            if (SpatialMetadataFormat.FORMAT_NAME.equals(formatName) && isSpatialMetadataSupported(true)) {
-                return SpatialMetadataFormat.getStreamInstance(null);
+            if (GEOTK_FORMAT_NAME.equals(formatName) && isSpatialMetadataSupported(true)) {
+                return SpatialMetadataFormat.getStreamInstance(GEOTK_FORMAT_NAME);
             }
             return super.getStreamMetadataFormat(formatName);
         }
@@ -603,8 +637,8 @@ public abstract class SpatialImageWriter extends ImageWriter implements WarningP
          */
         @Override
         public IIOMetadataFormat getImageMetadataFormat(final String formatName) {
-            if (SpatialMetadataFormat.FORMAT_NAME.equals(formatName) && isSpatialMetadataSupported(true)) {
-                return SpatialMetadataFormat.getImageInstance(null);
+            if (GEOTK_FORMAT_NAME.equals(formatName) && isSpatialMetadataSupported(true)) {
+                return SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME);
             }
             return super.getStreamMetadataFormat(formatName);
         }

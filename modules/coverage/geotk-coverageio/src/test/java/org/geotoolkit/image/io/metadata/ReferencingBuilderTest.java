@@ -41,6 +41,7 @@ import org.geotoolkit.test.LocaleDependantTestBase;
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
 import static org.geotoolkit.test.Commons.*;
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 
 
 /**
@@ -58,10 +59,10 @@ public final strictfp class ReferencingBuilderTest extends LocaleDependantTestBa
      */
     @Test
     public void testFormatGeographicCRS() {
-        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null));
+        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME));
         final ReferencingBuilder builder = new ReferencingBuilder(metadata);
         builder.setCoordinateReferenceSystem(DefaultGeographicCRS.WGS84);
-        String expected = SpatialMetadataFormat.FORMAT_NAME + '\n' +
+        String expected = GEOTK_FORMAT_NAME + '\n' +
             "└───RectifiedGridDomain\n" +
             "    └───CoordinateReferenceSystem\n" +
             "        ├───name=“WGS84(DD)”\n" +
@@ -121,10 +122,10 @@ public final strictfp class ReferencingBuilderTest extends LocaleDependantTestBa
     @Test
     public void testFormatProjectedCRS() throws FactoryException {
         final CoordinateReferenceSystem crs = CRS.parseWKT(WKT.PROJCS_MERCATOR);
-        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null));
+        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME));
         final ReferencingBuilder builder = new ReferencingBuilder(metadata);
         builder.setCoordinateReferenceSystem(crs);
-        assertMultilinesEquals(decodeQuotes(SpatialMetadataFormat.FORMAT_NAME + '\n' +
+        assertMultilinesEquals(decodeQuotes(GEOTK_FORMAT_NAME + '\n' +
             "└───RectifiedGridDomain\n" +
             "    └───CoordinateReferenceSystem\n" +
             "        ├───name=“WGS 84 / World Mercator”\n" +
@@ -170,10 +171,10 @@ public final strictfp class ReferencingBuilderTest extends LocaleDependantTestBa
     @Test
     public void testFormatTransverseMercatorCRS() throws FactoryException {
         final CoordinateReferenceSystem crs = CRS.parseWKT(WKT.PROJCS_UTM_10N);
-        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null));
+        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME));
         final ReferencingBuilder builder = new ReferencingBuilder(metadata);
         builder.setCoordinateReferenceSystem(crs);
-        assertMultilinesEquals(decodeQuotes(SpatialMetadataFormat.FORMAT_NAME + '\n' +
+        assertMultilinesEquals(decodeQuotes(GEOTK_FORMAT_NAME + '\n' +
             "└───RectifiedGridDomain\n" +
             "    └───CoordinateReferenceSystem\n" +
             "        ├───name=“NAD_1983_UTM_Zone_10N”\n" +
@@ -237,7 +238,7 @@ public final strictfp class ReferencingBuilderTest extends LocaleDependantTestBa
         /*
          * Following should have been tested by testFormatGeographicCRS()
          */
-        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null));
+        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME));
         final ReferencingBuilder builder = new ReferencingBuilder(metadata);
         builder.setCoordinateReferenceSystem(DefaultGeographicCRS.WGS84);
         /*
@@ -278,7 +279,7 @@ public final strictfp class ReferencingBuilderTest extends LocaleDependantTestBa
          * Following should have been tested by testFormatProjectedCRS()
          */
         final ProjectedCRS originalCRS = (ProjectedCRS) CRS.parseWKT(WKT.PROJCS_MERCATOR);
-        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null));
+        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME));
         final ReferencingBuilder builder = new ReferencingBuilder(metadata);
         builder.setCoordinateReferenceSystem(originalCRS);
         /*

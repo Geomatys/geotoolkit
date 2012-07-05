@@ -48,6 +48,7 @@ import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.resources.Errors;
 
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 
 
 /**
@@ -227,7 +228,7 @@ public class IIOImageHelper {
          */
         final IIOMetadata md = image.getMetadata();
         metadata = (md == null || md instanceof SpatialMetadata) ? (SpatialMetadata) md :
-                    new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null), writer, md);
+                    new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME), writer, md);
     }
 
     /**

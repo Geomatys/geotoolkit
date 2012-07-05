@@ -32,6 +32,7 @@ import org.geotoolkit.test.Depend;
 
 import static org.geotoolkit.test.Assert.*;
 import static org.geotoolkit.test.Commons.*;
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 
 
 /**
@@ -49,9 +50,9 @@ public final strictfp class MetadataAccessorTest {
      */
     @Test
     public void testImageDescription() {
-        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null));
+        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME));
         assertMultilinesEquals("The metadata should initially contains only the root node.",
-            SpatialMetadataFormat.FORMAT_NAME + "\n",
+            GEOTK_FORMAT_NAME + "\n",
             metadata.toString());
         /*
          * Ensure that the metadata is initially empty and that
@@ -63,7 +64,7 @@ public final strictfp class MetadataAccessorTest {
         assertNull(accessor.getAttribute("imagingCondition"));
         assertNull(accessor.getAttributeAsDouble("cloudCoverPercentage"));
         assertMultilinesEquals("MetadataAccessor constructor should have created its node.",
-            SpatialMetadataFormat.FORMAT_NAME + "\n" +
+            GEOTK_FORMAT_NAME + "\n" +
             "└───ImageDescription\n",
             metadata.toString());
         /*
@@ -78,7 +79,7 @@ public final strictfp class MetadataAccessorTest {
         assertEquals("cloud", accessor.getAttribute("imagingCondition"));
         assertEquals(Double.valueOf(20), accessor.getAttributeAsDouble("cloudCoverPercentage"));
         assertMultilinesEquals(decodeQuotes(
-            SpatialMetadataFormat.FORMAT_NAME + "\n" +
+            GEOTK_FORMAT_NAME + "\n" +
             "└───ImageDescription\n"  +
             "    ├───imagingCondition=“cloud”\n" +
             "    └───cloudCoverPercentage=“20.0”\n"),
@@ -117,9 +118,9 @@ public final strictfp class MetadataAccessorTest {
      * The child name shall be either {@code "OffsetVector"} or {@code "#auto"}.
      */
     private void testOffsetVectors(final String childName) {
-        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null));
+        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME));
         assertMultilinesEquals("The metadata should initially contains only the root node.",
-            SpatialMetadataFormat.FORMAT_NAME + "\n",
+            GEOTK_FORMAT_NAME + "\n",
             metadata.toString());
         /*
          * Ensure that the metadata is initially empty and that
@@ -128,7 +129,7 @@ public final strictfp class MetadataAccessorTest {
         final MetadataAccessor accessor = new MetadataAccessor(metadata, null, "RectifiedGridDomain/OffsetVectors", childName);
         assertEquals("OffsetVectors", accessor.name());
         assertMultilinesEquals("MetadataAccessor constructor should have created its node.",
-            SpatialMetadataFormat.FORMAT_NAME + "\n" +
+            GEOTK_FORMAT_NAME + "\n" +
             "└───RectifiedGridDomain\n" +
             "    └───OffsetVectors\n",
             metadata.toString());
@@ -152,7 +153,7 @@ public final strictfp class MetadataAccessorTest {
         accessor.selectChild(1);
         assertTrue(Arrays.equals(accessor.getAttributeAsDoubles("values", false), new double[] {3, 1, 4}));
         assertMultilinesEquals(decodeQuotes(
-            SpatialMetadataFormat.FORMAT_NAME + "\n" +
+            GEOTK_FORMAT_NAME + "\n" +
             "└───RectifiedGridDomain\n"  +
             "    └───OffsetVectors\n"    +
             "        ├───OffsetVector\n" +
@@ -169,7 +170,7 @@ public final strictfp class MetadataAccessorTest {
      */
     @Test
     public void testNonExistentAttribute() {
-        final SpatialMetadata  metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null));
+        final SpatialMetadata  metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME));
         final MetadataAccessor accessor = new MetadataAccessor(metadata, null, "ImageDescription", null);
         accessor.setAttribute("cloudCoverPercentage", 20.0); // For comparison purpose.
         accessor.setAttribute("inexistent", 10.0);
@@ -183,7 +184,7 @@ public final strictfp class MetadataAccessorTest {
         /*
          * Simpliest cases: the element below is known to appear only once.
          */
-        final SpatialMetadataFormat STREAM = SpatialMetadataFormat.getStreamInstance(null);
+        final SpatialMetadataFormat STREAM = SpatialMetadataFormat.getStreamInstance(GEOTK_FORMAT_NAME);
         List<String> paths = MetadataAccessor.listPaths(STREAM, GeographicBoundingBox.class);
         assertEquals(Arrays.asList("DiscoveryMetadata/Extent/GeographicElement"), paths);
         /*
@@ -195,7 +196,7 @@ public final strictfp class MetadataAccessorTest {
          * The element below appears more than once.
          * We don't consider elements order.
          */
-        paths = MetadataAccessor.listPaths(SpatialMetadataFormat.getImageInstance(null), Identifier.class);
+        paths = MetadataAccessor.listPaths(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME), Identifier.class);
         assertEquals(new HashSet<>(Arrays.asList("ImageDescription/ImageQualityCode",
                 "ImageDescription/ProcessingLevelCode")), new HashSet<>(paths));
         /*
@@ -212,11 +213,11 @@ public final strictfp class MetadataAccessorTest {
      */
     @Test
     public void testAutomaticLocation() {
-        SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getStreamInstance(null));
+        SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getStreamInstance(GEOTK_FORMAT_NAME));
         MetadataAccessor accessor = new MetadataAccessor(metadata, "#auto", GeographicBoundingBox.class);
         accessor.setAttribute("inclusion", true);
         assertMultilinesEquals(decodeQuotes(
-            SpatialMetadataFormat.FORMAT_NAME + "\n" +
+            GEOTK_FORMAT_NAME + "\n" +
             "└───DiscoveryMetadata\n" +
             "    └───Extent\n" +
             "        └───GeographicElement\n" +
@@ -225,7 +226,7 @@ public final strictfp class MetadataAccessorTest {
         /*
          * Following should fails because of ambiguity (there is many identifier).
          */
-        metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null));
+        metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME));
         try {
             accessor = new MetadataAccessor(metadata, "#auto", Identifier.class);
             fail(accessor.toString());
@@ -242,7 +243,7 @@ public final strictfp class MetadataAccessorTest {
      */
     @Test
     public void testAutomaticLocationInFallback() {
-        SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getStreamInstance(null));
+        SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getStreamInstance(GEOTK_FORMAT_NAME));
         MetadataAccessor accessor = new MetadataAccessor(metadata, "#auto", GeographicBoundingBox.class);
         assertEquals("GeographicElement", accessor.name());
         accessor.setAttribute("inclusion", true);
@@ -263,7 +264,7 @@ public final strictfp class MetadataAccessorTest {
          * the same name). We are just too lazy for creating a new metadata format, and the
          * approach used here is sufficient for this test.
          */
-        metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null), (ImageReader) null, metadata);
+        metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME), (ImageReader) null, metadata);
         accessor = new MetadataAccessor(metadata, "#auto", RectifiedGrid.class);
         assertEquals("RectifiedGridDomain", accessor.name());
         /*

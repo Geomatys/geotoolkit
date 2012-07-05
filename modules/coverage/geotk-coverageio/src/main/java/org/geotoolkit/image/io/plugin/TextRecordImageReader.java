@@ -44,6 +44,8 @@ import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
 import org.geotoolkit.internal.io.LineReader;
 
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
+
 
 /**
  * Image decoder for text files storing pixel values as records.
@@ -309,7 +311,7 @@ public class TextRecordImageReader extends TextImageReader {
             // Stream metadata.
             return null;
         }
-        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null), this, null);
+        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME), this, null);
         /*
          * Computes the smallest bounding box containing the full image in user coordinates.
          * This implementation searches for minimum and maximum values in x and y columns as

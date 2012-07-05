@@ -142,7 +142,7 @@ final class IIOMetadataChoice implements Serializable {
         }
         String rootName = getFormatName();
         switch (rootName) {
-            case SpatialMetadataFormat.FORMAT_NAME: {
+            case SpatialMetadataFormat.GEOTK_FORMAT_NAME: {
                 rootName = resources.getString(Vocabulary.Keys.GEOSPATIAL);
                 break;
             }

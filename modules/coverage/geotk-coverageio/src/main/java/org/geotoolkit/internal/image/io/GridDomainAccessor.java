@@ -41,7 +41,7 @@ import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.resources.Errors;
 
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
-import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.FORMAT_NAME;
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 import static org.geotoolkit.internal.image.io.DimensionAccessor.fixRoundingError;
 
 
@@ -97,7 +97,7 @@ public final class GridDomainAccessor extends MetadataAccessor {
      *        sub-class is recommended, but not mandatory.
      */
     public GridDomainAccessor(final IIOMetadata metadata) {
-        super(metadata, FORMAT_NAME, "RectifiedGridDomain", null);
+        super(metadata, GEOTK_FORMAT_NAME, "RectifiedGridDomain", null);
     }
 
     /**
@@ -250,7 +250,7 @@ public final class GridDomainAccessor extends MetadataAccessor {
             final PixelOrientation pointInPixel)
     {
         final MetadataAccessor accessor = new MetadataAccessor(
-                metadata, FORMAT_NAME, "SpatialRepresentation", null);
+                metadata, GEOTK_FORMAT_NAME, "SpatialRepresentation", null);
         accessor.setAttribute("numberOfDimensions", centerPoint.length);
         accessor.setAttribute("centerPoint",  centerPoint);
         accessor.setAttribute("pointInPixel", pointInPixel);

@@ -326,7 +326,7 @@ public abstract class TextImageWriter extends StreamImageWriter {
 
     /**
      * Service provider interface (SPI) for {@link TextImageWriter}. This SPI provides additional
-     * fields controling the character encoding ({@link #charset}), the local to use for formating
+     * fields controlling the character encoding ({@link #charset}), the local to use for formating
      * numbers, dates or other objects ({@link #locale}) and the line separator
      * ({@link #lineSeparator}).
      * <p>
