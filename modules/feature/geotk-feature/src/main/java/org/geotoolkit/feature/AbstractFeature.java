@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009-2011, Geomatys
  *
@@ -27,7 +27,8 @@ import org.opengis.feature.GeometryAttribute;
 import org.opengis.feature.Property;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
-import org.opengis.feature.type.GeometryType;
+import org.opengis.feature.type.GeometryDescriptor;
+import org.opengis.feature.type.Name;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.geometry.BoundingBox;
 
@@ -42,10 +43,14 @@ import org.opengis.geometry.BoundingBox;
  */
 public abstract class AbstractFeature<C extends Collection<Property>> extends AbstractComplexAttribute<C,FeatureId> implements Feature {
 
+    private static final Name NOT_FOUND = new DefaultName("notfound");
+
     /**
-     * Default geometry attribute
+     * Default geometry attribute name
+     * We store only the name of the property, otherwise if the properties change
+     * we might become inconsistant with the new default geometry.
      */
-    protected GeometryAttribute defaultGeometry;
+    protected Name defaultGeometryName;
 
     /**
      * Create a Feature with the following content.
@@ -94,7 +99,7 @@ public abstract class AbstractFeature<C extends Collection<Property>> extends Ab
 
         boolean copy = false;
         BoundingBox bounds = null;
-        
+
         for (Iterator itr = getValue().iterator(); itr.hasNext();) {
             final Property property = (Property) itr.next();
             if (property instanceof GeometryAttribute) {
@@ -103,7 +108,7 @@ public abstract class AbstractFeature<C extends Collection<Property>> extends Ab
                 if(bbox == null || bbox.isEmpty()){
                     continue;
                 }
-                
+
                 if(bounds == null){
                     //avoid copying geometry bounds if there is only one
                     bounds = bbox;
@@ -126,35 +131,22 @@ public abstract class AbstractFeature<C extends Collection<Property>> extends Ab
      */
     @Override
     public GeometryAttribute getDefaultGeometryProperty() {
-        if (defaultGeometry != null) {
-            return defaultGeometry;
-        }
 
-        synchronized (this) {
-            if (defaultGeometry == null) {
-                //look it up from the type
-                if (getType().getGeometryDescriptor() == null) {
-                    return null;
-                }
-
-                final GeometryType geometryType = getType().getGeometryDescriptor().getType();
-
-                if (geometryType != null) {
-                    for (Iterator itr = getValue().iterator(); itr.hasNext();) {
-                        final Property property = (Property) itr.next();
-                        if (property instanceof GeometryAttribute) {
-                            if (property.getType().equals(geometryType)) {
-                                defaultGeometry = (GeometryAttribute) property;
-                                break;
-                            }
-                        }
-                    }
-                }
-
+        if (defaultGeometryName == null){
+            //look for it up from the type
+            final GeometryDescriptor baseDesc = getType().getGeometryDescriptor();
+            if (baseDesc == null) {
+                defaultGeometryName = NOT_FOUND;
+            }else{
+                defaultGeometryName = baseDesc.getName();
             }
         }
 
-        return defaultGeometry;
+        if(defaultGeometryName == NOT_FOUND){
+            return null;
+        }else{
+            return (GeometryAttribute) getProperty(defaultGeometryName);
+        }
     }
 
     //TODO: REVISIT
@@ -167,8 +159,6 @@ public abstract class AbstractFeature<C extends Collection<Property>> extends Ab
             throw new IllegalArgumentException("specified attribute is not one of: " + getType());
         }
 
-        synchronized (this) {
-            this.defaultGeometry = defaultGeometry;
-        }
+        this.defaultGeometryName = defaultGeometry.getType().getName();
     }
 }
