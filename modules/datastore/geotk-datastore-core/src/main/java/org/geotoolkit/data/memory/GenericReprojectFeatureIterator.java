@@ -25,6 +25,7 @@ import org.geotoolkit.data.FeatureCollection;
 import com.vividsolutions.jts.geom.Geometry;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -143,7 +144,7 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
         @Override
         public F next() throws DataStoreRuntimeException {
             final Feature next = iterator.next();
-            
+
             final Collection<Property> properties = new ArrayList<Property>();
             for(Property prop : next.getProperties()){
                 if(prop instanceof GeometryAttribute){
@@ -193,7 +194,7 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
                                         Level.WARNING, "A feature in type :"+getFeatureType().getName() +" has no crs.");
                             }
                         }
-                        
+
                     }
                 }
                 properties.add(prop);
@@ -213,13 +214,14 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
     private static final class GenericReuseReprojectFeatureReader<T extends FeatureType, F extends Feature, R extends FeatureReader<T,F>>
             extends GenericReprojectFeatureIterator<F,R>{
 
-        private final List<Property> properties = new ArrayList<Property>();
+        private final Collection<Property> properties;
         private final AbstractFeature feature;
 
         private GenericReuseReprojectFeatureReader(final R reader, final CoordinateReferenceSystem targetCRS)
                                             throws FactoryException, SchemaException{
             super(reader, targetCRS);
-            feature = new DefaultFeature(properties, schema, null);
+            feature = new DefaultFeature(Collections.EMPTY_LIST, schema, null);
+            properties = feature.getProperties();
         }
 
         @Override
@@ -285,7 +287,7 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
         }
 
     }
-    
+
     /**
      * Wrap a FeatureReader with a reprojection and reuse the simple feature each time.
      *
@@ -305,13 +307,13 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
             super(reader, targetCRS);
 
             final SimpleFeatureType ft = (SimpleFeatureType) reader.getFeatureType();
-            values = new Object[ft.getAttributeCount()];            
+            values = new Object[ft.getAttributeCount()];
             geomIndexes = new boolean[values.length];
             feature = new DefaultSimpleFeature((SimpleFeatureType)schema, null, values, false);
 
             for(int i=0;i<values.length;i++){
                geomIndexes[i] = ft.getDescriptor(i) instanceof GeometryDescriptor;
-            }            
+            }
         }
 
         @Override
@@ -370,18 +372,18 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
                     }else{
                         values[i] = null;
                     }
-                    
+
                 }else{
                     values[i] = next.getAttribute(i);
                 }
             }
-            
+
             return (F)feature;
         }
 
     }
-    
-    
+
+
 
     private static final class GenericReprojectFeatureCollection extends WrapFeatureCollection{
 

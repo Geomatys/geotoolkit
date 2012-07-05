@@ -20,6 +20,7 @@ package org.geotoolkit.data.memory;
 import com.vividsolutions.jts.geom.Geometry;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.geotoolkit.data.FeatureIterator;
@@ -110,7 +111,7 @@ public abstract class GenericTransformFeatureIterator<F extends Feature, R exten
             extends GenericTransformFeatureIterator<F,R> implements FeatureReader<T,F>{
 
         private GenericTransformFeatureReader(final R reader, final GeometryTransformer transformer) {
-            super(reader, transformer);            
+            super(reader, transformer);
         }
 
         /**
@@ -165,7 +166,7 @@ public abstract class GenericTransformFeatureIterator<F extends Feature, R exten
     protected static final class GenericReuseTransformFeatureReader<T extends FeatureType, F extends Feature, R extends FeatureReader<T,F>>
             extends GenericTransformFeatureIterator<F,R> implements FeatureReader<T,F>{
 
-        private final List<Property> properties = new ArrayList<Property>();
+        private final Collection<Property> properties;
         private final AbstractFeature feature;
 
         private GenericReuseTransformFeatureReader(final R reader, final GeometryTransformer transformer) {
@@ -173,9 +174,11 @@ public abstract class GenericTransformFeatureIterator<F extends Feature, R exten
 
             final FeatureType ft = reader.getFeatureType();
             if(ft instanceof SimpleFeatureType){
-                feature = new DefaultSimpleFeature((SimpleFeatureType)ft, null, properties, false);
+                properties = new ArrayList<Property>();
+                feature = new DefaultSimpleFeature((SimpleFeatureType)ft, null, (List)properties, false);
             }else{
-                feature = new DefaultFeature(properties, ft, null);
+                feature = new DefaultFeature(Collections.EMPTY_LIST, ft, null);
+                properties = feature.getProperties();
             }
 
         }
@@ -260,7 +263,7 @@ public abstract class GenericTransformFeatureIterator<F extends Feature, R exten
                 //re-use same feature
                 return new GenericReuseTransformFeatureReader(reader, transformer);
             }
-            
+
         } else {
             return reader;
         }

@@ -223,10 +223,14 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
         }finally{
             e.close();
         }
-            
+
     }
-    
-    
+
+    @Override
+    public String toString() {
+        return "FeatureCollection\n"+String.valueOf(getFeatureType());
+    }
+
     /**
      * {@inheritDoc }
      */
