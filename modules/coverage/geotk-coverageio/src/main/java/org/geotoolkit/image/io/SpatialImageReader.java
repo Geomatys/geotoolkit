@@ -1200,7 +1200,7 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
      * @return {@code true} if the message has been sent to at least one warning listener,
      *         or {@code false} if it has been sent to the logging system as a fallback.
      *
-     * @see org.geotoolkit.image.io.metadata.MetadataAccessor#warningOccurred(LogRecord)
+     * @see org.geotoolkit.image.io.metadata.MetadataNodeParser#warningOccurred(LogRecord)
      */
     @Override
     public boolean warningOccurred(final LogRecord record) {

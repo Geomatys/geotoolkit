@@ -42,7 +42,7 @@ import org.geotoolkit.test.referencing.WKT;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.image.io.metadata.ReferencingBuilder;
-import org.geotoolkit.image.io.metadata.MetadataAccessor;
+import org.geotoolkit.image.io.metadata.MetadataNodeAccessor;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
 
@@ -181,6 +181,6 @@ public abstract strictfp class TextImageWriterTestBase extends ImageWriterTestCa
      * This is used for forcing recreation of objects, for testing this creation process.
      */
     private static void clearUserObject(final IIOMetadata metadata, final Class<? extends IdentifiedObject> type) {
-        new MetadataAccessor(metadata, SpatialMetadataFormat.GEOTK_FORMAT_NAME, type).setUserObject(null);
+        new MetadataNodeAccessor(metadata, SpatialMetadataFormat.GEOTK_FORMAT_NAME, type).setUserObject(null);
     }
 }

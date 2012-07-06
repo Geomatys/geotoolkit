@@ -51,7 +51,7 @@ import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMA
  *
  * @since 3.06
  */
-@Depend(MetadataAccessorTest.class)
+@Depend(MetadataNodeAccessorTest.class)
 public final strictfp class MetadataProxyTest {
     /**
      * Tests the proxy with some properties defined under the {@code "ImageDescription"} node
@@ -60,7 +60,7 @@ public final strictfp class MetadataProxyTest {
     @Test
     public void testImageDescription() {
         final SpatialMetadata  metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME));
-        final MetadataAccessor accessor = new MetadataAccessor(metadata, null, "ImageDescription", null);
+        final MetadataNodeAccessor accessor = new MetadataNodeAccessor(metadata, null, "ImageDescription", null);
         final ImageDescription proxy    = accessor.newProxyInstance(ImageDescription.class);
         /*
          * Test the properties before they are defined.
@@ -100,8 +100,8 @@ public final strictfp class MetadataProxyTest {
     @Test
     public void testImageQualityCode() {
         final SpatialMetadata  metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME));
-        final MetadataAccessor accessor = new MetadataAccessor(metadata, null, "ImageDescription", null);
-        final MetadataAccessor qualityA = new MetadataAccessor(metadata, null, "ImageDescription/ImageQualityCode", null);
+        final MetadataNodeAccessor accessor = new MetadataNodeAccessor(metadata, null, "ImageDescription", null);
+        final MetadataNodeAccessor qualityA = new MetadataNodeAccessor(metadata, null, "ImageDescription/ImageQualityCode", null);
         qualityA.setAttribute("code",      "okay");
         qualityA.setAttribute("authority", "Geotoolkit.org");
         accessor.setAttribute("cloudCoverPercentage", 20); // Test mixing attributes with elements.
@@ -124,7 +124,7 @@ public final strictfp class MetadataProxyTest {
     @Test
     public void testKeywords() {
         final SpatialMetadata  metadata = new SpatialMetadata(SpatialMetadataFormat.getStreamInstance(GEOTK_FORMAT_NAME));
-        final MetadataAccessor accessor = new MetadataAccessor(metadata, null,
+        final MetadataNodeAccessor accessor = new MetadataNodeAccessor(metadata, null,
                 "DiscoveryMetadata/DescriptiveKeywords", "DescriptiveKeywordsEntry");
         accessor.selectChild(accessor.appendChild());
         accessor.setAttribute("keywords", "red", "yellow or green", "blue");
@@ -133,7 +133,7 @@ public final strictfp class MetadataProxyTest {
         /*
          * Build the metadata objects.
          */
-        final MetadataAccessor rootAccessor = new MetadataAccessor(metadata, null, "DiscoveryMetadata", null);
+        final MetadataNodeAccessor rootAccessor = new MetadataNodeAccessor(metadata, null, "DiscoveryMetadata", null);
         final DataIdentification identification = rootAccessor.newProxyInstance(DataIdentification.class);
         assertMultilinesEquals(decodeQuotes(
             "DataIdentification[“DiscoveryMetadata”]\n" +
@@ -164,7 +164,7 @@ public final strictfp class MetadataProxyTest {
     @Test
     public void testDimensionList() {
         final SpatialMetadata  metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME));
-        final MetadataAccessor accessor = new MetadataAccessor(metadata, null, "ImageDescription/Dimensions", "Dimension");
+        final MetadataNodeAccessor accessor = new MetadataNodeAccessor(metadata, null, "ImageDescription/Dimensions", "Dimension");
         final List<SampleDimension> dimensions = accessor.newProxyList(SampleDimension.class);
         for (int i=1; i<=4; i++) {
             accessor.selectChild(accessor.appendChild());
@@ -200,7 +200,7 @@ public final strictfp class MetadataProxyTest {
     @Test
     public void testDimensions() {
         final SpatialMetadata  metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME));
-        final MetadataAccessor accessor = new MetadataAccessor(metadata, null, "ImageDescription/Dimensions", "Dimension");
+        final MetadataNodeAccessor accessor = new MetadataNodeAccessor(metadata, null, "ImageDescription/Dimensions", "Dimension");
         for (int i=1; i<=4; i++) {
             accessor.selectChild(accessor.appendChild());
             accessor.setAttribute("minValue", -i);
@@ -211,7 +211,7 @@ public final strictfp class MetadataProxyTest {
          * current implementation does not detect element additions when they are not performed
          * by the same accessor.
          */
-        final MetadataAccessor rootAccessor = new MetadataAccessor(metadata, null, "ImageDescription", null);
+        final MetadataNodeAccessor rootAccessor = new MetadataNodeAccessor(metadata, null, "ImageDescription", null);
         final ImageDescription proxy = rootAccessor.newProxyInstance(ImageDescription.class);
         final Collection<? extends RangeDimension> dimensions = proxy.getDimensions();
         assertEquals(4, dimensions.size());
@@ -243,12 +243,12 @@ public final strictfp class MetadataProxyTest {
     @Test
     public void testSpatialResolution() {
         final SpatialMetadata  metadata = new SpatialMetadata(SpatialMetadataFormat.getStreamInstance(GEOTK_FORMAT_NAME));
-        final MetadataAccessor accessor = new MetadataAccessor(metadata, null, "DiscoveryMetadata/SpatialResolution", null);
+        final MetadataNodeAccessor accessor = new MetadataNodeAccessor(metadata, null, "DiscoveryMetadata/SpatialResolution", null);
         accessor.setAttribute("distance", 40);
         /*
          * Build the metadata objects.
          */
-        final MetadataAccessor rootAccessor = new MetadataAccessor(metadata, null, "DiscoveryMetadata", null);
+        final MetadataNodeAccessor rootAccessor = new MetadataNodeAccessor(metadata, null, "DiscoveryMetadata", null);
         final DataIdentification identification = rootAccessor.newProxyInstance(DataIdentification.class);
         assertMultilinesEquals(decodeQuotes(
             "DataIdentification[“DiscoveryMetadata”]\n" +
@@ -269,12 +269,12 @@ public final strictfp class MetadataProxyTest {
     @Test
     public void testRectifiedGrid() {
         final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME));
-        final MetadataAccessor rootAccessor = new MetadataAccessor(metadata, null, "RectifiedGridDomain", null);
+        final MetadataNodeAccessor rootAccessor = new MetadataNodeAccessor(metadata, null, "RectifiedGridDomain", null);
         rootAccessor.setAttribute("origin", -180.0, 90.0);
-        MetadataAccessor accessor = new MetadataAccessor(rootAccessor, "Limits", null);
+        MetadataNodeAccessor accessor = new MetadataNodeAccessor(rootAccessor, "Limits", null);
         accessor.setAttribute("low",  new int[] {  0,   0});
         accessor.setAttribute("high", new int[] {719, 359});
-        accessor = new MetadataAccessor(rootAccessor, "OffsetVectors", "OffsetVector");
+        accessor = new MetadataNodeAccessor(rootAccessor, "OffsetVectors", "OffsetVector");
         accessor.selectChild(accessor.appendChild()); accessor.setAttribute("values", 0.5,  0);
         accessor.selectChild(accessor.appendChild()); accessor.setAttribute("values", 0, -0.5);
         /*

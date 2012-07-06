@@ -52,7 +52,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
-import org.geotoolkit.image.io.metadata.MetadataAccessor;
+import org.geotoolkit.image.io.metadata.MetadataNodeAccessor;
 import org.geotoolkit.image.io.metadata.ReferencingBuilder;
 import org.geotoolkit.internal.image.io.NetcdfVariable;
 import org.geotoolkit.internal.image.io.SampleMetadataFormat;
@@ -160,15 +160,15 @@ final class NetcdfMetadata extends SpatialMetadata {
         extraMetadataFormatNames = XArrays.append(extraMetadataFormatNames, ISO_FORMAT_NAME);
         Attribute attr = file.findGlobalAttribute("project_name");
         if (attr != null) {
-            final MetadataAccessor ac = new MetadataAccessor(this, DiscoveryAccessor.ROOT);
+            final MetadataNodeAccessor ac = new MetadataNodeAccessor(this, DiscoveryAccessor.ROOT);
             ac.setAttribute("citation", attr.getStringValue());
         }
-        MetadataAccessor ac = null;
+        MetadataNodeAccessor ac = null;
         for (int i=0; i<BBOX.length; i+=2) {
             attr = file.findGlobalAttribute(BBOX[i]);
             if (attr != null) {
                 if (ac == null) {
-                    ac = new MetadataAccessor(this, DiscoveryAccessor.GEOGRAPHIC_ELEMENT);
+                    ac = new MetadataNodeAccessor(this, DiscoveryAccessor.GEOGRAPHIC_ELEMENT);
                     ac.setAttribute("inclusion", true);
                 }
                 ac.setAttribute(BBOX[i+1], attr.getStringValue());

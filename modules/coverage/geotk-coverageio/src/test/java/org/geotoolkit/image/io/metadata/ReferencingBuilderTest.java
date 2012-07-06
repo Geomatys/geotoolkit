@@ -52,7 +52,7 @@ import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMA
  *
  * @since 3.07
  */
-@Depend(MetadataAccessorTest.class)
+@Depend(MetadataNodeAccessorTest.class)
 public final strictfp class ReferencingBuilderTest extends LocaleDependantTestBase {
     /**
      * Tests the formatting of the WGS84 CRS.
@@ -249,6 +249,7 @@ public final strictfp class ReferencingBuilderTest extends LocaleDependantTestBa
         GeodeticDatum datum = ((GeographicCRS) crs).getDatum();
 
         assertSame(DefaultGeographicCRS.WGS84,       crs);
+        assertSame(DefaultGeodeticDatum.WGS84,       datum);
         assertSame(DefaultEllipsoidalCS.GEODETIC_2D, builder.getCoordinateSystem(CoordinateSystem.class));
         assertSame(DefaultGeodeticDatum.WGS84,       builder.getDatum(Datum.class));
 
@@ -290,6 +291,7 @@ public final strictfp class ReferencingBuilderTest extends LocaleDependantTestBa
         GeodeticDatum datum = ((ProjectedCRS) crs).getDatum();
 
         assertSame(originalCRS, crs);
+        assertSame(originalCRS.getDatum(), datum);
         assertSame(originalCRS.getCoordinateSystem(), builder.getCoordinateSystem(CoordinateSystem.class));
         assertSame(originalCRS.getDatum(),            builder.getDatum(Datum.class));
 

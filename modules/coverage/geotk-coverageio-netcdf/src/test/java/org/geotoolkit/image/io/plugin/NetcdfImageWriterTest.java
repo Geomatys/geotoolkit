@@ -87,6 +87,7 @@ public final strictfp class NetcdfImageWriterTest extends ImageWriterTestCase {
     @Override
     protected void completeImageMetadata(final IIOMetadata iio, final RenderedImage image) throws IOException {
         super.completeImageMetadata(iio, image);
+        if (true) return; // Not yet ready (TODO).
         if (image != null) {
             final DefaultMetadata metadata = new DefaultMetadata();
             final IIOMetadataNode root = new IIOMetadataNode(ISO_FORMAT_NAME);

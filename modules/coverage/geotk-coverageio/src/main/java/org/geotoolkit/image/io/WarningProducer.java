@@ -39,14 +39,14 @@ import org.geotoolkit.util.logging.Logging;
  *
  *   <li><p>Otherwise the record is logged using the {@link #LOGGER} declared in this interface.</p></li>
  * </ol>
- * 
+ *
  * In many cases the {@code warningOccured} method delegates its work to an other
  * {@code WarningProducer} until an {@code ImageReader} or {@code ImageWriter} is
  * found. For example the chain of delegations can be as below:
  * <p>
  * <ol>
  *   <li>{@link org.geotoolkit.image.io.metadata.ReferencingBuilder}</li>
- *   <li>{@link org.geotoolkit.image.io.metadata.MetadataAccessor#warningOccurred(LogRecord)}</li>
+ *   <li>{@link org.geotoolkit.image.io.metadata.MetadataNodeParser#warningOccurred(LogRecord)}</li>
  *   <li>{@link org.geotoolkit.image.io.metadata.SpatialMetadata#warningOccurred(LogRecord)}</li>
  *   <li>{@link org.geotoolkit.image.io.SpatialImageReader#warningOccurred(LogRecord)}</li>
  *   <li>{@link javax.imageio.ImageReader#processWarningOccurred(String)}</li>
@@ -65,7 +65,7 @@ import org.geotoolkit.util.logging.Logging;
  * @see SpatialImageReader#warningOccurred(LogRecord)
  * @see SpatialImageWriter#warningOccurred(LogRecord)
  * @see org.geotoolkit.image.io.metadata.SpatialMetadata#warningOccurred(LogRecord)
- * @see org.geotoolkit.image.io.metadata.MetadataAccessor#warningOccurred(LogRecord)
+ * @see org.geotoolkit.image.io.metadata.MetadataNodeParser#warningOccurred(LogRecord)
  *
  * @since 3.08
  * @module
@@ -83,11 +83,11 @@ public interface WarningProducer extends Localized {
      *
      * <blockquote>
      * {@link org.geotoolkit.image.io.metadata.ReferencingBuilder} &rarr;
-     * {@link org.geotoolkit.image.io.metadata.MetadataAccessor} &rarr;
+     * {@link org.geotoolkit.image.io.metadata.MetadataNodeParser} &rarr;
      * {@link org.geotoolkit.image.io.metadata.SpatialMetadata} &rarr;
      * ({@link SpatialImageReader} or {@link SpatialImageWriter})
      * </blockquote>
-     * 
+     *
      * This method is public for allowing such forwarding.
      *
      * @param  record The warning that occurred.
