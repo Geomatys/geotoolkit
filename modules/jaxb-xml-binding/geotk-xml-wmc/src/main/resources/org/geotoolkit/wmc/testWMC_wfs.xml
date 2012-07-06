@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<ViewContext version="1.1.0"
+             id="eos_data_gateways"
+             xmlns="http://www.opengis.net/context"
+             xmlns:xlink="http://www.w3.org/1999/xlink"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.opengeospatial.net/context context.xsd">
+    
+    <General>
+        <Window width="500" height="300" />
+        <BoundingBox SRS="EPSG:4326" minx="-180.000000" miny="-90.000000" maxx="180.000000"
+             maxy="90.000000"/>
+        <Title>WFS Test Data</Title>
+        <KeywordList>
+            <Keyword>Geomatys</Keyword>
+            <Keyword>WFS</Keyword>
+            <Keyword>TEST</Keyword>
+            <Keyword>EUROPE</Keyword>
+        </KeywordList>
+        <Abstract>Map view of feature samples.</Abstract>
+    </General>
+    
+    <LayerList>
+        
+        <Layer queryable="1" hidden="0">
+            <Server service="OGC:WFS" version="1.1.0" title="Geomatys WFS">
+                <OnlineResource xlink:type="simple"
+                xlink:href="http://demo.geomatys.com/cstl-trunk/WS/wfs/default"/>
+            </Server>
+            <Name>{http://geotoolkit.org}veg-degrad</Name>
+            <Title>végétation dégradée</Title>
+            <Abstract>Here should be a description</Abstract>
+            <SRS>EPSG:4326</SRS>
+        </Layer>
+        
+        <Layer queryable="0" hidden="0">
+            <Server service="OGC:WFS" version="1.1.0" title="Geomatys WFS">
+                <OnlineResource xlink:type="simple"
+                xlink:href="http://demo.geomatys.com/cstl-trunk/WS/wfs/default"/>
+            </Server>
+            <Name>{http://geotoolkit.org}veg-ligneux</Name>
+            <Title>Végétation : ligneux</Title>
+            <SRS>EPSG:4326</SRS>
+        </Layer>
+        
+        <Layer queryable="1" hidden="0">
+            <Server service="OGC:WFS" version="1.1.0" title="Geomatys WFS">
+                <OnlineResource xlink:type="simple"
+                xlink:href="http://demo.geomatys.com/cstl-trunk/WS/wfs/default"/>
+            </Server>
+            <Name>{http://geotoolkit.org}agri</Name>
+            <Title>Zones agricoles</Title>
+            <SRS>EPSG:4326</SRS>
+        </Layer>
+        
+    </LayerList>
+    
+</ViewContext>
