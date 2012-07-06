@@ -30,13 +30,13 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "providerReference",
+    "dataReference",
     "styleReference"
 })
 @XmlRootElement(name = "MapLayer")
 public class MapLayer extends MapItem {
-    @XmlElement(name = "providerReference", required = true)
-    private ProviderReference providerReference;
+    @XmlElement(name = "dataReference", required = true)
+    private DataReference dataReference;
 
     @XmlElement(name = "styleReference")
     private StyleReference styleReference;
@@ -44,17 +44,17 @@ public class MapLayer extends MapItem {
     MapLayer(){
     }
 
-    public MapLayer(final ProviderReference providerReference, final StyleReference styleReference) {
-        this.providerReference = providerReference;
+    public MapLayer(final DataReference dataReference, final StyleReference styleReference) {
+        this.dataReference = dataReference;
         this.styleReference = styleReference;
     }
 
-    public ProviderReference getProviderReference() {
-        return providerReference;
+    public DataReference getDataReference() {
+        return dataReference;
     }
 
-    public void setProviderReference(final ProviderReference providerReference) {
-        this.providerReference = providerReference;
+    public void setDataReference(final DataReference dataReference) {
+        this.dataReference = dataReference;
     }
 
     public StyleReference getStyleReference() {

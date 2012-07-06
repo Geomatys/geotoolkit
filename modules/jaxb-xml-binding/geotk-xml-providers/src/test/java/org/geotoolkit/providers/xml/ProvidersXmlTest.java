@@ -47,17 +47,17 @@ public class ProvidersXmlTest {
             "    <MapItem>\n"+
             "        <MapItem>\n"+
             "            <MapLayer>\n"+
-            "                <providerReference>postgis_test:my_otherlayer</providerReference>\n"+
+            "                <dataReference>postgis_test:my_otherlayer</dataReference>\n"+
             "                <styleReference>my_otherstyle</styleReference>\n"+
             "            </MapLayer>\n"+
             "            <MapLayer>\n"+
-            "                <providerReference>coverage:my_thirdlayer</providerReference>\n"+
+            "                <dataReference>coverage:my_thirdlayer</dataReference>\n"+
             "                <styleReference>my_newstyle</styleReference>\n"+
             "            </MapLayer>\n"+
             "        </MapItem>\n"+
             "        <MapItem/>\n"+
             "        <MapLayer>\n"+
-            "            <providerReference>postgis_test:my_layer</providerReference>\n"+
+            "            <dataReference>postgis_test:my_layer</dataReference>\n"+
             "            <styleReference>my_style</styleReference>\n"+
             "        </MapLayer>\n"+
             "    </MapItem>\n"+
@@ -78,13 +78,13 @@ public class ProvidersXmlTest {
     @Test
     public void testMarshalling() throws JAXBException {
         final List<MapItem> mapLayers2 = new ArrayList<MapItem>();
-        mapLayers2.add(new MapLayer(new ProviderReference("postgis_test:my_otherlayer"), new StyleReference("my_otherstyle")));
-        mapLayers2.add(new MapLayer(new ProviderReference("coverage:my_thirdlayer"), new StyleReference("my_newstyle")));
+        mapLayers2.add(new MapLayer(new DataReference("postgis_test:my_otherlayer"), new StyleReference("my_otherstyle")));
+        mapLayers2.add(new MapLayer(new DataReference("coverage:my_thirdlayer"), new StyleReference("my_newstyle")));
 
         final List<MapItem> mapItems = new ArrayList<MapItem>();
         mapItems.add(new MapItem(mapLayers2));
 
-        final MapLayer ml = new MapLayer(new ProviderReference("postgis_test:my_layer"), new StyleReference("my_style"));
+        final MapLayer ml = new MapLayer(new DataReference("postgis_test:my_layer"), new StyleReference("my_style"));
         mapItems.add(new MapItem());
         mapItems.add(ml);
         final MapItem mapItem = new MapItem(mapItems);
@@ -124,14 +124,14 @@ public class ProvidersXmlTest {
         assertEquals(3, mapItems.size());
 
         final MapLayer ml0 = (MapLayer) mapItems.get(0).getMapItems().get(0);
-        assertEquals("postgis_test:my_otherlayer", ml0.getProviderReference().getValue());
+        assertEquals("postgis_test:my_otherlayer", ml0.getDataReference().getValue());
         assertEquals("my_otherstyle", ml0.getStyleReference().getValue());
 
         final MapLayer ml1 = (MapLayer) mapItems.get(0).getMapItems().get(1);
-        assertEquals("coverage:my_thirdlayer", ml1.getProviderReference().getValue());
+        assertEquals("coverage:my_thirdlayer", ml1.getDataReference().getValue());
         assertEquals("my_newstyle", ml1.getStyleReference().getValue());
 
-        assertEquals("postgis_test:my_layer", ((MapLayer)mapItems.get(2)).getProviderReference().getValue());
+        assertEquals("postgis_test:my_layer", ((MapLayer)mapItems.get(2)).getDataReference().getValue());
         assertEquals("my_style", ((MapLayer)mapItems.get(2)).getStyleReference().getValue());
     }
 

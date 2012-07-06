@@ -32,15 +32,15 @@ import javax.xml.bind.annotation.XmlValue;
 @XmlType(name = "", propOrder = {
     "value"
 })
-@XmlRootElement(name = "ProviderReference")
-public class ProviderReference {
+@XmlRootElement(name = "DataReference")
+public class DataReference {
     @XmlValue
     private String value;
 
-    ProviderReference() {
+    DataReference() {
     }
 
-    public ProviderReference(final String value) {
+    public DataReference(final String value) {
         this.value = value;
     }
 
@@ -54,6 +54,6 @@ public class ProviderReference {
 
     @Override
     public String toString() {
-        return "[ProviderReference]\nvalue:"+ value;
+        return "[DataReference]\nvalue:"+ value;
     }
 }
