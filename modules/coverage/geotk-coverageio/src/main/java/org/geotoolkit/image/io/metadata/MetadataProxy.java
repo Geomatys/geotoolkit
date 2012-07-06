@@ -100,7 +100,7 @@ final class MetadataProxy<T> implements InvocationHandler {
      * The metadata accessor. This is used for fetching the value of an attribute. The name of
      * the attribute is inferred from the method name using the {@linkplain #namesMapping} map.
      */
-    final MetadataAccessor accessor;
+    final MetadataNodeParser accessor;
 
     /**
      * The index of the child element, or -1 if none.
@@ -138,7 +138,7 @@ final class MetadataProxy<T> implements InvocationHandler {
     /**
      * Creates a new proxy for the given metadata accessor.
      */
-    MetadataProxy(final Class<T> type, final MetadataAccessor accessor) {
+    MetadataProxy(final Class<T> type, final MetadataNodeParser accessor) {
         interfaceType = type;
         this.accessor = accessor;
         this.index    = -1;
@@ -158,7 +158,7 @@ final class MetadataProxy<T> implements InvocationHandler {
      * @throws IllegalArgumentException If the given type is not a valid interface
      *         (see {@link Proxy} javadoc for a list of the conditions).
      */
-    static <T> T newProxyInstance(final Class<T> type, final MetadataAccessor accessor) {
+    static <T> T newProxyInstance(final Class<T> type, final MetadataNodeParser accessor) {
         return type.cast(Proxy.newProxyInstance(MetadataProxy.class.getClassLoader(),
                 new Class<?>[] {type}, new MetadataProxy<T>(type, accessor)));
     }
@@ -194,7 +194,8 @@ final class MetadataProxy<T> implements InvocationHandler {
          * conventions. If the prefix is not "is", the code below assumes "get" or "set".
          */
         final int offset = methodName.startsWith("is") ? 2 : 3; // Prefix length
-        switch (methodName.length() - offset) {
+        final int length = methodName.length();
+        switch (length - offset) {
             default: {
                 /*
                  * If there is at least 2 characters after the prefix, assume that
@@ -211,7 +212,9 @@ final class MetadataProxy<T> implements InvocationHandler {
                 /*
                  * If we have at least one character, make the first character lower-case.
                  */
-                return Character.toLowerCase(methodName.charAt(offset)) + methodName.substring(offset + 1);
+                return new StringBuilder(length - offset)
+                        .append(Character.toLowerCase(methodName.charAt(offset)))
+                        .append(methodName, offset+1, length).toString();
             }
             case 0: {
                 /*
@@ -336,7 +339,7 @@ final class MetadataProxy<T> implements InvocationHandler {
          * Gets the name of the attribute to fetch, and set the accessor
          * child index on the children represented by this proxy (if any).
          */
-        final MetadataAccessor accessor = this.accessor;
+        final MetadataNodeParser accessor = this.accessor;
         final String name = getAttributeName(methodName);
         if (index >= 0) {
             accessor.selectChild(index);
@@ -452,23 +455,23 @@ final class MetadataProxy<T> implements InvocationHandler {
             List<?> list = (List<?>) childs.get(methodName);
             if (list == null) {
                 String elementName = SpatialMetadataFormat.toElementName(name);
-                MetadataAccessor acc;
+                final MetadataNodeParser acc;
                 try {
-                    acc = new ReadOnlyAccessor(accessor, elementName);
+                    acc = new MetadataNodeParser(accessor, elementName, "#auto");
                 } catch (IllegalArgumentException e) {
                     /*
                      * This exception happen when no node for 'elementName' is defined in the
                      * IIOMetadataFormat used by the accessor. For example, DiscoveryMetadata
                      * node in stream SpatialMetadataFormat omits the 'languages' attribute.
                      */
-                    Logging.recoverableException(MetadataAccessor.LOGGER, interfaceType, methodName, e);
+                    Logging.recoverableException(MetadataNodeParser.LOGGER, interfaceType, methodName, e);
                     return null;
                 } catch (NoSuchElementException e) {
                     // There is no value for this node.
                     return Collections.emptyList();
                 }
                 /*
-                 * At this point we have a MetadataAccessor to a node which is known to exist.
+                 * At this point we have a MetadataNodeParser to a node which is known to exist.
                  * This node may have no children, in which case we need to wraps the singleton
                  * in a list.
                  */
@@ -504,7 +507,7 @@ final class MetadataProxy<T> implements InvocationHandler {
                 // Each of the last 3 lines may throw, directly or indirectly, an IllegalArgumentException.
                 final String   elementName = SpatialMetadataFormat.toElementName(name);
                 final Class<?> elementType = getElementClass(elementName, targetType);
-                final MetadataAccessor acc = new ReadOnlyAccessor(accessor, elementName);
+                final MetadataNodeParser acc = new MetadataNodeParser(accessor, elementName, "#auto");
                 child = acc.isEmpty() ? Void.TYPE : acc.newProxyInstance(elementType);
             } catch (IllegalArgumentException e) {
                 /*
@@ -563,7 +566,7 @@ final class MetadataProxy<T> implements InvocationHandler {
 
     /**
      * Returns a string representation of the {@linkplain #accessor}, but declaring the
-     * class as {@code MetadataProxy} instead than {@code MetadataAccessor}.
+     * class as {@code MetadataProxy} instead than {@code MetadataNodeParser}.
      */
     @Override
     public String toString() {

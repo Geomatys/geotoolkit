@@ -63,6 +63,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.XArrays;
 
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 import static org.geotoolkit.internal.image.io.DimensionAccessor.fixRoundingError;
 
 
@@ -288,7 +289,7 @@ final class GridCoverageLoader extends ImageCoverageReader {
      * Creates stream metadata for the given geographic bounding box.
      */
     static SpatialMetadata createStreamMetadata(final GeographicBoundingBox bbox) {
-        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getStreamInstance(null));
+        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getStreamInstance(GEOTK_FORMAT_NAME));
         if (bbox != null) {
             final DiscoveryAccessor accessor = new DiscoveryAccessor(metadata) {
                 @Override protected double nice(final double value) {
@@ -323,7 +324,7 @@ final class GridCoverageLoader extends ImageCoverageReader {
     static SpatialMetadata createImageMetadata(final Locale locale,
             final List<GridSampleDimension> bands, final GeneralGridGeometry geometry)
     {
-        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null));
+        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME));
         if (bands != null) {
             final DimensionAccessor accessor = new DimensionAccessor(metadata);
             for (GridSampleDimension band : bands) {

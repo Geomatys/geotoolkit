@@ -25,6 +25,7 @@ import java.awt.Point;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.image.Raster;
@@ -36,6 +37,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.awt.image.IndexColorModel;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
@@ -56,6 +58,7 @@ import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
@@ -79,6 +82,7 @@ import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
 import org.geotoolkit.referencing.operation.transform.LogarithmicTransform1D;
+import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
 import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.image.io.PaletteFactory;
 import org.geotoolkit.resources.Errors;
@@ -1014,6 +1018,62 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
     }
 
     /**
+     * Implementation of {@link #getAffineGridToCRS()} with control on the desired pixel orientation.
+     *
+     * @param orientation The desired orientation, or {@code null} for the default.
+     * @param force Whatever to force the transform to have the specified orientation if we get the
+     *              transform from the {@link #gridToCRS} field rather than {@link #gridGeometry}.
+     */
+    private AffineTransform getAffineGridToCRS(final PixelOrientation orientation, boolean force)
+            throws IllegalStateException
+    {
+        MathTransform candidate = gridToCRS;
+        if (candidate == null) {
+            final GridGeometry2D gridGeometry = GridGeometry2D.castOrCopy(getGridGeometry(false));
+            if (gridGeometry == null || (!force && !gridGeometry.isDefined(GridGeometry2D.GRID_TO_CRS))) {
+                return null;
+            }
+            final PixelInCell pixelAnchor = this.pixelAnchor;
+            if (pixelAnchor == null) {
+                candidate = gridGeometry.getGridToCRS2D();
+            } else {
+                candidate = gridGeometry.getGridToCRS2D(orientation);
+            }
+            force = false;
+        }
+        if (candidate instanceof AffineTransform) {
+            AffineTransform at = (AffineTransform) candidate;
+            if (force) {
+                final double offset = -0.5 - PixelTranslation.getPixelTranslation(getPixelAnchor());
+                if (offset != 0) {
+                    at = new AffineTransform(at);
+                    at.translate(offset, offset);
+                }
+            }
+            return at;
+        }
+        throw new IllegalStateException(Errors.format(Errors.Keys.NOT_AN_AFFINE_TRANSFORM));
+    }
+
+    /**
+     * Returns two-dimensional part of the current <cite>grid to CRS</cite> affine transform.
+     * This method gets the transform as documented in the {@link #getGridToCRS()} method,
+     * except that it tries to extract only the two-dimensional component of that transform.
+     * <p>
+     * Whatever the returned transform maps pixel centers or pixel corners depends on the
+     * {@link #pixelAnchor} value.
+     *
+     * @return The <cite>grid to CRS</cite> transform, or {@code null} if unspecified and can not
+     *         be inferred.
+     * @throws IllegalStateException If a transform exists but that transform is not affine.
+     *
+     * @since 3.20
+     */
+    public AffineTransform getAffineGridToCRS() throws IllegalStateException {
+        return getAffineGridToCRS(PixelTranslation.getPixelOrientation(pixelAnchor), false);
+    }
+
+    /**
      * Returns the current <cite>grid to CRS</cite> transform.
      * This method returns the first non-null value in the above choices, in preference order:
      * <p>
@@ -1036,7 +1096,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
     public MathTransform getGridToCRS() {
         final MathTransform gridToCRS = this.gridToCRS;
         if (gridToCRS == null) {
-            final GridGeometry gridGeometry = this.gridGeometry;
+            final GridGeometry gridGeometry = getGridGeometry(false);
             if (gridGeometry != null) {
                 final PixelInCell pixelAnchor = this.pixelAnchor;
                 if (pixelAnchor == null) {
@@ -1197,13 +1257,23 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * @since 3.20
      */
     public GridGeometry getGridGeometry() {
+        return getGridGeometry(true);
+    }
+
+    /**
+     * Implementation of {@link #getGridGeometry()}.
+     *
+     * @param useGridToCRS {@code true} if this method is allowed to invoke {@link #getGridToCRS()}.
+     *        This flag is necessary for avoiding never-ending recursive method invocations.
+     */
+    private GridGeometry getGridGeometry(final boolean useGridToCRS) {
         GridGeometry geom = gridGeometry;
         if (geom == null) {
             geom = cachedGridGeometry;
             if (geom == null) {
-                final GridEnvelope  extent    = getExtent();
-                final MathTransform gridToCRS = getGridToCRS();
-                if (gridToCRS != null) {
+                final GridEnvelope extent = getExtent();
+                final MathTransform gridToCRS;
+                if (useGridToCRS && (gridToCRS = getGridToCRS()) != null) {
                     geom = new GridGeometry2D(extent, getPixelAnchor(),
                             gridToCRS, getCoordinateReferenceSystem(), hints);
                 } else {
@@ -1212,7 +1282,11 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
                         geom = new GridGeometry2D(extent, envelope);
                     }
                 }
-                cachedGridGeometry = geom;
+                if (useGridToCRS) {
+                    // Do not cache the result if we were not allowed to invoke getGridToCRS()
+                    // since the result could have been different.
+                    cachedGridGeometry = geom;
+                }
             }
         }
         return geom;
@@ -1670,28 +1744,45 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      * rendered image}. It is caller responsibility to invoke {@link Graphics#dispose()} after
      * the drawing has been completed.
      * <p>
-     * The returned value can usually be casted to {@link java.awt.Graphics2D}.
+     * The returned value can usually be casted to {@link Graphics2D}.
      *
-     * @return A graphics (usually a {@link java.awt.Graphics2D}) for drawing into the image.
-     * @throws UnsupportedOperationException If the rendered image does not support drawing.
+     * @param  crsUnit {@code true} for drawing using the coverage units (typically metres or
+     *         degrees of longitude/latitude), or {@code false} for drawing using pixel units.
+     *         The value of {@code true} is supported only for {@link Graphics2D} instances.
+     * @return A graphics (usually a {@link Graphics2D}) for drawing into the image.
+     * @throws UnsupportedOperationException If the rendered image does not support drawing,
+     *         or if {@code crsUnit} is {@code true} and the graphics is not an instance of
+     *         {@link Graphics2D}.
      *
      * @since 3.20
      */
-    public Graphics createGraphics() throws UnsupportedOperationException {
+    public Graphics createGraphics(final boolean crsUnit) throws UnsupportedOperationException {
         RenderedImage image = getRenderedImage();
         while (image instanceof RenderedImageAdapter) {
             image = ((RenderedImageAdapter) image).getWrappedImage();
         }
+        final Graphics gr;
         if (image instanceof Image) {
-            return ((Image) image).getGraphics();
+            gr = ((Image) image).getGraphics();
+        } else if (image instanceof PlanarImage) {
+            gr = ((PlanarImage) image).getGraphics();
+        } else {
+            throw new UnsupportedOperationException(Errors.format(Errors.Keys.UNSUPPORTED_IMAGE_TYPE));
         }
-        Throwable cause = null;
-        if (image instanceof PlanarImage) try {
-            return ((PlanarImage) image).getGraphics();
-        } catch (IllegalAccessError e) {
-            cause = e;
+        if (crsUnit) {
+            final AffineTransform at = getAffineGridToCRS(PixelOrientation.UPPER_LEFT, true);
+            if (at == null) {
+                throw new IllegalStateException(Errors.format(Errors.Keys.UNSPECIFIED_TRANSFORM));
+            }
+            try {
+                ((Graphics2D) gr).transform(at.createInverse());
+            } catch (NoninvertibleTransformException e) {
+                throw new IllegalArgumentException(Errors.format(Errors.Keys.NONINVERTIBLE_TRANSFORM), e);
+            } catch (ClassCastException e) {
+                throw new UnsupportedOperationException(Errors.format(Errors.Keys.UNSUPPORTED_IMAGE_TYPE), e);
+            }
         }
-        throw new UnsupportedOperationException(Errors.format(Errors.Keys.UNSUPPORTED_IMAGE_TYPE), cause);
+        return gr;
     }
 
     /**
@@ -2052,11 +2143,10 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
     public void setRenderedImage(final ImageFunction function) {
         RenderedImage data = null;
         if (function != null) {
-            final MathTransform transform = GridGeometry2D.castOrCopy(getGridGeometry()).getGridToCRS2D();
-            if (!(transform instanceof AffineTransform)) {
-                throw new IllegalArgumentException(Errors.format(Errors.Keys.NOT_AN_AFFINE_TRANSFORM));
+            final AffineTransform at = getAffineGridToCRS(PixelOrientation.CENTER, true);
+            if (at == null) {
+                throw new IllegalStateException(Errors.format(Errors.Keys.UNSPECIFIED_TRANSFORM));
             }
-            final AffineTransform at = (AffineTransform) transform;
             if (at.getShearX()!=0 || at.getShearY()!=0) {
                 // TODO: We may support that in a future version.
                 //       1) Create a copy with shear[X/Y] set to 0. Use the copy.

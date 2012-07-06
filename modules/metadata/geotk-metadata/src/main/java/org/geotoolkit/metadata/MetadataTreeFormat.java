@@ -69,12 +69,12 @@ import static org.geotoolkit.metadata.AbstractMetadata.LOGGER;
  * stands for any metadata object compliant with the {@link MetadataStandard} specified at
  * construction time.
  * <p>
- * <table>
+ * <table border="1">
  *   <tr><th></th><th>Parsing</th><th>Formatting</th></tr>
- *   <tr><td><b>Between {@link String} and metadata:</b></td>
+ *   <tr><td>Between {@link String} and metadata:</td>
  *     <td>{@link #parseObject(String)} ⇒ {@link Object}</td>
  *     <td>{@link #format(Object)} ⇒ {@link String}</td></tr>
- *   <tr><td><b>Between {@link TreeNode} and metadata:</b></td>
+ *   <tr><td>Between {@link TreeNode} and metadata:</td>
  *     <td>{@link #parse(TreeNode)} ⇒ {@link Object}</td>
  *     <td>{@link #asTree(Object)} ⇒ {@link TreeNode}</td></tr>
  * </table>
@@ -89,8 +89,19 @@ import static org.geotoolkit.metadata.AbstractMetadata.LOGGER;
  *        package. However it can be used as a data structure independent of Swing.}
  *
  * {@section Subclassing}
- * This class provides some protected methods than subclasses can override in order to control
- * the parsing and formatting processes.
+ * This class provides some protected methods that subclasses can override in order to control
+ * the parsing and formatting processes:
+ * <p>
+ * <table>
+ * <tr><th>Formating</th><th>Parsing</th></tr>
+ * <tr><td><ul>
+ *   <li>{@link #formatElementName(Class, String)}</li>
+ *   <li>{@link #formatCodeList(CodeList)}</li>
+ *   <li>{@link #formatNumber(Number)}</li>
+ * </ul></td>
+ * <td><ul>
+ *   <li>{@link #getTypeForName(String)}</li>
+ * </ul></td></tr></table>
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Mehdi Sidhoum (Geomatys)
@@ -874,7 +885,7 @@ public class MetadataTreeFormat extends Format {
         name = name.trim();
         final int length = name.length();
         if (length != 0) {
-            final StringBuilder buffer = new StringBuilder();
+            final StringBuilder buffer = new StringBuilder(name.length() + 8);
             buffer.append(Character.toUpperCase(name.charAt(0)));
             boolean previousIsUpper = true;
             int base = 1;
@@ -891,13 +902,13 @@ public class MetadataTreeFormat extends Format {
                         split--;
                     }
                     if (split > base) {
-                        buffer.append(name.substring(base, split)).append(' ');
+                        buffer.append(name, base, split).append(' ');
                         base = split;
                     }
                 }
                 previousIsUpper = currentIsUpper;
             }
-            final String candidate = buffer.append(name.substring(base)).toString();
+            final String candidate = buffer.append(name, base, name.length()).toString();
             if (!candidate.equals(name)) {
                 // Holds a reference to this new String object only if it worth it.
                 name = candidate;

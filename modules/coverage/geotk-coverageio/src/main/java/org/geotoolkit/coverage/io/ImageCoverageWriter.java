@@ -59,7 +59,6 @@ import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.image.io.mosaic.MosaicImageWriter;
 import org.geotoolkit.image.io.metadata.ReferencingBuilder;
-import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.referencing.operation.transform.WarpFactory;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
@@ -71,6 +70,7 @@ import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.resources.Errors;
 
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 
 
 /**
@@ -309,15 +309,19 @@ public class ImageCoverageWriter extends GridCoverageWriter {
      * <ol>
      *   <li>If {@code formatName} is non-null, then this method checks if the given name is
      *       one of the {@linkplain ImageWriterSpi#getFormatNames() format names declared by
-     *       the provider}. If not, then this method returns {@code false}.</li>
+     *       the provider}. If not, then this method immediately returns {@code false}.</li>
      *
-     *   <li>Next, this method checks if the writer
-     *       {@linkplain ImageWriterSpi#canEncodeImage(RenderedImage) can encode} the given image.</li>
+     *   <li>Next, this method returns {@code true} if the writer
+     *       {@linkplain ImageWriterSpi#canEncodeImage(RenderedImage) can encode} the given image,
+     *       or {@code false} otherwise.</li>
      * </ol>
-     * <p>
-     * Subclasses can override this method if they want to determine in another way
-     * whatever the {@linkplain #imageWriter image writer} can be reused. Subclasses
-     * don't need to set the image writer output; this will be done by the caller.
+     *
+     * {@section Overriding}
+     * Subclasses can override this method if they want to determine in another way whatever
+     * the {@linkplain #imageWriter image writer} can be reused. Subclasses can optionally
+     * {@linkplain ImageWriter#setOutput(Object) set the image writer output} or leave it
+     * {@code null}, at their choice. If they set the output, then that output will be used.
+     * Otherwise the caller will set the output automatically.
      *
      * @param  provider The provider of the image writer.
      * @param  formatName The format to use for fetching an {@link ImageWriter},
@@ -342,16 +346,21 @@ public class ImageCoverageWriter extends GridCoverageWriter {
 
     /**
      * Creates an {@link ImageWriter} that claim to be able to encode the given output. This method
-     * is invoked automatically for creating a new {@linkplain #imageWriter image writer}.
+     * is invoked automatically for assigning a new value to the {@link #imageWriter} field.
      * <p>
-     * This method shall {@linkplain ImageWriter#setOutput(Object) set the output} of the
-     * image writer that it create before returning it.
+     * The default implementation performs the following choice:
      * <p>
-     * The default implementation delegates to
-     * {@link XImageIO#getWriterByFormatName(String, Object, RenderedImage)} if a non-null format
-     * is specified, or {@link XImageIO#getWriterBySuffix(Object, RenderedImage)} otherwise.
-     * Subclasses can override this method if they want to create a new
-     * {@linkplain #imageWriter image writer} in another way.
+     * <ul>
+     *   <li>If a non-null format name is specified, delegate to
+     *       {@link XImageIO#getWriterByFormatName(String, Object, RenderedImage)}.</li>
+     *   <li>Otherwise delegate to {@link XImageIO#getWriterBySuffix(Object, RenderedImage)}.</li>
+     * </ul>
+     *
+     * {@section Overriding}
+     * Subclasses can override this method if they want to create a new image writer in another way.
+     * Subclasses can optionally {@linkplain ImageWriter#setOutput(Object) set the image writer output}
+     * or leave it {@code null}, at their choice. If they set the output, then that output will be used.
+     * Otherwise the caller will set the output automatically.
      *
      * @param  formatName The format to use for fetching an {@link ImageWriter},
      *         or {@code null} if unspecified.
@@ -681,7 +690,7 @@ public class ImageCoverageWriter extends GridCoverageWriter {
         final ImageTypeSpecifier imageType = ImageTypeSpecifier.createFromRenderedImage(image);
         final IIOMetadata streamMetadata = isFirst ? imageWriter.getDefaultStreamMetadata(imageParam) : null;
         final IIOMetadata imageMetadata  = imageWriter.getDefaultImageMetadata(imageType, imageParam);
-        if (XArrays.contains(imageMetadata.getMetadataFormatNames(), SpatialMetadataFormat.FORMAT_NAME)) {
+        if (XArrays.contains(imageMetadata.getMetadataFormatNames(), GEOTK_FORMAT_NAME)) {
             CoordinateReferenceSystem crs = null;
             Envelope env = null;
             double[] res = null;

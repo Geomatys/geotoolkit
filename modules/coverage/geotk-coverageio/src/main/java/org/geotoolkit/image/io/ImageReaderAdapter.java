@@ -56,6 +56,7 @@ import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.XArrays;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 
 
 /**
@@ -628,7 +629,7 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
      *       returns it unchanged.</li>
      *   <li>Otherwise wraps the result in a new {@link SpatialMetadata}, which will
      *       delegate the request for any metadata format other than
-     *       {@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#FORMAT_NAME}
+     *       {@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#GEOTK_FORMAT_NAME}
      *       to the wrapped format.</li>
      * </ul>
      */
@@ -642,7 +643,7 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
                     sm.setReadOnly(false);
                     return sm;
                 }
-                return new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null), this, metadata);
+                return new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME), this, metadata);
             }
         } else {
             final IIOMetadata metadata = main.getStreamMetadata();
@@ -652,7 +653,7 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
                     sm.setReadOnly(false);
                     return sm;
                 }
-                return new SpatialMetadata(SpatialMetadataFormat.getStreamInstance(null), this, metadata);
+                return new SpatialMetadata(SpatialMetadataFormat.getStreamInstance(GEOTK_FORMAT_NAME), this, metadata);
             }
         }
         return null;
@@ -1049,7 +1050,7 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
      * a filename, like {@link File} or {@link URL}, rather than the usual
      * {@linkplain #STANDARD_INPUT_TYPE standard input type}. The {@link #names names} and
      * {@link #MIMETypes MIMETypes} fields are set to the values of the wrapped provider,
-     * suffixed with the string given at construction time.
+     * suffixed with the string given to the {@link #addFormatNameSuffix(String)} method.
      * <p>
      * <b>Example:</b> An {@code ImageReaderAdapter} wrapping the {@code "tiff"} image reader
      * with the {@code "-wf"} suffix will have the {@code "tiff-wf"} format name and the
@@ -1090,11 +1091,11 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
      */
     public abstract static class Spi extends SpatialImageReader.Spi {
         /**
-         * The {@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#FORMAT_NAME} value
+         * The {@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#GEOTK_FORMAT_NAME} value
          * in an array, for assignment to {@code extra[Stream|Image]MetadataFormatNames} fields.
          */
         private static final String[] EXTRA_METADATA = {
-            SpatialMetadataFormat.FORMAT_NAME
+            GEOTK_FORMAT_NAME
         };
 
         /**
@@ -1134,22 +1135,6 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
         private final boolean acceptOther;
 
         /**
-         * @deprecated Specify a suffix.
-         */
-        @Deprecated
-        protected Spi(final ImageReaderSpi main) {
-            this(main, "");
-        }
-
-        /**
-         * @deprecated Specify a suffix.
-         */
-        @Deprecated
-        protected Spi(final String format) {
-            this(format, "");
-        }
-
-        /**
          * Creates an {@code ImageReaderAdapter.Spi} wrapping the given provider. The fields are
          * initialized as documented in the <a href="#skip-navbar_top">class javadoc</a>. It is up
          * to the subclass to initialize all other instance variables in order to provide working
@@ -1159,14 +1144,9 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
          * Subclasses can assign new arrays, but should not modify the default array content.
          *
          * @param main The provider of the readers to use for reading the pixel values.
-         * @param formatNameSuffix The suffix to append to {@linkplain #getFormatNames()
-         *        format names} and {@linkplain #getMIMETypes() MIME types}.
-         *
-         * @since 3.20
          */
-        protected Spi(final ImageReaderSpi main, String formatNameSuffix) {
+        protected Spi(final ImageReaderSpi main) {
             ensureNonNull("main", main);
-            ensureNonNull("formatNameSuffix", formatNameSuffix);
             this.main  = main;
             names      = main.getFormatNames();
             suffixes   = main.getFileSuffixes();
@@ -1176,8 +1156,8 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
             supportsStandardImageMetadataFormat  = main.isStandardImageMetadataFormatSupported();
             nativeStreamMetadataFormatName       = main.getNativeStreamMetadataFormatName();
             nativeImageMetadataFormatName        = main.getNativeImageMetadataFormatName();
-            extraStreamMetadataFormatNames       = addSpatialFormat(main.getExtraStreamMetadataFormatNames());
-            extraImageMetadataFormatNames        = addSpatialFormat(main.getExtraImageMetadataFormatNames());
+            extraStreamMetadataFormatNames       = main.getExtraStreamMetadataFormatNames();
+            extraImageMetadataFormatNames        = main.getExtraImageMetadataFormatNames();
             boolean acceptStream = false;
             boolean acceptOther  = false;
             for (final Class<?> type : main.getInputTypes()) {
@@ -1189,10 +1169,6 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
             }
             this.acceptStream = acceptStream;
             this.acceptOther  = acceptOther;
-            formatNameSuffix = formatNameSuffix.trim();
-            if (!formatNameSuffix.isEmpty()) {
-                addPrefix(names, MIMETypes, formatNameSuffix);
-            }
         }
 
         /**
@@ -1201,22 +1177,31 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
          * fetched from the given format name.
          *
          * @param  format The name of the provider to use for reading the pixel values.
-         * @param  suffix The suffix to append to {@linkplain #getFormatNames() format names} and
-         *                {@linkplain #getMIMETypes() MIME types}.
          * @throws IllegalArgumentException If no provider is found for the given format.
+         */
+        protected Spi(final String format) {
+            this(Formats.getReaderByFormatName(format, Spi.class));
+        }
+
+        /**
+         * Adds the given suffix to all {@linkplain #names format names} and
+         * {@linkplain #MIMETypes MIME types}. Subclasses should invoke this
+         * method in their constructor.
+         *
+         * @param suffix The suffix to append to format names and MIME types.
          *
          * @since 3.20
          */
-        protected Spi(final String format, final String suffix) throws IllegalArgumentException {
-            this(Formats.getReaderByFormatName(format, Spi.class), suffix);
+        protected void addFormatNameSuffix(final String suffix) {
+            addFormatNameSuffix(names, MIMETypes, suffix);
         }
 
         /**
          * Appends the given suffix in the given names array if the array is non-null,
          * then updates the MIME type arrays. The replacement is performed in-place.
          */
-        static void addPrefix(final String[] names, final String[] MIMETypes, final String suffix) {
-            if (names != null) {
+        static void addFormatNameSuffix(final String[] names, final String[] MIMETypes, final String suffix) {
+            if (names != null && !suffix.isEmpty()) {
                 final String upper = suffix.toUpperCase(Locale.ENGLISH);
                 final boolean[] replaced = new boolean[(MIMETypes != null) ? MIMETypes.length : 0];
                 for (int i=0; i<names.length; i++) {
@@ -1234,11 +1219,26 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
         }
 
         /**
-         * Adds the {@value SpatialMetadataFormat#FORMAT_NAME} to the given array,
+         * Adds the {@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#GEOTK_FORMAT_NAME}
+         * format to the list of extra stream or metadata format names, if not already present. This
+         * method does nothing if the format is already listed as the native or an extra format.
+         *
+         * @param stream {@code true} for adding the spatial format to the list of stream formats.
+         * @param image  {@code true} for adding the spatial format to the list of image formats.
+         *
+         * @since 3.20
+         */
+        protected void addSpatialFormat(final boolean stream, final boolean image) {
+            if (stream) extraStreamMetadataFormatNames = addSpatialFormat(nativeStreamMetadataFormatName, extraStreamMetadataFormatNames);
+            if (image)  extraImageMetadataFormatNames  = addSpatialFormat(nativeImageMetadataFormatName,  extraImageMetadataFormatNames);
+        }
+
+        /**
+         * Adds the {@value SpatialMetadataFormat#GEOTK_FORMAT_NAME} to the given array,
          * if not already presents.
          */
-        static String[] addSpatialFormat(String[] formatNames) {
-            if (!XArrays.contains(formatNames, SpatialMetadataFormat.FORMAT_NAME)) {
+        static String[] addSpatialFormat(final String nativeName, String[] formatNames) {
+            if (!GEOTK_FORMAT_NAME.equals(nativeName) && !XArrays.contains(formatNames, GEOTK_FORMAT_NAME)) {
                 formatNames = XArrays.concatenate(formatNames, EXTRA_METADATA);
             }
             return formatNames;
@@ -1249,8 +1249,8 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
          */
         @Override
         public IIOMetadataFormat getStreamMetadataFormat(final String formatName) {
-            if (SpatialMetadataFormat.FORMAT_NAME.equals(formatName) && isSpatialMetadataSupported(true)) {
-                return SpatialMetadataFormat.getStreamInstance(null);
+            if (GEOTK_FORMAT_NAME.equals(formatName) && isSpatialMetadataSupported(true)) {
+                return SpatialMetadataFormat.getStreamInstance(GEOTK_FORMAT_NAME);
             }
             return main.getStreamMetadataFormat(formatName);
         }
@@ -1260,8 +1260,8 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
          */
         @Override
         public IIOMetadataFormat getImageMetadataFormat(final String formatName) {
-            if (SpatialMetadataFormat.FORMAT_NAME.equals(formatName) && isSpatialMetadataSupported(false)) {
-                return SpatialMetadataFormat.getImageInstance(null);
+            if (GEOTK_FORMAT_NAME.equals(formatName) && isSpatialMetadataSupported(false)) {
+                return SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME);
             }
             return main.getImageMetadataFormat(formatName);
         }

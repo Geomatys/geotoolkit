@@ -32,10 +32,11 @@ import org.geotoolkit.test.Depend;
 
 import static org.geotoolkit.test.Assert.*;
 import static org.geotoolkit.test.Commons.*;
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 
 
 /**
- * Tests {@link MetadataAccessor}.
+ * Tests {@link MetadataNodeAccessor}.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.16
@@ -43,27 +44,27 @@ import static org.geotoolkit.test.Commons.*;
  * @since 3.06
  */
 @Depend(SpatialMetadataFormatTest.class)
-public final strictfp class MetadataAccessorTest {
+public final strictfp class MetadataNodeAccessorTest {
     /**
      * Tests the accessor with some properties defined under the {@code "ImageDescription"} node.
      */
     @Test
     public void testImageDescription() {
-        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null));
+        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME));
         assertMultilinesEquals("The metadata should initially contains only the root node.",
-            SpatialMetadataFormat.FORMAT_NAME + "\n",
+            GEOTK_FORMAT_NAME + "\n",
             metadata.toString());
         /*
          * Ensure that the metadata is initially empty and that
          * attempts to access attributes do not throw an exception.
          */
-        final MetadataAccessor accessor = new MetadataAccessor(metadata, null, "ImageDescription", null);
+        final MetadataNodeAccessor accessor = new MetadataNodeAccessor(metadata, null, "ImageDescription", null);
         assertEquals("ImageDescription", accessor.name());
         assertEquals("Initially empty metadata should have no child.", 0, accessor.childCount());
         assertNull(accessor.getAttribute("imagingCondition"));
         assertNull(accessor.getAttributeAsDouble("cloudCoverPercentage"));
-        assertMultilinesEquals("MetadataAccessor constructor should have created its node.",
-            SpatialMetadataFormat.FORMAT_NAME + "\n" +
+        assertMultilinesEquals("MetadataNodeAccessor constructor should have created its node.",
+            GEOTK_FORMAT_NAME + "\n" +
             "└───ImageDescription\n",
             metadata.toString());
         /*
@@ -78,7 +79,7 @@ public final strictfp class MetadataAccessorTest {
         assertEquals("cloud", accessor.getAttribute("imagingCondition"));
         assertEquals(Double.valueOf(20), accessor.getAttributeAsDouble("cloudCoverPercentage"));
         assertMultilinesEquals(decodeQuotes(
-            SpatialMetadataFormat.FORMAT_NAME + "\n" +
+            GEOTK_FORMAT_NAME + "\n" +
             "└───ImageDescription\n"  +
             "    ├───imagingCondition=“cloud”\n" +
             "    └───cloudCoverPercentage=“20.0”\n"),
@@ -117,18 +118,18 @@ public final strictfp class MetadataAccessorTest {
      * The child name shall be either {@code "OffsetVector"} or {@code "#auto"}.
      */
     private void testOffsetVectors(final String childName) {
-        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null));
+        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME));
         assertMultilinesEquals("The metadata should initially contains only the root node.",
-            SpatialMetadataFormat.FORMAT_NAME + "\n",
+            GEOTK_FORMAT_NAME + "\n",
             metadata.toString());
         /*
          * Ensure that the metadata is initially empty and that
          * attempts to access attributes do not throw an exception.
          */
-        final MetadataAccessor accessor = new MetadataAccessor(metadata, null, "RectifiedGridDomain/OffsetVectors", childName);
+        final MetadataNodeAccessor accessor = new MetadataNodeAccessor(metadata, null, "RectifiedGridDomain/OffsetVectors", childName);
         assertEquals("OffsetVectors", accessor.name());
-        assertMultilinesEquals("MetadataAccessor constructor should have created its node.",
-            SpatialMetadataFormat.FORMAT_NAME + "\n" +
+        assertMultilinesEquals("MetadataNodeAccessor constructor should have created its node.",
+            GEOTK_FORMAT_NAME + "\n" +
             "└───RectifiedGridDomain\n" +
             "    └───OffsetVectors\n",
             metadata.toString());
@@ -152,7 +153,7 @@ public final strictfp class MetadataAccessorTest {
         accessor.selectChild(1);
         assertTrue(Arrays.equals(accessor.getAttributeAsDoubles("values", false), new double[] {3, 1, 4}));
         assertMultilinesEquals(decodeQuotes(
-            SpatialMetadataFormat.FORMAT_NAME + "\n" +
+            GEOTK_FORMAT_NAME + "\n" +
             "└───RectifiedGridDomain\n"  +
             "    └───OffsetVectors\n"    +
             "        ├───OffsetVector\n" +
@@ -165,58 +166,58 @@ public final strictfp class MetadataAccessorTest {
     /**
      * Tests the accessor with a non-existent attribute under the {@code "ImageDescription"} node.
      * Actually nothing special happen except that the resulting {@code IIOMetadata} is invalid,
-     * but this is not {@link MetadataAccessor} job to verify that.
+     * but this is not {@link MetadataNodeAccessor} job to verify that.
      */
     @Test
     public void testNonExistentAttribute() {
-        final SpatialMetadata  metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null));
-        final MetadataAccessor accessor = new MetadataAccessor(metadata, null, "ImageDescription", null);
+        final SpatialMetadata  metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME));
+        final MetadataNodeAccessor accessor = new MetadataNodeAccessor(metadata, null, "ImageDescription", null);
         accessor.setAttribute("cloudCoverPercentage", 20.0); // For comparison purpose.
         accessor.setAttribute("inexistent", 10.0);
     }
 
     /**
-     * Tests the {@link MetadataAccessor#listPaths} static method.
+     * Tests the {@link MetadataNodeAccessor#listPaths} static method.
      */
     @Test
     public void testListPaths() {
         /*
          * Simpliest cases: the element below is known to appear only once.
          */
-        final SpatialMetadataFormat STREAM = SpatialMetadataFormat.getStreamInstance(null);
-        List<String> paths = MetadataAccessor.listPaths(STREAM, GeographicBoundingBox.class);
+        final SpatialMetadataFormat STREAM = SpatialMetadataFormat.getStreamInstance(GEOTK_FORMAT_NAME);
+        List<String> paths = MetadataNodeAccessor.listPaths(STREAM, GeographicBoundingBox.class);
         assertEquals(Arrays.asList("DiscoveryMetadata/Extent/GeographicElement"), paths);
         /*
          * Simpliest case again, but deeper path. Note that it cross a collection (Instruments).
          */
-        paths = MetadataAccessor.listPaths(STREAM, Identifier.class);
+        paths = MetadataNodeAccessor.listPaths(STREAM, Identifier.class);
         assertEquals(Arrays.asList("AcquisitionMetadata/Platform/Instruments/Instrument/Identifier"), paths);
         /*
          * The element below appears more than once.
          * We don't consider elements order.
          */
-        paths = MetadataAccessor.listPaths(SpatialMetadataFormat.getImageInstance(null), Identifier.class);
+        paths = MetadataNodeAccessor.listPaths(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME), Identifier.class);
         assertEquals(new HashSet<String>(Arrays.asList("ImageDescription/ImageQualityCode",
                 "ImageDescription/ProcessingLevelCode")), new HashSet<String>(paths));
         /*
          * More tricky case: 'Instrument' is the type of elements in a collection.
          * But we want the path to the whole collection.
          */
-        paths = MetadataAccessor.listPaths(STREAM, Instrument.class);
+        paths = MetadataNodeAccessor.listPaths(STREAM, Instrument.class);
         assertEquals(Arrays.asList("AcquisitionMetadata/Platform/Instruments"), paths);
     }
 
     /**
-     * Tests the {@link MetadataAccessor} constructors which locate the path
+     * Tests the {@link MetadataNodeAccessor} constructors which locate the path
      * automatically from the given type, searching in the whole tree.
      */
     @Test
     public void testAutomaticLocation() {
-        SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getStreamInstance(null));
-        MetadataAccessor accessor = new MetadataAccessor(metadata, "#auto", GeographicBoundingBox.class);
+        SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getStreamInstance(GEOTK_FORMAT_NAME));
+        MetadataNodeAccessor accessor = new MetadataNodeAccessor(metadata, "#auto", GeographicBoundingBox.class);
         accessor.setAttribute("inclusion", true);
         assertMultilinesEquals(decodeQuotes(
-            SpatialMetadataFormat.FORMAT_NAME + "\n" +
+            GEOTK_FORMAT_NAME + "\n" +
             "└───DiscoveryMetadata\n" +
             "    └───Extent\n" +
             "        └───GeographicElement\n" +
@@ -225,9 +226,9 @@ public final strictfp class MetadataAccessorTest {
         /*
          * Following should fails because of ambiguity (there is many identifier).
          */
-        metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null));
+        metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME));
         try {
-            accessor = new MetadataAccessor(metadata, "#auto", Identifier.class);
+            accessor = new MetadataNodeAccessor(metadata, "#auto", Identifier.class);
             fail(accessor.toString());
         } catch (IllegalArgumentException e) {
             // This is the expected exception.
@@ -235,15 +236,15 @@ public final strictfp class MetadataAccessorTest {
     }
 
     /**
-     * Tests the {@link MetadataAccessor} constructors which locate the path
+     * Tests the {@link MetadataNodeAccessor} constructors which locate the path
      * automatically from the given type, forcing a search in the fallback.
      *
      * @since 3.16
      */
     @Test
     public void testAutomaticLocationInFallback() {
-        SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getStreamInstance(null));
-        MetadataAccessor accessor = new MetadataAccessor(metadata, "#auto", GeographicBoundingBox.class);
+        SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getStreamInstance(GEOTK_FORMAT_NAME));
+        MetadataNodeAccessor accessor = new MetadataNodeAccessor(metadata, "#auto", GeographicBoundingBox.class);
         assertEquals("GeographicElement", accessor.name());
         accessor.setAttribute("inclusion", true);
         /*
@@ -251,7 +252,7 @@ public final strictfp class MetadataAccessorTest {
          * Note that we will ask exactly the same interface later.
          */
         try {
-            accessor = new MetadataAccessor(metadata, "#auto", RectifiedGrid.class);
+            accessor = new MetadataNodeAccessor(metadata, "#auto", RectifiedGrid.class);
             fail("Should not find " + accessor);
         } catch (IllegalArgumentException e) {
             // This is the expected exception.
@@ -263,14 +264,14 @@ public final strictfp class MetadataAccessorTest {
          * the same name). We are just too lazy for creating a new metadata format, and the
          * approach used here is sufficient for this test.
          */
-        metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null), (ImageReader) null, metadata);
-        accessor = new MetadataAccessor(metadata, "#auto", RectifiedGrid.class);
+        metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME), (ImageReader) null, metadata);
+        accessor = new MetadataNodeAccessor(metadata, "#auto", RectifiedGrid.class);
         assertEquals("RectifiedGridDomain", accessor.name());
         /*
-         * Now ask a metadata which should work only if the MetadataAccessor has been
+         * Now ask a metadata which should work only if the MetadataNodeAccessor has been
          * able to search in the fallback chain.
          */
-        accessor = new MetadataAccessor(metadata, "#auto", GeographicBoundingBox.class);
+        accessor = new MetadataNodeAccessor(metadata, "#auto", GeographicBoundingBox.class);
         assertEquals("GeographicElement", accessor.name());
     }
 }

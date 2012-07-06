@@ -324,6 +324,28 @@ public final class InternalUtilities extends Static {
     }
 
     /**
+     * Returns the first non-null element in the given iterable, or {@code null} if none.
+     * This method makes sense only for collections having determinist iteration order like
+     * {@link List} and {@link SortedSet} interfaces, or {@link LinkedHashSet} implementation.
+     *
+     * @param  <E> The type of elements in the iterable.
+     * @param  collection Where to search for the first non-null element.
+     * @return The first non-null element, or {@code null} if none or if the given iterable is null.
+     *
+     * @since 3.20
+     */
+    public static <E> E firstNonNull(final Iterable<E> collection) {
+        if (collection != null) {
+            for (final E element : collection) {
+                if (element != null) {
+                    return element;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
      * Returns the separator to use between numbers. Current implementation returns the coma
      * character, unless the given number already use the coma as the decimal separator.
      *

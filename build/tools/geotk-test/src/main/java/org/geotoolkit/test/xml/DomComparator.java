@@ -63,7 +63,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @author Johann Sorel (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.18
+ * @version 3.20
  *
  * @since 3.17
  */
@@ -484,8 +484,13 @@ public strictfp class DomComparator {
 
     /**
      * Verifies that the text content of the given nodes are equal.
+     *
+     * @param expected The node that contains the expected text.
+     * @param actual   The node that contains the actual text to verify.
+     *
+     * @since 3.20
      */
-    private void assertTextContentEquals(final Node expected, final Node actual) {
+    protected void assertTextContentEquals(final Node expected, final Node actual) {
         assertPropertyEquals("textContent", expected.getTextContent(), actual.getTextContent(), expected, actual);
     }
 
@@ -498,8 +503,10 @@ public strictfp class DomComparator {
      * @param actual       The property to compare to the expected one.
      * @param expectedNode The node from which the expected property has been fetched.
      * @param actualNode   The node being compared to the expected node.
+     *
+     * @since 3.20
      */
-    private void assertPropertyEquals(final String property, Comparable<?> expected, Comparable<?> actual,
+    protected void assertPropertyEquals(final String property, Comparable<?> expected, Comparable<?> actual,
             final Node expectedNode, final Node actualNode)
     {
         expected = trim(expected);

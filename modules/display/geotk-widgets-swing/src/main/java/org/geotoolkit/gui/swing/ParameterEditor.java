@@ -574,7 +574,7 @@ public class ParameterEditor extends JComponent {
      */
     private static String multilines(final String text) {
         int splitAt = text.indexOf(':') + 1;
-        final StringBuilder buffer = new StringBuilder(text.substring(0, splitAt));
+        final StringBuilder buffer = new StringBuilder(splitAt).append(text, 0, splitAt);
         final StringTokenizer tk = new StringTokenizer(text.substring(splitAt));
         int state = 0; // 0=new line, 1=key, 2=value.
         while (tk.hasMoreTokens()) {

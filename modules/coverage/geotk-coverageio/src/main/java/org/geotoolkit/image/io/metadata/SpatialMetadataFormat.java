@@ -264,19 +264,29 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      * description requires that we provide a version number as part of the format name. The
      * version number provided in this constant is set to the last Geotk version when this
      * format has been modified, and may change in any future version.
+     *
+     * @since 3.20 (derived from 2.4)
      */
-    public static final String FORMAT_NAME = "geotk-coverageio_3.07";
+    public static final String GEOTK_FORMAT_NAME = "geotk-coverageio_3.07";
+
+    /**
+     * @deprecated Renamed {@link #GEOTK_FORMAT_NAME} for differentiating from ISO format name.
+     */
+    @Deprecated
+    public static final String FORMAT_NAME = GEOTK_FORMAT_NAME;
 
     /**
      * The ISO-19115 format name, which is {@value}. This metadata format is big and supported
      * only by a few plugins like {@link org.geotoolkit.image.io.plugin.NetcdfImageReader}.
      * For applications that don't need to full verbosity of ISO 19115, consider using the
      * {@linkplain #getStreamInstance(String) stream metadata instance} identified by the
-     * {@link #FORMAT_NAME} name instead.
+     * {@value #GEOTK_FORMAT_NAME} name instead.
+     *
+     * {@note The 3.0 version number is the GeoAPI version that define the format used here.}
      *
      * @since 3.20
      */
-    public static final String ISO_FORMAT_NAME = "ISO-19115";
+    public static final String ISO_FORMAT_NAME = "ISO-19115_3.0";
 
     /**
      * The policy for the names of the nodes to be inferred from the ISO objects.
@@ -313,7 +323,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
         /** The default instance for <cite>stream</cite> metadata format. */
         static final SpatialMetadataFormat STREAM;
         static {
-            SpatialMetadataFormatBuilder builder = new SpatialMetadataFormatBuilder(FORMAT_NAME);
+            SpatialMetadataFormatBuilder builder = new SpatialMetadataFormatBuilder(GEOTK_FORMAT_NAME);
             builder.addTreeForStream(null);
             STREAM = builder.build();
         }
@@ -321,7 +331,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
         /** The default instance for <cite>image</cite> metadata format. */
         static final SpatialMetadataFormat IMAGE;
         static {
-            final SpatialMetadataFormatBuilder builder = new SpatialMetadataFormatBuilder(FORMAT_NAME);
+            final SpatialMetadataFormatBuilder builder = new SpatialMetadataFormatBuilder(GEOTK_FORMAT_NAME);
             builder.addTreeForImage(null);
             builder.addTreeForCRS("RectifiedGridDomain");
             IMAGE = builder.build();
@@ -335,7 +345,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      *
      * @since 3.05
      *
-     * @deprecated Replaced by call to {@code getStreamInstance(FORMAT_NAME)}.
+     * @deprecated Replaced by call to {@code getStreamInstance(GEOTK_FORMAT_NAME)}.
      */
     @Deprecated
     public static final SpatialMetadataFormat STREAM = Geotk.STREAM;
@@ -347,7 +357,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      *
      * @since 3.05
      *
-     * @deprecated Replaced by call to {@code getImageInstance(FORMAT_NAME)}.
+     * @deprecated Replaced by call to {@code getImageInstance(GEOTK_FORMAT_NAME)}.
      */
     @Deprecated
     public static final SpatialMetadataFormat IMAGE = Geotk.IMAGE;
@@ -357,24 +367,16 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      * format that apply to a file as a whole, which may contain more than one image. The
      * tree structure is documented in the <a href="#default-formats">class javadoc</a>.
      *
-     * @param  name The {@link #FORMAT_NAME} or {@link #ISO_FORMAT_NAME} constant, or {@code null}
-     *              for the default format (currently {@value #FORMAT_NAME}).
+     * @param  name The {@value #GEOTK_FORMAT_NAME} or {@value #ISO_FORMAT_NAME} constant.
      * @return The stream metadata format for the given name.
      * @throws IllegalArgumentException If the given name is not one of the supported constants.
      *
      * @since 3.20
      */
     public static SpatialMetadataFormat getStreamInstance(final String name) {
-        if (name != null) {
-            if (name.equals(ISO_FORMAT_NAME)) {
-                return ISO.INSTANCE;
-            }
-            if (!name.equals(FORMAT_NAME)) {
-                throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.ILLEGAL_ARGUMENT_$2, "name", name));
-            }
-        }
-        return Geotk.STREAM;
+        if (name.equalsIgnoreCase(GEOTK_FORMAT_NAME)) return Geotk.STREAM;
+        if (name.equalsIgnoreCase(ISO_FORMAT_NAME))   return ISO.INSTANCE;
+        throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2, "name", name));
     }
 
     /**
@@ -382,22 +384,16 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      * This is the metadata format that apply to a particular image in a file.
      * The tree structure is documented in the <a href="#default-formats">class javadoc</a>.
      *
-     * @param  name The {@link #FORMAT_NAME} constant, or {@code null}
-     *              for the default format (currently {@value #FORMAT_NAME}).
+     * @param  name The {@value #GEOTK_FORMAT_NAME} constant.
      * @return The image metadata format for the given name.
      * @throws IllegalArgumentException If the given name is not one of the supported constants.
      *
      * @since 3.20
      */
     public static SpatialMetadataFormat getImageInstance(final String name) {
-        if (name != null) {
-            // More formats may be added later (e.g. GML in JPEG2000).
-            if (!name.equals(FORMAT_NAME)) {
-                throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.ILLEGAL_ARGUMENT_$2, "name", name));
-            }
-        }
-        return Geotk.IMAGE;
+        if (name.equalsIgnoreCase(GEOTK_FORMAT_NAME)) return Geotk.IMAGE;
+        // More formats may be added later (e.g. GML in JPEG2000).
+        throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2, "name", name));
     }
 
     /**
@@ -842,7 +838,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      * {@note An element may have more than one parent, since the same element can be copied under
      *        many nodes using <code>addChildElement(...)</code>. In such case, this method returns
      *        only the first path. Such cases do not occur with the Geotk formats identified by
-     *        <code>FORMAT_NAME</code> in this class, but occur with the more complex ISO-19115
+     *        <code>GEOTK_FORMAT_NAME</code> in this class, but occur with the more complex ISO-19115
      *        format.}
      *
      * @param  elementName The element for which the parent is desired.
@@ -908,7 +904,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      * {@note An element may have more than one path, since the same element can be copied under
      *        many nodes using <code>addChildElement(...)</code>. In such case, this method returns
      *        only the first path. Such cases do not occur with the Geotk formats identified by
-     *        <code>FORMAT_NAME</code> in this class, but occur with the more complex ISO-19115
+     *        <code>GEOTK_FORMAT_NAME</code> in this class, but occur with the more complex ISO-19115
      *        format.}
      *
      * @param  elementName The element for which the path is desired.
@@ -920,7 +916,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      */
     public String getElementPath(final String elementName) {
         ensureNonNull("elementName", elementName);
-        final StringBuilder path = new StringBuilder();
+        final StringBuilder path = new StringBuilder(64);
         final String parent = getElementParent(getRootName(), elementName, path);
         if (parent != null) {
             // The parent is already in the path at this point.

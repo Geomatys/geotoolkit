@@ -150,8 +150,6 @@ public class WorldFileImageWriter extends ImageWriterAdapter {
      * Invoked by the {@code write} methods when image metadata needs to be written.
      * The default implementation writes the <cite>World File</cite> if an affine
      * transform can be build from the {@linkplain RectifiedGrid rectified grid domain}.
-     *
-     * @todo Needs to write the PRJ file too.
      */
     @Override
     protected void writeImageMetadata(final IIOMetadata metadata, final int imageIndex,
@@ -224,10 +222,12 @@ public class WorldFileImageWriter extends ImageWriterAdapter {
          * @param main The provider of the writers to use for writing the pixel values.
          */
         public Spi(final ImageWriterSpi main) {
-            super(main, WorldFileImageReader.Spi.NAME_SUFFIX);
+            super(main);
             pluginClassName = "org.geotoolkit.image.io.plugin.WorldFileImageWriter";
             vendorName      = "Geotoolkit.org";
             version         = Version.GEOTOOLKIT.toString();
+            addFormatNameSuffix(WorldFileImageReader.Spi.NAME_SUFFIX);
+            addSpatialFormat(false, true);
         }
 
         /**
@@ -236,25 +236,23 @@ public class WorldFileImageWriter extends ImageWriterAdapter {
          * fetched from the given format name.
          *
          * @param  format The name of the provider to use for writing the pixel values.
-         * @param  readerSpiName The fully qualified class name of a provider for a reader that
-         *         can read the files created by this writer format, or {@code null} if none.
          * @throws IllegalArgumentException If no provider is found for the given format.
-         *
-         * @since 3.20
          */
-        public Spi(final String format, final String readerSpiName) throws IllegalArgumentException {
+        public Spi(final String format) throws IllegalArgumentException {
             this(Formats.getWriterByFormatName(format, Spi.class));
-            if (readerSpiName != null) {
-                readerSpiNames = new String[] {readerSpiName};
-            }
         }
 
         /**
-         * @deprecated Replaced by {@link #Spi(String, String)}.
+         * Creates a provider which will use the given format for writing pixel values.
+         *
+         * @param  format The name of the provider to use for writing the pixel values.
+         * @param  readerSpiName The fully qualified class name of a provider for a reader that
+         *         can read the files created by this writer format, or {@code null} if none.
+         * @throws IllegalArgumentException If no provider is found for the given format.
          */
-        @Deprecated
-        public Spi(final String format) throws IllegalArgumentException {
-            this(format, null);
+        Spi(final String format, final String readerSpiName) throws IllegalArgumentException {
+            this(format);
+            readerSpiNames = new String[] {readerSpiName};
         }
 
         /**

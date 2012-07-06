@@ -28,7 +28,6 @@ import javax.imageio.spi.ImageWriterSpi;
 
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.io.TemporaryFile;
-import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.resources.Errors;
 
 
@@ -138,7 +137,7 @@ public abstract class FileImageWriter extends StreamImageWriter {
          * the first declared image suffix (e.g. "png"), or "tmp" if there is no declared
          * suffix. The "FIW" prefix stands for "FileImageWriter".
          */
-        outputFile = TemporaryFile.createTempFile("FIW", Formats.getFileSuffix(originatingProvider), null);
+        outputFile = TemporaryFile.createTempFile("FIW", XImageIO.getFileSuffix(originatingProvider), null);
         isTemporary = true;
         return outputFile;
     }

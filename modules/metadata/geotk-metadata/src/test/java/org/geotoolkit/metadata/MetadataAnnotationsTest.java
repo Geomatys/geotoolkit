@@ -244,7 +244,7 @@ public final strictfp class MetadataAnnotationsTest extends AnnotationsTestBase 
         if (rootName.equals("SV_ServiceIdentification")) {
             return "MD_ServiceIdentification_Type";
         }
-        final StringBuilder buffer = new StringBuilder();
+        final StringBuilder buffer = new StringBuilder(rootName.length() + 13);
         if (implName.startsWith("Abstract")) {
             buffer.append("Abstract");
         }

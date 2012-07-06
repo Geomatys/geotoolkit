@@ -212,7 +212,7 @@ final class SeriesEntry extends DefaultEntry {
         if (host == null) {
             return file(filename).toURI();
         }
-        final StringBuilder buffer = new StringBuilder();
+        final StringBuilder buffer = new StringBuilder(path.length() + 8);
         if (!path.startsWith("/")) {
             buffer.append('/');
         }

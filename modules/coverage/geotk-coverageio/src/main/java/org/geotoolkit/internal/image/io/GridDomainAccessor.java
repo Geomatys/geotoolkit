@@ -34,19 +34,19 @@ import org.opengis.referencing.datum.PixelInCell;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
-import org.geotoolkit.image.io.metadata.MetadataAccessor;
+import org.geotoolkit.image.io.metadata.MetadataNodeAccessor;
 import org.geotoolkit.referencing.cs.DiscreteReferencingFactory;
 import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.resources.Errors;
 
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
-import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.FORMAT_NAME;
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 import static org.geotoolkit.internal.image.io.DimensionAccessor.fixRoundingError;
 
 
 /**
- * A convenience specialization of {@link MetadataAccessor} for nodes related to the
+ * A convenience specialization of {@link MetadataNodeAccessor} for nodes related to the
  * {@code "RectifiedGridDomain"} node. This class provides also convenience methods
  * for the {@code "RectifiedGridDomain/Limits"} and the {@code "SpatialRepresentation"}
  * nodes.
@@ -65,7 +65,7 @@ import static org.geotoolkit.internal.image.io.DimensionAccessor.fixRoundingErro
  * @since 3.06
  * @module
  */
-public final class GridDomainAccessor extends MetadataAccessor {
+public final class GridDomainAccessor extends MetadataNodeAccessor {
     /**
      * The name of the single attribute to declare for node that contains array.
      * This is used mostly for the following:
@@ -87,7 +87,7 @@ public final class GridDomainAccessor extends MetadataAccessor {
     /**
      * The accessor for offset vectors. Will be created only when first needed.
      */
-    private MetadataAccessor offsetVectors;
+    private MetadataNodeAccessor offsetVectors;
 
     /**
      * Creates a new accessor for the given metadata.
@@ -97,7 +97,7 @@ public final class GridDomainAccessor extends MetadataAccessor {
      *        sub-class is recommended, but not mandatory.
      */
     public GridDomainAccessor(final IIOMetadata metadata) {
-        super(metadata, FORMAT_NAME, "RectifiedGridDomain", null);
+        super(metadata, GEOTK_FORMAT_NAME, "RectifiedGridDomain", null);
     }
 
     /**
@@ -192,7 +192,7 @@ public final class GridDomainAccessor extends MetadataAccessor {
      * @param high The value to be assigned to the {@code "high"} attribute.
      */
     public void setLimits(final int[] low, final int[] high) {
-        final MetadataAccessor accessor = new MetadataAccessor(this, "Limits", null);
+        final MetadataNodeAccessor accessor = new MetadataNodeAccessor(this, "Limits", null);
         accessor.setAttribute("low",  low);
         accessor.setAttribute("high", high);
     }
@@ -231,9 +231,9 @@ public final class GridDomainAccessor extends MetadataAccessor {
      *        of a new {@code "OffsetVector"} node.
      */
     public void addOffsetVector(final double... values) {
-        MetadataAccessor accessor = offsetVectors;
+        MetadataNodeAccessor accessor = offsetVectors;
         if (accessor == null) {
-            offsetVectors = accessor = new MetadataAccessor(this, "OffsetVectors", "OffsetVector");
+            offsetVectors = accessor = new MetadataNodeAccessor(this, "OffsetVectors", "OffsetVector");
         }
         accessor.selectChild(accessor.appendChild());
         accessor.setAttribute(ARRAY_ATTRIBUTE_NAME, values);
@@ -249,8 +249,8 @@ public final class GridDomainAccessor extends MetadataAccessor {
     public void setSpatialRepresentation(final double[] centerPoint, final CellGeometry cellGeometry,
             final PixelOrientation pointInPixel)
     {
-        final MetadataAccessor accessor = new MetadataAccessor(
-                metadata, FORMAT_NAME, "SpatialRepresentation", null);
+        final MetadataNodeAccessor accessor = new MetadataNodeAccessor(
+                metadata, GEOTK_FORMAT_NAME, "SpatialRepresentation", null);
         accessor.setAttribute("numberOfDimensions", centerPoint.length);
         accessor.setAttribute("centerPoint",  centerPoint);
         accessor.setAttribute("pointInPixel", pointInPixel);

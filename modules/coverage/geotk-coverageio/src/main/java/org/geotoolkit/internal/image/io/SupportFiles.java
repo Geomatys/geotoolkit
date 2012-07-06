@@ -278,14 +278,15 @@ attmpt: for (int caseNumber=0; ; caseNumber++) {
      */
     public static void writeTFW(File file, final AffineTransform tr) throws IOException {
         final String suffix = toSuffixTFW(file);
-        String name = file.getName();
+        final String name = file.getName();
+        final StringBuilder buffer = new StringBuilder(name);
         final int s = name.lastIndexOf('.');
         if (s >= 0) {
-            name = name.substring(0, s+1) + suffix;
+            buffer.setLength(s + 1);
         } else {
-            name = name + '.' + suffix;
+            buffer.append('.');
         }
-        file = new File(file.getParent(), name);
+        file = new File(file.getParent(), buffer.append(suffix).toString());
         writeTFW(new FileOutputStream(file), tr);
     }
 

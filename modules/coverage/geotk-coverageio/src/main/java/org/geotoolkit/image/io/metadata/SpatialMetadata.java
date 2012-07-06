@@ -32,6 +32,7 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
+import javax.imageio.spi.ImageReaderWriterSpi;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.metadata.IIOMetadataFormat;
@@ -50,8 +51,6 @@ import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.logging.LoggedFormat;
-import org.geotoolkit.image.io.SpatialImageReader;
-import org.geotoolkit.image.io.SpatialImageWriter;
 import org.geotoolkit.image.io.WarningProducer;
 import org.geotoolkit.internal.image.io.Warnings;
 import org.geotoolkit.measure.RangeFormat;
@@ -67,7 +66,8 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * While ISO 19115-2 is the primary standard supported by this class, other standards can
  * works if they are designed with the same rules than the {@link org.opengis.metadata}
  * package.
- * <p>
+ *
+ * {@section Reading}
  * ISO 19115-2 metadata instances are obtained by {@link #getInstanceForType(Class)} (for
  * a single instance) or {@link #getListForType(Class)} (for a list of metadata instances)
  * methods. The table below lists some common metadata elements. The "<cite>Format</cite>"
@@ -120,6 +120,10 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * {@linkplain Class#isAssignableFrom(Class) assignable} to the given type.
  * In case of ambiguity, an {@link IllegalArgumentException} is thrown.
  *
+ * {@section Writing}
+ * Unless this metadata {@linkplain #isReadOnly() is read only}, it is possible to store
+ * the root of a metadata tree using the {@link #mergeTree(String, Node)} method.
+ *
  * {@section Errors handling}
  * If some inconsistency are found while reading (for example if the coordinate system
  * dimension doesn't match the envelope dimension), then the default implementation
@@ -139,6 +143,13 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  */
 public class SpatialMetadata extends IIOMetadata implements WarningProducer {
     /**
+     * Enumeration of values returned by {@link #getFormatCode(String)}.
+     *
+     * @since 3.20
+     */
+    private static final int MAIN=0, ISO=1, FALLBACK=2;
+
+    /**
      * An empty {@code SpatialMetadata} with no data and no format. This constant is
      * an alternative to {@code null} for meaning that no metadata are available.
      *
@@ -147,8 +158,13 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
     public static final SpatialMetadata EMPTY = new SpatialMetadata();
 
     /**
-     * The metadata format given at construction time. This is typically
-     * {@link SpatialMetadataFormat#IMAGE} or {@link SpatialMetadataFormat#STREAM}.
+     * The preferred metadata format, which was given at construction time.
+     * The preferred metadata format is not necessarily the only one. In particular, the
+     * {@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#ISO_FORMAT_NAME} format
+     * may also be accepted.
+     *
+     * @see SpatialMetadataFormat#getStreamInstance(String)
+     * @see SpatialMetadataFormat#getImageInstance(String)
      */
     public final IIOMetadataFormat format;
 
@@ -166,9 +182,16 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
     final IIOMetadata fallback;
 
     /**
-     * The root node to be returned by {@link #getAsTree}.
+     * The root node to be returned by {@link #getAsTree()}.
      */
     private Node root;
+
+    /**
+     * The root node to be returned by {@link #getAsTree(String)} for the ISO-19115 format.
+     *
+     * @since 3.20
+     */
+    private Node rootISO;
 
     /**
      * The values created by {@link #getInstanceForType(Class)}, cached for reuse.
@@ -196,9 +219,9 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
 
     /**
      * The default logging level for the warnings. This is given to the
-     * {@link MetadataAccessor} objects created for this metadata.
+     * {@link MetadataNodeParser} objects created for this metadata.
      */
-    private Level warningLevel = Level.WARNING;
+    private Level warningLevel;
 
     /**
      * {@code true} if this {@code SpatialMetadata} is read-only.
@@ -223,29 +246,29 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
 
     /**
      * Creates an initially empty metadata instance for the given format.
-     * The {@code format} argument is usually one of the {@code SpatialMetadataFormat}
-     * {@link SpatialMetadataFormat#STREAM STREAM} or {@link SpatialMetadataFormat#IMAGE IMAGE}
-     * constants, but other formats are allowed.
+     * The {@code format} argument is usually one of the {@link SpatialMetadataFormat} predefined
+     * {@linkplain SpatialMetadataFormat#getStreamInstance(String) stream} or
+     * {@linkplain SpatialMetadataFormat#getImageInstance(String) image} instances,
+     * but other formats are allowed.
      *
      * @param format The metadata format.
      */
     public SpatialMetadata(final IIOMetadataFormat format) {
-        this(format, (Object) null, null);
+        this(format, false, null, null, null);
     }
 
     /**
      * Creates an initially empty metadata instance for the given format and reader.
-     * The {@code format} argument is usually one of the {@code SpatialMetadataFormat}
-     * {@link SpatialMetadataFormat#STREAM STREAM} or {@link SpatialMetadataFormat#IMAGE IMAGE}
-     * constants, but other formats are allowed.
+     * The {@code format} argument is usually one of the {@link SpatialMetadataFormat} predefined
+     * {@linkplain SpatialMetadataFormat#getStreamInstance(String) stream} or
+     * {@linkplain SpatialMetadataFormat#getImageInstance(String) image} instances,
+     * but other formats are allowed.
      * <p>
      * If the {@code fallback} argument is non-null, then any call to a
      * {@link #getMetadataFormat(String) getMetadataFormat}, {@link #getAsTree(String) getAsTree},
      * {@link #mergeTree(String,Node) mergeTree} or {@link #setFromTree(String,Node) setFromTree}
-     * method with a format name different than
-     * <code>format.{@linkplain IIOMetadataFormat#getRootName() getRootName()}</code> will be
-     * delegated to that fallback. This is useful when the given {@code ImageReader} is actually
-     * a wrapper around an other {@code ImageReader}.
+     * method with an unrecognized format name will be delegated to that fallback. This is useful
+     * when the given {@code ImageReader} is actually a wrapper around an other {@code ImageReader}.
      *
      * @param format   The metadata format.
      * @param reader   The source image reader, or {@code null} if none.
@@ -253,22 +276,21 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
      *                 or {@code null} if none.
      */
     public SpatialMetadata(final IIOMetadataFormat format, final ImageReader reader, final IIOMetadata fallback) {
-        this(format, (Object) reader, fallback);
+        this(format, false, reader, null, fallback);
     }
 
     /**
      * Creates an initially empty metadata instance for the given format and writer.
-     * The {@code format} argument is usually one of the {@code SpatialMetadataFormat}
-     * {@link SpatialMetadataFormat#STREAM STREAM} or {@link SpatialMetadataFormat#IMAGE IMAGE}
-     * constants, but other formats are allowed.
+     * The {@code format} argument is usually one of the {@link SpatialMetadataFormat} predefined
+     * {@linkplain SpatialMetadataFormat#getStreamInstance stream} or
+     * {@linkplain SpatialMetadataFormat#getImageInstance image instances},
+     * but other formats are allowed.
      * <p>
      * If the {@code fallback} argument is non-null, then any call to a
      * {@link #getMetadataFormat(String) getMetadataFormat}, {@link #getAsTree(String) getAsTree},
      * {@link #mergeTree(String,Node) mergeTree} or {@link #setFromTree(String,Node) setFromTree}
-     * method with a format name different than
-     * <code>format.{@linkplain IIOMetadataFormat#getRootName() getRootName()}</code> will be
-     * delegated to that fallback. This is useful when the given {@code ImageWriter} is actually
-     * a wrapper around an other {@code ImageWriter}.
+     * method with an unrecognized format name will be delegated to that fallback. This is useful
+     * when the given {@code ImageWriter} is actually a wrapper around an other {@code ImageWriter}.
      *
      * @param format   The metadata format.
      * @param writer   The target image writer, or {@code null} if none.
@@ -276,36 +298,55 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
      *                 or {@code null} if none.
      */
     public SpatialMetadata(final IIOMetadataFormat format, final ImageWriter writer, final IIOMetadata fallback) {
-        this(format, (Object) writer, fallback);
+        this(format, false, writer, null, fallback);
     }
 
     /**
      * Creates an initially empty metadata instance for the given format and reader/writer.
      * The format name of the given fallback are merged with the name of the given format.
      */
-    private SpatialMetadata(final IIOMetadataFormat format, final Object owner, final IIOMetadata fallback) {
+    private SpatialMetadata(final IIOMetadataFormat format, final boolean isStreamMetadata,
+            final Object owner, final ImageReaderWriterSpi spi, final IIOMetadata fallback)
+    {
         ensureNonNull("format", format);
         this.format   = format;
         this.owner    = owner;
         this.fallback = fallback;
-        if (fallback != null) {
-            standardFormatSupported   = fallback.isStandardMetadataFormatSupported();
-            nativeMetadataFormatName  = fallback.getNativeMetadataFormatName();
-            String[] extraFormatNames = fallback.getExtraMetadataFormatNames();
-            if (extraFormatNames != null) {
-                extraMetadataFormatNames = XArrays.append(extraFormatNames, format.getRootName());
-                return;
+        if (spi != null) {
+            if (isStreamMetadata) {
+                standardFormatSupported  = spi.isStandardStreamMetadataFormatSupported();
+                nativeMetadataFormatName = spi.getNativeStreamMetadataFormatName();
+                extraMetadataFormatNames = spi.getExtraStreamMetadataFormatNames();
+            } else {
+                standardFormatSupported  = spi.isStandardImageMetadataFormatSupported();
+                nativeMetadataFormatName = spi.getNativeImageMetadataFormatName();
+                extraMetadataFormatNames = spi.getExtraImageMetadataFormatNames();
             }
-            /*
-             * Note: we leave 'nativeMetadataFormatClassName' and 'extraMetadataFormatClassNames'
-             * to null, which is illegal. However the only method to use those informations is
-             * IIOMetadata.getMetadataFormat(String), so this is okay if we overload that method.
-             *
-             * Getting the format class would be costly since there is no IIOMetadata method
-             * giving that information.
-             */
         }
-        extraMetadataFormatNames = new String[] {format.getRootName()};
+        if (fallback != null) {
+            if (!standardFormatSupported) {
+                standardFormatSupported = fallback.isStandardMetadataFormatSupported();
+            }
+            if (nativeMetadataFormatName == null) {
+                nativeMetadataFormatName = fallback.getNativeMetadataFormatName();
+            }
+            extraMetadataFormatNames = XArrays.concatenate(extraMetadataFormatNames, fallback.getExtraMetadataFormatNames());
+            extraMetadataFormatNames = XArrays.resize(extraMetadataFormatNames, XArrays.removeDuplicated(extraMetadataFormatNames));
+        }
+        final String rootName = format.getRootName();
+        if (extraMetadataFormatNames == null) {
+            extraMetadataFormatNames = new String[] {rootName};
+        } else if (!XArrays.contains(extraMetadataFormatNames, rootName)) {
+            extraMetadataFormatNames = XArrays.append(extraMetadataFormatNames, rootName);
+        }
+        /*
+         * Note: we leave 'nativeMetadataFormatClassName' and 'extraMetadataFormatClassNames'
+         * to null, which is illegal. However the only method to use those informations is
+         * IIOMetadata.getMetadataFormat(String), so this is okay if we overload that method.
+         *
+         * Getting the format class would be costly since there is no IIOMetadata method
+         * giving that information.
+         */
     }
 
     /**
@@ -313,35 +354,34 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
      * This method performs the following steps:
      *
      * <ol>
-     *   <li><p><b>Invoke <code>{@linkplain MetadataAccessor#listPaths
-     *       MetadataAccessor.listPaths}({@linkplain #format}, type)</code>:</b><br>
+     *   <li><p><b>Invoke <code>{@linkplain MetadataNodeParser#listPaths
+     *       MetadataNodeParser.listPaths}({@linkplain #format}, type)</code>:</b><br>
      *
      *       Search for an element declared in the {@linkplain #format} specified at construction
      *       time which accept a {@linkplain IIOMetadataNode#getUserObject() user object} of the
      *       given type. Exactly one element is expected, otherwise an {@link IllegalArgumentException}
      *       is thrown.</p></li>
      *
-     *   <li><p><b>Create a <code>new {@linkplain MetadataAccessor#MetadataAccessor(IIOMetadata,
-     *       String, String, String) MetadataAccessor}(this, {@linkplain #format}.getRootName(),
+     *   <li><p><b>Create a <code>new {@linkplain MetadataNodeParser#MetadataNodeParser(IIOMetadata,
+     *       String, String, String) MetadataNodeParser}(this, {@linkplain #format}.getRootName(),
      *       path, "#auto")</code>:</b><br>
      *
      *       Create a new metadata accessor for the single path found at the previous step.</p></li>
      *
-     *   <li><p><b>Invoke <code>{@linkplain MetadataAccessor#getUserObject(Class)
-     *       MetadataAccessor.getUserObject}(type)</code>:</b><br>
+     *   <li><p><b>Invoke <code>{@linkplain MetadataNodeParser#getUserObject(Class)
+     *       MetadataNodeParser.getUserObject}(type)</code>:</b><br>
      *
      *       If a user object was explicitly specified, return that object.</p></li>
      *
-     *   <li><p><b>Invoke <code>{@linkplain MetadataAccessor#newProxyInstance(Class)
-     *       MetadataAccessor.newProxyInstance}(type)</code>:</b><br>
+     *   <li><p><b>Invoke <code>{@linkplain MetadataNodeParser#newProxyInstance(Class)
+     *       MetadataNodeParser.newProxyInstance}(type)</code>:</b><br>
      *
      *       If no explicit user object was found, create a proxy which will implement the getter
      *       methods by a code that fetch the value from the corresponding attribute.</p></li>
      * </ol>
      *
      * If this {@code SpatialMetadata} does not contain a node for the given type, then this
-     * method returns {@code null} if this {@code SpatialMetadata} {@linkplain #isReadOnly()
-     * is read only}, or create the missing nodes otherwise.
+     * method returns {@code null}.
      *
      * @param  <T> The compile-time type specified as the {@code type} argument.
      * @param  type The interface implemented by the instance to fetch.
@@ -349,7 +389,7 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
      * @throws IllegalArgumentException If the given type is not a valid interface,
      *         or if no element or more than one element exist for the given type.
      *
-     * @see MetadataAccessor#newProxyInstance(Class)
+     * @see MetadataNodeParser#newProxyInstance(Class)
      *
      * @since 3.06
      */
@@ -368,7 +408,8 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
             if (CoordinateReferenceSystem.class.isAssignableFrom(type)) {
                 final ReferencingBuilder builder;
                 try {
-                    builder = new ReferencingBuilder(this);
+                    builder = new ReferencingBuilder(new MetadataNodeParser(this,
+                            SpatialMetadataFormat.GEOTK_FORMAT_NAME, ReferencingBuilder.PATH, null));
                 } catch (NoSuchElementException e) {
                     return null; // As of method contract.
                 }
@@ -378,9 +419,9 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
                  * For the general case (typically ISO 19115-2 metadata), create
                  * a proxy which will fetch attribute values using reflections.
                  */
-                final MetadataAccessor accessor;
+                final MetadataNodeParser accessor;
                 try {
-                    accessor = new MetadataAccessor(this, getMetadataFormatName(type), type);
+                    accessor = new MetadataNodeParser(this, getMetadataFormatName(type), type);
                 } catch (NoSuchElementException e) {
                     return null; // As of method contract.
                 }
@@ -403,8 +444,7 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
      * }
      *
      * If this {@code SpatialMetadata} does not contain a node for the given path, then this
-     * method returns {@code null} if this {@code SpatialMetadata} {@linkplain #isReadOnly()
-     * is read only}, or create the missing nodes otherwise.
+     * method returns {@code null}.
      *
      * {@note At the opposite of <code>getInstanceForType(Class)</code>, the current implementation
      *        of this method does not cache the returned proxy. Caching may be implemented in a
@@ -421,9 +461,9 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
     public <T> T getInstanceForType(final Class<T> type, final String path) throws IllegalArgumentException {
         // Handle CRS in the same special way than getInstanceForType(Class).
         final boolean isCRS = CoordinateReferenceSystem.class.isAssignableFrom(type);
-        final MetadataAccessor accessor;
+        final MetadataNodeParser accessor;
         try {
-            accessor = new MetadataAccessor(this, getMetadataFormatName(type), path, isCRS ? null : "#auto");
+            accessor = new MetadataNodeParser(this, getMetadataFormatName(type), path, isCRS ? null : "#auto");
         } catch (NoSuchElementException e) {
             return null; // As of method contract.
         }
@@ -441,7 +481,7 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
      * this method for a list (he should have invoked {@link #getListForType(Class)} instead),
      * returns the first element of that list as a convenience, creating an empty one if needed.
      */
-    private <T> T getInstanceForType(final Class<T> type, final MetadataAccessor accessor) {
+    private <T> T getInstanceForType(final Class<T> type, final MetadataNodeParser accessor) {
         T object;
         if (accessor.allowsChildren()) {
             final List<T> list = getListForType(type);
@@ -465,8 +505,7 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
      * list.
      * <p>
      * If this {@code SpatialMetadata} does not contain a node for the given type, then this
-     * method returns {@code null} if this {@code SpatialMetadata} {@linkplain #isReadOnly()
-     * is read only}, or create the missing nodes otherwise.
+     * method returns {@code null}.
      * <p>
      * Note that a {@code null} return value has a different meaning than an empty list:
      * an empty list means that the node exists but have no children, while a {@code null}
@@ -478,7 +517,7 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
      * @throws IllegalArgumentException If the given type is not a valid interface,
      *         or if no element or more than one element exist for the given type.
      *
-     * @see MetadataAccessor#newProxyList(Class)
+     * @see MetadataNodeParser#newProxyList(Class)
      *
      * @since 3.06
      */
@@ -489,9 +528,9 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
         @SuppressWarnings("unchecked")
         List<T> list = (List<T>) lists.get(type);
         if (list == null) {
-            final MetadataAccessor accessor;
+            final MetadataNodeParser accessor;
             try {
-                accessor = new MetadataAccessor(this, getMetadataFormatName(type), type);
+                accessor = new MetadataNodeParser(this, getMetadataFormatName(type), type);
             } catch (NoSuchElementException e) {
                 return null; // As of method contract.
             }
@@ -514,8 +553,7 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
      * }
      *
      * If this {@code SpatialMetadata} does not contain a node for the given path, then this
-     * method returns {@code null} if this {@code SpatialMetadata} {@linkplain #isReadOnly()
-     * is read only}, or create the missing nodes otherwise.
+     * method returns {@code null}.
      * <p>
      * Note that a {@code null} return value has a different meaning than an empty list:
      * an empty list means that the node exists but have no children, while a {@code null}
@@ -537,9 +575,9 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
     public <T> List<T> getListForType(final Class<T> type, final String path, final String children)
             throws IllegalArgumentException
     {
-        final MetadataAccessor accessor;
+        final MetadataNodeParser accessor;
         try {
-            accessor = new MetadataAccessor(this, getMetadataFormatName(type), path, children);
+            accessor = new MetadataNodeParser(this, getMetadataFormatName(type), path, children);
         } catch (NoSuchElementException e) {
             return null; // As of method contract.
         }
@@ -562,33 +600,57 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
         final String preferred, alternate;
         if (Metadata.class.isAssignableFrom(type)) {
             preferred = SpatialMetadataFormat.ISO_FORMAT_NAME;
-            alternate = SpatialMetadataFormat.FORMAT_NAME;
+            alternate = SpatialMetadataFormat.GEOTK_FORMAT_NAME;
         } else {
-            preferred = SpatialMetadataFormat.FORMAT_NAME;
+            preferred = SpatialMetadataFormat.GEOTK_FORMAT_NAME;
             alternate = SpatialMetadataFormat.ISO_FORMAT_NAME;
         }
         String fallback = nativeMetadataFormatName;
-        final String[] names = extraMetadataFormatNames;
-        if (names != null) {
-            for (final String name : names) {
-                if (preferred.equalsIgnoreCase(name)) return name;
-                if (alternate.equalsIgnoreCase(name)) fallback = name;
+        if (!preferred.equalsIgnoreCase(fallback)) {
+            final String[] names = extraMetadataFormatNames;
+            if (names != null) {
+                for (final String name : names) {
+                    if (preferred.equalsIgnoreCase(name)) return name;
+                    if (alternate.equalsIgnoreCase(name)) fallback = name;
+                }
             }
         }
         return fallback;
     }
 
     /**
-     * Returns {@code true} if we should use the {@linkplain #format} given at construction
-     * time, {@code false} if we should use the fallback, or thrown an exception otherwise.
+     * Returns {@code true} if the format of the given name is supported.
+     * This method does not verify the standard format name.
      */
-    private boolean isValidName(final String formatName) throws IllegalArgumentException {
+    private boolean isSupportedFormat(final String name) {
+        return name.equals(nativeMetadataFormatClassName) || XArrays.contains(extraMetadataFormatNames, name);
+    }
+
+    /**
+     * Returns a code for the given metadata format name. This method returns:
+     * <p>
+     * <ul>
+     *   <li>{@link #MAIN} if we should use the {@linkplain #format} given at construction time;</li>
+     *   <li>{@link #ISO} if we should use the ISO 19115-2 format;</li>
+     *   <li>{@link #FALLBACK} if we should use the {@linkplain #fallback};</li>
+     *   <li>or thrown an exception otherwise.</li>
+     * </ul>
+     */
+    private int getFormatCode(final String formatName) throws IllegalArgumentException {
         ensureNonNull("formatName", formatName);
+        if (format == null) {
+            throw new IllegalStateException(getErrorResources().getString(Errors.Keys.UNDEFINED_FORMAT));
+        }
         if (format.getRootName().equalsIgnoreCase(formatName)) {
-            return true;
+            return MAIN;
+        }
+        if (SpatialMetadataFormat.ISO_FORMAT_NAME.equalsIgnoreCase(formatName)
+                && isSupportedFormat(SpatialMetadataFormat.ISO_FORMAT_NAME))
+        {
+            return ISO;
         }
         if (fallback != null) {
-            return false;
+            return FALLBACK;
         }
         throw new IllegalArgumentException(getErrorResources().getString(
                 Errors.Keys.ILLEGAL_ARGUMENT_$2, "formatName", formatName));
@@ -601,8 +663,11 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
      * <ul>
      *   <li>If {@code formatName} is equals, ignoring case, to <code>{@linkplain #format}.getRootName()</code>
      *       where {@code format} is the argument given at construction time, then return that format.</li>
-     *   <li>Otherwise if a fallback has been specified at construction time, delegate to that
-     *       fallback.</li>
+     *   <li>Otherwise if {@code formatName} is equals, ignoring case, to
+     *       {@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat.ISO_FORMAT_NAME},
+     *       then return the ISO-19115 format.</li>
+     *   <li>Otherwise if a fallback has been specified at construction time,
+     *       then delegate to that fallback.</li>
      *   <li>Otherwise throw an {@code IllegalArgumentException}.</li>
      * </ul>
      *
@@ -612,11 +677,13 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
      */
     @Override
     public IIOMetadataFormat getMetadataFormat(final String formatName) throws IllegalArgumentException {
-        if (isValidName(formatName)) {
-            return format;
-        } else {
-            return fallback.getMetadataFormat(formatName);
+        switch (getFormatCode(formatName)) {
+            case MAIN: return format;
+            case ISO:  return SpatialMetadataFormat.getStreamInstance(SpatialMetadataFormat.ISO_FORMAT_NAME);
+            default:   return fallback.getMetadataFormat(formatName);
         }
+        // We do not invoke super.getMetadataFormat(...) because the 'nativeMetadataFormatClassName'
+        // and 'extraMetadataFormatClassNames' were left to null by the constructors.
     }
 
     /**
@@ -640,14 +707,14 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
      * @param  formatName the desired metadata format.
      * @return The node forming the root of metadata tree.
      * @throws IllegalArgumentException if the format name is {@code null} or is not
-     *         one of the names returned by {@link #getMetadataFormatNames}.
+     *         one of the names returned by {@link #getMetadataFormatNames()}.
      */
     @Override
     public Node getAsTree(final String formatName) throws IllegalArgumentException {
-        if (isValidName(formatName)) {
-            return getAsTree();
-        } else {
-            return fallback.getAsTree(formatName);
+        switch (getFormatCode(formatName)) {
+            case MAIN: return getAsTree();
+            case ISO:  return rootISO;
+            default:   return fallback.getAsTree(formatName);
         }
     }
 
@@ -669,10 +736,10 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
             throw new IllegalStateException(getErrorResources()
                     .getString(Errors.Keys.UNMODIFIABLE_METADATA));
         }
-        if (isValidName(formatName)) {
-            this.root = root;
-        } else {
-            fallback.mergeTree(formatName, root);
+        switch (getFormatCode(formatName)) {
+            case MAIN: this.root = root; break;
+            case ISO:  rootISO   = root; break;
+            default: fallback.mergeTree(formatName, root); break;
         }
     }
 
@@ -685,10 +752,10 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
      *       {@link #reset reset} methods will throw an {@link IllegalStateException}, as
      *       required by the standard {@link IIOMetadata} contract.</p></li>
      *
-     *   <li><p>Creation of {@link MetadataAccessor}s will throw a {@link NoSuchElementException}
+     *   <li><p>Creation of {@link MetadataNodeAccessor}s will throw a {@link NoSuchElementException}
      *       if the named element does not exist in this {@code SpatialMetadata} object. Note that
      *       if the {@code SpatialMetadata} has not been declared read-only, then the default
-     *       {@code MetadataAccessor} behavior is to create any missing nodes.</p></li>
+     *       {@code MetadataNodeAccessor} behavior is to create any missing nodes.</p></li>
      * </ul>
      */
     @Override
@@ -739,16 +806,19 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
      *
      * @return The current level at which warnings are emitted.
      *
-     * @see MetadataAccessor#getWarningLevel()
+     * @see MetadataNodeParser#getWarningLevel()
      *
      * @since 3.07
      */
     public Level getWarningLevel() {
+        if (warningLevel == null) {
+            warningLevel = Level.WARNING;
+        }
         return warningLevel;
     }
 
     /**
-     * Sets the warning level. This logging level is given to all {@link MetadataAccessor} created
+     * Sets the warning level. This logging level is given to all {@link MetadataNodeParser} created
      * by this {@code SpatialMetadata} instance. The default value is {@link Level#WARNING}.
      * <p>
      * Note that in the default implementation, warnings are logged only
@@ -759,7 +829,7 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
      *
      * @param level The new logging level.
      *
-     * @see MetadataAccessor#setWarningLevel(Level)
+     * @see MetadataNodeParser#setWarningLevel(Level)
      *
      * @since 3.07
      */
@@ -777,8 +847,8 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
      * implementation delegates to the first of the following choices which is applicable:
      * <p>
      * <ul>
-     *   <li>{@link SpatialImageReader#warningOccurred(LogRecord)}</li>
-     *   <li>{@link SpatialImageWriter#warningOccurred(LogRecord)}</li>
+     *   <li>{@link org.geotoolkit.image.io.SpatialImageReader#warningOccurred(LogRecord)}</li>
+     *   <li>{@link org.geotoolkit.image.io.SpatialImageWriter#warningOccurred(LogRecord)}</li>
      *   <li>Send the record to the {@link #LOGGER "org.geotoolkit.image.io"} logger otherwise.</li>
      * </ul>
      * <p>
@@ -789,7 +859,7 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
      * @return {@code true} if the message has been sent to at least one warning listener,
      *         or {@code false} if it has been sent to the logging system as a fallback.
      *
-     * @see MetadataAccessor#warningOccurred(LogRecord)
+     * @see MetadataNodeParser#warningOccurred(LogRecord)
      * @see javax.imageio.event.IIOReadWarningListener
      */
     @Override
@@ -842,7 +912,7 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
     private <T> LoggedFormat<T> createLoggedFormat(final Class<T> type, final String caller) {
         final LoggedFormat<T> format = createLoggedFormat(createFormat(type), type);
         format.setLogger("org.geotoolkit.image.io.metadata");
-        format.setCaller(MetadataAccessor.class, caller);
+        format.setCaller(MetadataNodeParser.class, caller);
         return format;
     }
 
@@ -898,7 +968,7 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
     }
 
     /**
-     * Returns a standard date format to be shared by {@link MetadataAccessor}.
+     * Returns a standard date format to be shared by {@link MetadataNodeParser}.
      * This method creates a new format only when first invoked, and reuses the
      * existing instance on subsequent invocations.
      */
@@ -910,7 +980,7 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
     }
 
     /**
-     * Returns a standard range format to be shared by {@link MetadataAccessor}.
+     * Returns a standard range format to be shared by {@link MetadataNodeParser}.
      * This method creates a new format only when first invoked, and reuses the
      * existing instance on subsequent invocations.
      */
@@ -943,7 +1013,7 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
     /**
      * Returns a string representation of this metadata, mostly for debugging purpose.
      * The default implementation formats the metadata as a tree similar to the one
-     * formatted by {@link MetadataAccessor#toString()}.
+     * formatted by {@link MetadataNodeParser#toString()}.
      */
     @Override
     public String toString() {

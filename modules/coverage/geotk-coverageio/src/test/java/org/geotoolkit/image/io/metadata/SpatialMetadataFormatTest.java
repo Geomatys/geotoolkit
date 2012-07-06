@@ -56,6 +56,7 @@ import org.junit.*;
 
 import static org.junit.Assert.*;
 import static javax.imageio.metadata.IIOMetadataFormat.*;
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 
 
 /**
@@ -74,7 +75,7 @@ public final strictfp class SpatialMetadataFormatTest {
      */
     @Test
     public void testStreamMetadataFormat() {
-        final IIOMetadataFormat f = SpatialMetadataFormat.getStreamInstance(null);
+        final IIOMetadataFormat f = SpatialMetadataFormat.getStreamInstance(GEOTK_FORMAT_NAME);
 
         assertEquals(DataIdentification.class,      f.getObjectClass           ("DiscoveryMetadata"));
         assertEquals(CHILD_POLICY_SOME,             f.getChildPolicy           ("DiscoveryMetadata"));
@@ -167,7 +168,7 @@ public final strictfp class SpatialMetadataFormatTest {
      */
     @Test
     public void testImageMetadataFormat() {
-        final IIOMetadataFormat f = SpatialMetadataFormat.getImageInstance(null);
+        final IIOMetadataFormat f = SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME);
 
         assertEquals(ImageDescription.class,          f.getObjectClass           ("ImageDescription"));
         assertEquals(CHILD_POLICY_SOME,               f.getChildPolicy           ("ImageDescription"));
@@ -364,7 +365,7 @@ public final strictfp class SpatialMetadataFormatTest {
      */
     @Test
     public void testImageDescriptions() {
-        final IIOMetadataFormat format = SpatialMetadataFormat.getImageInstance(null);
+        final IIOMetadataFormat format = SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME);
         assertEquals("Image distributor's code that identifies the level of radiometric and geometric processing that has been applied.",
                 format.getElementDescription("ProcessingLevelCode", Locale.ENGLISH));
         assertEquals("Area of the dataset obscured by clouds, expressed as a percentage of the spatial extent.",
@@ -378,12 +379,12 @@ public final strictfp class SpatialMetadataFormatTest {
      */
     @Test
     public void testStreamParents() {
-        final SpatialMetadataFormat format = SpatialMetadataFormat.getStreamInstance(null);
-        assertNull(format.getElementParent(SpatialMetadataFormat.FORMAT_NAME));
+        final SpatialMetadataFormat format = SpatialMetadataFormat.getStreamInstance(GEOTK_FORMAT_NAME);
+        assertNull(format.getElementParent(GEOTK_FORMAT_NAME));
 
-        assertEquals(SpatialMetadataFormat.FORMAT_NAME, format.getElementParent("DiscoveryMetadata"));
-        assertEquals(SpatialMetadataFormat.FORMAT_NAME, format.getElementParent("AcquisitionMetadata"));
-        assertEquals(SpatialMetadataFormat.FORMAT_NAME, format.getElementParent("QualityMetadata"));
+        assertEquals(GEOTK_FORMAT_NAME, format.getElementParent("DiscoveryMetadata"));
+        assertEquals(GEOTK_FORMAT_NAME, format.getElementParent("AcquisitionMetadata"));
+        assertEquals(GEOTK_FORMAT_NAME, format.getElementParent("QualityMetadata"));
         assertNull  ("'citation' is an attribute, not an element.", format.getElementParent("citation"));
         assertEquals("DiscoveryMetadata",   format.getElementParent("DescriptiveKeywords"));
         assertEquals("DescriptiveKeywords", format.getElementParent("DescriptiveKeywordsEntry"));
@@ -405,12 +406,12 @@ public final strictfp class SpatialMetadataFormatTest {
      */
     @Test
     public void testImageParents() {
-        final SpatialMetadataFormat format = SpatialMetadataFormat.getImageInstance(null);
-        assertNull(format.getElementParent(SpatialMetadataFormat.FORMAT_NAME));
+        final SpatialMetadataFormat format = SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME);
+        assertNull(format.getElementParent(GEOTK_FORMAT_NAME));
 
-        assertEquals(SpatialMetadataFormat.FORMAT_NAME, format.getElementParent("ImageDescription"));
-        assertEquals(SpatialMetadataFormat.FORMAT_NAME, format.getElementParent("SpatialRepresentation"));
-        assertEquals(SpatialMetadataFormat.FORMAT_NAME, format.getElementParent("RectifiedGridDomain"));
+        assertEquals(GEOTK_FORMAT_NAME, format.getElementParent("ImageDescription"));
+        assertEquals(GEOTK_FORMAT_NAME, format.getElementParent("SpatialRepresentation"));
+        assertEquals(GEOTK_FORMAT_NAME, format.getElementParent("RectifiedGridDomain"));
         assertNull  ("'contentType' is an attribute, not an element.", format.getElementParent("contentType"));
         assertEquals("ImageDescription",    format.getElementParent("ImageQualityCode"));
         assertEquals("ImageDescription",    format.getElementParent("Dimensions"));
@@ -427,8 +428,8 @@ public final strictfp class SpatialMetadataFormatTest {
      */
     @Test
     public void testStreamPaths() {
-        final SpatialMetadataFormat format = SpatialMetadataFormat.getStreamInstance(null);
-        assertNull(format.getElementPath(SpatialMetadataFormat.FORMAT_NAME));
+        final SpatialMetadataFormat format = SpatialMetadataFormat.getStreamInstance(GEOTK_FORMAT_NAME);
+        assertNull(format.getElementPath(GEOTK_FORMAT_NAME));
 
         assertNull  ("'citation' is an attribute, not an element.",                   format.getElementPath("citation"));
         assertEquals("DiscoveryMetadata",                                             format.getElementPath("DiscoveryMetadata"));
@@ -454,8 +455,8 @@ public final strictfp class SpatialMetadataFormatTest {
      */
     @Test
     public void testImagePaths() {
-        final SpatialMetadataFormat format = SpatialMetadataFormat.getImageInstance(null);
-        assertNull(format.getElementPath(SpatialMetadataFormat.FORMAT_NAME));
+        final SpatialMetadataFormat format = SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME);
+        assertNull(format.getElementPath(GEOTK_FORMAT_NAME));
 
         assertNull  ("'contentType' is an attribute, not an element.", format.getElementPath("contentType"));
         assertEquals("ImageDescription",                               format.getElementPath("ImageDescription"));
@@ -478,8 +479,8 @@ public final strictfp class SpatialMetadataFormatTest {
      */
     @Test
     public void testToString() throws IOException {
-        final String stream = SpatialMetadataFormat.getStreamInstance(null).toString();
-        final String image  = SpatialMetadataFormat.getImageInstance (null).toString();
+        final String stream = SpatialMetadataFormat.getStreamInstance(GEOTK_FORMAT_NAME).toString();
+        final String image  = SpatialMetadataFormat.getImageInstance (GEOTK_FORMAT_NAME).toString();
         assertTrue(!stream.isEmpty()); // Dummy check. The real interesting part is the write to a file.
         assertTrue(!image .isEmpty());
         if (false) {

@@ -26,11 +26,44 @@ import org.geotoolkit.lang.Static;
 
 /**
  * Simple operations on arrays. This class provides a central place for inserting and deleting
- * elements in an array, as well as resizing the array.
+ * elements in an array, as well as resizing the array. Some worthy methods are:
  * <p>
- * The {@code resize} methods provided in this class are very similar to the {@code copyOf}
- * methods provided in {@link Arrays} since Java 6, except that they accept {@code null}
- * arrays and do not copy anything if the given array already has the requested length.
+ * <ul>
+ *   <li>The {@link #resize(Object[], int) resize} methods, which are very similar to the
+ *       {@link Arrays#copyOf(Object[], int) Arrays.copyOf} methods except that they accept
+ *       {@code null} arrays and do not copy anything if the given array already has the
+ *       requested length.</li>
+ *   <li>The {@link #insert(Object[], int, Object[], int, int) insert} and {@link #remove(Object[],
+ *       int, int) remove} methods for adding and removing elements in the middle of an array.</li>
+ *   <li>The {@link #isSorted(Object[], Comparator, boolean) isSorted} methods for verifying
+ *       whatever an array is sorted, strictly or not.</li>
+ * </ul>
+ *
+ * {@section Handling of null values}
+ * Many (but not all) methods in this class are tolerant to null parameter values and to null
+ * elements in given arrays. The method behavior is such cases is typically to handle the null
+ * arrays like empty arrays, and to ignore the null elements. See the method javadoc for the
+ * actual behavior.
+ *
+ * {@section Performance consideration}
+ * The methods listed below are provided as convenience for <strong>casual</strong> use on
+ * <strong>small</strong> arrays. For large arrays of frequent use, consider using the
+ * Java collection framework instead.
+ * <p>
+ * <table>
+ * <tr><th>Method</th><th>Alternative</th></tr>
+ * <tr><td>{@link #resize(Object[], int)}</td>                     <td>{@link java.util.ArrayList}</td></tr>
+ * <tr><td>{@link #append(Object[], Object)}</td>                  <td>{@link java.util.ArrayList}</td></tr>
+ * <tr><td>{@link #insert(Object[], int, Object[], int, int)}</td> <td>{@link java.util.LinkedList}</td></tr>
+ * <tr><td>{@link #remove(Object[], int, int)}</td>                <td>{@link java.util.LinkedList}</td></tr>
+ * <tr><td>{@link #intersects(Object[], Object[])}</td>            <td>{@link java.util.HashSet}</td></tr>
+ * <tr><td>{@link #contains(Object[], Object)}</td>                <td>{@link java.util.HashSet}</td></tr>
+ * <tr><td>{@link #containsIdentity(Object[], Object)}</td>        <td>{@link java.util.IdentityHashMap}</td></tr>
+ * </table>
+ * <p>
+ * Note that this recommendation applies mostly to arrays of objects. It does not apply to arrays
+ * of primitive types, since as of JDK7 the collection framework wraps every primitive types in
+ * objects.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.20
@@ -350,20 +383,21 @@ public final class XArrays extends Static {
      * the {@code array} reference unchanged. Otherwise this method creates a new array.
      * In every cases, the given array is never modified.
      *
-     * @param <E>     The array type.
-     * @param array   Array from which to remove elements.
+     * @param <T>     The array type.
+     * @param array   Array from which to remove elements. Can be {@code null} only if {@code length} is 0.
      * @param first   Index of the first element to remove from the given {@code array}.
      * @param length  Number of elements to remove.
      * @return        Array with the same elements than the given {@code array} except for the
-     *                removed elements, or {@code array} if {@code length} is 0.
+     *                removed elements, or {@code array} (which may be null) if {@code length} is 0.
      */
-    private static <E> E doRemove(final E array, final int first, final int length) {
+    private static <T> T doRemove(final T array, final int first, final int length) {
         if (length == 0) {
-            return array;
+            return array; // May be null
         }
+        ArgumentChecks.ensureNonNull("array", array);
         int arrayLength = Array.getLength(array);
         @SuppressWarnings("unchecked")
-        final E newArray = (E) Array.newInstance(array.getClass().getComponentType(), arrayLength -= length);
+        final T newArray = (T) Array.newInstance(array.getClass().getComponentType(), arrayLength -= length);
         System.arraycopy(array, 0,            newArray, 0,                 first);
         System.arraycopy(array, first+length, newArray, first, arrayLength-first);
         return newArray;
@@ -376,11 +410,13 @@ public final class XArrays extends Static {
      * creates a new array. In every cases, the given array is never modified.
      *
      * @param <E>     The type of array elements.
-     * @param array   Array from which to remove elements.
+     * @param array   Array from which to remove elements. Can be {@code null} only if {@code length} is 0.
      * @param first   Index of the first element to remove from the given {@code array}.
      * @param length  Number of elements to remove.
      * @return        Array with the same elements than the given {@code array} except for the
-     *                removed elements, or {@code array} if {@code length} is 0.
+     *                removed elements, or {@code array} (which may be null) if {@code length} is 0.
+     *
+     * @see #insert(Object[], int, int)
      */
     public static <E> E[] remove(final E[] array, final int first, final int length) {
         return doRemove(array, first, length);
@@ -392,14 +428,17 @@ public final class XArrays extends Static {
      * the {@code array} reference unchanged (except if empty). Otherwise this method
      * creates a new array. In every cases, the given array is never modified.
      *
-     * @param array   Array from which to remove elements.
+     * @param array   Array from which to remove elements. Can be {@code null} only if {@code length} is 0.
      * @param first   Index of the first element to remove from the given {@code array}.
      * @param length  Number of elements to remove.
      * @return        Array with the same elements than the given {@code array} except for the
-     *                removed elements, or {@code array} if {@code length} is 0.
+     *                removed elements, or {@code array} (which may be null) if {@code length} is 0.
+     *
+     * @see #insert(double[], int, int)
      */
     public static double[] remove(final double[] array, final int first, final int length) {
-        return (first == 0 && length == array.length) ? EMPTY_DOUBLE : doRemove(array, first, length);
+        return (first == 0 && array != null && length == array.length)
+                ? EMPTY_DOUBLE : doRemove(array, first, length);
     }
 
     /**
@@ -408,14 +447,17 @@ public final class XArrays extends Static {
      * the {@code array} reference unchanged (except if empty). Otherwise this method
      * creates a new array. In every cases, the given array is never modified.
      *
-     * @param array   Array from which to remove elements.
+     * @param array   Array from which to remove elements. Can be {@code null} only if {@code length} is 0.
      * @param first   Index of the first element to remove from the given {@code array}.
      * @param length  Number of elements to remove.
      * @return        Array with the same elements than the given {@code array} except for the
-     *                removed elements, or {@code array} if {@code length} is 0.
+     *                removed elements, or {@code array} (which may be null) if {@code length} is 0.
+     *
+     * @see #insert(float[], int, int)
      */
     public static float[] remove(final float[] array, final int first, final int length) {
-        return (first == 0 && length == array.length) ? EMPTY_FLOAT : doRemove(array, first, length);
+        return (first == 0 && array != null && length == array.length)
+                ? EMPTY_FLOAT : doRemove(array, first, length);
     }
 
     /**
@@ -424,14 +466,17 @@ public final class XArrays extends Static {
      * the {@code array} reference unchanged (except if empty). Otherwise this method
      * creates a new array. In every cases, the given array is never modified.
      *
-     * @param array   Array from which to remove elements.
+     * @param array   Array from which to remove elements. Can be {@code null} only if {@code length} is 0.
      * @param first   Index of the first element to remove from the given {@code array}.
      * @param length  Number of elements to remove.
      * @return        Array with the same elements than the given {@code array} except for the
-     *                removed elements, or {@code array} if {@code length} is 0.
+     *                removed elements, or {@code array} (which may be null) if {@code length} is 0.
+     *
+     * @see #insert(long[], int, int)
      */
     public static long[] remove(final long[] array, final int first, final int length) {
-        return (first == 0 && length == array.length) ? EMPTY_LONG : doRemove(array, first, length);
+        return (first == 0 && array != null && length == array.length)
+                ? EMPTY_LONG : doRemove(array, first, length);
     }
 
     /**
@@ -440,14 +485,17 @@ public final class XArrays extends Static {
      * the {@code array} reference unchanged (except if empty). Otherwise this method
      * creates a new array. In every cases, the given array is never modified.
      *
-     * @param array   Array from which to remove elements.
+     * @param array   Array from which to remove elements. Can be {@code null} only if {@code length} is 0.
      * @param first   Index of the first element to remove from the given {@code array}.
      * @param length  Number of elements to remove.
      * @return        Array with the same elements than the given {@code array} except for the
-     *                removed elements, or {@code array} if {@code length} is 0.
+     *                removed elements, or {@code array} (which may be null) if {@code length} is 0.
+     *
+     * @see #insert(int[], int, int)
      */
     public static int[] remove(final int[] array, final int first, final int length) {
-        return (first == 0 && length == array.length) ? EMPTY_INT : doRemove(array, first, length);
+        return (first == 0 && array != null && length == array.length)
+                ? EMPTY_INT : doRemove(array, first, length);
     }
 
     /**
@@ -456,14 +504,17 @@ public final class XArrays extends Static {
      * the {@code array} reference unchanged (except if empty). Otherwise this method
      * creates a new array. In every cases, the given array is never modified.
      *
-     * @param array   Array from which to remove elements.
+     * @param array   Array from which to remove elements. Can be {@code null} only if {@code length} is 0.
      * @param first   Index of the first element to remove from the given {@code array}.
      * @param length  Number of elements to remove.
      * @return        Array with the same elements than the given {@code array} except for the
-     *                removed elements, or {@code array} if {@code length} is 0.
+     *                removed elements, or {@code array} (which may be null) if {@code length} is 0.
+     *
+     * @see #insert(short[], int, int)
      */
     public static short[] remove(final short[] array, final int first, final int length) {
-        return (first == 0 && length == array.length) ? EMPTY_SHORT : doRemove(array, first, length);
+        return (first == 0 && array != null && length == array.length) ?
+                EMPTY_SHORT : doRemove(array, first, length);
     }
 
     /**
@@ -472,14 +523,17 @@ public final class XArrays extends Static {
      * the {@code array} reference unchanged (except if empty). Otherwise this method
      * creates a new array. In every cases, the given array is never modified.
      *
-     * @param array   Array from which to remove elements.
+     * @param array   Array from which to remove elements. Can be {@code null} only if {@code length} is 0.
      * @param first   Index of the first element to remove from the given {@code array}.
      * @param length  Number of elements to remove.
      * @return        Array with the same elements than the given {@code array} except for the
-     *                removed elements, or {@code array} if {@code length} is 0.
+     *                removed elements, or {@code array} (which may be null) if {@code length} is 0.
+     *
+     * @see #insert(byte[], int, int)
      */
     public static byte[] remove(final byte[] array, final int first, final int length) {
-        return (first == 0 && length == array.length) ? EMPTY_BYTE : doRemove(array, first, length);
+        return (first == 0 && array != null && length == array.length)
+                ? EMPTY_BYTE : doRemove(array, first, length);
     }
 
     /**
@@ -488,14 +542,17 @@ public final class XArrays extends Static {
      * the {@code array} reference unchanged (except if empty). Otherwise this method
      * creates a new array. In every cases, the given array is never modified.
      *
-     * @param array   Array from which to remove elements.
+     * @param array   Array from which to remove elements. Can be {@code null} only if {@code length} is 0.
      * @param first   Index of the first element to remove from the given {@code array}.
      * @param length  Number of elements to remove.
      * @return        Array with the same elements than the given {@code array} except for the
-     *                removed elements, or {@code array} if {@code length} is 0.
+     *                removed elements, or {@code array} (which may be null) if {@code length} is 0.
+     *
+     * @see #insert(char[], int, int)
      */
     public static char[] remove(final char[] array, final int first, final int length) {
-        return (first == 0 && length == array.length) ? EMPTY_CHAR : doRemove(array, first, length);
+        return (first == 0 && array != null && length == array.length)
+                ? EMPTY_CHAR : doRemove(array, first, length);
     }
 
     /**
@@ -504,14 +561,17 @@ public final class XArrays extends Static {
      * the {@code array} reference unchanged (except if empty). Otherwise this method
      * creates a new array. In every cases, the given array is never modified.
      *
-     * @param array   Array from which to remove elements.
+     * @param array   Array from which to remove elements. Can be {@code null} only if {@code length} is 0.
      * @param first   Index of the first element to remove from the given {@code array}.
      * @param length  Number of elements to remove.
      * @return        Array with the same elements than the given {@code array} except for the
-     *                removed elements, or {@code array} if {@code length} is 0.
+     *                removed elements, or {@code array} (which may be null) if {@code length} is 0.
+     *
+     * @see #insert(boolean[], int, int)
      */
     public static boolean[] remove(final boolean[] array, final int first, final int length) {
-        return (first == 0 && length == array.length) ? EMPTY_BOOLEAN : doRemove(array, first, length);
+        return (first == 0 && array != null && length == array.length)
+                ? EMPTY_BOOLEAN : doRemove(array, first, length);
     }
 
     /**
@@ -522,21 +582,22 @@ public final class XArrays extends Static {
      * reference unchanged. Otherwise this method creates a new array. In every cases,
      * the given array is never modified.
      *
-     * @param <E>     The type of array elements.
-     * @param array   Array in which to insert spaces.
+     * @param <T>     The array type.
+     * @param array   Array in which to insert spaces. Can be {@code null} only if {@code length} is 0.
      * @param first   Index where the first space should be inserted. All {@code array} elements
      *                having an index equal to or higher than {@code index} will be moved forward.
      * @param length  Number of spaces to insert.
      * @return        Array containing the {@code array} elements with the additional space
-     *                inserted, or {@code array} if {@code length} is 0.
+     *                inserted, or {@code array} (which may be null) if {@code length} is 0.
      */
-    private static <E> E doInsert(final E array, final int first, final int length) {
+    private static <T> T doInsert(final T array, final int first, final int length) {
         if (length == 0) {
-            return array;
+            return array; // May be null
         }
+        ArgumentChecks.ensureNonNull("array", array);
         final int arrayLength = Array.getLength(array);
         @SuppressWarnings("unchecked")
-        final E newArray = (E) Array.newInstance(array.getClass().getComponentType(), arrayLength + length);
+        final T newArray = (T) Array.newInstance(array.getClass().getComponentType(), arrayLength + length);
         System.arraycopy(array, 0,     newArray, 0,            first            );
         System.arraycopy(array, first, newArray, first+length, arrayLength-first);
         return newArray;
@@ -551,12 +612,15 @@ public final class XArrays extends Static {
      * the given array is never modified.
      *
      * @param <E>     The type of array elements.
-     * @param array   Array in which to insert spaces.
+     * @param array   Array in which to insert spaces. Can be {@code null} only if {@code length} is 0.
      * @param first   Index where the first space should be inserted. All {@code array} elements
      *                having an index equal to or higher than {@code index} will be moved forward.
      * @param length  Number of spaces to insert.
      * @return        Array containing the {@code array} elements with the additional space
-     *                inserted, or {@code array} if {@code length} is 0.
+     *                inserted, or {@code array} (which may be null) if {@code length} is 0.
+     *
+     * @see #insert(Object[], int, Object[], int, int)
+     * @see #remove(Object[], int, int)
      */
     public static <E> E[] insert(final E[] array, final int first, final int length) {
         return doInsert(array, first, length);
@@ -571,12 +635,15 @@ public final class XArrays extends Static {
      * reference unchanged. Otherwise this method creates a new array. In every cases,
      * the given array is never modified.
      *
-     * @param array   Array in which to insert spaces.
+     * @param array   Array in which to insert spaces. Can be {@code null} only if {@code length} is 0.
      * @param first   Index where the first space should be inserted. All {@code array} elements
      *                having an index equal to or higher than {@code index} will be moved forward.
      * @param length  Number of spaces to insert.
      * @return        Array containing the {@code array} elements with the additional space
-     *                inserted, or {@code array} if {@code length} is 0.
+     *                inserted, or {@code array} (which may be null) if {@code length} is 0.
+     *
+     * @see #insert(double[], int, double[], int, int)
+     * @see #remove(double[], int, int)
      */
     public static double[] insert(final double[] array, final int first, final int length) {
         return doInsert(array, first, length);
@@ -591,12 +658,15 @@ public final class XArrays extends Static {
      * reference unchanged. Otherwise this method creates a new array. In every cases,
      * the given array is never modified.
      *
-     * @param array   Array in which to insert spaces.
+     * @param array   Array in which to insert spaces. Can be {@code null} only if {@code length} is 0.
      * @param first   Index where the first space should be inserted. All {@code array} elements
      *                having an index equal to or higher than {@code index} will be moved forward.
      * @param length  Number of spaces to insert.
      * @return        Array containing the {@code array} elements with the additional space
-     *                inserted, or {@code array} if {@code length} is 0.
+     *                inserted, or {@code array} (which may be null) if {@code length} is 0.
+     *
+     * @see #insert(float[], int, float[], int, int)
+     * @see #remove(float[], int, int)
      */
     public static float[] insert(final float[] array, final int first, final int length) {
         return doInsert(array, first, length);
@@ -611,12 +681,15 @@ public final class XArrays extends Static {
      * reference unchanged. Otherwise this method creates a new array. In every cases,
      * the given array is never modified.
      *
-     * @param array   Array in which to insert spaces.
+     * @param array   Array in which to insert spaces. Can be {@code null} only if {@code length} is 0.
      * @param first   Index where the first space should be inserted. All {@code array} elements
      *                having an index equal to or higher than {@code index} will be moved forward.
      * @param length  Number of spaces to insert.
      * @return        Array containing the {@code array} elements with the additional space
-     *                inserted, or {@code array} if {@code length} is 0.
+     *                inserted, or {@code array} (which may be null) if {@code length} is 0.
+     *
+     * @see #insert(long[], int, long[], int, int)
+     * @see #remove(long[], int, int)
      */
     public static long[] insert(final long[] array, final int first, final int length) {
         return doInsert(array, first, length);
@@ -631,12 +704,15 @@ public final class XArrays extends Static {
      * reference unchanged. Otherwise this method creates a new array. In every cases,
      * the given array is never modified.
      *
-     * @param array   Array in which to insert spaces.
+     * @param array   Array in which to insert spaces. Can be {@code null} only if {@code length} is 0.
      * @param first   Index where the first space should be inserted. All {@code array} elements
      *                having an index equal to or higher than {@code index} will be moved forward.
      * @param length  Number of spaces to insert.
      * @return        Array containing the {@code array} elements with the additional space
-     *                inserted, or {@code array} if {@code length} is 0.
+     *                inserted, or {@code array} (which may be null) if {@code length} is 0.
+     *
+     * @see #insert(int[], int, int[], int, int)
+     * @see #remove(int[], int, int)
      */
     public static int[] insert(final int[] array, final int first, final int length) {
         return doInsert(array, first, length);
@@ -651,12 +727,15 @@ public final class XArrays extends Static {
      * reference unchanged. Otherwise this method creates a new array. In every cases,
      * the given array is never modified.
      *
-     * @param array   Array in which to insert spaces.
+     * @param array   Array in which to insert spaces. Can be {@code null} only if {@code length} is 0.
      * @param first   Index where the first space should be inserted. All {@code array} elements
      *                having an index equal to or higher than {@code index} will be moved forward.
      * @param length  Number of spaces to insert.
      * @return        Array containing the {@code array} elements with the additional space
-     *                inserted, or {@code array} if {@code length} is 0.
+     *                inserted, or {@code array} (which may be null) if {@code length} is 0.
+     *
+     * @see #insert(short[], int, short[], int, int)
+     * @see #remove(short[], int, int)
      */
     public static short[] insert(final short[] array, final int first, final int length) {
         return doInsert(array, first, length);
@@ -671,12 +750,15 @@ public final class XArrays extends Static {
      * reference unchanged. Otherwise this method creates a new array. In every cases,
      * the given array is never modified.
      *
-     * @param array   Array in which to insert spaces.
+     * @param array   Array in which to insert spaces. Can be {@code null} only if {@code length} is 0.
      * @param first   Index where the first space should be inserted. All {@code array} elements
      *                having an index equal to or higher than {@code index} will be moved forward.
      * @param length  Number of spaces to insert.
      * @return        Array containing the {@code array} elements with the additional space
-     *                inserted, or {@code array} if {@code length} is 0.
+     *                inserted, or {@code array} (which may be null) if {@code length} is 0.
+     *
+     * @see #insert(byte[], int, byte[], int, int)
+     * @see #remove(byte[], int, int)
      */
     public static byte[] insert(final byte[] array, final int first, final int length) {
         return doInsert(array, first, length);
@@ -691,12 +773,15 @@ public final class XArrays extends Static {
      * reference unchanged. Otherwise this method creates a new array. In every cases,
      * the given array is never modified.
      *
-     * @param array   Array in which to insert spaces.
+     * @param array   Array in which to insert spaces. Can be {@code null} only if {@code length} is 0.
      * @param first   Index where the first space should be inserted. All {@code array} elements
      *                having an index equal to or higher than {@code index} will be moved forward.
      * @param length  Number of spaces to insert.
      * @return        Array containing the {@code array} elements with the additional space
-     *                inserted, or {@code array} if {@code length} is 0.
+     *                inserted, or {@code array} (which may be null) if {@code length} is 0.
+     *
+     * @see #insert(char[], int, char[], int, int)
+     * @see #remove(char[], int, int)
      */
     public static char[] insert(final char[] array, final int first, final int length) {
         return doInsert(array, first, length);
@@ -711,12 +796,15 @@ public final class XArrays extends Static {
      * reference unchanged. Otherwise this method creates a new array. In every cases,
      * the given array is never modified.
      *
-     * @param array   Array in which to insert spaces.
+     * @param array   Array in which to insert spaces. Can be {@code null} only if {@code length} is 0.
      * @param first   Index where the first space should be inserted. All {@code array} elements
      *                having an index equal to or higher than {@code index} will be moved forward.
      * @param length  Number of spaces to insert.
      * @return        Array containing the {@code array} elements with the additional space
-     *                inserted, or {@code array} if {@code length} is 0.
+     *                inserted, or {@code array} (which may be null) if {@code length} is 0.
+     *
+     * @see #insert(boolean[], int, boolean[], int, int)
+     * @see #remove(boolean[], int, int)
      */
     public static boolean[] insert(final boolean[] array, final int first, final int length) {
         return doInsert(array, first, length);
@@ -730,10 +818,10 @@ public final class XArrays extends Static {
      * reference unchanged. Otherwise this method creates a new array. In every cases,
      * the given arrays are never modified.
      *
-     * @param <E>     The type of array elements.
-     * @param src     Array to entirely or partially insert into {@code dst}.
+     * @param <T>     The arrays type.
+     * @param src     Array to entirely or partially insert into {@code dst}. Can be null only if {@code length} is 0.
      * @param srcOff  Index of the first element of {@code src} to insert into {@code dst}.
-     * @param dst     Array in which to insert {@code src} data.
+     * @param dst     Array in which to insert {@code src} data. Can be null only if {@code length} is 0.
      * @param dstOff  Index of the first element in {@code dst} where to insert {@code src} data.
      *                All elements of {@code dst} whose index is equal to or greater than
      *                {@code dstOff} will be moved forward.
@@ -742,15 +830,17 @@ public final class XArrays extends Static {
      *                returns directly {@code dst} when {@code length} is zero, but never return
      *                {@code src}.
      */
-    private static <E> E doInsert(final E src, final int srcOff,
-                                  final E dst, final int dstOff, final int length)
+    private static <T> T doInsert(final T src, final int srcOff,
+                                  final T dst, final int dstOff, final int length)
     {
         if (length == 0) {
-            return dst;
+            return dst; // May be null
         }
+        ArgumentChecks.ensureNonNull("src", src);
+        ArgumentChecks.ensureNonNull("dst", dst);
         final int dstLength = Array.getLength(dst);
         @SuppressWarnings("unchecked")
-        final E newArray = (E) Array.newInstance(dst.getClass().getComponentType(), dstLength+length);
+        final T newArray = (T) Array.newInstance(dst.getClass().getComponentType(), dstLength+length);
         System.arraycopy(dst, 0,      newArray, 0,             dstOff          );
         System.arraycopy(src, srcOff, newArray, dstOff,        length          );
         System.arraycopy(dst, dstOff, newArray, dstOff+length, dstLength-dstOff);
@@ -766,9 +856,9 @@ public final class XArrays extends Static {
      * the given arrays are never modified.
      *
      * @param <E>     The type of array elements.
-     * @param src     Array to entirely or partially insert into {@code dst}.
+     * @param src     Array to entirely or partially insert into {@code dst}. Can be null only if {@code length} is 0.
      * @param srcOff  Index of the first element of {@code src} to insert into {@code dst}.
-     * @param dst     Array in which to insert {@code src} data.
+     * @param dst     Array in which to insert {@code src} data. Can be null only if {@code length} is 0.
      * @param dstOff  Index of the first element in {@code dst} where to insert {@code src} data.
      *                All elements of {@code dst} whose index is equal to or greater than
      *                {@code dstOff} will be moved forward.
@@ -791,9 +881,9 @@ public final class XArrays extends Static {
      * reference unchanged. Otherwise this method creates a new array. In every cases,
      * the given arrays are never modified.
      *
-     * @param src     Array to entirely or partially insert into {@code dst}.
+     * @param src     Array to entirely or partially insert into {@code dst}. Can be null only if {@code length} is 0.
      * @param srcOff  Index of the first element of {@code src} to insert into {@code dst}.
-     * @param dst     Array in which to insert {@code src} data.
+     * @param dst     Array in which to insert {@code src} data. Can be null only if {@code length} is 0.
      * @param dstOff  Index of the first element in {@code dst} where to insert {@code src} data.
      *                All elements of {@code dst} whose index is equal to or greater than
      *                {@code dstOff} will be moved forward.
@@ -816,9 +906,9 @@ public final class XArrays extends Static {
      * reference unchanged. Otherwise this method creates a new array. In every cases,
      * the given arrays are never modified.
      *
-     * @param src     Array to entirely or partially insert into {@code dst}.
+     * @param src     Array to entirely or partially insert into {@code dst}. Can be null only if {@code length} is 0.
      * @param srcOff  Index of the first element of {@code src} to insert into {@code dst}.
-     * @param dst     Array in which to insert {@code src} data.
+     * @param dst     Array in which to insert {@code src} data. Can be null only if {@code length} is 0.
      * @param dstOff  Index of the first element in {@code dst} where to insert {@code src} data.
      *                All elements of {@code dst} whose index is equal to or greater than
      *                {@code dstOff} will be moved forward.
@@ -841,9 +931,9 @@ public final class XArrays extends Static {
      * reference unchanged. Otherwise this method creates a new array. In every cases,
      * the given arrays are never modified.
      *
-     * @param src     Array to entirely or partially insert into {@code dst}.
+     * @param src     Array to entirely or partially insert into {@code dst}. Can be null only if {@code length} is 0.
      * @param srcOff  Index of the first element of {@code src} to insert into {@code dst}.
-     * @param dst     Array in which to insert {@code src} data.
+     * @param dst     Array in which to insert {@code src} data. Can be null only if {@code length} is 0.
      * @param dstOff  Index of the first element in {@code dst} where to insert {@code src} data.
      *                All elements of {@code dst} whose index is equal to or greater than
      *                {@code dstOff} will be moved forward.
@@ -866,9 +956,9 @@ public final class XArrays extends Static {
      * reference unchanged. Otherwise this method creates a new array. In every cases,
      * the given arrays are never modified.
      *
-     * @param src     Array to entirely or partially insert into {@code dst}.
+     * @param src     Array to entirely or partially insert into {@code dst}. Can be null only if {@code length} is 0.
      * @param srcOff  Index of the first element of {@code src} to insert into {@code dst}.
-     * @param dst     Array in which to insert {@code src} data.
+     * @param dst     Array in which to insert {@code src} data. Can be null only if {@code length} is 0.
      * @param dstOff  Index of the first element in {@code dst} where to insert {@code src} data.
      *                All elements of {@code dst} whose index is equal to or greater than
      *                {@code dstOff} will be moved forward.
@@ -891,9 +981,9 @@ public final class XArrays extends Static {
      * reference unchanged. Otherwise this method creates a new array. In every cases,
      * the given arrays are never modified.
      *
-     * @param src     Array to entirely or partially insert into {@code dst}.
+     * @param src     Array to entirely or partially insert into {@code dst}. Can be null only if {@code length} is 0.
      * @param srcOff  Index of the first element of {@code src} to insert into {@code dst}.
-     * @param dst     Array in which to insert {@code src} data.
+     * @param dst     Array in which to insert {@code src} data. Can be null only if {@code length} is 0.
      * @param dstOff  Index of the first element in {@code dst} where to insert {@code src} data.
      *                All elements of {@code dst} whose index is equal to or greater than
      *                {@code dstOff} will be moved forward.
@@ -916,9 +1006,9 @@ public final class XArrays extends Static {
      * reference unchanged. Otherwise this method creates a new array. In every cases,
      * the given arrays are never modified.
      *
-     * @param src     Array to entirely or partially insert into {@code dst}.
+     * @param src     Array to entirely or partially insert into {@code dst}. Can be null only if {@code length} is 0.
      * @param srcOff  Index of the first element of {@code src} to insert into {@code dst}.
-     * @param dst     Array in which to insert {@code src} data.
+     * @param dst     Array in which to insert {@code src} data. Can be null only if {@code length} is 0.
      * @param dstOff  Index of the first element in {@code dst} where to insert {@code src} data.
      *                All elements of {@code dst} whose index is equal to or greater than
      *                {@code dstOff} will be moved forward.
@@ -941,9 +1031,9 @@ public final class XArrays extends Static {
      * reference unchanged. Otherwise this method creates a new array. In every cases,
      * the given arrays are never modified.
      *
-     * @param src     Array to entirely or partially insert into {@code dst}.
+     * @param src     Array to entirely or partially insert into {@code dst}. Can be null only if {@code length} is 0.
      * @param srcOff  Index of the first element of {@code src} to insert into {@code dst}.
-     * @param dst     Array in which to insert {@code src} data.
+     * @param dst     Array in which to insert {@code src} data. Can be null only if {@code length} is 0.
      * @param dstOff  Index of the first element in {@code dst} where to insert {@code src} data.
      *                All elements of {@code dst} whose index is equal to or greater than
      *                {@code dstOff} will be moved forward.
@@ -966,9 +1056,9 @@ public final class XArrays extends Static {
      * reference unchanged. Otherwise this method creates a new array. In every cases,
      * the given arrays are never modified.
      *
-     * @param src     Array to entirely or partially insert into {@code dst}.
+     * @param src     Array to entirely or partially insert into {@code dst}. Can be null only if {@code length} is 0.
      * @param srcOff  Index of the first element of {@code src} to insert into {@code dst}.
-     * @param dst     Array in which to insert {@code src} data.
+     * @param dst     Array in which to insert {@code src} data. Can be null only if {@code length} is 0.
      * @param dstOff  Index of the first element in {@code dst} where to insert {@code src} data.
      *                All elements of {@code dst} whose index is equal to or greater than
      *                {@code dstOff} will be moved forward.
@@ -998,25 +1088,76 @@ public final class XArrays extends Static {
      * @since 3.20
      */
     public static <T> T[] append(final T[] array, final T element) {
+        ArgumentChecks.ensureNonNull("array", array);
         final T[] copy = Arrays.copyOf(array, array.length + 1);
         copy[array.length] = element;
         return copy;
     }
 
     /**
+     * Removes the duplicated elements in the given array. This method should be invoked
+     * only for small arrays, typically less than 10 distinct elements. For larger arrays,
+     * use {@link java.util.LinkedHashSet} instead.
+     * <p>
+     * This method compares all pair of elements using the {@link Objects#equals(Object, Object)}
+     * method - so null elements are allowed. If duplicated values are found, then only the first
+     * occurrence is retained; the second occurrence is removed in-place. After all elements have
+     * been compared, this method returns the number of remaining elements in the array. The free
+     * space at the end of the array is padded with {@code null} values.
+     * <p>
+     * Callers can obtain an array of appropriate length using the following idiom.
+     * Note that this idiom will create a new array only if necessary:
+     *
+     * {@preformat java
+     *     T[] array = ...;
+     *     array = resize(array, removeDuplicated(array));
+     * }
+     *
+     * {@note This method return type is not an array in order to make obvious that the given
+     *        array will be modified in-place. This behavior is different than the behavior of
+     *        most other methods in this class, which doesn't modify the given source array.}
+     *
+     * @param  array Array from which to remove duplicated elements, or {@code null}.
+     * @return The number of remaining elements in the given array, or 0 if the given
+     *         {@code array} was null.
+     *
+     * @since 3.20
+     */
+    public static int removeDuplicated(final Object[] array) {
+        if (array == null) {
+            return 0;
+        }
+        int length = array.length;
+        for (int i=length; --i>=0;) {
+            final Object value = array[i];
+            for (int j=i; --j>=0;) {
+                if (Utilities.equals(array[j], value)) {
+                    System.arraycopy(array, i+1, array, i, --length - i);
+                    array[length] = null;
+                    break;
+                }
+            }
+        }
+        return length;
+    }
+
+    /**
      * Reverses the order of elements in the given array.
      * This operation is performed in-place.
+     * If the given array is {@code null}, then this method does nothing.
      *
-     * @param entries The array in which to reverse the order of elements.
+     * @param entries The array in which to reverse the order of elements, or {@code null} if none.
      *
      * @since 3.11
      */
     public static void reverse(final Object[] entries) {
-        for (int i=entries.length/2; --i >= 0;) {
-            final int j = (entries.length - 1) - i;
-            final Object tmp = entries[i];
-            entries[i] = entries[j];
-            entries[j] = tmp;
+        if (entries != null) {
+            for (int i=entries.length/2; --i >= 0;) {
+                final int j = (entries.length - 1) - i;
+                final Object tmp = entries[i];
+                entries[i] = entries[j];
+                entries[j] = tmp;
+            }
         }
     }
 
@@ -1278,13 +1419,15 @@ public final class XArrays extends Static {
      * Returns {@code true} if the specified array contains at least one
      * {@link Double#NaN NaN} value.
      *
-     * @param array The array to check.
-     * @return {@code true} if the given array contains at least one NaN value.
+     * @param array The array to check, or {@code null}.
+     * @return {@code true} if the given array is non-null and contains at least one NaN value.
      */
     public static boolean hasNaN(final double[] array) {
-        for (int i=0; i<array.length; i++) {
-            if (Double.isNaN(array[i])) {
-                return true;
+        if (array != null) {
+            for (int i=0; i<array.length; i++) {
+                if (Double.isNaN(array[i])) {
+                    return true;
+                }
             }
         }
         return false;
@@ -1294,13 +1437,15 @@ public final class XArrays extends Static {
      * Returns {@code true} if the specified array contains at least one
      * {@link Float#NaN NaN} value.
      *
-     * @param array The array to check.
-     * @return {@code true} if the given array contains at least one NaN value.
+     * @param array The array to check, or {@code null}.
+     * @return {@code true} if the given array is non-null and contains at least one NaN value.
      */
     public static boolean hasNaN(final float[] array) {
-        for (int i=0; i<array.length; i++) {
-            if (Float.isNaN(array[i])) {
-                return true;
+        if (array != null) {
+            for (int i=0; i<array.length; i++) {
+                if (Float.isNaN(array[i])) {
+                    return true;
+                }
             }
         }
         return false;
@@ -1364,6 +1509,8 @@ public final class XArrays extends Static {
      * @param  value The value to search. May be {@code null}.
      * @return {@code true} if the array is non-null and contains the value (which may be null),
      *         or {@code false} otherwise.
+     *
+     * @see #intersects(Object[], Object[])
      */
     public static boolean contains(final Object[] array, final Object value) {
         if (array != null) {
@@ -1385,14 +1532,18 @@ public final class XArrays extends Static {
      * arrays are large or if an array will be involved in more than one search, consider using
      * {@link java.util.HashSet} instead.
      *
-     * @param array1 The first array.
-     * @param array2 The second array.
-     * @return {@code true} if both array have at least one element in common.
+     * @param array1 The first array, or {@code null}.
+     * @param array2 The second array, or {@code null}.
+     * @return {@code true} if both array are non-null and have at least one element in common.
+     *
+     * @see #contains(Object[], Object)
      */
     public static boolean intersects(final Object[] array1, final Object[] array2) {
-        for (final Object element : array1) {
-            if (contains(array2, element)) {
-                return true;
+        if (array1 != null) {
+            for (final Object element : array1) {
+                if (contains(array2, element)) {
+                    return true;
+                }
             }
         }
         return false;
@@ -1417,6 +1568,7 @@ public final class XArrays extends Static {
      *               of the given array if it can be returned with no change), or {@code null}.
      *
      * @see #append(Object[], Object)
+     * @see #unionSorted(int[], int[])
      *
      * @since 3.07
      */
@@ -1448,10 +1600,7 @@ public final class XArrays extends Static {
     }
 
     /**
-     * Returns the union of two sorted arrays. The input arrays shall be sorted in strictly
-     * increasing order (for performance raison, this is verified only if assertions are enabled).
-     * The output array is the union of the input arrays without duplicated values, with elements
-     * in strictly increasing order.
+     * @deprecated Renamed {@link #unionSorted(int[], int[])}.
      *
      * @param  array1 The first array.
      * @param  array2 The second array.
@@ -1459,10 +1608,32 @@ public final class XArrays extends Static {
      *
      * @since 3.04
      */
+    @Deprecated
     public static int[] union(final int[] array1, final int[] array2) {
+        return unionSorted(array1, array2);
+    }
+
+    /**
+     * Returns the union of two sorted arrays. The input arrays shall be sorted in strictly
+     * increasing order (for performance raison, this is verified only if assertions are enabled).
+     * The output array is the union of the input arrays without duplicated values, with elements
+     * in strictly increasing order.
+     *
+     * @param  array1 The first array, or {@code null}.
+     * @param  array2 The second array, or {@code null}.
+     * @return The union of the given array without duplicated values, or {@code null} if the two
+     *         given arrays were null. May be one of the given arrays.
+     *
+     * @since 3.20 (derived from 3.04)
+     *
+     * @see #concatenate(Object[][])
+     */
+    public static int[] unionSorted(final int[] array1, final int[] array2) {
+        if (array1 == null) return array2;
+        if (array2 == null) return array1;
         assert isSorted(array1, true);
         assert isSorted(array2, true);
-        int[] union  = new int[array1.length + array2.length];
+        int[] union = new int[array1.length + array2.length];
         int nu=0;
         for (int ix=0, iy=0;;) {
             if (ix == array1.length) {

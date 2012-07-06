@@ -176,6 +176,7 @@ public class TextMatrixImageWriter extends TextImageWriter {
             readerSpiNames  = READERS;
             vendorName      = "Geotoolkit.org";
             version         = Version.GEOTOOLKIT.toString();
+            nativeStreamMetadataFormatName = null; // No stream metadata.
         }
 
         /**

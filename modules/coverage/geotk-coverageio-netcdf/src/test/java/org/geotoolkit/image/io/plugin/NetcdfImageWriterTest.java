@@ -20,15 +20,21 @@ package org.geotoolkit.image.io.plugin;
 import java.util.Iterator;
 import java.io.File;
 import java.io.IOException;
+import java.awt.image.RenderedImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriter;
+import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.metadata.IIOMetadataNode;
 
 import org.opengis.test.coverage.image.ImageWriterTestCase;
 
 import org.geotoolkit.image.io.DimensionSlice;
 import org.geotoolkit.internal.io.TemporaryFile;
+import org.geotoolkit.metadata.iso.DefaultMetadata;
+
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.ISO_FORMAT_NAME;
 
 
 /**
@@ -73,6 +79,24 @@ public final strictfp class NetcdfImageWriterTest extends ImageWriterTestCase {
     }
 
     /**
+     * Creates the metadata to be given to the NetCDF image writer.
+     *
+     * @param  iio The stream or image metadata to complete before to be given to the tested image writer.
+     * @param  image The image for which to create image metadata, or {@code null} for stream metadata.
+     */
+    @Override
+    protected void completeImageMetadata(final IIOMetadata iio, final RenderedImage image) throws IOException {
+        super.completeImageMetadata(iio, image);
+        if (true) return; // Not yet ready (TODO).
+        if (image != null) {
+            final DefaultMetadata metadata = new DefaultMetadata();
+            final IIOMetadataNode root = new IIOMetadataNode(ISO_FORMAT_NAME);
+            root.setUserObject(metadata);
+            iio.mergeTree(ISO_FORMAT_NAME, root);
+        }
+    }
+
+    /**
      * Tests the registration of the image writer in the Image I/O framework.
      */
     @Test
@@ -99,10 +123,14 @@ public final strictfp class NetcdfImageWriterTest extends ImageWriterTestCase {
     }
 
     /**
-     * Ignored for now.
+     * Unsupported because {@link org.geotoolkit.image.io.IndexedPalette#createImageTypeSpecifier()}
+     * unconditionally uses {@code TYPE_BYTE} or {@code TYPE_USHORT}, because they are the only types
+     * supported by {@link java.awt.image.IndexColorModel}. This work anyway in Geotk because we shift
+     * the range of values to a positive range, but GeoAPI tests are not prepared to handle such shift.
      */
     @Override
-    @Ignore("Seems to be handled as an unsigned type rather than a signed type.")
+    @Ignore("Our image reader uses DataBuffer.TYPE_USHORT rather than TYPE_SHORT "
+          + "because IndexColorModel supports only unsigned values.")
     public void testOneShortBand() {
     }
 

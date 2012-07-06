@@ -23,7 +23,6 @@ import java.awt.geom.Rectangle2D;
 
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
-import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
@@ -33,6 +32,7 @@ import org.geotoolkit.internal.sql.table.CatalogTestBase;
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
 import static org.geotoolkit.test.Commons.*;
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 
 
 /**
@@ -96,7 +96,7 @@ public final strictfp class LayerCoverageReaderTest extends CatalogTestBase {
         SpatialMetadata metadata = reader.getStreamMetadata();
         assertNotNull(metadata);
         assertMultilinesEquals(decodeQuotes(
-            SpatialMetadataFormat.FORMAT_NAME + '\n' +
+            GEOTK_FORMAT_NAME + '\n' +
             "└───DiscoveryMetadata\n" +
             "    └───Extent\n" +
             "        └───GeographicElement\n" +
@@ -108,7 +108,7 @@ public final strictfp class LayerCoverageReaderTest extends CatalogTestBase {
         metadata = reader.getCoverageMetadata(0);
         assertNotNull(metadata);
         assertMultilinesEquals(decodeQuotes(
-            SpatialMetadataFormat.FORMAT_NAME + '\n' +
+            GEOTK_FORMAT_NAME + '\n' +
             "├───ImageDescription\n" +
             "│   └───Dimensions\n" +
             "│       └───Dimension\n" +
@@ -210,7 +210,7 @@ public final strictfp class LayerCoverageReaderTest extends CatalogTestBase {
         SpatialMetadata metadata = reader.getStreamMetadata();
         assertNotNull(metadata);
         assertMultilinesEquals(decodeQuotes(
-            SpatialMetadataFormat.FORMAT_NAME + '\n' +
+            GEOTK_FORMAT_NAME + '\n' +
             "└───DiscoveryMetadata\n" +
             "    └───Extent\n" +
             "        └───GeographicElement\n" +
@@ -222,7 +222,7 @@ public final strictfp class LayerCoverageReaderTest extends CatalogTestBase {
         metadata = reader.getCoverageMetadata(0);
         assertNotNull(metadata);
         assertMultilinesEquals(decodeQuotes(
-            SpatialMetadataFormat.FORMAT_NAME + '\n' +
+            GEOTK_FORMAT_NAME + '\n' +
             "├───RectifiedGridDomain\n" +
             "│   ├───origin=“-180.0 90.0”\n" +
             "│   ├───Limits\n" +

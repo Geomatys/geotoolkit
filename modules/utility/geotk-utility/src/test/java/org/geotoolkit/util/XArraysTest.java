@@ -25,19 +25,31 @@ import static org.junit.Assert.*;
  * Tests the {@link XArrays} utility methods.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.04
+ * @version 3.20
  *
  * @since 3.04
  */
 public final strictfp class XArraysTest {
     /**
-     * Tests {@link XArrays#union}.
+     * Tests {@link XArrays#removeDuplicated(Object[])}.
+     *
+     * @since 3.20
      */
     @Test
-    public void testUnion() {
+    public void testRemoveDuplicated() {
+        final Integer[] array = new Integer[] {2, 8, 4, 8, 1, 2, 8};
+        assertArrayEquals(new Integer[] {2, 8, 4, 1},
+                XArrays.resize(array, XArrays.removeDuplicated(array)));
+    }
+
+    /**
+     * Tests {@link XArrays#unionSorted(int[], int[])}.
+     */
+    @Test
+    public void testUnionSorted() {
         final int[] array1 = new int[] {2, 4, 6, 9, 12};
         final int[] array2 = new int[] {1, 2, 3, 12, 13, 18, 22};
-        final int[] union = XArrays.union(array1, array2);
+        final int[] union = XArrays.unionSorted(array1, array2);
         assertArrayEquals(new int[] {1, 2, 3, 4, 6, 9, 12, 13, 18, 22}, union);
     }
 }

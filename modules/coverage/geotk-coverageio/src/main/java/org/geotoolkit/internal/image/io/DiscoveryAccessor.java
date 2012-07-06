@@ -19,7 +19,7 @@ package org.geotoolkit.internal.image.io;
 
 import javax.imageio.metadata.IIOMetadata;
 import org.opengis.metadata.extent.GeographicBoundingBox;
-import org.geotoolkit.image.io.metadata.MetadataAccessor;
+import org.geotoolkit.image.io.metadata.MetadataNodeAccessor;
 
 
 /**
@@ -66,7 +66,7 @@ public class DiscoveryAccessor {
      */
     public void setGeographicElement(final GeographicBoundingBox box) {
         if (box != null) {
-            final MetadataAccessor accessor = new MetadataAccessor(metadata, GEOGRAPHIC_ELEMENT);
+            final MetadataNodeAccessor accessor = new MetadataNodeAccessor(metadata, GEOGRAPHIC_ELEMENT);
             accessor.setAttribute("westBoundLongitude", nice(box.getWestBoundLongitude()));
             accessor.setAttribute("eastBoundLongitude", nice(box.getEastBoundLongitude()));
             accessor.setAttribute("southBoundLatitude", nice(box.getSouthBoundLatitude()));

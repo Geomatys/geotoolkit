@@ -141,7 +141,7 @@ final class IIOMetadataChoice implements Serializable {
             part = resources.getString(Vocabulary.Keys.IMAGE_$1, imageIndex + 1);
         }
         String rootName = getFormatName();
-        if (rootName.equals(SpatialMetadataFormat.FORMAT_NAME)) {
+        if (rootName.equals(SpatialMetadataFormat.GEOTK_FORMAT_NAME)) {
             rootName = resources.getString(Vocabulary.Keys.GEOSPATIAL);
         } else if (rootName.equals(IIOMetadataFormatImpl.standardMetadataFormatName)) {
             rootName = resources.getString(Vocabulary.Keys.STANDARD);

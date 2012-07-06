@@ -52,15 +52,15 @@ import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.naming.DefaultNameSpace;
 import org.geotoolkit.lang.Builder;
 
-import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.FORMAT_NAME;
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 
 
 /**
  * Builds referencing objects from an {@link IIOMetadata} object. This class uses a
- * {@link MetadataAccessor} for reading and writing the attribute values in the
+ * {@link MetadataNodeAccessor} for reading and writing the attribute values in the
  * {@link IIOMetadata} object given at construction time. By default, this class
  * uses an accessor for the {@code "RectifiedGridDomain/CoordinateReferenceSystem"}
- * node of the {@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#FORMAT_NAME}
+ * node of the {@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#GEOTK_FORMAT_NAME}
  * format. However a different accessor can be given to the constructor.
  *
  * {@note This class exists because we do not use the reflection mechanism like what we do for
@@ -96,11 +96,11 @@ import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.FORMAT_NAME
  *     <td>&nbsp;{@link #setDatum(Datum)}&nbsp;</td>
  *   </tr><tr>
  *     <td>&nbsp;{@link Ellipsoid}&nbsp;</td>
- *     <td>&nbsp;{@link #getEllipsoid(MetadataAccessor)}&nbsp;</td>
+ *     <td>&nbsp;{@link #getEllipsoid(MetadataNodeParser)}&nbsp;</td>
  *     <td>&nbsp;</td>
  *   </tr><tr>
  *     <td>&nbsp;{@link PrimeMeridian}&nbsp;</td>
- *     <td>&nbsp;{@link #getPrimeMeridian(MetadataAccessor)}&nbsp;</td>
+ *     <td>&nbsp;{@link #getPrimeMeridian(MetadataNodeParser)}&nbsp;</td>
  *     <td>&nbsp;</td>
  *   </tr>
  * </table>
@@ -112,6 +112,11 @@ import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.FORMAT_NAME
  * @module
  */
 public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
+    /**
+     * The default path to the CRS node.
+     */
+    static final String PATH = "RectifiedGridDomain/CoordinateReferenceSystem";
+
     /**
      * Small tolerance factor for comparisons of floating point numbers.
      */
@@ -131,18 +136,20 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
 
     /**
      * The metadata accessor for the {@code "CoordinateReferenceSystem"} node.
+     * Must be an instance of {@link MetadataNodeAccessor} if setter methods will be invoked.
      */
-    private final MetadataAccessor accessor;
+    private final MetadataNodeParser accessor;
 
     /**
-     * {@code true} if this helper should not {@linkplain MetadataAccessor#getUserObject() get}
-     * or {@linkplain MetadataAccessor#setUserObject(Object) set} the user object property. The
-     * default value is {@code false}.
+     * {@code true} if this helper should not {@linkplain MetadataNodeParser#getUserObject() get}
+     * or {@linkplain MetadataNodeAccessor#setUserObject(Object) set} the user object property.
+     * The default value is {@code false}.
      */
     private boolean ignoreUserObject;
 
     /**
      * Creates a new metadata helper for the given metadata.
+     * The new {@code ReferencingBuilder} can be used for read and write operations.
      *
      * @param  metadata The Image I/O metadata. An instance of the {@link SpatialMetadata}
      *                  sub-class is recommended, but not mandatory.
@@ -151,18 +158,19 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
      *         contains a node for the element to fetch.
      */
     public ReferencingBuilder(final IIOMetadata metadata) throws NoSuchElementException {
-        this(new MetadataAccessor(metadata, FORMAT_NAME, "RectifiedGridDomain/CoordinateReferenceSystem", null));
+        this(new MetadataNodeAccessor(metadata, GEOTK_FORMAT_NAME, PATH, null));
     }
 
     /**
      * Creates a new metadata helper using the given accessor. Accessors for child elements
      * will be derived from the given accessor. Subclasses can control the name of child
-     * elements by overriding the {@link #createMetadataAccessor createMetadataAccessor}
-     * method.
+     * elements by overriding the {@link #createNodeReader createNodeReader} and
+     * {@link #createNodeWriter createNodeWriter} methods.
      *
-     * @param accessor The accessor to the Coordinate Reference System node.
+     * @param accessor The accessor to the Coordinate Reference System node. Must be an instance
+     *        of {@link MetadataNodeAccessor} if setter methods will be invoked.
      */
-    public ReferencingBuilder(final MetadataAccessor accessor) {
+    public ReferencingBuilder(final MetadataNodeParser accessor) {
         this.accessor = accessor;
     }
 
@@ -181,7 +189,7 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
      *
      * @since 3.09
      */
-    private <T extends IdentifiedObject> T getUserObject(final MetadataAccessor accessor, final Class<T> type) {
+    private <T extends IdentifiedObject> T getUserObject(final MetadataNodeParser accessor, final Class<T> type) {
         return (!ignoreUserObject) ? accessor.getUserObject(type) : null;
     }
 
@@ -190,29 +198,29 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
      *
      * @since 3.09
      */
-    private void setUserObject(final MetadataAccessor accessor, final IdentifiedObject object) {
+    private void setUserObject(final MetadataNodeAccessor accessor, final IdentifiedObject object) {
         if (!ignoreUserObject) try {
             accessor.setUserObject(object);
         } catch (UnsupportedOperationException e) {
             // The underlying node is not an instance of IIOMetadataNode.
             // Ignore without warning, since this operation is optional.
-            Logging.recoverableException(MetadataAccessor.LOGGER,
+            Logging.recoverableException(MetadataNodeAccessor.LOGGER,
                     ReferencingBuilder.class, "setUserObject", e);
         }
     }
 
     /**
      * Returns {@code true} if this helper class should not
-     * {@linkplain MetadataAccessor#getUserObject() get} or
-     * {@linkplain MetadataAccessor#setUserObject(Object) set} the <cite>User Object</cite>
+     * {@linkplain MetadataNodeParser#getUserObject() get} or
+     * {@linkplain MetadataNodeAccessor#setUserObject(Object) set} the <cite>User Object</cite>
      * node property. The default value is {@code false}, in which case:
      * <p>
      * <ul>
      *   <li>Every call to a setter method in this {@code ReferencingBuilder} class will
-     *       {@linkplain MetadataAccessor#setUserObject(Object) set the user object} to
+     *       {@linkplain MetadataNodeAccessor#setUserObject(Object) set the user object} to
      *       the given value, if possible.</li>
      *   <li>Every call to a getter method in this {@code ReferencingBuilder} class will
-     *       {@linkplain MetadataAccessor#getUserObject() get the user object} and return
+     *       {@linkplain MetadataNodeParser#getUserObject() get the user object} and return
      *       it if it exist.</li>
      * </ul>
      * <p>
@@ -223,7 +231,7 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
      * @return {@code true} if user objects should be ignored.
      *
      * @see javax.imageio.metadata.IIOMetadataNode#getUserObject()
-     * @see MetadataAccessor#getUserObject()
+     * @see MetadataNodeParser#getUserObject()
      *
      * @since 3.09
      */
@@ -233,8 +241,8 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
 
     /**
      * Sets whatever this helper class is allowed to
-     * {@linkplain MetadataAccessor#getUserObject() get} or
-     * {@linkplain MetadataAccessor#setUserObject(Object) set} the <cite>User Object</cite>
+     * {@linkplain MetadataNodeParser#getUserObject() get} or
+     * {@linkplain MetadataNodeAccessor#setUserObject(Object) set} the <cite>User Object</cite>
      * node property. See {@link #getIgnoreUserObject()} for more information.
      *
      * @param ignore {@code true} if user objects should be ignored.
@@ -249,7 +257,7 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
      * Returns the coordinate reference system, or {@code null} if it can not be created.
      * This method delegates to {@link #getCoordinateReferenceSystem(Class)} and catch the
      * exception. If an exception has been thrown, the exception is
-     * {@linkplain MetadataAccessor#warningOccurred logged} and this method returns {@code null}.
+     * {@linkplain MetadataNodeParser#warningOccurred logged} and this method returns {@code null}.
      *
      * @return The CRS, or {@code null} if none.
      *
@@ -269,7 +277,7 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
             // Throws by 'isNonNull' (in this class) if a mandatory element is absents.
             failure = e;
         }
-        accessor.warning(null, getClass(), "getOptionalCRS", failure);
+        accessor.warning(null, getClass(), "build", failure);
         return null;
     }
 
@@ -283,7 +291,7 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
 
     /**
      * Gets the coordinate reference system. If no CRS is explicitly defined, then a
-     * {@linkplain MetadataAccessor#warningOccurred warning is logged} and a
+     * {@linkplain MetadataNodeParser#warningOccurred warning is logged} and a
      * {@linkplain #getDefault(Class) default CRS} is returned, which is {@code null}
      * in the default implementation.
      *
@@ -329,7 +337,7 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
     /**
      * Returns the defining conversion from the base geographic CRS to the projected CRS.
      * If no coordinate system is explicitly defined, then a
-     * {@linkplain MetadataAccessor#warningOccurred warning is logged} and a
+     * {@linkplain MetadataNodeParser#warningOccurred warning is logged} and a
      * {@linkplain #getDefault(Class) default conversion} is returned.
      *
      * @return The conversion from geographic to projected CRS, or {@code null}.
@@ -338,25 +346,31 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
     private Conversion getConversionFromBase(final CoordinateReferenceSystem baseCRS,
             final CoordinateSystem derivedCS) throws FactoryException
     {
-        final MetadataAccessor cvAccessor = createMetadataAccessor(accessor, "Conversion", null);
+        final MetadataNodeParser cvAccessor = createNodeReader(accessor, "Conversion", null);
         final String method = cvAccessor.getAttribute("method");
         if (isNonNull("getBaseToCRS", "method", method)) {
             final Map<String,?>       properties = getName(cvAccessor);
             final MathTransformFactory   factory = factories().getMathTransformFactory();
             final ParameterValueGroup parameters = factory.getDefaultParameters(method);
-            final MetadataAccessor paramAccessor = createMetadataAccessor(cvAccessor, "Parameters", "ParameterValue");
-            final int numParam = paramAccessor.childCount();
-            for (int i=0; i<numParam; i++) {
-                paramAccessor.selectChild(i);
-                final String name  = paramAccessor.getAttribute("name");
-                if (isNonNull("getBaseToCRS", "name", name)) {
-                    final Double value = paramAccessor.getAttributeAsDouble("value");
-                    if (isNonNull("getBaseToCRS", "value", value)) try {
-                        parameters.parameter(name).setValue(value.doubleValue());
-                    } catch (IllegalArgumentException e) {
-                        paramAccessor.warning(null, getClass(), "getBaseToCRS", e);
+            try {
+                final MetadataNodeParser paramAccessor = createNodeReader(cvAccessor, "Parameters", "ParameterValue");
+                final int numParam = paramAccessor.childCount();
+                for (int i=0; i<numParam; i++) {
+                    paramAccessor.selectChild(i);
+                    final String name  = paramAccessor.getAttribute("name");
+                    if (isNonNull("getBaseToCRS", "name", name)) {
+                        final Double value = paramAccessor.getAttributeAsDouble("value");
+                        if (isNonNull("getBaseToCRS", "value", value)) try {
+                            parameters.parameter(name).setValue(value.doubleValue());
+                        } catch (IllegalArgumentException e) {
+                            paramAccessor.warning(null, getClass(), "getBaseToCRS", e);
+                        }
                     }
                 }
+            } catch (NoSuchElementException e) {
+                // May happen if there is no "Parameters" node, for
+                // example because all parameters have their default value.
+                accessor.warning(null, getClass(), "getConversionFromBase", e);
             }
             final MathTransform tr = factory.createBaseToDerived(baseCRS, parameters, derivedCS);
             return new DefiningConversion(properties, factory.getLastMethodUsed(), tr);
@@ -372,6 +386,15 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
      * @todo The base CRS is not yet declared for the {@code DerivedCRS} case.
      */
     public void setCoordinateReferenceSystem(final CoordinateReferenceSystem crs) {
+        final MetadataNodeAccessor accessor;
+        try {
+            accessor = (MetadataNodeAccessor) this.accessor;
+        } catch (ClassCastException e) {
+            // We catch the ClassCastException rather than performing an instanceof check in order
+            // to help the developer to see which instance was expected in the "caused by" part.
+            throw new UnsupportedOperationException(this.accessor.getErrorResources()
+                    .getString(Errors.Keys.UNMODIFIABLE_METADATA), e);
+        }
         setName(crs, accessor);
         accessor.setAttribute("type", DataTypes.getType(crs));
         final Datum datum = CRS.getDatum(crs);
@@ -388,10 +411,10 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
          */
         if (crs instanceof GeneralDerivedCRS) {
             final Conversion conversion = ((GeneralDerivedCRS) crs).getConversionFromBase();
-            final MetadataAccessor opAccessor = createMetadataAccessor(accessor, "Conversion", null);
+            final MetadataNodeAccessor opAccessor = createNodeWriter(accessor, "Conversion", null);
             setName(conversion, opAccessor);
             setName(conversion.getMethod(), false, opAccessor, "method");
-            addParameter(new MetadataAccessor[] {opAccessor, null}, conversion.getParameterValues(),
+            addParameter(new MetadataNodeAccessor[] {opAccessor, null}, conversion.getParameterValues(),
                     CRS.getEllipsoid(crs));
         }
         setUserObject(accessor, crs);
@@ -412,7 +435,7 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
      * @param param The parameter or group of parameters to add.
      * @param ellipsoid The ellipsoid defined in the datum, or {@code null} if none.
      */
-    private void addParameter(final MetadataAccessor[] accessors,
+    private void addParameter(final MetadataNodeAccessor[] accessors,
             final GeneralParameterValue param, final Ellipsoid ellipsoid)
     {
         if (param instanceof ParameterValueGroup) {
@@ -457,9 +480,9 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
                         }
                     }
                 }
-                MetadataAccessor accessor = accessors[1];
+                MetadataNodeAccessor accessor = accessors[1];
                 if (accessor == null) {
-                    accessor = createMetadataAccessor(accessors[0], "Parameters", "ParameterValue");
+                    accessor = createNodeWriter(accessors[0], "Parameters", "ParameterValue");
                     accessors[1] = accessor;
                 }
                 accessor.selectChild(accessor.appendChild());
@@ -471,7 +494,7 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
 
     /**
      * Gets the coordinate system. If no coordinate system is explicitly defined, then a
-     * {@linkplain MetadataAccessor#warningOccurred warning is logged} and a
+     * {@linkplain MetadataNodeParser#warningOccurred warning is logged} and a
      * {@linkplain #getDefault(Class) default coordinate system} is returned,
      * which is {@link org.geotoolkit.referencing.cs.DefaultEllipsoidalCS#GEODETIC_2D},
      * {@link org.geotoolkit.referencing.cs.DefaultCartesianCS#GENERIC_2D} or {@code null}
@@ -487,7 +510,7 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
     public <T extends CoordinateSystem> T getCoordinateSystem(final Class<T> baseType)
             throws FactoryException
     {
-        final MetadataAccessor csAccessor = createMetadataAccessor(accessor, "CoordinateSystem", null);
+        final MetadataNodeParser csAccessor = createNodeReader(accessor, "CoordinateSystem", null);
         final T userObject = getUserObject(csAccessor, baseType);
         if (userObject != null) {
             return userObject;
@@ -496,7 +519,7 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
         if (type != null) {
             final Map<String,?> properties = getName(csAccessor);
             final Integer dimension = csAccessor.getAttributeAsInteger("dimension");
-            final MetadataAccessor axesAccessor = createMetadataAccessor(csAccessor, "Axes", "CoordinateSystemAxis");
+            final MetadataNodeParser axesAccessor = createNodeReader(csAccessor, "Axes", "CoordinateSystemAxis");
             final int numAxes = axesAccessor.childCount();
             if (dimension != null && dimension != numAxes) {
                 warning("getCoordinateSystem", Errors.Keys.MISMATCHED_DIMENSION_$3,
@@ -516,7 +539,7 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
                     /*
                      * If no abbreviation has been explicitly specified, use the first letter of the
                      * name. Note that if non-null, the name is guaranteed to have a length greater
-                     * than 0 has of MetadataAccessor.getAttribute(String) method implementation.
+                     * than 0 has of MetadataNodeParser.getAttribute(String) method implementation.
                      */
                     abbreviation = axesProperties.get(IdentifiedObject.NAME_KEY).toString();
                     if (abbreviation == null) {
@@ -576,12 +599,12 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
      * @param cs The coordinate system, or {@code null} if none.
      */
     public void setCoordinateSystem(final CoordinateSystem cs) {
-        final MetadataAccessor csAccessor = createMetadataAccessor(accessor, "CoordinateSystem", null);
+        final MetadataNodeAccessor csAccessor = createNodeWriter(accessor, "CoordinateSystem", null);
         setName(cs, csAccessor);
         csAccessor.setAttribute("type", DataTypes.getType(cs));
         final int dimension = cs.getDimension();
         csAccessor.setAttribute("dimension", dimension);
-        final MetadataAccessor axes = createMetadataAccessor(csAccessor, "Axes", "CoordinateSystemAxis");
+        final MetadataNodeAccessor axes = createNodeWriter(csAccessor, "Axes", "CoordinateSystemAxis");
         for (int i=0; i<dimension; i++) {
             final CoordinateSystemAxis axis = cs.getAxis(i);
             axes.selectChild(axes.appendChild());
@@ -613,7 +636,7 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
 
     /**
      * Gets the datum. If no datum is explicitly defined, then a
-     * {@linkplain MetadataAccessor#warningOccurred warning is logged} and a
+     * {@linkplain MetadataNodeParser#warningOccurred warning is logged} and a
      * {@linkplain #getDefault(Class) default datum} is returned,
      * which is {@link org.geotoolkit.referencing.datum.DefaultGeodeticDatum#WGS84}
      * in the default implementation.
@@ -628,7 +651,7 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
      *       implemented.
      */
     public <T extends Datum> T getDatum(final Class<T> baseType) throws FactoryException {
-        final MetadataAccessor datumAccessor = createMetadataAccessor(accessor, "Datum", null);
+        final MetadataNodeParser datumAccessor = createNodeReader(accessor, "Datum", null);
         final T userObject = getUserObject(datumAccessor, baseType);
         if (userObject != null) {
             return userObject;
@@ -656,14 +679,14 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
      * @param datum The datum, or {@code null} if none.
      */
     public void setDatum(final Datum datum) {
-        final MetadataAccessor datumAccessor = createMetadataAccessor(accessor, "Datum", null);
+        final MetadataNodeAccessor datumAccessor = createNodeWriter(accessor, "Datum", null);
         setName(datum, datumAccessor);
         datumAccessor.setAttribute("type", DataTypes.getType(datum));
         if (datum instanceof GeodeticDatum) {
             final GeodeticDatum gd = (GeodeticDatum) datum;
             final Ellipsoid ellipsoid = gd.getEllipsoid();
             if (ellipsoid != null) {
-                final MetadataAccessor child = createMetadataAccessor(datumAccessor, "Ellipsoid", null);
+                final MetadataNodeAccessor child = createNodeWriter(datumAccessor, "Ellipsoid", null);
                 setName(ellipsoid, child);
                 child.setAttribute("axisUnit", ellipsoid.getAxisUnit());
                 child.setAttribute("semiMajorAxis", ellipsoid.getSemiMajorAxis());
@@ -676,7 +699,7 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
             }
             final PrimeMeridian pm = gd.getPrimeMeridian();
             if (pm != null) {
-                final MetadataAccessor child = createMetadataAccessor(datumAccessor, "PrimeMeridian", null);
+                final MetadataNodeAccessor child = createNodeWriter(datumAccessor, "PrimeMeridian", null);
                 setName(pm, child);
                 child.setAttribute("greenwichLongitude", pm.getGreenwichLongitude());
                 child.setAttribute("angularUnit", pm.getAngularUnit());
@@ -688,7 +711,7 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
 
     /**
      * Gets the ellipsoid. If no ellipsoid is explicitly defined, then a
-     * {@linkplain MetadataAccessor#warningOccurred warning is logged} and a
+     * {@linkplain MetadataNodeParser#warningOccurred warning is logged} and a
      * {@linkplain #getDefault(Class) default ellipsoid} is returned,
      * which is {@link org.geotoolkit.referencing.datum.DefaultEllipsoid#WGS84}
      * in the default implementation.
@@ -698,8 +721,8 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
      *         and there is no default value.
      * @throws FactoryException If the ellipsoid can not be created.
      */
-    protected Ellipsoid getEllipsoid(final MetadataAccessor datumAccessor) throws FactoryException {
-        final MetadataAccessor ellipsoidAccessor = createMetadataAccessor(datumAccessor, "Ellipsoid", null);
+    protected Ellipsoid getEllipsoid(final MetadataNodeParser datumAccessor) throws FactoryException {
+        final MetadataNodeParser ellipsoidAccessor = createNodeReader(datumAccessor, "Ellipsoid", null);
         final Ellipsoid userObject = getUserObject(ellipsoidAccessor, Ellipsoid.class);
         if (userObject != null) {
             return userObject;
@@ -725,7 +748,7 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
 
     /**
      * Gets the prime meridian. If no prime meridian is explicitly defined, then a
-     * {@linkplain MetadataAccessor#warningOccurred warning is logged} and a
+     * {@linkplain MetadataNodeParser#warningOccurred warning is logged} and a
      * {@linkplain #getDefault(Class) default prime meridian} is returned,
      * which is {@link org.geotoolkit.referencing.datum.DefaultPrimeMeridian#GREENWICH}
      * in the default implementation.
@@ -735,8 +758,8 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
      *         parsed and there is no default value.
      * @throws FactoryException If the prime meridian can not be created.
      */
-    protected PrimeMeridian getPrimeMeridian(final MetadataAccessor datumAccessor) throws FactoryException {
-        final MetadataAccessor pmAccessor = createMetadataAccessor(datumAccessor, "PrimeMeridian", null);
+    protected PrimeMeridian getPrimeMeridian(final MetadataNodeParser datumAccessor) throws FactoryException {
+        final MetadataNodeParser pmAccessor = createNodeReader(datumAccessor, "PrimeMeridian", null);
         final PrimeMeridian userObject = getUserObject(pmAccessor, PrimeMeridian.class);
         if (userObject != null) {
             return userObject;
@@ -795,7 +818,7 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
      * </ul>
      */
     private <T extends IdentifiedObject> T getDefault(final String method,
-            final MetadataAccessor accessor, final Class<T> type) throws FactoryException
+            final MetadataNodeParser accessor, final Class<T> type) throws FactoryException
     {
         T object = getDefault(type);
         if (object == null) {
@@ -809,14 +832,14 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
     }
 
     /**
-     * Creates the accessor for a child element. This method is invoked automatically when a
-     * new accessor needs to be created for a child element, for example the {@code "Datum"}
+     * Creates a read-only accessor for a child element. This method is invoked automatically when
+     * a new accessor needs to be created for a child element, for example the {@code "Datum"}
      * element inside the {@code "CoordinateReferenceSystem"} element.
      * <p>
-     * The default implementation is implemented as below:
+     * The default implementation is as below:
      *
      * {@preformat java
-     *     return new MetadataAccessor(parent, path, childPath);
+     *     return new MetadataNodeAccessor(parent, path, childPath);
      * }
      *
      * Subclasses can override this method in order to create different accessors,
@@ -827,10 +850,43 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
      * @param childPath The path to the child elements, or {@code null} if none.
      * @return The accessor to use.
      *
-     * @see MetadataAccessor#MetadataAccessor(MetadataAccessor, String, String)
+     * @see MetadataNodeParser#MetadataNodeParser(MetadataNodeParser, String, String)
+     *
+     * @since 3.20
      */
-    protected MetadataAccessor createMetadataAccessor(MetadataAccessor parent, String path, String childPath) {
-        return new MetadataAccessor(parent, path, childPath);
+    protected MetadataNodeParser createNodeReader(final MetadataNodeParser parent,
+            final String path, final String childPath)
+    {
+        return new MetadataNodeParser(parent, path, childPath);
+    }
+
+    /**
+     * Creates the read/write accessor for a child element. This method is invoked automatically
+     * when a new accessor needs to be created for a child element, for example the {@code "Datum"}
+     * element inside the {@code "CoordinateReferenceSystem"} element.
+     * <p>
+     * The default implementation is as below:
+     *
+     * {@preformat java
+     *     return new MetadataNodeAccessor(parent, path, childPath);
+     * }
+     *
+     * Subclasses can override this method in order to create different accessors,
+     * for example in order to use different names for the child elements.
+     *
+     * @param parent    The accessor for which the {@code path} is relative.
+     * @param path      The path to the node of interest.
+     * @param childPath The path to the child elements, or {@code null} if none.
+     * @return The accessor to use.
+     *
+     * @see MetadataNodeAccessor#MetadataNodeAccessor(MetadataNodeParser, String, String)
+     *
+     * @since 3.20
+     */
+    protected MetadataNodeAccessor createNodeWriter(final MetadataNodeParser parent,
+            final String path, final String childPath)
+    {
+        return new MetadataNodeAccessor(parent, path, childPath);
     }
 
     /**
@@ -844,7 +900,7 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
      * @return The value of the {@code "type"} attribute as an interface, or {@code baseType}.
      */
     private <T extends IdentifiedObject> Class<? extends T> getInterface(final String method,
-            final Class<T> baseType, final MetadataAccessor accessor)
+            final Class<T> baseType, final MetadataNodeParser accessor)
     {
         final String type = accessor.getAttribute("type");
         if (type == null) {
@@ -876,7 +932,7 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
      * @param  accessor The accessor to use for getting the name attribute.
      * @return A map containing the name attribute.
      */
-    private static Map<String,Object> getName(final MetadataAccessor accessor) {
+    private static Map<String,Object> getName(final MetadataNodeParser accessor) {
         String name = accessor.getAttribute("name");
         if (name == null) {
             name = untitled(accessor);
@@ -905,7 +961,7 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
      * @param object    The object from which to fetch the name.
      * @param accessor  The accessor to use for setting the name attribute.
      */
-    private static void setName(final IdentifiedObject object, final MetadataAccessor accessor) {
+    private static void setName(final IdentifiedObject object, final MetadataNodeAccessor accessor) {
         setName(object, true, accessor, "name");
     }
 
@@ -918,7 +974,7 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
      * @param attribute The attribute name ({@code "name"} by default).
      */
     private static void setName(final IdentifiedObject object, final boolean scoped,
-            final MetadataAccessor accessor, final String attribute)
+            final MetadataNodeAccessor accessor, final String attribute)
     {
         final ReferenceIdentifier id = object.getName();
         if (id != null) {
@@ -936,7 +992,7 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
     /**
      * Returns {@code "untitled"} in the locale of the given accessor.
      */
-    private static String untitled(final MetadataAccessor accessor) {
+    private static String untitled(final MetadataNodeParser accessor) {
         return Vocabulary.getResources(accessor.getLocale()).getString(Vocabulary.Keys.UNTITLED);
     }
 

@@ -120,6 +120,11 @@ public final class Errors extends IndexedResourceBundle {
         public static final int CANT_CREATE_OBJECT_FROM_TEXT_$1 = 27;
 
         /**
+         * Can’t delete file “{0}”.
+         */
+        public static final int CANT_DELETE_FILE_$1 = 269;
+
+        /**
          * Can’t evaluate a value for coordinate ({0}).
          */
         public static final int CANT_EVALUATE_FOR_COORDINATE_$1 = 28;
@@ -318,6 +323,11 @@ public final class Errors extends IndexedResourceBundle {
          * No factory of kind “{0}” found.
          */
         public static final int FACTORY_NOT_FOUND_$1 = 63;
+
+        /**
+         * File “{0}” already exists.
+         */
+        public static final int FILE_ALREADY_EXISTS_$1 = 268;
 
         /**
          * File “{0}” does not exist or is unreadable.

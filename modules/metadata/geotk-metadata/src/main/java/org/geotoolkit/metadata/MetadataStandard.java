@@ -394,7 +394,7 @@ public final class MetadataStandard {
                      * have been replaced by their acronym (if any).
                      */
                     final StringBuilder buffer = new StringBuilder(implementationPackage)
-                            .append(name.substring(interfacePackage.length()));
+                            .append(name, interfacePackage.length(), name.length());
                     if (acronyms != null) {
                         for (int i=0; i<acronyms.length; i+=2) {
                             final String acronym = acronyms[i];

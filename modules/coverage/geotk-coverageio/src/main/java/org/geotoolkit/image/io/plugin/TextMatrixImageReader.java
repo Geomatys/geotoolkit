@@ -47,6 +47,8 @@ import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
 
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
+
 
 /**
  * An image decoder for matrix of floating-point numbers. The default implementation creates
@@ -247,7 +249,7 @@ public class TextMatrixImageReader extends TextImageReader {
                     if (value > maximum) maximum = value;
                 }
             }
-            final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(null), this, null);
+            final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME), this, null);
             final DimensionAccessor accessor = new DimensionAccessor(metadata);
             accessor.selectChild(accessor.appendChild());
             if (minimum < maximum) {
@@ -489,6 +491,7 @@ public class TextMatrixImageReader extends TextImageReader {
             writerSpiNames  = WRITERS;
             vendorName      = "Geotoolkit.org";
             version         = Version.GEOTOOLKIT.toString();
+            nativeStreamMetadataFormatName = null; // No stream metadata.
         }
 
         /**

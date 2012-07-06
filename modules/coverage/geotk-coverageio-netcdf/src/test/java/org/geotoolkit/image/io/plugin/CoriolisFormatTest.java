@@ -41,11 +41,11 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.image.io.DimensionSlice;
 import org.geotoolkit.image.io.SpatialImageReadParam;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
-import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
 import static org.geotoolkit.test.Commons.*;
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 import static javax.measure.unit.SI.METRE;
 import static javax.measure.unit.NonSI.DAY;
 import static javax.measure.unit.NonSI.DEGREE_ANGLE;
@@ -131,7 +131,7 @@ public final strictfp class CoriolisFormatTest extends NetcdfImageReaderTestBase
      * The first part of expected metadata (without the sample dimensions).
      */
     private static final String EXPECTED_METADATA =
-            SpatialMetadataFormat.FORMAT_NAME + '\n' +
+            GEOTK_FORMAT_NAME + '\n' +
             "├───RectifiedGridDomain\n" +
             "│   ├───origin=“-1.9959489E7 1.3843768E7 5.0 20975.0”\n" +
             "│   ├───Limits\n" +

@@ -259,11 +259,14 @@ final class PropertyAccessor {
             if (name.length() > base) {
                 final char lo = name.charAt(base);
                 final char up = Character.toUpperCase(lo);
+                final int length = name.length();
+                final StringBuilder buffer = new StringBuilder(length - base + 3).append(SET);
                 if (lo != up) {
-                    name = SET + up + name.substring(base + 1);
+                    buffer.append(up).append(name, base+1, length);
                 } else {
-                    name = SET + name.substring(base);
+                    buffer.append(name, base, length);
                 }
+                name = buffer.toString();
             }
             /*
              * Note: we want PUBLIC methods only.  For example the referencing module defines
@@ -520,14 +523,15 @@ final class PropertyAccessor {
      * @return The property name.
      */
     private static String toPropertyName(String name, final int base) {
-        if (name.length() > base) {
+        final int length = name.length();
+        if (length > base) {
             if (isAcronym(name, base)) {
                 name = name.substring(base);
             } else {
                 final char up = name.charAt(base);
                 final char lo = Character.toLowerCase(up);
                 if (up != lo) {
-                    name = lo + name.substring(base + 1);
+                    name = new StringBuilder(length - base).append(lo).append(name, base+1, length).toString();
                 } else {
                     name = name.substring(base);
                 }

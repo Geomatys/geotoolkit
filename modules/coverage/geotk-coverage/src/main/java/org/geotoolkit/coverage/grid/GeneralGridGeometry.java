@@ -353,12 +353,11 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
         if (PixelInCell.CELL_CORNER.equals(anchor)) {
             cornerToCRS = gridToCRS;
         }
+        this.envelope = ImmutableEnvelope.castOrCopy(envelope);
         if (envelope == null) {
-            this.envelope = null;
             this.extent   = null;
             return;
         }
-        this.envelope = new ImmutableEnvelope(envelope);
         if (gridToCRS == null) {
             this.extent = null;
             return;
@@ -416,7 +415,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
         ensureNonNull("extent",   extent);
         ensureNonNull("envelope", envelope);
         this.extent = clone(extent);
-        this.envelope = new ImmutableEnvelope(envelope);
+        this.envelope = ImmutableEnvelope.castOrCopy(envelope);
         final GridToEnvelopeMapper mapper = new GridToEnvelopeMapper(extent, envelope);
         if (!automatic) {
             mapper.setReverseAxis(reverse);

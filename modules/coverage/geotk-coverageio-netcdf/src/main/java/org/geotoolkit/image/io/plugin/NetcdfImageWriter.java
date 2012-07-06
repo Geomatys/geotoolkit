@@ -28,13 +28,19 @@ import javax.imageio.IIOImage;
 import javax.imageio.ImageWriter;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.metadata.IIOMetadataNode;
+import org.w3c.dom.Node;
 
 import ucar.nc2.NetcdfFileWriteable;
+import org.opengis.metadata.Metadata;
 
 import org.geotoolkit.util.Version;
+import org.geotoolkit.util.XArrays;
+import org.geotoolkit.util.collection.BackingStoreException;
 import org.geotoolkit.image.io.FileImageWriter;
-import org.geotoolkit.image.io.metadata.SpatialMetadata;
-import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
+import org.geotoolkit.metadata.netcdf.NetcdfMetadataWriter;
+
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.ISO_FORMAT_NAME;
 
 
 /**
@@ -70,6 +76,11 @@ public class NetcdfImageWriter extends FileImageWriter {
      * The list of image to write. Each image can be written in one or many NetCDF variables.
      */
     private final List<NetcdfImage> images;
+
+    /**
+     * The object to use for writing metadata, created only if needed.
+     */
+    private transient NetcdfMetadataWriter metadataWriter;
 
     /**
      * Constructs a new NetCDF writer.
@@ -154,10 +165,30 @@ public class NetcdfImageWriter extends FileImageWriter {
         } else {
             ncFile = NetcdfFileWriteable.createNew(getOutputFile().getPath(), false);
         }
-        if (metadata != null) {
-            final SpatialMetadata spatial = (metadata instanceof SpatialMetadata) ? (SpatialMetadata) metadata
-                    : new SpatialMetadata(SpatialMetadataFormat.getStreamInstance(null), this, metadata);
-            // TODO
+        writeMetadata(metadata);
+    }
+
+    /**
+     * Writes the given metadata, if non-null. The NetCDF file must be in "define" mode.
+     * This method may be invoked more than once, in which case the metadata will be merged
+     * with precedence given to the first occurrences.
+     */
+    private void writeMetadata(final IIOMetadata metadata) throws IOException {
+        if (metadata != null) try {
+            if (XArrays.contains(metadata.getExtraMetadataFormatNames(), ISO_FORMAT_NAME)) {
+                final Node root = metadata.getAsTree(ISO_FORMAT_NAME);
+                if (root instanceof IIOMetadataNode) {
+                    final Object userObject = ((IIOMetadataNode) root).getUserObject();
+                    if (userObject instanceof Metadata) {
+                        if (metadataWriter == null) {
+                            metadataWriter = new NetcdfMetadataWriter(ncFile, this);
+                        }
+                        metadataWriter.write((Metadata) userObject);
+                    }
+                }
+            }
+        } catch (BackingStoreException e) {
+            throw e.unwrapOrRethrow(IOException.class);
         }
     }
 
@@ -224,6 +255,7 @@ public class NetcdfImageWriter extends FileImageWriter {
      */
     @Override
     protected void close() throws IOException {
+        metadataWriter = null;
         try {
             if (ncFile != null && ncFile != output) {
                 ncFile.close();

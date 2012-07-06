@@ -54,7 +54,9 @@ import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.image.io.IIOListeners;
 import org.geotoolkit.internal.Threads;
 import org.geotoolkit.internal.io.Installation;
 import org.geotoolkit.internal.sql.table.ConfigurationKey;
@@ -79,7 +81,7 @@ import org.geotoolkit.resources.Errors;
  * in order to have more work executed concurrently.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.18
+ * @version 3.20
  *
  * @since 3.10
  * @module
@@ -127,6 +129,7 @@ public class CoverageDatabase implements Localized {
 
     /**
      * The object which will manage the connections to the database.
+     * This field shall never be {@code null}.
      */
     volatile TableFactory database;
 
@@ -187,7 +190,7 @@ public class CoverageDatabase implements Localized {
      * See the {@linkplain org.geotoolkit.coverage.sql package javadoc} for the list of
      * parameters supported by this constructor.
      *
-     * @param  datasource The data source, or {@code null} for creating it from the URL.
+     * @param datasource The data source, or {@code null} for creating it from the URL.
      * @param properties The configuration properties, or {@code null} if none.
      */
     public CoverageDatabase(final DataSource datasource, final Properties properties) {
@@ -203,7 +206,7 @@ public class CoverageDatabase implements Localized {
      * {@link #CoverageDatabase(DataSource, Properties)}, but using the ISO 19111
      * parameters construct instead than the Java properties.
      *
-     * @param  datasource The data source, or {@code null} for creating it from the URL.
+     * @param datasource The data source, or {@code null} for creating it from the URL.
      * @param parameters The configuration parameters, or {@code null} if none.
      *
      * @since 3.18
@@ -707,14 +710,33 @@ public class CoverageDatabase implements Localized {
      * need to check the geometry of the returned envelope and perform an additional
      * resampling if needed.
      *
+     * @param  layer     The layer of the coverage to query.
+     * @param  envelope  The desired envelope and resolution, or {@code null} for all data.
+     * @param  listeners The listeners, or {@code null} if none.
+     * @return The coverage.
+     *
+     * @see LayerCoverageReader#readSlice(int, GridCoverageReadParam)
+     *
+     * @since 3.20
+     */
+    public FutureQuery<GridCoverage2D> readSlice(final String layer, final CoverageEnvelope envelope, final IIOListeners listeners) {
+        ensureNonNull("layer", layer);
+        return executor.submit(new ReadSlice(layer, envelope, listeners));
+    }
+
+    /**
+     * Reads the data of a two-dimensional slice and returns them as a coverage.
+     *
      * @param  request Parameters used to control the reading process.
      * @return The coverage.
      *
-     * @see LayerCoverageReader#readSlice
+     * @deprecated Replaced by {@link #readSlice(String, CoverageEnvelope, IIOListeners)}
+     *             because the {@link CoverageQuery} class has been deprecated.
      */
+    @Deprecated
     public FutureQuery<GridCoverage2D> readSlice(final CoverageQuery request) {
         ensureNonNull("request", request);
-        return executor.submit(new ReadSlice(request));
+        return readSlice(request.getLayer(), request.getEnvelope(), request.listeners);
     }
 
     /**
@@ -723,22 +745,24 @@ public class CoverageDatabase implements Localized {
      * of failure.
      */
     private final class ReadSlice implements Callable<GridCoverage2D> {
-        /** The query. */
-        private final CoverageQuery query;
+        private final String           layer;
+        private final CoverageEnvelope envelope;
+        private final IIOListeners     listeners;
 
         /** Creates a new task. */
-        ReadSlice(final CoverageQuery query) {
-            this.query = query;
+        ReadSlice(final String layer, final CoverageEnvelope envelope, final IIOListeners listeners) {
+            this.layer     = layer;
+            this.envelope  = envelope;
+            this.listeners = listeners;
         }
 
         /** Executes the task in a background thread. */
         @Override public GridCoverage2D call() throws CoverageStoreException {
-            final CoverageEnvelope envelope = query.getEnvelope();
             final TablePool<GridCoverageTable> pool = database.coverages;
             final GridCoverageReference entry;
             try {
                 final GridCoverageTable table = pool.acquire();
-                table.setLayer(query.getLayer());
+                table.setLayer(layer);
                 table.envelope.setAll(envelope);
                 entry = table.getEntry();
                 pool.release(table);
@@ -748,14 +772,14 @@ public class CoverageDatabase implements Localized {
                 throw new CoverageStoreException(Errors.format(
                         Errors.Keys.ILLEGAL_COORDINATE_REFERENCE_SYSTEM), e);
             }
-            return entry.read(envelope, query.listeners);
+            return entry.read(envelope, listeners);
         }
     }
 
     /**
      * Configures and returns a {@link GridCoverageReader} for the given layer. This provides an
      * alternative way (as compared to {@link #readSlice readSlice}) for reading two-dimensional
-     * slices of coverage. This method is provided for inter-operability with library which want
+     * slices of coverage. This method is provided for inter-operability with libraries which want
      * to access to the data through the {@link GridCoverageReader} API only.
      *
      * @param  layer The name of the initial layer to be read by the returned reader, or {@code null}.
@@ -765,6 +789,22 @@ public class CoverageDatabase implements Localized {
     public LayerCoverageReader createGridCoverageReader(final String layer) throws CoverageStoreException {
         final FutureQuery<Layer> future = (layer != null) ? getLayer(layer) : null;
         return new LayerCoverageReader(this, future);
+    }
+
+    /**
+     * Configures and returns a {@link LayerCoverageWriter} for the given layer.
+     * This method is provided for inter-operability with libraries which want
+     * to add data through the {@link LayerCoverageWriter} API only.
+     *
+     * @param  layer The name of the initial layer to be read by the returned writer, or {@code null}.
+     * @return A grid coverage writer using the given layer as input.
+     * @throws CoverageStoreException If an error occurred while querying the database.
+     *
+     * @since 3.20
+     */
+    public LayerCoverageWriter createGridCoverageWriter(final String layer) throws CoverageStoreException {
+        final FutureQuery<Layer> future = (layer != null) ? getLayer(layer) : null;
+        return new LayerCoverageWriter(this, future);
     }
 
     /**

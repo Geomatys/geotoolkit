@@ -31,13 +31,13 @@ import org.opengis.metadata.content.TransferFunctionType;
 
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.internal.image.ImageUtilities;
-import org.geotoolkit.image.io.metadata.MetadataAccessor;
+import org.geotoolkit.image.io.metadata.MetadataNodeAccessor;
 
-import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.FORMAT_NAME;
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 
 
 /**
- * A convenience specialization of {@link MetadataAccessor} for the
+ * A convenience specialization of {@link MetadataNodeAccessor} for the
  * {@code "ImageDescription/Dimensions"} node. Example:
  *
  * {@preformat java
@@ -53,7 +53,7 @@ import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.FORMAT_NAME
  * @since 3.06
  * @module
  */
-public final class DimensionAccessor extends MetadataAccessor {
+public final class DimensionAccessor extends MetadataNodeAccessor {
     /**
      * Small tolerance threshold for rounding errors.
      */
@@ -67,7 +67,7 @@ public final class DimensionAccessor extends MetadataAccessor {
      *        sub-class is recommended, but not mandatory.
      */
     public DimensionAccessor(final IIOMetadata metadata) {
-        super(metadata, FORMAT_NAME, "ImageDescription/Dimensions", "Dimension");
+        super(metadata, GEOTK_FORMAT_NAME, "ImageDescription/Dimensions", "Dimension");
     }
 
     /**

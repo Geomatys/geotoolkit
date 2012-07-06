@@ -205,7 +205,7 @@ public class Tile implements Comparable<Tile>, Serializable {
     /**
      * The size of the image to be read, or 0 if not yet computed. Values are stored
      * as <strong>unsigned</strong> shorts:  they must be casted to {@code int} with
-     * {@code s & MASK}. We assume that the {@code [0 .. 65535]} range is sufficient
+     * {@code s & MASK}. We assume that the {@code [0 … 65535]} range is sufficient
      * on the basis that tiles need to be reasonably small for being useful. Furthermore
      * tiles are usually square and an image of size 32767&times;32767 reaches the limit
      * of Java Image I/O library anyway, since image area must hold in an {@code int}.
@@ -284,7 +284,7 @@ public class Tile implements Comparable<Tile>, Serializable {
     /**
      * Creates a tile for the given provider, input and location. This constructor can be used when
      * the size of the image to be read by the supplied reader is unknown. This size will be
-     * fetched automatically the first time {@link #getRegion} is invoked.
+     * fetched automatically the first time {@link #getRegion()} is invoked.
      *
      * @param provider
      *          The image reader provider to use. The same provider is typically given to every
@@ -300,7 +300,7 @@ public class Tile implements Comparable<Tile>, Serializable {
      * @param subsampling
      *          The subsampling relative to the tile having the finest resolution, or {@code null}
      *          if none. If non-null, width and height should be strictly positive. This argument
-     *          if of {@linkplain Dimension dimension} kind because it can also be understood as
+     *          is of {@linkplain Dimension dimension} kind because it can also be understood as
      *          relative "pixel size".
      */
     public Tile(ImageReaderSpi provider, final Object input, final int imageIndex,
@@ -329,7 +329,7 @@ public class Tile implements Comparable<Tile>, Serializable {
     /**
      * Creates a tile for the given provider, input and region. This constructor can be used when
      * the size of the image to be read by the supplied reader is known. It avoid the cost of
-     * fetching the size from the reader when {@link #getRegion} will be invoked.
+     * fetching the size from the reader when {@link #getRegion()} will be invoked.
      *
      * @param provider
      *          The image reader provider to use. The same provider is typically given to every
@@ -346,7 +346,7 @@ public class Tile implements Comparable<Tile>, Serializable {
      * @param subsampling
      *          The subsampling relative to the tile having the finest resolution, or {@code null}
      *          if none. If non-null, width and height should be strictly positive. This argument
-     *          if of {@linkplain Dimension dimension} kind because it can also be understood as
+     *          is of {@linkplain Dimension dimension} kind because it can also be understood as
      *          relative "pixel size".
      */
     public Tile(ImageReaderSpi provider, final Object input, final int imageIndex,
@@ -378,12 +378,12 @@ public class Tile implements Comparable<Tile>, Serializable {
 
     /**
      * Creates a tile for the given provider, input and "<cite>grid to real world</cite>" transform.
-     * This constructor can be used when the {@linkplain #getLocation location} of the image to be
+     * This constructor can be used when the {@linkplain #getLocation() location} of the image to be
      * read by the supplied reader is unknown. The definitive location and the subsampling will be
      * computed automatically when this tile will be given to a {@link TileManagerFactory}.
      * <p>
-     * When using this constructor, the {@link #getLocation}, {@link #getRegion} and
-     * {@link #getSubsampling} methods will throw an {@link IllegalStateException} until this tile
+     * When using this constructor, the {@link #getLocation()}, {@link #getRegion()} and
+     * {@link #getSubsampling()} methods will throw an {@link IllegalStateException} until this tile
      * has been given to a {@link TileManager}, which will compute those values automatically.
      *
      * @param provider

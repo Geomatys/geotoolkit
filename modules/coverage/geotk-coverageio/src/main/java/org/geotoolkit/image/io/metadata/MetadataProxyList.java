@@ -34,7 +34,7 @@ import static org.geotoolkit.internal.image.io.GridDomainAccessor.ARRAY_ATTRIBUT
  *
  * {@note Current implementation has a limitation, in that changes in existing elements are
  *        reflected by this view as expected, but <em>addition</em> or <em>removal</em> of
- *        elements are not visible if they are not performed by the <code>MetadataAccessor</code>
+ *        elements are not visible if they are not performed by the <code>MetadataNodeParser</code>
  *        instance wrapped by this class.}
  *
  * @param <T> The type of elements in this list.
@@ -60,14 +60,14 @@ final class MetadataProxyList<T> extends AbstractList<T> implements CheckedColle
     /**
      * Creates a new list.
      */
-    static <T> MetadataProxyList<T> create(final Class<T> elementType, final MetadataAccessor accessor) {
+    static <T> MetadataProxyList<T> create(final Class<T> elementType, final MetadataNodeParser accessor) {
         return new MetadataProxyList<T>(elementType, accessor);
     }
 
     /**
      * Creates a new list.
      */
-    private MetadataProxyList(final Class<T> elementType, final MetadataAccessor accessor) {
+    private MetadataProxyList(final Class<T> elementType, final MetadataNodeParser accessor) {
         parent = new MetadataProxy<T>(elementType, accessor);
     }
 
@@ -138,7 +138,7 @@ final class MetadataProxyList<T> extends AbstractList<T> implements CheckedColle
             if (componentType == null) {
                 element = parent.newProxyInstance(index);
             } else {
-                final MetadataAccessor accessor = parent.accessor;
+                final MetadataNodeParser accessor = parent.accessor;
                 accessor.selectChild(index);
                 final Object array;
                 if (componentType.equals(Double.TYPE)) {

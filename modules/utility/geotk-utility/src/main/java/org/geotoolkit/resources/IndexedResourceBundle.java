@@ -205,7 +205,7 @@ public class IndexedResourceBundle extends ResourceBundle {
             out.write(Strings.spaces(5 - number.length()));
             out.write(number);
             out.write(":\t");
-            out.write(value.substring(0, Math.min(indexCR,indexLF)));
+            out.write(value, 0, Math.min(indexCR,indexLF));
             out.write(lineSeparator);
         }
     }
@@ -246,7 +246,9 @@ public class IndexedResourceBundle extends ResourceBundle {
                     if (lang <= 0) {
                         throw new FileNotFoundException(filename);
                     }
-                    name = name.substring(0, lang) + name.substring(ext);
+                    final int length = name.length();
+                    name = new StringBuilder(lang + (length-ext))
+                            .append(name, 0, lang).append(name, ext, length).toString();
                 }
                 final DataInputStream input = new DataInputStream(new BufferedInputStream(in));
                 this.values = values = new String[input.readInt()];
@@ -409,7 +411,8 @@ public class IndexedResourceBundle extends ResourceBundle {
                 break;
             }
         }
-        return Strings.trim(text.substring(0, break1+1) + " (...) " + text.substring(break2));
+        return Strings.trim(new StringBuilder(break1 + (length-break2) + 6)
+                .append(text, 0, break1+1).append(" (…) ").append(text, break2, length).toString());
     }
 
     /**

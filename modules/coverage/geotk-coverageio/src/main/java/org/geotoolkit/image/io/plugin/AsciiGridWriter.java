@@ -187,7 +187,7 @@ public class AsciiGridWriter extends TextImageWriter {
         final MetadataHelper   helper    = new MetadataHelper(this);
         final Georectified     spatialRp = metadata.getInstanceForType(Georectified .class);
         final RectifiedGrid    domain    = metadata.getInstanceForType(RectifiedGrid.class);
-        final PixelOrientation ptInPixel = spatialRp.getPointInPixel();
+        final PixelOrientation ptInPixel = (spatialRp != null) ? spatialRp.getPointInPixel() : null;
         final AffineTransform  gridToCRS = helper.getAffineTransform(domain, param);
         String xll = "XLLCORNER";
         String yll = "YLLCORNER";
@@ -426,6 +426,7 @@ public class AsciiGridWriter extends TextImageWriter {
             locale          = Locale.US;
             charset         = Charset.forName("US-ASCII");
             lineSeparator   = "\n";
+            nativeStreamMetadataFormatName = null; // No stream metadata.
         }
 
         /**

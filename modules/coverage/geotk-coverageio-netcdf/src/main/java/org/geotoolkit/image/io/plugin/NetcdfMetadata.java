@@ -52,7 +52,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
-import org.geotoolkit.image.io.metadata.MetadataAccessor;
+import org.geotoolkit.image.io.metadata.MetadataNodeAccessor;
 import org.geotoolkit.image.io.metadata.ReferencingBuilder;
 import org.geotoolkit.internal.image.io.NetcdfVariable;
 import org.geotoolkit.internal.image.io.SampleMetadataFormat;
@@ -70,6 +70,7 @@ import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.ISO_FORMAT_NAME;
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
 import static ucar.nc2.constants.CF.GRID_MAPPING;
 
@@ -154,20 +155,20 @@ final class NetcdfMetadata extends SpatialMetadata {
      * @param file The file for which to read metadata.
      */
     public NetcdfMetadata(final ImageReader reader, final NetcdfFile file) {
-        super(SpatialMetadataFormat.getStreamInstance(null), reader, null);
+        super(SpatialMetadataFormat.getStreamInstance(GEOTK_FORMAT_NAME), reader, null);
         nativeMetadataFormatName = NATIVE_FORMAT_NAME;
         extraMetadataFormatNames = XArrays.append(extraMetadataFormatNames, ISO_FORMAT_NAME);
         Attribute attr = file.findGlobalAttribute("project_name");
         if (attr != null) {
-            final MetadataAccessor ac = new MetadataAccessor(this, DiscoveryAccessor.ROOT);
+            final MetadataNodeAccessor ac = new MetadataNodeAccessor(this, DiscoveryAccessor.ROOT);
             ac.setAttribute("citation", attr.getStringValue());
         }
-        MetadataAccessor ac = null;
+        MetadataNodeAccessor ac = null;
         for (int i=0; i<BBOX.length; i+=2) {
             attr = file.findGlobalAttribute(BBOX[i]);
             if (attr != null) {
                 if (ac == null) {
-                    ac = new MetadataAccessor(this, DiscoveryAccessor.GEOGRAPHIC_ELEMENT);
+                    ac = new MetadataNodeAccessor(this, DiscoveryAccessor.GEOGRAPHIC_ELEMENT);
                     ac.setAttribute("inclusion", true);
                 }
                 ac.setAttribute(BBOX[i+1], attr.getStringValue());
@@ -190,7 +191,7 @@ final class NetcdfMetadata extends SpatialMetadata {
     public NetcdfMetadata(final NetcdfImageReader reader, final NetcdfDataset file,
             final VariableIF... variables) throws IOException
     {
-        super(SpatialMetadataFormat.getImageInstance(null), reader, null);
+        super(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME), reader, null);
         nativeMetadataFormatName  = NATIVE_FORMAT_NAME;
         GDALGridMapping  gdal     = null;
         CoordinateSystem netcdfCS = null;
@@ -527,7 +528,7 @@ final class NetcdfMetadata extends SpatialMetadata {
                 }
                 return nativeFormat;
             }
-            if (format == SpatialMetadataFormat.getStreamInstance(null) && formatName.equalsIgnoreCase(ISO_FORMAT_NAME)) {
+            if (formatName.equalsIgnoreCase(ISO_FORMAT_NAME) && SpatialMetadataFormat.getStreamInstance(GEOTK_FORMAT_NAME).equals(format)) {
                 return SpatialMetadataFormat.getStreamInstance(ISO_FORMAT_NAME);
             }
         }
@@ -572,7 +573,7 @@ final class NetcdfMetadata extends SpatialMetadata {
             /*
              * "ISO-19115" metadata case (stream metadata only).
              *
-             * TODO: the tree is not yet build.
+             * TODO: the tree is not yet built.
              */
             if (formatName.equalsIgnoreCase(ISO_FORMAT_NAME) && isoMetadata != null) {
                 if (isoMetadata instanceof Node) {
