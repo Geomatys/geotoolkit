@@ -139,7 +139,6 @@ public final class ProcessFinder {
      *
      * @param authorityCode registry name
      * @return ProcessingRegistry or null if not found
-     * @deprecated Use {@link #getProcessFactory(java.lang.String)} instead
      */
     public static ProcessingRegistry getProcessFactory(final Iterator<? extends ProcessingRegistry> factories, final String authorityCode) {
         while (factories.hasNext()) {
@@ -160,7 +159,6 @@ public final class ProcessFinder {
      * @param processName process descriptor name
      * @return ProcessDescriptor
      * @throws IllegalArgumentException if description could not be found
-     * @deprecated Use {@link #getProcessDescriptor(java.lang.String, java.lang.String)} instead
      */
     public static ProcessDescriptor getProcessDescriptor(final Iterator<? extends ProcessingRegistry> factories, String authority, final String processName)
             throws NoSuchIdentifierException {
