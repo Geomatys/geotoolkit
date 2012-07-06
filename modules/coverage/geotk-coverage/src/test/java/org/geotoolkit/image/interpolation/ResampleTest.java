@@ -48,6 +48,12 @@ public class ResampleTest {
         defMatFact = new DefaultMathTransformFactory();
     }
 
+    /**
+     *
+     * @throws FactoryException
+     * @throws NoninvertibleTransformException
+     * @throws TransformException
+     */
     @Test
     public void resampleFactor2BicubicTest() throws FactoryException, NoninvertibleTransformException, TransformException {
 
@@ -75,15 +81,14 @@ public class ResampleTest {
         testInternalValues(targetImage, new double[]{0.5, 3});//valeur arbitraire
    }
 
+    /**
+     *
+     * @throws FactoryException
+     * @throws NoninvertibleTransformException
+     * @throws TransformException
+     */
     @Test
     public void resampleFactor2BilinearTest() throws FactoryException, NoninvertibleTransformException, TransformException {
-//        final BandedSampleModel targetSampleM = new BandedSampleModel(DataBuffer.TYPE_DOUBLE, 8, 8, 1);
-//        targetImage = new TiledImage(-4, -4, 8, 8, -4, -4, targetSampleM, null);
-//        for (int y = -4; y<4; y++) {
-//            for (int x = -4; x<4; x++) {
-//                targetImage.getWritableTile(0, 0).setSample(x, y, 0, Double.NaN);
-//            }
-//        }
         setTargetImage(-4, -4, 8, 8, -4, -4, 8, 8, DataBuffer.TYPE_DOUBLE, 1, Double.NaN);
 
         final BandedSampleModel sourceSampleM = new BandedSampleModel(DataBuffer.TYPE_INT, 4, 4, 1);
@@ -92,7 +97,7 @@ public class ResampleTest {
         for (int y = -2; y<2; y++) {
             for (int x = -2; x<2; x++) {
                 pixVal = (int) Math.hypot(x, y);
-                if(x+y >= 0)pixVal++;
+                if (x+y >= 0) pixVal++;
                 sourceImage.getWritableTile(0, 0).setSample(x, y, 0, pixVal);
             }
         }
@@ -108,6 +113,21 @@ public class ResampleTest {
         testInternalValues(targetImage, 1, 2);
    }
 
+    /**
+     * Affect appropriate image for tests.
+     *
+     * @param minX lower corner pixel index in X direction.
+     * @param minY lower corner pixel index in Y direction.
+     * @param width image width.
+     * @param height image height.
+     * @param tileGridXOffset minimum tiles index in X direction.
+     * @param tileGridYOffset minimum tiles index in Y direction.
+     * @param tilesWidth width of each raster (tiles) from image.
+     * @param tilesHeight height of each raster (tiles) from image.
+     * @param dataType image data type.
+     * @param numBand band number
+     * @param value fill image with this value.
+     */
     private void setTargetImage(int minX, int minY, int width, int height,
             int tileGridXOffset, int tileGridYOffset, int tilesWidth, int tilesHeight,
             int dataType, int numBand, double value) {
@@ -124,9 +144,9 @@ public class ResampleTest {
                 raster = targetImage.getWritableTile(tX, tY);
                 minx = raster.getMinX();
                 miny = raster.getMinY();
-                for (int y = miny; y<miny+tilesHeight; y++) {
-                    for (int x = minx; x<minx+tilesWidth; x++) {
-                        for (int b = 0; b<numBand; b++) {
+                for (int y = miny; y<miny + tilesHeight; y++) {
+                    for (int x = minx; x<minx + tilesWidth; x++) {
+                        for (int b = 0; b < numBand; b++) {
                             raster.setSample(x, y, b, value);
                         }
                     }
@@ -135,6 +155,12 @@ public class ResampleTest {
         }
     }
 
+    /**
+     * Affect appropriate interpolation about test.
+     *
+     * @param sourceImage image which will be iterate for tests.
+     * @param interpolCase chosen interpolation.
+     */
     private void setInterpolation(WritableRenderedImage sourceImage, InterpolationCase interpolCase) {
         interpolation = Interpolation.create(PixelIteratorFactory.createDefaultIterator(sourceImage), interpolCase, 0);
     }

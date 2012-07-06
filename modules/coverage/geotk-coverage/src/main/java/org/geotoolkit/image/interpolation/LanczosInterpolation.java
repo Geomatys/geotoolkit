@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.image.interpolation;
 
+import java.awt.Rectangle;
 import org.geotoolkit.image.iterator.PixelIterator;
 
 /**
@@ -113,5 +114,10 @@ public class LanczosInterpolation extends Interpolation {
             result[n] = interpol;
         }
         return result;
+    }
+
+    @Override
+    public double[] getMinMaxValue(Rectangle area) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

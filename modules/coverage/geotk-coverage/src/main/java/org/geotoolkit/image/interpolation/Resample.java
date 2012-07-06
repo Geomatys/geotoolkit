@@ -126,14 +126,9 @@ public class Resample {
         int compDebug = 0;
         while (destIterator.next()) {
             band = 0;
-            int getx = destIterator.getX();
-            int gety = destIterator.getY();
-            if(compDebug==15){
-                System.out.println("");
-            }
             destPixValue = getSourcePixelValue(destIterator.getX(), destIterator.getY());
             if (destPixValue == null) {
-                while (++band != numBands) destIterator.next();
+                while (++band != numBands) destIterator.next();//continue until next pixel.
             } else {
                 destIterator.setSampleDouble(destPixValue[0]);
                 while (++band != numBands) {

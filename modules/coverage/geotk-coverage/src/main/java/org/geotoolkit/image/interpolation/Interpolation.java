@@ -43,6 +43,16 @@ public abstract class Interpolation {
     protected final Rectangle boundary;
 
     /**
+     * last search of min max value area.
+     */
+    protected Rectangle precMinMax;
+
+    /**
+     * <p>Double table which contain minimum and maximum value, and x, y associate coordinates for each image band.</p>
+     */
+    protected double[] minMax;
+
+    /**
      * Build an Interpolate object.
      *
      * @param pixelIterator Iterator used to interpolation.
@@ -51,6 +61,7 @@ public abstract class Interpolation {
         this.pixelIterator = pixelIterator;
         this.numBands = pixelIterator.getNumBands();
         this.boundary = pixelIterator.getBoundary();
+        this.minMax = null;
     }
 
     /**
@@ -61,6 +72,32 @@ public abstract class Interpolation {
      * @return interpolate value from x, y pixel coordinate.
      */
     public abstract double[] interpolate(double x, double y);
+
+    /**
+     * <p>Find minimum and maximum pixels values for each band.<br/>
+     * Moreover double table result has length equal to 6*band number.<br/><br/>
+     * <var>min<sub>0</sub></var>  : min from band 0.<br/>
+     * <var>minX<sub>0</sub></var> : x coordinate from min value from band 0.<br/>
+     * <var>minY<sub>0</sub></var> : y coordinate from min value from band 0.<br/>
+     * <var>max<sub>0</sub></var>  : max from band 0.<br/>
+     * <var>maxX<sub>0</sub></var> : x coordinate from max value from band 0.<br/>
+     * <var>maxY<sub>0</sub></var> : y coordinate from max value from band 0.<br/>
+     * <var>min<sub>n</sub></var>  : min from nth band.<br/>
+     * <var>minX<sub>n</sub></var> : x coordinate from min value from nth band.<br/>
+     * <var>minY<sub>n</sub></var> : y coordinate from min value from nth band.<br/>
+     * <var>max<sub>n</sub></var>  : max from nth band.<br/>
+     * <var>maxX<sub>n</sub></var> : x coordinate from max value from nth band.<br/>
+     * <var>maxY<sub>n</sub></var> : y coordinate from max value from nth band.<br/><br/>
+     * Table is organize like this : <br/>
+     * [<var>min<sub>0</sub></var>, <var>minX<sub>0</sub></var>, <var>minY<sub>0</sub></var>,
+     * <var>max<sub>0</sub></var>, <var>maxX<sub>0</sub></var>, <var>maxY<sub>0</sub></var>
+     * ...
+     * <var>min<sub>n</sub></var>, <var>minX<sub>n</sub></var>, <var>minY<sub>n</sub></var>,
+     * <var>max<sub>n</sub></var>, <var>maxX<sub>n</sub></var>, <var>maxY<sub>n</sub></var>]</p>
+     *
+     * @return double array witch represent minimum and maximum pixels values for each band.
+     */
+    public abstract double[] getMinMaxValue(Rectangle area);
 
     /**
      * Verify coordinates are within iterate area boundary.
