@@ -91,6 +91,7 @@ public class WPSConverterRegistry {
         register(new WPSObjectConverterAdapter(StringToCRSConverter.getInstance()));
         register(new WPSObjectConverterAdapter(StringToNumberRangeConverter.getInstance()));
         register(new WPSObjectConverterAdapter(StringToFilterConverter.getInstance()));
+        register(new WPSObjectConverterAdapter(StringToDate.getInstance()));
         
     }
     

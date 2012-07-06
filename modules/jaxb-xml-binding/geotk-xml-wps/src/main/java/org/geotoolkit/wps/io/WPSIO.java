@@ -136,6 +136,7 @@ public final class WPSIO {
         FORMATSUPPORTS.add(new FormatSupport(SortBy[].class, IOType.INPUT, null, Encoding.UTF8.getValue(), null, true));
         FORMATSUPPORTS.add(new FormatSupport(NumberRange[].class, IOType.INPUT, null, Encoding.UTF8.getValue(), null, true));
         FORMATSUPPORTS.add(new FormatSupport(Filter.class, IOType.INPUT, null, Encoding.UTF8.getValue(), null, true));
+        FORMATSUPPORTS.add(new FormatSupport(Date.class, IOType.INPUT, null, Encoding.UTF8.getValue(), null, true));
 
     }
 
