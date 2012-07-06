@@ -35,7 +35,7 @@ public class WMCUtilitiesTest {
      */
     @Test
     public void testGetMapContext() throws Exception {
-        MapContext context = WMCUtilities.getMapContext(this.getClass().getResourceAsStream("testWMC2.xml"));
+        MapContext context = WMCUtilities.getMapContext(this.getClass().getResourceAsStream("testWMC_wms.xml"));
         assertNotNull(context);
     }
 }
