@@ -40,100 +40,100 @@ import org.xeustechnologies.jtar.TarOutputStream;
 
 /**
  * IO Process test.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  */
 public class IOProcessTest {
-    
+
     @Test
     public void createTempFileTest() throws NoSuchIdentifierException, ProcessException, URISyntaxException{
-        
+
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("io", "createTempFile");
         assertNotNull(desc);
-        
+
         final ParameterValueGroup input = desc.getInputDescriptor().createValue();
         input.parameter("prefix").setValue("myprefix");
         input.parameter("postfix").setValue(".post");
-                
+
         final Process process = desc.createProcess(input);
         assertNotNull(process);
         final ParameterValueGroup result = process.call();
         assertNotNull(result);
-        
+
         Object obj = result.parameter("file").getValue();
         assertNotNull(obj);
         assertTrue(obj instanceof URL);
-        
+
         File f = new File( ((URL)obj).toURI() );
         assertTrue(f.exists());
         assertTrue(f.getName().startsWith("myprefix"));
         assertTrue(f.getName().endsWith(".post"));
         f.delete();
     }
-    
+
     @Test
     public void createTempFolderTest() throws NoSuchIdentifierException, ProcessException, URISyntaxException{
-        
+
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("io", "createTempFolder");
         assertNotNull(desc);
-        
+
         final ParameterValueGroup input = desc.getInputDescriptor().createValue();
         input.parameter("prefix").setValue("myfolder");
-                
+
         final Process process = desc.createProcess(input);
         assertNotNull(process);
         final ParameterValueGroup result = process.call();
         assertNotNull(result);
-        
+
         Object obj = result.parameter("folder").getValue();
         assertNotNull(obj);
         assertTrue(obj instanceof URL);
-        
+
         File f = new File( ((URL)obj).toURI() );
         assertTrue(f.exists());
         assertTrue(f.getName().startsWith("myfolder"));
-        
+
     }
-    
+
     @Test
     public void deleteTest() throws NoSuchIdentifierException, ProcessException, URISyntaxException, IOException{
-        
+
         final File f = File.createTempFile("test", ".td");
         f.createNewFile();
-        
+
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("io", "delete");
         assertNotNull(desc);
-        
+
         final ParameterValueGroup input = desc.getInputDescriptor().createValue();
         input.parameter("path").setValue(f.toURI().toURL());
-                
+
         final Process process = desc.createProcess(input);
         assertNotNull(process);
         final ParameterValueGroup result = process.call();
         assertNotNull(result);
-        
+
         Object obj = result.parameter("result").getValue();
         assertNotNull(obj);
         assertTrue(obj instanceof Boolean);
         assertTrue((Boolean)obj);
-        
+
         assertFalse(f.exists());
     }
-    
+
     @Test
     public void unpackTest() throws NoSuchIdentifierException, ProcessException, URISyntaxException, IOException{
-        
+
         //create two archives, zip and tar.gz
         final File f = File.createTempFile("test", "");
         f.delete();
         f.mkdirs();
         final File f1 = new File(f, "file1.png"); f1.createNewFile();
         final File f2 = new File(f, "file2.txt"); f2.createNewFile();
-        
+
         final File archiveZip = File.createTempFile("archive", ".zip");
         archiveZip.deleteOnExit();
-        final File archiveTar = File.createTempFile("archive", ".tar.gz");      
-        archiveTar.deleteOnExit();  
+        final File archiveTar = File.createTempFile("archive", ".tar.gz");
+        archiveTar.deleteOnExit();
         FileUtilities.zip(archiveZip, null, f);
 
         // Create a TarOutputStream
@@ -150,58 +150,58 @@ public class IOProcessTest {
         out.flush();
         out.close();
 
-        
-        
+
+
         //temporary unpacking directory
         final File target = File.createTempFile("target", "");
         target.delete();
         target.mkdirs();
-        
+
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("io", "unpackFile");
         assertNotNull(desc);
-        
+
         // TEST ZIP UNPACK -----------------------------------------------------
         ParameterValueGroup input = desc.getInputDescriptor().createValue();
         input.parameter("source").setValue(archiveZip.toURI().toURL());
         input.parameter("target").setValue(target.toURI().toURL());
-                
+
         Process process = desc.createProcess(input);
         assertNotNull(process);
         ParameterValueGroup result = process.call();
         assertNotNull(result);
-        
+
         Object obj = result.parameter("files").getValue();
         assertNotNull(obj);
         assertEquals(2, ((URL[])obj).length );
-        
-        assertTrue(((URL[])obj)[0].toString().endsWith("file1.png"));
-        assertTrue(((URL[])obj)[1].toString().endsWith("file2.txt"));
-        
-        
+
+        assertTrue(((URL[])obj)[1].toString().endsWith("file1.png"));
+        assertTrue(((URL[])obj)[0].toString().endsWith("file2.txt"));
+
+
         // TEST TAR.GZ UNPACK --------------------------------------------------
         FileUtilities.deleteDirectory(target);
         target.delete();
         target.mkdirs();
-        
+
         input = desc.getInputDescriptor().createValue();
         input.parameter("source").setValue(archiveTar.toURI().toURL());
         input.parameter("target").setValue(target.toURI().toURL());
-                
+
         process = desc.createProcess(input);
         assertNotNull(process);
         result = process.call();
         assertNotNull(result);
-        
+
         obj = result.parameter("files").getValue();
         assertNotNull(obj);
         assertEquals(2, ((URL[])obj).length );
-        
+
         assertTrue(((URL[])obj)[0].toString().endsWith("file1.png"));
         assertTrue(((URL[])obj)[1].toString().endsWith("file2.txt"));
-        
-        
-        
+
+
+
     }
-    
-    
+
+
 }
