@@ -29,6 +29,7 @@ import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.spi.ServiceRegistry;
+import javax.imageio.stream.ImageOutputStream;
 
 import org.geotoolkit.image.io.ImageMetadataException;
 import org.geotoolkit.image.io.ImageWriterAdapter;
@@ -88,7 +89,7 @@ public class GeoTiffImageWriter extends ImageWriterAdapter{
     @Override
     public void write(final IIOMetadata streamMetadata, final IIOImage image, final ImageWriteParam param) throws IOException {
 
-        
+
         IIOMetadata iiometadata = image.getMetadata();
         if(!(iiometadata instanceof SpatialMetadata)){
             //no spatial metadatas, fallback on tiff writer
@@ -171,6 +172,7 @@ public class GeoTiffImageWriter extends ImageWriterAdapter{
             pluginClassName = "org.geotoolkit.image.io.plugin.GeoTiffImageWriter";
             vendorName      = "Geotoolkit.org";
             version         = Version.GEOTOOLKIT.toString();
+            outputTypes     = XArrays.append(outputTypes, ImageOutputStream.class);
         }
 
         /**
