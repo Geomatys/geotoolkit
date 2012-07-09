@@ -142,7 +142,7 @@ public abstract class NetcdfMetadata implements WarningProducer {
      * {@link Citation#getIdentifiers() identifier} /
      * {@link Identifier#getCode() code}</li></ul>
      *
-     * @see #getFileIdentifier()
+     * @see NetcdfMetadataReader#getFileIdentifier()
      * @see NetcdfFile#getId()
      * @see <a href="http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html#id_Attribute">UCAR reference</a>
      */
@@ -162,7 +162,7 @@ public abstract class NetcdfMetadata implements WarningProducer {
      * {@link Identifier#getAuthority() authority}</li></ul>
      *
      * @see #IDENTIFIER
-     * @see #getFileIdentifier()
+     * @see NetcdfMetadataReader#getFileIdentifier()
      * @see <a href="http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html#id_Attribute">UCAR reference</a>
      */
     public static final String NAMING_AUTHORITY = "naming_authority";
@@ -210,7 +210,7 @@ public abstract class NetcdfMetadata implements WarningProducer {
      *
      * @see #VOCABULARY
      * @see #STANDARD_NAME
-     * @see #getKeywordSeparator(Group)
+     * @see NetcdfMetadataReader#getKeywordSeparator(Group)
      * @see <a href="http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html#keywords_Attribute">UCAR reference</a>
      */
     public static final String KEYWORDS = "keywords";

@@ -1303,7 +1303,7 @@ public class NetcdfImageReader extends FileImageReader implements
 
     /**
      * Restores the {@code ImageReader} to its initial state. This method removes the input,
-     * the locale, all listeners and any {@link DimensionSlice.API}.
+     * the locale, all listeners and any {@link org.geotoolkit.image.io.DimensionSlice.API}.
      */
     @Override
     public void reset() {

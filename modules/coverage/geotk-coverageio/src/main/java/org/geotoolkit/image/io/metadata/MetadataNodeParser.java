@@ -744,12 +744,12 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
 
     /**
      * Returns the number of child {@linkplain Element elements}.
-     * This is the upper value (exclusive) for {@link #selectChild}.
+     * This is the upper value (exclusive) for {@link #selectChild(int)}.
      *
      * @return The child {@linkplain Element elements} count.
      *
      * @see #selectChild(int)
-     * @see #appendChild()
+     * @see MetadataNodeAccessor#appendChild()
      */
     public int childCount() {
         return childs.size();
@@ -757,8 +757,8 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
 
     /**
      * Returns {@code true} if this accessor allows children. If this method returns
-     * {@code false}, then attempts to {@linkplain #appendChild() append a child} will
-     * throw a {@link UnsupportedOperationException}.
+     * {@code false}, then attempts to {@linkplain MetadataNodeAccessor#appendChild()
+     * append a child} will throw a {@link UnsupportedOperationException}.
      *
      * @return {@code true) if this accessor allows children.
      */
@@ -774,7 +774,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @throws IndexOutOfBoundsException if the specified index is out of bounds.
      *
      * @see #childCount()
-     * @see #appendChild()
+     * @see MetadataNodeAccessor#appendChild()
      * @see #selectParent()
      */
     public void selectChild(final int index) throws IndexOutOfBoundsException {
@@ -822,9 +822,8 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      *   <li>{@link Node#getNodeValue()}</li>
      * </ul>
      * <p>
-     * The <cite>node value</cite> fallback is consistent with {@link #setUserObject(Object)}
-     * implementation, and allows processing of nodes that are not {@link IIOMetadataNode}
-     * instances.
+     * The <cite>node value</cite> fallback is consistent with {@link MetadataNodeAccessor#setUserObject(Object)}
+     * implementation, and allows processing of nodes that are not {@link IIOMetadataNode} instances.
      *
      * {@note This <code>getUserObject()</code> method and the <code>getUserObject(Class)</code>
      *        method below are the only getters that do not fetch the string to parse by a call
@@ -833,7 +832,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @return The user object, or {@code null} if none.
      *
      * @see #getUserObject(Class)
-     * @see #setUserObject(Object)
+     * @see MetadataNodeAccessor#setUserObject(Object)
      */
     public Object getUserObject() {
         final Element element = currentElement();
@@ -871,7 +870,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @throws ClassCastException If the user object can not be casted to the specified type.
      *
      * @see #getUserObject()
-     * @see #setUserObject(Object)
+     * @see MetadataNodeAccessor#setUserObject(Object)
      * @see SpatialMetadata#getInstanceForType(Class)
      */
     public <T> T getUserObject(final Class<? extends T> type) throws ClassCastException {
@@ -1019,7 +1018,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @param attribute The attribute to fetch (e.g. {@code "name"}).
      * @return The attribute value (never an empty string), or {@code null} if none.
      *
-     * @see #setAttribute(String, String)
+     * @see MetadataNodeAccessor#setAttribute(String, String)
      * @see IIOMetadataFormat#DATATYPE_STRING
      */
     public String getAttribute(final String attribute) {
@@ -1046,7 +1045,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      *         or {@code false} for preserving duplicated values.
      * @return The attribute values, or {@code null} if none.
      *
-     * @see #setAttribute(String, String[])
+     * @see MetadataNodeAccessor#setAttribute(String, String[])
      *
      * @since 3.06
      */
@@ -1064,7 +1063,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @param  codeType The type of the code list. This is used for determining the expected values.
      * @return The attribute value, or {@code null} if none or unknown.
      *
-     * @see #setAttribute(String, CodeList)
+     * @see MetadataNodeAccessor#setAttribute(String, CodeList)
      *
      * @since 3.06
      */
@@ -1085,7 +1084,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @param attribute The attribute to fetch (e.g. {@code "inclusion"}).
      * @return The attribute value, or {@code null} if none or unparseable.
      *
-     * @see #setAttribute(String, boolean)
+     * @see MetadataNodeAccessor#setAttribute(String, boolean)
      * @see IIOMetadataFormat#DATATYPE_BOOLEAN
      *
      * @since 3.06
@@ -1118,7 +1117,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @param attribute The attribute to fetch (e.g. {@code "minimum"}).
      * @return The attribute value, or {@code null} if none or unparseable.
      *
-     * @see #setAttribute(String, int)
+     * @see MetadataNodeAccessor#setAttribute(String, int)
      * @see IIOMetadataFormat#DATATYPE_INTEGER
      */
     public Integer getAttributeAsInteger(final String attribute) {
@@ -1144,7 +1143,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      *         or {@code false} for preserving duplicated values.
      * @return The attribute values, or {@code null} if none.
      *
-     * @see #setAttribute(String, int[])
+     * @see MetadataNodeAccessor#setAttribute(String, int[])
      */
     public int[] getAttributeAsIntegers(final String attribute, final boolean unique) {
         return (int[]) parseSequence(getAttribute(attribute), Integer.TYPE, unique, "getAttributeAsIntegers");
@@ -1158,7 +1157,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @param attribute The attribute to fetch (e.g. {@code "minimum"}).
      * @return The attribute value, or {@code null} if none or unparseable.
      *
-     * @see #setAttribute(String, float)
+     * @see MetadataNodeAccessor#setAttribute(String, float)
      * @see IIOMetadataFormat#DATATYPE_FLOAT
      *
      * @since 3.06
@@ -1183,7 +1182,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      *         or {@code false} for preserving duplicated values.
      * @return The attribute values, or {@code null} if none.
      *
-     * @see #setAttribute(String, float[])
+     * @see MetadataNodeAccessor#setAttribute(String, float[])
      *
      * @since 3.06
      */
@@ -1199,7 +1198,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @param attribute The attribute to fetch (e.g. {@code "minimum"}).
      * @return The attribute value, or {@code null} if none or unparseable.
      *
-     * @see #setAttribute(String, double)
+     * @see MetadataNodeAccessor#setAttribute(String, double)
      * @see IIOMetadataFormat#DATATYPE_DOUBLE
      */
     public Double getAttributeAsDouble(final String attribute) {
@@ -1222,7 +1221,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      *         or {@code false} for preserving duplicated values.
      * @return The attribute values, or {@code null} if none.
      *
-     * @see #setAttribute(String, double[])
+     * @see MetadataNodeAccessor#setAttribute(String, double[])
      */
     public double[] getAttributeAsDoubles(final String attribute, final boolean unique) {
         return (double[]) parseSequence(getAttribute(attribute), Double.TYPE, unique, "getAttributeAsDoubles");
@@ -1236,7 +1235,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @param attribute The attribute to fetch (e.g. {@code "origin"}).
      * @return The attribute value, or {@code null} if none or unparseable.
      *
-     * @see #setAttribute(String, Date)
+     * @see MetadataNodeAccessor#setAttribute(String, Date)
      */
     public Date getAttributeAsDate(final String attribute) {
         String value = getAttribute(attribute);
@@ -1262,7 +1261,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @param attribute The attribute to fetch (e.g. {@code "validSampleValues"}).
      * @return The attribute value, or {@code null} if none or unparseable.
      *
-     * @see #setAttribute(String, NumberRange)
+     * @see MetadataNodeAccessor#setAttribute(String, NumberRange)
      *
      * @since 3.06
      */
@@ -1291,7 +1290,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @param  quantity The quantity of the unit to be returned, or {@code null} for any.
      * @return The attribute value, or {@code null} if none or unparseable.
      *
-     * @see #setAttribute(String, Unit)
+     * @see MetadataNodeAccessor#setAttribute(String, Unit)
      *
      * @since 3.07
      */
@@ -1321,7 +1320,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @param  attribute The attribute to fetch (e.g. {@code "authority"}).
      * @return The attribute value, or {@code null} if none.
      *
-     * @see #setAttribute(String, Citation)
+     * @see MetadataNodeAccessor#setAttribute(String, Citation)
      *
      * @since 3.06
      */

@@ -146,13 +146,15 @@ public class MetadataTreeFormat extends Format {
 
     /**
      * The locale to use for {@linkplain InternationalString international string} formatting.
-     * By default, this is the locale for the {@linkplain Locale.Category#DISPLAY display} category.
+     * By default, this is the locale for the {@linkplain java.util.Locale.Category#DISPLAY display}
+     * category.
      */
     protected final Locale displayLocale;
 
     /**
      * The locale to use for {@linkplain Date date} and {@linkplain Number number} formatting.
-     * By default, this is the locale for the {@linkplain Locale.Category#FORMAT format} category.
+     * By default, this is the locale for the {@linkplain java.util.Locale.Category#FORMAT format}
+     * category.
      */
     protected final Locale formatLocale;
 

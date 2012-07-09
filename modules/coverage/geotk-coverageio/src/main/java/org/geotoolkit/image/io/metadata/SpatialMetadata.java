@@ -664,7 +664,7 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
      *   <li>If {@code formatName} is equals, ignoring case, to <code>{@linkplain #format}.getRootName()</code>
      *       where {@code format} is the argument given at construction time, then return that format.</li>
      *   <li>Otherwise if {@code formatName} is equals, ignoring case, to
-     *       {@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat.ISO_FORMAT_NAME},
+     *       {@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#ISO_FORMAT_NAME},
      *       then return the ISO-19115 format.</li>
      *   <li>Otherwise if a fallback has been specified at construction time,
      *       then delegate to that fallback.</li>
