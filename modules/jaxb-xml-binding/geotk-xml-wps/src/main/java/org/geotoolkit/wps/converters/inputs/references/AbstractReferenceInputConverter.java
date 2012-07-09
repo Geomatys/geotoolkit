@@ -34,6 +34,7 @@ import org.geotoolkit.feature.xml.XmlFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
 import org.geotoolkit.util.ArgumentChecks;
+import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.util.converter.SimpleConverter;
 import org.geotoolkit.wps.converters.WPSDefaultConverter;
@@ -45,7 +46,7 @@ import org.opengis.feature.type.FeatureType;
 
 /**
  *
- * 
+ *
  * @author Quentin Boileau (Geomatys).
  */
 public abstract class AbstractReferenceInputConverter extends WPSDefaultConverter<ReferenceType, Object> {
@@ -54,19 +55,19 @@ public abstract class AbstractReferenceInputConverter extends WPSDefaultConverte
     public Class<? super ReferenceType> getSourceClass() {
         return ReferenceType.class;
     }
-    
+
     @Override
     public abstract Class<? extends Object> getTargetClass();
 
     /**
-     * Convert a ReferenceType {@link InputReferenceType input} or {@link OutputReferenceType output} into the requested {@code Object}. 
-     * @param source ReferenceType 
+     * Convert a ReferenceType {@link InputReferenceType input} or {@link OutputReferenceType output} into the requested {@code Object}.
+     * @param source ReferenceType
      * @return Object
-     * @throws NonconvertibleObjectException 
+     * @throws NonconvertibleObjectException
      */
     @Override
     public abstract Object convert(final ReferenceType source, Map<String, Object> params) throws NonconvertibleObjectException;
-   
+
      /**
      * Get the JAXPStreamFeatureReader to read feature. If there is a schema defined, the JAXPStreamFeatureReader will
      * use it overwise it will use the embedded.
@@ -78,7 +79,7 @@ public abstract class AbstractReferenceInputConverter extends WPSDefaultConverte
      * @throws IOException
      */
     protected XmlFeatureReader getFeatureReader(final ReferenceType source) throws MalformedURLException, JAXBException, IOException {
-        
+
         JAXPStreamFeatureReader featureReader = new JAXPStreamFeatureReader();
         try {
             final XmlFeatureTypeReader xsdReader = new JAXBFeatureTypeReader();
@@ -98,24 +99,24 @@ public abstract class AbstractReferenceInputConverter extends WPSDefaultConverte
         }
         return featureReader;
     }
-    
+
     protected InputStream getInputStreamFromReference (final ReferenceType source) throws NonconvertibleObjectException {
-        
+
         ArgumentChecks.ensureNonNull("source", source);
         String method = null;
-        
+
         if (source instanceof InputReferenceType) {
             method = ((InputReferenceType) source).getMethod();
         } else if (source instanceof OutputReferenceType) {
             method = "GET";
         }
-        
+
         InputStream stream = null;
 
         if (method.equalsIgnoreCase("GET")) {
 
             try {
-                String href = URLDecoder.decode(source.getHref(), "UTF-8");
+                String href = source.getHref().replaceAll("&amp;", "&");
                 final URL url = new URL(href);
                 stream = url.openStream();
 
@@ -131,13 +132,13 @@ public abstract class AbstractReferenceInputConverter extends WPSDefaultConverte
         }
         return stream;
     }
-    
-    
+
+
     /**
-     * Return an Input {@link InputStream stream} of a reference using POST method. 
+     * Return an Input {@link InputStream stream} of a reference using POST method.
      * @param reference
      * @return
-     * @throws NonconvertibleObjectException 
+     * @throws NonconvertibleObjectException
      */
     private static InputStream postReferenceRequest(final InputReferenceType reference) throws NonconvertibleObjectException {
 
@@ -148,21 +149,21 @@ public abstract class AbstractReferenceInputConverter extends WPSDefaultConverte
             throw new NonconvertibleObjectException("Invalid reference href.", ex);
         }
 
-        
+
         final List<InputReferenceType.Header> headers = reference.getHeader();
 
         InputStream stream = null;
         OutputStream requestOS = null;
         Marshaller marshaller = null;
-        
+
         try {
             final Object body = getReferenceBody(reference);
             if (body == null) {
                 throw new NonconvertibleObjectException("No reference body found for the POST request.");
             }
-            
+
             marshaller = WPSMarshallerPool.getInstance().acquireMarshaller();
-            
+
             // Make request
             final URLConnection conec = new URL(href).openConnection();
             conec.setConnectTimeout(60);
@@ -171,14 +172,14 @@ public abstract class AbstractReferenceInputConverter extends WPSDefaultConverte
             for (final InputReferenceType.Header header : headers) {
                 conec.addRequestProperty(header.getKey(), header.getValue());
             }
-            
+
             // Write request content
             requestOS = conec.getOutputStream();
             marshaller.marshal(body, requestOS);
 
             // Parse the response
             stream = conec.getInputStream();
-            
+
         } catch (JAXBException ex) {
             throw new NonconvertibleObjectException("The requested body is not supported.", ex);
         } catch (IOException ex) {
@@ -197,35 +198,35 @@ public abstract class AbstractReferenceInputConverter extends WPSDefaultConverte
         }
         return stream;
     }
-    
+
     /**
      * Reach and unMarshall the body of a request.
-     * 
+     *
      * @param reference
      * @return
      * @throws UnsupportedEncodingException
      * @throws JAXBException
-     * @throws MalformedURLException 
+     * @throws MalformedURLException
      */
-    private static Object getReferenceBody(final InputReferenceType reference) 
+    private static Object getReferenceBody(final InputReferenceType reference)
             throws UnsupportedEncodingException, JAXBException, MalformedURLException {
-        
+
         Object obj = null;
-        
+
         if ( reference.getBody() != null ) {
             obj = reference.getBody();
-            
+
         } else if (reference.getBodyReference() != null) {
-            
+
             final String href = reference.getBodyReference().getHref();
-            
+
             Unmarshaller unmarshaller = null;
             try {
                 unmarshaller = WPSMarshallerPool.getInstance().acquireUnmarshaller();
                 final URL url = new URL(URLDecoder.decode(href, "UTF-8"));
-                
+
                 obj = unmarshaller.unmarshal(url);
-                
+
             } finally {
                 if (unmarshaller != null) {
                     WPSMarshallerPool.getInstance().release(unmarshaller);
@@ -234,5 +235,5 @@ public abstract class AbstractReferenceInputConverter extends WPSDefaultConverte
         }
         return obj;
     }
-    
+
 }
