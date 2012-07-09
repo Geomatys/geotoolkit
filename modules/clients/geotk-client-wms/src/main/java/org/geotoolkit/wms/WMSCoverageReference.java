@@ -164,7 +164,7 @@ public class WMSCoverageReference implements CoverageReference{
     /**
      * Use local reprojection of the image.
      */
-    private boolean useLocalReprojection = false;
+    private boolean useLocalReprojection = true;
     
     /**
      * If a daterange is defined in the envelope, move the temporal value

@@ -235,23 +235,25 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
             final FilterAttributeExtractor fae = new FilterAttributeExtractor();
             queryFilter.accept(fae, null);
             final Set<Name> filterPropertyNames = fae.getAttributeNameSet();
-            if(filterPropertyNames.isEmpty()){
+            if (filterPropertyNames.isEmpty()) {
                 //filter do not requiere attributs
                 readProperties = returnedProperties;
-            }else{
+            } else {
                 final Set<Name> attributes = new LinkedHashSet<Name>(filterPropertyNames);
                 attributes.addAll(Arrays.asList(queryPropertyNames));
                 readProperties = new ArrayList<PropertyDescriptor>(attributes.size());
-                for(Name n : attributes){
+                for (Name n : attributes) {
                     final AttributeDescriptor property = originalSchema.getDescriptor(n);
-                    if(property == null){
-                        throw new DataStoreException("Query filter requieres property : "+ n +
-                            " which is not present in feature type :\n"+ originalSchema);
+                    if (property == null) {
+                        throw new DataStoreException("Query filter requieres property : " + n
+                                + " which is not present in feature type :\n" + originalSchema);
                     }
-                    readProperties.add(property);
+                    if (!readProperties.contains(property)) {
+                        readProperties.add(property);
+                    }
                 }
                 //check if we read the same properties in different order
-                if(readProperties.size()== returnedProperties.size() && readProperties.containsAll(returnedProperties)){
+                if (readProperties.size() == returnedProperties.size() && readProperties.containsAll(returnedProperties)) {
                     //we avoid a useless retype iterator
                     readProperties = returnedProperties;
                 }

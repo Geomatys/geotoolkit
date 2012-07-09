@@ -18,10 +18,13 @@ import org.geotoolkit.client.Server;
 import org.geotoolkit.client.ServerFactory;
 import org.geotoolkit.client.ServerFinder;
 import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.coverage.CoverageStore;
+import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.data.wfs.WebFeatureServer;
+import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.map.CoverageMapLayer;
@@ -91,7 +94,7 @@ public class WMCUtilities {
         //Retrieve enveloppe for the map context.
         CoordinateReferenceSystem srs = null;//DefaultGeographicCRS.WGS84;
         try {
-            srs = CRS.decode(bbox.getSRS(),true);
+            srs = CRS.decode(bbox.getSRS(), true);
         } catch (NoSuchAuthorityCodeException ex) {
             Logger.getLogger(WMCUtilities.class.getName()).log(Level.SEVERE, null, ex);
         } catch (FactoryException ex) {
@@ -113,6 +116,7 @@ public class WMCUtilities {
         //fill context with layers
         for (final LayerType layerType : layers.getLayer()) {
 
+            //build server from parameters.
             final ServerType serverType = layerType.getServer();
             final Server server;
             final String serviceId = getServiceId(serverType.getService().value());
@@ -131,38 +135,31 @@ public class WMCUtilities {
                 continue;
             }
 
-            //Get server real type to retrieve layer.
-            if (server instanceof WebMapServer) {
-                final WebMapServer wms = (WebMapServer) server;
-                try {
-                    final WMSCoverageReference ref = (WMSCoverageReference) wms.getCoverageReference(layerName);
-                    ref.setUseLocalReprojection(true);
-                    final CoverageMapLayer mapLayer = MapBuilder.createCoverageLayer(ref, new DefaultStyleFactory().style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), ref.getName().toString());
-                    context.layers().add(mapLayer);
-                } catch (DataStoreException ex) {
+            if(server instanceof CoverageStore){
+                final CoverageStore cs = (CoverageStore) server;
+                try{
+                    for(Name n : cs.getNames()){
+                        if(n.getLocalPart().equalsIgnoreCase(layerName.getLocalPart())){                            
+                            final CoverageReference ref = cs.getCoverageReference(n);
+                            final CoverageMapLayer mapLayer = MapBuilder.createCoverageLayer(ref, 
+                                    GO2Utilities.STYLE_FACTORY.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), ref.getName().toString());
+                            context.layers().add(mapLayer);
+                        }
+                    }
+                }catch(DataStoreException ex){
                     Logger.getLogger(WMCUtilities.class.getName()).log(Level.SEVERE, null, ex);
                     continue;
                 }
-
-            } else if (server instanceof WebMapTileServer) {
-                try {
-                    final WebMapTileServer wmts = (WebMapTileServer) server;
-                    final CoverageReference ref = wmts.getCoverageReference(layerName);
-                    final CoverageMapLayer mapLayer = MapBuilder.createCoverageLayer(ref, new DefaultStyleFactory().style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), ref.getName().toString());
-                    context.layers().add(mapLayer);
-                } catch (DataStoreException ex) {
-                    Logger.getLogger(WMCUtilities.class.getName()).log(Level.SEVERE, null, ex);
-                    continue;
-                }
-
-            } else if (server instanceof WebFeatureServer) {
-                final WebFeatureServer wfs = (WebFeatureServer) server;
+                
+                
+            } else if(server instanceof DataStore){
+                final DataStore wfs = (DataStore) server;
                 final Session storeSession = wfs.createSession(true);
                 final FeatureCollection collection = storeSession.getFeatureCollection(QueryBuilder.all(layerName));
                 final MutableStyle style = RandomStyleFactory.createRandomVectorStyle(collection);
                 final MapLayer layer = MapBuilder.createFeatureLayer(collection, style);
                 context.layers().add(layer);
-            } 
+            }
         }
 
         pool.release(um);

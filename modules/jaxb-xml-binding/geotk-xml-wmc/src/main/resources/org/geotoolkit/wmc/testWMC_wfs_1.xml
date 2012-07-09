@@ -25,34 +25,24 @@
         <Layer queryable="1" hidden="0">
             <Server service="OGC:WFS" version="1.1.0" title="Geomatys WFS">
                 <OnlineResource xlink:type="simple"
-                xlink:href="http://demo.geomatys.com/cstl-trunk/WS/wfs/default"/>
+                xlink:href="http://localhost:8080/dcns-wrapper/WS/wfs/default"/>
             </Server>
-            <Name>{http://geotoolkit.org}veg-degrad</Name>
-            <Title>végétation dégradée</Title>
-            <Abstract>Here should be a description</Abstract>
+            <Name>{http://geotoolkit.org}Countries</Name>
+            <Title>Frontières européennes</Title>
+            <Abstract>Frontières européennes</Abstract>
             <SRS>EPSG:4326</SRS>
         </Layer>
-        
+        <!--
         <Layer queryable="0" hidden="0">
             <Server service="OGC:WFS" version="1.1.0" title="Geomatys WFS">
                 <OnlineResource xlink:type="simple"
-                xlink:href="http://demo.geomatys.com/cstl-trunk/WS/wfs/default"/>
+                xlink:href="http://localhost:8080/dcns-wrapper/WS/wfs/default"/>
             </Server>
-            <Name>{http://geotoolkit.org}veg-ligneux</Name>
-            <Title>Végétation : ligneux</Title>
+            <Name>{http://geotoolkit.org}city</Name>
+            <Title>Ville quelconque</Title>
             <SRS>EPSG:4326</SRS>
         </Layer>
-        
-        <Layer queryable="1" hidden="0">
-            <Server service="OGC:WFS" version="1.1.0" title="Geomatys WFS">
-                <OnlineResource xlink:type="simple"
-                xlink:href="http://demo.geomatys.com/cstl-trunk/WS/wfs/default"/>
-            </Server>
-            <Name>{http://geotoolkit.org}agri</Name>
-            <Title>Zones agricoles</Title>
-            <SRS>EPSG:4326</SRS>
-        </Layer>
-        
+        -->
     </LayerList>
     
 </ViewContext>

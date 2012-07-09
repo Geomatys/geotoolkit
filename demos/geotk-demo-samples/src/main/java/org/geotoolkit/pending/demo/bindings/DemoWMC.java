@@ -19,10 +19,11 @@ public class DemoWMC {
     
     public static void main(String[] args) {
         try {
-            //MapContext contextWMS = WMCUtilities.getMapContext(WMCUtilities.class.getResourceAsStream("testWMC_wms.xml"));            
+            MapContext contextWMS = WMCUtilities.getMapContext(WMCUtilities.class.getResourceAsStream("testWMC_wms.xml"));            
             MapContext contextWFS = WMCUtilities.getMapContext(WMCUtilities.class.getResourceAsStream("testWMC_wfs.xml"));
-            
-            //JMap2DFrame.show(contextWMS);
+            //MapContext contextWFS1 = WMCUtilities.getMapContext(WMCUtilities.class.getResourceAsStream("testWMC_wfs_1.xml"));
+            JMap2DFrame.show(contextWMS);
+            //JMap2DFrame.show(contextWFS1);
             JMap2DFrame.show(contextWFS);
             
         } catch (JAXBException ex) {
