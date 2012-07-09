@@ -174,8 +174,19 @@ public class IOProcessTest {
         assertNotNull(obj);
         assertEquals(2, ((URL[])obj).length );
 
-        assertTrue(((URL[])obj)[1].toString().endsWith("file1.png"));
-        assertTrue(((URL[])obj)[0].toString().endsWith("file2.txt"));
+        boolean found1 = false;
+        boolean found2 = false;
+        for(URL url : ((URL[])obj)){
+            if(url.toString().endsWith("file1.png")){
+                found1 = true;
+            }
+            if(url.toString().endsWith("file2.txt")){
+                found2 = true;
+            }
+        }
+
+        assertTrue(found1);
+        assertTrue(found2);
 
 
         // TEST TAR.GZ UNPACK --------------------------------------------------
