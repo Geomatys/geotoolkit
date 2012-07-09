@@ -68,7 +68,7 @@ import org.opengis.style.Symbolizer;
 /**
  * Random style factory. This is a convini class if you dont need special styles.
  * This class will provide you simple et good looking styles for your maps.
- * 
+ *
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
@@ -124,7 +124,7 @@ public class CategoryStyleBuilder extends Factory {
 
             //find the geometry class for template
             GeometryDescriptor geo = schema.getGeometryDescriptor();
-            Class<?> geoClass = geo.getType().getBinding();
+            Class<?> geoClass = (geo!=null)?geo.getType().getBinding():null;
 
             if(Polygon.class.isAssignableFrom(geoClass) || MultiPolygon.class.isAssignableFrom(geoClass)){
                 Stroke stroke = sf.stroke(Color.BLACK, 1);
