@@ -117,8 +117,7 @@ public class WFSDataStore extends AbstractDataStore{
                 prefix = "geotk" + NS_INC.incrementAndGet();
             }
 
-            prefixes.put(uri, prefix);
-            final Name name = new DefaultName(uri, localpart);
+            Name name = new DefaultName(uri, localpart);
             typeName = new QName(uri, localpart, prefix);
 
             //extract the feature type -----------------------------------------
@@ -157,7 +156,9 @@ public class WFSDataStore extends AbstractDataStore{
                 sftb.setDefaultGeometry(sft.getGeometryDescriptor().getLocalName());
             }
             sft = sftb.buildFeatureType();
+            name = sft.getName();
             types.put(name, sft);
+            prefixes.put(name.getNamespaceURI(), prefix);
             typeNames.add(name);
 
             final GeometryDescriptor geomDesc = sft.getGeometryDescriptor();
@@ -445,6 +446,7 @@ public class WFSDataStore extends AbstractDataStore{
         XmlFeatureReader reader = null;
         try {
             reader = new JAXPStreamFeatureReader(sft);
+            reader.getProperties().put(JAXPStreamFeatureReader.SKIP_UNEXPECTED_PROPERTY_TAGS, true);
             final InputStream stream;
             if (postRequest) {
                 getLogger().log(Level.INFO, "[WFS Client] request feature by POST.");
