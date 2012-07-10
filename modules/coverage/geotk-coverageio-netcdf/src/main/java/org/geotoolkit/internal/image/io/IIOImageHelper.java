@@ -42,13 +42,11 @@ import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.image.io.ImageMetadataException;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
-import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
 import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.resources.Errors;
 
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
-import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 
 
 /**
@@ -228,7 +226,7 @@ public class IIOImageHelper {
          */
         final IIOMetadata md = image.getMetadata();
         metadata = (md == null || md instanceof SpatialMetadata) ? (SpatialMetadata) md :
-                    new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME), writer, md);
+                    new SpatialMetadata(false, writer, md);
     }
 
     /**

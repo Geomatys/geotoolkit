@@ -25,7 +25,6 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.metadata.IIOMetadata;
 
-import org.geotoolkit.util.Version;
 import org.geotoolkit.resources.Vocabulary;
 
 
@@ -85,8 +84,6 @@ public strictfp class NullImageWriter extends SpatialImageWriter {
         public Spi() {
             names           = new String[] {"null"};
             pluginClassName = "org.geotoolkit.image.io.NullImageWriter";
-            vendorName      = "Geotoolkit.org";
-            version         = Version.GEOTOOLKIT.toString();
         }
 
         /**

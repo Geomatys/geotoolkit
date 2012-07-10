@@ -47,7 +47,6 @@ import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.lang.Configuration;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.Version;
 import org.geotoolkit.util.logging.Logging;
 
 
@@ -224,10 +223,8 @@ public class WorldFileImageWriter extends ImageWriterAdapter {
         public Spi(final ImageWriterSpi main) {
             super(main);
             pluginClassName = "org.geotoolkit.image.io.plugin.WorldFileImageWriter";
-            vendorName      = "Geotoolkit.org";
-            version         = Version.GEOTOOLKIT.toString();
             addFormatNameSuffix(WorldFileImageReader.Spi.NAME_SUFFIX);
-            addSpatialFormat(false, true);
+            addSpatialMetadataFormat(false, true);
         }
 
         /**

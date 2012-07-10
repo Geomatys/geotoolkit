@@ -61,7 +61,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 
 /**
- * Spatial (usually geographic) informations encoded in an image. This class converts the
+ * Spatial (usually geographic) informations encoded in an image file. This class converts the
  * {@link IIOMetadataNode} elements and attribute values to ISO 19115-2 metadata objects.
  * While ISO 19115-2 is the primary standard supported by this class, other standards can
  * works if they are designed with the same rules than the {@link org.opengis.metadata}
@@ -82,32 +82,32 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  *     <th>&nbsp;Method call&nbsp;</th>
  *   </tr>
  *   <tr>
- *     <td>&nbsp;{@link SpatialMetadataFormat#STREAM STREAM}&nbsp;</td>
+ *     <td>&nbsp;{@link SpatialMetadataFormat#getStreamInstance(String) Stream}&nbsp;</td>
  *     <td>&nbsp;{@code "DiscoveryMetadata"}</td>
  *     <td>&nbsp;<code>getInstanceForType({@linkplain DataIdentification}.class)</code></td>
  *   </tr>
  *   <tr>
- *     <td>&nbsp;{@link SpatialMetadataFormat#STREAM STREAM}&nbsp;</td>
+ *     <td>&nbsp;{@link SpatialMetadataFormat#getStreamInstance(String) Stream}&nbsp;</td>
  *     <td>&nbsp;{@code "DiscoveryMetadata/Extent/GeographicElement"}</td>
  *     <td>&nbsp;<code>getInstanceForType({@linkplain GeographicBoundingBox}.class)</code></td>
  *   </tr>
  *   <tr>
- *     <td>&nbsp;{@link SpatialMetadataFormat#STREAM STREAM}&nbsp;</td>
+ *     <td>&nbsp;{@link SpatialMetadataFormat#getStreamInstance(String) Stream}&nbsp;</td>
  *     <td>&nbsp;{@code "AcquisitionMetadata"}</td>
  *     <td>&nbsp;<code>getInstanceForType({@linkplain AcquisitionInformation}.class)</code></td>
  *   </tr>
  *   <tr>
- *     <td>&nbsp;{@link SpatialMetadataFormat#IMAGE IMAGE}&nbsp;</td>
+ *     <td>&nbsp;{@link SpatialMetadataFormat#getImageInstance(String) Image}&nbsp;</td>
  *     <td>&nbsp;{@code "ImageDescription"}</td>
  *     <td>&nbsp;<code>getInstanceForType({@linkplain ImageDescription}.class)</code></td>
  *   </tr>
  *   <tr>
- *     <td>&nbsp;{@link SpatialMetadataFormat#IMAGE IMAGE}&nbsp;</td>
+ *     <td>&nbsp;{@link SpatialMetadataFormat#getImageInstance(String) Image}&nbsp;</td>
  *     <td>&nbsp;{@code "ImageDescription/Dimensions"}</td>
  *     <td>&nbsp;<code>getListForType({@linkplain SampleDimension}.class)</code></td>
  *   </tr>
  *   <tr>
- *     <td>&nbsp;{@link SpatialMetadataFormat#IMAGE IMAGE}&nbsp;</td>
+ *     <td>&nbsp;{@link SpatialMetadataFormat#getImageInstance(String) Image}&nbsp;</td>
  *     <td>&nbsp;{@code "RectifiedGridDomain"}</td>
  *     <td>&nbsp;<code>getInstanceForType({@linkplain RectifiedGrid}.class)</code></td>
  *   </tr>
@@ -269,6 +269,10 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
      * {@link #mergeTree(String,Node) mergeTree} or {@link #setFromTree(String,Node) setFromTree}
      * method with an unrecognized format name will be delegated to that fallback. This is useful
      * when the given {@code ImageReader} is actually a wrapper around an other {@code ImageReader}.
+     * <p>
+     * This constructor does not inherit the metadata formats declared in the
+     * {@linkplain ImageReader#getOriginatingProvider() originating provider}, because this
+     * constructor doesn't specify which one of stream or image metadata should be inherited.
      *
      * @param format   The metadata format.
      * @param reader   The source image reader, or {@code null} if none.
@@ -277,6 +281,30 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
      */
     public SpatialMetadata(final IIOMetadataFormat format, final ImageReader reader, final IIOMetadata fallback) {
         this(format, false, reader, null, fallback);
+    }
+
+    /**
+     * Creates an initially empty metadata instance for the
+     * {@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#GEOTK_FORMAT_NAME} format
+     * and the given reader. In addition to the Geotk
+     * in <a href="SpatialMetadataFormat.html#default-formats">spatial metadata format</a>,
+     * this constructor inherits other stream or image formats defined in the
+     * {@linkplain ImageReader#getOriginatingProvider() originating provider}.
+     *
+     * @param isStreamMetadata {@code true} for <em>stream</em> metadata,
+     *        or {@code false} for <em>image</em> metadata.
+     * @param reader The source image reader, or {@code null} if none.
+     * @param fallback The fallback for any format name different than
+     *        {@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#GEOTK_FORMAT_NAME},
+     *        or {@code null} if none.
+     *
+     * @since 3.20
+     */
+    public SpatialMetadata(final boolean isStreamMetadata, final ImageReader reader, final IIOMetadata fallback) {
+        this(isStreamMetadata
+                ? SpatialMetadataFormat.getStreamInstance(SpatialMetadataFormat.GEOTK_FORMAT_NAME)
+                : SpatialMetadataFormat.getImageInstance (SpatialMetadataFormat.GEOTK_FORMAT_NAME),
+                isStreamMetadata, reader, (reader != null) ? reader.getOriginatingProvider() : null, fallback);
     }
 
     /**
@@ -291,6 +319,10 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
      * {@link #mergeTree(String,Node) mergeTree} or {@link #setFromTree(String,Node) setFromTree}
      * method with an unrecognized format name will be delegated to that fallback. This is useful
      * when the given {@code ImageWriter} is actually a wrapper around an other {@code ImageWriter}.
+     * <p>
+     * This constructor does not inherit the metadata formats declared in the
+     * {@linkplain ImageWriter#getOriginatingProvider() originating provider}, because this
+     * constructor doesn't specify which one of stream or image metadata should be inherited.
      *
      * @param format   The metadata format.
      * @param writer   The target image writer, or {@code null} if none.
@@ -299,6 +331,30 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
      */
     public SpatialMetadata(final IIOMetadataFormat format, final ImageWriter writer, final IIOMetadata fallback) {
         this(format, false, writer, null, fallback);
+    }
+
+    /**
+     * Creates an initially empty metadata instance for the
+     * {@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#GEOTK_FORMAT_NAME} format
+     * and the given writer. In addition to the Geotk
+     * in <a href="SpatialMetadataFormat.html#default-formats">spatial metadata format</a>,
+     * this constructor inherits other stream or image formats defined in the
+     * {@linkplain ImageWriter#getOriginatingProvider() originating provider}.
+     *
+     * @param isStreamMetadata {@code true} for <em>stream</em> metadata,
+     *        or {@code false} for <em>image</em> metadata.
+     * @param writer The source image writer, or {@code null} if none.
+     * @param fallback The fallback for any format name different than
+     *        {@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#GEOTK_FORMAT_NAME},
+     *        or {@code null} if none.
+     *
+     * @since 3.20
+     */
+    public SpatialMetadata(final boolean isStreamMetadata, final ImageWriter writer, final IIOMetadata fallback) {
+        this(isStreamMetadata
+                ? SpatialMetadataFormat.getStreamInstance(SpatialMetadataFormat.GEOTK_FORMAT_NAME)
+                : SpatialMetadataFormat.getImageInstance (SpatialMetadataFormat.GEOTK_FORMAT_NAME),
+                isStreamMetadata, writer, (writer != null) ? writer.getOriginatingProvider() : null, fallback);
     }
 
     /**
@@ -334,10 +390,14 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
             extraMetadataFormatNames = XArrays.resize(extraMetadataFormatNames, XArrays.removeDuplicated(extraMetadataFormatNames));
         }
         final String rootName = format.getRootName();
-        if (extraMetadataFormatNames == null) {
-            extraMetadataFormatNames = new String[] {rootName};
-        } else if (!XArrays.contains(extraMetadataFormatNames, rootName)) {
-            extraMetadataFormatNames = XArrays.append(extraMetadataFormatNames, rootName);
+        if (!isSupportedFormat(rootName)) {
+            if (nativeMetadataFormatName == null) {
+                nativeMetadataFormatName = rootName;
+            } else if (extraMetadataFormatNames == null) {
+                extraMetadataFormatNames = new String[] {rootName};
+            } else {
+                extraMetadataFormatNames = XArrays.append(extraMetadataFormatNames, rootName);
+            }
         }
         /*
          * Note: we leave 'nativeMetadataFormatClassName' and 'extraMetadataFormatClassNames'
@@ -623,7 +683,7 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
      * This method does not verify the standard format name.
      */
     private boolean isSupportedFormat(final String name) {
-        return name.equals(nativeMetadataFormatClassName) || XArrays.contains(extraMetadataFormatNames, name);
+        return name.equals(nativeMetadataFormatName) || XArrays.contains(extraMetadataFormatNames, name);
     }
 
     /**

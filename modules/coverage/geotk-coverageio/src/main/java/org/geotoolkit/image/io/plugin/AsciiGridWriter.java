@@ -39,7 +39,6 @@ import org.opengis.coverage.grid.RectifiedGrid;
 import org.opengis.metadata.spatial.Georectified;
 import org.opengis.metadata.spatial.PixelOrientation;
 
-import org.geotoolkit.util.Version;
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.image.ImageDimension;
 import org.geotoolkit.image.io.TextImageWriter;
@@ -386,7 +385,7 @@ public class AsciiGridWriter extends TextImageWriter {
      *   <tr><td>&nbsp;{@link #MIMETypes}       &nbsp;</td><td>&nbsp;{@code "text/plain"}, {@code "text/x-ascii-grid"}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #pluginClassName} &nbsp;</td><td>&nbsp;{@code "org.geotoolkit.image.io.plugin.AsciiGridWriter"}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #vendorName}      &nbsp;</td><td>&nbsp;{@code "Geotoolkit.org"}&nbsp;</td></tr>
-     *   <tr><td>&nbsp;{@link #version}         &nbsp;</td><td>&nbsp;{@link Version#GEOTOOLKIT}&nbsp;</td></tr>
+     *   <tr><td>&nbsp;{@link #version}         &nbsp;</td><td>&nbsp;Value of {@link org.geotoolkit.util.Version#GEOTOOLKIT}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #locale}          &nbsp;</td><td>&nbsp;{@link Locale#US}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #charset}         &nbsp;</td><td>&nbsp;{@code "US-ASCII"}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #lineSeparator}   &nbsp;</td><td>&nbsp;{@code "\n"}&nbsp;</td></tr>
@@ -420,9 +419,7 @@ public class AsciiGridWriter extends TextImageWriter {
             names           = AsciiGridReader.Spi.NAMES;
             MIMETypes       = AsciiGridReader.Spi.MIME_TYPES;
             pluginClassName = "org.geotoolkit.image.io.plugin.AsciiGridWriter";
-            vendorName      = "Geotoolkit.org";
             readerSpiNames  = READERS;
-            version         = Version.GEOTOOLKIT.toString();
             locale          = Locale.US;
             charset         = Charset.forName("US-ASCII");
             lineSeparator   = "\n";

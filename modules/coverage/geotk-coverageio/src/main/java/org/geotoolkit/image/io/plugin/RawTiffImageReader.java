@@ -61,7 +61,6 @@ import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ServiceRegistry;
 
 import org.geotoolkit.math.XMath;
-import org.geotoolkit.util.Version;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.image.SampleModels;
@@ -1255,7 +1254,7 @@ public class RawTiffImageReader extends SpatialImageReader {
      *   <tr><td>&nbsp;{@link #MIMETypes}       &nbsp;</td><td>&nbsp;{@code "image/tiff"}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #pluginClassName} &nbsp;</td><td>&nbsp;{@code "org.geotoolkit.image.io.plugin.RawTiffImageReader"}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #vendorName}      &nbsp;</td><td>&nbsp;{@code "Geotoolkit.org"}&nbsp;</td></tr>
-     *   <tr><td>&nbsp;{@link #version}         &nbsp;</td><td>&nbsp;{@link Version#GEOTOOLKIT}&nbsp;</td></tr>
+     *   <tr><td>&nbsp;{@link #version}         &nbsp;</td><td>&nbsp;Value of {@link org.geotoolkit.util.Version#GEOTOOLKIT}&nbsp;</td></tr>
      * </table>
      * <p>
      * By default, this provider register itself <em>after</em> the provider supplied by the
@@ -1300,8 +1299,6 @@ public class RawTiffImageReader extends SpatialImageReader {
             inputTypes      = INPUT_TYPES;
             MIMETypes       = MIME_TYPES;
             pluginClassName = "org.geotoolkit.image.io.plugin.RawTiffImageReader";
-            vendorName      = "Geotoolkit.org";
-            version         = Version.GEOTOOLKIT.toString();
             // Current implementation does not support metadata.
             nativeStreamMetadataFormatName = null;
             nativeImageMetadataFormatName  = null;

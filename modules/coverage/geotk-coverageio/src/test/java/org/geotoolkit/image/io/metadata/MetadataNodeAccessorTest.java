@@ -264,7 +264,7 @@ public final strictfp class MetadataNodeAccessorTest {
          * the same name). We are just too lazy for creating a new metadata format, and the
          * approach used here is sufficient for this test.
          */
-        metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME), (ImageReader) null, metadata);
+        metadata = new SpatialMetadata(false, (ImageReader) null, metadata);
         accessor = new MetadataNodeAccessor(metadata, "#auto", RectifiedGrid.class);
         assertEquals("RectifiedGridDomain", accessor.name());
         /*

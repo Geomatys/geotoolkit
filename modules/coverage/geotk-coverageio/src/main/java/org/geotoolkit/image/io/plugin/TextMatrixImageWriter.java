@@ -30,7 +30,6 @@ import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.metadata.IIOMetadata;
 import javax.media.jai.iterator.RectIter;
 
-import org.geotoolkit.util.Version;
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.image.ImageDimension;
 import org.geotoolkit.image.io.TextImageWriter;
@@ -142,7 +141,7 @@ public class TextMatrixImageWriter extends TextImageWriter {
      *   <tr><td>&nbsp;{@link #MIMETypes}       &nbsp;</td><td>&nbsp;{@code "text/plain"}, {@code "text/x-matrix"}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #pluginClassName} &nbsp;</td><td>&nbsp;{@code "org.geotoolkit.image.io.plugin.TextMatrixImageWriter"}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #vendorName}      &nbsp;</td><td>&nbsp;{@code "Geotoolkit.org"}&nbsp;</td></tr>
-     *   <tr><td>&nbsp;{@link #version}         &nbsp;</td><td>&nbsp;{@link Version#GEOTOOLKIT}&nbsp;</td></tr>
+     *   <tr><td>&nbsp;{@link #version}         &nbsp;</td><td>&nbsp;Value of {@link org.geotoolkit.util.Version#GEOTOOLKIT}&nbsp;</td></tr>
      *   <tr><td colspan="2" align="center">See
      *   {@linkplain org.geotoolkit.image.io.TextImageWriter.Spi super-class javadoc} for remaining fields</td></tr>
      * </table>
@@ -174,8 +173,6 @@ public class TextMatrixImageWriter extends TextImageWriter {
             MIMETypes       = TextMatrixImageReader.Spi.MIME_TYPES;
             pluginClassName = "org.geotoolkit.image.io.plugin.TextMatrixImageWriter";
             readerSpiNames  = READERS;
-            vendorName      = "Geotoolkit.org";
-            version         = Version.GEOTOOLKIT.toString();
             nativeStreamMetadataFormatName = null; // No stream metadata.
         }
 

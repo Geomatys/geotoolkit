@@ -643,7 +643,7 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
                     sm.setReadOnly(false);
                     return sm;
                 }
-                return new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME), this, metadata);
+                return new SpatialMetadata(false, this, metadata);
             }
         } else {
             final IIOMetadata metadata = main.getStreamMetadata();
@@ -653,7 +653,7 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
                     sm.setReadOnly(false);
                     return sm;
                 }
-                return new SpatialMetadata(SpatialMetadataFormat.getStreamInstance(GEOTK_FORMAT_NAME), this, metadata);
+                return new SpatialMetadata(true, this, metadata);
             }
         }
         return null;
@@ -1228,16 +1228,16 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
          *
          * @since 3.20
          */
-        protected void addSpatialFormat(final boolean stream, final boolean image) {
-            if (stream) extraStreamMetadataFormatNames = addSpatialFormat(nativeStreamMetadataFormatName, extraStreamMetadataFormatNames);
-            if (image)  extraImageMetadataFormatNames  = addSpatialFormat(nativeImageMetadataFormatName,  extraImageMetadataFormatNames);
+        protected void addSpatialMetadataFormat(final boolean stream, final boolean image) {
+            if (stream) extraStreamMetadataFormatNames = addSpatialMetadataFormat(nativeStreamMetadataFormatName, extraStreamMetadataFormatNames);
+            if (image)  extraImageMetadataFormatNames  = addSpatialMetadataFormat(nativeImageMetadataFormatName,  extraImageMetadataFormatNames);
         }
 
         /**
          * Adds the {@value SpatialMetadataFormat#GEOTK_FORMAT_NAME} to the given array,
          * if not already presents.
          */
-        static String[] addSpatialFormat(final String nativeName, String[] formatNames) {
+        static String[] addSpatialMetadataFormat(final String nativeName, String[] formatNames) {
             if (!GEOTK_FORMAT_NAME.equals(nativeName) && !XArrays.contains(formatNames, GEOTK_FORMAT_NAME)) {
                 formatNames = XArrays.concatenate(formatNames, EXTRA_METADATA);
             }

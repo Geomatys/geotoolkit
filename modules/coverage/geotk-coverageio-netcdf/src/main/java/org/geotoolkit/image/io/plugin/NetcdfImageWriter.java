@@ -34,13 +34,13 @@ import org.w3c.dom.Node;
 import ucar.nc2.NetcdfFileWriteable;
 import org.opengis.metadata.Metadata;
 
-import org.geotoolkit.util.Version;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.collection.BackingStoreException;
 import org.geotoolkit.image.io.FileImageWriter;
 import org.geotoolkit.metadata.netcdf.NetcdfMetadataWriter;
 
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.ISO_FORMAT_NAME;
+import static org.geotoolkit.image.io.plugin.NetcdfImageReader.Spi.*;
 
 
 /**
@@ -284,7 +284,7 @@ public class NetcdfImageWriter extends FileImageWriter {
      *   <tr><td>&nbsp;{@link #MIMETypes}       &nbsp;</td><td>&nbsp;{@code "application/netcdf"}, {@code "application/x-netcdf"}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #pluginClassName} &nbsp;</td><td>&nbsp;{@code "org.geotoolkit.image.io.plugin.NetcdfImageWriter"}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #vendorName}      &nbsp;</td><td>&nbsp;{@code "Geotoolkit.org"}&nbsp;</td></tr>
-     *   <tr><td>&nbsp;{@link #version}         &nbsp;</td><td>&nbsp;{@link Version#GEOTOOLKIT}&nbsp;</td></tr>
+     *   <tr><td>&nbsp;{@link #version}         &nbsp;</td><td>&nbsp;Value of {@link org.geotoolkit.util.Version#GEOTOOLKIT}&nbsp;</td></tr>
      *   <tr><td colspan="2" align="center">See super-class javadoc for remaining fields</td></tr>
      * </table>
      *
@@ -305,16 +305,18 @@ public class NetcdfImageWriter extends FileImageWriter {
          * Subclasses can assign new arrays, but should not modify the default array content.
          */
         public Spi() {
-            names           = NetcdfImageReader.Spi.NAMES;
-            MIMETypes       = NetcdfImageReader.Spi.MIME_TYPES;
-            suffixes        = NetcdfImageReader.Spi.SUFFIXES;
+            names           = NAMES;
+            MIMETypes       = MIME_TYPES;
+            suffixes        = SUFFIXES;
             pluginClassName = "org.geotoolkit.image.io.plugin.NetcdfImageWriter";
             readerSpiNames  = new String[] {"org.geotoolkit.image.io.plugin.NetcdfImageReader$Spi"};
-            vendorName      = "Geotoolkit.org";
-            version         = Version.GEOTOOLKIT.toString();
             final int length = outputTypes.length;
             outputTypes = Arrays.copyOf(outputTypes, length+1);
             outputTypes[length] = NetcdfFileWriteable.class;
+            nativeStreamMetadataFormatName = NATIVE_FORMAT_NAME;
+            nativeImageMetadataFormatName  = NATIVE_FORMAT_NAME;
+            extraStreamMetadataFormatNames = EXTRA_FORMAT_NAMES;
+            extraImageMetadataFormatNames  = EXTRA_FORMAT_NAMES;
         }
 
         /**
