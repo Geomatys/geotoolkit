@@ -23,18 +23,18 @@ import javax.xml.namespace.QName;
 
 
 /**
- * This object contains factory methods for each 
- * Java content interface and Java element interface 
- * generated in the net.opengis.context package. 
- * <p>An ObjectFactory allows you to programatically 
- * construct new instances of the Java representation 
- * for XML content. The Java representation of XML 
- * content can consist of schema derived interfaces 
- * and classes representing the binding of schema 
- * type definitions, element declarations and model 
- * groups.  Factory methods for each of these are 
+ * This object contains factory methods for each
+ * Java content interface and Java element interface
+ * generated in the net.opengis.context package.
+ * <p>An ObjectFactory allows you to programatically
+ * construct new instances of the Java representation
+ * for XML content. The Java representation of XML
+ * content can consist of schema derived interfaces
+ * and classes representing the binding of schema
+ * type definitions, element declarations and model
+ * groups.  Factory methods for each of these are
  * provided in this class.
- * 
+ *
  * @module pending
  */
 @XmlRegistry
@@ -44,14 +44,14 @@ public class ObjectFactory {
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: net.opengis.context
-     * 
+     *
      */
     public ObjectFactory() {
     }
 
     /**
      * Create an instance of {@link StyleType }
-     * 
+     *
      */
     public StyleType createStyleType() {
         return new StyleType();
@@ -59,7 +59,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link URLType }
-     * 
+     *
      */
     public URLType createURLType() {
         return new URLType();
@@ -67,7 +67,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LayerListType }
-     * 
+     *
      */
     public LayerListType createLayerListType() {
         return new LayerListType();
@@ -75,7 +75,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link OnlineResourceType }
-     * 
+     *
      */
     public OnlineResourceType createOnlineResourceType() {
         return new OnlineResourceType();
@@ -83,7 +83,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link WindowType }
-     * 
+     *
      */
     public WindowType createWindowType() {
         return new WindowType();
@@ -91,7 +91,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LayerType }
-     * 
+     *
      */
     public LayerType createLayerType() {
         return new LayerType();
@@ -99,7 +99,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link KeywordListType }
-     * 
+     *
      */
     public KeywordListType createKeywordListType() {
         return new KeywordListType();
@@ -107,7 +107,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SLDType }
-     * 
+     *
      */
     public SLDType createSLDType() {
         return new SLDType();
@@ -115,7 +115,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link FormatType }
-     * 
+     *
      */
     public FormatType createFormatType() {
         return new FormatType();
@@ -123,7 +123,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link FormatListType }
-     * 
+     *
      */
     public FormatListType createFormatListType() {
         return new FormatListType();
@@ -131,7 +131,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DimensionListType }
-     * 
+     *
      */
     public DimensionListType createDimensionListType() {
         return new DimensionListType();
@@ -139,7 +139,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AddressType }
-     * 
+     *
      */
     public AddressType createAddressType() {
         return new AddressType();
@@ -147,7 +147,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link StyleListType }
-     * 
+     *
      */
     public StyleListType createStyleListType() {
         return new StyleListType();
@@ -155,7 +155,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ServerType }
-     * 
+     *
      */
     public ServerType createServerType() {
         return new ServerType();
@@ -163,7 +163,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link BoundingBoxType }
-     * 
+     *
      */
     public BoundingBoxType createBoundingBoxType() {
         return new BoundingBoxType();
@@ -171,7 +171,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ContactInformationType }
-     * 
+     *
      */
     public ContactInformationType createContactInformationType() {
         return new ContactInformationType();
@@ -179,7 +179,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GeneralType }
-     * 
+     *
      */
     public GeneralType createGeneralType() {
         return new GeneralType();
@@ -187,7 +187,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ContactPersonPrimaryType }
-     * 
+     *
      */
     public ContactPersonPrimaryType createContactPersonPrimaryType() {
         return new ContactPersonPrimaryType();
@@ -195,7 +195,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DimensionType }
-     * 
+     *
      */
     public DimensionType createDimensionType() {
         return new DimensionType();
@@ -203,7 +203,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ExtensionType }
-     * 
+     *
      */
     public ExtensionType createExtensionType() {
         return new ExtensionType();
@@ -211,7 +211,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ViewContextType }
-     * 
+     *
      */
     public ViewContextType createViewContextType() {
         return new ViewContextType();
@@ -219,11 +219,11 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ViewContextType }{@code >}}
-     * 
-     */
+     *
+
     @XmlElementDecl(namespace = "http://www.opengis.net/context", name = "ViewContext")
     public JAXBElement<ViewContextType> createViewContext(final ViewContextType value) {
         return new JAXBElement<ViewContextType>(_ViewContext_QNAME, ViewContextType.class, null, value);
-    }
+    }*/
 
 }
