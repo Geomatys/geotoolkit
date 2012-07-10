@@ -32,6 +32,7 @@ import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.ext.BackgroundTemplate;
 import org.geotoolkit.display2d.ext.BackgroundUtilities;
 import org.geotoolkit.display2d.service.DefaultGlyphService;
+import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
@@ -60,16 +61,22 @@ public class J2DLegendUtilities {
     /**
      * Paint a legend using Java2D.
      *
-     * @param context : map context, from wich to extract the style informations
+     * @param item : map context, from wich to extract the style informations
      * @param g2d : Graphics2D used to render
      * @param bounds : Rectangle where the legend must be painted
      * @param template  : north arrow template
      * @throws org.geotoolkit.display.exception.PortrayalException
      */
-    public static void paintLegend(final MapItem context,
+    public static void paintLegend(MapItem item,
                               Graphics2D g2d,
                               final Rectangle bounds,
                               final LegendTemplate template) throws PortrayalException{
+
+        if(item instanceof MapLayer){
+            final MapContext context = MapBuilder.createContext();
+            context.items().add(item);
+            item = context;
+        }
 
         g2d = (Graphics2D) g2d.create();
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
@@ -81,7 +88,7 @@ public class J2DLegendUtilities {
 
         if(template == null){
             //no template generate a glyph
-            for(MapItem layer : context.items()){
+            for(MapItem layer : item.items()){
                 if(layer instanceof MapLayer){
                     DefaultGlyphService.render( ((MapLayer)layer).getStyle(), bounds, g2d, (MapLayer)layer);
                 }
@@ -90,7 +97,7 @@ public class J2DLegendUtilities {
         }
 
 
-        final Dimension estimation = estimate(g2d, context, template, false);
+        final Dimension estimation = estimate(g2d, item, template, false);
 
         final BackgroundTemplate background = template.getBackground();
         if(background != null){
@@ -119,7 +126,7 @@ public class J2DLegendUtilities {
 
         g2d.translate(X, Y);
 
-        final List<MapItem> layers = context.items();
+        final List<MapItem> layers = item.items();
         for(int l=0,n=layers.size();l<n;l++){
             if(!(layers.get(l) instanceof MapLayer)){
                 continue;
@@ -264,9 +271,15 @@ public class J2DLegendUtilities {
     }
 
 
-    public static Dimension estimate(final Graphics2D g, final MapItem mapitem, final LegendTemplate template, final boolean considerBackground){
+    public static Dimension estimate(final Graphics2D g, MapItem mapitem, final LegendTemplate template, final boolean considerBackground){
         final Dimension dim = new Dimension(0, 0);
         if(mapitem == null) return dim;
+
+        if(mapitem instanceof MapLayer){
+            final MapContext context = MapBuilder.createContext();
+            context.items().add(mapitem);
+            mapitem = context;
+        }
 
         if(template == null){
             //fallback on glyph size
