@@ -85,6 +85,8 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
 
     public static final String READ_EMBEDDED_FEATURE_TYPE = "readEmbeddedFeatureType";
     
+    public static final String SKIP_UNEXPECTED_PROPERTY_TAGS = "skipUnexpectedPropertyTags";
+    
     public static final String BINDING_PACKAGE = "bindingPackage";
     
     public JAXPStreamFeatureReader() {
@@ -278,7 +280,12 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                 final PropertyDescriptor pdesc = featureType.getDescriptor(propName.getLocalPart());
 
                 if (pdesc == null){
-                    throw new IllegalArgumentException("Unexpected attribute:" + propName + " not found in :\n" + featureType);
+                    if (Boolean.TRUE.equals(this.properties.get(SKIP_UNEXPECTED_PROPERTY_TAGS))) {
+                        toTagEnd(propName.getLocalPart());
+                        continue;
+                    } else {
+                        throw new IllegalArgumentException("Unexpected attribute:" + propName + " not found in :\n" + featureType);
+                    }
                 }
 
                 if (pdesc instanceof GeometryDescriptor) {
