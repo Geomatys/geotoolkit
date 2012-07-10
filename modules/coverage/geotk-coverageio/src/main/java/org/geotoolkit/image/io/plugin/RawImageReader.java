@@ -51,7 +51,6 @@ import org.geotoolkit.image.io.SpatialImageReader;
 import org.geotoolkit.lang.SystemOverride;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Descriptions;
-import org.geotoolkit.util.Version;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.logging.Logging;
@@ -445,7 +444,7 @@ public class RawImageReader extends SpatialImageReader {
      *   <tr><td>&nbsp;{@link #MIMETypes}       &nbsp;</td><td>&nbsp;{@code "image/x-raw"}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #pluginClassName} &nbsp;</td><td>&nbsp;{@code "org.geotoolkit.image.io.plugin.RawImageReader"}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #vendorName}      &nbsp;</td><td>&nbsp;{@code "Geotoolkit.org"}&nbsp;</td></tr>
-     *   <tr><td>&nbsp;{@link #version}         &nbsp;</td><td>&nbsp;{@link Version#GEOTOOLKIT}&nbsp;</td></tr>
+     *   <tr><td>&nbsp;{@link #version}         &nbsp;</td><td>&nbsp;Value of {@link org.geotoolkit.util.Version#GEOTOOLKIT}&nbsp;</td></tr>
      * </table>
      * <p>
      * By default, this provider register itself <em>after</em> the provider supplied by the
@@ -490,8 +489,6 @@ public class RawImageReader extends SpatialImageReader {
             inputTypes      = INPUT_TYPES;
             MIMETypes       = MIME_TYPES;
             pluginClassName = "org.geotoolkit.image.io.plugin.RawImageReader";
-            vendorName      = "Geotoolkit.org";
-            version         = Version.GEOTOOLKIT.toString();
             // This reader does not support any metadata.
             nativeStreamMetadataFormatName = null;
             nativeImageMetadataFormatName  = null;

@@ -74,6 +74,7 @@ import org.geotoolkit.image.io.NamedImageStore;
 import org.geotoolkit.image.io.SampleConverter;
 import org.geotoolkit.image.io.SpatialImageReadParam;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
+import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.internal.image.io.DimensionManager;
 import org.geotoolkit.internal.image.io.IIOImageHelper;
@@ -1303,7 +1304,7 @@ public class NetcdfImageReader extends FileImageReader implements
 
     /**
      * Restores the {@code ImageReader} to its initial state. This method removes the input,
-     * the locale, all listeners and any {@link DimensionSlice.API}.
+     * the locale, all listeners and any {@link org.geotoolkit.image.io.DimensionSlice.API}.
      */
     @Override
     public void reset() {
@@ -1327,18 +1328,31 @@ public class NetcdfImageReader extends FileImageReader implements
      *   <tr><td>&nbsp;{@link #MIMETypes}       &nbsp;</td><td>&nbsp;{@code "application/netcdf"}, {@code "application/x-netcdf"}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #pluginClassName} &nbsp;</td><td>&nbsp;{@code "org.geotoolkit.image.io.plugin.NetcdfImageReader"}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #vendorName}      &nbsp;</td><td>&nbsp;{@code "Geotoolkit.org"}&nbsp;</td></tr>
-     *   <tr><td>&nbsp;{@link #version}         &nbsp;</td><td>&nbsp;{@link Version#GEOTOOLKIT}&nbsp;</td></tr>
+     *   <tr><td>&nbsp;{@link #version}         &nbsp;</td><td>&nbsp;Value of {@link org.geotoolkit.util.Version#GEOTOOLKIT}&nbsp;</td></tr>
      *   <tr><td colspan="2" align="center">See super-class javadoc for remaining fields</td></tr>
      * </table>
      *
      * @author Martin Desruisseaux (Geomatys)
      * @author Antoine Hnawia (IRD)
-     * @version 3.15
+     * @version 3.20
      *
      * @since 3.08 (derived from 2.4)
      * @module
      */
     public static class Spi extends FileImageReader.Spi {
+        /**
+         * The name of the native format. It has no version number because this is
+         * a "dynamic" format inferred from the actual content of the NetCDF file.
+         */
+        static final String NATIVE_FORMAT_NAME = "NetCDF";
+
+        /**
+         * The name of extra formats.
+         */
+        static final String[] EXTRA_FORMAT_NAMES = {
+            SpatialMetadataFormat.GEOTK_FORMAT_NAME, SpatialMetadataFormat.ISO_FORMAT_NAME
+        };
+
         /**
          * List of legal names for NetCDF readers.
          */
@@ -1368,11 +1382,13 @@ public class NetcdfImageReader extends FileImageReader implements
             suffixes        = SUFFIXES;
             pluginClassName = "org.geotoolkit.image.io.plugin.NetcdfImageReader";
             writerSpiNames  = new String[] {"org.geotoolkit.image.io.plugin.NetcdfImageWriter$Spi"};
-            vendorName      = "Geotoolkit.org";
-            version         = Version.GEOTOOLKIT.toString();
             final int length = inputTypes.length;
             inputTypes = Arrays.copyOf(inputTypes, length+1);
             inputTypes[length] = NetcdfFile.class;
+            nativeStreamMetadataFormatName = NATIVE_FORMAT_NAME;
+            nativeImageMetadataFormatName  = NATIVE_FORMAT_NAME;
+            extraStreamMetadataFormatNames = EXTRA_FORMAT_NAMES;
+            extraImageMetadataFormatNames  = EXTRA_FORMAT_NAMES;
         }
 
         /**

@@ -38,16 +38,12 @@ import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.spi.ImageReaderSpi;
 
 import org.geotoolkit.util.XArrays;
-import org.geotoolkit.util.Version;
 import org.geotoolkit.io.LineFormat;
 import org.geotoolkit.resources.Descriptions;
 import org.geotoolkit.image.io.TextImageReader;
 import org.geotoolkit.image.io.SampleConverter;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
-import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
-
-import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 
 
 /**
@@ -249,7 +245,7 @@ public class TextMatrixImageReader extends TextImageReader {
                     if (value > maximum) maximum = value;
                 }
             }
-            final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME), this, null);
+            final SpatialMetadata metadata = new SpatialMetadata(false, this, null);
             final DimensionAccessor accessor = new DimensionAccessor(metadata);
             accessor.selectChild(accessor.appendChild());
             if (minimum < maximum) {
@@ -424,7 +420,7 @@ public class TextMatrixImageReader extends TextImageReader {
      *   <tr><td>&nbsp;{@link #MIMETypes}       &nbsp;</td><td>&nbsp;{@code "text/plain"}, {@code "text/x-matrix"}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #pluginClassName} &nbsp;</td><td>&nbsp;{@code "org.geotoolkit.image.io.plugin.TextMatrixImageReader"}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #vendorName}      &nbsp;</td><td>&nbsp;{@code "Geotoolkit.org"}&nbsp;</td></tr>
-     *   <tr><td>&nbsp;{@link #version}         &nbsp;</td><td>&nbsp;{@link Version#GEOTOOLKIT}&nbsp;</td></tr>
+     *   <tr><td>&nbsp;{@link #version}         &nbsp;</td><td>&nbsp;Value of {@link org.geotoolkit.util.Version#GEOTOOLKIT}&nbsp;</td></tr>
      *   <tr><td colspan="2" align="center">See
      *   {@linkplain org.geotoolkit.image.io.TextImageReader.Spi super-class javadoc} for remaining fields</td></tr>
      * </table>
@@ -489,8 +485,6 @@ public class TextMatrixImageReader extends TextImageReader {
             MIMETypes       = MIME_TYPES;
             pluginClassName = "org.geotoolkit.image.io.plugin.TextMatrixImageReader";
             writerSpiNames  = WRITERS;
-            vendorName      = "Geotoolkit.org";
-            version         = Version.GEOTOOLKIT.toString();
             nativeStreamMetadataFormatName = null; // No stream metadata.
         }
 

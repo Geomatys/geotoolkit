@@ -40,6 +40,7 @@ import javax.imageio.metadata.IIOMetadataFormat;
 
 import org.opengis.coverage.grid.GridEnvelope;
 
+import org.geotoolkit.util.Version;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Disposable;
 import org.geotoolkit.util.NumberRange;
@@ -1299,6 +1300,10 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
         protected Spi() {
             nativeStreamMetadataFormatName = GEOTK_FORMAT_NAME;
             nativeImageMetadataFormatName  = GEOTK_FORMAT_NAME;
+            if (getClass().getName().startsWith("org.geotoolkit.")) {
+                vendorName = "Geotoolkit.org";
+                version    = Version.GEOTOOLKIT.toString();
+            }
         }
 
         /**

@@ -51,14 +51,12 @@ import org.geotoolkit.util.collection.FrequencySortedSet;
 import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
-import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.image.io.metadata.ReferencingBuilder;
 import org.geotoolkit.coverage.grid.ImageGeometry;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 
 import static org.geotoolkit.image.io.mosaic.Tile.LOGGER;
-import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 import static org.geotoolkit.util.ArgumentChecks.ensureValidIndex;
 
 
@@ -909,7 +907,7 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
             final TileManager manager = getTileManager(imageIndex);
             final ImageGeometry geom = manager.getGridGeometry();
             if (geom != null) {
-                final SpatialMetadata sp = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME), this, null);
+                final SpatialMetadata sp = new SpatialMetadata(false, this, null);
                 final GridDomainAccessor accessor = new GridDomainAccessor(sp);
                 accessor.setAll(geom.getGridToCRS(), geom.getExtent(), null, PixelOrientation.UPPER_LEFT);
                 /*

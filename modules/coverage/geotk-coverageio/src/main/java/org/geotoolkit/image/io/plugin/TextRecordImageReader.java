@@ -32,19 +32,15 @@ import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ServiceRegistry;
 
-import org.geotoolkit.util.Version;
 import org.geotoolkit.io.LineFormat;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Descriptions;
 import org.geotoolkit.image.io.TextImageReader;
 import org.geotoolkit.image.io.SampleConverter;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
-import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
 import org.geotoolkit.internal.io.LineReader;
-
-import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 
 
 /**
@@ -311,7 +307,7 @@ public class TextRecordImageReader extends TextImageReader {
             // Stream metadata.
             return null;
         }
-        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME), this, null);
+        final SpatialMetadata metadata = new SpatialMetadata(false, this, null);
         /*
          * Computes the smallest bounding box containing the full image in user coordinates.
          * This implementation searches for minimum and maximum values in x and y columns as
@@ -651,7 +647,7 @@ public class TextRecordImageReader extends TextImageReader {
      *   <tr><td>&nbsp;{@link #MIMETypes}       &nbsp;</td><td>&nbsp;{@code "text/plain"}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #pluginClassName} &nbsp;</td><td>&nbsp;{@code "org.geotoolkit.image.io.plugin.TextRecordImageReader"}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #vendorName}      &nbsp;</td><td>&nbsp;{@code "Geotoolkit.org"}&nbsp;</td></tr>
-     *   <tr><td>&nbsp;{@link #version}         &nbsp;</td><td>&nbsp;{@link Version#GEOTOOLKIT}&nbsp;</td></tr>
+     *   <tr><td>&nbsp;{@link #version}         &nbsp;</td><td>&nbsp;Value of {@link org.geotoolkit.util.Version#GEOTOOLKIT}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #xColumn}         &nbsp;</td><td>&nbsp;{@code 0}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #yColumn}         &nbsp;</td><td>&nbsp;{@code 1}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #gridTolerance}   &nbsp;</td><td>&nbsp;May vary.&nbsp;</td></tr>
@@ -738,8 +734,6 @@ public class TextRecordImageReader extends TextImageReader {
             names           = NAMES;
             MIMETypes       = MIME_TYPES;
             pluginClassName = "org.geotoolkit.image.io.plugin.TextRecordImageReader";
-            vendorName      = "Geotoolkit.org";
-            version         = Version.GEOTOOLKIT.toString();
             xColumn         = 0;
             yColumn         = 1;
             gridTolerance   = EPS;

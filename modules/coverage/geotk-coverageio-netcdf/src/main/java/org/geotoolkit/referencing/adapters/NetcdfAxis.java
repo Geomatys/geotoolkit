@@ -182,7 +182,7 @@ public class NetcdfAxis extends NetcdfIdentifiedObject implements CoordinateSyst
     /**
      * Returns the type of ordinate values.
      *
-     * @sine 3.20
+     * @since 3.20
      */
     @Override
     public Class<?> getElementType() {

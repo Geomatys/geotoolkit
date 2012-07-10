@@ -283,7 +283,7 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
         if (metadata == null && !isSpatialMetadataSupported(true)) {
             return null;
         }
-        return new SpatialMetadata(SpatialMetadataFormat.getStreamInstance(GEOTK_FORMAT_NAME), this, metadata);
+        return new SpatialMetadata(true, this, metadata);
     }
 
     /**
@@ -303,7 +303,7 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
         if (metadata == null && !isSpatialMetadataSupported(false)) {
             return null;
         }
-        return new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME), this, metadata);
+        return new SpatialMetadata(false, this, metadata);
     }
 
     /**
@@ -792,9 +792,9 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
          *
          * @since 3.20
          */
-        protected void addSpatialFormat(final boolean stream, final boolean image) {
-            if (stream) extraStreamMetadataFormatNames = ImageReaderAdapter.Spi.addSpatialFormat(nativeStreamMetadataFormatName, extraStreamMetadataFormatNames);
-            if (image)  extraImageMetadataFormatNames  = ImageReaderAdapter.Spi.addSpatialFormat(nativeImageMetadataFormatName,  extraImageMetadataFormatNames);
+        protected void addSpatialMetadataFormat(final boolean stream, final boolean image) {
+            if (stream) extraStreamMetadataFormatNames = ImageReaderAdapter.Spi.addSpatialMetadataFormat(nativeStreamMetadataFormatName, extraStreamMetadataFormatNames);
+            if (image)  extraImageMetadataFormatNames  = ImageReaderAdapter.Spi.addSpatialMetadataFormat(nativeImageMetadataFormatName,  extraImageMetadataFormatNames);
         }
 
         /**

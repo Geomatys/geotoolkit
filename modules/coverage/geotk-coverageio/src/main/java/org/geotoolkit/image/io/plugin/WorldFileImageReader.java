@@ -35,7 +35,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.geotoolkit.image.io.InformationType;
 import org.geotoolkit.image.io.ImageReaderAdapter;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
-import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.image.io.metadata.ReferencingBuilder;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
 import org.geotoolkit.internal.image.io.SupportFiles;
@@ -44,10 +43,7 @@ import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.lang.Configuration;
 import org.geotoolkit.io.wkt.PrjFiles;
-import org.geotoolkit.util.Version;
 import org.geotoolkit.util.logging.Logging;
-
-import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 
 
 /**
@@ -223,7 +219,7 @@ public class WorldFileImageReader extends ImageReaderAdapter {
              */
             if (gridToCRS != null || crs != null) {
                 if (metadata == null) {
-                    metadata = new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME), this, null);
+                    metadata = new SpatialMetadata(false, this, null);
                 }
                 if (gridToCRS != null) {
                     final int width  = getWidth (imageIndex);
@@ -296,10 +292,8 @@ public class WorldFileImageReader extends ImageReaderAdapter {
         public Spi(final ImageReaderSpi main) {
             super(main);
             pluginClassName = "org.geotoolkit.image.io.plugin.WorldFileImageReader";
-            vendorName      = "Geotoolkit.org";
-            version         = Version.GEOTOOLKIT.toString();
             addFormatNameSuffix(NAME_SUFFIX);
-            addSpatialFormat(false, true);
+            addSpatialMetadataFormat(false, true);
         }
 
         /**

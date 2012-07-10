@@ -51,7 +51,6 @@ import org.opengis.metadata.content.TransferFunctionType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
-import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.image.io.metadata.MetadataNodeAccessor;
 import org.geotoolkit.image.io.metadata.ReferencingBuilder;
 import org.geotoolkit.internal.image.io.NetcdfVariable;
@@ -64,13 +63,12 @@ import org.geotoolkit.referencing.adapters.NetcdfAxis;
 import org.geotoolkit.referencing.adapters.NetcdfCRS;
 import org.geotoolkit.metadata.netcdf.NetcdfMetadataReader;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.collection.BackingStoreException;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.ISO_FORMAT_NAME;
-import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
+import static org.geotoolkit.image.io.plugin.NetcdfImageReader.Spi.NATIVE_FORMAT_NAME;
 import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
 import static ucar.nc2.constants.CF.GRID_MAPPING;
 
@@ -92,12 +90,6 @@ import static ucar.nc2.constants.CF.GRID_MAPPING;
  */
 final class NetcdfMetadata extends SpatialMetadata {
     /**
-     * The name of the native format. It has no version number because this is
-     * a "dynamic" format inferred from the actual content of the NetCDF file.
-     */
-    private static final String NATIVE_FORMAT_NAME = "NetCDF";
-
-    /**
      * Forces usage of UCAR libraries in some places where we use our own code instead.
      * This may result in rounding errors and absence of information regarding fill values,
      * but is useful for checking if we are doing the right thing compared to the UCAR way.
@@ -115,28 +107,35 @@ final class NetcdfMetadata extends SpatialMetadata {
     };
 
     /**
+     * The NetCDF file, or {@code null} if none. This field is set at construction time
+     * and will be reset to {@code null} when not needed anymore, in order to let GC do
+     * its work.
+     */
+    private NetcdfFile file;
+
+    /**
+     * The NetCDF variables, or {@code null} if none. Only one of {@link #file} or
+     * {@code variables} can be non-null. This field is reset to {@code null} when
+     * not needed anymore, in order to let GC do its work.
+     */
+    private VariableIF[] variables;
+
+    /**
      * The format inferred from the content of the NetCDF file.
      * Will be created only when first needed.
      */
     private IIOMetadataFormat nativeFormat;
 
     /**
-     * On construction of <cite>stream metadata</cite> only, the {@link NetcdfFile} given to the
-     * constructor. After {@code getAsTree("ISO-19115")} has been invoked, the metadata tree we
-     * have built as a {@link Node} object having a {@link Metadata} user object.
-     * <p>
-     * This information is used only by {@link #getAsTree(String)} - no other method shall use it.
+     * The native NetCDF metadata, created when first needed.
      */
-    private Object isoMetadata;
+    private Node netcdfMetadata;
 
     /**
-     * On construction of <cite>stream</cite> or <cite>image metadata</cite>, the {@link NetcdfFile}
-     * or {@link VariableIF} given to the constructor. After {@code getAsTree("NetCDF")} has been
-     * invoked, the metadata tree we have built as a {@link Node} object.
-     * <p>
-     * This information is used only by {@link #getAsTree(String)} - no other method shall use it.
+     * {@code true} if we need to check for ISO metadata.
+     * This will be done only if needed.
      */
-    private Object netcdfMetadata;
+    private boolean checkISO;
 
     /**
      * {@code true} if the sample dimensions declare at least one range of value. This is
@@ -155,9 +154,7 @@ final class NetcdfMetadata extends SpatialMetadata {
      * @param file The file for which to read metadata.
      */
     public NetcdfMetadata(final ImageReader reader, final NetcdfFile file) {
-        super(SpatialMetadataFormat.getStreamInstance(GEOTK_FORMAT_NAME), reader, null);
-        nativeMetadataFormatName = NATIVE_FORMAT_NAME;
-        extraMetadataFormatNames = XArrays.append(extraMetadataFormatNames, ISO_FORMAT_NAME);
+        super(true, reader, null);
         Attribute attr = file.findGlobalAttribute("project_name");
         if (attr != null) {
             final MetadataNodeAccessor ac = new MetadataNodeAccessor(this, DiscoveryAccessor.ROOT);
@@ -174,8 +171,8 @@ final class NetcdfMetadata extends SpatialMetadata {
                 ac.setAttribute(BBOX[i+1], attr.getStringValue());
             }
         }
-        isoMetadata    = file;
-        netcdfMetadata = file;
+        this.file = file;
+        checkISO = true;
     }
 
     /**
@@ -191,8 +188,7 @@ final class NetcdfMetadata extends SpatialMetadata {
     public NetcdfMetadata(final NetcdfImageReader reader, final NetcdfDataset file,
             final VariableIF... variables) throws IOException
     {
-        super(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME), reader, null);
-        nativeMetadataFormatName  = NATIVE_FORMAT_NAME;
+        super(false, reader, null);
         GDALGridMapping  gdal     = null;
         CoordinateSystem netcdfCS = null;
         for (final VariableIF variable : variables) {
@@ -251,7 +247,7 @@ final class NetcdfMetadata extends SpatialMetadata {
                 (gdal != null) ? gdal.crs : null,
                 (gdal != null) ? gdal.gridToCRS : null);
         addSampleDimension(variables);
-        netcdfMetadata = variables;
+        this.variables = variables;
     }
 
     /**
@@ -515,9 +511,7 @@ final class NetcdfMetadata extends SpatialMetadata {
 
     /**
      * If the given format name is {@code "NetCDF"}, returns a "dynamic" metadata format
-     * inferred from the actual content of the NetCDF file. If the given format name is
-     * {@code "ISO-19115"}, returns the ISO metadata. Otherwise returns the usual
-     * metadata format as defined in the super-class.
+     * inferred from the actual content of the NetCDF file. Otherwise delegates to the super-class.
      */
     @Override
     public IIOMetadataFormat getMetadataFormat(final String formatName) {
@@ -527,9 +521,6 @@ final class NetcdfMetadata extends SpatialMetadata {
                     nativeFormat = new Format();
                 }
                 return nativeFormat;
-            }
-            if (formatName.equalsIgnoreCase(ISO_FORMAT_NAME) && SpatialMetadataFormat.getStreamInstance(GEOTK_FORMAT_NAME).equals(format)) {
-                return SpatialMetadataFormat.getStreamInstance(ISO_FORMAT_NAME);
             }
         }
         return super.getMetadataFormat(formatName);
@@ -547,12 +538,12 @@ final class NetcdfMetadata extends SpatialMetadata {
              * "NetCDF" metadata case (both stream and image metadata)
              */
             if (formatName.equalsIgnoreCase(NATIVE_FORMAT_NAME)) {
-                if (netcdfMetadata instanceof Node) {
-                    return (Node) netcdfMetadata;
+                if (netcdfMetadata != null) {
+                    return netcdfMetadata;
                 }
                 final IIOMetadataNode root = new IIOMetadataNode(NATIVE_FORMAT_NAME);
-                if (netcdfMetadata instanceof VariableSimpleIF[]) {
-                    for (final VariableSimpleIF var : (VariableSimpleIF[]) netcdfMetadata) {
+                if (variables != null) {
+                    for (final VariableSimpleIF var : variables) {
                         final IIOMetadataNode node = new IIOMetadataNode("Variable");
                         node.setNodeValue(var.getShortName());
                         appendAttributes(new AttributeList(var.getAttributes(), var.getShortName()), node);
@@ -564,8 +555,12 @@ final class NetcdfMetadata extends SpatialMetadata {
                         }
                         root.appendChild(node);
                     }
+                    variables = null; // Not needed anymore; let GC do its work.
                 } else {
-                    buildTree(((NetcdfFile) netcdfMetadata).getRootGroup(), root);
+                    buildTree(file.getRootGroup(), root); // 'file' should never be null at this point.
+                    if (!checkISO) {
+                        file = null; // Not needed anymore; let GC do its work.
+                    }
                 }
                 netcdfMetadata = root;
                 return root;
@@ -575,19 +570,22 @@ final class NetcdfMetadata extends SpatialMetadata {
              *
              * TODO: the tree is not yet built.
              */
-            if (formatName.equalsIgnoreCase(ISO_FORMAT_NAME) && isoMetadata != null) {
-                if (isoMetadata instanceof Node) {
-                    return (Node) isoMetadata;
-                }
-                final Metadata metadata;
+            if (checkISO) {
+                final boolean isReadOnly = isReadOnly();
+                final IIOMetadataNode root = new IIOMetadataNode(ISO_FORMAT_NAME);
                 try {
-                    metadata = new NetcdfMetadataReader((NetcdfFile) isoMetadata, this).read();
+                    root.setUserObject(new NetcdfMetadataReader(file, this).read());
+                    setReadOnly(false);
+                    mergeTree(ISO_FORMAT_NAME, root);
                 } catch (IOException e) {
                     throw new BackingStoreException(e); // Will be handled by GridCoverageReader.
+                } finally {
+                    setReadOnly(isReadOnly);
                 }
-                final IIOMetadataNode root = new IIOMetadataNode(ISO_FORMAT_NAME);
-                root.setUserObject(metadata);
-                isoMetadata = root;
+                checkISO = false;
+                if (netcdfMetadata != null) {
+                    file = null; // Not needed anymore; let GC do its work.
+                }
                 return root;
             }
         }

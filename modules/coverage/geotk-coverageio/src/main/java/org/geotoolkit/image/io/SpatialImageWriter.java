@@ -38,6 +38,7 @@ import org.geotoolkit.image.ImageDimension;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.internal.image.ImageUtilities;
+import org.geotoolkit.util.Version;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Disposable;
 import org.geotoolkit.util.logging.Logging;
@@ -155,7 +156,7 @@ public abstract class SpatialImageWriter extends ImageWriter implements WarningP
         if (!isSpatialMetadataSupported(true)) {
             return null;
         }
-        return new SpatialMetadata(SpatialMetadataFormat.getStreamInstance(GEOTK_FORMAT_NAME), this, null);
+        return new SpatialMetadata(true, this, null);
     }
 
     /**
@@ -177,14 +178,15 @@ public abstract class SpatialImageWriter extends ImageWriter implements WarningP
         if (!isSpatialMetadataSupported(false)) {
             return null;
         }
-        return new SpatialMetadata(SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME), this, null);
+        return new SpatialMetadata(false, this, null);
     }
 
     /**
      * Returns a metadata object initialized to the specified data for encoding a stream of
      * images. The default implementation returns the given metadata unchanged if it is an
      * instance of {@link SpatialMetadata} using the
-     * {@linkplain SpatialMetadataFormat#getStreamInstance stream format}, or wraps it otherwise.
+     * {@linkplain SpatialMetadataFormat#getStreamInstance(String) stream format},
+     * or wraps it otherwise.
      *
      * @param inData Stream metadata used to initialize the state of the returned object.
      * @param param Parameters that will be used to encode the image (in cases where
@@ -212,7 +214,8 @@ public abstract class SpatialImageWriter extends ImageWriter implements WarningP
      * Returns a metadata object initialized to the specified data for encoding an image of the
      * given type. The default implementation returns the given metadata unchanged if it is an
      * instance of {@link SpatialMetadata} using the
-     * {@linkplain SpatialMetadataFormat#getImageInstance image format}, or wraps it otherwise.
+     * {@linkplain SpatialMetadataFormat#getImageInstance(String) image format},
+     * or wraps it otherwise.
      *
      * @param inData Image metadata used to initialize the state of the returned object.
      * @param imageType The format of the image to be written later.
@@ -585,6 +588,10 @@ public abstract class SpatialImageWriter extends ImageWriter implements WarningP
         protected Spi() {
             nativeStreamMetadataFormatName = GEOTK_FORMAT_NAME;
             nativeImageMetadataFormatName  = GEOTK_FORMAT_NAME;
+            if (getClass().getName().startsWith("org.geotoolkit.")) {
+                vendorName = "Geotoolkit.org";
+                version    = Version.GEOTOOLKIT.toString();
+            }
         }
 
         /**
