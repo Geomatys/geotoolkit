@@ -93,9 +93,9 @@ public class LayerListType {
         StringBuilder s = new StringBuilder("[LayerListType]\n");
         if (layer != null) {
             s.append("layer:\n");
-        }
             for (LayerType l : layer) {
                 s.append(l).append('\n');
+            }
         }
         return s.toString();
     }
