@@ -69,7 +69,6 @@
       <dependency>
           <groupId>org.geotoolkit</groupId>
           <artifactId>geotk-epsg-javadb</artifactId>
-          <version>${geotoolkit.version}</version>
           <scope>test</scope>
       </dependency>
       <dependency>
