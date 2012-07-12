@@ -95,7 +95,7 @@ public class WMSMapLayerTest {
         assertTrue( query.substring(query.indexOf("SRS")).startsWith("SRS=EPSG:4326"));
         assertTrue( query.substring(query.indexOf("BBOX")).startsWith("BBOX=-180.0,-90.0,180.0,90.0"));
     }
-        
+
     /**
      * This test checks that in the case we use EPSG:32761 in WMS 1.1.1
      */
@@ -103,6 +103,7 @@ public class WMSMapLayerTest {
     public void test_v111_GetMap_EPSG32761() throws MalformedURLException, TransformException, FactoryException {
 
         final WMSMapLayer layer = new WMSMapLayer(SERVER_111, "BlueMarble");
+        layer.getCoverageReference().setUseLocalReprojection(false);
 
 
         final GeneralEnvelope env = new GeneralEnvelope(CRS.decode("EPSG:32761"));
@@ -113,7 +114,7 @@ public class WMSMapLayerTest {
         assertTrue( query.substring(query.indexOf("SRS")).startsWith("SRS=EPSG:32761"));
         assertTrue( query.substring(query.indexOf("BBOX")).startsWith("BBOX=1974600.0,-882900.0,3701800.0,844300.0"));
     }
-    
+
     /**
      * This test checks that in the case we use CRS:84 in WMS 1.3.0
      * the URL BBOX Coordinate are not changed.
@@ -132,7 +133,7 @@ public class WMSMapLayerTest {
         assertTrue( query.substring(query.indexOf("CRS")).startsWith("CRS=CRS:84"));
         assertTrue( query.substring(query.indexOf("BBOX")).startsWith("BBOX=-180.0,-90.0,180.0,90.0"));
     }
-    
+
     /**
      * This test checks that in the case we use EPSG:4326 in WMS 1.3.0
      * the URL BBOX Coordinate are not changed.
@@ -151,7 +152,7 @@ public class WMSMapLayerTest {
         assertTrue( query.substring(query.indexOf("CRS")).startsWith("CRS=EPSG:4326"));
         assertTrue( query.substring(query.indexOf("BBOX")).startsWith("BBOX=-90.0,-180.0,90.0,180.0"));
     }
-    
+
     /**
      * This test checks that in the case we use EPSG:32761 in WMS 1.3.0
      */
@@ -159,6 +160,7 @@ public class WMSMapLayerTest {
     public void test_v130_GetMap_EPSG32761() throws MalformedURLException, TransformException, FactoryException {
 
         final WMSMapLayer layer = new WMSMapLayer(SERVER_130, "BlueMarble");
+        layer.getCoverageReference().setUseLocalReprojection(false);
 
 
         final GeneralEnvelope env = new GeneralEnvelope(CRS.decode("EPSG:32761"));
@@ -169,7 +171,7 @@ public class WMSMapLayerTest {
         assertTrue( query.substring(query.indexOf("CRS")).startsWith("CRS=EPSG:32761"));
         assertTrue( query.substring(query.indexOf("BBOX")).startsWith("BBOX=-882900.0,1974600.0,844300.0,3701800.0"));
     }
-    
+
     /**
      * Ensures the {@link GetFeatureInfo111#getURL()} method returns a well-built url,
      * with the parameters given.
@@ -191,7 +193,7 @@ public class WMSMapLayerTest {
         }finally{
             pool.release(unmarshaller);
         }
-        
+
         final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v111,capa);
 
         final WMSMapLayer layer = new WMSMapLayer(server, "test");
@@ -217,7 +219,7 @@ public class WMSMapLayerTest {
         assertTrue(sUrl.contains("X=140"));
         assertTrue(sUrl.contains("Y=250"));
     }
-    
+
     /**
      * Ensures the {@link GetFeatureInfo130#getURL()} method returns a well-built url,
      * with the parameters given.
@@ -239,7 +241,7 @@ public class WMSMapLayerTest {
         }finally{
             pool.release(unmarshaller);
         }
-        
+
         final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v130, capa);
 
         final WMSMapLayer layer = new WMSMapLayer(server, "test");
@@ -265,7 +267,7 @@ public class WMSMapLayerTest {
         assertTrue(sUrl.contains("I=140"));
         assertTrue(sUrl.contains("J=250"));
     }
-    
+
     /**
      * Ensures the {@link GetFeatureInfo130#getURL()} method returns a well-built url,
      * with the parameters given.
@@ -287,7 +289,7 @@ public class WMSMapLayerTest {
         }finally{
             pool.release(unmarshaller);
         }
-        
+
         final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v130,capa);
 
         final WMSMapLayer layer = new WMSMapLayer(server, "test");
@@ -313,7 +315,7 @@ public class WMSMapLayerTest {
         assertTrue(sUrl.contains("I=140"));
         assertTrue(sUrl.contains("J=250"));
     }
-    
+
     /**
      * Ensures the {@link GetFeatureInfo111#getURL()} method returns a well-built url,
      * with the parameters given.
@@ -335,9 +337,9 @@ public class WMSMapLayerTest {
         }finally{
             pool.release(unmarshaller);
         }
-        
+
         final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v111,capa);
-        
+
         final WMSMapLayer layer = new WMSMapLayer(server, "test");
         layer.getCoverageReference().setUseLocalReprojection(true);
 
@@ -384,7 +386,7 @@ public class WMSMapLayerTest {
         }finally{
             pool.release(unmarshaller);
         }
-        
+
         final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v130,capa);
 
         final WMSMapLayer layer = new WMSMapLayer(server, "test");
@@ -411,7 +413,7 @@ public class WMSMapLayerTest {
         assertTrue(sUrl.contains("I=140"));
         assertTrue(sUrl.contains("J=250"));
     }
-    
+
     /**
      * Ensures the {@link GetFeatureInfo111#getURL()} method returns a well-built url,
      * with the parameters given.
@@ -433,7 +435,7 @@ public class WMSMapLayerTest {
         }finally{
             pool.release(unmarshaller);
         }
-        
+
         final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v111,capa);
 
         final WMSMapLayer layer = new WMSMapLayer(server, "test");
@@ -442,15 +444,15 @@ public class WMSMapLayerTest {
         final GeneralEnvelope env = new GeneralEnvelope(CRS.decode("EPSG:3857"));
         env.setRange(0, -2.0037507067162E7, 2.0037507067162E7);
         env.setRange(1, -2.0037507067162E7, 2.0037507067162E7);
-        
+
         final Dimension rect = new Dimension(512, 512);
 
         final URL url = layer.getCoverageReference().queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1);
 
         final String sUrl = url.toString();
-        
+
         assertTrue(sUrl.startsWith("http://test.com?"));
-        assertTrue(sUrl.contains("BBOX=-179.9999885408455,-85.05112779126263,179.9999885408455,85.05112779126262")); 
+        assertTrue(sUrl.contains("BBOX=-179.9999885408455,-85.05112779126263,179.9999885408455,85.05112779126262"));
         assertTrue(sUrl.contains("SRS=EPSG:4326"));
         assertTrue(sUrl.contains("FORMAT=image/png"));
         assertTrue(sUrl.contains("WIDTH=512"));
@@ -462,7 +464,7 @@ public class WMSMapLayerTest {
         assertTrue(sUrl.contains("X=140"));
         assertTrue(sUrl.contains("Y=243"));
     }
-    
+
     /**
      * Ensures the {@link GetFeatureInfo111#getURL()} method returns a well-built url,
      * with the parameters given.
@@ -484,7 +486,7 @@ public class WMSMapLayerTest {
         }finally{
             pool.release(unmarshaller);
         }
-        
+
         final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v130,capa);
 
         final WMSMapLayer layer = new WMSMapLayer(server, "test");
@@ -497,9 +499,9 @@ public class WMSMapLayerTest {
 
         final URL url = layer.getCoverageReference().queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1);
 
-        final String sUrl = url.toString();        
+        final String sUrl = url.toString();
         assertTrue(sUrl.startsWith("http://test.com?"));
-        assertTrue(sUrl.contains("BBOX=-179.9999885408455,-85.05112779126263,179.9999885408455,85.05112779126262")); 
+        assertTrue(sUrl.contains("BBOX=-179.9999885408455,-85.05112779126263,179.9999885408455,85.05112779126262"));
         assertTrue(sUrl.contains("CRS=CRS:84"));
         assertTrue(sUrl.contains("FORMAT=image/png"));
         assertTrue(sUrl.contains("WIDTH=512"));
@@ -511,7 +513,7 @@ public class WMSMapLayerTest {
         assertTrue(sUrl.contains("I=140"));
         assertTrue(sUrl.contains("J=243"));
     }
-    
+
     /**
      * Ensures the {@link GetFeatureInfo111#getURL()} method returns a well-built url,
      * with the parameters given.
@@ -533,8 +535,8 @@ public class WMSMapLayerTest {
         }finally{
             pool.release(unmarshaller);
         }
-        
-        
+
+
         final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v111, capa);
 
         final WMSMapLayer layer = new WMSMapLayer(server, "test");
@@ -550,7 +552,7 @@ public class WMSMapLayerTest {
 
         final String sUrl = url.toString();
         assertTrue(sUrl.startsWith("http://test.com?"));
-        assertTrue(sUrl.contains("BBOX=-179.9999885408455,-85.05112779126263,179.9999885408455,85.05112779126262")); 
+        assertTrue(sUrl.contains("BBOX=-179.9999885408455,-85.05112779126263,179.9999885408455,85.05112779126262"));
         assertTrue(sUrl.contains("SRS=EPSG:4326"));
         assertTrue(sUrl.contains("FORMAT=image/png"));
         assertTrue(sUrl.contains("WIDTH=512"));
@@ -562,7 +564,7 @@ public class WMSMapLayerTest {
         assertTrue(sUrl.contains("X=140"));
         assertTrue(sUrl.contains("Y=243"));
     }
-    
+
     /**
      * Ensures the {@link GetFeatureInfo111#getURL()} method returns a well-built url,
      * with the parameters given.
@@ -584,7 +586,7 @@ public class WMSMapLayerTest {
         }finally{
             pool.release(unmarshaller);
         }
-        
+
         final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v130,capa);
 
         final WMSMapLayer layer = new WMSMapLayer(server, "test");
@@ -594,12 +596,12 @@ public class WMSMapLayerTest {
         env.setRange(0, -2.0037507067162E7, 2.0037507067162E7);
         env.setRange(1, -2.0037507067162E7, 2.0037507067162E7);
         final Dimension rect = new Dimension(512, 512);
-        
+
         final URL url = layer.getCoverageReference().queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1);
 
         final String sUrl = url.toString();
         assertTrue(sUrl.startsWith("http://test.com?"));
-        assertTrue(sUrl.contains("BBOX=-85.05112779126263,-179.9999885408455,85.05112779126262,179.9999885408455")); 
+        assertTrue(sUrl.contains("BBOX=-85.05112779126263,-179.9999885408455,85.05112779126262,179.9999885408455"));
         assertTrue(sUrl.contains("CRS=EPSG:4326"));
         assertTrue(sUrl.contains("FORMAT=image/png"));
         assertTrue(sUrl.contains("WIDTH=512"));
@@ -611,14 +613,14 @@ public class WMSMapLayerTest {
         assertTrue(sUrl.contains("I=140"));
         assertTrue(sUrl.contains("J=243"));
     }
-    
+
     /**
      * Ensures the {@link GetLegend111#getURL()} method returns a well-built url,
-     * with the parameters given. 
+     * with the parameters given.
      */
     @Test
     public void test_v111_GetLegendGraphic() throws MalformedURLException {
-        
+
         final WMSMapLayer layer = new WMSMapLayer(SERVER_111, "BlueMarble");
         layer.getCoverageReference().setStyles("test");
         layer.getCoverageReference().setExceptionsFormat("application/test");
@@ -627,7 +629,7 @@ public class WMSMapLayerTest {
         layer.getCoverageReference().dimensions().put("TIME", "20-20-20T20:20:20Z");
         layer.getCoverageReference().dimensions().put("ELEVATION", "500");
         layer.getCoverageReference().dimensions().put("DIMRANGE", "-50,50");
-        
+
         final Dimension rect = new Dimension(140, 20);
         final URL url = layer.getCoverageReference().queryLegend(rect, "image/gif", "test", 2500.0);
         final String sUrl = url.toString();
@@ -646,16 +648,16 @@ public class WMSMapLayerTest {
         assertTrue(sUrl.contains("TIME=20-20-20T20:20:20Z"));
         assertTrue(sUrl.contains("ELEVATION=500"));
         assertTrue(sUrl.contains("DIMRANGE=-50,50"));
-        
+
     }
-    
+
     /**
      * Ensures the {@link GetLegend130#getURL()} method returns a well-built url,
-     * with the parameters given. 
+     * with the parameters given.
      */
     @Test
     public void test_v130_GetLegendGraphic() throws MalformedURLException {
-        
+
         final WMSMapLayer layer = new WMSMapLayer(SERVER_130, "BlueMarble");
         layer.getCoverageReference().setStyles("test");
         layer.getCoverageReference().setExceptionsFormat("application/test");
@@ -664,7 +666,7 @@ public class WMSMapLayerTest {
         layer.getCoverageReference().dimensions().put("TIME", "20-20-20T20:20:20Z");
         layer.getCoverageReference().dimensions().put("ELEVATION", "500");
         layer.getCoverageReference().dimensions().put("DIMRANGE", "-50,50");
-        
+
         final Dimension rect = new Dimension(140, 20);
         final URL url = layer.getCoverageReference().queryLegend(rect, "image/gif", "test", 2500.0);
         final String sUrl = url.toString();
@@ -683,8 +685,8 @@ public class WMSMapLayerTest {
         assertTrue(sUrl.contains("TIME=20-20-20T20:20:20Z"));
         assertTrue(sUrl.contains("ELEVATION=500"));
         assertTrue(sUrl.contains("DIMRANGE=-50,50"));
-        
+
     }
-    
+
 
 }
