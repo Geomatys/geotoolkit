@@ -460,7 +460,7 @@ public class App {
 
         PixelIterator pixIterator = PixelIteratorFactory.createDefaultIterator(rastertest);
 
-        BiCubicInterpolation bicub = new BiCubicInterpolation(pixIterator);
+        BiCubicInterpolation bicub = new BiCubicInterpolation(pixIterator, false);
 
 
 //        double t0 = bicub.cubicInterpol(tabTest[0], tabTest[1], tabTest[2], tabTest[3], 0);

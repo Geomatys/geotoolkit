@@ -20,8 +20,12 @@ package org.geotoolkit.image.interpolation;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.DataBuffer;
+import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
+import javax.media.jai.InterpolationBicubic;
+import javax.media.jai.InterpolationBicubic2;
 import javax.media.jai.RasterFactory;
+import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.junit.Assert;
 import static org.junit.Assert.assertTrue;
@@ -29,6 +33,10 @@ import org.junit.Test;
 
 /**
  * BiCubic Interpolation test.
+ *
+ * Test 2 made of biCubic interpolation.
+ *
+ * All interpolation values are compared to JAI interpolation results.
  *
  * @author Remi Marechal (Geomatys).
  */
@@ -42,23 +50,18 @@ public class BiCubicTest extends InterpolationTest {
         minx = -2;
         width = 4;
         height = 4;
-
     }
 
     /**
      * <p>Test interpolate method from biCubic class.<br/><br/>
      *
-     * Verify that interpolation at Integer pixel position equal pixel position.<br/>
-     * Verify that none-integer pixels position interpolation is between minimum and maximum interpolation values.<br/><br/>
-     *
-     * To find minimum and maximum values :<br/>
-     * - Compute pixels interpolation at nearest integer pixel position and get maximum and minimum values.<br/>
-     * - Find interpolation roots, get roots interpolation values if its possible,<br/>
-     * and get maximum and minimum values from previous maximum and minimum.</p>
+     * Verify that interpolation at Integer pixel position equal pixel position value.<br/>
      */
     @Test
     public void globalTest() {
         double val = -55;
+        width = 8;
+        height = 8;
         rastertest = RasterFactory.createBandedRaster(DataBuffer.TYPE_DOUBLE, width, height, 1, new Point(minx, miny));
         for (int y = miny; y < miny + height; y++) {
             for (int x = minx; x < minx + width; x++) {
@@ -66,131 +69,83 @@ public class BiCubicTest extends InterpolationTest {
             }
         }
         pixIterator = PixelIteratorFactory.createDefaultIterator(rastertest);
-        interpol = new BiCubicInterpolation(pixIterator);
-        pixIterator.moveTo(0, -1);
-        final BiCubicInterpolation biCInterpol = (BiCubicInterpolation)interpol;
-        final double[] minAndMax = biCInterpol.getMinMaxValue(null);
-        double interpolXDeb, interpolXEnd, interpolYDeb, interpolYEnd, interPol;
-        for (int y = miny; y < miny + height-1; y++) {
-            for (int x = minx; x < minx + width-1; x++) {
+        interpol = new BiCubicInterpolation(pixIterator, false);
+        double interpolVal;
+        for (int y = miny+1; y < miny + height-2; y++) {
+            for (int x = minx+1; x < minx + width-2; x++) {
                 // interpolation verification at integer pixel position.
-                interpolXDeb = interpol.interpolate(x, y)[0];
-                assertTrue(Math.abs(rastertest.getSampleDouble(x, y, 0) - interpolXDeb) <= 1E-12);
-                interpolXEnd = interpol.interpolate(x+1, y)[0];
-                assertTrue(Math.abs(rastertest.getSampleDouble(x+1, y, 0) - interpolXEnd) <= 1E-12);
-                interpolYDeb = interpol.interpolate(x, y+1)[0];
-                assertTrue(Math.abs(rastertest.getSampleDouble(x, y+1, 0) - interpolYDeb) <= 1E-12);
-                interpolYEnd = interpol.interpolate(x+1, y+1)[0];
-                assertTrue(Math.abs(rastertest.getSampleDouble(x+1, y+1, 0) - interpolYEnd) <= 1E-12);
-                // verify each positions within x->x+1 and y->y+1 with step equals 0.1
-                // are always between minimum and maximum interpolation value.
-                for (double y2 = y + 0.01; y2 < y + 1; y2 += 0.01) {
-                    for (double x2 = x + 0.01; x2 < x + 1; x2 += 0.01) {
-                        interPol = interpol.interpolate(x2, y2)[0];
-                        assertTrue(interPol >= minAndMax[0]);
-                        assertTrue(interPol <= minAndMax[3]);
-                    }
-                }
+                interpolVal = interpol.interpolate(x, y)[0];
+                assertTrue(Math.abs(rastertest.getSampleDouble(x, y, 0) - interpolVal) <= 1E-12);
+            }
+        }
+        interpol = new BiCubicInterpolation(pixIterator, true);
+        for (int y = miny+1; y < miny + height-2; y++) {
+            for (int x = minx+1; x < minx + width-2; x++) {
+                // interpolation verification at integer pixel position.
+                interpolVal = interpol.interpolate(x, y)[0];
+                assertTrue(Math.abs(rastertest.getSampleDouble(x, y, 0) - interpolVal) <= 1E-12);
             }
         }
     }
 
     /**
-     * <p>Test find min and max values.<br/>
-     * First time verify that expected max value is at center of raster.<br/>
-     * Then verify that expected min value is at center of raster.<br/>
-     * Also test conformity with mean value theorem.</p>
+     * Compare interpolation values with JAI library biCubic interpolation results.
      */
     @Test
     public void minAndMaxTest() {
-        int idBand = 0;
-        rastertest = RasterFactory.createBandedRaster(DataBuffer.TYPE_DOUBLE, width, height, 1, new Point(minx, miny));
-        rastertest.setSample(-2, -1, idBand, 1);
-        rastertest.setSample(-1, -1, idBand, 1);
-        rastertest.setSample( 0, -1, idBand, 1);
-        rastertest.setSample( 1, -1, idBand, 1);
-        rastertest.setSample(-2, 0, idBand, 1);
-        rastertest.setSample(-1, 0, idBand, 2);
-        rastertest.setSample(-0, 0, idBand, 2);
-        rastertest.setSample( 1, 0, idBand, 1);
-        rastertest.setSample(-2, 1, idBand, 1);
-        rastertest.setSample(-1, 1, idBand, 2);
-        rastertest.setSample( 0, 1, idBand, 2);
-        rastertest.setSample( 1, 1, idBand, 1);
-        rastertest.setSample(-2, 2, idBand, 1);
-        rastertest.setSample(-1, 2, idBand, 1);
-        rastertest.setSample( 0, 2, idBand, 1);
-        rastertest.setSample( 1, 2, idBand, 1);
-        pixIterator = PixelIteratorFactory.createDefaultIterator(rastertest);
-        interpol = new BiCubicInterpolation(pixIterator);
-        double[] minMax = interpol.getMinMaxValue(null);
-        assertTrue(Math.abs(minMax[4] + 0.5) <= 1E-9);//x = -0.5 expected value
-        assertTrue(Math.abs(minMax[5] - 0.5) <= 1E-9);//y =  0.5 expected value
-        assertTrue(tAF(minMax[4], minMax[5], 1E-5, idBand));
+        width = 4;
+        height = 4;
+        //fill first band
+        rastertest = RasterFactory.createBandedRaster(DataBuffer.TYPE_DOUBLE, width, height, 3, new Point(minx, miny));
+        rastertest.setSample(-2, -1, 0, 1);
+        rastertest.setSample(-1, -1, 0, 1);
+        rastertest.setSample( 0, -1, 0, 1);
+        rastertest.setSample( 1, -1, 0, 1);
+        rastertest.setSample(-2, 0, 0, 1);
+        rastertest.setSample(-1, 0, 0, 2);
+        rastertest.setSample(-0, 0, 0, 2);
+        rastertest.setSample( 1, 0, 0, 1);
+        rastertest.setSample(-2, 1, 0, 1);
+        rastertest.setSample(-1, 1, 0, 2);
+        rastertest.setSample( 0, 1, 0, 2);
+        rastertest.setSample( 1, 1, 0, 1);
+        rastertest.setSample(-2, 2, 0, 1);
+        rastertest.setSample(-1, 2, 0, 1);
+        rastertest.setSample( 0, 2, 0, 1);
+        rastertest.setSample( 1, 2, 0, 1);
 
-        rastertest.setSample(-2, -1, idBand, 2);
-        rastertest.setSample(-1, -1, idBand, 2);
-        rastertest.setSample( 0, -1, idBand, 2);
-        rastertest.setSample( 1, -1, idBand, 2);
-        rastertest.setSample(-2, 0, idBand, 2);
-        rastertest.setSample(-1, 0, idBand, 1);
-        rastertest.setSample(-0, 0, idBand, 1);
-        rastertest.setSample( 1, 0, idBand, 2);
-        rastertest.setSample(-2, 1, idBand, 2);
-        rastertest.setSample(-1, 1, idBand, 1);
-        rastertest.setSample( 0, 1, idBand, 1);
-        rastertest.setSample( 1, 1, idBand, 2);
-        rastertest.setSample(-2, 2, idBand, 2);
-        rastertest.setSample(-1, 2, idBand, 2);
-        rastertest.setSample( 0, 2, idBand, 2);
-        rastertest.setSample( 1, 2, idBand, 2);
-        pixIterator = PixelIteratorFactory.createDefaultIterator(rastertest);
-        interpol = new BiCubicInterpolation(pixIterator);
-        minMax = interpol.getMinMaxValue(null);
-        assertTrue(Math.abs(minMax[1] + 0.5) <= 1E-9);//x = -0.5 expected value
-        assertTrue(Math.abs(minMax[2] - 0.5) <= 1E-9);//y =  0.5 expected value
-        assertTrue(tAF(minMax[1], minMax[2], 1E-5, idBand));
+        //fill second band
+        rastertest.setSample(-2, -1, 1, 2);
+        rastertest.setSample(-1, -1, 1, 2);
+        rastertest.setSample( 0, -1, 1, 2);
+        rastertest.setSample( 1, -1, 1, 2);
+        rastertest.setSample(-2, 0, 1, 2);
+        rastertest.setSample(-1, 0, 1, 1);
+        rastertest.setSample(-0, 0, 1, 1);
+        rastertest.setSample( 1, 0, 1, 2);
+        rastertest.setSample(-2, 1, 1, 2);
+        rastertest.setSample(-1, 1, 1, 1);
+        rastertest.setSample( 0, 1, 1, 1);
+        rastertest.setSample( 1, 1, 1, 2);
+        rastertest.setSample(-2, 2, 1, 2);
+        rastertest.setSample(-1, 2, 1, 2);
+        rastertest.setSample( 0, 2, 1, 2);
+        rastertest.setSample( 1, 2, 1, 2);
+
+        //fill third band
+        double val = 32;
+        for (int y = miny; y<miny+height; y++) {
+            for (int x = minx; x<minx+width; x++) {
+                rastertest.setSample(x, y, 2, val++);
+            }
+        }
+
+        //test about classic bicubic interpolation
+        checkBicubicInterpolation(rastertest, false);
+
+        //test about other made bicubic interpolation
+        checkBicubicInterpolation(rastertest, true);
     }
-
-//    @Test
-//    public void RandomValueMultiBandsTest(){
-//        int numband = 2;
-//        rastertest = RasterFactory.createBandedRaster(DataBuffer.TYPE_DOUBLE, width, height, numband, new Point(minx, miny));
-//        for (int band = 0; band<numband; band++) {
-//            for (int y = miny; y<miny+4; y++) {
-//                for (int x = minx; x<minx+4; x++) {
-//                    rastertest.setSample(x, y, band, Math.random()*10);
-//                }
-//            }
-//        }
-//        pixIterator = PixelIteratorFactory.createDefaultIterator(rastertest);
-//        interpol = new BiCubicInterpolation(pixIterator);
-//        double[] minMax = interpol.getMinMaxValue(null);
-//        double interPol;
-//        assertTrue(minMax.length == 12);
-//        //verify validity from derivative.
-//        for (int band = 0; band<numband; band++) {
-//            //test minimum
-////            if (!tAF(minMax[6*band+1], minMax[6*band+2], 1E-5, band)) {
-////                System.out.println("");
-////            }
-////            assertTrue(tAF(minMax[6*band+1], minMax[6*band+2], 1E-5, band));
-////            //test maximum
-////            assertTrue(tAF(minMax[6*band+4], minMax[6*band+5], 1E-5, band));
-//            // verify each positions within x->x+1 and y->y+1 with step equals 0.1
-//            // are always between minimum and maximum interpolation value.
-//            for (double y = miny + 0.01; y <= miny+3; y += 0.01) {
-//                for (double x = minx + 0.01; x <= minx+3; x += 0.01) {
-//                    interPol = interpol.interpolate(x, y)[band];
-//                    assertTrue(interPol >= minMax[6*band]);
-//                    if (!(interPol<= minMax[6*band+3])) {
-//                        System.out.println("");
-//                    }
-//                    assertTrue(interPol <= minMax[6*band+3]);
-//                }
-//            }
-//        }
-//    }
 
     /**
      * test get min max values on raster corner.
@@ -199,7 +154,7 @@ public class BiCubicTest extends InterpolationTest {
     public void testFail() {
         rastertest = RasterFactory.createBandedRaster(DataBuffer.TYPE_DOUBLE, width, height, 1, new Point(minx, miny));
         pixIterator = PixelIteratorFactory.createDefaultIterator(rastertest);
-        interpol = new BiCubicInterpolation(pixIterator);
+        interpol = new BiCubicInterpolation(pixIterator, false);
         //lower corner
         try {
             interpol.getMinMaxValue(new Rectangle(-2, -3, 3, 3));
@@ -233,82 +188,79 @@ public class BiCubicTest extends InterpolationTest {
         }
     }
 
-
     /**
-     * Test getCubicRoot method and verify validity from results by mean value theorem.
-     */
-    @Test
-    public void testCubicRoots() {
-        rastertest = RasterFactory.createBandedRaster(DataBuffer.TYPE_DOUBLE, width, height, 1, new Point(minx, miny));
-        pixIterator = PixelIteratorFactory.createDefaultIterator(rastertest);
-        interpol = new BiCubicInterpolation(pixIterator);
-        double t0 = -1.5;
-        double[] f = new double[]{1,2,2,1};
-        double eps = 1E-5;
-        double[] roots = ((BiCubicInterpolation)interpol).getCubicRoots(t0, t0, t0+4, f);
-        assertTrue(roots.length == 1);
-        if (roots != null) {
-            for (int i = 0; i<roots.length; i++) {
-                assertTrue(tAF(t0, f, roots[i], eps));
-            }
-        }
-        t0 = 10.3;
-        f = new double[]{2,-2,4,-1};
-        roots = ((BiCubicInterpolation)interpol).getCubicRoots(t0, t0, t0+4, f);
-        assertTrue(roots.length == 2);
-        if (roots != null) {
-            for (int i = 0; i<roots.length; i++) {
-                assertTrue(tAF(t0, f, roots[i], eps));
-            }
-        }
-        t0 = -100.3;
-        f = new double[]{55,20,20,55};
-        roots = ((BiCubicInterpolation)interpol).getCubicRoots(t0, t0, t0+4, f);
-        assertTrue(roots.length == 1);
-        if (roots != null) {
-            for (int i = 0; i<roots.length; i++) {
-                assertTrue(tAF(t0, f, roots[i], eps));
-            }
-        }
-    }
-
-    /**
-     * Verify root value conformity with mean value theorem.
+     * Compare biCubic interpolation results from Jai library {@link javax.media.jai.Interpolation}
+     * and from biCubic interpolation {@link BiCubicInterpolation}.
      *
-     * @param t0
-     * @param root found root.
-     * @param f
-     * @param epsilon
-     * @return true if root value is verified else false.
+     * @param raster tested raster.
+     * @param keys define type of biCubic interpolation.
      */
-    private boolean tAF(double t0, double[] f, double root, double epsilon) {
-        assert (epsilon>0) : "epsilon will be able to be define positively";
-        final BiCubicInterpolation bInterpol = (BiCubicInterpolation) interpol;
-        final double fx0 = bInterpol.getCubicValue(t0, root-epsilon, f);
-        final double fx1 = bInterpol.getCubicValue(t0, root+epsilon, f);
-        final double taf = Math.abs((fx1-fx0)/epsilon/2.0);
-        return taf <= 1E-9;
+    private void checkBicubicInterpolation(Raster raster, boolean keys) {
+        final int numBand = raster.getNumBands();
+        final int minX    = raster.getMinX();
+        final int minY    = raster.getMinY();
+        final int rW      = raster.getWidth();
+        final int rH      = raster.getHeight();
+        double[] jaiInter, inter;
+
+        javax.media.jai.Interpolation jaiInterpol = (keys) ? new InterpolationBicubic2(8) : new InterpolationBicubic(8);
+        PixelIterator pixelIterator = PixelIteratorFactory.createDefaultIterator(raster);
+        interpol = new BiCubicInterpolation(pixelIterator, keys);
+
+        double x, y, tolerance;
+        for(int b = 0; b<numBand; b++) {
+            for (int ny = 0; ny<100; ny++) {
+                for (int nx = 0; nx<100; nx++) {
+                    x = minX + 1 + nx*0.01;
+                    y = minY+1+ny*0.01;
+                    inter = interpol.interpolate(x, y);
+                    jaiInter = getJAIInterpolate(jaiInterpol, raster, x, y, rW, rH, numBand);
+                    for (int b2 = 0; b2 <numBand; b2++) {
+                        tolerance = ((inter[b2]+jaiInter[b2])/2)*1E-2;//1%
+                        assertTrue(Math.abs(inter[b2]-jaiInter[b2]) <= tolerance);
+                    }
+                }
+            }
+        }
     }
 
     /**
-     * Control validity of extremum coordinates in X and Y direction.
+     * Find interpolation value at x, y coordinate for each raster band.
      *
-     * @param rootX X extremum coordinate.
-     * @param rootY Y extremum coordinate.
-     * @param epsilon
-     * @param indexBand band number.
-     * @return true if roots coordinate values are conform else false.
+     * @param jaiInterpol interpolation type from jai library.
+     * @param raster raster which contain data.
+     * @param x interpolation X coordinate.
+     * @param y interpolation Y coordinate.
+     * @param rasterWidth raster width.
+     * @param rasterHeight raster height.
+     * @param rasterNumBand raster number bands.
+     * @return double table which contain interpolation value at x, y coordinate for each raster band.
      */
-    private boolean tAF(double rootX, double rootY, double epsilon, int indexBand) {
-        assert (epsilon>0) : "epsilon will be able to be define positively";
-        final BiCubicInterpolation bInterpol = (BiCubicInterpolation) interpol;
-        double[] pt0 = bInterpol.interpolate(rootX - epsilon, rootY);
-        double[] pt1 = bInterpol.interpolate(rootX + epsilon, rootY);
-        final double tafX = Math.abs((pt1[indexBand] - pt0[indexBand])/epsilon/2);
-        pt0 = bInterpol.interpolate(rootX, rootY - epsilon);
-        pt1 = bInterpol.interpolate(rootX, rootY + epsilon);
-        final double tafY = Math.abs((pt1[indexBand] - pt0[indexBand])/epsilon/2);
-        return (tafX <= 1E-9 && tafY <= 1E-9);
-    }
+    private double[] getJAIInterpolate(javax.media.jai.Interpolation jaiInterpol, Raster raster, double x, double y, int rasterWidth, int rasterHeight, int rasterNumBand){
 
+        int mx = (int) x;
+        int my = (int) y;
+        if (x<mx) mx--;
+        if (y<my) my--;
+        //ajust area interpolation on x, y center.
+        for (int i = 0; i<rasterWidth/2-1;i++) {
+            mx--;
+        }
+        for (int i = 0; i<rasterHeight/2-1;i++) {
+            my--;
+        }
+        float ix = (float) (x-mx-1);
+        float iy = (float) (y-my-1);
+        final double[] jaiResult = new double[rasterNumBand];
+        final double[][] interpolSample = new double[4][4];
+        for (int b = 0; b<rasterNumBand; b++) {
+            for (int idy = my; idy<my+4; idy++) {
+                for (int idx = mx; idx<mx+4; idx++) {
+                    interpolSample[idy-my][idx-mx] = raster.getSampleDouble(idx, idy, b);
+                }
+            }
+            jaiResult[b] = jaiInterpol.interpolate(interpolSample, (float) ix, (float) iy);
+        }
+        return jaiResult;
+    }
 }

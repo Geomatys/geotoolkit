@@ -76,6 +76,44 @@ public class BilinearInterpolation extends Interpolation {
     }
 
     /**
+     * Return appropriate interpolation minX and minY coordinates from x, y interpolate coordinates.
+     *
+     * @param x pixel x coordinate.
+     * @param y pixel y coordinate.
+     * @param width interpolate area width.
+     * @param height interpolate area height.
+     * @throws IllegalArgumentException if there are necessary pixels out of boundary.
+     * @return appropriate interpolation minX and minY coordinates.
+     */
+    private int[] getInterpolateMin(double x, double y, int width, int height) {
+        assert (width <= boundary.width && height <= boundary.height) : "area dimensions are out of boundary";
+        int minx = (int) x;
+        int miny = (int) y;
+        if (x<minx) minx--;
+        if (y<miny) miny--;
+
+        //ajust area interpolation on x, y center.
+        for (int i = 0; i<width/2-1;i++) {
+            minx--;
+        }
+        for (int i = 0; i<height/2-1;i++) {
+            miny--;
+        }
+        while(minx+width >= boundary.x+boundary.width) {
+            minx--;
+        }
+        while(miny+height >= boundary.y+boundary.height) {
+            miny--;
+        }
+        /*
+         * Test if interpolate area is within iterate object boundary
+         */
+        if (!boundary.contains(minx, miny))
+            throw new IllegalArgumentException("interpolate definition domain out of boundary");
+        return new int[]{minx, miny};
+    }
+
+    /**
      * Compute and return bilinear interpolation value.
      *
      * @param minx min x interpolation area value.

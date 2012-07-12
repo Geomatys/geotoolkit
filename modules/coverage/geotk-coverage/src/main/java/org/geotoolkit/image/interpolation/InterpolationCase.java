@@ -30,6 +30,7 @@ public enum InterpolationCase {
     NEIGHBOR,
     BILINEAR,
     BICUBIC,
+    BICUBIC2,
     LANCZOS
 
 }

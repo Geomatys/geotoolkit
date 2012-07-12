@@ -67,9 +67,8 @@ public class LanczosTest extends InterpolationTest {
     @Test
     public void globalTest() {
         pixIterator.moveTo(0, -1);
-        double interpolXDeb, interpolXEnd, interpolYDeb, interpolYEnd, interMin, interMax, tRoots, interPol;
+        double interpolXDeb, interpolXEnd, interpolYDeb, interpolYEnd;
         for (int y = miny; y < miny + height-1; y++) {
-//            }
             for (int x = minx; x < minx + width-1; x++) {
                 // interpolation verification at integer pixel position.
                 interpolXDeb = interpol.interpolate(x, y)[0];
@@ -80,22 +79,7 @@ public class LanczosTest extends InterpolationTest {
                 assertTrue(Math.abs(rastertest.getSampleDouble(x, y+1, 0) - interpolYDeb) <= 1E-12);
                 interpolYEnd = interpol.interpolate(x+1, y+1)[0];
                 assertTrue(Math.abs(rastertest.getSampleDouble(x+1, y+1, 0) - interpolYEnd) <= 1E-12);
-//
-                // get minimum and maximum interpolation values from integer pixels positions.
-                interMin = Math.min(Math.min(interpolXDeb, interpolXEnd), Math.min(interpolYDeb, interpolYEnd))-1E-12;
-                interMax = Math.max(Math.max(interpolXDeb, interpolXEnd), Math.max(interpolYDeb, interpolYEnd))+1E-12;
-                // verify each positions within x->x+1 and y->y+1 with step equals 0.1
-                // are always between minimum and maximum interpolation value.
-//                for (double y2 = y + 0.1; y2 < y + 1; y2 += 0.1) {
-//                    for (double x2 = x+0.1; x2 < x + 1; x2 += 0.1) {
-//                        interPol = interpol.interpolate(x2, y2)[0];
-//                        assertTrue(interPol >= interMin);
-//                        assertTrue(interPol <= interMax);
-//                    }
-//                }
             }
         }
     }
-
-
 }

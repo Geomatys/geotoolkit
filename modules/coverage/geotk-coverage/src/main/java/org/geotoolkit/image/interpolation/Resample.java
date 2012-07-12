@@ -76,6 +76,10 @@ public class Resample {
      */
     private final int maxSourceY;
 
+    /**
+     * Table use which target image pixel transformation is out of source image boundary.
+     */
+    private final double[] fillValue;
 
     /**
      * Fill destination image from interpolation of source pixels.<br/>
@@ -86,10 +90,13 @@ public class Resample {
      * @param interpol Interpolation use to interpolate source image pixels.
      * @throws NoninvertibleTransformException if it is impossible to invert {@code MathTransform} parameter.
      */
-    public Resample(MathTransform mathTransform, WritableRenderedImage imageDest, Interpolation interpol) throws NoninvertibleTransformException {
+    public Resample(MathTransform mathTransform, WritableRenderedImage imageDest, Interpolation interpol, double[] fillValue) throws NoninvertibleTransformException {
         this.numBands = interpol.getNumBands();
+        if (fillValue.length != numBands)
+            throw new IllegalArgumentException("fillValue table length and numbands are different : "+fillValue.length+" numbands = "+this.numBands);
         assert(numBands == imageDest.getWritableTile(imageDest.getMinTileX(), imageDest.getMinTileY()).getNumBands())
                 : "destination image numbands different from source image numbands";
+        this.fillValue = fillValue;
         this.invertMathTransform = mathTransform.inverse();
         this.imageDest = imageDest;
         this.interpol = interpol;
@@ -112,7 +119,7 @@ public class Resample {
         double[] srcCoords = new double[2];
         invertMathTransform.transform(new double[]{x, y, 1}, 0, srcCoords, 0, 1);
         if (srcCoords[0]<minSourceX||srcCoords[0]>maxSourceX
-          ||srcCoords[1]<minSourceY||srcCoords[1]>maxSourceY) return null;
+          ||srcCoords[1]<minSourceY||srcCoords[1]>maxSourceY) return fillValue;
         return interpol.interpolate(srcCoords[0], srcCoords[1]);
     }
 
@@ -123,18 +130,23 @@ public class Resample {
         final PixelIterator destIterator = PixelIteratorFactory.createDefaultWriteableIterator(imageDest, imageDest);
         int band;
         double[] destPixValue;
-        int compDebug = 0;
+        int compDebug = 0;//a supprimer a l'avenir
         while (destIterator.next()) {
             band = 0;
             destPixValue = getSourcePixelValue(destIterator.getX(), destIterator.getY());
-            if (destPixValue == null) {
-                while (++band != numBands) destIterator.next();//continue until next pixel.
-            } else {
-                destIterator.setSampleDouble(destPixValue[0]);
-                while (++band != numBands) {
-                    destIterator.next();
-                    destIterator.setSampleDouble(destPixValue[band]);
-                }
+//            if (destPixValue == null) {
+//                while (++band != numBands) destIterator.next();//continue until next pixel.
+//            } else {
+//                destIterator.setSampleDouble(destPixValue[0]);
+//                while (++band != numBands) {
+//                    destIterator.next();
+//                    destIterator.setSampleDouble(destPixValue[band]);
+//                }
+//            }
+            destIterator.setSampleDouble(destPixValue[0]);
+            while (++band != numBands) {
+                destIterator.next();
+                destIterator.setSampleDouble(destPixValue[band]);
             }
             compDebug++;
         }

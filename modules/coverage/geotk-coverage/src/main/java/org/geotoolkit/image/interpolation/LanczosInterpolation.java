@@ -116,6 +116,47 @@ public class LanczosInterpolation extends Interpolation {
         return result;
     }
 
+    /**
+     * Return appropriate interpolation minX and minY coordinates from x, y interpolate coordinates.
+     *
+     * @param x pixel x coordinate.
+     * @param y pixel y coordinate.
+     * @param width interpolate area width.
+     * @param height interpolate area height.
+     * @throws IllegalArgumentException if there are necessary pixels out of boundary.
+     * @return appropriate interpolation minX and minY coordinates.
+     */
+    private int[] getInterpolateMin(double x, double y, int width, int height) {
+        final int boundW = boundary.width;
+        final int boundH = boundary.height;
+        final int bx = boundary.x;
+        final int by = boundary.y;
+        assert (width <= boundW && height <= boundH) : "area dimensions are out of boundary";
+        int minx = (int) x;
+        int miny = (int) y;
+        if (x<minx) minx--;
+        if (y<miny) miny--;
+
+        //ajust area interpolation on x, y center.
+        for (int i = 0; i<width/2-1;i++) {
+            minx--;
+        }
+        for (int i = 0; i<height/2-1;i++) {
+            miny--;
+        }
+
+        int debX = Math.max(minx, bx);
+        int debY = Math.max(miny, by);
+
+        while (debX + width > bx + boundW) {
+            debX--;
+        }
+        while (debY + height > by + boundH) {
+            debY--;
+        }
+        return new int[]{debX, debY};
+    }
+
     @Override
     public double[] getMinMaxValue(Rectangle area) {
         throw new UnsupportedOperationException("Not supported yet.");

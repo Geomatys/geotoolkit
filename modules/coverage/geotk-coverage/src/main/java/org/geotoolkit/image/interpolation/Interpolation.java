@@ -114,41 +114,6 @@ public abstract class Interpolation {
     }
 
     /**
-     * Return appropriate interpolation minX and minY coordinates from x, y interpolate coordinates.
-     *
-     * @param x pixel x coordinate.
-     * @param y pixel y coordinate.
-     * @param width interpolate area width.
-     * @param height interpolate area height.
-     * @return appropriate interpolation minX and minY coordinates.
-     */
-    protected int[] getInterpolateMin(double x, double y, int width, int height) {
-        assert (width <= boundary.width && height <= boundary.height) : "area dimensions are out of boundary";
-        int minx = (int) x;
-        int miny = (int) y;
-        if (x<0) minx--;
-        if (y<0) miny--;
-        //ajust area interpolation on x, y center.
-        for (int i = 0; i<width/2-1;i++) {
-            minx--;
-        }
-        for (int i = 0; i<height/2-1;i++) {
-            miny--;
-        }
-
-        int debX = Math.max(minx, boundary.x);
-        int debY = Math.max(miny, boundary.y);
-
-        while (debX + width > boundary.x + boundary.width) {
-            debX--;
-        }
-        while (debY + height > boundary.y + boundary.height) {
-            debY--;
-        }
-        return new int[]{debX, debY};
-    }
-
-    /**
      * Returns {@code Rectangle} which is Image or Raster boundary within this Interpolator.
      *
      * @return {@code Rectangle} which is Image or Raster boundary within this Interpolator.
@@ -181,7 +146,8 @@ public abstract class Interpolation {
         switch (interpolationCase) {
             case NEIGHBOR : return new NeighborInterpolation(pixelIterator);
             case BILINEAR : return new BilinearInterpolation(pixelIterator);
-            case BICUBIC  : return new BiCubicInterpolation(pixelIterator);
+            case BICUBIC  : return new BiCubicInterpolation(pixelIterator, false);
+            case BICUBIC2  : return new BiCubicInterpolation(pixelIterator, true);
             case LANCZOS  : return new LanczosInterpolation(pixelIterator, lanczosWindow);
             default       : throw  new IllegalArgumentException("interpolation not supported yet");
         }
