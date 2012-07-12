@@ -129,8 +129,10 @@ Downloading Geotoolkit.org Binaries
 | <<<geotk-bundle-netcdf.pack.gz>>>      | <All the coverage pack plus:>\     | • Java 6\                 |
 |                                        | • geotk-coverageio-netcdf.jar\     | • Java Advanced Imaging\  |
 |                                        | • netcdf.jar\                      | • JavaDB (<optional>)     |
+|                                        | • udunits.jar\                     |                           |
 |                                        | • opendap.jar\                     |                           |
 |                                        | • grib.jar\                        |                           |
+|                                        | • joda-time.jar\                   |                           |
 |                                        | • protobuf-java.jar\               |                           |
 |                                        | • jdom.jar\                        |                           |
 |                                        | • servlet-api.jar\                 |                           |

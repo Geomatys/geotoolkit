@@ -107,8 +107,10 @@ public class PackerSpecificMojo extends AbstractMojo {
             packer.addPack(coverage, netcdf, new String[] {
                     "geotk-coverageio-netcdf-" + VERSION + ".jar",
                     "netcdf-*.jar",
+                    "udunits-*.jar",
                     "opendap-*.jar",
                     "grib-*.jar",
+                    "joda-time-*.jar",
                     "protobuf-java-*.jar",
                     "jdom-*.jar",
                     "servlet-api-*.jar",
