@@ -551,7 +551,8 @@ public abstract class NetcdfMetadata implements WarningProducer {
      * <p>
      * <b>Path:</b> <ul><li>{@link Metadata} /
      * {@link Metadata#getIdentificationInfo() identificationInfo} /
-     * {@link DataIdentification#getCitation() citation} in its own instance</li></ul>
+     * {@link DataIdentification#getCitation() citation} /
+     * {@link Citation#getOtherCitationDetails() otherCitationDetails}</li></ul>
      */
     public static final String REFERENCES = "references";
 

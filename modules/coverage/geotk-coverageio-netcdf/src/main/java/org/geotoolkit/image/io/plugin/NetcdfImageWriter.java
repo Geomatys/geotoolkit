@@ -221,6 +221,7 @@ public class NetcdfImageWriter extends FileImageWriter {
         }
         data.createVariables(ncFile, createRectIter(image, param));
         images.add(data);
+        writeMetadata(image.getMetadata());
     }
 
     /**
