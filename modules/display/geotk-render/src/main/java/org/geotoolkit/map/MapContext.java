@@ -27,7 +27,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 /**
  * Store context information about a map display.
  * This class does not store information about the map view.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
@@ -53,7 +53,7 @@ public interface MapContext extends MapItem{
     Envelope getAreaOfInterest();
 
     /**
-     * Set the favorite visible area.
+     * Set the favorite visible area. AreaOfInterest CRS and current MapContext CRS could be different.
      */
     void setAreaOfInterest(Envelope aoi);
 
