@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2010, Johann Sorel
+ *    (C) 2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,33 +14,29 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-
 package org.geotoolkit.gui.swing.go2.control.information.presenter;
-
-import javax.swing.JComponent;
-import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
-
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public interface InformationPresenter extends Comparable<InformationPresenter> {
+public abstract class AbstractInformationPresenter implements InformationPresenter{
 
-    /**
-     * Determinate the presenter order.
-     *
-     * @return higher value for high priority.
-     */
-    double getPriority();
+    private final double priority;
 
-    /**
-     * Create a user interface component to display the given object.
-     * @param candidate , object to display
-     * @return JComponent or null if no component appropriate.
-     */
-    JComponent createComponent(final Object graphic, final RenderingContext2D context, final SearchAreaJ2D area);
+    public AbstractInformationPresenter(double priority) {
+        this.priority = priority;
+    }
+
+    @Override
+    public double getPriority() {
+        return priority;
+    }
+
+    @Override
+    public int compareTo(final InformationPresenter o) {
+        return (int) (this.getPriority() - o.getPriority());
+    }
 
 }

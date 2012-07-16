@@ -38,7 +38,11 @@ import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class CoveragePresenter implements InformationPresenter{
+public class CoveragePresenter extends AbstractInformationPresenter{
+
+    public CoveragePresenter() {
+        super(0);
+    }
 
     @Override
     public JComponent createComponent(final Object graphic, final RenderingContext2D context, final SearchAreaJ2D area) {

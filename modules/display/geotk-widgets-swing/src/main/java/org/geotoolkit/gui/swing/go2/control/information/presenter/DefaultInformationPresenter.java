@@ -18,6 +18,7 @@
 package org.geotoolkit.gui.swing.go2.control.information.presenter;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import javax.imageio.spi.ServiceRegistry;
@@ -30,11 +31,11 @@ import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
 /**
  * Merge available presenter registered in META-INF services
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DefaultInformationPresenter implements InformationPresenter{
+public class DefaultInformationPresenter extends AbstractInformationPresenter{
 
     private static final List<InformationPresenter> PRESENTERS;
 
@@ -45,7 +46,15 @@ public class DefaultInformationPresenter implements InformationPresenter{
         while(ite.hasNext()){
             presenters.add(ite.next());
         }
+
+        Collections.sort(presenters);
+        Collections.reverse(presenters);
+
         PRESENTERS = UnmodifiableArrayList.wrap(presenters.toArray(new InformationPresenter[presenters.size()]));
+    }
+
+    public DefaultInformationPresenter() {
+        super(0);
     }
 
     /**
