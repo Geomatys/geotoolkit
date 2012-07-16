@@ -45,6 +45,8 @@ import org.geotoolkit.lang.Configuration;
 import org.geotoolkit.io.wkt.PrjFiles;
 import org.geotoolkit.util.logging.Logging;
 
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
+
 
 /**
  * Reader for the <cite>World File</cite> format. This reader wraps an other image reader
@@ -293,7 +295,7 @@ public class WorldFileImageReader extends ImageReaderAdapter {
             super(main);
             pluginClassName = "org.geotoolkit.image.io.plugin.WorldFileImageReader";
             addFormatNameSuffix(NAME_SUFFIX);
-            addSpatialMetadataFormat(false, true);
+            addExtraMetadataFormat(GEOTK_FORMAT_NAME, false, true);
         }
 
         /**

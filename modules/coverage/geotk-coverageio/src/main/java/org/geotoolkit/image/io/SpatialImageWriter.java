@@ -46,6 +46,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Locales;
 import org.geotoolkit.resources.IndexedResourceBundle;
 
+import static org.geotoolkit.image.io.SpatialImageReader.Spi.getMetadataFormatCode;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 
 
@@ -595,10 +596,26 @@ public abstract class SpatialImageWriter extends ImageWriter implements WarningP
         }
 
         /**
+         * Adds the given format to the list of extra stream or metadata format names,
+         * if not already present. This method does nothing if the format is already
+         * listed as the native or an extra format.
+         *
+         * @param formatName
+         * @param stream {@code true} for adding to the list of {@linkplain #extraStreamMetadataFormatNames extra stream formats}.
+         * @param image  {@code true} for adding to the list of {@linkplain #extraImageMetadataFormatNames extra image formats}.
+         *
+         * @since 3.20
+         */
+        protected void addExtraMetadataFormat(final String formatName, final boolean stream, final boolean image) {
+            if (stream) extraStreamMetadataFormatNames = ImageReaderAdapter.Spi.addExtraMetadataFormat(formatName, nativeStreamMetadataFormatName, extraStreamMetadataFormatNames);
+            if (image)  extraImageMetadataFormatNames  = ImageReaderAdapter.Spi.addExtraMetadataFormat(formatName, nativeImageMetadataFormatName,  extraImageMetadataFormatNames);
+        }
+
+        /**
          * Returns {@code true} if this provider supports the {@linkplain SpatialMetadataFormat
          * spatial metadata format}. This method checks if a native or extra metadata format
          * named {@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#GEOTK_FORMAT_NAME}
-         * is declared. This is the case by default unless sublcasses modified the values of
+         * is declared. This is the case by default unless subclasses modified the values of
          * the {@code xxxFormatName} fields.
          *
          * @param  stream {@code true} for testing stream metadata, or {@code false} for testing
@@ -629,10 +646,16 @@ public abstract class SpatialImageWriter extends ImageWriter implements WarningP
          */
         @Override
         public IIOMetadataFormat getStreamMetadataFormat(final String formatName) {
-            if (GEOTK_FORMAT_NAME.equals(formatName) && isSpatialMetadataSupported(true)) {
-                return SpatialMetadataFormat.getStreamInstance(GEOTK_FORMAT_NAME);
+            switch (getMetadataFormatCode(formatName,
+                    nativeStreamMetadataFormatName,
+                    nativeStreamMetadataFormatClassName,
+                    extraStreamMetadataFormatNames,
+                    extraStreamMetadataFormatClassNames))
+            {
+                case 0:  return null;
+                case 1:  return SpatialMetadataFormat.getStreamInstance(formatName);
+                default: return super.getStreamMetadataFormat(formatName);
             }
-            return super.getStreamMetadataFormat(formatName);
         }
 
         /**
@@ -644,10 +667,16 @@ public abstract class SpatialImageWriter extends ImageWriter implements WarningP
          */
         @Override
         public IIOMetadataFormat getImageMetadataFormat(final String formatName) {
-            if (GEOTK_FORMAT_NAME.equals(formatName) && isSpatialMetadataSupported(true)) {
-                return SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME);
+            switch (getMetadataFormatCode(formatName,
+                    nativeImageMetadataFormatName,
+                    nativeImageMetadataFormatClassName,
+                    extraImageMetadataFormatNames,
+                    extraImageMetadataFormatClassNames))
+            {
+                case 0:  return null;
+                case 1:  return SpatialMetadataFormat.getImageInstance(formatName);
+                default: return super.getImageMetadataFormat(formatName);
             }
-            return super.getStreamMetadataFormat(formatName);
         }
     }
 }

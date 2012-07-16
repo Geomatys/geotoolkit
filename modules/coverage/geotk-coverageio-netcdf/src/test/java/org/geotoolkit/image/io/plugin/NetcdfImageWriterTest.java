@@ -95,7 +95,7 @@ public final strictfp class NetcdfImageWriterTest extends ImageWriterTestCase {
     @Override
     protected void completeImageMetadata(final IIOMetadata iio, final RenderedImage image) throws IOException {
         super.completeImageMetadata(iio, image);
-        if (image != null) {
+        if (image == null) {
             final DefaultCitation citation = new DefaultCitation(Citations.OGC);
             citation.getIdentifiers().add(new DefaultIdentifier(Citations.GEOTOOLKIT, "Test"));
             citation.getDates().add(new DefaultCitationDate(new Date(400000000000L), DateType.CREATION));
