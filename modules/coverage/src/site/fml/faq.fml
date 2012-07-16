@@ -25,17 +25,11 @@
         instance need to be created with the data of the previous coverage:</p>
 
 <source>GridCoverage2D oldGC = ...;
-GridGeometry gridGeom = oldGC.getGridGeometry();
-CoordinateReferenceSystem crs = ...; // <i>Specify the new CRS here</i>
-GridCoverageFactory factory = CoverageFactoryFinder.getGridCoverageFactory(null);
-GridCoverage2D newGC = factory.create(
-    oldGC.getName(),             // <i>The grid coverage name</i>
-    oldGC.getRenderedImage(),    // <i>The pixel values</i>
-    crs,                         // <i>The coordinate reference system</i>
-    grigGeom.getGridToCRS(),     // <i>The transform from pixel to geodetic coordinates</i>
-    oldGC.getSampleDimensions(), // <i>Information about each bands</i>
-    null,                        // <i>The sources (not relevant in this example)</i>
-    null);                       // <i>Optional properties</i></source>
+GridCoverageBuilder builder = new GridCoverageBuilder();
+builder.setGridCoverage(oldGC);
+builder.setCoordinateReferenceSystem(newCRS);
+GridCoverage2D newGC = builder.getGridCoverage2D();</source>
+
         <p>Note that this FAQ is about fixing a CRS value which was wrong in the first place.
         In order to <cite>reproject</cite> the pixel values to a new CRS, use the
         <a href="../../apidocs/org/geotoolkit/coverage/processing/operation/Resample.html">resample
