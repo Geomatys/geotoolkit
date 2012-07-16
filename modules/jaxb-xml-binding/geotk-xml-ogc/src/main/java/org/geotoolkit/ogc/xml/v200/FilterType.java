@@ -31,9 +31,9 @@ import org.opengis.filter.FilterVisitor;
 
 /**
  * <p>Java class for FilterType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="FilterType">
  *   &lt;complexContent>
@@ -45,8 +45,8 @@ import org.opengis.filter.FilterVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FilterType", propOrder = {
@@ -58,6 +58,7 @@ import org.opengis.filter.FilterVisitor;
     "function",
     "id"
 })
+@XmlRootElement(name="Filter")
 public class FilterType extends AbstractSelectionClauseType implements Filter, XMLFilter {
 
     @XmlElementRef(name = "comparisonOps", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
@@ -76,30 +77,30 @@ public class FilterType extends AbstractSelectionClauseType implements Filter, X
 
     @XmlTransient
     private Map<String, String> prefixMapping;
-    
+
     /**
      * a transient factory to build JAXBelement
      */
     @XmlTransient
     private static ObjectFactory FACTORY = new ObjectFactory();
-    
+
     public FilterType() {
-        
+
     }
     /**
      * build a new FilterType with the specified logical operator
      */
     public FilterType(final Object obj) {
-        
+
         // comparison operator
         if (obj instanceof ComparisonOpsType) {
             this.comparisonOps = createComparisonOps((ComparisonOpsType) obj);
-            
-        // logical operator    
+
+        // logical operator
         } else if (obj instanceof LogicOpsType) {
             this.logicOps = createLogicOps((LogicOpsType) obj);
-            
-        // spatial operator    
+
+        // spatial operator
         } else if (obj instanceof SpatialOpsType) {
             this.spatialOps = createSpatialOps((SpatialOpsType) obj);
 
@@ -112,10 +113,10 @@ public class FilterType extends AbstractSelectionClauseType implements Filter, X
             throw new IllegalArgumentException("This kind of object is not allowed:" + obj.getClass().getSimpleName());
         }
     }
-    
+
     /**
      * Gets the value of the comparisonOps property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link PropertyIsBetweenType }{@code >}
@@ -129,7 +130,7 @@ public class FilterType extends AbstractSelectionClauseType implements Filter, X
      *     {@link JAXBElement }{@code <}{@link PropertyIsNilType }{@code >}
      *     {@link JAXBElement }{@code <}{@link BinaryComparisonOpType }{@code >}
      *     {@link JAXBElement }{@code <}{@link PropertyIsNullType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends ComparisonOpsType> getComparisonOps() {
         return comparisonOps;
@@ -137,7 +138,7 @@ public class FilterType extends AbstractSelectionClauseType implements Filter, X
 
     /**
      * Sets the value of the comparisonOps property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link PropertyIsBetweenType }{@code >}
@@ -151,7 +152,7 @@ public class FilterType extends AbstractSelectionClauseType implements Filter, X
      *     {@link JAXBElement }{@code <}{@link PropertyIsNilType }{@code >}
      *     {@link JAXBElement }{@code <}{@link BinaryComparisonOpType }{@code >}
      *     {@link JAXBElement }{@code <}{@link PropertyIsNullType }{@code >}
-     *     
+     *
      */
     public void setComparisonOps(JAXBElement<? extends ComparisonOpsType> value) {
         this.comparisonOps = ((JAXBElement<? extends ComparisonOpsType> ) value);
@@ -159,7 +160,7 @@ public class FilterType extends AbstractSelectionClauseType implements Filter, X
 
     /**
      * Gets the value of the spatialOps property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
@@ -174,7 +175,7 @@ public class FilterType extends AbstractSelectionClauseType implements Filter, X
      *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
      *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
      *     {@link JAXBElement }{@code <}{@link DistanceBufferType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends SpatialOpsType> getSpatialOps() {
         return spatialOps;
@@ -182,7 +183,7 @@ public class FilterType extends AbstractSelectionClauseType implements Filter, X
 
     /**
      * Sets the value of the spatialOps property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
@@ -197,7 +198,7 @@ public class FilterType extends AbstractSelectionClauseType implements Filter, X
      *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
      *     {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}
      *     {@link JAXBElement }{@code <}{@link DistanceBufferType }{@code >}
-     *     
+     *
      */
     public void setSpatialOps(JAXBElement<? extends SpatialOpsType> value) {
         this.spatialOps = ((JAXBElement<? extends SpatialOpsType> ) value);
@@ -205,7 +206,7 @@ public class FilterType extends AbstractSelectionClauseType implements Filter, X
 
     /**
      * Gets the value of the temporalOps property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
@@ -223,7 +224,7 @@ public class FilterType extends AbstractSelectionClauseType implements Filter, X
      *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
      *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
      *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends TemporalOpsType> getTemporalOps() {
         return temporalOps;
@@ -231,7 +232,7 @@ public class FilterType extends AbstractSelectionClauseType implements Filter, X
 
     /**
      * Sets the value of the temporalOps property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
@@ -249,7 +250,7 @@ public class FilterType extends AbstractSelectionClauseType implements Filter, X
      *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
      *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
      *     {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}
-     *     
+     *
      */
     public void setTemporalOps(JAXBElement<? extends TemporalOpsType> value) {
         this.temporalOps = ((JAXBElement<? extends TemporalOpsType> ) value);
@@ -257,14 +258,14 @@ public class FilterType extends AbstractSelectionClauseType implements Filter, X
 
     /**
      * Gets the value of the logicOps property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link BinaryLogicOpType }{@code >}
      *     {@link JAXBElement }{@code <}{@link LogicOpsType }{@code >}
      *     {@link JAXBElement }{@code <}{@link UnaryLogicOpType }{@code >}
      *     {@link JAXBElement }{@code <}{@link BinaryLogicOpType }{@code >}
-     *     
+     *
      */
     public JAXBElement<? extends LogicOpsType> getLogicOps() {
         return logicOps;
@@ -272,14 +273,14 @@ public class FilterType extends AbstractSelectionClauseType implements Filter, X
 
     /**
      * Sets the value of the logicOps property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link BinaryLogicOpType }{@code >}
      *     {@link JAXBElement }{@code <}{@link LogicOpsType }{@code >}
      *     {@link JAXBElement }{@code <}{@link UnaryLogicOpType }{@code >}
      *     {@link JAXBElement }{@code <}{@link BinaryLogicOpType }{@code >}
-     *     
+     *
      */
     public void setLogicOps(JAXBElement<? extends LogicOpsType> value) {
         this.logicOps = ((JAXBElement<? extends LogicOpsType> ) value);
@@ -287,11 +288,11 @@ public class FilterType extends AbstractSelectionClauseType implements Filter, X
 
     /**
      * Gets the value of the extensionOps property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ExtensionOpsType }
-     *     
+     *
      */
     public ExtensionOpsType getExtensionOps() {
         return extensionOps;
@@ -299,11 +300,11 @@ public class FilterType extends AbstractSelectionClauseType implements Filter, X
 
     /**
      * Sets the value of the extensionOps property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ExtensionOpsType }
-     *     
+     *
      */
     public void setExtensionOps(ExtensionOpsType value) {
         this.extensionOps = value;
@@ -311,11 +312,11 @@ public class FilterType extends AbstractSelectionClauseType implements Filter, X
 
     /**
      * Gets the value of the function property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link FunctionType }
-     *     
+     *
      */
     public FunctionType getFunction() {
         return function;
@@ -323,11 +324,11 @@ public class FilterType extends AbstractSelectionClauseType implements Filter, X
 
     /**
      * Sets the value of the function property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link FunctionType }
-     *     
+     *
      */
     public void setFunction(FunctionType value) {
         this.function = value;
@@ -335,12 +336,12 @@ public class FilterType extends AbstractSelectionClauseType implements Filter, X
 
     /**
      * Gets the value of the id property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link ResourceIdType }{@code >}
      * {@link JAXBElement }{@code <}{@link AbstractIdType }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<? extends AbstractIdType>> getId() {
         if (id == null) {
@@ -350,7 +351,7 @@ public class FilterType extends AbstractSelectionClauseType implements Filter, X
     }
 
     public static JAXBElement<? extends ComparisonOpsType> createComparisonOps(final ComparisonOpsType operator) {
-        
+
         if (operator instanceof PropertyIsLessThanOrEqualToType) {
             return FACTORY.createPropertyIsLessThanOrEqualTo((PropertyIsLessThanOrEqualToType) operator);
         } else if (operator instanceof PropertyIsLessThanType) {
@@ -373,9 +374,9 @@ public class FilterType extends AbstractSelectionClauseType implements Filter, X
             return FACTORY.createComparisonOps((ComparisonOpsType) operator);
         } else return null;
     }
-    
+
     public static JAXBElement<? extends LogicOpsType> createLogicOps(final LogicOpsType operator) {
-        
+
         if (operator instanceof OrType) {
             return FACTORY.createOr((OrType) operator);
         } else if (operator instanceof NotType) {
@@ -386,9 +387,9 @@ public class FilterType extends AbstractSelectionClauseType implements Filter, X
             return FACTORY.createLogicOps((LogicOpsType) operator);
         } else return null;
     }
-    
+
     public static JAXBElement<? extends SpatialOpsType> createSpatialOps(final SpatialOpsType operator) {
-        
+
         if (operator instanceof BeyondType) {
             return FACTORY.createBeyond((BeyondType) operator);
         } else if (operator instanceof DWithinType) {
@@ -417,9 +418,9 @@ public class FilterType extends AbstractSelectionClauseType implements Filter, X
             return null;
         }
     }
-    
+
     public static JAXBElement<? extends TemporalOpsType> createTemporalOps(final TemporalOpsType operator) {
-        
+
         if (operator instanceof TimeAfterType) {
             return FACTORY.createAfter((TimeAfterType) operator);
         } else if (operator instanceof TimeAnyInteractsType) {
@@ -452,7 +453,7 @@ public class FilterType extends AbstractSelectionClauseType implements Filter, X
             return null;
         }
     }
-    
+
     public static JAXBElement<? extends AbstractIdType> createIdOps(final AbstractIdType operator) {
 
         if (operator instanceof ResourceIdType) {
@@ -475,7 +476,7 @@ public class FilterType extends AbstractSelectionClauseType implements Filter, X
     public void setPrefixMapping(Map<String, String> prefixMapping) {
         this.prefixMapping = prefixMapping;
     }
-    
+
     public Object getFilterObject() {
         if (comparisonOps != null) {
             return comparisonOps.getValue();
@@ -498,7 +499,7 @@ public class FilterType extends AbstractSelectionClauseType implements Filter, X
         }
         return null;
     }
-    
+
     public boolean evaluate(Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -506,7 +507,7 @@ public class FilterType extends AbstractSelectionClauseType implements Filter, X
     public Object accept(FilterVisitor fv, Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
+
     @Override
     public String toString() {
         final StringBuilder s = new StringBuilder("[").append(this.getClass().getSimpleName()).append(']').append('\n');
@@ -538,7 +539,7 @@ public class FilterType extends AbstractSelectionClauseType implements Filter, X
         }
         return s.toString();
     }
-    
+
     /**
      * Verify that this entry is identical to the specified object.
      */
@@ -549,19 +550,19 @@ public class FilterType extends AbstractSelectionClauseType implements Filter, X
         }
         if (object instanceof FilterType) {
             final FilterType that = (FilterType) object;
-            
+
             boolean comp = false;
             if (this.comparisonOps != null && that.comparisonOps != null) {
                 comp = Utilities.equals(this.comparisonOps.getValue(), that.comparisonOps.getValue());
             } else if (this.comparisonOps == null && that.comparisonOps == null)
                 comp = true;
-            
+
             boolean log = false;
             if (this.logicOps != null && that.logicOps != null) {
                 log = Utilities.equals(this.logicOps.getValue(), that.logicOps.getValue());
             } else if (this.logicOps == null && that.logicOps == null)
                 log = true;
-            
+
             boolean spa = false;
             if (this.spatialOps != null && that.spatialOps != null) {
                 spa = Utilities.equals(this.spatialOps.getValue(), that.spatialOps.getValue());

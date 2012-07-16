@@ -23,6 +23,7 @@ import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
@@ -77,6 +78,7 @@ import org.opengis.util.FactoryException;
 @XmlSeeAlso({
     EnvelopeWithTimePeriodType.class
 })
+@XmlRootElement(name="Envelope")
 public class EnvelopeType implements Entry, Envelope, org.geotoolkit.gml.xml.Envelope {
 
     private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.gml.xml.v311");

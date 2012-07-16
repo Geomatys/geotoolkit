@@ -32,13 +32,14 @@ public class FilterMarshallerPool {
     static {
         try {
             instance = new MarshallerPool("org.geotoolkit.ogc.xml.v110:"           +
-                                         "org.geotoolkit.internal.jaxb.geometry:" +
-                                         "org.geotoolkit.gml.xml.v311");
+                                          "org.geotoolkit.ogc.xml.v200:"           +
+                                          "org.geotoolkit.internal.jaxb.geometry:" +
+                                          "org.geotoolkit.gml.xml.v311");
         } catch (JAXBException ex) {
             Logger.getLogger(FilterMarshallerPool.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     private FilterMarshallerPool() {}
 
     public static MarshallerPool getInstance() {

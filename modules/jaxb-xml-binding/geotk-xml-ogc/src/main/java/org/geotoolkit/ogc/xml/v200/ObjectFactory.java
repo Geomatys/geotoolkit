@@ -25,18 +25,18 @@ import javax.xml.namespace.QName;
 
 
 /**
- * This object contains factory methods for each 
- * Java content interface and Java element interface 
- * generated in the net.opengis.fes._2 package. 
- * <p>An ObjectFactory allows you to programatically 
- * construct new instances of the Java representation 
- * for XML content. The Java representation of XML 
- * content can consist of schema derived interfaces 
- * and classes representing the binding of schema 
- * type definitions, element declarations and model 
- * groups.  Factory methods for each of these are 
+ * This object contains factory methods for each
+ * Java content interface and Java element interface
+ * generated in the net.opengis.fes._2 package.
+ * <p>An ObjectFactory allows you to programatically
+ * construct new instances of the Java representation
+ * for XML content. The Java representation of XML
+ * content can consist of schema derived interfaces
+ * and classes representing the binding of schema
+ * type definitions, element declarations and model
+ * groups.  Factory methods for each of these are
  * provided in this class.
- * 
+ *
  */
 @XmlRegistry
 public class ObjectFactory {
@@ -100,14 +100,14 @@ public class ObjectFactory {
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: net.opengis.fes._2
-     * 
+     *
      */
     public ObjectFactory() {
     }
 
     /**
      * Create an instance of {@link ArgumentsType }
-     * 
+     *
      */
     public ArgumentsType createArgumentsType() {
         return new ArgumentsType();
@@ -115,7 +115,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ResourceIdentifierType }
-     * 
+     *
      */
     public ResourceIdentifierType createResourceIdentifierType() {
         return new ResourceIdentifierType();
@@ -123,7 +123,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link UpperBoundaryType }
-     * 
+     *
      */
     public UpperBoundaryType createUpperBoundaryType() {
         return new UpperBoundaryType();
@@ -131,7 +131,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GeometryOperandsType.GeometryOperand }
-     * 
+     *
      */
     public GeometryOperandsType.GeometryOperand createGeometryOperandsTypeGeometryOperand() {
         return new GeometryOperandsType.GeometryOperand();
@@ -139,7 +139,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link FilterType }
-     * 
+     *
      */
     public FilterType createFilterType() {
         return new FilterType();
@@ -147,7 +147,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link FunctionType }
-     * 
+     *
      */
     public FunctionType createFunctionType() {
         return new FunctionType();
@@ -155,7 +155,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TemporalOperatorType }
-     * 
+     *
      */
     public TemporalOperatorType createTemporalOperatorType() {
         return new TemporalOperatorType();
@@ -163,7 +163,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ComparisonOperatorsType }
-     * 
+     *
      */
     public ComparisonOperatorsType createComparisonOperatorsType() {
         return new ComparisonOperatorsType();
@@ -171,7 +171,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link BinaryLogicOpType }
-     * 
+     *
      */
     public BinaryLogicOpType createBinaryLogicOpType() {
         return new BinaryLogicOpType();
@@ -179,7 +179,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TemporalCapabilitiesType }
-     * 
+     *
      */
     public TemporalCapabilitiesType createTemporalCapabilitiesType() {
         return new TemporalCapabilitiesType();
@@ -187,7 +187,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link FilterCapabilities }
-     * 
+     *
      */
     public FilterCapabilities createFilterCapabilities() {
         return new FilterCapabilities();
@@ -195,7 +195,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LowerBoundaryType }
-     * 
+     *
      */
     public LowerBoundaryType createLowerBoundaryType() {
         return new LowerBoundaryType();
@@ -203,7 +203,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PropertyIsLikeType }
-     * 
+     *
      */
     public PropertyIsLikeType createPropertyIsLikeType() {
         return new PropertyIsLikeType();
@@ -211,7 +211,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TemporalOperandsType }
-     * 
+     *
      */
     public TemporalOperandsType createTemporalOperandsType() {
         return new TemporalOperandsType();
@@ -219,7 +219,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ArgumentType }
-     * 
+     *
      */
     public ArgumentType createArgumentType() {
         return new ArgumentType();
@@ -227,7 +227,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TemporalOperandsType.TemporalOperand }
-     * 
+     *
      */
     public TemporalOperandsType.TemporalOperand createTemporalOperandsTypeTemporalOperand() {
         return new TemporalOperandsType.TemporalOperand();
@@ -235,7 +235,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LiteralType }
-     * 
+     *
      */
     public LiteralType createLiteralType() {
         return new LiteralType();
@@ -243,7 +243,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link BinarySpatialOpType }
-     * 
+     *
      */
     public BinarySpatialOpType createBinarySpatialOpType() {
         return new BinarySpatialOpType();
@@ -251,7 +251,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ExtensionOperatorType }
-     * 
+     *
      */
     public ExtensionOperatorType createExtensionOperatorType() {
         return new ExtensionOperatorType();
@@ -259,7 +259,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PropertyIsBetweenType }
-     * 
+     *
      */
     public PropertyIsBetweenType createPropertyIsBetweenType() {
         return new PropertyIsBetweenType();
@@ -267,7 +267,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AvailableFunctionsType }
-     * 
+     *
      */
     public AvailableFunctionsType createAvailableFunctionsType() {
         return new AvailableFunctionsType();
@@ -275,7 +275,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AvailableFunctionType }
-     * 
+     *
      */
     public AvailableFunctionType createAvailableFunctionType() {
         return new AvailableFunctionType();
@@ -283,7 +283,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ResourceIdType }
-     * 
+     *
      */
     public ResourceIdType createResourceIdType() {
         return new ResourceIdType();
@@ -291,7 +291,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AdditionalOperatorsType }
-     * 
+     *
      */
     public AdditionalOperatorsType createAdditionalOperatorsType() {
         return new AdditionalOperatorsType();
@@ -299,7 +299,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link BinaryComparisonOpType }
-     * 
+     *
      */
     public BinaryComparisonOpType createBinaryComparisonOpType() {
         return new BinaryComparisonOpType();
@@ -307,7 +307,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SortByType }
-     * 
+     *
      */
     public SortByType createSortByType() {
         return new SortByType();
@@ -315,7 +315,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SpatialOperatorsType }
-     * 
+     *
      */
     public SpatialOperatorsType createSpatialOperatorsType() {
         return new SpatialOperatorsType();
@@ -323,7 +323,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PropertyIsNilType }
-     * 
+     *
      */
     public PropertyIsNilType createPropertyIsNilType() {
         return new PropertyIsNilType();
@@ -331,7 +331,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ScalarCapabilitiesType }
-     * 
+     *
      */
     public ScalarCapabilitiesType createScalarCapabilitiesType() {
         return new ScalarCapabilitiesType();
@@ -339,7 +339,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SpatialCapabilitiesType }
-     * 
+     *
      */
     public SpatialCapabilitiesType createSpatialCapabilitiesType() {
         return new SpatialCapabilitiesType();
@@ -347,7 +347,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SortPropertyType }
-     * 
+     *
      */
     public SortPropertyType createSortPropertyType() {
         return new SortPropertyType();
@@ -355,7 +355,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link GeometryOperandsType }
-     * 
+     *
      */
     public GeometryOperandsType createGeometryOperandsType() {
         return new GeometryOperandsType();
@@ -363,7 +363,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link BinaryTemporalOpType }
-     * 
+     *
      */
     public BinaryTemporalOpType createBinaryTemporalOpType() {
         return new BinaryTemporalOpType();
@@ -371,7 +371,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ExtendedCapabilitiesType }
-     * 
+     *
      */
     public ExtendedCapabilitiesType createExtendedCapabilitiesType() {
         return new ExtendedCapabilitiesType();
@@ -379,7 +379,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PropertyIsNullType }
-     * 
+     *
      */
     public PropertyIsNullType createPropertyIsNullType() {
         return new PropertyIsNullType();
@@ -387,7 +387,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link BBOXType }
-     * 
+     *
      */
     public BBOXType createBBOXType() {
         return new BBOXType();
@@ -395,7 +395,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link IdCapabilitiesType }
-     * 
+     *
      */
     public IdCapabilitiesType createIdCapabilitiesType() {
         return new IdCapabilitiesType();
@@ -403,7 +403,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DistanceBufferType }
-     * 
+     *
      */
     public DistanceBufferType createDistanceBufferType() {
         return new DistanceBufferType();
@@ -411,7 +411,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TemporalOperatorsType }
-     * 
+     *
      */
     public TemporalOperatorsType createTemporalOperatorsType() {
         return new TemporalOperatorsType();
@@ -419,7 +419,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ConformanceType }
-     * 
+     *
      */
     public ConformanceType createConformanceType() {
         return new ConformanceType();
@@ -427,7 +427,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link MeasureType }
-     * 
+     *
      */
     public MeasureType createMeasureType() {
         return new MeasureType();
@@ -435,7 +435,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LogicalOperators }
-     * 
+     *
      */
     public LogicalOperators createLogicalOperators() {
         return new LogicalOperators();
@@ -443,7 +443,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ComparisonOperatorType }
-     * 
+     *
      */
     public ComparisonOperatorType createComparisonOperatorType() {
         return new ComparisonOperatorType();
@@ -451,7 +451,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link UnaryLogicOpType }
-     * 
+     *
      */
     public UnaryLogicOpType createUnaryLogicOpType() {
         return new UnaryLogicOpType();
@@ -459,7 +459,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SpatialOperatorType }
-     * 
+     *
      */
     public SpatialOperatorType createSpatialOperatorType() {
         return new SpatialOperatorType();
@@ -467,7 +467,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "AbstractProjectionClause")
     public JAXBElement<Object> createAbstractProjectionClause(Object value) {
@@ -476,7 +476,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BinaryComparisonOpType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "PropertyIsGreaterThan", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "comparisonOps")
     public JAXBElement<BinaryComparisonOpType> createPropertyIsGreaterThan(BinaryComparisonOpType value) {
@@ -485,7 +485,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "TContains", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "temporalOps")
     public JAXBElement<BinaryTemporalOpType> createTContains(BinaryTemporalOpType value) {
@@ -494,7 +494,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "Meets", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "temporalOps")
     public JAXBElement<BinaryTemporalOpType> createMeets(BinaryTemporalOpType value) {
@@ -503,7 +503,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BinaryComparisonOpType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "PropertyIsNotEqualTo", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "comparisonOps")
     public JAXBElement<BinaryComparisonOpType> createPropertyIsNotEqualTo(BinaryComparisonOpType value) {
@@ -512,7 +512,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SpatialOpsType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "spatialOps")
     public JAXBElement<SpatialOpsType> createSpatialOps(SpatialOpsType value) {
@@ -521,7 +521,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BinaryComparisonOpType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "PropertyIsLessThanOrEqualTo", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "comparisonOps")
     public JAXBElement<BinaryComparisonOpType> createPropertyIsLessThanOrEqualTo(BinaryComparisonOpType value) {
@@ -530,7 +530,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link LogicOpsType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "logicOps")
     public JAXBElement<LogicOpsType> createLogicOps(LogicOpsType value) {
@@ -539,7 +539,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractIdType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "_Id")
     public JAXBElement<AbstractIdType> createId(AbstractIdType value) {
@@ -548,7 +548,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractQueryExpressionType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "AbstractQueryExpression")
     public JAXBElement<AbstractQueryExpressionType> createAbstractQueryExpression(AbstractQueryExpressionType value) {
@@ -557,7 +557,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "Contains", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "spatialOps")
     public JAXBElement<BinarySpatialOpType> createContains(BinarySpatialOpType value) {
@@ -566,7 +566,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PropertyIsLikeType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "PropertyIsLike", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "comparisonOps")
     public JAXBElement<PropertyIsLikeType> createPropertyIsLike(PropertyIsLikeType value) {
@@ -575,7 +575,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BinaryComparisonOpType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "PropertyIsEqualTo", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "comparisonOps")
     public JAXBElement<BinaryComparisonOpType> createPropertyIsEqualTo(BinaryComparisonOpType value) {
@@ -584,7 +584,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "Begins", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "temporalOps")
     public JAXBElement<BinaryTemporalOpType> createBegins(BinaryTemporalOpType value) {
@@ -593,7 +593,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "During", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "temporalOps")
     public JAXBElement<BinaryTemporalOpType> createDuring(BinaryTemporalOpType value) {
@@ -602,7 +602,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "ValueReference", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "expression")
     public JAXBElement<String> createValueReference(String value) {
@@ -611,7 +611,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BBOXType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "BBOX", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "spatialOps")
     public JAXBElement<BBOXType> createBBOX(BBOXType value) {
@@ -620,7 +620,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SortByType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "SortBy", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "AbstractSortingClause")
     public JAXBElement<SortByType> createSortBy(SortByType value) {
@@ -629,7 +629,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link UnaryLogicOpType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "Not", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "logicOps")
     public JAXBElement<UnaryLogicOpType> createNot(UnaryLogicOpType value) {
@@ -638,7 +638,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DistanceBufferType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "Beyond", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "spatialOps")
     public JAXBElement<DistanceBufferType> createBeyond(DistanceBufferType value) {
@@ -647,7 +647,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DistanceBufferType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "DWithin", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "spatialOps")
     public JAXBElement<DistanceBufferType> createDWithin(DistanceBufferType value) {
@@ -656,7 +656,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "expression")
     public JAXBElement<Object> createExpression(Object value) {
@@ -665,7 +665,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "EndedBy", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "temporalOps")
     public JAXBElement<BinaryTemporalOpType> createEndedBy(BinaryTemporalOpType value) {
@@ -674,7 +674,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "Within", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "spatialOps")
     public JAXBElement<BinarySpatialOpType> createWithin(BinarySpatialOpType value) {
@@ -683,7 +683,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BinaryLogicOpType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "Or", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "logicOps")
     public JAXBElement<BinaryLogicOpType> createOr(BinaryLogicOpType value) {
@@ -692,7 +692,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PropertyIsBetweenType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "PropertyIsBetween", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "comparisonOps")
     public JAXBElement<PropertyIsBetweenType> createPropertyIsBetween(PropertyIsBetweenType value) {
@@ -701,7 +701,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PropertyIsNullType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "PropertyIsNull", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "comparisonOps")
     public JAXBElement<PropertyIsNullType> createPropertyIsNull(PropertyIsNullType value) {
@@ -710,7 +710,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BinaryLogicOpType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "And", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "logicOps")
     public JAXBElement<BinaryLogicOpType> createAnd(BinaryLogicOpType value) {
@@ -719,7 +719,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "Touches", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "spatialOps")
     public JAXBElement<BinarySpatialOpType> createTouches(BinarySpatialOpType value) {
@@ -728,7 +728,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PropertyIsNilType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "PropertyIsNil", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "comparisonOps")
     public JAXBElement<PropertyIsNilType> createPropertyIsNil(PropertyIsNilType value) {
@@ -737,7 +737,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link LiteralType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "Literal", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "expression")
     public JAXBElement<LiteralType> createLiteral(LiteralType value) {
@@ -746,7 +746,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "Ends", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "temporalOps")
     public JAXBElement<BinaryTemporalOpType> createEnds(BinaryTemporalOpType value) {
@@ -755,7 +755,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "TOverlaps", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "temporalOps")
     public JAXBElement<BinaryTemporalOpType> createTOverlaps(BinaryTemporalOpType value) {
@@ -764,7 +764,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ComparisonOpsType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "comparisonOps")
     public JAXBElement<ComparisonOpsType> createComparisonOps(ComparisonOpsType value) {
@@ -773,7 +773,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ResourceIdType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "ResourceId", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "_Id")
     public JAXBElement<ResourceIdType> createResourceId(ResourceIdType value) {
@@ -782,7 +782,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "MetBy", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "temporalOps")
     public JAXBElement<BinaryTemporalOpType> createMetBy(BinaryTemporalOpType value) {
@@ -791,7 +791,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "Equals", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "spatialOps")
     public JAXBElement<BinarySpatialOpType> createEquals(BinarySpatialOpType value) {
@@ -800,7 +800,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractAdhocQueryExpressionType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "AbstractAdhocQueryExpression", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "AbstractQueryExpression")
     public JAXBElement<AbstractAdhocQueryExpressionType> createAbstractAdhocQueryExpression(AbstractAdhocQueryExpressionType value) {
@@ -809,7 +809,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link FunctionType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "Function", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "expression")
     public JAXBElement<FunctionType> createFunction(FunctionType value) {
@@ -818,7 +818,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "Disjoint", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "spatialOps")
     public JAXBElement<BinarySpatialOpType> createDisjoint(BinarySpatialOpType value) {
@@ -827,7 +827,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link TemporalOpsType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "temporalOps")
     public JAXBElement<TemporalOpsType> createTemporalOps(TemporalOpsType value) {
@@ -836,7 +836,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "Overlaps", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "spatialOps")
     public JAXBElement<BinarySpatialOpType> createOverlaps(BinarySpatialOpType value) {
@@ -845,7 +845,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "OverlappedBy", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "temporalOps")
     public JAXBElement<BinaryTemporalOpType> createOverlappedBy(BinaryTemporalOpType value) {
@@ -854,7 +854,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "BegunBy", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "temporalOps")
     public JAXBElement<BinaryTemporalOpType> createBegunBy(BinaryTemporalOpType value) {
@@ -863,7 +863,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BinaryComparisonOpType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "PropertyIsLessThan", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "comparisonOps")
     public JAXBElement<BinaryComparisonOpType> createPropertyIsLessThan(BinaryComparisonOpType value) {
@@ -872,7 +872,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "Crosses", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "spatialOps")
     public JAXBElement<BinarySpatialOpType> createCrosses(BinarySpatialOpType value) {
@@ -881,7 +881,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BinaryComparisonOpType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "PropertyIsGreaterThanOrEqualTo", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "comparisonOps")
     public JAXBElement<BinaryComparisonOpType> createPropertyIsGreaterThanOrEqualTo(BinaryComparisonOpType value) {
@@ -890,7 +890,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "Before", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "temporalOps")
     public JAXBElement<BinaryTemporalOpType> createBefore(BinaryTemporalOpType value) {
@@ -899,7 +899,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "After", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "temporalOps")
     public JAXBElement<BinaryTemporalOpType> createAfter(BinaryTemporalOpType value) {
@@ -908,7 +908,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link FilterType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "Filter", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "AbstractSelectionClause")
     public JAXBElement<FilterType> createFilter(FilterType value) {
@@ -917,7 +917,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BinarySpatialOpType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "Intersects", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "spatialOps")
     public JAXBElement<BinarySpatialOpType> createIntersects(BinarySpatialOpType value) {
@@ -926,7 +926,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link ExtensionOpsType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "extensionOps")
     public JAXBElement<ExtensionOpsType> createExtensionOps(ExtensionOpsType value) {
@@ -935,7 +935,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "AnyInteracts", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "temporalOps")
     public JAXBElement<BinaryTemporalOpType> createAnyInteracts(BinaryTemporalOpType value) {
@@ -944,7 +944,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "AbstractSortingClause")
     public JAXBElement<Object> createAbstractSortingClause(Object value) {
@@ -953,7 +953,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "AbstractSelectionClause")
     public JAXBElement<Object> createAbstractSelectionClause(Object value) {
@@ -962,7 +962,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link BinaryTemporalOpType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/fes/2.0", name = "TEquals", substitutionHeadNamespace = "http://www.opengis.net/fes/2.0", substitutionHeadName = "temporalOps")
     public JAXBElement<BinaryTemporalOpType> createTEquals(BinaryTemporalOpType value) {
