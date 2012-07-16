@@ -50,7 +50,7 @@ import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.util.converter.Classes;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
-import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
+import static org.geotoolkit.image.io.SpatialImageReader.Spi.getMetadataFormatCode;
 
 
 /**
@@ -783,21 +783,6 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
         }
 
         /**
-         * Adds the {@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#GEOTK_FORMAT_NAME}
-         * format to the list of extra stream or metadata format names, if not already present. This
-         * method does nothing if the format is already listed as the native or an extra format.
-         *
-         * @param stream {@code true} for adding the spatial format to the list of stream formats.
-         * @param image  {@code true} for adding the spatial format to the list of image formats.
-         *
-         * @since 3.20
-         */
-        protected void addSpatialMetadataFormat(final boolean stream, final boolean image) {
-            if (stream) extraStreamMetadataFormatNames = ImageReaderAdapter.Spi.addSpatialMetadataFormat(nativeStreamMetadataFormatName, extraStreamMetadataFormatNames);
-            if (image)  extraImageMetadataFormatNames  = ImageReaderAdapter.Spi.addSpatialMetadataFormat(nativeImageMetadataFormatName,  extraImageMetadataFormatNames);
-        }
-
-        /**
          * Returns the output types accepted by the {@linkplain #main} provider which are also
          * accepted by this provider, or {@code null} if none.
          */
@@ -810,10 +795,16 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
          */
         @Override
         public IIOMetadataFormat getStreamMetadataFormat(final String formatName) {
-            if (GEOTK_FORMAT_NAME.equals(formatName) && isSpatialMetadataSupported(true)) {
-                return SpatialMetadataFormat.getStreamInstance(GEOTK_FORMAT_NAME);
+            switch (getMetadataFormatCode(formatName,
+                    nativeStreamMetadataFormatName,
+                    nativeStreamMetadataFormatClassName,
+                    extraStreamMetadataFormatNames,
+                    extraStreamMetadataFormatClassNames))
+            {
+                case 1:  return SpatialMetadataFormat.getStreamInstance(formatName);
+                case 2:  return super.getStreamMetadataFormat(formatName);
+                default: return main.getStreamMetadataFormat(formatName);
             }
-            return main.getStreamMetadataFormat(formatName);
         }
 
         /**
@@ -821,10 +812,16 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
          */
         @Override
         public IIOMetadataFormat getImageMetadataFormat(final String formatName) {
-            if (GEOTK_FORMAT_NAME.equals(formatName) && isSpatialMetadataSupported(false)) {
-                return SpatialMetadataFormat.getImageInstance(GEOTK_FORMAT_NAME);
+            switch (getMetadataFormatCode(formatName,
+                    nativeImageMetadataFormatName,
+                    nativeImageMetadataFormatClassName,
+                    extraImageMetadataFormatNames,
+                    extraImageMetadataFormatClassNames))
+            {
+                case 1:  return SpatialMetadataFormat.getImageInstance(formatName);
+                case 2:  return super.getImageMetadataFormat(formatName);
+                default: return main.getImageMetadataFormat(formatName);
             }
-            return main.getImageMetadataFormat(formatName);
         }
 
         /**

@@ -39,8 +39,9 @@ import org.geotoolkit.util.collection.BackingStoreException;
 import org.geotoolkit.image.io.FileImageWriter;
 import org.geotoolkit.metadata.netcdf.NetcdfMetadataWriter;
 
-import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.ISO_FORMAT_NAME;
 import static org.geotoolkit.image.io.plugin.NetcdfImageReader.Spi.*;
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.ISO_FORMAT_NAME;
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 
 
 /**
@@ -221,6 +222,7 @@ public class NetcdfImageWriter extends FileImageWriter {
         }
         data.createVariables(ncFile, createRectIter(image, param));
         images.add(data);
+        writeMetadata(image.getMetadata());
     }
 
     /**
@@ -315,8 +317,8 @@ public class NetcdfImageWriter extends FileImageWriter {
             outputTypes[length] = NetcdfFileWriteable.class;
             nativeStreamMetadataFormatName = NATIVE_FORMAT_NAME;
             nativeImageMetadataFormatName  = NATIVE_FORMAT_NAME;
-            extraStreamMetadataFormatNames = EXTRA_FORMAT_NAMES;
-            extraImageMetadataFormatNames  = EXTRA_FORMAT_NAMES;
+            addExtraMetadataFormat(GEOTK_FORMAT_NAME, true, true);
+            addExtraMetadataFormat(ISO_FORMAT_NAME, true, false);
         }
 
         /**

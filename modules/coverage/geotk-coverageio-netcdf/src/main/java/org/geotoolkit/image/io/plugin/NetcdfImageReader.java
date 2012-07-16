@@ -74,7 +74,6 @@ import org.geotoolkit.image.io.NamedImageStore;
 import org.geotoolkit.image.io.SampleConverter;
 import org.geotoolkit.image.io.SpatialImageReadParam;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
-import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.internal.image.io.DimensionManager;
 import org.geotoolkit.internal.image.io.IIOImageHelper;
@@ -87,6 +86,9 @@ import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.collection.BackingStoreException;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.util.logging.Logging;
+
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.ISO_FORMAT_NAME;
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
 
 
 /**
@@ -1347,13 +1349,6 @@ public class NetcdfImageReader extends FileImageReader implements
         static final String NATIVE_FORMAT_NAME = "NetCDF";
 
         /**
-         * The name of extra formats.
-         */
-        static final String[] EXTRA_FORMAT_NAMES = {
-            SpatialMetadataFormat.GEOTK_FORMAT_NAME, SpatialMetadataFormat.ISO_FORMAT_NAME
-        };
-
-        /**
          * List of legal names for NetCDF readers.
          */
         static final String[] NAMES = new String[] {"NetCDF", "netcdf"};
@@ -1387,8 +1382,8 @@ public class NetcdfImageReader extends FileImageReader implements
             inputTypes[length] = NetcdfFile.class;
             nativeStreamMetadataFormatName = NATIVE_FORMAT_NAME;
             nativeImageMetadataFormatName  = NATIVE_FORMAT_NAME;
-            extraStreamMetadataFormatNames = EXTRA_FORMAT_NAMES;
-            extraImageMetadataFormatNames  = EXTRA_FORMAT_NAMES;
+            addExtraMetadataFormat(GEOTK_FORMAT_NAME, true, true);
+            addExtraMetadataFormat(ISO_FORMAT_NAME, true, false);
         }
 
         /**

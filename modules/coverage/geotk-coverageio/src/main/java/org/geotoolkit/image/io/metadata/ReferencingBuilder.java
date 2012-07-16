@@ -45,6 +45,7 @@ import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.IndexedResourceBundle;
 import org.geotoolkit.internal.Citations;
+import org.geotoolkit.internal.CodeLists;
 import org.geotoolkit.internal.image.io.DataTypes;
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.NullArgumentException;
@@ -543,7 +544,7 @@ public class ReferencingBuilder extends Builder<CoordinateReferenceSystem> {
                      */
                     abbreviation = axesProperties.get(IdentifiedObject.NAME_KEY).toString();
                     if (abbreviation == null) {
-                        abbreviation = direction.identifier();
+                        abbreviation = CodeLists.identifier(direction);
                     }
                     abbreviation = Strings.camelCaseToAcronym(abbreviation);
                 }

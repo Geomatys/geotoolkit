@@ -33,6 +33,7 @@ import org.opengis.metadata.distribution.Distributor;
 import org.opengis.metadata.distribution.Distribution;
 import org.opengis.metadata.constraint.LegalConstraints;
 import org.opengis.metadata.constraint.Restriction;
+import org.opengis.metadata.spatial.DimensionNameType;
 import org.opengis.metadata.spatial.GridSpatialRepresentation;
 import org.opengis.metadata.spatial.SpatialRepresentationType;
 import org.opengis.metadata.identification.DataIdentification;
@@ -551,7 +552,8 @@ public abstract class NetcdfMetadata implements WarningProducer {
      * <p>
      * <b>Path:</b> <ul><li>{@link Metadata} /
      * {@link Metadata#getIdentificationInfo() identificationInfo} /
-     * {@link DataIdentification#getCitation() citation} in its own instance</li></ul>
+     * {@link DataIdentification#getCitation() citation} /
+     * {@link Citation#getOtherCitationDetails() otherCitationDetails}</li></ul>
      */
     public static final String REFERENCES = "references";
 
@@ -681,6 +683,11 @@ public abstract class NetcdfMetadata implements WarningProducer {
      */
     public static class Dimension {
         /**
+         * The ISO-19115 dimension type, or {@code null} if none.
+         */
+        public final DimensionNameType TYPE;
+
+        /**
          * The attribute name for the minimal value of the bounding box (<em>Recommended</em>).
          * Possible values are {@code "geospatial_lat_min"}, {@code "geospatial_lon_min"},
          * {@code "geospatial_vertical_min"} and {@code "time_coverage_start"}.
@@ -724,6 +731,7 @@ public abstract class NetcdfMetadata implements WarningProducer {
         /**
          * Creates a new set of attribute names.
          *
+         * @param type       The ISO-19115 dimension type, or {@code null} if none.
          * @param min        The attribute name for the minimal value of the bounding box.
          * @param max        The attribute name for the maximal value of the bounding box.
          * @param span       The attribute name for the difference between the minimal and maximal values.
@@ -731,9 +739,10 @@ public abstract class NetcdfMetadata implements WarningProducer {
          * @param units      The attribute name for the bounding box units of measurement.
          * @param positive   The attribute name for indicating which direction is positive.
          */
-        public Dimension(final String min, final String max, final String span, final String resolution,
-                final String units, final String positive)
+        public Dimension(final DimensionNameType type, final String min, final String max, final String span,
+                final String resolution,final String units, final String positive)
         {
+            TYPE       = type;
             MINIMUM    = min;
             MAXIMUM    = max;
             SPAN       = span;
@@ -764,8 +773,9 @@ public abstract class NetcdfMetadata implements WarningProducer {
      * @see #TIME
      * @see <a href="http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html#geospatial_lat_min_Attribute">UCAR reference</a>
      */
-    public static final Dimension LATITUDE = new Dimension("geospatial_lat_min",
-            "geospatial_lat_max", null, "geospatial_lat_resolution", "geospatial_lat_units", null);
+    public static final Dimension LATITUDE = new Dimension(DimensionNameType.ROW,
+            "geospatial_lat_min", "geospatial_lat_max", null,
+            "geospatial_lat_resolution", "geospatial_lat_units", null);
 
     /**
      * The set of attribute names for the minimal and maximal longitudes of the bounding box,
@@ -788,8 +798,9 @@ public abstract class NetcdfMetadata implements WarningProducer {
      * @see #TIME
      * @see <a href="http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html#geospatial_lon_min_Attribute">UCAR reference</a>
      */
-    public static final Dimension LONGITUDE = new Dimension("geospatial_lon_min",
-            "geospatial_lon_max", null, "geospatial_lon_resolution", "geospatial_lon_units", null);
+    public static final Dimension LONGITUDE = new Dimension(DimensionNameType.COLUMN,
+            "geospatial_lon_min", "geospatial_lon_max", null,
+            "geospatial_lon_resolution", "geospatial_lon_units", null);
 
     /**
      * The set of attribute names for the minimal and maximal elevations of the bounding box,
@@ -812,9 +823,9 @@ public abstract class NetcdfMetadata implements WarningProducer {
      * @see #TIME
      * @see <a href="http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html#geospatial_vertical_min_Attribute">UCAR reference</a>
      */
-    public static final Dimension VERTICAL = new Dimension("geospatial_vertical_min",
-            "geospatial_vertical_max", null, "geospatial_vertical_resolution",
-            "geospatial_vertical_units", "geospatial_vertical_positive");
+    public static final Dimension VERTICAL = new Dimension(DimensionNameType.VERTICAL,
+            "geospatial_vertical_min", "geospatial_vertical_max", null,
+            "geospatial_vertical_resolution", "geospatial_vertical_units", "geospatial_vertical_positive");
 
     /**
      * The set of attribute names for the start and end times of the bounding box, resolution and
@@ -835,8 +846,9 @@ public abstract class NetcdfMetadata implements WarningProducer {
      * @see #VERTICAL
      * @see <a href="http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html#time_coverage_start_Attribute">UCAR reference</a>
      */
-    public static final Dimension TIME = new Dimension("time_coverage_start", "time_coverage_end",
-            "time_coverage_duration", "time_coverage_resolution", "time_coverage_units", null);
+    public static final Dimension TIME = new Dimension(DimensionNameType.TIME,
+            "time_coverage_start", "time_coverage_end", "time_coverage_duration",
+            "time_coverage_resolution", "time_coverage_units", null);
 
     /**
      * The {@value} attribute name for the designation associated with a range element.

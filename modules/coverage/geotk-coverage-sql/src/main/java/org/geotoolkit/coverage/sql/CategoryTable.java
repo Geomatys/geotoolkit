@@ -40,6 +40,7 @@ import org.geotoolkit.coverage.Category;
 import org.geotoolkit.internal.coverage.TransferFunction;
 import org.geotoolkit.referencing.operation.matrix.Matrix2;
 import org.geotoolkit.image.io.PaletteFactory;
+import org.geotoolkit.internal.CodeLists;
 import org.geotoolkit.internal.coverage.ColorPalette;
 import org.geotoolkit.resources.Errors;
 
@@ -327,7 +328,7 @@ final class CategoryTable extends Table {
                             statement.setDouble(c0Index, tf.offset);
                             statement.setDouble(c1Index, tf.scale);
                             if (tf.type != null) {
-                                statement.setString(functionIndex, tf.type.identifier());
+                                statement.setString(functionIndex, CodeLists.identifier(tf.type));
                             } else {
                                 statement.setNull(functionIndex, Types.VARCHAR);
                             }

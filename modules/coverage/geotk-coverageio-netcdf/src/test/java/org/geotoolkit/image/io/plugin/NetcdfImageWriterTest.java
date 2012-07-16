@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.image.io.plugin;
 
+import java.util.Date;
 import java.util.Iterator;
 import java.io.File;
 import java.io.IOException;
@@ -26,11 +27,17 @@ import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
 
+import org.opengis.metadata.citation.DateType;
 import org.opengis.test.coverage.image.ImageWriterTestCase;
 
 import org.geotoolkit.image.io.DimensionSlice;
 import org.geotoolkit.internal.io.TemporaryFile;
 import org.geotoolkit.metadata.iso.DefaultMetadata;
+import org.geotoolkit.metadata.iso.DefaultIdentifier;
+import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.metadata.iso.citation.DefaultCitation;
+import org.geotoolkit.metadata.iso.citation.DefaultCitationDate;
+import org.geotoolkit.metadata.iso.identification.DefaultDataIdentification;
 
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
@@ -80,6 +87,7 @@ public final strictfp class NetcdfImageWriterTest extends ImageWriterTestCase {
 
     /**
      * Creates the metadata to be given to the NetCDF image writer.
+     * Current version creates quite dummy metadata, just testing a small amount of code.
      *
      * @param  iio The stream or image metadata to complete before to be given to the tested image writer.
      * @param  image The image for which to create image metadata, or {@code null} for stream metadata.
@@ -87,8 +95,17 @@ public final strictfp class NetcdfImageWriterTest extends ImageWriterTestCase {
     @Override
     protected void completeImageMetadata(final IIOMetadata iio, final RenderedImage image) throws IOException {
         super.completeImageMetadata(iio, image);
-        if (image != null) {
+        if (image == null) {
+            final DefaultCitation citation = new DefaultCitation(Citations.OGC);
+            citation.getIdentifiers().add(new DefaultIdentifier(Citations.GEOTOOLKIT, "Test"));
+            citation.getDates().add(new DefaultCitationDate(new Date(400000000000L), DateType.CREATION));
+            citation.getDates().add(new DefaultCitationDate(new Date(500000000000L), DateType.PUBLICATION));
+            final DefaultDataIdentification info = new DefaultDataIdentification();
+            info.setCitation(citation);
             final DefaultMetadata metadata = new DefaultMetadata();
+            metadata.getIdentificationInfo().add(info);
+            metadata.setDateStamp(new Date());
+
             final IIOMetadataNode root = new IIOMetadataNode(ISO_FORMAT_NAME);
             root.setUserObject(metadata);
             iio.mergeTree(ISO_FORMAT_NAME, root);

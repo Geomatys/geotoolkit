@@ -29,6 +29,7 @@ import java.util.Collection;
 import javax.imageio.ImageReader;
 import javax.imageio.IIOException;
 import javax.imageio.spi.ImageReaderSpi;
+import javax.imageio.metadata.IIOMetadata;
 
 import org.opengis.util.FactoryException;
 import org.opengis.metadata.citation.Citation;
@@ -57,7 +58,6 @@ import org.geotoolkit.image.io.ImageReaderAdapter;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.image.io.Formats;
-import org.geotoolkit.internal.image.io.IIOUtilities;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.internal.sql.table.SpatialDatabase;
 import org.geotoolkit.internal.sql.table.NoSuchRecordException;
@@ -368,7 +368,7 @@ public final class NewGridCoverageReference {
     {
         this(database, reader, input, imageIndex, reader.getOriginatingProvider(),
              new Rectangle(reader.getWidth(imageIndex), reader.getHeight(imageIndex)), null,
-             IIOUtilities.getSpatialMetadata(reader, imageIndex));
+             getSpatialMetadata(reader, imageIndex));
         /*
          * Close the reader but do not dispose it (unless we were asked to),
          * since it may be used for the next entry.
@@ -618,6 +618,37 @@ public final class NewGridCoverageReference {
         this.sampleDimensions = (candidate.sampleDimensions != null) ?
             new ArrayList<GridSampleDimension>(candidate.sampleDimensions) :
             new ArrayList<GridSampleDimension>();
+    }
+
+    /**
+     * Extracts spatial metadata from the given reader. First, this method tries to extract the
+     * image metadata. If they are not suitable, then this method fallback on the stream metadata.
+     * This method does not wraps other implementations in {@code SpatialMetadata} implementation.
+     * <p>
+     * This method is a workaround for RFE #4093999 in Sun's bug database
+     * ("Relax constraint on placement of this()/super() call in constructors").
+     *
+     * @param  reader     The image reader from which to extract the metadata, or {@code null}.
+     * @param  imageIndex The index of the image from which to extract metadata.
+     * @return The metadata, or {@code null} if none.
+     * @throws IOException If an error occurred while reading the metadata.
+     */
+    private static SpatialMetadata getSpatialMetadata(final ImageReader reader, final int imageIndex)
+            throws IOException
+    {
+        SpatialMetadata metadata = null;
+        if (reader != null) {
+            IIOMetadata candidate = reader.getImageMetadata(imageIndex);
+            if (candidate instanceof SpatialMetadata) {
+                metadata = (SpatialMetadata) candidate;
+            } else {
+                candidate = reader.getStreamMetadata();
+                if (candidate instanceof SpatialMetadata) {
+                    metadata = (SpatialMetadata) candidate;
+                }
+            }
+        }
+        return metadata;
     }
 
     /**

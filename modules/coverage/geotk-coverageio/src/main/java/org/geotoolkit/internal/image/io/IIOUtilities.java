@@ -17,14 +17,9 @@
  */
 package org.geotoolkit.internal.image.io;
 
-import java.io.IOException;
-import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
-import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.ImageReaderWriterSpi;
 import java.awt.image.SampleModel;
-
-import org.geotoolkit.image.io.metadata.SpatialMetadata;
 
 import org.geotoolkit.lang.Static;
 
@@ -37,7 +32,10 @@ import org.geotoolkit.lang.Static;
  *
  * @since 3.16 (derived from 3.00)
  * @module
+ *
+ * @deprecated Will be removed after we redesigned MosaicImageWriter.
  */
+@Deprecated
 public final class IIOUtilities extends Static {
     /**
      * Do not allow instantiation of this class.
@@ -94,33 +92,5 @@ public final class IIOUtilities extends Static {
             }
         }
         return 4 * Byte.SIZE;
-    }
-
-    /**
-     * Extracts spatial metadata from the given reader. First, this method tries to extract the
-     * image metadata. If they are not suitable, then this method fallback on the stream metadata.
-     * This method does not wraps other implementations in {@code SpatialMetadata} implementation.
-     *
-     * @param  reader     The image reader from which to extract the metadata, or {@code null}.
-     * @param  imageIndex The index of the image from which to extract metadata.
-     * @return The metadata, or {@code null} if none.
-     * @throws IOException If an error occurred while reading the metadata.
-     */
-    public static SpatialMetadata getSpatialMetadata(final ImageReader reader, final int imageIndex)
-            throws IOException
-    {
-        SpatialMetadata metadata = null;
-        if (reader != null) {
-            IIOMetadata candidate = reader.getImageMetadata(imageIndex);
-            if (candidate instanceof SpatialMetadata) {
-                metadata = (SpatialMetadata) candidate;
-            } else {
-                candidate = reader.getStreamMetadata();
-                if (candidate instanceof SpatialMetadata) {
-                    metadata = (SpatialMetadata) candidate;
-                }
-            }
-        }
-        return metadata;
     }
 }

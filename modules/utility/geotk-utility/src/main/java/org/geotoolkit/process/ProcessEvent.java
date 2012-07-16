@@ -85,7 +85,7 @@ public class ProcessEvent extends EventObject {
      *
      * @param source The source of this event.
      */
-    public ProcessEvent(final Process source){
+    public ProcessEvent(final Process source) {
         super(source);
         this.progress  = Float.NaN;
         this.task      = null;

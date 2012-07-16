@@ -21,6 +21,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.awt.Point;
 import java.awt.Dimension;
 import java.awt.Rectangle;
@@ -36,6 +38,7 @@ import java.awt.image.RenderedImage;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.awt.image.IndexColorModel;
+import java.awt.image.renderable.RenderableImage;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.io.File;
@@ -47,6 +50,7 @@ import javax.media.jai.PlanarImage;
 import javax.media.jai.ImageFunction;
 import javax.media.jai.RasterFactory;
 import javax.media.jai.RenderedImageAdapter;
+import javax.media.jai.PropertySource;
 import javax.media.jai.operator.ImageFunctionDescriptor;
 
 import org.opengis.geometry.Envelope;
@@ -753,6 +757,26 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
             if (gridToCRS != null) {
                 ensureDimensionMatch("crs", dimension, gridToCRS.getSourceDimensions());
             }
+            /*
+             * If a Geotk implementation of GridGeometry was defined, we need to extract the
+             * its main fields (namely GridToCRS and extent) before to clear the geometry in
+             * order to rebuild later a new instance with the new CRS.
+             */
+            if (isDefined(GeneralGridGeometry.CRS)) {
+                if (gridToCRS == null) {
+                    this.gridToCRS = gridGeometry.getGridToCRS();
+                    pixelAnchor = null;
+                }
+                if (extent == null) {
+                    extent = gridGeometry.getExtent();
+                }
+                gridGeometry = null;
+            } else if (isDefined(GeneralGridGeometry.ENVELOPE)) {
+                gridGeometry = null;
+            }
+            /*
+             * Reproject the envelope, if needed.
+             */
             final Envelope oldEnvelope = envelope;
             if (oldEnvelope != null) {
                 ensureDimensionMatch("crs", dimension, oldEnvelope.getDimension());
@@ -2275,6 +2299,60 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
     }
 
     /**
+     * Configure this builder to the same values than the given coverage.
+     * This method invokes the following methods with values inferred from the given coverage:
+     * <p>
+     * <ul>
+     *   <li>{@link #setName(CharSequence)} (for instances of {@link GridCoverage2D} only)</li>
+     *   <li>{@link #setRenderedImage(RenderedImage)}</li>
+     *   <li>{@link #setGridGeometry(GridGeometry)}</li>
+     *   <li>{@link #setCoordinateReferenceSystem(CoordinateReferenceSystem)}</li>
+     *   <li>{@link #setSampleDimensions(SampleDimension[])}</li>
+     *   <li>{@link #setSources(GridCoverage[])}</li>
+     *   <li>{@link #setProperties(PropertySource)} (for instances of {@link PropertySource} only)</li>
+     * </ul>
+     *
+     * @param coverage The coverage to set.
+     *
+     * @since 3.20
+     */
+    public void setGridCoverage(final GridCoverage coverage) {
+        setCoordinateReferenceSystem(coverage.getCoordinateReferenceSystem());
+        final GridGeometry gridGeometry = coverage.getGridGeometry();
+        setGridGeometry(gridGeometry);
+        final SampleDimension[] bands = new SampleDimension[coverage.getNumSampleDimensions()];
+        for (int i=0; i<bands.length; i++) {
+            bands[i] = coverage.getSampleDimension(i);
+        }
+        setSampleDimensions(bands);
+        final List<GridCoverage> sources = coverage.getSources();
+        if (sources != null) {
+            setSources(sources.toArray(new GridCoverage[sources.size()]));
+        }
+        if (coverage instanceof PropertySource) {
+            setProperties((PropertySource) coverage);
+        }
+        if (coverage instanceof GridCoverage2D) {
+            final GridCoverage2D c2 = (GridCoverage2D) coverage;
+            setName(c2.getName());
+            setRenderedImage(c2.getRenderedImage());
+            this.coverage = c2; // Needs to be last.
+        } else {
+            int gridDimensionX = 0;
+            int gridDimensionY = 1;
+            if (gridGeometry instanceof GridGeometry2D) {
+                final GridGeometry2D g2 = (GridGeometry2D) gridGeometry;
+                gridDimensionX = g2.gridDimensionX;
+                gridDimensionY = g2.gridDimensionY;
+            }
+            final RenderableImage im = coverage.getRenderableImage(gridDimensionX, gridDimensionY);
+            if (im != null) {
+                setRenderedImage(im.createDefaultRendering());
+            }
+        }
+    }
+
+    /**
      * Returns the optional sources to be associated with the coverage.
      * If there is no sources, then this method returns {@code null}.
      *
@@ -2336,7 +2414,7 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
     }
 
     /**
-     * Sets the optional hints to be given to the coverage.
+     * Sets the optional properties to be given to the coverage.
      *
      * {@section Reference to the given map}
      * The given map is not cloned at this method invocation time. The map will be cloned by
@@ -2350,6 +2428,28 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
      */
     public void setProperties(final Map<?,?> properties) {
         this.properties = properties; // NOSONAR
+    }
+
+    /**
+     * Inherits all the properties from the given source. This convenience methods copies the
+     * properties in a new {@link Map} object, then invokes {@link #setProperties(Map)}.
+     *
+     * @param source The source from which to get the properties, {@code null}.
+     *
+     * @since 3.20
+     */
+    public void setProperties(final PropertySource source) {
+        Map<String,Object> map = null;
+        if (source != null) {
+            final String[] names = source.getPropertyNames();
+            if (names != null && names.length != 0) {
+                map = new LinkedHashMap<String,Object>();
+                for (final String name : names) {
+                    map.put(name, source.getProperty(name));
+                }
+            }
+        }
+        setProperties(map);
     }
 
     /**

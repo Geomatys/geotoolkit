@@ -49,6 +49,8 @@ import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.logging.Logging;
 
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
+
 
 /**
  * Writer for the <cite>World File</cite> format. This writer wraps an other image writer
@@ -224,7 +226,7 @@ public class WorldFileImageWriter extends ImageWriterAdapter {
             super(main);
             pluginClassName = "org.geotoolkit.image.io.plugin.WorldFileImageWriter";
             addFormatNameSuffix(WorldFileImageReader.Spi.NAME_SUFFIX);
-            addSpatialMetadataFormat(false, true);
+            addExtraMetadataFormat(GEOTK_FORMAT_NAME, false, true);
         }
 
         /**

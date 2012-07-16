@@ -389,6 +389,54 @@ public final class Strings extends Static {
     }
 
     /**
+     * Formats the given elements as a (typically) comma-separated list. This method is similar
+     * to {@link java.util.Collection#toString()} or {@link Arrays#toString(Object[])} except
+     * for the following:
+     * <p>
+     * <ul>
+     *   <li>There is no leading {@code '['} and trailing {@code ']'} characters.</li>
+     *   <li>Null elements are ignored instead than formatted as {@code "null"}.</li>
+     *   <li>If the {@code collection} argument is null or contains only null elements,
+     *       then this method returns {@code null}.</li>
+     *   <li>In the common case where the collection contains a single {@link String} element,
+     *       that string is returned directly (no object duplication).</li>
+     * </ul>
+     * <p>
+     * This method can also be used as the converse of {@link #getLinesFromMultilines(String)}
+     * when the separator is {@link System#lineSeparator()}.
+     *
+     * @param  collection The elements to format in a (typically) comma-separated list, or {@code null}.
+     * @param  separator  The element separator, which is usually {@code ", "}.
+     * @return The (typically) comma-separated list, or {@code null} if the given {@code collection}
+     *         was null or contains only null elements.
+     *
+     * @since 3.20
+     */
+    public static String formatList(final Iterable<?> collection, final String separator) {
+        ArgumentChecks.ensureNonNull("separator", separator);
+        String list = null;
+        if (collection != null) {
+            StringBuilder buffer = null;
+            for (final Object element : collection) {
+                if (element != null) {
+                    if (list == null) {
+                        list = element.toString();
+                    } else {
+                        if (buffer == null) {
+                            buffer = new StringBuilder(list);
+                        }
+                        buffer.append(separator).append(element);
+                    }
+                }
+            }
+            if (buffer != null) {
+                list = buffer.toString();
+            }
+        }
+        return list;
+    }
+
+    /**
      * Replaces every occurrences of the given string in the given buffer.
      * This method invokes {@link StringBuilder#replace(int, int, String)}
      * for each occurrence of {@code search} found in the buffer.
@@ -745,7 +793,7 @@ public final class Strings extends Static {
     public static String camelCaseToAcronym(String text) {
         if (text != null && !isUpperCase(text = text.trim())) {
             final int length = text.length();
-            final StringBuilder buffer = new StringBuilder();
+            final StringBuilder buffer = new StringBuilder(8); // Acronyms are usually short.
             boolean wantChar = true;
             for (int i=0; i<length;) {
                 final int c = text.codePointAt(i);
@@ -1334,6 +1382,13 @@ search: for (; fromIndex <= stopAt; fromIndex++) {
      * Returns a {@link String} instance for each line found in a multi-lines string. Each element
      * in the returned array will be a single line. If the given text is already a single line,
      * then this method returns a singleton containing only the given text.
+     * <p>
+     * The converse of this method is {@link #formatList(Iterable, String)}.
+     *
+     * {@note This method has been designed in a time when <code>String.substring(int,int)</code>
+     * was cheap, because it shared the same internal <code>char[]</code> array than the original
+     * array. However as of JDK8, the <code>String</code> implementation changed and now copies
+     * the data. The pertinence of this method may need to be re-evaluated.}
      *
      * @param  text The multi-line text from which to get the individual lines.
      * @return The lines in the text, or {@code null} if the given text was null.
