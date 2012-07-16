@@ -55,7 +55,6 @@ import org.opengis.metadata.content.*;
 import org.opengis.metadata.maintenance.ScopeCode;
 import org.opengis.metadata.constraint.Restriction;
 import org.opengis.metadata.spatial.CellGeometry;
-import org.opengis.metadata.spatial.DimensionNameType;
 import org.opengis.metadata.spatial.GridSpatialRepresentation;
 import org.opengis.metadata.spatial.SpatialRepresentationType;
 import org.opengis.metadata.identification.DataIdentification;
@@ -796,23 +795,23 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
         final List<CoordinateAxis> axes = cs.getCoordinateAxes();
         for (int i=axes.size(); --i>=0;) { // We need to iterate in reverse order.
             final CoordinateAxis axis = axes.get(i);
-            DimensionNameType type = null;
+            Dimension rsat = null;
             Double resolution = null;
             final AxisType at = axis.getAxisType();
             if (at != null) {
-                Dimension rsat = null;
+                boolean valid = false;
                 switch (at) {
-                    case Lon:      rsat = LONGITUDE; // fallthrough
-                    case GeoX:     type = DimensionNameType.COLUMN; break;
-                    case Lat:      rsat = LATITUDE;  // fallthrough
-                    case GeoY:     type = DimensionNameType.ROW; break;
-                    case Height:   rsat = VERTICAL;  // fallthrough
+                    case Lon:      valid = true; // fallthrough
+                    case GeoX:     rsat  = LONGITUDE; break;
+                    case Lat:      valid = true;  // fallthrough
+                    case GeoY:     rsat  = LATITUDE; break;
+                    case Height:   valid = true;  // fallthrough
                     case GeoZ:
-                    case Pressure: type = DimensionNameType.VERTICAL; break;
-                    case Time:     rsat = TIME; // fallthrough
-                    case RunTime:  type = DimensionNameType.TIME; break;
+                    case Pressure: rsat  = VERTICAL; break;
+                    case Time:     valid = true; // fallthrough
+                    case RunTime:  rsat  = TIME; break;
                 }
-                if (rsat != null) {
+                if (valid) {
                     final Number res = getNumericValue(rsat.RESOLUTION);
                     if (res != null) {
                         resolution = (res instanceof Double) ? (Double) res : res.doubleValue();
@@ -821,8 +820,10 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
             }
             for (int j=axis.getRank(); --j>=0;) { // Reverse order again.
                 final DefaultDimension dimension = new DefaultDimension();
-                dimension.setDimensionName(type);
-                dimension.setResolution(resolution);
+                if (rsat != null) {
+                    dimension.setDimensionName(rsat.TYPE);
+                    dimension.setResolution(resolution);
+                }
                 dimension.setDimensionSize(axis.getShape(j));
                 grid.getAxisDimensionProperties().add(dimension);
             }

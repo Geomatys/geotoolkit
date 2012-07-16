@@ -21,27 +21,32 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Date;
+import java.util.logging.Level;
 import java.io.IOException;
 import java.net.URI;
 import javax.measure.unit.Unit;
 import javax.measure.unit.NonSI;
+import javax.measure.converter.UnitConverter;
+import javax.measure.converter.ConversionException;
 import ucar.nc2.NetcdfFileWriteable;
 import ucar.nc2.units.DateFormatter;
 
 import org.opengis.metadata.Metadata;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.extent.*;
+import org.opengis.metadata.spatial.*;
 import org.opengis.metadata.content.*;
 import org.opengis.metadata.citation.*;
 import org.opengis.metadata.constraint.*;
 import org.opengis.metadata.identification.*;
-import org.opengis.metadata.spatial.SpatialRepresentationType;
 import org.opengis.metadata.lineage.Lineage;
 import org.opengis.metadata.quality.DataQuality;
+import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.util.InternationalString;
 import org.opengis.util.CodeList;
 
@@ -50,7 +55,8 @@ import org.geotoolkit.util.Version;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.image.io.WarningProducer;
 import org.geotoolkit.internal.CodeLists;
-import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
+import org.geotoolkit.internal.image.io.Warnings;
+import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.XArrays;
 
@@ -73,7 +79,9 @@ import org.geotoolkit.util.XArrays;
  *       formatted as a comma-separated list. However only the keywords belonging to the
  *       first vocabulary found will be formatted. The vocabulary name will be stored in
  *       the {@value #VOCABULARY} attribute.</li>
- *   <li>Latitude and longitude extremum, as the union of all geographic extents.</li>
+ *   <li>{@link #LATITUDE}, {@link #LONGITUDE}, {@link #VERTICAL} and {@link #TIME} groups of attributes,
+ *       as the union of all extents using compatible units of measurement. If some extents use incompatible
+ *       units, then only values compatible with the first unit of measurement found are retained.</li>
  * </ul>
  * <p>For every attributes not in the above list, only the first occurrence will be written in the NetCDF file.
  * For example if the ISO-19115 metadata define many {@linkplain Citation#getIdentifiers() identifiers},
@@ -93,6 +101,19 @@ import org.geotoolkit.util.XArrays;
  * @module
  */
 public class NetcdfMetadataWriter extends NetcdfMetadata {
+    /**
+     * Number of dimensions in the {@link #spatioTemporalExtent} array.
+     */
+    private static final int NUM_DIMENSIONS = 4;
+
+    /**
+     * Where to write the spatio-temporal extent. The length of this array
+     * shall be equals to the {@link #NUM_DIMENSIONS} value.
+     */
+    private static final Dimension[] DIMENSIONS = {
+        LONGITUDE, LATITUDE, VERTICAL, TIME
+    };
+
     /**
      * The NetCDF file where to write ISO metadata.
      * This file is set at construction time.
@@ -134,9 +155,28 @@ public class NetcdfMetadataWriter extends NetcdfMetadata {
     private String vocabulary;
 
     /**
-     * The union of all geographic extent, or {@code null} if unknown.
+     * The union of all geographic, vertical and temporal extents, and their resolution.
+     * The element in this array are as below, in that order:
+     *
+     * {@preformat text
+     *     xmin, ymin, zmin, tmin, xres, yres, zres, tres, xmax, ymax, zmax, tmax
+     * }
+     *
+     * The values at a given dimension are considered uninitialized if the the minimal value
+     * is greater than the maximal one.
+     *
+     * @see #NUM_DIMENSIONS
+     * @see #addExtent(int, double, double)
      */
-    private DefaultGeographicBoundingBox bbox;
+    private final double[] spatioTemporalExtent;
+
+    /**
+     * The vertical and temporal units, or {@code null} if unknown. As a special case, we
+     * use {@link Unit#ONE} when a minimal and maximal values where specified without units.
+     *
+     * @see #getUnit(SingleCRS)
+     */
+    private Unit<?> verticalUnit, temporalUnit;
 
     /**
      * The name of the next attribute value to set in a call to {@link #setAttribute(String)}.
@@ -160,6 +200,19 @@ public class NetcdfMetadataWriter extends NetcdfMetadata {
         ArgumentChecks.ensureNonNull("file", file);
         this.file  = file;
         defined = new HashSet<>();
+        spatioTemporalExtent = new double[3*NUM_DIMENSIONS];
+        Arrays.fill(spatioTemporalExtent, 0*NUM_DIMENSIONS, 2*NUM_DIMENSIONS, Double.POSITIVE_INFINITY);
+        Arrays.fill(spatioTemporalExtent, 2*NUM_DIMENSIONS, 3*NUM_DIMENSIONS, Double.NEGATIVE_INFINITY);
+    }
+
+    /**
+     * Reports a warning.
+     *
+     * @param method    The method in which the warning occurred.
+     * @param exception The exception to log.
+     */
+    private void warning(final String method, final Exception exception) {
+        Warnings.log(this, Level.WARNING, NetcdfMetadataWriter.class, method, exception);
     }
 
     /**
@@ -187,6 +240,29 @@ public class NetcdfMetadataWriter extends NetcdfMetadata {
     }
 
     /**
+     * Returns the value of the given number, or {@link Double#NaN} if the number is null.
+     */
+    private static double valueOf(final Double value) {
+        return (value != null) ? value.doubleValue() : Double.NaN;
+    }
+
+    /**
+     * Returns the units of measurement of the given CRS, or {@code Unit#ONE} if unspecified.
+     *
+     * @see #verticalUnit
+     * @see #temporalUnit
+     */
+    private static Unit<?> getUnit(final SingleCRS crs) {
+        if (crs != null) {
+            final Unit<?> unit = CRSUtilities.getUnit(crs.getCoordinateSystem());
+            if (unit != null) {
+                return unit;
+            }
+        }
+        return Unit.ONE;
+    }
+
+    /**
      * Formats the given units as a NetCDF unit. This method handles a few units in a special way
      * in order to match the NetCDF conventions. For example the {@linkplain NonSI#DEGREE_ANGLE
      * angular degrees} are formatted as {@code "degrees"} instead than {@code "°"}.
@@ -196,7 +272,7 @@ public class NetcdfMetadataWriter extends NetcdfMetadata {
      *         or {@code null} if the given unit was null.
      */
     private static String toString(final Unit<?> unit) {
-        if (unit == null) {
+        if (unit == null || unit.equals(Unit.ONE)) {
             return null;
         }
         if (unit.equals(NonSI.DEGREE_ANGLE)) {
@@ -342,8 +418,8 @@ public class NetcdfMetadataWriter extends NetcdfMetadata {
 
     /**
      * Adds the given (<var>key</var>, <var>value</var>) pair to the global attributes.
-     * If the given value is {@code NaN}, then this method does nothing and returns
-     * {@code false}.
+     * If the given value is {@code NaN} or infinite, then this method does nothing and
+     * returns {@code false}.
      * <p>
      * This method is invoked for every numerical attributes to be defined in the NetCDF file.
      * Subclasses can override this method if they want to alter the values, store it under a
@@ -355,7 +431,7 @@ public class NetcdfMetadataWriter extends NetcdfMetadata {
      * @throws IOException If an I/O operation was required and failed.
      */
     protected boolean setAttribute(final String key, final double value) throws IOException {
-        if (Double.isNaN(value)) {
+        if (Double.isNaN(value) || Double.isInfinite(value)) {
             return false;
         }
         file.addGlobalAttribute(key, value);
@@ -615,48 +691,109 @@ nextDate:       for (final CitationDate date : nonNull(citation.getDates())) {
     }
 
     /**
-     * Writes the NetCDF attributes for the given extent information.
+     * Computes the values of the NetCDF attributes for the given extent information.
      * This method does not write bounding box information immediately, but instead stores the
-     * information in the {@link #bbox} field. It is caller responsibility to write that field
-     * after this method invocation.
+     * information in the {@link #spatioTemporalExtent} field. It is caller responsibility to
+     * write that field after this method invocation.
      *
      * @param  content The extent information to write, or {@code null}.
      * @throws IOException If an I/O operation was required and failed.
      */
-    private void write(final Extent extent) throws IOException {
+    private void addExtent(final Extent extent) throws IOException {
         if (extent == null) {
             return;
         }
         boolean hasIdentifier = isDefined(GEOGRAPHIC_IDENTIFIER);
-        for (final GeographicExtent geo : nonNull(extent.getGeographicElements())) {
-            if (!hasIdentifier && (geo instanceof GeographicDescription)) {
-                hasIdentifier = setAttribute(((GeographicDescription) geo).getGeographicIdentifier());
+        for (final GeographicExtent element : nonNull(extent.getGeographicElements())) {
+            if (!hasIdentifier && (element instanceof GeographicDescription)) {
+                hasIdentifier = setAttribute(((GeographicDescription) element).getGeographicIdentifier());
             }
-            if (geo instanceof GeographicBoundingBox) {
-                final GeographicBoundingBox b = (GeographicBoundingBox) geo;
-                if (!Boolean.FALSE.equals(b.getInclusion())) {
-                    if (bbox == null) {
-                        bbox = new DefaultGeographicBoundingBox(b);
-                    } else {
-                        bbox.add(b);
-                    }
+            if (element instanceof GeographicBoundingBox) {
+                final GeographicBoundingBox bbox = (GeographicBoundingBox) element;
+                if (!Boolean.FALSE.equals(bbox.getInclusion())) {
+                    addExtent(null, 0, bbox.getWestBoundLongitude(), bbox.getEastBoundLongitude(), NonSI.DEGREE_ANGLE);
+                    addExtent(null, 1, bbox.getSouthBoundLatitude(), bbox.getNorthBoundLatitude(), NonSI.DEGREE_ANGLE);
                 }
             }
+        }
+        for (final VerticalExtent element : extent.getVerticalElements()) {
+            verticalUnit = addExtent(verticalUnit, 2,
+                    valueOf(element.getMinimumValue()),
+                    valueOf(element.getMaximumValue()),
+                    getUnit(element.getVerticalCRS()));
+        }
+        for (final TemporalExtent element : extent.getTemporalElements()) {
+            temporalUnit = addExtent(temporalUnit, 3,
+                    Double.NaN, // TODO
+                    Double.NaN, // TODO
+                    Unit.ONE);  // TODO
         }
     }
 
     /**
-     * Writes the given axis bounds in the given set of attributes.
+     * Adds the given minimum and maximum values for the extent at the given dimension.
+     * This method does nothing if the unit of measurement is incompatible with the one
+     * of previous calls.
      *
-     * @param  dim The set of attribute where to write the axis bounds.
+     * @param  oldUnit   The unit of measurement of previous calls, or {@code null} if none.
+     * @param  dimension The dimension to set, from 0 inclusive to {@value #NUM_DIMENSIONS} exclusive.
+     * @param  min       The minimal value, or {@code NaN} if unknown.
+     * @param  max       The minimal value, or {@code NaN} if unknown.
+     * @param  unit      The unit of measurement, or {@link Unit#ONE} if unknown.
+     * @return The unit of measurement to retain.
+     */
+    private Unit<?> addExtent(Unit<?> oldUnit, int dimension, double min, double max, final Unit<?> unit) {
+        if (oldUnit == null) {
+            oldUnit = unit;
+        } else try {
+            final UnitConverter c = unit.getConverterToAny(oldUnit);
+            min = c.convert(min);
+            max = c.convert(max);
+        } catch (ConversionException e) {
+            warning("addExtent", e);
+            return oldUnit;
+        }
+        double value = spatioTemporalExtent[dimension];
+        if (min < value) value = min;
+        if (max < value) value = max; // Paranoiac check, but should not happen.
+        spatioTemporalExtent[dimension] = value;
+
+        value = spatioTemporalExtent[dimension += 2*NUM_DIMENSIONS];
+        if (max > value) value = max;
+        if (min > value) value = min; // Paranoiac check, but should not happen.
+        spatioTemporalExtent[dimension] = value;
+        return oldUnit;
+    }
+
+    /**
+     * Computes the values of the NetCDF attributes for the given spatial information.
+     * This method does not write resolution information immediately, but instead stores the
+     * information in the {@link #spatioTemporalExtent} field. It is caller responsibility to
+     * write that field after this method invocation.
+     *
+     * @param dimension The dimension information to write, or {@code null}.
      * @throws IOException If an I/O operation was required and failed.
      */
-    private void write(final Dimension dim, final double min, final double max, final Unit<?> unit)
-            throws IOException
-    {
-        setAttribute(dim.MINIMUM, min);
-        setAttribute(dim.MAXIMUM, max);
-        setAttribute(dim.UNITS, toString(unit));
+    private void write(final SpatialRepresentation spatial) throws IOException {
+        if (spatial instanceof GridSpatialRepresentation) {
+            for (final org.opengis.metadata.spatial.Dimension dimension :
+                    nonNull(((GridSpatialRepresentation) spatial).getAxisDimensionProperties()))
+            {
+                final DimensionNameType type = dimension.getDimensionName();
+                if (type != null) for (int i=0; i<NUM_DIMENSIONS; i++) {
+                    if (type.equals(DIMENSIONS[i].TYPE)) {
+                        final Double resolution = dimension.getResolution();
+                        if (resolution != null) {
+                            final double value = resolution;
+                            if (value > 0 && value < spatioTemporalExtent[i + NUM_DIMENSIONS]) {
+                                spatioTemporalExtent[i + NUM_DIMENSIONS] = value;
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -692,18 +829,30 @@ nextDate:       for (final CitationDate date : nonNull(citation.getDates())) {
             }
         }
         /*
-         * Computes, then write the geographic extent.
+         * Computes, then write the geographic extent and resolution.
          */
         for (final Identification info : nonNull(metadata.getIdentificationInfo())) {
             if (info instanceof DataIdentification) {
                 for (final Extent extent : nonNull(((DataIdentification) info).getExtents())) {
-                    write(extent);
+                    addExtent(extent);
                 }
             }
         }
-        if (bbox != null) {
-            write(LATITUDE,  bbox.getSouthBoundLatitude(), bbox.getNorthBoundLatitude(), null);
-            write(LONGITUDE, bbox.getWestBoundLongitude(), bbox.getEastBoundLongitude(), null);
+        for (final SpatialRepresentation spatial : nonNull(metadata.getSpatialRepresentationInfo())) {
+            write(spatial);
+        }
+        for (int i=0; i<NUM_DIMENSIONS; i++) {
+            final Dimension dim = DIMENSIONS[i];
+            setAttribute(dim.MINIMUM,    spatioTemporalExtent[i]);
+            setAttribute(dim.MAXIMUM,    spatioTemporalExtent[i + 2*NUM_DIMENSIONS]);
+            setAttribute(dim.RESOLUTION, spatioTemporalExtent[i +   NUM_DIMENSIONS]);
+            final Unit<?> unit;
+            switch (i) {
+                default: continue;
+                case 2:  unit = verticalUnit; break;
+                case 3:  unit = temporalUnit; break;
+            }
+            setAttribute(dim.UNITS, toString(unit));
         }
         /*
          * Unconditionally write the legal information. This is okay because we accumulated
