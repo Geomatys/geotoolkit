@@ -34,9 +34,7 @@ import org.geotoolkit.feature.xml.XmlFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
 import org.geotoolkit.util.ArgumentChecks;
-import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
-import org.geotoolkit.util.converter.SimpleConverter;
 import org.geotoolkit.wps.converters.WPSDefaultConverter;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
 import org.geotoolkit.wps.xml.v100.InputReferenceType;
@@ -92,10 +90,10 @@ public abstract class AbstractReferenceInputConverter extends WPSDefaultConverte
                     featureReader = new JAXPStreamFeatureReader(featureTypes);
                 }
             } else {
-                featureReader.setReadEmbeddedFeatureType(true);
+                featureReader.getProperties().put(JAXPStreamFeatureReader.READ_EMBEDDED_FEATURE_TYPE, true);
             }
         } catch(JAXBException ex) {
-            featureReader.setReadEmbeddedFeatureType(true);
+            featureReader.getProperties().put(JAXPStreamFeatureReader.READ_EMBEDDED_FEATURE_TYPE, true);
         }
         return featureReader;
     }

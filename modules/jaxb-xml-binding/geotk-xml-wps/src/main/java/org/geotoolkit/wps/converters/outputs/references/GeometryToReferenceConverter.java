@@ -33,7 +33,7 @@ import org.opengis.util.FactoryException;
 
 /**
  * Implementation of ObjectConverter to convert a {@link Geometry geometry} into a {@link OutputReferenceType reference}.
- * 
+ *
  * @author Quentin Boileau (Geomatys).
  */
 public class GeometryToReferenceConverter extends AbstractReferenceOutputConverter<Geometry> {
@@ -49,32 +49,32 @@ public class GeometryToReferenceConverter extends AbstractReferenceOutputConvert
         }
         return INSTANCE;
     }
-    
+
     @Override
     public Class<? super Geometry> getSourceClass() {
         return Geometry.class;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     public ReferenceType convert(final Geometry source, final Map<String,Object> params) throws NonconvertibleObjectException {
-        
+
         if (params.get(TMP_DIR_PATH) == null) {
             throw new NonconvertibleObjectException("The output directory should be defined.");
         }
-        
+
         if (source == null) {
             throw new NonconvertibleObjectException("The output data should be defined.");
         }
         if ( !(source instanceof Geometry)) {
             throw new NonconvertibleObjectException("The geometry is not an JTS geometry.");
         }
-        
+
         final WPSIO.IOType ioType = WPSIO.IOType.valueOf((String) params.get(IOTYPE));
         ReferenceType reference = null ;
-        
+
         if (ioType.equals(WPSIO.IOType.INPUT)) {
             reference = new InputReferenceType();
         } else {
@@ -84,16 +84,12 @@ public class GeometryToReferenceConverter extends AbstractReferenceOutputConvert
         reference.setMimeType((String) params.get(MIME));
         reference.setEncoding((String) params.get(ENCODING));
         reference.setSchema((String) params.get(SCHEMA));
-        
-        reference.setMimeType((String) params.get(MIME));
-        reference.setEncoding((String) params.get(ENCODING));
-        reference.setSchema((String) params.get(SCHEMA));
-        
+
         String gmlVersion = (String) params.get(GMLVERSION);
         if (gmlVersion == null) {
             gmlVersion = "3.1.1";
         }
-        
+
         final String randomFileName = UUID.randomUUID().toString();
         Marshaller m = null;
         OutputStream geometryStream = null;
@@ -104,7 +100,7 @@ public class GeometryToReferenceConverter extends AbstractReferenceOutputConvert
             m = WPSMarshallerPool.getInstance().acquireMarshaller();
             m.marshal( JTStoGeometry.toGML(gmlVersion, source), geometryStream);
             reference.setHref((String) params.get(TMP_DIR_URL) + "/" +randomFileName);
-            
+
         } catch (FactoryException ex) {
             throw new NonconvertibleObjectException("Can't convert the JTS geometry to OpenGIS.", ex);
         } catch (FileNotFoundException ex) {

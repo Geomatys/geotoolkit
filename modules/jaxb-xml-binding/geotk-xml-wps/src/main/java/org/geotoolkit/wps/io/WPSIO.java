@@ -47,7 +47,7 @@ import org.opengis.filter.sort.SortBy;
 import org.opengis.geometry.Envelope;
 
 /**
- * 
+ *
  * @author Quentin Boileau (Geomatys).
  */
 public final class WPSIO {
@@ -71,13 +71,13 @@ public final class WPSIO {
         FORMATSUPPORTS.add(new FormatSupport(FeatureCollection[].class, IOType.INPUT, WPSMimeType.TEXT_GML.val(), Encoding.UTF8.getValue(), Schema.OGC_FEATURE_3_1_1.getValue(), false));
         FORMATSUPPORTS.add(new FormatSupport(FeatureCollection[].class, IOType.INPUT, WPSMimeType.APP_GML.val(), Encoding.UTF8.getValue(), Schema.OGC_FEATURE_3_1_1.getValue(), true));
 
-        FORMATSUPPORTS.add(new FormatSupport(Geometry.class, IOType.BOTH, WPSMimeType.TEXT_XML.val(), Encoding.UTF8.getValue(), Schema.ORC_GML_3_1_1.getValue(), false));
-        FORMATSUPPORTS.add(new FormatSupport(Geometry.class, IOType.BOTH, WPSMimeType.TEXT_GML.val(), Encoding.UTF8.getValue(), Schema.ORC_GML_3_1_1.getValue(), false));
-        FORMATSUPPORTS.add(new FormatSupport(Geometry.class, IOType.BOTH, WPSMimeType.APP_GML.val(), Encoding.UTF8.getValue(), Schema.ORC_GML_3_1_1.getValue(), true));
+        FORMATSUPPORTS.add(new FormatSupport(Geometry.class, IOType.BOTH, WPSMimeType.TEXT_XML.val(), Encoding.UTF8.getValue(), Schema.OGC_GML_3_1_1.getValue(), false));
+        FORMATSUPPORTS.add(new FormatSupport(Geometry.class, IOType.BOTH, WPSMimeType.TEXT_GML.val(), Encoding.UTF8.getValue(), Schema.OGC_GML_3_1_1.getValue(), false));
+        FORMATSUPPORTS.add(new FormatSupport(Geometry.class, IOType.BOTH, WPSMimeType.APP_GML.val(), Encoding.UTF8.getValue(), Schema.OGC_GML_3_1_1.getValue(), true));
 
-        FORMATSUPPORTS.add(new FormatSupport(Geometry[].class, IOType.BOTH, WPSMimeType.TEXT_XML.val(), Encoding.UTF8.getValue(), Schema.ORC_GML_3_1_1.getValue(), false));
-        FORMATSUPPORTS.add(new FormatSupport(Geometry[].class, IOType.BOTH, WPSMimeType.TEXT_GML.val(), Encoding.UTF8.getValue(), Schema.ORC_GML_3_1_1.getValue(), false));
-        FORMATSUPPORTS.add(new FormatSupport(Geometry[].class, IOType.BOTH, WPSMimeType.APP_GML.val(), Encoding.UTF8.getValue(), Schema.ORC_GML_3_1_1.getValue(), true));
+        FORMATSUPPORTS.add(new FormatSupport(Geometry[].class, IOType.BOTH, WPSMimeType.TEXT_XML.val(), Encoding.UTF8.getValue(), Schema.OGC_GML_3_1_1.getValue(), false));
+        FORMATSUPPORTS.add(new FormatSupport(Geometry[].class, IOType.BOTH, WPSMimeType.TEXT_GML.val(), Encoding.UTF8.getValue(), Schema.OGC_GML_3_1_1.getValue(), false));
+        FORMATSUPPORTS.add(new FormatSupport(Geometry[].class, IOType.BOTH, WPSMimeType.APP_GML.val(), Encoding.UTF8.getValue(), Schema.OGC_GML_3_1_1.getValue(), true));
 
         FORMATSUPPORTS.add(new FormatSupport(FeatureType.class, IOType.BOTH, WPSMimeType.TEXT_XML.val(), Encoding.UTF8.getValue(), Schema.OGC_FEATURE_3_1_1.getValue(), true));
 
@@ -100,7 +100,7 @@ public final class WPSIO {
                 }
             }
         }
-        
+
         /*  Coverage
         for (final String readerMime : ImageIO.getReaderMIMETypes()) {
             if (!readerMime.isEmpty()) {
@@ -129,7 +129,8 @@ public final class WPSIO {
         FORMATSUPPORTS.add(new FormatSupport(Boolean.class, IOType.BOTH, null, Encoding.UTF8.getValue(), null, true));
         FORMATSUPPORTS.add(new FormatSupport(String.class, IOType.BOTH, null, Encoding.UTF8.getValue(), null, true));
 
-        FORMATSUPPORTS.add(new FormatSupport(File.class, IOType.INPUT, null, null, null, true));
+        FORMATSUPPORTS.add(new FormatSupport(File.class, IOType.BOTH, WPSMimeType.APP_OCTET.val(), null, null, true));
+        FORMATSUPPORTS.add(new FormatSupport(File.class, IOType.BOTH, WPSMimeType.APP_ZIP.val(), null, null, true));
 
         FORMATSUPPORTS.add(new FormatSupport(Unit.class, IOType.INPUT, null, Encoding.UTF8.getValue(), null, true));
 
@@ -649,7 +650,7 @@ public final class WPSIO {
     public static enum Schema {
 
         OGC_FEATURE_3_1_1("http://schemas.opengis.net/gml/3.1.1/base/feature.xsd"),
-        ORC_GML_3_1_1("http://schemas.opengis.net/gml/3.1.1/base/gml.xsd"),
+        OGC_GML_3_1_1("http://schemas.opengis.net/gml/3.1.1/base/gml.xsd"),
         MATHML_3("http://www.w3.org/Math/XMLSchema/mathml3/mathml3.xsd");
         public final String schema;
 
