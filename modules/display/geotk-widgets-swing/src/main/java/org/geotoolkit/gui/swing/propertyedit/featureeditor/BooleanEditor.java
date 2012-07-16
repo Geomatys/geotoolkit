@@ -20,14 +20,13 @@ import java.awt.BorderLayout;
 import javax.swing.JCheckBox;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
-import org.geotoolkit.gui.swing.propertyedit.JFeatureOutLine;
 import org.opengis.feature.type.PropertyType;
 
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
  */
-public class BooleanEditor implements JFeatureOutLine.PropertyEditor {
+public class BooleanEditor extends VersatileEditor {
 
     private final BooleanRW r = new BooleanRW();
     private final BooleanRW w = new BooleanRW();
@@ -39,14 +38,24 @@ public class BooleanEditor implements JFeatureOutLine.PropertyEditor {
 
     @Override
     public TableCellEditor getEditor(PropertyType property) {
-        w.property = property;
+        w.propertyType = property;
         return w;
     }
 
     @Override
     public TableCellRenderer getRenderer(PropertyType property) {
-        r.property = property;
+        r.propertyType = property;
         return r.getRenderer();
+    }
+
+    @Override
+    public TableCellEditorRenderer getReadingRenderer() {
+        return r;
+    }
+
+    @Override
+    public TableCellEditorRenderer getWritingRenderer() {
+        return w;
     }
 
     private static class BooleanRW extends TableCellEditorRenderer {

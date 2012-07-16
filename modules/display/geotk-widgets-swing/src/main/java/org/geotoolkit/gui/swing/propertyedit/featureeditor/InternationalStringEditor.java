@@ -29,10 +29,20 @@ import org.opengis.util.InternationalString;
  *
  * @author Johann Sorel (Puzzle-GIS)
  */
-public class InternationalStringEditor implements JFeatureOutLine.PropertyEditor {
+public class InternationalStringEditor extends VersatileEditor {
 
     private final StringRW r = new StringRW();
     private final StringRW w = new StringRW();
+
+    @Override
+    public TableCellEditorRenderer getReadingRenderer() {
+        return r;
+    }
+
+    @Override
+    public TableCellEditorRenderer getWritingRenderer() {
+        return w;
+    }
 
     @Override
     public boolean canHandle(PropertyType candidate) {
@@ -41,14 +51,14 @@ public class InternationalStringEditor implements JFeatureOutLine.PropertyEditor
 
     @Override
     public TableCellEditor getEditor(PropertyType property) {
-        w.property = property;
+        w.propertyType = property;
         r.update();
         return w;
     }
 
     @Override
     public TableCellRenderer getRenderer(PropertyType property) {
-        r.property = property;
+        r.propertyType = property;
         r.update();
         return r.getRenderer();
     }

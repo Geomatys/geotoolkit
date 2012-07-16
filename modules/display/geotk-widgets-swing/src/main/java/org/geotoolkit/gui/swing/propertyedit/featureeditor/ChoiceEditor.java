@@ -34,10 +34,20 @@ import org.opengis.filter.expression.Function;
  *
  * @author Johann Sorel (Puzzle-GIS)
  */
-public class ChoiceEditor implements JFeatureOutLine.PropertyEditor {
+public class ChoiceEditor extends VersatileEditor {
 
     private final ChoiceRW r = new ChoiceRW();
     private final ChoiceRW w = new ChoiceRW();
+
+    @Override
+    public TableCellEditorRenderer getReadingRenderer() {
+        return r;
+    }
+
+    @Override
+    public TableCellEditorRenderer getWritingRenderer() {
+        return w;
+    }
 
     @Override
     public boolean canHandle(PropertyType candidate) {
@@ -46,13 +56,13 @@ public class ChoiceEditor implements JFeatureOutLine.PropertyEditor {
 
     @Override
     public TableCellEditor getEditor(PropertyType property) {
-        w.property = property;
+        w.propertyType = property;
         return w;
     }
 
     @Override
     public TableCellRenderer getRenderer(PropertyType property) {
-        r.property = property;
+        r.propertyType = property;
         return r.getRenderer();
     }
 
@@ -71,23 +81,23 @@ public class ChoiceEditor implements JFeatureOutLine.PropertyEditor {
                         final List<Expression> values = expression.getParameters();
                         for(int i=1,n=values.size();i<n;i++){
                             //we expect values to be literals
-                            choices.add(values.get(i).evaluate(null)); 
+                            choices.add(values.get(i).evaluate(null));
                         }
                     }
                     return data;
                 }
-                
+
             }, choices);
         }
-        
+
         if(choices.isEmpty()){
             return null;
         }else{
             return choices;
         }
-        
+
     }
-    
+
     private static class ChoiceRW extends TableCellEditorRenderer {
 
         private final JComboBox component = new JComboBox();
@@ -100,7 +110,7 @@ public class ChoiceEditor implements JFeatureOutLine.PropertyEditor {
 
         @Override
         protected void prepare() {
-            component.setModel(new ListComboBoxModel(extractChoices(property)));
+            component.setModel(new ListComboBoxModel(extractChoices(propertyType)));
             component.setSelectedItem(value);
         }
 

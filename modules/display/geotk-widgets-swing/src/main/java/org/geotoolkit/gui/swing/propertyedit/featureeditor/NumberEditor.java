@@ -30,10 +30,20 @@ import org.opengis.feature.type.PropertyType;
  *
  * @author Johann Sorel (Puzzle-GIS)
  */
-public class NumberEditor implements JFeatureOutLine.PropertyEditor {
+public class NumberEditor extends VersatileEditor {
 
     private final NumberRW r = new NumberRW();
     private final NumberRW w = new NumberRW();
+
+    @Override
+    public TableCellEditorRenderer getReadingRenderer() {
+        return r;
+    }
+
+    @Override
+    public TableCellEditorRenderer getWritingRenderer() {
+        return w;
+    }
 
     @Override
     public boolean canHandle(PropertyType candidate) {
@@ -42,13 +52,13 @@ public class NumberEditor implements JFeatureOutLine.PropertyEditor {
 
     @Override
     public TableCellEditor getEditor(PropertyType property) {
-        w.property = property;
+        w.propertyType = property;
         return w;
     }
 
     @Override
     public TableCellRenderer getRenderer(PropertyType property) {
-        r.property = property;
+        r.propertyType = property;
         return r.getRenderer();
     }
 
@@ -68,8 +78,8 @@ public class NumberEditor implements JFeatureOutLine.PropertyEditor {
         protected void prepare() {
 
             //change model based on property
-            if (property != null && property instanceof AttributeType) {
-                final AttributeType type = (AttributeType) property;
+            if (propertyType != null && propertyType instanceof AttributeType) {
+                final AttributeType type = (AttributeType) propertyType;
                 final Class clazz = type.getBinding();
 
                 if (clazz == Double.class || clazz == Float.class || clazz == Number.class || clazz == BigDecimal.class) {

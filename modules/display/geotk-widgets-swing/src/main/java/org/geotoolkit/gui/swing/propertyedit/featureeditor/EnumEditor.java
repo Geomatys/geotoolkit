@@ -20,7 +20,6 @@ import java.awt.BorderLayout;
 import javax.swing.JComboBox;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
-import org.geotoolkit.gui.swing.propertyedit.JFeatureOutLine;
 import org.jdesktop.swingx.combobox.EnumComboBoxModel;
 import org.opengis.feature.type.PropertyType;
 
@@ -28,10 +27,20 @@ import org.opengis.feature.type.PropertyType;
  *
  * @author Johann Sorel (Puzzle-GIS)
  */
-public class EnumEditor implements JFeatureOutLine.PropertyEditor {
+public class EnumEditor extends VersatileEditor {
 
     private final EnumRW r = new EnumRW();
     private final EnumRW w = new EnumRW();
+
+    @Override
+    public TableCellEditorRenderer getReadingRenderer() {
+        return r;
+    }
+
+    @Override
+    public TableCellEditorRenderer getWritingRenderer() {
+        return w;
+    }
 
     @Override
     public boolean canHandle(PropertyType candidate) {
@@ -40,13 +49,13 @@ public class EnumEditor implements JFeatureOutLine.PropertyEditor {
 
     @Override
     public TableCellEditor getEditor(PropertyType property) {
-        w.property = property;
+        w.propertyType = property;
         return w;
     }
 
     @Override
     public TableCellRenderer getRenderer(PropertyType property) {
-        r.property = property;
+        r.propertyType = property;
         return r.getRenderer();
     }
 
@@ -61,8 +70,8 @@ public class EnumEditor implements JFeatureOutLine.PropertyEditor {
 
         @Override
         protected void prepare() {
-            component.setModel(new EnumComboBoxModel(property.getBinding()));
-                
+            component.setModel(new EnumComboBoxModel(propertyType.getBinding()));
+
             if (value instanceof Enum) {
                 component.setSelectedItem(value);
             }else{

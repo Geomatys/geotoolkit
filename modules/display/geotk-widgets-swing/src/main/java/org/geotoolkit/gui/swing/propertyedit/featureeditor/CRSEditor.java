@@ -19,7 +19,6 @@ package org.geotoolkit.gui.swing.propertyedit.featureeditor;
 import java.awt.BorderLayout;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
-import org.geotoolkit.gui.swing.propertyedit.JFeatureOutLine;
 import org.geotoolkit.gui.swing.referencing.AuthorityCodesComboBox;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.opengis.feature.type.PropertyType;
@@ -30,10 +29,20 @@ import org.opengis.util.FactoryException;
  *
  * @author Johann Sorel (Puzzle-GIS)
  */
-public class CRSEditor implements JFeatureOutLine.PropertyEditor {
+public class CRSEditor extends VersatileEditor {
 
     private final CRSRW r = new CRSRW();
     private final CRSRW w = new CRSRW();
+
+    @Override
+    public TableCellEditorRenderer getReadingRenderer() {
+        return r;
+    }
+
+    @Override
+    public TableCellEditorRenderer getWritingRenderer() {
+        return w;
+    }
 
     @Override
     public boolean canHandle(PropertyType candidate) {
@@ -42,13 +51,13 @@ public class CRSEditor implements JFeatureOutLine.PropertyEditor {
 
     @Override
     public TableCellEditor getEditor(PropertyType property) {
-        w.property = property;
+        w.propertyType = property;
         return w;
     }
 
     @Override
     public TableCellRenderer getRenderer(PropertyType property) {
-        r.property = property;
+        r.propertyType = property;
         return r.getRenderer();
     }
 

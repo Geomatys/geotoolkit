@@ -31,7 +31,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JTextField;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
-import org.geotoolkit.gui.swing.propertyedit.JFeatureOutLine;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.opengis.feature.type.PropertyType;
 
@@ -39,10 +38,20 @@ import org.opengis.feature.type.PropertyType;
  *
  * @author Johann Sorel (Puzzle-GIS)
  */
-public class URLEditor implements JFeatureOutLine.PropertyEditor {
+public class URLEditor extends VersatileEditor {
 
     private final URLRW r = new URLRW();
     private final URLRW w = new URLRW();
+
+    @Override
+    public TableCellEditorRenderer getReadingRenderer() {
+        return r;
+    }
+
+    @Override
+    public TableCellEditorRenderer getWritingRenderer() {
+        return w;
+    }
 
     @Override
     public boolean canHandle(PropertyType candidate) {
@@ -51,13 +60,13 @@ public class URLEditor implements JFeatureOutLine.PropertyEditor {
 
     @Override
     public TableCellEditor getEditor(PropertyType property) {
-        w.property = property;
+        w.propertyType = property;
         return w;
     }
 
     @Override
     public TableCellRenderer getRenderer(PropertyType property) {
-        r.property = property;
+        r.propertyType = property;
         return r.getRenderer();
     }
 
@@ -111,6 +120,6 @@ public class URLEditor implements JFeatureOutLine.PropertyEditor {
                 }
             }
         }
-        
+
     }
 }

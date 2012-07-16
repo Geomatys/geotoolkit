@@ -46,7 +46,7 @@ public abstract class TableCellEditorRenderer extends AbstractCellEditor impleme
         }
     };
     protected final JPanel panel = new JPanel();
-    protected PropertyType property;
+    protected PropertyType propertyType;
     protected Object value;
 
     private void mimicStyle(final JComponent model, final JComponent candidate) {
@@ -55,6 +55,14 @@ public abstract class TableCellEditorRenderer extends AbstractCellEditor impleme
         candidate.setOpaque(model.isOpaque());
         candidate.setBorder(model.getBorder());
         candidate.setFont(model.getFont());
+    }
+
+    public void setPropertyType(PropertyType propertyType) {
+        this.propertyType = propertyType;
+    }
+
+    public void setCellEditorValue(Object value){
+        this.value = value;
     }
 
     @Override
@@ -76,7 +84,7 @@ public abstract class TableCellEditorRenderer extends AbstractCellEditor impleme
 
     protected abstract void prepare();
 
-    protected JComponent getComponent(JTable table, boolean isSelected, int row, int column) {
+    public JComponent getComponent(JTable table, boolean isSelected, int row, int column) {
         prepare();
 
         if (table instanceof Outline) {

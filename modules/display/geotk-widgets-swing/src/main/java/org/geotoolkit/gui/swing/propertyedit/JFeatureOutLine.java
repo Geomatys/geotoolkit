@@ -70,6 +70,9 @@ public class JFeatureOutLine extends Outline{
         TableCellEditor getEditor(PropertyType type);
 
         TableCellRenderer getRenderer(PropertyType type);
+
+        JComponent getSimpleEditor(Property property);
+
     }
 
     private static final ImageIcon ICON_ADD = IconBundle.getIcon("16_smallgray");

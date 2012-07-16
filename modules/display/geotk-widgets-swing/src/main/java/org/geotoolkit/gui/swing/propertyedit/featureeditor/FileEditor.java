@@ -34,10 +34,20 @@ import org.opengis.feature.type.PropertyType;
  *
  * @author Johann Sorel (Puzzle-GIS)
  */
-public class FileEditor implements JFeatureOutLine.PropertyEditor {
+public class FileEditor extends VersatileEditor {
 
     private final FileRW r = new FileRW();
     private final FileRW w = new FileRW();
+
+    @Override
+    public TableCellEditorRenderer getReadingRenderer() {
+        return r;
+    }
+
+    @Override
+    public TableCellEditorRenderer getWritingRenderer() {
+        return w;
+    }
 
     @Override
     public boolean canHandle(PropertyType candidate) {
@@ -46,13 +56,13 @@ public class FileEditor implements JFeatureOutLine.PropertyEditor {
 
     @Override
     public TableCellEditor getEditor(PropertyType property) {
-        w.property = property;
+        w.propertyType = property;
         return w;
     }
 
     @Override
     public TableCellRenderer getRenderer(PropertyType property) {
-        r.property = property;
+        r.propertyType = property;
         return r.getRenderer();
     }
 
@@ -60,7 +70,7 @@ public class FileEditor implements JFeatureOutLine.PropertyEditor {
 
         private final JTextField component = new JTextField();
         private final JButton chooseButton = new JButton("...");
-        
+
 
         private FileRW() {
             panel.setLayout(new BorderLayout());
@@ -100,6 +110,6 @@ public class FileEditor implements JFeatureOutLine.PropertyEditor {
                 }
             }
         }
-        
+
     }
 }

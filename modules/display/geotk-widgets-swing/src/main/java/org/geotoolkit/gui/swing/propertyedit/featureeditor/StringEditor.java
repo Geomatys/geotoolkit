@@ -21,17 +21,26 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
-import org.geotoolkit.gui.swing.propertyedit.JFeatureOutLine;
 import org.opengis.feature.type.PropertyType;
 
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
  */
-public class StringEditor implements JFeatureOutLine.PropertyEditor {
+public class StringEditor extends VersatileEditor {
 
     private final StringRW r = new StringRW();
     private final StringRW w = new StringRW();
+
+    @Override
+    public TableCellEditorRenderer getReadingRenderer() {
+        return r;
+    }
+
+    @Override
+    public TableCellEditorRenderer getWritingRenderer() {
+        return w;
+    }
 
     @Override
     public boolean canHandle(PropertyType candidate) {
@@ -40,14 +49,14 @@ public class StringEditor implements JFeatureOutLine.PropertyEditor {
 
     @Override
     public TableCellEditor getEditor(PropertyType property) {
-        w.property = property;
+        w.propertyType = property;
         r.update();
         return w;
     }
 
     @Override
     public TableCellRenderer getRenderer(PropertyType property) {
-        r.property = property;
+        r.propertyType = property;
         r.update();
         return r.getRenderer();
     }
@@ -62,10 +71,10 @@ public class StringEditor implements JFeatureOutLine.PropertyEditor {
             panel.setLayout(new BorderLayout());
             panel.add(BorderLayout.CENTER, textField);
         }
-        
+
         private void update(){
             panel.removeAll();
-            if(property != null && property.getName().getLocalPart().startsWith("pass")){
+            if(propertyType != null && propertyType.getName().getLocalPart().startsWith("pass")){
                 panel.add(BorderLayout.CENTER, passwordField);
                 current = passwordField;
             }else{
