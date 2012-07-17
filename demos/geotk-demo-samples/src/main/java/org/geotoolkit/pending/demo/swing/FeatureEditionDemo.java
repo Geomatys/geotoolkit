@@ -18,21 +18,24 @@ public class FeatureEditionDemo {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("test");
         ftb.add("boolean", Boolean.class);
-        ftb.add("boolean[]", boolean[].class);
-        ftb.add("Boolean[]", Boolean[].class);
         ftb.add("integer", Integer.class);
-        ftb.add("integer[]", int[].class);
-        ftb.add("Integer[]", Integer[].class);
         ftb.add("double", Double.class);
         ftb.add("String", String.class);
         ftb.add("Date", Date.class);
+        ftb.add("boolean[]", boolean[].class);
+        ftb.add("integer[]", int[].class);
+        ftb.add("double[]", double[].class);
+        ftb.add("Boolean[]", Boolean[].class);
+        ftb.add("Integer[]", Integer[].class);
+        ftb.add("Double[]", Double[].class);
+        ftb.add("String[]", String[].class);
         final FeatureType type = ftb.buildFeatureType();
         final Feature feature = FeatureUtilities.defaultFeature(type, "id-1");
 
         JFeatureOutLine.show(feature,true);
 
 
-        System.out.println(feature);
+        System.out.println(feature.toString());
 
     }
 
