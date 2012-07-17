@@ -767,9 +767,9 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
 
     /**
      * Returns the string to use as a keyword separator. This separator is used for parsing
-     * the {@value #KEYWORDS} attribute value. The default implementation returns {@code ","}.
-     * Subclasses can override this method in an other separator (possibly determined from
-     * the file content) is desired.
+     * the {@value org.geotoolkit.metadata.netcdf.NetcdfMetadata#KEYWORDS} attribute value.
+     * The default implementation returns {@code ","}. Subclasses can override this method
+     * in an other separator (possibly determined from the file content) is desired.
      *
      * @param  group The NetCDF group from which keywords are read.
      * @return The string to use as a keyword separator, as a regular expression.
