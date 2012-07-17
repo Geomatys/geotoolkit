@@ -23,13 +23,13 @@
             <artifactId>geotk-index-tree</artifactId>
             <version>${project.version}</version>
         </dependency>
-        
+
         <dependency>
             <groupId>org.geotoolkit.pending</groupId>
             <artifactId>geotk-xml-wmc</artifactId>
             <version>${project.version}</version>
         </dependency>
-        
+
         <dependency>
             <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-epsg</artifactId>
@@ -153,6 +153,12 @@
         <dependency>
             <groupId>org.geotoolkit.pending</groupId>
             <artifactId>geotk-processing-coverage</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.geotoolkit</groupId>
+            <artifactId>geotk-utility</artifactId>
             <version>${project.version}</version>
         </dependency>
 
