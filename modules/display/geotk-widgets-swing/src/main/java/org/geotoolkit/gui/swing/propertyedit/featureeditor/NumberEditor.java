@@ -18,6 +18,9 @@ package org.geotoolkit.gui.swing.propertyedit.featureeditor;
 
 import java.awt.BorderLayout;
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import org.opengis.feature.type.AttributeType;
@@ -76,6 +79,11 @@ public class NumberEditor extends PropertyValueEditor {
 
     @Override
     public Object getValue() {
+        try {
+            component.commitEdit();
+        } catch (ParseException ex) {
+            //not important
+        }
         return component.getValue();
     }
 
