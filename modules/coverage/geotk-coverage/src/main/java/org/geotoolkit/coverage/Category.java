@@ -443,7 +443,7 @@ public class Category implements Serializable {
     {
         ensureNonNull("name",  name);
         ensureNonNull("range", range);
-        Class<? extends Number> type = range.getElementClass();
+        Class<? extends Number> type = range.getElementType();
         this.name      = SimpleInternationalString.wrap(name);
         this.ARGB      = ARGB;
         this.range     = range;
@@ -570,8 +570,8 @@ public class Category implements Serializable {
             final NumberRange<?> sampleValueRange,
             final NumberRange<?> geophysicsValueRange)
     {
-        final Class<? extends Number> sType =     sampleValueRange.getElementClass();
-        final Class<? extends Number> gType = geophysicsValueRange.getElementClass();
+        final Class<? extends Number> sType =     sampleValueRange.getElementType();
+        final Class<? extends Number> gType = geophysicsValueRange.getElementType();
         /*
          * First, find the direction of the adjustment to apply to the ranges if we wanted
          * all values to be inclusives. Then, check if the adjustment is really needed: if
@@ -914,7 +914,7 @@ public class Category implements Serializable {
             buffer.append("NaN(").append(Math.round(inverse.minimum))
                   .append('…') .append(Math.round(inverse.maximum)).append(')');
         } else {
-            if (Numbers.isInteger(getRange().getElementClass())) {
+            if (Numbers.isInteger(getRange().getElementType())) {
                 buffer.append(Math.round(minimum)).append('…')
                       .append(Math.round(maximum)); // Inclusive
             } else {

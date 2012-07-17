@@ -190,8 +190,8 @@ public final strictfp class NetcdfCRSTest extends org.opengis.wrapper.netcdf.Net
                 assertFalse(r1.intersects(r2));
             }
             final Class<?> elementClass = isTimeAxis ? Date.class : Double.class;
-            assertEquals(elementClass, r1.getElementClass());
-            assertEquals(elementClass, r2.getElementClass());
+            assertEquals(elementClass, r1.getElementType());
+            assertEquals(elementClass, r2.getElementType());
         }
     }
 

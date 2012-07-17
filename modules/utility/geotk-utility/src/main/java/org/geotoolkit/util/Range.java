@@ -23,6 +23,7 @@ import javax.measure.unit.Unit;
 import net.jcip.annotations.Immutable;
 
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.collection.CheckedContainer;
 
 import static org.geotoolkit.util.converter.Numbers.isInteger;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
@@ -45,7 +46,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  *   <li><p>{@link #subtract(Range)} returns an empty array if the whole range is subtracted.</p></li>
  * </ul>
  *
- * The exact {@linkplain #getElementClass element class} doesn't need to be known at compile time.
+ * The exact {@linkplain #getElementType element class} doesn't need to be known at compile time.
  * Widening conversions are allowed as needed (subclasses like {@link NumberRange} do that). This
  * class is weakly parameterized in order to allow this flexibility. If any constructor or method
  * is invoked with an argument value of illegal class, then an {@link IllegalArgumentException} is
@@ -62,7 +63,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  *
  * @author Jody Garnett (Refractions)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.20
  *
  * @see javax.media.jai.util.Range
  * @see org.geotoolkit.measure.RangeFormat
@@ -71,7 +72,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * @module
  */
 @Immutable
-public class Range<T extends Comparable<? super T>> implements Serializable  {
+public class Range<T extends Comparable<? super T>> implements CheckedContainer<T>, Serializable  {
     /**
      * For cross-version compatibility.
      */
@@ -205,10 +206,21 @@ public class Range<T extends Comparable<? super T>> implements Serializable  {
      *
      * @return The class of elements in this range.
      *
-     * @see javax.media.jai.util.Range#getElementClass
+     * @see javax.media.jai.util.Range#getElementClass()
+     *
+     * @since 3.20 (derived from 2.5)
      */
-    public Class<T> getElementClass() {
+    @Override
+    public Class<T> getElementType() {
         return elementClass;
+    }
+
+    /**
+     * @deprecated Renamed {@link #getElementType()} for allowing retrofitting with {@link CheckedContainer}.
+     */
+    @Deprecated
+    public Class<T> getElementClass() {
+        return getElementType();
     }
 
     /**
@@ -669,7 +681,7 @@ public class Range<T extends Comparable<? super T>> implements Serializable  {
             }
             return value;
         }
-        final StringBuilder buffer = new StringBuilder();
+        final StringBuilder buffer = new StringBuilder(20);
         buffer.append(isMinIncluded ? '[' : '(');
         if (minValue == null) {
             buffer.append("-\u221E"); // Infinity

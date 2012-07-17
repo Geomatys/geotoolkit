@@ -964,7 +964,7 @@ public class RangeSet<T extends Comparable<? super T>> extends AbstractSet<Range
     public boolean contains(final Object object) {
         @SuppressWarnings("unchecked") // We are going to check just the line after.
         final Range<T> range = (Range<T>) object;
-        if (range.getElementClass() == elementClass) {
+        if (range.getElementType() == elementClass) {
             if (range.isMinIncluded() && range.isMaxIncluded()) {
                 final int index = binarySearch(toArrayElement(range.getMinValue(), "object"));
                 if (index >= 0 && (index & 1)==0) {

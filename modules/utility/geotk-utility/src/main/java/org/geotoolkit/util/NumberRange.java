@@ -355,7 +355,7 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
      * @since 2.4
      */
     public NumberRange(final Range<T> range) {
-        super(range.getElementClass(),
+        super(range.getElementType(),
               range.getMinValue(), range.isMinIncluded(),
               range.getMaxValue(), range.isMaxIncluded());
     }
@@ -401,7 +401,7 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
      * Returns the type of minimum and maximum values.
      */
     @SuppressWarnings("unchecked")
-    private static Class<? extends Number> getElementClass(final Range<?> range) {
+    private static Class<? extends Number> getElementType(final Range<?> range) {
         ensureNonNull("range", range);
         final Class<?> type = range.elementClass;
         ensureNumberClass(type);
@@ -455,7 +455,7 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
     NumberRange<N> convertAndCast(final Range<? extends Number> range, final Class<N> type)
             throws IllegalArgumentException
     {
-        if (type.equals(range.getElementClass())) {
+        if (type.equals(range.getElementType())) {
             // Safe because we checked in the line just above.
             return (NumberRange<N>) wrap((Range) range);
         }
@@ -536,11 +536,11 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
     @Override
     @SuppressWarnings({"unchecked","rawtypes"})
     public boolean contains(Range<?> range) throws IllegalArgumentException {
-        final Class<? extends Number> type = widestClass(elementClass, getElementClass(range));
+        final Class<? extends Number> type = widestClass(elementClass, getElementType(range));
         /*
          * The type bounds is actually <? extends Number & Comparable> but I'm unable to express
          * it as local variable as of Java 6. So we have to bypass the compiler check, but those
-         * casts are actually safes, including Range because getElementClass(range) would have
+         * casts are actually safes, including Range because getElementType(range) would have
          * throw an exception otherwise.
          */
         range = convertAndCast((Range) range, (Class) type);
@@ -553,11 +553,11 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
     @Override
     @SuppressWarnings({"unchecked","rawtypes"})
     public boolean intersects(Range<?> range) throws IllegalArgumentException {
-        final Class<? extends Number> type = widestClass(elementClass, getElementClass(range));
+        final Class<? extends Number> type = widestClass(elementClass, getElementType(range));
         /*
          * The type bounds is actually <? extends Number & Comparable> but I'm unable to express
          * it as local variable as of Java 6. So we have to bypass the compiler check, but those
-         * casts are actually safes, including Range because getElementClass(range) would have
+         * casts are actually safes, including Range because getElementType(range) would have
          * throw an exception otherwise.
          */
         range = convertAndCast((Range) range, (Class) type);
@@ -571,7 +571,7 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
     @Override
     @SuppressWarnings({"unchecked","rawtypes"})
     public NumberRange<?> union(Range<?> range) throws IllegalArgumentException {
-        final Class<? extends Number> type = widestClass(elementClass, getElementClass(range));
+        final Class<? extends Number> type = widestClass(elementClass, getElementType(range));
         range = convertAndCast((Range) range, (Class) type);
         return (NumberRange) castTo((Class) type).unionNC(range);
     }
@@ -583,7 +583,7 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
     @Override
     @SuppressWarnings({"unchecked","rawtypes"})
     public NumberRange<?> intersect(Range<?> range) throws IllegalArgumentException {
-        final Class<? extends Number> rangeType = getElementClass(range);
+        final Class<? extends Number> rangeType = getElementType(range);
         Class<? extends Number> type = widestClass(elementClass, rangeType);
         range = castTo((Class) type).intersectNC(convertAndCast((Range) range, (Class) type));
         /*
@@ -603,7 +603,7 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
     @Override
     @SuppressWarnings({"unchecked","rawtypes"})
     public NumberRange<?>[] subtract(Range<?> range) throws IllegalArgumentException {
-        Class<? extends Number> type = widestClass(elementClass, getElementClass(range));
+        Class<? extends Number> type = widestClass(elementClass, getElementType(range));
         return (NumberRange[]) castTo((Class) type)
                 .subtractNC(convertAndCast((Range) range, (Class) type));
     }
@@ -633,7 +633,7 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
     public double getMinimum(final boolean inclusive) {
         double value = getMinimum();
         if (inclusive != isMinIncluded()) {
-            value = next(getElementClass(), value, inclusive);
+            value = next(getElementType(), value, inclusive);
         }
         return value;
     }
@@ -663,7 +663,7 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
     public double getMaximum(final boolean inclusive) {
         double value = getMaximum();
         if (inclusive != isMaxIncluded()) {
-            value = next(getElementClass(), value, !inclusive);
+            value = next(getElementType(), value, !inclusive);
         }
         return value;
     }

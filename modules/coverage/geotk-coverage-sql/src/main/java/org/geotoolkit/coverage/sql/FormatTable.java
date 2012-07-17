@@ -204,7 +204,7 @@ final class FormatTable extends SingletonTable<FormatEntry> {
      */
     private static NumberRange<?> getRange(final Category category) {
         NumberRange<?> range = category.geophysics(false).getRange();
-        final Class<?> type = range.getElementClass();
+        final Class<?> type = range.getElementType();
         if (Numbers.isInteger(type)) {
             if (!range.isMaxIncluded() || !range.isMinIncluded() || type != Integer.class) {
                 range = new NumberRange<>(Integer.class,

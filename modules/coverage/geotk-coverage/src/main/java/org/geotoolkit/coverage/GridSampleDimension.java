@@ -924,7 +924,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
                         int lower = (int) min;
                         int upper = (int) max;
                         if (lower!=min || upper!=max ||
-                            !Numbers.isInteger(category.getRange().getElementClass()))
+                            !Numbers.isInteger(category.getRange().getElementType()))
                         {
                             throw new IllegalStateException(Errors.format(
                                     Errors.Keys.NON_INTEGER_CATEGORY));

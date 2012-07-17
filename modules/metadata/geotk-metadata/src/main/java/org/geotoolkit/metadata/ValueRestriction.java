@@ -44,7 +44,7 @@ import org.geotoolkit.resources.Errors;
  * method.
  * <p>
  * {@code ValueRestriction} objects do not contain the type of values
- * (except indirectly through {@link NumberRange#getElementClass()} or
+ * (except indirectly through {@link NumberRange#getElementType()} or
  * {@link org.geotoolkit.util.collection.CheckedCollection#getElementType()})
  * because this particular requirement is specified by other means, like
  * {@link MetadataStandard#asTypeMap MetadataStandard.asTypeMap(...)}.
