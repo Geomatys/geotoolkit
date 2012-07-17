@@ -132,7 +132,17 @@ public class ArrayEditor extends PropertyValueEditor implements ActionListener{
         value = Array.newInstance(subClass, newSize);
         int i=0;
         for(Property prop : properties){
-            Array.set(value, i, prop.getValue());
+            final Object val = prop.getValue();
+            if(subClass.isPrimitive()){
+                //we can only set if the value is not null
+                if(val != null){
+                    Array.set(value,i,val);
+                }
+
+            }else{
+                Array.set(value,i,val);
+            }
+
             i++;
         }
 

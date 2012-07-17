@@ -269,7 +269,7 @@ public class JFeatureOutLine extends Outline{
 
             final MutableTreeNode node = (MutableTreeNode) o;
             final Property prop = (Property) node.getUserObject();
-            prop.setValue(Converters.convert(value, prop.getType().getBinding()));
+            prop.setValue(value);
         }
 
         @Override

@@ -40,7 +40,14 @@ public class NumberEditor extends PropertyValueEditor {
 
     @Override
     public boolean canHandle(PropertyType candidate) {
-        return Number.class.isAssignableFrom(candidate.getBinding());
+        final Class binding = candidate.getBinding();
+        return Number.class.isAssignableFrom(binding)
+                || byte.class.equals(binding)
+                || short.class.equals(binding)
+                || int.class.equals(binding)
+                || long.class.equals(binding)
+                || float.class.equals(binding)
+                || double.class.equals(binding);
     }
 
     @Override
@@ -50,7 +57,8 @@ public class NumberEditor extends PropertyValueEditor {
             final AttributeType type = (AttributeType) propertyType;
             final Class clazz = type.getBinding();
 
-            if (clazz == Double.class || clazz == Float.class || clazz == Number.class || clazz == BigDecimal.class) {
+            if (clazz == Double.class || clazz == Float.class || clazz == Number.class || clazz == BigDecimal.class ||
+                clazz == double.class || clazz == float.class) {
                 component.setModel(new SpinnerNumberModel(Double.valueOf(0d), null, null, Double.valueOf(0.1d)));
             } else {
                 component.setModel(new SpinnerNumberModel(0, null, null, 1));

@@ -39,7 +39,8 @@ public class BooleanEditor extends PropertyValueEditor implements ActionListener
 
     @Override
     public boolean canHandle(PropertyType candidate) {
-        return Boolean.class.equals(candidate.getBinding());
+        return Boolean.class.equals(candidate.getBinding()) ||
+                boolean.class.equals(candidate.getBinding());
     }
 
     @Override
