@@ -33,6 +33,7 @@ import org.opengis.metadata.identification.TopicCategory;
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.test.Depend;
+import org.geotoolkit.test.LocaleDependantTestBase;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.gui.swing.tree.TreeNode;
 import org.geotoolkit.gui.swing.tree.TreeFormat;
@@ -59,7 +60,7 @@ import static org.geotoolkit.test.Assert.*;
  * @since 3.00
  */
 @Depend(MetadataStandard.class)
-public final strictfp class MetadataTreeFormatTest {
+public final strictfp class MetadataTreeFormatTest extends LocaleDependantTestBase {
     /**
      * Creates a tree from the given string representation. Each node must have at least one
      * {@code '─'} character (unicode 2500) in front of it. The number of spaces and drawing

@@ -28,14 +28,15 @@ import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.quality.Completeness;
 import org.opengis.coverage.grid.RectifiedGrid;
 
+import org.geotoolkit.test.Depend;
 import org.geotoolkit.util.ComparisonMode;
+import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.quality.AbstractCompleteness;
 
 import org.junit.*;
 import static org.junit.Assert.*;
-import org.geotoolkit.test.Depend;
 
 
 /**
@@ -43,7 +44,7 @@ import org.geotoolkit.test.Depend;
  * the tests use the {@link MetadataStandard#ISO_19115} constant.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.18
+ * @version 3.20
  *
  * @since 2.4
  */
@@ -61,6 +62,34 @@ public final strictfp class MetadataStandardTest {
 
         assertEquals(AbstractCompleteness.class, std.getImplementation(Completeness.class));
         assertEquals(Completeness.class, std.getInterface(AbstractCompleteness.class));
+    }
+
+    /**
+     * Tests the shallow copy methods without skipping null values. For this test, we need
+     * to use a class that doesn't have any {@code getIdentifiers()} method inherited from
+     * ISO 19115. The class will inherit the {@code getIdentifiers()} method defined by Geotk
+     * in the parent class, which doesn't have corresponding {@code setIdentifiers(...)} method.
+     *
+     * @since 3.20
+     */
+    @Test
+    public void testShallowCopy() {
+        final AbstractCompleteness source = new AbstractCompleteness();
+        final AbstractCompleteness target = new AbstractCompleteness();
+        source.setMeasureDescription(new SimpleInternationalString("Some description"));
+        target.getStandard().shallowCopy(source, target, false);
+        assertEquals("Some description", target.getMeasureDescription().toString());
+        assertEquals(source, target);
+
+        source.setMeasureDescription(null);
+        target.getStandard().shallowCopy(source, target, true);
+        assertEquals("Measure description should not have been removed, since we skipped null values.",
+                "Some description", target.getMeasureDescription().toString());
+        assertFalse(target.isEmpty()); // Opportunist test.
+
+        target.getStandard().shallowCopy(source, target, false);
+        assertNull("Measure description should have been removed.", target.getMeasureDescription());
+        assertTrue(target.isEmpty()); // Opportunist test.
     }
 
     /**
