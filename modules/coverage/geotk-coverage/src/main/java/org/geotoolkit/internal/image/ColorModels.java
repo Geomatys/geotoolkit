@@ -23,6 +23,7 @@ import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
 
 import org.geotoolkit.lang.Static;
+import org.geotoolkit.lang.Workaround;
 import org.geotoolkit.util.collection.WeakHashSet;
 
 
@@ -82,6 +83,7 @@ public final class ColorModels<T extends ColorModel> extends Static {
      * @param cm2 The second color model.
      * @return {@code true} if the two color models are equal.
      */
+    @Workaround(library="JDK", version="6")
     public static boolean equals(final ColorModel cm1, final ColorModel cm2) {
         if (cm1 == cm2) {
             return true;
