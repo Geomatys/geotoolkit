@@ -29,6 +29,7 @@ import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 
+import org.geotoolkit.lang.Workaround;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.io.wkt.Formattable;
 import org.geotoolkit.geometry.DirectPosition2D;
@@ -134,6 +135,7 @@ public class AffineTransform2D extends XAffineTransform
      * where AffineTransform.hashCode() is inconsistent with AffineTransform.equals(Object)
      * if there is zeros of opposite sign.
      */
+    @Workaround(library="JDK", version="6")
     private static double pz(final double value) {
         return (value != 0) ? value : 0;
     }

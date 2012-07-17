@@ -395,7 +395,7 @@ final class RenderedSampleDimension extends GridSampleDimension {
             final Color[] c = (colors != null) ? colors[b] : null;
             if (needScaling) {
                 final NumberRange<Double> range = NumberRange.create(min[b], max[b]);
-                sourceRange = range.castTo(sourceRange.getElementClass());
+                sourceRange = range.castTo(sourceRange.getElementType());
                 categories[0] = new Category(name, c, targetRange, sourceRange);
             } else {
                 categories[0] = new Category(name, c, targetRange, LinearTransform1D.IDENTITY);

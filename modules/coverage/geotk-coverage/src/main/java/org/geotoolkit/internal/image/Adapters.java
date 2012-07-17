@@ -44,7 +44,7 @@ public final class Adapters extends Static {
      * @return The JAI range.
      */
     public static javax.media.jai.util.Range convert(final Range<?> range) {
-        return new javax.media.jai.util.Range(range.getElementClass(),
+        return new javax.media.jai.util.Range(range.getElementType(),
                 range.getMinValue(), range.isMinIncluded(),
                 range.getMaxValue(), range.isMaxIncluded());
     }

@@ -317,11 +317,12 @@ scan:   for (int i=0; i<numBands; i++) {
     /**
      * Invoked by {@link #create} when a geophysics or packed view needs to be created.
      *
-     * @todo IndexColorModel seems to badly choose its sample model. As of JDK 1.4-rc1, it
-     *       construct a ComponentSampleModel, which is drawn very slowly to the screen. A
-     *       much faster sample model is PixelInterleavedSampleModel,  which is the sample
-     *       model used by BufferedImage for TYPE_BYTE_INDEXED. We should check if this is
-     *       fixed in future J2SE release.
+     * {@note <b>Historic</b>: In JDK 4 and 5, images using a <code>ComponentSampleModel</code> -
+     * as created by <code>IndexColorModel</code> - were much slower at rendering time than images
+     * using a <code>PixelInterleavedSampleModel</code> - as created by <code>BufferedImage</code>
+     * for type <code>TYPE_BYTE_INDEXED</code>.  Consequently the Geotk code had a patch replacing
+     * the former color model by the later one. This patch has been removed in later Geotk version
+     * since a micro-benchmarking with JDK6 and 7 didn't show any performance difference anymore.}
      *
      * @todo The "Piecewise" operation is disabled because javac 1.4.1_01 generate illegal
      *       bytecode. This bug is fixed in javac 1.4.2-beta. However, we still have an
@@ -389,17 +390,10 @@ scan:   for (int i=0; i<numBands; i++) {
          *          only one big tile, and for the color model and sample model  (since we are
          *          reformating data in the process of this operation).
          */
-        ImageLayout layout      = ImageUtilities.getImageLayout(image);
-        ColorModel  colors      = targetBands[visibleBand].getColorModel(visibleBand, numBands);
-        SampleModel targetModel = colors.createCompatibleSampleModel(
+              ImageLayout layout      = ImageUtilities.getImageLayout(image);
+        final ColorModel  colors      = targetBands[visibleBand].getColorModel(visibleBand, numBands);
+        final SampleModel targetModel = colors.createCompatibleSampleModel(
                 layout.getTileWidth(image), layout.getTileHeight(image));
-        if (colors instanceof IndexColorModel && targetModel.getClass() == ComponentSampleModel.class) {
-            // TODO: There is the 'IndexColorModel' hack (see method description).
-            // Consider removing this hack when we will target Java 6.
-            final int w = targetModel.getWidth();
-            final int h = targetModel.getHeight();
-            targetModel = new PixelInterleavedSampleModel(colors.getTransferType(), w,h,1,w, new int[1]);
-        }
         layout = layout.setSampleModel(targetModel).setColorModel(colors);
         ParameterBlock param = new ParameterBlock().addSource(image);
         RenderingHints hints = new RenderingHints(JAI.KEY_IMAGE_LAYOUT, layout);

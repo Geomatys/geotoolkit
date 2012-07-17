@@ -69,28 +69,33 @@ import org.geotoolkit.util.XArrays;
  * {@section Multi-occurrences}
  * <p>Multi-occurrences is allowed only for the following attribute values:</p>
  * <ul>
- *   <li>{@value #LICENSE},
+ *   <li>{@value org.geotoolkit.metadata.netcdf.NetcdfMetadata#LICENSE},
  *       formatted as a multi-lines string.</li>
- *   <li>{@value #ACCESS_CONSTRAINT},
+ *   <li>{@value org.geotoolkit.metadata.netcdf.NetcdfMetadata#ACCESS_CONSTRAINT},
  *       formatted as a comma-separated string.</li>
- *   <li>{@value #HISTORY},
+ *   <li>{@value org.geotoolkit.metadata.netcdf.NetcdfMetadata#HISTORY},
  *       formatted as a multi-lines string.</li>
- *   <li>{@value #KEYWORDS},
+ *   <li>{@value org.geotoolkit.metadata.netcdf.NetcdfMetadata#KEYWORDS},
  *       formatted as a comma-separated list. However only the keywords belonging to the
  *       first vocabulary found will be formatted. The vocabulary name will be stored in
- *       the {@value #VOCABULARY} attribute.</li>
- *   <li>{@link #LATITUDE}, {@link #LONGITUDE}, {@link #VERTICAL} and {@link #TIME} groups of attributes,
- *       as the union of all extents using compatible units of measurement. If some extents use incompatible
- *       units, then only values compatible with the first unit of measurement found are retained.</li>
+ *       the {@value org.geotoolkit.metadata.netcdf.NetcdfMetadata#VOCABULARY} attribute.</li>
+ *   <li>{@link #LATITUDE LATITUDE}, {@link #LONGITUDE LONGITUDE}, {@link #VERTICAL VERTICAL} and
+ *       {@link #TIME TIME} groups of attributes, as the union of all extents using compatible units
+ *       of measurement. If some extents use incompatible units, then only values compatible with
+ *       the first unit of measurement found are retained.</li>
  * </ul>
  * <p>For every attributes not in the above list, only the first occurrence will be written in the NetCDF file.
- * For example if the ISO-19115 metadata define many {@linkplain Citation#getIdentifiers() identifiers},
- * then only the first one will be stored in the {@value #IDENTIFIER} attribute.</p>
+ * For example if the ISO-19115 metadata defines many {@linkplain Citation#getIdentifiers() identifiers}, then
+ * only the first one will be stored in the {@value org.geotoolkit.metadata.netcdf.NetcdfMetadata#IDENTIFIER}
+ * attribute.</p>
  *
  * {@section Known limitations}
- * <p>The current implementation does not set the {@value #STANDARD_NAME} and
- * {@value #STANDARD_NAME_VOCABULARY} attributes. This is because both {@value #STANDARD_NAME} and
- * {@value #KEYWORDS} take their values from a {@link Keywords} object having {@link KeywordType#THEME},
+ * <p>The current implementation does not set the
+ * {@value org.geotoolkit.metadata.netcdf.NetcdfMetadata#STANDARD_NAME} and
+ * {@value org.geotoolkit.metadata.netcdf.NetcdfMetadata#STANDARD_NAME_VOCABULARY} attributes. This is because both
+ * {@value org.geotoolkit.metadata.netcdf.NetcdfMetadata#STANDARD_NAME} and
+ * {@value org.geotoolkit.metadata.netcdf.NetcdfMetadata#KEYWORDS} attributes take their values from a
+ * {@link Keywords} object having {@link KeywordType#THEME},
  * so we don't have a way to differentiate them at this stage.</p>
  *
  * @author Johann Sorel (Geomatys)

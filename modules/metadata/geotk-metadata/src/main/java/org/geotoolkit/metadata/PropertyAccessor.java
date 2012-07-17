@@ -431,32 +431,33 @@ final class PropertyAccessor {
                 for (final Method candidate : getters) {
                     if (Classes.isPossibleGetter(candidate)) {
                         final String name = candidate.getName();
-                        if (!name.startsWith(SET)) { // Paranoiac check.
-                            /*
-                             * At this point, we are ready to accept the method. Before doing so,
-                             * check if the method override an other method defined in a parent
-                             * class with a covariant return type. The JVM consider such cases
-                             * as two different methods, while from a Java developer point of
-                             * view this is the same method (GEOTK-205).
-                             */
-                            final Integer pi = mapping.put(name, count);
-                            if (pi != null) {
-                                final Class<?> pt = getters[pi].getReturnType();
-                                final Class<?> ct = candidate  .getReturnType();
-                                if (ct.isAssignableFrom(pt)) {
-                                    continue; // Previous type was more accurate.
-                                }
-                                if (pt.isAssignableFrom(ct)) {
-                                    getters[pi] = candidate;
-                                    continue;
-                                }
-                                throw new ClassCastException(Errors.format(Errors.Keys.ILLEGAL_CLASS_$3,
-                                        Classes.getShortName(type) + '.' + name, pt, ct));
+                        if (name.startsWith(SET)) { // Paranoiac check.
+                            continue;
+                        }
+                        /*
+                         * At this point, we are ready to accept the method. Before doing so,
+                         * check if the method override an other method defined in a parent
+                         * class with a covariant return type. The JVM considers such cases
+                         * as two different methods, while from a Java developer point of
+                         * view this is the same method (GEOTK-205).
+                         */
+                        final Integer pi = mapping.put(name, count);
+                        if (pi != null) {
+                            final Class<?> pt = getters[pi].getReturnType();
+                            final Class<?> ct = candidate  .getReturnType();
+                            if (ct.isAssignableFrom(pt)) {
+                                continue; // Previous type was more accurate.
                             }
-                            getters[count++] = candidate;
-                            if (!hasExtraGetter) {
-                                hasExtraGetter = name.equals(EXTRA_GETTER.getName());
+                            if (pt.isAssignableFrom(ct)) {
+                                getters[pi] = candidate;
+                                continue;
                             }
+                            throw new ClassCastException(Errors.format(Errors.Keys.ILLEGAL_CLASS_$3,
+                                    Classes.getShortName(type) + '.' + name, pt, ct));
+                        }
+                        getters[count++] = candidate;
+                        if (!hasExtraGetter) {
+                            hasExtraGetter = name.equals(EXTRA_GETTER.getName());
                         }
                     }
                 }
@@ -981,16 +982,6 @@ final class PropertyAccessor {
     }
 
     /**
-     * Return the number of getters to consider for operations using two objects (equals, copy).
-     *
-     * @param  other The other object.
-     * @return Number of getter methods to consider.
-     */
-    private int countFor(final Object other) {
-        return EXTRA_GETTER.getDeclaringClass().isInstance(other) ? allCount : standardCount;
-    }
-
-    /**
      * Compares the two specified metadata objects. The comparison is <cite>shallow</cite>,
      * i.e. all metadata attributes are compared using the {@link Object#equals} method without
      * recursive call to this {@code shallowEquals} method for other metadata.
@@ -1009,7 +1000,8 @@ final class PropertyAccessor {
     {
         assert type.isInstance(metadata1) : metadata1;
         assert type.isInstance(metadata2) : metadata2;
-        final int count = (mode == ComparisonMode.STRICT) ? countFor(metadata2) : standardCount;
+        final int count = (mode == ComparisonMode.STRICT &&
+                EXTRA_GETTER.getDeclaringClass().isInstance(metadata2)) ? allCount : standardCount;
         for (int i=0; i<count; i++) {
             final Method  method = getters[i];
             final Object  value1 = get(method, metadata1);
@@ -1052,8 +1044,7 @@ final class PropertyAccessor {
         boolean success = true;
         assert type.isInstance(source) : Classes.getClass(source);
         final Object[] arguments = new Object[1];
-        final int count = countFor(source);
-        for (int i=0; i<count; i++) {
+        for (int i=0; i<standardCount; i++) {
             final Method getter = getters[i];
             arguments[0] = get(getter, source);
             if (!skipNulls || !isEmpty(arguments[0])) {

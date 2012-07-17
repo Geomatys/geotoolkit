@@ -212,7 +212,7 @@ public final class TypeMap extends Static {
      * @return The smallest sample dimension type for the specified range.
      */
     public static SampleDimensionType getSampleDimensionType(final Range<? extends Number> range) {
-        final Class<? extends Number> type = range.getElementClass();
+        final Class<? extends Number> type = range.getElementType();
         if (Double.class.isAssignableFrom(type)) {
             return REAL_64BITS;
         }

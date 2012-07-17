@@ -390,8 +390,8 @@ public final class Strings extends Static {
 
     /**
      * Formats the given elements as a (typically) comma-separated list. This method is similar
-     * to {@link java.util.Collection#toString()} or {@link Arrays#toString(Object[])} except
-     * for the following:
+     * to {@link java.util.AbstractCollection#toString()} or {@link Arrays#toString(Object[])}
+     * except for the following:
      * <p>
      * <ul>
      *   <li>There is no leading {@code '['} and trailing {@code ']'} characters.</li>
@@ -402,7 +402,7 @@ public final class Strings extends Static {
      *       that string is returned directly (no object duplication).</li>
      * </ul>
      * <p>
-     * This method can also be used as the converse of {@link #getLinesFromMultilines(String)}
+     * This method is the converse of {@link #getLinesFromMultilines(String)}
      * when the separator is {@link System#lineSeparator()}.
      *
      * @param  collection The elements to format in a (typically) comma-separated list, or {@code null}.

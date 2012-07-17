@@ -609,7 +609,7 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
     public final ColorModel getColorModel(final int visibleBand, final int numBands) {
         int type = DataBuffer.TYPE_FLOAT;
         final NumberRange<?> range = getRange();
-        final Class<?> rt = range.getElementClass();
+        final Class<?> rt = range.getElementType();
         if (rt == Byte.class || rt == Short.class || rt == Integer.class) {
             final int min = range.getMinValue().intValue();
             final int max = range.getMaxValue().intValue();

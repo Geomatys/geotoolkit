@@ -54,8 +54,8 @@ public final strictfp class MeasurementRangeTest {
     public void testIntersectWithConversion() {
         NumberRange<Float> r1 = MeasurementRange.create(1000f, 2000f, SI.METRE);
         NumberRange<Float> r2 = MeasurementRange.create(1.5f, 3f, SI.KILOMETRE);
-        assertEquals(Float.class, r1.getElementClass());
-        assertEquals(Float.class, r2.getElementClass());
+        assertEquals(Float.class, r1.getElementType());
+        assertEquals(Float.class, r2.getElementType());
         assertEquals(MeasurementRange.create(1000f, 3000f, SI.METRE ),    r1.union    (r2));
         assertEquals(MeasurementRange.create(1f,    3f,    SI.KILOMETRE), r2.union    (r1));
         assertEquals(MeasurementRange.create(1500f, 2000f, SI.METRE ),    r1.intersect(r2));
