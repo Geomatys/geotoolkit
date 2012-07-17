@@ -26,6 +26,8 @@ import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageInputStream;
 
 import org.geotoolkit.test.TestData;
+import org.geotoolkit.lang.Workaround;
+import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.image.io.plugin.TextMatrixImageReader;
 
 import org.junit.*;
@@ -37,7 +39,7 @@ import static org.junit.Assert.*;
  * and a standard {@link ImageInputStream} is used for comparison purpose.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.07
+ * @version 3.20
  *
  * @since 3.07
  */
@@ -177,6 +179,10 @@ public final strictfp class ChannelImageInputStreamTest {
                     assertEquals("getBitOffset()",      r.getBitOffset(),      t.getBitOffset());
                 }
             } catch (AssertionError | RuntimeException e) {
+                if (isJDK(e)) {
+                    Logging.unexpectedException(ChannelImageInputStreamTest.class, "testWithRandomData", e);
+                    return;
+                }
                 final PrintStream err = System.err;
                 err.println("Position:    " + position);
                 err.println("Bit offset:  " + bitOffset);
@@ -229,6 +235,10 @@ public final strictfp class ChannelImageInputStreamTest {
                     assertEquals("getBitOffset()",      r.getBitOffset(),      t.getBitOffset());
                 }
             } catch (AssertionError | RuntimeException e) {
+                if (isJDK(e)) {
+                    Logging.unexpectedException(ChannelImageInputStreamTest.class, "testUsingFile", e);
+                    return;
+                }
                 final PrintStream err = System.err;
                 err.println("Position:    " + position);
                 err.println("Bit offset:  " + bitOffset);
@@ -238,5 +248,41 @@ public final strictfp class ChannelImageInputStreamTest {
                 throw e;
             }
         }
+    }
+
+    /**
+     * Returns {@code true} if this exception seems to be a JDK bug rather than a Geotk bug.
+     * The test case in this {@code ChannelImageInputStreamTest} compares the Geotk stream
+     * with the result of a JDK standard stream. However the following exception randomly
+     * occurs while reading from the standard stream. The random failures doesn't depend on
+     * the {@link Random} initial seed (the failure still happen randomly even if we fix the seed):
+     *
+     * <pre>java.lang.ArrayIndexOutOfBoundsException: -1
+     *   at java.util.ArrayList.elementData(ArrayList.java:371)
+     *   at java.util.ArrayList.get(ArrayList.java:384)
+     *   at javax.imageio.stream.MemoryCache.getCacheBlock(MemoryCache.java:77)
+     *   at javax.imageio.stream.MemoryCache.loadFromStream(MemoryCache.java:98)
+     *   at javax.imageio.stream.MemoryCacheImageInputStream.read(MemoryCacheImageInputStream.java:110)
+     *   at javax.imageio.stream.ImageInputStreamImpl.readFully(ImageInputStreamImpl.java:351)
+     *   at javax.imageio.stream.ImageInputStreamImpl.readFully(ImageInputStreamImpl.java:373)
+     *   at org.geotoolkit.image.io.stream.ChannelImageInputStreamTest.testWithRandomData(ChannelImageInputStreamTest.java:123)</pre>
+     *
+     * @param  exception The exception.
+     * @return {@code true} if stack trace inspection suggests a JDK bug.
+     *
+     * @since 3.20
+     */
+    @Workaround(library="JDK", version="7")
+    private static boolean isJDK(final Throwable exception) {
+        for (final StackTraceElement element : exception.getStackTrace()) {
+            final String name = element.getClassName();
+            if (name.startsWith("javax.imageio.stream.")) {
+                return true;
+            }
+            if (name.startsWith("org.geotoolkit.")) {
+                break;
+            }
+        }
+        return false;
     }
 }
