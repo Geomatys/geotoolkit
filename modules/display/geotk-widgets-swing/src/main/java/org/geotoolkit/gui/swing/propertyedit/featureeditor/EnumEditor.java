@@ -17,9 +17,9 @@
 package org.geotoolkit.gui.swing.propertyedit.featureeditor;
 
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.JComboBox;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
 import org.jdesktop.swingx.combobox.EnumComboBoxModel;
 import org.opengis.feature.type.PropertyType;
 
@@ -27,19 +27,13 @@ import org.opengis.feature.type.PropertyType;
  *
  * @author Johann Sorel (Puzzle-GIS)
  */
-public class EnumEditor extends VersatileEditor {
+public class EnumEditor extends PropertyValueEditor implements ActionListener{
 
-    private final EnumRW r = new EnumRW();
-    private final EnumRW w = new EnumRW();
+    private final JComboBox component = new JComboBox();
 
-    @Override
-    public TableCellEditorRenderer getReadingRenderer() {
-        return r;
-    }
-
-    @Override
-    public TableCellEditorRenderer getWritingRenderer() {
-        return w;
+    public EnumEditor() {
+        super(new BorderLayout());
+        add(BorderLayout.CENTER, component);
     }
 
     @Override
@@ -48,40 +42,24 @@ public class EnumEditor extends VersatileEditor {
     }
 
     @Override
-    public TableCellEditor getEditor(PropertyType property) {
-        w.propertyType = property;
-        return w;
+    public void setValue(PropertyType type, Object value) {
+        component.setModel(new EnumComboBoxModel(type.getBinding()));
+
+        if (value instanceof Enum) {
+            component.setSelectedItem(value);
+        }else{
+            component.setSelectedItem(null);
+        }
     }
 
     @Override
-    public TableCellRenderer getRenderer(PropertyType property) {
-        r.propertyType = property;
-        return r.getRenderer();
+    public Object getValue() {
+        return component.getSelectedItem();
     }
 
-    private static class EnumRW extends TableCellEditorRenderer {
-
-        private final JComboBox component = new JComboBox();
-
-        private EnumRW() {
-            panel.setLayout(new BorderLayout());
-            panel.add(BorderLayout.CENTER, component);
-        }
-
-        @Override
-        protected void prepare() {
-            component.setModel(new EnumComboBoxModel(propertyType.getBinding()));
-
-            if (value instanceof Enum) {
-                component.setSelectedItem(value);
-            }else{
-                component.setSelectedItem(null);
-            }
-        }
-
-        @Override
-        public Object getCellEditorValue() {
-            return component.getSelectedItem();
-        }
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        firePropertyChange(PROP_VALUE, null, getValue());
     }
+
 }

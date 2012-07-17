@@ -17,19 +17,25 @@
 package org.geotoolkit.gui.swing.propertyedit.featureeditor;
 
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.JCheckBox;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
 import org.opengis.feature.type.PropertyType;
 
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
  */
-public class BooleanEditor extends VersatileEditor {
+public class BooleanEditor extends PropertyValueEditor implements ActionListener{
 
-    private final BooleanRW r = new BooleanRW();
-    private final BooleanRW w = new BooleanRW();
+    private final JCheckBox component = new JCheckBox();
+
+    public BooleanEditor() {
+        super(new BorderLayout());
+        add(BorderLayout.CENTER, component);
+        component.setOpaque(false);
+        component.addActionListener(this);
+    }
 
     @Override
     public boolean canHandle(PropertyType candidate) {
@@ -37,49 +43,18 @@ public class BooleanEditor extends VersatileEditor {
     }
 
     @Override
-    public TableCellEditor getEditor(PropertyType property) {
-        w.propertyType = property;
-        return w;
+    public void setValue(PropertyType type, Object value) {
+        component.setSelected(Boolean.TRUE.equals(value));
     }
 
     @Override
-    public TableCellRenderer getRenderer(PropertyType property) {
-        r.propertyType = property;
-        return r.getRenderer();
+    public Object getValue() {
+        return component.isSelected();
     }
 
     @Override
-    public TableCellEditorRenderer getReadingRenderer() {
-        return r;
+    public void actionPerformed(ActionEvent e) {
+        firePropertyChange(PROP_VALUE, null, getValue());
     }
 
-    @Override
-    public TableCellEditorRenderer getWritingRenderer() {
-        return w;
-    }
-
-    private static class BooleanRW extends TableCellEditorRenderer {
-
-        private final JCheckBox component = new JCheckBox();
-
-        private BooleanRW() {
-            panel.setLayout(new BorderLayout());
-            panel.add(BorderLayout.CENTER, component);
-            component.setOpaque(false);
-        }
-
-        @Override
-        protected void prepare() {
-            if (value instanceof Boolean) {
-                component.setSelected((Boolean) value);
-            }else{
-                component.setSelected(false);
-            }
-        }
-
-        @Override
-        public Object getCellEditorValue() {
-            return component.isSelected();
-        }
-    }
 }

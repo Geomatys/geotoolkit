@@ -17,13 +17,12 @@
 package org.geotoolkit.gui.swing.propertyedit.featureeditor;
 
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JComboBox;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
 import org.geotoolkit.filter.visitor.DefaultFilterVisitor;
-import org.geotoolkit.gui.swing.propertyedit.JFeatureOutLine;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.opengis.feature.type.PropertyType;
 import org.opengis.filter.Filter;
@@ -34,36 +33,32 @@ import org.opengis.filter.expression.Function;
  *
  * @author Johann Sorel (Puzzle-GIS)
  */
-public class ChoiceEditor extends VersatileEditor {
+public class ChoiceEditor extends PropertyValueEditor implements ActionListener{
 
-    private final ChoiceRW r = new ChoiceRW();
-    private final ChoiceRW w = new ChoiceRW();
+    private final JComboBox component = new JComboBox();
 
-    @Override
-    public TableCellEditorRenderer getReadingRenderer() {
-        return r;
+    public ChoiceEditor() {
+        super(new BorderLayout());
+        add(BorderLayout.CENTER, component);
+        component.addActionListener(this);
     }
 
     @Override
-    public TableCellEditorRenderer getWritingRenderer() {
-        return w;
+    public void setValue(PropertyType type, Object value) {
+        component.setModel(new ListComboBoxModel(extractChoices(type)));
+        component.setSelectedItem(value);
     }
+
+    @Override
+    public Object getValue() {
+        return component.getSelectedItem();
+    }
+
+
 
     @Override
     public boolean canHandle(PropertyType candidate) {
         return extractChoices(candidate) != null;
-    }
-
-    @Override
-    public TableCellEditor getEditor(PropertyType property) {
-        w.propertyType = property;
-        return w;
-    }
-
-    @Override
-    public TableCellRenderer getRenderer(PropertyType property) {
-        r.propertyType = property;
-        return r.getRenderer();
     }
 
     /**
@@ -98,25 +93,9 @@ public class ChoiceEditor extends VersatileEditor {
 
     }
 
-    private static class ChoiceRW extends TableCellEditorRenderer {
-
-        private final JComboBox component = new JComboBox();
-
-        private ChoiceRW() {
-            panel.setLayout(new BorderLayout());
-            panel.add(BorderLayout.CENTER, component);
-            component.setEditable(true);
-        }
-
-        @Override
-        protected void prepare() {
-            component.setModel(new ListComboBoxModel(extractChoices(propertyType)));
-            component.setSelectedItem(value);
-        }
-
-        @Override
-        public Object getCellEditorValue() {
-            return component.getSelectedItem();
-        }
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        firePropertyChange(PROP_VALUE, null, getValue());
     }
+
 }

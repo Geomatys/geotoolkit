@@ -17,12 +17,12 @@
 package org.geotoolkit.gui.swing.propertyedit.featureeditor;
 
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JComboBox;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.opengis.feature.type.PropertyType;
 
@@ -30,19 +30,17 @@ import org.opengis.feature.type.PropertyType;
  *
  * @author Johann Sorel (Puzzle-GIS)
  */
-public class CharsetEditor extends VersatileEditor {
+public class CharsetEditor extends PropertyValueEditor implements ActionListener{
 
-    private final CharsetRW r = new CharsetRW();
-    private final CharsetRW w = new CharsetRW();
+    private final JComboBox component = new JComboBox();
 
-    @Override
-    public TableCellEditorRenderer getReadingRenderer() {
-        return r;
-    }
+    public CharsetEditor() {
+        super(new BorderLayout());
+        add(BorderLayout.NORTH, component);
 
-    @Override
-    public TableCellEditorRenderer getWritingRenderer() {
-        return w;
+        final List<Charset> sets = new ArrayList<Charset>(Charset.availableCharsets().values());
+        component.setModel(new ListComboBoxModel(sets));
+        component.addActionListener(this);
     }
 
     @Override
@@ -51,41 +49,22 @@ public class CharsetEditor extends VersatileEditor {
     }
 
     @Override
-    public TableCellEditor getEditor(PropertyType property) {
-        w.propertyType = property;
-        return w;
+    public void setValue(PropertyType type, Object value) {
+        if (value instanceof Charset) {
+            component.setSelectedItem(value);
+        }else{
+            component.setSelectedItem(null);
+        }
     }
 
     @Override
-    public TableCellRenderer getRenderer(PropertyType property) {
-        r.propertyType = property;
-        return r.getRenderer();
+    public Object getValue() {
+        return component.getSelectedItem();
     }
 
-    private static class CharsetRW extends TableCellEditorRenderer {
-
-        private final JComboBox component = new JComboBox();
-
-        private CharsetRW() {
-            panel.setLayout(new BorderLayout());
-            panel.add(BorderLayout.NORTH, component);
-
-            final List<Charset> sets = new ArrayList<Charset>(Charset.availableCharsets().values());
-            component.setModel(new ListComboBoxModel(sets));
-        }
-
-        @Override
-        protected void prepare() {
-            if (value instanceof Charset) {
-                component.setSelectedItem(value);
-            }else{
-                component.setSelectedItem(null);
-            }
-        }
-
-        @Override
-        public Object getCellEditorValue() {
-            return component.getSelectedItem();
-        }
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        firePropertyChange(PROP_VALUE, null, getValue());
     }
+
 }

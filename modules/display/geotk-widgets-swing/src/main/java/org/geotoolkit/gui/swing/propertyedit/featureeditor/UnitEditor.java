@@ -26,8 +26,6 @@ import javax.measure.unit.Unit;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JComboBox;
 import javax.swing.JList;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.opengis.feature.type.PropertyType;
 
@@ -35,20 +33,44 @@ import org.opengis.feature.type.PropertyType;
  *
  * @author Johann Sorel (Puzzle-GIS)
  */
-public class UnitEditor extends VersatileEditor {
+public class UnitEditor extends PropertyValueEditor {
 
-    private final EnumRW r = new EnumRW();
-    private final EnumRW w = new EnumRW();
+    private final JComboBox component = new JComboBox();
 
-    @Override
-    public TableCellEditorRenderer getReadingRenderer() {
-        return r;
+    public UnitEditor() {
+        super(new BorderLayout());
+
+        final List<Unit> units = new ArrayList<Unit>(SI.getInstance().getUnits());
+        units.addAll(NonSI.getInstance().getUnits());
+
+        component.setModel(new ListComboBoxModel(units));
+        component.setRenderer(new DefaultListCellRenderer(){
+
+            @Override
+            public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, null, index, isSelected, cellHasFocus);
+
+                if(value instanceof Unit){
+                    final Unit unit = (Unit) value;
+                    String str = "";
+                    try{
+                        str = unit.toString();
+                    }catch(Exception ex){
+                        str = "-";
+                    }
+                    this.setText(str);
+                }
+
+                return this;
+            }
+
+        });
+
+        add(BorderLayout.CENTER, component);
+
     }
 
-    @Override
-    public TableCellEditorRenderer getWritingRenderer() {
-        return w;
-    }
+
 
     @Override
     public boolean canHandle(PropertyType candidate) {
@@ -56,64 +78,17 @@ public class UnitEditor extends VersatileEditor {
     }
 
     @Override
-    public TableCellEditor getEditor(PropertyType property) {
-        w.propertyType = property;
-        return w;
+    public void setValue(PropertyType type, Object value) {
+        if (value instanceof Unit) {
+            component.setSelectedItem(value);
+        }else{
+            component.setSelectedItem(null);
+        }
     }
 
     @Override
-    public TableCellRenderer getRenderer(PropertyType property) {
-        r.propertyType = property;
-        return r.getRenderer();
+    public Object getValue() {
+        return component.getSelectedItem();
     }
 
-    private static class EnumRW extends TableCellEditorRenderer {
-
-        private final JComboBox component = new JComboBox();
-
-        private EnumRW() {
-            final List<Unit> units = new ArrayList<Unit>(SI.getInstance().getUnits());
-            units.addAll(NonSI.getInstance().getUnits());
-
-            component.setModel(new ListComboBoxModel(units));
-            component.setRenderer(new DefaultListCellRenderer(){
-
-                @Override
-                public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                    super.getListCellRendererComponent(list, null, index, isSelected, cellHasFocus);
-
-                    if(value instanceof Unit){
-                        final Unit unit = (Unit) value;
-                        String str = "";
-                        try{
-                            str = unit.toString();
-                        }catch(Exception ex){
-                            str = "-";
-                        }
-                        this.setText(str);
-                    }
-
-                    return this;
-                }
-
-            });
-
-            panel.setLayout(new BorderLayout());
-            panel.add(BorderLayout.CENTER, component);
-        }
-
-        @Override
-        protected void prepare() {
-            if (value instanceof Unit) {
-                component.setSelectedItem(value);
-            }else{
-                component.setSelectedItem(null);
-            }
-        }
-
-        @Override
-        public Object getCellEditorValue() {
-            return component.getSelectedItem();
-        }
-    }
 }

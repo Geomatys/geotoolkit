@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2012, Geomatys
+ *    (C) 2012, Johann Sorel
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,24 +16,29 @@
  */
 package org.geotoolkit.gui.swing.propertyedit.featureeditor;
 
-import javax.swing.JComponent;
-import org.geotoolkit.gui.swing.propertyedit.JFeatureOutLine;
-import org.opengis.feature.Property;
+import java.awt.LayoutManager;
+import javax.swing.JPanel;
+import org.opengis.feature.type.PropertyType;
 
 /**
  *
- * @author Johann Sorel (Geomatys)
+ * @author Johann Sorel
  */
-public abstract class VersatileEditor implements JFeatureOutLine.PropertyEditor {
+public abstract class PropertyValueEditor extends JPanel {
 
-    public abstract TableCellEditorRenderer getReadingRenderer();
-    public abstract TableCellEditorRenderer getWritingRenderer();
+    public static final String PROP_VALUE = "value";
 
-    @Override
-    public JComponent getSimpleEditor(Property property) {
-        final TableCellEditorRenderer editor = getWritingRenderer();
-        editor.setCellEditorValue(property);
-        return editor.getComponent(null, true, 0, 0);
+    public PropertyValueEditor() {
     }
+
+    public PropertyValueEditor(LayoutManager layout) {
+        super(layout);
+    }
+
+    public abstract boolean canHandle(PropertyType candidate);
+
+    public abstract void setValue(final PropertyType type, Object value);
+
+    public abstract Object getValue();
 
 }

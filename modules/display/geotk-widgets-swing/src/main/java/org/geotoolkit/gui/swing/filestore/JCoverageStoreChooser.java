@@ -40,6 +40,7 @@ import org.geotoolkit.coverage.CoverageStoreFactory;
 import org.geotoolkit.coverage.CoverageStoreFinder;
 import org.geotoolkit.gui.swing.filestore.JServerChooser.FactoryCellRenderer;
 import org.geotoolkit.gui.swing.propertyedit.JFeatureOutLine;
+import org.geotoolkit.gui.swing.propertyedit.featureeditor.PropertyValueEditor;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.DataStoreException;
@@ -51,35 +52,35 @@ import org.opengis.parameter.ParameterValueGroup;
 /**
  * Panel allowing to choose a coverage store and configure it among the
  * declared CoverageStoreFactories.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public class JCoverageStoreChooser extends javax.swing.JPanel {
 
     private static final Logger LOGGER = Logging.getLogger(JCoverageStoreChooser.class);
-        
+
     private static final Comparator<CoverageStoreFactory> SORTER = new Comparator<CoverageStoreFactory>() {
         @Override
         public int compare(CoverageStoreFactory o1, CoverageStoreFactory o2) {
             return o1.getDisplayName().toString().compareTo(o2.getDisplayName().toString());
         }
     };
-    
+
     private final JFeatureOutLine guiEditor = new JFeatureOutLine();
     private final JLayerChooser chooser = new JLayerChooser();
-    
+
     public JCoverageStoreChooser() {
         initComponents();
         guiEditPane.add(BorderLayout.CENTER,new JScrollPane(guiEditor));
-        
+
         final Iterator<CoverageStoreFactory> ite = CoverageStoreFinder.getAvailableFactories();
         final List<CoverageStoreFactory> factories = new ArrayList<CoverageStoreFactory>();
         while(ite.hasNext()){
             factories.add(ite.next());
         }
         Collections.sort(factories, SORTER);
-        
+
         guiList.setHighlighters(HighlighterFactory.createAlternateStriping() );
         guiList.setModel(new ListComboBoxModel(factories));
         guiList.setCellRenderer(new FactoryCellRenderer());
@@ -107,11 +108,11 @@ public class JCoverageStoreChooser extends javax.swing.JPanel {
 
     public CoverageStore getCoverageStore() throws DataStoreException{
         final CoverageStoreFactory factory = (CoverageStoreFactory) guiList.getSelectedValue();
-        
+
         if(factory == null){
             return null;
         }
-        
+
         final ParameterValueGroup param = guiEditor.getEditedAsParameter(factory.getParametersDescriptor());
         if(guiCreateNew.isSelected()){
             return factory.createNew(param);
@@ -119,11 +120,11 @@ public class JCoverageStoreChooser extends javax.swing.JPanel {
             return factory.create(param);
         }
     }
-    
+
     public List<MapLayer> getSelectedLayers() throws DataStoreException{
         return chooser.getLayers();
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -204,7 +205,7 @@ public class JCoverageStoreChooser extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
 private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guiConnectActionPerformed
-        
+
         CoverageStore store = null;
         try {
             chooser.setSource(null);
@@ -217,7 +218,7 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
             guiInfoLabel.setText(""+ex.getMessage());
             LOGGER.log(Level.WARNING, ex.getMessage(),ex);
         }
-    
+
 }//GEN-LAST:event_guiConnectActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -231,47 +232,47 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
     private javax.swing.JSplitPane guiSplit;
     private javax.swing.JScrollPane jScrollPane2;
     // End of variables declaration//GEN-END:variables
-    
+
     /**
      * Display a modal dialog.
-     * 
+     *
      * @return
-     * @throws DataStoreException 
+     * @throws DataStoreException
      */
     public static List<CoverageStore> showDialog() throws DataStoreException{
         return showDialog(Collections.EMPTY_LIST);
     }
-    
+
     /**
      * Display a modal dialog choosing layers.
-     * 
+     *
      * @param editors : additional FeatureOutline editors
      * @return
-     * @throws DataStoreException 
+     * @throws DataStoreException
      */
-    public static List<MapLayer> showLayerDialog(List<JFeatureOutLine.PropertyEditor> editors) throws DataStoreException{
+    public static List<MapLayer> showLayerDialog(List<PropertyValueEditor> editors) throws DataStoreException{
         return showDialog(editors, true);
     }
-    
+
     /**
      * Display a modal dialog.
-     * 
+     *
      * @param editors : additional FeatureOutline editors
      * @return
-     * @throws DataStoreException 
+     * @throws DataStoreException
      */
-    public static List<CoverageStore> showDialog(List<JFeatureOutLine.PropertyEditor> editors) throws DataStoreException{
-        return showDialog(editors, false);       
+    public static List<CoverageStore> showDialog(List<PropertyValueEditor> editors) throws DataStoreException{
+        return showDialog(editors, false);
     }
-    
-    private static List showDialog(List<JFeatureOutLine.PropertyEditor> editors, boolean layerVisible) throws DataStoreException{
+
+    private static List showDialog(List<PropertyValueEditor> editors, boolean layerVisible) throws DataStoreException{
         final JCoverageStoreChooser chooser = new JCoverageStoreChooser();
         if(editors != null){
             chooser.guiEditor.getEditors().addAll(editors);
         }
         chooser.setLayerSelectionVisible(layerVisible);
         final JDialog dialog = new JDialog();
-        
+
         final AtomicBoolean openAction = new AtomicBoolean(false);
         final JToolBar bar = new JToolBar();
         bar.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -283,16 +284,16 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
                 dialog.dispose();
             }
         });
-        
+
         final JPanel panel = new JPanel(new BorderLayout());
-        panel.add(BorderLayout.CENTER,chooser);        
+        panel.add(BorderLayout.CENTER,chooser);
         panel.add(BorderLayout.SOUTH, bar);
         dialog.setModal(true);
         dialog.setContentPane(panel);
         dialog.pack();
         dialog.setLocationRelativeTo(null);
         dialog.setVisible(true);
-        
+
         if(openAction.get()){
             if(layerVisible){
                 return chooser.getSelectedLayers();
@@ -308,5 +309,5 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
             return Collections.EMPTY_LIST;
         }
     }
-    
+
 }

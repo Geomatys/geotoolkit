@@ -36,8 +36,8 @@ import org.geotoolkit.coverage.CoverageStoreFactory;
 import org.geotoolkit.data.DataStoreFactory;
 import org.geotoolkit.data.FileDataStoreFactory;
 import org.geotoolkit.data.folder.AbstractFolderDataStoreFactory;
-import org.geotoolkit.data.folder.FolderDataStore;
 import org.geotoolkit.gui.swing.propertyedit.JFeatureOutLine;
+import org.geotoolkit.gui.swing.propertyedit.featureeditor.PropertyValueEditor;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapLayer;
@@ -50,35 +50,35 @@ import org.opengis.parameter.ParameterValueGroup;
 /**
  * Panel allowing to choose a server and configure it among the
  * declared ServerFactories.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public class JServerChooser extends javax.swing.JPanel {
 
     private static final Logger LOGGER = Logging.getLogger(JCoverageStoreChooser.class);
-    
+
     private static final Comparator<ServerFactory> SORTER = new Comparator<ServerFactory>() {
         @Override
         public int compare(ServerFactory o1, ServerFactory o2) {
             return o1.getDisplayName().toString().compareTo(o2.getDisplayName().toString());
         }
     };
-    
+
     private final JFeatureOutLine guiEditor = new JFeatureOutLine();
     private final JLayerChooser chooser = new JLayerChooser();
-    
+
     public JServerChooser() {
         initComponents();
         guiEditPane.add(BorderLayout.CENTER,new JScrollPane(guiEditor));
-        
+
         final Iterator<ServerFactory> ite = ServerFinder.getAvailableFactories();
         final List<ServerFactory> factories = new ArrayList<ServerFactory>();
         while(ite.hasNext()){
             factories.add(ite.next());
         }
         Collections.sort(factories, SORTER);
-        
+
         guiList.setHighlighters(HighlighterFactory.createAlternateStriping() );
         guiList.setModel(new ListComboBoxModel(factories));
         guiList.setCellRenderer(new FactoryCellRenderer());
@@ -106,20 +106,20 @@ public class JServerChooser extends javax.swing.JPanel {
 
     public Server getServer() throws DataStoreException{
         final ServerFactory factory = (ServerFactory) guiList.getSelectedValue();
-        
+
         if(factory == null){
             return null;
         }
-        
+
         final ParameterValueGroup param = guiEditor.getEditedAsParameter(factory.getParametersDescriptor());
         return factory.create(param);
     }
-    
+
     public List<MapLayer> getSelectedLayers() throws DataStoreException{
         return chooser.getLayers();
     }
-    
-    
+
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -200,7 +200,7 @@ public class JServerChooser extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
 private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guiConnectActionPerformed
-        
+
         Server store = null;
         try {
             chooser.setSource(null);
@@ -213,7 +213,7 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
             guiInfoLabel.setText(""+ex.getMessage());
             LOGGER.log(Level.WARNING, ex.getMessage(),ex);
         }
-    
+
 }//GEN-LAST:event_guiConnectActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -226,47 +226,47 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
     private javax.swing.JSplitPane guiSplit;
     private javax.swing.JScrollPane scr;
     // End of variables declaration//GEN-END:variables
-    
+
     /**
      * Display a modal dialog.
-     * 
+     *
      * @return
-     * @throws DataStoreException 
+     * @throws DataStoreException
      */
     public static List<Server> showDialog() throws DataStoreException{
         return showDialog(Collections.EMPTY_LIST);
     }
-    
+
     /**
      * Display a modal dialog choosing layers.
-     * 
+     *
      * @param editors : additional FeatureOutline editors
      * @return
-     * @throws DataStoreException 
+     * @throws DataStoreException
      */
-    public static List<MapLayer> showLayerDialog(List<JFeatureOutLine.PropertyEditor> editors) throws DataStoreException{
+    public static List<MapLayer> showLayerDialog(List<PropertyValueEditor> editors) throws DataStoreException{
         return showDialog(editors, true);
     }
-    
+
     /**
      * Display a modal dialog.
-     * 
+     *
      * @param editors : additional FeatureOutline editors
      * @return
-     * @throws DataStoreException 
+     * @throws DataStoreException
      */
-    public static List<Server> showDialog(List<JFeatureOutLine.PropertyEditor> editors) throws DataStoreException{
-        return showDialog(editors, false);       
+    public static List<Server> showDialog(List<PropertyValueEditor> editors) throws DataStoreException{
+        return showDialog(editors, false);
     }
-    
-    private static List showDialog(List<JFeatureOutLine.PropertyEditor> editors, boolean layerVisible) throws DataStoreException{
+
+    private static List showDialog(List<PropertyValueEditor> editors, boolean layerVisible) throws DataStoreException{
         final JServerChooser chooser = new JServerChooser();
         if(editors != null){
             chooser.guiEditor.getEditors().addAll(editors);
         }
         chooser.setLayerSelectionVisible(layerVisible);
         final JDialog dialog = new JDialog();
-        
+
         final AtomicBoolean openAction = new AtomicBoolean(false);
         final JToolBar bar = new JToolBar();
         bar.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -278,16 +278,16 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
                 dialog.dispose();
             }
         });
-        
+
         final JPanel panel = new JPanel(new BorderLayout());
-        panel.add(BorderLayout.CENTER,chooser);        
+        panel.add(BorderLayout.CENTER,chooser);
         panel.add(BorderLayout.SOUTH, bar);
         dialog.setModal(true);
         dialog.setContentPane(panel);
         dialog.pack();
         dialog.setLocationRelativeTo(null);
         dialog.setVisible(true);
-        
+
         if(openAction.get()){
             if(layerVisible){
                 return chooser.getSelectedLayers();
@@ -303,16 +303,16 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
             return Collections.EMPTY_LIST;
         }
     }
-    
+
     static class FactoryCellRenderer extends DefaultListCellRenderer{
 
         @Override
         public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
             final JLabel lbl = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-            
+
             String name = "";
             String desc = "";
-            
+
             if(value instanceof ServerFactory){
                 final ServerFactory factory = (ServerFactory) value;
                 name = String.valueOf(factory.getDisplayName());
@@ -326,21 +326,21 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
                 name = String.valueOf(factory.getDisplayName());
                 desc = String.valueOf(factory.getDescription());
             }
-            
+
             final String txt = "<html><b>"+name+"</b><br/>"
                         + "<font size=\"0.5em\"><i>&nbsp&nbsp&nbsp "+desc+"</i></font></html>";
             lbl.setText(txt);
-            lbl.setIcon(findIcon(value));   
-            
+            lbl.setIcon(findIcon(value));
+
             return lbl;
         }
-        
+
     }
-    
+
     private static final ImageIcon EMPTY_24 = new ImageIcon(new BufferedImage(24, 24, BufferedImage.TYPE_INT_ARGB));
-    
+
     private static ImageIcon findIcon(Object candidate){
-     
+
         ImageIcon icon = EMPTY_24;
         String name = "";
         if(candidate instanceof ServerFactory){
@@ -353,9 +353,9 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
             name = ((DataStoreFactory)candidate).getDisplayName().toString().toLowerCase();
             icon = IconBundle.getIcon("24_store");
         }
-        
+
         final String classname = candidate.getClass().getName().toLowerCase();
-        
+
         //knowned cases
         if(name.contains("google")){
             icon = IconBundle.getIcon("24_google");
@@ -374,9 +374,9 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
         }else if(candidate instanceof FileDataStoreFactory){
             icon = IconBundle.getIcon("24_doc");
         }
-        
-        
+
+
         return icon;
     }
-    
+
 }

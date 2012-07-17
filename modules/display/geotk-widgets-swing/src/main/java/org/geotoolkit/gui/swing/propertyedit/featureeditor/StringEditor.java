@@ -19,27 +19,21 @@ package org.geotoolkit.gui.swing.propertyedit.featureeditor;
 import java.awt.BorderLayout;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
 import org.opengis.feature.type.PropertyType;
 
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
  */
-public class StringEditor extends VersatileEditor {
+public class StringEditor extends PropertyValueEditor {
 
-    private final StringRW r = new StringRW();
-    private final StringRW w = new StringRW();
+    private final JTextField textField = new JTextField();
+    private final JPasswordField passwordField = new JPasswordField();
+    private JTextField current = textField;
 
-    @Override
-    public TableCellEditorRenderer getReadingRenderer() {
-        return r;
-    }
-
-    @Override
-    public TableCellEditorRenderer getWritingRenderer() {
-        return w;
+    public StringEditor() {
+        super(new BorderLayout());
+        add(BorderLayout.CENTER, textField);
     }
 
     @Override
@@ -48,55 +42,26 @@ public class StringEditor extends VersatileEditor {
     }
 
     @Override
-    public TableCellEditor getEditor(PropertyType property) {
-        w.propertyType = property;
-        r.update();
-        return w;
+    public void setValue(PropertyType propertyType, Object value) {
+        removeAll();
+        if(propertyType != null && propertyType.getName().getLocalPart().startsWith("pass")){
+            add(BorderLayout.CENTER, passwordField);
+            current = passwordField;
+        }else{
+            add(BorderLayout.CENTER, textField);
+            current = textField;
+        }
+
+        if (value instanceof String) {
+            current.setText((String) value);
+        }else{
+            current.setText("");
+        }
     }
 
     @Override
-    public TableCellRenderer getRenderer(PropertyType property) {
-        r.propertyType = property;
-        r.update();
-        return r.getRenderer();
+    public Object getValue() {
+        return current.getText();
     }
 
-    private static class StringRW extends TableCellEditorRenderer {
-
-        private final JTextField textField = new JTextField();
-        private final JPasswordField passwordField = new JPasswordField();
-        private JTextField current = null;
-
-        private StringRW() {
-            panel.setLayout(new BorderLayout());
-            panel.add(BorderLayout.CENTER, textField);
-        }
-
-        private void update(){
-            panel.removeAll();
-            if(propertyType != null && propertyType.getName().getLocalPart().startsWith("pass")){
-                panel.add(BorderLayout.CENTER, passwordField);
-                current = passwordField;
-            }else{
-                panel.add(BorderLayout.CENTER, textField);
-                current = textField;
-            }
-        }
-
-        @Override
-        protected void prepare() {
-            update();
-            if (value instanceof String) {
-                current.setText((String) value);
-            }else{
-                current.setText("");
-            }
-        }
-
-        @Override
-        public Object getCellEditorValue() {
-            update();
-            return current.getText();
-        }
-    }
 }

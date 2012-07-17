@@ -17,8 +17,6 @@
 package org.geotoolkit.gui.swing.propertyedit.featureeditor;
 
 import java.awt.BorderLayout;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
 import org.geotoolkit.gui.swing.referencing.AuthorityCodesComboBox;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.opengis.feature.type.PropertyType;
@@ -29,19 +27,13 @@ import org.opengis.util.FactoryException;
  *
  * @author Johann Sorel (Puzzle-GIS)
  */
-public class CRSEditor extends VersatileEditor {
+public class CRSEditor extends PropertyValueEditor {
 
-    private final CRSRW r = new CRSRW();
-    private final CRSRW w = new CRSRW();
+    private final AuthorityCodesComboBox component = new AuthorityCodesComboBox();
 
-    @Override
-    public TableCellEditorRenderer getReadingRenderer() {
-        return r;
-    }
-
-    @Override
-    public TableCellEditorRenderer getWritingRenderer() {
-        return w;
+    public CRSEditor() {
+        super(new BorderLayout());
+        add(BorderLayout.CENTER, component);
     }
 
     @Override
@@ -50,56 +42,35 @@ public class CRSEditor extends VersatileEditor {
     }
 
     @Override
-    public TableCellEditor getEditor(PropertyType property) {
-        w.propertyType = property;
-        return w;
+    public void setValue(PropertyType type, Object value) {
+        if (value instanceof CoordinateReferenceSystem) {
+            String code = IdentifiedObjects.getIdentifier(((CoordinateReferenceSystem) value));
+            component.setSelectedCode(code);
+            try {
+                if (component.getSelectedItem() == null) {
+                    //strip the 'EPSG:'
+                    final int index = code.indexOf(':');
+                    if (index >= 0) {
+                        code = code.substring(index + 1);
+                        component.setSelectedCode(code);
+                    }
+                }
+            } catch (FactoryException ex) {
+                //no need to log
+            }
+        }else{
+            component.setSelectedCode(null);
+        }
     }
 
     @Override
-    public TableCellRenderer getRenderer(PropertyType property) {
-        r.propertyType = property;
-        return r.getRenderer();
-    }
-
-    private static class CRSRW extends TableCellEditorRenderer {
-
-        private final AuthorityCodesComboBox component = new AuthorityCodesComboBox();
-
-        private CRSRW() {
-            panel.setLayout(new BorderLayout());
-            panel.add(BorderLayout.CENTER, component);
-        }
-
-        @Override
-        protected void prepare() {
-            if (value instanceof CoordinateReferenceSystem) {
-                String code = IdentifiedObjects.getIdentifier(((CoordinateReferenceSystem) value));
-                component.setSelectedCode(code);
-                try {
-                    if (component.getSelectedItem() == null) {
-                        //strip the 'EPSG:'
-                        final int index = code.indexOf(':');
-                        if (index >= 0) {
-                            code = code.substring(index + 1);
-                            component.setSelectedCode(code);
-                        }
-                    }
-                } catch (FactoryException ex) {
-                    //no need to log
-                }
-            }else{
-                component.setSelectedCode(null);
-            }
-        }
-
-        @Override
-        public Object getCellEditorValue() {
-            try {
-                return component.getSelectedItem();
-            } catch (FactoryException ex) {
-                //no need to log
-                return null;
-            }
+    public Object getValue() {
+        try {
+            return component.getSelectedItem();
+        } catch (FactoryException ex) {
+            //no need to log
+            return null;
         }
     }
+
 }

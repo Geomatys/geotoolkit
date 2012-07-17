@@ -29,8 +29,6 @@ import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JTextField;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.opengis.feature.type.PropertyType;
 
@@ -38,19 +36,17 @@ import org.opengis.feature.type.PropertyType;
  *
  * @author Johann Sorel (Puzzle-GIS)
  */
-public class URLEditor extends VersatileEditor {
+public class URLEditor extends PropertyValueEditor implements ActionListener{
 
-    private final URLRW r = new URLRW();
-    private final URLRW w = new URLRW();
+    private final JTextField component = new JTextField();
+    private final JButton chooseButton = new JButton("...");
 
-    @Override
-    public TableCellEditorRenderer getReadingRenderer() {
-        return r;
-    }
-
-    @Override
-    public TableCellEditorRenderer getWritingRenderer() {
-        return w;
+    public URLEditor() {
+        super(new BorderLayout());
+        add(BorderLayout.CENTER, component);
+        add(BorderLayout.EAST, chooseButton);
+        chooseButton.addActionListener(this);
+        chooseButton.setMargin(new Insets(0, 0, 0, 0));
     }
 
     @Override
@@ -59,67 +55,41 @@ public class URLEditor extends VersatileEditor {
     }
 
     @Override
-    public TableCellEditor getEditor(PropertyType property) {
-        w.propertyType = property;
-        return w;
+    public void setValue(PropertyType type, Object value) {
+        if (value instanceof URL) {
+            try {
+                component.setText( ((URL) value).toURI().toString() );
+            } catch (URISyntaxException ex) {
+                Logger.getLogger(URLEditor.class.getName()).log(Level.WARNING, null, ex);
+            }
+        }else{
+            component.setText("");
+        }
     }
 
     @Override
-    public TableCellRenderer getRenderer(PropertyType property) {
-        r.propertyType = property;
-        return r.getRenderer();
-    }
-
-    private static class URLRW extends TableCellEditorRenderer implements ActionListener {
-
-        private final JTextField component = new JTextField();
-        private final JButton chooseButton = new JButton("...");
-
-        private URLRW() {
-            panel.setLayout(new BorderLayout());
-            panel.add(BorderLayout.CENTER, component);
-            panel.add(BorderLayout.EAST, chooseButton);
-            chooseButton.addActionListener(this);
-            chooseButton.setMargin(new Insets(0, 0, 0, 0));
-        }
-
-        @Override
-        protected void prepare() {
-            if (value instanceof URL) {
-                try {
-                    component.setText( ((URL) value).toURI().toString() );
-                } catch (URISyntaxException ex) {
-                    Logger.getLogger(URLEditor.class.getName()).log(Level.WARNING, null, ex);
-                }
-            }else{
-                component.setText("");
-            }
-        }
-
-        @Override
-        public Object getCellEditorValue() {
-            final String str = component.getText();
+    public Object getValue() {
+        final String str = component.getText();
             try {
                 return new URL(str);
             } catch (MalformedURLException ex) {
                 Logger.getLogger(URLEditor.class.getName()).log(Level.FINER, null, ex);
                 return null;
             }
-        }
+    }
 
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            final JFileChooser chooser = new JFileChooser();
-            chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-            chooser.setMultiSelectionEnabled(false);
-            final int response = chooser.showDialog(chooseButton, MessageBundle.getString("ok"));
-            if(response == JFileChooser.APPROVE_OPTION){
-                final File f = chooser.getSelectedFile();
-                if(f!=null){
-                    component.setText(f.toURI().toString());
-                }
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        final JFileChooser chooser = new JFileChooser();
+        chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        chooser.setMultiSelectionEnabled(false);
+        final int response = chooser.showDialog(chooseButton, MessageBundle.getString("ok"));
+        if(response == JFileChooser.APPROVE_OPTION){
+            final File f = chooser.getSelectedFile();
+            if(f!=null){
+                component.setText(f.toURI().toString());
             }
         }
-
     }
+
 }

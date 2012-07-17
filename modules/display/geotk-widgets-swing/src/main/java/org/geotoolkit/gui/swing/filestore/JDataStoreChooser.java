@@ -40,6 +40,7 @@ import org.geotoolkit.data.DataStoreFactory;
 import org.geotoolkit.data.DataStoreFinder;
 import org.geotoolkit.gui.swing.filestore.JServerChooser.FactoryCellRenderer;
 import org.geotoolkit.gui.swing.propertyedit.JFeatureOutLine;
+import org.geotoolkit.gui.swing.propertyedit.featureeditor.PropertyValueEditor;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.DataStoreException;
@@ -51,36 +52,36 @@ import org.opengis.parameter.ParameterValueGroup;
 /**
  * Panel allowing to choose a data store and configure it among the
  * declared DataStoreFactories.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public class JDataStoreChooser extends javax.swing.JPanel {
 
     private static final Logger LOGGER = Logging.getLogger(JDataStoreChooser.class);
-    
+
     private static final Comparator<DataStoreFactory> SORTER = new Comparator<DataStoreFactory>() {
         @Override
         public int compare(DataStoreFactory o1, DataStoreFactory o2) {
             return o1.getDisplayName().toString().compareTo(o2.getDisplayName().toString());
         }
     };
-    
+
     private final JFeatureOutLine guiEditor = new JFeatureOutLine();
     private final JLayerChooser chooser = new JLayerChooser();
-    
+
     public JDataStoreChooser() {
         initComponents();
         guiEditPane.add(BorderLayout.CENTER,new JScrollPane(guiEditor));
-        
+
         final Iterator<DataStoreFactory> ite = DataStoreFinder.getAvailableFactories();
         final List<DataStoreFactory> factories = new ArrayList<DataStoreFactory>();
         while(ite.hasNext()){
             factories.add(ite.next());
         }
         Collections.sort(factories, SORTER);
-        
-        guiList.setHighlighters(HighlighterFactory.createAlternateStriping() );        
+
+        guiList.setHighlighters(HighlighterFactory.createAlternateStriping() );
         guiList.setModel(new ListComboBoxModel(factories));
         guiList.setCellRenderer(new FactoryCellRenderer());
         guiList.addListSelectionListener(new ListSelectionListener() {
@@ -104,14 +105,14 @@ public class JDataStoreChooser extends javax.swing.JPanel {
             guiSplit.setRightComponent(guiConfig);
         }
     }
-    
+
     public DataStore getDataStore() throws DataStoreException{
         final DataStoreFactory factory = (DataStoreFactory) guiList.getSelectedValue();
-        
+
         if(factory == null){
             return null;
         }
-        
+
         final ParameterValueGroup param = guiEditor.getEditedAsParameter(factory.getParametersDescriptor());
         if(guiCreateNew.isSelected()){
             return factory.createNew(param);
@@ -119,11 +120,11 @@ public class JDataStoreChooser extends javax.swing.JPanel {
             return factory.create(param);
         }
     }
-    
+
     public List<MapLayer> getSelectedLayers() throws DataStoreException{
         return chooser.getLayers();
     }
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -210,7 +211,7 @@ public class JDataStoreChooser extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
 private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guiConnectActionPerformed
-        
+
         DataStore store = null;
         try {
             chooser.setSource(null);
@@ -223,7 +224,7 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
             guiInfoLabel.setText(""+ex.getMessage());
             LOGGER.log(Level.WARNING, ex.getMessage(),ex);
         }
-    
+
 }//GEN-LAST:event_guiConnectActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -238,47 +239,47 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
     private javax.swing.JScrollPane jScrollPane2;
     // End of variables declaration//GEN-END:variables
 
-    
+
     /**
      * Display a modal dialog.
-     * 
+     *
      * @return
-     * @throws DataStoreException 
+     * @throws DataStoreException
      */
     public static List<DataStore> showDialog() throws DataStoreException{
         return showDialog(Collections.EMPTY_LIST);
     }
-    
+
     /**
      * Display a modal dialog.
-     * 
+     *
      * @param editors : additional FeatureOutline editors
      * @return
-     * @throws DataStoreException 
+     * @throws DataStoreException
      */
-    public static List<DataStore> showDialog(List<JFeatureOutLine.PropertyEditor> editors) throws DataStoreException{
+    public static List<DataStore> showDialog(List<PropertyValueEditor> editors) throws DataStoreException{
         return showDialog(editors, false);
     }
-    
+
     /**
      * Display a modal dialog choosing layers.
-     * 
+     *
      * @param editors : additional FeatureOutline editors
      * @return
-     * @throws DataStoreException 
+     * @throws DataStoreException
      */
-    public static List<MapLayer> showLayerDialog(List<JFeatureOutLine.PropertyEditor> editors) throws DataStoreException{
+    public static List<MapLayer> showLayerDialog(List<PropertyValueEditor> editors) throws DataStoreException{
         return showDialog(editors, true);
     }
-    
-    private static List showDialog(List<JFeatureOutLine.PropertyEditor> editors, boolean layerVisible) throws DataStoreException{
+
+    private static List showDialog(List<PropertyValueEditor> editors, boolean layerVisible) throws DataStoreException{
         final JDataStoreChooser chooser = new JDataStoreChooser();
         if(editors != null){
             chooser.guiEditor.getEditors().addAll(editors);
         }
         chooser.setLayerSelectionVisible(layerVisible);
         final JDialog dialog = new JDialog();
-        
+
         final AtomicBoolean openAction = new AtomicBoolean(false);
         final JToolBar bar = new JToolBar();
         bar.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -290,16 +291,16 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
                 dialog.dispose();
             }
         });
-        
+
         final JPanel panel = new JPanel(new BorderLayout());
-        panel.add(BorderLayout.CENTER,chooser);        
+        panel.add(BorderLayout.CENTER,chooser);
         panel.add(BorderLayout.SOUTH, bar);
         dialog.setModal(true);
         dialog.setContentPane(panel);
         dialog.pack();
         dialog.setLocationRelativeTo(null);
         dialog.setVisible(true);
-        
+
         if(openAction.get()){
             if(layerVisible){
                 return chooser.getSelectedLayers();
@@ -315,5 +316,5 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
             return Collections.EMPTY_LIST;
         }
     }
-    
+
 }

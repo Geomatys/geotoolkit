@@ -24,9 +24,6 @@ import java.io.File;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JTextField;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
-import org.geotoolkit.gui.swing.propertyedit.JFeatureOutLine;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.opengis.feature.type.PropertyType;
 
@@ -34,19 +31,17 @@ import org.opengis.feature.type.PropertyType;
  *
  * @author Johann Sorel (Puzzle-GIS)
  */
-public class FileEditor extends VersatileEditor {
+public class FileEditor extends PropertyValueEditor implements ActionListener{
 
-    private final FileRW r = new FileRW();
-    private final FileRW w = new FileRW();
+    private final JTextField component = new JTextField();
+    private final JButton chooseButton = new JButton("...");
 
-    @Override
-    public TableCellEditorRenderer getReadingRenderer() {
-        return r;
-    }
-
-    @Override
-    public TableCellEditorRenderer getWritingRenderer() {
-        return w;
+    public FileEditor() {
+        super(new BorderLayout());
+        add(BorderLayout.CENTER, component);
+        add(BorderLayout.EAST, chooseButton);
+        chooseButton.addActionListener(this);
+        chooseButton.setMargin(new Insets(0, 0, 0, 0));
     }
 
     @Override
@@ -55,61 +50,32 @@ public class FileEditor extends VersatileEditor {
     }
 
     @Override
-    public TableCellEditor getEditor(PropertyType property) {
-        w.propertyType = property;
-        return w;
+    public void setValue(PropertyType type, Object value) {
+        if (value instanceof File) {
+            component.setText( ((File) value).toURI().toString() );
+        }else{
+            component.setText("");
+        }
     }
 
     @Override
-    public TableCellRenderer getRenderer(PropertyType property) {
-        r.propertyType = property;
-        return r.getRenderer();
+    public Object getValue() {
+        final String str = component.getText();
+        final File value = new File(str);
+        return value;
     }
 
-    private static class FileRW extends TableCellEditorRenderer implements ActionListener {
-
-        private final JTextField component = new JTextField();
-        private final JButton chooseButton = new JButton("...");
-
-
-        private FileRW() {
-            panel.setLayout(new BorderLayout());
-            panel.add(BorderLayout.CENTER, component);
-            panel.add(BorderLayout.EAST, chooseButton);
-            chooseButton.addActionListener(this);
-            chooseButton.setMargin(new Insets(0, 0, 0, 0));
-        }
-
-        @Override
-        protected void prepare() {
-            if (value instanceof File) {
-                component.setText( ((File) value).toURI().toString() );
-            }else{
-                component.setText("");
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        final JFileChooser chooser = new JFileChooser();
+        chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        chooser.setMultiSelectionEnabled(false);
+        final int response = chooser.showDialog(chooseButton, MessageBundle.getString("ok"));
+        if(response == JFileChooser.APPROVE_OPTION){
+            final File f = chooser.getSelectedFile();
+            if(f!=null){
+                setValue(null, f);
             }
         }
-
-        @Override
-        public Object getCellEditorValue() {
-            final String str = component.getText();
-            value = new File(str);
-            return value;
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            final JFileChooser chooser = new JFileChooser();
-            chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-            chooser.setMultiSelectionEnabled(false);
-            final int response = chooser.showDialog(chooseButton, MessageBundle.getString("ok"));
-            if(response == JFileChooser.APPROVE_OPTION){
-                final File f = chooser.getSelectedFile();
-                if(f!=null){
-                    value = f;
-                    prepare();
-                }
-            }
-        }
-
     }
 }

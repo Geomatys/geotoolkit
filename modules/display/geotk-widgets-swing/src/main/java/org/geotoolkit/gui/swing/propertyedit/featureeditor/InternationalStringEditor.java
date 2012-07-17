@@ -18,9 +18,6 @@ package org.geotoolkit.gui.swing.propertyedit.featureeditor;
 
 import java.awt.BorderLayout;
 import javax.swing.JTextField;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
-import org.geotoolkit.gui.swing.propertyedit.JFeatureOutLine;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.opengis.feature.type.PropertyType;
 import org.opengis.util.InternationalString;
@@ -29,19 +26,13 @@ import org.opengis.util.InternationalString;
  *
  * @author Johann Sorel (Puzzle-GIS)
  */
-public class InternationalStringEditor extends VersatileEditor {
+public class InternationalStringEditor extends PropertyValueEditor {
 
-    private final StringRW r = new StringRW();
-    private final StringRW w = new StringRW();
+    private final JTextField textField = new JTextField();
+    private JTextField current = null;
 
-    @Override
-    public TableCellEditorRenderer getReadingRenderer() {
-        return r;
-    }
-
-    @Override
-    public TableCellEditorRenderer getWritingRenderer() {
-        return w;
+    public InternationalStringEditor() {
+        super(new BorderLayout());
     }
 
     @Override
@@ -50,51 +41,20 @@ public class InternationalStringEditor extends VersatileEditor {
     }
 
     @Override
-    public TableCellEditor getEditor(PropertyType property) {
-        w.propertyType = property;
-        r.update();
-        return w;
+    public void setValue(PropertyType type, Object value) {
+        removeAll();
+        add(BorderLayout.CENTER, textField);
+        current = textField;
+        if (value instanceof InternationalString) {
+            current.setText(((InternationalString) value).toString());
+        }else{
+            current.setText("");
+        }
     }
 
     @Override
-    public TableCellRenderer getRenderer(PropertyType property) {
-        r.propertyType = property;
-        r.update();
-        return r.getRenderer();
+    public Object getValue() {
+        return new SimpleInternationalString(current.getText());
     }
 
-    private static class StringRW extends TableCellEditorRenderer {
-
-        private final JTextField textField = new JTextField();
-        private JTextField current = null;
-
-        private StringRW() {
-            panel.setLayout(new BorderLayout());
-            panel.add(BorderLayout.CENTER, textField);
-        }
-
-        private void update(){
-            panel.removeAll();
-            panel.add(BorderLayout.CENTER, textField);
-            current = textField;
-        }
-
-        @Override
-        protected void prepare() {
-            update();
-            if (value instanceof InternationalString) {
-                current.setText(((InternationalString) value).toString());
-            }else{
-                current.setText("");
-            }
-        }
-
-        @Override
-        public Object getCellEditorValue() {
-            update();
-            //TODO: should return an InternationalString with translations,
-            //      not just a SimpleInternationString
-            return new SimpleInternationalString(current.getText());
-        }
-    }
 }

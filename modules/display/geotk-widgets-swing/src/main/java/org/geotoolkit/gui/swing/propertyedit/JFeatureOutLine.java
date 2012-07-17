@@ -23,7 +23,6 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -63,24 +62,12 @@ import org.opengis.util.InternationalString;
  */
 public class JFeatureOutLine extends Outline{
 
-    public static interface PropertyEditor{
-
-        boolean canHandle(PropertyType candidate);
-
-        TableCellEditor getEditor(PropertyType type);
-
-        TableCellRenderer getRenderer(PropertyType type);
-
-        JComponent getSimpleEditor(Property property);
-
-    }
-
     private static final ImageIcon ICON_ADD = IconBundle.getIcon("16_smallgray");
     private static final ImageIcon ICON_REMOVE = IconBundle.getIcon("16_smallgreen");
     private static final ImageIcon ICON_OCC_ADD = IconBundle.getIcon("16_occurence_add");
     private static final ImageIcon ICON_OCC_REMOVE = IconBundle.getIcon("16_occurence_remove");
 
-    private final List<JFeatureOutLine.PropertyEditor> editors = new CopyOnWriteArrayList<JFeatureOutLine.PropertyEditor>();
+    private final List<PropertyValueEditor> editors = new CopyOnWriteArrayList<PropertyValueEditor>();
     private final JFeatureOutLine.PropertyRowModel rowModel = new JFeatureOutLine.PropertyRowModel();
     private FeatureTreeModel treeModel = null;
     private Property edited = null;
@@ -92,7 +79,7 @@ public class JFeatureOutLine extends Outline{
         setFillsViewportHeight(true);
         setBackground(Color.WHITE);
         getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        editors.addAll(createDefaultEditorList());
+        editors.addAll(JAttributeEditor.createDefaultEditorList());
     }
 
     /**
@@ -161,7 +148,7 @@ public class JFeatureOutLine extends Outline{
     /**
      * @return live list of property editors.
      */
-    public List<JFeatureOutLine.PropertyEditor> getEditors() {
+    public List<PropertyValueEditor> getEditors() {
         return editors;
     }
 
@@ -179,26 +166,15 @@ public class JFeatureOutLine extends Outline{
         }
 
         if(column == 1){
-            final JFeatureOutLine.PropertyEditor edit = getEditor(type);
+            final PropertyValueEditor edit = JAttributeEditor.getEditor(editors,type);
             if(edit != null){
-                return edit.getEditor(type);
+                return new TableCellEditorRenderer.Editor(edit);
             }
         }
 
         //fallback on default java editor.
         final Class c = type.getBinding();
         return getDefaultEditor(c);
-    }
-
-    private JFeatureOutLine.PropertyEditor getEditor(PropertyType type){
-        if(type != null){
-            for(JFeatureOutLine.PropertyEditor edit : editors){
-                if(edit.canHandle(type)){
-                    return edit;
-                }
-            }
-        }
-        return null;
     }
 
     @Override
@@ -223,9 +199,9 @@ public class JFeatureOutLine extends Outline{
         }
 
         if(column == 1 && type != null){
-            final JFeatureOutLine.PropertyEditor edit = getEditor(type);
+            final PropertyValueEditor edit = JAttributeEditor.getEditor(editors,type);
             if(edit != null){
-                return edit.getRenderer(type);
+                return new TableCellEditorRenderer.Renderer(edit);
             }
         }
 
@@ -250,12 +226,13 @@ public class JFeatureOutLine extends Outline{
             final Object candidate = node.getUserObject();
 
             if(i==0){
-                //first column, property value
-                if(candidate instanceof Property && !(candidate instanceof ComplexAttribute)){
-                    return ((Property)candidate).getValue();
-                }else{
-                    return null;
-                }
+                return node;
+//                //first column, property value
+//                if(candidate instanceof Property && !(candidate instanceof ComplexAttribute)){
+//                    return ((Property)candidate).getValue();
+//                }else{
+//                    return null;
+//                }
             }else{
                 //second column, actions
                 return node;
@@ -279,7 +256,8 @@ public class JFeatureOutLine extends Outline{
                 final Property prop = (Property) node.getUserObject();
                 final Class type = prop.getType().getBinding();
                 return !(prop instanceof ComplexAttribute)
-                      && getEditor(prop.getType()) != null || getDefaultEditor(type) != getDefaultEditor(Object.class);
+                      && JAttributeEditor.getEditor(editors,prop.getType()) != null
+                      || getDefaultEditor(type) != getDefaultEditor(Object.class);
             }else{
                 return false;
             }
@@ -548,30 +526,20 @@ public class JFeatureOutLine extends Outline{
         return new JLabel();
     }
 
-    public static List<JFeatureOutLine.PropertyEditor> createDefaultEditorList(){
-        final List<JFeatureOutLine.PropertyEditor> lst = new ArrayList<JFeatureOutLine.PropertyEditor>();
-        lst.add(new ChoiceEditor());
-        lst.add(new BooleanEditor());
-        lst.add(new CRSEditor());
-        lst.add(new CharsetEditor());
-        lst.add(new NumberEditor());
-        lst.add(new StringEditor());
-        lst.add(new InternationalStringEditor());
-        lst.add(new URLEditor());
-        lst.add(new FileEditor());
-        lst.add(new UnitEditor());
-        lst.add(new EnumEditor());
-        return lst;
+    public static void show(final Property candidate){
+        show(candidate, false);
     }
 
-    public static void show(final Property candidate){
+    public static void show(final Property candidate, boolean modal){
         final JDialog dialog = new JDialog();
         final JFeatureOutLine outline = new JFeatureOutLine();
         outline.setEdited(candidate);
         dialog.setContentPane(new JScrollPane(outline));
         dialog.setSize(600, 600);
+        dialog.setModal(modal);
         dialog.setLocationRelativeTo(null);
         dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         dialog.setVisible(true);
     }
+
 }

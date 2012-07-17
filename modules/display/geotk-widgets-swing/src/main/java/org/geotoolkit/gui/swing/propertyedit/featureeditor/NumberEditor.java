@@ -20,9 +20,6 @@ import java.awt.BorderLayout;
 import java.math.BigDecimal;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
-import org.geotoolkit.gui.swing.propertyedit.JFeatureOutLine;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.PropertyType;
 
@@ -30,19 +27,15 @@ import org.opengis.feature.type.PropertyType;
  *
  * @author Johann Sorel (Puzzle-GIS)
  */
-public class NumberEditor extends VersatileEditor {
+public class NumberEditor extends PropertyValueEditor {
 
-    private final NumberRW r = new NumberRW();
-    private final NumberRW w = new NumberRW();
+    private final JSpinner component = new JSpinner();
 
-    @Override
-    public TableCellEditorRenderer getReadingRenderer() {
-        return r;
-    }
-
-    @Override
-    public TableCellEditorRenderer getWritingRenderer() {
-        return w;
+    public NumberEditor() {
+        super(new BorderLayout());
+        add(BorderLayout.CENTER, component);
+        component.setModel(new SpinnerNumberModel(0d, null, null, 1));
+        component.setBorder(null);
     }
 
     @Override
@@ -51,56 +44,31 @@ public class NumberEditor extends VersatileEditor {
     }
 
     @Override
-    public TableCellEditor getEditor(PropertyType property) {
-        w.propertyType = property;
-        return w;
+    public void setValue(PropertyType propertyType, Object value) {
+        //change model based on property
+        if (propertyType != null && propertyType instanceof AttributeType) {
+            final AttributeType type = (AttributeType) propertyType;
+            final Class clazz = type.getBinding();
+
+            if (clazz == Double.class || clazz == Float.class || clazz == Number.class || clazz == BigDecimal.class) {
+                component.setModel(new SpinnerNumberModel(Double.valueOf(0d), null, null, Double.valueOf(0.1d)));
+            } else {
+                component.setModel(new SpinnerNumberModel(0, null, null, 1));
+            }
+
+            //todo extract min/max values from filter
+        }
+
+        if (value instanceof Number) {
+            component.setValue((Number) value);
+        }else{
+            component.setValue(0d);
+        }
     }
 
     @Override
-    public TableCellRenderer getRenderer(PropertyType property) {
-        r.propertyType = property;
-        return r.getRenderer();
+    public Object getValue() {
+        return component.getValue();
     }
 
-    private static class NumberRW extends TableCellEditorRenderer {
-
-        private final JSpinner component = new JSpinner();
-
-        private NumberRW() {
-            panel.setLayout(new BorderLayout());
-            panel.add(BorderLayout.CENTER, component);
-            component.setModel(new SpinnerNumberModel(0d, null, null, 1));
-            component.setBorder(null);
-
-        }
-
-        @Override
-        protected void prepare() {
-
-            //change model based on property
-            if (propertyType != null && propertyType instanceof AttributeType) {
-                final AttributeType type = (AttributeType) propertyType;
-                final Class clazz = type.getBinding();
-
-                if (clazz == Double.class || clazz == Float.class || clazz == Number.class || clazz == BigDecimal.class) {
-                    component.setModel(new SpinnerNumberModel(Double.valueOf(0d), null, null, Double.valueOf(0.1d)));
-                } else {
-                    component.setModel(new SpinnerNumberModel(0, null, null, 1));
-                }
-
-                //todo extract min/max values from filter
-            }
-
-            if (value instanceof Number) {
-                component.setValue((Number) value);
-            }else{
-                component.setValue(0d);
-            }
-        }
-
-        @Override
-        public Object getCellEditorValue() {
-            return component.getValue();
-        }
-    }
 }

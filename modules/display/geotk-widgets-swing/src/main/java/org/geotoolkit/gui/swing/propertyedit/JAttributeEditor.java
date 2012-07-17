@@ -17,12 +17,26 @@
 package org.geotoolkit.gui.swing.propertyedit;
 
 import java.awt.BorderLayout;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import javax.swing.JComponent;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JPanel;
-import org.geotoolkit.gui.swing.propertyedit.featureeditor.TableCellEditorRenderer;
-import org.geotoolkit.gui.swing.propertyedit.featureeditor.VersatileEditor;
+import org.geotoolkit.gui.swing.propertyedit.featureeditor.ArrayEditor;
+import org.geotoolkit.gui.swing.propertyedit.featureeditor.BooleanEditor;
+import org.geotoolkit.gui.swing.propertyedit.featureeditor.CRSEditor;
+import org.geotoolkit.gui.swing.propertyedit.featureeditor.CharsetEditor;
+import org.geotoolkit.gui.swing.propertyedit.featureeditor.ChoiceEditor;
+import org.geotoolkit.gui.swing.propertyedit.featureeditor.EnumEditor;
+import org.geotoolkit.gui.swing.propertyedit.featureeditor.FileEditor;
+import org.geotoolkit.gui.swing.propertyedit.featureeditor.InternationalStringEditor;
+import org.geotoolkit.gui.swing.propertyedit.featureeditor.NumberEditor;
+import org.geotoolkit.gui.swing.propertyedit.featureeditor.PropertyValueEditor;
+import org.geotoolkit.gui.swing.propertyedit.featureeditor.StringEditor;
+import org.geotoolkit.gui.swing.propertyedit.featureeditor.URLEditor;
+import org.geotoolkit.gui.swing.propertyedit.featureeditor.UnitEditor;
 import org.opengis.feature.Property;
 import org.opengis.feature.type.PropertyType;
 
@@ -33,21 +47,19 @@ import org.opengis.feature.type.PropertyType;
  */
 public class JAttributeEditor extends JPanel{
 
-    private final List<JFeatureOutLine.PropertyEditor> editors = new CopyOnWriteArrayList<JFeatureOutLine.PropertyEditor>();
-    private VersatileEditor editor;
-    private TableCellEditorRenderer cellEditor;
+    private final List<PropertyValueEditor> editors = new CopyOnWriteArrayList<PropertyValueEditor>();
+    private PropertyValueEditor editor;
     private Property property = null;
 
     public JAttributeEditor(){
         setLayout(new BorderLayout());
-        editors.addAll(JFeatureOutLine.createDefaultEditorList());
+        editors.addAll(createDefaultEditorList());
     }
 
     public Property getProperty() {
-        if(editor != null && cellEditor != null){
-            property.setValue(cellEditor.getCellEditorValue());
+        if(editor != null ){
+            property.setValue(editor.getValue());
         }
-
         return property;
     }
 
@@ -57,12 +69,10 @@ public class JAttributeEditor extends JPanel{
         removeAll();
 
         if(this.property != null){
-            editor = (VersatileEditor) getEditor(this.property.getType());
+            editor = getEditor(editors,this.property.getType());
             if(editor != null){
-                cellEditor = editor.getWritingRenderer();
-                cellEditor.setPropertyType(property.getType());
-                cellEditor.setCellEditorValue(property.getValue());
-                add(BorderLayout.CENTER,cellEditor.getComponent(null, true, 0, 0));
+                editor.setValue(property.getType(), property.getValue());
+                add(BorderLayout.CENTER,editor);
             }
         }
 
@@ -71,15 +81,48 @@ public class JAttributeEditor extends JPanel{
     /**
      * @return live list of property editors.
      */
-    public List<JFeatureOutLine.PropertyEditor> getEditors() {
+    public List<PropertyValueEditor> getEditors() {
         return editors;
     }
 
-    private JFeatureOutLine.PropertyEditor getEditor(PropertyType type){
+    public static List<PropertyValueEditor> createDefaultEditorList(){
+        final List<PropertyValueEditor> lst = new ArrayList<PropertyValueEditor>();
+        lst.add(new ChoiceEditor());
+        lst.add(new BooleanEditor());
+        lst.add(new CRSEditor());
+        lst.add(new CharsetEditor());
+        lst.add(new NumberEditor());
+        lst.add(new StringEditor());
+        lst.add(new InternationalStringEditor());
+        lst.add(new URLEditor());
+        lst.add(new FileEditor());
+        lst.add(new UnitEditor());
+        lst.add(new EnumEditor());
+        lst.add(new ArrayEditor());
+        return lst;
+    }
+
+
+    public static PropertyValueEditor getEditor(final Collection<? extends PropertyValueEditor> editors, PropertyType type){
         if(type != null){
-            for(JFeatureOutLine.PropertyEditor edit : editors){
+            for(PropertyValueEditor edit : editors){
+                if(edit instanceof ArrayEditor){
+                    ((ArrayEditor)edit).setEditors(editors);
+                }
+
                 if(edit.canHandle(type)){
-                    return edit;
+                    try {
+                        PropertyValueEditor newInst = edit.getClass().newInstance();
+
+                        if(edit instanceof ArrayEditor){
+                            ((ArrayEditor)edit).setEditors(editors);
+                        }
+                        return newInst;
+                    } catch (InstantiationException ex) {
+                        Logger.getLogger(JAttributeEditor.class.getName()).log(Level.WARNING, ex.getMessage(), ex);
+                    } catch (IllegalAccessException ex) {
+                        Logger.getLogger(JAttributeEditor.class.getName()).log(Level.WARNING, ex.getMessage(), ex);
+                    }
                 }
             }
         }

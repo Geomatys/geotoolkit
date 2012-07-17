@@ -43,6 +43,8 @@ import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.gui.swing.misc.LoadingLockableUI;
+import org.geotoolkit.gui.swing.propertyedit.featureeditor.PropertyValueEditor;
+import org.geotoolkit.gui.swing.propertyedit.featureeditor.TableCellEditorRenderer;
 import org.geotoolkit.gui.swing.propertyedit.model.FeatureCollectionModel;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
@@ -70,7 +72,7 @@ import org.opengis.filter.identity.Identifier;
 
 /**
  * layer feature panel
- * 
+ *
  * @author  Johann Sorel
  * @module pending
  */
@@ -101,28 +103,28 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
     private FeatureMapLayer layer = null;
     private boolean editable = false;
     private final LayerListener.Weak weakListener = new LayerListener.Weak(this);
-    private final List<JFeatureOutLine.PropertyEditor> editors = new CopyOnWriteArrayList<JFeatureOutLine.PropertyEditor>();
-    
-    private final JXTable tab_data = new JXTable(){        
+    private final List<PropertyValueEditor> editors = new CopyOnWriteArrayList<PropertyValueEditor>();
+
+    private final JXTable tab_data = new JXTable(){
         @Override
         public TableCellEditor getCellEditor(final int row, final int column) {
 
             final FeatureCollectionModel model = (FeatureCollectionModel) tab_data.getModel();
             final int modelindex = tab_data.getColumnModel().getColumn(column).getModelIndex();
-            
+
             final PropertyDescriptor desc = model.getColumnDesc(modelindex);
             if(desc != null){
-                final JFeatureOutLine.PropertyEditor edit = getEditor(desc.getType());
+                final PropertyValueEditor edit = JAttributeEditor.getEditor(editors,desc.getType());
                 if(edit != null){
-                    return edit.getEditor(desc.getType());
+                    return new TableCellEditorRenderer.Editor(edit);
                 }
             }
 
             return super.getCellEditor(row, column);
-        }        
+        }
     };
     private final JFeatureCollectionOutline outline = new JFeatureCollectionOutline();
-    
+
 
     /** Creates new form DefaultMapLayerTablePanel */
     public LayerFeaturePropertyPanel() {
@@ -142,7 +144,7 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
         tab_data.setDefaultEditor(java.sql.Date.class, new DatePickerCellEditor(DateFormat.getDateTimeInstance()));
         tab_data.setDefaultEditor(Time.class, new DatePickerCellEditor(DateFormat.getDateTimeInstance()));
         tab_data.setDefaultEditor(Timestamp.class, new DatePickerCellEditor(DateFormat.getDateTimeInstance()));
-        editors.addAll(JFeatureOutLine.createDefaultEditorList());
+        editors.addAll(JAttributeEditor.createDefaultEditorList());
 
         SwingUtilities.invokeLater(new Runnable() {
             @Override
@@ -175,23 +177,12 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
 
     }
 
-    
+
     /**
      * @return live list of property editors.
      */
-    public List<JFeatureOutLine.PropertyEditor> getEditors() {
+    public List<PropertyValueEditor> getEditors() {
         return editors;
-    }
-    
-    private JFeatureOutLine.PropertyEditor getEditor(PropertyType type){
-        if(type != null){
-            for(JFeatureOutLine.PropertyEditor edit : editors){
-                if(edit.canHandle(type)){
-                    return edit;
-                }
-            }
-        }
-        return null;
     }
 
     /**
@@ -423,7 +414,7 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
     private JCheckBox jcb_edit;
     private JPanel panCenter;
     // End of variables declaration//GEN-END:variables
-    
+
     @Override
     public void setTarget(final Object target) {
 
@@ -439,7 +430,7 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
             final FeatureCollection<SimpleFeature> source =
                     (FeatureCollection<SimpleFeature>) layer.getCollection();
             editable = source.isWritable();
-            
+
             jcb_edit.setEnabled(editable);
 
             final FeatureType type = source.getFeatureType();
@@ -467,11 +458,11 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
         repaint();
         checkChanges();
     }
-    
+
     public void updateEditPane(){
-        
+
     }
-    
+
 
     public FeatureMapLayer getTarget(){
         return layer;
@@ -481,7 +472,7 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
     public boolean canHandle(Object target) {
         return target instanceof FeatureMapLayer;
     }
-    
+
     @Override
     public void apply() {
     }

@@ -19,37 +19,78 @@ package org.geotoolkit.gui.swing.propertyedit.featureeditor;
 import java.awt.Component;
 import javax.swing.AbstractCellEditor;
 import javax.swing.JComponent;
-import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
-import org.netbeans.swing.outline.Outline;
-import org.opengis.feature.type.PropertyType;
+import javax.swing.tree.DefaultMutableTreeNode;
+import org.opengis.feature.Property;
 
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
  */
-public abstract class TableCellEditorRenderer extends AbstractCellEditor implements TableCellEditor {
+public final class TableCellEditorRenderer {
 
-    private final TableCellRenderer renderer = new DefaultTableCellRenderer() {
+    private TableCellEditorRenderer() {
+    }
+
+    public static class Renderer extends DefaultTableCellRenderer{
+
+        private final PropertyValueEditor sub;
+
+        public Renderer(PropertyValueEditor sub) {
+            this.sub = sub;
+        }
 
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            final JComponent model = (JComponent) super.getTableCellRendererComponent(
-                    table, value, isSelected, hasFocus, row, column);
-            TableCellEditorRenderer.this.value = value;
-            final JComponent c = TableCellEditorRenderer.this.getComponent(table, isSelected, row, column);
-            TableCellEditorRenderer.this.mimicStyle(model, c);
-            return c;
-        }
-    };
-    protected final JPanel panel = new JPanel();
-    protected PropertyType propertyType;
-    protected Object value;
+            final JComponent model = (JComponent) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
-    private void mimicStyle(final JComponent model, final JComponent candidate) {
+            if(value instanceof DefaultMutableTreeNode){
+                value = ((DefaultMutableTreeNode)value).getUserObject();
+            }
+
+            if(value instanceof Property){
+                final Property prop = (Property) value;
+                sub.setValue(prop.getType(), prop.getValue());
+            }
+
+            TableCellEditorRenderer.mimicStyle(model, sub);
+            return sub;
+        }
+
+    }
+
+    public static class Editor extends AbstractCellEditor implements TableCellEditor {
+
+        private final PropertyValueEditor sub;
+
+        public Editor(PropertyValueEditor sub) {
+            this.sub = sub;
+        }
+
+        @Override
+        public Object getCellEditorValue() {
+            return sub.getValue();
+        }
+
+        @Override
+        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+            if(value instanceof DefaultMutableTreeNode){
+                value = ((DefaultMutableTreeNode)value).getUserObject();
+            }
+
+            if(value instanceof Property){
+                final Property prop = (Property) value;
+                sub.setValue(prop.getType(), prop.getValue());
+            }
+
+            return sub;
+        }
+
+    }
+
+    private static void mimicStyle(final JComponent model, final JComponent candidate) {
         candidate.setBackground(model.getBackground());
         candidate.setForeground(model.getForeground());
         candidate.setOpaque(model.isOpaque());
@@ -57,48 +98,4 @@ public abstract class TableCellEditorRenderer extends AbstractCellEditor impleme
         candidate.setFont(model.getFont());
     }
 
-    public void setPropertyType(PropertyType propertyType) {
-        this.propertyType = propertyType;
-    }
-
-    public void setCellEditorValue(Object value){
-        this.value = value;
-    }
-
-    @Override
-    public Object getCellEditorValue() {
-        return value;
-    }
-
-    @Override
-    public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-        this.value = value;
-
-        final JComponent candidate = getComponent(table, isSelected, row, column);
-
-        final JComponent model = (JComponent) renderer.getTableCellRendererComponent(
-                table, value, isSelected, true, row, column);
-        TableCellEditorRenderer.this.mimicStyle(model, candidate);
-        return candidate;
-    }
-
-    protected abstract void prepare();
-
-    public JComponent getComponent(JTable table, boolean isSelected, int row, int column) {
-        prepare();
-
-        if (table instanceof Outline) {
-            final Outline ol = (Outline) table;
-            final int height = ol.getRowHeight(row);
-            if (height < panel.getPreferredSize().height) {
-                ol.setRowHeight(panel.getPreferredSize().height);
-            }
-        }
-
-        return panel;
-    }
-
-    public TableCellRenderer getRenderer() {
-        return renderer;
-    }
 }
