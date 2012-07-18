@@ -76,6 +76,8 @@ public class JAttributeEditor extends JPanel{
             }
         }
 
+        revalidate();
+        repaint();
     }
 
     /**
