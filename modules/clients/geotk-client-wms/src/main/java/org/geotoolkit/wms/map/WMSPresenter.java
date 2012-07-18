@@ -43,12 +43,9 @@ import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.primitive.SearchArea;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.container.statefull.StatefullCoverageLayerJ2D;
 import org.geotoolkit.display2d.container.statefull.StatefullProjectedCoverage;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.gui.swing.go2.control.information.presenter.AbstractInformationPresenter;
-import org.geotoolkit.gui.swing.go2.control.information.presenter.InformationPresenter;
-import org.geotoolkit.gui.swing.image.ImagePane;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.util.logging.Logging;
@@ -120,9 +117,13 @@ public class WMSPresenter extends AbstractInformationPresenter{
 
                 try {
                     final URL url = getFeatureInfo(reference, context, area, guiMimeTypes.getSelectedItem().toString(), 20);
-                    final JXHyperlink link = new JXHyperlink();
-                    link.setURI(url.toURI());
-                    guiCenterPanel.add(BorderLayout.NORTH,link);
+                    try{
+                        final JXHyperlink link = new JXHyperlink();
+                        link.setURI(url.toURI());
+                        guiCenterPanel.add(BorderLayout.NORTH,link);
+                    }catch(Exception ex){
+                        //hyperlinks is not supported on all platforms
+                    }
 
                     new Thread(){
                         @Override
@@ -139,10 +140,8 @@ public class WMSPresenter extends AbstractInformationPresenter{
                     LOGGER.log(Level.WARNING, ex.getMessage(), ex);
                 } catch (NoninvertibleTransformException ex) {
                     LOGGER.log(Level.WARNING, ex.getMessage(), ex);
-                } catch (URISyntaxException ex) {
-                    LOGGER.log(Level.WARNING, ex.getMessage(), ex);
                 }
-
+                
                 guiCenterPanel.revalidate();
                 guiCenterPanel.repaint();
             }
