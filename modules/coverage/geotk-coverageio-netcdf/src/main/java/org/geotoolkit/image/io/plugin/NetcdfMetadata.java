@@ -45,7 +45,6 @@ import ucar.nc2.dataset.EnhanceScaleMissing;
 import ucar.nc2.dataset.Enhancements;
 import ucar.ma2.InvalidRangeException;
 
-import org.opengis.metadata.Metadata;
 import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.metadata.content.TransferFunctionType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

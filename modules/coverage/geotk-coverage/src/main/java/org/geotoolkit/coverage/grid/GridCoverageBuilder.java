@@ -64,6 +64,7 @@ import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
@@ -1174,8 +1175,24 @@ public class GridCoverageBuilder extends Builder<GridCoverage> {
     }
 
     /**
-     * Sets the <cite>grid to CRS</cite> transform. Whatever the transform maps pixel centers
-     * or pixel corners depends on the {@link #pixelAnchor} value.
+     * Sets the <cite>grid to CRS</cite> transform from a matrix. Whatever the transform maps
+     * pixel centers or pixel corners depends on the {@link #pixelAnchor} value.
+     * <p>
+     * See {@link #setGridToCRS(MathTransform)} for information about restrictions and precedence.
+     *
+     * @param  gridToCRS The new <cite>grid to CRS</cite> transform, or {@code null}.
+     * @throws MismatchedDimensionException If the current {@linkplain #extent} and
+     *         {@linkplain #envelope} (if any) are not two-dimensional.
+     *
+     * @since 3.20
+     */
+    public void setGridToCRS(final Matrix gridToCRS) throws MismatchedDimensionException {
+        setGridToCRS(gridToCRS != null ? MathTransforms.linear(gridToCRS) : null);
+    }
+
+    /**
+     * Sets the <cite>grid to CRS</cite> transform from a Java2D transform. Whatever the
+     * transform maps pixel centers or pixel corners depends on the {@link #pixelAnchor} value.
      * <p>
      * See {@link #setGridToCRS(MathTransform)} for information about restrictions and precedence.
      *

@@ -212,13 +212,7 @@ public class NetcdfAxis extends NetcdfIdentifiedObject implements CoordinateSyst
     @Override
     public Comparable<?> getOrdinateAt(final int index) throws IndexOutOfBoundsException {
         if (axis instanceof CoordinateAxis1DTime) {
-            if (false) {
-                // Replacement of the following deprecated method call. Not yet used,
-                // because we wait for the ucar.nc2.time API to be published as public
-                // API. Maybe their API will evolve.
-                return ((CoordinateAxis1DTime) axis).getCalendarDate(index).toDate();
-            }
-            return ((CoordinateAxis1DTime) axis).getTimeDate(index);
+            return ((CoordinateAxis1DTime) axis).getCalendarDate(index).toDate();
         } else if (axis.isNumeric()) {
             return axis.getCoordValue(index);
         } else {
@@ -255,7 +249,7 @@ public class NetcdfAxis extends NetcdfIdentifiedObject implements CoordinateSyst
             final CoordinateAxis1DTime timeAxis;
             if (axis instanceof CoordinateAxis1DTime) {
                 timeAxis = (CoordinateAxis1DTime) axis;
-                toMillis = timeAxis.getDateRange().getDuration().getValueInSeconds();
+                toMillis = timeAxis.getCalendarDateRange().getDurationInSecs();
                 if (toMillis > 0) {
                     toMillis = toMillis * 1000 / (axis.getMaxValue() - axis.getMinValue());
                 }
@@ -273,7 +267,7 @@ public class NetcdfAxis extends NetcdfIdentifiedObject implements CoordinateSyst
                 final double b2 = bound2[i];
                 Comparable<?> c1, c2;
                 if (timeAxis != null) {
-                    final long time = timeAxis.getTimeDate(i).getTime(); // See getOrdinateAt(i)
+                    final long time = timeAxis.getCalendarDate(i).toDate().getTime();
                     long t1 = time; // Usually the minimum value, but not necessarily.
                     long t2 = time; // Usually the maximum value, but not necessarily.
                     if (toMillis > 0) {
