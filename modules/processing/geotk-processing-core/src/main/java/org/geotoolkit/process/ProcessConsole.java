@@ -71,19 +71,16 @@ public final class ProcessConsole {
     private static final boolean X364_SUPPORTED = X364.isSupported();
     private static final List LIST_CONVERTERS = UnmodifiableArrayList.wrap(
                 StringToFeatureCollectionConverter.getInstance(),
-                StringToUnitConverter.getInstance(),
                 StringToGeometryConverter.getInstance(),
-                StringToCRSConverter.getInstance(),
                 StringToFeatureTypeConverter.getInstance(),
                 StringToAffineTransformConverter.getInstance(),
-                StringToFilterConverter.getInstance(),
                 StringToSortByConverter.getInstance(),
                 StringToMapConverter.getInstance());
-    
+
     private static boolean failed = false;
-        
+
     private static final ProcessListener CONSOLE_ADAPTER = new ProcessListener() {
-        
+
         @Override
         public void started(final ProcessEvent event) {
             printEvent(event, FOREGROUND_DEFAULT.sequence());
@@ -101,7 +98,7 @@ public final class ProcessConsole {
             failed = true;
             printEvent(event, FOREGROUND_RED.sequence());
         }
-        
+
         private void printEvent(final ProcessEvent event, final String color) {
             final StringBuilder sb = new StringBuilder();
             sb.append(color);
@@ -110,12 +107,12 @@ public final class ProcessConsole {
             sb.append("%\t");
             sb.append(RESET.sequence());
             sb.append(color);
-            
+
             final InternationalString message = event.getTask();
             if(message != null){
                 sb.append(message.toString());
             }
-            
+
             final Throwable ex = event.getException();
             if(ex != null && message == null){
                 sb.append(FOREGROUND_RED.sequence());
@@ -134,13 +131,13 @@ public final class ProcessConsole {
                 sb.append(str);
                 sb.append(FOREGROUND_DEFAULT.sequence());
             }
-            
+
             sb.append(RESET.sequence());
             sb.append("\n");
-            
+
             print(sb.toString());
         }
-        
+
     };
 
     public static void main(String ... args) {
@@ -206,7 +203,7 @@ public final class ProcessConsole {
             System.exit(1);
             return;
         }
-        
+
         //execute process
         final Process process = desc.createProcess(params);
         process.addListener(CONSOLE_ADAPTER);
@@ -225,11 +222,11 @@ public final class ProcessConsole {
         }
 
         Setup.shutdown();
-        
+
         if(failed){
             System.exit(1);
         }
-        
+
     }
 
     /**
@@ -251,7 +248,7 @@ public final class ProcessConsole {
      * Print a detailed description of the tool description.
      */
     private static void printHelp(final ProcessDescriptor desc){
-        
+
         final InternationalString abs = desc.getProcedureDescription();
         if(abs != null){
             print("\n",BOLD,"DESCRIPTION",RESET,"\n",abs,"\n");
@@ -335,7 +332,7 @@ public final class ProcessConsole {
     /**
      * Parse, convert and set parameter values from the command line arguments.
      */
-    private static ParameterValueGroup parseParameters(final String[] args, final ParameterDescriptorGroup desc) 
+    private static ParameterValueGroup parseParameters(final String[] args, final ParameterDescriptorGroup desc)
             throws NonconvertibleObjectException, IllegalArgumentException{
         final ParameterValueGroup group = desc.createValue();
 

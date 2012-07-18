@@ -32,16 +32,10 @@ import org.opengis.filter.Filter;
  */
 public class StringToFilterConverter extends SimpleConverter<String, Filter> {
 
-    private static StringToFilterConverter INSTANCE;
-
-    private StringToFilterConverter(){
-    }
-
-    public static StringToFilterConverter getInstance(){
-        if(INSTANCE == null){
-            INSTANCE = new StringToFilterConverter();
-        }
-        return INSTANCE;
+    /*
+     * Public constructor in order to regiser converter in Geotk ConverterRegisry by ServiceLoader system.
+     */
+    public StringToFilterConverter(){
     }
 
     @Override
@@ -60,10 +54,10 @@ public class StringToFilterConverter extends SimpleConverter<String, Filter> {
         try {
             final Filter filter = CQL.toFilter(s);
             return filter;
-        } 
+        }
         catch (CQLException ex) {
             throw new NonconvertibleObjectException(ex);
-        } 
+        }
     }
 }
 

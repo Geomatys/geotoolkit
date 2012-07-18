@@ -19,6 +19,7 @@ package org.geotoolkit.process.converters;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.util.converter.ConverterRegistry;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.util.converter.ObjectConverter;
 
@@ -41,8 +42,8 @@ public class FilterConverterTest {
     @Test
     public void FilterConvertTest() throws NoSuchAuthorityCodeException, FactoryException, NonconvertibleObjectException {
 
-        final ObjectConverter<String,Filter> converter = StringToFilterConverter.getInstance();
-        
+        final ObjectConverter<String,Filter> converter = ConverterRegistry.system().converter(String.class, Filter.class);
+
         String inputString = "name = 'Smith' AND age = 30";
         Filter convertedFilter = converter.convert(inputString);
         Filter expectedFilter = buildResultFilter();
@@ -57,6 +58,6 @@ public class FilterConverterTest {
         final Filter filter1 = ff.equals(ff.property(new DefaultName("name")), ff.literal("Smith"));
         final Filter filter2 = ff.equals(ff.property(new DefaultName("age")), ff.literal(30));
         return ff.and(filter1, filter2);
-      
+
     }
 }

@@ -17,6 +17,7 @@
 package org.geotoolkit.process.converters;
 
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.util.converter.ConverterRegistry;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.util.converter.ObjectConverter;
 
@@ -38,7 +39,7 @@ public class CRSConverterTest {
     @Test
     public void CRSConvertTest() throws NoSuchAuthorityCodeException, FactoryException, NonconvertibleObjectException {
 
-        final ObjectConverter<String,CoordinateReferenceSystem> converter = StringToCRSConverter.getInstance();
+        final ObjectConverter<String,CoordinateReferenceSystem> converter = ConverterRegistry.system().converter(String.class, CoordinateReferenceSystem.class);
 
         String inputString = "EPSG:3395";
         CoordinateReferenceSystem convertedCRS = converter.convert(inputString);

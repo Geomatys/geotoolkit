@@ -27,7 +27,7 @@ import org.opengis.util.NoSuchIdentifierException;
 
 /**
  * Abstract process factory.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
@@ -46,7 +46,7 @@ public abstract class AbstractProcessingRegistry implements ProcessingRegistry {
     public final ProcessDescriptor getDescriptor(final String name) throws NoSuchIdentifierException{
         final ProcessDescriptor desc = descriptors.get(name);
         if(desc == null){
-            throw new NoSuchIdentifierException("No process descriptor for name :", name);
+            throw new NoSuchIdentifierException("No process descriptor for name : "+name, name);
         }else{
             return desc;
         }

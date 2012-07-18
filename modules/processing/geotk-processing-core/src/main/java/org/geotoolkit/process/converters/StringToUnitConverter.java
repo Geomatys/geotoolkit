@@ -30,16 +30,11 @@ import org.geotoolkit.util.converter.SimpleConverter;
  */
 public class StringToUnitConverter extends SimpleConverter<String, Unit> {
 
-    private static StringToUnitConverter INSTANCE;
 
-    private StringToUnitConverter(){
-    }
-
-    public static StringToUnitConverter getInstance(){
-        if(INSTANCE == null){
-            INSTANCE = new StringToUnitConverter();
-        }
-        return INSTANCE;
+    /*
+     * Public constructor in order to regiser converter in Geotk ConverterRegisry by ServiceLoader system.
+     */
+    public StringToUnitConverter(){
     }
 
     @Override
