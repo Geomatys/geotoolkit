@@ -21,7 +21,9 @@ import java.awt.Rectangle;
 import org.geotoolkit.image.iterator.PixelIterator;
 
 /**
- * Define standard interpolation.
+ * <p>Define standard interpolation.<br/><br/>
+ *
+ * Regardless interpolation type, each interpolation is computing from sample center.</p>
  *
  * @author Rémi Maréchal (Geomatys).
  */
@@ -93,11 +95,24 @@ public abstract class Interpolation {
      * <var>max<sub>0</sub></var>, <var>maxX<sub>0</sub></var>, <var>maxY<sub>0</sub></var>
      * ...
      * <var>min<sub>n</sub></var>, <var>minX<sub>n</sub></var>, <var>minY<sub>n</sub></var>,
-     * <var>max<sub>n</sub></var>, <var>maxX<sub>n</sub></var>, <var>maxY<sub>n</sub></var>]</p>
+     * <var>max<sub>n</sub></var>, <var>maxX<sub>n</sub></var>, <var>maxY<sub>n</sub></var>]<br/><br/>
      *
+     * If Rectangle area parameter is {@code null} method will search minimum
+     * and maximum on all iterate object.</p>
+     *
+     * @param area area within search min and max values.
      * @return double array witch represent minimum and maximum pixels values for each band.
      */
     public abstract double[] getMinMaxValue(Rectangle area);
+
+    /**
+     * <p>Return side of Interpolation area.<br/>
+     * For example Bilinear interpolation compute from 4 pixel values.<br/>
+     * Its interpolation area is a square of side 2.<p>
+     *
+     * @return side of interpolation area.
+     */
+    abstract int getWindowSide();
 
     /**
      * Verify coordinates are within iterate area boundary.
@@ -134,7 +149,7 @@ public abstract class Interpolation {
     /**
      * <p>Return Interpolation object.<br/><br/>
      *
-     * Note : if lanczos interpolation is doesn't choose lanczosWindow integer has no impact.</p>
+     * Note : if lanczos interpolation doesn't choose lanczosWindow parameter has no impact.</p>
      *
      * @param pixelIterator Iterator which iterate to compute interpolation.
      * @param interpolationCase case of interpolation.
@@ -146,8 +161,8 @@ public abstract class Interpolation {
         switch (interpolationCase) {
             case NEIGHBOR : return new NeighborInterpolation(pixelIterator);
             case BILINEAR : return new BilinearInterpolation(pixelIterator);
-            case BICUBIC  : return new BiCubicInterpolation(pixelIterator, false);
-            case BICUBIC2  : return new BiCubicInterpolation(pixelIterator, true);
+            case BICUBIC  : return new BiCubicInterpolation1(pixelIterator);
+            case BICUBIC2 : return new BiCubicInterpolation2(pixelIterator);
             case LANCZOS  : return new LanczosInterpolation(pixelIterator, lanczosWindow);
             default       : throw  new IllegalArgumentException("interpolation not supported yet");
         }

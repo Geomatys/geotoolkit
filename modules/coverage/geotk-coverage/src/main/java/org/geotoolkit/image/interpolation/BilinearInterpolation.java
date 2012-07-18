@@ -99,17 +99,23 @@ public class BilinearInterpolation extends Interpolation {
         for (int i = 0; i<height/2-1;i++) {
             miny--;
         }
-        while(minx+width >= boundary.x+boundary.width) {
+        minx = Math.max(minx, boundary.x);
+        miny = Math.max(miny, boundary.y);
+        while(minx+width > boundary.x+boundary.width) {
             minx--;
         }
-        while(miny+height >= boundary.y+boundary.height) {
+        while(miny+height > boundary.y+boundary.height) {
             miny--;
         }
+        double diffx = Math.abs(x-minx);
+        double diffy = Math.abs(y-miny);
+        if(diffx>1 || diffy>1)//diff>window/2
+            throw new IllegalArgumentException("interpolate definition domain out of boundary");
         /*
          * Test if interpolate area is within iterate object boundary
          */
-        if (!boundary.contains(minx, miny))
-            throw new IllegalArgumentException("interpolate definition domain out of boundary");
+//        if (!boundary.contains(minx, miny))
+//            throw new IllegalArgumentException("interpolate definition domain out of boundary");
         return new int[]{minx, miny};
     }
 
@@ -222,5 +228,13 @@ public class BilinearInterpolation extends Interpolation {
         }
         precMinMax = area;
         return minMax;
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    int getWindowSide() {
+        return 2;
     }
 }

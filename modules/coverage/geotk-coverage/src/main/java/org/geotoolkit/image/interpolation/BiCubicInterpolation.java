@@ -27,7 +27,7 @@ import org.geotoolkit.image.iterator.PixelIterator;
  *
  * @author Rémi Marechal (Geomatys).
  */
-public class BiCubicInterpolation extends Interpolation {
+abstract class BiCubicInterpolation extends Interpolation {
 
     /**
      * Table to keep all 16 pixels values used to interpolate.
@@ -45,29 +45,12 @@ public class BiCubicInterpolation extends Interpolation {
     private final double[] tabInteCol;
 
     /**
-     * Parameter use in "cubic convolution" computing.
-     * a equal -0.5 for classic biCubic interpolation.
-     * a equal -1.0 for more amplitude between interpolation results.
-     * @see #getConvolutionValue(double) .
-     */
-    private final double a;
-
-    /**
      * <p>Create an BiCubic Interpolator.<br/>
      * This definition is also sometimes known as "cubic convolution".<br/><br/>
      *
-     * if keys parameter is true<br/>
-     * interpolator may produce somewhat sharper results than classic
-     * InterpolationBicubic, but that result is image dependent.<br/>
-     * It's a consequence from increase of biCubic curve amplitude.<br/>
-     * else if keys parameter is false<br/>
-     * define a standard biCubic interpolation.<br/>
-     * (Reference: Digital Image Warping, George Wolberg, 1990,
-     * pp 129-131, IEEE Computer Society Press, ISBN 0-8186-8944-7)</p>
-     *
      * @param pixelIterator Iterator used to interpolation.
      */
-    public BiCubicInterpolation(PixelIterator pixelIterator, boolean keys) {
+    public BiCubicInterpolation(PixelIterator pixelIterator) {
         super(pixelIterator);
         if (boundary.width < 4)
             throw new IllegalArgumentException("iterate object width too smaller" + boundary.width);
@@ -76,8 +59,29 @@ public class BiCubicInterpolation extends Interpolation {
         data       = new double[16*numBands];
         tabInteRow = new double[4];
         tabInteCol = new double[4];
-        this.a = (keys) ? -1.0 : -0.5;
     }
+
+    /**
+     * Cubic interpolation from 4 values.<br/>
+     * With always t0 &lt= t&lt= t0 + 3 <br/>
+     * <p>For example : cubic interpolation between 4 pixels.<br/>
+     *
+     *
+     * &nbsp;&nbsp;&nbsp;t =&nbsp;&nbsp; 0 &nbsp;1 &nbsp;2 &nbsp;3<br/>
+     * f(t) = |f0|f1|f2|f3|<br/>
+     * In this example t0 = 0.<br/><br/>
+     *
+     * Another example :<br/>
+     * &nbsp;&nbsp;&nbsp;t =&nbsp; -5 -4 -3 -2<br/>
+     * f(t) = |f0|f1|f2|f3|<br/>
+     * In this example parameter t0 = -5.</p>
+     *
+     * @param t0 f(t0) = f[0].Current position from first pixel interpolation.
+     * @param t position of interpolation.
+     * @param f pixel values from t = {0, 1, 2, 3}.
+     * @return cubic interpolation at t position.
+     */
+    abstract double getCubicValue(double t0, double t, double[]f);
 
     /**
      * Compute biCubic interpolation.
@@ -120,54 +124,6 @@ public class BiCubicInterpolation extends Interpolation {
     }
 
     /**
-     * Cubic interpolation from 4 values.<br/>
-     * With always t0 &lt= t&lt= t0 + 3 <br/>
-     * <p>For example : cubic interpolation between 4 pixels.<br/>
-     *
-     *
-     * &nbsp;&nbsp;&nbsp;t =&nbsp;&nbsp; 0 &nbsp;1 &nbsp;2 &nbsp;3<br/>
-     * f(t) = |f0|f1|f2|f3|<br/>
-     * In this example t0 = 0.<br/><br/>
-     *
-     * Another example :<br/>
-     * &nbsp;&nbsp;&nbsp;t =&nbsp; -5 -4 -3 -2<br/>
-     * f(t) = |f0|f1|f2|f3|<br/>
-     * In this example parameter t0 = -5.</p>
-     *
-     * @param t0 f(t0) = f[0].Current position from first pixel interpolation.
-     * @param t position of interpolation.
-     * @param f pixel values from t = {0, 1, 2, 3}.
-     * @return cubic interpolation at t position.
-     */
-    double getCubicValue(double t0, double t, double ...f) {
-        double result = 0;
-        int compteur = 0;
-        for (double ft : f) {
-            result += getConvolutionValue(t-t0 - compteur++)*ft;
-        }
-        return result;
-    }
-
-    /**
-     * Compute coefficient apply on current pixel value.
-     * Compute value of Kernel filter.
-     *
-     * @param t difference between interpolation position and pixel position.
-     * t &gt;= 0 && t&lt;2.
-     * @return Kernel filter value.
-     */
-    double getConvolutionValue(double t) {
-        final double tAbs = Math.abs(t);
-        if (tAbs<=1) {
-            return (a+2)*tAbs*tAbs*tAbs - (a+3)*tAbs*tAbs + 1;//(a + 2)|x|^3 - (a + 3)|x|^2 +  1
-        } else if(tAbs >1 && tAbs < 2) {
-            return a*tAbs*tAbs*tAbs - 5*a*tAbs*tAbs + 8*a*tAbs - 4*a;// a|x|^3 - 5a|x|^2 + 8a|x| - 4a
-        } else {
-            return 0;
-        }
-    }
-
-    /**
      * Return appropriate interpolation minX and minY coordinates from x, y interpolate coordinates.
      *
      * @param x pixel x coordinate.
@@ -191,22 +147,41 @@ public class BiCubicInterpolation extends Interpolation {
         for (int i = 0; i<height/2-1;i++) {
             miny--;
         }
+        minx = Math.max(minx, boundary.x);
+        miny = Math.max(miny, boundary.y);
+        while(minx+width > boundary.x+boundary.width) {
+            minx--;
+        }
+        while(miny+height > boundary.y+boundary.height) {
+            miny--;
+        }
+//        double diffx = Math.abs(x-minx);
+//        double diffy = Math.abs(y-miny);
+        //diff € [1; 2]
+//        if(diffx<width/2-1 ||diffy<width/2-1 || diffx>width/2 || diffy>height/2)//diff>window/2
+//            throw new IllegalArgumentException("interpolate definition domain out of boundary");
 
-        /*
-         * Test if interpolate area is within iterate object boundary
-         */
-        if (!boundary.contains(minx, miny) || !boundary.contains(minx + width-1, miny + height-1))
-            throw new IllegalArgumentException("interpolate definition domain out of boundary");
+//        /*
+//         * Test if interpolate area is within iterate object boundary
+//         */
+//        if (!boundary.contains(minx, miny) || !boundary.contains(minx + width-1, miny + height-1))
+//            throw new IllegalArgumentException("interpolate definition domain out of boundary");
         return new int[]{minx, miny};
     }
 
     /**
      * {@inheritDoc }.
-     * <p>If Rectangle area parameter is {@code null} method will search minimum
-     * and maximum on all iterate object.</p>
      */
     @Override
     public double[] getMinMaxValue(Rectangle area) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    int getWindowSide() {
+        return 4;
     }
 }

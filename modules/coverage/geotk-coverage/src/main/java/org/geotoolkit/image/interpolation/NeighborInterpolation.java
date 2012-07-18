@@ -146,4 +146,9 @@ public class NeighborInterpolation extends Interpolation {
         precMinMax = area;
         return minMax;
     }
+
+    @Override
+    int getWindowSide() {
+        return 0;
+    }
 }

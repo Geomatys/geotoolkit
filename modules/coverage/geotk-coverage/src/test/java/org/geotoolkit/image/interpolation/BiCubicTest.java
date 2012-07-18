@@ -32,23 +32,30 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 /**
- * BiCubic Interpolation test.
+ * <p>BiCubic Interpolation test.<br/>
  *
- * Test 2 made of biCubic interpolation.
+ * Test 2 made of biCubic interpolation.<br/>
  *
- * All interpolation values are compared to JAI interpolation results.
+ * All interpolation values are compared to JAI interpolation results.</p>
  *
  * @author Remi Marechal (Geomatys).
  */
 public class BiCubicTest extends InterpolationTest {
 
+    /**
+     * Raster attributes.
+     */
     private int miny, minx, width, height;
+
+    /**
+     * Raster use for biCubic test.
+     */
     private WritableRaster rastertest;
 
     public BiCubicTest() {
-        miny = -1;
-        minx = -2;
-        width = 4;
+        miny   = -1;
+        minx   = -2;
+        width  = 4;
         height = 4;
     }
 
@@ -60,7 +67,7 @@ public class BiCubicTest extends InterpolationTest {
     @Test
     public void globalTest() {
         double val = -55;
-        width = 8;
+        width  = 8;
         height = 8;
         rastertest = RasterFactory.createBandedRaster(DataBuffer.TYPE_DOUBLE, width, height, 1, new Point(minx, miny));
         for (int y = miny; y < miny + height; y++) {
@@ -69,7 +76,7 @@ public class BiCubicTest extends InterpolationTest {
             }
         }
         pixIterator = PixelIteratorFactory.createDefaultIterator(rastertest);
-        interpol = new BiCubicInterpolation(pixIterator, false);
+        interpol = new BiCubicInterpolation1(pixIterator);
         double interpolVal;
         for (int y = miny+1; y < miny + height-2; y++) {
             for (int x = minx+1; x < minx + width-2; x++) {
@@ -78,7 +85,7 @@ public class BiCubicTest extends InterpolationTest {
                 assertTrue(Math.abs(rastertest.getSampleDouble(x, y, 0) - interpolVal) <= 1E-12);
             }
         }
-        interpol = new BiCubicInterpolation(pixIterator, true);
+        interpol = new BiCubicInterpolation2(pixIterator);
         for (int y = miny+1; y < miny + height-2; y++) {
             for (int x = minx+1; x < minx + width-2; x++) {
                 // interpolation verification at integer pixel position.
@@ -92,8 +99,8 @@ public class BiCubicTest extends InterpolationTest {
      * Compare interpolation values with JAI library biCubic interpolation results.
      */
     @Test
-    public void minAndMaxTest() {
-        width = 4;
+    public void minAndMaxTest() throws InterruptedException {
+        width  = 4;
         height = 4;
         //fill first band
         rastertest = RasterFactory.createBandedRaster(DataBuffer.TYPE_DOUBLE, width, height, 3, new Point(minx, miny));
@@ -152,9 +159,9 @@ public class BiCubicTest extends InterpolationTest {
      */
     @Test
     public void testFail() {
-        rastertest = RasterFactory.createBandedRaster(DataBuffer.TYPE_DOUBLE, width, height, 1, new Point(minx, miny));
+        rastertest  = RasterFactory.createBandedRaster(DataBuffer.TYPE_DOUBLE, width, height, 1, new Point(minx, miny));
         pixIterator = PixelIteratorFactory.createDefaultIterator(rastertest);
-        interpol = new BiCubicInterpolation(pixIterator, false);
+        interpol    = new BiCubicInterpolation1(pixIterator);
         //lower corner
         try {
             interpol.getMinMaxValue(new Rectangle(-2, -3, 3, 3));
@@ -205,14 +212,14 @@ public class BiCubicTest extends InterpolationTest {
 
         javax.media.jai.Interpolation jaiInterpol = (keys) ? new InterpolationBicubic2(8) : new InterpolationBicubic(8);
         PixelIterator pixelIterator = PixelIteratorFactory.createDefaultIterator(raster);
-        interpol = new BiCubicInterpolation(pixelIterator, keys);
+        interpol = (keys) ? new BiCubicInterpolation2(pixelIterator) : new BiCubicInterpolation1(pixelIterator);
 
         double x, y, tolerance;
         for(int b = 0; b<numBand; b++) {
             for (int ny = 0; ny<100; ny++) {
                 for (int nx = 0; nx<100; nx++) {
                     x = minX + 1 + nx*0.01;
-                    y = minY+1+ny*0.01;
+                    y = minY + 1 + ny*0.01;
                     inter = interpol.interpolate(x, y);
                     jaiInter = getJAIInterpolate(jaiInterpol, raster, x, y, rW, rH, numBand);
                     for (int b2 = 0; b2 <numBand; b2++) {

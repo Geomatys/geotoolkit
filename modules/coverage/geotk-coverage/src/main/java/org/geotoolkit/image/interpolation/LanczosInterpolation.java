@@ -38,7 +38,7 @@ public class LanczosInterpolation extends Interpolation {
     private final int lanczosWindow;
 
     /**
-     * lanczosWindow².
+     * 2*lanczosWindow.
      */
     private final int l2W;
 
@@ -155,6 +155,14 @@ public class LanczosInterpolation extends Interpolation {
             debY--;
         }
         return new int[]{debX, debY};
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    int getWindowSide() {
+        return l2W;
     }
 
     @Override

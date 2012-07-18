@@ -23,7 +23,7 @@ import java.awt.image.*;
 import java.util.Arrays;
 import javax.media.jai.RasterFactory;
 import javax.media.jai.TiledImage;
-import org.geotoolkit.image.interpolation.BiCubicInterpolation;
+import org.geotoolkit.image.interpolation.BiCubicInterpolation1;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeocentricCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
@@ -460,7 +460,7 @@ public class App {
 
         PixelIterator pixIterator = PixelIteratorFactory.createDefaultIterator(rastertest);
 
-        BiCubicInterpolation bicub = new BiCubicInterpolation(pixIterator, false);
+        BiCubicInterpolation1 bicub = new BiCubicInterpolation1(pixIterator);
 
 
 //        double t0 = bicub.cubicInterpol(tabTest[0], tabTest[1], tabTest[2], tabTest[3], 0);
