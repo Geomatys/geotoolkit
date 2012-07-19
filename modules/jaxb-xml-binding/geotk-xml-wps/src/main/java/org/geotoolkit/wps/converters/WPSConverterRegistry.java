@@ -87,11 +87,11 @@ public class WPSConverterRegistry {
         register(FileToReferenceConverter                   .getInstance());
 
         //String -> Object converters
+        register(new WPSObjectConverterAdapter(new StringToUnitConverter()));
+        register(new WPSObjectConverterAdapter(new StringToCRSConverter()));
+        register(new WPSObjectConverterAdapter(new StringToFilterConverter()));
         register(new WPSObjectConverterAdapter(StringToSortByConverter.getInstance()));
-        register(new WPSObjectConverterAdapter(StringToUnitConverter.getInstance()));
-        register(new WPSObjectConverterAdapter(StringToCRSConverter.getInstance()));
         register(new WPSObjectConverterAdapter(StringToNumberRangeConverter.getInstance()));
-        register(new WPSObjectConverterAdapter(StringToFilterConverter.getInstance()));
         register(new WPSObjectConverterAdapter(StringToDate.getInstance()));
 
     }
