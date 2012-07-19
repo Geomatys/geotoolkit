@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.sld.xml.v110.StyledLayerDescriptor;
 
 /**
  * Represents a layer, with its provider, its name and its style.
@@ -31,7 +32,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
     "dataReference",
-    "styleReference"
+    "styleReference",
+    "style"
 })
 @XmlRootElement(name = "MapLayer")
 public class MapLayer extends MapItem {
@@ -41,12 +43,20 @@ public class MapLayer extends MapItem {
     @XmlElement(name = "styleReference")
     private StyleReference styleReference;
 
+    @XmlElement(name = "style")
+    private StyledLayerDescriptor style;
+
     MapLayer(){
     }
 
     public MapLayer(final DataReference dataReference, final StyleReference styleReference) {
         this.dataReference = dataReference;
         this.styleReference = styleReference;
+    }
+
+    public MapLayer(final DataReference dataReference, final StyledLayerDescriptor style) {
+        this.dataReference = dataReference;
+        this.style = style;
     }
 
     public DataReference getDataReference() {
@@ -63,5 +73,13 @@ public class MapLayer extends MapItem {
 
     public void setReferenceStyle(final StyleReference styleReference) {
         this.styleReference = styleReference;
+    }
+
+    public StyledLayerDescriptor getStyle() {
+        return style;
+    }
+
+    public void setStyle(StyledLayerDescriptor style) {
+        this.style = style;
     }
 }
