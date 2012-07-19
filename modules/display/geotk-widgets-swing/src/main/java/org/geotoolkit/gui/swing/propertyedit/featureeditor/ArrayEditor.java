@@ -18,6 +18,7 @@ package org.geotoolkit.gui.swing.propertyedit.featureeditor;
 
 import java.awt.BorderLayout;
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.Array;
@@ -27,11 +28,13 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.gui.swing.propertyedit.JFeatureOutLine;
+import org.geotoolkit.util.Utilities;
 import org.opengis.feature.Attribute;
 import org.opengis.feature.ComplexAttribute;
 import org.opengis.feature.Property;
@@ -48,15 +51,21 @@ import org.opengis.feature.type.PropertyType;
 public class ArrayEditor extends PropertyValueEditor implements ActionListener{
 
     private final List<PropertyValueEditor> editors = new ArrayList<PropertyValueEditor>();
-    private final JButton chooseButton = new JButton("...");
+    private final JButton guiButton = new JButton("...");
+    private final JLabel guiLabel = new JLabel();
     private PropertyType type = null;
     private Object value = null;
 
     public ArrayEditor() {
         super(new BorderLayout());
-        add(BorderLayout.EAST, chooseButton);
-        chooseButton.addActionListener(this);
-        chooseButton.setMargin(new Insets(0, 0, 0, 0));
+        add(BorderLayout.CENTER, guiLabel);
+        add(BorderLayout.EAST, guiButton);
+        guiButton.addActionListener(this);
+        guiButton.setMargin(new Insets(0, 0, 0, 0));
+    }
+
+    private void updateText(){
+        guiLabel.setText(Utilities.deepToString(value));
     }
 
     /**
@@ -91,6 +100,7 @@ public class ArrayEditor extends PropertyValueEditor implements ActionListener{
     public void setValue(PropertyType type, Object value) {
         this.type = type;
         this.value = value;
+        updateText();
     }
 
     @Override
@@ -123,7 +133,14 @@ public class ArrayEditor extends PropertyValueEditor implements ActionListener{
 
         dialog.setContentPane(new JScrollPane(outline));
         dialog.pack();
-        dialog.setLocation( ((JComponent)e.getSource()).getLocationOnScreen());
+
+        final Point p = ((JComponent)e.getSource()).getLocationOnScreen();
+        p.x -= dialog.getWidth()/2;
+        p.y -= dialog.getHeight()/2;
+        if(p.x < 0) p.x=0;
+        if(p.y < 0) p.y=0;
+
+        dialog.setLocation(p);
         dialog.setModal(true);
         dialog.setVisible(true);
 
@@ -146,6 +163,7 @@ public class ArrayEditor extends PropertyValueEditor implements ActionListener{
             i++;
         }
 
+        updateText();
     }
 
 }

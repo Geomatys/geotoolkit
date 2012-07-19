@@ -35,6 +35,7 @@ import org.geotoolkit.gui.swing.propertyedit.featureeditor.InternationalStringEd
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.NumberEditor;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.PropertyValueEditor;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.StringEditor;
+import org.geotoolkit.gui.swing.propertyedit.featureeditor.StyleEditor;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.URLEditor;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.UnitEditor;
 import org.opengis.feature.Property;
@@ -101,6 +102,7 @@ public class JAttributeEditor extends JPanel{
         lst.add(new UnitEditor());
         lst.add(new EnumEditor());
         lst.add(new ArrayEditor());
+        lst.add(new StyleEditor());
         return lst;
     }
 
