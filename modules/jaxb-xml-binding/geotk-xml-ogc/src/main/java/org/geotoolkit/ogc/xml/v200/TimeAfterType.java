@@ -25,6 +25,20 @@ import org.opengis.filter.FilterVisitor;
  */
 public class TimeAfterType extends BinaryTemporalOpType {
 
+     /**
+     * An empty constructor used by JAXB
+     */
+    public TimeAfterType() {
+
+    }
+
+    /**
+     * Build a new TIme After Type
+     */
+    public TimeAfterType(final String propertyName, final Object temporal) {
+        super(propertyName, temporal);
+    }
+
     @Override
     public boolean evaluate(Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -34,5 +48,5 @@ public class TimeAfterType extends BinaryTemporalOpType {
     public Object accept(FilterVisitor fv, Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
+
 }

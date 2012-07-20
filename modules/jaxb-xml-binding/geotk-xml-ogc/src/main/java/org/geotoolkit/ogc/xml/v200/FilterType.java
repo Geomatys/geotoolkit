@@ -104,6 +104,10 @@ public class FilterType extends AbstractSelectionClauseType implements Filter, X
         } else if (obj instanceof SpatialOpsType) {
             this.spatialOps = createSpatialOps((SpatialOpsType) obj);
 
+        // spatial operator
+        } else if (obj instanceof TemporalOpsType) {
+            this.temporalOps = createTemporalOps((TemporalOpsType) obj);
+
         // id operator
         } else if (obj instanceof AbstractIdType) {
             this.id = new ArrayList<JAXBElement<? extends AbstractIdType>>();

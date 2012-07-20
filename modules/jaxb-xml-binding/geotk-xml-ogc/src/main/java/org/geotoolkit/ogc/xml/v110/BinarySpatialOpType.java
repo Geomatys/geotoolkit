@@ -45,9 +45,9 @@ import org.opengis.filter.expression.Expression;
 
 /**
  * <p>Java class for BinarySpatialOpType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="BinarySpatialOpType">
  *   &lt;complexContent>
@@ -67,13 +67,13 @@ import org.opengis.filter.expression.Expression;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BinarySpatialOpType", propOrder = {
-    "propertyName", 
+    "propertyName",
     "envelope",
     "abstractGeometry"
 })
@@ -82,35 +82,35 @@ public class BinarySpatialOpType extends SpatialOpsType {
 
     @XmlElementRef(name = "AbstractGeometry", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
     private JAXBElement<? extends AbstractGeometryType> abstractGeometry;
-    
+
     @XmlElementRef(name = "PropertyName",     namespace = "http://www.opengis.net/ogc", type = JAXBElement.class)
     private JAXBElement<PropertyNameType> propertyName;
 
     @XmlElementRef(name = "Envelope",         namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
     private JAXBElement<EnvelopeType> envelope;
-    
+
     @XmlTransient
     private ObjectFactory ogcFactory = new ObjectFactory();
-    
+
     @XmlTransient
     private org.geotoolkit.gml.xml.v311.ObjectFactory gmlFactory = new org.geotoolkit.gml.xml.v311.ObjectFactory();
-    
+
     /**
      * An empty constructor used by JAXB
      */
     public BinarySpatialOpType() {
-        
+
     }
-    
+
     /**
      * Build a new Binary spatial operator
      */
     public BinarySpatialOpType(final String propertyName, final AbstractGeometryType geometry) {
         this.propertyName     = ogcFactory.createPropertyName(new PropertyNameType(propertyName));
         this.abstractGeometry = getCorrectJaxbElement(geometry);
-        
+
     }
-    
+
     /**
      * Build a new Binary spatial operator
      */
@@ -121,7 +121,7 @@ public class BinarySpatialOpType extends SpatialOpsType {
         } else {
             this.abstractGeometry = getCorrectJaxbElement(geometry);
         }
-        
+
     }
 
     private JAXBElement<? extends AbstractGeometryType> getCorrectJaxbElement(final Object geometry) {
@@ -161,66 +161,6 @@ public class BinarySpatialOpType extends SpatialOpsType {
         }
         return null;
     }
-    /**
-     * Verify that this entry is identical to the specified object.
-     */
-    @Override
-    public boolean equals(final Object object) {
-        if (object == this) {
-            return true;
-        }
-        if (object instanceof BinarySpatialOpType) {
-            final BinarySpatialOpType that = (BinarySpatialOpType) object;
-            
-            boolean pname = false;
-            if (this.propertyName != null && that.propertyName != null) {
-                pname = Utilities.equals(this.propertyName.getValue(), that.propertyName.getValue());
-            } else if (this.propertyName == null && that.propertyName == null)
-                pname = true;
-            
-            boolean env = false;
-            if (this.envelope != null && that.envelope != null) {
-                env = Utilities.equals(this.envelope.getValue(), that.envelope.getValue());
-            } else if (this.envelope == null && that.envelope == null)
-                env = true;
-            
-            boolean abgeo = false;
-            if (this.abstractGeometry != null && that.abstractGeometry != null) {
-                abgeo = Utilities.equals(this.abstractGeometry.getValue(), that.abstractGeometry.getValue());
-            } else if (this.abstractGeometry == null && that.abstractGeometry == null) {
-                abgeo = true;
-            }
-
-            return  pname && env && abgeo;
-        }
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 47 * hash + (this.abstractGeometry != null ? this.abstractGeometry.hashCode() : 0);
-        hash = 47 * hash + (this.propertyName != null ? this.propertyName.hashCode() : 0);
-        hash = 47 * hash + (this.envelope != null ? this.envelope.hashCode() : 0);
-        return hash;
-    }
-
-   
-   
-    @Override
-    public String toString() {
-        StringBuilder s = new StringBuilder(super.toString());
-        if (propertyName != null && propertyName.getValue() != null)
-            s.append("PropertyName: ").append(propertyName.getValue().getPropertyName()).append('\n');
-        
-        if (envelope != null && envelope.getValue() != null)
-            s.append("envelope: ").append(envelope.getValue().toString()).append('\n');
-        
-        if (abstractGeometry != null && abstractGeometry.getValue() != null)
-            s.append("abstract Geometry: ").append(abstractGeometry.getValue().toString()).append('\n');
-        
-        return s.toString();
-    }
 
     public Expression getExpression1() {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -229,7 +169,7 @@ public class BinarySpatialOpType extends SpatialOpsType {
     public Expression getExpression2() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
+
     public boolean evaluate(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -262,4 +202,64 @@ public class BinarySpatialOpType extends SpatialOpsType {
         this.envelope = envelope;
     }
 
+    /**
+     * Verify that this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof BinarySpatialOpType) {
+            final BinarySpatialOpType that = (BinarySpatialOpType) object;
+
+            boolean pname = false;
+            if (this.propertyName != null && that.propertyName != null) {
+                pname = Utilities.equals(this.propertyName.getValue(), that.propertyName.getValue());
+            } else if (this.propertyName == null && that.propertyName == null)
+                pname = true;
+
+            boolean env = false;
+            if (this.envelope != null && that.envelope != null) {
+                env = Utilities.equals(this.envelope.getValue(), that.envelope.getValue());
+            } else if (this.envelope == null && that.envelope == null)
+                env = true;
+
+            boolean abgeo = false;
+            if (this.abstractGeometry != null && that.abstractGeometry != null) {
+                abgeo = Utilities.equals(this.abstractGeometry.getValue(), that.abstractGeometry.getValue());
+            } else if (this.abstractGeometry == null && that.abstractGeometry == null) {
+                abgeo = true;
+            }
+
+            return  pname && env && abgeo;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 47 * hash + (this.abstractGeometry != null ? this.abstractGeometry.hashCode() : 0);
+        hash = 47 * hash + (this.propertyName != null ? this.propertyName.hashCode() : 0);
+        hash = 47 * hash + (this.envelope != null ? this.envelope.hashCode() : 0);
+        return hash;
+    }
+
+
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder(super.toString());
+        if (propertyName != null && propertyName.getValue() != null)
+            s.append("PropertyName: ").append(propertyName.getValue().getPropertyName()).append('\n');
+
+        if (envelope != null && envelope.getValue() != null)
+            s.append("envelope: ").append(envelope.getValue().toString()).append('\n');
+
+        if (abstractGeometry != null && abstractGeometry.getValue() != null)
+            s.append("abstract Geometry: ").append(abstractGeometry.getValue().toString()).append('\n');
+
+        return s.toString();
+    }
 }

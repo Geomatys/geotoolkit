@@ -29,11 +29,11 @@ public class ContainsType extends BinarySpatialOpType implements Contains {
      * An empty constructor used by JAXB
      */
     public ContainsType() {
-        
+
     }
-    
+
     /**
-     * Build a new Beyond Type
+     * Build a new Contains Type
      */
     public ContainsType(final String propertyName, final Object geometry) {
         super(propertyName, geometry);
