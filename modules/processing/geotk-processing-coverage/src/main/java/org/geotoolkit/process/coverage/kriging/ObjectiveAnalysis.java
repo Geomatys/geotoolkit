@@ -281,8 +281,8 @@ public class ObjectiveAnalysis {
      * @return Un coéffcient de corrélation entre 0 et 1.
      */
     protected double correlation(double distance) {
-        distance = ((distance / 1000) - 1) / 150; // Similar to the basic program DISPWX
         distance *= scale;
+        distance = ((distance / 1000) - 1) / 150; // Similar to the basic program DISPWX
         if (distance < 0) {
             return 1 - 15 * distance;
         }
