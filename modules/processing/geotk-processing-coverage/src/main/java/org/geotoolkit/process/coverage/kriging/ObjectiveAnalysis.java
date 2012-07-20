@@ -97,6 +97,13 @@ public class ObjectiveAnalysis {
     private final int ny;
 
     /**
+     * An arbitrary scale factor applied in the distance computed by {@link #correlation(double)}.
+     * This is a hack for allowing the code to work with different CRS. Do not rely on this hack,
+     * it may be suppressed in future versions.
+     */
+    private double scale = 1;
+
+    /**
      * Construit un objet qui interpollera des points
      * sur une grille réguliére dans une certaine région.
      *
@@ -275,10 +282,23 @@ public class ObjectiveAnalysis {
      */
     protected double correlation(double distance) {
         distance = ((distance / 1000) - 1) / 150; // Similar to the basic program DISPWX
+        distance *= scale;
         if (distance < 0) {
             return 1 - 15 * distance;
         }
         return Math.exp(-distance * distance);
+    }
+
+    /**
+     * Sets an arbitrary scale factor to be applied in the distance computed by {@link #correlation(double)}.
+     * This is a hack for allowing the code to work with different CRS. Do not rely on this hack,
+     * it may be suppressed in future versions.
+     */
+    public void setScaleFactor(final double scale) {
+        if (!(scale > 0)) {
+            throw new IllegalArgumentException();
+        }
+        this.scale = scale;
     }
 
     /**
@@ -352,7 +372,7 @@ public class ObjectiveAnalysis {
 
                     final boolean isDone[] = new boolean[4];
                     for (int k=0; k<isDone.length; k++) isDone[k] = false;
-                    
+
                     while (true) {
                         int kmin = -1;
                         int mmin = -1;
@@ -531,7 +551,7 @@ public class ObjectiveAnalysis {
                 }
             }
         }
-        
+
 
         return cellMap;
 
@@ -554,7 +574,7 @@ public class ObjectiveAnalysis {
             //add at the end
             coords.add(coord1);
         }else if(equalCoordinates(endCoord, coord1)){
-            //add at the end   
+            //add at the end
             coords.add(coord0);
         }else{
             return false;
@@ -643,7 +663,7 @@ public class ObjectiveAnalysis {
             final Map<Point3d,List<Coordinate>> steps = ob.doContouring(cx, cy, computed, new double[]{-10,10,20,30,40,50});
             final List<Shape> shapes = new ArrayList<Shape>();
             for(final Point3d p : steps.keySet()){
-                
+
                 final List<Coordinate> coords = steps.get(p);
 
                 GeneralPath isoline = null;

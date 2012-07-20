@@ -42,6 +42,7 @@ import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.ProjectedCRS;
 
 
 import static org.geotoolkit.parameter.Parameters.*;
@@ -105,6 +106,12 @@ public class KrigingProcess extends AbstractProcess {
         }
 
         final ObjectiveAnalysis ob = new ObjectiveAnalysis(rect, dim);
+        if (crs instanceof ProjectedCRS) {
+            // The default ObjectiveAnalysis algorithm is designed for GeographicCRS.
+            // In case of ProjectedCRS, we need to apply a scale factor that convert
+            // metres to some approximation of angles of longitude/latitude.
+            ob.setScaleFactor(1. / (60*1852)); // Use standard length of nautical mile.
+        }
         final double[] computed;
         try {
             computed = ob.interpole(x, y, z);
