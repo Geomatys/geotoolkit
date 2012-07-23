@@ -7,8 +7,10 @@ syntax: regexp
 \.settings$
 \.DS_Store$
 \.git$
+\.tmp$
 ^tmp$
 \.log$
+\.orig$
 
 # old svn files
 \.svn$

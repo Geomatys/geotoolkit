@@ -54,9 +54,7 @@ public class StaticGoogleServerFactory extends AbstractServerFactory implements 
         IDENTIFICATION.setCitation(citation);
     }
     
-    public static final ParameterDescriptor<String> IDENTIFIER = new DefaultParameterDescriptor<String>(
-                    AbstractServerFactory.IDENTIFIER.getName().getCode(),
-                    AbstractServerFactory.IDENTIFIER.getRemarks(), String.class,NAME,true);
+    public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
     
     
     public static final ParameterDescriptorGroup PARAMETERS =

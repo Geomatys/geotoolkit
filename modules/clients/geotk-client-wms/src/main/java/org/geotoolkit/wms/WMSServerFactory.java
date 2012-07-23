@@ -57,9 +57,7 @@ public class WMSServerFactory extends AbstractServerFactory implements CoverageS
         IDENTIFICATION.setCitation(citation);
     }
     
-    public static final ParameterDescriptor<String> IDENTIFIER = new DefaultParameterDescriptor<String>(
-                    AbstractServerFactory.IDENTIFIER.getName().getCode(),
-                    AbstractServerFactory.IDENTIFIER.getRemarks(), String.class,NAME,true);
+    public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
     
     /**
      * Version, Mandatory.

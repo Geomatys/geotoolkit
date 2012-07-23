@@ -25,6 +25,7 @@ import org.geotoolkit.metadata.iso.quality.DefaultConformanceResult;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.util.collection.MapUtilities;
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.InvalidParameterValueException;
@@ -48,6 +49,29 @@ public abstract class AbstractCoverageStoreFactory extends Factory implements Co
     public static final ParameterDescriptor<String> IDENTIFIER =
             new DefaultParameterDescriptor<String>("identifier","Factory identifier.",String.class,null,true);
 
+    /**
+     * Create the identifier descriptor, and set only one valid value, the one in parameter.
+     * 
+     * TODO : Maybe change the string in parameter to string array.
+     * @param idValue the value to use for identifier.
+     * 
+     * @return an identifier descriptor. 
+     */
+    public static ParameterDescriptor<String> createFixedIdentifier(String idValue) {
+            return new DefaultParameterDescriptor<String>(
+            MapUtilities.buildMap(DefaultParameterDescriptor.NAME_KEY,             
+                                 idValue, 
+                                 DefaultParameterDescriptor.REMARKS_KEY, 
+                                 AbstractCoverageStoreFactory.IDENTIFIER.getRemarks()),
+            String.class, 
+            new String[]{idValue}, 
+            idValue,
+            null,
+            null,
+            null,
+            true);
+    }
+            
     /** parameter for namespace of the coveragestore */
     public static final ParameterDescriptor<String> NAMESPACE =
              new DefaultParameterDescriptor<String>("namespace","Namespace prefix",String.class,null,false);

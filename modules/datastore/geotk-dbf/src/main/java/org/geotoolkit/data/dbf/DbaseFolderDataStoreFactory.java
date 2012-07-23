@@ -39,9 +39,7 @@ public class DbaseFolderDataStoreFactory extends AbstractFolderDataStoreFactory{
     public static final DefaultServiceIdentification IDENTIFICATION = derivateIdentification(DbaseDataStoreFactory.IDENTIFICATION);
     public static final String NAME = IDENTIFICATION.getCitation().getTitle().toString();
     
-    public static final ParameterDescriptor<String> IDENTIFIER = new DefaultParameterDescriptor<String>(
-                    AbstractDataStoreFactory.IDENTIFIER.getName().getCode(),
-                    AbstractDataStoreFactory.IDENTIFIER.getRemarks(), String.class,NAME,true);
+    public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
     
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR = 
             derivateDescriptor(IDENTIFIER,DbaseDataStoreFactory.PARAMETERS_DESCRIPTOR);

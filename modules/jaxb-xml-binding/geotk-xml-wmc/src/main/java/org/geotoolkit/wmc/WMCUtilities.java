@@ -149,8 +149,7 @@ public class WMCUtilities {
                 }catch(DataStoreException ex){
                     Logger.getLogger(WMCUtilities.class.getName()).log(Level.SEVERE, null, ex);
                     continue;
-                }
-                
+                }                
                 
             } else if(server instanceof DataStore){
                 final DataStore wfs = (DataStore) server;

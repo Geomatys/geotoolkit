@@ -53,9 +53,7 @@ public class XMLCoverageStoreFactory extends AbstractCoverageStoreFactory{
         IDENTIFICATION.setCitation(citation);
     }
     
-    public static final ParameterDescriptor<String> IDENTIFIER = new DefaultParameterDescriptor<String>(
-                    AbstractCoverageStoreFactory.IDENTIFIER.getName().getCode(),
-                    AbstractCoverageStoreFactory.IDENTIFIER.getRemarks(), String.class,NAME,true);
+    public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
     
     /**
      * Mandatory - the folder path

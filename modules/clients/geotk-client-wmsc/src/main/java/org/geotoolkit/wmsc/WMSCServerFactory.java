@@ -59,9 +59,7 @@ public class WMSCServerFactory extends AbstractServerFactory implements Coverage
         IDENTIFICATION.setCitation(citation);
     }
     
-    public static final ParameterDescriptor<String> IDENTIFIER = new DefaultParameterDescriptor<String>(
-                    AbstractServerFactory.IDENTIFIER.getName().getCode(),
-                    AbstractServerFactory.IDENTIFIER.getRemarks(), String.class,NAME,true);
+    public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
     
     public static final ParameterDescriptorGroup PARAMETERS = 
             new DefaultParameterDescriptorGroup("WMSCParameters", IDENTIFIER,URL,SECURITY,IMAGE_CACHE,NIO_QUERIES);

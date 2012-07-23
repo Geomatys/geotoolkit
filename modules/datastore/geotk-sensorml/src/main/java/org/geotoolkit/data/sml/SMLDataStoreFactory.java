@@ -62,9 +62,7 @@ public class SMLDataStoreFactory extends AbstractDataStoreFactory {
         IDENTIFICATION.setCitation(citation);
     }
     
-    public static final ParameterDescriptor<String> IDENTIFIER = new DefaultParameterDescriptor<String>(
-                    AbstractDataStoreFactory.IDENTIFIER.getName().getCode(),
-                    AbstractDataStoreFactory.IDENTIFIER.getRemarks(), String.class,NAME,true);
+    public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
     
     /**
      * Parameter for database port

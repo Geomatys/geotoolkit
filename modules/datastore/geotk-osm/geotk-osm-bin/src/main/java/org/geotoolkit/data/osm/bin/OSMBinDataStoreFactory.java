@@ -54,9 +54,7 @@ public class OSMBinDataStoreFactory extends AbstractFileDataStoreFactory{
         IDENTIFICATION.setCitation(citation);
     }
     
-    public static final ParameterDescriptor<String> IDENTIFIER = new DefaultParameterDescriptor<String>(
-                    AbstractDataStoreFactory.IDENTIFIER.getName().getCode(),
-                    AbstractDataStoreFactory.IDENTIFIER.getRemarks(), String.class,NAME,true);
+    public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
     
     private static final String[] EXTENSIONS = new String[]{".obm"};
 

@@ -29,6 +29,7 @@ import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.ResourceInternationalString;
+import org.geotoolkit.util.collection.MapUtilities;
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.InvalidParameterValueException;
@@ -59,6 +60,29 @@ public abstract class AbstractServerFactory extends Factory implements ServerFac
             new DefaultParameterDescriptor<String>("identifier",
                     new ResourceInternationalString("org/geotoolkit/client/bundle", "identifier"),
                     String.class,null,true);
+    
+    /**
+     * Create the identifier descriptor, and set only one valid value, the one in parameter.
+     * 
+     * TODO : Maybe change the string in parameter to string array.
+     * @param idValue the value to use for identifier.
+     * 
+     * @return an identifier descriptor. 
+     */
+    public static ParameterDescriptor<String> createFixedIdentifier(String idValue) {
+            return new DefaultParameterDescriptor<String>(
+            MapUtilities.buildMap(DefaultParameterDescriptor.NAME_KEY,             
+                                 idValue, 
+                                 DefaultParameterDescriptor.REMARKS_KEY, 
+                                 AbstractServerFactory.IDENTIFIER.getRemarks()),
+            String.class, 
+            new String[]{idValue}, 
+            idValue,
+            null,
+            null,
+            null,
+            true);
+    }
     
     /**
      * Server URL, Mandatory.

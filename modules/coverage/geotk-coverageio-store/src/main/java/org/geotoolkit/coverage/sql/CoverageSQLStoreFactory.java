@@ -56,9 +56,7 @@ public class CoverageSQLStoreFactory extends AbstractCoverageStoreFactory {
         IDENTIFICATION.freeze();
     }
 
-    public static final ParameterDescriptor<String> IDENTIFIER = new DefaultParameterDescriptor<String>(
-                    AbstractCoverageStoreFactory.IDENTIFIER.getName().getCode(),
-                    AbstractCoverageStoreFactory.IDENTIFIER.getRemarks(), String.class,NAME,true);
+    public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
 
     public static final ParameterDescriptorGroup PARAMETERS;
     static {

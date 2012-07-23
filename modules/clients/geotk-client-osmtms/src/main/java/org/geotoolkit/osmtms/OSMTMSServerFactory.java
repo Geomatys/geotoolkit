@@ -54,9 +54,7 @@ public class OSMTMSServerFactory extends AbstractServerFactory implements Covera
         IDENTIFICATION.setCitation(citation);
     }
     
-    public static final ParameterDescriptor<String> IDENTIFIER = new DefaultParameterDescriptor<String>(
-                    AbstractServerFactory.IDENTIFIER.getName().getCode(),
-                    AbstractServerFactory.IDENTIFIER.getRemarks(), String.class,NAME,true);
+    public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
     
     /**
      * Mandatory - the serveur max zoom level
