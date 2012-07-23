@@ -52,6 +52,9 @@ public class MapItem {
     }
 
     public List<MapItem> getMapItems() {
+        if (mapItems == null) {
+            mapItems = new ArrayList<MapItem>();
+        }
         return mapItems;
     }
 
