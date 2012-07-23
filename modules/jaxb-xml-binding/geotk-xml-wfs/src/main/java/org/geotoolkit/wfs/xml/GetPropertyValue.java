@@ -16,31 +16,13 @@
  */
 package org.geotoolkit.wfs.xml;
 
-import java.util.Map;
-
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public interface GetPropertyValue extends BaseRequest {
+public interface GetPropertyValue extends FeatureRequest {
 
-    int getCount();
-    
-    int getStartIndex();
-             
-    Map<String, String> getPrefixMapping();
-    
-    ResultTypeType getResultType();
-    
-    String getOutputFormat();
-    
-    int getResolveTimeout();
-    
-    String getResolveDepth();
-    
-    ResolveValueType getResolve();
-    
     String getResolvePath();
-    
+
     String getValueReference();
 }

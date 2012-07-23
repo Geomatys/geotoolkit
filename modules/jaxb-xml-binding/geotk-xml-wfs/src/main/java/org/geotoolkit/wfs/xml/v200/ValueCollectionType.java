@@ -31,9 +31,9 @@ import org.geotoolkit.wfs.xml.ValueCollection;
 
 /**
  * <p>Java class for ValueCollectionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ValueCollectionType">
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import org.geotoolkit.wfs.xml.ValueCollection;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ValueCollectionType", propOrder = {
@@ -77,13 +77,22 @@ public class ValueCollectionType implements ValueCollection {
     @XmlSchemaType(name = "anyURI")
     private String previous;
 
+    public ValueCollectionType() {
+
+    }
+
+    public ValueCollectionType(final Integer numberOfFeatures, final XMLGregorianCalendar timeStamp) {
+        this.numberReturned = numberOfFeatures;
+        this.timeStamp = timeStamp;
+    }
+
     /**
      * Gets the value of the member property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link MemberPropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<MemberPropertyType> getMember() {
         if (member == null) {
@@ -94,11 +103,11 @@ public class ValueCollectionType implements ValueCollection {
 
     /**
      * Gets the value of the additionalValues property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AdditionalValues }
-     *     
+     *
      */
     public AdditionalValues getAdditionalValues() {
         return additionalValues;
@@ -106,11 +115,11 @@ public class ValueCollectionType implements ValueCollection {
 
     /**
      * Sets the value of the additionalValues property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AdditionalValues }
-     *     
+     *
      */
     public void setAdditionalValues(AdditionalValues value) {
         this.additionalValues = value;
@@ -118,11 +127,11 @@ public class ValueCollectionType implements ValueCollection {
 
     /**
      * Gets the value of the truncatedResponse property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TruncatedResponse }
-     *     
+     *
      */
     public TruncatedResponse getTruncatedResponse() {
         return truncatedResponse;
@@ -130,11 +139,11 @@ public class ValueCollectionType implements ValueCollection {
 
     /**
      * Sets the value of the truncatedResponse property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TruncatedResponse }
-     *     
+     *
      */
     public void setTruncatedResponse(TruncatedResponse value) {
         this.truncatedResponse = value;
@@ -142,11 +151,11 @@ public class ValueCollectionType implements ValueCollection {
 
     /**
      * Gets the value of the timeStamp property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public XMLGregorianCalendar getTimeStamp() {
         return timeStamp;
@@ -154,11 +163,11 @@ public class ValueCollectionType implements ValueCollection {
 
     /**
      * Sets the value of the timeStamp property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public void setTimeStamp(XMLGregorianCalendar value) {
         this.timeStamp = value;
@@ -166,11 +175,11 @@ public class ValueCollectionType implements ValueCollection {
 
     /**
      * Gets the value of the numberMatched property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getNumberMatched() {
         return numberMatched;
@@ -178,11 +187,11 @@ public class ValueCollectionType implements ValueCollection {
 
     /**
      * Sets the value of the numberMatched property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setNumberMatched(String value) {
         this.numberMatched = value;
@@ -190,11 +199,11 @@ public class ValueCollectionType implements ValueCollection {
 
     /**
      * Gets the value of the numberReturned property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link int }
-     *     
+     *
      */
     public int getNumberReturned() {
         return numberReturned;
@@ -202,11 +211,11 @@ public class ValueCollectionType implements ValueCollection {
 
     /**
      * Sets the value of the numberReturned property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link int }
-     *     
+     *
      */
     public void setNumberReturned(int value) {
         this.numberReturned = value;
@@ -214,11 +223,11 @@ public class ValueCollectionType implements ValueCollection {
 
     /**
      * Gets the value of the next property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getNext() {
         return next;
@@ -226,11 +235,11 @@ public class ValueCollectionType implements ValueCollection {
 
     /**
      * Sets the value of the next property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setNext(String value) {
         this.next = value;
@@ -238,11 +247,11 @@ public class ValueCollectionType implements ValueCollection {
 
     /**
      * Gets the value of the previous property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getPrevious() {
         return previous;
@@ -250,11 +259,11 @@ public class ValueCollectionType implements ValueCollection {
 
     /**
      * Sets the value of the previous property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setPrevious(String value) {
         this.previous = value;

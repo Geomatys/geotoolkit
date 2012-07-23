@@ -22,6 +22,7 @@ import java.util.Map;
 import javax.xml.bind.annotation.*;
 import org.geotoolkit.util.Version;
 import org.geotoolkit.wfs.xml.GetFeature;
+import org.geotoolkit.wfs.xml.ResolveValueType;
 import org.geotoolkit.wfs.xml.ResultTypeType;
 import org.geotoolkit.wfs.xml.StoredQuery;
 
@@ -35,12 +36,12 @@ import org.geotoolkit.wfs.xml.StoredQuery;
  * A Web Feature Service may support other possibly non-XML
  * (and even binary) output formats as long as those formats
  * are advertised in the capabilities document.
- *          
- * 
+ *
+ *
  * <p>Java class for GetFeatureType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GetFeatureType">
  *   &lt;complexContent>
@@ -57,8 +58,8 @@ import org.geotoolkit.wfs.xml.StoredQuery;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GetFeatureType", propOrder = {
@@ -80,10 +81,10 @@ public class GetFeatureType implements GetFeature {
     @XmlSchemaType(name = "positiveInteger")
     private Integer maxFeatures;
 
-    
+
     @XmlTransient
     private Map<String, String> prefixMapping;
-       
+
     public GetFeatureType() {
 
     }
@@ -111,11 +112,11 @@ public class GetFeatureType implements GetFeature {
 
     /**
      * Gets the value of the version property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public Version getVersion() {
@@ -128,11 +129,11 @@ public class GetFeatureType implements GetFeature {
 
     /**
      * Sets the value of the version property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setVersion(String value) {
@@ -141,11 +142,11 @@ public class GetFeatureType implements GetFeature {
 
     /**
      * Gets the value of the service property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getService() {
@@ -158,11 +159,11 @@ public class GetFeatureType implements GetFeature {
 
     /**
      * Sets the value of the service property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setService(String value) {
@@ -171,11 +172,11 @@ public class GetFeatureType implements GetFeature {
 
     /**
      * Gets the value of the handle property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getHandle() {
@@ -184,11 +185,11 @@ public class GetFeatureType implements GetFeature {
 
     /**
      * Sets the value of the handle property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public void setHandle(String value) {
@@ -197,11 +198,11 @@ public class GetFeatureType implements GetFeature {
 
     /**
      * Gets the value of the outputFormat property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getOutputFormat() {
@@ -214,11 +215,11 @@ public class GetFeatureType implements GetFeature {
 
     /**
      * Sets the value of the outputFormat property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setOutputFormat(String value) {
         this.outputFormat = value;
@@ -226,11 +227,11 @@ public class GetFeatureType implements GetFeature {
 
     /**
      * Gets the value of the maxFeatures property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getMaxFeatures() {
         return maxFeatures;
@@ -238,11 +239,11 @@ public class GetFeatureType implements GetFeature {
 
     /**
      * Sets the value of the maxFeatures property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setMaxFeatures(Integer value) {
         this.maxFeatures = value;
@@ -255,12 +256,12 @@ public class GetFeatureType implements GetFeature {
         }
         return 0;
     }
-    
+
     @Override
     public int getStartIndex() {
         return 0;
     }
-    
+
     /**
      * @return the prefixMapping
      */
@@ -274,14 +275,14 @@ public class GetFeatureType implements GetFeature {
     public void setPrefixMapping(Map<String, String> prefixMapping) {
         this.prefixMapping = prefixMapping;
     }
-    
+
     /**
      * Gets the value of the resultType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ResultTypeType }
-     *     
+     *
      */
     @Override
     public ResultTypeType getResultType() {
@@ -292,8 +293,20 @@ public class GetFeatureType implements GetFeature {
     public String getFeatureId() {
         return null;
     }
-    
+
     public List<? extends StoredQuery> getStoredQuery() {
         throw new UnsupportedOperationException("Not supported in V1.0.0");
+    }
+
+    public ResolveValueType getResolve() {
+        return null;
+    }
+
+    public String getResolveDepth() {
+        return null;
+    }
+
+    public int getResolveTimeout() {
+        return -1;
     }
 }

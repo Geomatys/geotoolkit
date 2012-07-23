@@ -34,9 +34,9 @@ import org.geotoolkit.wfs.xml.*;
 
 /**
  * <p>Java class for GetFeatureType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GetFeatureType">
  *   &lt;complexContent>
@@ -50,8 +50,8 @@ import org.geotoolkit.wfs.xml.*;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GetFeatureType", propOrder = {
@@ -126,15 +126,15 @@ public class GetFeatureType extends BaseRequestType implements GetFeature {
 
     /**
      * Gets the value of the abstractQueryExpression property.
-     * 
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link StoredQueryType }{@code >}
      * {@link JAXBElement }{@code <}{@link AbstractQueryExpressionType }{@code >}
      * {@link JAXBElement }{@code <}{@link AbstractAdhocQueryExpressionType }{@code >}
      * {@link JAXBElement }{@code <}{@link QueryType }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<? extends AbstractQueryExpressionType>> getAbstractQueryExpression() {
         if (abstractQueryExpression == null) {
@@ -142,7 +142,7 @@ public class GetFeatureType extends BaseRequestType implements GetFeature {
         }
         return this.abstractQueryExpression;
     }
-    
+
    /**
      * Gets the value of the query property.
      */
@@ -163,7 +163,7 @@ public class GetFeatureType extends BaseRequestType implements GetFeature {
         }
         return queries;
     }
-    
+
     /**
      * Gets the value of the query property.
      */
@@ -187,23 +187,24 @@ public class GetFeatureType extends BaseRequestType implements GetFeature {
 
     /**
      * Gets the value of the startIndex property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link int }
-     *     
+     *
      */
+    @Override
     public int getStartIndex() {
         return startIndex;
     }
 
     /**
      * Sets the value of the startIndex property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link int }
-     *     
+     *
      */
     public void setStartIndex(int value) {
         this.startIndex = value;
@@ -211,11 +212,11 @@ public class GetFeatureType extends BaseRequestType implements GetFeature {
 
     /**
      * Gets the value of the count property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link int }
-     *     
+     *
      */
     @Override
     public int getCount() {
@@ -224,11 +225,11 @@ public class GetFeatureType extends BaseRequestType implements GetFeature {
 
     /**
      * Sets the value of the count property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link int }
-     *     
+     *
      */
     public void setCount(int value) {
         this.count = value;
@@ -236,11 +237,11 @@ public class GetFeatureType extends BaseRequestType implements GetFeature {
 
     /**
      * Gets the value of the resultType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ResultTypeType }
-     *     
+     *
      */
     @Override
     public ResultTypeType getResultType() {
@@ -253,11 +254,11 @@ public class GetFeatureType extends BaseRequestType implements GetFeature {
 
     /**
      * Sets the value of the resultType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ResultTypeType }
-     *     
+     *
      */
     public void setResultType(ResultTypeType value) {
         this.resultType = value;
@@ -265,11 +266,11 @@ public class GetFeatureType extends BaseRequestType implements GetFeature {
 
     /**
      * Gets the value of the outputFormat property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getOutputFormat() {
@@ -282,11 +283,11 @@ public class GetFeatureType extends BaseRequestType implements GetFeature {
 
     /**
      * Sets the value of the outputFormat property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setOutputFormat(String value) {
         this.outputFormat = value;
@@ -294,12 +295,13 @@ public class GetFeatureType extends BaseRequestType implements GetFeature {
 
     /**
      * Gets the value of the resolve property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ResolveValueType }
-     *     
+     *
      */
+    @Override
     public ResolveValueType getResolve() {
         if (resolve == null) {
             return ResolveValueType.NONE;
@@ -310,11 +312,11 @@ public class GetFeatureType extends BaseRequestType implements GetFeature {
 
     /**
      * Sets the value of the resolve property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ResolveValueType }
-     *     
+     *
      */
     public void setResolve(ResolveValueType value) {
         this.resolve = value;
@@ -322,12 +324,13 @@ public class GetFeatureType extends BaseRequestType implements GetFeature {
 
     /**
      * Gets the value of the resolveDepth property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
+    @Override
     public String getResolveDepth() {
         if (resolveDepth == null) {
             return "*";
@@ -338,11 +341,11 @@ public class GetFeatureType extends BaseRequestType implements GetFeature {
 
     /**
      * Sets the value of the resolveDepth property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setResolveDepth(String value) {
         this.resolveDepth = value;
@@ -350,23 +353,24 @@ public class GetFeatureType extends BaseRequestType implements GetFeature {
 
     /**
      * Gets the value of the resolveTimeout property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link int }
-     *     
+     *
      */
+    @Override
     public int getResolveTimeout() {
         return resolveTimeout;
     }
 
     /**
      * Sets the value of the resolveTimeout property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link int }
-     *     
+     *
      */
     public void setResolveTimeout(int value) {
         this.resolveTimeout = value;

@@ -16,11 +16,29 @@
  */
 package org.geotoolkit.wfs.xml;
 
+import java.util.List;
+
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public interface GetFeature extends FeatureRequest {
+public interface FeatureRequest extends BaseRequest {
 
-    String getFeatureId();
+    List<? extends Query> getQuery();
+
+    List<? extends StoredQuery> getStoredQuery();
+
+    int getCount();
+
+    int getStartIndex();
+
+    String getOutputFormat();
+
+    ResultTypeType getResultType();
+
+    ResolveValueType getResolve();
+
+    String getResolveDepth();
+
+    int getResolveTimeout();
 }
