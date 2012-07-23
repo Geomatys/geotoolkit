@@ -72,7 +72,7 @@ public abstract class AbstractServerFactory extends Factory implements ServerFac
     public static ParameterDescriptor<String> createFixedIdentifier(String idValue) {
             return new DefaultParameterDescriptor<String>(
             MapUtilities.buildMap(DefaultParameterDescriptor.NAME_KEY,             
-                                 idValue, 
+                                 IDENTIFIER.getName().getCode(), 
                                  DefaultParameterDescriptor.REMARKS_KEY, 
                                  AbstractServerFactory.IDENTIFIER.getRemarks()),
             String.class, 

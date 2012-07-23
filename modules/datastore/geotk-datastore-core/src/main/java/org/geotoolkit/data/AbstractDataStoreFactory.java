@@ -70,7 +70,7 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
     public static ParameterDescriptor<String> createFixedIdentifier(String idValue) {
             return new DefaultParameterDescriptor<String>(
             MapUtilities.buildMap(DefaultParameterDescriptor.NAME_KEY,             
-                                 idValue, 
+                                 IDENTIFIER.getName().getCode(), 
                                  DefaultParameterDescriptor.REMARKS_KEY, 
                                  AbstractDataStoreFactory.IDENTIFIER.getRemarks()),
             String.class, 
