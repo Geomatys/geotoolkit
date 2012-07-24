@@ -22,6 +22,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import org.geotoolkit.filter.visitor.DefaultFilterVisitor;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.opengis.feature.type.PropertyType;
@@ -35,26 +36,40 @@ import org.opengis.filter.expression.Function;
  */
 public class ChoiceEditor extends PropertyValueEditor implements ActionListener{
 
-    private final JComboBox component = new JComboBox();
+    private final JComboBox guiCombo = new JComboBox();
+    private final JLabel guiLabel = new JLabel();
 
     public ChoiceEditor() {
         super(new BorderLayout());
-        add(BorderLayout.CENTER, component);
-        component.addActionListener(this);
+        add(BorderLayout.CENTER, guiCombo);
+        guiCombo.addActionListener(this);
+        guiLabel.setOpaque(false);
+        setOpaque(false);
     }
 
     @Override
     public void setValue(PropertyType type, Object value) {
-        component.setModel(new ListComboBoxModel(extractChoices(type)));
-        component.setSelectedItem(value);
+
+        removeAll();
+        guiLabel.setText("");
+
+        final List<Object> values = extractChoices(type);
+        guiCombo.setModel(new ListComboBoxModel(values));
+        guiCombo.setSelectedItem(value);
+
+        if(values.size() == 1){
+            guiLabel.setText(String.valueOf(values.get(0)));
+            add(BorderLayout.CENTER,guiLabel);
+        }else{
+            add(BorderLayout.CENTER,guiCombo);
+        }
+
     }
 
     @Override
     public Object getValue() {
-        return component.getSelectedItem();
+        return guiCombo.getSelectedItem();
     }
-
-
 
     @Override
     public boolean canHandle(PropertyType candidate) {
