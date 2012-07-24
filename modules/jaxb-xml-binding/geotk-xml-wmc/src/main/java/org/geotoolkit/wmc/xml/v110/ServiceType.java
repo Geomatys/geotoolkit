@@ -60,7 +60,7 @@ public enum ServiceType {
 
     public static ServiceType fromValue(final String v) {
         for (ServiceType c: ServiceType.values()) {
-            if (c.value.equals(v)) {
+            if (c.value.equalsIgnoreCase(v)) {
                 return c;
             }
         }

@@ -152,8 +152,11 @@ public class DefaultName implements Name,Serializable {
 
         if (obj instanceof Name) {
             final Name other = (Name) obj;
-            if (!Utilities.equals(this.getNamespaceURI(), other.getNamespaceURI())) {
-                return false;
+            if( (other.getNamespaceURI() != null && !other.getNamespaceURI().isEmpty()) &&
+                (this.getNamespaceURI() != null  && !this.getNamespaceURI().isEmpty()) ){
+                if (!Utilities.equals(this.getNamespaceURI(), other.getNamespaceURI())) {
+                    return false;
+                }
             }
             if (!Utilities.equals(this.local, other.getLocalPart())) {
                 return false;
