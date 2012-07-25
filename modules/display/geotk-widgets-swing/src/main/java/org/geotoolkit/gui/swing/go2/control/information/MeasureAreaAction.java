@@ -28,9 +28,9 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class MesureAreaAction extends AbstractMapAction {
+public class MeasureAreaAction extends AbstractMapAction {
 
-    public MesureAreaAction(){
+    public MeasureAreaAction(){
         putValue(SMALL_ICON, IconBundle.getIcon("16_mesure_area"));
         putValue(SHORT_DESCRIPTION, MessageBundle.getString("map_measure_area"));
     }

@@ -81,7 +81,7 @@ public class LenghtDecoration extends AbstractGeometryDecoration{
         if(map == null) return;
         if(geometries.isEmpty()) return;
 
-        double d = MesureUtilities.calculateLenght(geometries.get(0), map.getCanvas().getObjectiveCRS(), (Unit)guiUOM.getSelectedItem());
+        double d = MeasureUtilities.calculateLenght(geometries.get(0), map.getCanvas().getObjectiveCRS(), (Unit)guiUOM.getSelectedItem());
         guiLbl.setText(NumberFormat.getNumberInstance().format(d));
     }
 

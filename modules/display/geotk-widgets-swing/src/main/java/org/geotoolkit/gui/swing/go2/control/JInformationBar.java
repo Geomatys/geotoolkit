@@ -19,8 +19,8 @@ package org.geotoolkit.gui.swing.go2.control;
 
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.go2.control.information.InformationAction;
-import org.geotoolkit.gui.swing.go2.control.information.MesureAreaAction;
-import org.geotoolkit.gui.swing.go2.control.information.MesureLenghtAction;
+import org.geotoolkit.gui.swing.go2.control.information.MeasureAreaAction;
+import org.geotoolkit.gui.swing.go2.control.information.MeasureLenghtAction;
 
 /**
  * Information bar
@@ -30,8 +30,8 @@ import org.geotoolkit.gui.swing.go2.control.information.MesureLenghtAction;
  */
 public class JInformationBar extends AbstractMapControlBar{
 
-    private final MesureLenghtAction actionLenght;
-    private final MesureAreaAction actionArea;
+    private final MeasureLenghtAction actionLenght;
+    private final MeasureAreaAction actionArea;
     private final InformationAction actionInfo;
 
     public JInformationBar() {
@@ -44,8 +44,8 @@ public class JInformationBar extends AbstractMapControlBar{
      */
     public JInformationBar(final JMap2D pane) {
 
-        actionLenght = new MesureLenghtAction();
-        actionArea = new MesureAreaAction();
+        actionLenght = new MeasureLenghtAction();
+        actionArea = new MeasureAreaAction();
         actionInfo = new InformationAction();
 
         add(actionLenght);

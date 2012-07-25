@@ -53,9 +53,9 @@ import org.opengis.referencing.operation.TransformException;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class MesureUtilities {
+public class MeasureUtilities {
 
-    private static final Logger LOGGER = Logging.getLogger(MesureUtilities.class);
+    private static final Logger LOGGER = Logging.getLogger(MeasureUtilities.class);
 
     public static double calculateLenght(final Geometry geom, final CoordinateReferenceSystem geomCRS, final Unit<Length> unit){
 
@@ -131,7 +131,7 @@ public class MesureUtilities {
             MathTransform step1 = CRS.findMathTransform(geomCRS, geoCRS);
             MathTransform step2 = f.createParameterizedTransform(p);
             MathTransform trs = f.createConcatenatedTransform(step1, step2);
-            
+
             Geometry calculatedGeom = JTS.transform(geom, trs);
             double area = calculatedGeom.getArea();
 
@@ -148,9 +148,9 @@ public class MesureUtilities {
             LOGGER.log(Level.WARNING, null, ex);
         } catch (TransformException ex) {
             LOGGER.log(Level.WARNING, null, ex);
-        } 
+        }
 
-        return 0;        
+        return 0;
     }
 
 
