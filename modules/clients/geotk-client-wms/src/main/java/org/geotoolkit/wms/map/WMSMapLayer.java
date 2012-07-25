@@ -25,6 +25,7 @@ import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.map.DefaultCoverageMapLayer;
 import org.geotoolkit.style.DefaultStyleFactory;
+import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.wms.*;
 import org.geotoolkit.wms.WMSCoverageReference.CRS84Politic;
 import org.geotoolkit.wms.WMSCoverageReference.EPSG4326Politic;
@@ -45,15 +46,15 @@ public class WMSMapLayer extends DefaultCoverageMapLayer {
     private static WMSCoverageReference toReference(final WebMapServer server, final String... layers){
         return new WMSCoverageReference(server, layers);
     }
-    
+
     public WMSMapLayer(final WebMapServer server, final String... layers) {
         this(toReference(server, layers));
         graphicBuilders().add(WMSGraphicBuilder.INSTANCE);
     }
-    
+
     protected WMSMapLayer(final CoverageReference ref){
-        super(ref,new DefaultStyleFactory().style(),ref.getName());
-    } 
+        super(ref,new DefaultStyleFactory().style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER),ref.getName());
+    }
 
     /**
      * Configuration of the requested coverage.
@@ -63,7 +64,7 @@ public class WMSMapLayer extends DefaultCoverageMapLayer {
     public WMSCoverageReference getCoverageReference() {
         return (WMSCoverageReference) super.getCoverageReference();
     }
-    
+
     /**
      * @deprecated use getCoverageReference() methods
      */
