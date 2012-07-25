@@ -62,8 +62,8 @@ import org.opengis.util.InternationalString;
  */
 public class JFeatureOutLine extends Outline{
 
-    private static final ImageIcon ICON_ADD = IconBundle.getIcon("16_smallgray");
-    private static final ImageIcon ICON_REMOVE = IconBundle.getIcon("16_smallgreen");
+    private static final ImageIcon ICON_ADD = IconBundle.getIcon("16_off");
+    private static final ImageIcon ICON_REMOVE = IconBundle.getIcon("16_on");
     private static final ImageIcon ICON_OCC_ADD = IconBundle.getIcon("16_occurence_add");
     private static final ImageIcon ICON_OCC_REMOVE = IconBundle.getIcon("16_occurence_remove");
 
@@ -114,8 +114,8 @@ public class JFeatureOutLine extends Outline{
         getColumnModel().getColumn(0).setHeaderValue(" ");
         getColumnModel().getColumn(0).setResizable(true);
         getColumnModel().getColumn(1).setResizable(true);
-        getColumnModel().getColumn(2).setMinWidth(26);
-        getColumnModel().getColumn(2).setMaxWidth(26);
+        getColumnModel().getColumn(2).setMinWidth(36);
+        getColumnModel().getColumn(2).setMaxWidth(36);
         getColumnModel().getColumn(2).setResizable(false);
     }
 
