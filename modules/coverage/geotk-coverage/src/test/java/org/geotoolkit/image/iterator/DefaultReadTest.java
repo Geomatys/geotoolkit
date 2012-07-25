@@ -19,10 +19,7 @@ package org.geotoolkit.image.iterator;
 
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.image.BandedSampleModel;
-import java.awt.image.DataBuffer;
-import java.awt.image.Raster;
-import java.awt.image.RenderedImage;
+import java.awt.image.*;
 import javax.media.jai.RasterFactory;
 import javax.media.jai.TiledImage;
 import static org.junit.Assert.assertTrue;
@@ -96,10 +93,8 @@ public abstract class DefaultReadTest extends IteratorTest{
 
     static void setRenderedImgTest(IteratorTest test, int minx, int miny, int width, int height, int tilesWidth, int tilesHeight, int numBand, Rectangle areaIterate) {
         final int dataType = test.getDataBufferType();
-
-        final BandedSampleModel sampleM = new BandedSampleModel(dataType, tilesWidth, tilesHeight, numBand);
+        final SampleModel sampleM = new PixelInterleavedSampleModel(dataType, tilesWidth, tilesHeight,numBand,tilesWidth*numBand, new int[]{0,1,2});
         test.renderedImage = new TiledImage(minx, miny, width, height, minx+tilesWidth, miny+tilesHeight, sampleM, null);
-
         double comp;
         int nbrTX = width/tilesWidth;
         int nbrTY = height/tilesHeight;
@@ -192,9 +187,10 @@ public abstract class DefaultReadTest extends IteratorTest{
             case DataBuffer.TYPE_FLOAT : valueRef = -2000.5;break;
             default : valueRef = 0;break;
         }
-
+        SampleModel sampleM = new PixelInterleavedSampleModel(dataType, width, width, numband, width*numband, new int[]{0, 1, 2});
+        test.rasterTest = Raster.createWritableRaster(sampleM, new Point(minx, miny));
         double comp = valueRef;
-        test.rasterTest = RasterFactory.createBandedRaster(dataType, width, height, numband, new Point(minx, miny));
+//        test.rasterTest = Raster.create(dataType, width, height, width*numband, numband, new int[]{0, 1, 2}, new Point(minx, miny));
         for (int y = miny; y<miny + height; y++) {
             for (int x = minx; x<minx + width; x++) {
                 for (int b = 0; b<numband; b++) {

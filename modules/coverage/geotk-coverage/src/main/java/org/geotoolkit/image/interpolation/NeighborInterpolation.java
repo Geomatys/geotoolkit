@@ -79,11 +79,11 @@ public class NeighborInterpolation extends Interpolation {
                 pixelIterator.next();
                 value = pixelIterator.getSampleDouble();
                 //min value, x, y coordinates
-                minMax[6*band]         = value;
+                minMax[6*band]     = value;
                 minMax[6*band + 1] = pixelIterator.getX();
                 minMax[6*band + 2] = pixelIterator.getX();
                 //max value, x, y coordinates
-                minMax[6*band + 3]     = value;
+                minMax[6*band + 3] = value;
                 minMax[6*band + 4] = pixelIterator.getX();
                 minMax[6*band + 5] = pixelIterator.getX();
             }
@@ -92,13 +92,13 @@ public class NeighborInterpolation extends Interpolation {
                 value = pixelIterator.getSampleDouble();
                 if (value < minMax[6*band]) {
                     //min value, x, y coordinates
-                    minMax[6*band]         = value;
+                    minMax[6*band]     = value;
                     minMax[6*band + 1] = pixelIterator.getX();
                     minMax[6*band + 2] = pixelIterator.getX();
                 }
                 if (value > minMax[6*band + 3]) {
                     //max value, x, y coordinates
-                    minMax[6*band + 3]     = value;
+                    minMax[6*band + 3] = value;
                     minMax[6*band + 4] = pixelIterator.getX();
                     minMax[6*band + 5] = pixelIterator.getX();
                 }
@@ -112,11 +112,11 @@ public class NeighborInterpolation extends Interpolation {
                 pixelIterator.next();
                 value = pixelIterator.getSampleDouble();
                 //min value, x, y coordinates
-                minMax[6*band]         = value;
+                minMax[6*band]     = value;
                 minMax[6*band + 1] = pixelIterator.getX();
                 minMax[6*band + 2] = pixelIterator.getX();
                 //max value, x, y coordinates
-                minMax[6*band + 3]     = value;
+                minMax[6*band + 3] = value;
                 minMax[6*band + 4] = pixelIterator.getX();
                 minMax[6*band + 5] = pixelIterator.getX();
             }
@@ -129,13 +129,13 @@ public class NeighborInterpolation extends Interpolation {
                         value = pixelIterator.getSampleDouble();
                         if (value < minMax[6*band]) {
                             //min value, x, y coordinates
-                            minMax[6*band]         = value;
+                            minMax[6*band]     = value;
                             minMax[6*band + 1] = pixelIterator.getX();
                             minMax[6*band + 2] = pixelIterator.getX();
                         }
                         if (value > minMax[6*band + 3]) {
                             //max value, x, y coordinates
-                            minMax[6*band + 3]     = value;
+                            minMax[6*band + 3] = value;
                             minMax[6*band + 4] = pixelIterator.getX();
                             minMax[6*band + 5] = pixelIterator.getX();
                         }

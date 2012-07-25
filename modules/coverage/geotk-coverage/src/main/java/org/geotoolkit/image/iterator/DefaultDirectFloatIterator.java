@@ -52,7 +52,7 @@ public class DefaultDirectFloatIterator extends DefaultDirectIterator {
     /**
      * Current raster data table.
      */
-    private float[][] currentDataArray;
+    private float[] currentDataArray;
 
     /**
      * Create Byte type raster iterator to follow from minX, minY raster and rectangle intersection coordinate.
@@ -65,7 +65,7 @@ public class DefaultDirectFloatIterator extends DefaultDirectIterator {
         super(raster, subArea);
         final DataBuffer databuf = raster.getDataBuffer();
         assert (databuf.getDataType() == DataBuffer.TYPE_FLOAT) : "raster data or not Byte type"+databuf;
-        this.currentDataArray = ((DataBufferFloat)databuf).getBankData();
+        this.currentDataArray = ((DataBufferFloat)databuf).getData();
     }
 
     /**
@@ -87,7 +87,7 @@ public class DefaultDirectFloatIterator extends DefaultDirectIterator {
     @Override
     protected void updateCurrentRaster(final int tileX, final int tileY){
         super.updateCurrentRaster(tileX, tileY);
-        this.currentDataArray = ((DataBufferFloat)currentRaster.getDataBuffer()).getBankData();
+        this.currentDataArray = ((DataBufferFloat)currentRaster.getDataBuffer()).getData();
     }
 
     /**
@@ -95,7 +95,7 @@ public class DefaultDirectFloatIterator extends DefaultDirectIterator {
      */
     @Override
     public int getSample() {
-        return (int) currentDataArray[band][dataCursor];
+        return (int) currentDataArray[(dataCursor/rasterWidth)*scanLineStride+(dataCursor%rasterWidth)*numBand+bandOffset[band]];
     }
 
     /**
@@ -103,7 +103,7 @@ public class DefaultDirectFloatIterator extends DefaultDirectIterator {
      */
     @Override
     public float getSampleFloat() {
-        return currentDataArray[band][dataCursor];
+        return currentDataArray[(dataCursor/rasterWidth)*scanLineStride+(dataCursor%rasterWidth)*numBand+bandOffset[band]];
     }
 
     /**
@@ -111,7 +111,7 @@ public class DefaultDirectFloatIterator extends DefaultDirectIterator {
      */
     @Override
     public double getSampleDouble() {
-        return currentDataArray[band][dataCursor];
+        return currentDataArray[(dataCursor/rasterWidth)*scanLineStride+(dataCursor%rasterWidth)*numBand+bandOffset[band]];
     }
 
     /**

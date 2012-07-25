@@ -136,7 +136,8 @@ public abstract class DefaultWritableTest extends WritableIteratorTest {
         tilesHeight = 5;
         numBand = 3;
 
-        BandedSampleModel sampleM = new BandedSampleModel(dataType, tilesWidth, tilesHeight, numBand);
+        //SampleModel sampleM = new PixelInterleavedSampleModel(DataBuffer.TYPE_BYTE, tilesWidth, tilesHeight, numBand, tilesWidth*numBand, bandOffset);
+        SampleModel sampleM = new PixelInterleavedSampleModel(dataType, tilesWidth, tilesHeight, numBand, tilesWidth*numBand, new int[]{0, 1, 2});
         renderedImage = new TiledImage(minx, miny, width, height, minx+tilesWidth, miny+tilesHeight, sampleM, null);
         setPixelIterator(renderedImage);
         final int length = width*height*numBand;
@@ -174,7 +175,8 @@ public abstract class DefaultWritableTest extends WritableIteratorTest {
         height = 50;
         tilesWidth = 10;
         tilesHeight = 5;
-        sampleM = new BandedSampleModel(dataType, tilesWidth, tilesHeight, numBand);
+//        sampleM = new BandedSampleModel(dataType, tilesWidth, tilesHeight, numBand);
+        sampleM = new PixelInterleavedSampleModel(dataType, tilesWidth, tilesHeight, numBand, tilesWidth*numBand, new int[]{0, 1, 2});
         renderedImage = new TiledImage(minx, miny, width, height, minx+tilesWidth, miny+tilesHeight, sampleM, null);
         setPixelIterator(renderedImage);
 
@@ -198,8 +200,10 @@ public abstract class DefaultWritableTest extends WritableIteratorTest {
     @Test
     public void unappropriateRasterTest() {
         final int databuffer = getDataBufferType();
-        final Raster rasterRead = RasterFactory.createBandedRaster(databuffer, 20, 10, 3, new Point(0,0));
-        WritableRaster rasterWrite = RasterFactory.createBandedRaster(databuffer, 200, 100, 30, new Point(3,1));
+        //Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE, width, height, numBand, new Point(minx, miny));
+        //Raster.createInterleavedRaster(databuffer, 20, 1, numBand, new Point(minx, miny));
+        final Raster rasterRead = RasterFactory.createInterleavedRaster(databuffer, 20, 10, 3, new Point(0,0));
+        WritableRaster rasterWrite = RasterFactory.createInterleavedRaster(databuffer, 200, 100, 30, new Point(3,1));
 
         //test : different raster dimension.
         try {

@@ -100,12 +100,11 @@ public class Resample {
         this.invertMathTransform = mathTransform.inverse();
         this.imageDest = imageDest;
         this.interpol  = interpol;
-        Rectangle bound = interpol.getBoundary();
-        final int border = 0;//interpol.getWindowSide()/2 - 1;
-        minSourceX = bound.x + border;
-        minSourceY = bound.y + border;
-        maxSourceX = bound.x + bound.width  - border - 1;//getwindow
-        maxSourceY = bound.y + bound.height - border - 1;
+        final Rectangle bound = interpol.getBoundary();
+        minSourceX = bound.x;
+        minSourceY = bound.y;
+        maxSourceX = minSourceX + bound.width  - 1;
+        maxSourceY = minSourceY + bound.height - 1;
     }
 
     /**
@@ -121,16 +120,12 @@ public class Resample {
         invertMathTransform.transform(new double[]{x, y}, 0, srcCoords, 0, 1);
         if (srcCoords[0]<minSourceX||srcCoords[0]>maxSourceX
           ||srcCoords[1]<minSourceY||srcCoords[1]>maxSourceY) return fillValue;
-
-
-        double[] vi = null;
-//        try{
-            vi = interpol.interpolate(srcCoords[0], srcCoords[1]);
-//        }catch(Exception e){
-//            System.out.println("");
-//        }
-
-        return vi;
+        try{
+            return interpol.interpolate(srcCoords[0], srcCoords[1]);
+        }catch(Exception e){
+            System.out.println("");
+        }
+        return fillValue;
     }
 
     /**
@@ -140,25 +135,14 @@ public class Resample {
         final PixelIterator destIterator = PixelIteratorFactory.createDefaultWriteableIterator(imageDest, imageDest);
         int band;
         double[] destPixValue;
-        int compDebug = 0;//a supprimer a l'avenir
         while (destIterator.next()) {
             band = 0;
             destPixValue = getSourcePixelValue(destIterator.getX(), destIterator.getY());
-//            if (destPixValue == null) {
-//                while (++band != numBands) destIterator.next();//continue until next pixel.
-//            } else {
-//                destIterator.setSampleDouble(destPixValue[0]);
-//                while (++band != numBands) {
-//                    destIterator.next();
-//                    destIterator.setSampleDouble(destPixValue[band]);
-//                }
-//            }
             destIterator.setSampleDouble(destPixValue[0]);
             while (++band != numBands) {
                 destIterator.next();
                 destIterator.setSampleDouble(destPixValue[band]);
             }
-            compDebug++;
         }
     }
 }

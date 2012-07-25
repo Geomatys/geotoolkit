@@ -19,9 +19,7 @@ package org.geotoolkit.image.iterator;
 
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.image.BandedSampleModel;
-import java.awt.image.DataBuffer;
-import java.awt.image.Raster;
+import java.awt.image.*;
 import javax.media.jai.TiledImage;
 
 /**
@@ -56,7 +54,8 @@ public class DefaultByteIteratorTest extends DefaultReadTest{
 
     static void setRasterByteTest(IteratorTest test, int minx, int miny, int width, int height, int numBand, Rectangle subArea) {
         int comp = 0;
-        test.rasterTest = Raster.createBandedRaster(DataBuffer.TYPE_BYTE, width, height, numBand, new Point(minx, miny));
+//        test.rasterTest = Raster.createBandedRaster(DataBuffer.TYPE_BYTE, width, height, numBand, new Point(minx, miny));
+        test.rasterTest = Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE, width, height, numBand, new Point(minx, miny));
         for (int y = miny; y<miny + height; y++) {
             for (int x = minx; x<minx + width; x++) {
                 for (int b = 0; b<numBand; b++) {
@@ -99,9 +98,16 @@ public class DefaultByteIteratorTest extends DefaultReadTest{
     }
 
     static void setRenderedImgByteTest(IteratorTest test, int minx, int miny, int width, int height, int tilesWidth, int tilesHeight, int numBand, Rectangle areaIterate) {
-        final BandedSampleModel sampleM = new BandedSampleModel(DataBuffer.TYPE_BYTE, tilesWidth, tilesHeight, numBand);
+//        final BandedSampleModel sampleM = new BandedSampleModel(DataBuffer.TYPE_BYTE, tilesWidth, tilesHeight, numBand);
+        final int[] bankIndice = new int[]{0};
+        final int[] bandOffset = new int[]{0, 1, 2};
+//        for (int i = 0;i<numBand; i++) {
+//            bandOffset[i] = bankIndice[i] = 0;
+//        }
+        //On créé une image a 3 bandes mais 1 seul bank.
+//        final BandedSampleModel sampleM = new BandedSampleModel(DataBuffer.TYPE_BYTE, tilesWidth, tilesHeight, numBand*tilesWidth, bankIndice, bandOffset);
+        SampleModel sampleM = new PixelInterleavedSampleModel(DataBuffer.TYPE_BYTE, tilesWidth, tilesHeight, numBand, tilesWidth*numBand, bandOffset);
         test.renderedImage = new TiledImage(minx, miny, width, height, minx+tilesWidth, miny+tilesHeight, sampleM, null);
-
         double comp;
         final int nbrTX = width/tilesWidth;
         final int nbrTY = height/tilesHeight;

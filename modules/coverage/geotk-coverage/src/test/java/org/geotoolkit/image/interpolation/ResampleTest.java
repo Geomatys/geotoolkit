@@ -17,57 +17,65 @@
  */
 package org.geotoolkit.image.interpolation;
 
-import java.awt.Point;
-import java.awt.RenderingHints;
-import java.awt.Transparency;
-import java.awt.color.ColorSpace;
 import java.awt.geom.AffineTransform;
 import java.awt.image.*;
 import javax.media.jai.*;
 import javax.media.jai.operator.AffineDescriptor;
-import org.geotoolkit.coverage.processing.Operations;
+import org.geotoolkit.image.iterator.PixelIterator;
+import org.geotoolkit.image.iterator.PixelIteratorConform;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
-import org.geotoolkit.referencing.operation.DefaultMathTransformFactory;
-import org.geotoolkit.referencing.operation.MathTransforms;
-import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import static org.junit.Assert.assertTrue;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
 /**
+ * Test resampling class.
  *
  * @author Rémi Marechal (Geomatys).
  */
 public class ResampleTest {
 
+    /**
+     * Transformation applicate on source image for resampling.
+     */
     MathTransform mathTransform;
 
+    /**
+     * Interpolation applicate during resampling.
+     */
     Interpolation interpolation;
 
+    /**
+     * Destination image.
+     * Resampling result.
+     */
     WritableRenderedImage targetImage;
 
+    /**
+     * Source image.
+     * Image within interpolation computing is applicate.
+     */
     TiledImage sourceImg;
 
-    private final DefaultMathTransformFactory defMatFact;
+    /**
+     * Destination image parameters.
+     */
+    int tIminy, tIminx, tIH, tIW, tINB;
 
     public ResampleTest() {
-        defMatFact = new DefaultMathTransformFactory();
 
-        final BandedSampleModel sourceSampleM = new BandedSampleModel(DataBuffer.TYPE_DOUBLE, 4, 4, 3);
+        final SampleModel sourceSampleM = new PixelInterleavedSampleModel(DataBuffer.TYPE_BYTE, 4, 4, 3, 12,new int[]{0, 1, 2});
         sourceImg = new TiledImage(0, 0, 4, 4, 0, 0, sourceSampleM, null);
 
         final WritableRaster raster = sourceImg.getWritableTile(0, 0);
-        final int minx = raster.getMinX();
-        final int miny = raster.getMinY();
+        final int minx   = raster.getMinX();
+        final int miny   = raster.getMinY();
         final int height = raster.getHeight();
-        final int width = raster.getWidth();
+        final int width  = raster.getWidth();
         //band0
         raster.setSample(0, 0, 0, 1);
         raster.setSample(1, 0, 0, 1);
@@ -110,37 +118,50 @@ public class ResampleTest {
                 raster.setSample(x, y, 2, val++);
             }
         }
-
     }
 
-    @Ignore
+    /**
+     * Test result obtained from neighBor interpolation and a resampling.
+     *
+     * @throws NoninvertibleTransformException
+     * @throws FactoryException
+     * @throws TransformException
+     */
     @Test
-    public void jaiBiLinearTest() throws NoninvertibleTransformException, FactoryException, TransformException {
+    public void jaiNeighBorTest() throws NoninvertibleTransformException, FactoryException, TransformException {
 
         /*
          * jai resampling
          */
         final AffineTransform affTransform = new AffineTransform(2, 0, 0, 2, 0, 0);
-        final javax.media.jai.Interpolation jaiInterpol =  new InterpolationBilinear();
+        final javax.media.jai.Interpolation jaiInterpol =  new InterpolationNearest();
         final RenderedOp renderOp = AffineDescriptor.create(sourceImg, affTransform, jaiInterpol, new double[]{Double.NaN, Double.NaN, Double.NaN}, null);
         final Raster rastresult = renderOp.getData();
 
-        final int tIminy = 0;
-        final int tIminx = 0;
-        final int tIH    = 8;
-        final int tIW    = 8;
-        final int tINB   = 3;
+        tIminy = tIminx = 0;
+        tIH = tIW = 8;
+        tINB = 3;
 
-        setTargetImage(tIminx, tIminy, tIW, tIH, tIminx, tIminy, tIW, tIH, DataBuffer.TYPE_DOUBLE, tINB, -1000);
-        setInterpolation(sourceImg, InterpolationCase.BILINEAR);
+        setTargetImage(tIminx, tIminy, tIW, tIH, tIminx, tIminy, tIW, tIH, DataBuffer.TYPE_BYTE, tINB, -1000);
+        setInterpolation(sourceImg, InterpolationCase.NEIGHBOR);
         setAffineMathTransform(2, 0, 0, 2, 0.5, 0.5);//decalage de 1/2 pour concordé au decalage de JAI.
 
         /*
          * Resampling
          */
-        final Resample resample = new Resample(mathTransform, targetImage, interpolation, new double[]{0, 0, 0});
+        Resample resample = new Resample(mathTransform, targetImage, interpolation, new double[]{0, 0, 0});
         resample.fillImage();
-        final Raster coverageRaster = targetImage.getTile(0, 0);
+        Raster coverageRaster = targetImage.getTile(0, 0);
+
+        //check border
+        for (int b = 1; b <= 2; b++) {
+            for (int y = tIminy; y < tIminy+tIH-1;y++) {
+                assertTrue((coverageRaster.getSampleDouble(0, y, b-1)-b) <= 1E-9);
+            }
+            for (int x = tIminx; x < tIminx+tIW; x++) {
+                assertTrue((coverageRaster.getSampleDouble(x, 0, b-1)-b) <= 1E-9);
+            }
+        }
 
         /*
          * Compare JAI and Interpolation results.
@@ -154,7 +175,68 @@ public class ResampleTest {
         }
     }
 
-    @Ignore
+    /**
+     * Test result obtained from biLinear interpolation and a resampling.
+     *
+     * @throws NoninvertibleTransformException
+     * @throws FactoryException
+     * @throws TransformException
+     */
+    @Test
+    public void jaiBiLinearTest() throws NoninvertibleTransformException, FactoryException, TransformException {
+
+        /*
+         * jai resampling
+         */
+        final AffineTransform affTransform = new AffineTransform(2, 0, 0, 2, 0, 0);
+        final javax.media.jai.Interpolation jaiInterpol =  new InterpolationBilinear();
+        final RenderedOp renderOp = AffineDescriptor.create(sourceImg, affTransform, jaiInterpol, new double[]{Double.NaN, Double.NaN, Double.NaN}, null);
+        final Raster rastresult = renderOp.getData();
+
+        tIminy = tIminx = 0;
+        tIH =  tIW = 8;
+        tINB = 3;
+
+        setTargetImage(tIminx, tIminy, tIW, tIH, tIminx, tIminy, tIW, tIH, DataBuffer.TYPE_BYTE, tINB, -1000);
+        setInterpolation(sourceImg, InterpolationCase.BILINEAR);
+        setAffineMathTransform(2, 0, 0, 2, 0.5, 0.5);//decalage de 1/2 pour concordé au decalage de JAI.
+
+        /*
+         * Resampling
+         */
+        final Resample resample = new Resample(mathTransform, targetImage, interpolation, new double[]{0, 0, 0});
+        resample.fillImage();
+        final Raster coverageRaster = targetImage.getTile(0, 0);
+
+        //check border
+        for (int b = 1; b <= 2; b++) {
+            for (int y = tIminy; y < tIminy+tIH-1;y++) {
+                assertTrue((coverageRaster.getSampleDouble(0, y, b-1)-b) <= 1E-9);
+            }
+            for (int x = tIminx; x < tIminx+tIW; x++) {
+                assertTrue((coverageRaster.getSampleDouble(x, 0, b-1)-b) <= 1E-9);
+            }
+        }
+
+        /*
+         * Compare JAI and Interpolation results.
+         */
+        for (int b = 0; b<tINB; b++) {
+            for (int y = tIminy+1; y<tIminy+tIH-1; y++) {
+                for (int x = tIminx+1; x<tIminx+tIW-1; x++) {
+                    assertTrue(Math.abs(rastresult.getSampleDouble(x, y, b) - coverageRaster.getSampleDouble(x, y, b)) <= 1E-9);
+                }
+            }
+        }
+    }
+
+    /**
+     * Test result obtained from biCubic interpolation and a resampling.
+     *
+     * @throws NoninvertibleTransformException
+     * @throws FactoryException
+     * @throws TransformException
+     */
     @Test
     public void jaiBiCubicTest() throws NoninvertibleTransformException, FactoryException, TransformException {
         /*
@@ -163,15 +245,13 @@ public class ResampleTest {
         final AffineTransform affTransform = new AffineTransform(2, 0, 0, 2, 0, 0);
         final javax.media.jai.Interpolation jaiInterpol =  new InterpolationBicubic(8);
         final RenderedOp renderOp = AffineDescriptor.create(sourceImg, affTransform, jaiInterpol, new double[]{Double.NaN, Double.NaN, Double.NaN}, null);
-        final Raster rastresult = renderOp.getData();
+        final Raster rastresult   = renderOp.getData();
 
-        final int tIminy = 0;
-        final int tIminx = 0;
-        final int tIH    = 8;
-        final int tIW    = 8;
-        final int tINB   = 3;
+        tIminy = tIminx = 0;
+        tIH = tIW = 8;
+        tINB   = 3;
 
-        setTargetImage(tIminx, tIminy, tIW, tIH, tIminx, tIminy, tIW, tIH, DataBuffer.TYPE_DOUBLE, tINB, -1000);
+        setTargetImage(tIminx, tIminy, tIW, tIH, tIminx, tIminy, tIW, tIH, DataBuffer.TYPE_BYTE, tINB, -1000);
         setInterpolation(sourceImg, InterpolationCase.BICUBIC);
         setAffineMathTransform(2, 0, 0, 2, 0.5, 0.5);//decalage de 1/2 pour concordé au decalage de JAI.
 
@@ -194,130 +274,49 @@ public class ResampleTest {
         }
     }
 
-    //a la limite le faire avec un raster plus gros pour plus d'exhaustivité
+    /**
+     * Test result obtained from biCubic interpolation and a resampling.
+     *
+     * @throws NoninvertibleTransformException
+     * @throws FactoryException
+     * @throws TransformException
+     */
     @Test
-    public void coverageBiCubicTest() throws NoninvertibleTransformException, FactoryException, TransformException {
-        /*
-         * jai resampling
-         */
-        final AffineTransform affTransform = new AffineTransform(2, 0, 0, 2, 0, 0);
-        final javax.media.jai.Interpolation jaiInterpol =  new InterpolationBicubic(8);
-        final RenderedOp renderOp = AffineDescriptor.create(sourceImg, affTransform, jaiInterpol, new double[]{Double.NaN, Double.NaN, Double.NaN}, null);
-        final Raster rastresult = renderOp.getData();
+    public void jaiBiCubicTest2() throws NoninvertibleTransformException, FactoryException, TransformException {
 
-        final int tIminy = 0;
-        final int tIminx = 0;
-        final int tIH    = 8;
-        final int tIW    = 8;
-        final int tINB   = 3;
+        final BandedSampleModel sourceSampleM = new BandedSampleModel(DataBuffer.TYPE_DOUBLE, 8, 8, 3);
+        TiledImage sourceImg2 = new TiledImage(0, 0, 8, 8, 0, 0, sourceSampleM, null);
 
-        setTargetImage(tIminx, tIminy, tIW, tIH, tIminx, tIminy, tIW, tIH, DataBuffer.TYPE_DOUBLE, tINB, -1000);
-        setInterpolation(sourceImg, InterpolationCase.BICUBIC);
-        setAffineMathTransform(2, 0, 0, 2, 0.5, 0.5);//lag 1/2 pixel about JAI made.
+        final WritableRaster raster = sourceImg2.getWritableTile(0, 0);
+        final int minx = raster.getMinX();
+        final int miny = raster.getMinY();
+        final int height = raster.getHeight();
+        final int width = raster.getWidth();
 
-        /*
-         * Resampling
-         */
-        final Resample resample = new Resample(mathTransform, targetImage, interpolation, new double[]{0, 0, 0});
-        resample.fillImage();
-        final Raster coverageRaster = targetImage.getTile(0, 0);
-
-        /*
-         * Compare JAI and Interpolation results.
-         */
-        for (int b = 0; b<tINB; b++) {
-            for (int y = tIminy+3; y<tIminy+tIH-3; y++) {
-                for (int x = tIminx+3; x<tIminx+tIW-3; x++) {
-                    assertTrue(Math.abs(rastresult.getSampleDouble(x, y, b) - coverageRaster.getSampleDouble(x, y, b)) <= 1E-9);
-//                    System.out.println("f("+x+", "+y+") = "+coverageRaster.getSampleDouble(x, y, b)+" "+rastresult.getSampleDouble(x, y, b));
+        int val = -96;
+        for (int b = 0; b<3; b++) {
+            for (int y = miny; y<miny + height; y++) {
+                for (int x = minx; x<minx + width; x++) {
+                    raster.setSample(x, y, b, val++);
                 }
             }
         }
 
-//        /*
-//         * Compare JAI and Interpolation results.
-//         */
-//        for (int b = 0; b<tINB; b++) {
-//            for (int y = tIminy; y<tIminy+tIH; y++) {
-//                for (int x = tIminx; x<tIminx+tIW; x++) {
-//                    System.out.println("f("+x+", "+y+") = "+coverageRaster.getSampleDouble(x, y, b));
-//                }
-//            }
-//        }
-    }
-
-    @Test
-    public void coverageBiCubicTest2() throws NoninvertibleTransformException, FactoryException, TransformException {
         /*
          * jai resampling
          */
-        final AffineTransform affTransform = new AffineTransform(2, 0, 0, 2, 0, 0);
+        final AffineTransform affTransform = new AffineTransform(3, 0, 0, 3, 0, 0);
         final javax.media.jai.Interpolation jaiInterpol =  new InterpolationBicubic(8);
-        final RenderedOp renderOp = AffineDescriptor.create(sourceImg, affTransform, jaiInterpol, new double[]{Double.NaN, Double.NaN, Double.NaN}, null);
+        final RenderedOp renderOp = AffineDescriptor.create(sourceImg2, affTransform, jaiInterpol, new double[]{Double.NaN, Double.NaN, Double.NaN}, null);
         final Raster rastresult = renderOp.getData();
 
-        final int tIminy = 0;
-        final int tIminx = 0;
-        final int tIH    = 8;
-        final int tIW    = 8;
-        final int tINB   = 3;
+        tIminy = tIminx = 0;
+        tIH = tIW = 24;
+        tINB = 3;
 
         setTargetImage(tIminx, tIminy, tIW, tIH, tIminx, tIminy, tIW, tIH, DataBuffer.TYPE_DOUBLE, tINB, -1000);
-        setInterpolation(sourceImg, InterpolationCase.BICUBIC);
-        setAffineMathTransform(2, 0, 0, 2, 0, 0);//lag 1/2 pixel about JAI made.
-
-        /*
-         * Resampling
-         */
-        final Resample resample = new Resample(mathTransform, targetImage, interpolation, new double[]{0, 0, 0});
-        resample.fillImage();
-        final Raster coverageRaster = targetImage.getTile(0, 0);
-
-//        /*
-//         * Compare JAI and Interpolation results.
-//         */
-//        for (int b = 0; b<tINB; b++) {
-//            for (int y = tIminy+3; y<tIminy+tIH-3; y++) {
-//                for (int x = tIminx+3; x<tIminx+tIW-3; x++) {
-//                    assertTrue(Math.abs(rastresult.getSampleDouble(x, y, b) - coverageRaster.getSampleDouble(x, y, b)) <= 1E-9);
-////                    System.out.println("f("+x+", "+y+") = "+coverageRaster.getSampleDouble(x, y, b)+" "+rastresult.getSampleDouble(x, y, b));
-//                }
-//            }
-//        }
-
-        /*
-         * Compare JAI and Interpolation results.
-         */
-        for (int b = 0; b<tINB; b++) {
-            for (int y = tIminy; y<tIminy+tIH; y++) {
-                for (int x = tIminx; x<tIminx+tIW; x++) {
-                    System.out.println("f("+x+", "+y+") = "+coverageRaster.getSampleDouble(x, y, b));
-                }
-            }
-        }
-    }
-
-    @Ignore
-    @Test
-    public void jaiBiCubic2Test() throws NoninvertibleTransformException, FactoryException, TransformException {
-
-        /*
-         * jai resampling
-         */
-        final AffineTransform affTransform = new AffineTransform(2, 0, 0, 2, 0, 0);
-        final javax.media.jai.Interpolation jaiInterpol =  new InterpolationBicubic2(8);
-        final RenderedOp renderOp = AffineDescriptor.create(sourceImg, affTransform, jaiInterpol, new double[]{Double.NaN, Double.NaN, Double.NaN}, null);
-        final Raster rastresult = renderOp.getData();
-
-        final int tIminy = 0;
-        final int tIminx = 0;
-        final int tIH    = 8;
-        final int tIW    = 8;
-        final int tINB   = 3;
-
-        setTargetImage(tIminx, tIminy, tIW, tIH, tIminx, tIminy, tIW, tIH, DataBuffer.TYPE_DOUBLE, tINB, -1000);
-        setInterpolation(sourceImg, InterpolationCase.BICUBIC2);
-        setAffineMathTransform(2, 0, 0, 2, 0.5, 0.5);//décalage de 1/2 pour concorder au decalage de JAI.
+        setInterpolation(sourceImg2, InterpolationCase.BICUBIC);
+        setAffineMathTransform(3, 0, 0, 3, 1, 1);
 
         /*
          * Resampling
@@ -330,8 +329,8 @@ public class ResampleTest {
          * Compare JAI and Interpolation results.
          */
         for (int b = 0; b<tINB; b++) {
-            for (int y = tIminy+3; y<tIminy+tIH-3; y++) {
-                for (int x = tIminx+3; x<tIminx+tIW-3; x++) {
+            for (int y = tIminy+5; y<tIminy+tIH-5; y++) {
+                for (int x = tIminx+5; x<tIminx+tIW-5; x++) {
                     assertTrue(Math.abs(rastresult.getSampleDouble(x, y, b) - coverageRaster.getSampleDouble(x, y, b)) <= 1E-9);
                 }
             }
@@ -356,13 +355,15 @@ public class ResampleTest {
     private void setTargetImage(int minX, int minY, int width, int height,
             int tileGridXOffset, int tileGridYOffset, int tilesWidth, int tilesHeight,
             int dataType, int numBand, double value) {
-        final BandedSampleModel targetSampleM = new BandedSampleModel(dataType, tilesWidth, tilesHeight, numBand);
+
+        final SampleModel targetSampleM = new PixelInterleavedSampleModel(dataType, tilesWidth, tilesHeight, numBand, width*numBand, new int[]{0, 1, 2});
         targetImage = new TiledImage(minX, minY, width, height, tileGridXOffset, tileGridYOffset, targetSampleM, null);
-        int minTX = targetImage.getMinTileX();//par le calcul ca se fait
-        int minTY = targetImage.getMinTileY();
-        int maxTX = minTX + width/tilesWidth;
-        int maxTY = minTY + height/tilesHeight;
+        final int minTX = targetImage.getMinTileX();
+        final int minTY = targetImage.getMinTileY();
+        final int maxTX = minTX + width/tilesWidth;
+        final int maxTY = minTY + height/tilesHeight;
         WritableRaster raster;
+
         int minx, miny;
         for (int tY = minTY; tY<maxTY; tY++) {
             for (int tX = minTX; tX<maxTX; tX++) {
@@ -384,80 +385,25 @@ public class ResampleTest {
      * Affect appropriate interpolation about test.
      *
      * @param sourceImage image which will be iterate for tests.
-     * @param interpolCase chosen interpolation.
+     * @param interpolCase chosen interpolator.
      */
     private void setInterpolation(WritableRenderedImage sourceImage, InterpolationCase interpolCase) {
-        interpolation = Interpolation.create(PixelIteratorFactory.createDefaultIterator(sourceImage), interpolCase, 0);
+//        interpolation = Interpolation.create(PixelIteratorFactory.createDefaultIterator(sourceImage), interpolCase, 0);
+        interpolation = Interpolation.create(new PixelIteratorConform(sourceImage), interpolCase, 0);
     }
 
     /**
+     * Affect MathTransform with appropriate test values.
      *
-     * @param mii
+     * @param m00 the X coordinate scaling.
+     * @param m10 the Y coordinate shearing.
+     * @param m01 the X coordinate shearing.
+     * @param m11 the Y coordinate scaling.
+     * @param m02 the X coordinate translation.
+     * @param m12 the Y coordinate translation.
      * @throws FactoryException
      */
     private void setAffineMathTransform(double m00, double m10, double m01, double m11, double m02, double m12) throws FactoryException {
         mathTransform = new AffineTransform2D(m00, m10, m01, m11, m02, m12);
-    }
-
-    /**
-     * min and max values for each renderedImage bands.<br/>
-     * <var>min<sub>0</sub></var> means : min from band 0.<br/>
-     * <var>max<sub>0</sub></var> means : max from band 0.<br/>
-     * <var>min<sub>n</sub></var> means : min from nth band.<br/>
-     * <var>max<sub>n</sub></var> means : max from nth band.<br/><br/>
-     *
-     * <var>min<sub>0</sub></var>, <var>max<sub>0</sub></var>,
-     * <var>min<sub>1</sub></var>, <var>max<sub>1</sub></var>, ... ,
-     * <var>min<sub>n</sub></var>, <var>max<sub>n</sub></var>
-     *
-     * @param image
-     * @param minMax
-     */
-    private void testInternalValues(RenderedImage image, double ...minMax) {
-        final int minTY  = image.getMinTileY();
-        final int minTX  = image.getMinTileX();
-        final int tilesWidth  = image.getNumXTiles();
-        final int tilesHeigth = image.getNumYTiles();
-        int minx, miny, width, heigth, band, maxx, maxy;
-        Raster raster;
-        double sample;
-        for (int tY = minTY; tY<minTY+tilesHeigth; tY++) {
-            for (int tX = minTX; tX<minTX+tilesWidth; tX++) {
-                raster = image.getTile(tX, tY);
-                minx   = raster.getMinX();
-                miny   = raster.getMinY();
-                heigth = raster.getHeight();
-                width  = raster.getWidth();
-                band   = raster.getNumBands();
-                maxx = minx+width;
-                maxy = miny+heigth;
-                if (tX == minTX+tilesWidth -1) {
-                    maxx--;
-                    for (int y = miny; y<miny + heigth; y++) {
-                        for (int b = 0; b<band; b++) {
-                            sample = raster.getSampleDouble(maxx, y, b);
-                            assertTrue(Double.isNaN(sample));
-                        }
-                    }
-                }
-                if (tY == minTY+tilesHeigth-1) {
-                    maxy--;
-                    for (int x = minx; x<minx + width; x++) {
-                        for (int b = 0; b<band; b++) {
-                            sample = raster.getSampleDouble(x, maxy, b);
-                            assertTrue(Double.isNaN(sample));
-                        }
-                    }
-                }
-                for (int y = miny; y<maxy; y++) {
-                    for (int x = minx; x<maxx; x++) {
-                        for (int b = 0; b<band; b++) {
-                            sample = raster.getSampleDouble(x, y, b);
-                            assertTrue(sample >= minMax[0]-1E-12 && sample <= minMax[1]+1E-12);
-                        }
-                    }
-                }
-            }
-        }
     }
 }

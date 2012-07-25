@@ -69,7 +69,7 @@ public class DefaultWritableDirectFloatIterator extends DefaultDirectFloatIterat
     /**
      * Current writable raster data table.
      */
-    private float[][] currentWritableDataArray;
+    private float[] currentWritableDataArray;
 
     /**
      * Create an appropriate iterator to read and write in a raster sub area.
@@ -109,7 +109,7 @@ public class DefaultWritableDirectFloatIterator extends DefaultDirectFloatIterat
         if (currentWritableRaster != null) writableRenderedImage.releaseWritableTile(prectX, prectY);
         this.currentWritableRaster    = writableRenderedImage.getWritableTile(tileX, tileY);
         this.currentWritableRaster    = writableRenderedImage.getWritableTile(tileX, tileY);
-        this.currentWritableDataArray = ((DataBufferFloat) currentWritableRaster.getDataBuffer()).getBankData();
+        this.currentWritableDataArray = ((DataBufferFloat) currentWritableRaster.getDataBuffer()).getData();
         this.prectX = tileX;
         this.prectY = tileY;
     }
@@ -127,7 +127,7 @@ public class DefaultWritableDirectFloatIterator extends DefaultDirectFloatIterat
      */
     @Override
     public void setSample(int value) {
-        currentWritableDataArray[band][dataCursor] = (float) value;
+        currentWritableDataArray[(dataCursor/rasterWidth)*scanLineStride+(dataCursor%rasterWidth)*numBand+bandOffset[band]] = (float) value;
     }
 
     /**
@@ -135,7 +135,7 @@ public class DefaultWritableDirectFloatIterator extends DefaultDirectFloatIterat
      */
     @Override
     public void setSampleDouble(double value) {
-        currentWritableDataArray[band][dataCursor] = (float) value;
+        currentWritableDataArray[(dataCursor/rasterWidth)*scanLineStride+(dataCursor%rasterWidth)*numBand+bandOffset[band]] = (float) value;
     }
 
     /**
@@ -143,6 +143,6 @@ public class DefaultWritableDirectFloatIterator extends DefaultDirectFloatIterat
      */
     @Override
     public void setSampleFloat(float value) {
-        currentWritableDataArray[band][dataCursor] = value;
+        currentWritableDataArray[(dataCursor/rasterWidth)*scanLineStride+(dataCursor%rasterWidth)*numBand+bandOffset[band]] = value;
     }
 }

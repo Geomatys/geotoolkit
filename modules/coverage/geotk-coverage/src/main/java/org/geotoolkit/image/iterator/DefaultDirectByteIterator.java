@@ -52,7 +52,7 @@ class DefaultDirectByteIterator extends DefaultDirectIterator {
     /**
      * Current raster data table.
      */
-    private byte[][] currentDataArray;
+    private byte[] currentDataArray;
 
     /**
      * Create Byte type raster iterator to follow from minX, minY raster and rectangle intersection coordinate.
@@ -65,7 +65,8 @@ class DefaultDirectByteIterator extends DefaultDirectIterator {
         super(raster, subArea);
         final DataBuffer databuf = raster.getDataBuffer();
         assert (databuf.getDataType() == DataBuffer.TYPE_BYTE) : "raster data or not Byte type"+databuf;
-        this.currentDataArray = ((DataBufferByte)databuf).getBankData();
+        assert (databuf.getNumBanks() == 1) : "raster contains more than one banks";
+        this.currentDataArray = ((DataBufferByte)databuf).getData();
     }
 
     /**
@@ -87,7 +88,7 @@ class DefaultDirectByteIterator extends DefaultDirectIterator {
     @Override
     protected void updateCurrentRaster(final int tileX, final int tileY){
         super.updateCurrentRaster(tileX, tileY);
-        this.currentDataArray = ((DataBufferByte)currentRaster.getDataBuffer()).getBankData();
+        this.currentDataArray = ((DataBufferByte)currentRaster.getDataBuffer()).getData();
     }
 
     /**
@@ -95,7 +96,7 @@ class DefaultDirectByteIterator extends DefaultDirectIterator {
      */
     @Override
     public int getSample() {
-        return currentDataArray[band][dataCursor];
+        return currentDataArray[(dataCursor/rasterWidth)*scanLineStride+(dataCursor%rasterWidth)*numBand+bandOffset[band]];// & 0xff;
     }
 
     /**
@@ -103,7 +104,7 @@ class DefaultDirectByteIterator extends DefaultDirectIterator {
      */
     @Override
     public float getSampleFloat() {
-        return currentDataArray[band][dataCursor];
+        return currentDataArray[(dataCursor/rasterWidth)*scanLineStride+(dataCursor%rasterWidth)*numBand+bandOffset[band]];// & 0xff;
     }
 
     /**
@@ -111,7 +112,7 @@ class DefaultDirectByteIterator extends DefaultDirectIterator {
      */
     @Override
     public double getSampleDouble() {
-        return currentDataArray[band][dataCursor];
+        return currentDataArray[(dataCursor/rasterWidth)*scanLineStride+(dataCursor%rasterWidth)*numBand+bandOffset[band]];// & 0xff;//avant ct just datacursor
     }
 
     /**
