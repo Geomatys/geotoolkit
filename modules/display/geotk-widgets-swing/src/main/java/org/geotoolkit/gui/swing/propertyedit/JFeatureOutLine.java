@@ -34,11 +34,11 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.tree.TreePath;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureUtilities;
+import org.geotoolkit.gui.swing.misc.EmptyCellRenderer;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.*;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 import org.geotoolkit.gui.swing.tree.MutableTreeNode;
-import org.geotoolkit.util.Converters;
 import org.geotoolkit.util.converter.Classes;
 import org.jdesktop.swingx.table.DatePickerCellEditor;
 import org.netbeans.swing.outline.*;
@@ -210,7 +210,13 @@ public class JFeatureOutLine extends Outline{
         if(value instanceof Geometry || value instanceof org.opengis.geometry.Geometry){
             return new JFeatureOutLine.GeometryCellRenderer();
         }
-        return super.getCellRenderer(row, column);
+
+        if(column >= 1){
+            return new EmptyCellRenderer();
+        }else{
+            return super.getCellRenderer(row, column);
+        }
+
     }
 
     private class PropertyRowModel implements RowModel{
