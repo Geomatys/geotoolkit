@@ -66,11 +66,10 @@ class DefaultIterator extends PixelIterator {
     DefaultIterator(final Raster raster, final Rectangle subArea) {
         super(raster, subArea);
         this.minX = areaIterateMinX;
-        this.minY = areaIterateMinY;
         this.maxX = areaIterateMaxX;
         this.maxY = areaIterateMaxY;
         x  = this.minX;
-        y  = this.minY;
+        y  = areaIterateMinY;
     }
 
     /**
@@ -119,7 +118,7 @@ class DefaultIterator extends PixelIterator {
         final int cRMinX   = this.currentRaster.getMinX();
         final int cRMinY   = this.currentRaster.getMinY();
         this.minX = this.x = Math.max(areaIterateMinX, cRMinX);
-        this.minY = this.y = Math.max(areaIterateMinY, cRMinY);
+        this.y    = Math.max(areaIterateMinY, cRMinY);
         this.maxX          = Math.min(areaIterateMaxX, cRMinX + currentRaster.getWidth());
         this.maxY          = Math.min(areaIterateMaxY, cRMinY + currentRaster.getHeight());
         this.numBand       = this.currentRaster.getNumBands();
@@ -171,7 +170,7 @@ class DefaultIterator extends PixelIterator {
     @Override
     public void rewind() {
         if (renderedImage == null) {
-            band = -1; x = minX; y = minY;
+            band = -1; x = minX; y = areaIterateMinY;
             tX = tY = 0;
             tMaxX = tMaxY = 1;
         } else {

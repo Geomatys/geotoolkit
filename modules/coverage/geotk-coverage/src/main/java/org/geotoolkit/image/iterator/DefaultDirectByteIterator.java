@@ -96,7 +96,7 @@ class DefaultDirectByteIterator extends DefaultDirectIterator {
      */
     @Override
     public int getSample() {
-        return currentDataArray[(dataCursor/rasterWidth)*scanLineStride+(dataCursor%rasterWidth)*numBand+bandOffset[band]];// & 0xff;
+        return currentDataArray[(dataCursor/rasterWidth)*scanLineStride+(dataCursor%rasterWidth)*numBand+bandOffset[band]] & 0xff;
     }
 
     /**
@@ -104,7 +104,7 @@ class DefaultDirectByteIterator extends DefaultDirectIterator {
      */
     @Override
     public float getSampleFloat() {
-        return currentDataArray[(dataCursor/rasterWidth)*scanLineStride+(dataCursor%rasterWidth)*numBand+bandOffset[band]];// & 0xff;
+        return currentDataArray[(dataCursor/rasterWidth)*scanLineStride+(dataCursor%rasterWidth)*numBand+bandOffset[band]] & 0xff;
     }
 
     /**
@@ -112,7 +112,7 @@ class DefaultDirectByteIterator extends DefaultDirectIterator {
      */
     @Override
     public double getSampleDouble() {
-        return currentDataArray[(dataCursor/rasterWidth)*scanLineStride+(dataCursor%rasterWidth)*numBand+bandOffset[band]];// & 0xff;//avant ct just datacursor
+        return currentDataArray[(dataCursor/rasterWidth)*scanLineStride+(dataCursor%rasterWidth)*numBand+bandOffset[band]] & 0xff;//avant ct just datacursor
     }
 
     /**

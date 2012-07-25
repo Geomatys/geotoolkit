@@ -78,11 +78,6 @@ public abstract class PixelIterator {
     protected int minX;
 
     /**
-     * The Y coordinate of the upper-left pixel of this current raster.
-     */
-    protected int minY;
-
-    /**
      * The X coordinate of the bottom-right pixel of this current raster.
      */
     protected int maxX;
@@ -146,7 +141,7 @@ public abstract class PixelIterator {
             final int sAMY = subArea.y;
             //intersection
             this.minX = this.areaIterateMinX = Math.max(sAMX, minx);
-            this.minY = this.areaIterateMinY = Math.max(sAMY, miny);
+            this.areaIterateMinY = Math.max(sAMY, miny);
             this.maxX = this.areaIterateMaxX = Math.min(sAMX + subArea.width, maxx);
             this.maxY = this.areaIterateMaxY = Math.min(sAMY + subArea.height, maxy);
         } else {
@@ -391,5 +386,13 @@ public abstract class PixelIterator {
         //data type
         if (renderedImage.getTile(rimtx, rimty).getDataBuffer().getDataType() != writableRI.getTile(wrimtx, wrimty).getDataBuffer().getDataType())
             throw new IllegalArgumentException("rendered image and writable rendered image haven't got same datas type");
+    }
+
+    /**
+     * Return type data from iterate source.
+     * @return type data from iterate source.
+     */
+    public int getSourceDatatype() {
+        return (renderedImage == null) ? currentRaster.getSampleModel().getDataType() : renderedImage.getSampleModel().getDataType();
     }
 }

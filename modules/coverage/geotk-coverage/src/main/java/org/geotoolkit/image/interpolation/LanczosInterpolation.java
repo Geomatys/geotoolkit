@@ -18,6 +18,7 @@
 package org.geotoolkit.image.interpolation;
 
 import java.awt.Rectangle;
+import java.awt.image.DataBuffer;
 import org.geotoolkit.image.iterator.PixelIterator;
 
 /**
@@ -45,6 +46,16 @@ public class LanczosInterpolation extends Interpolation {
     private static double PI = Math.PI;
 
     /**
+     * Minimum value authorized from type of data from source interpolation.
+     */
+    private final double minValue;
+
+    /**
+     * maximum value authorized from type of data from source interpolation.
+     */
+    private final double maxValue;
+
+    /**
      * Create a Lanczos interpolation.
      *
      * The Lanczos window is the central lobe of a horizontally-stretched sinc,<br/>
@@ -57,6 +68,28 @@ public class LanczosInterpolation extends Interpolation {
      */
     public LanczosInterpolation(PixelIterator pixelIterator, int lanczosWindow) {
         super(pixelIterator);
+        switch (pixelIterator.getSourceDatatype()) {
+            case DataBuffer.TYPE_BYTE : {
+                minValue = 0;
+                maxValue = 255;
+            }break;
+            case DataBuffer.TYPE_SHORT : {
+                minValue = -32768;
+                maxValue = 32767;
+            }break;
+            case DataBuffer.TYPE_INT : {
+                minValue = -2147483648;
+                maxValue = 2147483647;
+            }break;
+            case DataBuffer.TYPE_FLOAT : {
+                minValue = -3.40282347E38;
+                maxValue = 3.40282347E38;
+            }break;
+            default : {//double border
+                minValue = -1.79769313486231E308;
+                maxValue = 1.79769313486231E308;
+            }
+        }
         if (lanczosWindow > boundary.width || lanczosWindow > boundary.height)
             throw new IllegalArgumentException("lanczosWindow more longer");
         this.lanczosWindow = lanczosWindow;
@@ -110,6 +143,11 @@ public class LanczosInterpolation extends Interpolation {
                 for (int dx = debX; dx < debX + l2W; dx++) {
                     interpol += data[n + (l2W * (dy - debY) + (dx - debX)) * numBands] * getLCZt(dx, x) * getLCZt(dy, y);
                 }
+            }
+            if (interpol < minValue) {
+                interpol = minValue;
+            } else if (interpol > maxValue) {
+                interpol = maxValue;
             }
             result[n] = interpol;
         }

@@ -18,6 +18,7 @@
 package org.geotoolkit.image.interpolation;
 
 import java.awt.Rectangle;
+import java.awt.image.DataBuffer;
 import org.geotoolkit.image.iterator.PixelIterator;
 
 /**
@@ -45,6 +46,16 @@ abstract class BiCubicInterpolation extends Interpolation {
     private final double[] tabInteCol;
 
     /**
+     * Minimum value authorized from type of data from source interpolation.
+     */
+    private final double minValue;
+
+    /**
+     * maximum value authorized from type of data from source interpolation.
+     */
+    private final double maxValue;
+
+    /**
      * <p>Create an BiCubic Interpolator.<br/>
      * This definition is also sometimes known as "cubic convolution".<br/><br/>
      *
@@ -52,6 +63,28 @@ abstract class BiCubicInterpolation extends Interpolation {
      */
     public BiCubicInterpolation(PixelIterator pixelIterator) {
         super(pixelIterator);
+        switch (pixelIterator.getSourceDatatype()) {
+            case DataBuffer.TYPE_BYTE : {
+                minValue = 0;
+                maxValue = 255;
+            }break;
+            case DataBuffer.TYPE_SHORT : {
+                minValue = -32768;
+                maxValue = 32767;
+            }break;
+            case DataBuffer.TYPE_INT : {
+                minValue = -2147483648;
+                maxValue = 2147483647;
+            }break;
+            case DataBuffer.TYPE_FLOAT : {
+                minValue = -3.40282347E38;
+                maxValue = 3.40282347E38;
+            }break;
+            default : {//double border
+                minValue = -1.79769313486231E308;
+                maxValue = 1.79769313486231E308;
+            }
+        }
         if (boundary.width < 4)
             throw new IllegalArgumentException("iterate object width too smaller" + boundary.width);
         if (boundary.height < 4)
@@ -99,6 +132,7 @@ abstract class BiCubicInterpolation extends Interpolation {
         int compteur = 0;
         int bands;
         final double[] result = new double[numBands];
+        double rn;
         for (int idY = debY; idY < debY + 4; idY++) {
             for (int idX = debX; idX < debX + 4; idX++) {
                 pixelIterator.moveTo(idX, idY);
@@ -118,7 +152,13 @@ abstract class BiCubicInterpolation extends Interpolation {
                 }
                 tabInteCol[idRow] = getCubicValue(debX, x, tabInteRow);
             }
-            result[n] = getCubicValue(debY, y, tabInteCol);
+            rn = getCubicValue(debY, y, tabInteCol);
+            if (rn < minValue) {
+                rn = minValue;
+            } else if (rn > maxValue) {
+                rn = maxValue;
+            }
+            result[n] = rn;
         }
         return result;
     }
@@ -155,17 +195,6 @@ abstract class BiCubicInterpolation extends Interpolation {
         while(miny+height > boundary.y+boundary.height) {
             miny--;
         }
-//        double diffx = Math.abs(x-minx);
-//        double diffy = Math.abs(y-miny);
-        //diff € [1; 2]
-//        if(diffx<width/2-1 ||diffy<width/2-1 || diffx>width/2 || diffy>height/2)//diff>window/2
-//            throw new IllegalArgumentException("interpolate definition domain out of boundary");
-
-//        /*
-//         * Test if interpolate area is within iterate object boundary
-//         */
-//        if (!boundary.contains(minx, miny) || !boundary.contains(minx + width-1, miny + height-1))
-//            throw new IllegalArgumentException("interpolate definition domain out of boundary");
         return new int[]{minx, miny};
     }
 
