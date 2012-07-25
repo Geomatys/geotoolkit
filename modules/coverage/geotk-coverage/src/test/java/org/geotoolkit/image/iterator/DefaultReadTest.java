@@ -20,7 +20,6 @@ package org.geotoolkit.image.iterator;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.*;
-import javax.media.jai.RasterFactory;
 import javax.media.jai.TiledImage;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;

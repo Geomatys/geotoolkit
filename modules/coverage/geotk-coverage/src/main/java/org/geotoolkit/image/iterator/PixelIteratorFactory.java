@@ -210,11 +210,17 @@ public final class PixelIteratorFactory {
      * @return adapted      {@link PixelIterator}.
      */
     public static PixelIterator createRowMajorIterator(final RenderedImage renderedImage) {
-        switch (renderedImage.getTile(renderedImage.getMinTileX(), renderedImage.getMinTileY()).getDataBuffer().getDataType()) {
-            case DataBuffer.TYPE_BYTE  : return new RowMajorDirectByteIterator(renderedImage, null);
-            case DataBuffer.TYPE_FLOAT : return new RowMajorDirectFloatIterator(renderedImage, null);
-            default : return new RowMajorIterator(renderedImage, null);
+        final SampleModel sampleM = renderedImage.getSampleModel();
+        if (sampleM instanceof ComponentSampleModel) {
+            if (sampleM.getNumDataElements() == sampleM.getNumBands() && sampleM.createDataBuffer().getNumBanks() == 1) {
+                switch (sampleM.getDataType()) {
+                    case DataBuffer.TYPE_BYTE  : return new RowMajorDirectByteIterator(renderedImage, null);
+                    case DataBuffer.TYPE_FLOAT : return new RowMajorDirectFloatIterator(renderedImage, null);
+                    default : return new RowMajorIterator(renderedImage, null);
+                }
+            }
         }
+        return new RowMajorIterator(renderedImage, null);
     }
 
     /**
@@ -226,11 +232,17 @@ public final class PixelIteratorFactory {
      * @return adapted      {@link PixelIterator}.
      */
     public static PixelIterator createRowMajorIterator(final RenderedImage renderedImage, final Rectangle subReadArea) {
-        switch (renderedImage.getTile(renderedImage.getMinTileX(), renderedImage.getMinTileY()).getDataBuffer().getDataType()) {
-            case DataBuffer.TYPE_BYTE  : return new RowMajorDirectByteIterator(renderedImage, subReadArea);
-            case DataBuffer.TYPE_FLOAT : return new RowMajorDirectFloatIterator(renderedImage, subReadArea);
-            default : return new RowMajorIterator(renderedImage, subReadArea);
+        final SampleModel sampleM = renderedImage.getSampleModel();
+        if (sampleM instanceof ComponentSampleModel) {
+            if (sampleM.getNumDataElements() == sampleM.getNumBands() && sampleM.createDataBuffer().getNumBanks() == 1) {
+                switch (sampleM.getDataType()) {
+                    case DataBuffer.TYPE_BYTE  : return new RowMajorDirectByteIterator(renderedImage, subReadArea);
+                    case DataBuffer.TYPE_FLOAT : return new RowMajorDirectFloatIterator(renderedImage, subReadArea);
+                    default : return new RowMajorIterator(renderedImage, subReadArea);
+                }
+            }
         }
+        return new RowMajorIterator(renderedImage, subReadArea);
     }
 
     /**
@@ -242,11 +254,17 @@ public final class PixelIteratorFactory {
      * @return adapted              {@link PixelIterator}.
      */
     public static PixelIterator createRowMajorWriteableIterator(final RenderedImage renderedImage, final WritableRenderedImage writableRenderedImage) {
-        switch (renderedImage.getTile(renderedImage.getMinTileX(), renderedImage.getMinTileY()).getDataBuffer().getDataType()) {
-            case DataBuffer.TYPE_BYTE  : return new RowMajorWritableDirectByteIterator(renderedImage, writableRenderedImage, null);
-            case DataBuffer.TYPE_FLOAT : return new RowMajorWritableDirectFloatIterator(renderedImage, writableRenderedImage, null);
-            default : return new RowMajorWritableIterator(renderedImage, writableRenderedImage, null);
+        final SampleModel sampleM = renderedImage.getSampleModel();
+        if (sampleM instanceof ComponentSampleModel) {
+            if (sampleM.getNumDataElements() == sampleM.getNumBands() && sampleM.createDataBuffer().getNumBanks() == 1) {
+                switch (sampleM.getDataType()) {
+                    case DataBuffer.TYPE_BYTE  : return new RowMajorWritableDirectByteIterator(renderedImage, writableRenderedImage, null);
+                    case DataBuffer.TYPE_FLOAT : return new RowMajorWritableDirectFloatIterator(renderedImage, writableRenderedImage, null);
+                    default : return new RowMajorWritableIterator(renderedImage, writableRenderedImage, null);
+                }
+            }
         }
+        return new RowMajorWritableIterator(renderedImage, writableRenderedImage, null);
     }
 
     /**
@@ -259,10 +277,16 @@ public final class PixelIteratorFactory {
      * @return adapted              {@link PixelIterator}.
      */
     public static PixelIterator createRowMajorWriteableIterator(final RenderedImage renderedImage, final WritableRenderedImage writableRenderedImage, final Rectangle subArea) {
-        switch (renderedImage.getTile(renderedImage.getMinTileX(), renderedImage.getMinTileY()).getDataBuffer().getDataType()) {
-            case DataBuffer.TYPE_BYTE  : return new RowMajorWritableDirectByteIterator(renderedImage, writableRenderedImage, subArea);
-            case DataBuffer.TYPE_FLOAT : return new RowMajorWritableDirectFloatIterator(renderedImage, writableRenderedImage, subArea);
-            default : return new RowMajorWritableIterator(renderedImage, writableRenderedImage, subArea);
+        final SampleModel sampleM = renderedImage.getSampleModel();
+        if (sampleM instanceof ComponentSampleModel) {
+            if (sampleM.getNumDataElements() == sampleM.getNumBands() && sampleM.createDataBuffer().getNumBanks() == 1) {
+                switch (sampleM.getDataType()) {
+                    case DataBuffer.TYPE_BYTE  : return new RowMajorWritableDirectByteIterator(renderedImage, writableRenderedImage, subArea);
+                    case DataBuffer.TYPE_FLOAT : return new RowMajorWritableDirectFloatIterator(renderedImage, writableRenderedImage, subArea);
+                    default : return new RowMajorWritableIterator(renderedImage, writableRenderedImage, subArea);
+                }
+            }
         }
+        return new RowMajorWritableIterator(renderedImage, writableRenderedImage, subArea);
     }
 }

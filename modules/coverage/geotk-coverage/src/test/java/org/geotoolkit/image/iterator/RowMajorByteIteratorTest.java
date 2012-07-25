@@ -18,8 +18,9 @@
 package org.geotoolkit.image.iterator;
 
 import java.awt.Rectangle;
-import java.awt.image.BandedSampleModel;
 import java.awt.image.DataBuffer;
+import java.awt.image.PixelInterleavedSampleModel;
+import java.awt.image.SampleModel;
 import javax.media.jai.TiledImage;
 
 /**
@@ -52,9 +53,11 @@ public class RowMajorByteIteratorTest extends RowMajorReadTest{
      */
     protected void setRenderedByteImgTest(IteratorTest test, int minx, int miny, int width, int height, int tilesWidth, int tilesHeight, int numBand, Rectangle areaIterate) {
 
-        final int dataType = test.getDataBufferType();
-
-        final BandedSampleModel sampleM = new BandedSampleModel(dataType, tilesWidth, tilesHeight, numBand);
+        final int[] bandOffset = new int[numBand];
+        for (int i = 0;i<numBand; i++) {
+            bandOffset[i] = i;
+        }
+        final SampleModel sampleM = new PixelInterleavedSampleModel(DataBuffer.TYPE_BYTE, tilesWidth, tilesHeight, numBand, tilesWidth*numBand, bandOffset);
         test.renderedImage = new TiledImage(minx, miny, width, height, minx+tilesWidth, miny+tilesHeight, sampleM, null);
 
         int nbrTX = width/tilesWidth;

@@ -18,7 +18,6 @@
 package org.geotoolkit.image.iterator;
 
 import java.awt.Rectangle;
-import java.awt.image.DataBufferByte;
 import java.awt.image.DataBufferFloat;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRenderedImage;
@@ -63,7 +62,7 @@ public class RowMajorWritableDirectFloatIterator extends RowMajorDirectFloatIter
     /**
      * Current writable raster data table.
      */
-    private float[][] currentWritableDataArray;
+    private float[] currentWritableDataArray;
 
     /**
      * Rendered image which is followed by iterator and wherein caller write.
@@ -99,7 +98,7 @@ public class RowMajorWritableDirectFloatIterator extends RowMajorDirectFloatIter
      */
     @Override
     public void setSample(int value) {
-        currentWritableDataArray[band][dataCursor] = (float) value;
+        currentWritableDataArray[(dataCursor/rasterWidth)*scanLineStride+(dataCursor%rasterWidth)*numBand+bandOffset[band]] = (float) value;
     }
 
     /**
@@ -107,7 +106,7 @@ public class RowMajorWritableDirectFloatIterator extends RowMajorDirectFloatIter
      */
     @Override
     public void setSampleDouble(double value) {
-        currentWritableDataArray[band][dataCursor] = (float) value;
+        currentWritableDataArray[(dataCursor/rasterWidth)*scanLineStride+(dataCursor%rasterWidth)*numBand+bandOffset[band]] = (float) value;
     }
 
     /**
@@ -115,7 +114,7 @@ public class RowMajorWritableDirectFloatIterator extends RowMajorDirectFloatIter
      */
     @Override
     public void setSampleFloat(float value) {
-        currentWritableDataArray[band][dataCursor] = value;
+        currentWritableDataArray[(dataCursor/rasterWidth)*scanLineStride+(dataCursor%rasterWidth)*numBand+bandOffset[band]] = value;
     }
 
     /**
@@ -125,7 +124,7 @@ public class RowMajorWritableDirectFloatIterator extends RowMajorDirectFloatIter
     protected void updateCurrentRaster(int tileX, int tileY) {
         super.updateCurrentRaster(tileX, tileY);
         if (currentWritableDataArray != null) writableRenderedImage.releaseWritableTile(prectX, prectY);
-        currentWritableDataArray = ((DataBufferFloat) writableRenderedImage.getWritableTile(tileX, tileY).getDataBuffer()).getBankData();
+        currentWritableDataArray = ((DataBufferFloat) writableRenderedImage.getWritableTile(tileX, tileY).getDataBuffer()).getData();
         this.prectX = tileX;
         this.prectY = tileY;
     }

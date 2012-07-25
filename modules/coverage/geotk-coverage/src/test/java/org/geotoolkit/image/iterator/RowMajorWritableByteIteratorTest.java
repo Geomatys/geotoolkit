@@ -18,8 +18,9 @@
 package org.geotoolkit.image.iterator;
 
 import java.awt.Rectangle;
-import java.awt.image.BandedSampleModel;
 import java.awt.image.DataBuffer;
+import java.awt.image.PixelInterleavedSampleModel;
+import java.awt.image.SampleModel;
 import javax.media.jai.TiledImage;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
@@ -88,7 +89,11 @@ public class RowMajorWritableByteIteratorTest extends RowMajorWritableTest {
         tilesHeight = 5;
         numBand = 3;
 
-        BandedSampleModel sampleM = new BandedSampleModel(DataBuffer.TYPE_BYTE, tilesWidth, tilesHeight, numBand);
+        final int[] bandOffset = new int[numBand];
+        for (int i = 0;i<numBand; i++) {
+            bandOffset[i] = i;
+        }
+        final SampleModel sampleM = new PixelInterleavedSampleModel(DataBuffer.TYPE_BYTE, tilesWidth, tilesHeight, numBand, tilesWidth*numBand, bandOffset);
         renderedImage = new TiledImage(minx, miny, width, height, minx+tilesWidth, miny+tilesHeight, sampleM, null);
 
         setPixelIterator(renderedImage);
@@ -127,7 +132,6 @@ public class RowMajorWritableByteIteratorTest extends RowMajorWritableTest {
         height = 50;
         tilesWidth = 10;
         tilesHeight = 5;
-        sampleM = new BandedSampleModel(DataBuffer.TYPE_BYTE, tilesWidth, tilesHeight, numBand);
         renderedImage = new TiledImage(minx, miny, width, height, minx+tilesWidth, miny+tilesHeight, sampleM, null);
         setPixelIterator(renderedImage);
 

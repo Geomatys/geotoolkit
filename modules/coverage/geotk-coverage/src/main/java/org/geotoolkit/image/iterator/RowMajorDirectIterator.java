@@ -18,7 +18,9 @@
 package org.geotoolkit.image.iterator;
 
 import java.awt.Rectangle;
+import java.awt.image.ComponentSampleModel;
 import java.awt.image.RenderedImage;
+import java.awt.image.SampleModel;
 import org.geotoolkit.util.ArgumentChecks;
 
 /**
@@ -47,7 +49,7 @@ abstract class RowMajorDirectIterator extends PixelIterator {
     /**
      * Current raster width.
      */
-    private int rasterWidth;
+    protected int rasterWidth;
 
     /**
      * Abstract row index;
@@ -65,6 +67,16 @@ abstract class RowMajorDirectIterator extends PixelIterator {
     private int cRMinY;
 
     /**
+     * Tile scanLineStride from Raster or RenderedImage Sample model.
+     */
+    protected final int scanLineStride;
+
+    /**
+     * Band offset for all band.
+     */
+    protected final int[] bandOffset;
+
+    /**
      * Create default rendered image iterator.
      *
      * @param renderedImage image which will be follow by iterator.
@@ -75,6 +87,13 @@ abstract class RowMajorDirectIterator extends PixelIterator {
         super(renderedImage, subArea);
         ArgumentChecks.ensureNonNull("RenderedImage : ", renderedImage);
         this.renderedImage = renderedImage;
+        final SampleModel sampleM = renderedImage.getSampleModel();
+        if (sampleM instanceof ComponentSampleModel) {
+            this.scanLineStride = ((ComponentSampleModel)sampleM).getScanlineStride();
+            this.bandOffset = ((ComponentSampleModel)sampleM).getBandOffsets();
+        } else {
+            throw new IllegalArgumentException("DefaultDirectIterator constructor : sample model not conform");
+        }
 
         //initialize attributs to first iteration
         this.row     = this.areaIterateMinY - 1;

@@ -199,7 +199,11 @@ public abstract class RowMajorWritableTest extends WritableIteratorTest {
         tilesHeight = 5;
         numBand = 3;
 
-        BandedSampleModel sampleM = new BandedSampleModel(dataType, tilesWidth, tilesHeight, numBand);
+        final int[] bandOffset = new int[numBand];
+        for (int i = 0;i<numBand; i++) {
+            bandOffset[i] = i;
+        }
+        final SampleModel sampleM = new PixelInterleavedSampleModel(dataType, tilesWidth, tilesHeight, numBand, tilesWidth*numBand, bandOffset);
         renderedImage = new TiledImage(minx, miny, width, height, minx+tilesWidth, miny+tilesHeight, sampleM, null);
 
         setPixelIterator(renderedImage);
@@ -224,7 +228,6 @@ public abstract class RowMajorWritableTest extends WritableIteratorTest {
         height = 50;
         tilesWidth = 10;
         tilesHeight = 5;
-        sampleM = new BandedSampleModel(dataType, tilesWidth, tilesHeight, numBand);
         renderedImage = new TiledImage(minx, miny, width, height, minx+tilesWidth, miny+tilesHeight, sampleM, null);
         setPixelIterator(renderedImage);
 

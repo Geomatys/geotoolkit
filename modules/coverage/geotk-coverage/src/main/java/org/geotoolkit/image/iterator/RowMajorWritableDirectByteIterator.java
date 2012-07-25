@@ -62,7 +62,7 @@ class RowMajorWritableDirectByteIterator extends RowMajorDirectByteIterator{
     /**
      * Current writable raster data table.
      */
-    private byte[][] currentWritableDataArray;
+    private byte[] currentWritableDataArray;
 
     /**
      * Rendered image which is followed by iterator and wherein caller write.
@@ -98,7 +98,7 @@ class RowMajorWritableDirectByteIterator extends RowMajorDirectByteIterator{
      */
     @Override
     public void setSample(int value) {
-        currentWritableDataArray[band][dataCursor] = (byte) value;
+        currentWritableDataArray[(dataCursor/rasterWidth)*scanLineStride+(dataCursor%rasterWidth)*numBand+bandOffset[band]] = (byte) value;
     }
 
     /**
@@ -106,7 +106,7 @@ class RowMajorWritableDirectByteIterator extends RowMajorDirectByteIterator{
      */
     @Override
     public void setSampleDouble(double value) {
-        currentWritableDataArray[band][dataCursor] = (byte) value;
+        currentWritableDataArray[(dataCursor/rasterWidth)*scanLineStride+(dataCursor%rasterWidth)*numBand+bandOffset[band]] = (byte) value;
     }
 
     /**
@@ -114,7 +114,7 @@ class RowMajorWritableDirectByteIterator extends RowMajorDirectByteIterator{
      */
     @Override
     public void setSampleFloat(float value) {
-        currentWritableDataArray[band][dataCursor] = (byte) value;
+        currentWritableDataArray[(dataCursor/rasterWidth)*scanLineStride+(dataCursor%rasterWidth)*numBand+bandOffset[band]] = (byte) value;
     }
 
     /**
@@ -124,7 +124,7 @@ class RowMajorWritableDirectByteIterator extends RowMajorDirectByteIterator{
     protected void updateCurrentRaster(int tileX, int tileY) {
         super.updateCurrentRaster(tileX, tileY);
         if (currentWritableDataArray != null) writableRenderedImage.releaseWritableTile(prectX, prectY);
-        currentWritableDataArray = ((DataBufferByte) writableRenderedImage.getWritableTile(tileX, tileY).getDataBuffer()).getBankData();
+        currentWritableDataArray = ((DataBufferByte) writableRenderedImage.getWritableTile(tileX, tileY).getDataBuffer()).getData();
         this.prectX = tileX;
         this.prectY = tileY;
     }

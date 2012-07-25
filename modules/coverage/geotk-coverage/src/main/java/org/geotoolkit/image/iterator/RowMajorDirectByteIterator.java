@@ -51,7 +51,7 @@ public class RowMajorDirectByteIterator extends RowMajorDirectIterator {
     /**
      * Current raster data table.
      */
-    private byte[][] currentDataArray;
+    private byte[] currentDataArray;
 
     /**
      * Create Byte type row-major rendered image iterator.
@@ -72,7 +72,7 @@ public class RowMajorDirectByteIterator extends RowMajorDirectIterator {
     @Override
     protected void updateCurrentRaster(int tileX, int tileY) {
         super.updateCurrentRaster(tileX, tileY);
-        this.currentDataArray = ((DataBufferByte)currentRaster.getDataBuffer()).getBankData();
+        this.currentDataArray = ((DataBufferByte)currentRaster.getDataBuffer()).getData();
     }
 
     /**
@@ -80,12 +80,12 @@ public class RowMajorDirectByteIterator extends RowMajorDirectIterator {
      */
     @Override
     public int getSample() {
-        return currentDataArray[band][dataCursor];
+        return currentDataArray[(dataCursor/rasterWidth)*scanLineStride+(dataCursor%rasterWidth)*numBand+bandOffset[band]];
     }
 
     @Override
     public float getSampleFloat() {
-        return currentDataArray[band][dataCursor];
+        return currentDataArray[(dataCursor/rasterWidth)*scanLineStride+(dataCursor%rasterWidth)*numBand+bandOffset[band]];
     }
 
     /**
@@ -93,7 +93,7 @@ public class RowMajorDirectByteIterator extends RowMajorDirectIterator {
      */
     @Override
     public double getSampleDouble() {
-        return currentDataArray[band][dataCursor];
+        return currentDataArray[(dataCursor/rasterWidth)*scanLineStride+(dataCursor%rasterWidth)*numBand+bandOffset[band]];
     }
 
     /**
