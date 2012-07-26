@@ -174,11 +174,13 @@ class AddDelta extends AbstractDelta{
         final FeatureIterator ite = features.iterator();
         int i=0;
         try{
-            while(ite.hasNext()){
-                final Feature f = ite.next();
-                final String id = f.getIdentifier().getID();
-                updates.put(id, createdIds.get(i).getID());
-                i++;
+            if(createdIds != null && !createdIds.isEmpty()){
+                while(ite.hasNext()){
+                    final Feature f = ite.next();
+                    final String id = f.getIdentifier().getID();
+                        updates.put(id, createdIds.get(i).getID());
+                    i++;
+                }
             }
         }finally{
             ite.close();

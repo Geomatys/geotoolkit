@@ -34,7 +34,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.client.Request;
@@ -61,12 +63,21 @@ import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.xml.XmlFeatureReader;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
+import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.geometry.GeneralEnvelope;
+import org.geotoolkit.ogc.xml.v110.FeatureIdType;
 import org.geotoolkit.ows.xml.v100.WGS84BoundingBoxType;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.geotoolkit.wfs.xml.TransactionResponse;
+import org.geotoolkit.wfs.xml.WFSMarshallerPool;
+import org.geotoolkit.wfs.xml.v100.TransactionResultType;
 import org.geotoolkit.wfs.xml.v110.FeatureTypeListType;
 import org.geotoolkit.wfs.xml.v110.FeatureTypeType;
+import org.geotoolkit.wfs.xml.v110.InsertResultsType;
+import org.geotoolkit.wfs.xml.v110.InsertedFeatureType;
+import org.geotoolkit.wfs.xml.v110.TransactionResponseType;
+import org.geotoolkit.wfs.xml.v110.TransactionResultsType;
 import org.geotoolkit.wfs.xml.v110.WFSCapabilitiesType;
 
 import org.opengis.feature.Feature;
@@ -330,15 +341,59 @@ public class WFSDataStore extends AbstractDataStore{
 
         request.elements().add(insert);
 
+        
+        Unmarshaller unmarshal = null;
+        InputStream response = null;
+        
         try {
-            final InputStream response = request.getResponseStream();
-            response.close();
+            response = request.getResponseStream();
+            unmarshal = WFSMarshallerPool.getInstance().acquireUnmarshaller();
+            Object obj = unmarshal.unmarshal(response);
+            
+            if(obj instanceof JAXBElement){
+                obj = ((JAXBElement)obj).getValue();
+            }
+            
+            if(obj instanceof TransactionResponseType){
+                final List<FeatureId> ids = new ArrayList<FeatureId>();
+                final TransactionResponseType tr = (TransactionResponseType) obj;
+                
+                final InsertResultsType rt = tr.getInsertResults();                
+                if(rt != null){
+                    final List<InsertedFeatureType> inserted = rt.getFeature();
+
+                    if(inserted != null){
+                        for(InsertedFeatureType ift : inserted){
+                            for(FeatureIdType fit : ift.getFeatureId()){
+                                ids.add(new DefaultFeatureId(fit.getFid()));
+                            }
+                        }
+                    }
+                }
+                
+                return ids;
+            }else{
+                throw new DataStoreException("Unexpected response : "+ obj.getClass());
+            }
+            
         } catch (IOException ex) {
             throw new DataStoreException(ex);
+        } catch (JAXBException ex) {
+            throw new DataStoreException(ex);
+        } finally {
+            if(unmarshal != null){
+                WFSMarshallerPool.getInstance().release(unmarshal);
+            }
+            
+            if(response != null){
+                try {
+                    response.close();
+                } catch (IOException ex) {
+                    java.util.logging.Logger.getLogger(WFSDataStore.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
         }
 
-        //todo read response
-        return null;
     }
 
     /**
