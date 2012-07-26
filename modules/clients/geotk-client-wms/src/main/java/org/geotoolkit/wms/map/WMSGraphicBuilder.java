@@ -67,7 +67,7 @@ public class WMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
         if(cr instanceof PyramidalModel){
             gra = new StatelessPyramidalCoverageLayerJ2D((J2DCanvas)canvas, cml);
         }else{
-            gra = new StatefullCoverageLayerJ2D((J2DCanvas)canvas, cml);
+            gra = new StatefullCoverageLayerJ2D((J2DCanvas)canvas, cml,true);
         }
         
         return Collections.<GraphicJ2D>singleton(gra);

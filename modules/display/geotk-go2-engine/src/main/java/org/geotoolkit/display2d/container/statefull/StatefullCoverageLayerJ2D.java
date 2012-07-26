@@ -54,14 +54,21 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public class StatefullCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapLayer>{
 
     private final StatefullProjectedCoverage projectedCoverage;
-
+    private final boolean ignoreBuilders;
+    
     //compare values to update caches if necessary
     private final StatefullContextParams params;
     private CoordinateReferenceSystem lastObjectiveCRS = null;
 
     public StatefullCoverageLayerJ2D(final J2DCanvas canvas, final CoverageMapLayer layer){
+        this(canvas,layer,false);
+    }
+    
+    public StatefullCoverageLayerJ2D(final J2DCanvas canvas, final CoverageMapLayer layer, final boolean ignoreBuilders){
         super(canvas, layer);
 
+        this.ignoreBuilders = ignoreBuilders;
+        
         try {
             final GeneralGridGeometry ggg = layer.getCoverageReader().getGridGeometry(0);
             if(ggg == null){
@@ -72,7 +79,6 @@ public class StatefullCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapL
         } catch (CoverageStoreException ex) {
             Logger.getLogger(StatefullCoverageLayerJ2D.class.getName()).log(Level.WARNING, null, ex);
         }
-
 
         params = new StatefullContextParams(canvas,null);
         this.projectedCoverage = new StatefullProjectedCoverage(params, layer);
@@ -135,14 +141,16 @@ public class StatefullCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapL
         updateCache(context);
 
         //search for a special graphic renderer
-        final GraphicBuilder<GraphicJ2D> builder = (GraphicBuilder<GraphicJ2D>) item.getGraphicBuilder(GraphicJ2D.class);
-        if(builder != null){
-            //this layer has a special graphic rendering, use it instead of normal rendering
-            final Collection<GraphicJ2D> graphics = builder.createGraphics(item, canvas);
-            for(GraphicJ2D gra : graphics){
-                gra.paint(context);
+        if(!ignoreBuilders){
+            final GraphicBuilder<GraphicJ2D> builder = (GraphicBuilder<GraphicJ2D>) item.getGraphicBuilder(GraphicJ2D.class);
+            if(builder != null){
+                //this layer has a special graphic rendering, use it instead of normal rendering
+                final Collection<GraphicJ2D> graphics = builder.createGraphics(item, canvas);
+                for(GraphicJ2D gra : graphics){
+                    gra.paint(context);
+                }
+                return;
             }
-            return;
         }
         
         if(!intersects(context.getCanvasObjectiveBounds2D())){
