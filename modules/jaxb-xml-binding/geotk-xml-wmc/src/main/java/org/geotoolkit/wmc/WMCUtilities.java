@@ -77,7 +77,6 @@ public class WMCUtilities {
      * @return A map context containing informations given by a wmc document.
      */
     public static MapContext getMapContext(InputStream source) throws JAXBException {
-        final MapContext context = MapBuilder.createContext();
         final MarshallerPool pool = new MarshallerPool("org.geotoolkit.ogc.xml.exception:" + "org.geotoolkit.wmc.xml.v110");
         final Unmarshaller um = pool.acquireUnmarshaller();
         Object o = um.unmarshal(source);
@@ -86,6 +85,16 @@ public class WMCUtilities {
         }
         //Get needed markups
         ViewContextType root = (ViewContextType) o;
+        
+        final MapContext context = getMapContext(root);
+
+        pool.release(um);
+        return context;
+    }
+    
+    public static MapContext getMapContext(ViewContextType root) {
+        final MapContext context = MapBuilder.createContext();
+        //Get needed markups
         GeneralType general = root.getGeneral();
         LayerListType layers = root.getLayerList();
         BoundingBoxType bbox = general.getBoundingBox();
@@ -160,8 +169,6 @@ public class WMCUtilities {
                 context.layers().add(layer);
             }
         }
-
-        pool.release(um);
         return context;
     }
 }
