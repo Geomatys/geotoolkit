@@ -43,6 +43,23 @@ public final strictfp class XArraysTest {
     }
 
     /**
+     * Tests {@link XArrays#reverse(int[])}.
+     * The test uses an array of even length, then an array of odd length.
+     *
+     * @since 3.20
+     */
+    @Test
+    public void testReverse() {
+        int[] array = new int[] {2, 4, 8, 10};
+        XArrays.reverse(array);
+        assertArrayEquals(new int[] {10, 8, 4, 2}, array);
+
+        array = new int[] {2, 4, 8, 10, 11};
+        XArrays.reverse(array);
+        assertArrayEquals(new int[] {11, 10, 8, 4, 2}, array);
+    }
+
+    /**
      * Tests {@link XArrays#unionSorted(int[], int[])}.
      */
     @Test

@@ -43,7 +43,7 @@ public final strictfp class ObjectiveAnalysisTest {
 
     /**
      * Tests the Objective Analysis computation on integer values.
-     * The computated results are compared with the original values.
+     * The computed results are compared with the original values.
      */
     @Test
     public void testIntegers() {

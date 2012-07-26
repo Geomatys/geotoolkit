@@ -137,6 +137,21 @@
       <version>${geoapi.version}</version>
       <scope>test</scope>
     </dependency>
+
+    <!-- Other tests using more complex CRS. -->
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derby</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- Following is useful only for those who customize
+         their EPSG database connection parameters. -->
+    <dependency>
+      <groupId>postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
 

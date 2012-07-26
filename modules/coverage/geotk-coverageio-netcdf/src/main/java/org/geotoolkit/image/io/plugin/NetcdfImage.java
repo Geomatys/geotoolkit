@@ -129,8 +129,8 @@ final class NetcdfImage extends IIOImageHelper {
             numDimensions = 3; // Use the bands as the third dimension.
         }
         dimensions = new NetcdfDimension[numDimensions];
-        for (int i=0; i<dimensions.length; i++) {
-            NetcdfDimension dimension = new NetcdfDimension(this, i);
+        for (int i=0; i<numDimensions; i++) {
+            NetcdfDimension dimension = new NetcdfDimension(this, i, i == Y_DIMENSION);
             final int existing = allDimensions.indexOf(dimension);
             if (existing >= 0) {
                 dimension = allDimensions.get(existing);
