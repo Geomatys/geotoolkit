@@ -31,11 +31,6 @@ import org.geotoolkit.image.iterator.PixelIterator;
 abstract class BiCubicInterpolation extends Interpolation {
 
     /**
-     * Table to keep all 16 pixels values used to interpolate.
-     */
-    private final double[] data;
-
-    /**
      * Table used to compute interpolation from rows values.
      */
     private final double[] tabInteRow;
@@ -62,7 +57,7 @@ abstract class BiCubicInterpolation extends Interpolation {
      * @param pixelIterator Iterator used to interpolation.
      */
     public BiCubicInterpolation(PixelIterator pixelIterator) {
-        super(pixelIterator);
+        super(pixelIterator, 4);
         switch (pixelIterator.getSourceDatatype()) {
             case DataBuffer.TYPE_BYTE : {
                 minValue = 0;
@@ -89,7 +84,6 @@ abstract class BiCubicInterpolation extends Interpolation {
             throw new IllegalArgumentException("iterate object width too smaller" + boundary.width);
         if (boundary.height < 4)
             throw new IllegalArgumentException("iterate object height too smaller" + boundary.height);
-        data       = new double[16*numBands];
         tabInteRow = new double[4];
         tabInteCol = new double[4];
     }
@@ -125,24 +119,9 @@ abstract class BiCubicInterpolation extends Interpolation {
      */
     @Override
     public double[] interpolate(double x, double y) {
-        checkInterpolate(x, y);
-        int[] deb = getInterpolateMin(x, y, 4, 4);
-        int debX = deb[0];
-        int debY = deb[1];
-        int compteur = 0;
-        int bands;
-        final double[] result = new double[numBands];
+        super.interpolate(x, y);
         double rn;
-        for (int idY = debY; idY < debY + 4; idY++) {
-            for (int idX = debX; idX < debX + 4; idX++) {
-                pixelIterator.moveTo(idX, idY);
-                bands = 0;
-                while (bands++ != numBands) {
-                    pixelIterator.next();
-                    data[compteur++] = pixelIterator.getSampleDouble();
-                }
-            }
-        }
+        final double[] result = new double[numBands];
         //build pixels interpolation band per band
         for (int n = 0; n < numBands; n++) {
             //16 values for each interpolation per band
@@ -150,9 +129,9 @@ abstract class BiCubicInterpolation extends Interpolation {
                 for (int idC = 0; idC<4;idC++) {
                     tabInteRow[idC] = data[n + (4*idRow + idC) * numBands];
                 }
-                tabInteCol[idRow] = getCubicValue(debX, x, tabInteRow);
+                tabInteCol[idRow] = getCubicValue(minX, x, tabInteRow);
             }
-            rn = getCubicValue(debY, y, tabInteCol);
+            rn = getCubicValue(minY, y, tabInteCol);
             if (rn < minValue) {
                 rn = minValue;
             } else if (rn > maxValue) {
@@ -164,53 +143,10 @@ abstract class BiCubicInterpolation extends Interpolation {
     }
 
     /**
-     * Return appropriate interpolation minX and minY coordinates from x, y interpolate coordinates.
-     *
-     * @param x pixel x coordinate.
-     * @param y pixel y coordinate.
-     * @param width interpolate area width.
-     * @param height interpolate area height.
-     * @throws IllegalArgumentException if there are necessary pixels out of boundary.
-     * @return appropriate interpolation minX and minY coordinates.
-     */
-    private int[] getInterpolateMin(double x, double y, int width, int height) {
-        assert (width <= boundary.width && height <= boundary.height) : "area dimensions are out of boundary";
-        int minx = (int) x;
-        int miny = (int) y;
-        if (x<minx) minx--;
-        if (y<miny) miny--;
-
-        //ajust area interpolation on x, y center.
-        for (int i = 0; i<width/2-1;i++) {
-            minx--;
-        }
-        for (int i = 0; i<height/2-1;i++) {
-            miny--;
-        }
-        minx = Math.max(minx, boundary.x);
-        miny = Math.max(miny, boundary.y);
-        while(minx+width > boundary.x+boundary.width) {
-            minx--;
-        }
-        while(miny+height > boundary.y+boundary.height) {
-            miny--;
-        }
-        return new int[]{minx, miny};
-    }
-
-    /**
      * {@inheritDoc }.
      */
     @Override
     public double[] getMinMaxValue(Rectangle area) {
         throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    int getWindowSide() {
-        return 4;
     }
 }

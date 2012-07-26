@@ -69,10 +69,10 @@ public class BiCubicInterpolation2 extends BiCubicInterpolation {
      */
     private double getConvolutionValue(double t) {
         final double tAbs = Math.abs(t);
-        if (tAbs<=1) {
-            return (a+2)*tAbs*tAbs*tAbs - (a+3)*tAbs*tAbs + 1;//(a + 2)|x|^3 - (a + 3)|x|^2 +  1
+        if (tAbs <= 1) {
+            return ((a+2)*tAbs - (a+3))*tAbs*tAbs + 1;//(a + 2)|x|^3 - (a + 3)|x|^2 +  1
         } else if(tAbs >1 && tAbs < 2) {
-            return a*tAbs*tAbs*tAbs - 5*a*tAbs*tAbs + 8*a*tAbs - 4*a;// a|x|^3 - 5a|x|^2 + 8a|x| - 4a
+            return (((tAbs - 5)*tAbs + 8)*tAbs - 4)*a;// a|x|^3 - 5a|x|^2 + 8a|x| - 4a
         } else {
             return 0;
         }

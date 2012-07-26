@@ -29,19 +29,9 @@ import org.geotoolkit.image.iterator.PixelIterator;
 public class LanczosInterpolation extends Interpolation {
 
     /**
-     * Table to keep all (2*lanczosWindow)² pixels values used to interpolate.
-     */
-    private final double[] data;
-
-    /**
      * Pixels number use to interpolate before and after pixel coordinate on one dimension.
      */
     private final int lanczosWindow;
-
-    /**
-     * 2*lanczosWindow.
-     */
-    private final int l2W;
 
     private static double PI = Math.PI;
 
@@ -67,7 +57,7 @@ public class LanczosInterpolation extends Interpolation {
      * @param lanczosWindow define pixel number use to interpolate.
      */
     public LanczosInterpolation(PixelIterator pixelIterator, int lanczosWindow) {
-        super(pixelIterator);
+        super(pixelIterator, 2*lanczosWindow);
         switch (pixelIterator.getSourceDatatype()) {
             case DataBuffer.TYPE_BYTE : {
                 minValue = 0;
@@ -85,7 +75,7 @@ public class LanczosInterpolation extends Interpolation {
                 minValue = -3.40282347E38;
                 maxValue = 3.40282347E38;
             }break;
-            default : {//double border
+            default : {//double limits
                 minValue = -1.79769313486231E308;
                 maxValue = 1.79769313486231E308;
             }
@@ -93,8 +83,6 @@ public class LanczosInterpolation extends Interpolation {
         if (lanczosWindow > boundary.width || lanczosWindow > boundary.height)
             throw new IllegalArgumentException("lanczosWindow more longer");
         this.lanczosWindow = lanczosWindow;
-        this.l2W = 2 * lanczosWindow;
-        data = new double[l2W * l2W * numBands];
     }
 
 
@@ -120,28 +108,13 @@ public class LanczosInterpolation extends Interpolation {
      */
     @Override
     public double[] interpolate(double x, double y) {
-        checkInterpolate(x, y);
-        int[] deb = getInterpolateMin(x, y, l2W, l2W);
-        int debX = deb[0];
-        int debY = deb[1];
-        int compteur = 0;
-        int band;
-        for (int dy = debY; dy < debY + l2W; dy++) {
-            for (int dx = debX; dx < debX + l2W; dx++) {
-                pixelIterator.moveTo(dx, dy);
-                band = 0;
-                while (band++ != numBands) {
-                    pixelIterator.next();
-                    data[compteur++] = pixelIterator.getSampleDouble();
-                }
-            }
-        }
-        double[] result = new double[numBands];
+        super.interpolate(x, y);
+        final double[] result = new double[numBands];
         for (int n = 0; n < numBands; n++) {
             double interpol = 0;
-            for (int dy = debY; dy < debY + l2W; dy++) {
-                for (int dx = debX; dx < debX + l2W; dx++) {
-                    interpol += data[n + (l2W * (dy - debY) + (dx - debX)) * numBands] * getLCZt(dx, x) * getLCZt(dy, y);
+            for (int dy = minY; dy < minY + windowSide; dy++) {
+                for (int dx = minX; dx < minX + windowSide; dx++) {
+                    interpol += data[n + (windowSide * (dy - minY) + (dx - minX)) * numBands] * getLCZt(dx, x) * getLCZt(dy, y);
                 }
             }
             if (interpol < minValue) {
@@ -155,54 +128,8 @@ public class LanczosInterpolation extends Interpolation {
     }
 
     /**
-     * Return appropriate interpolation minX and minY coordinates from x, y interpolate coordinates.
-     *
-     * @param x pixel x coordinate.
-     * @param y pixel y coordinate.
-     * @param width interpolate area width.
-     * @param height interpolate area height.
-     * @throws IllegalArgumentException if there are necessary pixels out of boundary.
-     * @return appropriate interpolation minX and minY coordinates.
-     */
-    private int[] getInterpolateMin(double x, double y, int width, int height) {
-        final int boundW = boundary.width;
-        final int boundH = boundary.height;
-        final int bx = boundary.x;
-        final int by = boundary.y;
-        assert (width <= boundW && height <= boundH) : "area dimensions are out of boundary";
-        int minx = (int) x;
-        int miny = (int) y;
-        if (x<minx) minx--;
-        if (y<miny) miny--;
-
-        //ajust area interpolation on x, y center.
-        for (int i = 0; i<width/2-1;i++) {
-            minx--;
-        }
-        for (int i = 0; i<height/2-1;i++) {
-            miny--;
-        }
-
-        int debX = Math.max(minx, bx);
-        int debY = Math.max(miny, by);
-
-        while (debX + width > bx + boundW) {
-            debX--;
-        }
-        while (debY + height > by + boundH) {
-            debY--;
-        }
-        return new int[]{debX, debY};
-    }
-
-    /**
      * {@inheritDoc }.
      */
-    @Override
-    int getWindowSide() {
-        return l2W;
-    }
-
     @Override
     public double[] getMinMaxValue(Rectangle area) {
         throw new UnsupportedOperationException("Not supported yet.");
