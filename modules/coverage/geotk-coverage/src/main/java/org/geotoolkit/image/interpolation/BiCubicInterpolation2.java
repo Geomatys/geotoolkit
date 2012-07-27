@@ -46,19 +46,6 @@ public class BiCubicInterpolation2 extends BiCubicInterpolation {
     }
 
     /**
-     * {@inheritDoc }.
-     */
-    @Override
-    double getCubicValue(double t0, double t, double ...f) {
-        double result = 0;
-        int compteur = 0;
-        for (double ft : f) {
-            result += getConvolutionValue(t-t0 - compteur++)*ft;
-        }
-        return result;
-    }
-
-    /**
      * Compute coefficient apply on current pixel value.
      * Compute value of Kernel filter.
      *
@@ -75,5 +62,38 @@ public class BiCubicInterpolation2 extends BiCubicInterpolation {
         } else {
             return 0;
         }
+    }
+
+    /**
+     * {@inheritDoc }
+     *
+     * Cubic interpolation from 4 values.<br/>
+     * With always t0 &lt= t&lt= t0 + 3 <br/>
+     * <p>For example : cubic interpolation between 4 pixels.<br/>
+     *
+     *
+     * &nbsp;&nbsp;&nbsp;t =&nbsp;&nbsp; 0 &nbsp;1 &nbsp;2 &nbsp;3<br/>
+     * f(t) = |f0|f1|f2|f3|<br/>
+     * In this example t0 = 0.<br/><br/>
+     *
+     * Another example :<br/>
+     * &nbsp;&nbsp;&nbsp;t =&nbsp; -5 -4 -3 -2<br/>
+     * f(t) = |f0|f1|f2|f3|<br/>
+     * In this example parameter t0 = -5.</p>
+     *
+     * @param t0 f(t0) = f[0].Current position from first pixel interpolation.
+     * @param t position of interpolation.
+     * @param f pixel values from t = {0, 1, 2, 3}.
+     * @return cubic interpolation at t position.
+     */
+    @Override
+    protected double getInterpolValue(double t0, double t, double... f) {
+        assert (f.length == 4) : "impossible to interpolate with less or more than 4 values";
+        double res = 0;
+        int compteur = 0;
+        for (double ft : f) {
+            res += getConvolutionValue(t-t0 - compteur++)*ft;
+        }
+        return res;
     }
 }

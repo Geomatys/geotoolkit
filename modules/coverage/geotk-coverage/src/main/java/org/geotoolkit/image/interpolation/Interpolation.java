@@ -94,25 +94,7 @@ public abstract class Interpolation {
      * @param y pixel y coordinate.
      * @return interpolate value from x, y pixel coordinate.
      */
-    public double[] interpolate(double x, double y) {
-        checkInterpolate(x, y);
-        int[] mins = getInterpolateMin(x, y, windowSide, windowSide);
-        minX = mins[0];
-        minY = mins[1];
-        int compteur = 0;
-        int band;
-        for (int dy = minY; dy < minY + windowSide; dy++) {
-            for (int dx = minX; dx < minX + windowSide; dx++) {
-                pixelIterator.moveTo(dx, dy, 0);
-                band = 0;
-                while (band++ != numBands) {
-                    pixelIterator.next();
-                    data[compteur++] = pixelIterator.getSampleDouble();
-                }
-            }
-        }
-        return null;
-    }
+    public abstract double[] interpolate(double x, double y);
 
     /**
      * <p>Find minimum and maximum pixels values for each band.<br/>

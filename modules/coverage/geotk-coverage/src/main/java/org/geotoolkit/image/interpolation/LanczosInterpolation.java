@@ -1,4 +1,4 @@
-/*
+ /*
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
@@ -107,7 +107,22 @@ public class LanczosInterpolation extends Interpolation {
      */
     @Override
     public double[] interpolate(double x, double y) {
-        super.interpolate(x, y);
+        checkInterpolate(x, y);
+        int[] mins = getInterpolateMin(x, y, windowSide, windowSide);
+        minX = mins[0];
+        minY = mins[1];
+        int compteur = 0;
+        int band;
+        for (int dy = minY; dy < minY + windowSide; dy++) {
+            for (int dx = minX; dx < minX + windowSide; dx++) {
+                pixelIterator.moveTo(dx, dy, 0);
+                band = 0;
+                while (band++ != numBands) {
+                    pixelIterator.next();
+                    data[compteur++] = pixelIterator.getSampleDouble();
+                }
+            }
+        }
         final double[] result = new double[numBands];
         for (int n = 0; n < numBands; n++) {
             double interpol = 0;

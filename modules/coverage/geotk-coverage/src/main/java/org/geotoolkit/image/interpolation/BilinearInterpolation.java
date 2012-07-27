@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.image.interpolation;
 
-import java.awt.Rectangle;
 import org.geotoolkit.image.iterator.PixelIterator;
 
 /**
@@ -26,7 +25,7 @@ import org.geotoolkit.image.iterator.PixelIterator;
  *
  * @author Rémi Marechal (Geomatys).
  */
-public class BilinearInterpolation extends Interpolation {
+public class BilinearInterpolation extends SeparableInterpolation {
 
     /**
      * Create a Bilinear Interpolator.
@@ -38,43 +37,12 @@ public class BilinearInterpolation extends Interpolation {
     }
 
     /**
-     * Compute bilinear interpolation
-     *
-     * @param x pixel x coordinate.
-     * @param y pixel y coordinate.
-     * @return pixel interpolated values for each bands.
+     * Compute linear interpolation between 2 values.
+     * {@inheritDoc }
      */
     @Override
-    public double[] interpolate(double x, double y) {
-        super.interpolate(x, y);
-        final double[] result = new double[numBands];
-        //interpolation
-        for (int n=0; n<numBands; n++) {
-            result[n] = bilinear(minX, minX + 1, minY, minY + 1, x, y, data[n], data[n + numBands], data[n + 2 * numBands], data[n + 3 * numBands]);
-        }
-        return result;
-    }
-
-    /**
-     * Compute and return bilinear interpolation value.
-     *
-     * @param minx min x interpolation area value.
-     * @param maxX max x interpolation area value.
-     * @param miny min y interpolation area value.
-     * @param maxY max y interpolation area value.
-     * @param pixX pixel x coordinate.
-     * @param pixY pixel y coordinate.
-     * @param iVal different values use to interpolate.
-     * @return bilinear interpolation value at pixX, pixY coordinate values.
-     */
-    private double bilinear(int minx, int maxX, int miny, int maxY, double pixX, double pixY, double...iVal) {
-        if (minx == maxX || miny == maxY)
-            throw new IllegalArgumentException("impossible to effectuate a bilinear interpolation area = "+new Rectangle(minx, miny, maxX-minx, maxY-miny));
-        final double pixmix = pixX - minx;
-        final double mixpix = maxX - pixX;
-        final double wid = maxX-minx;
-        final double r2 = (mixpix*iVal[2] + pixmix*iVal[3])/wid;
-        final double r1 = (mixpix*iVal[0] + pixmix*iVal[1])/wid;
-        return ((pixY-miny) * r2 + (maxY-pixY) * r1) / (maxY-miny);
+    protected double getInterpolValue(double t0, double t, double... f) {
+        assert (f.length == 2) : " bilinear interpolation table not conform";
+        return (t-t0)*(f[1]-f[0]) + f[0];
     }
 }

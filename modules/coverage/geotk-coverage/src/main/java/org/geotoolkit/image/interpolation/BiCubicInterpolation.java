@@ -27,17 +27,7 @@ import org.geotoolkit.image.iterator.PixelIterator;
  *
  * @author Rémi Marechal (Geomatys).
  */
-abstract class BiCubicInterpolation extends Interpolation {
-
-    /**
-     * Table used to compute interpolation from rows values.
-     */
-    private final double[] tabInteRow;
-
-    /**
-     * Table used to interpolate values from rows interpolation result.
-     */
-    private final double[] tabInteCol;
+abstract class BiCubicInterpolation extends SeparableInterpolation {
 
     /**
      * Minimum value authorized from type of data from source interpolation.
@@ -83,62 +73,22 @@ abstract class BiCubicInterpolation extends Interpolation {
             throw new IllegalArgumentException("iterate object width too smaller" + boundary.width);
         if (boundary.height < 4)
             throw new IllegalArgumentException("iterate object height too smaller" + boundary.height);
-        tabInteRow = new double[4];
-        tabInteCol = new double[4];
     }
 
     /**
-     * Cubic interpolation from 4 values.<br/>
-     * With always t0 &lt= t&lt= t0 + 3 <br/>
-     * <p>For example : cubic interpolation between 4 pixels.<br/>
-     *
-     *
-     * &nbsp;&nbsp;&nbsp;t =&nbsp;&nbsp; 0 &nbsp;1 &nbsp;2 &nbsp;3<br/>
-     * f(t) = |f0|f1|f2|f3|<br/>
-     * In this example t0 = 0.<br/><br/>
-     *
-     * Another example :<br/>
-     * &nbsp;&nbsp;&nbsp;t =&nbsp; -5 -4 -3 -2<br/>
-     * f(t) = |f0|f1|f2|f3|<br/>
-     * In this example parameter t0 = -5.</p>
-     *
-     * @param t0 f(t0) = f[0].Current position from first pixel interpolation.
-     * @param t position of interpolation.
-     * @param f pixel values from t = {0, 1, 2, 3}.
-     * @return cubic interpolation at t position.
-     */
-    abstract double getCubicValue(double t0, double t, double[]f);
-
-    /**
-     * Compute biCubic interpolation.
-     *
-     * @param x pixel x coordinate.
-     * @param y pixel y coordinate.
-     * @return pixel interpolated values for each bands.
+     * {@inheritDoc }
      */
     @Override
     public double[] interpolate(double x, double y) {
-        super.interpolate(x, y);
-        double rn;
-        final double[] result = new double[numBands];
-        //build pixels interpolation band per band
-        for (int n = 0; n < numBands; n++) {
-            //16 values for each interpolation per band
-            for (int idRow = 0; idRow<4; idRow++) {
-                for (int idC = 0; idC<4;idC++) {
-                    tabInteRow[idC] = data[n + (4*idRow + idC) * numBands];
-                }
-                tabInteCol[idRow] = getCubicValue(minX, x, tabInteRow);
+        double[] itRes = super.interpolate(x, y);
+        for (int b = 0; b<numBands; b++) {
+            if (itRes[b] < minValue) {
+                itRes[b] = minValue;
+            } else if (itRes[b] > maxValue) {
+                itRes[b] = maxValue;
             }
-            rn = getCubicValue(minY, y, tabInteCol);
-            if (rn < minValue) {
-                rn = minValue;
-            } else if (rn > maxValue) {
-                rn = maxValue;
-            }
-            result[n] = rn;
         }
-        return result;
+        return itRes;
     }
 
     /**
