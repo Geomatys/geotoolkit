@@ -66,7 +66,7 @@ public final class ReferenceToFileConverter extends AbstractReferenceInputConver
             in = getInputStreamFromReference(source);
 
             final String fileName = UUID.randomUUID().toString();
-            final String suffix = "tmp";
+            final String suffix = ".tmp";
             //Create a temp file
             file = File.createTempFile(fileName, suffix);
             out = new FileOutputStream(file);
