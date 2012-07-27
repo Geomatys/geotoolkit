@@ -2,7 +2,6 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2002 - 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2008 - 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -28,7 +27,6 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.net.URI;
 import java.util.Map.Entry;
-
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.DocumentLoader;
 import org.apache.batik.bridge.GVTBuilder;
@@ -43,7 +41,6 @@ import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.TranscodingHints;
 import org.apache.batik.transcoder.TranscodingHints.Key;
 import org.apache.batik.util.XMLResourceDescriptor;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.svg.SVGDocument;
 import org.xml.sax.XMLReader;
@@ -107,7 +104,7 @@ public class SvgUtils {
         if(dim.height <=0 || dim.width <=0){
             throw new IllegalArgumentException("Height and width must be superior to 0");
         }
-        final InternalTranscoder svgTranscoder = new InternalTranscoder();
+        final BufferedImageTranscoder svgTranscoder = new BufferedImageTranscoder();
         TranscoderOutput out                   = new TranscoderOutput();
 
         if(hints != null){
@@ -123,7 +120,7 @@ public class SvgUtils {
         svgTranscoder.addTranscodingHint(SVGAbstractTranscoder.KEY_WIDTH, Float.valueOf(dim.width));
         svgTranscoder.transcode(in, out);
 
-        return svgTranscoder.getImage();
+        return svgTranscoder.getBufferedImage();
     }
 
     public static void render(final URI in, final Point2D dim, final Graphics2D g, final RenderingHints hints) throws TranscoderException, IOException{
