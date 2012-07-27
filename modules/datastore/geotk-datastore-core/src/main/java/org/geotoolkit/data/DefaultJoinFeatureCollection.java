@@ -20,7 +20,6 @@ package org.geotoolkit.data;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
-
 import org.geotoolkit.data.query.Join;
 import org.geotoolkit.data.query.JoinType;
 import org.geotoolkit.data.query.Query;
@@ -35,8 +34,6 @@ import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.storage.DataStoreException;
-import org.opengis.feature.ComplexAttribute;
-
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureFactory;
 import org.opengis.feature.Property;

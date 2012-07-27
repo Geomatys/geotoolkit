@@ -21,11 +21,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import org.geotoolkit.data.AbstractFeatureCollection;
-
-import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.data.FeatureIterator;
+import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
@@ -35,7 +34,6 @@ import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.converter.Classes;
-
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureFactory;
 import org.opengis.feature.Property;

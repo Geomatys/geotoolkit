@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2003-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009-2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,17 +17,14 @@
  */
 package org.geotoolkit.data.query;
 
-import org.geotoolkit.util.NullArgumentException;
 import java.util.Arrays;
-
 import org.geotoolkit.factory.Hints;
-
+import static org.geotoolkit.util.ArgumentChecks.*;
+import org.geotoolkit.util.NullArgumentException;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
-import static org.geotoolkit.util.ArgumentChecks.*;
 
 /**
  * Default query implementation.

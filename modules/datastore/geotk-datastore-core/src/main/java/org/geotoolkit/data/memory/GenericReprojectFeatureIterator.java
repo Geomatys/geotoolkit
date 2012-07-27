@@ -18,19 +18,16 @@
 
 package org.geotoolkit.data.memory;
 
-import org.opengis.feature.simple.SimpleFeature;
-import java.util.logging.Logger;
-import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.data.FeatureCollection;
 import com.vividsolutions.jts.geom.Geometry;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.logging.Level;
-
-import org.geotoolkit.data.FeatureReader;
+import java.util.logging.Logger;
 import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.data.FeatureIterator;
+import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.AbstractFeature;
@@ -39,26 +36,25 @@ import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.simple.DefaultSimpleFeature;
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
+import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
 import org.geotoolkit.geometry.jts.transform.GeometryTransformer;
 import org.geotoolkit.referencing.CRS;
+import static org.geotoolkit.util.ArgumentChecks.*;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.logging.Logging;
-
 import org.opengis.feature.Feature;
 import org.opengis.feature.GeometryAttribute;
 import org.opengis.feature.Property;
+import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
-import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
-
-import static org.geotoolkit.util.ArgumentChecks.*;
+import org.opengis.util.FactoryException;
 
 /**
  * Basic support for a  FeatureIterator that reprojects the geometry attribute.

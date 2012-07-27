@@ -17,7 +17,6 @@
 package org.geotoolkit.data.memory;
 
 import java.util.Map;
-
 import org.geotoolkit.data.AbstractFeatureCollection;
 import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
@@ -25,7 +24,6 @@ import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.converter.Classes;
-
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;

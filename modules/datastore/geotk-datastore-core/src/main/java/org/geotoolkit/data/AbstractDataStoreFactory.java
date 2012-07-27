@@ -40,7 +40,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.IdentifiedObject;
 
 /**
- * A best of toolkit for DataStoreFactory implementors.
+ * Abstract DataStoreFactory.
  *
  * @author Jody Garnett, Refractions Research
  * @author Johann Sorel (Geomatys)

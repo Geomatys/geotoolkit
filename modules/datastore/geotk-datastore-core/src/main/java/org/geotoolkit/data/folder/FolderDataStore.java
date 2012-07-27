@@ -25,19 +25,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
-
 import org.geotoolkit.data.AbstractDataStore;
+import static org.geotoolkit.data.AbstractDataStoreFactory.IDENTIFIER;
+import static org.geotoolkit.data.AbstractFileDataStoreFactory.*;
 import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.DataStoreFactory;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.FileDataStoreFactory;
+import static org.geotoolkit.data.folder.AbstractFolderDataStoreFactory.*;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataStoreException;
-
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
@@ -48,9 +49,6 @@ import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
-
-import static org.geotoolkit.data.folder.AbstractFolderDataStoreFactory.*;
-import static org.geotoolkit.data.AbstractFileDataStoreFactory.*;
 
 /**
  * Handle a folder of single file datastore.

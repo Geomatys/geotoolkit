@@ -17,47 +17,43 @@
 
 package org.geotoolkit.data;
 
-import java.util.Iterator;
 import java.util.AbstractCollection;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
-
-
-import org.geotoolkit.data.memory.GenericReprojectFeatureIterator;
-import org.geotoolkit.data.memory.GenericTransformFeatureIterator;
-import org.geotoolkit.data.memory.GenericRetypeFeatureIterator;
-import org.geotoolkit.data.memory.GenericMaxFeatureIterator;
-import org.geotoolkit.data.memory.GenericStartIndexFeatureIterator;
-import org.geotoolkit.geometry.jts.transform.GeometryScaleTransformer;
-import org.geotoolkit.factory.HintsPending;
-import org.geotoolkit.feature.SchemaException;
-import org.geotoolkit.feature.FeatureTypeUtilities;
-import org.geotoolkit.data.memory.GenericFilterFeatureIterator;
 import org.geotoolkit.data.memory.GenericEmptyFeatureIterator;
+import org.geotoolkit.data.memory.GenericFilterFeatureIterator;
+import org.geotoolkit.data.memory.GenericMaxFeatureIterator;
+import org.geotoolkit.data.memory.GenericReprojectFeatureIterator;
+import org.geotoolkit.data.memory.GenericRetypeFeatureIterator;
 import org.geotoolkit.data.memory.GenericSortByFeatureIterator;
-import org.geotoolkit.factory.Hints;
+import org.geotoolkit.data.memory.GenericStartIndexFeatureIterator;
+import org.geotoolkit.data.memory.GenericTransformFeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.data.query.Selector;
 import org.geotoolkit.data.query.Source;
 import org.geotoolkit.data.query.TextStatement;
 import org.geotoolkit.data.session.Session;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.factory.HintsPending;
+import org.geotoolkit.feature.FeatureTypeUtilities;
+import org.geotoolkit.feature.SchemaException;
+import org.geotoolkit.geometry.jts.transform.GeometryScaleTransformer;
 import org.geotoolkit.storage.DataStoreException;
-
+import static org.geotoolkit.util.ArgumentChecks.*;
 import org.geotoolkit.util.collection.CloseableIterator;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
-import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.Filter;
 import org.opengis.filter.Id;
+import org.opengis.filter.sort.SortBy;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
-import static org.geotoolkit.util.ArgumentChecks.*;
 
 /**
  *

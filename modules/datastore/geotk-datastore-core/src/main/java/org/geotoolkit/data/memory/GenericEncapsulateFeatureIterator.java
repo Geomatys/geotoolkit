@@ -18,14 +18,13 @@
 package org.geotoolkit.data.memory;
 
 
-import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.data.FeatureIterator;
+import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.util.converter.Classes;
-
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.PropertyDescriptor;

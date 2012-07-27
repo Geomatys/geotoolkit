@@ -20,13 +20,11 @@ package org.geotoolkit.data.memory;
 
 import java.util.List;
 import java.util.Map;
-
 import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.memory.mapping.DefaultFeatureMapper;
 import org.geotoolkit.data.memory.mapping.FeatureMapper;
 import org.geotoolkit.util.converter.Classes;
-
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;

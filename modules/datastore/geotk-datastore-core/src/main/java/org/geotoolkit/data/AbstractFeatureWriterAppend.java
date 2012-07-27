@@ -17,10 +17,9 @@
 
 package org.geotoolkit.data;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
-
-import static org.geotoolkit.util.ArgumentChecks.*;
 
 /**
  *

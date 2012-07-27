@@ -2,7 +2,6 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2003-2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -23,13 +22,11 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
+import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
-import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.util.converter.Classes;
-
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 
@@ -44,7 +41,7 @@ public class GenericWrapFeatureIterator<F extends Feature> implements FeatureIte
     protected final Iterator<F> iterator;
 
     /**
-     * Creates a new instance of GenericMaxFeatureIterator
+     * Creates a new instance of GenericWrapFeatureIterator
      *
      * @param iterator FeatureReader to limit
      * @param maxFeatures maximum number of feature

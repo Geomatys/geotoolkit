@@ -19,10 +19,8 @@ package org.geotoolkit.data.query;
 
 import java.util.HashSet;
 import java.util.Set;
-
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.DefaultName;
-
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.sort.SortBy;

@@ -17,11 +17,10 @@
 
 package org.geotoolkit.data.query;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
 import org.opengis.filter.PropertyIsEqualTo;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.PropertyName;
-
-import static org.geotoolkit.util.ArgumentChecks.*;
 
 /**
  * Default join implementation.

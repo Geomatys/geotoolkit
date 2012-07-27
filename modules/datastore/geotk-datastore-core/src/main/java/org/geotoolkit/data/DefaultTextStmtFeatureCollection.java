@@ -20,7 +20,6 @@ package org.geotoolkit.data;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
-
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.QueryUtilities;
@@ -28,7 +27,6 @@ import org.geotoolkit.data.query.TextStatement;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.storage.DataStoreException;
-
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;

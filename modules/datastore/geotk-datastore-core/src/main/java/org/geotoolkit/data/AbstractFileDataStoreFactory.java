@@ -20,7 +20,6 @@ package org.geotoolkit.data;
 import java.net.URL;
 import java.util.Collections;
 
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.storage.DataStoreException;
 
 import org.geotoolkit.util.ResourceInternationalString;
