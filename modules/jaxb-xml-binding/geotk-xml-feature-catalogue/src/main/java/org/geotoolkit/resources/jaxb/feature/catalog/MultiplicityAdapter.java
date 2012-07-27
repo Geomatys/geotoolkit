@@ -1,8 +1,8 @@
 /*
  *    GeotoolKit - An Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2008, Geomatys
+ * 
+ *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,16 +16,16 @@
  */
 package org.geotoolkit.resources.jaxb.feature.catalog;
 
-import org.geotoolkit.util.*;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
+import org.geotoolkit.util.*;
 
 /**
  * JAXB adapter in order to map implementing class with the GeoAPI Multiplicity. See
  * package documentation for more information about JAXB and Multiplicity.
  *
  * @module pending
- * @since 2.5
+ * @since 3.03
  * @author Guilhem Legal
  */
 public class MultiplicityAdapter extends XmlAdapter<MultiplicityAdapter, Multiplicity> {
