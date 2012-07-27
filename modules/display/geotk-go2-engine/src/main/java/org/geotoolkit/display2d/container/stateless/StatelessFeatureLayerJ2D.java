@@ -2,7 +2,6 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2004 - 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -17,7 +16,6 @@
  */
 package org.geotoolkit.display2d.container.stateless;
 
-import org.opengis.style.Rule;
 import java.awt.RenderingHints;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,55 +25,55 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.geotoolkit.data.StorageContentEvent;
-import org.geotoolkit.data.StorageManagementEvent;
-import org.geotoolkit.display2d.container.stateless.StatelessCollectionLayerJ2D.RenderingIterator;
-import org.geotoolkit.feature.SchemaException;
-import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.data.FeatureIterator;
+import org.geotoolkit.data.StorageContentEvent;
+import org.geotoolkit.data.StorageListener;
+import org.geotoolkit.data.StorageManagementEvent;
+import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.data.session.Session;
+import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display.exception.PortrayalException;
-import org.geotoolkit.display2d.primitive.DefaultGraphicFeatureJ2D;
-import org.geotoolkit.display2d.primitive.GraphicJ2D;
-import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.primitive.SearchArea;
+import org.geotoolkit.display2d.GO2Hints;
+import org.geotoolkit.display2d.GO2Utilities;
+import static org.geotoolkit.display2d.GO2Utilities.*;
+import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
+import org.geotoolkit.display2d.container.statefull.StatefullCachedRule;
 import org.geotoolkit.display2d.container.statefull.StatefullContextParams;
 import org.geotoolkit.display2d.container.statefull.StatefullProjectedFeature;
-import org.geotoolkit.display2d.style.CachedRule;
-import org.geotoolkit.display2d.GO2Utilities;
+import org.geotoolkit.display2d.container.stateless.StatelessCollectionLayerJ2D.RenderingIterator;
+import org.geotoolkit.display2d.primitive.DefaultGraphicFeatureJ2D;
 import org.geotoolkit.display2d.primitive.DefaultSearchAreaJ2D;
+import org.geotoolkit.display2d.primitive.GraphicJ2D;
+import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
+import org.geotoolkit.display2d.style.CachedRule;
+import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.factory.HintsPending;
+import org.geotoolkit.feature.FeatureTypeUtilities;
+import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.filter.DefaultLiteral;
+import org.geotoolkit.filter.FilterUtilities;
+import org.geotoolkit.filter.binaryspatial.LooseBBox;
+import org.geotoolkit.filter.binaryspatial.UnreprojectedLooseBBox;
+import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.geometry.DefaultBoundingBox;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.data.StorageListener;
-import org.geotoolkit.data.query.Query;
-import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.data.session.Session;
-import org.geotoolkit.display2d.GO2Hints;
-import org.geotoolkit.display2d.canvas.J2DCanvas;
-import org.geotoolkit.display2d.container.statefull.StatefullCachedRule;
-import org.geotoolkit.display2d.primitive.ProjectedFeature;
-import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.factory.HintsPending;
-import org.geotoolkit.feature.FeatureTypeUtilities;
-import org.geotoolkit.filter.FilterUtilities;
-import org.geotoolkit.filter.binaryspatial.UnreprojectedLooseBBox;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.StyleUtilities;
-
 import org.opengis.display.primitive.Graphic;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
@@ -89,9 +87,7 @@ import org.opengis.geometry.Envelope;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
-
-import static org.geotoolkit.display2d.GO2Utilities.*;
-import org.geotoolkit.filter.binaryspatial.LooseBBox;
+import org.opengis.style.Rule;
 
 /**
  * Single object to represent a complete feature map layer.

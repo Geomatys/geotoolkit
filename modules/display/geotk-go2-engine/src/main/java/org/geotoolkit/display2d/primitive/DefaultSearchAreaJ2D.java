@@ -18,9 +18,7 @@
 package org.geotoolkit.display2d.primitive;
 
 import java.awt.Shape;
-
 import org.geotoolkit.display.primitive.DefaultSearchArea;
-
 import org.geotoolkit.display.primitive.SearchArea;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.opengis.geometry.Geometry;

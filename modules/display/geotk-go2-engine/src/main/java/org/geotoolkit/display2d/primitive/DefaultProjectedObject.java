@@ -17,11 +17,9 @@
 package org.geotoolkit.display2d.primitive;
 
 import com.vividsolutions.jts.geom.Geometry;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Level;
-
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.container.statefull.StatefullContextParams;
@@ -29,7 +27,6 @@ import org.geotoolkit.display2d.container.statefull.StatefullProjectedGeometry;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.CRS;
-
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;

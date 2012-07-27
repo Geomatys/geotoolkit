@@ -18,7 +18,6 @@ package org.geotoolkit.display2d.primitive.iso;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
-
 import org.opengis.geometry.Geometry;
 
 /**

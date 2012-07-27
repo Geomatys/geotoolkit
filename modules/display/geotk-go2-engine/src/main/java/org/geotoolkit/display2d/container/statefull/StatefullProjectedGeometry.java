@@ -17,10 +17,8 @@
 package org.geotoolkit.display2d.container.statefull;
 
 import java.awt.Shape;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.geotoolkit.display.shape.ProjectedShape;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.display2d.primitive.jts.JTSGeometryJ2D;
@@ -30,7 +28,6 @@ import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
 import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
-
 import org.opengis.geometry.Geometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform2D;

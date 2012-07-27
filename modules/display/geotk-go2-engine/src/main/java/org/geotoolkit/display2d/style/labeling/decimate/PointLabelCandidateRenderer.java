@@ -17,10 +17,7 @@
 
 package org.geotoolkit.display2d.style.labeling.decimate;
 
-import org.geotoolkit.display2d.style.labeling.candidate.PointCandidate;
-import org.geotoolkit.display2d.style.labeling.candidate.Candidate;
 import java.awt.BasicStroke;
-import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Shape;
@@ -29,10 +26,10 @@ import java.awt.font.GlyphVector;
 import java.awt.geom.Rectangle2D;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.labeling.PointLabelDescriptor;
-
+import org.geotoolkit.display2d.style.labeling.candidate.Candidate;
+import org.geotoolkit.display2d.style.labeling.candidate.PointCandidate;
 import org.opengis.referencing.operation.TransformException;
 
 /**

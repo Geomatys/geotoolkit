@@ -2,7 +2,6 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2004 - 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2008 - 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -27,7 +26,6 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
-
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -64,7 +62,6 @@ import javax.media.jai.JAI;
 import javax.media.jai.OperationDescriptor;
 import javax.media.jai.OperationRegistry;
 import javax.media.jai.registry.RIFRegistry;
-
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -72,25 +69,24 @@ import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.processing.CoverageProcessingException;
 import org.geotoolkit.coverage.processing.Operations;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.util.collection.Cache;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display.shape.TransformedShape;
-import org.geotoolkit.display2d.primitive.jts.JTSGeometryJ2D;
-import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
+import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.primitive.iso.ISOGeometryJ2D;
 import org.geotoolkit.display2d.primitive.jts.DecimateJTSGeometryJ2D;
+import org.geotoolkit.display2d.primitive.jts.JTSGeometryJ2D;
 import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.raster.ShadedReliefCRIF;
 import org.geotoolkit.display2d.style.raster.ShadedReliefDescriptor;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.filter.accessor.Accessors;
 import org.geotoolkit.filter.accessor.PropertyAccessor;
 import org.geotoolkit.filter.visitor.IsStaticExpressionVisitor;
@@ -111,8 +107,9 @@ import org.geotoolkit.renderer.style.WellKnownMarkFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.style.visitor.PrepareStyleVisitor;
+import static org.geotoolkit.util.ArgumentChecks.*;
 import org.geotoolkit.util.NullArgumentException;
-
+import org.geotoolkit.util.collection.Cache;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
@@ -145,16 +142,14 @@ import org.opengis.style.FeatureTypeStyle;
 import org.opengis.style.Fill;
 import org.opengis.style.Mark;
 import org.opengis.style.RasterSymbolizer;
-import org.opengis.style.Style;
 import org.opengis.style.Rule;
 import org.opengis.style.SelectedChannelType;
 import org.opengis.style.SemanticType;
 import org.opengis.style.Stroke;
+import org.opengis.style.Style;
 import org.opengis.style.StyleVisitor;
 import org.opengis.style.Symbolizer;
 import org.opengis.util.FactoryException;
-
-import static org.geotoolkit.util.ArgumentChecks.*;
 
 /**
  *

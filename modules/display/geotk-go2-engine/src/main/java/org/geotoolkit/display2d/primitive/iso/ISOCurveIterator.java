@@ -17,7 +17,6 @@
 package org.geotoolkit.display2d.primitive.iso;
 
 import java.awt.geom.AffineTransform;
-
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.coordinate.LineString;
 import org.opengis.geometry.coordinate.PointArray;

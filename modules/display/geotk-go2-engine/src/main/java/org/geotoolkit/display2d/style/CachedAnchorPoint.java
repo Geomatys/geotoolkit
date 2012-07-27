@@ -19,10 +19,8 @@ package org.geotoolkit.display2d.style;
 
 import java.util.ArrayList;
 import java.util.Collection;
-
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.style.StyleConstants;
-
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.AnchorPoint;
 

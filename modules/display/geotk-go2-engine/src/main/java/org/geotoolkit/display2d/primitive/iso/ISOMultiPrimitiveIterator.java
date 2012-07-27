@@ -16,12 +16,10 @@
  */
 package org.geotoolkit.display2d.primitive.iso;
 
-import java.awt.geom.PathIterator;
 import java.awt.geom.AffineTransform;
-
+import java.awt.geom.PathIterator;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.opengis.geometry.Geometry;
 import org.opengis.geometry.aggregate.MultiPrimitive;
 import org.opengis.geometry.coordinate.PolyhedralSurface;

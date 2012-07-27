@@ -2,7 +2,6 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2004 - 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -21,7 +20,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Paint;
 import java.awt.geom.AffineTransform;
-
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -35,11 +33,11 @@ import org.geotoolkit.display2d.style.CachedLabelPlacement;
 import org.geotoolkit.display2d.style.CachedLinePlacement;
 import org.geotoolkit.display2d.style.CachedPointPlacement;
 import org.geotoolkit.display2d.style.CachedTextSymbolizer;
-import org.geotoolkit.display2d.style.labeling.LabelRenderer;
+import org.geotoolkit.display2d.style.labeling.DefaultLinearLabelDescriptor;
 import org.geotoolkit.display2d.style.labeling.DefaultPointLabelDescriptor;
 import org.geotoolkit.display2d.style.labeling.LabelDescriptor;
-import org.geotoolkit.display2d.style.labeling.DefaultLinearLabelDescriptor;
 import org.geotoolkit.display2d.style.labeling.LabelLayer;
+import org.geotoolkit.display2d.style.labeling.LabelRenderer;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 
 

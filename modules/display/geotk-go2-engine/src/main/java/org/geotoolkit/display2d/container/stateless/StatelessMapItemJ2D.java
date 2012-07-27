@@ -32,7 +32,6 @@ import javax.media.jai.TileFactory;
 import javax.media.jai.TileRecycler;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.PyramidalModel;
-
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.primitive.SearchArea;
@@ -50,7 +49,6 @@ import org.geotoolkit.map.ItemListener;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
-
 import org.opengis.display.primitive.Graphic;
 
 /**

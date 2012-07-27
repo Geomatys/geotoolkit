@@ -20,7 +20,6 @@ package org.geotoolkit.display2d.primitive.iso;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.coordinate.PointArray;
 import org.opengis.geometry.coordinate.Polygon;

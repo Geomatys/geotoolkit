@@ -2,7 +2,6 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2004 - 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2008 - 2011, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -18,7 +17,6 @@
 package org.geotoolkit.display2d.primitive;
 
 import org.geotoolkit.map.FeatureMapLayer;
-
 import org.opengis.feature.Feature;
 import org.opengis.filter.identity.FeatureId;
 
