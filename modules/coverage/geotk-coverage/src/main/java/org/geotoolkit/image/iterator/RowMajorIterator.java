@@ -2,7 +2,6 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2012, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -195,8 +194,8 @@ class RowMajorIterator extends PixelIterator{
     }
 
     @Override
-    public void moveTo(int x, int y) {
-        super.moveTo(x, y);
+    public void moveTo(int x, int y, int b) {
+        super.moveTo(x, y, b);
         final int riMinX = renderedImage.getMinX();
         final int riMinY = renderedImage.getMinY();
         tX = (x - riMinX) / renderedImage.getTileWidth() + renderedImage.getMinTileX();
@@ -209,6 +208,6 @@ class RowMajorIterator extends PixelIterator{
         this.numBand = currentRaster.getNumBands();
         this.x = x;
         this.y = y;
-        this.band = -1;
+        this.band = b -1;
     }
 }

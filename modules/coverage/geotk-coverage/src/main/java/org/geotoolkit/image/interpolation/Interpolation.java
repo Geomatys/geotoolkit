@@ -103,7 +103,7 @@ public abstract class Interpolation {
         int band;
         for (int dy = minY; dy < minY + windowSide; dy++) {
             for (int dx = minX; dx < minX + windowSide; dx++) {
-                pixelIterator.moveTo(dx, dy);
+                pixelIterator.moveTo(dx, dy, 0);
                 band = 0;
                 while (band++ != numBands) {
                     pixelIterator.next();
@@ -186,7 +186,7 @@ public abstract class Interpolation {
         } else {//iterate within rectangle.
             if (!getBoundary().contains(area))
                 throw new IllegalArgumentException("impossible to define min and max in area out of Iterate object boundary");
-            pixelIterator.moveTo(area.x, area.y);
+            pixelIterator.moveTo(area.x, area.y, 0);
             for (;band<numBands; band++) {
                 pixelIterator.next();
                 value = pixelIterator.getSampleDouble();
@@ -202,7 +202,7 @@ public abstract class Interpolation {
             band = 0;
             for (int y = area.y; y<area.y + area.height; y++) {
                 for (int x = area.x; x<area.x + area.width; x++) {
-                    pixelIterator.moveTo(x, y);
+                    pixelIterator.moveTo(x, y, 0);
                     for (;band<numBands; band++) {
                         pixelIterator.next();
                         value = pixelIterator.getSampleDouble();

@@ -17,10 +17,7 @@
 package org.geotoolkit.image.iterator;
 
 import java.awt.Rectangle;
-import java.awt.image.Raster;
-import java.awt.image.RenderedImage;
-import java.awt.image.WritableRaster;
-import java.awt.image.WritableRenderedImage;
+import java.awt.image.*;
 import org.geotoolkit.util.ArgumentChecks;
 
 /**
@@ -284,11 +281,11 @@ public abstract class PixelIterator {
 
     /**
      * Move forward iterator cursor at x, y coordinates. Cursor is automatically
-     * positioned just before first band index.
+     * positioned just before band index.
      *
      * User must call next() method before get() or set() method. Code example :
      * {@code
-     *       PixelIterator.moveTo(x, y);
+     *       PixelIterator.moveTo(x, y, b);
      *       while (PixelIterator.next()) {
      *            PixelIterator.getSample();//for example
      *       }
@@ -298,13 +295,17 @@ public abstract class PixelIterator {
      *
      * @param x the x coordinate cursor position.
      * @param y the y coordinate cursor position.
+     * @param b the band index cursor position.
      * @throws IllegalArgumentException if coordinates are out of iteration area boundary.
      */
-    public void moveTo(int x, int y){
+    public void moveTo(int x, int y, int b){
         if (x < areaIterateMinX || x >= areaIterateMaxX
             ||  y < areaIterateMinY || y >= areaIterateMaxY)
                 throw new IllegalArgumentException("coordinate out of iteration area define by: "
                         +"("+areaIterateMinX+", "+areaIterateMinY+")"+" ; ("+areaIterateMaxX+", "+areaIterateMaxY+")");
+        SampleModel sampleM = (renderedImage == null) ? currentRaster.getSampleModel() : renderedImage.getSampleModel() ;
+        if (b<0 || b>=sampleM.getNumBands())
+            throw new IllegalArgumentException("band index out of numband border define by: [0;"+sampleM.getNumBands()+"]");
     }
 
     /**

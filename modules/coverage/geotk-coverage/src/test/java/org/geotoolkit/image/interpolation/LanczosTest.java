@@ -2,7 +2,6 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2012, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -66,7 +65,7 @@ public class LanczosTest extends InterpolationTest {
      */
     @Test
     public void globalTest() {
-        pixIterator.moveTo(0, -1);
+        pixIterator.moveTo(0, -1, 0);
         double interpolXDeb, interpolXEnd, interpolYDeb, interpolYEnd;
         for (int y = miny; y < miny + height-1; y++) {
             for (int x = minx; x < minx + width-1; x++) {

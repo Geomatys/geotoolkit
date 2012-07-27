@@ -217,8 +217,8 @@ class DefaultIterator extends PixelIterator {
     }
 
     @Override
-    public void moveTo(final int x, final int y) {
-        super.moveTo(x, y);
+    public void moveTo(final int x, final int y, final int b) {
+        super.moveTo(x, y, b);
         if (renderedImage != null) {
             final int riMinX = renderedImage.getMinX();
             final int riMinY = renderedImage.getMinY();
@@ -228,6 +228,6 @@ class DefaultIterator extends PixelIterator {
         }
         this.x = x;
         this.y = y;
-        this.band = -1;
+        this.band = b - 1;
     }
 }

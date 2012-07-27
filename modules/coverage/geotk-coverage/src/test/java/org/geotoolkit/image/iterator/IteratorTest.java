@@ -2,7 +2,6 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2012, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -401,7 +400,21 @@ public abstract class IteratorTest {
         setRasterTest(minx, miny, width, height, numBand, null);
         setPixelIterator(rasterTest);
         try{
-            pixIterator.moveTo(2, 3);
+            pixIterator.moveTo(2, 3, 0);
+            Assert.fail("test should had failed");
+        }catch(Exception e){
+            //ok
+        }
+
+        try{
+            pixIterator.moveTo(9, 10, -1);
+            Assert.fail("test should had failed");
+        }catch(Exception e){
+            //ok
+        }
+
+        try{
+            pixIterator.moveTo(9, 10, 500);
             Assert.fail("test should had failed");
         }catch(Exception e){
             //ok
@@ -765,7 +778,7 @@ public abstract class IteratorTest {
         setRenderedImgTest(minx, miny, width, height, tilesWidth, tilesHeight, numBand, null);
         setPixelIterator(renderedImage);
         try{
-            pixIterator.moveTo(102, 53);
+            pixIterator.moveTo(102, 53, 0);
             Assert.fail("test should had failed");
         }catch(IllegalArgumentException e){
             //ok

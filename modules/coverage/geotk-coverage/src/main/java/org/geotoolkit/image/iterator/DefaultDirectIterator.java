@@ -226,8 +226,8 @@ abstract class DefaultDirectIterator extends PixelIterator{
      * {@inheritDoc }.
      */
     @Override
-    public void moveTo(int x, int y) {
-        super.moveTo(x, y);
+    public void moveTo(int x, int y, int b) {
+        super.moveTo(x, y, b);
         if (renderedImage != null) {
             final int riMinX = renderedImage.getMinX();
             final int riMinY = renderedImage.getMinY();
@@ -235,7 +235,7 @@ abstract class DefaultDirectIterator extends PixelIterator{
             tY = (y - riMinY) / renderedImage.getTileHeight() + renderedImage.getMinTileY();
             updateCurrentRaster(tX, tY);
         }
-        this.dataCursor = (x - crMinX) * numBand        + (y - crMinY) * scanLineStride - 1;
+        this.dataCursor = (x - crMinX) * numBand        + (y - crMinY) * scanLineStride + b - 1;
         this.maxX       = (y - crMinY) * scanLineStride + (Math.min(areaIterateMaxX, crMinX + rasterWidth) - crMinX)*numBand;
     }
 }

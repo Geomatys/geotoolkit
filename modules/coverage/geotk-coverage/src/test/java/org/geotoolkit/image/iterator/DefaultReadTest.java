@@ -2,7 +2,6 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2012, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -261,7 +260,7 @@ public abstract class DefaultReadTest extends IteratorTest{
         setPixelIterator(rasterTest);
         final int mX = 17;
         final int mY = 15;
-        pixIterator.moveTo(mX, mY);
+        pixIterator.moveTo(mX, mY, 0);
         final int indexCut = ((mY-miny)*width + mX - minx)*numBand;
         final int lenght = width*height*numBand - indexCut;
         setMoveToRITabs(indexCut, lenght);
@@ -322,7 +321,7 @@ public abstract class DefaultReadTest extends IteratorTest{
         final int mY = 15;
         final int ity = (mY-miny) / tilesHeight;
         final int itx = (mX-minx) / tilesWidth;
-        pixIterator.moveTo(mX, mY);
+        pixIterator.moveTo(mX, mY,0);
         final int indexCut = ((((ity*((width/tilesWidth)-1))+itx)*tilesHeight+mY-miny-itx)*tilesWidth + mX-minx)*numBand;
         final int lenght = width*height*numBand - indexCut;
         setMoveToRITabs(indexCut, lenght);
@@ -351,7 +350,7 @@ public abstract class DefaultReadTest extends IteratorTest{
         final int mY = 3;
         final int ity = (mY-miny) / tilesHeight;
         final int itx = (mX-minx) / tilesWidth;
-        pixIterator.moveTo(mX, mY);
+        pixIterator.moveTo(mX, mY, 0);
         final int indexCut = ((((ity*((width/tilesWidth)-1))+itx)*tilesHeight+mY-miny-itx)*tilesWidth + mX-minx)*numBand;
         final int lenght = width*height*numBand - indexCut;
         setMoveToRITabs(indexCut, lenght);
@@ -380,7 +379,7 @@ public abstract class DefaultReadTest extends IteratorTest{
         final int mY = 3;
         final int ity = (mY-miny) / tilesHeight;
         final int itx = (mX-minx) / tilesWidth;
-        pixIterator.moveTo(mX, mY);
+        pixIterator.moveTo(mX, mY, 0);
         final int indexCut = ((((ity*((width/tilesWidth)-1))+itx)*tilesHeight+mY-miny-itx)*tilesWidth + mX-minx)*numBand;
         final int lenght = width*height*numBand - indexCut;
         setMoveToRITabs(indexCut, lenght);
@@ -409,7 +408,7 @@ public abstract class DefaultReadTest extends IteratorTest{
         final int mY = 52;
         final int ity = (mY-miny) / tilesHeight;
         final int itx = (mX-minx) / tilesWidth;
-        pixIterator.moveTo(mX, mY);
+        pixIterator.moveTo(mX, mY, 0);
         final int indexCut = ((((ity*((width/tilesWidth)-1))+itx)*tilesHeight+mY-miny-itx)*tilesWidth + mX-minx)*numBand;
         final int lenght = width*height*numBand - indexCut;
         setMoveToRITabs(indexCut, lenght);
@@ -438,7 +437,7 @@ public abstract class DefaultReadTest extends IteratorTest{
         final int mY = 52;
         final int ity = (mY-miny) / tilesHeight;
         final int itx = (mX-minx) / tilesWidth;
-        pixIterator.moveTo(mX, mY);
+        pixIterator.moveTo(mX, mY, 0);
         final int indexCut = ((((ity*((width/tilesWidth)-1))+itx)*tilesHeight+mY-miny-itx)*tilesWidth + mX-minx)*numBand;
         final int lenght = width*height*numBand - indexCut;
         setMoveToRITabs(indexCut, lenght);

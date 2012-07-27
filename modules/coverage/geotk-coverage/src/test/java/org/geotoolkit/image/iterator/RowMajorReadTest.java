@@ -2,7 +2,6 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2012, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -256,7 +255,7 @@ public abstract class RowMajorReadTest extends IteratorTest {
         final int mY = 26;
         final int indexCut = (mX - minx + (mY-miny) *width) * numBand;
         final int lenght = width*height*numBand - indexCut;
-        pixIterator.moveTo(mX, mY);
+        pixIterator.moveTo(mX, mY, 0);
         setMoveToRITabs(indexCut, lenght);
         int comp = 0;
         while (pixIterator.next()) {
@@ -277,13 +276,14 @@ public abstract class RowMajorReadTest extends IteratorTest {
         tilesWidth = 10;
         tilesHeight = 5;
         numBand = 3;
+        int b = 2;
         setRenderedImgTest(minx, miny, width, height, tilesWidth, tilesHeight, numBand, null);
         setPixelIterator(renderedImage);
         final int mX = 57;
         final int mY = 26;
-        final int indexCut = ((mY-miny)*width + (mX-minx)) * numBand;
+        final int indexCut = ((mY-miny)*width + (mX-minx)) * numBand + b;
         final int lenght = width*height*numBand - indexCut;
-        pixIterator.moveTo(mX, mY);
+        pixIterator.moveTo(mX, mY, b);
         setMoveToRITabs(indexCut, lenght);
         int comp = 0;
         while (pixIterator.next()) {

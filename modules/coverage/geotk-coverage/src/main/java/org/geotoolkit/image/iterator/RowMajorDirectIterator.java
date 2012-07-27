@@ -165,8 +165,8 @@ abstract class RowMajorDirectIterator extends PixelIterator {
      * {@inheritDoc }.
      */
     @Override
-    public void moveTo(int x, int y) {
-        super.moveTo(x, y);
+    public void moveTo(int x, int y, int b) {
+        super.moveTo(x, y, b);
         tX = (x - renderedImage.getMinX())/renderedImage.getTileWidth() + renderedImage.getMinTileX();
         tY = (y - renderedImage.getMinY())/renderedImage.getTileHeight() + renderedImage.getMinTileY();
 
@@ -180,6 +180,6 @@ abstract class RowMajorDirectIterator extends PixelIterator {
 
         //initialize row
         this.maxY = Math.min(areaIterateMaxY, cRMinY + currentRaster.getHeight());
-        this.dataCursor = (x - cRMinX) * numBand + step - 1;
+        this.dataCursor = (x - cRMinX) * numBand + step + b - 1;
     }
 }
