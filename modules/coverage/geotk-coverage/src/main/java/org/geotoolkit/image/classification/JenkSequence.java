@@ -2,7 +2,6 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2012, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or

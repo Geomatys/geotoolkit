@@ -2,7 +2,6 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2012, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -39,7 +38,9 @@ public final class PixelIteratorFactory {
     public static PixelIterator createDefaultIterator(final Raster raster) {
         final SampleModel sampleM = raster.getSampleModel();
         if (sampleM instanceof ComponentSampleModel ) {
-            if (sampleM.getNumDataElements() == sampleM.getNumBands() && sampleM.createDataBuffer().getNumBanks() == 1) {
+            if (sampleM.getNumDataElements() == sampleM.getNumBands()
+             && sampleM.createDataBuffer().getNumBanks() == 1
+             && checkBandOffset(((ComponentSampleModel)sampleM).getBandOffsets())) {
                 switch (sampleM.getDataType()) {
                     case DataBuffer.TYPE_BYTE  : return new DefaultDirectByteIterator(raster, null);
                     case DataBuffer.TYPE_FLOAT : return new DefaultDirectFloatIterator(raster, null);
@@ -60,7 +61,9 @@ public final class PixelIteratorFactory {
     public static PixelIterator createDefaultIterator(final Raster raster, final Rectangle subReadArea) {
         final SampleModel sampleM = raster.getSampleModel();
         if (sampleM instanceof ComponentSampleModel) {
-            if (sampleM.getNumDataElements() == sampleM.getNumBands() && sampleM.createDataBuffer().getNumBanks() == 1) {
+            if (sampleM.getNumDataElements() == sampleM.getNumBands()
+             && sampleM.createDataBuffer().getNumBanks() == 1
+             && checkBandOffset(((ComponentSampleModel)sampleM).getBandOffsets())) {
                 switch (sampleM.getDataType()) {
                     case DataBuffer.TYPE_BYTE  : return new DefaultDirectByteIterator(raster, subReadArea);
                     case DataBuffer.TYPE_FLOAT : return new DefaultDirectFloatIterator(raster, subReadArea);
@@ -80,7 +83,9 @@ public final class PixelIteratorFactory {
     public static PixelIterator createDefaultIterator(final RenderedImage renderedImage) {
         final SampleModel sampleM = renderedImage.getSampleModel();
         if (sampleM instanceof ComponentSampleModel) {
-            if (sampleM.getNumDataElements() == sampleM.getNumBands() && sampleM.createDataBuffer().getNumBanks() == 1) {
+            if (sampleM.getNumDataElements() == sampleM.getNumBands()
+             && sampleM.createDataBuffer().getNumBanks() == 1
+             && checkBandOffset(((ComponentSampleModel)sampleM).getBandOffsets())) {
                 switch (sampleM.getDataType()) {
                     case DataBuffer.TYPE_BYTE  : return new DefaultDirectByteIterator(renderedImage, null);
                     case DataBuffer.TYPE_FLOAT : return new DefaultDirectFloatIterator(renderedImage, null);
@@ -101,7 +106,9 @@ public final class PixelIteratorFactory {
     public static PixelIterator createDefaultIterator(final RenderedImage renderedImage, final Rectangle subReadArea) {
         final SampleModel sampleM = renderedImage.getSampleModel();
         if (sampleM instanceof ComponentSampleModel ) {
-            if (sampleM.getNumDataElements() == sampleM.getNumBands() && sampleM.createDataBuffer().getNumBanks() == 1) {
+            if (sampleM.getNumDataElements() == sampleM.getNumBands()
+             && sampleM.createDataBuffer().getNumBanks() == 1
+             && checkBandOffset(((ComponentSampleModel)sampleM).getBandOffsets())) {
                 switch (sampleM.getDataType()) {
                     case DataBuffer.TYPE_BYTE  : return new DefaultDirectByteIterator(renderedImage, subReadArea);
                     case DataBuffer.TYPE_FLOAT : return new DefaultDirectFloatIterator(renderedImage, subReadArea);
@@ -122,7 +129,9 @@ public final class PixelIteratorFactory {
     public static PixelIterator createDefaultWriteableIterator(final Raster raster, final WritableRaster writeableRaster) {
         final SampleModel sampleM = raster.getSampleModel();
         if (sampleM instanceof ComponentSampleModel ) {
-            if (sampleM.getNumDataElements() == sampleM.getNumBands() && sampleM.createDataBuffer().getNumBanks() == 1) {
+            if (sampleM.getNumDataElements() == sampleM.getNumBands()
+             && sampleM.createDataBuffer().getNumBanks() == 1
+             && checkBandOffset(((ComponentSampleModel)sampleM).getBandOffsets())) {
                 switch (sampleM.getDataType()) {
                     case DataBuffer.TYPE_BYTE  : return new DefaultWritableDirectByteIterator(raster, writeableRaster, null);
                     case DataBuffer.TYPE_FLOAT : return new DefaultWritableDirectFloatIterator(raster, writeableRaster, null);
@@ -145,7 +154,9 @@ public final class PixelIteratorFactory {
     public static PixelIterator createDefaultWriteableIterator(final Raster raster, final WritableRaster writeableRaster, final Rectangle subArea) {
         final SampleModel sampleM = raster.getSampleModel();
         if (sampleM instanceof ComponentSampleModel) {
-            if (sampleM.getNumDataElements() == sampleM.getNumBands() && sampleM.createDataBuffer().getNumBanks() == 1) {
+            if (sampleM.getNumDataElements() == sampleM.getNumBands()
+             && sampleM.createDataBuffer().getNumBanks() == 1
+             && checkBandOffset(((ComponentSampleModel)sampleM).getBandOffsets())) {
                 switch (sampleM.getDataType()) {
                     case DataBuffer.TYPE_BYTE  : return new DefaultWritableDirectByteIterator(raster, writeableRaster, subArea);
                     case DataBuffer.TYPE_FLOAT : return new DefaultWritableDirectFloatIterator(raster, writeableRaster, subArea);
@@ -166,7 +177,9 @@ public final class PixelIteratorFactory {
     public static PixelIterator createDefaultWriteableIterator(final RenderedImage renderedImage, final WritableRenderedImage writableRenderedImage) {
         final SampleModel sampleM = renderedImage.getSampleModel();
         if (sampleM instanceof ComponentSampleModel ) {
-            if (sampleM.getNumDataElements() == sampleM.getNumBands() && sampleM.createDataBuffer().getNumBanks() == 1) {
+            if (sampleM.getNumDataElements() == sampleM.getNumBands()
+             && sampleM.createDataBuffer().getNumBanks() == 1
+             && checkBandOffset(((ComponentSampleModel)sampleM).getBandOffsets())) {
                 switch (sampleM.getDataType()) {
                     case DataBuffer.TYPE_BYTE  : return new DefaultWritableDirectByteIterator(renderedImage, writableRenderedImage, null);
                     case DataBuffer.TYPE_FLOAT : return new DefaultWritableDirectFloatIterator(renderedImage, writableRenderedImage, null);
@@ -188,7 +201,9 @@ public final class PixelIteratorFactory {
     public static PixelIterator createDefaultWriteableIterator(final RenderedImage renderedImage, final WritableRenderedImage writableRenderedImage, final Rectangle subArea) {
         final SampleModel sampleM = renderedImage.getSampleModel();
         if (sampleM instanceof ComponentSampleModel ) {
-            if (sampleM.getNumDataElements() == sampleM.getNumBands() && sampleM.createDataBuffer().getNumBanks() == 1) {
+            if (sampleM.getNumDataElements() == sampleM.getNumBands()
+             && sampleM.createDataBuffer().getNumBanks() == 1
+             && checkBandOffset(((ComponentSampleModel)sampleM).getBandOffsets())) {
                 switch (sampleM.getDataType()) {
                     case DataBuffer.TYPE_BYTE  : return new DefaultWritableDirectByteIterator(renderedImage, writableRenderedImage, subArea);
                     case DataBuffer.TYPE_FLOAT : return new DefaultWritableDirectFloatIterator(renderedImage, writableRenderedImage, subArea);
@@ -212,7 +227,9 @@ public final class PixelIteratorFactory {
     public static PixelIterator createRowMajorIterator(final RenderedImage renderedImage) {
         final SampleModel sampleM = renderedImage.getSampleModel();
         if (sampleM instanceof ComponentSampleModel) {
-            if (sampleM.getNumDataElements() == sampleM.getNumBands() && sampleM.createDataBuffer().getNumBanks() == 1) {
+            if (sampleM.getNumDataElements() == sampleM.getNumBands()
+             && sampleM.createDataBuffer().getNumBanks() == 1
+             && checkBandOffset(((ComponentSampleModel)sampleM).getBandOffsets())) {
                 switch (sampleM.getDataType()) {
                     case DataBuffer.TYPE_BYTE  : return new RowMajorDirectByteIterator(renderedImage, null);
                     case DataBuffer.TYPE_FLOAT : return new RowMajorDirectFloatIterator(renderedImage, null);
@@ -234,7 +251,9 @@ public final class PixelIteratorFactory {
     public static PixelIterator createRowMajorIterator(final RenderedImage renderedImage, final Rectangle subReadArea) {
         final SampleModel sampleM = renderedImage.getSampleModel();
         if (sampleM instanceof ComponentSampleModel) {
-            if (sampleM.getNumDataElements() == sampleM.getNumBands() && sampleM.createDataBuffer().getNumBanks() == 1) {
+            if (sampleM.getNumDataElements() == sampleM.getNumBands()
+             && sampleM.createDataBuffer().getNumBanks() == 1
+             && checkBandOffset(((ComponentSampleModel)sampleM).getBandOffsets())) {
                 switch (sampleM.getDataType()) {
                     case DataBuffer.TYPE_BYTE  : return new RowMajorDirectByteIterator(renderedImage, subReadArea);
                     case DataBuffer.TYPE_FLOAT : return new RowMajorDirectFloatIterator(renderedImage, subReadArea);
@@ -256,7 +275,9 @@ public final class PixelIteratorFactory {
     public static PixelIterator createRowMajorWriteableIterator(final RenderedImage renderedImage, final WritableRenderedImage writableRenderedImage) {
         final SampleModel sampleM = renderedImage.getSampleModel();
         if (sampleM instanceof ComponentSampleModel) {
-            if (sampleM.getNumDataElements() == sampleM.getNumBands() && sampleM.createDataBuffer().getNumBanks() == 1) {
+            if (sampleM.getNumDataElements() == sampleM.getNumBands()
+             && sampleM.createDataBuffer().getNumBanks() == 1
+             && checkBandOffset(((ComponentSampleModel)sampleM).getBandOffsets())) {
                 switch (sampleM.getDataType()) {
                     case DataBuffer.TYPE_BYTE  : return new RowMajorWritableDirectByteIterator(renderedImage, writableRenderedImage, null);
                     case DataBuffer.TYPE_FLOAT : return new RowMajorWritableDirectFloatIterator(renderedImage, writableRenderedImage, null);
@@ -279,7 +300,9 @@ public final class PixelIteratorFactory {
     public static PixelIterator createRowMajorWriteableIterator(final RenderedImage renderedImage, final WritableRenderedImage writableRenderedImage, final Rectangle subArea) {
         final SampleModel sampleM = renderedImage.getSampleModel();
         if (sampleM instanceof ComponentSampleModel) {
-            if (sampleM.getNumDataElements() == sampleM.getNumBands() && sampleM.createDataBuffer().getNumBanks() == 1) {
+            if (sampleM.getNumDataElements() == sampleM.getNumBands()
+             && sampleM.createDataBuffer().getNumBanks() == 1
+             && checkBandOffset(((ComponentSampleModel)sampleM).getBandOffsets())) {
                 switch (sampleM.getDataType()) {
                     case DataBuffer.TYPE_BYTE  : return new RowMajorWritableDirectByteIterator(renderedImage, writableRenderedImage, subArea);
                     case DataBuffer.TYPE_FLOAT : return new RowMajorWritableDirectFloatIterator(renderedImage, writableRenderedImage, subArea);
@@ -289,4 +312,18 @@ public final class PixelIteratorFactory {
         }
         return new RowMajorWritableIterator(renderedImage, writableRenderedImage, subArea);
     }
+
+    /**
+     * Verify bandOffset table conformity.
+     *
+     * @param bandOffset band offset table.
+     * @return true if bandOffset table is conform else false.
+     */
+    private static boolean checkBandOffset(int[] bandOffset) {
+        for (int i = 0, l = bandOffset.length; i<l; i++) {
+            if (bandOffset[i] != i) return false;
+        }
+        return true;
+    }
+
 }
