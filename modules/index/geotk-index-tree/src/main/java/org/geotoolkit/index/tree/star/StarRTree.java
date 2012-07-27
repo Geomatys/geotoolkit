@@ -2,7 +2,6 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008-2012, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009-2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -475,12 +474,12 @@ public class StarRTree extends DefaultAbstractTree {
      *
      * <blockquote><font size=-1>
      * <strong>NOTE: Define split axis method decides a split axis among all dimensions.
-     *               The choosen axis is the one with smallest overall perimeter or area (in fonction with dimension size).
+     *               The chosen axis is the one with smallest overall perimeter or area (in function with dimension size).
      *               It work by sorting all entry or {@code Node}, from their left boundary coordinates.
      *               Then it considers every divisions of the sorted list that ensure each node is at least 40% full.
-     *               The algorithm compute perimeters or area of two result {@code Node} from every division.
+     *               The algorithm compute perimeter or area of two result {@code Node} from every division.
      *               A second pass repeat this process with respect their right boundary coordinates.
-     *               Finally the overall perimeter or area on one axis is the som of all perimeter or area obtained from the two pass.</strong>
+     *               Finally the overall perimeter or area on one axis is the sum of all perimeter or area obtained from the two pass.</strong>
      * </font></blockquote>
      *
      * @throws IllegalArgumentException if candidate is null.
@@ -675,7 +674,7 @@ public class StarRTree extends DefaultAbstractTree {
      * @param nodeA Node
      * @param nodeB Node
      * @throws IllegalArgumentException if nodeA or nodeB are not tree leaf.
-     * @throws IllegalArgumentException if nodeA or nodeB, and their subnodes, don't contains some {@code Envelope} entry(ies).
+     * @throws IllegalArgumentException if nodeA or nodeB, and their sub-nodes, don't contains some {@code Envelope} entry(ies).
      */
     private static void branchGrafting(final Node nodeA, final Node nodeB ) throws IllegalArgumentException {
         if(!nodeA.isLeaf() || !nodeB.isLeaf()) throw new IllegalArgumentException("branchGrafting : not leaf");

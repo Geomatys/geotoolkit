@@ -2,7 +2,6 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008-2012, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009-2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -17,15 +16,15 @@
  */
 package org.geotoolkit.index.tree.nodefactory;
 
-/**Create choosen {@code NodeFactory}.
+/**Create chosen {@code NodeFactory}.
  *
  * @author Rémi Marechal (Geomatys).
  */
 public class TreeNodeFactory {
-    
+
     /**
      * Adapted default {@code Node} factory to R-Tree.
      */
     public static final NodeFactory DEFAULT_FACTORY = new DefaultNodeFactory();
-    
+
 }

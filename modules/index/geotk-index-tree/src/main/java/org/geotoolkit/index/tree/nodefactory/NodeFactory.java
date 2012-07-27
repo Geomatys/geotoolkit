@@ -2,7 +2,6 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008-2012, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009-2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -28,14 +27,14 @@ import org.opengis.geometry.Envelope;
  * @author Rémi Marechal (Geomatys).
  */
 public interface NodeFactory {
-    
+
     /**Create a node in accordance with RTree properties.
-     *  
+     *
      * @param tree pointer on Tree.
      * @param parent pointer on parent {@code Node}.
      * @param children sub {@code Node}.
-     * @param entries entries {@code List} to add in this node. 
-     * @param coordinates lower upper bounding box coordinates table. 
+     * @param entries entries {@code List} to add in this node.
+     * @param coordinates lower upper bounding box coordinates table.
      * @return appropriate Node from tree.
      */
     Node createNode(final Tree tree, final Node parent, final DirectPosition lowerCorner, final DirectPosition upperCorner, final List<Node> children, final List<Envelope> entries);

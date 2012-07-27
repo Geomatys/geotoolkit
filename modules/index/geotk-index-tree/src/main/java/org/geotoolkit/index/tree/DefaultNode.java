@@ -2,7 +2,6 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008-2012, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009-2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -32,12 +31,12 @@ import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 
 /**Create a Node adapting with Euclidean dimensions datas.
- * 
+ *
  * @author Rémi Marechal (Geomatys)
  * @author Johann Sorel  (Geomatys)
  */
 public class DefaultNode extends Node {
-    
+
     private final List<Node> children = new CrossList<Node>(Node.class) {
 
         @Override
@@ -69,7 +68,7 @@ public class DefaultNode extends Node {
             clearBounds();
         }
     };
-    
+
     private final List<Envelope> entries = new NotifiedCheckedList<Envelope>(Envelope.class) {
         @Override
         protected void notifyAdd(Envelope e, int i) {
@@ -88,17 +87,17 @@ public class DefaultNode extends Node {
             clearBounds();
         }
     };
-    
+
     /**Create an empty {@code DefaultNode}.
-     * 
-     * @param tree 
+     *
+     * @param tree
      */
     public DefaultNode(final Tree tree) {
         this(tree, null, null, null, null, null);
     }
-    
+
     /**Create {@code DefaultNode}.
-     * 
+     *
      * @param tree pointer on {@code Tree}.
      * @param parent pointer on {@code Node} parent.
      * @param children subNode.
@@ -124,9 +123,9 @@ public class DefaultNode extends Node {
         }
     }
 
-    
+
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     @Override
     public List<Node> getChildren() {
@@ -134,7 +133,7 @@ public class DefaultNode extends Node {
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     @Override
     public boolean isLeaf() {
@@ -146,7 +145,7 @@ public class DefaultNode extends Node {
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     @Override
     public boolean isEmpty() {
@@ -163,7 +162,7 @@ public class DefaultNode extends Node {
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     @Override
     public boolean isFull() {
@@ -180,7 +179,7 @@ public class DefaultNode extends Node {
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     @Override
     public Envelope getBoundary() {
@@ -191,7 +190,7 @@ public class DefaultNode extends Node {
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     @Override
     public List<Envelope> getEntries() {
@@ -199,7 +198,7 @@ public class DefaultNode extends Node {
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     @Override
     public Node getParent() {
@@ -207,13 +206,13 @@ public class DefaultNode extends Node {
     }
 
     /**
-     * {@inheritDoc} 
+     * {@inheritDoc}
      */
     @Override
     public Tree getTree() {
         return tree;
     }
-    
+
     /**
      * Affect a {@code null} on boundary.
      */
@@ -221,9 +220,9 @@ public class DefaultNode extends Node {
         boundary=null;
         fireCollectionEvent();
     }
-    
+
     /**
-     * Compute {@code Node} boundary from stocked sub-node or entries . 
+     * Compute {@code Node} boundary from stocked sub-node or entries .
      */
     protected void calculateBounds(){
         for(Envelope ent2D : getEntries()){
@@ -237,7 +236,7 @@ public class DefaultNode extends Node {
     }
 
     /**Update boundary size from {@code Envelope}.
-     * 
+     *
      * @param env {@code Node} or entry boundary.
      */
     protected void addBound(final Envelope env){
@@ -247,24 +246,24 @@ public class DefaultNode extends Node {
             boundary.add(env);
         }
     }
-    
+
     /**Affect a new parent pointer.
-     * 
-     * @param parent 
+     *
+     * @param parent
      */
     @Override
     public void setParent(final Node parent){
         this.parent = parent;
     }
-    
+
     /**
-     * {@inheritDoc}. 
+     * {@inheritDoc}.
      */
     @Override
     public String toString() {
         final Collection col = new ArrayList(entries);
         col.addAll(children);
-        String strparent =  (parent == null)?"null":String.valueOf(parent.hashCode()); 
+        String strparent =  (parent == null)?"null":String.valueOf(parent.hashCode());
         return Trees.toString(Classes.getShortClassName(this)+" : "+this.hashCode()+" parent : "+strparent
                 + " leaf : "+isLeaf()+ " userPropLeaf : "+(Boolean)getUserProperty("isleaf"), col);
     }

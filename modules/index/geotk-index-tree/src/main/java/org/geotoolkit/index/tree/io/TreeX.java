@@ -2,7 +2,6 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008-2012, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009-2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -33,11 +32,11 @@ public final class TreeX {
     private TreeX() {
     }
 
-    /**Effectuate differents logics operations on tree.
+    /**Effectuate different logics operations on tree.
      *
      * @param tree
      * @param areaSearch
-     * @param logicFilter differente logic operation.
+     * @param logicFilter different logic operation.
      * @param visitor
      * @see SpatialFilterType
      */

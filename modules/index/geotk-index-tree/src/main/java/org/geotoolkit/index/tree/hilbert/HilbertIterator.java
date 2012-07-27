@@ -2,7 +2,6 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008-2012, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009-2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -21,7 +20,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 /**
- * Iterator which follow multi-dimensionnal Hilbert curve.
+ * Iterator which follow multi-dimensional Hilbert curve.
  *
  * @author Rémi Marechal        (Geomatys).
  * @author Martin Desruisseaux  (Geomatys).
@@ -82,7 +81,7 @@ public class HilbertIterator implements Iterator<int[]> {
     }
 
     /**
-     * Create appropriate first Hibert curve path iteration.
+     * Create appropriate first Hilbert curve path iteration.
      *
      * @param remainingDim space dimension.
      * @param currentlyPath
