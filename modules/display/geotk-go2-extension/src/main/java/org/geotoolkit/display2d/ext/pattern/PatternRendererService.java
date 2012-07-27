@@ -18,7 +18,6 @@ package org.geotoolkit.display2d.ext.pattern;
 
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.renderer.AbstractSymbolizerRendererService;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;

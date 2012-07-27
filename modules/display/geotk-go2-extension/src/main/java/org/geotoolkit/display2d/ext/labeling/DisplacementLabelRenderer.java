@@ -20,17 +20,16 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.style.labeling.candidate.Candidate;
 import org.geotoolkit.display2d.style.labeling.DefaultLabelRenderer;
 import org.geotoolkit.display2d.style.labeling.LabelDescriptor;
 import org.geotoolkit.display2d.style.labeling.LabelLayer;
 import org.geotoolkit.display2d.style.labeling.LinearLabelDescriptor;
-import org.geotoolkit.display2d.style.labeling.candidate.PointCandidate;
-import org.geotoolkit.display2d.style.labeling.candidate.LinearCandidate;
 import org.geotoolkit.display2d.style.labeling.PointLabelDescriptor;
+import org.geotoolkit.display2d.style.labeling.candidate.Candidate;
 import org.geotoolkit.display2d.style.labeling.candidate.LabelingUtilities;
+import org.geotoolkit.display2d.style.labeling.candidate.LinearCandidate;
+import org.geotoolkit.display2d.style.labeling.candidate.PointCandidate;
 import org.geotoolkit.display2d.style.labeling.decimate.LinearLabelCandidateRenderer;
 import org.geotoolkit.display2d.style.labeling.decimate.PointLabelCandidateRenderer;
 

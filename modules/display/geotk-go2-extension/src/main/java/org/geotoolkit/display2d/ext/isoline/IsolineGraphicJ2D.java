@@ -18,42 +18,39 @@
 package org.geotoolkit.display2d.ext.isoline;
 
 import com.vividsolutions.jts.geom.Coordinate;
-
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
-
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.data.DataStoreRuntimeException;
-import org.geotoolkit.display.exception.PortrayalException;
-import org.geotoolkit.process.ProcessEvent;
-import org.geotoolkit.process.ProcessException;
-import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.container.stateless.StatelessFeatureLayerJ2D;
-import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
+import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
+import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.container.statefull.StatefullCoverageLayerJ2D;
+import org.geotoolkit.display2d.container.stateless.StatelessFeatureLayerJ2D;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.map.CoverageMapLayer;
+import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
+import org.geotoolkit.process.ProcessEvent;
+import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessListener;
 import org.geotoolkit.process.ProcessListenerAdapter;
 import org.geotoolkit.process.coverage.kriging.KrigingDescriptor;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.style.MutableStyle;
-
 import org.opengis.feature.Feature;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;

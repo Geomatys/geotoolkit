@@ -21,7 +21,6 @@ import java.awt.Image;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
@@ -30,7 +29,6 @@ import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.MutableStyle;
-
 import org.opengis.display.canvas.Canvas;
 
 /**

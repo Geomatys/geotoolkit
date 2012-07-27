@@ -24,11 +24,9 @@ import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.primitive.SearchArea;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-
 import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
-import org.opengis.display.primitive.Graphic;
-
 import static org.geotoolkit.util.ArgumentChecks.*;
+import org.opengis.display.primitive.Graphic;
 
 /**
  * Graphic decoration to paint a grid.

@@ -20,29 +20,25 @@ import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
-
 import java.awt.Color;
-import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
-import org.geotoolkit.storage.DataStoreException;
-
+import org.geotoolkit.data.FeatureIterator;
+import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.map.FeatureMapLayer;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
-import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.data.query.QueryBuilder;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
-
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.And;

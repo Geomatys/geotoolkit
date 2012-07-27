@@ -22,9 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import javax.measure.unit.NonSI;
-
 import org.geotoolkit.style.AbstractExtensionSymbolizer;
-
 import org.geotoolkit.style.function.ThreshholdsBelongTo;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;

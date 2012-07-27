@@ -22,7 +22,6 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Polygon;
-
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Shape;
@@ -30,7 +29,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.geotoolkit.display.axis.Graduation;
 import org.geotoolkit.display.axis.NumberGraduation;
 import org.geotoolkit.display.axis.TickIterator;
@@ -45,7 +43,6 @@ import org.geotoolkit.display2d.style.labeling.LinearLabelDescriptor;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.referencing.CRS;
-
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;

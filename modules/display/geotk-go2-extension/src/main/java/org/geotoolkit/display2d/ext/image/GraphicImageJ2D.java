@@ -17,14 +17,13 @@
 
 package org.geotoolkit.display2d.ext.image;
 
-import org.geotoolkit.display2d.canvas.J2DCanvas;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import static javax.swing.SwingConstants.*;
+import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.ext.PositionedGraphic2D;
-
-import static javax.swing.SwingConstants.*;
 
 /**
  * Graphic decoration to paint an Image.

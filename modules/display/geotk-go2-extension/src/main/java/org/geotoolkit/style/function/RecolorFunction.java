@@ -24,9 +24,7 @@ import java.awt.image.ComponentColorModel;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
 import org.geotoolkit.filter.AbstractExpression;
-
 import org.opengis.filter.capability.FunctionName;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.ExpressionVisitor;

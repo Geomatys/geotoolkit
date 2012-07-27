@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.geotoolkit.display2d.style.labeling.candidate.Candidate;
 import org.geotoolkit.display2d.style.labeling.candidate.LabelingUtilities;
 import org.geotoolkit.display2d.style.labeling.candidate.PointCandidate;

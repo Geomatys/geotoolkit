@@ -17,29 +17,29 @@
 
 package org.geotoolkit.display2d.ext.legend;
 
-import java.awt.Color;
 import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
-import org.geotoolkit.style.MutableStyleFactory;
-import org.opengis.style.Symbolizer;
-import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.MeasurementRange;
-import org.geotoolkit.display2d.ext.dimrange.DimRangeSymbolizer;
 import javax.measure.unit.Unit;
 import org.geotoolkit.display2d.ext.DefaultBackgroundTemplate;
+import org.geotoolkit.display2d.ext.dimrange.DimRangeSymbolizer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.DefaultStyleFactory;
+import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
+import org.geotoolkit.util.MeasurementRange;
+import org.geotoolkit.util.NumberRange;
 import org.junit.After;
 import org.junit.AfterClass;
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
+import org.opengis.style.Symbolizer;
 
 /**
  *

@@ -2,7 +2,6 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2007 - 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2008 - 2009, Johann Sorel
  *
  *    This library is free software; you can redistribute it and/or
@@ -22,22 +21,20 @@ import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
-
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.DataStoreRuntimeException;
-
-import org.geotoolkit.factory.Factory;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.factory.Factory;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.map.FeatureMapLayer;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -45,7 +42,6 @@ import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.style.interval.RandomPalette;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
-
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;

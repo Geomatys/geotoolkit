@@ -23,10 +23,10 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
-import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.style.renderer.AbstractCoverageSymbolizerRenderer;
+import org.geotoolkit.geometry.GeneralEnvelope;
 
 
 /**

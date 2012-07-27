@@ -21,16 +21,14 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.util.logging.Level;
-
+import static javax.swing.SwingConstants.*;
 import org.geotoolkit.display.container.AbstractContainer2D;
 import org.geotoolkit.display.exception.PortrayalException;
+import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.container.ContextContainer2D;
 import org.geotoolkit.display2d.ext.PositionedGraphic2D;
 import org.geotoolkit.map.MapContext;
-
-import static javax.swing.SwingConstants.*;
-import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.opengis.referencing.operation.TransformException;
 
 /**

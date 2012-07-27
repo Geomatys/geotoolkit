@@ -18,7 +18,6 @@
 package org.geotoolkit.display2d.ext.pattern;
 
 import com.vividsolutions.jts.geom.Geometry;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,19 +28,17 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
+import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.coverage.coveragetovector.CoverageToVectorDescriptor;
 import org.geotoolkit.util.NumberRange;
-
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.expression.Expression;

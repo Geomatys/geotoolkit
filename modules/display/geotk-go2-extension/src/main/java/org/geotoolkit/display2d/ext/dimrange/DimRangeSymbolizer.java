@@ -21,7 +21,6 @@ import java.util.Collections;
 import java.util.Map;
 import javax.measure.unit.NonSI;
 import org.geotoolkit.style.AbstractSymbolizer;
-
 import org.geotoolkit.util.MeasurementRange;
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.ExtensionSymbolizer;

@@ -32,7 +32,6 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
-
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.processing.ColorMap;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;

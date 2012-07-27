@@ -2,7 +2,6 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2007 - 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2008 - 2009, Johann Sorel
  *
  *    This library is free software; you can redistribute it and/or
@@ -17,25 +16,22 @@
  */
 package org.geotoolkit.style.random;
 
-import org.geotoolkit.style.*;
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.List;
-import javax.measure.unit.NonSI;
-import javax.measure.unit.Unit;
-
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
+import javax.measure.unit.NonSI;
+import javax.measure.unit.Unit;
 import org.geotoolkit.data.FeatureCollection;
-
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
-
+import org.geotoolkit.style.*;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.AttributeType;

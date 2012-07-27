@@ -22,7 +22,6 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.RenderedImage;
 import java.util.logging.Level;
-
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
@@ -40,7 +39,6 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.util.MeasurementRange;
-
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform2D;

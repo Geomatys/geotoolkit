@@ -21,10 +21,9 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
-
-import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.renderer.AbstractSymbolizerRendererService;
+import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.map.MapLayer;
 
 

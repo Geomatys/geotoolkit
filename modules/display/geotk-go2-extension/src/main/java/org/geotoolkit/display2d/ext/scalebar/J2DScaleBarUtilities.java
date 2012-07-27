@@ -2,7 +2,6 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2004 - 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2008 - 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -30,28 +29,24 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.text.FieldPosition;
 import java.util.Arrays;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.measure.converter.ConversionException;
 import javax.measure.converter.UnitConverter;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
-
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.ext.BackgroundTemplate;
 import org.geotoolkit.display2d.ext.BackgroundUtilities;
+import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.math.XMath;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.datum.DefaultEllipsoid;
-import org.geotoolkit.internal.referencing.CRSUtilities;
-
-import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.datum.Ellipsoid;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 
 /**
  * Utility class to render scalebars using a provided template and geographic information.
