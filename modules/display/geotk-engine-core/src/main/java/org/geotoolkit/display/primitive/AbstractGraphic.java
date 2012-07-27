@@ -17,18 +17,15 @@
  */
 package org.geotoolkit.display.primitive;
 
-import java.util.Locale;
-import java.util.logging.Logger;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-
+import java.util.Locale;
+import java.util.logging.Logger;
+import org.geotoolkit.display.canvas.DisplayObject;
+import static org.geotoolkit.util.ArgumentChecks.*;
+import org.geotoolkit.util.converter.Classes;
 import org.opengis.display.canvas.Canvas;
 import org.opengis.display.primitive.Graphic;
-
-import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.display.canvas.DisplayObject;
-
-import static org.geotoolkit.util.ArgumentChecks.*;
 
 /**
  * The root abstraction of a graphic object taxonomy, specifying the methods common to a

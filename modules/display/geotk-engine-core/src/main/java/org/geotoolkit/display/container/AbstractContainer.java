@@ -27,7 +27,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import javax.swing.event.EventListenerList;
-
 import org.geotoolkit.display.canvas.AbstractCanvas;
 import org.geotoolkit.display.canvas.AbstractReferencedCanvas2D;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
@@ -35,7 +34,6 @@ import org.geotoolkit.display.primitive.AbstractGraphic;
 import org.geotoolkit.display.primitive.AbstractReferencedGraphic;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.resources.Errors;
-
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.display.canvas.Canvas;
 import org.opengis.display.container.ContainerEvent;

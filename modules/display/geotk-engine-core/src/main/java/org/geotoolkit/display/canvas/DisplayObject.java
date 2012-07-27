@@ -17,20 +17,19 @@
  */
 package org.geotoolkit.display.canvas;
 
+import java.awt.RenderingHints;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+import java.beans.VetoableChangeListener;
+import java.beans.VetoableChangeSupport;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.awt.RenderingHints;
-import java.beans.PropertyChangeSupport;
-import java.beans.PropertyChangeListener;
-import java.beans.VetoableChangeListener;
-import java.beans.VetoableChangeSupport;
 import org.geotoolkit.display.primitive.AbstractGraphic;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.util.logging.Logging;
-
-import org.opengis.display.primitive.Graphic;   //for javadoc
-import org.opengis.display.canvas.Canvas;       //for javadoc
+import org.opengis.display.canvas.Canvas;
+import org.opengis.display.primitive.Graphic;
 
 /**
  * The base class for {@linkplain AbstractCanvas canvas} and

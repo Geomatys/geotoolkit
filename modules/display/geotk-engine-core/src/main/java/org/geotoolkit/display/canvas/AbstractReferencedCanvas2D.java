@@ -28,7 +28,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
-
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.internal.referencing.CRSUtilities;
@@ -40,8 +39,8 @@ import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.referencing.operation.transform.IdentityTransform;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
+import static org.geotoolkit.util.ArgumentChecks.*;
 import org.geotoolkit.util.converter.Classes;
-
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.DerivedCRS;
@@ -49,8 +48,6 @@ import org.opengis.referencing.crs.GeneralDerivedCRS;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-
-import static org.geotoolkit.util.ArgumentChecks.*;
 
 /**
  * A canvas implementation with default support for two-dimensional CRS management. This

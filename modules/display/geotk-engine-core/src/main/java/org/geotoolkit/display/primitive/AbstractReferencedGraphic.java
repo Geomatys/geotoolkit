@@ -18,16 +18,13 @@
 package org.geotoolkit.display.primitive;
 
 import java.util.List;
-
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.opengis.display.primitive.Graphic;
-
 import org.geotoolkit.display.canvas.AbstractReferencedCanvas2D;
-import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.RenderingContext;
+import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
+import org.opengis.display.primitive.Graphic;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;

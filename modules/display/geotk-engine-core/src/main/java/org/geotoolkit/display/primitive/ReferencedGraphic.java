@@ -19,14 +19,12 @@ package org.geotoolkit.display.primitive;
 
 import java.beans.PropertyChangeEvent;
 import java.util.List;
-
+import org.geotoolkit.display.canvas.AbstractReferencedCanvas2D;
+import org.geotoolkit.display.canvas.RenderingContext;
+import org.geotoolkit.display.canvas.VisitFilter;
+import org.geotoolkit.geometry.GeneralEnvelope;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.geometry.Envelope;
-
-import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotoolkit.display.canvas.VisitFilter;
-import org.geotoolkit.display.canvas.RenderingContext;
-import org.geotoolkit.display.canvas.AbstractReferencedCanvas2D;
 
 
 /**
