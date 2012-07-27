@@ -2,7 +2,6 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2005-2012, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009-2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -37,18 +36,17 @@ import org.junit.*;
 import org.opengis.coverage.Coverage;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.NoSuchIdentifierException;
-import sun.awt.image.ByteBandedRaster;
 
 /**
  *
- * @author geoadmin
+ * @author Alexis Manin (Geomatys)
  */
 public class CombinerTest {
-    
+
     static final int WIDTH = 10;
     static final int HEIGHT = 10;
     static final int SIZE = WIDTH*HEIGHT;
-    
+
     public CombinerTest() {
     }
 
@@ -59,15 +57,15 @@ public class CombinerTest {
     @AfterClass
     public static void tearDownClass() throws Exception {
     }
-    
+
     @Before
     public void setUp() {
     }
-    
+
     @After
     public void tearDown() {
     }
-    
+
     @Test
     public void testProcess() {
         byte[] redTable = new byte[SIZE];
@@ -92,26 +90,26 @@ public class CombinerTest {
             for (int i = 0; i < WIDTH; i++) {
                 greenTable[j * WIDTH + i] = (byte) 127;
             }
-        }        
-        
+        }
+
         DataBuffer buffer = new DataBufferByte(redTable, SIZE);
         WritableRaster raster = WritableRaster.createBandedRaster(buffer, WIDTH, HEIGHT, WIDTH, new int[1], new int[1], new Point(0, 0));
         BufferedImage result = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_BYTE_GRAY);
-        result.setData(raster);      
+        result.setData(raster);
         Coverage red = createCoverage(result);
-        
+
         buffer = new DataBufferByte(greenTable, SIZE);
         raster = WritableRaster.createBandedRaster(buffer, WIDTH, HEIGHT, WIDTH, new int[1], new int[1], new Point(0, 0));
         result = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_BYTE_GRAY);
-        result.setData(raster);        
+        result.setData(raster);
         Coverage green = createCoverage(result);
-        
+
         buffer = new DataBufferByte(blueTable, SIZE);
         raster = WritableRaster.createBandedRaster(buffer, WIDTH, HEIGHT, WIDTH, new int[1], new int[1], new Point(0, 0));
         result = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_BYTE_GRAY);
-        result.setData(raster);   
+        result.setData(raster);
         Coverage blue = createCoverage(result);
-        
+
         //get the description of the process we want
         ProcessDescriptor desc = null;
         try {
@@ -120,8 +118,8 @@ public class CombinerTest {
             Logger.getLogger(CombinerTest.class.getName()).log(Level.SEVERE, null, ex);
             fail(ex.getMessage());
         }
-        
-        //create a process        
+
+        //create a process
         //set the input parameters
         final ParameterValueGroup input = desc.getInputDescriptor().createValue();
         input.parameter("red").setValue(red);
@@ -132,23 +130,23 @@ public class CombinerTest {
         try {
             //get the result
             output = p.call();
-        } catch (ProcessException ex) {            
+        } catch (ProcessException ex) {
             Logger.getLogger(CombinerTest.class.getName()).log(Level.SEVERE, null, ex);
             fail(ex.getMessage());
         }
-        
+
         assertNotNull(output);
         Object res = output.parameter("result").getValue();
-        
+
         assertNotNull(res);
         assertTrue(res instanceof GridCoverage2D);
         GridCoverage2D toTest = (GridCoverage2D)res;
-        
+
         assertNotNull(toTest.getRenderedImage());
         assertTrue(toTest.getRenderedImage() instanceof RenderedImage);
         RenderedImage img = (RenderedImage) toTest.getRenderedImage();
         //assertEquals(BufferedImage.TYPE_3BYTE_BGR, img.getDataType());
-        
+
         File f = new File(System.getProperty("user.home")+"/imageTest.bmp");
         try {
             ImageIO.write(img, "bmp", f);
@@ -156,22 +154,22 @@ public class CombinerTest {
             Logger.getLogger(CombinerTest.class.getName()).log(Level.SEVERE, null, ex);
             fail(ex.getMessage());
         }
-        
+
     }
-    
+
     private Coverage createCoverage(RenderedImage img){
-        
+
         final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
         env.setRange(0, 0, 100);
         env.setRange(1, 0, 100);
 
-        //prepare coverages        
+        //prepare coverages
         final GridCoverageBuilder builder = new GridCoverageBuilder();
         builder.setName("7357");
-        builder.setEnvelope(env);  
-        
+        builder.setEnvelope(env);
+
         builder.setRenderedImage(img);
-        
+
         return builder.getGridCoverage2D();
     }
 }
