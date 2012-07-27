@@ -2,7 +2,6 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2003 - 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2008 - 2011, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -18,23 +17,20 @@
 package org.geotoolkit.map;
 
 import java.util.logging.Level;
-
-import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
+import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.style.MutableStyle;
-
+import static org.geotoolkit.util.ArgumentChecks.*;
 import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
-import static org.geotoolkit.util.ArgumentChecks.*;
 
 /**
  * Default implementation of the MapLayer.
@@ -73,13 +69,11 @@ final class DefaultFeatureMapLayer extends DefaultCollectionMapLayer implements 
     }
 
     /**
-     * Sets a definition query for this layer.
+     * Sets a filter query for this layer.
      *
      * <p>
-     * If present (other than <code>Query.ALL</code>, a renderer or consumer
-     * must use it to limit the number of returned features based on the filter
-     * it holds and the value of the maxFeatures attributes, and also can use it
-     * as a performance hto limit the number of requested attributes
+     * Query filters should be used to reduce searched or displayed feature
+     * when rendering or analyzing this layer.
      * </p>
      *
      * @param query the full filter for this layer. can not be null.

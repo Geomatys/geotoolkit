@@ -2,7 +2,6 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2003 - 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2008 - 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -19,7 +18,6 @@ package org.geotoolkit.map;
 
 import java.io.IOException;
 import java.util.List;
-
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -27,6 +25,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 /**
  * Store context information about a map display.
  * This class does not store information about the map view.
+ * Internal structure is a Tree which can be viewed as a list using method 'layers'.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
@@ -59,7 +58,8 @@ public interface MapContext extends MapItem{
 
     /**
      * Returns the living list of all layers. You may add, remove or change layers
-     * of this list.
+     * of this list. modifying this list automaticaly updates the tree structure of
+     * the parent classe : MapItem.
      * @return the live list
      */
     List<MapLayer> layers();

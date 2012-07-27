@@ -2,7 +2,6 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2003 - 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2008 - 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -21,10 +20,9 @@ import java.beans.PropertyChangeEvent;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collection;
-
 import org.geotoolkit.internal.ReferenceQueueConsumer;
-import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.geotoolkit.util.Disposable;
+import org.geotoolkit.util.collection.CollectionChangeEvent;
 
 
 /**

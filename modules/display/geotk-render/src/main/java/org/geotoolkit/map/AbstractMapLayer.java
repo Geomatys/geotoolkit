@@ -2,7 +2,6 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2003 - 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -21,17 +20,14 @@ import java.beans.PropertyChangeEvent;
 import java.util.Collections;
 import java.util.EventObject;
 import java.util.List;
-
-import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.style.StyleListener;
-import org.geotoolkit.util.collection.CheckedArrayList;
-
-import org.opengis.display.primitive.Graphic;
-
 import static org.geotoolkit.util.ArgumentChecks.*;
+import org.geotoolkit.util.collection.CheckedArrayList;
+import org.geotoolkit.util.collection.CollectionChangeEvent;
+import org.opengis.display.primitive.Graphic;
 
 /**
  * Abstract implementation of the MapLayer.

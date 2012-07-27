@@ -2,7 +2,6 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2003 - 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2008 - 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -19,15 +18,13 @@ package org.geotoolkit.map;
 
 import java.beans.PropertyChangeEvent;
 import java.util.List;
-
 import org.geotoolkit.style.MutableStyle;
-
 import org.opengis.display.primitive.Graphic;
 import org.opengis.geometry.Envelope;
 
 /**
  * A layer to be rendered. A layer is an aggregation of both a
- * data source : {@link FeatureCollection} or {@ GridCoverageReader}
+ * data source : {@link FeatureCollection} or {@ CoverageReference}
  * with a given {@link MutableStyle}.
  *
  * @author Johann Sorel (Geomatys)

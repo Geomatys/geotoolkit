@@ -18,9 +18,7 @@ package org.geotoolkit.map;
 
 import java.awt.Image;
 import java.util.Collection;
-
 import org.geotoolkit.display.exception.PortrayalException;
-
 import org.opengis.display.canvas.Canvas;
 import org.opengis.display.primitive.Graphic;
 
