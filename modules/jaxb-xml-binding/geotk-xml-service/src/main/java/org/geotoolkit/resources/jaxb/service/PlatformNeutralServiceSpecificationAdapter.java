@@ -1,8 +1,8 @@
 /*
  *    GeotoolKit - An Open Source Java GIS Toolkit
  *    http://geotoolkit.org
- *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2008, Geomatys
+ * 
+ *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -26,7 +26,7 @@ import org.opengis.service.PlatformNeutralServiceSpecification;
  * package documentation for more information about JAXB and interface.
  *
  * @module pending
- * @since 2.5
+ * @since 3.03
  * @author Guilhem Legal
  */
 public class PlatformNeutralServiceSpecificationAdapter extends XmlAdapter<PlatformNeutralServiceSpecificationAdapter, PlatformNeutralServiceSpecification> {
