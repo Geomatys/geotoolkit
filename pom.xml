@@ -61,7 +61,7 @@
 
   <ciManagement>
     <system>jenkins</system>
-    <url>http://jenkins.geomatys.com/job/Geotoolkit-pending/</url>
+    <url>http://jenkins.geotoolkit.org/job/Geotoolkit-pending/</url>
   </ciManagement>
 
   <issueManagement>
