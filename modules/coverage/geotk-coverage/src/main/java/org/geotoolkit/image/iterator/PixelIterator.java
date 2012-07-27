@@ -72,11 +72,6 @@ public abstract class PixelIterator {
     protected int numBand;
 
     /**
-     * The X coordinate of the upper-left pixel of this current raster.
-     */
-    protected int minX;
-
-    /**
      * The X coordinate of the bottom-right pixel of this current raster.
      */
     protected int maxX;
@@ -139,7 +134,7 @@ public abstract class PixelIterator {
             final int sAMX = subArea.x;
             final int sAMY = subArea.y;
             //intersection
-            this.minX = this.areaIterateMinX = Math.max(sAMX, minx);
+            this.areaIterateMinX = Math.max(sAMX, minx);
             this.areaIterateMinY = Math.max(sAMY, miny);
             this.maxX = this.areaIterateMaxX = Math.min(sAMX + subArea.width, maxx);
             this.maxY = this.areaIterateMaxY = Math.min(sAMY + subArea.height, maxy);
@@ -150,7 +145,7 @@ public abstract class PixelIterator {
             this.areaIterateMaxX = maxx;
             this.areaIterateMaxY = maxy;
         }
-        this.numBand    = raster.getNumBands();
+        this.numBand = raster.getNumBands();
         if(areaIterateMinX > areaIterateMaxX || areaIterateMinY > areaIterateMaxY)
             throw new IllegalArgumentException("invalid subArea coordinate no intersection between it and raster"+raster+subArea);
         this.band = -1;
@@ -219,6 +214,7 @@ public abstract class PixelIterator {
 
     /**
      * Returns next X iterator coordinate without move forward it.
+     * User must call next() method before getX() method.
      *
      * @return X iterator position.
      */
@@ -226,6 +222,7 @@ public abstract class PixelIterator {
 
     /**
      * Returns next Y iterator coordinate without move forward it.
+     * User must call next() method before getY() method.
      *
      * @return Y iterator position.
      */

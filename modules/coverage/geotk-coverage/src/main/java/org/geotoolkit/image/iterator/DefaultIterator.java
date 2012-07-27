@@ -56,6 +56,11 @@ class DefaultIterator extends PixelIterator {
     protected int y;
 
     /**
+     * The X coordinate of the upper-left pixel of this current raster.
+     */
+    private int minX;
+
+    /**
      * Create raster iterator to follow from minX, minY raster and rectangle intersection coordinate.
      *
      * @param raster will be followed by this iterator.

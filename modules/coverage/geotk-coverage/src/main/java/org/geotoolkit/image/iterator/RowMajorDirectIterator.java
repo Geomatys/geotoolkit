@@ -2,7 +2,6 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2012, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -72,11 +71,6 @@ abstract class RowMajorDirectIterator extends PixelIterator {
     protected final int scanLineStride;
 
     /**
-     * Band offset for all band.
-     */
-    protected final int[] bandOffset;
-
-    /**
      * Create default rendered image iterator.
      *
      * @param renderedImage image which will be follow by iterator.
@@ -90,15 +84,15 @@ abstract class RowMajorDirectIterator extends PixelIterator {
         final SampleModel sampleM = renderedImage.getSampleModel();
         if (sampleM instanceof ComponentSampleModel) {
             this.scanLineStride = ((ComponentSampleModel)sampleM).getScanlineStride();
-            this.bandOffset = ((ComponentSampleModel)sampleM).getBandOffsets();
         } else {
             throw new IllegalArgumentException("DefaultDirectIterator constructor : sample model not conform");
         }
-
+        this.rasterWidth = renderedImage.getTileWidth();
+        this.numBand = sampleM.getNumBands();
         //initialize attributs to first iteration
         this.row     = this.areaIterateMinY - 1;
         this.maxY    = this.row + 1;
-        this.numBand = this.maxX = 1;
+        this.maxX = 1;
         this.tY      = tMinY - 1;
         this.tX      = tMaxX - 1;
     }
@@ -108,27 +102,22 @@ abstract class RowMajorDirectIterator extends PixelIterator {
      */
     @Override
     public boolean next() {
-        if (++band == numBand) {
-            band = 0;
-            if (++dataCursor == maxX) {
-                if (++tX == tMaxX) {
-                    tX = tMinX;
-                    if (++row == maxY) {
-                        if (++tY == tMaxY) return false;
-                        updateCurrentRaster(tX, tY);
-                        this.cRMinY = this.currentRaster.getMinY();
-                        this.maxY   = Math.min(areaIterateMaxY, cRMinY + currentRaster.getHeight());
-                    }
+        if (++dataCursor == maxX) {
+            if (++tX == tMaxX) {
+                tX = tMinX;
+                if (++row == maxY) {
+                    if (++tY == tMaxY) return false;
+                    updateCurrentRaster(tX, tY);
+                    this.cRMinY = this.currentRaster.getMinY();
+                    this.maxY   = Math.min(areaIterateMaxY, cRMinY + currentRaster.getHeight());
                 }
-                updateCurrentRaster(tX, tY);
-                this.cRMinX    = currentRaster.getMinX();
-                this.minX      = Math.max(areaIterateMinX, cRMinX) - cRMinX;
-                this.maxX      = Math.min(areaIterateMaxX, cRMinX + rasterWidth) - cRMinX;
-                final int step = (row - cRMinY) * rasterWidth;
-                this.maxX     +=  step;
-                dataCursor     = minX + step;
-                this.numBand   = currentRaster.getNumBands();
             }
+            updateCurrentRaster(tX, tY);
+            this.cRMinX    = currentRaster.getMinX();
+            this.maxX      = (Math.min(areaIterateMaxX, cRMinX + rasterWidth) - cRMinX)*numBand;
+            final int step = (row - cRMinY) * scanLineStride;
+            this.maxX     +=  step;
+            dataCursor     = (Math.max(areaIterateMinX, cRMinX) - cRMinX)*numBand + step;
         }
         return true;
     }
@@ -141,7 +130,6 @@ abstract class RowMajorDirectIterator extends PixelIterator {
      */
     protected void updateCurrentRaster(int tileX, int tileY) {
         this.currentRaster = renderedImage.getTile(tileX, tileY);
-        this.rasterWidth   = currentRaster.getWidth();
     }
 
     /**
@@ -149,8 +137,7 @@ abstract class RowMajorDirectIterator extends PixelIterator {
      */
     @Override
     public int getX() {
-        final int minx = (renderedImage == null) ? currentRaster.getMinX() : renderedImage.getMinX();
-        return minx + (tX - tMinX) * rasterWidth + dataCursor % rasterWidth;
+        return cRMinX + dataCursor % scanLineStride/numBand;
     }
 
     /**
@@ -158,8 +145,7 @@ abstract class RowMajorDirectIterator extends PixelIterator {
      */
     @Override
     public int getY() {
-        final int miny = (renderedImage == null) ? currentRaster.getMinY() : renderedImage.getMinY();
-        return miny + (tY - tMinY) * currentRaster.getHeight() + dataCursor/rasterWidth;
+        return cRMinY + dataCursor / scanLineStride;
     }
 
     /**
@@ -168,7 +154,7 @@ abstract class RowMajorDirectIterator extends PixelIterator {
     @Override
     public void rewind() {
         this.maxY       = this.areaIterateMinY;
-        this.numBand    = this.maxX = 1;
+        this.maxX = 1;
         this.dataCursor = this.band = 0;
         this.tY         = this.tMinY - 1;
         this.tX         = this.tMaxX - 1;
@@ -188,19 +174,12 @@ abstract class RowMajorDirectIterator extends PixelIterator {
         this.cRMinX = currentRaster.getMinX();
         this.cRMinY = currentRaster.getMinY();
         this.row = y;
-        final int step = (row - cRMinY) * rasterWidth;
-        this.maxX = Math.min(areaIterateMaxX, cRMinX + rasterWidth) - cRMinX;
+        final int step = (row - cRMinY) * scanLineStride;
+        this.maxX = (Math.min(areaIterateMaxX, cRMinX + rasterWidth) - cRMinX) * numBand;
         this.maxX += step;
 
         //initialize row
         this.maxY = Math.min(areaIterateMaxY, cRMinY + currentRaster.getHeight());
-
-        this.dataCursor = x;
-        this.dataCursor -= this.cRMinX;
-        this.dataCursor += step;
-
-        //initialize band
-        this.numBand = currentRaster.getNumBands();
-        this.band = -1;
+        this.dataCursor = (x - cRMinX) * numBand + step - 1;
     }
 }

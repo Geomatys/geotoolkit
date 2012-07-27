@@ -2,7 +2,6 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2012, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -98,7 +97,7 @@ class RowMajorWritableDirectByteIterator extends RowMajorDirectByteIterator{
      */
     @Override
     public void setSample(int value) {
-        currentWritableDataArray[(dataCursor/rasterWidth)*scanLineStride+(dataCursor%rasterWidth)*numBand+bandOffset[band]] = (byte) value;
+        currentWritableDataArray[dataCursor] = (byte) value;
     }
 
     /**
@@ -106,7 +105,7 @@ class RowMajorWritableDirectByteIterator extends RowMajorDirectByteIterator{
      */
     @Override
     public void setSampleDouble(double value) {
-        currentWritableDataArray[(dataCursor/rasterWidth)*scanLineStride+(dataCursor%rasterWidth)*numBand+bandOffset[band]] = (byte) value;
+        currentWritableDataArray[dataCursor] = (byte) value;
     }
 
     /**
@@ -114,7 +113,7 @@ class RowMajorWritableDirectByteIterator extends RowMajorDirectByteIterator{
      */
     @Override
     public void setSampleFloat(float value) {
-        currentWritableDataArray[(dataCursor/rasterWidth)*scanLineStride+(dataCursor%rasterWidth)*numBand+bandOffset[band]] = (byte) value;
+        currentWritableDataArray[dataCursor] = (byte) value;
     }
 
     /**
