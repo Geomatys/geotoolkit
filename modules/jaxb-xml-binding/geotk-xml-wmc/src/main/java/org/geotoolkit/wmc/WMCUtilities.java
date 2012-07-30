@@ -32,6 +32,7 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.style.DefaultDescription;
 import org.geotoolkit.style.DefaultStyleFactory;
@@ -101,7 +102,7 @@ public class WMCUtilities {
 
 
         //Retrieve enveloppe for the map context.
-        CoordinateReferenceSystem srs = null;//DefaultGeographicCRS.WGS84;
+        CoordinateReferenceSystem srs = DefaultGeographicCRS.WGS84;
         try {
             srs = CRS.decode(bbox.getSRS(), true);
         } catch (NoSuchAuthorityCodeException ex) {

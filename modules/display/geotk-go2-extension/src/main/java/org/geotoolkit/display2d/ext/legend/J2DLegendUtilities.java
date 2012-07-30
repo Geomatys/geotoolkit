@@ -41,7 +41,6 @@ import org.opengis.style.Description;
 import org.opengis.style.Rule;
 import org.opengis.util.InternationalString;
 
-
 /**
  * Utility class to render legend using a provided template.
  *
@@ -52,7 +51,7 @@ public class J2DLegendUtilities {
 
     private static final int GLYPH_SPACE = 5;
 
-    private J2DLegendUtilities(){
+    private J2DLegendUtilities() {
     }
 
     /**
@@ -61,33 +60,33 @@ public class J2DLegendUtilities {
      * @param item : map context, from wich to extract the style informations
      * @param g2d : Graphics2D used to render
      * @param bounds : Rectangle where the legend must be painted
-     * @param template  : north arrow template
+     * @param template : north arrow template
      * @throws org.geotoolkit.display.exception.PortrayalException
      */
     public static void paintLegend(MapItem item,
-                              Graphics2D g2d,
-                              final Rectangle bounds,
-                              final LegendTemplate template) throws PortrayalException{
+            Graphics2D g2d,
+            final Rectangle bounds,
+            final LegendTemplate template) throws PortrayalException {
 
-        if(item instanceof MapLayer){
+        if (item instanceof MapLayer) {
             final MapContext context = MapBuilder.createContext();
             context.items().add(item);
             item = context;
         }
 
         g2d = (Graphics2D) g2d.create();
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setClip(bounds);
         g2d.setStroke(new BasicStroke(1));
 
         float X = bounds.x;
         float Y = bounds.y;
 
-        if(template == null){
+        if (template == null) {
             //no template generate a glyph
-            for(MapItem layer : item.items()){
-                if(layer instanceof MapLayer){
-                    DefaultGlyphService.render( ((MapLayer)layer).getStyle(), bounds, g2d, (MapLayer)layer);
+            for (MapItem layer : item.items()) {
+                if (layer instanceof MapLayer) {
+                    DefaultGlyphService.render(((MapLayer) layer).getStyle(), bounds, g2d, (MapLayer) layer);
                 }
             }
             return;
@@ -97,7 +96,7 @@ public class J2DLegendUtilities {
         final Dimension estimation = estimate(g2d, item, template, false);
 
         final BackgroundTemplate background = template.getBackground();
-        if(background != null){
+        if (background != null) {
             final Rectangle area = new Rectangle(estimation);
             area.x = bounds.x;
             area.y = bounds.y;
@@ -124,18 +123,26 @@ public class J2DLegendUtilities {
         g2d.translate(X, Y);
 
         final List<MapItem> layers = item.items();
-        for(int l=0,n=layers.size();l<n;l++){
-            if(!(layers.get(l) instanceof MapLayer)){
+        for (int l = 0, n = layers.size(); l < n; l++) {
+            if (!(layers.get(l) instanceof MapLayer)) {
                 continue;
             }
 
             final MapLayer layer = (MapLayer) layers.get(l);
+
+            //check if the given layer is visible, and if we should display invisible layers.
+            if (template.displayOnlyVisibleLayers() && !layer.isVisible()) {
+                continue;
+            }
+
             final MutableStyle style = layer.getStyle();
 
-            if(style == null) continue;
+            if (style == null) {
+                continue;
+            }
 
-            if(template.isLayerVisible()){
-                if(l!=0){
+            if (template.isLayerVisible()) {
+                if (l != 0) {
                     moveY += gapSize;
                 }
                 String title = "";
@@ -143,23 +150,23 @@ public class J2DLegendUtilities {
                 if (description != null) {
                     final InternationalString titleTmp = description.getTitle();
                     if (titleTmp != null) {
-                        title = titleTmp.toString();
+                        title = titleTmp.toString().replace("{}", "");
                     }
                 }
 
                 moveY += layerFontMetric.getLeading() + layerFontMetric.getAscent();
                 g2d.setFont(template.getLayerFont());
                 g2d.setColor(Color.BLACK);
-                g2d.drawString(title,0,moveY);
+                g2d.drawString(title, 0, moveY);
                 moveY += layerFontMetric.getDescent();
 
                 moveY += gapSize;
             }
 
             int numElement = 0;
-            for(final MutableFeatureTypeStyle fts :style.featureTypeStyles()){
-                for(final MutableRule rule : fts.rules()){
-                    if(numElement!=0){
+            for (final MutableFeatureTypeStyle fts : style.featureTypeStyles()) {
+                for (final MutableRule rule : fts.rules()) {
+                    if (numElement != 0) {
                         moveY += gapSize;
                     }
 
@@ -167,21 +174,21 @@ public class J2DLegendUtilities {
                     final float stepRuleTitle;
                     final float glyphHeight;
                     final float glyphWidth;
-                    if(glyphSize == null){
+                    if (glyphSize == null) {
                         //find the best size
                         final Dimension preferred = DefaultGlyphService.glyphPreferredSize(rule, glyphSize, layer);
                         glyphHeight = preferred.height;
                         glyphWidth = preferred.width;
-                    }else{
+                    } else {
                         //use the defined size
                         glyphHeight = glyphSize.height;
                         glyphWidth = glyphSize.width;
                     }
 
-                    if(glyphHeight > ruleFontHeight){
+                    if (glyphHeight > ruleFontHeight) {
                         stepRuleTitle = ruleFontMetric.getLeading() + ruleFontMetric.getAscent()
-                                + (glyphHeight-ruleFontHeight)/2 ;
-                    }else{
+                                + (glyphHeight - ruleFontHeight) / 2;
+                    } else {
                         stepRuleTitle = ruleFontMetric.getLeading() + ruleFontMetric.getAscent();
                     }
 
@@ -196,7 +203,7 @@ public class J2DLegendUtilities {
                     }
                     rectangle.setRect(0, moveY, glyphWidth, glyphHeight);
 
-                    DefaultGlyphService.render(rule, rectangle, g2d,layer);
+                    DefaultGlyphService.render(rule, rectangle, g2d, layer);
                     g2d.setFont(template.getRuleFont());
                     g2d.setColor(Color.BLACK);
 
@@ -208,7 +215,7 @@ public class J2DLegendUtilities {
 //                        baseline = moveY + ruleFontMetric.getLeading() + ruleFontMetric.getAscent();
 //                    }
 
-                    g2d.drawString(title, glyphWidth+GLYPH_SPACE, moveY + stepRuleTitle);
+                    g2d.drawString(title, glyphWidth + GLYPH_SPACE, moveY + stepRuleTitle);
 
 
                     moveY += (glyphHeight > ruleFontHeight) ? glyphHeight : ruleFontHeight;
@@ -224,19 +231,19 @@ public class J2DLegendUtilities {
     /**
      * Paint a legend using Java2D.
      *
-     * @param context : map context, from wich to extract the style informations
+     * @param rules : A list of rules to use for legend rendering.
      * @param g2d : Graphics2D used to render
      * @param bounds : Rectangle where the legend must be painted
-     * @param template  : north arrow template
+     * @param template : north arrow template
      * @throws org.geotoolkit.display.exception.PortrayalException
      */
     public static void paintLegend(final List<Rule> rules,
-                              Graphics2D g2d,
-                              final Rectangle bounds,
-                              final LegendTemplate template) throws PortrayalException{
+            Graphics2D g2d,
+            final Rectangle bounds,
+            final LegendTemplate template) throws PortrayalException {
 
         g2d = (Graphics2D) g2d.create();
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setClip(bounds);
         g2d.setStroke(new BasicStroke(1));
 
@@ -247,7 +254,7 @@ public class J2DLegendUtilities {
         float X = bounds.x;
         float Y = bounds.y;
 
-        for(final Rule rule : rules){
+        for (final Rule rule : rules) {
             String title = "";
             final Description description = rule.getDescription();
             if (description != null) {
@@ -260,33 +267,38 @@ public class J2DLegendUtilities {
             DefaultGlyphService.render(rule, rectangle, g2d, null);
             g2d.setFont(template.getRuleFont());
             g2d.setColor(Color.BLACK);
-            g2d.drawString(title, X+glyphWidth+gapSize, Y+glyphHeight);
+            g2d.drawString(title, X + glyphWidth + gapSize, Y + glyphHeight);
 
             Y += glyphHeight + gapSize;
         }
 
     }
 
-
-    public static Dimension estimate(final Graphics2D g, MapItem mapitem, final LegendTemplate template, final boolean considerBackground){
+    public static Dimension estimate(final Graphics2D g, MapItem mapitem, final LegendTemplate template, final boolean considerBackground) {
         final Dimension dim = new Dimension(0, 0);
-        if(mapitem == null) return dim;
+        if (mapitem == null) {
+            return dim;
+        }
 
-        if(mapitem instanceof MapLayer){
+        if (mapitem instanceof MapLayer) {
             final MapContext context = MapBuilder.createContext();
             context.items().add(mapitem);
             mapitem = context;
         }
 
-        if(template == null){
+        if (template == null) {
             //fallback on glyph size
-            for(MapItem childItem : mapitem.items()){
-                if(childItem instanceof MapLayer){
+            for (MapItem childItem : mapitem.items()) {
+                if (childItem instanceof MapLayer) {
                     final MapLayer ml = (MapLayer) childItem;
                     final Dimension preferred = DefaultGlyphService.glyphPreferredSize(ml.getStyle(), dim, ml);
-                    if(preferred != null){
-                        if(preferred.width > dim.width) dim.width = preferred.width;
-                        if(preferred.height > dim.height) dim.height = preferred.height;
+                    if (preferred != null) {
+                        if (preferred.width > dim.width) {
+                            dim.width = preferred.width;
+                        }
+                        if (preferred.height > dim.height) {
+                            dim.height = preferred.height;
+                        }
                     }
                 }
             }
@@ -301,32 +313,41 @@ public class J2DLegendUtilities {
         final Dimension glyphSize = template.getGlyphSize();
 
         final List<MapItem> childItems = mapitem.items();
-        for(int l=0,n=childItems.size();l<n;l++){
-            if(!(childItems.get(l) instanceof MapLayer)){
+        for (int l = 0, n = childItems.size(); l < n; l++) {
+            if (!(childItems.get(l) instanceof MapLayer)) {
                 continue;
             }
 
             final MapLayer layer = (MapLayer) childItems.get(l);
+
+            if (template.displayOnlyVisibleLayers() && !layer.isVisible()) {
+                continue;
+            }
+
             final MutableStyle style = layer.getStyle();
 
-            if(style == null) continue;
+            if (style == null) {
+                continue;
+            }
 
-            if(template.isLayerVisible()){
-                if(l!=0){
+            if (template.isLayerVisible()) {
+                if (l != 0) {
                     dim.height += template.getGapSize();
                 }
                 final String title = layer.getDescription().getTitle().toString();
                 final int width = layerFontMetric.stringWidth(title);
 
                 dim.height += layerFontHeight;
-                if(dim.width < width) dim.width = width;
+                if (dim.width < width) {
+                    dim.width = width;
+                }
                 dim.height += template.getGapSize();
             }
 
             int numElement = 0;
-            for(final MutableFeatureTypeStyle fts :style.featureTypeStyles()){
-                for(final MutableRule rule : fts.rules()){
-                    if(numElement!=0){
+            for (final MutableFeatureTypeStyle fts : style.featureTypeStyles()) {
+                for (final MutableRule rule : fts.rules()) {
+                    if (numElement != 0) {
                         dim.height += template.getGapSize();
                     }
 
@@ -344,19 +365,19 @@ public class J2DLegendUtilities {
                     //calculate the glyph size
                     final int glyphHeight;
                     final int glyphWidth;
-                    if(glyphSize == null){
+                    if (glyphSize == null) {
                         //find the best size
                         final Dimension preferred = DefaultGlyphService.glyphPreferredSize(rule, glyphSize, layer);
                         glyphHeight = preferred.height;
                         glyphWidth = preferred.width;
-                    }else{
+                    } else {
                         //use the defined size
                         glyphHeight = glyphSize.height;
                         glyphWidth = glyphSize.width;
                     }
 
-                    final int totalWidth = glyphWidth + ((textLenght==0)? 0 : (GLYPH_SPACE+textLenght));
-                    final int fh = (textLenght>0) ? ruleFontHeight : 0;
+                    final int totalWidth = glyphWidth + ((textLenght == 0) ? 0 : (GLYPH_SPACE + textLenght));
+                    final int fh = (textLenght > 0) ? ruleFontHeight : 0;
                     final int totalHeight = (glyphHeight > fh) ? glyphHeight : fh;
 
                     dim.height += totalHeight;
@@ -369,7 +390,7 @@ public class J2DLegendUtilities {
 
         }
 
-        if(considerBackground && template.getBackground() != null){
+        if (considerBackground && template.getBackground() != null) {
             final Insets insets = template.getBackground().getBackgroundInsets();
             dim.width += insets.left + insets.right;
             dim.height += insets.bottom + insets.top;
@@ -380,13 +401,12 @@ public class J2DLegendUtilities {
         return dim;
     }
 
-    private static void checkMinimumSize(final Dimension dim){
-        if(dim.width==0){
+    private static void checkMinimumSize(final Dimension dim) {
+        if (dim.width == 0) {
             dim.width = 1;
         }
-        if(dim.height==0){
+        if (dim.height == 0) {
             dim.height = 1;
         }
     }
-
 }

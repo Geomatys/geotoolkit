@@ -52,6 +52,10 @@ public class GraphicLegendJ2D extends PositionedGraphic2D{
     @Override
     protected void paint(final RenderingContext2D context, final int position, final int[] offset) {
 
+        if(!isVisible()){
+            return;
+        }
+        
         final AbstractContainer2D container = getCanvas().getContainer();
         if(!(container instanceof ContextContainer2D)) return;
 
