@@ -27,34 +27,33 @@ import org.geotoolkit.map.MapLayer;
 
 /**
  * Geometrie panel
- * 
+ *
  * @author Johann Sorel
  * @module pending
  */
 public class JGeomPane extends javax.swing.JPanel {
-     
+
     /** Creates new form JGeomPane */
     public JGeomPane() {
         initComponents();
     }
-    
-    public void setLayer(final MapLayer layer){                
-        guiBox.setLayer(layer);        
-        lbl.setEnabled( layer != null );              
+
+    public void setLayer(final MapLayer layer){
+        guiBox.setLayer(layer);
     }
-    
+
     public MapLayer getLayer(){
         return guiBox.getLayer();
     }
-    
+
     public String getGeom(){
         return guiBox.getGeom();
     }
-    
+
     public void setGeom(final String name){
         guiBox.setGeom(name);
-    }    
-    
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -68,10 +67,10 @@ public class JGeomPane extends javax.swing.JPanel {
 
         setOpaque(false);
 
-        guiBox.setModel(new DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        guiBox.setEditable(true);
+        guiBox.setEnabled(true);
 
         lbl.setText(MessageBundle.getString("geometry")); // NOI18N
-        lbl.setEnabled(false);
 
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
@@ -80,7 +79,7 @@ public class JGeomPane extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(lbl)
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(guiBox, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(guiBox, GroupLayout.DEFAULT_SIZE, 76, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(Alignment.LEADING)
@@ -89,11 +88,11 @@ public class JGeomPane extends javax.swing.JPanel {
                 .addComponent(guiBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
         );
     }// </editor-fold>//GEN-END:initComponents
-    
-    
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JGeomBox guiBox;
     private JLabel lbl;
     // End of variables declaration//GEN-END:variables
-    
+
 }
