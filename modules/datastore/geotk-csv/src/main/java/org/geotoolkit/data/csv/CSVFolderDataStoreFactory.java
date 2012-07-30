@@ -21,7 +21,6 @@ import org.geotoolkit.data.DataStoreFinder;
 import org.geotoolkit.data.FileDataStoreFactory;
 import org.geotoolkit.data.folder.AbstractFolderDataStoreFactory;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.util.ResourceInternationalString;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
@@ -31,40 +30,52 @@ import static org.geotoolkit.data.csv.CSVDataStore.*;
 
 /**
  * DataStore for a folder of CSV files.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public class CSVFolderDataStoreFactory extends AbstractFolderDataStoreFactory{
-    
+
     /** factory identification **/
     public static final DefaultServiceIdentification IDENTIFICATION = derivateIdentification(CSVDataStoreFactory.IDENTIFICATION);
     public static final String NAME = IDENTIFICATION.getCitation().getTitle().toString();
-    
+
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
-    
-    public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR = 
+
+    public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             derivateDescriptor(IDENTIFIER,CSVDataStoreFactory.PARAMETERS_DESCRIPTOR);
-    
+
     public CSVFolderDataStoreFactory(){
         super(PARAMETERS_DESCRIPTOR);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Identification getIdentification() {
         return IDENTIFICATION;
     }
-    
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public FileDataStoreFactory getSingleFileFactory() {
         return DataStoreFinder.getAllFactories(CSVDataStoreFactory.class).next();
     }
-    
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public CharSequence getDescription() {
         return new ResourceInternationalString(BUNDLE_PATH, "datastoreFolderDescription");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public CharSequence getDisplayName() {
         return new ResourceInternationalString(BUNDLE_PATH, "datastoreFolderTitle");

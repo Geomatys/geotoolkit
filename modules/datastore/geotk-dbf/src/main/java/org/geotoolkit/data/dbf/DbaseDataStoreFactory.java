@@ -18,13 +18,11 @@
 package org.geotoolkit.data.dbf;
 
 import java.util.Collections;
-import org.geotoolkit.data.AbstractDataStoreFactory;
 import org.geotoolkit.data.AbstractFileDataStoreFactory;
 import org.geotoolkit.data.DataStore;
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
-import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.ResourceInternationalString;
@@ -54,44 +52,65 @@ public class DbaseDataStoreFactory extends AbstractFileDataStoreFactory {
         citation.setIdentifiers(Collections.singleton(id));
         IDENTIFICATION.setCitation(citation);
     }
-    
+
     public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
-    
+
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new DefaultParameterDescriptorGroup("DBFParameters",
                 IDENTIFIER,URLP,NAMESPACE);
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Identification getIdentification() {
         return IDENTIFICATION;
     }
-    
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public CharSequence getDescription() {
         return new ResourceInternationalString("org/geotoolkit/dbf/bundle", "databaseDescription");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public CharSequence getDisplayName() {
         return new ResourceInternationalString("org/geotoolkit/dbf/bundle", "databaseTitle");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ParameterDescriptorGroup getParametersDescriptor() {
         return PARAMETERS_DESCRIPTOR;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public DataStore create(final ParameterValueGroup params) throws DataStoreException {
         checkCanProcessWithError(params);
         return new DbaseFileDataStore(params);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public DataStore createNew(final ParameterValueGroup params) throws DataStoreException {
         return create(params);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String[] getFileExtensions() {
         return new String[] {".dbf"};
