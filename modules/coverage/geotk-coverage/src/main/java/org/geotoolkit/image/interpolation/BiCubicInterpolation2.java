@@ -87,7 +87,7 @@ public class BiCubicInterpolation2 extends BiCubicInterpolation {
      * @return cubic interpolation at t position.
      */
     @Override
-    protected double getInterpolValue(double t0, double t, double... f) {
+    protected double interpolate1D(double t0, double t, double... f) {
         assert (f.length == 4) : "impossible to interpolate with less or more than 4 values";
         double res = 0;
         int compteur = 0;

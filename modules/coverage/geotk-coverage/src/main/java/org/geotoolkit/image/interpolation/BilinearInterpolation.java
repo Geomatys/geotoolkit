@@ -41,7 +41,7 @@ public class BilinearInterpolation extends SeparableInterpolation {
      * {@inheritDoc }
      */
     @Override
-    protected double getInterpolValue(double t0, double t, double... f) {
+    protected double interpolate1D(double t0, double t, double... f) {
         assert (f.length == 2) : " bilinear interpolation table not conform";
         return (t-t0)*(f[1]-f[0]) + f[0];
     }

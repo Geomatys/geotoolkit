@@ -55,7 +55,7 @@ public class BiCubicInterpolation1 extends BiCubicInterpolation {
      * @return cubic interpolation at t position.
      */
     @Override
-    protected double getInterpolValue(double t0, double t, double... f) {
+    protected double interpolate1D(double t0, double t, double... f) {
         assert (f.length == 4) : "impossible to interpolate with less or more than 4 values";
         final double a1 =  f[3]/3 - 3*f[2]/2 + 3*f[1]   - 11*f[0]/6;
         final double a2 = -f[3]/2 + 2*f[2]   - 5*f[1]/2 + f[0];
