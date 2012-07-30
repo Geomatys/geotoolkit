@@ -84,6 +84,7 @@
     <module>geotk-coverageio-bil</module>
     <module>geotk-coverageio-dimap</module>
     <module>geotk-coverageio-geotiff</module>
+    <module>geotk-coverage</module>
   </modules>
 
 </project>
