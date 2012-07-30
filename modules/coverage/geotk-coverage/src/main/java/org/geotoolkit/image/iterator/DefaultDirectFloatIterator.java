@@ -94,7 +94,6 @@ public class DefaultDirectFloatIterator extends DefaultDirectIterator {
      */
     @Override
     public int getSample() {
-//        return (int) currentDataArray[(dataCursor/rasterWidth)*scanLineStride+(dataCursor%rasterWidth)*numBand+bandOffset[band]];
         return (int) currentDataArray[dataCursor];
     }
 

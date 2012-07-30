@@ -103,9 +103,6 @@ abstract class DefaultDirectIterator extends PixelIterator{
 
         if (subArea != null) {
             this.maxBanks  = (areaIterateMaxX - crMinX)*numBand + (areaIterateMaxY-crMinY-1) * scanLineStride;
-            this.tMaxX = this.tMaxY = 1;
-
-            //step
             this.cursorStep = scanLineStride - (areaIterateMaxX - areaIterateMinX)*numBand;
             this.dataCursor = baseCursor = (areaIterateMinX - crMinX) * numBand + (areaIterateMinY-crMinY) * scanLineStride - 1;
             this.maxX = (areaIterateMaxX-crMinX) * numBand + (areaIterateMinY-crMinY) * scanLineStride;

@@ -107,6 +107,7 @@ public abstract class PixelIterator {
      * Current x tile position in rendered image tile array.
      */
     protected int tX;
+
     /**
      * Current y tile position in rendered image tile array.
      */

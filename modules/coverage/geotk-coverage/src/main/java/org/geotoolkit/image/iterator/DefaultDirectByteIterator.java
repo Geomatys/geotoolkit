@@ -95,7 +95,6 @@ class DefaultDirectByteIterator extends DefaultDirectIterator {
      */
     @Override
     public int getSample() {
-//        return currentDataArray[(dataCursor/rasterWidth)*scanLineStride+(dataCursor%rasterWidth)*numBand+bandOffset[band]] & 0xff;
         return currentDataArray[dataCursor] & 0xff;
     }
 

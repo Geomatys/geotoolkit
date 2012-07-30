@@ -320,9 +320,7 @@ public final class PixelIteratorFactory {
      * @return true if bandOffset table is conform else false.
      */
     private static boolean checkBandOffset(int[] bandOffset) {
-        for (int i = 0, l = bandOffset.length; i<l; i++) {
-            if (bandOffset[i] != i) return false;
-        }
+        for (int i = 0, l = bandOffset.length; i<l; i++) if (bandOffset[i] != i) return false;
         return true;
     }
 

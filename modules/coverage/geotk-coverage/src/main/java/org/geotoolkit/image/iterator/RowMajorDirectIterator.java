@@ -154,7 +154,7 @@ abstract class RowMajorDirectIterator extends PixelIterator {
     @Override
     public void rewind() {
         this.maxY       = this.areaIterateMinY;
-        this.maxX = 1;
+        this.maxX       = 1;
         this.dataCursor = this.band = 0;
         this.tY         = this.tMinY - 1;
         this.tX         = this.tMaxX - 1;

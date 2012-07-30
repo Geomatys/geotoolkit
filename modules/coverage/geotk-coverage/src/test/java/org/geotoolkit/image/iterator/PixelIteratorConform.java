@@ -23,8 +23,10 @@ import java.awt.image.WritableRenderedImage;
 import static org.junit.Assert.assertTrue;
 
 /**
+ * <p>Class use to compare result between two distinct Iterators.<br/>
+ * Only use for tests.</p>
  *
- * @author rmarech
+ * @author Remi Maréchal (Geomatys).
  */
 public class PixelIteratorConform extends PixelIterator {
 
