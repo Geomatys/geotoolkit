@@ -21,7 +21,8 @@ package org.geotoolkit.image.interpolation;
  *  - neighbor : find nearest pixel values.<br/>
  *  - bilinear : compute biLinear pixel value from nearest 4 pixels values.<br/>
  *  - biCubic  : compute biCubic pixel value from nearest 16 pixels values.<br/>
- *  - lanczos  : todo.</p>
+ *  - lanczos  : compute biCubic pixel value from nearest n * n pixels values.<br/>
+ * where n = 2 * {@link LanczosInterpolation#lanczosWindow} </p>
  *
  * @author Rémi Marechal (Geomatys).
  */

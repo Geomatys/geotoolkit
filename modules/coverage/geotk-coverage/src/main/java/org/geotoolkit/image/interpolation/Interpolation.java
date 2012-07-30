@@ -74,17 +74,27 @@ public abstract class Interpolation {
     protected final int windowSide;
 
     /**
+     * Interpolation results table.
+     */
+    protected double[] result;
+
+    /**
      * Build an Interpolate object.
      *
      * @param pixelIterator Iterator used to interpolation.
      */
     public Interpolation(PixelIterator pixelIterator, int windowSide) {
         this.pixelIterator = pixelIterator;
-        this.numBands = pixelIterator.getNumBands();
-        this.boundary = pixelIterator.getBoundary();
-        this.minMax = null;
+        this.numBands   = pixelIterator.getNumBands();
+        this.boundary   = pixelIterator.getBoundary();
+        if (windowSide > boundary.width || windowSide > boundary.height)
+            throw new IllegalArgumentException("windowSide argument is more "
+                    + "larger than iterate object boundary side. boundary = "
+                    +boundary+" windowSide = "+windowSide);
+        this.minMax     = null;
         this.windowSide = windowSide;
-        this.data = new double[windowSide * windowSide * numBands];
+        this.data       = new double[windowSide * windowSide * numBands];
+        result          = new double[numBands];
     }
 
     /**
@@ -121,6 +131,9 @@ public abstract class Interpolation {
      * If Rectangle area parameter is {@code null} method will search minimum
      * and maximum on all iterate object.</p>
      *
+     * Note : This code is adapted for BiLinear and Neighbor interpolation.
+     * About another interpolation min and max values method isn't implemented yet.
+     *
      * @param area area within search min and max values.
      * @return double array witch represent minimum and maximum pixels values for each band.
      */
@@ -144,7 +157,7 @@ public abstract class Interpolation {
                 minMax[6*band + 1] = pixelIterator.getX();
                 minMax[6*band + 2] = pixelIterator.getX();
                 //max value, x, y coordinates
-                minMax[6*band + 3]     = value;
+                minMax[6*band + 3] = value;
                 minMax[6*band + 4] = pixelIterator.getX();
                 minMax[6*band + 5] = pixelIterator.getX();
             }
@@ -233,39 +246,36 @@ public abstract class Interpolation {
      * @throws IllegalArgumentException if there are necessary pixels out of boundary.
      * @return appropriate interpolation minX and minY coordinates.
      */
-    protected int[] getInterpolateMin(double x, double y, int width, int height) {
+    protected void setInterpolateMin(double x, double y) {
         final int boundW = boundary.width;
         final int boundH = boundary.height;
         final int bx = boundary.x;
         final int by = boundary.y;
-        assert (width <= boundW && height <= boundH) : "area dimensions are out of boundary";
-        int minx = (int) x;
-        int miny = (int) y;
-        if (x<minx) minx--;
-        if (y<miny) miny--;
+        minX = (int) x;
+        minY = (int) y;
 
-        //ajust area interpolation on x, y center.
-        for (int i = 0; i<width/2-1;i++) {
-            minx--;
-        }
-        for (int i = 0; i<height/2-1;i++) {
-            miny--;
-        }
-        minx = Math.max(minx, bx);
-        miny = Math.max(miny, by);
-        while(minx+width > bx+boundW) {
-            minx--;
-        }
-        while(miny+height > by+boundH) {
-            miny--;
-        }
-        return new int[]{minx, miny};
+        //Adjust truncation.
+        if (x<minX) minX--;
+        if (y<minY) minY--;
+
+        //Adjust area interpolation on x, y center.
+        for (int i = 0; i<windowSide/2-1;i++) minX--;
+        for (int i = 0; i<windowSide/2-1;i++) minY--;
+
+        //Adjust area from lower corner.
+        minX = Math.max(minX, bx);
+        minY = Math.max(minY, by);
+
+        //Adjust area from upper corner.
+        while (minX + windowSide > bx + boundW) minX--;
+        while (minY + windowSide > by + boundH) minY--;
     }
 
     /**
      * Returns {@code Rectangle} which is Image or Raster boundary within this Interpolator.
      *
      * @return {@code Rectangle} which is Image or Raster boundary within this Interpolator.
+     * @see Resample#getSourcePixelValue(double, double)
      */
     Rectangle getBoundary() {
         return boundary;
@@ -275,6 +285,7 @@ public abstract class Interpolation {
      * Return number of bands from object that iterate.
      *
      * @return number of bands from object that iterate.
+     * @see Resample#getSourcePixelValue(double, double)
      */
     public int getNumBands(){
         return numBands;

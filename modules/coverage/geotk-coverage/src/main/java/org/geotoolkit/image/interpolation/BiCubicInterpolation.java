@@ -76,19 +76,21 @@ abstract class BiCubicInterpolation extends SeparableInterpolation {
     }
 
     /**
-     * {@inheritDoc }
+     * <p>Verify value is in [{@link #minValue}; {@link #maxValue}] interval.<br/><br/>
+     *
+     * If value &lt; {@link #minValue} value = {@link #minValue}.
+     * If value &gt; {@link #maxValue} value = {@link #maxValue}.</p>
+     *
+     * @param value double which will be verify.
+     * @return
      */
-    @Override
-    public double[] interpolate(double x, double y) {
-        double[] itRes = super.interpolate(x, y);
-        for (int b = 0; b<numBands; b++) {
-            if (itRes[b] < minValue) {
-                itRes[b] = minValue;
-            } else if (itRes[b] > maxValue) {
-                itRes[b] = maxValue;
-            }
+    protected double checkValue(double value) {
+        if (value < minValue) {
+            value = minValue;
+        } else if (value > maxValue) {
+            value = maxValue;
         }
-        return itRes;
+        return value;
     }
 
     /**

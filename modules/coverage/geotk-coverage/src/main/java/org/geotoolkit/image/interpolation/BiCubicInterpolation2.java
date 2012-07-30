@@ -94,6 +94,6 @@ public class BiCubicInterpolation2 extends BiCubicInterpolation {
         for (double ft : f) {
             res += getConvolutionValue(t-t0 - compteur++)*ft;
         }
-        return res;
+        return checkValue(res);
     }
 }

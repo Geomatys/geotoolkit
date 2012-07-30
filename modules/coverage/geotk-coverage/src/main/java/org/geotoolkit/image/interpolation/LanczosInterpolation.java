@@ -18,6 +18,7 @@ package org.geotoolkit.image.interpolation;
 
 import java.awt.Rectangle;
 import java.awt.image.DataBuffer;
+import static java.lang.Math.sin;
 import org.geotoolkit.image.iterator.PixelIterator;
 
 /**
@@ -57,6 +58,9 @@ public class LanczosInterpolation extends Interpolation {
      */
     public LanczosInterpolation(PixelIterator pixelIterator, int lanczosWindow) {
         super(pixelIterator, 2*lanczosWindow);
+        if (lanczosWindow > boundary.width || lanczosWindow > boundary.height)
+            throw new IllegalArgumentException("lanczosWindow more longer");
+        this.lanczosWindow = lanczosWindow;
         switch (pixelIterator.getSourceDatatype()) {
             case DataBuffer.TYPE_BYTE : {
                 minValue = 0;
@@ -79,9 +83,6 @@ public class LanczosInterpolation extends Interpolation {
                 maxValue = 1.79769313486231E308;
             }
         }
-        if (lanczosWindow > boundary.width || lanczosWindow > boundary.height)
-            throw new IllegalArgumentException("lanczosWindow more longer");
-        this.lanczosWindow = lanczosWindow;
     }
 
 
@@ -96,7 +97,8 @@ public class LanczosInterpolation extends Interpolation {
         double x = t-t0;
         if (x == 0) return 1;
         if (Math.abs(x) > lanczosWindow) return 0;
-        return (lanczosWindow * Math.sin(PI*x) * Math.sin(PI*x/lanczosWindow))/(PI*PI*x*x);
+        final double pix = PI*x;
+        return (lanczosWindow * sin(pix) * sin(pix/lanczosWindow))/(pix*pix);
     }
 
     /**
@@ -108,27 +110,18 @@ public class LanczosInterpolation extends Interpolation {
     @Override
     public double[] interpolate(double x, double y) {
         checkInterpolate(x, y);
-        int[] mins = getInterpolateMin(x, y, windowSide, windowSide);
-        minX = mins[0];
-        minY = mins[1];
-        int compteur = 0;
-        int band;
-        for (int dy = minY; dy < minY + windowSide; dy++) {
-            for (int dx = minX; dx < minX + windowSide; dx++) {
-                pixelIterator.moveTo(dx, dy, 0);
-                band = 0;
-                while (band++ != numBands) {
+        setInterpolateMin(x, y);
+        final int hY = minY + windowSide;
+        final int wX = minX + windowSide;
+        int dy, dx;
+        double interpol;
+        for (int b = 0; b<numBands; b++) {
+            interpol = 0;
+            for (dy = minY; dy < hY; dy++) {
+                for (dx = minX; dx < wX; dx++) {
+                    pixelIterator.moveTo(dx, dy, b);
                     pixelIterator.next();
-                    data[compteur++] = pixelIterator.getSampleDouble();
-                }
-            }
-        }
-        final double[] result = new double[numBands];
-        for (int n = 0; n < numBands; n++) {
-            double interpol = 0;
-            for (int dy = minY; dy < minY + windowSide; dy++) {
-                for (int dx = minX; dx < minX + windowSide; dx++) {
-                    interpol += data[n + (windowSide * (dy - minY) + (dx - minX)) * numBands] * getLCZt(dx, x) * getLCZt(dy, y);
+                    interpol += pixelIterator.getSampleDouble() * getLCZt(dx, x) * getLCZt(dy, y);
                 }
             }
             if (interpol < minValue) {
@@ -136,7 +129,7 @@ public class LanczosInterpolation extends Interpolation {
             } else if (interpol > maxValue) {
                 interpol = maxValue;
             }
-            result[n] = interpol;
+            result[b] = interpol;
         }
         return result;
     }

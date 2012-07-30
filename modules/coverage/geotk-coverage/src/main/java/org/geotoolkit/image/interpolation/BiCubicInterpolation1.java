@@ -61,6 +61,6 @@ public class BiCubicInterpolation1 extends BiCubicInterpolation {
         final double a2 = -f[3]/2 + 2*f[2]   - 5*f[1]/2 + f[0];
         final double a3 =  f[3]/6 - f[2]/2   + f[1]/2   - f[0]/6;
         final double x  = t-t0;
-        return f[0] + a1*x + a2*x*x + a3*x*x*x;
+        return checkValue(f[0] + (a1 + (a2 + a3*x)*x)*x);
     }
 }

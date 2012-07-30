@@ -23,7 +23,7 @@ import org.geotoolkit.image.iterator.PixelIterator;
  *
  * @author Rémi Maréchal (Geomatys).
  */
-abstract class SeparableInterpolation extends Interpolation{
+abstract class SeparableInterpolation extends Interpolation {
 
     /**
      * Table used to compute interpolation from rows values.
@@ -35,20 +35,14 @@ abstract class SeparableInterpolation extends Interpolation{
      */
     private final double[] tabInteCol;
 
-    /**
-     * Interpolation results table.
-     */
-    private final double[] result;
-
     public SeparableInterpolation(PixelIterator pixelIterator, int windowSide) {
         super(pixelIterator, windowSide);
         tabInteRow = new double[windowSide];
         tabInteCol = new double[windowSide];
-        result = new double[numBands];
     }
 
 
-        /**
+    /**
      * Return interpolate value from x, y pixel coordinate.
      *
      * @param x pixel x coordinate.
@@ -58,13 +52,12 @@ abstract class SeparableInterpolation extends Interpolation{
     @Override
     public double[] interpolate(double x, double y) {
         checkInterpolate(x, y);
-        int[] mins = getInterpolateMin(x, y, windowSide, windowSide);
-        minX = mins[0];
-        minY = mins[1];
-
+        setInterpolateMin(x, y);
+        final int wX = minX + windowSide;
+        final int hY = minY + windowSide;
         for (int b = 0; b<numBands; b++) {
-            for (int dy = minY; dy < minY + windowSide; dy++) {
-                for (int dx = minX; dx < minX + windowSide; dx++) {
+            for (int dy = minY; dy < hY; dy++) {
+                for (int dx = minX; dx < wX; dx++) {
                     pixelIterator.moveTo(dx, dy, b);
                     pixelIterator.next();
                     tabInteRow[dx - minX] = pixelIterator.getSampleDouble();

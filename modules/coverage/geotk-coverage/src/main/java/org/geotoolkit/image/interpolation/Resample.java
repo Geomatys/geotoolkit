@@ -81,6 +81,11 @@ public class Resample {
     private final double[] fillValue;
 
     /**
+     * Table which contain x, y coordinates after {@link MathTransform} transformation.
+     */
+    private final double[] srcCoords;
+
+    /**
      * Fill destination image from interpolation of source pixels.<br/>
      * Source pixel is obtained from invert transformation of destination pixel coordinates.
      *
@@ -104,6 +109,7 @@ public class Resample {
         minSourceY = bound.y;
         maxSourceX = minSourceX + bound.width  - 1;
         maxSourceY = minSourceY + bound.height - 1;
+        srcCoords  = new double[2];
     }
 
     /**
@@ -115,16 +121,10 @@ public class Resample {
      * @throws TransformException
      */
     private double[] getSourcePixelValue(double x, double y) throws TransformException {
-        double[] srcCoords = new double[2];
         invertMathTransform.transform(new double[]{x, y}, 0, srcCoords, 0, 1);
-        if (srcCoords[0]<minSourceX||srcCoords[0]>maxSourceX
-          ||srcCoords[1]<minSourceY||srcCoords[1]>maxSourceY) return fillValue;
-        try{
-            return interpol.interpolate(srcCoords[0], srcCoords[1]);
-        }catch(Exception e){
-            System.out.println("");
-        }
-        return fillValue;
+        if (srcCoords[0]<minSourceX || srcCoords[0]>maxSourceX
+         || srcCoords[1]<minSourceY || srcCoords[1]>maxSourceY) return fillValue;
+        return interpol.interpolate(srcCoords[0], srcCoords[1]);
     }
 
     /**
