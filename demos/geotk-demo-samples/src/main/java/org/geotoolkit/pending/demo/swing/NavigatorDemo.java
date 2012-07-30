@@ -35,7 +35,7 @@ public class NavigatorDemo {
 
         //add some data bands on the navigator
         for(int i=0;i<30;i++){
-            guiNavigator.addBand(new TaskBand());
+            guiNavigator.getBands().add(new TaskBand());
         }
         
         //move to current date
