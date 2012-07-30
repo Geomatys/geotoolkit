@@ -28,7 +28,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
+ * Model renderer displaying dates for JNavigator component.
+ * 
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
@@ -49,7 +50,7 @@ public class DateRenderer implements NavigatorRenderer{
 
     @Override
     public int getGraduationHeight() {
-        return 20;
+        return 42;
     }
 
     @Override
