@@ -102,7 +102,7 @@ public class CatalogServicesServer extends AbstractServer {
 
     @Override
     public ServerFactory getFactory() {
-        return ServerFinder.getFactory(CSWServerFactory.NAME);
+        return ServerFinder.getFactoryById(CSWServerFactory.NAME);
     }
 
     private static CSWVersion toVersion(final String version){

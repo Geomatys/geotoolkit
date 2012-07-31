@@ -14,7 +14,7 @@ public class ListAllFactoriesDemo {
         Demos.init();
         
         // Listing or creating new servers are made through the serverFinder utility class        
-        final Iterator<ServerFactory> ite = ServerFinder.getAllFactories();
+        final Iterator<ServerFactory> ite = ServerFinder.getAllFactories(null).iterator();
         
         while(ite.hasNext()){
             

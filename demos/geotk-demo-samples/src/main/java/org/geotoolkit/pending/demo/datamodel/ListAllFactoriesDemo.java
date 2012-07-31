@@ -14,7 +14,7 @@ public class ListAllFactoriesDemo {
         Demos.init();
         
         // Listing or creating new datastores are made through the DataStoreFinder utility class        
-        final Iterator<DataStoreFactory> ite = DataStoreFinder.getAllFactories();
+        final Iterator<DataStoreFactory> ite = DataStoreFinder.getAllFactories(null).iterator();
         
         while(ite.hasNext()){
             

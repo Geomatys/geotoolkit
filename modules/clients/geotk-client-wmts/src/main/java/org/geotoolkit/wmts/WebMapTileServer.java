@@ -122,7 +122,7 @@ public class WebMapTileServer extends AbstractServer implements CoverageStore{
     
     @Override
     public WMTSServerFactory getFactory() {
-        return (WMTSServerFactory)ServerFinder.getFactory(WMTSServerFactory.NAME);
+        return (WMTSServerFactory)ServerFinder.getFactoryById(WMTSServerFactory.NAME);
     }
     
     /**

@@ -53,7 +53,7 @@ public class ShapefileFolderDataStoreFactory extends AbstractFolderDataStoreFact
 
     @Override
     public FileDataStoreFactory getSingleFileFactory() {
-        return DataStoreFinder.getAllFactories(ShapefileDataStoreFactory.class).next();
+        return DataStoreFinder.getAllFactories(ShapefileDataStoreFactory.class).iterator().next();
     }
 
     @Override

@@ -61,7 +61,7 @@ public class FileCoverageStore extends AbstractCoverageStore{
 
     @Override
     public CoverageStoreFactory getFactory() {
-        return CoverageStoreFinder.getFactory(FileCoverageStoreFactory.NAME);
+        return CoverageStoreFinder.getFactoryById(FileCoverageStoreFactory.NAME);
     }
     
     /**

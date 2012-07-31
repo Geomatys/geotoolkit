@@ -52,7 +52,7 @@ public class CoverageSQLStore extends CoverageDatabase implements CoverageStore 
 
     @Override
     public CoverageStoreFactory getFactory() {
-        return CoverageStoreFinder.getFactory(CoverageSQLStoreFactory.NAME);
+        return CoverageStoreFinder.getFactoryById(CoverageSQLStoreFactory.NAME);
     }
 
     @Override

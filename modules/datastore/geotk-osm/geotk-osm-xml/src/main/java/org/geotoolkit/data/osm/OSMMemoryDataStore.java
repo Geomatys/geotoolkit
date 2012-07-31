@@ -154,7 +154,7 @@ public class OSMMemoryDataStore extends AbstractDataStore{
 
     @Override
     public DataStoreFactory getFactory() {
-        return DataStoreFinder.getFactory(OSMMemoryDataStoreFactory.NAME);
+        return DataStoreFinder.getFactoryById(OSMMemoryDataStoreFactory.NAME);
     }
     
     @Override

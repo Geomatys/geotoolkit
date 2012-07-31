@@ -90,7 +90,7 @@ public class OSMTileMapServer extends AbstractServer implements CoverageStore{
         
     @Override
     public OSMTMSServerFactory getFactory() {
-        return (OSMTMSServerFactory)ServerFinder.getFactory(OSMTMSServerFactory.NAME);
+        return (OSMTMSServerFactory)ServerFinder.getFactoryById(OSMTMSServerFactory.NAME);
     }
 
     public boolean getCacheImage(){

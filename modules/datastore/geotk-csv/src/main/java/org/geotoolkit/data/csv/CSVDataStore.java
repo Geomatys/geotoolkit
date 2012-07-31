@@ -140,7 +140,7 @@ public class CSVDataStore extends AbstractDataStore{
 
     @Override
     public DataStoreFactory getFactory() {
-        return DataStoreFinder.getFactory(CSVDataStoreFactory.NAME);
+        return DataStoreFinder.getFactoryById(CSVDataStoreFactory.NAME);
     }
     
     private synchronized void checkExist() throws DataStoreException{

@@ -88,7 +88,7 @@ public class OpenStreetMapServer extends AbstractServer{
 
     @Override
     public ServerFactory getFactory() {
-        return ServerFinder.getFactory(OSMServerFactory.NAME);
+        return ServerFinder.getFactoryById(OSMServerFactory.NAME);
     }
 
     public OSMVersion getVersion(){

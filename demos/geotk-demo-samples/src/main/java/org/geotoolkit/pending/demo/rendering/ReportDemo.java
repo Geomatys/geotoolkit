@@ -6,7 +6,9 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.io.File;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 
@@ -77,7 +79,8 @@ public class ReportDemo {
 
         
         //source to make an atlas ----------------------------------------------------
-        final DataStore store = DataStoreFinder.get("url",ReportDemo.class.getResource("/data/world/Countries.shp"));
+        final DataStore store = DataStoreFinder.open(
+                (Map)Collections.singletonMap("url",ReportDemo.class.getResource("/data/world/Countries.shp")));
         final Name name = store.getNames().iterator().next();
         final FeatureCollection countries =  store.createSession(true).getFeatureCollection(QueryBuilder.all(name));
 

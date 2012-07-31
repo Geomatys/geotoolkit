@@ -60,7 +60,7 @@ public class DbaseFolderDataStoreFactory extends AbstractFolderDataStoreFactory{
      */
     @Override
     public FileDataStoreFactory getSingleFileFactory() {
-        return DataStoreFinder.getAllFactories(DbaseDataStoreFactory.class).next();
+        return DataStoreFinder.getAllFactories(DbaseDataStoreFactory.class).iterator().next();
     }
 
     /**

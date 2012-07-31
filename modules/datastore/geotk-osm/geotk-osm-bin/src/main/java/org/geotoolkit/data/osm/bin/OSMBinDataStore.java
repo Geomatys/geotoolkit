@@ -57,7 +57,7 @@ public class OSMBinDataStore extends AbstractDataStore{
 
     @Override
     public DataStoreFactory getFactory() {
-        return DataStoreFinder.getFactory(OSMBinDataStoreFactory.NAME);
+        return DataStoreFinder.getFactoryById(OSMBinDataStoreFactory.NAME);
     }
     
     /**

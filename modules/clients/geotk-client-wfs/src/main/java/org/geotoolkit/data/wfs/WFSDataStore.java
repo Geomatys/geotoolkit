@@ -206,7 +206,7 @@ public class WFSDataStore extends AbstractDataStore{
 
     @Override
     public DataStoreFactory getFactory() {
-        return DataStoreFinder.getFactory(WFSDataStoreFactory.NAME);
+        return DataStoreFinder.getFactoryById(WFSDataStoreFactory.NAME);
     }
 
     @Override

@@ -75,7 +75,7 @@ public class StringToFeatureCollectionConverter extends SimpleConverter<String, 
             final Map<String, Serializable> parameters = new HashMap<String, Serializable>();
             parameters.put("url", new URL(url));
 
-            final DataStore store = DataStoreFinder.get(parameters);
+            final DataStore store = DataStoreFinder.open(parameters);
             
             if(store == null){
                 throw new NonconvertibleObjectException("Invalid URL");

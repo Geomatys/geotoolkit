@@ -74,11 +74,7 @@ public class JDataStoreChooser extends javax.swing.JPanel {
         initComponents();
         guiEditPane.add(BorderLayout.CENTER,new JScrollPane(guiEditor));
 
-        final Iterator<DataStoreFactory> ite = DataStoreFinder.getAvailableFactories();
-        final List<DataStoreFactory> factories = new ArrayList<DataStoreFactory>();
-        while(ite.hasNext()){
-            factories.add(ite.next());
-        }
+        final List<DataStoreFactory> factories = new ArrayList<DataStoreFactory>(DataStoreFinder.getAvailableFactories(null));
         Collections.sort(factories, SORTER);
 
         guiList.setHighlighters(HighlighterFactory.createAlternateStriping() );

@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2012, Geomatys
  *    (C) 2012, Johann Sorel
  *
@@ -28,14 +28,14 @@ import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * Factory used to construct a Server from a set of parameters.
- * 
+ *
  * @author Johann Sorel
  * @module pending
  */
 public interface ServerFactory {
 
     /**
-     * General information about this factory. 
+     * General information about this factory.
      * If a given ParameterValueGroup has an identifier parameter set, it's value must
      * be {@linkplain Identifier#getAuthority() identifier authority}, otherwise this
      * factory will not support this ParameterValueGroup.
@@ -43,7 +43,7 @@ public interface ServerFactory {
      * @return The identification of this factory.
      */
     Identification getIdentification();
-    
+
     /**
      * Test to see if the implementation is available for use.
      * This method ensures all the appropriate libraries to construct
@@ -98,21 +98,21 @@ public interface ServerFactory {
      * to by the params map.
      *
      * <p>
-     * If this datasource requires a number of parameters then this mehtod
+     * If this datasource requires a number of parameters then this method
      * should check that they are all present and that they are all valid.
      * </p>
      *
      * @param params The full set of information needed to construct a live
      *        data source.
      *
-     * @return booean true if and only if this factory can process the resource
+     * @return boolean true if and only if this factory can process the resource
      *         indicated by the param set and all the required params are
-     *         pressent.
+     *         present.
      */
     boolean canProcess(Map<String, ? extends Serializable> params);
 
     /**
-     * @see DataStoreFactory#canProcess(org.opengis.parameter.ParameterValueGroup) 
+     * @see DataStoreFactory#canProcess(org.opengis.parameter.ParameterValueGroup)
      */
     boolean canProcess(ParameterValueGroup params);
 
@@ -133,9 +133,9 @@ public interface ServerFactory {
      *        server.
      *
      * @return The created Server, this may be null if the required resource
-     *         was not found or if insufficent parameters were given. Note
+     *         was not found or if insufficient parameters were given. Note
      *         that canProcess() should have returned false if the problem is
-     *         to do with insuficent parameters.
+     *         to do with insufficient parameters.
      *
      * @throws IOException if there were any problems setting up (creating or
      *         connecting) the datasource.

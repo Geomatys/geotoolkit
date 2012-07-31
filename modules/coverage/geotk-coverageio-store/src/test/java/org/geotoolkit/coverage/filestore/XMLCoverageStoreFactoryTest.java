@@ -17,6 +17,7 @@
 package org.geotoolkit.coverage.filestore;
 
 import java.util.Iterator;
+import java.util.Set;
 import org.geotoolkit.coverage.CoverageStoreFactory;
 import org.geotoolkit.coverage.CoverageStoreFinder;
 import static org.junit.Assert.fail;
@@ -36,11 +37,11 @@ public class XMLCoverageStoreFactoryTest {
     @Test
     public void testFactory() {
                 
-        final Iterator<CoverageStoreFactory> ite = CoverageStoreFinder.getAllFactories();
+        final Set<CoverageStoreFactory> set = CoverageStoreFinder.getAllFactories(null);
         
         boolean found = false;
-        while (ite.hasNext()){
-            if(ite.next() instanceof XMLCoverageStoreFactory){
+        for(CoverageStoreFactory fact : set){
+            if(fact instanceof XMLCoverageStoreFactory){
                 found = true;
             }
         }

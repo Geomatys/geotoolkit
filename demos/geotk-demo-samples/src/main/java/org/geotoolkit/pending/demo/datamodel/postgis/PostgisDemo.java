@@ -30,7 +30,7 @@ public class PostgisDemo {
         Parameters.getOrCreate(PostgisNGDataStoreFactory.USER, parameters).setValue("user");
         Parameters.getOrCreate(PostgisNGDataStoreFactory.PASSWD, parameters).setValue("secret");
         
-        final DataStore store = DataStoreFinder.get(parameters);
+        final DataStore store = DataStoreFinder.open(parameters);
         
         final MapContext context = MapBuilder.createContext();
         

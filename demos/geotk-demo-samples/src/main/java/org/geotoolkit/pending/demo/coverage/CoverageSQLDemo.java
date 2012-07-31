@@ -38,7 +38,7 @@ public class CoverageSQLDemo {
         params.parameter("user").setValue("username");        
         params.parameter("password").setValue("******");        
         
-        CoverageStore store = CoverageStoreFinder.get(params);
+        CoverageStore store = CoverageStoreFinder.open(params);
         CoverageReference ref = store.getCoverageReference(new DefaultName("Levitus"));
         
         CoverageMapLayer layer = MapBuilder.createCoverageLayer(ref, new DefaultStyleFactory().style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), "levitus");

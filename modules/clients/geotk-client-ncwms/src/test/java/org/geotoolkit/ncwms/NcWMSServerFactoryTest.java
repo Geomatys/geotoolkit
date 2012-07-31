@@ -36,7 +36,7 @@ public class NcWMSServerFactoryTest {
     @Test
     public void testFactory() {
         
-        final Iterator<ServerFactory> ite = ServerFinder.getAllFactories();
+        final Iterator<ServerFactory> ite = ServerFinder.getAllFactories(null).iterator();
         
         boolean found = false;
         while (ite.hasNext()){

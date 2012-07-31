@@ -76,7 +76,7 @@ public class WebCoverageServer extends AbstractServer {
 
     @Override
     public ServerFactory getFactory() {
-        return ServerFinder.getFactory(WCSServerFactory.NAME);
+        return ServerFinder.getFactoryById(WCSServerFactory.NAME);
     }
 
     /**

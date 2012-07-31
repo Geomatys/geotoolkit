@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2003-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,297 +16,227 @@
  */
 package org.geotoolkit.coverage;
 
-import java.io.IOException;
 import java.io.Serializable;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.imageio.spi.ServiceRegistry;
-import org.geotoolkit.factory.DynamicFactoryRegistry;
-import org.geotoolkit.factory.FactoryRegistry;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.ServiceLoader;
+import java.util.Set;
+import net.jcip.annotations.ThreadSafe;
+import org.geotoolkit.internal.Citations;
 import org.geotoolkit.internal.LazySet;
+import org.geotoolkit.lang.Static;
 import org.geotoolkit.storage.DataStoreException;
-import org.opengis.metadata.Identifier;
+import org.geotoolkit.util.ArgumentChecks;
 import org.opengis.parameter.ParameterValueGroup;
 
+
 /**
- * Enable programs to find all available CoverageStore implementations.
+ * Creates {@link CoverageStore} instances from a set of parameters.
  *
- * <p>
- * In order to be located by this finder datasources must provide an
- * implementation of the {@link CoverageStoreFactory} interface.
- * </p>
+ * {@section Registration}
+ * {@link CoverageStore} factories must implement the {@link CoverageStoreFactory} interface and declare their
+ * fully qualified class name in a {@code META-INF/services/org.geotoolkit.coverage.CoverageStoreFactory}
+ * file. See the {@link ServiceLoader} javadoc for more information.
  *
- * <p>
- * In addition to implementing this interface datasouces should have a services
- * file:<br/><code>META-INF/services/org.geotoolkit.coverage.CoverageStoreFactory</code>
- * </p>
+ * @author Martin Desruisseaux (Geomatys)
+ * @author Johann Sorel (Geomatys)
+ * @version 3.20
  *
- * <p>
- * The file should contain a single line which gives the full name of the
- * implementing class.
- * </p>
- *
- * <p>
- * Example:<br/><code>org.geotoolkit.data.mytype.MyTypeCoverageStoreFactory</code>
- * </p>
+ * @since 3.20
  * @module pending
  */
-public final class CoverageStoreFinder{
-
-    /** The logger for the CoverageStore module. */
-    private static final Logger LOGGER = org.geotoolkit.util.logging.Logging.getLogger("org.geotoolkit.data");
+@ThreadSafe
+public final class CoverageStoreFinder extends Static {
     /**
-     * The service registry for this manager. Will be initialized only when
-     * first needed.
+     * The service loader. This loader and its iterator are not synchronized;
+     * when doing an iteration, the iterator must be used inside synchronized blocks.
      */
-    private static FactoryRegistry registry;
-
-    private CoverageStoreFinder() {}
+    private static final ServiceLoader<CoverageStoreFactory> loader = ServiceLoader.load(CoverageStoreFactory.class);
 
     /**
-     * @see CoverageStoreFinder#getCoverageStore(java.util.Map) 
-     * Get a CoverageStore wich has a single parameter. 
-     * This is a utility method that will redirect to getCoverageStore(java.util.Map)
+     * Do not allow instantiation of this class.
      */
-    public static synchronized CoverageStore get(
-            final String key, final Serializable value) throws DataStoreException{
-        return get(Collections.singletonMap(key, value));
+    private CoverageStoreFinder() {
     }
 
     /**
-     * Checks each available datasource implementation in turn and returns the
-     * first one which claims to support the resource identified by the params
-     * object.
+     * Returns the set of all factories, optionally filtered by type and availability.
+     * This method ensures also that the iterator backing the set is properly synchronized.
+     * <p>
+     * Note that the iterator doesn't need to be thread-safe; this is the accesses to the
+     * underlying {@linkplain #loader}, directly or indirectly through its iterator, which
+     * need to be thread-safe.
      *
-     * @param params
-     *            A Map object which contains a defenition of the resource to
-     *            connect to. for file based resources the property 'url' should
-     *            be set within this Map.
-     *
-     * @return The first datasource which claims to process the required
-     *         resource, returns null if none can be found.
-     *
-     * @throws IOException
-     *             If a suitable loader can be found, but it can not be attached
-     *             to the specified resource without errors.
+     * @param  <T>  The type of factories to be returned.
+     * @param  type The type of factories to be returned, or {@code null} for all kind of factories.
+     * @param  all  {@code true} for all factories, or {@code false} for only available factories.
+     * @return The set of factories for the given conditions.
      */
-    public static synchronized CoverageStore get(
-            final Map<String, Serializable> params) throws DataStoreException {
-        final Iterator<CoverageStoreFactory> ps = getAvailableFactories();
+    private static synchronized <T extends CoverageStoreFactory> Set<T> getFactories(final Class<T> type, final boolean all) {
+        final Iterator<CoverageStoreFactory> factories = loader.iterator();
+        return new LazySet<T>(new Iterator<T>() {
+            /**
+             * The next factory to be returned by the {@link #next()} method, or {@code null}
+             * if not yet computed. This field is set by the {@link #hasNext()} method.
+             */
+            private T next;
 
-
-        DataStoreException canProcessButNotAvailable = null;
-        while (ps.hasNext()) {
-            final CoverageStoreFactory fac = (CoverageStoreFactory) ps.next();
-            boolean canProcess = false;
-            try {
-                canProcess = fac.canProcess(params);
-            } catch (Throwable t) {
-                LOGGER.log(Level.WARNING, "Problem asking " + fac.getDisplayName() + " if it can process request:" + t, t);
-                // Protect against CoverageStores that don't carefully code
-                // canProcess
-                continue;
-            }
-            if (canProcess) {
-                boolean isAvailable = false;
-                try {
-                    isAvailable = fac.availability().pass();
-                } catch (Throwable t) {
-                    LOGGER.log(Level.WARNING, "Difficulity checking if " + fac.getDisplayName() + " is available:" + t, t);
-                    // Protect against CoverageStores that don't carefully code
-                    // isAvailable
-                    continue;
+            /**
+             * Returns {@code true} if there is more factories to return.
+             * This implementation fetches immediately the next factory.
+             */
+            @Override
+            @SuppressWarnings("unchecked")
+            public boolean hasNext() {
+                if (next != null) {
+                    return true;
                 }
-                if (isAvailable) {
-                    try {
-                        return fac.create(params);
-                    } catch (DataStoreException couldNotConnect) {
-                        canProcessButNotAvailable = couldNotConnect;
-                        LOGGER.log(Level.WARNING, fac.getDisplayName() + " should be used, but could not connect", couldNotConnect);
+                synchronized (CoverageStoreFinder.class) {
+                    while (factories.hasNext()) {
+                        final CoverageStoreFactory candidate = factories.next();
+                        if (type == null || type.isInstance(candidate)) {
+                            if (all || candidate.availability().pass()) {
+                                next = (T) candidate;
+                                return true;
+                            }
+                        }
                     }
-                } else {
-                    canProcessButNotAvailable = new DataStoreException(
-                            fac.getDisplayName() + " should be used, but is not availble. Have you installed the required drivers or jar files?");
-                    LOGGER.log(Level.WARNING, fac.getDisplayName() + " should be used, but is not availble", canProcessButNotAvailable);
                 }
+                return false;
             }
-        }
-        if (canProcessButNotAvailable != null) {
-            throw canProcessButNotAvailable;
+
+            /**
+             * Returns the next element in the iteration.
+             */
+            @Override
+            public T next() {
+                if (hasNext()) {
+                    final T n = next;
+                    next = null; // Tells to hasNext() that it will need to fetch a new element.
+                    return n;
+                }
+                throw new NoSuchElementException();
+            }
+
+            /**
+             * Unsupported operation, since this iterator is read-only.
+             */
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException();
+            }
+        });
+    }
+
+    /**
+     * Returns all factories of the given type, regardless of their
+     * {@linkplain CoverageStoreFactory#availability() availability}.
+     *
+     * @param  <T>  The type of the factories to fetch.
+     * @param  type The type of the factories to fetch, or {@code null} for fetching all of them.
+     * @return The set of all factories of the given type.
+     */
+    public static <T extends CoverageStoreFactory> Set<T> getAllFactories(final Class<T> type) {
+        return getFactories(type, true);
+    }
+
+    /**
+     * Returns factories of the given type which are
+     * {@linkplain CoverageStoreFactory#availability() available}.
+     *
+     * @param  <T>  The type of the factories to fetch.
+     * @param  type The type of the factories to fetch, or {@code null} for fetching very types.
+     * @return The set of available factories of the given type.
+     */
+    public static <T extends CoverageStoreFactory> Set<T> getAvailableFactories(final Class<T> type) {
+        return getFactories(type, false);
+    }
+
+    /**
+     * Returns a factory having an {@linkplain CoverageStoreFactory#getIdentification() identification}
+     * equals (ignoring case) to the given string. If more than one factory is found, then this
+     * method selects an arbitrary one. If no factory is found, then this method returns
+     * {@code null}.
+     *
+     * @param  identifier The identifier of the factory to find.
+     * @return A factory for the given identifier, or {@code null} if none.
+     */
+    public static synchronized CoverageStoreFactory getFactoryById(final String identifier) {
+        for (final CoverageStoreFactory factory : loader) {
+            if (Citations.identifierMatches(factory.getIdentification().getCitation(), identifier)) {
+                return factory;
+            }
         }
         return null;
     }
 
     /**
-     * Checks each available datasource implementation in turn and returns the
-     * first one which claims to support the resource identified by the params
-     * object.
+     * Creates a {@link CoverageStore} instance for the given map of parameter values. This method iterates
+     * over all {@linkplain #getAvailableFactories(Class) available factories} until a factory
+     * claiming to {@linkplain CoverageStoreFactory#canProcess(Map) be able to process} the given
+     * parameters is found. This factory then {@linkplain CoverageStoreFactory#create(Map) create}
+     * the coverage store.
      *
-     * @param parameters
-     *            A parameter value group with all requiered configuration.
-     *
-     * @return The first datasource which claims to process the required
-     *         resource, returns null if none can be found.
-     *
-     * @throws IOException
-     *             If a suitable loader can be found, but it can not be attached
-     *             to the specified resource without errors.
+     * @param  parameters The configuration of the desired coverage store.
+     * @return A coverage store created from the given parameters, or {@code null} if none.
+     * @throws CoverageStoreException If a factory is found but can't create the coverage store.
      */
-    public static synchronized CoverageStore get(
-            final ParameterValueGroup parameters) throws DataStoreException {
-        final Iterator<CoverageStoreFactory> ps = getAvailableFactories();
+    public static CoverageStore open(final Map<String, Serializable> parameters) throws DataStoreException {
+        ArgumentChecks.ensureNonNull("parameters", parameters);
+        return open(null, parameters);
+    }
 
-        DataStoreException canProcessButNotAvailable = null;
-        while (ps.hasNext()) {
-            final CoverageStoreFactory fac = (CoverageStoreFactory) ps.next();
-            boolean canProcess = false;
-            try {
-                canProcess = fac.canProcess(parameters);
-            } catch (Throwable t) {
-                LOGGER.log(Level.WARNING, "Problem asking " + fac.getDisplayName() + " if it can process request:" + t, t);
-                // Protect against CoverageStores that don't carefully code
-                // canProcess
-                continue;
-            }
-            if (canProcess) {
-                boolean isAvailable = false;
-                try {
-                    isAvailable = fac.availability().pass();
-                } catch (Throwable t) {
-                    LOGGER.log(Level.WARNING, "Difficulity checking if " + fac.getDisplayName() + " is available:" + t, t);
-                    // Protect against CoverageStores that don't carefully code
-                    // isAvailable
-                    continue;
-                }
-                if (isAvailable) {
-                    try {
-                        return fac.create(parameters);
-                    } catch (DataStoreException couldNotConnect) {
-                        canProcessButNotAvailable = couldNotConnect;
-                        LOGGER.log(Level.WARNING, fac.getDisplayName() + " should be used, but could not connect", couldNotConnect);
-                    }
-                } else {
-                    canProcessButNotAvailable = new DataStoreException(
-                            fac.getDisplayName() + " should be used, but is not availble. Have you installed the required drivers or jar files?");
-                    LOGGER.log(Level.WARNING, fac.getDisplayName() + " should be used, but is not availble", canProcessButNotAvailable);
+    /**
+     * Creates a {@link CoverageStore} instance for the given parameters group. This method iterates over
+     * all {@linkplain #getAvailableFactories(Class) available factories} until a factory claiming
+     * to {@linkplain CoverageStoreFactory#canProcess(ParameterValueGroup) be able to process} the given
+     * parameters is found. This factory then {@linkplain CoverageStoreFactory#create(ParameterValueGroup)
+     * create} the coverage store.
+     *
+     * @param  parameters The configuration of the desired coverage store.
+     * @return A coverage store created from the given parameters, or {@code null} if none.
+     * @throws CoverageStoreException If a factory is found but can't create the coverage store.
+     */
+    public static CoverageStore open(final ParameterValueGroup parameters) throws DataStoreException {
+        ArgumentChecks.ensureNonNull("parameters", parameters);
+        return open(parameters, null);
+    }
+
+    /**
+     * Implementation of the public {@code create} method. Exactly one of the {@code parameters}
+     * and {@code asMap} arguments shall be non-null.
+     */
+    private static synchronized CoverageStore open(final ParameterValueGroup parameters,
+            final Map<String, Serializable> asMap) throws DataStoreException
+    {
+        CharSequence unavailable = null;
+        for (final CoverageStoreFactory factory : loader) {
+            if ((parameters != null) ? factory.canProcess(parameters) : factory.canProcess(asMap)) {
+                if (factory.availability().pass()) {
+                    return (parameters != null) ? factory.create(parameters) : factory.create(asMap);
+                } else if (unavailable == null) {
+                    unavailable = factory.getDisplayName();
                 }
             }
         }
-        if (canProcessButNotAvailable != null) {
-            throw canProcessButNotAvailable;
+        if (unavailable != null) {
+            throw new DataStoreException("The " + unavailable + " coverage store is not available. "
+                    + "Are every required JAR files accessible on the classpath?");
         }
         return null;
     }
 
     /**
-     * Finds all implemtaions of DataAccessFactory which have registered using
-     * the services mechanism, regardless weather it has the appropriate
-     * libraries on the classpath.
-     *
-     * @return An iterator over all discovered CoverageStores which have registered
-     *         factories
-     */
-    public static synchronized Iterator<CoverageStoreFactory> getAllFactories() {
-        return getAllFactories(null);
-    }
-
-    /**
-     * @see CoverageStoreFinder#getAllCoverageStores() 
-     * Get all CoverageStores of a given class.
-     */
-    public static synchronized <T extends CoverageStoreFactory> Iterator<T> getAllFactories(final Class<T> type){
-        final FactoryRegistry serviceRegistry = getServiceRegistry();
-
-        ServiceRegistry.Filter filter = null;
-        if(type != null){
-            filter = new ServiceRegistry.Filter() {
-                @Override
-                public boolean filter(Object provider) {
-                    return type.isInstance(provider);
-                }
-            };
-        }
-
-        final Iterator<CoverageStoreFactory> allDataAccess = serviceRegistry.getServiceProviders(CoverageStoreFactory.class, filter, null, null);
-
-        return new LazySet(allDataAccess).iterator();
-    }
-
-    /**
-     * Finds all implementations of CoverageStoreFactory which have registered using
-     * the services mechanism, and that have the appropriate libraries on the
-     * classpath.
-     *
-     * @return An iterator over all discovered CoverageStores which have registered
-     *         factories, and whose available method returns true.
-     */
-    public static synchronized Iterator<CoverageStoreFactory> getAvailableFactories() {
-        return getAvailableFactories(null);
-    }
-
-    /**
-     * @see CoverageStoreFinder#getAvailableCoverageStores()
-     * Get all available CoverageStores of a given class.
-     */
-    public static synchronized <T extends CoverageStoreFactory> Iterator<T> getAvailableFactories(final Class<T> type) {
-        final Iterator<T> allStores = getAllFactories(type);
-
-        final Set<T> availableStores = new HashSet<T>();
-
-        while (allStores.hasNext()) {
-            final T dsFactory = allStores.next();
-            if (dsFactory.availability().pass()) {
-                availableStores.add(dsFactory);
-            }
-        }
-        
-        return availableStores.iterator();
-    }
-
-    /**
-     * Search factories for one which identifier is the given value.
-     * @param identifier
-     * @return CoverageStoreFactory or null if factory not found.
-     */
-    public static CoverageStoreFactory getFactory(String identifier){
-        final Iterator<CoverageStoreFactory> ite = getAllFactories();
-        while(ite.hasNext()){
-            final CoverageStoreFactory candidate = ite.next();
-            for(final Identifier id : candidate.getIdentification().getCitation().getIdentifiers()){
-                if(id.getCode().equalsIgnoreCase(identifier)){
-                    return candidate;
-                }
-            }
-        }
-        
-        return null;
-    }
-    
-    /**
-     * Returns the service registry. The registry will be created the first time
-     * this method is invoked.
-     */
-    private static FactoryRegistry getServiceRegistry() {
-        assert Thread.holdsLock(CoverageStoreFinder.class);
-        if (registry == null) {
-            registry = new DynamicFactoryRegistry(CoverageStoreFactory.class);
-        }
-        return registry;
-    }
-
-    /**
-     * Scans for factory plug-ins on the application class path. This method is
-     * needed because the application class path can theoretically change, or
-     * additional plug-ins may become available. Rather than re-scanning the
-     * classpath on every invocation of the API, the class path is scanned
-     * automatically only on the first invocation. Clients can call this method
-     * to prompt a re-scan. Thus this method need only be invoked by
-     * sophisticated applications which dynamically make new plug-ins available
-     * at runtime.
+     * Scans for factory plug-ins on the application class path. This method is needed because the
+     * application class path can theoretically change, or additional plug-ins may become available.
+     * Rather than re-scanning the classpath on every invocation of the API, the class path is scanned
+     * automatically only on the first invocation. Clients can call this method to prompt a re-scan.
+     * Thus this method need only be invoked by sophisticated applications which dynamically make
+     * new plug-ins available at runtime.
      */
     public static synchronized void scanForPlugins() {
-        getServiceRegistry().scanForPlugins();
+        loader.reload();
     }
 
 }

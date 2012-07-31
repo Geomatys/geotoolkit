@@ -98,7 +98,7 @@ public class GPXDataStore extends AbstractDataStore{
 
     @Override
     public DataStoreFactory getFactory() {
-        return DataStoreFinder.getFactory(GPXDataStoreFactory.NAME);
+        return DataStoreFinder.getFactoryById(GPXDataStoreFactory.NAME);
     }
 
     public MetaData getGPXMetaData() throws DataStoreException{

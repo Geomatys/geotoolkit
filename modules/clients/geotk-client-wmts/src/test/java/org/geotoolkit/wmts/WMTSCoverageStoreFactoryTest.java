@@ -37,7 +37,7 @@ public class WMTSCoverageStoreFactoryTest {
     public void testFactory() {
         
         
-        final Iterator<CoverageStoreFactory> ite = CoverageStoreFinder.getAllFactories();
+        final Iterator<CoverageStoreFactory> ite = CoverageStoreFinder.getAllFactories(null).iterator();
         
         boolean found = false;
         while (ite.hasNext()){

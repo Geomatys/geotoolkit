@@ -62,7 +62,7 @@ public class FishDataStore extends AbstractDataStore{
 
     @Override
     public DataStoreFactory getFactory() {
-        return DataStoreFinder.getFactory(FishDatastoreFactory.NAME);
+        return DataStoreFinder.getFactoryById(FishDatastoreFactory.NAME);
     }
 
     @Override

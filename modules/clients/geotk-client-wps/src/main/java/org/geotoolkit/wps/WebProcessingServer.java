@@ -175,7 +175,7 @@ public class WebProcessingServer extends AbstractServer implements ProcessingReg
 
     @Override
     public ServerFactory getFactory() {
-        return ServerFinder.getFactory(WPSServerFactory.NAME);
+        return ServerFinder.getFactoryById(WPSServerFactory.NAME);
     }
 
     /**

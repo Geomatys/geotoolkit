@@ -106,7 +106,7 @@ public class DbaseFileDataStore extends AbstractDataStore{
      */
     @Override
     public DataStoreFactory getFactory() {
-        return DataStoreFinder.getFactory(DbaseDataStoreFactory.NAME);
+        return DataStoreFinder.getFactoryById(DbaseDataStoreFactory.NAME);
     }
 
     private synchronized void checkExist() throws DataStoreException{

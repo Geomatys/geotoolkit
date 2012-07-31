@@ -51,7 +51,7 @@ public class IGNRMServer extends AbstractServer {
 
     @Override
     public ServerFactory getFactory() {
-        return ServerFinder.getFactory(IGNRMServerFactory.NAME);
+        return ServerFinder.getFactoryById(IGNRMServerFactory.NAME);
     }
     
     public GetTokenRequest createGetToken(){

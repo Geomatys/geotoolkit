@@ -78,7 +78,7 @@ public class GraphicBuilderDemo {
         //create a feature layer
         Map<String,Serializable> params = new HashMap<String,Serializable>();
         params.put( "url", GraphicBuilderDemo.class.getResource("/data/weather/stations2.shp") );
-        DataStore store = DataStoreFinder.get(params);
+        DataStore store = DataStoreFinder.open(params);
         FeatureCollection fs = store.createSession(true).getFeatureCollection(QueryBuilder.all(store.getNames().iterator().next()));
         MutableStyle style = SF.style();
         MapLayer layer = MapBuilder.createFeatureLayer(fs, style);

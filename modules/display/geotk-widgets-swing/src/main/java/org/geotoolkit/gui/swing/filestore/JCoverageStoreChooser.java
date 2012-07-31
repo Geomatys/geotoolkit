@@ -74,11 +74,8 @@ public class JCoverageStoreChooser extends javax.swing.JPanel {
         initComponents();
         guiEditPane.add(BorderLayout.CENTER,new JScrollPane(guiEditor));
 
-        final Iterator<CoverageStoreFactory> ite = CoverageStoreFinder.getAvailableFactories();
-        final List<CoverageStoreFactory> factories = new ArrayList<CoverageStoreFactory>();
-        while(ite.hasNext()){
-            factories.add(ite.next());
-        }
+        final List<CoverageStoreFactory> factories = new ArrayList<CoverageStoreFactory>(
+                CoverageStoreFinder.getAvailableFactories(null));
         Collections.sort(factories, SORTER);
 
         guiList.setHighlighters(HighlighterFactory.createAlternateStriping() );

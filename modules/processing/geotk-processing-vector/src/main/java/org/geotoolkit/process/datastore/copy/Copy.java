@@ -21,7 +21,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.DataStoreFactory;
 import org.geotoolkit.data.DataStoreFinder;
@@ -31,18 +30,15 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
+import static org.geotoolkit.parameter.Parameters.*;
 import org.geotoolkit.process.AbstractProcess;
-import org.geotoolkit.process.ProcessEvent;
+import org.geotoolkit.process.ProcessException;
+import static org.geotoolkit.process.datastore.copy.CopyDescriptor.*;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
-
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
 import org.opengis.parameter.ParameterValueGroup;
-
-import static org.geotoolkit.process.datastore.copy.CopyDescriptor.*;
-import static org.geotoolkit.parameter.Parameters.*;
-import org.geotoolkit.process.ProcessException;
 /**
  * Copy feature from one datastore to another.
  *
@@ -76,7 +72,7 @@ public class Copy extends AbstractProcess {
         final DataStore sourceDS;
         DataStore targetDS = null;
         try {
-            sourceDS = DataStoreFinder.get(sourceDSparams);
+            sourceDS = DataStoreFinder.open(sourceDSparams);
             if(sourceDS == null) {
                 throw new DataStoreException("No datastore for parameters :"+sourceDSparams);
             }
@@ -86,7 +82,7 @@ public class Copy extends AbstractProcess {
 
         DataStoreException exp = null;
         try {
-            targetDS = DataStoreFinder.get(targetDSparams);
+            targetDS = DataStoreFinder.open(targetDSparams);
             if(targetDS == null) {
                 exp = new DataStoreException("No datastore for parameters :"+targetDSparams);
             }
@@ -97,7 +93,7 @@ public class Copy extends AbstractProcess {
         if (exp != null) {
             if(createParam) {
                 //try to create the datastore
-                final Iterator<DataStoreFactory> ite = DataStoreFinder.getAvailableFactories();
+                final Iterator<DataStoreFactory> ite = DataStoreFinder.getAvailableFactories(null).iterator();
                 while(ite.hasNext()) {
                     final DataStoreFactory factory = ite.next();
                     if(factory.canProcess(targetDSparams)) {

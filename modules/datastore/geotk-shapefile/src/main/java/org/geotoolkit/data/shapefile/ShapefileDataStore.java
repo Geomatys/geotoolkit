@@ -187,7 +187,7 @@ public class ShapefileDataStore extends AbstractDataStore{
 
     @Override
     public DataStoreFactory getFactory() {
-        return DataStoreFinder.getFactory(ShapefileDataStoreFactory.NAME);
+        return DataStoreFinder.getFactoryById(ShapefileDataStoreFactory.NAME);
     }
 
     @Override

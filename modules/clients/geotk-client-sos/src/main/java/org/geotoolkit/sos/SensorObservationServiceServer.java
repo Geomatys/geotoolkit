@@ -61,7 +61,7 @@ public class SensorObservationServiceServer extends AbstractServer {
 
     @Override
     public ServerFactory getFactory() {
-        return ServerFinder.getFactory(SOSServerFactory.NAME);
+        return ServerFinder.getFactoryById(SOSServerFactory.NAME);
     }
 
     /**

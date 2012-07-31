@@ -64,7 +64,7 @@ public class PyramidalModelReaderTest {
         
         crs = CRS.decode("EPSG:3395");
         
-        final CoverageStore store = CoverageStoreFinder.get(params);
+        final CoverageStore store = CoverageStoreFinder.open(params);
         final DefaultName name = new DefaultName("test");
         ref = store.create(name);
         final PyramidalModel model = (PyramidalModel) ref;

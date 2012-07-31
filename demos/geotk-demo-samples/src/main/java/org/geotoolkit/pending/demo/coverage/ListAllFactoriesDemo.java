@@ -14,7 +14,7 @@ public class ListAllFactoriesDemo {
         Demos.init();
         
         // Listing or creating new coveragestores are made through the CoverageStoreFinder utility class        
-        final Iterator<CoverageStoreFactory> ite = CoverageStoreFinder.getAllFactories();
+        final Iterator<CoverageStoreFactory> ite = CoverageStoreFinder.getAllFactories(null).iterator();
         
         while(ite.hasNext()){
             

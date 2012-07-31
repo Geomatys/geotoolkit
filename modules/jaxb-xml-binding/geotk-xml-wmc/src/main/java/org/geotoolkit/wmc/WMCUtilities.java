@@ -134,7 +134,7 @@ public class WMCUtilities {
             try {
                 final URL serviceURL = new URL(serverType.getOnlineResource().getHref());
 
-                final ServerFactory factory = ServerFinder.getFactory(serviceId);
+                final ServerFactory factory = ServerFinder.getFactoryById(serviceId);
                 final Map<String, Serializable> parameters = new HashMap<String, Serializable>();
                 parameters.put("identifier", serviceId);
                 parameters.put("version", serverType.getVersion());

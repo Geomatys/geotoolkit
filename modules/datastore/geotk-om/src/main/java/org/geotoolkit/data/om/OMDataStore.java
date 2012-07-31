@@ -114,7 +114,7 @@ public class OMDataStore extends AbstractDataStore {
 
     @Override
     public DataStoreFactory getFactory() {
-        return DataStoreFinder.getFactory(OMDataStoreFactory.NAME);
+        return DataStoreFinder.getFactoryById(OMDataStoreFactory.NAME);
     }
 
     private Connection getConnection() throws SQLException{

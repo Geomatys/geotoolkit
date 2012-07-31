@@ -86,7 +86,7 @@ public class DataStoreReadingDemo {
         final Map<String,Serializable> parameters = new HashMap<String, Serializable>();
         parameters.put("url", DataStoreReadingDemo.class.getResource("/data/world/Countries.shp"));
 
-        final DataStore store = DataStoreFinder.get(parameters);
+        final DataStore store = DataStoreFinder.open(parameters);
         return store;
     }
 
@@ -99,7 +99,7 @@ public class DataStoreReadingDemo {
         final ParameterValueGroup parameters = ShapefileDataStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
         parameters.parameter("url").setValue(DataStoreReadingDemo.class.getResource("/data/world/Countries.shp"));
         
-        final DataStore store = DataStoreFinder.get(parameters);
+        final DataStore store = DataStoreFinder.open(parameters);
         return store;
     }
 

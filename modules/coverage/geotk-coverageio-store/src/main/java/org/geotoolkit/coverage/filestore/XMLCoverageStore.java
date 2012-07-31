@@ -54,7 +54,7 @@ public class XMLCoverageStore extends AbstractCoverageStore{
 
     @Override
     public CoverageStoreFactory getFactory() {
-        return CoverageStoreFinder.getFactory(XMLCoverageStoreFactory.NAME);
+        return CoverageStoreFinder.getFactoryById(XMLCoverageStoreFactory.NAME);
     }
     
     /**

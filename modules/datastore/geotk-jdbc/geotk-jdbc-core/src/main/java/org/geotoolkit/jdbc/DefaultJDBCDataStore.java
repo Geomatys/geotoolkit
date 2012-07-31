@@ -120,7 +120,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
 
     @Override
     public DataStoreFactory getFactory() {
-        return DataStoreFinder.getFactory(factoryId);
+        return DataStoreFinder.getFactoryById(factoryId);
     }
 
     @Override

@@ -37,7 +37,7 @@ public class GoogleMapsClientDemo {
         parameters.put("identifier", "googleStaticMaps");
         parameters.put("url", new URL("http://maps.google.com/maps/api/staticmap"));
         
-        final CoverageStore store = CoverageStoreFinder.get(parameters);
+        final CoverageStore store = CoverageStoreFinder.open(parameters);
         
         for(Name name : store.getNames()){
             final CoverageMapLayer layer = MapBuilder.createCoverageLayer(store.getCoverageReference(name), 

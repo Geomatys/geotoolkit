@@ -99,7 +99,7 @@ public class WebFeatureServer extends AbstractServer implements DataStore{
 
     @Override
     public WFSDataStoreFactory getFactory() {
-        return (WFSDataStoreFactory)ServerFinder.getFactory(WFSDataStoreFactory.NAME);
+        return (WFSDataStoreFactory)ServerFinder.getFactoryById(WFSDataStoreFactory.NAME);
     }
     
     public WFSVersion getVersion(){

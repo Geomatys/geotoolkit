@@ -159,7 +159,7 @@ public class SMLDataStore extends AbstractDataStore {
 
     @Override
     public DataStoreFactory getFactory() {
-        return DataStoreFinder.getFactory(SMLDataStoreFactory.NAME);
+        return DataStoreFinder.getFactoryById(SMLDataStoreFactory.NAME);
     }
 
     public Connection getConnection() throws SQLException {

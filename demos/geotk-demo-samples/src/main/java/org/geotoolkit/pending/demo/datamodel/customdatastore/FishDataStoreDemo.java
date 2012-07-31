@@ -21,7 +21,7 @@ public class FishDataStoreDemo {
         Map<String,Serializable> params = new HashMap<String, Serializable>();
         params.put("url", FishDataStoreDemo.class.getResource("/data/fishes.fsh"));
 
-        DataStore store = DataStoreFinder.get(params);
+        DataStore store = DataStoreFinder.open(params);
 
         for(Name name : store.getNames()){
             System.out.println(store.getFeatureType(name));
