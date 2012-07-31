@@ -20,6 +20,7 @@ package org.geotoolkit.image.io.plugin;
 import java.util.List;
 import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Locale;
 import java.io.IOException;
 import java.awt.image.Raster;
@@ -211,8 +212,9 @@ public class NetcdfImageWriter extends FileImageWriter {
     @Override
     public void writeToSequence(final IIOImage image, final ImageWriteParam param) throws IOException {
         ensureState(true);
+        writeMetadata(image.getMetadata());
         int i = dimensions.size();
-        final NetcdfImage data = new NetcdfImage(this, image, param, dimensions);
+        final NetcdfImage data = new NetcdfImage(this, image, param, dimensions, createRectIter(image, param));
         final int upper = dimensions.size();
         while (i < upper) {
             // If any new dimension were added as a side effect of the NetcdfImage construction,
@@ -220,9 +222,8 @@ public class NetcdfImageWriter extends FileImageWriter {
             // goes wrong with the NetCDF dimension creation.
             dimensions.get(i++).create(ncFile, locale);
         }
-        data.createVariables(ncFile, createRectIter(image, param));
+        data.createVariables(ncFile);
         images.add(data);
-        writeMetadata(image.getMetadata());
     }
 
     /**
@@ -241,11 +242,13 @@ public class NetcdfImageWriter extends FileImageWriter {
          * can be written.
          */
         ncFile.create();
-        for (final NetcdfDimension dimension : dimensions) {
-            dimension.write(ncFile);
+        for (final Iterator<NetcdfDimension> it=dimensions.iterator(); it.hasNext();) {
+            it.next().write(ncFile);
+            it.remove(); // Allow the garbage collector to do its work.
         }
-        for (final NetcdfImage image : images){
-            image.write(ncFile);
+        for (final Iterator<NetcdfImage> it=images.iterator(); it.hasNext();) {
+            it.next().write(ncFile);
+            it.remove(); // Allow the garbage collector to do its work.
         }
         close();
     }

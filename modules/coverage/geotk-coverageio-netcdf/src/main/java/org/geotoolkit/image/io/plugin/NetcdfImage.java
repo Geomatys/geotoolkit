@@ -108,19 +108,31 @@ final class NetcdfImage extends IIOImageHelper {
     /**
      * The iterator to use for writing the image sample values.
      */
-    private transient RectIter iterator;
+    private final RectIter iterator;
 
     /**
      * Creates a new object for the given image to write.
+     * <p>
+     * This method stores a reference to the given iterator, but will not use it immediately.
+     * The actual iteration will begin when the {@link #write(NetcdfFileWriteable)} method
+     * will be invoked. The iteration is deferred because the {@link NetcdfFileWriteable}
+     * needs to be switched from "define mode" to write mode before we can actually write
+     * the pixel values. We can not switch the mode here because the caller may want to add
+     * more variables before writing sample values.
+     * <p>
+     * The iterator must take the source bands, source region and source sub-sampling
+     * in account. This is done automatically if the iterator has been created by
+     * {@link SpatialImageWriter#createRectIter(IIOImage, ImageWriteParam)}.
      *
      * @param writer The writer which is preparing the image to write, or {@code null} if unknown.
      * @param image  The image or raster to be read or written.
      * @param param  The parameters that control the writing process, or {@code null} if none.
      * @param allDimensions All dimensions created by previous invocations of this constructor.
      *        The constructor will add new dimensions in this array if needed.
+     * @param iter The iterator to use for extracting the image sample values.
      */
     NetcdfImage(final ImageWriter writer, final IIOImage image, final IIOParam parameters,
-            final List<NetcdfDimension> allDimensions) throws IIOException
+            final List<NetcdfDimension> allDimensions, final RectIter iter) throws IIOException
     {
         super(writer, image, parameters);
         int bandDimension = -1;
@@ -147,33 +159,32 @@ final class NetcdfImage extends IIOImageHelper {
         }
         this.bandDimension = bandDimension;
         variables = new Variable[bandDimension >= 0 ? 1 : getNumSourceBands()];
+        iterator = iter;
+    }
+
+    /**
+     * Returns the range dimensions specified in the metadata, or {@code null} if none.
+     */
+    private List<? extends RangeDimension> getRangeDimensions() {
+        if (metadata != null) {
+            final ImageDescription description = metadata.getInstanceForType(ImageDescription.class);
+            if (description != null) {
+                return XCollections.asList(description.getDimensions());
+            }
+        }
+        return null;
     }
 
     /**
      * Adds the variables to the given NetCDF file. The NetCDF file must be in "define mode".
      * This method does not write the sample values. In order to compute the sample values,
      * invoke {@link #setSampleValues(RectIter)} after this method call.
-     * <p>
-     * This method stores a reference to the given iterator, but will not use it immediately.
-     * The actual iteration will begin when the {@link #write(NetcdfFileWriteable)} method
-     * will be invoked. The iteration is deferred because the {@link NetcdfFileWriteable}
-     * needs to be switched from "define mode" to write mode before we can actually write
-     * the pixel values. We can not switch the mode here because the caller may want to add
-     * more variables before writing sample values.
-     * <p>
-     * The iterator must take the source bands, source region and source sub-sampling
-     * in account. This is done automatically if the iterator has been created by
-     * {@link SpatialImageWriter#createRectIter(IIOImage, ImageWriteParam)}.
      *
      * @param  file The NetCDF file where to add the variables.
-     * @param  iter The iterator to use for extracting the image sample values.
      * @throws ImageMetadataException If an error occurred while creating the variables.
      */
     @SuppressWarnings("fallthrough")
-    final void createVariables(final NetcdfFileWriteable file, final RectIter iter)
-            throws ImageMetadataException
-    {
-        iterator = iter;
+    final void createVariables(final NetcdfFileWriteable file) throws ImageMetadataException {
         /*
          * Get the UCAR variable data type, and whatever the data are signed or unsigned.
          * The fact that we compute those two information together explain why this code
@@ -202,13 +213,7 @@ final class NetcdfImage extends IIOImageHelper {
         /*
          * Get the metadata which will be shared for all variables.
          */
-        List<? extends RangeDimension> ranges = null;
-        if (metadata != null) {
-            final ImageDescription description = metadata.getInstanceForType(ImageDescription.class);
-            if (description != null) {
-                ranges = XCollections.asList(description.getDimensions());
-            }
-        }
+        final List<? extends RangeDimension> ranges = getRangeDimensions();
         final int numRanges = (ranges != null) ? ranges.size() : 0;
         for (int i=0; i<variables.length; i++) {
             final int band = getSourceBand(i);
@@ -303,7 +308,6 @@ final class NetcdfImage extends IIOImageHelper {
      */
     final void write(final NetcdfFileWriteable file) throws IOException {
         final RectIter iter = iterator;
-        iterator = null;
         /*
          * Creates a buffer large enough for at least one row, and possibly a few more
          * rows if they are not too large.
@@ -316,7 +320,7 @@ final class NetcdfImage extends IIOImageHelper {
         final int zDimension = shape.length - (bandDimension + 1);
         final int width      = shape[xDimension];
         final int height     = shape[yDimension];
-        final int bufHeight  = bufferHeight(width, height);
+        final int bufHeight  = bufferHeight(height);
         final int capacity   = width * bufHeight;
         shape[yDimension]    = bufHeight;
         Arrays.fill(shape, 0, yDimension, 1); // Set all extra dimensions (if any) to a length of 1.
@@ -373,11 +377,10 @@ final class NetcdfImage extends IIOImageHelper {
      * given height in order to avoid a dimension reduction applied by the UCAR library when
      * the length of a dimension is 1.
      *
-     * @param  width  The image width., in pixels.
      * @param  height The image height, in pixels.
      * @return Proposed buffer height, in pixels.
      */
-    private static int bufferHeight(final int width, final int height) {
+    private static int bufferHeight(final int height) {
         final int[] divisors = divisors(height);
         int i = Arrays.binarySearch(divisors, BUFFER_SIZE / height);
         if (i < 0) {

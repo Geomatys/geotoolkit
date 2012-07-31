@@ -314,7 +314,6 @@ final class NetcdfDimension {
          * name, then it will be used on the assumption that this name come from a previous
          * reading of a NetCDF file.
          */
-        final String abbreviation;
         final String ncName = IdentifiedObjects.getName(axis, Citations.NETCDF);
         if (ncName != null && N3iosp.isValidNetcdf3ObjectName(ncName)) {
             name = ncName;
@@ -400,7 +399,10 @@ final class NetcdfDimension {
     }
 
     /**
-     * Compares this dimension with the given object for equality.
+     * Compares the dimension to be written in the NetCDF file with the given object for equality.
+     * This method is designed for comparing only the attributes having an influence on the NetCDF
+     * file content, especially {@link #axis} and {@link #ordinates}. It does not compare the
+     * {@link #api} attribute, because it has an influence only on the source of the data.
      */
     @Override
     public boolean equals(final Object other) {
@@ -410,5 +412,13 @@ final class NetcdfDimension {
                    Objects.deepEquals(ordinates.getStorage(), that.ordinates.getStorage());
         }
         return false;
+    }
+
+    /**
+     * Returns a string representation for debugging purpose.
+     */
+    @Override
+    public String toString() {
+        return api + " → " + IdentifiedObjects.getName(axis, null) + Utilities.deepToString(ordinates.getStorage());
     }
 }

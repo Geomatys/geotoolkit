@@ -43,6 +43,9 @@ import org.geotoolkit.coverage.io.ImageCoverageWriter;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
+import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 
 import ucar.nc2.NCdumpW;
@@ -90,7 +93,7 @@ public class NetcdfCoverageWriterTest extends ImageTestBase {
      */
     @Test
     public void testCRS84() throws Exception {
-        final GeneralEnvelope env = new GeneralEnvelope(CRS.decode("CRS:84"));
+        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
         env.setRange(0, -180, 180);
         env.setRange(1,  -90,  90);
         testWriteRead(env, "CRS84.cdl");
@@ -139,6 +142,74 @@ public class NetcdfCoverageWriterTest extends ImageTestBase {
         final GridCoverage2D coverage = writeAndRead(cdlFile, createGridCoverage(envelope, "data", 0));
         verifyGridGeometry(coverage, envelope);
         assertSampleValuesEqual(cdlFile, image, coverage.getRenderedImage(), EPS);
+    }
+
+    /**
+     * Tests writing a sequence of 3 variables.
+     *
+     * @throws Exception If an I/O, CRS factory or coverage store error occurred.
+     */
+    @Test
+    public void testSequence() throws Exception {
+        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        env.setRange(0, -180, 180);
+        env.setRange(1,  -90,  90);
+        final GridCoverage2D coverage = writeAndRead("sequence.cdl",
+                createGridCoverage(env, "cat1", 100),
+                createGridCoverage(env, "cat2", 200),
+                createGridCoverage(env, "cat3", 300));
+        verifyGridGeometry(coverage, env);
+        assertSampleValuesEqual("Sequence", image, coverage.getRenderedImage(), EPS);
+    }
+
+    /**
+     * Tests the creation of a three-dimensional NetCDF file. This is similar to
+     * {@link #testSequence()}, except that the coverages have the same name.
+     *
+     * @throws Exception If an I/O, CRS factory or coverage store error occurred.
+     */
+    @Test
+    @Ignore("Not yet implemented")
+    public void testXYZ() throws Exception {
+        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84_3D);
+        env.setRange(0, -180, 180);
+        env.setRange(1,  -90,  90);
+        env.setRange(2,   10,  12); final GridCoverage2D coverage1 = createGridCoverage(env, "data", 100);
+        env.setRange(2,   20,  22); final GridCoverage2D coverage2 = createGridCoverage(env, "data", 200);
+        env.setRange(2,   30,  32); final GridCoverage2D coverage3 = createGridCoverage(env, "data", 300);
+        final GridCoverage2D coverage = writeAndRead("xyz.cdl", coverage1, coverage2, coverage3);
+        verifyGridGeometry(coverage, env);
+    }
+
+    /**
+     * Tests the creation of a four-dimensional NetCDF file.
+     *
+     * @throws Exception If an I/O, CRS factory or coverage store error occurred.
+     */
+    @Test
+    @Ignore("Not yet implemented")
+    public void testXYZT() throws Exception {
+        final CoordinateReferenceSystem crs = new DefaultCompoundCRS("WGS84 + z + t",
+                DefaultGeographicCRS.WGS84_3D,
+                DefaultTemporalCRS.JAVA);
+
+        final GeneralEnvelope env = new GeneralEnvelope(crs);
+        env.setRange(0, -180, 180);
+        env.setRange(1,  -90,  90);
+        env.setRange(2,   10,  10);
+        env.setRange(3,    3,   3);
+        final GridCoverage2D coverage1 = createGridCoverage(env, "data", 100);
+
+        env.setRange(2, 20, 20);
+        env.setRange(3,  6,  6);
+        final GridCoverage2D coverage2 = createGridCoverage(env, "data", 200);
+
+        env.setRange(2, 30, 30);
+        env.setRange(3,  9,  9);
+        final GridCoverage2D coverage3 = createGridCoverage(env, "data", 300);
+
+        final GridCoverage2D coverage = writeAndRead("xyzt.cdl", coverage1, coverage2, coverage3);
+        verifyGridGeometry(coverage, env);
     }
 
     /**
@@ -214,7 +285,9 @@ public class NetcdfCoverageWriterTest extends ImageTestBase {
         builder.setCoordinateReferenceSystem(envelope.getCoordinateReferenceSystem());
         builder.setRenderedImage(raster);
         final GridCoverage2D coverage = builder.getGridCoverage2D();
-        image = coverage.getRenderedImage();
+        if (image == null) { // Remember only the first image.
+            image = coverage.getRenderedImage();
+        }
         return coverage;
     }
 

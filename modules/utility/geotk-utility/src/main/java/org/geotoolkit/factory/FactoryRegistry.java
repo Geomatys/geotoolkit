@@ -245,7 +245,7 @@ public class FactoryRegistry extends ServiceRegistry {
      * Implementation of {@link #getServiceProviders(Class, Filter, Hints)} without the filtering
      * applied by the {@link #isAcceptable(Object, Class, Hints, Filter)} method. If this filtering
      * is not already presents in the filter given to this method, then it must be applied on the
-     * elements returned by the iterator. The later is preferrable when:
+     * elements returned by the iterator. The later is preferable when:
      * <p>
      * <ul>
      *   <li>There is some cheaper tests to perform before {@code isAcceptable}.</li>
@@ -683,7 +683,7 @@ public class FactoryRegistry extends ServiceRegistry {
     }
 
     /**
-     * Invoked when a factory declares itelf as unavailable. The default implementation does
+     * Invoked when a factory declares itself as unavailable. The default implementation does
      * nothing. Subclasses can override this method if they want to track those unavailable
      * factories.
      *

@@ -45,6 +45,8 @@ import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.DefaultReferenceIdentifier;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
+import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.cs.AbstractCS;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 import org.geotoolkit.referencing.CRS;
@@ -596,6 +598,25 @@ search:     for (final CoordinateReferenceSystem source : sources) {
                 return targets[0];
             }
             return getCRSFactory().createCompoundCRS(getTemporaryName(crs), XArrays.resize(targets, count));
+        }
+        /*
+         * Special case for common hard-coded constants.
+         */
+        if (CRS.equalsIgnoreMetadata(crs, DefaultGeographicCRS.WGS84_3D)) {
+            switch (dimensions.length) {
+                case 2: {
+                    if (dimensions[0] == 0 && dimensions[1] == 1) {
+                        return DefaultGeographicCRS.WGS84;
+                    }
+                    break;
+                }
+                case 1: {
+                    if (dimensions[0] == 2) {
+                        return DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT;
+                    }
+                    break;
+                }
+            }
         }
         /*
          * TODO: Implement other cases here (3D-GeographicCRS, etc.).
