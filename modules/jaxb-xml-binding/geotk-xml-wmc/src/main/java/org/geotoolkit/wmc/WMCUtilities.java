@@ -38,6 +38,7 @@ import org.geotoolkit.style.DefaultDescription;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.StyleConstants;
+import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.RandomStyleFactory;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.wmc.xml.v110.*;
@@ -94,35 +95,38 @@ public class WMCUtilities {
     }
     
     public static MapContext getMapContext(ViewContextType root) {
+        ArgumentChecks.ensureNonNull("ViewContextType", root);
+        CoordinateReferenceSystem srs = DefaultGeographicCRS.WGS84;
         final MapContext context = MapBuilder.createContext();
+        
         //Get needed markups
         GeneralType general = root.getGeneral();
         LayerListType layers = root.getLayerList();
-        BoundingBoxType bbox = general.getBoundingBox();
 
+        if (general != null) {
+            //Retrieve enveloppe for the map context.        
+            BoundingBoxType bbox = general.getBoundingBox();
+            try {
+                srs = CRS.decode(bbox.getSRS(), true);
+            } catch (NoSuchAuthorityCodeException ex) {
+                Logger.getLogger(WMCUtilities.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (FactoryException ex) {
+                Logger.getLogger(WMCUtilities.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            final double width = bbox.getMaxx().subtract(bbox.getMinx()).doubleValue();
+            final double height = bbox.getMaxy().subtract(bbox.getMiny()).doubleValue();
+            Envelope aoi = new Envelope2D(srs, bbox.getMinx().doubleValue(), bbox.getMiny().doubleValue(), width, height);
 
-        //Retrieve enveloppe for the map context.
-        CoordinateReferenceSystem srs = DefaultGeographicCRS.WGS84;
-        try {
-            srs = CRS.decode(bbox.getSRS(), true);
-        } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(WMCUtilities.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FactoryException ex) {
-            Logger.getLogger(WMCUtilities.class.getName()).log(Level.SEVERE, null, ex);
+            SimpleInternationalString title = new SimpleInternationalString(general.getTitle());
+            SimpleInternationalString description = new SimpleInternationalString((general.getAbstract() == null) ? "No description" : general.getAbstract());
+            Description desc = new DefaultDescription(title, description);
+            context.setDescription(desc);
+            context.setAreaOfInterest(aoi);
         }
-        final double width = bbox.getMaxx().subtract(bbox.getMinx()).doubleValue();
-        final double height = bbox.getMaxy().subtract(bbox.getMiny()).doubleValue();
-        Envelope aoi = new Envelope2D(srs, bbox.getMinx().doubleValue(), bbox.getMiny().doubleValue(), width, height);
-
         //set context general values
-        context.setName(root.getId());
-        SimpleInternationalString title = new SimpleInternationalString(general.getTitle());
-        SimpleInternationalString description = new SimpleInternationalString((general.getAbstract() == null) ? "No description" : general.getAbstract());
-        Description desc = new DefaultDescription(title, description);
-        context.setDescription(desc);
-        context.setAreaOfInterest(aoi);
+        context.setName(root.getId());        
         context.setCoordinateReferenceSystem(srs);
-
+        
         //fill context with layers
         for (final LayerType layerType : layers.getLayer()) {
 
