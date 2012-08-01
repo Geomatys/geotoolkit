@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -43,7 +42,6 @@ import org.geotoolkit.internal.jaxb.JTSWrapperMarshallerPool;
 import org.geotoolkit.internal.jaxb.ObjectFactory;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.IdentifiedObjects;
-import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.xml.MarshallerPool;
 import org.geotoolkit.xml.Namespaces;
 import org.geotoolkit.xml.StaxStreamWriter;
@@ -67,36 +65,28 @@ import org.opengis.util.FactoryException;
  * @author Guilhem Legal (Geomatys)
  */
 public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeatureWriter {
-    /**
-     * Logger for this writer.
-     */
-    protected static final Logger LOGGER = Logging.getLogger(JAXPStreamFeatureWriter.class);
 
     /**
      * The pool of marshallers used for marshalling geometries.
      */
     @Deprecated
     private static final MarshallerPool GML_31_POOL = JTSWrapperMarshallerPool.getInstance();
-    
+
     private static final MarshallerPool GML_32_POOL = GMLMarshallerPool.getInstance();
 
     /**
      * Object factory to build a geometry.
      */
     private static final ObjectFactory OBJECT_FACTORY = new ObjectFactory();
-    
+
     private static final org.geotoolkit.gml.xml.v321.ObjectFactory GML32_FACTORY = new org.geotoolkit.gml.xml.v321.ObjectFactory();
 
     protected String schemaLocation;
 
-    private int lastUnknowPrefix = 0;
-
-    private final Map<String, String> unknowNamespaces = new HashMap<String, String>();
-    
     private final String gmlVersion;
-    
+
     private final String wfsNamespace;
-    
+
     private final String gmlNamespace;
 
     public JAXPStreamFeatureWriter() {
@@ -126,7 +116,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             gmlNamespace = Namespaces.GML;
         }
     }
-    
+
     public JAXPStreamFeatureWriter(final Map<String, String> schemaLocations)  {
          this("3.1.1", "1.1.0", schemaLocations);
     }
@@ -402,46 +392,6 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
 
             streamWriter.writeEndElement();
             streamWriter.writeEndElement();
-        }
-    }
-
-    /**
-     * Returns the prefix for the given namespace.
-     *
-     * @param namespace The namespace for which we want the prefix.
-     */
-    private Prefix getPrefix(final String namespace) {
-        String prefix = Namespaces.getPreferredPrefix(namespace, null);
-        /*
-         * temporary hack todo remove
-         */
-        if ("http://www.opengis.net/gml/3.2.1".equals(namespace)) {
-            return new Prefix(false, "gml");
-        }
-        boolean unknow = false;
-        if (prefix == null) {
-            prefix = unknowNamespaces.get(namespace);
-            if (prefix == null) {
-                prefix = "ns" + lastUnknowPrefix;
-                lastUnknowPrefix++;
-                unknow = true;
-                unknowNamespaces.put(namespace, prefix);
-            }
-        }
-        return new Prefix(unknow, prefix);
-    }
-
-
-    /**
-     * Inner class for handling prefix and if it is already known.
-     */
-    private final class Prefix {
-        public boolean unknow;
-        public String prefix;
-
-        public Prefix(final boolean unknow, final String prefix) {
-            this.prefix = prefix;
-            this.unknow = unknow;
         }
     }
 }

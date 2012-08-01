@@ -24,15 +24,16 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
+import org.geotoolkit.util.Utilities;
 import org.geotoolkit.wfs.xml.WFSFeatureCollection;
 import org.geotoolkit.wfs.xml.WFSResponse;
 
 
 /**
  * <p>Java class for FeatureCollectionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="FeatureCollectionType">
  *   &lt;complexContent>
@@ -47,8 +48,8 @@ import org.geotoolkit.wfs.xml.WFSResponse;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FeatureCollectionType", propOrder = {
@@ -84,14 +85,14 @@ public class FeatureCollectionType extends SimpleFeatureCollectionType implement
         this.numberReturned   = numberOfFeatures;
         this.timeStamp        = timeStamp;
     }
-    
+
     /**
      * Gets the value of the additionalObjects property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link AdditionalObjects }
-     *     
+     *
      */
     public AdditionalObjects getAdditionalObjects() {
         return additionalObjects;
@@ -99,11 +100,11 @@ public class FeatureCollectionType extends SimpleFeatureCollectionType implement
 
     /**
      * Sets the value of the additionalObjects property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link AdditionalObjects }
-     *     
+     *
      */
     public void setAdditionalObjects(AdditionalObjects value) {
         this.additionalObjects = value;
@@ -111,11 +112,11 @@ public class FeatureCollectionType extends SimpleFeatureCollectionType implement
 
     /**
      * Gets the value of the truncatedResponse property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TruncatedResponse }
-     *     
+     *
      */
     public TruncatedResponse getTruncatedResponse() {
         return truncatedResponse;
@@ -123,11 +124,11 @@ public class FeatureCollectionType extends SimpleFeatureCollectionType implement
 
     /**
      * Sets the value of the truncatedResponse property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TruncatedResponse }
-     *     
+     *
      */
     public void setTruncatedResponse(TruncatedResponse value) {
         this.truncatedResponse = value;
@@ -135,11 +136,11 @@ public class FeatureCollectionType extends SimpleFeatureCollectionType implement
 
     /**
      * Gets the value of the lockId property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLockId() {
         return lockId;
@@ -147,11 +148,11 @@ public class FeatureCollectionType extends SimpleFeatureCollectionType implement
 
     /**
      * Sets the value of the lockId property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLockId(String value) {
         this.lockId = value;
@@ -159,11 +160,11 @@ public class FeatureCollectionType extends SimpleFeatureCollectionType implement
 
     /**
      * Gets the value of the timeStamp property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public XMLGregorianCalendar getTimeStamp() {
         return timeStamp;
@@ -171,11 +172,11 @@ public class FeatureCollectionType extends SimpleFeatureCollectionType implement
 
     /**
      * Sets the value of the timeStamp property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link XMLGregorianCalendar }
-     *     
+     *
      */
     public void setTimeStamp(XMLGregorianCalendar value) {
         this.timeStamp = value;
@@ -183,11 +184,11 @@ public class FeatureCollectionType extends SimpleFeatureCollectionType implement
 
     /**
      * Gets the value of the numberMatched property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getNumberMatched() {
         return numberMatched;
@@ -195,11 +196,11 @@ public class FeatureCollectionType extends SimpleFeatureCollectionType implement
 
     /**
      * Sets the value of the numberMatched property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setNumberMatched(String value) {
         this.numberMatched = value;
@@ -207,11 +208,11 @@ public class FeatureCollectionType extends SimpleFeatureCollectionType implement
 
     /**
      * Gets the value of the numberReturned property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link int }
-     *     
+     *
      */
     public int getNumberReturned() {
         return numberReturned;
@@ -219,11 +220,11 @@ public class FeatureCollectionType extends SimpleFeatureCollectionType implement
 
     /**
      * Sets the value of the numberReturned property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link int }
-     *     
+     *
      */
     public void setNumberReturned(int value) {
         this.numberReturned = value;
@@ -231,11 +232,11 @@ public class FeatureCollectionType extends SimpleFeatureCollectionType implement
 
     /**
      * Gets the value of the next property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getNext() {
         return next;
@@ -243,11 +244,11 @@ public class FeatureCollectionType extends SimpleFeatureCollectionType implement
 
     /**
      * Sets the value of the next property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setNext(String value) {
         this.next = value;
@@ -255,11 +256,11 @@ public class FeatureCollectionType extends SimpleFeatureCollectionType implement
 
     /**
      * Gets the value of the previous property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getPrevious() {
         return previous;
@@ -267,14 +268,74 @@ public class FeatureCollectionType extends SimpleFeatureCollectionType implement
 
     /**
      * Sets the value of the previous property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setPrevious(String value) {
         this.previous = value;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (additionalObjects != null) {
+            sb.append("additionalObjects:").append(additionalObjects).append('\n');
+        }
+        if (lockId != null) {
+            sb.append("lockId:").append(lockId).append('\n');
+        }
+        if (next != null) {
+            sb.append("next:").append(next).append('\n');
+        }
+        sb.append("numberReturned:").append(numberReturned).append('\n');
+        if (numberMatched != null) {
+            sb.append("numberMatched:").append(numberMatched).append('\n');
+        }
+        if (previous != null) {
+            sb.append("previous:").append(previous).append('\n');
+        }
+        if (timeStamp != null) {
+            sb.append("timeStamp:").append(timeStamp).append('\n');
+        }
+        if (truncatedResponse != null) {
+            sb.append("truncatedResponse:").append(truncatedResponse).append('\n');
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof FeatureCollectionType && super.equals(obj)) {
+            final FeatureCollectionType that = (FeatureCollectionType) obj;
+            return Utilities.equals(this.additionalObjects, that.additionalObjects) &&
+                   Utilities.equals(this.lockId,            that.lockId) &&
+                   Utilities.equals(this.next,              that.next) &&
+                   Utilities.equals(this.numberMatched,     that.numberMatched) &&
+                   Utilities.equals(this.numberReturned,    that.numberReturned) &&
+                   Utilities.equals(this.previous,          that.previous) &&
+                   Utilities.equals(this.timeStamp,         that.timeStamp) &&
+                   Utilities.equals(this.truncatedResponse, that.truncatedResponse);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 23 * hash + (this.additionalObjects != null ? this.additionalObjects.hashCode() : 0);
+        hash = 23 * hash + (this.truncatedResponse != null ? this.truncatedResponse.hashCode() : 0);
+        hash = 23 * hash + (this.lockId != null ? this.lockId.hashCode() : 0);
+        hash = 23 * hash + (this.timeStamp != null ? this.timeStamp.hashCode() : 0);
+        hash = 23 * hash + (this.numberMatched != null ? this.numberMatched.hashCode() : 0);
+        hash = 23 * hash + this.numberReturned;
+        hash = 23 * hash + (this.next != null ? this.next.hashCode() : 0);
+        hash = 23 * hash + (this.previous != null ? this.previous.hashCode() : 0);
+        return hash;
+    }
 }

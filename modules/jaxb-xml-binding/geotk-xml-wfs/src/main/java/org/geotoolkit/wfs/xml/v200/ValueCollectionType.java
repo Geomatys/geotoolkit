@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
+import org.geotoolkit.util.Utilities;
 import org.geotoolkit.wfs.xml.ValueCollection;
 
 
@@ -157,6 +158,7 @@ public class ValueCollectionType implements ValueCollection {
      *     {@link XMLGregorianCalendar }
      *
      */
+    @Override
     public XMLGregorianCalendar getTimeStamp() {
         return timeStamp;
     }
@@ -181,6 +183,7 @@ public class ValueCollectionType implements ValueCollection {
      *     {@link String }
      *
      */
+    @Override
     public String getNumberMatched() {
         return numberMatched;
     }
@@ -205,6 +208,7 @@ public class ValueCollectionType implements ValueCollection {
      *     {@link int }
      *
      */
+    @Override
     public int getNumberReturned() {
         return numberReturned;
     }
@@ -269,4 +273,67 @@ public class ValueCollectionType implements ValueCollection {
         this.previous = value;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (additionalValues != null) {
+            sb.append("additionalValues:").append(additionalValues).append('\n');
+        }
+        if (member != null && !member.isEmpty()) {
+            sb.append("member:\n");
+            for (MemberPropertyType m : member) {
+                sb.append(m).append('\n');
+            }
+        }
+        if (next != null) {
+            sb.append("next:").append(next).append('\n');
+        }
+        sb.append("numberReturned:").append(numberReturned).append('\n');
+        if (numberMatched != null) {
+            sb.append("numberMatched:").append(numberMatched).append('\n');
+        }
+        if (previous != null) {
+            sb.append("previous:").append(previous).append('\n');
+        }
+        if (timeStamp != null) {
+            sb.append("timeStamp:").append(timeStamp).append('\n');
+        }
+        if (truncatedResponse != null) {
+            sb.append("truncatedResponse:").append(truncatedResponse).append('\n');
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof ValueCollectionType) {
+            final ValueCollectionType that = (ValueCollectionType) obj;
+            return Utilities.equals(this.member,            that.member) &&
+                   Utilities.equals(this.additionalValues,  that.additionalValues) &&
+                   Utilities.equals(this.next,              that.next) &&
+                   Utilities.equals(this.numberMatched,     that.numberMatched) &&
+                   Utilities.equals(this.numberReturned,    that.numberReturned) &&
+                   Utilities.equals(this.previous,          that.previous) &&
+                   Utilities.equals(this.timeStamp,         that.timeStamp) &&
+                   Utilities.equals(this.truncatedResponse, that.truncatedResponse);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 23 * hash + (this.additionalValues != null ? this.additionalValues.hashCode() : 0);
+        hash = 23 * hash + (this.truncatedResponse != null ? this.truncatedResponse.hashCode() : 0);
+        hash = 23 * hash + (this.member != null ? this.member.hashCode() : 0);
+        hash = 23 * hash + (this.timeStamp != null ? this.timeStamp.hashCode() : 0);
+        hash = 23 * hash + (this.numberMatched != null ? this.numberMatched.hashCode() : 0);
+        hash = 23 * hash + this.numberReturned;
+        hash = 23 * hash + (this.next != null ? this.next.hashCode() : 0);
+        hash = 23 * hash + (this.previous != null ? this.previous.hashCode() : 0);
+        return hash;
+    }
 }

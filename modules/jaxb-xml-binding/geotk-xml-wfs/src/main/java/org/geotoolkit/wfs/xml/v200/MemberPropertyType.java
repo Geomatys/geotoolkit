@@ -30,7 +30,7 @@ import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
-import org.w3c.dom.Element;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -106,7 +106,30 @@ public class MemberPropertyType {
         if (content == null) {
             content = new ArrayList<Object>();
         }
+        cleanContent();
         return this.content;
+    }
+
+    public void cleanContent() {
+        if (this.content != null) {
+            final List<Object> toRemove = new ArrayList<Object>();
+            int i = 0;
+            for (Object element : content) {
+                if (element instanceof String) {
+                    String s = (String) element;
+                    s = s.replace("\n", "");
+                    s = s.replace("\t", "");
+                    s = s.trim();
+                    if (s.isEmpty()) {
+                        toRemove.add(element);
+                    } else {
+                        content.set(i, s);
+                    }
+                }
+                i++;
+            }
+            this.content.removeAll(toRemove);
+        }
     }
 
     /**
@@ -303,6 +326,99 @@ public class MemberPropertyType {
      */
     public void setActuate(String value) {
         this.actuate = value;
+    }
+
+    @Override
+     public String toString() {
+        final StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
+        if (actuate != null) {
+            sb.append("actuate:").append(actuate).append('\n');
+        }
+        if (arcrole != null) {
+            sb.append("arcrole:").append(arcrole).append('\n');
+        }
+        if (href != null) {
+            sb.append("href:").append(href).append('\n');
+        }
+        if (role != null) {
+            sb.append("role:").append(role).append('\n');
+        }
+        if (show != null) {
+            sb.append("show:").append(show).append('\n');
+        }
+        if (state != null) {
+            sb.append("state:").append(state).append('\n');
+        }
+        if (title != null) {
+            sb.append("title:").append(title).append('\n');
+        }
+        if (type != null) {
+            sb.append("type:").append(type).append('\n');
+        }
+        cleanContent();
+        if (content != null) {
+            for (Object obj : content) {
+                if (obj instanceof JAXBElement) {
+                    sb.append("content [JAXBElement]= ").append(((JAXBElement)obj).getValue()).append('\n');
+                } else {
+                    sb.append("content= ").append(obj).append('\n');
+                }
+            }
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof MemberPropertyType) {
+            final MemberPropertyType that = (MemberPropertyType) obj;
+            boolean anyEq = false;
+            if (this.content == null && that.content == null) {
+                anyEq = true;
+            } else if (this.content != null && that.content != null) {
+                this.cleanContent();
+                that.cleanContent();
+                if (this.content.size() == that.content.size()) {
+                    for (int i = 0; i < this.content.size(); i++) {
+                        final Object thisany = this.content.get(i);
+                        final Object thatany = that.content.get(i);
+                        if (thisany instanceof JAXBElement && thatany instanceof JAXBElement) {
+                            anyEq = Utilities.equals(((JAXBElement)thisany).getValue(), ((JAXBElement)thatany).getValue());
+                        } else {
+                            anyEq = Utilities.equals(thisany, thatany);
+                        }
+                    }
+                }
+            }
+            return Utilities.equals(this.actuate, that.actuate) &&
+                   Utilities.equals(this.arcrole, that.arcrole) &&
+                   anyEq                                        &&
+                   Utilities.equals(this.href,    that.href)    &&
+                   Utilities.equals(this.role,    that.role)    &&
+                   Utilities.equals(this.show,    that.show)    &&
+                   Utilities.equals(this.state,   that.state)   &&
+                   Utilities.equals(this.title,   that.title)   &&
+                   Utilities.equals(this.type,    that.type);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 89 * hash + (this.content != null ? this.content.hashCode() : 0);
+        hash = 89 * hash + (this.state != null ? this.state.hashCode() : 0);
+        hash = 89 * hash + (this.type != null ? this.type.hashCode() : 0);
+        hash = 89 * hash + (this.href != null ? this.href.hashCode() : 0);
+        hash = 89 * hash + (this.role != null ? this.role.hashCode() : 0);
+        hash = 89 * hash + (this.arcrole != null ? this.arcrole.hashCode() : 0);
+        hash = 89 * hash + (this.title != null ? this.title.hashCode() : 0);
+        hash = 89 * hash + (this.show != null ? this.show.hashCode() : 0);
+        hash = 89 * hash + (this.actuate != null ? this.actuate.hashCode() : 0);
+        return hash;
     }
 
 }

@@ -24,13 +24,14 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.v110.ExceptionReport;
+import org.geotoolkit.util.Utilities;
 
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -42,8 +43,8 @@ import org.geotoolkit.ows.xml.v110.ExceptionReport;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -57,11 +58,11 @@ public class TruncatedResponse {
 
     /**
      * Gets the value of the exceptionReport property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ExceptionReport }
-     *     
+     *
      */
     public ExceptionReport getExceptionReport() {
         return exceptionReport;
@@ -69,14 +70,42 @@ public class TruncatedResponse {
 
     /**
      * Sets the value of the exceptionReport property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ExceptionReport }
-     *     
+     *
      */
     public void setExceptionReport(ExceptionReport value) {
         this.exceptionReport = value;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
+        if (exceptionReport != null) {
+            sb.append("exceptionReport:").append(exceptionReport).append('\n');
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof TruncatedResponse) {
+            final TruncatedResponse that = (TruncatedResponse) obj;
+            return Utilities.equals(this.exceptionReport, that.exceptionReport);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 71 * hash + (this.exceptionReport != null ? this.exceptionReport.hashCode() : 0);
+        return hash;
     }
 
 }
