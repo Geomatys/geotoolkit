@@ -162,7 +162,7 @@ public class Utils {
 
     private static final Map<Class, QName> NAME_BINDING = new HashMap<Class, QName>();
     static {
-       
+
         // Special case when we get a List or Map we return String => TODO
         NAME_BINDING.put(List.class,          new QName("http://www.w3.org/2001/XMLSchema", "string"));
         NAME_BINDING.put(Map.class,           new QName("http://www.w3.org/2001/XMLSchema", "string"));
@@ -182,13 +182,13 @@ public class Utils {
         NAME_BINDING.put(Byte.class,          new QName("http://www.w3.org/2001/XMLSchema", "byte"));
 
     }
-    
+
     private static final String GML_311_NAMESPACE = "http://www.opengis.net/gml";
-    private static final String GML_321_NAMESPACE = "http://www.opengis.net/gml/3.2.1";
-    
+    private static final String GML_321_NAMESPACE = "http://www.opengis.net/gml/3.2";
+
     private static final Map<Class, QName> GEOMETRY_NAME_BINDING_311 = new HashMap<Class, QName>();
     static {
-       
+
         GEOMETRY_NAME_BINDING_311.put(MultiPoint.class,         new QName(GML_311_NAMESPACE, "MultiPoint"));
         GEOMETRY_NAME_BINDING_311.put(Point.class,              new QName(GML_311_NAMESPACE, "Point"));
         GEOMETRY_NAME_BINDING_311.put(LineString.class,         new QName(GML_311_NAMESPACE, "Curve"));
@@ -199,10 +199,10 @@ public class Utils {
         GEOMETRY_NAME_BINDING_311.put(Polygon.class,            new QName(GML_311_NAMESPACE, "Polygon"));
         GEOMETRY_NAME_BINDING_311.put(LinearRing.class,         new QName(GML_311_NAMESPACE, "Ring"));
     }
-    
+
     private static final Map<Class, QName> GEOMETRY_NAME_BINDING_321 = new HashMap<Class, QName>();
     static {
-       
+
         GEOMETRY_NAME_BINDING_321.put(MultiPoint.class,         new QName(GML_321_NAMESPACE, "MultiPoint"));
         GEOMETRY_NAME_BINDING_321.put(Point.class,              new QName(GML_321_NAMESPACE, "Point"));
         GEOMETRY_NAME_BINDING_321.put(LineString.class,         new QName(GML_321_NAMESPACE, "Curve"));

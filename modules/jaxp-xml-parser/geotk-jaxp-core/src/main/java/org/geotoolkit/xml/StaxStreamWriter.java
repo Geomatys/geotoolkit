@@ -82,7 +82,7 @@ public abstract class StaxStreamWriter extends AbstractConfigurable {
     private int lastUnknowPrefix = 0;
 
     private final Map<String, String> unknowNamespaces = new HashMap<String, String>();
-    
+
     public StaxStreamWriter(){
     }
 
@@ -199,7 +199,7 @@ public abstract class StaxStreamWriter extends AbstractConfigurable {
         /*
          * temporary hack todo remove
          */
-        if ("http://www.opengis.net/gml/3.2.1".equals(namespace)) {
+        if ("http://www.opengis.net/gml/3.2".equals(namespace)) {
             return new Prefix(false, "gml");
         }
         boolean unknow = false;

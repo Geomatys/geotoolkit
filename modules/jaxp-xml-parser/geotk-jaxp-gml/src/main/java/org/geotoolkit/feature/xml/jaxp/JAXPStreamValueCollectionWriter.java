@@ -58,7 +58,7 @@ public class JAXPStreamValueCollectionWriter extends StaxStreamWriter implements
      */
     private static final ObjectFactory GML32_FACTORY = new ObjectFactory();
 
-    private static final String GML_NAMESPACE = "http://www.opengis.net/gml/3.2.1";
+    private static final String GML_NAMESPACE = "http://www.opengis.net/gml/3.2";
     private static final String WFS_NAMESPACE = "http://www.opengis.net/wfs/2.0";
 
     private final String valueReference;
@@ -132,42 +132,40 @@ public class JAXPStreamValueCollectionWriter extends StaxStreamWriter implements
                 writer.writeEndElement();
             }
 
-        } else if (!(valueA instanceof GeometryType)) {
+        } else if (valueA instanceof com.vividsolutions.jts.geom.Geometry) {
+            writer.writeStartElement("wfs", "member", WFS_NAMESPACE);
+
+            AbstractGeometry gmlGeometry = null;
+            try {
+                gmlGeometry = JTStoGeometry.toGML("3.2.1", (com.vividsolutions.jts.geom.Geometry) valueA,  type.getCoordinateReferenceSystem());
+            } catch (FactoryException ex) {
+                LOGGER.log(Level.WARNING, "Factory exception when transforming JTS geometry to GML binding", ex);
+            }
+            final JAXBElement element = GML32_FACTORY.buildAnyGeometry(gmlGeometry);
+
+            Marshaller marshaller = null;
+            try {
+                marshaller = GML_32_POOL.acquireMarshaller();
+                marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
+                marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, false);
+                marshaller.marshal(element, writer);
+            } catch (JAXBException ex) {
+                LOGGER.log(Level.WARNING, "JAXB Exception while marshalling the iso geometry: " + ex.getMessage(), ex);
+            } finally {
+                if (marshaller != null) {
+                    GML_32_POOL.release(marshaller);
+                }
+            }
+            writer.writeEndElement();
+
+
+        // we add the geometry
+        } else {
             String value = Utils.getStringValue(valueA);
             if (value != null) {
                 writer.writeStartElement("wfs", "member", WFS_NAMESPACE);
                 if (value != null) {
                     writer.writeCharacters(value);
-                }
-                writer.writeEndElement();
-            }
-
-        // we add the geometry
-        } else {
-
-            if (valueA != null) {
-                writer.writeStartElement("wfs", "member", WFS_NAMESPACE);
-
-                AbstractGeometry gmlGeometry = null;
-                try {
-                    gmlGeometry = JTStoGeometry.toGML("3.2.1", (com.vividsolutions.jts.geom.Geometry) valueA,  type.getCoordinateReferenceSystem());
-                } catch (FactoryException ex) {
-                    LOGGER.log(Level.WARNING, "Factory exception when transforming JTS geometry to GML binding", ex);
-                }
-                final JAXBElement element = GML32_FACTORY.buildAnyGeometry(gmlGeometry);
-
-                Marshaller marshaller = null;
-                try {
-                    marshaller = GML_32_POOL.acquireMarshaller();
-                    marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
-                    marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, false);
-                    marshaller.marshal(element, writer);
-                } catch (JAXBException ex) {
-                    LOGGER.log(Level.WARNING, "JAXB Exception while marshalling the iso geometry: " + ex.getMessage(), ex);
-                } finally {
-                    if (marshaller != null) {
-                        GML_32_POOL.release(marshaller);
-                    }
                 }
                 writer.writeEndElement();
             }
@@ -200,7 +198,7 @@ public class JAXPStreamValueCollectionWriter extends StaxStreamWriter implements
         FeatureType type = featureCollection.getFeatureType();
         if (type != null && type.getName() != null) {
             String namespace = type.getName().getNamespaceURI();
-            if (namespace != null && !(namespace.equals(Namespaces.GML) || namespace.equals("http://www.opengis.net/gml/3.2.1"))) {
+            if (namespace != null && !(namespace.equals(Namespaces.GML) || namespace.equals("http://www.opengis.net/gml/3.2"))) {
                 Prefix prefix    = getPrefix(namespace);
                 writer.writeNamespace(prefix.prefix, namespace);
             }

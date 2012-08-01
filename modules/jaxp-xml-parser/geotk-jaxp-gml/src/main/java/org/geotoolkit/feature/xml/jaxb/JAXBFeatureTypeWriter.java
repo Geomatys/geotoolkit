@@ -60,22 +60,22 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable implements XmlFe
     private static final MarshallerPool POOL = XSDMarshallerPool.getInstance();
 
     private static final Import GML_IMPORT_311 = new Import("http://www.opengis.net/gml", "http://schemas.opengis.net/gml/3.1.1/base/gml.xsd");
-    private static final Import GML_IMPORT_321 = new Import("http://www.opengis.net/gml/3.2.1", "http://schemas.opengis.net/gml/3.2.1/gml.xsd");
+    private static final Import GML_IMPORT_321 = new Import("http://www.opengis.net/gml/3.2", "http://schemas.opengis.net/gml/3.2.1/gml.xsd");
 
     private static final QName FEATURE_NAME_311 = new QName("http://www.opengis.net/gml", "_Feature");
-    
-    private static final QName FEATURE_NAME_321 = new QName("http://www.opengis.net/gml/3.2.1", "_Feature");
+
+    private static final QName FEATURE_NAME_321 = new QName("http://www.opengis.net/gml/3.2", "_Feature");
 
     private int lastUnknowPrefix = 0;
-    
+
     private final Map<String, String> unknowNamespaces = new HashMap<String, String>();
-    
+
     private final String gmlVersion;
-    
+
     public JAXBFeatureTypeWriter(){
         gmlVersion = "3.1.1";
     }
-    
+
     public JAXBFeatureTypeWriter(final String gmlVersion){
         this.gmlVersion = gmlVersion;
     }
@@ -123,7 +123,7 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable implements XmlFe
             }
         }
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -200,14 +200,14 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable implements XmlFe
     }
 
     private void fillSchemaWithFeatureType(final FeatureType featureType, final Schema schema) {
-        
+
         final String typeNamespace    = featureType.getName().getNamespaceURI();
         final String elementName      = featureType.getName().getLocalPart();
         final String typeName         = elementName + "Type";
         schema.addElement(new TopLevelElement(elementName, new QName(typeNamespace, typeName)));
 
         final ExplicitGroup sequence  = new ExplicitGroup();
-        
+
         for(final PropertyDescriptor pdesc : featureType.getDescriptors()) {
             final String name   = pdesc.getName().getLocalPart();
             final QName type    = Utils.getQNameFromType(pdesc.getType().getBinding(), gmlVersion);
@@ -231,8 +231,8 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable implements XmlFe
         final ComplexContent content  = new ComplexContent(extension);
         schema.addComplexType(new TopLevelComplexType(typeName, content));
     }
-    
-    
+
+
      /**
      * Returns the prefix for the given namespace.
      *

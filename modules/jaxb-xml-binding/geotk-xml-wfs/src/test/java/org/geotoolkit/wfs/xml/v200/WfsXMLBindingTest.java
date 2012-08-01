@@ -109,52 +109,52 @@ public class WfsXMLBindingTest {
         result =(WFSCapabilitiesType) obj;
         assertEquals(expResult.getFeatureTypeList().getFeatureType(), result.getFeatureTypeList().getFeatureType());
         assertEquals(expResult.getFeatureTypeList(), result.getFeatureTypeList());
-        
-        String xml = 
+
+        String xml =
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + '\n' +
-                "<wfs:Transaction version=\"2.0.0\" service=\"WFS\" xmlns:gml=\"http://www.opengis.net/gml/3.2.1\" xmlns:ogc=\"http://www.opengis.net/fes/2.0\" " + '\n' +
+                "<wfs:Transaction version=\"2.0.0\" service=\"WFS\" xmlns:gml=\"http://www.opengis.net/gml/3.2\" xmlns:ogc=\"http://www.opengis.net/fes/2.0\" " + '\n' +
                 "          xmlns:wfs=\"http://www.opengis.net/wfs/2.0\" xmlns:sampling=\"http://www.opengis.net/sampling/1.0\">" + '\n' +
                 "    <wfs:Insert idgen=\"UseExisting\">" + '\n' +
                 "    </wfs:Insert>" + '\n' +
                 "</wfs:Transaction>";
 
         unmarshalled = unmarshaller.unmarshal(new StringReader(xml));
-        
+
         if (unmarshalled instanceof JAXBElement) {
             unmarshalled = ((JAXBElement)unmarshalled).getValue();
         }
         assertTrue("was " + unmarshalled.getClass().getName(), unmarshalled instanceof TransactionType);
         TransactionType resultT = (TransactionType) unmarshalled;
-        
+
         InsertType ins = new InsertType();
         //ins.setIdgen(IdentifierGenerationOptionType.USE_EXISTING);
         TransactionType expResultT = new TransactionType("WFS", "2.0.0", null, null, ins);
-        
+
         assertEquals(expResultT, resultT);
-        
+
         xml =   "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + '\n' +
-                "<wfs:Transaction version=\"2.0.0\" service=\"WFS\" xmlns:gml=\"http://www.opengis.net/gml/3.2.1\" xmlns:fes=\"http://www.opengis.net/fes/2.0\" " + '\n' +
+                "<wfs:Transaction version=\"2.0.0\" service=\"WFS\" xmlns:gml=\"http://www.opengis.net/gml/3.2\" xmlns:fes=\"http://www.opengis.net/fes/2.0\" " + '\n' +
                 "          xmlns:wfs=\"http://www.opengis.net/wfs/2.0\" xmlns:sampling=\"http://www.opengis.net/sampling/1.0\">" + '\n' +
                 "    <wfs:Delete typeName=\"gml:test\">" + '\n' +
                 "    </wfs:Delete>" + '\n' +
                 "</wfs:Transaction>";
 
         unmarshalled = unmarshaller.unmarshal(new StringReader(xml));
-        
+
         if (unmarshalled instanceof JAXBElement) {
             unmarshalled = ((JAXBElement)unmarshalled).getValue();
         }
-        
+
         assertTrue(unmarshalled instanceof TransactionType);
         resultT = (TransactionType) unmarshalled;
-        
+
         DeleteType del = new DeleteType();
-        del.setTypeName(new QName("http://www.opengis.net/gml/3.2.1", "test"));
+        del.setTypeName(new QName("http://www.opengis.net/gml/3.2", "test"));
         expResultT = new TransactionType("WFS", "2.0.0", null, null, del);
-        
+
         assertEquals(expResultT, resultT);
-        
-        
+
+
     }
 
     @Test
@@ -187,7 +187,7 @@ public class WfsXMLBindingTest {
 
         sw = new StringWriter();
         marshaller.marshal(transac, sw);
-        
+
         final List<StoredQueryDescription> descriptions = new ArrayList<StoredQueryDescription>();
         final ParameterExpressionType param = new ParameterExpressionType("param1", "parameter 1", "a test parameter", new QName("http://www.w3.org/2001/XMLSchema", "string", "xs"));
         final List<QName> types = Arrays.asList(new QName("http://test.com", "someType"));
@@ -196,10 +196,10 @@ public class WfsXMLBindingTest {
         final StoredQueryDescriptionType des1 = new StoredQueryDescriptionType("query1", "title1", "abstract1", param, queryEx);
         descriptions.add(des1);
         final StoredQueries storesQueries = new StoredQueries(descriptions);
-        
+
         sw = new StringWriter();
         marshaller.marshal(storesQueries, sw);
-        
+
         //System.out.println(sw.toString());
     }
 }
