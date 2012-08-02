@@ -1,7 +1,20 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2012, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation; either
+ *    version 2.1 of the License, or (at your option) any later version.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
  */
+
 package org.geotoolkit.wmc;
 
 import java.io.InputStream;
@@ -23,7 +36,6 @@ import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
-import org.geotoolkit.data.wfs.WebFeatureServer;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.geometry.Envelope2D;
@@ -35,16 +47,12 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.style.DefaultDescription;
-import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.RandomStyleFactory;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.wmc.xml.v110.*;
-import org.geotoolkit.wms.WMSCoverageReference;
-import org.geotoolkit.wms.WebMapServer;
-import org.geotoolkit.wmts.WebMapTileServer;
 import org.geotoolkit.xml.MarshallerPool;
 import org.opengis.feature.type.Name;
 import org.opengis.geometry.Envelope;
@@ -74,9 +82,12 @@ public class WMCUtilities {
     }
 
     /**
-     * This method will get WMC informations to create a new valid {@link MapContext}.
+     * This method will get WMC informations to create a new valid
+     * {@link MapContext}.
      *
+     * @param source : An {@link InputSream}, the WMC as an xml.
      * @return A map context containing informations given by a wmc document.
+     * @throws JAXBException if the xml cannot be read.
      */
     public static MapContext getMapContext(InputStream source) throws JAXBException {
         final MarshallerPool pool = new MarshallerPool("org.geotoolkit.ogc.xml.exception:" + "org.geotoolkit.wmc.xml.v110");
@@ -87,18 +98,24 @@ public class WMCUtilities {
         }
         //Get needed markups
         ViewContextType root = (ViewContextType) o;
-        
+
         final MapContext context = getMapContext(root);
 
         pool.release(um);
         return context;
     }
-    
+
+    /**
+     * Create a Geotk {@link MapContext} embeding layers described by given wmc.
+     *
+     * @param root The {@link ViewContextType}, root markup of the wmc.
+     * @return a {@link MapContext} containing layers extracted from wmc.
+     */
     public static MapContext getMapContext(ViewContextType root) {
         ArgumentChecks.ensureNonNull("ViewContextType", root);
         CoordinateReferenceSystem srs = DefaultGeographicCRS.WGS84;
         final MapContext context = MapBuilder.createContext();
-        
+
         //Get needed markups
         GeneralType general = root.getGeneral();
         LayerListType layers = root.getLayerList();
@@ -124,9 +141,9 @@ public class WMCUtilities {
             context.setAreaOfInterest(aoi);
         }
         //set context general values
-        context.setName(root.getId());        
+        context.setName(root.getId());
         context.setCoordinateReferenceSystem(srs);
-        
+
         //fill context with layers
         for (final LayerType layerType : layers.getLayer()) {
 
@@ -149,23 +166,23 @@ public class WMCUtilities {
                 continue;
             }
 
-            if(server instanceof CoverageStore){
+            if (server instanceof CoverageStore) {
                 final CoverageStore cs = (CoverageStore) server;
-                try{
-                    for(Name n : cs.getNames()){
-                        if(n.getLocalPart().equalsIgnoreCase(layerName.getLocalPart())){                            
+                try {
+                    for (Name n : cs.getNames()) {
+                        if (n.getLocalPart().equalsIgnoreCase(layerName.getLocalPart())) {
                             final CoverageReference ref = cs.getCoverageReference(n);
-                            final CoverageMapLayer mapLayer = MapBuilder.createCoverageLayer(ref, 
+                            final CoverageMapLayer mapLayer = MapBuilder.createCoverageLayer(ref,
                                     GO2Utilities.STYLE_FACTORY.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), ref.getName().toString());
                             context.layers().add(mapLayer);
                         }
                     }
-                }catch(DataStoreException ex){
+                } catch (DataStoreException ex) {
                     Logger.getLogger(WMCUtilities.class.getName()).log(Level.SEVERE, null, ex);
                     continue;
-                }                
-                
-            } else if(server instanceof DataStore){
+                }
+
+            } else if (server instanceof DataStore) {
                 final DataStore wfs = (DataStore) server;
                 final Session storeSession = wfs.createSession(true);
                 final FeatureCollection collection = storeSession.getFeatureCollection(QueryBuilder.all(layerName));
