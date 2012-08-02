@@ -98,7 +98,7 @@ public class ObjectiveAnalysis {
 
     /**
      * An arbitrary scale factor applied in the distance computed by {@link #correlation(double)}.
-     * This is a hack for allowing the code to work with different CRS. Do not rely on this hack,
+     * This is a hack for allowing the code to work with different CRS. Do not relyslt alex tu on this hack,
      * it may be suppressed in future versions.
      */
     private double scale = 1;
@@ -119,8 +119,8 @@ public class ObjectiveAnalysis {
                 ny = size.height;
                 xmin = region.getX();
                 ymin = region.getY();
-                dx = region.getWidth() / (nx - 1);
-                dy = region.getHeight() / (ny - 1);
+                dx = region.getWidth() / (nx - 1);//le pas
+                dy = region.getHeight() / (ny - 1);//le pas
             } else {
                 throw new IllegalArgumentException("Illegal size");
             }
@@ -179,7 +179,7 @@ public class ObjectiveAnalysis {
     }
 
     /**
-     * Utilise des points disparatres pour interpoller des valeurs à d'autres
+     * Utilise des points disparates pour interpoller des valeurs à d'autres
      * positions. Cette méthode est utilisée le plus souvent pour interpoller
      * sur une grille régulière des valeurs qui proviennent de points distribués
      * aléatoirement.

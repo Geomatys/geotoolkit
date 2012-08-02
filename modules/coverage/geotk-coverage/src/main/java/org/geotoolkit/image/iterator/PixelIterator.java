@@ -393,4 +393,13 @@ public abstract class PixelIterator {
     public int getSourceDatatype() {
         return (renderedImage == null) ? currentRaster.getSampleModel().getDataType() : renderedImage.getSampleModel().getDataType();
     }
+
+    /**
+     * Return {@link Rectangle} which represent iteration area.
+     *
+     * @return {@link Rectangle} which represent iteration area.
+     */
+    public Rectangle getAreaIterate() {
+        return new Rectangle(areaIterateMinX, areaIterateMinY, areaIterateMaxX-areaIterateMinX, areaIterateMaxY-areaIterateMinY);
+    }
 }

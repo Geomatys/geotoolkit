@@ -21,6 +21,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import java.awt.Dimension;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.RenderedImage;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -105,29 +106,37 @@ public class KrigingProcess extends AbstractProcess {
             if (dim.width > maxDim.width)   dim.width  = maxDim.width;
         }
 
-        final ObjectiveAnalysis ob = new ObjectiveAnalysis(rect, dim);
+//        final ObjectiveAnalysis ob = new ObjectiveAnalysis(rect, dim);
+        final ObjectiveAnalysisPending ob = new ObjectiveAnalysisPending(rect, dim);
         if (crs instanceof ProjectedCRS) {
             // The default ObjectiveAnalysis algorithm is designed for GeographicCRS.
             // In case of ProjectedCRS, we need to apply a scale factor that convert
             // metres to some approximation of angles of longitude/latitude.
             ob.setScaleFactor(1. / (60*1852)); // Use standard length of nautical mile.
         }
-        final double[] computed;
-        try {
-            computed = ob.interpole(x, y, z);
-        } catch (Exception ex) {
-            throw new ProcessException(null, this, ex);
-        }
-        final double[] cx = ob.getXs();
-        final double[] cy = ob.getYs();
 
+//        double[] computed;
+//        try {
+////            computed = ob.interpole(x, y, z);
+////            computed = ob.interpolate(null);
+//            computed = ob.interpolate((double[])null);
+//        } catch (Exception ex) {
+//            throw new ProcessException(null, this, ex);
+//        }
+//        final double[] cx = ob.getXs();
+//        final double[] cy = ob.getYs();
+        final RenderedImage renderedImage = ob.createImage();
 
         //create the coverage //////////////////////////////////////////////////
+//        final GeneralEnvelope env = new GeneralEnvelope(
+//                new Rectangle2D.Double(cx[0], cy[0], cx[cx.length-1]-cx[0], cy[cy.length-1]-cy[0]));
+//        env.setCoordinateReferenceSystem(crs);
         final GeneralEnvelope env = new GeneralEnvelope(
-                new Rectangle2D.Double(cx[0], cy[0], cx[cx.length-1]-cx[0], cy[cy.length-1]-cy[0]));
+                new Rectangle2D.Double(renderedImage.getMinX(), renderedImage.getMinY(), renderedImage.getWidth(), renderedImage.getHeight()));
         env.setCoordinateReferenceSystem(crs);
 
-        final GridCoverage2D coverage = toCoverage(computed, cx, cy, env);
+//        final GridCoverage2D coverage = toCoverage(computed, cx, cy, env);
+        final GridCoverage2D coverage = new GridCoverageFactory().create("catgrid", renderedImage, env);
         getOrCreate(OUT_COVERAGE, outputParameters).setValue(coverage);
 
 
@@ -142,9 +151,12 @@ public class KrigingProcess extends AbstractProcess {
             palier[i] = minz + i*step;
         }
 
+        final IsolineCreator isolineCreator = new IsolineCreator(renderedImage, palier);
+
         final Map<Point3d,List<Coordinate>> steps;
         try {
-            steps = ob.doContouring(cx, cy, computed, palier);
+//            steps = ob.doContouring(cx, cy, computed, palier);
+            steps = isolineCreator.createIsolines();
         } catch(Exception ex) {
             //this task rais some IllegalStateExceptio
             //TODO, fix objective analysis

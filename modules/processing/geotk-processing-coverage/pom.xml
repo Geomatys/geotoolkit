@@ -86,12 +86,21 @@
       </dependency>
       <dependency>
           <groupId>org.geotoolkit.pending</groupId>
+          <artifactId>geotk-coverage</artifactId>
+          <version>${project.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.geotoolkit.pending</groupId>
           <artifactId>geotk-go2</artifactId>
           <version>${project.version}</version>
       </dependency>
       <dependency>
           <groupId>org.geotoolkit</groupId>
           <artifactId>geotk-coverage</artifactId>
+      </dependency>
+      <dependency>
+          <groupId>org.geotoolkit</groupId>
+          <artifactId>geotk-analytics</artifactId>
       </dependency>
       <dependency>
           <groupId>org.geotoolkit</groupId>
