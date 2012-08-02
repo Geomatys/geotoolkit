@@ -436,8 +436,8 @@ scan:   for (final CoordinateReferenceSystem component : crs.getComponents()) {
      * <p>
      * <ul>
      *   <li>Some CRS component may compute their own transform in a different way. For example
-     *       {@link org.geotoolkit.referencing.adapters.NetcdfCRS} returns {@code null} if an
-     *       axis is irregular.</li>
+     *       {@link org.geotoolkit.referencing.adapters.NetcdfCRS} returns a custom implementation
+     *       if an axis is irregular.</li>
      *   <li>We invoke {@code getAffineTransform(CoordinateReferenceSystem, ...)} first in order
      *       to have at least a translation term when the component can not compute its own "grid
      *       to CRS" transform.</li>

@@ -23,7 +23,6 @@ import java.io.IOException;
 
 import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.dataset.CoordinateSystem;
-import ucar.nc2.dataset.CoordinateAxis1D;
 import ucar.nc2.dataset.CoordinateAxis1DTime;
 
 import org.opengis.coverage.grid.GridGeometry;
@@ -50,7 +49,7 @@ import org.geotoolkit.internal.image.io.IrregularAxesConverterTest;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
 
 import org.junit.*;
-import static org.junit.Assert.*;
+import static org.opengis.test.Assert.*;
 import static java.lang.Double.NaN;
 import static org.geotoolkit.image.io.plugin.CoriolisFormatTest.GRID_SIZE;
 import static org.geotoolkit.image.io.plugin.CoriolisFormatTest.getTestFile;
@@ -66,7 +65,7 @@ import static org.geotoolkit.image.io.plugin.CoriolisFormatTest.assertExpectedAx
  *
  * @since 3.08
  */
-@Depend(IrregularAxesConverterTest.class)
+@Depend({NetcdfAxisTest.class, IrregularAxesConverterTest.class})
 public final strictfp class NetcdfCRSTest extends org.opengis.wrapper.netcdf.NetcdfCRSTest {
     /**
      * Small tolerance factor for floating point comparison.
@@ -163,7 +162,7 @@ public final strictfp class NetcdfCRSTest extends org.opengis.wrapper.netcdf.Net
              * For each axis, check the consistency of ordinate values.
              */
             final CoordinateSystemAxis axis = cs.getAxis(i);
-            assertTrue("Expected a discrete axis.", axis instanceof DiscreteCoordinateSystemAxis<?>);
+            assertInstanceOf("Expected a discrete axis.", DiscreteCoordinateSystemAxis.class, axis);
             final DiscreteCoordinateSystemAxis<?> discreteAxis = (DiscreteCoordinateSystemAxis<?>) axis;
             final int n = discreteAxis.length();
             assertEquals("Unexpected number of indices.", GRID_SIZE[i], n);
@@ -206,16 +205,16 @@ public final strictfp class NetcdfCRSTest extends org.opengis.wrapper.netcdf.Net
          * Check the CRS types. It should be a CompoundCRS. The first component shall be either
          * geographic and projected, and the last components shall be vertical and temporal.
          */
-        assertTrue("Expected a Compound CRS.", crs instanceof CompoundCRS);
+        assertInstanceOf("Expected a Compound CRS.", CompoundCRS.class, crs);
         final List<CoordinateReferenceSystem> components = ((CompoundCRS) crs).getComponents();
         assertEquals(3, components.size());
         if (isProjected) {
-            assertTrue("Expected a Projected CRS.", components.get(0) instanceof ProjectedCRS);
+            assertInstanceOf("Expected a Projected CRS.", ProjectedCRS.class, components.get(0));
         } else {
-            assertTrue("Expected a Geographic CRS.", components.get(0) instanceof GeographicCRS);
+            assertInstanceOf("Expected a Geographic CRS.", GeographicCRS.class, components.get(0));
         }
-        assertTrue("Expected a Vertical CRS.", components.get(1) instanceof VerticalCRS);
-        assertTrue("Expected a Temporal CRS.", components.get(2) instanceof TemporalCRS);
+        assertInstanceOf("Expected a Vertical CRS.", VerticalCRS.class, components.get(1));
+        assertInstanceOf("Expected a Temporal CRS.", TemporalCRS.class, components.get(2));
         /*
          * Check the epoch of the temporal CRS.
          */
@@ -225,7 +224,7 @@ public final strictfp class NetcdfCRSTest extends org.opengis.wrapper.netcdf.Net
         /*
          * Check the grid geometry.
          */
-        assertTrue("Expected a grid geometry.", crs instanceof GridGeometry);
+        assertInstanceOf("Expected a grid geometry.", GridGeometry.class, crs);
         final GridGeometry gg = (GridGeometry) crs;
         final GridEnvelope ge = gg.getExtent();
         final int[] high = GRID_SIZE.clone();
@@ -237,7 +236,7 @@ public final strictfp class NetcdfCRSTest extends org.opengis.wrapper.netcdf.Net
         final MathTransform gridToCRS = gg.getGridToCRS();
         final Matrix matrix = DiscreteReferencingFactory.getAffineTransform(crs);
         if (isProjected) {
-            assertTrue(gridToCRS instanceof LinearTransform);
+            assertInstanceOf("Expected regular axes.", LinearTransform.class, gridToCRS);
             /*
              * The first two lines of the above matrix contain the same offset and scale factors
              * than the ones in IrregularAxesConverterTest, except for a slight southing offset.
@@ -251,7 +250,7 @@ public final strictfp class NetcdfCRSTest extends org.opengis.wrapper.netcdf.Net
                     new double[] {    0,     0,     0,   NaN,     20975},
                     new double[] {    0,     0,     0,     0,         1}).equals(matrix, 1));
         } else {
-            assertNull(gridToCRS);
+            assertInstanceOf("Expected an irregular transform.", NetcdfGridToCRS.class, gridToCRS);
             assertTrue("GridToCRS of a GeographicCRS", new GeneralMatrix(
                     new double[] {NaN,   0,   0,   0,  -179.5}, // Actually, the scale should be 0.5
                     new double[] {  0, NaN,   0,   0,   -77.0105},
@@ -274,34 +273,6 @@ public final strictfp class NetcdfCRSTest extends org.opengis.wrapper.netcdf.Net
                     new double[] {0, 0, NaN,   0,   NaN},
                     new double[] {0, 0,   0, NaN,   NaN},
                     new double[] {0, 0,   0,   0,     0}).equals(matrix, 1));
-        }
-    }
-
-    /**
-     * Tests whatever the patch provided by {@link NetcdfCRS.Temporal#complete}
-     * is still necessary. If this method fails in a future version of the UCAR
-     * library, then we may consider removing the patch.
-     *
-     * @throws IOException If an error occurred while reading the test file.
-     */
-    @Test
-    public void testCoordinateAxis1DTimePatch() throws IOException {
-        final NetcdfDataset data = NetcdfDataset.openDataset(getTestFile().getPath());
-        try {
-            final CoordinateSystem cs = data.getCoordinateSystems().get(0);
-            boolean useFile = false;
-            do {
-                final NetcdfCRS crs;
-                if (useFile) {
-                    crs = NetcdfCRS.wrap(cs, data, null);
-                } else {
-                    crs = NetcdfCRS.wrap(cs);
-                }
-                final CoordinateAxis1D axis = ((NetcdfAxis) crs.getCoordinateSystem().getAxis(3)).delegate();
-                assertEquals("CoordinateAxis1DTime check", useFile, axis instanceof CoordinateAxis1DTime);
-            } while ((useFile = !useFile) == true);
-        } finally {
-            data.close();
         }
     }
 }

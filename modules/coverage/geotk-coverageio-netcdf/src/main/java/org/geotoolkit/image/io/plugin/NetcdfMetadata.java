@@ -68,7 +68,6 @@ import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.ISO_FORMAT_NAME;
 import static org.geotoolkit.image.io.plugin.NetcdfImageReader.Spi.NATIVE_FORMAT_NAME;
-import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
 import static ucar.nc2.constants.CF.GRID_MAPPING;
 
 
@@ -191,7 +190,7 @@ final class NetcdfMetadata extends SpatialMetadata {
         GDALGridMapping  gdal     = null;
         CoordinateSystem netcdfCS = null;
         for (final VariableIF variable : variables) {
-            if (file != null) {
+            if (gdal == null && file != null) {
                 /*
                  * Before to rely on CF convention, check for GDAL convention. GDAL declares
                  * the CRS in WKT format, together with the "grid to CRS" affine transform.
@@ -229,17 +228,14 @@ final class NetcdfMetadata extends SpatialMetadata {
              * Now check for CF-convention. If a CRS is found from CF convention, we will check
              * for consistency but the CRS found above (if any) will have precedence. We prefer
              * WKT definition rather than CF conventions because CF convention does not declare
-             * (at the time of writing) datum of axis order.
+             * (at the time of writing) datum or axis order.
              */
             if (variable instanceof Enhancements) {
-                final List<CoordinateSystem> systems = ((Enhancements) variable).getCoordinateSystems();
-                if (!isNullOrEmpty(systems)) {
-                    netcdfCS = systems.get(0);
-                    break; // Infers the CRS only from the first variable having such CRS.
+                for (final CoordinateSystem cs : ((Enhancements) variable).getCoordinateSystems()) {
+                    if (netcdfCS == null || priority(cs) > priority(netcdfCS)) {
+                        netcdfCS = cs;
+                    }
                 }
-            }
-            if (gdal != null) {
-                break;
             }
         }
         setCoordinateSystem(file, netcdfCS,
@@ -264,6 +260,18 @@ final class NetcdfMetadata extends SpatialMetadata {
             }
         }
         return null;
+    }
+
+    /**
+     * Returns a "measurement" of the given coordinate system fitness for the purpose of grid
+     * coverages. Higher numbers are better.
+     */
+    private static int priority(final CoordinateSystem cs) {
+        int p = cs.isRegular() ? 2 : cs.isProductSet() ? 1 : 0;
+        if (cs.isGeoReferencing()) {
+            p |= 4;
+        }
+        return p;
     }
 
     /**

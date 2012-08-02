@@ -138,6 +138,9 @@ public final strictfp class GeophysicsFormatTest extends NetcdfImageReaderTestBa
             "│                   ├───minimumValue=“73.0”\n" +
             "│                   ├───maximumValue=“9845.0”\n" +
             "│                   └───unit=“d”\n" +
+            "├───SpatialRepresentation\n" +
+            "│   ├───numberOfDimensions=“4”\n" +
+            "│   └───centerPoint=“38.0 74.5 55.0 4959.0”\n" +
             "└───ImageDescription\n" +
             "    └───Dimensions\n" +
             "        └───Dimension\n" +
