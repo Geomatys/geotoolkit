@@ -1152,11 +1152,33 @@ public final class XArrays extends Static {
      */
     public static void reverse(final Object[] entries) {
         if (entries != null) {
-            for (int i=entries.length/2; --i >= 0;) {
-                final int j = (entries.length - 1) - i;
+            int i = entries.length >>> 1;
+            int j = i + (entries.length & 1);
+            while (--i >= 0) {
                 final Object tmp = entries[i];
                 entries[i] = entries[j];
-                entries[j] = tmp;
+                entries[j++] = tmp;
+            }
+        }
+    }
+
+    /**
+     * Reverses the order of elements in the given array.
+     * This operation is performed in-place.
+     * If the given array is {@code null}, then this method does nothing.
+     *
+     * @param values The array in which to reverse the order of elements, or {@code null} if none.
+     *
+     * @since 3.20
+     */
+    public static void reverse(final int[] values) {
+        if (values != null) {
+            int i = values.length >>> 1;
+            int j = i + (values.length & 1);
+            while (--i >= 0) {
+                final int tmp = values[i];
+                values[i] = values[j];
+                values[j++] = tmp;
             }
         }
     }

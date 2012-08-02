@@ -1,0 +1,27 @@
+{
+ dimensions:
+   lon = 4;
+   lat = 2;
+ variables:
+   float lon(lon);
+     lon:long_name = "Geodetic longitude";
+     lon:units = "degrees_east";
+     lon:axis = "X";
+     lon:_CoordinateAxisType = "Lon";
+   float lat(lat);
+     lat:long_name = "Geodetic latitude";
+     lat:units = "degrees_north";
+     lat:axis = "Y";
+     lat:_CoordinateAxisType = "Lat";
+   float data(lat, lon);
+ data:
+lon =
+  {-135.0, -45.0, 45.0, 135.0}
+lat =
+  {-45.0, 45.0}
+data =
+  {
+    {0.0, 1.0, 2.0, 3.0},
+    {4.0, 5.0, 6.0, 7.0}
+  }
+}

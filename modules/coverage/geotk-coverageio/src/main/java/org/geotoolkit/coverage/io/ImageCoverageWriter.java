@@ -57,6 +57,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.image.io.XImageIO;
+import org.geotoolkit.image.io.MultidimensionalImageStore;
 import org.geotoolkit.image.io.mosaic.MosaicImageWriter;
 import org.geotoolkit.image.io.metadata.ReferencingBuilder;
 import org.geotoolkit.referencing.operation.transform.WarpFactory;
@@ -700,10 +701,18 @@ public class ImageCoverageWriter extends GridCoverageWriter {
                 res = param.getResolution();
             }
             if (crs == null && gridGeometry.isDefined(GridGeometry2D.CRS)) {
-                crs = gridGeometry.getCoordinateReferenceSystem2D();
+                if (imageWriter instanceof MultidimensionalImageStore) {
+                    crs = gridGeometry.getCoordinateReferenceSystem();
+                } else {
+                    crs = gridGeometry.getCoordinateReferenceSystem2D();
+                }
             }
             if (env == null && gridGeometry.isDefined(GridGeometry2D.ENVELOPE)) {
-                env = gridGeometry.getEnvelope2D();
+                if (imageWriter instanceof MultidimensionalImageStore) {
+                    env = gridGeometry.getEnvelope();
+                } else {
+                    env = gridGeometry.getEnvelope2D();
+                }
             }
             if (crs != null) {
                 final ReferencingBuilder builder = new ReferencingBuilder(imageMetadata);

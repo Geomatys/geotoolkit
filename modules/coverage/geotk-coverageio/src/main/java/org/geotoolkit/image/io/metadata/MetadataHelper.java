@@ -571,7 +571,7 @@ public class MetadataHelper implements Localized {
         /*
          * Now format the string.
          */
-        final StringBuffer  buffer = new StringBuffer();
+        final StringBuffer  buffer = new StringBuffer(24);
         final Locale        locale = getLocale();
         final FieldPosition pos    = new FieldPosition(0);
         final NumberFormat  nf;

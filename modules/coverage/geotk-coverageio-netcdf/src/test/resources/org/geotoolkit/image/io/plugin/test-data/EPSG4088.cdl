@@ -1,0 +1,27 @@
+{
+ dimensions:
+   x = 4;
+   y = 2;
+ variables:
+   float x(x);
+     x:long_name = "Easting";
+     x:units = "m";
+     x:axis = "X";
+     x:_CoordinateAxisType = "GeoX";
+   float y(y);
+     y:long_name = "Northing";
+     y:units = "m";
+     y:axis = "Y";
+     y:_CoordinateAxisType = "GeoY";
+   float data(y, x);
+ data:
+x =
+  {-1.5E7, -5000000.0, 5000000.0, 1.5E7}
+y =
+  {-5000000.0, 5000000.0}
+data =
+  {
+    {0.0, 1.0, 2.0, 3.0},
+    {4.0, 5.0, 6.0, 7.0}
+  }
+}

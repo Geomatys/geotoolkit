@@ -17,34 +17,32 @@
  */
 package org.geotoolkit.referencing.adapters;
 
-import java.util.Date;
+import java.util.List;
 import javax.measure.unit.Unit;
 
+import ucar.nc2.Dimension;
 import ucar.nc2.constants.CF;
 import ucar.nc2.constants.AxisType;
 import ucar.nc2.dataset.CoordinateAxis;
 import ucar.nc2.dataset.CoordinateAxis1D;
-import ucar.nc2.dataset.CoordinateAxis1DTime;
+import ucar.nc2.dataset.CoordinateAxis2D;
 
 import org.opengis.util.InternationalString;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.cs.RangeMeaning;
+import org.opengis.referencing.operation.TransformException;
 
-import org.geotoolkit.util.Range;
 import org.geotoolkit.util.Strings;
-import org.geotoolkit.util.DateRange;
-import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.SimpleInternationalString;
-import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
-import org.geotoolkit.lang.Workaround;
 import org.geotoolkit.measure.Units;
 
+import org.geotoolkit.resources.Errors;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 
 /**
- * Wraps a NetCDF {@link CoordinateAxis1D} as an implementation of GeoAPI interfaces.
+ * Wraps a NetCDF {@link CoordinateAxis} as an implementation of GeoAPI interfaces.
  * <p>
  * {@code NetcdfAxis} is a <cite>view</cite>: every methods in this class delegate their work to the
  * wrapped NetCDF axis. Consequently any change in the wrapped axis is immediately reflected in this
@@ -57,13 +55,11 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * @since 3.08
  * @module
  */
-public class NetcdfAxis extends NetcdfIdentifiedObject implements CoordinateSystemAxis,
-        DiscreteCoordinateSystemAxis // Parameterized type is impractical here.
-{
+public class NetcdfAxis extends NetcdfIdentifiedObject implements CoordinateSystemAxis {
     /**
      * The NetCDF coordinate axis wrapped by this {@code NetcdfAxis} instance.
      */
-    private final CoordinateAxis1D axis;
+    final CoordinateAxis axis;
 
     /**
      * The unit, computed when first needed.
@@ -71,25 +67,38 @@ public class NetcdfAxis extends NetcdfIdentifiedObject implements CoordinateSyst
     volatile Unit<?> unit;
 
     /**
-     * The values returned by {@link #getOrdinateRangeAt(int)}, cached when first computed.
+     * Creates a new {@code NetcdfAxis} object wrapping the given NetCDF coordinate axis.
+     *
+     * @param axis The NetCDF coordinate axis to wrap.
      */
-    private transient Range<?>[] ranges;
+    public NetcdfAxis(final CoordinateAxis axis) {
+        ensureNonNull("axis", axis);
+        this.axis = axis;
+    }
 
     /**
      * Creates a new {@code NetcdfAxis} object wrapping the given NetCDF coordinate axis.
      *
      * @param axis The NetCDF coordinate axis to wrap.
+     * @param domain Dimensions of the coordinate system for which we are wrapping an axis, in NetCDF order.
+     *        This is typically {@link ucar.nc2.dataset.CoordinateSystem#getDomain()}.
+     * @return The {@code NetcdfAxis} object wrapping the given axis.
      */
-    public NetcdfAxis(final CoordinateAxis1D axis) {
-        ensureNonNull("axis", axis);
-        this.axis = axis;
+    static NetcdfAxis wrap(final CoordinateAxis axis, final List<Dimension> domain) {
+        if (axis instanceof CoordinateAxis1D) {
+            return new NetcdfAxis1D((CoordinateAxis1D) axis, domain);
+        }
+        if (axis instanceof CoordinateAxis2D) {
+            return new NetcdfAxis2D((CoordinateAxis2D) axis, domain);
+        }
+        return new NetcdfAxis(axis);
     }
 
     /**
      * Returns the wrapped NetCDF axis.
      */
     @Override
-    public CoordinateAxis1D delegate() {
+    public CoordinateAxis delegate() {
         return axis;
     }
 
@@ -159,9 +168,9 @@ public class NetcdfAxis extends NetcdfIdentifiedObject implements CoordinateSyst
 
     /**
      * Returns the axis minimal value. The default implementation delegates
-     * to {@link CoordinateAxis1D#getMinValue()}.
+     * to {@link CoordinateAxis#getMinValue()}.
      *
-     * @see CoordinateAxis1D#getMinValue()
+     * @see CoordinateAxis#getMinValue()
      */
     @Override
     public double getMinimumValue() {
@@ -170,158 +179,13 @@ public class NetcdfAxis extends NetcdfIdentifiedObject implements CoordinateSyst
 
     /**
      * Returns the axis maximal value. The default implementation delegates
-     * to {@link CoordinateAxis1D#getMaxValue()}.
+     * to {@link CoordinateAxis#getMaxValue()}.
      *
-     * @see CoordinateAxis1D#getMaxValue()
+     * @see CoordinateAxis#getMaxValue()
      */
     @Override
     public double getMaximumValue() {
         return axis.getMaxValue();
-    }
-
-    /**
-     * Returns the type of ordinate values.
-     *
-     * @since 3.20
-     */
-    @Override
-    public Class<?> getElementType() {
-        if (axis instanceof CoordinateAxis1DTime) {
-            return Date.class;
-        } else if (axis.isNumeric()) {
-            return Double.class;
-        } else {
-            return String.class;
-        }
-    }
-
-    /**
-     * Returns the ordinate value at the given index. This method delegates to the first
-     * suitable NetCDF method in the following list:
-     * <p>
-     * <ul>
-     *   <li>{@link CoordinateAxis1DTime#getTimeDate(int)} if the wrapped
-     *       axis is an instance of {@code CoordinateAxis1DTime}.</li>
-     *   <li>{@link CoordinateAxis1D#getCoordValue(int)} if the axis
-     *       {@linkplain CoordinateAxis1D#isNumeric() is numeric}.</li>
-     *   <li>{@link CoordinateAxis1D#getCoordName(int)} otherwise.</li>
-     * </ul>
-     *
-     * @since 3.15
-     */
-    @Override
-    public Comparable<?> getOrdinateAt(final int index) throws IndexOutOfBoundsException {
-        if (axis instanceof CoordinateAxis1DTime) {
-            if (false) {
-                // Replacement of the following deprecated method call. Not yet used,
-                // because we wait for the ucar.nc2.time API to be published as public
-                // API. Maybe their API will evolve.
-                return ((CoordinateAxis1DTime) axis).getCalendarDate(index).toDate();
-            }
-            return ((CoordinateAxis1DTime) axis).getTimeDate(index);
-        } else if (axis.isNumeric()) {
-            return axis.getCoordValue(index);
-        } else {
-            return axis.getCoordName(index);
-        }
-    }
-
-    /**
-     * Returns the range of ordinate values at the given index.
-     *
-     * @since 3.15
-     */
-    @Override
-    @SuppressWarnings({"unchecked","rawtypes"})
-    @Workaround(library="NetCDF", version="4.1")
-    public synchronized Range<?> getOrdinateRangeAt(final int index)
-            throws IndexOutOfBoundsException, UnsupportedOperationException
-    {
-        Range<?>[] ranges = this.ranges;
-        if (ranges == null) {
-            final double[] bound1 = axis.getBound1();
-            final double[] bound2 = axis.getBound2();
-            final int length = Math.min(bound1.length, bound2.length);
-            /*
-             * Workaround for what is apparently a NetCDF 4.1 bug.
-             */
-            if (length == 1 && bound1[0] == 0) {
-                bound1[0] = bound2[0] = axis.getCoordValue(0);
-            }
-            /*
-             * Computes the conversion factor from numerical values to milliseconds.
-             */
-            double toMillis = 0;
-            final CoordinateAxis1DTime timeAxis;
-            if (axis instanceof CoordinateAxis1DTime) {
-                timeAxis = (CoordinateAxis1DTime) axis;
-                toMillis = timeAxis.getDateRange().getDuration().getValueInSeconds();
-                if (toMillis > 0) {
-                    toMillis = toMillis * 1000 / (axis.getMaxValue() - axis.getMinValue());
-                }
-                ranges = new DateRange[length];
-            } else {
-                timeAxis = null;
-                ranges = new NumberRange<?>[length];
-            }
-            /*
-             * Creates the ranges.
-             */
-            Comparable<?> previous = null;
-            for (int i=0; i<length; i++) {
-                final double b1 = bound1[i];
-                final double b2 = bound2[i];
-                Comparable<?> c1, c2;
-                if (timeAxis != null) {
-                    final long time = timeAxis.getTimeDate(i).getTime(); // See getOrdinateAt(i)
-                    long t1 = time; // Usually the minimum value, but not necessarily.
-                    long t2 = time; // Usually the maximum value, but not necessarily.
-                    if (toMillis > 0) {
-                        final double ordinate = axis.getCoordValue(i);
-                        t1 -= Math.round((ordinate - b1) * toMillis);
-                        t2 += Math.round((b2 - ordinate) * toMillis);
-                    }
-                    c1 = new Date(t1);
-                    c2 = new Date(t2);
-                } else {
-                    c1 = b1;
-                    c2 = b2;
-                }
-                // Reuse the instance of the previous iteration.
-                if (c1.equals(previous)) {
-                    c1 = previous;
-                }
-                previous = c2;
-                // Ensure that (c1,c2) are sorted.
-                if (((Comparable) c2).compareTo(c1) < 0) {
-                    final Comparable<?> tmp = c1;
-                    c1 = c2;
-                    c2 = tmp;
-                }
-                // Store the result.
-                final boolean maxInclusive = c1.equals(c2);
-                if (timeAxis != null) {
-                    ranges[i] = new DateRange((Date) c1, true, (Date) c2, maxInclusive);
-                } else {
-                    ranges[i] = new NumberRange<Double>(Double.class, (Double) c1, true, (Double) c2, maxInclusive);
-                }
-            }
-            this.ranges = ranges; // Only on success.
-        }
-        return ranges[index];
-    }
-
-    /**
-     * Returns the number of ordinates in the NetCDF axis. This method delegates to the
-     * {@link CoordinateAxis1D#getShape(int)} method.
-     *
-     * @return The number or ordinates in the NetCDF axis.
-     *
-     * @since 3.15
-     */
-    @Override
-    public int length() {
-        return axis.getShape(0);
     }
 
     /**
@@ -330,6 +194,42 @@ public class NetcdfAxis extends NetcdfIdentifiedObject implements CoordinateSyst
     @Override
     public RangeMeaning getRangeMeaning() {
         return null;
+    }
+
+    /**
+     * Returns {@code true} if the NetCDF axis is an instance of {@link CoordinateAxis1D} and
+     * {@linkplain CoordinateAxis1D#isRegular() is regular}.
+     *
+     * @return {@code true} if the NetCDF axis is regular.
+     *
+     * @see CoordinateAxis1D#isRegular()
+     *
+     * @since 3.20
+     */
+    final boolean isRegular() {
+        return (axis instanceof CoordinateAxis1D) && ((CoordinateAxis1D) axis).isRegular();
+    }
+
+    /**
+     * Interpolates the ordinate value for the given grid coordinate. The {@code gridPts} array
+     * shall contains a complete grid coordinate - not only the grid index value for this axis -
+     * starting at index {@code srcOff}.
+     * <p>
+     * The interpolated ordinate value shall maps the
+     * {@linkplain org.opengis.referencing.datum.PixelInCell#CELL_CENTER cell center}.
+     * <p>
+     * The default implementation throws an exception in all cases.
+     * The actual implementation needs to be provided by subclasses.
+     *
+     * @param  gridPts An array containing grid coordinates.
+     * @param  srcOff  Index of the first ordinate value in the {@code gridPts}.
+     * @return The ordinate value of cell center interpolated from the given grid coordinate.
+     * @throws TransformException If the ordinate value can not be computed.
+     *
+     * @since 3.20
+     */
+    public double getOrdinateValue(final double[] gridPts, final int srcOff) throws TransformException {
+        throw new TransformException(Errors.format(Errors.Keys.UNSPECIFIED_TRANSFORM));
     }
 
     /**

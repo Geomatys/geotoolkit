@@ -233,7 +233,7 @@ public class GridCoverageWriteParam extends GridCoverageStoreParam {
      *
      * @since 3.15
      */
-    public void setBackgroundValues(double[] values) {
+    public void setBackgroundValues(double... values) {
         if (values != null) {
             values = values.clone();
         }

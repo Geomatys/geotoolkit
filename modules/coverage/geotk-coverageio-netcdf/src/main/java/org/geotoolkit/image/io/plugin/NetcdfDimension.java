@@ -45,6 +45,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
 import org.geotoolkit.measure.Units;
+import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.referencing.IdentifiedObjects;
@@ -126,12 +127,17 @@ final class NetcdfDimension {
      * @param dimension   The dimension for which to create a sequence of ordinate values.
      *                    This method assumes that the same dimension is used for both source
      *                    and target ordinate values (i.e. there is no axis swapping).
+     * @param flip        {@code true} if the axis direction needs to be flipped. This is the
+     *                    case of the <var>y</var> axis. This flag must set to a value consistent
+     *                    with the behavior of the code writing the actual pixel values.
      * @throws ImageMetadataException If an error occurred while computing the grid geometry.
      *
      * @todo Define a 'sourceToTargetDimension' method somewhere based on the value of the
      *       derivative at the center position.
      */
-    NetcdfDimension(final IIOImageHelper image, final int dimension) throws ImageMetadataException {
+    NetcdfDimension(final IIOImageHelper image, final int dimension, final boolean flip)
+            throws ImageMetadataException
+    {
         final CoordinateSystem cs = image.getCoordinateSystem();
         axis = (cs.getDimension() > dimension) ? cs.getAxis(dimension) : null;
         /*
@@ -190,7 +196,7 @@ final class NetcdfDimension {
                         index = sourceIndices[i];
                     }
                     final Comparable<?> ordinate = ds.getOrdinateAt(index);
-                    ordinates.setDouble(i, ((Number) ordinate).doubleValue());
+                    ordinates.setDouble(flip ? (length-1)-i : i, ((Number) ordinate).doubleValue());
                     index += subsampling;
                 }
                 return;
@@ -210,6 +216,12 @@ final class NetcdfDimension {
                     index += subsampling;
                 }
             }
+            if (flip) {
+                if (sourceIndices == image.sourceBands) {
+                    sourceIndices = sourceIndices.clone();
+                }
+                XArrays.reverse(sourceIndices);
+            }
             ordinates = Array.factory(dataType = DataType.INT, new int[] {length}, sourceIndices);
         } else {
             ordinates = Array.factory(dataType = DataType.FLOAT, new int[] {length});
@@ -224,7 +236,7 @@ final class NetcdfDimension {
                     }
                     source[dimension] = index;
                     gridToCRS.transform(source, 0, target, 0, 1);
-                    ordinates.setDouble(i, target[dimension]);
+                    ordinates.setDouble(flip ? (length-1)-i : i, target[dimension]);
                     index += subsampling;
                 }
             } catch (TransformException e) {
@@ -304,10 +316,6 @@ final class NetcdfDimension {
         final String ncName = IdentifiedObjects.getName(axis, Citations.NETCDF);
         if (ncName != null && N3iosp.isValidNetcdf3ObjectName(ncName)) {
             name = ncName;
-        } else if (longName != null && N3iosp.isValidNetcdf3ObjectName(longName)) {
-            if (!name.equalsIgnoreCase(longName)) { // 'name' may be in lower case.
-                name = longName;
-            }
         }
         /*
          * Create the variable and attach the relevant attribute value.
@@ -390,7 +398,10 @@ final class NetcdfDimension {
     }
 
     /**
-     * Compares this dimension with the given object for equality.
+     * Compares the dimension to be written in the NetCDF file with the given object for equality.
+     * This method is designed for comparing only the attributes having an influence on the NetCDF
+     * file content, especially {@link #axis} and {@link #ordinates}. It does not compare the
+     * {@link #api} attribute, because it has an influence only on the source of the data.
      */
     @Override
     public boolean equals(final Object other) {
@@ -400,5 +411,13 @@ final class NetcdfDimension {
                    Utilities.deepEquals(ordinates.getStorage(), that.ordinates.getStorage());
         }
         return false;
+    }
+
+    /**
+     * Returns a string representation for debugging purpose.
+     */
+    @Override
+    public String toString() {
+        return api + " → " + IdentifiedObjects.getName(axis, null) + Utilities.deepToString(ordinates.getStorage());
     }
 }

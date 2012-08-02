@@ -18,13 +18,16 @@
 package org.geotoolkit.referencing.adapters;
 
 import java.io.IOException;
+import java.util.Set;
 import java.util.List;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.Formatter;
 import javax.measure.unit.SI;
 
+import ucar.nc2.Dimension;
 import ucar.nc2.units.DateUnit;
 import ucar.nc2.constants.AxisType;
 import ucar.nc2.dataset.NetcdfDataset;
@@ -60,10 +63,12 @@ import org.geotoolkit.image.io.WarningProducer;
 import org.geotoolkit.internal.image.io.Warnings;
 import org.geotoolkit.internal.image.io.IrregularAxesConverter;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.referencing.datum.DefaultTemporalDatum;
 import org.geotoolkit.referencing.datum.DefaultVerticalDatum;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.cs.DiscreteReferencingFactory;
+import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
@@ -101,10 +106,6 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * {@section Restrictions}
  * Current implementation has the following restrictions:
  * <ul>
- *   <li><p>This class supports only axes of kind {@link CoordinateAxis1D}. Callers can verify this
- *       condition with a call to the {@link CoordinateSystem#isProductSet()} method on the wrapped
- *       NetCDF coordinate system, which shall returns {@code true}.</p></li>
- *
  *   <li><p>At the time of writing, the NetCDF API doesn't specify the CRS datum. Consequently the
  *       current implementation assumes that all {@code NetcdfCRS} instances use the
  *       {@linkplain DefaultGeodeticDatum#WGS84 WGS84} geodetic datum.</p></li>
@@ -136,7 +137,20 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
     private final CoordinateSystem cs;
 
     /**
-     * The NetCDF axes.
+     * The dimensions of all axis, in the "natural" order. This is similar to
+     * {@link CoordinateSystem#getDomain()} except for reverse order, and may
+     * contains only a subset if the {@link #axes} array is only a subset of
+     * the coordinate system axes.
+     *
+     * @see CoordinateSystem#getDomain()
+     */
+    private final Dimension[] domain;
+
+    /**
+     * The NetCDF axes in "natural" order (reverse order compared to NetCDF file).
+     * May be only a subset of the coordinate system axes.
+     *
+     * @see CoordinateSystem#getCoordinateAxes()
      */
     private final NetcdfAxis[] axes;
 
@@ -161,6 +175,7 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
      */
     NetcdfCRS(final NetcdfCRS crs) {
         this.cs        = crs.cs;
+        this.domain    = crs.domain;
         this.axes      = crs.axes;
         this.extent    = crs.extent;
         this.gridToCRS = crs.gridToCRS;
@@ -168,14 +183,11 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
 
     /**
      * Creates a new {@code NetcdfCRS} object wrapping the given NetCDF coordinate system.
-     * The {@link CoordinateSystem#getCoordinateAxes()} is invoked at construction time and
-     * every elements are assumed instances of {@link CoordinateAxis1D}.
+     * The {@link CoordinateSystem#getCoordinateAxes()} is invoked at construction time.
      *
      * @param  netcdfCS The NetCDF coordinate system to wrap.
-     * @throws ClassCastException If at least one axis is not an instance of the
-     *         {@link CoordinateAxis1D} subclass.
      */
-    protected NetcdfCRS(final CoordinateSystem netcdfCS) throws ClassCastException {
+    protected NetcdfCRS(final CoordinateSystem netcdfCS) {
         this(netcdfCS, netcdfCS.getCoordinateAxes());
     }
 
@@ -191,10 +203,19 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
         ensureNonNull("netcdfCS", netcdfCS);
         cs = netcdfCS;
         final int dimension = netcdfAxis.size();
+        final Set<Dimension> netcdfDim = new LinkedHashSet<Dimension>(XCollections.hashMapCapacity(dimension));
+        for (int i=dimension; --i >= 0;) {
+            final List<Dimension> dimensions = netcdfAxis.get(i).getDimensions();
+            for (int j=dimensions.size(); --j>=0;) { // Must be in reverse order.
+                netcdfDim.add(dimensions.get(j));
+            }
+        }
+        domain = netcdfDim.toArray(new Dimension[netcdfDim.size()]);
         axes = new NetcdfAxis[dimension];
+        final List<Dimension> fullDomain = cs.getDomain();
         for (int i=0; i<dimension; i++) {
             // Adds the axis in reverse order. See class javadoc for explanation.
-            axes[(dimension-1) - i] = new NetcdfAxis((CoordinateAxis1D) netcdfAxis.get(i));
+            axes[(dimension-1) - i] = NetcdfAxis.wrap(netcdfAxis.get(i), fullDomain);
         }
     }
 
@@ -205,10 +226,13 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
     NetcdfCRS(final CoordinateSystem netcdfCS, final NetcdfCRS... components) {
         cs = netcdfCS;
         final List<NetcdfAxis> axes = new ArrayList<NetcdfAxis>(netcdfCS.getRankRange());
+        final Set<Dimension> domain = new LinkedHashSet<Dimension>(netcdfCS.getRankDomain());
         for (final NetcdfCRS c : components) {
-            axes.addAll(Arrays.asList(c.axes));
+            domain.addAll(Arrays.asList(c.domain));
+            axes  .addAll(Arrays.asList(c.axes));
         }
-        this.axes = axes.toArray(new NetcdfAxis[axes.size()]);
+        this.domain = domain.toArray(new Dimension [domain.size()]);
+        this.axes   = axes  .toArray(new NetcdfAxis[axes  .size()]);
     }
 
     /**
@@ -226,10 +250,8 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
      *
      * @param  netcdfCS The NetCDF coordinate system to wrap, or {@code null} if none.
      * @return A wrapper for the given object, or {@code null} if the argument was null.
-     * @throws ClassCastException If at least one axis is not an instance of the
-     *         {@link CoordinateAxis1D} subclass.
      */
-    public static NetcdfCRS wrap(final CoordinateSystem netcdfCS) throws ClassCastException {
+    public static NetcdfCRS wrap(final CoordinateSystem netcdfCS) {
         try {
             return wrap(netcdfCS, null, null);
         } catch (IOException e) {
@@ -248,14 +270,12 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
      * @param  logger An optional object where to log warnings, or {@code null} if none.
      * @return A wrapper for the given object, or {@code null} if the {@code netcdfCS}
      *         argument was null.
-     * @throws ClassCastException If at least one axis is not an instance of the
-     *         {@link CoordinateAxis1D} subclass.
      * @throws IOException If an I/O operation was needed and failed.
      *
      * @since 3.14
      */
     public static NetcdfCRS wrap(final CoordinateSystem netcdfCS, final NetcdfDataset file,
-                final WarningProducer logger) throws IOException, ClassCastException
+                final WarningProducer logger) throws IOException
     {
         if (netcdfCS == null) {
             return null;
@@ -269,36 +289,34 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
         final List<NetcdfCRS> components = new ArrayList<NetcdfCRS>(4);
         final List<CoordinateAxis>  axes = netcdfCS.getCoordinateAxes();
         for (int i=axes.size(); --i>=0;) {
-            CoordinateAxis1D axis = (CoordinateAxis1D) axes.get(i);
-            if (axis != null) {
-                final AxisType type = axis.getAxisType();
-                if (type != null) { // This is really null in some NetCDF file.
-                    switch (type) {
-                        case Pressure:
-                        case Height:
-                        case GeoZ: {
-                            components.add(new Vertical(netcdfCS, axis));
-                            continue;
-                        }
-                        case RunTime:
-                        case Time: {
-                            components.add(new Temporal(netcdfCS, Temporal.complete(axis, file, logger)));
-                            continue;
-                        }
-                        case Lat:
-                        case Lon: {
-                            final int upper = i+1;
-                            i = lower(axes, i, AxisType.Lat, AxisType.Lon);
-                            components.add(new Geographic(netcdfCS, axes.subList(i, upper)));
-                            continue;
-                        }
-                        case GeoX:
-                        case GeoY: {
-                            final int upper = i+1;
-                            i = lower(axes, i, AxisType.GeoX, AxisType.GeoY);
-                            components.add(new Projected(netcdfCS, axes.subList(i, upper)));
-                            continue;
-                        }
+            final CoordinateAxis axis = axes.get(i);
+            final AxisType type = axis.getAxisType();
+            if (type != null) { // This is really null in some NetCDF file.
+                switch (type) {
+                    case Pressure:
+                    case Height:
+                    case GeoZ: {
+                        components.add(new Vertical(netcdfCS, axis));
+                        continue;
+                    }
+                    case RunTime:
+                    case Time: {
+                        components.add(new Temporal(netcdfCS, Temporal.complete(axis, file, logger)));
+                        continue;
+                    }
+                    case Lat:
+                    case Lon: {
+                        final int upper = i+1;
+                        i = lower(axes, i, AxisType.Lat, AxisType.Lon);
+                        components.add(new Geographic(netcdfCS, axes.subList(i, upper)));
+                        continue;
+                    }
+                    case GeoX:
+                    case GeoY: {
+                        final int upper = i+1;
+                        i = lower(axes, i, AxisType.GeoX, AxisType.GeoY);
+                        components.add(new Projected(netcdfCS, axes.subList(i, upper)));
+                        continue;
                     }
                 }
             }
@@ -455,10 +473,11 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
     @Deprecated
     public synchronized GridEnvelope getGridRange() {
         if (extent == null) {
-            final int[] lower = new int[axes.length];
-            final int[] upper = new int[axes.length];
-            for (int i=0; i<upper.length; i++) {
-                upper[i] = axes[i].length();
+            int i = domain.length;
+            final int[] lower = new int[i];
+            final int[] upper = new int[i];
+            while (--i >= 0) {
+                upper[i] = domain[i].getLength();
             }
             extent = new GeneralGridEnvelope(lower, upper, false);
         }
@@ -466,8 +485,8 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
     }
 
     /**
-     * Returns the transform from grid coordinates to this CRS coordinates, or {@code null} if
-     * none. The returned transform is often specialized in two ways:
+     * Returns the transform from grid coordinates to this CRS coordinates.
+     * The returned transform is often specialized in two ways:
      * <p>
      * <ul>
      *   <li>If the underlying NetCDF coordinate system {@linkplain CoordinateSystem#isRegular()
@@ -477,64 +496,41 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
      *       instance of Java2D {@link java.awt.geom.AffineTransform}.</li>
      * </ul>
      *
-     * {@section Limitation}
-     * Current implementation can build a transform only for regular coordinate systems.
-     * A future implementation may be more general.
-     *
-     * @return The transform from grid to this CRS, or {@code null} if none.
+     * @return The transform from grid to this CRS.
      */
     @Override
     public synchronized MathTransform getGridToCRS() {
         if (gridToCRS == null) {
-            gridToCRS = getGridToCRS(0, axes.length);
+            Matrix matrix = null; // Created when first needed.
+            final int sourceDim = domain.length;
+            final int targetDim = axes.length;
+            for (int j=0; j<targetDim; j++) {
+                final NetcdfAxis axis = axes[j];
+                if (!axis.isRegular()) {
+                    matrix = null;
+                    break;
+                }
+                final CoordinateAxis1D netcdfAxis = (CoordinateAxis1D) axis.axis;
+                final double scale = netcdfAxis.getIncrement();
+                if (Double.isNaN(scale) || scale == 0) {
+                    matrix = null;
+                    break;
+                }
+                if (matrix == null) {
+                    matrix = Matrices.create(targetDim+1, sourceDim+1);
+                }
+                final Dimension dim = netcdfAxis.getDimension(0);
+                for (int i=0; i<sourceDim; i++) {
+                    if (dim.equals(domain[i])) {
+                        matrix.setElement(j, i, nice(scale));
+                        break; // 'domain' is not expected to contain duplicated values.
+                    }
+                }
+                matrix.setElement(j, sourceDim, nice(netcdfAxis.getStart()));
+            }
+            gridToCRS = (matrix != null) ? MathTransforms.linear(matrix) : new NetcdfGridToCRS(sourceDim, axes);
         }
         return gridToCRS;
-    }
-
-    /**
-     * Returns the transform from grid coordinates to this CRS coordinates in the given
-     * range of dimensions. The returned transform is often specialized in two ways:
-     * <p>
-     * <ul>
-     *   <li>If every NetCDF axes in the given range of dimensions are
-     *       {@linkplain CoordinateAxis1D#isRegular() regular}, then the returned transform implements
-     *       the {@link org.geotoolkit.referencing.operation.transform.LinearTransform} interface.</li>
-     *   <li>If, in addition of the above, the range spans two dimensions (i.e. {@code upperDimension}
-     *       - {@code lowerDimension} == 2), then the returned transform is also an instance of Java2D
-     *       {@link java.awt.geom.AffineTransform}.</li>
-     * </ul>
-     *
-     * {@section Limitation}
-     * Current implementation can build a transform only for regular axes.
-     * A future implementation may be more general.
-     *
-     * @param  lowerDimension Index of the first dimension for which to get the transform.
-     * @param  upperDimension Index after the last dimension for which to get the transform.
-     * @return The transform from grid to this CRS in the given range of dimensions, or
-     *         {@code null} if none.
-     * @throws IllegalArgumentException If the given dimensions are not in the
-     *         [0 &hellip; {@linkplain #getDimension() dimension}] range.
-     */
-    public MathTransform getGridToCRS(final int lowerDimension, final int upperDimension) {
-        if (lowerDimension < 0 || upperDimension > axes.length || upperDimension < lowerDimension) {
-            throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_RANGE_$2, lowerDimension, upperDimension));
-        }
-        final int numDimensions = upperDimension - lowerDimension;
-        final Matrix matrix = Matrices.create(numDimensions + 1);
-        for (int i=0; i<numDimensions; i++) {
-            final CoordinateAxis1D axis = axes[lowerDimension + i].delegate();
-            if (!axis.isRegular()) {
-                return null;
-            }
-            final double scale = axis.getIncrement();
-            if (Double.isNaN(scale) || scale == 0) {
-                return null;
-            }
-            matrix.setElement(i, i, nice(scale));
-            matrix.setElement(i, numDimensions, nice(axis.getStart()));
-        }
-        return MathTransforms.linear(matrix);
     }
 
     /**
@@ -810,9 +806,9 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
                     case Lon: longitude = axis; break;
                 }
             }
-            if (latitude != null && longitude != null &&
-                   (!latitude .delegate().isRegular() ||
-                    !longitude.delegate().isRegular()))
+            if ((latitude  instanceof DiscreteCoordinateSystemAxis<?>) &&
+                (longitude instanceof DiscreteCoordinateSystemAxis<?>) &&
+                   (!latitude.isRegular() || !longitude.isRegular()))
             {
                 /*
                  * The 1E-4 threshold have been determined empirically from the IFREMER Coriolis
@@ -820,7 +816,9 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
                  * CoordinateSystem1D.isRegular() method is 5E-3.
                  */
                 final IrregularAxesConverter converter = new IrregularAxesConverter(1E-4, null);
-                final ProjectedCRS crs = converter.canConvert(longitude, latitude);
+                final ProjectedCRS crs = converter.canConvert(
+                        (DiscreteCoordinateSystemAxis<?>) longitude,
+                        (DiscreteCoordinateSystemAxis<?>) latitude);
                 if (crs != null) {
                     return crs;
                 }
