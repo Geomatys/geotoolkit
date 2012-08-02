@@ -629,6 +629,7 @@ public abstract class AbstractSQLDialect implements SQLDialect{
         mappings.put(Boolean.class, Types.BOOLEAN);
 
         mappings.put(Short.class, Types.SMALLINT);
+        mappings.put(Byte.class, Types.SMALLINT);
 
         mappings.put(Integer.class, Types.INTEGER);
         mappings.put(Long.class, Types.BIGINT);
