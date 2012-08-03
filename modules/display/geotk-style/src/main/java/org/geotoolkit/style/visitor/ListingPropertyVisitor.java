@@ -67,6 +67,8 @@ import org.opengis.style.TextSymbolizer;
  */
 public class ListingPropertyVisitor extends org.geotoolkit.filter.visitor.ListingPropertyVisitor implements StyleVisitor{
 
+    public static final ListingPropertyVisitor VISITOR = new ListingPropertyVisitor();
+        
     @Override
     public Object visit(final Style style, Object data) {
         final List<? extends FeatureTypeStyle> ftss = style.featureTypeStyles();
