@@ -222,7 +222,7 @@ public class PostGISDialect extends AbstractSQLDialect {
     @Override
     public void encodeGeometryColumn(final GeometryDescriptor gatt, final int srid,
                                      final StringBuilder sql,final Hints hints){
-        
+
         double res = 0;
         if(hints != null){
             double[] ress = (double[]) hints.get(JDBCDataStore.RESAMPLING);
@@ -233,12 +233,12 @@ public class PostGISDialect extends AbstractSQLDialect {
         if(Double.isInfinite(res)){
             res = Double.MAX_VALUE;
         }
-        
-        
+
+
         final CoordinateReferenceSystem crs = gatt.getCoordinateReferenceSystem();
         final int dimensions = (crs == null) ? 2 : crs.getCoordinateSystem().getDimension();
         sql.append("encode(");
-        
+
         if(res > 0){
             if (dimensions > 2) {
                 sql.append("ST_AsEWKB(ST_simplify(");
@@ -260,9 +260,9 @@ public class PostGISDialect extends AbstractSQLDialect {
             }
             sql.append(") ");
         }
-        
+
         sql.append(",'base64')");
-        
+
     }
 
     @Override
@@ -359,12 +359,12 @@ public class PostGISDialect extends AbstractSQLDialect {
         ResultSet result = null;
         Integer srid = null;
         try {
-            if (schemaName == null) {
-                schemaName = "public";
-            }
             final StringBuilder sb = new StringBuilder("SELECT SRID FROM GEOMETRY_COLUMNS WHERE ");
-            sb.append("F_TABLE_SCHEMA = '").append(schemaName).append("' ");
-            sb.append("AND F_TABLE_NAME = '").append(tableName).append("' ");
+            if (schemaName != null && !schemaName.isEmpty()) {
+                sb.append("F_TABLE_SCHEMA = '").append(schemaName).append("' ");
+                sb.append(" AND ");
+            }
+            sb.append("F_TABLE_NAME = '").append(tableName).append("' ");
             sb.append("AND F_GEOMETRY_COLUMN = '").append(columnName).append('\'');
             final String sqlStatement = sb.toString();
 
@@ -685,18 +685,18 @@ public class PostGISDialect extends AbstractSQLDialect {
     }
 
     @Override
-    public void analyzeResult(final DataBaseModel model, final FeatureTypeBuilder ftb, 
+    public void analyzeResult(final DataBaseModel model, final FeatureTypeBuilder ftb,
             final ResultSet result) throws SQLException,DataStoreException{
-        
+
         final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
         final AttributeTypeBuilder atb = new AttributeTypeBuilder();
-                
+
         final String namespace = ftb.getName().getNamespaceURI();
-        
+
         //postgis jdbc driver provide more informations on properties
         //we recreate them from scratch
         ftb.getProperties().clear();
-        
+
         final Jdbc4ResultSetMetaData metadata = (Jdbc4ResultSetMetaData)result.getMetaData();
         final int nbcol = metadata.getColumnCount();
 
@@ -707,7 +707,7 @@ public class PostGISDialect extends AbstractSQLDialect {
             final String schemaName = metadata.getBaseSchemaName(i);
             final String tableName = metadata.getBaseTableName(i);
             final int type = metadata.getColumnType(i);
-            
+
             //search if we already have this minute
             PropertyDescriptor desc = null;
             final SchemaMetaModel schema = model.getSchemaMetaModel(schemaName);
@@ -715,22 +715,22 @@ public class PostGISDialect extends AbstractSQLDialect {
                 final TableMetaModel table = schema.getTable(tableName);
                 if(table != null){
                     desc = table.getSimpleType().getDescriptor(columnbaseName);
-                    
+
                     //column name might have change
                     //and user data must be changed
                     adb.reset();
                     adb.copy(desc);
                     adb.setName(desc.getName().getNamespaceURI(), columnName);
-                    
+
                     atb.reset();
-                    atb.copy((AttributeType)desc.getType());                    
+                    atb.copy((AttributeType)desc.getType());
                     if(Geometry.class.isAssignableFrom(atb.getBinding())){
                         atb.addUserData(GEOM_ENCODING, GeometryEncoding.HEXEWKB);
                         adb.setType(atb.buildGeometryType());
                     }else{
                         adb.setType(atb.buildType());
                     }
-                    
+
                     desc = adb.buildDescriptor();
                 }
             }
@@ -740,7 +740,7 @@ public class PostGISDialect extends AbstractSQLDialect {
                 //this column must be calculated
                 adb.reset();
                 atb.reset();
-                
+
                 adb.setName(ensureGMLNS(namespace, columnName));
                 adb.setMinOccurs(1);
                 adb.setMaxOccurs(1);
@@ -767,7 +767,7 @@ public class PostGISDialect extends AbstractSQLDialect {
                 }else{
                     adb.setType(atb.buildType());
                 }
-                
+
                 adb.findBestDefaultValue();
                 desc = adb.buildDescriptor();
             }
@@ -776,5 +776,5 @@ public class PostGISDialect extends AbstractSQLDialect {
         }
 
     }
-    
+
 }

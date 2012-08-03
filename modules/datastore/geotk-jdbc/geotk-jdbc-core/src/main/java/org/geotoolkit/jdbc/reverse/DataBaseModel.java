@@ -208,7 +208,7 @@ public final class DataBaseModel {
         final String baseSchemaName = store.getDatabaseSchema();
 
         final Collection<SchemaMetaModel> candidates;
-        if(baseSchemaName == null){
+        if(baseSchemaName == null || baseSchemaName.isEmpty()){
             //take all schemas
             candidates = getSchemaMetaModels();
         }else{
