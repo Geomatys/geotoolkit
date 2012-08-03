@@ -328,7 +328,7 @@ public final class SQLQueryBuilder {
 
         return sqlType.toString() + sqlValues.toString();
     }
-    
+
     public String insertSQL(final SimpleFeatureType featureType, final Collection<? extends Feature> features,
                                final List keyValues, final Connection cx) throws DataStoreException{
         final SQLDialect dialect = getDialect();
@@ -360,17 +360,17 @@ public final class SQLQueryBuilder {
             dialect.encodeColumnName(attName, sqlType);
             sqlType.append(',');
         }
-        
+
         sqlType.setLength(sqlType.length() - 1);
         sqlType.append(" ) ");
-        
-        
+
+
         final StringBuilder sqlValues = new StringBuilder();
         sqlValues.append(" VALUES ");
 
         //add all fields
         for(Feature feature : features){
-            
+
             sqlValues.append(" (");
             fields :
             for(int i=0,n=featureType.getAttributeCount(); i<n; i++){
@@ -428,11 +428,11 @@ public final class SQLQueryBuilder {
         }
 
         sqlValues.setLength(sqlValues.length() - 1);
-        sqlValues.append(';');        
-        
+        sqlValues.append(';');
+
         return sqlType.toString() + sqlValues.toString();
     }
-    
+
 
     /**
      * Generates an 'UPDATE' sql statement.
@@ -603,14 +603,14 @@ public final class SQLQueryBuilder {
         final Class clazz = desc.getType().getBinding();
         final Integer sqlType = dialect.getMapping(clazz);
         final String sqlTypeName = getSQLTypeNames(new Class[]{clazz}, cx)[0];
-        
+
         final StringBuilder sql = new StringBuilder();
         sql.append("ALTER TABLE ");
         encodeTableName(tableName, sql);
         sql.append(" ADD COLUMN ");
         dialect.encodeColumnName(desc.getName().getLocalPart(), sql);
         sql.append(' ');
-        
+
         //encode type
         if (sqlTypeName.toUpperCase().startsWith("VARCHAR")) {
             //sql type name
@@ -624,7 +624,7 @@ public final class SQLQueryBuilder {
         } else {
             dialect.encodeColumnType(sqlTypeName, sql);
         }
-        
+
         //nullable
         if (!nillable) {
             sql.append(" NOT NULL ");
@@ -632,13 +632,13 @@ public final class SQLQueryBuilder {
 
         return sql.toString();
     }
-    
+
     /**
      * Generates a 'ALTER TABLE . DROP COLUMN ' sql statement.
      */
     public String AlterTableDropColumnSQL(final FeatureType featureType, final PropertyDescriptor desc, final Connection cx){
         final SQLDialect dialect = getDialect();
-        final String tableName = featureType.getName().getLocalPart();        
+        final String tableName = featureType.getName().getLocalPart();
         final StringBuilder sql = new StringBuilder();
         sql.append("ALTER TABLE ");
         encodeTableName(tableName, sql);
@@ -646,7 +646,7 @@ public final class SQLQueryBuilder {
         dialect.encodeColumnName(desc.getName().getLocalPart(), sql);
         return sql.toString();
     }
-    
+
     /**
      * Generates a 'DROP TABLE' sql statement.
      */
@@ -657,7 +657,7 @@ public final class SQLQueryBuilder {
         sql.append(";");
         return sql.toString();
     }
-    
+
     ////////////////////////////////////////////////////////////////////////////
     // PREPARED STATEMENT QUERIES //////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
@@ -1286,7 +1286,7 @@ public final class SQLQueryBuilder {
     public void encodeTableName(final String tableName, final StringBuilder sql) {
         final SQLDialect dialect = getDialect();
         final String databaseSchema = store.getDatabaseSchema();
-        if (databaseSchema != null) {
+        if (databaseSchema != null && !databaseSchema.isEmpty()) {
             dialect.encodeSchemaName(databaseSchema, sql);
             sql.append('.');
         }
