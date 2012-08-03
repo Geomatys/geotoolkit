@@ -29,12 +29,17 @@ public class CrystallizeSymbolizerRendererService extends AbstractSymbolizerRend
 
     @Override
     public SymbolizerRenderer createRenderer(CrystallizeCachedSymbolizer symbol, RenderingContext2D context) {
-        return new CrystallizeSymbolizerRenderer(symbol, context);
+        return new CrystallizeSymbolizerRenderer(this, symbol, context);
     }
 
     @Override
     public void glyph(Graphics2D g, Rectangle2D rect, CrystallizeCachedSymbolizer symbol, MapLayer layer) {
         //no glyph
+    }
+
+    @Override
+    public boolean isGroupSymbolizer() {
+        return false;
     }
 
 }

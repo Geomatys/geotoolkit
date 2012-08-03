@@ -57,6 +57,14 @@ import org.opengis.style.Symbolizer;
 public interface SymbolizerRendererService<S extends Symbolizer, C extends CachedSymbolizer<S>> {
 
     /**
+     * If this symbolizer needs all elements for rendering.
+     * Only the portray(Iterator<? extends ProjectedObject> graphics) on SymbolizerRenderer will be used.
+     * 
+     * @return true if this symbolizer render groups of elements.
+     */
+    boolean isGroupSymbolizer();
+    
+    /**
      * @return The symbolizer class handle by this renderer.
      */
     Class<S> getSymbolizerClass();

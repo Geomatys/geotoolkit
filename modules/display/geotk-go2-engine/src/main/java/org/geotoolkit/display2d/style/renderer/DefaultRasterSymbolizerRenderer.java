@@ -96,8 +96,8 @@ import org.opengis.style.ShadedRelief;
 public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<CachedRasterSymbolizer>{
 
 
-    public DefaultRasterSymbolizerRenderer(final CachedRasterSymbolizer symbol, final RenderingContext2D context){
-        super(symbol,context);
+    public DefaultRasterSymbolizerRenderer(final SymbolizerRendererService service, final CachedRasterSymbolizer symbol, final RenderingContext2D context){
+        super(service,symbol,context);
     }
     
     /**

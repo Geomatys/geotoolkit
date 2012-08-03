@@ -48,7 +48,12 @@ import org.geotoolkit.util.NumberRange;
  * @module pending
  */
 public class DimRangeRendererService extends AbstractSymbolizerRendererService<DimRangeSymbolizer,CachedDimRangeSymbolizer>{
-
+    
+    @Override
+    public boolean isGroupSymbolizer() {
+        return false;
+    }
+    
     @Override
     public Class<DimRangeSymbolizer> getSymbolizerClass() {
         return DimRangeSymbolizer.class;
@@ -66,7 +71,7 @@ public class DimRangeRendererService extends AbstractSymbolizerRendererService<D
 
     @Override
     public SymbolizerRenderer createRenderer(final CachedDimRangeSymbolizer symbol, final RenderingContext2D context) {
-        return new DimRangeRenderer(symbol, context);
+        return new DimRangeRenderer(this,symbol, context);
     }
 
     @Override

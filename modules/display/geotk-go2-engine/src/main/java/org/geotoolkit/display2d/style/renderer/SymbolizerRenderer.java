@@ -22,6 +22,7 @@ import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
+import org.geotoolkit.display2d.style.CachedSymbolizer;
 
 
 /**
@@ -37,6 +38,13 @@ import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
  */
 public interface SymbolizerRenderer {
 
+    /**
+     * Original SymbolizerRendererService.
+     * 
+     * @return SymbolizerRendererService
+     */
+    SymbolizerRendererService getService();
+    
     /**
      * Paint the graphic object using the cached symbolizer and the rendering parameters.
      *

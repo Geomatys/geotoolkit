@@ -32,6 +32,12 @@ import org.opengis.style.LineSymbolizer;
  */
 public class DefaultLineSymbolizerRendererService extends AbstractSymbolizerRendererService<LineSymbolizer, CachedLineSymbolizer>{
 
+    
+    @Override
+    public boolean isGroupSymbolizer() {
+        return false;
+    }
+    
     /**
      * {@inheritDoc }
      */
@@ -61,7 +67,7 @@ public class DefaultLineSymbolizerRendererService extends AbstractSymbolizerRend
      */
     @Override
     public SymbolizerRenderer createRenderer(final CachedLineSymbolizer symbol, final RenderingContext2D context) {
-        return new DefaultLineSymbolizerRenderer(symbol, context);
+        return new DefaultLineSymbolizerRenderer(this,symbol, context);
     }
 
     /**

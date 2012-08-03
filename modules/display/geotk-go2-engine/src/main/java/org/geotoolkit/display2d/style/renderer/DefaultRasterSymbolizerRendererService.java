@@ -38,6 +38,12 @@ import org.opengis.style.RasterSymbolizer;
  */
 public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRendererService<RasterSymbolizer, CachedRasterSymbolizer>{
 
+    
+    @Override
+    public boolean isGroupSymbolizer() {
+        return false;
+    }
+    
     /**
      * {@inheritDoc }
      */
@@ -67,7 +73,7 @@ public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRe
      */
     @Override
     public SymbolizerRenderer createRenderer(final CachedRasterSymbolizer symbol, final RenderingContext2D context) {
-        return new DefaultRasterSymbolizerRenderer(symbol, context);
+        return new DefaultRasterSymbolizerRenderer(this, symbol, context);
     }
 
     /**

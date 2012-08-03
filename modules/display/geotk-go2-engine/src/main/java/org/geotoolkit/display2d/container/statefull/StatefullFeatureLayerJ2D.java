@@ -38,6 +38,7 @@ import org.geotoolkit.display2d.container.stateless.StatelessFeatureLayerJ2D;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.CachedRule;
+import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
@@ -174,16 +175,27 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
         //we do not check if the collection is empty or not since
         //it can be a very expensive operation
 
-        final Boolean SymbolOrder = (Boolean) canvas.getRenderingHint(GO2Hints.KEY_SYMBOL_RENDERING_ORDER);
-        if(SymbolOrder == null || SymbolOrder == false){
+        //check if we have group symbolizers, if it's the case we must render by symbol order.
+        boolean symbolOrder = false;
+        for(CachedRule rule : rules){
+            for(CachedSymbolizer symbolizer : rule.symbolizers()){
+                if(symbolizer.getRenderer().isGroupSymbolizer()){
+                    symbolOrder = true;
+                    break;
+                }
+            }
+        }
+        
+        symbolOrder = symbolOrder || Boolean.TRUE.equals(canvas.getRenderingHint(GO2Hints.KEY_SYMBOL_RENDERING_ORDER));
+        if(symbolOrder){
             try{
-                renderByObjectOrder(features, context, rules, params);
+                renderBySymbolOrder(candidates, context, rules, params);
             }catch(PortrayalException ex){
                 monitor.exceptionOccured(ex, Level.WARNING);
             }
         }else{
             try{
-                renderBySymbolOrder(features, context, rules, params);
+                renderByObjectOrder(candidates, context, rules, params);
             }catch(PortrayalException ex){
                 monitor.exceptionOccured(ex, Level.WARNING);
             }

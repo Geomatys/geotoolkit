@@ -42,6 +42,7 @@ public abstract class AbstractSymbolizerRenderer<C extends CachedSymbolizer<? ex
 
     protected static final Logger LOGGER = Logging.getLogger(AbstractSymbolizerRenderer.class);
 
+    protected final SymbolizerRendererService service;
     protected final RenderingContext2D renderingContext;
     protected final RenderingHints hints;
     protected final Graphics2D g2d;
@@ -53,7 +54,8 @@ public abstract class AbstractSymbolizerRenderer<C extends CachedSymbolizer<? ex
     protected final boolean dispGeom;
     protected final String geomPropertyName;
 
-    public AbstractSymbolizerRenderer(final C symbol, final RenderingContext2D context){
+    public AbstractSymbolizerRenderer(final SymbolizerRendererService service, final C symbol, final RenderingContext2D context){
+        this.service = service;
         this.symbol = symbol;
         this.renderingContext = context;
         this.g2d = renderingContext.getGraphics();
@@ -67,6 +69,11 @@ public abstract class AbstractSymbolizerRenderer<C extends CachedSymbolizer<? ex
 
     }
 
+    @Override
+    public SymbolizerRendererService getService() {
+        return service;
+    }
+    
     @Override
     public void portray(final Iterator<? extends ProjectedObject> graphics) throws PortrayalException {
         while(graphics.hasNext()){

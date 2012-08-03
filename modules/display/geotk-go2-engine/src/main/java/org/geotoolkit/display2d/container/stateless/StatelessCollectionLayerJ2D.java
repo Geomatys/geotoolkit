@@ -275,16 +275,27 @@ public class StatelessCollectionLayerJ2D<T extends CollectionMapLayer> extends S
         final StatefullContextParams params = getStatefullParameters(context);
         if(monitor.stopRequested()) return;
 
-        final Boolean SymbolOrder = (Boolean) canvas.getRenderingHint(GO2Hints.KEY_SYMBOL_RENDERING_ORDER);
-        if(SymbolOrder == null || SymbolOrder == false){
+        //check if we have group symbolizers, if it's the case we must render by symbol order.
+        boolean symbolOrder = false;
+        for(CachedRule rule : rules){
+            for(CachedSymbolizer symbolizer : rule.symbolizers()){
+                if(symbolizer.getRenderer().isGroupSymbolizer()){
+                    symbolOrder = true;
+                    break;
+                }
+            }
+        }
+        
+        symbolOrder = symbolOrder || Boolean.TRUE.equals(canvas.getRenderingHint(GO2Hints.KEY_SYMBOL_RENDERING_ORDER));
+        if(symbolOrder){
             try{
-                renderByObjectOrder(candidates, context, rules, params);
+                renderBySymbolOrder(candidates, context, rules, params);
             }catch(PortrayalException ex){
                 monitor.exceptionOccured(ex, Level.WARNING);
             }
         }else{
             try{
-                renderBySymbolOrder(candidates, context, rules, params);
+                renderByObjectOrder(candidates, context, rules, params);
             }catch(PortrayalException ex){
                 monitor.exceptionOccured(ex, Level.WARNING);
             }
@@ -395,18 +406,18 @@ public class StatelessCollectionLayerJ2D<T extends CollectionMapLayer> extends S
      * Render by symbol index order in a single pass, this results in creating a buffered image
      * for each symbolizer depth, the maximum number of buffer is the maximum number of symbolizer a rule contain.
      */
-    protected void renderBySymbolIndexInRule(final Collection<?> candidates,
+    private void renderBySymbolIndexInRule(final Collection<?> candidates,
             final RenderingContext2D context, final CachedRule[] rules, final StatefullContextParams params)
             throws PortrayalException {
         final RenderingIterator statefullIterator = getIterator(candidates, context, params);
-        renderBySymbolIndexInRule(statefullIterator, context, rules);
+        renderBySymbolIndexInRule(candidates,statefullIterator, context, rules);
     }
     
     /**
      * Render by symbol index order in a single pass, this results in creating a buffered image
      * for each symbolizer depth, the maximum number of buffer is the maximum number of symbolizer a rule contain.
      */
-    protected void renderBySymbolIndexInRule(final RenderingIterator statefullIterator,
+    private  void renderBySymbolIndexInRule(final Collection<?> candidates,final RenderingIterator statefullIterator,
             final RenderingContext2D context, final CachedRule[] rules)
             throws PortrayalException {
 
@@ -495,6 +506,20 @@ public class StatelessCollectionLayerJ2D<T extends CollectionMapLayer> extends S
                 }
                 
             }
+            
+            //paint group symbolizers
+            for(int i=0; i<elseRuleIndex; i++){
+                final CachedRule rule = rules[i];   
+                final CachedSymbolizer[] css = rule.symbolizers();
+                for(int k=0; k<css.length; k++){
+                    if(renderers[i][k].getService().isGroupSymbolizer()){
+                        final RenderingIterator ite = getIterator(candidates, context, params);
+                        renderers[i][k].portray(ite);
+                    }
+                    
+                }
+            }
+            
         }finally{
             try {
                 statefullIterator.close();

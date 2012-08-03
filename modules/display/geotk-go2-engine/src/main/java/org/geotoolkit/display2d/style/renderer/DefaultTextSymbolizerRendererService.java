@@ -38,6 +38,11 @@ import org.opengis.style.TextSymbolizer;
  */
 public class DefaultTextSymbolizerRendererService extends AbstractSymbolizerRendererService<TextSymbolizer, CachedTextSymbolizer>{
 
+    @Override
+    public boolean isGroupSymbolizer() {
+        return false;
+    }
+    
     /**
      * {@inheritDoc }
      */
@@ -67,7 +72,7 @@ public class DefaultTextSymbolizerRendererService extends AbstractSymbolizerRend
      */
     @Override
     public SymbolizerRenderer createRenderer(final CachedTextSymbolizer symbol, final RenderingContext2D context) {
-        return new DefaultTextSymbolizerRenderer(symbol, context);
+        return new DefaultTextSymbolizerRenderer(this, symbol, context);
     }
 
     /**

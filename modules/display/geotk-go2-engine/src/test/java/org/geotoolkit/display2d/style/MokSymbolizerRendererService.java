@@ -33,6 +33,11 @@ import org.geotoolkit.map.MapLayer;
 public class MokSymbolizerRendererService extends AbstractSymbolizerRendererService<MokSymbolizer, CachedMokSymbolizer>{
 
     @Override
+    public boolean isGroupSymbolizer() {
+        return false;
+    }
+    
+    @Override
     public Class<MokSymbolizer> getSymbolizerClass() {
         return MokSymbolizer.class;
     }
@@ -49,7 +54,7 @@ public class MokSymbolizerRendererService extends AbstractSymbolizerRendererServ
 
     @Override
     public SymbolizerRenderer createRenderer(final CachedMokSymbolizer symbol, final RenderingContext2D context) {
-        return new MokSymbolizerRenderer(symbol, context);
+        return new MokSymbolizerRenderer(this,symbol, context);
     }
 
     @Override

@@ -39,8 +39,8 @@ import org.opengis.style.Symbolizer;
 public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymbolizer<? extends Symbolizer>> extends AbstractSymbolizerRenderer<C>{
 
 
-    public AbstractCoverageSymbolizerRenderer(final C symbol, final RenderingContext2D context){
-        super(symbol,context);
+    public AbstractCoverageSymbolizerRenderer(final SymbolizerRendererService service, final C symbol, final RenderingContext2D context){
+        super(service, symbol,context);
     }
 
     @Override

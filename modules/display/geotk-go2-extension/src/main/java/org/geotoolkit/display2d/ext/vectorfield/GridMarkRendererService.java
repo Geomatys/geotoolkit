@@ -35,6 +35,12 @@ import org.geotoolkit.map.MapLayer;
  */
 public class GridMarkRendererService extends AbstractSymbolizerRendererService<VectorFieldSymbolizer,CachedVectorFieldSymbolizer>{
 
+    
+    @Override
+    public boolean isGroupSymbolizer() {
+        return false;
+    }
+    
     /**
      * {@inheritDoc }
      */
@@ -64,7 +70,7 @@ public class GridMarkRendererService extends AbstractSymbolizerRendererService<V
      */
     @Override
     public SymbolizerRenderer createRenderer(final CachedVectorFieldSymbolizer symbol, final RenderingContext2D context) {
-        return new GridMarkRenderer(symbol, context);
+        return new GridMarkRenderer(this, symbol, context);
     }
 
     @Override

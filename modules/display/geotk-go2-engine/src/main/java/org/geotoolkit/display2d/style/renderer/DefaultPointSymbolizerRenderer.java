@@ -43,8 +43,8 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedPointSymbolizer>{
 
-    public DefaultPointSymbolizerRenderer(final CachedPointSymbolizer symbol, final RenderingContext2D context){
-        super(symbol,context);
+    public DefaultPointSymbolizerRenderer(final SymbolizerRendererService service,final CachedPointSymbolizer symbol, final RenderingContext2D context){
+        super(service,symbol,context);
     }
 
     /**

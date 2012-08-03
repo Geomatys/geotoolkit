@@ -50,8 +50,8 @@ public class DefaultTextSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
 
     private LabelLayer labelLayer;
 
-    public DefaultTextSymbolizerRenderer(final CachedTextSymbolizer symbol, final RenderingContext2D context){
-        super(symbol,context);
+    public DefaultTextSymbolizerRenderer(final SymbolizerRendererService service, final CachedTextSymbolizer symbol, final RenderingContext2D context){
+        super(service,symbol,context);
     }
 
     public LabelLayer getLabelLayer() {

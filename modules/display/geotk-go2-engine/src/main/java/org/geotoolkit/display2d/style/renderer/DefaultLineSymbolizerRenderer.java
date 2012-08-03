@@ -53,8 +53,8 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
 
     private final CachedStroke cachedStroke;
 
-    public DefaultLineSymbolizerRenderer(final CachedLineSymbolizer symbol, final RenderingContext2D context){
-        super(symbol,context);
+    public DefaultLineSymbolizerRenderer(final SymbolizerRendererService service,final CachedLineSymbolizer symbol, final RenderingContext2D context){
+        super(service,symbol,context);
         cachedStroke = symbol.getCachedStroke();
     }
 

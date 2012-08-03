@@ -53,8 +53,8 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
 
     private final boolean mosaic;
 
-    public DefaultPolygonSymbolizerRenderer(final CachedPolygonSymbolizer symbol, final RenderingContext2D context){
-        super(symbol,context);
+    public DefaultPolygonSymbolizerRenderer(final SymbolizerRendererService service,final CachedPolygonSymbolizer symbol, final RenderingContext2D context){
+        super(service,symbol,context);
         mosaic = symbol.isMosaic();
     }
 

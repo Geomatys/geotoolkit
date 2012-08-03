@@ -31,6 +31,12 @@ import org.opengis.style.PointSymbolizer;
  */
 public class DefaultPointSymbolizerRendererService extends AbstractSymbolizerRendererService<PointSymbolizer, CachedPointSymbolizer>{
 
+    
+    @Override
+    public boolean isGroupSymbolizer() {
+        return false;
+    }
+    
     /**
      * {@inheritDoc }
      */
@@ -60,7 +66,7 @@ public class DefaultPointSymbolizerRendererService extends AbstractSymbolizerRen
      */
     @Override
     public SymbolizerRenderer createRenderer(final CachedPointSymbolizer symbol, final RenderingContext2D context) {
-        return new DefaultPointSymbolizerRenderer(symbol, context);
+        return new DefaultPointSymbolizerRenderer(this,symbol, context);
     }
 
     /**

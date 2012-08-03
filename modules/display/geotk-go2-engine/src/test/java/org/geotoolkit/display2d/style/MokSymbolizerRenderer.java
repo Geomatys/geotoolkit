@@ -24,6 +24,7 @@ import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.renderer.AbstractSymbolizerRenderer;
+import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 
 /**
  * Test that symbolizer renderer are properly called and only once.
@@ -35,8 +36,8 @@ public class MokSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedMokS
 
     public static volatile int called = 0;
 
-    public MokSymbolizerRenderer(final CachedMokSymbolizer cached, final RenderingContext2D ctx){
-        super(cached,ctx);
+    public MokSymbolizerRenderer(final SymbolizerRendererService service,final CachedMokSymbolizer cached, final RenderingContext2D ctx){
+        super(service,cached,ctx);
     }
 
     @Override

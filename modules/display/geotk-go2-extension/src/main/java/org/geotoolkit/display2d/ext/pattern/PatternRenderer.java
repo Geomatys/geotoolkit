@@ -35,6 +35,7 @@ import org.geotoolkit.display2d.container.statefull.StatefullProjectedFeature;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.renderer.AbstractCoverageSymbolizerRenderer;
+import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
 import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
@@ -56,8 +57,8 @@ import org.opengis.util.FactoryException;
  */
 public class PatternRenderer extends AbstractCoverageSymbolizerRenderer<CachedPatternSymbolizer>{
 
-    public PatternRenderer(final CachedPatternSymbolizer symbol, final RenderingContext2D context){
-        super(symbol,context);
+    public PatternRenderer(final SymbolizerRendererService service,final CachedPatternSymbolizer symbol, final RenderingContext2D context){
+        super(service,symbol,context);
     }
 
     /**

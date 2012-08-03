@@ -34,6 +34,12 @@ import org.opengis.style.Stroke;
  */
 public class DefaultPolygonSymbolizerRendererService extends AbstractSymbolizerRendererService<PolygonSymbolizer, CachedPolygonSymbolizer>{
 
+    
+    @Override
+    public boolean isGroupSymbolizer() {
+        return false;
+    }
+    
     /**
      * {@inheritDoc }
      */
@@ -63,7 +69,7 @@ public class DefaultPolygonSymbolizerRendererService extends AbstractSymbolizerR
      */
     @Override
     public SymbolizerRenderer createRenderer(final CachedPolygonSymbolizer symbol, final RenderingContext2D context) {
-        return new DefaultPolygonSymbolizerRenderer(symbol, context);
+        return new DefaultPolygonSymbolizerRenderer(this, symbol, context);
     }
 
     /**
