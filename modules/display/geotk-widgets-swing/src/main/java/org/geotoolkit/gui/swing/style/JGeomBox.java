@@ -79,7 +79,7 @@ public class JGeomBox extends JComboBox {
     }
 
     public String getGeom() {
-        if(getSelectedItem().toString().equals(ALL_GEOM)){
+        if(getSelectedItem() == null || getSelectedItem().toString().equals(ALL_GEOM)){
             return null;
         }else{
             return getSelectedItem().toString();

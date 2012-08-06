@@ -22,15 +22,12 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JComboBox;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
-import org.geotoolkit.gui.swing.style.StyleElementEditor;
 import org.geotoolkit.map.MapLayer;
-
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
@@ -47,6 +44,7 @@ public class JComboExpressionPane extends StyleElementEditor<Expression>{
     
     /** Creates new form JColorExpressionPane */
     public JComboExpressionPane() {
+        super(Expression.class);
         initComponents();
         guiCombo.setEditable(false);
     }

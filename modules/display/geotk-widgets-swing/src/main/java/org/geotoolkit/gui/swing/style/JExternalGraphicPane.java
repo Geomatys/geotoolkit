@@ -44,6 +44,7 @@ public class JExternalGraphicPane extends StyleElementEditor<ExternalGraphic> {
 
     /** Creates new form JDisplacementPanel */
     public JExternalGraphicPane() {
+        super(ExternalGraphic.class);
         initComponents();
         init();
     }

@@ -17,19 +17,18 @@
  */
 package org.geotoolkit.gui.swing.style;
 
-import java.util.ResourceBundle;
-import org.geotoolkit.gui.swing.resource.MessageBundle;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ResourceBundle;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
-import org.geotoolkit.gui.swing.style.StyleElementEditor;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.style.Fill;
 
@@ -48,6 +47,7 @@ public class JFillPane extends StyleElementEditor<Fill>{
      * Creates new form JFillPanel 
      */
     public JFillPane() {
+        super(Fill.class);
         initComponents();
         butFill.setEnabled(false);
         guiAlpha.setModel(1d, 0d, 1d, 0.1d);

@@ -38,11 +38,9 @@ import javax.swing.SwingConstants;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
-
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
-
 import org.opengis.style.GraphicalSymbol;
 import org.opengis.style.Mark;
 
@@ -52,7 +50,7 @@ import org.opengis.style.Mark;
  * @author Johann Sorel
  * @module pending
  */
-public class JMarkTable extends StyleElementEditor<List<GraphicalSymbol>> {
+public class JMarkTable <T> extends StyleElementEditor<List> {
 
     private static final Icon ICO_UP = IconBundle.getIcon("16_uparrow");
     private static final Icon ICO_DOWN = IconBundle.getIcon("16_downarrow");
@@ -65,6 +63,7 @@ public class JMarkTable extends StyleElementEditor<List<GraphicalSymbol>> {
 
     /** Creates new form JFontsPanel */
     public JMarkTable() {
+        super(List.class);
         initComponents();
         init();
     }
@@ -89,7 +88,7 @@ public class JMarkTable extends StyleElementEditor<List<GraphicalSymbol>> {
     }
 
     @Override
-    public void parse(final List<GraphicalSymbol> graphics) {
+    public void parse(final List graphics) {
         model.setGraphics(graphics);
     }
 

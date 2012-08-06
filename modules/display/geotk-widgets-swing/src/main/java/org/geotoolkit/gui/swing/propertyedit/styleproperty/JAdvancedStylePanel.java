@@ -20,9 +20,6 @@ package org.geotoolkit.gui.swing.propertyedit.styleproperty;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.GridLayout;
-import java.util.WeakHashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -31,45 +28,24 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
-
-import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
+import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
-import org.geotoolkit.gui.swing.style.JFeatureTypeStylePane;
-import org.geotoolkit.gui.swing.style.JLineSymbolizerPane;
-import org.geotoolkit.gui.swing.style.JPointSymbolizerPane;
-import org.geotoolkit.gui.swing.style.JPolygonSymbolizerPane;
-import org.geotoolkit.gui.swing.style.JRasterSymbolizerPane;
-import org.geotoolkit.gui.swing.style.JRulePane;
-import org.geotoolkit.gui.swing.style.JStylePane;
 import org.geotoolkit.gui.swing.style.JStyleTree;
-import org.geotoolkit.gui.swing.style.JTextSymbolizerPane;
 import org.geotoolkit.gui.swing.style.StyleElementEditor;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
-import org.geotoolkit.util.logging.Logging;
-
-import org.opengis.style.LineSymbolizer;
-import org.opengis.style.PointSymbolizer;
-import org.opengis.style.PolygonSymbolizer;
-import org.opengis.style.RasterSymbolizer;
 import org.opengis.style.Symbolizer;
-import org.opengis.style.TextSymbolizer;
 
 /**
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
-public class JAdvancedStylePanel<T extends Object> extends StyleElementEditor<T> implements PropertyPane {
-
-    private static final Logger LOGGER = Logging.getLogger(JAdvancedStylePanel.class);
-
-    private final WeakHashMap<Class,StyleElementEditor> guiPanels = new WeakHashMap<Class, StyleElementEditor>();
+public class JAdvancedStylePanel extends StyleElementEditor implements PropertyPane {
 
     private MapLayer layer = null;
-    private T style = null;
+    private Object style = null;
     private StyleElementEditor editor = null;
     private final TreeSelectionListener listener = new TreeSelectionListener() {
 
@@ -80,63 +56,28 @@ public class JAdvancedStylePanel<T extends Object> extends StyleElementEditor<T>
             //we validate the previous edition pane
             applyEditor(e.getOldLeadSelectionPath());
 
+            pan_info.removeAll();
+            
             if (path != null) {
                 final Object val = ((DefaultMutableTreeNode) path.getLastPathComponent()).getUserObject();
-                pan_info.removeAll();
-
-                if (val instanceof MutableStyle) {
-                    editor = getPanel(JStylePane.class);
-                } else if (val instanceof MutableFeatureTypeStyle) {
-                    editor = getPanel(JFeatureTypeStylePane.class);
-                } else if (val instanceof MutableRule) {
-                    editor = getPanel(JRulePane.class);
-                } else if (val instanceof RasterSymbolizer) {
-                    editor = getPanel(JRasterSymbolizerPane.class);
-                } else if (val instanceof PolygonSymbolizer) {
-                    editor = getPanel(JPolygonSymbolizerPane.class);
-                } else if (val instanceof LineSymbolizer) {
-                    editor = getPanel(JLineSymbolizerPane.class);
-                } else if (val instanceof PointSymbolizer) {
-                    editor = getPanel(JPointSymbolizerPane.class);
-                } else if (val instanceof TextSymbolizer) {
-                    editor = getPanel(JTextSymbolizerPane.class);
-                } else {
-                    editor = null;
-                }
-
+                editor = StyleElementEditor.findEditor(val);
                 if(editor != null){
+                    editor.setLayer(getLayer());
                     editor.parse(val);
                     pan_info.add(editor);
-                }
-
-                pan_info.revalidate();
-                pan_info.repaint();
+                }                
             }
+            
+            pan_info.revalidate();
+            pan_info.repaint();
         }
     };
 
     /** Creates new form JAdvancedStylePanel */
     public JAdvancedStylePanel() {
+        super(Object.class);
         initComponents();
         tree.addTreeSelectionListener(listener);
-    }
-
-    private StyleElementEditor getPanel(final Class clazz){
-        StyleElementEditor val = guiPanels.get(clazz);
-        if(val == null){
-            try {
-                val = (StyleElementEditor) clazz.newInstance();
-                val.setLayer(getLayer());
-            } catch (InstantiationException ex) {
-                LOGGER.log(Level.WARNING, ex.getLocalizedMessage(), ex);
-            } catch (IllegalAccessException ex) {
-               LOGGER.log(Level.WARNING, ex.getLocalizedMessage(), ex);
-            }
-            guiPanels.put(clazz, val);
-        }else{
-            val.setLayer(getLayer());
-        }
-        return val;
     }
 
     private void applyEditor(final TreePath oldPath){
@@ -144,6 +85,8 @@ public class JAdvancedStylePanel<T extends Object> extends StyleElementEditor<T>
 
         //create implies a call to apply if a style element is present
         final Object obj = editor.create();
+        //ensure we wont save twice
+        editor = null;
         
         if(obj instanceof Symbolizer){
             //in case of a symbolizer we must update it.
@@ -162,7 +105,7 @@ public class JAdvancedStylePanel<T extends Object> extends StyleElementEditor<T>
                 }
             }
         }
-
+        
     }
 
     /** This method is called from within the constructor to
@@ -206,7 +149,7 @@ public class JAdvancedStylePanel<T extends Object> extends StyleElementEditor<T>
 
         applyEditor(tree.getSelectionModel().getSelectionPath());
 
-        style = (T) tree.getStyleElement();
+        style = tree.getStyleElement();
 
         if (layer != null && style instanceof MutableStyle) {
             layer.setStyle((MutableStyle)style);
@@ -224,14 +167,14 @@ public class JAdvancedStylePanel<T extends Object> extends StyleElementEditor<T>
     }
 
     @Override
-    public void parse(final T style) {
+    public void parse(final Object style) {
         this.style = style;
         parse();
     }
 
     @Override
-    public T create() {
-        style = (T) tree.getStyleElement();
+    public Object create() {
+        style = tree.getStyleElement();
         apply();
         return style;
     }
@@ -255,7 +198,7 @@ public class JAdvancedStylePanel<T extends Object> extends StyleElementEditor<T>
 
         if (layer instanceof MapLayer) {
             setLayer((MapLayer) layer);
-            parse((T) this.layer.getStyle());
+            parse(this.layer.getStyle());
         }
     }
 

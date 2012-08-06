@@ -64,6 +64,7 @@ public class JExternalGraphicTable extends StyleElementEditor<ExternalGraphic[]>
 
     /** Creates new form JFontsPanel */
     public JExternalGraphicTable() {
+        super(ExternalGraphic[].class);
         initComponents();
         init();
     }

@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.gui.swing.style;
 
-import org.geotoolkit.gui.swing.resource.MessageBundle;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -30,6 +29,7 @@ import javax.swing.JLabel;
 import javax.swing.JRadioButton;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.style.GraphicFill;
 import org.opengis.style.GraphicStroke;
@@ -52,7 +52,7 @@ public class JStrokePane extends StyleElementEditor<Stroke> {
      * Creates new form JStrokePanel 
      */
     public JStrokePane() {
-        super();
+        super(Stroke.class);
         initComponents();
         init();
 

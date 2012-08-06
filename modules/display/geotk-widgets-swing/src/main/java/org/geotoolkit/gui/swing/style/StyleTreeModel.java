@@ -18,16 +18,12 @@
 package org.geotoolkit.gui.swing.style;
 
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.lang.reflect.Method;
 import java.util.EventObject;
 import java.util.List;
 import java.util.logging.Level;
 import javax.swing.tree.DefaultTreeModel;
-
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 import org.geotoolkit.sld.MutableLayerStyle;
-import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.geotoolkit.style.FeatureTypeStyleListener;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
@@ -35,14 +31,13 @@ import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.RuleListener;
 import org.geotoolkit.style.StyleListener;
 import org.geotoolkit.style.StyleUtilities;
+import static org.geotoolkit.util.ArgumentChecks.*;
 import org.geotoolkit.util.NumberRange;
+import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.feature.type.Name;
 import org.opengis.style.SemanticType;
-
 import org.opengis.style.Symbolizer;
-
-import static org.geotoolkit.util.ArgumentChecks.*;
 
 /**
  *

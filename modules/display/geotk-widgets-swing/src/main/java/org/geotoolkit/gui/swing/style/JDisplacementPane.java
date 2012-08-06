@@ -42,6 +42,7 @@ public class JDisplacementPane extends StyleElementEditor<Displacement>{
      * Creates new form JDisplacementPanel 
      */
     public JDisplacementPane() {
+        super(Displacement.class);
         initComponents();
         init();
     }

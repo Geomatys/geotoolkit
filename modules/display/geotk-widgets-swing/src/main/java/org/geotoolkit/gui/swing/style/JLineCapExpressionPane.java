@@ -48,6 +48,7 @@ public class JLineCapExpressionPane extends StyleElementEditor<Expression>{
 
     /** Creates new form JColorExpressionPane */
     public JLineCapExpressionPane() {
+        super(Expression.class);
         initComponents();
         guiRound.setIcon(ICON_CAP_ROUND);
         guiSquare.setIcon(ICON_CAP_SQUARE);

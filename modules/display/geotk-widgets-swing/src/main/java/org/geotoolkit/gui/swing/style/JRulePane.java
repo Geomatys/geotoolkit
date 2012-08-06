@@ -36,7 +36,6 @@ import javax.swing.JTextPane;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
-
 import org.geotoolkit.filter.text.cql2.CQL;
 import org.geotoolkit.filter.text.cql2.CQLException;
 import org.geotoolkit.gui.swing.propertyedit.filterproperty.JCQLPropertyPanel;
@@ -59,6 +58,7 @@ public class JRulePane extends StyleElementEditor<MutableRule> {
 
     /** Creates new form JRulePanel */
     public JRulePane() {
+        super(MutableRule.class);
         initComponents();
     }
 

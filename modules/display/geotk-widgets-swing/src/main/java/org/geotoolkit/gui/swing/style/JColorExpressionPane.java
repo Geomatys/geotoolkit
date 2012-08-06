@@ -41,6 +41,7 @@ public class JColorExpressionPane extends StyleElementEditor<Expression>{
 
     /** Creates new form JColorExpressionPane */
     public JColorExpressionPane() {
+        super(Expression.class);
         initComponents();
     }
 

@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.gui.swing.style;
 
-import org.geotoolkit.gui.swing.resource.MessageBundle;
 import java.awt.Component;
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
@@ -26,9 +25,8 @@ import javax.swing.JLabel;
 import javax.swing.JRadioButton;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
-import org.geotoolkit.gui.swing.style.StyleElementEditor;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapLayer;
-
 import org.opengis.style.ContrastEnhancement;
 import org.opengis.style.ContrastMethod;
 
@@ -46,6 +44,7 @@ public class JContrastEnhancement extends StyleElementEditor<ContrastEnhancement
      * Creates new form JFillPanel 
      */
     public JContrastEnhancement() {
+        super(ContrastEnhancement.class);
         initComponents();
     }
 

@@ -17,17 +17,15 @@
  */
 package org.geotoolkit.gui.swing.style;
 
-import org.geotoolkit.gui.swing.resource.MessageBundle;
 import java.awt.Component;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
-import org.geotoolkit.gui.swing.style.StyleElementEditor;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
-
 import org.opengis.style.Font;
 
 /**
@@ -42,6 +40,7 @@ public class JFontPane extends StyleElementEditor<Font>{
     
     /** Creates new form JfontPanel */
     public JFontPane() {
+        super(Font.class);
         initComponents();
         init();
     }

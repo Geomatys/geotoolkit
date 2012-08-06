@@ -17,11 +17,8 @@
  */
 package org.geotoolkit.gui.swing.style;
 
-import javax.swing.JPanel;
-import org.geotoolkit.gui.swing.resource.MessageBundle;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
@@ -30,13 +27,13 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
-
-import org.jdesktop.swingx.JXTitledPanel;
 import org.opengis.style.OverlapBehavior;
 import org.opengis.style.RasterSymbolizer;
 import org.opengis.style.Symbolizer;
@@ -56,6 +53,7 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
      * @param layer the layer style to edit
      */
     public JRasterSymbolizerPane() {
+        super(RasterSymbolizer.class);
         initComponents();
     }
 

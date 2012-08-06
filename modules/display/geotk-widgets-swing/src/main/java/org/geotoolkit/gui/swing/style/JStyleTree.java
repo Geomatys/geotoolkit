@@ -42,6 +42,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -55,14 +56,16 @@ import javax.swing.JSpinner;
 import javax.swing.JTree;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.event.TreeModelEvent;
+import javax.swing.event.TreeModelListener;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
-
-import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.display2d.service.DefaultGlyphService;
 import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
@@ -70,7 +73,6 @@ import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.util.RandomStyleFactory;
 import org.jdesktop.swingx.JXTree;
-
 import org.opengis.style.Description;
 import org.opengis.style.Symbolizer;
 import org.opengis.util.InternationalString;
@@ -109,6 +111,8 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
         DragGestureRecognizer dgr = dragSource.createDefaultDragGestureRecognizer(this,DnDConstants.ACTION_COPY_OR_MOVE, this);
         dgr.setSourceActions(dgr.getSourceActions() & ~InputEvent.BUTTON3_MASK);
         DropTarget dropTarget = new DropTarget(this, this);
+        
+        
     }
 
     public T getStyleElement() {
@@ -121,6 +125,28 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
 
         if (style != null) {
             treemodel = new StyleTreeModel(style);
+            treemodel.addTreeModelListener(new TreeModelListener() {
+                @Override
+                public void treeNodesChanged(TreeModelEvent e) {
+                }
+                @Override
+                public void treeNodesInserted(final TreeModelEvent e) {
+                    SwingUtilities.invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            TreePath tp = e.getTreePath().pathByAddingChild(e.getChildren()[0]);
+                            getSelectionModel().setSelectionPath(tp);
+                        }
+                    });
+                }
+                @Override
+                public void treeNodesRemoved(TreeModelEvent e) {
+                }
+                @Override
+                public void treeStructureChanged(TreeModelEvent e) {
+                }
+            }
+            );
             setModel(treemodel);
             revalidate();
         }
@@ -353,11 +379,10 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
                     add(new DuplicateAction(node));
                 } else if (val instanceof MutableRule) {
                     final MutableRule rule = (MutableRule) val;
-                    add(new NewPointSymbolizerAction(rule));
-                    add(new NewLineSymbolizerAction(rule));
-                    add(new NewPolygonSymbolizerAction(rule));
-                    add(new NewRasterSymbolizerAction(rule));
-                    add(new NewTextSymbolizerAction(rule));
+                    final List<StyleElementEditor> editors = StyleElementEditor.findEditorsForType(Symbolizer.class);
+                    for(StyleElementEditor editor : editors){
+                        add(new NewSymbolizerAction(rule,editor));
+                    }
                     add(new JSeparator(SwingConstants.HORIZONTAL));
                     add(new ExpandAction(node));
                     add(new CollapseAction(node));
@@ -478,76 +503,22 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
         }
     }
 
-    class NewPointSymbolizerAction extends AbstractAction {
+    class NewSymbolizerAction extends AbstractAction{
         private final MutableRule rule;
+        private final StyleElementEditor editor;
 
-        NewPointSymbolizerAction(final MutableRule cdt) {
-            super("Point Symbolizer",ICON_NEW);
+        NewSymbolizerAction(final MutableRule cdt, final StyleElementEditor editor) {
+            super(editor.getEditedClass().getSimpleName(),ICON_NEW);
             this.rule = cdt;
+            this.editor = editor;
         }
 
         @Override
         public void actionPerformed(final ActionEvent e) {
-            rule.symbolizers().add(RandomStyleFactory.createPointSymbolizer());
-        }
-    }
-
-    class NewLineSymbolizerAction extends AbstractAction {
-        private final MutableRule rule;
-
-        NewLineSymbolizerAction(final MutableRule cdt) {
-            super("Line Symbolizer", ICON_NEW);
-            this.rule = cdt;
-        }
-
-        @Override
-        public void actionPerformed(final ActionEvent e) {
-            rule.symbolizers().add(RandomStyleFactory.createLineSymbolizer());
-        }
-    }
-
-    class NewPolygonSymbolizerAction extends AbstractAction {
-        private final MutableRule rule;
-
-        NewPolygonSymbolizerAction(final MutableRule cdt) {
-            super("Polygon Symbolizer",ICON_NEW);
-            this.rule = cdt;
-        }
-
-        @Override
-        public void actionPerformed(final ActionEvent e) {
-            rule.symbolizers().add(RandomStyleFactory.createPolygonSymbolizer());
+            rule.symbolizers().add((Symbolizer)editor.create());
         }
     }
     
-    class NewTextSymbolizerAction extends AbstractAction {
-        private final MutableRule rule;
-
-        NewTextSymbolizerAction(final MutableRule cdt) {
-            super("Text Symbolizer", ICON_NEW);
-            this.rule = cdt;
-        }
-        
-        @Override
-        public void actionPerformed(final ActionEvent e) {
-            rule.symbolizers().add(SF.textSymbolizer());
-        }
-    }
-
-    class NewRasterSymbolizerAction extends AbstractAction {
-        private final MutableRule rule;
-
-        NewRasterSymbolizerAction(final MutableRule cdt) {
-            super("Raster Symbolizer", ICON_NEW);
-            this.rule = cdt;
-        }
-
-        @Override
-        public void actionPerformed(final ActionEvent e) {
-            rule.symbolizers().add(SF.rasterSymbolizer());
-        }
-    }
-
     class DuplicateAction extends AbstractAction {
         private final DefaultMutableTreeNode parentNode;
 

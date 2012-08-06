@@ -17,40 +17,36 @@
  */
 package org.geotoolkit.gui.swing.propertyedit.styleproperty;
 
-import java.awt.BorderLayout;
-
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JScrollPane;
-import java.awt.FlowLayout;
-import javax.swing.JCheckBox;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.JToolBar;
-
-import org.geotoolkit.gui.swing.resource.IconBundle;
-import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
-import org.geotoolkit.gui.swing.resource.MessageBundle;
-import org.geotoolkit.gui.swing.style.JRasterSymbolizerPane;
-import org.geotoolkit.gui.swing.style.JTextSymbolizerPane;
-import org.geotoolkit.gui.swing.style.StyleElementEditor;
-import org.geotoolkit.gui.swing.style.JLineSymbolizerPane;
-import org.geotoolkit.gui.swing.style.JPointSymbolizerPane;
-import org.geotoolkit.gui.swing.style.JPolygonSymbolizerPane;
-import org.geotoolkit.style.DefaultStyleFactory;
-import org.geotoolkit.style.MutableStyleFactory;
-import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.map.CoverageMapLayer;
-import org.geotoolkit.map.FeatureMapLayer;
-
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
-
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JToolBar;
+import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
+import org.geotoolkit.gui.swing.resource.IconBundle;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
+import org.geotoolkit.gui.swing.style.JLineSymbolizerPane;
+import org.geotoolkit.gui.swing.style.JPointSymbolizerPane;
+import org.geotoolkit.gui.swing.style.JPolygonSymbolizerPane;
+import org.geotoolkit.gui.swing.style.JRasterSymbolizerPane;
+import org.geotoolkit.gui.swing.style.JTextSymbolizerPane;
+import org.geotoolkit.gui.swing.style.StyleElementEditor;
+import org.geotoolkit.map.CoverageMapLayer;
+import org.geotoolkit.map.FeatureMapLayer;
+import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.style.DefaultStyleFactory;
+import org.geotoolkit.style.MutableStyleFactory;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.style.FeatureTypeStyle;
 import org.opengis.style.LineSymbolizer;
