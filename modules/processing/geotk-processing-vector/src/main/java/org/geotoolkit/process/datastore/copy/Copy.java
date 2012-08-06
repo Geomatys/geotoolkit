@@ -17,13 +17,9 @@
 package org.geotoolkit.process.datastore.copy;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.DataStoreFactory;
-import org.geotoolkit.data.DataStoreFinder;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
@@ -39,10 +35,12 @@ import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
 import org.opengis.parameter.ParameterValueGroup;
+
 /**
  * Copy feature from one datastore to another.
  *
  * @author Johann Sorel (Geomatys)
+ * @author Cédric Briançon (Geomatys)
  * @module pending
  */
 public class Copy extends AbstractProcess {
@@ -62,58 +60,11 @@ public class Copy extends AbstractProcess {
 
         fireProcessStarted("Starting copy.");
 
-        final Map sourceDSparams    = value(SOURCE_STORE_PARAMS,  inputParameters);
-        final Map targetDSparams    = value(TARGET_STORE_PARAMS,  inputParameters);
-        final Boolean eraseParam    = value(ERASE,                inputParameters);
-        final Boolean createParam   = value(CREATE,               inputParameters);
-        final String typenameParam  = value(TYPE_NAME,            inputParameters);
-        final Query queryParam      = value(QUERY,                inputParameters);
-
-        final DataStore sourceDS;
-        DataStore targetDS = null;
-        try {
-            sourceDS = DataStoreFinder.open(sourceDSparams);
-            if(sourceDS == null) {
-                throw new DataStoreException("No datastore for parameters :"+sourceDSparams);
-            }
-        } catch (DataStoreException ex) {
-            throw new ProcessException(null, this, ex);
-        }
-
-        DataStoreException exp = null;
-        try {
-            targetDS = DataStoreFinder.open(targetDSparams);
-            if(targetDS == null) {
-                exp = new DataStoreException("No datastore for parameters :"+targetDSparams);
-            }
-        } catch (DataStoreException ex) {
-            exp = ex;
-        }
-
-        if (exp != null) {
-            if(createParam) {
-                //try to create the datastore
-                final Iterator<DataStoreFactory> ite = DataStoreFinder.getAvailableFactories(null).iterator();
-                while(ite.hasNext()) {
-                    final DataStoreFactory factory = ite.next();
-                    if(factory.canProcess(targetDSparams)) {
-                        try {
-                            targetDS = factory.createNew(targetDSparams);
-                        } catch (DataStoreException ex) {
-                            throw new ProcessException(null, this, ex);
-                        }
-                    }
-                }
-
-                if (targetDS == null) {
-                    throw new ProcessException(null, this, new DataStoreException(
-                            "Failed to found a factory to create datastore for parameters : "+targetDSparams));
-                }
-            }
-
-            //through error
-            throw new ProcessException(null, this, exp);
-        }
+        final DataStore sourceDS    = value(SOURCE_STORE, inputParameters);
+        final DataStore targetDS    = value(TARGET_STORE, inputParameters);
+        final Boolean eraseParam    = value(ERASE,        inputParameters);
+        final String typenameParam  = value(TYPE_NAME,    inputParameters);
+        final Query queryParam      = value(QUERY,        inputParameters);
 
         final Set<Name> names;
         if (queryParam != null) {
