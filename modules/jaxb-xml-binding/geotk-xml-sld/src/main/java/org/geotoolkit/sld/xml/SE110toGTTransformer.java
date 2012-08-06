@@ -191,8 +191,8 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
             return StyleConstants.DEFAULT_DESCRIPTION;
         } else {
             return styleFactory.description(
-                (dt.getTitle() == null) ? null : new SimpleInternationalString(dt.getTitle()),
-                (dt.getAbstract() == null) ? null : new SimpleInternationalString(dt.getAbstract()));
+                (dt.getTitle() == null) ? null : dt.getTitle(),
+                (dt.getAbstract() == null) ? null : dt.getAbstract());
         }
 
     }
@@ -565,14 +565,18 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
             
         }else{
             
-            for(final JAXBElement<? extends org.geotoolkit.se.xml.v110.SymbolizerType> jax : rt.getSymbolizer()) {
-                final org.geotoolkit.se.xml.v110.SymbolizerType st = jax.getValue();
+            for(final JAXBElement<?> jax : rt.getSymbolizer()) {
+                final Object st = jax.getValue();
 
                 if (st == null) {
                     continue;
+                }else if(st instanceof SymbolizerType){
+                    rule.symbolizers().add(visit((SymbolizerType)st));
+                }else if(st instanceof Symbolizer){
+                    rule.symbolizers().add((Symbolizer)st);
                 }
 
-                rule.symbolizers().add(visit(st));
+                
             }
 
         }
@@ -621,6 +625,10 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
         } else if (st instanceof PatternSymbolizerType) {
             final PatternSymbolizerType pst = (PatternSymbolizerType) st;
             return visit(pst);
+        } else if(st instanceof Symbolizer){
+            //jaxbelement is a conform opengis symbolizer
+            //this element is an extension symbolizer
+            return (Symbolizer) st;
         }
 
         throw new IllegalArgumentException("Unknowned Symbolizer : " + st.getClass().toString());

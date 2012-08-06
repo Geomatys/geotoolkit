@@ -17,22 +17,23 @@
 package org.geotoolkit.sld.xml;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ServiceLoader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-
-import org.geotoolkit.sld.MutableStyledLayerDescriptor;
 import org.geotoolkit.sld.MutableSLDFactory;
+import org.geotoolkit.sld.MutableStyledLayerDescriptor;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.xml.MarshallerPool;
-
 import org.opengis.filter.FilterFactory2;
-import org.opengis.util.FactoryException;
 import org.opengis.sld.StyledLayerDescriptor;
+import org.opengis.util.FactoryException;
 
 /**
  * Utility class to read and write XML OGC SLD files.
@@ -53,8 +54,19 @@ public class JAXBSLDUtilities {
 
     public static MarshallerPool getMarshallerPoolSLD100() {
         if (POOL_100 == null) {
+            
+            final List<Class> classes = new ArrayList<Class>();
+            classes.add(org.geotoolkit.sld.xml.v100.StyledLayerDescriptor.class);
+            
+            final ServiceLoader<org.opengis.style.ExtensionSymbolizer> additionalTypes = ServiceLoader.load(org.opengis.style.ExtensionSymbolizer.class);
+            final Iterator<org.opengis.style.ExtensionSymbolizer> ite = additionalTypes.iterator();
+            while(ite.hasNext()){
+                org.opengis.style.ExtensionSymbolizer st = ite.next();
+                classes.add(st.getClass());
+            }
+            
             try {
-                POOL_100 = new MarshallerPool(org.geotoolkit.sld.xml.v100.StyledLayerDescriptor.class);
+                POOL_100 = new MarshallerPool(classes.toArray(new Class[classes.size()]));
             } catch (JAXBException ex) {
                 throw new RuntimeException("Could not load jaxbcontext for sld 100.",ex);
             }
@@ -64,10 +76,30 @@ public class JAXBSLDUtilities {
 
     public static MarshallerPool getMarshallerPoolSLD110() {
         if (POOL_110 == null) {
+            
+            final List<Class> classes = new ArrayList<Class>();
+            classes.add(org.geotoolkit.sld.xml.v110.StyledLayerDescriptor.class);
+            classes.add(org.geotoolkit.internal.jaxb.geometry.ObjectFactory.class);
+            
+            final ServiceLoader<org.opengis.style.ExtensionSymbolizer> additionalTypes = ServiceLoader.load(org.opengis.style.ExtensionSymbolizer.class);
+            final Iterator<org.opengis.style.ExtensionSymbolizer> ite = additionalTypes.iterator();
+            while(ite.hasNext()){
+                org.opengis.style.ExtensionSymbolizer st = ite.next();
+                final Class sc = st.getClass();
+                classes.add(sc);
+                
+                final String factoryClassName = sc.getName()+"ObjectFactory";
+                try {
+                    classes.add(Class.forName(factoryClassName));
+                } catch (ClassNotFoundException ex) {
+                    throw new RuntimeException("Could not load Extension symbolizer object factory : "+factoryClassName,ex);
+                }
+            }
+            
             try {
-                POOL_110 = new MarshallerPool(org.geotoolkit.sld.xml.v110.StyledLayerDescriptor.class, org.geotoolkit.internal.jaxb.geometry.ObjectFactory.class);
+                POOL_110 = new MarshallerPool(classes.toArray(new Class[classes.size()]));
             } catch (JAXBException ex) {
-                throw new RuntimeException("Could not load jaxbcontext for sld 100.",ex);
+                throw new RuntimeException("Could not load jaxbcontext for sld 110.",ex);
             }
         }
         return POOL_110;

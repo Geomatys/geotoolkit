@@ -19,24 +19,22 @@ package org.geotoolkit.sld.xml;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import java.math.BigInteger;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.measure.quantity.Energy;
 import javax.measure.quantity.Length;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
+import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
 import javax.xml.namespace.QName;
-
 import org.geotoolkit.display2d.ext.pattern.PatternSymbolizer;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.gml.GMLUtilities;
@@ -53,7 +51,6 @@ import org.geotoolkit.ogc.xml.v110.BeyondType;
 import org.geotoolkit.ogc.xml.v110.BinaryComparisonOpType;
 import org.geotoolkit.ogc.xml.v110.BinaryLogicOpType;
 import org.geotoolkit.ogc.xml.v110.BinaryOperatorType;
-import org.geotoolkit.ogc.xml.v110.BinarySpatialOpType;
 import org.geotoolkit.ogc.xml.v110.ComparisonOpsType;
 import org.geotoolkit.ogc.xml.v110.ContainsType;
 import org.geotoolkit.ogc.xml.v110.CrossesType;
@@ -87,7 +84,6 @@ import org.geotoolkit.ogc.xml.v110.UpperBoundaryType;
 import org.geotoolkit.ogc.xml.v110.WithinType;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.se.xml.v110.AnchorPointType;
 import org.geotoolkit.se.xml.v110.CategorizeType;
 import org.geotoolkit.se.xml.v110.ChannelSelectionType;
@@ -122,14 +118,12 @@ import org.geotoolkit.se.xml.v110.PointPlacementType;
 import org.geotoolkit.se.xml.v110.PointSymbolizerType;
 import org.geotoolkit.se.xml.v110.PolygonSymbolizerType;
 import org.geotoolkit.se.xml.v110.RasterSymbolizerType;
-import org.geotoolkit.se.xml.v110.RecodeType;
 import org.geotoolkit.se.xml.v110.RuleType;
 import org.geotoolkit.se.xml.v110.ShadedReliefType;
 import org.geotoolkit.se.xml.v110.StrokeType;
 import org.geotoolkit.se.xml.v110.SvgParameterType;
 import org.geotoolkit.se.xml.v110.TextSymbolizerType;
 import org.geotoolkit.se.xml.v110.ThreshholdsBelongToType;
-
 import org.geotoolkit.se.xml.vext.ColorItemType;
 import org.geotoolkit.se.xml.vext.PatternSymbolizerType;
 import org.geotoolkit.se.xml.vext.RangeType;
@@ -140,14 +134,9 @@ import org.geotoolkit.style.function.Interpolate;
 import org.geotoolkit.style.function.InterpolationPoint;
 import org.geotoolkit.style.function.Method;
 import org.geotoolkit.style.function.Mode;
-import org.geotoolkit.style.function.Recode;
-import org.geotoolkit.style.function.RecodeFunction;
 import org.geotoolkit.style.function.RecolorFunction;
 import org.geotoolkit.style.function.ThreshholdsBelongTo;
-
-import org.geotoolkit.util.logging.Logging;
 import org.opengis.feature.type.Name;
-import org.opengis.feature.type.PropertyType;
 import org.opengis.filter.And;
 import org.opengis.filter.BinaryComparisonOperator;
 import org.opengis.filter.Filter;
@@ -188,8 +177,6 @@ import org.opengis.filter.spatial.Overlaps;
 import org.opengis.filter.spatial.Touches;
 import org.opengis.filter.spatial.Within;
 import org.opengis.metadata.citation.OnlineResource;
-import org.opengis.util.FactoryException;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.style.AnchorPoint;
 import org.opengis.style.ChannelSelection;
@@ -229,6 +216,7 @@ import org.opengis.style.Style;
 import org.opengis.style.StyleVisitor;
 import org.opengis.style.Symbolizer;
 import org.opengis.style.TextSymbolizer;
+import org.opengis.util.FactoryException;
 
 /**
  *
@@ -987,8 +975,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
             }else if(symbol instanceof PatternSymbolizer){
                 rt.getSymbolizer().add( visit((PatternSymbolizer)symbol,null));
             }else if(symbol instanceof ExtensionSymbolizer){
-                //TODO provide jaxb binding for extension symbolizers
-//                rt.getSymbolizer().add( visit((ExtensionSymbolizer)symbol,null));
+                ((List)rt.getSymbolizer()).add( visit((ExtensionSymbolizer)symbol,null));
             }
         }
 
@@ -1187,8 +1174,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
             }else if(symbol instanceof PatternSymbolizer){
                 type.getSymbolizer().add( visit((PatternSymbolizer)symbol,null));
             }else if(symbol instanceof ExtensionSymbolizer){
-                //TODO provide jaxb binding for extension symbolizers
-//                rt.getSymbolizer().add( visit((ExtensionSymbolizer)symbol,null));
+                ((List)type.getSymbolizer()).add( visit((ExtensionSymbolizer)symbol,null));
             }
         }
 
@@ -1197,7 +1183,8 @@ public class GTtoSE110Transformer implements StyleVisitor{
 
     @Override
     public Object visit(final ExtensionSymbolizer ext, final Object data){
-        return null;
+        //we expect the extension to be a valid jaxb element
+        return ext;
     }
 
     /**
@@ -1661,5 +1648,5 @@ public class GTtoSE110Transformer implements StyleVisitor{
         srt.setReliefFactor(shadedRelief.getReliefFactor().evaluate(null, Double.class));
         return srt;
     }
-
+    
 }

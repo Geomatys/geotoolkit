@@ -200,8 +200,8 @@ public class SEforSLD110Test extends TestCase{
         assertNotNull(pvt);
         
         assertEquals(pvt.getName(), valueName);
-        assertEquals(pvt.getDescription().getTitle(), valueTitle);
-        assertEquals(pvt.getDescription().getAbstract(), valueAbstract);
+        assertEquals(String.valueOf(pvt.getDescription().getTitle()), valueTitle);
+        assertEquals(String.valueOf(pvt.getDescription().getAbstract()), valueAbstract);
         assertEquals(pvt.isIsDefault(), Boolean.TRUE);
         
         assertEquals(pvt.getFeatureTypeStyleOrCoverageStyleOrOnlineResource().size(), 3);
@@ -248,8 +248,8 @@ public class SEforSLD110Test extends TestCase{
         assertNotNull(pvt);
         
         assertEquals(pvt.getName(), valueName);
-        assertEquals(pvt.getDescription().getTitle(), valueTitle);
-        assertEquals(pvt.getDescription().getAbstract(), valueAbstract);
+        assertEquals(String.valueOf(pvt.getDescription().getTitle()), valueTitle);
+        assertEquals(String.valueOf(pvt.getDescription().getAbstract()), valueAbstract);
         assertTrue(pvt.getCoverageName().contains(valueFTN) );
         
         assertEquals(pvt.getRuleOrOnlineResource().size(), 3);
@@ -299,8 +299,8 @@ public class SEforSLD110Test extends TestCase{
         assertNotNull(pvt);
         
         assertEquals(pvt.getName(), valueName);
-        assertEquals(pvt.getDescription().getTitle(), valueTitle);
-        assertEquals(pvt.getDescription().getAbstract(), valueAbstract);
+        assertEquals(String.valueOf(pvt.getDescription().getTitle()), valueTitle);
+        assertEquals(String.valueOf(pvt.getDescription().getAbstract()), valueAbstract);
         assertEquals(pvt.getMinScaleDenominator(),500d);
         assertEquals(pvt.getMaxScaleDenominator(),1000d);
         
