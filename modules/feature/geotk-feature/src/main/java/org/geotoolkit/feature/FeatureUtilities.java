@@ -30,6 +30,7 @@ import java.util.logging.Logger;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.parameter.Parameters;
+import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.Converters;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.coverage.grid.GridCoverage;
@@ -367,6 +368,7 @@ public final class FeatureUtilities {
 
     public static ComplexAttribute defaultProperty(final ComplexType type, final String id){
 
+        ArgumentChecks.ensureNonNull("type", type);
         final Collection<Property> props = new ArrayList<Property>();
         for(final PropertyDescriptor subDesc : type.getDescriptors()){
             for(int i=0,n=subDesc.getMinOccurs();i<n;i++){
@@ -458,8 +460,10 @@ public final class FeatureUtilities {
      * @param desc : parameter descriptor
      * @return ParameterValueGroup
      */
-    public static ParameterValueGroup toParameter(final ComplexAttribute source, final ParameterDescriptorGroup desc){
+    public static ParameterValueGroup toParameter(final ComplexAttribute source, final ParameterDescriptorGroup desc) {
 
+        ArgumentChecks.ensureNonNull("source", source);
+        ArgumentChecks.ensureNonNull("desc", desc);
         final ParameterValueGroup target = desc.createValue();
         fill(source,target);
         return target;
@@ -471,8 +475,9 @@ public final class FeatureUtilities {
      * @param source : parameter to convert
      * @return ComplexAttribute
      */
-    public static ComplexAttribute toFeature(final ParameterValueGroup source){
+    public static ComplexAttribute toFeature(final ParameterValueGroup source) {
 
+        ArgumentChecks.ensureNonNull("source", source);
         final ComplexType ft = (ComplexType)FeatureTypeUtilities.toPropertyType(source.getDescriptor());
         final ComplexAttribute target = FeatureUtilities.defaultProperty(ft);
         fill(source,target);
@@ -485,7 +490,9 @@ public final class FeatureUtilities {
      * @param source : property to convert
      * @return Map
      */
-    public static Map<String,Object> toMap(final ComplexAttribute att){
+    public static Map<String,Object> toMap(final ComplexAttribute att) {
+
+        ArgumentChecks.ensureNonNull("att", att);
         final Map<String,Object> map = new HashMap<String, Object>();
         for(final Property prop : att.getProperties()){
             map.put(prop.getName().getLocalPart(), prop.getValue());
@@ -499,7 +506,8 @@ public final class FeatureUtilities {
      * @param source : parameter to convert
      * @return Map
      */
-    public static Map<String,Object> toMap(final ParameterValueGroup source){
+    public static Map<String,Object> toMap(final ParameterValueGroup source) {
+        ArgumentChecks.ensureNonNull("source", source);
         return toMap(toFeature(source));
     }
 
@@ -513,6 +521,8 @@ public final class FeatureUtilities {
      * @return
      */
     public static ParameterValueGroup toParameter(final Map<String, ?> params, final ParameterDescriptorGroup desc) {
+        ArgumentChecks.ensureNonNull("params", params);
+        ArgumentChecks.ensureNonNull("desc", desc);
         return toParameter(params, desc, true);
     }
 
@@ -530,6 +540,8 @@ public final class FeatureUtilities {
     public static ParameterValueGroup toParameter(final Map<String, ?> params,
             final ParameterDescriptorGroup desc, final boolean checkMandatory) {
 
+        ArgumentChecks.ensureNonNull("params", params);
+        ArgumentChecks.ensureNonNull("desc", desc);
         if(checkMandatory){
             for(GeneralParameterDescriptor de : desc.descriptors()){
                 if(de.getMinimumOccurs()>0 && !(params.containsKey(de.getName().getCode()))){
@@ -673,15 +685,16 @@ public final class FeatureUtilities {
      * @return GeneralParameterValue
      */
     public static GeneralParameterValue searchParameter(final ParameterValueGroup group, final String code){
+        ArgumentChecks.ensureNonNull("group", group);
         for(GeneralParameterValue param : group.values()){
             if(param instanceof ParameterValue){
                 final ParameterValue pv = (ParameterValue) param;
-                if(code.equals(pv.getDescriptor().getName().getCode())){
+                if(pv.getDescriptor().getName().getCode().equals(code)){
                     return pv;
                 }
             }else if(param instanceof ParameterValueGroup){
                 final ParameterValueGroup pvg = (ParameterValueGroup) param;
-                if(code.equals(pvg.getDescriptor().getName().getCode())){
+                if(pvg.getDescriptor().getName().getCode().equals(code)){
                     return pvg;
                 }
             }
