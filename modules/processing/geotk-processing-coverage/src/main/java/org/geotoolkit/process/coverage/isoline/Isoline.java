@@ -23,12 +23,15 @@ import java.awt.image.RenderedImage;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.vecmath.Point3d;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
+import org.geotoolkit.geometry.jts.JTS;
 import static org.geotoolkit.parameter.Parameters.*;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -37,8 +40,11 @@ import static org.geotoolkit.process.coverage.isoline.IsolineDescriptor.*;
 import org.geotoolkit.process.coverage.kriging.IsolineCreator;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
+import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform2D;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  *
@@ -57,6 +63,7 @@ public class Isoline extends AbstractProcess {
 
         final CoordinateReferenceSystem crs = coverage.getCoordinateReferenceSystem2D();
         final RenderedImage image = coverage.getRenderedImage();
+        final MathTransform2D trs = coverage.getGridGeometry().getGridToCRS2D();
 
         final IsolineCreator creator = new IsolineCreator(image, intervals);
         final Map<Point3d, List<Coordinate>> steps = creator.createIsolines();
@@ -80,7 +87,14 @@ public class Isoline extends AbstractProcess {
                 Collections.reverse(cshps);
             }
 
-            final LineString geometry = GF.createLineString(cshps.toArray(new Coordinate[cshps.size()]));
+            LineString geometry = GF.createLineString(cshps.toArray(new Coordinate[cshps.size()]));
+            try {
+                geometry = (LineString) JTS.transform(geometry, trs);
+            } catch (MismatchedDimensionException ex) {
+                throw new ProcessException(ex.getMessage(), this, ex);
+            } catch (TransformException ex) {
+                throw new ProcessException(ex.getMessage(), this, ex);
+            }
             final double value = p.z;
 
             final Feature f = FeatureUtilities.defaultFeature(type, String.valueOf(inc++));
