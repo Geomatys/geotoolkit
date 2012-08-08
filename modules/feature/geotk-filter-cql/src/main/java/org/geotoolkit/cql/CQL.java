@@ -90,11 +90,15 @@ public final class CQL {
     
     
     public static String write(Filter filter){
-        return null;
+        final StringBuilder sb = new StringBuilder();
+        filter.accept(FilterToCQLVisitor.INSTANCE,sb);
+        return sb.toString();
     }
     
     public static String write(Expression exp){
-        return null;
+        final StringBuilder sb = new StringBuilder();
+        exp.accept(FilterToCQLVisitor.INSTANCE,sb);
+        return sb.toString();
     }
     
     /**

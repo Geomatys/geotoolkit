@@ -16,17 +16,16 @@
  */
 package org.geotoolkit.cql;
 
-import org.antlr.runtime.tree.CommonTree;
 import org.geotoolkit.filter.DefaultFilterFactory2;
-import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Test;
 import org.opengis.filter.FilterFactory2;
-import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
 
 /**
- *
+ * Test reading CQL expressions.
+ * 
  * @author Johann Sorel (Geomatys)
  */
 public class ExpressionReadingTest {
