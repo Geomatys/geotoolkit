@@ -3,7 +3,12 @@ grammar cql;
 options {
     language = Java; // antlr will generate java lexer and parser
     output = AST; // generated parser should create abstract syntax tree
+    //backtrack = true;
 }
+
+//-----------------------------------------------------------------//
+// JAVA CLASS GENERATION
+//-----------------------------------------------------------------//
 
 //force header on generated classes
 @lexer::header {
@@ -41,6 +46,10 @@ options {
   }
 }
 
+//-----------------------------------------------------------------//
+// LEXER
+//-----------------------------------------------------------------//
+
 
 // GLOBAL STUFF ---------------------------------------
 
@@ -51,11 +60,6 @@ WS  :   ( ' '
         | '\r'
         | '\n'
         ) {$channel=HIDDEN;}
-    ;
-
-// PROPERTY NAME -------------------------------------
-PROPERTY_NAME
-    :  '"' ( ESC_SEQ | ~('\\'|'"') )* '"'
     ;
 
 //LITERALS  ----------------------------------------------
@@ -75,21 +79,34 @@ FLOAT
 //OPERATORS -------------------------------------------
 OPERATOR: '+' | '-' | '/' | '*' | '%' ; 
 
-//FUNCTION --------------------------------------------
-//WORD :  (~( ' ' | '\t' | '\r' | '\n' | '(' | ')' | '"' ))+ ;
+
 
 // FILTERING OPERAND -----------------------------------
-EQUAL       : '=' ;
-BETWEEN     : 'BETWEEN';
-LIKE        : 'LIKE';
-NULL        : 'NULL';
+EQUALABOVE: '>=' ;
+EQUALUNDER: '<=' ;
+NOTEQUAL	: '<>' ;
+EQUAL	: '=' ;
+ABOVE	: '>' ;
+UNDER	: '<' ;
+LIKE       	: L I K E;
+NULL        	: N U L L;
+BETWEEN     	: B E T W E E N;
 
 
 // LOGIC ----------------------------------------------
-AND : 'AND' ;
-OR : 'OR' ;
-NOT : 'NOT' ;
+AND 	: A N D;
+OR 	: O R ;
+NOT 	: N O T ;
 
+// PROPERTY NAME -------------------------------------
+PROPERTY_NAME_1
+    :  '"' ( ESC_SEQ | ~('\\'|'"') )* '"'
+    ;
+    
+PROPERTY_NAME_2
+   : WORD 
+   ;
+   
 
 // FRAGMENT -------------------------------------------
 
@@ -118,18 +135,55 @@ UNICODE_ESC
     :   '\\' 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
     ;
     
+fragment
+WORD 	:(~( ' ' | '\t' | '\r' | '\n' | '(' | ')' | '"' ))+ ;
     
-//expression		: expression_function;
+ // caseinsensitive , possible alternative solution ?
+fragment A: ('a'|'A');
+fragment B: ('b'|'B');
+fragment C: ('c'|'C');
+fragment D: ('d'|'D');
+fragment E: ('e'|'E');
+fragment F: ('f'|'F');
+fragment G: ('g'|'G');
+fragment H: ('h'|'H');
+fragment I: ('i'|'I');
+fragment J: ('j'|'J');
+fragment K: ('k'|'K');
+fragment L: ('l'|'L');
+fragment M: ('m'|'M');
+fragment N: ('n'|'N');
+fragment O: ('o'|'O');
+fragment P: ('p'|'P');
+fragment Q: ('q'|'Q');
+fragment R: ('r'|'R');
+fragment S: ('s'|'S');
+fragment T: ('t'|'T');
+fragment U: ('u'|'U');
+fragment V: ('v'|'V');
+fragment W: ('w'|'W');
+fragment X: ('x'|'X');
+fragment Y: ('y'|'Y');
+fragment Z: ('z'|'Z');
+    
+    
+//-----------------------------------------------------------------//
+// PARSER
+//-----------------------------------------------------------------//
+    
+    
+expression		: expression_simple;
 //expression_function 	: expression_operation | WORD '(' (expression (',' expression)+)* ')';
-//expression_operation	: expression_simple | expression OPERATOR expression;
-expression_simple	: PROPERTY_NAME | TEXT | INT | FLOAT;
+//expression_operation	: expression_simple (OPERATOR expression_operation)* ;
+expression_simple	: PROPERTY_NAME_1 | PROPERTY_NAME_2 |  TEXT | INT | FLOAT;
     	
-filter          : filter_and;
+filter          	: filter_and;
 filter_and 	: filter_or (AND filter_and)*;
-filter_or 	: filter_cb (OR filter_or)*;
-filter_cb 	: expression_simple  WS*  (EQUAL)  WS*  expression_simple;
+filter_or 	: filter_cb (OR filter_and)*;
+filter_cb 	: expression  (EQUAL|LIKE)  expression;
+ 
     	
-result : expression_simple | filter ;
+result : expression | filter ;
 
 		
 

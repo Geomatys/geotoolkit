@@ -120,7 +120,8 @@ public class JCQLEditor extends JPanel implements KeyListener{
                 case cqlLexer.FLOAT : 
                     doc.setCharacterAttributes(offset, length, styleLiteral, true);
                     break;
-                case cqlLexer.PROPERTY_NAME :
+                case cqlLexer.PROPERTY_NAME_1 :
+                case cqlLexer.PROPERTY_NAME_2 :
                     doc.setCharacterAttributes(offset, length, stylePropertyName, true);
                     break;
                 case cqlLexer.OPERATOR :

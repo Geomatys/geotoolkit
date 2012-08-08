@@ -16,23 +16,26 @@
  */
 package org.geotoolkit.cql;
 
-import org.antlr.runtime.tree.CommonTree;
-import org.junit.Test;
-
 /**
- *
+ * CQL exception.
+ * 
  * @author Johann Sorel (Geomatys)
  */
-public class CQLTest {
-    
-    @Test
-    public void testExpression(){
-        
-        final String helloWorld = "Hello word!";
-        
-        CommonTree tree = CQL.compile(helloWorld);
-        System.out.println(CQL.toString(tree));
-                
+public class CQLException extends Exception{
+
+    public CQLException() {
+    }
+
+    public CQLException(String message) {
+        super(message);
+    }
+
+    public CQLException(Throwable cause) {
+        super(cause);
+    }
+
+    public CQLException(String message, Throwable cause) {
+        super(message, cause);
     }
     
 }
