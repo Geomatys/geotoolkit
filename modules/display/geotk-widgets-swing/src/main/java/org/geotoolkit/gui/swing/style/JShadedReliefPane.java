@@ -44,6 +44,7 @@ public class JShadedReliefPane extends StyleElementEditor<ShadedRelief>{
     public JShadedReliefPane() {
         super(ShadedRelief.class);
         initComponents();
+        guiFactor.setModel(1d, 0d, 1d, 0.1d);
     }
 
     @Override
@@ -65,8 +66,8 @@ public class JShadedReliefPane extends StyleElementEditor<ShadedRelief>{
         }
     }
 
+    @Override
     public ShadedRelief create() {
-
         return getStyleFactory().shadedRelief(
                 guiFactor.create(),
                 guiBrightness.isSelected());

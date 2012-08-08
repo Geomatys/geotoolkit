@@ -31,6 +31,7 @@ import org.opengis.style.StyleVisitor;
 import org.opengis.style.Symbolizer;
 
 import static org.geotoolkit.style.StyleConstants.*;
+import org.geotoolkit.util.Utilities;
 import static org.opengis.filter.expression.Expression.*;
 
 /**
@@ -171,19 +172,18 @@ public class DefaultRasterSymbolizer extends AbstractSymbolizer implements Raste
 
         DefaultRasterSymbolizer other = (DefaultRasterSymbolizer) obj;
 
-        return true;
-//        return Utilities.equals(this.colorMap ,other.colorMap)
-//                && this.desc.equals(other.desc)
-//                && this.enhance.equals(other.enhance)
-//                && Utilities.equals(this.geom,other.geom)
-//                && Utilities.equals(this.name,other.name)
-//                && this.opacity.equals(other.opacity)
-//                && Utilities.equals(this.outline,other.outline)
-//                && Utilities.equals(this.outline,other.outline)
-//                && this.overlap.equals(other.overlap)
-//                && Utilities.equals(this.relief,other.relief)
-//                && Utilities.equals(this.selection,other.selection)
-//                && this.uom.equals(other.uom);
+        return Utilities.equals(this.colorMap ,other.colorMap)
+                && this.desc.equals(other.desc)
+                && this.enhance.equals(other.enhance)
+                && Utilities.equals(this.geom,other.geom)
+                && Utilities.equals(this.name,other.name)
+                && this.opacity.equals(other.opacity)
+                && Utilities.equals(this.outline,other.outline)
+                && Utilities.equals(this.outline,other.outline)
+                && this.overlap.equals(other.overlap)
+                && Utilities.equals(this.relief,other.relief)
+                && Utilities.equals(this.selection,other.selection)
+                && this.uom.equals(other.uom);
                         
 
     }

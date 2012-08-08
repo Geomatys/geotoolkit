@@ -48,6 +48,7 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
 
     private MapLayer layer = null;
     private Symbolizer outLine = null;
+    private RasterSymbolizer oldSymbolizer;
 
     /** Creates new form RasterStylePanel
      * @param layer the layer style to edit
@@ -83,11 +84,12 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
      */
     @Override
     public void parse(final RasterSymbolizer symbol) {
-    
+        this.oldSymbolizer = symbol;
+        
         if (symbol != null) {
             guiGeom.setGeom(symbol.getGeometryPropertyName());
             guiOpacity.parse(symbol.getOpacity());
-//            guiOverLap.parse(symbol.getOverlap());
+            //guiOverLap.parse(symbol.getOverlapBehavior());
             guiContrast.parse(symbol.getContrastEnhancement());
             guiRelief.parse(symbol.getShadedRelief());
                                     
@@ -116,15 +118,15 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
         return getStyleFactory().rasterSymbolizer(
                 "RasterSymbolizer",
                 guiGeom.getGeom(),
-                StyleConstants.DEFAULT_DESCRIPTION,
+                (oldSymbolizer!=null) ? oldSymbolizer.getDescription() : StyleConstants.DEFAULT_DESCRIPTION,
                 guiUOM.create(),
                 guiOpacity.create(),
-                StyleConstants.DEFAULT_RASTER_CHANNEL_RGB,
-                OverlapBehavior.AVERAGE, 
-                null, 
+                (oldSymbolizer!=null) ? oldSymbolizer.getChannelSelection() : StyleConstants.DEFAULT_RASTER_CHANNEL_RGB,
+                (oldSymbolizer!=null) ? oldSymbolizer.getOverlapBehavior() : OverlapBehavior.AVERAGE, 
+                (oldSymbolizer!=null) ? oldSymbolizer.getColorMap() : null, 
                 guiContrast.create(), 
                 guiRelief.create(), 
-                null );
+                (oldSymbolizer!=null) ? oldSymbolizer.getImageOutline() : null );
     
     }
 

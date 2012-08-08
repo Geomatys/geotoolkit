@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.display2d.style.renderer;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
@@ -237,8 +238,16 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 //                    System.out.println("shadow sample model : " +shadowImage.getSampleModel());
 //                    System.out.println("transform :" + eleTrs2D);
 
-                    g2d.setComposite(GO2Utilities.ALPHA_COMPOSITE_1F);
-//                    g2.setComposite(AlphaComposite.SrcAtop);
+                    final Number n = relief.getReliefFactor().evaluate(null,Number.class);
+                    if(n != null){
+                        float factor = n.floatValue();
+                        if(factor>1) factor = 1;
+                        if(factor<0) factor = 0;
+                        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, factor));
+                    }else{
+                        g2d.setComposite(GO2Utilities.ALPHA_COMPOSITE_1F);
+                    }
+                    
                     g2d.drawRenderedImage(shadowImage, (AffineTransform)eleTrs2D);
                 }
 
