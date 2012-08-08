@@ -26,6 +26,7 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
+import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.map.CoverageMapLayer;
@@ -84,7 +85,10 @@ public class StatefullProjectedCoverage implements ProjectedCoverage {
     @Override
     public GridCoverage2D getElevationCoverage(final GridCoverageReadParam param)
         throws CoverageStoreException{
-        final ElevationModel elevationModel = layer.getElevationModel();
+        ElevationModel elevationModel = layer.getElevationModel();
+        if(elevationModel == null){
+             elevationModel = (ElevationModel) params.context.getRenderingHints().get(GO2Hints.KEY_ELEVATION_MODEL);
+        }
 
         if(elevationModel != null){
             return (GridCoverage2D) elevationModel.getCoverageReader().read(0,param);

@@ -32,9 +32,11 @@ import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.ext.vectorfield.VectorFieldSymbolizer;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.map.ElevationModel;
 import org.geotoolkit.sld.DefaultSLDFactory;
 import org.geotoolkit.sld.MutableSLDFactory;
 import org.geotoolkit.style.MutableRule;
@@ -537,6 +539,38 @@ public class Styles {
         return SF.style(symbol);
     }
 
+    /**
+     * Relief shading requieres a secondary data for the elevation model.
+     */
+    public static MapLayer ShadedReliefRaster(){
+        
+        final RasterSymbolizer shadedSymbolizer = SF.rasterSymbolizer(
+                null, 
+                FF.literal(1), 
+                null, 
+                null, 
+                null, 
+                null, 
+                SF.shadedRelief(FF.literal(1), true), 
+                null);
+        
+        
+        //create your maplayer with your datas
+        final GridCoverageReader readerData = null;
+        final GridCoverageReader elevationData = null;
+        
+        final MapLayer layer = MapBuilder.createCoverageLayer(readerData, SF.style(shadedSymbolizer), "data");
+        final ElevationModel elevationModel = MapBuilder.createElevationModel(elevationData);
+        //associate this elevation model to the layer.
+        layer.setElevationModel(elevationModel);
+        
+        //TIP : a default ElevationModel can be set in the Hints passed to the
+        // protrayal service, or set in the default Hint values
+        //Hints.putSystemDefault(GO2Hints.KEY_ELEVATION_MODEL, elevationModel);
+        
+        return layer;
+    }
+    
     //////////////////////////////////////////////////////////////////////
     // RULES /////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////
