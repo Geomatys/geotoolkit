@@ -20,7 +20,10 @@ import org.geotoolkit.filter.DefaultFilterFactory2;
 import static org.junit.Assert.*;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.opengis.filter.And;
 import org.opengis.filter.FilterFactory2;
+import org.opengis.filter.Or;
+import org.opengis.filter.PropertyIsBetween;
 import org.opengis.filter.PropertyIsEqualTo;
 import org.opengis.filter.PropertyIsGreaterThan;
 import org.opengis.filter.PropertyIsGreaterThanOrEqualTo;
@@ -81,10 +84,24 @@ public class FilterReadingTest {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    @Ignore
     @Test
     public void testPropertyIsBetween() throws CQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final String cql = "att BETWEEN 15 AND 30";
+        final Object obj = CQL.parseFilter(cql);        
+        assertTrue(obj instanceof PropertyIsBetween);
+        final PropertyIsBetween filter = (PropertyIsBetween) obj;
+        assertEquals(FF.between(FF.property("att"), FF.literal(15), FF.literal(30)), filter);                
+    }
+    
+    @Test
+    public void testIn() throws CQLException {
+        final String cql = "att IN ( 15, 30, 'hello')";
+        final Object obj = CQL.parseFilter(cql);        
+        assertTrue(obj instanceof Or);
+        final Or filter = (Or) obj;
+        assertEquals(FF.equals(FF.property("att"), FF.literal(15)), filter.getChildren().get(0));  
+        assertEquals(FF.equals(FF.property("att"), FF.literal(30)), filter.getChildren().get(1)); 
+        assertEquals(FF.equals(FF.property("att"), FF.literal("hello")), filter.getChildren().get(2));               
     }
 
     @Test

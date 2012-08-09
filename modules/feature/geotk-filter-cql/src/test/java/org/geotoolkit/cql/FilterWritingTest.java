@@ -75,10 +75,12 @@ public class FilterWritingTest {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    @Ignore
     @Test
     public void testPropertyIsBetween() throws CQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final Filter filter = FF.between(FF.property("att"), FF.literal(15), FF.literal(30));
+        final String cql = CQL.write(filter);
+        assertNotNull(cql);
+        assertEquals("att BETWEEN 15 AND 30", cql);   
     }
 
     @Test

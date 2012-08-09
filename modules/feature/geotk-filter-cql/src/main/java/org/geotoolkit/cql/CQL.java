@@ -237,6 +237,31 @@ public final class CQL {
         }else if(CQLParser.ISNULL == type){
             final Expression exp = convertExpression((CommonTree)tree.getChild(0), ff);
             return ff.isNull(exp);
+        }else if(CQLParser.BETWEEN == type){
+            final Expression exp1 = convertExpression((CommonTree)tree.getChild(0), ff);
+            final Expression exp2 = convertExpression((CommonTree)tree.getChild(1), ff);
+            final Expression exp3 = convertExpression((CommonTree)tree.getChild(2), ff);
+            return ff.between(exp1, exp2, exp3);
+        }else if(CQLParser.IN == type){
+            final Expression val = convertExpression((CommonTree)tree.getChild(0), ff);            
+            final int nbchild = tree.getChildCount();
+            final List<Expression> exps = new ArrayList<Expression>();
+            for(int i=1; i<nbchild; i++){
+                exps.add(convertExpression((CommonTree)tree.getChild(i), ff));
+            }
+            
+            final int size = exps.size();
+            if(size == 0){
+                return Filter.EXCLUDE;
+            }else if(size == 1){
+                return ff.equals(val, exps.get(0));
+            }else{
+                final List<Filter> filters = new ArrayList<Filter>();
+                for(Expression exp : exps){
+                    filters.add(ff.equals(val, exp));
+                }
+                return ff.or(filters);
+            }            
         }
         
         throw new CQLException("Unreconized filter : type="+tree.getType()+" text=" + tree.getText());

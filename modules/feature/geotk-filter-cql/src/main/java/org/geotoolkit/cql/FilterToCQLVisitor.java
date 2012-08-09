@@ -115,7 +115,13 @@ public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
 
     @Override
     public Object visit(final PropertyIsBetween filter, final Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final StringBuilder sb = toStringBuilder(o);
+        filter.getExpression().accept(this,sb);
+        sb.append(" BETWEEN ");
+        filter.getLowerBoundary().accept(this,sb);
+        sb.append(" AND ");
+        filter.getUpperBoundary().accept(this,sb);
+        return sb;
     }
 
     @Override
