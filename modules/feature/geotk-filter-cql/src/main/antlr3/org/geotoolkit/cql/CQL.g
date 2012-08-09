@@ -1,4 +1,4 @@
-grammar cql;
+grammar CQL;
 
 options {
     language = Java; // antlr will generate java lexer and parser
@@ -99,16 +99,34 @@ OPERATOR: '+' | '-' | '/' | '*' ;
 
 
 // FILTERING OPERAND -----------------------------------
-EQUALABOVE: '>=' ;
-EQUALUNDER: '<=' ;
-NOTEQUAL	: '<>' ;
-EQUAL	: '=' ;
-ABOVE	: '>' ;
-UNDER	: '<' ;
-LIKE       	: L I K E;
+COMPARE 
+	: EQUALABOVE
+	| EQUALUNDER
+	| NOTEQUAL
+	| EQUAL
+	| ABOVE
+	| UNDER	
+	| LIKE
+	;
+	
 NULL        	: N U L L;
 BETWEEN     	: B E T W E E N;
 IN     	: I N;
+
+fragment
+EQUALABOVE: '>=' ;
+fragment
+EQUALUNDER: '<=' ;
+fragment
+NOTEQUAL	: '<>' ;
+fragment
+EQUAL	: '=' ;
+fragment
+ABOVE	: '>' ;
+fragment
+UNDER	: '<' ;
+fragment
+LIKE       	: L I K E;
 
 
 // LOGIC ----------------------------------------------
@@ -190,7 +208,6 @@ fragment Z: ('z'|'Z');
 // PARSER
 //-----------------------------------------------------------------//
     
-    
 expression		
 	: {isOperatorNext()}? expression_operation
 	| expression_function
@@ -204,10 +221,9 @@ expression_literal	: TEXT | INT | FLOAT;
 filter          	: filter_and;
 filter_and 	: filter_or (AND^ filter)* ;
 filter_or 	: filter_cb (OR^ filter)* ;
-filter_cb 	: expression  compare  expression -> ^(compare expression+);
+filter_cb 	: expression  COMPARE^  expression ;
 fitler_in	: IN '(' (expression_literal (',' expression_literal)* )?  ')' -> ^(IN expression_literal+);
 
-compare	: EQUALABOVE| EQUALUNDER | EQUAL | NOTEQUAL | ABOVE | UNDER | LIKE ;
 
 
 	

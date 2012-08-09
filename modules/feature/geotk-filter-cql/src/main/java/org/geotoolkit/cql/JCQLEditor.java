@@ -112,21 +112,21 @@ public class JCQLEditor extends JPanel implements KeyListener{
             position.addAndGet(length);
             
             switch(tree.token.getType()){
-                case cqlLexer.TEXT : 
-                case cqlLexer.INT : 
-                case cqlLexer.FLOAT : 
+                case CQLLexer.TEXT : 
+                case CQLLexer.INT : 
+                case CQLLexer.FLOAT : 
                     doc.setCharacterAttributes(offset, length, styleLiteral, true);
                     break;
-                case cqlLexer.PROPERTY_NAME_1 :
-                case cqlLexer.PROPERTY_NAME_2 :
+                case CQLLexer.PROPERTY_NAME_1 :
+                case CQLLexer.PROPERTY_NAME_2 :
                     doc.setCharacterAttributes(offset, length, stylePropertyName, true);
                     break;
-                case cqlLexer.OPERATOR :
-                case cqlLexer.EQUAL :
+                case CQLLexer.OPERATOR :
+                case CQLLexer.EQUAL :
                     doc.setCharacterAttributes(offset, length, styleOperator, true);
                     break;
-                case cqlLexer.AND :
-                case cqlLexer.OR :
+                case CQLLexer.AND :
+                case CQLLexer.OR :
                     doc.setCharacterAttributes(offset, length, styleBinary, true);
                     break;
                 default : 

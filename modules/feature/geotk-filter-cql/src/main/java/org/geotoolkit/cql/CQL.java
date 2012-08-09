@@ -39,51 +39,74 @@ public final class CQL {
 
     private CQL() {}
     
-    private static Object compileInternal(String expression) {
+    private static Object compileExpression(String cql) {
         try {
             //lexer splits input into tokens
-            final ANTLRStringStream input = new ANTLRStringStream(expression);
-            final TokenStream tokens = new CommonTokenStream(new cqlLexer(input));
+            final ANTLRStringStream input = new ANTLRStringStream(cql);
+            final TokenStream tokens = new CommonTokenStream(new CQLLexer(input));
 
             //parser generates abstract syntax tree
-            final cqlParser parser = new cqlParser(tokens);
-            final cqlParser.expression_return retexp = parser.expression();
-            final cqlParser.filter_return retfilter = parser.filter();
+            final CQLParser parser = new CQLParser(tokens);
+            final CQLParser.expression_return retexp = parser.expression();
             
-            if(retexp != null){
-                return retexp;
-            }else{
-                return retfilter;
-            }
+            return retexp;
             
         } catch (RecognitionException e) {
             throw new IllegalStateException("Recognition exception is never thrown, only declared.");
         }
     }
     
-    public static CommonTree compile(String expression) {
-        final Object obj =compileInternal(expression);
+    private static Object compileFilter(String cql) {
+        try {
+            //lexer splits input into tokens
+            final ANTLRStringStream input = new ANTLRStringStream(cql);
+            final TokenStream tokens = new CommonTokenStream(new CQLLexer(input));
+
+            //parser generates abstract syntax tree
+            final CQLParser parser = new CQLParser(tokens);
+            final CQLParser.filter_return retfilter = parser.filter();
+            
+            return retfilter;
+            
+        } catch (RecognitionException e) {
+            throw new IllegalStateException("Recognition exception is never thrown, only declared.");
+        }
+    }
+    
+    public static CommonTree compile(String cql) {
+        final Object obj =compileExpression(cql);
         
         CommonTree tree = null;
-        if(obj instanceof cqlParser.expression_return){
-            tree = (CommonTree)((cqlParser.expression_return)obj).tree;
-        }else if(obj instanceof cqlParser.filter_return){
-            tree = (CommonTree)((cqlParser.filter_return)obj).tree;
+        if(obj instanceof CQLParser.expression_return){
+            tree = (CommonTree)((CQLParser.expression_return)obj).tree;
+        }else if(obj instanceof CQLParser.filter_return){
+            tree = (CommonTree)((CQLParser.filter_return)obj).tree;
         }
         
         return tree;
     }
     
-    public static Object read(String cql) throws CQLException{
-        final Object obj = compileInternal(cql);
+    public static Expression parseExpression(String cql) throws CQLException{
+        final Object obj = compileExpression(cql);
         
         CommonTree tree = null;
-        Object result = null;
-        if(obj instanceof cqlParser.expression_return){
-            tree = (CommonTree)((cqlParser.expression_return)obj).tree;
+        Expression result = null;
+        if(obj instanceof CQLParser.expression_return){
+            tree = (CommonTree)((CQLParser.expression_return)obj).tree;
             result = convertExpression(tree, FactoryFinder.getFilterFactory(null));
-        }else if(obj instanceof cqlParser.filter_return){
-            tree = (CommonTree)((cqlParser.filter_return)obj).tree;
+        }
+        
+        return result;
+    }
+    
+    public static Filter parseFilter(String cql) throws CQLException{
+        final Object obj = compileFilter(cql);
+        
+        CommonTree tree = null;
+        Filter result = null;
+        if(obj instanceof CQLParser.filter_return){
+            tree = (CommonTree)((CQLParser.filter_return)obj).tree;
+            result = convertFilter(tree, FactoryFinder.getFilterFactory(null));
         }
         
         return result;
@@ -129,52 +152,88 @@ public final class CQL {
     }
     
     /**
-     * Convert the given tree in a Filter or Expression.
+     * Convert the given tree in an Expression.
      */
     private static Expression convertExpression(CommonTree tree, FilterFactory ff) throws CQLException{
         
-        if(tree.token != null && tree.token.getTokenIndex() >= 0){
-            final int type = tree.getType();
-            if(cqlParser.PROPERTY_NAME_1 == type){
-                //strip start and end "
-                final String text = tree.getText();
-                return ff.property(text.substring(1, text.length()-1));
-            }else if(cqlParser.PROPERTY_NAME_2 == type){
-                return ff.property(tree.getText());
-            }else if(cqlParser.INT == type){
-                return ff.literal(Integer.valueOf(tree.getText()));
-            }else if(cqlParser.FLOAT == type){
-                return ff.literal(Double.valueOf(tree.getText()));
-            }else if(cqlParser.TEXT == type){
-                //strip start and end '
-                final String text = tree.getText();
-                return ff.literal(text.substring(1, text.length()-1));
-            }else if(cqlParser.OPERATOR == type){
-                final String text = tree.getText();
-                final Expression left = convertExpression((CommonTree)tree.getChild(0), ff);
-                final Expression right = convertExpression((CommonTree)tree.getChild(1), ff);
-                if("+".equals(text)){
-                    return ff.add(left,right);
-                }else if("-".equals(text)){
-                    return ff.subtract(left,right);
-                }else if("*".equals(text)){
-                    return ff.multiply(left,right);
-                }else if("/".equals(text)){
-                    return ff.divide(left,right);
-                }
-            }else if(cqlParser.FUNCTION_NAME == type){
-                String functionName = tree.getText();
-                //remove the (
-                functionName = functionName.substring(0, functionName.length()-1);
-                final List<Expression> exps = new ArrayList<Expression>();
-                for(Object child : tree.getChildren()){
-                    exps.add(convertExpression((CommonTree)child, ff));
-                }
-                return ff.function(functionName, exps.toArray(new Expression[exps.size()]));
+        if(!(tree.token != null && tree.token.getTokenIndex() >= 0)){
+            throw new CQLException("Unreconized expression : type="+tree.getType()+" text=" + tree.getText());
+        }
+        
+        final int type = tree.getType();
+        if(CQLParser.PROPERTY_NAME_1 == type){
+            //strip start and end "
+            final String text = tree.getText();
+            return ff.property(text.substring(1, text.length()-1));
+        }else if(CQLParser.PROPERTY_NAME_2 == type){
+            return ff.property(tree.getText());
+        }else if(CQLParser.INT == type){
+            return ff.literal(Integer.valueOf(tree.getText()));
+        }else if(CQLParser.FLOAT == type){
+            return ff.literal(Double.valueOf(tree.getText()));
+        }else if(CQLParser.TEXT == type){
+            //strip start and end '
+            final String text = tree.getText();
+            return ff.literal(text.substring(1, text.length()-1));
+        }else if(CQLParser.OPERATOR == type){
+            final String text = tree.getText();
+            final Expression left = convertExpression((CommonTree)tree.getChild(0), ff);
+            final Expression right = convertExpression((CommonTree)tree.getChild(1), ff);
+            if("+".equals(text)){
+                return ff.add(left,right);
+            }else if("-".equals(text)){
+                return ff.subtract(left,right);
+            }else if("*".equals(text)){
+                return ff.multiply(left,right);
+            }else if("/".equals(text)){
+                return ff.divide(left,right);
             }
+        }else if(CQLParser.FUNCTION_NAME == type){
+            String functionName = tree.getText();
+            //remove the (
+            functionName = functionName.substring(0, functionName.length()-1);
+            final List<Expression> exps = new ArrayList<Expression>();
+            for(Object child : tree.getChildren()){
+                exps.add(convertExpression((CommonTree)child, ff));
+            }
+            return ff.function(functionName, exps.toArray(new Expression[exps.size()]));
         }
         
         throw new CQLException("Unreconized expression : type="+tree.getType()+" text=" + tree.getText());
+    }
+    
+    /**
+     * Convert the given tree in a Filter.
+     */
+    private static Filter convertFilter(CommonTree tree, FilterFactory ff) throws CQLException{
+        
+        if(!(tree.token != null && tree.token.getTokenIndex() >= 0)){
+            throw new CQLException("Unreconized filter : type="+tree.getType()+" text=" + tree.getText());
+        }
+        
+        final int type = tree.getType();
+        if(CQLParser.COMPARE == type){
+            final String text = tree.getText();
+            final Expression left = convertExpression((CommonTree)tree.getChild(0), ff);
+            final Expression right = convertExpression((CommonTree)tree.getChild(1), ff);
+            
+            if("=".equals(text)){
+                return ff.equals(left, right);
+            }else if("<>".equals(text)){
+                return ff.notEqual(left, right);
+            }else if(">".equals(text)){
+                return ff.greater(left,right);
+            }else if("<".equals(text)){
+                return ff.less(left,right);
+            }else if(">=".equals(text)){
+                return ff.greaterOrEqual(left,right);
+            }else if("<=".equals(text)){
+                return ff.lessOrEqual(left,right);
+            }
+        }
+        
+        throw new CQLException("Unreconized filter : type="+tree.getType()+" text=" + tree.getText());
+        
     }
     
 }

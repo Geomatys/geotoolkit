@@ -79,7 +79,7 @@ public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
 
     @Override
     public Object visitNullFilter(final Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Null filter not supported in CQL.");
     }
 
     @Override
@@ -119,32 +119,56 @@ public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
 
     @Override
     public Object visit(final PropertyIsEqualTo filter, final Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final StringBuilder sb = toStringBuilder(o);
+        filter.getExpression1().accept(this,sb);
+        sb.append(" = ");
+        filter.getExpression2().accept(this,sb);
+        return sb;
     }
 
     @Override
     public Object visit(final PropertyIsNotEqualTo filter, final Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final StringBuilder sb = toStringBuilder(o);
+        filter.getExpression1().accept(this,sb);
+        sb.append(" <> ");
+        filter.getExpression2().accept(this,sb);
+        return sb;
     }
 
     @Override
     public Object visit(final PropertyIsGreaterThan filter, final Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final StringBuilder sb = toStringBuilder(o);
+        filter.getExpression1().accept(this,sb);
+        sb.append(" > ");
+        filter.getExpression2().accept(this,sb);
+        return sb;
     }
 
     @Override
     public Object visit(final PropertyIsGreaterThanOrEqualTo filter, final Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final StringBuilder sb = toStringBuilder(o);
+        filter.getExpression1().accept(this,sb);
+        sb.append(" >= ");
+        filter.getExpression2().accept(this,sb);
+        return sb;
     }
 
     @Override
     public Object visit(final PropertyIsLessThan filter, final Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final StringBuilder sb = toStringBuilder(o);
+        filter.getExpression1().accept(this,sb);
+        sb.append(" < ");
+        filter.getExpression2().accept(this,sb);
+        return sb;
     }
 
     @Override
     public Object visit(final PropertyIsLessThanOrEqualTo filter, final Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final StringBuilder sb = toStringBuilder(o);
+        filter.getExpression1().accept(this,sb);
+        sb.append(" <= ");
+        filter.getExpression2().accept(this,sb);
+        return sb;
     }
 
     @Override
