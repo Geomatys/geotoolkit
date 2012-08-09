@@ -16,13 +16,16 @@
  */
 package org.geotoolkit.cql;
 
+import java.util.Collections;
 import org.geotoolkit.filter.DefaultFilterFactory2;
+import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import static org.junit.Assert.*;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
+import org.opengis.filter.Not;
 
 /**
  * Test writing in CQL filters.
@@ -34,22 +37,20 @@ public class FilterWritingTest {
     private final FilterFactory2 FF = new DefaultFilterFactory2();
     
     
-    @Ignore
-    @Test
-    public void testNullFilter() throws CQLException {
-        throw new UnsupportedOperationException("Null filter not supported in CQL.");
-    }
-
-    @Ignore
     @Test
     public void testExcludeFilter() throws CQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final Filter filter = Filter.EXCLUDE;
+        final String cql = CQL.write(filter);
+        assertNotNull(cql);
+        assertEquals("1=0", cql);    
     }
 
-    @Ignore
     @Test
     public void testIncludeFilter() throws CQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final Filter filter = Filter.INCLUDE;
+        final String cql = CQL.write(filter);
+        assertNotNull(cql);
+        assertEquals("1=1", cql);    
     }
 
     @Test
@@ -78,16 +79,23 @@ public class FilterWritingTest {
         assertEquals("(att1 = 15 OR att2 = 30 OR att3 = 50)", cql);
     }
     
-    @Ignore
     @Test
     public void testId() throws CQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final Filter filter = FF.id(Collections.singleton(new DefaultFeatureId("test-1")));
+        try{
+            final String cql = CQL.write(filter);
+            fail("ID filter does not exist in CQL");
+        }catch(UnsupportedOperationException ex){
+            //ok
+        }
     }
 
-    @Ignore
     @Test
     public void testNot() throws CQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final Filter filter = FF.not(FF.equals(FF.property("att"), FF.literal(15)));
+        final String cql = CQL.write(filter);
+        assertNotNull(cql);
+        assertEquals("NOT att = 15", cql);
     }
 
     @Test

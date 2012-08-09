@@ -218,7 +218,8 @@ expression_operation	: expression_simple (OPERATOR^ expression_operation)* ;
 expression_simple	: PROPERTY_NAME_1 | PROPERTY_NAME_2 |  expression_literal;
 expression_literal	: TEXT | INT | FLOAT;
     	
-filter          	: filter_and;
+filter          	: filter_and | filter_not;
+filter_not 	: NOT^ filter ;
 filter_and 	: filter_or (AND^ filter)* ;
 filter_or 	: filter_cb (OR^ filter)* ;
 filter_cb 	: expression  

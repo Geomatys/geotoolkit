@@ -86,12 +86,16 @@ public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
 
     @Override
     public Object visit(final ExcludeFilter filter, final Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final StringBuilder sb = toStringBuilder(o);
+        sb.append("1=0");
+        return sb;
     }
 
     @Override
     public Object visit(final IncludeFilter filter, final Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final StringBuilder sb = toStringBuilder(o);
+        sb.append("1=1");
+        return sb;
     }
 
     @Override
@@ -128,15 +132,17 @@ public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
         return sb;
     }
     
-
     @Override
     public Object visit(final Id filter, final Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("ID filter not supported in CQL.");
     }
 
     @Override
     public Object visit(final Not filter, final Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final StringBuilder sb = toStringBuilder(o);
+        sb.append("NOT ");
+        filter.getFilter().accept(this,sb);
+        return sb;
     }
 
     @Override

@@ -100,6 +100,13 @@ public final class CQL {
     }
     
     public static Filter parseFilter(String cql) throws CQLException{
+        cql = cql.trim();
+        
+        //bypass parsing for inclusive filter
+        if(cql.isEmpty() || "*".equals(cql)){
+            return Filter.INCLUDE;
+        }
+        
         final Object obj = compileFilter(cql);
         
         CommonTree tree = null;
@@ -276,6 +283,9 @@ public final class CQL {
                 filters.add(convertFilter((CommonTree)tree.getChild(i), ff));
             }
             return ff.or(filters);
+        }else if(CQLParser.NOT == type){
+            final Filter sub = convertFilter((CommonTree)tree.getChild(0), ff);
+            return ff.not(sub);
         }
         
         throw new CQLException("Unreconized filter : type="+tree.getType()+" text=" + tree.getText());

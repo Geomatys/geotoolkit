@@ -24,6 +24,7 @@ import org.junit.Test;
 import org.opengis.filter.And;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
+import org.opengis.filter.Not;
 import org.opengis.filter.Or;
 import org.opengis.filter.PropertyIsBetween;
 import org.opengis.filter.PropertyIsEqualTo;
@@ -44,10 +45,16 @@ public class FilterReadingTest {
     
     private final FilterFactory2 FF = new DefaultFilterFactory2();
     
-    @Ignore
     @Test
     public void testNullFilter() throws CQLException {
-        throw new UnsupportedOperationException("Null filter not supported in CQL.");
+        //this is not true cql but is since in commun use cases.
+        String cql = "";
+        Object obj = CQL.parseFilter(cql);
+        assertEquals(Filter.INCLUDE,obj);
+        
+        cql = "*";
+        obj = CQL.parseFilter(cql);
+        assertEquals(Filter.INCLUDE,obj);
     }
 
     @Test
@@ -88,19 +95,14 @@ public class FilterReadingTest {
                 filter);     
     }
 
-    @Ignore
-    @Test
-    public void testId() throws CQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Ignore
     @Test
     public void testNot() throws CQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final String cql = "NOT att = 15";
+        final Object obj = CQL.parseFilter(cql);        
+        assertTrue(obj instanceof Not);
+        final Not filter = (Not) obj;
+        assertEquals(FF.not(FF.equals(FF.property("att"), FF.literal(15))), filter);    
     }
-
-    
 
     @Test
     public void testPropertyIsBetween() throws CQLException {
