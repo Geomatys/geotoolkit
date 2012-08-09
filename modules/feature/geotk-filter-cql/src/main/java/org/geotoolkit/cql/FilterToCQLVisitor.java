@@ -63,12 +63,12 @@ import org.opengis.filter.spatial.Within;
  */
 public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
 
-    public static FilterToCQLVisitor INSTANCE = new FilterToCQLVisitor();
+    public static final FilterToCQLVisitor INSTANCE = new FilterToCQLVisitor();
 
     private FilterToCQLVisitor() {
     }
     
-    private static StringBuilder toStringBuilder(Object o){
+    private static StringBuilder toStringBuilder(final Object o){
         if(o instanceof StringBuilder){
             return (StringBuilder) o;
         }
@@ -76,137 +76,137 @@ public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
     }
 
     @Override
-    public Object visitNullFilter(Object o) {
+    public Object visitNullFilter(final Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Object visit(ExcludeFilter filter, Object o) {
+    public Object visit(final ExcludeFilter filter, final Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Object visit(IncludeFilter filter, Object o) {
+    public Object visit(final IncludeFilter filter, final Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Object visit(And filter, Object o) {
+    public Object visit(final And filter, final Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Object visit(Id filter, Object o) {
+    public Object visit(final Id filter, final Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Object visit(Not filter, Object o) {
+    public Object visit(final Not filter, final Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Object visit(Or filter, Object o) {
+    public Object visit(final Or filter, final Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Object visit(PropertyIsBetween filter, Object o) {
+    public Object visit(final PropertyIsBetween filter, final Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Object visit(PropertyIsEqualTo filter, Object o) {
+    public Object visit(final PropertyIsEqualTo filter, final Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Object visit(PropertyIsNotEqualTo filter, Object o) {
+    public Object visit(final PropertyIsNotEqualTo filter, final Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Object visit(PropertyIsGreaterThan filter, Object o) {
+    public Object visit(final PropertyIsGreaterThan filter, final Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Object visit(PropertyIsGreaterThanOrEqualTo filter, Object o) {
+    public Object visit(final PropertyIsGreaterThanOrEqualTo filter, final Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Object visit(PropertyIsLessThan filter, Object o) {
+    public Object visit(final PropertyIsLessThan filter, final Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Object visit(PropertyIsLessThanOrEqualTo filter, Object o) {
+    public Object visit(final PropertyIsLessThanOrEqualTo filter, final Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Object visit(PropertyIsLike filter, Object o) {
+    public Object visit(final PropertyIsLike filter, final Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Object visit(PropertyIsNull filter, Object o) {
+    public Object visit(final PropertyIsNull filter, final Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Object visit(BBOX filter, Object o) {
+    public Object visit(final BBOX filter, final Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Object visit(Beyond filter, Object o) {
+    public Object visit(final Beyond filter, final Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Object visit(Contains filter, Object o) {
+    public Object visit(final Contains filter, final Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Object visit(Crosses filter, Object o) {
+    public Object visit(final Crosses filter, final Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Object visit(Disjoint filter, Object o) {
+    public Object visit(final Disjoint filter, final Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Object visit(DWithin filter, Object o) {
+    public Object visit(final DWithin filter, final Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Object visit(Equals filter, Object o) {
+    public Object visit(final Equals filter, final Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Object visit(Intersects filter, Object o) {
+    public Object visit(final Intersects filter, final Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Object visit(Overlaps filter, Object o) {
+    public Object visit(final Overlaps filter, final Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Object visit(Touches filter, Object o) {
+    public Object visit(final Touches filter, final Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Object visit(Within filter, Object o) {
+    public Object visit(final Within filter, final Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -215,7 +215,7 @@ public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
     ////////////////////////////////////////////////////////////////////////////
     
     @Override
-    public Object visit(Literal exp, Object o) {
+    public Object visit(final Literal exp, final Object o) {
         final StringBuilder sb = toStringBuilder(o);
 
         final Object value = exp.getValue();
@@ -237,7 +237,7 @@ public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
     }
 
     @Override
-    public Object visit(PropertyName exp, Object o) {
+    public Object visit(final PropertyName exp, final Object o) {
         final StringBuilder sb = toStringBuilder(o);
         final String name = exp.getPropertyName();
         if(name.contains(" ")){
@@ -250,33 +250,49 @@ public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
     }
     
     @Override
-    public Object visit(Add exp, Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public Object visit(final Add exp, final Object o) {
+        final StringBuilder sb = toStringBuilder(o);
+        exp.getExpression1().accept(this,sb);
+        sb.append(" + ");
+        exp.getExpression2().accept(this,sb);
+        return sb;
     }
 
     @Override
-    public Object visit(Divide exp, Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public Object visit(final Divide exp, final Object o) {
+        final StringBuilder sb = toStringBuilder(o);
+        exp.getExpression1().accept(this,sb);
+        sb.append(" / ");
+        exp.getExpression2().accept(this,sb);
+        return sb;
     }
     
     @Override
-    public Object visit(Multiply exp, Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public Object visit(final Multiply exp, final Object o) {
+        final StringBuilder sb = toStringBuilder(o);
+        exp.getExpression1().accept(this,sb);
+        sb.append(" * ");
+        exp.getExpression2().accept(this,sb);
+        return sb;
     }
 
     @Override
-    public Object visit(Subtract exp, Object o) {
+    public Object visit(final Subtract exp, final Object o) {
+        final StringBuilder sb = toStringBuilder(o);
+        exp.getExpression1().accept(this,sb);
+        sb.append(" - ");
+        exp.getExpression2().accept(this,sb);
+        return sb;
+    }
+    
+    @Override
+    public Object visit(final Function exp, final Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
     
     @Override
-    public Object visit(Function exp, Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-    
-    @Override
-    public Object visit(NilExpression exp, Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public Object visit(final NilExpression exp, final Object o) {
+        throw new UnsupportedOperationException("NilExpression not supported in CQL.");
     }
     
 }

@@ -77,7 +77,7 @@ FLOAT
     ;
 
 //OPERATORS -------------------------------------------
-OPERATOR: '+' | '-' | '/' | '*' | '%' ; 
+OPERATOR: '+' | '-' | '/' | '*' ; 
 
 
 
@@ -91,6 +91,7 @@ UNDER	: '<' ;
 LIKE       	: L I K E;
 NULL        	: N U L L;
 BETWEEN     	: B E T W E E N;
+IN     	: I N;
 
 
 // LOGIC ----------------------------------------------
@@ -172,20 +173,24 @@ fragment Z: ('z'|'Z');
 //-----------------------------------------------------------------//
     
     
-expression		: expression_simple;
+expression		
+	: expression_operation 
+	;
 //expression_function 	: expression_operation | WORD '(' (expression (',' expression)+)* ')';
-//expression_operation	: expression_simple (OPERATOR expression_operation)* ;
-expression_simple	: PROPERTY_NAME_1 | PROPERTY_NAME_2 |  TEXT | INT | FLOAT;
+expression_operation	: expression_simple (OPERATOR^ expression)* ;
+expression_simple	: PROPERTY_NAME_1 | PROPERTY_NAME_2 |  expression_literal;
+expression_literal	: TEXT | INT | FLOAT;
     	
 filter          	: filter_and;
-filter_and 	: filter_or (AND filter_and)*;
-filter_or 	: filter_cb (OR filter_and)*;
-filter_cb 	: expression  (EQUAL|LIKE)  expression;
- 
-    	
-result : expression | filter ;
+filter_and 	: filter_or (AND^ filter)* ;
+filter_or 	: filter_cb (OR^ filter)* ;
+filter_cb 	: expression  compare  expression -> ^(compare expression+);
+fitler_in	: IN '(' (expression_literal (',' expression_literal)* )?  ')' -> ^(IN expression_literal+);
 
-		
+compare	: EQUALABOVE| EQUALUNDER | EQUAL | NOTEQUAL | ABOVE | UNDER | LIKE ;
+
+
+	
 
 
 

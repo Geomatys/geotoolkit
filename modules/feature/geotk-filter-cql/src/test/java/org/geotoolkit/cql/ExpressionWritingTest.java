@@ -79,4 +79,36 @@ public class ExpressionWritingTest {
         assertEquals("'hello world'", cql);             
     }
     
+    @Test
+    public void testAdd() throws CQLException{
+        final Expression exp = FF.add(FF.literal(3),FF.literal(2));
+        final String cql = CQL.write(exp);
+        assertNotNull(cql);
+        assertEquals("3 + 2", cql);             
+    }
+    
+    @Test
+    public void testSubtract() throws CQLException{
+        final Expression exp = FF.subtract(FF.literal(3),FF.literal(2));
+        final String cql = CQL.write(exp);
+        assertNotNull(cql);
+        assertEquals("3 - 2", cql);             
+    }
+    
+    @Test
+    public void testMultiply() throws CQLException{
+        final Expression exp = FF.multiply(FF.literal(3),FF.literal(2));
+        final String cql = CQL.write(exp);
+        assertNotNull(cql);
+        assertEquals("3 * 2", cql);             
+    }
+    
+    @Test
+    public void testDivide() throws CQLException{
+        final Expression exp = FF.divide(FF.literal(3),FF.literal(2));
+        final String cql = CQL.write(exp);
+        assertNotNull(cql);
+        assertEquals("3 / 2", cql);             
+    }
+    
 }

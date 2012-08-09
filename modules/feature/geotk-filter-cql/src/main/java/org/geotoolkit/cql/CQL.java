@@ -148,6 +148,19 @@ public final class CQL {
                 //strip start and end '
                 final String text = tree.getText();
                 return ff.literal(text.substring(1, text.length()-1));
+            }else if(cqlParser.OPERATOR == type){
+                final String text = tree.getText();
+                final Expression left = convertExpression((CommonTree)tree.getChild(0), ff);
+                final Expression right = convertExpression((CommonTree)tree.getChild(1), ff);
+                if("+".equals(text)){
+                    return ff.add(left,right);
+                }else if("-".equals(text)){
+                    return ff.subtract(left,right);
+                }else if("*".equals(text)){
+                    return ff.multiply(left,right);
+                }else if("/".equals(text)){
+                    return ff.divide(left,right);
+                }
             }
         }
         

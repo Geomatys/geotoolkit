@@ -20,8 +20,12 @@ import org.geotoolkit.filter.DefaultFilterFactory2;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.filter.FilterFactory2;
+import org.opengis.filter.expression.Add;
+import org.opengis.filter.expression.Divide;
 import org.opengis.filter.expression.Literal;
+import org.opengis.filter.expression.Multiply;
 import org.opengis.filter.expression.PropertyName;
+import org.opengis.filter.expression.Subtract;
 
 /**
  * Test reading CQL expressions.
@@ -84,6 +88,42 @@ public class ExpressionReadingTest {
         assertTrue(obj instanceof Literal);
         final Literal expression = (Literal) obj;
         assertEquals("hello world", expression.getValue());                
+    }
+    
+    @Test
+    public void testAddition() throws CQLException{
+        final String cql = "3 + 2";
+        final Object obj = CQL.read(cql);        
+        assertTrue(obj instanceof Add);
+        final Add expression = (Add) obj;
+        assertEquals(FF.add(FF.literal(3), FF.literal(2)), expression);                
+    }
+    
+    @Test
+    public void testSubstract() throws CQLException{
+        final String cql = "3 - 2";
+        final Object obj = CQL.read(cql);        
+        assertTrue(obj instanceof Subtract);
+        final Subtract expression = (Subtract) obj;
+        assertEquals(FF.subtract(FF.literal(3), FF.literal(2)), expression);                
+    }
+    
+    @Test
+    public void testMultiply() throws CQLException{
+        final String cql = "3 * 2";
+        final Object obj = CQL.read(cql);        
+        assertTrue(obj instanceof Multiply);
+        final Multiply expression = (Multiply) obj;
+        assertEquals(FF.multiply(FF.literal(3), FF.literal(2)), expression);                
+    }
+    
+    @Test
+    public void testDivide() throws CQLException{
+        final String cql = "3 / 2";
+        final Object obj = CQL.read(cql);        
+        assertTrue(obj instanceof Divide);
+        final Divide expression = (Divide) obj;
+        assertEquals(FF.divide(FF.literal(3), FF.literal(2)), expression);                
     }
     
 }
