@@ -22,6 +22,7 @@ import org.junit.Test;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Add;
 import org.opengis.filter.expression.Divide;
+import org.opengis.filter.expression.Function;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.Multiply;
 import org.opengis.filter.expression.PropertyName;
@@ -124,6 +125,24 @@ public class ExpressionReadingTest {
         assertTrue(obj instanceof Divide);
         final Divide expression = (Divide) obj;
         assertEquals(FF.divide(FF.literal(3), FF.literal(2)), expression);                
+    }
+    
+    @Test
+    public void testFunction1() throws CQLException{
+        final String cql = "max(\"att\",15)";
+        final Object obj = CQL.read(cql);        
+        assertTrue(obj instanceof Function);
+        final Function expression = (Function) obj;
+        assertEquals(FF.function("max",FF.property("att"), FF.literal(15)), expression);                
+    }
+    
+    @Test
+    public void testFunction2() throws CQLException{
+        final String cql = "min(\"att\",cos(3.14))";
+        final Object obj = CQL.read(cql);        
+        assertTrue(obj instanceof Function);
+        final Function expression = (Function) obj;
+        assertEquals(FF.function("min",FF.property("att"), FF.function("cos",FF.literal(3.14d))), expression);                
     }
     
 }

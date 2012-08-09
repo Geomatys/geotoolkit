@@ -20,31 +20,48 @@ options {
 
 //catch errors
 @lexer::members {
+
   private List<RecognitionException> errors = new ArrayList<RecognitionException>();
+  
   public List<RecognitionException> getAllErrors() {
     return new ArrayList<RecognitionException>(errors);
   }
+  
   public boolean hasErrors() {
     return !errors.isEmpty();
   }
+  
   public void reportError(RecognitionException e) {
     errors.add(e);
   }  
+  
 }
 
 //catch errors
 @parser::members {
+
   private List<RecognitionException> errors = new ArrayList<RecognitionException>();
+  
   public List<RecognitionException> getAllErrors() {
     return new ArrayList<RecognitionException>(errors);
   }
+  
   public boolean hasErrors() {
     return !errors.isEmpty();
   }
+  
   public void reportError(RecognitionException e) {
     errors.add(e);
   }
+  
+  private boolean isOperatorNext(){
+      final Token tk = input.LT(2);
+      final String txt = tk.getText();
+      return "+".equals(txt) || "-".equals(txt) || "/".equals(txt) || "*".equals(txt);
+    }
+    
 }
+
 
 //-----------------------------------------------------------------//
 // LEXER
@@ -53,7 +70,7 @@ options {
 
 // GLOBAL STUFF ---------------------------------------
 
-COMMENT : '#' ~('\n'|'\r')* '\r'? '\n' {$channel=HIDDEN;} ;
+SEPARATOR 	: ',' ;
 
 WS  :   ( ' '
         | '\t'
@@ -104,8 +121,12 @@ PROPERTY_NAME_1
     :  '"' ( ESC_SEQ | ~('\\'|'"') )* '"'
     ;
     
+FUNCTION_NAME
+  : (~( ' ' | '\t' | '\r' | '\n' | '(' | ')' | '"' | ','))+ '('
+  ;
+    
 PROPERTY_NAME_2
-   : WORD 
+   : (~( ' ' | '\t' | '\r' | '\n' | '(' | ')' | '"' | ','))+ 
    ;
    
 
@@ -135,9 +156,6 @@ fragment
 UNICODE_ESC
     :   '\\' 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
     ;
-    
-fragment
-WORD 	:(~( ' ' | '\t' | '\r' | '\n' | '(' | ')' | '"' ))+ ;
     
  // caseinsensitive , possible alternative solution ?
 fragment A: ('a'|'A');
@@ -174,10 +192,12 @@ fragment Z: ('z'|'Z');
     
     
 expression		
-	: expression_operation 
+	: {isOperatorNext()}? expression_operation
+	| expression_function
+	| expression_simple
 	;
-//expression_function 	: expression_operation | WORD '(' (expression (',' expression)+)* ')';
-expression_operation	: expression_simple (OPERATOR^ expression)* ;
+expression_function 	: FUNCTION_NAME^ ((expression ( SEPARATOR!  expression)*)?) ')'! ;
+expression_operation	: expression_simple (OPERATOR^ expression_operation)* ;
 expression_simple	: PROPERTY_NAME_1 | PROPERTY_NAME_2 |  expression_literal;
 expression_literal	: TEXT | INT | FLOAT;
     	

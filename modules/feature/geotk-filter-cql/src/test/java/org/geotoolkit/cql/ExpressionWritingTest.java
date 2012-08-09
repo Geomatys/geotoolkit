@@ -21,6 +21,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Expression;
+import org.opengis.filter.expression.Function;
 
 /**
  * Test writing in CQL expressions.
@@ -109,6 +110,22 @@ public class ExpressionWritingTest {
         final String cql = CQL.write(exp);
         assertNotNull(cql);
         assertEquals("3 / 2", cql);             
+    }
+    
+    @Test
+    public void testFunction1() throws CQLException{
+        final Expression exp = FF.function("max",FF.property("att"), FF.literal(15));
+        final String cql = CQL.write(exp);
+        assertNotNull(cql);
+        assertEquals("max(att , 15)", cql);
+    }
+    
+    @Test
+    public void testFunction2() throws CQLException{
+        final Expression exp = FF.function("min",FF.property("att"), FF.function("cos",FF.literal(3.14d)));
+        final String cql = CQL.write(exp);
+        assertNotNull(cql);
+        assertEquals("min(att , cos(3.14))", cql);
     }
     
 }

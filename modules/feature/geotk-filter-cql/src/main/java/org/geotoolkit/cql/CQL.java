@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.cql;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.tree.DefaultMutableTreeNode;
 import org.antlr.runtime.ANTLRStringStream;
@@ -161,10 +162,19 @@ public final class CQL {
                 }else if("/".equals(text)){
                     return ff.divide(left,right);
                 }
+            }else if(cqlParser.FUNCTION_NAME == type){
+                String functionName = tree.getText();
+                //remove the (
+                functionName = functionName.substring(0, functionName.length()-1);
+                final List<Expression> exps = new ArrayList<Expression>();
+                for(Object child : tree.getChildren()){
+                    exps.add(convertExpression((CommonTree)child, ff));
+                }
+                return ff.function(functionName, exps.toArray(new Expression[exps.size()]));
             }
         }
         
-        throw new CQLException("Unreconized expression " + tree.getText());
+        throw new CQLException("Unreconized expression : type="+tree.getType()+" text=" + tree.getText());
     }
     
 }

@@ -19,6 +19,7 @@ package org.geotoolkit.cql;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.WKTWriter;
 import java.util.Date;
+import java.util.List;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.opengis.filter.And;
 import org.opengis.filter.ExcludeFilter;
@@ -38,6 +39,7 @@ import org.opengis.filter.PropertyIsNotEqualTo;
 import org.opengis.filter.PropertyIsNull;
 import org.opengis.filter.expression.Add;
 import org.opengis.filter.expression.Divide;
+import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.ExpressionVisitor;
 import org.opengis.filter.expression.Function;
 import org.opengis.filter.expression.Literal;
@@ -287,7 +289,24 @@ public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
     
     @Override
     public Object visit(final Function exp, final Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final StringBuilder sb = toStringBuilder(o);
+        sb.append(exp.getName());
+        sb.append('(');
+        final List<Expression> exps = exp.getParameters();
+        if(exps != null){
+            final int size = exps.size();
+            if(size==1){
+                exps.get(0).accept(this,sb);
+            }else if(size>1){
+                for(int i=0,n=size-1;i<n;i++){
+                    exps.get(i).accept(this,sb);
+                    sb.append(" , ");
+                }
+                exps.get(size-1).accept(this,sb);
+            }            
+        }
+        sb.append(')');
+        return sb;
     }
     
     @Override

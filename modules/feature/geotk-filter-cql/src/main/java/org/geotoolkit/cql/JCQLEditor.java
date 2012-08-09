@@ -112,9 +112,6 @@ public class JCQLEditor extends JPanel implements KeyListener{
             position.addAndGet(length);
             
             switch(tree.token.getType()){
-                case cqlLexer.COMMENT : 
-                    doc.setCharacterAttributes(offset, length, styleComment, true);
-                    break;
                 case cqlLexer.TEXT : 
                 case cqlLexer.INT : 
                 case cqlLexer.FLOAT : 
