@@ -109,7 +109,7 @@ COMPARE
 	| LIKE
 	;
 	
-NULL        	: N U L L;
+ISNULL        	: I S ' ' N U L L;
 BETWEEN     	: B E T W E E N;
 IN     	: I N;
 
@@ -221,8 +221,14 @@ expression_literal	: TEXT | INT | FLOAT;
 filter          	: filter_and;
 filter_and 	: filter_or (AND^ filter)* ;
 filter_or 	: filter_cb (OR^ filter)* ;
-filter_cb 	: expression  COMPARE^  expression ;
-fitler_in	: IN '(' (expression_literal (',' expression_literal)* )?  ')' -> ^(IN expression_literal+);
+filter_cb 	: expression  
+	(
+		| COMPARE^  expression
+		| IN^ '('! (expression (','! expression )* )?  ')'!
+		| BETWEEN^ expression AND! expression
+		| LIKE^ expression
+		| ISNULL^
+	);
 
 
 

@@ -129,16 +129,20 @@ public class FilterWritingTest {
         assertEquals("att <= 15", cql);     
     }
 
-    @Ignore
     @Test
-    public void testPropertyIsLike() throws CQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void testPropertyIsLike() throws CQLException {        
+        final Filter filter = FF.like(FF.property("att"),"%hello");
+        final String cql = CQL.write(filter);
+        assertNotNull(cql);
+        assertEquals("upper(att) LIKE '%hello'", cql);
     }
 
-    @Ignore
     @Test
     public void testPropertyIsNull() throws CQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final Filter filter = FF.isNull(FF.property("att"));
+        final String cql = CQL.write(filter);
+        assertNotNull(cql);
+        assertEquals("att IS NULL", cql);
     }
 
     @Ignore

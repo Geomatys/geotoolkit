@@ -229,7 +229,14 @@ public final class CQL {
                 return ff.greaterOrEqual(left,right);
             }else if("<=".equals(text)){
                 return ff.lessOrEqual(left,right);
+            }else if("<=".equals(text)){
+                return ff.lessOrEqual(left,right);
+            }else if("like".equalsIgnoreCase(text)){
+                return ff.like(left, right.evaluate(null, String.class));
             }
+        }else if(CQLParser.ISNULL == type){
+            final Expression exp = convertExpression((CommonTree)tree.getChild(0), ff);
+            return ff.isNull(exp);
         }
         
         throw new CQLException("Unreconized filter : type="+tree.getType()+" text=" + tree.getText());

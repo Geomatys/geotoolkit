@@ -26,7 +26,9 @@ import org.opengis.filter.PropertyIsGreaterThan;
 import org.opengis.filter.PropertyIsGreaterThanOrEqualTo;
 import org.opengis.filter.PropertyIsLessThan;
 import org.opengis.filter.PropertyIsLessThanOrEqualTo;
+import org.opengis.filter.PropertyIsLike;
 import org.opengis.filter.PropertyIsNotEqualTo;
+import org.opengis.filter.PropertyIsNull;
 
 /**
  * Test reading CQL filters.
@@ -139,16 +141,22 @@ public class FilterReadingTest {
         assertEquals(FF.lessOrEqual(FF.property("att"), FF.literal(15)), filter);   
     }
 
-    @Ignore
     @Test
     public void testPropertyIsLike() throws CQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final String cql = "att LIKE '%hello?'";
+        final Object obj = CQL.parseFilter(cql);        
+        assertTrue(obj instanceof PropertyIsLike);
+        final PropertyIsLike filter = (PropertyIsLike) obj;
+        assertEquals(FF.like(FF.property("att"),"%hello?"), filter);   
     }
 
-    @Ignore
     @Test
     public void testPropertyIsNull() throws CQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final String cql = "att IS NULL";
+        final Object obj = CQL.parseFilter(cql);        
+        assertTrue(obj instanceof PropertyIsNull);
+        final PropertyIsNull filter = (PropertyIsNull) obj;
+        assertEquals(FF.isNull(FF.property("att")), filter);   
     }
 
     @Ignore

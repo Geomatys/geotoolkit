@@ -20,6 +20,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.WKTWriter;
 import java.util.Date;
 import java.util.List;
+import org.geotoolkit.filter.DefaultPropertyIsLike;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.opengis.filter.And;
 import org.opengis.filter.ExcludeFilter;
@@ -173,12 +174,35 @@ public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
 
     @Override
     public Object visit(final PropertyIsLike filter, final Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final StringBuilder sb = toStringBuilder(o);
+        final char escape = filter.getEscape().charAt(0);
+        final char wildCard = filter.getWildCard().charAt(0);
+        final char singleChar = filter.getSingleChar().charAt(0);
+        final boolean matchingCase = filter.isMatchingCase();
+        final String literal = filter.getLiteral();
+        final String pattern = DefaultPropertyIsLike.convertToSQL92(escape, wildCard, singleChar, literal);
+
+        if(matchingCase){
+            filter.getExpression().accept(this,sb);
+        }else{
+            sb.append("upper(");
+            filter.getExpression().accept(this,sb);
+            sb.append(')');
+        }
+        
+        sb.append(" LIKE ");
+        sb.append('\'');
+        sb.append(pattern);
+        sb.append('\'');
+        return sb;
     }
 
     @Override
     public Object visit(final PropertyIsNull filter, final Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final StringBuilder sb = toStringBuilder(o);
+        filter.getExpression().accept(this,sb);
+        sb.append(" IS NULL");
+        return sb;
     }
 
     @Override
