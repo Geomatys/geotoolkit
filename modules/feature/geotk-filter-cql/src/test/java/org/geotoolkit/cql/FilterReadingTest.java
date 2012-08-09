@@ -17,10 +17,12 @@
 package org.geotoolkit.cql;
 
 import org.geotoolkit.filter.DefaultFilterFactory2;
+import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import static org.junit.Assert.*;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.opengis.filter.And;
+import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.Or;
 import org.opengis.filter.PropertyIsBetween;
@@ -48,22 +50,42 @@ public class FilterReadingTest {
         throw new UnsupportedOperationException("Null filter not supported in CQL.");
     }
 
-    @Ignore
-    @Test
-    public void testExcludeFilter() throws CQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Ignore
-    @Test
-    public void testIncludeFilter() throws CQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Ignore
     @Test
     public void testAnd() throws CQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final String cql = "att1 = 15 AND att2 = 30 AND att3 = 50";
+        final Object obj = CQL.parseFilter(cql);        
+        assertTrue(obj instanceof Filter);
+        final Filter filter = (Filter) obj;
+        assertEquals(
+                FF.and(
+                UnmodifiableArrayList.wrap((Filter)
+                    FF.equals(FF.property("att1"), FF.literal(15)),
+                    FF.and(
+                    UnmodifiableArrayList.wrap((Filter)
+                        FF.equals(FF.property("att2"), FF.literal(30)),
+                        FF.equals(FF.property("att3"), FF.literal(50))
+                    ))
+                )),
+                filter);     
+    }
+    
+    @Test
+    public void testOr() throws CQLException {
+        final String cql = "att1 = 15 OR att2 = 30 OR att3 = 50";
+        final Object obj = CQL.parseFilter(cql);        
+        assertTrue(obj instanceof Filter);
+        final Filter filter = (Filter) obj;
+        assertEquals(
+                FF.or(
+                UnmodifiableArrayList.wrap((Filter)
+                    FF.equals(FF.property("att1"), FF.literal(15)),
+                    FF.or(
+                    UnmodifiableArrayList.wrap((Filter)
+                        FF.equals(FF.property("att2"), FF.literal(30)),
+                        FF.equals(FF.property("att3"), FF.literal(50))
+                    ))
+                )),
+                filter);     
     }
 
     @Ignore
@@ -78,11 +100,7 @@ public class FilterReadingTest {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    @Ignore
-    @Test
-    public void testOr() throws CQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+    
 
     @Test
     public void testPropertyIsBetween() throws CQLException {

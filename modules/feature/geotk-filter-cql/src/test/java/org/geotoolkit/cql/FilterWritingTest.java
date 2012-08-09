@@ -17,6 +17,7 @@
 package org.geotoolkit.cql;
 
 import org.geotoolkit.filter.DefaultFilterFactory2;
+import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import static org.junit.Assert.*;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -51,12 +52,32 @@ public class FilterWritingTest {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    @Ignore
     @Test
     public void testAnd() throws CQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final Filter filter = FF.and(
+                UnmodifiableArrayList.wrap((Filter)
+                    FF.equals(FF.property("att1"), FF.literal(15)),
+                    FF.equals(FF.property("att2"), FF.literal(30)),
+                    FF.equals(FF.property("att3"), FF.literal(50))
+                ));
+        final String cql = CQL.write(filter);
+        assertNotNull(cql);
+        assertEquals("(att1 = 15 AND att2 = 30 AND att3 = 50)", cql);
     }
 
+    @Test
+    public void testOr() throws CQLException {
+        final Filter filter = FF.or(
+                UnmodifiableArrayList.wrap((Filter)
+                    FF.equals(FF.property("att1"), FF.literal(15)),
+                    FF.equals(FF.property("att2"), FF.literal(30)),
+                    FF.equals(FF.property("att3"), FF.literal(50))
+                ));
+        final String cql = CQL.write(filter);
+        assertNotNull(cql);
+        assertEquals("(att1 = 15 OR att2 = 30 OR att3 = 50)", cql);
+    }
+    
     @Ignore
     @Test
     public void testId() throws CQLException {
@@ -69,18 +90,12 @@ public class FilterWritingTest {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    @Ignore
-    @Test
-    public void testOr() throws CQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
     @Test
     public void testPropertyIsBetween() throws CQLException {
         final Filter filter = FF.between(FF.property("att"), FF.literal(15), FF.literal(30));
         final String cql = CQL.write(filter);
         assertNotNull(cql);
-        assertEquals("att BETWEEN 15 AND 30", cql);   
+        assertEquals("att BETWEEN 15 AND 30", cql);
     }
 
     @Test

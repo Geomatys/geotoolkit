@@ -262,6 +262,20 @@ public final class CQL {
                 }
                 return ff.or(filters);
             }            
+        }else if(CQLParser.AND == type){
+            final List<Filter> filters = new ArrayList<Filter>();
+            final int nbchild = tree.getChildCount();
+            for(int i=0; i<nbchild; i++){
+                filters.add(convertFilter((CommonTree)tree.getChild(i), ff));
+            }
+            return ff.and(filters);
+        }else if(CQLParser.OR == type){
+            final List<Filter> filters = new ArrayList<Filter>();
+            final int nbchild = tree.getChildCount();
+            for(int i=0; i<nbchild; i++){
+                filters.add(convertFilter((CommonTree)tree.getChild(i), ff));
+            }
+            return ff.or(filters);
         }
         
         throw new CQLException("Unreconized filter : type="+tree.getType()+" text=" + tree.getText());

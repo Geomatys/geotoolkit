@@ -24,6 +24,7 @@ import org.geotoolkit.filter.DefaultPropertyIsLike;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.opengis.filter.And;
 import org.opengis.filter.ExcludeFilter;
+import org.opengis.filter.Filter;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.Id;
 import org.opengis.filter.IncludeFilter;
@@ -95,8 +96,38 @@ public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
 
     @Override
     public Object visit(final And filter, final Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final StringBuilder sb = toStringBuilder(o);        
+        final List<Filter> filters = filter.getChildren();
+        if(filters != null && !filters.isEmpty()){
+            final int size = filters.size();
+            sb.append('(');            
+            for(int i=0,n=size-1;i<n;i++){
+                filters.get(i).accept(this,sb);
+                sb.append(" AND ");
+            }
+            filters.get(size-1).accept(this,sb);            
+            sb.append(')');
+        }        
+        return sb;
     }
+    
+    @Override
+    public Object visit(final Or filter, final Object o) {
+        final StringBuilder sb = toStringBuilder(o);        
+        final List<Filter> filters = filter.getChildren();
+        if(filters != null && !filters.isEmpty()){
+            final int size = filters.size();
+            sb.append('(');            
+            for(int i=0,n=size-1;i<n;i++){
+                filters.get(i).accept(this,sb);
+                sb.append(" OR ");
+            }
+            filters.get(size-1).accept(this,sb);            
+            sb.append(')');
+        }        
+        return sb;
+    }
+    
 
     @Override
     public Object visit(final Id filter, final Object o) {
@@ -105,11 +136,6 @@ public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
 
     @Override
     public Object visit(final Not filter, final Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Object visit(final Or filter, final Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
