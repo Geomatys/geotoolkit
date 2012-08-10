@@ -109,7 +109,7 @@ public class XmlFeatureTest {
     private final SimpleFeature simpleFeature3;
     private FeatureCollection collectionSimple;
 
-    private final FeatureType complexType;
+    private final FeatureType multiGeomType;
 
     private static String EPSG_VERSION;
 
@@ -142,7 +142,7 @@ public class XmlFeatureTest {
         simpleTypeFull = ftb.buildSimpleFeatureType();
 
         ftb.reset();
-        ftb.setName(GML_NAMESPACE,"TestComplex");
+        ftb.setName(GML_NAMESPACE,"TestMultiGeom");
         ftb.add(new DefaultName(GML_NAMESPACE,"ID"),                   Integer.class,           1,1,true,null);
         ftb.add(new DefaultName(GML_NAMESPACE,"attString"),            String.class,            1,1,true,null);
         ftb.add(new DefaultName(GML_NAMESPACE,"attShort"),             Short.class,             1,1,true,null);
@@ -162,7 +162,7 @@ public class XmlFeatureTest {
         ftb.add(new DefaultName(GML_NAMESPACE,"geomMultiPolygon"),     GeometryCollection.class,crs,1,Integer.MAX_VALUE,true,null);
         ftb.add(new DefaultName(GML_NAMESPACE,"geomMultiGeometry"),    GeometryCollection.class,crs,1,Integer.MAX_VALUE,true,null);
         ftb.add(new DefaultName(GML_NAMESPACE,"geomAnyGeometry"),      Geometry.class,          crs,1,Integer.MAX_VALUE,true,null);
-        complexType = ftb.buildFeatureType();
+        multiGeomType = ftb.buildFeatureType();
 
         ftb.reset();
         ftb.setName(GML_NAMESPACE,"TestSimpleBasic");
@@ -290,13 +290,13 @@ public class XmlFeatureTest {
     }
 
     @Test
-    public void testReadComplexFeatureType() throws JAXBException {
+    public void testReadMultiGeomFeatureType() throws JAXBException {
         final XmlFeatureTypeReader reader = new JAXBFeatureTypeReader();
         final List<FeatureType> types = reader.read(XmlFeatureTest.class
-                .getResourceAsStream("/org/geotoolkit/feature/xml/ComplexType.xsd"));
+                .getResourceAsStream("/org/geotoolkit/feature/xml/MultiGeomType.xsd"));
 
         assertEquals(1, types.size());
-        assertEquals(complexType, types.get(0));
+        assertEquals(multiGeomType, types.get(0));
     }
 
     @Test
@@ -306,7 +306,7 @@ public class XmlFeatureTest {
                 .getResourceAsStream("/org/geotoolkit/feature/xml/wfs1.xsd"));
 
         assertEquals(1, types.size());
-        //assertEquals(complexType, types.get(0));
+        //assertEquals(multiGeomType, types.get(0));
     }
 
     @Test
@@ -321,14 +321,14 @@ public class XmlFeatureTest {
     }
 
     @Test
-    public void testWriteComplexFeatureType() throws JAXBException, IOException, ParserConfigurationException, SAXException{
+    public void testWriteMultiGeomFeatureType() throws JAXBException, IOException, ParserConfigurationException, SAXException{
         final File temp = File.createTempFile("gml", ".xml");
         temp.deleteOnExit();
         final XmlFeatureTypeWriter writer = new JAXBFeatureTypeWriter();
-        writer.write(complexType, new FileOutputStream(temp));
+        writer.write(multiGeomType, new FileOutputStream(temp));
 
         DomCompare.compare(XmlFeatureTest.class
-                .getResourceAsStream("/org/geotoolkit/feature/xml/ComplexType.xsd"), temp);
+                .getResourceAsStream("/org/geotoolkit/feature/xml/MultiGeomType.xsd"), temp);
     }
 
     @Test
@@ -493,7 +493,7 @@ public class XmlFeatureTest {
     @Test
     public void testReadSimpleCollectionEmbeddedFT() throws JAXBException, IOException, XMLStreamException{
         JAXPStreamFeatureReader reader = new JAXPStreamFeatureReader();
-        reader.setReadEmbeddedFeatureType(true);
+        reader.getProperties().put(JAXPStreamFeatureReader.READ_EMBEDDED_FEATURE_TYPE, true);
 
         Object obj = reader.read(XmlFeatureTest.class
                 .getResourceAsStream("/org/geotoolkit/feature/xml/featureCollectionEmbedFT.xml"));
@@ -502,7 +502,7 @@ public class XmlFeatureTest {
         assertTrue(obj instanceof FeatureCollection);
 
         reader = new JAXPStreamFeatureReader();
-        reader.setReadEmbeddedFeatureType(true);
+        reader.getProperties().put(JAXPStreamFeatureReader.READ_EMBEDDED_FEATURE_TYPE, true);
 
         obj = reader.read(XmlFeatureTest.class
                 .getResourceAsStream("/org/geotoolkit/feature/xml/featureCollectionEmbedFT2.xml"));
