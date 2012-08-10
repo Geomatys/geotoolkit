@@ -16,7 +16,15 @@
  */
 package org.geotoolkit.cql;
 
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.LinearRing;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Polygon;
 import org.geotoolkit.filter.DefaultFilterFactory2;
+import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.filter.FilterFactory2;
@@ -36,6 +44,7 @@ import org.opengis.filter.expression.Subtract;
 public class ExpressionReadingTest {
     
     private final FilterFactory2 FF = new DefaultFilterFactory2();
+    private final GeometryFactory GF = new GeometryFactory();
     
     @Test
     public void testPropertyName1() throws CQLException{        
@@ -143,6 +152,146 @@ public class ExpressionReadingTest {
         assertTrue(obj instanceof Function);
         final Function expression = (Function) obj;
         assertEquals(FF.function("min",FF.property("att"), FF.function("cos",FF.literal(3.14d))), expression);                
+    }
+    
+    @Test
+    public void testGeometryPoint() throws CQLException{
+        final String cql = "POINT(15 30)";
+        final Object obj = CQL.parseExpression(cql);        
+        assertTrue(obj instanceof Literal);
+        final Literal expression = (Literal) obj;        
+        final Geometry geom =  GF.createPoint(new Coordinate(15, 30));
+        assertTrue(geom.equals((Geometry)expression.getValue()));  
+    }
+    
+    @Test
+    public void testGeometryMPoint() throws CQLException{
+        final String cql = "MULTIPOINT(15 30, 45 60)";
+        final Object obj = CQL.parseExpression(cql);        
+        assertTrue(obj instanceof Literal);
+        final Literal expression = (Literal) obj;        
+        final Geometry geom =  GF.createMultiPoint(
+                new Coordinate[]{
+                    new Coordinate(15, 30),
+                    new Coordinate(45, 60)
+                });
+        assertTrue(geom.equals((Geometry)expression.getValue()));  
+    }
+    
+    @Test
+    public void testGeometryLineString() throws CQLException{
+        final String cql = "LINESTRING(10 20, 30 40, 50 60)";
+        final Object obj = CQL.parseExpression(cql);        
+        assertTrue(obj instanceof Literal);
+        final Literal expression = (Literal) obj;        
+        final Geometry geom =  GF.createLineString(
+                new Coordinate[]{
+                    new Coordinate(10, 20),
+                    new Coordinate(30, 40),
+                    new Coordinate(50, 60)
+                });
+        assertTrue(geom.equals((Geometry)expression.getValue()));  
+    }
+    
+    @Test
+    public void testGeometryMLineString() throws CQLException{
+        final String cql = "MULTILINESTRING((10 20, 30 40, 50 60),(70 80, 90 100, 110 120))";
+        final Object obj = CQL.parseExpression(cql);        
+        assertTrue(obj instanceof Literal);
+        final Literal expression = (Literal) obj;        
+        final Geometry geom =  GF.createMultiLineString(
+                new LineString[]{
+                    GF.createLineString(
+                        new Coordinate[]{
+                            new Coordinate(10, 20),
+                            new Coordinate(30, 40),
+                            new Coordinate(50, 60)
+                        }),
+                    GF.createLineString(
+                        new Coordinate[]{
+                            new Coordinate(70, 80),
+                            new Coordinate(90, 100),
+                            new Coordinate(110, 120)
+                        })
+                    }
+                );
+        assertTrue(geom.equals((Geometry)expression.getValue()));  
+    }
+    
+    @Test
+    public void testGeometryPolygon() throws CQLException{
+        final String cql = "POLYGON((10 20, 30 40, 50 60, 10 20), (70 80, 90 100, 110 120, 70 80))";
+        final Object obj = CQL.parseExpression(cql);        
+        assertTrue(obj instanceof Literal);
+        final Literal expression = (Literal) obj;        
+        final Geometry geom =  GF.createPolygon(
+                GF.createLinearRing(
+                    new Coordinate[]{
+                        new Coordinate(10, 20),
+                        new Coordinate(30, 40),
+                        new Coordinate(50, 60),
+                        new Coordinate(10, 20)
+                    }),
+                new LinearRing[]{
+                    GF.createLinearRing(
+                        new Coordinate[]{
+                            new Coordinate(70, 80),
+                            new Coordinate(90, 100),
+                            new Coordinate(110, 120),
+                            new Coordinate(70, 80)
+                        })
+                    }
+                );
+        assertTrue(geom.equals((Geometry)expression.getValue()));  
+    }
+    
+    @Test
+    public void testGeometryMPolygon() throws CQLException{
+        final String cql = "MULTIPOLYGON("
+                + "((10 20, 30 40, 50 60, 10 20), (70 80, 90 100, 110 120, 70 80)),"
+                + "((11 21, 31 41, 51 61, 11 21), (71 81, 91 101, 111 121, 71 81))"
+                + ")";
+        final Object obj = CQL.parseExpression(cql);        
+        assertTrue(obj instanceof Literal);
+        final Literal expression = (Literal) obj;        
+        final Polygon geom1 = GF.createPolygon(
+                GF.createLinearRing(
+                    new Coordinate[]{
+                        new Coordinate(10, 20),
+                        new Coordinate(30, 40),
+                        new Coordinate(50, 60),
+                        new Coordinate(10, 20)
+                    }),
+                new LinearRing[]{
+                    GF.createLinearRing(
+                        new Coordinate[]{
+                            new Coordinate(70, 80),
+                            new Coordinate(90, 100),
+                            new Coordinate(110, 120),
+                            new Coordinate(70, 80)
+                        })
+                    }
+                );
+        final Polygon geom2 = GF.createPolygon(
+                GF.createLinearRing(
+                    new Coordinate[]{
+                        new Coordinate(11, 21),
+                        new Coordinate(31, 41),
+                        new Coordinate(51, 61),
+                        new Coordinate(11, 21)
+                    }),
+                new LinearRing[]{
+                    GF.createLinearRing(
+                        new Coordinate[]{
+                            new Coordinate(71, 81),
+                            new Coordinate(91, 101),
+                            new Coordinate(111, 121),
+                            new Coordinate(71, 81)
+                        })
+                    }
+                );
+        final Geometry geom = GF.createMultiPolygon(new Polygon[]{geom1,geom2});
+        assertTrue(geom.equals((Geometry)expression.getValue()));  
     }
     
 }

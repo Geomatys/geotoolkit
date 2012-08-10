@@ -16,6 +16,13 @@
  */
 package org.geotoolkit.cql;
 
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.CoordinateSequence;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.LinearRing;
+import com.vividsolutions.jts.geom.Polygon;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -37,6 +44,8 @@ import org.opengis.filter.expression.Expression;
  */
 public final class CQL {
 
+    private static final GeometryFactory GF = new GeometryFactory();
+    
     private CQL() {}
     
     private static Object compileExpression(String cql) {
@@ -168,12 +177,10 @@ public final class CQL {
         }
         
         final int type = tree.getType();
-        if(CQLParser.PROPERTY_NAME_1 == type){
+        if(CQLParser.PROPERTY_NAME == type){
             //strip start and end "
             final String text = tree.getText();
             return ff.property(text.substring(1, text.length()-1));
-        }else if(CQLParser.PROPERTY_NAME_2 == type){
-            return ff.property(tree.getText());
         }else if(CQLParser.INT == type){
             return ff.literal(Integer.valueOf(tree.getText()));
         }else if(CQLParser.FLOAT == type){
@@ -195,19 +202,86 @@ public final class CQL {
             }else if("/".equals(text)){
                 return ff.divide(left,right);
             }
-        }else if(CQLParser.FUNCTION_NAME == type){
-            String functionName = tree.getText();
-            //remove the (
-            functionName = functionName.substring(0, functionName.length()-1);
-            final List<Expression> exps = new ArrayList<Expression>();
-            for(Object child : tree.getChildren()){
-                exps.add(convertExpression((CommonTree)child, ff));
+        }else if(CQLParser.NAME == type){
+            String name = tree.getText();
+            if(tree.getChildCount() == 0){
+                //handle as property name
+                return ff.property(name);
             }
-            return ff.function(functionName, exps.toArray(new Expression[exps.size()]));
+            
+            //handle as a function
+            final List<Expression> exps = new ArrayList<Expression>();
+            for(int i=1,n=tree.getChildCount()-1;i<n;i++){ //skip first and last ( )
+                final CommonTree ct = (CommonTree) tree.getChild(i);
+                exps.add(convertExpression(ct, ff));
+            }
+            return ff.function(name, exps.toArray(new Expression[exps.size()]));
+        }
+        
+        // GEOMETRY TYPES ------------------------------------------------------
+        else if(CQLParser.POINT == type){
+            final CoordinateSequence cs = parseSequence((CommonTree)tree.getChild(0));
+            final Geometry geom = GF.createPoint(cs);
+            return ff.literal(geom);
+        }else if(CQLParser.LINESTRING == type){
+            final CoordinateSequence cs = parseSequence((CommonTree)tree.getChild(0));
+            final Geometry geom = GF.createLineString(cs);
+            return ff.literal(geom);
+        }else if(CQLParser.POLYGON == type){
+            final CommonTree serie = (CommonTree)tree.getChild(0);
+            final LinearRing contour = GF.createLinearRing(parseSequence((CommonTree)serie.getChild(0)));
+            final int n = serie.getChildCount();
+            final LinearRing[] holes = new LinearRing[n-1];
+            for(int i=1; i<n; i++){
+                holes[i-1] = GF.createLinearRing(parseSequence((CommonTree)serie.getChild(i)));
+            }
+            final Geometry geom = GF.createPolygon(contour,holes);
+            return ff.literal(geom);
+        }else if(CQLParser.MPOINT == type){
+            final CoordinateSequence cs = parseSequence((CommonTree)tree.getChild(0));
+            final Geometry geom = GF.createMultiPoint(cs);
+            return ff.literal(geom);
+        }else if(CQLParser.MLINESTRING == type){
+            final CommonTree series = (CommonTree) tree.getChild(0);
+            final int n = series.getChildCount();
+            final LineString[] strings = new LineString[n];
+            for(int i=0; i<n; i++){
+                strings[i] = GF.createLineString(parseSequence((CommonTree)series.getChild(i)));
+            }            
+            final Geometry geom = GF.createMultiLineString(strings);
+            return ff.literal(geom);
+        }else if(CQLParser.MPOLYGON == type){
+            final int n = tree.getChildCount();
+            final Polygon[] polygons = new Polygon[n];
+            for(int i=0; i<n; i++){
+                final CommonTree polyTree = (CommonTree) tree.getChild(i);
+                final LinearRing contour = GF.createLinearRing(parseSequence((CommonTree)polyTree.getChild(0)));
+                final int hn = polyTree.getChildCount();
+                final LinearRing[] holes = new LinearRing[hn-1];
+                for(int j=1; j<hn; j++){
+                    holes[j-1] = GF.createLinearRing(parseSequence((CommonTree)polyTree.getChild(j)));
+                }
+                final Polygon geom = GF.createPolygon(contour,holes);
+                polygons[i] = geom;
+            }            
+            final Geometry geom = GF.createMultiPolygon(polygons);
+            return ff.literal(geom);
         }
         
         throw new CQLException("Unreconized expression : type="+tree.getType()+" text=" + tree.getText());
     }
+    
+    private static CoordinateSequence parseSequence(CommonTree tree){
+        final int size = tree.getChildCount()/2;
+        final Coordinate[] coords = new Coordinate[size];
+        for(int i=0,j=0;i<size;i++,j+=2){
+            coords[i] = new Coordinate(
+                    Double.valueOf(tree.getChild(j).getText()), 
+                    Double.valueOf(tree.getChild(j+1).getText()));
+        }
+        return GF.getCoordinateSequenceFactory().create(coords);
+    }
+    
     
     /**
      * Convert the given tree in a Filter.

@@ -6,6 +6,12 @@ options {
     //backtrack = true;
 }
 
+tokens{
+    COORD;
+    COORDS;
+    SERIE;
+}
+
 //-----------------------------------------------------------------//
 // JAVA CLASS GENERATION
 //-----------------------------------------------------------------//
@@ -78,6 +84,35 @@ WS  :   ( ' '
         | '\n'
         ) {$channel=HIDDEN;}
     ;
+    
+// caseinsensitive , possible alternative solution ?
+fragment A: ('a'|'A');
+fragment B: ('b'|'B');
+fragment C: ('c'|'C');
+fragment D: ('d'|'D');
+fragment E: ('e'|'E');
+fragment F: ('f'|'F');
+fragment G: ('g'|'G');
+fragment H: ('h'|'H');
+fragment I: ('i'|'I');
+fragment J: ('j'|'J');
+fragment K: ('k'|'K');
+fragment L: ('l'|'L');
+fragment M: ('m'|'M');
+fragment N: ('n'|'N');
+fragment O: ('o'|'O');
+fragment P: ('p'|'P');
+fragment Q: ('q'|'Q');
+fragment R: ('r'|'R');
+fragment S: ('s'|'S');
+fragment T: ('t'|'T');
+fragment U: ('u'|'U');
+fragment V: ('v'|'V');
+fragment W: ('w'|'W');
+fragment X: ('x'|'X');
+fragment Y: ('y'|'Y');
+fragment Z: ('z'|'Z');
+    
 
 //LITERALS  ----------------------------------------------
 
@@ -97,7 +132,6 @@ FLOAT
 OPERATOR: '+' | '-' | '/' | '*' ; 
 
 
-
 // FILTERING OPERAND -----------------------------------
 COMPARE 
 	: EQUALABOVE
@@ -108,25 +142,18 @@ COMPARE
 	| UNDER	
 	| LIKE
 	;
+fragment EQUALABOVE: '>=' ;
+fragment EQUALUNDER: '<=' ;
+fragment NOTEQUAL	: '<>' ;
+fragment EQUAL	: '=' ;
+fragment ABOVE	: '>' ;
+fragment UNDER	: '<' ;
+fragment LIKE       	: L I K E;
 	
 ISNULL        	: I S ' ' N U L L;
 BETWEEN     	: B E T W E E N;
 IN     	: I N;
 
-fragment
-EQUALABOVE: '>=' ;
-fragment
-EQUALUNDER: '<=' ;
-fragment
-NOTEQUAL	: '<>' ;
-fragment
-EQUAL	: '=' ;
-fragment
-ABOVE	: '>' ;
-fragment
-UNDER	: '<' ;
-fragment
-LIKE       	: L I K E;
 
 
 // LOGIC ----------------------------------------------
@@ -134,18 +161,19 @@ AND 	: A N D;
 OR 	: O R ;
 NOT 	: N O T ;
 
+// GEOMETRIC TYPES ------------------------------------
+POINT		: P O I N T ;
+LINESTRING		: L I N E S T R I N G ;
+POLYGON		: P O L Y G O N ;
+MPOINT		: M U L T I P O I N T ;
+MLINESTRING	: M U L T I L I N E S T R I N G ;
+MPOLYGON		: M U L T I P O L Y G O N ;
+GEOMETRYCOLLECTION	: G E O M E T R Y C O L L E C T I O N ;
+
+
 // PROPERTY NAME -------------------------------------
-PROPERTY_NAME_1
-    :  '"' ( ESC_SEQ | ~('\\'|'"') )* '"'
-    ;
-    
-FUNCTION_NAME
-  : (~( ' ' | '\t' | '\r' | '\n' | '(' | ')' | '"' | ','))+ '('
-  ;
-    
-PROPERTY_NAME_2
-   : (~( ' ' | '\t' | '\r' | '\n' | '(' | ')' | '"' | ','))+ 
-   ;
+PROPERTY_NAME    	:  '"' ( ESC_SEQ | ~('\\'|'"') )* '"'    ;
+NAME   	: (~( ' ' | '\t' | '\r' | '\n' | '(' | ')' | '"' | ','))+    ;
    
 
 // FRAGMENT -------------------------------------------
@@ -175,33 +203,7 @@ UNICODE_ESC
     :   '\\' 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
     ;
     
- // caseinsensitive , possible alternative solution ?
-fragment A: ('a'|'A');
-fragment B: ('b'|'B');
-fragment C: ('c'|'C');
-fragment D: ('d'|'D');
-fragment E: ('e'|'E');
-fragment F: ('f'|'F');
-fragment G: ('g'|'G');
-fragment H: ('h'|'H');
-fragment I: ('i'|'I');
-fragment J: ('j'|'J');
-fragment K: ('k'|'K');
-fragment L: ('l'|'L');
-fragment M: ('m'|'M');
-fragment N: ('n'|'N');
-fragment O: ('o'|'O');
-fragment P: ('p'|'P');
-fragment Q: ('q'|'Q');
-fragment R: ('r'|'R');
-fragment S: ('s'|'S');
-fragment T: ('t'|'T');
-fragment U: ('u'|'U');
-fragment V: ('v'|'V');
-fragment W: ('w'|'W');
-fragment X: ('x'|'X');
-fragment Y: ('y'|'Y');
-fragment Z: ('z'|'Z');
+ 
     
     
 //-----------------------------------------------------------------//
@@ -209,14 +211,24 @@ fragment Z: ('z'|'Z');
 //-----------------------------------------------------------------//
     
 expression		
-	: {isOperatorNext()}? expression_operation
+	: expression_geometry
+	| {isOperatorNext()}? expression_operation
 	| expression_function
 	| expression_simple
 	;
-expression_function 	: FUNCTION_NAME^ ((expression ( SEPARATOR!  expression)*)?) ')'! ;
+expression_function 	: NAME^ '(' ((expression ( SEPARATOR!  expression)*)?) ')' ;
 expression_operation	: expression_simple (OPERATOR^ expression_operation)* ;
-expression_simple	: PROPERTY_NAME_1 | PROPERTY_NAME_2 |  expression_literal;
+expression_simple	: PROPERTY_NAME | NAME |  expression_literal;
 expression_literal	: TEXT | INT | FLOAT;
+expression_geometry	
+	: POINT^ coordinate_serie
+	| LINESTRING^ coordinate_serie
+	| POLYGON^ coordinate_series
+	| MPOINT^ coordinate_serie
+	| MLINESTRING^  coordinate_series
+	| MPOLYGON^ '('! coordinate_series (SEPARATOR! coordinate_series)* ')'! 
+	;	
+
     	
 filter          	: filter_and | filter_not;
 filter_not 	: NOT^ filter ;
@@ -231,7 +243,9 @@ filter_cb 	: expression
 		| ISNULL^
 	);
 
-
+coordinate : (FLOAT|INT)  (FLOAT|INT) ;
+coordinate_serie : '(' coordinate (SEPARATOR coordinate)*  ')' -> ^(COORDS coordinate+) ;
+coordinate_series : '(' coordinate_serie (SEPARATOR coordinate_serie)* ')' -> ^(SERIE coordinate_serie+) ;
 
 	
 
