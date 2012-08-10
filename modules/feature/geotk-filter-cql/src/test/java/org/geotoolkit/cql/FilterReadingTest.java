@@ -16,6 +16,10 @@
  */
 package org.geotoolkit.cql;
 
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LinearRing;
 import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import static org.junit.Assert.*;
@@ -35,6 +39,19 @@ import org.opengis.filter.PropertyIsLessThanOrEqualTo;
 import org.opengis.filter.PropertyIsLike;
 import org.opengis.filter.PropertyIsNotEqualTo;
 import org.opengis.filter.PropertyIsNull;
+import org.opengis.filter.expression.Literal;
+import org.opengis.filter.spatial.BBOX;
+import org.opengis.filter.spatial.Beyond;
+import org.opengis.filter.spatial.BinarySpatialOperator;
+import org.opengis.filter.spatial.Contains;
+import org.opengis.filter.spatial.Crosses;
+import org.opengis.filter.spatial.DWithin;
+import org.opengis.filter.spatial.Disjoint;
+import org.opengis.filter.spatial.Equals;
+import org.opengis.filter.spatial.Intersects;
+import org.opengis.filter.spatial.Overlaps;
+import org.opengis.filter.spatial.Touches;
+import org.opengis.filter.spatial.Within;
 
 /**
  * Test reading CQL filters.
@@ -44,6 +61,18 @@ import org.opengis.filter.PropertyIsNull;
 public class FilterReadingTest {
     
     private final FilterFactory2 FF = new DefaultFilterFactory2();
+    private final GeometryFactory GF = new GeometryFactory();
+    private final Geometry baseGeometry = GF.createPolygon(
+                GF.createLinearRing(
+                    new Coordinate[]{
+                        new Coordinate(10, 20),
+                        new Coordinate(30, 40),
+                        new Coordinate(50, 60),
+                        new Coordinate(10, 20)
+                    }),
+                new LinearRing[0]
+                );
+    
     
     @Test
     public void testNullFilter() throws CQLException {
@@ -196,70 +225,162 @@ public class FilterReadingTest {
         assertEquals(FF.isNull(FF.property("att")), filter);   
     }
 
-    @Ignore
     @Test
-    public void testBBOX() throws CQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void testBBOX1() throws CQLException {
+        final String cql = "BBOX(\"att\" ,10, 20, 30, 40)";
+        final Object obj = CQL.parseFilter(cql);        
+        assertTrue(obj instanceof BBOX);
+        final BinarySpatialOperator filter = (BBOX) obj;
+        assertEquals(FF.bbox(FF.property("att"), 10,20,30,40, null), filter);   
+    }
+    
+    @Test
+    public void testBBOX2() throws CQLException {
+        final String cql = "BBOX(\"att\" ,10, 20, 30, 40, 'CRS:84')";
+        final Object obj = CQL.parseFilter(cql);        
+        assertTrue(obj instanceof BBOX);
+        final BBOX filter = (BBOX) obj;
+        assertEquals(FF.bbox(FF.property("att"), 10,20,30,40, "CRS:84"), filter);   
     }
 
-    @Ignore
     @Test
     public void testBeyond() throws CQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final String cql = "BEYOND(\"att\" ,POLYGON((10 20, 30 40, 50 60, 10 20)))";
+        final Object obj = CQL.parseFilter(cql);        
+        assertTrue(obj instanceof Beyond);
+        final Beyond filter = (Beyond) obj;
+                
+        assertEquals(FF.property("att"), filter.getExpression1());
+        assertTrue(filter.getExpression2() instanceof Literal);
+        assertTrue( ((Literal)filter.getExpression2()).getValue() instanceof Geometry);
+        final Geometry filtergeo = (Geometry) ((Literal)filter.getExpression2()).getValue();
+        assertTrue(baseGeometry.equalsExact(filtergeo)); 
     }
 
-    @Ignore
     @Test
     public void testContains() throws CQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final String cql = "CONTAINS(\"att\" ,POLYGON((10 20, 30 40, 50 60, 10 20)))";
+        final Object obj = CQL.parseFilter(cql);        
+        assertTrue(obj instanceof Contains);
+        final Contains filter = (Contains) obj;
+                
+        assertEquals(FF.property("att"), filter.getExpression1());
+        assertTrue(filter.getExpression2() instanceof Literal);
+        assertTrue( ((Literal)filter.getExpression2()).getValue() instanceof Geometry);
+        final Geometry filtergeo = (Geometry) ((Literal)filter.getExpression2()).getValue();
+        assertTrue(baseGeometry.equalsExact(filtergeo)); 
     }
 
-    @Ignore
     @Test
     public void testCrosses() throws CQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final String cql = "CROSS(\"att\" ,POLYGON((10 20, 30 40, 50 60, 10 20)))";
+        final Object obj = CQL.parseFilter(cql);        
+        assertTrue(obj instanceof Crosses);
+        final Crosses filter = (Crosses) obj;
+                
+        assertEquals(FF.property("att"), filter.getExpression1());
+        assertTrue(filter.getExpression2() instanceof Literal);
+        assertTrue( ((Literal)filter.getExpression2()).getValue() instanceof Geometry);
+        final Geometry filtergeo = (Geometry) ((Literal)filter.getExpression2()).getValue();
+        assertTrue(baseGeometry.equalsExact(filtergeo)); 
     }
 
-    @Ignore
     @Test
     public void testDisjoint() throws CQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final String cql = "DISJOINT(\"att\" ,POLYGON((10 20, 30 40, 50 60, 10 20)))";
+        final Object obj = CQL.parseFilter(cql);        
+        assertTrue(obj instanceof Disjoint);
+        final Disjoint filter = (Disjoint) obj;
+                
+        assertEquals(FF.property("att"), filter.getExpression1());
+        assertTrue(filter.getExpression2() instanceof Literal);
+        assertTrue( ((Literal)filter.getExpression2()).getValue() instanceof Geometry);
+        final Geometry filtergeo = (Geometry) ((Literal)filter.getExpression2()).getValue();
+        assertTrue(baseGeometry.equalsExact(filtergeo)); 
     }
 
-    @Ignore
     @Test
     public void testDWithin() throws CQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final String cql = "DWITHIN(\"att\" ,POLYGON((10 20, 30 40, 50 60, 10 20)))";
+        final Object obj = CQL.parseFilter(cql);        
+        assertTrue(obj instanceof DWithin);
+        final DWithin filter = (DWithin) obj;
+                
+        assertEquals(FF.property("att"), filter.getExpression1());
+        assertTrue(filter.getExpression2() instanceof Literal);
+        assertTrue( ((Literal)filter.getExpression2()).getValue() instanceof Geometry);
+        final Geometry filtergeo = (Geometry) ((Literal)filter.getExpression2()).getValue();
+        assertTrue(baseGeometry.equalsExact(filtergeo)); 
     }
 
-    @Ignore
     @Test
     public void testEquals() throws CQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final String cql = "EQUALS(\"att\" ,POLYGON((10 20, 30 40, 50 60, 10 20)))";
+        final Object obj = CQL.parseFilter(cql);        
+        assertTrue(obj instanceof Equals);
+        final Equals filter = (Equals) obj;
+                
+        assertEquals(FF.property("att"), filter.getExpression1());
+        assertTrue(filter.getExpression2() instanceof Literal);
+        assertTrue( ((Literal)filter.getExpression2()).getValue() instanceof Geometry);
+        final Geometry filtergeo = (Geometry) ((Literal)filter.getExpression2()).getValue();
+        assertTrue(baseGeometry.equalsExact(filtergeo)); 
     }
 
-    @Ignore
     @Test
     public void testIntersects() throws CQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final String cql = "INTERSECT(\"att\" ,POLYGON((10 20, 30 40, 50 60, 10 20)))";
+        final Object obj = CQL.parseFilter(cql);        
+        assertTrue(obj instanceof Intersects);
+        final Intersects filter = (Intersects) obj;
+                
+        assertEquals(FF.property("att"), filter.getExpression1());
+        assertTrue(filter.getExpression2() instanceof Literal);
+        assertTrue( ((Literal)filter.getExpression2()).getValue() instanceof Geometry);
+        final Geometry filtergeo = (Geometry) ((Literal)filter.getExpression2()).getValue();
+        assertTrue(baseGeometry.equalsExact(filtergeo)); 
     }
 
-    @Ignore
     @Test
     public void testOverlaps() throws CQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final String cql = "OVERLAP(\"att\" ,POLYGON((10 20, 30 40, 50 60, 10 20)))";
+        final Object obj = CQL.parseFilter(cql);        
+        assertTrue(obj instanceof Overlaps);
+        final Overlaps filter = (Overlaps) obj;
+                
+        assertEquals(FF.property("att"), filter.getExpression1());
+        assertTrue(filter.getExpression2() instanceof Literal);
+        assertTrue( ((Literal)filter.getExpression2()).getValue() instanceof Geometry);
+        final Geometry filtergeo = (Geometry) ((Literal)filter.getExpression2()).getValue();
+        assertTrue(baseGeometry.equalsExact(filtergeo)); 
     }
 
-    @Ignore
     @Test
     public void testTouches() throws CQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final String cql = "TOUCH(\"att\" ,POLYGON((10 20, 30 40, 50 60, 10 20)))";
+        final Object obj = CQL.parseFilter(cql);        
+        assertTrue(obj instanceof Touches);
+        final Touches filter = (Touches) obj;
+                
+        assertEquals(FF.property("att"), filter.getExpression1());
+        assertTrue(filter.getExpression2() instanceof Literal);
+        assertTrue( ((Literal)filter.getExpression2()).getValue() instanceof Geometry);
+        final Geometry filtergeo = (Geometry) ((Literal)filter.getExpression2()).getValue();
+        assertTrue(baseGeometry.equalsExact(filtergeo)); 
     }
 
-    @Ignore
     @Test
     public void testWithin() throws CQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final String cql = "WITHIN(\"att\" ,POLYGON((10 20, 30 40, 50 60, 10 20)))";
+        final Object obj = CQL.parseFilter(cql);        
+        assertTrue(obj instanceof Within);
+        final Within filter = (Within) obj;
+                
+        assertEquals(FF.property("att"), filter.getExpression1());
+        assertTrue(filter.getExpression2() instanceof Literal);
+        assertTrue( ((Literal)filter.getExpression2()).getValue() instanceof Geometry);
+        final Geometry filtergeo = (Geometry) ((Literal)filter.getExpression2()).getValue();
+        assertTrue(baseGeometry.equalsExact(filtergeo)); 
     }
         
 }

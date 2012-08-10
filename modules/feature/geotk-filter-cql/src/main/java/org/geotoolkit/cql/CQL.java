@@ -32,11 +32,12 @@ import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.TokenStream;
 import org.antlr.runtime.tree.CommonTree;
 import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.opengis.filter.Filter;
-import org.opengis.filter.FilterFactory;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Expression;
+import org.opengis.filter.expression.PropertyName;
 
 /**
  *
@@ -102,7 +103,9 @@ public final class CQL {
         Expression result = null;
         if(obj instanceof CQLParser.expression_return){
             tree = (CommonTree)((CQLParser.expression_return)obj).tree;
-            result = convertExpression(tree, FactoryFinder.getFilterFactory(null));
+            final FilterFactory2 ff = (FilterFactory2) FactoryFinder
+                    .getFilterFactory(new Hints(Hints.FILTER_FACTORY,FilterFactory2.class));
+            result = convertExpression(tree, ff);
         }
         
         return result;
@@ -122,7 +125,9 @@ public final class CQL {
         Filter result = null;
         if(obj instanceof CQLParser.filter_return){
             tree = (CommonTree)((CQLParser.filter_return)obj).tree;
-            result = convertFilter(tree, FactoryFinder.getFilterFactory(null));
+            final FilterFactory2 ff = (FilterFactory2) FactoryFinder
+                    .getFilterFactory(new Hints(Hints.FILTER_FACTORY,FilterFactory2.class));
+            result = convertFilter(tree, ff);
         }
         
         return result;
@@ -170,7 +175,7 @@ public final class CQL {
     /**
      * Convert the given tree in an Expression.
      */
-    private static Expression convertExpression(CommonTree tree, FilterFactory ff) throws CQLException{
+    private static Expression convertExpression(CommonTree tree, FilterFactory2 ff) throws CQLException{
         
         if(!(tree.token != null && tree.token.getTokenIndex() >= 0)){
             throw new CQLException("Unreconized expression : type="+tree.getType()+" text=" + tree.getText());
@@ -286,7 +291,7 @@ public final class CQL {
     /**
      * Convert the given tree in a Filter.
      */
-    private static Filter convertFilter(CommonTree tree, FilterFactory ff) throws CQLException{
+    private static Filter convertFilter(CommonTree tree, FilterFactory2 ff) throws CQLException{
         
         if(!(tree.token != null && tree.token.getTokenIndex() >= 0)){
             throw new CQLException("Unreconized filter : type="+tree.getType()+" text=" + tree.getText());
@@ -360,6 +365,57 @@ public final class CQL {
         }else if(CQLParser.NOT == type){
             final Filter sub = convertFilter((CommonTree)tree.getChild(0), ff);
             return ff.not(sub);
+        }else if(CQLParser.BBOX == type){
+            final String exp = ((PropertyName)convertExpression((CommonTree)tree.getChild(0), ff)).getPropertyName();
+            final double v1 = Double.valueOf(tree.getChild(1).getText());
+            final double v2 = Double.valueOf(tree.getChild(2).getText());
+            final double v3 = Double.valueOf(tree.getChild(3).getText());
+            final double v4 = Double.valueOf(tree.getChild(4).getText());
+            String crs = null;
+            if(tree.getChildCount()>5){
+                crs = convertExpression((CommonTree)tree.getChild(5), ff).evaluate(null, String.class);
+            }            
+            return ff.bbox(exp, v1,v2,v3,v4,crs);
+        }else if(CQLParser.BEYOND == type){
+            final Expression exp1 = convertExpression((CommonTree)tree.getChild(0), ff);
+            final Expression exp2 = convertExpression((CommonTree)tree.getChild(1), ff);  
+            return ff.beyond(exp1,exp2,0,"");
+        }else if(CQLParser.CONTAINS == type){
+            final Expression exp1 = convertExpression((CommonTree)tree.getChild(0), ff);
+            final Expression exp2 = convertExpression((CommonTree)tree.getChild(1), ff);  
+            return ff.contains(exp1,exp2);
+        }else if(CQLParser.CROSS == type){
+            final Expression exp1 = convertExpression((CommonTree)tree.getChild(0), ff);
+            final Expression exp2 = convertExpression((CommonTree)tree.getChild(1), ff);  
+            return ff.crosses(exp1,exp2);
+        }else if(CQLParser.DISJOINT == type){
+            final Expression exp1 = convertExpression((CommonTree)tree.getChild(0), ff);
+            final Expression exp2 = convertExpression((CommonTree)tree.getChild(1), ff);  
+            return ff.disjoint(exp1,exp2);
+        }else if(CQLParser.DWITHIN == type){
+            final Expression exp1 = convertExpression((CommonTree)tree.getChild(0), ff);
+            final Expression exp2 = convertExpression((CommonTree)tree.getChild(1), ff);  
+            return ff.dwithin(exp1,exp2,0,"");
+        }else if(CQLParser.EQUALS == type){
+            final Expression exp1 = convertExpression((CommonTree)tree.getChild(0), ff);
+            final Expression exp2 = convertExpression((CommonTree)tree.getChild(1), ff);  
+            return ff.equal(exp1,exp2);
+        }else if(CQLParser.INTERSECT == type){
+            final Expression exp1 = convertExpression((CommonTree)tree.getChild(0), ff);
+            final Expression exp2 = convertExpression((CommonTree)tree.getChild(1), ff);  
+            return ff.intersects(exp1,exp2);
+        }else if(CQLParser.OVERLAP == type){
+            final Expression exp1 = convertExpression((CommonTree)tree.getChild(0), ff);
+            final Expression exp2 = convertExpression((CommonTree)tree.getChild(1), ff);  
+            return ff.overlaps(exp1,exp2);
+        }else if(CQLParser.TOUCH == type){
+            final Expression exp1 = convertExpression((CommonTree)tree.getChild(0), ff);
+            final Expression exp2 = convertExpression((CommonTree)tree.getChild(1), ff);  
+            return ff.touches(exp1,exp2);
+        }else if(CQLParser.WITHIN == type){
+            final Expression exp1 = convertExpression((CommonTree)tree.getChild(0), ff);
+            final Expression exp2 = convertExpression((CommonTree)tree.getChild(1), ff);  
+            return ff.within(exp1,exp2);
         }
         
         throw new CQLException("Unreconized filter : type="+tree.getType()+" text=" + tree.getText());

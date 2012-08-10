@@ -62,7 +62,9 @@ import org.opengis.filter.spatial.Touches;
 import org.opengis.filter.spatial.Within;
 
 /**
- *
+ * Visitor to convert a Filter in CQL.<br>
+ * Returned object is a StringBuilder containing the CQL text.
+ * 
  * @author Johann Sorel (Geomatys)
  */
 public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
@@ -245,57 +247,143 @@ public class FilterToCQLVisitor implements FilterVisitor, ExpressionVisitor {
 
     @Override
     public Object visit(final BBOX filter, final Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final StringBuilder sb = toStringBuilder(o);
+        
+        if(filter.getExpression1() instanceof PropertyName 
+           && filter.getExpression2() instanceof Literal){
+            //use writing : BBOX(att,v1,v2,v3,v4)
+            sb.append("BBOX(");
+            sb.append(filter.getPropertyName());
+            sb.append(',');
+            sb.append(filter.getMinX());
+            sb.append(',');
+            sb.append(filter.getMaxX());
+            sb.append(',');
+            sb.append(filter.getMinY());
+            sb.append(',');
+            sb.append(filter.getMaxY());
+            sb.append(')');
+            
+        }else{
+            //use writing BBOX(exp1,exp2)
+            sb.append("BBOX(");
+            filter.getExpression1().accept(this,sb);
+            sb.append(',');
+            filter.getExpression2().accept(this,sb);
+            sb.append(')');            
+        }
+        
+        return sb;
     }
 
     @Override
     public Object visit(final Beyond filter, final Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final StringBuilder sb = toStringBuilder(o);
+        sb.append("BEYOND(");
+        filter.getExpression1().accept(this,sb);
+        sb.append(',');
+        filter.getExpression2().accept(this,sb);
+        sb.append(')');        
+        return sb;
     }
 
     @Override
     public Object visit(final Contains filter, final Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final StringBuilder sb = toStringBuilder(o);
+        sb.append("CONTAINS(");
+        filter.getExpression1().accept(this,sb);
+        sb.append(',');
+        filter.getExpression2().accept(this,sb);
+        sb.append(')');        
+        return sb;
     }
 
     @Override
     public Object visit(final Crosses filter, final Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final StringBuilder sb = toStringBuilder(o);
+        sb.append("CROSS(");
+        filter.getExpression1().accept(this,sb);
+        sb.append(',');
+        filter.getExpression2().accept(this,sb);
+        sb.append(')');        
+        return sb;
     }
 
     @Override
     public Object visit(final Disjoint filter, final Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final StringBuilder sb = toStringBuilder(o);
+        sb.append("DISJOINT(");
+        filter.getExpression1().accept(this,sb);
+        sb.append(',');
+        filter.getExpression2().accept(this,sb);
+        sb.append(')');        
+        return sb;
     }
 
     @Override
     public Object visit(final DWithin filter, final Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final StringBuilder sb = toStringBuilder(o);
+        sb.append("DWITHIN(");
+        filter.getExpression1().accept(this,sb);
+        sb.append(',');
+        filter.getExpression2().accept(this,sb);
+        sb.append(')');        
+        return sb;
     }
 
     @Override
     public Object visit(final Equals filter, final Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final StringBuilder sb = toStringBuilder(o);
+        sb.append("EQUALS(");
+        filter.getExpression1().accept(this,sb);
+        sb.append(',');
+        filter.getExpression2().accept(this,sb);
+        sb.append(')');        
+        return sb;
     }
 
     @Override
     public Object visit(final Intersects filter, final Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final StringBuilder sb = toStringBuilder(o);
+        sb.append("INTERSECT(");
+        filter.getExpression1().accept(this,sb);
+        sb.append(',');
+        filter.getExpression2().accept(this,sb);
+        sb.append(')');        
+        return sb;
     }
 
     @Override
     public Object visit(final Overlaps filter, final Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final StringBuilder sb = toStringBuilder(o);
+        sb.append("OVERLAP(");
+        filter.getExpression1().accept(this,sb);
+        sb.append(',');
+        filter.getExpression2().accept(this,sb);
+        sb.append(')');        
+        return sb;
     }
 
     @Override
     public Object visit(final Touches filter, final Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final StringBuilder sb = toStringBuilder(o);
+        sb.append("TOUCH(");
+        filter.getExpression1().accept(this,sb);
+        sb.append(',');
+        filter.getExpression2().accept(this,sb);
+        sb.append(')');        
+        return sb;
     }
 
     @Override
     public Object visit(final Within filter, final Object o) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final StringBuilder sb = toStringBuilder(o);
+        sb.append("WITHIN(");
+        filter.getExpression1().accept(this,sb);
+        sb.append(',');
+        filter.getExpression2().accept(this,sb);
+        sb.append(')');        
+        return sb;
     }
 
     ////////////////////////////////////////////////////////////////////////////

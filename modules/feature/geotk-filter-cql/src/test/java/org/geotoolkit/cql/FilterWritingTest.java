@@ -16,6 +16,10 @@
  */
 package org.geotoolkit.cql;
 
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LinearRing;
 import java.util.Collections;
 import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
@@ -35,7 +39,17 @@ import org.opengis.filter.Not;
 public class FilterWritingTest {
     
     private final FilterFactory2 FF = new DefaultFilterFactory2();
-    
+    private final GeometryFactory GF = new GeometryFactory();
+    private final Geometry baseGeometry = GF.createPolygon(
+                GF.createLinearRing(
+                    new Coordinate[]{
+                        new Coordinate(10, 20),
+                        new Coordinate(30, 40),
+                        new Coordinate(50, 60),
+                        new Coordinate(10, 20)
+                    }),
+                new LinearRing[0]
+                );
     
     @Test
     public void testExcludeFilter() throws CQLException {
@@ -170,70 +184,92 @@ public class FilterWritingTest {
         assertEquals("att IS NULL", cql);
     }
 
-    @Ignore
     @Test
     public void testBBOX() throws CQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final Filter filter = FF.bbox(FF.property("att"), 10,20,30,40, null);
+        final String cql = CQL.write(filter);
+        assertNotNull(cql);
+        assertEquals("BBOX(att,10.0,30.0,20.0,40.0)", cql);
     }
 
-    @Ignore
     @Test
     public void testBeyond() throws CQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final Filter filter = FF.beyond(FF.property("att"), FF.literal(baseGeometry), 0, "");
+        final String cql = CQL.write(filter);
+        assertNotNull(cql);
+        assertEquals("BEYOND(att,POLYGON ((10 20, 30 40, 50 60, 10 20)))", cql);
     }
 
-    @Ignore
     @Test
     public void testContains() throws CQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final Filter filter = FF.contains(FF.property("att"), FF.literal(baseGeometry));
+        final String cql = CQL.write(filter);
+        assertNotNull(cql);
+        assertEquals("CONTAINS(att,POLYGON ((10 20, 30 40, 50 60, 10 20)))", cql);
     }
 
-    @Ignore
     @Test
     public void testCrosses() throws CQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final Filter filter = FF.crosses(FF.property("att"), FF.literal(baseGeometry));
+        final String cql = CQL.write(filter);
+        assertNotNull(cql);
+        assertEquals("CROSS(att,POLYGON ((10 20, 30 40, 50 60, 10 20)))", cql);
     }
 
-    @Ignore
     @Test
     public void testDisjoint() throws CQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final Filter filter = FF.disjoint(FF.property("att"), FF.literal(baseGeometry));
+        final String cql = CQL.write(filter);
+        assertNotNull(cql);
+        assertEquals("DISJOINT(att,POLYGON ((10 20, 30 40, 50 60, 10 20)))", cql);
     }
 
-    @Ignore
     @Test
     public void testDWithin() throws CQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final Filter filter = FF.dwithin(FF.property("att"), FF.literal(baseGeometry), 0, "");
+        final String cql = CQL.write(filter);
+        assertNotNull(cql);
+        assertEquals("DWITHIN(att,POLYGON ((10 20, 30 40, 50 60, 10 20)))", cql);
     }
 
-    @Ignore
     @Test
     public void testEquals() throws CQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final Filter filter = FF.equal(FF.property("att"), FF.literal(baseGeometry));
+        final String cql = CQL.write(filter);
+        assertNotNull(cql);
+        assertEquals("EQUALS(att,POLYGON ((10 20, 30 40, 50 60, 10 20)))", cql);
     }
 
-    @Ignore
     @Test
     public void testIntersects() throws CQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final Filter filter = FF.intersects(FF.property("att"), FF.literal(baseGeometry));
+        final String cql = CQL.write(filter);
+        assertNotNull(cql);
+        assertEquals("INTERSECT(att,POLYGON ((10 20, 30 40, 50 60, 10 20)))", cql);
     }
 
-    @Ignore
     @Test
     public void testOverlaps() throws CQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final Filter filter = FF.overlaps(FF.property("att"), FF.literal(baseGeometry));
+        final String cql = CQL.write(filter);
+        assertNotNull(cql);
+        assertEquals("OVERLAP(att,POLYGON ((10 20, 30 40, 50 60, 10 20)))", cql);
     }
 
-    @Ignore
     @Test
     public void testTouches() throws CQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final Filter filter = FF.touches(FF.property("att"), FF.literal(baseGeometry));
+        final String cql = CQL.write(filter);
+        assertNotNull(cql);
+        assertEquals("TOUCH(att,POLYGON ((10 20, 30 40, 50 60, 10 20)))", cql);
     }
 
-    @Ignore
     @Test
     public void testWithin() throws CQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final Filter filter = FF.within(FF.property("att"), FF.literal(baseGeometry));
+        final String cql = CQL.write(filter);
+        assertNotNull(cql);
+        assertEquals("WITHIN(att,POLYGON ((10 20, 30 40, 50 60, 10 20)))", cql);
     }
     
 }

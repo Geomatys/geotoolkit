@@ -76,14 +76,8 @@ tokens{
 
 // GLOBAL STUFF ---------------------------------------
 
-SEPARATOR 	: ',' ;
-
-WS  :   ( ' '
-        | '\t'
-        | '\r'
-        | '\n'
-        ) {$channel=HIDDEN;}
-    ;
+COMMA 	: ',' ;
+WS  :   ( ' ' | '\t' | '\r'| '\n' ) {$channel=HIDDEN;} ;
     
 // caseinsensitive , possible alternative solution ?
 fragment A: ('a'|'A');
@@ -112,14 +106,14 @@ fragment W: ('w'|'W');
 fragment X: ('x'|'X');
 fragment Y: ('y'|'Y');
 fragment Z: ('z'|'Z');
+
+LPAREN : '(';
+RPAREN : ')';
     
 
 //LITERALS  ----------------------------------------------
 
-TEXT
-    :   '\'' ( ESC_SEQ | ~('\\'|'\'') )* '\''
-    ;
-    
+TEXT :   '\'' ( ESC_SEQ | ~('\\'|'\'') )* '\'' ;    
 INT : '0'..'9'+ ;
 
 FLOAT
@@ -142,33 +136,46 @@ COMPARE
 	| UNDER	
 	| LIKE
 	;
-fragment EQUALABOVE: '>=' ;
-fragment EQUALUNDER: '<=' ;
-fragment NOTEQUAL	: '<>' ;
-fragment EQUAL	: '=' ;
-fragment ABOVE	: '>' ;
-fragment UNDER	: '<' ;
-fragment LIKE       	: L I K E;
+fragment EQUALABOVE : '>=' ;
+fragment EQUALUNDER : '<=' ;
+fragment NOTEQUAL   : '<>' ;
+fragment EQUAL      : '=' ;
+fragment ABOVE      : '>' ;
+fragment UNDER      : '<' ;
+fragment LIKE       : L I K E;
 	
-ISNULL        	: I S ' ' N U L L;
-BETWEEN     	: B E T W E E N;
-IN     	: I N;
+ISNULL  : I S ' ' N U L L;
+BETWEEN : B E T W E E N;
+IN      : I N;
 
 
 
 // LOGIC ----------------------------------------------
-AND 	: A N D;
-OR 	: O R ;
-NOT 	: N O T ;
+AND : A N D;
+OR  : O R ;
+NOT : N O T ;
 
-// GEOMETRIC TYPES ------------------------------------
-POINT		: P O I N T ;
-LINESTRING		: L I N E S T R I N G ;
-POLYGON		: P O L Y G O N ;
-MPOINT		: M U L T I P O I N T ;
-MLINESTRING	: M U L T I L I N E S T R I N G ;
-MPOLYGON		: M U L T I P O L Y G O N ;
-GEOMETRYCOLLECTION	: G E O M E T R Y C O L L E C T I O N ;
+// GEOMETRIC TYPES AND FILTERS ------------------------
+POINT               : P O I N T ;
+LINESTRING          : L I N E S T R I N G ;
+POLYGON             : P O L Y G O N ;
+MPOINT              : M U L T I P O I N T ;
+MLINESTRING         : M U L T I L I N E S T R I N G ;
+MPOLYGON            : M U L T I P O L Y G O N ;
+GEOMETRYCOLLECTION  : G E O M E T R Y C O L L E C T I O N ;
+
+BBOX        : B B O X ;
+BEYOND      : B E Y O N D ;
+CONTAINS    : C O N T A I N S ;
+CROSS       : C R O S S ;
+DISJOINT    : D I S J O I N T ;
+DWITHIN     : D W I T H I N ;
+EQUALS      : E Q U A L S ;
+INTERSECT   : I N T E R S E C T ;
+OVERLAP     : O V E R L A P ;
+TOUCH       : T O U C H ;
+WITHIN      : W I T H I N ;
+
 
 
 // PROPERTY NAME -------------------------------------
@@ -178,11 +185,8 @@ NAME   	: (~( ' ' | '\t' | '\r' | '\n' | '(' | ')' | '"' | ','))+    ;
 
 // FRAGMENT -------------------------------------------
 
-fragment
-EXPONENT : ('e'|'E') ('+'|'-')? ('0'..'9')+ ;
-
-fragment
-HEX_DIGIT : ('0'..'9'|'a'..'f'|'A'..'F') ;
+fragment EXPONENT : ('e'|'E') ('+'|'-')? ('0'..'9')+ ;
+fragment HEX_DIGIT : ('0'..'9'|'a'..'f'|'A'..'F') ;
 
 fragment
 ESC_SEQ
@@ -216,7 +220,7 @@ expression
 	| expression_function
 	| expression_simple
 	;
-expression_function 	: NAME^ '(' ((expression ( SEPARATOR!  expression)*)?) ')' ;
+expression_function 	: NAME^ LPAREN ((expression ( COMMA!  expression)*)?) RPAREN ;
 expression_operation	: expression_simple (OPERATOR^ expression_operation)* ;
 expression_simple	: PROPERTY_NAME | NAME |  expression_literal;
 expression_literal	: TEXT | INT | FLOAT;
@@ -226,26 +230,39 @@ expression_geometry
 	| POLYGON^ coordinate_series
 	| MPOINT^ coordinate_serie
 	| MLINESTRING^  coordinate_series
-	| MPOLYGON^ '('! coordinate_series (SEPARATOR! coordinate_series)* ')'! 
+	| MPOLYGON^ LPAREN! coordinate_series (COMMA! coordinate_series)* RPAREN! 
 	;	
 
     	
-filter          	: filter_and | filter_not;
+filter          : filter_and | filter_not | filter_geometry;
 filter_not 	: NOT^ filter ;
 filter_and 	: filter_or (AND^ filter)* ;
 filter_or 	: filter_cb (OR^ filter)* ;
 filter_cb 	: expression  
 	(
-		| COMPARE^  expression
-		| IN^ '('! (expression (','! expression )* )?  ')'!
-		| BETWEEN^ expression AND! expression
-		| LIKE^ expression
-		| ISNULL^
+                | COMPARE^  expression
+                | IN^ LPAREN! (expression (','! expression )* )?  RPAREN!
+                | BETWEEN^ expression AND! expression
+                | LIKE^ expression
+                | ISNULL^
 	);
+filter_geometry
+        : BBOX^ LPAREN! (PROPERTY_NAME|TEXT) COMMA! (INT|FLOAT) COMMA! (INT|FLOAT) COMMA! (INT|FLOAT) COMMA! (INT|FLOAT) COMMA! TEXT? RPAREN!
+        | BEYOND^ LPAREN! expression COMMA! expression RPAREN!
+        | CONTAINS^ LPAREN! expression COMMA! expression RPAREN!
+        | CROSS^ LPAREN! expression COMMA! expression RPAREN!
+        | DISJOINT^ LPAREN! expression COMMA! expression RPAREN!
+        | DWITHIN^ LPAREN! expression COMMA! expression RPAREN!
+        | EQUALS^ LPAREN! expression COMMA! expression RPAREN!
+        | INTERSECT^ LPAREN! expression COMMA! expression RPAREN!
+        | OVERLAP^ LPAREN! expression COMMA! expression RPAREN!
+        | TOUCH^ LPAREN! expression COMMA! expression RPAREN!
+        | WITHIN^ LPAREN! expression COMMA! expression RPAREN!
+        ;
 
-coordinate : (FLOAT|INT)  (FLOAT|INT) ;
-coordinate_serie : '(' coordinate (SEPARATOR coordinate)*  ')' -> ^(COORDS coordinate+) ;
-coordinate_series : '(' coordinate_serie (SEPARATOR coordinate_serie)* ')' -> ^(SERIE coordinate_serie+) ;
+coordinate          : (FLOAT|INT)  (FLOAT|INT) ;
+coordinate_serie    : LPAREN coordinate (COMMA coordinate)*  RPAREN -> ^(COORDS coordinate+) ;
+coordinate_series   : LPAREN coordinate_serie (COMMA coordinate_serie)* RPAREN -> ^(SERIE coordinate_serie+) ;
 
 	
 
