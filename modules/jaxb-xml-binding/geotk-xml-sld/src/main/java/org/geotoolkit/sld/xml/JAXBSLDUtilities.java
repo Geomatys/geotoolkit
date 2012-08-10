@@ -90,7 +90,7 @@ public class JAXBSLDUtilities {
 
                 final String factoryClassName = sc.getName()+"ObjectFactory";
                 try {
-                    classes.add(Class.forName(factoryClassName));
+                    classes.add(sc.getClassLoader().loadClass(factoryClassName));
                 } catch (ClassNotFoundException ex) {
                     throw new RuntimeException("Could not load Extension symbolizer object factory : "+factoryClassName,ex);
                 }
