@@ -34,9 +34,9 @@ import org.opengis.filter.Filter;
 
 /**
  * <p>Java class for AbstractAdhocQueryExpressionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="AbstractAdhocQueryExpressionType">
  *   &lt;complexContent>
@@ -52,8 +52,8 @@ import org.opengis.filter.Filter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractAdhocQueryExpressionType", propOrder = {
@@ -81,6 +81,26 @@ public abstract class AbstractAdhocQueryExpressionType extends AbstractQueryExpr
 
     }
 
+
+    public AbstractAdhocQueryExpressionType(final AbstractAdhocQueryExpressionType that) {
+        if (that != null) {
+            if (that.aliases != null) {
+                this.aliases = new ArrayList<String>(that.aliases);
+            }
+            if (that.typeNames != null) {
+                this.typeNames = new ArrayList<QName>(that.typeNames);
+            }
+            if (that.abstractProjectionClause != null) {
+                this.abstractProjectionClause = new ArrayList<JAXBElement<?>>();
+                for (JAXBElement<?> prjClause : that.abstractProjectionClause) {
+                    final Object value = prjClause.getValue();
+                    throw new UnsupportedOperationException("not supported yet"); //TODO
+                }
+            }
+        }
+        throw new UnsupportedOperationException("not supported yet"); //TODO
+    }
+
     public AbstractAdhocQueryExpressionType(final FilterType filter, final List<QName> typeName) {
         this.typeNames = typeName;
         if (filter != null) {
@@ -90,13 +110,13 @@ public abstract class AbstractAdhocQueryExpressionType extends AbstractQueryExpr
     }
     /**
      * Gets the value of the abstractProjectionClause property.
-     * 
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link Object }{@code >}
      * {@link JAXBElement }{@code <}{@link PropertyName }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<?>> getAbstractProjectionClause() {
         if (abstractProjectionClause == null) {
@@ -104,7 +124,7 @@ public abstract class AbstractAdhocQueryExpressionType extends AbstractQueryExpr
         }
         return this.abstractProjectionClause;
     }
-    
+
     public List<Object> getPropertyNames() {
         final List<Object> propertyNames = new ArrayList<Object>();
         if (abstractProjectionClause != null) {
@@ -114,20 +134,20 @@ public abstract class AbstractAdhocQueryExpressionType extends AbstractQueryExpr
         }
         return propertyNames;
     }
-    
+
     /**
      * Gets the value of the abstractSelectionClause property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link Object }{@code >}
      *     {@link JAXBElement }{@code <}{@link FilterType }{@code >}
-     *     
+     *
      */
     public JAXBElement<?> getAbstractSelectionClause() {
         return abstractSelectionClause;
     }
-    
+
     public Filter getFilter() {
         if (abstractSelectionClause != null && abstractSelectionClause.getValue() instanceof Filter) {
             return (Filter) abstractSelectionClause.getValue();
@@ -137,12 +157,12 @@ public abstract class AbstractAdhocQueryExpressionType extends AbstractQueryExpr
 
     /**
      * Sets the value of the abstractSelectionClause property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link Object }{@code >}
      *     {@link JAXBElement }{@code <}{@link FilterType }{@code >}
-     *     
+     *
      */
     public void setAbstractSelectionClause(JAXBElement<?> value) {
         this.abstractSelectionClause = ((JAXBElement<?> ) value);
@@ -150,12 +170,12 @@ public abstract class AbstractAdhocQueryExpressionType extends AbstractQueryExpr
 
     /**
      * Gets the value of the abstractSortingClause property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link SortByType }{@code >}
      *     {@link JAXBElement }{@code <}{@link Object }{@code >}
-     *     
+     *
      */
     public JAXBElement<?> getAbstractSortingClause() {
         return abstractSortingClause;
@@ -167,7 +187,7 @@ public abstract class AbstractAdhocQueryExpressionType extends AbstractQueryExpr
         }
         return null;
     }
-    
+
     public final void setSortBy(final SortByType sb) {
         if (sb != null) {
             final ObjectFactory factory = new ObjectFactory();
@@ -175,15 +195,15 @@ public abstract class AbstractAdhocQueryExpressionType extends AbstractQueryExpr
         }
     }
 
-    
+
     /**
      * Sets the value of the abstractSortingClause property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link SortByType }{@code >}
      *     {@link JAXBElement }{@code <}{@link Object }{@code >}
-     *     
+     *
      */
     public void setAbstractSortingClause(JAXBElement<?> value) {
         this.abstractSortingClause = ((JAXBElement<?> ) value);
@@ -191,11 +211,11 @@ public abstract class AbstractAdhocQueryExpressionType extends AbstractQueryExpr
 
     /**
      * Gets the value of the typeNames property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link QName }
-     * 
-     * 
+     *
+     *
      */
     public List<QName> getTypeNames() {
         if (typeNames == null) {
@@ -206,11 +226,11 @@ public abstract class AbstractAdhocQueryExpressionType extends AbstractQueryExpr
 
     /**
      * Gets the value of the aliases property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public List<String> getAliases() {
         if (aliases == null) {
@@ -238,7 +258,7 @@ public abstract class AbstractAdhocQueryExpressionType extends AbstractQueryExpr
             } else {
                 return false;
             }
-            
+
             final boolean sorting;
             if (this.abstractSortingClause == null && that.abstractSortingClause == null) {
                 sorting = true;
@@ -247,7 +267,7 @@ public abstract class AbstractAdhocQueryExpressionType extends AbstractQueryExpr
             } else {
                 return false;
             }
-            
+
             boolean projection;
             if (this.abstractProjectionClause == null && that.abstractProjectionClause == null) {
                 projection = true;
@@ -265,10 +285,10 @@ public abstract class AbstractAdhocQueryExpressionType extends AbstractQueryExpr
             } else {
                 return false;
             }
-            
+
             return projection &&
-                   selection && 
-                   sorting && 
+                   selection &&
+                   sorting &&
                    Utilities.equals(this.typeNames, that.typeNames) &&
                    Utilities.equals(this.aliases, that.aliases);
         }
@@ -286,7 +306,7 @@ public abstract class AbstractAdhocQueryExpressionType extends AbstractQueryExpr
         return hash;
     }
 
-   
+
 
     @Override
     public String toString() {

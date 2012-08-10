@@ -29,9 +29,9 @@ import org.geotoolkit.util.Utilities;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;simpleContent>
@@ -41,8 +41,8 @@ import org.geotoolkit.util.Utilities;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -57,37 +57,45 @@ public class Abstract implements org.geotoolkit.wfs.xml.Abstract {
     private String lang;
 
     public Abstract() {
-        
+
     }
-    
+
+    public Abstract(final org.geotoolkit.wfs.xml.Abstract that) {
+        if (that != null) {
+            this.value = that.getValue();
+            this.lang  = that.getLang();
+        }
+    }
+
     public Abstract(final String value) {
         this.value = value;
     }
-    
+
     public Abstract(final String value, final String lang) {
         this.value = value;
         this.lang  = lang;
     }
-    
+
     /**
      * Gets the value of the value property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
+    @Override
     public String getValue() {
         return value;
     }
 
     /**
      * Sets the value of the value property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setValue(String value) {
         this.value = value;
@@ -95,12 +103,13 @@ public class Abstract implements org.geotoolkit.wfs.xml.Abstract {
 
     /**
      * Gets the value of the lang property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
+    @Override
     public String getLang() {
         if (lang == null) {
             return "en";
@@ -111,11 +120,11 @@ public class Abstract implements org.geotoolkit.wfs.xml.Abstract {
 
     /**
      * Sets the value of the lang property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLang(String value) {
         this.lang = value;
@@ -146,7 +155,7 @@ public class Abstract implements org.geotoolkit.wfs.xml.Abstract {
         return hash;
     }
 
-   
+
 
     @Override
     public String toString() {

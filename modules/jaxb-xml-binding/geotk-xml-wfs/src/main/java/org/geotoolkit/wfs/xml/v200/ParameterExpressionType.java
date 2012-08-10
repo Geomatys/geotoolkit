@@ -26,15 +26,16 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
+import org.geotoolkit.ows.xml.AbstractMetadata;
 import org.geotoolkit.ows.xml.v110.MetadataType;
 import org.geotoolkit.util.Utilities;
-
+import org.geotoolkit.wfs.xml.ParameterExpression;
 
 /**
  * <p>Java class for ParameterExpressionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ParameterExpressionType">
  *   &lt;complexContent>
@@ -50,8 +51,8 @@ import org.geotoolkit.util.Utilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ParameterExpressionType", propOrder = {
@@ -59,7 +60,7 @@ import org.geotoolkit.util.Utilities;
     "_abstract",
     "metadata"
 })
-public class ParameterExpressionType implements org.geotoolkit.wfs.xml.ParameterExpression {
+public class ParameterExpressionType implements ParameterExpression {
 
     @XmlElement(name = "Title")
     private List<Title> title;
@@ -73,7 +74,32 @@ public class ParameterExpressionType implements org.geotoolkit.wfs.xml.Parameter
     private QName type;
 
     public ParameterExpressionType() {
-        
+
+    }
+
+    public ParameterExpressionType(final ParameterExpression that) {
+        if (that != null) {
+            if (that.getAbstract() != null) {
+                this._abstract = new ArrayList<Abstract>();
+                for (org.geotoolkit.wfs.xml.Abstract a : that.getAbstract()) {
+                    this._abstract.add(new Abstract(a));
+                }
+            }
+            if (that.getMetadata() != null) {
+                this.metadata = new ArrayList<MetadataType>();
+                for (AbstractMetadata m : that.getMetadata()) {
+                    this.metadata.add(new MetadataType(m));
+                }
+            }
+            this.name = that.getName();
+            if (that.getTitle() != null) {
+                this.title = new ArrayList<Title>();
+                for (org.geotoolkit.wfs.xml.Title  m : that.getTitle()) {
+                    this.title.add(new Title(m));
+                }
+            }
+            this.type = that.getType();
+        }
     }
 
     public ParameterExpressionType(final String name, final String title, final String _abstract, final QName type) {
@@ -88,10 +114,10 @@ public class ParameterExpressionType implements org.geotoolkit.wfs.xml.Parameter
             this._abstract.add(new Abstract(_abstract));
         }
     }
-    
+
     /**
      * Gets the value of the title property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link Title }
      */
@@ -104,10 +130,11 @@ public class ParameterExpressionType implements org.geotoolkit.wfs.xml.Parameter
 
     /**
      * Gets the value of the abstract property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link Abstract }
      */
+    @Override
     public List<Abstract> getAbstract() {
         if (_abstract == null) {
             _abstract = new ArrayList<Abstract>();
@@ -117,10 +144,11 @@ public class ParameterExpressionType implements org.geotoolkit.wfs.xml.Parameter
 
     /**
      * Gets the value of the metadata property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link MetadataType }
      */
+    @Override
     public List<MetadataType> getMetadata() {
         if (metadata == null) {
             metadata = new ArrayList<MetadataType>();
@@ -130,23 +158,24 @@ public class ParameterExpressionType implements org.geotoolkit.wfs.xml.Parameter
 
     /**
      * Gets the value of the name property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
+    @Override
     public String getName() {
         return name;
     }
 
     /**
      * Sets the value of the name property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setName(String value) {
         this.name = value;
@@ -154,11 +183,11 @@ public class ParameterExpressionType implements org.geotoolkit.wfs.xml.Parameter
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link QName }
-     *     
+     *
      */
     public QName getType() {
         return type;
@@ -166,11 +195,11 @@ public class ParameterExpressionType implements org.geotoolkit.wfs.xml.Parameter
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link QName }
-     *     
+     *
      */
     public void setType(QName value) {
         this.type = value;

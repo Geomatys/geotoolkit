@@ -16,10 +16,24 @@
  */
 package org.geotoolkit.wfs.xml;
 
+import java.util.List;
+import javax.xml.namespace.QName;
+import org.geotoolkit.ows.xml.AbstractMetadata;
+import org.geotoolkit.wfs.xml.Title;
+
 /**
  *
  * @author Guilhem Legal
  */
 public interface ParameterExpression {
-    
+
+    String getName();
+
+    List<? extends Title> getTitle();
+
+    List<? extends Abstract> getAbstract();
+
+    List<? extends AbstractMetadata> getMetadata();
+
+    QName getType();
 }

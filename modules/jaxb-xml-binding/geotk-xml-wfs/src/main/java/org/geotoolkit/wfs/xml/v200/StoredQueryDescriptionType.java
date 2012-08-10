@@ -26,16 +26,19 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.AbstractMetadata;
 import org.geotoolkit.ows.xml.v110.MetadataType;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.wfs.xml.ParameterExpression;
+import org.geotoolkit.wfs.xml.QueryExpressionText;
 import org.geotoolkit.wfs.xml.StoredQueryDescription;
 
 
 /**
  * <p>Java class for StoredQueryDescriptionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="StoredQueryDescriptionType">
  *   &lt;complexContent>
@@ -52,8 +55,8 @@ import org.geotoolkit.wfs.xml.StoredQueryDescription;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "StoredQueryDescriptionType", propOrder = {
@@ -80,13 +83,45 @@ public class StoredQueryDescriptionType implements StoredQueryDescription {
     private String id;
 
     public StoredQueryDescriptionType() {
-        
+
     }
-    
+
     public StoredQueryDescriptionType(final StoredQueryDescription that) {
-        throw new UnsupportedOperationException("TODO not implemented yet");
+        if (that != null) {
+            if (that.getAbstract() != null) {
+                this._abstract = new ArrayList<Abstract>();
+                for (org.geotoolkit.wfs.xml.Abstract a : that.getAbstract()) {
+                    this._abstract.add(new Abstract(a));
+                }
+            }
+            this.id = that.getId();
+            if (that.getMetadata() != null) {
+                this.metadata = new ArrayList<MetadataType>();
+                for (AbstractMetadata m : that.getMetadata()) {
+                    this.metadata.add(new MetadataType(m));
+                }
+            }
+            if (that.getParameter() != null) {
+                this.parameter = new ArrayList<ParameterExpressionType>();
+                for (ParameterExpression m : that.getParameter()) {
+                    this.parameter.add(new ParameterExpressionType(m));
+                }
+            }
+            if (that.getQueryExpressionText() != null) {
+                this.queryExpressionText = new ArrayList<QueryExpressionTextType>();
+                for (QueryExpressionText m : that.getQueryExpressionText()) {
+                    this.queryExpressionText.add(new QueryExpressionTextType(m));
+                }
+            }
+            if (that.getTitle() != null) {
+                this.title = new ArrayList<Title>();
+                for (org.geotoolkit.wfs.xml.Title t : that.getTitle()) {
+                    this.title.add(new Title(t));
+                }
+            }
+        }
     }
-    
+
     public StoredQueryDescriptionType(final String id, final String title, final String _abstract, final ParameterExpressionType parameter,
             final QueryExpressionTextType queryExpressionText) {
         this.id = id;
@@ -107,10 +142,10 @@ public class StoredQueryDescriptionType implements StoredQueryDescription {
             this.queryExpressionText.add(queryExpressionText);
         }
     }
-    
+
     /**
      * Gets the value of the title property.
-     * 
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Title }
@@ -124,7 +159,7 @@ public class StoredQueryDescriptionType implements StoredQueryDescription {
 
     /**
      * Gets the value of the abstract property.
-     * 
+     *
      * {@link Abstract }
      */
     public List<Abstract> getAbstract() {
@@ -136,7 +171,7 @@ public class StoredQueryDescriptionType implements StoredQueryDescription {
 
     /**
      * Gets the value of the metadata property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link MetadataType }
      */
@@ -149,7 +184,7 @@ public class StoredQueryDescriptionType implements StoredQueryDescription {
 
     /**
      * Gets the value of the parameter property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link ParameterExpressionType }
      */
@@ -174,11 +209,11 @@ public class StoredQueryDescriptionType implements StoredQueryDescription {
 
     /**
      * Gets the value of the id property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getId() {
         return id;
@@ -186,16 +221,16 @@ public class StoredQueryDescriptionType implements StoredQueryDescription {
 
     /**
      * Sets the value of the id property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setId(String value) {
         this.id = value;
     }
-    
+
     /**
      * Verify if this entry is identical to specified object.
      */

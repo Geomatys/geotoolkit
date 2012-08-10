@@ -30,14 +30,15 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.wfs.xml.QueryExpressionText;
 import org.w3c.dom.Element;
 
 
 /**
  * <p>Java class for QueryExpressionTextType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="QueryExpressionTextType">
  *   &lt;complexContent>
@@ -53,8 +54,8 @@ import org.w3c.dom.Element;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "QueryExpressionTextType", propOrder = {
@@ -74,9 +75,9 @@ public class QueryExpressionTextType implements org.geotoolkit.wfs.xml.QueryExpr
     private Boolean isPrivate;
 
     public QueryExpressionTextType() {
-        
+
     }
-    
+
     public QueryExpressionTextType(final String language, final QueryType query, final List<QName> returnFeatureTypes) {
         this.language = language;
         this.returnFeatureTypes = returnFeatureTypes;
@@ -85,19 +86,40 @@ public class QueryExpressionTextType implements org.geotoolkit.wfs.xml.QueryExpr
             this.content.add(query);
         }
     }
-    
+
+    public QueryExpressionTextType(final QueryExpressionText that) {
+        if (that != null) {
+            this.language = that.getLanguage();
+            if (that.getReturnFeatureTypes() != null) {
+                this.returnFeatureTypes = new ArrayList<QName>(that.getReturnFeatureTypes());
+            }
+            this.isPrivate = that.isIsPrivate();
+            if (that.getContent() != null) {
+                this.content = new ArrayList<Object>();
+                for (Object obj : that.getContent()) {
+                    // only can duplicate queryType
+                    if (obj instanceof QueryType) {
+                        this.content.add(new QueryType((QueryType)obj));
+                    } else {
+                        throw new IllegalArgumentException("Unable to clone the object:" + obj.getClass().getName());
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * Gets the value of the content property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link Element }
      * {@link String }
-     * 
+     *
      */
     public List<Object> getContent() {
         if (content == null) {
             content = new ArrayList<Object>();
-            
+
         // remove the empty String
         } else {
             final List<Object> toRemove = new ArrayList<Object>();
@@ -128,11 +150,11 @@ public class QueryExpressionTextType implements org.geotoolkit.wfs.xml.QueryExpr
 
     /**
      * Gets the value of the language property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLanguage() {
         return language;
@@ -140,11 +162,11 @@ public class QueryExpressionTextType implements org.geotoolkit.wfs.xml.QueryExpr
 
     /**
      * Sets the value of the language property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLanguage(String value) {
         this.language = value;
@@ -152,11 +174,11 @@ public class QueryExpressionTextType implements org.geotoolkit.wfs.xml.QueryExpr
 
     /**
      * Gets the value of the isPrivate property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public boolean isIsPrivate() {
         if (isPrivate == null) {
@@ -168,11 +190,11 @@ public class QueryExpressionTextType implements org.geotoolkit.wfs.xml.QueryExpr
 
     /**
      * Sets the value of the isPrivate property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setIsPrivate(Boolean value) {
         this.isPrivate = value;

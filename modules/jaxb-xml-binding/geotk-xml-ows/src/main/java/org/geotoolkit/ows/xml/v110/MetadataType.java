@@ -32,11 +32,11 @@ import org.geotoolkit.util.Utilities;
  * Either at least one of the attributes in xlink:simpleLink or a substitute for the AbstractMetaData element shall be included, but not both.
  * An Implementation Specification can restrict the contents of this element to always be a reference or always contain metadata.
  * (Informative: This element was adapted from the metaDataProperty element in GML 3.0.)
- * 
+ *
  * <p>Java class for MetadataType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="MetadataType">
  *   &lt;complexContent>
@@ -50,7 +50,7 @@ import org.geotoolkit.util.Utilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  * @author Guilhem Legal
  * @module pending
  */
@@ -86,26 +86,26 @@ public class MetadataType implements AbstractMetadata {
     public MetadataType() {
 
     }
-    
-    public MetadataType(final MetadataType that) {
+
+    public MetadataType(final AbstractMetadata that) {
         if (that != null) {
-            this.href    = that.href;
-            this.type    = that.type;
-            this.actuate = that.actuate;
-            this.arcrole = that.arcrole;
-            this.role    = that.role;
-            this.show    = that.show;
-            this.title   = that.title;
-            this.about   = that.about;
+            this.href    = that.getHref();
+            this.type    = that.getType();
+            this.actuate = that.getActuate();
+            this.arcrole = that.getArcrole();
+            this.role    = that.getRole();
+            this.show    = that.getShow();
+            this.title   = that.getTitle();
+            this.about   = that.getAbout();
             // can not clone this attribute
-            this.abstractMetaData = that.abstractMetaData;
+            this.abstractMetaData = that.getAbstractMetaData();
         }
     }
 
     public MetadataType(final String href) {
         this.href = href;
     }
-    
+
     /**
      * Gets the value of the abstractMetaData property.
      */
@@ -147,7 +147,7 @@ public class MetadataType implements AbstractMetadata {
 
     /**
      * Gets the value of the arcrole property.
-     * 
+     *
      */
     public String getArcrole() {
         return arcrole;
@@ -155,7 +155,7 @@ public class MetadataType implements AbstractMetadata {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      */
     public String getTitle() {
         return title;
@@ -163,7 +163,7 @@ public class MetadataType implements AbstractMetadata {
 
    /**
     * Gets the value of the show property.
-    * 
+    *
     */
     public String getShow() {
         return show;
@@ -237,7 +237,7 @@ public class MetadataType implements AbstractMetadata {
             s.append("title=").append(title).append('\n');
         if (type != null)
             s.append("type=").append(type).append('\n');
-        
+
         return s.toString();
     }
 }

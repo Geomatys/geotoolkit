@@ -37,9 +37,9 @@ import org.geotoolkit.wfs.xml.Query;
 
 /**
  * <p>Java class for QueryType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="QueryType">
  *   &lt;complexContent>
@@ -50,8 +50,8 @@ import org.geotoolkit.wfs.xml.Query;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "QueryType")
@@ -68,12 +68,20 @@ public class QueryType extends AbstractAdhocQueryExpressionType implements Query
 
     }
 
+    public QueryType(final QueryType that) {
+        super(that);
+        if (that != null) {
+            this.featureVersion = that.featureVersion;
+            this.srsName        = that.srsName;
+        }
+    }
+
     public QueryType(final FilterType filter, final List<QName> typeName, final String featureVersion) {
         super(filter, typeName);
         this.featureVersion = featureVersion;
     }
-    
-    public QueryType(final FilterType filter, final List<QName> typeName, final String featureVersion, final String srsName, 
+
+    public QueryType(final FilterType filter, final List<QName> typeName, final String featureVersion, final String srsName,
             final SortByType sort, final List<String> propertyNames) {
         super(filter, typeName);
         this.featureVersion = featureVersion;
@@ -81,7 +89,7 @@ public class QueryType extends AbstractAdhocQueryExpressionType implements Query
         setSortBy(sort);
         setPropertyNames(propertyNames);
     }
-    
+
     public final void setPropertyNames(final List<String> properties) {
         if (properties != null) {
             if (this.abstractProjectionClause == null) {
@@ -95,11 +103,11 @@ public class QueryType extends AbstractAdhocQueryExpressionType implements Query
     }
     /**
      * Gets the value of the srsName property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     @Override
     public String getSrsName() {
@@ -108,11 +116,11 @@ public class QueryType extends AbstractAdhocQueryExpressionType implements Query
 
     /**
      * Sets the value of the srsName property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setSrsName(String value) {
         this.srsName = value;
@@ -120,11 +128,11 @@ public class QueryType extends AbstractAdhocQueryExpressionType implements Query
 
     /**
      * Gets the value of the featureVersion property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getFeatureVersion() {
         return featureVersion;
@@ -132,11 +140,11 @@ public class QueryType extends AbstractAdhocQueryExpressionType implements Query
 
     /**
      * Sets the value of the featureVersion property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setFeatureVersion(String value) {
         this.featureVersion = value;
@@ -167,7 +175,7 @@ public class QueryType extends AbstractAdhocQueryExpressionType implements Query
         return hash;
     }
 
-   
+
 
     @Override
     public String toString() {

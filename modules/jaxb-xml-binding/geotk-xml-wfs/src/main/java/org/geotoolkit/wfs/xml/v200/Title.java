@@ -29,9 +29,9 @@ import org.geotoolkit.util.Utilities;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;simpleContent>
@@ -41,8 +41,8 @@ import org.geotoolkit.util.Utilities;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -57,25 +57,32 @@ public class Title implements org.geotoolkit.wfs.xml.Title {
     private String lang;
 
     public Title() {
-        
+
     }
-    
+
+    public Title(final org.geotoolkit.wfs.xml.Title that) {
+        if (that != null) {
+            this.value = that.getValue();
+            this.lang  = that.getLang();
+        }
+    }
+
     public Title(final String value) {
         this.value = value;
     }
-    
+
     public Title(final String value,final String lang) {
         this.value = value;
         this.lang  = lang;
     }
-    
+
     /**
      * Gets the value of the value property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getValue() {
         return value;
@@ -83,11 +90,11 @@ public class Title implements org.geotoolkit.wfs.xml.Title {
 
     /**
      * Sets the value of the value property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setValue(String value) {
         this.value = value;
@@ -95,11 +102,11 @@ public class Title implements org.geotoolkit.wfs.xml.Title {
 
     /**
      * Gets the value of the lang property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLang() {
         if (lang == null) {
@@ -111,11 +118,11 @@ public class Title implements org.geotoolkit.wfs.xml.Title {
 
     /**
      * Sets the value of the lang property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLang(String value) {
         this.lang = value;
@@ -146,7 +153,7 @@ public class Title implements org.geotoolkit.wfs.xml.Title {
         return hash;
     }
 
-   
+
 
     @Override
     public String toString() {

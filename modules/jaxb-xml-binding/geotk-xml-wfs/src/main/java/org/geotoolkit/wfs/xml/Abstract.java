@@ -21,5 +21,8 @@ package org.geotoolkit.wfs.xml;
  * @author Guilhem Legal
  */
 public interface Abstract {
-    
+
+    String getValue();
+
+    String getLang();
 }
