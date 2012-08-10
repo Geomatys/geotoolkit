@@ -32,6 +32,7 @@ import com.vividsolutions.jts.geom.Polygon;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.ParseException;
@@ -87,8 +88,13 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import static org.junit.Assert.*;
 import static org.geotoolkit.data.AbstractDataStore.*;
 import org.geotoolkit.data.AbstractFeatureCollection;
+import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.xml.jaxp.ElementFeatureWriter;
 import org.geotoolkit.util.FileUtilities;
+import org.opengis.feature.ComplexAttribute;
+import org.opengis.feature.Feature;
+import org.opengis.feature.Property;
+import org.opengis.feature.type.ComplexType;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
@@ -101,19 +107,23 @@ public class XmlFeatureTest {
 
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
 
-    private final SimpleFeatureType simpleTypeBasic;
-    private final SimpleFeatureType simpleTypeFull;
-    private final SimpleFeature simpleFeatureFull;
-    private final SimpleFeature simpleFeature1;
-    private final SimpleFeature simpleFeature2;
-    private final SimpleFeature simpleFeature3;
-    private FeatureCollection collectionSimple;
+    private static SimpleFeatureType simpleTypeBasic;
+    private static SimpleFeatureType simpleTypeFull;
+    private static SimpleFeature simpleFeatureFull;
+    private static SimpleFeature simpleFeature1;
+    private static SimpleFeature simpleFeature2;
+    private static SimpleFeature simpleFeature3;
+    private static FeatureCollection collectionSimple;
+    private static Feature complexFeature;
 
-    private final FeatureType multiGeomType;
+    private static FeatureType multiGeomType;
+
+    private static FeatureType complexType;
 
     private static String EPSG_VERSION;
 
-    public XmlFeatureTest() throws NoSuchAuthorityCodeException, FactoryException, ParseException {
+    @BeforeClass
+    public static void setUpClass() throws Exception {
 
 
         final CoordinateReferenceSystem crs = CRS.decode("EPSG:4326");
@@ -169,6 +179,31 @@ public class XmlFeatureTest {
         ftb.add(new DefaultName(GML_NAMESPACE,"attString"),            String.class);
         ftb.add(new DefaultName(GML_NAMESPACE,"attDouble"),            Double.class);
         simpleTypeBasic = ftb.buildSimpleFeatureType();
+
+
+        ftb.reset();
+        ftb.setName(GML_NAMESPACE,"Address");
+        ftb.add(new DefaultName(GML_NAMESPACE,"streetName"),           String.class,            1,1,true,null);
+        ftb.add(new DefaultName(GML_NAMESPACE,"streetNumber"),         String.class,            1,1,true,null);
+        ftb.add(new DefaultName(GML_NAMESPACE,"city"),                 String.class,            1,1,true,null);
+        ftb.add(new DefaultName(GML_NAMESPACE,"province"),             String.class,            0,1,true,null);
+        ftb.add(new DefaultName(GML_NAMESPACE,"postalCode"),           String.class,            1,1,true,null);
+        ftb.add(new DefaultName(GML_NAMESPACE,"country"),              String.class,            0,1,true,null);
+        final ComplexType adress = ftb.buildType();
+
+        ftb.reset();
+        ftb.setName(GML_NAMESPACE,"Person");
+        ftb.add(new DefaultName(GML_NAMESPACE,"insuranceNumber"),      Integer.class,           1,1,true,null);
+        ftb.add(new DefaultName(GML_NAMESPACE,"lastName"),             String.class,            1,1,true,null);
+        ftb.add(new DefaultName(GML_NAMESPACE,"firstName"),            String.class,            1,1,true,null);
+        ftb.add(new DefaultName(GML_NAMESPACE,"age"),                  Integer.class,           0,1,true,null);
+        ftb.add(new DefaultName(GML_NAMESPACE,"sex"),                  Double.class,            1,1,true,null);
+        //ftb.add(new DefaultName(GML_NAMESPACE,"spouse"),               Person.class,            0,1,true,null);
+        ftb.add(new DefaultName(GML_NAMESPACE,"location"),             Point.class,             0,1,true,null);
+        ftb.add(adress, new DefaultName(GML_NAMESPACE,"mailAddress"),  null,                    0,1,true,null);
+        ftb.add(new DefaultName(GML_NAMESPACE,"phone"),                String.class,            0,Integer.MAX_VALUE,true,null);
+
+        complexType = ftb.buildFeatureType();
 
 
         final GeometryFactory GF = new GeometryFactory();
@@ -242,18 +277,48 @@ public class XmlFeatureTest {
         collectionSimple.add(simpleFeature1);
         collectionSimple.add(simpleFeature2);
         collectionSimple.add(simpleFeature3);
-        try {
-            collectionSimple = collectionSimple.subCollection(
+        collectionSimple = collectionSimple.subCollection(
                     QueryBuilder.sorted(collectionSimple.getFeatureType().getName(), FF.sort("attDouble", SortOrder.ASCENDING)));
-            ((AbstractFeatureCollection)collectionSimple).setId("one of a kind ID");
-        } catch (DataStoreException ex) {
-            Logger.getLogger(XmlFeatureTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+                    ((AbstractFeatureCollection)collectionSimple).setId("one of a kind ID");
 
-    }
 
-    @BeforeClass
-    public static void setUpClass() throws Exception {
+        complexFeature = FeatureUtilities.defaultFeature(complexType, "id-0");
+        complexFeature.getProperty("insuranceNumber").setValue(new Integer(345678345));
+        complexFeature.getProperty("lastName").setValue("Smith");
+        complexFeature.getProperty("firstName").setValue("John");
+
+        final Property age = FeatureUtilities.defaultProperty(complexType.getDescriptor("age"));
+        age.setValue(new Integer(35));
+        complexFeature.getProperties().add(age);
+        complexFeature.getProperty("sex").setValue("male");
+
+        final Property location = FeatureUtilities.defaultProperty(complexType.getDescriptor("location"));
+        location.setValue(GF.createPoint(new Coordinate(10, 10)));
+        complexFeature.getProperties().add(location);
+
+        final ComplexAttribute address = (ComplexAttribute) FeatureUtilities.defaultProperty(
+                complexType.getDescriptor("mailAddress"));
+        address.getProperty("streetName").setValue("Main");
+        address.getProperty("streetNumber").setValue("10");
+        address.getProperty("city").setValue("SomeTown");
+        final Property province = FeatureUtilities.defaultProperty(adress.getDescriptor("province"));
+        province.setValue("Ontario");
+        address.getProperties().add(province);
+        address.getProperty("postalCode").setValue("M1R1K9");
+        final Property country = FeatureUtilities.defaultProperty(adress.getDescriptor("country"));
+        country.setValue("Canada");
+        address.getProperties().add(country);
+
+        complexFeature.getProperties().add(address);
+
+        final Property phone = FeatureUtilities.defaultProperty(complexType.getDescriptor("phone"));
+        phone.setValue("4161234567");
+        complexFeature.getProperties().add(phone);
+
+        final Property phone2 = FeatureUtilities.defaultProperty(complexType.getDescriptor("phone"));
+        phone2.setValue("4168901234");
+        complexFeature.getProperties().add(phone2);
+
         EPSG_VERSION = CRS.getVersion("EPSG").toString();
     }
 
@@ -550,6 +615,21 @@ public class XmlFeatureTest {
 
 
         String expResult = FileUtilities.getStringFromStream(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/CollectionSimple.xml"));
+        expResult = expResult.replace("EPSG_VERSION", EPSG_VERSION);
+        DomCompare.compare(expResult, temp);
+    }
+
+    @Test
+    public void testWriteComplexFeature() throws JAXBException, IOException, XMLStreamException,
+            DataStoreException, ParserConfigurationException, SAXException{
+        final File temp = File.createTempFile("gml", ".xml");
+        temp.deleteOnExit();
+        final XmlFeatureWriter writer = new JAXPStreamFeatureWriter();
+        final StringWriter sw = new StringWriter();
+        writer.write(complexFeature, temp);
+        writer.dispose();
+
+        String expResult = FileUtilities.getStringFromStream(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/ComplexFeature.xml"));
         expResult = expResult.replace("EPSG_VERSION", EPSG_VERSION);
         DomCompare.compare(expResult, temp);
     }

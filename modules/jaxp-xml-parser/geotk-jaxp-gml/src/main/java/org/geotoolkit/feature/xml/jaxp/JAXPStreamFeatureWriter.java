@@ -19,7 +19,6 @@ package org.geotoolkit.feature.xml.jaxp;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
@@ -32,6 +31,7 @@ import javax.xml.stream.XMLStreamWriter;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
+import org.geotoolkit.feature.DefaultAttribute;
 import org.geotoolkit.feature.xml.Utils;
 import org.geotoolkit.feature.xml.XmlFeatureWriter;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
@@ -45,16 +45,20 @@ import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.xml.MarshallerPool;
 import org.geotoolkit.xml.Namespaces;
 import org.geotoolkit.xml.StaxStreamWriter;
+import org.opengis.feature.ComplexAttribute;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
+import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryType;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.feature.type.PropertyType;
+import org.opengis.filter.identity.Identifier;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.Geometry;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 
 
@@ -157,17 +161,20 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
      * @param root
      * @throws XMLStreamException
      */
-    private void writeFeature(final Feature feature, final boolean root) throws XMLStreamException {
+    private void writeFeature(final ComplexAttribute feature, final boolean root) throws XMLStreamException {
 
         //the root element of the xml document (type of the feature)
-        final FeatureType type = feature.getType();
-        final Name typeName = type.getName();
+        final ComplexType type = feature.getType();
+        final Name typeName    = type.getName();
         final String namespace = typeName.getNamespaceURI();
         final String localPart = typeName.getLocalPart();
+        final Identifier featureId = feature.getIdentifier();
         if (namespace != null) {
             final Prefix prefix = getPrefix(namespace);
             writer.writeStartElement(prefix.prefix, localPart, namespace);
-            writer.writeAttribute("gml", gmlNamespace, "id", feature.getIdentifier().getID());
+            if (featureId != null) {
+                writer.writeAttribute("gml", gmlNamespace, "id", (String)featureId.getID());
+            }
             if (prefix.unknow && !root) {
                 writer.writeNamespace(prefix.prefix, namespace);
             }
@@ -179,7 +186,9 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
             }
         } else {
             writer.writeStartElement(localPart);
-            writer.writeAttribute("gml", gmlNamespace, "id", feature.getIdentifier().getID());
+            if (featureId != null) {
+                writer.writeAttribute("gml", gmlNamespace, "id", (String)featureId.getID());
+            }
         }
 
         //write properties in the type order
@@ -191,7 +200,17 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                 final Name nameA = a.getName();
                 final String nameProperty = nameA.getLocalPart();
                 String namespaceProperty = nameA.getNamespaceURI();
-                if (valueA instanceof Collection && !(typeA instanceof GeometryType)) {
+
+                if (a instanceof ComplexAttribute) {
+                    if (namespaceProperty != null) {
+                        writer.writeStartElement(namespaceProperty, nameProperty);
+                    } else {
+                        writer.writeStartElement(nameProperty);
+                    }
+                    writeFeature((ComplexAttribute)a, false);
+                    writer.writeEndElement();
+
+                } else if (valueA instanceof Collection && !(typeA instanceof GeometryType)) {
                     for (Object value : (Collection)valueA) {
                         if (namespaceProperty != null) {
                             writer.writeStartElement(namespaceProperty, nameProperty);
@@ -246,16 +265,17 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                         } else {
                             writer.writeStartElement(nameProperty);
                         }
+                        final CoordinateReferenceSystem crs = ((GeometryType)typeA).getCoordinateReferenceSystem();
                         final JAXBElement element;
                         final MarshallerPool POOL;
                         if ("3.1.1".equals(gmlVersion)) {
-                            final Geometry isoGeometry = JTSUtils.toISO((com.vividsolutions.jts.geom.Geometry) valueA, type.getCoordinateReferenceSystem());
+                            final Geometry isoGeometry = JTSUtils.toISO((com.vividsolutions.jts.geom.Geometry) valueA, crs);
                             element = OBJECT_FACTORY.buildAnyGeometry(isoGeometry);
                             POOL = GML_31_POOL;
                         } else if ("3.2.1".equals(gmlVersion)) {
                             AbstractGeometry gmlGeometry = null;
                             try {
-                                gmlGeometry = JTStoGeometry.toGML(gmlVersion, (com.vividsolutions.jts.geom.Geometry) valueA,  type.getCoordinateReferenceSystem());
+                                gmlGeometry = JTStoGeometry.toGML(gmlVersion, (com.vividsolutions.jts.geom.Geometry) valueA,  crs);
                             } catch (FactoryException ex) {
                                 LOGGER.log(Level.WARNING, "Factory exception when transforming JTS geometry to GML binding", ex);
                             }
