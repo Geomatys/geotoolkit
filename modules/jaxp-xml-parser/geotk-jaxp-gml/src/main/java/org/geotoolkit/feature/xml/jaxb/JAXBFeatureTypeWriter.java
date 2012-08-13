@@ -40,6 +40,7 @@ import org.geotoolkit.xsd.xml.v2001.ExplicitGroup;
 import org.geotoolkit.xsd.xml.v2001.ExtensionType;
 import org.geotoolkit.xsd.xml.v2001.FormChoice;
 import org.geotoolkit.xsd.xml.v2001.Import;
+import org.geotoolkit.xsd.xml.v2001.LocalElement;
 import org.geotoolkit.xsd.xml.v2001.Schema;
 import org.geotoolkit.xsd.xml.v2001.TopLevelComplexType;
 import org.geotoolkit.xsd.xml.v2001.TopLevelElement;
@@ -244,7 +245,7 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable implements XmlFe
         } else {
             maxOcc = Integer.toString(maxOccurs);
         }
-        sequence.addElement(new TopLevelElement(name, type, minOccurs, maxOcc, nillable));
+        sequence.addElement(new LocalElement(name, type, minOccurs, maxOcc, nillable));
 
         // for a complexType we have to add 2 complexType (PropertyType and type)
         if (pType instanceof ComplexType) {

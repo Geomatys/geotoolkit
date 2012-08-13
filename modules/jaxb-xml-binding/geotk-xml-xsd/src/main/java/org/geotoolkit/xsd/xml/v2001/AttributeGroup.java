@@ -29,13 +29,14 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.namespace.QName;
+import org.geotoolkit.util.Utilities;
 
 
 /**
  * <p>Java class for attributeGroup complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="attributeGroup">
  *   &lt;complexContent>
@@ -46,8 +47,8 @@ import javax.xml.namespace.QName;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -76,26 +77,12 @@ public abstract class AttributeGroup extends Annotated {
 
     /**
      * Gets the value of the attributeOrAttributeGroup property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the attributeOrAttributeGroup property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getAttributeOrAttributeGroup().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link Attribute }
      * {@link AttributeGroupRef }
-     * 
-     * 
+     *
+     *
      */
     public List<Annotated> getAttributeOrAttributeGroup() {
         if (attributeOrAttributeGroup == null) {
@@ -106,11 +93,11 @@ public abstract class AttributeGroup extends Annotated {
 
     /**
      * Gets the value of the anyAttribute property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Wildcard }
-     *     
+     *
      */
     public Wildcard getAnyAttribute() {
         return anyAttribute;
@@ -118,11 +105,11 @@ public abstract class AttributeGroup extends Annotated {
 
     /**
      * Sets the value of the anyAttribute property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Wildcard }
-     *     
+     *
      */
     public void setAnyAttribute(final Wildcard value) {
         this.anyAttribute = value;
@@ -130,11 +117,11 @@ public abstract class AttributeGroup extends Annotated {
 
     /**
      * Gets the value of the name property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getName() {
         return name;
@@ -142,11 +129,11 @@ public abstract class AttributeGroup extends Annotated {
 
     /**
      * Sets the value of the name property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setName(final String value) {
         this.name = value;
@@ -154,11 +141,11 @@ public abstract class AttributeGroup extends Annotated {
 
     /**
      * Gets the value of the ref property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link QName }
-     *     
+     *
      */
     public QName getRef() {
         return ref;
@@ -166,14 +153,63 @@ public abstract class AttributeGroup extends Annotated {
 
     /**
      * Sets the value of the ref property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link QName }
-     *     
+     *
      */
     public void setRef(final QName value) {
         this.ref = value;
     }
 
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof AttributeGroup && super.equals(object)) {
+            final AttributeGroup that = (AttributeGroup) object;
+            return Utilities.equals(this.anyAttribute,              that.anyAttribute) &&
+                   Utilities.equals(this.attributeOrAttributeGroup, that.attributeOrAttributeGroup) &&
+                   Utilities.equals(this.name,                      that.name) &&
+                   Utilities.equals(this.ref,                       that.ref);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 53 * hash + super.hashCode();
+        hash = 53 * hash + (this.anyAttribute != null ? this.anyAttribute.hashCode() : 0);
+        hash = 53 * hash + (this.attributeOrAttributeGroup != null ? this.attributeOrAttributeGroup.hashCode() : 0);
+        hash = 53 * hash + (this.name != null ? this.name.hashCode() : 0);
+        hash = 53 * hash + (this.ref != null ? this.ref.hashCode() : 0);
+        return hash;
+    }
+
+
+
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString()).append('\n');
+        if (name != null) {
+            sb.append("name:").append(name).append('\n');
+        }
+        if (anyAttribute != null) {
+            sb.append("anyAttribute:").append(anyAttribute).append('\n');
+        }
+        if (attributeOrAttributeGroup != null) {
+            sb.append("attributeOrAttributeGroup:").append(attributeOrAttributeGroup).append('\n');
+        }
+        if (ref != null) {
+            sb.append("ref:").append(ref).append('\n');
+        }
+        return  sb.toString();
+    }
 }

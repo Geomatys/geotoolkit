@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -378,24 +379,6 @@ public abstract class ComplexType extends Annotated {
     /**
      * Gets the value of the final property.
      *
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the final property.
-     *
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getFinal().add(newItem);
-     * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
-     *
-     *
      */
     public List<String> getFinal() {
         if (_final == null) {
@@ -407,24 +390,6 @@ public abstract class ComplexType extends Annotated {
     /**
      * Gets the value of the block property.
      *
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the block property.
-     *
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getBlock().add(newItem);
-     * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
-     *
-     *
      */
     public List<String> getBlock() {
         if (block == null) {
@@ -433,4 +398,97 @@ public abstract class ComplexType extends Annotated {
         return this.block;
     }
 
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof ComplexType && super.equals(object)) {
+            final ComplexType that = (ComplexType) object;
+            return Utilities.equals(this._abstract,                 that._abstract) &&
+                   Utilities.equals(this._final,                    that._final) &&
+                   Utilities.equals(this.all,                       that.all) &&
+                   Utilities.equals(this.anyAttribute,              that.anyAttribute) &&
+                   Utilities.equals(this.attributeOrAttributeGroup, that.attributeOrAttributeGroup) &&
+                   Utilities.equals(this.block,                     that.block) &&
+                   Utilities.equals(this.choice,                    that.choice) &&
+                   Utilities.equals(this.complexContent,            that.complexContent) &&
+                   Utilities.equals(this.group,                     that.group) &&
+                   Utilities.equals(this.mixed,                     that.mixed) &&
+                   Utilities.equals(this.name,                      that.name) &&
+                   Utilities.equals(this.sequence,                  that.sequence) &&
+                   Utilities.equals(this.simpleContent,             that.simpleContent);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 37 * hash + super.hashCode();
+        hash = 37 * hash + (this.simpleContent != null ? this.simpleContent.hashCode() : 0);
+        hash = 37 * hash + (this.complexContent != null ? this.complexContent.hashCode() : 0);
+        hash = 37 * hash + (this.group != null ? this.group.hashCode() : 0);
+        hash = 37 * hash + (this.all != null ? this.all.hashCode() : 0);
+        hash = 37 * hash + (this.choice != null ? this.choice.hashCode() : 0);
+        hash = 37 * hash + (this.sequence != null ? this.sequence.hashCode() : 0);
+        hash = 37 * hash + (this.attributeOrAttributeGroup != null ? this.attributeOrAttributeGroup.hashCode() : 0);
+        hash = 37 * hash + (this.anyAttribute != null ? this.anyAttribute.hashCode() : 0);
+        hash = 37 * hash + (this.name != null ? this.name.hashCode() : 0);
+        hash = 37 * hash + (this.mixed != null ? this.mixed.hashCode() : 0);
+        hash = 37 * hash + (this._abstract != null ? this._abstract.hashCode() : 0);
+        hash = 37 * hash + (this._final != null ? this._final.hashCode() : 0);
+        hash = 37 * hash + (this.block != null ? this.block.hashCode() : 0);
+        return hash;
+    }
+
+
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString()).append('\n');
+        if (name != null) {
+            sb.append("name:").append(name).append('\n');
+        }
+        if (_abstract != null) {
+            sb.append("_abstract:").append(_abstract).append('\n');
+        }
+        if (all != null) {
+            sb.append("all:").append(all).append('\n');
+        }
+        if (anyAttribute != null) {
+            sb.append("anyAttribute:").append(anyAttribute).append('\n');
+        }
+        if (attributeOrAttributeGroup != null) {
+            sb.append("attributeOrAttributeGroup:").append(attributeOrAttributeGroup).append('\n');
+        }
+        if (block != null) {
+            sb.append("block:").append(block).append('\n');
+        }
+        if (choice != null) {
+            sb.append("choice:").append(choice).append('\n');
+        }
+        if (complexContent != null) {
+            sb.append("complexContent:").append(complexContent).append('\n');
+        }
+        if (group != null) {
+            sb.append("group:").append(group).append('\n');
+        }
+        if (mixed != null) {
+            sb.append("mixed:").append(mixed).append('\n');
+        }
+        if (sequence != null) {
+            sb.append("sequence:").append(sequence).append('\n');
+        }
+        if (simpleContent != null) {
+            sb.append("simpleContent:").append(simpleContent).append('\n');
+        }
+        if (_final != null) {
+            sb.append("_final:").append(_final).append('\n');
+        }
+        return  sb.toString();
+    }
 }

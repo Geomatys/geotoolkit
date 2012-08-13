@@ -29,13 +29,14 @@ import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
+import org.geotoolkit.util.Utilities;
 
 
 /**
  * <p>Java class for restrictionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="restrictionType">
  *   &lt;complexContent>
@@ -52,8 +53,8 @@ import javax.xml.namespace.QName;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -71,9 +72,7 @@ import javax.xml.namespace.QName;
     ComplexRestrictionType.class,
     SimpleRestrictionType.class
 })
-public class RestrictionType
-    extends Annotated
-{
+public class RestrictionType extends Annotated {
 
     private GroupRef group;
     private All all;
@@ -106,11 +105,11 @@ public class RestrictionType
 
     /**
      * Gets the value of the group property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link GroupRef }
-     *     
+     *
      */
     public GroupRef getGroup() {
         return group;
@@ -118,11 +117,11 @@ public class RestrictionType
 
     /**
      * Sets the value of the group property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link GroupRef }
-     *     
+     *
      */
     public void setGroup(final GroupRef value) {
         this.group = value;
@@ -130,11 +129,11 @@ public class RestrictionType
 
     /**
      * Gets the value of the all property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link All }
-     *     
+     *
      */
     public All getAll() {
         return all;
@@ -142,11 +141,11 @@ public class RestrictionType
 
     /**
      * Sets the value of the all property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link All }
-     *     
+     *
      */
     public void setAll(final All value) {
         this.all = value;
@@ -154,11 +153,11 @@ public class RestrictionType
 
     /**
      * Gets the value of the choice property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ExplicitGroup }
-     *     
+     *
      */
     public ExplicitGroup getChoice() {
         return choice;
@@ -166,11 +165,11 @@ public class RestrictionType
 
     /**
      * Sets the value of the choice property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ExplicitGroup }
-     *     
+     *
      */
     public void setChoice(final ExplicitGroup value) {
         this.choice = value;
@@ -178,11 +177,11 @@ public class RestrictionType
 
     /**
      * Gets the value of the sequence property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ExplicitGroup }
-     *     
+     *
      */
     public ExplicitGroup getSequence() {
         return sequence;
@@ -190,11 +189,11 @@ public class RestrictionType
 
     /**
      * Sets the value of the sequence property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ExplicitGroup }
-     *     
+     *
      */
     public void setSequence(final ExplicitGroup value) {
         this.sequence = value;
@@ -202,11 +201,11 @@ public class RestrictionType
 
     /**
      * Gets the value of the simpleType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LocalSimpleType }
-     *     
+     *
      */
     public LocalSimpleType getSimpleType() {
         return simpleType;
@@ -214,11 +213,11 @@ public class RestrictionType
 
     /**
      * Sets the value of the simpleType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LocalSimpleType }
-     *     
+     *
      */
     public void setSimpleType(final LocalSimpleType value) {
         this.simpleType = value;
@@ -226,20 +225,20 @@ public class RestrictionType
 
     /**
      * Gets the value of the facets property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the facets property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getFacets().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link Facet }{@code >}
@@ -254,8 +253,8 @@ public class RestrictionType
      * {@link JAXBElement }{@code <}{@link Facet }{@code >}
      * {@link JAXBElement }{@code <}{@link Facet }{@code >}
      * {@link JAXBElement }{@code <}{@link NumFacet }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getFacets() {
         if (facets == null) {
@@ -266,26 +265,26 @@ public class RestrictionType
 
     /**
      * Gets the value of the attributeOrAttributeGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the attributeOrAttributeGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getAttributeOrAttributeGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Attribute }
      * {@link AttributeGroupRef }
-     * 
-     * 
+     *
+     *
      */
     public List<Annotated> getAttributeOrAttributeGroup() {
         if (attributeOrAttributeGroup == null) {
@@ -296,11 +295,11 @@ public class RestrictionType
 
     /**
      * Gets the value of the anyAttribute property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Wildcard }
-     *     
+     *
      */
     public Wildcard getAnyAttribute() {
         return anyAttribute;
@@ -308,11 +307,11 @@ public class RestrictionType
 
     /**
      * Sets the value of the anyAttribute property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Wildcard }
-     *     
+     *
      */
     public void setAnyAttribute(final Wildcard value) {
         this.anyAttribute = value;
@@ -320,11 +319,11 @@ public class RestrictionType
 
     /**
      * Gets the value of the base property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link QName }
-     *     
+     *
      */
     public QName getBase() {
         return base;
@@ -332,14 +331,88 @@ public class RestrictionType
 
     /**
      * Sets the value of the base property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link QName }
-     *     
+     *
      */
     public void setBase(final QName value) {
         this.base = value;
     }
 
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof RestrictionType && super.equals(object)) {
+            final RestrictionType that = (RestrictionType) object;
+                   return
+                   Utilities.equals(this.all,                       that.all) &&
+                   Utilities.equals(this.anyAttribute,              that.anyAttribute) &&
+                   Utilities.equals(this.attributeOrAttributeGroup, that.attributeOrAttributeGroup) &&
+                   Utilities.equals(this.base,                      that.base) &&
+                   Utilities.equals(this.choice,                    that.choice) &&
+                   Utilities.equals(this.facets,                    that.facets) &&
+                   Utilities.equals(this.group,                     that.group) &&
+                   Utilities.equals(this.simpleType,                that.simpleType) &&
+                   Utilities.equals(this.sequence,                  that.sequence);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 37 * hash + super.hashCode();
+        hash = 37 * hash + (this.base != null ? this.base.hashCode() : 0);
+        hash = 37 * hash + (this.facets != null ? this.facets.hashCode() : 0);
+        hash = 37 * hash + (this.group != null ? this.group.hashCode() : 0);
+        hash = 37 * hash + (this.all != null ? this.all.hashCode() : 0);
+        hash = 37 * hash + (this.choice != null ? this.choice.hashCode() : 0);
+        hash = 37 * hash + (this.sequence != null ? this.sequence.hashCode() : 0);
+        hash = 37 * hash + (this.attributeOrAttributeGroup != null ? this.attributeOrAttributeGroup.hashCode() : 0);
+        hash = 37 * hash + (this.anyAttribute != null ? this.anyAttribute.hashCode() : 0);
+        hash = 37 * hash + (this.simpleType != null ? this.simpleType.hashCode() : 0);
+        return hash;
+    }
+
+
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString()).append('\n');
+        if (base != null) {
+            sb.append("base:").append(base).append('\n');
+        }
+        if (facets != null) {
+            sb.append("facets:").append(facets).append('\n');
+        }
+        if (all != null) {
+            sb.append("all:").append(all).append('\n');
+        }
+        if (anyAttribute != null) {
+            sb.append("anyAttribute:").append(anyAttribute).append('\n');
+        }
+        if (attributeOrAttributeGroup != null) {
+            sb.append("attributeOrAttributeGroup:").append(attributeOrAttributeGroup).append('\n');
+        }
+        if (simpleType != null) {
+            sb.append("simpleType:").append(simpleType).append('\n');
+        }
+        if (choice != null) {
+            sb.append("choice:").append(choice).append('\n');
+        }
+        if (group != null) {
+            sb.append("group:").append(group).append('\n');
+        }
+        if (sequence != null) {
+            sb.append("sequence:").append(sequence).append('\n');
+        }
+        return  sb.toString();
+    }
 }

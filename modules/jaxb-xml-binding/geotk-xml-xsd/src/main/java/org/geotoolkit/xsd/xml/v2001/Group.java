@@ -30,17 +30,18 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.namespace.QName;
+import org.geotoolkit.util.Utilities;
 
 
 /**
- * 
+ *
  *    group type for explicit groups, named top-level groups and
  *    group references
- * 
+ *
  * <p>Java class for group complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="group">
  *   &lt;complexContent>
@@ -52,8 +53,8 @@ import javax.xml.namespace.QName;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -92,7 +93,7 @@ public abstract class Group extends Annotated {
 
     /**
      * Gets the value of the particle property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link Any }
      * {@link JAXBElement }{@code <}{@link ExplicitGroup }{@code >}
@@ -100,8 +101,8 @@ public abstract class Group extends Annotated {
      * {@link JAXBElement }{@code <}{@link All }{@code >}
      * {@link JAXBElement }{@code <}{@link LocalElement }{@code >}
      * {@link JAXBElement }{@code <}{@link ExplicitGroup }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getParticle() {
         if (particle == null) {
@@ -125,20 +126,24 @@ public abstract class Group extends Annotated {
         return result;
     }
 
-    public void addElement(final TopLevelElement element) {
+    public void addElement(final Element element) {
         if (particle == null) {
             particle = new ArrayList<Object>();
         }
-        particle.add(FACTORY.createElement(element));
+        if (element instanceof TopLevelElement) {
+            particle.add(FACTORY.createElement((TopLevelElement)element));
+        } else if (element instanceof LocalElement) {
+            particle.add(FACTORY.createGroupElement((LocalElement)element));
+        }
     }
 
     /**
      * Gets the value of the name property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getName() {
         return name;
@@ -146,11 +151,11 @@ public abstract class Group extends Annotated {
 
     /**
      * Sets the value of the name property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setName(final String value) {
         this.name = value;
@@ -158,11 +163,11 @@ public abstract class Group extends Annotated {
 
     /**
      * Gets the value of the ref property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link QName }
-     *     
+     *
      */
     public QName getRef() {
         return ref;
@@ -170,11 +175,11 @@ public abstract class Group extends Annotated {
 
     /**
      * Sets the value of the ref property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link QName }
-     *     
+     *
      */
     public void setRef(final QName value) {
         this.ref = value;
@@ -182,11 +187,11 @@ public abstract class Group extends Annotated {
 
     /**
      * Gets the value of the minOccurs property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public Integer getMinOccurs() {
         if (minOccurs == null) {
@@ -198,11 +203,11 @@ public abstract class Group extends Annotated {
 
     /**
      * Sets the value of the minOccurs property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public void setMinOccurs(final Integer value) {
         this.minOccurs = value;
@@ -210,11 +215,11 @@ public abstract class Group extends Annotated {
 
     /**
      * Gets the value of the maxOccurs property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getMaxOccurs() {
         if (maxOccurs == null) {
@@ -226,14 +231,96 @@ public abstract class Group extends Annotated {
 
     /**
      * Sets the value of the maxOccurs property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setMaxOccurs(final String value) {
         this.maxOccurs = value;
     }
 
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof Group && super.equals(object)) {
+            final Group that = (Group) object;
+            boolean part = false;
+            if (this.particle != null && that.particle != null) {
+                if (this.particle.size() == that.particle.size()) {
+                    part = true;
+                    for (int i = 0; i < this.particle.size(); i++) {
+                        Object o1 = this.particle.get(i);
+                        Object o2 = that.particle.get(i);
+                        if (o1 instanceof JAXBElement) {
+                            o1 = ((JAXBElement)o1).getValue();
+                        }
+                        if (o2 instanceof JAXBElement) {
+                            o2 = ((JAXBElement)o2).getValue();
+                        }
+                        if (!Utilities.equals(o1, o2)) {
+                            part = false;
+                            break;
+                        }
+                    }
+                }
+            } else if (this.particle == null && that.particle == null) {
+                part = true;
+            }
+            return Utilities.equals(this.maxOccurs,                 that.maxOccurs) &&
+                   Utilities.equals(this.minOccurs,                 that.minOccurs) &&
+                   Utilities.equals(this.name,                      that.name) &&
+                   Utilities.equals(this.ref,                       that.ref) &&
+                   part;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 37 * hash + super.hashCode();
+        hash = 37 * hash + (this.minOccurs != null ? this.minOccurs.hashCode() : 0);
+        hash = 37 * hash + (this.maxOccurs != null ? this.maxOccurs.hashCode() : 0);
+        hash = 37 * hash + (this.ref != null ? this.ref.hashCode() : 0);
+        hash = 37 * hash + (this.name != null ? this.name.hashCode() : 0);
+        hash = 37 * hash + (this.particle != null ? this.particle.hashCode() : 0);
+        return hash;
+    }
+
+
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString()).append('\n');
+        if (name != null) {
+            sb.append("name:").append(name).append('\n');
+        }
+        if (maxOccurs != null) {
+            sb.append("maxOccurs:").append(maxOccurs).append('\n');
+        }
+        if (minOccurs != null) {
+            sb.append("minOccurs:").append(minOccurs).append('\n');
+        }
+        if (ref != null) {
+            sb.append("ref:").append(ref).append('\n');
+        }
+        if (particle != null) {
+            sb.append("particle:\n");
+            for (Object obj : particle) {
+                if (obj instanceof JAXBElement) {
+                    obj = ((JAXBElement)obj).getValue();
+                    sb.append("JB:");
+                }
+                sb.append(obj).append('\n');
+            }
+        }
+        return  sb.toString();
+    }
 }
