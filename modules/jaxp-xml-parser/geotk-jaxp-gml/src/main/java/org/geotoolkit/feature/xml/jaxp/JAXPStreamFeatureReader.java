@@ -66,6 +66,8 @@ import static javax.xml.stream.events.XMLEvent.*;
 import org.geotoolkit.gml.GeometrytoJTS;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.GMLMarshallerPool;
+import org.opengis.feature.ComplexAttribute;
+import org.opengis.feature.type.ComplexType;
 import org.opengis.util.FactoryException;
 
 
@@ -80,19 +82,19 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
             new Hints(Hints.FEATURE_FACTORY,LenientFeatureFactory.class));
 
     protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.feature.xml.jaxp");
-    
+
     protected List<FeatureType> featureTypes;
 
     public static final String READ_EMBEDDED_FEATURE_TYPE = "readEmbeddedFeatureType";
-    
+
     public static final String SKIP_UNEXPECTED_PROPERTY_TAGS = "skipUnexpectedPropertyTags";
-    
+
     public static final String BINDING_PACKAGE = "bindingPackage";
-    
+
     public JAXPStreamFeatureReader() {
         this(new ArrayList<FeatureType>());
     }
-    
+
     public JAXPStreamFeatureReader(final FeatureType featureType) {
         this(Arrays.asList(featureType));
     }
@@ -163,7 +165,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                         }
                     }
                 }
-                
+
                 final Name name  = Utils.getNameFromQname(reader.getName());
                 final String id  = reader.getAttributeValue(Namespaces.GML, "id");
                 final StringBuilder expectedFeatureType = new StringBuilder();
@@ -178,7 +180,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                         }
                     }
                     return coll;
-                        
+
                 } else if (name.getLocalPart().equals("Transaction")) {
                     return extractFeatureFromTransaction();
 
@@ -236,7 +238,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                         LOGGER.info("Missing feature id : generating a random one");
                         fid = UUID.randomUUID().toString();
                     }
-                    
+
                     boolean find = false;
                     StringBuilder expectedFeatureType = new StringBuilder();
                     for (FeatureType ft : featureTypes) {
@@ -261,7 +263,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
         return collection;
     }
 
-    private Feature readFeature(final String id, final FeatureType featureType) throws XMLStreamException {
+    private ComplexAttribute readFeature(final String id, final ComplexType featureType) throws XMLStreamException {
         final Map<Name,Property> namedProperties = new LinkedHashMap<Name, Property>();
 
         while (reader.hasNext()) {
@@ -320,7 +322,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                             throw new IllegalArgumentException("unexpected geometry type:" + geometry);
                         }
                         namedProperties.put(propName,FF.createAttribute(jtsGeom, (AttributeDescriptor)pdesc, null));
-                        
+
                     } catch (JAXBException ex) {
                         String msg = ex.getMessage();
                         if (msg == null && ex.getLinkedException() != null) {
@@ -332,6 +334,17 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                             pool.release(unmarshaller);
                         }
                     }
+
+                } else if (pdesc.getType() instanceof ComplexType) {
+                    // skip the Class Mark
+                    while (reader.hasNext()) {
+                        if (reader.next() == START_ELEMENT) {
+                            break;
+                        }
+                    }
+
+                    final ComplexAttribute catt = readFeature(null, (ComplexType)pdesc.getType());
+                    namedProperties.put(propName, FF.createComplexAttribute(catt.getProperties(), (AttributeDescriptor)pdesc, null));
 
                 } else {
                     final String content = reader.getElementText();
@@ -381,7 +394,11 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
             }
         }
 
-        return FF.createFeature(namedProperties.values(), featureType, id);
+        if (featureType instanceof FeatureType) {
+            return FF.createFeature(namedProperties.values(), (FeatureType)featureType, id);
+        } else {
+            return FF.createComplexAttribute(namedProperties.values(), (ComplexType)featureType, null);
+        }
     }
 
     private Object extractFeatureFromTransaction() throws XMLStreamException {
@@ -414,7 +431,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                     StringBuilder expectedFeatureType = new StringBuilder();
                     for (FeatureType ft : featureTypes) {
                         if (ft.getName().equals(name)) {
-                            features.add(readFeature("", ft));
+                            features.add((Feature)readFeature("", ft));
                             find = true;
                         }
                         expectedFeatureType.append(ft.getName()).append('\n');
@@ -479,7 +496,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
 
     /**
      * Return a MarshallerPool depending on the property BINDING_PACKAGE.
-     * 
+     *
      * accepted values : "JTSWrapper" or null (default). => JTSWrapperMarshallerPool
      *                   "GML"                           => GMLMarshallerPool
      */
@@ -493,7 +510,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
             throw new IllegalArgumentException("Unexpected property value for BINDING_PACKAGE:" + bindingPackage);
         }
     }
-    
+
     /**
      * @deprecated use getProperty(READ_EMBEDDED_FEATURE_TYPE)
      */

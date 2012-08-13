@@ -35,7 +35,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.text.ParseException;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -81,8 +81,6 @@ import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.sort.SortOrder;
-import org.opengis.util.FactoryException;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import static org.junit.Assert.*;
@@ -186,7 +184,7 @@ public class XmlFeatureTest {
         ftb.add(new DefaultName(GML_NAMESPACE,"streetName"),           String.class,            1,1,true,null);
         ftb.add(new DefaultName(GML_NAMESPACE,"streetNumber"),         String.class,            1,1,true,null);
         ftb.add(new DefaultName(GML_NAMESPACE,"city"),                 String.class,            1,1,true,null);
-        ftb.add(new DefaultName(GML_NAMESPACE,"province"),             String.class,            0,1,true,null);
+        ftb.add(new DefaultName(GML_NAMESPACE,"province"),             String.class,            1,1,true,null);
         ftb.add(new DefaultName(GML_NAMESPACE,"postalCode"),           String.class,            1,1,true,null);
         ftb.add(new DefaultName(GML_NAMESPACE,"country"),              String.class,            0,1,true,null);
         final ComplexType adress = ftb.buildType();
@@ -196,10 +194,10 @@ public class XmlFeatureTest {
         ftb.add(new DefaultName(GML_NAMESPACE,"insuranceNumber"),      Integer.class,           1,1,true,null);
         ftb.add(new DefaultName(GML_NAMESPACE,"lastName"),             String.class,            1,1,true,null);
         ftb.add(new DefaultName(GML_NAMESPACE,"firstName"),            String.class,            1,1,true,null);
-        ftb.add(new DefaultName(GML_NAMESPACE,"age"),                  Integer.class,           0,1,true,null);
-        ftb.add(new DefaultName(GML_NAMESPACE,"sex"),                  Double.class,            1,1,true,null);
+        ftb.add(new DefaultName(GML_NAMESPACE,"age"),                  Integer.class,           1,1,true,null);
+        ftb.add(new DefaultName(GML_NAMESPACE,"sex"),                  String.class,            1,1,true,null);
         //ftb.add(new DefaultName(GML_NAMESPACE,"spouse"),               Person.class,            0,1,true,null);
-        ftb.add(new DefaultName(GML_NAMESPACE,"location"),             Point.class,             0,1,true,null);
+        ftb.add(new DefaultName(GML_NAMESPACE,"location"),             Point.class,        crs, 0,1,true,null);
         ftb.add(adress, new DefaultName(GML_NAMESPACE,"mailAddress"),  null,                    0,1,true,null);
         ftb.add(new DefaultName(GML_NAMESPACE,"phone"),                String.class,            0,Integer.MAX_VALUE,true,null);
 
@@ -287,9 +285,9 @@ public class XmlFeatureTest {
         complexFeature.getProperty("lastName").setValue("Smith");
         complexFeature.getProperty("firstName").setValue("John");
 
-        final Property age = FeatureUtilities.defaultProperty(complexType.getDescriptor("age"));
-        age.setValue(new Integer(35));
-        complexFeature.getProperties().add(age);
+        //final Property age = FeatureUtilities.defaultProperty(complexType.getDescriptor("age"));
+        //age.setValue(new Integer(35));
+        complexFeature.getProperty("age").setValue(new Integer(35));
         complexFeature.getProperty("sex").setValue("male");
 
         final Property location = FeatureUtilities.defaultProperty(complexType.getDescriptor("location"));
@@ -301,9 +299,7 @@ public class XmlFeatureTest {
         address.getProperty("streetName").setValue("Main");
         address.getProperty("streetNumber").setValue("10");
         address.getProperty("city").setValue("SomeTown");
-        final Property province = FeatureUtilities.defaultProperty(adress.getDescriptor("province"));
-        province.setValue("Ontario");
-        address.getProperties().add(province);
+        address.getProperty("province").setValue("Ontario");
         address.getProperty("postalCode").setValue("M1R1K9");
         final Property country = FeatureUtilities.defaultProperty(adress.getDescriptor("country"));
         country.setValue("Canada");
@@ -312,12 +308,8 @@ public class XmlFeatureTest {
         complexFeature.getProperties().add(address);
 
         final Property phone = FeatureUtilities.defaultProperty(complexType.getDescriptor("phone"));
-        phone.setValue("4161234567");
+        phone.setValue(Arrays.asList("4161234567", "4168901234"));
         complexFeature.getProperties().add(phone);
-
-        final Property phone2 = FeatureUtilities.defaultProperty(complexType.getDescriptor("phone"));
-        phone2.setValue("4168901234");
-        complexFeature.getProperties().add(phone2);
 
         EPSG_VERSION = CRS.getVersion("EPSG").toString();
     }
@@ -634,4 +626,27 @@ public class XmlFeatureTest {
         DomCompare.compare(expResult, temp);
     }
 
+    @Test
+    public void testReadComplexFeature() throws JAXBException, IOException, XMLStreamException{
+        final XmlFeatureReader reader = new JAXPStreamFeatureReader(complexType);
+        Object obj = reader.read(XmlFeatureTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/ComplexFeature.xml"));
+        reader.dispose();
+
+        assertTrue(obj instanceof Feature);
+
+        Feature result = (Feature) obj;
+
+        assertEquals(complexFeature, result);
+
+        final XmlFeatureReader readerGml = new JAXPStreamFeatureReader(complexType);
+        readerGml.getProperties().put(JAXPStreamFeatureReader.BINDING_PACKAGE, "GML");
+        obj = readerGml.read(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/ComplexFeature.xml"));
+        readerGml.dispose();
+
+        assertTrue(obj instanceof Feature);
+
+        result =  (Feature) obj;
+        assertEquals(complexFeature, result);
+    }
 }

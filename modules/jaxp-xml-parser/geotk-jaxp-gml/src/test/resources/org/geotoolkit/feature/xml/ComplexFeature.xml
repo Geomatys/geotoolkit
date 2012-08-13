@@ -6,8 +6,8 @@
     <gml:age>35</gml:age>
     <gml:sex>male</gml:sex>
     <gml:location>
-        <gml:Point xmlns:wfs="http://www.opengis.net/wfs">
-            <gml:pos>10.0 10.0 NaN</gml:pos>
+        <gml:Point srsName="urn:ogc:def:crs:epsg:7.9:4326" xmlns:wfs="http://www.opengis.net/wfs">
+            <gml:pos>10.0 10.0</gml:pos>
         </gml:Point>
     </gml:location>
     <gml:mailAddress>
