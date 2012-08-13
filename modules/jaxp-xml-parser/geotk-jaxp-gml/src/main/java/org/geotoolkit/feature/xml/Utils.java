@@ -44,7 +44,9 @@ import java.util.logging.Logger;
 import javax.xml.namespace.QName;
 import javax.xml.stream.events.XMLEvent;
 import org.geotoolkit.feature.DefaultName;
+import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.Name;
+import org.opengis.feature.type.PropertyType;
 
 /**
  *
@@ -221,32 +223,37 @@ public class Utils {
      * @param binding A prmitive type Class.
      * @return A QName describing the class.
      */
-    public static QName getQNameFromType(final Class binding, final String gmlVersion) {
-        if (binding != null) {
-            final QName result;
-            if (Geometry.class.isAssignableFrom(binding)) {
-                if ("3.2.1".equals(gmlVersion)) {
-                    result = GEOMETRY_NAME_BINDING_321.get(binding);
+    public static QName getQNameFromType(final PropertyType type, final String gmlVersion) {
+        if (type instanceof ComplexType) {
+            return new QName(type.getName().getNamespaceURI(), type.getName().getLocalPart() + "PropertyType");
+        } else {
+            final Class binding = type.getBinding();
+            if (binding != null) {
+                final QName result;
+                if (Geometry.class.isAssignableFrom(binding)) {
+                    if ("3.2.1".equals(gmlVersion)) {
+                        result = GEOMETRY_NAME_BINDING_321.get(binding);
+                    } else {
+                        result = GEOMETRY_NAME_BINDING_311.get(binding);
+                    }
+                    if (result == null) {
+                        if ("3.2.1".equals(gmlVersion)) {
+                            return new QName(GML_321_NAMESPACE, "GeometryPropertyType");
+                        } else {
+                            return new QName(GML_311_NAMESPACE, "GeometryPropertyType");
+                        }
+                    }
+                // maybe we can find a better way to handle Enum. for now we set a String value
+                } else if (binding.isEnum()){
+                    result = new QName("http://www.w3.org/2001/XMLSchema", "string");
                 } else {
-                    result = GEOMETRY_NAME_BINDING_311.get(binding);
+                    result = NAME_BINDING.get(binding);
                 }
                 if (result == null) {
-                    if ("3.2.1".equals(gmlVersion)) {
-                        return new QName(GML_321_NAMESPACE, "GeometryPropertyType");
-                    } else {
-                        return new QName(GML_311_NAMESPACE, "GeometryPropertyType");
-                    }
+                    throw new IllegalArgumentException("unexpected type:" + binding);
                 }
-            // maybe we can find a better way to handle Enum. for now we set a String value
-            } else if (binding.isEnum()){
-                result = new QName("http://www.w3.org/2001/XMLSchema", "string");
-            } else {
-                result = NAME_BINDING.get(binding);
+                return result;
             }
-            if (result == null) {
-                throw new IllegalArgumentException("unexpected type:" + binding);
-            }
-            return result;
         }
         return null;
     }

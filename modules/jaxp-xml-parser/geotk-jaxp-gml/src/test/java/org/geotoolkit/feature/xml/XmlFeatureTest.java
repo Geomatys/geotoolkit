@@ -389,6 +389,17 @@ public class XmlFeatureTest {
     }
 
     @Test
+    public void testWriteComplexFeatureType() throws JAXBException, IOException, ParserConfigurationException, SAXException{
+        final File temp = File.createTempFile("gml", ".xml");
+        temp.deleteOnExit();
+        final XmlFeatureTypeWriter writer = new JAXBFeatureTypeWriter();
+        writer.write(complexType, new FileOutputStream(temp));
+
+        DomCompare.compare(XmlFeatureTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/ComplexType.xsd"), temp);
+    }
+
+    @Test
     public void testReadSimpleFeature() throws JAXBException, IOException, XMLStreamException{
         final XmlFeatureReader reader = new JAXPStreamFeatureReader(simpleTypeFull);
         Object obj = reader.read(XmlFeatureTest.class

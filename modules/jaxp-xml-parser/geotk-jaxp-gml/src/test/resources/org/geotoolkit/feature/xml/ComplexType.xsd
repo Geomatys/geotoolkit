@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xsd:schema elementFormDefault="qualified"
+    targetNamespace="http://www.opengis.net/gml"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <xsd:import schemaLocation="http://schemas.opengis.net/gml/3.1.1/base/gml.xsd" namespace="http://www.opengis.net/gml"/>
+    <xsd:element xmlns:gml="http://www.opengis.net/gml" name="Person" type="gml:PersonType" />
+    <xsd:complexType name="PersonType">
+        <xsd:complexContent>
+            <xsd:extension xmlns:gml="http://www.opengis.net/gml" base="gml:_Feature" >
+                <xsd:sequence>
+                    <xsd:element name="insuranceNumber"     maxOccurs="1" minOccurs="1" nillable="true" type="xsd:integer"/>
+                    <xsd:element name="lastName"            maxOccurs="1" minOccurs="1" nillable="true" type="xsd:string"/>
+                    <xsd:element name="firstName"           maxOccurs="1" minOccurs="1" nillable="true" type="xsd:string"/>
+                    <xsd:element name="age"                 maxOccurs="1" minOccurs="1" nillable="true" type="xsd:integer"/>
+                    <xsd:element name="sex"                 maxOccurs="1" minOccurs="1" nillable="true" type="xsd:string"/>
+                    <xsd:element name="location"            maxOccurs="1" minOccurs="0" nillable="true" type="gml:Point"/>
+                    <xsd:element name="mailAddress"         maxOccurs="1" minOccurs="0" nillable="true" type="gml:AddressPropertyType"/>
+                    <xsd:element name="phone"               maxOccurs="unbounded" minOccurs="0" nillable="true" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+   <xsd:complexType name="AddressPropertyType">
+      <xsd:sequence>
+         <xsd:element name="Address" type="gml:AddressType" xmlns:gml="http://www.opengis.net/gml"/>
+      </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType name="AddressType">
+      <xsd:sequence>
+         <xsd:element name="streetName"   maxOccurs="1" minOccurs="1" nillable="true" type="xsd:string"/>
+         <xsd:element name="streetNumber" maxOccurs="1" minOccurs="1" nillable="true" type="xsd:string"/>
+         <xsd:element name="city"         maxOccurs="1" minOccurs="1" nillable="true" type="xsd:string"/>
+         <xsd:element name="province"     maxOccurs="1" minOccurs="1" nillable="true" type="xsd:string"/>
+         <xsd:element name="postalCode"   maxOccurs="1" minOccurs="1" nillable="true" type="xsd:string"/>
+         <xsd:element name="country"      maxOccurs="1" minOccurs="0" nillable="true" type="xsd:string"/>
+      </xsd:sequence>
+   </xsd:complexType>
+</xsd:schema>

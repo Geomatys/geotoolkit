@@ -44,9 +44,12 @@ import org.geotoolkit.xsd.xml.v2001.Schema;
 import org.geotoolkit.xsd.xml.v2001.TopLevelComplexType;
 import org.geotoolkit.xsd.xml.v2001.TopLevelElement;
 import org.geotoolkit.xsd.xml.v2001.XSDMarshallerPool;
+import org.opengis.feature.type.ComplexType;
 
 import org.opengis.feature.type.FeatureType;
+import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
+import org.opengis.feature.type.PropertyType;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -200,38 +203,64 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable implements XmlFe
     }
 
     private void fillSchemaWithFeatureType(final FeatureType featureType, final Schema schema) {
-
         final String typeNamespace    = featureType.getName().getNamespaceURI();
         final String elementName      = featureType.getName().getLocalPart();
         final String typeName         = elementName + "Type";
         schema.addElement(new TopLevelElement(elementName, new QName(typeNamespace, typeName)));
 
         final ExplicitGroup sequence  = new ExplicitGroup();
-
         for (final PropertyDescriptor pdesc : featureType.getDescriptors()) {
-            final String name   = pdesc.getName().getLocalPart();
-            final QName type    = Utils.getQNameFromType(pdesc.getType().getBinding(), gmlVersion);
-            final int minOccurs = pdesc.getMinOccurs();
-            final int maxOccurs = pdesc.getMaxOccurs();
-            final boolean nillable = pdesc.isNillable();
-            final String maxOcc;
-            if (maxOccurs == Integer.MAX_VALUE) {
-                maxOcc = "unbounded";
-            } else {
-                maxOcc = Integer.toString(maxOccurs);
-            }
-            sequence.addElement(new TopLevelElement(name, type, minOccurs, maxOcc, nillable));
+            writeProperty(pdesc, sequence, schema);
         }
+        final ComplexContent content  = getComplexContent(sequence);
+        schema.addComplexType(1, new TopLevelComplexType(typeName, content));
+    }
+
+    private void writeComplexType(final ComplexType ctype, final Schema schema) {
+        // PropertyType
+        final ExplicitGroup ctypeSequence  = new ExplicitGroup();
+        final Name ptypeName = ctype.getName();
+        ctypeSequence.addElement(new TopLevelElement(ptypeName.getLocalPart(), new QName(ptypeName.getNamespaceURI(), ptypeName.getLocalPart() + "Type")));
+        schema.addComplexType(new TopLevelComplexType(ptypeName.getLocalPart() + "PropertyType", ctypeSequence));
+
+        //complex type
+        final ExplicitGroup sequence  = new ExplicitGroup();
+        for (final PropertyDescriptor pdesc : ctype.getDescriptors()) {
+            writeProperty(pdesc, sequence, schema);
+        }
+        schema.addComplexType(new TopLevelComplexType( ptypeName.getLocalPart() + "Type", sequence));
+    }
+
+    private void writeProperty(final PropertyDescriptor pdesc, final ExplicitGroup sequence, final Schema schema) {
+        final PropertyType pType = pdesc.getType();
+        final String name        = pdesc.getName().getLocalPart();
+        final QName type         = Utils.getQNameFromType(pType, gmlVersion);
+        final int minOccurs      = pdesc.getMinOccurs();
+        final int maxOccurs      = pdesc.getMaxOccurs();
+        final boolean nillable   = pdesc.isNillable();
+        final String maxOcc;
+        if (maxOccurs == Integer.MAX_VALUE) {
+            maxOcc = "unbounded";
+        } else {
+            maxOcc = Integer.toString(maxOccurs);
+        }
+        sequence.addElement(new TopLevelElement(name, type, minOccurs, maxOcc, nillable));
+
+        // for a complexType we have to add 2 complexType (PropertyType and type)
+        if (pType instanceof ComplexType) {
+            writeComplexType((ComplexType)pType, schema);
+        }
+    }
+
+    private ComplexContent getComplexContent(final ExplicitGroup sequence) {
         final ExtensionType extension;
         if ("3.2.1".equals(gmlVersion)) {
             extension = new ExtensionType(FEATURE_NAME_321, sequence);
         } else {
             extension = new ExtensionType(FEATURE_NAME_311, sequence);
         }
-        final ComplexContent content  = new ComplexContent(extension);
-        schema.addComplexType(new TopLevelComplexType(typeName, content));
+        return  new ComplexContent(extension);
     }
-
 
      /**
      * Returns the prefix for the given namespace.

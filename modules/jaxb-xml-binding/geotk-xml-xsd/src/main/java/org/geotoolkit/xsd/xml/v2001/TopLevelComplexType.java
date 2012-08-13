@@ -23,9 +23,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for topLevelComplexType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="topLevelComplexType">
  *   &lt;complexContent>
@@ -39,8 +39,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -53,6 +53,10 @@ public class TopLevelComplexType extends ComplexType {
 
     public TopLevelComplexType(final String name, final ComplexContent complexContent) {
         super(name, complexContent);
+    }
+
+    public TopLevelComplexType(final String name, final ExplicitGroup sequence) {
+        super(name, sequence);
     }
 
 }

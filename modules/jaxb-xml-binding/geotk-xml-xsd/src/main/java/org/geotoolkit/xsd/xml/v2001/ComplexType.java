@@ -32,9 +32,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p>Java class for complexType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="complexType">
  *   &lt;complexContent>
@@ -49,8 +49,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -105,14 +105,19 @@ public abstract class ComplexType extends Annotated {
         this.name           = name;
         this.complexContent = complexContent;
     }
-    
+
+    public ComplexType(final String name, final ExplicitGroup sequence) {
+        this.name     = name;
+        this.sequence = sequence;
+    }
+
     /**
      * Gets the value of the simpleContent property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SimpleContent }
-     *     
+     *
      */
     public SimpleContent getSimpleContent() {
         return simpleContent;
@@ -120,11 +125,11 @@ public abstract class ComplexType extends Annotated {
 
     /**
      * Sets the value of the simpleContent property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SimpleContent }
-     *     
+     *
      */
     public void setSimpleContent(final SimpleContent value) {
         this.simpleContent = value;
@@ -132,11 +137,11 @@ public abstract class ComplexType extends Annotated {
 
     /**
      * Gets the value of the complexContent property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ComplexContent }
-     *     
+     *
      */
     public ComplexContent getComplexContent() {
         return complexContent;
@@ -144,11 +149,11 @@ public abstract class ComplexType extends Annotated {
 
     /**
      * Sets the value of the complexContent property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ComplexContent }
-     *     
+     *
      */
     public void setComplexContent(final ComplexContent value) {
         this.complexContent = value;
@@ -156,11 +161,11 @@ public abstract class ComplexType extends Annotated {
 
     /**
      * Gets the value of the group property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link GroupRef }
-     *     
+     *
      */
     public GroupRef getGroup() {
         return group;
@@ -168,11 +173,11 @@ public abstract class ComplexType extends Annotated {
 
     /**
      * Sets the value of the group property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link GroupRef }
-     *     
+     *
      */
     public void setGroup(final GroupRef value) {
         this.group = value;
@@ -180,11 +185,11 @@ public abstract class ComplexType extends Annotated {
 
     /**
      * Gets the value of the all property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link All }
-     *     
+     *
      */
     public All getAll() {
         return all;
@@ -192,11 +197,11 @@ public abstract class ComplexType extends Annotated {
 
     /**
      * Sets the value of the all property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link All }
-     *     
+     *
      */
     public void setAll(final All value) {
         this.all = value;
@@ -204,11 +209,11 @@ public abstract class ComplexType extends Annotated {
 
     /**
      * Gets the value of the choice property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ExplicitGroup }
-     *     
+     *
      */
     public ExplicitGroup getChoice() {
         return choice;
@@ -216,11 +221,11 @@ public abstract class ComplexType extends Annotated {
 
     /**
      * Sets the value of the choice property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ExplicitGroup }
-     *     
+     *
      */
     public void setChoice(final ExplicitGroup value) {
         this.choice = value;
@@ -228,11 +233,11 @@ public abstract class ComplexType extends Annotated {
 
     /**
      * Gets the value of the sequence property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ExplicitGroup }
-     *     
+     *
      */
     public ExplicitGroup getSequence() {
         return sequence;
@@ -240,11 +245,11 @@ public abstract class ComplexType extends Annotated {
 
     /**
      * Sets the value of the sequence property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ExplicitGroup }
-     *     
+     *
      */
     public void setSequence(final ExplicitGroup value) {
         this.sequence = value;
@@ -256,8 +261,8 @@ public abstract class ComplexType extends Annotated {
      * Objects of the following type(s) are allowed in the list
      * {@link Attribute }
      * {@link AttributeGroupRef }
-     * 
-     * 
+     *
+     *
      */
     public List<Annotated> getAttributeOrAttributeGroup() {
         if (attributeOrAttributeGroup == null) {
@@ -268,11 +273,11 @@ public abstract class ComplexType extends Annotated {
 
     /**
      * Gets the value of the anyAttribute property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Wildcard }
-     *     
+     *
      */
     public Wildcard getAnyAttribute() {
         return anyAttribute;
@@ -280,11 +285,11 @@ public abstract class ComplexType extends Annotated {
 
     /**
      * Sets the value of the anyAttribute property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Wildcard }
-     *     
+     *
      */
     public void setAnyAttribute(final Wildcard value) {
         this.anyAttribute = value;
@@ -292,11 +297,11 @@ public abstract class ComplexType extends Annotated {
 
     /**
      * Gets the value of the name property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getName() {
         return name;
@@ -304,11 +309,11 @@ public abstract class ComplexType extends Annotated {
 
     /**
      * Sets the value of the name property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setName(final String value) {
         this.name = value;
@@ -316,11 +321,11 @@ public abstract class ComplexType extends Annotated {
 
     /**
      * Gets the value of the mixed property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public boolean isMixed() {
         if (mixed == null) {
@@ -332,11 +337,11 @@ public abstract class ComplexType extends Annotated {
 
     /**
      * Sets the value of the mixed property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setMixed(final Boolean value) {
         this.mixed = value;
@@ -344,11 +349,11 @@ public abstract class ComplexType extends Annotated {
 
     /**
      * Gets the value of the abstract property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public boolean isAbstract() {
         if (_abstract == null) {
@@ -360,11 +365,11 @@ public abstract class ComplexType extends Annotated {
 
     /**
      * Sets the value of the abstract property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setAbstract(final Boolean value) {
         this._abstract = value;
@@ -372,25 +377,25 @@ public abstract class ComplexType extends Annotated {
 
     /**
      * Gets the value of the final property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the final property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getFinal().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public List<String> getFinal() {
         if (_final == null) {
@@ -401,25 +406,25 @@ public abstract class ComplexType extends Annotated {
 
     /**
      * Gets the value of the block property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the block property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getBlock().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public List<String> getBlock() {
         if (block == null) {
