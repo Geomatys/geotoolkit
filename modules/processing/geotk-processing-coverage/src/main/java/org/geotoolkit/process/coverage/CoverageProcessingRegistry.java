@@ -58,8 +58,7 @@ public class CoverageProcessingRegistry extends AbstractProcessingRegistry{
               KrigingDescriptor.INSTANCE,
               MapcontextPyramidDescriptor.INSTANCE,
               ExtractionDescriptor.INSTANCE,
-              CombinerDescriptor.INSTANCE,
-              CoverageToIsolineDescriptor.INSTANCE);
+              CombinerDescriptor.INSTANCE);
     }
 
     @Override
