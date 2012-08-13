@@ -59,6 +59,7 @@ import org.opengis.filter.spatial.BBOX;
     "envelopeWithTimePeriod"
 })
 public class BBOXType extends SpatialOpsType implements BBOX {
+    private static final String DEFAULT_SRS = "EPSG:4326";
 
     @XmlElement(name = "PropertyName")
     private String propertyName;
@@ -77,12 +78,15 @@ public class BBOXType extends SpatialOpsType implements BBOX {
     /**
      * build a new BBox with an envelope.
      */
-    public BBOXType(final String propertyName, final double minx, final double miny, final double maxx, final double maxy, final String srs) {
+    public BBOXType(final String propertyName, final double minx, final double miny, final double maxx, final double maxy, String srs) {
         this.propertyName = propertyName;
         DirectPositionType lower = new DirectPositionType(minx, miny);
         DirectPositionType upper = new DirectPositionType(maxx, maxy);
+        if (srs == null) {
+            // In the case of an empty crs, use the default one.
+            srs = DEFAULT_SRS;
+        }
         this.envelope = new EnvelopeType(null, lower, upper, srs);
-
     }
     /**
      * Gets the value of the propertyName property.
@@ -124,9 +128,9 @@ public class BBOXType extends SpatialOpsType implements BBOX {
 
     public String getSRS() {
         if (envelope != null) {
-            return envelope.getSrsName();
+            return (envelope.getSrsName() != null) ? envelope.getSrsName() : DEFAULT_SRS;
         } else if (envelopeWithTimePeriod != null) {
-            return envelopeWithTimePeriod.getSrsName();
+            return (envelopeWithTimePeriod.getSrsName() != null) ? envelopeWithTimePeriod.getSrsName() : DEFAULT_SRS;
         }
         return null;
     }
