@@ -82,16 +82,16 @@ public class IsolineCreator {
      * Define isoline on object that iterate by {@link PixelIterator}.
      *
      * @param pixelIterator
-     * @param lls Isoline intervals.
+     * @param isolineLevel Isoline levels.
      */
-    public IsolineCreator(final PixelIterator pixelIterator, final double[] lls) {
+    public IsolineCreator(final PixelIterator pixelIterator, final double[] isolineLevel) {
         ArgumentChecks.ensureNonNull("pixelIterator", pixelIterator);
-        ArgumentChecks.ensureNonNull("isoline interval", lls);
+        ArgumentChecks.ensureNonNull("isoline interval", isolineLevel);
         if (pixelIterator.getNumBands() != 1)
             throw new IllegalArgumentException("image not conform, number of bands exceed 1");
         this.pixelIterator = pixelIterator;
         this.areaIterate   = pixelIterator.getAreaIterate();
-        this.lls = lls;
+        this.lls = isolineLevel;
     }
 
     /**

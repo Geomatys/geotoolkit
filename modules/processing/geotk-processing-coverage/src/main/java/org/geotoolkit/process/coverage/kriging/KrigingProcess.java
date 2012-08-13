@@ -107,7 +107,7 @@ public class KrigingProcess extends AbstractProcess {
         }
 
 //        final ObjectiveAnalysis ob = new ObjectiveAnalysis(rect, dim);
-        final ObjectiveAnalysisPending ob = new ObjectiveAnalysisPending(rect, dim);
+        final BDHObjectiveAnalysis ob = new BDHObjectiveAnalysis(rect, dim);
         if (crs instanceof ProjectedCRS) {
             // The default ObjectiveAnalysis algorithm is designed for GeographicCRS.
             // In case of ProjectedCRS, we need to apply a scale factor that convert
