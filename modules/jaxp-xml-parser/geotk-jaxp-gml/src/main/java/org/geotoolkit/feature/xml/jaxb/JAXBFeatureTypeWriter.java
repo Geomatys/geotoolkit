@@ -208,7 +208,7 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable implements XmlFe
 
         final ExplicitGroup sequence  = new ExplicitGroup();
 
-        for(final PropertyDescriptor pdesc : featureType.getDescriptors()) {
+        for (final PropertyDescriptor pdesc : featureType.getDescriptors()) {
             final String name   = pdesc.getName().getLocalPart();
             final QName type    = Utils.getQNameFromType(pdesc.getType().getBinding(), gmlVersion);
             final int minOccurs = pdesc.getMinOccurs();

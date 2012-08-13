@@ -163,9 +163,11 @@ public class Utils {
     private static final Map<Class, QName> NAME_BINDING = new HashMap<Class, QName>();
     static {
 
-        // Special case when we get a List or Map we return String => TODO
+        // Special case when we get a Collection or Map we return String => TODO
         NAME_BINDING.put(List.class,          new QName("http://www.w3.org/2001/XMLSchema", "string"));
         NAME_BINDING.put(Map.class,           new QName("http://www.w3.org/2001/XMLSchema", "string"));
+        NAME_BINDING.put(Collection.class,    new QName("http://www.w3.org/2001/XMLSchema", "string"));
+
         NAME_BINDING.put(String.class,        new QName("http://www.w3.org/2001/XMLSchema", "string"));
         NAME_BINDING.put(Long.class,          new QName("http://www.w3.org/2001/XMLSchema", "long"));
         NAME_BINDING.put(Integer.class,       new QName("http://www.w3.org/2001/XMLSchema", "integer"));

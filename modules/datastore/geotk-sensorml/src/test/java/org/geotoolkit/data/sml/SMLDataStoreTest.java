@@ -36,6 +36,7 @@ import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.internal.sql.DefaultDataSource;
 import org.geotoolkit.internal.sql.ScriptRunner;
 import org.geotoolkit.referencing.CRS;
+import org.opengis.feature.type.ComplexType;
 
 import org.opengis.feature.type.Name;
 
@@ -51,16 +52,23 @@ public class SMLDataStoreTest extends AbstractReadingTests{
 
     private static final String SML_NAMESPACE = "http://www.opengis.net/sml/1.0";
     private static final String GML_NAMESPACE = "http://www.opengis.net/gml";
+
+    //root types
     private final static Name SML_TN_SYSTEM         = new DefaultName(SML_NAMESPACE, "System");
     private final static Name SML_TN_COMPONENT      = new DefaultName(SML_NAMESPACE, "Component");
     private final static Name SML_TN_PROCESSCHAIN   = new DefaultName(SML_NAMESPACE, "ProcessChain");
     private final static Name SML_TN_PROCESSMODEL   = new DefaultName(SML_NAMESPACE, "ProcessModel");
     private final static Name SML_TN_DATASOURCETYPE = new DefaultName(SML_NAMESPACE, "DataSourceType");
 
+    //subTypes
+    private final static Name SML_KEYWORD_LIST      = new DefaultName(SML_NAMESPACE, "KeywordList");
+
     // Shared attributes
     private static final Name ATT_DESC        = new DefaultName(GML_NAMESPACE, "description");
     private static final Name ATT_NAME        = new DefaultName(GML_NAMESPACE, "name");
+    private static final Name ATT_CODESPACE   = new DefaultName(GML_NAMESPACE, "codespace");
     private static final Name ATT_KEYWORDS    = new DefaultName(SML_NAMESPACE, "keywords");
+    private static final Name ATT_KEYWORD     = new DefaultName(SML_NAMESPACE, "keyword");
     private static final Name ATT_LOCATION    = new DefaultName(SML_NAMESPACE, "location");
     private static final Name ATT_PHENOMENONS = new DefaultName(SML_NAMESPACE, "phenomenons");
     private static final Name ATT_SMLTYPE     = new DefaultName(SML_NAMESPACE, "smltype");
@@ -104,12 +112,20 @@ public class SMLDataStoreTest extends AbstractReadingTests{
 
             final FeatureTypeBuilder featureTypeBuilder = new FeatureTypeBuilder();
 
+            //subType KeywordList
+            featureTypeBuilder.reset();
+            featureTypeBuilder.setName(SML_KEYWORD_LIST);
+            featureTypeBuilder.add(ATT_CODESPACE,  String.class, 0, 1, true, null); // TODO xml attribute ?
+            featureTypeBuilder.add(ATT_KEYWORD,    List.class, 0, Integer.MAX_VALUE, true, null);
+
+            final ComplexType kwList = featureTypeBuilder.buildType();
+
             // Feature type sml:System
             featureTypeBuilder.reset();
             featureTypeBuilder.setName(SML_TN_SYSTEM);
             featureTypeBuilder.add(ATT_DESC,        String.class, 0, 1, true, null);
             featureTypeBuilder.add(ATT_NAME,        String.class, 1, 1, false, null);
-            featureTypeBuilder.add(ATT_KEYWORDS,    List.class, 0, Integer.MAX_VALUE, true, null);
+            featureTypeBuilder.add(kwList, ATT_KEYWORDS,    null, 0, Integer.MAX_VALUE, true, null);
             featureTypeBuilder.add(ATT_LOCATION,    Point.class, 1, 1, false, null);
             featureTypeBuilder.add(ATT_PHENOMENONS, List.class, 0, Integer.MAX_VALUE, true, null);
             featureTypeBuilder.add(ATT_SMLTYPE,     String.class, 1, 1, true, null);
@@ -126,7 +142,7 @@ public class SMLDataStoreTest extends AbstractReadingTests{
             featureTypeBuilder.setName(SML_TN_COMPONENT);
             featureTypeBuilder.add(ATT_DESC,        String.class, 0, 1, true, null);
             featureTypeBuilder.add(ATT_NAME,        String.class, 1, 1, false, null);
-            featureTypeBuilder.add(ATT_KEYWORDS,    List.class, 0, Integer.MAX_VALUE, true, null);
+            featureTypeBuilder.add(kwList, ATT_KEYWORDS,    null, 0, Integer.MAX_VALUE, true, null);
             featureTypeBuilder.add(ATT_LOCATION,    Point.class, 1, 1, false, null);
             featureTypeBuilder.add(ATT_PHENOMENONS, List.class, 0, Integer.MAX_VALUE, true, null);
             featureTypeBuilder.add(ATT_SMLTYPE,     String.class, 1, 1, true, null);
@@ -141,7 +157,7 @@ public class SMLDataStoreTest extends AbstractReadingTests{
             featureTypeBuilder.setName(SML_TN_PROCESSCHAIN);
             featureTypeBuilder.add(ATT_DESC,        String.class, 0, 1, true, null);
             featureTypeBuilder.add(ATT_NAME,        String.class, 1, 1, false, null);
-            featureTypeBuilder.add(ATT_KEYWORDS,    List.class, 0, Integer.MAX_VALUE, true, null);
+            featureTypeBuilder.add(kwList, ATT_KEYWORDS,    null, 0, Integer.MAX_VALUE, true, null);
             featureTypeBuilder.add(ATT_LOCATION,    Point.class, 1, 1, false, null);
             featureTypeBuilder.add(ATT_PHENOMENONS, List.class, 0, Integer.MAX_VALUE, true, null);
             featureTypeBuilder.add(ATT_SMLTYPE,     String.class, 1, 1, true, null);
@@ -158,7 +174,7 @@ public class SMLDataStoreTest extends AbstractReadingTests{
             featureTypeBuilder.setName(SML_TN_PROCESSMODEL);
             featureTypeBuilder.add(ATT_DESC,        String.class, 0, 1, true, null);
             featureTypeBuilder.add(ATT_NAME,        String.class, 1, 1, false, null);
-            featureTypeBuilder.add(ATT_KEYWORDS,    List.class, 0, Integer.MAX_VALUE, true, null);
+            featureTypeBuilder.add(kwList, ATT_KEYWORDS,    null, 0, Integer.MAX_VALUE, true, null);
             featureTypeBuilder.add(ATT_LOCATION,    Point.class, 1, 1, false, null);
             featureTypeBuilder.add(ATT_PHENOMENONS, List.class, 0, Integer.MAX_VALUE, true, null);
             featureTypeBuilder.add(ATT_SMLTYPE,     String.class, 1, 1, true, null);
@@ -174,7 +190,7 @@ public class SMLDataStoreTest extends AbstractReadingTests{
             featureTypeBuilder.setName(SML_TN_DATASOURCETYPE);
             featureTypeBuilder.add(ATT_DESC,        String.class, 0, 1, true, null);
             featureTypeBuilder.add(ATT_NAME,        String.class, 1, 1, false, null);
-            featureTypeBuilder.add(ATT_KEYWORDS,    List.class, 0, Integer.MAX_VALUE, true, null);
+            featureTypeBuilder.add(kwList, ATT_KEYWORDS,    null, 0, Integer.MAX_VALUE, true, null);
             featureTypeBuilder.add(ATT_LOCATION,    Point.class, 1, 1, false, null);
             featureTypeBuilder.add(ATT_PHENOMENONS, List.class, 0, Integer.MAX_VALUE, true, null);
             featureTypeBuilder.add(ATT_SMLTYPE,     String.class, 1, 1, true, null);
