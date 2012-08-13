@@ -297,7 +297,7 @@ public class WMSCoverageReference implements CoverageReference{
     }
 
     /**
-     * Sets the slBody parameter.
+     * Sets the sldBody parameter.
      *
      * @param sldBody A sld body.
      */

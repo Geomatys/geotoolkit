@@ -72,7 +72,7 @@ public final class DouglasPeuckerDescriptor extends VectorDescriptor {
      */
     public static final ParameterDescriptor<Boolean> DEL_SMALL_GEO_IN=
             new DefaultParameterDescriptor("del_small_geo_in", "Input boolean to set process behavior with small geometry",
-                                            Boolean.class, null, false);
+                                            Boolean.class, false, false);
 
     /**
      * Optional - Simplification behavior
