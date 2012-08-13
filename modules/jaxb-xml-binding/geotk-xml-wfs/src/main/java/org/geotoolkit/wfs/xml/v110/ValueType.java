@@ -80,7 +80,7 @@ public class ValueType {
             obj = gmlFactory.createMultiSolid((MultiSolidType) obj);
         } else if (obj instanceof MultiSurfaceType) {
             obj = gmlFactory.createMultiSurface((MultiSurfaceType) obj);
-        } 
+        }
         this.value = Arrays.asList(obj);
     }
 
@@ -89,7 +89,7 @@ public class ValueType {
      */
     public Object getValue() {
         cleanValueList();
-        if (value.size() == 1) {
+        if (value != null && value.size() == 1) {
             if (value.get(0) instanceof JAXBElement) {
                 return ((JAXBElement)value.get(0)).getValue();
             }
@@ -138,16 +138,18 @@ public class ValueType {
     }
 
     public void cleanValueList() {
-        List<Object> toRemove = new ArrayList<Object>();
-        for (Object obj : value) {
-            if (obj instanceof String) {
-                if (isOnlySpace((String)obj)) {
-                    toRemove.add(obj);
+        if (value != null) {
+            final List<Object> toRemove = new ArrayList<Object>();
+            for (Object obj : value) {
+                if (obj instanceof String) {
+                    if (isOnlySpace((String)obj)) {
+                        toRemove.add(obj);
+                    }
                 }
             }
-        }
-        for (Object obj : toRemove) {
-            value.remove(obj);
+            for (Object obj : toRemove) {
+                value.remove(obj);
+            }
         }
     }
     public boolean isOnlySpace(final String s) {
