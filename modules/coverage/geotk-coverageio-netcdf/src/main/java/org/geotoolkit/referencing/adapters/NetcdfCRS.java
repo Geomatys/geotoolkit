@@ -38,7 +38,6 @@ import ucar.nc2.dataset.CoordinateAxis1DTime;
 
 import org.opengis.metadata.extent.Extent;
 import org.opengis.util.InternationalString;
-import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.Projection;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.cs.TimeCS;
@@ -70,8 +69,6 @@ import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.cs.DiscreteReferencingFactory;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.referencing.operation.MathTransforms;
-import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
@@ -126,11 +123,6 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateReferenceSystem,
         org.opengis.referencing.cs.CoordinateSystem, GridGeometry
 {
-    /**
-     * Small tolerance factor for rounding error.
-     */
-    private static final double EPS = 1E-10;
-
     /**
      * The NetCDF coordinate system wrapped by this {@code NetcdfCRS} instance.
      */
@@ -501,50 +493,9 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
     @Override
     public synchronized MathTransform getGridToCRS() {
         if (gridToCRS == null) {
-            Matrix matrix = null; // Created when first needed.
-            final int sourceDim = domain.length;
-            final int targetDim = axes.length;
-            for (int j=0; j<targetDim; j++) {
-                final NetcdfAxis axis = axes[j];
-                if (!axis.isRegular()) {
-                    matrix = null;
-                    break;
-                }
-                final CoordinateAxis1D netcdfAxis = (CoordinateAxis1D) axis.axis;
-                final double scale = netcdfAxis.getIncrement();
-                if (Double.isNaN(scale) || scale == 0) {
-                    matrix = null;
-                    break;
-                }
-                if (matrix == null) {
-                    matrix = Matrices.create(targetDim+1, sourceDim+1);
-                }
-                final Dimension dim = netcdfAxis.getDimension(0);
-                for (int i=0; i<sourceDim; i++) {
-                    if (dim.equals(domain[i])) {
-                        matrix.setElement(j, i, nice(scale));
-                        break; // 'domain' is not expected to contain duplicated values.
-                    }
-                }
-                matrix.setElement(j, sourceDim, nice(netcdfAxis.getStart()));
-            }
-            gridToCRS = (matrix != null) ? MathTransforms.linear(matrix) : new NetcdfGridToCRS(sourceDim, axes);
+            gridToCRS = NetcdfGridToCRS.create(domain, axes);
         }
         return gridToCRS;
-    }
-
-    /**
-     * Workaround rounding errors found in NetCDF files.
-     *
-     * @since 3.16
-     */
-    private static double nice(double value) {
-        final double tf = value * 360;
-        final double ti = Math.rint(tf);
-        if (Math.abs(tf - ti) <= EPS) {
-            value = ti / 360;
-        }
-        return value;
     }
 
     /**

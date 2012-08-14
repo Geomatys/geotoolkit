@@ -73,7 +73,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureBetween;
  *         }
  *     }
  *     //
- *     // Code below onstructs the grid coordinate reference system. "degree" is the polynomial
+ *     // Code below constructs the grid coordinate reference system. "degree" is the polynomial
  *     // degree (e.g. 2) for a math transform that approximately map the grid of localization.
  *     // For a more accurate (but not always better) math transform backed by the whole grid,
  *     // invoke getMathTransform() instead, or use the special value of 0 for the degree argument.
@@ -112,6 +112,8 @@ import static org.geotoolkit.util.ArgumentChecks.ensureBetween;
  *     coverage = (Coverage2D) Operations.DEFAULT.resample(coverage, realCRS);
  *     coverage.show();
  * }
+ *
+ * @todo <code>LocalizationGridBuilder</code> would be a better name.
  *
  * @author Rémi Eve (IRD)
  * @author Martin Desruisseaux (IRD, Geomatys)

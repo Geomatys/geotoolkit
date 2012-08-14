@@ -39,6 +39,7 @@ import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageInputStream;
 
 import org.opengis.coverage.grid.GridEnvelope;
+import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.coverage.grid.RectifiedGrid;
 import org.opengis.metadata.spatial.Georectified;
 import org.opengis.metadata.spatial.PixelOrientation;
@@ -593,13 +594,17 @@ public class ImageCoverageReader extends GridCoverageReader {
                 final SpatialMetadata metadata = getSpatialMetadata(imageReader, index);
                 if (metadata != null) {
                     crs = metadata.getInstanceForType(CoordinateReferenceSystem.class);
-                    final RectifiedGrid grid = metadata.getInstanceForType(RectifiedGrid.class);
-                    if (grid != null) {
-                        gridToCRS = getMetadataHelper().getGridToCRS(grid);
-                    }
-                    final Georectified georect = metadata.getInstanceForType(Georectified.class);
-                    if (georect != null) {
-                        pointInPixel = georect.getPointInPixel();
+                    if (crs instanceof GridGeometry) { // Some formats (e.g. NetCDF) do that.
+                        gridToCRS = ((GridGeometry) crs).getGridToCRS();
+                    } else {
+                        final RectifiedGrid grid = metadata.getInstanceForType(RectifiedGrid.class);
+                        if (grid != null) {
+                            gridToCRS = getMetadataHelper().getGridToCRS(grid);
+                        }
+                        final Georectified georect = metadata.getInstanceForType(Georectified.class);
+                        if (georect != null) {
+                            pointInPixel = georect.getPointInPixel();
+                        }
                     }
                 }
             } catch (IOException e) {

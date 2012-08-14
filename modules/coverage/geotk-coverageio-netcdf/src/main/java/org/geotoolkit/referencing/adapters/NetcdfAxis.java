@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.referencing.adapters;
 
+import java.util.Map;
 import java.util.List;
 import javax.measure.unit.Unit;
 
@@ -65,6 +66,16 @@ public class NetcdfAxis extends NetcdfIdentifiedObject implements CoordinateSyst
      * The unit, computed when first needed.
      */
     volatile Unit<?> unit;
+
+    /**
+     * Creates a copy of the given axis. Copy are normally not necessary since {@code NetcdfAxis}
+     * is immutable. This constructor is provided only for subclasses that need to create almost
+     * identical copies.
+     */
+    NetcdfAxis(final NetcdfAxis axis) {
+        this.axis = axis.axis;
+        this.unit = axis.unit;
+    }
 
     /**
      * Creates a new {@code NetcdfAxis} object wrapping the given NetCDF coordinate axis.
@@ -200,6 +211,10 @@ public class NetcdfAxis extends NetcdfIdentifiedObject implements CoordinateSyst
      * Returns {@code true} if the NetCDF axis is an instance of {@link CoordinateAxis1D} and
      * {@linkplain CoordinateAxis1D#isRegular() is regular}.
      *
+     * {@note We do not allow overriding of this method, because callers assume that a
+     *        value of <code>true</code> implies that the NetCDF axis is an instance of
+     *        <code>CoordinateAxis1D</code>.}
+     *
      * @return {@code true} if the NetCDF axis is regular.
      *
      * @see CoordinateAxis1D#isRegular()
@@ -208,6 +223,51 @@ public class NetcdfAxis extends NetcdfIdentifiedObject implements CoordinateSyst
      */
     final boolean isRegular() {
         return (axis instanceof CoordinateAxis1D) && ((CoordinateAxis1D) axis).isRegular();
+    }
+
+    /**
+     * Returns the source dimension of this axis, or {@code null} if unknown. The dimensions are
+     * stored in the values of the returned map. The keys are the indices at which the dimensions
+     * are expected to be found in a source coordinates.
+     * <p>
+     * Note that the source indices are <strong>not</strong> the dimension in the coordinate system
+     * (while "source" and "target" dimensions are often the same, they could also be different).
+     * This method is not public in order to avoid confusion.
+     *
+     * @return The source dimensions associated to their indices as expected by a math transform
+     *         from pixel indices to geodetic coordinates, or {@code null} if unknown.
+     */
+    Map<Integer,Dimension> getDomain() {
+        return null;
+    }
+
+    /**
+     * Returns a NetCDF axis which is part of the given domain.
+     * This method does not modify this axis. Instead, it will create a new one if necessary.
+     *
+     * @param  domain The new domain.
+     * @return A NetCDF axis which is part of the given domain.
+     */
+    NetcdfAxis forDomain(final List<Dimension> domain) {
+        return this;
+    }
+
+    /**
+     * Returns the number of source ordinate values along the given <em>source</em> dimension,
+     * or -1 if none. Note that the given argument is <strong>not</strong> the dimension in the
+     * coordinate system (while "source" and "target" dimensions are often the same, they could
+     * also be different). This method is not public in order to avoid confusion.
+     *
+     * {@note It would almost be possible to infer the length from the <code>Dimension</code> object
+     * returned by <code>getDomain()</code>. However it would not work for "unlimited" dimensions,
+     * so we still need this method.}
+     *
+     * @param  sourceDimension The source dimension in a math transform from pixel indices to
+     *         geodetic coordinates.
+     * @return Number of ordinate values in the given dimension, or -1 if unknown.
+     */
+    int length(final int sourceDimension) {
+        return -1;
     }
 
     /**
