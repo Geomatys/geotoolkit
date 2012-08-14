@@ -31,7 +31,6 @@ import javax.xml.stream.XMLStreamWriter;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.feature.DefaultAttribute;
 import org.geotoolkit.feature.xml.Utils;
 import org.geotoolkit.feature.xml.XmlFeatureWriter;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
@@ -144,8 +143,8 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                                                XMLStreamException, DataStoreException
     {
         setOutput(output);
-        if (candidate instanceof Feature) {
-            writeFeature((Feature) candidate,true);
+        if (candidate instanceof ComplexAttribute) {
+            writeFeature((ComplexAttribute) candidate,true);
         } else if (candidate instanceof FeatureCollection) {
             writeFeatureCollection((FeatureCollection) candidate,false);
         } else {
@@ -243,7 +242,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
 
                         if ((nameProperty.equals("name") || nameProperty.equals("description")) && !gmlNamespace.equals(namespaceProperty)) {
                             namespaceProperty = gmlNamespace;
-                            LOGGER.warning("the property name and description of a feature must have the GML namespace");
+                            LOGGER.finer("the property name and description of a feature must have the GML namespace");
                         }
                         if (namespaceProperty != null) {
                             writer.writeStartElement(namespaceProperty, nameProperty);

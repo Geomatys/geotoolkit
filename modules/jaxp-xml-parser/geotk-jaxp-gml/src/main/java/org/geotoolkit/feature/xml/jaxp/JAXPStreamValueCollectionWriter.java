@@ -39,9 +39,10 @@ import org.geotoolkit.gml.xml.v321.ObjectFactory;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.xml.MarshallerPool;
 import org.geotoolkit.xml.Namespaces;
+import org.opengis.feature.Attribute;
+import org.opengis.feature.ComplexAttribute;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
-import org.opengis.feature.type.GeometryType;
 import org.opengis.filter.expression.Expression;
 import org.opengis.util.FactoryException;
 
@@ -115,7 +116,7 @@ public class JAXPStreamValueCollectionWriter extends StaxStreamWriter implements
         if (valueA instanceof Collection) {
             for (Object value : (Collection)valueA) {
                 writer.writeStartElement("wfs", "member", WFS_NAMESPACE);
-                writer.writeCharacters(Utils.getStringValue(value));
+                writeValue(value);
                 writer.writeEndElement();
             }
 
@@ -128,7 +129,7 @@ public class JAXPStreamValueCollectionWriter extends StaxStreamWriter implements
                 if (key != null) {
                     writer.writeAttribute("name", (String)key);
                 }
-                writer.writeCharacters(Utils.getStringValue(entry.getValue()));
+                writeValue(entry.getValue());
                 writer.writeEndElement();
             }
 
@@ -159,19 +160,44 @@ public class JAXPStreamValueCollectionWriter extends StaxStreamWriter implements
             writer.writeEndElement();
 
 
-        // we add the geometry
         } else {
             String value = Utils.getStringValue(valueA);
             if (value != null) {
                 writer.writeStartElement("wfs", "member", WFS_NAMESPACE);
-                if (value != null) {
-                    writer.writeCharacters(value);
-                }
+                writeValue(value);
                 writer.writeEndElement();
             }
         }
     }
 
+    private void writeValue(final Object value) throws XMLStreamException {
+        if (value instanceof ComplexAttribute) {
+            final JAXPStreamFeatureWriter featureWriter = new JAXPStreamFeatureWriter("3.2.1", "2.0.0",null);
+            try {
+                featureWriter.write(value, getWriter());
+            } catch (IOException ex) {
+                LOGGER.log(Level.WARNING, null, ex);
+            } catch (DataStoreException ex) {
+                LOGGER.log(Level.WARNING, null, ex);
+            }
+        } else if (value instanceof Attribute) {
+            final Attribute att   = (Attribute) value;
+            final Object attValue = att.getValue();
+            if (attValue instanceof Collection) {
+                for (Object o : (Collection)attValue) {
+                    writer.writeStartElement(att.getName().getNamespaceURI(), att.getName().getLocalPart());
+                    writer.writeCharacters(Utils.getStringValue(o));
+                    writer.writeEndElement();
+                }
+            } else {
+                writer.writeStartElement(att.getName().getNamespaceURI(), att.getName().getLocalPart());
+                writer.writeCharacters(Utils.getStringValue(attValue));
+                writer.writeEndElement();
+            }
+        } else {
+            writer.writeCharacters(Utils.getStringValue(value));
+        }
+    }
     /**
      *
      * @param featureCollection
