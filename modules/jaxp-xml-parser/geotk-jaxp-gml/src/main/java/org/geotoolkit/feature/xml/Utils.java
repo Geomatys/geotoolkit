@@ -145,6 +145,14 @@ public class Utils {
         CLASS_BINDING.put("LinearRing",                    LinearRing.class);
         CLASS_BINDING.put("LinearRingPropertyType",        LinearRing.class);
     }
+
+    public static boolean isGeometricType(final QName elementType) {
+        if (elementType != null) {
+            return CLASS_BINDING.get(elementType.getLocalPart()) != null;
+        }
+        return false;
+    }
+
     /**
      * Return a primitive Class from the specified XML QName (extracted from an xsd file).
      *

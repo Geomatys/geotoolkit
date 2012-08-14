@@ -46,6 +46,7 @@ import org.geotoolkit.xsd.xml.v2001.Schema;
 import org.geotoolkit.xsd.xml.v2001.TopLevelComplexType;
 import org.geotoolkit.xsd.xml.v2001.TopLevelElement;
 import org.geotoolkit.xsd.xml.v2001.XSDMarshallerPool;
+import org.opengis.feature.type.ComplexType;
 
 import org.opengis.feature.type.FeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -60,10 +61,8 @@ import org.w3c.dom.Node;
 public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFeatureTypeReader {
 
     private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.feature.xml.jaxp");
-    
-    private static final MarshallerPool POOL = XSDMarshallerPool.getInstance();
 
-    private final FeatureTypeBuilder builder = new FeatureTypeBuilder();
+    private static final MarshallerPool POOL = XSDMarshallerPool.getInstance();
 
     public JAXBFeatureTypeReader() {
     }
@@ -73,7 +72,6 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
      */
     @Override
     public List<FeatureType> read(final String xml) throws JAXBException {
-        builder.reset();
         Unmarshaller unmarshaller = null;
         try {
             unmarshaller        = POOL.acquireUnmarshaller();
@@ -93,7 +91,6 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
      */
     @Override
     public List<FeatureType> read(final InputStream in) throws JAXBException {
-        builder.reset();
         Unmarshaller unmarshaller = null;
         try {
             unmarshaller        = POOL.acquireUnmarshaller();
@@ -113,7 +110,6 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
      */
     @Override
     public List<FeatureType> read(final Reader reader) throws JAXBException {
-        builder.reset();
         Unmarshaller unmarshaller = null;
         try {
             unmarshaller         = POOL.acquireUnmarshaller();
@@ -127,13 +123,12 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
             }
         }
     }
-    
+
     /**
      * {@inheritDoc }
      */
     @Override
     public List<FeatureType> read(final Node element) throws JAXBException {
-        builder.reset();
         Unmarshaller unmarshaller = null;
         try {
             unmarshaller         = POOL.acquireUnmarshaller();
@@ -153,7 +148,6 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
      */
     @Override
     public FeatureType read(final String xml, final String name) throws JAXBException {
-        builder.reset();
         Unmarshaller unmarshaller = null;
         try {
             unmarshaller        = POOL.acquireUnmarshaller();
@@ -173,7 +167,6 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
      */
     @Override
     public FeatureType read(final InputStream in, final String name) throws JAXBException {
-        builder.reset();
         Unmarshaller unmarshaller = null;
         try {
             unmarshaller        = POOL.acquireUnmarshaller();
@@ -193,7 +186,6 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
      */
     @Override
     public FeatureType read(final Reader reader, final String name) throws JAXBException {
-        builder.reset();
         Unmarshaller unmarshaller = null;
         try {
             unmarshaller        = POOL.acquireUnmarshaller();
@@ -207,13 +199,12 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
             }
         }
     }
-    
+
     /**
      * {@inheritDoc }
      */
     @Override
     public FeatureType read(final Node node, final String name) throws JAXBException {
-        builder.reset();
         Unmarshaller unmarshaller = null;
         try {
             unmarshaller        = POOL.acquireUnmarshaller();
@@ -234,34 +225,34 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
         for (TopLevelElement element : schema.getElements()) {
             final QName typeName = element.getType();
             if (typeName != null) {
-                builder.setName(new DefaultName(typeName.getNamespaceURI(), element.getName()));
                 final TopLevelComplexType type = schema.getComplexTypeByName(typeName.getLocalPart());
-                result.add(getFeatureTypeFromSchema(type, typeName.getNamespaceURI()));
+                result.add(getFeatureTypeFromSchema(element.getName(), type, typeName.getNamespaceURI(), schema));
             } else {
                 LOGGER.log(Level.WARNING, "null typeName for element:{0}", element.getName());
             }
         }
         return result;
     }
-    
-    
+
+
     public FeatureType getFeatureTypeFromSchema(final Schema schema, final String name) throws SchemaException {
         final TopLevelElement element = schema.getElementByName(name);
         if (element != null) {
             final QName typeName = element.getType();
             if (typeName != null) {
-                builder.setName(new DefaultName(typeName.getNamespaceURI(), name));
                 final TopLevelComplexType type = schema.getComplexTypeByName(typeName.getLocalPart());
-                return getFeatureTypeFromSchema(type, typeName.getNamespaceURI());
+                return getFeatureTypeFromSchema(name, type, typeName.getNamespaceURI(), schema);
             } else {
                 LOGGER.log(Level.WARNING, "the element:{0} has no type", name);
             }
         }
         return null;
     }
-    
-    private FeatureType getFeatureTypeFromSchema(final TopLevelComplexType type, final String namespace) throws SchemaException {
+
+    private FeatureType getFeatureTypeFromSchema(final String name, final TopLevelComplexType type, final String namespace, final Schema schema) throws SchemaException {
+        final FeatureTypeBuilder builder = new FeatureTypeBuilder();
         if (type != null) {
+            builder.setName(new DefaultName(namespace, name));
             final ComplexContent content = type.getComplexContent();
             if (content != null) {
                 final ExtensionType ext = content.getExtension();
@@ -278,10 +269,11 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
                                     elementType = simpleType.getRestriction().getBase();
                                 }
                             }
+                            final String typeName    = elementType.getLocalPart();
                             final String elementName = attributeElement.getName();
-                            final Integer minAtt = attributeElement.getMinOccurs();
-                            final String maxxAtt = attributeElement.getMaxOccurs();
-                            final boolean nillable = attributeElement.isNillable();
+                            final Integer minAtt     = attributeElement.getMinOccurs();
+                            final String maxxAtt     = attributeElement.getMaxOccurs();
+                            final boolean nillable   = attributeElement.isNillable();
                             final int min = (minAtt==null)? 1 : minAtt;
                             final int max;
                             if(maxxAtt == null){
@@ -293,21 +285,106 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
                             }
                             CoordinateReferenceSystem crs = null;
 
-                            final Class c = Utils.getTypeFromQName(elementType);
-                            if (c == null) {
-                                throw new SchemaException("The attribute:" + elementName + " does no have a declared type.");
-                            }
-                            if(Geometry.class.isAssignableFrom(c) || org.opengis.geometry.Geometry.class.isAssignableFrom(c)){
-                                builder.add(new DefaultName(namespace, elementName), c, crs, min, max, nillable, null);
-                            }else{
-                                builder.add(new DefaultName(namespace, elementName), c, min, max, nillable, null);
+                            if ((typeName.endsWith("PropertyType") || typeName.endsWith("Type")) && !Utils.isGeometricType(elementType)) {
+                                final String cname;
+                                if (typeName.endsWith("PropertyType")) {
+                                    cname = typeName.substring(0, typeName.lastIndexOf("PropertyType")) + "Type";
+                                } else {
+                                    cname = typeName;
+                                }
+                                final ComplexType cType = getComplexTypeFromSchema(schema, namespace, cname);
+                                if (cType != null) {
+                                    builder.add(cType, new DefaultName(namespace, elementName), null, min, max, nillable, null);
+                                }
+
+                            } else {
+                                final Class c = Utils.getTypeFromQName(elementType);
+                                if (c == null) {
+                                    throw new SchemaException("The attribute:" + elementName + " does no have a declared type.");
+                                }
+                                if (Geometry.class.isAssignableFrom(c) || org.opengis.geometry.Geometry.class.isAssignableFrom(c)) {
+                                    builder.add(new DefaultName(namespace, elementName), c, crs, min, max, nillable, null);
+                                } else {
+                                    builder.add(new DefaultName(namespace, elementName), c, min, max, nillable, null);
+                                }
                             }
                         }
                     }
                 }
             }
         }
-
         return builder.buildFeatureType();
+    }
+
+    private ComplexType getComplexTypeFromSchema(final Schema schema, final String namespace, final String name) throws SchemaException {
+        final TopLevelComplexType complexType = schema.getComplexTypeByName(name);
+        final FeatureTypeBuilder builder      = new FeatureTypeBuilder();
+        if (complexType != null) {
+            final String properName;
+            if (name.endsWith("Type")) {
+                properName = name.substring(0, name.lastIndexOf("Type"));
+            } else {
+                properName = name;
+            }
+            builder.setName(new DefaultName(namespace, properName));
+            final ExplicitGroup sequence = complexType.getSequence();
+            if (sequence != null) {
+                for (Element attributeElement : sequence.getElements()) {
+                    QName elementType = attributeElement.getType();
+                    final String typeName = elementType.getLocalPart();
+
+                    // Try to extract base from a SimpleType
+                    if (elementType == null && attributeElement.getSimpleType() != null) {
+                        final LocalSimpleType simpleType = attributeElement.getSimpleType();
+                        if (simpleType.getRestriction() != null) {
+                            elementType = simpleType.getRestriction().getBase();
+                        }
+                    }
+                    final String elementName = attributeElement.getName();
+                    final Integer minAtt     = attributeElement.getMinOccurs();
+                    final String maxxAtt     = attributeElement.getMaxOccurs();
+                    final boolean nillable   = attributeElement.isNillable();
+                    final int min = (minAtt == null) ? 1 : minAtt;
+                    final int max;
+                    if (maxxAtt == null) {
+                        max = 1;
+                    } else if (maxxAtt.equalsIgnoreCase("unbounded")) {
+                        max = Integer.MAX_VALUE;
+                    } else {
+                        max = Integer.parseInt(maxxAtt);
+                    }
+                    CoordinateReferenceSystem crs = null;
+
+                    if ((typeName.endsWith("PropertyType") || typeName.endsWith("Type")) && !Utils.isGeometricType(elementType)) {
+
+                        final String cname;
+                        if (typeName.endsWith("PropertyType")) {
+                            cname = typeName.substring(0, typeName.lastIndexOf("PropertyType")) + "Type";
+                        } else {
+                            cname = typeName;
+                        }
+                        final ComplexType cType = getComplexTypeFromSchema(schema, namespace, cname);
+                        if (cType != null) {
+                            builder.add(cType, new DefaultName(namespace, elementName), null, min, max, nillable, null);
+                        }
+
+                    } else {
+                        final Class c = Utils.getTypeFromQName(elementType);
+                        if (c == null) {
+                            throw new SchemaException("The attribute:" + elementName + " does no have a declared type.");
+                        }
+                        if (Geometry.class.isAssignableFrom(c) || org.opengis.geometry.Geometry.class.isAssignableFrom(c)) {
+                            builder.add(new DefaultName(namespace, elementName), c, crs, min, max, nillable, null);
+                        } else {
+                            builder.add(new DefaultName(namespace, elementName), c, min, max, nillable, null);
+                        }
+                    }
+                }
+            }
+            return builder.buildType();
+        } else {
+            LOGGER.log(Level.WARNING, "Unable to find complex type for:{0}", name);
+            return null;
+        }
     }
 }

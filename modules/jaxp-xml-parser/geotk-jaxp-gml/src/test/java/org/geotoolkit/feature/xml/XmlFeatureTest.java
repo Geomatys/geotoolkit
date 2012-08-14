@@ -367,6 +367,16 @@ public class XmlFeatureTest {
     }
 
     @Test
+    public void testReadComplexFeatureType() throws JAXBException {
+        final XmlFeatureTypeReader reader = new JAXBFeatureTypeReader();
+        final List<FeatureType> types = reader.read(XmlFeatureTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/ComplexType.xsd"));
+
+        assertEquals(1, types.size());
+        assertEquals(complexType, types.get(0));
+    }
+
+    @Test
     public void testWriteSimpleFeatureType() throws JAXBException, IOException, ParserConfigurationException, SAXException{
         final File temp = File.createTempFile("gml", ".xml");
         temp.deleteOnExit();
