@@ -221,7 +221,7 @@ public class JAXBFeatureTypeWriter extends AbstractConfigurable implements XmlFe
         // PropertyType
         final ExplicitGroup ctypeSequence  = new ExplicitGroup();
         final Name ptypeName = ctype.getName();
-        ctypeSequence.addElement(new TopLevelElement(ptypeName.getLocalPart(), new QName(ptypeName.getNamespaceURI(), ptypeName.getLocalPart() + "Type")));
+        ctypeSequence.addElement(new LocalElement(ptypeName.getLocalPart(), new QName(ptypeName.getNamespaceURI(), ptypeName.getLocalPart() + "Type")));
         schema.addComplexType(new TopLevelComplexType(ptypeName.getLocalPart() + "PropertyType", ctypeSequence));
 
         //complex type
