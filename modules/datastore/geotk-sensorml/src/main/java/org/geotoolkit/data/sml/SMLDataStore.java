@@ -616,16 +616,15 @@ public class SMLDataStore extends AbstractDataStore {
 
             final ComplexAttribute input = (ComplexAttribute) FeatureUtilities.defaultProperty(istype.getDescriptor(ATT_INPUT));
             final ComplexType itype = input.getType();
-            final Collection<Property> iprops = new ArrayList<Property>();
 
             while (rset.next() && result3.next()) {
+                final Collection<Property> iprops = new ArrayList<Property>();
                 iprops.add(FF.createAttribute(result3.getString(1), (AttributeDescriptor) itype.getDescriptor(ATT_NAME), null));
                 iprops.add(FF.createAttribute(rset.getString(1),    (AttributeDescriptor) itype.getDescriptor(ATT_DESC), null));
+                isprops.add(FF.createComplexAttribute(iprops, (AttributeDescriptor) istype.getDescriptor(ATT_INPUT), null));
             }
             rset.close();
             result3.close();
-
-            isprops.add(FF.createComplexAttribute(iprops, (AttributeDescriptor) istype.getDescriptor(ATT_INPUT), null));
 
             props.add(FF.createComplexAttribute(isprops, (AttributeDescriptor) type.getDescriptor(ATT_INPUTS), null));
 
@@ -645,17 +644,15 @@ public class SMLDataStore extends AbstractDataStore {
 
             final ComplexAttribute output = (ComplexAttribute) FeatureUtilities.defaultProperty(ostype.getDescriptor(ATT_OUTPUT));
             final ComplexType otype = output.getType();
-            final Collection<Property> oprops = new ArrayList<Property>();
-
 
             while (rset.next() && result3.next()) {
+                final Collection<Property> oprops = new ArrayList<Property>();
                 oprops.add(FF.createAttribute(result3.getString(1), (AttributeDescriptor) otype.getDescriptor(ATT_NAME), null));
                 oprops.add(FF.createAttribute(rset.getString(1),    (AttributeDescriptor) otype.getDescriptor(ATT_DESC), null));
+                osprops.add(FF.createComplexAttribute(oprops, (AttributeDescriptor) ostype.getDescriptor(ATT_OUTPUT), null));
             }
             rset.close();
             result3.close();
-
-            osprops.add(FF.createComplexAttribute(oprops, (AttributeDescriptor) ostype.getDescriptor(ATT_OUTPUT), null));
 
             props.add(FF.createComplexAttribute(osprops, (AttributeDescriptor) type.getDescriptor(ATT_OUTPUTS), null));
 
