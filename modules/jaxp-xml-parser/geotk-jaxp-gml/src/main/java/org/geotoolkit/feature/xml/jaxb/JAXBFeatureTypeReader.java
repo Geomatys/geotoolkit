@@ -261,53 +261,7 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
                     final ExplicitGroup sequence = ext.getSequence();
                     if (sequence != null) {
                         for (Element attributeElement : sequence.getElements()) {
-                            QName elementType  = attributeElement.getType();
-                            // Try to extract base from a SimpleType
-                            if (elementType == null && attributeElement.getSimpleType() != null) {
-                                final LocalSimpleType simpleType = attributeElement.getSimpleType();
-                                if (simpleType.getRestriction() != null) {
-                                    elementType = simpleType.getRestriction().getBase();
-                                }
-                            }
-                            final String typeName    = elementType.getLocalPart();
-                            final String elementName = attributeElement.getName();
-                            final Integer minAtt     = attributeElement.getMinOccurs();
-                            final String maxxAtt     = attributeElement.getMaxOccurs();
-                            final boolean nillable   = attributeElement.isNillable();
-                            final int min = (minAtt==null)? 1 : minAtt;
-                            final int max;
-                            if(maxxAtt == null){
-                                max = 1;
-                            }else if(maxxAtt.equalsIgnoreCase("unbounded")){
-                                max = Integer.MAX_VALUE;
-                            }else{
-                                max = Integer.parseInt(maxxAtt);
-                            }
-                            CoordinateReferenceSystem crs = null;
-
-                            if ((typeName.endsWith("PropertyType") || typeName.endsWith("Type")) && !Utils.isGeometricType(elementType)) {
-                                final String cname;
-                                if (typeName.endsWith("PropertyType")) {
-                                    cname = typeName.substring(0, typeName.lastIndexOf("PropertyType")) + "Type";
-                                } else {
-                                    cname = typeName;
-                                }
-                                final ComplexType cType = getComplexTypeFromSchema(schema, namespace, cname);
-                                if (cType != null) {
-                                    builder.add(cType, new DefaultName(namespace, elementName), null, min, max, nillable, null);
-                                }
-
-                            } else {
-                                final Class c = Utils.getTypeFromQName(elementType);
-                                if (c == null) {
-                                    throw new SchemaException("The attribute:" + elementName + " does no have a declared type.");
-                                }
-                                if (Geometry.class.isAssignableFrom(c) || org.opengis.geometry.Geometry.class.isAssignableFrom(c)) {
-                                    builder.add(new DefaultName(namespace, elementName), c, crs, min, max, nillable, null);
-                                } else {
-                                    builder.add(new DefaultName(namespace, elementName), c, min, max, nillable, null);
-                                }
-                            }
+                            elementToAttribute(attributeElement, namespace, schema, builder);
                         }
                     }
                 }
@@ -330,61 +284,64 @@ public class JAXBFeatureTypeReader extends AbstractConfigurable implements XmlFe
             final ExplicitGroup sequence = complexType.getSequence();
             if (sequence != null) {
                 for (Element attributeElement : sequence.getElements()) {
-                    QName elementType = attributeElement.getType();
-                    final String typeName = elementType.getLocalPart();
-
-                    // Try to extract base from a SimpleType
-                    if (elementType == null && attributeElement.getSimpleType() != null) {
-                        final LocalSimpleType simpleType = attributeElement.getSimpleType();
-                        if (simpleType.getRestriction() != null) {
-                            elementType = simpleType.getRestriction().getBase();
-                        }
-                    }
-                    final String elementName = attributeElement.getName();
-                    final Integer minAtt     = attributeElement.getMinOccurs();
-                    final String maxxAtt     = attributeElement.getMaxOccurs();
-                    final boolean nillable   = attributeElement.isNillable();
-                    final int min = (minAtt == null) ? 1 : minAtt;
-                    final int max;
-                    if (maxxAtt == null) {
-                        max = 1;
-                    } else if (maxxAtt.equalsIgnoreCase("unbounded")) {
-                        max = Integer.MAX_VALUE;
-                    } else {
-                        max = Integer.parseInt(maxxAtt);
-                    }
-                    CoordinateReferenceSystem crs = null;
-
-                    if ((typeName.endsWith("PropertyType") || typeName.endsWith("Type")) && !Utils.isGeometricType(elementType)) {
-
-                        final String cname;
-                        if (typeName.endsWith("PropertyType")) {
-                            cname = typeName.substring(0, typeName.lastIndexOf("PropertyType")) + "Type";
-                        } else {
-                            cname = typeName;
-                        }
-                        final ComplexType cType = getComplexTypeFromSchema(schema, namespace, cname);
-                        if (cType != null) {
-                            builder.add(cType, new DefaultName(namespace, elementName), null, min, max, nillable, null);
-                        }
-
-                    } else {
-                        final Class c = Utils.getTypeFromQName(elementType);
-                        if (c == null) {
-                            throw new SchemaException("The attribute:" + elementName + " does no have a declared type.");
-                        }
-                        if (Geometry.class.isAssignableFrom(c) || org.opengis.geometry.Geometry.class.isAssignableFrom(c)) {
-                            builder.add(new DefaultName(namespace, elementName), c, crs, min, max, nillable, null);
-                        } else {
-                            builder.add(new DefaultName(namespace, elementName), c, min, max, nillable, null);
-                        }
-                    }
+                    elementToAttribute(attributeElement, namespace, schema, builder);
                 }
             }
             return builder.buildType();
         } else {
             LOGGER.log(Level.WARNING, "Unable to find complex type for:{0}", name);
             return null;
+        }
+    }
+
+    private void elementToAttribute(final Element attributeElement, final String namespace, final Schema schema, final FeatureTypeBuilder builder) throws SchemaException {
+        QName elementType = attributeElement.getType();
+        // Try to extract base from a SimpleType
+        if (elementType == null && attributeElement.getSimpleType() != null) {
+            final LocalSimpleType simpleType = attributeElement.getSimpleType();
+            if (simpleType.getRestriction() != null) {
+                elementType = simpleType.getRestriction().getBase();
+            }
+        }
+        final String typeName    = elementType.getLocalPart();
+        final String elementName = attributeElement.getName();
+        final Integer minAtt     = attributeElement.getMinOccurs();
+        final String maxxAtt     = attributeElement.getMaxOccurs();
+        final boolean nillable   = attributeElement.isNillable();
+        final int min = (minAtt == null) ? 1 : minAtt;
+        final int max;
+        if (maxxAtt == null) {
+            max = 1;
+        } else if (maxxAtt.equalsIgnoreCase("unbounded")) {
+            max = Integer.MAX_VALUE;
+        } else {
+            max = Integer.parseInt(maxxAtt);
+        }
+        CoordinateReferenceSystem crs = null;
+
+        if ((typeName.endsWith("PropertyType") || typeName.endsWith("Type")) && !Utils.isGeometricType(elementType)) {
+
+            final String cname;
+            if (typeName.endsWith("PropertyType")) {
+                cname = typeName.substring(0, typeName.lastIndexOf("PropertyType")) + "Type";
+            } else {
+                cname = typeName;
+            }
+            final ComplexType cType = getComplexTypeFromSchema(schema, namespace, cname);
+            if (cType != null) {
+                builder.add(cType, new DefaultName(namespace, elementName), null, min, max, nillable, null);
+            }
+
+        } else {
+            final Class c = Utils.getTypeFromQName(elementType);
+            if (c == null) {
+                throw new SchemaException("The attribute:" + elementName + " does no have a declared type.");
+            }
+            if (Geometry.class.isAssignableFrom(c) || org.opengis.geometry.Geometry.class.isAssignableFrom(c)) {
+                builder.add(new DefaultName(namespace, elementName), c, crs, min, max, nillable, null);
+            } else {
+                builder.add(new DefaultName(namespace, elementName), c, min, max, nillable, null);
+            }
         }
     }
 }
