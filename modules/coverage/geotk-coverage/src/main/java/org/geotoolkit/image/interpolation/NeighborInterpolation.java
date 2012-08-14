@@ -50,8 +50,8 @@ public class NeighborInterpolation extends Interpolation {
         pixelIterator.moveTo((int) Math.round(x), (int) Math.round(y), 0);
         int bands = 0;
         while (bands++ != numBands) {
-            pixelIterator.next();
             result[bands - 1] = pixelIterator.getSampleDouble();
+            pixelIterator.next();
         }
         return result;
     }

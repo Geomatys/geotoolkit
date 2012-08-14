@@ -125,9 +125,9 @@ public class PixelIteratorConform extends PixelIterator {
     }
 
     @Override
-    public Rectangle getBoundary() {
-        assertTrue(pixelIter1.getBoundary().equals(pixelIter2.getBoundary()));
-        return pixelIter1.getBoundary();
+    public Rectangle getBoundary(boolean areaIterate) {
+        assertTrue(pixelIter1.getBoundary(areaIterate).equals(pixelIter2.getBoundary(areaIterate)));
+        return pixelIter1.getBoundary(areaIterate);
     }
 
 

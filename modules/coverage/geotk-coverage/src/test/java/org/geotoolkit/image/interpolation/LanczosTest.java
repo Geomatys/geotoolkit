@@ -65,7 +65,7 @@ public class LanczosTest extends InterpolationTest {
      */
     @Test
     public void globalTest() {
-        pixIterator.moveTo(0, -1, 0);
+//        pixIterator.moveTo(0, -1, 0);
         double interpolXDeb, interpolXEnd, interpolYDeb, interpolYEnd;
         for (int y = miny; y < miny + height-1; y++) {
             for (int x = minx; x < minx + width-1; x++) {

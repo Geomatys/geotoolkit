@@ -232,7 +232,7 @@ abstract class DefaultDirectIterator extends PixelIterator{
             tY = (y - riMinY) / renderedImage.getTileHeight() + renderedImage.getMinTileY();
             updateCurrentRaster(tX, tY);
         }
-        this.dataCursor = (x - crMinX) * numBand        + (y - crMinY) * scanLineStride + b - 1;
+        this.dataCursor = (x - crMinX) * numBand        + (y - crMinY) * scanLineStride + b;// - 1;
         this.maxX       = (y - crMinY) * scanLineStride + (Math.min(areaIterateMaxX, crMinX + rasterWidth) - crMinX)*numBand;
     }
 }

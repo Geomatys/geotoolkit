@@ -188,7 +188,6 @@ public abstract class DefaultReadTest extends IteratorTest{
         SampleModel sampleM = new PixelInterleavedSampleModel(dataType, width, width, numband, width*numband, new int[]{0, 1, 2});
         test.rasterTest = Raster.createWritableRaster(sampleM, new Point(minx, miny));
         double comp = valueRef;
-//        test.rasterTest = Raster.create(dataType, width, height, width*numband, numband, new int[]{0, 1, 2}, new Point(minx, miny));
         for (int y = miny; y<miny + height; y++) {
             for (int x = minx; x<minx + width; x++) {
                 for (int b = 0; b<numband; b++) {
@@ -265,9 +264,9 @@ public abstract class DefaultReadTest extends IteratorTest{
         final int lenght = width*height*numBand - indexCut;
         setMoveToRITabs(indexCut, lenght);
         int comp = 0;
-        while (pixIterator.next()) {
+        do {
             setTabTestValue(comp++, pixIterator.getSampleDouble());
-        }
+        } while (pixIterator.next());
         assertTrue(compareTab());
     }
 
@@ -326,9 +325,9 @@ public abstract class DefaultReadTest extends IteratorTest{
         final int lenght = width*height*numBand - indexCut;
         setMoveToRITabs(indexCut, lenght);
         int comp = 0;
-        while (pixIterator.next()) {
+        do {
             setTabTestValue(comp++, pixIterator.getSampleDouble());
-        }
+        } while (pixIterator.next());
         assertTrue(compareTab());
     }
 
@@ -355,9 +354,9 @@ public abstract class DefaultReadTest extends IteratorTest{
         final int lenght = width*height*numBand - indexCut;
         setMoveToRITabs(indexCut, lenght);
         int comp = 0;
-        while (pixIterator.next()) {
+        do {
             setTabTestValue(comp++, pixIterator.getSampleDouble());
-        }
+        } while (pixIterator.next());
         assertTrue(compareTab());
     }
 
@@ -384,9 +383,9 @@ public abstract class DefaultReadTest extends IteratorTest{
         final int lenght = width*height*numBand - indexCut;
         setMoveToRITabs(indexCut, lenght);
         int comp = 0;
-        while (pixIterator.next()) {
+        do {
             setTabTestValue(comp++, pixIterator.getSampleDouble());
-        }
+        } while (pixIterator.next());
         assertTrue(compareTab());
     }
 
@@ -413,9 +412,9 @@ public abstract class DefaultReadTest extends IteratorTest{
         final int lenght = width*height*numBand - indexCut;
         setMoveToRITabs(indexCut, lenght);
         int comp = 0;
-        while (pixIterator.next()) {
+        do {
             setTabTestValue(comp++, pixIterator.getSampleDouble());
-        }
+        } while (pixIterator.next());
         assertTrue(compareTab());
     }
 
@@ -442,9 +441,9 @@ public abstract class DefaultReadTest extends IteratorTest{
         final int lenght = width*height*numBand - indexCut;
         setMoveToRITabs(indexCut, lenght);
         int comp = 0;
-        while (pixIterator.next()) {
+        do {
             setTabTestValue(comp++, pixIterator.getSampleDouble());
-        }
+        } while (pixIterator.next());
         assertTrue(compareTab());
     }
 }

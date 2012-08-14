@@ -46,7 +46,7 @@ import java.awt.image.WritableRenderedImage;
  * @author Rémi Marechal       (Geomatys).
  * @author Martin Desruisseaux (Geomatys).
  */
-public class RowMajorWritableDirectFloatIterator extends RowMajorDirectFloatIterator {
+class RowMajorWritableDirectFloatIterator extends RowMajorDirectFloatIterator {
 
     /**
      * Current last x tile position in rendered image tile array.

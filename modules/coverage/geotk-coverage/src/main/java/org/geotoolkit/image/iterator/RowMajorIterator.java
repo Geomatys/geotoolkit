@@ -193,6 +193,9 @@ class RowMajorIterator extends PixelIterator{
     public void close() {
     }
 
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public void moveTo(int x, int y, int b) {
         super.moveTo(x, y, b);
@@ -208,6 +211,6 @@ class RowMajorIterator extends PixelIterator{
         this.numBand = currentRaster.getNumBands();
         this.x = x;
         this.y = y;
-        this.band = b -1;
+        this.band = b;// -1;
     }
 }

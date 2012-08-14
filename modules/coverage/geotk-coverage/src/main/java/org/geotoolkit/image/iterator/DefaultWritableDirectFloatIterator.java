@@ -43,7 +43,7 @@ import java.awt.image.*;
  * @author Rémi Marechal       (Geomatys).
  * @author Martin Desruisseaux (Geomatys).
  */
-public class DefaultWritableDirectFloatIterator extends DefaultDirectFloatIterator {
+class DefaultWritableDirectFloatIterator extends DefaultDirectFloatIterator {
 
     /**
      * Raster which is followed by iterator and wherein caller write.

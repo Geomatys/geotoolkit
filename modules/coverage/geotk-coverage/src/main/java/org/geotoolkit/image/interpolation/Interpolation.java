@@ -86,7 +86,7 @@ public abstract class Interpolation {
     public Interpolation(PixelIterator pixelIterator, int windowSide) {
         this.pixelIterator = pixelIterator;
         this.numBands   = pixelIterator.getNumBands();
-        this.boundary   = pixelIterator.getBoundary();
+        this.boundary   = pixelIterator.getBoundary(false);
         if (windowSide > boundary.width || windowSide > boundary.height)
             throw new IllegalArgumentException("windowSide argument is more "
                     + "larger than iterate object boundary side. boundary = "
@@ -183,7 +183,6 @@ public abstract class Interpolation {
                 throw new IllegalArgumentException("impossible to define min and max in area out of Iterate object boundary");
             pixelIterator.moveTo(area.x, area.y, 0);
             for (;band<numBands; band++) {
-                pixelIterator.next();
                 value = pixelIterator.getSampleDouble();
                 //min value, x, y coordinates
                 minMax[6*band]     = value;
@@ -193,13 +192,13 @@ public abstract class Interpolation {
                 minMax[6*band + 3] = value;
                 minMax[6*band + 4] = pixelIterator.getX();
                 minMax[6*band + 5] = pixelIterator.getX();
+                pixelIterator.next();
             }
             band = 0;
             for (int y = area.y; y<area.y + area.height; y++) {
                 for (int x = area.x; x<area.x + area.width; x++) {
                     pixelIterator.moveTo(x, y, 0);
                     for (;band<numBands; band++) {
-                        pixelIterator.next();
                         value = pixelIterator.getSampleDouble();
                         if (value < minMax[6*band]) {
                             //min value, x, y coordinates
@@ -213,6 +212,7 @@ public abstract class Interpolation {
                             minMax[6*band + 4] = pixelIterator.getX();
                             minMax[6*band + 5] = pixelIterator.getX();
                         }
+                        pixelIterator.next();
                     }
                 }
             }

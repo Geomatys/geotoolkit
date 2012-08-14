@@ -282,17 +282,17 @@ public abstract class PixelIterator {
 
     /**
      * Move forward iterator cursor at x, y coordinates. Cursor is automatically
-     * positioned just before band index.
+     * positioned at band index.
      *
-     * User must call next() method before get() or set() method. Code example :
+     * Code example :
      * {@code
      *       PixelIterator.moveTo(x, y, b);
-     *       while (PixelIterator.next()) {
+     *       do {
      *            PixelIterator.getSample();//for example
-     *       }
+     *       } while (PixelIterator.next());
      * }
      *
-     * MoveTo method is configure to use while loop after moveTo call.
+     * MoveTo method is configure to use do...while() loop after moveTo call.
      *
      * @param x the x coordinate cursor position.
      * @param y the y coordinate cursor position.
@@ -322,9 +322,12 @@ public abstract class PixelIterator {
     /**
      * Returns {@code Rectangle} which is Image or Raster boundary within this Iterator.
      *
+     * @param areaIterate true to get area iterate boundary, false to get boundary of object that iterate.
      * @return {@code Rectangle} which is Image or Raster boundary within this Iterator.
      */
-    public Rectangle getBoundary() {
+    public Rectangle getBoundary(final boolean areaIterate) {
+        if (areaIterate)
+            return new Rectangle(areaIterateMinX, areaIterateMinY, areaIterateMaxX-areaIterateMinX, areaIterateMaxY-areaIterateMinY);
         int x, y, w, h;
         if (renderedImage == null) {
             x = currentRaster.getMinX();
@@ -394,12 +397,5 @@ public abstract class PixelIterator {
         return (renderedImage == null) ? currentRaster.getSampleModel().getDataType() : renderedImage.getSampleModel().getDataType();
     }
 
-    /**
-     * Return {@link Rectangle} which represent iteration area.
-     *
-     * @return {@link Rectangle} which represent iteration area.
-     */
-    public Rectangle getAreaIterate() {
-        return new Rectangle(areaIterateMinX, areaIterateMinY, areaIterateMaxX-areaIterateMinX, areaIterateMaxY-areaIterateMinY);
-    }
+//    public abstract enum getIterationDirection();
 }

@@ -180,6 +180,6 @@ abstract class RowMajorDirectIterator extends PixelIterator {
 
         //initialize row
         this.maxY = Math.min(areaIterateMaxY, cRMinY + currentRaster.getHeight());
-        this.dataCursor = (x - cRMinX) * numBand + step + b - 1;
+        this.dataCursor = (x - cRMinX) * numBand + step + b;// - 1;
     }
 }

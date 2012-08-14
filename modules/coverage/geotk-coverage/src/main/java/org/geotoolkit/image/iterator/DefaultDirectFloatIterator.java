@@ -46,7 +46,7 @@ import java.awt.image.RenderedImage;
  * @author Rémi Marechal       (Geomatys).
  * @author Martin Desruisseaux (Geomatys).
  */
-public class DefaultDirectFloatIterator extends DefaultDirectIterator {
+class DefaultDirectFloatIterator extends DefaultDirectIterator {
 
     /**
      * Current raster data table.

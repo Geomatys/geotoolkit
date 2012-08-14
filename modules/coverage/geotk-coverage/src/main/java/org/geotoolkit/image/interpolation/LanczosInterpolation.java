@@ -120,7 +120,6 @@ public class LanczosInterpolation extends Interpolation {
             for (dy = minY; dy < hY; dy++) {
                 for (dx = minX; dx < wX; dx++) {
                     pixelIterator.moveTo(dx, dy, b);
-                    pixelIterator.next();
                     interpol += pixelIterator.getSampleDouble() * getLCZt(dx, x) * getLCZt(dy, y);
                 }
             }

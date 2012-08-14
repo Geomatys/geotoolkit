@@ -228,6 +228,6 @@ class DefaultIterator extends PixelIterator {
         }
         this.x = x;
         this.y = y;
-        this.band = b - 1;
+        this.band = b;// - 1;
     }
 }

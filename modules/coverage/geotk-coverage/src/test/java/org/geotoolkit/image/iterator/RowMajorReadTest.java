@@ -258,9 +258,9 @@ public abstract class RowMajorReadTest extends IteratorTest {
         pixIterator.moveTo(mX, mY, 0);
         setMoveToRITabs(indexCut, lenght);
         int comp = 0;
-        while (pixIterator.next()) {
+        do {
             setTabTestValue(comp++, pixIterator.getSampleDouble());
-        }
+        } while (pixIterator.next());
         assertTrue(compareTab());
     }
 
@@ -286,9 +286,9 @@ public abstract class RowMajorReadTest extends IteratorTest {
         pixIterator.moveTo(mX, mY, b);
         setMoveToRITabs(indexCut, lenght);
         int comp = 0;
-        while (pixIterator.next()) {
+        do {
             setTabTestValue(comp++, pixIterator.getSampleDouble());
-        }
+        } while (pixIterator.next());
         assertTrue(compareTab());
     }
 }
