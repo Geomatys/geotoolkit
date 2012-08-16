@@ -19,11 +19,13 @@ package org.geotoolkit.image.io.plugin;
 
 import java.util.Map;
 import java.util.List;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
 import javax.imageio.ImageReader;
+import javax.imageio.IIOException;
 import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.metadata.IIOMetadataFormat;
 
@@ -35,6 +37,7 @@ import ucar.nc2.Group;
 import ucar.ma2.DataType;
 import ucar.nc2.Attribute;
 import ucar.nc2.NetcdfFile;
+import ucar.nc2.Dimension;
 import ucar.nc2.Variable;
 import ucar.nc2.VariableIF;
 import ucar.nc2.VariableSimpleIF;
@@ -64,6 +67,7 @@ import org.geotoolkit.metadata.netcdf.NetcdfMetadataReader;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.collection.BackingStoreException;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.geotoolkit.util.XArrays;
 
 import static org.geotoolkit.image.io.MultidimensionalImageStore.*;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.ISO_FORMAT_NAME;
@@ -177,6 +181,9 @@ final class NetcdfMetadata extends SpatialMetadata {
      * Creates <cite>image metadata</cite> from the specified variables. Note that
      * {@link CoordSysBuilderIF#buildCoordinateSystems(NetcdfDataset)}
      * should have been invoked (if needed) before this constructor.
+     * <p>
+     * This constructor is usually invoked for exactly one variable, unless the user
+     * assigned many variables to the same image index using the bands API.
      *
      * @param reader The reader for which to assign the metadata.
      * @param file The originating dataset file, or {@code null} if none.
@@ -189,6 +196,7 @@ final class NetcdfMetadata extends SpatialMetadata {
         super(false, reader, null);
         GDALGridMapping  gdal     = null;
         CoordinateSystem netcdfCS = null;
+        List<Dimension>  domain   = null;
         for (final VariableIF variable : variables) {
             if (gdal == null && file != null) {
                 /*
@@ -237,10 +245,23 @@ final class NetcdfMetadata extends SpatialMetadata {
                     }
                 }
             }
+            /*
+             * Get the domain of the first variable, and ensure that the domain of all other
+             * variables is the same. We will need to domain later for sorting axes in an order
+             * consistent with the data.
+             */
+            final List<Dimension> vd = variable.getDimensions();
+            if (domain == null) {
+                domain = vd;
+            } else if (!domain.equals(vd)) {
+                throw new IIOException(Errors.format(Errors.Keys.INCONSISTENT_DOMAIN_$2,
+                        variable.getShortName(), variables[0].getShortName()));
+            }
         }
-        setCoordinateSystem(file, netcdfCS,
+        setCoordinateSystem(file, domain, netcdfCS,
                 (gdal != null) ? gdal.crs : null,
-                (gdal != null) ? gdal.gridToCRS : null);
+                (gdal != null) ? gdal.gridToCRS : null,
+                reader.coordinateSystems);
         addSampleDimension(variables);
         this.variables = variables;
     }
@@ -281,22 +302,40 @@ final class NetcdfMetadata extends SpatialMetadata {
      * Coordinate Reference System} implementation.
      *
      * @param  file The originating dataset file, or {@code null} if none.
+     * @param  domain The domain in NetCDF order (reverse of "natural" order).
      * @param  cs The NetCDF coordinate system to define in metadata, or {@code null}.
      * @param  crs Always {@code null}, unless an alternative CRS should be formatted
      *         in replacement of the CRS built from the given NetCDF coordinate system.
      * @param  gridToCRS The transform from pixel coordinates to CRS coordinates, or
      *         {@code null} if unknown.
+     * @param  cache A cache of previously created {@link NetcdfCS}. This is usually
+     *         the {@link NetcdfImageReader#coordinateSystems} instance.
      * @throws IOException If an I/O operation was needed and failed.
      */
-    private void setCoordinateSystem(final NetcdfDataset file, final CoordinateSystem cs,
-            CoordinateReferenceSystem crs, AffineTransform gridToCRS) throws IOException
+    private void setCoordinateSystem(final NetcdfDataset file, final List<Dimension> domain,
+            final CoordinateSystem cs, CoordinateReferenceSystem crs, AffineTransform gridToCRS,
+            final Map<List<Object>,NetcdfCRS> cache) throws IOException
     {
         /*
-         * The following code is only a validity check. It may produce warnings,
-         * but does not write any metadata at this stage.
+         * If a NetCDF coordinate system is available, wraps it as a GeoAPI implementation.
+         * Use a cache of previously created objects in the current file, since the same CS
+         * is typically used for many variables.
          */
         if (cs != null) {
-            final NetcdfCRS netcdfCRS = NetcdfCRS.wrap(cs, file, this);
+            final int rank = domain.size();
+            final List<Object> cacheKey = Arrays.asList(domain.toArray(new Object[rank + 1]));
+            cacheKey.set(rank, cs); // We need both the domain of the variable and the its CS.
+            NetcdfCRS netcdfCRS = cache.get(cacheKey);
+            if (netcdfCRS == null) {
+                final Dimension[] dim = domain.toArray(new Dimension[rank]);
+                XArrays.reverse(dim);
+                netcdfCRS = NetcdfCRS.wrap(cs, dim, file, this);
+                cache.put(cacheKey, netcdfCRS);
+            }
+            /*
+             * The following code is only a validity check. It may produce warnings,
+             * but does not write any metadata at this stage.
+             */
             final int dim = netcdfCRS.getDimension();
             for (int i=0; i<dim; i++) {
                 final NetcdfAxis axis = netcdfCRS.getAxis(i);

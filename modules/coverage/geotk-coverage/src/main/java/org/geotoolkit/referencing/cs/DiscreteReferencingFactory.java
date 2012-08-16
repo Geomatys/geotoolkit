@@ -467,16 +467,20 @@ scan:   for (final CoordinateReferenceSystem component : crs.getComponents()) {
                     final MathTransform tr = ((GridGeometry) component).getGridToCRS();
                     if (tr instanceof LinearTransform) {
                         /*
-                         * Copies the scale and translation terms from the matrix
-                         * computed by the individual component.
+                         * Copies the scale and translation terms from the matrix computed by the
+                         * individual component. The matrix is usually square, but not always. So
+                         * we need to check its size.
                          */
                         final Matrix sub = ((LinearTransform) tr).getMatrix();
+                        final int sourceDim = tr.getSourceDimensions(); // Also the translation column.
+                        assert sub.getNumRow() == dimension + 1 : tr;
+                        assert sub.getNumCol() == sourceDim + 1 : tr;
                         for (int j=0; j<dimension; j++) {
                             final int dj = j + lower;
                             for (int i=0; i<dimension; i++) {
                                 matrix.setElement(dj, i+lower, sub.getElement(j, i));
                             }
-                            matrix.setElement(j+lower, lastColumn, sub.getElement(j, dimension));
+                            matrix.setElement(j+lower, lastColumn, sub.getElement(j, sourceDim));
                         }
                     } else {
                         /*

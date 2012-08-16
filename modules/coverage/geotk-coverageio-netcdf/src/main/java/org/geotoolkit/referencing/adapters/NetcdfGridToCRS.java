@@ -18,8 +18,7 @@
 package org.geotoolkit.referencing.adapters;
 
 import java.util.Map;
-import java.util.List;
-import java.util.Arrays;
+import javax.imageio.IIOException;
 import ucar.nc2.Dimension;
 import ucar.nc2.dataset.CoordinateAxis1D;
 
@@ -28,6 +27,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
 import org.geotoolkit.util.XArrays;
+import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.internal.referencing.SeparableTransform;
 import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
@@ -189,14 +189,20 @@ class NetcdfGridToCRS extends AbstractMathTransform implements SeparableTransfor
             }
         }
         domain = XArrays.resize(domain, n);
-        final List<Dimension> domainList = Arrays.asList(domain);
         n = 0;
-        for (int i=0; i<target.length; i++) {
-            if (target[i] != null) {
-                target[n++] = target[i].forDomain(domainList);
-            } else if (targetDimensions != null) {
-                return null;
+        try {
+            for (int i=0; i<target.length; i++) {
+                if (target[i] != null) {
+                    target[n++] = target[i].forDomain(domain);
+                } else if (targetDimensions != null) {
+                    return null;
+                }
             }
+        } catch (IIOException e) {
+            // Should not happen. But if it does happen anyway,
+            // returns null as allowed by this method contract.
+            Logging.unexpectedException(NetcdfGridToCRS.class, "subTransform", e);
+            return null;
         }
         target = XArrays.resize(target, n);
         return create(domain, target);

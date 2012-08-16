@@ -18,10 +18,9 @@
 package org.geotoolkit.referencing.adapters;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.Collections;
-import java.util.NoSuchElementException;
+import javax.imageio.IIOException;
 
 import ucar.nc2.Dimension;
 import ucar.nc2.dataset.CoordinateAxis1D;
@@ -78,17 +77,15 @@ final class NetcdfAxis1D extends NetcdfAxis implements DiscreteCoordinateSystemA
      * Creates a new {@code NetcdfAxis} object wrapping the given NetCDF coordinate axis.
      *
      * @param axis The NetCDF coordinate axis to wrap.
-     * @param domain Dimensions of the coordinate system for which we are wrapping an axis, in NetCDF order.
-     *        This is typically {@link ucar.nc2.dataset.CoordinateSystem#getDomain()}.
+     * @param domain Dimensions of the variable for which we are wrapping an axis, in natural order
+     *        (reverse of NetCDF order). They are often, but not necessarily, the coordinate system
+     *        dimensions.
+     * @throws IIOException If the axis domain is not contained in the given list of dimensions.
      */
-    NetcdfAxis1D(final CoordinateAxis1D axis, final List<Dimension> domain) {
+    NetcdfAxis1D(final CoordinateAxis1D axis, final Dimension[] domain) throws IIOException {
         super(axis);
+        iDim = indexOfDimension(axis, 0, domain);
         length = axis.getShape(0);
-        final int r = domain.size() - 1;
-        iDim = r - domain.indexOf(axis.getDimension(0));
-        if (iDim > r) {
-            throw new NoSuchElementException(); // Should never happen.
-        }
     }
 
     /**
@@ -110,11 +107,13 @@ final class NetcdfAxis1D extends NetcdfAxis implements DiscreteCoordinateSystemA
     /**
      * Returns a NetCDF axis which is part of the given domain.
      * This method does not modify this axis. Instead, it will create a new one if necessary.
+     *
+     * @param domain The new domain in <em>natural</em> order (<strong>not</strong> the NetCDF order).
+     * @throws IIOException If the given domain does not contains this axis domain.
      */
     @Override
-    final NetcdfAxis forDomain(final List<Dimension> domain) {
-        final int dim = domain.indexOf(axis.getDimension(0));
-        assert (dim >= 0) : domain; // The caller is expected to have provided a complete list.
+    final NetcdfAxis forDomain(final Dimension[] domain) throws IIOException {
+        final int dim = indexOfDimension(axis, 0, domain);
         return (dim == iDim) ? this : new NetcdfAxis1D(this, dim);
     }
 

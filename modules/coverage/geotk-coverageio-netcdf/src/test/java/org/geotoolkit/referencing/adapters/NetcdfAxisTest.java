@@ -59,7 +59,7 @@ public final strictfp class NetcdfAxisTest {
     public void testGetOrdinateValue1D() throws IOException, TransformException {
         final NetcdfDataset data = NetcdfDataset.openDataset(getTestFile().getPath());
         try {
-            final NetcdfCRS crs = NetcdfCRS.wrap(data.getCoordinateSystems().get(0), data, null);
+            final NetcdfCRS crs = NetcdfCRS.wrap(data.getCoordinateSystems().get(0), null, data, null);
             final NetcdfAxis axis = ((NetcdfAxis) crs.getCoordinateSystem().getAxis(2));
             assertInstanceOf("Expected a one-dimensional axis", NetcdfAxis1D.class, axis);
             final double[] c = new double[4];
@@ -129,7 +129,7 @@ public final strictfp class NetcdfAxisTest {
             do {
                 final NetcdfCRS crs;
                 if (useFile) {
-                    crs = NetcdfCRS.wrap(cs, data, null);
+                    crs = NetcdfCRS.wrap(cs, null, data, null);
                 } else {
                     crs = NetcdfCRS.wrap(cs);
                 }

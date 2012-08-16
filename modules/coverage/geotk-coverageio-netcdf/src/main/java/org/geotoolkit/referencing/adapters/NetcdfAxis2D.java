@@ -17,10 +17,9 @@
  */
 package org.geotoolkit.referencing.adapters;
 
-import java.util.List;
 import java.util.Map;
 import java.util.LinkedHashMap;
-import java.util.NoSuchElementException;
+import javax.imageio.IIOException;
 
 import ucar.nc2.Dimension;
 import ucar.nc2.dataset.CoordinateAxis2D;
@@ -54,19 +53,17 @@ final class NetcdfAxis2D extends NetcdfAxis {
      * Creates a new {@code NetcdfAxis} object wrapping the given NetCDF coordinate axis.
      *
      * @param axis The NetCDF coordinate axis to wrap.
-     * @param domain Dimensions of the coordinate system for which we are wrapping an axis, in NetCDF order.
-     *        This is typically {@link ucar.nc2.dataset.CoordinateSystem#getDomain()}.
+     * @param domain Dimensions of the variable for which we are wrapping an axis, in natural order
+     *        (reverse of NetCDF order). They are often, but not necessarily, the coordinate system
+     *        dimensions.
+     * @throws IIOException If the axis domain is not contained in the given list of dimensions.
      */
-    NetcdfAxis2D(final CoordinateAxis2D axis, final List<Dimension> domain) {
+    NetcdfAxis2D(final CoordinateAxis2D axis, final Dimension[] domain) throws IIOException {
         super(axis);
+        iDim = indexOfDimension(axis, 0, domain);
+        jDim = indexOfDimension(axis, 1, domain);
         iNum = axis.getShape(0);
         jNum = axis.getShape(1);
-        final int r = domain.size() - 1;
-        iDim = r - domain.indexOf(axis.getDimension(0));
-        jDim = r - domain.indexOf(axis.getDimension(1));
-        if (iDim > r || jDim > r) {
-            throw new NoSuchElementException(); // Should never happen.
-        }
     }
 
     /**
@@ -83,12 +80,14 @@ final class NetcdfAxis2D extends NetcdfAxis {
     /**
      * Returns a NetCDF axis which is part of the given domain.
      * This method does not modify this axis. Instead, it will create a new one if necessary.
+     *
+     * @param domain The new domain in <em>natural</em> order (<strong>not</strong> the NetCDF order).
+     * @throws IIOException If the given domain does not contains this axis domain.
      */
     @Override
-    final NetcdfAxis forDomain(final List<Dimension> domain) {
-        final int i0 = domain.indexOf(axis.getDimension(0));
-        final int i1 = domain.indexOf(axis.getDimension(1));
-        assert (i0 >= 0) && (i1 >= 0) : domain; // The caller is expected to have provided a complete list.
+    final NetcdfAxis forDomain(final Dimension[] domain) throws IIOException {
+        final int i0 = indexOfDimension(axis, 0, domain);
+        final int i1 = indexOfDimension(axis, 1, domain);
         return (i0 == iDim && i1 == jDim) ? this : new NetcdfAxis2D(this, i0, i1);
     }
 
