@@ -43,7 +43,7 @@ public class BDHObjectiveAnalysis extends org.geotoolkit.math.ObjectiveAnalysis 
 
     /**
      * An arbitrary scale factor applied in the distance computed by {@link #correlation(double)}.
-     * This is a hack for allowing the code to work with different CRS. Do not relyslt alex tu on this hack,
+     * This is a hack for allowing the code to work with different CRS. Do not rely on this hack,
      * it may be suppressed in future versions.
      */
     private double scaleHack = 1;

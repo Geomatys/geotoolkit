@@ -194,22 +194,22 @@ public class KrigingProcess extends AbstractProcess {
         getOrCreate(OUT_LINES, outputParameters).setValue(col);
     }
 
-    private static GridCoverage2D toCoverage(final double[] computed, final double[] xs, final double[] ys,
-            final Envelope env) {
-
-        final float[][] matrix = new float[xs.length][ys.length];
-
-        //TODO find why the matrice is inverted. the envelope ? lines are corrects
-        //flip the matrix on y axi
-        for (int column=0;column<xs.length;column++) {
-            for (int row=0;row<ys.length;row++) {
-                //matrix[row][column] = (float)computed[column + row * xs.length];
-                matrix[ (ys.length-row-1) ][column] = (float)computed[column + row * xs.length];
-            }
-        }
-
-        final GridCoverageFactory gcf = new GridCoverageFactory();
-        return gcf.create("catgrid",matrix, env);
-    }
+//    private static GridCoverage2D toCoverage(final double[] computed, final double[] xs, final double[] ys,
+//            final Envelope env) {
+//
+//        final float[][] matrix = new float[xs.length][ys.length];
+//
+//        //TODO find why the matrice is inverted. the envelope ? lines are corrects
+//        //flip the matrix on y axi
+//        for (int column=0;column<xs.length;column++) {
+//            for (int row=0;row<ys.length;row++) {
+//                //matrix[row][column] = (float)computed[column + row * xs.length];
+//                matrix[ (ys.length-row-1) ][column] = (float)computed[column + row * xs.length];
+//            }
+//        }
+//
+//        final GridCoverageFactory gcf = new GridCoverageFactory();
+//        return gcf.create("catgrid",matrix, env);
+//    }
 
 }

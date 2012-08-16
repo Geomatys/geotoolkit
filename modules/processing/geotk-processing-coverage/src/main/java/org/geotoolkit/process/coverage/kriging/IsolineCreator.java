@@ -81,16 +81,18 @@ public class IsolineCreator {
     /**
      * Define isoline on object that iterate by {@link PixelIterator}.
      *
-     * @param pixelIterator
+     * @param pixelIterator must be instance of RowMajor iterator.
      * @param isolineLevel Isoline levels.
      */
     public IsolineCreator(final PixelIterator pixelIterator, final double[] isolineLevel) {
+
+        // faire une verif pixel iterator de type row major
         ArgumentChecks.ensureNonNull("pixelIterator", pixelIterator);
         ArgumentChecks.ensureNonNull("isoline interval", isolineLevel);
         if (pixelIterator.getNumBands() != 1)
             throw new IllegalArgumentException("image not conform, number of bands exceed 1");
         this.pixelIterator = pixelIterator;
-        this.areaIterate   = pixelIterator.getAreaIterate();
+        this.areaIterate   = pixelIterator.getBoundary(true);
         this.lls = isolineLevel;
     }
 
@@ -101,7 +103,7 @@ public class IsolineCreator {
      * @param lls Isoline intervals.
      */
     public IsolineCreator(final RenderedImage renderedImage, final double[] lls) {
-        this(PixelIteratorFactory.createDefaultIterator(renderedImage), lls);
+        this(PixelIteratorFactory.createRowMajorIterator(renderedImage), lls);
     }
 
     /**
@@ -145,16 +147,27 @@ public class IsolineCreator {
                 y[0] = y[3] = j;
                 y[1] = y[2] = j+1;
 
+//                pixelIterator.moveTo((int)x[0],(int)y[0], 0);
+//                pixelIterator.next();
+//                z[0] = pixelIterator.getSampleDouble();
+//                pixelIterator.moveTo((int)x[1],(int)y[1], 0);
+//                pixelIterator.next();
+//                z[1] = pixelIterator.getSampleDouble();
+//                pixelIterator.moveTo((int)x[3],(int)y[3], 0);
+//                pixelIterator.next();
+//                z[3] = pixelIterator.getSampleDouble();
+//                pixelIterator.moveTo((int)x[2],(int)y[2], 0);
+//                pixelIterator.next();
+//                z[2] = pixelIterator.getSampleDouble();
+
                 pixelIterator.moveTo((int)x[0],(int)y[0], 0);
-                pixelIterator.next();
+//                pixelIterator.next();
                 z[0] = pixelIterator.getSampleDouble();
-                pixelIterator.moveTo((int)x[1],(int)y[1], 0);
-                pixelIterator.next();
-                z[1] = pixelIterator.getSampleDouble();
-                pixelIterator.moveTo((int)x[3],(int)y[3], 0);
                 pixelIterator.next();
                 z[3] = pixelIterator.getSampleDouble();
-                pixelIterator.moveTo((int)x[2],(int)y[2], 0);
+                pixelIterator.moveTo((int)x[1],(int)y[1], 0);
+//                pixelIterator.next();
+                z[1] = pixelIterator.getSampleDouble();
                 pixelIterator.next();
                 z[2] = pixelIterator.getSampleDouble();
 
@@ -202,7 +215,7 @@ public class IsolineCreator {
                                     //Ce coté contient la valeur de la courbe de niveau
                                     double tmp;
                                     if (z[k1] == z[k0]) {
-                                        tmp = Math.pow(x[k0]-x[k1], 2) + Math.pow(y[k0]-y[k1], 2);
+                                        tmp = (x[k0]-x[k1])*(x[k0]-x[k1])+(y[k0]-y[k1])*(y[k0]-y[k1]);//Math.pow(x[k0]-x[k1], 2) + Math.pow(y[k0]-y[k1], 2);
                                         if (tmp < d2min) {
                                             d2min = tmp;
                                             kmin = k0;
@@ -230,7 +243,8 @@ public class IsolineCreator {
                                                     tmp = (zline - z[m0]) / (z[m1] - z[m0]);
                                                     final double tx1 = x[m0] + tmp * (x[m1] - x[m0]);
                                                     final double ty1 = y[m0] + tmp * (y[m1] - y[m0]);
-                                                    tmp = Math.pow(tx0 - tx1, 2) + Math.pow(ty0 - ty1, 2);
+//                                                    tmp = Math.pow(tx0 - tx1, 2) + Math.pow(ty0 - ty1, 2);
+                                                    tmp = (tx0 - tx1)*(tx0 - tx1)+(ty0 - ty1)*(ty0 - ty1);// Math.pow(tx0 - tx1, 2) + Math.pow(ty0 - ty1, 2);
                                                     if (tmp < d2min) {
                                                         d2min = tmp;
                                                         kmin = k0;
