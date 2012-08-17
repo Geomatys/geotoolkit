@@ -31,6 +31,7 @@ import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.internal.referencing.SeparableTransform;
 import org.geotoolkit.referencing.operation.MathTransforms;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
+import org.geotoolkit.referencing.operation.matrix.XMatrix;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
 import org.geotoolkit.resources.Errors;
 
@@ -117,9 +118,18 @@ class NetcdfGridToCRS extends AbstractMathTransform implements SeparableTransfor
         if (derivate) {
             throw new TransformException(Errors.format(Errors.Keys.CANT_COMPUTE_DERIVATIVE));
         }
+        /*
+         * We need to store the result in a temporary array before to write in the destination
+         * array in case the source and destination overlap: we must make sure that the source
+         * coordinate is not modified until the destination has been fully calculated. This is
+         * epecially important for CoordinateAxis2D:  the ordinate values must not be modified
+         * be the previous axes before CoordinateAxis2D had a chance to use them.
+         */
+        final double[] t = new double[axes.length];
         for (int i=0; i<axes.length; i++) {
-            dstPts[dstOff + i] = axes[i].getOrdinateValue(srcPts, srcOff);
+            t[i] = axes[i].getOrdinateValue(srcPts, srcOff);
         }
+        System.arraycopy(t, 0, dstPts, dstOff, t.length);
         return null;
     }
 
@@ -222,7 +232,7 @@ class NetcdfGridToCRS extends AbstractMathTransform implements SeparableTransfor
      * @return The transform from grid to the CRS.
      */
     static MathTransform create(final Dimension[] domain, final NetcdfAxis[] axes) {
-        Matrix matrix = null; // Created when first needed.
+        XMatrix matrix = null; // Created when first needed.
         final int sourceDim = domain.length;
         final int targetDim = axes.length;
         for (int j=0; j<targetDim; j++) {
@@ -239,6 +249,8 @@ class NetcdfGridToCRS extends AbstractMathTransform implements SeparableTransfor
             }
             if (matrix == null) {
                 matrix = Matrices.create(targetDim+1, sourceDim+1);
+                matrix.setZero();
+                matrix.setElement(targetDim, sourceDim, 1);
             }
             final Dimension dim = netcdfAxis.getDimension(0);
             for (int i=0; i<sourceDim; i++) {

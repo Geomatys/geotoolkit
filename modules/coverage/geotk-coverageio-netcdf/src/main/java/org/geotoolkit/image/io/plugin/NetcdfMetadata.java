@@ -19,7 +19,8 @@ package org.geotoolkit.image.io.plugin;
 
 import java.util.Map;
 import java.util.List;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.awt.geom.AffineTransform;
@@ -63,6 +64,7 @@ import org.geotoolkit.internal.image.io.GridDomainAccessor;
 import org.geotoolkit.internal.referencing.AxisDirections;
 import org.geotoolkit.referencing.adapters.NetcdfAxis;
 import org.geotoolkit.referencing.adapters.NetcdfCRS;
+import org.geotoolkit.referencing.adapters.NetcdfCRSBuilder;
 import org.geotoolkit.metadata.netcdf.NetcdfMetadataReader;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.collection.BackingStoreException;
@@ -258,10 +260,9 @@ final class NetcdfMetadata extends SpatialMetadata {
                         variable.getShortName(), variables[0].getShortName()));
             }
         }
-        setCoordinateSystem(file, domain, netcdfCS,
+        setCoordinateSystem(reader, file, domain, netcdfCS,
                 (gdal != null) ? gdal.crs : null,
-                (gdal != null) ? gdal.gridToCRS : null,
-                reader.coordinateSystems);
+                (gdal != null) ? gdal.gridToCRS : null);
         addSampleDimension(variables);
         this.variables = variables;
     }
@@ -308,13 +309,11 @@ final class NetcdfMetadata extends SpatialMetadata {
      *         in replacement of the CRS built from the given NetCDF coordinate system.
      * @param  gridToCRS The transform from pixel coordinates to CRS coordinates, or
      *         {@code null} if unknown.
-     * @param  cache A cache of previously created {@link NetcdfCS}. This is usually
-     *         the {@link NetcdfImageReader#coordinateSystems} instance.
      * @throws IOException If an I/O operation was needed and failed.
      */
-    private void setCoordinateSystem(final NetcdfDataset file, final List<Dimension> domain,
-            final CoordinateSystem cs, CoordinateReferenceSystem crs, AffineTransform gridToCRS,
-            final Map<List<Object>,NetcdfCRS> cache) throws IOException
+    private void setCoordinateSystem(final NetcdfImageReader reader, final NetcdfDataset file,
+            List<Dimension> domain, final CoordinateSystem cs, CoordinateReferenceSystem crs,
+            AffineTransform gridToCRS) throws IOException
     {
         /*
          * If a NetCDF coordinate system is available, wraps it as a GeoAPI implementation.
@@ -322,16 +321,15 @@ final class NetcdfMetadata extends SpatialMetadata {
          * is typically used for many variables.
          */
         if (cs != null) {
-            final int rank = domain.size();
-            final List<Object> cacheKey = Arrays.asList(domain.toArray(new Object[rank + 1]));
-            cacheKey.set(rank, cs); // We need both the domain of the variable and the its CS.
-            NetcdfCRS netcdfCRS = cache.get(cacheKey);
-            if (netcdfCRS == null) {
-                final Dimension[] dim = domain.toArray(new Dimension[rank]);
-                XArrays.reverse(dim);
-                netcdfCRS = NetcdfCRS.wrap(cs, dim, file, this);
-                cache.put(cacheKey, netcdfCRS);
+            NetcdfCRSBuilder builder = reader.crsBuilder;
+            if (builder == null) {
+                reader.crsBuilder = builder = new NetcdfCRSBuilder(file, reader);
             }
+            domain = new ArrayList<>(domain);
+            Collections.reverse(domain);
+            builder.setDomain(domain);
+            builder.setCoordinateSystem(cs);
+            final NetcdfCRS netcdfCRS = builder.getNetcdfCRS();
             /*
              * The following code is only a validity check. It may produce warnings,
              * but does not write any metadata at this stage.

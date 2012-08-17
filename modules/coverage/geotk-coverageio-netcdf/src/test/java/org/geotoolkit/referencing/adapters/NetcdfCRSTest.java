@@ -83,7 +83,16 @@ public final strictfp class NetcdfCRSTest extends org.opengis.wrapper.netcdf.Net
      */
     @Override
     protected CoordinateReferenceSystem wrap(final CoordinateSystem cs, final NetcdfDataset file) throws IOException {
-        return NetcdfCRS.wrap(cs, null, file, null);
+        return wrapStatic(cs, file);
+    }
+
+    /**
+     * Implementation of {@link #wrap(CoordinateSystem, NetcdfDataset)} as a static method.
+     */
+    static NetcdfCRS wrapStatic(final CoordinateSystem cs, final NetcdfDataset file) throws IOException {
+        final NetcdfCRSBuilder builder = new NetcdfCRSBuilder(file, null);
+        builder.setCoordinateSystem(cs);
+        return builder.getNetcdfCRS();
     }
 
     /**
@@ -100,8 +109,8 @@ public final strictfp class NetcdfCRSTest extends org.opengis.wrapper.netcdf.Net
             final List<CoordinateSystem> cs = data.getCoordinateSystems();
             assertNotNull("List of CoordinateSystem shall not be null.", cs);
             assertEquals("Expected exactly one CoordinateSystem.", 1, cs.size());
-            assertValid(NetcdfCRS.wrap(cs.get(0)), false, false);
-            assertValid(NetcdfCRS.wrap(cs.get(0), null, data, null), false, true);
+            assertValid(wrapStatic(cs.get(0), null), false, false);
+            assertValid(wrapStatic(cs.get(0), data), false, true);
         } finally {
             data.close();
         }
@@ -119,7 +128,7 @@ public final strictfp class NetcdfCRSTest extends org.opengis.wrapper.netcdf.Net
         final NetcdfDataset data = NetcdfDataset.openDataset(getTestFile().getPath());
         try {
             final List<CoordinateSystem> cs = data.getCoordinateSystems();
-            final NetcdfCRS geographic = NetcdfCRS.wrap(cs.get(0), null, data, null);
+            final NetcdfCRS geographic = wrapStatic(cs.get(0), data);
             final CoordinateReferenceSystem projected = geographic.regularize();
             assertValid(geographic, false, true);
             assertValid(projected , true,  true);

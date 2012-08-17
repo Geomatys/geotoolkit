@@ -80,6 +80,7 @@ import org.geotoolkit.internal.image.io.IIOImageHelper;
 import org.geotoolkit.internal.image.io.NetcdfVariable;
 import org.geotoolkit.referencing.adapters.NetcdfAxis;
 import org.geotoolkit.referencing.adapters.NetcdfCRS;
+import org.geotoolkit.referencing.adapters.NetcdfCRSBuilder;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.Workaround;
 import org.geotoolkit.util.Version;
@@ -189,18 +190,12 @@ public class NetcdfImageReader extends FileImageReader implements
     private NetcdfDataset dataset;
 
     /**
-     * A cache of NetCDF coordinate systems wrapped as GeoAPI implementations.
-     * This cache is valid only for the currently opened file. We use a cache
-     * because many variables will typically share the same coordinate systems.
-     * <p>
-     * Keys are the domain of the variable (as a list of NetCDF {@link Dimension}s) for
-     * which we create a coordinate system, followed by the NetCDF coordinate system to
-     * be wrapped.
+     * The builder for {@link NetcdfCRS} objects, created when first needed.
      * <p>
      * This field is not used directly by this class.
      * But it is used by {@link NetcdfMetadata#setCoordinateSystem}.
      */
-    final Map<List<Object>,NetcdfCRS> coordinateSystems;
+    NetcdfCRSBuilder crsBuilder;
 
     /**
      * The name of the {@linkplain Variable variables} found in the NetCDF file.
@@ -262,7 +257,6 @@ public class NetcdfImageReader extends FileImageReader implements
     public NetcdfImageReader(final Spi spi) {
         super(spi != null ? spi : new Spi());
         dimensionManager = new DimensionManager(this);
-        coordinateSystems = new HashMap<>(8);
     }
 
     /**
@@ -1304,8 +1298,8 @@ public class NetcdfImageReader extends FileImageReader implements
      */
     @Override
     protected void close() throws IOException {
-        coordinateSystems.clear();
         metadataLoaded = false;
+        crsBuilder     = null;
         gridMapping    = null;
         lastError      = null;
         variable       = null;
