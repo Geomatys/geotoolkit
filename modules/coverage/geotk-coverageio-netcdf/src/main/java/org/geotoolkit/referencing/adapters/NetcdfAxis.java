@@ -17,7 +17,8 @@
  */
 package org.geotoolkit.referencing.adapters;
 
-import java.util.List;
+import java.util.Map;
+import javax.imageio.IIOException;
 import javax.measure.unit.Unit;
 
 import ucar.nc2.Dimension;
@@ -67,6 +68,16 @@ public class NetcdfAxis extends NetcdfIdentifiedObject implements CoordinateSyst
     volatile Unit<?> unit;
 
     /**
+     * Creates a copy of the given axis. Copy are normally not necessary since {@code NetcdfAxis}
+     * is immutable. This constructor is provided only for subclasses that need to create almost
+     * identical copies.
+     */
+    NetcdfAxis(final NetcdfAxis axis) {
+        this.axis = axis.axis;
+        this.unit = axis.unit;
+    }
+
+    /**
      * Creates a new {@code NetcdfAxis} object wrapping the given NetCDF coordinate axis.
      *
      * @param axis The NetCDF coordinate axis to wrap.
@@ -80,11 +91,13 @@ public class NetcdfAxis extends NetcdfIdentifiedObject implements CoordinateSyst
      * Creates a new {@code NetcdfAxis} object wrapping the given NetCDF coordinate axis.
      *
      * @param axis The NetCDF coordinate axis to wrap.
-     * @param domain Dimensions of the coordinate system for which we are wrapping an axis, in NetCDF order.
-     *        This is typically {@link ucar.nc2.dataset.CoordinateSystem#getDomain()}.
+     * @param domain Dimensions of the variable for which we are wrapping an axis, in natural order
+     *        (reverse of NetCDF order). They are often, but not necessarily, the coordinate system
+     *        dimensions.
      * @return The {@code NetcdfAxis} object wrapping the given axis.
+     * @throws IIOException If the axis domain is not contained in the given list of dimensions.
      */
-    static NetcdfAxis wrap(final CoordinateAxis axis, final List<Dimension> domain) {
+    static NetcdfAxis wrap(final CoordinateAxis axis, final Dimension[] domain) throws IIOException {
         if (axis instanceof CoordinateAxis1D) {
             return new NetcdfAxis1D((CoordinateAxis1D) axis, domain);
         }
@@ -92,6 +105,35 @@ public class NetcdfAxis extends NetcdfIdentifiedObject implements CoordinateSyst
             return new NetcdfAxis2D((CoordinateAxis2D) axis, domain);
         }
         return new NetcdfAxis(axis);
+    }
+
+    /**
+     * Returns the index in the given {@code domain} array of the dimension equals to the given
+     * axis dimension. This is a convenience method for subclasses.
+     *
+     * @param  axis   The axis for which to search the dimension in the {@code domain} array.
+     * @param  index  The index of the axis dimension to search.
+     * @param  domain The array in which to search for the axis dimension.
+     * @return Index of the requested dimension in the {@code domain} array.
+     * @throws IIOException If the dimension has not been found in the given array.
+     */
+    static int indexOfDimension(final CoordinateAxis axis, final int index, final Dimension[] domain)
+            throws IIOException
+    {
+        final Dimension toSearch = axis.getDimension(index);
+        for (int i=0; i<domain.length; i++) {
+            if (toSearch.equals(domain[i])) {
+                return i;
+            }
+        }
+        final StringBuilder buffer = new StringBuilder(40);
+        for (final Dimension dimension : domain) {
+            if (buffer.length() != 0) {
+                buffer.append(", ");
+            }
+            buffer.append(dimension.getName());
+        }
+        throw new IIOException(Errors.format(Errors.Keys.UNEXPECTED_AXIS_DOMAIN_$2, axis.getShortName(), buffer));
     }
 
     /**
@@ -122,9 +164,25 @@ public class NetcdfAxis extends NetcdfIdentifiedObject implements CoordinateSyst
     @Override
     public String getAbbreviation() {
         final String name = axis.getShortName().trim();
-        if (name.equalsIgnoreCase("longitude")) return "\u03BB";
-        if (name.equalsIgnoreCase("latitude"))  return "\u03C6";
-        return Strings.camelCaseToAcronym(name).toLowerCase();
+        String abbreviation = Strings.camelCaseToAcronym(name).toLowerCase();
+        if (abbreviation.startsWith("l")) {
+            // Heuristic disambiguity.
+            final int length = Math.min(9, name.length()); // 9 is the length of "longitude".
+            int s = 0;
+            while (++s != length && Character.isLetter(name.charAt(s)));
+            final char prefix;
+            if (name.regionMatches(true, 0, "longitude", 0, s)) {
+                prefix = '\u03BB';
+            } else if (name.regionMatches(true, 0, "latitude", 0, Math.min(8, s))) {
+                prefix = '\u03C6';
+            } else {
+                return abbreviation;
+            }
+            final StringBuilder buffer = new StringBuilder(abbreviation);
+            buffer.setCharAt(0, prefix);
+            abbreviation = buffer.toString();
+        }
+        return abbreviation;
     }
 
     /**
@@ -200,6 +258,10 @@ public class NetcdfAxis extends NetcdfIdentifiedObject implements CoordinateSyst
      * Returns {@code true} if the NetCDF axis is an instance of {@link CoordinateAxis1D} and
      * {@linkplain CoordinateAxis1D#isRegular() is regular}.
      *
+     * {@note We do not allow overriding of this method, because callers assume that a
+     *        value of <code>true</code> implies that the NetCDF axis is an instance of
+     *        <code>CoordinateAxis1D</code>.}
+     *
      * @return {@code true} if the NetCDF axis is regular.
      *
      * @see CoordinateAxis1D#isRegular()
@@ -208,6 +270,52 @@ public class NetcdfAxis extends NetcdfIdentifiedObject implements CoordinateSyst
      */
     final boolean isRegular() {
         return (axis instanceof CoordinateAxis1D) && ((CoordinateAxis1D) axis).isRegular();
+    }
+
+    /**
+     * Returns the source dimension of this axis, or {@code null} if unknown. The dimensions are
+     * stored in the values of the returned map. The keys are the indices at which the dimensions
+     * are expected to be found in a source coordinates.
+     * <p>
+     * Note that the source indices are <strong>not</strong> the dimension in the coordinate system
+     * (while "source" and "target" dimensions are often the same, they could also be different).
+     * This method is not public in order to avoid confusion.
+     *
+     * @return The source dimensions associated to their indices as expected by a math transform
+     *         from pixel indices to geodetic coordinates, or {@code null} if unknown.
+     */
+    Map<Integer,Dimension> getDomain() {
+        return null;
+    }
+
+    /**
+     * Returns a NetCDF axis which is part of the given domain.
+     * This method does not modify this axis. Instead, it will create a new one if necessary.
+     *
+     * @param  domain The new domain in <em>natural</em> order (<strong>not</strong> the NetCDF order).
+     * @return A NetCDF axis which is part of the given domain.
+     * @throws IIOException If the given domain does not contains this axis domain.
+     */
+    NetcdfAxis forDomain(final Dimension[] domain) throws IIOException {
+        return this;
+    }
+
+    /**
+     * Returns the number of source ordinate values along the given <em>source</em> dimension,
+     * or -1 if none. Note that the given argument is <strong>not</strong> the dimension in the
+     * coordinate system (while "source" and "target" dimensions are often the same, they could
+     * also be different). This method is not public in order to avoid confusion.
+     *
+     * {@note It would almost be possible to infer the length from the <code>Dimension</code> object
+     * returned by <code>getDomain()</code>. However it would not work for "unlimited" dimensions,
+     * so we still need this method.}
+     *
+     * @param  sourceDimension The source dimension in a math transform from pixel indices to
+     *         geodetic coordinates.
+     * @return Number of ordinate values in the given dimension, or -1 if unknown.
+     */
+    int length(final int sourceDimension) {
+        return -1;
     }
 
     /**

@@ -255,7 +255,12 @@ public class IIOImageHelper {
      * @param srcRegion The {@code srcRegion} argument given to {@code computeRegions}.
      *
      * @see <a href="http://jira.geotoolkit.org/browse/GEOTK-117">GEOTK-117</a>
+     *
+     * @deprecated We really need to stop flipping NetCDF images. Experience shows that it
+     *             just brings a big bunch of problems, one after other.
      */
+    @Deprecated
+    // TODO: Remove the special case in GridDomainAccessor after this method has been removed.
     public static void flipVertically(final IIOParam param, final int srcHeight, final Rectangle srcRegion) {
         final int spaceLeft = srcRegion.y;
         srcRegion.y = srcHeight - (srcRegion.y + srcRegion.height);

@@ -17,14 +17,13 @@
  */
 package org.geotoolkit.referencing.adapters;
 
-import java.io.IOException;
-import java.util.Set;
 import java.util.List;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.Formatter;
+import java.io.IOException;
+import javax.imageio.IIOException;
 import javax.measure.unit.SI;
 
 import ucar.nc2.Dimension;
@@ -38,7 +37,6 @@ import ucar.nc2.dataset.CoordinateAxis1DTime;
 
 import org.opengis.metadata.extent.Extent;
 import org.opengis.util.InternationalString;
-import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.Projection;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.cs.TimeCS;
@@ -63,15 +61,13 @@ import org.geotoolkit.image.io.WarningProducer;
 import org.geotoolkit.internal.image.io.Warnings;
 import org.geotoolkit.internal.image.io.IrregularAxesConverter;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
-import org.geotoolkit.util.collection.XCollections;
+import org.geotoolkit.util.XArrays;
 import org.geotoolkit.referencing.datum.DefaultTemporalDatum;
 import org.geotoolkit.referencing.datum.DefaultVerticalDatum;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.cs.DiscreteReferencingFactory;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.referencing.operation.MathTransforms;
-import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
@@ -127,20 +123,15 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
         org.opengis.referencing.cs.CoordinateSystem, GridGeometry
 {
     /**
-     * Small tolerance factor for rounding error.
-     */
-    private static final double EPS = 1E-10;
-
-    /**
      * The NetCDF coordinate system wrapped by this {@code NetcdfCRS} instance.
      */
     private final CoordinateSystem cs;
 
     /**
-     * The dimensions of all axis, in the "natural" order. This is similar to
-     * {@link CoordinateSystem#getDomain()} except for reverse order, and may
-     * contains only a subset if the {@link #axes} array is only a subset of
-     * the coordinate system axes.
+     * The variable dimensions, in the "natural" order (i.e. reverse of NetCDF order). This array
+     * shall be consistent with the variable dimensions or a sub-set of the variable dimensions,
+     * which may or may not be the same than the {@linkplain CoordinateSystem#getDomain() CS domain}
+     * (experience shows that the axis order is sometime different than the variable dimension order).
      *
      * @see CoordinateSystem#getDomain()
      */
@@ -186,36 +177,45 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
      * The {@link CoordinateSystem#getCoordinateAxes()} is invoked at construction time.
      *
      * @param  netcdfCS The NetCDF coordinate system to wrap.
+     * @throws IIOException If the given coordinate system can not be wrapped.
      */
-    protected NetcdfCRS(final CoordinateSystem netcdfCS) {
-        this(netcdfCS, netcdfCS.getCoordinateAxes());
+    protected NetcdfCRS(final CoordinateSystem netcdfCS) throws IIOException {
+        this(netcdfCS, getDomain(netcdfCS), netcdfCS.getCoordinateAxes());
+    }
+
+    /**
+     * Workaround for RFE #4093999 ("Relax constraint on placement of this()/super()
+     * call in constructors").
+     */
+    private static Dimension[] getDomain(final CoordinateSystem netcdfCS) {
+        final Dimension[] domain = netcdfCS.getDomain().toArray(new Dimension[netcdfCS.getRankDomain()]);
+        XArrays.reverse(domain);
+        return domain;
     }
 
     /**
      * Creates a new {@code NetcdfCRS} object wrapping the given axes of the given NetCDF
-     * coordinate system. The axes will be retained in reverse order, as documented in
-     * class javadoc.
+     * coordinate system.
      *
      * @param  netcdfCS The NetCDF coordinate system to wrap.
-     * @param  The axes to add, in reverse order.
+     * @param  domain Dimensions of the variable for which we are wrapping a coordinate system,
+     *         in natural order (reverse of NetCDF order). They are often, but not necessarily,
+     *         the coordinate system domain except for order.
+     * @param  The axes to add, in natural order (i.e. reverse of NetCDF order).
+     *         Some axes may be ignored if their domain is not contained in the {@code variableDomain}.
+     * @throws IIOException If an axis domain is not contained in the given variable domain,
+     *         or if a unit can not be parsed.
      */
-    NetcdfCRS(final CoordinateSystem netcdfCS, final List<CoordinateAxis> netcdfAxis) {
+    NetcdfCRS(final CoordinateSystem netcdfCS, final Dimension[] domain,
+            final List<CoordinateAxis> netcdfAxes) throws IIOException
+    {
         ensureNonNull("netcdfCS", netcdfCS);
         cs = netcdfCS;
-        final int dimension = netcdfAxis.size();
-        final Set<Dimension> netcdfDim = new LinkedHashSet<Dimension>(XCollections.hashMapCapacity(dimension));
-        for (int i=dimension; --i >= 0;) {
-            final List<Dimension> dimensions = netcdfAxis.get(i).getDimensions();
-            for (int j=dimensions.size(); --j>=0;) { // Must be in reverse order.
-                netcdfDim.add(dimensions.get(j));
-            }
-        }
-        domain = netcdfDim.toArray(new Dimension[netcdfDim.size()]);
+        this.domain = domain; // No need to clone here.
+        final int dimension = netcdfAxes.size();
         axes = new NetcdfAxis[dimension];
-        final List<Dimension> fullDomain = cs.getDomain();
         for (int i=0; i<dimension; i++) {
-            // Adds the axis in reverse order. See class javadoc for explanation.
-            axes[(dimension-1) - i] = NetcdfAxis.wrap(netcdfAxis.get(i), fullDomain);
+            axes[i] = NetcdfAxis.wrap(netcdfAxes.get(i), domain);
         }
     }
 
@@ -223,16 +223,14 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
      * Creates a new {@code NetcdfCRS} with {@link NetcdfAxis} instances fetched
      * from the given components. This is used by the {@link Compound} constructor.
      */
-    NetcdfCRS(final CoordinateSystem netcdfCS, final NetcdfCRS... components) {
+    NetcdfCRS(final CoordinateSystem netcdfCS, final Dimension[] domain, final NetcdfCRS... components) {
         cs = netcdfCS;
-        final List<NetcdfAxis> axes = new ArrayList<NetcdfAxis>(netcdfCS.getRankRange());
-        final Set<Dimension> domain = new LinkedHashSet<Dimension>(netcdfCS.getRankDomain());
+        this.domain = domain; // No need to clone here.
+        final List<NetcdfAxis> netcdfAxes = new ArrayList<NetcdfAxis>(netcdfCS.getRankRange());
         for (final NetcdfCRS c : components) {
-            domain.addAll(Arrays.asList(c.domain));
-            axes  .addAll(Arrays.asList(c.axes));
+            netcdfAxes.addAll(Arrays.asList(c.axes));
         }
-        this.domain = domain.toArray(new Dimension [domain.size()]);
-        this.axes   = axes  .toArray(new NetcdfAxis[axes  .size()]);
+        axes = netcdfAxes.toArray(new NetcdfAxis[netcdfAxes.size()]);
     }
 
     /**
@@ -250,7 +248,10 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
      *
      * @param  netcdfCS The NetCDF coordinate system to wrap, or {@code null} if none.
      * @return A wrapper for the given object, or {@code null} if the argument was null.
+     *
+     * @deprecated Use {@link NetcdfCRSBuilder} instead.
      */
+    @Deprecated
     public static NetcdfCRS wrap(final CoordinateSystem netcdfCS) {
         try {
             return wrap(netcdfCS, null, null);
@@ -263,7 +264,7 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
      * Creates a new {@code NetcdfCRS} object, optionally using the given NetCDF file for additional
      * information. This method performs the same work than {@link #wrap(CoordinateSystem)}, except
      * that more accurate coordinate axes may be created if a reference to the original dataset file
-     * is provided. This apply especially to {@link CoordinateAxis1DTime}.
+     * is provided. This applies especially to {@link CoordinateAxis1DTime}.
      *
      * @param  netcdfCS The NetCDF coordinate system to wrap, or {@code null} if none.
      * @param  file The originating dataset file, or {@code null} if none.
@@ -272,107 +273,17 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
      *         argument was null.
      * @throws IOException If an I/O operation was needed and failed.
      *
+     * @deprecated Use {@link NetcdfCRSBuilder} instead.
+     *
      * @since 3.14
      */
+    @Deprecated
     public static NetcdfCRS wrap(final CoordinateSystem netcdfCS, final NetcdfDataset file,
-                final WarningProducer logger) throws IOException
+            final WarningProducer logger) throws IOException
     {
-        if (netcdfCS == null) {
-            return null;
-        }
-        /*
-         * Separate the horizontal, vertical and temporal components. We need to iterate
-         * over the NetCDF axes in reverse order (see class javadoc). We don't use the
-         * CoordinateAxis.getTaxis() and similar methods because we want to ensure that
-         * the components are build in the same order than axes are found.
-         */
-        final List<NetcdfCRS> components = new ArrayList<NetcdfCRS>(4);
-        final List<CoordinateAxis>  axes = netcdfCS.getCoordinateAxes();
-        for (int i=axes.size(); --i>=0;) {
-            final CoordinateAxis axis = axes.get(i);
-            final AxisType type = axis.getAxisType();
-            if (type != null) { // This is really null in some NetCDF file.
-                switch (type) {
-                    case Pressure:
-                    case Height:
-                    case GeoZ: {
-                        components.add(new Vertical(netcdfCS, axis));
-                        continue;
-                    }
-                    case RunTime:
-                    case Time: {
-                        components.add(new Temporal(netcdfCS, Temporal.complete(axis, file, logger)));
-                        continue;
-                    }
-                    case Lat:
-                    case Lon: {
-                        final int upper = i+1;
-                        i = lower(axes, i, AxisType.Lat, AxisType.Lon);
-                        components.add(new Geographic(netcdfCS, axes.subList(i, upper)));
-                        continue;
-                    }
-                    case GeoX:
-                    case GeoY: {
-                        final int upper = i+1;
-                        i = lower(axes, i, AxisType.GeoX, AxisType.GeoY);
-                        components.add(new Projected(netcdfCS, axes.subList(i, upper)));
-                        continue;
-                    }
-                }
-            }
-            // Unknown axes: do not try to split.
-            components.clear();
-            break;
-        }
-        final int size = components.size();
-        switch (size) {
-            /*
-             * If we have been unable to split the CRS ourself in various components,
-             * use the information provided by the NetCDF library as a fallback. Note
-             * that the CRS created that way may not be valid in the ISO 19111 sense.
-             */
-            case 0: {
-                if (netcdfCS.isLatLon()) {
-                    return new Geographic(netcdfCS, axes);
-                }
-                if (netcdfCS.isGeoXY()) {
-                    return new Projected(netcdfCS, axes);
-                }
-                return new NetcdfCRS(netcdfCS, axes);
-            }
-            /*
-             * If we have been able to create exactly one CRS, returns that CRS.
-             */
-            case 1: {
-                return components.get(0);
-            }
-            /*
-             * Otherwise create a CompoundCRS will all the components we have separated.
-             */
-            default: {
-                return new Compound(netcdfCS, components.toArray(new NetcdfCRS[size]));
-            }
-        }
-    }
-
-    /**
-     * Returns the lower index of the sublist containing axes of the given types.
-     *
-     * @param axes  The list from which to get the sublist indices.
-     * @param upper The upper index of the sublist, inclusive.
-     * @param t1    The first axis type to accept.
-     * @param t2    The second axis type to accept.
-     * @return      The lower index of the sublist range.
-     */
-    private static int lower(final List<CoordinateAxis> axes, int upper, final AxisType t1, final AxisType t2) {
-        while (upper != 0) {
-            final AxisType type = axes.get(upper-1).getAxisType();
-            if (type != t1 && type != t2) {
-                break;
-            }
-            upper--;
-        }
-        return upper;
+        final NetcdfCRSBuilder builder = new NetcdfCRSBuilder(file, logger);
+        builder.setCoordinateSystem(netcdfCS);
+        return builder.getNetcdfCRS();
     }
 
     /**
@@ -501,50 +412,9 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
     @Override
     public synchronized MathTransform getGridToCRS() {
         if (gridToCRS == null) {
-            Matrix matrix = null; // Created when first needed.
-            final int sourceDim = domain.length;
-            final int targetDim = axes.length;
-            for (int j=0; j<targetDim; j++) {
-                final NetcdfAxis axis = axes[j];
-                if (!axis.isRegular()) {
-                    matrix = null;
-                    break;
-                }
-                final CoordinateAxis1D netcdfAxis = (CoordinateAxis1D) axis.axis;
-                final double scale = netcdfAxis.getIncrement();
-                if (Double.isNaN(scale) || scale == 0) {
-                    matrix = null;
-                    break;
-                }
-                if (matrix == null) {
-                    matrix = Matrices.create(targetDim+1, sourceDim+1);
-                }
-                final Dimension dim = netcdfAxis.getDimension(0);
-                for (int i=0; i<sourceDim; i++) {
-                    if (dim.equals(domain[i])) {
-                        matrix.setElement(j, i, nice(scale));
-                        break; // 'domain' is not expected to contain duplicated values.
-                    }
-                }
-                matrix.setElement(j, sourceDim, nice(netcdfAxis.getStart()));
-            }
-            gridToCRS = (matrix != null) ? MathTransforms.linear(matrix) : new NetcdfGridToCRS(sourceDim, axes);
+            gridToCRS = NetcdfGridToCRS.create(domain, axes);
         }
         return gridToCRS;
-    }
-
-    /**
-     * Workaround rounding errors found in NetCDF files.
-     *
-     * @since 3.16
-     */
-    private static double nice(double value) {
-        final double tf = value * 360;
-        final double ti = Math.rint(tf);
-        if (Math.abs(tf - ti) <= EPS) {
-            value = ti / 360;
-        }
-        return value;
     }
 
     /**
@@ -576,7 +446,7 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
      * @since 3.14
      * @module
      */
-    private static final class Compound extends NetcdfCRS implements CompoundCRS,
+    static final class Compound extends NetcdfCRS implements CompoundCRS,
             org.opengis.referencing.cs.CoordinateSystem
     {
         /**
@@ -587,8 +457,8 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
         /**
          * Wraps the given coordinate system.
          */
-        Compound(final CoordinateSystem cs, final NetcdfCRS[] components) {
-            super(cs, components);
+        Compound(final CoordinateSystem cs, final Dimension[] domain, final NetcdfCRS[] components) {
+            super(cs, domain, components);
             this.components = UnmodifiableArrayList.<CoordinateReferenceSystem>wrap(components);
         }
 
@@ -647,7 +517,7 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
      * @since 3.14
      * @module
      */
-    private static final class Temporal extends NetcdfCRS implements TemporalCRS, TimeCS {
+    static final class Temporal extends NetcdfCRS implements TemporalCRS, TimeCS {
         /**
          * The temporal datum.
          */
@@ -656,15 +526,14 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
         /**
          * Wraps the given coordinate system.
          */
-        Temporal(final CoordinateSystem cs, final CoordinateAxis netcdfAxis) {
-            super(cs, Collections.singletonList(netcdfAxis));
+        Temporal(final CoordinateSystem cs, final Dimension[] domain, final CoordinateAxis netcdfAxis) throws IIOException {
+            super(cs, domain, Collections.singletonList(netcdfAxis));
             final String unitSymbol = netcdfAxis.getUnitsString();
             final DateUnit unit;
             try {
                 unit = new DateUnit(unitSymbol);
             } catch (Exception e) {
-                throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.UNKNOWN_UNIT_$1, unitSymbol), e);
+                throw new IIOException(Errors.format(Errors.Keys.UNKNOWN_UNIT_$1, unitSymbol), e);
             }
             datum = new DefaultTemporalDatum(unitSymbol, unit.getDateOrigin());
             getAxis(0).unit = Units.multiply(SI.SECOND, unit.getTimeUnit().getValueInSeconds());
@@ -726,7 +595,7 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
      * @since 3.14
      * @module
      */
-    private static final class Vertical extends NetcdfCRS implements VerticalCRS, VerticalCS {
+    static final class Vertical extends NetcdfCRS implements VerticalCRS, VerticalCS {
         /**
          * The vertical datum.
          */
@@ -735,8 +604,8 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
         /**
          * Wraps the given coordinate system.
          */
-        Vertical(final CoordinateSystem cs, final CoordinateAxis netcdfAxis) {
-            super(cs, Collections.singletonList(netcdfAxis));
+        Vertical(final CoordinateSystem cs, final Dimension[] domain, final CoordinateAxis netcdfAxis) throws IIOException {
+            super(cs, domain, Collections.singletonList(netcdfAxis));
             switch (netcdfAxis.getAxisType()) {
                 case Pressure: datum = DefaultVerticalDatum.BAROMETRIC;    break;
                 case Height:   datum = DefaultVerticalDatum.GEOIDAL;       break;
@@ -778,7 +647,7 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
      * @since 3.08
      * @module
      */
-    private static final class Geographic extends NetcdfCRS implements GeographicCRS, EllipsoidalCS {
+    static final class Geographic extends NetcdfCRS implements GeographicCRS, EllipsoidalCS {
         /**
          * Wraps the given coordinate system. The given list of axes should in theory contains
          * exactly 2 elements (current {@link NetcdfCRS} implementation has no support for 3D
@@ -786,8 +655,8 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
          * {@link NetcdfCRS#wrap(CoordinateSystem)} method has been unable to split the
          * NetCDF coordinate system into geodetic, vertical and temporal components.
          */
-        Geographic(final CoordinateSystem cs, final List<CoordinateAxis> netcdfAxis) {
-            super(cs, netcdfAxis);
+        Geographic(final CoordinateSystem cs, final Dimension[] domain, final List<CoordinateAxis> netcdfAxis) throws IIOException {
+            super(cs, domain, netcdfAxis);
         }
 
         /**
@@ -858,7 +727,7 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
      * @since 3.08
      * @module
      */
-    private static final class Projected extends NetcdfCRS implements ProjectedCRS, CartesianCS {
+    static final class Projected extends NetcdfCRS implements ProjectedCRS, CartesianCS {
         /**
          * The NetCDF projection, or {@code null} if none.
          * Will be created when first needed.
@@ -871,8 +740,8 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
          * {@link NetcdfCRS#wrap(CoordinateSystem)} method has been unable to split the NetCDF
          * coordinate system into geodetic, vertical and temporal components.
          */
-        Projected(final CoordinateSystem cs, final List<CoordinateAxis> netcdfAxis) {
-            super(cs, netcdfAxis);
+        Projected(final CoordinateSystem cs, final Dimension[] domain, final List<CoordinateAxis> netcdfAxis) throws IIOException {
+            super(cs, domain, netcdfAxis);
         }
 
         /**

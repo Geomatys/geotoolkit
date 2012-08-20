@@ -59,7 +59,7 @@ public final strictfp class NetcdfAxisTest {
     public void testGetOrdinateValue1D() throws IOException, TransformException {
         final NetcdfDataset data = NetcdfDataset.openDataset(getTestFile().getPath());
         try {
-            final NetcdfCRS crs = NetcdfCRS.wrap(data.getCoordinateSystems().get(0), data, null);
+            final NetcdfCRS crs = NetcdfCRSTest.wrapStatic(data.getCoordinateSystems().get(0), data);
             final NetcdfAxis axis = ((NetcdfAxis) crs.getCoordinateSystem().getAxis(2));
             assertInstanceOf("Expected a one-dimensional axis", NetcdfAxis1D.class, axis);
             final double[] c = new double[4];
@@ -95,7 +95,7 @@ public final strictfp class NetcdfAxisTest {
         try {
             // Do not provide the 'data' NetcdfFile to the wrapper in
             // order to prevent it from "regularizing" the CRS axes.
-            final NetcdfCRS crs = NetcdfCRS.wrap(data.getCoordinateSystems().get(0));
+            final NetcdfCRS crs = NetcdfCRSTest.wrapStatic(data.getCoordinateSystems().get(0), null);
             final NetcdfAxis axis = ((NetcdfAxis) crs.getCoordinateSystem().getAxis(0));
             assertInstanceOf("Expected a two-dimensional axis", NetcdfAxis2D.class, axis);
             final double[] c = new double[4];
@@ -127,12 +127,7 @@ public final strictfp class NetcdfAxisTest {
             final CoordinateSystem cs = data.getCoordinateSystems().get(0);
             boolean useFile = false;
             do {
-                final NetcdfCRS crs;
-                if (useFile) {
-                    crs = NetcdfCRS.wrap(cs, data, null);
-                } else {
-                    crs = NetcdfCRS.wrap(cs);
-                }
+                final NetcdfCRS crs = NetcdfCRSTest.wrapStatic(cs, useFile ? data : null);
                 final CoordinateAxis axis = ((NetcdfAxis) crs.getCoordinateSystem().getAxis(3)).delegate();
                 assertEquals("CoordinateAxis1DTime check", useFile, axis instanceof CoordinateAxis1DTime);
             } while ((useFile = !useFile) == true);

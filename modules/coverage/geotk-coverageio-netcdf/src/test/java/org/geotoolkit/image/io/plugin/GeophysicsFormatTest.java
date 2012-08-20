@@ -22,8 +22,10 @@ import java.io.IOException;
 import java.util.List;
 import java.awt.image.RenderedImage;
 
+import org.opengis.util.FactoryException;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.referencing.operation.Matrix;
+import org.opengis.referencing.operation.MathTransform;
 
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.coverage.Category;
@@ -34,6 +36,7 @@ import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
+import org.geotoolkit.referencing.operation.transform.DimensionFilter;
 
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
@@ -112,14 +115,14 @@ public final strictfp class GeophysicsFormatTest extends NetcdfImageReaderTestBa
             "│           └───Axes\n" +
             "│               ├───CoordinateSystemAxis\n" +
             "│               │   ├───name=“NetCDF:lon”\n" +
-            "│               │   ├───axisAbbrev=“l”\n" +
+            "│               │   ├───axisAbbrev=“λ”\n" +
             "│               │   ├───direction=“east”\n" +
             "│               │   ├───minimumValue=“6.0”\n" +
             "│               │   ├───maximumValue=“70.0”\n" +
             "│               │   └───unit=“deg”\n" +
             "│               ├───CoordinateSystemAxis\n" +
             "│               │   ├───name=“NetCDF:lat”\n" +
-            "│               │   ├───axisAbbrev=“l”\n" +
+            "│               │   ├───axisAbbrev=“φ”\n" +
             "│               │   ├───direction=“north”\n" +
             "│               │   ├───minimumValue=“68.0”\n" +
             "│               │   ├───maximumValue=“81.0”\n" +
@@ -157,9 +160,10 @@ public final strictfp class GeophysicsFormatTest extends NetcdfImageReaderTestBa
      *
      * @throws IOException if an error occurred while reading the file.
      * @throws CoverageStoreException Should never happen.
+     * @throws FactoryException Should never happen.
      */
     @Test
-    public void testCoverageReader() throws IOException, CoverageStoreException {
+    public void testCoverageReader() throws IOException, CoverageStoreException, FactoryException {
         prepareImageReader(true);
         final ImageCoverageReader reader = new ImageCoverageReader();
         reader.setInput(this.reader);
@@ -208,10 +212,21 @@ public final strictfp class GeophysicsFormatTest extends NetcdfImageReaderTestBa
         assertArrayEquals("GridEnvelope.getLow()",  new int[4], gridExtent.getLow().getCoordinateValues());
         assertArrayEquals("GridEnvelope.getHigh()", new int[] {128, 65, 0, 0}, // TODO: last value should be 107.
                 gridExtent.getHigh().getCoordinateValues());
-        final Matrix gridToCRS = ((LinearTransform) gridGeometry.getGridToCRS()).getMatrix();
+        //
+        // Check the scale and translation factors of the 2 first dimensions.
+        // Note that the transform as a whole is an instance of NetcdfGridToCRS,
+        // so we need to extract the first dimensions in order to get the scale factors.
+        //
+        MathTransform tr = gridGeometry.getGridToCRS();
+        assertFalse(tr.getClass().getName(), tr instanceof LinearTransform);
+        final DimensionFilter filter = new DimensionFilter();
+        filter.addSourceDimensions(0, 1);
+        tr = filter.separate(tr);
+        assertInstanceOf("DimensionFilter.separate(gridToCRS)", LinearTransform.class, tr);
+        final Matrix gridToCRS = ((LinearTransform) tr).getMatrix();
         assertEquals("Scale X",      0.5, gridToCRS.getElement(0, 0), 0.0);
-        assertEquals("Scale Y",     -0.2, gridToCRS.getElement(1, 1), 0.0);
-        assertEquals("Translate X",  6.0, gridToCRS.getElement(0, 4), 0.0);
-        assertEquals("Translate Y", 81.0, gridToCRS.getElement(1, 4), 0.0);
+        assertEquals("Scale Y",      0.2, gridToCRS.getElement(1, 1), 0.0);
+        assertEquals("Translate X",  6.0, gridToCRS.getElement(0, 2), 0.0);
+        assertEquals("Translate Y", 68.0, gridToCRS.getElement(1, 2), 0.0);
     }
 }

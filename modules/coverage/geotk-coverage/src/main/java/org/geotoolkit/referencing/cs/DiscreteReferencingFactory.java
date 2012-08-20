@@ -454,7 +454,7 @@ scan:   for (final CoordinateReferenceSystem component : crs.getComponents()) {
         final XMatrix matrix = getAffineTransform((CoordinateReferenceSystem) crs, axes);
         if (matrix != null) {
             final int lastColumn = matrix.getNumCol() - 1;
-            int lower = 0;
+            int rowOffset = 0;
             for (final CoordinateReferenceSystem component : crs.getComponents()) {
                 final int dimension = component.getCoordinateSystem().getDimension();
                 /*
@@ -467,16 +467,29 @@ scan:   for (final CoordinateReferenceSystem component : crs.getComponents()) {
                     final MathTransform tr = ((GridGeometry) component).getGridToCRS();
                     if (tr instanceof LinearTransform) {
                         /*
-                         * Copies the scale and translation terms from the matrix
-                         * computed by the individual component.
+                         * Copies the scale and translation terms from the matrix computed by the
+                         * individual component. The matrix is usually square, but not always. So
+                         * we need to check its size:
+                         *
+                         * - If the matrix of the sub-transform is square, then we presume that
+                         *   the source ordinates are a sub-set of the full grid ordinates. So
+                         *   the copy of ordinate values need to be applied at the right offset.
+                         *
+                         * - If the matrix of the sub-transform is not square, then we presume
+                         *   that the source ordinates are the full grid ordinates. So we need
+                         *   to copy the full row.
                          */
                         final Matrix sub = ((LinearTransform) tr).getMatrix();
+                        final int sourceDim = tr.getSourceDimensions(); // Also the translation column.
+                        final int columnOffset = (sourceDim == dimension) ? rowOffset : 0;
+                        assert sub.getNumRow() == dimension + 1 : tr;
+                        assert sub.getNumCol() == sourceDim + 1 : tr;
                         for (int j=0; j<dimension; j++) {
-                            final int dj = j + lower;
-                            for (int i=0; i<dimension; i++) {
-                                matrix.setElement(dj, i+lower, sub.getElement(j, i));
+                            final int dj = j + rowOffset;
+                            for (int i=0; i<sourceDim; i++) {
+                                matrix.setElement(dj, i+columnOffset, sub.getElement(j, i));
                             }
-                            matrix.setElement(j+lower, lastColumn, sub.getElement(j, dimension));
+                            matrix.setElement(dj, lastColumn, sub.getElement(j, sourceDim));
                         }
                     } else {
                         /*
@@ -486,12 +499,12 @@ scan:   for (final CoordinateReferenceSystem component : crs.getComponents()) {
                          * it still valid.
                          */
                         for (int j=0; j<dimension; j++) {
-                            final int dj = j + lower;
+                            final int dj = j + rowOffset;
                             matrix.setElement(dj, dj, Double.NaN);
                         }
                     }
                 }
-                lower += dimension;
+                rowOffset += dimension;
             }
         }
         return matrix;

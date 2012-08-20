@@ -79,6 +79,8 @@ import org.geotoolkit.internal.image.io.DimensionManager;
 import org.geotoolkit.internal.image.io.IIOImageHelper;
 import org.geotoolkit.internal.image.io.NetcdfVariable;
 import org.geotoolkit.referencing.adapters.NetcdfAxis;
+import org.geotoolkit.referencing.adapters.NetcdfCRS;
+import org.geotoolkit.referencing.adapters.NetcdfCRSBuilder;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.Workaround;
 import org.geotoolkit.util.Version;
@@ -186,6 +188,14 @@ public class NetcdfImageReader extends FileImageReader implements
      * {@link #ensureFileOpen()} when first needed.
      */
     private NetcdfDataset dataset;
+
+    /**
+     * The builder for {@link NetcdfCRS} objects, created when first needed.
+     * <p>
+     * This field is not used directly by this class.
+     * But it is used by {@link NetcdfMetadata#setCoordinateSystem}.
+     */
+    NetcdfCRSBuilder crsBuilder;
 
     /**
      * The name of the {@linkplain Variable variables} found in the NetCDF file.
@@ -1289,6 +1299,7 @@ public class NetcdfImageReader extends FileImageReader implements
     @Override
     protected void close() throws IOException {
         metadataLoaded = false;
+        crsBuilder     = null;
         gridMapping    = null;
         lastError      = null;
         variable       = null;

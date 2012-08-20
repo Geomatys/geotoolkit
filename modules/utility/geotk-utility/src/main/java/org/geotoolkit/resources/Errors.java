@@ -561,6 +561,11 @@ public final class Errors extends IndexedResourceBundle {
         public static final int INCONSISTENT_AXIS_ORIENTATION_$2 = 93;
 
         /**
+         * Inconsistent domain between “{0}” and “{1}”.
+         */
+        public static final int INCONSISTENT_DOMAIN_$2 = 270;
+
+        /**
          * Property “{0}” has a value inconsistent with other properties.
          */
         public static final int INCONSISTENT_PROPERTY_$1 = 94;
@@ -1151,6 +1156,11 @@ public final class Errors extends IndexedResourceBundle {
          * Unexpected argument for operation “{0}”.
          */
         public static final int UNEXPECTED_ARGUMENT_FOR_INSTRUCTION_$1 = 206;
+
+        /**
+         * Unexpected domain for the “{0}” axis. Expected one of {1}.
+         */
+        public static final int UNEXPECTED_AXIS_DOMAIN_$2 = 271;
 
         /**
          * Unexpected dimension for a “{0}” coordinate system.

@@ -18,8 +18,9 @@
 package org.geotoolkit.referencing.adapters;
 
 import java.util.Date;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.Map;
+import java.util.Collections;
+import javax.imageio.IIOException;
 
 import ucar.nc2.Dimension;
 import ucar.nc2.dataset.CoordinateAxis1D;
@@ -51,24 +52,40 @@ final class NetcdfAxis1D extends NetcdfAxis implements DiscreteCoordinateSystemA
     final int iDim;
 
     /**
+     * Number of ordinate values in this axis.
+     */
+    private final int length;
+
+    /**
      * The values returned by {@link #getOrdinateRangeAt(int)}, cached when first computed.
      */
     private transient Range<?>[] ranges;
 
     /**
+     * Creates a copy of the given axis with only a different {@link #iDim} value.
+     */
+    private NetcdfAxis1D(final NetcdfAxis1D axis, final int iDim) {
+        super(axis);
+        this.iDim   = iDim;
+        this.length = axis.length;
+        synchronized (axis) {
+            this.ranges = axis.ranges;
+        }
+    }
+
+    /**
      * Creates a new {@code NetcdfAxis} object wrapping the given NetCDF coordinate axis.
      *
      * @param axis The NetCDF coordinate axis to wrap.
-     * @param domain Dimensions of the coordinate system for which we are wrapping an axis, in NetCDF order.
-     *        This is typically {@link ucar.nc2.dataset.CoordinateSystem#getDomain()}.
+     * @param domain Dimensions of the variable for which we are wrapping an axis, in natural order
+     *        (reverse of NetCDF order). They are often, but not necessarily, the coordinate system
+     *        dimensions.
+     * @throws IIOException If the axis domain is not contained in the given list of dimensions.
      */
-    NetcdfAxis1D(final CoordinateAxis1D axis, final List<Dimension> domain) {
+    NetcdfAxis1D(final CoordinateAxis1D axis, final Dimension[] domain) throws IIOException {
         super(axis);
-        final int r = domain.size() - 1;
-        iDim = r - domain.indexOf(axis.getDimension(0));
-        if (iDim > r) {
-            throw new NoSuchElementException(); // Should never happen.
-        }
+        iDim = indexOfDimension(axis, 0, domain);
+        length = axis.getShape(0);
     }
 
     /**
@@ -88,6 +105,27 @@ final class NetcdfAxis1D extends NetcdfAxis implements DiscreteCoordinateSystemA
     }
 
     /**
+     * Returns a NetCDF axis which is part of the given domain.
+     * This method does not modify this axis. Instead, it will create a new one if necessary.
+     *
+     * @param domain The new domain in <em>natural</em> order (<strong>not</strong> the NetCDF order).
+     * @throws IIOException If the given domain does not contains this axis domain.
+     */
+    @Override
+    final NetcdfAxis forDomain(final Dimension[] domain) throws IIOException {
+        final int dim = indexOfDimension(axis, 0, domain);
+        return (dim == iDim) ? this : new NetcdfAxis1D(this, dim);
+    }
+
+    /**
+     * Returns the source dimension of this axis, associated to the index in source coordinates.
+     */
+    @Override
+    final Map<Integer,Dimension> getDomain() {
+        return Collections.singletonMap(iDim, axis.getDimension(0));
+    }
+
+    /**
      * Returns the number of ordinates in the NetCDF axis. This method delegates to the
      * {@link CoordinateAxis1D#getShape(int)} method.
      *
@@ -97,7 +135,17 @@ final class NetcdfAxis1D extends NetcdfAxis implements DiscreteCoordinateSystemA
      */
     @Override
     public int length() {
-        return axis.getShape(0);
+        return length;
+    }
+
+    /**
+     * Returns the number of source ordinate values along the given <em>source</em> dimension,
+     * or -1 if this axis is not for the given dimension.
+     */
+    @Override
+    final int length(final int sourceDimension) {
+        if (sourceDimension == iDim) return length;
+        return super.length(sourceDimension);
     }
 
     /**
@@ -217,18 +265,29 @@ final class NetcdfAxis1D extends NetcdfAxis implements DiscreteCoordinateSystemA
      */
     @Override
     public double getOrdinateValue(final double[] gridPts, final int srcOff) throws TransformException {
-        final double source = gridPts[srcOff + iDim];
+        final double x = gridPts[srcOff + iDim];
         try {
-            final int lower = (int) source;
+            /*
+             * Casting to (int) round all values between -1 and 1 toward 0, which is exactly what we
+             * need in this particular case. We want -0.5 to be rounded toward zero because envelope
+             * transformations will often apply a 0.5 shift on the pixel coordinates, thus resulting
+             * in some -0.5 values. For such cases, a small extrapolation will be applied.
+             */
+            final int i = (int) x;
             final CoordinateAxis1D axis = (CoordinateAxis1D) this.axis;
-            double value = axis.getCoordValue(lower);
-            final double delta = source - lower;
-            if (delta != 0) {
-                value += delta * (axis.getCoordValue(lower + 1) - value);
+            double value = axis.getCoordValue(i);
+            double delta = x - i;
+            if (delta != 0 && length != 1) {
+                int i1 = i + 1;
+                if (i1 == length) {
+                    i1 -= 2;
+                    delta = -delta;
+                }
+                value += delta * (axis.getCoordValue(i1) - value);
             }
             return value;
         } catch (IndexOutOfBoundsException e) {
-            throw new TransformException(Errors.format(Errors.Keys.ILLEGAL_COORDINATE_$1, source), e);
+            throw new TransformException(Errors.format(Errors.Keys.ILLEGAL_COORDINATE_$1, x), e);
         }
     }
 }

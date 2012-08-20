@@ -29,6 +29,7 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
 import org.geotoolkit.referencing.operation.matrix.Matrices;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
+import org.geotoolkit.internal.referencing.SeparableTransform;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.XArrays;
 
@@ -57,6 +58,11 @@ import org.geotoolkit.util.XArrays;
  *
  * @todo This class contains a set of static methods that could be factored out in
  *       some kind of {@code org.geotoolkit.util.SortedIntegerSet} implementation.
+ *
+ * @todo Consider providing a {@code subTransform(DimensionFilter)} method in
+ *       {@link AbstractMathTransform}, and move some {@code DimensionFilter}
+ *       code in {@code AbstractMathTransform} sub-classes. This would allow us
+ *       to separate transforms that are defined in downstream modules, like NetCDF.
  *
  * @since 2.1
  * @module
@@ -174,7 +180,7 @@ public class DimensionFilter {
      * @throws IllegalArgumentException if {@code dimensions} contains negative values or
      *         is not a strictly increasing sequence.
      */
-    public void addSourceDimensions(final int[] dimensions) throws IllegalArgumentException {
+    public void addSourceDimensions(final int... dimensions) throws IllegalArgumentException {
         sourceDimensions = add(sourceDimensions, dimensions);
     }
 
@@ -233,7 +239,7 @@ public class DimensionFilter {
      * @throws IllegalArgumentException if {@code dimensions} contains negative values or
      *         is not a strictly increasing sequence.
      */
-    public void addTargetDimensions(int[] dimensions) throws IllegalArgumentException {
+    public void addTargetDimensions(int... dimensions) throws IllegalArgumentException {
         targetDimensions = add(targetDimensions, dimensions);
     }
 
@@ -296,6 +302,28 @@ public class DimensionFilter {
      * @throws FactoryException if the transform can't be separated.
      */
     public MathTransform separate(MathTransform transform) throws FactoryException {
+        /*
+         * -------- HACK BEGINS --------
+         * Special case for NetCDF transforms. Actually we should generalize the approach used
+         * here by providing an abstract protected method in AbstractMathTransform which expect
+         * a DimensionFilter (maybe to be renamed) in argument. The default implementation would
+         * check for the trivial case allowing to return 'this', and throw an exception for non-
+         * trivial cases. Appropriate subclasses (PassthroughTransform, ConcatenatedTransform,
+         * etc.) should implement that method.
+         */
+        if (transform instanceof SeparableTransform) {
+            final MathTransform candidate = ((SeparableTransform) transform).subTransform(sourceDimensions, targetDimensions);
+            if (candidate != null) {
+                // BAD HACK - Presume that source and target dimensions are the same.
+                // This is often the case with NetCDF files, but is not garanteed.
+                if (sourceDimensions == null) sourceDimensions = targetDimensions;
+                if (targetDimensions == null) targetDimensions = sourceDimensions;
+                return candidate;
+            }
+        }
+        /*
+         * -------- END OF HACK --------
+         */
         if (sourceDimensions == null) {
             sourceDimensions = series(0, transform.getSourceDimensions());
             if (targetDimensions == null) {
@@ -315,8 +343,8 @@ public class DimensionFilter {
                 if (j < 0) {
                     /*
                      * The user is asking for some target dimensions that we can't keep, probably
-                     * because at least one of the requested target dimension as a dependency to
-                     * an source dimension that do not appears in the list of source dimensions to
+                     * because at least one of the requested target dimension has a dependency to
+                     * a source dimension that doesn't appear in the list of source dimensions to
                      * kept.
                      *
                      * TODO: provide a more accurate error message.
@@ -493,7 +521,7 @@ reduce:     for (int j=0; j<rows.length; j++) {
     }
 
     /**
-     * Creates a transform which retains only a subset of an other transform's outputs. The number
+     * Creates a transform which retains only a subset of an other transform outputs. The number
      * and nature of inputs stay unchanged. For example if the supplied {@code transform} has
      * (<var>longitude</var>, <var>latitude</var>, <var>height</var>) outputs, then a sub-transform
      * may be used to keep only the (<var>longitude</var>, <var>latitude</var>) part. In most cases,
