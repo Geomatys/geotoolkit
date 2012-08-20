@@ -684,8 +684,14 @@ public abstract class NetcdfMetadata implements WarningProducer {
     public static class Dimension {
         /**
          * The ISO-19115 dimension type, or {@code null} if none.
+         * <p>
+         * Current implementation assigns {@link DimensionNameType#COLUMN} to longitudes and
+         * {@link DimensionNameType#ROW} to latitude, which is not strictly correct since the
+         * columns and rows can be anything. The problem is that we relate this type to the
+         * coordinate system, while it should be related to the grid geometry. We may need to
+         * remove this field in a future version.
          */
-        public final DimensionNameType TYPE;
+        final DimensionNameType TYPE;
 
         /**
          * The attribute name for the minimal value of the bounding box (<em>Recommended</em>).
@@ -731,7 +737,6 @@ public abstract class NetcdfMetadata implements WarningProducer {
         /**
          * Creates a new set of attribute names.
          *
-         * @param type       The ISO-19115 dimension type, or {@code null} if none.
          * @param min        The attribute name for the minimal value of the bounding box.
          * @param max        The attribute name for the maximal value of the bounding box.
          * @param span       The attribute name for the difference between the minimal and maximal values.
@@ -739,7 +744,23 @@ public abstract class NetcdfMetadata implements WarningProducer {
          * @param units      The attribute name for the bounding box units of measurement.
          * @param positive   The attribute name for indicating which direction is positive.
          */
-        public Dimension(final DimensionNameType type, final String min, final String max, final String span,
+        public Dimension(final String min, final String max, final String span,
+                final String resolution,final String units, final String positive)
+        {
+            TYPE       = null;
+            MINIMUM    = min;
+            MAXIMUM    = max;
+            SPAN       = span;
+            RESOLUTION = resolution;
+            UNITS      = units;
+            POSITIVE   = positive;
+        }
+
+        /**
+         * Same constructor than above, but allows to specify the type. See {@link #TYPE}
+         * for an explanation about why this field is not public.
+         */
+        Dimension(final DimensionNameType type, final String min, final String max, final String span,
                 final String resolution,final String units, final String positive)
         {
             TYPE       = type;
@@ -902,7 +923,7 @@ public abstract class NetcdfMetadata implements WarningProducer {
     /**
      * Where to send the warnings, or {@code null} if none.
      */
-    private final WarningProducer owner;
+    final WarningProducer owner;
 
     /**
      * Creates a new metadata reader or writer for the given source or destination.

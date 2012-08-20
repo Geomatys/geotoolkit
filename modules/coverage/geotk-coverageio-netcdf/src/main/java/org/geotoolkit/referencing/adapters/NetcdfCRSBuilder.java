@@ -19,19 +19,27 @@ package org.geotoolkit.referencing.adapters;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.IdentityHashMap;
 
 import java.io.IOException;
 import ucar.nc2.Dimension;
 import ucar.nc2.constants.AxisType;
 import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.dataset.CoordinateAxis;
+import ucar.nc2.dataset.CoordinateAxis1D;
+import ucar.nc2.dataset.CoordinateAxis2D;
 import ucar.nc2.dataset.CoordinateSystem;
 
 import org.geotoolkit.lang.Builder;
 import org.geotoolkit.image.io.WarningProducer;
+import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.resources.Errors;
 
 
@@ -157,10 +165,17 @@ public class NetcdfCRSBuilder extends Builder<NetcdfCRS> {
      * <p>
      * By default, the returned list is modifiable. Any changes in the content of this list will be
      * reflected in the wrappers to be {@linkplain #build() build}. This is useful if the caller
-     * wants to modify the axis order.
+     * wants to modify the axis order, as in the example below:
+     *
+     * {@preformat java
+     *     builder.setCoordinateSystem(...);
+     *     Collection.sort(builder.getCoordinateAxes(), new CoordinateAxis.AxisComparator());
+     * }
      *
      * @return The NetCDF coordinate axis in natural order (reverse of NetCDF order),
      *         or {@code null} if unknown.
+     *
+     * @see ucar.nc2.dataset.CoordinateAxis.AxisComparator
      */
     public List<CoordinateAxis> getCoordinateAxes() {
         if (axes == null && netcdfCS != null) {
@@ -217,6 +232,186 @@ public class NetcdfCRSBuilder extends Builder<NetcdfCRS> {
     public void setDomain(final List<Dimension> newValue) {
         domain = newValue; // Intentionally no clone.
         explicitDomain = (newValue != null);
+    }
+
+    /**
+     * Returns the dimensions of all axes, together with an axis associated to each dimension.
+     * If more than one axis use the same dimension, then the first axis has precedence.
+     * <p>
+     * The domain of all axes (or the {@linkplain CoordinateSystem#getDomain() coordinate system
+     * domain}) is often the same than the {@linkplain #getDomain() domain of the variable}, but
+     * not necessarily. In particular, the relationship is not straightforward when the coordinate
+     * system contains instances of {@link CoordinateAxis2D}.
+     *
+     * @return All axis dimensions associated to their originating axis.
+     * @throws IllegalStateException If the {@linkplain #getCoordinateAxes() coordinate axes}
+     *         are not defined.
+     *
+     * @see CoordinateAxis#getDimensions()
+     */
+    public Map<Dimension,CoordinateAxis> getAxesDomain() throws IllegalStateException {
+        final List<CoordinateAxis> axes = getCoordinateAxes();
+        ensureDefined("axes", axes);
+        final Map<Dimension,CoordinateAxis> map = new LinkedHashMap<>(XCollections.hashMapCapacity(axes.size()));
+        /*
+         * Stores all dimensions in the map, together with an arbitrary axis. If there is no
+         * conflict, we are done. If there is conflicts, then the first one-dimensional axis
+         * (if any) will have precedence over all other axes for that dimension. If the conflict
+         * involves only axes having 2 or more dimensions, then we will defer their handling
+         * to a later stage.
+         */
+        Map<Dimension, Set<CoordinateAxis>> conflicts = null;
+        for (final CoordinateAxis axis : axes) {
+            final int rank = axis.getRank();
+            for (int i=rank; --i>=0;) {
+                final Dimension dimension = axis.getDimension(i);
+                final CoordinateAxis previous = map.put(dimension, axis);
+                if (previous != null) {
+                    final int pr = previous.getRank();
+                    if (pr != 1 && rank != 1) {
+                        /*
+                         * Found a conflict (two axes using the same dimension) that can not be
+                         * resolved before the loop completion. Remember this conflict in order
+                         * to process it later.
+                         */
+                        if (conflicts == null) {
+                            conflicts = new HashMap<>(4);
+                        }
+                        Set<CoordinateAxis> deferred = conflicts.get(dimension);
+                        if (deferred == null) {
+                            deferred = new LinkedHashSet<>(4);
+                            conflicts.put(dimension, deferred);
+                        }
+                        deferred.add(previous);
+                        deferred.add(axis);
+                    } else {
+                        /*
+                         * The conflict can be resolved by giving precedence to a one-dimensional
+                         * axis and discart the other.
+                         */
+                        if (pr == 1) {
+                            map.put(dimension, previous);
+                        }
+                        if (conflicts != null) {
+                            conflicts.remove(dimension);
+                        }
+                    }
+                }
+            }
+        }
+        /*
+         * At this point the map is fully build, but some values may be inaccurate if conflicts
+         * exist. In such cases, we will first checks if there is any axis that can be assigned
+         * to only one dimension, because all other dimensions are not available anymore.
+         */
+redo:   while (!XCollections.isNullOrEmpty(conflicts)) {
+            for (final Map.Entry<Dimension,Set<CoordinateAxis>> entry : conflicts.entrySet()) {
+                final Dimension dimension = entry.getKey();
+otherAxis:      for (final CoordinateAxis axis : entry.getValue()) {
+                    for (int i=axis.getRank(); --i>=0;) {
+                        final Dimension candidate = axis.getDimension(i);
+                        if (candidate != dimension && conflicts.containsKey(candidate)) {
+                            // Axis can be assigned to 2 or more dimensions. Search an other one.
+                            continue otherAxis;
+                        }
+                    }
+                    /*
+                     * If we reach this point, then this axis can be associated only
+                     * to the current dimension; no other dimension are available.
+                     */
+                    conflicts.remove(dimension);
+                    map.put(dimension, axis);
+                    continue redo; // Maybe some axes prior to this one can now be processed.
+                }
+            }
+            /*
+             * If we reach this point, we have not been able to process any axis.
+             * Pickup what seems the "main" dimension according an arbitrary rule.
+             */
+            for (final Set<CoordinateAxis> as : conflicts.values()) {
+                for (final CoordinateAxis axis : as) {
+                    final Dimension dimension = axis.getDimension(findMainDimensionOf(axis));
+                    if (conflicts.remove(dimension) != null) {
+                        map.put(dimension, axis);
+                        for (final Set<CoordinateAxis> toClean : conflicts.values()) {
+                            toClean.remove(axis);
+                        }
+                        continue redo; // Maybe some other axes can now be processed.
+                    }
+                }
+            }
+            /*
+             * If we reach this point, there is no "main" dimension available. Such case should
+             * never happen for two-dimensional axes, but could happen for axes having three or
+             * more dimensions. Such axes do not exist in the NetCDF API at the time of writting,
+             * but if they appear in a future version there is where we should complete the code.
+             */
+            throw new UnsupportedOperationException();
+        }
+        return map;
+    }
+
+    /**
+     * Sorts the axes in an order as close as possible to the dimension order. Invoking this method
+     * increases the chances for the "<cite>grid to CRS</cite>" transform to be a diagonal matrix.
+     * <p>
+     * If the axes or the domain are undefined, then this method does nothing.
+     *
+     * @see ucar.nc2.dataset.CoordinateAxis.AxisComparator
+     */
+    public void sortAxesAccordingDomain() {
+        final List<CoordinateAxis> axes = getCoordinateAxes(); if (axes   == null) return;
+        final List<Dimension>    domain = getDomain();         if (domain == null) return;
+        final Map<Dimension,CoordinateAxis> forDim = getAxesDomain();
+        final int rank = domain.size();
+        final Map<CoordinateAxis,Integer> positions = new IdentityHashMap<>(XCollections.hashMapCapacity(rank));
+        for (int i=rank; --i>=0;) {
+            /*
+             * Remember the axis position for later sorting. If the axis dimension is not in the
+             * domain of the variable (which is probably an error, but this is not this method job
+             * to handle it), then the comparator will sort that axis last.
+             */
+            positions.put(forDim.get(domain.get(i)), i);
+        }
+        /*
+         * Sort the axes. We do not need to invoke 'setCoordinateAxis' since we modified the
+         * array in-place. Not invoking the setter avoid to modify the 'explicitAxes' state.
+         */
+        Collections.sort(axes, new Comparator<CoordinateAxis>() {
+            @Override
+            public int compare(final CoordinateAxis a1, final CoordinateAxis a2) {
+                final Integer p1 = positions.get(a1);
+                final Integer p2 = positions.get(a2);
+                return (p1 != null ? p1 : rank) -
+                       (p2 != null ? p2 : rank);
+            }
+        });
+    }
+
+    /**
+     * Returns the index of what seems to be the "main" dimension of the given coordinate axis.
+     * For {@link CoordinateAxis1D}, the returned index is trivially 0 in all cases.
+     * For {@link CoordinateAxis2D}, the default implementation returns the index (0 or 1)
+     * of the dimension for which the largest increment is found.
+     * <p>
+     * This method affects the sort performed by {@link #sortAxesAccordingDomain()}.
+     *
+     * @param  axis The axis for which to get the index of the "main" dimension.
+     * @return Index of the axis dimension having the largest increment.
+     */
+    private static int findMainDimensionOf(final CoordinateAxis axis) {
+        int main = 0;
+        if (axis instanceof CoordinateAxis2D) {
+            final CoordinateAxis2D a2 = (CoordinateAxis2D) axis;
+            final int    si = a2.getShape(0);
+            final int    sj = a2.getShape(1);
+            final double di = Math.abs(a2.getCoordValue(0, sj >>> 1) - a2.getCoordValue(si-1, sj >>> 1)) / si;
+            final double dj = Math.abs(a2.getCoordValue(si >>> 1, 0) - a2.getCoordValue(si >>> 1, sj-1)) / sj;
+            if (dj > di) {
+                main = 1;
+            }
+        }
+        return main;
     }
 
     /**

@@ -96,6 +96,7 @@ import org.geotoolkit.metadata.iso.extent.DefaultVerticalExtent;
 import org.geotoolkit.metadata.iso.extent.DefaultTemporalExtent;
 import org.geotoolkit.metadata.iso.quality.DefaultDataQuality;
 import org.geotoolkit.metadata.iso.lineage.DefaultLineage;
+import org.geotoolkit.referencing.adapters.NetcdfCRSBuilder;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.resources.Errors;
 
@@ -792,9 +793,15 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
     protected GridSpatialRepresentation createSpatialRepresentationInfo(final CoordinateSystem cs) throws IOException {
         final DefaultGridSpatialRepresentation grid = new DefaultGridSpatialRepresentation();
         grid.setNumberOfDimensions(cs.getRankDomain());
-        final List<CoordinateAxis> axes = cs.getCoordinateAxes();
-        for (int i=axes.size(); --i>=0;) { // We need to iterate in reverse order.
-            final CoordinateAxis axis = axes.get(i);
+        /*
+         * The caller (which is the read() method) has verified that the file is an instance
+         * of NetcdfDataset.
+         */
+        final NetcdfCRSBuilder builder = new NetcdfCRSBuilder((NetcdfDataset) file, owner);
+        builder.setCoordinateSystem(cs);
+        for (final Map.Entry<ucar.nc2.Dimension,CoordinateAxis> entry : builder.getAxesDomain().entrySet()) {
+            final CoordinateAxis axis = entry.getValue();
+            final int i = axis.getDimensions().indexOf(entry.getKey());
             Dimension rsat = null;
             Double resolution = null;
             final AxisType at = axis.getAxisType();
@@ -803,9 +810,9 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
                 switch (at) {
                     case Lon:      valid = true; // fallthrough
                     case GeoX:     rsat  = LONGITUDE; break;
-                    case Lat:      valid = true;  // fallthrough
+                    case Lat:      valid = true; // fallthrough
                     case GeoY:     rsat  = LATITUDE; break;
-                    case Height:   valid = true;  // fallthrough
+                    case Height:   valid = true; // fallthrough
                     case GeoZ:
                     case Pressure: rsat  = VERTICAL; break;
                     case Time:     valid = true; // fallthrough
@@ -818,15 +825,13 @@ public class NetcdfMetadataReader extends NetcdfMetadata {
                     }
                 }
             }
-            for (int j=axis.getRank(); --j>=0;) { // Reverse order again.
-                final DefaultDimension dimension = new DefaultDimension();
-                if (rsat != null) {
-                    dimension.setDimensionName(rsat.TYPE);
-                    dimension.setResolution(resolution);
-                }
-                dimension.setDimensionSize(axis.getShape(j));
-                grid.getAxisDimensionProperties().add(dimension);
+            final DefaultDimension dimension = new DefaultDimension();
+            if (rsat != null) {
+                dimension.setDimensionName(rsat.TYPE);
+                dimension.setResolution(resolution);
             }
+            dimension.setDimensionSize(axis.getShape(i));
+            grid.getAxisDimensionProperties().add(dimension);
         }
         grid.setCellGeometry(CellGeometry.AREA);
         return grid;

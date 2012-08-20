@@ -329,6 +329,7 @@ final class NetcdfMetadata extends SpatialMetadata {
             Collections.reverse(domain);
             builder.setDomain(domain);
             builder.setCoordinateSystem(cs);
+            builder.sortAxesAccordingDomain();
             final NetcdfCRS netcdfCRS = builder.getNetcdfCRS();
             /*
              * The following code is only a validity check. It may produce warnings,
