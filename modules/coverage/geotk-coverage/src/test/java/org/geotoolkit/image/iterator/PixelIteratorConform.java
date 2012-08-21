@@ -21,6 +21,7 @@ import java.awt.image.DataBuffer;
 import java.awt.image.Raster;
 import java.awt.image.WritableRenderedImage;
 import static org.junit.Assert.assertTrue;
+import org.opengis.coverage.grid.SequenceType;
 
 /**
  * <p>Class use to compare result between two distinct Iterators.<br/>
@@ -130,6 +131,9 @@ public class PixelIteratorConform extends PixelIterator {
         return pixelIter1.getBoundary(areaIterate);
     }
 
-
-
+    @Override
+    public SequenceType getIterationDirection() {
+        assertTrue(pixelIter1.getIterationDirection().equals(pixelIter2.getIterationDirection()));
+        return pixelIter1.getIterationDirection();
+    }
 }

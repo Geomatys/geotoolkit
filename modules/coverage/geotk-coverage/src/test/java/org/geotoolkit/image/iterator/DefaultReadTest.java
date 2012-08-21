@@ -22,6 +22,7 @@ import java.awt.image.*;
 import javax.media.jai.TiledImage;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
+import org.opengis.coverage.grid.SequenceType;
 
 /**
  * Some tests only for Default type iterator.
@@ -218,6 +219,20 @@ public abstract class DefaultReadTest extends IteratorTest{
                 }
             }
         }
+    }
+
+    /**
+     * Test sequence iteration direction.
+     */
+    public void getIterationDirectionTest() {
+        numBand = 3;
+        width = 16;
+        height = 16;
+        minx = 5;
+        miny = 7;
+        setRasterTest(minx, miny, width, height, numBand, null);
+        setPixelIterator(rasterTest);
+        assertTrue(pixIterator.getIterationDirection() == null);
     }
 
     ///////////////////////////////Raster Tests/////////////////////////////////

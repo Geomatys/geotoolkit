@@ -21,6 +21,7 @@ import java.awt.image.*;
 import javax.media.jai.TiledImage;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
+import org.opengis.coverage.grid.SequenceType;
 
 /**
  * Some tests only for RowMajor type iterator.
@@ -209,6 +210,22 @@ public abstract class RowMajorReadTest extends IteratorTest {
             }
         }
 
+    }
+
+    /**
+     * Test sequence iteration direction.
+     */
+    public void getIterationDirectionTest() {
+        minx = 0;
+        miny = 0;
+        width = 100;
+        height = 50;
+        tilesWidth = 10;
+        tilesHeight = 5;
+        numBand = 3;
+        setRenderedImgTest(minx, miny, width, height, tilesWidth, tilesHeight, numBand, null);
+        setPixelIterator(renderedImage);
+        assertTrue(pixIterator.getIterationDirection().equals(SequenceType.LINEAR));
     }
 
     /**

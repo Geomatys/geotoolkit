@@ -19,6 +19,7 @@ package org.geotoolkit.image.iterator;
 import java.awt.Rectangle;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
+import org.opengis.coverage.grid.SequenceType;
 
 /**
  * An Iterator for traversing anyone rendered Image.
@@ -229,5 +230,13 @@ class DefaultIterator extends PixelIterator {
         this.x = x;
         this.y = y;
         this.band = b;// - 1;
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public SequenceType getIterationDirection() {
+        return null;
     }
 }

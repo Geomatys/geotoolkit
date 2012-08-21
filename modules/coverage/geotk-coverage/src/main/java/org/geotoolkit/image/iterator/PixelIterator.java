@@ -19,6 +19,7 @@ package org.geotoolkit.image.iterator;
 import java.awt.Rectangle;
 import java.awt.image.*;
 import org.geotoolkit.util.ArgumentChecks;
+import org.opengis.coverage.grid.SequenceType;
 
 /**
  * Define standard iterator for image pixel.
@@ -281,6 +282,13 @@ public abstract class PixelIterator {
     public abstract void close();
 
     /**
+     * Return type of sequence iteration direction.
+     *
+     * @return type of sequence.
+     */
+    public abstract SequenceType getIterationDirection();
+
+    /**
      * Move forward iterator cursor at x, y coordinates. Cursor is automatically
      * positioned at band index.
      *
@@ -396,6 +404,4 @@ public abstract class PixelIterator {
     public int getSourceDatatype() {
         return (renderedImage == null) ? currentRaster.getSampleModel().getDataType() : renderedImage.getSampleModel().getDataType();
     }
-
-//    public abstract enum getIterationDirection();
 }

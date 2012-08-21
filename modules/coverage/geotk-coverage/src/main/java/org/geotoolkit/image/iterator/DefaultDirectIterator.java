@@ -21,6 +21,7 @@ import java.awt.image.ComponentSampleModel;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
+import org.opengis.coverage.grid.SequenceType;
 
 /**
  * An Iterator for traversing anyone rendered Image.
@@ -234,5 +235,13 @@ abstract class DefaultDirectIterator extends PixelIterator{
         }
         this.dataCursor = (x - crMinX) * numBand        + (y - crMinY) * scanLineStride + b;// - 1;
         this.maxX       = (y - crMinY) * scanLineStride + (Math.min(areaIterateMaxX, crMinX + rasterWidth) - crMinX)*numBand;
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public SequenceType getIterationDirection() {
+        return null;
     }
 }

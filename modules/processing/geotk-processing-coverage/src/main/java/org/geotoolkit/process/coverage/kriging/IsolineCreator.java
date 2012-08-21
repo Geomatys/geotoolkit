@@ -33,6 +33,7 @@ import javax.vecmath.Point3d;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.util.ArgumentChecks;
+import org.opengis.coverage.grid.SequenceType;
 
 /**
  * <p>Search and compute Isoline on a {@link RenderedImage} or an
@@ -64,9 +65,9 @@ public class IsolineCreator {
     private static final double EPS = 1E-8;
 
     /**
-     * Isoline intervals.
+     * Isoline Levels.
      */
-    private final double[] lls;
+    private final double[] isolineLevel;
 
     /**
      * Iterator use to compute isoline.
@@ -85,25 +86,25 @@ public class IsolineCreator {
      * @param isolineLevel Isoline levels.
      */
     public IsolineCreator(final PixelIterator pixelIterator, final double[] isolineLevel) {
-
-        // faire une verif pixel iterator de type row major
+        if (!pixelIterator.getIterationDirection().equals(SequenceType.LINEAR))
+            throw new IllegalArgumentException("PixelIterator must be linear sequence direction type.");
         ArgumentChecks.ensureNonNull("pixelIterator", pixelIterator);
         ArgumentChecks.ensureNonNull("isoline interval", isolineLevel);
         if (pixelIterator.getNumBands() != 1)
             throw new IllegalArgumentException("image not conform, number of bands exceed 1");
         this.pixelIterator = pixelIterator;
         this.areaIterate   = pixelIterator.getBoundary(true);
-        this.lls = isolineLevel;
+        this.isolineLevel = isolineLevel;
     }
 
     /**
      * Define isoline on {@link RenderedImage}.
      *
      * @param renderedImage Image where caller search isoline.
-     * @param lls Isoline intervals.
+     * @param isolineLevel Isoline levels.
      */
-    public IsolineCreator(final RenderedImage renderedImage, final double[] lls) {
-        this(PixelIteratorFactory.createRowMajorIterator(renderedImage), lls);
+    public IsolineCreator(final RenderedImage renderedImage, final double[] isolineLevel) {
+        this(PixelIteratorFactory.createRowMajorIterator(renderedImage), isolineLevel);
     }
 
     /**
@@ -127,12 +128,12 @@ public class IsolineCreator {
         final double z[] = new double[4];
         final Coordinate toMerge[] = new Coordinate[2];
 
-        final int minX = areaIterate.x;
-        final int minY = areaIterate.y;
-        final int areaWidth = areaIterate.width;
+        final int minX       = areaIterate.x;
+        final int minY       = areaIterate.y;
+        final int areaWidth  = areaIterate.width;
         final int areaHeight = areaIterate.height;
-        final int xlength = minX + areaWidth - 1;
-        final int ylength = minY + areaHeight - 1;
+        final int xlength    = minX + areaWidth - 1;
+        final int ylength    = minY + areaHeight - 1;
 
         for (int i = minX; i<xlength; i++) {
             /*
@@ -185,7 +186,7 @@ public class IsolineCreator {
                     if (z[k] > zmax) zmax = z[k];
                 }
                 //zl = hauteur de courbe de niveau courante
-                for(double zline : lls){
+                for(double zline : isolineLevel){
                     if (zline > zmax || zline < zmin) {
                         // la cellule ne contient pas ce niveau
                         continue;

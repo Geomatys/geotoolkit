@@ -21,6 +21,7 @@ import java.awt.image.ComponentSampleModel;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import org.geotoolkit.util.ArgumentChecks;
+import org.opengis.coverage.grid.SequenceType;
 
 /**
  * An Iterator for traversing anyone rendered Image with Byte type data.
@@ -181,5 +182,13 @@ abstract class RowMajorDirectIterator extends PixelIterator {
         //initialize row
         this.maxY = Math.min(areaIterateMaxY, cRMinY + currentRaster.getHeight());
         this.dataCursor = (x - cRMinX) * numBand + step + b;// - 1;
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    public SequenceType getIterationDirection() {
+        return SequenceType.LINEAR;
     }
 }
