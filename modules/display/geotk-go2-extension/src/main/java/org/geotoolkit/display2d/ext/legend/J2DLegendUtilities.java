@@ -25,11 +25,21 @@ import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
+import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.ext.BackgroundTemplate;
 import org.geotoolkit.display2d.ext.BackgroundUtilities;
 import org.geotoolkit.display2d.service.DefaultGlyphService;
+import org.geotoolkit.map.DefaultCoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapItem;
@@ -37,6 +47,8 @@ import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
+import org.geotoolkit.util.logging.Logging;
+import org.opengis.feature.type.Name;
 import org.opengis.style.Description;
 import org.opengis.style.Rule;
 import org.opengis.util.InternationalString;
@@ -48,6 +60,7 @@ import org.opengis.util.InternationalString;
  * @module pending
  */
 public class J2DLegendUtilities {
+    private static final Logger LOGGER = Logging.getLogger(J2DLegendUtilities.class);
 
     private static final int GLYPH_SPACE = 5;
 
@@ -93,7 +106,9 @@ public class J2DLegendUtilities {
         }
 
 
-        final Dimension estimation = estimate(g2d, item, template, false);
+        // Will store the get legend graphic results
+        final Map<Name,BufferedImage> legendResults = new HashMap<Name,BufferedImage>();
+        final Dimension estimation = estimate(g2d, item, template, legendResults, false);
 
         final BackgroundTemplate background = template.getBackground();
         if (background != null) {
@@ -132,6 +147,21 @@ public class J2DLegendUtilities {
 
             //check if the given layer is visible, and if we should display invisible layers.
             if (template.displayOnlyVisibleLayers() && !layer.isVisible()) {
+                continue;
+            }
+
+            // If we are browsing a coverage map layer, a default generic style has been defined,
+            // we can use the result of a GetLegendGraphic request instead. It should presents the
+            // default style defined on the WMS service for this layer.
+            if (layer instanceof DefaultCoverageMapLayer) {
+                final DefaultCoverageMapLayer covLayer = (DefaultCoverageMapLayer)layer;
+                // Get the image from the ones previously stored, to not resend a get legend graphic request.
+                final BufferedImage image = legendResults.get(covLayer.getCoverageName());
+                if (l != 0) {
+                    moveY += gapSize;
+                }
+                g2d.drawImage(image, null, 0, Math.round(moveY));
+                moveY += image.getHeight();
                 continue;
             }
 
@@ -275,6 +305,12 @@ public class J2DLegendUtilities {
     }
 
     public static Dimension estimate(final Graphics2D g, MapItem mapitem, final LegendTemplate template, final boolean considerBackground) {
+        return estimate(g, mapitem, template, null, considerBackground);
+    }
+
+    public static Dimension estimate(final Graphics2D g, MapItem mapitem, final LegendTemplate template,
+            final Map<Name,BufferedImage> images, final boolean considerBackground)
+    {
         final Dimension dim = new Dimension(0, 0);
         if (mapitem == null) {
             return dim;
@@ -321,6 +357,36 @@ public class J2DLegendUtilities {
             final MapLayer layer = (MapLayer) childItems.get(l);
 
             if (template.displayOnlyVisibleLayers() && !layer.isVisible()) {
+                continue;
+            }
+
+            // Launch a get legend request and take the dimensions from the result
+            if (layer instanceof DefaultCoverageMapLayer) {
+                final DefaultCoverageMapLayer covLayer = (DefaultCoverageMapLayer)layer;
+                final CoverageReference covRef = covLayer.getCoverageReference();
+                final URL urlWms = (URL) covRef.getStore().getConfiguration().parameter("url").getValue();
+                final StringBuilder sb = new StringBuilder(urlWms.toString());
+                if (!urlWms.toString().endsWith("?")) {
+                    sb.append("?");
+                }
+                sb.append("request=GetLegendGraphic&service=WMS&format=image/png&layer=")
+                  .append(covLayer.getCoverageName());
+                final BufferedImage image;
+                try {
+                    final URL getLegendUrl = new URL(sb.toString());
+                    image = ImageIO.read(getLegendUrl);
+                } catch (IOException e) {
+                    LOGGER.log(Level.INFO, e.getLocalizedMessage(), e);
+                    // just skip this layer if we didn't succeed in getting the get legend result.
+                    continue;
+                }
+
+                dim.height += image.getHeight();
+                dim.width  += image.getWidth();
+
+                if (images != null) {
+                    images.put(covLayer.getCoverageName(), image);
+                }
                 continue;
             }
 
