@@ -382,7 +382,9 @@ public class J2DLegendUtilities {
                 }
 
                 dim.height += image.getHeight();
-                dim.width  += image.getWidth();
+                if (dim.width < image.getWidth()) {
+                    dim.width = image.getWidth();
+                }
 
                 if (images != null) {
                     images.put(covLayer.getCoverageName(), image);
