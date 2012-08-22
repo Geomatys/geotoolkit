@@ -221,10 +221,12 @@ public abstract class DefaultReadTest extends IteratorTest{
         }
     }
 
+    ///////////////////////////////Raster Tests/////////////////////////////////
     /**
      * Test sequence iteration direction.
      */
-    public void getIterationDirectionTest() {
+    @Test
+    public void getIterationDirectionRasterTest() {
         numBand = 3;
         width = 16;
         height = 16;
@@ -232,10 +234,9 @@ public abstract class DefaultReadTest extends IteratorTest{
         miny = 7;
         setRasterTest(minx, miny, width, height, numBand, null);
         setPixelIterator(rasterTest);
-        assertTrue(pixIterator.getIterationDirection() == null);
+        assertTrue(SequenceType.LINEAR.equals(pixIterator.getIterationDirection()));
     }
 
-    ///////////////////////////////Raster Tests/////////////////////////////////
     /**
      * Test if getX() getY() iterator methods are conform from raster.
      */
@@ -287,6 +288,41 @@ public abstract class DefaultReadTest extends IteratorTest{
 
 
     ///////////////////////////Rendered Image Tests//////////////////////////////
+
+    /**
+     * Test sequence iteration direction in image which contain only one raster.
+     */
+    @Test
+    public void getIterationDirectionOneRasterTest() {
+        minx = 56;
+        miny = 1;
+        width = 100;
+        height = 50;
+        tilesWidth = 100;
+        tilesHeight = 50;
+        numBand = 3;
+        setRenderedImgTest(minx, miny, width, height, tilesWidth, tilesHeight, numBand, null);
+        setPixelIterator(renderedImage);
+        assertTrue(SequenceType.LINEAR.equals(pixIterator.getIterationDirection()));
+    }
+
+    /**
+     * Test sequence iteration direction in image which contain only one raster.
+     */
+    @Test
+    public void getIterationDirectionMultiRasterTest() {
+        minx = 56;
+        miny = 1;
+        width = 100;
+        height = 50;
+        tilesWidth = 10;
+        tilesHeight = 5;
+        numBand = 3;
+        setRenderedImgTest(minx, miny, width, height, tilesWidth, tilesHeight, numBand, null);
+        setPixelIterator(renderedImage);
+        assertTrue(pixIterator.getIterationDirection() == null);
+    }
+
     /**
      * Test if getX() getY() iterator methods are conform from rendered image.
      */

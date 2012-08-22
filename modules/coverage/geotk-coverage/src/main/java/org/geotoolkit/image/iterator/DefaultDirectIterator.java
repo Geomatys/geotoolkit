@@ -242,6 +242,9 @@ abstract class DefaultDirectIterator extends PixelIterator{
      */
     @Override
     public SequenceType getIterationDirection() {
+        if (renderedImage == null) return SequenceType.LINEAR;//1 raster seul
+        if (renderedImage.getNumXTiles() <=1 && renderedImage.getNumYTiles() <= 1)
+            return SequenceType.LINEAR;
         return null;
     }
 }
