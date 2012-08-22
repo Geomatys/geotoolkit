@@ -18,6 +18,7 @@ package org.geotoolkit.image.classification;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import org.geotoolkit.util.ArgumentChecks;
 
@@ -25,7 +26,7 @@ import org.geotoolkit.util.ArgumentChecks;
  * <p>Define and compute two sort of data classifications.<br/>
  * Quantile classification.<br/>
  * Quantile classification is the most basic classification.<br/>
- * Algorithm divide in some equal parts(at best, if its possible) all ascending organized data.<br/><br/>
+ * Algorithm divide in some equal parts(at best, if its possible) all data.<br/><br/>
  * Jenks classification.<br/>
  * Jenks method is the most effective, but also most costly in computing terms.<br/>
  * For each case, in first time,  the algorithm computes the "intra-class variance"
@@ -34,7 +35,8 @@ import org.geotoolkit.util.ArgumentChecks;
  * ie the variance of each of the generated classes.<br/>
  * The aim is thus to minimize the "intra-class variance" so that each
  * elements group has generated individuals who "look at best"
- * and maximize the "inter-class variance" in order to obtain the most dissimilar classes possible.</p>
+ * and maximize the "inter-class variance" in order to obtain the most dissimilar classes possible.<br/><br/>
+ * Data will aren't sort in ascending order.</p>
  *
  * @author Rémi Marechal (Geomatys).
  */
@@ -61,6 +63,11 @@ public class Classification {
     private final int dataLength;
 
     /**
+     * Begin and ending classes index from {@link #data} table.
+     */
+    private final int[] index;
+
+    /**
      * <p>Define and compute two sort of data classifications.<br/>
      * Quantile classification.<br/>
      * Jenks classification.<br/><br/>
@@ -79,26 +86,31 @@ public class Classification {
         if (classNumber > data.length)
             throw new IllegalArgumentException("impossible to classify datas"
                 + " with class number larger than overall elements number");
-        this.data = data;
+        this.data        = data;
         this.classNumber = classNumber;
-        this.classList = new ArrayList<double[]>(classNumber);
-        this.dataLength = data.length;
+        this.classList   = new LinkedList<double[]>();
+        this.dataLength  = data.length;
+        this.index       = new int[2 * classNumber];
     }
 
     /**
      * Class data from quantile method.
      */
     public void computeQuantile() {
-        Arrays.sort(data);
         if (classNumber == 1) {
             classList.add(data);
+            index[0] = 0;
+            index[1] = data.length;
             return;
         }
-        int lowLimit = 0;
+        int lowLimit = 0, compIndex = 0;
         int highLimit, comp, l, j;
         double[] result;
         for (int i = 1; i<=classNumber; i++) {
             highLimit = (int) Math.round(i*((double)dataLength)/classNumber);
+            //fill index
+            index[compIndex++] = lowLimit;
+            index[compIndex++] = highLimit;
             l = highLimit-lowLimit;
             comp = 0;
             result = new double[l];
@@ -114,9 +126,10 @@ public class Classification {
      * Class data from Jenks method.
      */
     public void computeJenks() {
-        Arrays.sort(data);
         if (classNumber == 1) {
             classList.add(data);
+            index[0] = 0;
+            index[1] = data.length;
             return;
         }
         int[] finalSequenceKept = null;
@@ -173,10 +186,13 @@ public class Classification {
             }
         }
         min = 0;
-        int compteur;
+        int compteur, compIndex = 0;
         double[] result;
         for (int i = 0; i<classNumber; i++) {
             max = finalSequenceKept[i];
+            //fill index table
+            index[compIndex++] = min;
+            index[compIndex++] = max;
             len = max - min;
             compteur = 0;
             result = new double[len];
@@ -190,10 +206,20 @@ public class Classification {
 
     /**
      * Return classification result.
+     *
      * @return classification result.
      */
     public List<double[]> getClasses() {
         return classList;
+    }
+
+    /**
+     * Return classes separation index from {@link #data} table.
+     *
+     * @return classes separation index from {@link #data} table.
+     */
+    public int[] getIndex() {
+        return index;
     }
 
     /**
