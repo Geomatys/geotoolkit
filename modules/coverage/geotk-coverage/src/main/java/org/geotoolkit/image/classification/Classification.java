@@ -214,7 +214,11 @@ public class Classification {
     }
 
     /**
-     * Return classes separation index from {@link #data} table.
+     * <p>Return classes separation index from {@link #data} table.<br/><br/>
+     * for example : caller want class 10 data in 3 distinct class.<br/>
+     * first class  second class   third class<br/>
+     * &nbsp;&nbsp;[0][4]&nbsp;&nbsp;&nbsp;...&nbsp;&nbsp;&nbsp;[4][7]&nbsp;&nbsp;&nbsp;...&nbsp;&nbsp;&nbsp;[7][10]<br/>
+     * With begin index is inclusive and ending index is exclusive.</p>
      *
      * @return classes separation index from {@link #data} table.
      */
