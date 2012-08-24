@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.parameter;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import javax.measure.unit.Unit;
 import org.opengis.metadata.citation.Citation;
@@ -23,6 +25,8 @@ import org.opengis.metadata.citation.Citation;
 /**
  * ExtendedParameterDescriptor extent the {@link DefaultParameterDescriptor} class to add
  * a {@code userObject} Map that will contain others additionals parameters.
+ * Add also a new constructor that take parameter name and remarks and others parameters like
+ * validValues, minimum, maximum and units.
  * 
  * @author Quentin Boileau (Geomatys).
  * 
@@ -93,6 +97,26 @@ public class ExtendedParameterDescriptor<T> extends DefaultParameterDescriptor<T
         super(properties, valueClass, validValues, defaultValue, minimum, maximum, unit, required);
         this.userObject = userObject;
     }
+    
+    /**
+     * {@inheritDoc}
+     * 
+     * @param userObject map that contain additionnal value for the parameter.
+     */
+    public ExtendedParameterDescriptor(final String name, 
+                                       final CharSequence remarks,  
+                                       final Class<T> valueClass, 
+                                       final T[] validValues, 
+                                       final T defaultValue, 
+                                       final Comparable<T> minimum, 
+                                       final Comparable<T> maximum, 
+                                       final Unit<?> unit, 
+                                       final boolean required, 
+                                       final Map<String, Object> userObject) {
+        
+        super(properties(name, remarks), valueClass, validValues, defaultValue, minimum, maximum, unit, required);
+        this.userObject = userObject;
+    }
 
     /**
      * {@inheritDoc}
@@ -123,4 +147,20 @@ public class ExtendedParameterDescriptor<T> extends DefaultParameterDescriptor<T
         return userObject;
     }
 
+    /**
+     * Work around for RFE #4093999 in Sun's bug database
+     * ("Relax constraint on placement of this()/super() call in constructors").
+     */
+    private static Map<String,CharSequence> properties(final String name, final CharSequence remarks) {
+        final Map<String,CharSequence> properties;
+        if (remarks == null ){
+            properties = Collections.singletonMap(NAME_KEY, (CharSequence) name);
+        } else {
+            properties = new HashMap<String,CharSequence>(4);
+            properties.put(NAME_KEY,    name);
+            properties.put(REMARKS_KEY, remarks);
+        }
+        return properties;
+    }
+    
 }
