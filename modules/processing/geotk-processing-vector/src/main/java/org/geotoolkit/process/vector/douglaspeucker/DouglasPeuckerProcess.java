@@ -70,9 +70,14 @@ public class DouglasPeuckerProcess extends AbstractProcess {
     @Override
     protected void execute() {
         final FeatureCollection<Feature> inputFeatureList   = value(FEATURE_IN, inputParameters);
-        final double inputAccuracy                          = value(ACCURACY_IN, inputParameters).doubleValue();
-        final boolean inputBehavior                         = value(DEL_SMALL_GEO_IN, inputParameters);
-        final boolean inputLenient                          = value(LENIENT_TRANSFORM_IN, inputParameters);
+        final Double inputAccuracy                          = value(ACCURACY_IN, inputParameters);
+        final Boolean inputBehavior                               = value(DEL_SMALL_GEO_IN, inputParameters) != null ? 
+                                                                    value(DEL_SMALL_GEO_IN, inputParameters) : 
+                                                                    DEL_SMALL_GEO_IN.getDefaultValue();
+        
+        final Boolean inputLenient                                = value(LENIENT_TRANSFORM_IN, inputParameters) != null ? 
+                                                                    value(LENIENT_TRANSFORM_IN, inputParameters) : 
+                                                                    LENIENT_TRANSFORM_IN.getDefaultValue();
 
         final FeatureCollection resultFeatureList =
                 new DouglasPeuckerFeatureCollection(inputFeatureList, inputAccuracy, inputBehavior, inputLenient);
@@ -95,7 +100,7 @@ public class DouglasPeuckerProcess extends AbstractProcess {
      * @throws MismatchedDimensionException
      * @throws TransformException
      */
-    static Feature simplifyFeature(final Feature oldFeature, final double accuracy, final boolean behavior, final boolean lenient)
+    static Feature simplifyFeature(final Feature oldFeature, final Double accuracy, final boolean behavior, final boolean lenient)
             throws FactoryException, MismatchedDimensionException, TransformException {
 
         final CoordinateReferenceSystem originalCRS = oldFeature.getType().getCoordinateReferenceSystem();

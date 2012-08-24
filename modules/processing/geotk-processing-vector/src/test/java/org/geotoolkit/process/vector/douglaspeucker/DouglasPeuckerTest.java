@@ -157,6 +157,31 @@ public class DouglasPeuckerTest extends AbstractProcessTest {
         assertTrue(featureListOut.isEmpty());
 
     }
+    
+    /**
+     * Test DouglasPeucker process with no del_small_geo_in and lenient_transform_in parameters.
+     */
+    @Test
+    public void testDouglasPeuckerOptionalParam() throws ProcessException, NoSuchIdentifierException, FactoryException {
+
+        // Inputs
+        final FeatureCollection<?> featureList = buildFeatureCollectionInput2();
+        Unit<Length> unit = SI.METRE;
+
+        // Process
+        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "douglasPeucker");
+
+        ParameterValueGroup in = desc.getInputDescriptor().createValue();
+        in.parameter("feature_in").setValue(featureList);
+        in.parameter("accuracy_in").setValue(new Double(61));
+        org.geotoolkit.process.Process proc = desc.createProcess(in);
+
+        //Features out
+        final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.call().parameter("feature_out").getValue();
+
+        assertTrue(!featureListOut.isEmpty());
+
+    }
 
     /**
      * Test DouglasPeucker process when a geometry is smaller than the precision of the simplification, and the user
