@@ -33,6 +33,7 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
+import org.geotoolkit.data.memory.GenericCachedFeatureIterator;
 import org.geotoolkit.data.memory.GenericEmptyFeatureIterator;
 import org.geotoolkit.data.memory.GenericFilterFeatureIterator;
 import org.geotoolkit.data.memory.GenericMaxFeatureIterator;
@@ -102,6 +103,10 @@ public class GenericIteratorTest extends TestCase{
     private final String id3;
     private final String cid1;
     private final String cid2;
+    
+    private final SimpleFeature sf1;
+    private final SimpleFeature sf2;
+    private final SimpleFeature sf3;
 
     public GenericIteratorTest() throws NoSuchAuthorityCodeException, FactoryException{
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
@@ -130,25 +135,25 @@ public class GenericIteratorTest extends TestCase{
 
         collection = DataUtilities.collection("id", originalType);
 
-        SimpleFeature sf = FeatureUtilities.defaultFeature(originalType, "");
-        sf.setAttribute("att_geom", GF.createPoint(new Coordinate(3, 0)));
-        sf.setAttribute("att_string", "bbb");
-        sf.setAttribute("att_double", 3d);
-        collection.add(sf);
+        sf1 = FeatureUtilities.defaultFeature(originalType, "");
+        sf1.setAttribute("att_geom", GF.createPoint(new Coordinate(3, 0)));
+        sf1.setAttribute("att_string", "bbb");
+        sf1.setAttribute("att_double", 3d);
+        collection.add(sf1);
         id1 = name.getLocalPart()+"."+0;
 
-        sf = FeatureUtilities.defaultFeature(originalType, "");
-        sf.setAttribute("att_geom", GF.createPoint(new Coordinate(1, 0)));
-        sf.setAttribute("att_string", "ccc");
-        sf.setAttribute("att_double", 1d);
-        collection.add(sf);
+        sf2 = FeatureUtilities.defaultFeature(originalType, "");
+        sf2.setAttribute("att_geom", GF.createPoint(new Coordinate(1, 0)));
+        sf2.setAttribute("att_string", "ccc");
+        sf2.setAttribute("att_double", 1d);
+        collection.add(sf2);
         id2 = name.getLocalPart()+"."+1;
 
-        sf = FeatureUtilities.defaultFeature(originalType, "");
-        sf.setAttribute("att_geom", GF.createPoint(new Coordinate(2, 0)));
-        sf.setAttribute("att_string", "aaa");
-        sf.setAttribute("att_double", 2d);
-        collection.add(sf);
+        sf3 = FeatureUtilities.defaultFeature(originalType, "");
+        sf3.setAttribute("att_geom", GF.createPoint(new Coordinate(2, 0)));
+        sf3.setAttribute("att_string", "aaa");
+        sf3.setAttribute("att_double", 2d);
+        collection.add(sf3);
         id3 = name.getLocalPart()+"."+2;
 
         builder.reset();
@@ -262,7 +267,25 @@ public class GenericIteratorTest extends TestCase{
 
         iterator.close();
     }
+    
+    @Test
+    public void testCacheIterator(){
+        FeatureIterator ite = GenericCachedFeatureIterator.wrap(collection.iterator(), 1);
+        assertEquals(3, DataUtilities.calculateCount(ite));
 
+        ite = GenericCachedFeatureIterator.wrap(collection.iterator(), 1);
+        
+        Feature s1 = ite.next();
+        Feature s2 = ite.next();
+        Feature s3 = ite.next();
+        
+        assertEquals(s1.getIdentifier().getID(),id1);
+        assertEquals(s2.getIdentifier().getID(),id2);
+        assertEquals(s3.getIdentifier().getID(),id3);
+        
+    }
+
+    
     @Test
     public void testFilterIterator(){
         FeatureIterator ite = GenericFilterFeatureIterator.wrap(collection.iterator(), Filter.INCLUDE);

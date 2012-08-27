@@ -33,6 +33,7 @@ import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.StorageContentEvent;
 import org.geotoolkit.data.StorageListener;
 import org.geotoolkit.data.StorageManagementEvent;
+import org.geotoolkit.data.memory.GenericCachedFeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
@@ -175,8 +176,12 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
     protected Collection<?> optimizeCollection(final RenderingContext2D context,
             final Set<String> requieredAtts, final List<Rule> rules) throws Exception {
         currentQuery = prepareQuery(context, item, requieredAtts, rules);
+        //we detach feature since we are going to use a cache.
+        currentQuery.getHints().put(HintsPending.FEATURE_DETACHED,Boolean.TRUE);
         final Query query = currentQuery;
-        return ((FeatureCollection<Feature>)item.getCollection()).subCollection(query);
+        FeatureCollection col = ((FeatureCollection<Feature>)item.getCollection()).subCollection(query);
+        col = GenericCachedFeatureIterator.wrap(col, 1000);
+        return col;
     }
 
     @Override

@@ -61,6 +61,8 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
     private com.vividsolutions.jts.geom.Geometry    displayGeometryJTS = null;
     private Geometry                                displayGeometryISO = null;
     private Shape                                   displayShape = null;
+    
+    private boolean geomSet = false;
 
     public StatefullProjectedGeometry(final StatefullContextParams params){
         this.params = params;
@@ -79,11 +81,13 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
         this.displayGeometryJTS = null;
         this.displayGeometryISO = null;
         this.displayShape       = null;
+        this.geomSet = copy.geomSet;
     }
 
     public void setDataGeometry(final com.vividsolutions.jts.geom.Geometry geom, CoordinateReferenceSystem dataCRS){
         clearDataCache();
         this.dataGeometryJTS = geom;
+        this.geomSet = this.dataGeometryJTS != null;
         
         try {
             if(dataCRS == null){
@@ -137,7 +141,7 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
     }
 
     public Shape getDataShape() {
-        if(dataShape == null){
+        if(dataShape == null && geomSet){
             dataShape = new JTSGeometryJ2D(dataGeometryJTS);
         }
         
@@ -146,7 +150,7 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
 
     @Override
     public com.vividsolutions.jts.geom.Geometry getObjectiveGeometryJTS() throws TransformException {
-        if(objectiveGeometryJTS == null){
+        if(objectiveGeometryJTS == null && geomSet){
             if(dataToObjective == null){
                 //we assume data and objective are in the same crs
                 objectiveGeometryJTS = dataGeometryJTS;
@@ -163,7 +167,7 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
      */
     @Override
     public Geometry getObjectiveGeometry() throws TransformException {
-        if(objectiveGeometryISO == null){
+        if(objectiveGeometryISO == null && geomSet){
             objectiveGeometryISO = JTSUtils.toISO(getObjectiveGeometryJTS(), params.objectiveCRS);
         }
         return objectiveGeometryISO;
@@ -174,7 +178,7 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
      */
     @Override
     public Shape getObjectiveShape() throws TransformException{
-        if(objectiveShape == null){
+        if(objectiveShape == null && geomSet){
             objectiveShape = ProjectedShape.wrap(getDataShape(), dataToObjective);
         }
         return objectiveShape;
@@ -182,7 +186,7 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
     
     @Override
     public com.vividsolutions.jts.geom.Geometry getDisplayGeometryJTS() throws TransformException{
-        if(displayGeometryJTS == null){
+        if(displayGeometryJTS == null && geomSet){
             displayGeometryJTS = params.objToDisplayTransformer.transform(getObjectiveGeometryJTS());
         }
         return displayGeometryJTS;
@@ -193,7 +197,7 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
      */
     @Override
     public Geometry getDisplayGeometry() throws TransformException {
-        if(displayGeometryISO == null){
+        if(displayGeometryISO == null && geomSet){
             displayGeometryISO = JTSUtils.toISO(getDisplayGeometryJTS(), params.displayCRS);
         }
         return displayGeometryISO;
@@ -204,7 +208,7 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
      */
     @Override
     public Shape getDisplayShape() throws TransformException{
-        if(displayShape == null){
+        if(displayShape == null && geomSet){
             displayShape = ProjectedShape.wrap(getDataShape(), dataToDisplay);
         }
         return displayShape;

@@ -102,8 +102,8 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
      * feature builder
      */
     protected final String fidBase;
-    protected final DefaultSimpleFeature feature;
-    private final Object[] values;
+    protected DefaultSimpleFeature feature;
+    private Object[] values;
     
     /**
      * The primary key
@@ -185,7 +185,11 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
                 
         this.fidBase = this.featureType.getTypeName() + ".";
         this.values = new Object[this.featureType.getAttributeCount()];
-        this.feature = new DefaultSimpleFeature(this.featureType, null, values, false);        
+        
+        final boolean detached = Boolean.TRUE.equals(this.hints.get(HintsPending.FEATURE_DETACHED));
+        if(!detached){
+            this.feature = new DefaultSimpleFeature(this.featureType, null, values, false);
+        }
         
         // find the primary key
         this.pkey = pkey;
@@ -246,6 +250,10 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
         try {
             ensureOpen();
             ensureNext();
+            
+            if(feature == null){
+                values = new Object[this.featureType.getAttributeCount()];
+            }
             
             // figure out the fid
             final String fid;
@@ -312,8 +320,17 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
             }
 
             // create the feature
-            feature.setId(fid);
-            return feature;
+            if(feature == null){
+                //detached feature
+                final DefaultSimpleFeature sf = new DefaultSimpleFeature(this.featureType, null, values, false);
+                sf.setId(fid);
+                return sf;
+            }else{
+                //reuse feature
+                feature.setId(fid);
+                return feature;
+            }
+            
 
         } finally {
             // reset the next flag. We do this in a finally block to make sure we
