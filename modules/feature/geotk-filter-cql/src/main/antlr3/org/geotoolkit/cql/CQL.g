@@ -81,7 +81,7 @@ tokens{
 COMMA 	: ',' ;
 WS  :   ( ' ' | '\t' | '\r'| '\n' ) {$channel=HIDDEN;} ;
 UNARY : '+' | '-' ;
-fragment MULT : '*' | '/' ;
+MULT : '*' | '/' ;
 fragment DIGIT : '0'..'9' ;
     
 // caseinsensitive , possible alternative solution ?
@@ -241,28 +241,34 @@ expression_geometry
 	| MPOLYGON^ LPAREN! coordinate_series (COMMA! coordinate_series)* RPAREN! 
 	;
 
+expression_fct_param
+        : expression (COMMA! expression)*
+        ;
+
 
 expression_term		
 	: TEXT
 	| expression_unary
 	| PROPERTY_NAME
-	//| NAME
+	| NAME^ (LPAREN expression_fct_param RPAREN)?
 	| expression_geometry
-	| LPAREN expression RPAREN
+	| LPAREN! expression RPAREN!
 	;
 
 
 expression_mult 
-	: expression_term (( '*' | '/' ) expression_term)*
+	: ( a=expression_term -> $a ) 
+          ( MULT b=expression_term -> ^(EXP_MUL MULT $expression_mult $b) )*
 	;
 	
 expression_add
-	: expression_mult (UNARY expression_mult)*
+	: ( a=expression_mult -> $a )
+          ( UNARY b=expression_mult -> ^(EXP_ADD UNARY $expression_add $b) )* 
 	;
 	
 expression
 	: expression_add
-	| NAME^ (LPAREN! ((expression_add ( COMMA!  expression_add)*)?) RPAREN!)?
+	//| NAME^ (LPAREN! ((expression_add ( COMMA!  expression_add)*)?) RPAREN!)?
 	;
     	
 

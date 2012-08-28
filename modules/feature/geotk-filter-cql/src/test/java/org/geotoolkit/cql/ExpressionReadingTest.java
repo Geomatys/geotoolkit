@@ -314,8 +314,8 @@ public class ExpressionReadingTest {
     public void testCombine1() throws CQLException{
         final String cql = "((3*1)+(2-6))/4";
         final Object obj = CQL.parseExpression(cql);        
-        assertTrue(obj instanceof Add);
-        final Add expression = (Add) obj;
+        assertTrue(obj instanceof Divide);
+        final Divide expression = (Divide) obj;
         assertEquals(
                 FF.divide(
                     FF.add(
@@ -331,8 +331,53 @@ public class ExpressionReadingTest {
         final String cql = "3*1+2/4";
         final Object obj = CQL.parseExpression(cql);        
         assertTrue(obj instanceof Add);
-        final Add expression = (Add) obj;
-        //TODO              
+        final Add rootAdd = (Add) obj;
+        
+        assertEquals(
+                    FF.add(
+                        FF.multiply(FF.literal(3), FF.literal(1)),
+                        FF.divide(FF.literal(2), FF.literal(4))
+                        )
+                , rootAdd);     
+                    
+    }
+    
+    @Test
+    public void testCombine3() throws CQLException{
+        final String cql = "3*max(val,15)+2/4";
+        final Object obj = CQL.parseExpression(cql);        
+        assertTrue(obj instanceof Add);
+        final Add rootAdd = (Add) obj;
+        
+        assertEquals(
+                    FF.add(
+                        FF.multiply(
+                            FF.literal(3), 
+                            FF.function("max", FF.property("val"),FF.literal(15))
+                        ),
+                        FF.divide(FF.literal(2), FF.literal(4))
+                        )
+                , rootAdd);     
+                    
+    }
+    
+    @Test
+    public void testCombine4() throws CQLException{
+        final String cql = "3 * max ( val , 15 ) + 2 / 4";
+        final Object obj = CQL.parseExpression(cql);        
+        assertTrue(obj instanceof Add);
+        final Add rootAdd = (Add) obj;
+        
+        assertEquals(
+                    FF.add(
+                        FF.multiply(
+                            FF.literal(3), 
+                            FF.function("max", FF.property("val"),FF.literal(15))
+                        ),
+                        FF.divide(FF.literal(2), FF.literal(4))
+                        )
+                , rootAdd);     
+       
     }
     
 }

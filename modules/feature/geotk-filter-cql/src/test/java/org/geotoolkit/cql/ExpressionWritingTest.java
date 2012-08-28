@@ -26,6 +26,8 @@ import org.geotoolkit.filter.DefaultFilterFactory2;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.filter.FilterFactory2;
+import org.opengis.filter.expression.Add;
+import org.opengis.filter.expression.Divide;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
 
@@ -64,6 +66,14 @@ public class ExpressionWritingTest {
     }
     
     @Test
+    public void testNegativeInteger() throws CQLException{
+        final Expression exp = FF.literal(-15);
+        final String cql = CQL.write(exp);
+        assertNotNull(cql);
+        assertEquals("-15", cql);                     
+    }
+    
+    @Test
     public void testDecimal1() throws CQLException{
         final Expression exp = FF.literal(3.14);
         final String cql = CQL.write(exp);
@@ -77,6 +87,14 @@ public class ExpressionWritingTest {
         final String cql = CQL.write(exp);
         assertNotNull(cql);
         assertEquals("9.0E-21", cql);    
+    }
+    
+    @Test
+    public void testNegativeDecimal() throws CQLException{
+        final Expression exp = FF.literal(-3.14);
+        final String cql = CQL.write(exp);
+        assertNotNull(cql);
+        assertEquals("-3.14", cql);                     
     }
     
     @Test
@@ -135,6 +153,48 @@ public class ExpressionWritingTest {
         assertEquals("min(att , cos(3.14))", cql);
     }
     
+    @Test
+    public void testCombine1() throws CQLException{
+        final Expression exp =  
+                FF.divide(
+                    FF.add(
+                        FF.multiply(FF.literal(3), FF.literal(1)),
+                        FF.subtract(FF.literal(2), FF.literal(6))
+                        ), 
+                    FF.literal(4));
+        final String cql = CQL.write(exp);
+        assertNotNull(cql);
+        assertEquals("3 * 1 + 2 - 6 / 4", cql);              
+    }
+    
+    @Test
+    public void testCombine2() throws CQLException{
+        final Expression exp =  
+                FF.add(
+                        FF.multiply(FF.literal(3), FF.literal(1)),
+                        FF.divide(FF.literal(2), FF.literal(4))
+                        );
+        final String cql = CQL.write(exp);
+        assertNotNull(cql);
+        assertEquals("3 * 1 + 2 / 4", cql);        
+                    
+    }
+    
+    @Test
+    public void testCombine3() throws CQLException{
+        final Expression exp =  
+                FF.add(
+                        FF.multiply(
+                            FF.literal(3), 
+                            FF.function("max", FF.property("val"),FF.literal(15))
+                        ),
+                        FF.divide(FF.literal(2), FF.literal(4))
+                        );
+        final String cql = CQL.write(exp);
+        assertNotNull(cql);
+        assertEquals("3 * max(val , 15) + 2 / 4", cql);
+    }
+        
     @Test
     public void testPoint() throws CQLException{
         final Geometry geom = GF.createPoint(new Coordinate(15, 30));

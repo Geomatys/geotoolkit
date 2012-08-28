@@ -177,7 +177,7 @@ public final class CQL {
      */
     private static Expression convertExpression(CommonTree tree, FilterFactory2 ff) throws CQLException{
         
-        if(!(tree.token != null && tree.token.getTokenIndex() >= 0)){
+        if(tree.getType() < 0){
             throw new CQLException("Unreconized expression : type="+tree.getType()+" text=" + tree.getText());
         }
         
@@ -203,6 +203,24 @@ public final class CQL {
             }
             
             return val;
+        }else if(CQLParser.EXP_ADD == type){
+            final String operand = tree.getChild(0).getText();            
+            final Expression left = convertExpression((CommonTree)tree.getChild(1), ff);
+            final Expression right = convertExpression((CommonTree)tree.getChild(2), ff);
+            if("+".equals(operand)){
+                return ff.add(left,right);
+            }else if("-".equals(operand)){
+                return ff.subtract(left,right);
+            }
+        }else if(CQLParser.EXP_MUL == type){
+            final String operand = tree.getChild(0).getText();            
+            final Expression left = convertExpression((CommonTree)tree.getChild(1), ff);
+            final Expression right = convertExpression((CommonTree)tree.getChild(2), ff);
+            if("*".equals(operand)){
+                return ff.multiply(left,right);
+            }else if("/".equals(operand)){
+                return ff.divide(left,right);
+            }
         }else if(CQLParser.TEXT == type){
             //strip start and end '
             final String text = tree.getText();

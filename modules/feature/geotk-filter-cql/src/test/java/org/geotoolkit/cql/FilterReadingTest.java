@@ -383,4 +383,32 @@ public class FilterReadingTest {
         assertTrue(baseGeometry.equalsExact(filtergeo)); 
     }
         
+    @Ignore
+    @Test
+    public void testCombine1() throws CQLException {
+        final String cql = "NOT att = 15 OR att BETWEEN 15 AND 30";
+        final Object obj = CQL.parseFilter(cql);        
+        assertTrue(obj instanceof Not);
+        final Not filter = (Not) obj;
+        assertEquals(
+                FF.or(
+                    FF.not(FF.equals(FF.property("att"), FF.literal(15))), filter),
+                    FF.between(FF.property("att"), FF.literal(15), FF.literal(30))
+                );    
+    }
+
+    @Ignore
+    @Test
+    public void testCombine2() throws CQLException {
+        final String cql = "(NOT att = 15) OR (att BETWEEN 15 AND 30)";
+        final Object obj = CQL.parseFilter(cql);        
+        assertTrue(obj instanceof Not);
+        final Not filter = (Not) obj;
+        assertEquals(
+                FF.or(
+                    FF.not(FF.equals(FF.property("att"), FF.literal(15))), filter),
+                    FF.between(FF.property("att"), FF.literal(15), FF.literal(30))
+                );              
+    }
+    
 }
