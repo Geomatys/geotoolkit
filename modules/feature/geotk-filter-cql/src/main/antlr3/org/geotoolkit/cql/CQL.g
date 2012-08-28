@@ -1,3 +1,19 @@
+/*
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2012, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
 grammar CQL;
 
 options {
@@ -13,6 +29,9 @@ tokens{
     EXP_ADD;
     EXP_MUL;
     FIL_LOG;
+    FIL_ISNULL;
+    FIL_ISNOTNULL;
+
 }
 
 //-----------------------------------------------------------------//
@@ -140,7 +159,8 @@ fragment ABOVE      : '>' ;
 fragment UNDER      : '<' ;
 LIKE    : L I K E;
 	
-ISNULL  : I S ' ' N U L L;
+IS      : I S ;
+NULL    : N U L L ;
 BETWEEN : B E T W E E N;
 IN      : I N;
 
@@ -282,7 +302,7 @@ filter_term 	: expression
                             | NOT? IN^ LPAREN! (expression_fct_param )?  RPAREN!
                             | BETWEEN^ expression AND! expression
                             | NOT? LIKE^ expression
-                            | ISNULL^
+                            | IS^ NOT? NULL
                     ) ?
                 | filter_geometry
                 ;

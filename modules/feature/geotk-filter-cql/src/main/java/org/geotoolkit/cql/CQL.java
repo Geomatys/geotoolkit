@@ -335,10 +335,6 @@ public final class CQL {
                 return ff.lessOrEqual(left,right);
             }else if("<=".equals(text)){
                 return ff.lessOrEqual(left,right);
-            }else if("like".equalsIgnoreCase(text)){
-                return ff.like(left, right.evaluate(null, String.class));
-            }else if("not like".equalsIgnoreCase(text)){
-                return ff.not(ff.like(left, right.evaluate(null, String.class)));
             }
         }else if(CQLParser.LIKE == type){
             final Expression left = convertExpression((CommonTree)tree.getChild(0), ff);
@@ -351,9 +347,17 @@ public final class CQL {
                 return ff.like(left, right.evaluate(null, String.class));
             }
             
-        }else if(CQLParser.ISNULL == type){
+        }else if(CQLParser.IS == type){
             final Expression exp = convertExpression((CommonTree)tree.getChild(0), ff);
-            return ff.isNull(exp);
+            
+            final CommonTree negateNode = (CommonTree)tree.getChild(1);
+            if(CQLParser.NOT == negateNode.getType()){
+                return ff.not(ff.isNull(exp));
+            }else{
+                return ff.isNull(exp);
+            }
+            
+            
         }else if(CQLParser.BETWEEN == type){
             final Expression exp1 = convertExpression((CommonTree)tree.getChild(0), ff);
             final Expression exp2 = convertExpression((CommonTree)tree.getChild(1), ff);

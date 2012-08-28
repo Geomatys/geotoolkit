@@ -244,6 +244,16 @@ public class FilterReadingTest {
         final PropertyIsNull filter = (PropertyIsNull) obj;
         assertEquals(FF.isNull(FF.property("att")), filter);   
     }
+    
+    @Test
+    public void testPropertyIsNotNull() throws CQLException {
+        final String cql = "att IS NOT NULL";
+        Object obj = CQL.parseFilter(cql);
+        obj = ((Not)obj).getFilter();
+        assertTrue(obj instanceof PropertyIsNull);
+        final PropertyIsNull filter = (PropertyIsNull) obj;
+        assertEquals(FF.isNull(FF.property("att")), filter);   
+    }
 
     @Test
     public void testBBOX1() throws CQLException {
