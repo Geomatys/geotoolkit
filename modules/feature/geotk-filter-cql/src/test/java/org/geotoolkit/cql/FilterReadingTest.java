@@ -23,7 +23,6 @@ import com.vividsolutions.jts.geom.LinearRing;
 import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import static org.junit.Assert.*;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.opengis.filter.And;
 import org.opengis.filter.Filter;
@@ -114,12 +113,12 @@ public class FilterReadingTest {
         assertEquals(
                 FF.or(
                 UnmodifiableArrayList.wrap((Filter)
-                    FF.equals(FF.property("att1"), FF.literal(15)),
                     FF.or(
                     UnmodifiableArrayList.wrap((Filter)
-                        FF.equals(FF.property("att2"), FF.literal(30)),
-                        FF.equals(FF.property("att3"), FF.literal(50))
-                    ))
+                        FF.equals(FF.property("att1"), FF.literal(15)),
+                        FF.equals(FF.property("att2"), FF.literal(30))
+                    )),
+                    FF.equals(FF.property("att3"), FF.literal(50))
                 )),
                 filter);     
     }
@@ -146,6 +145,18 @@ public class FilterReadingTest {
     public void testIn() throws CQLException {
         final String cql = "att IN ( 15, 30, 'hello')";
         final Object obj = CQL.parseFilter(cql);        
+        assertTrue(obj instanceof Or);
+        final Or filter = (Or) obj;
+        assertEquals(FF.equals(FF.property("att"), FF.literal(15)), filter.getChildren().get(0));  
+        assertEquals(FF.equals(FF.property("att"), FF.literal(30)), filter.getChildren().get(1)); 
+        assertEquals(FF.equals(FF.property("att"), FF.literal("hello")), filter.getChildren().get(2));               
+    }
+    
+    @Test
+    public void testNotIn() throws CQLException {
+        final String cql = "att NOT IN ( 15, 30, 'hello')";
+        Object obj = CQL.parseFilter(cql);
+        obj = ((Not)obj).getFilter();
         assertTrue(obj instanceof Or);
         final Or filter = (Or) obj;
         assertEquals(FF.equals(FF.property("att"), FF.literal(15)), filter.getChildren().get(0));  
@@ -216,6 +227,15 @@ public class FilterReadingTest {
         assertEquals(FF.like(FF.property("att"),"%hello?"), filter);   
     }
 
+    @Test
+    public void testPropertyIsNotLike() throws CQLException {
+        final String cql = "att NOT LIKE '%hello?'";
+        final Object obj = CQL.parseFilter(cql);        
+        assertTrue(obj instanceof Not);
+        final Not filter = (Not) obj;
+        assertEquals(FF.not(FF.like(FF.property("att"),"%hello?")), filter);   
+    }
+    
     @Test
     public void testPropertyIsNull() throws CQLException {
         final String cql = "att IS NULL";
@@ -387,12 +407,14 @@ public class FilterReadingTest {
     public void testCombine1() throws CQLException {
         final String cql = "NOT att = 15 OR att BETWEEN 15 AND 30";
         final Object obj = CQL.parseFilter(cql);        
-        assertTrue(obj instanceof Not);
-        final Not filter = (Not) obj;
+        assertTrue(obj instanceof Or);
+        final Or filter = (Or) obj;
         assertEquals(
                 FF.or(
-                    FF.not(FF.equals(FF.property("att"), FF.literal(15))), filter),
+                    FF.not(FF.equals(FF.property("att"), FF.literal(15))),
                     FF.between(FF.property("att"), FF.literal(15), FF.literal(30))
+                ),
+                filter
                 );    
     }
 
@@ -400,13 +422,53 @@ public class FilterReadingTest {
     public void testCombine2() throws CQLException {
         final String cql = "(NOT att = 15) OR (att BETWEEN 15 AND 30)";
         final Object obj = CQL.parseFilter(cql);        
-        assertTrue(obj instanceof Not);
-        final Not filter = (Not) obj;
+        assertTrue(obj instanceof Or);
+        final Or filter = (Or) obj;
         assertEquals(
                 FF.or(
-                    FF.not(FF.equals(FF.property("att"), FF.literal(15))), filter),
+                    FF.not(FF.equals(FF.property("att"), FF.literal(15))),
                     FF.between(FF.property("att"), FF.literal(15), FF.literal(30))
-                );              
+                ),
+                filter
+                );               
+    }
+    
+    @Test
+    public void testCombine3() throws CQLException {
+        final String cql = "(NOT att1 = 15) AND (att2 = 15 OR att3 BETWEEN 15 AND 30) AND (att4 BETWEEN 1 AND 2)";
+        final Object obj = CQL.parseFilter(cql);        
+        assertTrue(obj instanceof And);
+        final And filter = (And) obj;
+        assertEquals(
+                FF.and(
+                    FF.and(
+                        UnmodifiableArrayList.wrap(
+                            FF.not(FF.equals(FF.property("att1"), FF.literal(15))),
+                            FF.or(
+                                FF.equals(FF.property("att2"), FF.literal(15)),
+                                FF.between(FF.property("att3"), FF.literal(15), FF.literal(30))
+                            )
+                        )
+                    ),
+                    FF.between(FF.property("att4"), FF.literal(1), FF.literal(2))
+                ),
+                filter
+                );               
+    }
+    
+    @Test
+    public void testCombine4() throws CQLException {
+        final String cql = "(x+7) <= (y-9)";
+        final Object obj = CQL.parseFilter(cql);        
+        assertTrue(obj instanceof PropertyIsLessThanOrEqualTo);
+        final PropertyIsLessThanOrEqualTo filter = (PropertyIsLessThanOrEqualTo) obj;
+        assertEquals(
+                FF.lessOrEqual(
+                    FF.add(FF.property("x"), FF.literal(7)),
+                    FF.subtract(FF.property("y"), FF.literal(9))
+                ),
+                filter
+                );               
     }
     
 }

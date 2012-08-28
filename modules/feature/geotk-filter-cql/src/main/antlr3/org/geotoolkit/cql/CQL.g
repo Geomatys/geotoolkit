@@ -1,4 +1,4 @@
- grammar CQL;
+grammar CQL;
 
 options {
     language = Java; // antlr will generate java lexer and parser
@@ -63,12 +63,6 @@ tokens{
     errors.add(e);
   }
   
-/*  private boolean isOperatorNext(){
-      final Token tk = input.LT(2);
-      final String txt = tk.getText();
-      return "+".equals(txt) || "-".equals(txt) || "/".equals(txt) || "*".equals(txt);
-    }
-    */
 }
 
 
@@ -136,8 +130,7 @@ COMPARE
 	| NOTEQUAL
 	| EQUAL
 	| ABOVE
-	| UNDER	
-	| LIKE
+	| UNDER
 	;
 fragment EQUALABOVE : '>=' ;
 fragment EQUALUNDER : '<=' ;
@@ -145,7 +138,7 @@ fragment NOTEQUAL   : '<>' ;
 fragment EQUAL      : '=' ;
 fragment ABOVE      : '>' ;
 fragment UNDER      : '<' ;
-fragment LIKE       : L I K E;
+LIKE    : L I K E;
 	
 ISNULL  : I S ' ' N U L L;
 BETWEEN : B E T W E E N;
@@ -252,7 +245,7 @@ expression_term
 	| PROPERTY_NAME
 	| NAME^ (LPAREN expression_fct_param? RPAREN)?
 	| expression_geometry
-	| LPAREN! expression RPAREN!
+	| LPAREN! filter RPAREN!
 	;
 
 expression_mult 
@@ -286,11 +279,11 @@ filter_geometry
 filter_term 	: expression
                     (
                               COMPARE^  expression
-                            | IN^ LPAREN! (expression_fct_param )?  RPAREN!
+                            | NOT? IN^ LPAREN! (expression_fct_param )?  RPAREN!
                             | BETWEEN^ expression AND! expression
-                            | LIKE^ expression
+                            | NOT? LIKE^ expression
                             | ISNULL^
-                    )
+                    ) ?
                 | filter_geometry
                 ;
 

@@ -337,7 +337,20 @@ public final class CQL {
                 return ff.lessOrEqual(left,right);
             }else if("like".equalsIgnoreCase(text)){
                 return ff.like(left, right.evaluate(null, String.class));
+            }else if("not like".equalsIgnoreCase(text)){
+                return ff.not(ff.like(left, right.evaluate(null, String.class)));
             }
+        }else if(CQLParser.LIKE == type){
+            final Expression left = convertExpression((CommonTree)tree.getChild(0), ff);
+            final CommonTree negateNode = (CommonTree)tree.getChild(1);
+            if(CQLParser.NOT == negateNode.getType()){
+                final Expression right = convertExpression((CommonTree)tree.getChild(2), ff);
+                return ff.not(ff.like(left, right.evaluate(null, String.class)));
+            }else{
+                final Expression right = convertExpression((CommonTree)tree.getChild(1), ff);
+                return ff.like(left, right.evaluate(null, String.class));
+            }
+            
         }else if(CQLParser.ISNULL == type){
             final Expression exp = convertExpression((CommonTree)tree.getChild(0), ff);
             return ff.isNull(exp);
@@ -347,25 +360,46 @@ public final class CQL {
             final Expression exp3 = convertExpression((CommonTree)tree.getChild(2), ff);
             return ff.between(exp1, exp2, exp3);
         }else if(CQLParser.IN == type){
-            final Expression val = convertExpression((CommonTree)tree.getChild(0), ff);            
+            final Expression val = convertExpression((CommonTree)tree.getChild(0), ff); 
+            final CommonTree negateNode = (CommonTree)tree.getChild(1);
+            
+            final boolean negate;
+            int i;
+            if(CQLParser.NOT == negateNode.getType()){
+                i=2;
+                negate = true;
+            }else{
+                i=1;
+                negate = false;
+            }
+            
+            
             final int nbchild = tree.getChildCount();
             final List<Expression> exps = new ArrayList<Expression>();
-            for(int i=1; i<nbchild; i++){
+            for(; i<nbchild; i++){
                 exps.add(convertExpression((CommonTree)tree.getChild(i), ff));
             }
             
             final int size = exps.size();
+            final Filter selection;
             if(size == 0){
-                return Filter.EXCLUDE;
+                selection = Filter.EXCLUDE;
             }else if(size == 1){
-                return ff.equals(val, exps.get(0));
+                selection = ff.equals(val, exps.get(0));
             }else{
                 final List<Filter> filters = new ArrayList<Filter>();
                 for(Expression exp : exps){
                     filters.add(ff.equals(val, exp));
                 }
-                return ff.or(filters);
-            }            
+                selection = ff.or(filters);
+            }
+            
+            if(negate){
+                return ff.not(selection);
+            }else{
+                return selection;
+            }
+            
         }else if(CQLParser.FIL_LOG == type){
             final List<Filter> filters = new ArrayList<Filter>();
             final int nbchild = tree.getChildCount();
