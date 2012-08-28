@@ -49,6 +49,8 @@ import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.feature.type.Name;
+import org.opengis.parameter.ParameterNotFoundException;
+import org.opengis.parameter.ParameterValue;
 import org.opengis.style.Description;
 import org.opengis.style.Rule;
 import org.opengis.util.InternationalString;
@@ -157,6 +159,9 @@ public class J2DLegendUtilities {
                 final DefaultCoverageMapLayer covLayer = (DefaultCoverageMapLayer)layer;
                 // Get the image from the ones previously stored, to not resend a get legend graphic request.
                 final BufferedImage image = legendResults.get(covLayer.getCoverageName());
+                if (image == null) {
+                    continue;
+                }
                 if (l != 0) {
                     moveY += gapSize;
                 }
@@ -364,7 +369,14 @@ public class J2DLegendUtilities {
             if (layer instanceof DefaultCoverageMapLayer) {
                 final DefaultCoverageMapLayer covLayer = (DefaultCoverageMapLayer)layer;
                 final CoverageReference covRef = covLayer.getCoverageReference();
-                final URL urlWms = (URL) covRef.getStore().getConfiguration().parameter("url").getValue();
+                final ParameterValue paramVal;
+                try {
+                    paramVal = covRef.getStore().getConfiguration().parameter("url");
+                } catch (ParameterNotFoundException e) {
+                    LOGGER.log(Level.FINE, e.getLocalizedMessage(), e);
+                    continue;
+                }
+                final URL urlWms = (URL) paramVal.getValue();
                 final StringBuilder sb = new StringBuilder(urlWms.toString());
                 if (!urlWms.toString().endsWith("?")) {
                     sb.append("?");
@@ -381,12 +393,12 @@ public class J2DLegendUtilities {
                     continue;
                 }
 
-                dim.height += image.getHeight();
-                if (dim.width < image.getWidth()) {
-                    dim.width = image.getWidth();
-                }
-
                 if (images != null) {
+                    dim.height += image.getHeight();
+                    if (dim.width < image.getWidth()) {
+                        dim.width = image.getWidth();
+                    }
+
                     images.put(covLayer.getCoverageName(), image);
                 }
                 continue;
