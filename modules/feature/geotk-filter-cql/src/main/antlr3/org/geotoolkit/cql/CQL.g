@@ -12,6 +12,7 @@ tokens{
     SERIE;
     EXP_ADD;
     EXP_MUL;
+    FIL_LOG;
 }
 
 //-----------------------------------------------------------------//
@@ -245,16 +246,14 @@ expression_fct_param
         : expression (COMMA! expression)*
         ;
 
-
 expression_term		
 	: TEXT
 	| expression_unary
 	| PROPERTY_NAME
-	| NAME^ (LPAREN expression_fct_param RPAREN)?
+	| NAME^ (LPAREN expression_fct_param? RPAREN)?
 	| expression_geometry
 	| LPAREN! expression RPAREN!
 	;
-
 
 expression_mult 
 	: ( a=expression_term -> $a ) 
@@ -268,22 +267,8 @@ expression_add
 	
 expression
 	: expression_add
-	//| NAME^ (LPAREN! ((expression_add ( COMMA!  expression_add)*)?) RPAREN!)?
 	;
-    	
 
-filter          : filter_and | filter_not | filter_geometry;
-filter_not 	: NOT^ filter ;
-filter_and 	: filter_or (AND^ filter)* ;
-filter_or 	: filter_cb (OR^ filter)* ;
-filter_cb 	: expression
-	(
-                | COMPARE^  expression
-                | IN^ LPAREN! (expression (','! expression )* )?  RPAREN!
-                | BETWEEN^ expression AND! expression
-                | LIKE^ expression
-                | ISNULL^
-	);
 filter_geometry
         : BBOX^ LPAREN! (PROPERTY_NAME|TEXT) COMMA! (INT|FLOAT) COMMA! (INT|FLOAT) COMMA! (INT|FLOAT) COMMA! (INT|FLOAT) COMMA! TEXT? RPAREN!
         | BEYOND^ LPAREN! expression COMMA! expression RPAREN!
@@ -297,4 +282,32 @@ filter_geometry
         | TOUCH^ LPAREN! expression COMMA! expression RPAREN!
         | WITHIN^ LPAREN! expression COMMA! expression RPAREN!
         ;
+
+filter_term 	: expression
+                    (
+                              COMPARE^  expression
+                            | IN^ LPAREN! (expression_fct_param )?  RPAREN!
+                            | BETWEEN^ expression AND! expression
+                            | LIKE^ expression
+                            | ISNULL^
+                    )
+                | filter_geometry
+                ;
+
+filter_not	: NOT^* filter_term ;
+
+filter_and 	: 
+                ( a=filter_not -> $a )
+                ( AND b=filter_not -> ^(FIL_LOG AND $filter_and $b) )* 
+                ;
+
+filter_or 	: 
+                ( a=filter_and -> $a )
+                ( OR b=filter_and -> ^(FIL_LOG OR $filter_or $b) )* 
+                ;
+
+filter          : 
+                  filter_or
+                ;
+
 

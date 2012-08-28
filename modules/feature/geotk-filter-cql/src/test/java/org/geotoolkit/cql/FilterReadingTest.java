@@ -95,12 +95,12 @@ public class FilterReadingTest {
         assertEquals(
                 FF.and(
                 UnmodifiableArrayList.wrap((Filter)
-                    FF.equals(FF.property("att1"), FF.literal(15)),
                     FF.and(
-                    UnmodifiableArrayList.wrap((Filter)
-                        FF.equals(FF.property("att2"), FF.literal(30)),
-                        FF.equals(FF.property("att3"), FF.literal(50))
-                    ))
+                        UnmodifiableArrayList.wrap((Filter)
+                            FF.equals(FF.property("att1"), FF.literal(15)),
+                            FF.equals(FF.property("att2"), FF.literal(30))
+                        )),
+                    FF.equals(FF.property("att3"), FF.literal(50))
                 )),
                 filter);     
     }
@@ -382,8 +382,7 @@ public class FilterReadingTest {
         final Geometry filtergeo = (Geometry) ((Literal)filter.getExpression2()).getValue();
         assertTrue(baseGeometry.equalsExact(filtergeo)); 
     }
-        
-    @Ignore
+    
     @Test
     public void testCombine1() throws CQLException {
         final String cql = "NOT att = 15 OR att BETWEEN 15 AND 30";
@@ -397,7 +396,6 @@ public class FilterReadingTest {
                 );    
     }
 
-    @Ignore
     @Test
     public void testCombine2() throws CQLException {
         final String cql = "(NOT att = 15) OR (att BETWEEN 15 AND 30)";

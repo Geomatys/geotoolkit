@@ -225,19 +225,6 @@ public final class CQL {
             //strip start and end '
             final String text = tree.getText();
             return ff.literal(text.substring(1, text.length()-1));
-//        }else if(CQLParser.OPERATOR == type){
-//            final String text = tree.getText();
-//            final Expression left = convertExpression((CommonTree)tree.getChild(0), ff);
-//            final Expression right = convertExpression((CommonTree)tree.getChild(1), ff);
-//            if("+".equals(text)){
-//                return ff.add(left,right);
-//            }else if("-".equals(text)){
-//                return ff.subtract(left,right);
-//            }else if("*".equals(text)){
-//                return ff.multiply(left,right);
-//            }else if("/".equals(text)){
-//                return ff.divide(left,right);
-//            }
         }else if(CQLParser.NAME == type){
             String name = tree.getText();
             if(tree.getChildCount() == 0){
@@ -324,7 +311,7 @@ public final class CQL {
      */
     private static Filter convertFilter(CommonTree tree, FilterFactory2 ff) throws CQLException{
         
-        if(!(tree.token != null && tree.token.getTokenIndex() >= 0)){
+        if(tree.getType() < 0){
             throw new CQLException("Unreconized filter : type="+tree.getType()+" text=" + tree.getText());
         }
         
@@ -379,6 +366,21 @@ public final class CQL {
                 }
                 return ff.or(filters);
             }            
+        }else if(CQLParser.FIL_LOG == type){
+            final List<Filter> filters = new ArrayList<Filter>();
+            final int nbchild = tree.getChildCount();
+            final String logicType = tree.getChild(0).getText();
+            
+            for(int i=1; i<nbchild; i++){
+                filters.add(convertFilter((CommonTree)tree.getChild(i), ff));
+            }
+            
+            if("AND".equalsIgnoreCase(logicType)){
+                return ff.and(filters);
+            }else if("OR".equalsIgnoreCase(logicType)){
+                return ff.or(filters);
+            }
+            
         }else if(CQLParser.AND == type){
             final List<Filter> filters = new ArrayList<Filter>();
             final int nbchild = tree.getChildCount();
