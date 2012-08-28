@@ -1,4 +1,4 @@
-grammar CQL;
+ grammar CQL;
 
 options {
     language = Java; // antlr will generate java lexer and parser
@@ -10,6 +10,8 @@ tokens{
     COORD;
     COORDS;
     SERIE;
+    EXP_ADD;
+    EXP_MUL;
 }
 
 //-----------------------------------------------------------------//
@@ -60,12 +62,12 @@ tokens{
     errors.add(e);
   }
   
-  private boolean isOperatorNext(){
+/*  private boolean isOperatorNext(){
       final Token tk = input.LT(2);
       final String txt = tk.getText();
       return "+".equals(txt) || "-".equals(txt) || "/".equals(txt) || "*".equals(txt);
     }
-    
+    */
 }
 
 
@@ -78,6 +80,9 @@ tokens{
 
 COMMA 	: ',' ;
 WS  :   ( ' ' | '\t' | '\r'| '\n' ) {$channel=HIDDEN;} ;
+UNARY : '+' | '-' ;
+fragment MULT : '*' | '/' ;
+fragment DIGIT : '0'..'9' ;
     
 // caseinsensitive , possible alternative solution ?
 fragment A: ('a'|'A');
@@ -106,6 +111,7 @@ fragment W: ('w'|'W');
 fragment X: ('x'|'X');
 fragment Y: ('y'|'Y');
 fragment Z: ('z'|'Z');
+fragment LETTER : ('a'..'z' | 'A'..'Z');
 
 LPAREN : '(';
 RPAREN : ')';
@@ -114,17 +120,13 @@ RPAREN : ')';
 //LITERALS  ----------------------------------------------
 
 TEXT :   '\'' ( ESC_SEQ | ~('\\'|'\'') )* '\'' ;    
-INT : '0'..'9'+ ;
+INT : DIGIT+ ;
 
 FLOAT
     :   ('0'..'9')+ '.' ('0'..'9')* EXPONENT?
     |   '.' ('0'..'9')+ EXPONENT?
     |   ('0'..'9')+ EXPONENT
     ;
-
-//OPERATORS -------------------------------------------
-OPERATOR: '+' | '-' | '/' | '*' ; 
-
 
 // FILTERING OPERAND -----------------------------------
 COMPARE 
@@ -180,7 +182,7 @@ WITHIN      : W I T H I N ;
 
 // PROPERTY NAME -------------------------------------
 PROPERTY_NAME    	:  '"' ( ESC_SEQ | ~('\\'|'"') )* '"'    ;
-NAME   	: (~( ' ' | '\t' | '\r' | '\n' | '(' | ')' | '"' | ','))+    ;
+NAME   	: LETTER (DIGIT|LETTER)* ;
    
 
 // FRAGMENT -------------------------------------------
@@ -214,16 +216,22 @@ UNICODE_ESC
 // PARSER
 //-----------------------------------------------------------------//
     
-expression		
-	: expression_geometry
-	| {isOperatorNext()}? expression_operation
-	| expression_function
-	| expression_simple
+expression_num
+	: INT
+	| FLOAT
 	;
-expression_function 	: NAME^ LPAREN ((expression ( COMMA!  expression)*)?) RPAREN ;
-expression_operation	: expression_simple (OPERATOR^ expression_operation)* ;
-expression_simple	: PROPERTY_NAME | NAME |  expression_literal;
-expression_literal	: TEXT | INT | FLOAT;
+	
+expression_unary 
+	: (UNARY^)? expression_num
+	;
+	
+coordinate          : expression_unary expression_unary ;
+
+coordinate_serie    : LPAREN coordinate (COMMA coordinate)*  RPAREN -> ^(COORDS coordinate+) ;
+
+coordinate_series   : LPAREN coordinate_serie (COMMA coordinate_serie)* RPAREN -> ^(SERIE coordinate_serie+) ;
+
+
 expression_geometry	
 	: POINT^ coordinate_serie
 	| LINESTRING^ coordinate_serie
@@ -231,14 +239,38 @@ expression_geometry
 	| MPOINT^ coordinate_serie
 	| MLINESTRING^  coordinate_series
 	| MPOLYGON^ LPAREN! coordinate_series (COMMA! coordinate_series)* RPAREN! 
-	;	
+	;
 
+
+expression_term		
+	: TEXT
+	| expression_unary
+	| PROPERTY_NAME
+	//| NAME
+	| expression_geometry
+	| LPAREN expression RPAREN
+	;
+
+
+expression_mult 
+	: expression_term (( '*' | '/' ) expression_term)*
+	;
+	
+expression_add
+	: expression_mult (UNARY expression_mult)*
+	;
+	
+expression
+	: expression_add
+	| NAME^ (LPAREN! ((expression_add ( COMMA!  expression_add)*)?) RPAREN!)?
+	;
     	
+
 filter          : filter_and | filter_not | filter_geometry;
 filter_not 	: NOT^ filter ;
 filter_and 	: filter_or (AND^ filter)* ;
 filter_or 	: filter_cb (OR^ filter)* ;
-filter_cb 	: expression  
+filter_cb 	: expression
 	(
                 | COMPARE^  expression
                 | IN^ LPAREN! (expression (','! expression )* )?  RPAREN!
@@ -259,12 +291,4 @@ filter_geometry
         | TOUCH^ LPAREN! expression COMMA! expression RPAREN!
         | WITHIN^ LPAREN! expression COMMA! expression RPAREN!
         ;
-
-coordinate          : (FLOAT|INT)  (FLOAT|INT) ;
-coordinate_serie    : LPAREN coordinate (COMMA coordinate)*  RPAREN -> ^(COORDS coordinate+) ;
-coordinate_series   : LPAREN coordinate_serie (COMMA coordinate_serie)* RPAREN -> ^(SERIE coordinate_serie+) ;
-
-	
-
-
 

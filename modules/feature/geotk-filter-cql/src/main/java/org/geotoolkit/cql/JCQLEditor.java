@@ -104,43 +104,43 @@ public class JCQLEditor extends JPanel implements KeyListener{
     
     private void syntaxHighLight(CommonTree tree, StyledDocument doc, AtomicInteger position){
         
-        if(tree.token != null && tree.token.getTokenIndex() >= 0){
-            // if index<0 = missing token
-            final CommonToken ct = (CommonToken) tree.token;
-            final int offset = ct.getStartIndex();
-            final int length = ct.getStopIndex()-ct.getStartIndex() +1;
-            position.addAndGet(length);
-            
-            switch(tree.token.getType()){
-                case CQLLexer.TEXT : 
-                case CQLLexer.INT : 
-                case CQLLexer.FLOAT : 
-                    doc.setCharacterAttributes(offset, length, styleLiteral, true);
-                    break;
-                case CQLLexer.PROPERTY_NAME :
-                case CQLLexer.NAME :
-                    doc.setCharacterAttributes(offset, length, stylePropertyName, true);
-                    break;
-                case CQLLexer.OPERATOR :
-                case CQLLexer.EQUAL :
-                    doc.setCharacterAttributes(offset, length, styleOperator, true);
-                    break;
-                case CQLLexer.AND :
-                case CQLLexer.OR :
-                    doc.setCharacterAttributes(offset, length, styleBinary, true);
-                    break;
-                default : 
-                    doc.setCharacterAttributes(offset, length, styleError, true);
-                    break;
-            }
-        }
-        
-        final List children = tree.getChildren();        
-        if(children != null){
-            for(Object child : children){
-                syntaxHighLight((CommonTree)child, doc, position);
-            }
-        }
+//        if(tree.token != null && tree.token.getTokenIndex() >= 0){
+//            // if index<0 = missing token
+//            final CommonToken ct = (CommonToken) tree.token;
+//            final int offset = ct.getStartIndex();
+//            final int length = ct.getStopIndex()-ct.getStartIndex() +1;
+//            position.addAndGet(length);
+//            
+//            switch(tree.token.getType()){
+//                case CQLLexer.TEXT : 
+//                case CQLLexer.INT : 
+//                case CQLLexer.FLOAT : 
+//                    doc.setCharacterAttributes(offset, length, styleLiteral, true);
+//                    break;
+//                case CQLLexer.PROPERTY_NAME :
+//                case CQLLexer.NAME :
+//                    doc.setCharacterAttributes(offset, length, stylePropertyName, true);
+//                    break;
+//                case CQLLexer.OPERATOR :
+//                case CQLLexer.EQUAL :
+//                    doc.setCharacterAttributes(offset, length, styleOperator, true);
+//                    break;
+//                case CQLLexer.AND :
+//                case CQLLexer.OR :
+//                    doc.setCharacterAttributes(offset, length, styleBinary, true);
+//                    break;
+//                default : 
+//                    doc.setCharacterAttributes(offset, length, styleError, true);
+//                    break;
+//            }
+//        }
+//        
+//        final List children = tree.getChildren();        
+//        if(children != null){
+//            for(Object child : children){
+//                syntaxHighLight((CommonTree)child, doc, position);
+//            }
+//        }
     }
     
 }

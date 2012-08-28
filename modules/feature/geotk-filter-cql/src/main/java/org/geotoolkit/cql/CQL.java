@@ -190,23 +190,36 @@ public final class CQL {
             return ff.literal(Integer.valueOf(tree.getText()));
         }else if(CQLParser.FLOAT == type){
             return ff.literal(Double.valueOf(tree.getText()));
+        }else if(CQLParser.UNARY == type){
+            final String negText = tree.getText();
+            final Expression val = convertExpression((CommonTree)tree.getChild(0), ff);
+            if("-".equals(negText)){
+                final Number n = val.evaluate(null, Number.class);
+                if(n instanceof Integer){
+                    return ff.literal(-n.intValue());
+                }else{
+                    return ff.literal(-n.doubleValue());
+                }
+            }
+            
+            return val;
         }else if(CQLParser.TEXT == type){
             //strip start and end '
             final String text = tree.getText();
             return ff.literal(text.substring(1, text.length()-1));
-        }else if(CQLParser.OPERATOR == type){
-            final String text = tree.getText();
-            final Expression left = convertExpression((CommonTree)tree.getChild(0), ff);
-            final Expression right = convertExpression((CommonTree)tree.getChild(1), ff);
-            if("+".equals(text)){
-                return ff.add(left,right);
-            }else if("-".equals(text)){
-                return ff.subtract(left,right);
-            }else if("*".equals(text)){
-                return ff.multiply(left,right);
-            }else if("/".equals(text)){
-                return ff.divide(left,right);
-            }
+//        }else if(CQLParser.OPERATOR == type){
+//            final String text = tree.getText();
+//            final Expression left = convertExpression((CommonTree)tree.getChild(0), ff);
+//            final Expression right = convertExpression((CommonTree)tree.getChild(1), ff);
+//            if("+".equals(text)){
+//                return ff.add(left,right);
+//            }else if("-".equals(text)){
+//                return ff.subtract(left,right);
+//            }else if("*".equals(text)){
+//                return ff.multiply(left,right);
+//            }else if("/".equals(text)){
+//                return ff.divide(left,right);
+//            }
         }else if(CQLParser.NAME == type){
             String name = tree.getText();
             if(tree.getChildCount() == 0){

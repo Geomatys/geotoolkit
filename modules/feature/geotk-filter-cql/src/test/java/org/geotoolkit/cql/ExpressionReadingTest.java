@@ -21,10 +21,8 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
-import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import org.geotoolkit.filter.DefaultFilterFactory2;
-import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.opengis.filter.FilterFactory2;
@@ -74,6 +72,15 @@ public class ExpressionReadingTest {
     }
     
     @Test
+    public void testNegativeInteger() throws CQLException{        
+        final String cql = "-15";
+        final Object obj = CQL.parseExpression(cql);        
+        assertTrue(obj instanceof Literal);
+        final Literal expression = (Literal) obj;
+        assertEquals(Integer.valueOf(-15), expression.getValue());                
+    }
+    
+    @Test
     public void testDecimal1() throws CQLException{
         final String cql = "3.14";
         final Object obj = CQL.parseExpression(cql);        
@@ -89,6 +96,15 @@ public class ExpressionReadingTest {
         assertTrue(obj instanceof Literal);
         final Literal expression = (Literal) obj;
         assertEquals(Double.valueOf(9e-1), expression.getValue());                
+    }
+    
+    @Test
+    public void testNegativeDecimal() throws CQLException{        
+        final String cql = "-3.14";
+        final Object obj = CQL.parseExpression(cql);        
+        assertTrue(obj instanceof Literal);
+        final Literal expression = (Literal) obj;
+        assertEquals(Double.valueOf(-3.14), expression.getValue());                
     }
     
     @Test
@@ -292,6 +308,31 @@ public class ExpressionReadingTest {
                 );
         final Geometry geom = GF.createMultiPolygon(new Polygon[]{geom1,geom2});
         assertTrue(geom.equals((Geometry)expression.getValue()));  
+    }
+    
+    @Test
+    public void testCombine1() throws CQLException{
+        final String cql = "((3*1)+(2-6))/4";
+        final Object obj = CQL.parseExpression(cql);        
+        assertTrue(obj instanceof Add);
+        final Add expression = (Add) obj;
+        assertEquals(
+                FF.divide(
+                    FF.add(
+                        FF.multiply(FF.literal(3), FF.literal(1)),
+                        FF.subtract(FF.literal(2), FF.literal(6))
+                        ), 
+                    FF.literal(4))
+                , expression);                
+    }
+    
+    @Test
+    public void testCombine2() throws CQLException{
+        final String cql = "3*1+2/4";
+        final Object obj = CQL.parseExpression(cql);        
+        assertTrue(obj instanceof Add);
+        final Add expression = (Add) obj;
+        //TODO              
     }
     
 }
