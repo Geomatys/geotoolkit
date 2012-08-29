@@ -39,7 +39,7 @@ public class DemoFrame extends JFrame{
 
     public DemoFrame(){
         Demos.init();
-        
+
         setTitle("SLD/SE 1.1 demo.");
         try {
             guiTree.setModel(createModel());
@@ -116,6 +116,7 @@ public class DemoFrame extends JFrame{
         final DefaultMutableTreeNode textsNode = new DefaultMutableTreeNode("Texts");
         textsNode.add(new PanelNode("Default text", Styles.createWorldContext(Styles.defaultText())));
         textsNode.add(new PanelNode("Centered text", Styles.createWorldContext(Styles.centeredText())));
+        textsNode.add(new PanelNode("Lined text", Styles.createWorldContext(Styles.linedText())));
         root.add(textsNode);
 
         // Raster demo -------------------------------------------------------

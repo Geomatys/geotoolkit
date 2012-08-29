@@ -477,6 +477,29 @@ public class Styles {
         return style;
     }
 
+    public static MutableStyle linedText(){
+
+        //general informations
+        final String name = "mySymbol";
+        final Description desc = DEFAULT_DESCRIPTION;
+        final String geometry = null; //use the default geometry of the feature
+        final Unit unit = NonSI.PIXEL;
+        final Expression label = FF.property("CNTRY_NAME");
+        final Font font = SF.font(
+                FF.literal("Arial"),
+                FONT_STYLE_ITALIC,
+                FONT_WEIGHT_BOLD,
+                FF.literal(14));
+        final LabelPlacement placement = SF.linePlacement(FF.literal(0));
+        final Halo halo = SF.halo(Color.WHITE, 1);
+        final Fill fill = SF.fill(Color.BLUE);
+
+        final TextSymbolizer symbol = SF.textSymbolizer(name, geometry, desc, unit, label, font, placement, halo, fill);
+
+        final MutableStyle style = SF.style(DEFAULT_POLYGON_SYMBOLIZER,symbol);
+        return style;
+    }
+
     //////////////////////////////////////////////////////////////////////
     // RASTER SYMBOLIZER /////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////
@@ -507,9 +530,9 @@ public class Styles {
         final MutableStyle style = SF.style(symbol);
         return style;
     }
-    
+
     public static MutableStyle colorInterpolationRaster(){
-        
+
         final List<InterpolationPoint> values = new ArrayList<InterpolationPoint>();
         values.add( SF.interpolationPoint(1003, SF.literal(new Color(46,154,88))));
         values.add( SF.interpolationPoint(1800, SF.literal(new Color(251,255,128))));
@@ -543,34 +566,34 @@ public class Styles {
      * Relief shading requieres a secondary data for the elevation model.
      */
     public static MapLayer ShadedReliefRaster(){
-        
+
         final RasterSymbolizer shadedSymbolizer = SF.rasterSymbolizer(
-                null, 
-                FF.literal(1), 
-                null, 
-                null, 
-                null, 
-                null, 
-                SF.shadedRelief(FF.literal(1), true), 
+                null,
+                FF.literal(1),
+                null,
+                null,
+                null,
+                null,
+                SF.shadedRelief(FF.literal(1), true),
                 null);
-        
-        
+
+
         //create your maplayer with your datas
         final GridCoverageReader readerData = null;
         final GridCoverageReader elevationData = null;
-        
+
         final MapLayer layer = MapBuilder.createCoverageLayer(readerData, SF.style(shadedSymbolizer), "data");
         final ElevationModel elevationModel = MapBuilder.createElevationModel(elevationData);
         //associate this elevation model to the layer.
         layer.setElevationModel(elevationModel);
-        
+
         //TIP : a default ElevationModel can be set in the Hints passed to the
         // protrayal service, or set in the default Hint values
         //Hints.putSystemDefault(GO2Hints.KEY_ELEVATION_MODEL, elevationModel);
-        
+
         return layer;
     }
-    
+
     //////////////////////////////////////////////////////////////////////
     // RULES /////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////
@@ -614,7 +637,7 @@ public class Styles {
     //////////////////////////////////////////////////////////////////////
     // Unormalize VectorField ////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////
-    
+
     public static MutableStyle vectorFieldtRaster(){
         final Symbolizer symbol = new VectorFieldSymbolizer();
         final MutableStyle style = SF.style(symbol);
@@ -682,7 +705,7 @@ public class Styles {
         MapContext context = MapBuilder.createContext(DefaultGeographicCRS.WGS84);
         context.setName("demo context");
         context.setDescription(SF.description("demo context", ""));
-   
+
         final GridCoverageReader reader = CoverageIO.createSimpleReader(new File("data/clouds.jpg"));
         final MapLayer layer = MapBuilder.createCoverageLayer(reader, style, "world");
         layer.setDescription(SF.description("raster", ""));
