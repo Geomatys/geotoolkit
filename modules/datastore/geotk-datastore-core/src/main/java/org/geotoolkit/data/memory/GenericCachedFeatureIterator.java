@@ -42,7 +42,7 @@ public class GenericCachedFeatureIterator<F extends Feature, R extends FeatureIt
     private final Object LOCK = new Object();
     
     private DataStoreRuntimeException subException = null;
-    private boolean closed = false;
+    private volatile boolean closed = false;
     protected final R iterator;
     protected final int cacheSize;
     private final ArrayBlockingQueue queue;
@@ -68,41 +68,38 @@ public class GenericCachedFeatureIterator<F extends Feature, R extends FeatureIt
             public void run() {
                 
                 boolean finish = false;
-                try{
-                    while(!closed && !finish){
-                        //create and fill buffer
-                        final Feature[] buffer = new Feature[cacheSize];
-                        try{
-                            for(int i=0;i<buffer.length;i++){
-                                if(iterator.hasNext()){
-                                    buffer[i] = iterator.next();
-                                }else{
-                                    finish = true;
-                                    break;
-                                }
+                while(!closed && !finish){
+                    //create and fill buffer
+                    final Feature[] buffer = new Feature[cacheSize];
+                    try{
+                        for(int i=0;i<buffer.length;i++){
+                            if(iterator.hasNext()){
+                                buffer[i] = iterator.next();
+                            }else{
+                                finish = true;
+                                break;
                             }
-                        }catch(DataStoreRuntimeException ex){
-                            subException = ex;
+                        }
+                    }catch(DataStoreRuntimeException ex){
+                        subException = ex;
+                    }
+
+                    boolean success;
+                    do{
+                        success = queue.offer(buffer);
+                        if(!success){
+                            try {
+                                if(closed)break;
+                                //no space left, go to sleep until iterator wake it up
+                                synchronized(LOCK){
+                                    LOCK.wait();
+                                }
+                            } catch (InterruptedException ex) {
+                                Logging.getLogger(GenericCachedFeatureIterator.class).log(Level.WARNING, ex.getMessage(), ex);
+                            }
                         }
 
-                        boolean success;
-                        do{
-                            success = queue.offer(buffer);
-                            if(!success){
-                                try {
-                                    //no space left, go to sleep until iterator wake it up
-                                    synchronized(LOCK){
-                                        LOCK.wait();
-                                    }
-                                } catch (InterruptedException ex) {
-                                    Logging.getLogger(GenericCachedFeatureIterator.class).log(Level.WARNING, ex.getMessage(), ex);
-                                }
-                            }
-
-                        }while(!success || closed);
-                    }
-                }finally{
-                    iterator.close();
+                    }while(!success && !closed);
                 }
                 
             }
@@ -141,6 +138,7 @@ public class GenericCachedFeatureIterator<F extends Feature, R extends FeatureIt
         synchronized(LOCK){
             LOCK.notify();
         }
+        iterator.close();
     }
 
     /**
