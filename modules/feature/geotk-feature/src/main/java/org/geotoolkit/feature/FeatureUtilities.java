@@ -363,7 +363,7 @@ public final class FeatureUtilities {
     }
 
     public static ComplexAttribute defaultProperty(final ComplexType type){
-        return defaultProperty(type, null);
+        return defaultProperty(type, "");
     }
 
     public static ComplexAttribute defaultProperty(final ComplexType type, final String id){
@@ -479,10 +479,27 @@ public final class FeatureUtilities {
 
         ArgumentChecks.ensureNonNull("source", source);
         final ComplexType ft = (ComplexType)FeatureTypeUtilities.toPropertyType(source.getDescriptor());
-        final ComplexAttribute target = FeatureUtilities.defaultProperty(ft);
+        return toFeature(source,null);
+    }
+    
+    /**
+     * Convert a ParameterValueGroup in a feature.
+     *
+     * @param source : parameter to convert
+     * @param target : wanted type, may contain more or less parameters.
+     * @return ComplexAttribute
+     */
+    public static ComplexAttribute toFeature(final ParameterValueGroup source, ComplexType targetType) {
+
+        ArgumentChecks.ensureNonNull("source", source);
+        if(targetType == null){
+            targetType = (ComplexType)FeatureTypeUtilities.toPropertyType(source.getDescriptor());
+        }
+        final ComplexAttribute target = FeatureUtilities.defaultProperty(targetType);
         fill(source,target);
         return target;
     }
+    
 
     /**
      * Convert a ComplexAttribute in a Map of values.
