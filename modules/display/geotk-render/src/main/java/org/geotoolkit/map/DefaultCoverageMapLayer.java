@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -23,6 +23,7 @@ import org.geotoolkit.coverage.PyramidalModel;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.data.query.Query;
 import org.geotoolkit.geometry.ImmutableEnvelope;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.storage.DataStoreException;
@@ -30,13 +31,15 @@ import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.util.NullArgumentException;
 import org.opengis.feature.type.Name;
 import org.opengis.geometry.Envelope;
+import static org.geotoolkit.util.ArgumentChecks.*;
 
 /**
  * Default implementation of the coverage MapLayer.
  * Use MapBuilder to create it.
  * This class is left public only for subclass implementations.
- * 
+ *
  * @author Johann Sorel (Geomatys)
+ * @author Cédric Briançon (Geomatys)
  * @module pending
  */
 public class DefaultCoverageMapLayer extends AbstractMapLayer implements CoverageMapLayer {
@@ -46,7 +49,8 @@ public class DefaultCoverageMapLayer extends AbstractMapLayer implements Coverag
     private final CoverageReference ref;
     private final GridCoverageReader reader;
     private final Name coverageName;
-    
+    private Query query = null;
+
     protected DefaultCoverageMapLayer(final CoverageReference ref, final MutableStyle style, final Name name){
         super(style);
         if(ref == null || name == null || name.toString() == null || name.getLocalPart() == null){
@@ -56,7 +60,7 @@ public class DefaultCoverageMapLayer extends AbstractMapLayer implements Coverag
         this.reader = null;
         this.coverageName = name;
     }
-    
+
     protected DefaultCoverageMapLayer(final GridCoverageReader reader, final MutableStyle style, final Name name){
         super(style);
         if(reader == null || name == null || name.toString() == null || name.getLocalPart() == null){
@@ -66,7 +70,7 @@ public class DefaultCoverageMapLayer extends AbstractMapLayer implements Coverag
         this.reader = reader;
         this.coverageName = name;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -74,7 +78,7 @@ public class DefaultCoverageMapLayer extends AbstractMapLayer implements Coverag
     public Name getCoverageName() {
         return coverageName;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -89,7 +93,7 @@ public class DefaultCoverageMapLayer extends AbstractMapLayer implements Coverag
         }
         return reader;
     }
-        
+
     /**
      * {@inheritDoc }
      */
@@ -97,7 +101,38 @@ public class DefaultCoverageMapLayer extends AbstractMapLayer implements Coverag
     public CoverageReference getCoverageReference() {
         return ref;
     }
-    
+
+    /**
+     * Returns the query, may be {@code null}.
+     */
+    public Query getQuery() {
+        return query;
+    }
+
+    /**
+     * Sets a filter query for this layer.
+     *
+     * <p>
+     * Query filters should be used to reduce searched or displayed feature
+     * when rendering or analyzing this layer.
+     * </p>
+     *
+     * @param query the full filter for this layer. can not be null.
+     */
+    public void setQuery(final Query query) {
+        ensureNonNull("query", query);
+
+        final Query oldQuery;
+        synchronized (this) {
+            oldQuery = getQuery();
+            if(query.equals(oldQuery)){
+                return;
+            }
+            this.query = query;
+        }
+        firePropertyChange(QUERY_PROPERTY, oldQuery, this.query);
+    }
+
     /**
      * {@inheritDoc }
      */
@@ -110,8 +145,8 @@ public class DefaultCoverageMapLayer extends AbstractMapLayer implements Coverag
                 Logger.getLogger(DefaultCoverageMapLayer.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        
-        
+
+
         try {
             final GeneralGridGeometry geom = getCoverageReader().getGridGeometry(0);
             if(geom == null){

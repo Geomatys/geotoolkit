@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2010, Geomatys
+ *    (C) 2008 - 2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -28,6 +28,7 @@ import java.awt.image.IndexColorModel;
 import java.awt.image.RenderedImage;
 import java.awt.image.renderable.ParameterBlock;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -49,6 +50,7 @@ import org.geotoolkit.coverage.io.DisjointCoverageDomainException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.processing.CoverageProcessingException;
 import org.geotoolkit.coverage.processing.Operations;
+import org.geotoolkit.data.query.Query;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -58,11 +60,13 @@ import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.raster.CompatibleColorModel;
 import org.geotoolkit.display2d.style.raster.ShadedReliefOp;
 import org.geotoolkit.display2d.style.raster.StatisticOp;
+import org.geotoolkit.filter.visitor.DefaultFilterVisitor;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.image.jai.FloodFill;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.internal.image.ColorUtilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.map.DefaultCoverageMapLayer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.resources.Errors;
@@ -75,12 +79,17 @@ import org.geotoolkit.style.function.Method;
 import org.geotoolkit.style.function.Mode;
 import org.geotoolkit.util.converter.Classes;
 import org.opengis.coverage.Coverage;
+import org.opengis.filter.Filter;
+import org.opengis.filter.FilterVisitor;
+import org.opengis.filter.PropertyIsEqualTo;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
 import org.opengis.filter.expression.Literal;
+import org.opengis.filter.expression.PropertyName;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.style.ChannelSelection;
 import org.opengis.style.ColorMap;
@@ -92,6 +101,7 @@ import org.opengis.style.ShadedRelief;
 
 /**
  * @author Johann Sorel (Geomatys)
+ * @author Cédric Briançon (Geomatys)
  * @module pending
  */
 public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<CachedRasterSymbolizer>{
@@ -100,7 +110,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
     public DefaultRasterSymbolizerRenderer(final SymbolizerRendererService service, final CachedRasterSymbolizer symbol, final RenderingContext2D context){
         super(service,symbol,context);
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -108,162 +118,218 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
     public void portray(final ProjectedCoverage projectedCoverage) throws PortrayalException{
 
         try {
-        double[] resolution = renderingContext.getResolution();
-        final Envelope bounds = new GeneralEnvelope(renderingContext.getCanvasObjectiveBounds());
-        resolution = checkResolution(resolution,bounds);
-        final GridCoverageReadParam param = new GridCoverageReadParam();
-        
-        param.setEnvelope(bounds);
-        param.setResolution(resolution);
+            double[] resolution = renderingContext.getResolution();
+            Envelope bounds = new GeneralEnvelope(renderingContext.getCanvasObjectiveBounds());
+            resolution = checkResolution(resolution,bounds);
 
-        GridCoverage2D dataCoverage;
-        GridCoverage2D elevationCoverage;
-        try {
-            dataCoverage = projectedCoverage.getCoverage(param);
-            elevationCoverage = projectedCoverage.getElevationCoverage(param);
-        } catch (DisjointCoverageDomainException ex) {
-            LOGGER.log(Level.INFO, ex.getMessage());
-            return;
-        } catch (CoverageStoreException ex) {
-            throw new PortrayalException(ex);
-        }
+            if (projectedCoverage.getLayer() instanceof DefaultCoverageMapLayer) {
+                final DefaultCoverageMapLayer covMapLayer = (DefaultCoverageMapLayer)projectedCoverage.getLayer();
+                final Query query = covMapLayer.getQuery();
+                Map<String,Double> values = null;
+                if (query != null) {
+                    // visit the filter to extract all values
+                    final FilterVisitor fv = new DefaultFilterVisitor() {
 
-        if(dataCoverage == null){
-            LOGGER.log(Level.WARNING, "Requested an area where no coverage where found.");
-            return;
-        }
+                        @Override
+                        public Object visit(PropertyIsEqualTo filter, Object data) {
+                            final Map<String,Double> values = (Map<String,Double>) data;
+                            final String expr1 = ((PropertyName)filter.getExpression1()).getPropertyName();
+                            final Double expr2 = Double.valueOf(((Literal)filter.getExpression2()).getValue().toString());
+                            values.put(expr1, expr2);
+                            return values;
+                        }
 
-        boolean isReprojected = false;
-        final CoordinateReferenceSystem coverageCRS = dataCoverage.getCoordinateReferenceSystem();
-        try{
-            final CoordinateReferenceSystem targetCRS = renderingContext.getObjectiveCRS2D();
-            final CoordinateReferenceSystem candidate2D = CRSUtilities.getCRS2D(coverageCRS);
-            if(!CRS.equalsIgnoreMetadata(candidate2D,targetCRS) ){
-                
-                final GridGeometry2D gridgeom = new GridGeometry2D(
-                        new GeneralGridEnvelope(renderingContext.getPaintingDisplayBounds(), 2),
-                        renderingContext.getPaintingObjectiveBounds2D());
-                
-                isReprojected = true;
-                dataCoverage = (GridCoverage2D) Operations.DEFAULT.resample(dataCoverage, targetCRS, gridgeom, null);
-            }
-        } catch (CoverageProcessingException ex) {
-            monitor.exceptionOccured(ex, Level.WARNING);
-            return;
-        } catch(Exception ex){
-            //several kind of errors can happen here, we catch anything to avoid blocking the map component.
-            monitor.exceptionOccured(
-                new IllegalStateException("Coverage is not in the requested CRS, found : \n" +
-                coverageCRS +
-                "\n Was expecting : \n" +
-                renderingContext.getObjectiveCRS() +
-                "\nOriginal Cause:"+ ex.getMessage(), ex), Level.WARNING);
-            return;
-        }
+                    };
 
-        if(dataCoverage == null){
-            LOGGER.log(Level.WARNING, "Reprojected coverage is null.");
-            return;
-        }
+                    final Filter filter = query.getFilter();
+                    values = (Map<String,Double>) filter.accept(fv, new HashMap<String, Double>());
+                }
 
-        //we must switch to objectiveCRS for grid coverage
-        renderingContext.switchToObjectiveCRS();
+                if (values != null) {
+                    final CoordinateReferenceSystem crsND = covMapLayer.getBounds().getCoordinateReferenceSystem();
+                    final GeneralEnvelope env = new GeneralEnvelope(crsND);
 
-        RenderedImage img = applyStyle(dataCoverage, symbol.getSource(), hints, isReprojected);
-        final MathTransform2D trs2D = dataCoverage.getGridGeometry().getGridToCRS2D(PixelOrientation.UPPER_LEFT);
-        if(trs2D instanceof AffineTransform){
-            g2d.setComposite(symbol.getJ2DComposite());
-            try{
-                g2d.drawRenderedImage(img, (AffineTransform)trs2D);
-            }catch(Exception ex){
-                    
-                if(ex instanceof ArrayIndexOutOfBoundsException){
-                    //we can recover when it's an inapropriate componentcolormodel
-                    final StackTraceElement[] eles = ex.getStackTrace();
-                    if(eles.length > 0 && ComponentColorModel.class.getName().equalsIgnoreCase(eles[0].getClassName())){
-                        
-                        try{
-                            final Map<String,Object> analyze = StatisticOp.analyze(projectedCoverage.getLayer().getCoverageReader());
-                            final double min = (Double)analyze.get(StatisticOp.MINIMUM);
-                            final double max = (Double)analyze.get(StatisticOp.MAXIMUM);
-                            
-                            final List<InterpolationPoint> values = new ArrayList<InterpolationPoint>();        
-                            values.add(new DefaultInterpolationPoint(Double.NaN, GO2Utilities.STYLE_FACTORY.literal(new Color(0, 0, 0, 0))));
-                            values.add(new DefaultInterpolationPoint(min, GO2Utilities.STYLE_FACTORY.literal(Color.BLACK)));
-                            values.add(new DefaultInterpolationPoint(max, GO2Utilities.STYLE_FACTORY.literal(Color.WHITE)));
-                            final Literal lookup = StyleConstants.DEFAULT_CATEGORIZE_LOOKUP;
-                            final Literal fallback = StyleConstants.DEFAULT_FALLBACK;
-                            final Function function = GO2Utilities.STYLE_FACTORY.interpolateFunction(
-                                    lookup, values, Method.COLOR, Mode.LINEAR, fallback);
-                            final CompatibleColorModel model = new CompatibleColorModel(img.getColorModel().getPixelSize(), function);
-                            final ImageLayout layout = new ImageLayout().setColorModel(model);
-                            img = new NullOpImage(img, layout, null, OpImage.OP_COMPUTE_BOUND);
-                            g2d.drawRenderedImage(img, (AffineTransform)trs2D);
-                        }catch(Exception e){
-                            //plenty of errors can happen when painting an image
-                            monitor.exceptionOccured(e, Level.WARNING);
-                            
-                            //raise the original error
-                            monitor.exceptionOccured(ex, Level.WARNING);
+                    // Set ranges from the map
+                    for (int j=0; j < bounds.getDimension(); j++) {
+                        env.setRange(j, bounds.getMinimum(j), bounds.getMaximum(j));
+                    }
+
+                    // Set ranges from the filter
+                    for (int i=0; i < crsND.getCoordinateSystem().getDimension(); i++) {
+                        final CoordinateSystemAxis axis = crsND.getCoordinateSystem().getAxis(i);
+                        final String axisName = axis.getName().getCode();
+                        if (values.containsKey(axisName)) {
+                            final Double val = values.get(axisName);
+                            env.setRange(i, val, val);
                         }
                     }
-                }else{
-                    //plenty of errors can happen when painting an image
-                    monitor.exceptionOccured(ex, Level.WARNING);
-                }
-            }
-        }else if (trs2D instanceof LinearTransform) {
-            final LinearTransform lt = (LinearTransform) trs2D;
-            final int col = lt.getMatrix().getNumCol();
-            final int row = lt.getMatrix().getNumRow();
-            //TODO using only the first parameters of the linear transform
-            throw new PortrayalException("Could not render image, GridToCRS is a not an AffineTransform, found a " + trs2D.getClass());
-        }else{
-            throw new PortrayalException("Could not render image, GridToCRS is a not an AffineTransform, found a " + trs2D.getClass() );
-        }
 
-        //draw the relief shading ----------------------------------------------
-        final ShadedRelief relief = symbol.getSource().getShadedRelief();
-        if(relief != null && elevationCoverage != null){
-            elevationCoverage = elevationCoverage.view(ViewType.GEOPHYSICS);
-            final MathTransform2D eleTrs2D = elevationCoverage.getGridGeometry().getGridToCRS2D();
-            if(eleTrs2D instanceof AffineTransform){
-                RenderedImage shadowImage = elevationCoverage.getRenderedImage();
-                shadowImage = shadowed(shadowImage);
-
-                if(shadowImage.getColorModel() != null && shadowImage.getSampleModel() != null){
-                    //TODO should check this differently, dont know how yet.
-//                    System.out.println("shadow seems valid");
-//                    System.out.println("shadow color model : " +shadowImage.getColorModel());
-//                    System.out.println("shadow sample model : " +shadowImage.getSampleModel());
-//                    System.out.println("transform :" + eleTrs2D);
-
-                    final Number n = relief.getReliefFactor().evaluate(null,Number.class);
-                    if(n != null){
-                        float factor = n.floatValue();
-                        if(factor>1) factor = 1;
-                        if(factor<0) factor = 0;
-                        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, factor));
-                    }else{
-                        g2d.setComposite(GO2Utilities.ALPHA_COMPOSITE_1F);
+                    bounds = env;
+                    final double[] tempRes = new double[crsND.getCoordinateSystem().getDimension()];
+                    for (int i=0; i < tempRes.length; i++) {
+                        if (i < resolution.length) {
+                            tempRes[i] = resolution[i];
+                        } else {
+                            tempRes[i] = Math.nextUp(0);
+                        }
                     }
-                    
-                    g2d.drawRenderedImage(shadowImage, (AffineTransform)eleTrs2D);
+                    resolution = tempRes;
                 }
-
-            }else{
-                throw new PortrayalException("Could not render elevation model, GridToCRS is a not an AffineTransform, found a " + eleTrs2D.getClass() );
             }
 
-        }
+            final GridCoverageReadParam param = new GridCoverageReadParam();
 
-        //draw the border if there is one---------------------------------------
-        CachedSymbolizer outline = symbol.getOutLine();
-        if(outline != null){
-            GO2Utilities.portray(projectedCoverage, outline, renderingContext);
-        }
+            param.setEnvelope(bounds);
+            param.setResolution(resolution);
 
-        renderingContext.switchToDisplayCRS();
+            GridCoverage2D dataCoverage;
+            GridCoverage2D elevationCoverage;
+            try {
+                dataCoverage = projectedCoverage.getCoverage(param);
+                elevationCoverage = projectedCoverage.getElevationCoverage(param);
+            } catch (DisjointCoverageDomainException ex) {
+                LOGGER.log(Level.INFO, ex.getMessage());
+                return;
+            } catch (CoverageStoreException ex) {
+                throw new PortrayalException(ex);
+            }
+
+            if(dataCoverage == null){
+                LOGGER.log(Level.WARNING, "Requested an area where no coverage where found.");
+                return;
+            }
+
+            boolean isReprojected = false;
+            final CoordinateReferenceSystem coverageCRS = dataCoverage.getCoordinateReferenceSystem();
+            try{
+                final CoordinateReferenceSystem targetCRS = renderingContext.getObjectiveCRS2D();
+                final CoordinateReferenceSystem candidate2D = CRSUtilities.getCRS2D(coverageCRS);
+                if(!CRS.equalsIgnoreMetadata(candidate2D,targetCRS) ){
+
+                    final GridGeometry2D gridgeom = new GridGeometry2D(
+                            new GeneralGridEnvelope(renderingContext.getPaintingDisplayBounds(), 2),
+                            renderingContext.getPaintingObjectiveBounds2D());
+
+                    isReprojected = true;
+                    dataCoverage = (GridCoverage2D) Operations.DEFAULT.resample(dataCoverage, targetCRS, gridgeom, null);
+                }
+            } catch (CoverageProcessingException ex) {
+                monitor.exceptionOccured(ex, Level.WARNING);
+                return;
+            } catch(Exception ex){
+                //several kind of errors can happen here, we catch anything to avoid blocking the map component.
+                monitor.exceptionOccured(
+                    new IllegalStateException("Coverage is not in the requested CRS, found : \n" +
+                    coverageCRS +
+                    "\n Was expecting : \n" +
+                    renderingContext.getObjectiveCRS() +
+                    "\nOriginal Cause:"+ ex.getMessage(), ex), Level.WARNING);
+                return;
+            }
+
+            if(dataCoverage == null){
+                LOGGER.log(Level.WARNING, "Reprojected coverage is null.");
+                return;
+            }
+
+            //we must switch to objectiveCRS for grid coverage
+            renderingContext.switchToObjectiveCRS();
+
+            RenderedImage img = applyStyle(dataCoverage, symbol.getSource(), hints, isReprojected);
+            final MathTransform2D trs2D = dataCoverage.getGridGeometry().getGridToCRS2D(PixelOrientation.UPPER_LEFT);
+            if(trs2D instanceof AffineTransform){
+                g2d.setComposite(symbol.getJ2DComposite());
+                try{
+                    g2d.drawRenderedImage(img, (AffineTransform)trs2D);
+                }catch(Exception ex){
+
+                    if(ex instanceof ArrayIndexOutOfBoundsException){
+                        //we can recover when it's an inapropriate componentcolormodel
+                        final StackTraceElement[] eles = ex.getStackTrace();
+                        if(eles.length > 0 && ComponentColorModel.class.getName().equalsIgnoreCase(eles[0].getClassName())){
+
+                            try{
+                                final Map<String,Object> analyze = StatisticOp.analyze(projectedCoverage.getLayer().getCoverageReader());
+                                final double min = (Double)analyze.get(StatisticOp.MINIMUM);
+                                final double max = (Double)analyze.get(StatisticOp.MAXIMUM);
+
+                                final List<InterpolationPoint> values = new ArrayList<InterpolationPoint>();
+                                values.add(new DefaultInterpolationPoint(Double.NaN, GO2Utilities.STYLE_FACTORY.literal(new Color(0, 0, 0, 0))));
+                                values.add(new DefaultInterpolationPoint(min, GO2Utilities.STYLE_FACTORY.literal(Color.BLACK)));
+                                values.add(new DefaultInterpolationPoint(max, GO2Utilities.STYLE_FACTORY.literal(Color.WHITE)));
+                                final Literal lookup = StyleConstants.DEFAULT_CATEGORIZE_LOOKUP;
+                                final Literal fallback = StyleConstants.DEFAULT_FALLBACK;
+                                final Function function = GO2Utilities.STYLE_FACTORY.interpolateFunction(
+                                        lookup, values, Method.COLOR, Mode.LINEAR, fallback);
+                                final CompatibleColorModel model = new CompatibleColorModel(img.getColorModel().getPixelSize(), function);
+                                final ImageLayout layout = new ImageLayout().setColorModel(model);
+                                img = new NullOpImage(img, layout, null, OpImage.OP_COMPUTE_BOUND);
+                                g2d.drawRenderedImage(img, (AffineTransform)trs2D);
+                            }catch(Exception e){
+                                //plenty of errors can happen when painting an image
+                                monitor.exceptionOccured(e, Level.WARNING);
+
+                                //raise the original error
+                                monitor.exceptionOccured(ex, Level.WARNING);
+                            }
+                        }
+                    }else{
+                        //plenty of errors can happen when painting an image
+                        monitor.exceptionOccured(ex, Level.WARNING);
+                    }
+                }
+            }else if (trs2D instanceof LinearTransform) {
+                final LinearTransform lt = (LinearTransform) trs2D;
+                final int col = lt.getMatrix().getNumCol();
+                final int row = lt.getMatrix().getNumRow();
+                //TODO using only the first parameters of the linear transform
+                throw new PortrayalException("Could not render image, GridToCRS is a not an AffineTransform, found a " + trs2D.getClass());
+            }else{
+                throw new PortrayalException("Could not render image, GridToCRS is a not an AffineTransform, found a " + trs2D.getClass() );
+            }
+
+            //draw the relief shading ----------------------------------------------
+            final ShadedRelief relief = symbol.getSource().getShadedRelief();
+            if(relief != null && elevationCoverage != null){
+                elevationCoverage = elevationCoverage.view(ViewType.GEOPHYSICS);
+                final MathTransform2D eleTrs2D = elevationCoverage.getGridGeometry().getGridToCRS2D();
+                if(eleTrs2D instanceof AffineTransform){
+                    RenderedImage shadowImage = elevationCoverage.getRenderedImage();
+                    shadowImage = shadowed(shadowImage);
+
+                    if(shadowImage.getColorModel() != null && shadowImage.getSampleModel() != null){
+                        //TODO should check this differently, dont know how yet.
+    //                    System.out.println("shadow seems valid");
+    //                    System.out.println("shadow color model : " +shadowImage.getColorModel());
+    //                    System.out.println("shadow sample model : " +shadowImage.getSampleModel());
+    //                    System.out.println("transform :" + eleTrs2D);
+
+                        final Number n = relief.getReliefFactor().evaluate(null,Number.class);
+                        if(n != null){
+                            float factor = n.floatValue();
+                            if(factor>1) factor = 1;
+                            if(factor<0) factor = 0;
+                            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, factor));
+                        }else{
+                            g2d.setComposite(GO2Utilities.ALPHA_COMPOSITE_1F);
+                        }
+
+                        g2d.drawRenderedImage(shadowImage, (AffineTransform)eleTrs2D);
+                    }
+
+                }else{
+                    throw new PortrayalException("Could not render elevation model, GridToCRS is a not an AffineTransform, found a " + eleTrs2D.getClass() );
+                }
+
+            }
+
+            //draw the border if there is one---------------------------------------
+            CachedSymbolizer outline = symbol.getOutLine();
+            if(outline != null){
+                GO2Utilities.portray(projectedCoverage, outline, renderingContext);
+            }
+
+            renderingContext.switchToDisplayCRS();
         }catch (Exception e) {
             LOGGER.warning(e.getMessage());
         }
@@ -274,14 +340,14 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
     ////////////////////////////////////////////////////////////////////////////
 
     /**
-     * 
+     *
      * @param coverage
      * @param styleElement
      * @param hints
      * @param isReprojected : if the coverage was rerprojected, this implies some
      *       black borders might have been added on the image
      * @return
-     * @throws PortrayalException 
+     * @throws PortrayalException
      */
     private static RenderedImage applyStyle(GridCoverage2D coverage, final RasterSymbolizer styleElement,
                 final RenderingHints hints, boolean isReprojected) throws PortrayalException {
@@ -295,7 +361,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             final ChannelSelection selections = styleElement.getChannelSelection();
             final SelectedChannelType channel = selections.getGrayChannel();
             final SelectedChannelType[] channels = selections.getRGBChannels();
-            
+
             if(channel != null){
                 //single band selection
                 final int[] indices = new int[]{
@@ -303,13 +369,13 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                 };
                 coverage = (GridCoverage2D)selectBand(coverage, indices);
             }else{
-                
+
                 final int[] selected = new int[]{
                         Integer.valueOf(channels[0].getChannelName()),
                         Integer.valueOf(channels[1].getChannelName()),
                         Integer.valueOf(channels[2].getChannelName())
                         };
-                
+
                 //@Workaround(library="JAI",version="1.0.x")
                 //TODO when JAI has been rewritten, this test might not be necessary anymore
                 //check if selection actually does something
@@ -332,19 +398,19 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                     coverage = (GridCoverage2D)selectBand(coverage, indices);
                 }
             }
-            
+
         }
 
-        
+
         RenderedImage image = null;
-        
+
         //Recolor coverage -----------------------------------------------------
         final ColorMap recolor = styleElement.getColorMap();
         if(recolor != null && recolor.getFunction() != null){
             //colormap is applyed on geophysic view
             coverage = coverage.view(ViewType.GEOPHYSICS);
             image = coverage.getRenderedImage();
-            
+
             final Function fct = recolor.getFunction();
             image = recolor(image,fct);
         }else{
@@ -368,7 +434,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
                 image = forceAlpha(image);
             }
         }
-        
+
         final ContrastEnhancement ce = styleElement.getContrastEnhancement();
         if(ce != null && image.getColorModel() instanceof ComponentColorModel){
 
@@ -396,7 +462,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
     /**
      * Add an alpha band to the image and remove any black border.
-     * 
+     *
      * TODO, this could be done more efficiently by adding an ImageLayout hints
      * when doing the coverage reprojection. but hints can not be passed currently.
      */
@@ -422,7 +488,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         }
         return img;
     }
-    
+
     private static RenderedImage shadowed(final RenderedImage img){
         final ParameterBlock pb = new ParameterBlock();
         pb.setSource(img, 0);
@@ -449,14 +515,14 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         //TODO : this should be used when the index color model can not handle signed values
         //
         //final SampleModel sm = image.getSampleModel();
-        //final int datatype = sm.getDataType();        
+        //final int datatype = sm.getDataType();
         //if(datatype == DataBuffer.TYPE_SHORT){
         //    final ColorModel model = new CompatibleColorModel(16, function);
         //    final ImageLayout layout = new ImageLayout().setColorModel(model);
         //    return new NullOpImage(image, layout, null, OpImage.OP_COMPUTE_BOUND);
         //}
-        
-        
+
+
         /*
          * Extracts the ARGB codes from the ColorModel and invokes the
          * transformColormap(...) method.
@@ -468,7 +534,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             final int mapSize = colors.getMapSize();
             ARGB = new int[mapSize];
             colors.getRGBs(ARGB);
-            
+
             transformColormap(ARGB, function);
             model = ColorUtilities.getIndexColorModel(ARGB, 1, visibleBand, -1);
 
@@ -476,7 +542,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
             final ComponentColorModel colors = (ComponentColorModel) candidate;
             final int nbbit = colors.getPixelSize();
             final int type = image.getSampleModel().getDataType();
-            
+
             if(type == DataBuffer.TYPE_BYTE || type == DataBuffer.TYPE_USHORT){
                 final int mapSize = 1 << nbbit;
                 ARGB = new int[mapSize];
@@ -492,12 +558,12 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
                 transformColormap(ARGB, function);
                 model = ColorUtilities.getIndexColorModel(ARGB, 1, visibleBand, -1);
-                
+
             }else{
                 //we can't handle a index color model when values exceed int max value
                 model = new CompatibleColorModel(nbbit, function);
             }
-            
+
         }else{
             // Current implementation supports only sources that use of index color model
             // and component color model
