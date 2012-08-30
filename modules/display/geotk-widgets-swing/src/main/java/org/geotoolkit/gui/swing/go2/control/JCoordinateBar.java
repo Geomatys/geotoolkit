@@ -90,7 +90,7 @@ public class JCoordinateBar extends AbstractMapControlBar {
     
     private final JPanel paneTemp = new JPanel(new BorderLayout());
     private final JPanel paneElev = new JPanel(new BorderLayout());
-    private final JMapElevationLine guiElevationLine = new JMapElevationLine();
+    private final JAdditionalAxisNavigator guiAdditional = new JAdditionalAxisNavigator();
     private final JMapTimeLine guiTimeLine = new JMapTimeLine();
 
     public JCoordinateBar() {
@@ -106,7 +106,7 @@ public class JCoordinateBar extends AbstractMapControlBar {
         add(BorderLayout.CENTER,paneTemp);
 
         paneTemp.add(BorderLayout.CENTER,guiTimeLine);
-        paneElev.add(BorderLayout.CENTER,guiElevationLine);
+        paneElev.add(BorderLayout.CENTER,guiAdditional);
 
         //the hints menu -------------------------------------------------------
         final JCheckBoxMenuItem guiAxis = new JCheckBoxMenuItem(MessageBundle.getString("map_xy_ratio")){
@@ -327,8 +327,7 @@ public class JCoordinateBar extends AbstractMapControlBar {
         paneTemp.setVisible(false);
         paneElev.setVisible(false);
         guiTimeLine.setPreferredSize(new Dimension(100, 100));
-        guiElevationLine.setPreferredSize(new Dimension(100, 100));
-
+        
         int x = 1;
 
         GridBagConstraints constraints = new GridBagConstraints();
@@ -372,7 +371,7 @@ public class JCoordinateBar extends AbstractMapControlBar {
         super.setMap(map);
         guiCombo.setMap(map);
         guiTimeLine.setMap(map);
-        guiElevationLine.setMap(map);
+        guiAdditional.setMap(map);
         
         if(this.map != null){
 

@@ -225,7 +225,7 @@ public class JLayerBandMenu extends JMenu implements ContextListener{
                         if(band instanceof JLayerBand){
                             final JLayerBand lb = (JLayerBand) band;
                             if(lb.getLayer().equals(this.layer)){
-                                navigator.getBands().add(lb);
+                                navigator.getBands().remove(lb);
                             }
                         }
                     }

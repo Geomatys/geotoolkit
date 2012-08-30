@@ -22,6 +22,7 @@ import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -418,9 +419,18 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
         }
 
         if (index >= 0) {
-            canvas.setRange(index, 
+            
+            if(startDate!=null || startDate!=null){
+                canvas.setRange(index, 
                     (startDate!=null)?startDate.getTime():Double.NEGATIVE_INFINITY,
                     (endDate!=null)?endDate.getTime():Double.POSITIVE_INFINITY);
+            }else{
+                //remove this dimension
+                CoordinateReferenceSystem crs = canvas.getObjectiveCRS();
+                crs = removeCRS(crs, DefaultTemporalCRS.JAVA);
+                setObjectiveCRS(crs);
+            }
+            
         }
     }
 
@@ -451,9 +461,16 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
         }
 
         if (index >= 0) {
-            canvas.setRange(index, 
+            if(min!=null || max!=null){
+                canvas.setRange(index, 
                     (min!=null)?min:Double.NEGATIVE_INFINITY,
                     (max!=null)?max:Double.POSITIVE_INFINITY);
+            }else{
+                //remove this dimension
+                CoordinateReferenceSystem crs = canvas.getObjectiveCRS();
+                crs = removeCRS(crs, DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT);
+                setObjectiveCRS(crs);
+            }
         }
     }
 
@@ -507,6 +524,58 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
         }
         return -1;
     }
+    
+    
+    public Double[] getAxisRange(final Comparator<CoordinateSystemAxis> comparator) {
+        final int index = getAxisIndex(comparator);
+        if (index >= 0) {
+            final Envelope envelope = canvas.getVisibleEnvelope();
+            return new Double[]{envelope.getMinimum(index), envelope.getMaximum(index)};
+        }
+        return null;
+    }
+    
+    public void setAxisRange(final Double min, final Double max, 
+            final Comparator<CoordinateSystemAxis> comparator, CoordinateReferenceSystem axisCrs) throws TransformException {
+        int index = getAxisIndex(comparator);
+        if(index < 0 && (min!=null || max!=null)){
+            //no elevation axis, add one
+            CoordinateReferenceSystem crs = canvas.getObjectiveCRS();
+            crs = appendCRS(crs, axisCrs);
+            setObjectiveCRS(crs);
+            index = getElevationAxisIndex();
+        }
+
+        if (index >= 0) {
+            if(min!=null || max!=null){
+                canvas.setRange(index, 
+                    (min!=null)?min:Double.NEGATIVE_INFINITY,
+                    (max!=null)?max:Double.POSITIVE_INFINITY);
+            }else{
+                //remove this dimension
+                CoordinateReferenceSystem crs = canvas.getObjectiveCRS();
+                crs = removeCRS(crs, axisCrs);
+                setObjectiveCRS(crs);
+            }
+        }
+    }
+    
+    /**
+     * Search an axis index.
+     * Comparator must return 0 when found.
+     * 
+     * @param comparator
+     * @return -1 if not found
+     */
+    public int getAxisIndex(final Comparator<CoordinateSystemAxis> comparator) {
+        final CoordinateReferenceSystem objCrs = canvas.getObjectiveCRS();
+        final CoordinateSystem cs = objCrs.getCoordinateSystem();
+        for (int i = 0, n = cs.getDimension(); i < n; i++) {
+            final CoordinateSystemAxis axi = cs.getAxis(i);
+            if(comparator.compare(axi, axi) == 0) return i;
+        }
+        return -1;
+    }
 
     private CoordinateReferenceSystem appendCRS(final CoordinateReferenceSystem crs, final CoordinateReferenceSystem toAdd){
         if(crs instanceof CompoundCRS){
@@ -516,6 +585,21 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
             return new DefaultCompoundCRS(orig.getName().getCode(), lst.toArray(new CoordinateReferenceSystem[lst.size()]));
         }else{
             return new DefaultCompoundCRS(crs.getName().getCode()+" "+toAdd.getName().getCode(),crs, toAdd);
+        }
+
+    }
+    
+    private CoordinateReferenceSystem removeCRS(final CoordinateReferenceSystem crs, final CoordinateReferenceSystem toRemove){
+        if(crs instanceof CompoundCRS){
+            final CompoundCRS orig = (CompoundCRS) crs;
+            final List<CoordinateReferenceSystem> lst = new ArrayList<CoordinateReferenceSystem>(orig.getComponents());
+            lst.remove(toRemove);
+            if(lst.size() == 1){
+                return lst.get(0);
+            }
+            return new DefaultCompoundCRS(orig.getName().getCode(), lst.toArray(new CoordinateReferenceSystem[lst.size()]));
+        }else{
+            return crs;
         }
 
     }
