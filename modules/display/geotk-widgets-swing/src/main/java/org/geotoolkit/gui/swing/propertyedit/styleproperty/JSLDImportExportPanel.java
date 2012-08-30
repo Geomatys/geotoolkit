@@ -28,6 +28,7 @@ import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.sld.MutableLayer;
 import org.geotoolkit.sld.MutableStyledLayerDescriptor;
+import org.geotoolkit.sld.xml.Specification;
 import org.geotoolkit.sld.xml.Specification.StyledLayerDescriptor;
 import org.geotoolkit.sld.xml.XMLUtilities;
 import org.geotoolkit.style.MutableStyle;
@@ -140,8 +141,9 @@ public class JSLDImportExportPanel extends javax.swing.JPanel implements Propert
         final StyledLayerDescriptor version = (StyledLayerDescriptor)guiVersion.getSelectedItem();
         if(layer != null){
             final JFileChooser chooser = new JFileChooser();
-            final int result = chooser.showSaveDialog(this);
+            final int result = chooser.showOpenDialog(this);
 
+            parse:
             if(result == JFileChooser.APPROVE_OPTION){
                 final XMLUtilities tool = new XMLUtilities();
                 try {
@@ -166,12 +168,28 @@ public class JSLDImportExportPanel extends javax.swing.JPanel implements Propert
                             }
                         }
                     }
-
+                    break parse;
                 } catch (JAXBException ex) {
-                    Logging.getLogger(JSLDImportExportPanel.class).log(Level.WARNING,ex.getMessage(),ex);
+                    Logging.getLogger(JSLDImportExportPanel.class).log(Level.FINEST,ex.getMessage(),ex);
                 } catch (FactoryException ex) {
-                    Logging.getLogger(JSLDImportExportPanel.class).log(Level.WARNING,ex.getMessage(),ex);
+                    Logging.getLogger(JSLDImportExportPanel.class).log(Level.FINEST,ex.getMessage(),ex);
                 }
+                
+                try {
+                    final MutableStyle style = tool.readStyle(chooser.getSelectedFile(), 
+                            (version==StyledLayerDescriptor.V_1_0_0) ? 
+                            Specification.SymbologyEncoding.SLD_1_0_0 : 
+                            Specification.SymbologyEncoding.V_1_1_0);
+
+                    layer.setStyle(style);
+                    
+                    break parse;
+                } catch (JAXBException ex) {
+                    Logging.getLogger(JSLDImportExportPanel.class).log(Level.FINEST,ex.getMessage(),ex);
+                } catch (FactoryException ex) {
+                    Logging.getLogger(JSLDImportExportPanel.class).log(Level.FINEST,ex.getMessage(),ex);
+                }
+                
             }
         }
     }
