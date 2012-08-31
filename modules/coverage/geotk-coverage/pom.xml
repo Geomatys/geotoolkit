@@ -60,6 +60,15 @@
   <!--     Dependency Management                                   -->
   <!-- =========================================================== -->
     <dependencies>
+        <dependency>
+            <groupId>org.geotoolkit</groupId>
+            <artifactId>geotk-coverageio</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.geotoolkit.pending</groupId>
+            <artifactId>geotk-index-tree</artifactId>
+            <version>3.x-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
 </project>
