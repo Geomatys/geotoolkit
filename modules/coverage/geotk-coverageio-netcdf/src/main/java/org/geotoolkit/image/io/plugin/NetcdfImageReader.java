@@ -689,13 +689,15 @@ public class NetcdfImageReader extends FileImageReader implements
 
     /**
      * Returns the indices along all dimensions of the slice to read. The default value for
-     * indices that were not explicitly specified is 0.
+     * indices that were not explicitly specified is 0. This method returns elements in the
+     * NetCDF order (reverse of the usual order).
      * <p>
      * The {@link #prepareVariable} method shall be invoked prior this method (this is not verified).
      *
      * @param  param The parameters supplied by the user to the {@code read} method.
      * @param  rank The number of dimensions (the rank) in the {@linkplain #variable}.
-     * @return The indices as a value from 0 inclusive to {@link Dimension#getLength} exclusive.
+     * @return The indices in NetCDF order (reverse of usual order), as values from 0
+     *         inclusive to {@link Dimension#getLength()} exclusive.
      * @throws IOException If an error occurred while reading the NetCDF file.
      */
     @SuppressWarnings("fallthrough")
@@ -707,11 +709,11 @@ public class NetcdfImageReader extends FileImageReader implements
                 final List<CoordinateAxis> axes = getAxes(rank);
                 final Object[] properties = new Object[axes != null ? 3 : 1];
                 for (int i=0; i<rank; i++) {
-                    final CoordinateAxis axis = axes.get(i);
+                    final CoordinateAxis axis = (axes != null) ? axes.get(i) : null;
                     switch (properties.length) {
                         default: properties[2] = NetcdfAxis.getDirection(axis);
                         case 2:  properties[1] = axis.getFullName();
-                        case 1:  properties[0] = i;
+                        case 1:  properties[0] = (rank - 1) - i;
                         case 0:  break;
                     }
                     indices[i] = p.getSliceIndex(properties);
@@ -730,9 +732,11 @@ public class NetcdfImageReader extends FileImageReader implements
      * already provided in image metadata. We use it when we want only this specific information
      * without the rest of metadata. In many cases this method will not be invoked at all, thus
      * avoiding the need to load metadata.
+     * <p>
+     * This method returns axes in NetCDF order (reverse of the usual order).
      *
      * @param  rank The number of dimensions (the rank) in the {@linkplain #variable}.
-     * @return The axis having a length equals or greater than {@code dimension}, or {@code null}.
+     * @return The axes in NetCDF order, or {@code null} if no set of axis is applicable.
      * @throws IOException If an error occurred while reading the NetCDF file.
      */
     private List<CoordinateAxis> getAxes(final int rank) throws IOException {
@@ -1123,7 +1127,7 @@ public class NetcdfImageReader extends FileImageReader implements
                     break;
                 }
                 default: {
-                    first  = dimensionSlices[i];
+                    first  = dimensionSlices[i]; // Already in NetCDF order.
                     length = 1;
                     stride = 1;
                     break;
