@@ -27,6 +27,7 @@ import org.opengis.metadata.extent.Extent;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.referencing.datum.Datum;
 import org.opengis.referencing.datum.GeodeticDatum;
 import org.opengis.referencing.datum.VerticalDatum;
 import org.opengis.referencing.datum.TemporalDatum;
@@ -35,6 +36,7 @@ import org.opengis.referencing.cs.VerticalCS;
 import org.opengis.referencing.cs.CartesianCS;
 import org.opengis.referencing.cs.EllipsoidalCS;
 import org.opengis.referencing.cs.CoordinateSystem;
+import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.crs.VerticalCRS;
 import org.opengis.referencing.crs.ProjectedCRS;
@@ -175,6 +177,17 @@ class DiscreteCRS<T extends CoordinateReferenceSystem> implements CoordinateRefe
         }
         @Override public TimeCS getCoordinateSystem() {return (TimeCS) cs;}
         @Override public TemporalDatum getDatum()     {return crs.getDatum();}
+    }
+
+    /**
+     * A discrete single CRS of unknown type.
+     */
+    static final class Single extends DiscreteCRS<SingleCRS> implements SingleCRS {
+        private static final long serialVersionUID = 1616462096697283316L;
+        Single(final SingleCRS crs, final double[]... ordinates) {
+            super(crs, new DiscreteCS(crs.getCoordinateSystem(), ordinates));
+        }
+        @Override public Datum getDatum() {return crs.getDatum();}
     }
 
     /**

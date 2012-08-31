@@ -299,8 +299,6 @@ public class DefaultContact extends MetadataEntity implements Contact {
      * Constructs an initially empty contact.
      */
     public DefaultContact() {
-        // empty constructor. Use set methods and call freeze
-        // before returning this instance to client code
     }
 
     /**

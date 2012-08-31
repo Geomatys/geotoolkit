@@ -44,6 +44,7 @@ public final strictfp class MonolineFormatterTest extends LocaleDependantTestBas
      * Tests formatting of a multi-line message.
      */
     @Test
+    @Ignore("Result varies with JDK implementations.")
     public void testMultilines() {
         final LogRecord record = new LogRecord(Level.INFO, "First line\n  Indented line\nLast line\n");
         final String formatted = formatter.format(record);
@@ -57,6 +58,7 @@ public final strictfp class MonolineFormatterTest extends LocaleDependantTestBas
      * Tests formatting a log record which contains an exception.
      */
     @Test
+    @Ignore("Result varies with JDK implementations.")
     public void testException() {
         final LogRecord record = new LogRecord(Level.WARNING, "An exception occured.");
         final Exception exception = new Exception();
