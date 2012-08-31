@@ -276,7 +276,7 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
         requestParameters.put("WIDTH", String.valueOf(dimension.width));
         requestParameters.put("HEIGHT", String.valueOf(dimension.height));
         requestParameters.put("LAYERS", StringUtilities.toCommaSeparatedValues((Object[])layers));
-        requestParameters.putAll(toString(envelope));      
+        requestParameters.putAll(toString(envelope));
 
 
         // Add optional parameters
@@ -295,25 +295,25 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
         if (sldVersion != null) {
             requestParameters.put("SLD_VERSION", sldVersion);
         }
-        
-        
-        // Add one style parameter       
-        String styleParam = "STYLES"; 
+
+
+        // Add one style parameter
+        String styleParam = "STYLES";
         String styleValue = "";
-        
+
         if (sldBody != null) {
             styleParam = "SLD_BODY";
             styleValue = sldBody;
-            
+
         } else if (sld != null) {
             styleParam = "SLD";
-            styleValue = sld;        
-        
+            styleValue = sld;
+
         } else if (styles != null && styles.length > 0 && styles[0] != null) {
-            styleValue = StringUtilities.toCommaSeparatedValues((Object[])styles);          
+            styleValue = StringUtilities.toCommaSeparatedValues((Object[])styles);
         }
-        
-        requestParameters.put(styleParam, styleValue);  
+
+        requestParameters.put(styleParam, styleValue);
 
     }
 
@@ -321,18 +321,18 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
      * Return a map containing BBOX, SRS (or CRS), TIME and ELEVATION parameters.
      *
      * @param env
-     * @return 
+     * @return
      */
     protected abstract Map<String, String> toString(Envelope env);
 
     /**
-     * Encode TIME and ELEVATION parameters if they are defined in the envelope.
+     * Encode other additional parameters, like TIME, ELEVATION or others which will be put
+     * in a filter, if they are defined in the envelope.
      *
      * @param env Current Envelope
      * @param map map containing GetMap parameters
      */
-    protected void encodeTimeAndElevation(final Envelope env, final Map<String, String> map) {
-        //append time and elevation parameter
+    protected void encodeNDParameters(final Envelope env, final Map<String, String> map) {
         final CoordinateSystem cs = env.getCoordinateReferenceSystem().getCoordinateSystem();
         for (int i = 0, n = cs.getDimension(); i < n; i++) {
             final CoordinateSystemAxis axis = cs.getAxis(i);
@@ -388,10 +388,17 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
                     map.put("ELEVATION", String.valueOf(median));
                 }
 
+            } else if ((!ad.equals(AxisDirection.EAST)) && (!ad.equals(AxisDirection.WEST)) &&
+                       (!ad.equals(AxisDirection.SOUTH)) && (!ad.equals(AxisDirection.NORTH))) {
+
+                // TODO: handle it with a cql filter and then get back with the toString method
+                // in order to handle the AND filter and to filter on several dimensions.
+                // For now, it only works with one.
+                map.put("cql_filter", axis.getName().getCode() +"="+ env.getMedian(i));
             }
         }
     }
-    
+
     /**
      * Encode ELEVATION parameters if defined in the envelope.
      *

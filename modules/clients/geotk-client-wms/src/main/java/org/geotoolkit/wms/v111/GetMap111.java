@@ -69,7 +69,7 @@ public class GetMap111 extends AbstractGetMap {
             LOGGER.log(Level.WARNING, null, ex);
         }
 
-        encodeTimeAndElevation(env, map);
+        encodeNDParameters(env, map);
 
         return map;
     }
