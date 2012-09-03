@@ -33,7 +33,7 @@ import org.geotoolkit.index.tree.io.TreeVisitorResult;
 import org.opengis.geometry.Envelope;
 
 /**
- * Copy all pixels tile find in RTree, in a destination {@code WritableRenderedImage}.
+ * Copy all pixels tile(s) found in RTree, in a destination {@code WritableRenderedImage}.
  *
  * @author Remi Marechal (Geomatys).
  */

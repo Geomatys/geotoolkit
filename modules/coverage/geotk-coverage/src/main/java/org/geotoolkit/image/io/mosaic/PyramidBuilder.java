@@ -172,11 +172,13 @@ public class PyramidBuilder {
      * @param tileSize Result tile size.
      * @param interpolationCase Interpolation type for pyramid.
      * @param lanczosWindow lanczos window for Lanczos interpolation.
+     * @param fillValue
      * @see LanczosInterpolation
+     * @see Resample
      */
-    public PyramidBuilder(RenderedImage renderedImage, double[] coeffX, double[] coeffY,
-            Dimension tileSize, String formatName,
-            InterpolationCase interpolationCase, int lanczosWindow, double[] fillValue) {
+    public PyramidBuilder(final RenderedImage renderedImage, final double[] coeffX, final double[] coeffY,
+            final Dimension tileSize, final String formatName,
+            final InterpolationCase interpolationCase, final int lanczosWindow, final double[] fillValue) {
         ArgumentChecks.ensureNonNull("rendered image", renderedImage);
         ArgumentChecks.ensureNonNull("coeffX", coeffX);
         ArgumentChecks.ensureNonNull("coeffY", coeffY);
@@ -185,13 +187,13 @@ public class PyramidBuilder {
             throw new IllegalArgumentException("resampling coeffX and coeffY will be able to have same length");
         //image attributs
         this.renderedImage = renderedImage;
-        this.rIMinX = renderedImage.getMinX();
-        this.rIMinY = renderedImage.getMinY();
-        this.rIWidth = renderedImage.getWidth();
-        this.rIHeight = renderedImage.getHeight();
-        this.sampleMod = renderedImage.getSampleModel();
-        this.colorMod = renderedImage.getColorModel();
-        this.formatName = formatName;
+        this.rIMinX        = renderedImage.getMinX();
+        this.rIMinY        = renderedImage.getMinY();
+        this.rIWidth       = renderedImage.getWidth();
+        this.rIHeight      = renderedImage.getHeight();
+        this.sampleMod     = renderedImage.getSampleModel();
+        this.colorMod      = renderedImage.getColorModel();
+        this.formatName    = formatName;
         //resampling coefficients
         this.coeffX = coeffX;
         this.coeffY = coeffY;
@@ -199,9 +201,9 @@ public class PyramidBuilder {
         this.tileWidth  = (tileSize == null) ? DEFAULT_TILE_SIZE : (tileSize.width  < MIN_TILE_SIZE) ? MIN_TILE_SIZE : tileSize.width;
         this.tileHeight = (tileSize == null) ? DEFAULT_TILE_SIZE : (tileSize.height < MIN_TILE_SIZE) ? MIN_TILE_SIZE : tileSize.height;
 
-        interpolation = Interpolation.create(PixelIteratorFactory.createRowMajorIterator(renderedImage), interpolationCase, lanczosWindow);
-        this.fillValue = fillValue;
-        formatter = new FilenameFormatter();
+        interpolation   = Interpolation.create(PixelIteratorFactory.createRowMajorIterator(renderedImage), interpolationCase, lanczosWindow);
+        this.fillValue  = fillValue;
+        formatter       = new FilenameFormatter();
         formatter.ensurePrefixSet("tile");
     }
 

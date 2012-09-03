@@ -92,6 +92,7 @@ public class Resample {
      * @param mathTransform Transformation use to transform source point to target point.
      * @param imageDest image will be fill by image source pixel interpolation.
      * @param interpol Interpolation use to interpolate source image pixels.
+     * @param fillValue contains value use when pixel transformation is out of source image boundary.
      * @throws NoninvertibleTransformException if it is impossible to invert {@code MathTransform} parameter.
      */
     public Resample(MathTransform mathTransform, WritableRenderedImage imageDest, Interpolation interpol, double[] fillValue) throws NoninvertibleTransformException {
