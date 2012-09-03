@@ -29,6 +29,7 @@ import javax.media.jai.TiledImage;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
+import org.geotoolkit.image.interpolation.LanczosInterpolation;
 import org.geotoolkit.image.interpolation.Resample;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
@@ -47,8 +48,9 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
 
 /**
+ * Construct and write from a defined path, a "pyramid" of tiles from given {@code Rendered image}.
  *
- * @author rmarech
+ * @author Remi Marechal (Geomatys).
  */
 public class PyramidBuilder {
 
@@ -58,15 +60,18 @@ public class PyramidBuilder {
     private static final int DEFAULT_TILE_SIZE = 256;
 
     /**
-     * Minimum tile size when using {@link TileLayout#CONSTANT_GEOGRAPHIC_AREA} without
-     * explicit subsamplings provided by user.
+     * Minimum tile size.
      */
     private static final int MIN_TILE_SIZE = 64;
 
     /**
-     * Tile size.
+     * Tile width.
      */
     private final int tileWidth;
+
+    /**
+     * Tile height.
+     */
     private final int tileHeight;
 
     /**
@@ -74,26 +79,49 @@ public class PyramidBuilder {
      */
     private final FilenameFormatter formatter;
 
-
-    ////////image attributs//////////////////
     /**
-     *
+     * Pyramid base {@code RenderedImage}.
      */
     private final RenderedImage renderedImage;
 
+    /**
+     * {@code RenderedImage} lower corner min x value.
+     */
     private final int rIMinX;
+
+    /**
+     * {@code RenderedImage} lower corner min y value.
+     */
     private final int rIMinY;
+
+    /**
+     * {@code RenderedImage} width.
+     */
     private final int rIWidth;
+
+    /**
+     * {@code RenderedImage} height.
+     */
     private final int rIHeight;
+
+    /**
+     * {@code RenderedImage} {@code SampleModel}.
+     */
     private final SampleModel sampleMod;
+
+    /**
+     * {@code RenderedImage} {@code ColorModel}.
+     */
     private final ColorModel colorMod;
-    ///////////////////////////////////////////////
 
     /**
      * Directory path which will contain tile.
      */
     private File tileDirectory = null;
 
+    /**
+     * Written tile extention.
+     */
     private final String formatName;
 
     /**
@@ -111,28 +139,40 @@ public class PyramidBuilder {
      */
     private final int levelNbre;
 
+    /**
+     * Temporary tile area iterate.
+     */
     private final Rectangle areaTile = new Rectangle();
 
-    //initialisation RTree
-    //pseudo 2D temporal
+    /**
+     * RTree attributes.
+     */
     private static final CoordinateReferenceSystem TEMPORALCRS     = DefaultTemporalCRS.JAVA;
     private static final CoordinateReferenceSystem CARTESIAN_2DCRS = DefaultEngineeringCRS.CARTESIAN_2D;
     private final CoordinateReferenceSystem crsCompound = new DefaultCompoundCRS("compoundCrs",
             new CoordinateReferenceSystem[] {CARTESIAN_2DCRS, TEMPORALCRS});
     private final Tree hilberTree = TreeFactory.createHilbertRTree(1, 3, crsCompound,TreeNodeFactory.DEFAULT_FACTORY);
 
-    //interpolation attributs
+    /**
+     * Interpolation attributes.
+     */
     private final Interpolation interpolation;
     private final double[] fillValue;
 
     /**
+     * <p>Construct a pyramid of tiles, from {@code RenderedImage}.<br/>
      *
-     * @param renderedImage
-     * @param coeffX
-     * @param coeffY
-     * @param tileSize
-     * @param interpolationCase
-     * @param lanczosWindow
+     * Pyramid level number is given by {@code coeffx} and {@code coeffy} length.<br/>
+     *
+     * Note : if Lanczos interpolation isn't choose, {@code Lanczoswindow} parameter has no impact.</p>
+     *
+     * @param renderedImage image which will be pyramid.
+     * @param coeffX Transformation in x direction for each pyramid level.
+     * @param coeffY Transformation in y direction for each pyramid level.
+     * @param tileSize Result tile size.
+     * @param interpolationCase Interpolation type for pyramid.
+     * @param lanczosWindow lanczos window for Lanczos interpolation.
+     * @see LanczosInterpolation
      */
     public PyramidBuilder(RenderedImage renderedImage, double[] coeffX, double[] coeffY,
             Dimension tileSize, String formatName,
@@ -165,10 +205,19 @@ public class PyramidBuilder {
         formatter.ensurePrefixSet("tile");
     }
 
+    /**
+     * Construct and write pyramid.
+     *
+     * @throws NoninvertibleTransformException if can't resample image.
+     * @throws TransformException if can't resample image.
+     * @throws IOException if can't write tile.
+     */
     public void createPyramid() throws NoninvertibleTransformException, TransformException, IOException {
         if (tileDirectory == null)
             throw new IllegalStateException("you must set tile directory path");
-        //vider le dossier courant
+        /**
+         * Clean destination directory.
+         */
         File[] tabfil = tileDirectory.listFiles();
         for (File f : tabfil) {
             f.delete();
@@ -216,14 +265,15 @@ public class PyramidBuilder {
             for (int ity = 0; ity<nbrTY; ity++) {
                 int tempMinx = minx;
                 for (int itx = 0; itx<nbrTX; itx++) {
-                    int tmaxx = Math.min(tempMinx + tileWidth, maxx);
-                    int tmaxy = Math.min(miny + tileHeight, maxy);
+                    final int tmaxx = Math.min(tempMinx + tileWidth, maxx);
+                    final int tmaxy = Math.min(miny + tileHeight, maxy);
                     //on creer la tuile
                     TiledImage tuile = new TiledImage(tempMinx, miny, tmaxx - tempMinx, tmaxy - miny, tempMinx, miny, sampleMod, colorMod);
                     //on rempli la tuile
                     areaTile.setBounds(tempMinx, miny, tmaxx - tempMinx, tmaxy - miny);
-                    PixelIterator pix = PixelIteratorFactory.createRowMajorIterator(wri, areaTile);
-                    PixelIterator destPix = PixelIteratorFactory.createRowMajorWriteableIterator(tuile, tuile);
+                    //optimisation : faire un seul iterateur pour recopier
+                    final PixelIterator pix = PixelIteratorFactory.createRowMajorIterator(wri, areaTile);
+                    final PixelIterator destPix = PixelIteratorFactory.createRowMajorWriteableIterator(tuile, tuile);
                     while (pix.next()) {
                         destPix.next();
                         destPix.setSample(pix.getSample());
@@ -232,7 +282,7 @@ public class PyramidBuilder {
                     namePTile = tileDirectory.getPath()+"/";
                     namePTile += formatter.generateFilename(lev, itx, ity)+"."+formatName;
                     //on genere le path
-                    File path = new File(namePTile);
+                    final File path = new File(namePTile);
                     //on ecrit sur disk
                     ImageIO.write(tuile, formatName, new File(namePTile));
                     //on genere un envelope de pyramidtile
@@ -265,20 +315,32 @@ public class PyramidBuilder {
         }
     }
 
-
     /**
+     * Return format tile size.
      *
-     * @return
+     * @return format tile size.
      */
     public TileLayout getTileLayout(){
         return TileLayout.CONSTANT_TILE_SIZE;
     }
 
-    public RenderedImage getImage(Rectangle bound, int pyramidLevel) {
-        GeneralEnvelope regionSearch = new GeneralEnvelope(crsCompound);
-        regionSearch.setEnvelope(bound.x, bound.y, pyramidLevel, bound.x+bound.width, bound.y+bound.height, pyramidLevel);
-        WritableRenderedImage renderResult = new TiledImage(bound.x, bound.y, bound.width, bound.height, bound.x, bound.y, sampleMod, colorMod);
-        TreeVisitor treevisit = new PyramidVisitor(renderResult, bound);
+    /**
+     * Construct and fill a {@code RenderedImage} of boundary parameter size
+     * from pyramid tile at pyramidLevel parameter level.
+     *
+     * @param boundary RenderedImage result boundary.
+     * @param pyramidLevel pyramid level.
+     * @return result {@code RenderedImage}.
+     */
+    public RenderedImage getImage(Rectangle boundary, int pyramidLevel) {
+        final int brx = boundary.x;
+        final int bry = boundary.y;
+        final int brw = boundary.width;
+        final int brh = boundary.height;
+        final GeneralEnvelope regionSearch = new GeneralEnvelope(crsCompound);
+        regionSearch.setEnvelope(brx, bry, pyramidLevel, brx + brw, bry + brh, pyramidLevel);
+        final WritableRenderedImage renderResult = new TiledImage(brx, bry, brw, brh, brx, bry, sampleMod, colorMod);
+        final TreeVisitor treevisit = new PyramidVisitor(renderResult, boundary);
         hilberTree.search(regionSearch, treevisit);
         return renderResult;
     }

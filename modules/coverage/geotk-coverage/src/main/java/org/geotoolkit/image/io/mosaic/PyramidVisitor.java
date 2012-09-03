@@ -33,24 +33,63 @@ import org.geotoolkit.index.tree.io.TreeVisitorResult;
 import org.opengis.geometry.Envelope;
 
 /**
+ * Copy all pixels tile find in RTree, in a destination {@code WritableRenderedImage}.
  *
- * @author rmarech
+ * @author Remi Marechal (Geomatys).
  */
 public class PyramidVisitor implements TreeVisitor {
 
+    /**
+     * Area iterate.
+     */
     private Rectangle intersection;
 
+    /**
+     * Area iterate min x.
+     */
     private final int bx;
+
+    /**
+     * Area iterate min y.
+     */
     private final int by;
+
+    /**
+     * Area iterate width.
+     */
     private final int bw;
+
+    /**
+     * Area iterate height.
+     */
     private final int bh;
+
+    /**
+     * Area iterate max x.
+     */
     private final int bxmax;
+
+    /**
+     * Area iterate max y.
+     */
     private final int bymax;
 
+    /**
+     * Iterator to write in result {@code RenderedImage}.
+     */
     PixelIterator destPix;
 
+    /**
+     * Result image band number.
+     */
     private final int nb;
 
+    /**
+     * Copy and write in a result {@code RenderedImage} from RTree tile found.
+     *
+     * @param image result image within write.
+     * @param boundary area iterate write.
+     */
     public PyramidVisitor(WritableRenderedImage image, Rectangle boundary) {
         destPix = PixelIteratorFactory.createRowMajorWriteableIterator(image, image);
         this.nb = image.getSampleModel().getNumBands();
@@ -63,12 +102,22 @@ public class PyramidVisitor implements TreeVisitor {
         this.bymax = by + bh;
     }
 
-
+    /**
+     * {@inheritDoc }.
+     */
     @Override
     public TreeVisitorResult filter(Node node) {
         return TreeVisitorResult.CONTINUE;
     }
 
+    /**
+     * {@inheritDoc }.
+     *
+     * Copy found tile pixels values in result {@code RenderedImage}.
+     *
+     * @param element found RTree tile.
+     * @return {@link TreeVisitorResult}.
+     */
     @Override
     public TreeVisitorResult visit(Envelope element) {
         //recup le chemin
@@ -80,23 +129,25 @@ public class PyramidVisitor implements TreeVisitor {
 
         RenderedImage img = null;
         try {
-            img = ImageIO.read(((PyramidTile)element).getPath());//////
+            img = ImageIO.read(((PyramidTile)element).getPath());
         } catch (IOException ex) {
             Logger.getLogger(PyramidVisitor.class.getName()).log(Level.SEVERE, null, ex);
         }
+        if (img.getSampleModel().getNumBands() != nb)
+            throw new IllegalStateException("tile band number not equals to destination image band number = "+nb);
 
         intersection.setBounds(bx - eltminx, by - eltminy, bw, bh);
 
         final PixelIterator pix = PixelIteratorFactory.createRowMajorIterator(img, intersection);
 
-        int ydeb = max(by, eltminy);
-        int ymax = min(bymax,(int) element.getMaximum(1));
-        int xdeb = max(bx, eltminx);
-        int xmax = xdeb + (min(bxmax,(int) element.getMaximum(0)) - xdeb) * nb;
+        final int ydeb = max(by, eltminy);
+        final int ymax = min(bymax, (int) element.getMaximum(1));
+        final int xdeb = max(bx, eltminx);
+        final int xmax = xdeb + (min(bxmax,(int) element.getMaximum(0)) - xdeb) * nb;
 
         for (int y = ydeb ; y < ymax; y++) {
             destPix.moveTo(xdeb, y, 0);
-            for (int x = xdeb; x < xmax; x++) {//ya une modif genre xmax x nb
+            for (int x = xdeb; x < xmax; x++) {
                 pix.next();
                 destPix.setSample(pix.getSample());
                 destPix.next();
@@ -104,5 +155,4 @@ public class PyramidVisitor implements TreeVisitor {
         }
         return TreeVisitorResult.CONTINUE;
     }
-
 }
