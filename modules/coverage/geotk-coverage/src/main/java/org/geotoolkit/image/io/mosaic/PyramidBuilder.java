@@ -1,18 +1,31 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ *    Geotoolkit.org - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2012, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
  */
 package org.geotoolkit.image.io.mosaic;
 
-import java.awt.*;
-import java.awt.image.*;
+import java.awt.Dimension;
+import java.awt.Rectangle;
+import java.awt.image.ColorModel;
+import java.awt.image.RenderedImage;
+import java.awt.image.SampleModel;
+import java.awt.image.WritableRenderedImage;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.media.jai.TiledImage;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.image.interpolation.Interpolation;
 import org.geotoolkit.image.interpolation.InterpolationCase;
@@ -22,7 +35,6 @@ import org.geotoolkit.image.iterator.PixelIteratorFactory;
 import org.geotoolkit.index.tree.Tree;
 import org.geotoolkit.index.tree.TreeFactory;
 import org.geotoolkit.index.tree.io.TreeVisitor;
-import org.geotoolkit.index.tree.nodefactory.NodeFactory;
 import org.geotoolkit.index.tree.nodefactory.TreeNodeFactory;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
@@ -54,7 +66,8 @@ public class PyramidBuilder {
     /**
      * Tile size.
      */
-    private final Dimension tileSize;
+    private final int tileWidth;
+    private final int tileHeight;
 
     /**
      * The filename formatter.
@@ -98,9 +111,6 @@ public class PyramidBuilder {
      */
     private final int levelNbre;
 
-    private final int dataType;
-    private final int numBand;
-
     private final Rectangle areaTile = new Rectangle();
 
     //initialisation RTree
@@ -140,14 +150,15 @@ public class PyramidBuilder {
         this.rIWidth = renderedImage.getWidth();
         this.rIHeight = renderedImage.getHeight();
         this.sampleMod = renderedImage.getSampleModel();
-        this.dataType = sampleMod.getDataType();
-        this.numBand = sampleMod.getNumBands();
         this.colorMod = renderedImage.getColorModel();
         this.formatName = formatName;
         //resampling coefficients
         this.coeffX = coeffX;
         this.coeffY = coeffY;
-        this.tileSize = (tileSize == null) ? new Dimension(DEFAULT_TILE_SIZE, DEFAULT_TILE_SIZE) : tileSize;
+        //tile attributs
+        this.tileWidth  = (tileSize == null) ? DEFAULT_TILE_SIZE : (tileSize.width  < MIN_TILE_SIZE) ? MIN_TILE_SIZE : tileSize.width;
+        this.tileHeight = (tileSize == null) ? DEFAULT_TILE_SIZE : (tileSize.height < MIN_TILE_SIZE) ? MIN_TILE_SIZE : tileSize.height;
+
         interpolation = Interpolation.create(PixelIteratorFactory.createRowMajorIterator(renderedImage), interpolationCase, lanczosWindow);
         this.fillValue = fillValue;
         formatter = new FilenameFormatter();
@@ -194,19 +205,19 @@ public class PyramidBuilder {
             }
 
             //nbre de tuile suivant x
-            nbrTX     = resWidth  / tileSize.width;
+            nbrTX     = resWidth  / tileWidth;
             //nbre de tuile suivant y
-            nbrTY     = resHeight / tileSize.height;
+            nbrTY     = resHeight / tileHeight;
             //si la division n'est pas entiere
-            if (resWidth  % tileSize.width  != 0) nbrTX++;
-            if (resHeight % tileSize.height != 0) nbrTY++;
+            if (resWidth  % tileWidth  != 0) nbrTX++;
+            if (resHeight % tileHeight != 0) nbrTY++;
 
             //on resample, ecrit sur le disk et insert dans l'arbre pour chaque tuile
             for (int ity = 0; ity<nbrTY; ity++) {
                 int tempMinx = minx;
                 for (int itx = 0; itx<nbrTX; itx++) {
-                    int tmaxx = Math.min(tempMinx + tileSize.width, maxx);
-                    int tmaxy = Math.min(miny + tileSize.height, maxy);
+                    int tmaxx = Math.min(tempMinx + tileWidth, maxx);
+                    int tmaxy = Math.min(miny + tileHeight, maxy);
                     //on creer la tuile
                     TiledImage tuile = new TiledImage(tempMinx, miny, tmaxx - tempMinx, tmaxy - miny, tempMinx, miny, sampleMod, colorMod);
                     //on rempli la tuile
@@ -232,10 +243,10 @@ public class PyramidBuilder {
                     //on insert dans l'arbre pyramidtile
                     hilberTree.insert(pTile);
                     //tuile suivante en x
-                    tempMinx += tileSize.width;
+                    tempMinx += tileWidth;
                 }
                 //ligne de tuile suivante
-                miny += tileSize.height;
+                miny += tileHeight;
             }
         }
     }
