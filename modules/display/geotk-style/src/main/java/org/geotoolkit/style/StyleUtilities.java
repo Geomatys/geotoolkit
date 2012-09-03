@@ -26,6 +26,7 @@ import org.geotoolkit.sld.DefaultSLDFactory;
 import org.geotoolkit.sld.MutableSLDFactory;
 import org.geotoolkit.sld.MutableStyledLayerDescriptor;
 import org.geotoolkit.sld.MutableUserLayer;
+import org.geotoolkit.util.ArgumentChecks;
 
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
@@ -61,6 +62,7 @@ public final class StyleUtilities extends Static {
     private StyleUtilities(){}
 
     public static MutableStyledLayerDescriptor copy(final StyledLayerDescriptor sld){
+        ArgumentChecks.ensureNonNull("sld", sld);
         final MutableStyledLayerDescriptor copy = SLDF.createSLD();
         copy.setName(sld.getName());
         copy.setVersion(sld.getVersion());
@@ -78,6 +80,7 @@ public final class StyleUtilities extends Static {
     }
     
     public static MutableUserLayer copy(final UserLayer layer){
+        ArgumentChecks.ensureNonNull("layer", layer);
         final MutableUserLayer copy = SLDF.createUserLayer();
         copy.setName(layer.getName());
         //copy.setConstraints(layer.getConstraints());
@@ -96,6 +99,7 @@ public final class StyleUtilities extends Static {
     }
 
     public static MutableStyle copy(final Style style, final double opacity){
+        ArgumentChecks.ensureNonNull("style", style);
         final MutableStyle copy = SF.style();
         copy.setDefault(style.isDefault());
         copy.setDefaultSpecification(style.getDefaultSpecification());
@@ -114,6 +118,7 @@ public final class StyleUtilities extends Static {
     }
 
     public static MutableFeatureTypeStyle copy(final FeatureTypeStyle fts, final double opacity){
+        ArgumentChecks.ensureNonNull("fts", fts);
         final MutableFeatureTypeStyle copy = SF.featureTypeStyle();
         copy.semanticTypeIdentifiers().addAll(fts.semanticTypeIdentifiers());
         copy.setDescription(fts.getDescription());
@@ -133,6 +138,7 @@ public final class StyleUtilities extends Static {
     }
 
     public static MutableRule copy(final Rule rule, final double opacity){
+        ArgumentChecks.ensureNonNull("rule", rule);
         final MutableRule copy = SF.rule();
         copy.setDescription(rule.getDescription());
         copy.setElseFilter(rule.isElseFilter());
@@ -150,6 +156,7 @@ public final class StyleUtilities extends Static {
     }
 
     public static Symbolizer copy(final Symbolizer symbol, final double opacity){
+        ArgumentChecks.ensureNonNull("symbol", symbol);
         if(opacity == 1){
             //no need to modify the symbol
             return symbol;
@@ -227,6 +234,7 @@ public final class StyleUtilities extends Static {
     }
 
     private static Fill correctOpacity(final Fill fl, final double opacity){
+        ArgumentChecks.ensureNonNull("fill", fl);
         return SF.fill(
             fl.getGraphicFill(),
             fl.getColor(),
