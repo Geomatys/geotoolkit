@@ -233,7 +233,7 @@ public class JMap2DFrame extends javax.swing.JFrame {
         jSeparator4 = new JPopupMenu.Separator();
         jMenuItem1 = new JMenuItem();
 
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Go-2 Java2D Renderer");
 
         jSplitPane1.setDividerLocation(200);
