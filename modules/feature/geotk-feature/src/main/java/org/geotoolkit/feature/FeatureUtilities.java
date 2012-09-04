@@ -452,7 +452,7 @@ public final class FeatureUtilities {
     ////////////////////////////////////////////////////////////////////////////
     // PARAMETERS API MAPPING OPERATIONS ///////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
-
+    
     /**
      * Convert a ComplexAttribute in a parameter.
      *
@@ -476,9 +476,7 @@ public final class FeatureUtilities {
      * @return ComplexAttribute
      */
     public static ComplexAttribute toFeature(final ParameterValueGroup source) {
-
         ArgumentChecks.ensureNonNull("source", source);
-        final ComplexType ft = (ComplexType)FeatureTypeUtilities.toPropertyType(source.getDescriptor());
         return toFeature(source,null);
     }
     
@@ -640,25 +638,6 @@ public final class FeatureUtilities {
 
         }
 
-        for(final GeneralParameterDescriptor gpd : source.getDescriptor().descriptors()){
-
-            final Collection<Property> properties = target.getProperties(gpd.getName().getCode());
-
-            if(gpd instanceof ParameterDescriptor){
-                final ParameterDescriptor desc = (ParameterDescriptor) gpd;
-
-                for(final Property prop : properties){
-                    Parameters.getOrCreate(desc, source).setValue(prop.getValue());
-                }
-            }else if(gpd instanceof ParameterDescriptorGroup){
-                final ParameterDescriptorGroup desc = (ParameterDescriptorGroup) gpd;
-
-                for(final Property prop : properties){
-                    final ParameterValueGroup subGroup = source.addGroup(desc.getName().getCode());
-                    fill(subGroup,(ComplexAttribute)prop);
-                }
-            }
-        }
     }
 
     private static void fill(final ComplexAttribute source, final ParameterValueGroup target){
