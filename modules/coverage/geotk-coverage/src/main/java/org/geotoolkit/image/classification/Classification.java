@@ -68,6 +68,12 @@ public class Classification {
     private final int[] index;
 
     /**
+     * Stock average and variance of each possible value group.
+     */
+    private final double[] moyVar;
+    private final int cellLength;
+
+    /**
      * <p>Define and compute two sort of data classifications.<br/>
      * Quantile classification.<br/>
      * Jenks classification.<br/><br/>
@@ -91,6 +97,8 @@ public class Classification {
         this.classList   = new LinkedList<double[]>();
         this.dataLength  = data.length;
         this.index       = new int[2 * classNumber];
+        this.cellLength  = dataLength - classNumber + 1;
+        this.moyVar      = new double[2 * dataLength * cellLength];
     }
 
     /**
@@ -122,6 +130,88 @@ public class Classification {
         }
     }
 
+//    /**
+//     * Class data from Jenks method.
+//     */
+//    public void computeJenks() {
+//        if (classNumber == 1) {
+//            classList.add(data);
+//            index[0] = 0;
+//            index[1] = data.length;
+//            return;
+//        }
+//        int[] finalSequenceKept = null;
+//        final int[] jSequence = new int[classNumber];
+//        final JenkSequence jSeq = new JenkSequence(jSequence, dataLength);
+//        int max, len, min;
+//        double moy, currentVar, currentVariance, varianceIntraClass, varianceInterClass;
+//        double[] average  = new double[classNumber];
+//        double[] variance = new double[classNumber];
+//        double diff = 0;
+//        //for each classes possibilities.
+//        while (jSeq.next()) {
+//            min = 0;
+//            //for each sequence index.
+//            for (int i = 0; i<classNumber; i++) {
+//                max = jSequence[i];
+//                len = max - min;
+//                moy = 0;
+//                currentVariance = 0;
+//                //average computing.
+//                for (int j = min; j<max;j++) {
+//                    moy+=data[j];
+//                }
+//                moy/=len;
+//                average[i] = moy;
+//                //variance computing.
+//                for (int j = min; j<max;j++) {
+//                    currentVar = data[j] - moy;
+//                    currentVar *= currentVar;
+//                    currentVariance += currentVar;
+//                }
+//                variance[i] = currentVariance/len;
+//                //next table begin index.
+//                min = max;
+//            }
+//            /**
+//             * Average of classes variances.
+//             * Named SDBC or "intra classes variances".
+//             */
+//            varianceIntraClass = getAverage(variance);
+//            /**
+//             * Variance of classes averages.
+//             * Named SDAM or "inter classes variance".
+//             */
+//            varianceInterClass = getVariance(average);
+//            if (finalSequenceKept == null) {
+//                finalSequenceKept = jSequence.clone();
+//                diff = (varianceInterClass - varianceIntraClass)/varianceInterClass;
+//            } else {
+//                if (diff < (varianceInterClass - varianceIntraClass)/varianceInterClass) {
+//                    finalSequenceKept = jSequence.clone();
+//                    diff = (varianceInterClass - varianceIntraClass)/varianceInterClass;
+//                }
+//            }
+//        }
+//        min = 0;
+//        int compteur, compIndex = 0;
+//        double[] result;
+//        for (int i = 0; i<classNumber; i++) {
+//            max = finalSequenceKept[i];
+//            //fill index table
+//            index[compIndex++] = min;
+//            index[compIndex++] = max;
+//            len = max - min;
+//            compteur = 0;
+//            result = new double[len];
+//            for (int j = min; j<max; j++) {
+//                result[compteur++] = data[j];
+//            }
+//            classList.add(result);
+//            min = max;
+//        }
+//    }
+
     /**
      * Class data from Jenks method.
      */
@@ -132,11 +222,12 @@ public class Classification {
             index[1] = data.length;
             return;
         }
+        computeMoyVar();
         int[] finalSequenceKept = null;
         final int[] jSequence = new int[classNumber];
         final JenkSequence jSeq = new JenkSequence(jSequence, dataLength);
         int max, len, min;
-        double moy, currentVar, currentVariance, varianceIntraClass, varianceInterClass;
+        double varianceIntraClass, varianceInterClass;
         double[] average  = new double[classNumber];
         double[] variance = new double[classNumber];
         double diff = 0;
@@ -146,22 +237,9 @@ public class Classification {
             //for each sequence index.
             for (int i = 0; i<classNumber; i++) {
                 max = jSequence[i];
-                len = max - min;
-                moy = 0;
-                currentVariance = 0;
-                //average computing.
-                for (int j = min; j<max;j++) {
-                    moy+=data[j];
-                }
-                moy/=len;
-                average[i] = moy;
-                //variance computing.
-                for (int j = min; j<max;j++) {
-                    currentVar = data[j] - moy;
-                    currentVar *= currentVar;
-                    currentVariance += currentVar;
-                }
-                variance[i] = currentVariance/len;
+                int id = 2*(min*cellLength+(max-1-min));
+                average[i]  = moyVar[id];
+                variance[i] = moyVar[id+1];
                 //next table begin index.
                 min = max;
             }
@@ -175,14 +253,10 @@ public class Classification {
              * Named SDAM or "inter classes variance".
              */
             varianceInterClass = getVariance(average);
-            if (finalSequenceKept == null) {
+            double diffTemp = (varianceInterClass - varianceIntraClass) / varianceInterClass;
+            if (finalSequenceKept == null || (diff < diffTemp)) {
                 finalSequenceKept = jSequence.clone();
-                diff = (varianceInterClass - varianceIntraClass)/varianceInterClass;
-            } else {
-                if (diff < (varianceInterClass - varianceIntraClass)/varianceInterClass) {
-                    finalSequenceKept = jSequence.clone();
-                    diff = (varianceInterClass - varianceIntraClass)/varianceInterClass;
-                }
+                diff = diffTemp;
             }
         }
         min = 0;
@@ -264,5 +338,36 @@ public class Classification {
             result += values[i];
         }
         return result /= length;
+    }
+
+    /**
+     * Stock and compute average and variance of each possible value group.
+     */
+    public void computeMoyVar() {
+        int min = 0;
+        int max = cellLength;
+        int currentIndex = min - 1;
+        double moy, var, variance;
+        int id, len;
+        while (min != dataLength) {
+            moy = 0;
+            while (++currentIndex != max) {
+                moy += data[currentIndex];
+                len  = currentIndex - min;
+                id   = 2 * (min * cellLength + len);
+                len++;
+                moyVar[id] = moy / len;
+                variance   = 0;
+                for (int i = min; i <= currentIndex; i++) {
+                    var       = data[i] - moy / len;
+                    var      *= var;
+                    variance += var;
+                }
+                moyVar[id + 1] = variance / len;
+            }
+            if (max < dataLength) max++;
+            min++;
+            currentIndex = min - 1;
+        }
     }
 }
