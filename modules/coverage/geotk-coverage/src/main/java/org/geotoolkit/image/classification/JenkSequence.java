@@ -49,10 +49,20 @@ class JenkSequence {
     private final int classNumber;
 
     /**
+     * Equal to {@link #classNumber}-2.
+     */
+    private final int cN_2;
+
+    /**
      * Attribute use to define max value achieved.
      * @see #next(int) .
      */
     private final int max;
+
+    /**
+     * Jenks sequence table index which change.
+     */
+    private final int[] id;
 
     /**
      * Create an appropriate sequence to build Jenks classification.<br/>
@@ -61,20 +71,23 @@ class JenkSequence {
      *
      * @param sequence table which contains all fractionate possibilities.
      * @param elementsNumber total elements number to classifieds.
+     * @param id table which contain index which change during iteration.
      */
-    JenkSequence(int[] sequence, int elementsNumber) {
+    JenkSequence(int[] sequence, int elementsNumber, int[] id) {
         assert (sequence.length > 1) : "impossible to classify datas with"
                 + " class number lesser 2";
         assert (elementsNumber >= sequence.length) :"impossible to classify datas"
                 + " with class number larger than overall elements number";
         this.sequence = sequence;
         this.classNumber = sequence.length;
+        this.cN_2     = classNumber - 2;
         for (int i = 0; i<classNumber-1; i++) {
             sequence[i] = i+1;
         }
         sequence[classNumber-2]--;
         sequence[classNumber-1] = elementsNumber;
         this.max = elementsNumber - classNumber + 2;
+        this.id = id;
     }
 
     /**
@@ -83,7 +96,7 @@ class JenkSequence {
      * @return true if next iterate exist else return false.
      */
     boolean next() {
-        return next(classNumber-2);
+        return next(cN_2);
     }
 
     /**
@@ -94,6 +107,7 @@ class JenkSequence {
      */
     private boolean next(int currentIndex) {
         if (currentIndex < 0) return false;
+        id[0] = currentIndex;
         sequence[currentIndex]++;
         if (sequence[currentIndex] == max + currentIndex) {
             if (!next(currentIndex-1)) return false;
