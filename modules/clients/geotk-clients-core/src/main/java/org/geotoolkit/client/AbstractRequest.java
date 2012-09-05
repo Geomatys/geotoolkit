@@ -19,9 +19,11 @@ package org.geotoolkit.client;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +33,7 @@ import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.security.DefaultClientSecurity;
 import org.geotoolkit.util.StringUtilities;
+import org.geotoolkit.util.logging.Logging;
 
 
 /**
@@ -52,7 +55,7 @@ public abstract class AbstractRequest implements Request {
      * Client security.
      */
     protected final ClientSecurity security;
-    
+
     /**
      * The address of the web service.
      */
@@ -77,25 +80,25 @@ public abstract class AbstractRequest implements Request {
     protected AbstractRequest(final Server server) {
         this(server, null);
     }
-    
+
     protected AbstractRequest(final Server server, final String subPath) {
         this(server.getURL().toString(), server.getClientSecurity(), subPath);
     }
-    
+
     protected AbstractRequest(final String serverURL) {
         this(serverURL,null);
     }
-    
+
     protected AbstractRequest(final String serverURL, final String subPath) {
         this(serverURL,null,subPath);
     }
-    
+
     protected AbstractRequest(final String serverURL, final ClientSecurity security, final String subPath) {
         this.serverURL = serverURL;
         this.security = (security==null) ? DefaultClientSecurity.NO_SECURITY : security ;
         this.subPath = subPath;
     }
-    
+
     /**
      * Child class may override this method to return different subpath on different
      * parameter values.
@@ -161,20 +164,24 @@ public abstract class AbstractRequest implements Request {
                 if (firstKeyRead) {
                     sb.append('&');
                 }
-                sb.append(StringUtilities.convertSpacesForUrl(key));
-                final String value = entry.getValue();
-                if(DONT_ENCODE_EQUAL != value){
-                    sb.append('=');
-                    if (value != null) {
-                        sb.append(StringUtilities.convertSpacesForUrl(value));
+                try {
+                    sb.append(URLEncoder.encode(key, "UTF-8"));
+                    final String value = entry.getValue();
+                    if(DONT_ENCODE_EQUAL != value){
+                        sb.append('=');
+                        if (value != null) {
+                            sb.append(URLEncoder.encode(value, "UTF-8"));
+                        }
                     }
+                } catch (UnsupportedEncodingException ex) {
+                    Logging.getLogger(AbstractRequest.class).warning("Unsupported charset encoding:" + ex.getMessage());
                 }
                 firstKeyRead = true;
             }
         }
 
         final URL url = new URL(sb.toString());
-        
+
         //security
         return security.secure(url);
     }
@@ -185,12 +192,12 @@ public abstract class AbstractRequest implements Request {
     @Override
     public InputStream getResponseStream() throws IOException{
         URLConnection cnx = getURL().openConnection();
-        
+
         //Set all fields from the headerMap to the properties of this URLConnection.
         for(final Entry<String,String> entry : headerMap.entrySet()){
             cnx.setRequestProperty(entry.getKey(),entry.getValue());
         }
-        
+
         //security
         cnx = security.secure(cnx);
 
@@ -228,14 +235,14 @@ public abstract class AbstractRequest implements Request {
     protected InputStream openRichException(final URLConnection cnx) throws IOException {
         return openRichException(cnx, security);
     }
-    
+
     public static InputStream openRichException(final URLConnection cnx, final ClientSecurity security) throws IOException {
         try {
             cnx.setConnectTimeout(20000);
             InputStream stream = cnx.getInputStream();
             //security
             stream = security.decrypt(stream);
-            
+
             if ("gzip".equalsIgnoreCase(cnx.getContentEncoding())) {
                 return new GZIPInputStream(stream);
             } else {
