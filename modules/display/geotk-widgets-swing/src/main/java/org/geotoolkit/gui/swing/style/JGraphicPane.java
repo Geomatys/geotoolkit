@@ -37,7 +37,6 @@ import org.opengis.style.Graphic;
 public class JGraphicPane extends StyleElementEditor<Graphic> {
 
     private MapLayer layer = null;
-    private Graphic graphic = null;
 
     /** Creates new form JGraphicPanel */
     public JGraphicPane() {
@@ -77,7 +76,6 @@ public class JGraphicPane extends StyleElementEditor<Graphic> {
             guiSize.parse(graphic.getSize());
             guiGraphics.parse(graphic.graphicalSymbols());
         }
-        this.graphic = graphic;
     }
 
     @Override
@@ -108,7 +106,7 @@ public class JGraphicPane extends StyleElementEditor<Graphic> {
         guiSize = new JNumberExpressionPane();
         guiRotation = new JNumberExpressionPane();
         guiAlpha = new JNumberExpressionPane();
-        guiGraphics = new JMarkTable();
+        guiGraphics = new JGraphicSymbolTable();
 
         setOpaque(false);
 
@@ -190,7 +188,7 @@ public class JGraphicPane extends StyleElementEditor<Graphic> {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JNumberExpressionPane guiAlpha;
     private JDisplacementPane guiDisplacement;
-    private JMarkTable guiGraphics;
+    private JGraphicSymbolTable guiGraphics;
     private JNumberExpressionPane guiRotation;
     private JNumberExpressionPane guiSize;
     private JLabel jLabel1;

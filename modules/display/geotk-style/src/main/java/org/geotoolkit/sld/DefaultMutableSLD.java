@@ -71,6 +71,11 @@ class DefaultMutableSLD implements MutableStyledLayerDescriptor{
             protected void notifyRemove(Collection<? extends SLDLibrary> items, NumberRange<Integer> range) {
                 fireLibraryChange(CollectionChangeEvent.ITEM_REMOVED, items, range);
             }
+
+            @Override
+            protected void notifyChange(SLDLibrary oldItem, SLDLibrary newItem, int index) {
+                fireLibraryChange(CollectionChangeEvent.ITEM_CHANGED, oldItem, NumberRange.create(index, index));
+            }
             
         };
     
@@ -107,6 +112,17 @@ class DefaultMutableSLD implements MutableStyledLayerDescriptor{
                     ml.removeListener(layerListener);
                 }
                 fireLayerChange(CollectionChangeEvent.ITEM_REMOVED, items, range);
+            }
+
+            @Override
+            protected void notifyChange(MutableLayer oldItem, MutableLayer newItem, int index) {
+                if(oldItem != null){
+                    oldItem.removeListener(layerListener);
+                }
+                if(newItem != null){
+                    newItem.addListener(layerListener);
+                }
+                fireLayerChange(CollectionChangeEvent.ITEM_CHANGED, oldItem, NumberRange.create(index, index));
             }
             
         };

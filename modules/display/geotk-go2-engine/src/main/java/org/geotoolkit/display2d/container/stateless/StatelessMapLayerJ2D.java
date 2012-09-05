@@ -51,10 +51,7 @@ public class StatelessMapLayerJ2D<T extends MapLayer> extends StatelessMapItemJ2
 
         @Override
         public void styleChange(MapLayer source, EventObject event) {
-            if(item.isVisible() && getCanvas().getController().isAutoRepaint()){
-                //TODO should call a repaint only on this graphic
-                getCanvas().getController().repaint();
-            }
+            //event is catch in the property change
         }
 
         @Override

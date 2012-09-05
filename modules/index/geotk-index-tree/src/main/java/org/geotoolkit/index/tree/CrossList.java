@@ -69,4 +69,17 @@ public abstract class CrossList<T extends Node> extends NotifiedCheckedList<T> i
             n.removeListener(this);
         }
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void notifyChange(T o, T e, int i) {
+        if(o != null){
+            o.removeListener(this);
+        }
+        if(e != null){
+            e.addListener(this);
+        }
+    }
 }

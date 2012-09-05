@@ -88,6 +88,7 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
         
         if (symbol != null) {
             guiGeom.setGeom(symbol.getGeometryPropertyName());
+            guiUOM.parse(symbol.getUnitOfMeasure());
             guiOpacity.parse(symbol.getOpacity());
             //guiOverLap.parse(symbol.getOverlapBehavior());
             guiContrast.parse(symbol.getContrastEnhancement());

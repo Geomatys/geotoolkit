@@ -67,6 +67,12 @@ public class DefaultNode extends Node {
         public void propertyChange(PropertyChangeEvent evt) {
             clearBounds();
         }
+
+        @Override
+        protected void notifyChange(Node oldItem, Node newItem, int index) {
+            super.notifyChange(oldItem, newItem, index);
+            clearBounds();
+        }
     };
 
     private final List<Envelope> entries = new NotifiedCheckedList<Envelope>(Envelope.class) {
@@ -84,6 +90,11 @@ public class DefaultNode extends Node {
         }
         @Override
         protected void notifyRemove(Collection<? extends Envelope> clctn, NumberRange<Integer> nr) {
+            clearBounds();
+        }
+
+        @Override
+        protected void notifyChange(Envelope oldItem, Envelope newItem, int index) {
             clearBounds();
         }
     };

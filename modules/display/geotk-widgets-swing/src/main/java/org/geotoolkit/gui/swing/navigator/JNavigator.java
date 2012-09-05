@@ -106,6 +106,25 @@ public class JNavigator extends JPanel implements
             }
             updateDisplay();
         }
+
+        @Override
+        protected void notifyChange(JNavigatorBand oldItem, JNavigatorBand newItem, int index) {
+            if(oldItem != null){
+                oldItem.removeMouseListener(JNavigator.this);
+                oldItem.removeMouseMotionListener(JNavigator.this);
+                oldItem.removeMouseWheelListener(JNavigator.this);
+                oldItem.removeKeyListener(JNavigator.this);
+            }
+            if(newItem != null){
+                newItem.setModel(getModel());
+                newItem.setNavigator(JNavigator.this);
+                newItem.addMouseListener(JNavigator.this);
+                newItem.addMouseMotionListener(JNavigator.this);
+                newItem.addMouseWheelListener(JNavigator.this);
+                newItem.addKeyListener(JNavigator.this);
+            }
+            updateDisplay();
+        }
         
     };
 

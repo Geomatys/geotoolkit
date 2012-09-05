@@ -85,8 +85,7 @@ public class JAdvancedStylePanel extends StyleElementEditor implements PropertyP
 
         //create implies a call to apply if a style element is present
         final Object obj = editor.create();
-        //ensure we wont save twice
-        editor = null;
+        editor.parse(obj);
         
         if(obj instanceof Symbolizer){
             //in case of a symbolizer we must update it.
@@ -97,10 +96,9 @@ public class JAdvancedStylePanel extends StyleElementEditor implements PropertyP
                     //new symbol created is different, update in the rule
                     final MutableRule rule = (MutableRule) ((DefaultMutableTreeNode)oldPath.getParentPath().getLastPathComponent()).getUserObject();
 
-                    final int index =rule.symbolizers().indexOf(symbol);
-                    if(index >=0){
-                        rule.symbolizers().remove(symbol);
-                        rule.symbolizers().add(index,(Symbolizer) obj);
+                    final int index = rule.symbolizers().indexOf(symbol);
+                    if(index >= 0){
+                        rule.symbolizers().set(index, (Symbolizer) obj);
                     }
                 }
             }
@@ -151,7 +149,7 @@ public class JAdvancedStylePanel extends StyleElementEditor implements PropertyP
 
         style = tree.getStyleElement();
 
-        if (layer != null && style instanceof MutableStyle) {
+        if (layer != null && style instanceof MutableStyle && style != layer.getStyle()) {
             layer.setStyle((MutableStyle)style);
         }
     }

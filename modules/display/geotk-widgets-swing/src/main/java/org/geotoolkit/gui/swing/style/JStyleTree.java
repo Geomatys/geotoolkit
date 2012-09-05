@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.gui.swing.style;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
@@ -40,6 +41,8 @@ import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.List;
@@ -73,6 +76,8 @@ import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.util.RandomStyleFactory;
 import org.jdesktop.swingx.JXTree;
+import org.jdesktop.swingx.decorator.ColorHighlighter;
+import org.jdesktop.swingx.decorator.HighlightPredicate;
 import org.opengis.style.Description;
 import org.opengis.style.Symbolizer;
 import org.opengis.util.InternationalString;
@@ -101,17 +106,19 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
     public JStyleTree() {
         super();        
         setModel(treemodel);
-        setEditable(false);
+        setEditable(false); 
 
         setCellRenderer(new StyleCellRenderer());
         getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-        setComponentPopupMenu(new StylePopup(this));
+        setComponentPopupMenu(new StylePopup());
 
         dragSource = DragSource.getDefaultDragSource();
         DragGestureRecognizer dgr = dragSource.createDefaultDragGestureRecognizer(this,DnDConstants.ACTION_COPY_OR_MOVE, this);
         dgr.setSourceActions(dgr.getSourceActions() & ~InputEvent.BUTTON3_MASK);
         DropTarget dropTarget = new DropTarget(this, this);
         
+        setRolloverEnabled(true);
+        addHighlighter(new ColorHighlighter(HighlightPredicate.ROLLOVER_ROW, null, Color.RED));  
         
     }
 
@@ -125,28 +132,6 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
 
         if (style != null) {
             treemodel = new StyleTreeModel(style);
-            treemodel.addTreeModelListener(new TreeModelListener() {
-                @Override
-                public void treeNodesChanged(TreeModelEvent e) {
-                }
-                @Override
-                public void treeNodesInserted(final TreeModelEvent e) {
-                    SwingUtilities.invokeLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            TreePath tp = e.getTreePath().pathByAddingChild(e.getChildren()[0]);
-                            getSelectionModel().setSelectionPath(tp);
-                        }
-                    });
-                }
-                @Override
-                public void treeNodesRemoved(TreeModelEvent e) {
-                }
-                @Override
-                public void treeStructureChanged(TreeModelEvent e) {
-                }
-            }
-            );
             setModel(treemodel);
             revalidate();
         }
@@ -291,7 +276,7 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
         }
 
     }
-
+    
     //-------------private classes----------------------------------------------
     class StyleCellRenderer extends DefaultTreeCellRenderer {
         
@@ -331,30 +316,36 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
         
         private String text(Description desc){
             if(desc == null){
-                return "";
+                return " \u26AB unnamed";
             }else{
                 final InternationalString str = desc.getTitle();
-                if(str != null){
+                if(str != null && !str.toString().trim().isEmpty()){
                     return str.toString();
                 }else{
-                    return "";
+                    return " \u26AB unnamed";
                 }
             }
         }
     }
 
-    class StylePopup extends JPopupMenu {
+    private class StylePopup extends JPopupMenu {
 
-        private final JTree tree;
-
-        StylePopup(final JTree tree) {
+        StylePopup() {
             super();
-            this.tree = tree;
         }
 
         @Override
         public void setVisible(final boolean visible) {
-            final TreePath path = tree.getSelectionModel().getSelectionPath();
+            TreePath path = JStyleTree.this.getSelectionModel().getSelectionPath();
+            
+            final Point mousePosition = JStyleTree.this.getMousePosition();
+            if(mousePosition != null){
+                final int rowIndex = getRowForLocation(mousePosition.x, mousePosition.y);
+                if(rowIndex>=0){
+                    path = JStyleTree.this.getPathForRow(rowIndex);
+                }
+            }
+            
 
             if (path != null && visible) {
                 removeAll();

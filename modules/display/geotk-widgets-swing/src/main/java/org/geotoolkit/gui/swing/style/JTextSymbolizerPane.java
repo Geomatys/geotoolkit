@@ -91,12 +91,13 @@ public class JTextSymbolizerPane extends StyleElementEditor<TextSymbolizer> {
     @Override
     public void parse(final TextSymbolizer symbol) {
         if (symbol != null) {
-            guiFill.parse(symbol.getFill());
-            guiLabel.parse(symbol.getLabel());
             guiGeom.setGeom(symbol.getGeometryPropertyName());
+            guiUOM.parse(symbol.getUnitOfMeasure());
+            guiLabel.parse(symbol.getLabel());
             guiFont.parse(symbol.getFont());
-            guiHalo.parse(symbol.getHalo());
-            guiPlacement.parse(symbol.getLabelPlacement());        
+            guiPlacement.parse(symbol.getLabelPlacement());    
+            guiHalo.parse(symbol.getHalo());   
+            guiFill.parse(symbol.getFill()); 
         }
     }
 

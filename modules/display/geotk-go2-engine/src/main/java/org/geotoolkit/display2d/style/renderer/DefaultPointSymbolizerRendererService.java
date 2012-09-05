@@ -79,6 +79,8 @@ public class DefaultPointSymbolizerRendererService extends AbstractSymbolizerRen
         final Object feature = null;
         final float coeff = 1;
         final BufferedImage img = symbol.getImage(feature, coeff, null);
+        if(img == null) return;
+        
         final float[] disps = new float[]{0,0};
         final float[] anchor = new float[]{0.5f,0.5f};
         disps[0] *= coeff ;

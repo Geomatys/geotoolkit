@@ -64,6 +64,11 @@ class DefaultMutableLayerCoverageConstraints implements MutableLayerCoverageCons
             protected void notifyRemove(final Collection<? extends CoverageConstraint> items, final NumberRange<Integer> range) {
                 fireLibraryChange(CollectionChangeEvent.ITEM_REMOVED, items, range );
             }
+
+            @Override
+            protected void notifyChange(CoverageConstraint oldItem, CoverageConstraint newItem, int index) {
+                fireLibraryChange(CollectionChangeEvent.ITEM_CHANGED, oldItem, NumberRange.create(index, index) );
+            }
             
         };
     

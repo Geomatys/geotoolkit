@@ -72,6 +72,11 @@ public class DefaultMutableRule implements MutableRule{
             protected void notifyRemove(final Collection<? extends Symbolizer> items, final NumberRange<Integer> range) {
                 fireSymbolizerChange(CollectionChangeEvent.ITEM_REMOVED, items, range );
             }
+
+            @Override
+            protected void notifyChange(Symbolizer oldItem, Symbolizer newItem, int index) {
+                fireSymbolizerChange(CollectionChangeEvent.ITEM_CHANGED, oldItem, NumberRange.create(index, index) );
+            }
             
         };
         

@@ -84,6 +84,17 @@ class DefaultMutableUserLayer implements MutableUserLayer,StyleListener{
                 }
                 fireStyleChange(CollectionChangeEvent.ITEM_REMOVED, items, range);
             }
+
+            @Override
+            protected void notifyChange(MutableStyle oldItem, MutableStyle newItem, int index) {
+                if(oldItem != null){
+                    styleListener.unregisterSource(oldItem);
+                }
+                if(newItem != null){
+                    styleListener.registerSource(newItem);
+                }
+                fireStyleChange(CollectionChangeEvent.ITEM_CHANGED, oldItem, NumberRange.create(index, index));
+            }
             
         };
         
