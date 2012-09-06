@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.gui.swing.misc;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -53,11 +54,21 @@ public class ActionCell {
             lbl.setIconTextGap(0);
             lbl.setHorizontalTextPosition(SwingConstants.CENTER);
             lbl.setHorizontalAlignment(SwingConstants.CENTER);
+            
+            final Color bg = getBackgroundColor(value);
+            if(!isSelected && bg != null){
+                lbl.setBackground(bg);
+            }
+            
             return lbl;
         }
         
         public Icon getIcon(Object value){
             return icon;
+        }
+        
+        public Color getBackgroundColor(Object value){
+            return null;
         }
         
     }
