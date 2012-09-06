@@ -50,7 +50,7 @@ public class DescribeProcessTest {
         identifiers.add("identifier1");
         identifiers.add("identifier2");
         identifiers.add("identifier3");
-        
+
         final DescribeProcess100 desc100 = new DescribeProcess100("http://test.com",null);
         desc100.setIdentifiers(identifiers);
         final URL url;
@@ -60,52 +60,52 @@ public class DescribeProcessTest {
             fail(ex.getLocalizedMessage());
             return;
         }
-        
+
         final String strUrl = url.toString();
         //final String expectedURL = "http://test.com?VERSION=1.0.0&SERVICE=WPS&REQUEST=DescribeProcess&IDENTIFIER=identifier1,identifier2,identifier3";
         assertTrue(strUrl.contains("VERSION=1.0.0"));
         assertTrue(strUrl.contains("SERVICE=WPS"));
         assertTrue(strUrl.contains("REQUEST=DescribeProcess"));
-        assertTrue(strUrl.contains("IDENTIFIER=identifier1,identifier2,identifier3"));
+        assertTrue(strUrl.contains("IDENTIFIER=identifier1%2Cidentifier2%2Cidentifier3"));
     }
-    
-   @Test 
+
+   @Test
    public void testRequestAndMarshall(){
         try {
             final List<String> identifiers = new ArrayList<String>();
             identifiers.add("identifier1");
             identifiers.add("identifier2");
             identifiers.add("identifier3");
-            
+
             final List<CodeType> identifierList = new ArrayList<CodeType>();
             identifierList.add(new CodeType("identifier1"));
             identifierList.add(new CodeType("identifier2"));
             identifierList.add(new CodeType("identifier3"));
-            
+
             final DescribeProcess100 desc100 = new DescribeProcess100("http://test.com",null);
             desc100.setIdentifiers(identifiers);
             final DescribeProcess request = desc100.makeRequest();
             assertEquals("WPS", request.getService());
             assertEquals("1.0.0", request.getVersion());
             assertEquals(request.getIdentifier(),identifierList);
-            
+
             final StringWriter stringWriter = new StringWriter();
             final Marshaller marshaller = WPSMarshallerPool.getInstance().acquireMarshaller();
             marshaller.marshal(request,stringWriter);
-            
+
             String result = StringUtilities.removeXmlns(stringWriter.toString());
-            final String expectedMarshalledRequest = 
+            final String expectedMarshalledRequest =
                     "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
                     + "<wps:DescribeProcess version=\"1.0.0\" service=\"WPS\" >\n"
                     + "    <ows:Identifier>identifier1</ows:Identifier>\n"
                     + "    <ows:Identifier>identifier2</ows:Identifier>\n"
                     + "    <ows:Identifier>identifier3</ows:Identifier>\n"
                     + "</wps:DescribeProcess>\n";
-            assertEquals(expectedMarshalledRequest, result); 
+            assertEquals(expectedMarshalledRequest, result);
         } catch (JAXBException ex) {
             fail(ex.getLocalizedMessage());
             return;
         }
    }
-   
+
 }

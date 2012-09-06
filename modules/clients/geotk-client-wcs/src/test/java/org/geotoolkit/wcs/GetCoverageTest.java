@@ -64,11 +64,11 @@ public class GetCoverageTest {
         }
         final String sUrl = url.toString();
         assertTrue(sUrl.startsWith("http://test.com?"));
-        assertTrue(sUrl.contains("BBOX=-180.0,-90.0,180.0,90.0"));
-        assertTrue(sUrl.contains("CRS=CRS:84"));
-        assertTrue(sUrl.contains("FORMAT=image/png"));
-        assertTrue(sUrl.contains("WIDTH=800"));
-        assertTrue(sUrl.contains("HEIGHT=600"));
-        assertTrue(sUrl.contains("COVERAGE=test"));
+        assertTrue("was:" + sUrl, sUrl.contains("BBOX=-180.0%2C-90.0%2C180.0%2C90.0"));
+        assertTrue("was:" + sUrl, sUrl.contains("CRS=CRS%3A84"));
+        assertTrue("was:" + sUrl, sUrl.contains("FORMAT=image%2Fpng"));
+        assertTrue("was:" + sUrl, sUrl.contains("WIDTH=800"));
+        assertTrue("was:" + sUrl, sUrl.contains("HEIGHT=600"));
+        assertTrue("was:" + sUrl, sUrl.contains("COVERAGE=test"));
     }
 }

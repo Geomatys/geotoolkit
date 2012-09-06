@@ -49,8 +49,8 @@ public class DescribeRecordTest {
             return;
         }
         final String sUrl = url.toString();
-        assertTrue(sUrl.startsWith("http://test.com?"));
-        assertTrue(sUrl.contains("TYPENAME=ut:value"));
-        assertTrue(sUrl.contains("NAMESPACE=xmlns(ut=http://myqnametest.com)"));
+        assertTrue("was:" + sUrl, sUrl.startsWith("http://test.com?"));
+        assertTrue("was:" + sUrl, sUrl.contains("TYPENAME=ut%3Avalue"));
+        assertTrue("was:" + sUrl, sUrl.contains("NAMESPACE=xmlns%28ut%3Dhttp%3A%2F%2Fmyqnametest.com%29"));
     }
 }

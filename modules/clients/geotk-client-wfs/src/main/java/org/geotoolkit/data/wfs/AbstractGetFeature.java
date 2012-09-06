@@ -52,7 +52,7 @@ import org.opengis.filter.Filter;
 
 /**
  * Abstract Get feature request.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @author Cédric Briançon (Geomatys)
  * @module pending
@@ -149,7 +149,7 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
     public void setOutputFormat(final String outputFormat) {
         this.outputFormat = outputFormat;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -191,8 +191,8 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
             final SimplifyingFilterVisitor visitor = new SimplifyingFilterVisitor();
             filter = (Filter) this.filter.accept(visitor, null);
         }
-        
-        
+
+
         if(filter != null && filter != Filter.INCLUDE){
             final XMLUtilities util = new XMLUtilities();
             final StringWriter writer = new StringWriter();
@@ -209,12 +209,7 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
             } catch (IOException ex) {
                 LOGGER.log(Level.FINER, ex.getLocalizedMessage(), ex);
             }
-            try {
-                requestParameters.put("FILTER", URLEncoder.encode(strFilter, "UTF-8"));
-            } catch (UnsupportedEncodingException ex) {
-                // Should not occur.
-                LOGGER.log(Level.FINEST, ex.getLocalizedMessage(), ex);
-            }
+            requestParameters.put("FILTER", strFilter);
         }
 
         if(propertyNames != null){
@@ -242,13 +237,13 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
      */
     @Override
     public InputStream getResponseStream() throws IOException {
-       
+
         final List<QName> typeNames = new ArrayList<QName>();
 
         if(typeName != null){
             typeNames.add(typeName);
         }
-        
+
         FilterType xmlFilter;
         if(filter != null && filter != Filter.INCLUDE){
             final XMLUtilities util = new XMLUtilities();

@@ -61,6 +61,6 @@ public class GetRecordsTest {
         assertTrue(sUrl.contains("OUTPUTFORMAT=xml"));
         assertTrue(sUrl.contains("ELEMENTSETNAME="+ ElementSetType.FULL.value()));
         assertTrue(sUrl.contains("RESULTTYPE="+ ResultType.RESULTS.value()));
-        assertTrue(sUrl.contains("CONSTRAINT=prop%20LIKE%20'value'"));
+        assertTrue("was :" + sUrl, sUrl.contains("CONSTRAINT=prop+LIKE+%27value%27"));
     }
 }

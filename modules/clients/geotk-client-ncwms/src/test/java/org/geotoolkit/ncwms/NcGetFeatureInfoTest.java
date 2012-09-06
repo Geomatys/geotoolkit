@@ -49,11 +49,11 @@ public class NcGetFeatureInfoTest {
      */
     @Test
     public void testNcGetFeatureInfo111() throws NoSuchAuthorityCodeException, FactoryException {
-        
+
         final GeneralEnvelope env = new GeneralEnvelope(CRS.decode("CRS:84"));
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
-        
+
         final NcGetFeatureInfo111 request = new NcGetFeatureInfo111("http://test.com",null);
         request.setDimension(new Dimension(800, 600));
         request.setFormat("image/png");
@@ -64,12 +64,12 @@ public class NcGetFeatureInfoTest {
         request.setQueryLayers("test");
         request.setColumnIndex(50);
         request.setRawIndex(40);
-        
+
         request.setOpacity(65);
         request.dimensions().put("COLORSCALERANGE","-50,50");
         request.setNumColorBands(150);
         request.setLogScale(true);
-        
+
         final URL url;
         try {
             url = request.getURL();
@@ -77,12 +77,12 @@ public class NcGetFeatureInfoTest {
             fail(ex.getLocalizedMessage());
             return;
         }
-        
+
         final String sUrl = url.toString();
         assertTrue(sUrl.startsWith("http://test.com?"));
-        assertTrue(sUrl.contains("BBOX=-180.0,-90.0,180.0,90.0"));
-        assertTrue(sUrl.contains("SRS=CRS:84"));
-        assertTrue(sUrl.contains("FORMAT=image/png"));
+        assertTrue(sUrl.contains("BBOX=-180.0%2C-90.0%2C180.0%2C90.0"));
+        assertTrue(sUrl.contains("SRS=CRS%3A84"));
+        assertTrue(sUrl.contains("FORMAT=image%2Fpng"));
         assertTrue(sUrl.contains("WIDTH=800"));
         assertTrue(sUrl.contains("HEIGHT=600"));
         assertTrue(sUrl.contains("LAYERS=test"));
@@ -92,7 +92,7 @@ public class NcGetFeatureInfoTest {
         assertTrue(sUrl.contains("X=50"));
         assertTrue(sUrl.contains("Y=40"));
         assertTrue(sUrl.contains("OPACITY=65"));
-        assertTrue(sUrl.contains("COLORSCALERANGE=-50,50"));
+        assertTrue(sUrl.contains("COLORSCALERANGE=-50%2C50"));
         assertTrue(sUrl.contains("NUMCOLORBANDS=150"));
         assertTrue(sUrl.contains("LOGSCALE=true"));
     }
@@ -106,11 +106,11 @@ public class NcGetFeatureInfoTest {
      */
     @Test
     public void testNcGetFeatureInfo130() throws NoSuchAuthorityCodeException, FactoryException {
-        
+
         final GeneralEnvelope env = new GeneralEnvelope(CRS.decode("CRS:84"));
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
-        
+
         final NcGetFeatureInfo130 request = new NcGetFeatureInfo130("http://test.com",null);
         request.setDimension(new Dimension(800, 600));
         request.setFormat("image/png");
@@ -120,13 +120,13 @@ public class NcGetFeatureInfoTest {
         request.setInfoFormat("gml");
         request.setQueryLayers("test");
         request.setColumnIndex(50);
-        request.setRawIndex(40);        
-        
+        request.setRawIndex(40);
+
         request.setOpacity(65);
         request.dimensions().put("COLORSCALERANGE","-50,50");
         request.setNumColorBands(150);
         request.setLogScale(true);
-        
+
         final URL url;
         try {
             url = request.getURL();
@@ -134,12 +134,12 @@ public class NcGetFeatureInfoTest {
             fail(ex.getLocalizedMessage());
             return;
         }
-        
+
         final String sUrl = url.toString();
         assertTrue(sUrl.startsWith("http://test.com?"));
-        assertTrue(sUrl.contains("BBOX=-180.0,-90.0,180.0,90.0"));
-        assertTrue(sUrl.contains("CRS=CRS:84"));
-        assertTrue(sUrl.contains("FORMAT=image/png"));
+        assertTrue(sUrl.contains("BBOX=-180.0%2C-90.0%2C180.0%2C90.0"));
+        assertTrue(sUrl.contains("CRS=CRS%3A84"));
+        assertTrue(sUrl.contains("FORMAT=image%2Fpng"));
         assertTrue(sUrl.contains("WIDTH=800"));
         assertTrue(sUrl.contains("HEIGHT=600"));
         assertTrue(sUrl.contains("LAYERS=test"));
@@ -148,9 +148,9 @@ public class NcGetFeatureInfoTest {
         assertTrue(sUrl.contains("QUERY_LAYERS=test"));
         assertTrue(sUrl.contains("I=50"));
         assertTrue(sUrl.contains("J=40"));
-        
+
         assertTrue(sUrl.contains("OPACITY=65"));
-        assertTrue(sUrl.contains("COLORSCALERANGE=-50,50"));
+        assertTrue(sUrl.contains("COLORSCALERANGE=-50%2C50"));
         assertTrue(sUrl.contains("NUMCOLORBANDS=150"));
         assertTrue(sUrl.contains("LOGSCALE=true"));
     }

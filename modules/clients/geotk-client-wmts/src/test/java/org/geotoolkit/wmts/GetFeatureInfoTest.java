@@ -59,7 +59,7 @@ public class GetFeatureInfoTest {
         featureInfo111.setTileRow(4);
 
         featureInfo111.setInfoFormat("gml");
-        
+
         featureInfo111.setColumnIndex(50);
         featureInfo111.setRawIndex(40);
         final URL url;
@@ -71,7 +71,7 @@ public class GetFeatureInfoTest {
         }
         final String sUrl = url.toString();
         assertTrue(sUrl.startsWith("http://test.com?"));
-        assertTrue(sUrl.contains("FORMAT=image/png"));
+        assertTrue(sUrl.contains("FORMAT=image%2Fpng"));
         assertTrue(sUrl.contains("TILEMATRIX=L1"));
         assertTrue(sUrl.contains("TILEMATRIXSET=test"));
         assertTrue(sUrl.contains("LAYER=test"));
@@ -83,5 +83,5 @@ public class GetFeatureInfoTest {
         assertTrue(sUrl.contains("J=40"));
     }
 
-   
+
 }

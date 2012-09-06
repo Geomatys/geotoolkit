@@ -37,16 +37,16 @@ public class NcGetVerticalProfileTest {
     @Test
     public void testNcGetVerticalProfile() {
         final NcGetVerticalProfile request = new NcGetVerticalProfile("http://test.com");
-        
+
         // Mandatory
         request.setLayer("test");
         request.setCrs("CRS:84");
-        request.setPoint("24%25");        
+        request.setPoint("24%25");
         request.setFormat("image/png");
-        
+
         // Optional
         request.setTime("01-01-01T01:00:00Z");
-        
+
         final URL url;
         try {
             url = request.getURL();
@@ -54,14 +54,14 @@ public class NcGetVerticalProfileTest {
             fail(ex.getLocalizedMessage());
             return;
         }
-        
+
         final String sUrl = url.toString();
         assertTrue(sUrl.contains("REQUEST=GetVerticalProfile"));
         assertTrue(sUrl.contains("LAYER=test"));
-        assertTrue(sUrl.contains("CRS=CRS:84"));
-        assertTrue(sUrl.contains("TIME=01-01-01T01:00:00Z"));
+        assertTrue(sUrl.contains("CRS=CRS%3A84"));
+        assertTrue(sUrl.contains("TIME=01-01-01T01%3A00%3A00Z"));
         assertTrue(sUrl.contains("POINT=24%25"));
-        assertTrue(sUrl.contains("FORMAT=image/png"));
+        assertTrue(sUrl.contains("FORMAT=image%2Fpng"));
     }
 
 }

@@ -29,7 +29,7 @@ import static org.junit.Assert.*;
  */
 public class AbstractNcGetLegendTest {
     public AbstractNcGetLegendTest() {}
-    
+
     /**
      * Test the getters ans setters methods.
      */
@@ -41,14 +41,14 @@ public class AbstractNcGetLegendTest {
         legend.setPalette("test");
         legend.setNumColorBands(125);
         legend.dimensions().put("COLORSCALERANGE","20,30");
-        
+
         assertTrue(legend.getOpacity().equals(60));
         assertTrue(legend.isLogScale().equals(true));
         assertTrue(legend.getNumColorBands().equals(125));
         assertTrue(legend.dimensions().get("COLORSCALERANGE").equals("20,30"));
         assertTrue(legend.getPalette().equals("test"));
     }
-    
+
     /**
      * Test the prepareParameters method.
      */
@@ -62,7 +62,7 @@ public class AbstractNcGetLegendTest {
         legend.setPalette("test");
         legend.setNumColorBands(125);
         legend.dimensions().put("COLORSCALERANGE","20,30");
-        
+
         final URL url;
         try {
             url = legend.getURL();
@@ -70,13 +70,13 @@ public class AbstractNcGetLegendTest {
             fail(ex.getLocalizedMessage());
             return;
         }
-        
+
         final String sUrl = url.toString();
-        assertTrue(sUrl.contains("OPACITY=60"));
-        assertTrue(sUrl.contains("LOGSCALE=true"));
-        assertTrue(sUrl.contains("PALETTE=test"));
-        assertTrue(sUrl.contains("NUMCOLORBANDS=125"));
-        assertTrue(sUrl.contains("COLORSCALERANGE=20,30"));
+        assertTrue("was:" + sUrl, sUrl.contains("OPACITY=60"));
+        assertTrue("was:" + sUrl, sUrl.contains("LOGSCALE=true"));
+        assertTrue("was:" + sUrl, sUrl.contains("PALETTE=test"));
+        assertTrue("was:" + sUrl, sUrl.contains("NUMCOLORBANDS=125"));
+        assertTrue("was:" + sUrl, sUrl.contains("COLORSCALERANGE=20%2C30"));
     }
 }
 

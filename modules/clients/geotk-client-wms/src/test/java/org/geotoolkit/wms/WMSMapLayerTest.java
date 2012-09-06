@@ -73,8 +73,8 @@ public class WMSMapLayerTest {
         env.setRange(1, -90, 90);
 
         final String query = layer.getCoverageReference().query(env, new Dimension(800, 600)).toString();
-        assertTrue( query.substring(query.indexOf("SRS")).startsWith("SRS=EPSG:4326"));
-        assertTrue( query.substring(query.indexOf("BBOX")).startsWith("BBOX=-180.0,-90.0,180.0,90.0"));
+        assertTrue("was:" + query, query.substring(query.indexOf("SRS")).startsWith("SRS=EPSG%3A4326"));
+        assertTrue( query.substring(query.indexOf("BBOX")).startsWith("BBOX=-180.0%2C-90.0%2C180.0%2C90.0"));
     }
 
     /**
@@ -92,8 +92,8 @@ public class WMSMapLayerTest {
         env.setRange(1, -180, 180);
 
         final String query = layer.getCoverageReference().query(env, new Dimension(800, 600)).toString();
-        assertTrue( query.substring(query.indexOf("SRS")).startsWith("SRS=EPSG:4326"));
-        assertTrue( query.substring(query.indexOf("BBOX")).startsWith("BBOX=-180.0,-90.0,180.0,90.0"));
+        assertTrue("was:" + query, query.substring(query.indexOf("SRS")).startsWith("SRS=EPSG%3A4326"));
+        assertTrue("was:" + query, query.substring(query.indexOf("BBOX")).startsWith("BBOX=-180.0%2C-90.0%2C180.0%2C90.0"));
     }
 
     /**
@@ -111,8 +111,8 @@ public class WMSMapLayerTest {
         env.setRange(1, 1974600.0, 3701800.0); // Lon
 
         final String query = layer.getCoverageReference().query(env, new Dimension(800, 600)).toString();
-        assertTrue( query.substring(query.indexOf("SRS")).startsWith("SRS=EPSG:32761"));
-        assertTrue( query.substring(query.indexOf("BBOX")).startsWith("BBOX=1974600.0,-882900.0,3701800.0,844300.0"));
+        assertTrue("was:" + query, query.substring(query.indexOf("SRS")).startsWith("SRS=EPSG%3A32761"));
+        assertTrue("was:" + query, query.substring(query.indexOf("BBOX")).startsWith("BBOX=1974600.0%2C-882900.0%2C3701800.0%2C844300.0"));
     }
 
     /**
@@ -130,8 +130,8 @@ public class WMSMapLayerTest {
         env.setRange(1, -90, 90);
 
         final String query = layer.getCoverageReference().query(env, new Dimension(800, 600)).toString();
-        assertTrue( query.substring(query.indexOf("CRS")).startsWith("CRS=CRS:84"));
-        assertTrue( query.substring(query.indexOf("BBOX")).startsWith("BBOX=-180.0,-90.0,180.0,90.0"));
+        assertTrue("was:" + query, query.substring(query.indexOf("CRS")).startsWith("CRS=CRS%3A84"));
+        assertTrue("was:" + query, query.substring(query.indexOf("BBOX")).startsWith("BBOX=-180.0%2C-90.0%2C180.0%2C90.0"));
     }
 
     /**
@@ -149,8 +149,8 @@ public class WMSMapLayerTest {
         env.setRange(1, -180, 180);
 
         final String query = layer.getCoverageReference().query(env, new Dimension(800, 600)).toString();
-        assertTrue( query.substring(query.indexOf("CRS")).startsWith("CRS=EPSG:4326"));
-        assertTrue( query.substring(query.indexOf("BBOX")).startsWith("BBOX=-90.0,-180.0,90.0,180.0"));
+        assertTrue("was:" + query, query.substring(query.indexOf("CRS")).startsWith("CRS=EPSG%3A4326"));
+        assertTrue("was:" + query, query.substring(query.indexOf("BBOX")).startsWith("BBOX=-90.0%2C-180.0%2C90.0%2C180.0"));
     }
 
     /**
@@ -168,8 +168,8 @@ public class WMSMapLayerTest {
         env.setRange(1, 1974600.0, 3701800.0); // Lon
 
         final String query = layer.getCoverageReference().query(env, new Dimension(800, 600)).toString();
-        assertTrue( query.substring(query.indexOf("CRS")).startsWith("CRS=EPSG:32761"));
-        assertTrue( query.substring(query.indexOf("BBOX")).startsWith("BBOX=-882900.0,1974600.0,844300.0,3701800.0"));
+        assertTrue("was:" + query, query.substring(query.indexOf("CRS")).startsWith("CRS=EPSG%3A32761"));
+        assertTrue("was:" + query, query.substring(query.indexOf("BBOX")).startsWith("BBOX=-882900.0%2C1974600.0%2C844300.0%2C3701800.0"));
     }
 
     /**
@@ -207,17 +207,17 @@ public class WMSMapLayerTest {
 
         final String sUrl = url.toString();
         assertTrue(sUrl.startsWith("http://test.com?"));
-        assertTrue(sUrl.contains("BBOX=-180.0,-90.0,180.0,90.0"));
-        assertTrue(sUrl.contains("SRS=EPSG:4326"));
-        assertTrue(sUrl.contains("FORMAT=image/png"));
-        assertTrue(sUrl.contains("WIDTH=360"));
-        assertTrue(sUrl.contains("HEIGHT=180"));
-        assertTrue(sUrl.contains("LAYERS=test"));
-        assertTrue(sUrl.contains("STYLES="));
-        assertTrue(sUrl.contains("INFO_FORMAT=gml"));
-        assertTrue(sUrl.contains("QUERY_LAYERS=test"));
-        assertTrue(sUrl.contains("X=140"));
-        assertTrue(sUrl.contains("Y=250"));
+        assertTrue("was:" + sUrl, sUrl.contains("BBOX=-180.0%2C-90.0%2C180.0%2C90.0"));
+        assertTrue("was:" + sUrl, sUrl.contains("SRS=EPSG%3A4326"));
+        assertTrue("was:" + sUrl, sUrl.contains("FORMAT=image%2Fpng"));
+        assertTrue("was:" + sUrl, sUrl.contains("WIDTH=360"));
+        assertTrue("was:" + sUrl, sUrl.contains("HEIGHT=180"));
+        assertTrue("was:" + sUrl, sUrl.contains("LAYERS=test"));
+        assertTrue("was:" + sUrl, sUrl.contains("STYLES="));
+        assertTrue("was:" + sUrl, sUrl.contains("INFO_FORMAT=gml"));
+        assertTrue("was:" + sUrl, sUrl.contains("QUERY_LAYERS=test"));
+        assertTrue("was:" + sUrl, sUrl.contains("X=140"));
+        assertTrue("was:" + sUrl, sUrl.contains("Y=250"));
     }
 
     /**
@@ -255,17 +255,17 @@ public class WMSMapLayerTest {
 
         final String sUrl = url.toString();
         assertTrue(sUrl.startsWith("http://test.com?"));
-        assertTrue(sUrl.contains("BBOX=-90.0,-180.0,90.0,180.0"));
-        assertTrue(sUrl.contains("CRS=EPSG:4326"));
-        assertTrue(sUrl.contains("FORMAT=image/png"));
-        assertTrue(sUrl.contains("WIDTH=360"));
-        assertTrue(sUrl.contains("HEIGHT=180"));
-        assertTrue(sUrl.contains("LAYERS=test"));
-        assertTrue(sUrl.contains("STYLES="));
-        assertTrue(sUrl.contains("INFO_FORMAT=gml"));
-        assertTrue(sUrl.contains("QUERY_LAYERS=test"));
-        assertTrue(sUrl.contains("I=140"));
-        assertTrue(sUrl.contains("J=250"));
+        assertTrue("was:" + sUrl, sUrl.contains("BBOX=-90.0%2C-180.0%2C90.0%2C180.0"));
+        assertTrue("was:" + sUrl, sUrl.contains("CRS=EPSG%3A4326"));
+        assertTrue("was:" + sUrl, sUrl.contains("FORMAT=image%2Fpng"));
+        assertTrue("was:" + sUrl, sUrl.contains("WIDTH=360"));
+        assertTrue("was:" + sUrl, sUrl.contains("HEIGHT=180"));
+        assertTrue("was:" + sUrl, sUrl.contains("LAYERS=test"));
+        assertTrue("was:" + sUrl, sUrl.contains("STYLES="));
+        assertTrue("was:" + sUrl, sUrl.contains("INFO_FORMAT=gml"));
+        assertTrue("was:" + sUrl, sUrl.contains("QUERY_LAYERS=test"));
+        assertTrue("was:" + sUrl, sUrl.contains("I=140"));
+        assertTrue("was:" + sUrl, sUrl.contains("J=250"));
     }
 
     /**
@@ -303,17 +303,17 @@ public class WMSMapLayerTest {
 
         final String sUrl = url.toString();
         assertTrue(sUrl.startsWith("http://test.com?"));
-        assertTrue(sUrl.contains("BBOX=-180.0,-90.0,180.0,90.0"));
-        assertTrue(sUrl.contains("CRS=CRS:84"));
-        assertTrue(sUrl.contains("FORMAT=image/png"));
-        assertTrue(sUrl.contains("WIDTH=360"));
-        assertTrue(sUrl.contains("HEIGHT=180"));
-        assertTrue(sUrl.contains("LAYERS=test"));
-        assertTrue(sUrl.contains("STYLES="));
-        assertTrue(sUrl.contains("INFO_FORMAT=gml"));
-        assertTrue(sUrl.contains("QUERY_LAYERS=test"));
-        assertTrue(sUrl.contains("I=140"));
-        assertTrue(sUrl.contains("J=250"));
+        assertTrue("was:" + sUrl,sUrl.contains("BBOX=-180.0%2C-90.0%2C180.0%2C90.0"));
+        assertTrue("was:" + sUrl,sUrl.contains("CRS=CRS%3A84"));
+        assertTrue("was:" + sUrl, sUrl.contains("FORMAT=image%2Fpng"));
+        assertTrue("was:" + sUrl, sUrl.contains("WIDTH=360"));
+        assertTrue("was:" + sUrl, sUrl.contains("HEIGHT=180"));
+        assertTrue("was:" + sUrl, sUrl.contains("LAYERS=test"));
+        assertTrue("was:" + sUrl, sUrl.contains("STYLES="));
+        assertTrue("was:" + sUrl, sUrl.contains("INFO_FORMAT=gml"));
+        assertTrue("was:" + sUrl, sUrl.contains("QUERY_LAYERS=test"));
+        assertTrue("was:" + sUrl, sUrl.contains("I=140"));
+        assertTrue("was:" + sUrl, sUrl.contains("J=250"));
     }
 
     /**
@@ -352,17 +352,17 @@ public class WMSMapLayerTest {
 
         final String sUrl = url.toString();
         assertTrue(sUrl.startsWith("http://test.com?"));
-        assertTrue(sUrl.contains("BBOX=-180.0,-90.0,180.0,90.0"));
-        assertTrue(sUrl.contains("SRS=EPSG:4326"));
-        assertTrue(sUrl.contains("FORMAT=image/png"));
-        assertTrue(sUrl.contains("WIDTH=360"));
-        assertTrue(sUrl.contains("HEIGHT=180"));
-        assertTrue(sUrl.contains("LAYERS=test"));
-        assertTrue(sUrl.contains("STYLES="));
-        assertTrue(sUrl.contains("INFO_FORMAT=gml"));
-        assertTrue(sUrl.contains("QUERY_LAYERS=test"));
-        assertTrue(sUrl.contains("X=140"));
-        assertTrue(sUrl.contains("Y=250"));
+        assertTrue(sUrl.contains("BBOX=-180.0%2C-90.0%2C180.0%2C90.0"));
+        assertTrue("was:" + sUrl, sUrl.contains("SRS=EPSG%3A4326"));
+        assertTrue("was:" + sUrl, sUrl.contains("FORMAT=image%2Fpng"));
+        assertTrue("was:" + sUrl, sUrl.contains("WIDTH=360"));
+        assertTrue("was:" + sUrl, sUrl.contains("HEIGHT=180"));
+        assertTrue("was:" + sUrl, sUrl.contains("LAYERS=test"));
+        assertTrue("was:" + sUrl, sUrl.contains("STYLES="));
+        assertTrue("was:" + sUrl, sUrl.contains("INFO_FORMAT=gml"));
+        assertTrue("was:" + sUrl, sUrl.contains("QUERY_LAYERS=test"));
+        assertTrue("was:" + sUrl, sUrl.contains("X=140"));
+        assertTrue("was:" + sUrl, sUrl.contains("Y=250"));
     }
 
     /**
@@ -401,17 +401,17 @@ public class WMSMapLayerTest {
 
         final String sUrl = url.toString();
         assertTrue(sUrl.startsWith("http://test.com?"));
-        assertTrue(sUrl.contains("BBOX=-90.0,-180.0,90.0,180.0"));
-        assertTrue(sUrl.contains("CRS=EPSG:4326"));
-        assertTrue(sUrl.contains("FORMAT=image/png"));
-        assertTrue(sUrl.contains("WIDTH=360"));
-        assertTrue(sUrl.contains("HEIGHT=180"));
-        assertTrue(sUrl.contains("LAYERS=test"));
-        assertTrue(sUrl.contains("STYLES="));
-        assertTrue(sUrl.contains("INFO_FORMAT=gml"));
-        assertTrue(sUrl.contains("QUERY_LAYERS=test"));
-        assertTrue(sUrl.contains("I=140"));
-        assertTrue(sUrl.contains("J=250"));
+        assertTrue("was:" + sUrl, sUrl.contains("BBOX=-90.0%2C-180.0%2C90.0%2C180.0"));
+        assertTrue("was:" + sUrl, sUrl.contains("CRS=EPSG%3A4326"));
+        assertTrue("was:" + sUrl, sUrl.contains("FORMAT=image%2Fpng"));
+        assertTrue("was:" + sUrl, sUrl.contains("WIDTH=360"));
+        assertTrue("was:" + sUrl, sUrl.contains("HEIGHT=180"));
+        assertTrue("was:" + sUrl, sUrl.contains("LAYERS=test"));
+        assertTrue("was:" + sUrl, sUrl.contains("STYLES="));
+        assertTrue("was:" + sUrl, sUrl.contains("INFO_FORMAT=gml"));
+        assertTrue("was:" + sUrl, sUrl.contains("QUERY_LAYERS=test"));
+        assertTrue("was:" + sUrl, sUrl.contains("I=140"));
+        assertTrue("was:" + sUrl, sUrl.contains("J=250"));
     }
 
     /**
@@ -452,17 +452,17 @@ public class WMSMapLayerTest {
         final String sUrl = url.toString();
 
         assertTrue(sUrl.startsWith("http://test.com?"));
-        assertTrue(sUrl.contains("BBOX=-179.9999885408455,-85.05112779126263,179.9999885408455,85.05112779126262"));
-        assertTrue(sUrl.contains("SRS=EPSG:4326"));
-        assertTrue(sUrl.contains("FORMAT=image/png"));
-        assertTrue(sUrl.contains("WIDTH=512"));
-        assertTrue(sUrl.contains("HEIGHT=512"));
-        assertTrue(sUrl.contains("LAYERS=test"));
-        assertTrue(sUrl.contains("STYLES="));
-        assertTrue(sUrl.contains("INFO_FORMAT=gml"));
-        assertTrue(sUrl.contains("QUERY_LAYERS=test"));
-        assertTrue(sUrl.contains("X=140"));
-        assertTrue(sUrl.contains("Y=243"));
+        assertTrue("was:" + sUrl, sUrl.contains("BBOX=-179.9999885408455%2C-85.05112779126263%2C179.9999885408455%2C85.05112779126262"));
+        assertTrue("was:" + sUrl, sUrl.contains("SRS=EPSG%3A4326"));
+        assertTrue("was:" + sUrl, sUrl.contains("FORMAT=image%2Fpng"));
+        assertTrue("was:" + sUrl, sUrl.contains("WIDTH=512"));
+        assertTrue("was:" + sUrl, sUrl.contains("HEIGHT=512"));
+        assertTrue("was:" + sUrl, sUrl.contains("LAYERS=test"));
+        assertTrue("was:" + sUrl, sUrl.contains("STYLES="));
+        assertTrue("was:" + sUrl, sUrl.contains("INFO_FORMAT=gml"));
+        assertTrue("was:" + sUrl, sUrl.contains("QUERY_LAYERS=test"));
+        assertTrue("was:" + sUrl, sUrl.contains("X=140"));
+        assertTrue("was:" + sUrl, sUrl.contains("Y=243"));
     }
 
     /**
@@ -501,17 +501,17 @@ public class WMSMapLayerTest {
 
         final String sUrl = url.toString();
         assertTrue(sUrl.startsWith("http://test.com?"));
-        assertTrue(sUrl.contains("BBOX=-179.9999885408455,-85.05112779126263,179.9999885408455,85.05112779126262"));
-        assertTrue(sUrl.contains("CRS=CRS:84"));
-        assertTrue(sUrl.contains("FORMAT=image/png"));
-        assertTrue(sUrl.contains("WIDTH=512"));
-        assertTrue(sUrl.contains("HEIGHT=512"));
-        assertTrue(sUrl.contains("LAYERS=test"));
-        assertTrue(sUrl.contains("STYLES="));
-        assertTrue(sUrl.contains("INFO_FORMAT=gml"));
-        assertTrue(sUrl.contains("QUERY_LAYERS=test"));
-        assertTrue(sUrl.contains("I=140"));
-        assertTrue(sUrl.contains("J=243"));
+        assertTrue("was:" + sUrl, sUrl.contains("BBOX=-179.9999885408455%2C-85.05112779126263%2C179.9999885408455%2C85.05112779126262"));
+        assertTrue("was:" + sUrl, sUrl.contains("CRS=CRS%3A84"));
+        assertTrue("was:" + sUrl, sUrl.contains("FORMAT=image%2Fpng"));
+        assertTrue("was:" + sUrl, sUrl.contains("WIDTH=512"));
+        assertTrue("was:" + sUrl, sUrl.contains("HEIGHT=512"));
+        assertTrue("was:" + sUrl, sUrl.contains("LAYERS=test"));
+        assertTrue("was:" + sUrl, sUrl.contains("STYLES="));
+        assertTrue("was:" + sUrl, sUrl.contains("INFO_FORMAT=gml"));
+        assertTrue("was:" + sUrl, sUrl.contains("QUERY_LAYERS=test"));
+        assertTrue("was:" + sUrl, sUrl.contains("I=140"));
+        assertTrue("was:" + sUrl, sUrl.contains("J=243"));
     }
 
     /**
@@ -552,17 +552,17 @@ public class WMSMapLayerTest {
 
         final String sUrl = url.toString();
         assertTrue(sUrl.startsWith("http://test.com?"));
-        assertTrue(sUrl.contains("BBOX=-179.9999885408455,-85.05112779126263,179.9999885408455,85.05112779126262"));
-        assertTrue(sUrl.contains("SRS=EPSG:4326"));
-        assertTrue(sUrl.contains("FORMAT=image/png"));
-        assertTrue(sUrl.contains("WIDTH=512"));
-        assertTrue(sUrl.contains("HEIGHT=512"));
-        assertTrue(sUrl.contains("LAYERS=test"));
-        assertTrue(sUrl.contains("STYLES="));
-        assertTrue(sUrl.contains("INFO_FORMAT=gml"));
-        assertTrue(sUrl.contains("QUERY_LAYERS=test"));
-        assertTrue(sUrl.contains("X=140"));
-        assertTrue(sUrl.contains("Y=243"));
+        assertTrue("was:" + sUrl, sUrl.contains("BBOX=-179.9999885408455%2C-85.05112779126263%2C179.9999885408455%2C85.05112779126262"));
+        assertTrue("was:" + sUrl, sUrl.contains("SRS=EPSG%3A4326"));
+        assertTrue("was:" + sUrl, sUrl.contains("FORMAT=image%2Fpng"));
+        assertTrue("was:" + sUrl, sUrl.contains("WIDTH=512"));
+        assertTrue("was:" + sUrl, sUrl.contains("HEIGHT=512"));
+        assertTrue("was:" + sUrl, sUrl.contains("LAYERS=test"));
+        assertTrue("was:" + sUrl, sUrl.contains("STYLES="));
+        assertTrue("was:" + sUrl, sUrl.contains("INFO_FORMAT=gml"));
+        assertTrue("was:" + sUrl, sUrl.contains("QUERY_LAYERS=test"));
+        assertTrue("was:" + sUrl, sUrl.contains("X=140"));
+        assertTrue("was:" + sUrl, sUrl.contains("Y=243"));
     }
 
     /**
@@ -601,17 +601,17 @@ public class WMSMapLayerTest {
 
         final String sUrl = url.toString();
         assertTrue(sUrl.startsWith("http://test.com?"));
-        assertTrue(sUrl.contains("BBOX=-85.05112779126263,-179.9999885408455,85.05112779126262,179.9999885408455"));
-        assertTrue(sUrl.contains("CRS=EPSG:4326"));
-        assertTrue(sUrl.contains("FORMAT=image/png"));
-        assertTrue(sUrl.contains("WIDTH=512"));
-        assertTrue(sUrl.contains("HEIGHT=512"));
-        assertTrue(sUrl.contains("LAYERS=test"));
-        assertTrue(sUrl.contains("STYLES="));
-        assertTrue(sUrl.contains("INFO_FORMAT=gml"));
-        assertTrue(sUrl.contains("QUERY_LAYERS=test"));
-        assertTrue(sUrl.contains("I=140"));
-        assertTrue(sUrl.contains("J=243"));
+        assertTrue("was:" + sUrl, sUrl.contains("BBOX=-85.05112779126263%2C-179.9999885408455%2C85.05112779126262%2C179.9999885408455"));
+        assertTrue("was:" + sUrl, sUrl.contains("CRS=EPSG%3A4326"));
+        assertTrue("was:" + sUrl, sUrl.contains("FORMAT=image%2Fpng"));
+        assertTrue("was:" + sUrl, sUrl.contains("WIDTH=512"));
+        assertTrue("was:" + sUrl, sUrl.contains("HEIGHT=512"));
+        assertTrue("was:" + sUrl, sUrl.contains("LAYERS=test"));
+        assertTrue("was:" + sUrl, sUrl.contains("STYLES="));
+        assertTrue("was:" + sUrl, sUrl.contains("INFO_FORMAT=gml"));
+        assertTrue("was:" + sUrl, sUrl.contains("QUERY_LAYERS=test"));
+        assertTrue("was:" + sUrl, sUrl.contains("I=140"));
+        assertTrue("was:" + sUrl, sUrl.contains("J=243"));
     }
 
     /**
@@ -633,21 +633,21 @@ public class WMSMapLayerTest {
         final Dimension rect = new Dimension(140, 20);
         final URL url = layer.getCoverageReference().queryLegend(rect, "image/gif", "test", 2500.0);
         final String sUrl = url.toString();
-        assertTrue(sUrl.contains("SERVICE=WMS"));
-        assertTrue(sUrl.contains("VERSION=1.1.1"));
-        assertTrue(sUrl.contains("REQUEST=GetLegendGraphic"));
-        assertTrue(sUrl.contains("FORMAT=image/gif"));
-        assertTrue(sUrl.contains("EXCEPTIONS=application/test"));
-        assertTrue(sUrl.contains("LAYER=BlueMarble"));
-        assertTrue(sUrl.contains("STYLE=test"));
-        assertTrue(sUrl.contains("WIDTH=140"));
-        assertTrue(sUrl.contains("HEIGHT=20"));
-        assertTrue(sUrl.contains("RULE=test"));
-        assertTrue(sUrl.contains("SCALE=2500"));
-        assertTrue(sUrl.contains("SLD_VERSION=3.3.3"));
-        assertTrue(sUrl.contains("TIME=20-20-20T20:20:20Z"));
-        assertTrue(sUrl.contains("ELEVATION=500"));
-        assertTrue(sUrl.contains("DIMRANGE=-50,50"));
+        assertTrue("was:" + sUrl, sUrl.contains("SERVICE=WMS"));
+        assertTrue("was:" + sUrl, sUrl.contains("VERSION=1.1.1"));
+        assertTrue("was:" + sUrl, sUrl.contains("REQUEST=GetLegendGraphic"));
+        assertTrue("was:" + sUrl, sUrl.contains("FORMAT=image%2Fgif"));
+        assertTrue("was:" + sUrl, sUrl.contains("EXCEPTIONS=application%2Ftest"));
+        assertTrue("was:" + sUrl, sUrl.contains("LAYER=BlueMarble"));
+        assertTrue("was:" + sUrl, sUrl.contains("STYLE=test"));
+        assertTrue("was:" + sUrl, sUrl.contains("WIDTH=140"));
+        assertTrue("was:" + sUrl, sUrl.contains("HEIGHT=20"));
+        assertTrue("was:" + sUrl, sUrl.contains("RULE=test"));
+        assertTrue("was:" + sUrl, sUrl.contains("SCALE=2500"));
+        assertTrue("was:" + sUrl, sUrl.contains("SLD_VERSION=3.3.3"));
+        assertTrue("was:" + sUrl, sUrl.contains("TIME=20-20-20T20%3A20%3A20Z"));
+        assertTrue("was:" + sUrl, sUrl.contains("ELEVATION=500"));
+        assertTrue("was:" + sUrl, sUrl.contains("DIMRANGE=-50%2C50"));
 
     }
 
@@ -670,21 +670,21 @@ public class WMSMapLayerTest {
         final Dimension rect = new Dimension(140, 20);
         final URL url = layer.getCoverageReference().queryLegend(rect, "image/gif", "test", 2500.0);
         final String sUrl = url.toString();
-        assertTrue(sUrl.contains("SERVICE=WMS"));
-        assertTrue(sUrl.contains("VERSION=1.3.0"));
-        assertTrue(sUrl.contains("REQUEST=GetLegendGraphic"));
-        assertTrue(sUrl.contains("FORMAT=image/gif"));
-        assertTrue(sUrl.contains("EXCEPTIONS=application/test"));
-        assertTrue(sUrl.contains("LAYER=BlueMarble"));
-        assertTrue(sUrl.contains("STYLE=test"));
-        assertTrue(sUrl.contains("WIDTH=140"));
-        assertTrue(sUrl.contains("HEIGHT=20"));
-        assertTrue(sUrl.contains("RULE=test"));
-        assertTrue(sUrl.contains("SCALE=2500"));
-        assertTrue(sUrl.contains("SLD_VERSION=3.3.3"));
-        assertTrue(sUrl.contains("TIME=20-20-20T20:20:20Z"));
-        assertTrue(sUrl.contains("ELEVATION=500"));
-        assertTrue(sUrl.contains("DIMRANGE=-50,50"));
+        assertTrue("was:" + sUrl, sUrl.contains("SERVICE=WMS"));
+        assertTrue("was:" + sUrl, sUrl.contains("VERSION=1.3.0"));
+        assertTrue("was:" + sUrl, sUrl.contains("REQUEST=GetLegendGraphic"));
+        assertTrue("was:" + sUrl, sUrl.contains("FORMAT=image%2Fgif"));
+        assertTrue("was:" + sUrl, sUrl.contains("EXCEPTIONS=application%2Ftest"));
+        assertTrue("was:" + sUrl, sUrl.contains("LAYER=BlueMarble"));
+        assertTrue("was:" + sUrl, sUrl.contains("STYLE=test"));
+        assertTrue("was:" + sUrl, sUrl.contains("WIDTH=140"));
+        assertTrue("was:" + sUrl, sUrl.contains("HEIGHT=20"));
+        assertTrue("was:" + sUrl, sUrl.contains("RULE=test"));
+        assertTrue("was:" + sUrl, sUrl.contains("SCALE=2500"));
+        assertTrue("was:" + sUrl, sUrl.contains("SLD_VERSION=3.3.3"));
+        assertTrue("was:" + sUrl, sUrl.contains("TIME=20-20-20T20%3A20%3A20Z"));
+        assertTrue("was:" + sUrl, sUrl.contains("ELEVATION=500"));
+        assertTrue("was:" + sUrl, sUrl.contains("DIMRANGE=-50%2C50"));
 
     }
 
