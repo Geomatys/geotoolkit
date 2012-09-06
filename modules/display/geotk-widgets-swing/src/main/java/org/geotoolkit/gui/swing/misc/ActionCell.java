@@ -36,7 +36,7 @@ import javax.swing.table.TableCellEditor;
  */
 public class ActionCell {
     
-    private ActionCell(){}
+    protected ActionCell(){}
     
     public static class Renderer extends DefaultTableCellRenderer{
 
@@ -45,19 +45,23 @@ public class ActionCell {
         public Renderer(final Icon icon) {
             this.icon = icon;
         }
-        
+
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             final JLabel lbl = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-            lbl.setText("");
+            lbl.setText(getText(value));
             lbl.setIcon(getIcon(value));
-            lbl.setIconTextGap(0);
             lbl.setHorizontalTextPosition(SwingConstants.CENTER);
             lbl.setHorizontalAlignment(SwingConstants.CENTER);
             
             final Color bg = getBackgroundColor(value);
             if(!isSelected && bg != null){
                 lbl.setBackground(bg);
+            }
+            
+            final Color fg = getForegroundColor(value);
+            if(!isSelected && fg != null){
+                lbl.setForeground(fg);
             }
             
             return lbl;
@@ -67,7 +71,15 @@ public class ActionCell {
             return icon;
         }
         
+        public String getText(Object value){
+            return "";
+        }
+        
         public Color getBackgroundColor(Object value){
+            return null;
+        }
+        
+        public Color getForegroundColor(Object value){
             return null;
         }
         
@@ -93,6 +105,7 @@ public class ActionCell {
         public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
             this.value = value;
             button.setIcon(getIcon(value));
+            button.setText(getText(value));
             return button;
         }
         
@@ -116,6 +129,10 @@ public class ActionCell {
 
         public Icon getIcon(Object value){
             return icon;
+        }
+        
+        public String getText(Object value){
+            return "";
         }
         
         public abstract void actionPerformed(ActionEvent e, Object value);
