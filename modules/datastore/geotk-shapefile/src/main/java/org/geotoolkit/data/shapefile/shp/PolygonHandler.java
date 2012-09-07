@@ -195,6 +195,8 @@ public class PolygonHandler extends AbstractShapeHandler {
                 }
                 coordIndex++;
             }
+            
+            JTS.ensureClosed(points);
 
             final LinearRing ring = GEOMETRY_FACTORY.createLinearRing(points);
             if (CGAlgorithms.isCCW(points)) {
