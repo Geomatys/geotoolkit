@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.image.classification;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import org.geotoolkit.util.ArgumentChecks;
@@ -45,12 +43,12 @@ public class Classification {
     /**
      * data will be classified.
      */
-    private final double[] data;
+    private double[] data = null;
 
     /**
      * Number of class which fragment data.
      */
-    private final int classNumber;
+    private int classNumber;
 
     /**
      * List will be contain classification result.
@@ -60,144 +58,101 @@ public class Classification {
     /**
      * Data value number.
      */
-    private final int dataLength;
+    private int dataLength;
 
     /**
      * Begin and ending classes index from {@link #data} table.
      */
-    private final int[] index;
+    private int[] index = null;
 
     /**
-     * Stock average and variance of each possible value group.
+     * true if re-compute class list from {@link #index} table else false.
      */
-    private final double[] moyVar;
-    private final int cellLength;
+    private boolean reComputeList;
+
 
     /**
-     * <p>Define and compute two sort of data classifications.<br/>
+     * Define and compute two sort of data classifications.<br/>
      * Quantile classification.<br/>
-     * Jenks classification.<br/><br/>
-     *
-     * Note : if "classNumber" parameter equal 1, the 2 classification made add
-     * in result list only one ascending order class.</p>
-     *
-     * @param data table will be classified.
-     * @param classNumber class number.
+     * Jenks classification.
      */
-    public Classification(double[] data, int classNumber) {
-        ArgumentChecks.ensureNonNull("data table", data);
-        if (classNumber < 1)
-            throw new IllegalArgumentException("impossible to classify datas with"
-                + " class number lesser 1");
-        if (classNumber > data.length)
-            throw new IllegalArgumentException("impossible to classify datas"
-                + " with class number larger than overall elements number");
-        this.data        = data;
-        this.classNumber = classNumber;
+    public Classification() {
+        this.classNumber = 1;
         this.classList   = new LinkedList<double[]>();
-        this.dataLength  = data.length;
-        this.index       = new int[2 * classNumber];
-        this.cellLength  = dataLength - classNumber + 1;
-        this.moyVar      = new double[2 * dataLength * cellLength];
     }
 
     /**
      * Class data from quantile method.
      */
     public void computeQuantile() {
+        if (data == null)
+            throw new IllegalArgumentException("you must set data");
+        if (classNumber > dataLength)
+            throw new IllegalArgumentException("impossible to classify datas"
+                + " with class number larger than overall elements number");
+        this.index = new int[classNumber];
+        this.reComputeList = true;
         if (classNumber == 1) {
-            classList.add(data);
-            index[0] = 0;
-            index[1] = data.length;
+            index[0] = dataLength;
             return;
         }
-        int lowLimit = 0, compIndex = 0;
-        int highLimit, comp, l, j;
-        double[] result;
-        for (int i = 1; i<=classNumber; i++) {
-            highLimit = (int) Math.round(i*((double)dataLength)/classNumber);
-            //fill index
-            index[compIndex++] = lowLimit;
-            index[compIndex++] = highLimit;
-            l = highLimit-lowLimit;
-            comp = 0;
-            result = new double[l];
-            for (j = lowLimit; j<highLimit; j++) {
-                result[comp++] = data[j];
-            }
-            lowLimit +=l;
-            classList.add(result);
-        }
+        for (int i = 1; i<=classNumber; i++)
+            index[i-1] = (int) Math.round(i*((double)dataLength)/classNumber);
     }
 
     /**
      * Class data from Jenks method.
      */
     public void computeJenks() {
+        if (data == null)
+            throw new IllegalArgumentException("you must set data");
+        if (classNumber > dataLength)
+            throw new IllegalArgumentException("impossible to classify datas"
+                + " with class number larger than overall elements number");
+        this.index = new int[classNumber];
+        this.reComputeList = true;
         if (classNumber == 1) {
-            classList.add(data);
-            index[0] = 0;
-            index[1] = data.length;
+            index[0] = dataLength;
             return;
         }
-        computeMoyVar();
-        int[] finalSequenceKept = null;
-        final int[] jSequence = new int[classNumber];
-        final int[] idc = new int[1];
-        final JenkSequence jSeq = new JenkSequence(jSequence, dataLength, idc);
-        int max, len, min, id;
-        double varianceIntraClass, varianceInterClass;
-        double[] average  = new double[classNumber];
-        double[] variance = new double[classNumber];
-        double diffTemp, diff = 0;
-        boolean oneTime = true;
-
-        while (jSeq.next()) {
-            min = (idc[0] == 0 || oneTime) ? 0 : jSequence[idc[0]-1];
-            if (oneTime) {
-                idc[0] = 0;
-                oneTime = false;
-            }
-            for (int i = idc[0]; i<classNumber; i++) {
-                max = jSequence[i];
-                id  = 2 * (min * cellLength + (max - 1 - min));
-                average[i]  = moyVar[id];
-                variance[i] = moyVar[id+1];
-                //next table begin index.
-                min = max;
-            }
-            /**
-             * Average of classes variances.
-             * Named SDBC or "intra classes variances".
-             */
-            varianceIntraClass = getAverage(variance);
-            /**
-             * Variance of classes averages.
-             * Named SDAM or "inter classes variance".
-             */
-            varianceInterClass = getVariance(average);
-            diffTemp = (varianceInterClass - varianceIntraClass) / varianceInterClass;
-            if (finalSequenceKept == null || (diff < diffTemp)) {
-                finalSequenceKept = jSequence.clone();
-                diff = diffTemp;
-            }
+        final double[][] mat1 = new double[dataLength + 1][classNumber + 1];
+        final double[][] mat2 = new double[dataLength + 1][classNumber + 1];
+        for (int i = 1; i <= classNumber; i++) {
+            mat1[1][i] = 1;
+            mat2[1][i] = 0;
+            for (int j = 2; j <= dataLength; j++)
+                mat2[j][i] = Double.MAX_VALUE;
         }
-        min = 0;
-        int compteur, compIndex = 0;
-        double[] result;
-        for (int i = 0; i<classNumber; i++) {
-            max = finalSequenceKept[i];
-            //fill index table
-            index[compIndex++] = min;
-            index[compIndex++] = max;
-            len = max - min;
-            compteur = 0;
-            result = new double[len];
-            for (int j = min; j<max; j++) {
-                result[compteur++] = data[j];
+        double s1, s2, len, val, diff = 0;
+        int id_3, id_4;
+        for (int l = 2; l <= dataLength; l++) {
+            s1 = s2 = len = 0;
+            for (int m = 1; m <= l; m++) {
+                id_3 = l - m + 1;
+                val = data[id_3 -1];
+                s2 += val * val;
+                s1 += val;
+                len++;
+                diff = s2 - (s1 * s1) / len;
+                id_4 = id_3 - 1;
+                if (id_4 != 0) {
+                    for (int j = 2; j <= classNumber; j++) {
+                        if (mat2[l][j] >= (diff + mat2[id_4][j - 1])) {
+                            mat1[l][j] = id_3;
+                            mat2[l][j] = diff + mat2[id_4][j - 1];
+                        }
+                    }
+                }
             }
-            classList.add(result);
-            min = max;
+            mat1[l][1] = 1;
+            mat2[l][1] = diff;
+        }
+        int idata = dataLength;
+        index[classNumber - 1] = dataLength;
+        for (int j = classNumber; j >= 2; j--) {
+            int id =  (int) (mat1[idata][j]) - 2;
+            index[j - 2] = id + 1;
+            idata = (int) mat1[idata][j] - 1;
         }
     }
 
@@ -207,6 +162,21 @@ public class Classification {
      * @return classification result.
      */
     public List<double[]> getClasses() {
+        if (index == null)
+            throw new IllegalStateException("you must call compute method to fill index table");
+        if (!reComputeList) return classList;
+        int max, len, min = 0;
+        double[] result;
+        classList.clear();
+        for (int i = 0; i<classNumber; i++) {
+            max    = index[i];
+            len    = max-min;
+            result = new double[len];
+            System.arraycopy(data, min, result, 0, len);
+            classList.add(result);
+            min    = max;
+        }
+        reComputeList = false;
         return classList;
     }
 
@@ -214,83 +184,41 @@ public class Classification {
      * <p>Return classes separation index from {@link #data} table.<br/><br/>
      * for example : caller want class 10 data in 3 distinct class.<br/>
      * first class  second class   third class<br/>
-     * &nbsp;&nbsp;[0][4]&nbsp;&nbsp;&nbsp;...&nbsp;&nbsp;&nbsp;[4][7]&nbsp;&nbsp;&nbsp;...&nbsp;&nbsp;&nbsp;[7][10]<br/>
-     * With begin index is inclusive and ending index is exclusive.</p>
+     * &nbsp;&nbsp;[4]&nbsp;&nbsp;&nbsp;...&nbsp;&nbsp;&nbsp;[7]&nbsp;&nbsp;&nbsp;...&nbsp;&nbsp;&nbsp;[10]<br/>
+     * With ending index is exclusive.</p>
      *
      * @return classes separation index from {@link #data} table.
      */
     public int[] getIndex() {
+        if (index == null)
+            throw new IllegalStateException("you must call compute method to fill index table");
         return index;
     }
 
     /**
-     * Return variance from double table elements.
+     * Set data which will be classified.
      *
-     * @param values table which contain value to compute variance.
-     * @return variance of double elements.
+     * @param data which will be classified.
      */
-    double getVariance(double[] values) {
-        assert (values != null) : "variance values table is null";
-        final int length = values.length;
-        double moy = 0;
-        double var;
-        double variance = 0;
-        for (int i = 0; i<length; i++) {
-            moy += values[i];
-        }
-        moy /= length;
-        for (int i = 0; i<length; i++) {
-            var = values[i]-moy;
-            var *= var;
-            variance += var;
-        }
-        return variance /= length;
+    public void setData(double ...data) {
+        ArgumentChecks.ensureNonNull("data table", data);
+        if (data.length < classNumber)
+            throw new IllegalArgumentException("classNumber will not be able to > dataLenght. dataLenght = "+dataLength);
+        this.data       = data;
+        this.dataLength = data.length;
+        this.index      = null;
     }
 
     /**
-     * Return average from double table elements.
+     * Set class number.
      *
-     * @param values table which contain value to compute average.
-     * @return average from double table elements.
+     * @param classNumber class number ask by caller.
      */
-    private double getAverage(double[] values) {
-        assert (values != null) : "average values table is null";
-        final int length = values.length;
-        double result = 0;
-        for (int i = 0; i<length; i++) {
-            result += values[i];
-        }
-        return result /= length;
-    }
-
-    /**
-     * Stock and compute average and variance of each possible value group.
-     */
-    public void computeMoyVar() {
-        int min = 0;
-        int max = cellLength;
-        int currentIndex = min - 1;
-        double moy, var, variance;
-        int id, len;
-        while (min != dataLength) {
-            moy = 0;
-            while (++currentIndex != max) {
-                moy += data[currentIndex];
-                len  = currentIndex - min;
-                id   = 2 * (min * cellLength + len);
-                len++;
-                moyVar[id] = moy / len;
-                variance   = 0;
-                for (int i = min; i <= currentIndex; i++) {
-                    var       = data[i] - moy / len;
-                    var      *= var;
-                    variance += var;
-                }
-                moyVar[id + 1] = variance / len;
-            }
-            if (max < dataLength) max++;
-            min++;
-            currentIndex = min - 1;
-        }
+    public void setClassNumber(int classNumber) {
+        if (classNumber < 1)
+            throw new IllegalArgumentException("impossible to classify datas with"
+                + " class number lesser 1");
+        this.classNumber = classNumber;
+        this.index       = null;
     }
 }
