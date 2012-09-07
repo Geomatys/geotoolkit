@@ -40,12 +40,15 @@ import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.process.ProgressController;
 
+import static org.geotoolkit.util.Strings.length;
+
 
 /**
  * Reports progress by sending email to the specified address at regular interval.
  *
  * @author Martin Desruisseaux (MPO, IRD, Geomatys)
- * @version 3.19
+ * @author Guilhem Legal (Geomatys)
+ * @version 3.20
  *
  * @since 2.0
  * @module
@@ -200,7 +203,27 @@ public class ProgressMailer extends ProgressController {
     }
 
     /**
-     * Sends an emails saying that the operation finished.
+     * Sends an email saying that the operation paused.
+     *
+     * @since 3.20
+     */
+    @Override
+    public void paused() {
+        send(Vocabulary.format(Vocabulary.Keys.PAUSED), getProgress());
+    }
+
+    /**
+     * Sends an email saying that the operation resumed.
+     *
+     * @since 3.20
+     */
+    @Override
+    public void resumed() {
+        send(Vocabulary.format(Vocabulary.Keys.RESUMED), getProgress());
+    }
+
+    /**
+     * Sends an email saying that the operation finished.
      */
     @Override
     public synchronized void completed() {
@@ -222,7 +245,7 @@ public class ProgressMailer extends ProgressController {
      */
     @Override
     public synchronized void warningOccurred(final String source, final String location, final String warning) {
-        final StringBuilder buffer = new StringBuilder();
+        final StringBuilder buffer = new StringBuilder(length(source) + length(location) + length(warning) + 5);
         if (source != null) {
             buffer.append(source);
             if (location != null) {

@@ -130,6 +130,17 @@ public final class Strings extends Static {
     }
 
     /**
+     * Returns the {@linkplain CharSequence#length()} of the given characters sequence,
+     * or 0 if {@code null}.
+     *
+     * @param  text The character sequence from which to get the length, or {@code null}.
+     * @return The length of the character sequence, or 0 if the argument is {@code null}.
+     */
+    public static int length(final CharSequence text) {
+        return (text != null) ? text.length() : 0;
+    }
+
+    /**
      * Returns the number of occurrences of the {@code toSearch} string in the given {@code text}.
      * The search is case-sensitive.
      *

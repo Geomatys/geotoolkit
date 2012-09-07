@@ -48,7 +48,8 @@ import org.geotoolkit.util.Utilities;
  * <p>&nbsp;</p>
  *
  * @author Martin Desruisseaux (MPO, IRD, Geomatys)
- * @version 3.19
+ * @author Guilhem Legal (Geomatys)
+ * @version 3.20
  *
  * @since 1.0
  * @module
@@ -259,6 +260,24 @@ public class ProgressWindow extends ProgressController implements Disposable {
     }
 
     /**
+     * Notifies that the operation is suspended. This method sets the progress bar in
+     * an {@linkplain JProgressBar#setIndeterminate(boolean) indeterminated} state.
+     */
+    @Override
+    public void paused() {
+        call(Caller.PAUSED);
+    }
+
+    /**
+     * Notifies that the operation has been resumed. This method stops the progress bar
+     * {@linkplain JProgressBar#setIndeterminate(boolean) indeterminated} state.
+     */
+    @Override
+    public void resumed() {
+        call(Caller.RESUMED);
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -377,25 +396,31 @@ public class ProgressWindow extends ProgressController implements Disposable {
      */
     private class Caller implements Runnable {
         /** For getting or setting the window title. */
-        public static final int TITLE = 1;
+        static final int TITLE = 1;
 
         /** For getting or setting the progress label. */
-        public static final int LABEL = 2;
+        static final int LABEL = 2;
 
         /** For getting or setting the progress bar value. */
-        public static final int PROGRESS = 3;
+        static final int PROGRESS = 3;
 
         /** For adding a warning message. */
-        public static final int WARNING = 4;
+        static final int WARNING = 4;
 
         /** Notify that an action started. */
-        public static final int STARTED = 5;
+        static final int STARTED = 5;
+
+        /** Notify that the process is paused. */
+        static final int PAUSED = 6;
+
+        /** Notify that the process is resumed. */
+        static final int RESUMED = 7;
 
         /** Notify that an action is completed. */
-        public static final int COMPLETE = 6;
+        static final int COMPLETE = 8;
 
         /** Notify that the window can be disposed. */
-        public static final int DISPOSE = 7;
+        static final int DISPOSE = 9;
 
         /**
          * The task to execute, as one of the {@link #TITLE}, {@link #LABEL}, <i>etc.</i>
@@ -443,6 +468,14 @@ public class ProgressWindow extends ProgressController implements Disposable {
                     }
                     window.setVisible(true);
                     break; // Need further action below.
+                }
+                case PAUSED: {
+                    progressBar.setIndeterminate(true);
+                    return;
+                }
+                case RESUMED: {
+                    progressBar.setIndeterminate(false);
+                    return;
                 }
                 case COMPLETE: {
                     progressBar.setIndeterminate(false);

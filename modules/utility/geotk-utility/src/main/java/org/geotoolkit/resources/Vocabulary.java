@@ -1265,6 +1265,11 @@ public final class Vocabulary extends IndexedResourceBundle {
         public static final int PAST = 231;
 
         /**
+         * Paused
+         */
+        public static final int PAUSED = 355;
+
+        /**
          * Personalized
          */
         public static final int PERSONALIZED = 232;
@@ -1380,6 +1385,11 @@ public final class Vocabulary extends IndexedResourceBundle {
          * Resolution
          */
         public static final int RESOLUTION = 340;
+
+        /**
+         * Resumed
+         */
+        public static final int RESUMED = 356;
 
         /**
          * RGF93 transform
