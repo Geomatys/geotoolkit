@@ -18,6 +18,8 @@ package org.geotoolkit.data.memory;
 
 import java.util.NoSuchElementException;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
@@ -39,17 +41,25 @@ import org.opengis.feature.type.FeatureType;
 public class GenericCachedFeatureIterator<F extends Feature, R extends FeatureIterator<F>>
         implements FeatureIterator<F> {
         
-    private final Object LOCK = new Object();
+    //TODO : wait for martin, there should already be a thread pool for global tasks somewhere.
+    public static final Executor POOL = Executors.newCachedThreadPool();
     
-    private DataStoreRuntimeException subException = null;
+    private final Object QUEUELOCK = new Object();
+    private final Object FINISHLOCK = new Object();
+    
+    // used by the main thread to notify collector thread to stop retrieving features.
     private volatile boolean closed = false;
-    protected final R iterator;
+    // used by the collector thread to notify main thread that sub iterator can be closed.
+    private volatile boolean canCloseSub = false;
+    
+    private final ArrayBlockingQueue queue = new ArrayBlockingQueue(2);
+    
+    protected R iterator;
     protected final int cacheSize;
-    private final ArrayBlockingQueue queue;
     private Feature[] buffer = null;
     private int bufferIndex = 0;
     protected F next = null;
-    private final Thread collector;
+    private DataStoreRuntimeException subException = null;
 
     /**
      * Creates a new instance of GenericCacheFeatureIterator
@@ -60,51 +70,8 @@ public class GenericCachedFeatureIterator<F extends Feature, R extends FeatureIt
     private GenericCachedFeatureIterator(final R iterator, final int cacheSize) {
         this.iterator = iterator;
         this.cacheSize = cacheSize;
-        this.queue = new ArrayBlockingQueue(2);
         
-        collector = new Thread(){
-
-            @Override
-            public void run() {
-                
-                boolean finish = false;
-                while(!closed && !finish){
-                    //create and fill buffer
-                    final Feature[] buffer = new Feature[cacheSize];
-                    try{
-                        for(int i=0;i<buffer.length;i++){
-                            if(iterator.hasNext()){
-                                buffer[i] = iterator.next();
-                            }else{
-                                finish = true;
-                                break;
-                            }
-                        }
-                    }catch(DataStoreRuntimeException ex){
-                        subException = ex;
-                    }
-
-                    boolean success;
-                    do{
-                        success = queue.offer(buffer);
-                        if(!success){
-                            try {
-                                if(closed)break;
-                                //no space left, go to sleep until iterator wake it up
-                                synchronized(LOCK){
-                                    LOCK.wait();
-                                }
-                            } catch (InterruptedException ex) {
-                                Logging.getLogger(GenericCachedFeatureIterator.class).log(Level.WARNING, ex.getMessage(), ex);
-                            }
-                        }
-
-                    }while(!success && !closed);
-                }
-                
-            }
-        };
-        collector.start();
+        POOL.execute(new Collector());
     }
 
     /**
@@ -135,12 +102,19 @@ public class GenericCachedFeatureIterator<F extends Feature, R extends FeatureIt
     public void close() throws DataStoreRuntimeException {
         closed = true;
         //notify collector thread, may be waiting
-        synchronized(LOCK){
-            LOCK.notify();
+        synchronized(QUEUELOCK){
+            QUEUELOCK.notify();
         }
-        iterator.close();
+        
+        //sub iterator might already be closed
+        if(iterator != null){
+            synchronized(FINISHLOCK){
+                iterator.close();
+                iterator = null;
+            }
+        }
     }
-
+    
     /**
      * {@inheritDoc }
      */
@@ -160,6 +134,13 @@ public class GenericCachedFeatureIterator<F extends Feature, R extends FeatureIt
         if(next != null || closed) return;
         
         if(buffer == null){
+            //collector thread might have finish reading before iteration
+            //is over. we can release the sub iterator sooner to release resources.
+            if(iterator!=null && canCloseSub){
+                iterator.close();
+                iterator = null;
+            }
+            
             try {
                 buffer = (Feature[]) queue.take();
             } catch (InterruptedException ex) {
@@ -168,8 +149,8 @@ public class GenericCachedFeatureIterator<F extends Feature, R extends FeatureIt
             bufferIndex = 0;
             
             //notify collector thread some space is available
-            synchronized(LOCK){
-                LOCK.notify();
+            synchronized(QUEUELOCK){
+                QUEUELOCK.notify();
             }
         }
         
@@ -193,7 +174,7 @@ public class GenericCachedFeatureIterator<F extends Feature, R extends FeatureIt
      */
     @Override
     public void remove() {
-        iterator.remove();
+        throw new DataStoreRuntimeException("Cached iterator does not support remove operation.");
     }
 
     @Override
@@ -216,13 +197,16 @@ public class GenericCachedFeatureIterator<F extends Feature, R extends FeatureIt
     private static final class GenericCachedFeatureReader<T extends FeatureType, F extends Feature, R extends FeatureReader<T,F>>
             extends GenericCachedFeatureIterator<F,R> implements FeatureReader<T,F>{
 
+        private final T ft;
+        
         private GenericCachedFeatureReader(final R reader, final int cacheSize){
             super(reader,cacheSize);
+            ft = iterator.getFeatureType();
         }
         
         @Override
         public T getFeatureType() {
-            return iterator.getFeatureType();
+            return ft;
         }
 
     }
@@ -274,6 +258,54 @@ public class GenericCachedFeatureIterator<F extends Feature, R extends FeatureIt
      */
     public static FeatureCollection wrap(final FeatureCollection original, final int cacheSize){
         return new GenericCachedFeatureIterator.GenericCachedFeatureCollection(original, cacheSize);
+    }
+    
+    
+    private final class Collector implements Runnable{
+
+        @Override
+        public void run() {
+            boolean finish = false;
+            
+            synchronized(FINISHLOCK){
+                mainLoop:
+                while(!closed && !finish){
+                    //create and fill buffer
+                    final Feature[] buffer = new Feature[cacheSize];
+                    try{
+                        for(int i=0;i<buffer.length;i++){
+                            if(iterator.hasNext()){
+                                buffer[i] = iterator.next();
+                            }else{
+                                finish = true;
+                                break;
+                            }
+                        }
+                    }catch(DataStoreRuntimeException ex){
+                        subException = ex;
+                    }
+
+                    boolean success;
+                    do{
+                        success = queue.offer(buffer);
+                        if(!success){
+                            try {
+                                //no space left, go to sleep until iterator wake it up
+                                synchronized(QUEUELOCK){
+                                    if(closed) break mainLoop;
+                                    QUEUELOCK.wait();
+                                }
+                            } catch (InterruptedException ex) {
+                                Logging.getLogger(GenericCachedFeatureIterator.class).log(Level.WARNING, ex.getMessage(), ex);
+                            }
+                        }
+
+                    }while(!success);
+                }
+            }
+            canCloseSub = true;
+        }
+    
     }
     
 }
