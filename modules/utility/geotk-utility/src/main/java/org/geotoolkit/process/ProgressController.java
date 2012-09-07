@@ -55,7 +55,8 @@ import org.geotoolkit.util.SimpleInternationalString;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Jody Garnet (Refractions Research)
- * @version 3.19
+ * @author Guilhem Legal (Geomatys)
+ * @version 3.20
  *
  * @since 3.19 (derived from 2.0)
  * @module
@@ -146,6 +147,51 @@ public abstract class ProgressController implements Localized, ProcessListener {
     @Override
     public void started(final ProcessEvent event) {
         started();
+        progressing(event);
+    }
+
+    /**
+     * Notifies this controller that the operation is suspended.
+     *
+     * @since 3.20
+     */
+    public abstract void paused();
+
+    /**
+     * Notifies this controller that the operation is suspended and sets the states of this
+     * controller according the given event. The default implementation first invokes
+     * <code>{@linkplain #progressing(ProcessEvent) progressing}(event)</code>,
+     * then invokes {@link #paused()}.
+     *
+     * @param event The progress event, or {@code null} if none.
+     *
+     * @since 3.20
+     */
+    @Override
+    public void paused(final ProcessEvent event) {
+        progressing(event);
+        paused();
+    }
+
+    /**
+     * Notifies this controller that the operation is resumed.
+     *
+     * @since 3.20
+     */
+    public abstract void resumed();
+
+    /**
+     * Notifies this controller that the operation is resumed and sets the states of this controller
+     * according the given event. The default implementation first invokes {@link #resumed()},
+     * then invokes <code>{@linkplain #progressing(ProcessEvent) progressing}(event)</code>.
+     *
+     * @param event The progress event, or {@code null} if none.
+     *
+     * @since 3.20
+     */
+    @Override
+    public void resumed(final ProcessEvent event) {
+        resumed();
         progressing(event);
     }
 

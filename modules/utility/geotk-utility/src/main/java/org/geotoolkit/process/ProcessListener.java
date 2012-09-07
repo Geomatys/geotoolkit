@@ -28,7 +28,8 @@ import java.util.EventListener;
  * {@link #progressing progressing} method are optional but recommended.
  *
  * @author Johann Sorel (Geomatys)
- * @version 3.19
+ * @author Guilhem Legal (Geomatys)
+ * @version 3.20
  *
  * @since 3.19
  * @module
@@ -56,6 +57,26 @@ public interface ProcessListener extends EventListener {
      * @param event The progress event.
      */
     void progressing(ProcessEvent event);
+
+    /**
+     * Reports that a process has been paused. In addition to the
+     * source and task name, the event argument may contain the following optional information:
+     * <p>
+     * <ul>
+     *   <li>{@link ProcessEvent#getOutput()}, if non-null, indicates the calculation state before
+     *       the pause.</li>
+     * </ul>
+     *
+     * @param event The progress event.
+     */
+    void paused(ProcessEvent event);
+
+    /**
+     * Reports that a process has been resumed after a pause.
+     *
+     * @param event The progress event.
+     */
+    void resumed(ProcessEvent event);
 
     /**
      * Reports that a process has completed successfully. {@link Process} implementations

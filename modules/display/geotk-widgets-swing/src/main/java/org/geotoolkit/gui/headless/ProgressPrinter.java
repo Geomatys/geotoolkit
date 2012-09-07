@@ -38,7 +38,8 @@ import org.geotoolkit.process.ProgressController;
  * notifications without stopping the lengthly task.
  *
  * @author Martin Desruisseaux (MPO, IRD, Geomatys)
- * @version 3.19
+ * @author Guilhem Legal (Geomatys)
+ * @version 3.20
  *
  * @since 1.0
  * @module
@@ -190,6 +191,26 @@ public class ProgressPrinter extends ProgressController {
         lastPercent       = null;
         lastSource        = null;
         hasPrintedWarning = false;
+    }
+
+    /**
+     * Notifies this controller that the operation is suspended.
+     */
+    @Override
+    public synchronized void paused() {
+        final String message = Vocabulary.getResources(getLocale()).getString(Vocabulary.Keys.PAUSED);
+        out.print(message);
+        carriageReturn(message.length());
+    }
+
+    /**
+     * Notifies this controller that the operation is resumed.
+     */
+    @Override
+    public synchronized void resumed() {
+        final String message = Vocabulary.getResources(getLocale()).getString(Vocabulary.Keys.RESUMED);
+        out.print(message);
+        carriageReturn(message.length());
     }
 
     /**
