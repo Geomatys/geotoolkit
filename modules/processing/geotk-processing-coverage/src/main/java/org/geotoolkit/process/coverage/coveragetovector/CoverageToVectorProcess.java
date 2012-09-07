@@ -47,6 +47,7 @@ import static org.geotoolkit.parameter.Parameters.*;
 import static org.geotoolkit.process.coverage.coveragetovector.CoverageToVectorDescriptor.*;
 /**
  * Process to extract Polygon from a coverage.
+ * NumberRange is stored in geometry userData.
  *
  * @author Johann Sorel (Geomatys)
  */
@@ -425,7 +426,7 @@ public class CoverageToVectorProcess extends AbstractProcess {
     private static class NaNRange extends NumberRange{
 
         public NaNRange() {
-            super(Number.class,0,0);
+            super(Double.class,0d,0d);
         }
 
         @Override

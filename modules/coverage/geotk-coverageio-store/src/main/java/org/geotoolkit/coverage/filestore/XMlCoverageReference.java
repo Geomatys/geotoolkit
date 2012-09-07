@@ -104,7 +104,7 @@ public class XMlCoverageReference implements CoverageReference, PyramidalModel{
      * Save the pyramid set in the file
      * @throws DataStoreException 
      */
-    void save() throws DataStoreException{
+    synchronized void save() throws DataStoreException{
         final XMLPyramidSet set = getPyramidSet();
         try {
             set.write();

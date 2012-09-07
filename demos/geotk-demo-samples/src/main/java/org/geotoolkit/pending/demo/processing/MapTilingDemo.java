@@ -19,6 +19,7 @@ import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.gui.swing.ProgressWindow;
 import org.geotoolkit.gui.swing.go2.JMap2DFrame;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
@@ -89,6 +90,38 @@ public class MapTilingDemo {
         input.parameter("scales").setValue(scales);
         input.parameter("container").setValue(ref);
         final org.geotoolkit.process.Process p = desc.createProcess(input);
+        
+        //use a small predefined dialog
+        final ProgressWindow pw = new ProgressWindow(null);
+        p.addListener(pw);
+        
+        //or plain output
+//        p.addListener(new ProcessListener() {
+//            
+//            private final NumberFormat NF = NumberFormat.getPercentInstance();
+//            
+//            @Override
+//            public void started(ProcessEvent event) {
+//                showEvent(event, "Start :");
+//            }
+//            @Override
+//            public void progressing(ProcessEvent event) {
+//                showEvent(event, "");
+//            }
+//            @Override
+//            public void completed(ProcessEvent event) {
+//                showEvent(event, "Complete :");
+//            }
+//            @Override
+//            public void failed(ProcessEvent event) {
+//                showEvent(event, "Fail :");
+//            }
+//            
+//            private void showEvent(ProcessEvent event, String message){
+//                System.out.println(NF.format(event.getProgress()) +" "+message+" " + String.valueOf(event.getTask()));
+//            }
+//            
+//        });
 
         //get the result
         final ParameterValueGroup result = p.call();

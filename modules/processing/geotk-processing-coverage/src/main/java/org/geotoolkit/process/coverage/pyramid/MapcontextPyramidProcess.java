@@ -26,6 +26,7 @@ import org.geotoolkit.coverage.PyramidalModel;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
+import org.geotoolkit.display2d.service.PortrayalRenderedImage;
 import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.display2d.service.ViewDef;
 import org.geotoolkit.factory.Hints;
@@ -54,6 +55,9 @@ import static org.geotoolkit.process.coverage.pyramid.MapcontextPyramidDescripto
  */
 public final class MapcontextPyramidProcess extends AbstractProcess {
 
+    private volatile long progress = 0;
+    private long total = 0;
+        
     MapcontextPyramidProcess(final ParameterValueGroup input) {
         super(INSTANCE,input);
     }
@@ -75,6 +79,13 @@ public final class MapcontextPyramidProcess extends AbstractProcess {
             // Get the hint parameter if exist, otherwise keep it to null.
         }
 
+        //calculate the number of tile to generate
+        for(double scale : scales){
+            final double gridWidth  = envelope.getSpan(0) / (scale*tileSize.width);
+            final double gridHeight = envelope.getSpan(1) / (scale*tileSize.height);
+            total += (int)gridWidth*gridHeight;
+        }
+        
         final CanvasDef canvasDef = new CanvasDef(new Dimension(1, 1), null);
         final ViewDef viewDef = new ViewDef(envelope);
         final SceneDef sceneDef = new SceneDef(context,hints);
@@ -126,11 +137,18 @@ public final class MapcontextPyramidProcess extends AbstractProcess {
                         gridSize, tileDim, upperleft, scale);
                 }
 
-                final RenderedImage image = DefaultPortrayalService.prepareImage(
+                final PortrayalRenderedImage image = (PortrayalRenderedImage) DefaultPortrayalService.prepareImage(
                         canvasDef, sceneDef, viewDef,
                         mosaic.getGridSize(), mosaic.getTileSize(), scale);
+                image.addProgressListener(new PortrayalRenderedImage.ProgressListener() {
+                    @Override
+                    public void tileCreated(int x, int y) {
+                        progress++;
+                        progress();
+                    }
+                });
 
-                container.writeTiles(pyramid.getId(), mosaic.getId(), image, true);
+                container.writeTiles(pyramid.getId(), mosaic.getId(), image, true);  
                 
                 getOrCreate(OUT_CONTAINER, outputParameters).setValue(container);
             }
@@ -140,6 +158,10 @@ public final class MapcontextPyramidProcess extends AbstractProcess {
         } catch (PortrayalException ex) {
             throw new ProcessException(ex.getMessage(), this, ex);
         }
+    }
+    
+    private void progress(){
+        fireProgressing(progress+"/"+total, (float)((double)progress/(double)total), false);
     }
 
 }

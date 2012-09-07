@@ -23,12 +23,14 @@ import java.awt.Rectangle;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.awt.image.*;
+import java.util.EventListener;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.media.jai.RasterFactory;
+import javax.swing.event.EventListenerList;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.canvas.J2DCanvasBuffered;
@@ -38,7 +40,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 
 /**
- *
+ * On the fly calculated image.
+ * 
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
@@ -55,6 +58,9 @@ public class PortrayalRenderedImage implements RenderedImage{
     private final J2DCanvasBuffered canvas;
     private final int nbtileonwidth;
     private final int nbtileonheight;
+    
+    /** listener support */
+    private final EventListenerList listeners = new EventListenerList();
     
     /**
      * 
@@ -324,6 +330,7 @@ public class PortrayalRenderedImage implements RenderedImage{
                         tileSize.width, 
                         tileSize.height);
                 tileCache.put(idx, tile.getRaster());
+                fireTileCreated(col+x,row+y);
             }
         }        
         
@@ -392,4 +399,23 @@ public class PortrayalRenderedImage implements RenderedImage{
         return row*getNumXTiles() + col;
     }
     
+    protected void fireTileCreated(int x, int y){
+        for(ProgressListener l : listeners.getListeners(ProgressListener.class)){
+            l.tileCreated(x, y);
+        }
+    }
+    
+    public void addProgressListener(ProgressListener listener){
+        listeners.add(ProgressListener.class, listener);
+    }
+    
+    public void removeProgressListener(ProgressListener listener){
+        listeners.remove(ProgressListener.class, listener);
+    }
+    
+    public static interface ProgressListener extends EventListener{
+        
+        void tileCreated(int x, int y);
+        
+    }
 }
