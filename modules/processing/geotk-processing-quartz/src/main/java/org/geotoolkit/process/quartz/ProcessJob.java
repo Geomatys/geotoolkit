@@ -33,7 +33,7 @@ import org.quartz.JobExecutionException;
 
 /**
  * Quartz job executing a geotoolkit process.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
@@ -43,16 +43,16 @@ public class ProcessJob implements Job{
     public static final String KEY_PROCESS_ID = "processID";
     public static final String KEY_PARAMETERS = "processParams";
     public static final String KEY_PROCESS    = "processObj";
-    
+
     @Override
     public void execute(final JobExecutionContext jec) throws JobExecutionException {
         final JobDataMap parameters = jec.getJobDetail().getJobDataMap();
-        
+
         final Object objFactoryId = parameters.get(KEY_FACTORY_ID);
         final Object objProcessId = parameters.get(KEY_PROCESS_ID);
         final Object objProcessParams = parameters.get(KEY_PARAMETERS);
         final Object objProcess = parameters.get(KEY_PROCESS);
-        
+
         if(!(objFactoryId instanceof String)){
             throw new JobExecutionException("Factory id is not String, value found : " + objFactoryId);
         }
@@ -65,12 +65,12 @@ public class ProcessJob implements Job{
          if(objProcess != null && !(objProcess instanceof Process)){
             throw new JobExecutionException("Process object is invalid, value found : " + objProcess);
         }
-        
+
         final String factoryId = (String) objFactoryId;
         final String processId = (String) objProcessId;
-        final ParameterValueGroup params = (ParameterValueGroup) objProcessParams;    
+        final ParameterValueGroup params = (ParameterValueGroup) objProcessParams;
         Process process = (Process) objProcess;
-        
+
         if(process == null){
             final ProcessDescriptor desc;
             try{
@@ -82,7 +82,7 @@ public class ProcessJob implements Job{
         }
         final StoreExceptionMonitor monitor = new StoreExceptionMonitor();
         process.addListener(monitor);
-        
+
         //set the result int he context, for listener that might want it.
         final ParameterValueGroup result;
         try {
@@ -95,13 +95,13 @@ public class ProcessJob implements Job{
             }
         }
         jec.setResult(result);
-           
+
     }
 
     private final class StoreExceptionMonitor implements ProcessListener{
 
         JobExecutionException failed = null;
-        
+
         @Override
         public void started(ProcessEvent event) {
         }
@@ -118,7 +118,14 @@ public class ProcessJob implements Job{
         public void failed(ProcessEvent event) {
             failed = new JobExecutionException(String.valueOf(event.getTask()), event.getException(),false);
         }
-        
+
+        @Override
+        public void paused(ProcessEvent event) {
+        }
+
+        @Override
+        public void resumed(ProcessEvent event) {
+        }
     }
-    
+
 }

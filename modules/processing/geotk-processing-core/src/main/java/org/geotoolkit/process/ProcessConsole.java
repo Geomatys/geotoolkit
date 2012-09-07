@@ -98,6 +98,14 @@ public final class ProcessConsole {
             failed = true;
             printEvent(event, FOREGROUND_RED.sequence());
         }
+        @Override
+        public void paused(final ProcessEvent event) {
+            printEvent(event, FOREGROUND_DEFAULT.sequence());
+        }
+        @Override
+        public void resumed(final ProcessEvent event) {
+            printEvent(event, FOREGROUND_DEFAULT.sequence());
+        }
 
         private void printEvent(final ProcessEvent event, final String color) {
             final StringBuilder sb = new StringBuilder();

@@ -66,4 +66,14 @@ public class NullProgressListener extends ProgressController {
     public void completed() {
         //do nothing
     }
+
+    @Override
+    public void paused() {
+        //do nothing
+    }
+
+    @Override
+    public void resumed() {
+        //do nothing
+    }
 }

@@ -37,8 +37,10 @@ public abstract class AbstractProcess implements Process {
     protected final ProcessDescriptor descriptor;
     protected final ParameterValueGroup outputParameters;
     protected ParameterValueGroup inputParameters;
-    
+
     volatile boolean isCanceled = false;
+
+    volatile boolean isPaused = false;
 
     public AbstractProcess(final ProcessDescriptor desc, final ParameterValueGroup input) {
         ensureNonNull("descriptor", desc);
@@ -62,7 +64,7 @@ public abstract class AbstractProcess implements Process {
     public ParameterValueGroup getInput() {
         return inputParameters;
     }
-    
+
     /**
      * {@linkplain #execute() Executes} the process and returns the {@linkplain #outputParameters
      * output parameters}. This method takes care of invoking the
@@ -96,10 +98,10 @@ public abstract class AbstractProcess implements Process {
         }
         return outputParameters;
     }
-    
+
     /**
-     * {@linkplain #cancelProcess() CancelProcess} set the {@code isCanceled} flag to {@code true}. 
-     * The {@code isCanceled} flag is used by the process to know if someone ask for his cancelation. 
+     * {@linkplain #cancelProcess() CancelProcess} set the {@code isCanceled} flag to {@code true}.
+     * The {@code isCanceled} flag is used by the process to know if someone ask for his cancelation.
      * Long process should when they can check the {@code isCanceled} flag through the {@link #isCanceled() isCanceled} method.
      * If a process see his {@code isCanceled} flag to {@code true} he should throw an {@link CancellationException exception}.
      */
@@ -108,14 +110,43 @@ public abstract class AbstractProcess implements Process {
     }
 
     /**
-     * Return the {@code isCanceled} flag value. 
-     * 
+     * {@linkplain #pauseProcess() PauseProcess} set the {@code isPaused} flag to {@code true}.
+     * The {@code isPaused} flag is used by the process to know if someone ask for his pause.
+     * Long process should when they can check the {@code isPaused} flag through the {@link #isPaused() isPaused} method.
+     * If a process see his {@code isPaused} flag to {@code true} he should throw an {@link PauseException exception}.
+     */
+    public void pauseProcess(){
+        isPaused = true;
+    }
+
+    /**
+     * {@linkplain #resumeProcess() ResumeProcess} set the {@code isPaused} flag to {@code false}.
+     * The {@code isPaused} flag is used by the process to know if someone ask for his pause.
+     * Long process should when they can check the {@code isPaused} flag through the {@link #isPaused() isPaused} method.
+     * If a process see his {@code isPaused} flag to {@code true} he should throw an {@link PauseException exception}.
+     */
+    public void resumeProcess(){
+        isPaused = false;
+    }
+
+    /**
+     * Return the {@code isCanceled} flag value.
+     *
      * @return {@code isCanceled} flag value.
      */
     public boolean isCanceled(){
         return isCanceled;
     }
-    
+
+    /**
+     * Return the {@code isPaused} flag value.
+     *
+     * @return {@code isPaused} flag value.
+     */
+    public boolean isPaused(){
+        return isPaused;
+    }
+
     /**
      * Immediately performs the action of this process. This method is invoked by the {@link #call()}
      * method after any {@linkplain #addListener(ProcessListener) registered listeners} have been
@@ -212,6 +243,34 @@ public abstract class AbstractProcess implements Process {
         final ProcessEvent event = new ProcessEvent(this, task, Float.NaN, exception);
         for (ProcessListener listener : listeners.getListeners(ProcessListener.class)) {
             listener.failed(event);
+        }
+    }
+
+    /**
+     * Invoked when the process is paused during the process execution. This method invokes
+     * {@link ProcessListener#paused(ProcessEvent)} for all registered listeners.
+     *
+     * @param task A description of the task that being paused, or {@code null} if none.
+     * @param exception The exception which occurred, or {@code null} if unavailable.
+     */
+    protected void fireProcessPaused(final CharSequence task, final float progress) {
+        final ProcessEvent event = new ProcessEvent(this, task, progress);
+        for (ProcessListener listener : listeners.getListeners(ProcessListener.class)) {
+            listener.paused(event);
+        }
+    }
+
+    /**
+     * Invoked when the process is resumed after being suspended. This method invokes
+     * {@link ProcessListener#resumed(ProcessEvent)} for all registered listeners.
+     *
+     * @param task A description of the task that being resumed, or {@code null} if none.
+     * @param exception The exception which occurred, or {@code null} if unavailable.
+     */
+    protected void fireProcessResumed(final CharSequence task, final float progress) {
+        final ProcessEvent event = new ProcessEvent(this, task, progress);
+        for (ProcessListener listener : listeners.getListeners(ProcessListener.class)) {
+            listener.resumed(event);
         }
     }
 

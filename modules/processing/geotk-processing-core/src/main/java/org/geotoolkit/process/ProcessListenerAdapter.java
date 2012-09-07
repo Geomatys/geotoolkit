@@ -19,7 +19,7 @@ package org.geotoolkit.process;
 /**
  * Implement ProcessMonitor with all methods empty.
  * Used by subclass which only need to implement a single method.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
@@ -40,5 +40,13 @@ public class ProcessListenerAdapter implements ProcessListener{
     @Override
     public void failed(final ProcessEvent event) {
     }
-    
+
+    @Override
+    public void paused(final ProcessEvent event) {
+    }
+
+    @Override
+    public void resumed(final ProcessEvent event) {
+    }
+
 }
