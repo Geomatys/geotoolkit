@@ -100,6 +100,63 @@ public class Classification {
             index[i-1] = (int) Math.round(i*((double)dataLength)/classNumber);
     }
 
+//    /**
+//     * Class data from Jenks method.
+//     */
+//    public void computeJenks() {
+//        if (data == null)
+//            throw new IllegalArgumentException("you must set data");
+//        if (classNumber > dataLength)
+//            throw new IllegalArgumentException("impossible to classify datas"
+//                + " with class number larger than overall elements number");
+//        this.index = new int[classNumber];
+//        this.reComputeList = true;
+//        if (classNumber == 1) {
+//            index[0] = dataLength;
+//            return;
+//        }
+//        final double[][] mat1 = new double[dataLength + 1][classNumber + 1];
+//        final double[][] mat2 = new double[dataLength + 1][classNumber + 1];
+//        for (int i = 1; i <= classNumber; i++) {
+//            mat1[1][i] = 1;
+//            mat2[1][i] = 0;
+//            for (int j = 2; j <= dataLength; j++)
+//                mat2[j][i] = Double.MAX_VALUE;
+//        }
+//        double s1, s2, len, val, diff = 0;
+//        int id_3, id_4;
+//        for (int l = 2; l <= dataLength; l++) {
+//            s1 = s2 = len = 0;
+//            for (int m = 1; m <= l; m++) {
+//                id_3 = l - m + 1;
+//                val = data[id_3 -1];
+//                s2 += val * val;
+//                s1 += val;
+//                len++;
+//                diff = s2 - (s1 * s1) / len;
+//                id_4 = id_3 - 1;
+//                if (id_4 != 0) {
+//                    for (int j = 2; j <= classNumber; j++) {
+//                        if (mat2[l][j] >= (diff + mat2[id_4][j - 1])) {
+//                            mat1[l][j] = id_3;
+//                            mat2[l][j] = diff + mat2[id_4][j - 1];
+//                        }
+//                    }
+//                }
+//            }
+//            mat1[l][1] = 1;
+//            mat2[l][1] = diff;
+//        }
+//        int idata = dataLength;
+//        index[classNumber - 1] = dataLength;
+//        for (int j = classNumber; j >= 2; j--) {
+//            int id =  (int) (mat1[idata][j]) - 2;
+//            index[j - 2] = id + 1;
+//            idata = (int) mat1[idata][j] - 1;
+//        }
+//    }
+
+
     /**
      * Class data from Jenks method.
      */
@@ -115,45 +172,51 @@ public class Classification {
             index[0] = dataLength;
             return;
         }
-        final double[][] mat1 = new double[dataLength + 1][classNumber + 1];
-        final double[][] mat2 = new double[dataLength + 1][classNumber + 1];
-        for (int i = 1; i <= classNumber; i++) {
-            mat1[1][i] = 1;
-            mat2[1][i] = 0;
+        final int nbRow = dataLength + 1;
+        final int nbCol = classNumber + 1;
+        final int[] indexClassTab = new int[nbRow * nbCol];
+        final double[] moyVarTab  = new double[nbRow * nbCol];
+        int currentIndex;
+        for (int i = 0; i < classNumber; i++) {
+            currentIndex = nbCol + i + 1;
+            indexClassTab[currentIndex] = 1;
+            moyVarTab[currentIndex]     = 0;
             for (int j = 2; j <= dataLength; j++)
-                mat2[j][i] = Double.MAX_VALUE;
+                moyVarTab[j*nbCol+i+1] = Double.POSITIVE_INFINITY;
         }
-        double s1, s2, len, val, diff = 0;
-        int id_3, id_4;
-        for (int l = 2; l <= dataLength; l++) {
-            s1 = s2 = len = 0;
-            for (int m = 1; m <= l; m++) {
-                id_3 = l - m + 1;
-                val = data[id_3 -1];
-                s2 += val * val;
-                s1 += val;
+        double somA, somB, len, currentVal, diff = 0;
+        int currentId, idTemp;
+        int idl = 1;
+        while (idl < dataLength) {
+            somA = somB = len = 0;
+            int deb = 1;
+            while (deb <= idl+1) {
+                currentId = idl - deb+1;
+                currentVal = data[currentId];
+                somB += currentVal * currentVal;
+                somA += currentVal;
                 len++;
-                diff = s2 - (s1 * s1) / len;
-                id_4 = id_3 - 1;
-                if (id_4 != 0) {
-                    for (int j = 2; j <= classNumber; j++) {
-                        if (mat2[l][j] >= (diff + mat2[id_4][j - 1])) {
-                            mat1[l][j] = id_3;
-                            mat2[l][j] = diff + mat2[id_4][j - 1];
+                diff = somB - (somA * somA) / len;
+                idTemp = currentId;
+                if (idTemp != 0)
+                    for (int j = 1; j < classNumber; j++) {
+                        currentIndex = (idl+1) * nbCol + j + 1;
+                        if (moyVarTab[currentIndex]    >= (diff + moyVarTab[idTemp*nbCol+j])) {
+                            indexClassTab[currentIndex] = currentId + 1;
+                            moyVarTab[currentIndex]     = diff + moyVarTab[idTemp*nbCol+j];
                         }
                     }
-                }
+                deb++;
             }
-            mat1[l][1] = 1;
-            mat2[l][1] = diff;
+            currentIndex = (idl+1) * nbCol + 1;
+            indexClassTab[currentIndex] = 1;
+            moyVarTab[currentIndex]     = diff;
+            idl++;
         }
         int idata = dataLength;
         index[classNumber - 1] = dataLength;
-        for (int j = classNumber; j >= 2; j--) {
-            int id =  (int) (mat1[idata][j]) - 2;
-            index[j - 2] = id + 1;
-            idata = (int) mat1[idata][j] - 1;
-        }
+        for (int j = classNumber; j >= 2; j--)
+            index[j - 2] = idata = indexClassTab[idata * nbCol + j] - 1;
     }
 
     /**
