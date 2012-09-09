@@ -1,6 +1,5 @@
 /*
  * Map and oceanographical data visualisation
- * Copyright (C) 1999 Pêches et Océans Canada
  * Copyright (C) 2012 Geomatys
  *
  *
@@ -16,15 +15,25 @@
  */
 package org.geotoolkit.process.coverage.kriging;
 
-import com.vividsolutions.jts.geom.Coordinate;
+import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.NoSuchElementException;
 import java.awt.Rectangle;
 import java.awt.image.RenderedImage;
-import java.util.*;
 import javax.vecmath.Point3d;
+
+import org.opengis.coverage.grid.SequenceType;
+import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
-import org.geotoolkit.util.ArgumentChecks;
-import org.opengis.coverage.grid.SequenceType;
+
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.CoordinateSequence;
+
+import static java.lang.Double.isNaN;
 
 
 /**
@@ -44,25 +53,14 @@ import org.opengis.coverage.grid.SequenceType;
  * the bands, use the constructor expecting a {@link PixelIterator} instead.
  *
  * @version 3.20
- * @author Martin Desruisseaux
- * @author Howard Freeland
- * @author Johann Sorel (adaptation isoligne et mise a jour sur geotoolkit)
- * @author Rémi Marechal (Geomatys).
+ * @author Martin Desruisseaux (Geomatys)
+ * @author Johann Sorel (Geomatys)
+ * @author Rémi Marechal (Geomatys)
  * @module pending
  *
  * @since 3.20 (derived from 1.1)
  */
 public class IsolineCreator {
-    /**
-     * Number of corners in a pixel.
-     */
-    private static final int NUM_CORNERS = 4;
-
-    /**
-     * Mask for the {@code isDone} local variable inside the {@link #createIsolines()} method.
-     */
-    private static final int ALL_DONE_MASK = (1 << NUM_CORNERS) - 1;
-
     /**
      * Values for which to compute isolines, sorted in ascending order.
      */
@@ -74,9 +72,14 @@ public class IsolineCreator {
     private final PixelIterator iterator;
 
     /**
-     * Area where to compute isolines, <strong>inclusive</strong> (even the maximal values).
+     * Area where to compute isolines.
      */
-    private final int xMin, yMin, xMax, yMax;
+    private final int xMin, yMin, width, height;
+
+    /**
+     * The intersections on rows and columns. The length of this array is the number of isoline levels.
+     */
+    private final IntersectionGrid[] intersections;
 
     /**
      * Creates a new object which will creates isolines from the data provided by the given image.
@@ -107,277 +110,168 @@ public class IsolineCreator {
         this.levels = levels.clone();
         Arrays.sort(this.levels);
         final Rectangle area = iterator.getBoundary(true);
-        xMin = area.x;
-        yMin = area.y;
-        xMax = xMin + area.width - 1;
-        yMax = yMin + area.height - 1;
+        xMin   = area.x;
+        yMin   = area.y;
+        width  = area.width;
+        height = area.height;
+        intersections = new IntersectionGrid[levels.length];
     }
 
     /**
-     * Returns {@code true} if the given value is inside the given bounds.
-     * It is not necessary for {@code z0} to be lower than {@code z1}.
-     * If any value is {@link Double#NaN}, then this method returns {@code false}.
-     */
-    private static boolean isBetween(final double z0, final double z1, final double value) {
-        return (z0 > z1) ? (value >= z1 && value <= z0) : (value >= z0 && value <= z1);
-    }
-
-    /**
-     * Creates isolines from the grid data specified at construction time.
+     * Returns the intersection grid for the given level.
+     * This method will create the grid when first needed.
      *
-     * @return The isolines for each level.
+     * @param k Index of the desired level.
      */
-    public Map<Point3d, List<Coordinate>> createIsolines() {
-        final Map<Point3d,List<Coordinate>> cellMapResult = new HashMap<Point3d,List<Coordinate>>();
-        for (final Map.Entry<Point3d, Polyline> toCopy : createPolylines().entrySet()) {
-            cellMapResult.put(toCopy.getKey(), toCopy.getValue().toCoordinates());
+    private IntersectionGrid gridAt(final int k) {
+        IntersectionGrid grid = intersections[k];
+        if (grid == null) {
+            intersections[k] = grid = new IntersectionGrid(levels[k], width, height);
         }
-        return cellMapResult;
+        return grid;
     }
 
     /**
-     * Creates isolines from the grid data specified at construction time.
-     *
-     * @return The isolines for each level.
+     * Calculate the intersection grids.
      */
-    private Map<Point3d, Polyline> createPolylines() {
-        final Map<Point3d,Polyline> cellMapResult = new HashMap<Point3d,Polyline>();
-        final double z[] = new double[NUM_CORNERS];
+    private void calculateIntersectionGrids() {
+        // Temporary buffer when calculating intersections on a single row.
+        final Intersections[] rows = new Intersections[levels.length];
         /*
-         * The four corners of the pixel to process will be numbered from 0 to 3 as below:
+         * For each pixel (x,y) having the value z, we will interpolate the intersection
+         * with the isolines on the bottom (0) and right (1) edges.
          *
-         *     [0] ← [3]
-         *      ↓     ↑
-         *     [1] ➝ [2]
-         *
-         * The (x,y) pixel coordinate can be calculated as below,
-         * where k is the corner index from 0 to 3 inclusive:
-         *
-         *     ox = k >>> 1;        // Zero for corners [0] and [1], one for [2] and [3]
-         *     oy = (k & 1) ^ ox;   // Zero for corners [0] and [3], one for [1] and [2]
-         *     x0 = i + ox
-         *     y0 = j + oy
-         *
-         * To compute (x,y) for k+1:
-         *
-         *     x1 = i + oy
-         *     y1 = j + (ox ^ 1)
+         *            zOnTopRow[x]
+         *       ☐─────────☐
+         *       │         ↑ (1)
+         *       ☐←──(0)───☒
+         *    zOnLeft     z(x,y)
          */
-        for (int i=xMin; i<xMax; i++) {
-            iterator.moveTo(i, yMin, 0);
-            z[1] = iterator.getSampleDouble();
-            iterator.next();
-            z[2] = iterator.getSampleDouble();
-            for (int j=yMin; j<yMax; j++) {
-                z[0] = z[1];
-                z[3] = z[2];
-                iterator.moveTo(i, j+1, 0);
-                z[1] = iterator.getSampleDouble();
-                iterator.next();
-                z[2] = iterator.getSampleDouble();
+        final double[] zOnTopRow = new double[width];
+        Arrays.fill(zOnTopRow, Double.NaN);
+        for (int y=0; y<height; y++) {
+            double zOnLeft = Double.NaN;
+            for (int x=0; x<width; x++) {
                 /*
-                 * Get the minimum and maximum z values among the 4 corners. The isoline segments
-                 * to create will be for levels between those extremums. Example: for zmin = 8.76
-                 * and zmax=11.35, we may build segments for levels = 9, 10 and 11.
+                 * zOnLeft and zOnTop are z values in the previous column and in the previous row.
+                 * Note that zOnLeft will always be NaN when we are in the first column (i == 0),
+                 * and zOnTop will always be NaN when we are in the first row (j == 0).
                  */
-                double zmin = Double.POSITIVE_INFINITY;
-                double zmax = Double.NEGATIVE_INFINITY;
-                for (final double value : z) {
-                    if (value < zmin) zmin = value;
-                    if (value > zmax) zmax = value;
+                if (!iterator.next()) {
+                    throw new NoSuchElementException();
                 }
-                /*
-                 * At this point, 'zmin' and 'zmax' must be considered final.
-                 *
-                 * The variables below could be unitialized if we were programming in C/C++,
-                 * because all those variables are assigned a value together when 'd2min' takes a
-                 * finite value. We have to initialize them for preventing the Java compiler to
-                 * report an error, but do that outside the loop for avoiding re-initialization
-                 * at every iteration step.
-                 */
-                int    ci0=0, ci1=0;               // Corner indices.
-                double px0=0, py0=0, px1=0, py1=0; // Point (x,y) coordinates.
-                /*
-                 * Find the highest level lower or equals to 'zmin', and iterates until 'zmax'.
-                 */
-                int levelIndex = Arrays.binarySearch(levels, zmin);
-                if (levelIndex < 0) {
-                    levelIndex = ~levelIndex; // Tild operator, not minus.
+                final double z = iterator.getSampleDouble();
+                double zmin = z; // May be non-NaN even if zOnTop or zOnLeft is NaN.
+                double zmax = z;
+                final double zOnTop = zOnTopRow[x];
+                if (zOnTop  < zmin) zmin = zOnTop;
+                if (zOnTop  > zmax) zmax = zOnTop;
+                if (zOnLeft < zmin) zmin = zOnLeft;
+                if (zOnLeft > zmax) zmax = zOnLeft;
+                int k = Arrays.binarySearch(levels, zmin);
+                if (k < 0) {
+                    k = ~k;  // Tild operator, not minus.
                 }
-                while (levelIndex < levels.length) {
-                    final double levelValue = levels[levelIndex++];
-                    if (!(levelValue <= zmax)) { // Use '!' for catching NaN values.
+                for (; k<levels.length; k++) {
+                    final double level = levels[k];
+                    if (!(level <= zmax)) { // Use '!' for catching NaN values.
                         break;
                     }
                     /*
-                     * Following loop searches the shortest (px0,py0) - (px1,py1) line segment which
-                     * is part of the isoline, and set 'pi0' and 'pi1' to the index (from 0 to 3) of
-                     * the corners before P0 and before P1 respectively.
+                     * Find the intersection point between the edge and the isoline. The variables
+                     * below will be outside the [0…1] range if there is no intersection on the edge
+                     * (i.e. the intersection is outside the cell area). NaN may mean that there is
+                     * intersection everywhere (i.e. the line is vertical or horizontal).
                      */
-                    int isDone = 0; // A mask of 4 bits.
-                    do {
-                        /*
-                         * For each pixel corner, find the intersection point between a pixel side
-                         * and the isoline. We may execute this loop more than once for the same cell,
-                         * so the side already examined in a previous pass will have to be skipped.
-                         */
-                        double d2min = Double.POSITIVE_INFINITY;
-                        for (int ci=0; ci<NUM_CORNERS; ci++) {
-                            if ((isDone & (1 << ci)) != 0) {
-                                continue; // Skip points that are already done.
-                            }
-                            final int ni = (ci+1) % NUM_CORNERS; // Index of the next corner.
-                            double z0 = z[ci];
-                            double z1 = z[ni];
-                            if (!isBetween(z0, z1, levelValue)) {
-                                isDone |= (1 << ci);
-                                continue; // Skip sides that do not intersect the isoline.
-                            }
-                            /*
-                             * Compute the coordinates (in image coordinate system) of the two corners
-                             * which are the end points of the pixel side (ci - ni). See the comment
-                             * at the begining of this method for more information about the bits
-                             * manipulation performed here.
-                             */
-                            int ox = ci >>> 1;
-                            int oy = (ci & 1) ^ ox;
-                            int x0 = i + ox;
-                            int y0 = j + oy;
-                            int x1 = i + oy;
-                            int y1 = j + (ox ^ 1);
-                            if (z0 == z1) {
-                                // Found a horizontal or vertical segment. We can't use the
-                                // general block below since it would produce a division by
-                                // zero. Store directly the segment coordinates.
-                                if (1 < d2min) {
-                                    d2min = 1;
-                                    ci0 = ci; px0 = x0; py0 = y0;
-                                    ci1 = ni; py1 = y1; px1 = x1;
-                                }
-                                continue;
-                            }
-                            /*
-                             * Compute (tx0,ty0) as the intersection point between the isoline
-                             * and the pixel side (ci to ni). Next, search the intersection on
-                             * an other side as (tx1,ty1) and keep the shortest line segment.
-                             */
-                            double slope = (levelValue-z0) / (z1 - z0);
-                            final double tx0 =  x0 + slope * (x1 - x0);
-                            final double ty0 =  y0 + slope * (y1 - y0);
-                            for (int oi=0; oi<NUM_CORNERS; oi++) {
-                                if (oi == ci || (isDone & (1 << oi)) != 0) {
-                                    continue; // Skip points that are already done.
-                                }
-                                z0 = z[oi];
-                                z1 = z[(oi + 1) % NUM_CORNERS]; // z at the next corner.
-                                if (!isBetween(z0, z1, levelValue)) {
-                                    isDone |= (1 << oi);
-                                    continue; // Skip sides that do not intersect the isoline.
-                                }
-                                // Compute the coordinates of the pixel side in image CS
-                                // (same calculation than in the above enclosing loop).
-                                // Then calculate the intersection in the same way than above.
-                                ox = oi >>> 1;  oy = (oi & 1) ^ ox;
-                                x0 = i + ox;    y0 = j + oy;
-                                x1 = i + oy;    y1 = j + (ox ^ 1);
-                                slope = (levelValue - z0) / (z1 - z0);
-                                final double tx1 = x0 + slope * (x1 - x0);
-                                final double ty1 = y0 + slope * (y1 - y0);
-                                double d;
-                                d = (d = tx0-tx1)*d + (d = ty0-ty1)*d;
-                                if (d < d2min) {
-                                    d2min = d;
-                                    ci0 = ci; px0 = tx0; py0 = ty0;
-                                    ci1 = oi; px1 = tx1; py1 = ty1;
-                                }
-                            }
+                    final double dx = (level - z) / (zOnLeft - z);
+                    final double dy = (level - z) / (zOnTop  - z);
+                    final boolean inRange = (dx >= 0 && dx <= 1);
+                    if (inRange || (isNaN(dx) && !isNaN(zOnLeft))) {
+                        Intersections row = rows[k];
+                        if (row == null) {
+                            rows[k] = row = new Intersections(width / 16);
                         }
                         /*
-                         * If after completion of iteration over every pixel sides we didn't
-                         * found any isoline segment, then stop this loop. The enclosing
-                         * 'while' loop will start the search for the next isoline level.
+                         * If (zOnLeft == level), then dx == 1 in this iteration and was 0 or NaN
+                         * in the previous iteration since we had (z == level) at that time. We do
+                         * not test (dx != 1) since dx may have slight rounding errors. Note that
+                         * if we reach that point while x == 0 then z == level and zOnLeft is NaN.
                          */
-                        if (d2min == Double.POSITIVE_INFINITY) {
-                            break;
+                        if (zOnLeft != level) { // 'false' only if the value has already been added.
+                            row.add(inRange ? x-dx : x-1);
                         }
-                        /*
-                         * At this point we have the coordinates of an isoline segment.
-                         * Add this coordinates to the polyline in process of being built.
-                         */
-                        isDone |= (1 << ci0);
-                        isDone |= (1 << ci1);
-                        final Polyline toMerge = new Polyline(px0, py0, px1, py1);
-                        /*
-                         * Verify if intersection points (px0, py0) and/or (px1, py1) have been
-                         * found previously. If yes, append the (px0,py0)-(px1, py1) line segment
-                         * to the existing polyline. If not, store a new polyline.
-                         */
-                        final Point3d pt0 = new Point3d((float) px0, (float) py0, levelValue);
-                        final Point3d pt1 = new Point3d((float) px1, (float) py1, levelValue);
-                        final Polyline line0 = cellMapResult.remove(pt0);
-                        final Polyline line1 = cellMapResult.remove(pt1);
-                        if (line0 == null) {
-                            if (line1 == null) {
-                                cellMapResult.put(pt0, toMerge);
-                                cellMapResult.put(pt1, toMerge);
-                            } else {
-                                Polyline merged = line1.merge(toMerge);
-                                merged = assertd(merged, line1);
-                                cellMapResult.put(pt0, merged);
-                            }
-                        } else {
-                            Polyline merged = line0.merge(toMerge);
-                            if (line1 == null) {
-                                merged = assertd(merged, line0);
-                                cellMapResult.put(pt1, merged);
-                            } else {
-                                if (merged == null) {
-                                    merged = line1.merge(toMerge);
-                                    merged = assertd(merged, line1);
-                                }
-                                if (line0 != line1) {
-                                    final Polyline other = (merged != line0) ? line0 : line1;
-                                    merged = merged.merge(other);
-                                    merged = assertd(merged, other);
-                                    /*
-                                     * Since we merged 'line0' with 'line1' and we are going to keep
-                                     * only one of them (namely 'merged'), we need to update all the
-                                     * references to 'other'.
-                                     */
-                                    final Iterator<Map.Entry<Point3d,Polyline>> it = cellMapResult.entrySet().iterator();
-                                    while (it.hasNext()) {
-                                        final Map.Entry<Point3d,Polyline> entry = it.next();
-                                        final Polyline line = entry.getValue();
-                                        if (line == other) {
-                                            entry.setValue(merged);
-                                        }
-                                    }
-                                } else {
-                                    /*
-                                     * Si on vient de refermer une cle (I0==I1), alors il ne
-                                     * reste plus de référence vers celle-ci. On en créera une
-                                     * avec un point bidon, choisie de façon à être innacessible
-                                     * par le reste de cette méthode.
-                                     */
-                                    pt0.add(pt1);
-                                    pt0.scale(0.5);
-                                    pt0.z = levelValue;
-                                    cellMapResult.put(pt0, line0);
-                                }
-                            }
+                        if (!inRange) {
+                            row.add(x); // Fully horizontal line segment.
                         }
-                    } while (isDone != ALL_DONE_MASK);
+                    }
+                    /*
+                     * For the vertical grid lines, we do not accept dy == 0 or 1 because
+                     * the same points should have been added in the horizontal grid lines.
+                     */
+                    if (dy > 0 && dy < 1) {
+                        gridAt(k).add(x, y-dy);
+                    } else {
+                        // If dy == 0 or NaN, ensure that the ordinate value is present in the
+                        // horizontal grid line. We could perform similar check for dy == 1,
+                        // but this would require to fetch the previous horizontal grid line.
+                        assert (dy != 0 && !isNaN(dy)) || rows[k].indexOf(x, 0) >= 0 : rows[k];
+                    }
+                }
+                // Remember the z value for next iterations.
+                zOnTopRow[x] = zOnLeft = z;
+            }
+            // Flush the row content before to move to next row.
+            for (int k=0; k<levels.length; k++) {
+                final Intersections row = rows[k];
+                if (row != null && row.size() != 0) {
+                    gridAt(k).setRow(y, row);
+                    row.clear();
                 }
             }
         }
-        return cellMapResult;
     }
 
-    private static Polyline assertd(final Polyline polyline, final Polyline original) {
-        if (polyline == null) {
-            System.out.println("ERROR " + original);
-            return original;
+    /**
+     * Creates the polylines.
+     *
+     * @return The isolines for each level.
+     *
+     * @todo Current implementation ignore the image (x,y) origin. This should be handled
+     *       with an affine transform.
+     */
+    public Collection<? extends CoordinateSequence>[] createPolylines() {
+        calculateIntersectionGrids();
+        @SuppressWarnings({"unchecked","rawtypes"})
+        final Collection<? extends CoordinateSequence>[] polylines = new Collection[intersections.length];
+        for (int i=0; i<intersections.length; i++) {
+            polylines[i] = intersections[i].createIsolines();
         }
-        return polyline;
+        return polylines;
+    }
+
+    /**
+     * Creates isolines from the grid data specified at construction time.
+     *
+     * @return The isolines for each level.
+     *
+     * @deprecated Use {@link #createPolylines()} instead.
+     */
+    @Deprecated
+    public Map<Point3d, List<Coordinate>> createIsolines() {
+        final Collection<? extends CoordinateSequence>[] polylines = createPolylines();
+        final Map<Point3d,List<Coordinate>> cellMapResult = new HashMap<Point3d,List<Coordinate>>();
+        for (int i=0; i<polylines.length; i++) {
+            int n = 0;
+            for (final CoordinateSequence polyline : polylines[i]) {
+                final Coordinate[] coords = polyline.toCoordinateArray();
+                for (final Coordinate coord : coords) {
+                    coord.x += xMin;
+                    coord.y += yMin;
+                }
+                // The (i,j) coordinates below are totally arbitrary; only the z one is significant.
+                cellMapResult.put(new Point3d(i, n++, levels[i]), Arrays.asList(coords));
+            }
+        }
+        return cellMapResult;
     }
 }

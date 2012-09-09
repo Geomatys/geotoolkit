@@ -15,17 +15,24 @@
  */
 package org.geotoolkit.process.coverage.kriging;
 
-import java.util.List;
 import java.util.Arrays;
 import com.vividsolutions.jts.geom.Coordinate;
-
-import static java.lang.Math.max;
-import static java.lang.Math.abs;
+import com.vividsolutions.jts.geom.CoordinateSequence;
+import com.vividsolutions.jts.geom.Envelope;
 
 
 /**
- * A polyline in process of being created by {@link IsolineCreator}.
- * Those polylines are always two dimensional.
+ * A polyline in process of being created by {@link IsolineCreator}. The ranges of coordinate
+ * values are (0,0) inclusive to (<var>width</var>, <var>height</var>) exclusive. For every
+ * (<var>x</var>,<var>y</var>) coordinate, at least one of <var>x</var> or <var>y</var> is an
+ * integer, because of the way intersections are calculated by {@link IsolineCreator}.
+ * <p>
+ * Every coordinates in this object are stored as ({@code int}, {@code double}) tuples.
+ * The {@code int} value is positive if it stands for the <var>x</var> ordinate values,
+ * or negative (with all bits reversed by the {@code ~} operator) if it stands for the
+ * <var>y</var> ordinate value. This is a slightly more compact storage scheme than the
+ * plain {@code double} pairs (25% less space) and make slightly easier (only one
+ * comparison instead of two) to identify on which grid line a point is located.
  *
  * @version 3.20
  * @author Martin Desruisseaux
@@ -33,186 +40,382 @@ import static java.lang.Math.abs;
  *
  * @since 3.20
  */
-final class Polyline {
+final class Polyline implements CoordinateSequence {
     /**
-     * Small tolerance factor for rounding errors. This is used for comparing ordinate values
-     * in image coordinate system, i.e. the values to compare will typically be in the range
-     * from 0 to the image width or height in pixels.
+     * The grid line on which the intersection is calculated. Values range from
+     * {@code 0} inclusive to {@code width} exclusive for vertical grid lines, or from
+     * {@code ~0} inclusive to {@code ~height} exclusive for horizontal grid line.
      */
-    private static final double EPS = 1E-8;
+    private int[] gridLines;
 
     /**
-     * Constants for {@code switch} statement.
+     * The intersection location on a grid line. For each element in this array, the value
+     * is a <var>x</var> ordinate if the corresponding {@link #gridLines} is negative, or
+     * a <var>y</var> ordinate otherwise.
      */
-    private static final int
-            APPEND  = 0, APPEND_REVERSED  = 1,
-            PREPEND = 2, PREPEND_REVERSED = 3;
+    private double[] ordinates;
 
     /**
-     * The coordinate arrays.
+     * The number of points in this object. This determines the length of the valid part
+     * in the {@link #gridLines} and {@link #ordinates} arrays.
      */
-    private double[] coordinates;
+    private int size;
 
     /**
-     * Length of the valid part of the {@link #coordinates} array.
-     * This is twice the number of points.
+     * Creates a new polyline initialized to the given line segment. The {@code gridLine}
+     * arguments must be compliant with the {@link #gridLines} documentation.
      */
-    private int length;
-
-    /**
-     * Creates a polyline initialized to the given line segment.
-     */
-    Polyline(final double x0, final double y0, final double x1, final double y1) {
-        coordinates = new double[] {x0, y0, x1, y1};
-        length = 4;
+    Polyline(final int gridLine1, final double ordinate1,
+             final int gridLine2, final double ordinate2)
+    {
+        gridLines = new int   [] {gridLine1, gridLine2};
+        ordinates = new double[] {ordinate1, ordinate2};
+        size = 2;
     }
 
     /**
-     * Compares two values for equality, with a tolerance up to the {@link #EPS} factor.
+     * Encodes the given coordinate in a single long value. The {@code gridLine} argument shall
+     * be compliant with the sign convention documented in the {@link #gridLines} javadoc. The
+     * {@code ordinate} value will be casted to an integer since we should have at most one
+     * intersection per cell edge.
      */
-    private static boolean epsilonEquals(final double x0, final double x1) {
-        return abs(x0 - x1) <= EPS * max(abs(x0), abs(x1));
+    static Long key(final int gridLine, final double ordinate) {
+        return (((long) gridLine) << Integer.SIZE) | (int) ordinate;
     }
 
     /**
-     * Compares two coordinates for equality, with a tolerance up to the {@link #EPS} factor.
+     * Returns the key at the start or end of this polyline.
      *
-     * @return {@code true} if the two coordinates are considered equals.
+     * @param start {@code true} for the key value at the polyline start,
+     *        or {@code false} for the key value at the polyline end.
      */
-    private static boolean epsilonEquals(final double[] c0, final int i0, final double[] c1, final int i1) {
-        return epsilonEquals(c0[i0], c1[i1]) && epsilonEquals(c0[i0+1], c1[i1+1]);
+    final Long key(final boolean start) {
+        final int index = start ? 0 : size-1;
+        final long key = key(gridLines[index], ordinates[index]);
+        assert startsWith(key) == start || isClosed();
+        return key;
     }
 
     /**
-     * Returns {@code true} if the merging should be done on the {@code toMerge} instance instead.
-     * We do that for example if the other instance has sufficient capacity while this instance does
-     * not.
+     * Returns {@code true} if the given key stands for the starting point of this line segment,
+     * or {@code false} if it stands for the ending point. This method shall be invoked only when
+     * the given point is known to be either at the polyline beginning or the end, otherwise an
+     * {@link AssertionError} may be thrown.
      */
-    private boolean preferOther(final Polyline toMerge) {
-        final int newLength = length + toMerge.length - 2;
-        final boolean thisHasEnough  = (newLength <= coordinates.length);
-        final boolean otherHasEnough = (newLength <= toMerge.coordinates.length);
-        if (thisHasEnough != otherHasEnough) {
-            return otherHasEnough;
+    private boolean startsWith(final long key) {
+        final int gridLine = (int) (key >>> Integer.SIZE);
+        if (gridLine != gridLines[0]) {
+            // If this is not the first point, then it must be the last point.
+            assert gridLine == gridLines[size-1] : gridLine;
+            return false;
         }
-        return false;
+        /*
+         * The above check is suffisient in many cases. However we sometime have an
+         * ambiguity. In such case, we need to check also the other ordinate value.
+         */
+        if (gridLine == gridLines[size-1]) {
+            final int ordinate = (int) (key & 0xFFFFFFFFL);
+            if (ordinate != (int) ordinates[0]) {
+                assert ordinate == (int) ordinates[size-1] : ordinate;
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
-     * Merges the content of this polyline with the {@code toMerge} polyline if the beginning or end
-     * points of a polyline is approximatively equals to the beginning or end point of the other. If
-     * no beginning or end points are equal, then this method does nothing and returns {@code null}.
+     * Returns {@code true} if the start point and end point are the same.
+     */
+    private boolean isClosed() {
+        return gridLines[0] == gridLines[size-1]
+            && ordinates[0] == ordinates[size-1];
+    }
+
+    /**
+     * Appends a single point to this polyline. This method shall be invoked only for polyline
+     * having at least two points.
      *
-     * @param  toMerge The polyline to insert in this polyline, if possible.
-     * @return The merged polyline, {@code null} if no merge has been performed.
+     * @param key      The key which was used for storing this polyline in the hash map.
+     * @param gridLine The grid line value, must be compliant with the {@link #gridLines} sign convention.
+     * @param ordinate The ordinate value.
      */
-    final Polyline merge(final Polyline toMerge) {
-        final double[] src1 = this.   coordinates;
-        final double[] src2 = toMerge.coordinates;
-        if (epsilonEquals(src1, 0, src2, 0)) {
-            if (preferOther(toMerge)) {
-                toMerge.merge(this, PREPEND_REVERSED);
+    final void append(final Long key, final int gridLine, final double ordinate) {
+        assert !isClosed();
+        final int     size = this.size;
+        int[]    gridLines = this.gridLines;
+        double[] ordinates = this.ordinates;
+        if (size == gridLines.length) {
+            this.gridLines = gridLines = Arrays.copyOf(gridLines, size*2);
+            this.ordinates = ordinates = Arrays.copyOf(ordinates, size*2);
+        }
+        /*
+         * The given coordinate can be either at the begining or end of this polyline.
+         * If it is at the begining, then we need to reverse the coordinate order before
+         * to append.
+         */
+        if (startsWith(key)) {
+            int i = size >>> 1;
+            int j = i + (size & 1);
+            while (--i >= 0) {
+                final int    ti = gridLines[i]; gridLines[i] = gridLines[j]; gridLines[j] = ti;
+                final double td = ordinates[i]; ordinates[i] = ordinates[j]; ordinates[j] = td;
+                j++;
+            }
+        }
+        gridLines[size] = gridLine;
+        ordinates[size] = ordinate;
+        this.size++;
+        assert isValid();
+    }
+
+    /**
+     * Merges the content of this polyline with the {@code toMerge} polyline.
+     * If the polyline to merge is {@code this}, then this method will close
+     * the polyline as an island.
+     *
+     * @param  toMerge The polyline to insert in this polyline.
+     * @return The merged polyline.
+     */
+    final Polyline merge(final Long key, final Long keyOther, final Polyline toMerge) {
+        assert !isClosed();
+        if (toMerge == this) {
+            final int     size = this.size;
+            int[]    gridLines = this.gridLines;
+            double[] ordinates = this.ordinates;
+            if (size == gridLines.length) {
+                this.gridLines = gridLines = Arrays.copyOf(gridLines, size+1);
+                this.ordinates = ordinates = Arrays.copyOf(ordinates, size+1);
+            }
+            gridLines[size] = gridLines[0];
+            ordinates[size] = ordinates[0];
+            this.size++;
+            assert isValid();
+        } else {
+            final boolean prepend = startsWith(key);
+            final boolean reverse = toMerge.startsWith(keyOther) == prepend;
+            /*
+             * Determine if the merging should be done on the 'toMerge' instance instead.
+             * We do that for example if the other instance has sufficient capacity while
+             * this instance does not.
+             */
+            final int newLength = size + toMerge.size;
+            if (newLength > ordinates.length && newLength <= toMerge.ordinates.length) {
+                /*
+                 * Set 'prepend' to the value of toMerge.startWith(x,y). This is equals
+                 * to 'prepend' if 'reverse' is false, or is the opposite otherwise.
+                 * Next we switch the meaning to 'append'.
+                */
+                toMerge.merge(this, !(prepend ^ reverse), reverse);
                 return toMerge;
             }
-            merge(toMerge, PREPEND_REVERSED);
-            return this;
+            merge(toMerge, !prepend, reverse); // "!prepend" means "append".
         }
-        final int last2 = toMerge.length - 2;
-        if (epsilonEquals(src1, 0, src2, last2)) {
-            if (preferOther(toMerge)) {
-                toMerge.merge(this, APPEND);
-                return toMerge;
-            }
-            merge(toMerge, PREPEND);
-            return this;
-        }
-        final int last1 = length - 2;
-        if (epsilonEquals(src1, last1, src2, 0)) {
-            if (preferOther(toMerge)) {
-                toMerge.merge(this, PREPEND);
-                return toMerge;
-            }
-            merge(toMerge, APPEND);
-            return this;
-        }
-        if (epsilonEquals(src1, last1, src2, last2)) {
-            if (preferOther(toMerge)) {
-                toMerge.merge(this, APPEND_REVERSED);
-                return toMerge;
-            }
-            merge(toMerge, APPEND_REVERSED);
-            return this;
-        }
-        return null;
+        return this;
     }
 
     /**
      * Actually perform the merge.
+     *
+     * @param append  {@code true} for appending {@code toMerge}, or {@code false} for prepending.
+     * @param reverse {@code true} if the {@code toMerge} data shall be copied in reverse order.
      */
-    private void merge(final Polyline toMerge, final int op) {
-        final double[] src1 = this.   coordinates;
-        final double[] src2 = toMerge.coordinates;
-        final int addLength = toMerge.length - 2;
-        final int newLength = addLength + length;
-        switch (op) {
-            case PREPEND: {
-                if (newLength > src1.length) {
-                    coordinates = new double[newLength * 2];
-                }
-                System.arraycopy(src1, 0, coordinates, addLength, length);
-                System.arraycopy(src2, 0, coordinates, 0, addLength);
-                break;
+    private void merge(final Polyline toMerge, final boolean append, final boolean reverse) {
+        int[]     gridLines = this.gridLines;
+        double[]  ordinates = this.ordinates;
+        int       addLength = toMerge.size;
+        final int newLength = addLength + size;
+        int copyAt;
+        if (append) {
+            if (newLength > ordinates.length) {
+                this.gridLines = gridLines = Arrays.copyOf(gridLines, newLength * 2);
+                this.ordinates = ordinates = Arrays.copyOf(ordinates, newLength * 2);
             }
-            case PREPEND_REVERSED: {
-                if (newLength > src1.length) {
-                    coordinates = new double[newLength * 2];
-                }
-                System.arraycopy(src1, 0, coordinates, addLength, length);
-                copyReversed    (src2, 2, coordinates, 0, addLength);
-                break;
+            copyAt = size;
+        } else {
+            if (newLength > ordinates.length) {
+                gridLines = new int   [newLength * 2];
+                ordinates = new double[newLength * 2];
+                // Variables and fields will be different for a short time.
             }
-            case APPEND: {
-                if (newLength > src1.length) {
-                    coordinates = Arrays.copyOf(src1, newLength * 2);
-                }
-                System.arraycopy(src2, 2, coordinates, length, addLength);
-                break;
-            }
-            case APPEND_REVERSED: {
-                if (newLength > src1.length) {
-                    coordinates = Arrays.copyOf(src1, newLength * 2);
-                }
-                copyReversed(src2, 0, coordinates, length, addLength);
-                break;
-            }
-            default: throw new AssertionError(op);
+            System.arraycopy(this.gridLines, 0, gridLines, addLength, size);
+            System.arraycopy(this.ordinates, 0, ordinates, addLength, size);
+            this.gridLines = gridLines;
+            this.ordinates = ordinates;
+            copyAt = 0;
         }
-        length = newLength;
+        if (reverse) {
+            while (--addLength >= 0) {
+                gridLines[copyAt] = toMerge.gridLines[addLength];
+                ordinates[copyAt] = toMerge.ordinates[addLength];
+                copyAt++;
+            }
+        } else {
+            System.arraycopy(toMerge.gridLines, 0, gridLines, copyAt, addLength);
+            System.arraycopy(toMerge.ordinates, 0, ordinates, copyAt, addLength);
+        }
+        size = newLength;
+        assert isValid();
+    }
+
+    // ---- JTS methods ---------------------------------------------------------------------------
+
+    /**
+     * Returns the number of dimensions.
+     */
+    @Override
+    public int getDimension() {
+        return 2;
     }
 
     /**
-     * Copies the given source array into the given destination array with (x,y) coordinates in
-     * reverse order.
+     * Returns the number of points.
      */
-    private static void copyReversed(final double[] src, int srcOff, final double[] dst, int dstOff, int length) {
-        srcOff += length;
-        length >>>= 1; // From this point, 'length' is actually the number of points.
-        while (--length >= 0) {
-            dst[dstOff++] = src[srcOff -= 2];
-            dst[dstOff++] = src[srcOff +  1];
+    @Override
+    public int size() {
+        return size;
+    }
+
+    /**
+     * Returns the coordinate at the given index. This method delegates to
+     * {@link #getCoordinateCopy(int)} since this class does not store any
+     * coordinate instance.
+     */
+    @Override
+    public Coordinate getCoordinate(final int i) {
+        return getCoordinateCopy(i);
+    }
+
+    /**
+     * Returns a copy of the coordinate at the given index.
+     */
+    @Override
+    public Coordinate getCoordinateCopy(final int i) {
+        final Coordinate coord = new Coordinate();
+        getCoordinate(i, coord);
+        return coord;
+    }
+
+    /**
+     * Stores the coordinate value in the given object.
+     */
+    @Override
+    public void getCoordinate(final int i, final Coordinate target) {
+        final int    x = gridLines[i];
+        final double y = ordinates[i];
+        if (x >= 0) {
+            target.x =  x;
+            target.y =  y;
+        } else {
+            target.x =  y;
+            target.y = ~x;
+        }
+        target.z = Double.NaN;
+    }
+
+    /**
+     * Returns the <var>x</var> value at the given index.
+     */
+    @Override
+    public double getX(final int i) {
+        final int x = gridLines[i];
+        return (x >= 0) ? x : ordinates[i];
+    }
+
+    /**
+     * Returns the <var>x</var> value at the given index.
+     */
+    @Override
+    public double getY(final int i) {
+        final int x = gridLines[i];
+        return (x >= 0) ? ordinates[i] : ~x;
+    }
+
+    /**
+     * Returns the ordinate value at the given index in the given dimension.
+     */
+    @Override
+    public double getOrdinate(final int i, final int dim) {
+        switch (dim) {
+            case 0: return getX(i);
+            case 1: return getY(i);
+            case 2: return Double.NaN;
+            default: throw new IllegalArgumentException();
         }
     }
 
     /**
-     * Returns the data as an array of JTS coordinates.
-     * This is a temporary method for JTS compatibility only.
+     * Unsupported operation, since we do not allow polyline modification through this API.
      */
-    final List<Coordinate> toCoordinates() {
-        final Coordinate[] coord = new Coordinate[length / 2];
-        int offset = 0;
-        for (int i=0; i<coord.length; i++) {
-            coord[i] = new Coordinate(coordinates[offset++], coordinates[offset++]);
+    @Override
+    public void setOrdinate(final int i, final int dim, final double ordinate) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Returns all coordinates.
+     */
+    @Override
+    public Coordinate[] toCoordinateArray() {
+        final Coordinate[] array = new Coordinate[size];
+        for (int i=0; i<array.length; i++) {
+            array[i] = getCoordinateCopy(i);
         }
-        return Arrays.asList(coord);
+        return array;
+    }
+
+    /**
+     * Unsupported operation, since we do not allow polyline modification through this API.
+     */
+    @Override
+    public Envelope expandEnvelope(Envelope envlp) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Overridden because the JTS API require us to do so, but returns {@code this} since
+     * {@code Polyline} are unmodifiable through the JTS API.
+     */
+    @Override
+    public Object clone() {
+        return this;
+    }
+
+    // Do not override equals(Object) and hashCode(), since identity comparison is okay for
+    // IsolineCreator usage (Polylines are put in HashSet).
+
+    @Override
+    public String toString() {
+        final StringBuilder buffer = new StringBuilder(60);
+        buffer.append("Polyline[size=").append(size);
+        String separator = ": ";
+        for (int i=0; i<size; i++) {
+            buffer.append(separator).append('(').append(getX(i)).append(", ").append(getY(i)).append(')');
+            separator = ", ";
+            if (i == 2 && size >= 7) {
+                separator = " … ";
+                i = size - 3; // Skip some values.
+            }
+        }
+        return buffer.append(']').toString();
+    }
+
+    /**
+     * Tests the validity of this {@link Polyline} object. This method verifies that all points
+     * are unique, and that the distance between them is less than 2. This method is used for
+     * assertions only.
+     */
+    private boolean isValid() {
+        Coordinate previous = null;
+        for (int i=0; i<size; i++) {
+            final Coordinate c = getCoordinate(i);
+            if (previous != null) {
+                final double d = c.distance(previous);
+                if (!(d > 0 && d*d < IntersectionGrid.MAX_DISTANCE_SQUARED)) { // Use ! for catching NaN.
+                    throw new AssertionError("distance(" + (i-1) + '-' + i + ")=" + d + " in "+ this);
+                }
+            }
+            previous = c;
+        }
+        return true;
     }
 }
