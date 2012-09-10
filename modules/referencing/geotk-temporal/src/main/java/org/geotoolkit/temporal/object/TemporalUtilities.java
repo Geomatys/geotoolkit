@@ -275,84 +275,123 @@ public final class TemporalUtilities {
     public static long getTimeInMillis(String periodDuration) {
 
         long time = 0;
-        // we remove the 'P'
-        periodDuration = periodDuration.substring(1);
+        if(periodDuration.startsWith("P")){
 
-        // we look if the period contains years (31536000000 ms)
-        if (periodDuration.indexOf('Y') != -1) {
-            final int nbYear = Integer.parseInt(periodDuration.substring(0,
-                    periodDuration.indexOf('Y')));
-            time += nbYear * YEAR_MS;
-            periodDuration = periodDuration.substring(periodDuration
-                    .indexOf('Y') + 1);
-        }
-
-        // we look if the period contains months (2628000000 ms)
-        if (periodDuration.indexOf('M') != -1
-                && (periodDuration.indexOf('T') == -1 || periodDuration
-                        .indexOf('T') > periodDuration.indexOf('M'))) {
-            final int nbMonth = Integer.parseInt(periodDuration.substring(0,
-                    periodDuration.indexOf('M')));
-            time += nbMonth * MONTH_MS;
-            periodDuration = periodDuration.substring(periodDuration
-                    .indexOf('M') + 1);
-        }
-
-        // we look if the period contains weeks (604800000 ms)
-        if (periodDuration.indexOf('W') != -1) {
-            final int nbWeek = Integer.parseInt(periodDuration.substring(0,
-                    periodDuration.indexOf('W')));
-            time += nbWeek * WEEK_MS;
-            periodDuration = periodDuration.substring(periodDuration
-                    .indexOf('W') + 1);
-        }
-
-        // we look if the period contains days (86400000 ms)
-        if (periodDuration.indexOf('D') != -1) {
-            final int nbDay = Integer.parseInt(periodDuration.substring(0,
-                    periodDuration.indexOf('D')));
-            time += nbDay * DAY_MS;
-            periodDuration = periodDuration.substring(periodDuration
-                    .indexOf('D') + 1);
-        }
-
-        // if the periodDuration is not over we pass to the hours by removing
-        // 'T'
-        if (periodDuration.indexOf('T') != -1) {
+            // we remove the 'P'
             periodDuration = periodDuration.substring(1);
-        }
 
-        // we look if the period contains hours (3600000 ms)
-        if (periodDuration.indexOf('H') != -1) {
-            final int nbHour = Integer.parseInt(periodDuration.substring(0,
-                    periodDuration.indexOf('H')));
-            time += nbHour * HOUR_MS;
-            periodDuration = periodDuration.substring(periodDuration
-                    .indexOf('H') + 1);
-        }
+            // we look if the period contains years (31536000000 ms)
+            if (periodDuration.indexOf('Y') != -1) {
+                final int nbYear = Integer.parseInt(periodDuration.substring(0,
+                        periodDuration.indexOf('Y')));
+                time += nbYear * YEAR_MS;
+                periodDuration = periodDuration.substring(periodDuration
+                        .indexOf('Y') + 1);
+            }
 
-        // we look if the period contains minutes (60000 ms)
-        if (periodDuration.indexOf('M') != -1) {
-            final int nbMin = Integer.parseInt(periodDuration.substring(0,
-                    periodDuration.indexOf('M')));
-            time += nbMin * MINUTE_MS;
-            periodDuration = periodDuration.substring(periodDuration
-                    .indexOf('M') + 1);
-        }
+            // we look if the period contains months (2628000000 ms)
+            if (periodDuration.indexOf('M') != -1
+                    && (periodDuration.indexOf('T') == -1 || periodDuration
+                            .indexOf('T') > periodDuration.indexOf('M'))) {
+                final int nbMonth = Integer.parseInt(periodDuration.substring(0,
+                        periodDuration.indexOf('M')));
+                time += nbMonth * MONTH_MS;
+                periodDuration = periodDuration.substring(periodDuration
+                        .indexOf('M') + 1);
+            }
 
-        // we look if the period contains seconds (1000 ms)
-        if (periodDuration.indexOf('S') != -1) {
-            final int nbSec = Integer.parseInt(periodDuration.substring(0,
-                    periodDuration.indexOf('S')));
-            time += nbSec * SECOND_MS;
-            periodDuration = periodDuration.substring(periodDuration
-                    .indexOf('S') + 1);
-        }
+            // we look if the period contains weeks (604800000 ms)
+            if (periodDuration.indexOf('W') != -1) {
+                final int nbWeek = Integer.parseInt(periodDuration.substring(0,
+                        periodDuration.indexOf('W')));
+                time += nbWeek * WEEK_MS;
+                periodDuration = periodDuration.substring(periodDuration
+                        .indexOf('W') + 1);
+            }
 
-        if (periodDuration.length() != 0) {
-            throw new IllegalArgumentException(
-                    "The period descritpion is malformed");
+            // we look if the period contains days (86400000 ms)
+            if (periodDuration.indexOf('D') != -1) {
+                final int nbDay = Integer.parseInt(periodDuration.substring(0,
+                        periodDuration.indexOf('D')));
+                time += nbDay * DAY_MS;
+                periodDuration = periodDuration.substring(periodDuration
+                        .indexOf('D') + 1);
+            }
+
+            // if the periodDuration is not over we pass to the hours by removing
+            // 'T'
+            if (periodDuration.indexOf('T') != -1) {
+                periodDuration = periodDuration.substring(1);
+            }
+
+            // we look if the period contains hours (3600000 ms)
+            if (periodDuration.indexOf('H') != -1) {
+                final int nbHour = Integer.parseInt(periodDuration.substring(0,
+                        periodDuration.indexOf('H')));
+                time += nbHour * HOUR_MS;
+                periodDuration = periodDuration.substring(periodDuration
+                        .indexOf('H') + 1);
+            }
+
+            // we look if the period contains minutes (60000 ms)
+            if (periodDuration.indexOf('M') != -1) {
+                final int nbMin = Integer.parseInt(periodDuration.substring(0,
+                        periodDuration.indexOf('M')));
+                time += nbMin * MINUTE_MS;
+                periodDuration = periodDuration.substring(periodDuration
+                        .indexOf('M') + 1);
+            }
+
+            // we look if the period contains seconds (1000 ms)
+            if (periodDuration.indexOf('S') != -1) {
+                final int nbSec = Integer.parseInt(periodDuration.substring(0,
+                        periodDuration.indexOf('S')));
+                time += nbSec * SECOND_MS;
+                periodDuration = periodDuration.substring(periodDuration
+                        .indexOf('S') + 1);
+            }
+
+            if (periodDuration.length() != 0) {
+                throw new IllegalArgumentException(
+                        "The period descritpion is malformed");
+            }
+        }else if(periodDuration.startsWith("T")){
+            // we remove the 'T'
+            periodDuration = periodDuration.substring(1);
+
+            // we look if the period contains hours (3600000 ms)
+            if (periodDuration.indexOf('H') != -1) {
+                final int nbHour = Integer.parseInt(periodDuration.substring(0,
+                        periodDuration.indexOf('H')));
+                time += nbHour * HOUR_MS;
+                periodDuration = periodDuration.substring(periodDuration
+                        .indexOf('H') + 1);
+            }
+
+            // we look if the period contains minutes (60000 ms)
+            if (periodDuration.indexOf('M') != -1) {
+                final int nbMin = Integer.parseInt(periodDuration.substring(0,
+                        periodDuration.indexOf('M')));
+                time += nbMin * MINUTE_MS;
+                periodDuration = periodDuration.substring(periodDuration
+                        .indexOf('M') + 1);
+            }
+
+            // we look if the period contains seconds (1000 ms)
+            if (periodDuration.indexOf('S') != -1) {
+                final int nbSec = Integer.parseInt(periodDuration.substring(0,
+                        periodDuration.indexOf('S')));
+                time += nbSec * SECOND_MS;
+                periodDuration = periodDuration.substring(periodDuration
+                        .indexOf('S') + 1);
+            }
+
+            if (periodDuration.length() != 0) {
+                throw new IllegalArgumentException(
+                        "The period descritpion is malformed");
+            }
         }
+        
         return time;
     }
 
