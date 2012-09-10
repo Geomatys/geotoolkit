@@ -38,12 +38,14 @@ public class PyramidTest {
     RenderedImage ri;
     double[] coeffX, coeffY;
 
-    final JFrame frm = new JFrame();
-    final PanelTest jp = new PanelTest();
+    JFrame frm;
+    PanelTest jp;
 
     public PyramidTest() throws IOException, NoninvertibleTransformException, TransformException {
 
         try{
+            frm = new JFrame();
+            jp = new PanelTest();
             ri = ImageIO.read(new File("../../../../MF.jpg"));
             File directory = new File("../../../../tuile_pour_Martin");
 
