@@ -143,9 +143,6 @@ FLOAT
     |   ('0'..'9')+ EXPONENT
     ;
 
-DATE : DIGIT DIGIT DIGIT DIGIT '-' DIGIT DIGIT '-' DIGIT DIGIT 'T' DIGIT DIGIT ':' DIGIT DIGIT ':' DIGIT DIGIT ('.' DIGIT+)? 'Z';
-DURATION_P : P (INT 'Y')? (INT 'M')? (INT 'D')? (INT 'H')? (INT 'M')? (INT 'S')?; 
-DURATION_T : T (INT 'H')? (INT 'M')? (INT 'S')?;
 
 // FILTERING OPERAND -----------------------------------
 COMPARE 
@@ -197,6 +194,26 @@ OVERLAP     : O V E R L A P ;
 TOUCH       : T O U C H ;
 WITHIN      : W I T H I N ;
 
+// TEMPORAL TYPES AND FILTERS
+
+DATE : DIGIT DIGIT DIGIT DIGIT '-' DIGIT DIGIT '-' DIGIT DIGIT 'T' DIGIT DIGIT ':' DIGIT DIGIT ':' DIGIT DIGIT ('.' DIGIT+)? 'Z';
+DURATION_P : P (INT 'Y')? (INT 'M')? (INT 'D')? (INT 'H')? (INT 'M')? (INT 'S')?; 
+DURATION_T : T (INT 'H')? (INT 'M')? (INT 'S')?;
+
+AFTER		: A F T E R ;
+ANYINTERACTS	: A N Y I N T E R A C T S ;
+BEFORE		: B E F O R E ;
+BEGINS		: B E G I N S ;
+BEGUNBY		: B E G U N B Y ;
+DURING		: D U R I N G ;
+ENDEDBY		: E N D E D B Y ;
+ENDS		: E N D S ;
+MEETS		: M E E T S ;
+METBY		: M E T B Y ;
+OVERLAPPEDBY	: O V E R L A P P E D B Y ;
+TCONTAINS	: T C O N T A I N S ;
+TEQUALS		: T E Q U A L S ;
+TOVERLAPS	: T O V E R L A P S ;
 
 
 // PROPERTY NAME -------------------------------------
@@ -311,6 +328,20 @@ filter_term 	: expression
                             | BETWEEN^ expression AND! expression
                             | NOT? LIKE^ expression
                             | IS^ NOT? NULL
+                            | AFTER^  expression
+                            | ANYINTERACTS expression
+                            | BEFORE expression
+                            | BEGINS expression
+                            | BEGUNBY expression
+                            | DURING expression
+                            | ENDEDBY expression
+                            | ENDS expression
+                            | MEETS expression
+                            | METBY expression
+                            | OVERLAPPEDBY expression
+                            | TCONTAINS expression
+                            | TEQUALS expression
+                            | TOVERLAPS expression
                     ) ?
                 | filter_geometry
                 ;

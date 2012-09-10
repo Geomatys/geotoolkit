@@ -87,7 +87,7 @@ public final class CQL {
     }
     
     public static CommonTree compile(String cql) {
-        final Object obj =compileExpression(cql);
+        final Object obj = compileFilter(cql);
         
         CommonTree tree = null;
         if(obj instanceof CQLParser.expression_return){
