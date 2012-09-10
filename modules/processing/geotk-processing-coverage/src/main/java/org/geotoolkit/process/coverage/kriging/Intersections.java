@@ -138,8 +138,8 @@ final class Intersections {
 
     /**
      * Searches for the intersection point nearest to the point at the given index. If such point
-     * is found, then callbacks {@link IntersectionGrid#createLineSegment} and removes the point
-     * at {@code ordinateIndex}.
+     * is found, then this method callbacks {@link IntersectionGrid#createLineSegment} and removes
+     * zero, one or the two points depending on the {@code createLineSegment} return value.
      * <p>
      * This method invokes itself recursively, because when a "nearest" point has been found
      * in our neighbor, we need to verify if that point has a yet nearest point in its own
@@ -165,6 +165,15 @@ final class Intersections {
         assert gridLines[gridLineIndex] == this : gridLineIndex;
         assert (ordinateIndex >= 0 && ordinateIndex < currentSize) : ordinateIndex;
         final double ordinate = ordinates[ordinateIndex];
+        /*
+         * This method needs the coordinate of a point to exclude, in order to prevent polylines
+         * to be closed with themselves after only 2 points. When the point specified by the
+         * (gridLineIndex, ordinateIndex) arguments is part of an existing polyline, then the
+         * (excludedGridLine, excludedOrdinate) point shall be the opposite extremity of that
+         * polyline.
+         */
+        final Intersections excludedGridLine = grid.findExclusion(gridLines, gridLineIndex, ordinate);
+        final double excludedOrdinate = grid.excludedOrdinate; // Must be stored now.
 
         // All following fields will have a meaning only if 'nearest' is non-null.
         Intersections   nearest                = null;
@@ -190,27 +199,30 @@ final class Intersections {
             }
             int neighborIndex = ordinateIndex + offset;
             if (neighborIndex >= 0 && neighborIndex < currentSize) {
-                double d = ordinates[neighborIndex] - ordinate; // Sign doesn't matter here.
-                if ((d *= d) < distanceSquared) {
-                    /*
-                     * Found a point which is potentially the nearest one. But before to retain
-                     * that point as a candidate, check if it has a nearer neighbor.
-                     */
-                    if (!nearest(grid, gridLines, perpendicular, gridLineIndex, neighborIndex, d)) {
-                        if (size != currentSize) { // Same check than at the begining of the 'do' loop.
-                            currentSize = size;
-                            ordinateIndex = Arrays.binarySearch(ordinates, 0, currentSize, ordinate);
-                            if (ordinateIndex < 0) {
-                                return true;  // Our point doesn't exist anymore.
+                final double candidate = ordinates[neighborIndex];
+                if (excludedGridLine != this || excludedOrdinate != candidate) {
+                    double d = candidate - ordinate; // Sign doesn't matter here.
+                    if ((d *= d) < distanceSquared) {
+                        /*
+                         * Found a point which is potentially the nearest one. But before to retain
+                         * that point as a candidate, check if it has a nearer neighbor.
+                         */
+                        if (!nearest(grid, gridLines, perpendicular, gridLineIndex, neighborIndex, d)) {
+                            if (size != currentSize) { // Same check than at the begining of the 'do' loop.
+                                currentSize = size;
+                                ordinateIndex = Arrays.binarySearch(ordinates, 0, currentSize, ordinate);
+                                if (ordinateIndex < 0) {
+                                    return true;  // Our point doesn't exist anymore.
+                                }
+                                neighborIndex = ordinateIndex + offset;
                             }
-                            neighborIndex = ordinateIndex + offset;
+                            distanceSquared        = d;
+                            nearest                = this;
+                            gridLinesOfNearest     = gridLines;
+                            indexOfNearest         = neighborIndex;
+                            ordinateOfNearest      = ordinates[neighborIndex];
+                            gridLineIndexOfNearest = gridLineIndex;
                         }
-                        distanceSquared        = d;
-                        nearest                = this;
-                        gridLinesOfNearest     = gridLines;
-                        indexOfNearest         = neighborIndex;
-                        ordinateOfNearest      = ordinates[neighborIndex];
-                        gridLineIndexOfNearest = gridLineIndex;
                     }
                 }
             }
@@ -233,13 +245,15 @@ final class Intersections {
                          * that point, check if that point has a nearer neighbor.
                          */
                         final double candidate = neighbor.ordinates[neighbor.indexOfNearest];
-                        if (!neighbor.nearest(grid, gridLines, perpendicular, neighborIndex, neighbor.indexOfNearest, d)) {
-                            // Warning: From this point, value of above 'neighbor.indexOfNearest' may be invalid.
-                            distanceSquared        = d;
-                            nearest                = neighbor;
-                            gridLinesOfNearest     = gridLines;
-                            ordinateOfNearest      = candidate;
-                            gridLineIndexOfNearest = neighborIndex;
+                        if (neighbor != excludedGridLine || candidate != excludedOrdinate) {
+                            if (!neighbor.nearest(grid, gridLines, perpendicular, neighborIndex, neighbor.indexOfNearest, d)) {
+                                // Warning: From this point, value of above 'neighbor.indexOfNearest' may be invalid.
+                                distanceSquared        = d;
+                                nearest                = neighbor;
+                                gridLinesOfNearest     = gridLines;
+                                ordinateOfNearest      = candidate;
+                                gridLineIndexOfNearest = neighborIndex;
+                            }
                         }
                     }
                 }
@@ -261,13 +275,15 @@ final class Intersections {
                 d = d*d + p.nearest(gridLineIndex);
                 if (d < distanceSquared) {
                     final double candidate = p.ordinates[p.indexOfNearest];
-                    if (!p.nearest(grid, perpendicular, gridLines, i, p.indexOfNearest, d)) {
-                        // Warning: From this point, value of above 'neighbor.indexOfNearest' may be invalid.
-                        distanceSquared        = d;
-                        nearest                = p;
-                        gridLinesOfNearest     = perpendicular;
-                        ordinateOfNearest      = candidate;
-                        gridLineIndexOfNearest = i;
+                    if (p != excludedGridLine || candidate != excludedOrdinate) {
+                        if (!p.nearest(grid, perpendicular, gridLines, i, p.indexOfNearest, d)) {
+                            // Warning: From this point, value of above 'neighbor.indexOfNearest' may be invalid.
+                            distanceSquared        = d;
+                            nearest                = p;
+                            gridLinesOfNearest     = perpendicular;
+                            ordinateOfNearest      = candidate;
+                            gridLineIndexOfNearest = i;
+                        }
                     }
                 }
             }
@@ -280,11 +296,13 @@ final class Intersections {
         if (nearest == null) {
             return false;
         }
-        assert gridLines[gridLineIndex] == this;
+        // 'nearest' should not be non-null if its point has been removed,
+        // because recursive call to this method should have returned 'true'.
+        assert nearest.indexOf(ordinateOfNearest, nearest.indexOfNearest) >= 0;
         assert gridLinesOfNearest[gridLineIndexOfNearest] == nearest;
         ordinateIndex = indexOf(ordinate, ordinateIndex);
         if (ordinateIndex >= 0) { // If false, someone else used our point.
-            assert nearest.indexOf(ordinateOfNearest, nearest.indexOfNearest) >= 0;
+            assert gridLines[gridLineIndex] == this;
             final int toRemove = grid.createLineSegment(
                     gridLines,          gridLineIndex,          ordinate,
                     gridLinesOfNearest, gridLineIndexOfNearest, ordinateOfNearest);
@@ -303,6 +321,7 @@ final class Intersections {
                     gridLinesOfNearest[gridLineIndexOfNearest] = null;
                 }
             }
+            assert grid.isValid();
         }
         return true;
     }

@@ -45,11 +45,6 @@ final class IntersectionGrid {
     private static final int MAX_LINE_COUNT = 20;
 
     /**
-     * The <var>z</var> value for which to create isolines.
-     */
-    private final double level;
-
-    /**
      * All intersections found on horizontal or vertical grid lines.
      * The elements in this array will be created when first needed.
      */
@@ -62,14 +57,25 @@ final class IntersectionGrid {
     private final Map<Long,Polyline> polylines;
 
     /**
+     * Temporary variable for tracking content changes.
+     */
+    private transient boolean changed;
+
+    /**
+     * Workaround for the lack of multi-values return in the Java language.
+     *
+     * @see #findExclusion(Intersections[], int, double)
+     */
+    transient double excludedOrdinate;
+
+    /**
      * Creates a new instance for the given level.
      *
      * @param level  The isoline <var>z</var> value.
      * @param width  The image width.
      * @param height The image height.
      */
-    IntersectionGrid(final double level, final int width, final int height) {
-        this.level = level;
+    IntersectionGrid(final int width, final int height) {
         horizontal = new Intersections[height];
         vertical   = new Intersections[width];
         polylines  = new HashMap<Long,Polyline>();
@@ -104,8 +110,11 @@ final class IntersectionGrid {
      * This method shall be invoked only after all intersection points have been added.
      */
     final Collection<Polyline> createIsolines() {
-        createIsolines(horizontal, vertical);
-        createIsolines(vertical, horizontal);
+        do {
+            changed = false;
+            createIsolines(horizontal, vertical);
+            createIsolines(vertical, horizontal);
+        } while (changed);
         return polylines.values();
     }
 
@@ -197,6 +206,8 @@ final class IntersectionGrid {
             Polyline p;
             p = polylines.put(key1, merged); assert (p == null || p == p1 || p == p2) : p;
             p = polylines.put(key2, merged); assert (p == null || p == p1 || p == p2) : p;
+            // If we performed a merge, then the second polyline instance should be discarted.
+            assert (p1 == p2) || !polylines.values().contains(merged == p1 ? p2 : p1);
         } else {
             /*
              * Adding a single point to an existing polyline. We will need to remove only
@@ -221,7 +232,71 @@ final class IntersectionGrid {
             final Polyline p = polylines.put(added, expand);
             assert (p == null) : p;
         }
+        changed = true;
         return toRemove;
+    }
+
+    /**
+     * Finds the intersection point to exclude, if any. If this method returns a non-null value,
+     * then the ordinate value of the excluded point is stored in {@link #excludedOrdinate}.
+     */
+    final Intersections findExclusion(final Intersections[] gridLines, int gridLineIndex, final double ordinate) {
+        if (gridLines == horizontal) {
+            gridLineIndex = ~gridLineIndex;
+        }
+        final Long key = Polyline.key(gridLineIndex, ordinate);
+        final Polyline polyline = polylines.get(key);
+        if (polyline == null) {
+            return null;
+        }
+        final int i = polyline.startsWith(key) ? polyline.size()-1 : 0; // Opposite extremity.
+        excludedOrdinate = polyline.ordinate(i);
+        gridLineIndex = polyline.gridLine(i);
+        return (gridLineIndex >= 0) ? vertical[gridLineIndex] : horizontal[~gridLineIndex];
+    }
+
+    /**
+     * Tests the validity of this grid line, for assertion purposes only.
+     * This method tests that every {@link #polylines} key are associated
+     * to the correct {@link Polyline} instance, and that every polylines
+     * have its two extremities in the key set. Then, if the polyline is
+     * not closed, this method verifies that the two extremities are still
+     * available as intersection points.
+     * <p>
+     * This method does not invoke {@link Polyline#isValid()}, since this
+     * check is rather performed when the polylines are modified.
+     */
+    final boolean isValid() {
+        for (final Map.Entry<Long, Polyline> entry : polylines.entrySet()) {
+            final Polyline polyline = entry.getValue();
+            final Long     key      = entry.getKey();
+            boolean startsWith = false;
+            while (!key.equals(polyline.key(startsWith))) {
+                if ((startsWith = !startsWith) == false) {
+                    throw new AssertionError(polyline); // Invalid key.
+                }
+            }
+            if (polylines.get(polyline.key(!startsWith)) != polyline) {
+                throw new AssertionError(polyline); // Missing key.
+            }
+            /*
+             * At this point, we verified that the polylines map is correct regarding this
+             * polyline instance. Now check the grid of intersection points: intersections
+             * shall stil exist for the polyline extremities (if not closed), but shall not
+             * exist anymore for any point between the extremities.
+             */
+            final boolean isClosed = polyline.isClosed();
+            final int last = polyline.size() - 1;
+            for (int i=0; i<=last; i++) {
+                final int j = polyline.gridLine(i);
+                final Intersections gridLine = (j >= 0) ? vertical[j] : horizontal[~j];
+                final boolean exists = (gridLine != null) && gridLine.indexOf(polyline.ordinate(i), 0) >= 0;
+                if (exists != ((i == 0 || i == last) ? !isClosed : false)) {
+                    throw new AssertionError("exists=" + exists + " for i=" + i + " in " + polyline);
+                }
+            }
+        }
+        return true;
     }
 
     /**

@@ -126,7 +126,7 @@ public class IsolineCreator {
     private IntersectionGrid gridAt(final int k) {
         IntersectionGrid grid = intersections[k];
         if (grid == null) {
-            intersections[k] = grid = new IntersectionGrid(levels[k], width, height);
+            intersections[k] = grid = new IntersectionGrid(width, height);
         }
         return grid;
     }
@@ -239,12 +239,14 @@ public class IsolineCreator {
      * @todo Current implementation ignore the image (x,y) origin. This should be handled
      *       with an affine transform.
      */
-    public Collection<? extends CoordinateSequence>[] createPolylines() {
+    public CoordinateSequence[][] createPolylines() {
         calculateIntersectionGrids();
-        @SuppressWarnings({"unchecked","rawtypes"})
-        final Collection<? extends CoordinateSequence>[] polylines = new Collection[intersections.length];
+        final CoordinateSequence[][] polylines = new CoordinateSequence[intersections.length][];
         for (int i=0; i<intersections.length; i++) {
-            polylines[i] = intersections[i].createIsolines();
+            final Collection<Polyline> p = intersections[i].createIsolines();
+            polylines[i] = p.toArray(new CoordinateSequence[p.size()]);
+            // We convert to array in order to allow the garbage collector to collect
+            // the map entries, since the key values are not of interest to the user.
         }
         return polylines;
     }
@@ -258,7 +260,7 @@ public class IsolineCreator {
      */
     @Deprecated
     public Map<Point3d, List<Coordinate>> createIsolines() {
-        final Collection<? extends CoordinateSequence>[] polylines = createPolylines();
+        final CoordinateSequence[][] polylines = createPolylines();
         final Map<Point3d,List<Coordinate>> cellMapResult = new HashMap<Point3d,List<Coordinate>>();
         for (int i=0; i<polylines.length; i++) {
             int n = 0;

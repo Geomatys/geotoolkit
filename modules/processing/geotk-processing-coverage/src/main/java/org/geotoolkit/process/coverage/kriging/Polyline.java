@@ -74,6 +74,22 @@ final class Polyline implements CoordinateSequence {
     }
 
     /**
+     * Returns the grid line number at the given index.
+     * See class javadoc for a note about sign convention.
+     */
+    final int gridLine(final int i) {
+        return gridLines[i];
+    }
+
+    /**
+     * Returns the ordinate at the given index. It may be either the <var>x</var> or
+     * <var>y</var> ordinate value, depending on the {@linkplain #gridLine(int)} sign.
+     */
+    final double ordinate(final int i) {
+        return ordinates[i];
+    }
+
+    /**
      * Encodes the given coordinate in a single long value. The {@code gridLine} argument shall
      * be compliant with the sign convention documented in the {@link #gridLines} javadoc. The
      * {@code ordinate} value will be casted to an integer since we should have at most one
@@ -102,7 +118,7 @@ final class Polyline implements CoordinateSequence {
      * the given point is known to be either at the polyline beginning or the end, otherwise an
      * {@link AssertionError} may be thrown.
      */
-    private boolean startsWith(final long key) {
+    final boolean startsWith(final long key) {
         final int gridLine = (int) (key >>> Integer.SIZE);
         if (gridLine != gridLines[0]) {
             // If this is not the first point, then it must be the last point.
@@ -126,7 +142,7 @@ final class Polyline implements CoordinateSequence {
     /**
      * Returns {@code true} if the start point and end point are the same.
      */
-    private boolean isClosed() {
+    final boolean isClosed() {
         return gridLines[0] == gridLines[size-1]
             && ordinates[0] == ordinates[size-1];
     }
@@ -192,7 +208,8 @@ final class Polyline implements CoordinateSequence {
             assert isValid();
         } else {
             final boolean prepend = startsWith(key);
-            final boolean reverse = toMerge.startsWith(keyOther) == prepend;
+            final boolean mgStart = toMerge.startsWith(keyOther);
+            final boolean reverse = (prepend == mgStart);
             /*
              * Determine if the merging should be done on the 'toMerge' instance instead.
              * We do that for example if the other instance has sufficient capacity while
@@ -200,15 +217,10 @@ final class Polyline implements CoordinateSequence {
              */
             final int newLength = size + toMerge.size;
             if (newLength > ordinates.length && newLength <= toMerge.ordinates.length) {
-                /*
-                 * Set 'prepend' to the value of toMerge.startWith(x,y). This is equals
-                 * to 'prepend' if 'reverse' is false, or is the opposite otherwise.
-                 * Next we switch the meaning to 'append'.
-                */
-                toMerge.merge(this, !(prepend ^ reverse), reverse);
+                toMerge.merge(this, mgStart, reverse);
                 return toMerge;
             }
-            merge(toMerge, !prepend, reverse); // "!prepend" means "append".
+            merge(toMerge, prepend, reverse);
         }
         return this;
     }
@@ -216,16 +228,16 @@ final class Polyline implements CoordinateSequence {
     /**
      * Actually perform the merge.
      *
-     * @param append  {@code true} for appending {@code toMerge}, or {@code false} for prepending.
+     * @param prepend {@code true} for prepending {@code toMerge}, or {@code false} for appending..
      * @param reverse {@code true} if the {@code toMerge} data shall be copied in reverse order.
      */
-    private void merge(final Polyline toMerge, final boolean append, final boolean reverse) {
+    private void merge(final Polyline toMerge, final boolean prepend, final boolean reverse) {
         int[]     gridLines = this.gridLines;
         double[]  ordinates = this.ordinates;
         int       addLength = toMerge.size;
         final int newLength = addLength + size;
         int copyAt;
-        if (append) {
+        if (!prepend) { // Append case
             if (newLength > ordinates.length) {
                 this.gridLines = gridLines = Arrays.copyOf(gridLines, newLength * 2);
                 this.ordinates = ordinates = Arrays.copyOf(ordinates, newLength * 2);
