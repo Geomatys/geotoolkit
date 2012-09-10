@@ -34,7 +34,21 @@ import org.geotoolkit.util.ArgumentChecks;
  * The aim is thus to minimize the "intra-class variance" so that each
  * elements group has generated individuals who "look at best"
  * and maximize the "inter-class variance" in order to obtain the most dissimilar classes possible.<br/><br/>
- * Data will aren't sort in ascending order.</p>
+ * Data will aren't sort in ascending order.<br/><br/>
+ *
+ * Code example : <br/><br/>
+ *
+ * {@code Classification classify = new Classification();}<br/>
+ * {@code classify.setData(double[]data);}<br/>
+ * {@code classify.setClassNumber(5);}<br/>
+ * {@code classify.computeQuantile();}<br/>
+ * {@code or}<br/>
+ * {@code classify.computeJenks();}<br/>
+ *
+ * {@code //results in two forms}<br/>
+ * {@code classify.getIndex();}<br/>
+ * {@code classify.getClasses();}
+ * </p>
  *
  * @author Rémi Marechal (Geomatys).
  */
@@ -100,63 +114,6 @@ public class Classification {
             index[i-1] = (int) Math.round(i*((double)dataLength)/classNumber);
     }
 
-//    /**
-//     * Class data from Jenks method.
-//     */
-//    public void computeJenks() {
-//        if (data == null)
-//            throw new IllegalArgumentException("you must set data");
-//        if (classNumber > dataLength)
-//            throw new IllegalArgumentException("impossible to classify datas"
-//                + " with class number larger than overall elements number");
-//        this.index = new int[classNumber];
-//        this.reComputeList = true;
-//        if (classNumber == 1) {
-//            index[0] = dataLength;
-//            return;
-//        }
-//        final double[][] mat1 = new double[dataLength + 1][classNumber + 1];
-//        final double[][] mat2 = new double[dataLength + 1][classNumber + 1];
-//        for (int i = 1; i <= classNumber; i++) {
-//            mat1[1][i] = 1;
-//            mat2[1][i] = 0;
-//            for (int j = 2; j <= dataLength; j++)
-//                mat2[j][i] = Double.MAX_VALUE;
-//        }
-//        double s1, s2, len, val, diff = 0;
-//        int id_3, id_4;
-//        for (int l = 2; l <= dataLength; l++) {
-//            s1 = s2 = len = 0;
-//            for (int m = 1; m <= l; m++) {
-//                id_3 = l - m + 1;
-//                val = data[id_3 -1];
-//                s2 += val * val;
-//                s1 += val;
-//                len++;
-//                diff = s2 - (s1 * s1) / len;
-//                id_4 = id_3 - 1;
-//                if (id_4 != 0) {
-//                    for (int j = 2; j <= classNumber; j++) {
-//                        if (mat2[l][j] >= (diff + mat2[id_4][j - 1])) {
-//                            mat1[l][j] = id_3;
-//                            mat2[l][j] = diff + mat2[id_4][j - 1];
-//                        }
-//                    }
-//                }
-//            }
-//            mat1[l][1] = 1;
-//            mat2[l][1] = diff;
-//        }
-//        int idata = dataLength;
-//        index[classNumber - 1] = dataLength;
-//        for (int j = classNumber; j >= 2; j--) {
-//            int id =  (int) (mat1[idata][j]) - 2;
-//            index[j - 2] = id + 1;
-//            idata = (int) mat1[idata][j] - 1;
-//        }
-//    }
-
-
     /**
      * Class data from Jenks method.
      */
@@ -172,17 +129,19 @@ public class Classification {
             index[0] = dataLength;
             return;
         }
-        final int nbRow = dataLength + 1;
+
         final int nbCol = classNumber + 1;
-        final int[] indexClassTab = new int[nbRow * nbCol];
-        final double[] moyVarTab  = new double[nbRow * nbCol];
+        int lenght = dataLength + 1;
+        lenght    *= nbCol;
+        final int[] indexClassTab = new int[lenght];
+        final double[] moyVarTab  = new double[lenght];
         int currentIndex;
         for (int i = 0; i < classNumber; i++) {
             currentIndex = nbCol + i + 1;
             indexClassTab[currentIndex] = 1;
             moyVarTab[currentIndex]     = 0;
             for (int j = 2; j <= dataLength; j++)
-                moyVarTab[j*nbCol+i+1] = Double.POSITIVE_INFINITY;
+                moyVarTab[j*nbCol + i + 1] = Double.POSITIVE_INFINITY;
         }
         double somA, somB, len, currentVal, diff = 0;
         int currentId, idTemp;
@@ -208,7 +167,7 @@ public class Classification {
                     }
                 deb++;
             }
-            currentIndex = (idl+1) * nbCol + 1;
+            currentIndex = (idl + 1) * nbCol + 1;
             indexClassTab[currentIndex] = 1;
             moyVarTab[currentIndex]     = diff;
             idl++;
@@ -278,9 +237,7 @@ public class Classification {
      * @param classNumber class number ask by caller.
      */
     public void setClassNumber(int classNumber) {
-        if (classNumber < 1)
-            throw new IllegalArgumentException("impossible to classify datas with"
-                + " class number lesser 1");
+        ArgumentChecks.ensureStrictlyPositive("classNumber", classNumber);
         this.classNumber = classNumber;
         this.index       = null;
     }
