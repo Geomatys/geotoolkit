@@ -137,7 +137,7 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
     }
 
     private RenderedImage getTileImage(GridMosaic mosaic, int col, int row, Map hints) throws DataStoreException {
-
+        
         final String tileId = toId(mosaic, col, row, hints);
 
         //use the cache if available        
@@ -337,7 +337,7 @@ public abstract class CachedPyramidSet extends DefaultPyramidSet {
                         queue.offer(pack.readNow());
                     } catch (IOException ex) {
                         ex.printStackTrace();
-                    } catch (DataStoreException ex) {
+                    } catch (Exception ex) {
                         ex.printStackTrace();
                     } finally {
                         latch.countDown();

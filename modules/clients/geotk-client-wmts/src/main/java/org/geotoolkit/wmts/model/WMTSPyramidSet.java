@@ -109,6 +109,8 @@ public class WMTSPyramidSet extends CachedPyramidSet{
     public Request getTileRequest(GridMosaic mosaic, int col, int row, Map hints) throws DataStoreException {
         final WMTSMosaic wmtsMosaic = (WMTSMosaic) mosaic;
         
+        if(hints == null) hints = new HashMap();
+        
         final GetTileRequest request = getServer().createGetTile();
         
         //set the format
