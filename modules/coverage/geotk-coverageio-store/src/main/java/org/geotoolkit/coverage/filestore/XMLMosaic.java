@@ -20,6 +20,7 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
@@ -30,7 +31,11 @@ import java.io.IOException;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.Map;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.RejectedExecutionHandler;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.IIOImage;
@@ -58,6 +63,15 @@ import org.opengis.geometry.Envelope;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XMLMosaic implements GridMosaic{
+    
+    /** Executor used to write images */
+    @XmlTransient
+    private static final RejectedExecutionHandler LOCAL_REJECT_EXECUTION_HANDLER = new ThreadPoolExecutor.CallerRunsPolicy();    
+    @XmlTransient
+    private static final BlockingQueue IMAGEQUEUE = new ArrayBlockingQueue(Runtime.getRuntime().availableProcessors());
+    @XmlTransient
+    private static final ThreadPoolExecutor TILEWRITEREXECUTOR = new ThreadPoolExecutor(
+            0, Runtime.getRuntime().availableProcessors(), 1, TimeUnit.MINUTES, IMAGEQUEUE, LOCAL_REJECT_EXECUTION_HANDLER);
         
     //empty tile informations
     @XmlTransient
@@ -81,6 +95,7 @@ public class XMLMosaic implements GridMosaic{
     BitSet tileExist;
     @XmlTransient
     BitSet tileEmpty;
+    
     
     void initialize(XMLPyramid pyramid){
         this.pyramid = pyramid;
@@ -275,11 +290,8 @@ public class XMLMosaic implements GridMosaic{
     }
     
     void writeTiles(final RenderedImage image, final boolean onlyMissing) throws DataStoreException{
-        
-        ImageWriter writer = null;
-        try {            
-            writer = ImageIO.getImageWritersByFormatName("PNG").next();
-            final boolean canWriteRaster = writer.canWriteRasters();
+                
+        try {
             
             for(int y=0,ny=image.getNumYTiles(); y<ny; y++){
                 for(int x=0,nx=image.getNumXTiles(); x<nx; x++){
@@ -301,39 +313,15 @@ public class XMLMosaic implements GridMosaic{
                     
                     final File f = getTileFile(x, y);
                     f.getParentFile().mkdirs();
+                    TILEWRITEREXECUTOR.submit(new TileWriter(f, raster, image.getColorModel()));
+                    tileExist.set(tileIndex, true);
+                    tileEmpty.set(tileIndex, false);
                     
-                    final ImageOutputStream out = ImageIO.createImageOutputStream(f);
-                    try{
-                        writer.reset();
-                        writer.setOutput(out);
-
-                        //write tile
-                        if(canWriteRaster){
-                            final IIOImage buffer = new IIOImage(raster, null, null);                    
-                            writer.write(buffer);
-                        }else{
-                            //encapsulate image in a buffered image with parent color model
-                            final BufferedImage buffer = new BufferedImage(
-                                    image.getColorModel(), 
-                                    (WritableRaster)raster, true, null);
-                            writer.write(buffer);
-                        }
-
-                        tileExist.set(tileIndex, true);
-                        tileEmpty.set(tileIndex, false);
-                    }finally {
-                        out.close();
-                    }
                 }
             }
                     
-        } catch (IOException ex) {
-            throw new DataStoreException(ex.getMessage(),ex);
         } finally{
             updateCompletionString();
-            if(writer != null){
-                writer.dispose();
-            }
         }
         
     }
@@ -371,6 +359,54 @@ public class XMLMosaic implements GridMosaic{
     @Override
     public BlockingQueue<Object> getTiles(Collection<? extends Point> positions, Map hints) throws DataStoreException{
         return AbstractGridMosaic.getTiles(this, positions, hints);
+    }
+ 
+    private static class TileWriter implements Runnable{
+
+        private final File f;
+        private final Raster raster;
+        private final ColorModel cm;
+
+        public TileWriter(File f,Raster raster, ColorModel cm) {
+            this.f = f;
+            this.raster = raster;
+            this.cm = cm;
+        }
+        
+        @Override
+        public void run() {
+            ImageWriter writer = null;
+            ImageOutputStream out = null;
+            try{
+                out = ImageIO.createImageOutputStream(f);
+                writer = ImageIO.getImageWritersByFormatName("PNG").next();
+                writer.setOutput(out);
+                final boolean canWriteRaster = writer.canWriteRasters();
+                //write tile
+                if(canWriteRaster){
+                    final IIOImage buffer = new IIOImage(raster, null, null);                    
+                    writer.write(buffer);
+                }else{
+                    //encapsulate image in a buffered image with parent color model
+                    final BufferedImage buffer = new BufferedImage(
+                            cm, (WritableRaster)raster, true, null);
+                    writer.write(buffer);
+                }
+            }catch(IOException ex){
+                throw new RuntimeException(ex.getMessage(),ex);
+            }finally{
+                writer.dispose();
+                if(out != null){
+                    try {
+                        out.close();
+                    } catch (IOException ex) {
+                        Logger.getLogger(XMLMosaic.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+            
+        }
+        
     }
     
 }

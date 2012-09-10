@@ -72,6 +72,15 @@ public final class MapcontextPyramidDescriptor extends AbstractProcessDescriptor
             "Different scales to generate. (in crs unit by pixel)",double[].class,null,true);
     
     /**
+     * Optional - Number of painters.
+     * Increasing the number of painting thread may improve performances.
+     * But also uses more memory. Default will be set to number of computer cpu cores.
+     */
+    public static final ParameterDescriptor<Integer> IN_NBPAINTER =
+            new DefaultParameterDescriptor<Integer>("painters",
+            "Number of threads painting images.",Integer.class,null,false);
+    
+    /**
      * Mandatory - Container which will receive the tiles.
      */
     public static final ParameterDescriptor<PyramidalModel> IN_CONTAINER =
@@ -87,7 +96,7 @@ public final class MapcontextPyramidDescriptor extends AbstractProcessDescriptor
     
     public static final ParameterDescriptorGroup INPUT_DESC =
             new DefaultParameterDescriptorGroup(NAME+"InputParameters",
-                IN_MAPCONTEXT,IN_EXTENT,IN_TILE_SIZE,IN_SCALES,IN_CONTAINER,IN_HINTS);
+                IN_MAPCONTEXT,IN_EXTENT,IN_TILE_SIZE,IN_SCALES,IN_NBPAINTER,IN_CONTAINER,IN_HINTS);
 
     public static final ParameterDescriptor<PyramidalModel> OUT_CONTAINER =
             new DefaultParameterDescriptor<PyramidalModel>("outContainer",

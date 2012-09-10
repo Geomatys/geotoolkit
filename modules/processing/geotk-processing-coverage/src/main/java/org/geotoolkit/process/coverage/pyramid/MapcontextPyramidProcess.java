@@ -19,14 +19,11 @@ package org.geotoolkit.process.coverage.pyramid;
 
 import java.awt.Dimension;
 import java.awt.geom.Point2D;
-import java.awt.image.RenderedImage;
 import org.geotoolkit.coverage.GridMosaic;
 import org.geotoolkit.coverage.Pyramid;
 import org.geotoolkit.coverage.PyramidalModel;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.service.CanvasDef;
-import org.geotoolkit.display2d.service.DefaultPortrayalService;
-import org.geotoolkit.display2d.service.PortrayalRenderedImage;
 import org.geotoolkit.display2d.service.SceneDef;
 import org.geotoolkit.display2d.service.ViewDef;
 import org.geotoolkit.factory.Hints;
@@ -70,7 +67,12 @@ public final class MapcontextPyramidProcess extends AbstractProcess {
         final Envelope envelope = value(IN_EXTENT, inputParameters);
         final Dimension tileSize = value(IN_TILE_SIZE, inputParameters);
         final double[] scales = value(IN_SCALES, inputParameters);
+        Integer nbpainter = value(IN_NBPAINTER, inputParameters);
         final PyramidalModel container = value(IN_CONTAINER, inputParameters);
+        
+        if(nbpainter == null){
+            nbpainter = Runtime.getRuntime().availableProcessors();
+        }
 
         Hints hints = null;
         try{
@@ -136,11 +138,11 @@ public final class MapcontextPyramidProcess extends AbstractProcess {
                     mosaic = container.createMosaic(pyramid.getId(),
                         gridSize, tileDim, upperleft, scale);
                 }
-
-                final PortrayalRenderedImage image = (PortrayalRenderedImage) DefaultPortrayalService.prepareImage(
+                
+                final ProgressiveImage image = new ProgressiveImage(
                         canvasDef, sceneDef, viewDef,
-                        mosaic.getGridSize(), mosaic.getTileSize(), scale);
-                image.addProgressListener(new PortrayalRenderedImage.ProgressListener() {
+                        mosaic.getGridSize(), mosaic.getTileSize(), scale,nbpainter);
+                image.addProgressListener(new ProgressiveImage.ProgressListener() {
                     @Override
                     public void tileCreated(int x, int y) {
                         progress++;
