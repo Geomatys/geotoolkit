@@ -31,9 +31,12 @@ import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.TokenStream;
 import org.antlr.runtime.tree.CommonTree;
+import org.antlr.runtime.tree.Tree;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.gui.swing.tree.Trees;
+import org.geotoolkit.temporal.object.ISODateParser;
+import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Expression;
@@ -190,6 +193,10 @@ public final class CQL {
             return ff.literal(Integer.valueOf(tree.getText()));
         }else if(CQLParser.FLOAT == type){
             return ff.literal(Double.valueOf(tree.getText()));
+        }else if(CQLParser.DATE == type){
+            return ff.literal(TemporalUtilities.parseDateSafe(tree.getText(),true));
+        }else if(CQLParser.DURATION_P == type || CQLParser.DURATION_T == type){
+            return ff.literal(TemporalUtilities.getTimeInMillis(tree.getText()));
         }else if(CQLParser.UNARY == type){
             final String negText = tree.getText();
             final Expression val = convertExpression((CommonTree)tree.getChild(0), ff);

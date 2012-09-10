@@ -31,6 +31,7 @@ tokens{
     FIL_LOG;
     FIL_ISNULL;
     FIL_ISNOTNULL;
+    DURATION;
 
 }
 
@@ -133,7 +134,7 @@ RPAREN : ')';
 
 //LITERALS  ----------------------------------------------
 
-TEXT :   '\'' ( ESC_SEQ | ~('\\'|'\'') )* '\'' ;    
+TEXT :   '\'' ( ESC_SEQ | ~('\\'|'\'') )* '\'' ;   
 INT : DIGIT+ ;
 
 FLOAT
@@ -141,6 +142,10 @@ FLOAT
     |   '.' ('0'..'9')+ EXPONENT?
     |   ('0'..'9')+ EXPONENT
     ;
+
+DATE : DIGIT DIGIT DIGIT DIGIT '-' DIGIT DIGIT '-' DIGIT DIGIT 'T' DIGIT DIGIT ':' DIGIT DIGIT ':' DIGIT DIGIT ('.' DIGIT+)? 'Z';
+DURATION_P : P (INT 'Y')? (INT 'M')? (INT 'D')? (INT 'H')? (INT 'M')? (INT 'S')?; 
+DURATION_T : T (INT 'H')? (INT 'M')? (INT 'S')?;
 
 // FILTERING OPERAND -----------------------------------
 COMPARE 
@@ -263,6 +268,9 @@ expression_term
 	: TEXT
 	| expression_unary
 	| PROPERTY_NAME
+	| DATE
+	| DURATION_P
+	| DURATION_T
 	| NAME^ (LPAREN expression_fct_param? RPAREN)?
 	| expression_geometry
 	| LPAREN! filter RPAREN!
