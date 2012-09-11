@@ -18,6 +18,7 @@ package org.geotoolkit.xsd.xml.v2001;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -26,13 +27,14 @@ import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
+import org.geotoolkit.util.Utilities;
 
 
 /**
  * <p>Java class for extensionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="extensionType">
  *   &lt;complexContent>
@@ -46,8 +48,8 @@ import javax.xml.namespace.QName;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -87,11 +89,11 @@ public class ExtensionType extends Annotated {
     }
     /**
      * Gets the value of the group property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link GroupRef }
-     *     
+     *
      */
     public GroupRef getGroup() {
         return group;
@@ -99,11 +101,11 @@ public class ExtensionType extends Annotated {
 
     /**
      * Sets the value of the group property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link GroupRef }
-     *     
+     *
      */
     public void setGroup(final GroupRef value) {
         this.group = value;
@@ -111,11 +113,11 @@ public class ExtensionType extends Annotated {
 
     /**
      * Gets the value of the all property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link All }
-     *     
+     *
      */
     public All getAll() {
         return all;
@@ -123,11 +125,11 @@ public class ExtensionType extends Annotated {
 
     /**
      * Sets the value of the all property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link All }
-     *     
+     *
      */
     public void setAll(final All value) {
         this.all = value;
@@ -135,11 +137,11 @@ public class ExtensionType extends Annotated {
 
     /**
      * Gets the value of the choice property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ExplicitGroup }
-     *     
+     *
      */
     public ExplicitGroup getChoice() {
         return choice;
@@ -147,11 +149,11 @@ public class ExtensionType extends Annotated {
 
     /**
      * Sets the value of the choice property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ExplicitGroup }
-     *     
+     *
      */
     public void setChoice(final ExplicitGroup value) {
         this.choice = value;
@@ -159,11 +161,11 @@ public class ExtensionType extends Annotated {
 
     /**
      * Gets the value of the sequence property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ExplicitGroup }
-     *     
+     *
      */
     public ExplicitGroup getSequence() {
         return sequence;
@@ -171,11 +173,11 @@ public class ExtensionType extends Annotated {
 
     /**
      * Sets the value of the sequence property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ExplicitGroup }
-     *     
+     *
      */
     public void setSequence(final ExplicitGroup value) {
         this.sequence = value;
@@ -183,26 +185,26 @@ public class ExtensionType extends Annotated {
 
     /**
      * Gets the value of the attributeOrAttributeGroup property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the attributeOrAttributeGroup property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getAttributeOrAttributeGroup().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link AttributeGroupRef }
      * {@link Attribute }
-     * 
-     * 
+     *
+     *
      */
     public List<Annotated> getAttributeOrAttributeGroup() {
         if (attributeOrAttributeGroup == null) {
@@ -213,11 +215,11 @@ public class ExtensionType extends Annotated {
 
     /**
      * Gets the value of the anyAttribute property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Wildcard }
-     *     
+     *
      */
     public Wildcard getAnyAttribute() {
         return anyAttribute;
@@ -225,11 +227,11 @@ public class ExtensionType extends Annotated {
 
     /**
      * Sets the value of the anyAttribute property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Wildcard }
-     *     
+     *
      */
     public void setAnyAttribute(final Wildcard value) {
         this.anyAttribute = value;
@@ -237,11 +239,11 @@ public class ExtensionType extends Annotated {
 
     /**
      * Gets the value of the base property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link QName }
-     *     
+     *
      */
     public QName getBase() {
         return base;
@@ -249,14 +251,78 @@ public class ExtensionType extends Annotated {
 
     /**
      * Sets the value of the base property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link QName }
-     *     
+     *
      */
     public void setBase(final QName value) {
         this.base = value;
     }
 
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof ExtensionType && super.equals(object)) {
+            final ExtensionType that = (ExtensionType) object;
+                   return
+                   Objects.equals(this.all,                       that.all) &&
+                   Objects.equals(this.anyAttribute,              that.anyAttribute) &&
+                   Objects.equals(this.attributeOrAttributeGroup, that.attributeOrAttributeGroup) &&
+                   Objects.equals(this.base,                      that.base) &&
+                   Objects.equals(this.choice,                    that.choice) &&
+                   Objects.equals(this.group,                     that.group) &&
+                   Objects.equals(this.sequence,                  that.sequence);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 37 * hash + super.hashCode();
+        hash = 37 * hash + (this.base != null ? this.base.hashCode() : 0);
+        hash = 37 * hash + (this.group != null ? this.group.hashCode() : 0);
+        hash = 37 * hash + (this.all != null ? this.all.hashCode() : 0);
+        hash = 37 * hash + (this.choice != null ? this.choice.hashCode() : 0);
+        hash = 37 * hash + (this.sequence != null ? this.sequence.hashCode() : 0);
+        hash = 37 * hash + (this.attributeOrAttributeGroup != null ? this.attributeOrAttributeGroup.hashCode() : 0);
+        hash = 37 * hash + (this.anyAttribute != null ? this.anyAttribute.hashCode() : 0);
+        return hash;
+    }
+
+
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString()).append('\n');
+        if (base != null) {
+            sb.append("base:").append(base).append('\n');
+        }
+        if (all != null) {
+            sb.append("all:").append(all).append('\n');
+        }
+        if (anyAttribute != null) {
+            sb.append("anyAttribute:").append(anyAttribute).append('\n');
+        }
+        if (attributeOrAttributeGroup != null) {
+            sb.append("attributeOrAttributeGroup:").append(attributeOrAttributeGroup).append('\n');
+        }
+        if (choice != null) {
+            sb.append("choice:").append(choice).append('\n');
+        }
+        if (group != null) {
+            sb.append("group:").append(group).append('\n');
+        }
+        if (sequence != null) {
+            sb.append("sequence:").append(sequence).append('\n');
+        }
+        return  sb.toString();
+    }
 }

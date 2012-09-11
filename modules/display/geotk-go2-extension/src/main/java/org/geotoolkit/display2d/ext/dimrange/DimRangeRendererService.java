@@ -32,7 +32,6 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
-
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.processing.ColorMap;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -49,7 +48,12 @@ import org.geotoolkit.util.NumberRange;
  * @module pending
  */
 public class DimRangeRendererService extends AbstractSymbolizerRendererService<DimRangeSymbolizer,CachedDimRangeSymbolizer>{
-
+    
+    @Override
+    public boolean isGroupSymbolizer() {
+        return false;
+    }
+    
     @Override
     public Class<DimRangeSymbolizer> getSymbolizerClass() {
         return DimRangeSymbolizer.class;
@@ -67,7 +71,7 @@ public class DimRangeRendererService extends AbstractSymbolizerRendererService<D
 
     @Override
     public SymbolizerRenderer createRenderer(final CachedDimRangeSymbolizer symbol, final RenderingContext2D context) {
-        return new DimRangeRenderer(symbol, context);
+        return new DimRangeRenderer(this,symbol, context);
     }
 
     @Override

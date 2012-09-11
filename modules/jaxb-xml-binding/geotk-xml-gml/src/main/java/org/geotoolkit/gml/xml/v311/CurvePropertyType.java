@@ -24,6 +24,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.CurveProperty;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -56,7 +58,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "CurvePropertyType", propOrder = {
     "abstractCurve"
 })
-public class CurvePropertyType {
+public class CurvePropertyType implements CurveProperty {
 
     @XmlElementRef(name = "AbstractCurve", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
     private JAXBElement<? extends AbstractCurveType> abstractCurve;

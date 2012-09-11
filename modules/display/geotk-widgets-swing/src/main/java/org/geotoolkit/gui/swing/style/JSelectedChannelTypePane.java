@@ -17,14 +17,12 @@
  */
 package org.geotoolkit.gui.swing.style;
 
-import org.geotoolkit.gui.swing.resource.MessageBundle;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.SwingConstants;
-import org.geotoolkit.gui.swing.style.StyleElementEditor;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapLayer;
 import org.jdesktop.swingx.JXTitledSeparator;
 import org.opengis.style.SelectedChannelType;
@@ -44,6 +42,7 @@ public class JSelectedChannelTypePane extends StyleElementEditor<SelectedChannel
      * Creates new form JFillPanel 
      */
     public JSelectedChannelTypePane() {
+        super(SelectedChannelType.class);
         initComponents();
     }
 

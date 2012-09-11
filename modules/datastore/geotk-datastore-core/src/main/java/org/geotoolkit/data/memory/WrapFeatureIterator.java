@@ -117,6 +117,13 @@ public abstract class WrapFeatureIterator implements FeatureIterator<Feature> {
         return feature;
     }
 
+    /**
+     * @return Original/Wrapped feature iterator.
+     */
+    public Iterator<? extends Feature> getOriginal() {
+        return originalFI;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder(Classes.getShortClassName(this));

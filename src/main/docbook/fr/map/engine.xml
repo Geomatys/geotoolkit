@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book [
+  <!ENTITY % book.entities SYSTEM "../../book.entities">
+  %book.entities;
+]>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xlink = "http://www.w3.org/1999/xlink">
+          
+    <title>
+        Engine
+    </title>
+
+    <section>
+        <title>Spécification</title>
+    
+        <para>
+            Il y avait une norme 
+            <emphasis>OGC Graphical Object</emphasis> qui définissait le modèle des objets à dessiner. Malheureusement, cette norme est dépréciée et aucune autre ISO ou OGC ne couvre ce domaine.
+        </para>
+        <para>
+            Un effort à donc été produit dans GeoAPI et GeotoolKit afin de définir un nouveau modèle utilisable à la fois en 2D et en 3D.
+        </para>
+        <para>
+            GeotoolKit vient avec un moteur de rendu 2D appelé "GO2" se basant sur un modèle modifié de la norme Graphical Object.
+        </para>
+        <para>
+            Pour le moment le modèle est très léger. 
+        </para> 
+       
+        <figure> 
+            <title>Classes relatives au moteur de rendu 2D</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="../images/engine_classes.png" format="png"></imagedata>
+                </imageobject>
+                <textobject>
+                    <phrase> Classes relatives au moteur de rendu 2D
+                    </phrase>
+                </textobject>
+            </mediaobject>
+        </figure>
+    </section>
+    
+    <section>
+        <title>Etapes du rendu</title>
+        
+        <para>
+            Lors du rendu, les données sont traitées d'une manière bien connue, ce pipeline se compose de quatre étapes séparées par des transformations mathématiques :
+        </para>
+        
+        <figure> 
+            <title>Etapes de rendu</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="../images/engine_etapes.png" format="png"></imagedata>
+                </imageobject>
+                <textobject>
+                    <phrase> Etapes de rendu
+                    </phrase>
+                </textobject>
+            </mediaobject>
+        </figure>
+        
+        <orderedlist>
+            <listitem>Le <emphasis>Data CRS</emphasis> correspond à la projection d'origine des données. Sur une même carte, il y a généralement plusieurs couches avec des projections différentes.</listitem>
+            <listitem>Pour les dessiner de manière cohérente on les reprojète vers une projection nommée <emphasis>Objective CRS</emphasis>, c'est la projection de la carte affichée.</listitem>
+            <listitem>Une autre transformation est ajoutée afin d'obtenir le <emphasis>Display CRS</emphasis>, c'est habituellement une transformation affine utilisée pour traiter les translations, rotations et l'échelle quand on est a deux dimensions.</listitem>
+            <listitem>Et une derniere transformation pour aller vers le <emphasis>Device CRS</emphasis> (le périphérique de sortie) , Java2D se charge automatiquement de cette dernière.</listitem>
+        </orderedlist>
+    </section>
+    
+    </section>

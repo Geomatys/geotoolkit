@@ -2,7 +2,6 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2004 - 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -26,27 +25,25 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Iterator;
 import java.util.logging.Level;
-
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.exception.PortrayalException;
-import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.style.CachedLineSymbolizer;
-import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display.shape.TransformedShape;
+import org.geotoolkit.display2d.GO2Utilities;
+import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.CachedGraphicStroke;
+import org.geotoolkit.display2d.style.CachedLineSymbolizer;
 import org.geotoolkit.display2d.style.CachedStroke;
 import org.geotoolkit.display2d.style.CachedStrokeGraphic;
 import org.geotoolkit.display2d.style.CachedStrokeSimple;
 import org.geotoolkit.display2d.style.j2d.DefaultPathWalker;
 import org.geotoolkit.display2d.style.j2d.PathWalker;
-
 import org.opengis.geometry.Geometry;
-import org.opengis.util.FactoryException;
 import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 
 /**
  * @author Johann Sorel (Geomatys)
@@ -56,8 +53,8 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
 
     private final CachedStroke cachedStroke;
 
-    public DefaultLineSymbolizerRenderer(final CachedLineSymbolizer symbol, final RenderingContext2D context){
-        super(symbol,context);
+    public DefaultLineSymbolizerRenderer(final SymbolizerRendererService service,final CachedLineSymbolizer symbol, final RenderingContext2D context){
+        super(service,symbol,context);
         cachedStroke = symbol.getCachedStroke();
     }
 
@@ -105,6 +102,11 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
         }
 
         while(graphics.hasNext()){
+
+            if(monitor.stopRequested()){
+                break;
+            }
+            
             final ProjectedObject projectedFeature = graphics.next();
             final Object feature = projectedFeature.getCandidate();
             final ProjectedGeometry projectedGeometry = projectedFeature.getGeometry(geomPropertyName);

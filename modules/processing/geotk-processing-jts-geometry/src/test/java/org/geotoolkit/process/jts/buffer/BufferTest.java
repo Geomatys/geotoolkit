@@ -16,10 +16,7 @@
  */
 package org.geotoolkit.process.jts.buffer;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.process.jts.union.UnionProcess;
 import org.geotoolkit.referencing.CRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
@@ -61,13 +58,9 @@ public class BufferTest extends AbstractProcessTest{
         final int segments = 5;
         final int capStype = BufferOp.CAP_SQUARE;
         
-        CoordinateReferenceSystem crs1 = null;
-        try{
-            crs1 = CRS.decode("EPSG:4326");
-            JTS.setCRS(geom, crs1);
-        }catch(FactoryException ex){
-            Logger.getLogger(UnionProcess.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        CoordinateReferenceSystem crs1 = CRS.decode("EPSG:4326");
+        JTS.setCRS(geom, crs1);
+       
         // Process
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("jts", "buffer");
 

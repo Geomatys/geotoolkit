@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.geotoolkit.gml.xml.v311.AbstractFeatureCollectionType;
+import org.geotoolkit.wfs.xml.WFSFeatureCollection;
 import org.geotoolkit.wfs.xml.WFSResponse;
 
 
@@ -55,7 +56,7 @@ import org.geotoolkit.wfs.xml.WFSResponse;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FeatureCollectionType")
 @XmlRootElement(name = "FeatureCollection")
-public class FeatureCollectionType extends AbstractFeatureCollectionType implements WFSResponse {
+public class FeatureCollectionType extends AbstractFeatureCollectionType implements WFSResponse, WFSFeatureCollection {
 
     @XmlAttribute
     private String lockId;
@@ -70,6 +71,12 @@ public class FeatureCollectionType extends AbstractFeatureCollectionType impleme
     }
 
     public FeatureCollectionType(final Integer numberOfFeatures, final XMLGregorianCalendar timeStamp) {
+        this.numberOfFeatures = numberOfFeatures;
+        this.timeStamp        = timeStamp;
+    }
+    
+    public FeatureCollectionType(final String id, final Integer numberOfFeatures, final XMLGregorianCalendar timeStamp) {
+        super(id);
         this.numberOfFeatures = numberOfFeatures;
         this.timeStamp        = timeStamp;
     }

@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.logging.Logger;
-
 import org.geotoolkit.data.memory.MemoryDataStore;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
@@ -38,9 +37,9 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.storage.DataStoreException;
+import static org.geotoolkit.util.ArgumentChecks.*;
 import org.geotoolkit.util.collection.CloseableIterator;
 import org.geotoolkit.util.logging.Logging;
-
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
 import org.opengis.feature.type.FeatureType;
@@ -50,8 +49,6 @@ import org.opengis.filter.sort.SortBy;
 import org.opengis.geometry.BoundingBox;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
-import static org.geotoolkit.util.ArgumentChecks.*;
 
 /**
  *
@@ -163,8 +160,8 @@ public class DataUtilities {
             }
         }finally{
             
-            writer.close();
-            
+            //close reader before the writer to ensure no more read lock might still exist
+            //if we write on the same source
             DataStoreRuntimeException e = null;
             //todo must close safely both iterator
             if(ite instanceof Closeable){
@@ -174,7 +171,8 @@ public class DataUtilities {
                     e = new DataStoreRuntimeException(ex);
                 }
             }
-
+            
+            writer.close();
             
             if(e != null){
                 throw e;

@@ -45,10 +45,10 @@ import static org.junit.Assert.*;
 
 /**
  * JUnit test of Centroid process
- * @author Quentin Boileau
- * @module pending
+ *
+ * @author Quentin Boileau @module pending
  */
-public class CentroidTest extends AbstractProcessTest{
+public class CentroidTest extends AbstractProcessTest {
 
     private static SimpleFeatureBuilder sfb;
     private static GeometryFactory geometryFactory;
@@ -58,9 +58,8 @@ public class CentroidTest extends AbstractProcessTest{
         super("centroid");
     }
 
-
     @Test
-    public void testCentroid() throws ProcessException, NoSuchIdentifierException{
+    public void testCentroid() throws ProcessException, NoSuchIdentifierException, FactoryException {
 
         // Features in
         final FeatureCollection<?> featureList = buildFeatureList();
@@ -108,15 +107,9 @@ public class CentroidTest extends AbstractProcessTest{
         return sft;
     }
 
-    private static FeatureCollection<?> buildFeatureList() {
+    private static FeatureCollection<?> buildFeatureList() throws FactoryException {
 
-        try {
-            type = createSimpleType();
-        } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(CentroidTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FactoryException ex) {
-            Logger.getLogger(CentroidTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        type = createSimpleType();
 
         final FeatureCollection<Feature> featureList = DataUtilities.collection("", type);
 
@@ -146,15 +139,9 @@ public class CentroidTest extends AbstractProcessTest{
         return featureList;
     }
 
-    private static FeatureCollection<?> buildResultList() {
+    private static FeatureCollection<?> buildResultList() throws FactoryException {
 
-        try {
-            type = createSimpleResultType();
-        } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(CentroidTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FactoryException ex) {
-            Logger.getLogger(CentroidTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        type = createSimpleResultType();
 
         final FeatureCollection<Feature> featureList = DataUtilities.collection("", type);
 

@@ -17,6 +17,9 @@
 package org.geotoolkit.filter.text.commons;
 
 import java.security.InvalidParameterException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Literal;
@@ -40,6 +43,8 @@ public class PeriodNode {
     private final Literal begin;
     private final Literal end;
 
+    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'");
+    
     /**
      * @see create
      *
@@ -47,16 +52,8 @@ public class PeriodNode {
      * @param end
      */
     private PeriodNode(final Literal begin, final Literal end) {
-        if (!(begin.getValue() instanceof Date)) {
-            throw new InvalidParameterException("begin parameter must be Literal with Date");
-        }
-
-        if (!(begin.getValue() instanceof Date)) {
-            throw new InvalidParameterException("end paremeter must be Literal with Date");
-        }
-
         this.begin = begin;
-        this.end = end;
+        this.end   = end;
     }
 
     public static PeriodNode createPeriodDateAndDate(final Literal beginDate, final Literal endDate) {
@@ -82,7 +79,20 @@ public class PeriodNode {
         final Literal date, final FilterFactory filterFactory)
     {
         // compute first date from duration Y M D and H M S
-        final Date lastDate = (Date) date.getValue();
+        final Date lastDate;
+        if (date.getValue() instanceof Date) {
+            lastDate = (Date) date.getValue();
+        } else if (date.getValue() instanceof String) {
+            try {
+                synchronized(DATE_FORMAT) {
+                    lastDate = DATE_FORMAT.parse((String)date.getValue());
+                }
+            } catch (ParseException ex) {
+                throw new InvalidParameterException("parameter must be Literal with Date");
+            }
+        } else {
+            throw new InvalidParameterException("parameter must be Literal with Date");
+        }
         final String strDuration = (String) duration.getValue();
 
         final Date firstDate = DurationUtil.subtractDurationToDate(lastDate, strDuration);

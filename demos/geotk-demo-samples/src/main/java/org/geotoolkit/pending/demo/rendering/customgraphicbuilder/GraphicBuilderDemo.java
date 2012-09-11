@@ -28,6 +28,7 @@ import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -43,7 +44,8 @@ public class GraphicBuilderDemo {
 
     public static void main(String[] args) throws DataStoreException, NoninvertibleTransformException,
                                                   TransformException, IOException {
-
+        Demos.init();
+        
         final MapContext context = createContext();
 
         final JMap2D jmap = new JMap2D();
@@ -76,7 +78,7 @@ public class GraphicBuilderDemo {
         //create a feature layer
         Map<String,Serializable> params = new HashMap<String,Serializable>();
         params.put( "url", GraphicBuilderDemo.class.getResource("/data/weather/stations2.shp") );
-        DataStore store = DataStoreFinder.getDataStore(params);
+        DataStore store = DataStoreFinder.open(params);
         FeatureCollection fs = store.createSession(true).getFeatureCollection(QueryBuilder.all(store.getNames().iterator().next()));
         MutableStyle style = SF.style();
         MapLayer layer = MapBuilder.createFeatureLayer(fs, style);

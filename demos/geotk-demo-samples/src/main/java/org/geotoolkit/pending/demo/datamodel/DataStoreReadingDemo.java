@@ -16,6 +16,7 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.data.shapefile.ShapefileDataStoreFactory;
 import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.storage.DataStoreException;
 
@@ -30,7 +31,8 @@ public class DataStoreReadingDemo {
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
 
     public static void main(String[] args) throws DataStoreException, NoSuchAuthorityCodeException, FactoryException {
-
+        Demos.init();
+        
         //getting a datastore
         final DataStore store = createUsingParameterGroup();
 
@@ -84,7 +86,7 @@ public class DataStoreReadingDemo {
         final Map<String,Serializable> parameters = new HashMap<String, Serializable>();
         parameters.put("url", DataStoreReadingDemo.class.getResource("/data/world/Countries.shp"));
 
-        final DataStore store = DataStoreFinder.getDataStore(parameters);
+        final DataStore store = DataStoreFinder.open(parameters);
         return store;
     }
 
@@ -97,7 +99,7 @@ public class DataStoreReadingDemo {
         final ParameterValueGroup parameters = ShapefileDataStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
         parameters.parameter("url").setValue(DataStoreReadingDemo.class.getResource("/data/world/Countries.shp"));
         
-        final DataStore store = DataStoreFinder.getDataStore(parameters);
+        final DataStore store = DataStoreFinder.open(parameters);
         return store;
     }
 

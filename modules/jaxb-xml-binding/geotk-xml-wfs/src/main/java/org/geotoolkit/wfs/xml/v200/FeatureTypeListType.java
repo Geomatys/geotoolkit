@@ -20,10 +20,15 @@ package org.geotoolkit.wfs.xml.v200;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
+import org.geotoolkit.wfs.xml.FeatureType;
+import org.geotoolkit.wfs.xml.FeatureTypeList;
+import org.geotoolkit.wfs.xml.v110.OperationsType;
 
 
 /**
@@ -49,33 +54,23 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "FeatureTypeListType", propOrder = {
     "featureType"
 })
-public class FeatureTypeListType {
+public class FeatureTypeListType implements FeatureTypeList {
 
     @XmlElement(name = "FeatureType", required = true)
     private List<FeatureTypeType> featureType;
 
+    public FeatureTypeListType() {
+
+    }
+
+    public FeatureTypeListType(final OperationsType operations, final List<FeatureTypeType> featureType) {
+        this.featureType = featureType;
+    }
+    
     /**
      * Gets the value of the featureType property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the featureType property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getFeatureType().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link FeatureTypeType }
-     * 
-     * 
-     */
+    */
     public List<FeatureTypeType> getFeatureType() {
         if (featureType == null) {
             featureType = new ArrayList<FeatureTypeType>();
@@ -83,4 +78,46 @@ public class FeatureTypeListType {
         return this.featureType;
     }
 
+    public void addFeatureType(final FeatureType ft) {
+        if (ft instanceof FeatureTypeType) {
+            getFeatureType().add((FeatureTypeType)ft);
+        } else if (ft != null) {
+            throw new IllegalArgumentException("unexpected version of the featureType object");
+        }
+    }
+    
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof FeatureTypeListType) {
+            final FeatureTypeListType that = (FeatureTypeListType) object;
+
+            return Objects.equals(this.featureType, that.featureType);
+            }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 79 * hash + (this.featureType != null ? this.featureType.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder("[FeatureTypeListType]\n");
+        if(featureType != null) {
+            s.append("featureType:\n");
+            for (FeatureTypeType feat : featureType) {
+                s.append(feat).append('\n');
+            }
+        }
+        return s.toString();
+    }
 }

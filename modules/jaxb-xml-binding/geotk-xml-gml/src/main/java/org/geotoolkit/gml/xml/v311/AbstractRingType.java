@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.AbstractRing;
 
 
 /**
@@ -47,7 +48,14 @@ import javax.xml.bind.annotation.XmlType;
     RingType.class,
     LinearRingType.class
 })
-public abstract class AbstractRingType extends AbstractGeometryType {
+public abstract class AbstractRingType extends AbstractGeometryType implements AbstractRing {
 
+    public AbstractRingType() {
+        
+    }
+    
+    public AbstractRingType(final String srsName) {
+        super(srsName);
+    }
 
 }

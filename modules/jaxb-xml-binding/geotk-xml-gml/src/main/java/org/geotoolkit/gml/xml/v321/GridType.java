@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.filter.expression.ExpressionVisitor;
 
 
 /**
@@ -63,9 +64,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlSeeAlso({
     RectifiedGridType.class
 })
-public class GridType
-    extends AbstractGeometryType
-{
+public class GridType extends AbstractGeometryType {
 
     @XmlElementRefs({
         @XmlElementRef(name = "axisName", namespace = "http://www.opengis.net/gml/3.2", type = JAXBElement.class),
@@ -140,6 +139,18 @@ public class GridType
      */
     public void setDimension(BigInteger value) {
         this.dimension = value;
+    }
+
+    public Object evaluate(Object o) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public <T> T evaluate(Object o, Class<T> type) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Object accept(ExpressionVisitor ev, Object o) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

@@ -89,7 +89,7 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
         map.put(ShapefileDataStoreFactory.URLP.getName().toString(), ShapeTestData
                 .url(IndexedShapefileDataStoreTest.STATE_POP));
 
-        DataStore store = factory.createDataStore(map);
+        DataStore store = factory.create(map);
         String typeName = IndexedShapefileDataStoreTest.STATE_POP.substring(
                 IndexedShapefileDataStoreTest.STATE_POP.indexOf('/') + 1,
                 IndexedShapefileDataStoreTest.STATE_POP.lastIndexOf('.'));
@@ -110,9 +110,9 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
 
         if (newDS) {
             // This may provided a warning if the file already is created
-            ds = (ShapefileDataStore) factory.createNewDataStore(map);
+            ds = (ShapefileDataStore) factory.createNew(map);
         } else {
-            ds = (ShapefileDataStore) factory.createDataStore(map);
+            ds = (ShapefileDataStore) factory.create(map);
         }
 
         if (ds instanceof IndexedShapefileDataStore) {

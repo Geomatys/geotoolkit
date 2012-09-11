@@ -50,7 +50,7 @@ public class CoverageToFeatureCollection extends RasterFeatureCollection {
         this.coverage = coverage;
         this.gridGeom = gridGeom;
 
-        this.newFeatureType = CoverageToFeatures.createFeatureType(coverage, reader);
+        this.newFeatureType = CoverageToFeaturesProcess.createFeatureType(coverage, reader);
     }
 
     /**
@@ -81,7 +81,7 @@ public class CoverageToFeatureCollection extends RasterFeatureCollection {
     protected Feature create(int x, int y) throws DataStoreRuntimeException {
         Feature feat = null;
         try {
-            feat = CoverageToFeatures.convertToFeature(getFeatureType(), x, y, coverage, reader, gridGeom);
+            feat = CoverageToFeaturesProcess.convertToFeature(getFeatureType(), x, y, coverage, reader, gridGeom);
         } catch (CoverageStoreException ex) {
            throw new DataStoreRuntimeException(ex);
         } catch (TransformException ex) {

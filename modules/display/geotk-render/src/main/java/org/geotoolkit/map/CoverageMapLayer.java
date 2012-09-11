@@ -2,7 +2,6 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2003 - 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2008 - 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -17,6 +16,7 @@
  */
 package org.geotoolkit.map;
 
+import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.opengis.feature.type.Name;
 
@@ -32,7 +32,14 @@ public interface CoverageMapLayer extends MapLayer{
     
     /**
      * CoverageReader used to obtain GridCoverages.
+     * @return GridCoverageReader
      */
     GridCoverageReader getCoverageReader();
         
+    /**
+     * If layer is from a coverage store, returns it's reference
+     * @return CoverageReference, can be null.
+     */
+    CoverageReference getCoverageReference();
+    
 }

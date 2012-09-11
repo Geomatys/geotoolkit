@@ -23,6 +23,7 @@ import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ServiceRegistry;
 import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.stream.ImageInputStream;
 
 import org.geotoolkit.image.io.ImageReaderAdapter;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
@@ -31,6 +32,7 @@ import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.lang.Configuration;
 import org.geotoolkit.metadata.geotiff.GeoTiffMetaDataReader;
 import org.geotoolkit.util.Version;
+import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -91,7 +93,8 @@ public class GeoTiffImageReader extends ImageReaderAdapter {
             pluginClassName = "org.geotoolkit.image.io.plugin.GeoTiffImageReader";
             vendorName      = "Geotoolkit.org";
             version         = Version.GEOTOOLKIT.toString();
-            writerSpiNames = new String[] {GeoTiffImageWriter.TIFF.class.getName()};
+            writerSpiNames  = new String[] {GeoTiffImageWriter.TIFF.class.getName()};
+            inputTypes      = XArrays.append(inputTypes, ImageInputStream.class);
         }
 
         public Spi(final String format) throws IllegalArgumentException {
@@ -113,6 +116,15 @@ public class GeoTiffImageReader extends ImageReaderAdapter {
                     if(str != null){
                         if(!(str.equalsIgnoreCase("tif") ||
                              str.equalsIgnoreCase("tiff"))){
+                            return false;
+                        }
+
+                        try{
+                            final GeoTiffImageReader reader = new GeoTiffImageReader(this);
+                            reader.setInput(source);
+                            reader.getImageMetadata(0);
+                        }catch(IOException ex){
+                            //failed to read metadatas
                             return false;
                         }
                         //ok

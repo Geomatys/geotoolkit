@@ -32,9 +32,10 @@ import com.vividsolutions.jts.geom.Polygon;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.text.ParseException;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -80,15 +81,18 @@ import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.sort.SortOrder;
-import org.opengis.util.FactoryException;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import static org.junit.Assert.*;
 import static org.geotoolkit.data.AbstractDataStore.*;
 import org.geotoolkit.data.AbstractFeatureCollection;
+import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.xml.jaxp.ElementFeatureWriter;
 import org.geotoolkit.util.FileUtilities;
+import org.opengis.feature.ComplexAttribute;
+import org.opengis.feature.Feature;
+import org.opengis.feature.Property;
+import org.opengis.feature.type.ComplexType;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
@@ -101,19 +105,23 @@ public class XmlFeatureTest {
 
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
 
-    private final SimpleFeatureType simpleTypeBasic;
-    private final SimpleFeatureType simpleTypeFull;
-    private final SimpleFeature simpleFeatureFull;
-    private final SimpleFeature simpleFeature1;
-    private final SimpleFeature simpleFeature2;
-    private final SimpleFeature simpleFeature3;
-    private FeatureCollection collectionSimple;
+    private static SimpleFeatureType simpleTypeBasic;
+    private static SimpleFeatureType simpleTypeFull;
+    private static SimpleFeature simpleFeatureFull;
+    private static SimpleFeature simpleFeature1;
+    private static SimpleFeature simpleFeature2;
+    private static SimpleFeature simpleFeature3;
+    private static FeatureCollection collectionSimple;
+    private static Feature complexFeature;
 
-    private final FeatureType complexType;
+    private static FeatureType multiGeomType;
+
+    private static FeatureType complexType;
 
     private static String EPSG_VERSION;
-    
-    public XmlFeatureTest() throws NoSuchAuthorityCodeException, FactoryException, ParseException {
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
 
 
         final CoordinateReferenceSystem crs = CRS.decode("EPSG:4326");
@@ -142,7 +150,7 @@ public class XmlFeatureTest {
         simpleTypeFull = ftb.buildSimpleFeatureType();
 
         ftb.reset();
-        ftb.setName(GML_NAMESPACE,"TestComplex");
+        ftb.setName(GML_NAMESPACE,"TestMultiGeom");
         ftb.add(new DefaultName(GML_NAMESPACE,"ID"),                   Integer.class,           1,1,true,null);
         ftb.add(new DefaultName(GML_NAMESPACE,"attString"),            String.class,            1,1,true,null);
         ftb.add(new DefaultName(GML_NAMESPACE,"attShort"),             Short.class,             1,1,true,null);
@@ -162,13 +170,38 @@ public class XmlFeatureTest {
         ftb.add(new DefaultName(GML_NAMESPACE,"geomMultiPolygon"),     GeometryCollection.class,crs,1,Integer.MAX_VALUE,true,null);
         ftb.add(new DefaultName(GML_NAMESPACE,"geomMultiGeometry"),    GeometryCollection.class,crs,1,Integer.MAX_VALUE,true,null);
         ftb.add(new DefaultName(GML_NAMESPACE,"geomAnyGeometry"),      Geometry.class,          crs,1,Integer.MAX_VALUE,true,null);
-        complexType = ftb.buildFeatureType();
+        multiGeomType = ftb.buildFeatureType();
 
         ftb.reset();
         ftb.setName(GML_NAMESPACE,"TestSimpleBasic");
         ftb.add(new DefaultName(GML_NAMESPACE,"attString"),            String.class);
         ftb.add(new DefaultName(GML_NAMESPACE,"attDouble"),            Double.class);
         simpleTypeBasic = ftb.buildSimpleFeatureType();
+
+
+        ftb.reset();
+        ftb.setName(GML_NAMESPACE,"Address");
+        ftb.add(new DefaultName(GML_NAMESPACE,"streetName"),           String.class,            1,1,true,null);
+        ftb.add(new DefaultName(GML_NAMESPACE,"streetNumber"),         String.class,            1,1,true,null);
+        ftb.add(new DefaultName(GML_NAMESPACE,"city"),                 String.class,            1,1,true,null);
+        ftb.add(new DefaultName(GML_NAMESPACE,"province"),             String.class,            1,1,true,null);
+        ftb.add(new DefaultName(GML_NAMESPACE,"postalCode"),           String.class,            1,1,true,null);
+        ftb.add(new DefaultName(GML_NAMESPACE,"country"),              String.class,            0,1,true,null);
+        final ComplexType adress = ftb.buildType();
+
+        ftb.reset();
+        ftb.setName(GML_NAMESPACE,"Person");
+        ftb.add(new DefaultName(GML_NAMESPACE,"insuranceNumber"),      Integer.class,           1,1,true,null);
+        ftb.add(new DefaultName(GML_NAMESPACE,"lastName"),             String.class,            1,1,true,null);
+        ftb.add(new DefaultName(GML_NAMESPACE,"firstName"),            String.class,            1,1,true,null);
+        ftb.add(new DefaultName(GML_NAMESPACE,"age"),                  Integer.class,           1,1,true,null);
+        ftb.add(new DefaultName(GML_NAMESPACE,"sex"),                  String.class,            1,1,true,null);
+        //ftb.add(new DefaultName(GML_NAMESPACE,"spouse"),               Person.class,            0,1,true,null);
+        ftb.add(new DefaultName(GML_NAMESPACE,"location"),             Point.class,        crs, 0,1,true,null);
+        ftb.add(adress, new DefaultName(GML_NAMESPACE,"mailAddress"),  null,                    0,1,true,null);
+        ftb.add(new DefaultName(GML_NAMESPACE,"phone"),                String.class,            0,Integer.MAX_VALUE,true,null);
+
+        complexType = ftb.buildFeatureType();
 
 
         final GeometryFactory GF = new GeometryFactory();
@@ -242,18 +275,42 @@ public class XmlFeatureTest {
         collectionSimple.add(simpleFeature1);
         collectionSimple.add(simpleFeature2);
         collectionSimple.add(simpleFeature3);
-        try {
-            collectionSimple = collectionSimple.subCollection(
+        collectionSimple = collectionSimple.subCollection(
                     QueryBuilder.sorted(collectionSimple.getFeatureType().getName(), FF.sort("attDouble", SortOrder.ASCENDING)));
-            ((AbstractFeatureCollection)collectionSimple).setId("one of a kind ID");
-        } catch (DataStoreException ex) {
-            Logger.getLogger(XmlFeatureTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+                    ((AbstractFeatureCollection)collectionSimple).setId("one of a kind ID");
 
-    }
 
-    @BeforeClass
-    public static void setUpClass() throws Exception {
+        complexFeature = FeatureUtilities.defaultFeature(complexType, "id-0");
+        complexFeature.getProperty("insuranceNumber").setValue(new Integer(345678345));
+        complexFeature.getProperty("lastName").setValue("Smith");
+        complexFeature.getProperty("firstName").setValue("John");
+
+        //final Property age = FeatureUtilities.defaultProperty(complexType.getDescriptor("age"));
+        //age.setValue(new Integer(35));
+        complexFeature.getProperty("age").setValue(new Integer(35));
+        complexFeature.getProperty("sex").setValue("male");
+
+        final Property location = FeatureUtilities.defaultProperty(complexType.getDescriptor("location"));
+        location.setValue(GF.createPoint(new Coordinate(10, 10)));
+        complexFeature.getProperties().add(location);
+
+        final ComplexAttribute address = (ComplexAttribute) FeatureUtilities.defaultProperty(
+                complexType.getDescriptor("mailAddress"));
+        address.getProperty("streetName").setValue("Main");
+        address.getProperty("streetNumber").setValue("10");
+        address.getProperty("city").setValue("SomeTown");
+        address.getProperty("province").setValue("Ontario");
+        address.getProperty("postalCode").setValue("M1R1K9");
+        final Property country = FeatureUtilities.defaultProperty(adress.getDescriptor("country"));
+        country.setValue("Canada");
+        address.getProperties().add(country);
+
+        complexFeature.getProperties().add(address);
+
+        final Property phone = FeatureUtilities.defaultProperty(complexType.getDescriptor("phone"));
+        phone.setValue(Arrays.asList("4161234567", "4168901234"));
+        complexFeature.getProperties().add(phone);
+
         EPSG_VERSION = CRS.getVersion("EPSG").toString();
     }
 
@@ -290,6 +347,26 @@ public class XmlFeatureTest {
     }
 
     @Test
+    public void testReadMultiGeomFeatureType() throws JAXBException {
+        final XmlFeatureTypeReader reader = new JAXBFeatureTypeReader();
+        final List<FeatureType> types = reader.read(XmlFeatureTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/MultiGeomType.xsd"));
+
+        assertEquals(1, types.size());
+        assertEquals(multiGeomType, types.get(0));
+    }
+
+    @Test
+    public void testReadWfsFeatureType() throws JAXBException {
+        final XmlFeatureTypeReader reader = new JAXBFeatureTypeReader();
+        final List<FeatureType> types = reader.read(XmlFeatureTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/wfs1.xsd"));
+
+        assertEquals(1, types.size());
+        //assertEquals(multiGeomType, types.get(0));
+    }
+
+    @Test
     public void testReadComplexFeatureType() throws JAXBException {
         final XmlFeatureTypeReader reader = new JAXBFeatureTypeReader();
         final List<FeatureType> types = reader.read(XmlFeatureTest.class
@@ -305,9 +382,20 @@ public class XmlFeatureTest {
         temp.deleteOnExit();
         final XmlFeatureTypeWriter writer = new JAXBFeatureTypeWriter();
         writer.write(simpleTypeFull, new FileOutputStream(temp));
-        
+
         DomCompare.compare(XmlFeatureTest.class
                 .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleType.xsd"), temp);
+    }
+
+    @Test
+    public void testWriteMultiGeomFeatureType() throws JAXBException, IOException, ParserConfigurationException, SAXException{
+        final File temp = File.createTempFile("gml", ".xml");
+        temp.deleteOnExit();
+        final XmlFeatureTypeWriter writer = new JAXBFeatureTypeWriter();
+        writer.write(multiGeomType, new FileOutputStream(temp));
+
+        DomCompare.compare(XmlFeatureTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/MultiGeomType.xsd"), temp);
     }
 
     @Test
@@ -324,7 +412,7 @@ public class XmlFeatureTest {
     @Test
     public void testReadSimpleFeature() throws JAXBException, IOException, XMLStreamException{
         final XmlFeatureReader reader = new JAXPStreamFeatureReader(simpleTypeFull);
-        final Object obj = reader.read(XmlFeatureTest.class
+        Object obj = reader.read(XmlFeatureTest.class
                 .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeature.xml"));
         reader.dispose();
 
@@ -332,6 +420,83 @@ public class XmlFeatureTest {
 
         SimpleFeature result = (SimpleFeature) obj;
         assertEquals(simpleFeatureFull, result);
+
+        final XmlFeatureReader readerGml = new JAXPStreamFeatureReader(simpleTypeFull);
+        readerGml.getProperties().put(JAXPStreamFeatureReader.BINDING_PACKAGE, "GML");
+        obj = readerGml.read(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeature.xml"));
+        readerGml.dispose();
+
+        assertTrue(obj instanceof SimpleFeature);
+
+        result = (SimpleFeature) obj;
+        assertEquals(simpleFeatureFull, result);
+    }
+
+    @Test
+    public void testReadSimpleFeatureOldEnc() throws JAXBException, IOException, XMLStreamException{
+
+        final XmlFeatureReader readerGml = new JAXPStreamFeatureReader(simpleTypeFull);
+        readerGml.getProperties().put(JAXPStreamFeatureReader.BINDING_PACKAGE, "GML");
+        Object obj = readerGml.read(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeatureOldEnc.xml"));
+
+        assertTrue(obj instanceof SimpleFeature);
+
+        SimpleFeature result = (SimpleFeature) obj;
+        assertEquals(simpleFeatureFull, result);
+
+        obj = readerGml.read(XmlFeatureTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeatureOldEnc2.xml"));
+
+        assertTrue(obj instanceof SimpleFeature);
+
+        result = (SimpleFeature) obj;
+        assertEquals(simpleFeatureFull, result);
+
+        // adding lineString encoding
+        obj = readerGml.read(XmlFeatureTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeatureOldEnc3.xml"));
+        readerGml.dispose();
+
+        assertTrue(obj instanceof SimpleFeature);
+
+        result = (SimpleFeature) obj;
+        assertEquals(simpleFeatureFull, result);
+
+        /*
+         * Not working with JTSWrapper binding mode for JAXP Feature Writer
+         *
+         * working for Polygon
+         * working for LineString
+         * not for point
+         */
+
+        final XmlFeatureReader reader = new JAXPStreamFeatureReader(simpleTypeFull);
+        obj = reader.read(XmlFeatureTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeatureOldEnc.xml"));
+
+        assertTrue(obj instanceof SimpleFeature);
+
+        result = (SimpleFeature) obj;
+        assertEquals(simpleFeatureFull, result);
+
+        // adding lineString encoding
+        obj = reader.read(XmlFeatureTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeatureOldEnc2.xml"));
+
+        assertTrue(obj instanceof SimpleFeature);
+
+        result = (SimpleFeature) obj;
+        assertEquals(simpleFeatureFull, result);
+
+        // adding lineString encoding
+        obj = reader.read(XmlFeatureTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeatureOldEnc3.xml"));
+        reader.dispose();
+
+        assertTrue(obj instanceof SimpleFeature);
+
+        result = (SimpleFeature) obj;
+        assertFalse(simpleFeatureFull.equals(result));
     }
 
     @Test
@@ -347,7 +512,7 @@ public class XmlFeatureTest {
         expResult = expResult.replace("EPSG_VERSION", EPSG_VERSION);
         DomCompare.compare(expResult, temp);
     }
-    
+
     @Test
     public void testWriteSimpleFeatureElement() throws JAXBException, IOException, XMLStreamException,
             DataStoreException, ParserConfigurationException, SAXException, TransformerConfigurationException, TransformerException{
@@ -355,7 +520,7 @@ public class XmlFeatureTest {
         temp.deleteOnExit();
         final ElementFeatureWriter writer = new ElementFeatureWriter();
         Element result = writer.write(simpleFeatureFull, false);
-        
+
         Source source = new DOMSource(result.getOwnerDocument());
 
         // Prepare the output file
@@ -364,8 +529,8 @@ public class XmlFeatureTest {
         // Write the DOM document to the file
         Transformer xformer = TransformerFactory.newInstance().newTransformer();
         xformer.transform(source, resultxml);
-        
-        
+
+
         String expResult = FileUtilities.getStringFromStream(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeature.xml"));
         expResult = expResult.replace("EPSG_VERSION", EPSG_VERSION);
         DomCompare.compare(expResult, temp);
@@ -404,6 +569,34 @@ public class XmlFeatureTest {
     }
 
     @Test
+    public void testReadSimpleCollectionEmbeddedFT() throws JAXBException, IOException, XMLStreamException{
+        JAXPStreamFeatureReader reader = new JAXPStreamFeatureReader();
+        reader.getProperties().put(JAXPStreamFeatureReader.READ_EMBEDDED_FEATURE_TYPE, true);
+
+        Object obj = reader.read(XmlFeatureTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/featureCollectionEmbedFT.xml"));
+        reader.dispose();
+
+        assertTrue(obj instanceof FeatureCollection);
+
+        reader = new JAXPStreamFeatureReader();
+        reader.getProperties().put(JAXPStreamFeatureReader.READ_EMBEDDED_FEATURE_TYPE, true);
+
+        obj = reader.read(XmlFeatureTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/featureCollectionEmbedFT2.xml"));
+        reader.dispose();
+
+        assertTrue(obj instanceof FeatureCollection);
+
+        obj = reader.read(XmlFeatureTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/featureCollectionEmbedFT3.xml"));
+        reader.dispose();
+
+        assertTrue(obj instanceof FeatureCollection);
+    }
+
+
+    @Test
     public void testWriteSimpleCollection() throws JAXBException, IOException, XMLStreamException,
             DataStoreException, ParserConfigurationException, SAXException{
         final File temp = File.createTempFile("gml", ".xml");
@@ -415,7 +608,7 @@ public class XmlFeatureTest {
         DomCompare.compare(XmlFeatureTest.class
                 .getResourceAsStream("/org/geotoolkit/feature/xml/CollectionSimple.xml"), temp);
     }
-    
+
     @Test
     public void testWriteSimplCollectionElement() throws JAXBException, IOException, XMLStreamException,
             DataStoreException, ParserConfigurationException, SAXException, TransformerConfigurationException, TransformerException{
@@ -423,7 +616,7 @@ public class XmlFeatureTest {
         temp.deleteOnExit();
         final ElementFeatureWriter writer = new ElementFeatureWriter();
         Element result = writer.write(collectionSimple, false);
-        
+
         Source source = new DOMSource(result.getOwnerDocument());
 
         // Prepare the output file
@@ -432,11 +625,49 @@ public class XmlFeatureTest {
         // Write the DOM document to the file
         Transformer xformer = TransformerFactory.newInstance().newTransformer();
         xformer.transform(source, resultxml);
-        
-        
+
+
         String expResult = FileUtilities.getStringFromStream(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/CollectionSimple.xml"));
         expResult = expResult.replace("EPSG_VERSION", EPSG_VERSION);
         DomCompare.compare(expResult, temp);
     }
 
+    @Test
+    public void testWriteComplexFeature() throws JAXBException, IOException, XMLStreamException,
+            DataStoreException, ParserConfigurationException, SAXException{
+        final File temp = File.createTempFile("gml", ".xml");
+        temp.deleteOnExit();
+        final XmlFeatureWriter writer = new JAXPStreamFeatureWriter();
+        final StringWriter sw = new StringWriter();
+        writer.write(complexFeature, temp);
+        writer.dispose();
+
+        String expResult = FileUtilities.getStringFromStream(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/ComplexFeature.xml"));
+        expResult = expResult.replace("EPSG_VERSION", EPSG_VERSION);
+        DomCompare.compare(expResult, temp);
+    }
+
+    @Test
+    public void testReadComplexFeature() throws JAXBException, IOException, XMLStreamException{
+        final XmlFeatureReader reader = new JAXPStreamFeatureReader(complexType);
+        Object obj = reader.read(XmlFeatureTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/ComplexFeature.xml"));
+        reader.dispose();
+
+        assertTrue(obj instanceof Feature);
+
+        Feature result = (Feature) obj;
+
+        assertEquals(complexFeature, result);
+
+        final XmlFeatureReader readerGml = new JAXPStreamFeatureReader(complexType);
+        readerGml.getProperties().put(JAXPStreamFeatureReader.BINDING_PACKAGE, "GML");
+        obj = readerGml.read(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/ComplexFeature.xml"));
+        readerGml.dispose();
+
+        assertTrue(obj instanceof Feature);
+
+        result =  (Feature) obj;
+        assertEquals(complexFeature, result);
+    }
 }

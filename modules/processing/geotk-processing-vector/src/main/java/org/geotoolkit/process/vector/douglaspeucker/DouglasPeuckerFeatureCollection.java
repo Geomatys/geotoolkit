@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.process.vector.douglaspeucker;
 
-import javax.measure.quantity.Length;
-import javax.measure.unit.Unit;
 
 import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
@@ -38,7 +36,6 @@ public class DouglasPeuckerFeatureCollection extends WrapFeatureCollection {
 
     private final FeatureType newFeatureType;
     private final double inputAccuracy;
-    private final Unit<Length> inputUnit;
     private final Boolean inputBehavior;
     private final Boolean inputLenient;
 
@@ -51,10 +48,9 @@ public class DouglasPeuckerFeatureCollection extends WrapFeatureCollection {
      * @param inputLenient
      */
     public DouglasPeuckerFeatureCollection(final FeatureCollection<Feature> originalFC, final double inputAccuracy,
-            final Unit<Length> inputUnit, final Boolean inputBehavior, final Boolean inputLenient) {
+            final Boolean inputBehavior, final Boolean inputLenient) {
         super(originalFC);
         this.inputAccuracy = inputAccuracy;
-        this.inputUnit = inputUnit;
         this.inputBehavior = inputBehavior;
         this.inputLenient = inputLenient;
         this.newFeatureType = super.getOriginalFeatureCollection().getFeatureType();
@@ -75,7 +71,7 @@ public class DouglasPeuckerFeatureCollection extends WrapFeatureCollection {
     @Override
     public Feature modify(final Feature original) throws DataStoreRuntimeException {
         try {
-            return DouglasPeucker.simplifyFeature(original, inputAccuracy, inputUnit, inputBehavior, inputLenient);
+            return DouglasPeuckerProcess.simplifyFeature(original, inputAccuracy, inputBehavior, inputLenient);
         } catch (FactoryException ex) {
             throw new DataStoreRuntimeException(ex);
         } catch (MismatchedDimensionException ex) {

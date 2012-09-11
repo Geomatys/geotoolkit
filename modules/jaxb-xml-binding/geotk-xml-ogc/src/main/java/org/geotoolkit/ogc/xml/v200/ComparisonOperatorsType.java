@@ -19,11 +19,17 @@
 package org.geotoolkit.ogc.xml.v200;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
+import org.opengis.filter.capability.ComparisonOperators;
+import org.opengis.filter.capability.Operator;
 
 
 /**
@@ -49,31 +55,32 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "ComparisonOperatorsType", propOrder = {
     "comparisonOperator"
 })
-public class ComparisonOperatorsType {
+public class ComparisonOperatorsType implements ComparisonOperators {
 
     @XmlElement(name = "ComparisonOperator", required = true)
     private List<ComparisonOperatorType> comparisonOperator;
 
     /**
+     * An empty constructor used by JAXB
+     */
+    public ComparisonOperatorsType() {
+        
+    }
+    
+    /**
+     * Build a new comparison operators with the specified array of operator 
+     * 
+     * @param operators an array of comparison operator
+     */
+    public ComparisonOperatorsType( Operator[] operators ) {
+        if ( operators == null ){
+            operators = new Operator[]{};
+        }
+        this.comparisonOperator = new ArrayList(Arrays.asList(operators));
+    }
+    
+    /**
      * Gets the value of the comparisonOperator property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the comparisonOperator property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getComparisonOperator().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link ComparisonOperatorType }
-     * 
      * 
      */
     public List<ComparisonOperatorType> getComparisonOperator() {
@@ -83,4 +90,70 @@ public class ComparisonOperatorsType {
         return this.comparisonOperator;
     }
 
+    /**
+     * Gets the value of the comparisonOperator property.
+     * 
+     */
+    public Collection<Operator> getOperators() {
+        List<Operator> result =  new ArrayList<Operator>();
+        if (comparisonOperator == null) {
+            comparisonOperator = new ArrayList<ComparisonOperatorType>();
+            return result;
+        } else {
+            for (ComparisonOperatorType c: comparisonOperator) {
+                result.add(c);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * @return Operator with the provided name, or null if not supported
+     */
+    public Operator getOperator(final String name) {
+        if ( name == null || comparisonOperator == null) {
+            return null;
+        }        
+        for ( Operator operator : comparisonOperator ) {            
+            if ( name.equals( operator.getName() ) ) {
+                return operator;
+            }
+        }        
+        return null;
+    }
+    
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("[ComparisonOperatorsType]").append("\n");
+        if (comparisonOperator != null) {
+            sb.append("comparisonOperator:\n");
+            for (ComparisonOperatorType q: comparisonOperator) {
+                sb.append(q).append('\n');
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof ComparisonOperatorsType) {
+            final ComparisonOperatorsType that = (ComparisonOperatorsType) object;
+
+            return Objects.equals(this.comparisonOperator, that.comparisonOperator);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 47 * hash + (this.comparisonOperator != null ? this.comparisonOperator.hashCode() : 0);
+        return hash;
+    }
 }

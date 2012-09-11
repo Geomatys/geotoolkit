@@ -44,9 +44,10 @@ import org.geotoolkit.filter.visitor.FilterAttributeExtractor;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.CRS;
 
-import org.opengis.feature.type.Name;
-import org.opengis.feature.type.PropertyDescriptor;
-import org.opengis.feature.type.GeometryType;
+import org.opengis.feature.type.*;
+import org.opengis.parameter.GeneralParameterDescriptor;
+import org.opengis.parameter.ParameterDescriptor;
+import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.BinaryComparisonOperator;
 import org.opengis.filter.Filter;
@@ -57,10 +58,6 @@ import org.opengis.feature.Property;
 import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.feature.type.AttributeType;
-import org.opengis.feature.type.FeatureType;
-import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -75,8 +72,11 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
-import java.util.*;
-import org.opengis.feature.type.PropertyType;
+import java.util.Collection;
+import java.util.Objects;
+import org.geotoolkit.factory.FactoryFinder;
+import org.opengis.filter.FilterFactory;
+import org.opengis.filter.expression.Function;
 
 /**
  * Utility methods for working against the FeatureType interface.
@@ -1281,4 +1281,88 @@ public final class FeatureTypeUtilities {
         return SimpleFeatureBuilder.build(featureType, attributes, id);
     }
 
+    
+    ////////////////////////////////////////////////////////////////////////////
+    // PARAMETERS API MAPPING OPERATIONS ///////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+    
+    /**
+     * Convert given parameter descriptor to a feature type.
+     * the original parameter descriptor will be store in the user map with key "origin"
+     * 
+     * @param descriptor
+     * @return ComplexType
+     */
+    public static ComplexType toPropertyType(final ParameterDescriptorGroup descriptor){
+        return (ComplexType) toPropertyType((GeneralParameterDescriptor)descriptor);
+    }
+    
+    /**
+     * Convert given parameter descriptor to a feature type.
+     * the original parameter descriptor will be store in the user map with key "origin"
+     * 
+     * @param descriptor
+     * @return PropertyType
+     */
+    public static PropertyType toPropertyType(final GeneralParameterDescriptor descriptor){
+        
+        if(descriptor instanceof ParameterDescriptor){
+            final ParameterDescriptor desc = (ParameterDescriptor) descriptor;
+            
+            final AttributeTypeBuilder atb = new AttributeTypeBuilder();
+            atb.setName(desc.getName().getCode());
+            atb.setDescription(desc.getRemarks());
+            atb.setBinding(desc.getValueClass());
+            final Set validValues = desc.getValidValues();
+            if(validValues != null && !validValues.isEmpty()){
+                final FilterFactory ff = FactoryFinder.getFilterFactory(null);
+                final List<Expression> values = new ArrayList<Expression>();
+                values.add(ff.property("."));
+                for(Object obj : validValues){
+                    values.add(ff.literal(obj));
+                }
+                final Function in = ff.function("in", values.toArray(new Expression[values.size()]));
+                atb.addRestriction(ff.equals(in, ff.literal(true)));
+            }            
+            
+            //store the original descriptor, it contain additional informations
+            //not mapped in the feature type.
+            final AttributeType at = atb.buildType();
+            at.getUserData().put("origin", descriptor);
+            return at;
+            
+        }else if (descriptor instanceof ParameterDescriptorGroup){
+            final ParameterDescriptorGroup desc = (ParameterDescriptorGroup) descriptor;
+            
+            final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+            ftb.setName(desc.getName().getCode());
+            
+            for(GeneralParameterDescriptor sd : desc.descriptors()){
+                final PropertyType pt = toPropertyType(sd);
+                
+                final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
+                adb.setName(pt.getName());
+                adb.setType(pt);
+                adb.setMinOccurs(sd.getMinimumOccurs());
+                adb.setMaxOccurs(sd.getMaximumOccurs());
+                
+                if(sd instanceof ParameterDescriptor){
+                    adb.setDefaultValue( ((ParameterDescriptor)sd).getDefaultValue() );                    
+                }
+                
+                ftb.add(adb.buildDescriptor());                
+            }
+            
+            ComplexType type = ftb.buildType();
+            //store the original descriptor, it contain additional informations
+            //not mapped in the feature type.
+            type.getUserData().put("origin", descriptor);
+            
+            return type;
+        }else{
+            throw new IllegalArgumentException("Unsupported type : " + descriptor.getClass());
+        }
+        
+    }
+    
 }

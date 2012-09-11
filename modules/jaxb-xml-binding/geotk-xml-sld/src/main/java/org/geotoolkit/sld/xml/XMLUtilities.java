@@ -44,6 +44,7 @@ import javax.xml.transform.Source;
 // Geotoolkit dependencies
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.ogc.xml.OGC200toGTTransformer;
 import org.geotoolkit.ogc.xml.v110.PropertyNameType;
 import org.geotoolkit.sld.DefaultSLDFactory;
 import org.geotoolkit.sld.MutableSLDFactory;
@@ -91,6 +92,7 @@ public final class XMLUtilities {
     
     private SLD100toGTTransformer transformerGTv100 = null;
     private SLD110toGTTransformer transformerGTv110 = null;
+    private OGC200toGTTransformer transformerGTv200 = null;
     private GTtoSLD100Transformer transformerXMLv100 = null;
     private GTtoSLD110Transformer transformerXMLv110 = null;
     
@@ -138,6 +140,13 @@ public final class XMLUtilities {
             transformerGTv110 = new SLD110toGTTransformer(filterFactory, styleFactory, sldFactory, namespaceMapping);
         }
         return transformerGTv110;
+    }
+    
+    public OGC200toGTTransformer getTransformer200(final Map<String, String> namespaceMapping){
+        if (transformerGTv200 == null) {
+            transformerGTv200 = new OGC200toGTTransformer(filterFactory, namespaceMapping);
+        }
+        return transformerGTv200;
     }
 
     public GTtoSLD100Transformer getTransformerXMLv100() {

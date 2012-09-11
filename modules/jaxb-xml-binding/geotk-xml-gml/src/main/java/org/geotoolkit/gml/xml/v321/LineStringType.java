@@ -26,6 +26,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.LineString;
+import org.opengis.geometry.DirectPosition;
 
 
 /**
@@ -61,9 +63,7 @@ import javax.xml.bind.annotation.XmlType;
     "posList",
     "coordinates"
 })
-public class LineStringType
-    extends AbstractCurveType
-{
+public class LineStringType extends AbstractCurveType implements LineString {
 
     @XmlElementRefs({
         @XmlElementRef(name = "pos", namespace = "http://www.opengis.net/gml/3.2", type = JAXBElement.class),
@@ -75,20 +75,31 @@ public class LineStringType
     private CoordinatesType coordinates;
 
     /**
+     * An empty constructor used by JAXB.
+     */
+    LineStringType() {}
+
+    /**
+     * Build a new LineString with the specified coordinates
+     */
+    public LineStringType(final CoordinatesType coordinates) {
+        this.coordinates = coordinates;
+    }
+
+    /**
+     * Build a new LineString with the specified coordinates
+     */
+    public LineStringType(final List<DirectPosition> positions) {
+        this.posOrPointPropertyOrPointRep = new ArrayList<JAXBElement<?>>();
+        final ObjectFactory factory = new ObjectFactory();
+        for (DirectPosition currentPos : positions) {
+            final DirectPositionType position = new DirectPositionType(currentPos);
+            posOrPointPropertyOrPointRep.add(factory.createPos(position));
+        }
+    }
+
+    /**
      * Gets the value of the posOrPointPropertyOrPointRep property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the posOrPointPropertyOrPointRep property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getPosOrPointPropertyOrPointRep().add(newItem);
-     * </pre>
-     * 
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list

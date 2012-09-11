@@ -2,7 +2,6 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2004 - 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -19,10 +18,10 @@ package org.geotoolkit.display2d;
 
 import java.awt.RenderingHints.Key;
 import java.awt.image.ColorModel;
-
 import org.geotoolkit.display.canvas.HintKey;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.lang.Static;
+import org.geotoolkit.map.ElevationModel;
 
 /**
  * Set of hints used by the Go2 Renderer
@@ -136,6 +135,28 @@ public final class GO2Hints extends Static {
      * Default value is false.
      */
     public static final Key KEY_PARALLAL_BUFFER = new NamedKey(Boolean.class, "GO2 - Parallal Buffer");
+        
+    /**
+     * When the raster symbolizer requieres an elevation model and the MapLayer
+     * does not define any then a rendering engine search for a default one in the 
+     * Hints.
+     *
+     * Default value is null.
+     */
+    public static final Key KEY_ELEVATION_MODEL = new NamedKey(ElevationModel.class, "GO2 - Default Elevation Model");
+    
+    /**
+     * Used only by J2DCanvasVolatile.
+     * BEHAVIOR_PROGRESSIVE : progressive repaint
+     * BEHAVIOR_KEEP_TILE : keep an image of the previously rendered map and translate it while map is repainting
+     * BEHAVIOR_ON_FINISH : replace image only when painting is finished
+     *
+     * Default value is false.
+     */
+    public static final Key KEY_BEHAVIOR_MODE = new NamedKey(Object.class, "GO2 - Paint of finish");
+    public static final Object BEHAVIOR_PROGRESSIVE = new Object();
+    public static final Object BEHAVIOR_KEEP_TILE = new Object();
+    public static final Object BEHAVIOR_ON_FINISH = new Object();
 
     public static final Boolean MULTI_THREAD_ON = Boolean.TRUE;
     public static final Boolean MULTI_THREAD_OFF = Boolean.FALSE;

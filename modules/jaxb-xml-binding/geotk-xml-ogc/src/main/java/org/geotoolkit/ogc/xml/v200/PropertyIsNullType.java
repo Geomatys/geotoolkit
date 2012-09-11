@@ -18,11 +18,14 @@
 
 package org.geotoolkit.ogc.xml.v200;
 
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
+import org.opengis.filter.FilterVisitor;
 
 
 /**
@@ -48,13 +51,18 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "PropertyIsNullType", propOrder = {
     "expression"
 })
-public class PropertyIsNullType
-    extends ComparisonOpsType
-{
+public class PropertyIsNullType extends ComparisonOpsType {
 
     @XmlElementRef(name = "expression", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
     private JAXBElement<?> expression;
 
+    public String getPropertyName() {
+        if (expression != null && expression.getValue() instanceof String) {
+            return (String)expression.getValue();
+        }
+        return null;
+    }
+    
     /**
      * Gets the value of the expression property.
      * 
@@ -85,4 +93,47 @@ public class PropertyIsNullType
         this.expression = ((JAXBElement<?> ) value);
     }
 
+    @Override
+    public boolean evaluate(final Object object) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Object accept(final FilterVisitor visitor, final Object extraData) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
+    @Override
+    public String toString() {
+        final StringBuilder s = new StringBuilder(super.toString());
+        if (expression != null) {
+            s.append("expression: ").append(expression.getValue()).append('\n');
+        }
+        return s.toString();
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 67 * hash + (this.expression != null ? this.expression.hashCode() : 0);
+        return hash;
+    }
+    
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof PropertyIsNullType) {
+            final PropertyIsNullType that = (PropertyIsNullType) obj;
+            if (this.expression == null && that.expression == null) {
+                return true;
+            } else if (this.expression != null && that.expression != null) {
+                return Objects.equals(this.expression.getValue(), that.expression.getValue());
+            } else {
+                return false;
+            }
+        }
+        return false;
+    }
 }

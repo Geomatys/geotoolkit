@@ -27,19 +27,20 @@ public class WPSInputComplex extends AbstractWPSInput{
     private String encoding;
     private String schema;
     private String mime;
-
+    private Class clazz;
     
     /**
      * Minimal constructor with only identifier and href Input Complex parameters
      * @param identifier
      * @param href
      */
-    public WPSInputComplex(final String identifier, final Object obj) {
+    public WPSInputComplex(final String identifier, final Object obj, final Class complexClass) {
         super(identifier);
         this.data = obj;
         this.encoding = null;
         this.schema = null;
         this.mime = null;
+        this.clazz = complexClass;
     }
     
     /**
@@ -50,9 +51,9 @@ public class WPSInputComplex extends AbstractWPSInput{
      * @param schema
      * @param mime
      */
-    public WPSInputComplex(final String identifier, final Object data, final String encoding, 
+    public WPSInputComplex(final String identifier, final Object data, final Class complexClass, final String encoding, 
             final String schema, final String mime) {
-        super(identifier);
+        this(identifier, data, complexClass);
         this.data = data;
         this.encoding = encoding;
         this.schema = schema;
@@ -85,6 +86,13 @@ public class WPSInputComplex extends AbstractWPSInput{
      */
     public String getSchema() {
         return schema;
+    }
+
+    /**
+     * Return Output class
+     */
+    public Class getComplexClass() {
+        return clazz;
     }
     
 }

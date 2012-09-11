@@ -20,17 +20,19 @@ package org.geotoolkit.wfs.xml.v200;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
  * <p>Java class for SimpleFeatureCollectionType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SimpleFeatureCollectionType">
  *   &lt;complexContent>
@@ -43,8 +45,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SimpleFeatureCollectionType", propOrder = {
@@ -61,11 +63,11 @@ public class SimpleFeatureCollectionType {
 
     /**
      * Gets the value of the boundedBy property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link EnvelopePropertyType }
-     *     
+     *
      */
     public EnvelopePropertyType getBoundedBy() {
         return boundedBy;
@@ -73,11 +75,11 @@ public class SimpleFeatureCollectionType {
 
     /**
      * Sets the value of the boundedBy property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link EnvelopePropertyType }
-     *     
+     *
      */
     public void setBoundedBy(EnvelopePropertyType value) {
         this.boundedBy = value;
@@ -85,25 +87,6 @@ public class SimpleFeatureCollectionType {
 
     /**
      * Gets the value of the member property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the member property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getMember().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link MemberPropertyType }
-     * 
-     * 
      */
     public List<MemberPropertyType> getMember() {
         if (member == null) {
@@ -112,4 +95,39 @@ public class SimpleFeatureCollectionType {
         return this.member;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
+        if (boundedBy != null) {
+            sb.append("boundedBy:").append(boundedBy).append('\n');
+        }
+        if (member != null && !member.isEmpty()) {
+            sb.append("member:\n");
+            for (MemberPropertyType m : member) {
+                sb.append(m).append('\n');
+            }
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof SimpleFeatureCollectionType) {
+            final SimpleFeatureCollectionType that = (SimpleFeatureCollectionType) obj;
+            return Objects.equals(this.boundedBy, that.boundedBy) &&
+                   Objects.equals(this.member,    that.member);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 23 * hash + (this.boundedBy != null ? this.boundedBy.hashCode() : 0);
+        hash = 23 * hash + (this.member != null ? this.member.hashCode() : 0);
+        return hash;
+    }
 }

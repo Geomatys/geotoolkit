@@ -91,6 +91,7 @@
   <!-- =========================================================== -->
   <modules>
     <module>geotk-filter</module>
+    <module>geotk-filter-cql</module>
     <module>geotk-feature</module>
     <module>geotk-cql</module>
   </modules>

@@ -8,12 +8,14 @@ import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.DataStoreFinder;
 import org.geotoolkit.data.shapefile.ShapefileDataStoreFactory;
 import org.geotoolkit.parameter.Parameters;
+import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.parameter.ParameterValueGroup;
 
 public class ShapefileDemo {
     
     public static void main(String[] args) throws DataStoreException {
+        Demos.init();
         
         //create using a Parameters object--------------------------------------
         System.out.println(ShapefileDataStoreFactory.PARAMETERS_DESCRIPTOR);
@@ -22,14 +24,14 @@ public class ShapefileDemo {
         Parameters.getOrCreate(ShapefileDataStoreFactory.URLP,parameters).setValue(
                 ShapefileDemo.class.getResource("/data/world/Countries.shp"));
         
-        final DataStore store1 = DataStoreFinder.getDataStore(parameters);        
+        final DataStore store1 = DataStoreFinder.open(parameters);        
         
         
         //create using a Map----------------------------------------------------
         final Map<String,Serializable> map = new HashMap<String, Serializable>();
         map.put("url", ShapefileDemo.class.getResource("/data/world/Countries.shp"));
         
-        final DataStore store2 = DataStoreFinder.getDataStore(map);
+        final DataStore store2 = DataStoreFinder.open(map);
         
     }
     

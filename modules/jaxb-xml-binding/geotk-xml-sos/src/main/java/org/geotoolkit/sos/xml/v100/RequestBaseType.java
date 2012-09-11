@@ -95,6 +95,11 @@ public class RequestBaseType implements RequestBase {
             return service;
         }
     }
+    
+    @Override
+    public void setService(final String service) {
+        this.service = service;
+    }
 
     /**
      * Return the value of the version property.
@@ -106,6 +111,11 @@ public class RequestBaseType implements RequestBase {
         }
         return null;
     }
+    
+    public void setVersion(final String version) {
+        this.version = version;
+    }
+
 
     /**
      * Verify if this entry is identical to the specified object.

@@ -47,6 +47,12 @@ public class DCPType extends AbstractDCP {
      DCPType() {
      }
 
+    public DCPType(final DCPType dcp) {
+        if (dcp != null && dcp.http != null) {
+            this.http = new HTTP(dcp.http);
+        }
+    }
+     
     /**
      * Build a new DCP object.
      */

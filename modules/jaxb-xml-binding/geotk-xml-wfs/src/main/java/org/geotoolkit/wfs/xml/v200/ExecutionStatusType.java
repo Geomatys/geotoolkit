@@ -18,11 +18,14 @@
 
 package org.geotoolkit.wfs.xml.v200;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
+import org.geotoolkit.wfs.xml.ExecutionStatus;
 
 
 /**
@@ -45,13 +48,22 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ExecutionStatusType")
 @XmlSeeAlso({
-    CreateStoredQueryResponseType.class
+    CreateStoredQueryResponseType.class,
+    DropStoredQueryResponseType.class
 })
-public class ExecutionStatusType {
+public class ExecutionStatusType implements ExecutionStatus {
 
     @XmlAttribute
     private String status;
 
+    public ExecutionStatusType() {
+        
+    }
+    
+    public ExecutionStatusType(final String status) {
+        this.status = status;
+    }
+    
     /**
      * Gets the value of the status property.
      * 
@@ -80,4 +92,32 @@ public class ExecutionStatusType {
         this.status = value;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
+        sb.append("status=").append(status);
+        return sb.toString();
+    }
+    
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof ExecutionStatusType) {
+            final ExecutionStatusType that = (ExecutionStatusType) object;
+            return Objects.equals(this.status, that.status);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 89 * hash + (this.status != null ? this.status.hashCode() : 0);
+        return hash;
+    }
 }

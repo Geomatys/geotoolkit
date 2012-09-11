@@ -77,6 +77,18 @@ public class OnlineResourceType implements AbstractOnlineResourceType {
     public OnlineResourceType(){
     }
     
+    public OnlineResourceType(final OnlineResourceType that) {
+        if (that != null) {
+            this.href    = that.href;
+            this.type    = that.type;
+            this.actuate = that.actuate;
+            this.arcrole = that.arcrole;
+            this.role    = that.role;
+            this.show    = that.show;
+            this.title   = that.title;
+        }
+    }
+    
     /**
      * Build a new Online resource with only the href property (most of the case).
      */

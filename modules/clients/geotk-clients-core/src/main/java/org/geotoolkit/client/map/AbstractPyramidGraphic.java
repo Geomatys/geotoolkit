@@ -16,14 +16,15 @@
  */
 package org.geotoolkit.client.map;
 
-import java.util.AbstractMap.SimpleImmutableEntry;
+import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.logging.Level;
-
 import org.geotoolkit.client.Request;
+import org.geotoolkit.coverage.GridMosaic;
+import org.geotoolkit.coverage.Pyramid;
+import org.geotoolkit.coverage.PyramidSet;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
@@ -34,7 +35,6 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
-
 import org.opengis.display.primitive.Graphic;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -61,9 +61,8 @@ public abstract class AbstractPyramidGraphic extends AbstractTiledGraphic{
      * above. it might be better to have text slightly bigger rather then N times bigger.
      * value in %.
      */
-    public AbstractPyramidGraphic(final J2DCanvas canvas, 
-            final CoordinateReferenceSystem crs, final double resolutionTolerance){
-        super(canvas, crs);
+    public AbstractPyramidGraphic(final J2DCanvas canvas,final double resolutionTolerance){
+        super(canvas);
         this.tolerance = resolutionTolerance / 100d;
     }
     
@@ -122,16 +121,19 @@ public abstract class AbstractPyramidGraphic extends AbstractTiledGraphic{
 
         final double tileMatrixMinX = mosaic.getUpperLeftCorner().getX();
         final double tileMatrixMaxY = mosaic.getUpperLeftCorner().getY();
-        final int gridWidth = mosaic.getWidth();
-        final int gridHeight = mosaic.getHeight();
-        final double tileWidth = mosaic.getTileWidth();
-        final double tileHeight = mosaic.getTileHeight();
-        final double tileSpanX = mosaic.getTileSpanX();
-        final double tileSpanY = mosaic.getTileSpanY();
+        final Dimension gridSize = mosaic.getGridSize();
+        final Dimension tileSize = mosaic.getTileSize();
+        final double scale = mosaic.getScale();
+        final double tileSpanX = scale * tileSize.width;
+        final double tileSpanY = scale * tileSize.height;
+        final int gridWidth = gridSize.width;
+        final int gridHeight = gridSize.height;
+        final double tileWidth = tileSize.width;
+        final double tileHeight = tileSize.height;
 
         //find all the tiles we need --------------------------------------
         //tiles to render         
-        final Collection<TileReference> queries = new ArrayList<TileReference>();
+        final Collection<QueryTileReference> queries = new ArrayList<QueryTileReference>();
 
         final double epsilon = 1e-6;
         final double bBoxMinX = wantedEnv.getMinimum(0);
@@ -180,11 +182,8 @@ public abstract class AbstractPyramidGraphic extends AbstractTiledGraphic{
 
                 final Request request = createRequest(mosaic, tileCol, tileRow);
 
-                final Entry<CoordinateReferenceSystem,MathTransform> key;
-                key = new SimpleImmutableEntry<CoordinateReferenceSystem, MathTransform>(pyramidCRS, gridToCRS);
-
                 final String tileId = mosaic.getId() +"_"+tileRow+"_"+tileCol;
-                final TileReference ref = new TileReference(tileId, pyramidCRS, gridToCRS, request);
+                final QueryTileReference ref = new QueryTileReference(tileId, pyramidCRS, gridToCRS, request);
                 
                 queries.add(ref);
                 //break loopCol;

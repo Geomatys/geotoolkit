@@ -52,10 +52,10 @@ import static org.junit.Assert.*;
 
 /**
  * JUnit test douglas peucker simplification on FeatureCollection
- * @author Quentin Boileau
- * @module pending
+ *
+ * @author Quentin Boileau @module pending
  */
-public class BufferTest extends AbstractProcessTest{
+public class BufferTest extends AbstractProcessTest {
 
     private static SimpleFeatureBuilder sfb;
     private static GeometryFactory geometryFactory;
@@ -66,17 +66,13 @@ public class BufferTest extends AbstractProcessTest{
         super("buffer");
     }
 
-
     /**
-     * Test Buffer process
-     * Tests realized :
-     * - Same FeatureType between the output FeatureCollection and a generated FeatureCollection
-     * - Same Features ID
-     * - Same FeatureCollection size
-     * - Output FeatureCollection geometry contains input FeatureCollection geometry
+     * Test Buffer process Tests realized : - Same FeatureType between the output FeatureCollection and a generated
+     * FeatureCollection - Same Features ID - Same FeatureCollection size - Output FeatureCollection geometry contains
+     * input FeatureCollection geometry
      */
     @Test
-    public void testBuffer() throws ProcessException, NoSuchIdentifierException{
+    public void testBuffer() throws ProcessException, NoSuchIdentifierException, FactoryException {
 
         // Inputs
         final FeatureCollection<?> featureList = buildFeatureCollectionInput1();
@@ -88,7 +84,7 @@ public class BufferTest extends AbstractProcessTest{
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("feature_in").setValue(featureList);
         in.parameter("distance_in").setValue(distance);
-        in.parameter("unit_in").setValue(unit);
+        //in.parameter("unit_in").setValue(unit);
         in.parameter("lenient_transform_in").setValue(true);
         org.geotoolkit.process.Process proc = desc.createProcess(in);
 
@@ -130,7 +126,7 @@ public class BufferTest extends AbstractProcessTest{
                 }
             }
         }
-        
+
         assertEquals(geomsInput.size(), geomsOut.size());
         for (int i = 0; i < geomsInput.size(); i++) {
             Geometry gOut = geomsOut.get(i);
@@ -151,14 +147,8 @@ public class BufferTest extends AbstractProcessTest{
         return sft;
     }
 
-    private static FeatureCollection<Feature> buildFeatureCollectionInput1() {
-        try {
-            type = createSimpleType();
-        } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(BufferTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FactoryException ex) {
-            Logger.getLogger(BufferTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    private static FeatureCollection<Feature> buildFeatureCollectionInput1() throws FactoryException {
+        type = createSimpleType();
 
         final FeatureCollection<Feature> featureList = DataUtilities.collection("", type);
 

@@ -60,7 +60,7 @@ public class GetTileTest {
         }
         final String sUrl = url.toString();
         assertTrue(sUrl.startsWith("http://test.com?"));
-        assertTrue(sUrl.contains("FORMAT=image/png"));
+        assertTrue(sUrl.contains("FORMAT=image%2Fpng"));
         assertTrue(sUrl.contains("TILEMATRIX=L1"));
         assertTrue(sUrl.contains("TILEMATRIXSET=test"));
         assertTrue(sUrl.contains("LAYER=test"));

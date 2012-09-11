@@ -70,17 +70,17 @@ public class GetFeatureInfoTest {
         }
         final String sUrl = url.toString();
         assertTrue(sUrl.startsWith("http://test.com?"));
-        assertTrue(sUrl.contains("BBOX=-180.0,-90.0,180.0,90.0"));
-        assertTrue(sUrl.contains("SRS=CRS:84"));
-        assertTrue(sUrl.contains("FORMAT=image/png"));
-        assertTrue(sUrl.contains("WIDTH=800"));
-        assertTrue(sUrl.contains("HEIGHT=600"));
-        assertTrue(sUrl.contains("LAYERS=test"));
-        assertTrue(sUrl.contains("STYLES="));
-        assertTrue(sUrl.contains("INFO_FORMAT=gml"));
-        assertTrue(sUrl.contains("QUERY_LAYERS=test"));
-        assertTrue(sUrl.contains("X=50"));
-        assertTrue(sUrl.contains("Y=40"));
+        assertTrue("was:" + sUrl, sUrl.contains("BBOX=-180.0%2C-90.0%2C180.0%2C90.0"));
+        assertTrue("was:" + sUrl, sUrl.contains("SRS=CRS%3A84"));
+        assertTrue("was:" + sUrl, sUrl.contains("FORMAT=image%2Fpng"));
+        assertTrue("was:" + sUrl, sUrl.contains("WIDTH=800"));
+        assertTrue("was:" + sUrl, sUrl.contains("HEIGHT=600"));
+        assertTrue("was:" + sUrl, sUrl.contains("LAYERS=test"));
+        assertTrue("was:" + sUrl, sUrl.contains("STYLES="));
+        assertTrue("was:" + sUrl, sUrl.contains("INFO_FORMAT=gml"));
+        assertTrue("was:" + sUrl, sUrl.contains("QUERY_LAYERS=test"));
+        assertTrue("was:" + sUrl, sUrl.contains("X=50"));
+        assertTrue("was:" + sUrl, sUrl.contains("Y=40"));
     }
 
     /**
@@ -115,16 +115,16 @@ public class GetFeatureInfoTest {
         }
         final String sUrl = url.toString();
         assertTrue(sUrl.startsWith("http://test.com?"));
-        assertTrue(sUrl.contains("BBOX=-180.0,-90.0,180.0,90.0"));
-        assertTrue(sUrl.contains("CRS=CRS:84"));
-        assertTrue(sUrl.contains("FORMAT=image/png"));
-        assertTrue(sUrl.contains("WIDTH=800"));
-        assertTrue(sUrl.contains("HEIGHT=600"));
-        assertTrue(sUrl.contains("LAYERS=test"));
-        assertTrue(sUrl.contains("STYLES="));
-        assertTrue(sUrl.contains("INFO_FORMAT=gml"));
-        assertTrue(sUrl.contains("QUERY_LAYERS=test"));
-        assertTrue(sUrl.contains("I=50"));
-        assertTrue(sUrl.contains("J=40"));
+        assertTrue("was:" + sUrl, sUrl.contains("BBOX=-180.0%2C-90.0%2C180.0%2C90.0"));
+        assertTrue("was:" + sUrl, sUrl.contains("CRS=CRS%3A84"));
+        assertTrue("was:" + sUrl, sUrl.contains("FORMAT=image%2Fpng"));
+        assertTrue("was:" + sUrl, sUrl.contains("WIDTH=800"));
+        assertTrue("was:" + sUrl, sUrl.contains("HEIGHT=600"));
+        assertTrue("was:" + sUrl, sUrl.contains("LAYERS=test"));
+        assertTrue("was:" + sUrl, sUrl.contains("STYLES="));
+        assertTrue("was:" + sUrl, sUrl.contains("INFO_FORMAT=gml"));
+        assertTrue("was:" + sUrl, sUrl.contains("QUERY_LAYERS=test"));
+        assertTrue("was:" + sUrl, sUrl.contains("I=50"));
+        assertTrue("was:" + sUrl, sUrl.contains("J=40"));
     }
 }

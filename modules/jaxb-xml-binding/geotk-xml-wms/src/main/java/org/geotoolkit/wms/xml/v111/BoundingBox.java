@@ -156,10 +156,10 @@ public class BoundingBox extends AbstractBoundingBox{
             final BoundingBox that = (BoundingBox) object;
 
             
-            return Utilities.equals(this.maxx, that.maxx) &&
-                   Utilities.equals(this.maxy,     that.maxy)     &&
-                   Utilities.equals(this.minx,   that.minx)   &&
-                   Utilities.equals(this.miny,   that.miny)   &&
+            return Objects.equals(this.maxx, that.maxx) &&
+                   Objects.equals(this.maxy,     that.maxy)     &&
+                   Objects.equals(this.minx,   that.minx)   &&
+                   Objects.equals(this.miny,   that.miny)   &&
                    Objects.equals(this.resx,   that.resx)   &&
                    Objects.equals(this.resy,   that.resy)   &&
                    Objects.equals(this.srs,   that.srs);

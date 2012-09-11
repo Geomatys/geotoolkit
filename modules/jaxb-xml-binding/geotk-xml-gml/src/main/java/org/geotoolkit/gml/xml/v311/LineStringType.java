@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.LineString;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.Utilities;
 import org.opengis.geometry.DirectPosition;
@@ -72,7 +73,7 @@ import org.opengis.geometry.DirectPosition;
     "posList",
     "coordinates"
 })
-public class LineStringType extends AbstractCurveType {
+public class LineStringType extends AbstractCurveType implements LineString {
 
     @XmlElementRefs({
         @XmlElementRef(name = "pointProperty", namespace = "http://www.opengis.net/gml", type = JAXBElement.class),

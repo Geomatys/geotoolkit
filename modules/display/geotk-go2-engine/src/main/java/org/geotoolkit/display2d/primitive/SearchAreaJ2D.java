@@ -18,7 +18,6 @@
 package org.geotoolkit.display2d.primitive;
 
 import java.awt.Shape;
-
 import org.geotoolkit.display.primitive.SearchArea;
 
 /**

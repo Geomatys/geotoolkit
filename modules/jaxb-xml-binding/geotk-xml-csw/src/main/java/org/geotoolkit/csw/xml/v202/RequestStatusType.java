@@ -24,7 +24,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -63,12 +62,22 @@ import org.geotoolkit.util.logging.Logging;
 @XmlType(name = "RequestStatusType")
 public class RequestStatusType implements RequestStatus {
 
+    private static final Logger LOGGER = Logging.getLogger(RequestStatusType.class);
+
+    private static DatatypeFactory factory = null;
+    static {
+        try {
+            factory = DatatypeFactory.newInstance();
+        } catch (DatatypeConfigurationException ex) {
+            LOGGER.severe("error at the dataType factory initialisation in request status");
+        }
+    }
+        
+    
     @XmlAttribute
     @XmlSchemaType(name = "dateTime")
     private XMLGregorianCalendar timestamp;
     
-    @XmlTransient
-    private Logger logger = Logging.getLogger(RequestStatusType.class);
 
     /**
      * An empty constructor used by JAXB
@@ -88,14 +97,11 @@ public class RequestStatusType implements RequestStatus {
      * Build a new request statuc with the specified .
      */
     public RequestStatusType(final long time) {
-        Date d = new Date(time);
-        GregorianCalendar cal = new  GregorianCalendar();
+        final Date d = new Date(time);
+        final GregorianCalendar cal = new  GregorianCalendar();
         cal.setTime(d);
-        try {
-            DatatypeFactory factory = DatatypeFactory.newInstance();
+        synchronized (factory) {
             this.timestamp = factory.newXMLGregorianCalendar(cal);
-        } catch(DatatypeConfigurationException ex) {
-            logger.severe("error at the timestamp initialisation in request status");
         }
     }
     

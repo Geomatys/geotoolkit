@@ -1,0 +1,148 @@
+/*
+ *    Geotoolkit.org - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2012, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
+package org.geotoolkit.image.interpolation;
+
+import java.awt.Rectangle;
+import java.awt.image.WritableRenderedImage;
+import org.geotoolkit.image.iterator.PixelIterator;
+import org.geotoolkit.image.iterator.PixelIteratorFactory;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.NoninvertibleTransformException;
+import org.opengis.referencing.operation.TransformException;
+
+/**
+ * Fill target image from source image pixels interpolation at coordinate define
+ * by transformation of target pixel coordinate by {@code MathTransform}.
+ *
+ * @author Rémi Marechal       (Geomatys).
+ * @author Martin Desruisseaux (Geomatys).
+ */
+public class Resample {
+
+    /**
+     * Transform multi-dimensional point (in our case pixel coordinate) from target image
+     * {@code CoordinateReferenceSystem} to source image {@code CoordinateReferenceSystem}.
+     */
+    private final MathTransform invertMathTransform;
+
+    /**
+     * Image in which image source pixel interpolation result is push.
+     */
+    private final WritableRenderedImage imageDest;
+
+    /**
+     * Sort of interpolation use to interpolate image source pixels.
+     */
+    private final Interpolation interpol;
+
+    /**
+     * Image number bands.<br/>
+     * Note : source and target image have same bands number.
+     */
+    private final int numBands;
+
+    /**
+     * Minimum inclusive pixel index from source iterate source object in X direction.
+     */
+    private final int minSourceX;
+
+    /**
+     * Maximum inclusive pixel index from source iterate source object in X direction.
+     */
+    private final int maxSourceX;
+
+    /**
+     * Minimum inclusive pixel index from source iterate source object in Y direction.
+     */
+    private final int minSourceY;
+
+    /**
+     * Maximum inclusive pixel index from source iterate source object in Y direction.
+     */
+    private final int maxSourceY;
+
+    /**
+     * Table use which target image pixel transformation is out of source image boundary.
+     */
+    private final double[] fillValue;
+
+    /**
+     * Table which contain x, y coordinates after {@link MathTransform} transformation.
+     */
+    private final double[] srcCoords;
+
+    /**
+     * Fill destination image from interpolation of source pixels.<br/>
+     * Source pixel is obtained from invert transformation of destination pixel coordinates.
+     *
+     * @param mathTransform Transformation use to transform source point to target point.
+     * @param imageDest image will be fill by image source pixel interpolation.
+     * @param interpol Interpolation use to interpolate source image pixels.
+     * @param fillValue contains value use when pixel transformation is out of source image boundary.
+     * @throws NoninvertibleTransformException if it is impossible to invert {@code MathTransform} parameter.
+     */
+    public Resample(MathTransform mathTransform, WritableRenderedImage imageDest, Interpolation interpol, double[] fillValue) throws NoninvertibleTransformException {
+        this.numBands = interpol.getNumBands();
+        if (fillValue.length != numBands)
+            throw new IllegalArgumentException("fillValue table length and numbands are different : "+fillValue.length+" numbands = "+this.numBands);
+        assert(numBands == imageDest.getWritableTile(imageDest.getMinTileX(), imageDest.getMinTileY()).getNumBands())
+                : "destination image numbands different from source image numbands";
+        this.fillValue = fillValue;
+        this.invertMathTransform = mathTransform.inverse();
+        this.imageDest = imageDest;
+        this.interpol  = interpol;
+        final Rectangle bound = interpol.getBoundary();
+        minSourceX = bound.x;
+        minSourceY = bound.y;
+        maxSourceX = minSourceX + bound.width  - 1;
+        maxSourceY = minSourceY + bound.height - 1;
+        srcCoords  = new double[2];
+    }
+
+    /**
+     * Compute interpolation value from source image.
+     *
+     * @param x destination pixel coordinate.
+     * @param y destination pixel coordinate.
+     * @return interpolation value from source image.
+     * @throws TransformException
+     */
+    private double[] getSourcePixelValue(double x, double y) throws TransformException {
+        invertMathTransform.transform(new double[]{x, y}, 0, srcCoords, 0, 1);
+        if (srcCoords[0]<minSourceX || srcCoords[0]>maxSourceX
+         || srcCoords[1]<minSourceY || srcCoords[1]>maxSourceY) return fillValue;
+        return interpol.interpolate(srcCoords[0], srcCoords[1]);
+    }
+
+    /**
+     * Fill destination image from source image pixel interpolation.
+     */
+    public void fillImage() throws TransformException {
+        final PixelIterator destIterator = PixelIteratorFactory.createDefaultWriteableIterator(imageDest, imageDest);
+        int band;
+        double[] destPixValue;
+        while (destIterator.next()) {
+            band = 0;
+            destPixValue = getSourcePixelValue(destIterator.getX(), destIterator.getY());
+            destIterator.setSampleDouble(destPixValue[0]);
+            while (++band != numBands) {
+                destIterator.next();
+                destIterator.setSampleDouble(destPixValue[band]);
+            }
+        }
+    }
+}

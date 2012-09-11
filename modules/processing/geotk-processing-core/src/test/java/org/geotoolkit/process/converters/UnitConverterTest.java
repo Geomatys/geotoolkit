@@ -23,6 +23,7 @@ import javax.measure.unit.Unit;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.util.converter.ConverterRegistry;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.util.converter.ObjectConverter;
 
@@ -45,8 +46,8 @@ public class UnitConverterTest {
     @Test
     public void FilterConvertTest() throws NoSuchAuthorityCodeException, FactoryException, NonconvertibleObjectException {
 
-        final ObjectConverter<String,Unit> converter = StringToUnitConverter.getInstance();
-        
+        final ObjectConverter<String,Unit> converter = ConverterRegistry.system().converter(String.class, Unit.class);
+
         String inputString = "mm";
         Unit convertedUnit= converter.convert(inputString);
         Unit expectedUnit = SI.MILLIMETRE;
@@ -60,7 +61,7 @@ public class UnitConverterTest {
             //ok
         }
 
-        
+
         inputString = "fail";
         try{
             convertedUnit = converter.convert(inputString);

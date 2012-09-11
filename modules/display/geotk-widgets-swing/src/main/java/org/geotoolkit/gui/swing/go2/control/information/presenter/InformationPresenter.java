@@ -18,7 +18,6 @@
 package org.geotoolkit.gui.swing.go2.control.information.presenter;
 
 import javax.swing.JComponent;
-
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 
@@ -28,7 +27,14 @@ import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public interface InformationPresenter {
+public interface InformationPresenter extends Comparable<InformationPresenter> {
+
+    /**
+     * Determinate the presenter order.
+     *
+     * @return higher value for high priority.
+     */
+    double getPriority();
 
     /**
      * Create a user interface component to display the given object.

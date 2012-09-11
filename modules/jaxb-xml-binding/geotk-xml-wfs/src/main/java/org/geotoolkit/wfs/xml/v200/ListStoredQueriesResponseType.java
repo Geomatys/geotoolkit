@@ -20,10 +20,13 @@ package org.geotoolkit.wfs.xml.v200;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
+import org.geotoolkit.wfs.xml.ListStoredQueriesResponse;
 
 
 /**
@@ -49,32 +52,21 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "ListStoredQueriesResponseType", propOrder = {
     "storedQuery"
 })
-public class ListStoredQueriesResponseType {
+public class ListStoredQueriesResponseType implements ListStoredQueriesResponse {
 
     @XmlElement(name = "StoredQuery")
     private List<StoredQueryListItemType> storedQuery;
 
+    public ListStoredQueriesResponseType() {
+        
+    }
+    
+    public ListStoredQueriesResponseType(final List<StoredQueryListItemType> storedQuery) {
+        this.storedQuery = storedQuery;
+    }
+    
     /**
      * Gets the value of the storedQuery property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the storedQuery property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getStoredQuery().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link StoredQueryListItemType }
-     * 
-     * 
      */
     public List<StoredQueryListItemType> getStoredQuery() {
         if (storedQuery == null) {
@@ -83,4 +75,37 @@ public class ListStoredQueriesResponseType {
         return this.storedQuery;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("[ListStoredQueriesResponseType]\n");
+        if (storedQuery != null) {
+           sb.append("storedQuery: ").append('\n');
+           for (StoredQueryListItemType a : storedQuery) {
+                sb.append(a).append('\n');
+           }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof ListStoredQueriesResponseType) {
+            final ListStoredQueriesResponseType that = (ListStoredQueriesResponseType) object;
+            return Objects.equals(this.storedQuery,   that.storedQuery);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 13 * hash + (this.storedQuery != null ? this.storedQuery.hashCode() : 0);
+        return hash;
+    }
 }

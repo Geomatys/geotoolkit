@@ -81,7 +81,7 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
     }
 
     private void process() throws DataStoreException, NoSuchAuthorityCodeException, FactoryException{
-        final DataStore store = DataStoreFinder.getDataStore(dbParameters);
+        final DataStore store = DataStoreFinder.open(dbParameters);
         final Session session = store.createSession(false);
 
 //        processLanduse(store, session);

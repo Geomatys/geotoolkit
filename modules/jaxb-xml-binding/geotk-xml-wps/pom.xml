@@ -6,55 +6,66 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                              http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>org.geotoolkit.pending</groupId>
-    <artifactId>jaxb-xml-binding</artifactId>
-    <version>3.x-SNAPSHOT</version>
-  </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.geotoolkit.pending</groupId>
+        <artifactId>jaxb-xml-binding</artifactId>
+        <version>3.x-SNAPSHOT</version>
+    </parent>
 
 
 
   <!--
     Module description.
   -->
-  <groupId>org.geotoolkit.pending</groupId>
-  <artifactId>geotk-xml-wps</artifactId>
-  <packaging>jar</packaging>
-  <name>Bindings OGC - WPS : Web Processing Service</name>
-  <description>
-    XML bindings for the OGC Web Processing Service schema.
-  </description>
+    <groupId>org.geotoolkit.pending</groupId>
+    <artifactId>geotk-xml-wps</artifactId>
+    <packaging>jar</packaging>
+    <name>Bindings OGC - WPS : Web Processing Service</name>
+    <description>
+        XML bindings for the OGC Web Processing Service schema.
+    </description>
 
 
 
   <!--
     Developers and contributors.
   -->
-  <developers>
-    <developer>
-      <id>glegal</id>
-      <name>Guilhem Legal</name>
-      <email>guilhem.legal@geomatys.fr</email>
-      <organization>Geomatys</organization>
-      <organizationUrl>http://www.geomatys.fr/</organizationUrl>
-      <roles>
-        <role>Developer</role>
-      </roles>
-      <timezone>+1</timezone>
-    </developer>
-    <developer>
-      <id>desruisseaux</id>
-      <name>Martin Desruisseaux</name>
-      <email>desruisseaux@users.sourceforge.net</email>
-      <organization>Geomatys</organization>
-      <organizationUrl>http://www.geomatys.fr/</organizationUrl>
-      <roles>
-        <role>Developer</role>
-      </roles>
-      <timezone>+1</timezone>
-    </developer>
-  </developers>
+    <developers>
+        <developer>
+            <id>glegal</id>
+            <name>Guilhem Legal</name>
+            <email>guilhem.legal@geomatys.fr</email>
+            <organization>Geomatys</organization>
+            <organizationUrl>http://www.geomatys.fr/</organizationUrl>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <timezone>+1</timezone>
+        </developer>
+        <developer>
+            <id>desruisseaux</id>
+            <name>Martin Desruisseaux</name>
+            <email>desruisseaux@users.sourceforge.net</email>
+            <organization>Geomatys</organization>
+            <organizationUrl>http://www.geomatys.fr/</organizationUrl>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <timezone>+1</timezone>
+        </developer>
+        <developer>
+            <id>qboileau</id>
+            <name>Quentin Boileau</name>
+            <email>quentin.boileau@geomatys.com</email>
+            <organization>Geomatys</organization>
+            <organizationUrl>http://www.geomatys.fr/</organizationUrl>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <timezone>+1</timezone>
+        </developer>
+    </developers>
 
 
 
@@ -62,17 +73,52 @@
     Required dependencies for building. These dependencies will be included
     in the JARs' list that maven will put in the directory "target/binaries".
   -->
-  <dependencies>
-    <dependency>
-      <groupId>org.geotoolkit.pending</groupId>
-      <artifactId>geotk-xml-ogc</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.geotoolkit.pending</groupId>
-      <artifactId>geotk-xml-ows</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-  </dependencies>
+    <dependencies>
+        <dependency>
+            <groupId>org.geotoolkit.pending</groupId>
+            <artifactId>geotk-xml-ogc</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotoolkit.pending</groupId>
+            <artifactId>geotk-xml-ows</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotoolkit.pending</groupId>
+            <artifactId>geotk-xml-mathml</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    
+    <!-- 
+        Provided dependencies for converters 
+    -->
+    
+        <dependency>
+            <groupId>org.geotoolkit.pending</groupId>
+            <artifactId>geotk-jaxp-core</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.geotoolkit.pending</groupId>
+            <artifactId>geotk-jaxp-gml</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.geotoolkit.pending</groupId>
+            <artifactId>geotk-processing-core</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.geotoolkit</groupId>
+            <artifactId>geotk-coverageio</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+   
+    </dependencies>
 
 </project>

@@ -93,6 +93,7 @@ public class DimapImageReader extends ImageReaderAdapter {
      * Apply the band selection indexes provided in the dimap file.
      */
     private RenderedImage changeColorModel(RenderedImage image, final boolean bufferedImage) throws IOException{
+        LOGGER.info("Dimap: changing color model");
         if(image == null) return image;
 
         final boolean oldState = ignoreMetadata;
@@ -108,7 +109,7 @@ public class DimapImageReader extends ImageReaderAdapter {
             //find solution to pass the ignoreMetadata flag down in the reader stack.
             return image;
         }
-
+        
         //apply the band <-> color mapping -------------------------------------
         final int[] colorMapping = DimapAccessor.readColorBandMapping((Element)metadata.getAsTree(DimapMetadataFormat.NATIVE_FORMAT));
         if(colorMapping == null){
@@ -236,8 +237,14 @@ public class DimapImageReader extends ImageReaderAdapter {
                 final File parent = file.getParentFile();
 
                 //search for metadata.dim
-                File candidate = new File(parent, "metadata.dim");
-                if(candidate.isFile()) return candidate;
+                File candidate = null;
+                for(final File f : parent.listFiles()){
+                    if("metadata.dim".equalsIgnoreCase(f.getName())){
+                        candidate = f;
+                    }
+                }
+                
+                if(candidate != null && candidate.isFile()) return candidate;
 
                 //search for filename.dim
                 Object obj = IOUtilities.changeExtension(file, "dim");

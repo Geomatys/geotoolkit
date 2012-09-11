@@ -24,9 +24,9 @@ import javax.xml.namespace.QName;
 
 /**
  * <p>Java class for topLevelElement complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="topLevelElement">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import javax.xml.namespace.QName;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -61,11 +61,10 @@ public class TopLevelElement extends Element {
     }
 
     public TopLevelElement(final String name, final QName type, final Integer minOccurs, final String maxOccurs) {
-        super(name, type, minOccurs, maxOccurs);
+        this(name, type, minOccurs, maxOccurs, null);
     }
 
-    public TopLevelElement(final String name, final QName type, final Integer minOccurs, final String maxOccurs, final boolean nillable) {
-        super(name, type, minOccurs, maxOccurs);
-        setNillable(nillable);
+    public TopLevelElement(final String name, final QName type, final Integer minOccurs, final String maxOccurs, final Boolean nillable) {
+        super(name, type, minOccurs, maxOccurs, nillable);
     }
 }

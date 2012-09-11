@@ -31,7 +31,9 @@ public class WFSMarshallerPool {
     private static MarshallerPool instance;
     static {
         try {
-            instance = new MarshallerPool("org.geotoolkit.wfs.xml.v110:org.geotoolkit.internal.jaxb.geometry");
+            instance = new MarshallerPool("org.geotoolkit.wfs.xml.v110:"
+                                        + "org.geotoolkit.wfs.xml.v200:"
+                                        + "org.geotoolkit.internal.jaxb.geometry");
         } catch (JAXBException ex) {
             Logger.getLogger(WFSMarshallerPool.class.getName()).log(Level.SEVERE, null, ex);
         }

@@ -68,7 +68,7 @@ public class NcGetFeatureInfo130 extends AbstractNcGetFeatureInfo {
             LOGGER.log(Level.WARNING, null, ex);
         }
 
-        encodeTimeAndElevation(env, map);
+        encodeNDParameters(env, map);
 
         return map;
     }

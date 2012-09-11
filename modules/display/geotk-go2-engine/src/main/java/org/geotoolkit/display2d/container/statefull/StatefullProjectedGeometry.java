@@ -17,14 +17,20 @@
 package org.geotoolkit.display2d.container.statefull;
 
 import java.awt.Shape;
-
-import org.geotoolkit.display2d.GO2Utilities;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.geotoolkit.display.shape.ProjectedShape;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
-import org.geotoolkit.display2d.primitive.jts.AbstractJTSGeometryJ2D;
 import org.geotoolkit.display2d.primitive.jts.JTSGeometryJ2D;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
-
+import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
+import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
+import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.referencing.CRS;
 import org.opengis.geometry.Geometry;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 
 /**
@@ -38,7 +44,14 @@ import org.opengis.referencing.operation.TransformException;
 public class StatefullProjectedGeometry implements ProjectedGeometry {
 
     private final StatefullContextParams params;
+    private MathTransform2D dataToObjective;
+    private MathTransform2D dataToDisplay;
 
+    //Geometry is data CRS
+    private com.vividsolutions.jts.geom.Geometry    dataGeometryJTS = null;
+    private Geometry                                dataGeometryISO = null;
+    private Shape                                   dataShape = null;
+    
     //Geometry in objective CRS
     private com.vividsolutions.jts.geom.Geometry    objectiveGeometryJTS = null;
     private Geometry                                objectiveGeometryISO = null;
@@ -47,84 +60,114 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
     //Geometry in display CRS
     private com.vividsolutions.jts.geom.Geometry    displayGeometryJTS = null;
     private Geometry                                displayGeometryISO = null;
-    private final AbstractJTSGeometryJ2D            displayShape;
+    private Shape                                   displayShape = null;
+    
+    private boolean geomSet = false;
 
-    public StatefullProjectedGeometry(final StatefullContextParams params, final Class GeometryClazz,
-            final com.vividsolutions.jts.geom.Geometry geom){
+    public StatefullProjectedGeometry(final StatefullContextParams params){
         this.params = params;
-        this.objectiveGeometryJTS = geom;
-        this.displayShape = JTSGeometryJ2D.best(GeometryClazz,params.objectiveToDisplay);
-        this.displayShape.setGeometry(objectiveGeometryJTS);
     }
 
     public StatefullProjectedGeometry(final StatefullProjectedGeometry copy){
         this.params = copy.params;
+        this.dataToObjective = copy.dataToObjective;
+        this.dataToDisplay = copy.dataToDisplay;
+        this.dataGeometryJTS = copy.dataGeometryJTS;
+        this.dataGeometryISO = copy.dataGeometryISO;
+        this.dataShape       = copy.dataShape;
         this.objectiveGeometryJTS = copy.objectiveGeometryJTS;
         this.objectiveGeometryISO = copy.objectiveGeometryISO;
-        this.objectiveShape = copy.objectiveShape;
-        this.displayGeometryJTS = copy.displayGeometryJTS;
-        this.displayGeometryISO = copy.displayGeometryISO;
-        this.displayShape = copy.displayShape.clone();
+        this.objectiveShape       = copy.objectiveShape;
+        this.displayGeometryJTS = null;
+        this.displayGeometryISO = null;
+        this.displayShape       = null;
+        this.geomSet = copy.geomSet;
     }
 
-    public void setObjectiveGeometry(final com.vividsolutions.jts.geom.Geometry geom){
+    public void setDataGeometry(final com.vividsolutions.jts.geom.Geometry geom, CoordinateReferenceSystem dataCRS){
+        clearDataCache();
+        this.dataGeometryJTS = geom;
+        this.geomSet = this.dataGeometryJTS != null;
+        
+        try {
+            if(dataCRS == null){
+                //try to extract data crs from geometry
+                dataCRS = JTS.findCoordinateReferenceSystem(geom);
+            }
+            if(dataCRS != null){
+                dataCRS = CRSUtilities.getCRS2D(dataCRS);
+                dataToObjective = (MathTransform2D) CRS.findMathTransform(dataCRS, params.context.getObjectiveCRS2D());
+                dataToDisplay = (MathTransform2D) CRS.findMathTransform(dataCRS, params.displayCRS);
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(StatefullProjectedGeometry.class.getName()).log(Level.WARNING, null, ex);
+        }
+    }
+    
+    public boolean isSet(){
+        return this.dataGeometryJTS != null;
+    }
+    
+    public void clearAll(){
+        clearDataCache();
+    }
+    
+    public void clearDataCache(){
         clearObjectiveCache();
-        this.objectiveGeometryJTS = geom;
-        this.displayShape.setGeometry(objectiveGeometryJTS);
+        dataGeometryISO = null;
+        dataGeometryJTS = null;
+        dataShape = null;
     }
-
+    
     public void clearObjectiveCache(){
         clearDisplayCache();
         objectiveGeometryISO = null;
+        objectiveGeometryJTS = null;
         objectiveShape = null;
     }
     
     public void clearDisplayCache(){
         displayGeometryISO = null;
         displayGeometryJTS = null;
+        displayShape = null;
+    }
+
+    public Geometry getDataGeometryISO() {
+        return dataGeometryISO;
+    }
+
+    public com.vividsolutions.jts.geom.Geometry getDataGeometryJTS() {
+        return dataGeometryJTS;
+    }
+
+    public Shape getDataShape() {
+        if(dataShape == null && geomSet){
+            dataShape = new JTSGeometryJ2D(dataGeometryJTS);
+        }
+        
+        return dataShape;
     }
 
     @Override
-    public com.vividsolutions.jts.geom.Geometry getObjectiveGeometryJTS() {
+    public com.vividsolutions.jts.geom.Geometry getObjectiveGeometryJTS() throws TransformException {
+        if(objectiveGeometryJTS == null && geomSet){
+            if(dataToObjective == null){
+                //we assume data and objective are in the same crs
+                objectiveGeometryJTS = dataGeometryJTS;
+            }else{
+                final GeometryCSTransformer transformer = new GeometryCSTransformer(new CoordinateSequenceMathTransformer(dataToObjective));
+                objectiveGeometryJTS = transformer.transform(getDataGeometryJTS());
+            }
+        }
         return objectiveGeometryJTS;
     }
-
-    @Override
-    public com.vividsolutions.jts.geom.Geometry getDisplayGeometryJTS() throws TransformException{
-        if(displayGeometryJTS == null){
-            displayGeometryJTS = params.objToDisplayTransformer.transform(getObjectiveGeometryJTS());
-        }
-        return displayGeometryJTS;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Shape getObjectiveShape() throws TransformException{
-        if(objectiveShape == null){
-            objectiveShape = GO2Utilities.toJava2D(getObjectiveGeometryJTS());
-        }
-        return objectiveShape;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Shape getDisplayShape() throws TransformException{
-        if(objectiveGeometryJTS == null){
-            return null;
-        }
-        return displayShape;
-    }
-
+    
     /**
      * {@inheritDoc }
      */
     @Override
     public Geometry getObjectiveGeometry() throws TransformException {
-        if(objectiveGeometryISO == null){
+        if(objectiveGeometryISO == null && geomSet){
             objectiveGeometryISO = JTSUtils.toISO(getObjectiveGeometryJTS(), params.objectiveCRS);
         }
         return objectiveGeometryISO;
@@ -134,11 +177,41 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
      * {@inheritDoc }
      */
     @Override
+    public Shape getObjectiveShape() throws TransformException{
+        if(objectiveShape == null && geomSet){
+            objectiveShape = ProjectedShape.wrap(getDataShape(), dataToObjective);
+        }
+        return objectiveShape;
+    }
+    
+    @Override
+    public com.vividsolutions.jts.geom.Geometry getDisplayGeometryJTS() throws TransformException{
+        if(displayGeometryJTS == null && geomSet){
+            displayGeometryJTS = params.objToDisplayTransformer.transform(getObjectiveGeometryJTS());
+        }
+        return displayGeometryJTS;
+    }
+    
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public Geometry getDisplayGeometry() throws TransformException {
-        if(displayGeometryISO == null){
+        if(displayGeometryISO == null && geomSet){
             displayGeometryISO = JTSUtils.toISO(getDisplayGeometryJTS(), params.displayCRS);
         }
         return displayGeometryISO;
+    }
+    
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Shape getDisplayShape() throws TransformException{
+        if(displayShape == null && geomSet){
+            displayShape = ProjectedShape.wrap(getDataShape(), dataToDisplay);
+        }
+        return displayShape;
     }
 
 }

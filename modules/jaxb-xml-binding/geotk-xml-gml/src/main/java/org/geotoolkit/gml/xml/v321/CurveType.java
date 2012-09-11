@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.Curve;
 
 
 /**
@@ -47,9 +48,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "CurveType", propOrder = {
     "segments"
 })
-public class CurveType
-    extends AbstractCurveType
-{
+public class CurveType extends AbstractCurveType implements Curve {
 
     @XmlElement(required = true)
     private CurveSegmentArrayPropertyType segments;

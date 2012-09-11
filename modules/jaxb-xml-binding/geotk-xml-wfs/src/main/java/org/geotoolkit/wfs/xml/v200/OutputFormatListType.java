@@ -20,10 +20,12 @@ package org.geotoolkit.wfs.xml.v200;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -57,30 +59,46 @@ public class OutputFormatListType {
     /**
      * Gets the value of the format property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the format property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getFormat().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
-     * 
-     * 
      */
     public List<String> getFormat() {
         if (format == null) {
             format = new ArrayList<String>();
         }
         return this.format;
+    }
+    
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof OutputFormatListType) {
+            final OutputFormatListType that = (OutputFormatListType) object;
+
+            return Objects.equals(this.format, that.format);
+            }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 37 * hash + (this.format != null ? this.format.hashCode() : 0);
+        return hash;
+    }
+
+   
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder("[OutputFormatListType]\n");
+        if(format != null) {
+            s.append("format:").append(format).append('\n');
+        }
+        return s.toString();
     }
 
 }

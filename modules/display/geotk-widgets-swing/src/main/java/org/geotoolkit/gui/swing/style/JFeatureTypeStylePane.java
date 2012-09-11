@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.gui.swing.style;
 
-import org.geotoolkit.gui.swing.resource.MessageBundle;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -30,7 +29,7 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
-import org.geotoolkit.gui.swing.style.StyleElementEditor;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.jdesktop.swingx.JXTitledPanel;
@@ -48,6 +47,7 @@ public class JFeatureTypeStylePane extends StyleElementEditor<MutableFeatureType
     
     /** Creates new form JRulePanel */
     public JFeatureTypeStylePane() {
+        super(MutableFeatureTypeStyle.class);
         initComponents();
     }
         

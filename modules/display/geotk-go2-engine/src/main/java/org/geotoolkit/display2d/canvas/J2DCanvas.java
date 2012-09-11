@@ -2,7 +2,6 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2004 - 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -26,13 +25,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
-
+import org.geotoolkit.display.canvas.AbstractReferencedCanvas2D;
 import org.geotoolkit.display.canvas.CanvasController2D;
+import org.geotoolkit.display.canvas.DefaultCanvasController2D;
 import org.geotoolkit.display.canvas.GraphicVisitor;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.canvas.VisitFilter;
-import org.geotoolkit.display.canvas.AbstractReferencedCanvas2D;
-import org.geotoolkit.display.canvas.DefaultCanvasController2D;
 import org.geotoolkit.display.container.AbstractContainer;
 import org.geotoolkit.display.container.AbstractContainer2D;
 import org.geotoolkit.display.primitive.ReferencedGraphic;
@@ -46,15 +44,13 @@ import org.geotoolkit.display2d.style.labeling.LabelRenderer;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
-
+import static org.geotoolkit.util.ArgumentChecks.*;
 import org.opengis.display.container.ContainerEvent;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.geometry.Geometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
-
-import static org.geotoolkit.util.ArgumentChecks.*;
 
 /**
  *

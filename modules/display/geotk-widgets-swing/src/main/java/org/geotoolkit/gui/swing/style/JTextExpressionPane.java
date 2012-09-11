@@ -27,7 +27,6 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
-
 import org.geotoolkit.map.MapLayer;
 import org.opengis.filter.expression.Expression;
 
@@ -40,6 +39,7 @@ public class JTextExpressionPane extends StyleElementEditor<Expression>{
 
     /** Creates new form JColorExpressionPane */
     public JTextExpressionPane() {
+        super(Expression.class);
         initComponents();
     }
 

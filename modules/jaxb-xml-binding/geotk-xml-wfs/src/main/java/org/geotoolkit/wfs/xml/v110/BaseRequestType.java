@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.util.Version;
-import org.geotoolkit.ows.xml.RequestBase;
+import org.geotoolkit.wfs.xml.BaseRequest;
 
 
 /**
@@ -61,7 +61,7 @@ import org.geotoolkit.ows.xml.RequestBase;
     GetGmlObjectType.class,
     DescribeFeatureTypeType.class
 })
-public abstract class BaseRequestType implements RequestBase {
+public abstract class BaseRequestType implements BaseRequest {
 
     @XmlAttribute
     private String service;

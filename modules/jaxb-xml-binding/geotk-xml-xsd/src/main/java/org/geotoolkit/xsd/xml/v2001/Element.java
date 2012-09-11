@@ -35,17 +35,17 @@ import org.geotoolkit.util.Utilities;
 
 
 /**
- * 
+ *
  *    The element element can be used either
  *    at the top level to define an element-type binding globally,
  *    or within a content model to either reference a globally-defined
  *    element or type or declare an element-type binding locally.
  *    The ref form is not allowed at the top level.
- * 
+ *
  * <p>Java class for element complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="element">
  *   &lt;complexContent>
@@ -72,8 +72,8 @@ import org.geotoolkit.util.Utilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -138,20 +138,21 @@ public abstract class Element extends Annotated {
         this.type = type;
     }
 
-    public Element(final String name, final QName type, final Integer minOccurs, final String maxOccurs) {
+    public Element(final String name, final QName type, final Integer minOccurs, final String maxOccurs, final Boolean nillable) {
         this.name      = name;
         this.type      = type;
         this.minOccurs = minOccurs;
         this.maxOccurs = maxOccurs;
+        this.nillable  = nillable;
     }
 
     /**
      * Gets the value of the simpleType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LocalSimpleType }
-     *     
+     *
      */
     public LocalSimpleType getSimpleType() {
         return simpleType;
@@ -159,11 +160,11 @@ public abstract class Element extends Annotated {
 
     /**
      * Sets the value of the simpleType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LocalSimpleType }
-     *     
+     *
      */
     public void setSimpleType(final LocalSimpleType value) {
         this.simpleType = value;
@@ -171,11 +172,11 @@ public abstract class Element extends Annotated {
 
     /**
      * Gets the value of the complexType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LocalComplexType }
-     *     
+     *
      */
     public LocalComplexType getComplexType() {
         return complexType;
@@ -183,11 +184,11 @@ public abstract class Element extends Annotated {
 
     /**
      * Sets the value of the complexType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LocalComplexType }
-     *     
+     *
      */
     public void setComplexType(final LocalComplexType value) {
         this.complexType = value;
@@ -195,12 +196,12 @@ public abstract class Element extends Annotated {
 
     /**
      * Gets the value of the identityConstraint property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link Keyref }
      * {@link JAXBElement }{@code <}{@link Keybase }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getIdentityConstraint() {
         if (identityConstraint == null) {
@@ -211,11 +212,11 @@ public abstract class Element extends Annotated {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link QName }
-     *     
+     *
      */
     public QName getType() {
         return type;
@@ -223,11 +224,11 @@ public abstract class Element extends Annotated {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link QName }
-     *     
+     *
      */
     public void setType(final QName value) {
         this.type = value;
@@ -235,11 +236,11 @@ public abstract class Element extends Annotated {
 
     /**
      * Gets the value of the substitutionGroup property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link QName }
-     *     
+     *
      */
     public QName getSubstitutionGroup() {
         return substitutionGroup;
@@ -247,11 +248,11 @@ public abstract class Element extends Annotated {
 
     /**
      * Sets the value of the substitutionGroup property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link QName }
-     *     
+     *
      */
     public void setSubstitutionGroup(final QName value) {
         this.substitutionGroup = value;
@@ -259,11 +260,11 @@ public abstract class Element extends Annotated {
 
     /**
      * Gets the value of the default property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getDefault() {
         return _default;
@@ -271,11 +272,11 @@ public abstract class Element extends Annotated {
 
     /**
      * Sets the value of the default property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDefault(final String value) {
         this._default = value;
@@ -283,11 +284,11 @@ public abstract class Element extends Annotated {
 
     /**
      * Gets the value of the fixed property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getFixed() {
         return fixed;
@@ -295,11 +296,11 @@ public abstract class Element extends Annotated {
 
     /**
      * Sets the value of the fixed property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setFixed(final String value) {
         this.fixed = value;
@@ -307,11 +308,11 @@ public abstract class Element extends Annotated {
 
     /**
      * Gets the value of the nillable property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public boolean isNillable() {
         if (nillable == null) {
@@ -323,11 +324,11 @@ public abstract class Element extends Annotated {
 
     /**
      * Sets the value of the nillable property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setNillable(final Boolean value) {
         this.nillable = value;
@@ -335,11 +336,11 @@ public abstract class Element extends Annotated {
 
     /**
      * Gets the value of the abstract property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public boolean isAbstract() {
         if (_abstract == null) {
@@ -351,11 +352,11 @@ public abstract class Element extends Annotated {
 
     /**
      * Sets the value of the abstract property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setAbstract(final Boolean value) {
         this._abstract = value;
@@ -363,11 +364,11 @@ public abstract class Element extends Annotated {
 
     /**
      * Gets the value of the final property.
-     * 
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public List<String> getFinal() {
         if (_final == null) {
@@ -388,11 +389,11 @@ public abstract class Element extends Annotated {
 
     /**
      * Gets the value of the form property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link FormChoice }
-     *     
+     *
      */
     public FormChoice getForm() {
         return form;
@@ -400,11 +401,11 @@ public abstract class Element extends Annotated {
 
     /**
      * Sets the value of the form property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link FormChoice }
-     *     
+     *
      */
     public void setForm(final FormChoice value) {
         this.form = value;
@@ -412,11 +413,11 @@ public abstract class Element extends Annotated {
 
     /**
      * Gets the value of the minOccurs property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public Integer getMinOccurs() {
         if (minOccurs == null) {
@@ -428,11 +429,11 @@ public abstract class Element extends Annotated {
 
     /**
      * Sets the value of the minOccurs property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigInteger }
-     *     
+     *
      */
     public void setMinOccurs(final Integer value) {
         this.minOccurs = value;
@@ -440,11 +441,11 @@ public abstract class Element extends Annotated {
 
     /**
      * Gets the value of the maxOccurs property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getMaxOccurs() {
         if (maxOccurs == null) {
@@ -456,11 +457,11 @@ public abstract class Element extends Annotated {
 
     /**
      * Sets the value of the maxOccurs property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setMaxOccurs(final String value) {
         this.maxOccurs = value;
@@ -468,11 +469,11 @@ public abstract class Element extends Annotated {
 
     /**
      * Gets the value of the name property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getName() {
         return name;
@@ -480,11 +481,11 @@ public abstract class Element extends Annotated {
 
     /**
      * Sets the value of the name property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setName(final String value) {
         this.name = value;
@@ -492,11 +493,11 @@ public abstract class Element extends Annotated {
 
     /**
      * Gets the value of the ref property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link QName }
-     *     
+     *
      */
     public QName getRef() {
         return ref;
@@ -504,11 +505,11 @@ public abstract class Element extends Annotated {
 
     /**
      * Sets the value of the ref property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link QName }
-     *     
+     *
      */
     public void setRef(final QName value) {
         this.ref = value;
@@ -567,7 +568,7 @@ public abstract class Element extends Annotated {
         }
         return  sb.toString();
     }
-    
+
     /**
      * Verify if this entry is identical to the specified object.
      */

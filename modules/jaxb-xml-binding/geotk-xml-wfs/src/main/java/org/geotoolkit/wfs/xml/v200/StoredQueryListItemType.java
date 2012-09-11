@@ -20,6 +20,7 @@ package org.geotoolkit.wfs.xml.v200;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -27,6 +28,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -65,26 +67,21 @@ public class StoredQueryListItemType {
     @XmlSchemaType(name = "anyURI")
     private String id;
 
+    public StoredQueryListItemType() {
+        
+    }
+
+    public StoredQueryListItemType(final String id, final List<Title> title, final List<QName> returnFeatureType) {
+        this.id = id;
+        this.returnFeatureType = returnFeatureType;
+        this.title = title;
+    }
+    
     /**
      * Gets the value of the title property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the title property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getTitle().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Title }
-     * 
      * 
      */
     public List<Title> getTitle() {
@@ -97,23 +94,8 @@ public class StoredQueryListItemType {
     /**
      * Gets the value of the returnFeatureType property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the returnFeatureType property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getReturnFeatureType().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link QName }
-     * 
      * 
      */
     public List<QName> getReturnFeatureType() {
@@ -147,4 +129,50 @@ public class StoredQueryListItemType {
         this.id = value;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("[StoredQueryListItemType]\n");
+        if (id != null) {
+            sb.append("id: ").append(id).append('\n');
+        }
+        if (title != null) {
+           sb.append("title: ").append('\n');
+           for (Title a : title) {
+                sb.append(a).append('\n');
+           }
+        }
+        if (returnFeatureType != null) {
+           sb.append("returnFeatureType: ").append('\n');
+           for (QName a : returnFeatureType) {
+                sb.append(a).append('\n');
+           }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof StoredQueryListItemType) {
+            final StoredQueryListItemType that = (StoredQueryListItemType) object;
+            return Objects.equals(this.id,                that.id) &&
+                   Objects.equals(this.returnFeatureType, that.returnFeatureType) &&
+                   Objects.equals(this.title,             that.title);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 13 * hash + (this.id != null ? this.id.hashCode() : 0);
+        hash = 13 * hash + (this.title != null ? this.title.hashCode() : 0);
+        hash = 13 * hash + (this.returnFeatureType != null ? this.returnFeatureType.hashCode() : 0);
+        return hash;
+    }
 }

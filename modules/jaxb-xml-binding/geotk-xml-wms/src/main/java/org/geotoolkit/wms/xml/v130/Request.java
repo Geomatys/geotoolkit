@@ -77,6 +77,25 @@ public class Request extends AbstractRequest {
      Request() {
      }
 
+    public Request(final Request that) {
+        if (that != null) {
+            if (that.getCapabilities != null) {
+                this.getCapabilities = new OperationType(that.getCapabilities);
+            }
+            if (that.getFeatureInfo != null) {
+                this.getFeatureInfo = new OperationType(that.getFeatureInfo);
+            }
+            if (that.getMap != null) {
+                this.getMap = new OperationType(that.getMap);
+            }
+            if (that.extendedOperation != null) {
+                for(JAXBElement<OperationType> op : that.extendedOperation) {
+                    this.extendedOperation.add(new JAXBElement<OperationType>(op.getName(), op.getDeclaredType(), op.getValue()));
+                }
+            }
+        }
+
+    }
     /**
      * Build a new Request.
      */

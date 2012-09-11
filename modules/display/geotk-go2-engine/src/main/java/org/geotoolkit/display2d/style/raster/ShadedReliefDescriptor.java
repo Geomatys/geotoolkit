@@ -2,7 +2,6 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2004 - 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2008 - 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -21,9 +20,8 @@ import java.awt.image.RenderedImage;
 import java.awt.image.renderable.ParameterBlock;
 import javax.media.jai.OperationDescriptorImpl;
 import javax.media.jai.registry.RenderedRegistryMode;
-
-import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.converter.Classes;
 
 /**
  * Description of the shading operation.
@@ -78,7 +76,7 @@ public class ShadedReliefDescriptor extends OperationDescriptorImpl {
 
             final Object source = param.getSource(0);
             if (!(source instanceof RenderedImage)) {
-                message.append(Errors.format(Errors.Keys.BAD_PARAMETER_TYPE_$2,
+                message.append(Errors.format(Errors.Keys.ILLEGAL_PARAMETER_TYPE_$2,
                                "source"+0, Classes.getClass(source)));
                 return false;
             }

@@ -25,10 +25,7 @@ import com.vividsolutions.jts.geom.Polygon;
 // J2SE dependencies
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Logger;
 
 // Geotoolkit dependencies
@@ -150,7 +147,7 @@ public class FilterFactoryImpl implements FilterFactory2 {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.filter");
 
-    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'");
 
     public FeatureId featureId(final String id) {
         return new FeatureIdType(id);
@@ -161,7 +158,27 @@ public class FilterFactoryImpl implements FilterFactory2 {
     }
 
     public And and(final Filter f, final Filter g) {
-        return new AndType(f, g);
+        final List<Filter> filterList = new ArrayList<Filter>();
+        boolean factorized = false;
+        // factorize OR filter
+        if (g instanceof And) {
+            factorized = true;
+            filterList.addAll(((And)g).getChildren());
+        } else {
+            filterList.add(g);
+        }
+        if (f instanceof And) {
+            factorized = true;
+            filterList.addAll(((And)f).getChildren());
+        } else {
+            filterList.add(f);
+        }
+        
+        if (factorized) {
+            return new AndType(filterList.toArray());
+        } else {
+            return new AndType(f, g);
+        }
     }
 
     public And and(final List<Filter> f) {
@@ -169,11 +186,31 @@ public class FilterFactoryImpl implements FilterFactory2 {
     }
 
     public Or or(final Filter f, final Filter g) {
-        return new OrType(f, g);
+        final List<Filter> filterList = new ArrayList<Filter>();
+        boolean factorized = false;
+        // factorize OR filter
+        if (g instanceof Or) {
+            factorized = true;
+            filterList.addAll(((Or)g).getChildren());
+        } else {
+            filterList.add(g);
+        }
+        if (f instanceof Or) {
+            factorized = true;
+            filterList.addAll(((Or)f).getChildren());
+        } else {
+            filterList.add(f);
+        }
+        
+        if (factorized) {
+            return new OrType(filterList.toArray());
+        } else {
+            return new OrType(f, g);
+        }
     }
 
-    public Or or(final List<Filter> f) {
-        return new OrType(f);
+    public Or or(final List<Filter> filterList) {
+        return new OrType(filterList.toArray());
     }
 
     public Not not(final Filter f) {
@@ -208,51 +245,207 @@ public class FilterFactoryImpl implements FilterFactory2 {
     }
 
     public PropertyIsEqualTo equals(final Expression expr1, final Expression expr2) {
-        return new PropertyIsEqualToType((LiteralType) expr2, (PropertyNameType) expr1, null);
+        LiteralType lit           = null;
+        PropertyNameType propName = null;
+        if (expr1 instanceof PropertyNameType) {
+            propName = (PropertyNameType) expr1;
+        } else if (expr2 instanceof PropertyNameType) {
+            propName = (PropertyNameType) expr2;
+        }
+        
+        if (expr1 instanceof LiteralType) {
+            lit = (LiteralType) expr1;
+        } else if (expr2 instanceof LiteralType) {
+            lit = (LiteralType) expr2;
+        }
+        return new PropertyIsEqualToType(lit, propName, null);
     }
 
     public PropertyIsEqualTo equal(final Expression expr1, final Expression expr2, final boolean matchCase) {
-        return new PropertyIsEqualToType((LiteralType) expr2, (PropertyNameType) expr1, matchCase);
+        LiteralType lit           = null;
+        PropertyNameType propName = null;
+        if (expr1 instanceof PropertyNameType) {
+            propName = (PropertyNameType) expr1;
+        } else if (expr2 instanceof PropertyNameType) {
+            propName = (PropertyNameType) expr2;
+        }
+        
+        if (expr1 instanceof LiteralType) {
+            lit = (LiteralType) expr1;
+        } else if (expr2 instanceof LiteralType) {
+            lit = (LiteralType) expr2;
+        }
+        return new PropertyIsEqualToType(lit, propName, matchCase);
     }
 
     public PropertyIsNotEqualTo notEqual(final Expression expr1, final Expression expr2) {
-        return new PropertyIsNotEqualToType((LiteralType) expr2, (PropertyNameType) expr1, null);
+        LiteralType lit           = null;
+        PropertyNameType propName = null;
+        if (expr1 instanceof PropertyNameType) {
+            propName = (PropertyNameType) expr1;
+        } else if (expr2 instanceof PropertyNameType) {
+            propName = (PropertyNameType) expr2;
+        }
+        
+        if (expr1 instanceof LiteralType) {
+            lit = (LiteralType) expr1;
+        } else if (expr2 instanceof LiteralType) {
+            lit = (LiteralType) expr2;
+        }
+        return new PropertyIsNotEqualToType(lit, propName, null);
     }
 
     public PropertyIsNotEqualTo notEqual(final Expression expr1, final Expression expr2, final boolean matchCase) {
-        return new PropertyIsNotEqualToType((LiteralType) expr2, (PropertyNameType) expr1, matchCase);
+        LiteralType lit           = null;
+        PropertyNameType propName = null;
+        if (expr1 instanceof PropertyNameType) {
+            propName = (PropertyNameType) expr1;
+        } else if (expr2 instanceof PropertyNameType) {
+            propName = (PropertyNameType) expr2;
+        }
+        
+        if (expr1 instanceof LiteralType) {
+            lit = (LiteralType) expr1;
+        } else if (expr2 instanceof LiteralType) {
+            lit = (LiteralType) expr2;
+        }
+        return new PropertyIsNotEqualToType(lit, propName, matchCase);
     }
 
     public PropertyIsGreaterThan greater(final Expression expr1, final Expression expr2) {
-        return new PropertyIsGreaterThanType((LiteralType) expr2, (PropertyNameType) expr1, null);
+        LiteralType lit           = null;
+        PropertyNameType propName = null;
+        if (expr1 instanceof PropertyNameType) {
+            propName = (PropertyNameType) expr1;
+        } else if (expr2 instanceof PropertyNameType) {
+            propName = (PropertyNameType) expr2;
+        }
+        
+        if (expr1 instanceof LiteralType) {
+            lit = (LiteralType) expr1;
+        } else if (expr2 instanceof LiteralType) {
+            lit = (LiteralType) expr2;
+        }
+        return new PropertyIsGreaterThanType(lit, propName, null);
     }
 
     public PropertyIsGreaterThan greater(final Expression expr1, final Expression expr2, final boolean matchCase) {
-        return new PropertyIsGreaterThanType((LiteralType) expr2, (PropertyNameType) expr1, matchCase);
+        LiteralType lit           = null;
+        PropertyNameType propName = null;
+        if (expr1 instanceof PropertyNameType) {
+            propName = (PropertyNameType) expr1;
+        } else if (expr2 instanceof PropertyNameType) {
+            propName = (PropertyNameType) expr2;
+        }
+        
+        if (expr1 instanceof LiteralType) {
+            lit = (LiteralType) expr1;
+        } else if (expr2 instanceof LiteralType) {
+            lit = (LiteralType) expr2;
+        }
+        return new PropertyIsGreaterThanType(lit, propName, matchCase);
     }
 
     public PropertyIsGreaterThanOrEqualTo greaterOrEqual(final Expression expr1, final Expression expr2) {
-        return new PropertyIsGreaterThanOrEqualToType((LiteralType) expr2, (PropertyNameType) expr1, null);
+        LiteralType lit           = null;
+        PropertyNameType propName = null;
+        if (expr1 instanceof PropertyNameType) {
+            propName = (PropertyNameType) expr1;
+        } else if (expr2 instanceof PropertyNameType) {
+            propName = (PropertyNameType) expr2;
+        }
+        
+        if (expr1 instanceof LiteralType) {
+            lit = (LiteralType) expr1;
+        } else if (expr2 instanceof LiteralType) {
+            lit = (LiteralType) expr2;
+        }
+        return new PropertyIsGreaterThanOrEqualToType(lit, propName, null);
     }
 
     public PropertyIsGreaterThanOrEqualTo greaterOrEqual(final Expression expr1, final Expression expr2, final boolean matchCase) {
-        return new PropertyIsGreaterThanOrEqualToType((LiteralType) expr2, (PropertyNameType) expr1, matchCase);
+        LiteralType lit           = null;
+        PropertyNameType propName = null;
+        if (expr1 instanceof PropertyNameType) {
+            propName = (PropertyNameType) expr1;
+        } else if (expr2 instanceof PropertyNameType) {
+            propName = (PropertyNameType) expr2;
+        }
+        
+        if (expr1 instanceof LiteralType) {
+            lit = (LiteralType) expr1;
+        } else if (expr2 instanceof LiteralType) {
+            lit = (LiteralType) expr2;
+        }
+        return new PropertyIsGreaterThanOrEqualToType(lit, propName, matchCase);
     }
 
     public PropertyIsLessThan less(final Expression expr1, final Expression expr2, final boolean matchCase) {
-        return new PropertyIsLessThanType((LiteralType) expr2, (PropertyNameType) expr1, matchCase);
+        LiteralType lit           = null;
+        PropertyNameType propName = null;
+        if (expr1 instanceof PropertyNameType) {
+            propName = (PropertyNameType) expr1;
+        } else if (expr2 instanceof PropertyNameType) {
+            propName = (PropertyNameType) expr2;
+        }
+        
+        if (expr1 instanceof LiteralType) {
+            lit = (LiteralType) expr1;
+        } else if (expr2 instanceof LiteralType) {
+            lit = (LiteralType) expr2;
+        }
+        return new PropertyIsLessThanType(lit, propName, matchCase);
     }
 
     public PropertyIsLessThan less(final Expression expr1, final Expression expr2) {
-        return new PropertyIsLessThanType((LiteralType) expr2, (PropertyNameType) expr1, null);
+        LiteralType lit           = null;
+        PropertyNameType propName = null;
+        if (expr1 instanceof PropertyNameType) {
+            propName = (PropertyNameType) expr1;
+        } else if (expr2 instanceof PropertyNameType) {
+            propName = (PropertyNameType) expr2;
+        }
+        
+        if (expr1 instanceof LiteralType) {
+            lit = (LiteralType) expr1;
+        } else if (expr2 instanceof LiteralType) {
+            lit = (LiteralType) expr2;
+        }
+        return new PropertyIsLessThanType(lit, propName, null);
     }
 
     public PropertyIsLessThanOrEqualTo lessOrEqual(final Expression expr1, final Expression expr2, final boolean matchCase) {
-        return new PropertyIsLessThanOrEqualToType((LiteralType) expr2, (PropertyNameType) expr1, matchCase);
+        LiteralType lit           = null;
+        PropertyNameType propName = null;
+        if (expr1 instanceof PropertyNameType) {
+            propName = (PropertyNameType) expr1;
+        } else if (expr2 instanceof PropertyNameType) {
+            propName = (PropertyNameType) expr2;
+        }
+        
+        if (expr1 instanceof LiteralType) {
+            lit = (LiteralType) expr1;
+        } else if (expr2 instanceof LiteralType) {
+            lit = (LiteralType) expr2;
+        }
+        return new PropertyIsLessThanOrEqualToType(lit, propName, matchCase);
     }
 
     public PropertyIsLessThanOrEqualTo lessOrEqual(final Expression expr1, final Expression expr2) {
-        return new PropertyIsLessThanOrEqualToType((LiteralType) expr2, (PropertyNameType) expr1, null);
+        LiteralType lit           = null;
+        PropertyNameType propName = null;
+        if (expr1 instanceof PropertyNameType) {
+            propName = (PropertyNameType) expr1;
+        } else if (expr2 instanceof PropertyNameType) {
+            propName = (PropertyNameType) expr2;
+        }
+        
+        if (expr1 instanceof LiteralType) {
+            lit = (LiteralType) expr1;
+        } else if (expr2 instanceof LiteralType) {
+            lit = (LiteralType) expr2;
+        }
+        return new PropertyIsLessThanOrEqualToType(lit, propName, null);
     }
 
     public PropertyIsLike like(final Expression expr, final String pattern) {
@@ -283,7 +476,7 @@ public class FilterFactoryImpl implements FilterFactory2 {
 
     public BBOX bbox(final String propertyName, final double minx, final double miny, final double maxx, final double maxy, String srs) {
         if (srs == null || srs.equals("")) {
-            srs = "EPSG:4326";
+            srs = "CRS:84"; // default CRS used is normally EPSG 4326 but most of the implementation use this one by default
         }
         return new BBOXType(propertyName, minx, miny, maxx, maxy, srs);
     }
@@ -296,21 +489,21 @@ public class FilterFactoryImpl implements FilterFactory2 {
             throw new IllegalArgumentException("unexpected type instead of propertyNameType: " + geometry.getClass().getSimpleName());
         }
         if (srs == null || srs.equals("")) {
-            srs = "EPSG:4326";
+            srs = "CRS:84"; // default CRS used is normally EPSG 4326 but most of the implementation use this one by default
         }
         return new BBOXType(propertyName, minx, miny, maxx, maxy, srs);
     }
 
     public BBOX bbox(final Expression geometry, final BoundingBox bounds) {
         String propertyName = "";
-        String CRSName      = "";
+        final String CRSName;
         if (geometry instanceof PropertyNameType) {
             propertyName = ((PropertyNameType)geometry).getPropertyName();
         }
         if (bounds.getCoordinateReferenceSystem() != null) {
             CRSName = IdentifiedObjects.getIdentifier(bounds.getCoordinateReferenceSystem());
         } else {
-            CRSName = "EPSG:4326";
+            CRSName = "CRS:84";
         }
         return new BBOXType(propertyName, bounds.getMinX(), bounds.getMinY(), bounds.getMaxX(), bounds.getMaxY(), CRSName);
     }
@@ -687,8 +880,8 @@ public class FilterFactoryImpl implements FilterFactory2 {
 
             // an envelope
             if (coord.length == 5) {
-                final DirectPositionType lowerCorner = new DirectPositionType(coord[0].x, coord[1].y);
-                final DirectPositionType upperCorner = new DirectPositionType(coord[2].x, coord[0].y);
+                final DirectPositionType lowerCorner = new DirectPositionType(coord[0].y, coord[0].x);
+                final DirectPositionType upperCorner = new DirectPositionType(coord[2].y, coord[2].x);
                 result = new EnvelopeType(null, lowerCorner, upperCorner, "EPSG:4326");
             }
         } else if (geom instanceof Point){

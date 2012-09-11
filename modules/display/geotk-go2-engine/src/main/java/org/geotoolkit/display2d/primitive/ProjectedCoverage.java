@@ -17,14 +17,12 @@
 package org.geotoolkit.display2d.primitive;
 
 import java.io.IOException;
-
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.map.CoverageMapLayer;
-
-import org.opengis.util.FactoryException;
 import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 
 /**
  * Convenient representation of a coverage for rendering.

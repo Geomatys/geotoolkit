@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.display2d.container.stateless;
 
-import java.util.ArrayList;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -24,40 +23,40 @@ import java.awt.image.ColorModel;
 import java.awt.image.SampleModel;
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
-
-import org.geotoolkit.style.MutableRule;
-import org.geotoolkit.display2d.container.ContextContainer2D;
-import org.geotoolkit.style.MutableStyle;
-import org.geotoolkit.display.canvas.VisitFilter;
-import org.geotoolkit.display.exception.PortrayalException;
-import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.display.canvas.RenderingContext;
+import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
+import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display.primitive.SearchArea;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
-import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.map.CollectionMapLayer;
-import org.geotoolkit.map.GraphicBuilder;
+import static org.geotoolkit.display2d.GO2Utilities.*;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
+import org.geotoolkit.display2d.canvas.RenderingContext2D;
+import org.geotoolkit.display2d.container.ContextContainer2D;
 import org.geotoolkit.display2d.container.statefull.StatefullCachedRule;
 import org.geotoolkit.display2d.container.statefull.StatefullContextParams;
 import org.geotoolkit.display2d.primitive.DefaultProjectedObject;
+import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
-
-import org.opengis.feature.type.FeatureType;
+import org.geotoolkit.map.CollectionMapLayer;
+import org.geotoolkit.map.GraphicBuilder;
+import org.geotoolkit.style.MutableRule;
+import org.geotoolkit.style.MutableStyle;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.feature.type.ComplexType;
+import org.opengis.feature.type.FeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.identity.FeatureId;
@@ -65,8 +64,6 @@ import org.opengis.style.Rule;
 import org.opengis.style.Style;
 import org.opengis.style.Symbolizer;
 import org.opengis.style.TextSymbolizer;
-
-import static org.geotoolkit.display2d.GO2Utilities.*;
 
 
 /**
@@ -278,16 +275,27 @@ public class StatelessCollectionLayerJ2D<T extends CollectionMapLayer> extends S
         final StatefullContextParams params = getStatefullParameters(context);
         if(monitor.stopRequested()) return;
 
-        final Boolean SymbolOrder = (Boolean) canvas.getRenderingHint(GO2Hints.KEY_SYMBOL_RENDERING_ORDER);
-        if(SymbolOrder == null || SymbolOrder == false){
+        //check if we have group symbolizers, if it's the case we must render by symbol order.
+        boolean symbolOrder = false;
+        for(CachedRule rule : rules){
+            for(CachedSymbolizer symbolizer : rule.symbolizers()){
+                if(symbolizer.getRenderer().isGroupSymbolizer()){
+                    symbolOrder = true;
+                    break;
+                }
+            }
+        }
+        
+        symbolOrder = symbolOrder || Boolean.TRUE.equals(canvas.getRenderingHint(GO2Hints.KEY_SYMBOL_RENDERING_ORDER));
+        if(symbolOrder){
             try{
-                renderByObjectOrder(candidates, context, rules, params);
+                renderBySymbolOrder(candidates, context, rules, params);
             }catch(PortrayalException ex){
                 monitor.exceptionOccured(ex, Level.WARNING);
             }
         }else{
             try{
-                renderBySymbolOrder(candidates, context, rules, params);
+                renderByObjectOrder(candidates, context, rules, params);
             }catch(PortrayalException ex){
                 monitor.exceptionOccured(ex, Level.WARNING);
             }
@@ -398,18 +406,18 @@ public class StatelessCollectionLayerJ2D<T extends CollectionMapLayer> extends S
      * Render by symbol index order in a single pass, this results in creating a buffered image
      * for each symbolizer depth, the maximum number of buffer is the maximum number of symbolizer a rule contain.
      */
-    protected void renderBySymbolIndexInRule(final Collection<?> candidates,
+    private void renderBySymbolIndexInRule(final Collection<?> candidates,
             final RenderingContext2D context, final CachedRule[] rules, final StatefullContextParams params)
             throws PortrayalException {
         final RenderingIterator statefullIterator = getIterator(candidates, context, params);
-        renderBySymbolIndexInRule(statefullIterator, context, rules);
+        renderBySymbolIndexInRule(candidates,statefullIterator, context, rules);
     }
     
     /**
      * Render by symbol index order in a single pass, this results in creating a buffered image
      * for each symbolizer depth, the maximum number of buffer is the maximum number of symbolizer a rule contain.
      */
-    protected void renderBySymbolIndexInRule(final RenderingIterator statefullIterator,
+    private  void renderBySymbolIndexInRule(final Collection<?> candidates,final RenderingIterator statefullIterator,
             final RenderingContext2D context, final CachedRule[] rules)
             throws PortrayalException {
 
@@ -498,6 +506,20 @@ public class StatelessCollectionLayerJ2D<T extends CollectionMapLayer> extends S
                 }
                 
             }
+            
+            //paint group symbolizers
+            for(int i=0; i<elseRuleIndex; i++){
+                final CachedRule rule = rules[i];   
+                final CachedSymbolizer[] css = rule.symbolizers();
+                for(int k=0; k<css.length; k++){
+                    if(renderers[i][k].getService().isGroupSymbolizer()){
+                        final RenderingIterator ite = getIterator(candidates, context, params);
+                        renderers[i][k].portray(ite);
+                    }
+                    
+                }
+            }
+            
         }finally{
             try {
                 statefullIterator.close();

@@ -18,6 +18,7 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
+import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.Feature;
@@ -31,7 +32,8 @@ public class DataStoreWritingDemo {
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
 
     public static void main(String[] args) throws  DataStoreException {
-
+        Demos.init();
+        
         final GeometryFactory gf = new GeometryFactory();
 
 

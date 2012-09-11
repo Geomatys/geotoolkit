@@ -2,7 +2,6 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2004 - 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2008 - 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -17,16 +16,17 @@
  */
 package org.geotoolkit.display2d.container.statefull;
 
-import com.vividsolutions.jts.geom.Geometry;
-
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.primitive.DefaultProjectedObject;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.map.FeatureMapLayer;
-
 import org.opengis.feature.Feature;
+import org.opengis.feature.type.FeatureType;
+import org.opengis.feature.type.GeometryDescriptor;
+import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.identity.FeatureId;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Not thread safe.
@@ -51,20 +51,33 @@ public class StatefullProjectedFeature extends DefaultProjectedObject<Feature> i
     public ProjectedGeometry getGeometry(String name) {
         if(name == null) name = DEFAULT_GEOM;
         StatefullProjectedGeometry proj = geometries.get(name);
+        
+        CoordinateReferenceSystem dataCRS = null;
         if(proj == null){
-            Geometry geom = GO2Utilities.getGeometry(candidate, name);
-            if(geom != null){
-                final Class geomClass = GO2Utilities.getGeometryClass(candidate.getType(), name);
-                final StatefullProjectedGeometry projectedGeom = new StatefullProjectedGeometry(params, geomClass, geom);
-                geometries.put(name, projectedGeom);
-                return projectedGeom;
+            
+            final FeatureType featuretype = candidate.getType();
+            final PropertyDescriptor prop;
+            if (name != null && !name.trim().isEmpty()) {
+                prop = featuretype.getDescriptor(name);
+            }else if(featuretype != null){
+                prop = featuretype.getGeometryDescriptor();
+            }else{
+                prop = null;
             }
-        }else{
-            //check that the geometry is set
-            if(proj.getObjectiveGeometryJTS() == null){
-                proj.setObjectiveGeometry(GO2Utilities.getGeometry(candidate, name));
-            }
+
+            if(prop != null){
+                dataCRS = ((GeometryDescriptor)prop).getCoordinateReferenceSystem();
+            } 
+            
+            proj = new StatefullProjectedGeometry(params);
+            geometries.put(name, proj);
         }
+        
+        //check that the geometry is set
+        if(!proj.isSet()){
+            proj.setDataGeometry(GO2Utilities.getGeometry(candidate, name),dataCRS);
+        }
+        
         return proj;
     }
 

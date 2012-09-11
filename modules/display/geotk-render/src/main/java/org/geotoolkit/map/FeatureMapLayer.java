@@ -2,7 +2,6 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2003 - 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2008 - 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -19,7 +18,6 @@ package org.geotoolkit.map;
 
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.query.Query;
-
 import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
 
@@ -47,23 +45,14 @@ public interface FeatureMapLayer extends CollectionMapLayer{
     Query getQuery();
 
     /**
-     * Sets a definition query for the layer wich acts as a filter for the
-     * features that the layer will draw.
-     * 
+     * Sets a filter query for this layer.
+     *
      * <p>
-     * A consumer must ensure that this query is used in  combination with the
-     * bounding box filter generated on each map interaction to limit the
-     * number of features returned to those that complains both the definition
-     * query  and relies inside the area of interest.
-     * </p>
-     * <p>
-     * IMPORTANT: only include attribute names in the query if you want them to
-     * be ALWAYS returned. It is desirable to not include attributes at all
-     * but let the layer user (a renderer?) to decide wich attributes are actually
-     * needed to perform its requiered operation.
+     * Query filters should be used to reduce searched or displayed feature
+     * when rendering or analyzing this layer.
      * </p>
      *
-     * @param query
+     * @param query the full filter for this layer. can not be null.
      */
     void setQuery(Query query);
 

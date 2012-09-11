@@ -17,51 +17,49 @@
 
 package org.geotoolkit.display2d.service;
 
-import java.util.logging.Logger;
-import java.util.logging.Level;
-import org.geotoolkit.coverage.io.GridCoverageWriteParam;
-import org.geotoolkit.coverage.io.ImageCoverageWriter;
-import org.geotoolkit.image.io.XImageIO;
-import java.awt.geom.NoninvertibleTransformException;
-import org.geotoolkit.display.canvas.CanvasController2D;
-import org.opengis.referencing.operation.TransformException;
-import org.geotoolkit.map.MapContext;
-import org.geotoolkit.display.canvas.control.CanvasMonitor;
-import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
-import org.geotoolkit.display2d.container.DefaultContextContainer2D;
-import org.geotoolkit.display2d.container.ContextContainer2D;
-import org.geotoolkit.display2d.canvas.J2DCanvasBuffered;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.geom.NoninvertibleTransformException;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.util.List;
-
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageFactory;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.coverage.io.GridCoverageWriteParam;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
+import org.geotoolkit.coverage.io.ImageCoverageWriter;
 import org.geotoolkit.coverage.processing.Operations;
+import org.geotoolkit.display.canvas.CanvasController2D;
+import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
+import static org.geotoolkit.display2d.GO2Utilities.*;
+import org.geotoolkit.display2d.canvas.J2DCanvasBuffered;
+import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
+import org.geotoolkit.display2d.container.ContextContainer2D;
+import org.geotoolkit.display2d.container.DefaultContextContainer2D;
+import static org.geotoolkit.display2d.service.DefaultPortrayalService.*;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
+import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.geometry.Envelope;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.Symbolizer;
-
-import static org.geotoolkit.display2d.service.DefaultPortrayalService.*;
-import static org.geotoolkit.display2d.GO2Utilities.*;
 
 /**
  * Portrayal data, caches the Java2D canvas for further reuse.

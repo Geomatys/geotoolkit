@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.gui.swing.style;
 
-import org.geotoolkit.gui.swing.resource.MessageBundle;
 import java.awt.Component;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -27,7 +26,7 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
-import org.geotoolkit.gui.swing.style.StyleElementEditor;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.style.ExternalGraphic;
 
@@ -44,6 +43,7 @@ public class JExternalGraphicPane extends StyleElementEditor<ExternalGraphic> {
 
     /** Creates new form JDisplacementPanel */
     public JExternalGraphicPane() {
+        super(ExternalGraphic.class);
         initComponents();
         init();
     }

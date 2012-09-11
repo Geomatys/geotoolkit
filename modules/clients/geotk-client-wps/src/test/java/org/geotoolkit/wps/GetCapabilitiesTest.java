@@ -21,6 +21,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.wps.v100.GetCapabilities100;
 import org.geotoolkit.wps.xml.WPSMarshallerPool;
 import org.geotoolkit.wps.xml.v100.GetCapabilities;
@@ -69,12 +70,14 @@ public class GetCapabilitiesTest {
             
             final String expectedMarshalledRequest = 
                 "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
-                    + "<wps:GetCapabilities service=\"WPS\" xmlns:wps=\"http://www.opengis.net/wps/1.0.0\" xmlns:ins=\"http://www.inspire.org\" xmlns:ows=\"http://www.opengis.net/ows/1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ns6=\"http://www.opengis.net/ows\">\n"
+                    + "<wps:GetCapabilities service=\"WPS\" >\n"
                     + "    <wps:AcceptVersions>\n"
                     + "        <ows:Version>1.0.0</ows:Version>\n"
                     + "    </wps:AcceptVersions>\n"
                     + "</wps:GetCapabilities>\n";
-            assertEquals(expectedMarshalledRequest, stringWriter.toString());                   
+            
+            String result = StringUtilities.removeXmlns(stringWriter.toString());
+            assertEquals(expectedMarshalledRequest, result);                   
             
         } catch (JAXBException ex) {
             fail(ex.getLocalizedMessage());

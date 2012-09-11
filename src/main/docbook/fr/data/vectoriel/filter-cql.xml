@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book [
+  <!ENTITY % book.entities SYSTEM "../../../book.entities">
+  %book.entities;
+]>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xlink = "http://www.w3.org/1999/xlink">
+             
+    <title>filter-cql</title> 
+    <section>
+        <title>Spécifications</title>
+                 
+        <para>CQL est l'acronyme de Common Query Language. Il s'agit d'un language pour exprimer une requête dont la syntaxe est très similaire à la clause WHERE du SQL.
+
+            Les détails de ce langage sont précisés dans la section 6.2.2 de la norme OGC Catalog Service for Web (CSW) version 2.0.1.
+        </para>
+    </section>
+             
+    <section>
+        <title>Exemples</title>
+                 
+        <example>
+            <title>Code source complet : </title>
+            <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/filter/CQLDemo.java">
+                <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/filter/CQLDemo.java</acronym>
+            </link>
+        
+        </example>
+        <para>
+            La manipulation de cette syntaxe se fait avec la classe CQL. 
+        </para>
+        <para>
+            Pour convertir de CQL vers Filter :
+        </para>
+        <example>
+            <programlisting>
+                
+                    Filter f = CQL.toFilter("ATTR1 &lt; 10 AND ATTR2 &lt; 2 OR ATTR3 &gt; 10");
+                    Filter f = CQL.toFilter("NAME = 'New York' ");
+                    Filter f = CQL.toFilter("NAME LIKE 'New%' ");
+                    Filter f = CQL.toFilter("NAME IS NULL");
+                    Filter f = CQL.toFilter("DATE BEFORE 2006-11-30T01:30:00Z");
+                    Filter f = CQL.toFilter("NAME DOES-NOT-EXIST");
+                    Filter f = CQL.toFilter("QUANTITY BETWEEN 10 AND 20");
+                    Filter f = CQL.toFilter("CROSS(SHAPE, LINESTRING(1 2, 10 15))");
+                    Filter f = CQL.toFilter("BBOX(SHAPE, 10,20,30,40)");
+                    Expression e = CQL.toExpression("NAME");
+                    Expression e = CQL.toExpression("QUANTITY * 2");
+                    Expression e = CQL.toExpression("strConcat(NAME, 'suffix')");
+                    List filters = CQL.toFilterList("NAME IS NULL;BBOX(SHAPE, 10,20,30,40);INCLUDE");
+                
+            </programlisting>
+        </example>
+        <para>Pour convertir de Filter vers CQL :</para>
+        <example>
+            <programlisting>
+                            	
+                    String cqlfilter = CQL.toCQL(filter);
+                    String cqlexpression = CQL.toCQL(FF.literal("hello"));
+                
+            </programlisting>
+        </example>
+    </section>
+</section>

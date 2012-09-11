@@ -16,39 +16,57 @@
  */
 package org.geotoolkit.wmts.model;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
-
-import org.geotoolkit.client.map.Pyramid;
-import org.geotoolkit.client.map.PyramidSet;
+import java.util.*;
+import org.geotoolkit.client.Request;
+import org.geotoolkit.client.map.CachedPyramidSet;
+import org.geotoolkit.coverage.GridMosaic;
+import org.geotoolkit.coverage.Pyramid;
+import org.geotoolkit.coverage.PyramidSet;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.ArgumentChecks;
-import org.geotoolkit.wmts.xml.v100.Capabilities;
-import org.geotoolkit.wmts.xml.v100.ContentsType;
-import org.geotoolkit.wmts.xml.v100.LayerType;
-import org.geotoolkit.wmts.xml.v100.TileMatrixSetLink;
+import org.geotoolkit.wmts.GetTileRequest;
+import org.geotoolkit.wmts.WebMapTileServer;
+import org.geotoolkit.wmts.xml.v100.*;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class WMTSPyramidSet implements PyramidSet{
+public class WMTSPyramidSet extends CachedPyramidSet{
 
-    private final String id = UUID.randomUUID().toString();
-    private final Capabilities capabilities;
-    private final String layerName;
+    /**
+     * Additional hint : to specify the style.
+     */
+    public static final String HINT_STYLE = "style";
     
-    public WMTSPyramidSet(final Capabilities capabilities, final String layerName){
-        ArgumentChecks.ensureNonNull("capabilities", capabilities);
+    private final String layerName;
+    private final String id = UUID.randomUUID().toString();
+    private LayerType wmtsLayer;
+    
+    public WMTSPyramidSet(final WebMapTileServer server, final String layerName, boolean cacheImage){
+        super(server,true,cacheImage);
         ArgumentChecks.ensureNonNull("layer name", layerName);
-        this.capabilities = capabilities;
         this.layerName = layerName;
+                
+        //find the wmts layer
+        final ContentsType contents = server.getCapabilities().getContents();
+        wmtsLayer = null;
+        for(LayerType candidate : contents.getLayers()){            
+            if(layerName.equalsIgnoreCase(candidate.getIdentifier().getValue())){
+                wmtsLayer = candidate;
+                break;
+            }            
+        }
     }
 
+    @Override
+    protected WebMapTileServer getServer() {
+        return (WebMapTileServer)super.getServer();
+    }
+    
     public Capabilities getCapabilities() {
-        return capabilities;
+        return getServer().getCapabilities();
     }
 
     public String getLayerName() {
@@ -64,7 +82,7 @@ public class WMTSPyramidSet implements PyramidSet{
     public Collection<Pyramid> getPyramids() {        
         final List<Pyramid> pyramids = new ArrayList<Pyramid>();
         
-        final ContentsType contents = capabilities.getContents();
+        final ContentsType contents = getServer().getCapabilities().getContents();
         
         //first find the layer
         LayerType layer = null;
@@ -86,5 +104,47 @@ public class WMTSPyramidSet implements PyramidSet{
         
         return pyramids;
     }
-    
+
+    @Override
+    public Request getTileRequest(GridMosaic mosaic, int col, int row, Map hints) throws DataStoreException {
+        final WMTSMosaic wmtsMosaic = (WMTSMosaic) mosaic;
+        
+        if(hints == null) hints = new HashMap();
+        
+        final GetTileRequest request = getServer().createGetTile();
+        
+        //set the format
+        Object format = hints.get(PyramidSet.HINT_FORMAT);
+        if(format == null){
+            //set a default value
+            format = "image/png";
+        }        
+        request.setFormat(format.toString());
+        
+        request.setLayer(layerName);
+        request.setTileCol(col);
+        request.setTileRow(row);
+        request.setTileMatrix(wmtsMosaic.getMatrix().getIdentifier().getValue());
+        request.setTileMatrixSet(wmtsMosaic.getPyramid().getMatrixset().getIdentifier().getValue());
+        
+        //set the style
+        Object style = hints.get(HINT_STYLE);
+        if(style == null || !(style instanceof String)){
+            //get the default style
+            for(Style st : wmtsLayer.getStyle()){
+                if(style == null){
+                    style = st.getIdentifier().getValue();
+                }
+                if(st.isIsDefault()){
+                    break;
+                }
+            }
+        }
+        
+        if(style != null){
+            request.setStyle(style.toString());
+        }
+        return request;
+    }
+        
 }

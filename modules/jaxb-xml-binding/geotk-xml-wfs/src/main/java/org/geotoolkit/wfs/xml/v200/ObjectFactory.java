@@ -22,6 +22,7 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElementDecl;
 import javax.xml.bind.annotation.XmlRegistry;
 import javax.xml.namespace.QName;
+import org.geotoolkit.wfs.xml.StoredQueries;
 
 
 /**
@@ -110,12 +111,16 @@ public class ObjectFactory {
         return new MetadataURLType();
     }
 
+    public StoredQueries createStoredQueries() {
+        return new StoredQueries();
+    }
+    
     /**
      * Create an instance of {@link DropStoredQuery }
      * 
      */
-    public DropStoredQuery createDropStoredQuery() {
-        return new DropStoredQuery();
+    public DropStoredQueryType createDropStoredQuery() {
+        return new DropStoredQueryType();
     }
 
     /**
@@ -290,8 +295,8 @@ public class ObjectFactory {
      * Create an instance of {@link PropertyType.ValueReference }
      * 
      */
-    public PropertyType.ValueReference createPropertyTypeValueReference() {
-        return new PropertyType.ValueReference();
+    public ValueReference createValueReference() {
+        return new ValueReference();
     }
 
     /**

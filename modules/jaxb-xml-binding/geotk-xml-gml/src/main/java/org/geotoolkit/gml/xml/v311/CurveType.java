@@ -22,13 +22,17 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.Curve;
 import org.geotoolkit.util.ComparisonMode;
 
 
 /**
  * Curve is a 1-dimensional primitive. Curves are continuous, connected, and have a measurable length in terms of the coordinate system. 
- * 				A curve is composed of one or more curve segments. Each curve segment within a curve may be defined using a different interpolation method. The curve segments are connected to one another, with the end point of each segment except the last being the start point of the next segment in the segment list.
- * 				The orientation of the curve is positive.
+ * A curve is composed of one or more curve segments. 
+ * Each curve segment within a curve may be defined using a different interpolation method. 
+ * The curve segments are connected to one another, 
+ * with the end point of each segment except the last being the start point of the next segment in the segment list.
+ * The orientation of the curve is positive.
  * 
  * <p>Java class for CurveType complex type.
  * 
@@ -53,7 +57,7 @@ import org.geotoolkit.util.ComparisonMode;
 @XmlType(name = "CurveType", propOrder = {
     "segments"
 })
-public class CurveType extends AbstractCurveType {
+public class CurveType extends AbstractCurveType implements Curve {
 
     @XmlElement(required = true)
     private CurveSegmentArrayPropertyType segments;

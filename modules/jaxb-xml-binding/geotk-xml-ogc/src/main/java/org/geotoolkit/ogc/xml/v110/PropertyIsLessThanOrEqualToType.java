@@ -23,7 +23,7 @@ import org.opengis.filter.PropertyIsLessThanOrEqualTo;
 
 /**
  *
- * @author guilhem
+ * @author Guilhem Legal (Geomatys)
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)

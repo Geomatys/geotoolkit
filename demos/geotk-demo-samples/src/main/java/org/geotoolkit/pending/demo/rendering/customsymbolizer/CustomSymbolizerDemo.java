@@ -20,6 +20,7 @@ import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
+import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -33,7 +34,8 @@ public class CustomSymbolizerDemo {
 
     public static void main(String[] args) throws DataStoreException, NoninvertibleTransformException,
                                                   TransformException, IOException {
-
+        Demos.init();
+        
         final MapContext context = createContext();
 
         final JMap2D jmap = new JMap2D();

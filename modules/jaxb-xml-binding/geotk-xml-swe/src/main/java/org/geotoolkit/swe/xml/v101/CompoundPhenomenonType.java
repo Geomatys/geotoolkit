@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.swe.xml.v101;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -112,7 +113,7 @@ public abstract class CompoundPhenomenonType extends PhenomenonType {
         if (object instanceof CompoundPhenomenonType && super.equals(object, mode)) {
             final CompoundPhenomenonType that = (CompoundPhenomenonType) object;
             
-            return Utilities.equals(this.dimension ,that.dimension);
+            return Objects.equals(this.dimension ,that.dimension);
        } 
        return false;
         

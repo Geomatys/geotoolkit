@@ -21,27 +21,25 @@ import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.exception.PortrayalException;
-import org.geotoolkit.display2d.primitive.GraphicJ2D;
-import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.primitive.SearchArea;
-import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.style.CachedRule;
-import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
+import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.container.stateless.StatelessMapLayerJ2D;
 import org.geotoolkit.display2d.primitive.DefaultSearchAreaJ2D;
+import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
+import org.geotoolkit.display2d.style.CachedRule;
+import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
-
 import org.opengis.display.primitive.Graphic;
 import org.opengis.feature.type.Name;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -54,14 +52,21 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public class StatefullCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapLayer>{
 
     private final StatefullProjectedCoverage projectedCoverage;
-
+    private final boolean ignoreBuilders;
+    
     //compare values to update caches if necessary
     private final StatefullContextParams params;
     private CoordinateReferenceSystem lastObjectiveCRS = null;
 
     public StatefullCoverageLayerJ2D(final J2DCanvas canvas, final CoverageMapLayer layer){
-        super(canvas, layer, true);
+        this(canvas,layer,false);
+    }
+    
+    public StatefullCoverageLayerJ2D(final J2DCanvas canvas, final CoverageMapLayer layer, final boolean ignoreBuilders){
+        super(canvas, layer);
 
+        this.ignoreBuilders = ignoreBuilders;
+        
         try {
             final GeneralGridGeometry ggg = layer.getCoverageReader().getGridGeometry(0);
             if(ggg == null){
@@ -72,7 +77,6 @@ public class StatefullCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapL
         } catch (CoverageStoreException ex) {
             Logger.getLogger(StatefullCoverageLayerJ2D.class.getName()).log(Level.WARNING, null, ex);
         }
-
 
         params = new StatefullContextParams(canvas,null);
         this.projectedCoverage = new StatefullProjectedCoverage(params, layer);
@@ -135,14 +139,16 @@ public class StatefullCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapL
         updateCache(context);
 
         //search for a special graphic renderer
-        final GraphicBuilder<GraphicJ2D> builder = (GraphicBuilder<GraphicJ2D>) item.getGraphicBuilder(GraphicJ2D.class);
-        if(builder != null){
-            //this layer has a special graphic rendering, use it instead of normal rendering
-            final Collection<GraphicJ2D> graphics = builder.createGraphics(item, canvas);
-            for(GraphicJ2D gra : graphics){
-                gra.paint(context);
+        if(!ignoreBuilders){
+            final GraphicBuilder<GraphicJ2D> builder = (GraphicBuilder<GraphicJ2D>) item.getGraphicBuilder(GraphicJ2D.class);
+            if(builder != null){
+                //this layer has a special graphic rendering, use it instead of normal rendering
+                final Collection<GraphicJ2D> graphics = builder.createGraphics(item, canvas);
+                for(GraphicJ2D gra : graphics){
+                    gra.paint(context);
+                }
+                return;
             }
-            return;
         }
         
         if(!intersects(context.getCanvasObjectiveBounds2D())){

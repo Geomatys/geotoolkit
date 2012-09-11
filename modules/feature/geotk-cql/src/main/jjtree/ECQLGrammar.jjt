@@ -14,19 +14,20 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
- 
+
 options {
    STATIC=false;
    NODE_SCOPE_HOOK=true;
    NODE_DEFAULT_VOID=true;
    MULTI=false;
-   BUILD_NODE_FILES=false; // Generates sample implementations for SimpleNode and any other nodes used in the grammar   	
+   BUILD_NODE_FILES=false; // Generates sample implementations for SimpleNode and any other nodes used in the grammar
+   JAVA_UNICODE_ESCAPE = true;
 
    NODE_PACKAGE="org.geotoolkit.filter.text.generated.parsers";
- 
+
    SANITY_CHECK=true;
    VISITOR=false;
-   
+
    FORCE_LA_CHECK=false; // force lookahead ambiguity checking in such instances. This option don't take into account the locak lookagead
 
    	// debug
@@ -37,7 +38,7 @@ options {
 PARSER_BEGIN(ECQLParser)
 
 package org.geotoolkit.filter.text.generated.parsers;
-        
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -45,13 +46,13 @@ import java.util.Set;
 
 /**
  * ECQLParser is the result of a javacc jjtree grammar.
- * 
+ *
  * @author  Mauricio Pazos - Axios Engineering
  * @since 2.6
  */
 public class ECQLParser {
   public void jjtreeOpenNodeScope(Node n) throws ParseException {
- 
+
   }
 
   public void jjtreeCloseNodeScope(Node n) throws ParseException {
@@ -73,23 +74,23 @@ public class ECQLParser {
 		GEOOP.add("BBOX");
   }
   protected boolean isGeoOp() {
-  
+
         return "(".equals(getToken(2).image)
             && GEOOP.contains(getToken(1).image.toUpperCase());
   }
-  
+
   protected static final Set RELGEOOP = new HashSet();
   static {
   	RELGEOOP.add("DWITHIN");
-  	RELGEOOP.add("BEYOND"); 
-  	
+  	RELGEOOP.add("BEYOND");
+
   }
   protected boolean isRelGeoOp() {
-  
+
         return "(".equals(getToken(2).image)
             && RELGEOOP.contains(getToken(1).image.toUpperCase());
   }
-  
+
 }
 
 PARSER_END(ECQLParser)
@@ -135,7 +136,7 @@ TOKEN [IGNORE_CASE]:  /* keywords */
    < ID: "id" > |
    < IN: "in" > |
    < IS: "is" > |
-   < NULL: "null" > 
+   < NULL: "null" >
 
 }
 
@@ -144,7 +145,7 @@ TOKEN [IGNORE_CASE]: /* include all and exclude all filters */
   < INCLUDE: "include"> |
   < EXCLUDE: "exclude">
 }
-  
+
 TOKEN [IGNORE_CASE]: /* geometry markers */
 {
   < POINT: "point"> |
@@ -160,10 +161,10 @@ TOKEN [IGNORE_CASE]: /* geometry markers */
 
 TOKEN [IGNORE_CASE]: /* temporal expression*/
 {
-	<BEFORE: "before"> 	| 
+	<BEFORE: "before"> 	|
 	<DURING: "during"> 	|
 	<AFTER:  "after">  	|
-	<UTC: "T">			
+	<UTC: "T">
 }
 TOKEN [IGNORE_CASE]: /* existence predicate*/
 {
@@ -171,7 +172,7 @@ TOKEN [IGNORE_CASE]: /* existence predicate*/
 	<DOES_NOT_EXIST: "does-not-exist">
 }
 
-TOKEN [IGNORE_CASE]:  
+TOKEN [IGNORE_CASE]:
 {
   < EQUALS: "equals"> |
   < DISJOINT: "disjoint"> |
@@ -182,21 +183,21 @@ TOKEN [IGNORE_CASE]:
   < CONTAINS: "contains"> |
   < OVERLAPS: "overlaps"> |
   < RELATE: "relate"> |
-  < BBOX: "bbox"> 
+  < BBOX: "bbox">
 }
 
 TOKEN [IGNORE_CASE]: /* relgeoop name */
 {
   < DWITHIN: "dwithin"> |
-  < BEYOND: "beyond"> 
+  < BEYOND: "beyond">
 }
 
 TOKEN [IGNORE_CASE]:
 {
-	<FEET: "feet" > | 
-	<METERS: "meters"> | 
-	<STATUTE_MILES: "statute miles"> | 
-	<NAUTICAL_MILES: "nautical miles"> | 
+	<FEET: "feet" > |
+	<METERS: "meters"> |
+	<STATUTE_MILES: "statute miles"> |
+	<NAUTICAL_MILES: "nautical miles"> |
 	<KILOMETERS: "kilometers">
 }
 
@@ -216,13 +217,13 @@ TOKEN:
   < COLON: ":">	|
   < MULT: "*"> |
   < PLUS: "+"> |
-  < MINUS: "-" > 
+  < MINUS: "-" >
 }
 
 
 // Note, because float and int can technically have the same grammar,
 // put int first to make token manager have preference for it...
-// The same case occurs between identifier and duration tokens, 
+// The same case occurs between identifier and duration tokens,
 // then DURATION has preference over IDENTIFIER
 TOKEN [IGNORE_CASE]: /* Literals */
 {
@@ -235,16 +236,16 @@ TOKEN [IGNORE_CASE]: /* Literals */
 
 	< #DUR_DAY:	  (<DIGIT>)+ "D" > |
 	< #DUR_MONTH: (<DIGIT>)+ "M" (<DUR_DAY>)? > |
-	< #DUR_YEAR:  (<DIGIT>)+ "Y" (<DUR_MONTH>)? > |	
-	< #DUR_DATE:  (<DUR_DAY> | <DUR_MONTH> | <DUR_YEAR>) ("T" <DUR_TIME>)?> | 
+	< #DUR_YEAR:  (<DIGIT>)+ "Y" (<DUR_MONTH>)? > |
+	< #DUR_DATE:  (<DUR_DAY> | <DUR_MONTH> | <DUR_YEAR>) ("T" <DUR_TIME>)?> |
 
 	< #DUR_HOUR:  (<DIGIT>)+ "H" (<DUR_MINUTE>)?> |
 	< #DUR_MINUTE:(<DIGIT>)+ "M" (<DUR_SECOND>)? > |
-	< #DUR_SECOND:(<DIGIT>)+ "S" > |	
-	< #DUR_TIME:  (<DUR_HOUR> | <DUR_MINUTE> | <DUR_SECOND>) > | 
-	
+	< #DUR_SECOND:(<DIGIT>)+ "S" > |
+	< #DUR_TIME:  (<DUR_HOUR> | <DUR_MINUTE> | <DUR_SECOND>) > |
+
 	< DURATION:  ("P" <DUR_DATE> |  "T" <DUR_TIME>) > |
-	
+
 	< #FULL_DATE: <DIGIT><DIGIT><DIGIT><DIGIT> "-" <DIGIT><DIGIT> "-" <DIGIT><DIGIT> > |
 	< #UTC_TIME: <DIGIT><DIGIT> ":" <DIGIT><DIGIT> ":" <DIGIT><DIGIT> ("." (<DIGIT>)+)? "Z" > |
 	< DATE_TIME : <FULL_DATE>"T"<UTC_TIME> > |
@@ -253,7 +254,7 @@ TOKEN [IGNORE_CASE]: /* Literals */
 
   	< LETTER: [ "a"-"z", "A"-"Z" , "_"] > |
   	< DIGIT: [ "0"-"9"] > |
-  	< #EXPONENT: ["e","E"] (["+","-"])? (<DIGIT>)+ > 
+  	< #EXPONENT: ["e","E"] (["+","-"])? (<DIGIT>)+ >
 }
 
 
@@ -299,10 +300,10 @@ Node FilterListCompilationUnit() :
 
 
 /*
- * <SequenceOfSearchConditions> ::= 
+ * <SequenceOfSearchConditions> ::=
  * 			<search condition>
  * 		|	<SequenceOfSearchConditions> ; <search condition>
- */ 
+ */
 void SequenceOfSearchConditions() #void:
 {}
 {
@@ -316,7 +317,7 @@ void SearchCondition() #void:
 }
 
 /*
- * <boolean value expression> ::= 
+ * <boolean value expression> ::=
  *			<boolean term>
  * 		| 	<boolean value expression> OR <boolean term>
  */
@@ -327,7 +328,7 @@ void BooleanValueExpression() #void:
 }
 
 /*
- * <boolean term> ::= 
+ * <boolean term> ::=
  *            <boolean factor>
  *          | <boolean term> AND <boolean factor>
  */
@@ -349,11 +350,11 @@ void BooleanFactor() #void:
 void BooleanPrimary() #void:
 {}
 {
-	   LOOKAHEAD(Predicate()) Predicate() 
+	   LOOKAHEAD(Predicate()) Predicate()
 	|  LOOKAHEAD(3)IncludeExcludePredicate()
-	|  LOOKAHEAD(3)<LP>SearchCondition()<RP> 
-	|  LOOKAHEAD(3)<LSP>SearchCondition()<RSP> 
-	|  RoutineInvocation() 
+	|  LOOKAHEAD(3)<LP>SearchCondition()<RP>
+	|  LOOKAHEAD(3)<LSP>SearchCondition()<RSP>
+	|  RoutineInvocation()
 }
 
 /*
@@ -362,7 +363,7 @@ void BooleanPrimary() #void:
  * 	| <null predicate>
  * 	| <temporal predicate>
  * 	| <classification predicate> (*not supported*)
- * 	| <existence predicate> 
+ * 	| <existence predicate>
  * 	| <between predicate> (*extension*)
  *  | <includeexclude predicate> (*extesion*)
  *  | <id predicate>
@@ -370,25 +371,25 @@ void BooleanPrimary() #void:
 void Predicate() #void:
 {}
 {
-		LOOKAHEAD(3) Expression()  
+		LOOKAHEAD(3) Expression()
 		(
 				LOOKAHEAD(2) TextPredicate()
-			| 	LOOKAHEAD(2) ExistencePredicate() 
-			|  	LOOKAHEAD(2) NullPredicate() 
-			|   LOOKAHEAD(2) BetweenPredicate()		
-			| 	LOOKAHEAD(2) TemporalPredicate() 
-			| 	ComparisonPredicate() 
+			| 	LOOKAHEAD(2) ExistencePredicate()
+			|  	LOOKAHEAD(2) NullPredicate()
+			|   LOOKAHEAD(2) BetweenPredicate()
+			| 	LOOKAHEAD(2) TemporalPredicate()
+			| 	ComparisonPredicate()
 		)
 	|	LOOKAHEAD(3) IdPredicate()
-	|	InPredicate() 
-		 
+	|	InPredicate()
+
 }
 
 /* ---------------------------------------- *
  *   	<id predicate>
  * ---------------------------------------- *
 /*
- * <id predicate> ::= "ID" "IN" <id list> 
+ * <id predicate> ::= "ID" "IN" <id list>
  * <id list> ::= <id value>, {"," id value}
  */
 void IdPredicate() #void:
@@ -396,19 +397,19 @@ void IdPredicate() #void:
 {
   	 	 LOOKAHEAD(3) <ID> <NOT> <IN> IdList() 	#Not_Id_Predicate_Node
   	|	  			  <ID> <IN> IdList() 		#Id_Predicate_Node
-  	
+
 }
 void IdList() #void:
 {}
 {
-	<LP> IdValue()( <COMMA>  IdValue() )* <RP> 
-	
-} 
+	<LP> IdValue()( <COMMA>  IdValue() )* <RP>
+
+}
 
 void IdValue() #FEATURE_ID_NODE:
 {}
 {
-	<STRING_LITERAL>	
+	<STRING_LITERAL>
 }
 
 /* ---------------------------------------- *
@@ -417,21 +418,21 @@ void IdValue() #FEATURE_ID_NODE:
 /*
 /* <in predicate>    	::=   <attribute-name> [  "NOT"  ]  "IN"  <in predicate value>
  * <in predicate value>    ::=   "(" <in value list> ")"
- * <in value list>         ::=   <expression> {"," <expression>} 
+ * <in value list>         ::=   <expression> {"," <expression>}
  */
 void InPredicate() #void:
 {}
 {
   	 	  LOOKAHEAD(4) 	Attribute() <NOT> <IN> InPredicateList() 	#Not_In_Predicate_Node
   	|	   				Attribute() <IN> InPredicateList() 		#In_Predicate_Node
-  	
+
 }
 
 void InPredicateList() #void:
 {}
 {
-	<LP> ExpressionInList()( <COMMA>  ExpressionInList() )* <RP>	
-} 
+	<LP> ExpressionInList()( <COMMA>  ExpressionInList() )* <RP>
+}
 
 void ExpressionInList() #Expression_In_List_Node:
 {}
@@ -444,7 +445,7 @@ void ExpressionInList() #Expression_In_List_Node:
  *   	<routine invocation>
  * ---------------------------------------- *
 /*
- * <routine invocation> ::= 
+ * <routine invocation> ::=
  *	 <geoop name><georoutine argument list>
  * | <relgeoop name><relgeoop argument list>
  * | <routine name><argument list>
@@ -468,15 +469,15 @@ void RoutineInvocationGeoOp() #void:
   |	<WITHIN> 	GeoRoutineArgumentList() #RoutineInvocation_GeoOp_Within_Node
   |	<CONTAINS> 	GeoRoutineArgumentList() #RoutineInvocation_GeoOp_Contain_Node
   |	<OVERLAPS> 	GeoRoutineArgumentList() #RoutineInvocation_GeoOp_Overlap_Node
-  |	<RELATE> 	GeoRoutineArgumentList() RelateTail() 
-  | <BBOX> 		BBoxArgumentList()		 
+  |	<RELATE> 	GeoRoutineArgumentList() RelateTail()
+  | <BBOX> 		BBoxArgumentList()
 }
 
 void RelateTail() #void:
 {}
 {
 	    <EOF> #Relate_Node
-// FIXME	  | SpatialRelateLike()  
+// FIXME	  | SpatialRelateLike()
 }
 
 /*
@@ -514,25 +515,25 @@ void GeoRoutineArgumentList() #void:
 }
 
 /*
- * <bbox argument list>::= 
- * 	  "(" <expression> "," <bounding box> ")" 
- * 	| "(" <expression> "," 
+ * <bbox argument list>::=
+ * 	  "(" <expression> "," <bounding box> ")"
+ * 	| "(" <expression> ","
  * 		<min X> ","
  * 		<min Y> ","
  * 		<max X> ","
- * 		<max Y> 
+ * 		<max Y>
  * 		[, srs] ")"
- * 
- * <min X> ::= <signed numerical literal> 
- * <min Y> ::= <signed numerical literal> 
- * <max X> ::= <signed numerical literal> 
- * <max Y> ::= <signed numerical literal> 
+ *
+ * <min X> ::= <signed numerical literal>
+ * <min Y> ::= <signed numerical literal>
+ * <max X> ::= <signed numerical literal>
+ * <max Y> ::= <signed numerical literal>
  * <srs> ::= <character string literal>
 */
 void BBoxArgumentList() #void:
 {}
 {
-		<LP> Expression() <COMMA> BBoxArgListTail() 
+		<LP> Expression() <COMMA> BBoxArgListTail()
 }
 
 void BBoxArgListTail() #void:
@@ -540,8 +541,8 @@ void BBoxArgListTail() #void:
 {
 		BoundingBox()
 	| 	(Function() | GeometryLiteral()) <RP>
-	
-} 
+
+}
 
 void BoundingBox() #void:
 {}
@@ -549,7 +550,7 @@ void BoundingBox() #void:
 	 	NumericLiteral() <COMMA>
  		NumericLiteral() <COMMA>
  		NumericLiteral() <COMMA>
- 		NumericLiteral() 
+ 		NumericLiteral()
  	( 		<RP> 						#RoutineInvocation_GeoOp_BBOX_Node
   		| 	<COMMA> StringLiteral()<RP> #RoutineInvocation_GeoOp_BBOX_SRS_Node)
 }
@@ -565,14 +566,14 @@ void RoutineInvocationRelGeoOp() #void:
 }
 
 /*
- * <relgeoop argument list> ::= 
+ * <relgeoop argument list> ::=
  *		<left paren><attribute name><comma><geometry literal><comma><tolerance><right paren>
  */
 void RelGeoRoutineArgumentList() #void:
 {}
 {
 	<LP> Expression() <COMMA> Expression() <COMMA> Tolerance() <RP>
-	
+
 //	<LP> Attribute() <COMMA> GeometryLiteral() <COMMA> Tolerance() <RP>
 }
 /*
@@ -588,9 +589,9 @@ void Tolerance() :
  * <distance units> ::=
  *	 'feet' | 'meters' | 'statute miles' |
  *   'nautical miles' | 'kilometers'
- * 
+ *
  * TODO this set of units is just an example. The real list of distance unit must be developed
- */ 
+ */
 void DistanceUnits() #DistanceUnits_Node:
 {}
 {
@@ -599,7 +600,7 @@ void DistanceUnits() #DistanceUnits_Node:
 
 
 /*
- * <geometry literal> ::= 
+ * <geometry literal> ::=
  *	  <Point Tagged Text>
  * 	| <Point3D Tagged Text>
  * 	| <LineString Tagged Text>
@@ -624,19 +625,19 @@ void GeometryLiteral() #GeometryLiteral:
   EnvelopeTaggedText()
 }
 /*
- *  <routine invocation > ::= 
- *  |   <routine name > <argument list > 
- *                                           
- * <argument list&gt ::=    
+ *  <routine invocation > ::=
+ *  |   <routine name > <argument list >
+ *
+ * <argument list&gt ::=
  *      <left paren> [<positional arguments>] <right paren>
  * <positional arguments> ::=
  *      <argument> [ { <comma&gt <argument> }... ]
- *           
- * <argument>  ::= 
- *      <literal>  
- *  |   <attribute name>                                            
- *  |   <function>           (*Extension*)                                            
- *  |   <binary expression>  (*Extension*)                            
+ *
+ * <argument>  ::=
+ *      <literal>
+ *  |   <attribute name>
+ *  |   <function>           (*Extension*)
+ *  |   <binary expression>  (*Extension*)
  */
 void RoutineInvocationGeneric() #void:
 {}
@@ -653,7 +654,7 @@ void RoutineInvocationGeneric() #void:
  *   	<includeexclude predicate>
  * ---------------------------------------- *
 /*
- * <includeexclude predicate> ::= 
+ * <includeexclude predicate> ::=
  *		  <INCLUDE> | <EXCLUDE>
  */
 void IncludeExcludePredicate() #void:
@@ -667,7 +668,7 @@ void IncludeExcludePredicate() #void:
  *   	<comparison predicate>
  * ---------------------------------------- *
 /*
- * <comparison predicate> ::= 
+ * <comparison predicate> ::=
  *		  <attribute name> <comp op> <literal>
  */
 void ComparisonPredicate() :
@@ -682,7 +683,7 @@ void ComparisonPredicate() :
 }
 
 /*
- * <null predicate> ::= <attribute name> IS [ NOT ] NULL 
+ * <null predicate> ::= <attribute name> IS [ NOT ] NULL
  */
 void NullPredicate() :
 {}
@@ -695,7 +696,7 @@ void NullPredicate() :
 /* ---------------------------------------- *
  *   	<temporal predicate>
  * ---------------------------------------- *
- * <temporal predicate> ::= 
+ * <temporal predicate> ::=
  *    <attribute_name> BEFORE <date-time expression>
  *	| <attribute_name> BEFORE OR DURING <period>
  *	| <attribute_name> DURING <period>
@@ -705,17 +706,17 @@ void NullPredicate() :
 void TemporalPredicate() #void:
 {}
 {
-		<BEFORE> TemporalPredicateBefore() 	
-	|   <AFTER>	 TemporalPredicateAfter()	
-	|	<DURING> TemporalPredicateDuring()	
-	
+		<BEFORE> TemporalPredicateBefore()
+	|   <AFTER>	 TemporalPredicateAfter()
+	|	<DURING> TemporalPredicateDuring()
+
 }
 
 void TemporalPredicateBefore()#void:
 {}
 {
 		DateTimeExpression() 	#TPBefore_DateTime_Node
-	|	<OR> <DURING> Period()	#TPBefore_Or_During_Period_Node 
+	|	<OR> <DURING> Period()	#TPBefore_Or_During_Period_Node
 }
 
 void TemporalPredicateAfter() #TPAfter_DateTime_Node:
@@ -737,12 +738,12 @@ void TemporalPredicateDuring()#void:
 void DateTimeExpression()#void:
 {}
 {
-		LOOKAHEAD(2) Period() 	
-	| 	DateTime()						
+		LOOKAHEAD(2) Period()
+	| 	DateTime()
 }
 
 /*
- *<period> ::= 
+ *<period> ::=
  *	  <date-time> "/" <date-time>
  * 	| <date-time> "/" <duration>
  * 	| <duration> "/" <date-time>
@@ -751,7 +752,7 @@ void Period() #void:
 {}
 {
 		LOOKAHEAD(2)
-		DateTime() <SLASH> PeriodTail() 	
+		DateTime() <SLASH> PeriodTail()
 	|	Duration() <SLASH> DateTime()	#Period_With_Duration_Date_Node
 }
 
@@ -759,13 +760,13 @@ void PeriodTail()#void:
 {}
 {
 		Duration()	#Period_With_Date_Duration_Node
-	|	DateTime()	#Period_Between_Dates_Node	
+	|	DateTime()	#Period_Between_Dates_Node
 }
 
-void DateTime()#DateTime_Node: 
+void DateTime()#DateTime_Node:
 {}
 {
-	<DATE_TIME> 
+	<DATE_TIME>
 }
 
 /*
@@ -813,12 +814,12 @@ void TextPredicate() #void:
 void CharacterPattern() #void:
 {}
 {
-  	StringLiteral() 
+  	StringLiteral()
 }
 
 /*
  * Cql Extension
- * 
+ *
  *	<beween predicate>::= ["NOT"] "BETWEEN" expression "AND" expression
  */
 void BetweenPredicate() #void:
@@ -830,7 +831,7 @@ void BetweenPredicate() #void:
 
 /*
  * cql extension
- *	<expression> ::= 
+ *	<expression> ::=
  */
 void Expression() #void:
 {}
@@ -849,13 +850,13 @@ void BinaryExpression() #void:
     <MINUS> MultiplicativeExpression() #SubtractNode
   )*
 }
- 
+
 
 
 void MultiplicativeExpression() #void :
 {}
 {
-  
+
   UnaryExpression()
   (
     <MULT> UnaryExpression() #MulNode
@@ -869,7 +870,7 @@ void UnaryExpression() #void:
 {
 	  LOOKAHEAD(2)<LP> Expression()<RP>
 	| LOOKAHEAD(2)<LSP> Expression()<RSP>
-	| LOOKAHEAD(2) Function() 
+	| LOOKAHEAD(2) Function()
 	| Literal()
 	| Attribute()
 }
@@ -877,7 +878,7 @@ void UnaryExpression() #void:
 void Evaluate() #void:
 {}
 {
-  	LOOKAHEAD(2) Function() 
+  	LOOKAHEAD(2) Function()
   |	Attribute()
 }
 
@@ -887,29 +888,29 @@ void Evaluate() #void:
 void Identifier() #Identifier_Node:
 {}
 {
-	IdentifierPart() ( LOOKAHEAD(2) <COLON> | IdentifierPart() )*	
+	IdentifierPart() ( LOOKAHEAD(2) <COLON> | IdentifierPart() )*
 }
 void IdentifierPart() #Identifier_Part_Node:
  {}
  {
 	<IDENTIFIER>
  }
- 
-   
+
+
 /*
- * <attribute name> ::= 
- *  	  <simple attribute name> 
+ * <attribute name> ::=
+ *  	  <simple attribute name>
  * 		| <compound attribute name>
- * 
- * <compound attribute name> ::= 
+ *
+ * <compound attribute name> ::=
  * 		<identifier><period> [{<identifier><period>}*] <simple attribute name>
  *
  * <simple attribute name> ::= <identifier>
- */ 
+ */
 void Attribute() #void:
 {}
 {
-	 	SimpleAttributeName() AttributeTail() 
+	 	SimpleAttributeName() AttributeTail()
 }
 
 /*
@@ -918,17 +919,17 @@ void Attribute() #void:
 void SimpleAttributeName() #Simple_Attribute_Node:
 {}
 {
-	Identifier()	
+	Identifier()
 }
 
 void AttributeTail() #Compound_Attribute_Node:
 {}
 {
- 	 (  <PERIOD> SimpleAttributeName() )* 
+ 	 (  <PERIOD> SimpleAttributeName() )*
 }
 
 /*
- * <literal> ::= 
+ * <literal> ::=
  *			<signed numeric literal>
  * 		| 	<general literal>
  */
@@ -936,35 +937,35 @@ void Literal() #void :
 {}
 {
 		NumericLiteral()
-	| 	GeneralLiteral()	
+	| 	GeneralLiteral()
 }
 void NumericLiteral() #void :
 {}
 {
-		(("-") UnsignedNumericLiteral())  #NegativeNumber_Node 
-	| 	UnsignedNumericLiteral() 
+		(("-") UnsignedNumericLiteral())  #NegativeNumber_Node
+	| 	UnsignedNumericLiteral()
 
 }
 void UnsignedNumericLiteral() #void :
 {}
 {
-		IntegerLiteral() 
-  	| 	FloatingLiteral() 
+		IntegerLiteral()
+  	| 	FloatingLiteral()
 }
 
 /*
- *<general literal> ::= 
+ *<general literal> ::=
  * 			<character string literal>
  * 		| 	<datetime literal>
  * 		| 	<boolean literal>
  * 		| 	<geography literal
- */   
+ */
 void GeneralLiteral() #void:
 {}
 {
   	StringLiteral()
-//  | DatetimeLiteral()   TODO	
-  |	BooleanLiteral() 
+//  | DatetimeLiteral()   TODO
+  |	BooleanLiteral()
 //  | GeographyLiteral()  TODO
 }
 
@@ -990,7 +991,7 @@ void BooleanLiteral() #void :
 void StringLiteral() #StringNode :
 {}
 {
-    <STRING_LITERAL> 
+    <STRING_LITERAL>
 }
 
 /* ---------------------------------------- *
@@ -1006,10 +1007,10 @@ void Function() #Function_Node:
   			<LP>( FunctionArg() (<COMMA> FunctionArg() )* )? <RP>
 }
 /*
- * <argument>  ::= 
- *      <literal>  
- *  |   <attribute name>                                            
- * 	|	<expression> (*extension: expresion inclue literal and attributes*) 
+ * <argument>  ::=
+ *      <literal>
+ *  |   <attribute name>
+ * 	|	<expression> (*extension: expresion inclue literal and attributes*)
  */
 void FunctionArg() #FunctionArg_Node:
 {}
@@ -1049,7 +1050,7 @@ void LineStringText() #LineStringText_Node:
 }
 
 void PointTaggedText() #WKTNode:
-{} 
+{}
 {
    <POINT> PointText()
 }
@@ -1063,7 +1064,7 @@ void PointText() #PointText_Node:
 }
 
 void Point3DTaggedText() #WKTNode:
-{} 
+{}
 {
    <POINT3D> Point3DText()
 }
@@ -1079,7 +1080,7 @@ void Point3DText() #Point3DText_Node:
 void LineStringTaggedText() #WKTNode:
 {}
 {
-   <LINESTRING> LineStringText() 
+   <LINESTRING> LineStringText()
 }
 /*
  * <Polygon Tagged Text> := POLYGON <Polygon Text>
@@ -1128,7 +1129,7 @@ void MultiLineStringTaggedText() #WKTNode:
   <MULTILINESTRING> MultiLineStringText()
 }
 /*
- * <MultiLineString Text> := 
+ * <MultiLineString Text> :=
  *		EMPTY
  * 		| ( <LineString Text > {, < LineString Text > }* )
  */
@@ -1170,7 +1171,7 @@ void GeometryCollectionTaggedText() #WKTNode:
  {
  	( <LP> GeometryLiteral() ( <COMMA> GeometryLiteral() )* <RP>)?
  }
- 
+
 /*
  * <Envelope Tagged Text> ::= ENVELOPE <Envelope Text>
  */
@@ -1196,11 +1197,11 @@ void GeometryCollectionTaggedText() #WKTNode:
  void EnvelopText() #void:
  {}
  {
- 	( <LP> 
+ 	( <LP>
  		NumericLiteral() <COMMA>
  		NumericLiteral() <COMMA>
  		NumericLiteral() <COMMA>
- 		NumericLiteral() 
+ 		NumericLiteral()
  	 <RP> )?
  }
 

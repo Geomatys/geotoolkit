@@ -208,7 +208,7 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
         params.put(ShapefileDataStoreFactory.MEMORY_MAPPED.getName().toString(), memorymapped);
         params.put(ShapefileDataStoreFactory.DBFCHARSET.getName().toString(), charset);
 
-        shapefile = (ShapefileDataStore) maker.createDataStore(params);
+        shapefile = (ShapefileDataStore) maker.create(params);
 
         shapefile.createSchema(typeName,type);
 

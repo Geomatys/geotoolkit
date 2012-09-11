@@ -18,11 +18,16 @@
 
 package org.geotoolkit.ogc.xml.v200;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
+import org.opengis.filter.capability.IdCapabilities;
+import org.opengis.filter.capability.ScalarCapabilities;
+import org.opengis.filter.capability.SpatialCapabilities;
 
 
 /**
@@ -61,7 +66,7 @@ import javax.xml.bind.annotation.XmlType;
     "extendedCapabilities"
 })
 @XmlRootElement(name = "Filter_Capabilities")
-public class FilterCapabilities {
+public class FilterCapabilities implements org.opengis.filter.capability.FilterCapabilities {
 
     @XmlElement(name = "Conformance", required = true)
     private ConformanceType conformance;
@@ -78,6 +83,23 @@ public class FilterCapabilities {
     @XmlElement(name = "Extended_Capabilities")
     private ExtendedCapabilitiesType extendedCapabilities;
 
+    /**
+     * An empty constructor used by JAXB
+     */
+    public FilterCapabilities() {
+        
+    }
+    
+    /**
+     * Build a new filter capabilities (light version)
+     */
+    public FilterCapabilities(final ScalarCapabilities scalar, final SpatialCapabilities spatial, final IdCapabilities id) {
+        this.spatialCapabilities = (SpatialCapabilitiesType) spatial;
+        this.idCapabilities      = (IdCapabilitiesType)      id;
+        this.scalarCapabilities  = (ScalarCapabilitiesType)  scalar;
+        
+    }
+    
     /**
      * Gets the value of the conformance property.
      * 
@@ -246,4 +268,71 @@ public class FilterCapabilities {
         this.extendedCapabilities = value;
     }
 
+    public String getVersion() {
+        return "2.0.0";
+    }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[FilterCapabilities]").append("\n");
+        if (conformance != null) {
+            sb.append("conformance: ").append(conformance).append('\n');
+        }
+        if (extendedCapabilities != null) {
+            sb.append("extendedCapabilities: ").append(extendedCapabilities).append('\n');
+        }
+        if (functions != null) {
+            sb.append("functions: ").append(functions).append('\n');
+        }
+        if (idCapabilities != null) {
+            sb.append("idCapabilities: ").append(idCapabilities).append('\n');
+        }
+        if (scalarCapabilities != null) {
+            sb.append("scalarCapabilities: ").append(scalarCapabilities).append('\n');
+        }
+        if (spatialCapabilities != null) {
+            sb.append("spatialCapabilities: ").append(spatialCapabilities).append('\n');
+        }
+        if (temporalCapabilities != null) {
+            sb.append("temporalCapabilities: ").append(temporalCapabilities).append('\n');
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+
+       if (object instanceof FilterCapabilities) {
+           final FilterCapabilities that = (FilterCapabilities) object;
+       
+            
+            return Objects.equals(this.conformance,          that.conformance)            &&
+                   Objects.equals(this.extendedCapabilities, that.extendedCapabilities)   &&
+                   Objects.equals(this.functions,            that.functions)              &&
+                   Objects.equals(this.idCapabilities,       that.idCapabilities)         &&
+                   Objects.equals(this.scalarCapabilities,   that.scalarCapabilities)     &&
+                   Objects.equals(this.spatialCapabilities,  that.spatialCapabilities)    &&
+                   Objects.equals(this.temporalCapabilities, that.temporalCapabilities);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 59 * hash + (this.spatialCapabilities != null ? this.spatialCapabilities.hashCode() : 0);
+        hash = 59 * hash + (this.temporalCapabilities != null ? this.temporalCapabilities.hashCode() : 0);
+        hash = 59 * hash + (this.extendedCapabilities != null ? this.extendedCapabilities.hashCode() : 0);
+        hash = 59 * hash + (this.functions != null ? this.functions.hashCode() : 0);
+        hash = 59 * hash + (this.conformance != null ? this.conformance.hashCode() : 0);
+        hash = 59 * hash + (this.scalarCapabilities != null ? this.scalarCapabilities.hashCode() : 0);
+        hash = 59 * hash + (this.idCapabilities != null ? this.idCapabilities.hashCode() : 0);
+        return hash;
+    }
 }

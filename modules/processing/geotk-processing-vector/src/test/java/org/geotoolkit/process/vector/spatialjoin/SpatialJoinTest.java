@@ -23,9 +23,6 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.feature.FeatureTypeBuilder;
@@ -47,10 +44,10 @@ import static org.junit.Assert.*;
 
 /**
  * JUnit test of SpatialJoin process
- * @author Quentin Boileau
- * @module pending
+ *
+ * @author Quentin Boileau @module pending
  */
-public class SpatialJoinTest extends AbstractProcessTest{
+public class SpatialJoinTest extends AbstractProcessTest {
 
     private static SimpleFeatureBuilder sfb;
     private static final GeometryFactory geometryFactory = new GeometryFactory();
@@ -60,12 +57,11 @@ public class SpatialJoinTest extends AbstractProcessTest{
         super("spatialjoin");
     }
 
-
     /**
      * Test SpatialJoin process with Nearest method
      */
     @Test
-    public void testSpacialJoin() throws ProcessException, NoSuchIdentifierException{
+    public void testSpacialJoin() throws ProcessException, NoSuchIdentifierException, FactoryException {
 
         // Inputs
         final FeatureCollection<?> targetFeatures = buildFeatureList1();
@@ -95,12 +91,12 @@ public class SpatialJoinTest extends AbstractProcessTest{
      * Test SpatialJoin process with Intersection method
      */
     @Test
-    public void testSpacialJoinIntersection() throws ProcessException, NoSuchIdentifierException{
+    public void testSpacialJoinIntersection() throws ProcessException, NoSuchIdentifierException, FactoryException {
 
         // Inputs
         final FeatureCollection<?> targetFeatures = buildFeatureListInter1();
         final FeatureCollection<?> sourceFeatures = buildFeatureListInter2();
-       
+
         // Process
         ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "spatialjoin");
 
@@ -112,10 +108,10 @@ public class SpatialJoinTest extends AbstractProcessTest{
 
         //Features out
         final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.call().parameter("feature_out").getValue();
-        
+
         //Expected Features out
         final FeatureCollection<?> featureListResult = buildResultInter();
-        
+
         assertEquals(featureListOut.getFeatureType(), featureListResult.getFeatureType());
         assertEquals(featureListOut.size(), featureListResult.size());
         assertTrue(featureListOut.containsAll(featureListResult));
@@ -125,7 +121,7 @@ public class SpatialJoinTest extends AbstractProcessTest{
      * Test SpatialJoin process with Intersection method and no intersection
      */
     @Test
-    public void testSpacialJoinIntersection2() throws ProcessException, NoSuchIdentifierException{
+    public void testSpacialJoinIntersection2() throws ProcessException, NoSuchIdentifierException, FactoryException {
 
         // Inputs
         final FeatureCollection<?> targetFeatures = buildFeatureListInter1_2();
@@ -142,7 +138,7 @@ public class SpatialJoinTest extends AbstractProcessTest{
 
         //Features out
         final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.call().parameter("feature_out").getValue();
-        
+
         //Expected Features out
         final FeatureCollection<?> featureListResult = buildResultInter2();
         assertEquals(featureListOut.getFeatureType(), featureListResult.getFeatureType());
@@ -185,15 +181,9 @@ public class SpatialJoinTest extends AbstractProcessTest{
         return sft;
     }
 
-    private static FeatureCollection<?> buildFeatureList1() {
+    private static FeatureCollection<?> buildFeatureList1() throws FactoryException {
 
-        try {
-            type = createSimpleType1();
-        } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(SpatialJoinTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FactoryException ex) {
-            Logger.getLogger(SpatialJoinTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        type = createSimpleType1();
 
         final FeatureCollection<Feature> featureList = DataUtilities.collection("Target", type);
 
@@ -242,15 +232,9 @@ public class SpatialJoinTest extends AbstractProcessTest{
         return featureList;
     }
 
-    private static FeatureCollection<?> buildFeatureList2() {
+    private static FeatureCollection<?> buildFeatureList2() throws FactoryException {
 
-        try {
-            type = createSimpleType2();
-        } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(SpatialJoinTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FactoryException ex) {
-            Logger.getLogger(SpatialJoinTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        type = createSimpleType2();
 
         final FeatureCollection<Feature> featureList = DataUtilities.collection("source", type);
 
@@ -299,15 +283,9 @@ public class SpatialJoinTest extends AbstractProcessTest{
         return featureList;
     }
 
-    private static FeatureCollection<?> buildFeatureListInter1() {
+    private static FeatureCollection<?> buildFeatureListInter1() throws FactoryException {
 
-        try {
-            type = createSimpleType1();
-        } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(SpatialJoinTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FactoryException ex) {
-            Logger.getLogger(SpatialJoinTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        type = createSimpleType1();
 
         final FeatureCollection<Feature> featureList = DataUtilities.collection("target", type);
 
@@ -329,15 +307,9 @@ public class SpatialJoinTest extends AbstractProcessTest{
         return featureList;
     }
 
-    private static FeatureCollection<?> buildFeatureListInter1_2() {
+    private static FeatureCollection<?> buildFeatureListInter1_2() throws FactoryException {
 
-        try {
-            type = createSimpleType1();
-        } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(SpatialJoinTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FactoryException ex) {
-            Logger.getLogger(SpatialJoinTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        type = createSimpleType1();
 
         final FeatureCollection<Feature> featureList = DataUtilities.collection("target", type);
 
@@ -359,16 +331,9 @@ public class SpatialJoinTest extends AbstractProcessTest{
         return featureList;
     }
 
-    private static FeatureCollection<?> buildFeatureListInter2() {
+    private static FeatureCollection<?> buildFeatureListInter2() throws FactoryException {
 
-        try {
-            type = createSimpleType2();
-        } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(SpatialJoinTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FactoryException ex) {
-            Logger.getLogger(SpatialJoinTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
+        type = createSimpleType2();
         final FeatureCollection<Feature> featureList = DataUtilities.collection("source", type);
 
         final Feature feature1 = FeatureUtilities.defaultFeature(type, "id-11");
@@ -426,14 +391,8 @@ public class SpatialJoinTest extends AbstractProcessTest{
         return featureList;
     }
 
-    private static FeatureCollection<?> buildResultNear() {
-        try {
-            type = createSimpleTypeResult();
-        } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(SpatialJoinTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FactoryException ex) {
-            Logger.getLogger(SpatialJoinTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    private static FeatureCollection<?> buildResultNear() throws FactoryException {
+        type = createSimpleTypeResult();
 
         final FeatureCollection<Feature> featureList = DataUtilities.collection("Target", type);
 
@@ -496,15 +455,9 @@ public class SpatialJoinTest extends AbstractProcessTest{
         return featureList;
     }
 
-    private static FeatureCollection<?> buildResultInter() {
+    private static FeatureCollection<?> buildResultInter() throws FactoryException {
 
-        try {
-            type = createSimpleTypeResult();
-        } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(SpatialJoinTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FactoryException ex) {
-            Logger.getLogger(SpatialJoinTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        type = createSimpleTypeResult();
 
         final FeatureCollection<Feature> featureList = DataUtilities.collection("source", type);
 
@@ -528,15 +481,9 @@ public class SpatialJoinTest extends AbstractProcessTest{
         return featureList;
     }
 
-    private static FeatureCollection<?> buildResultInter2() {
+    private static FeatureCollection<?> buildResultInter2() throws FactoryException {
 
-        try {
-            type = createSimpleTypeResult();
-        } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(SpatialJoinTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FactoryException ex) {
-            Logger.getLogger(SpatialJoinTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        type = createSimpleTypeResult();
 
         final FeatureCollection<Feature> featureList = DataUtilities.collection("source", type);
 

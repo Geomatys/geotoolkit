@@ -219,7 +219,7 @@ public class ElementFeatureWriter {
 
                         if ((nameProperty.equals("name") || nameProperty.equals("description")) && !Namespaces.GML.equals(namespaceProperty)) {
                             namespaceProperty = Namespaces.GML;
-                            LOGGER.warning("the property name and description of a feature must have the GML namespace");
+                            LOGGER.finer("the property name and description of a feature must have the GML namespace");
                         }
                         final Element element;
                         if (namespaceProperty != null) {

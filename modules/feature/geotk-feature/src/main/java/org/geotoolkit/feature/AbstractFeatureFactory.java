@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009-2011, Geomatys
  *
@@ -45,11 +45,11 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Factory for creating instances of the Attribute family of classes.
- * 
+ *
  * @author Ian Schneider
  * @author Gabriel Roldan
  * @author Justin Deoliveira
- * 
+ *
  * @version $Id$
  * @module pending
  */
@@ -142,7 +142,7 @@ public abstract class AbstractFeatureFactory implements FeatureFactory {
      * {@inheritDoc }
      */
     @Override
-    public Feature createFeature(final Collection<Property> value, final AttributeDescriptor descriptor, final String id) {        
+    public Feature createFeature(final Collection<Property> value, final AttributeDescriptor descriptor, final String id) {
         if(descriptor.getType() instanceof SimpleFeatureType){
             //in case we try to create a simple Feature with this method.
             final List<Property> properties = new ArrayList<Property>(value);
@@ -170,7 +170,7 @@ public abstract class AbstractFeatureFactory implements FeatureFactory {
     @Override
     public SimpleFeature createSimpleFeature(final Object[] array, final SimpleFeatureType type, final String id) {
         if (type.isAbstract()) {
-            throw new IllegalArgumentException("Cannot create an feature of an abstract FeatureType " + type.getTypeName());
+            throw new IllegalArgumentException("Cannot create a feature of an abstract FeatureType " + type.getTypeName());
         }
         return new DefaultSimpleFeature(type, FF.featureId(id), array, validating);
     }
@@ -179,11 +179,11 @@ public abstract class AbstractFeatureFactory implements FeatureFactory {
      * {@inheritDoc }
      */
     @Override
-    public SimpleFeature createSimpleFeautre(final Object[] array, final AttributeDescriptor descriptor, final String id) {
+    public SimpleFeature createSimpleFeature(final Object[] array, final AttributeDescriptor descriptor, final String id) {
         if (descriptor.getType().isAbstract()) {
-            throw new IllegalArgumentException("Cannot create an feature of an abstract FeatureType " + descriptor.getType().getName());
+            throw new IllegalArgumentException("Cannot create a feature of an abstract FeatureType " + descriptor.getType().getName());
         }
         return new DefaultSimpleFeature(descriptor, FF.featureId(id), array, validating);
     }
-    
+
 }

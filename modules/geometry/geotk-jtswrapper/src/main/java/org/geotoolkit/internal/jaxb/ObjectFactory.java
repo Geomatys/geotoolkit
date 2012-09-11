@@ -44,7 +44,7 @@ public class ObjectFactory {
     private static final QName POLYHEDRAL_SURFACE_QNAME = new QName("http://www.opengis.net/gml", "PolyhedralSurface");
     private static final QName POLYGON_QNAME            = new QName("http://www.opengis.net/gml", "Polygon");
     private static final QName MULTI_GEOMETRY_QNAME     = new QName("http://www.opengis.net/gml", "MultiGeometry");
-    
+
     public JTSPoint createJTSPoint() {
         return new JTSPoint();
     }
@@ -95,6 +95,10 @@ public class ObjectFactory {
 
     public LineStringPosListType createLineStringPosListType() {
         return new LineStringPosListType();
+    }
+
+    public CoordinatesType createCoordinatesType() {
+        return new CoordinatesType();
     }
 
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs", name = "Value")
@@ -205,10 +209,10 @@ public class ObjectFactory {
 
         } else if (value instanceof JTSPolyhedralSurface) {
             return createJTSPolyhedralSurface((JTSPolyhedralSurface) value);
-        
+
         } else if (value instanceof JTSRing) {
             return createJTSRing((JTSRing) value);
-        
+
         } else if (value != null) {
             throw new IllegalArgumentException("unexpected geometry type:" + value.getClass().getName());
         }

@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009-2011, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009-2011, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,19 +17,16 @@
 
 package org.geotoolkit.data.session;
 
-import org.opengis.filter.identity.FeatureId;
-import java.util.List;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.geotoolkit.data.DataStore;
-import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
@@ -37,16 +34,16 @@ import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
+import org.geotoolkit.storage.DataStoreException;
+import static org.geotoolkit.util.ArgumentChecks.*;
 import org.geotoolkit.util.logging.Logging;
-
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
+import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.geometry.Envelope;
-
-import static org.geotoolkit.util.ArgumentChecks.*;
 
 /**
  * Delta which add a collection of features.
@@ -174,11 +171,13 @@ class AddDelta extends AbstractDelta{
         final FeatureIterator ite = features.iterator();
         int i=0;
         try{
-            while(ite.hasNext()){
-                final Feature f = ite.next();
-                final String id = f.getIdentifier().getID();
-                updates.put(id, createdIds.get(i).getID());
-                i++;
+            if(createdIds != null && !createdIds.isEmpty()){
+                while(ite.hasNext()){
+                    final Feature f = ite.next();
+                    final String id = f.getIdentifier().getID();
+                        updates.put(id, createdIds.get(i).getID());
+                    i++;
+                }
             }
         }finally{
             ite.close();

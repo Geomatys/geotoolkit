@@ -23,6 +23,7 @@ import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.renderer.AbstractSymbolizerRenderer;
+import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.referencing.CRS;
 
 import org.opengis.metadata.spatial.PixelOrientation;
@@ -32,8 +33,8 @@ import org.opengis.referencing.operation.MathTransform2D;
 
 public class CrystallizeSymbolizerRenderer extends AbstractSymbolizerRenderer<CrystallizeCachedSymbolizer>{
 
-    public CrystallizeSymbolizerRenderer(CrystallizeCachedSymbolizer cache, RenderingContext2D context){
-        super(cache, context);
+    public CrystallizeSymbolizerRenderer(final SymbolizerRendererService service,CrystallizeCachedSymbolizer cache, RenderingContext2D context){
+        super(service,cache, context);
     }
 
     @Override

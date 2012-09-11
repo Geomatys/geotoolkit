@@ -97,6 +97,13 @@ public class ObjectiveAnalysis {
     private final int ny;
 
     /**
+     * An arbitrary scale factor applied in the distance computed by {@link #correlation(double)}.
+     * This is a hack for allowing the code to work with different CRS. Do not relyslt alex tu on this hack,
+     * it may be suppressed in future versions.
+     */
+    private double scale = 1;
+
+    /**
      * Construit un objet qui interpollera des points
      * sur une grille réguliére dans une certaine région.
      *
@@ -112,8 +119,8 @@ public class ObjectiveAnalysis {
                 ny = size.height;
                 xmin = region.getX();
                 ymin = region.getY();
-                dx = region.getWidth() / (nx - 1);
-                dy = region.getHeight() / (ny - 1);
+                dx = region.getWidth() / (nx - 1);//le pas
+                dy = region.getHeight() / (ny - 1);//le pas
             } else {
                 throw new IllegalArgumentException("Illegal size");
             }
@@ -172,7 +179,7 @@ public class ObjectiveAnalysis {
     }
 
     /**
-     * Utilise des points disparatres pour interpoller des valeurs à d'autres
+     * Utilise des points disparates pour interpoller des valeurs à d'autres
      * positions. Cette méthode est utilisée le plus souvent pour interpoller
      * sur une grille régulière des valeurs qui proviennent de points distribués
      * aléatoirement.
@@ -274,11 +281,24 @@ public class ObjectiveAnalysis {
      * @return Un coéffcient de corrélation entre 0 et 1.
      */
     protected double correlation(double distance) {
+        distance *= scale;
         distance = ((distance / 1000) - 1) / 150; // Similar to the basic program DISPWX
         if (distance < 0) {
             return 1 - 15 * distance;
         }
         return Math.exp(-distance * distance);
+    }
+
+    /**
+     * Sets an arbitrary scale factor to be applied in the distance computed by {@link #correlation(double)}.
+     * This is a hack for allowing the code to work with different CRS. Do not rely on this hack,
+     * it may be suppressed in future versions.
+     */
+    public void setScaleFactor(final double scale) {
+        if (!(scale > 0)) {
+            throw new IllegalArgumentException();
+        }
+        this.scale = scale;
     }
 
     /**
@@ -352,7 +372,7 @@ public class ObjectiveAnalysis {
 
                     final boolean isDone[] = new boolean[4];
                     for (int k=0; k<isDone.length; k++) isDone[k] = false;
-                    
+
                     while (true) {
                         int kmin = -1;
                         int mmin = -1;
@@ -531,7 +551,7 @@ public class ObjectiveAnalysis {
                 }
             }
         }
-        
+
 
         return cellMap;
 
@@ -554,7 +574,7 @@ public class ObjectiveAnalysis {
             //add at the end
             coords.add(coord1);
         }else if(equalCoordinates(endCoord, coord1)){
-            //add at the end   
+            //add at the end
             coords.add(coord0);
         }else{
             return false;
@@ -643,7 +663,7 @@ public class ObjectiveAnalysis {
             final Map<Point3d,List<Coordinate>> steps = ob.doContouring(cx, cy, computed, new double[]{-10,10,20,30,40,50});
             final List<Shape> shapes = new ArrayList<Shape>();
             for(final Point3d p : steps.keySet()){
-                
+
                 final List<Coordinate> coords = steps.get(p);
 
                 GeneralPath isoline = null;

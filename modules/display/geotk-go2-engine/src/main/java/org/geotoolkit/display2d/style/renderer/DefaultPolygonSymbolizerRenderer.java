@@ -2,7 +2,6 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2004 - 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -26,27 +25,25 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.logging.Level;
 import javax.measure.unit.Unit;
-
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.exception.PortrayalException;
-import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.style.CachedPolygonSymbolizer;
-import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display.shape.TransformedShape;
+import org.geotoolkit.display2d.GO2Utilities;
+import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.CachedGraphicStroke;
+import org.geotoolkit.display2d.style.CachedPolygonSymbolizer;
 import org.geotoolkit.display2d.style.CachedStroke;
 import org.geotoolkit.display2d.style.CachedStrokeGraphic;
 import org.geotoolkit.display2d.style.CachedStrokeSimple;
 import org.geotoolkit.display2d.style.j2d.DefaultPathWalker;
 import org.geotoolkit.display2d.style.j2d.PathWalker;
-
 import org.opengis.geometry.Geometry;
-import org.opengis.util.FactoryException;
 import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 
 /**
  * @author Johann Sorel (Geomatys)
@@ -55,9 +52,9 @@ import org.opengis.referencing.operation.TransformException;
 public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedPolygonSymbolizer>{
 
     private final boolean mosaic;
-    
-    public DefaultPolygonSymbolizerRenderer(final CachedPolygonSymbolizer symbol, final RenderingContext2D context){
-        super(symbol,context);
+
+    public DefaultPolygonSymbolizerRenderer(final SymbolizerRendererService service,final CachedPolygonSymbolizer symbol, final RenderingContext2D context){
+        super(service,symbol,context);
         mosaic = symbol.isMosaic();
     }
 
@@ -116,7 +113,7 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
                 renderingContext.switchToObjectiveCRS();
                 shape = (offset != 0) ? bufferObjectiveGeometry(renderingContext, projectedGeometry, symbolUnit, offset)
                                       : projectedGeometry.getObjectiveShape();
-                
+
                 //adjust displacement, displacement is expressed in pixel units
                 final AffineTransform inverse = renderingContext.getDisplayToObjective();
                 dispStep = inverse.deltaTransform(dispStep, dispStep);
@@ -130,7 +127,7 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
             return;
         }
 
-        //we apply the displacement ---------------------------------------        
+        //we apply the displacement ---------------------------------------
         if(dispStep != null){
             g2d.translate(dispStep.getX(), dispStep.getY());
         }
@@ -148,17 +145,17 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
             x=0;
             y=0;
         }
-        
+
         if(symbol.isFillVisible(candidate)){
             g2d.setComposite( symbol.getJ2DFillComposite(candidate) );
             g2d.setPaint( symbol.getJ2DFillPaint(candidate, x, y,coeff, hints) );
             g2d.fill(shape);
         }
-        
+
         if(symbol.isStrokeVisible(candidate)){
             final CachedStroke cachedStroke = symbol.getCachedStroke();
             if(cachedStroke instanceof CachedStrokeSimple){
-            final CachedStrokeSimple cs = (CachedStrokeSimple)cachedStroke;
+                final CachedStrokeSimple cs = (CachedStrokeSimple)cachedStroke;
                 g2d.setComposite(cs.getJ2DComposite(candidate));
                 g2d.setPaint(cs.getJ2DPaint(candidate, x, y, coeff, hints));
                 g2d.setStroke(cs.getJ2DStroke(candidate,coeff));
@@ -269,7 +266,7 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
         if(j2dShape == null){
             return false;
         }
-        
+
         final Area area ;
         if(fillAlpha >= GO2Utilities.SELECTION_LOWER_ALPHA){
             area = new Area(j2dShape);
@@ -320,7 +317,7 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
         Geometry geom = projectedFeature.getObjectiveGeometry();
         geom = geom.getBuffer(offset);
         shape = GO2Utilities.toJava2D(geom);
-        
+
         return shape;
     }
 

@@ -48,6 +48,21 @@ public class GetLegendGraphic extends AbstractOperation {
 
     }
 
+    public GetLegendGraphic(final GetLegendGraphic that) {
+        if (that.format != null) {
+            this.format = new ArrayList<Format>();
+            for (Format f : that.format) {
+               this.format.add(new Format(f.getvalue()));
+            }
+        }
+        if (that.dcpType != null) {
+            this.dcpType = new ArrayList<DCPType>();
+            for (DCPType f : that.dcpType) {
+               this.dcpType.add(new DCPType(f));
+            }
+        }
+    }
+    
     public GetLegendGraphic(final List<String> formats, final DCPType... dcpList) {
         if (formats != null) {
             this.format = new ArrayList<Format>();

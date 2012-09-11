@@ -126,8 +126,8 @@
             <LatLonBoundingBox minx="-180.0" miny="-90.0" maxx="180.0" maxy="90.0"/>
             
             <Layer queryable="1">
-                <Name>layer4D</Name>
-                <Title>layer4D</Title>
+                <Name>BlueMarble</Name>
+                <Title>BlueMarble</Title>
                 <Abstract></Abstract>
                 <KeywordList>
                     <Keyword></Keyword>
@@ -147,6 +147,20 @@
                 <Extent name="time" default="2007-06-20T12:00:00Z">2007-06-06T12:00:00Z/2007-06-20T12:00:00Z/P1W</Extent>
                 <Extent name="elevation" default="5.0">5.0,10.0,20.0,30.0,40.0,50.0,60.0,80.0,100.0,120.0,140.0,160.0,180.0,200.0,220.0,240.0,260.0,280.0,300.0,320.0,360.0,400.0,440.0,480.0,520.0,560.0,600.0,640.0,680.0,720.0,760.0,800.0,840.0,880.0,920.0,960.0,1000.0,1040.0,1080.0,1120.0,1160.0,1200.0,1240.0,1280.0,1320.0,1360.0,1400.0,1440.0,1480.0,1520.0,1560.0,1600.0,1650.0,1700.0,1750.0,1800.0,1850.0,1900.0,1950.0</Extent>
                 <Extent name="dim_range" default="-3.0,40.0">-3.0,40.0</Extent>
+            </Layer>
+            
+            <Layer queryable="1">
+                <Name>ns1:Sample</Name>
+                <Title>Sample with ns1</Title>
+                <SRS>EPSG:3395</SRS>
+                <LatLonBoundingBox minx="-179.99999999999784" miny="-77.01047999972037" maxx="180.00000000000225" maxy="77.01048000000112"/>
+            </Layer>
+            
+            <Layer queryable="1">
+                <Name>ns2:Sample</Name>
+                <Title>Sample with ns2</Title>
+                <SRS>EPSG:3395</SRS>
+                <LatLonBoundingBox minx="-179.99999999999784" miny="-77.01047999972037" maxx="180.00000000000225" maxy="77.01048000000112"/>
             </Layer>
 
         </Layer>

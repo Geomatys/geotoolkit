@@ -20,8 +20,11 @@ package org.geotoolkit.wfs.xml.v200;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.v110.AcceptFormatsType;
+import org.geotoolkit.ows.xml.v110.AcceptVersionsType;
+import org.geotoolkit.ows.xml.v110.SectionsType;
+import org.geotoolkit.wfs.xml.GetCapabilities;
 
 
 /**
@@ -43,39 +46,28 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GetCapabilitiesType")
-public class GetCapabilitiesType extends org.geotoolkit.ows.xml.v110.GetCapabilitiesType {
-
-    @XmlAttribute(required = true)
-    private String service;
+public class GetCapabilitiesType extends org.geotoolkit.ows.xml.v110.GetCapabilitiesType implements GetCapabilities {
 
     /**
-     * Gets the value of the service property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * minimal getCapabilities request.
      */
-    @Override
-    public String getService() {
-        if (service == null) {
-            return "WFS";
-        } else {
-            return service;
-        }
+    public GetCapabilitiesType() {
+        super("WFS");
+    }
+    
+    /**
+     * Build a new getCapabilities request with the specified service
+     */
+    public GetCapabilitiesType(final AcceptVersionsType acceptVersions, final SectionsType sections,
+            final AcceptFormatsType acceptFormats, final String updateSequence, final String service) {
+        super(acceptVersions, sections, acceptFormats, updateSequence, service);
     }
 
-    /**
-     * Sets the value of the service property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     /**
+     * Build a new getCapabilities (simplified version).
      */
-    @Override
-    public void setService(String value) {
-        this.service = value;
+    public GetCapabilitiesType(final String acceptVersions, final String acceptFormats) {
+        super(acceptVersions, acceptFormats, "WFS");
     }
 
 }

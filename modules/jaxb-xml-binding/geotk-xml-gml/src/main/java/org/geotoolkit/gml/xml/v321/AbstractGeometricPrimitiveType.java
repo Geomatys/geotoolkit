@@ -18,10 +18,16 @@
 
 package org.geotoolkit.gml.xml.v321;
 
+import java.util.Set;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.filter.expression.ExpressionVisitor;
+import org.opengis.geometry.complex.Complex;
+import org.opengis.geometry.complex.Composite;
+import org.opengis.geometry.primitive.OrientablePrimitive;
+import org.opengis.geometry.primitive.Primitive;
 
 
 /**
@@ -50,9 +56,65 @@ import javax.xml.bind.annotation.XmlType;
     AbstractSolidType.class,
     AbstractCurveType.class
 })
-public abstract class AbstractGeometricPrimitiveType
-    extends AbstractGeometryType
-{
+public abstract class AbstractGeometricPrimitiveType extends AbstractGeometryType implements Primitive {
 
 
+    public AbstractGeometricPrimitiveType() {
+        
+    }
+    
+    public AbstractGeometricPrimitiveType(final String srsName) {
+        super(srsName);
+    }
+    
+    @Override
+    public Object evaluate(final Object object) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public <T> T evaluate(final Object object, final Class<T> context) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Set<Primitive> getContainedPrimitives() {
+        // TODO calculate this for each subtype of geometry
+        return null;
+    }
+
+    @Override
+    public Set<Primitive> getContainingPrimitives() {
+        // TODO calculate this for each subtype of geometry
+        return null;
+    }
+
+    @Override
+    public Set<Complex> getComplexes() {
+        // TODO calculate this for each subtype of geometry
+        return null;
+    }
+
+    @Override
+    public Composite getComposite() {
+        // TODO calculate this for each subtype of geometry
+        return null;
+    }
+
+    @Override
+    public OrientablePrimitive[] getProxy() {
+        // TODO calculate this for each subtype of geometry
+        return null;
+    }
+
+    @Override
+    public AbstractGeometricPrimitiveType clone() {
+        // TODO calculate this for each subtype of geometry
+        return null;
+    }
 }

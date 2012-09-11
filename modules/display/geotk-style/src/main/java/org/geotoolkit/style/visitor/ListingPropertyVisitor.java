@@ -67,6 +67,8 @@ import org.opengis.style.TextSymbolizer;
  */
 public class ListingPropertyVisitor extends org.geotoolkit.filter.visitor.ListingPropertyVisitor implements StyleVisitor{
 
+    public static final ListingPropertyVisitor VISITOR = new ListingPropertyVisitor();
+        
     @Override
     public Object visit(final Style style, Object data) {
         final List<? extends FeatureTypeStyle> ftss = style.featureTypeStyles();
@@ -119,6 +121,11 @@ public class ListingPropertyVisitor extends org.geotoolkit.filter.visitor.Listin
 
     @Override
     public Object visit(final PointSymbolizer pointSymbolizer, Object data) {
+        final String geomName = pointSymbolizer.getGeometryPropertyName();
+        if(geomName != null && !geomName.trim().isEmpty()){
+            ((Collection)data).add(geomName);
+        }
+        
         final Graphic gra = pointSymbolizer.getGraphic();
         if(gra != null){
             data = gra.accept(this, data);
@@ -128,6 +135,11 @@ public class ListingPropertyVisitor extends org.geotoolkit.filter.visitor.Listin
 
     @Override
     public Object visit(final LineSymbolizer lineSymbolizer, Object data) {
+        final String geomName = lineSymbolizer.getGeometryPropertyName();
+        if(geomName != null && !geomName.trim().isEmpty()){
+            ((Collection)data).add(geomName);
+        }
+        
         final Expression offset = lineSymbolizer.getPerpendicularOffset();
         if(offset != null){
             data = offset.accept(this, data);
@@ -141,6 +153,11 @@ public class ListingPropertyVisitor extends org.geotoolkit.filter.visitor.Listin
 
     @Override
     public Object visit(final PolygonSymbolizer polygonSymbolizer, Object data) {
+        final String geomName = polygonSymbolizer.getGeometryPropertyName();
+        if(geomName != null && !geomName.trim().isEmpty()){
+            ((Collection)data).add(geomName);
+        }
+        
         final Displacement disp = polygonSymbolizer.getDisplacement();
         if(disp != null){
             data = disp.accept(this, data);
@@ -162,6 +179,11 @@ public class ListingPropertyVisitor extends org.geotoolkit.filter.visitor.Listin
 
     @Override
     public Object visit(final TextSymbolizer textSymbolizer, Object data) {
+        final String geomName = textSymbolizer.getGeometryPropertyName();
+        if(geomName != null && !geomName.trim().isEmpty()){
+            ((Collection)data).add(geomName);
+        }
+        
         final Fill fill = textSymbolizer.getFill();
         if(fill != null){
             data = fill.accept(this, data);
@@ -187,6 +209,11 @@ public class ListingPropertyVisitor extends org.geotoolkit.filter.visitor.Listin
 
     @Override
     public Object visit(final RasterSymbolizer rasterSymbolizer, Object data) {
+        final String geomName = rasterSymbolizer.getGeometryPropertyName();
+        if(geomName != null && !geomName.trim().isEmpty()){
+            ((Collection)data).add(geomName);
+        }
+        
         final ChannelSelection cs = rasterSymbolizer.getChannelSelection();
         if(cs != null){
             data = cs.accept(this, data);
@@ -216,6 +243,11 @@ public class ListingPropertyVisitor extends org.geotoolkit.filter.visitor.Listin
 
     @Override
     public Object visit(final ExtensionSymbolizer extension, Object data) {
+        final String geomName = extension.getGeometryPropertyName();
+        if(geomName != null && !geomName.trim().isEmpty()){
+            ((Collection)data).add(geomName);
+        }
+        
         final Map<String,Expression> exps = extension.getParameters();
         if(exps != null){
             for(Expression exp : exps.values()){

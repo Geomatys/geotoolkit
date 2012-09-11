@@ -24,7 +24,7 @@ import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
-import org.geotoolkit.map.MapItem;
+import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
@@ -39,6 +39,8 @@ public class MapContextDemo {
                                                    new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
 
     public static void main(String[] args) throws Exception{
+        Demos.init();
+        
         //preloading parameters --------------
         WorldFileImageReader.Spi.registerDefaults(null);
         Registry.setDefaultCodecPreferences();
@@ -94,7 +96,7 @@ public class MapContextDemo {
         final Map<String,Serializable> params = new HashMap<String,Serializable>();
         params.put("url", MapContextDemo.class.getResource("/data/world/Countries.shp"));
 
-        final DataStore store = DataStoreFinder.getDataStore(params);
+        final DataStore store = DataStoreFinder.open(params);
         final Session session = store.createSession(true);
         final Query query = QueryBuilder.all(store.getNames().iterator().next());
         final FeatureCollection collection = session.getFeatureCollection(query);

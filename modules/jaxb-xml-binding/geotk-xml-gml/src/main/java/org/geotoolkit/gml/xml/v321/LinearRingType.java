@@ -26,13 +26,14 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.LinearRing;
 
 
 /**
  * <p>Java class for LinearRingType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="LinearRingType">
  *   &lt;complexContent>
@@ -52,8 +53,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "LinearRingType", propOrder = {
@@ -61,9 +62,7 @@ import javax.xml.bind.annotation.XmlType;
     "posList",
     "coordinates"
 })
-public class LinearRingType
-    extends AbstractRingType
-{
+public class LinearRingType extends AbstractRingType implements LinearRing {
 
     @XmlElementRefs({
         @XmlElementRef(name = "pos", namespace = "http://www.opengis.net/gml/3.2", type = JAXBElement.class),
@@ -74,29 +73,25 @@ public class LinearRingType
     private DirectPositionListType posList;
     private CoordinatesType coordinates;
 
+    public LinearRingType() {
+
+    }
+
+    public LinearRingType(final String srsName, final DirectPositionListType posList) {
+        super(srsName);
+        this.posList = posList;
+    }
+
     /**
      * Gets the value of the posOrPointPropertyOrPointRep property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the posOrPointPropertyOrPointRep property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getPosOrPointPropertyOrPointRep().add(newItem);
-     * </pre>
-     * 
-     * 
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link PointPropertyType }{@code >}
      * {@link JAXBElement }{@code <}{@link DirectPositionType }{@code >}
      * {@link JAXBElement }{@code <}{@link PointPropertyType }{@code >}
-     * 
-     * 
+     *
+     *
      */
     public List<JAXBElement<?>> getPosOrPointPropertyOrPointRep() {
         if (posOrPointPropertyOrPointRep == null) {
@@ -107,11 +102,11 @@ public class LinearRingType
 
     /**
      * Gets the value of the posList property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DirectPositionListType }
-     *     
+     *
      */
     public DirectPositionListType getPosList() {
         return posList;
@@ -119,11 +114,11 @@ public class LinearRingType
 
     /**
      * Sets the value of the posList property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DirectPositionListType }
-     *     
+     *
      */
     public void setPosList(DirectPositionListType value) {
         this.posList = value;
@@ -131,11 +126,11 @@ public class LinearRingType
 
     /**
      * Gets the value of the coordinates property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link CoordinatesType }
-     *     
+     *
      */
     public CoordinatesType getCoordinates() {
         return coordinates;
@@ -143,11 +138,11 @@ public class LinearRingType
 
     /**
      * Sets the value of the coordinates property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link CoordinatesType }
-     *     
+     *
      */
     public void setCoordinates(CoordinatesType value) {
         this.coordinates = value;

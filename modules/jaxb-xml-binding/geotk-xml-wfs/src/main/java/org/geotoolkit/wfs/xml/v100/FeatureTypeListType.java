@@ -23,6 +23,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
+import org.geotoolkit.wfs.xml.FeatureType;
+import org.geotoolkit.wfs.xml.FeatureTypeList;
 
 
 /**
@@ -50,7 +53,7 @@ import javax.xml.bind.annotation.XmlType;
     "operations",
     "featureType"
 })
-public class FeatureTypeListType {
+public class FeatureTypeListType implements FeatureTypeList {
 
     @XmlElement(name = "Operations")
     private OperationsType operations;
@@ -93,30 +96,20 @@ public class FeatureTypeListType {
     /**
      * Gets the value of the featureType property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the featureType property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getFeatureType().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link FeatureTypeType }
-     * 
-     * 
      */
     public List<FeatureTypeType> getFeatureType() {
         if (featureType == null) {
             featureType = new ArrayList<FeatureTypeType>();
         }
         return this.featureType;
+    }
+    
+    public void addFeatureType(final FeatureType ft) {
+        if (ft instanceof FeatureTypeType) {
+            getFeatureType().add((FeatureTypeType)ft);
+        } else if (ft != null) {
+            throw new IllegalArgumentException("unexpected version of the featureType object");
+        }
     }
     
     /**

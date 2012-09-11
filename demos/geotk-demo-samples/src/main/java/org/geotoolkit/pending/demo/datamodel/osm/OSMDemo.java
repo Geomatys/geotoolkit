@@ -8,17 +8,19 @@ import java.util.Map;
 import java.util.Set;
 import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.DataStoreFinder;
+import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.type.Name;
 
 public class OSMDemo {
 
     public static void main(String[] args) throws DataStoreException {
-
+        Demos.init();
+        
         final Map<String,Serializable> parameters = new HashMap<String,Serializable>();
         parameters.put("url", OSMDemo.class.getResource("/data/sampleOSM.osm"));
 
-        final DataStore store = DataStoreFinder.getDataStore(parameters);
+        final DataStore store = DataStoreFinder.open(parameters);
 
         System.out.println("=================== Feature types ====================");
         final Set<Name> names = store.getNames();

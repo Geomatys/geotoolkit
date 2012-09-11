@@ -18,13 +18,24 @@ package org.geotoolkit.data.mysql;
 
 import java.io.IOException;
 
+import java.util.Collections;
+import org.geotoolkit.data.AbstractDataStoreFactory;
+import org.geotoolkit.data.DataStoreFactory;
+import org.geotoolkit.data.DataStoreFinder;
+import org.geotoolkit.jdbc.DefaultJDBCDataStore;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.jdbc.JDBCDataStore;
 import org.geotoolkit.jdbc.JDBCDataStoreFactory;
 import org.geotoolkit.jdbc.dialect.SQLDialect;
+import org.geotoolkit.metadata.iso.DefaultIdentifier;
+import org.geotoolkit.metadata.iso.citation.DefaultCitation;
+import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
+import org.geotoolkit.util.ResourceInternationalString;
 
+import org.opengis.metadata.Identifier;
+import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -36,10 +47,19 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class MySQLDataStoreFactory extends JDBCDataStoreFactory {
 
-    /** parameter for database type */
-    public static final ParameterDescriptor<String> DBTYPE =
-             new DefaultParameterDescriptor<String>("dbtype","Type",String.class,"mysql",true);
-
+    /** factory identification **/
+    public static final String NAME = "mysql";
+    public static final DefaultServiceIdentification IDENTIFICATION;
+    static {
+        IDENTIFICATION = new DefaultServiceIdentification();
+        final Identifier id = new DefaultIdentifier(NAME);
+        final DefaultCitation citation = new DefaultCitation(NAME);
+        citation.setIdentifiers(Collections.singleton(id));
+        IDENTIFICATION.setCitation(citation);
+    }
+    
+    public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
+    
     /**
      * Parameter for database port
      */
@@ -55,8 +75,13 @@ public class MySQLDataStoreFactory extends JDBCDataStoreFactory {
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new DefaultParameterDescriptorGroup("MySQLParameters",
-                DBTYPE,HOST,PORT,DATABASE,SCHEMA,USER,PASSWD,NAMESPACE,
+                IDENTIFIER,HOST,PORT,DATABASE,SCHEMA,USER,PASSWD,NAMESPACE,
                 DATASOURCE,MAXCONN,MINCONN,VALIDATECONN,FETCHSIZE,MAXWAIT,PREPARED_STATEMENTS);
+
+    @Override
+    public Identification getIdentification() {
+        return IDENTIFICATION;
+    }
 
     @Override
     protected SQLDialect createSQLDialect(final JDBCDataStore dataStore) {
@@ -77,13 +102,13 @@ public class MySQLDataStoreFactory extends JDBCDataStoreFactory {
     }
 
     @Override
-    public String getDisplayName() {
-        return "MySQL";
+    public CharSequence getDisplayName() {
+        return new ResourceInternationalString("org/geotoolkit/mysql/bundle", "datastoreTitle");
     }
 
     @Override
-    public String getDescription() {
-        return "MySQL Database";
+    public CharSequence getDescription() {
+        return new ResourceInternationalString("org/geotoolkit/mysql/bundle", "datastoreDescription");
     }
 
     @Override
@@ -92,9 +117,10 @@ public class MySQLDataStoreFactory extends JDBCDataStoreFactory {
     }
 
     @Override
-    public JDBCDataStore createDataStore(final ParameterValueGroup params)
+    public JDBCDataStore create(final ParameterValueGroup params)
         throws DataStoreException {
-        JDBCDataStore dataStore = super.createDataStore(params);
+        checkCanProcessWithError(params);
+        JDBCDataStore dataStore = super.create(params);
 
         final MySQLDialect dialect;
 

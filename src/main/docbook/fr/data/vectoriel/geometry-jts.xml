@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book [
+  <!ENTITY % book.entities SYSTEM "../../../book.entities">
+  %book.entities;
+]>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xlink = "http://www.w3.org/1999/xlink">
+          
+    <title> Geometry-JTS</title>
+    
+    <section>
+        <para>
+            JTS est une API java pour la manipulation des géométries.
+        </para>
+        <para>
+            La documentation complète peut être trouvée sur leur site web :
+            <simplelist>
+                <member>
+                    Documentation : 
+                    <link xlink:href="http://www.vividsolutions.com/jts/jtshome.htm">http://www.vividsolutions.com/jts/jtshome.htm</link>
+                </member>
+                <member>
+                    Téléchargement : 
+                    <link xlink:href="http://sourceforge.net/projects/jts-topo-suite">http://sourceforge.net/projects/jts-topo-suite</link>
+                </member>
+            </simplelist>
+             
+            <itemizedlist>
+                <title>
+                    Limitations de JTS
+                </title>
+                <listitem>
+                    Malgré sa large communauté, le projet n'a qu'un seul développeur et ne supporte que les géométries 2D.Elle peut stocker une troisième coordonnée mais celle ci n'est pas utilisé dans les opérations.
+                </listitem>
+                <listitem>
+                    Les géométries ne sont pas faites pour les SIG car le modèle ne permet pas de stocker les projections ou de traiter des géométries de différents systèmes.
+                </listitem>
+                <listitem>
+                    Actuellement, le CRS peut être stocké sous forme d'entier dans le paramètre SRID de la geometry ou dans un Map dédié aux données utilisateur. Il faut ensuite s'assurer soi-même de reprojeter les géométries avant toute opération.
+                </listitem>
+                <listitem>
+                    La structure est verrouillée : JTS n'utilise pas d'interface, pas d'interface Geometry Point ... juste des classes. Cela rend impossible le remplacement des instances utilisées. Il n'y a qu'une interface : CoordinateSequence qui semble un point d'extension intéressant, mais cela s'avère inefficace car toutes les opérations font appel à la méthode 
+                    <emphasis>toCoordinate</emphasis> qui force la création d'un tableau avec toute les valeurs. Tous les efforts mis dans la création d'une séquence plus optimisée ou plus compacte sont alors perdus.
+                </listitem>
+            </itemizedlist>
+            Malheureusement il n'y pas d'alternative pour le moment, nous espérons proposer une implémentation des géométries multidimensionnelles basée sur ISO 19107 à l'avenir.
+        </para>
+        
+    </section>
+    
+    <section>
+        <title>
+            Création de géométries
+        </title>
+        <example>
+            <title>Code source complet : </title>
+            <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/geometry/JTSDemo.java">
+                <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/geometry/JTSDemo.java</acronym>
+            </link>        
+        </example>
+        
+        <para>
+            JTS comme GeoAPI travaille avec des fabriques.
+        </para>
+            <programlisting>
+                                    
+                    import com.vividsolutions.jts.geom.GeometryFactory
+ 
+                    final GeometryFactory gf = new GeometryFactory();                    
+                
+            </programlisting>
+        <para>
+            Les géométries sont relativement simples a créer.
+        </para>
+            <programlisting>
+                
+                    //creating a point
+                    final Point point = gf.createPoint(new Coordinate(56, 45));
+ 
+ 
+                    //creating a multipoint
+                    final MultiPoint mp = gf.createMultiPoint(new Coordinate[]{
+                    new Coordinate(23, 78),
+                    new Coordinate(-10, 43),
+                    new Coordinate(12, 94)});
+ 
+ 
+                    //creating a linestring
+                    final LineString ls = gf.createLineString(new Coordinate[]{
+                    new Coordinate(23, 78),
+                    new Coordinate(-10, 43),
+                    new Coordinate(12, 94)});
+ 
+ 
+                    //creating a multilinestring
+                    final LineString ls1 = gf.createLineString(new Coordinate[]{
+                    new Coordinate(30, 45),new Coordinate(56, 29)});
+                    final LineString ls2 = gf.createLineString(new Coordinate[]{
+                    new Coordinate(98,12),new Coordinate(19, 87)});
+                    final MultiLineString mls = gf.createMultiLineString(new LineString[]{
+                    ls1,ls2});
+ 
+ 
+                    //creating a polygon
+                    final LinearRing ring = gf.createLinearRing(new Coordinate[]{
+                    new Coordinate(23, 78),
+                    new Coordinate(-10, 43),
+                    new Coordinate(12, 94),
+                    new Coordinate(23, 78)});
+                    final Polygon polygon = gf.createPolygon(ring, new LinearRing[0]);
+ 
+ 
+                    //creating a multipolygon
+                    final MultiPolygon mpolygon = gf.createMultiPolygon(new Polygon[]{polygon});
+                
+            </programlisting>
+    </section>
+    
+    <section>
+        <title>
+            Opérations
+        </title>
+        
+        <para>
+            Toute les opérations disponibles sont directement accessibles sur les objects geometries.
+        </para>
+        <para>
+            Voici une liste non-exhaustive des opérations que l'on peut trouver.
+            <simplelist>
+                <member>
+                    Intersect
+                </member>
+                <member>
+                    Buffer
+                </member>
+                <member>
+                    Overlap
+                </member>
+                <member>
+                    Within
+                </member>
+                <member>
+                    Cover
+                </member>
+                <member>
+                    Crosse
+                </member>
+                <member>
+                    Touches
+                </member>
+                <member>...</member>
+            </simplelist>
+        </para>
+            <programlisting>
+                
+                    Geometry geom1 = ...
+                    Geometry geom2 = ...
+                    Geometry intersection = geom1.intersection(geom2);
+                
+            </programlisting>
+        <para>
+            Pour plus de détails sur leurs résultats : 
+            <link xlink:href="http://www.vividsolutions.com/jts/jtshome.htm">http://www.vividsolutions.com/jts/jtshome.htm </link>
+            Dans la section section : Demos &amp; Case Studies > JTS Validation Suite
+        </para>
+    </section>
+    <section>
+        <title>SRID</title>
+        <example>
+            <title>Code source complet : </title>
+            <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/geometry/SRIDDemo.java">
+                <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/geometry/SRIDDemo.java</acronym>
+            </link>        
+        </example>
+        <para>
+            Comme JTS ne permet pas de stocker la projection, GeotoolKit contient une classe utilitaire SRIDGenerator qui peut être utilisée pour transformer un CRS en entier.
+        </para>
+        <para>
+            Cela n'est valide que pour les projections des l'autorité EPSG et CRS. 
+        </para>
+            <programlisting>	
+                
+                    final CoordinateReferenceSystem crs = CRS.decode("EPSG:3395");
+                    //converting the CRS to an integer
+                    final int srid = SRIDGenerator.toSRID(crs, SRIDGenerator.Version.V1);
+                    //srid back to CRS
+                    final CoordinateReferenceSystem backcrs = CRS.decode(SRIDGenerator.toSRS(srid, SRIDGenerator.Version.V1));
+                
+            </programlisting>
+        <para>
+            Il est aussi possible d'utiliser la classe utilitaire JTS pour faire ces affectations.
+        </para>
+            <programlisting>
+                
+                    Point pt = new GeometryFactory().createPoint(new Coordinate(10, 50));
+                    //set crs on a geometry
+                    JTS.setCRS(pt, crs);
+                    //extract crs from geometry srid or user map
+                    backcrs = JTS.findCoordinateReferenceSystem(pt);
+                
+            </programlisting>
+    </section>
+</section>

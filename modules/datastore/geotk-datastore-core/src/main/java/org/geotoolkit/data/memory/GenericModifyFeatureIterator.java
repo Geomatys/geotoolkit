@@ -20,12 +20,10 @@ package org.geotoolkit.data.memory;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
-
-import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.util.converter.Classes;
-
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
 import org.opengis.feature.type.PropertyDescriptor;

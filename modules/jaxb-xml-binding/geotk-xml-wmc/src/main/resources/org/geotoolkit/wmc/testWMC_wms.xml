@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ViewContext xmlns="http://www.opengis.net/context"
+             xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             version="1.0.0" id="map"
+             xsi:schemaLocation="http://www.opengis.net/context http://schemas.opengis.net/context/1.0.0/context.xsd"
+             xmlns:ol="http://www.openlayers.org"
+             xmlns:le="http://www.disy.net/legato/extensions"
+             xmlns:lb="http://www.disy.net/legato/beans">
+    <General>
+        <Window width="600" height="300" />
+        <BoundingBox SRS="EPSG:4326"
+                 minx="-16" miny="36"
+                 maxx="37" maxy="63.5" />
+                 <Title>legato example</Title>
+    </General>
+    <LayerList>
+        <Layer queryable="0" hidden="0">
+            <Server service="OGC:WMS" version="1.1.1" title="OGC:WMS">
+                <OnlineResource xlink:type="simple" xlink:href="http://www2.demis.nl/wms/wms.asp?wms=WorldMap" />
+            </Server>
+            <Name>Bathymetry</Name>
+            <Title>Bathymetry</Title>
+            <FormatList>
+                <Format current="0">image/png</Format>
+            </FormatList>
+        </Layer>
+        <Layer queryable="0" hidden="0">
+            <Server service="OGC:WMS" version="1.1.1" title="OGC:WMS">
+                <OnlineResource xlink:type="simple" xlink:href="http://www2.demis.nl/wms/wms.asp?wms=WorldMap" />
+            </Server>
+            <Name>Topography</Name>
+            <Title>Topography</Title>
+            <FormatList>
+                <Format current="0">image/png</Format>
+            </FormatList>
+        </Layer>
+        <Layer queryable="0" hidden="0">
+            <Server service="OGC:WMS" version="1.1.1" title="OGC:WMS">
+                <OnlineResource xlink:type="simple" xlink:href="http://www2.demis.nl/wms/wms.asp?wms=WorldMap" />
+            </Server>
+            <Name>Hillshading</Name>
+            <Title>Hillshading</Title>
+            <FormatList>
+                <Format current="0">image/png</Format>
+            </FormatList>
+        </Layer>
+    </LayerList>
+</ViewContext>

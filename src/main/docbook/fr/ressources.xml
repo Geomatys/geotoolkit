@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book [
+  <!ENTITY % book.entities SYSTEM "../book.entities">
+  %book.entities;
+]>
+
+<chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xlink = "http://www.w3.org/1999/xlink">
+
+    <title>
+        Ressources
+    </title>
+
+    <para>
+        Différentes ressources sont utilisées au travers de ces tutoriels, les informations communes sont regroupées ici.
+    </para>
+
+    <section>
+        <title>
+            Sources
+        </title>
+
+        <para>
+            Un ensembles d'exemples de code source sont disponibles dans le projet officiel de GeotoolKit.
+        </para>
+        <para>
+            Consulter en ligne :
+            <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/file/0237bc78daa2/demos">
+                <acronym>Dépôt mercurial de GeotoolKit</acronym>
+            </link>
+        </para>
+
+        <section>
+            <title>
+                Récupérer et tenir à jour les sources
+            </title>
+
+            <para>
+                GeotoolKit utilise le gestionnaire de version décentralisée
+                <link xlink:href="http://mercurial.selenic.com/">
+                    <acronym>Mercurial</acronym>
+                </link>.
+            </para>
+
+            <para>
+                Une fois celui-ci installé, les sources peuvent être récupérées avec la commande suivante :
+            </para>
+
+            <programlisting>
+                hg clone http://hg.geotoolkit.org/geotoolkit-pending geotk-pending
+            </programlisting>
+
+            <para>
+                La mise à jour se fait avec la commande :
+            </para>
+            <programlisting>
+                hg pull -u
+            </programlisting>
+
+        </section>
+
+    </section>
+
+    <section>
+        <title>
+            Précompilé
+        </title>
+
+        <para>
+            Tous les projets sont compilés toutes les nuits et les archives sont accessibles publiquement.
+        </para>
+
+        <para>
+            <link xlink:href="http://jenkins.geomatys.com/">
+                <acronym>Dépôt Jenkins</acronym>
+            </link>
+        </para>
+    </section>
+
+    <section>
+        <title>
+            Compilation locale
+        </title>
+
+        <para>
+            La compilation requiert :
+
+            <itemizedlist>
+                <listitem>
+                    <para>
+                        <link xlink:href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">
+                            <acronym>JDK 1.6+</acronym>
+                        </link>
+                        avec les extensions
+                        <link xlink:href="http://java.net/projects/jai/">
+                            <acronym>JAI</acronym>
+                        </link>
+                        (pré-installé sous Mac) et
+                        <link xlink:href="http://java.net/projects/jai-imageio/">
+                            <acronym>ImageIO</acronym>
+                        </link>
+                    </para>
+                </listitem>
+
+                <listitem>
+                    <para>
+                        <link xlink:href="http://maven.apache.org/">
+                            <acronym>Maven 3.0.4 ou supérieur</acronym>
+                        </link>
+                    </para>
+                </listitem>
+            </itemizedlist>
+        </para>
+
+        <para> Une fois ceux ci installés, la compilation se fait avec la commande :
+        </para>
+        <programlisting>
+            mvn clean install -DskipTests
+        </programlisting>
+        <para>
+            Le temps de compilation varie selon la machine utilisée et votre connexion internet. La première compilation est plus longue pour récupérer les différents paquets dont elle a besoin. Comptez une trentaine de minute pour la première compilation.
+        </para>
+        <para>
+            Les jars de GeotoolKit sont dans le sous-dossier
+            <emphasis>target</emphasis>.
+        </para>
+    </section>
+</chapter>

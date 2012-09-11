@@ -19,31 +19,65 @@ package org.geotoolkit.data.osm;
 
 import java.net.URL;
 
+import java.util.Collections;
+import org.geotoolkit.data.AbstractDataStoreFactory;
 import org.geotoolkit.data.AbstractFileDataStoreFactory;
 import org.geotoolkit.data.DataStore;
 import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.metadata.iso.DefaultIdentifier;
+import org.geotoolkit.metadata.iso.citation.DefaultCitation;
+import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
+import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.util.ResourceInternationalString;
 
+import org.opengis.metadata.Identifier;
+import org.opengis.metadata.identification.Identification;
+import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
- * GPX datastore factory.
+ * OSM XML datastore factory.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public class OSMMemoryDataStoreFactory extends AbstractFileDataStoreFactory {
 
+    /** factory identification **/
+    public static final String NAME = "osm-xml";
+    public static final DefaultServiceIdentification IDENTIFICATION;
+    static {
+        IDENTIFICATION = new DefaultServiceIdentification();
+        final Identifier id = new DefaultIdentifier(NAME);
+        final DefaultCitation citation = new DefaultCitation(NAME);
+        citation.setIdentifiers(Collections.singleton(id));
+        IDENTIFICATION.setCitation(citation);
+    }
+    
+    public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            new DefaultParameterDescriptorGroup("OSMMemoryParameters",URLP);
+            new DefaultParameterDescriptorGroup("OSMMemoryParameters",IDENTIFIER,URLP);
 
     @Override
-    public String getDescription() {
-        return "OSM files (*.osm)";
+    public Identification getIdentification() {
+        return IDENTIFICATION;
     }
+
+    @Override
+    public CharSequence getDescription() {
+        return new ResourceInternationalString("org/geotoolkit/osm_xml/bundle", "datastoreDescription");
+    }
+
+    @Override
+    public CharSequence getDisplayName() {
+        return new ResourceInternationalString("org/geotoolkit/osm_xml/bundle", "datastoreTitle");
+    }
+    
+    
 
     @Override
     public ParameterDescriptorGroup getParametersDescriptor() {
@@ -51,7 +85,8 @@ public class OSMMemoryDataStoreFactory extends AbstractFileDataStoreFactory {
     }
 
     @Override
-    public DataStore createDataStore(final ParameterValueGroup params) throws DataStoreException {
+    public DataStore create(final ParameterValueGroup params) throws DataStoreException {
+        checkCanProcessWithError(params);
         final URL url = (URL) params.parameter(URLP.getName().toString()).getValue();
                 
         final String path = url.toString();
@@ -62,15 +97,15 @@ public class OSMMemoryDataStoreFactory extends AbstractFileDataStoreFactory {
         }
         final String name = path.substring(slash, dot);
         try {
-            return new OSMMemoryDataStore(IOUtilities.toFile(url, null));
+            return new OSMMemoryDataStore(params,IOUtilities.toFile(url, null));
         } catch (Exception ex) {
             throw new DataStoreException(ex);
         }
     }
 
     @Override
-    public DataStore createNewDataStore(final ParameterValueGroup params) throws DataStoreException {
-        return createDataStore(params);
+    public DataStore createNew(final ParameterValueGroup params) throws DataStoreException {
+        return create(params);
     }
 
     @Override

@@ -40,6 +40,9 @@ import org.geotoolkit.ogc.xml.v110.PropertyNameType;
 import org.geotoolkit.ogc.xml.v110.SortByType;
 import org.geotoolkit.ogc.xml.v110.SortOrderType;
 import org.geotoolkit.ogc.xml.v110.SortPropertyType;
+import org.geotoolkit.ogc.xml.v200.BBOXType;
+import org.geotoolkit.ogc.xml.v200.ContainsType;
+import org.geotoolkit.ogc.xml.v200.TimeAfterType;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.xml.MarshallerPool;
 
@@ -58,7 +61,7 @@ public class FilterXMLBindingTest {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.filter");
 
-    private static final MarshallerPool pool = FilterMarshallerPool.getInstance();;
+    private static final MarshallerPool pool = FilterMarshallerPool.getInstance();
     private Unmarshaller unmarshaller;
     private Marshaller   marshaller;
 
@@ -112,6 +115,8 @@ public class FilterXMLBindingTest {
         result = result.replace(" xmlns:xlink=\"http://www.w3.org/1999/xlink\"", "");
         result = result.replace(" xmlns:gml=\"http://www.opengis.net/gml\"", "");
         result = result.replace(" xmlns:ogc=\"http://www.opengis.net/ogc\"", "");
+        result = result.replace(" xmlns:fes=\"http://www.opengis.net/fes/2.0\"", "");
+        result = result.replace(" xmlns:ows=\"http://www.opengis.net/ows/1.1\"","");
 
         String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"     + '\n' +
@@ -129,28 +134,47 @@ public class FilterXMLBindingTest {
         LOGGER.log(Level.FINER, "expected: {0}", expResult);
         assertEquals(expResult, result);
 
-        
-        
+
+
         ObjectFactory factory = new ObjectFactory();
-        
-        
+
+        final BBOXType bbox = new BBOXType("propName", envelope);
+
+        org.geotoolkit.ogc.xml.v200.FilterType filter2   = new org.geotoolkit.ogc.xml.v200.FilterType(bbox);
+
+        //sw = new StringWriter();
+
+        marshaller.marshal(filter2, System.out);
+
+        /*--------------------------------------------*/
+        /*- --------------- DEBUG --------------------*/
+        /*--------------------------------------------*/
+
         String[] arr = new String[2];
         arr[0] = "boby";
         arr[1] = "DESC";
 
         SortPropertyType sp = new SortPropertyType(arr[0], SortOrderType.valueOf(arr[1]));
         SortByType sort = new SortByType(Arrays.asList(sp));
-        
+
         JAXBElement<SortByType> jbSort = factory.createSortBy(sort);
-        
+
         //marshaller.marshal(jbSort, System.out);
-        
+
         sp = new SortPropertyType(arr[0], SortOrder.valueOf(arr[1]));
         sort = new SortByType(Arrays.asList(sp));
-        
+
         jbSort = factory.createSortBy(sort);
-        
+
         //marshaller.marshal(jbSort, System.out);
+
+        BBOXType filterBox = new BBOXType("boundingBox", "$test");
+        org.geotoolkit.ogc.xml.v200.FilterType filter3 = new org.geotoolkit.ogc.xml.v200.FilterType(filterBox);
+        marshaller.marshal(filter3, System.out);
+
+        TimeAfterType filterAfter = new TimeAfterType("boundingBox", "$test");
+        org.geotoolkit.ogc.xml.v200.FilterType filter4 = new org.geotoolkit.ogc.xml.v200.FilterType(filterAfter);
+        marshaller.marshal(filter4, System.out);
     }
 
     /**
@@ -192,6 +216,94 @@ public class FilterXMLBindingTest {
 
         assertEquals(expResult.getSpatialOps().getValue(), result.getSpatialOps().getValue());
         assertEquals(expResult, result);
+
+        xml =
+       "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +
+        "<ogc:Filter xmlns:ogc=\"http://www.opengis.net/fes/2.0\" xmlns:gml=\"http://www.opengis.net/gml\">"  + '\n' +
+        "    <ogc:BBOX>"                                                                                                                               + '\n' +
+        "        <ogc:ValueReference>boundingBox</ogc:ValueReference>"                                                                                 + '\n' +
+        "        <gml:Envelope srsName=\"EPSG:4326\" gml:id=\"env-id\">"                                                                               + '\n' +
+        "            <gml:lowerCorner>10.0 11.0</gml:lowerCorner>"                                                                                     + '\n' +
+        "            <gml:upperCorner>10.0 11.0</gml:upperCorner>"                                                                                     + '\n' +
+        "        </gml:Envelope>"                                                                                                                      + '\n' +
+        "    </ogc:BBOX>"                                                                                                                              + '\n' +
+        "</ogc:Filter>" + '\n';
+
+         sr = new StringReader(xml);
+
+        jb =  (JAXBElement) unmarshaller.unmarshal(sr);
+        org.geotoolkit.ogc.xml.v200.FilterType result2 = (org.geotoolkit.ogc.xml.v200.FilterType) jb.getValue();
+        final org.geotoolkit.gml.xml.v311.ObjectFactory gmlFactory = new org.geotoolkit.gml.xml.v311.ObjectFactory();
+        BBOXType filterBox = new BBOXType("boundingBox", gmlFactory.createEnvelope(envelope));
+        org.geotoolkit.ogc.xml.v200.FilterType expResult2 = new org.geotoolkit.ogc.xml.v200.FilterType(filterBox);
+
+
+        assertEquals(((JAXBElement)((BBOXType)expResult2.getSpatialOps().getValue()).getAny()).getValue(), ((JAXBElement)((BBOXType)result2.getSpatialOps().getValue()).getAny()).getValue());
+        assertEquals(expResult2.getSpatialOps().getValue(), result2.getSpatialOps().getValue());
+        assertEquals(expResult2, result2);
+
+         xml =
+       "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +
+        "<ogc:Filter xmlns:ogc=\"http://www.opengis.net/fes/2.0\">"  + '\n' +
+        "    <ogc:BBOX>"                                                                                                                               + '\n' +
+        "        <ogc:ValueReference>boundingBox</ogc:ValueReference>"                                                                                     + '\n' +
+        "        $test"                                                                                                                                + '\n' +
+        "    </ogc:BBOX>"                                                                                                                              + '\n' +
+        "</ogc:Filter>" + '\n';
+
+         sr = new StringReader(xml);
+
+        jb =  (JAXBElement) unmarshaller.unmarshal(sr);
+        result2 = (org.geotoolkit.ogc.xml.v200.FilterType) jb.getValue();
+
+        filterBox = new BBOXType("boundingBox", "$test");
+        expResult2 = new org.geotoolkit.ogc.xml.v200.FilterType(filterBox);
+
+
+        assertEquals(expResult2.getSpatialOps().getValue(), result2.getSpatialOps().getValue());
+        assertEquals(expResult2, result2);
+
+        xml =
+       "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +
+        "<ogc:Filter xmlns:ogc=\"http://www.opengis.net/fes/2.0\">"  + '\n' +
+        "    <ogc:Contains>"                                                                                                                               + '\n' +
+        "        <ogc:ValueReference>boundingBox</ogc:ValueReference>"                                                                                     + '\n' +
+        "        $test"                                                                                                                                + '\n' +
+        "    </ogc:Contains>"                                                                                                                              + '\n' +
+        "</ogc:Filter>" + '\n';
+
+         sr = new StringReader(xml);
+
+        jb =  (JAXBElement) unmarshaller.unmarshal(sr);
+        result2 = (org.geotoolkit.ogc.xml.v200.FilterType) jb.getValue();
+
+        ContainsType filterContains = new ContainsType("boundingBox", "$test");
+        expResult2 = new org.geotoolkit.ogc.xml.v200.FilterType(filterContains);
+
+
+        assertEquals(expResult2.getSpatialOps().getValue(), result2.getSpatialOps().getValue());
+        assertEquals(expResult2, result2);
+
+        xml =
+       "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +
+        "<ogc:Filter xmlns:ogc=\"http://www.opengis.net/fes/2.0\">"  + '\n' +
+        "    <ogc:After>"                                                                                                                               + '\n' +
+        "        <ogc:ValueReference>boundingBox</ogc:ValueReference>"                                                                                     + '\n' +
+        "        $test"                                                                                                                                + '\n' +
+        "    </ogc:After>"                                                                                                                              + '\n' +
+        "</ogc:Filter>" + '\n';
+
+         sr = new StringReader(xml);
+
+        jb =  (JAXBElement) unmarshaller.unmarshal(sr);
+        result2 = (org.geotoolkit.ogc.xml.v200.FilterType) jb.getValue();
+
+        TimeAfterType filterAfter = new TimeAfterType("boundingBox", "$test");
+        expResult2 = new org.geotoolkit.ogc.xml.v200.FilterType(filterAfter);
+
+
+        assertEquals(expResult2.getTemporalOps().getValue(), result2.getTemporalOps().getValue());
+        assertEquals(expResult2, result2);
 
     }
 }

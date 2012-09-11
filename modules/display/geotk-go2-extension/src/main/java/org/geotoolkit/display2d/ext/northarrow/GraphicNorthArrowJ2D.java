@@ -2,7 +2,6 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2004 - 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2008 - 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -17,17 +16,15 @@
  */
 package org.geotoolkit.display2d.ext.northarrow;
 
-import org.geotoolkit.display2d.canvas.J2DCanvas;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.util.logging.Level;
-
+import static javax.swing.SwingConstants.*;
 import org.geotoolkit.display.exception.PortrayalException;
+import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.ext.PositionedGraphic2D;
-
-import static javax.swing.SwingConstants.*;
 
 /**
  * Java2D graphic object displaying a north arrow.

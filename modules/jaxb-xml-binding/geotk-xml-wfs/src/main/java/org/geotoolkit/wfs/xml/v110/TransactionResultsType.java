@@ -68,7 +68,7 @@ public class TransactionResultsType {
         return this.action;
     }
 
-     @Override
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("[TransactionResultsType]\n");
         if (action != null) {

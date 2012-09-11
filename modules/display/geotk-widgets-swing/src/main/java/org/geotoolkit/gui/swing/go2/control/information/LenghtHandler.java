@@ -20,12 +20,11 @@ package org.geotoolkit.gui.swing.go2.control.information;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
-
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.event.MouseEvent;
-import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -33,17 +32,17 @@ import java.util.logging.Logger;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
-
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.gui.swing.go2.CanvasHandler;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.go2.control.navigation.MouseNavigatonListener;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
+import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.util.logging.Logging;
 
 /**
  * Lenght mesure handler
- * 
+ *
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
@@ -53,14 +52,7 @@ public class LenghtHandler implements CanvasHandler {
 
     private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory();
 
-    public static final List<Unit> UNITS = new ArrayList<Unit>();
-
-    static{
-        UNITS.add(SI.KILOMETRE);
-        UNITS.add(SI.METRE);
-        UNITS.add(NonSI.MILE);
-        UNITS.add(NonSI.INCH);
-    }
+    public static final List<Unit> UNITS = UnmodifiableArrayList.wrap((Unit)SI.KILOMETRE,SI.METRE,NonSI.MILE,NonSI.INCH);
 
     private final MouseListen mouseInputListener;
 
@@ -109,7 +101,7 @@ public class LenghtHandler implements CanvasHandler {
         return map.getCanvas();
     }
 
-    
+
     //---------------------PRIVATE CLASSES--------------------------------------
     private class MouseListen extends MouseNavigatonListener {
 
@@ -149,5 +141,5 @@ public class LenghtHandler implements CanvasHandler {
         }
 
     }
-    
+
 }

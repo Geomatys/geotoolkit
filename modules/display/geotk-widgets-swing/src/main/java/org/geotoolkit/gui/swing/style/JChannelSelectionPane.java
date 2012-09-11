@@ -50,6 +50,7 @@ public class JChannelSelectionPane extends StyleElementEditor<ChannelSelection>{
      * Creates new form JFillPanel 
      */
     public JChannelSelectionPane() {
+        super(ChannelSelection.class);
         initComponents();
         lock();
     }

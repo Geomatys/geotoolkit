@@ -18,14 +18,14 @@
 
 package org.geotoolkit.wfs.xml.v200;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.*;
 import org.geotoolkit.ogc.xml.v200.FilterCapabilities;
 import org.geotoolkit.ows.xml.v110.CapabilitiesBaseType;
+import org.geotoolkit.ows.xml.v110.OperationsMetadata;
+import org.geotoolkit.ows.xml.v110.ServiceIdentification;
+import org.geotoolkit.ows.xml.v110.ServiceProvider;
+import org.geotoolkit.wfs.xml.WFSCapabilities;
+import org.geotoolkit.wfs.xml.WFSResponse;
 
 
 /**
@@ -63,7 +63,8 @@ import org.geotoolkit.ows.xml.v110.CapabilitiesBaseType;
     "featureTypeList",
     "filterCapabilities"
 })
-public class WFSCapabilitiesType extends CapabilitiesBaseType {
+@XmlRootElement(name = "WFS_Capabilities")
+public class WFSCapabilitiesType extends CapabilitiesBaseType implements WFSResponse, WFSCapabilities {
 
     @XmlElement(name = "WSDL")
     private WFSCapabilitiesType.WSDL wsdl;
@@ -72,6 +73,20 @@ public class WFSCapabilitiesType extends CapabilitiesBaseType {
     @XmlElement(name = "Filter_Capabilities", namespace = "http://www.opengis.net/fes/2.0")
     private FilterCapabilities filterCapabilities;
 
+    public WFSCapabilitiesType() {
+
+    }
+
+    public WFSCapabilitiesType(final String version, final String updateSequence) {
+        super(version, updateSequence);
+    }
+
+    public WFSCapabilitiesType(final String version, final ServiceIdentification si, final ServiceProvider sp, final OperationsMetadata om, 
+            final FeatureTypeListType ft, final FilterCapabilities fc) {
+        super(si, sp, om, version, null);
+        this.featureTypeList = ft;
+        this.filterCapabilities = fc;
+    }
     /**
      * Gets the value of the wsdl property.
      * 

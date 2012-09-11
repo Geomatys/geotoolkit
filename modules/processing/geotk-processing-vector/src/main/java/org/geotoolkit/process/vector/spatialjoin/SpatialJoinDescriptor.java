@@ -87,6 +87,6 @@ public final class SpatialJoinDescriptor extends VectorDescriptor {
      */
     @Override
     public Process createProcess(final ParameterValueGroup input) {
-        return new SpatialJoin(input);
+        return new SpatialJoinProcess(input);
     }
 }

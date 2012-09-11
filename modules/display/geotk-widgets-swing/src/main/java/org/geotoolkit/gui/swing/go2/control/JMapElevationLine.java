@@ -348,7 +348,7 @@ public class JMapElevationLine extends JNavigator implements PropertyChangeListe
         band.addMouseWheelListener(this);
         band.addKeyListener(this);
 
-        addBand(band);
+        getBands().add(band);
     }
     
     /**

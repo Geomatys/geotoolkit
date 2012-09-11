@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.wfs.xml.v110;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -25,6 +24,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.wfs.xml.ResultTypeType;
 
 
 /**
@@ -69,19 +69,19 @@ public class GetFeatureWithLockType extends BaseRequestType {
     private List<QueryType> query;
     @XmlAttribute
     @XmlSchemaType(name = "positiveInteger")
-    private BigInteger expiry;
+    private Integer expiry;
     @XmlAttribute
     private ResultTypeType resultType;
     @XmlAttribute
     private String outputFormat;
     @XmlAttribute
     @XmlSchemaType(name = "positiveInteger")
-    private BigInteger maxFeatures;
+    private Integer maxFeatures;
     @XmlAttribute
     private String traverseXlinkDepth;
     @XmlAttribute
     @XmlSchemaType(name = "positiveInteger")
-    private BigInteger traverseXlinkExpiry;
+    private Integer traverseXlinkExpiry;
 
     /**
      * Gets the value of the query property.
@@ -98,12 +98,12 @@ public class GetFeatureWithLockType extends BaseRequestType {
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getExpiry() {
+    public Integer getExpiry() {
         if (expiry == null) {
-            return new BigInteger("5");
+            return new Integer("5");
         } else {
             return expiry;
         }
@@ -114,10 +114,10 @@ public class GetFeatureWithLockType extends BaseRequestType {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setExpiry(final BigInteger value) {
+    public void setExpiry(final Integer value) {
         this.expiry = value;
     }
 
@@ -182,10 +182,10 @@ public class GetFeatureWithLockType extends BaseRequestType {
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getMaxFeatures() {
+    public Integer getMaxFeatures() {
         return maxFeatures;
     }
 
@@ -194,10 +194,10 @@ public class GetFeatureWithLockType extends BaseRequestType {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setMaxFeatures(final BigInteger value) {
+    public void setMaxFeatures(final Integer value) {
         this.maxFeatures = value;
     }
 
@@ -230,10 +230,10 @@ public class GetFeatureWithLockType extends BaseRequestType {
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getTraverseXlinkExpiry() {
+    public Integer getTraverseXlinkExpiry() {
         return traverseXlinkExpiry;
     }
 
@@ -242,10 +242,10 @@ public class GetFeatureWithLockType extends BaseRequestType {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setTraverseXlinkExpiry(final BigInteger value) {
+    public void setTraverseXlinkExpiry(final Integer value) {
         this.traverseXlinkExpiry = value;
     }
 

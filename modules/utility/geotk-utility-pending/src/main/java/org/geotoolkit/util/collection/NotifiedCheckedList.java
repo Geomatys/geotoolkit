@@ -41,6 +41,8 @@ public abstract class NotifiedCheckedList<E> extends CheckedArrayList<E>{
     
     protected abstract void notifyAdd(final Collection<? extends E> items, NumberRange<Integer> range);
     
+    protected abstract void notifyChange(final E oldItem, E newItem, int index);
+    
     protected abstract void notifyRemove(final E item, int index);
     
     protected abstract void notifyRemove(final Collection<? extends E> items, NumberRange<Integer> range);
@@ -62,6 +64,13 @@ public abstract class NotifiedCheckedList<E> extends CheckedArrayList<E>{
         notifyAdd(element, index);
     }
 
+    @Override
+    public E set(int index, E element) throws IllegalArgumentException, UnsupportedOperationException {
+        final E old = super.set(index, element);
+        notifyChange(old, element, index);
+        return old;
+    }
+    
     @Override
     public boolean addAll(final Collection<? extends E> collection) throws IllegalArgumentException, UnsupportedOperationException {
         final int startIndex = super.size();

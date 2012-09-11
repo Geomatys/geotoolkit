@@ -33,7 +33,6 @@ import org.opengis.util.NoSuchIdentifierException;
  * @module pending
  */
 public class AbsoluteTest extends AbstractProcessTest{
-
    
 
     public AbsoluteTest() {
@@ -56,7 +55,6 @@ public class AbsoluteTest extends AbstractProcessTest{
         //result
         final Double result = (Double) proc.call().parameter("result").getValue();
 
-       
         assertEquals(new Double(2.6), result);
     }
     

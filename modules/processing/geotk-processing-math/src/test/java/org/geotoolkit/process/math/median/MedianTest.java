@@ -34,7 +34,6 @@ import static org.junit.Assert.*;
  */
 public class MedianTest extends AbstractProcessTest{
 
-   
 
     public MedianTest() {
         super("median");

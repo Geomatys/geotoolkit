@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.LinearRing;
 import org.geotoolkit.util.ComparisonMode;
 import org.opengis.filter.expression.ExpressionVisitor;
 
@@ -67,7 +68,7 @@ import org.opengis.filter.expression.ExpressionVisitor;
     "coordinates",
     "coord"
 })
-public class LinearRingType extends AbstractRingType {
+public class LinearRingType extends AbstractRingType implements LinearRing {
 
     @XmlElementRefs({
         @XmlElementRef(name = "pointProperty", namespace = "http://www.opengis.net/gml", type = JAXBElement.class),
@@ -79,6 +80,15 @@ public class LinearRingType extends AbstractRingType {
     private CoordinatesType coordinates;
     private List<CoordType> coord;
 
+    public LinearRingType() {
+        
+    }
+    
+    public LinearRingType(final String srsName, final DirectPositionListType posList) {
+        super(srsName);
+        this.posList = posList;
+    }
+    
     /**
      * Gets the value of the posOrPointPropertyOrPointRep property.
      * 

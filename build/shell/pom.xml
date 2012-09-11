@@ -37,7 +37,6 @@
 
         <!-- GeoToolKit dependencies -->
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-analytics</artifactId></dependency>
-        <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-clustering</artifactId></dependency>
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-coverage</artifactId></dependency>
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-coverage-sql</artifactId></dependency>
         <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-coverageio</artifactId></dependency>
@@ -91,6 +90,9 @@
         <dependency><groupId>org.geotoolkit.pending</groupId><artifactId>geotk-osm-core</artifactId>            <version>${project.version}</version></dependency>
         <dependency><groupId>org.geotoolkit.pending</groupId><artifactId>geotk-osm-xml</artifactId>             <version>${project.version}</version></dependency>
         <dependency><groupId>org.geotoolkit.pending</groupId><artifactId>geotk-processing-core</artifactId>     <version>${project.version}</version></dependency>
+        <dependency><groupId>org.geotoolkit.pending</groupId><artifactId>geotk-processing-jts-geometry</artifactId><version>${project.version}</version></dependency>
+        <dependency><groupId>org.geotoolkit.pending</groupId><artifactId>geotk-processing-math</artifactId>   <version>${project.version}</version></dependency>
+        <dependency><groupId>org.geotoolkit.pending</groupId><artifactId>geotk-processing-referencing</artifactId><version>${project.version}</version></dependency>
         <dependency><groupId>org.geotoolkit.pending</groupId><artifactId>geotk-processing-coverage</artifactId> <version>${project.version}</version></dependency>
         <dependency><groupId>org.geotoolkit.pending</groupId><artifactId>geotk-processing-vector</artifactId>   <version>${project.version}</version></dependency>
         <dependency><groupId>org.geotoolkit.pending</groupId><artifactId>geotk-render</artifactId>              <version>${project.version}</version></dependency>

@@ -24,26 +24,25 @@ import static org.geotoolkit.parameter.Parameters.*;
 
 /**
  * Addition process between two numbers.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class AddProcess extends AbstractProcess{
-    
-    public AddProcess(final ParameterValueGroup input){
+public class AddProcess extends AbstractProcess {
+
+    public AddProcess(final ParameterValueGroup input) {
         super(INSTANCE,input);
     }
-    
+
     @Override
-    public ParameterValueGroup call() {
-                
+    protected void execute() {
+
         final double first = value(FIRST_NUMBER, inputParameters);
         final double second = value(SECOND_NUMBER, inputParameters);
-        
-        final Double result = first + second;
-        
+
+        final double result = first + second;
+
         getOrCreate(RESULT_NUMBER, outputParameters).setValue(result);
-        return outputParameters;
     }
-    
+
 }

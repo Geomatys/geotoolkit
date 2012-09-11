@@ -27,7 +27,6 @@ import java.net.URI;
 import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.geotoolkit.renderer.style.ExternalGraphicFactory;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
@@ -39,8 +38,7 @@ import org.geotoolkit.util.collection.UnmodifiableArrayList;
  */
 public class SVGGraphicFactory implements ExternalGraphicFactory {
 
-    private static Collection<String> mimeTypes = 
-            UnmodifiableArrayList.wrap(new String[]{"svg","image/svg"});
+    private static final Collection<String> MIME_TYPES = UnmodifiableArrayList.wrap(new String[]{"svg","image/svg"});
 
     /**
      * {@inheritDoc }
@@ -63,7 +61,7 @@ public class SVGGraphicFactory implements ExternalGraphicFactory {
             try{
                 stream = SVGGraphicFactory.class.getResourceAsStream(uri.toString());
             }catch(Exception e){
-                Logger.getLogger(SVGGraphicFactory.class.getName()).log(Level.WARNING, null, e);
+                Logger.getLogger(SVGGraphicFactory.class.getName()).log(Level.WARNING, e.getMessage(), e);
             }
         }
 
@@ -95,7 +93,7 @@ public class SVGGraphicFactory implements ExternalGraphicFactory {
      */
     @Override
     public Collection<String> getSupportedMimeTypes() {
-        return mimeTypes;
+        return MIME_TYPES;
     }
 
 }

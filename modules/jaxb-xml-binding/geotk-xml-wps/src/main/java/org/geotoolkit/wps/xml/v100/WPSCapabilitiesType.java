@@ -61,17 +61,25 @@ import org.geotoolkit.wps.xml.WPSResponse;
 public class WPSCapabilitiesType extends CapabilitiesBaseType implements WPSResponse {
 
     @XmlElement(name = "ProcessOfferings", required = true)
-    protected ProcessOfferings processOfferings;
+    private ProcessOfferings processOfferings;
     @XmlElement(name = "Languages", required = true)
-    protected Languages languages;
+    private Languages languages;
     @XmlElement(name = "WSDL")
-    protected WSDL wsdl;
+    private WSDL wsdl;
     @XmlAttribute(required = true)
     @XmlSchemaType(name = "anySimpleType")
-    protected String service;
+    private String service;
     @XmlAttribute(namespace = "http://www.w3.org/XML/1998/namespace", required = true)
-    protected String lang;
+    private String lang;
 
+    public WPSCapabilitiesType() {
+        
+    }
+    
+    public WPSCapabilitiesType(final String version, final String updateSequence) {
+        super(version, updateSequence);
+    }
+    
     /**
      * Gets the value of the processOfferings property.
      * 

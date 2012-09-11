@@ -2,7 +2,6 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2004 - 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2008 - 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -17,7 +16,6 @@
  */
 package org.geotoolkit.display2d.style;
 
-import org.geotoolkit.display2d.GO2Utilities;
 import java.awt.AlphaComposite;
 import java.awt.Composite;
 import java.awt.Graphics2D;
@@ -25,9 +23,8 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.util.List;
-
 import org.geotoolkit.display.shape.TransformedShape;
-
+import org.geotoolkit.display2d.GO2Utilities;
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.ExternalGraphic;
 import org.opengis.style.Graphic;
@@ -36,7 +33,7 @@ import org.opengis.style.Mark;
 
 /**
  * Cached graphic.
- *  
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
@@ -50,11 +47,11 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
     private final CachedDisplacement cachedDisplacement;
     private CachedMark cachedMark = null;
     private CachedExternal cachedExternal = null;
-    
+
     //we cant use buffer for images seens they can be symbolizer UOM relative
 //    protected static final short ID_SUBBUFFER = 6;
 //    protected static final short ID_BUFFER = 7;
-    
+
 
 
     protected CachedGraphic(final C graphic){
@@ -69,7 +66,7 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
     @Override
     protected void evaluate(){
         if(!isNotEvaluated) return;
-        
+
         if(!evaluateGraphic()){
             //composite is completely translucent or paint is not visible
             //we cache nothing seens nothing can be render
@@ -106,7 +103,7 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
             }
 
         }
-        
+
         isNotEvaluated = false;
     }
 
@@ -121,43 +118,43 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
         if(GO2Utilities.isStatic(expOpacity)){
             cachedOpacity = GO2Utilities.evaluate(expOpacity, null, Number.class, 1f).floatValue();
             //we return false, opacity is 0 no need to cache or draw anything
-            if(cachedOpacity == 0){
+            if(cachedOpacity <= 0){
                 isStaticVisible = VisibilityState.UNVISIBLE;
                 return false;
             }
-            //this style is visible 
+            //this style is visible
             if(isStaticVisible == VisibilityState.NOT_DEFINED) isStaticVisible = VisibilityState.VISIBLE;
-            
+
         }else{
             //this style visibility is dynamic
-            if(isStaticVisible != VisibilityState.UNVISIBLE) isStaticVisible = VisibilityState.DYNAMIC;            
+            if(isStaticVisible != VisibilityState.UNVISIBLE) isStaticVisible = VisibilityState.DYNAMIC;
             isStatic = false;
             GO2Utilities.getRequieredAttributsName(expOpacity,requieredAttributs);
         }
 
-        
+
         // Rotation ------------------------------------
         if(GO2Utilities.isStatic(expRotation)){
             cachedRotation = (float) Math.toRadians(GO2Utilities.evaluate(expRotation, null, Number.class, 0d).doubleValue());
-        }else{ 
-            isStatic = false; 
+        }else{
+            isStatic = false;
             GO2Utilities.getRequieredAttributsName(expRotation,requieredAttributs);
         }
-        
-        
+
+
         // Size ----------------------------------------
         if(GO2Utilities.isStatic(expSize)){
             cachedSize = GO2Utilities.evaluate(expSize, null, Number.class, Float.NaN).floatValue();
             //we return false, size is 0 no need to cache or draw anything
-            if(cachedSize == 0){
+            if(cachedSize <= 0){
                 isStaticVisible = VisibilityState.UNVISIBLE;
                 return false;
             }
-            //this style is visible 
+            //this style is visible
             if(isStaticVisible == VisibilityState.NOT_DEFINED) isStaticVisible = VisibilityState.VISIBLE;
-        }else{ 
+        }else{
             //this style visibility is dynamic
-            if(isStaticVisible != VisibilityState.UNVISIBLE) isStaticVisible = VisibilityState.DYNAMIC;            
+            if(isStaticVisible != VisibilityState.UNVISIBLE) isStaticVisible = VisibilityState.DYNAMIC;
             isStatic = false;
             GO2Utilities.getRequieredAttributsName(expSize,requieredAttributs);
         }
@@ -165,16 +162,16 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
 
         //grab the first available symbol-------------------
         boolean found = false;
-        
+
         graphicLoop:
         for(GraphicalSymbol symbol : symbols){
-            
+
             if(symbol instanceof Mark){
                 CachedMark candidateMark = CachedMark.cache((Mark)symbol);
 
                 //test if the mark is valid, could be false if an URL or anything is broken
                 if(candidateMark.isValid()){
-                    
+
                     //if the mark is invisible this graphic is invisible too
                     //so there is nothing to cache
                     VisibilityState markStaticVisibility = candidateMark.isStaticVisible();
@@ -199,14 +196,14 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
                 CachedExternal candidateExternal = CachedExternal.cache((ExternalGraphic)symbol);
 
                 if(candidateExternal.isValid()){
-                    
+
                     //if the external is invisible this graphic is invisible too
                     //so there is nothing to cache
                     if(candidateExternal.isStaticVisible() == VisibilityState.UNVISIBLE){
                         isStaticVisible = VisibilityState.UNVISIBLE;
                         return false;
                     }
-                    
+
 //                    //if size is static and external static visible, we can cache the symbol graphic
 //                    if(!Float.isNaN(cachedSize) && cachedExternal.isStatic() && cachedExternal.isStaticVisible() == VisibilityState.VISIBLE){
 //                        BufferedImage buffer = cachedExternal.getImage(cachedSize);
@@ -231,7 +228,7 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
             cachedMark = CachedMark.cache(mark);
 
             if(isStaticVisible == VisibilityState.NOT_DEFINED) isStaticVisible = VisibilityState.VISIBLE;
-            
+
 //            //if size is static, we can cache the symbol graphic
 //            if(!Float.isNaN(cachedSize)){
 //                BufferedImage buffer = cachedMark.getImage(null, cachedSize);
@@ -243,7 +240,7 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
 
 //        //if static we can cache the stroke directly
 //        if(isStatic){
-//            
+//
 //            //no operation to append to image, erase all cache and cache the subbuffer as the main buffer
 //            if(cachedRotation ==0 && cachedOpacity==1){
 //                BufferedImage buffer = (BufferedImage) cachedValues.get(ID_SUBBUFFER);
@@ -284,20 +281,20 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
 
         return true;
     }
-        
+
     /**
-     * 
-     * @return BufferedImage for a feature 
+     *
+     * @return BufferedImage for a feature
      */
     public BufferedImage getImage(final Object candidate, final float coeff, final RenderingHints hints) {
         evaluate();
-        
-        
+
+
 //        //we have a cached buffer ---------------------------------------------------------------
 //        if(cachedValues.containsKey(ID_BUFFER)){
 //            return (BufferedImage) cachedValues.get(ID_BUFFER);
 //        }
-        
+
         //-------- grab the cached parameters ----------------------------------------------------
         float candidateOpacity = cachedOpacity;
         float candidateRotation = cachedRotation;
@@ -318,15 +315,15 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
             final Expression expSize = styleElement.getSize();
             candidateSize = GO2Utilities.evaluate(expSize, candidate, Number.class, Float.NaN).floatValue();
         }
-        
+
         //the subbuffer image
         BufferedImage subBuffer = null;
-        
+
 //        //we have a cached subbuffer ------------------------------------------------------------
 //        if(cachedValues.containsKey(ID_SUBBUFFER)){
 //            subBuffer = (BufferedImage) cachedValues.get(ID_SUBBUFFER);
 //        }
-        
+
         //we have a cached mark ------------------------------------------------------------------
         if(cachedMark != null){
             if(candidateSize.isNaN()){
@@ -335,17 +332,17 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
                 subBuffer = cachedMark.getImage(candidate, candidateSize*coeff,hints);
             }
         }
-        
-                
+
+
         //we have a cached external --------------------------------------------------------------
         if(cachedExternal != null){
             subBuffer = cachedExternal.getImage(candidateSize,coeff,hints);
         }
-        
-        
+
+
         //no operation to append to image, return the buffer directly ----------------------------
         if( candidateRotation == 0 && candidateOpacity == 1 ) return subBuffer;
-        
+
 
         // we must change opacity or rotation ----------------------------------------------------
         final int maxSizeX;
@@ -369,7 +366,7 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
         }
 
         final Composite j2dComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, candidateOpacity);
-        
+
         g2.setComposite(j2dComposite);
         g2.rotate(candidateRotation, maxSizeX/2f, maxSizeY/2f);
         final int translateX = (int)((maxSizeX-subBuffer.getWidth())/2 );
@@ -386,14 +383,14 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
     public float[] getDisplacement(final Object candidate, final float[] buffer){
         return cachedDisplacement.getValues(candidate, buffer);
     }
-    
+
     /**
      * return an Array of 2 floats.
      */
     public float[] getAnchor(final Object candidate, final float[] buffer){
         return cachedAnchor.getValues(candidate, buffer);
     }
-    
+
     /**
      * @return margin of this style for the given feature
      */
@@ -401,14 +398,14 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
         evaluate();
 
         final boolean noFeature = (candidate == null);
-        
+
 //        //we have a cachedImage, we return it's bigest attribut
 //        BufferedImage img = (BufferedImage)cachedValues.get(ID_BUFFER);
 //        if(img != null){
 //            return (img.getHeight()*coeff > img.getWidth()*coeff) ? img.getHeight()*coeff : img.getWidth()*coeff;
 //        }
-        
-        
+
+
         float candidateOpacity = cachedOpacity;
         float candidateRotation = cachedRotation;
         float candidateSize = cachedSize;
@@ -423,8 +420,8 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
             }
         }
 
-        if(candidateOpacity == 0) return 0;
-        
+        if(candidateOpacity <= 0) return 0;
+
         if(Float.isNaN(candidateRotation)){
             final Expression expRotation = styleElement.getRotation();
             final Number rot = GO2Utilities.evaluate(expRotation, candidate, Number.class, 0f);
@@ -441,16 +438,16 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
             }
         }
 
-        if(candidateSize == 0) return 0;
-        
+        if(candidateSize <= 0) return 0;
+
         //the subbuffer image
         BufferedImage subBuffer = null;
-        
+
 //        //we have a cached subbuffer ------------------------------------------------------------
 //        if(cachedValues.containsKey(ID_SUBBUFFER)){
 //            subBuffer = (BufferedImage) cachedValues.get(ID_SUBBUFFER);
 //        }
-        
+
         //we have a cached mark ------------------------------------------------------------------
         if(cachedMark != null){
             if(noFeature){
@@ -461,7 +458,7 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
                 subBuffer = cachedMark.getImage(candidate, candidateSize*coeff,null);
             }
         }
-        
+
         //we have a cached external --------------------------------------------------------------
         if(cachedExternal != null){
             if(noFeature){
@@ -491,17 +488,17 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
         }
 
         return (maxSizeX*coeff > maxSizeY*coeff) ? maxSizeX*coeff : maxSizeY*coeff;
-        
+
     }
-    
+
     /**
      * {@inheritDoc }
      */
     @Override
     public boolean isVisible(final Object candidate) {
         evaluate();
-        
-        
+
+
         if(isStaticVisible == VisibilityState.VISIBLE){
             //visible whatever feature we have
             return true;
@@ -510,37 +507,37 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
             return false;
         }else{
             //dynamic visibility
-            
+
 //            if(cachedValues.get(ID_BUFFER) != null){
 //                //should normaly not happen, if we have a buffer
 //                // Visibility should always be VISIBLE
 //                return true;
 //            }
-            
+
             //test dynamic opacity
             if(Float.isNaN(cachedOpacity)){
                 final Expression expopacity = styleElement.getOpacity();
                 float j2dOpacity = GO2Utilities.evaluate(expopacity, candidate, Number.class, 1f).floatValue();
-                if(j2dOpacity == 0) return false;
+                if(j2dOpacity <= 0) return false;
             }
-            
+
             //test dynamic size
             if(Float.isNaN(cachedSize)){
                 final Expression expSize = styleElement.getSize();
                 float j2dSize = GO2Utilities.evaluate(expSize, candidate, Number.class, 16f).floatValue();
-                if(j2dSize == 0) return false;
+                if(j2dSize <= 0) return false;
             }
-            
+
 //            if(cachedValues.get(ID_SUBBUFFER) == null){
             if(true){
-                
-            
+
+
                 //test dynamic mark
                 if(cachedMark != null){
                     boolean visible = cachedMark.isVisible(candidate);
                     if(!visible) return false;
                 }
-                
+
                 //test dynamic external
                 if(cachedExternal != null){
                     boolean visible = cachedExternal.isVisible(candidate);

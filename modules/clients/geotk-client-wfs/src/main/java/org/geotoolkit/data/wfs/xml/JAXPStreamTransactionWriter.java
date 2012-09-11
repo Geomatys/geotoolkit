@@ -20,6 +20,7 @@ package org.geotoolkit.data.wfs.xml;
 import com.vividsolutions.jts.geom.Geometry;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Date;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.xml.bind.JAXBException;
@@ -102,6 +103,7 @@ public class JAXPStreamTransactionWriter {
     private static final String TYPE_STRING = XS_PREFIX+":string";
     private static final String TYPE_DECIMAL = XS_PREFIX+":decimal";
     private static final String TYPE_INTEGER = XS_PREFIX+":int";
+    private static final String TYPE_BOOLEAN = XS_PREFIX+":boolean";
     private static final String TYPE_DATE = XS_PREFIX+":date";
 
     private final AtomicInteger inc = new AtomicInteger();
@@ -421,6 +423,10 @@ public class JAXPStreamTransactionWriter {
             return TYPE_STRING;
         }else if(candidate instanceof Integer){
             return TYPE_INTEGER;
+        }else if(candidate instanceof Boolean){
+            return TYPE_BOOLEAN;
+        }else if(candidate instanceof Date){
+            return TYPE_DATE;
         }else if(candidate instanceof Float || candidate instanceof Double){
             return TYPE_DECIMAL;
         }else if(candidate instanceof org.opengis.geometry.Geometry){

@@ -30,7 +30,8 @@ import java.util.logging.Level;
 import javax.media.jai.JAI;
 import javax.media.jai.TileFactory;
 import javax.media.jai.TileRecycler;
-
+import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.coverage.PyramidalModel;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.primitive.SearchArea;
@@ -41,7 +42,6 @@ import org.geotoolkit.display2d.container.MultiThreadedRendering;
 import org.geotoolkit.display2d.container.statefull.StatefullCoverageLayerJ2D;
 import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
-import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.map.CollectionMapLayer;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
@@ -49,9 +49,7 @@ import org.geotoolkit.map.ItemListener;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
-
 import org.opengis.display.primitive.Graphic;
-import org.opengis.referencing.operation.TransformException;
 
 /**
  *
@@ -72,20 +70,8 @@ public class StatelessMapItemJ2D<T extends MapItem> extends AbstractGraphicJ2D i
     protected final T item;
 
     public StatelessMapItemJ2D(final J2DCanvas canvas, final T item){
-        //do not use layer crs here, to long to calculate
-        super(canvas, canvas.getObjectiveCRS2D());
-        //super(canvas, layer.getBounds().getCoordinateReferenceSystem());
+        super(canvas);
         this.item = item;
-
-        try{
-            //generic map items do not have an envelope, they act as containers
-            final GeneralEnvelope env = new GeneralEnvelope(canvas.getObjectiveCRS2D());
-            env.setRange(0, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
-            env.setRange(1, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
-            setEnvelope(env);
-        }catch(TransformException ex){
-            getLogger().log(Level.WARNING, ex.getLocalizedMessage(), ex);
-        }
 
         parseItem(this.item);
         weakListener.registerSource(item);
@@ -128,7 +114,15 @@ public class StatelessMapItemJ2D<T extends MapItem> extends AbstractGraphicJ2D i
         }else if (child instanceof CollectionMapLayer){
             g2d = new StatelessCollectionLayerJ2D(getCanvas(), (CollectionMapLayer)child);
         }else if (child instanceof CoverageMapLayer){
-            g2d = new StatefullCoverageLayerJ2D(getCanvas(), (CoverageMapLayer)child);
+            final CoverageMapLayer layer = (CoverageMapLayer) child;
+            final CoverageReference ref = layer.getCoverageReference();
+            if(ref != null && ref instanceof PyramidalModel){
+                //pyramidal model, we can improve rendering
+                g2d = new StatelessPyramidalCoverageLayerJ2D(getCanvas(), (CoverageMapLayer)child);
+            }else{
+                //normal coverage
+                g2d = new StatefullCoverageLayerJ2D(getCanvas(), (CoverageMapLayer)child);
+            }            
         }else if(child instanceof MapLayer){
             g2d = new StatelessMapLayerJ2D(getCanvas(), (MapLayer)child);
         }else{
@@ -204,7 +198,6 @@ public class StatelessMapItemJ2D<T extends MapItem> extends AbstractGraphicJ2D i
             for(final MapItem child : event.getItems()){
                 final GraphicJ2D gj2d = parseChild(child, item.items().indexOf(child));
                 itemGraphics.put(child, gj2d);
-                parseChild(child, item.items().indexOf(child));
             }
             //change other layers indexes
             final List<MapItem> children = item.items();

@@ -28,24 +28,18 @@ import static org.geotoolkit.parameter.Parameters.*;
  * @module pending
  */
 public class CosProcess extends AbstractProcess{
-    
+
     public CosProcess(final ParameterValueGroup input){
         super(INSTANCE,input);
     }
-    
+
     @Override
-    public ParameterValueGroup call() {
-        
-        final double first = value(FIRST_NUMBER, inputParameters);   
-        
-        Double result = 0.0;
-        try{
-            result = Math.cos(first);
-        }catch(Exception e){
-            fireFailEvent(new ProcessEvent(this, e.getMessage(),0, e));
-        }
+    protected void execute() {
+
+        final double first = value(FIRST_NUMBER, inputParameters);
+
+        final double result = Math.cos(first);
         getOrCreate(RESULT_NUMBER, outputParameters).setValue(result);
-        return outputParameters;
     }
-    
+
 }

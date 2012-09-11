@@ -18,11 +18,15 @@
 
 package org.geotoolkit.wfs.xml.v200;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
+import org.geotoolkit.wfs.xml.TransactionResponse;
+import org.geotoolkit.wfs.xml.WFSResponse;
 
 
 /**
@@ -55,7 +59,7 @@ import javax.xml.bind.annotation.XmlType;
     "updateResults",
     "replaceResults"
 })
-public class TransactionResponseType {
+public class TransactionResponseType implements WFSResponse, TransactionResponse {
 
     @XmlElement(name = "TransactionSummary", required = true)
     private TransactionSummaryType transactionSummary;
@@ -68,6 +72,17 @@ public class TransactionResponseType {
     @XmlAttribute(required = true)
     private String version;
 
+    public TransactionResponseType() {
+
+    }
+
+    public TransactionResponseType(final TransactionSummaryType transactionSummary, final ActionResultsType updateResults, final ActionResultsType insertResults, final String version) {
+        this.transactionSummary = transactionSummary;
+        this.updateResults      = updateResults;
+        this.insertResults      = insertResults;
+        this.version            = version;
+    }
+    
     /**
      * Gets the value of the transactionSummary property.
      * 
@@ -190,6 +205,57 @@ public class TransactionResponseType {
      */
     public void setVersion(String value) {
         this.version = value;
+    }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[TransactionResponseType]\n");
+        if (version != null) {
+           sb.append("version: ").append(version).append('\n');
+        }
+        if (transactionSummary != null) {
+           sb.append("transactionSummary: ").append(transactionSummary).append('\n');
+        }
+        if (replaceResults != null) {
+            sb.append("replaceResults: ").append(replaceResults).append('\n');
+        }
+        if (updateResults != null) {
+            sb.append("updateResults: ").append(updateResults).append('\n');
+        }
+        if (insertResults != null) {
+            sb.append("insertResults: ").append(insertResults).append('\n');
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof TransactionResponseType) {
+            final TransactionResponseType that = (TransactionResponseType) object;
+            return Objects.equals(this.insertResults,      that.insertResults)        &&
+                   Objects.equals(this.updateResults,      that.updateResults)   &&
+                   Objects.equals(this.replaceResults,     that.replaceResults)   &&
+                   Objects.equals(this.transactionSummary, that.transactionSummary)   &&
+                   Objects.equals(this.version,            that.version) ;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 19 * hash + (this.transactionSummary != null ? this.transactionSummary.hashCode() : 0);
+        hash = 19 * hash + (this.updateResults != null ? this.updateResults.hashCode() : 0);
+        hash = 19 * hash + (this.replaceResults != null ? this.replaceResults.hashCode() : 0);
+        hash = 19 * hash + (this.insertResults != null ? this.insertResults.hashCode() : 0);
+        hash = 19 * hash + (this.version != null ? this.version.hashCode() : 0);
+        return hash;
     }
 
 }

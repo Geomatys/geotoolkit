@@ -34,7 +34,6 @@ import static org.junit.Assert.*;
  */
 public class SumTest extends AbstractProcessTest{
 
-   
 
     public SumTest() {
         super("sum");

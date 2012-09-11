@@ -69,6 +69,18 @@ public class OnlineResourceType {
 
     }
 
+    public OnlineResourceType(final OnlineResourceType that) {
+        if (that != null) {
+            this.href    = that.href;
+            this.type    = that.type;
+            this.actuate = that.actuate;
+            this.arcrole = that.arcrole;
+            this.role    = that.role;
+            this.show    = that.show;
+            this.title   = that.title;
+        }
+    }
+    
     public OnlineResourceType(final String href) {
         this.href = href;
     }

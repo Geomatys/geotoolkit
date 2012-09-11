@@ -31,17 +31,22 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.Date;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
 
 import org.geotoolkit.data.AbstractDataStore;
+import org.geotoolkit.data.DataStoreFactory;
+import org.geotoolkit.data.DataStoreFinder;
 import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
@@ -56,9 +61,11 @@ import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.simple.DefaultSimpleFeature;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.geotoolkit.util.Converters;
 import org.geotoolkit.util.StringUtilities;
 
@@ -73,6 +80,7 @@ import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
+import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -85,24 +93,56 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class CSVDataStore extends AbstractDataStore{
 
+    static final String BUNDLE_PATH = "org/geotoolkit/csv/bundle";
+    
     private final ReadWriteLock RWLock = new ReentrantReadWriteLock();
     private final ReadWriteLock TempLock = new ReentrantReadWriteLock();
 
     private final File file;
-    private String namespace;
     private String name;
     private final char separator;
 
     private SimpleFeatureType featureType;
 
-    public CSVDataStore(final File f, final String namespace, final String name, final char separator){
-        super(namespace);
-        this.file = f;
-        this.name = name;
-        this.namespace = getDefaultNamespace();
-        this.separator = separator;
+    public CSVDataStore(final File f, final String namespace, final char separator) throws MalformedURLException, DataStoreException{
+        this(toParameters(f, namespace, separator));
+    }
+    
+    public CSVDataStore(final ParameterValueGroup params) throws DataStoreException{
+        super(params);
+        
+        final URL url = (URL) params.parameter(CSVDataStoreFactory.URLP.getName().toString()).getValue();
+        try {
+            this.file = new File(url.toURI());
+        } catch (URISyntaxException ex) {
+            throw new DataStoreException(ex);
+        }
+        this.separator = (Character) params.parameter(CSVDataStoreFactory.SEPARATOR.getName().toString()).getValue();
+                
+        final String path = url.toString();
+        final int slash = Math.max(0, path.lastIndexOf('/') + 1);
+        int dot = path.indexOf('.', slash);
+        if (dot < 0) {
+            dot = path.length();
+        }
+        this.name = path.substring(slash, dot);
+        
     }
 
+    private static ParameterValueGroup toParameters(final File f, 
+            final String namespace, final Character separator) throws MalformedURLException{
+        final ParameterValueGroup params = CSVDataStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
+        Parameters.getOrCreate(CSVDataStoreFactory.URLP, params).setValue(f.toURL());
+        Parameters.getOrCreate(CSVDataStoreFactory.NAMESPACE, params).setValue(namespace);
+        Parameters.getOrCreate(CSVDataStoreFactory.SEPARATOR, params).setValue(separator);
+        return params;
+    }
+
+    @Override
+    public DataStoreFactory getFactory() {
+        return DataStoreFinder.getFactoryById(CSVDataStoreFactory.NAME);
+    }
+    
     private synchronized void checkExist() throws DataStoreException{
         if(featureType != null) return;
 
@@ -134,7 +174,7 @@ public class CSVDataStore extends AbstractDataStore{
               final String line = scanner.nextLine();
               final String[] fields = line.split(""+separator);
               final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-              ftb.setName(namespace, name);
+              ftb.setName(getDefaultNamespace(), name);
               for(String field : fields){
                   final int dep = field.indexOf('(');
                   final int fin = field.lastIndexOf(')');
@@ -143,7 +183,7 @@ public class CSVDataStore extends AbstractDataStore{
                   Class type = String.class;
                   CoordinateReferenceSystem crs = null;
                   if(dep >0 && fin>dep){
-                      fieldName = new DefaultName(namespace, field.substring(0, dep));
+                      fieldName = new DefaultName(getDefaultNamespace(), field.substring(0, dep));
                       //there is a defined type
                       final String name = field.substring(dep + 1, fin).toLowerCase();
                       if ("integer".equalsIgnoreCase(name)) {
@@ -152,6 +192,10 @@ public class CSVDataStore extends AbstractDataStore{
                           type = Double.class;
                       } else if ("string".equalsIgnoreCase(name)) {
                           type = String.class;
+                      } else if ("date".equalsIgnoreCase(name)) {
+                          type = Date.class;
+                      } else if ("boolean".equalsIgnoreCase(name)) {
+                          type = Boolean.class;
                       }else{
                           try {
                               //check if it's a geometry type
@@ -165,7 +209,7 @@ public class CSVDataStore extends AbstractDataStore{
                       }
                   }
                   else{
-                    fieldName = new DefaultName(namespace, field);
+                    fieldName = new DefaultName(getDefaultNamespace(), field);
                     type = String.class;
                   }
 
@@ -206,6 +250,10 @@ public class CSVDataStore extends AbstractDataStore{
                 sb.append("Double");
             }else if(clazz.equals(String.class)){
                 sb.append("String");
+            }else if(clazz.equals(Date.class)){
+                sb.append("Date");
+            }else if(clazz.equals(Boolean.class)){
+                sb.append("boolean");
             }else if(Geometry.class.isAssignableFrom(clazz)){
                 GeometryDescriptor gd = (GeometryDescriptor) desc;
                 try {
@@ -230,7 +278,8 @@ public class CSVDataStore extends AbstractDataStore{
                 file.createNewFile();
             }
             output = new BufferedWriter(new FileWriter(file));
-            namespace = type.getName().getNamespaceURI();
+            defaultNamespace = type.getName().getNamespaceURI();
+            Parameters.getOrCreate(CSVDataStoreFactory.NAMESPACE, parameters).setValue(defaultNamespace);
             name = type.getName().getLocalPart();
             output.write(createHeader(type));
         } catch (IOException ex) {
@@ -559,7 +608,14 @@ public class CSVDataStore extends AbstractDataStore{
                     }else if(att instanceof GeometryDescriptor){
                         str = wktWriter.write((Geometry) value);
                     }else{
-                        str = Converters.convert(value, String.class);
+                        
+                        if(value instanceof Date){
+                            str = TemporalUtilities.toISO8601((Date)value);
+                        }else if(value instanceof Boolean){
+                            str = ((Boolean)value).toString();
+                        }else{
+                            str = Converters.convert(value, String.class);
+                        }
                     }
                     writer.append(str);
                     if (i != n-1) {

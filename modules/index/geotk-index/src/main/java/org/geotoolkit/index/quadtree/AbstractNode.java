@@ -21,7 +21,7 @@ import com.vividsolutions.jts.geom.Envelope;
 import java.util.logging.Level;
 
 /**
- * Represent a tyle in the fack quad tree.
+ * Represent a tyle in the fake quad tree.
  *
  * @author Tommaso Nolli
  * @author Johann Sorel (Geomatys)

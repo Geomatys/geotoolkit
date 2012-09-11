@@ -119,7 +119,16 @@ public class DefaultFeatureTypeFactory implements FeatureTypeFactory {
     @Override
     public ComplexType createComplexType(final Name name, final Collection schema,
             final boolean isIdentifiable, final boolean isAbstract, final List restrictions,
-            final AttributeType superType, final InternationalString description){
+            final AttributeType superType, final InternationalString description) throws IllegalArgumentException{
+        AttributeDescriptor[] testNames = new AttributeDescriptor[schema.size()];
+        schema.toArray(testNames);
+        for(int i = 0 ; i < testNames.length-1 ; i++){
+            final Name toTest = testNames[i].getName();
+            for(int j = i+1 ; j < testNames.length ; j++){
+                if(toTest.equals(testNames[j].getName()))
+                    throw new IllegalArgumentException("We can't build a complexType with multiple descriptor owning the same name");
+            }
+        }
         return new DefaultComplexType(name, schema, isIdentifiable, isAbstract,
                 restrictions, superType, description);
     }

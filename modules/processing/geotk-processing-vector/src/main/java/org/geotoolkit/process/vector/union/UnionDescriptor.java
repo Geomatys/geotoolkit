@@ -88,6 +88,6 @@ public final class UnionDescriptor extends VectorDescriptor {
      */
     @Override
     public Process createProcess(final ParameterValueGroup input) {
-        return new Union(input);
+        return new UnionProcess(input);
     }
 }

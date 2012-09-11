@@ -18,6 +18,7 @@
 package org.geotoolkit.feature;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -111,7 +112,7 @@ public class AttributeTypeBuilder {
     /**
      * string description
      */
-    private String description;
+    private CharSequence description;
     /**
      * identifiable flag
      */
@@ -235,11 +236,11 @@ public class AttributeTypeBuilder {
         return crs;
     }
 
-    public void setDescription(final String description) {
+    public void setDescription(final CharSequence description) {
         this.description = description;
     }
 
-    public String getDescription() {
+    public CharSequence getDescription() {
         return description;
     }
 
@@ -267,6 +268,14 @@ public class AttributeTypeBuilder {
         return length;
     }
 
+    public void setRestrictions(List<Filter> restrictions){
+        this.restrictions = restrictions;
+    }
+
+    public List<Filter> getRestrictions() {
+        return restrictions;
+    }
+    
     public void addRestriction(final Filter restriction) {
         restrictions().add(restriction);
     }
@@ -346,7 +355,11 @@ public class AttributeTypeBuilder {
     }
     
     private InternationalString description() {
-        return description != null ? new SimpleInternationalString(description) : null;
+        if(description instanceof InternationalString){
+            return (InternationalString) description;
+        }
+        
+        return description != null ? new SimpleInternationalString(description.toString()) : null;
     }
 
     private List<Filter> restrictions() {

@@ -58,7 +58,7 @@ public class CSVReadingTest extends AbstractReadingTests{
 
         final File file = File.createTempFile("temp2", "csv");
         file.deleteOnExit();
-        store = new CSVDataStore(file, "http://test.com", "csvstore", ';');
+        store = new CSVDataStore(file, "http://test.com",';');
 
         final GeometryFactory gf = new GeometryFactory();
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();

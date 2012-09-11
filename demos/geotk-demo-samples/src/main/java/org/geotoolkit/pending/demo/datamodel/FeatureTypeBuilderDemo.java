@@ -7,6 +7,7 @@ import java.util.Date;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
+import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.referencing.CRS;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -18,6 +19,8 @@ import org.opengis.util.FactoryException;
 public class FeatureTypeBuilderDemo {
 
     public static void main(String[] args) throws NoSuchAuthorityCodeException, FactoryException {
+        Demos.init();
+        
         System.out.println(createSimpleType());
         System.out.println(createComplexType());
     }

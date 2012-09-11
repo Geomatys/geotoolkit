@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -36,19 +35,19 @@ import org.geotoolkit.display2d.container.statefull.StatefullProjectedFeature;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.renderer.AbstractCoverageSymbolizerRenderer;
+import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
 import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
 import org.geotoolkit.geometry.jts.transform.GeometryTransformer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
-
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.geometry.Envelope;
-import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 
 /**
  * Renderer for Pattern symbolizer.
@@ -58,8 +57,8 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class PatternRenderer extends AbstractCoverageSymbolizerRenderer<CachedPatternSymbolizer>{
 
-    public PatternRenderer(final CachedPatternSymbolizer symbol, final RenderingContext2D context){
-        super(symbol,context);
+    public PatternRenderer(final SymbolizerRendererService service,final CachedPatternSymbolizer symbol, final RenderingContext2D context){
+        super(service,symbol,context);
     }
 
     /**

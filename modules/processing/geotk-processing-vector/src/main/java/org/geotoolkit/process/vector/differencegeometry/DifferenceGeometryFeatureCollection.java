@@ -59,6 +59,6 @@ public class DifferenceGeometryFeatureCollection extends WrapFeatureCollection {
      */
     @Override
     protected Feature modify(final Feature original) {
-        return DifferenceGeometry.clipFeature(original, newFeatureType, diffGeometry);
+        return DifferenceGeometryProcess.clipFeature(original, newFeatureType, diffGeometry);
     }
 }

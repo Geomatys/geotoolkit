@@ -18,6 +18,7 @@ package org.geotoolkit.data.folder;
 
 import java.io.File;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
@@ -25,19 +26,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
-
 import org.geotoolkit.data.AbstractDataStore;
-import org.geotoolkit.data.AbstractFileDataStoreFactory;
+import static org.geotoolkit.data.AbstractDataStoreFactory.IDENTIFIER;
+import static org.geotoolkit.data.AbstractFileDataStoreFactory.*;
 import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.DataStoreFactory;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.FileDataStoreFactory;
+import static org.geotoolkit.data.folder.AbstractFolderDataStoreFactory.*;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataStoreException;
-
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
@@ -47,16 +49,13 @@ import org.opengis.filter.identity.FeatureId;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
-import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
-
-import static org.geotoolkit.data.folder.AbstractFolderDataStoreFactory.*;
-import static org.geotoolkit.data.AbstractFileDataStoreFactory.*;
 
 /**
  * Handle a folder of single file datastore.
- * 
+ *
  * @author Johann Sorel (Geomatys)
+ * @author Cédric Briançon (Geomatys)
  * @module pending
  */
 public class FolderDataStore extends AbstractDataStore{
@@ -66,32 +65,43 @@ public class FolderDataStore extends AbstractDataStore{
     private final FileDataStoreFactory singleFileFactory;
     private final ParameterValueGroup singleFileDefaultParameters;
     private Map<Name,DataStore> stores = null;
-    
+
     public FolderDataStore(final ParameterValueGroup params, final AbstractFolderDataStoreFactory factory){
-        super(Parameters.value(AbstractFileDataStoreFactory.NAMESPACE, params));
+        super(params);
         this.folderParameters = params;
         this.folderFactory = factory;
         this.singleFileFactory = this.folderFactory.getSingleFileFactory();
-        
+
         final ParameterDescriptorGroup desc = singleFileFactory.getParametersDescriptor();
         singleFileDefaultParameters = desc.createValue();
         for(GeneralParameterDescriptor pdesc : desc.descriptors()){
-            if(pdesc == URLP){
+            if(pdesc == URLP || pdesc.getName().getCode().equals(IDENTIFIER.getName().getCode())) {
                 continue;
             }
             Parameters.getOrCreate((ParameterDescriptor)pdesc, singleFileDefaultParameters)
                     .setValue(folderParameters.parameter(pdesc.getName().getCode()).getValue());
         }
-        
+
     }
-    
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public DataStoreFactory getFactory() {
+        return folderFactory;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public synchronized Set<Name> getNames() throws DataStoreException {
-        
+
         if(stores == null){
             this.stores = new HashMap<Name, DataStore>();
             final File folder = getFolder(folderParameters);
-            
+
             if(!folder.exists()){
                 try{
                     folder.mkdirs();
@@ -99,13 +109,17 @@ public class FolderDataStore extends AbstractDataStore{
                     throw new DataStoreException(ex.getMessage(), ex);
                 }
             }
-            
-            final Boolean recursive = Parameters.value(RECURSIVE, folderParameters);
+
+            Boolean recursive = Parameters.value(RECURSIVE, folderParameters);
+            if (recursive == null) {
+                recursive = RECURSIVE.getDefaultValue();
+            }
+
             for(File f : folder.listFiles()){
                 explore(f,recursive);
             }
         }
-        
+
         return stores.keySet();
     }
 
@@ -119,16 +133,15 @@ public class FolderDataStore extends AbstractDataStore{
         }else{
             //test the file
             final ParameterValueGroup params = singleFileDefaultParameters.clone();
-            final ParameterValue<URL> urlparam = URLP.createValue();
             try {
-                urlparam.setValue(candidate.toURI().toURL());
+                Parameters.getOrCreate(URLP, params)
+                    .setValue(candidate.toURI().toURL());
             } catch (MalformedURLException ex) {
                 getLogger().log(Level.FINE, ex.getLocalizedMessage(),ex);
             }
-            params.values().add(urlparam);
             if(singleFileFactory.canProcess(params)){
                 try {
-                    final DataStore fileDS = singleFileFactory.createDataStore(params);
+                    final DataStore fileDS = singleFileFactory.create(params);
                     stores.put(fileDS.getNames().iterator().next(), fileDS);
                 } catch (DataStoreException ex) {
                     getLogger().log(Level.WARNING, ex.getLocalizedMessage(),ex);
@@ -136,10 +149,13 @@ public class FolderDataStore extends AbstractDataStore{
             }
         }
     }
-    
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void createSchema(final Name typeName, final FeatureType featureType) throws DataStoreException {
-        
+
         if(typeName == null){
             throw new DataStoreException("Type name can not be null.");
         }
@@ -151,7 +167,7 @@ public class FolderDataStore extends AbstractDataStore{
         if(getNames().contains(typeName)){
             throw new DataStoreException("Type name "+ typeName + " already exists.");
         }
-        
+
         final ParameterValueGroup params = singleFileDefaultParameters.clone();
         try {
             final File folder = getFolder(folderParameters);
@@ -160,22 +176,31 @@ public class FolderDataStore extends AbstractDataStore{
         } catch (MalformedURLException ex) {
             throw new DataStoreException(ex);
         }
-        
-        final DataStore store = singleFileFactory.createNewDataStore(params);
+
+        final DataStore store = singleFileFactory.createNew(params);
         store.createSchema(typeName, featureType);
         stores.put(typeName, store);
     }
 
+    /**
+     * Unsupported, throws a {@link DataStoreException}.
+     */
     @Override
     public void updateSchema(final Name typeName, final FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Not supported.");
     }
 
+    /**
+     * Unsupported, throws a {@link DataStoreException}.
+     */
     @Override
     public void deleteSchema(final Name typeName) throws DataStoreException {
         throw new DataStoreException("Not supported yet.");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public FeatureType getFeatureType(final Name typeName) throws DataStoreException {
         typeCheck(typeName);
@@ -183,27 +208,49 @@ public class FolderDataStore extends AbstractDataStore{
         return store.getFeatureType(typeName);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isWritable(final Name typeName) throws DataStoreException {
+        typeCheck(typeName);
+        final DataStore store = stores.get(typeName);
+        return store.isWritable(typeName);
+    }
+
+    /**
+     * Unsupported, throws a {@link DataStoreException}.
+     */
     @Override
     public QueryCapabilities getQueryCapabilities() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures, 
+    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures,
             final Hints hints) throws DataStoreException {
         typeCheck(groupName);
         final DataStore store = stores.get(groupName);
         return store.addFeatures(groupName, newFeatures);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void updateFeatures(final Name groupName, final Filter filter, 
+    public void updateFeatures(final Name groupName, final Filter filter,
             final Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
         typeCheck(groupName);
         final DataStore store = stores.get(groupName);
         store.updateFeatures(groupName, filter, values);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void removeFeatures(final Name groupName, final Filter filter) throws DataStoreException {
         typeCheck(groupName);
@@ -211,6 +258,9 @@ public class FolderDataStore extends AbstractDataStore{
         store.removeFeatures(groupName, filter);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public FeatureReader getFeatureReader(final Query query) throws DataStoreException {
         final Name name = query.getTypeName();
@@ -219,6 +269,9 @@ public class FolderDataStore extends AbstractDataStore{
         return store.getFeatureReader(query);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public FeatureWriter getFeatureWriter(final Name typeName, final Filter filter, final Hints hints) throws DataStoreException {
         typeCheck(typeName);
@@ -226,21 +279,15 @@ public class FolderDataStore extends AbstractDataStore{
         return store.getFeatureWriter(typeName, filter, hints);
     }
 
-    private File getFolder(ParameterValueGroup params) throws DataStoreException{
+    private File getFolder(final ParameterValueGroup params) throws DataStoreException{
         final URL url = Parameters.value(URLFOLDER, params);
-        
-        //strip the postfix to obtain the containing folder url
-        final String path = url.getPath();
-        final String lpath = path.toLowerCase();
-        for(String ext : singleFileFactory.getFileExtensions()){
-            ext = "*"+ext;
-            if(lpath.endsWith(ext)){
-                final String fpath = path.substring(0, path.length()-ext.length());
-                return new File(fpath);
-            }
+
+        try {
+            return new File(url.toURI());
+        } catch (URISyntaxException e) {
+            throw new DataStoreException(e);
         }
-        throw new DataStoreException("Unvalid folder path "+url);
     }
-    
-    
+
+
 }

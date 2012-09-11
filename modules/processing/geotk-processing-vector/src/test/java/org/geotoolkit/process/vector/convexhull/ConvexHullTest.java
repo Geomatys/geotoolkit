@@ -25,9 +25,6 @@ import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiPoint;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.feature.FeatureTypeBuilder;
@@ -48,10 +45,10 @@ import static org.junit.Assert.*;
 
 /**
  * JUnit test of ConvexHull process
- * @author Quentin Boileau
- * @module pending
+ *
+ * @author Quentin Boileau @module pending
  */
-public class ConvexHullTest extends AbstractProcessTest{
+public class ConvexHullTest extends AbstractProcessTest {
 
     private static SimpleFeatureBuilder sfb;
     private static final GeometryFactory geometryFactory = new GeometryFactory();
@@ -61,9 +58,8 @@ public class ConvexHullTest extends AbstractProcessTest{
         super("convexhull");
     }
 
-
     @Test
-    public void testConvexHull() throws ProcessException, NoSuchIdentifierException{
+    public void testConvexHull() throws ProcessException, NoSuchIdentifierException, FactoryException {
 
         // Inputs
         final FeatureCollection<?> featureList = buildFeatureList();
@@ -112,15 +108,9 @@ public class ConvexHullTest extends AbstractProcessTest{
         return sft;
     }
 
-    private static FeatureCollection<?> buildFeatureList() {
+    private static FeatureCollection<?> buildFeatureList() throws FactoryException {
 
-        try {
-            type = createSimpleType();
-        } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(ConvexHullTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FactoryException ex) {
-            Logger.getLogger(ConvexHullTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        type = createSimpleType();
 
         final FeatureCollection<Feature> featureList = DataUtilities.collection("", type);
 

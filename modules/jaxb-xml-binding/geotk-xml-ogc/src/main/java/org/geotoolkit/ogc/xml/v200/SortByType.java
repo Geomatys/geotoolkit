@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ogc.xml.SortBy;
 
 
 /**
@@ -49,32 +50,29 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "SortByType", propOrder = {
     "sortProperty"
 })
-public class SortByType {
+public class SortByType implements SortBy {
 
     @XmlElement(name = "SortProperty", required = true)
     private List<SortPropertyType> sortProperty;
 
     /**
+     * An empty constructor used by JAXB
+     */
+    public SortByType() {
+        
+    }
+    
+    /**
+     * Build a new sort by list.
+     */
+    public SortByType(final List<SortPropertyType> sortProperty) {
+        this.sortProperty = sortProperty;
+    }
+    
+    /**
      * Gets the value of the sortProperty property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the sortProperty property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getSortProperty().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
      * {@link SortPropertyType }
-     * 
-     * 
      */
     public List<SortPropertyType> getSortProperty() {
         if (sortProperty == null) {

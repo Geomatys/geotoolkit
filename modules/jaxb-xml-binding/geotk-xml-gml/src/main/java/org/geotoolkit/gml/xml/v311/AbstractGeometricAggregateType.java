@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.AbstractGeometricAggregate;
 
 
 /**
@@ -52,7 +53,7 @@ import javax.xml.bind.annotation.XmlType;
     MultiPointType.class,
     MultiSolidType.class
 })
-public abstract class AbstractGeometricAggregateType extends AbstractGeometryType {
+public abstract class AbstractGeometricAggregateType extends AbstractGeometryType implements AbstractGeometricAggregate {
 
     public AbstractGeometricAggregateType(){
     }

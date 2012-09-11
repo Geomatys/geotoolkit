@@ -16,17 +16,19 @@
  */
 package org.geotoolkit.xsd.xml.v2001;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -39,8 +41,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -56,11 +58,11 @@ public class SimpleContent extends Annotated {
 
     /**
      * Gets the value of the restriction property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SimpleRestrictionType }
-     *     
+     *
      */
     public SimpleRestrictionType getRestriction() {
         return restriction;
@@ -68,11 +70,11 @@ public class SimpleContent extends Annotated {
 
     /**
      * Sets the value of the restriction property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SimpleRestrictionType }
-     *     
+     *
      */
     public void setRestriction(final SimpleRestrictionType value) {
         this.restriction = value;
@@ -80,11 +82,11 @@ public class SimpleContent extends Annotated {
 
     /**
      * Gets the value of the extension property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link SimpleExtensionType }
-     *     
+     *
      */
     public SimpleExtensionType getExtension() {
         return extension;
@@ -92,14 +94,50 @@ public class SimpleContent extends Annotated {
 
     /**
      * Sets the value of the extension property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link SimpleExtensionType }
-     *     
+     *
      */
     public void setExtension(final SimpleExtensionType value) {
         this.extension = value;
     }
 
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof SimpleContent && super.equals(object)) {
+            final SimpleContent that = (SimpleContent) object;
+            return Objects.equals(this.extension,   that.extension) &&
+                   Objects.equals(this.restriction, that.restriction);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 83 * hash + super.hashCode();
+        hash = 83 * hash + (this.extension != null ? this.extension.hashCode() : 0);
+        hash = 83 * hash + (this.restriction != null ? this.restriction.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString()).append('\n');
+        if (extension != null) {
+            sb.append("extension:").append(extension).append('\n');
+        }
+        if (restriction != null) {
+            sb.append("restriction:").append(restriction).append('\n');
+        }
+        return  sb.toString();
+    }
 }

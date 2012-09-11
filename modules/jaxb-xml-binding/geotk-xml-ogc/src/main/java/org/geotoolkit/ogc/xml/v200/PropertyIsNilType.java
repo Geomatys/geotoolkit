@@ -18,12 +18,15 @@
 
 package org.geotoolkit.ogc.xml.v200;
 
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
+import org.opengis.filter.FilterVisitor;
 
 
 /**
@@ -50,9 +53,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "PropertyIsNilType", propOrder = {
     "expression"
 })
-public class PropertyIsNilType
-    extends ComparisonOpsType
-{
+public class PropertyIsNilType extends ComparisonOpsType {
 
     @XmlElementRef(name = "expression", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
     private JAXBElement<?> expression;
@@ -113,4 +114,51 @@ public class PropertyIsNilType
         this.nilReason = value;
     }
 
+    @Override
+    public boolean evaluate(final Object object) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Object accept(final FilterVisitor visitor, final Object extraData) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
+    @Override
+    public String toString() {
+        final StringBuilder s = new StringBuilder(super.toString());
+        s.append("nilReason = ").append(nilReason).append('\n');
+        if (expression != null) {
+            s.append("expression: ").append(expression.getValue()).append('\n');
+        }
+        return s.toString();
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 67 * hash + (this.expression != null ? this.expression.hashCode() : 0);
+        hash = 67 * hash + (this.nilReason != null ? this.nilReason.hashCode() : 0);
+        return hash;
+    }
+    
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof PropertyIsNilType) {
+            final PropertyIsNilType that = (PropertyIsNilType) obj;
+            final boolean exp;
+            if (this.expression == null && that.expression == null) {
+                exp = true;
+            } else if (this.expression != null && that.expression != null) {
+                exp = Objects.equals(this.expression.getValue(), that.expression.getValue());
+            } else {
+                return false;
+            }
+            return exp && Objects.equals(this.nilReason, that.nilReason);
+        }
+        return false;
+    }
 }

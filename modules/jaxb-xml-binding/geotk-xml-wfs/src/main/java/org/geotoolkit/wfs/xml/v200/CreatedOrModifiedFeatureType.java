@@ -19,13 +19,16 @@
 package org.geotoolkit.wfs.xml.v200;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ogc.xml.v200.ResourceIdType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -59,28 +62,21 @@ public class CreatedOrModifiedFeatureType {
     @XmlAttribute
     private String handle;
 
+    public CreatedOrModifiedFeatureType() {
+        
+    }
+    
+    public CreatedOrModifiedFeatureType(final ResourceIdType rid, final String handle) {
+        if (rid != null) {
+            this.resourceId = Arrays.asList(rid);
+        }
+        this.handle = handle;
+    }
+    
     /**
      * Gets the value of the resourceId property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the resourceId property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getResourceId().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link ResourceIdType }
-     * 
-     * 
-     */
+    */
     public List<ResourceIdType> getResourceId() {
         if (resourceId == null) {
             resourceId = new ArrayList<ResourceIdType>();
@@ -112,4 +108,39 @@ public class CreatedOrModifiedFeatureType {
         this.handle = value;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("[CreatedOrModifiedFeatureType]\n");
+        if (resourceId != null) {
+           sb.append("resourceId: ").append('\n');
+           for (ResourceIdType a : resourceId) {
+                sb.append(a).append('\n');
+           }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof CreatedOrModifiedFeatureType) {
+            final CreatedOrModifiedFeatureType that = (CreatedOrModifiedFeatureType) object;
+            return Objects.equals(this.resourceId,   that.resourceId) &&
+                   Objects.equals(this.handle,   that.handle);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 13 * hash + (this.handle != null ? this.handle.hashCode() : 0);
+        hash = 13 * hash + (this.resourceId != null ? this.resourceId.hashCode() : 0);
+        return hash;
+    }
 }

@@ -20,10 +20,12 @@ package org.geotoolkit.wfs.xml.v200;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -57,30 +59,46 @@ public class ExtendedDescriptionType {
     /**
      * Gets the value of the element property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the element property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getElement().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link ElementType }
-     * 
-     * 
      */
     public List<ElementType> getElement() {
         if (element == null) {
             element = new ArrayList<ElementType>();
         }
         return this.element;
+    }
+    
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof ExtendedDescriptionType) {
+            final ExtendedDescriptionType that = (ExtendedDescriptionType) object;
+
+            return Objects.equals(this.element, that.element);
+            }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 37 * hash + (this.element != null ? this.element.hashCode() : 0);
+        return hash;
+    }
+
+   
+
+    @Override
+    public String toString() {
+        final StringBuilder s = new StringBuilder("[ExtendedDescriptionType]\n");
+        if(element != null) {
+            s.append("element:").append(element).append('\n');
+        }
+        return s.toString();
     }
 
 }

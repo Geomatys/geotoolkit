@@ -88,7 +88,7 @@ public class ShapeCreationTool extends JPanel {
             final Map<String, Serializable> map = Collections.singletonMap("url", (Serializable)file.toURI().toURL());
 
             // Create the ShapefileDataStore from our factory based on our Map object
-            final ShapefileDataStore myData = (ShapefileDataStore) factory.createNewDataStore(map);
+            final ShapefileDataStore myData = (ShapefileDataStore) factory.createNew(map);
 
             // Tell this shapefile what type of data it will store
             final StringBuilder buffer = new StringBuilder();

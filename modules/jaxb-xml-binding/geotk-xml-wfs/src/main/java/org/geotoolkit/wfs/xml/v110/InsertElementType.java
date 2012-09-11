@@ -26,6 +26,9 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 
+import org.geotoolkit.util.Utilities;
+import org.geotoolkit.wfs.xml.IdentifierGenerationOptionType;
+import org.geotoolkit.wfs.xml.InsertElement;
 
 /**
  * An Insert element may contain a feature collection or one or more feature instances to be inserted into the 
@@ -59,7 +62,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "InsertElementType", propOrder = {
     "feature"
 })
-public class InsertElementType {
+public class InsertElementType implements InsertElement {
 
     @XmlAnyElement(lax = true)
     private List<Object> feature;

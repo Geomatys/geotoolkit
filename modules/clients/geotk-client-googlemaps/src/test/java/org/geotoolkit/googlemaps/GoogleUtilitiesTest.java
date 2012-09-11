@@ -20,7 +20,7 @@ import org.junit.Test;
 import org.opengis.geometry.DirectPosition;
 
 import static org.junit.Assert.*;
-import static org.geotoolkit.googlemaps.map.GoogleMapsUtilities.*;
+import static org.geotoolkit.googlemaps.model.GoogleMapsPyramidSet.*;
 
 /**
  * Testing class for GetMap requests.

@@ -17,20 +17,17 @@
  */
 package org.geotoolkit.gui.swing.style;
 
-import javax.swing.JPanel;
-import org.geotoolkit.gui.swing.resource.MessageBundle;
 import java.awt.Component;
-import java.awt.FlowLayout;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
-
-import org.jdesktop.swingx.JXTitledPanel;
 import org.opengis.style.TextSymbolizer;
 
 /**
@@ -45,6 +42,7 @@ public class JTextSymbolizerPane extends StyleElementEditor<TextSymbolizer> {
 
     /** Creates new form JTextSymbolizer */
     public JTextSymbolizerPane() {
+        super(TextSymbolizer.class);
         initComponents();
     }
 
@@ -93,12 +91,13 @@ public class JTextSymbolizerPane extends StyleElementEditor<TextSymbolizer> {
     @Override
     public void parse(final TextSymbolizer symbol) {
         if (symbol != null) {
-            guiFill.parse(symbol.getFill());
-            guiLabel.parse(symbol.getLabel());
             guiGeom.setGeom(symbol.getGeometryPropertyName());
+            guiUOM.parse(symbol.getUnitOfMeasure());
+            guiLabel.parse(symbol.getLabel());
             guiFont.parse(symbol.getFont());
-            guiHalo.parse(symbol.getHalo());
-            guiPlacement.parse(symbol.getLabelPlacement());        
+            guiPlacement.parse(symbol.getLabelPlacement());    
+            guiHalo.parse(symbol.getHalo());   
+            guiFill.parse(symbol.getFill()); 
         }
     }
 

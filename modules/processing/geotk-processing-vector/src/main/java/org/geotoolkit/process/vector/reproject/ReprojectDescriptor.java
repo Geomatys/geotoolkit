@@ -79,6 +79,6 @@ public final class ReprojectDescriptor extends VectorDescriptor {
      */
     @Override
     public Process createProcess(final ParameterValueGroup input) {
-        return new Reproject(input);
+        return new ReprojectProcess(input);
     }
 }

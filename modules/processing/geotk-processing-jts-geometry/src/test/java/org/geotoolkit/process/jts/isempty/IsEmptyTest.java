@@ -16,20 +16,18 @@
  */
 package org.geotoolkit.process.jts.isempty;
 
-import org.geotoolkit.process.ProcessException;
-import org.opengis.util.NoSuchIdentifierException;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import org.geotoolkit.process.ProcessDescriptor;
+import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.process.jts.AbstractProcessTest;
-
-import org.opengis.parameter.ParameterValueGroup;
-
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
-import static org.junit.Assert.*;
+import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.util.NoSuchIdentifierException;
 
 /**
  * JUnit test of IsEmpty process
@@ -59,7 +57,6 @@ public class IsEmptyTest extends AbstractProcessTest{
         
         final Geometry geom1 = fact.createPolygon(ring, null) ;
         
-      
         // Process
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("jts", "isEmpty");
 
@@ -70,7 +67,6 @@ public class IsEmptyTest extends AbstractProcessTest{
         //result
         final Boolean result = (Boolean) proc.call().parameter("result").getValue();
        
-        
         final Boolean expected = geom1.isEmpty();
         
         assertTrue(expected.equals(result));

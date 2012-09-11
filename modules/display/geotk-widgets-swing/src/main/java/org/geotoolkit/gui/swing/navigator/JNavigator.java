@@ -17,7 +17,6 @@
 
 package org.geotoolkit.gui.swing.navigator;
 
-import java.util.List;
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -26,6 +25,7 @@ import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
+import static java.awt.event.KeyEvent.*;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -35,14 +35,19 @@ import java.awt.event.MouseWheelListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
+import javax.swing.BoxLayout;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
-
 import static javax.swing.SwingConstants.*;
-import static java.awt.event.KeyEvent.*;
+import org.geotoolkit.util.NumberRange;
+import org.geotoolkit.util.collection.NotifiedCheckedList;
 
 /**
  *
@@ -55,8 +60,73 @@ public class JNavigator extends JPanel implements
     private final NavigatorModel model = new DoubleNavigatorModel(null);
     private NavigatorRenderer renderer;
     private final JComponent graduation = new JComponent(){};
-    private final JPanel bandsPan = new JPanel(new GridLayout(0, 1));
-    private final List<JNavigatorBand> bands = new ArrayList<JNavigatorBand>();
+    private final JPanel bandsPan = new JPanel();
+    private final List<JNavigatorBand> bands = new NotifiedCheckedList<JNavigatorBand>(JNavigatorBand.class){
+
+        @Override
+        protected void notifyAdd(JNavigatorBand band, int index) {
+            band.setModel(getModel());
+            band.setNavigator(JNavigator.this);
+            band.addMouseListener(JNavigator.this);
+            band.addMouseMotionListener(JNavigator.this);
+            band.addMouseWheelListener(JNavigator.this);
+            band.addKeyListener(JNavigator.this);
+            updateDisplay();
+        }
+
+        @Override
+        protected void notifyAdd(Collection<? extends JNavigatorBand> items, NumberRange<Integer> range) {
+            for(JNavigatorBand band : items){
+                band.setModel(getModel());
+                band.setNavigator(JNavigator.this);
+                band.addMouseListener(JNavigator.this);
+                band.addMouseMotionListener(JNavigator.this);
+                band.addMouseWheelListener(JNavigator.this);
+                band.addKeyListener(JNavigator.this);
+            }
+            updateDisplay();
+        }
+
+        @Override
+        protected void notifyRemove(JNavigatorBand band, int index) {
+            band.removeMouseListener(JNavigator.this);
+            band.removeMouseMotionListener(JNavigator.this);
+            band.removeMouseWheelListener(JNavigator.this);
+            band.removeKeyListener(JNavigator.this);
+            updateDisplay();
+        }
+
+        @Override
+        protected void notifyRemove(Collection<? extends JNavigatorBand> items, NumberRange<Integer> range) {
+            for(JNavigatorBand band : items){
+                band.removeMouseListener(JNavigator.this);
+                band.removeMouseMotionListener(JNavigator.this);
+                band.removeMouseWheelListener(JNavigator.this);
+                band.removeKeyListener(JNavigator.this);
+            }
+            updateDisplay();
+        }
+
+        @Override
+        protected void notifyChange(JNavigatorBand oldItem, JNavigatorBand newItem, int index) {
+            if(oldItem != null){
+                oldItem.removeMouseListener(JNavigator.this);
+                oldItem.removeMouseMotionListener(JNavigator.this);
+                oldItem.removeMouseWheelListener(JNavigator.this);
+                oldItem.removeKeyListener(JNavigator.this);
+            }
+            if(newItem != null){
+                newItem.setModel(getModel());
+                newItem.setNavigator(JNavigator.this);
+                newItem.addMouseListener(JNavigator.this);
+                newItem.addMouseMotionListener(JNavigator.this);
+                newItem.addMouseWheelListener(JNavigator.this);
+                newItem.addKeyListener(JNavigator.this);
+            }
+            updateDisplay();
+        }
+        
+    };
 
     private int orientation = SwingConstants.SOUTH;
 
@@ -75,10 +145,22 @@ public class JNavigator extends JPanel implements
         bandsPan.setInheritsPopupMenu(true);
         graduation.setInheritsPopupMenu(true);
 
+        final BoxLayout bl = new BoxLayout(bandsPan, BoxLayout.Y_AXIS);        
+        bandsPan.setLayout(bl);
+                
         model.addPropertyChangeListener(listener);
         this.graduation.setOpaque(false);
         add(BorderLayout.SOUTH,graduation);
-        add(BorderLayout.CENTER,bandsPan);
+        
+        final JScrollPane scroller = new JScrollPane(bandsPan);
+        scroller.setOpaque(false);
+        scroller.setInheritsPopupMenu(true);
+        scroller.setBorder(null);
+        scroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scroller.getViewport().setBorder(null);
+        scroller.getViewport().setOpaque(false);      
+        scroller.getViewport().setInheritsPopupMenu(true);  
+        add(BorderLayout.CENTER,scroller);
 
         addMouseListener(this);
         addMouseMotionListener(this);
@@ -100,28 +182,22 @@ public class JNavigator extends JPanel implements
         graduation.setComponentPopupMenu(popup);
     }
 
-    public void addBand(final JNavigatorBand band){
-        band.setModel(getModel());
-        band.setNavigator(this);
-        bands.add(band);
-        bandsPan.add(band);
+    private void updateDisplay(){
+        bandsPan.removeAll();
+        
+        for(JNavigatorBand band : bands){
+            bandsPan.add(band);
+        }
+        
         bandsPan.revalidate();
         bandsPan.repaint();
-        revalidate();
-        repaint();
     }
-
-    public void removeBand(final JNavigatorBand band){
-        bands.remove(band);
-        bandsPan.remove(band);
-        bandsPan.revalidate();
-        bandsPan.repaint();
-        revalidate();
-        repaint();
-    }
-    
+        
+    /**
+     * Nodifiable list of bands to display.
+     */
     public List<JNavigatorBand> getBands(){
-        return Collections.unmodifiableList(bands);
+        return bands;
     }
 
     public NavigatorModel getModel() {
@@ -209,6 +285,7 @@ public class JNavigator extends JPanel implements
 
     @Override
     public void mousePressed(final MouseEvent e) {
+        if(e.isConsumed()) return;
         flagMove = (e.getButton() == MouseEvent.BUTTON1);
 
         newMouseX = e.getX();
@@ -220,6 +297,7 @@ public class JNavigator extends JPanel implements
 
     @Override
     public void mouseReleased(final MouseEvent e) {
+        if(e.isConsumed()) return;
         flagMove = false;
     }
 
@@ -234,6 +312,7 @@ public class JNavigator extends JPanel implements
 
     @Override
     public void mouseDragged(final MouseEvent e) {
+        if(e.isConsumed()) return;
 
         if(!flagMove) return;
 

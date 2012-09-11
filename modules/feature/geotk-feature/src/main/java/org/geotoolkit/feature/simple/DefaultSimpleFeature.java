@@ -19,7 +19,6 @@ package org.geotoolkit.feature.simple;
 
 import com.vividsolutions.jts.geom.Geometry;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -32,7 +31,6 @@ import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.identity.Identifier;
@@ -145,7 +143,7 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
             validate();
         }
     }
-
+    
     @Override
     public List<Property> getValue() {
         if(value == null){
@@ -174,6 +172,15 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
             return;
         }
         valueArray[idx] = value;
+        
+        //clear the geometry cache if necessary
+//        if(this.value != null){
+//            Object prop = this.value.get(idx);
+//            if(prop instanceof DefaultGeometryAttribute){
+//                ((SimpleGeometryAttribut)prop).clearCache();
+//            }
+//        }
+        
     }
     
     @Override

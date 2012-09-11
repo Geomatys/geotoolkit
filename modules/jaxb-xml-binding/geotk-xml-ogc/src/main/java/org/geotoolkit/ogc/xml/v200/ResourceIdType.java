@@ -18,12 +18,14 @@
 
 package org.geotoolkit.ogc.xml.v200;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -49,9 +51,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ResourceIdType")
-public class ResourceIdType
-    extends AbstractIdType
-{
+public class ResourceIdType extends AbstractIdType {
 
     @XmlAttribute(required = true)
     private String rid;
@@ -66,6 +66,14 @@ public class ResourceIdType
     @XmlSchemaType(name = "dateTime")
     private XMLGregorianCalendar endDate;
 
+    public ResourceIdType() {
+        
+    }
+    
+    public ResourceIdType(final String rid) {
+        this.rid = rid;
+    }
+    
     /**
      * Gets the value of the rid property.
      * 
@@ -186,4 +194,54 @@ public class ResourceIdType
         this.endDate = value;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[ResourceIdType]\n");
+        if (version != null) {
+           sb.append("version: ").append(version).append('\n');
+        }
+        if (previousRid != null) {
+           sb.append("previousRid: ").append(previousRid).append('\n');
+        }
+        if (rid != null) {
+            sb.append("rid: ").append(rid).append('\n');
+        }
+        if (startDate != null) {
+            sb.append("startDate: ").append(startDate).append('\n');
+        }
+        if (endDate != null) {
+            sb.append("endDate: ").append(endDate).append('\n');
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof ResourceIdType) {
+            final ResourceIdType that = (ResourceIdType) object;
+            return Objects.equals(this.endDate,      that.endDate)        &&
+                   Objects.equals(this.previousRid,  that.previousRid)   &&
+                   Objects.equals(this.rid,          that.rid)   &&
+                   Objects.equals(this.startDate,    that.startDate)   &&
+                   Objects.equals(this.version,      that.version) ;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 19 * hash + (this.endDate != null ? this.endDate.hashCode() : 0);
+        hash = 19 * hash + (this.previousRid != null ? this.previousRid.hashCode() : 0);
+        hash = 19 * hash + (this.rid != null ? this.rid.hashCode() : 0);
+        hash = 19 * hash + (this.version != null ? this.version.hashCode() : 0);
+        hash = 19 * hash + (this.startDate != null ? this.startDate.hashCode() : 0);
+        return hash;
+    }
 }

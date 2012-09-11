@@ -51,7 +51,7 @@ public final class FeatureValidationUtilities {
     private FeatureValidationUtilities(){}
 
     /**
-     * Ensures an attribute value is withing the restrictions of the AttributeDescriptor and
+     * Ensures an attribute value is within the restrictions of the AttributeDescriptor and
      * AttributeType.
      * @param attribute
      * @return true if the attribute value is valid

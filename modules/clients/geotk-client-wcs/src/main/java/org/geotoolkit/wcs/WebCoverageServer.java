@@ -23,6 +23,9 @@ import java.util.logging.Logger;
 import javax.xml.bind.Unmarshaller;
 
 import org.geotoolkit.client.AbstractServer;
+import org.geotoolkit.client.ServerFactory;
+import org.geotoolkit.client.ServerFinder;
+import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.wcs.v100.DescribeCoverage100;
@@ -31,6 +34,7 @@ import org.geotoolkit.wcs.v100.GetCoverage100;
 import org.geotoolkit.wcs.xml.WCSMarshallerPool;
 import org.geotoolkit.wcs.xml.WCSVersion;
 import org.geotoolkit.wcs.xml.v100.WCSCapabilitiesType;
+import org.opengis.parameter.ParameterValueGroup;
 
 
 /**
@@ -43,8 +47,6 @@ public class WebCoverageServer extends AbstractServer {
 
     private static final Logger LOGGER = Logging.getLogger(WebCoverageServer.class);
 
-    private final WCSVersion version;
-
     private WCSCapabilitiesType capabilities;
 
     public WebCoverageServer(final URL serverURL, final String version) {
@@ -52,14 +54,38 @@ public class WebCoverageServer extends AbstractServer {
     }
     
     public WebCoverageServer(final URL serverURL, final ClientSecurity security, final String version) {
-        super(serverURL,security);
+        super(create(WCSServerFactory.PARAMETERS, serverURL, security));
         if (version.equals("1.0.0")) {
-            this.version = WCSVersion.v100;
+            Parameters.getOrCreate(WCSServerFactory.VERSION, parameters).setValue(WCSVersion.v100);
         } else {
             throw new IllegalArgumentException("unkonwed version : " + version);
         }
     }
+    
+    public WebCoverageServer(final URL serverURL, final ClientSecurity security, final WCSVersion version) {
+        super(create(WCSServerFactory.PARAMETERS, serverURL, security));
+        if(version == null){
+            throw new IllegalArgumentException("unkonwed version : " + version);
+        }
+        Parameters.getOrCreate(WCSServerFactory.VERSION, parameters).setValue(version);
+    }
+    
+    public WebCoverageServer(final ParameterValueGroup params) {
+        super(params);
+    }
 
+    @Override
+    public ServerFactory getFactory() {
+        return ServerFinder.getFactoryById(WCSServerFactory.NAME);
+    }
+
+    /**
+     * Returns the currently used version for this server
+     */
+    public WCSVersion getVersion() {
+        return WCSVersion.fromCode(Parameters.value(WCSServerFactory.VERSION, parameters));
+    }
+    
     /**
      * Returns the {@linkplain WCSCapabilitiesType capabilities} response for this
      * server.
@@ -113,9 +139,9 @@ public class WebCoverageServer extends AbstractServer {
      */
     public DescribeCoverageRequest createDescribeCoverage() {
 
-        switch (version) {
+        switch (getVersion()) {
             case v100:
-                return new DescribeCoverage100(serverURL.toString(),securityManager);
+                return new DescribeCoverage100(serverURL.toString(),getClientSecurity());
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -127,9 +153,9 @@ public class WebCoverageServer extends AbstractServer {
      */
     public GetCapabilitiesRequest createGetCapabilities() {
 
-        switch (version) {
+        switch (getVersion()) {
             case v100:
-                return new GetCapabilities100(serverURL.toString(),securityManager);
+                return new GetCapabilities100(serverURL.toString(),getClientSecurity());
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -141,9 +167,9 @@ public class WebCoverageServer extends AbstractServer {
      */
     public GetCoverageRequest createGetCoverage() {
 
-        switch (version) {
+        switch (getVersion()) {
             case v100:
-                return new GetCoverage100(serverURL.toString(),securityManager);
+                return new GetCoverage100(serverURL.toString(),getClientSecurity());
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }

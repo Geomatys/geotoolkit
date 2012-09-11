@@ -1,4 +1,19 @@
-
+/*
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2012, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation; either
+ *    version 2.1 of the License, or (at your option) any later version.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
 
 package org.geotoolkit.internal.jaxb;
 
@@ -25,6 +40,9 @@ public class LinearRingPosListType {
 
     @XmlElement(namespace = "http://www.opengis.net/gml")
     private PosListType posList;
+
+    @XmlElement(namespace = "http://www.opengis.net/gml")
+    private CoordinatesType coordinates;
 
     public LinearRingPosListType() {
 
@@ -61,11 +79,20 @@ public class LinearRingPosListType {
 
     public JTSRing getJTSRing() {
 
-        JTSLineString line = new JTSLineString();
-        for (int i = 0; i < posList.getValue().size() -1; i = i + 2) {
-            double x = posList.getValue().get(i);
-            double y = posList.getValue().get(i + 1);
-            DirectPosition pos = new GeneralDirectPosition(x , y);
+        final List<Double> values;
+        if (posList != null) {
+            values = posList.getValue();
+        } else if (coordinates != null) {
+            values = coordinates.getValues();
+        } else {
+            values = new ArrayList<Double>();
+        }
+
+        final JTSLineString line = new JTSLineString();
+        for (int i = 0; i < values.size() - 1; i = i + 2) {
+            double x = values.get(i);
+            double y = values.get(i + 1);
+            final DirectPosition pos = new GeneralDirectPosition(x, y);
             line.getControlPoints().add(pos);
         }
 
@@ -88,5 +115,19 @@ public class LinearRingPosListType {
      */
     public void setPosList(final PosListType posList) {
         this.posList = posList;
+    }
+
+    /**
+     * @return the coordinates
+     */
+    public CoordinatesType getCoordinates() {
+        return coordinates;
+    }
+
+    /**
+     * @param coordinates the coordinates to set
+     */
+    public void setCoordinates(CoordinatesType coordinates) {
+        this.coordinates = coordinates;
     }
 }

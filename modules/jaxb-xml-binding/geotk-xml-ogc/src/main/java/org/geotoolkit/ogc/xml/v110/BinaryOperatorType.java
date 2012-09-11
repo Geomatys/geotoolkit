@@ -29,9 +29,9 @@ import org.opengis.filter.expression.ExpressionVisitor;
 
 /**
  * <p>Java class for BinaryOperatorType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="BinaryOperatorType">
  *   &lt;complexContent>
@@ -43,8 +43,8 @@ import org.opengis.filter.expression.ExpressionVisitor;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -76,6 +76,28 @@ public class BinaryOperatorType extends ExpressionType {
 
     public Object accept(final ExpressionVisitor visitor, final Object extraData) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final BinaryOperatorType other = (BinaryOperatorType) obj;
+        if (this.expression != other.expression && (this.expression == null || !this.expression.equals(other.expression))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 53 * hash + (this.expression != null ? this.expression.hashCode() : 0);
+        return hash;
     }
 
 }

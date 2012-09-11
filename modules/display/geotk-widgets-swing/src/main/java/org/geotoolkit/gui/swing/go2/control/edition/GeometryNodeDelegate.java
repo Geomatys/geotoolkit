@@ -100,7 +100,7 @@ public class GeometryNodeDelegate extends AbstractFeatureEditionDelegate {
                 decoration.setNodeSelection(selection);
             }
         }else if(button == MouseEvent.BUTTON3){
-            helper.sourceModifyFeature(feature, selection.geometry);
+            helper.sourceModifyFeature(feature, selection.geometry, true);
             reset();
         }
 

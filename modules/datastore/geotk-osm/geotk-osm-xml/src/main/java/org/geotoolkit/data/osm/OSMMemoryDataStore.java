@@ -29,6 +29,8 @@ import java.util.Set;
 import javax.xml.stream.XMLStreamException;
 
 import org.geotoolkit.data.AbstractDataStore;
+import org.geotoolkit.data.DataStoreFactory;
+import org.geotoolkit.data.DataStoreFinder;
 import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
@@ -60,6 +62,7 @@ import org.opengis.filter.FilterFactory;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.identity.Identifier;
 
+import org.opengis.parameter.ParameterValueGroup;
 import static org.geotoolkit.data.osm.model.OSMModelConstants.*;
 
 /**
@@ -118,8 +121,9 @@ public class OSMMemoryDataStore extends AbstractDataStore{
 
     private final MemoryDataStore memoryStore;
 
-    public OSMMemoryDataStore(final Object input) throws IOException, XMLStreamException, DataStoreException{
-        super(null);
+    public OSMMemoryDataStore(final ParameterValueGroup params, 
+            final Object input) throws IOException, XMLStreamException, DataStoreException{
+        super(params);
         memoryStore = new MemoryDataStore();
         memoryStore.createSchema(TYPE_NODE.getName(), TYPE_NODE);
         memoryStore.createSchema(TYPE_WAY.getName(), TYPE_WAY);
@@ -148,6 +152,11 @@ public class OSMMemoryDataStore extends AbstractDataStore{
         }
     }
 
+    @Override
+    public DataStoreFactory getFactory() {
+        return DataStoreFinder.getFactoryById(OSMMemoryDataStoreFactory.NAME);
+    }
+    
     @Override
     public Set<Name> getNames() throws DataStoreException {
         final Set<Name> names = new HashSet<Name>();

@@ -30,6 +30,7 @@ import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.style.StyleListener;
 import org.geotoolkit.util.NumberRange;
+import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
 import org.geotoolkit.util.converter.Classes;
 
@@ -83,6 +84,16 @@ class DefaultMutableNamedLayer implements MutableNamedLayer,StyleListener{
                 fireStyleChange(CollectionChangeEvent.ITEM_REMOVED, items, range);
             }
 
+            @Override
+            protected void notifyChange(MutableLayerStyle oldItem, MutableLayerStyle newItem, int index) {
+                if(oldItem != null){
+                    styleListener.unregisterSource(oldItem);
+                }
+                if(newItem != null){
+                    styleListener.registerSource(newItem);
+                }
+                fireStyleChange(CollectionChangeEvent.ITEM_CHANGED, oldItem, NumberRange.create(index, index));
+            }
             
         };
         

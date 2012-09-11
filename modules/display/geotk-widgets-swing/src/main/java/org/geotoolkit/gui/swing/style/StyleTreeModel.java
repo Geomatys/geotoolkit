@@ -18,16 +18,12 @@
 package org.geotoolkit.gui.swing.style;
 
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.lang.reflect.Method;
 import java.util.EventObject;
 import java.util.List;
 import java.util.logging.Level;
 import javax.swing.tree.DefaultTreeModel;
-
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 import org.geotoolkit.sld.MutableLayerStyle;
-import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.geotoolkit.style.FeatureTypeStyleListener;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
@@ -35,14 +31,19 @@ import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.RuleListener;
 import org.geotoolkit.style.StyleListener;
 import org.geotoolkit.style.StyleUtilities;
+import static org.geotoolkit.util.ArgumentChecks.*;
 import org.geotoolkit.util.NumberRange;
+import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.feature.type.Name;
+import org.opengis.sld.NamedLayer;
+import org.opengis.sld.StyledLayerDescriptor;
+import org.opengis.sld.UserLayer;
+import org.opengis.style.FeatureTypeStyle;
+import org.opengis.style.Rule;
 import org.opengis.style.SemanticType;
-
+import org.opengis.style.Style;
 import org.opengis.style.Symbolizer;
-
-import static org.geotoolkit.util.ArgumentChecks.*;
 
 /**
  *
@@ -180,14 +181,23 @@ public class StyleTreeModel<T> extends DefaultTreeModel implements StyleListener
                 }
             }
         }else if(type == CollectionChangeEvent.ITEM_CHANGED){
+            int index = (int) event.getRange().getMinimum();
             for(Object ele : event.getItems()){
                 final DefaultMutableTreeNode child = search(parent,ele);
                 final EventObject subEvent = event.getChangeEvent();
                 if(subEvent instanceof CollectionChangeEvent){
                     styleElementChange((CollectionChangeEvent) subEvent);
                 }else{
+                    //check if the element itself changed
+                    final Object newElement = getStyleElementAt(parent, index);
+                    if(ele != newElement){
+                        //the full object has changed
+                        child.setUserObject(newElement);
+                    }
+                    
                     nodeChanged(child);
                 }
+                index++;
             }
         }
     }
@@ -349,6 +359,31 @@ public class StyleTreeModel<T> extends DefaultTreeModel implements StyleListener
     }
 
     //-------------------utilities----------------------------------------------
+    /**
+     * Get the style element at real index in the userObject style element.
+     * @param parent
+     * @param index
+     * @return 
+     */
+    private Object getStyleElementAt(final DefaultMutableTreeNode parent, final int index){
+        final Object pse = parent.getUserObject();
+        
+        if(pse instanceof StyledLayerDescriptor){
+            return ((StyledLayerDescriptor)pse).layers().get(index);
+        }else if(pse instanceof NamedLayer){
+            return ((NamedLayer)pse).styles().get(index);
+        }else if(pse instanceof UserLayer){
+            return ((UserLayer)pse).styles().get(index);
+        }else if(pse instanceof Style){
+            return ((Style)pse).featureTypeStyles().get(index);
+        }else if(pse instanceof FeatureTypeStyle){
+            return ((FeatureTypeStyle)pse).rules().get(index);
+        }else if(pse instanceof Rule){
+            return ((Rule)pse).symbolizers().get(index);
+        }
+        return null;
+    }
+    
     private DefaultMutableTreeNode search(final Object userObject){
         return search(getRoot(), userObject);
     }

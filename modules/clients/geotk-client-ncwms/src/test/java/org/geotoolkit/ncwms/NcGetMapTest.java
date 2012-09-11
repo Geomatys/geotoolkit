@@ -55,12 +55,12 @@ public class NcGetMapTest {
         request.setLayers("test");
         request.setStyles("");
         request.setEnvelope(env);
-        
+
         request.setOpacity(65);
         request.dimensions().put("COLORSCALERANGE","-50,50");
         request.setNumColorBands(150);
         request.setLogScale(true);
-        
+
         final URL url;
         try {
             url = request.getURL();
@@ -71,7 +71,7 @@ public class NcGetMapTest {
         final String sUrl = url.toString();
         assertTrue(sUrl.contains("VERSION=1.1.1"));
         assertTrue(sUrl.contains("OPACITY=65"));
-        assertTrue(sUrl.contains("COLORSCALERANGE=-50,50"));
+        assertTrue(sUrl.contains("COLORSCALERANGE=-50%2C50"));
         assertTrue(sUrl.contains("NUMCOLORBANDS=150"));
         assertTrue(sUrl.contains("LOGSCALE=true"));
     }
@@ -85,23 +85,23 @@ public class NcGetMapTest {
      */
     @Test
     public void testGetMap130() throws NoSuchAuthorityCodeException, FactoryException {
-        
+
         final GeneralEnvelope env = new GeneralEnvelope(CRS.decode("CRS:84"));
         env.setRange(0, -180, 180);
         env.setRange(1, -90, 90);
-        
+
         final NcGetMap130 request = new NcGetMap130("http://test.com",null);
         request.setDimension(new Dimension(800, 600));
         request.setFormat("image/png");
         request.setLayers("test");
         request.setStyles("");
         request.setEnvelope(env);
-        
+
         request.setOpacity(65);
         request.dimensions().put("COLORSCALERANGE","-50,50");
         request.setNumColorBands(150);
         request.setLogScale(true);
-        
+
         final URL url;
         try {
             url = request.getURL();
@@ -109,11 +109,11 @@ public class NcGetMapTest {
             fail(ex.getLocalizedMessage());
             return;
         }
-        
+
         final String sUrl = url.toString();
         assertTrue(sUrl.contains("VERSION=1.3.0"));
         assertTrue(sUrl.contains("OPACITY=65"));
-        assertTrue(sUrl.contains("COLORSCALERANGE=-50,50"));
+        assertTrue(sUrl.contains("COLORSCALERANGE=-50%2C50"));
         assertTrue(sUrl.contains("NUMCOLORBANDS=150"));
         assertTrue(sUrl.contains("LOGSCALE=true"));
     }

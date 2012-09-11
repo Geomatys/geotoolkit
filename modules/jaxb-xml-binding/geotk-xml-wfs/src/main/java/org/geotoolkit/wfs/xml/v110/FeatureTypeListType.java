@@ -23,6 +23,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
+import org.geotoolkit.wfs.xml.FeatureType;
+import org.geotoolkit.wfs.xml.FeatureTypeList;
 
 
 /**
@@ -55,7 +58,7 @@ import javax.xml.bind.annotation.XmlType;
     "operations",
     "featureType"
 })
-public class FeatureTypeListType {
+public class FeatureTypeListType implements FeatureTypeList {
 
     @XmlElement(name = "Operations")
     private OperationsType operations;
@@ -109,6 +112,14 @@ public class FeatureTypeListType {
         this.featureType = featureType;
     }
 
+    public void addFeatureType(final FeatureType ft) {
+        if (ft instanceof FeatureTypeType) {
+            getFeatureType().add((FeatureTypeType)ft);
+        } else if (ft != null) {
+            throw new IllegalArgumentException("unexpected version of the featureType object");
+        }
+    }
+    
     /**
      * Verify if this entry is identical to specified object.
      */

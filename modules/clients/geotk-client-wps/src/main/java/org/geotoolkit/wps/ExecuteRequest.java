@@ -38,7 +38,6 @@ public interface ExecuteRequest extends Request {
      */
     void setIdentifier(String identifiers);
     
-    
     /**
      * Returns OutputForm "document" or "raw", can be {@code null}.
      */
@@ -100,5 +99,29 @@ public interface ExecuteRequest extends Request {
      */
     void setInputs(List<AbstractWPSInput> inputs);
     
+    
+    /**
+     * Return the storage directory path used to store input/output data when it's needed.
+     * @return path
+     */
+    String getStorageDirectory();
+    
+    /**
+     * Set the storage directory path used to store input/output data when it's needed.
+     * @param path 
+     */
+    void setStorageDirectory(final String path);
+    
+    /**
+     * Return the storage URL path used to acces stored data.
+     * @return url
+     */
+    String getStorageURL();
+    
+    /**
+     * Set the storage URL path used to acces stored data.
+     * @return path
+     */
+    void setStorageURL(final String url);
 }
     

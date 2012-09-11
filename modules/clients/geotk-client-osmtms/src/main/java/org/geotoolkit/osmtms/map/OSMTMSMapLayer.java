@@ -16,15 +16,15 @@
  */
 package org.geotoolkit.osmtms.map;
 
-import org.geotoolkit.geometry.Envelope2D;
-import org.geotoolkit.map.AbstractMapLayer;
-import org.geotoolkit.style.DefaultStyleFactory;
+import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.coverage.PyramidSet;
+import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.map.DefaultCoverageMapLayer;
 import org.geotoolkit.osmtms.OSMTileMapServer;
-
-import org.opengis.geometry.Envelope;
-
-import static org.geotoolkit.util.ArgumentChecks.*;
-import static org.geotoolkit.referencing.crs.DefaultGeographicCRS.*;
+import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.style.DefaultStyleFactory;
+import org.geotoolkit.style.StyleConstants;
+import org.geotoolkit.util.ArgumentChecks;
 
 
 /**
@@ -33,60 +33,46 @@ import static org.geotoolkit.referencing.crs.DefaultGeographicCRS.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class OSMTMSMapLayer extends AbstractMapLayer {    
+public class OSMTMSMapLayer extends DefaultCoverageMapLayer {    
 
-    //full world extend
-    private static final Envelope MAXEXTEND_ENV = new Envelope2D(WGS84, -180,
-                                                                 -90, 360, 180);            
-    
-    /**
-     * The server to request.
-     */
-    private final OSMTileMapServer server;
-    
+    private static CoverageReference getReference(OSMTileMapServer server){
+        try {
+            return server.getCoverageReference(server.getNames().iterator().next());
+        } catch (DataStoreException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
     /**
      * Query extension.
      */
-    private String format = ".png";
+    private static final String DEFAULT_FORMAT = ".png";
     
     
     public OSMTMSMapLayer(final OSMTileMapServer server) {
-        super(new DefaultStyleFactory().style());
-        this.server = server;
-
-        //register the default graphic builder for geotk 2D engine.
-        graphicBuilders().add(OSMTMSGraphicBuilder.INSTANCE);
+        super(getReference(server),
+              new DefaultStyleFactory().style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER),
+              new DefaultName("osm"));
+        setUserPropertie(PyramidSet.HINT_FORMAT, DEFAULT_FORMAT);
     }
-    
+       
     /**
      * Sets the extension for the output response. By default sets to {@code .png}.
      * @param format 
      */
     public void setFormat(final String format) {
-        ensureNonNull("format", format);
-        this.format = format;
+        ArgumentChecks.ensureNonNull("format", format);
+        setUserPropertie(PyramidSet.HINT_FORMAT, format);
     }
-
+    
     /**
      * Gets the extension for the output response. By default {@code .png}.
      */
     public String getFormat() {
-        return format;
+        Object val = getUserPropertie(PyramidSet.HINT_FORMAT);
+        if(val != null){
+            return val.toString();
+        }
+        return null;
     }
-
-    /**
-     * Returns the {@link StaticGoogleMapsServer} to request. Can't be {@code null}.
-     */
-    public OSMTileMapServer getServer() {
-        return server;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Envelope getBounds() {
-        return MAXEXTEND_ENV;
-    }
-   
+    
 }

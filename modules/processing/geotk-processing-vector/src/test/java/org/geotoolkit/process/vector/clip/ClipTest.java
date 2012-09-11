@@ -25,8 +25,6 @@ import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.FeatureCollection;
@@ -48,10 +46,10 @@ import static org.junit.Assert.*;
 
 /**
  * JUnit test of clip with a FeatureCollection process
- * @author Quentin Boileau
- * @module pending
+ *
+ * @author Quentin Boileau @module pending
  */
-public class ClipTest extends AbstractProcessTest{
+public class ClipTest extends AbstractProcessTest {
 
     private static SimpleFeatureBuilder sfb;
     private static GeometryFactory geometryFactory;
@@ -61,9 +59,8 @@ public class ClipTest extends AbstractProcessTest{
         super("clip");
     }
 
-
     @Test
-    public void testClip() throws ProcessException, NoSuchIdentifierException{
+    public void testClip() throws ProcessException, NoSuchIdentifierException, FactoryException {
 
         // Inputs
         final FeatureCollection<?> featureList = buildFeatureList();
@@ -80,7 +77,7 @@ public class ClipTest extends AbstractProcessTest{
         //Features out
         final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.call().parameter("feature_out").getValue();
 
-        
+
         //Expected Features out
         final FeatureCollection<?> featureListResult = buildResultList();
 
@@ -114,15 +111,9 @@ public class ClipTest extends AbstractProcessTest{
         return sft;
     }
 
-    private static FeatureCollection<?> buildFeatureList() {
+    private static FeatureCollection<?> buildFeatureList() throws FactoryException {
 
-        try {
-            type = createSimpleType();
-        } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(ClipTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FactoryException ex) {
-            Logger.getLogger(ClipTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        type = createSimpleType();
 
         final FeatureCollection<Feature> featureList = DataUtilities.collection("", type);
 
@@ -212,15 +203,9 @@ public class ClipTest extends AbstractProcessTest{
         return featureList;
     }
 
-    private static FeatureCollection<?> buildFeatureClip() {
-        
-         try {
-            type = createSimpleType();
-        } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(ClipTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FactoryException ex) {
-            Logger.getLogger(ClipTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    private static FeatureCollection<?> buildFeatureClip() throws FactoryException {
+
+        type = createSimpleType();
 
         final FeatureCollection<Feature> featureList = DataUtilities.collection("", type);
 
@@ -289,19 +274,13 @@ public class ClipTest extends AbstractProcessTest{
         sfb.set("position", geometryFactory.createPolygon(ring, null));
         myFeature4 = sfb.buildFeature("id-14");
         featureList.add(myFeature4);
-        
+
         return featureList;
     }
 
-    private static FeatureCollection<?> buildResultList() {
+    private static FeatureCollection<?> buildResultList() throws FactoryException {
 
-        try {
-            type = createSimpleResultType();
-        } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(ClipTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FactoryException ex) {
-            Logger.getLogger(ClipTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        type = createSimpleResultType();
 
         final FeatureCollection<Feature> featureList = DataUtilities.collection("", type);
 
@@ -342,29 +321,29 @@ public class ClipTest extends AbstractProcessTest{
         sfb = new SimpleFeatureBuilder(type);
         sfb.set("name", "Building2");
         sfb.set("height", 12);
-        sfb.set("position", geometryFactory.createGeometryCollection(new Geometry[]{poly,lineString}));
+        sfb.set("position", geometryFactory.createGeometryCollection(new Geometry[]{poly, lineString}));
         myFeature2 = sfb.buildFeature("id-02");
         featureList.add(myFeature2);
 
         Feature myFeature3;
         ring = geometryFactory.createLinearRing(
-               new Coordinate[]{
-                   new Coordinate(10.0, 1.0),
-                   new Coordinate(11.0, 1.0),
-                   new Coordinate(11.0, 0.0),
-                   new Coordinate(10.0, 0.0),
-                   new Coordinate(10.0, 1.0)
-               });
+                new Coordinate[]{
+                    new Coordinate(10.0, 1.0),
+                    new Coordinate(11.0, 1.0),
+                    new Coordinate(11.0, 0.0),
+                    new Coordinate(10.0, 0.0),
+                    new Coordinate(10.0, 1.0)
+                });
         poly = geometryFactory.createPolygon(ring, null);
         sfb = new SimpleFeatureBuilder(type);
         sfb.set("name", "Building3");
         sfb.set("height", 12);
-        sfb.set("position",  poly);
+        sfb.set("position", poly);
         myFeature3 = sfb.buildFeature("id-03");
         featureList.add(myFeature3);
 
         Feature myFeature4;
-        Point pt =  geometryFactory.createPoint(new Coordinate(3.0, 6.0));
+        Point pt = geometryFactory.createPoint(new Coordinate(3.0, 6.0));
         sfb = new SimpleFeatureBuilder(type);
         sfb.set("name", "Building4");
         sfb.set("height", 12);

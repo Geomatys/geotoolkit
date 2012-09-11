@@ -26,6 +26,8 @@ import javax.xml.stream.XMLStreamException;
 
 import org.geotoolkit.client.AbstractServer;
 import org.geotoolkit.client.Request;
+import org.geotoolkit.client.ServerFactory;
+import org.geotoolkit.client.ServerFinder;
 import org.geotoolkit.data.osm.client.v060.CloseChangeSet060;
 import org.geotoolkit.data.osm.client.v060.CreateChangeSet060;
 import org.geotoolkit.data.osm.client.v060.ChangeElement060;
@@ -48,9 +50,11 @@ import org.geotoolkit.data.osm.client.v060.UpdateChangeSet060;
 import org.geotoolkit.data.osm.client.v060.Upload060;
 import org.geotoolkit.data.osm.model.Api;
 import org.geotoolkit.data.osm.xml.OSMXMLReader;
+import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.logging.Logging;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * Represent an open street map server.
@@ -64,8 +68,6 @@ public class OpenStreetMapServer extends AbstractServer{
 
     private Api capabilities = null;
 
-    private final OSMVersion version;
-
     public OpenStreetMapServer(final URL serverURL, final String version){
         this(serverURL, OSMVersion.getVersion(version));
     }
@@ -75,11 +77,24 @@ public class OpenStreetMapServer extends AbstractServer{
     }
     
     public OpenStreetMapServer(final URL url, final ClientSecurity security, final OSMVersion version){
-        super(url,security);
+        super(create(OSMServerFactory.PARAMETERS, url, security));
         ArgumentChecks.ensureNonNull("version", version);
-        this.version = version;
+        Parameters.getOrCreate(OSMServerFactory.VERSION, parameters).setValue(version.getCode());
+    }
+    
+    public OpenStreetMapServer(final ParameterValueGroup params){
+        super(params);
     }
 
+    @Override
+    public ServerFactory getFactory() {
+        return ServerFinder.getFactoryById(OSMServerFactory.NAME);
+    }
+
+    public OSMVersion getVersion(){
+        return OSMVersion.getVersion(Parameters.value(OSMServerFactory.VERSION, parameters));
+    }
+    
     public Api getCapabilities(){
         if (capabilities != null) {
             return capabilities;
@@ -135,7 +150,7 @@ public class OpenStreetMapServer extends AbstractServer{
      * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Capabilities:_GET_.2Fapi.2Fcapabilities">OSM API 0.6</a>}
      */
     public GetCapabilitiesRequest createGetCapabilities(){
-        switch (version) {
+        switch (getVersion()) {
             case v060:
                 return new GetCapabilities060(this);
             default:
@@ -147,7 +162,7 @@ public class OpenStreetMapServer extends AbstractServer{
      * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Retrieving_map_data_by_bounding_box:_GET_.2Fapi.2F0.6.2Fmap">OSM API 0.6</a>}
      */
     public GetDataRequest createGetData() {
-        switch (version) {
+        switch (getVersion()) {
             case v060:
                 return new GetData060(this);
             default:
@@ -161,7 +176,7 @@ public class OpenStreetMapServer extends AbstractServer{
      * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Create:_PUT_.2Fapi.2F0.6.2Fchangeset.2Fcreate">OSM API 0.6</a>}
      */
     public GetChangeSetRequest createGetChangeSet(){
-        switch (version) {
+        switch (getVersion()) {
             case v060:
                 return new GetChangeSet060(this);
             default:
@@ -173,7 +188,7 @@ public class OpenStreetMapServer extends AbstractServer{
      * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Query:_GET_.2Fapi.2F0.6.2Fchangesets">OSM API 0.6</a>}
      */
     public GetChangeSetsRequest createGetChangeSets(){
-        switch (version) {
+        switch (getVersion()) {
             case v060:
                 return new GetChangeSets060(this);
             default:
@@ -185,7 +200,7 @@ public class OpenStreetMapServer extends AbstractServer{
      * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Update:_PUT_.2Fapi.2F0.6.2Fchangeset.2F.23id">OSM API 0.6</a>}
      */
     public CreateChangeSetRequest createCreateChangeSet(){
-        switch (version) {
+        switch (getVersion()) {
             case v060:
                 return new CreateChangeSet060(this);
             default:
@@ -197,7 +212,7 @@ public class OpenStreetMapServer extends AbstractServer{
      * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Update:_PUT_.2Fapi.2F0.6.2Fchangeset.2F.23id">OSM API 0.6</a>}
      */
     public UpdateChangeSetRequest createUpdateChangeSet(){
-        switch (version) {
+        switch (getVersion()) {
             case v060:
                 return new UpdateChangeSet060(this);
             default:
@@ -209,7 +224,7 @@ public class OpenStreetMapServer extends AbstractServer{
      * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Close:_PUT_.2Fapi.2F0.6.2Fchangeset.2F.23id.2Fclose">OSM API 0.6</a>}
      */
     public CloseChangeSetRequest createCloseChangeSet(){
-        switch (version) {
+        switch (getVersion()) {
             case v060:
                 return new CloseChangeSet060(this);
             default:
@@ -221,7 +236,7 @@ public class OpenStreetMapServer extends AbstractServer{
      * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Download:_GET_.2Fapi.2F0.6.2Fchangeset.2F.23id.2Fdownload">OSM API 0.6</a>}
      */
     public DownloadChangeSetRequest createDownloadChangeSet(){
-        switch (version) {
+        switch (getVersion()) {
             case v060:
                 return new DownloadChangeSet060(this);
             default:
@@ -233,7 +248,7 @@ public class OpenStreetMapServer extends AbstractServer{
      * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Expand_Bounding_Box:_POST_.2Fapi.2F0.6.2Fchangeset.2F.23id.2Fexpand_bbox">OSM API 0.6</a>}
      */
     public ExpandChangeSetRequest createExpandChangeSet(){
-        switch (version) {
+        switch (getVersion()) {
             case v060:
                 return new ExpandChangeSet060(this);
             default:
@@ -245,7 +260,7 @@ public class OpenStreetMapServer extends AbstractServer{
      * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Diff_upload:_POST_.2Fapi.2F0.6.2Fchangeset.2F.23id.2Fupload">OSM API 0.6</a>}
      */
     public UploadRequest createUploadChangeSet(){
-        switch (version) {
+        switch (getVersion()) {
             case v060:
                 return new Upload060(this);
             default:
@@ -257,7 +272,7 @@ public class OpenStreetMapServer extends AbstractServer{
      * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Create:_PUT_.2Fapi.2F0.6.2F.5Bnode.7Cway.7Crelation.5D.2Fcreate">OSM API 0.6</a>}
      */
     public ChangeElementRequest createCreateElement(){
-        switch (version) {
+        switch (getVersion()) {
             case v060:
                 return new ChangeElement060(this,ChangeElementRequest.Type.CREATE);
             default:
@@ -270,7 +285,7 @@ public class OpenStreetMapServer extends AbstractServer{
      * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Version:_GET_.2Fapi.2F0.6.2F.5Bnode.7Cway.7Crelation.5D.2F.23id.2F.23version">OSM API 0.6</a>}
      */
     public ReadElementRequest createReadElement(){
-        switch (version) {
+        switch (getVersion()) {
             case v060:
                 return new ReadElement060(this);
             default:
@@ -282,7 +297,7 @@ public class OpenStreetMapServer extends AbstractServer{
      * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Multi_fetch:_GET_.2Fapi.2F0.6.2F.5Bnodes.7Cways.7Crelations.5D">OSM API 0.6</a>}
      */
     public ReadElementsRequest createReadElements(){
-        switch (version) {
+        switch (getVersion()) {
             case v060:
                 return new ReadElements060(this);
             default:
@@ -294,7 +309,7 @@ public class OpenStreetMapServer extends AbstractServer{
      * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Full:_GET_.2Fapi.2F0.6.2F.5Bway.7Crelation.5D.2F.23id.2Ffull">OSM API 0.6</a>}
      */
     public ReadElementFullRequest createReadFullElement(){
-        switch (version) {
+        switch (getVersion()) {
             case v060:
                 return new ReadElementFull060(this);
             default:
@@ -306,7 +321,7 @@ public class OpenStreetMapServer extends AbstractServer{
      * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Update:_PUT_.2Fapi.2F0.6.2F.5Bnode.7Cway.7Crelation.5D.2F.23id">OSM API 0.6</a>}
      */
     public ChangeElementRequest createUpdateElement(){
-        switch (version) {
+        switch (getVersion()) {
             case v060:
                 return new ChangeElement060(this,ChangeElementRequest.Type.UPDATE);
             default:
@@ -318,7 +333,7 @@ public class OpenStreetMapServer extends AbstractServer{
      * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Delete:_DELETE_.2Fapi.2F0.6.2F.5Bnode.7Cway.7Crelation.5D.2F.23id">OSM API 0.6</a>}
      */
     public ChangeElementRequest createDeleteElement(){
-        switch (version) {
+        switch (getVersion()) {
             case v060:
                 return new ChangeElement060(this,ChangeElementRequest.Type.DELETE);
             default:
@@ -330,7 +345,7 @@ public class OpenStreetMapServer extends AbstractServer{
      * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#History:_GET_.2Fapi.2F0.6.2F.5Bnode.7Cway.7Crelation.5D.2F.23id.2Fhistory">OSM API 0.6</a>}
      */
     public ReadElementHistoryRequest createHistoryElement(){
-        switch (version) {
+        switch (getVersion()) {
             case v060:
                 return new ReadElementHistory060(this);
             default:
@@ -342,7 +357,7 @@ public class OpenStreetMapServer extends AbstractServer{
      * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Relations_for_Element:_GET_.2Fapi.2F0.6.2F.5Bnode.7Cway.7Crelation.5D.2F.23id.2Frelations">OSM API 0.6</a>}
      */
     public ReadElementRelationsRequest createRelatedRelationElement(){
-        switch (version) {
+        switch (getVersion()) {
             case v060:
                 return new ReadElementRelations060(this);
             default:
@@ -354,7 +369,7 @@ public class OpenStreetMapServer extends AbstractServer{
      * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Ways_for_Node:_GET_.2Fapi.2F0.6.2Fnode.2F.23id.2Fways">OSM API 0.6</a>}
      */
     public ReadNodeWaysRequest createRelatedWayElement(){
-        switch (version) {
+        switch (getVersion()) {
             case v060:
                 return new ReadNodeWays060(this);
             default:
@@ -368,7 +383,7 @@ public class OpenStreetMapServer extends AbstractServer{
      * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Retrieving_GPS_points">OSM API 0.6</a>}
      */
     public GetGPSTraceRequest createGetGPSTraces(){
-        switch (version) {
+        switch (getVersion()) {
             case v060:
                 return new GetGPSTraces060(this);
             default:
@@ -388,7 +403,7 @@ public class OpenStreetMapServer extends AbstractServer{
      * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Downloading_Trace_Metadata">OSM API 0.6</a>}
      */
     public DownloadGPSTraceDetail createDownloadGPSTraceDetails(){
-        switch (version) {
+        switch (getVersion()) {
             case v060:
                 return new DownloadGPSTraceDetails060(this);
             default:
@@ -400,7 +415,7 @@ public class OpenStreetMapServer extends AbstractServer{
      * {@see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Downloading_Trace_Metadata">OSM API 0.6</a>}
      */
     public DownloadGPSTraceData createDownloadGPSTraceData(){
-        switch (version) {
+        switch (getVersion()) {
             case v060:
                 return new DownloadGPSTraceData060(this);
             default:

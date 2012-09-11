@@ -17,40 +17,37 @@
  */
 package org.geotoolkit.gui.swing.propertyedit.styleproperty;
 
-import java.awt.BorderLayout;
-
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JScrollPane;
-import java.awt.FlowLayout;
-import javax.swing.JCheckBox;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.JToolBar;
-
-import org.geotoolkit.gui.swing.resource.IconBundle;
-import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
-import org.geotoolkit.gui.swing.resource.MessageBundle;
-import org.geotoolkit.gui.swing.style.JRasterSymbolizerPane;
-import org.geotoolkit.gui.swing.style.JTextSymbolizerPane;
-import org.geotoolkit.gui.swing.style.StyleElementEditor;
-import org.geotoolkit.gui.swing.style.JLineSymbolizerPane;
-import org.geotoolkit.gui.swing.style.JPointSymbolizerPane;
-import org.geotoolkit.gui.swing.style.JPolygonSymbolizerPane;
-import org.geotoolkit.style.DefaultStyleFactory;
-import org.geotoolkit.style.MutableStyleFactory;
-import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.map.CoverageMapLayer;
-import org.geotoolkit.map.FeatureMapLayer;
-
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
-
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JToolBar;
+import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
+import org.geotoolkit.gui.swing.resource.IconBundle;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
+import org.geotoolkit.gui.swing.style.JLineSymbolizerPane;
+import org.geotoolkit.gui.swing.style.JPointSymbolizerPane;
+import org.geotoolkit.gui.swing.style.JPolygonSymbolizerPane;
+import org.geotoolkit.gui.swing.style.JRasterSymbolizerPane;
+import org.geotoolkit.gui.swing.style.JTextSymbolizerPane;
+import org.geotoolkit.gui.swing.style.StyleElementEditor;
+import org.geotoolkit.map.CoverageMapLayer;
+import org.geotoolkit.map.FeatureMapLayer;
+import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.style.DefaultStyleFactory;
+import org.geotoolkit.style.MutableStyleFactory;
+import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.style.FeatureTypeStyle;
 import org.opengis.style.LineSymbolizer;
 import org.opengis.style.PointSymbolizer;
@@ -62,7 +59,7 @@ import org.opengis.style.TextSymbolizer;
 
 /**
  * Simple style panel
- * 
+ *
  * @author Johann Sorel
  * @module pending
  */
@@ -76,7 +73,7 @@ public class JSimpleStylePanel extends JTabbedPane implements PropertyPane {
     private MapLayer layer;
     private StyleElementEditor<? extends Symbolizer> detail = null;
 
-    
+
     public JSimpleStylePanel() {
         check.setSelected(false);
         check.setText(MessageBundle.getString("property_style_label_enable"));
@@ -105,12 +102,12 @@ public class JSimpleStylePanel extends JTabbedPane implements PropertyPane {
 
             if(check.isSelected()){
                 Symbolizer symbol = detail.create();
-                Symbolizer label = textSymbolPane.create();                
+                Symbolizer label = textSymbolPane.create();
                 layer.setStyle(SF.style(new Symbolizer[]{symbol,label}));
             }else{
                 layer.setStyle(SF.style(detail.create()));
             }
-            
+
         }
     }
 
@@ -128,10 +125,10 @@ public class JSimpleStylePanel extends JTabbedPane implements PropertyPane {
     public boolean canHandle(Object target) {
         return target instanceof MapLayer;
     }
-    
+
     @Override
     public void setTarget(final Object layer) {
-        
+
         if(layer instanceof MapLayer){
             this.layer = (MapLayer) layer;
             parse();
@@ -144,9 +141,10 @@ public class JSimpleStylePanel extends JTabbedPane implements PropertyPane {
 
         if(layer instanceof FeatureMapLayer){
             final FeatureMapLayer featureLayer = (FeatureMapLayer) layer;
-            final Class val = featureLayer.getCollection().getFeatureType().getGeometryDescriptor().getType().getBinding();
+            final GeometryDescriptor geomDesc = featureLayer.getCollection().getFeatureType().getGeometryDescriptor();
+            final Class val = (geomDesc != null) ? geomDesc.getType().getBinding() : null;
 
-            if (val.equals(Polygon.class) || val.equals(MultiPolygon.class)) {
+            if (val!= null && (Polygon.class.isAssignableFrom(val) || MultiPolygon.class.isAssignableFrom(val)) ) {
                 detail = new JPolygonSymbolizerPane();
                 detail.setLayer(layer);
 
@@ -166,7 +164,7 @@ public class JSimpleStylePanel extends JTabbedPane implements PropertyPane {
                 jsp.setBorder(null);
                 jsp.setViewportBorder(null);
                 stylePane.add(BorderLayout.CENTER, jsp );
-            } else if (val.equals(MultiLineString.class) || val.equals(LineString.class)) {
+            } else if (val != null && (MultiLineString.class.isAssignableFrom(val) || LineString.class.isAssignableFrom(val))) {
                 detail = new JLineSymbolizerPane();
                 detail.setLayer(layer);
 
@@ -186,7 +184,7 @@ public class JSimpleStylePanel extends JTabbedPane implements PropertyPane {
                 jsp.setBorder(null);
                 jsp.setViewportBorder(null);
                 stylePane.add(BorderLayout.CENTER, jsp );
-            } else if (val.equals(Point.class) || val.equals(MultiPoint.class)) {
+            } else if (val != null && (Point.class.isAssignableFrom(val) || MultiPoint.class.isAssignableFrom(val))) {
                 detail = new JPointSymbolizerPane();
                 detail.setLayer(layer);
 

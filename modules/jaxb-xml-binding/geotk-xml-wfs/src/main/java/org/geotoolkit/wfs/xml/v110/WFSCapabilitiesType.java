@@ -27,6 +27,8 @@ import org.geotoolkit.ows.xml.v100.CapabilitiesBaseType;
 import org.geotoolkit.ows.xml.v100.OperationsMetadata;
 import org.geotoolkit.ows.xml.v100.ServiceIdentification;
 import org.geotoolkit.ows.xml.v100.ServiceProvider;
+import org.geotoolkit.util.Utilities;
+import org.geotoolkit.wfs.xml.WFSCapabilities;
 import org.geotoolkit.wfs.xml.WFSResponse;
 
 
@@ -73,7 +75,7 @@ import org.geotoolkit.wfs.xml.WFSResponse;
     "filterCapabilities"
 })
 @XmlRootElement(name = "WFS_Capabilities")
-public class WFSCapabilitiesType extends CapabilitiesBaseType implements WFSResponse {
+public class WFSCapabilitiesType extends CapabilitiesBaseType implements WFSResponse, WFSCapabilities {
 
     @XmlElement(name = "FeatureTypeList")
     private FeatureTypeListType featureTypeList;
@@ -88,8 +90,8 @@ public class WFSCapabilitiesType extends CapabilitiesBaseType implements WFSResp
 
     }
 
-    public WFSCapabilitiesType(final String version) {
-        super(version);
+    public WFSCapabilitiesType(final String version, final String updateSequence) {
+        super(version, updateSequence);
     }
 
     public WFSCapabilitiesType(final String version, final ServiceIdentification si, final ServiceProvider sp, final OperationsMetadata om, 

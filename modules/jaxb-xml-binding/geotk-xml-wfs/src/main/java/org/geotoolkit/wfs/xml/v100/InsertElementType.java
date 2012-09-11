@@ -27,6 +27,9 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v212.AbstractFeatureType;
+import org.geotoolkit.util.Utilities;
+import org.geotoolkit.wfs.xml.IdentifierGenerationOptionType;
+import org.geotoolkit.wfs.xml.InsertElement;
 
 
 /**
@@ -53,7 +56,7 @@ import org.geotoolkit.gml.xml.v212.AbstractFeatureType;
 @XmlType(name = "InsertElementType", propOrder = {
     "feature"
 })
-public class InsertElementType {
+public class InsertElementType implements InsertElement {
 
     @XmlElementRef(name = "AbstractFeature", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
     private List<JAXBElement<? extends AbstractFeatureType>> feature;
@@ -63,20 +66,6 @@ public class InsertElementType {
     /**
      * Gets the value of the feature property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the feature property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getFeature().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link AbstractFeatureType }{@code >}
      * {@link JAXBElement }{@code <}{@link FeatureCollectionType }{@code >}
@@ -90,7 +79,7 @@ public class InsertElementType {
         }
         return this.feature;
     }
-
+    
     /**
      * Gets the value of the handle property.
      * 
@@ -150,5 +139,17 @@ public class InsertElementType {
         hash = 17 * hash + (this.feature != null ? this.feature.hashCode() : 0);
         hash = 17 * hash + (this.handle != null ? this.handle.hashCode() : 0);
         return hash;
+    }
+
+    public String getInputFormat() {
+        return null; // not implemented in 1.0.0
+    }
+
+    public String getSrsName() {
+        return null; // not implemented in 1.0.0
+    }
+
+    public IdentifierGenerationOptionType getIdgen() {
+        return null; // not implemented in 1.0.0
     }
 }

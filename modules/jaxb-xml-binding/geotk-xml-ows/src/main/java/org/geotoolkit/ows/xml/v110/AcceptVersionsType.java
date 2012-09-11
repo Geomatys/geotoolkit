@@ -73,6 +73,10 @@ public class AcceptVersionsType implements org.geotoolkit.ows.xml.AcceptVersions
         }
     }
     
+    public AcceptVersionsType(final List<String> version){
+        this.version = version;
+    }
+    
     /**
      * Gets the value of the version property.
      */

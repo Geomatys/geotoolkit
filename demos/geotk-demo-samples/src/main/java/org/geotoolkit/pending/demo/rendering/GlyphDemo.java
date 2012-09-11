@@ -10,6 +10,7 @@ import javax.swing.JLabel;
 import org.geotoolkit.display2d.service.DefaultGlyphService;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
 import org.opengis.style.Style;
@@ -22,7 +23,8 @@ public class GlyphDemo {
                                                    new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
 
     public static void main(String[] args) {
-
+        Demos.init();
+        
         //generate a style
         final Style style = SF.style(StyleConstants.DEFAULT_LINE_SYMBOLIZER);
 

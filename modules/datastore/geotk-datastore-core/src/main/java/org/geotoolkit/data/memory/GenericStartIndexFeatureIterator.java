@@ -2,7 +2,6 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2003-2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -19,15 +18,13 @@
 package org.geotoolkit.data.memory;
 
 import java.util.NoSuchElementException;
-
+import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
-import org.geotoolkit.data.DataStoreRuntimeException;
-import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.util.converter.Classes;
-
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 

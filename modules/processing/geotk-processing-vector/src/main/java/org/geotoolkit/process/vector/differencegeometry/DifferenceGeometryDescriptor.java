@@ -80,6 +80,6 @@ public final class DifferenceGeometryDescriptor extends VectorDescriptor {
      */
     @Override
     public Process createProcess(final ParameterValueGroup input) {
-        return new DifferenceGeometry(input);
+        return new DifferenceGeometryProcess(input);
     }
 }

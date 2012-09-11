@@ -36,15 +36,18 @@ import javax.swing.JPanel;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display2d.canvas.DefaultRenderingContext2D;
-import org.geotoolkit.display2d.primitive.DefaultProjectedGeometry;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
-import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-
+import org.geotoolkit.display2d.container.statefull.StatefullContextParams;
+import org.geotoolkit.display2d.container.statefull.StatefullProjectedGeometry;
+import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.gui.swing.go2.JMap2D;
-
 import org.geotoolkit.util.logging.Logging;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
 import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 
 /**
  * Abstract Decoration to easely render objective CRS geometries.
@@ -67,7 +70,7 @@ public abstract class AbstractGeometryDecoration extends JPanel implements MapDe
     public static Logger getLogger() {
         return LOGGER;
     }
-    
+
     protected double[] toDisplay(final Coordinate coord){
         double[] coords = new double[]{coord.x,coord.y};
         objToDisp.transform(coords, 0, coords, 0, 1);
@@ -132,22 +135,37 @@ public abstract class AbstractGeometryDecoration extends JPanel implements MapDe
         final J2DCanvas canvas = (J2DCanvas) candidate;
         canvas.prepareContext(context,(Graphics2D) g.create(), null);
         objToDisp = context.getObjectiveToDisplay();
-
         if (objToDisp == null) return;
 
         final Graphics2D g2 = context.getGraphics();
 
-        paintComponent(g2, context, objToDisp);
+        paintComponent(g2, context);
     }
 
-    protected void paintComponent(final Graphics2D g2, final DefaultRenderingContext2D context,
-            final AffineTransform objToDisp){
+    protected void paintComponent(final Graphics2D g2, final DefaultRenderingContext2D context){
+
+        final StatefullContextParams params = new StatefullContextParams(null, null);
+        final StatefullProjectedGeometry projected = new StatefullProjectedGeometry(params);
+        params.update(context);
 
         //prepare datas for geometry painting
         for(final Geometry geo : geometries){
             if(geo == null) continue;
-            final DefaultProjectedGeometry projected = new DefaultProjectedGeometry(geo);
-            projected.setObjToDisplay(new AffineTransform2D(objToDisp));
+
+            CoordinateReferenceSystem dataCrs = null;
+            try {
+                dataCrs = JTS.findCoordinateReferenceSystem(geo);
+            } catch (Exception ex) {
+                LOGGER.log(Level.FINE, ex.getMessage(), ex);
+            }
+
+            if(dataCrs == null){
+                //we assume the geometry is in objective crs
+                dataCrs = params.objectiveCRS;
+            }
+
+            projected.setDataGeometry(geo, dataCrs);
+
             try {
                 paintGeometry(g2,context, projected);
             } catch (TransformException ex) {
@@ -155,7 +173,7 @@ public abstract class AbstractGeometryDecoration extends JPanel implements MapDe
             }
         }
     }
-    
+
     protected abstract void paintGeometry(Graphics2D g2, RenderingContext2D context, ProjectedGeometry geom) throws TransformException;
 
 

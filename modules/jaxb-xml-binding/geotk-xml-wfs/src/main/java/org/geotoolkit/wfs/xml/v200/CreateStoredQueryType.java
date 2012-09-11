@@ -18,6 +18,7 @@
 
 package org.geotoolkit.wfs.xml.v200;
 
+import org.geotoolkit.wfs.xml.CreateStoredQuery;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -49,35 +50,30 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "CreateStoredQueryType", propOrder = {
     "storedQueryDefinition"
 })
-public class CreateStoredQueryType
-    extends BaseRequestType
-{
+public class CreateStoredQueryType extends BaseRequestType implements CreateStoredQuery {
 
+    public CreateStoredQueryType() {
+        
+    }
+    
+    public CreateStoredQueryType(final String service, final String version, final String handle, 
+            final List<StoredQueryDescriptionType> storedQueryDefinition) {
+        super(service, version, handle);
+        this.storedQueryDefinition = storedQueryDefinition;
+    }
+    
     @XmlElement(name = "StoredQueryDefinition")
     private List<StoredQueryDescriptionType> storedQueryDefinition;
 
     /**
      * Gets the value of the storedQueryDefinition property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the storedQueryDefinition property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getStoredQueryDefinition().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link StoredQueryDescriptionType }
      * 
      * 
      */
+    @Override
     public List<StoredQueryDescriptionType> getStoredQueryDefinition() {
         if (storedQueryDefinition == null) {
             storedQueryDefinition = new ArrayList<StoredQueryDescriptionType>();

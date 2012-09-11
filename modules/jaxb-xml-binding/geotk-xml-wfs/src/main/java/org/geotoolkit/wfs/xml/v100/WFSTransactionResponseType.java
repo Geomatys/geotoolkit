@@ -23,6 +23,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.wfs.xml.TransactionResponse;
+import org.geotoolkit.wfs.xml.WFSResponse;
 
 
 /**
@@ -60,7 +62,7 @@ import javax.xml.bind.annotation.XmlType;
     "insertResult",
     "transactionResult"
 })
-public class WFSTransactionResponseType {
+public class WFSTransactionResponseType implements WFSResponse, TransactionResponse {
 
     @XmlElement(name = "InsertResult")
     private List<InsertResultType> insertResult;
@@ -69,26 +71,18 @@ public class WFSTransactionResponseType {
     @XmlAttribute(required = true)
     private String version;
 
+    public WFSTransactionResponseType() {
+
+    }
+
+    public WFSTransactionResponseType(final TransactionResultType transactionResults, final List<InsertResultType> insertResults, final String version) {
+        this.transactionResult = transactionResults;
+        this.insertResult      = insertResults;
+        this.version           = version;
+    }
+    
     /**
      * Gets the value of the insertResult property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the insertResult property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getInsertResult().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link InsertResultType }
-     * 
      * 
      */
     public List<InsertResultType> getInsertResult() {

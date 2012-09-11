@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.process.vector.maxlimit;
 
-
 import org.geotoolkit.process.ProcessException;
 import org.opengis.util.NoSuchIdentifierException;
 import com.vividsolutions.jts.geom.Coordinate;
@@ -25,13 +24,10 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Polygon;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
-import org.geotoolkit.process.vector.union.UnionTest;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -51,10 +47,10 @@ import static org.junit.Assert.*;
 
 /**
  * JUnit test of MaxLimit process
- * @author Quentin Boileau
- * @module pending
+ *
+ * @author Quentin Boileau @module pending
  */
-public class MaxLimitTest extends AbstractProcessTest{
+public class MaxLimitTest extends AbstractProcessTest {
 
     private static SimpleFeatureBuilder sfb;
     private static final GeometryFactory geometryFactory = new GeometryFactory();
@@ -65,7 +61,7 @@ public class MaxLimitTest extends AbstractProcessTest{
     }
 
     @Test
-    public void testLimit() throws ProcessException, NoSuchIdentifierException{
+    public void testLimit() throws ProcessException, NoSuchIdentifierException, FactoryException {
 
         // Inputs
         final FeatureCollection<?> featureList = buildFeatureList();
@@ -75,7 +71,7 @@ public class MaxLimitTest extends AbstractProcessTest{
 
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("feature_in").setValue(featureList);
-        in.parameter("max_in").setValue( 5 );
+        in.parameter("max_in").setValue(5);
         org.geotoolkit.process.Process proc = desc.createProcess(in);
 
         //Features out
@@ -84,7 +80,7 @@ public class MaxLimitTest extends AbstractProcessTest{
         assertEquals(5, featureListOut.size());
     }
 
-     private static SimpleFeatureType createSimpleResultType() throws NoSuchAuthorityCodeException, FactoryException {
+    private static SimpleFeatureType createSimpleResultType() throws NoSuchAuthorityCodeException, FactoryException {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("MaxTest");
         ftb.add("name", String.class);
@@ -95,16 +91,9 @@ public class MaxLimitTest extends AbstractProcessTest{
         return sft;
     }
 
-     private static FeatureCollection<?> buildFeatureList() {
+    private static FeatureCollection<?> buildFeatureList() throws FactoryException {
 
-
-        try {
-            type = createSimpleResultType();
-        } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(UnionTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FactoryException ex) {
-            Logger.getLogger(UnionTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        type = createSimpleResultType();
 
         final FeatureCollection<Feature> featureList = DataUtilities.collection("", type);
 
@@ -290,7 +279,7 @@ public class MaxLimitTest extends AbstractProcessTest{
         Polygon poly2 = geometryFactory.createPolygon(ring2, null);
         sfb = new SimpleFeatureBuilder(type);
         sfb.set("name", "feature11");
-        sfb.set("geom1", geometryFactory.createMultiPolygon(new Polygon[]{ poly1,poly2}));
+        sfb.set("geom1", geometryFactory.createMultiPolygon(new Polygon[]{poly1, poly2}));
         myFeature = sfb.buildFeature("id-11");
         featureList.add(myFeature);
 

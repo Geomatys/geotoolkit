@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -26,10 +26,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.DataUtilities;
-import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.memory.GenericFilterFeatureIterator;
@@ -39,10 +37,11 @@ import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.filter.visitor.DuplicatingFilterVisitor;
+import org.geotoolkit.filter.visitor.SimplifyingFilterVisitor;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.referencing.CRS;
-
+import org.geotoolkit.storage.DataStoreException;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
@@ -152,7 +151,7 @@ public class DefaultSession extends AbstractSession {
      * {@inheritDoc }
      */
     @Override
-    public void updateFeatures(final Name groupName, final Filter filter, final Map<? extends AttributeDescriptor,? extends Object> values) throws DataStoreException {
+    public void updateFeatures(final Name groupName, Filter filter, final Map<? extends AttributeDescriptor,? extends Object> values) throws DataStoreException {
         //will raise an error if the name doesnt exist
         store.getFeatureType(groupName);
 
@@ -165,6 +164,9 @@ public class DefaultSession extends AbstractSession {
         if(async){
             final Id modified;
 
+            final SimplifyingFilterVisitor simplifier = new SimplifyingFilterVisitor();
+            filter = (Filter) filter.accept(simplifier, null);
+            
             if(filter instanceof Id){
                 modified = FF.id( ((Id)filter).getIdentifiers());
             }else{

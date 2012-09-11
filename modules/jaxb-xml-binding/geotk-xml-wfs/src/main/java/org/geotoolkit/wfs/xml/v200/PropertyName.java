@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import javax.xml.namespace.QName;
+import org.geotoolkit.wfs.xml.ResolveValueType;
 
 
 /**
@@ -63,6 +64,14 @@ public class PropertyName {
     @XmlSchemaType(name = "positiveInteger")
     private int resolveTimeout = 300;
 
+    public PropertyName() {
+        
+    }
+    
+    public PropertyName(final QName value) {
+        this.value = value;
+    }
+    
     /**
      * Gets the value of the value property.
      * 

@@ -27,6 +27,8 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 import org.geotoolkit.ows.xml.v100.KeywordsType;
 import org.geotoolkit.ows.xml.v100.WGS84BoundingBoxType;
+import org.geotoolkit.util.Utilities;
+import org.geotoolkit.wfs.xml.FeatureType;
 
 
 /**
@@ -87,7 +89,7 @@ import org.geotoolkit.ows.xml.v100.WGS84BoundingBoxType;
     "wgs84BoundingBox",
     "metadataURL"
 })
-public class FeatureTypeType {
+public class FeatureTypeType implements FeatureType {
 
     @XmlElement(name = "Name", required = true)
     private QName name;
@@ -194,6 +196,7 @@ public class FeatureTypeType {
      *     {@link String }
      *     
      */
+    @Override
     public void setAbstract(final String value) {
         this._abstract = value;
     }
@@ -208,6 +211,15 @@ public class FeatureTypeType {
         return this.keywords;
     }
 
+    @Override
+    public void addKeywords(final List<String> values) {
+        if (values != null) {
+            for (String value : values) {
+                getKeywords().add(new KeywordsType(value));
+            }
+        }
+    }
+    
     /**
      * Gets the value of the defaultSRS property.
      * 
@@ -228,7 +240,7 @@ public class FeatureTypeType {
      *     {@link String }
      *     
      */
-    public void setDefaultSRS(final String value) {
+    public void setDefaultCRS(final String value) {
         this.defaultSRS = value;
     }
 
@@ -245,7 +257,7 @@ public class FeatureTypeType {
     /**
      * Gets the value of the otherSRS property.
      */
-    public void setOtherSRS(final List<String> otherCRS) {
+    public void setOtherCRS(final List<String> otherCRS) {
         this.otherSRS = otherCRS;
     }
 
@@ -341,7 +353,11 @@ public class FeatureTypeType {
         return this.metadataURL;
     }
 
-
+    @Override
+    public void addMetadataURL(final String value, final String type, final String format) {
+        getMetadataURL().add(new MetadataURLType(value, type, format));
+    }
+    
     /**
      * Verify if this entry is identical to specified object.
      */

@@ -12,6 +12,7 @@ import javax.xml.bind.Unmarshaller;
 import org.geotoolkit.observation.xml.v100.ObservationCollectionType;
 import org.geotoolkit.ows.xml.v110.Operation;
 import org.geotoolkit.ows.xml.v110.ValueType;
+import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.sml.xml.AbstractSensorML;
 import org.geotoolkit.sos.DescribeSensorRequest;
 import org.geotoolkit.sos.GetCapabilitiesRequest;
@@ -29,6 +30,8 @@ import org.geotoolkit.xml.MarshallerPool;
 public class SOSClientDemo {
     
     public static void main(String[] args) throws MalformedURLException, URISyntaxException, IOException, JAXBException {
+        Demos.init();
+        
         final MarshallerPool pool = SOSMarshallerPool.getInstance();
         Unmarshaller um = null;
 

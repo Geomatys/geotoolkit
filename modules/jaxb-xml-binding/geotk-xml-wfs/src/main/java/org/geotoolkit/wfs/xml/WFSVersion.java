@@ -22,7 +22,8 @@ package org.geotoolkit.wfs.xml;
  * @module pending
  */
 public enum WFSVersion {
-    v110("1.1.0");
+    v110("1.1.0"),
+    v200("2.0.0");
 
     private final String code;
 
@@ -32,6 +33,27 @@ public enum WFSVersion {
 
     public String getCode() {
         return code;
+    }
+    
+    /**
+     * Returns {@link WFSVersion} that matches from the code.
+     * 
+     * @param v code value to resolve.
+     * @return {@link WFSVersion} from code value.
+     * @throws IllegalArgumentException if the code does not correspond to any existing code in this enum
+     */
+    public static WFSVersion fromCode(final String v) throws IllegalArgumentException {
+        for (final WFSVersion candidat : WFSVersion.values()) {
+            if (candidat.getCode().equals(v)) {
+                return candidat;
+            }
+        }
+        
+        try{
+            return WFSVersion.valueOf(v);
+        }catch(IllegalArgumentException ex){/*we tryed*/}
+        
+        throw new IllegalArgumentException(v);
     }
 
 }

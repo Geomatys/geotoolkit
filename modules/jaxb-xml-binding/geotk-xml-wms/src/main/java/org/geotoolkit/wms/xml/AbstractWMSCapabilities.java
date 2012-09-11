@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.wms.xml;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import org.geotoolkit.wms.xml.v111.WMT_MS_Capabilities;
 import org.geotoolkit.wms.xml.v130.WMSCapabilities;
@@ -65,5 +67,25 @@ public abstract class AbstractWMSCapabilities implements WMSResponse {
      * element is the wanted layer.
      */
     public abstract AbstractLayer[] getLayerStackFromName(String name);
+    
+    /**
+     * List all layers recursivly.
+     */
+    public List<AbstractLayer> getLayers() {
+        final AbstractLayer layer = getCapability().getLayer();
+        final List<AbstractLayer> layers = new ArrayList<AbstractLayer>();
+        explore(layers, layer);
+        return layers;
+    }
+    
+    private static void explore(List<AbstractLayer> buffer, AbstractLayer candidate){
+        buffer.add(candidate);
+        final List<? extends AbstractLayer> layers = candidate.getLayer();
+        if(layers != null){
+            for(AbstractLayer child : layers){
+                explore(buffer, child);
+            }
+        }
+    }
 
 }

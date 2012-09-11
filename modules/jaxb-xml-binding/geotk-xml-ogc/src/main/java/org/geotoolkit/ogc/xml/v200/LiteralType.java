@@ -20,6 +20,7 @@ package org.geotoolkit.ogc.xml.v200;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyElement;
@@ -27,6 +28,10 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
+import org.geotoolkit.ogc.xml.XMLLiteral;
+import org.geotoolkit.util.Utilities;
+import org.opengis.filter.expression.ExpressionVisitor;
+import org.opengis.filter.expression.Literal;
 
 
 /**
@@ -53,31 +58,47 @@ import javax.xml.namespace.QName;
 @XmlType(name = "LiteralType", propOrder = {
     "content"
 })
-public class LiteralType {
+public class LiteralType implements XMLLiteral {
 
     @XmlMixed
     @XmlAnyElement(lax = true)
     private List<Object> content;
     @XmlAttribute
     private QName type;
+    
+    /**
+     * an empty constructor used by JAXB
+     */
+    public LiteralType() {
+        
+    }
+    
+    /**
+     * build a new Literal with the specified list of object
+     */
+    public LiteralType(final List<Object> content) {
+        this.content = content;
+    }
+    
+     /**
+     * build a new Literal with the specified Object.
+     */
+    public LiteralType(final Object content) {
+        this.content = new ArrayList<Object>(); 
+        this.content.add(content);
+    }
+    
+    /**
+     * build a new Literal with the specified String
+     */
+    public LiteralType(final String content) {
+        this.content = new ArrayList<Object>(); 
+        this.content.add(content);
+    }
 
     /**
      * Gets the value of the content property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the content property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getContent().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Object }
      * {@link String }
@@ -91,6 +112,69 @@ public class LiteralType {
         return this.content;
     }
 
+    /**
+     * Sets the value of the content property.
+     */
+    public void setContent(final Object content) {
+        if (content != null) {
+            if (this.content == null) {
+                this.content = new ArrayList<Object>();
+            }
+            this.content.add(content);
+        }
+    }
+    
+    /**
+     * Sets the value of the content property.
+     */
+    public void setContent(final List<Object> content) {
+        this.content = content;
+    }
+    
+    /**
+     * We assume that the list have only One Value.
+     */
+    @Override
+    public Object getValue() {
+        if (content != null && !content.isEmpty()) {
+            return content.get(0);
+        }
+        return null;
+    }
+    
+    @Override
+    public Object evaluate(final Object object) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Object evaluate(final Object object, final Class context) {
+       Object literal = null;
+       if (content != null && !content.isEmpty()) {
+            literal = content.get(0);
+       } 
+       
+       if(literal == null || literal.getClass().equals(context))
+            return context.cast( literal );
+       else
+            return null;
+        
+    }
+    
+    /**
+     * Used by FilterVisitors to perform some action on this filter instance.
+     * Typicaly used by Filter decoders, but may also be used by any thing
+     * which needs infomration from filter structure. Implementations should
+     * always call: visitor.visit(this); It is importatant that this is not
+     * left to a parent class unless the parents API is identical.
+     *
+     * @param visitor The visitor which requires access to this filter, the
+     *        method must call visitor.visit(this);
+     */
+    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
+    	return visitor.visit(this,extraData);
+    }
+    
     /**
      * Gets the value of the type property.
      * 
@@ -115,4 +199,36 @@ public class LiteralType {
         this.type = value;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder();
+        for (Object obj: content) {
+            s.append(obj.toString()).append(" ");
+        }
+        return s.toString();
+    }
+    
+    /**
+     * Verify that this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof LiteralType) {
+            final LiteralType that = (LiteralType) object;
+            return Objects.equals(this.content, that.content) &&
+                   Objects.equals(this.type,    that.type);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 31 * hash + (this.content != null ? this.content.hashCode() : 0);
+        hash = 31 * hash + (this.type != null ? this.type.hashCode() : 0);
+        return hash;
+    }
 }

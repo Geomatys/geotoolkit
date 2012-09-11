@@ -17,6 +17,7 @@
 
 package org.geotoolkit.data.gpx;
 
+import java.net.URL;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -29,7 +30,10 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import javax.xml.stream.XMLStreamException;
 
+import org.geotoolkit.data.DataStoreFactory;
+import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.data.AbstractDataStore;
+import org.geotoolkit.data.DataStoreFinder;
 import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
@@ -51,6 +55,7 @@ import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
+import org.opengis.parameter.ParameterValueGroup;
 
 import static org.geotoolkit.data.gpx.model.GPXModelConstants.*;
 
@@ -71,9 +76,29 @@ public class GPXDataStore extends AbstractDataStore{
 
     private final File file;
 
-    public GPXDataStore(final File f){
-        super(null);
-        this.file = f;
+    public GPXDataStore(final File f) throws MalformedURLException, DataStoreException{
+        this(toParameter(f));
+    }
+    
+    public GPXDataStore(final ParameterValueGroup params) throws DataStoreException{
+        super(params);
+        final URL url = (URL) params.parameter(GPXDataStoreFactory.URLP.getName().toString()).getValue();
+        try {
+            this.file = IOUtilities.toFile(url, null);
+        } catch (IOException ex) {
+            throw new DataStoreException(ex);
+        }
+    }
+    
+    private static ParameterValueGroup toParameter(final File f) throws MalformedURLException{
+        final ParameterValueGroup params = GPXDataStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
+        Parameters.getOrCreate(GPXDataStoreFactory.URLP, params).setValue(f.toURL());
+        return params;
+    }
+
+    @Override
+    public DataStoreFactory getFactory() {
+        return DataStoreFinder.getFactoryById(GPXDataStoreFactory.NAME);
     }
 
     public MetaData getGPXMetaData() throws DataStoreException{

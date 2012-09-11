@@ -108,6 +108,8 @@ public class DecimatePolygonHandler extends PolygonHandler {
                 coordIndex++;
             }
 
+            JTS.ensureClosed(points);
+            
             final LinearRing ring = GEOMETRY_FACTORY.createLinearRing(decimateRing(points));
             if (CGAlgorithms.isCCW(points)) {
                 // counter-clockwise

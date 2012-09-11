@@ -20,7 +20,6 @@ package org.geotoolkit.display.primitive;
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
-
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 
 

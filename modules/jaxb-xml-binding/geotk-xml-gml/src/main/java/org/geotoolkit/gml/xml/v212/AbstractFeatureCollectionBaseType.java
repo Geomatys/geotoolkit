@@ -57,4 +57,11 @@ import javax.xml.bind.annotation.XmlType;
 })
 public abstract class AbstractFeatureCollectionBaseType extends AbstractFeatureType {
 
+    public AbstractFeatureCollectionBaseType() {
+
+    }
+
+    public AbstractFeatureCollectionBaseType(final String fid) {
+        super(fid);
+    }
 }

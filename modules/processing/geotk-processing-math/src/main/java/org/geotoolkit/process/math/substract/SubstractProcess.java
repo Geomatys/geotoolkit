@@ -26,22 +26,21 @@ import static org.geotoolkit.parameter.Parameters.*;
  * @author Quentin Boileau (Geomatys)
  * @module pending
  */
-public class SubstractProcess extends AbstractProcess{
-    
-    public SubstractProcess(final ParameterValueGroup input){
+public class SubstractProcess extends AbstractProcess {
+
+    public SubstractProcess(final ParameterValueGroup input) {
         super(INSTANCE,input);
     }
-    
+
     @Override
-    public ParameterValueGroup call() {
-        
-        final double first = value(FIRST_NUMBER, inputParameters);  
-        final double second = value(SECOND_NUMBER, inputParameters);      
-        
-        final Double result = first - second;
-        
-        getOrCreate(RESULT_NUMBER, outputParameters).setValue(result);  
-        return outputParameters;
+    protected void execute() {
+
+        final double first = value(FIRST_NUMBER, inputParameters);
+        final double second = value(SECOND_NUMBER, inputParameters);
+
+        final double result = first - second;
+
+        getOrCreate(RESULT_NUMBER, outputParameters).setValue(result);
     }
-    
+
 }

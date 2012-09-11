@@ -33,20 +33,10 @@ import java.util.List;
 
 import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.gml.xml.v311.AbstractGeometricAggregateType;
-import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
-import org.geotoolkit.gml.xml.v311.AbstractRingType;
-import org.geotoolkit.gml.xml.v311.DirectPositionListType;
-import org.geotoolkit.gml.xml.v311.LineStringPropertyType;
-import org.geotoolkit.gml.xml.v311.LineStringType;
-import org.geotoolkit.gml.xml.v311.LinearRingType;
-import org.geotoolkit.gml.xml.v311.MultiLineStringType;
-import org.geotoolkit.gml.xml.v311.MultiPointType;
-import org.geotoolkit.gml.xml.v311.MultiPolygonType;
-import org.geotoolkit.gml.xml.v311.PointPropertyType;
-import org.geotoolkit.gml.xml.v311.PointType;
-import org.geotoolkit.gml.xml.v311.PolygonPropertyType;
-import org.geotoolkit.gml.xml.v311.PolygonType;
+import org.geotoolkit.gml.xml.AbstractGeometricAggregate;
+import org.geotoolkit.gml.xml.AbstractGeometry;
+import org.geotoolkit.gml.xml.AbstractRing;
+import org.geotoolkit.gml.xml.GMLXmlFactory;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.IdentifiedObjects;
 
@@ -56,119 +46,156 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 
 /**
- * Set of converter from JTS Geometry to GML Geometry.
- * @author Quentin Boileau
+ * Set of converters from JTS Geometry to GML Geometry.
+ * 
+ * @author Quentin Boileau (Geomatys).
  * @module pending
  */
-public class JTStoGeometry {
+public final class JTStoGeometry {
+    
+    /**
+     * Private constructor.
+     */
     private JTStoGeometry(){}
 
+    private static final GMLXmlFactory gmlFactory = new GMLXmlFactory();
+    
     /**
      * Transform A JTS geometry into GML geometry
      *
-     * @param AbstractGeometryType A GML geometry.
+     * @param gmlVersion The output gml version. (actually 3.1.1 or 3.2.1 are avalable)
+     * @param jts The JTS geometry to convert.
      *
-     * @return A JTS Polygon
-     * @throws org.opengis.referencing.NoSuchAuthorityCodeException
-     * @throws org.opengis.util.FactoryException
+     * @return AbstractGeometry gml geometry.
+     * 
+     * @throws org.opengis.referencing.NoSuchAuthorityCodeException - if {@link CoordinateReferenceSystem crs} 
+     * can't be extracted from JTS geometry or can't be injected into the {@link AbstractGeometry}.
+     * @throws org.opengis.util.FactoryException - if {@link CoordinateReferenceSystem crs} can't be extracted from JTS 
+     * geometry or can't be injected into the {@link AbstractGeometry}.
      */
-     public static AbstractGeometryType toGML(final Geometry jts) throws NoSuchAuthorityCodeException, FactoryException{
+     public static AbstractGeometry toGML(final String gmlVersion, final Geometry jts) throws NoSuchAuthorityCodeException, FactoryException {
+        final CoordinateReferenceSystem crs = JTS.findCoordinateReferenceSystem(jts);
+        return toGML(gmlVersion, jts, crs);
+        
+     }
+     
+    /**
+     * Transform A JTS geometry into GML geometry
+     *
+     * @param gmlVersion The output gml version. (actually 3.1.1 or 3.2.1 are avalable)
+     * @param jts The JTS geometry to convert.
+     *
+     * @return AbstractGeometry gml geometry.
+     * 
+     * @throws org.opengis.referencing.NoSuchAuthorityCodeException - if {@link CoordinateReferenceSystem crs} 
+     * can't be extracted from JTS geometry or can't be injected into the {@link AbstractGeometry}.
+     * @throws org.opengis.util.FactoryException - if {@link CoordinateReferenceSystem crs} can't be extracted from JTS 
+     * geometry or can't be injected into the {@link AbstractGeometry}.
+     */
+     public static AbstractGeometry toGML(final String gmlVersion, final Geometry jts, CoordinateReferenceSystem crs) throws NoSuchAuthorityCodeException, FactoryException {
 
-         final CoordinateReferenceSystem crs = JTS.findCoordinateReferenceSystem(jts);
+         if (crs == null) {
+             crs = JTS.findCoordinateReferenceSystem(jts);
+         }
+        if (jts instanceof Point) {
+            return toGML(gmlVersion, (Point) jts, crs);
+            
+        } else if (jts instanceof LineString) {
+            return toGML(gmlVersion,(LineString) jts, crs);
+            
+        } else if (jts instanceof Polygon) {
+            return toGML(gmlVersion,(Polygon) jts, crs);
+            
+        } else if (jts instanceof LinearRing) {
+            return toGML(gmlVersion,(LinearRing) jts, crs);
 
-        if (jts instanceof Point){
-            return toGML((Point)jts,crs);
-        } else if(jts instanceof LineString){
-            return toGML((LineString)jts,crs);
-        } else if(jts instanceof Polygon){
-            return toGML((Polygon)jts,crs);
-        }else if(jts instanceof LinearRing){
-            return toGML((LinearRing)jts,crs);
+        } else if (jts instanceof GeometryCollection) {
+            return toGML(gmlVersion,(GeometryCollection) jts, crs);
 
-        } else if(jts instanceof GeometryCollection){
-            return toGML((GeometryCollection)jts,crs);
+        } else if (jts instanceof MultiPoint) {
+            return toGML(gmlVersion,(MultiPoint) jts, crs);
 
-        } else if(jts instanceof MultiPoint){
-            return toGML((MultiPoint)jts,crs);
+        } else if (jts instanceof MultiLineString) {
+            return toGML(gmlVersion,(MultiLineString) jts, crs);
 
-        } else if(jts instanceof MultiLineString){
-            return toGML((MultiLineString)jts,crs);
-
-        } else if(jts instanceof MultiPolygon){
-            return toGML((MultiPolygon)jts,crs);
+        } else if (jts instanceof MultiPolygon) {
+            return toGML(gmlVersion,(MultiPolygon) jts, crs);
 
         } else {
-            throw new IllegalArgumentException("Unssupported geometry type : " + jts);
+            throw new IllegalArgumentException("Unsupported geometry type : " + jts);
         }
-
     }
 
     /**
-      * Try to convert a JTS GeometryCollection to a GML AbstractGeometricAggregateType
-      * @param jtsGeom
-      * @param crs Coordinate Reference System
-      * @return AbstractGeometricAggregateType
-      * @throws NoSuchAuthorityCodeException
-      * @throws FactoryException
-      */
-    public static AbstractGeometricAggregateType toGML(final GeometryCollection jtsGeom, final CoordinateReferenceSystem crs)
-            throws NoSuchAuthorityCodeException, FactoryException{
+     * Try to convert a JTS GeometryCollection to a GML AbstractGeometricAggregateType
+     *
+     * @param jtsGeom {@link GeometryCollection collection}
+     * @param crs Coordinate Reference System
+     * @return AbstractGeometricAggregateType
+     *
+     * @throws org.opengis.referencing.NoSuchAuthorityCodeException - if {@link CoordinateReferenceSystem crs} can't be
+     * injected into the {@link AbstractGeometry}.
+     * @throws org.opengis.util.FactoryException - if {@link CoordinateReferenceSystem crs} can't be injected into the
+     * {@link AbstractGeometry}.
+     */
+    public static AbstractGeometricAggregate toGML(final String gmlVersion, final GeometryCollection jtsGeom, final CoordinateReferenceSystem crs)
+            throws NoSuchAuthorityCodeException, FactoryException {
 
         //Test if it's a 2D Geometry from CRS
         isValideGeometry(crs);
 
         //Get th e class of the first geometry in the GeometryCollection
         Class buffer = null;
-        if(jtsGeom.getNumGeometries() > 0){
+        if (jtsGeom.getNumGeometries() > 0) {
             final Geometry geom = jtsGeom.getGeometryN(0);
-            if(geom.getClass().isAssignableFrom(Polygon.class) || geom.getClass().isAssignableFrom(Point.class)
-                    || geom.getClass().isAssignableFrom(LineString.class)){
+            if (geom.getClass().isAssignableFrom(Polygon.class) || geom.getClass().isAssignableFrom(Point.class)
+                    || geom.getClass().isAssignableFrom(LineString.class)) {
                 buffer = geom.getClass();
             }
         }
         //Verify if all other geometries contained by the GeometryCollection is from the same class
         boolean isSupported = true;
-        for(int i=0; i<jtsGeom.getNumGeometries(); i++){
-            if(!(jtsGeom.getGeometryN(i).getClass().isAssignableFrom(buffer))){
+        for (int i = 0; i < jtsGeom.getNumGeometries(); i++) {
+            if (!(jtsGeom.getGeometryN(i).getClass().isAssignableFrom(buffer))) {
                 isSupported = false;
                 break;
             }
         }
 
-        if(isSupported){
+        if (isSupported) {
             final GeometryFactory gf = new GeometryFactory();
             //Convert to a MultiPoint
-            if(buffer.equals(Point.class)){
+            if (buffer.equals(Point.class)) {
                 List<Point> ptList = new ArrayList<Point>();
-                for(int i=0; i<jtsGeom.getNumGeometries(); i++){
-                   ptList.add((Point) jtsGeom.getGeometryN(i));
+                for (int i = 0; i < jtsGeom.getNumGeometries(); i++) {
+                    ptList.add((Point) jtsGeom.getGeometryN(i));
                 }
                 final MultiPoint mutlPt = gf.createMultiPoint(ptList.toArray(new Point[ptList.size()]));
                 JTS.setCRS(mutlPt, crs);
-                return toGML(mutlPt,crs);
+                return toGML(gmlVersion, mutlPt, crs);
 
-            //Convert to a MultiLineString
-            }else if(buffer.equals(LineString.class)){
+                //Convert to a MultiLineString
+            } else if (buffer.equals(LineString.class)) {
                 List<LineString> lsList = new ArrayList<LineString>();
-                for(int i=0; i<jtsGeom.getNumGeometries(); i++){
-                   lsList.add((LineString) jtsGeom.getGeometryN(i));
+                for (int i = 0; i < jtsGeom.getNumGeometries(); i++) {
+                    lsList.add((LineString) jtsGeom.getGeometryN(i));
                 }
                 final MultiLineString multLineString = gf.createMultiLineString(lsList.toArray(new LineString[lsList.size()]));
                 JTS.setCRS(multLineString, crs);
-                return toGML(multLineString,crs);
+                return toGML(gmlVersion, multLineString, crs);
 
-            }else if(buffer.equals(Polygon.class)){
+            } else if (buffer.equals(Polygon.class)) {
                 List<Polygon> polyList = new ArrayList<Polygon>();
-                for(int i=0; i<jtsGeom.getNumGeometries(); i++){
-                   polyList.add((Polygon) jtsGeom.getGeometryN(i));
+                for (int i = 0; i < jtsGeom.getNumGeometries(); i++) {
+                    polyList.add((Polygon) jtsGeom.getGeometryN(i));
                 }
                 final MultiPolygon multPoly = gf.createMultiPolygon(polyList.toArray(new Polygon[polyList.size()]));
                 JTS.setCRS(multPoly, crs);
-                return toGML(multPoly,crs);
-            }else{
+                return toGML(gmlVersion, multPoly, crs);
+            } else {
                 throw new IllegalArgumentException("Unssupported geometry type : " + jtsGeom);
             }
-        }else{
+        } else {
             throw new IllegalArgumentException("Unssupported geometry type : " + jtsGeom);
         }
 
@@ -179,25 +206,25 @@ public class JTStoGeometry {
      * @param jtsGeom
      * @param crs Coordinate Reference System
      * @return MultiPointType
-     * @throws NoSuchAuthorityCodeException
-     * @throws FactoryException
+     * 
+     * @throws org.opengis.referencing.NoSuchAuthorityCodeException - if {@link CoordinateReferenceSystem crs} 
+     * can't be injected into the {@link AbstractGeometry}.
+     * @throws org.opengis.util.FactoryException - if {@link CoordinateReferenceSystem crs} can't be injected into the 
+     * {@link AbstractGeometry}.
      */
-    public static MultiPointType toGML(final MultiPoint jtsGeom, final CoordinateReferenceSystem crs)
-            throws NoSuchAuthorityCodeException, FactoryException{
+    public static org.geotoolkit.gml.xml.MultiPoint toGML(final String gmlVersion, final MultiPoint jtsGeom, final CoordinateReferenceSystem crs)
+            throws NoSuchAuthorityCodeException, FactoryException {
 
-       //Test if it's a 2D Geometry from CRS
+        //Test if it's a 2D Geometry from CRS
         isValideGeometry(crs);
 
-        final List<PointPropertyType> pointList = new ArrayList<PointPropertyType>();
-        for(int i=0; i<jtsGeom.getNumGeometries(); i++){
-            final PointType gmlPt = toGML((Point)jtsGeom.getGeometryN(i),crs);
-            pointList.add(new PointPropertyType(gmlPt));
+        final List<org.geotoolkit.gml.xml.Point> pointList = new ArrayList<org.geotoolkit.gml.xml.Point>();
+        for (int i = 0; i < jtsGeom.getNumGeometries(); i++) {
+            pointList.add(toGML(gmlVersion, (Point) jtsGeom.getGeometryN(i), crs));
         }
 
         final String srs = getSRS(crs);
-        final MultiPointType gmlMultPt = new MultiPointType(srs, pointList);
-
-        return gmlMultPt;
+        return gmlFactory.buildMultiPoint(gmlVersion, pointList, srs);
     }
 
     /**
@@ -205,29 +232,26 @@ public class JTStoGeometry {
      * @param jtsGeom
      * @param crs Coordinate Reference System
      * @return MultiLineStringType
-     * @throws NoSuchAuthorityCodeException
-     * @throws FactoryException
+     * 
+     * @throws org.opengis.referencing.NoSuchAuthorityCodeException - if {@link CoordinateReferenceSystem crs} 
+     * can't be injected into the {@link AbstractGeometry}.
+     * @throws org.opengis.util.FactoryException - if {@link CoordinateReferenceSystem crs} can't be injected into the 
+     * {@link AbstractGeometry}.
      */
-    public static MultiLineStringType toGML(final MultiLineString jtsGeom, final CoordinateReferenceSystem crs)
-            throws NoSuchAuthorityCodeException, FactoryException{
+    public static org.geotoolkit.gml.xml.AbstractGeometricAggregate toGML(final String gmlVersion, final MultiLineString jtsGeom, final CoordinateReferenceSystem crs)
+            throws NoSuchAuthorityCodeException, FactoryException {
 
         //Test if it's a 2D Geometry from CRS
         isValideGeometry(crs);
 
-        final List<LineStringPropertyType> lineList = new ArrayList<LineStringPropertyType>();
-        for(int i=0; i<jtsGeom.getNumGeometries(); i++){
+        final List<org.geotoolkit.gml.xml.LineString> lineList = new ArrayList<org.geotoolkit.gml.xml.LineString>();
+        for (int i = 0; i < jtsGeom.getNumGeometries(); i++) {
 
-            final LineStringPropertyType gmlLineStr = new LineStringPropertyType();
-            gmlLineStr.setLineString(toGML((LineString)jtsGeom.getGeometryN(i),crs));
-            lineList.add(gmlLineStr);
+            lineList.add(toGML(gmlVersion, (LineString) jtsGeom.getGeometryN(i), crs));
         }
 
         final String srs = getSRS(crs);
-        final MultiLineStringType gmlMultLine = new MultiLineStringType();
-        gmlMultLine.setSrsName(srs);
-        gmlMultLine.setLineStringMember(lineList);
-
-        return gmlMultLine;
+        return gmlFactory.buildMultiLineString(gmlVersion, lineList, srs);
     }
 
     /**
@@ -235,29 +259,25 @@ public class JTStoGeometry {
      * @param jtsGeom
      * @param crs Coordinate Reference System
      * @return MultiPolygonType
-     * @throws NoSuchAuthorityCodeException
-     * @throws FactoryException
+     * 
+     * @throws org.opengis.referencing.NoSuchAuthorityCodeException - if {@link CoordinateReferenceSystem crs} 
+     * can't be injected into the {@link AbstractGeometry}.
+     * @throws org.opengis.util.FactoryException - if {@link CoordinateReferenceSystem crs} can't be injected into the 
+     * {@link AbstractGeometry}.
      */
-    public static MultiPolygonType toGML(final MultiPolygon jtsGeom, final CoordinateReferenceSystem crs)
-            throws NoSuchAuthorityCodeException, FactoryException{
+    public static org.geotoolkit.gml.xml.AbstractGeometricAggregate toGML(final String gmlVersion, final MultiPolygon jtsGeom, final CoordinateReferenceSystem crs)
+            throws NoSuchAuthorityCodeException, FactoryException {
 
         //Test if it's a 2D Geometry from CRS
         isValideGeometry(crs);
 
-        final List<PolygonPropertyType> polyList = new ArrayList<PolygonPropertyType>();
-        for(int i=0; i<jtsGeom.getNumGeometries(); i++){
-
-            final PolygonPropertyType gmlPoly = new PolygonPropertyType();
-            gmlPoly.setPolygon(toGML((Polygon)jtsGeom.getGeometryN(i),crs));
-            polyList.add(gmlPoly);
+        final List<org.geotoolkit.gml.xml.Polygon> polyList = new ArrayList<org.geotoolkit.gml.xml.Polygon>();
+        for (int i = 0; i < jtsGeom.getNumGeometries(); i++) {
+            polyList.add(toGML(gmlVersion, (Polygon) jtsGeom.getGeometryN(i), crs));
         }
 
         final String srs = getSRS(crs);
-        final MultiPolygonType gmlMultPoly = new MultiPolygonType();
-        gmlMultPoly.setSrsName(srs);
-        gmlMultPoly.setPolygonMember(polyList);
-
-        return gmlMultPoly;
+        return gmlFactory.buildMultiPolygon(gmlVersion, polyList, srs);
     }
 
     /**
@@ -265,28 +285,26 @@ public class JTStoGeometry {
      * @param jtsGeom
      * @param crs Coordinate Reference System
      * @return PolygonType
-     * @throws NoSuchAuthorityCodeException
-     * @throws FactoryException
+     * 
+     * @throws org.opengis.referencing.NoSuchAuthorityCodeException - if {@link CoordinateReferenceSystem crs} 
+     * can't be injected into the {@link AbstractGeometry}.
+     * @throws org.opengis.util.FactoryException - if {@link CoordinateReferenceSystem crs} can't be injected into the 
+     * {@link AbstractGeometry}.
      */
-    public static PolygonType toGML(final Polygon jtsGeom, final CoordinateReferenceSystem crs)
-            throws NoSuchAuthorityCodeException, FactoryException{
+    public static org.geotoolkit.gml.xml.Polygon toGML(final String gmlVersion, final Polygon jtsGeom, final CoordinateReferenceSystem crs)
+            throws NoSuchAuthorityCodeException, FactoryException {
 
         //Test if it's a 2D Geometry from CRS
         isValideGeometry(crs);
 
         //get exterior ring
-        final AbstractRingType gmlExterior = toGML((LinearRing)jtsGeom.getExteriorRing(),crs);
+        final AbstractRing gmlExterior = toGML(gmlVersion, (LinearRing) jtsGeom.getExteriorRing(), crs);
         //get interiors ring
-        final List<AbstractRingType> gmlInterior = new ArrayList<AbstractRingType>();
-        for(int i=0; i<jtsGeom.getNumInteriorRing(); i++){
-            gmlInterior.add(toGML((LinearRing)jtsGeom.getInteriorRingN(i),crs));
+        final List<AbstractRing> gmlInterior = new ArrayList<AbstractRing>();
+        for (int i = 0; i < jtsGeom.getNumInteriorRing(); i++) {
+            gmlInterior.add(toGML(gmlVersion, (LinearRing) jtsGeom.getInteriorRingN(i), crs));
         }
-
-
-        final PolygonType gmlPoly = new PolygonType(gmlExterior,gmlInterior);
-        gmlPoly.setSrsName(getSRS(crs));
-
-        return gmlPoly;
+        return gmlFactory.buildPolygon(gmlVersion, gmlExterior, gmlInterior, getSRS(crs));
     }
 
     /**
@@ -294,23 +312,26 @@ public class JTStoGeometry {
      * @param jtsGeom
      * @param crs Coordinate Reference System
      * @return LineStringType
-     * @throws NoSuchAuthorityCodeException
-     * @throws FactoryException
+     * 
+     * @throws org.opengis.referencing.NoSuchAuthorityCodeException - if {@link CoordinateReferenceSystem crs} 
+     * can't be injected into the {@link AbstractGeometry}.
+     * @throws org.opengis.util.FactoryException - if {@link CoordinateReferenceSystem crs} can't be injected into the 
+     * {@link AbstractGeometry}.
      */
-    public static LineStringType toGML(final LineString jtsGeom, final CoordinateReferenceSystem crs)
-            throws NoSuchAuthorityCodeException, FactoryException{
+    public static org.geotoolkit.gml.xml.LineString toGML(final String gmlVersion, final LineString jtsGeom, final CoordinateReferenceSystem crs)
+            throws NoSuchAuthorityCodeException, FactoryException {
 
-       //Test if it's a 2D Geometry from CRS
+        //Test if it's a 2D Geometry from CRS
         isValideGeometry(crs);
         final Coordinate[] jtsCoord = jtsGeom.getCoordinates();
 
         final List<DirectPosition> dpList = new ArrayList<DirectPosition>();
 
-        for(Coordinate c : jtsCoord){
-           dpList.add(coordinateToDirectPosition(c, crs));
+        for (Coordinate c : jtsCoord) {
+            dpList.add(coordinateToDirectPosition(c, crs));
         }
 
-        final LineStringType gmlString = new LineStringType(dpList);
+        final org.geotoolkit.gml.xml.LineString gmlString = gmlFactory.buildLineString(gmlVersion, dpList);
         gmlString.setSrsName(getSRS(crs));
 
         return gmlString;
@@ -321,11 +342,14 @@ public class JTStoGeometry {
      * @param jtsGeom
      * @param crs Coordinate Reference System
      * @return LinearRingType
-     * @throws NoSuchAuthorityCodeException
-     * @throws FactoryException
+     * 
+     * @throws org.opengis.referencing.NoSuchAuthorityCodeException - if {@link CoordinateReferenceSystem crs} 
+     * can't be injected into the {@link AbstractGeometry}.
+     * @throws org.opengis.util.FactoryException - if {@link CoordinateReferenceSystem crs} can't be injected into the 
+     * {@link AbstractGeometry}.
      */
-    public static LinearRingType toGML(final LinearRing jtsGeom, final CoordinateReferenceSystem crs)
-            throws NoSuchAuthorityCodeException, FactoryException{
+    public static org.geotoolkit.gml.xml.LinearRing toGML(final String gmlVersion, final LinearRing jtsGeom, final CoordinateReferenceSystem crs)
+            throws NoSuchAuthorityCodeException, FactoryException {
 
         //Test if it's a 2D Geometry from CRS
         isValideGeometry(crs);
@@ -333,19 +357,12 @@ public class JTStoGeometry {
 
         final List<Double> coordList = new ArrayList<Double>();
 
-        for(Coordinate c : jtsCoord){
+        for (Coordinate c : jtsCoord) {
             coordList.add(c.x);
             coordList.add(c.y);
         }
 
-        final DirectPositionListType dpList = new DirectPositionListType();
-        dpList.setValue(coordList);
-
-        final LinearRingType gmlRing = new LinearRingType();
-        gmlRing.setPosList(dpList);
-        gmlRing.setSrsName(getSRS(crs));
-
-        return gmlRing;
+        return gmlFactory.buildLinearRing(gmlVersion, coordList, getSRS(crs));
     }
 
     /**
@@ -353,16 +370,19 @@ public class JTStoGeometry {
      * @param jtsPoint
      * @param crs Coordinate Reference System
      * @return PointType
-     * @throws NoSuchAuthorityCodeException
-     * @throws FactoryException
+     * 
+     * @throws org.opengis.referencing.NoSuchAuthorityCodeException - if {@link CoordinateReferenceSystem crs} 
+     * can't be injected into the {@link AbstractGeometry}.
+     * @throws org.opengis.util.FactoryException - if {@link CoordinateReferenceSystem crs} can't be injected into the 
+     * {@link AbstractGeometry}.
      */
-    public static PointType toGML(final Point jtsPoint, final CoordinateReferenceSystem crs)
-            throws NoSuchAuthorityCodeException, FactoryException{
+    public static org.geotoolkit.gml.xml.Point toGML(final String gmlVersion, final Point jtsPoint, final CoordinateReferenceSystem crs)
+            throws NoSuchAuthorityCodeException, FactoryException {
 
         //Test if it's a 2D Geometry from CRS
         isValideGeometry(crs);
 
-        final PointType gmlPoint = new PointType(coordinateToDirectPosition(jtsPoint.getCoordinate(), crs));
+        final org.geotoolkit.gml.xml.Point gmlPoint = gmlFactory.buildPoint(gmlVersion, coordinateToDirectPosition(jtsPoint.getCoordinate(), crs));
 
         gmlPoint.setSrsName(getSRS(crs));
         return gmlPoint;
@@ -375,8 +395,8 @@ public class JTStoGeometry {
      * @return DirectPostion with x and y
      * @throws IllegalArgumentException if isn't a 2D Geometry
      */
-    private static DirectPosition coordinateToDirectPosition(final Coordinate coord, final CoordinateReferenceSystem crs){
-        if(coord.z != Double.NaN){
+    private static DirectPosition coordinateToDirectPosition(final Coordinate coord, final CoordinateReferenceSystem crs) {
+        if (coord.z != Double.NaN) {
             //throw new IllegalArgumentException("This service support only 2D coordinate.");
         }
 
@@ -392,11 +412,11 @@ public class JTStoGeometry {
      * @throws FactoryException in case of unknow factory
      * @throws IllegalArgumentException in case of null CRS
      */
-    private static CoordinateReferenceSystem getCRS(final Geometry jtsGeom) throws NoSuchAuthorityCodeException, FactoryException{
+    private static CoordinateReferenceSystem getCRS(final Geometry jtsGeom) throws NoSuchAuthorityCodeException, FactoryException {
 
         //get JTS CRS
         final CoordinateReferenceSystem crs = JTS.findCoordinateReferenceSystem(jtsGeom);
-        if(crs == null){
+        if (crs == null) {
             throw new IllegalArgumentException("JTS geometry must specify a Coordinate Reference System.");
         }
 
@@ -408,9 +428,11 @@ public class JTStoGeometry {
      * @param crs
      * @return <code>true</code> for valid Geometry, <code>false</code> else.
      */
-    private static void isValideGeometry(final CoordinateReferenceSystem crs){
-        if( crs.getCoordinateSystem().getDimension() != 2){
-            throw new IllegalArgumentException("This service support only 2D JTS Geometry.");
+    private static void isValideGeometry(final CoordinateReferenceSystem crs) {
+        if (crs == null || crs.getCoordinateSystem() == null) {
+            throw new IllegalArgumentException("This service support only 2D JTS Geometry (CRS null, or coordinate system null).");
+        } else if (crs.getCoordinateSystem().getDimension() != 2) {
+            throw new IllegalArgumentException("This service support only 2D JTS Geometry. (CRS dimension != 2) => " + crs.getCoordinateSystem().getDimension());
         }
     }
     /**
@@ -419,19 +441,19 @@ public class JTStoGeometry {
      * @return CRS identifier
      * @throws FactoryException
      */
-    private static String getSRS(final CoordinateReferenceSystem crs) throws FactoryException{
+    private static String getSRS(final CoordinateReferenceSystem crs) throws FactoryException {
         String srs = null;
         final String method1 = IdentifiedObjects.lookupIdentifier(Citations.URN_OGC, crs, false);
 
-        if(method1 != null){
+        if (method1 != null) {
             srs = method1;
-        }else {
+        } else {
             //Try to use the deprecated methode
             final String method2 = IdentifiedObjects.getIdentifier(crs);
-            if(method2 != null){
+            if (method2 != null) {
                 srs = method2;
-            }else{
-                 throw new IllegalArgumentException("Can't get Coordinate Reference System identifier.");
+            } else {
+                throw new IllegalArgumentException("Can't get Coordinate Reference System identifier.");
             }
         }
 

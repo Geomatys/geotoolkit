@@ -36,8 +36,8 @@
     <developers>
         <developer>
             <name>Quentin Boileau</name>
-            <id>kite</id>
-            <email>quentin.boileau@gmail.com</email>
+            <id>qboileau</id>
+            <email>quentin.boileau@geomatys.com</email>
             <organization>Geomatys</organization>
             <organizationUrl>http://www.geomatys.com/</organizationUrl>
             <timezone>+1</timezone>

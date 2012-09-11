@@ -379,9 +379,9 @@ public class SearchResultsType implements SearchResults {
                    Objects.equals(this.any,                     that.any)                     &&
                    Objects.equals(this.elementSet,              that.elementSet)              &&
                    Objects.equals(this.expires,                 that.expires)                 &&
-                   Utilities.equals(this.nextRecord,              that.nextRecord)              &&
-                   Utilities.equals(this.numberOfRecordsMatched,  that.numberOfRecordsMatched)  &&
-                   Utilities.equals(this.numberOfRecordsReturned, that.numberOfRecordsReturned) &&
+                   Objects.equals(this.nextRecord,              that.nextRecord)              &&
+                   Objects.equals(this.numberOfRecordsMatched,  that.numberOfRecordsMatched)  &&
+                   Objects.equals(this.numberOfRecordsReturned, that.numberOfRecordsReturned) &&
                    Objects.equals(this.recordSchema,            that.recordSchema)            &&
                    Objects.equals(this.resultSetId,             that.resultSetId);
         }

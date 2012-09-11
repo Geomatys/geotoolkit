@@ -16,6 +16,10 @@
  */
 package org.geotoolkit.process.vector.buffer;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
@@ -28,6 +32,7 @@ import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.IdentifiedObject;
 
 /**
  * Parameters description for Buffer process.
@@ -36,8 +41,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * Inputs :
  * <ul>
  *     <li>FEATURE_IN "feature_in" FeatureCollection to clip</li>
- *     <li>DISTANCE_IN "distance_in" buffer distance</li>
- *     <li>UNIT_IN "unit_in" simplification unit</li>
+ *     <li>DISTANCE_IN "distance_in" buffer distance in meters</li>
  *     <li>LENIENT_TRANSFORM_IN "lenient_transform_in" CRS transformation accuracy</li>
  * </ul>
  * Outputs :
@@ -51,17 +55,17 @@ public final class BufferDescriptor extends VectorDescriptor {
 
     /**Process name : buffer */
     public static final String NAME = "buffer";
+    
+    private static final Map DISTANCE_PROPERTIES = new HashMap();
+    static{
+        DISTANCE_PROPERTIES.put(IdentifiedObject.NAME_KEY, "distance_in");
+        DISTANCE_PROPERTIES.put(IdentifiedObject.REMARKS_KEY, "Input buffer distance in meters.");
+    }
     /**
      * Mandatory - Buffer distance
      */
-    public static final ParameterDescriptor<Double> DISTANCE_IN=
-            new DefaultParameterDescriptor("distance_in", "Input buffer distance", Double.class, null, true);
-
-    /**
-     * Mandatory - Distance unit
-     */
-    public static final ParameterDescriptor<Unit> UNIT_IN=
-            new DefaultParameterDescriptor("unit_in", "Input buffer unit", Unit.class, null, true);
+    public static final ParameterDescriptor<Double> DISTANCE_IN = 
+            new DefaultParameterDescriptor(DISTANCE_PROPERTIES, Double.class, null, 1.0, null, null, SI.METRE, true);
 
   
     public static final ParameterDescriptor<Boolean> LENIENT_TRANSFORM_IN=
@@ -71,7 +75,7 @@ public final class BufferDescriptor extends VectorDescriptor {
     /**Input parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =
             new DefaultParameterDescriptorGroup("InputParameters",
-            new GeneralParameterDescriptor[]{FEATURE_IN, DISTANCE_IN, UNIT_IN, LENIENT_TRANSFORM_IN});
+            new GeneralParameterDescriptor[]{FEATURE_IN, DISTANCE_IN, LENIENT_TRANSFORM_IN});
 
     /**Output parameters */
     public static final ParameterDescriptorGroup OUTPUT_DESC =
@@ -93,6 +97,6 @@ public final class BufferDescriptor extends VectorDescriptor {
      */
     @Override
     public Process createProcess(final ParameterValueGroup input) {
-        return new Buffer(input);
+        return new BufferProcess(input);
     }
 }

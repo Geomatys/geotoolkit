@@ -49,10 +49,10 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
+import org.geotoolkit.data.memory.GenericFilterFeatureIterator;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.propertyedit.JFeatureOutLine;
 import org.geotoolkit.map.FeatureMapLayer;
@@ -85,28 +85,6 @@ public class EditionHelper {
     private static final FilterFactory2 FF = (FilterFactory2) FactoryFinder.getFilterFactory(
                                                 new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
     public static final Coordinate[] EMPTY_COORDINATE_ARRAY = new Coordinate[0];
-
-    public static class EditionContext{
-        public Feature feature = null;
-        public Geometry geometry = null;
-        public final List<Geometry> subGeometries =  new ArrayList<Geometry>();
-        public int subGeometryIndex = -1;
-        public int[] nodes = null;
-        public final List<Coordinate> coords = new ArrayList<Coordinate>();
-        public boolean modified = false;
-        public boolean added = false;
-
-        public void reset(){
-            feature = null;
-            geometry = null;
-            subGeometries.clear();
-            subGeometryIndex = -1;
-            nodes = null;
-            modified = false;
-            added = false;
-            coords.clear();
-        }
-    }
 
     public static class EditionGeometry{
 
@@ -293,13 +271,33 @@ public class EditionHelper {
         FeatureIterator<Feature> fi = null;
         try {
             final Polygon geo = mousePositionToGeometry(mx, my);
-            final Filter flt = toFilter(geo, editedLayer);
-            editgeoms = (FeatureCollection<Feature>) editedLayer.getCollection().subCollection(
-                    QueryBuilder.filtered(editedLayer.getCollection().getFeatureType().getName(), flt));
+            Filter flt = toFilter(geo, editedLayer);
+            QueryBuilder qb = new QueryBuilder(editedLayer.getCollection().getFeatureType().getName());
+            //we filter in the map CRS
+            qb.setCRS(map.getCanvas().getObjectiveCRS2D());
+            editgeoms = (FeatureCollection<Feature>) editedLayer.getCollection().subCollection(qb.buildQuery());
 
+            //we filter ourself since we want the filter to occure after the reprojection
+            editgeoms = GenericFilterFeatureIterator.wrap(editgeoms, flt);
+                        
             fi = editgeoms.iterator();
             if (fi.hasNext()) {
                 Feature sf = fi.next();
+                
+                //get the original, in it's data crs                
+                flt = FF.id(Collections.singleton(sf.getIdentifier()));
+                sf = null;
+                fi.close();
+                
+                qb.reset();
+                qb.setTypeName(editedLayer.getCollection().getFeatureType().getName());
+                qb.setFilter(flt);
+                editgeoms = (FeatureCollection<Feature>) editedLayer.getCollection().subCollection(qb.buildQuery());
+                fi = editgeoms.iterator();
+                if (fi.hasNext()){
+                    sf = fi.next();
+                }
+                
                 return sf;
             }
         }catch(Exception ex){
@@ -399,82 +397,6 @@ public class EditionHelper {
         }
     }
 
-    /**
-     * grab a node in the given geometry.
-     * int[0] == subgeometry index
-     * int[1] == grabbed coordinate index
-     * int[2] == grabbed coordinate index
-     * there might be two coordinate grab in the case of polygon last point
-     */
-    public int[] grabGeometryNode(final Geometry geo, final int mx, final int my) {
-        final int[] indexes = new int[]{-1,-1,-1};
-
-        try{
-            //transform our mouse in a geometry
-            final Geometry mouseGeo = mousePositionToGeometry(mx, my);
-
-            for (int i=0,n=geo.getNumGeometries(); i<n; i++) {
-                final Geometry subgeo = geo.getGeometryN(i);
-
-                if (subgeo.intersects(mouseGeo)) {
-                    //this geometry intersect the mouse
-                    indexes[0] = i;
-
-                    final Coordinate[] coos = subgeo.getCoordinates();
-                    for (int j=0,m=coos.length; j<m; j++) {
-                        final Coordinate coo = coos[j];
-                        final Point p = createPoint(coo);
-                        if (p.intersects(mouseGeo)) {
-
-                            if ((j==0 || j==m-1) && (geo instanceof Polygon || geo instanceof MultiPolygon)) {
-                                //first and last coordinate index are the same point
-                                indexes[1] = 0;
-                                indexes[2] = m-1;
-                            } else {
-                                //coordinate is in the middle of the geometry
-                                indexes[1] = j;
-                                indexes[2] = j;
-                            }
-                        }
-                    }
-                    break;
-                }
-
-            }
-        }catch(final Exception ex){
-            LOGGER.log(Level.WARNING, ex.getLocalizedMessage(),ex);
-        }
-
-        return indexes;
-    }
-
-    public void dragGeometryNode(final EditionContext context, final int mx, final int my) {
-        final Coordinate mouseCoord = toCoord(mx, my);
-
-        final Geometry subgeo = context.subGeometries.get(0);
-        if(subgeo == null) return;
-
-        final int[] nodeIndexes = context.nodes;
-        if(nodeIndexes == null) return;
-
-        context.modified = true;
-
-        if(context.geometry instanceof Point){
-            Point pt = (Point) context.geometry;
-            pt.getCoordinate().x = mouseCoord.x;
-            pt.getCoordinate().y = mouseCoord.y;
-        }else{
-            for (int index : nodeIndexes) {
-                subgeo.getCoordinates()[index].x = mouseCoord.x;
-                subgeo.getCoordinates()[index].y = mouseCoord.y;
-            }
-        }
-
-
-        subgeo.geometryChanged();
-        context.geometry.geometryChanged();
-    }
-
     public void moveGeometry(final Geometry geo, final int dx, final int dy) {
 
         try{
@@ -523,7 +445,6 @@ public class EditionHelper {
         geo.geometryChanged();
 
     }
-
 
     public Geometry insertNode(final Polygon geo, final int mx, final int my) {
         try{
@@ -947,6 +868,7 @@ public class EditionHelper {
                     map.getCanvas().getObjectiveCRS(), true);
 
             geom = JTS.transform(geom, trs);
+            JTS.setCRS(geom, map.getCanvas().getObjectiveCRS());
             return geom;
         }catch(final Exception ex){
             LOGGER.log(Level.WARNING, ex.getLocalizedMessage(),ex);
@@ -966,13 +888,11 @@ public class EditionHelper {
         final String geoStr = fl.getCollection().getFeatureType().getGeometryDescriptor().getLocalName();
         final Expression geomField = FF.property(geoStr);
 
-        final CoordinateReferenceSystem dataCrs = fl.getCollection().getFeatureType().getCoordinateReferenceSystem();
-
-        final Geometry dataPoly = JTS.transform(poly, CRS.findMathTransform(map.getCanvas().getObjectiveCRS(), dataCrs,true));
-        dataPoly.setSRID(SRIDGenerator.toSRID(dataCrs, SRIDGenerator.Version.V1));
+        final Geometry dataPoly = poly;
+        JTS.setCRS(dataPoly, map.getCanvas().getObjectiveCRS2D());
 
         final Expression geomData = FF.literal(dataPoly);
-        final Filter f = FF.intersects(geomField, geomData);
+        final Filter f = FF.intersects(geomData,geomField);
 
         return f;
     }
@@ -1012,6 +932,11 @@ public class EditionHelper {
 
     public void sourceModifyFeature(final Feature feature, final Geometry geo, boolean reprojectToDataCRS){
 
+        if(feature == null || geo == null){
+            //nothing to do
+            return;
+        }
+        
         final String ID = feature.getIdentifier().getID();
 
         ensureNonNull("geometry", geo);
@@ -1029,6 +954,7 @@ public class EditionHelper {
                 if(reprojectToDataCRS){
                     geom = JTS.transform(geo, 
                             CRS.findMathTransform(map.getCanvas().getObjectiveCRS(), dataCrs,true));
+                    JTS.setCRS(geom, dataCrs);
                 }else{
                     geom = geo;
                 }
@@ -1044,10 +970,6 @@ public class EditionHelper {
 
     }
     
-    public void sourceModifyFeature(final Feature feature, final Geometry geo){
-        sourceModifyFeature(feature, geo, true);
-    }
-
     public void sourceRemoveFeature(final Feature feature){
         sourceRemoveFeature(feature.getIdentifier().getID());
     }

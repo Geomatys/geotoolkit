@@ -55,11 +55,13 @@ import org.geotoolkit.ows.xml.v110.AcceptVersionsType;
 public class GetCapabilities {
 
     @XmlElement(name = "AcceptVersions")
-    protected AcceptVersionsType acceptVersions;
+    private AcceptVersionsType acceptVersions;
     @XmlAttribute(required = true)
-    protected String service;
+    private String service;
     @XmlAttribute
-    protected String language;
+    private String language;
+    @XmlAttribute
+    private String updateSequence;
 
     /**
      * Gets the value of the acceptVersions property.
@@ -135,6 +137,20 @@ public class GetCapabilities {
      */
     public void setLanguage(final String value) {
         this.language = value;
+    }
+
+    /**
+     * @return the updateSequence
+     */
+    public String getUpdateSequence() {
+        return updateSequence;
+    }
+
+    /**
+     * @param updateSequence the updateSequence to set
+     */
+    public void setUpdateSequence(String updateSequence) {
+        this.updateSequence = updateSequence;
     }
 
 }

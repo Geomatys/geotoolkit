@@ -16,18 +16,20 @@
  */
 package org.geotoolkit.wmc.xml.v110;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
  * <p>Java class for ServerType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ServerType">
  *   &lt;complexContent>
@@ -42,8 +44,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -63,11 +65,11 @@ public class ServerType {
 
     /**
      * Gets the value of the onlineResource property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link OnlineResourceType }
-     *     
+     *
      */
     public OnlineResourceType getOnlineResource() {
         return onlineResource;
@@ -75,11 +77,11 @@ public class ServerType {
 
     /**
      * Sets the value of the onlineResource property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link OnlineResourceType }
-     *     
+     *
      */
     public void setOnlineResource(final OnlineResourceType value) {
         this.onlineResource = value;
@@ -87,11 +89,11 @@ public class ServerType {
 
     /**
      * Gets the value of the service property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link ServiceType }
-     *     
+     *
      */
     public ServiceType getService() {
         return service;
@@ -99,11 +101,11 @@ public class ServerType {
 
     /**
      * Sets the value of the service property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link ServiceType }
-     *     
+     *
      */
     public void setService(final ServiceType value) {
         this.service = value;
@@ -111,11 +113,11 @@ public class ServerType {
 
     /**
      * Gets the value of the title property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTitle() {
         return title;
@@ -123,11 +125,11 @@ public class ServerType {
 
     /**
      * Sets the value of the title property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTitle(final String value) {
         this.title = value;
@@ -135,11 +137,11 @@ public class ServerType {
 
     /**
      * Gets the value of the version property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getVersion() {
         return version;
@@ -147,14 +149,62 @@ public class ServerType {
 
     /**
      * Sets the value of the version property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setVersion(final String value) {
         this.version = value;
     }
 
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof ServerType) {
+            final ServerType that = (ServerType) object;
+
+            return Objects.equals(this.onlineResource, that.onlineResource) &&
+                   Objects.equals(this.service, that.service) &&
+                   Objects.equals(this.title, that.title) &&
+                   Objects.equals(this.version, that.version);
+            }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 41 * hash + (this.onlineResource != null ? this.onlineResource.hashCode() : 0);
+        hash = 41 * hash + (this.service != null ? this.service.hashCode() : 0);
+        hash = 41 * hash + (this.title != null ? this.title.hashCode() : 0);
+        hash = 41 * hash + (this.version != null ? this.version.hashCode() : 0);
+        return hash;
+    }
+
+
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder("[ServerType]\n");
+        if (title != null) {
+            s.append("title:").append(title).append('\n');
+        }
+        if (onlineResource != null) {
+            s.append("onlineResource:").append(onlineResource).append('\n');
+        }
+        if (service != null) {
+            s.append("service:").append(service).append('\n');
+        }
+        if (version != null) {
+            s.append("version:").append(version).append('\n');
+        }
+        return s.toString();
+    }
 }

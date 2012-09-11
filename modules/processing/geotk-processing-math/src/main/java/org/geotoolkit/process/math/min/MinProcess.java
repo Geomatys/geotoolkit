@@ -26,24 +26,23 @@ import static org.geotoolkit.parameter.Parameters.*;
  * @author Quentin Boileau (Geomatys)
  * @module pending
  */
-public class MinProcess extends AbstractProcess{
-    
-    public MinProcess(final ParameterValueGroup input){
+public class MinProcess extends AbstractProcess {
+
+    public MinProcess(final ParameterValueGroup input) {
         super(INSTANCE,input);
     }
-    
+
     @Override
-    public ParameterValueGroup call() {
-        
-        final Double[] set = value(SET, inputParameters);   
-        
-        Double min = Math.min(set[0], set[1]);
-        for(int i=1; i<set.length; i++){
-            min = Math.min(min.doubleValue(), set[i].doubleValue());
+    protected void execute() {
+
+        final Double[] set = value(SET, inputParameters);
+
+        double min = Math.min(set[0].doubleValue(), set[1].doubleValue());
+        for (int i=1; i<set.length; i++) {
+            min = Math.min(min, set[i].doubleValue());
         }
-       
-        getOrCreate(RESULT_NUMBER, outputParameters).setValue(min);  
-        return outputParameters;
+
+        getOrCreate(RESULT_NUMBER, outputParameters).setValue(min);
     }
-    
+
 }

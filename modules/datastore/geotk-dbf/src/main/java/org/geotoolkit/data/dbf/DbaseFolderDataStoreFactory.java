@@ -19,31 +19,65 @@ package org.geotoolkit.data.dbf;
 import org.geotoolkit.data.DataStoreFinder;
 import org.geotoolkit.data.FileDataStoreFactory;
 import org.geotoolkit.data.folder.AbstractFolderDataStoreFactory;
+import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
+import org.geotoolkit.util.ResourceInternationalString;
+import org.opengis.metadata.identification.Identification;
+import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 
 /**
  * DataStore for a folder of DBF files.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public class DbaseFolderDataStoreFactory extends AbstractFolderDataStoreFactory{
-    
-    public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR = 
-            createDescriptor(DbaseDataStoreFactory.PARAMETERS_DESCRIPTOR);
-    
+
+    /** factory identification **/
+    public static final DefaultServiceIdentification IDENTIFICATION = derivateIdentification(DbaseDataStoreFactory.IDENTIFICATION);
+    public static final String NAME = IDENTIFICATION.getCitation().getTitle().toString();
+
+    public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
+
+    public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
+            derivateDescriptor(IDENTIFIER,DbaseDataStoreFactory.PARAMETERS_DESCRIPTOR);
+
+
     public DbaseFolderDataStoreFactory(){
         super(PARAMETERS_DESCRIPTOR);
     }
-    
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public FileDataStoreFactory getSingleFileFactory() {
-        return DataStoreFinder.getAllDataStores(DbaseDataStoreFactory.class).next();
+    public Identification getIdentification() {
+        return IDENTIFICATION;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public String getDescription() {
-        return "Folder of DBF files";
+    public FileDataStoreFactory getSingleFileFactory() {
+        return DataStoreFinder.getAllFactories(DbaseDataStoreFactory.class).iterator().next();
     }
-    
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public CharSequence getDescription() {
+        return new ResourceInternationalString("org/geotoolkit/dbf/bundle", "databaseFolderDescription");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public CharSequence getDisplayName() {
+        return new ResourceInternationalString("org/geotoolkit/dbf/bundle", "databaseFolderTitle");
+    }
+
+
 }

@@ -18,6 +18,7 @@
 
 package org.geotoolkit.data.shapefile;
 
+import org.geotoolkit.data.DataStoreFactory;
 import org.geotoolkit.data.shapefile.lock.StorageFile;
 import org.geotoolkit.data.shapefile.lock.ShpFiles;
 import org.geotoolkit.data.shapefile.lock.AccessManager;
@@ -47,6 +48,7 @@ import java.util.logging.Level;
 
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.AbstractDataStore;
+import org.geotoolkit.data.DataStoreFinder;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureReader;
@@ -58,7 +60,6 @@ import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.data.dbf.DbaseFileHeader;
 import org.geotoolkit.data.dbf.DbaseFileReader;
-import org.geotoolkit.data.shapefile.shx.ShxReader;
 import org.geotoolkit.data.shapefile.shp.ShapeType;
 import org.geotoolkit.data.shapefile.shp.ShapefileHeader;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
@@ -71,6 +72,7 @@ import org.geotoolkit.feature.type.BasicFeatureTypes;
 import org.geotoolkit.filter.visitor.FilterAttributeExtractor;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.io.wkt.PrjFiles;
+import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
@@ -85,6 +87,7 @@ import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.geometry.Envelope;
+import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import static org.geotoolkit.data.shapefile.lock.ShpFileType.*;
@@ -144,7 +147,19 @@ public class ShapefileDataStore extends AbstractDataStore{
      */
     public ShapefileDataStore(final URL url, final String namespace, final boolean useMemoryMapped,
             Charset dbfCharset) throws MalformedURLException, DataStoreException {
-        super(namespace);
+        this(toParameter(url, namespace, useMemoryMapped, dbfCharset));
+    }
+    
+    public ShapefileDataStore(final ParameterValueGroup params) throws MalformedURLException, DataStoreException {
+        super(params);
+        
+        final URL url = (URL) params.parameter(
+                ShapefileDataStoreFactory.URLP.getName().toString()).getValue();
+        final Boolean useMemoryMapped = (Boolean) params.parameter(
+                ShapefileDataStoreFactory.MEMORY_MAPPED.getName().toString()).getValue();
+        Charset dbfCharset = (Charset) params.parameter(
+                ShapefileDataStoreFactory.DBFCHARSET.getName().toString()).getValue();
+                
         shpFiles = new ShpFiles(url);
 
         if(dbfCharset == null){
@@ -158,6 +173,21 @@ public class ShapefileDataStore extends AbstractDataStore{
         }
 
         this.dbfCharset = dbfCharset;
+    }
+    
+    private static ParameterValueGroup toParameter(final URL url, final String namespace, 
+            final boolean useMemoryMapped, Charset dbfCharset){
+        final ParameterValueGroup params = ShapefileDataStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
+        Parameters.getOrCreate(ShapefileDataStoreFactory.URLP, params).setValue(url);
+        Parameters.getOrCreate(ShapefileDataStoreFactory.NAMESPACE, params).setValue(namespace);
+        Parameters.getOrCreate(ShapefileDataStoreFactory.MEMORY_MAPPED, params).setValue(useMemoryMapped);
+        Parameters.getOrCreate(ShapefileDataStoreFactory.DBFCHARSET, params).setValue(dbfCharset);        
+        return params;
+    }
+
+    @Override
+    public DataStoreFactory getFactory() {
+        return DataStoreFinder.getFactoryById(ShapefileDataStoreFactory.NAME);
     }
 
     @Override
@@ -282,7 +312,7 @@ public class ShapefileDataStore extends AbstractDataStore{
         final CoordinateReferenceSystem reproject = query.getCoordinateSystemReproject();
         final boolean read3D = (reproject==null || (reproject != null && CRS.getVerticalCRS(reproject)!=null));
 
-        if (query.getSortBy() != null) {
+        if (!QueryBuilder.isNaturalSortBy(query.getSortBy())) {
             throw new DataStoreException("The ShapeFileDatastore does not support sortby query");
         }
         // gather attributes needed by the query tool, they will be used by the

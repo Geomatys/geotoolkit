@@ -49,6 +49,7 @@ public class JLineJoinExpressionPane extends StyleElementEditor<Expression>{
 
     /** Creates new form JColorExpressionPane */
     public JLineJoinExpressionPane() {
+        super(Expression.class);
         initComponents();
         guiBevel.setIcon(ICON_JOIN_BEVEL);
         guiMiter.setIcon(ICON_JOIN_MITRE);

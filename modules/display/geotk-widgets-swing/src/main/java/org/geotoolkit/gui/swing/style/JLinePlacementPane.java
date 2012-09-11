@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.gui.swing.style;
 
-import org.geotoolkit.gui.swing.resource.MessageBundle;
 import java.awt.Component;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -25,7 +24,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
-import org.geotoolkit.gui.swing.style.StyleElementEditor;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.style.LinePlacement;
 
@@ -41,6 +40,7 @@ public class JLinePlacementPane extends StyleElementEditor<LinePlacement>{
     private LinePlacement placement = null;
     
     public JLinePlacementPane() {
+        super(LinePlacement.class);
         initComponents();
         guiOffset.setModel(0d, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 1d);
         guiInitial.setModel(0d, 0d, Double.POSITIVE_INFINITY, 1d);

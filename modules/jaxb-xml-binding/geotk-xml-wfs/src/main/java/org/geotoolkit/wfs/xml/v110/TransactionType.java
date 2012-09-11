@@ -26,6 +26,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
+import org.geotoolkit.wfs.xml.AllSomeType;
+import org.geotoolkit.wfs.xml.Transaction;
 
 
 /**
@@ -66,7 +69,7 @@ import javax.xml.bind.annotation.XmlType;
     "insertOrUpdateOrDelete"
 })
 @XmlRootElement(name = "Transaction")
-public class TransactionType extends BaseRequestType {
+public class TransactionType extends BaseRequestType implements Transaction {
 
     @XmlElement(name = "LockId")
     private String lockId;
@@ -164,6 +167,10 @@ public class TransactionType extends BaseRequestType {
             insertOrUpdateOrDelete = new ArrayList<Object>();
         }
         return this.insertOrUpdateOrDelete;
+    }
+    
+    public List<Object> getTransactionAction() {
+        return getInsertOrUpdateOrDelete();
     }
 
     /**

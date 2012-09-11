@@ -20,10 +20,13 @@ package org.geotoolkit.wfs.xml.v200;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
+import org.geotoolkit.wfs.xml.DescribeStoredQueriesResponse;
 
 
 /**
@@ -49,31 +52,21 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "DescribeStoredQueriesResponseType", propOrder = {
     "storedQueryDescription"
 })
-public class DescribeStoredQueriesResponseType {
+public class DescribeStoredQueriesResponseType implements DescribeStoredQueriesResponse {
 
     @XmlElement(name = "StoredQueryDescription")
     private List<StoredQueryDescriptionType> storedQueryDescription;
 
+    public DescribeStoredQueriesResponseType() {
+        
+    }
+    
+    public DescribeStoredQueriesResponseType(final List<StoredQueryDescriptionType> storedQueryDescription) {
+        this.storedQueryDescription = storedQueryDescription;
+    }
+    
     /**
      * Gets the value of the storedQueryDescription property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the storedQueryDescription property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getStoredQueryDescription().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link StoredQueryDescriptionType }
-     * 
      * 
      */
     public List<StoredQueryDescriptionType> getStoredQueryDescription() {
@@ -83,4 +76,37 @@ public class DescribeStoredQueriesResponseType {
         return this.storedQueryDescription;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("[DescribeStoredQueriesResponseType]\n");
+        if (storedQueryDescription != null) {
+           sb.append("storedQueryDescription: ").append('\n');
+           for (StoredQueryDescriptionType a : storedQueryDescription) {
+                sb.append(a).append('\n');
+           }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof DescribeStoredQueriesResponseType) {
+            final DescribeStoredQueriesResponseType that = (DescribeStoredQueriesResponseType) object;
+            return Objects.equals(this.storedQueryDescription,   that.storedQueryDescription);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 13 * hash + (this.storedQueryDescription != null ? this.storedQueryDescription.hashCode() : 0);
+        return hash;
+    }
 }

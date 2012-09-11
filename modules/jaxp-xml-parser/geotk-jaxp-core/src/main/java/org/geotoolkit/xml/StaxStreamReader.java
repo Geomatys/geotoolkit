@@ -74,7 +74,7 @@ import static javax.xml.stream.XMLStreamReader.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class StaxStreamReader {
+public abstract class StaxStreamReader extends AbstractConfigurable {
 
     protected XMLStreamReader reader;
     

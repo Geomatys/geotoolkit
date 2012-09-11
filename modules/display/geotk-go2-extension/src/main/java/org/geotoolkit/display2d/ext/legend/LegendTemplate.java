@@ -2,7 +2,6 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2004 - 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2008 - 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -20,7 +19,6 @@ package org.geotoolkit.display2d.ext.legend;
 import java.awt.Dimension;
 import java.awt.Font;
 import org.geotoolkit.display2d.ext.BackgroundTemplate;
-
 
 /**
  * Template holding informations about the design of the legend to paint.
@@ -60,4 +58,18 @@ public interface LegendTemplate {
      */
     Font getRuleFont();
 
+    /**
+     * @return true if we display legend only for the visible layers on the map,
+     * false otherwise.
+     */
+    boolean displayOnlyVisibleLayers();
+
+    /**
+     * A function to decide if we should display only the visible layers on the
+     * legend.
+     *
+     * @param displayOption : set to true if we only want visible layers on the
+     * legend, false otherwise.
+     */
+    void setDisplayOnlyVisibleLayers(boolean displayOption);
 }

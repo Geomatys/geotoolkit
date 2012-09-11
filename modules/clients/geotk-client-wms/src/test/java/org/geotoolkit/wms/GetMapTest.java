@@ -66,9 +66,9 @@ public class GetMapTest {
         }
         final String sUrl = url.toString();
         assertTrue(sUrl.startsWith("http://test.com?"));
-        assertTrue(sUrl.contains("BBOX=-180.0,-90.0,180.0,90.0"));
-        assertTrue(sUrl.contains("SRS=CRS:84"));
-        assertTrue(sUrl.contains("FORMAT=image/png"));
+        assertTrue(sUrl.contains("BBOX=-180.0%2C-90.0%2C180.0%2C90.0"));
+        assertTrue(sUrl.contains("SRS=CRS%3A84"));
+        assertTrue(sUrl.contains("FORMAT=image%2Fpng"));
         assertTrue(sUrl.contains("WIDTH=800"));
         assertTrue(sUrl.contains("HEIGHT=600"));
         assertTrue(sUrl.contains("LAYERS=test"));
@@ -103,9 +103,9 @@ public class GetMapTest {
         }
         final String sUrl = url.toString();
         assertTrue(sUrl.startsWith("http://test.com?"));
-        assertTrue(sUrl.contains("BBOX=-180.0,-90.0,180.0,90.0"));
-        assertTrue(sUrl.contains("CRS=CRS:84"));
-        assertTrue(sUrl.contains("FORMAT=image/png"));
+        assertTrue(sUrl.contains("BBOX=-180.0%2C-90.0%2C180.0%2C90.0"));
+        assertTrue(sUrl.contains("CRS=CRS%3A84"));
+        assertTrue(sUrl.contains("FORMAT=image%2Fpng"));
         assertTrue(sUrl.contains("WIDTH=800"));
         assertTrue(sUrl.contains("HEIGHT=600"));
         assertTrue(sUrl.contains("LAYERS=test"));

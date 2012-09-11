@@ -37,6 +37,13 @@ import org.geotoolkit.data.shapefile.indexed.IndexType;
 
 import com.vividsolutions.jts.geom.Geometry;
 
+import java.util.Collections;
+import org.geotoolkit.metadata.iso.DefaultIdentifier;
+import org.geotoolkit.metadata.iso.citation.DefaultCitation;
+import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
+import org.geotoolkit.util.ResourceInternationalString;
+import org.opengis.metadata.Identifier;
+import org.opengis.metadata.identification.Identification;
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -55,16 +62,29 @@ import org.opengis.parameter.ParameterValueGroup;
  * <li>{@link #MEMORY_MAPPED}
  * <li>{@link #DBFCHARSET}
  * </ul>
- * 
+ *
  * @author Chris Holmes, TOPP
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public class ShapefileDataStoreFactory extends AbstractFileDataStoreFactory implements FileDataStoreFactory {
 
+    /** factory identification **/
+    public static final String NAME = "shapefile";
+    public static final DefaultServiceIdentification IDENTIFICATION;
+    static {
+        IDENTIFICATION = new DefaultServiceIdentification();
+        final Identifier id = new DefaultIdentifier(NAME);
+        final DefaultCitation citation = new DefaultCitation(NAME);
+        citation.setIdentifiers(Collections.singleton(id));
+        IDENTIFICATION.setCitation(citation);
+    }
+
+    public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
+
     public static final String ENCODING = "UTF-8";
     public static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.shapefile");
-    
+
     /**
      * Optional - enable/disable the use of memory-mapped io
      */
@@ -92,9 +112,11 @@ public class ShapefileDataStoreFactory extends AbstractFileDataStoreFactory impl
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new DefaultParameterDescriptorGroup("ShapefileParameters",
-                URLP,NAMESPACE,MEMORY_MAPPED,CREATE_SPATIAL_INDEX,DBFCHARSET,LOAD_QIX);
+                IDENTIFIER,URLP,NAMESPACE,MEMORY_MAPPED,CREATE_SPATIAL_INDEX,DBFCHARSET,LOAD_QIX);
 
-    public ShapefileDataStoreFactory(){
+    @Override
+    public Identification getIdentification() {
+        return IDENTIFICATION;
     }
 
     /**
@@ -109,8 +131,8 @@ public class ShapefileDataStoreFactory extends AbstractFileDataStoreFactory impl
      * {@inheritDoc }
      */
     @Override
-    public String getDisplayName() {
-        return "Shapefile";
+    public CharSequence getDisplayName() {
+        return new ResourceInternationalString("org/geotoolkit/shapefile/bundle", "datastoreTitle");
     }
 
     /**
@@ -121,8 +143,8 @@ public class ShapefileDataStoreFactory extends AbstractFileDataStoreFactory impl
      *         supported by this datastore.
      */
     @Override
-    public String getDescription() {
-        return "ESRI(tm) Shapefiles (*.shp)";
+    public CharSequence getDescription() {
+        return new ResourceInternationalString("org/geotoolkit/shapefile/bundle", "datastoreDescription");
     }
 
     /**
@@ -137,7 +159,7 @@ public class ShapefileDataStoreFactory extends AbstractFileDataStoreFactory impl
      */
     @Override
     public ConformanceResult availability() {
-        DefaultConformanceResult result = new DefaultConformanceResult();
+        final DefaultConformanceResult result = new DefaultConformanceResult();
         try {
             ShapefileDataStore.class.getName();
             IndexedShapefileDataStore.class.getName();
@@ -161,11 +183,12 @@ public class ShapefileDataStoreFactory extends AbstractFileDataStoreFactory impl
      * {@inheritDoc }
      */
     @Override
-    public DataStore createDataStore(final ParameterValueGroup params) throws DataStoreException {
+    public DataStore create(final ParameterValueGroup params) throws DataStoreException {
+        checkCanProcessWithError(params);
 
-        URL url = (URL) params.parameter(URLP.getName().toString()).getValue();
+        final URL url = (URL) params.parameter(URLP.getName().toString()).getValue();
         Boolean isMemoryMapped = (Boolean) params.parameter(MEMORY_MAPPED.getName().toString()).getValue();
-        String namespace = (String) params.parameter(NAMESPACE.getName().toString()).getValue();
+        final String namespace = (String) params.parameter(NAMESPACE.getName().toString()).getValue();
         Charset dbfCharset = (Charset) params.parameter(DBFCHARSET.getName().toString()).getValue();
         Boolean isCreateSpatialIndex = (Boolean) params.parameter(CREATE_SPATIAL_INDEX.getName().toString()).getValue();
 
@@ -212,7 +235,7 @@ public class ShapefileDataStoreFactory extends AbstractFileDataStoreFactory impl
             }
         }
 
-        try {            
+        try {
             if (createIndex) {
                 return new IndexedShapefileDataStore(url, namespace, useMemoryMappedBuffer, createIndex, IndexType.QIX, dbfCharset);
             } else if (treeIndex != IndexType.NONE) {
@@ -229,10 +252,10 @@ public class ShapefileDataStoreFactory extends AbstractFileDataStoreFactory impl
      * {@inheritDoc }
      */
     @Override
-    public DataStore createNewDataStore(final ParameterValueGroup params) throws DataStoreException {
-        URL url = (URL) params.parameter(URLP.getName().toString()).getValue();
+    public DataStore createNew(final ParameterValueGroup params) throws DataStoreException {
+        final URL url = (URL) params.parameter(URLP.getName().toString()).getValue();
         Boolean isMemoryMapped = (Boolean) params.parameter(MEMORY_MAPPED.getName().toString()).getValue();
-        String namespace = (String) params.parameter(NAMESPACE.getName().toString()).getValue();
+        final String namespace = (String) params.parameter(NAMESPACE.getName().toString()).getValue();
         Charset dbfCharset = (Charset) params.parameter(DBFCHARSET.getName().toString()).getValue();
         Boolean isCreateSpatialIndex = (Boolean) params.parameter(CREATE_SPATIAL_INDEX.getName().toString()).getValue();
 
@@ -252,13 +275,13 @@ public class ShapefileDataStoreFactory extends AbstractFileDataStoreFactory impl
             // this should not happen as false was the default
             isMemoryMapped = Boolean.FALSE;
         }
-        ShpFiles shpFiles = new ShpFiles(url);
+        final ShpFiles shpFiles = new ShpFiles(url);
 
-        boolean isLocal = shpFiles.isLocal();
+        final boolean isLocal = shpFiles.isLocal();
         if (!isLocal || shpFiles.exists(ShpFileType.SHP)) {
             LOGGER.fine("File already exists: " + shpFiles.get(ShpFileType.SHP));
         }
-        
+
         final boolean useMemoryMappedBuffer = isLocal && isMemoryMapped.booleanValue();
         final boolean createIndex = isCreateSpatialIndex.booleanValue() && isLocal;
 

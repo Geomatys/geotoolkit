@@ -23,25 +23,18 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
-
 import javax.swing.DefaultListModel;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.ListModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-
-import org.geotoolkit.internal.swing.SwingUtilities;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.referencing.CRS;
-
 import org.jdesktop.swingx.JXList;
-
-import org.opengis.referencing.AuthorityFactory;
-import org.opengis.util.FactoryException;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.FactoryException;
 
 /**
  * CRS list
@@ -50,8 +43,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @module pending
  */
 public class JCRSList extends JComponent{
-
-    private final AuthorityFactory factory;
     
     private CodeList codeList;    
     private JXList liste = new JXList();
@@ -64,10 +55,8 @@ public class JCRSList extends JComponent{
 //        this.factory = FallbackAuthorityFactory.create(CRSAuthorityFactory.class,
 //             filter(AuthorityFactoryFinder.getCRSAuthorityFactories(null), authority));
 
-        this.factory = CRS.getAuthorityFactory(Boolean.FALSE);
-
         try{
-            this.codeList = new CodeList(factory, CoordinateReferenceSystem.class);
+            this.codeList = CodeList.getCRSInstance();
             liste.setModel(codeList);
         }catch(FactoryException e){
             e.printStackTrace();
@@ -136,7 +125,7 @@ public class JCRSList extends JComponent{
      */
     public IdentifiedObject getSelectedItem() throws FactoryException {
         final String code = getSelectedCode();
-        return (code != null) ? factory.createObject(code) : null;
+        return (code != null) ? codeList.getFactory().createObject(code) : null;
     }
     
     

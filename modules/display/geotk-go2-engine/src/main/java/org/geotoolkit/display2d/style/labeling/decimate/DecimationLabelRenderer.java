@@ -17,26 +17,22 @@
 package org.geotoolkit.display2d.style.labeling.decimate;
 
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.awt.RenderingHints;
-import java.awt.geom.Area;
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
-
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.style.labeling.candidate.Candidate;
 import org.geotoolkit.display2d.style.labeling.DefaultLabelRenderer;
 import org.geotoolkit.display2d.style.labeling.LabelDescriptor;
-import org.geotoolkit.display2d.style.labeling.candidate.LabelingUtilities;
 import org.geotoolkit.display2d.style.labeling.LabelLayer;
-import org.geotoolkit.display2d.style.labeling.candidate.LinearCandidate;
 import org.geotoolkit.display2d.style.labeling.LinearLabelDescriptor;
-import org.geotoolkit.display2d.style.labeling.candidate.PointCandidate;
 import org.geotoolkit.display2d.style.labeling.PointLabelDescriptor;
+import org.geotoolkit.display2d.style.labeling.candidate.Candidate;
+import org.geotoolkit.display2d.style.labeling.candidate.LabelingUtilities;
+import org.geotoolkit.display2d.style.labeling.candidate.LinearCandidate;
+import org.geotoolkit.display2d.style.labeling.candidate.PointCandidate;
 
 /**
  * Label renderer that apply a simple decimation on labels to remove all

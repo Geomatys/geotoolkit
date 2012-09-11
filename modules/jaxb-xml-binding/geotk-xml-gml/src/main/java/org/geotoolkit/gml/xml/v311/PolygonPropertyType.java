@@ -23,6 +23,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.PolygonProperty;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -53,7 +55,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "PolygonPropertyType", propOrder = {
     "polygon"
 })
-public class PolygonPropertyType {
+public class PolygonPropertyType implements PolygonProperty {
 
     @XmlElement(name = "Polygon")
     protected PolygonType polygon;
@@ -78,6 +80,14 @@ public class PolygonPropertyType {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     protected String actuate;
 
+    public PolygonPropertyType() {
+    
+    }
+    
+    public PolygonPropertyType(final PolygonType polygon) {
+        this.polygon = polygon;
+    }
+    
     /**
      * Gets the value of the polygon property.
      * 

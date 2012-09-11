@@ -161,6 +161,9 @@ public class SimplifyingFilterVisitor extends DuplicatingFilterVisitor {
         final List<Filter> children = filter.getChildren();
         final List<Filter> newChildren = new ArrayList<Filter>(children.size());
 
+        Set<Identifier> mergedIds = null;
+        Id regroupedIds = null;
+        
         for (Filter child : children) {
             final Filter cloned = (Filter) child.accept(this, extraData);
 
@@ -173,8 +176,28 @@ public class SimplifyingFilterVisitor extends DuplicatingFilterVisitor {
             if(cloned == Filter.EXCLUDE)
                 continue;
             
-            newChildren.add(cloned);
+            if(cloned instanceof Id){
+                //merge id filters
+                if(regroupedIds == null && mergedIds == null){
+                    regroupedIds = (Id) cloned;
+                }else{
+                    if(mergedIds == null){
+                        mergedIds = new HashSet<Identifier>(regroupedIds.getIdentifiers());
+                    }
+                    regroupedIds = null;
+                    mergedIds.addAll( ((Id)cloned).getIdentifiers() );
+                }
+            }else{
+                newChildren.add(cloned);
+            }
         }
+        
+        if(regroupedIds != null){
+            newChildren.add(regroupedIds);
+        }else if(mergedIds != null){
+            newChildren.add(ff.id(mergedIds));
+        }
+        
         
         // we might end up with an empty list
         if(newChildren.size() == 0)

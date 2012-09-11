@@ -77,6 +77,36 @@ public class Operation implements AbstractOperation {
     Operation(){
     }
     
+    public Operation(final Operation that){
+        if (that != null) {
+            if (that.constraint != null) {
+                this.constraint = new ArrayList<DomainType>();
+                for (DomainType d : that.constraint) {
+                    this.constraint.add(new DomainType(d));
+                }
+            }
+            if (that.dcp != null) {
+                this.dcp        = new ArrayList<DCP>();
+                for (DCP d : that.dcp) {
+                    this.dcp.add(new DCP(d));
+                }
+            }
+            if (that.metadata != null) {
+                this.metadata   = new ArrayList<MetadataType>();
+                for (MetadataType m : that.metadata) {
+                    this.metadata.add(new MetadataType(m));
+                }
+            }
+            this.name       = that.name;
+            if (that.parameter != null) {
+                this.parameter = new ArrayList<DomainType>();
+                for (DomainType d : that.parameter) {
+                    this.parameter.add(new DomainType(d));
+                }
+            }
+        }
+    }
+    
     /**
      * Build a new Operation.
      */

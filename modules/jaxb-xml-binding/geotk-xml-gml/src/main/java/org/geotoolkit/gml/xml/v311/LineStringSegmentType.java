@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.LineStringSegment;
 import org.geotoolkit.util.Utilities;
 import org.opengis.geometry.DirectPosition;
 
@@ -70,7 +71,7 @@ import org.opengis.geometry.DirectPosition;
     "posList",
     "coordinates"
 })
-public class LineStringSegmentType extends AbstractCurveSegmentType {
+public class LineStringSegmentType extends AbstractCurveSegmentType implements LineStringSegment {
 
     @XmlElementRefs({
         @XmlElementRef(name = "pointProperty", namespace = "http://www.opengis.net/gml", type = JAXBElement.class),
@@ -109,7 +110,7 @@ public class LineStringSegmentType extends AbstractCurveSegmentType {
      * 
      * 
      */
-    public List<JAXBElement<?>> getPointPropertyOrPointRep() {
+    public List<JAXBElement<?>> getRest() {
         if (pointPropertyOrPointRep == null) {
             pointPropertyOrPointRep = new ArrayList<JAXBElement<?>>();
         }
@@ -228,10 +229,10 @@ public class LineStringSegmentType extends AbstractCurveSegmentType {
             final LineStringSegmentType that = (LineStringSegmentType) object;
 
             boolean jb = false;
-            if (this.getPointPropertyOrPointRep().size() == that.getPointPropertyOrPointRep().size()) {
+            if (this.getRest().size() == that.getRest().size()) {
                 jb = true;
-                for (int i = 0; i < this.getPointPropertyOrPointRep().size(); i++) {
-                    if (!JAXBElementEquals(this.getPointPropertyOrPointRep().get(i), this.getPointPropertyOrPointRep().get(i))) {
+                for (int i = 0; i < this.getRest().size(); i++) {
+                    if (!JAXBElementEquals(this.getRest().get(i), this.getRest().get(i))) {
                         jb = false;
                     }
                 }

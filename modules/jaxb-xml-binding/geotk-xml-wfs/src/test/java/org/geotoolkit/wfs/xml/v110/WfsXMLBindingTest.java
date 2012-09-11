@@ -33,11 +33,7 @@ import org.geotoolkit.gml.xml.v311.PointType;
 import org.geotoolkit.ogc.xml.v110.FilterType;
 import org.geotoolkit.ogc.xml.v110.PropertyIsLikeType;
 import org.geotoolkit.ows.xml.v100.WGS84BoundingBoxType;
-
-//Junit dependencies
-import org.geotoolkit.wfs.xml.WFSBindingUtilities;
-import org.geotoolkit.wfs.xml.WFSMarshallerPool;
-import org.geotoolkit.wfs.xml.WFSVersion;
+import org.geotoolkit.wfs.xml.*;
 import org.geotoolkit.xml.MarshallerPool;
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -108,7 +104,7 @@ public class WfsXMLBindingTest {
         // TEST with WFSBindingUtilities
 
         is = WfsXMLBindingTest.class.getResourceAsStream("/org/geotoolkit/wfs/v110/capabilities.xml");
-        result = WFSBindingUtilities.unmarshall(is, WFSVersion.v110);
+        result = (WFSCapabilitiesType) WFSBindingUtilities.unmarshall(is, WFSVersion.v110);
         assertEquals(expResult.getFeatureTypeList().getFeatureType(), result.getFeatureTypeList().getFeatureType());
         assertEquals(expResult.getFeatureTypeList(), result.getFeatureTypeList());
         

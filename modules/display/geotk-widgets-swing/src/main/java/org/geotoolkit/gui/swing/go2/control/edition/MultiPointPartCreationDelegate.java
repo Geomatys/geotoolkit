@@ -88,7 +88,7 @@ public class MultiPointPartCreationDelegate extends AbstractFeatureEditionDelega
                 decoration.setGeometries(Collections.singleton(geometry));
             }
         } else if (button == MouseEvent.BUTTON3 && feature != null) {
-            helper.sourceModifyFeature(feature, geometry);
+            helper.sourceModifyFeature(feature, geometry, true);
             reset();
         }
     }

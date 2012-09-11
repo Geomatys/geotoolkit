@@ -56,9 +56,12 @@
     <module>geotk-processing-core</module>
     <module>geotk-processing-quartz</module>
     <module>geotk-processing-math</module>
+    <module>geotk-processing-referencing</module>
     <module>geotk-processing-coverage</module>
     <module>geotk-processing-vector</module>
     <module>geotk-processing-jts-geometry</module>
+    <module>geotk-processing-io</module>
+    <module>geotk-processing-metadata</module>
   </modules>
 
 </project>

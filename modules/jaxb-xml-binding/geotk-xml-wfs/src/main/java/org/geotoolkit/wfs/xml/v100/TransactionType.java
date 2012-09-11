@@ -18,13 +18,13 @@ package org.geotoolkit.wfs.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElements;
-import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.*;
+import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.Version;
+import org.geotoolkit.wfs.xml.AllSomeType;
+import org.geotoolkit.wfs.xml.Transaction;
 
 
 /**
@@ -66,7 +66,7 @@ import javax.xml.bind.annotation.XmlType;
     "lockId",
     "insertOrUpdateOrDelete"
 })
-public class TransactionType {
+public class TransactionType implements Transaction {
 
     @XmlElement(name = "LockId")
     private String lockId;
@@ -86,6 +86,9 @@ public class TransactionType {
     @XmlAttribute
     private AllSomeType releaseAction;
 
+    @XmlTransient
+    private Map<String, String> prefixMapping;
+    
     public TransactionType() {
 
     }
@@ -159,20 +162,6 @@ public class TransactionType {
     /**
      * Gets the value of the insertOrUpdateOrDelete property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the insertOrUpdateOrDelete property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getInsertOrUpdateOrDelete().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link NativeType }
      * {@link DeleteElementType }
@@ -188,6 +177,10 @@ public class TransactionType {
         return this.insertOrUpdateOrDelete;
     }
 
+    public List<Object> getTransactionAction() {
+        return getInsertOrUpdateOrDelete();
+    }
+    
     /**
      * Gets the value of the version property.
      * 
@@ -196,11 +189,11 @@ public class TransactionType {
      *     {@link String }
      *     
      */
-    public String getVersion() {
+    public Version getVersion() {
         if (version == null) {
-            return "1.0.0";
+            return new Version("1.0.0");
         } else {
-            return version;
+            return new Version(version);
         }
     }
 
@@ -331,5 +324,16 @@ public class TransactionType {
         hash = 37 * hash + (this.insertOrUpdateOrDelete != null ? this.insertOrUpdateOrDelete.hashCode() : 0);
         hash = 37 * hash + (this.releaseAction != null ? this.releaseAction.hashCode() : 0);
         return hash;
+    }
+
+    public Map<String, String> getPrefixMapping() {
+        return prefixMapping;
+    }
+    
+    /**
+     * @param prefixMapping the prefixMapping to set
+     */
+    public void setPrefixMapping(Map<String, String> prefixMapping) {
+        this.prefixMapping = prefixMapping;
     }
 }

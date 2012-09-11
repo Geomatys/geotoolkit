@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book [
+  <!ENTITY % book.entities SYSTEM "../book.entities">
+  %book.entities;
+]>
+<chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xlink = "http://www.w3.org/1999/xlink">
+          
+    <title>
+        Composants Swing
+    </title>
+    
+    <example>
+        <title>Code source complet  : </title>
+        <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/swing/WidgetsDemo.java">
+            <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/swing/WidgetsDemo.java</acronym>
+        </link>        
+    </example>
+    
+    <para>
+        GeotoolKit offre une panoplie de composants swing pour la cartographie.
+    </para>
+    
+    <section>
+        <title>Composants de carte</title>
+        
+        <section>
+            <title>JMap2D</title>
+            <para>
+                C'est le composant qui permet d'afficher une carte, celui-ci utilise un MapContext.
+            </para>
+        
+            <figure> 
+                <title>
+                    Affichage d'une carte via JMap2D
+                </title>
+                <mediaobject>
+                    <imageobject>
+                        <imagedata fileref="../images/swing_jmap2d.png" format="png"></imagedata>
+                    </imageobject>
+                </mediaobject>
+            </figure>
+        </section>
+        
+        <section>
+            <title>JContextTree</title>
+            <para>
+                Affiche les couche de données, permet des les réorganiser, de les rendre invisible ou de jouer sur leur opacité. 
+            </para>
+        
+            <figure> 
+                <title>
+                    Affichage des propriétés d'affichage via JContextTree
+                </title>
+                <mediaobject>
+                    <imageobject>
+                        <imagedata fileref="../images/swing_contexttree.png" format="png"></imagedata>
+                    </imageobject>
+                </mediaobject>
+            </figure>
+        </section>
+        
+        <section>
+            <title>JNavigationBar</title>
+            <para>
+                Permet les opérations de navigation :
+                <itemizedlist>
+                    <listitem>Zoom sur tout</listitem>
+                    <listitem>Rafraichir</listitem>
+                    <listitem>Zoom +</listitem>
+                    <listitem>Zoom -</listitem>
+                    <listitem>Pan</listitem>
+                    <listitem>Aller à un point</listitem> 
+                </itemizedlist>
+            </para>
+        
+            <figure> 
+                <title>
+                    Barre de navigation
+                </title>
+                <mediaobject>
+                    <imageobject>
+                        <imagedata fileref="../images/swing_navtoolbar.png" format="png"></imagedata>
+                    </imageobject>
+                </mediaobject>
+            </figure>
+        </section>
+        
+        <section>
+            <title>JInformationBar</title>
+            <para>
+                Permet d'obtenir des informations :
+                <itemizedlist>
+                    <listitem>Mesure de distance</listitem>
+                    <listitem>Mesure d'aire</listitem>
+                    <listitem>Afficher une popup avec les détails de ce qui est sous la souris </listitem>  
+                </itemizedlist>
+            </para>
+        
+            <figure> 
+                <title>
+                    Barre d'information
+                </title>
+                <mediaobject>
+                    <imageobject>
+                        <imagedata fileref="../images/swing_infotoolbar.png" format="png"></imagedata>
+                    </imageobject>
+                </mediaobject>
+            </figure>
+        </section>
+        
+        <section>
+            <title>JSelectionBar</title>
+            <para>
+                Permet la sélection des données. avec différents paramètres tel que l'utilisation d'un test d'intersection ou de contenue, d'une forme de sélection rectangulaire ou libre ... 
+            </para>
+        
+            <figure> 
+                <title>
+                    Barre de sélection
+                </title>
+                <mediaobject>
+                    <imageobject>
+                        <imagedata fileref="../images/swing_selecttoolbar.png" format="png"></imagedata>
+                    </imageobject>
+                </mediaobject>
+            </figure>
+        </section>
+        
+        <section>
+            <title>JEditionBar</title>
+            <para>
+                Permet l'édition des géométries. 
+            </para>
+        
+            <figure> 
+                <title>
+                    Barre d'édition
+                </title>
+                <mediaobject>
+                    <imageobject>
+                        <imagedata fileref="../images/swing_edittoolbar.png" format="png"></imagedata>
+                    </imageobject>
+                </mediaobject>
+            </figure>
+        </section>
+        
+        <section>
+            <title>JCoordinateBar</title>
+            <para>
+                Afficher les coordonnées de la souris, l’échelle ainsi que de changer de projection. 
+            </para>
+        
+            <figure> 
+                <title>
+                    Barre des coordonnées
+                </title>
+                <mediaobject>
+                    <imageobject>
+                        <imagedata fileref="../images/swing_coordtoolbar.png" format="png"></imagedata>
+                    </imageobject>
+                </mediaobject>
+            </figure>
+        
+            <para>Celle ci peut afficher deux barres supplémentaires , pour la navigation temporelle et l'altitude.</para>
+        
+            <figure> 
+                <title>
+                    Barre des élévations
+                </title>
+                <mediaobject>
+                    <imageobject>
+                        <imagedata fileref="../images/swing_elevationbar.png" format="png"></imagedata>
+                    </imageobject>
+                </mediaobject>
+            </figure>
+        
+            <figure> 
+                <title>
+                    Barre temporelle
+                </title>
+                <mediaobject>
+                    <imageobject>
+                        <imagedata fileref="../images/swing_temporalbar.png" format="png"></imagedata>
+                    </imageobject>
+                </mediaobject>
+            </figure>
+        </section>
+        
+        <section>
+            <title>JConfigBar</title>
+            <para>
+                Permet d'afficher des décorations comme la boussole ou la barre d'échelle.
+            </para>
+        
+            <figure> 
+                <title>
+                    Barre de configuration
+                </title>
+                <mediaobject>
+                    <imageobject>
+                        <imagedata fileref="../images/swing_conftoolbar.png" format="png"></imagedata>
+                    </imageobject>
+                </mediaobject>
+            </figure>
+        
+        
+            <figure> 
+                <title>
+                    Boussole
+                </title>
+                <mediaobject>
+                    <imageobject>
+                        <imagedata fileref="../images/swing_northarrow.png" format="png"></imagedata>
+                    </imageobject>
+                </mediaobject>
+            </figure>
+        
+            <para>Mais aussi un panneau informatif avec les différents paramètres de la zone d'affichage actuelle.</para>
+        
+            <figure> 
+                <title>
+                    Panneau d'information
+                </title>
+                <mediaobject>
+                    <imageobject>
+                        <imagedata fileref="../images/swing_debug.png" format="png"></imagedata>
+                    </imageobject>
+                </mediaobject>
+            </figure>
+        </section>
+        
+        <section>
+            <title>JMap2DFrame</title>
+            <para>
+                A des fins de débogage, cette classe permet d'afficher une mini application SIG rassemblant tous les widgets.
+            </para>
+        
+            <figure> 
+                <title>
+                    Affichage d'un JMap2DFrame
+                </title>
+                <mediaobject>
+                    <imageobject>
+                        <imagedata fileref="../images/swing_jmap2dframe.png" format="png"></imagedata>
+                    </imageobject>
+                </mediaobject>
+            </figure>       
+        </section>
+        
+    </section>
+    
+    <section>
+        <title>Autres composants</title>
+        
+        <para>Divers composants sont aussi disponible pour l'édition des attributs ou des différentes propriétés des couches de données dont le style.</para>
+    
+        <figure> 
+            <title>
+                Fenêtre d'édition des attributs
+            </title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="../images/swing_datatable.png" format="png"></imagedata>
+                </imageobject>
+            </mediaobject>
+        </figure>
+        
+        <figure> 
+            <title>
+                Fenêtre d'édition de style
+            </title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="../images/swing_style.png" format="png"></imagedata>
+                </imageobject>
+            </mediaobject>
+        </figure>        
+        
+    </section>
+    
+</chapter>

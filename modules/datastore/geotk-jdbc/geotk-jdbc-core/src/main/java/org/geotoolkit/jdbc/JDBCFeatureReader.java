@@ -102,8 +102,8 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
      * feature builder
      */
     protected final String fidBase;
-    protected final DefaultSimpleFeature feature;
-    private final Object[] values;
+    protected DefaultSimpleFeature feature;
+    private Object[] values;
     
     /**
      * The primary key
@@ -125,18 +125,18 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
     public JDBCFeatureReader(final String sql, final Connection cx, final JDBCDataStore store, 
             final Name groupName, final SimpleFeatureType featureType, final PrimaryKey pkey, final Hints hints )
             throws SQLException, IOException, DataStoreException{
-        this(sql,cx,null, store, featureType, pkey, hints );
+        this(sql,cx,null, store, featureType, pkey, hints, groupName);
     }
 
     public JDBCFeatureReader(final PreparedStatement st, final Connection cx, final JDBCDataStore store, 
             final Name groupName, final SimpleFeatureType featureType, final PrimaryKey pkey, final Hints hints)
             throws SQLException, IOException, DataStoreException{
-        this(null,cx,st,store, featureType, pkey, hints );
+        this(null,cx,st,store, featureType, pkey, hints, groupName);
     }
 
     private JDBCFeatureReader(final String sql, final Connection cx, final PreparedStatement st,
             final JDBCDataStore store, final SimpleFeatureType featureType,
-            final PrimaryKey pkey, final Hints hints)
+            final PrimaryKey pkey, final Hints hints,final Name groupName)
             throws SQLException, IOException, DataStoreException{
 
         //create the result set
@@ -150,13 +150,19 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
             this.rs = this.st.executeQuery(sql);
         }
         this.stcx = this.st.getConnection();
+
+        if (featureType == null) {
+            this.featureType = (SimpleFeatureType) store.getMetaModel().analyzeResult(rs, groupName);
+        } else {
+            this.featureType = featureType;
+        }
         
         // init the tracer if we need to debug a connection leak
         assert(creationStack = new IllegalStateException().fillInStackTrace()) != null;
 
         // init base fields
         this.dataStore = (DefaultJDBCDataStore) store;
-        this.featureType = featureType;
+        
         this.hints = (hints == null) ? new Hints() : hints;
 
         //grab a geometry factory... check for a special hint
@@ -177,14 +183,18 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
         }
         this.geometryFactory = gf;
                 
-        this.fidBase = featureType.getTypeName() + ".";
-        this.values = new Object[featureType.getAttributeCount()];
-        this.feature = new DefaultSimpleFeature(featureType, null, values, false);        
+        this.fidBase = this.featureType.getTypeName() + ".";
+        this.values = new Object[this.featureType.getAttributeCount()];
+        
+        final boolean detached = Boolean.TRUE.equals(this.hints.get(HintsPending.FEATURE_DETACHED));
+        if(!detached){
+            this.feature = new DefaultSimpleFeature(this.featureType, null, values, false);
+        }
         
         // find the primary key
         this.pkey = pkey;
         
-        this.properties = featureType.getDescriptors().toArray(new PropertyDescriptor[0]);
+        this.properties = this.featureType.getDescriptors().toArray(new PropertyDescriptor[0]);
         
     }
 
@@ -240,7 +250,11 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
         try {
             ensureOpen();
             ensureNext();
-
+            
+            if(feature == null){
+                values = new Object[this.featureType.getAttributeCount()];
+            }
+            
             // figure out the fid
             final String fid;
             try {
@@ -256,7 +270,7 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
 
                 try {
                     Object value = null;
-
+                    final Class binding = type.getType().getBinding();
                     // is this a geometry?
                     if (type instanceof GeometryDescriptor) {
                         final GeometryDescriptor gatt = (GeometryDescriptor) type;
@@ -277,6 +291,14 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
                                 geometry.setUserData( gatt.getCoordinateReferenceSystem() );
                             }
                         }
+                    } else if (binding.equals(Integer.class)){
+                        value = rs.getInt(i + 1);
+                    } else if (binding.equals(String.class)){
+                        value = rs.getString(i + 1);
+                    } else if (binding.equals(Double.class)){
+                        value = rs.getDouble(i + 1);
+                    } else if (binding.equals(Float.class)){
+                        value = rs.getFloat(i + 1);    
                     } else {
                         value = rs.getObject(i + 1);
                     }
@@ -287,7 +309,6 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
                     // user (being the feature type reverse engineerd, it's unlikely a true
                     // conversion will be needed)
                     if (value != null) {
-                        final Class binding = type.getType().getBinding();
                         if (!binding.isInstance(value) ) {
                             value = convert(value, binding);
                         }
@@ -299,8 +320,17 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
             }
 
             // create the feature
-            feature.setId(fid);
-            return feature;
+            if(feature == null){
+                //detached feature
+                final DefaultSimpleFeature sf = new DefaultSimpleFeature(this.featureType, null, values, false);
+                sf.setId(fid);
+                return sf;
+            }else{
+                //reuse feature
+                feature.setId(fid);
+                return feature;
+            }
+            
 
         } finally {
             // reset the next flag. We do this in a finally block to make sure we

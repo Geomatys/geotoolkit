@@ -16,11 +16,13 @@
  */
 package org.geotoolkit.ogc.xml.v100;
 
+import java.util.Arrays;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v212.BoxType;
+import org.geotoolkit.gml.xml.v212.CoordType;
 
 
 /**
@@ -56,6 +58,23 @@ public class BBOXType extends SpatialOpsType {
     @XmlElement(name = "Box", namespace = "http://www.opengis.net/gml", required = true)
     private BoxType box;
 
+    /**
+     * An empty constructor used by JAXB
+     */
+    public BBOXType() {
+        
+    }
+    
+    /**
+     * build a new BBox with an envelope.
+     */
+    public BBOXType(final String propertyName, final double minx, final double miny, final double maxx, final double maxy, final String srs) {
+        this.propertyName = new PropertyNameType(propertyName);
+        final CoordType lower = new CoordType(minx, miny);
+        final CoordType upper = new CoordType(maxx, maxy);
+        this.box = new BoxType(Arrays.asList(lower, upper), srs);
+        
+    }
     /**
      * Gets the value of the propertyName property.
      * 

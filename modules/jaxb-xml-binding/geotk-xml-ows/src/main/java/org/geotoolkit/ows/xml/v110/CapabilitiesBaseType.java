@@ -79,6 +79,13 @@ public class CapabilitiesBaseType implements AbstractCapabilitiesBase {
     /**
      * Build the base of a Capabilities document.
      */
+    public CapabilitiesBaseType(final String version, final String updateSequence) {
+        this(null, null, null, version, updateSequence);
+    }
+    
+    /**
+     * Build the base of a Capabilities document.
+     */
     public CapabilitiesBaseType(final ServiceIdentification serviceIdentification, final ServiceProvider serviceProvider,
             final OperationsMetadata operationsMetadata, final String version, final String updateSequence) {
         this.operationsMetadata    = operationsMetadata;
@@ -135,6 +142,11 @@ public class CapabilitiesBaseType implements AbstractCapabilitiesBase {
     public String getUpdateSequence() {
         return updateSequence;
     }
+    
+    public void setUpdateSequence(final String updateSequence) {
+        this.updateSequence = updateSequence;
+    }
+
 
     /**
      * Verify that this entry is identical to the specified object.

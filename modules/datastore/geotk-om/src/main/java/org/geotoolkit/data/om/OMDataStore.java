@@ -37,6 +37,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.geotoolkit.data.AbstractDataStore;
+import org.geotoolkit.data.DataStoreFactory;
+import org.geotoolkit.data.DataStoreFinder;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureReader;
@@ -65,6 +67,7 @@ import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
+import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -103,10 +106,15 @@ public class OMDataStore extends AbstractDataStore {
     private static final String SQL_DELETE_SAMPLING_POINT = "DELETE FROM \"observation\".\"sampling_points\" WHERE \"id\" = ?";
 
 
-    public OMDataStore(final ManageableDataSource source) {
-        super(null);
+    public OMDataStore(final ParameterValueGroup params, final ManageableDataSource source) {
+        super(params);
         this.source = source;
         initTypes();
+    }
+
+    @Override
+    public DataStoreFactory getFactory() {
+        return DataStoreFinder.getFactoryById(OMDataStoreFactory.NAME);
     }
 
     private Connection getConnection() throws SQLException{

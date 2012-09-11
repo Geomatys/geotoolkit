@@ -16,6 +16,9 @@
  */
 package org.geotoolkit.display2d.service;
 
+import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.style.StyleConstants;
+import org.geotoolkit.map.CoverageMapLayer;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
@@ -26,6 +29,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
+import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,6 +38,7 @@ import java.util.List;
 import org.geotoolkit.coverage.CoverageStack;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageFactory;
+import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureWriter;
@@ -60,6 +65,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import org.opengis.coverage.Coverage;
+import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.geometry.Envelope;
@@ -252,7 +258,7 @@ public class PortrayalServiceTest {
         for(FeatureCollection col : featureColls){
             final MapLayer layer = MapBuilder.createFeatureLayer(col, SF.style(SF.pointSymbolizer()));
             testRendering(layer);
-        }        
+        }
     }
 
     @Test
@@ -279,7 +285,7 @@ public class PortrayalServiceTest {
         hints.put(GO2Hints.KEY_COLOR_MODEL, ColorModel.getRGBdefault());
 
 
-        
+
 
         //create a map context with a layer that will cover the entire area we will ask for
         final GeneralEnvelope covenv = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
@@ -315,7 +321,7 @@ public class PortrayalServiceTest {
         raster.getPixel(359, 359, pixel);   assertArrayEquals(white, pixel);
         raster.getPixel(0, 359, pixel);     assertArrayEquals(white, pixel);
         raster.getPixel(180, 0, pixel);     assertArrayEquals(red, pixel);
-        raster.getPixel(180, 359, pixel);   assertArrayEquals(red, pixel);
+        raster.getPixel(180, 358, pixel);   assertArrayEquals(red, pixel);
         raster.getPixel(0, 180, pixel);     assertArrayEquals(white, pixel);
         raster.getPixel(359, 180, pixel);   assertArrayEquals(white, pixel);
 
@@ -344,7 +350,42 @@ public class PortrayalServiceTest {
 
     }
 
+    /**
+     * Test the CoverageReader view of a scene.
+     */
+    @Test
+    public void testPortrayalCoverageReader() throws CoverageStoreException{
 
+        //create a test coverage
+        final BufferedImage img = new BufferedImage(360, 180, BufferedImage.TYPE_INT_ARGB);
+        final Graphics2D g2d = img.createGraphics();
+        g2d.setColor(Color.GREEN);
+        g2d.fillRect(0, 0, 360, 180);
+        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        env.setRange(0, -180, 180);
+        env.setRange(1, -90, 90);
+        final GridCoverageFactory GF = new GridCoverageFactory();
+        final GridCoverage2D coverage = GF.create("myCoverage", img, env);
+
+        //display it
+        final MapContext context = MapBuilder.createContext();
+        final CoverageMapLayer cl = MapBuilder.createCoverageLayer(
+                coverage, SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), "coverage");
+        context.layers().add(cl);
+
+        final SceneDef sceneDef = new SceneDef(context);
+        final GridCoverageReader reader = DefaultPortrayalService.asCoverageReader(sceneDef);
+
+        assertEquals(1, reader.getCoverageNames().size());
+
+        final GridGeometry gridGeom = reader.getGridGeometry(0);
+        assertNotNull(gridGeom);
+
+        final GridCoverage2D result = (GridCoverage2D) reader.read(0, null);
+        final RenderedImage image = result.getRenderedImage();
+        assertEquals(1000, image.getWidth());
+
+    }
 
     private void testRendering(final MapLayer layer) throws TransformException, PortrayalException{
         final StopOnErrorMonitor monitor = new StopOnErrorMonitor();

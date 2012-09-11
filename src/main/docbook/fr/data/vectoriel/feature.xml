@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book [
+  <!ENTITY % book.entities SYSTEM "../../../book.entities">
+  %book.entities;
+]>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xlink = "http://www.w3.org/1999/xlink">
+    <title>Feature</title>
+             
+    <example>
+        <title>Code source complet : </title>
+        <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/FeatureDemo.java">
+            <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/datamodel/FeatureDemo.java</acronym>
+        </link>        
+    </example>
+    <para>
+        Il existe trois façons des créer des Features.
+        <itemizedlist>
+            <listitem>FeatureFactory</listitem>
+            <listitem>SimpleFeatureBuilder</listitem>
+            <listitem>FeatureUtilities</listitem>
+        </itemizedlist>
+    </para>
+    
+    <section>
+        <title>FeatureFactory</title>
+        
+        <para>
+            Cette méthode est la méthode par défaut, efficace mais elle peut demander beaucoup d'efforts lorsque l'on souhaite avoir un Feature valide rapidement.
+        </para>
+            <programlisting>
+                    final Object[] values = new Object[]{
+                    "placide",
+                    12,
+                    GF.createPoint(new Coordinate(-10, 23)),
+                    new Date(),
+                    56.498f
+                    };
+
+                    final Feature feature = FF.createSimpleFeature(values, type, "id-0");
+            </programlisting>
+        <para>
+            Elle requiert de créer les valeurs à l'avance dans un tableau, et dans le cas de types complexes cela peut devenir fastidieux.
+        </para>
+        <para>
+            Les Features sont des objets créés par millions et l'on imagine assez bien que vérifier les contraintes à chaque modification d'un attribut ou à chaque création devient coûteux suivant la quantité.
+        </para>
+        <para>
+            Pour des raisons de performances, on dispose donc de deux fabriques :
+            <itemizedlist>
+                <listitem>ValidationFeatureFactory</listitem>
+                <listitem>LenientFeatureFactory </listitem>
+            </itemizedlist>
+            La première va générer des Features qui vérifieront toujours les contraintes à la création et lors des modifications. La seconde est la version opposée qui ne fait aucune vérification.
+        </para>
+        <para>
+            Pour obtenir l'une ou l'autre : 
+        </para>
+            <programlisting>
+                    FeatureFactory LFF = FactoryFinder.getFeatureFactory(
+                    new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
+                    FeatureFactory VFF = FactoryFinder.getFeatureFactory(
+                    new Hints(Hints.FEATURE_FACTORY, ValidatingFeatureFactory.class));
+            </programlisting>
+        <para>
+            Dans l'utilisation quotidienne, on utilise la LenientFeatureFactory et lorsqu'une validation est nécessaire on appelle la méthode 
+            <emphasis>validate</emphasis> sur le Feature.
+        </para>    
+    </section>
+    
+    <section>
+        <title>SimpleFeatureBuilder</title>
+        <para>
+            Cette classe ne marche que pour les types simples avec la même approche que le FeatureTypeBuilder.
+            La relation entre le Feature et le FeatureType étant homogène, cela rend le code simple a comprendre.
+        </para>
+        <para>
+            <programlisting>
+                
+                    final SimpleFeatureBuilder sfb = new SimpleFeatureBuilder(type);
+                    sfb.set("name", "placide");
+                    sfb.set("lenght", 12);
+                    sfb.set("lastPosition", GF.createPoint(new Coordinate(-10, 23)));
+                    sfb.set("lastPositionDate", new Date());
+                    sfb.set("direction", 56.498f);
+                    final Feature feature = sfb.buildFeature("id-0");
+                
+            </programlisting>
+        </para>
+        <para>
+            Si aucune fabrique n'est fournie au builder, c'est la LenientFeatureFactory qui est utilisée.
+        </para>
+    </section>
+    
+    <section>
+        <title>FeatureUtilities</title>
+        <para>
+            Cet utilitaire va générer un Feature directement utilisable avec les valeurs par défaut.
+        </para>
+        <para>
+            Une façon rapide d'obtenir un Feature à partir d'un FeatureType sans travail de notre coté, cet utilitaire utilise la LenientFeatureFactory.
+        </para>
+            <programlisting>
+                
+                    final Feature feature = FeatureUtilities.defaultFeature(type, "id-0");
+                    feature.getProperty("name").setValue("placide");
+                    feature.getProperty("lenght").setValue(12);
+                    feature.getProperty("lastPosition").setValue(GF.createPoint(new Coordinate(-10, 23)));
+                    feature.getProperty("lastPositionDate").setValue(new Date());
+                    feature.getProperty("direction").setValue(56.498f);
+                
+            </programlisting>
+    </section>
+</section>

@@ -33,46 +33,19 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
-import javax.xml.bind.JAXBElement;
+import java.util.logging.Logger;
 
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
-import org.geotoolkit.gml.xml.v311.AbstractCurveSegmentType;
-import org.geotoolkit.gml.xml.v311.AbstractCurveType;
-import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
-import org.geotoolkit.gml.xml.v311.AbstractRingPropertyType;
-import org.geotoolkit.gml.xml.v311.AbstractRingType;
+import org.geotoolkit.gml.xml.*;
 import org.geotoolkit.gml.xml.v311.ArcByCenterPointType;
 import org.geotoolkit.gml.xml.v311.ArcStringByBulgeType;
 import org.geotoolkit.gml.xml.v311.ArcStringType;
 import org.geotoolkit.gml.xml.v311.BSplineType;
 import org.geotoolkit.gml.xml.v311.ClothoidType;
-import org.geotoolkit.gml.xml.v311.CoordinatesType;
 import org.geotoolkit.gml.xml.v311.CubicSplineType;
-import org.geotoolkit.gml.xml.v311.CurvePropertyType;
-import org.geotoolkit.gml.xml.v311.CurveSegmentArrayPropertyType;
-import org.geotoolkit.gml.xml.v311.CurveType;
-import org.geotoolkit.gml.xml.v311.DirectPositionListType;
-import org.geotoolkit.gml.xml.v311.DirectPositionType;
-import org.geotoolkit.gml.xml.v311.EnvelopeType;
 import org.geotoolkit.gml.xml.v311.GeodesicStringType;
-import org.geotoolkit.gml.xml.v311.LineStringPropertyType;
-import org.geotoolkit.gml.xml.v311.LineStringSegmentType;
-import org.geotoolkit.gml.xml.v311.LineStringType;
-import org.geotoolkit.gml.xml.v311.LinearRingType;
-import org.geotoolkit.gml.xml.v311.MultiCurveType;
-import org.geotoolkit.gml.xml.v311.MultiLineStringType;
-import org.geotoolkit.gml.xml.v311.MultiPointType;
-import org.geotoolkit.gml.xml.v311.MultiPolygonType;
-import org.geotoolkit.gml.xml.v311.MultiSurfaceType;
 import org.geotoolkit.gml.xml.v311.OffsetCurveType;
-import org.geotoolkit.gml.xml.v311.OrientableCurveType;
-import org.geotoolkit.gml.xml.v311.PointPropertyType;
-import org.geotoolkit.gml.xml.v311.PointType;
-import org.geotoolkit.gml.xml.v311.PolygonPropertyType;
-import org.geotoolkit.gml.xml.v311.PolygonType;
-import org.geotoolkit.gml.xml.v311.RingType;
-import org.geotoolkit.gml.xml.v311.SurfacePropertyType;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.logging.Logging;
 
@@ -87,6 +60,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class GeometrytoJTS {
 
+    private static final Logger LOGGER = Logging.getLogger(GeometrytoJTS.class);
     private static final GeometryFactory GF = new GeometryFactory();
 
     private GeometrytoJTS(){}
@@ -101,7 +75,7 @@ public class GeometrytoJTS {
      * @throws org.opengis.referencing.NoSuchAuthorityCodeException
      * @throws org.opengis.util.FactoryException
      */
-    public static com.vividsolutions.jts.geom.Polygon toJTS(final EnvelopeType gmlEnvelope)
+    public static com.vividsolutions.jts.geom.Polygon toJTS(final Envelope gmlEnvelope)
             throws NoSuchAuthorityCodeException, FactoryException {
         final String crsName = gmlEnvelope.getSrsName();
         if (crsName == null) {
@@ -135,30 +109,30 @@ public class GeometrytoJTS {
         return polygon;
     }
 
-    public static Geometry toJTS(final AbstractGeometryType gml)
+    public static Geometry toJTS(final AbstractGeometry gml)
             throws NoSuchAuthorityCodeException, FactoryException{
 
-        if (gml instanceof PointType){
-            return toJTS((PointType)gml, -1);
-        } else if(gml instanceof LineStringType){
-            return toJTS((LineStringType)gml);
-        } else if(gml instanceof PolygonType){
-            return toJTS((PolygonType)gml);
-        
+        if (gml instanceof org.geotoolkit.gml.xml.Point){
+            return toJTS((org.geotoolkit.gml.xml.Point)gml, -1);
+        } else if(gml instanceof org.geotoolkit.gml.xml.LineString){
+            return toJTS((org.geotoolkit.gml.xml.LineString)gml);
+        } else if(gml instanceof org.geotoolkit.gml.xml.Polygon){
+            return toJTS((org.geotoolkit.gml.xml.Polygon)gml);
 
-        } else if(gml instanceof MultiPointType){
-            return toJTS((MultiPointType)gml);
-        } else if(gml instanceof MultiLineStringType){
-            return toJTS((MultiLineStringType)gml);
-        } else if(gml instanceof MultiCurveType){
-            return toJTS((MultiCurveType)gml);
-        } else if(gml instanceof MultiPolygonType){
-            return toJTS((MultiPolygonType)gml);
-        } else if(gml instanceof MultiSurfaceType){
-            return toJTS((MultiSurfaceType)gml);
-        
-        } else if(gml instanceof LinearRingType){
-            return toJTS((LinearRingType)gml);
+
+        } else if(gml instanceof org.geotoolkit.gml.xml.MultiPoint){
+            return toJTS((org.geotoolkit.gml.xml.MultiPoint)gml);
+        } else if(gml instanceof org.geotoolkit.gml.xml.MultiLineString){
+            return toJTS((org.geotoolkit.gml.xml.MultiLineString)gml);
+        } else if(gml instanceof org.geotoolkit.gml.xml.MultiCurve){
+            return toJTS((org.geotoolkit.gml.xml.MultiCurve)gml);
+        } else if(gml instanceof org.geotoolkit.gml.xml.MultiPolygon){
+            return toJTS((org.geotoolkit.gml.xml.MultiPolygon)gml);
+        } else if(gml instanceof MultiSurface){
+            return toJTS((MultiSurface)gml);
+
+        } else if(gml instanceof org.geotoolkit.gml.xml.LinearRing){
+            return toJTS((org.geotoolkit.gml.xml.LinearRing)gml);
 
         } else {
             throw new IllegalArgumentException("Unssupported geometry type : " + gml);
@@ -166,7 +140,7 @@ public class GeometrytoJTS {
 
     }
 
-    public static Point toJTS(final PointType gmlPoint, final int parentSrid) throws NoSuchAuthorityCodeException, FactoryException{
+    public static Point toJTS(final org.geotoolkit.gml.xml.Point gmlPoint, final int parentSrid) throws NoSuchAuthorityCodeException, FactoryException{
         final String crsName;
         if (parentSrid == -1) {
             crsName = gmlPoint.getSrsName();
@@ -187,7 +161,7 @@ public class GeometrytoJTS {
         if (gmlPoint.getCoordinates() != null) {
             final String coord = gmlPoint.getCoordinates().getValue();
 
-            final StringTokenizer tokens = new StringTokenizer(coord, " ");
+            final StringTokenizer tokens = new StringTokenizer(coord, ",");
             int index = 0;
             while (tokens.hasMoreTokens()) {
                 final double value = parseDouble(tokens.nextToken());
@@ -217,10 +191,10 @@ public class GeometrytoJTS {
 
         return pt;
     }
-    
-    public static Polygon toJTS(final PolygonType gml) throws FactoryException{
-        final AbstractRingPropertyType ext = gml.getExterior();
-        final List<AbstractRingPropertyType> ints = gml.getInterior();
+
+    public static Polygon toJTS(final org.geotoolkit.gml.xml.Polygon gml) throws FactoryException{
+        final AbstractRingProperty ext = gml.getExterior();
+        final List<? extends AbstractRingProperty> ints = gml.getInterior();
 
         final LinearRing exterior = toJTS(ext.getAbstractRing());
         final LinearRing[] holes = new LinearRing[ints.size()];
@@ -235,51 +209,34 @@ public class GeometrytoJTS {
             final int srid = SRIDGenerator.toSRID(crs, SRIDGenerator.Version.V1);
             polygon.setSRID(srid);
         }
-
         return polygon;
     }
 
-    public static LineString toJTS(final LineStringType gmlLine) throws FactoryException{
+    public static LineString toJTS(final org.geotoolkit.gml.xml.LineString gmlLine) throws FactoryException{
         final String crsName = gmlLine.getSrsName();
         if (crsName == null) {
             throw new FactoryException("A CRS (coordinate Reference system) must be specified for the line.");
         }
 
         final com.vividsolutions.jts.geom.LineString ls;
-        final CoordinatesType coord = gmlLine.getCoordinates();
+        final Coordinates coord = gmlLine.getCoordinates();
         if(coord != null){
-            String s = coord.getValue();
-            final String cs;
-            if (coord.getCs() == null) {
-                cs = ",";
-            } else {
-                cs = coord.getCs();
+
+            final List<Double> values = coord.getValues();
+            final Coordinate[] coordinates = new Coordinate[values.size() / 2];
+            if (values != null && !values.isEmpty()) {
+                int cpt = 0;
+                for (int i=0; i < values.size(); i = i + 2) {
+                    coordinates[cpt] = new Coordinate(values.get(i), values.get(i + 1));
+                    cpt++;
+                }
             }
-            int csIndex = s.indexOf(cs);
-            double x1 = Double.parseDouble(s.substring(0, csIndex));
-
-            final String ts;
-            if (coord.getTs() == null) {
-                ts = " ";
-            } else {
-                ts = coord.getTs();
-            }
-
-            int tsIndex =  s.indexOf(ts, csIndex);
-            double y1 = Double.parseDouble(s.substring(csIndex + 1, tsIndex));
-
-            csIndex = s.indexOf(cs, tsIndex + 1);
-            double x2 = Double.parseDouble(s.substring(tsIndex + 1, csIndex));
-            double y2 = Double.parseDouble(s.substring(csIndex + 1));
 
             final int srid = SRIDGenerator.toSRID(crsName, Version.V1);
-            ls = GF.createLineString(new Coordinate[]{
-                new Coordinate(x1,y1),
-                new Coordinate(x2,y2)
-            });
+            ls = GF.createLineString(coordinates);
             ls.setSRID(srid);
-        }else{
-            final DirectPositionListType dplt = gmlLine.getPosList();
+        } else {
+            final DirectPositionList dplt = gmlLine.getPosList();
             final int dim = gmlLine.getCoordinateDimension();
             final List<Coordinate> coords = toJTSCoords(dplt, dim);
 
@@ -293,19 +250,19 @@ public class GeometrytoJTS {
         return ls;
     }
 
-    public static List<LineString> toJTS(final CurveType gmlLine) throws FactoryException{
+    public static List<LineString> toJTS(final Curve gmlLine) throws FactoryException{
         final String crsName = gmlLine.getSrsName();
         if (crsName == null) {
             throw new FactoryException("A CRS (coordinate Reference system) must be specified for the line.");
         }
         final List<com.vividsolutions.jts.geom.LineString> lineList = new ArrayList<com.vividsolutions.jts.geom.LineString>();
-        final CurveSegmentArrayPropertyType arrayProperty = gmlLine.getSegments();
-        List<? extends AbstractCurveSegmentType> segments = arrayProperty.getAbstractCurveSegment();
-        for (AbstractCurveSegmentType segment : segments) {
-            if (segment instanceof LineStringSegmentType) {
-                final LineStringSegmentType lineSegment = (LineStringSegmentType) segment;
+        final CurveSegmentArrayProperty arrayProperty = gmlLine.getSegments();
+        List<? extends AbstractCurveSegment> segments = arrayProperty.getAbstractCurveSegment();
+        for (AbstractCurveSegment segment : segments) {
+            if (segment instanceof LineStringSegment) {
+                final LineStringSegment lineSegment = (LineStringSegment) segment;
                 final com.vividsolutions.jts.geom.LineString ls;
-                final CoordinatesType coord = lineSegment.getCoordinates();
+                final Coordinates coord = lineSegment.getCoordinates();
                 if (coord != null) {
                     String s = coord.getValue();
                     final String cs;
@@ -338,7 +295,7 @@ public class GeometrytoJTS {
                             });
                     ls.setSRID(srid);
                 } else {
-                    final DirectPositionListType dplt = lineSegment.getPosList();
+                    final DirectPositionList dplt = lineSegment.getPosList();
                     final int dim = gmlLine.getCoordinateDimension();
                     final List<Coordinate> coords = toJTSCoords(dplt, dim);
 
@@ -354,7 +311,7 @@ public class GeometrytoJTS {
         return lineList;
     }
 
-    public static List<Coordinate> toJTSCoords(final DirectPositionListType lst, final int dim){
+    public static List<Coordinate> toJTSCoords(final DirectPositionList lst, final int dim){
         final List<Double> values = lst.getValue();
         final List<Coordinate> coords = new ArrayList<Coordinate>();
 
@@ -364,8 +321,8 @@ public class GeometrytoJTS {
         return coords;
     }
 
-    public static MultiPoint toJTS(final MultiPointType gml) throws NoSuchAuthorityCodeException, FactoryException{
-        final List<PointPropertyType> pos = gml.getPointMember();
+    public static MultiPoint toJTS(final org.geotoolkit.gml.xml.MultiPoint gml) throws NoSuchAuthorityCodeException, FactoryException{
+        final List<? extends PointProperty> pos = gml.getPointMember();
         final Point[] members = new Point[pos.size()];
 
         final CoordinateReferenceSystem crs = gml.getCoordinateReferenceSystem();
@@ -379,7 +336,7 @@ public class GeometrytoJTS {
         for(int i=0,n=pos.size(); i<n; i++){
             members[i] = toJTS(pos.get(i).getPoint(), srid);
         }
-        
+
         final MultiPoint geom = GF.createMultiPoint(members);
         if (srid != -1){
             geom.setSRID(srid);
@@ -388,8 +345,8 @@ public class GeometrytoJTS {
         return geom;
     }
 
-    public static MultiLineString toJTS(final MultiLineStringType gml) throws FactoryException{
-        final List<LineStringPropertyType> pos = gml.getLineStringMember();
+    public static MultiLineString toJTS(final org.geotoolkit.gml.xml.MultiLineString gml) throws FactoryException{
+        final List<? extends LineStringProperty> pos = gml.getLineStringMember();
         final LineString[] members = new LineString[pos.size()];
 
         for(int i=0,n=pos.size(); i<n; i++){
@@ -407,16 +364,16 @@ public class GeometrytoJTS {
         return geom;
     }
 
-    public static MultiLineString toJTS(final MultiCurveType gml) throws FactoryException{
-        final List<CurvePropertyType> pos = gml.getCurveMember();
+    public static MultiLineString toJTS(final org.geotoolkit.gml.xml.MultiCurve gml) throws FactoryException{
+        final List<? extends CurveProperty> pos = gml.getCurveMember();
         final List<LineString> members = new ArrayList<LineString>();
 
         for (int i=0,n=pos.size(); i<n; i++) {
-            AbstractCurveType curve = pos.get(i).getAbstractCurve();
-            if (curve instanceof LineStringType) {
-                members.add(toJTS((LineStringType)curve));
-            } else if (curve instanceof CurveType) {
-                members.addAll(toJTS((CurveType)curve));
+            AbstractCurve curve = pos.get(i).getAbstractCurve();
+            if (curve instanceof org.geotoolkit.gml.xml.LineString) {
+                members.add(toJTS((org.geotoolkit.gml.xml.LineString)curve));
+            } else if (curve instanceof org.geotoolkit.gml.xml.Curve) {
+                members.addAll(toJTS((org.geotoolkit.gml.xml.Curve)curve));
             } else {
                 throw new IllegalArgumentException("unexpected Curve type:" + curve);
             }
@@ -433,8 +390,8 @@ public class GeometrytoJTS {
         return geom;
     }
 
-    public static MultiPolygon toJTS(final MultiPolygonType gml) throws FactoryException{
-        final List<PolygonPropertyType> pos = gml.getPolygonMember();
+    public static MultiPolygon toJTS(final org.geotoolkit.gml.xml.MultiPolygon gml) throws FactoryException{
+        final List<? extends PolygonProperty> pos = gml.getPolygonMember();
         final Polygon[] members = new Polygon[pos.size()];
 
         for (int i=0,n=pos.size(); i<n; i++) {
@@ -452,12 +409,12 @@ public class GeometrytoJTS {
         return geom;
     }
 
-    public static MultiPolygon toJTS(final MultiSurfaceType gml) throws FactoryException{
-        final List<SurfacePropertyType> pos = gml.getSurfaceMember();
+    public static MultiPolygon toJTS(final MultiSurface gml) throws FactoryException{
+        final List<? extends SurfaceProperty> pos = gml.getSurfaceMember();
         final Polygon[] members = new Polygon[pos.size()];
 
         for (int i=0,n=pos.size(); i<n; i++) {
-            members[i] = toJTS((PolygonType)pos.get(i).getAbstractSurface());
+            members[i] = toJTS((org.geotoolkit.gml.xml.Polygon)pos.get(i).getAbstractSurface());
         }
 
         final MultiPolygon geom             = GF.createMultiPolygon(members);
@@ -470,26 +427,35 @@ public class GeometrytoJTS {
         return geom;
     }
 
-    public static LinearRing toJTS(final AbstractRingType gml) throws FactoryException{
-        if(gml instanceof LinearRingType){
-            return toJTS((LinearRingType)gml);
-        }else if(gml instanceof RingType){
-            return toJTS((RingType)gml);
+    public static LinearRing toJTS(final AbstractRing gml) throws FactoryException{
+        if(gml instanceof org.geotoolkit.gml.xml.LinearRing){
+            return toJTS((org.geotoolkit.gml.xml.LinearRing)gml);
+        }else if(gml instanceof Ring){
+            return toJTS((Ring)gml);
         }else{
-            Logging.getLogger(GeometrytoJTS.class).log(Level.WARNING, "Unssupported geometry type : {0}", gml);
+            LOGGER.log(Level.WARNING, "Unssupported geometry type : {0}", gml);
             return GF.createLinearRing(new Coordinate[]{new Coordinate(0, 0),new Coordinate(0, 0),
             new Coordinate(0, 0),new Coordinate(0, 0)});
         }
 
     }
 
-    public static LinearRing toJTS(final LinearRingType gml){
-        final DirectPositionListType lst = gml.getPosList();
-        final int dim = gml.getCoordinateDimension();
+    public static LinearRing toJTS(final org.geotoolkit.gml.xml.LinearRing gml){
+        final List<Double> values;
+        final DirectPositionList lst = gml.getPosList();
+        final Coordinates cds        = gml.getCoordinates();
+        if (lst != null) {
+            values = lst.getValue();
+        } else if (cds != null) {
+            values = cds.getValues();
+        } else {
+            values = new ArrayList<Double>();
+            LOGGER.warning("no coordinates available for linear ring");
+        }
 
-        final List<Double> values = lst.getValue();
-        final List<Coordinate> coords = new ArrayList<Coordinate>();
-        
+
+        final int dim = gml.getCoordinateDimension();
+        final List<Coordinate> coords = new ArrayList<Coordinate>(dim);
         for (int i=0,n=values.size(); i<n; i+=dim) {
             coords.add( new Coordinate(values.get(i), values.get(i+1)) );
         }
@@ -505,17 +471,16 @@ public class GeometrytoJTS {
         return ring;
     }
 
-    public static LinearRing toJTS(final RingType gml) throws FactoryException {
+    public static LinearRing toJTS(final Ring gml) throws FactoryException {
 
         final LinkedList<Coordinate> coords = new LinkedList<Coordinate>();
 
-        for(CurvePropertyType cpt :gml.getCurveMember()){
-            AbstractCurveType act = cpt.getAbstractCurve();
+        for (CurveProperty cpt :gml.getCurveMember()){
+            AbstractCurve act = cpt.getAbstractCurve();
 
-            if (act instanceof CurveType) {
-                final CurveType ct = (CurveType) act;
-                for(JAXBElement<? extends AbstractCurveSegmentType> jax : ct.getSegments().getJbAbstractCurveSegment()){
-                    AbstractCurveSegmentType acst = jax.getValue();
+            if (act instanceof Curve) {
+                final Curve ct = (Curve) act;
+                for(AbstractCurveSegment acst : ct.getSegments().getAbstractCurveSegment()){
 
                     if(acst instanceof ClothoidType){
                         throw new IllegalArgumentException("ClothoidType not supported yet");
@@ -525,11 +490,11 @@ public class GeometrytoJTS {
                         throw new IllegalArgumentException("CubicSplineType not supported yet");
                     } else if (acst instanceof GeodesicStringType){
                         throw new IllegalArgumentException("GeodesicStringType not supported yet");
-                    } else if (acst instanceof LineStringSegmentType){
-                        final LineStringSegmentType lsst = (LineStringSegmentType)acst;
+                    } else if (acst instanceof LineStringSegment){
+                        final LineStringSegment lsst = (LineStringSegment)acst;
 
                         if (lsst.getPosList() != null) {
-                            final DirectPositionListType dpst = lsst.getPosList();
+                            final DirectPositionList dpst = lsst.getPosList();
                             final int dim = ct.getCoordinateDimension();
                             final List<Coordinate> plots = toJTSCoords(dpst, dim);
 
@@ -551,20 +516,20 @@ public class GeometrytoJTS {
                         } else {
 
                             if(coords.isEmpty()){
-                                for (DirectPositionType pos : lsst.getPos()) {
+                                for (DirectPosition pos : lsst.getPos()) {
                                     coords.add(new Coordinate(pos.getOrdinate(0), pos.getOrdinate(1)));
                                 }
-                                if (lsst.getPointPropertyOrPointRep().size() > 0) {
+                                if (!lsst.getRest().isEmpty()) {
                                     throw new IllegalArgumentException("not supported yet");
                                 }
                             } else {
-                                for(DirectPositionType pos : lsst.getPos()){
+                                for(DirectPosition pos : lsst.getPos()){
                                     final Coordinate c = new Coordinate(pos.getOrdinate(0), pos.getOrdinate(1));
                                     if (!c.equals2D(coords.getLast())){
                                         coords.add(c);
                                     }
                                 }
-                                if (lsst.getPointPropertyOrPointRep().size() > 0) {
+                                if (!lsst.getRest().isEmpty()) {
                                     throw new IllegalArgumentException("not supported yet");
                                 }
                             }
@@ -579,11 +544,11 @@ public class GeometrytoJTS {
                     } else if (acst instanceof ArcStringByBulgeType){
                         throw new IllegalArgumentException("not supported yet");
                     } else{
-                        throw new IllegalArgumentException("not supported yet");
+                        throw new IllegalArgumentException("not supported yet:" + acst);
                     }
                 }
-            } else if(act instanceof LineStringType) {
-                final LineString ls = toJTS((LineStringType)act);
+            } else if(act instanceof org.geotoolkit.gml.xml.LineString) {
+                final LineString ls = toJTS((org.geotoolkit.gml.xml.LineString)act);
                 final Coordinate[] plots = ls.getCoordinates();
 
                 if(coords.isEmpty()) {
@@ -601,7 +566,7 @@ public class GeometrytoJTS {
                         }
                     }
                 }
-            } else if(act instanceof OrientableCurveType) {
+            } else if(act instanceof OrientableCurve) {
                 throw new IllegalArgumentException("not supported yet");
             }
         }

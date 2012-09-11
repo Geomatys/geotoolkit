@@ -27,9 +27,11 @@ import org.geotoolkit.ncwms.v130.NcGetLegend130;
 import org.geotoolkit.ncwms.v130.NcGetMap130;
 import org.geotoolkit.ncwms.v130.NcGetTimeseries130;
 import org.geotoolkit.security.ClientSecurity;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
 import org.geotoolkit.wms.xml.WMSVersion;
 import org.geotoolkit.wms.WebMapServer;
+import org.opengis.feature.type.Name;
 
 
 /**
@@ -94,6 +96,15 @@ public class NcWebMapServer extends WebMapServer{
         super(wms.getURL(), wms.getVersion(), cap);
     }
    
+    @Override
+    public NcWMSCoverageReference getCoverageReference(Name name) throws DataStoreException {
+        if(getNames().contains(name)){
+            return new NcWMSCoverageReference(this,name);
+        }
+        throw new DataStoreException("No layer for name : " + name);
+    }
+
+    
     /**
      * {@inheritDoc }
      */
@@ -103,10 +114,10 @@ public class NcWebMapServer extends WebMapServer{
         switch (getVersion()) {
             
             case v111:
-                return new NcGetMap111(getURI().toString(),securityManager);
+                return new NcGetMap111(getURI().toString(),getClientSecurity());
                 
             case v130:
-                return new NcGetMap130(getURI().toString(),securityManager);
+                return new NcGetMap130(getURI().toString(),getClientSecurity());
                 
             default:
                 throw new IllegalArgumentException("Version was not defined");
@@ -122,17 +133,16 @@ public class NcWebMapServer extends WebMapServer{
         switch (getVersion()) {
             
             case v111:
-                return new NcGetLegend111(getURI().toString(),securityManager);
+                return new NcGetLegend111(getURI().toString(),getClientSecurity());
                 
             case v130:
-                return new NcGetLegend130(getURI().toString(),securityManager);
+                return new NcGetLegend130(getURI().toString(),getClientSecurity());
                 
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
     }
 
-    
     /**
      * {@inheritDoc }
      */
@@ -142,10 +152,10 @@ public class NcWebMapServer extends WebMapServer{
         switch (getVersion()) {
             
             case v111:
-                return new NcGetFeatureInfo111(getURI().toString(),securityManager);
+                return new NcGetFeatureInfo111(getURI().toString(),getClientSecurity());
                 
             case v130:
-                return new NcGetFeatureInfo130(getURI().toString(),securityManager);
+                return new NcGetFeatureInfo130(getURI().toString(),getClientSecurity());
                 
             default:
                 throw new IllegalArgumentException("Version was not defined");
@@ -199,10 +209,10 @@ public class NcWebMapServer extends WebMapServer{
         switch (getVersion()) {
             
             case v111:
-                return new NcGetTimeseries111(getURI().toString(),securityManager);
+                return new NcGetTimeseries111(getURI().toString(),getClientSecurity());
                 
             case v130:
-                return new NcGetTimeseries130(getURI().toString(),securityManager);
+                return new NcGetTimeseries130(getURI().toString(),getClientSecurity());
                 
             default:
                 throw new IllegalArgumentException("Version was not defined");

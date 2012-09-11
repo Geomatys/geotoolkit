@@ -2,7 +2,6 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2004 - 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2008 - 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -17,7 +16,6 @@
  */
 package org.geotoolkit.display2d.style;
 
-import org.geotoolkit.display2d.GO2Utilities;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Paint;
@@ -25,14 +23,14 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.TexturePaint;
 import java.awt.image.BufferedImage;
-
+import org.geotoolkit.display2d.GO2Utilities;
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.Fill;
 import org.opengis.style.GraphicFill;
 
 /**
  * Cached Fill.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
@@ -64,7 +62,7 @@ public class CachedFill extends Cache<Fill>{
             requieredAttributs = EMPTY_ATTRIBUTS;
             isStatic = true;
         }
-        
+
         isNotEvaluated = false;
     }
 
@@ -78,14 +76,14 @@ public class CachedFill extends Cache<Fill>{
             float j2dOpacity = GO2Utilities.evaluate(opacity, null, Float.class, 1f);
 
             //we return false, opacity is 0 no need to cache or draw anything
-            if(j2dOpacity == 0){
+            if(j2dOpacity <= 0){
                 isStaticVisible = VisibilityState.UNVISIBLE;
                 return false;
             }
 
-            //this style is visible 
+            //this style is visible
             if(isStaticVisible == VisibilityState.NOT_DEFINED) isStaticVisible = VisibilityState.VISIBLE;
-            
+
             //we cache the composite
             cachedComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, j2dOpacity);
         }else{
@@ -102,12 +100,12 @@ public class CachedFill extends Cache<Fill>{
      * @return false if it's not even necessary to paint anything.
      */
     private boolean evaluatePaint(){
-        
+
         final GraphicFill graphicFill = styleElement.getGraphicFill();
 
         if(graphicFill != null && graphicFill != null){
             cachedGraphic = CachedGraphic.cache(graphicFill);
-                        
+
             switch(cachedGraphic.isStaticVisible()){
                 //graphic is not visible even if some value are dynamic, this fill is not visible neither
                 case UNVISIBLE :
@@ -117,8 +115,8 @@ public class CachedFill extends Cache<Fill>{
                 case DYNAMIC :
                     if(isStaticVisible != VisibilityState.UNVISIBLE) isStaticVisible = VisibilityState.DYNAMIC;
                     break;
-                //this graphic is visible 
-                default : 
+                //this graphic is visible
+                default :
                     if(isStaticVisible == VisibilityState.NOT_DEFINED) isStaticVisible = VisibilityState.VISIBLE;
             }
 
@@ -126,12 +124,12 @@ public class CachedFill extends Cache<Fill>{
 
         }else{
             final Expression expColor = styleElement.getColor();
-            
+
             if(GO2Utilities.isStatic(expColor)){
                 Color j2dColor = GO2Utilities.evaluate(expColor, null, Color.class, Color.BLACK);
 
                 //we return false, opacity is 0 no need to cache or draw anything
-                if( j2dColor.getAlpha() == 0 ){
+                if( j2dColor.getAlpha() <= 0 ){
                     isStaticVisible = VisibilityState.UNVISIBLE;
                     return false;
                 }
@@ -139,13 +137,13 @@ public class CachedFill extends Cache<Fill>{
                 //this style is visible even if something else is dynamic
                 //evaluatePaint may change this value
                 if(isStaticVisible == VisibilityState.NOT_DEFINED) isStaticVisible = VisibilityState.VISIBLE;
-                
+
                 //we cache the paint
                 cachedPaint = j2dColor;
             }else{
                 //this style visibility is dynamic
                 if(isStaticVisible != VisibilityState.UNVISIBLE) isStaticVisible = VisibilityState.DYNAMIC;
-                
+
                 isStatic = false;
                 GO2Utilities.getRequieredAttributsName(expColor,requieredAttributs);
             }
@@ -160,8 +158,8 @@ public class CachedFill extends Cache<Fill>{
     @Override
     public boolean isVisible(final Object candidate){
         evaluate();
-        
-        
+
+
         if(isStaticVisible == VisibilityState.VISIBLE){
             //visible whatever feature we have
             return true;
@@ -170,14 +168,14 @@ public class CachedFill extends Cache<Fill>{
             return false;
         }else{
             //dynamic visibility
-            
+
             //test dynamic composite
             if(cachedComposite == null){
                 final Expression opacity = styleElement.getOpacity();
                 Float j2dOpacity = GO2Utilities.evaluate(opacity, candidate, Float.class, 1f);
-                if(j2dOpacity == 0) return false;
+                if(j2dOpacity <= 0) return false;
             }
-            
+
             //test dynamic paint
             if(cachedPaint == null){
                 final Expression expColor = styleElement.getColor();
@@ -188,13 +186,13 @@ public class CachedFill extends Cache<Fill>{
                 } else {
                     //or it's a normal plain inside
                     Color color = GO2Utilities.evaluate(expColor, null, Color.class, Color.BLACK);
-                    if(color.getAlpha() == 0) return false;
+                    if(color.getAlpha() <= 0) return false;
                 }
             }
-            
+
             return true;
         }
-        
+
     }
 
     /**
@@ -214,16 +212,16 @@ public class CachedFill extends Cache<Fill>{
     }
 
     /**
-     * 
+     *
      * @return true if the paint is a texture, in this case X/Y value must be correct
      * when calling getJ2DPaint method.
      */
     public boolean isMosaic(){
         return cachedPaint != null && cachedGraphic != null;
     }
-    
+
     /**
-     * 
+     *
      * @return Java2D paint for this feature
      */
     public Paint getJ2DPaint(final Object candidate, final int x, final int y, final float coeff, final RenderingHints hints){

@@ -59,6 +59,12 @@ public class Post  extends AbstractProtocol {
     Post() {
     }
 
+    public Post(final Post that) {
+        if (that != null && that.onlineResource != null) {
+            this.onlineResource = new OnlineResource(that.onlineResource);
+        }
+    }
+    
     /**
      * Build a new Post object.
      */

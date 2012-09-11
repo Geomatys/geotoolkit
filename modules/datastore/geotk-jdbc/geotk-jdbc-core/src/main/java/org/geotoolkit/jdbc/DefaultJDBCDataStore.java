@@ -36,6 +36,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
 
+import org.geotoolkit.data.DataStoreFactory;
+import org.geotoolkit.data.DataStoreFinder;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.jdbc.fid.PrimaryKey;
 import org.geotoolkit.jdbc.fid.PrimaryKeyColumn;
@@ -68,6 +70,7 @@ import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
 import org.geotoolkit.filter.visitor.CapabilitiesFilterSplitter;
+import org.geotoolkit.filter.visitor.FIDFixVisitor;
 import org.geotoolkit.filter.visitor.FilterAttributeExtractor;
 import org.geotoolkit.filter.visitor.SimplifyingFilterVisitor;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
@@ -88,6 +91,7 @@ import org.opengis.filter.Filter;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.geometry.Envelope;
+import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -107,9 +111,16 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
     private final DataBaseModel dbmodel = new DataBaseModel(this);
     private final QueryCapabilities capabilities = new DefaultQueryCapabilities(true, new String[]{Query.GEOTK_QOM, CUSTOM_SQL});
     final SQLQueryBuilder queryBuilder = new SQLQueryBuilder(this);
+    private final String factoryId;
 
-    DefaultJDBCDataStore(final String namespace){
-        super(namespace);
+    DefaultJDBCDataStore(final ParameterValueGroup params,final String factoryId){
+        super(params);
+        this.factoryId =factoryId;
+    }
+
+    @Override
+    public DataStoreFactory getFactory() {
+        return DataStoreFinder.getFactoryById(factoryId);
     }
 
     @Override
@@ -356,8 +367,14 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
         final SimpleFeatureType type = (SimpleFeatureType) getFeatureType(query.getTypeName());
         final PrimaryKey pkey = dbmodel.getPrimaryKey(query.getTypeName());
 
+        //replace any PropertyEqualsTo in true ID filters
+        Filter baseFilter = query.getFilter();
+        final FIDFixVisitor visitor = new FIDFixVisitor();
+        baseFilter = (Filter) baseFilter.accept(visitor, null);
+        
+        
         // split the filter
-        final Filter[] split = splitFilter(query.getFilter(),type);
+        final Filter[] split = splitFilter(baseFilter,type);
         final Filter preFilter = split[0];
         final Filter postFilter = split[1];
 
@@ -485,10 +502,9 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
         final String sql = stmt.getStatement();
         
         try {
-            final SimpleFeatureType sft = (SimpleFeatureType) getFeatureType(query);
-            final PrimaryKey pk = new NullPrimaryKey(sft.getTypeName());
+            final PrimaryKey pk = new NullPrimaryKey(query.getTypeName().getLocalPart());
             final Connection cx = getDataSource().getConnection();
-            final JDBCFeatureReader reader = new JDBCFeatureReader(sql, cx, this, null, sft, pk, null);
+            final JDBCFeatureReader reader = new JDBCFeatureReader(sql, cx, this, query.getTypeName(), null, pk, null);
             return reader;
         } catch (SchemaException ex) {
             throw new DataStoreException(ex);
@@ -695,6 +711,16 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
      */
     @Override
     public Envelope getEnvelope(final Query query) throws DataStoreException, DataStoreRuntimeException {
+        if(CUSTOM_SQL.equalsIgnoreCase(query.getLanguage())){
+            //can not optimize this query
+            final FeatureReader reader = getSQLFeatureReader(query);
+            try{
+                return DataUtilities.calculateEnvelope(reader);
+            }finally{
+                reader.close();
+            }
+        }
+        
         typeCheck(query.getTypeName());
         final SimpleFeatureType type = (SimpleFeatureType) getFeatureType(query.getTypeName());
 

@@ -110,23 +110,34 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
     /**
      * Gets the value of the acceptVersions property.
      */
+    @Override
     public AcceptVersionsType getAcceptVersions() {
         return acceptVersions;
     }
 
+    public void setAcceptVersions(final AcceptVersionsType acceptVersions) {
+        this.acceptVersions = acceptVersions;
+    }
+    
     /**
      * Gets the value of the sections property.
      */
+    @Override
     public SectionsType getSections() {
         return sections;
     }
 
+    public void setSections(final SectionsType sections) {
+        this.sections = sections;
+    }
+    
     /**
      * Return true if the request contains the specified section.
      *
      * @param sectionName The name of the searched section.
      * @return true if the request contains the specified section.
      */
+    @Override
     public boolean containsSection(final String sectionName) {
         if (sections != null) {
             return sections.containsSection(sectionName);
@@ -137,13 +148,19 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
    /**
     * Gets the value of the acceptFormats property.
     */
+    @Override
     public AcceptFormatsType getAcceptFormats() {
         return acceptFormats;
+    }
+
+    public void setAcceptFormats(final AcceptFormatsType acceptFormats) {
+        this.acceptFormats = acceptFormats;
     }
 
     /**
     * Return the first outputFormat of the is if there is one
     */
+    @Override
     public String getFirstAcceptFormat() {
         if (acceptFormats != null) {
             if (acceptFormats.getOutputFormat().size() > 0) {
@@ -156,6 +173,7 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
     /**
      * Gets the value of the updateSequence property.
      */
+    @Override
     public String getUpdateSequence() {
         return updateSequence;
     }
@@ -168,6 +186,7 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
      *     {@link String }
      *
      */
+    @Override
     public String getService() {
         return service;
     }
@@ -180,6 +199,7 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
      *     {@link String }
      *
      */
+    @Override
     public void setService(final String value) {
         this.service = value;
     }

@@ -16,20 +16,18 @@
  */
 package org.geotoolkit.process.jts.lenght;
 
-import org.geotoolkit.process.ProcessException;
-import org.opengis.util.NoSuchIdentifierException;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import org.geotoolkit.process.ProcessDescriptor;
+import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.process.jts.AbstractProcessTest;
-
-import org.opengis.parameter.ParameterValueGroup;
-
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
-import static org.junit.Assert.*;
+import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.util.NoSuchIdentifierException;
 
 /**
  * JUnit test of lenght process
@@ -59,7 +57,6 @@ public class LenghtTest extends AbstractProcessTest{
         
         final Geometry geom1 = fact.createPolygon(ring, null) ;
         
-      
         // Process
         final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("jts", "lenght");
 
@@ -69,7 +66,6 @@ public class LenghtTest extends AbstractProcessTest{
 
         //result
         final Double result = (Double) proc.call().parameter("result").getValue();
-       
         
         final Double expected = geom1.getLength();
         

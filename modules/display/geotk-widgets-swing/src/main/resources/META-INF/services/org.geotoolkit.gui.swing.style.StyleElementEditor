@@ -1,0 +1,13 @@
+
+# global style elements
+org.geotoolkit.gui.swing.style.JStylePane
+org.geotoolkit.gui.swing.style.JFeatureTypeStylePane
+org.geotoolkit.gui.swing.style.JRulePane
+
+# symbolizer editors
+org.geotoolkit.gui.swing.style.JTextSymbolizerPane
+org.geotoolkit.gui.swing.style.JPolygonSymbolizerPane
+org.geotoolkit.gui.swing.style.JPointSymbolizerPane
+org.geotoolkit.gui.swing.style.JLineSymbolizerPane
+org.geotoolkit.gui.swing.style.JRasterSymbolizerPane
+org.geotoolkit.gui.swing.style.JRasterSymbolizerPane

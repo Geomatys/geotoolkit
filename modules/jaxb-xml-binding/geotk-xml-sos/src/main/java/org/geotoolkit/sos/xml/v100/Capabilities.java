@@ -68,15 +68,17 @@ public class Capabilities extends CapabilitiesBaseType implements SOSResponse {
      */
     public Capabilities() {}
     
-     /**
-     * An empty constructor used by JAXB
-     */
+    public Capabilities(final String version, final String updateSequence) {
+        super(version, updateSequence);
+                    
+    }
+    
     public Capabilities(final ServiceIdentification serviceIdentification, final ServiceProvider serviceProvider,
             final OperationsMetadata operationsMetadata, final String version, final String updateSequence, final FilterCapabilities filterCapabilities,
             final Contents contents) {
-            super(serviceIdentification, serviceProvider, operationsMetadata, version, updateSequence);
-            this.contents           = contents;
-            this.filterCapabilities = filterCapabilities;
+        super(serviceIdentification, serviceProvider, operationsMetadata, version, updateSequence);
+        this.contents           = contents;
+        this.filterCapabilities = filterCapabilities;
                     
     }
 

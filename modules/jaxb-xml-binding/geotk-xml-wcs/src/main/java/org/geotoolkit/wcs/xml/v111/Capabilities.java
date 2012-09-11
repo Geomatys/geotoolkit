@@ -66,6 +66,13 @@ public class Capabilities extends CapabilitiesBaseType implements GetCapabilitie
     /**
      * Build a new Capabilities document.
      */
+    public Capabilities(final String version, final String updateSequence) {
+        super(null, null, null, version, updateSequence);
+    }
+    
+    /**
+     * Build a new Capabilities document.
+     */
     public Capabilities(final ServiceIdentification serviceIdentification, final ServiceProvider serviceProvider,
             final OperationsMetadata operationsMetadata, final String version, final String updateSequence, final Contents contents) {
         super(serviceIdentification, serviceProvider, operationsMetadata, version, updateSequence);

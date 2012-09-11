@@ -154,7 +154,6 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
         final CoordinateReferenceSystem axis = getModel().getCRS();
         
         if(layer instanceof CoverageMapLayer){
-            final CoverageMapLayer cml = (CoverageMapLayer) layer;
             final Envelope env = layer.getBounds();                        
             
             Double min = null;
@@ -163,18 +162,11 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
             final CoordinateSystem cs = env.getCoordinateReferenceSystem().getCoordinateSystem();
             for(int i=0;i<cs.getDimension();i++){
                 CoordinateSystemAxis csa = cs.getAxis(i);
-                final AxisDirection direction = csa.getDirection();
                 
-                if(axis instanceof TemporalCRS){
-                    if(!(AxisDirection.FUTURE.equals(direction) || AxisDirection.PAST.equals(direction))){
-                        csa = null;
-                    }
-                }else if(axis instanceof VerticalCRS){
-                    if(!(AxisDirection.UP.equals(direction) || AxisDirection.DOWN.equals(direction))){
-                        csa = null;
-                    }
+                if(!csa.getName().getCode().equalsIgnoreCase(axis.getName().getCode())){
+                    continue;
                 }
-                
+                                
                 if(csa instanceof DiscreteCoordinateSystemAxis){
                     final DiscreteCoordinateSystemAxis dcsa = (DiscreteCoordinateSystemAxis) csa;
                     for(int k=0;k<dcsa.length();k++){
@@ -193,6 +185,8 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
                         }
                     }
                 }
+                
+                break;
             }
             
             if(min != null && max != null){
@@ -483,8 +477,8 @@ public class JLayerBand extends JNavigatorBand implements LayerListener{
                             JNavigator navi = JLayerBand.this.getNavigator();
                             if(navi instanceof JMapTimeLine){
                                 ((JMapTimeLine)navi).moveTo(new Date(pc.longValue()));
-                            }else if(navi instanceof JMapElevationLine){
-                                ((JMapElevationLine)navi).moveTo(pc);
+                            }else if(navi instanceof JMapAxisLine){
+                                ((JMapAxisLine)navi).moveTo(pc);
                             }
                         }
                     });

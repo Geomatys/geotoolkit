@@ -27,7 +27,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 
 /**

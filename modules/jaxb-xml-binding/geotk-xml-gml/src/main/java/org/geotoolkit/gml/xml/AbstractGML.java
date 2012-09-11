@@ -17,7 +17,6 @@
 package org.geotoolkit.gml.xml;
 
 import org.geotoolkit.gml.xml.v311.CodeType;
-import org.geotoolkit.gml.xml.v311.ReferenceType;
 
 /**
  *
@@ -38,7 +37,7 @@ public interface AbstractGML {
 
     void setName(String name);
 
-    ReferenceType getDescriptionReference();
+    Reference getDescriptionReference();
 
     CodeType getParameterName();
 }

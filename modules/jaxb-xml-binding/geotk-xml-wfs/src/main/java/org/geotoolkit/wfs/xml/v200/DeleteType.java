@@ -18,6 +18,7 @@
 
 package org.geotoolkit.wfs.xml.v200;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -25,6 +26,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 import org.geotoolkit.ogc.xml.v200.FilterType;
+import org.geotoolkit.util.Utilities;
+import org.geotoolkit.wfs.xml.DeleteElement;
 
 
 /**
@@ -51,13 +54,23 @@ import org.geotoolkit.ogc.xml.v200.FilterType;
 @XmlType(name = "DeleteType", propOrder = {
     "filter"
 })
-public class DeleteType extends AbstractTransactionActionType {
+public class DeleteType extends AbstractTransactionActionType implements DeleteElement {
 
     @XmlElement(name = "Filter", namespace = "http://www.opengis.net/fes/2.0", required = true)
     private FilterType filter;
     @XmlAttribute(required = true)
     private QName typeName;
 
+    public DeleteType() {
+
+    }
+
+    public DeleteType(final FilterType filter, final String handle, final QName typeName) {
+        super(handle);
+        this.filter   = filter;
+        this.typeName = typeName;
+    }
+    
     /**
      * Gets the value of the filter property.
      * 
@@ -106,4 +119,37 @@ public class DeleteType extends AbstractTransactionActionType {
         this.typeName = value;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("[DeleteType]\n");
+        if (filter != null) {
+            sb.append("filter").append(filter).append('\n');
+        }
+        if (typeName != null) {
+            sb.append("typeName").append(typeName).append('\n');
+        }
+        return sb.toString();
+    }
+    
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        
+        if (obj instanceof DeleteType) {
+            DeleteType that = (DeleteType) obj;
+            return Objects.equals(this.filter, that.filter) &&
+                   Objects.equals(this.typeName, that.typeName);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 13 * hash + (this.filter != null ? this.filter.hashCode() : 0);
+        hash = 13 * hash + (this.typeName != null ? this.typeName.hashCode() : 0);
+        return hash;
+    }
 }

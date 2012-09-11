@@ -33,16 +33,10 @@ import org.opengis.util.FactoryException;
  */
 public class StringToCRSConverter extends SimpleConverter<String, CoordinateReferenceSystem> {
 
-    private static StringToCRSConverter INSTANCE;
-
-    private StringToCRSConverter(){
-    }
-
-    public static StringToCRSConverter getInstance(){
-        if(INSTANCE == null){
-            INSTANCE = new StringToCRSConverter();
-        }
-        return INSTANCE;
+    /*
+     * Public constructor in order to regiser converter in Geotk ConverterRegisry by ServiceLoader system.
+     */
+    public StringToCRSConverter(){
     }
 
     @Override
@@ -60,7 +54,7 @@ public class StringToCRSConverter extends SimpleConverter<String, CoordinateRefe
         try {
             final CoordinateReferenceSystem crs = CRS.decode(s);
             return crs;
-        } 
+        }
         catch (NoSuchAuthorityCodeException ex) {
             throw new NonconvertibleObjectException(ex);
         } catch (FactoryException ex) {

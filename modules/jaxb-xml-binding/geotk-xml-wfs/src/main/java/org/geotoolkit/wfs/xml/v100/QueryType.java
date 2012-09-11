@@ -17,6 +17,7 @@
 package org.geotoolkit.wfs.xml.v100;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -24,8 +25,10 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
+import org.geotoolkit.ogc.xml.SortBy;
 import org.geotoolkit.ogc.xml.v100.FilterType;
 import org.geotoolkit.ogc.xml.v100.PropertyNameType;
+import org.geotoolkit.wfs.xml.Query;
 
 
 /**
@@ -60,7 +63,7 @@ import org.geotoolkit.ogc.xml.v100.PropertyNameType;
     "propertyName",
     "filter"
 })
-public class QueryType {
+public class QueryType implements Query {
 
     @XmlElement(name = "PropertyName", namespace = "http://www.opengis.net/ogc")
     private List<PropertyNameType> propertyName;
@@ -73,43 +76,39 @@ public class QueryType {
     @XmlAttribute
     private String featureVersion;
 
+    public QueryType() {
+
+    }
+
+    public QueryType(final FilterType filter, final QName typeName, final String featureVersion, final List<String> properties) {
+        this.featureVersion = featureVersion;
+        this.filter         = filter;
+        this.typeName       = typeName;
+        setPropertyNames(properties);
+    }
+    
+    
     /**
+     * The PropertyName element is used to specify one or more properties 
+     * of a feature whose values are to be retrieved by a Web Feature Service.  
+     *  
+     *  While a Web Feature Service should endeavour to satisfy
+     *  the exact request specified, in some instance this may
+     *  not be possible.  Specifically, a Web Feature Service
+     *  must generate a valid GML2 response to a Query operation.
+     *  The schema used to generate the output may include 
+     *  properties that are mandatory.  In order that the output
+     *  validates, these mandatory properties must be specified
+     *  in the request.  If they are not, a Web Feature Service
+     *  may add them automatically to the Query before processing
+     *  it.  Thus a client application should, in general, be
+     *  prepared to receive more properties than it requested.
      * 
-     *                 The PropertyName element is used to specify one or more
-     *                 properties of a feature whose values are to be retrieved
-     *                 by a Web Feature Service.  
-     *                 
-     *                 While a Web Feature Service should endeavour to satisfy
-     *                 the exact request specified, in some instance this may
-     *                 not be possible.  Specifically, a Web Feature Service
-     *                 must generate a valid GML2 response to a Query operation.
-     *                 The schema used to generate the output may include 
-     *                 properties that are mandatory.  In order that the output
-     *                 validates, these mandatory properties must be specified
-     *                 in the request.  If they are not, a Web Feature Service
-     *                 may add them automatically to the Query before processing
-     *                 it.  Thus a client application should, in general, be
-     *                 prepared to receive more properties than it requested.
-     * 
-     *                 Of course, using the DescribeFeatureType request, a client
-     *                 application can determine which properties are mandatory
-     *                 and request them in the first place.
+     *  Of course, using the DescribeFeatureType request, a client
+     *  application can determine which properties are mandatory
+     *  and request them in the first place.
      *              Gets the value of the propertyName property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the propertyName property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getPropertyName().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link PropertyNameType }
      * 
@@ -122,13 +121,27 @@ public class QueryType {
         return this.propertyName;
     }
 
+    public List<Object> getPropertyNames() {
+        return (List) getPropertyName();
+    }
+
+    public final void setPropertyNames(final List<String> properties) {
+        if (properties != null) {
+            if (this.propertyName == null) {
+                this.propertyName = new ArrayList<PropertyNameType>();
+            }
+            for (String property : properties) {
+                this.propertyName.add(new PropertyNameType(property));
+            }
+        }
+    }
     /**
      * 
-     *                 The Filter element is used to define spatial and/or non-spatial
-     *                 constraints on query.  Spatial constrains use GML2 to specify
-     *                 the constraining geometry.  A full description of the Filter
-     *                 element can be found in the Filter Encoding Implementation
-     *                 Specification.
+     *  The Filter element is used to define spatial and/or non-spatial
+     *  constraints on query.  Spatial constrains use GML2 to specify
+     *  the constraining geometry.  A full description of the Filter
+     *  element can be found in the Filter Encoding Implementation
+     *  Specification.
      *              
      * 
      * @return
@@ -136,6 +149,7 @@ public class QueryType {
      *     {@link FilterType }
      *     
      */
+    @Override
     public FilterType getFilter() {
         return filter;
     }
@@ -187,6 +201,11 @@ public class QueryType {
     public QName getTypeName() {
         return typeName;
     }
+    
+    @Override
+    public List<QName> getTypeNames() {
+        return Arrays.asList(typeName);
+    }
 
     /**
      * Sets the value of the typeName property.
@@ -224,4 +243,18 @@ public class QueryType {
         this.featureVersion = value;
     }
 
+    @Override
+    public String getSrsName() {
+        return null; // not implemented in 1.0.0
+    }
+    
+    @Override
+    public void setSrsName(final String srsName) {
+        // not implemented in 1.0.0
+    }
+
+    @Override
+    public SortBy getSortBy() {
+        return null; // not implemented in 1.0.0
+    }
 }

@@ -27,11 +27,17 @@ import org.geotoolkit.data.DataStore;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.jdbc.DBCPDataSource;
 import org.geotoolkit.jdbc.ManageableDataSource;
+import org.geotoolkit.metadata.iso.DefaultIdentifier;
+import org.geotoolkit.metadata.iso.citation.DefaultCitation;
+import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.metadata.iso.quality.DefaultConformanceResult;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.parameter.Parameters;
+import org.geotoolkit.util.ResourceInternationalString;
 
+import org.opengis.metadata.Identifier;
+import org.opengis.metadata.identification.Identification;
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -45,6 +51,19 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class SMLDataStoreFactory extends AbstractDataStoreFactory {
 
+    /** factory identification **/
+    public static final String NAME = "sml";
+    public static final DefaultServiceIdentification IDENTIFICATION;
+    static {
+        IDENTIFICATION = new DefaultServiceIdentification();
+        final Identifier id = new DefaultIdentifier(NAME);
+        final DefaultCitation citation = new DefaultCitation(NAME);
+        citation.setIdentifiers(Collections.singleton(id));
+        IDENTIFICATION.setCitation(citation);
+    }
+    
+    public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
+    
     /**
      * Parameter for database port
      */
@@ -96,15 +115,27 @@ public class SMLDataStoreFactory extends AbstractDataStoreFactory {
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new DefaultParameterDescriptorGroup("SMLParameters",
-                DBTYPE,HOST,PORT,DATABASE,USER,PASSWD,NAMESPACE, SGBDTYPE, DERBYURL);
+                IDENTIFIER,DBTYPE,HOST,PORT,DATABASE,USER,PASSWD,NAMESPACE, SGBDTYPE, DERBYURL);
+
+    @Override
+    public Identification getIdentification() {
+        return IDENTIFICATION;
+    }
     
     /**
      * {@inheritDoc }
      */
     @Override
-    public String getDescription() {
-        return "OGC Sensor Markup Language datastore factory";
+    public CharSequence getDescription() {
+        return new ResourceInternationalString("org/geotoolkit/sml/bundle", "datastoreDescription");
     }
+
+    @Override
+    public CharSequence getDisplayName() {
+        return new ResourceInternationalString("org/geotoolkit/sml/bundle", "datastoreTitle");
+    }
+    
+    
 
     /**
      * {@inheritDoc }
@@ -139,7 +170,8 @@ public class SMLDataStoreFactory extends AbstractDataStoreFactory {
     }
 
     @Override
-    public DataStore createDataStore(final ParameterValueGroup params) throws DataStoreException {
+    public DataStore create(final ParameterValueGroup params) throws DataStoreException {
+        checkCanProcessWithError(params);
         try{
             //create a datasource
             final BasicDataSource dataSource = new BasicDataSource();
@@ -167,14 +199,14 @@ public class SMLDataStoreFactory extends AbstractDataStoreFactory {
             dataSource.setAccessToUnderlyingConnectionAllowed(true);
 
             final ManageableDataSource source = new DBCPDataSource(dataSource);
-            return new SMLDataStore(source);
+            return new SMLDataStore(params,source);
         } catch (IOException ex) {
             throw new DataStoreException(ex);
         }
     }
 
     @Override
-    public DataStore createNewDataStore(final ParameterValueGroup params) throws DataStoreException {
+    public DataStore createNew(final ParameterValueGroup params) throws DataStoreException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

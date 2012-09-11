@@ -1,4 +1,19 @@
-
+/*
+ *    GeotoolKit - An Open Source Java GIS Toolkit
+ *    http://geotoolkit.org
+ * 
+ *    (C) 2009, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation; either
+ *    version 2.1 of the License, or (at your option) any later version.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
 
 
 package org.geotoolkit.feature.catalog;
@@ -531,7 +546,7 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
             
              //to avoid infinite cycle
              boolean carrier = false;
-             carrier = Utilities.equals(this.getCarrierOfCharacteristics().size(), that.getCarrierOfCharacteristics().size());
+             carrier = Objects.equals(this.getCarrierOfCharacteristics().size(), that.getCarrierOfCharacteristics().size());
              if (carrier) {
                  for (int i = 0; i < this.getCarrierOfCharacteristics().size(); i++) {
                      final String thisId = this.getCarrierOfCharacteristics().get(i).getId();
@@ -555,8 +570,8 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
              boolean catalogue = Objects.equals(this.featureCatalogue.getId(), that.featureCatalogue.getId());
              
              //to avoid infinite cycle
-             boolean inherits = Utilities.equals(this.getInheritsFrom().size(), that.getInheritsFrom().size()) && 
-                                Utilities.equals(this.getInheritsTo().size(),   that.getInheritsTo().size()); 
+             boolean inherits = Objects.equals(this.getInheritsFrom().size(), that.getInheritsFrom().size()) && 
+                                Objects.equals(this.getInheritsTo().size(),   that.getInheritsTo().size()); 
             
             return Objects.equals(this.aliases,                  that.aliases)                  &&
                    Objects.equals(this.code,                     that.code)                     &&

@@ -51,9 +51,9 @@ public class HarvestTest {
         }
         final String sUrl = url.toString();
         assertTrue(sUrl.startsWith("http://test.com?"));
-        assertTrue(sUrl.contains("NAMESPACE=xmlns(ut=http://myqname.com)"));
-        assertTrue(sUrl.contains("SOURCE=http://mysourcetoharvest.com"));
-        assertTrue(sUrl.contains("RESOURCETYPE=file"));
-        assertTrue(sUrl.contains("RESOURCEFORMAT=xml"));
+        assertTrue("was:" + sUrl, sUrl.contains("NAMESPACE=xmlns%28ut%3Dhttp%3A%2F%2Fmyqname.com%29"));
+        assertTrue("was:" + sUrl, sUrl.contains("SOURCE=http%3A%2F%2Fmysourcetoharvest.com"));
+        assertTrue("was:" + sUrl, sUrl.contains("RESOURCETYPE=file"));
+        assertTrue("was:" + sUrl, sUrl.contains("RESOURCEFORMAT=xml"));
     }
 }

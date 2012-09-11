@@ -18,7 +18,6 @@ package org.geotoolkit.display2d.ext.pattern;
 
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.renderer.AbstractSymbolizerRendererService;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
@@ -30,7 +29,12 @@ import org.geotoolkit.map.MapLayer;
  * @module pending
  */
 public class PatternRendererService extends AbstractSymbolizerRendererService<PatternSymbolizer,CachedPatternSymbolizer>{
-
+    
+    @Override
+    public boolean isGroupSymbolizer() {
+        return false;
+    }
+    
     /**
      * {@inheritDoc }
      */
@@ -60,7 +64,7 @@ public class PatternRendererService extends AbstractSymbolizerRendererService<Pa
      */
     @Override
     public SymbolizerRenderer createRenderer(final CachedPatternSymbolizer symbol, final RenderingContext2D context) {
-        return new PatternRenderer(symbol, context);
+        return new PatternRenderer(this,symbol, context);
     }
 
     /**

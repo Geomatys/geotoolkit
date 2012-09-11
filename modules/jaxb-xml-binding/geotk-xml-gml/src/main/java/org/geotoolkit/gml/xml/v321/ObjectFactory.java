@@ -7245,5 +7245,45 @@ public class ObjectFactory {
     public JAXBElement<String> createGridTypeAxisName(String value) {
         return new JAXBElement<String>(_GridTypeAxisName_QNAME, String.class, GridType.class, value);
     }
+    
+    public JAXBElement<?> buildAnyGeometry(final Object value) {
+        if (value instanceof PointType) {
+            return createPoint((PointType) value);
+
+        } else if (value instanceof MultiPointType) {
+            return createMultiPoint((MultiPointType) value);
+
+        } else if (value instanceof MultiSurfaceType) {
+            return createMultiSurface((MultiSurfaceType) value);
+
+        } else if (value instanceof MultiCurveType) {
+            return createMultiCurve((MultiCurveType) value);
+
+        } else if (value instanceof CompositeCurveType) {
+            return createCompositeCurve((CompositeCurveType) value);
+
+        } else if (value instanceof CurveType) {
+            return createCurve((CurveType) value);
+
+        } else if (value instanceof LineStringType) {
+            return createLineString((LineStringType) value);
+
+        } else if (value instanceof EnvelopeType) {
+            return createEnvelope((EnvelopeType) value);
+
+        } else if (value instanceof MultiGeometryType) {
+            return createMultiGeometry((MultiGeometryType) value);
+
+        } else if (value instanceof PolygonType) {
+            return createPolygon((PolygonType) value);
+
+        } else if (value instanceof RingType) {
+            return createRing((RingType) value);
+        
+        } else if (value != null) {
+            throw new IllegalArgumentException("unexpected geometry type:" + value.getClass().getName());
+        }
+        return null;
+    }
 
 }

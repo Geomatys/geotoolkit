@@ -18,15 +18,13 @@
 package org.geotoolkit.display.canvas;
 
 import java.awt.Shape;
-import java.awt.geom.Rectangle2D;
 import java.awt.geom.AffineTransform;
-
-import org.opengis.display.canvas.Canvas;
-import org.opengis.referencing.crs.DerivedCRS;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.TransformException;
-
+import java.awt.geom.Rectangle2D;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
+import org.opengis.display.canvas.Canvas;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.DerivedCRS;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  * A canvas implementation with default support for two-dimensional CRS management. This

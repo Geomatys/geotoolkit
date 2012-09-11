@@ -18,6 +18,7 @@ package org.geotoolkit.ows.xml.v110;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -31,6 +32,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
+import org.geotoolkit.util.Utilities;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
@@ -157,5 +159,55 @@ public class BoundingBoxType {
      */
     public Integer getDimensions() {
         return dimensions;
+    }
+    
+     /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof BoundingBoxType) {
+            final BoundingBoxType that = (BoundingBoxType) object;
+            return Objects.equals(this.crs        , that.crs)         &&
+                   Objects.equals(this.dimensions , that.dimensions)  &&
+                   Objects.equals(this.lowerCorner, that.lowerCorner) &&
+                   Objects.equals(this.upperCorner, that.upperCorner);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 43 * hash + (this.lowerCorner != null ? this.lowerCorner.hashCode() : 0);
+        hash = 43 * hash + (this.upperCorner != null ? this.upperCorner.hashCode() : 0);
+        hash = 43 * hash + (this.crs != null ? this.crs.hashCode() : 0);
+        return hash;
+    }
+    
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]:").append('\n');
+        if (crs != null)
+            s.append("CRS:").append(crs).append('\n');
+        if (dimensions != null) {
+            s.append("Dim:").append(dimensions).append('\n');
+        }
+        if (lowerCorner != null) {
+            s.append("lower corner: ");
+            for (Double d: lowerCorner) {
+                s.append(d).append(' ');
+            }
+        }
+        if (upperCorner != null) {
+            s.append("upper corner: ");
+            for (Double d: upperCorner) {
+                s.append(d).append(' ');
+            }
+        }
+        return s.toString();
     }
 }

@@ -16,15 +16,13 @@
  */
 package org.geotoolkit.wfs.xml.v100;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlType;
+import java.util.Map;
+import javax.xml.bind.annotation.*;
+import org.geotoolkit.util.Version;
+import org.geotoolkit.wfs.xml.AllSomeType;
+import org.geotoolkit.wfs.xml.LockFeature;
 
 
 /**
@@ -62,7 +60,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "LockFeatureType", propOrder = {
     "lock"
 })
-public class LockFeatureType {
+public class LockFeatureType implements LockFeature {
 
     @XmlElement(name = "Lock", required = true)
     private List<LockType> lock;
@@ -72,28 +70,29 @@ public class LockFeatureType {
     private String service;
     @XmlAttribute
     @XmlSchemaType(name = "positiveInteger")
-    private BigInteger expiry;
+    private Integer expiry;
     @XmlAttribute
     private AllSomeType lockAction;
 
+    @XmlTransient
+    private Map<String, String> prefixMapping;
+    
+    public LockFeatureType() {
+
+    }
+
+    public LockFeatureType(final String service, final String version, final List<LockType> lock, final Integer expiry, final AllSomeType lockAction) {
+        this.service = service;
+        this.version = version;
+        this.expiry     = expiry;
+        this.lock       = lock;
+        this.lockAction = lockAction;
+    }
+    
     /**
      * Gets the value of the lock property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the lock property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getLock().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
+    * Objects of the following type(s) are allowed in the list
      * {@link LockType }
      * 
      * 
@@ -113,11 +112,11 @@ public class LockFeatureType {
      *     {@link String }
      *     
      */
-    public String getVersion() {
+    public Version getVersion() {
         if (version == null) {
-            return "1.0.0";
+            return new Version("1.0.0");
         } else {
-            return version;
+            return new Version(version);
         }
     }
 
@@ -166,10 +165,10 @@ public class LockFeatureType {
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getExpiry() {
+    public Integer getExpiry() {
         return expiry;
     }
 
@@ -178,10 +177,10 @@ public class LockFeatureType {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setExpiry(BigInteger value) {
+    public void setExpiry(Integer value) {
         this.expiry = value;
     }
 
@@ -209,4 +208,22 @@ public class LockFeatureType {
         this.lockAction = value;
     }
 
+    public String getHandle() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void setHandle(String value) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Map<String, String> getPrefixMapping() {
+        return prefixMapping;
+    }
+    
+    /**
+     * @param prefixMapping the prefixMapping to set
+     */
+    public void setPrefixMapping(Map<String, String> prefixMapping) {
+        this.prefixMapping = prefixMapping;
+    }
 }

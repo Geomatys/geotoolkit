@@ -28,50 +28,44 @@ import org.opengis.parameter.ParameterValueGroup;
  * Regroup a stack of process in a single process.
  * Each process in the stack will be called one after another, parameters
  * being transformer by the ParameterMapper between them.
- * 
+ *
  * @author johann Sorel (Geomatys)
  * @module pending
  */
 public class ChainedProcess extends AbstractProcess{
 
     private final List<Object> stack;
-    
+
     /**
-     * 
+     *
      * @param stack : list starting with a Process and ending with process,
      * one process on two must be a ParameterMapper.
      */
-    public ChainedProcess(final ProcessDescriptor desc, final ParameterValueGroup input, final List<Object> stack){
+    public ChainedProcess(final ProcessDescriptor desc, final ParameterValueGroup input, final List<Object> stack) {
         super(desc,input);
         this.stack = stack;
     }
-    
+
     @Override
-    public ParameterValueGroup call() throws ProcessException {
-        fireStartEvent(new ProcessEvent(this,null,0));
-        
+    protected void execute() throws ProcessException {
         ParameterValueGroup intermediateResult = inputParameters;;
-        
-        for(int i=0,n=stack.size(); i<n; i+=2){
+
+        for(int i=0,n=stack.size(); i<n; i+=2) {
             final ProcessDescriptor desc = (ProcessDescriptor) stack.get(i);
-            
+
             // first process, no parameter mapping
             //other ones must be transformed
-            if(i!=0){
+            if (i!=0) {
                 final ParameterMapper mapper = (ParameterMapper) stack.get(i-1);
                 intermediateResult = mapper.transform(intermediateResult, desc.getInputDescriptor());
             }
-            
+
             final Process p = desc.createProcess(intermediateResult);
-            intermediateResult = p.call();   
+            intermediateResult = p.call();
         }
-        
+
         final ParameterValueGroup result = outputParameters;
         result.values().addAll(intermediateResult.values());
-        
-        fireEndEvent(new ProcessEvent(this, null,100));
-        
-        return result;
     }
-        
+
 }

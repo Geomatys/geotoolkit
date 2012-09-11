@@ -63,6 +63,16 @@ public class RequestMethodType extends OnlineResourceType {
     RequestMethodType(){
     }
 
+    public RequestMethodType(final RequestMethodType that){
+        super(that);
+        if (that != null && that.constraint != null) {
+            this.constraint = new ArrayList<DomainType>();
+            for (DomainType d : that.constraint) {
+                this.constraint.add(new DomainType(d));
+            }
+        }
+    }
+    
     /**
      * Build a new Request method.
      */

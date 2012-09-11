@@ -23,10 +23,11 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
-import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.style.renderer.AbstractCoverageSymbolizerRenderer;
+import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
+import org.geotoolkit.geometry.GeneralEnvelope;
 
 
 /**
@@ -37,8 +38,8 @@ import org.geotoolkit.display2d.style.renderer.AbstractCoverageSymbolizerRendere
  */
 public class GridMarkRenderer extends AbstractCoverageSymbolizerRenderer<CachedVectorFieldSymbolizer>{
 
-    public GridMarkRenderer(final CachedVectorFieldSymbolizer symbol, final RenderingContext2D context){
-        super(symbol,context);
+    public GridMarkRenderer(final SymbolizerRendererService service,final CachedVectorFieldSymbolizer symbol, final RenderingContext2D context){
+        super(service,symbol,context);
     }
 
     /**

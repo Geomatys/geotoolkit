@@ -64,7 +64,7 @@ public class DifferenceFeatureCollection extends WrapFeatureCollection {
     @Override
     protected Feature modify(final Feature original) {
         try {
-            return Difference.clipFeature(original, newFeatureType, clippingList);
+            return DifferenceProcess.clipFeature(original, newFeatureType, clippingList);
             
         } catch (MismatchedDimensionException ex) {
             throw new DataStoreRuntimeException(ex);

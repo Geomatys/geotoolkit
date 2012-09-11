@@ -29,32 +29,22 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.stream.ImageOutputStream;
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
-import javax.swing.JSplitPane;
-import javax.swing.JToolBar;
+import javax.swing.*;
 import javax.swing.JToolBar.Separator;
-import javax.swing.SwingConstants;
-import javax.swing.WindowConstants;
 
+import org.geotoolkit.client.Server;
+import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.data.session.Session;
 import org.geotoolkit.display2d.GO2Hints;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.gui.swing.go2.control.JConfigBar;
 import org.geotoolkit.gui.swing.go2.control.JCoordinateBar;
 import org.geotoolkit.gui.swing.go2.control.JEditionBar;
@@ -79,7 +69,10 @@ import org.geotoolkit.gui.swing.contexttree.menu.SeparatorItem;
 import org.geotoolkit.gui.swing.contexttree.menu.SessionCommitItem;
 import org.geotoolkit.gui.swing.contexttree.menu.SessionRollbackItem;
 import org.geotoolkit.gui.swing.contexttree.menu.ZoomToLayerItem;
-import org.geotoolkit.gui.swing.filestore.JFileDatastoreChooser;
+import org.geotoolkit.gui.swing.filestore.JCoverageStoreChooser;
+import org.geotoolkit.gui.swing.filestore.JDataStoreChooser;
+import org.geotoolkit.gui.swing.filestore.JLayerChooser;
+import org.geotoolkit.gui.swing.filestore.JServerChooser;
 import org.geotoolkit.gui.swing.go2.decoration.JClassicNavigationDecoration;
 import org.geotoolkit.gui.swing.propertyedit.ClearSelectionAction;
 import org.geotoolkit.gui.swing.propertyedit.DeleteSelectionAction;
@@ -88,15 +81,11 @@ import org.geotoolkit.gui.swing.propertyedit.styleproperty.JClassificationSingle
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JClassificationIntervalStylePanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JRasterColorMapStylePanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JSLDImportExportPanel;
-import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.style.DefaultStyleFactory;
-import org.geotoolkit.style.MutableStyle;
-import org.geotoolkit.util.RandomStyleFactory;
-import org.opengis.feature.type.Name;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -106,11 +95,11 @@ import org.opengis.geometry.Envelope;
  * @module pending
  */
 public class JMap2DFrame extends javax.swing.JFrame {
-
+    
     private final JMap2D guiMap;
     private final JContextTree guiContextTree;
     
-    private JMap2DFrame(final MapContext context) {
+    protected JMap2DFrame(final MapContext context, Hints hints) {
         initComponents();        
 
         guiContextTree = (JContextTree) jScrollPane1;
@@ -121,6 +110,12 @@ public class JMap2DFrame extends javax.swing.JFrame {
         guiMap.getContainer().setContext(context);
         guiMap.getCanvas().setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         guiMap.getCanvas().setRenderingHint(GO2Hints.KEY_GENERALIZE, GO2Hints.GENERALIZE_ON);
+        guiMap.getCanvas().setRenderingHint(GO2Hints.KEY_BEHAVIOR_MODE, GO2Hints.BEHAVIOR_PROGRESSIVE);
+        
+        if(hints != null){
+            guiMap.getCanvas().setRenderingHints(hints);
+        }
+        
         guiMap.getCanvas().getController().setAutoRepaint(true);
 
         for(TreePopupItem item : guiContextTree.controls()){
@@ -214,10 +209,8 @@ public class JMap2DFrame extends javax.swing.JFrame {
         buttonGroup1 = new ButtonGroup();
         AxisProportions = new ButtonGroup();
         jSplitPane1 = new JSplitPane();
+        panTabs = new JTabbedPane();
         panGeneral = new JPanel();
-        guiCoordBar = new JCoordinateBar();
-        panTree = new JPanel();
-        jScrollPane1 = new JContextTree();
         jPanel1 = new JPanel();
         jToolBar1 = new JToolBar();
         jButton3 = new JButton();
@@ -229,31 +222,23 @@ public class JMap2DFrame extends javax.swing.JFrame {
         jSeparator3 = new Separator();
         guiEditBar = new JEditionBar();
         guiConfigBar = new JConfigBar();
+        guiCoordBar = new JCoordinateBar();
+        panTree = new JPanel();
+        jScrollPane1 = new JContextTree();
         jMenuBar1 = new JMenuBar();
         jMenu1 = new JMenu();
+        jMenuItem4 = new JMenuItem();
         jMenuItem2 = new JMenuItem();
+        jMenuItem3 = new JMenuItem();
         jSeparator4 = new JPopupMenu.Separator();
         jMenuItem1 = new JMenuItem();
 
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Go-2 Java2D Renderer");
 
         jSplitPane1.setDividerLocation(200);
 
         panGeneral.setLayout(new BorderLayout());
-
-        guiCoordBar.setFloatable(false);
-        panGeneral.add(guiCoordBar, BorderLayout.PAGE_END);
-
-        jSplitPane1.setRightComponent(panGeneral);
-
-        panTree.setPreferredSize(new Dimension(100, 300));
-        panTree.setLayout(new BorderLayout());
-        panTree.add(jScrollPane1, BorderLayout.CENTER);
-
-        jSplitPane1.setLeftComponent(panTree);
-
-        getContentPane().add(jSplitPane1, BorderLayout.CENTER);
 
         jPanel1.setLayout(new GridBagLayout());
 
@@ -314,17 +299,48 @@ public class JMap2DFrame extends javax.swing.JFrame {
         gridBagConstraints.fill = GridBagConstraints.BOTH;
         jPanel1.add(guiConfigBar, gridBagConstraints);
 
-        getContentPane().add(jPanel1, BorderLayout.NORTH);
+        panGeneral.add(jPanel1, BorderLayout.NORTH);
+
+        guiCoordBar.setFloatable(false);
+        panGeneral.add(guiCoordBar, BorderLayout.PAGE_END);
+
+        panTabs.addTab("2D", panGeneral);
+
+        jSplitPane1.setRightComponent(panTabs);
+
+        panTree.setPreferredSize(new Dimension(100, 300));
+        panTree.setLayout(new BorderLayout());
+        panTree.add(jScrollPane1, BorderLayout.CENTER);
+
+        jSplitPane1.setLeftComponent(panTree);
+
+        getContentPane().add(jSplitPane1, BorderLayout.CENTER);
 
         jMenu1.setText("File");
 
-        jMenuItem2.setText("Add vector file data ...");
+        jMenuItem4.setText("Add coverage store ...");
+        jMenuItem4.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                openCoverageStoreChooser(evt);
+            }
+        });
+        jMenu1.add(jMenuItem4);
+
+        jMenuItem2.setText("Add data store ...");
         jMenuItem2.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                jMenuItem2ActionPerformed(evt);
+                openDataStoreChooser(evt);
             }
         });
         jMenu1.add(jMenuItem2);
+
+        jMenuItem3.setText("Add from server ...");
+        jMenuItem3.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                openServerChooser(evt);
+            }
+        });
+        jMenu1.add(jMenuItem3);
         jMenu1.add(jSeparator4);
 
         jMenuItem1.setText("Quit");
@@ -399,32 +415,53 @@ private void jButton3ActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_j
     
 }//GEN-LAST:event_jButton3ActionPerformed
 
-    private void jMenuItem2ActionPerformed(ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
-        
-        final List<DataStore> stores = JFileDatastoreChooser.showDialog();
-        
-        for(DataStore store : stores){
+private void openCoverageStoreChooser(ActionEvent evt) {//GEN-FIRST:event_openCoverageStoreChooser
+        try {
+            final List<MapLayer> layers = JCoverageStoreChooser.showLayerDialog(null);
             
-            try{
-                final Session session = store.createSession(true);
-                for(Name n : store.getNames()){
-                    final FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(n));
-                    final MutableStyle style = RandomStyleFactory.createDefaultVectorStyle(col);
-                    final FeatureMapLayer layer = MapBuilder.createFeatureLayer(col, style);
-                    layer.setName(n.getLocalPart());
-                    layer.setDescription(new DefaultStyleFactory().description(n.getLocalPart(), n.getLocalPart()));
-                    guiMap.getContainer().getContext().layers().add(layer);
-                    
-                }
-            }catch(DataStoreException ex){
-                ex.printStackTrace();
+            for(MapLayer layer : layers){
+                if(layer == null) continue;                    
+                guiContextTree.getContext().layers().add(layer);                    
+            }   
+            
+        } catch (DataStoreException ex) {
+            Logger.getLogger(JMap2DFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    
+        
+}//GEN-LAST:event_openCoverageStoreChooser
+
+private void openDataStoreChooser(ActionEvent evt) {//GEN-FIRST:event_openDataStoreChooser
+
+        try {
+            final List<MapLayer> layers = JDataStoreChooser.showLayerDialog(null);
+            
+            for(MapLayer layer : layers){
+                if(layer == null) continue;                    
+                guiContextTree.getContext().layers().add(layer);                    
             }
             
+        } catch (DataStoreException ex) {
+            Logger.getLogger(JMap2DFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        
-    }//GEN-LAST:event_jMenuItem2ActionPerformed
+    
+}//GEN-LAST:event_openDataStoreChooser
 
+private void openServerChooser(ActionEvent evt) {//GEN-FIRST:event_openServerChooser
+
+    try {
+        final List<MapLayer> layers = JServerChooser.showLayerDialog(null);
+            
+        for(MapLayer layer : layers){
+            if(layer == null) continue;                    
+            guiContextTree.getContext().layers().add(layer);                    
+        } 
+
+    } catch (DataStoreException ex) {
+        Logger.getLogger(JMap2DFrame.class.getName()).log(Level.SEVERE, null, ex);
+    }
+
+}//GEN-LAST:event_openServerChooser
 
     private boolean isValidType(final Class<?>[] validTypes, final Object type) {
         for (final Class<?> t : validTypes) {
@@ -434,18 +471,18 @@ private void jButton3ActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_j
         }
         return false;
     }
-
-    public static void show(final MapContext context){
-//        try {
-//            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-//        } catch (Exception ex) {
-//            Logger.getLogger(JMap2DFrame.class.getName()).log(Level.WARNING, null, ex);
-//        }
+    
+    public static void show(MapContext context){
+        if(context == null) context = MapBuilder.createContext();
+        show(context,null);
+    }
+    
+    public static void show(final MapContext context, final Hints hints){
 
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new JMap2DFrame(context).setVisible(true);
+                new JMap2DFrame(context,hints).setVisible(true);
             }
         });
     }
@@ -465,6 +502,8 @@ private void jButton3ActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_j
     private JMenuBar jMenuBar1;
     private JMenuItem jMenuItem1;
     private JMenuItem jMenuItem2;
+    private JMenuItem jMenuItem3;
+    private JMenuItem jMenuItem4;
     private JPanel jPanel1;
     private JScrollPane jScrollPane1;
     private Separator jSeparator1;
@@ -474,6 +513,7 @@ private void jButton3ActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_j
     private JSplitPane jSplitPane1;
     private JToolBar jToolBar1;
     private JPanel panGeneral;
+    protected JTabbedPane panTabs;
     private JPanel panTree;
     // End of variables declaration//GEN-END:variables
 

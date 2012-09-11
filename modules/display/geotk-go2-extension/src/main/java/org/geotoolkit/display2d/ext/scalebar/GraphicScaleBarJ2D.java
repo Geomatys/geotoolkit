@@ -2,7 +2,6 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2004 - 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2008 - 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -17,7 +16,6 @@
  */
 package org.geotoolkit.display2d.ext.scalebar;
 
-import org.geotoolkit.display2d.canvas.J2DCanvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -29,12 +27,11 @@ import java.text.NumberFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.measure.unit.SI;
-
+import static javax.swing.SwingConstants.*;
 import org.geotoolkit.display.exception.PortrayalException;
+import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.ext.PositionedGraphic2D;
-
-import static javax.swing.SwingConstants.*;
 import static org.geotoolkit.util.ArgumentChecks.*;
 
 /**

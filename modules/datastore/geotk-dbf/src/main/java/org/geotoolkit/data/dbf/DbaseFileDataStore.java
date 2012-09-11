@@ -21,43 +21,42 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.net.MalformedURLException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
-
 import org.geotoolkit.data.AbstractDataStore;
+import org.geotoolkit.data.DataStoreFactory;
+import org.geotoolkit.data.DataStoreFinder;
 import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
+import org.geotoolkit.data.dbf.DbaseFileReader.Row;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
-import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.simple.DefaultSimpleFeature;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataStoreException;
-
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * DBF DataStore, holds a single feature type.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
@@ -71,10 +70,43 @@ public class DbaseFileDataStore extends AbstractDataStore{
 
     private SimpleFeatureType featureType;
 
-    public DbaseFileDataStore(final File f, final String namespace, final String name){
-        super(namespace);
-        this.file = f;
-        this.name = name;
+    public DbaseFileDataStore(final File f, final String namespace) throws MalformedURLException, DataStoreException{
+        this(toParameters(f, namespace));
+    }
+
+    public DbaseFileDataStore(final ParameterValueGroup params) throws DataStoreException{
+        super(params);
+
+        final URL url = (URL) params.parameter(DbaseDataStoreFactory.URLP.getName().toString()).getValue();
+        try {
+            this.file = new File(url.toURI());
+        } catch (URISyntaxException ex) {
+            throw new DataStoreException(ex);
+        }
+
+        final String path = url.toString();
+        final int slash = Math.max(0, path.lastIndexOf('/') + 1);
+        int dot = path.indexOf('.', slash);
+        if (dot < 0) {
+            dot = path.length();
+        }
+        this.name = path.substring(slash, dot);
+    }
+
+    private static ParameterValueGroup toParameters(final File f,
+            final String namespace) throws MalformedURLException{
+        final ParameterValueGroup params = DbaseDataStoreFactory.PARAMETERS_DESCRIPTOR.createValue();
+        Parameters.getOrCreate(DbaseDataStoreFactory.URLP, params).setValue(f.toURI().toURL());
+        Parameters.getOrCreate(DbaseDataStoreFactory.NAMESPACE, params).setValue(namespace);
+        return params;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public DataStoreFactory getFactory() {
+        return DataStoreFinder.getFactoryById(DbaseDataStoreFactory.NAME);
     }
 
     private synchronized void checkExist() throws DataStoreException{
@@ -119,6 +151,9 @@ public class DbaseFileDataStore extends AbstractDataStore{
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Set<Name> getNames() throws DataStoreException {
         checkExist();
@@ -129,12 +164,18 @@ public class DbaseFileDataStore extends AbstractDataStore{
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public FeatureType getFeatureType(final Name typeName) throws DataStoreException {
         typeCheck(typeName); //raise error is type doesnt exist
         return featureType;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public FeatureReader getFeatureReader(final Query query) throws DataStoreException {
         typeCheck(query.getTypeName()); //raise error is type doesnt exist
@@ -146,48 +187,72 @@ public class DbaseFileDataStore extends AbstractDataStore{
         return handleRemaining(fr, query);
     }
 
-    
+
     ////////////////////////////////////////////////////////////////////////////
     // FALLTHROUGHT OR NOT IMPLEMENTED /////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Unsupported, throws a {@link DataStoreException}.
+     */
     @Override
-    public FeatureWriter getFeatureWriter(final Name typeName, 
+    public FeatureWriter getFeatureWriter(final Name typeName,
     final Filter filter, final Hints hints) throws DataStoreException {
         throw new DataStoreException("Writing not supported");
     }
 
+    /**
+     * Unsupported, throws a {@link DataStoreException}.
+     */
     @Override
     public void createSchema(final Name typeName, final FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Schema creation not supported");
     }
 
+    /**
+     * Unsupported, throws a {@link DataStoreException}.
+     */
     @Override
     public void deleteSchema(final Name typeName) throws DataStoreException {
         throw new DataStoreException("Schema deletion not supported");
     }
 
+    /**
+     * Unsupported, throws a {@link DataStoreException}.
+     */
     @Override
     public void updateSchema(final Name typeName, final FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Schema update not supported");
     }
 
+    /**
+     * Unsupported, throws a {@link DataStoreException}.
+     */
     @Override
     public QueryCapabilities getQueryCapabilities() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures, 
+    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures,
             final Hints hints) throws DataStoreException {
         return handleAddWithFeatureWriter(groupName, newFeatures,hints);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void updateFeatures(final Name groupName, final Filter filter, final Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
         handleUpdateWithFeatureWriter(groupName, filter, values);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void removeFeatures(final Name groupName, final Filter filter) throws DataStoreException {
         handleRemoveWithFeatureWriter(groupName, filter);
@@ -246,13 +311,14 @@ public class DbaseFileDataStore extends AbstractDataStore{
             if(!reader.hasNext()) return;
 
             try{
+                final Row row = reader.next();
                 if(reuse != null){
-                    reuse.setAttributes(reader.readEntry());
+                    reuse.setAttributes(row.readAll(null));
                     reuse.setId(String.valueOf(inc++));
                     current = reuse;
                 }else{
                     sfb.reset();
-                    sfb.addAll(reader.readEntry());
+                    sfb.addAll(row.readAll(null));
                     current = sfb.buildFeature(Integer.toString(inc++));
                 }
             }catch(IOException ex){

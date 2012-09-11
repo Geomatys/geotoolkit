@@ -23,7 +23,7 @@ package org.geotoolkit.wms.xml;
 public enum WMSVersion {
     v111("1.1.1"),
     v130("1.3.0");
-
+    
     private final String code;
 
     WMSVersion(final String code){
@@ -43,11 +43,18 @@ public enum WMSVersion {
      *                                  for the given string value.
      */
     public static WMSVersion getVersion(final String version) {
+        
         for (WMSVersion vers :  values()) {
             if (vers.getCode().equals(version)) {
                 return vers;
             }
         }
+        
+        //maybe it's the enum string
+        try{
+            WMSVersion.valueOf(version);
+        }catch(IllegalArgumentException ex){}
+        
         throw new IllegalArgumentException("The given string \""+ version +"\" is not " +
                 "a known version.");
     }

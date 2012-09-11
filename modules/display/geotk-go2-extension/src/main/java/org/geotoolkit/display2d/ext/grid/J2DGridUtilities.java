@@ -22,7 +22,6 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Polygon;
-
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Shape;
@@ -30,20 +29,20 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.geotoolkit.display.axis.Graduation;
 import org.geotoolkit.display.axis.NumberGraduation;
 import org.geotoolkit.display.axis.TickIterator;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.primitive.DefaultProjectedGeometry;
+import org.geotoolkit.display2d.container.statefull.StatefullContextParams;
+import org.geotoolkit.display2d.container.statefull.StatefullProjectedGeometry;
 import org.geotoolkit.display2d.style.labeling.DefaultLabelLayer;
 import org.geotoolkit.display2d.style.labeling.DefaultLinearLabelDescriptor;
 import org.geotoolkit.display2d.style.labeling.LabelLayer;
 import org.geotoolkit.display2d.style.labeling.LabelRenderer;
 import org.geotoolkit.display2d.style.labeling.LinearLabelDescriptor;
+import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.referencing.CRS;
-
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
@@ -79,7 +78,6 @@ public class J2DGridUtilities {
             ite.next();
         }
 
-        final double[] gridResolution = context.getResolution(gridCRS);
         final GeometryFactory fact = new GeometryFactory();
         final LinearRing ring = fact.createLinearRing(coords.toArray(new Coordinate[coords.size()]));
         final Polygon bounds = fact.createPolygon(ring, new LinearRing[0]);
@@ -91,21 +89,24 @@ public class J2DGridUtilities {
         tickHint.put(Graduation.VISUAL_AXIS_LENGTH, context.getCanvasDisplayBounds().width);
         tickHint.put(Graduation.VISUAL_TICK_SPACING, 200);
 
+        //number of point by line
+        final int nbPoint = 20;
+        
+        final CoordinateReferenceSystem objectiveCRS = context.getObjectiveCRS2D();
         try{
-            final Envelope gridBounds = CRS.transform(context.getCanvasObjectiveBounds2D(), gridCRS);
-            final MathTransform gridToObj = CRS.findMathTransform(gridCRS, context.getObjectiveCRS(), true);
-            final MathTransform inverse = gridToObj.inverse();
-            final MathTransform objToDisp = context.getObjectiveToDisplay();
-
-            //ensure we dont have to much points on the lines-------------------
-            if((gridBounds.getMaximum(1)-gridBounds.getMinimum(1)) / gridResolution[1] > context.getCanvasDisplayBounds().height){
-                gridResolution[1] = (gridBounds.getMaximum(1)-gridBounds.getMinimum(1)) /context.getCanvasDisplayBounds().height;
+            //reduce grid bounds to validity area
+            Envelope gridBounds = CRS.transform(context.getCanvasObjectiveBounds2D(), gridCRS);
+            
+            Envelope validity = CRS.getEnvelope(gridCRS);
+            if(validity != null){
+                GeneralEnvelope env = new GeneralEnvelope(gridBounds);
+                env.intersect(validity);
+                gridBounds = env;
             }
-
-            if((gridBounds.getMaximum(0)-gridBounds.getMinimum(0)) / gridResolution[0] > context.getCanvasDisplayBounds().width){
-                gridResolution[0] = (gridBounds.getMaximum(0)-gridBounds.getMinimum(0)) / context.getCanvasDisplayBounds().width;
-            }
-
+            
+            
+            final MathTransform gridToObj = CRS.findMathTransform(gridCRS, objectiveCRS, true);
+            final MathTransform objToGrid = gridToObj.inverse();
 
             //grid on X axis ---------------------------------------------------
 
@@ -119,23 +120,42 @@ public class J2DGridUtilities {
                 tickIte.next();
                 final String label = tickIte.currentLabel();
                 final double d = tickIte.currentPosition();
+                if(d>gridBounds.getMaximum(0))continue;
 
                 final ArrayList<Coordinate> lineCoords = new ArrayList<Coordinate>();
                 final double maxY = gridBounds.getMaximum(1);
-                for(double k= gridBounds.getMinimum(1); k<maxY; k+=gridResolution[1]){
+                final double step = gridBounds.getSpan(1)/nbPoint;
+                for(double k=Math.nextUp(gridBounds.getMinimum(1)); k<maxY; k+=step){
                     lineCoords.add(new Coordinate(d, k));
                 }
-                lineCoords.add(new Coordinate(d, maxY));
+                lineCoords.add(new Coordinate(d, Math.nextAfter(maxY,Double.NEGATIVE_INFINITY)));
 
-                Geometry ls = fact.createLineString(lineCoords.toArray(new Coordinate[lineCoords.size()]));
-                ls = JTS.transform(ls, gridToObj);
+                Geometry geom = fact.createLineString(lineCoords.toArray(new Coordinate[lineCoords.size()]));
+                if(geom == null) continue;
 
-                if(ls == null) continue;
+                final StatefullContextParams params = new StatefullContextParams(null, null);            
+                final StatefullProjectedGeometry pg = new StatefullProjectedGeometry(params);
+                params.update(context);
+                pg.setDataGeometry(geom, gridCRS);
 
-                final Geometry geom = ls.intersection(bounds);
-                final DefaultProjectedGeometry pg = new DefaultProjectedGeometry(geom);
-                pg.setObjToDisplay(objToDisp);
-
+                //draw line
+                if(tickIte.isMajorTick()){
+                    g.setPaint(template.getMainLinePaint());
+                    g.setStroke(template.getMainLineStroke());
+                }else{
+                    g.setPaint(template.getLinePaint());
+                    g.setStroke(template.getLineStroke());
+                }                
+                g.draw(pg.getDisplayShape());
+                
+                
+                //clip geometry to avoid text outside visible area
+                geom = JTS.transform(geom, gridToObj);
+                if(geom == null) continue;
+                geom = geom.intersection(bounds);
+                pg.setDataGeometry(geom, objectiveCRS);
+                
+                //draw text
                 final LinearLabelDescriptor desc;
                 if(tickIte.isMajorTick()){
                     desc = new DefaultLinearLabelDescriptor(
@@ -154,15 +174,7 @@ public class J2DGridUtilities {
                 }
                 layer.labels().add(desc);
 
-                if(tickIte.isMajorTick()){
-                    g.setPaint(template.getMainLinePaint());
-                    g.setStroke(template.getMainLineStroke());
-                }else{
-                    g.setPaint(template.getLinePaint());
-                    g.setStroke(template.getLineStroke());
-                }
                 
-                g.draw(pg.getDisplayShape());
             }
 
             //grid on Y axis ---------------------------------------------------
@@ -177,21 +189,39 @@ public class J2DGridUtilities {
                 tickIte.next();
                 final String label = tickIte.currentLabel();
                 final double d = tickIte.currentPosition();
+                if(d>gridBounds.getMaximum(1))continue;
 
                 final ArrayList<Coordinate> lineCoords = new ArrayList<Coordinate>();
                 final double maxX = gridBounds.getMaximum(0);
-                for(double k= gridBounds.getMinimum(0); k<maxX; k+=gridResolution[1]){
+                final double step = gridBounds.getSpan(0)/nbPoint;
+                for(double k= Math.nextUp(gridBounds.getMinimum(0)); k<maxX; k+=step){
                     lineCoords.add(new Coordinate(k, d));
                 }
-                lineCoords.add(new Coordinate(maxX, d));
+                lineCoords.add(new Coordinate(Math.nextAfter(maxX,Double.NEGATIVE_INFINITY), d));
 
-                Geometry ls = fact.createLineString(lineCoords.toArray(new Coordinate[lineCoords.size()]));
-                ls = JTS.transform(ls, gridToObj);
+                Geometry geom = fact.createLineString(lineCoords.toArray(new Coordinate[lineCoords.size()]));
+                final StatefullContextParams params = new StatefullContextParams(null, null);            
+                final StatefullProjectedGeometry pg = new StatefullProjectedGeometry(params);
+                params.update(context);
+                pg.setDataGeometry(geom, gridCRS);
 
-                final Geometry geom = ls.intersection(bounds);
-                final DefaultProjectedGeometry pg = new DefaultProjectedGeometry(geom);
-                pg.setObjToDisplay(objToDisp);
-
+                //draw line
+                if(tickIte.isMajorTick()){
+                    g.setPaint(template.getMainLinePaint());
+                    g.setStroke(template.getMainLineStroke());
+                }else{
+                    g.setPaint(template.getLinePaint());
+                    g.setStroke(template.getLineStroke());
+                }                
+                g.draw(pg.getDisplayShape());
+                
+                //clip geometry to avoid text outside visible area
+                geom = JTS.transform(geom, gridToObj);
+                if(geom == null) continue;
+                geom = geom.intersection(bounds);
+                pg.setDataGeometry(geom, objectiveCRS);
+                
+                //draw text
                 final LinearLabelDescriptor desc;
                 if(tickIte.isMajorTick()){
                     desc = new DefaultLinearLabelDescriptor(
@@ -210,16 +240,6 @@ public class J2DGridUtilities {
                 }
 
                 layer.labels().add(desc);
-
-                if(tickIte.isMajorTick()){
-                    g.setPaint(template.getMainLinePaint());
-                    g.setStroke(template.getMainLineStroke());
-                }else{
-                    g.setPaint(template.getLinePaint());
-                    g.setStroke(template.getLineStroke());
-                }
-                
-                g.draw(pg.getDisplayShape());
             }
 
 

@@ -23,6 +23,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.Polygon;
 
 
 /**
@@ -50,13 +51,32 @@ import javax.xml.bind.annotation.XmlType;
     "exterior",
     "interior"
 })
-public class PolygonType
-    extends AbstractSurfaceType
-{
+public class PolygonType extends AbstractSurfaceType implements Polygon {
 
     private AbstractRingPropertyType exterior;
     private List<AbstractRingPropertyType> interior;
 
+    public PolygonType() {
+
+    }
+    
+    public PolygonType(final String srsName, final AbstractRingType exterior, final List<? extends AbstractRingType> interiors) {
+        super(srsName);
+        if (exterior != null) {
+            this.exterior = new AbstractRingPropertyType(exterior);
+        }
+        if (interiors != null) {
+            this.interior = new ArrayList<AbstractRingPropertyType>();
+            for (AbstractRingType inte : interiors) {
+                this.interior.add(new AbstractRingPropertyType(inte));
+            }
+        }
+    }
+    
+    public PolygonType(final AbstractRingType exterior, final List<? extends AbstractRingType> interiors) {
+        this(null, exterior, interiors);
+    }
+    
     /**
      * Gets the value of the exterior property.
      * 
@@ -65,6 +85,7 @@ public class PolygonType
      *     {@link AbstractRingPropertyType }
      *     
      */
+    @Override
     public AbstractRingPropertyType getExterior() {
         return exterior;
     }
@@ -84,25 +105,8 @@ public class PolygonType
     /**
      * Gets the value of the interior property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the interior property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getInterior().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link AbstractRingPropertyType }
-     * 
-     * 
      */
+    @Override
     public List<AbstractRingPropertyType> getInterior() {
         if (interior == null) {
             interior = new ArrayList<AbstractRingPropertyType>();

@@ -24,6 +24,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ogc.xml.SortBy;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -50,7 +52,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "SortByType", propOrder = {
     "sortProperty"
 })
-public class SortByType {
+public class SortByType implements SortBy {
 
     @XmlElement(name = "SortProperty", required = true)
     private List<SortPropertyType> sortProperty;

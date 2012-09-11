@@ -25,24 +25,23 @@ import static org.geotoolkit.parameter.Parameters.*;
  * @author Quentin Boileau (Geomatys)
  * @module pending
  */
-public class MaxProcess extends AbstractProcess{
-    
-    public MaxProcess(final ParameterValueGroup input){
+public class MaxProcess extends AbstractProcess {
+
+    public MaxProcess(final ParameterValueGroup input) {
         super(INSTANCE,input);
     }
-    
+
     @Override
-    public ParameterValueGroup call() {
-        
-        final Double[] set = value(SET, inputParameters);  
-        
-        Double max = Math.max(set[0], set[1]);
-        for(int i=1; i<set.length; i++){
-            max = Math.max(max.doubleValue(), set[i].doubleValue());
+    protected void execute() {
+
+        final Double[] set = value(SET, inputParameters);
+
+        double max = Math.max(set[0].doubleValue(), set[1].doubleValue());
+        for (int i=1; i<set.length; i++) {
+            max = Math.max(max, set[i].doubleValue());
         }
-       
-        getOrCreate(RESULT_NUMBER, outputParameters).setValue(max);  
-        return outputParameters;
+
+        getOrCreate(RESULT_NUMBER, outputParameters).setValue(max);
     }
-    
+
 }

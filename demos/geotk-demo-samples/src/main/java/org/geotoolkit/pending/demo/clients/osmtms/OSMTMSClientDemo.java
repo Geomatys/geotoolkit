@@ -7,7 +7,7 @@ import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.osmtms.OSMTileMapServer;
 import org.geotoolkit.osmtms.map.OSMTMSMapLayer;
-import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -18,6 +18,7 @@ public class OSMTMSClientDemo {
     public static final MutableStyleFactory SF = new DefaultStyleFactory();
     
     public static void main(String[] args) throws Exception {
+        Demos.init();
         
         final MapContext context = createOSMTMSContext();
         
@@ -29,7 +30,7 @@ public class OSMTMSClientDemo {
         final MapContext context = MapBuilder.createContext(DefaultGeographicCRS.WGS84);
 
         OSMTileMapServer server = new OSMTileMapServer(
-                new URL("http://tile.openstreetmap.org"),18);
+                new URL("http://tile.openstreetmap.org"),null,18,true);
         OSMTMSMapLayer layer = new OSMTMSMapLayer(server);
         layer.setDescription(SF.description("Mapnik", ""));
         context.layers().add(layer);

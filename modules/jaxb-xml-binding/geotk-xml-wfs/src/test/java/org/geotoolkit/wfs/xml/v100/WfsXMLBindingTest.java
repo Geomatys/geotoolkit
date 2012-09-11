@@ -33,6 +33,7 @@ import org.geotoolkit.gml.xml.v212.PointType;
 import org.geotoolkit.ogc.xml.v100.ComparisonOpsType;
 import org.geotoolkit.ogc.xml.v100.FilterType;
 import org.geotoolkit.ogc.xml.v100.PropertyIsLikeType;
+import org.geotoolkit.wfs.xml.AllSomeType;
 
 //Junit dependencies
 import org.geotoolkit.wfs.xml.WFSMarshallerPool;

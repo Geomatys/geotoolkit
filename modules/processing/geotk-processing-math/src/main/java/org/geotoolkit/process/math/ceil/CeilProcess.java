@@ -29,25 +29,18 @@ import static org.geotoolkit.parameter.Parameters.*;
  * @module pending
  */
 public class CeilProcess extends AbstractProcess{
-    
-    public CeilProcess(final ParameterValueGroup input){
+
+    public CeilProcess(final ParameterValueGroup input) {
         super(INSTANCE,input);
     }
-    
+
     @Override
-    public ParameterValueGroup call() {
-        
-        final double first = value(FIRST_NUMBER, inputParameters);  
-        
-        Double result = 0.0;
-        try{
-            result = Math.ceil(first);
-        }catch(Exception e){
-            fireFailEvent(new ProcessEvent(this, new DefaultInternationalString(e.getMessage()), 0, e));
-        }
-        
-        getOrCreate(RESULT_NUMBER, outputParameters).setValue(result); 
-        return outputParameters;
+    protected void execute() {
+
+        final double first = value(FIRST_NUMBER, inputParameters);
+
+        final double result = Math.ceil(first);
+        getOrCreate(RESULT_NUMBER, outputParameters).setValue(result);
     }
-    
+
 }

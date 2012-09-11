@@ -32,6 +32,9 @@ public class LineStringPosListType {
     @XmlElement(namespace = "http://www.opengis.net/gml")
     private PosListType posList;
 
+    @XmlElement(namespace = "http://www.opengis.net/gml")
+    private CoordinatesType coordinates;
+
     public LineStringPosListType() {
 
     }
@@ -62,9 +65,15 @@ public class LineStringPosListType {
                 Logger.getLogger(LineStringPosListType.class.getName()).log(Level.WARNING, null, ex);
             }
         }
-        JTSLineString result = new JTSLineString(crs);
-        for (int i = 0; i < posList.getValue().size(); i = i + 2) {
-            result.getPositions().add(new GeneralDirectPosition(posList.getValue().get(i), posList.getValue().get(i + 1)));
+        final JTSLineString result = new JTSLineString(crs);
+        if (posList != null) {
+            for (int i = 0; i < posList.getValue().size(); i = i + 2) {
+                result.getPositions().add(new GeneralDirectPosition(posList.getValue().get(i), posList.getValue().get(i + 1)));
+            }
+        } else if (coordinates != null) {
+            for (int i = 0; i < coordinates.getValues().size(); i = i + 2) {
+                result.getPositions().add(new GeneralDirectPosition(coordinates.getValues().get(i), coordinates.getValues().get(i + 1)));
+            }
         }
         return result;
     }
@@ -94,5 +103,19 @@ public class LineStringPosListType {
      */
     public void setPosList(final PosListType posList) {
         this.posList = posList;
+    }
+
+    /**
+     * @return the coordinates
+     */
+    public CoordinatesType getCoordinates() {
+        return coordinates;
+    }
+
+    /**
+     * @param coordinates the coordinates to set
+     */
+    public void setCoordinates(CoordinatesType coordinates) {
+        this.coordinates = coordinates;
     }
 }

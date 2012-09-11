@@ -28,33 +28,32 @@ import static org.geotoolkit.parameter.Parameters.*;
  * @author Quentin Boileau (Geomatys)
  * @module pending
  */
-public class MedianProcess extends AbstractProcess{
-    
-    public MedianProcess(final ParameterValueGroup input){
+public class MedianProcess extends AbstractProcess {
+
+    public MedianProcess(final ParameterValueGroup input) {
         super(INSTANCE,input);
     }
-    
+
     @Override
-    public ParameterValueGroup call() {
-        
-        final Double[] set = value(SET, inputParameters);   
+    protected void execute() {
+
+        final Double[] set = value(SET, inputParameters);
         List<Double> list = Arrays.asList(set);
-        
+
         //Sort the set of double
         Collections.sort(list);
-        
+
         //index of the median
         int indexMedian = ((list.size()+1)/2)-1;
-        Double median = 0.0;
-        
-        if(list.size()%2 == 0){
+        double median = 0.0;
+
+        if(list.size()%2 == 0) {
             median = (list.get(indexMedian) + list.get(indexMedian+1))/2;//avg of index and index +1
         }else{
             median = list.get(indexMedian);
         }
-       
+
         getOrCreate(RESULT_NUMBER, outputParameters).setValue(median);
-        return outputParameters;
     }
-    
+
 }

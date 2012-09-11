@@ -16,7 +16,9 @@
  */
 package org.geotoolkit.process.vector.douglaspeucker;
 
-import javax.measure.unit.Unit;
+import java.util.HashMap;
+import java.util.Map;
+import javax.measure.unit.SI;
 
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
@@ -28,6 +30,7 @@ import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.IdentifiedObject;
 
 /**
  * Parameters description for DouglasPeucker process.
@@ -36,8 +39,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * Inputs :
  * <ul>
  *     <li>FEATURE_IN "feature_in" FeatureCollection to clip</li>
- *     <li>ACCURACY_IN "accuracy_in" simplification accuracy</li>
- *     <li>UNIT_IN "unit_in" simplification unit</li>
+ *     <li>ACCURACY_IN "accuracy_in" simplification accuracy in meters.</li>
  *     <li>DEL_SMALL_GEO_IN "del_small_geo_in" Simplification behavior with small geometry</li>
  *     <li>LENIENT_TRANSFORM_IN "lenient_transform_in" CRS transformation accuracy</li>
  * </ul>
@@ -52,24 +54,25 @@ public final class DouglasPeuckerDescriptor extends VectorDescriptor {
 
     /**Process name : douglaspeucker */
     public static final String NAME = "douglasPeucker";
+    
+    private static final Map ACCURACY_PROPERTIES = new HashMap();
+    static{
+        ACCURACY_PROPERTIES.put(IdentifiedObject.NAME_KEY, "accuracy_in");
+        ACCURACY_PROPERTIES.put(IdentifiedObject.REMARKS_KEY, "Input simplification accuracy.");
+    }
+    
     /**
      * Mandatory - Simplification accuracy
      */
     public static final ParameterDescriptor<Double> ACCURACY_IN=
-            new DefaultParameterDescriptor("accuracy_in", "Input simplification accuracy", Double.class, null, true);
-
-    /**
-     * Mandatory - Simplification unit
-     */
-    public static final ParameterDescriptor<Unit> UNIT_IN=
-            new DefaultParameterDescriptor("unit_in", "Input simplification unit", Unit.class, null, true);
-
+            new DefaultParameterDescriptor(ACCURACY_PROPERTIES, Double.class, null, 1.0, null, null, SI.METRE, true);
+    
      /**
      * Optional - Simplification behavior
      */
     public static final ParameterDescriptor<Boolean> DEL_SMALL_GEO_IN=
             new DefaultParameterDescriptor("del_small_geo_in", "Input boolean to set process behavior with small geometry",
-                                            Boolean.class, null, false);
+                                            Boolean.class, false, false);
 
     /**
      * Optional - Simplification behavior
@@ -81,7 +84,7 @@ public final class DouglasPeuckerDescriptor extends VectorDescriptor {
     /**Input parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =
             new DefaultParameterDescriptorGroup("InputParameters",
-            new GeneralParameterDescriptor[]{FEATURE_IN, ACCURACY_IN, UNIT_IN, DEL_SMALL_GEO_IN, LENIENT_TRANSFORM_IN});
+            new GeneralParameterDescriptor[]{FEATURE_IN, ACCURACY_IN, DEL_SMALL_GEO_IN, LENIENT_TRANSFORM_IN});
 
     /**Output parameters */
     public static final ParameterDescriptorGroup OUTPUT_DESC =
@@ -103,6 +106,6 @@ public final class DouglasPeuckerDescriptor extends VectorDescriptor {
      */
     @Override
     public Process createProcess(final ParameterValueGroup input) {
-        return new DouglasPeucker(input);
+        return new DouglasPeuckerProcess(input);
     }
 }

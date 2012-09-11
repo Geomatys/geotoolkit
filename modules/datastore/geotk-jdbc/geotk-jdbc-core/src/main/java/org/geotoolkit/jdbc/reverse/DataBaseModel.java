@@ -17,6 +17,8 @@
 
 package org.geotoolkit.jdbc.reverse;
 
+import org.geotoolkit.feature.type.ModifiableType;
+import org.geotoolkit.feature.type.ModifiableFeatureTypeFactory;
 import java.util.Collection;
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -143,7 +145,7 @@ public final class DataBaseModel {
                     throw new DataStoreException(ex);
                 }
             }
-            
+
             nameCache = Collections.unmodifiableSet(ref);
         }
         return ref;
@@ -176,7 +178,7 @@ public final class DataBaseModel {
 
             final DatabaseMetaData metadata = cx.getMetaData();
             schemaSet = metadata.getSchemas();
-            
+
             boolean hasSchema = false;
             while (schemaSet.next()) {
                 hasSchema = true;
@@ -184,13 +186,13 @@ public final class DataBaseModel {
                 final SchemaMetaModel schema = analyzeSchema(SchemaName);
                 schemas.put(schema.name, schema);
             }
-            
+
             if(!hasSchema){
                 //database might not handle schemas, example : mysql
                 final SchemaMetaModel schema = analyzeSchema(null);
                 schemas.put(null, schema);
             }
-            
+
 
         } catch (SQLException e) {
             throw new DataStoreException("Error occurred analyzing database model.", e);
@@ -206,7 +208,7 @@ public final class DataBaseModel {
         final String baseSchemaName = store.getDatabaseSchema();
 
         final Collection<SchemaMetaModel> candidates;
-        if(baseSchemaName == null){
+        if(baseSchemaName == null || baseSchemaName.isEmpty()){
             //take all schemas
             candidates = getSchemaMetaModels();
         }else{
@@ -260,7 +262,7 @@ public final class DataBaseModel {
         final String tableName = tableSet.getString(Table.TABLE_NAME);
 
         final TableMetaModel table = new TableMetaModel(tableName);
-        
+
         Connection cx = null;
         ResultSet result = null;
         try {
@@ -271,7 +273,7 @@ public final class DataBaseModel {
             result = metadata.getColumns(null, schemaName, tableName, "%");
             while (result.next()) {
                 final PropertyDescriptor desc = analyzeColumn(result);
-                ftb.add(analyzeColumn(result));
+                ftb.add(desc);
             }
             store.closeSafe(result);
 
@@ -317,6 +319,57 @@ public final class DataBaseModel {
 
                 cols.add(col);
             }
+            store.closeSafe(result);
+
+            //ask the metadata for the best column combinaison to be used as id
+            //TODO that might be a good idea but so far I haven't seen any database which
+            //return a result here when the primary key is null
+            //if(cols.isEmpty()){
+            //    result = metadata.getBestRowIdentifier(null, schemaName, tableName,
+            //            DatabaseMetaData.bestRowSession, false);
+            //    while (result.next()) {
+            //        final String cname = result.getString(BestRow.COLUMN_NAME);
+            //
+            //    }
+            //    store.closeSafe(result);
+            //}
+
+            //check if we could use a unique key index if no primary key found
+            if(cols.isEmpty()){
+                result = metadata.getIndexInfo(null, schemaName, tableName, true, false);
+                final List<String> names = new ArrayList<String>();
+                String indexname = null;
+                while (result.next()) {
+                    final String columnName = result.getString(Index.COLUMN_NAME);
+
+                    //we use a single index columns set as primary key
+                    //we must not mix with other potential indexes.
+                    if(indexname == null){
+                        indexname = result.getString(Index.INDEX_NAME);
+                    }else if(!indexname.equals(result.getString(Index.INDEX_NAME))){
+                        continue;
+                    }
+
+                    names.add(columnName);
+                }
+                store.closeSafe(result);
+
+                if(!names.isEmpty()){
+                    result = metadata.getColumns(null, schemaName, tableName, "%");
+                    while (result.next()) {
+                        final String columnName = result.getString(Column.COLUMN_NAME);
+                        if(!names.contains(columnName)){
+                            continue;
+                        }
+
+                        final PropertyDescriptor desc = analyzeColumn(result);
+                        final PrimaryKeyColumn col = new NonIncrementingPrimaryKeyColumn(columnName, desc.getType().getBinding());
+                        cols.add(col);
+                    }
+                    store.closeSafe(result);
+                }
+            }
+
 
             if (cols.isEmpty()) {
                 store.getLogger().log(Level.FINE, "No primary key found for {0}.", tableName);
@@ -432,14 +485,14 @@ public final class DataBaseModel {
     public FeatureType analyzeResult(final ResultSet result, Name name) throws SQLException, DataStoreException{
         final SQLDialect dialect = store.getDialect();
         String namespace;
-        
+
         if(name == null){
             namespace = store.getNamespaceURI();
             name = new DefaultName(namespace, "undefined");
         }else{
             namespace = name.getNamespaceURI();
         }
-        
+
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder(FTF);
         ftb.setName(ensureGMLNS(namespace, name.getLocalPart()));
 
@@ -452,7 +505,7 @@ public final class DataBaseModel {
             final String schemaName = metadata.getSchemaName(i);
             final String tableName = metadata.getTableName(i);
             final int type = metadata.getColumnType(i);
-            
+
             //search if we already have this minute
             PropertyDescriptor desc = null;
             final SchemaMetaModel schema = getSchemaMetaModel(schemaName);
@@ -494,7 +547,7 @@ public final class DataBaseModel {
                 }else{
                     adb.setType(atb.buildType());
                 }
-                
+
                 adb.findBestDefaultValue();
                 desc = adb.buildDescriptor();
             }
@@ -519,7 +572,7 @@ public final class DataBaseModel {
         for(final SchemaMetaModel schema : schemas.values()){
             for(final TableMetaModel table : schema.tables.values()){
                 final String tableName = table.name;
-                
+
                 //add flag for primary key fields-------------------------------
                 final PrimaryKey pk = table.key;
                 for(PrimaryKeyColumn column : pk.getColumns()){
@@ -584,7 +637,7 @@ public final class DataBaseModel {
                 table.simpleType = ftb.buildSimpleFeatureType();
             }
         }
-        
+
     }
 
     /**
@@ -593,7 +646,7 @@ public final class DataBaseModel {
     private void reverseComplexFeatureTypes(){
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder(FTF);
         final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder(FTF);
-        
+
         //result map
         final Map<String,ModifiableType> builded = new HashMap<String, ModifiableType>();
 
@@ -636,7 +689,7 @@ public final class DataBaseModel {
 
                     final Name n = new DefaultName(store.getNamespaceURI(),
                             relation.foreignTable+"→"+relation.foreignColumn);
-                    
+
                     adb.reset();
                     adb.setName(n);
                     adb.setType(FLAG_TYPE);
@@ -666,7 +719,7 @@ public final class DataBaseModel {
                 for(final RelationMetaModel relation : table.importedKeys){
                     final String relCode = relation.foreignSchema +"."+relation.foreignTable;
                     final ComplexType relType = builded.get(relCode);
-                    
+
                     //find the descriptor to replace
                     final List<PropertyDescriptor> descs = candidate.getDescriptors();
                     int index = -1;
@@ -693,8 +746,8 @@ public final class DataBaseModel {
 
                     final Name expn = new DefaultName(store.getNamespaceURI(),
                             relation.foreignTable+"→"+relation.foreignColumn);
-                    
-                    
+
+
                     //find the descriptor to replace
                     final List<PropertyDescriptor> descs = candidate.getDescriptors();
                     int index = -1;
@@ -705,7 +758,7 @@ public final class DataBaseModel {
                         }
                     }
 
-                    
+
                     //create the new descriptor derivated
                     final PropertyDescriptor baseDescriptor = descs.get(index);
                     adb.reset();
@@ -714,7 +767,7 @@ public final class DataBaseModel {
                     final PropertyDescriptor newDescriptor = adb.buildDescriptor();
                     candidate.changeProperty(index, newDescriptor);
                 }
-                                
+
                 //et parents ---------------------------------------------------
                 final Collection<String> parents = table.parents;
                 if(!parents.isEmpty()){
@@ -725,8 +778,8 @@ public final class DataBaseModel {
                     if(tmd != null){
                         candidate.changeParent(tmd.complexType);
                     }
-                }               
-                
+                }
+
             }
         }
 

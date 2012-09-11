@@ -450,24 +450,25 @@ public class DataComponentPropertyType implements DataComponentProperty {
                 eq = (this.abstractDataRecord == null && that.abstractDataRecord == null);
             }
 
-            return eq                                                             &&
-                   Objects.equals(this.actuate,            that.actuate)          &&
-                   Objects.equals(this.arcrole,            that.arcrole)          &&
-                   Objects.equals(this.type,               that.type)             &&
-                   Objects.equals(this.href,               that.href)             &&
-                   Objects.equals(this.remoteSchema,       that.remoteSchema)     &&
-                   Objects.equals(this.show,               that.show)             &&
-                   Objects.equals(this.role,               that.role)             &&
-                   Objects.equals(this.title,              that.title)            &&
-                   Objects.equals(this.getBoolean(), that.getBoolean())               &&
-                   Objects.equals(this.getCategory(), that.getCategory())      &&
-                   Objects.equals(this.getCount(), that.getCount())         &&
-                   Objects.equals(this.getCountRange(), that.getCountRange())    &&
-                   Objects.equals(this.name,         that.name)          &&
-                   Objects.equals(this.getQuantity(), that.getQuantity())      &&
+            return eq                                                               &&
+                   Objects.equals(this.actuate,            that.actuate)            &&
+                   Objects.equals(this.arcrole,            that.arcrole)            &&
+                   Objects.equals(this.type,               that.type)               &&
+                   Objects.equals(this.href,               that.href)               &&
+                   Objects.equals(this.remoteSchema,       that.remoteSchema)       &&
+                   Objects.equals(this.show,               that.show)               &&
+                   Objects.equals(this.role,               that.role)               &&
+                   Objects.equals(this.title,              that.title)              &&
+                   Objects.equals(this.getBoolean(),       that.getBoolean())       &&
+                   Objects.equals(this.getCategory(),      that.getCategory())      &&
+                   Objects.equals(this.getCount(),         that.getCount())         &&
+                   Objects.equals(this.getCountRange(),    that.getCountRange())    &&
+                   Objects.equals(this.name,               that.name)               &&
+                   Objects.equals(this.getQuantity(),      that.getQuantity())      &&
                    Objects.equals(this.getQuantityRange(), that.getQuantityRange()) &&
-                   Objects.equals(this.getTime(), that.getTime())          &&
-                   Objects.equals(this.getTimeRange(), that.getTimeRange());
+                   Objects.equals(this.getTime(),          that.getTime())          &&
+                   Objects.equals(this.getText(),          that.getText())          &&
+                   Objects.equals(this.getTimeRange(),     that.getTimeRange());
         }
         return false;
     }

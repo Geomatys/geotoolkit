@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book [
+  <!ENTITY % book.entities SYSTEM "../../../book.entities">
+  %book.entities;
+]>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xlink = "http://www.w3.org/1999/xlink">
+          
+    <title>
+        Custom Graphic Builder
+    </title>
+    
+    <example>
+        <title>Code source complet  : </title>
+        <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/customgraphicbuilder/GraphicBuilderDemo.java">
+            <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/customgraphicbuilder/GraphicBuilderDemo.java</acronym>
+        </link>        
+    </example>
+    
+    <section>
+        <title>Quand utiliser un graphic builder ?</title>
+        <para>
+            Les 
+            <emphasis>GraphicBuilder</emphasis> ne peuvent être utilisés qu'avec des objets 
+            <emphasis>MapLayer</emphasis>. 
+            Un builder est utilisé quand on souhaite dessiner un modèle connu (Feature ou Coverage) mais avec une méthode de dessin qui ne peut pas être exprimé avec des styles classiques.        
+        </para>
+        <para>
+            Lors du rendu, le moteur va chercher sur le MapItem un GraphicBuilder capable de générer des objets graphiques qu'il est capable de traiter.
+        </para>
+        <para>
+            Le moteur 
+            <emphasis>GO2</emphasis> va chercher des objets de type 
+            <emphasis>GraphicJ2D</emphasis>. S'il ne peut pas en trouver, c'est le style standard de la couche qui sera utilisé. Cette approche permet d'avoir différents GraphicBuilder pour différents moteurs de rendu (2D ou 3D à l'avenir).
+        </para>
+    </section>
+    
+    <section>
+        
+        <title>Comment en créer un ?</title>        
+
+        L'interface GraphicBuilder ne définit que deux méthodes.
+        <para>
+            Une pour définir le type d'objet graphique qu'elle génère :
+        </para>
+       
+            <programlisting>
+                    public Class&lt;GraphicJ2D&gt; getGraphicType();
+            </programlisting>
+        
+        Et une pour créer les objets : 
+            <programlisting>
+                    public Collection&lt;GraphicJ2D&gt; createGraphics(MapLayer layer, Canvas canvas);
+            </programlisting>
+        
+        Une fois que vous avez un GraphicBuilder, il ne reste plus qu'à l'affecter à la couche de données : 
+            <programlisting>
+                    coverageLayer.graphicBuilders().add(new MyGraphicBuilder());
+            </programlisting>
+    </section>
+    
+</section>

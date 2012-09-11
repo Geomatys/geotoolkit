@@ -17,17 +17,22 @@
  */
 package org.geotoolkit.gui.swing.style;
 
-import org.geotoolkit.gui.swing.resource.MessageBundle;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
-import org.geotoolkit.gui.swing.style.StyleElementEditor;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.style.LabelPlacement;
+import org.opengis.style.LinePlacement;
+import org.opengis.style.PointPlacement;
 
 /**
  * Label placement panel
@@ -38,10 +43,10 @@ import org.opengis.style.LabelPlacement;
 public class JLabelPlacementPane extends StyleElementEditor<LabelPlacement> {
 
     private MapLayer layer = null;
-    private LabelPlacement placement = null;
 
     /** Creates new form JPointPlacementPanel */
     public JLabelPlacementPane() {
+        super(LabelPlacement.class);
         initComponents();
     }
 
@@ -59,42 +64,39 @@ public class JLabelPlacementPane extends StyleElementEditor<LabelPlacement> {
 
     @Override
     public void parse(final LabelPlacement target) {
-        placement = target;
 
-//        if (placement != null) {
-//
-//            if(target instanceof LinePlacement){
-//                jrbLine.setSelected(true);
-//                guiLine.setEdited( (LinePlacement)target);
-//            }else if(target instanceof PointPlacement){
-//                jrbPoint.setSelected(true);
-//                guiPoint.setEdited( (PointPlacement)target);
-//            }
-//        }
-
+        if(target instanceof LinePlacement){
+            guiLine.parse( (LinePlacement)target);
+            jrbLine.setSelected(true);
+        }else if(target instanceof PointPlacement){
+            guiPoint.parse( (PointPlacement)target);
+            jrbPoint.setSelected(true);
+        }else{
+            jrbPoint.setSelected(true);
+        }
+        updateActivePlacement();
     }
 
     @Override
     public LabelPlacement create() {
-
-//        if (placement == null) {
-//            placement = new StyleBuilder().createPointPlacement();
-//        }
-
-        apply();
-        return placement;
+        if(jrbLine.isSelected()){
+            return guiLine.create();
+        }else{
+            return guiPoint.create();
+        }
     }
 
-    public void apply() {
-//        if (placement != null) {
-//            if(jrbLine.isSelected()){
-//                placement = guiLine.getEdited();
-//            }else{
-//                placement = guiPoint.getEdited();
-//            }
-//        }
+    private void updateActivePlacement(){
+        guiPlacePane.removeAll();
+        if(jrbLine.isSelected()){
+            guiPlacePane.add(BorderLayout.CENTER,guiLine);
+        }else{
+            guiPlacePane.add(BorderLayout.CENTER,guiPoint);
+        }
+        guiPlacePane.revalidate();
+        guiPlacePane.repaint();
     }
-
+    
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -104,60 +106,70 @@ public class JLabelPlacementPane extends StyleElementEditor<LabelPlacement> {
     private void initComponents() {
 
         grpType = new ButtonGroup();
-        guiPoint = new JPointPlacementPane();
         guiLine = new JLinePlacementPane();
+        guiPoint = new JPointPlacementPane();
+        jPanel1 = new JPanel();
         jrbLine = new JRadioButton();
         jrbPoint = new JRadioButton();
-        jSeparator1 = new JSeparator();
+        guiPlacePane = new JPanel();
 
         setOpaque(false);
+        setLayout(new BorderLayout(0, 10));
 
         grpType.add(jrbLine);
-        jrbLine.setSelected(true);
         jrbLine.setText(MessageBundle.getString("lineplacement")); // NOI18N
-        jrbLine.setOpaque(false);
+        jrbLine.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                jrbLineActionPerformed(evt);
+            }
+        });
 
         grpType.add(jrbPoint);
         jrbPoint.setText(MessageBundle.getString("pointplacement")); // NOI18N
-        jrbPoint.setOpaque(false);
+        jrbPoint.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                jrbPointActionPerformed(evt);
+            }
+        });
 
-        jSeparator1.setOrientation(SwingConstants.VERTICAL);
-
-        GroupLayout layout = new GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                    .addComponent(guiLine, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jrbLine))
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(jSeparator1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                    .addComponent(jrbPoint)
-                    .addComponent(guiPoint, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jrbLine)
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(guiLine, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(47, Short.MAX_VALUE))
-            .addComponent(jSeparator1, GroupLayout.DEFAULT_SIZE, 220, Short.MAX_VALUE)
-            .addGroup(layout.createSequentialGroup()
+        GroupLayout jPanel1Layout = new GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
                 .addComponent(jrbPoint)
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(guiPoint, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addComponent(jrbLine)
+                .addContainerGap(59, Short.MAX_VALUE))
         );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE)
+                .addComponent(jrbPoint)
+                .addComponent(jrbLine))
+        );
+
+        add(jPanel1, BorderLayout.NORTH);
+
+        guiPlacePane.setLayout(new BorderLayout());
+        add(guiPlacePane, BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jrbLineActionPerformed(ActionEvent evt) {//GEN-FIRST:event_jrbLineActionPerformed
+        updateActivePlacement();
+    }//GEN-LAST:event_jrbLineActionPerformed
+
+    private void jrbPointActionPerformed(ActionEvent evt) {//GEN-FIRST:event_jrbPointActionPerformed
+        updateActivePlacement();
+    }//GEN-LAST:event_jrbPointActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private ButtonGroup grpType;
     private JLinePlacementPane guiLine;
+    private JPanel guiPlacePane;
     private JPointPlacementPane guiPoint;
-    private JSeparator jSeparator1;
+    private JPanel jPanel1;
     private JRadioButton jrbLine;
     private JRadioButton jrbPoint;
     // End of variables declaration//GEN-END:variables

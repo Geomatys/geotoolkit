@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  * 
  *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009, Geomatys
+ *    (C) 2009-2012, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Map;
 import org.geotoolkit.storage.DataStoreException;
-
+import org.opengis.metadata.identification.Identification;
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -83,6 +83,17 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public interface DataStoreFactory {
 
+    
+    /**
+     * General information about this factory. 
+     * If a given ParameterValueGroup has an identifier parameter set, it's value must
+     * be {@linkplain Identifier#getAuthority() identifier authority}, otherwise this
+     * factory will not support this ParameterValueGroup.
+     *
+     * @return The identification of this factory.
+     */
+    Identification getIdentification();
+    
     /**
      * Test to see if the implementation is available for use.
      * This method ensures all the appropriate libraries to construct
@@ -110,24 +121,24 @@ public interface DataStoreFactory {
      * Name suitable for display to end user.
      *
      * <p>
-     * A non localized display name for this data store type.
+     * A multilingual display name for this data store type.
      * </p>
      *
      * @return A short name suitable for display in a user interface.
      */
-    String getDisplayName();
+    CharSequence getDisplayName();
 
     /**
      * Describe the nature of the datasource constructed by this factory.
      *
      * <p>
-     * A non localized description of this data store type.
+     * A multilingual description of this data store type.
      * </p>
      *
      * @return A human readable description that is suitable for inclusion in a
      *         list of available datasources.
      */
-    String getDescription();
+    CharSequence getDescription();
 
     /**
      * Metadata about the required Parameters (for createDataStore).
@@ -166,7 +177,7 @@ public interface DataStoreFactory {
     /**
      * @see DataStoreFactory#createDataStore(org.opengis.parameter.ParameterValueGroup)
      */
-    DataStore createDataStore(Map<String, ? extends Serializable> params) throws DataStoreException;
+    DataStore create(Map<String, ? extends Serializable> params) throws DataStoreException;
 
     /**
      * Construct a live DataStore using the connection parameters provided.
@@ -204,10 +215,10 @@ public interface DataStoreFactory {
      * @throws IOException if there were any problems setting up (creating or
      *         connecting) the datasource.
      */
-    DataStore createDataStore(ParameterValueGroup params) throws DataStoreException;
+    DataStore create(ParameterValueGroup params) throws DataStoreException;
 
-    DataStore createNewDataStore(Map<String, ? extends Serializable> params) throws DataStoreException;
+    DataStore createNew(Map<String, ? extends Serializable> params) throws DataStoreException;
 
-    DataStore createNewDataStore(ParameterValueGroup params) throws DataStoreException;
+    DataStore createNew(ParameterValueGroup params) throws DataStoreException;
 
 }

@@ -36,6 +36,8 @@ import java.util.Set;
 import java.util.logging.Level;
 
 import org.geotoolkit.data.AbstractDataStore;
+import org.geotoolkit.data.DataStoreFactory;
+import org.geotoolkit.data.DataStoreFinder;
 import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.FeatureReader;
@@ -47,22 +49,26 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
+import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.feature.type.DefaultFeatureTypeFactory;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.jdbc.ManageableDataSource;
 import org.geotoolkit.referencing.CRS;
+import org.opengis.feature.ComplexAttribute;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureFactory;
 import org.opengis.feature.Property;
 import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.FeatureTypeFactory;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
+import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -85,11 +91,20 @@ public class SMLDataStore extends AbstractDataStore {
     private final ManageableDataSource source;
 
     private static final String SML_NAMESPACE = "http://www.opengis.net/sml/1.0";
+
+    //Root types
     private final static Name SML_TN_SYSTEM         = new DefaultName(SML_NAMESPACE, "System");
     private final static Name SML_TN_COMPONENT      = new DefaultName(SML_NAMESPACE, "Component");
     private final static Name SML_TN_PROCESSCHAIN   = new DefaultName(SML_NAMESPACE, "ProcessChain");
     private final static Name SML_TN_PROCESSMODEL   = new DefaultName(SML_NAMESPACE, "ProcessModel");
     private final static Name SML_TN_DATASOURCETYPE = new DefaultName(SML_NAMESPACE, "DataSourceType");
+
+    //subTypes
+    private final static Name SML_KEYWORD_LIST      = new DefaultName(SML_NAMESPACE, "KeywordList");
+    private final static Name SML_INPUT_LIST        = new DefaultName(SML_NAMESPACE, "InputList");
+    private final static Name SML_OUTPUT_LIST       = new DefaultName(SML_NAMESPACE, "OutputList");
+    private final static Name SML_INPUT             = new DefaultName(SML_NAMESPACE, "Input");
+    private final static Name SML_OUTPUT            = new DefaultName(SML_NAMESPACE, "Output");
 
     private static final String pathDescription        = "SensorML:SensorML:member:description";
     private static final String pathName               = "SensorML:SensorML:member:name";
@@ -130,13 +145,17 @@ public class SMLDataStore extends AbstractDataStore {
     // Shared attributes
     private static final Name ATT_DESC        = new DefaultName(GML_NAMESPACE, "description");
     private static final Name ATT_NAME        = new DefaultName(GML_NAMESPACE, "name");
+    private static final Name ATT_CODESPACE   = new DefaultName(GML_NAMESPACE, "codespace");
     private static final Name ATT_KEYWORDS    = new DefaultName(SML_NAMESPACE, "keywords");
+    private static final Name ATT_KEYWORD     = new DefaultName(SML_NAMESPACE, "keyword");
     private static final Name ATT_LOCATION    = new DefaultName(SML_NAMESPACE, "location");
     private static final Name ATT_PHENOMENONS = new DefaultName(SML_NAMESPACE, "phenomenons");
     private static final Name ATT_SMLTYPE     = new DefaultName(SML_NAMESPACE, "smltype");
     private static final Name ATT_SMLREF      = new DefaultName(SML_NAMESPACE, "smlref");
     private static final Name ATT_INPUTS      = new DefaultName(SML_NAMESPACE, "inputs");
+    private static final Name ATT_INPUT       = new DefaultName(SML_NAMESPACE, "input");
     private static final Name ATT_OUTPUTS     = new DefaultName(SML_NAMESPACE, "outputs");
+    private static final Name ATT_OUTPUT      = new DefaultName(SML_NAMESPACE, "output");
     // attribute for sml:System or sml:ProcessChain
     private static final Name ATT_PRODUCER = new DefaultName(SML_NAMESPACE, "producer");
     private static final Name ATT_COMPONENTS = new DefaultName(SML_NAMESPACE, "components");
@@ -147,11 +166,16 @@ public class SMLDataStore extends AbstractDataStore {
 
 
     private final QueryCapabilities capabilities = new DefaultQueryCapabilities(false);
-    
-    public SMLDataStore(final ManageableDataSource source) {
-        super(null);
+
+    public SMLDataStore(final ParameterValueGroup params, final ManageableDataSource source) {
+        super(params);
         this.source = source;
         initTypes();
+    }
+
+    @Override
+    public DataStoreFactory getFactory() {
+        return DataStoreFinder.getFactoryById(SMLDataStoreFactory.NAME);
     }
 
     public Connection getConnection() throws SQLException {
@@ -161,18 +185,58 @@ public class SMLDataStore extends AbstractDataStore {
     private void initTypes() {
         final FeatureTypeBuilder featureTypeBuilder = new FeatureTypeBuilder();
 
+        //subType KeywordList
+        featureTypeBuilder.reset();
+        featureTypeBuilder.setName(SML_KEYWORD_LIST);
+        featureTypeBuilder.add(ATT_CODESPACE,  String.class, 0, 1, true, null); // TODO xml attribute ?
+        featureTypeBuilder.add(ATT_KEYWORD,    List.class, 0, Integer.MAX_VALUE, true, null);
+
+        final ComplexType kwList = featureTypeBuilder.buildType();
+
+        //subType Input
+        featureTypeBuilder.reset();
+        featureTypeBuilder.setName(SML_INPUT);
+        featureTypeBuilder.add(ATT_NAME,     String.class, 0, 1, true, null); // TODO xml attribute ?
+        featureTypeBuilder.add(ATT_DESC,     String.class, 0, 1, true, null);
+
+        final ComplexType input = featureTypeBuilder.buildType();
+
+
+        //subType InputList
+        featureTypeBuilder.reset();
+        featureTypeBuilder.setName(SML_INPUT_LIST);
+        featureTypeBuilder.add(input, ATT_INPUT,    null, 0, Integer.MAX_VALUE, true, null);
+
+        final ComplexType inList = featureTypeBuilder.buildType();
+
+        //subType Output
+        featureTypeBuilder.reset();
+        featureTypeBuilder.setName(SML_OUTPUT);
+        featureTypeBuilder.add(ATT_NAME,     String.class, 0, 1, true, null); // TODO xml attribute ?
+        featureTypeBuilder.add(ATT_DESC,     String.class, 0, 1, true, null);
+
+        final ComplexType output = featureTypeBuilder.buildType();
+
+        //subType OutputList
+        featureTypeBuilder.reset();
+        featureTypeBuilder.setName(SML_OUTPUT_LIST);
+        featureTypeBuilder.add(output, ATT_OUTPUT,    null, 0, Integer.MAX_VALUE, true, null);
+
+        final ComplexType outList = featureTypeBuilder.buildType();
+
+
         // Feature type sml:System
         featureTypeBuilder.reset();
         featureTypeBuilder.setName(SML_TN_SYSTEM);
         featureTypeBuilder.add(ATT_DESC,        String.class, 0, 1, true, null);
         featureTypeBuilder.add(ATT_NAME,        String.class, 1, 1, false, null);
-        featureTypeBuilder.add(ATT_KEYWORDS,    List.class, 0, Integer.MAX_VALUE, true, null);
+        featureTypeBuilder.add(kwList, ATT_KEYWORDS,    null, 0, Integer.MAX_VALUE, true, null);
         featureTypeBuilder.add(ATT_LOCATION,    Point.class, 1, 1, false, null);
         featureTypeBuilder.add(ATT_PHENOMENONS, List.class, 0, Integer.MAX_VALUE, true, null);
         featureTypeBuilder.add(ATT_SMLTYPE,     String.class, 1, 1, true, null);
         featureTypeBuilder.add(ATT_SMLREF,      String.class, 1, 1, true, null);
-        featureTypeBuilder.add(ATT_INPUTS,      Map.class, 0, Integer.MAX_VALUE, true, null);
-        featureTypeBuilder.add(ATT_OUTPUTS,     Map.class, 0, Integer.MAX_VALUE, true, null);
+        featureTypeBuilder.add(inList, ATT_INPUTS,      null, 0, Integer.MAX_VALUE, true, null);
+        featureTypeBuilder.add(outList, ATT_OUTPUTS,     null, 0, Integer.MAX_VALUE, true, null);
         featureTypeBuilder.add(ATT_PRODUCER,    Map.class, 0, Integer.MAX_VALUE, true, null);
         featureTypeBuilder.add(ATT_COMPONENTS,  Map.class, 0, Integer.MAX_VALUE, true, null);
         featureTypeBuilder.setDefaultGeometry(ATT_LOCATION);
@@ -183,13 +247,13 @@ public class SMLDataStore extends AbstractDataStore {
         featureTypeBuilder.setName(SML_TN_COMPONENT);
         featureTypeBuilder.add(ATT_DESC,        String.class, 0, 1, true, null);
         featureTypeBuilder.add(ATT_NAME,        String.class, 1, 1, false, null);
-        featureTypeBuilder.add(ATT_KEYWORDS,    List.class, 0, Integer.MAX_VALUE, true, null);
+        featureTypeBuilder.add(kwList, ATT_KEYWORDS,    null, 0, Integer.MAX_VALUE, true, null);
         featureTypeBuilder.add(ATT_LOCATION,    Point.class, 1, 1, false, null);
         featureTypeBuilder.add(ATT_PHENOMENONS, List.class, 0, Integer.MAX_VALUE, true, null);
         featureTypeBuilder.add(ATT_SMLTYPE,     String.class, 1, 1, true, null);
         featureTypeBuilder.add(ATT_SMLREF,      String.class, 1, 1, true, null);
-        featureTypeBuilder.add(ATT_INPUTS,      Map.class, 0, Integer.MAX_VALUE, true, null);
-        featureTypeBuilder.add(ATT_OUTPUTS,     Map.class, 0, Integer.MAX_VALUE, true, null);
+        featureTypeBuilder.add(inList, ATT_INPUTS,      null, 0, Integer.MAX_VALUE, true, null);
+        featureTypeBuilder.add(outList, ATT_OUTPUTS,     null, 0, Integer.MAX_VALUE, true, null);
         featureTypeBuilder.setDefaultGeometry(ATT_LOCATION);
         types.put(SML_TN_COMPONENT, featureTypeBuilder.buildFeatureType());
 
@@ -198,13 +262,13 @@ public class SMLDataStore extends AbstractDataStore {
         featureTypeBuilder.setName(SML_TN_PROCESSCHAIN);
         featureTypeBuilder.add(ATT_DESC,        String.class, 0, 1, true, null);
         featureTypeBuilder.add(ATT_NAME,        String.class, 1, 1, false, null);
-        featureTypeBuilder.add(ATT_KEYWORDS,    List.class, 0, Integer.MAX_VALUE, true, null);
+        featureTypeBuilder.add(kwList, ATT_KEYWORDS,    null, 0, Integer.MAX_VALUE, true, null);
         featureTypeBuilder.add(ATT_LOCATION,    Point.class, 1, 1, false, null);
         featureTypeBuilder.add(ATT_PHENOMENONS, List.class, 0, Integer.MAX_VALUE, true, null);
         featureTypeBuilder.add(ATT_SMLTYPE,     String.class, 1, 1, true, null);
         featureTypeBuilder.add(ATT_SMLREF,      String.class, 1, 1, true, null);
-        featureTypeBuilder.add(ATT_INPUTS,      Map.class, 0, Integer.MAX_VALUE, true, null);
-        featureTypeBuilder.add(ATT_OUTPUTS,     Map.class, 0, Integer.MAX_VALUE, true, null);
+        featureTypeBuilder.add(inList, ATT_INPUTS,      null, 0, Integer.MAX_VALUE, true, null);
+        featureTypeBuilder.add(outList, ATT_OUTPUTS,     null, 0, Integer.MAX_VALUE, true, null);
         featureTypeBuilder.add(ATT_PRODUCER,    Map.class, 0, Integer.MAX_VALUE, true, null);
         featureTypeBuilder.add(ATT_COMPONENTS,  Map.class, 0, Integer.MAX_VALUE, true, null);
         featureTypeBuilder.setDefaultGeometry(ATT_LOCATION);
@@ -215,13 +279,13 @@ public class SMLDataStore extends AbstractDataStore {
         featureTypeBuilder.setName(SML_TN_PROCESSMODEL);
         featureTypeBuilder.add(ATT_DESC,        String.class, 0, 1, true, null);
         featureTypeBuilder.add(ATT_NAME,        String.class, 1, 1, false, null);
-        featureTypeBuilder.add(ATT_KEYWORDS,    List.class, 0, Integer.MAX_VALUE, true, null);
+        featureTypeBuilder.add(kwList, ATT_KEYWORDS,    null, 0, Integer.MAX_VALUE, true, null);
         featureTypeBuilder.add(ATT_LOCATION,    Point.class, 1, 1, false, null);
         featureTypeBuilder.add(ATT_PHENOMENONS, List.class, 0, Integer.MAX_VALUE, true, null);
         featureTypeBuilder.add(ATT_SMLTYPE,     String.class, 1, 1, true, null);
         featureTypeBuilder.add(ATT_SMLREF,      String.class, 1, 1, true, null);
-        featureTypeBuilder.add(ATT_INPUTS,      Map.class, 0, Integer.MAX_VALUE, true, null);
-        featureTypeBuilder.add(ATT_OUTPUTS,     Map.class, 0, Integer.MAX_VALUE, true, null);
+        featureTypeBuilder.add(inList, ATT_INPUTS,      null, 0, Integer.MAX_VALUE, true, null);
+        featureTypeBuilder.add(outList, ATT_OUTPUTS,     null, 0, Integer.MAX_VALUE, true, null);
         featureTypeBuilder.add(ATT_METHOD,      String.class, 0, Integer.MAX_VALUE, true, null);
         featureTypeBuilder.setDefaultGeometry(ATT_LOCATION);
         types.put(SML_TN_PROCESSMODEL, featureTypeBuilder.buildFeatureType());
@@ -231,13 +295,13 @@ public class SMLDataStore extends AbstractDataStore {
         featureTypeBuilder.setName(SML_TN_DATASOURCETYPE);
         featureTypeBuilder.add(ATT_DESC,        String.class, 0, 1, true, null);
         featureTypeBuilder.add(ATT_NAME,        String.class, 1, 1, false, null);
-        featureTypeBuilder.add(ATT_KEYWORDS,    List.class, 0, Integer.MAX_VALUE, true, null);
+        featureTypeBuilder.add(kwList, ATT_KEYWORDS,    null, 0, Integer.MAX_VALUE, true, null);
         featureTypeBuilder.add(ATT_LOCATION,    Point.class, 1, 1, false, null);
         featureTypeBuilder.add(ATT_PHENOMENONS, List.class, 0, Integer.MAX_VALUE, true, null);
         featureTypeBuilder.add(ATT_SMLTYPE,     String.class, 1, 1, true, null);
         featureTypeBuilder.add(ATT_SMLREF,      String.class, 1, 1, true, null);
-        featureTypeBuilder.add(ATT_INPUTS,      Map.class, 0, Integer.MAX_VALUE, true, null);
-        featureTypeBuilder.add(ATT_OUTPUTS,     Map.class, 0, Integer.MAX_VALUE, true, null);
+        featureTypeBuilder.add(inList, ATT_INPUTS,      null, 0, Integer.MAX_VALUE, true, null);
+        featureTypeBuilder.add(outList, ATT_OUTPUTS,     null, 0, Integer.MAX_VALUE, true, null);
         featureTypeBuilder.add(ATT_CHARACTERISTICS,Map.class, 0, Integer.MAX_VALUE, true, null);
         featureTypeBuilder.setDefaultGeometry(ATT_LOCATION);
         types.put(SML_TN_DATASOURCETYPE, featureTypeBuilder.buildFeatureType());
@@ -257,7 +321,7 @@ public class SMLDataStore extends AbstractDataStore {
             throw new DataStoreException(ex);
         }
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -331,7 +395,7 @@ public class SMLDataStore extends AbstractDataStore {
      * {@inheritDoc }
      */
     @Override
-    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures, 
+    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures,
             final Hints hints) throws DataStoreException {
         throw new DataStoreException("Not supported.");
     }
@@ -352,7 +416,7 @@ public class SMLDataStore extends AbstractDataStore {
         throw new DataStoreException("Not supported.");
     }
 
-    
+
     ////////////////////////////////////////////////////////////////////////////
     // Feature Reader //////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
@@ -515,7 +579,14 @@ public class SMLDataStore extends AbstractDataStore {
                 keywords.add(rset.getString(1));
             }
             rset.close();
-            props.add(FF.createAttribute(keywords, (AttributeDescriptor) type.getDescriptor(ATT_KEYWORDS), null));
+            final ComplexAttribute keywordList = (ComplexAttribute) FeatureUtilities.defaultProperty(type.getDescriptor(ATT_KEYWORDS));
+            final ComplexType ktype = keywordList.getType();
+            final Collection<Property> kprops = new ArrayList<Property>();
+            kprops.add(FF.createAttribute(keywords, (AttributeDescriptor) ktype.getDescriptor(ATT_KEYWORD), null));
+            //TODO codespace
+
+            props.add(FF.createComplexAttribute(kprops, (AttributeDescriptor) type.getDescriptor(ATT_KEYWORDS), null));
+
 
             /*
              *  SML : REF
@@ -538,13 +609,24 @@ public class SMLDataStore extends AbstractDataStore {
             stmtTextValue2.setString(1, pathInputsNam);
             stmtTextValue2.setInt(2, formID);
             ResultSet result3 = stmtTextValue2.executeQuery();
-            Map<String, String> inputs = new HashMap<String, String>();
+
+            final ComplexAttribute inputList = (ComplexAttribute) FeatureUtilities.defaultProperty(type.getDescriptor(ATT_INPUTS));
+            final ComplexType istype = inputList.getType();
+            final Collection<Property> isprops = new ArrayList<Property>();
+
+            final ComplexAttribute input = (ComplexAttribute) FeatureUtilities.defaultProperty(istype.getDescriptor(ATT_INPUT));
+            final ComplexType itype = input.getType();
+
             while (rset.next() && result3.next()) {
-                inputs.put(result3.getString(1), rset.getString(1));
+                final Collection<Property> iprops = new ArrayList<Property>();
+                iprops.add(FF.createAttribute(result3.getString(1), (AttributeDescriptor) itype.getDescriptor(ATT_NAME), null));
+                iprops.add(FF.createAttribute(rset.getString(1),    (AttributeDescriptor) itype.getDescriptor(ATT_DESC), null));
+                isprops.add(FF.createComplexAttribute(iprops, (AttributeDescriptor) istype.getDescriptor(ATT_INPUT), null));
             }
             rset.close();
             result3.close();
-            props.add(FF.createAttribute(inputs, (AttributeDescriptor) type.getDescriptor(ATT_INPUTS), null));
+
+            props.add(FF.createComplexAttribute(isprops, (AttributeDescriptor) type.getDescriptor(ATT_INPUTS), null));
 
             /*
              * SML : OUTPUTS (multiple map)
@@ -555,13 +637,24 @@ public class SMLDataStore extends AbstractDataStore {
             stmtTextValue2.setString(1, pathOutputsNam);
             stmtTextValue2.setInt(2, formID);
             result3 = stmtTextValue2.executeQuery();
-            Map<String, String> outputs = new HashMap<String, String>();
+
+            final ComplexAttribute outputList = (ComplexAttribute) FeatureUtilities.defaultProperty(type.getDescriptor(ATT_OUTPUTS));
+            final ComplexType ostype = outputList.getType();
+            final Collection<Property> osprops = new ArrayList<Property>();
+
+            final ComplexAttribute output = (ComplexAttribute) FeatureUtilities.defaultProperty(ostype.getDescriptor(ATT_OUTPUT));
+            final ComplexType otype = output.getType();
+
             while (rset.next() && result3.next()) {
-                outputs.put(result3.getString(1), rset.getString(1));
+                final Collection<Property> oprops = new ArrayList<Property>();
+                oprops.add(FF.createAttribute(result3.getString(1), (AttributeDescriptor) otype.getDescriptor(ATT_NAME), null));
+                oprops.add(FF.createAttribute(rset.getString(1),    (AttributeDescriptor) otype.getDescriptor(ATT_DESC), null));
+                osprops.add(FF.createComplexAttribute(oprops, (AttributeDescriptor) ostype.getDescriptor(ATT_OUTPUT), null));
             }
             rset.close();
             result3.close();
-            props.add(FF.createAttribute(outputs, (AttributeDescriptor) type.getDescriptor(ATT_OUTPUTS), null));
+
+            props.add(FF.createComplexAttribute(osprops, (AttributeDescriptor) type.getDescriptor(ATT_OUTPUTS), null));
 
             /*
              * SML : LOCATION (geometric)

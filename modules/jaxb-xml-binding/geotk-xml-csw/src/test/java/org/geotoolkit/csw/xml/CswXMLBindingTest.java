@@ -1274,7 +1274,7 @@ public class CswXMLBindingTest {
         "    <csw:Update>"                                                                           + '\n' +
         "        <csw:RecordProperty>"                                                               + '\n' +
         "            <csw:Name>/csw:Record/dc:contributor</csw:Name>"                                + '\n' +
-        "            <csw:Value xsi:type=\"xsd:string\">Jane</csw:Value>"                           + '\n' +
+        "            <csw:Value xsi:type=\"xsd:string\">Jane</csw:Value>"                            + '\n' +
         "        </csw:RecordProperty>"                                                              + '\n' +
         "        <csw:Constraint version=\"1.1.0\">"                                                 + '\n' +
         "            <csw:CqlText>identifier='{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}'</csw:CqlText>" + '\n' +

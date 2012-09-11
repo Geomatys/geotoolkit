@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Johann Sorel
+ *    (C) 2009-2012, Johann Sorel
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -23,13 +23,11 @@ import com.ardor3d.renderer.state.CullState;
 import com.ardor3d.renderer.state.MaterialState;
 import com.ardor3d.scenegraph.Mesh;
 import com.ardor3d.util.geom.BufferUtils;
-
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.triangulate.ConformingDelaunayTriangulationBuilder;
-
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;

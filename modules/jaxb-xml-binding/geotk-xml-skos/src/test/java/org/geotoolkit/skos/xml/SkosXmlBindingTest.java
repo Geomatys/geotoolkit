@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.skos.xml;
 
-import org.geotoolkit.skos.*;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -40,7 +39,7 @@ import static org.junit.Assert.*;
  */
 public class SkosXmlBindingTest {
 
-    private Logger       logger = Logging.getLogger("org.geotoolkit.skos");
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.skos");
 
     private MarshallerPool pool;
     private Unmarshaller unmarshaller;
@@ -71,8 +70,8 @@ public class SkosXmlBindingTest {
     public void RDFMarshalingTest() throws JAXBException {
         List<Concept> concepts = new ArrayList<Concept>();
         Concept c1 = new Concept("http://www.geomatys.com/test/bonjour", null, "bonjour", "salut", "Un terme de politesse pour saluer son interlocuteur.", null);
-        Concept c2 = new Concept("http://www.geomatys.com/test/pluie", null, "pluie", Arrays.asList("averse", "précipitation"), "Un evenement meteorologique qui fais tomber de l'eau sur la terre.", null);
-        Concept c3 = new Concept("http://www.geomatys.com/test/livre", null, "livre", Arrays.asList("bouquin", "ouvrage"), "Une reliure de papier avec des chose plus ou moins interesante ecrite dessus.", null);
+        Concept c2 = new Concept("http://www.geomatys.com/test/pluie", null, new Value("pluie"), Arrays.asList(new Value("averse"), new Value("précipitation")), new Value("Un evenement meteorologique qui fais tomber de l'eau sur la terre."), null);
+        Concept c3 = new Concept("http://www.geomatys.com/test/livre", null, new Value("livre"), Arrays.asList(new Value("bouquin"), new Value("ouvrage")), new Value("Une reliure de papier avec des chose plus ou moins interesante ecrite dessus."), null);
         concepts.add(c1);
         concepts.add(c2);
         concepts.add(c3);
@@ -107,12 +106,61 @@ public class SkosXmlBindingTest {
         "    </skos:Concept>"                                                                                                      + '\n' +
         "</rdf:RDF>"                                                                                                               + '\n';
 
-        logger.finer("result" + result);
-        logger.finer("expected" + expResult);
+        LOGGER.finer("result" + result);
+        LOGGER.finer("expected" + expResult);
         assertEquals(expResult, result);
 
     }
 
+    @Test
+    public void RDFMultilangMarshalingTest() throws JAXBException {
+        List<Concept> concepts = new ArrayList<Concept>();
+        Concept c1 = new Concept("http://www.geomatys.com/test/bonjour", null, new Value("bonjour", "fr"), new Value("salut", "fr"), new Value("Un terme de politesse pour saluer son interlocuteur.", "fr"), null);
+        Concept c2 = new Concept("http://www.geomatys.com/test/pluie", null, Arrays.asList(new Value("pluie", "fr"), new Value("rain", "en")), Arrays.asList(new Value("averse", "fr"), new Value("précipitation", "fr")), Arrays.asList(new Value("Un evenement meteorologique qui fais tomber de l'eau sur la terre.", "fr"), new Value("water falling from sky", "en")), null);
+        Concept c3 = new Concept("http://www.geomatys.com/test/livre", null, new Value("livre", "fr"), Arrays.asList(new Value("bouquin", "fr"), new Value("ouvrage", "fr")), new Value("Une reliure de papier avec des chose plus ou moins interesante ecrite dessus.", "fr"), null);
+        concepts.add(c1);
+        concepts.add(c2);
+        concepts.add(c3);
+        RDF rdf = new RDF(concepts);
+
+        StringWriter sw = new StringWriter();
+        marshaller.marshal(rdf, sw);
+
+        String result = sw.toString();
+        //we remove the xmlmns
+        result = removeXmlns(result);
+
+        String expResult =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                                            + '\n' +
+        "<rdf:RDF >"                                                                                                               + '\n' +
+        "    <skos:Concept rdf:about=\"http://www.geomatys.com/test/bonjour\">"                                                    + '\n' +
+        "        <skos:prefLabel xml:lang=\"fr\">bonjour</skos:prefLabel>"                                                                         + '\n' +
+        "        <skos:altLabel xml:lang=\"fr\">salut</skos:altLabel>"                                                                             + '\n' +
+        "        <skos:definition xml:lang=\"fr\">Un terme de politesse pour saluer son interlocuteur.</skos:definition>"                          + '\n' +
+        "    </skos:Concept>"                                                                                                      + '\n' +
+        "    <skos:Concept rdf:about=\"http://www.geomatys.com/test/pluie\">"                                                      + '\n' +
+        "        <skos:prefLabel xml:lang=\"fr\">pluie</skos:prefLabel>"                                                                           + '\n' +
+        "        <skos:prefLabel xml:lang=\"en\">rain</skos:prefLabel>"                                                                           + '\n' +
+        "        <skos:altLabel xml:lang=\"fr\">averse</skos:altLabel>"                                                                            + '\n' +
+        "        <skos:altLabel xml:lang=\"fr\">précipitation</skos:altLabel>"                                                                     + '\n' +
+        "        <skos:definition xml:lang=\"fr\">Un evenement meteorologique qui fais tomber de l'eau sur la terre.</skos:definition>"            + '\n' +
+        "        <skos:definition xml:lang=\"en\">water falling from sky</skos:definition>"            + '\n' +
+        "    </skos:Concept>"                                                                                                      + '\n' +
+        "    <skos:Concept rdf:about=\"http://www.geomatys.com/test/livre\">"                                                      + '\n' +
+        "        <skos:prefLabel xml:lang=\"fr\">livre</skos:prefLabel>"                                                                           + '\n' +
+        "        <skos:altLabel xml:lang=\"fr\">bouquin</skos:altLabel>"                                                                           + '\n' +
+        "        <skos:altLabel xml:lang=\"fr\">ouvrage</skos:altLabel>"                                                                           + '\n' +
+        "        <skos:definition xml:lang=\"fr\">Une reliure de papier avec des chose plus ou moins interesante ecrite dessus.</skos:definition>" + '\n' +
+        "    </skos:Concept>"                                                                                                      + '\n' +
+        "</rdf:RDF>"                                                                                                               + '\n';
+
+        LOGGER.finer("result" + result);
+        LOGGER.finer("expected" + expResult);
+        assertEquals(expResult, result);
+
+    }
+
+     
     /**
      *
      * @throws java.lang.Exception
@@ -152,8 +200,8 @@ public class SkosXmlBindingTest {
 
         List<Concept> concepts = new ArrayList<Concept>();
         Concept c1 = new Concept("http://www.geomatys.com/test/bonjour", null, "bonjour", "salut", "Un terme de politesse pour saluer son interlocuteur.", null);
-        Concept c2 = new Concept("http://www.geomatys.com/test/pluie", null, "pluie", Arrays.asList("averse", "précipitation"), "Un evenement meteorologique qui fais tomber de l'eau sur la terre.", null);
-        Concept c3 = new Concept("http://www.geomatys.com/test/livre", null, "livre", Arrays.asList("bouquin", "ouvrage"), "Une reliure de papier avec des chose plus ou moins interesante ecrite dessus.", null);
+        Concept c2 = new Concept("http://www.geomatys.com/test/pluie", null, new Value("pluie"), Arrays.asList(new Value("averse"), new Value("précipitation")), new Value("Un evenement meteorologique qui fais tomber de l'eau sur la terre."), null);
+        Concept c3 = new Concept("http://www.geomatys.com/test/livre", null, new Value("livre"), Arrays.asList(new Value("bouquin"), new Value("ouvrage")), new Value("Une reliure de papier avec des chose plus ou moins interesante ecrite dessus."), null);
         concepts.add(c1);
         concepts.add(c2);
         concepts.add(c3);

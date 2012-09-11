@@ -23,6 +23,7 @@ import java.nio.ByteOrder;
 import java.nio.IntBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
+import java.util.logging.Level;
 
 import org.geotoolkit.data.shapefile.shp.ShapefileHeader;
 
@@ -45,6 +46,10 @@ public final class ShxReader implements Closeable{
 
     private static final int RECS_IN_BUFFER = 2000;
 
+     /**
+     * Stores the creation stack trace if assertion are enable.
+     */
+    protected Throwable creationStack;
     private final FileChannel channel;
     private final ByteBuffer buffer;
     private final boolean useMemoryMappedBuffer;
@@ -66,33 +71,40 @@ public final class ShxReader implements Closeable{
      */
     public ShxReader(final ReadableByteChannel shxChannel, final boolean useMemoryMappedBuffer)
             throws IOException {
+        
+        // init the tracer if we need to debug a connection leak
+        assert (creationStack = new IllegalStateException().fillInStackTrace()) != null;
+        
         this.useMemoryMappedBuffer = useMemoryMappedBuffer;
         final ReadableByteChannel byteChannel = shxChannel;
 
         try {
             header = readHeader(byteChannel);
-            if (byteChannel instanceof FileChannel) {
-
-                this.channel = (FileChannel) byteChannel;
-                if (useMemoryMappedBuffer) {
-                    LOGGER.finest("Memory mapping file...");
-                    this.buffer = this.channel.map(FileChannel.MapMode.READ_ONLY,
-                            0, this.channel.size());
-
-                    this.channelOffset = 0;
-                } else {
-                    LOGGER.finest("Reading from file...");
-                    this.buffer = ByteBuffer.allocateDirect(8 * RECS_IN_BUFFER);
-                    this.channelOffset = 100;
-                }
-
-            } else {
+            
+            //windows do not handle memory mapped buffer correctly
+            //the buffer is released by the GC very late, which causes some file locks to remain.
+//            if (byteChannel instanceof FileChannel) {
+//
+//                this.channel = (FileChannel) byteChannel;
+//                if (useMemoryMappedBuffer) {
+//                    LOGGER.finest("Memory mapping file...");
+//                    this.buffer = this.channel.map(FileChannel.MapMode.READ_ONLY,
+//                            0, this.channel.size());
+//
+//                    this.channelOffset = 0;
+//                } else {
+//                    LOGGER.finest("Reading from file...");
+//                    this.buffer = ByteBuffer.allocateDirect(8 * RECS_IN_BUFFER);
+//                    this.channelOffset = 0;
+//                }
+//
+//            } else {
                 this.channel = null;
                 this.buffer = null;
                 LOGGER.finest("Loading all shx...");
                 readRecords(byteChannel);
                 byteChannel.close();
-            }
+//            }
         } catch (Throwable e) {
             if (byteChannel != null) {
                 byteChannel.close();
@@ -168,7 +180,7 @@ public final class ShxReader implements Closeable{
         closed = true;
         if (channel != null && channel.isOpen()) {
             channel.close();
-        }
+        }        
         this.content = null;
     }
 
@@ -182,7 +194,16 @@ public final class ShxReader implements Closeable{
      */
     @Override
     protected void finalize() throws Throwable {
-        this.close();
+        if (!closed) {
+            LOGGER.log(Level.WARNING,
+                    "UNCLOSED ITERATOR : There is code leaving shx reader open, "
+                    + "this may cause memory leaks or data integrity problems !");
+            if (creationStack != null) {
+                LOGGER.log(Level.WARNING,
+                        "The unclosed shx reader originated on this stack trace", creationStack);
+            }
+            this.close();
+        }        
         super.finalize();
     }
 

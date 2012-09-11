@@ -41,6 +41,7 @@ import org.opengis.filter.PropertyIsLessThan;
 import org.opengis.filter.PropertyIsLike;
 import org.opengis.filter.expression.Add;
 import org.opengis.filter.expression.Expression;
+import org.opengis.filter.expression.Literal;
 import org.opengis.filter.spatial.Disjoint;
 import org.opengis.filter.spatial.DistanceBufferOperator;
 
@@ -159,6 +160,34 @@ public class CQLTest {
 
         Assert.assertTrue(filter instanceof Not);
     }
+
+    /**
+     * Equals predicate sample
+     *
+     * @see ECQLEqualsPredicateTest
+     *
+     * @throws Exception
+     */
+    @Test
+    public void equalsPredicate() throws Exception{
+
+        Filter filter = CQL.toFilter("NAME = 'new'");
+
+        Assert.assertTrue(filter instanceof PropertyIsEqualTo);
+
+        filter = CQL.toFilter("NAME = 'bla vla '' blu vlu'");
+
+        Assert.assertTrue(filter instanceof PropertyIsEqualTo);
+
+        filter = CQL.toFilter("NAME = 'zemědělství'");
+
+        Assert.assertTrue(filter instanceof PropertyIsEqualTo);
+
+        final PropertyIsEqualTo pet = (PropertyIsEqualTo) filter;
+        final Literal lit = (Literal) pet.getExpression2();
+        Assert.assertEquals("zemědělství", lit.getValue());
+    }
+
 
     /**
      * Like predicate sample

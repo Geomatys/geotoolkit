@@ -80,6 +80,17 @@ public class DefaultMutableFeatureTypeStyle implements MutableFeatureTypeStyle, 
                 }
                 fireRuleChange(CollectionChangeEvent.ITEM_REMOVED, items, range );
             }
+
+            @Override
+            protected void notifyChange(MutableRule oldItem, MutableRule newItem, int index) {
+                if(oldItem != null){
+                    ruleListener.unregisterSource(oldItem);
+                }
+                if(newItem != null){
+                    ruleListener.registerSource(newItem);
+                }
+                fireRuleChange(CollectionChangeEvent.ITEM_CHANGED, oldItem, NumberRange.create(index, index) );
+            }
             
         };
         

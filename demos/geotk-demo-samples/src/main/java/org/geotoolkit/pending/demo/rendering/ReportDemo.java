@@ -6,7 +6,9 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.io.File;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 
@@ -32,6 +34,7 @@ import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
+import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.report.FeatureCollectionDataSource;
 import org.geotoolkit.report.JasperReportService;
@@ -65,7 +68,8 @@ public class ReportDemo {
 
 
     public static void main(String[] args) throws Exception {
-
+        Demos.init();
+        
         final InputStream template = ReportDemo.class.getResourceAsStream("/data/report/complexReport.jrxml");
 
         final Entry<JasperReport,FeatureType> entry = JasperReportService.prepareTemplate(template);
@@ -75,7 +79,8 @@ public class ReportDemo {
 
         
         //source to make an atlas ----------------------------------------------------
-        final DataStore store = DataStoreFinder.getDataStore("url",ReportDemo.class.getResource("/data/world/Countries.shp"));
+        final DataStore store = DataStoreFinder.open(
+                (Map)Collections.singletonMap("url",ReportDemo.class.getResource("/data/world/Countries.shp")));
         final Name name = store.getNames().iterator().next();
         final FeatureCollection countries =  store.createSession(true).getFeatureCollection(QueryBuilder.all(name));
 
@@ -86,6 +91,17 @@ public class ReportDemo {
 
         //We map the feature type to the report type ---------------------------------
         final GenericMappingFeatureIterator mapped = new GenericMappingFeatureIterator(ite, new FeatureMapper(){
+            
+            @Override
+            public FeatureType getSourceType() {
+                return countries.getFeatureType();
+            }
+
+            @Override
+            public FeatureType getTargetType() {
+                return type;
+            }
+            
             @Override
             public Feature transform(Feature feature) {
                 final Feature modified = FeatureUtilities.defaultFeature(type, "id");

@@ -17,19 +17,45 @@
 
 package org.geotoolkit.wms.map;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.geom.NoninvertibleTransformException;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import org.geotoolkit.client.CapabilitiesException;
+import org.geotoolkit.display.canvas.RenderingContext;
+import org.geotoolkit.display.primitive.SearchArea;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
+import org.geotoolkit.display2d.container.statefull.StatefullProjectedCoverage;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
-import org.geotoolkit.gui.swing.go2.control.information.presenter.InformationPresenter;
-import org.geotoolkit.wms.map.WMSGraphicBuilder.WMSGraphic;
+import org.geotoolkit.gui.swing.go2.control.information.presenter.AbstractInformationPresenter;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
+import org.geotoolkit.map.CoverageMapLayer;
+import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.wms.WMSCoverageReference;
+import org.geotoolkit.wms.WebMapServer;
+import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
+import org.jdesktop.swingx.JXBusyLabel;
 import org.jdesktop.swingx.JXHyperlink;
+import org.jdesktop.swingx.combobox.ListComboBoxModel;
+import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
@@ -39,41 +65,149 @@ import org.opengis.util.FactoryException;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class WMSPresenter implements InformationPresenter{
+public class WMSPresenter extends AbstractInformationPresenter{
+
+    private static final Logger LOGGER = Logging.getLogger(WMSPresenter.class);
+
+    public WMSPresenter() {
+        super(100);
+    }
 
     @Override
     public JComponent createComponent(final Object graphic,
             final RenderingContext2D context, final SearchAreaJ2D area) {
-        
-        if (!(graphic instanceof WMSGraphicBuilder.WMSGraphic)) {
+
+        if (!(graphic instanceof StatefullProjectedCoverage)) {
             return null;
         }
 
-        final URL url;
-        try {
-            WMSGraphicBuilder.WMSGraphic gra = (WMSGraphic) graphic;
-            url = gra.getFeatureInfo(context, area, "application/vnd.ogc.gml", 20);
+        final StatefullProjectedCoverage graCoverage = (StatefullProjectedCoverage) graphic;
+        final CoverageMapLayer layer = graCoverage.getLayer();
 
-            final JXHyperlink link = new JXHyperlink();
-            link.setURI(url.toURI());
-            final JPanel panel = new JPanel();
-            panel.add(link);
-            return panel;
-
-        } catch (TransformException ex) {
-            Logger.getLogger(WMSPresenter.class.getName()).log(Level.WARNING, null, ex);
-        } catch (FactoryException ex) {
-            Logger.getLogger(WMSPresenter.class.getName()).log(Level.WARNING, null, ex);
-        } catch (MalformedURLException ex) {
-            Logger.getLogger(WMSPresenter.class.getName()).log(Level.WARNING, null, ex);
-        } catch (NoninvertibleTransformException ex) {
-            Logger.getLogger(WMSPresenter.class.getName()).log(Level.WARNING, null, ex);
-        } catch (URISyntaxException ex) {
-            Logger.getLogger(WMSPresenter.class.getName()).log(Level.WARNING, null, ex);
+        if(!(layer.getCoverageReference() instanceof WMSCoverageReference)){
+            return null;
         }
 
+        final WMSCoverageReference reference = (WMSCoverageReference) layer.getCoverageReference();
 
-        return null;
+        //get the different mime types
+        final List<String> mimeTypes = new ArrayList<String>();
+        final WebMapServer server = reference.getStore();
+        try {
+            final AbstractWMSCapabilities capa = server.getCapabilities();
+            mimeTypes.addAll(capa.getCapability().getRequest().getGetFeatureInfo().getFormats());
+        } catch (CapabilitiesException ex) {
+            LOGGER.log(Level.WARNING, ex.getMessage(),ex);
+        }
+
+        final JPanel guiTopPanel = new JPanel(new BorderLayout());
+        final JPanel guiCenterPanel = new JPanel(new BorderLayout());
+        guiCenterPanel.setPreferredSize(new Dimension(350, 300));
+
+        final JLabel guiMimeLabel = new JLabel(MessageBundle.getString("mimeType") +"  ");
+        final JComboBox guiMimeTypes = new JComboBox();
+        guiMimeTypes.setModel(new ListComboBoxModel(mimeTypes));
+        guiTopPanel.add(BorderLayout.WEST, guiMimeLabel);
+        guiTopPanel.add(BorderLayout.CENTER, guiMimeTypes);
+
+        guiMimeTypes.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                guiCenterPanel.removeAll();
+
+                try {
+                    final URL url = getFeatureInfo(reference, context, area, guiMimeTypes.getSelectedItem().toString(), 20);
+                    try{
+                        final JXHyperlink link = new JXHyperlink();
+                        link.setURI(url.toURI());
+                        guiCenterPanel.add(BorderLayout.NORTH,link);
+                    }catch(Exception ex){
+                        //hyperlinks is not supported on all platforms
+                    }
+
+                    new Thread(){
+                        @Override
+                        public void run() {
+                            downloadGetFeatureInfo(guiCenterPanel, url);
+                        }
+                    }.start();
+
+                } catch (TransformException ex) {
+                    LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+                } catch (FactoryException ex) {
+                    LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+                } catch (MalformedURLException ex) {
+                    LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+                } catch (NoninvertibleTransformException ex) {
+                    LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+                }
+                
+                guiCenterPanel.revalidate();
+                guiCenterPanel.repaint();
+            }
+        });
+
+
+
+        final JPanel guiAll = new JPanel(new BorderLayout());
+        guiAll.add(BorderLayout.NORTH,guiTopPanel);
+        guiAll.add(BorderLayout.CENTER,guiCenterPanel);
+        return guiAll;
+    }
+
+    public URL getFeatureInfo(final WMSCoverageReference reference, final RenderingContext context, final SearchArea mask,
+                final String infoFormat, final int featureCount)
+                throws TransformException, FactoryException,
+                MalformedURLException, NoninvertibleTransformException{
+
+            final RenderingContext2D ctx2D = (RenderingContext2D) context;
+            final DirectPosition center = mask.getDisplayGeometry().getCentroid();
+
+            final URL url;
+                url = reference.queryFeatureInfo(
+                        ctx2D.getCanvasObjectiveBounds(),
+                        ctx2D.getCanvasDisplayBounds().getSize(),
+                        (int) center.getOrdinate(0),
+                        (int) center.getOrdinate(1),
+                        reference.getLayerNames(),
+                        infoFormat,featureCount);
+
+            return url;
+        }
+
+    private static void downloadGetFeatureInfo(final JPanel contentPane, final URL url){
+
+        final JXBusyLabel guiBuzy = new JXBusyLabel(new Dimension(30, 30));
+        guiBuzy.setBusy(true);
+        contentPane.add(BorderLayout.CENTER,guiBuzy);
+        contentPane.revalidate();
+        contentPane.repaint();
+
+
+        InputStream input = null;
+
+        try{
+            input = url.openStream();
+
+            final BufferedImage image = ImageIO.read(input);
+            final JLabel lbl = new JLabel(new ImageIcon(image));
+            contentPane.remove(guiBuzy);
+            contentPane.add(BorderLayout.CENTER,new JScrollPane(lbl));
+            contentPane.revalidate();
+            contentPane.repaint();
+
+        } catch (IOException ex) {
+            LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+        }finally{
+            if(input != null){
+                try {
+                    input.close();
+                } catch (IOException ex) {
+                    LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+                }
+            }
+        }
+
     }
 
 }

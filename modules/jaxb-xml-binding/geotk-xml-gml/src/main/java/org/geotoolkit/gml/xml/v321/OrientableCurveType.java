@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-
+import org.geotoolkit.gml.xml.OrientableCurve;
 
 /**
  * <p>Java class for OrientableCurveType complex type.
@@ -49,9 +49,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "OrientableCurveType", propOrder = {
     "baseCurve"
 })
-public class OrientableCurveType
-    extends AbstractCurveType
-{
+public class OrientableCurveType extends AbstractCurveType implements OrientableCurve {
 
     @XmlElement(required = true)
     private CurvePropertyType baseCurve;

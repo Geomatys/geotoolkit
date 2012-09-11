@@ -168,12 +168,12 @@ public class SurveyProcedureType implements SurveyProcedure, Entry {
         if (object instanceof SurveyProcedureType && super.equals(object)) {
             final SurveyProcedureType that = (SurveyProcedureType) object;
             return Objects.equals(this.operator,          that.operator)   &&
-                   //Utilities.equals(this.elevationDatum,    that.elevationDatum)   && 
+                   //Objects.equals(this.elevationDatum,    that.elevationDatum)   && 
                    Objects.equals(this.elevationMethod,   that.elevationMethod) &&
                    Objects.equals(this.elevationAccuracy, that.elevationAccuracy) &&
                    Objects.equals(this.positionAccuracy,  that.positionAccuracy) &&
                    Objects.equals(this.positionMethod,    that.positionMethod) &&
-                   //Utilities.equals(this.projection,        that.projection) &&
+                   //Objects.equals(this.projection,        that.projection) &&
                    Objects.equals(this.surveyTime,        that.surveyTime);
         }
         return false;

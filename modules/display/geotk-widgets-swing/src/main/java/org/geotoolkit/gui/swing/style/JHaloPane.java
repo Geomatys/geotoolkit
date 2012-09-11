@@ -17,13 +17,11 @@
  */
 package org.geotoolkit.gui.swing.style;
 
-import org.geotoolkit.gui.swing.resource.MessageBundle;
-import java.awt.Component;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
 import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.SwingConstants;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.style.Halo;
 
@@ -39,6 +37,7 @@ public class JHaloPane extends StyleElementEditor<Halo> {
 
     /** Creates new form JHaloPanel */
     public JHaloPane() {
+        super(Halo.class);
         initComponents();
         init();
     }

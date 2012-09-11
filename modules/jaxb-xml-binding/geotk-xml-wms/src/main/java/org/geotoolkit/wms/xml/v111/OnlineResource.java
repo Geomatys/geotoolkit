@@ -72,6 +72,18 @@ public class OnlineResource extends AbstractOnlineResource {
     OnlineResource() {
     }
 
+    public OnlineResource(final OnlineResource that) {
+        if (that != null) {
+            this.href    = that.href;
+            this.type    = that.type;
+            this.actuate = that.actuate;
+            this.arcrole = that.arcrole;
+            this.role    = that.role;
+            this.show    = that.show;
+            this.title   = that.title;
+        }
+    }
+    
     /**
      * Build an online resource with only the href attribute (most of the case).
      * 

@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.LineStringProperty;
 import org.geotoolkit.util.Utilities;
 
 
@@ -58,7 +59,7 @@ import org.geotoolkit.util.Utilities;
 @XmlType(name = "LineStringPropertyType", propOrder = {
     "lineString"
 })
-public class LineStringPropertyType {
+public class LineStringPropertyType implements LineStringProperty {
 
     @XmlElement(name = "LineString")
     protected LineStringType lineString;
@@ -83,6 +84,14 @@ public class LineStringPropertyType {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     protected String actuate;
 
+    public LineStringPropertyType() {
+        
+    }
+    
+    public LineStringPropertyType(final LineStringType lineString) {
+        this.lineString = lineString;
+    }
+    
     /**
      * Gets the value of the lineString property.
      * 

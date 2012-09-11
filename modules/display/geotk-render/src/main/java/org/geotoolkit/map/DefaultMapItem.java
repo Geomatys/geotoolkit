@@ -22,7 +22,6 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.geotoolkit.util.collection.NotifiedCopyOnWriteArrayList;

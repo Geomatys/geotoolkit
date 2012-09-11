@@ -19,7 +19,7 @@ package org.geotoolkit.display2d.ext.legend;
 import java.awt.Dimension;
 import java.awt.Font;
 import org.geotoolkit.display2d.ext.BackgroundTemplate;
-
+import org.geotoolkit.util.ArgumentChecks;
 
 /**
  * Default legend template, immutable.
@@ -27,16 +27,15 @@ import org.geotoolkit.display2d.ext.BackgroundTemplate;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DefaultLegendTemplate implements LegendTemplate{
+public class DefaultLegendTemplate implements LegendTemplate {
 
     private final float gap;
     private final Dimension glyphSize;
     private final Font rulefont;
     private final boolean layerVisible;
     private final Font layerFont;
-
+    private boolean onlyVisibleLayers = false;
     private final BackgroundTemplate background;
-
 
     public DefaultLegendTemplate(final BackgroundTemplate background,
             final float gap, final Dimension glyphSize, final Font rulefont, final boolean layerVisible, final Font layerFont) {
@@ -46,6 +45,12 @@ public class DefaultLegendTemplate implements LegendTemplate{
         this.rulefont = rulefont;
         this.layerVisible = layerVisible;
         this.layerFont = layerFont;
+    }
+
+    public DefaultLegendTemplate(final BackgroundTemplate background,
+            final float gap, final Dimension glyphSize, final Font rulefont, final boolean layerVisible, final Font layerFont, boolean displayOnlyTheVisibles) {
+        this(background, gap, glyphSize, rulefont, layerVisible, layerFont);
+        onlyVisibleLayers = displayOnlyTheVisibles;
     }
 
     /**
@@ -62,6 +67,10 @@ public class DefaultLegendTemplate implements LegendTemplate{
     @Override
     public float getGapSize() {
         return gap;
+    }
+    
+    public boolean displayOnlyVisibleLayers() {
+        return onlyVisibleLayers;
     }
 
     /**
@@ -90,4 +99,9 @@ public class DefaultLegendTemplate implements LegendTemplate{
         return layerFont;
     }
 
+    @Override
+    public void setDisplayOnlyVisibleLayers(boolean displayOption) {
+        ArgumentChecks.ensureNonNull("display option", displayOption);
+        onlyVisibleLayers = displayOption;
+    }
 }

@@ -20,13 +20,19 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.geotoolkit.client.AbstractServer;
+import org.geotoolkit.client.CapabilitiesException;
+import org.geotoolkit.client.ServerFactory;
+import org.geotoolkit.client.ServerFinder;
+import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.coverage.CoverageStore;
+import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.wms.v111.GetCapabilities111;
 import org.geotoolkit.wms.v111.GetFeatureInfo111;
@@ -36,9 +42,12 @@ import org.geotoolkit.wms.v130.GetCapabilities130;
 import org.geotoolkit.wms.v130.GetFeatureInfo130;
 import org.geotoolkit.wms.v130.GetLegend130;
 import org.geotoolkit.wms.v130.GetMap130;
+import org.geotoolkit.wms.xml.AbstractLayer;
 import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
 import org.geotoolkit.wms.xml.WMSBindingUtilities;
 import org.geotoolkit.wms.xml.WMSVersion;
+import org.opengis.feature.type.Name;
+import org.opengis.parameter.ParameterValueGroup;
 
 
 /**
@@ -49,12 +58,17 @@ import org.geotoolkit.wms.xml.WMSVersion;
  * @author Cédric Briançon (Geomatys)
  * @module pending
  */
-public class WebMapServer extends AbstractServer{
+public class WebMapServer extends AbstractServer implements CoverageStore{
 
     private static final Logger LOGGER = Logging.getLogger(WebMapServer.class);
 
-    private final WMSVersion version;
+    /**
+     * Defines the timeout in milliseconds for the GetCapabilities request.
+     */
+    private static final long TIMEOUT_GETCAPS = 20000L;
+
     private AbstractWMSCapabilities capabilities;
+    private Set<Name> names = null;
 
     /**
      * The request header map for this server
@@ -128,11 +142,20 @@ public class WebMapServer extends AbstractServer{
      */
     public WebMapServer(final URL serverURL, final ClientSecurity security, 
             final WMSVersion version, final AbstractWMSCapabilities capabilities) {
-        super(serverURL,security);
-        this.version = version;
+        super(create(WMSServerFactory.PARAMETERS, serverURL, security));
+        Parameters.getOrCreate(WMSServerFactory.VERSION, parameters).setValue(version.getCode());
         this.capabilities = capabilities;
     }
 
+    public WebMapServer(ParameterValueGroup params) {
+        super(params);
+    }
+
+    @Override
+    public WMSServerFactory getFactory() {
+        return (WMSServerFactory)ServerFinder.getFactoryById(WMSServerFactory.NAME);
+    }
+    
     /**
      * {@inheritDoc}
      */
@@ -156,13 +179,34 @@ public class WebMapServer extends AbstractServer{
 
     /**
      * Returns the {@linkplain AbstractWMSCapabilities capabilities} response for this
-     * request.
+     * request if the server answers in less than 20s, otherwise throws a
+     * {@link CapabilitiesException}.
+     *
+     * @return {@linkplain AbstractWMSCapabilities capabilities} response but never {@code null}.
+     * @throws CapabilitiesException
+     * @see {@link #getCapabilities(long)}
      */
-    public AbstractWMSCapabilities getCapabilities() {
+    public AbstractWMSCapabilities getCapabilities() throws CapabilitiesException{
+    	return getCapabilities(TIMEOUT_GETCAPS);
+    }
+
+    /**
+     * Returns the {@linkplain AbstractWMSCapabilities capabilities} response for this
+     * request if the server answers before the specified timeout, otherwise throws a
+     * {@link CapabilitiesException}.
+     *
+     * @param timeout Timeout in milliseconds
+     * @return {@linkplain AbstractWMSCapabilities capabilities} response but never {@code null}.
+     * @throws CapabilitiesException  
+     */
+    public AbstractWMSCapabilities getCapabilities(final long timeout) throws CapabilitiesException{
 
         if (capabilities != null) {
             return capabilities;
         }
+        
+        final CapabilitiesException[] exception = new CapabilitiesException[1];
+        
         //Thread to prevent infinite request on a server
         final Thread thread = new Thread() {
             @Override
@@ -175,27 +219,38 @@ public class WebMapServer extends AbstractServer{
 
                 try {
                     System.out.println(getCaps.getURL());
-                    capabilities = WMSBindingUtilities.unmarshall(getCaps.getResponseStream(), version);
+                    capabilities = WMSBindingUtilities.unmarshall(getCaps.getResponseStream(), getVersion());
                 } catch (Exception ex) {
                     capabilities = null;
                     try {
-                        LOGGER.log(Level.WARNING, "Wrong URL, the server doesn't answer : " +
+                        exception[0] = new CapabilitiesException("Wrong URL, the server doesn't answer : " +
                                 createGetCapabilities().getURL().toString(), ex);
                     } catch (MalformedURLException ex1) {
-                        LOGGER.log(Level.WARNING, "Malformed URL, the server doesn't answer. ", ex1);
+                        exception[0] = new CapabilitiesException("Malformed URL, the server doesn't answer. ", ex);
                     }
                 }
             }
         };
+        
         thread.start();
         final long start = System.currentTimeMillis();
         try {
-            thread.join(10000);
+            thread.join(timeout);
         } catch (InterruptedException ex) {
-            LOGGER.log(Level.WARNING, "The thread to obtain GetCapabilities doesn't answer.", ex);
+            throw new CapabilitiesException("The thread to obtain GetCapabilities doesn't answer.");
         }
-        if ((System.currentTimeMillis() - start) > 10000) {
-            LOGGER.log(Level.WARNING, "TimeOut error, the server takes too much time to answer. ");
+        
+        if(exception[0] != null){
+            throw exception[0];
+        }
+        
+        if ((System.currentTimeMillis() - start) > timeout) {
+            throw new CapabilitiesException("TimeOut error, the server takes too much time to answer.");
+        }
+
+        //force throw CapabilitiesException if the returned capabilities object is null
+        if(capabilities == null){
+            throw new CapabilitiesException("The capabilities document is null.");
         }
 
         return capabilities;
@@ -203,22 +258,24 @@ public class WebMapServer extends AbstractServer{
 
     /**
      * Returns the request version.
+     * @return 
      */
     public WMSVersion getVersion() {
-        return version;
+        return WMSVersion.getVersion(Parameters.value(WMSServerFactory.VERSION, parameters));
     }
 
     /**
      * Returns the request object, in the version chosen.
      *
+     * @return 
      * @throws IllegalArgumentException if the version requested is not supported.
      */
     public GetMapRequest createGetMap() {
-        switch (version) {
+        switch (getVersion()) {
             case v111:
-                return new GetMap111(serverURL.toString(),securityManager);
+                return new GetMap111(serverURL.toString(),getClientSecurity());
             case v130:
-                return new GetMap130(serverURL.toString(),securityManager);
+                return new GetMap130(serverURL.toString(),getClientSecurity());
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -227,14 +284,15 @@ public class WebMapServer extends AbstractServer{
     /**
      * Returns the request object, in the version chosen.
      *
+     * @return 
      * @throws IllegalArgumentException if the version requested is not supported.
      */
     public GetCapabilitiesRequest createGetCapabilities() {
-        switch (version) {
+        switch (getVersion()) {
             case v111:
-                return new GetCapabilities111(serverURL.toString(),securityManager);
+                return new GetCapabilities111(serverURL.toString(),getClientSecurity());
             case v130:
-                return new GetCapabilities130(serverURL.toString(),securityManager);
+                return new GetCapabilities130(serverURL.toString(),getClientSecurity());
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -243,14 +301,15 @@ public class WebMapServer extends AbstractServer{
     /**
      * Returns the request object, in the version chosen.
      *
+     * @return 
      * @throws IllegalArgumentException if the version requested is not supported.
      */
     public GetLegendRequest createGetLegend(){
-        switch (version) {
+        switch (getVersion()) {
             case v111:
-                return new GetLegend111(serverURL.toString(),securityManager);
+                return new GetLegend111(serverURL.toString(),getClientSecurity());
             case v130:
-                return new GetLegend130(serverURL.toString(),securityManager);
+                return new GetLegend130(serverURL.toString(),getClientSecurity());
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -259,14 +318,15 @@ public class WebMapServer extends AbstractServer{
     /**
      * Returns the request object, in the version chosen.
      *
+     * @return 
      * @throws IllegalArgumentException if the version requested is not supported.
      */
     public GetFeatureInfoRequest createGetFeatureInfo() {
-        switch (version) {
+        switch (getVersion()) {
             case v111:
-                return new GetFeatureInfo111(serverURL.toString(),securityManager);
+                return new GetFeatureInfo111(serverURL.toString(),getClientSecurity());
             case v130:
-                return new GetFeatureInfo130(serverURL.toString(),securityManager);
+                return new GetFeatureInfo130(serverURL.toString(),getClientSecurity());
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -281,10 +341,51 @@ public class WebMapServer extends AbstractServer{
     }
 
     @Override
+    public synchronized Set<Name> getNames() throws DataStoreException {
+        if(names == null){
+            names = new HashSet<Name>();
+            final AbstractWMSCapabilities capa;
+            try {
+                capa = getCapabilities();
+            } catch (CapabilitiesException ex) {
+                throw new DataStoreException(ex);
+            }
+                        
+            final List<AbstractLayer> layers = capa.getLayers();
+            for(AbstractLayer al : layers){
+                final String name = al.getName();
+                if(name != null){
+                    names.add(DefaultName.valueOf(name));
+                }
+            }
+            
+            names = Collections.unmodifiableSet(names);
+        }
+        return names;
+    }
+
+    @Override
+    public CoverageReference getCoverageReference(Name name) throws DataStoreException {
+        if(getNames().contains(name)){
+            return new WMSCoverageReference(this,name);
+        }
+        throw new DataStoreException("No layer for name : " + name);
+    }
+
+    @Override
+    public void dispose() {
+    }
+
+    @Override
+    public CoverageReference create(Name name) throws DataStoreException {
+        throw new DataStoreException("Can not create new coverage.");
+    }
+    
+    @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("WebMapServer[");
         sb.append("serverUrl: ").append(serverURL).append(", ")
-          .append("version: ").append(version).append("]");
+          .append("version: ").append(getVersion()).append("]");
         return sb.toString();
     }
 }

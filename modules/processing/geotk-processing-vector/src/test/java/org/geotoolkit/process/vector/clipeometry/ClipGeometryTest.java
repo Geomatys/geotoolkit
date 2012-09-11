@@ -46,10 +46,10 @@ import static org.junit.Assert.*;
 
 /**
  * JUnit test of clip with a geometry process
- * @author Quentin Boileau
- * @module pending
+ *
+ * @author Quentin Boileau @module pending
  */
-public class ClipGeometryTest extends AbstractProcessTest{
+public class ClipGeometryTest extends AbstractProcessTest {
 
     private static SimpleFeatureBuilder sfb;
     private static GeometryFactory geometryFactory;
@@ -59,9 +59,8 @@ public class ClipGeometryTest extends AbstractProcessTest{
         super("clipGeometry");
     }
 
-
     @Test
-    public void testClipGeometry() throws ProcessException, NoSuchIdentifierException{
+    public void testClipGeometry() throws ProcessException, NoSuchIdentifierException, FactoryException {
 
         // Inputs
         final FeatureCollection<?> featureList = buildFeatureList();
@@ -113,15 +112,9 @@ public class ClipGeometryTest extends AbstractProcessTest{
         return sft;
     }
 
-    private static FeatureCollection<?> buildFeatureList() {
+    private static FeatureCollection<?> buildFeatureList() throws FactoryException {
 
-        try {
-            type = createSimpleType();
-        } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(ClipGeometryTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FactoryException ex) {
-            Logger.getLogger(ClipGeometryTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        type = createSimpleType();
 
         final FeatureCollection<Feature> featureList = DataUtilities.collection("", type);
 
@@ -226,15 +219,9 @@ public class ClipGeometryTest extends AbstractProcessTest{
         return clip;
     }
 
-    private static FeatureCollection<?> buildResultList() {
+    private static FeatureCollection<?> buildResultList() throws FactoryException {
 
-        try {
-            type = createSimpleResultType();
-        } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(ClipGeometryTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FactoryException ex) {
-            Logger.getLogger(ClipGeometryTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        type = createSimpleResultType();
 
         final FeatureCollection<Feature> featureList = DataUtilities.collection("", type);
 

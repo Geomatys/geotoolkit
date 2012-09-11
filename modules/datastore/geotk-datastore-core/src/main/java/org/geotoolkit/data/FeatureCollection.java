@@ -19,13 +19,11 @@ package org.geotoolkit.data;
 
 import java.util.Collection;
 import java.util.Map;
-
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.Source;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.storage.DataStoreException;
-
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;

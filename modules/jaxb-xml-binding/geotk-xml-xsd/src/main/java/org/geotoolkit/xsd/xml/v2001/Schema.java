@@ -35,9 +35,9 @@ import org.geotoolkit.util.Utilities;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -65,8 +65,8 @@ import org.geotoolkit.util.Utilities;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -151,8 +151,8 @@ public class Schema extends OpenAttrs {
      * {@link Annotation }
      * {@link TopLevelSimpleType }
      * {@link NamedAttributeGroup }
-     * 
-     * 
+     *
+     *
      */
     public List<OpenAttrs> getSimpleTypeOrComplexTypeOrGroup() {
         if (simpleTypeOrComplexTypeOrGroup == null) {
@@ -247,14 +247,21 @@ public class Schema extends OpenAttrs {
         this.simpleTypeOrComplexTypeOrGroup.add(element);
     }
 
+    public void addComplexType(final int index, final TopLevelComplexType element) {
+        if (simpleTypeOrComplexTypeOrGroup == null) {
+            simpleTypeOrComplexTypeOrGroup = new ArrayList<OpenAttrs>();
+        }
+        this.simpleTypeOrComplexTypeOrGroup.add(index, element);
+    }
+
 
     /**
      * Gets the value of the targetNamespace property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTargetNamespace() {
         return targetNamespace;
@@ -262,11 +269,11 @@ public class Schema extends OpenAttrs {
 
     /**
      * Sets the value of the targetNamespace property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTargetNamespace(final String value) {
         this.targetNamespace = value;
@@ -274,11 +281,11 @@ public class Schema extends OpenAttrs {
 
     /**
      * Gets the value of the version property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getVersion() {
         return version;
@@ -286,11 +293,11 @@ public class Schema extends OpenAttrs {
 
     /**
      * Sets the value of the version property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setVersion(final String value) {
         this.version = value;
@@ -318,11 +325,11 @@ public class Schema extends OpenAttrs {
 
     /**
      * Gets the value of the attributeFormDefault property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link FormChoice }
-     *     
+     *
      */
     public FormChoice getAttributeFormDefault() {
         if (attributeFormDefault == null) {
@@ -334,11 +341,11 @@ public class Schema extends OpenAttrs {
 
     /**
      * Sets the value of the attributeFormDefault property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link FormChoice }
-     *     
+     *
      */
     public void setAttributeFormDefault(final FormChoice value) {
         this.attributeFormDefault = value;
@@ -346,11 +353,11 @@ public class Schema extends OpenAttrs {
 
     /**
      * Gets the value of the elementFormDefault property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link FormChoice }
-     *     
+     *
      */
     public FormChoice getElementFormDefault() {
         if (elementFormDefault == null) {
@@ -362,11 +369,11 @@ public class Schema extends OpenAttrs {
 
     /**
      * Sets the value of the elementFormDefault property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link FormChoice }
-     *     
+     *
      */
     public void setElementFormDefault(final FormChoice value) {
         this.elementFormDefault = value;
@@ -374,11 +381,11 @@ public class Schema extends OpenAttrs {
 
     /**
      * Gets the value of the id property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getId() {
         return id;
@@ -386,11 +393,11 @@ public class Schema extends OpenAttrs {
 
     /**
      * Sets the value of the id property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setId(final String value) {
         this.id = value;
@@ -398,11 +405,11 @@ public class Schema extends OpenAttrs {
 
     /**
      * Gets the value of the lang property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getLang() {
         return lang;
@@ -410,11 +417,11 @@ public class Schema extends OpenAttrs {
 
     /**
      * Sets the value of the lang property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setLang(final String value) {
         this.lang = value;

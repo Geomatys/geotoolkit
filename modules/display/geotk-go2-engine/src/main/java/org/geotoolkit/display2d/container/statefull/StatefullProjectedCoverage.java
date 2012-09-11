@@ -20,21 +20,19 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
-import com.vividsolutions.jts.geom.Polygon;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
+import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.ElevationModel;
-import org.geotoolkit.util.collection.Cache;
-import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.referencing.CRS;
-
+import org.geotoolkit.util.collection.Cache;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 
@@ -87,7 +85,10 @@ public class StatefullProjectedCoverage implements ProjectedCoverage {
     @Override
     public GridCoverage2D getElevationCoverage(final GridCoverageReadParam param)
         throws CoverageStoreException{
-        final ElevationModel elevationModel = layer.getElevationModel();
+        ElevationModel elevationModel = layer.getElevationModel();
+        if(elevationModel == null){
+             elevationModel = (ElevationModel) params.context.getRenderingHints().get(GO2Hints.KEY_ELEVATION_MODEL);
+        }
 
         if(elevationModel != null){
             return (GridCoverage2D) elevationModel.getCoverageReader().read(0,param);
@@ -111,7 +112,8 @@ public class StatefullProjectedCoverage implements ProjectedCoverage {
                 Logger.getLogger(StatefullProjectedCoverage.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-            border = new StatefullProjectedGeometry(params, Polygon.class, createGeometry(env));
+            border = new StatefullProjectedGeometry(params);
+            border.setDataGeometry(createGeometry(env),env.getCoordinateReferenceSystem());
         }
         return border;
     }

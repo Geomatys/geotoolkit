@@ -64,6 +64,17 @@ public class HTTP extends AbstractHTTP {
      HTTP() {
      }
 
+    public HTTP(final HTTP that) {
+        if (that != null) {
+            if (that.get != null) {
+                this.get  = new Get(that.get);
+            }
+            if (that.post != null) {
+                this.post  = new Post(that.post);
+            }
+        }
+    }
+     
     /**
      * Build a new HTTP object.
      */

@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009-2011, Geomatys
  *
@@ -19,6 +19,7 @@ package org.geotoolkit.feature;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -28,6 +29,9 @@ import java.util.List;
 
 import java.util.Set;
 import org.geotoolkit.io.TableWriter;
+import org.geotoolkit.util.StringUtilities;
+import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.collection.CloseableIterator;
 import org.geotoolkit.util.converter.Classes;
 
@@ -52,7 +56,7 @@ import org.opengis.filter.identity.Identifier;
  */
 public abstract class AbstractComplexAttribute<V extends Collection<Property>,I extends Identifier> extends DefaultAttribute<V,AttributeDescriptor,I>
         implements ComplexAttribute {
-    
+
     protected AbstractComplexAttribute(final AttributeDescriptor descriptor, final I id) {
         super( descriptor, id );
     }
@@ -158,7 +162,7 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
     public void setValue(final Collection<Property> newValues) {
         final Collection<Property> props = getProperties();
         if(props.size() != newValues.size()){
-            throw new IllegalArgumentException("Expected size of the collection is " 
+            throw new IllegalArgumentException("Expected size of the collection is "
                     + this.getProperties().size() +" but the provided size is " +newValues.size());
         }
         props.clear();
@@ -169,7 +173,7 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
     public String toString() {
         return toString(3,5);
     }
-    
+
     public String toString(int depth, int maxarray) {
         final StringBuilder sb = new StringBuilder(Classes.getShortClassName(this));
         sb.append(" ");
@@ -186,7 +190,7 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
         tablewriter.write("name\tid\tvalue\n");
         tablewriter.nextLine(TableWriter.SINGLE_HORIZONTAL_LINE);
 
-        final Set<FeatureId> visited = new HashSet<FeatureId>();        
+        final Set<FeatureId> visited = new HashSet<FeatureId>();
         toString(tablewriter, this, null, true, depth, maxarray, visited);
 
         tablewriter.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
@@ -201,7 +205,7 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
 
         return sb.toString();
     }
-    
+
 
     private static final String BLANCK = "\u00A0\u00A0\u00A0\u00A0";
     private static final String LINE =   "\u00A0\u00A0\u2502\u00A0";
@@ -216,7 +220,7 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
      * @param path
      * @param last node of the tree
      */
-    private static void toString(final TableWriter tablewriter, final Property property, 
+    private static void toString(final TableWriter tablewriter, final Property property,
             final Integer index, final boolean last, final int depth, final int maxArray,
             final Set<FeatureId> visited,final String... path){
 
@@ -231,18 +235,18 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
             //use the type name
             name = property.getType().getName();
         }
-        
+
         if(name != null){
             tablewriter.write(DefaultName.toJCRExtendedForm(name));
         }
-                
+
         //write the index if one
         if(index != null){
             tablewriter.write('[');
             tablewriter.write(index.toString());
             tablewriter.write(']');
         }
-        
+
         if(property instanceof Association){
             tablewriter.write("  <ASSO> ");
             //check if we already visited this element
@@ -267,16 +271,16 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
             }
             visited.add(f.getIdentifier());
         }
-        
+
         //check if we reached depth limit
         if( (depth <= 1 && (property.getType() instanceof ComplexType || property.getType() instanceof AssociationType))
             || depth == 0 ){
             tablewriter.write(" ⋅⋅⋅ \t\t \n");
             return;
         }
-        
-        
-        
+
+
+
 
         tablewriter.write('\t');
 
@@ -286,9 +290,9 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
             if(property instanceof Feature){
                 tablewriter.write(((Feature)property).getIdentifier().getID());
             }
-            
+
             tablewriter.write('\n');
-            
+
             final ComplexType ct = (ComplexType) pt;
             final ComplexAttribute ca = (ComplexAttribute)property;
 
@@ -305,9 +309,9 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
                         nb++;
                         if(last){ subPath = last(path, BLANCK); }
 
-                        toString(tablewriter, sub, null, nb==nbProperty, depth-1, 
+                        toString(tablewriter, sub, null, nb==nbProperty, depth-1,
                                 maxArray, visited, append(subPath, (nb==nbProperty)?END:CROSS));
-                        
+
                     }
                 }else{
                     final Collection<? extends Property> properties = ca.getProperties(desc.getName());
@@ -332,13 +336,13 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
                                 break;
 
                             }else if(i==n){
-                                toString(tablewriter, sub, i, nb==nbProperty, depth-1, 
+                                toString(tablewriter, sub, i, nb==nbProperty, depth-1,
                                         maxArray, visited, append(subPath, (nb==nbProperty)?END:CROSS));
                             }else if(i == 0){
-                                toString(tablewriter, sub, i, nb==nbProperty, depth-1, 
+                                toString(tablewriter, sub, i, nb==nbProperty, depth-1,
                                         maxArray, visited, append(subPath, (nb==nbProperty)?END:CROSS));
                             }else{
-                                toString(tablewriter, sub, i, nb==nbProperty, depth-1, 
+                                toString(tablewriter, sub, i, nb==nbProperty, depth-1,
                                         maxArray, visited, append(subPath, (nb==nbProperty)?END:CROSS));
                             }
                             i++;
@@ -348,28 +352,33 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
                             ((CloseableIterator)ite).close();
                         }
                     }
-                    
+
                 }
             }
 
         }else if(pt instanceof AssociationType){
             //no value
             tablewriter.write('\n');
-            
+
             //encode association value
             final Property ca = (Property) property.getValue();
-            final String[] subPath = last(path, (last)?BLANCK:LINE);            
-            toString(tablewriter, ca, null, true, depth-1, 
+            final String[] subPath = last(path, (last)?BLANCK:LINE);
+            toString(tablewriter, ca, null, true, depth-1,
                     maxArray, visited, append(subPath, END));
-            
+
         }else{
             //simple property
-            String strValue = String.valueOf(property.getValue());
+            Object value = property.getValue();
+            if(value != null && value.getClass().isArray()){
+                value = Utilities.deepToString(value);
+            }
+
+            String strValue = String.valueOf(value);
             if(strValue.length() > 100){
                 //clip the string, to avoid a to big table
                 strValue = strValue.substring(0, 100) +" ...";
             }
-            
+
             tablewriter.write("\t");
             tablewriter.write(strValue);
             tablewriter.write('\n');
@@ -389,5 +398,5 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
         }
         return array;
     }
-    
+
 }

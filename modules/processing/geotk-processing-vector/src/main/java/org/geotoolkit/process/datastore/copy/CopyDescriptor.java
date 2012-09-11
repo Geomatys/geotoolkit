@@ -16,8 +16,7 @@
  */
 package org.geotoolkit.process.datastore.copy;
 
-import java.util.Map;
-
+import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
@@ -34,80 +33,74 @@ import org.opengis.parameter.ParameterValueGroup;
  * name of the process : "copy"
  * inputs :
  * <ul>
- *     <li>FEATURE_IN "feature_in" FeatureCollection source</li>
- *     <li>TRANSFORM_IN "transform_in" AffineTransform</li>
+ *     <li>SOURCE_STORE "source_datastore"</li>
+ *     <li>TARGET_STORE "target_datastore"</li>
+ *     <li>ERASE "erase" the data provider will be erased if true</li>
+ *     <li>TYPE_NAME "type_name" feature type name to copy</li>
+ *     <li>QUERY "query" query to use to retrieve the feature collection</li>
  * </ul>
- * outputs :
- * <ul>
- *     <li>FEATURE_OUT "feature_out" resulting FeatureCollection</li>
- * </ul>
- * 
+ * outputs : none
+ *
  * @author Johann Sorel (Geomatys)
+ * @author Cédric Briançon (Geomatys)
  * @module pending
  */
 public final class CopyDescriptor extends VectorDescriptor {
 
     /**
-     * Process name : copy 
+     * Process name : copy
      */
     public static final String NAME = "copy";
 
     /**
-     * Mandatory - Source datastore parameters
+     * Mandatory - Source datastore.
      */
-    public static final ParameterDescriptor<Map> SOURCE_STORE_PARAMS =
-            new DefaultParameterDescriptor("source_params", "The source datastore parameters", 
-            Map.class, null, true);
-    
+    public static final ParameterDescriptor<DataStore> SOURCE_STORE =
+            new DefaultParameterDescriptor("source_datastore", "The source datastore",
+            DataStore.class, null, true);
+
     /**
-     * Mandatory - Target datastore parameters
+     * Mandatory - Target datastore.
      */
-    public static final ParameterDescriptor<Map> TARGET_STORE_PARAMS =
-            new DefaultParameterDescriptor("target_params", "The target datastore parameters", 
-            Map.class, null, true);
-    
-    /**
-     * Mandatory - create target datastore if it do not exist.
-     */
-    public static final ParameterDescriptor<Boolean> CREATE =
-            new DefaultParameterDescriptor("create", "Create the datastore if it doesn't exist", 
-            Boolean.class, false, true);
-    
+    public static final ParameterDescriptor<DataStore> TARGET_STORE =
+            new DefaultParameterDescriptor("target_datastore", "The target datastore",
+            DataStore.class, null, true);
+
     /**
      * Mandatory - drop before insertion or not.
      */
     public static final ParameterDescriptor<Boolean> ERASE =
-            new DefaultParameterDescriptor("erase", "Erase type if it already exist before insertion.", 
+            new DefaultParameterDescriptor("erase", "Erase type if it already exist before insertion.",
             Boolean.class, false, true);
-    
+
     /**
      * Mandatory - Feature type names to  copy. several names can be passed separated by commas.
      */
     public static final ParameterDescriptor<String> TYPE_NAME =
-            new DefaultParameterDescriptor("type_name", "Name of the feature type to copy. '*' for all.", 
+            new DefaultParameterDescriptor("type_name", "Name of the feature type to copy. '*' for all.",
             String.class, "*", true);
-    
+
     /**
      * Optional - Query to use to retrieve FeatureCollection during the process.
      */
     public static final ParameterDescriptor<Query> QUERY =
-            new DefaultParameterDescriptor("query", "Query used to get the FeatureCollection during the process.", 
+            new DefaultParameterDescriptor("query", "Query used to get the FeatureCollection during the process.",
             Query.class, null, false);
-    
-    /** 
-     * Input Parameters 
+
+    /**
+     * Input Parameters
      */
     public static final ParameterDescriptorGroup INPUT_DESC =
             new DefaultParameterDescriptorGroup("InputParameters",
-            new GeneralParameterDescriptor[]{SOURCE_STORE_PARAMS, TARGET_STORE_PARAMS,CREATE,ERASE,TYPE_NAME, QUERY});
+            new GeneralParameterDescriptor[]{SOURCE_STORE, TARGET_STORE, ERASE, TYPE_NAME, QUERY});
 
-    /** 
-     * Output Parameters 
+    /**
+     * Output Parameters
      */
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new DefaultParameterDescriptorGroup("OutputParameters",
             new GeneralParameterDescriptor[]{});
-    
+
     public static final ProcessDescriptor INSTANCE = new CopyDescriptor();
 
     private CopyDescriptor() {

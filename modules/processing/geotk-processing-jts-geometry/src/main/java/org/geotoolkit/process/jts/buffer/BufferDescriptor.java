@@ -49,7 +49,7 @@ public class BufferDescriptor extends AbstractProcessDescriptor{
     public static final ParameterDescriptor<Integer> SEGMENTS =
             new DefaultParameterDescriptor("segments", "Number of segments used to represent a quadrant of a circle.", Integer.class, 0, false);
     public static final ParameterDescriptor<Integer> ENDSTYLE =
-            new DefaultParameterDescriptor("endstyle", "The end cap style used.", Integer.class, 0, false);
+            new DefaultParameterDescriptor("endstyle", "The end cap style used. 1 -> Round, 2 -> Flat, 3 -> Square.", Integer.class, 2, false);
    
     public static final ParameterDescriptorGroup INPUT_DESC =
             new DefaultParameterDescriptorGroup("InputParameters",

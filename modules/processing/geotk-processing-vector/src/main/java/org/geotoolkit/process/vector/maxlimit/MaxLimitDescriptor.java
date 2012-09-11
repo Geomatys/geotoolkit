@@ -78,6 +78,6 @@ public final class MaxLimitDescriptor extends VectorDescriptor {
      */
     @Override
     public Process createProcess(final ParameterValueGroup input) {
-        return new MaxLimit(input);
+        return new MaxLimitProcess(input);
     }
 }

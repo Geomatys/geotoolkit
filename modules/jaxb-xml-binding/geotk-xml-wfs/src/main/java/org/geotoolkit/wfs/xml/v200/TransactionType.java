@@ -15,18 +15,22 @@
  *    Lesser General Public License for more details.
  */
 
-
 package org.geotoolkit.wfs.xml.v200;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
+import org.geotoolkit.wfs.xml.AllSomeType;
+import org.geotoolkit.wfs.xml.Transaction;
 
 
 /**
@@ -57,9 +61,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "TransactionType", propOrder = {
     "abstractTransactionAction"
 })
-public class TransactionType
-    extends BaseRequestType
-{
+@XmlRootElement(name="Transaction")
+public class TransactionType extends BaseRequestType implements Transaction {
 
     @XmlElementRef(name = "AbstractTransactionAction", namespace = "http://www.opengis.net/wfs/2.0", type = JAXBElement.class)
     private List<JAXBElement<?>> abstractTransactionAction;
@@ -71,23 +74,46 @@ public class TransactionType
     @XmlSchemaType(name = "anyURI")
     private String srsName;
 
+    public TransactionType() {
+
+    }
+
+    public TransactionType(final String service, final String version, final String handle, final AllSomeType releaseAction, final DeleteType delete) {
+        super(service, version, handle);
+        this.releaseAction = releaseAction;
+        this.abstractTransactionAction = new ArrayList<JAXBElement<?>>();
+        if (delete != null) {
+            final ObjectFactory factory = new ObjectFactory();
+            final JAXBElement<?> jb = factory.createDelete(delete);
+            this.abstractTransactionAction.add(jb);
+        }
+    }
+    
+    public TransactionType(final String service, final String version, final String handle, final AllSomeType releaseAction, final InsertType insert) {
+        super(service, version, handle);
+        this.releaseAction = releaseAction;
+        this.abstractTransactionAction = new ArrayList<JAXBElement<?>>();
+        if (insert != null) {
+            final ObjectFactory factory = new ObjectFactory();
+            final JAXBElement<?> jb = factory.createInsert(insert);
+            this.abstractTransactionAction.add(jb);
+        }
+    }
+    
+    public TransactionType(final String service, final String version, final String handle, final AllSomeType releaseAction, final UpdateType udpate) {
+        super(service, version, handle);
+        this.releaseAction = releaseAction;
+        this.abstractTransactionAction = new ArrayList<JAXBElement<?>>();
+        if (udpate != null) {
+            final ObjectFactory factory = new ObjectFactory();
+            final JAXBElement<?> jb = factory.createUpdate(udpate);
+            this.abstractTransactionAction.add(jb);
+        }
+    }
+    
     /**
      * Gets the value of the abstractTransactionAction property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the abstractTransactionAction property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getAbstractTransactionAction().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link DeleteType }{@code >}
      * {@link JAXBElement }{@code <}{@link AbstractTransactionActionType }{@code >}
@@ -105,6 +131,16 @@ public class TransactionType
         return this.abstractTransactionAction;
     }
 
+    public List<Object> getTransactionAction() {
+        final List<Object> result = new ArrayList<Object>();
+        if (abstractTransactionAction != null) {
+            for (JAXBElement<?> jb : abstractTransactionAction) {
+                result.add(jb.getValue());
+            }
+        }
+        return result;
+    }
+    
     /**
      * Gets the value of the lockId property.
      * 
@@ -179,6 +215,66 @@ public class TransactionType
      */
     public void setSrsName(String value) {
         this.srsName = value;
+    }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(super.toString()).append('\n');
+        if (lockId != null) {
+            sb.append("lockId=").append(lockId).append('\n');
+        }
+        if (releaseAction != null) {
+            sb.append("releaseAction=").append(releaseAction).append('\n');
+        }
+        if (srsName != null) {
+            sb.append("srsName=").append(srsName).append('\n');
+        }
+        if (abstractTransactionAction != null) {
+            sb.append("abstractTransactionAction:").append('\n');
+            for (JAXBElement obj : abstractTransactionAction) {
+                sb.append(obj.getValue()).append('\n');
+            }
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof TransactionType && super.equals(object)) {
+            final TransactionType that = (TransactionType) object;
+
+            boolean ok = false;
+            if (this.abstractTransactionAction.size() == that.abstractTransactionAction.size()) {
+                ok = true;
+                for (int i = 0; i < abstractTransactionAction.size(); i++) {
+                    Object thisO = this.abstractTransactionAction.get(i).getValue();
+                    Object thatO = that.abstractTransactionAction.get(i).getValue();
+                    if (!Objects.equals(thisO, thatO)) {
+                        ok = false;
+                        break;
+                    }
+                }
+            }
+            
+            return  ok &&
+                    Objects.equals(this.lockId, that.lockId) &&
+                    Objects.equals(this.srsName, that.srsName) &&
+                    Objects.equals(this.releaseAction, that.releaseAction);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 37 * hash + (this.lockId != null ? this.lockId.hashCode() : 0);
+        hash = 37 * hash + (this.srsName != null ? this.srsName.hashCode() : 0);
+        hash = 37 * hash + (this.abstractTransactionAction != null ? this.abstractTransactionAction.hashCode() : 0);
+        hash = 37 * hash + (this.releaseAction != null ? this.releaseAction.hashCode() : 0);
+        return hash;
     }
 
 }

@@ -16,14 +16,11 @@
  */
 package org.geotoolkit.data.shapefile;
 
-import org.junit.Test;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.geotoolkit.ShapeTestData;
 import org.geotoolkit.data.dbf.DbaseFieldFormatter;
 import org.geotoolkit.data.dbf.DbaseFileHeader;
@@ -31,10 +28,10 @@ import org.geotoolkit.data.dbf.DbaseFileReader;
 import org.geotoolkit.data.dbf.DbaseFileWriter;
 import org.geotoolkit.data.shapefile.lock.AccessManager;
 import org.geotoolkit.data.shapefile.lock.ShpFiles;
-
 import org.junit.After;
-import org.junit.Before;
 import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * 
@@ -82,7 +79,7 @@ public class DbaseFileTest extends AbstractTestCaseSupport {
     @Test
     public void testDataLoaded() throws Exception {
         Object[] attrs = new Object[dbf.getHeader().getNumFields()];
-        dbf.readEntry(attrs);
+        dbf.next().readAll(attrs);
         assertEquals("Value of Column 0 is wrong", "Illinois", attrs[0]);
         assertEquals("Value of Column 4 is wrong", 143986.61,
                 ((Double) attrs[4]).doubleValue(), 0.001);
@@ -94,12 +91,14 @@ public class DbaseFileTest extends AbstractTestCaseSupport {
         final AccessManager locker = shpFiles.createLocker();
         DbaseFileReader dbf2 = locker.getDBFReader(false, ShapefileDataStore.DEFAULT_STRING_CHARSET);
         while (dbf.hasNext()) {
-            dbf.readEntry(attrs);
-            DbaseFileReader.Row r = dbf2.readRow();
+            final DbaseFileReader.Row r1 = dbf.next();
+            final DbaseFileReader.Row r2 = dbf2.next();
+            r1.readAll(attrs);
+            
             for (int i = 0, ii = attrs.length; i < ii; i++) {
                 assertNotNull(attrs[i]);
-                assertNotNull(r.read(i));
-                assertEquals(attrs[i], r.read(i));
+                assertNotNull(r2.read(i));
+                assertEquals(attrs[i], r2.read(i));
             }
         }
         dbf2.close();
@@ -167,7 +166,7 @@ public class DbaseFileTest extends AbstractTestCaseSupport {
         FileOutputStream fout = new FileOutputStream(f);
         DbaseFileWriter dbf = new DbaseFileWriter(header, fout.getChannel(), Charset.defaultCharset());
         for (int i = 0; i < header.getNumRecords(); i++) {
-            dbf.write(new Object[6]);
+            dbf.write(new Object[]{String.valueOf(900+i),null,null,null,null,null});
         }
         dbf.close();
         final ShpFiles tempShpFiles = new ShpFiles(f);
@@ -176,7 +175,7 @@ public class DbaseFileTest extends AbstractTestCaseSupport {
         int cnt = 0;
         while (r.hasNext()) {
             cnt++;
-            Object[] o = r.readEntry();
+            Object[] o = r.next().readAll(null);
             assertTrue(o.length == r.getHeader().getNumFields());
         }
         assertEquals("Bad number of records", cnt, 20);

@@ -18,23 +18,40 @@ package org.geotoolkit.data.postgis;
 
 import java.io.IOException;
 
+import java.util.Collections;
+import org.geotoolkit.data.AbstractDataStoreFactory;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.jdbc.JDBCDataStore;
 import org.geotoolkit.jdbc.JDBCDataStoreFactory;
 import org.geotoolkit.jdbc.dialect.SQLDialect;
+import org.geotoolkit.metadata.iso.DefaultIdentifier;
+import org.geotoolkit.metadata.iso.citation.DefaultCitation;
+import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
+import org.geotoolkit.util.ResourceInternationalString;
 
+import org.opengis.metadata.Identifier;
+import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
 public class PostgisNGDataStoreFactory extends JDBCDataStoreFactory {
 
-    /** parameter for database type */
-    public static final ParameterDescriptor<String> DBTYPE =
-             new DefaultParameterDescriptor<String>("dbtype","Type",String.class,"postgisng",true);
-
+    /** factory identification **/
+    public static final String NAME = "postgis";
+    public static final DefaultServiceIdentification IDENTIFICATION;
+    static {
+        IDENTIFICATION = new DefaultServiceIdentification();
+        final Identifier id = new DefaultIdentifier(NAME);
+        final DefaultCitation citation = new DefaultCitation(NAME);
+        citation.setIdentifiers(Collections.singleton(id));
+        IDENTIFICATION.setCitation(citation);
+    }
+    
+    public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
+    
     /**
      * Parameter for namespace of the datastore
      */
@@ -56,9 +73,14 @@ public class PostgisNGDataStoreFactory extends JDBCDataStoreFactory {
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new DefaultParameterDescriptorGroup("PostGISParameters",
-                DBTYPE,HOST,PORT,DATABASE,SCHEMA,USER,PASSWD,NAMESPACE,
+                IDENTIFIER,HOST,PORT,DATABASE,SCHEMA,USER,PASSWD,NAMESPACE,
                 DATASOURCE,MAXCONN,MINCONN,VALIDATECONN,FETCHSIZE,MAXWAIT,LOOSEBBOX,PREPARED_STATEMENTS);
 
+    @Override
+    public Identification getIdentification() {
+        return IDENTIFICATION;
+    }
+    
     @Override
     protected SQLDialect createSQLDialect(final JDBCDataStore dataStore) {
         return new PostGISDialect(dataStore);
@@ -74,17 +96,17 @@ public class PostgisNGDataStoreFactory extends JDBCDataStoreFactory {
 
     @Override
     protected String getDatabaseID() {
-        return "postgisng";
+        return "postgresql";
     }
 
     @Override
-    public String getDisplayName() {
-        return "PostGIS NG";
+    public CharSequence getDisplayName() {
+        return new ResourceInternationalString("org/geotoolkit/postgis/bundle", "datastoreTitle");
     }
 
     @Override
-    public String getDescription() {
-        return "PostGIS Database";
+    public CharSequence getDescription() {
+        return new ResourceInternationalString("org/geotoolkit/postgis/bundle", "datastoreDescription");
     }
 
     @Override
@@ -93,9 +115,10 @@ public class PostgisNGDataStoreFactory extends JDBCDataStoreFactory {
     }
 
     @Override
-    public JDBCDataStore createDataStore(final ParameterValueGroup params)
+    public JDBCDataStore create(final ParameterValueGroup params)
         throws DataStoreException {
-        JDBCDataStore dataStore = super.createDataStore(params);
+        checkCanProcessWithError(params);
+        JDBCDataStore dataStore = super.create(params);
 
         final PostGISDialect dialect;
 

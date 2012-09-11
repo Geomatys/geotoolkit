@@ -2,7 +2,6 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2004 - 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -21,11 +20,9 @@ package org.geotoolkit.display2d.style.renderer;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.CachedPointSymbolizer;
 import org.geotoolkit.map.MapLayer;
-
 import org.opengis.style.PointSymbolizer;
 
 /**
@@ -34,6 +31,12 @@ import org.opengis.style.PointSymbolizer;
  */
 public class DefaultPointSymbolizerRendererService extends AbstractSymbolizerRendererService<PointSymbolizer, CachedPointSymbolizer>{
 
+    
+    @Override
+    public boolean isGroupSymbolizer() {
+        return false;
+    }
+    
     /**
      * {@inheritDoc }
      */
@@ -63,7 +66,7 @@ public class DefaultPointSymbolizerRendererService extends AbstractSymbolizerRen
      */
     @Override
     public SymbolizerRenderer createRenderer(final CachedPointSymbolizer symbol, final RenderingContext2D context) {
-        return new DefaultPointSymbolizerRenderer(symbol, context);
+        return new DefaultPointSymbolizerRenderer(this,symbol, context);
     }
 
     /**
@@ -76,6 +79,8 @@ public class DefaultPointSymbolizerRendererService extends AbstractSymbolizerRen
         final Object feature = null;
         final float coeff = 1;
         final BufferedImage img = symbol.getImage(feature, coeff, null);
+        if(img == null) return;
+        
         final float[] disps = new float[]{0,0};
         final float[] anchor = new float[]{0.5f,0.5f};
         disps[0] *= coeff ;

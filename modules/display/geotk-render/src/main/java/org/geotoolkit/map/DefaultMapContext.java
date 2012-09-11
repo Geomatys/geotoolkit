@@ -2,7 +2,6 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2003 - 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -17,7 +16,6 @@
  */
 package org.geotoolkit.map;
 
-import java.beans.PropertyChangeEvent;
 import java.io.IOException;
 import java.util.AbstractList;
 import java.util.ArrayList;
@@ -27,23 +25,22 @@ import java.util.EventObject;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
-
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.geotoolkit.style.StyleConstants;
+import static org.geotoolkit.util.ArgumentChecks.*;
 import org.geotoolkit.util.NumberRange;
-
+import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 
-import static org.geotoolkit.util.ArgumentChecks.*;
-
 
 /**
  * The default implementation of the {@linkplain org.geotoolkit.map.MapContext}
- * interface
+ * interface.
+ * Mapcontext has a tree structure which can be viewed as a MapLayer list using
+ * the 'layers' method.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
@@ -109,10 +106,7 @@ final class DefaultMapContext extends DefaultMapItem implements MapContext, Laye
      * layer, then null is returned. The bounds will be expressed in the
      * MapContext coordinate system.
      *
-     * @return The bounding box of the features or null if unknown and too
-     *         expensive for the method to calculate. TODO: when coordinate
-     *         system information will be added reproject the bounds according
-     *         to the current coordinate system
+     * @return The bounding box of all layers.
      */
     @Override
     public Envelope getBounds() throws IOException {

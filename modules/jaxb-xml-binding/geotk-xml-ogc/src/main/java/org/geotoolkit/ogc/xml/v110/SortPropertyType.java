@@ -95,6 +95,7 @@ public class SortPropertyType implements SortBy {
     /**
      * Gets the value of the propertyName property.
      */
+    @Override
     public PropertyNameType getPropertyName() {
         return propertyName;
     }
@@ -102,6 +103,7 @@ public class SortPropertyType implements SortBy {
     /**
      * Gets the value of the sortOrder property.
      */
+    @Override
     public SortOrder getSortOrder() {
         if (sortOrder != null && sortOrder.equals(SortOrderType.ASC))
             return SortOrder.ASCENDING;

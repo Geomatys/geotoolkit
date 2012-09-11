@@ -35,7 +35,6 @@ import static org.junit.Assert.*;
 public class MultiplyTest extends AbstractProcessTest{
 
    
-
     public MultiplyTest() {
         super("multiply");
     }
@@ -57,7 +56,6 @@ public class MultiplyTest extends AbstractProcessTest{
 
         //result
         final Double result = (Double) proc.call().parameter("result").getValue();
-
        
         assertEquals(new Double(234.15), result);
     }

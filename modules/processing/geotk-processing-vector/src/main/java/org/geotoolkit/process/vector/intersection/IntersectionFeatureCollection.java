@@ -76,7 +76,7 @@ public class IntersectionFeatureCollection extends WrapFeatureCollection {
     private FeatureCollection modify2(final Feature original) {
 
         try {
-            return Intersection.intersetFeature(original, newFeatureType, intersList, geometryName);
+            return IntersectionProcess.intersetFeature(original, newFeatureType, intersList, geometryName);
 
         } catch (FactoryException ex) {
             throw new DataStoreRuntimeException(ex);

@@ -24,6 +24,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.geotoolkit.data.AbstractDataStore;
+import org.geotoolkit.data.DataStoreFactory;
+import org.geotoolkit.data.DataStoreFinder;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
@@ -53,6 +55,11 @@ public class OSMBinDataStore extends AbstractDataStore{
         super(null);
     }
 
+    @Override
+    public DataStoreFactory getFactory() {
+        return DataStoreFinder.getFactoryById(OSMBinDataStoreFactory.NAME);
+    }
+    
     /**
      * {@inheritDoc }
      */

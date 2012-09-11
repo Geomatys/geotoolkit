@@ -2,7 +2,6 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2004 - 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -17,6 +16,10 @@
  */
 package org.geotoolkit.display2d.primitive.jts;
 
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.LinearRing;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
@@ -25,12 +28,6 @@ import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.logging.Level;
-
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.LinearRing;
-
 import org.geotoolkit.util.logging.Logging;
 
 /**
@@ -84,7 +81,7 @@ public abstract class AbstractJTSGeometryJ2D<T extends Geometry> implements Shap
         try {
             return transform.createInverse();
         } catch (NoninvertibleTransformException ex) {
-            Logging.getLogger(JTSGeometryJ2D.class.getName()).log(Level.SEVERE, null, ex);
+            Logging.getLogger(JTSGeometryJ2D.class.getName()).log(Level.WARNING, ex.getMessage(), ex);
             return null;
         }
     }

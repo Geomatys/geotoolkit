@@ -20,15 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAnyAttribute;
-import javax.xml.bind.annotation.XmlAnyElement;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElementRef;
-import javax.xml.bind.annotation.XmlMixed;
-import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.*;
 import javax.xml.namespace.QName;
 import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
 import org.w3c.dom.Element;
@@ -61,7 +53,10 @@ import org.w3c.dom.Element;
 public class ComplexDataType {
 
     @XmlMixed
-    @XmlElementRef(name = "AbstractGeometry", namespace = "http://www.opengis.net/gml", type = AbstractGeometryType.class)
+    @XmlElementRefs({
+        @XmlElementRef(name = "AbstractGeometry", namespace = "http://www.opengis.net/gml", type = AbstractGeometryType.class),
+        @XmlElementRef(name = "math", namespace = "http://www.w3.org/1998/Math/MathML", type = org.geotoolkit.mathml.xml.Math.class)
+    })
     @XmlAnyElement
     protected List<Object> content;
     @XmlAttribute

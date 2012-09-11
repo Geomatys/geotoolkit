@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ogc.xml.v200.AbstractQueryExpressionType;
+import org.geotoolkit.wfs.xml.StoredQuery;
 
 
 /**
@@ -53,7 +54,7 @@ import org.geotoolkit.ogc.xml.v200.AbstractQueryExpressionType;
 @XmlType(name = "StoredQueryType", propOrder = {
     "parameter"
 })
-public class StoredQueryType extends AbstractQueryExpressionType {
+public class StoredQueryType extends AbstractQueryExpressionType implements StoredQuery {
 
     @XmlElement(name = "Parameter")
     private List<ParameterType> parameter;
@@ -61,28 +62,23 @@ public class StoredQueryType extends AbstractQueryExpressionType {
     @XmlSchemaType(name = "anyURI")
     private String id;
 
+    public StoredQueryType() {
+        
+    }
+    
+    public StoredQueryType(final String id, final String handle, final List<ParameterType> parameter) {
+        super(handle);
+        this.id = id;
+        this.parameter = parameter;
+    }
+    
     /**
      * Gets the value of the parameter property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the parameter property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getParameter().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link ParameterType }
-     * 
-     * 
      */
+    @Override
     public List<ParameterType> getParameter() {
         if (parameter == null) {
             parameter = new ArrayList<ParameterType>();
@@ -98,6 +94,7 @@ public class StoredQueryType extends AbstractQueryExpressionType {
      *     {@link String }
      *     
      */
+    @Override
     public String getId() {
         return id;
     }

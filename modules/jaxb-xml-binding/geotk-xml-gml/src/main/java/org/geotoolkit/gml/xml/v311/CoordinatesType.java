@@ -17,28 +17,34 @@
 package org.geotoolkit.gml.xml.v311;
 
 import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+import org.geotoolkit.gml.xml.Coordinates;
 import org.geotoolkit.util.Utilities;
 
 
 /**
- * Tables or arrays of tuples.  
- * May be used for text-encoding of values from a table.  
- * Actually just a string, but allows the user to indicate which characters are used as separators.  
- * The value of the 'cs' attribute is the separator for coordinate values, 
- * and the value of the 'ts' attribute gives the tuple separator (a single space by default); 
+ * Tables or arrays of tuples.
+ * May be used for text-encoding of values from a table.
+ * Actually just a string, but allows the user to indicate which characters are used as separators.
+ * The value of the 'cs' attribute is the separator for coordinate values,
+ * and the value of the 'ts' attribute gives the tuple separator (a single space by default);
  * the default values may be changed to reflect local usage.
- * Defaults to CSV within a tuple, space between tuples.  
- * However, any string content will be schema-valid.  
- * 
+ * Defaults to CSV within a tuple, space between tuples.
+ * However, any string content will be schema-valid.
+ *
  * <p>Java class for CoordinatesType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CoordinatesType">
  *   &lt;simpleContent>
@@ -50,15 +56,15 @@ import org.geotoolkit.util.Utilities;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CoordinatesType", propOrder = {
     "value"
 })
-public class CoordinatesType {
+public class CoordinatesType implements Coordinates {
 
     @XmlValue
     private String value;
@@ -100,11 +106,11 @@ public class CoordinatesType {
 
     /**
      * Gets the value of the value property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getValue() {
         return value;
@@ -112,23 +118,60 @@ public class CoordinatesType {
 
     /**
      * Sets the value of the value property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setValue(final String value) {
         this.value = value;
     }
 
+    @Override
+    public List<Double> getValues() {
+        final String curentTs;
+        if (ts == null) {
+            curentTs = " ";
+        } else {
+            curentTs = ts;
+        }
+
+        final String curentCs;
+        if (cs == null) {
+            curentCs = ",";
+        } else {
+            curentCs = cs;
+        }
+
+        final List<Double> values = new ArrayList<Double>();
+        if (value != null) {
+            final StringTokenizer tokenizer = new StringTokenizer(value, curentTs);
+            while (tokenizer.hasMoreTokens()) {
+                final String v = tokenizer.nextToken();
+                try {
+                    int i = v.indexOf(curentCs);
+                    if (i != -1) {
+                        String first = v.substring(0, i);
+                        String second = v.substring(i + 1);
+                        values.add(Double.parseDouble(first));
+                        values.add(Double.parseDouble(second));
+                    }
+                } catch (NumberFormatException ex) {
+                    Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "unable to parse coordiante value:{0}", v);
+                }
+            }
+        }
+        return values;
+    }
+
     /**
      * Gets the value of the decimal property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getDecimal() {
         /*if (decimal == null) {
@@ -139,11 +182,11 @@ public class CoordinatesType {
 
     /**
      * Sets the value of the decimal property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDecimal(final String value) {
         this.decimal = value;
@@ -151,11 +194,11 @@ public class CoordinatesType {
 
     /**
      * Gets the value of the cs property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getCs() {
         /*if (cs == null) {
@@ -166,11 +209,11 @@ public class CoordinatesType {
 
     /**
      * Sets the value of the cs property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setCs(final String value) {
         this.cs = value;
@@ -178,11 +221,11 @@ public class CoordinatesType {
 
     /**
      * Gets the value of the ts property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTs() {
         /*if (ts == null) {
@@ -193,11 +236,11 @@ public class CoordinatesType {
 
     /**
      * Sets the value of the ts property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTs(final String value) {
         this.ts = value;

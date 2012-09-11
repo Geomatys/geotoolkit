@@ -33,7 +33,7 @@ import org.opengis.feature.type.PropertyDescriptor;
 
 /**
  * Geometrie box attribut
- * 
+ *
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
@@ -43,15 +43,12 @@ public class JGeomBox extends JComboBox {
     private MapLayer layer = null;
 
     public JGeomBox() {
-        setEnabled(false);
         setOpaque(false);
     }
 
     public void setLayer(final MapLayer layer) {
 
         this.layer = layer;
-
-        setEnabled(layer != null);
 
         if (layer instanceof FeatureMapLayer && layer != null) {
             final Collection<PropertyDescriptor> col = ((FeatureMapLayer)layer).getCollection().getFeatureType().getDescriptors();
@@ -69,6 +66,10 @@ public class JGeomBox extends JComboBox {
 
             setModel(new ListComboBoxModel(geoms));
             setSelectedItem(ALL_GEOM);
+        } else {
+            final List<String> geoms = new ArrayList<String>();
+            geoms.add(ALL_GEOM);
+            setModel(new ListComboBoxModel(geoms));
         }
 
     }
@@ -78,7 +79,7 @@ public class JGeomBox extends JComboBox {
     }
 
     public String getGeom() {
-        if(getSelectedItem().toString().equals(ALL_GEOM)){
+        if(getSelectedItem() == null || getSelectedItem().toString().equals(ALL_GEOM)){
             return null;
         }else{
             return getSelectedItem().toString();

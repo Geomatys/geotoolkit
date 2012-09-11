@@ -17,18 +17,15 @@
  */
 package org.geotoolkit.display.primitive;
 
-import java.util.Locale;
-import java.util.logging.Logger;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-
+import java.util.Locale;
+import java.util.logging.Logger;
+import org.geotoolkit.display.canvas.DisplayObject;
+import static org.geotoolkit.util.ArgumentChecks.*;
+import org.geotoolkit.util.converter.Classes;
 import org.opengis.display.canvas.Canvas;
 import org.opengis.display.primitive.Graphic;
-
-import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.display.canvas.DisplayObject;
-
-import static org.geotoolkit.util.ArgumentChecks.*;
 
 /**
  * The root abstraction of a graphic object taxonomy, specifying the methods common to a
@@ -41,12 +38,7 @@ import static org.geotoolkit.util.ArgumentChecks.*;
  * @author Johann Sorel (Geomatys)
  */
 public abstract class AbstractGraphic extends DisplayObject implements Graphic, PropertyChangeListener {
-    /**
-     * The name of the {@linkplain PropertyChangeEvent property change event} fired when the
-     * {@linkplain AbstractGraphic#getName graphic name} changed.
-     */
-    public static final String NAME_PROPERTY = "name";
-
+    
     /**
      * The name of the {@linkplain PropertyChangeEvent property change event} fired when the
      * {@linkplain AbstractGraphic#getParent graphic parent} changed.
@@ -63,11 +55,6 @@ public abstract class AbstractGraphic extends DisplayObject implements Graphic, 
      * The canvas that own this graphic, or {@code null} if none.
      */
     protected final Canvas canvas;
-
-    /**
-     * The name assigned to this graphic.
-     */
-    protected String name;
 
     /**
      * The parent of this graphic, or {@code null} if none.
@@ -103,29 +90,6 @@ public abstract class AbstractGraphic extends DisplayObject implements Graphic, 
      */
     public Canvas getCanvas() {
         return canvas;
-    }
-
-    /**
-     * Returns the name assigned to this {@code Graphic}.
-     */
-    public String getName() {
-        final String name = this.name;  // Avoid the need for synchronization.
-        return name;
-    }
-
-    /**
-     * Sets the name of this {@code Graphic} to the given value.
-     * <p>
-     * This method fires a {@value org.geotoolkit.display.canvas.DisplayObject#NAME_PROPERTY}
-     * property change event.
-     */
-    public void setName(final String name) {
-        final String old;
-        synchronized (getTreeLock()) {
-            old = this.name;
-            this.name = name;
-        }
-        propertyListeners.firePropertyChange(NAME_PROPERTY, old, name);
     }
 
     /**
@@ -242,6 +206,6 @@ public abstract class AbstractGraphic extends DisplayObject implements Graphic, 
      */
     @Override
     public String toString() {
-        return Classes.getShortClassName(this) + '[' + getName() + ']';
+        return Classes.getShortClassName(this);
     }
 }

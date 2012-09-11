@@ -24,11 +24,9 @@ import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.primitive.SearchArea;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-
 import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
-import org.opengis.display.primitive.Graphic;
-
 import static org.geotoolkit.util.ArgumentChecks.*;
+import org.opengis.display.primitive.Graphic;
 
 /**
  * Graphic decoration to paint a grid.
@@ -41,7 +39,7 @@ public class GraphicGridJ2D extends AbstractGraphicJ2D{
     private final GridTemplate template;
 
     public GraphicGridJ2D(final J2DCanvas canvas, final GridTemplate template){
-        super(canvas,canvas.getObjectiveCRS());
+        super(canvas);
         ensureNonNull("template", template);
         this.template = template;
     }

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book [
+  <!ENTITY % book.entities SYSTEM "../../../book.entities">
+  %book.entities;
+]>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xlink = "http://www.w3.org/1999/xlink">
+          
+    <title>
+        Service-portrayal
+    </title>
+    
+    <example>
+        <title>Code source complet : </title>
+        <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/PortrayalDemo.java">
+            <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/PortrayalDemo.java</acronym>
+        </link>        
+    </example>
+        
+    <para>
+        Une seule classe est utilisée pour cette tâche : 
+        <emphasis>DefaultPortrayalService</emphasis> qui dispose de deux méthodes :
+        <itemizedlist>
+            <listitem>
+                <emphasis>portray</emphasis> : va générer un 
+                <emphasis>BufferedImage</emphasis> ou écrire l'image dans le flux/fichier donné.
+            </listitem>
+            <listitem>
+                <emphasis>visit</emphasis> : va chercher les éléments qui touche la zone demandée, utilisé pour les opérations de sélection principalement.
+            </listitem>
+        </itemizedlist>
+    </para>
+    <para>
+        La définition de ce qui est à dessiner et comment est divisée en quatre groupes :
+        <itemizedlist>
+            <listitem>
+                <emphasis>CanvasDef</emphasis> : définit la taille de la zone de dessin ainsi que la couleur de fond.
+            </listitem>
+            <listitem>
+                <emphasis>SceneDef</emphasis> : définit le MapContext ainsi que les éléments de la scène a dessiner.
+            </listitem>
+            <listitem>
+                <emphasis>ViewDef</emphasis> : définit la zone géographique a dessiner ainsi qu'un azimuth (rotation).
+            </listitem>
+            <listitem>
+                <emphasis>OutputDef</emphasis> : définit le flux de sortie (flux,fichier,uri,...).
+            </listitem>
+        </itemizedlist>
+    </para>
+    
+    <example>
+        <title>Exemple : </title>
+        <programlisting>
+            
+                //generate a map context
+                final MapContext context = createContext();
+ 
+                //prepare the rendering context
+                final CanvasDef canvasdef = new CanvasDef(new Dimension(800, 600), Color.WHITE);
+                final SceneDef scenedef = new SceneDef(context);
+                final ViewDef viewdef = new ViewDef(context.getBounds());
+ 
+                //generate the image
+                final BufferedImage img = DefaultPortrayalService.portray(canvasdef, scenedef, viewdef);
+ 
+                //show the image
+                final JFrame frm = new JFrame();
+                frm.setContentPane(new JLabel(new ImageIcon(img)));
+                frm.pack();
+                frm.setLocationRelativeTo(null);
+                frm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frm.setVisible(true);
+            
+        </programlisting>
+    </example>
+    </section>

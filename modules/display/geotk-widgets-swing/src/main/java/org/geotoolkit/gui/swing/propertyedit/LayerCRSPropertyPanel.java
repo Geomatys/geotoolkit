@@ -55,7 +55,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * layer CRS panel
- * 
+ *
  * @author  Johann Sorel
  * @module pending
  */
@@ -65,8 +65,8 @@ public class LayerCRSPropertyPanel extends javax.swing.JPanel implements Propert
     private JCRSList liste = null;
     private CoordinateReferenceSystem crs = null;
 
-    /** 
-     * Creates new form DefaultMapContextCRSEditPanel 
+    /**
+     * Creates new form DefaultMapContextCRSEditPanel
      */
     public LayerCRSPropertyPanel() {
         initComponents();
@@ -230,7 +230,7 @@ public class LayerCRSPropertyPanel extends javax.swing.JPanel implements Propert
     private JPanel pan_list;
     private JTextArea wktArea;
     // End of variables declaration//GEN-END:variables
-    
+
     @Override
     public void setTarget(final Object target) {
         layer = (MapLayer) target;
@@ -241,7 +241,7 @@ public class LayerCRSPropertyPanel extends javax.swing.JPanel implements Propert
     public boolean canHandle(Object target) {
         return target instanceof MapLayer;
     }
-    
+
     @Override
     public void apply() {
         //nothing to apply
@@ -268,9 +268,15 @@ public class LayerCRSPropertyPanel extends javax.swing.JPanel implements Propert
     }
 
     private void init() {
+        gui_jtf_crs.setText("");
+        liste.setCRS(null);
 
         if (layer != null) {
             final CoordinateReferenceSystem crs = layer.getBounds().getCoordinateReferenceSystem();
+            if(crs == null){
+                return;
+            }
+
             final String epsg = crs.getName().toString();
                 gui_jtf_crs.setText(epsg);
             if(liste!=null){

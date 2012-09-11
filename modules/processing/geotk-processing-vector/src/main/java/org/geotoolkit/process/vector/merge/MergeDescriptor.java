@@ -83,6 +83,6 @@ public final class MergeDescriptor extends AbstractProcessDescriptor {
      */
     @Override
     public Process createProcess(final ParameterValueGroup input) {
-        return new Merge(input);
+        return new MergeProcess(input);
     }
 }

@@ -26,21 +26,20 @@ import static org.geotoolkit.parameter.Parameters.*;
  * @author Quentin Boileau (Geomatys)
  * @module pending
  */
-public class AbsoluteProcess extends AbstractProcess{
-    
-    public AbsoluteProcess(final ParameterValueGroup input){
+public class AbsoluteProcess extends AbstractProcess {
+
+    public AbsoluteProcess(final ParameterValueGroup input) {
         super(INSTANCE, input);
     }
-    
+
     @Override
-    public ParameterValueGroup call() {
-        
+    protected void execute() {
+
         final double first = value(FIRST_NUMBER, inputParameters);
-       
-        Double result = Math.abs(first);
-        
-        getOrCreate(RESULT_NUMBER, outputParameters).setValue(result);  
-        return outputParameters;
+
+        final double result = Math.abs(first);
+
+        getOrCreate(RESULT_NUMBER, outputParameters).setValue(result);
     }
-    
+
 }

@@ -30,9 +30,9 @@ import org.opengis.filter.spatial.BBOX;
 
 /**
  * <p>Java class for BBOXType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="BBOXType">
  *   &lt;complexContent>
@@ -48,8 +48,8 @@ import org.opengis.filter.spatial.BBOX;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -59,6 +59,7 @@ import org.opengis.filter.spatial.BBOX;
     "envelopeWithTimePeriod"
 })
 public class BBOXType extends SpatialOpsType implements BBOX {
+    private static final String DEFAULT_SRS = "EPSG:4326";
 
     @XmlElement(name = "PropertyName")
     private String propertyName;
@@ -71,18 +72,21 @@ public class BBOXType extends SpatialOpsType implements BBOX {
      * An empty constructor used by JAXB
      */
     public BBOXType() {
-        
+
     }
-    
+
     /**
      * build a new BBox with an envelope.
      */
-    public BBOXType(final String propertyName, final double minx, final double miny, final double maxx, final double maxy, final String srs) {
+    public BBOXType(final String propertyName, final double minx, final double miny, final double maxx, final double maxy, String srs) {
         this.propertyName = propertyName;
         DirectPositionType lower = new DirectPositionType(minx, miny);
         DirectPositionType upper = new DirectPositionType(maxx, maxy);
+        if (srs == null) {
+            // In the case of an empty crs, use the default one.
+            srs = DEFAULT_SRS;
+        }
         this.envelope = new EnvelopeType(null, lower, upper, srs);
-        
     }
     /**
      * Gets the value of the propertyName property.
@@ -124,9 +128,9 @@ public class BBOXType extends SpatialOpsType implements BBOX {
 
     public String getSRS() {
         if (envelope != null) {
-            return envelope.getSrsName();
+            return (envelope.getSrsName() != null) ? envelope.getSrsName() : DEFAULT_SRS;
         } else if (envelopeWithTimePeriod != null) {
-            return envelopeWithTimePeriod.getSrsName();
+            return (envelopeWithTimePeriod.getSrsName() != null) ? envelopeWithTimePeriod.getSrsName() : DEFAULT_SRS;
         }
         return null;
     }
@@ -198,4 +202,35 @@ public class BBOXType extends SpatialOpsType implements BBOX {
     public Object accept(final FilterVisitor visitor, final Object extraData) {
         return visitor.visit(this,extraData);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final BBOXType other = (BBOXType) obj;
+        if ((this.propertyName == null) ? (other.propertyName != null) : !this.propertyName.equals(other.propertyName)) {
+            return false;
+        }
+        if (this.envelope != other.envelope && (this.envelope == null || !this.envelope.equals(other.envelope))) {
+            return false;
+        }
+        if (this.envelopeWithTimePeriod != other.envelopeWithTimePeriod && (this.envelopeWithTimePeriod == null || !this.envelopeWithTimePeriod.equals(other.envelopeWithTimePeriod))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 13 * hash + (this.propertyName != null ? this.propertyName.hashCode() : 0);
+        hash = 13 * hash + (this.envelope != null ? this.envelope.hashCode() : 0);
+        hash = 13 * hash + (this.envelopeWithTimePeriod != null ? this.envelopeWithTimePeriod.hashCode() : 0);
+        return hash;
+    }
+
 }

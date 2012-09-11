@@ -2,7 +2,6 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2004 - 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -32,23 +31,19 @@ import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-
 import org.geotoolkit.display.container.AbstractContainer2D;
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
-import org.geotoolkit.display2d.container.statefull.StatefullContextJ2D;
 import org.geotoolkit.display2d.container.stateless.StatelessMapItemJ2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.internal.image.ColorUtilities;
 import org.geotoolkit.map.GraphicBuilder;
-import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.visitor.ListingColorVisitor;
-
 import org.opengis.display.canvas.RenderingState;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -106,6 +101,9 @@ public class J2DCanvasBuffered extends J2DCanvas{
 
     @Override
     public void repaint(final Shape displayArea) {
+        //finish any previous painting
+        getMonitor().stopRendering();
+        
         final Dimension dim = getSize();
 
         if(buffer == null){

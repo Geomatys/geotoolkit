@@ -18,11 +18,17 @@
 
 package org.geotoolkit.ogc.xml.v200;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.namespace.QName;
+import org.opengis.filter.capability.GeometryOperand;
+import org.opengis.filter.capability.SpatialOperator;
 
 
 /**
@@ -49,13 +55,31 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "SpatialOperatorType", propOrder = {
     "geometryOperands"
 })
-public class SpatialOperatorType {
+public class SpatialOperatorType implements SpatialOperator{
 
     @XmlElement(name = "GeometryOperands")
     private GeometryOperandsType geometryOperands;
     @XmlAttribute
     private String name;
 
+    /**
+     * An empty constructor used by JAXB 
+     */
+    public SpatialOperatorType() {
+        
+    }
+    
+    /**
+     * build a new spatial operator 
+     */
+    public SpatialOperatorType(final String name, final GeometryOperand[] geometryOperands) {
+        this.name = name;
+        if (geometryOperands != null) {
+            this.geometryOperands = new GeometryOperandsType(geometryOperands);
+        }
+        
+    }
+    
     /**
      * Gets the value of the geometryOperands property.
      * 
@@ -64,7 +88,7 @@ public class SpatialOperatorType {
      *     {@link GeometryOperandsType }
      *     
      */
-    public GeometryOperandsType getGeometryOperands() {
+    public GeometryOperandsType getGeometryOperandsType() {
         return geometryOperands;
     }
 
@@ -102,6 +126,20 @@ public class SpatialOperatorType {
      */
     public void setName(String value) {
         this.name = value;
+    }
+    
+    /**
+     * Implements SpatialOperator geoAPI interface
+     * @return
+     */
+    public Collection<GeometryOperand> getGeometryOperands() {
+        List<GeometryOperand> result = new ArrayList<GeometryOperand>();
+        if (geometryOperands != null) {
+            for (GeometryOperandsType.GeometryOperand qn: geometryOperands.getGeometryOperand()) {
+                result.add(GeometryOperand.get(qn.getName().getNamespaceURI(), qn.getName().getLocalPart()));
+            }
+        }
+        return result;
     }
 
 }

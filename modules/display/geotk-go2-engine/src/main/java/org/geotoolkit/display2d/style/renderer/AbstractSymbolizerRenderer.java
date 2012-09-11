@@ -2,7 +2,6 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2004 - 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -23,14 +22,12 @@ import java.util.Iterator;
 import java.util.logging.Logger;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
-
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.util.logging.Logging;
-
 import org.opengis.geometry.Envelope;
 import org.opengis.style.Symbolizer;
 
@@ -45,6 +42,7 @@ public abstract class AbstractSymbolizerRenderer<C extends CachedSymbolizer<? ex
 
     protected static final Logger LOGGER = Logging.getLogger(AbstractSymbolizerRenderer.class);
 
+    protected final SymbolizerRendererService service;
     protected final RenderingContext2D renderingContext;
     protected final RenderingHints hints;
     protected final Graphics2D g2d;
@@ -56,7 +54,8 @@ public abstract class AbstractSymbolizerRenderer<C extends CachedSymbolizer<? ex
     protected final boolean dispGeom;
     protected final String geomPropertyName;
 
-    public AbstractSymbolizerRenderer(final C symbol, final RenderingContext2D context){
+    public AbstractSymbolizerRenderer(final SymbolizerRendererService service, final C symbol, final RenderingContext2D context){
+        this.service = service;
         this.symbol = symbol;
         this.renderingContext = context;
         this.g2d = renderingContext.getGraphics();
@@ -70,6 +69,11 @@ public abstract class AbstractSymbolizerRenderer<C extends CachedSymbolizer<? ex
 
     }
 
+    @Override
+    public SymbolizerRendererService getService() {
+        return service;
+    }
+    
     @Override
     public void portray(final Iterator<? extends ProjectedObject> graphics) throws PortrayalException {
         while(graphics.hasNext()){

@@ -27,25 +27,19 @@ import static org.geotoolkit.parameter.Parameters.*;
  * @module pending
  */
 public class DivideProcess extends AbstractProcess{
-    
-    public DivideProcess(final ParameterValueGroup input){
+
+    public DivideProcess(final ParameterValueGroup input) {
         super(INSTANCE,input);
     }
-    
+
     @Override
-    public ParameterValueGroup call() {
-        
-        final double first = value(FIRST_NUMBER, inputParameters); 
-        final double second = value(SECOND_NUMBER, inputParameters);    
-        
-        Double result = 0.0;
-        try{
-            result = first / second;
-        }catch(Exception e){
-            fireFailEvent(new ProcessEvent(this, e.getMessage(),0, e));
-        }
-        getOrCreate(RESULT_NUMBER, outputParameters).setValue(result); 
-        return outputParameters;
+    protected void execute() {
+
+        final double first = value(FIRST_NUMBER, inputParameters);
+        final double second = value(SECOND_NUMBER, inputParameters);
+
+        final double result = first / second;
+        getOrCreate(RESULT_NUMBER, outputParameters).setValue(result);
     }
-    
+
 }

@@ -60,7 +60,7 @@ import org.opengis.filter.expression.Expression;
 @XmlType(name = "BinaryComparisonOpType", propOrder = {
     "expression"
 })
-public class BinaryComparisonOpType extends ComparisonOpsType  implements BinaryComparisonOperator {
+public class BinaryComparisonOpType extends ComparisonOpsType implements BinaryComparisonOperator {
 
     @XmlElementRef(name = "expression", namespace = "http://www.opengis.net/ogc", type = JAXBElement.class)
     protected List<JAXBElement<?>> expression;

@@ -17,7 +17,6 @@
 package org.geotoolkit.display2d.primitive;
 
 import java.awt.Shape;
-
 import org.opengis.geometry.Geometry;
 import org.opengis.referencing.operation.TransformException;
 

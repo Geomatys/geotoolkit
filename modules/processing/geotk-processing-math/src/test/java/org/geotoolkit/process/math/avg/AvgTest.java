@@ -34,7 +34,6 @@ import static org.junit.Assert.*;
  */
 public class AvgTest extends AbstractProcessTest{
 
-   
 
     public AvgTest() {
         super("avg");

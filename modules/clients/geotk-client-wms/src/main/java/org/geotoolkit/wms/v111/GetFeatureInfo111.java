@@ -66,7 +66,7 @@ public class GetFeatureInfo111 extends AbstractGetFeatureInfo {
             LOGGER.log(Level.WARNING, null, ex);
         }
 
-        encodeTimeAndElevation(env, map);
+        encodeNDParameters(env, map);
 
         return map;
     }

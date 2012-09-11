@@ -25,9 +25,6 @@ import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiPoint;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.feature.FeatureTypeBuilder;
@@ -48,10 +45,10 @@ import static org.junit.Assert.*;
 
 /**
  * JUnit test of intersect process
- * @author Quentin Boileau
- * @module pending
+ *
+ * @author Quentin Boileau @module pending
  */
-public class IntersectionTest extends AbstractProcessTest{
+public class IntersectionTest extends AbstractProcessTest {
 
     private static SimpleFeatureBuilder sfb;
     private static final GeometryFactory geometryFactory = new GeometryFactory();
@@ -61,13 +58,12 @@ public class IntersectionTest extends AbstractProcessTest{
         super("intersection");
     }
 
-
     @Test
-    public void testIntersection() throws ProcessException, NoSuchIdentifierException{
+    public void testIntersection() throws ProcessException, NoSuchIdentifierException, FactoryException {
 
         // Inputs
         final FeatureCollection<?> featureList = buildFeatureList();
-        
+
         final FeatureCollection<?> featureInterList = buildFeatureInterList();
         // Process
         ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "intersection");
@@ -113,16 +109,9 @@ public class IntersectionTest extends AbstractProcessTest{
         return sft;
     }
 
+    private static FeatureCollection<?> buildFeatureList() throws FactoryException {
 
-    private static FeatureCollection<?> buildFeatureList() {
-
-        try {
-            type = createSimpleType();
-        } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(IntersectionTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FactoryException ex) {
-            Logger.getLogger(IntersectionTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        type = createSimpleType();
 
         final FeatureCollection<Feature> featureList = DataUtilities.collection("", type);
 
@@ -190,15 +179,9 @@ public class IntersectionTest extends AbstractProcessTest{
         return featureList;
     }
 
-    private static FeatureCollection<?> buildFeatureInterList() {
+    private static FeatureCollection<?> buildFeatureInterList() throws FactoryException {
 
-        try {
-            type = createSimpleType();
-        } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(IntersectionTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FactoryException ex) {
-            Logger.getLogger(IntersectionTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        type = createSimpleType();
 
         final FeatureCollection<Feature> featureList = DataUtilities.collection("", type);
 
@@ -216,12 +199,12 @@ public class IntersectionTest extends AbstractProcessTest{
                 new Coordinate[]{
                     new Coordinate(1.0, 6.0), //nothing
                     new Coordinate(3.0, 6.0), //intersection with a point
-                    new Coordinate(3.5, 3.5)  //intersection with a polygon
+                    new Coordinate(3.5, 3.5) //intersection with a polygon
                 });
         sfb = new SimpleFeatureBuilder(type);
         sfb.set("name", "feature11");
         sfb.set("geom1", geometryFactory.createPolygon(ring, null));
-        sfb.set("geom2",multPt);
+        sfb.set("geom2", multPt);
         myFeature1 = sfb.buildFeature("id-11");
         featureList.add(myFeature1);
 
@@ -265,16 +248,10 @@ public class IntersectionTest extends AbstractProcessTest{
         return featureList;
     }
 
-    private static FeatureCollection<?> buildResultList() {
+    private static FeatureCollection<?> buildResultList() throws FactoryException {
 
 
-        try {
-            type = createSimpleResultType();
-        } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(IntersectionTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FactoryException ex) {
-            Logger.getLogger(IntersectionTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        type = createSimpleResultType();
 
         final FeatureCollection<Feature> featureList = DataUtilities.collection("", type);
 
@@ -287,7 +264,7 @@ public class IntersectionTest extends AbstractProcessTest{
                 });
         sfb = new SimpleFeatureBuilder(type);
         sfb.set("name", "feature1");
-        sfb.set("geom1",line);
+        sfb.set("geom1", line);
         myFeature1 = sfb.buildFeature("id-01<->id-12");
         featureList.add(myFeature1);
 

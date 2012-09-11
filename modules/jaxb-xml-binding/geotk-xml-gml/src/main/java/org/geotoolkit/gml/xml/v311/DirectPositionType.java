@@ -62,7 +62,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 @XmlType(name = "DirectPositionType", propOrder = {
     "value"
 })
-public class DirectPositionType implements DirectPosition {
+public class DirectPositionType implements DirectPosition, org.geotoolkit.gml.xml.DirectPosition {
 
     @XmlValue
     protected List<Double> value;

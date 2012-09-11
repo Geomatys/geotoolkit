@@ -83,8 +83,8 @@ public class AreaDecoration extends AbstractGeometryDecoration {
     private void updateArea() {
         if (map == null) return;
         if (geometries.isEmpty()) return;
-        
-        double d = MesureUtilities.calculateArea(geometries.get(0), map.getCanvas().getObjectiveCRS(), (Unit) guiUOM.getSelectedItem());
+
+        double d = MeasureUtilities.calculateArea(geometries.get(0), map.getCanvas().getObjectiveCRS(), (Unit) guiUOM.getSelectedItem());
         guiLbl.setText(NumberFormat.getNumberInstance().format(d));
     }
 
@@ -93,7 +93,7 @@ public class AreaDecoration extends AbstractGeometryDecoration {
         super.setGeometries(geoms);
         updateArea();
     }
-    
+
     @Override
     protected void paintGeometry(final Graphics2D g2, final RenderingContext2D context, final ProjectedGeometry projectedGeom) throws TransformException {
         context.switchToDisplayCRS();

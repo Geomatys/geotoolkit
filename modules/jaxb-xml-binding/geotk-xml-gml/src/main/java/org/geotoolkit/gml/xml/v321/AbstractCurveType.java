@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.AbstractCurve;
 
 
 /**
@@ -50,9 +51,7 @@ import javax.xml.bind.annotation.XmlType;
     LineStringType.class,
     CompositeCurveType.class
 })
-public abstract class AbstractCurveType
-    extends AbstractGeometricPrimitiveType
-{
+public abstract class AbstractCurveType extends AbstractGeometricPrimitiveType implements AbstractCurve {
 
 
 }

@@ -2,7 +2,6 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2004 - 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -84,7 +83,7 @@ public class J2DCanvasVolatile extends J2DCanvas{
      * Resize the volatile image, this will set to null the buffer.
      * A new one will be created when repaint is called.
      */
-    public synchronized void resize(final Dimension dim){
+    public synchronized void resize(Dimension dim){
         if(this.dim == null){
             //first time we affect the size
             this.dim = dim;
@@ -105,6 +104,13 @@ public class J2DCanvasVolatile extends J2DCanvas{
             return;
         }
 
+        //ensure dimension is valid
+        if(dim.width<=0 || dim.height<=0){
+            dim = new Dimension(dim);
+            if(dim.width<=0)dim.width=1;
+            if(dim.height<=0)dim.height=1;
+        }
+        
         this.dim = dim;
         setDisplayBounds(new Rectangle(dim));
         buffer0 = null;
@@ -229,6 +235,9 @@ public class J2DCanvasVolatile extends J2DCanvas{
 
     @Override
     public synchronized void repaint(final Shape displayArea) {
+        //finish any previous painting
+        getMonitor().stopRendering();
+        
         this.dirtyArea.add(new Area(displayArea));
         mustupdate = true;
         thread.wake();

@@ -25,6 +25,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.wfs.xml.AllSomeType;
+import org.geotoolkit.wfs.xml.LockFeature;
 
 
 /**
@@ -61,7 +63,7 @@ import javax.xml.bind.annotation.XmlType;
     "lock"
 })
 @XmlRootElement(name = "LockFeature")
-public class LockFeatureType extends BaseRequestType {
+public class LockFeatureType extends BaseRequestType implements LockFeature {
 
     @XmlElement(name = "Lock", required = true)
     private List<LockType> lock;

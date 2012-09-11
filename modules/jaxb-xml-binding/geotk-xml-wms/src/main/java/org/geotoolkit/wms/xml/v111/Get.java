@@ -46,6 +46,12 @@ public class Get extends AbstractProtocol {
      Get() {
      }
 
+    public Get(final Get that) {
+        if (that != null && that.onlineResource != null) {
+            this.onlineResource = new OnlineResource(that.onlineResource);
+        }
+    }
+     
     /**
      * Build a new Contact person primary object.
      */

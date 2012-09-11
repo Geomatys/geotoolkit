@@ -24,6 +24,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
+import org.geotoolkit.util.Utilities;
+import org.geotoolkit.wfs.xml.FeatureType;
 
 
 /**
@@ -63,7 +65,7 @@ import javax.xml.namespace.QName;
     "latLongBoundingBox",
     "metadataURL"
 })
-public class FeatureTypeType {
+public class FeatureTypeType implements FeatureType {
 
     @XmlElement(name = "Name", required = true)
     private QName name;
@@ -161,6 +163,7 @@ public class FeatureTypeType {
      *     {@link String }
      *     
      */
+    @Override
     public void setAbstract(String value) {
         this._abstract = value;
     }
@@ -185,8 +188,14 @@ public class FeatureTypeType {
      *     {@link String }
      *     
      */
-    public void setKeywords(String value) {
+    public void setKeywords(final String value) {
         this.keywords = value;
+    }
+    
+    @Override
+    public void addKeywords(final List<String> values) {
+        if (values != null && !values.isEmpty())
+        this.keywords = values.get(0);
     }
 
     /**
@@ -209,10 +218,15 @@ public class FeatureTypeType {
      *     {@link String }
      *     
      */
-    public void setSRS(String value) {
+    @Override
+    public void setDefaultCRS(String value) {
         this.srs = value;
     }
 
+    @Override
+    public void setOtherCRS(final List<String> otherCRS) {
+        // do nothing
+    }
     /**
      * Gets the value of the operations property.
      * 
@@ -240,24 +254,6 @@ public class FeatureTypeType {
     /**
      * Gets the value of the latLongBoundingBox property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the latLongBoundingBox property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getLatLongBoundingBox().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link LatLongBoundingBoxType }
-     * 
-     * 
      */
     public List<LatLongBoundingBoxType> getLatLongBoundingBox() {
         if (latLongBoundingBox == null) {
@@ -269,30 +265,17 @@ public class FeatureTypeType {
     /**
      * Gets the value of the metadataURL property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the metadataURL property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getMetadataURL().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link MetadataURLType }
-     * 
-     * 
      */
     public List<MetadataURLType> getMetadataURL() {
         if (metadataURL == null) {
             metadataURL = new ArrayList<MetadataURLType>();
         }
         return this.metadataURL;
+    }
+    
+    @Override
+    public void addMetadataURL(final String value, final String type, final String format) {
+        getMetadataURL().add(new MetadataURLType(value, type, format));
     }
     
     /**

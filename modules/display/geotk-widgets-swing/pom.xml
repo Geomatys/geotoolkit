@@ -88,6 +88,13 @@
       <artifactId>geotk-go2</artifactId>
       <version>${project.version}</version>
     </dependency>
+    
+    <dependency>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-go3</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
 
     <dependency>
       <groupId>org.geotoolkit.pending</groupId>
@@ -104,6 +111,24 @@
     <dependency>
       <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-widgets-swing</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-datastore-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-coverageio-store</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-clients-core</artifactId>
+      <version>${project.version}</version>
     </dependency>
 
     <dependency>

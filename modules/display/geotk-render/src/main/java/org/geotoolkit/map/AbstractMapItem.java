@@ -21,17 +21,15 @@ import java.beans.PropertyChangeListener;
 import java.util.*;
 import java.util.logging.Logger;
 import javax.swing.event.EventListenerList;
-
-import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.gui.swing.tree.Trees;
+import org.geotoolkit.style.StyleConstants;
+import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 import org.geotoolkit.util.NumberRange;
+import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.logging.Logging;
-
 import org.opengis.style.Description;
-
-import static org.geotoolkit.util.ArgumentChecks.*;
 
 /**
  * Abstract implementation of a MapItem.
@@ -156,6 +154,14 @@ public abstract class AbstractMapItem implements MapItem {
     @Override
     public Object getUserPropertie(final String key){
         return parameters.get(key);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Map<String, Object> getUserProperties() {
+        return parameters;
     }
     
     //--------------------------------------------------------------------------

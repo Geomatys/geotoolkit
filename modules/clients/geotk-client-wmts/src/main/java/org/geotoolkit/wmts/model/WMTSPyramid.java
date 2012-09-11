@@ -18,15 +18,9 @@ package org.geotoolkit.wmts.model;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import org.geotoolkit.client.map.DefaultPyramid;
+import org.geotoolkit.coverage.DefaultPyramid;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.wmts.xml.v100.TileMatrix;
-import org.geotoolkit.wmts.xml.v100.TileMatrixLimits;
-import org.geotoolkit.wmts.xml.v100.TileMatrixSet;
-import org.geotoolkit.wmts.xml.v100.TileMatrixSetLimits;
-import org.geotoolkit.wmts.xml.v100.TileMatrixSetLink;
-
+import org.geotoolkit.wmts.xml.v100.*;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
@@ -40,18 +34,26 @@ public class WMTSPyramid extends DefaultPyramid{
 
     private final TileMatrixSetLink link;
     private final TileMatrixSet matrixset;
+    private CoordinateReferenceSystem crs;
     
     public WMTSPyramid(final WMTSPyramidSet set, final TileMatrixSetLink link){
         super(set, null);
         this.link = link;
         matrixset = set.getCapabilities().getContents().getTileMatrixSetByIdentifier(link.getTileMatrixSet());
         
+        final String crsstr = matrixset.getSupportedCRS();
+        try {
+            crs = CRS.decode(crsstr);
+        } catch (NoSuchAuthorityCodeException ex) {
+            Logger.getLogger(WMTSPyramid.class.getName()).log(Level.WARNING, null, ex);
+        } catch (FactoryException ex) {
+            Logger.getLogger(WMTSPyramid.class.getName()).log(Level.WARNING, null, ex);
+        }
+        
         final TileMatrixSetLimits limits = link.getTileMatrixSetLimits();
         
         for(final TileMatrix matrix : matrixset.getTileMatrix()){
-            
-            double scale = matrix.getScaleDenominator();
-            
+                        
             TileMatrixLimits limit = null;
             if(limits != null){
                 for(TileMatrixLimits li : limits.getTileMatrixLimits()){
@@ -63,7 +65,7 @@ public class WMTSPyramid extends DefaultPyramid{
             }
             
             final WMTSMosaic mosaic = new WMTSMosaic(this, matrix, limit);            
-            getMosaics().put(scale, mosaic);
+            getMosaics().put(mosaic.getScale(), mosaic);
         }
         
     }
@@ -79,15 +81,7 @@ public class WMTSPyramid extends DefaultPyramid{
 
     @Override
     public CoordinateReferenceSystem getCoordinateReferenceSystem() {
-        final String crs = matrixset.getSupportedCRS();
-        try {
-            return CRS.decode(crs);
-        } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(WMTSPyramid.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FactoryException ex) {
-            Logger.getLogger(WMTSPyramid.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return null;
+        return crs;
     }
     
 }

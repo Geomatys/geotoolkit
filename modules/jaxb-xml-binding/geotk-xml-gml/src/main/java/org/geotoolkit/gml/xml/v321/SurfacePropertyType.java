@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.SurfaceProperty;
 
 
 /**
@@ -56,7 +57,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "SurfacePropertyType", propOrder = {
     "abstractSurface"
 })
-public class SurfacePropertyType {
+public class SurfacePropertyType implements SurfaceProperty {
 
     @XmlElementRef(name = "AbstractSurface", namespace = "http://www.opengis.net/gml/3.2", type = JAXBElement.class)
     private JAXBElement<? extends AbstractSurfaceType> abstractSurface;
@@ -85,6 +86,16 @@ public class SurfacePropertyType {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String actuate;
 
+    public SurfacePropertyType() {
+        
+    }
+    
+    public SurfacePropertyType(final PolygonType polygon) {
+        if (polygon != null) {
+            final ObjectFactory factory = new ObjectFactory();
+            this.abstractSurface = factory.createPolygon(polygon);
+        }
+    }
     /**
      * Gets the value of the abstractSurface property.
      * 
@@ -100,7 +111,7 @@ public class SurfacePropertyType {
      *     {@link JAXBElement }{@code <}{@link SurfaceType }{@code >}
      *     
      */
-    public JAXBElement<? extends AbstractSurfaceType> getAbstractSurface() {
+    public JAXBElement<? extends AbstractSurfaceType> getJbAbstractSurface() {
         return abstractSurface;
     }
 
@@ -123,6 +134,27 @@ public class SurfacePropertyType {
         this.abstractSurface = ((JAXBElement<? extends AbstractSurfaceType> ) value);
     }
 
+    /**
+     * Gets the value of the abstractSurface property.
+     *
+     * @return
+     *     possible object is
+     *     {@code <}{@link SurfaceType }{@code >}
+     *     {@code <}{@link OrientableSurfaceType }{@code >}
+     *     {@code <}{@link AbstractSurfaceType }{@code >}
+     *     {@code <}{@link TriangulatedSurfaceType }{@code >}
+     *     {@code <}{@link PolyhedralSurfaceType }{@code >}
+     *     {@code <}{@link PolygonType }{@code >}
+     *     {@code <}{@link TinType }{@code >}
+     *
+     */
+    public AbstractSurfaceType getAbstractSurface() {
+        if (abstractSurface != null) {
+            return abstractSurface.getValue();
+        }
+        return null;
+    }
+    
     /**
      * Gets the value of the owns property.
      * 

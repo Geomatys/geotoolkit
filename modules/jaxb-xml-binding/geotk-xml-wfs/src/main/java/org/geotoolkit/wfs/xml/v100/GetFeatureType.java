@@ -16,15 +16,15 @@
  */
 package org.geotoolkit.wfs.xml.v100;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlType;
+import java.util.Map;
+import javax.xml.bind.annotation.*;
+import org.geotoolkit.util.Version;
+import org.geotoolkit.wfs.xml.GetFeature;
+import org.geotoolkit.wfs.xml.ResolveValueType;
+import org.geotoolkit.wfs.xml.ResultTypeType;
+import org.geotoolkit.wfs.xml.StoredQuery;
 
 
 /**
@@ -36,12 +36,12 @@ import javax.xml.bind.annotation.XmlType;
  * A Web Feature Service may support other possibly non-XML
  * (and even binary) output formats as long as those formats
  * are advertised in the capabilities document.
- *          
- * 
+ *
+ *
  * <p>Java class for GetFeatureType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="GetFeatureType">
  *   &lt;complexContent>
@@ -58,14 +58,14 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GetFeatureType", propOrder = {
     "query"
 })
-public class GetFeatureType {
+public class GetFeatureType implements GetFeature {
 
     @XmlElement(name = "Query", required = true)
     private List<QueryType> query;
@@ -79,30 +79,30 @@ public class GetFeatureType {
     private String outputFormat;
     @XmlAttribute
     @XmlSchemaType(name = "positiveInteger")
-    private BigInteger maxFeatures;
+    private Integer maxFeatures;
+
+
+    @XmlTransient
+    private Map<String, String> prefixMapping;
+
+    public GetFeatureType() {
+
+    }
+
+    public GetFeatureType(final String service, final String version, final String handle, final Integer maxFeatures,
+            final List<QueryType> query, final String outputformat) {
+        this.service = service;
+        this.version = version;
+        this.handle = handle;
+        this.maxFeatures  = maxFeatures;
+        this.query        = query;
+        this.outputFormat = outputformat;
+    }
 
     /**
      * Gets the value of the query property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the query property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getQuery().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link QueryType }
-     * 
-     * 
      */
+    @Override
     public List<QueryType> getQuery() {
         if (query == null) {
             query = new ArrayList<QueryType>();
@@ -112,40 +112,43 @@ public class GetFeatureType {
 
     /**
      * Gets the value of the version property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
-    public String getVersion() {
+    @Override
+    public Version getVersion() {
         if (version == null) {
-            return "1.0.0";
+            return new Version("1.0.0");
         } else {
-            return version;
+            return new Version(version);
         }
     }
 
     /**
      * Sets the value of the version property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
+    @Override
     public void setVersion(String value) {
         this.version = value;
     }
 
     /**
      * Gets the value of the service property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
+    @Override
     public String getService() {
         if (service == null) {
             return "WFS";
@@ -156,48 +159,52 @@ public class GetFeatureType {
 
     /**
      * Sets the value of the service property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
+    @Override
     public void setService(String value) {
         this.service = value;
     }
 
     /**
      * Gets the value of the handle property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
+    @Override
     public String getHandle() {
         return handle;
     }
 
     /**
      * Sets the value of the handle property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
+    @Override
     public void setHandle(String value) {
         this.handle = value;
     }
 
     /**
      * Gets the value of the outputFormat property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
+    @Override
     public String getOutputFormat() {
         if (outputFormat == null) {
             return "GML2";
@@ -208,11 +215,11 @@ public class GetFeatureType {
 
     /**
      * Sets the value of the outputFormat property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setOutputFormat(String value) {
         this.outputFormat = value;
@@ -220,26 +227,86 @@ public class GetFeatureType {
 
     /**
      * Gets the value of the maxFeatures property.
-     * 
+     *
      * @return
      *     possible object is
-     *     {@link BigInteger }
-     *     
+     *     {@link Integer }
+     *
      */
-    public BigInteger getMaxFeatures() {
+    public Integer getMaxFeatures() {
         return maxFeatures;
     }
 
     /**
      * Sets the value of the maxFeatures property.
-     * 
+     *
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
-     *     
+     *     {@link Integer }
+     *
      */
-    public void setMaxFeatures(BigInteger value) {
+    public void setMaxFeatures(Integer value) {
         this.maxFeatures = value;
     }
 
+    @Override
+    public int getCount() {
+        if (maxFeatures != null) {
+            return maxFeatures;
+        }
+        return 0;
+    }
+
+    @Override
+    public int getStartIndex() {
+        return 0;
+    }
+
+    /**
+     * @return the prefixMapping
+     */
+    public Map<String, String> getPrefixMapping() {
+        return prefixMapping;
+    }
+
+    /**
+     * @param prefixMapping the prefixMapping to set
+     */
+    public void setPrefixMapping(Map<String, String> prefixMapping) {
+        this.prefixMapping = prefixMapping;
+    }
+
+    /**
+     * Gets the value of the resultType property.
+     *
+     * @return
+     *     possible object is
+     *     {@link ResultTypeType }
+     *
+     */
+    @Override
+    public ResultTypeType getResultType() {
+        return ResultTypeType.RESULTS;
+    }
+
+    @Override
+    public String getFeatureId() {
+        return null;
+    }
+
+    public List<? extends StoredQuery> getStoredQuery() {
+        throw new UnsupportedOperationException("Not supported in V1.0.0");
+    }
+
+    public ResolveValueType getResolve() {
+        return null;
+    }
+
+    public String getResolveDepth() {
+        return null;
+    }
+
+    public int getResolveTimeout() {
+        return -1;
+    }
 }

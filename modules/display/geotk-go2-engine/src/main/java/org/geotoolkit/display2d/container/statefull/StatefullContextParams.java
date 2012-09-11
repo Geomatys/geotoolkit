@@ -2,7 +2,6 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2004 - 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2008 - 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -18,7 +17,6 @@
 package org.geotoolkit.display2d.container.statefull;
 
 import java.awt.geom.AffineTransform;
-
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
@@ -26,7 +24,6 @@ import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.util.converter.Classes;
-
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -60,8 +57,9 @@ public class StatefullContextParams<T extends MapLayer> {
     }
 
     public void update(final RenderingContext2D context){
-        objectiveCRS = context.getObjectiveCRS2D();
-        displayCRS = context.getDisplayCRS();
+        this.context = context;
+        this.objectiveCRS = context.getObjectiveCRS2D();
+        this.displayCRS = context.getDisplayCRS();
 
         final AffineTransform2D objtoDisp = context.getObjectiveToDisplay();
         if(!objtoDisp.equals(objectiveToDisplay)){

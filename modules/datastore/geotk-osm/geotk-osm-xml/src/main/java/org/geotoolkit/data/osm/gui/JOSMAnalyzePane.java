@@ -121,7 +121,7 @@ public class JOSMAnalyzePane extends javax.swing.JPanel {
     private DataStore getDataStore(){
         if(store == null){
             try {
-                store = DataStoreFinder.getDataStore(dbParameters);
+                store = DataStoreFinder.open(dbParameters);
             } catch (DataStoreException ex) {
                 JXErrorPane.showDialog(ex);
             }

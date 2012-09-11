@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book [
+  <!ENTITY % book.entities SYSTEM "../book.entities">
+  %book.entities;
+]>
+<chapter xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xi    = "http://www.w3.org/2001/XInclude"
+         xmlns:xlink = "http://www.w3.org/1999/xlink">
+
+    <title ooclass="chapiterTitle">
+        Process
+    </title>
+
+    <section>
+        <title>Qu'est ce qu'un process ?</title>
+        <para>
+            Un process (ou processus), est un traitement effectué sur des données. Ces traitements peuvent être plus ou moins complexes, avec la possibilité de les chaîner pour des applications particulières.
+        </para>
+        <para> Geotoolkit contient plusieurs type de process organiser par modules permettant des
+            traitements basiques. </para>
+        <para>
+            On y trouve donc les modules suivant :
+        </para>
+        <itemizedlist>
+            <listitem><emphasis role="bold">Math</emphasis> : contient des fonctions mathématiques tel que cos(), add(), avg(), ceil(), ...</listitem>
+            <listitem><emphasis role="bold">JTS Geometry</emphasis> : permet d'appeler les fonctions de la  librairie JTS sur des geometries (buffer, contain, intersect, ...)</listitem>
+            <listitem><emphasis role="bold">Vector</emphasis> : permet de réaliser des oppérations sur les données vecoriel de features (centroid, merge, spacialJoin, ...) </listitem>
+            <listitem><emphasis role="bold">Referencing</emphasis> : contient pour le moment seulement un processus de création de base de donnée EPSG.</listitem>
+            <listitem><emphasis role="bold">Coverage</emphasis> : contient des fonctions pour la création de pyramide et de tuillage.</listitem>
+            <listitem><emphasis role="bold">IO</emphasis> : contient des traitements sur des fichiers (suppression, createTempFile, unpackFile, ...).</listitem>
+            <listitem><emphasis role="bold">Metadata</emphasis> : contient des traitements sur des metadonnées (merge, ...).</listitem>
+        </itemizedlist>
+    </section>
+
+    <xi:include href="process/process-create.xml"/>
+
+    <xi:include href="process/process-using.xml"/>
+
+    <xi:include href="process/process-tools.xml"/>
+
+</chapter>

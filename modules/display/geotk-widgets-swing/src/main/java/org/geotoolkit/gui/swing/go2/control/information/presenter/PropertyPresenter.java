@@ -33,7 +33,13 @@ import org.opengis.feature.Property;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class PropertyPresenter implements InformationPresenter{
+public class PropertyPresenter extends AbstractInformationPresenter{
+
+    public PropertyPresenter() {
+        super(0);
+    }
+
+
 
     @Override
     public JComponent createComponent(Object graphic, RenderingContext2D context, SearchAreaJ2D area) {

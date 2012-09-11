@@ -267,7 +267,7 @@ public class TileMatrix extends DescriptionType {
             return  Objects.equals(this.identifier, that.identifier)     &&
                     Objects.equals(this.matrixHeight, that.matrixHeight) &&
                     Objects.equals(this.matrixWidth, that.matrixWidth)   &&
-                    Utilities.equals(this.scaleDenominator, that.scaleDenominator) &&
+                    Objects.equals(this.scaleDenominator, that.scaleDenominator) &&
                     Objects.equals(this.tileHeight, that.tileHeight) &&
                     Objects.equals(this.tileWidth, that.tileWidth) &&
                     Objects.equals(this.topLeftCorner, that.topLeftCorner);

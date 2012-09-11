@@ -2,7 +2,6 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2004 - 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -17,10 +16,9 @@
  */
 package org.geotoolkit.display2d.primitive.jts;
 
+import com.vividsolutions.jts.geom.MultiLineString;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
-
-import com.vividsolutions.jts.geom.MultiLineString;
 
 
 /**

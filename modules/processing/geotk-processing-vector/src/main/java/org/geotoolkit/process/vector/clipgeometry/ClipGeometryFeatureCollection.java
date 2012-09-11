@@ -59,6 +59,6 @@ public class ClipGeometryFeatureCollection extends WrapFeatureCollection {
      */
     @Override
     protected Feature modify(final Feature original) {
-        return ClipGeometry.clipFeature(original, newFeatureType, clipGeometry);
+        return ClipGeometryProcess.clipFeature(original, newFeatureType, clipGeometry);
     }
 }

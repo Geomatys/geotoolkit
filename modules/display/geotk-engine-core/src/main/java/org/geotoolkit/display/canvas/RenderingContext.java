@@ -20,16 +20,14 @@ package org.geotoolkit.display.canvas;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.util.Date;
-
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.factory.Hints;
-
 import org.opengis.display.canvas.Canvas;
-import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
-import org.opengis.referencing.operation.CoordinateOperationFactory;
+import org.opengis.util.FactoryException;
 
 /**
  * Informations relative to a rendering in progress. A {@code RenderingContext} instance is

@@ -91,7 +91,7 @@ public class JLayerBandMenu extends JMenu implements ContextListener{
     private void checkBands(){
         for(JNavigatorBand b : new ArrayList<JNavigatorBand>(navigator.getBands())){
             if(b instanceof JLayerBand){
-                navigator.removeBand(b);
+                navigator.getBands().remove(b);
             }
         }        
         if(map == null){
@@ -124,7 +124,7 @@ public class JLayerBandMenu extends JMenu implements ContextListener{
             if(b instanceof JLayerBand){
                 final JLayerBand lb = (JLayerBand) b;
                 if(!layers.contains(lb.getLayer())){
-                    navigator.removeBand(b);
+                    navigator.getBands().remove(b);
                 }
             }
         }
@@ -219,13 +219,13 @@ public class JLayerBandMenu extends JMenu implements ContextListener{
                     }
                     final JLayerBand band = new JLayerBand(layer);
                     band.setColor(label.getForeground());
-                    navigator.addBand(band);
+                    navigator.getBands().add(band);
                 }else{
                     for(final Object band : navigator.getBands().toArray()){
                         if(band instanceof JLayerBand){
                             final JLayerBand lb = (JLayerBand) band;
                             if(lb.getLayer().equals(this.layer)){
-                                navigator.removeBand(lb);
+                                navigator.getBands().remove(lb);
                             }
                         }
                     }

@@ -90,6 +90,6 @@ public final class ConvexHullDescriptor extends AbstractProcessDescriptor {
      */
     @Override
     public Process createProcess(final ParameterValueGroup input) {
-        return new ConvexHull(input);
+        return new ConvexHullProcess(input);
     }
 }

@@ -18,6 +18,7 @@
 package org.geotoolkit.gui.swing.propertyedit.styleproperty;
 
 import java.awt.Component;
+import java.util.logging.Level;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.xml.bind.JAXBException;
@@ -27,9 +28,11 @@ import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.sld.MutableLayer;
 import org.geotoolkit.sld.MutableStyledLayerDescriptor;
+import org.geotoolkit.sld.xml.Specification;
 import org.geotoolkit.sld.xml.Specification.StyledLayerDescriptor;
 import org.geotoolkit.sld.xml.XMLUtilities;
 import org.geotoolkit.style.MutableStyle;
+import org.geotoolkit.util.logging.Logging;
 import org.jdesktop.swingx.combobox.EnumComboBoxModel;
 
 import org.opengis.sld.LayerStyle;
@@ -37,7 +40,6 @@ import org.opengis.sld.NamedLayer;
 import org.opengis.sld.UserLayer;
 import org.opengis.style.Style;
 import org.opengis.util.FactoryException;
-import org.openide.util.Exceptions;
 
 
 /**
@@ -129,7 +131,7 @@ public class JSLDImportExportPanel extends javax.swing.JPanel implements Propert
                 try {
                     tool.writeStyle(chooser.getSelectedFile(), style, version);
                 } catch (JAXBException ex) {
-                    Exceptions.printStackTrace(ex);
+                    Logging.getLogger(JSLDImportExportPanel.class).log(Level.WARNING,ex.getMessage(),ex);
                 }
             }
         }
@@ -139,8 +141,9 @@ public class JSLDImportExportPanel extends javax.swing.JPanel implements Propert
         final StyledLayerDescriptor version = (StyledLayerDescriptor)guiVersion.getSelectedItem();
         if(layer != null){
             final JFileChooser chooser = new JFileChooser();
-            final int result = chooser.showSaveDialog(this);
+            final int result = chooser.showOpenDialog(this);
 
+            parse:
             if(result == JFileChooser.APPROVE_OPTION){
                 final XMLUtilities tool = new XMLUtilities();
                 try {
@@ -165,12 +168,28 @@ public class JSLDImportExportPanel extends javax.swing.JPanel implements Propert
                             }
                         }
                     }
-
+                    break parse;
                 } catch (JAXBException ex) {
-                    Exceptions.printStackTrace(ex);
+                    Logging.getLogger(JSLDImportExportPanel.class).log(Level.FINEST,ex.getMessage(),ex);
                 } catch (FactoryException ex) {
-                    Exceptions.printStackTrace(ex);
+                    Logging.getLogger(JSLDImportExportPanel.class).log(Level.FINEST,ex.getMessage(),ex);
                 }
+                
+                try {
+                    final MutableStyle style = tool.readStyle(chooser.getSelectedFile(), 
+                            (version==StyledLayerDescriptor.V_1_0_0) ? 
+                            Specification.SymbologyEncoding.SLD_1_0_0 : 
+                            Specification.SymbologyEncoding.V_1_1_0);
+
+                    layer.setStyle(style);
+                    
+                    break parse;
+                } catch (JAXBException ex) {
+                    Logging.getLogger(JSLDImportExportPanel.class).log(Level.FINEST,ex.getMessage(),ex);
+                } catch (FactoryException ex) {
+                    Logging.getLogger(JSLDImportExportPanel.class).log(Level.FINEST,ex.getMessage(),ex);
+                }
+                
             }
         }
     }

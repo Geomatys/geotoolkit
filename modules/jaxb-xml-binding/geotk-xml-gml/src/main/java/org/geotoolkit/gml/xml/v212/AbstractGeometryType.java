@@ -73,6 +73,14 @@ public abstract class AbstractGeometryType {
     @XmlSchemaType(name = "anyURI")
     private String srsName;
 
+    public AbstractGeometryType() {
+        
+    }
+    
+    public AbstractGeometryType(final String srsName) {
+        this.srsName = srsName;
+    }
+    
     /**
      * Gets the value of the gid property.
      * 

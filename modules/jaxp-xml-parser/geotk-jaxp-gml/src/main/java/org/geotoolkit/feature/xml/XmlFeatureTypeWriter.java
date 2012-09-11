@@ -21,8 +21,10 @@ import java.io.OutputStream;
 import java.io.Writer;
 import java.util.List;
 import javax.xml.bind.JAXBException;
+import javax.xml.parsers.ParserConfigurationException;
 import org.geotoolkit.xsd.xml.v2001.Schema;
 import org.opengis.feature.type.FeatureType;
+import org.w3c.dom.Node;
 
 /**
  *  An interface for feature type XML writing.
@@ -30,7 +32,7 @@ import org.opengis.feature.type.FeatureType;
  * @module pending
  * @author Guilhem Legal (Geomatys)
  */
-public interface XmlFeatureTypeWriter {
+public interface XmlFeatureTypeWriter extends Configurable {
 
     /**
      * Return an XML representation of the specified featureType.
@@ -55,6 +57,15 @@ public interface XmlFeatureTypeWriter {
      */
     void write(FeatureType feature, OutputStream stream) throws JAXBException;
 
+    /**
+     * Write an XML representation of the specified featureType into an Element.
+     * @param feature
+     * @return the xml element.
+     * @throws JAXBException
+     * @throws ParserConfigurationException 
+     */
+    Node writeToElement(FeatureType feature) throws JAXBException, ParserConfigurationException;
+    
     /**
      * Create an xsd schema from a list of feature type.
      * 

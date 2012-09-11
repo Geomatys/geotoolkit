@@ -34,7 +34,6 @@ import static org.junit.Assert.*;
  */
 public class ToRadianTest extends AbstractProcessTest{
 
-   
 
     public ToRadianTest() {
         super("toRadian");

@@ -73,7 +73,7 @@ public class NcGetMap130 extends AbstractNcGetMap  {
             LOGGER.log(Level.WARNING, null, ex);
         }
 
-        encodeTimeAndElevation(env, map);
+        encodeNDParameters(env, map);
 
         return map;
     }

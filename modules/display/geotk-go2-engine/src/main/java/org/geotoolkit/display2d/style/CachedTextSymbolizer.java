@@ -2,7 +2,6 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2004 - 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2008 - 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -23,10 +22,8 @@ import java.awt.Composite;
 import java.awt.Font;
 import java.awt.Paint;
 import java.awt.RenderingHints;
-
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
-
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.Fill;
 import org.opengis.style.Halo;

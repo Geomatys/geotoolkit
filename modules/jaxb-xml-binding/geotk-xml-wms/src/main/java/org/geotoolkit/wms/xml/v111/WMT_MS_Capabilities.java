@@ -18,7 +18,6 @@ package org.geotoolkit.wms.xml.v111;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -61,6 +60,13 @@ public class WMT_MS_Capabilities extends AbstractWMSCapabilities {
     WMT_MS_Capabilities() {
     }
 
+    /**
+     * Build a new WMSCapabilities object.
+     */
+    public WMT_MS_Capabilities(final String version, final String updateSequence) {
+        this(null, null, version, updateSequence);
+    }
+    
     /**
      * Build a new WMSCapabilities object.
      */

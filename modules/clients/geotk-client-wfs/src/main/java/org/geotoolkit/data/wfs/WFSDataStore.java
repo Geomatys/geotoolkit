@@ -34,12 +34,16 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.client.Request;
 
 import org.geotoolkit.data.AbstractDataStore;
+import org.geotoolkit.data.DataStoreFactory;
+import org.geotoolkit.data.DataStoreFinder;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.FeatureReader;
@@ -59,12 +63,21 @@ import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.xml.XmlFeatureReader;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
+import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.geometry.GeneralEnvelope;
+import org.geotoolkit.ogc.xml.v110.FeatureIdType;
 import org.geotoolkit.ows.xml.v100.WGS84BoundingBoxType;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.geotoolkit.wfs.xml.TransactionResponse;
+import org.geotoolkit.wfs.xml.WFSMarshallerPool;
+import org.geotoolkit.wfs.xml.v100.TransactionResultType;
 import org.geotoolkit.wfs.xml.v110.FeatureTypeListType;
 import org.geotoolkit.wfs.xml.v110.FeatureTypeType;
+import org.geotoolkit.wfs.xml.v110.InsertResultsType;
+import org.geotoolkit.wfs.xml.v110.InsertedFeatureType;
+import org.geotoolkit.wfs.xml.v110.TransactionResponseType;
+import org.geotoolkit.wfs.xml.v110.TransactionResultsType;
 import org.geotoolkit.wfs.xml.v110.WFSCapabilitiesType;
 
 import org.opengis.feature.Feature;
@@ -95,8 +108,6 @@ public class WFSDataStore extends AbstractDataStore{
     private final Map<Name,Envelope> bounds = new HashMap<Name, Envelope>();
     private final Map<String,String> prefixes = new HashMap<String, String>();
     private final boolean postRequest;
-    private Request lastRequest = null;
-    private SoftReference<FeatureCollection<Feature>> lastCollection = null;
 
 
     public WFSDataStore(final URI serverURI, final boolean postRequest) throws MalformedURLException{
@@ -117,8 +128,7 @@ public class WFSDataStore extends AbstractDataStore{
                 prefix = "geotk" + NS_INC.incrementAndGet();
             }
 
-            prefixes.put(uri, prefix);
-            final Name name = new DefaultName(uri, localpart);
+            Name name = new DefaultName(uri, localpart);
             typeName = new QName(uri, localpart, prefix);
 
             //extract the feature type -----------------------------------------
@@ -152,39 +162,51 @@ public class WFSDataStore extends AbstractDataStore{
                     sftb.add(desc);
                 }
             }
-            sftb.setDefaultGeometry(sft.getGeometryDescriptor().getLocalName());
-            sft = sftb.buildFeatureType();
-
-            final CoordinateReferenceSystem val = sft.getGeometryDescriptor().getCoordinateReferenceSystem();
-            if(val == null){
-                throw new IllegalArgumentException("CRS should not be null");
+            
+            if(sft.getGeometryDescriptor() != null){
+                sftb.setDefaultGeometry(sft.getGeometryDescriptor().getLocalName());
             }
-
+            sft = sftb.buildFeatureType();
+            name = sft.getName();
             types.put(name, sft);
+            prefixes.put(name.getNamespaceURI(), prefix);
             typeNames.add(name);
 
-            //extract the bounds -----------------------------------------------
-            final WGS84BoundingBoxType bbox = ftt.getWGS84BoundingBox().get(0);
-            try {
-                final String crsVal = bbox.getCrs();
-                crs = crsVal != null ? CRS.decode(crsVal) : DefaultGeographicCRS.WGS84;
-                final GeneralEnvelope env = new GeneralEnvelope(crs);
-                final BigInteger dims = bbox.getDimensions();
-                final List<Double> upper = bbox.getUpperCorner();
-                final List<Double> lower = bbox.getLowerCorner();
-
-                //@TODO bbox should be null if there is no bbox in response.
-                if(dims == null)continue;
-                for(int i=0,n=dims.intValue();i<n;i++){
-                    env.setRange(i, lower.get(i), upper.get(i));
+            final GeometryDescriptor geomDesc = sft.getGeometryDescriptor();
+            if(geomDesc != null){
+                final CoordinateReferenceSystem val = geomDesc.getCoordinateReferenceSystem();
+                if(val == null){
+                    throw new IllegalArgumentException("CRS should not be null");
                 }
-                bounds.put(name, env);
-            } catch (FactoryException ex) {
-                getLogger().log(Level.WARNING, null, ex);
+
+                //extract the bounds -----------------------------------------------
+                final WGS84BoundingBoxType bbox = ftt.getWGS84BoundingBox().get(0);
+                try {
+                    final String crsVal = bbox.getCrs();
+                    crs = crsVal != null ? CRS.decode(crsVal) : DefaultGeographicCRS.WGS84;
+                    final GeneralEnvelope env = new GeneralEnvelope(crs);
+                    final BigInteger dims = bbox.getDimensions();
+                    final List<Double> upper = bbox.getUpperCorner();
+                    final List<Double> lower = bbox.getLowerCorner();
+
+                    //@TODO bbox should be null if there is no bbox in response.
+                    if(dims == null)continue;
+                    for(int i=0,n=dims.intValue();i<n;i++){
+                        env.setRange(i, lower.get(i), upper.get(i));
+                    }
+                    bounds.put(name, env);
+                } catch (FactoryException ex) {
+                    getLogger().log(Level.WARNING, null, ex);
+                }
             }
 
         }
 
+    }
+
+    @Override
+    public DataStoreFactory getFactory() {
+        return DataStoreFinder.getFactoryById(WFSDataStoreFactory.NAME);
     }
 
     @Override
@@ -303,7 +325,6 @@ public class WFSDataStore extends AbstractDataStore{
     @Override
     public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures, 
             final Hints hints) throws DataStoreException {
-        lastCollection = null;
 
         final TransactionRequest request = server.createTransaction();
         final Insert insert = server.createInsertElement();
@@ -320,15 +341,59 @@ public class WFSDataStore extends AbstractDataStore{
 
         request.elements().add(insert);
 
+        
+        Unmarshaller unmarshal = null;
+        InputStream response = null;
+        
         try {
-            final InputStream response = request.getResponseStream();
-            response.close();
+            response = request.getResponseStream();
+            unmarshal = WFSMarshallerPool.getInstance().acquireUnmarshaller();
+            Object obj = unmarshal.unmarshal(response);
+            
+            if(obj instanceof JAXBElement){
+                obj = ((JAXBElement)obj).getValue();
+            }
+            
+            if(obj instanceof TransactionResponseType){
+                final List<FeatureId> ids = new ArrayList<FeatureId>();
+                final TransactionResponseType tr = (TransactionResponseType) obj;
+                
+                final InsertResultsType rt = tr.getInsertResults();                
+                if(rt != null){
+                    final List<InsertedFeatureType> inserted = rt.getFeature();
+
+                    if(inserted != null){
+                        for(InsertedFeatureType ift : inserted){
+                            for(FeatureIdType fit : ift.getFeatureId()){
+                                ids.add(new DefaultFeatureId(fit.getFid()));
+                            }
+                        }
+                    }
+                }
+                
+                return ids;
+            }else{
+                throw new DataStoreException("Unexpected response : "+ obj.getClass());
+            }
+            
         } catch (IOException ex) {
             throw new DataStoreException(ex);
+        } catch (JAXBException ex) {
+            throw new DataStoreException(ex);
+        } finally {
+            if(unmarshal != null){
+                WFSMarshallerPool.getInstance().release(unmarshal);
+            }
+            
+            if(response != null){
+                try {
+                    response.close();
+                } catch (IOException ex) {
+                    java.util.logging.Logger.getLogger(WFSDataStore.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
         }
 
-        //todo read response
-        return null;
     }
 
     /**
@@ -336,7 +401,6 @@ public class WFSDataStore extends AbstractDataStore{
      */
     @Override
     public void updateFeatures(final Name groupName, final Filter filter, final Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
-        lastCollection = null;
         
         final TransactionRequest request = server.createTransaction();
         final Update update = server.createUpdateElement();
@@ -363,7 +427,6 @@ public class WFSDataStore extends AbstractDataStore{
      */
     @Override
     public void removeFeatures(final Name groupName, final Filter filter) throws DataStoreException {
-        lastCollection = null;
         
         final TransactionRequest request = server.createTransaction();
         final Delete delete = server.createDeleteElement();
@@ -435,16 +498,10 @@ public class WFSDataStore extends AbstractDataStore{
             request.setPropertyNames(query.getPropertyNames());
         }
 
-        if(request.equals(lastRequest) && lastCollection != null){
-            final FeatureCollection<Feature> col = lastCollection.get();
-            if(col != null){
-                return col;
-            }
-        }
-
         XmlFeatureReader reader = null;
         try {
             reader = new JAXPStreamFeatureReader(sft);
+            reader.getProperties().put(JAXPStreamFeatureReader.SKIP_UNEXPECTED_PROPERTY_TAGS, true);
             final InputStream stream;
             if (postRequest) {
                 getLogger().log(Level.INFO, "[WFS Client] request feature by POST.");
@@ -456,25 +513,18 @@ public class WFSDataStore extends AbstractDataStore{
             }
             final Object result = reader.read(stream);
 
-            lastRequest = request;
 
             if(result instanceof Feature){
                 final Feature sf = (Feature) result;
                 final FeatureCollection<Feature> col = DataUtilities.collection("id", sft);
                 col.add(sf);
-
-                lastCollection = new SoftReference<FeatureCollection<Feature>>(col);
-
                 return col;
             }else if(result instanceof FeatureCollection){
                 final FeatureCollection<Feature> col = (FeatureCollection<Feature>) result;
-                lastCollection = new SoftReference<FeatureCollection<Feature>>(col);
                 return col;
             }else{
                 final FeatureCollection<Feature> col = DataUtilities.collection("", sft);
-                lastCollection = new SoftReference<FeatureCollection<Feature>>(col);
                 return col;
-//                throw new IOException("unexpected type : " + result);
             }
 
         }catch (XMLStreamException ex) {
@@ -486,7 +536,5 @@ public class WFSDataStore extends AbstractDataStore{
         }
 
     }
-
-
 
 }

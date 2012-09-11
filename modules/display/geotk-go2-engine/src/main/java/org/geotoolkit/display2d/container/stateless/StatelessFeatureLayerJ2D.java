@@ -2,7 +2,6 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2004 - 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -17,7 +16,6 @@
  */
 package org.geotoolkit.display2d.container.stateless;
 
-import org.opengis.style.Rule;
 import java.awt.RenderingHints;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,53 +25,56 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
-
-import org.geotoolkit.data.StorageContentEvent;
-import org.geotoolkit.data.StorageManagementEvent;
-import org.geotoolkit.display2d.container.stateless.StatelessCollectionLayerJ2D.RenderingIterator;
-import org.geotoolkit.feature.SchemaException;
-import org.geotoolkit.storage.DataStoreException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.data.FeatureIterator;
+import org.geotoolkit.data.StorageContentEvent;
+import org.geotoolkit.data.StorageListener;
+import org.geotoolkit.data.StorageManagementEvent;
+import org.geotoolkit.data.memory.GenericCachedFeatureIterator;
+import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.data.session.Session;
+import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display.exception.PortrayalException;
-import org.geotoolkit.display2d.primitive.DefaultGraphicFeatureJ2D;
-import org.geotoolkit.display2d.primitive.GraphicJ2D;
-import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.primitive.SearchArea;
+import org.geotoolkit.display2d.GO2Hints;
+import org.geotoolkit.display2d.GO2Utilities;
+import static org.geotoolkit.display2d.GO2Utilities.*;
+import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
+import org.geotoolkit.display2d.container.statefull.StatefullCachedRule;
 import org.geotoolkit.display2d.container.statefull.StatefullContextParams;
 import org.geotoolkit.display2d.container.statefull.StatefullProjectedFeature;
-import org.geotoolkit.display2d.style.CachedRule;
-import org.geotoolkit.display2d.GO2Utilities;
+import org.geotoolkit.display2d.container.stateless.StatelessCollectionLayerJ2D.RenderingIterator;
+import org.geotoolkit.display2d.primitive.DefaultGraphicFeatureJ2D;
 import org.geotoolkit.display2d.primitive.DefaultSearchAreaJ2D;
+import org.geotoolkit.display2d.primitive.GraphicJ2D;
+import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
+import org.geotoolkit.display2d.style.CachedRule;
+import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.factory.HintsPending;
+import org.geotoolkit.feature.FeatureTypeUtilities;
+import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.filter.DefaultLiteral;
+import org.geotoolkit.filter.FilterUtilities;
+import org.geotoolkit.filter.binaryspatial.LooseBBox;
+import org.geotoolkit.filter.binaryspatial.UnreprojectedLooseBBox;
+import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.geometry.DefaultBoundingBox;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.data.StorageListener;
-import org.geotoolkit.data.query.Query;
-import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.data.session.Session;
-import org.geotoolkit.display2d.GO2Hints;
-import org.geotoolkit.display2d.canvas.J2DCanvas;
-import org.geotoolkit.display2d.container.statefull.StatefullCachedRule;
-import org.geotoolkit.display2d.primitive.ProjectedFeature;
-import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.factory.HintsPending;
-import org.geotoolkit.feature.FeatureTypeUtilities;
-import org.geotoolkit.filter.FilterUtilities;
-import org.geotoolkit.filter.binaryspatial.LooseBBox;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.StyleUtilities;
-
 import org.opengis.display.primitive.Graphic;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
@@ -87,8 +88,7 @@ import org.opengis.geometry.Envelope;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
-
-import static org.geotoolkit.display2d.GO2Utilities.*;
+import org.opengis.style.Rule;
 
 /**
  * Single object to represent a complete feature map layer.
@@ -122,6 +122,11 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         }
     }
 
+    @Override
+    protected StatefullContextParams getStatefullParameters(final RenderingContext2D context){
+        params.update(context);
+        return params;
+    }
 
     /**
      * {@inheritDoc }
@@ -139,16 +144,16 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
 
         //first extract the valid rules at this scale
         final List<Rule> validRules = getValidRules(renderingContext,item,item.getCollection().getFeatureType());
-        
+
         //we perform a first check on the style to see if there is at least
         //one valid rule at this scale, if not we just continue.
         if(validRules.isEmpty()){
             return;
         }
-        
+
         //extract the used names
         final Set<String> names = propertiesNames(validRules);
-        
+
         final FeatureCollection<Feature> candidates;
         try {
             //optimize
@@ -157,10 +162,10 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
             renderingContext.getMonitor().exceptionOccured(ex, Level.WARNING);
             return;
         }
-        
+
         //get the expected result type
         final FeatureType expected = candidates.getFeatureType();
-        
+
         //calculate optimized rules and included filter + expressions
         final CachedRule[] rules = toCachedRules(validRules, expected);
 
@@ -171,8 +176,12 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
     protected Collection<?> optimizeCollection(final RenderingContext2D context,
             final Set<String> requieredAtts, final List<Rule> rules) throws Exception {
         currentQuery = prepareQuery(context, item, requieredAtts, rules);
+        //we detach feature since we are going to use a cache.
+        currentQuery.getHints().put(HintsPending.FEATURE_DETACHED,Boolean.TRUE);
         final Query query = currentQuery;
-        return ((FeatureCollection<Feature>)item.getCollection()).subCollection(query);
+        FeatureCollection col = ((FeatureCollection<Feature>)item.getCollection()).subCollection(query);
+        col = GenericCachedFeatureIterator.wrap(col, 1000);
+        return col;
     }
 
     @Override
@@ -312,7 +321,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
      * Creates an optimal query to send to the datastore, knowing which properties are knowned and
      * the appropriate bounding box to filter.
      */
-    protected static Query prepareQuery(final RenderingContext2D renderingContext, final FeatureMapLayer layer, 
+    protected static Query prepareQuery(final RenderingContext2D renderingContext, final FeatureMapLayer layer,
             final Set<String> styleRequieredAtts, final List<Rule> rules) throws PortrayalException{
 
         final FeatureCollection<? extends Feature> fs            = layer.getCollection();
@@ -378,7 +387,11 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         //}else{
         //make a bbox filter
         if(geomAttName != null){
-            filter = new LooseBBox(FILTER_FACTORY.property(geomAttName),new DefaultLiteral<BoundingBox>(bbox));
+            if (layerCRS != null) {
+                filter = new UnreprojectedLooseBBox(FILTER_FACTORY.property(geomAttName),new DefaultLiteral<BoundingBox>(bbox));
+            } else {
+                filter = new LooseBBox(FILTER_FACTORY.property(geomAttName),new DefaultLiteral<BoundingBox>(bbox));
+            }
         }else{
             filter = Filter.EXCLUDE;
         }
@@ -467,32 +480,33 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         for(int i=0; i<atts.length; i++){
             String attName = atts[i];
             int index = attName.indexOf('/');
-            if(index >=0){
-                //remove all xpath filtering and indexing
-                int n = attName.indexOf('[', index+1);
-                while(n > 0){
-                    int d = attName.indexOf(']', n);
-                    if(d>0){
-                        attName = attName.substring(index, n)+attName.substring(d+1);
-                    }else{
+            if(index == 0){
+
+                //remove all xpath elements
+                attName = attName.substring(1); //remove first slash
+                final Pattern pattern = Pattern.compile("(\\{[^\\{\\}]*\\})|(\\[[^\\[\\]]*\\])|/{1}");
+                final Matcher matcher = pattern.matcher(attName);
+
+                final StringBuilder sb = new StringBuilder();
+                int position = 0;
+                while (matcher.find()) {
+                    final String match = matcher.group();
+                    sb.append(attName.substring(position, matcher.start()));
+                    position = matcher.end();
+
+                    if(match.charAt(0) == '/'){
+                        //we don't query precisely sub elements
+                        position = attName.length();
                         break;
+                    }else if(match.charAt(0) == '{'){
+                        sb.append(match);
+                    }else if(match.charAt(0) == '['){
+                        //strip indexes or xpath searches
                     }
-                    n = attName.indexOf('[', index+1);
                 }
+                sb.append(attName.substring(position));
+                atts[i] = sb.toString();
 
-                //looks like we have a path
-                int nextOcc = attName.indexOf('/', index+1);
-                int startBracket = attName.indexOf('{', index+1);
-                int endBracket = attName.indexOf('}', index+1);
-                if(nextOcc> startBracket && nextOcc<endBracket){
-                    //in a qname, ignore this slash
-                    nextOcc = attName.indexOf('/', endBracket+1);
-                }
-
-                if(endBracket > index){
-                    //this is a path, reduce it
-                    atts[i] = attName.substring(index+1, nextOcc);
-                }
             }
         }
 
@@ -502,7 +516,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         } catch (SchemaException ex) {
             throw new PortrayalException(ex);
         }
-        
+
         //combine the filter with rule filters----------------------------------
         if(rules != null){
             List<Filter> rulefilters = new ArrayList<Filter>();
@@ -541,8 +555,8 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
                 }
             }
         }
-        
-        
+
+
         //optimize the filter---------------------------------------------------
         filter = FilterUtilities.prepare(filter,Feature.class,expected);
 
@@ -584,7 +598,10 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         }
 
         //add reprojection -----------------------------------------------------
-        qb.setCRS(renderingContext.getObjectiveCRS2D());
+        //we don't reproject, the reprojection may produce curves but JTS can not represent those.
+        //so we generate those curves in java2d shapes by doing the transformation ourself.
+        //TODO wait for a new geometry implementation
+        //qb.setCRS(renderingContext.getObjectiveCRS2D());
 
         //set the acumulated hints
         qb.setHints(queryHints);

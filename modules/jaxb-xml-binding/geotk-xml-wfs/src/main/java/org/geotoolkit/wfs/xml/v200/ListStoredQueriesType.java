@@ -21,6 +21,7 @@ package org.geotoolkit.wfs.xml.v200;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.wfs.xml.ListStoredQueries;
 
 
 /**
@@ -41,9 +42,15 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ListStoredQueriesType")
-public class ListStoredQueriesType
-    extends BaseRequestType
-{
+public class ListStoredQueriesType extends BaseRequestType implements ListStoredQueries {
+
+    public ListStoredQueriesType() {
+        
+    }
+    
+    public ListStoredQueriesType(final String service, final String version, final String handle) {
+        super(service, version, handle);
+    }
 
 
 }

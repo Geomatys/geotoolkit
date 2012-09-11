@@ -77,6 +77,14 @@ public abstract class AbstractFeatureType {
     @XmlSchemaType(name = "ID")
     private String fid;
 
+    public AbstractFeatureType() {
+
+    }
+
+    public AbstractFeatureType(final String fid) {
+        this.fid = fid;
+    }
+    
     /**
      * Gets the value of the description property.
      * 

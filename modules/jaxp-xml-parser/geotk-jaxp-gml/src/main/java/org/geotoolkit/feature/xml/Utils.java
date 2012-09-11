@@ -44,7 +44,9 @@ import java.util.logging.Logger;
 import javax.xml.namespace.QName;
 import javax.xml.stream.events.XMLEvent;
 import org.geotoolkit.feature.DefaultName;
+import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.Name;
+import org.opengis.feature.type.PropertyType;
 
 /**
  *
@@ -143,6 +145,14 @@ public class Utils {
         CLASS_BINDING.put("LinearRing",                    LinearRing.class);
         CLASS_BINDING.put("LinearRingPropertyType",        LinearRing.class);
     }
+
+    public static boolean isGeometricType(final QName elementType) {
+        if (elementType != null) {
+            return CLASS_BINDING.get(elementType.getLocalPart()) != null;
+        }
+        return false;
+    }
+
     /**
      * Return a primitive Class from the specified XML QName (extracted from an xsd file).
      *
@@ -162,10 +172,12 @@ public class Utils {
 
     private static final Map<Class, QName> NAME_BINDING = new HashMap<Class, QName>();
     static {
-       
-        // Special case when we get a List or Map we return String => TODO
+
+        // Special case when we get a Collection or Map we return String => TODO
         NAME_BINDING.put(List.class,          new QName("http://www.w3.org/2001/XMLSchema", "string"));
         NAME_BINDING.put(Map.class,           new QName("http://www.w3.org/2001/XMLSchema", "string"));
+        NAME_BINDING.put(Collection.class,    new QName("http://www.w3.org/2001/XMLSchema", "string"));
+
         NAME_BINDING.put(String.class,        new QName("http://www.w3.org/2001/XMLSchema", "string"));
         NAME_BINDING.put(Long.class,          new QName("http://www.w3.org/2001/XMLSchema", "long"));
         NAME_BINDING.put(Integer.class,       new QName("http://www.w3.org/2001/XMLSchema", "integer"));
@@ -182,18 +194,36 @@ public class Utils {
         NAME_BINDING.put(Byte.class,          new QName("http://www.w3.org/2001/XMLSchema", "byte"));
 
     }
-    private static final Map<Class, QName> GEOMETRY_NAME_BINDING = new HashMap<Class, QName>();
+
+    private static final String GML_311_NAMESPACE = "http://www.opengis.net/gml";
+    private static final String GML_321_NAMESPACE = "http://www.opengis.net/gml/3.2";
+
+    private static final Map<Class, QName> GEOMETRY_NAME_BINDING_311 = new HashMap<Class, QName>();
     static {
-       
-        GEOMETRY_NAME_BINDING.put(MultiPoint.class,         new QName("http://www.opengis.net/gml", "MultiPoint"));
-        GEOMETRY_NAME_BINDING.put(Point.class,              new QName("http://www.opengis.net/gml", "Point"));
-        GEOMETRY_NAME_BINDING.put(LineString.class,         new QName("http://www.opengis.net/gml", "Curve"));
-        GEOMETRY_NAME_BINDING.put(GeometryCollection.class, new QName("http://www.opengis.net/gml", "MultiGeometry"));
-        GEOMETRY_NAME_BINDING.put(MultiLineString.class,    new QName("http://www.opengis.net/gml", "CompositeCurve"));
-        GEOMETRY_NAME_BINDING.put(Envelope.class,           new QName("http://www.opengis.net/gml", "Envelope"));
-        GEOMETRY_NAME_BINDING.put(MultiPolygon.class,       new QName("http://www.opengis.net/gml", "MultiGeometry"));
-        GEOMETRY_NAME_BINDING.put(Polygon.class,            new QName("http://www.opengis.net/gml", "Polygon"));
-        GEOMETRY_NAME_BINDING.put(LinearRing.class,         new QName("http://www.opengis.net/gml", "Ring"));
+
+        GEOMETRY_NAME_BINDING_311.put(MultiPoint.class,         new QName(GML_311_NAMESPACE, "MultiPoint"));
+        GEOMETRY_NAME_BINDING_311.put(Point.class,              new QName(GML_311_NAMESPACE, "Point"));
+        GEOMETRY_NAME_BINDING_311.put(LineString.class,         new QName(GML_311_NAMESPACE, "Curve"));
+        GEOMETRY_NAME_BINDING_311.put(GeometryCollection.class, new QName(GML_311_NAMESPACE, "MultiGeometry"));
+        GEOMETRY_NAME_BINDING_311.put(MultiLineString.class,    new QName(GML_311_NAMESPACE, "CompositeCurve"));
+        GEOMETRY_NAME_BINDING_311.put(Envelope.class,           new QName(GML_311_NAMESPACE, "Envelope"));
+        GEOMETRY_NAME_BINDING_311.put(MultiPolygon.class,       new QName(GML_311_NAMESPACE, "MultiGeometry"));
+        GEOMETRY_NAME_BINDING_311.put(Polygon.class,            new QName(GML_311_NAMESPACE, "Polygon"));
+        GEOMETRY_NAME_BINDING_311.put(LinearRing.class,         new QName(GML_311_NAMESPACE, "Ring"));
+    }
+
+    private static final Map<Class, QName> GEOMETRY_NAME_BINDING_321 = new HashMap<Class, QName>();
+    static {
+
+        GEOMETRY_NAME_BINDING_321.put(MultiPoint.class,         new QName(GML_321_NAMESPACE, "MultiPoint"));
+        GEOMETRY_NAME_BINDING_321.put(Point.class,              new QName(GML_321_NAMESPACE, "Point"));
+        GEOMETRY_NAME_BINDING_321.put(LineString.class,         new QName(GML_321_NAMESPACE, "Curve"));
+        GEOMETRY_NAME_BINDING_321.put(GeometryCollection.class, new QName(GML_321_NAMESPACE, "MultiGeometry"));
+        GEOMETRY_NAME_BINDING_321.put(MultiLineString.class,    new QName(GML_321_NAMESPACE, "CompositeCurve"));
+        GEOMETRY_NAME_BINDING_321.put(Envelope.class,           new QName(GML_321_NAMESPACE, "Envelope"));
+        GEOMETRY_NAME_BINDING_321.put(MultiPolygon.class,       new QName(GML_321_NAMESPACE, "MultiGeometry"));
+        GEOMETRY_NAME_BINDING_321.put(Polygon.class,            new QName(GML_321_NAMESPACE, "Polygon"));
+        GEOMETRY_NAME_BINDING_321.put(LinearRing.class,         new QName(GML_321_NAMESPACE, "Ring"));
     }
     /**
      * Return a QName intended to be used in a xsd XML file fro mthe specified class.
@@ -201,21 +231,37 @@ public class Utils {
      * @param binding A prmitive type Class.
      * @return A QName describing the class.
      */
-    public static QName getQNameFromType(final Class binding) {
-        if (binding != null) {
-            final QName result;
-             if (Geometry.class.isAssignableFrom(binding)) {
-                result = GEOMETRY_NAME_BINDING.get(binding);
-                if (result == null) {
-                    return new QName("http://www.opengis.net/gml", "GeometryPropertyType");
+    public static QName getQNameFromType(final PropertyType type, final String gmlVersion) {
+        if (type instanceof ComplexType) {
+            return new QName(type.getName().getNamespaceURI(), type.getName().getLocalPart() + "PropertyType");
+        } else {
+            final Class binding = type.getBinding();
+            if (binding != null) {
+                final QName result;
+                if (Geometry.class.isAssignableFrom(binding)) {
+                    if ("3.2.1".equals(gmlVersion)) {
+                        result = GEOMETRY_NAME_BINDING_321.get(binding);
+                    } else {
+                        result = GEOMETRY_NAME_BINDING_311.get(binding);
+                    }
+                    if (result == null) {
+                        if ("3.2.1".equals(gmlVersion)) {
+                            return new QName(GML_321_NAMESPACE, "GeometryPropertyType");
+                        } else {
+                            return new QName(GML_311_NAMESPACE, "GeometryPropertyType");
+                        }
+                    }
+                // maybe we can find a better way to handle Enum. for now we set a String value
+                } else if (binding.isEnum()){
+                    result = new QName("http://www.w3.org/2001/XMLSchema", "string");
+                } else {
+                    result = NAME_BINDING.get(binding);
                 }
-            } else {
-                result = NAME_BINDING.get(binding);
+                if (result == null) {
+                    throw new IllegalArgumentException("unexpected type:" + binding);
+                }
+                return result;
             }
-            if (result == null) {
-                throw new IllegalArgumentException("unexpected type:" + binding);
-            }
-            return result;
         }
         return null;
     }
@@ -226,7 +272,7 @@ public class Utils {
      * @param eventType An XMLEvent type.
      * @return A string representation or "UNKNOWN_EVENT_TYPE" if the integer does not correspound to an XMLEvent type.
      */
-    public final static String getEventTypeString(final int eventType) {
+    public static String getEventTypeString(final int eventType) {
         switch (eventType) {
             case XMLEvent.START_DOCUMENT:
                 return "START_DOCUMENT";

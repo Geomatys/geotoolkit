@@ -13,7 +13,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import java.util.logging.Level;
 import org.geotoolkit.data.AbstractDataStore;
+import org.geotoolkit.data.DataStoreFactory;
+import org.geotoolkit.data.DataStoreFinder;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.Query;
@@ -30,6 +33,7 @@ import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
+import org.opengis.parameter.ParameterValueGroup;
 
 public class FishDataStore extends AbstractDataStore{
 
@@ -37,18 +41,28 @@ public class FishDataStore extends AbstractDataStore{
     private final File storage;
     private final SimpleFeatureType type;
 
-    public FishDataStore(URL url, String namespace) throws URISyntaxException{
-        super(namespace);
+    public FishDataStore(ParameterValueGroup params) throws DataStoreException{
+        super(params);
 
-        storage = new File(url.toURI());
+        URL url = (URL) params.parameter(FishDatastoreFactory.URLP.getName().toString()).getValue();
+        try {
+            storage = new File(url.toURI());
+        } catch (URISyntaxException ex) {
+            throw new DataStoreException(ex);
+        }
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-        ftb.setName(namespace,"Fish");
+        ftb.setName(getDefaultNamespace(),"Fish");
         ftb.add("name", String.class);
         ftb.add("length", Integer.class);
         ftb.add("position", Point.class, DefaultGeographicCRS.WGS84);
         ftb.setDefaultGeometry("position");
         type = ftb.buildSimpleFeatureType();
+    }
+
+    @Override
+    public DataStoreFactory getFactory() {
+        return DataStoreFinder.getFactoryById(FishDatastoreFactory.NAME);
     }
 
     @Override

@@ -22,20 +22,16 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSGeometryFactory;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPrimitiveFactory;
-
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.Geometry;
 import org.opengis.geometry.aggregate.MultiPrimitive;
 import org.opengis.geometry.coordinate.GeometryFactory;
-import org.opengis.geometry.coordinate.Polygon;
 import org.opengis.geometry.coordinate.PolyhedralSurface;
 import org.opengis.geometry.coordinate.Position;
 import org.opengis.geometry.primitive.Curve;

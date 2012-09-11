@@ -35,7 +35,7 @@ public class LinksGraphic extends AbstractGraphicJ2D{
     private final FeatureMapLayer layer;
 
     public LinksGraphic(J2DCanvas canvas, FeatureMapLayer layer){
-        super(canvas, canvas.getObjectiveCRS());
+        super(canvas);
         this.layer = layer;
     }
 

@@ -44,9 +44,9 @@ import org.geotoolkit.gml.xml.v311.RingType;
 
 /**
  * <p>Java class for DistanceBufferType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="DistanceBufferType">
  *   &lt;complexContent>
@@ -60,8 +60,8 @@ import org.geotoolkit.gml.xml.v311.RingType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -80,24 +80,13 @@ public class DistanceBufferType extends SpatialOpsType {
     private DistanceType distance;
 
     @XmlTransient
-    private ObjectFactory factory = new ObjectFactory();
+    private static final ObjectFactory factory = new ObjectFactory();
+
     /**
      * An empty constructor used by JAXB
      */
     public DistanceBufferType() {
-        
-    }
 
-    public void setAbstractGeometry(final JAXBElement<? extends AbstractGeometryType> abstractGeometry) {
-        this.abstractGeometry = abstractGeometry;
-    }
-
-    public void setDistance(final DistanceType distance) {
-        this.distance = distance;
-    }
-
-    public void setPropertyName(final PropertyNameType propertyName) {
-        this.propertyName = propertyName;
     }
 
     /**
@@ -146,7 +135,20 @@ public class DistanceBufferType extends SpatialOpsType {
         }
         return null;
     }
-    
+
+    public void setAbstractGeometry(final JAXBElement<? extends AbstractGeometryType> abstractGeometry) {
+        this.abstractGeometry = abstractGeometry;
+    }
+
+    public void setDistance(final DistanceType distance) {
+        this.distance = distance;
+    }
+
+    public void setPropertyName(final PropertyNameType propertyName) {
+        this.propertyName = propertyName;
+    }
+
+
     /**
      * Gets the value of the propertyName property.
      */
@@ -161,14 +163,14 @@ public class DistanceBufferType extends SpatialOpsType {
         return abstractGeometry;
     }
 
-    
+
     /**
      * Gets the value of the distance property.
      */
     public DistanceType getDistanceType() {
         return distance;
     }
-    
+
     public double getDistance() {
         if (distance != null)
             return distance.getValue();
@@ -180,7 +182,7 @@ public class DistanceBufferType extends SpatialOpsType {
             return distance.getUnits();
         return null;
     }
-    
+
     public Expression getExpression1() {
         return propertyName;
     }
@@ -190,8 +192,8 @@ public class DistanceBufferType extends SpatialOpsType {
             return abstractGeometry.getValue();
         return null;
     }
-    
-    
+
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder(super.toString());
@@ -218,5 +220,35 @@ public class DistanceBufferType extends SpatialOpsType {
     @Override
     public Object accept(final FilterVisitor visitor, final Object extraData) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final DistanceBufferType other = (DistanceBufferType) obj;
+        if (this.propertyName != other.propertyName && (this.propertyName == null || !this.propertyName.equals(other.propertyName))) {
+            return false;
+        }
+        if (this.abstractGeometry != other.abstractGeometry && (this.abstractGeometry == null || !this.abstractGeometry.equals(other.abstractGeometry))) {
+            return false;
+        }
+        if (this.distance != other.distance && (this.distance == null || !this.distance.equals(other.distance))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 23 * hash + (this.propertyName != null ? this.propertyName.hashCode() : 0);
+        hash = 23 * hash + (this.abstractGeometry != null ? this.abstractGeometry.hashCode() : 0);
+        hash = 23 * hash + (this.distance != null ? this.distance.hashCode() : 0);
+        return hash;
     }
 }

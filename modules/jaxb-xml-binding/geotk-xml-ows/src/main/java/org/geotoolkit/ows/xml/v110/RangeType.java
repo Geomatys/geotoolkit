@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.ows.xml.v110;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -72,6 +73,23 @@ public class RangeType {
      * Empty constructor used by JAXB.
      */
     RangeType(){
+    }
+    
+    public RangeType(final RangeType that){
+        if (that != null)  {
+            if (that.maximumValue != null) {
+                this.maximumValue = new ValueType(that.maximumValue);
+            }
+            if (that.minimumValue != null) {
+                this.minimumValue = new ValueType(that.minimumValue);
+            }
+            if (that.rangeClosure != null) {
+                this.rangeClosure = new ArrayList<String>(that.rangeClosure);
+            }
+            if (that.spacing != null) {
+                this.spacing      = new ValueType(that.spacing);
+            }
+        }
     }
     
     /**

@@ -22,12 +22,11 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-
 import org.geotoolkit.display.exception.PortrayalException;
-import org.geotoolkit.display2d.service.DefaultGlyphService;
 import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.display2d.service.OutputDef;
 import org.geotoolkit.map.MapContext;
+import org.geotoolkit.map.MapItem;
 
 /**
  * Render a complete legend of a mapcontext.
@@ -48,7 +47,7 @@ public class DefaultLegendService {
      * @return buffered image
      * @throws PortrayalException
      */
-    public static BufferedImage portray(final LegendTemplate template, final MapContext context, Dimension dim)
+    public static BufferedImage portray(final LegendTemplate template, final MapItem context, Dimension dim)
             throws PortrayalException{
         if(dim == null){
             dim = legendPreferredSize(template, context);
@@ -88,14 +87,14 @@ public class DefaultLegendService {
 
     /**
      * Get the most appropriate legend size.
-     * 
+     *
      * @param template : legend template
-     * @param context : map context
+     * @param mapitem : map context
      * @return Dimension : legend preferred size
      */
-    public static Dimension legendPreferredSize(final LegendTemplate template, final MapContext context){
+    public static Dimension legendPreferredSize(final LegendTemplate template, final MapItem mapitem){
         final BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
-        return J2DLegendUtilities.estimate(img.createGraphics(), context, template, true);
+        return J2DLegendUtilities.estimate(img.createGraphics(), mapitem, template, true);
     }
 
 }

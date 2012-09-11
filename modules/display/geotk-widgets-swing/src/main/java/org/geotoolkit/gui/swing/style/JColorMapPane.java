@@ -42,6 +42,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap>{
      * Creates new form JFillPanel 
      */
     public JColorMapPane() {
+        super(ColorMap.class);
         initComponents();
     }
 

@@ -20,6 +20,7 @@ package org.geotoolkit.wfs.xml.v200;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -28,6 +29,8 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 import org.geotoolkit.ows.xml.v110.KeywordsType;
 import org.geotoolkit.ows.xml.v110.WGS84BoundingBoxType;
+import org.geotoolkit.util.Utilities;
+import org.geotoolkit.wfs.xml.FeatureType;
 
 
 /**
@@ -84,7 +87,7 @@ import org.geotoolkit.ows.xml.v110.WGS84BoundingBoxType;
     "metadataURL",
     "extendedDescription"
 })
-public class FeatureTypeType {
+public class FeatureTypeType implements FeatureType {
 
     @XmlElement(name = "Name", required = true)
     private QName name;
@@ -110,6 +113,21 @@ public class FeatureTypeType {
     private List<MetadataURLType> metadataURL;
     @XmlElement(name = "ExtendedDescription")
     private ExtendedDescriptionType extendedDescription;
+    
+    public FeatureTypeType() {
+
+    }
+
+    public FeatureTypeType(final QName name, final String title, final String defaultCRS, final List<String> otherCRS, final List<WGS84BoundingBoxType> wgs84BoundingBox) {
+        this.name       = name;
+        if (title != null) {
+            this.title  = new ArrayList<Title>();
+            this.title.add(new Title(title));
+        }
+        this.defaultCRS = defaultCRS;
+        this.otherCRS   = otherCRS;
+        this.wgs84BoundingBox = wgs84BoundingBox;
+    }
 
     /**
      * Gets the value of the name property.
@@ -138,24 +156,6 @@ public class FeatureTypeType {
     /**
      * Gets the value of the title property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the title property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getTitle().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Title }
-     * 
-     * 
      */
     public List<Title> getTitle() {
         if (title == null) {
@@ -166,25 +166,6 @@ public class FeatureTypeType {
 
     /**
      * Gets the value of the abstract property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the abstract property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getAbstract().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Abstract }
-     * 
-     * 
      */
     public List<Abstract> getAbstract() {
         if (_abstract == null) {
@@ -192,28 +173,16 @@ public class FeatureTypeType {
         }
         return this._abstract;
     }
+    
+    @Override
+    public void setAbstract(final String value) {
+        if (value != null) {
+            getAbstract().add(new Abstract(value));
+        }
+    }
 
     /**
      * Gets the value of the keywords property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the keywords property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getKeywords().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link KeywordsType }
-     * 
-     * 
      */
     public List<KeywordsType> getKeywords() {
         if (keywords == null) {
@@ -222,6 +191,15 @@ public class FeatureTypeType {
         return this.keywords;
     }
 
+    @Override
+    public void addKeywords(final List<String> values) {
+        if (values != null) {
+            for (String value : values) {
+                getKeywords().add(new KeywordsType(value));
+            }
+        }
+    }
+    
     /**
      * Gets the value of the defaultCRS property.
      * 
@@ -248,31 +226,16 @@ public class FeatureTypeType {
 
     /**
      * Gets the value of the otherCRS property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the otherCRS property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getOtherCRS().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
-     * 
-     * 
      */
     public List<String> getOtherCRS() {
         if (otherCRS == null) {
             otherCRS = new ArrayList<String>();
         }
         return this.otherCRS;
+    }
+    
+    public void setOtherCRS(final List<String> otherCRS) {
+        this.otherCRS = otherCRS;
     }
 
     /**
@@ -325,25 +288,6 @@ public class FeatureTypeType {
 
     /**
      * Gets the value of the wgs84BoundingBox property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the wgs84BoundingBox property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getWGS84BoundingBox().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link WGS84BoundingBoxType }
-     * 
-     * 
      */
     public List<WGS84BoundingBoxType> getWGS84BoundingBox() {
         if (wgs84BoundingBox == null) {
@@ -354,25 +298,6 @@ public class FeatureTypeType {
 
     /**
      * Gets the value of the metadataURL property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the metadataURL property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getMetadataURL().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link MetadataURLType }
-     * 
-     * 
      */
     public List<MetadataURLType> getMetadataURL() {
         if (metadataURL == null) {
@@ -381,6 +306,11 @@ public class FeatureTypeType {
         return this.metadataURL;
     }
 
+    @Override
+    public void addMetadataURL(final String value, final String type, final String format) {
+        getMetadataURL().add(new MetadataURLType(value, type, format));
+    }
+    
     /**
      * Gets the value of the extendedDescription property.
      * 
@@ -406,6 +336,94 @@ public class FeatureTypeType {
     }
 
 
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof FeatureTypeType) {
+            final FeatureTypeType that = (FeatureTypeType) object;
+
+            return Objects.equals(this._abstract, that._abstract) &&
+                   Objects.equals(this.defaultCRS, that.defaultCRS) &&
+                   Objects.equals(this.keywords, that.keywords) &&
+                   Objects.equals(this.metadataURL, that.metadataURL) &&
+                   Objects.equals(this.name, that.name) &&
+                   Objects.equals(this.extendedDescription, that.extendedDescription) &&
+                   Objects.equals(this.otherCRS, that.otherCRS) &&
+                   Objects.equals(this.outputFormats, that.outputFormats) &&
+                   Objects.equals(this.title, that.title) &&
+                   Objects.equals(this.wgs84BoundingBox, that.wgs84BoundingBox) &&
+                   Objects.equals(this.noCRS,  that.noCRS);
+            }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 79 * hash + (this.name != null ? this.name.hashCode() : 0);
+        hash = 79 * hash + (this.title != null ? this.title.hashCode() : 0);
+        hash = 79 * hash + (this._abstract != null ? this._abstract.hashCode() : 0);
+        hash = 79 * hash + (this.keywords != null ? this.keywords.hashCode() : 0);
+        hash = 79 * hash + (this.defaultCRS != null ? this.defaultCRS.hashCode() : 0);
+        hash = 79 * hash + (this.otherCRS != null ? this.otherCRS.hashCode() : 0);
+        hash = 79 * hash + (this.noCRS != null ? this.noCRS.hashCode() : 0);
+        hash = 79 * hash + (this.extendedDescription != null ? this.extendedDescription.hashCode() : 0);
+        hash = 79 * hash + (this.outputFormats != null ? this.outputFormats.hashCode() : 0);
+        hash = 79 * hash + (this.wgs84BoundingBox != null ? this.wgs84BoundingBox.hashCode() : 0);
+        hash = 79 * hash + (this.metadataURL != null ? this.metadataURL.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder("[featureTypeType]\n");
+        if(name != null) {
+            s.append("name:").append(name).append('\n');
+        }
+        if (title != null)
+            s.append("title:").append(title).append('\n');
+        if (_abstract != null)
+            s.append("_abstract:").append(_abstract).append('\n');
+        if (defaultCRS != null)
+            s.append("defaultCRS:").append(defaultCRS).append('\n');
+        if (keywords != null) {
+            s.append("keywords:").append('\n');
+            for (KeywordsType k : keywords) {
+                s.append(k).append('\n');
+            }
+        }
+       if (metadataURL != null) {
+            s.append("metadataURL:").append('\n');
+            for (MetadataURLType k : metadataURL) {
+                s.append(k).append('\n');
+            }
+        }
+        if (otherCRS != null) {
+            s.append("otherCRS:").append('\n');
+            for (String k : otherCRS) {
+                s.append(k).append('\n');
+            }
+        }
+        if (wgs84BoundingBox != null) {
+            s.append("wgs84BoundingBox:").append('\n');
+            for (WGS84BoundingBoxType k : wgs84BoundingBox) {
+                s.append(k).append('\n');
+            }
+        }
+        if (noCRS != null)
+            s.append("noCRS:").append(noCRS).append('\n');
+         if (extendedDescription != null)
+            s.append("extendedDescription:").append(extendedDescription).append('\n');
+         if (outputFormats != null)
+            s.append("outputFormats:").append(outputFormats).append('\n');
+        return s.toString();
+    }
+    
     /**
      * <p>Java class for anonymous complex type.
      * 

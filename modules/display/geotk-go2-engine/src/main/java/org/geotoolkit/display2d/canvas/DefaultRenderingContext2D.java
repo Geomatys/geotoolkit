@@ -19,10 +19,10 @@ package org.geotoolkit.display2d.canvas;
 
 import java.awt.Font;
 import java.awt.FontMetrics;
-import java.awt.Shape;
-import java.awt.Rectangle;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
@@ -36,7 +36,6 @@ import java.util.logging.Logger;
 import javax.measure.quantity.Length;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
-
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
@@ -45,20 +44,21 @@ import org.geotoolkit.display2d.style.labeling.LabelRenderer;
 import org.geotoolkit.display2d.style.labeling.decimate.DecimationLabelRenderer;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.geometry.Envelope2D;
+import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.logging.Logging;
-
 import org.opengis.geometry.BoundingBox;
 import org.opengis.geometry.Envelope;
-import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 
 
 /**
@@ -551,13 +551,19 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
             return getResolution();
         }else{
             final double[] res = new double[crs.getCoordinateSystem().getDimension()];
-
-            final Envelope env;
             try {
-                env = CRS.transform(canvasObjectiveBBox2D, crs);
-                final Rectangle2D canvasCRSBounds = new Rectangle2D.Double(0, 0, env.getSpan(0), env.getSpan(1));
-                res[0] = Math.abs(canvasCRSBounds.getWidth()/canvasDisplaybounds.getWidth());
-                res[1] = Math.abs(canvasCRSBounds.getHeight()/canvasDisplaybounds.getHeight());
+                final double[] origRes = getResolution();
+                res[0] = origRes[0];
+                res[1] = origRes[1];
+                
+                final MathTransform trs = CRS.findMathTransform(canvasObjectiveBBox2D.getCoordinateReferenceSystem(), crs);
+                final GeneralDirectPosition pos = new GeneralDirectPosition(
+                        canvasObjectiveBBox2D.getMedian(0),
+                        canvasObjectiveBBox2D.getMedian(1));
+                final Matrix matrix = trs.derivative(pos);
+                
+                res[0] *= Math.hypot(matrix.getElement(0, 0),matrix.getElement(1, 0)) ; 
+                res[1] *= Math.hypot(matrix.getElement(0, 1),matrix.getElement(1, 1)) ;
                 for(int i=2; i<res.length; i++){
                     //other dimension are likely to be the temporal and elevation one.
                     //we set a hug resolution to ensure that only one slice of data will be retrived.

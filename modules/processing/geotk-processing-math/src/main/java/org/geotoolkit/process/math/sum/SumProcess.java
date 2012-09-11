@@ -25,24 +25,23 @@ import static org.geotoolkit.parameter.Parameters.*;
  * @author Quentin Boileau (Geomatys)
  * @module pending
  */
-public class SumProcess extends AbstractProcess{
-    
-    public SumProcess(final ParameterValueGroup input){
+public class SumProcess extends AbstractProcess {
+
+    public SumProcess(final ParameterValueGroup input) {
         super(INSTANCE,input);
     }
-    
+
     @Override
-    public ParameterValueGroup call() {
-        
-        final Double[] set = value(SET, inputParameters);  
-        
-        Double sum = 0.0;
-        for(int i=0; i<set.length; i++){
+    protected void execute() {
+
+        final Double[] set = value(SET, inputParameters);
+
+        double sum = 0.0;
+        for(int i=0; i<set.length; i++) {
             sum += set[i].doubleValue();
         }
-       
-        getOrCreate(RESULT_NUMBER, outputParameters).setValue(sum);  
-        return outputParameters;
+
+        getOrCreate(RESULT_NUMBER, outputParameters).setValue(sum);
     }
-    
+
 }

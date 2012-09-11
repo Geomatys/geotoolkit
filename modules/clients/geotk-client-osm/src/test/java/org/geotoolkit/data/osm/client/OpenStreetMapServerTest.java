@@ -47,7 +47,7 @@ public class OpenStreetMapServerTest {
     private final OpenStreetMapServer server;
 
     public OpenStreetMapServerTest() throws MalformedURLException {
-        server = new OpenStreetMapServer(new URL("http://api.openstreetmap.org/"), OSMVersion.v060);
+        server = new OpenStreetMapServer(new URL("http://api.openstreetmap.org/"), OSMVersion.v060.getCode());
     }
 
     @BeforeClass

@@ -18,7 +18,14 @@ package org.geotoolkit.security;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.geotoolkit.client.AbstractServer;
+import org.geotoolkit.client.AbstractServerFactory;
+import org.geotoolkit.client.ServerFactory;
+import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
+import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  *
@@ -27,12 +34,35 @@ import org.geotoolkit.client.AbstractServer;
  */
 public class MockServer extends AbstractServer{
 
-    public MockServer(final ClientSecurity security) throws MalformedURLException {
-        super(new URL("http://test.com"),security);
+    private static final ParameterValueGroup PARAM;
+    static {
+        final ParameterDescriptorGroup desc = new DefaultParameterDescriptorGroup("mock", 
+                AbstractServerFactory.URL,AbstractServerFactory.SECURITY);
+        PARAM = desc.createValue();
+        try {
+            PARAM.parameter("url").setValue(new URL("http://test.com"));
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(MockServer.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
+    public MockServer(final ClientSecurity security) throws MalformedURLException {
+        super(appendSecurity(security));
+    }
+        
     public MockRequest createRequest(){
         return new MockRequest(this);
+    }
+
+    @Override
+    public ServerFactory getFactory() {
+        return null;
+    }
+    
+    private static ParameterValueGroup appendSecurity(final ClientSecurity security){
+        ParameterValueGroup param = PARAM.clone();
+        param.parameter(AbstractServerFactory.SECURITY.getName().getCode()).setValue(security);
+        return param;
     }
     
 }

@@ -18,11 +18,16 @@ package org.geotoolkit.ogc.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ogc.xml.XMLLiteral;
+import org.geotoolkit.util.Utilities;
+import org.opengis.filter.expression.ExpressionVisitor;
+import org.opengis.filter.expression.Literal;
 
 
 /**
@@ -49,7 +54,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "LiteralType", propOrder = {
     "content"
 })
-public class LiteralType {
+public class LiteralType implements XMLLiteral {
 
     @XmlMixed
     @XmlAnyElement(lax = true)
@@ -90,5 +95,92 @@ public class LiteralType {
         }
         return this.content;
     }
+    
+    public void setContent(final List<Object> content) {
+        this.content = content;
+    }
+    
+    public void setContent(final Object content) {
+        if (content != null) {
+            if (this.content == null) {
+                this.content = new ArrayList<Object>();
+            }
+            this.content.add(content);
+        }
+    }
 
+    /**
+     * We assume that the list have only One Value.
+     */
+    @Override
+    public Object getValue() {
+        if (content != null && !content.isEmpty()) {
+            return content.get(0);
+        }
+        return null;
+    }
+    
+    @Override
+    public Object evaluate(final Object object) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Object evaluate(final Object object, final Class context) {
+       Object literal = null;
+       if (content != null && !content.isEmpty()) {
+            literal = content.get(0);
+       } 
+       
+       if(literal == null || literal.getClass().equals(context))
+            return context.cast( literal );
+       else
+            return null;
+        
+    }
+    
+    /**
+     * Used by FilterVisitors to perform some action on this filter instance.
+     * Typicaly used by Filter decoders, but may also be used by any thing
+     * which needs infomration from filter structure. Implementations should
+     * always call: visitor.visit(this); It is importatant that this is not
+     * left to a parent class unless the parents API is identical.
+     *
+     * @param visitor The visitor which requires access to this filter, the
+     *        method must call visitor.visit(this);
+     */
+    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
+    	return visitor.visit(this,extraData);
+    }
+    
+      @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder();
+        for (Object obj: content) {
+            s.append(obj.toString()).append(" ");
+        }
+        return s.toString();
+    }
+    
+    /**
+     * Verify that this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof LiteralType) {
+            final LiteralType that = (LiteralType) object;
+            return Objects.equals(this.content, that.content);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 31 * hash + (this.content != null ? this.content.hashCode() : 0);
+        return hash;
+    }
 }

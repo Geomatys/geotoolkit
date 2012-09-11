@@ -17,8 +17,8 @@
 package org.geotoolkit.wps.xml;
 
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
+import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.xml.MarshallerPool;
 
 /**
@@ -32,10 +32,11 @@ public class WPSMarshallerPool {
         try {
             instance = new MarshallerPool("org.geotoolkit.wps.xml.v100:"
                                         + "org.geotoolkit.gml.xml.v311:"
-                                        + "org.geotoolkit.ows.xml.v100:"
-                                        + "org.geotoolkit.internal.jaxb.geometry");
+                                        + "org.geotoolkit.ows.xml.v110:"
+                                        + "org.geotoolkit.internal.jaxb.geometry:"
+                                        + "org.geotoolkit.mathml.xml");
         } catch (JAXBException ex) {
-            Logger.getLogger(WPSMarshallerPool.class.getName()).log(Level.SEVERE, null, ex);
+            Logging.getLogger(WPSMarshallerPool.class).log(Level.SEVERE, null, ex);
         }
     }
     private WPSMarshallerPool() {}

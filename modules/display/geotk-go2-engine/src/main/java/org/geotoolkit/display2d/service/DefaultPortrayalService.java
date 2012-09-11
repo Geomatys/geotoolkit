@@ -2,7 +2,6 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2004 - 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -17,11 +16,6 @@
  */
 package org.geotoolkit.display2d.service;
 
-import javax.imageio.ImageTypeSpecifier;
-import java.awt.image.IndexColorModel;
-import java.awt.image.ColorModel;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -34,11 +28,15 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
 import java.awt.image.DirectColorModel;
+import java.awt.image.IndexColorModel;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
@@ -46,11 +44,11 @@ import java.util.logging.Logger;
 import javax.imageio.IIOException;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.stream.ImageOutputStream;
-
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageFactory;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -60,7 +58,6 @@ import org.geotoolkit.coverage.io.GridCoverageWriteParam;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.coverage.io.ImageCoverageWriter;
 import org.geotoolkit.coverage.processing.Operations;
-import org.geotoolkit.display2d.canvas.J2DCanvasBuffered;
 import org.geotoolkit.display.canvas.CanvasController2D;
 import org.geotoolkit.display.canvas.GraphicVisitor;
 import org.geotoolkit.display.canvas.VisitFilter;
@@ -68,7 +65,9 @@ import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
+import static org.geotoolkit.display2d.GO2Utilities.*;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
+import org.geotoolkit.display2d.canvas.J2DCanvasBuffered;
 import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
 import org.geotoolkit.display2d.container.ContextContainer2D;
 import org.geotoolkit.display2d.container.DefaultContextContainer2D;
@@ -83,9 +82,8 @@ import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.ImageIOUtilities;
-import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
-
+import org.geotoolkit.util.converter.Classes;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -93,14 +91,12 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.Symbolizer;
 import org.opengis.style.portrayal.PortrayalService;
 
-import static org.geotoolkit.display2d.GO2Utilities.*;
-
 /**
  * Default implementation of portrayal service.
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DefaultPortrayalService implements PortrayalService{
+public final class DefaultPortrayalService implements PortrayalService{
 
     private static final GridCoverageFactory GCF = new GridCoverageFactory();
 
@@ -116,8 +112,8 @@ public class DefaultPortrayalService implements PortrayalService{
     static final Map<String,String> MIME_CACHE = new ConcurrentHashMap<String, String>();
 
     private DefaultPortrayalService(){}
-    
-    
+
+
     /**
      * Portray a gridcoverage using amplitute windarrows/cercles
      *
@@ -305,6 +301,35 @@ public class DefaultPortrayalService implements PortrayalService{
 
     }
 
+    /**
+     * Create a rendered image which tile model maps the given definition.
+     * The image will be divided in the same number of tiles and size as the mosaic.
+     * Unlike a call to a portray method, the returned rendered image will be calculated
+     * progressively.
+     *
+     * @param mosaic
+     * @param def
+     * @param sceneDef
+     * @param viewDef
+     * @return RenderedImage , never null
+     */
+    public static RenderedImage prepareImage(final CanvasDef canvasDef, final SceneDef sceneDef, final ViewDef viewDef,
+            final Dimension gridSize, final Dimension tileSize, final double scale) throws PortrayalException{
+        return new PortrayalRenderedImage(canvasDef, sceneDef, viewDef, gridSize, tileSize, scale);
+    }
+
+    /**
+     * Manipulate a MapContext as if it was an ARGB coverage of infinite resolution.
+     *
+     * @param canvasDef
+     * @param sceneDef
+     * @param viewDef
+     * @return GridCoverageReader, never null
+     */
+    public static GridCoverageReader asCoverageReader(final SceneDef sceneDef){
+        return new PortrayalCoverageReader(sceneDef);
+    }
+
     ////////////////////////////////////////////////////////////////////////////
     // PAINTING IN A STREAM or OUTPUT //////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
@@ -488,8 +513,8 @@ public class DefaultPortrayalService implements PortrayalService{
         final GridCoverageReadParam readParam = new GridCoverageReadParam();
         readParam.setEnvelope(viewDef.getEnvelope());
         readParam.setResolution(resolution);
-        
-        try{            
+
+        try{
             GridCoverage2D coverage = (GridCoverage2D)reader.read(0, readParam);
             final RenderedImage image = coverage.getRenderedImage();
 
@@ -516,7 +541,7 @@ public class DefaultPortrayalService implements PortrayalService{
 
     /**
      * Write a coverage using the canvas, view and output definition.
-     * 
+     *
      * @param coverage : coverage to write
      * @param canvasDef : canvas definition
      * @param viewDef : view definition
@@ -542,14 +567,14 @@ public class DefaultPortrayalService implements PortrayalService{
             //no related java type, incorrect mime type
             throw new PortrayalException("No java type found for mime type : " + mimeType);
         }
-        
+
 
         //get a writer
         GridCoverageWriter writer = WRITER_CACHE.getAndSet(null);
         if(writer == null){
             writer = new ImageCoverageWriter();
         }
-        
+
         try{
             final GridCoverageWriteParam writeParam = new GridCoverageWriteParam();
             writeParam.setEnvelope(env);
@@ -740,7 +765,7 @@ public class DefaultPortrayalService implements PortrayalService{
         }else{
             writer = XImageIO.getWriterByMIMEType(mime, outputDef.getOutput(), image);
         }
-        
+
         ImageOutputStream stream = null;
         try{
             final ImageWriteParam param = writer.getDefaultWriteParam();
@@ -765,13 +790,13 @@ public class DefaultPortrayalService implements PortrayalService{
                     param.setCompressionQuality(compression);
                 }
             }
-            
+
             //TODO is this useless ?
             param.setDestinationType(new ImageTypeSpecifier(image.getColorModel(), image.getSampleModel()));
 
             Object output = outputDef.getOutput();
             final ImageWriterSpi spi = writer.getOriginatingProvider();
-            
+
             if (!ImageIOUtilities.isValidType(spi.getOutputTypes(), output)) {
                 stream = ImageIO.createImageOutputStream(output);
                 output = stream;
@@ -832,7 +857,7 @@ public class DefaultPortrayalService implements PortrayalService{
     }
 
     /**
-     * @see #rectifyColorModel(java.awt.image.ColorModel, java.lang.String) 
+     * @see #rectifyColorModel(java.awt.image.ColorModel, java.lang.String)
      */
     public static RenderedImage rectifyImageColorModel(RenderedImage img, final String mime){
         final ColorModel cm = img.getColorModel();
@@ -850,7 +875,7 @@ public class DefaultPortrayalService implements PortrayalService{
     }
 
     /**
-     * 
+     *
      * @param image
      * @return String containing a technical description of the image.
      */
@@ -864,5 +889,5 @@ public class DefaultPortrayalService implements PortrayalService{
         sb.append("SampleModel : ").append(image.getSampleModel()).append('\n');
         return sb.toString();
     }
-    
+
 }

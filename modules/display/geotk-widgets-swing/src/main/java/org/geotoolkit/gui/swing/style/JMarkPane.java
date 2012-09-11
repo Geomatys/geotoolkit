@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.gui.swing.style;
 
-import org.geotoolkit.gui.swing.resource.MessageBundle;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -27,10 +26,9 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
-
 import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapLayer;
-
 import org.jdesktop.swingx.JXTitledPanel;
 import org.opengis.filter.FilterFactory;
 import org.opengis.style.Mark;
@@ -46,6 +44,7 @@ public class JMarkPane extends StyleElementEditor<Mark> {
     private MapLayer layer = null;
 
     public JMarkPane() {
+        super(Mark.class);
         initComponents();
         init();
     }

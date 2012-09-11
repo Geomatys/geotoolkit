@@ -2,7 +2,6 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2004 - 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -20,14 +19,12 @@ package org.geotoolkit.display2d.style.renderer;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
-
+import org.geotoolkit.display.shape.TransformedShape;
+import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.CachedPolygonSymbolizer;
-import org.geotoolkit.display2d.GO2Utilities;
-import org.geotoolkit.display.shape.TransformedShape;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.style.Fill;
-
 import org.opengis.style.PolygonSymbolizer;
 import org.opengis.style.Stroke;
 
@@ -37,6 +34,12 @@ import org.opengis.style.Stroke;
  */
 public class DefaultPolygonSymbolizerRendererService extends AbstractSymbolizerRendererService<PolygonSymbolizer, CachedPolygonSymbolizer>{
 
+    
+    @Override
+    public boolean isGroupSymbolizer() {
+        return false;
+    }
+    
     /**
      * {@inheritDoc }
      */
@@ -66,7 +69,7 @@ public class DefaultPolygonSymbolizerRendererService extends AbstractSymbolizerR
      */
     @Override
     public SymbolizerRenderer createRenderer(final CachedPolygonSymbolizer symbol, final RenderingContext2D context) {
-        return new DefaultPolygonSymbolizerRenderer(symbol, context);
+        return new DefaultPolygonSymbolizerRenderer(this, symbol, context);
     }
 
     /**

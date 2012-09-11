@@ -18,10 +18,9 @@
 package org.geotoolkit.data;
 
 import java.util.EventObject;
+import static org.geotoolkit.util.ArgumentChecks.*;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
-
-import static org.geotoolkit.util.ArgumentChecks.*;
 
 /**
  * Storage management event.

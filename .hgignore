@@ -5,9 +5,12 @@ syntax: regexp
 \.project$
 \.classpath$
 \.settings$
-\.DS_Store
+\.DS_Store$
+\.git$
+\.tmp$
 ^tmp$
-.log
+\.log$
+\.orig$
 
 # old svn files
 \.svn$
@@ -20,6 +23,6 @@ nbactions.xml
 nbproject
 
 # Intellij files
-.iml
-.ipr
-.iws
+\.iml$
+\.ipr$
+\.iws$

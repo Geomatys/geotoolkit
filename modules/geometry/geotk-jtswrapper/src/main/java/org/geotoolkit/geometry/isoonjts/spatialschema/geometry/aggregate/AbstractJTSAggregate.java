@@ -46,11 +46,14 @@ public abstract class AbstractJTSAggregate<T extends Geometry> extends AbstractJ
      */
     @Override
     protected com.vividsolutions.jts.geom.Geometry computeJTSPeer() {
-        List<com.vividsolutions.jts.geom.Geometry> childParts = new ArrayList<com.vividsolutions.jts.geom.Geometry>();
+        final List<com.vividsolutions.jts.geom.Geometry> childParts = new ArrayList<com.vividsolutions.jts.geom.Geometry>();
         for(Geometry prim : elements) {
             if(prim instanceof JTSGeometry){
-                JTSGeometry jtsGeom = (JTSGeometry) prim;
-                childParts.add(jtsGeom.getJTSGeometry());
+                final JTSGeometry jtsGeom = (JTSGeometry) prim;
+                final com.vividsolutions.jts.geom.Geometry geom = jtsGeom.getJTSGeometry();
+                if (geom != null) {
+                    childParts.add(geom);
+                }
             }else{
                 throw new IllegalStateException("Only JTSGeometries are allowed in the JTSAggregate class.");
             }

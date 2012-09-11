@@ -27,7 +27,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import javax.swing.event.EventListenerList;
-
 import org.geotoolkit.display.canvas.AbstractCanvas;
 import org.geotoolkit.display.canvas.AbstractReferencedCanvas2D;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
@@ -35,7 +34,6 @@ import org.geotoolkit.display.primitive.AbstractGraphic;
 import org.geotoolkit.display.primitive.AbstractReferencedGraphic;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.resources.Errors;
-
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.display.canvas.Canvas;
 import org.opengis.display.container.ContainerEvent;
@@ -291,7 +289,7 @@ public abstract class AbstractContainer<C extends AbstractCanvas, G extends Grap
             if (canvas != this) {
                 assert !graphics.containsKey(candidate) : candidate;
                 throw new IllegalArgumentException(Errors.format(
-                            Errors.Keys.CANVAS_NOT_OWNER_$1, candidate.getName()));
+                            Errors.Keys.CANVAS_NOT_OWNER_$1, candidate.toString()));
             }
 //            assert Thread.holdsLock(candidate.getTreeLock());
             candidate.removePropertyChangeListener(graphicListener);

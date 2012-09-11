@@ -47,6 +47,23 @@ public class GetStyles extends AbstractOperation {
     public GetStyles() {
 
     }
+    
+    public GetStyles(final GetStyles that) {
+        if (that != null) {
+            if (that.format != null) {
+                this.format = new ArrayList<Format>();
+                for (Format f : that.format) {
+                this.format.add(new Format(f.getvalue()));
+                }
+            }
+            if (that.dcpType != null) {
+                this.dcpType = new ArrayList<DCPType>();
+                for (DCPType f : that.dcpType) {
+                this.dcpType.add(new DCPType(f));
+                }
+            }
+        }
+    }
 
     public GetStyles(final List<String> formats, final DCPType... dcpList) {
         if (formats != null) {

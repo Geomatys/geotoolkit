@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.Envelope;
 
 
 /**
@@ -64,7 +65,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlSeeAlso({
     EnvelopeWithTimePeriodType.class
 })
-public class EnvelopeType {
+public class EnvelopeType implements Envelope{
 
     private DirectPositionType lowerCorner;
     private DirectPositionType upperCorner;
@@ -80,6 +81,20 @@ public class EnvelopeType {
     private List<String> axisLabels;
     @XmlAttribute
     private List<String> uomLabels;
+
+    /**
+     * An empty constructor used by JAXB.
+     */
+    protected EnvelopeType(){}
+
+    /**
+     * build a new envelope.
+     */
+    public EnvelopeType(final DirectPositionType lowerCorner, final DirectPositionType upperCorner, final String srsName) {
+        this.lowerCorner = lowerCorner;
+        this.upperCorner = upperCorner;
+        this.srsName     = srsName;
+    }
 
     /**
      * Gets the value of the lowerCorner property.

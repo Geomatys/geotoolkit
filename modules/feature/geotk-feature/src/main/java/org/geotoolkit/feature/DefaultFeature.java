@@ -39,7 +39,7 @@ public class DefaultFeature extends AbstractFeature<Collection<Property>> {
     /**
      * Create a Feature with the following content.
      *
-     * @param properties Collectio of Properties (aka Attributes and/or Associations)
+     * @param properties Collection of Properties (aka Attributes and/or Associations)
      * @param desc Nested descriptor
      * @param id Feature ID
      */
@@ -51,7 +51,7 @@ public class DefaultFeature extends AbstractFeature<Collection<Property>> {
     /**
      * Create a Feature with the following content.
      *
-     * @param properties Collectio of Properties (aka Attributes and/or Associations)
+     * @param properties Collection of Properties (aka Attributes and/or Associations)
      * @param type Type of feature to be created
      * @param id Feature ID
      */

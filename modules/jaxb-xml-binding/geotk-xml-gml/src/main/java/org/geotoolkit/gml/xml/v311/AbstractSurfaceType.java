@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.AbstractSurface;
 
 
 /**
@@ -48,6 +49,13 @@ import javax.xml.bind.annotation.XmlType;
     PolygonType.class,
     SurfaceType.class
 })
-public class AbstractSurfaceType extends AbstractGeometricPrimitiveType {
+public class AbstractSurfaceType extends AbstractGeometricPrimitiveType implements AbstractSurface{
 
+    public AbstractSurfaceType() {
+        
+    }
+    
+    public AbstractSurfaceType(final String srsName) {
+        super(srsName);
+    }
 }

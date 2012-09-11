@@ -31,7 +31,7 @@ import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
 import static org.geotoolkit.util.DomUtilities.*;
 
 /**
- * Set of convinient methods to manipulate Dom nodes specific to geotiff.
+ * Set of convenient methods to manipulate Dom nodes specific to geotiff.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending

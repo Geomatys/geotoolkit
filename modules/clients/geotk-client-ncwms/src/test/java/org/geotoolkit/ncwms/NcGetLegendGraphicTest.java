@@ -43,13 +43,13 @@ public class NcGetLegendGraphicTest {
         request.setDimension(new Dimension(140, 20));
         request.setFormat("image/png");
         request.setLayer("test");
-        
+
         request.setOpacity(65);
         request.dimensions().put("COLORSCALERANGE","-50,50");
         request.setNumColorBands(150);
         request.setLogScale(true);
         request.setPalette("test");
-        
+
         final URL url;
         try {
             url = request.getURL();
@@ -58,12 +58,12 @@ public class NcGetLegendGraphicTest {
             return;
         }
         final String sUrl = url.toString();
-        assertTrue(sUrl.contains("VERSION=1.1.1"));
-        assertTrue(sUrl.contains("OPACITY=65"));
-        assertTrue(sUrl.contains("COLORSCALERANGE=-50,50"));
-        assertTrue(sUrl.contains("NUMCOLORBANDS=150"));
-        assertTrue(sUrl.contains("LOGSCALE=true"));
-        assertTrue(sUrl.contains("PALETTE=test"));
+        assertTrue("was:" + sUrl, sUrl.contains("VERSION=1.1.1"));
+        assertTrue("was:" + sUrl, sUrl.contains("OPACITY=65"));
+        assertTrue("was:" + sUrl, sUrl.contains("COLORSCALERANGE=-50%2C50"));
+        assertTrue("was:" + sUrl, sUrl.contains("NUMCOLORBANDS=150"));
+        assertTrue("was:" + sUrl, sUrl.contains("LOGSCALE=true"));
+        assertTrue("was:" + sUrl, sUrl.contains("PALETTE=test"));
     }
 
     /**
@@ -76,13 +76,13 @@ public class NcGetLegendGraphicTest {
         request.setDimension(new Dimension(140, 20));
         request.setFormat("image/png");
         request.setLayer("test");
-        
+
         request.setOpacity(65);
         request.dimensions().put("COLORSCALERANGE","-50,50");
         request.setNumColorBands(150);
         request.setLogScale(true);
         request.setPalette("test");
-        
+
         final URL url;
         try {
             url = request.getURL();
@@ -90,14 +90,14 @@ public class NcGetLegendGraphicTest {
             fail(ex.getLocalizedMessage());
             return;
         }
-        
+
         final String sUrl = url.toString();
-        assertTrue(sUrl.contains("VERSION=1.3.0"));
-        assertTrue(sUrl.contains("OPACITY=65"));
-        assertTrue(sUrl.contains("COLORSCALERANGE=-50,50"));
-        assertTrue(sUrl.contains("NUMCOLORBANDS=150"));
-        assertTrue(sUrl.contains("LOGSCALE=true"));
-        assertTrue(sUrl.contains("PALETTE=test"));
-    }    
-    
+        assertTrue("was:" + sUrl, sUrl.contains("VERSION=1.3.0"));
+        assertTrue("was:" + sUrl, sUrl.contains("OPACITY=65"));
+        assertTrue("was:" + sUrl, sUrl.contains("COLORSCALERANGE=-50%2C50"));
+        assertTrue("was:" + sUrl, sUrl.contains("NUMCOLORBANDS=150"));
+        assertTrue("was:" + sUrl, sUrl.contains("LOGSCALE=true"));
+        assertTrue("was:" + sUrl, sUrl.contains("PALETTE=test"));
+    }
+
 }

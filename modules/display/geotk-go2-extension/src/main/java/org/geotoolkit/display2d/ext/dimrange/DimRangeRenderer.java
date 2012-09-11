@@ -22,7 +22,6 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.RenderedImage;
 import java.util.logging.Level;
-
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
@@ -35,12 +34,12 @@ import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.style.renderer.AbstractCoverageSymbolizerRenderer;
+import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.util.MeasurementRange;
-
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform2D;
@@ -53,8 +52,8 @@ import org.opengis.referencing.operation.MathTransform2D;
  */
 public class DimRangeRenderer extends AbstractCoverageSymbolizerRenderer<CachedDimRangeSymbolizer>{
 
-    public DimRangeRenderer(final CachedDimRangeSymbolizer symbol, final RenderingContext2D context){
-        super(symbol,context);
+    public DimRangeRenderer(final SymbolizerRendererService service,final CachedDimRangeSymbolizer symbol, final RenderingContext2D context){
+        super(service,symbol,context);
     }
 
     @Override

@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.wfs.xml.Property;
 
 
 /**
@@ -47,7 +48,7 @@ import javax.xml.bind.annotation.XmlType;
     "name",
     "value"
 })
-public class PropertyType {
+public class PropertyType  implements Property {
 
     @XmlElement(name = "Name", required = true)
     private String name;
@@ -72,6 +73,10 @@ public class PropertyType {
      *     
      */
     public String getName() {
+        return name;
+    }
+    
+    public String getLocalName() {
         return name;
     }
 

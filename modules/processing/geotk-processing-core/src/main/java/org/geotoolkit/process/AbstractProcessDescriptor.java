@@ -31,10 +31,11 @@ import static org.geotoolkit.util.ArgumentChecks.*;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @author Quentin Boileau (Geomatys)
  * @module pending
  */
 public abstract class AbstractProcessDescriptor implements ProcessDescriptor {
-
+    
     private final Identifier id;
     private final InternationalString abs;
     private final ParameterDescriptorGroup inputDesc;
@@ -118,7 +119,25 @@ public abstract class AbstractProcessDescriptor implements ProcessDescriptor {
         public Citation getAuthority() {
             return factoryId.getCitation();
         }
-
     }
 
+    /**
+     * @return process authority and name. Also table of process inputs and outputs.
+     */
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append("Authority : ");
+        sb.append(id.getAuthority().getTitle().toString()).append("\n");
+        sb.append("Name      : ");
+        sb.append(id.getCode()).append("\n");
+        sb.append("Abstract : ");
+        sb.append(abs.toString()).append("\n");
+        sb.append(inputDesc.toString());
+        sb.append(outputdesc.toString());
+        return sb.toString();
+        
+    }
+
+    
 }

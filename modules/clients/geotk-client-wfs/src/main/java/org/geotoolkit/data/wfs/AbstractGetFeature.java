@@ -35,6 +35,8 @@ import javax.xml.bind.Marshaller;
 import javax.xml.namespace.QName;
 
 import org.geotoolkit.client.AbstractRequest;
+import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.filter.visitor.SimplifyingFilterVisitor;
 import org.geotoolkit.ogc.xml.v110.FilterType;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.sld.xml.XMLUtilities;
@@ -42,7 +44,7 @@ import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.wfs.xml.WFSMarshallerPool;
 import org.geotoolkit.wfs.xml.v110.GetFeatureType;
 import org.geotoolkit.wfs.xml.v110.QueryType;
-import org.geotoolkit.wfs.xml.v110.ResultTypeType;
+import org.geotoolkit.wfs.xml.ResultTypeType;
 
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
@@ -50,7 +52,7 @@ import org.opengis.filter.Filter;
 
 /**
  * Abstract Get feature request.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @author Cédric Briançon (Geomatys)
  * @module pending
@@ -147,7 +149,7 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
     public void setOutputFormat(final String outputFormat) {
         this.outputFormat = outputFormat;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -184,6 +186,13 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
             requestParameters.put("NAMESPACE",sbNS.toString());
         }
 
+        Filter filter = Filter.INCLUDE;
+        if(this.filter != null && this.filter != Filter.INCLUDE){
+            final SimplifyingFilterVisitor visitor = new SimplifyingFilterVisitor();
+            filter = (Filter) this.filter.accept(visitor, null);
+        }
+
+
         if(filter != null && filter != Filter.INCLUDE){
             final XMLUtilities util = new XMLUtilities();
             final StringWriter writer = new StringWriter();
@@ -200,19 +209,14 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
             } catch (IOException ex) {
                 LOGGER.log(Level.FINER, ex.getLocalizedMessage(), ex);
             }
-            try {
-                requestParameters.put("FILTER", URLEncoder.encode(strFilter, "UTF-8"));
-            } catch (UnsupportedEncodingException ex) {
-                // Should not occur.
-                LOGGER.log(Level.FINEST, ex.getLocalizedMessage(), ex);
-            }
+            requestParameters.put("FILTER", strFilter);
         }
 
         if(propertyNames != null){
             final StringBuilder sb = new StringBuilder();
 
             for(final Name prop : propertyNames){
-                sb.append(prop).append(',');
+                sb.append(DefaultName.toExtendedForm(prop)).append(',');
             }
 
             if(sb.length() > 0 && sb.charAt(sb.length()-1) == ','){
@@ -233,13 +237,13 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
      */
     @Override
     public InputStream getResponseStream() throws IOException {
-       
+
         final List<QName> typeNames = new ArrayList<QName>();
 
         if(typeName != null){
             typeNames.add(typeName);
         }
-        
+
         FilterType xmlFilter;
         if(filter != null && filter != Filter.INCLUDE){
             final XMLUtilities util = new XMLUtilities();

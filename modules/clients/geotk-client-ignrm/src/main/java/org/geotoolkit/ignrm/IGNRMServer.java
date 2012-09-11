@@ -22,9 +22,12 @@ import java.net.URL;
 import javax.xml.stream.XMLStreamException;
 
 import org.geotoolkit.client.AbstractServer;
+import org.geotoolkit.client.ServerFactory;
+import org.geotoolkit.client.ServerFinder;
 import org.geotoolkit.ignrm.parser.TokenParser;
 import org.geotoolkit.ignrm.parser.TokenInformationParser;
 import org.geotoolkit.security.ClientSecurity;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * IGN right management server
@@ -39,7 +42,16 @@ public class IGNRMServer extends AbstractServer {
     }
     
     public IGNRMServer(final URL serverURL, final ClientSecurity security){
-        super(serverURL, security);
+        super(create(IGNRMServerFactory.PARAMETERS, serverURL, security));
+    }
+    
+    public IGNRMServer(final ParameterValueGroup params){
+        super(params);
+    }
+
+    @Override
+    public ServerFactory getFactory() {
+        return ServerFinder.getFactoryById(IGNRMServerFactory.NAME);
     }
     
     public GetTokenRequest createGetToken(){

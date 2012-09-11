@@ -52,8 +52,8 @@ public class GeometrySimplificationTool extends AbstractEditionTool {
         final FeatureType ft = layer.getCollection().getFeatureType();
 
         final GeometryDescriptor desc = ft.getGeometryDescriptor();
-
-        if(Point.class.isAssignableFrom(desc.getType().getBinding())){
+        
+        if(desc == null || Point.class.isAssignableFrom(desc.getType().getBinding())){
             //Point simplification is impossible
             return false;
         }

@@ -20,42 +20,68 @@ package org.geotoolkit.feature.xml.jaxb;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.namespace.QName;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.geotoolkit.feature.xml.Utils;
 import org.geotoolkit.feature.xml.XmlFeatureTypeWriter;
+import org.geotoolkit.xml.AbstractConfigurable;
 import org.geotoolkit.xml.MarshallerPool;
+import org.geotoolkit.xml.Namespaces;
 import org.geotoolkit.xsd.xml.v2001.ComplexContent;
 import org.geotoolkit.xsd.xml.v2001.ExplicitGroup;
 import org.geotoolkit.xsd.xml.v2001.ExtensionType;
 import org.geotoolkit.xsd.xml.v2001.FormChoice;
 import org.geotoolkit.xsd.xml.v2001.Import;
+import org.geotoolkit.xsd.xml.v2001.LocalElement;
 import org.geotoolkit.xsd.xml.v2001.Schema;
 import org.geotoolkit.xsd.xml.v2001.TopLevelComplexType;
 import org.geotoolkit.xsd.xml.v2001.TopLevelElement;
 import org.geotoolkit.xsd.xml.v2001.XSDMarshallerPool;
+import org.opengis.feature.type.ComplexType;
 
 import org.opengis.feature.type.FeatureType;
+import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
+import org.opengis.feature.type.PropertyType;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  * @author Johann Sorel (Geomatys)
  */
-public class JAXBFeatureTypeWriter implements XmlFeatureTypeWriter {
+public class JAXBFeatureTypeWriter extends AbstractConfigurable implements XmlFeatureTypeWriter {
 
     private static final MarshallerPool POOL = XSDMarshallerPool.getInstance();
 
-    private static final Import GML_IMPORT = new Import("http://www.opengis.net/gml", "http://schemas.opengis.net/gml/3.1.1/base/gml.xsd");
+    private static final Import GML_IMPORT_311 = new Import("http://www.opengis.net/gml", "http://schemas.opengis.net/gml/3.1.1/base/gml.xsd");
+    private static final Import GML_IMPORT_321 = new Import("http://www.opengis.net/gml/3.2", "http://schemas.opengis.net/gml/3.2.1/gml.xsd");
 
-    private static final QName FEATURE_NAME = new QName("http://www.opengis.net/gml", "_Feature");
+    private static final QName FEATURE_NAME_311 = new QName("http://www.opengis.net/gml", "_Feature");
 
+    private static final QName FEATURE_NAME_321 = new QName("http://www.opengis.net/gml/3.2", "_Feature");
+
+    private int lastUnknowPrefix = 0;
+
+    private final Map<String, String> unknowNamespaces = new HashMap<String, String>();
+
+    private final String gmlVersion;
 
     public JAXBFeatureTypeWriter(){
+        gmlVersion = "3.1.1";
+    }
+
+    public JAXBFeatureTypeWriter(final String gmlVersion){
+        this.gmlVersion = gmlVersion;
     }
 
     /**
@@ -106,6 +132,35 @@ public class JAXBFeatureTypeWriter implements XmlFeatureTypeWriter {
      * {@inheritDoc }
      */
     @Override
+    public Node writeToElement(final FeatureType feature) throws JAXBException, ParserConfigurationException {
+
+        final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        // then we have to create document-loader:
+        factory.setNamespaceAware(false);
+        final DocumentBuilder loader = factory.newDocumentBuilder();
+
+        // creating a new DOM-document...
+        final Document document = loader.newDocument();
+
+        final Schema schema = getSchemaFromFeatureType(feature);
+        Marshaller marshaller = null;
+        try {
+            marshaller = POOL.acquireMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, false);
+            marshaller.marshal(schema, document);
+        } finally {
+            if (marshaller != null) {
+                POOL.release(marshaller);
+            }
+        }
+        return document.getDocumentElement();
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public Schema getSchemaFromFeatureType(final List<FeatureType> featureTypes) {
         final Schema schema = new Schema(FormChoice.QUALIFIED, null);
         if (featureTypes != null && featureTypes.size() > 0) {
@@ -117,7 +172,11 @@ public class JAXBFeatureTypeWriter implements XmlFeatureTypeWriter {
                 i++;
             }
             schema.setTargetNamespace(typeNamespace);
-            schema.addImport(GML_IMPORT);
+            if ("3.2.1".equals(gmlVersion)) {
+                schema.addImport(GML_IMPORT_321);
+            } else {
+                schema.addImport(GML_IMPORT_311);
+            }
             for (FeatureType ftype : featureTypes) {
                 fillSchemaWithFeatureType(ftype, schema);
             }
@@ -133,7 +192,11 @@ public class JAXBFeatureTypeWriter implements XmlFeatureTypeWriter {
         if (featureType != null) {
             final String typeNamespace = featureType.getName().getNamespaceURI();
             final Schema schema = new Schema(FormChoice.QUALIFIED, typeNamespace);
-            schema.addImport(GML_IMPORT);
+            if ("3.2.1".equals(gmlVersion)) {
+                schema.addImport(GML_IMPORT_321);
+            } else {
+                schema.addImport(GML_IMPORT_311);
+            }
             fillSchemaWithFeatureType(featureType, schema);
             return schema;
         }
@@ -141,32 +204,97 @@ public class JAXBFeatureTypeWriter implements XmlFeatureTypeWriter {
     }
 
     private void fillSchemaWithFeatureType(final FeatureType featureType, final Schema schema) {
-        
         final String typeNamespace    = featureType.getName().getNamespaceURI();
         final String elementName      = featureType.getName().getLocalPart();
         final String typeName         = elementName + "Type";
         schema.addElement(new TopLevelElement(elementName, new QName(typeNamespace, typeName)));
 
         final ExplicitGroup sequence  = new ExplicitGroup();
-        
-        for(final PropertyDescriptor pdesc : featureType.getDescriptors()) {
-            final String name   = pdesc.getName().getLocalPart();
-            final QName type    = Utils.getQNameFromType(pdesc.getType().getBinding());
-            final int minOccurs = pdesc.getMinOccurs();
-            final int maxOccurs = pdesc.getMaxOccurs();
-            final boolean nillable = pdesc.isNillable();
-            final String maxOcc;
-            if (maxOccurs == Integer.MAX_VALUE) {
-                maxOcc = "unbounded";
-            } else {
-                maxOcc = Integer.toString(maxOccurs);
-            }
-            sequence.addElement(new TopLevelElement(name, type, minOccurs, maxOcc, nillable));
+        for (final PropertyDescriptor pdesc : featureType.getDescriptors()) {
+            writeProperty(pdesc, sequence, schema);
         }
+        final ComplexContent content  = getComplexContent(sequence);
+        schema.addComplexType(1, new TopLevelComplexType(typeName, content));
+    }
 
-        final ExtensionType extension = new ExtensionType(FEATURE_NAME, sequence);
-        final ComplexContent content  = new ComplexContent(extension);
-        schema.addComplexType(new TopLevelComplexType(typeName, content));
+    private void writeComplexType(final ComplexType ctype, final Schema schema) {
+        // PropertyType
+        final ExplicitGroup ctypeSequence  = new ExplicitGroup();
+        final Name ptypeName = ctype.getName();
+        ctypeSequence.addElement(new LocalElement(ptypeName.getLocalPart(), new QName(ptypeName.getNamespaceURI(), ptypeName.getLocalPart() + "Type")));
+        schema.addComplexType(new TopLevelComplexType(ptypeName.getLocalPart() + "PropertyType", ctypeSequence));
+
+        //complex type
+        final ExplicitGroup sequence  = new ExplicitGroup();
+        for (final PropertyDescriptor pdesc : ctype.getDescriptors()) {
+            writeProperty(pdesc, sequence, schema);
+        }
+        schema.addComplexType(new TopLevelComplexType( ptypeName.getLocalPart() + "Type", sequence));
+    }
+
+    private void writeProperty(final PropertyDescriptor pdesc, final ExplicitGroup sequence, final Schema schema) {
+        final PropertyType pType = pdesc.getType();
+        final String name        = pdesc.getName().getLocalPart();
+        final QName type         = Utils.getQNameFromType(pType, gmlVersion);
+        final int minOccurs      = pdesc.getMinOccurs();
+        final int maxOccurs      = pdesc.getMaxOccurs();
+        final boolean nillable   = pdesc.isNillable();
+        final String maxOcc;
+        if (maxOccurs == Integer.MAX_VALUE) {
+            maxOcc = "unbounded";
+        } else {
+            maxOcc = Integer.toString(maxOccurs);
+        }
+        sequence.addElement(new LocalElement(name, type, minOccurs, maxOcc, nillable));
+
+        // for a complexType we have to add 2 complexType (PropertyType and type)
+        if (pType instanceof ComplexType) {
+            writeComplexType((ComplexType)pType, schema);
+        }
+    }
+
+    private ComplexContent getComplexContent(final ExplicitGroup sequence) {
+        final ExtensionType extension;
+        if ("3.2.1".equals(gmlVersion)) {
+            extension = new ExtensionType(FEATURE_NAME_321, sequence);
+        } else {
+            extension = new ExtensionType(FEATURE_NAME_311, sequence);
+        }
+        return  new ComplexContent(extension);
+    }
+
+     /**
+     * Returns the prefix for the given namespace.
+     *
+     * @param namespace The namespace for which we want the prefix.
+     */
+    private JAXBFeatureTypeWriter.Prefix getPrefix(final String namespace) {
+        String prefix = Namespaces.getPreferredPrefix(namespace, null);
+        boolean unknow = false;
+        if (prefix == null) {
+            prefix = unknowNamespaces.get(namespace);
+            if (prefix == null) {
+                prefix = "ns" + lastUnknowPrefix;
+                lastUnknowPrefix++;
+                unknow = true;
+                unknowNamespaces.put(namespace, prefix);
+            }
+        }
+        return new JAXBFeatureTypeWriter.Prefix(unknow, prefix);
+    }
+
+
+    /**
+     * Inner class for handling prefix and if it is already known.
+     */
+    private final class Prefix {
+        public boolean unknow;
+        public String prefix;
+
+        public Prefix(final boolean unknow, final String prefix) {
+            this.prefix = prefix;
+            this.unknow = unknow;
+        }
     }
 
 }

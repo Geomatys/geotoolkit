@@ -27,25 +27,18 @@ import static org.geotoolkit.parameter.Parameters.*;
  * @module pending
  */
 public class ToRadianProcess extends AbstractProcess{
-    
-    public ToRadianProcess(final ParameterValueGroup input){
+
+    public ToRadianProcess(final ParameterValueGroup input) {
         super(INSTANCE,input);
     }
-    
+
     @Override
-    public ParameterValueGroup call() {
-        
+    protected void execute() {
+
         final double first = value(FIRST_NUMBER, inputParameters);
-        
-        Double result = 0.0;
-        try{
-            result = Math.toRadians(first);
-        }catch(Exception e){
-            fireFailEvent(new ProcessEvent(this, e.getMessage(),0, e));
-        }
-        
-        getOrCreate(RESULT_NUMBER, outputParameters).setValue(result); 
-        return outputParameters;
+
+        final double result = Math.toRadians(first);
+        getOrCreate(RESULT_NUMBER, outputParameters).setValue(result);
     }
-    
+
 }

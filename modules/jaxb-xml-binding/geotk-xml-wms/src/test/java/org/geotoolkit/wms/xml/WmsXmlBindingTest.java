@@ -130,10 +130,10 @@ public class WmsXmlBindingTest {
         assertTrue(unmarshalled instanceof org.geotoolkit.wms.xml.v111.Capability);
 
         org.geotoolkit.wms.xml.v111.Capability result = (org.geotoolkit.wms.xml.v111.Capability) unmarshalled;
-        
+
         org.geotoolkit.wms.xml.v111.Capability expResult = new org.geotoolkit.wms.xml.v111.Capability(null, null,null,null);
         VendorSpecificCapabilities spec = new VendorSpecificCapabilities();
-        
+
         BoundingBox bb1 = new BoundingBox("EPSG:310024802", -1048576, 3670016, 2621440, 8388608, null, null, null);
         List<Double> res = new ArrayList<Double>();
         res.add(0.5);
@@ -141,25 +141,25 @@ public class WmsXmlBindingTest {
         res.add(2.0);
         res.add(4.0);
         res.add(8.0);
-        
+
         TileSet ts = new TileSet("EPSG:310024802", bb1, res, 256, 256, "image/png", Arrays.asList("ADMINISTRATIVEUNITS.BOUNDARIES"));
         spec.getTileSet().add(ts);
-        
+
         BoundingBox bb2 = new BoundingBox("EPSG:310915814", -6791168, 1761280, -6553600, 2023424, null, null, null);
         List<Double> res2 = new ArrayList<Double>();
         res2.add(0.5);
         res2.add(1.0);
         res2.add(2.0);
         res2.add(4.0);
-        
+
         TileSet ts2 = new TileSet("EPSG:310915814", bb2, res2, 256, 256, "image/png", Arrays.asList("ADMINISTRATIVEUNITS.BOUNDARIES"));
         spec.getTileSet().add(ts2);
         expResult.setVendorSpecificCapabilities(spec);
-        
+
         assertEquals(expResult, result);
-        
+
     }
-    
+
     /**
      * @throws java.lang.Exception
      */
@@ -189,11 +189,11 @@ public class WmsXmlBindingTest {
         "    </VendorSpecificCapabilities>" + '\n' +
         "</Capability>" + '\n';
 
-       
-        
+
+
         org.geotoolkit.wms.xml.v111.Capability capa = new org.geotoolkit.wms.xml.v111.Capability(null, null,null,null);
         VendorSpecificCapabilities spec = new VendorSpecificCapabilities();
-        
+
         BoundingBox bb1 = new BoundingBox("EPSG:310024802", -1048576, 3670016, 2621440, 8388608, null, null, null);
         List<Double> res = new ArrayList<Double>();
         res.add(0.5);
@@ -201,32 +201,32 @@ public class WmsXmlBindingTest {
         res.add(2.0);
         res.add(4.0);
         res.add(8.0);
-        
+
         TileSet ts = new TileSet("EPSG:310024802", bb1, res, 256, 256, "image/png", Arrays.asList("ADMINISTRATIVEUNITS.BOUNDARIES"));
         spec.getTileSet().add(ts);
-        
+
         BoundingBox bb2 = new BoundingBox("EPSG:310915814", -6791168, 1761280, -6553600, 2023424, null, null, null);
         List<Double> res2 = new ArrayList<Double>();
         res2.add(0.5);
         res2.add(1.0);
         res2.add(2.0);
         res2.add(4.0);
-        
+
         TileSet ts2 = new TileSet("EPSG:310915814", bb2, res2, 256, 256, "image/png", Arrays.asList("ADMINISTRATIVEUNITS.BOUNDARIES"));
         spec.getTileSet().add(ts2);
         capa.setVendorSpecificCapabilities(spec);
-        
+
         StringWriter sw = new StringWriter();
         marshaller.marshal(capa, sw);
         String result = sw.toString();
-        
+
         //we remove the first line
         result = result.substring(result.indexOf("?>") + 3);
         //we remove the xmlmns
         result = StringUtilities.removeXmlns(result);
-                
+
         assertEquals(expResult, result);
-        
+
     }
 
     /**
@@ -317,7 +317,7 @@ public class WmsXmlBindingTest {
         "                    <gmd:EX_TemporalExtent>" + '\n' +
         "                        <gmd:extent>" + '\n' +
         "                            <gml:TimePeriod gml:id=\"extent\">" + '\n' +
-        "                                <gml:beginPosition>1970-01-02T10:20:00.000+01:00</gml:beginPosition>" + '\n' +
+        "                                <gml:beginPosition>1970-01-02T10:20:00+01:00</gml:beginPosition>" + '\n' +
         "                                <gml:endPosition>1970-01-02T10:20:00.001+01:00</gml:endPosition>" + '\n' +
         "                            </gml:TimePeriod>" + '\n' +
         "                        </gmd:extent>" + '\n' +
@@ -461,7 +461,7 @@ public class WmsXmlBindingTest {
         "                    <gmd:EX_TemporalExtent>" + '\n' +
         "                        <gmd:extent>" + '\n' +
         "                            <gml:TimePeriod gml:id=\"extent\">" + '\n' +
-        "                                <gml:beginPosition>1970-01-02T10:20:00.000+01:00</gml:beginPosition>" + '\n' +
+        "                                <gml:beginPosition>1970-01-02T10:20:00+01:00</gml:beginPosition>" + '\n' +
         "                                <gml:endPosition>1970-01-02T10:20:00.001+01:00</gml:endPosition>" + '\n' +
         "                            </gml:TimePeriod>" + '\n' +
         "                        </gmd:extent>" + '\n' +

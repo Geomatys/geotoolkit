@@ -53,11 +53,11 @@ public class GetFeatureTest {
         }
         final String sUrl = url.toString();
         assertTrue(sUrl.startsWith("http://test.com?"));
-        assertTrue(sUrl.contains("TYPENAME=ut:value"));
-        assertTrue(sUrl.contains("NAMESPACE=xmlns(ut=http://myqnametest.com)"));
-        assertTrue(sUrl.contains("%3Cogc%3APropertyName%3EpropGeom%3C%2Fogc%3APropertyName%3E"));
-        assertTrue(sUrl.contains("%3Cgml%3AEnvelope+srsName%3D%22CRS%3A84%22%3E"));
-        assertTrue(sUrl.contains("%3Cgml%3AlowerCorner%3E-180.0+-90.0%3C%2Fgml%3AlowerCorner%3E"));
-        assertTrue(sUrl.contains("%3Cgml%3AupperCorner%3E180.0+90.0%3C%2Fgml%3AupperCorner%3E"));
+        assertTrue("was:" + sUrl, sUrl.contains("TYPENAME=ut%3Avalue"));
+        assertTrue("was:" + sUrl, sUrl.contains("NAMESPACE=xmlns%28ut%3Dhttp%3A%2F%2Fmyqnametest.com%29"));
+        assertTrue("was:" + sUrl, sUrl.contains("%3Cogc%3APropertyName%3EpropGeom%3C%2Fogc%3APropertyName%3E"));
+        assertTrue("was:" + sUrl, sUrl.contains("%3Cgml%3AEnvelope+srsName%3D%22CRS%3A84%22%3E"));
+        assertTrue("was:" + sUrl, sUrl.contains("%3Cgml%3AlowerCorner%3E-180.0+-90.0%3C%2Fgml%3AlowerCorner%3E"));
+        assertTrue("was:" + sUrl, sUrl.contains("%3Cgml%3AupperCorner%3E180.0+90.0%3C%2Fgml%3AupperCorner%3E"));
     }
 }

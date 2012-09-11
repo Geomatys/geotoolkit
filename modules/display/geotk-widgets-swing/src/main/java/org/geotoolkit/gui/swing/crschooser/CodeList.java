@@ -24,8 +24,11 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.AbstractListModel;
+import org.geotoolkit.referencing.CRS;
 
 import org.opengis.referencing.AuthorityFactory;
+import org.opengis.referencing.crs.CRSAuthorityFactory;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 
 /**
@@ -40,6 +43,8 @@ import org.opengis.util.FactoryException;
  */
 final class CodeList extends AbstractListModel {
 
+    private static CodeList DEFAULT_INSTANCE;
+    
     /**
      * The authority factory, or {@code null} if disposed.
      */
@@ -108,6 +113,13 @@ final class CodeList extends AbstractListModel {
     }
 
     /**
+     * @return original factory.
+     */
+    public AuthorityFactory getFactory() {
+        return factory;
+    }
+
+    /**
      * Returns the selected item.
      *
      * @todo Change to return type to {@link Code} when we will be allowed to compile for J2SE 1.5.
@@ -142,4 +154,14 @@ final class CodeList extends AbstractListModel {
         }
         return prototype;
     }
+
+    public static CodeList getCRSInstance() throws FactoryException {
+        if(DEFAULT_INSTANCE == null){
+            final CRSAuthorityFactory factory = CRS.getAuthorityFactory(Boolean.FALSE);
+            DEFAULT_INSTANCE = new CodeList(factory, CoordinateReferenceSystem.class);
+        }
+        
+        return DEFAULT_INSTANCE;
+    }
+    
 }

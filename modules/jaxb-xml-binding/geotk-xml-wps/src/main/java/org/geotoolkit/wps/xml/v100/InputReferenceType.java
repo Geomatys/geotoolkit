@@ -84,7 +84,7 @@ import javax.xml.bind.annotation.XmlType;
     "body",
     "bodyReference"
 })
-public class InputReferenceType {
+public class InputReferenceType implements ReferenceType {
 
     @XmlElement(name = "Header")
     protected List<InputReferenceType.Header> header;

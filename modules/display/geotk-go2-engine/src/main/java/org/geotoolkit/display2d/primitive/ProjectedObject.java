@@ -18,7 +18,6 @@ package org.geotoolkit.display2d.primitive;
 
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.map.MapLayer;
-
 import org.opengis.display.primitive.Graphic;
 
 /**

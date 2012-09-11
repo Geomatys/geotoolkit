@@ -19,10 +19,8 @@ package org.geotoolkit.data.query;
 
 import java.util.HashSet;
 import java.util.Set;
-
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.DefaultName;
-
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.sort.SortBy;
@@ -300,4 +298,23 @@ public final class QueryBuilder {
         return builder.buildQuery();
     }
 
+    /**
+     * 
+     * @param sortBy array or null
+     * @return true is the given array of sort by operand is equal to natural sort by
+     */
+    public static boolean isNaturalSortBy(SortBy[] sortBy){
+        if(sortBy == null || sortBy.length == 0){
+            return true;
+        }
+        
+        for(SortBy sb : sortBy){
+            if(sb != SortBy.NATURAL_ORDER){
+                return false;
+            }
+        }
+        
+        return true;
+    }
+    
 }

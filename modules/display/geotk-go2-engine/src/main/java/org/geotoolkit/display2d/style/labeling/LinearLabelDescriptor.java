@@ -2,7 +2,6 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2004 - 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2008 - 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -16,8 +15,6 @@
  *    Lesser General Public License for more details.
  */
 package org.geotoolkit.display2d.style.labeling;
-
-import java.awt.Shape;
 
 /**
  * Label descriptor for a text along a shape.

@@ -18,6 +18,7 @@ package org.geotoolkit.xsd.xml.v2001;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -26,13 +27,14 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.util.Utilities;
 
 
 /**
  * <p>Java class for wildcard complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="wildcard">
  *   &lt;complexContent>
@@ -51,8 +53,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -60,9 +62,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @XmlSeeAlso({
     Any.class
 })
-public class Wildcard
-    extends Annotated
-{
+public class Wildcard extends Annotated {
 
     @XmlAttribute
     @XmlSchemaType(name = "namespaceList")
@@ -73,7 +73,7 @@ public class Wildcard
 
     /**
      * Gets the value of the namespace property.
-     * 
+     *
      */
     public List<String> getNamespace() {
         if (namespace == null) {
@@ -84,11 +84,11 @@ public class Wildcard
 
     /**
      * Gets the value of the processContents property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getProcessContents() {
         if (processContents == null) {
@@ -100,14 +100,50 @@ public class Wildcard
 
     /**
      * Sets the value of the processContents property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setProcessContents(final String value) {
         this.processContents = value;
     }
 
+        /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof Wildcard && super.equals(object)) {
+            final Wildcard that = (Wildcard) object;
+            return Objects.equals(this.namespace,   that.namespace) &&
+                   Objects.equals(this.processContents, that.processContents);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 83 * hash + super.hashCode();
+        hash = 83 * hash + (this.namespace != null ? this.namespace.hashCode() : 0);
+        hash = 83 * hash + (this.processContents != null ? this.processContents.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString()).append('\n');
+        if (namespace != null) {
+            sb.append("namespace:").append(namespace).append('\n');
+        }
+        if (processContents != null) {
+            sb.append("processContents:").append(processContents).append('\n');
+        }
+        return  sb.toString();
+    }
 }

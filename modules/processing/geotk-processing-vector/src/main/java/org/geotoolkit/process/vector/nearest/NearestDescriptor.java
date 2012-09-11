@@ -75,6 +75,6 @@ public final class NearestDescriptor extends VectorDescriptor {
      */
     @Override
     public Process createProcess(final ParameterValueGroup input) {
-        return new Nearest(input);
+        return new NearestProcess(input);
     }
 }

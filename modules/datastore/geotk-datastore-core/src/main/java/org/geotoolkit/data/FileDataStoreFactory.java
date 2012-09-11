@@ -1,9 +1,9 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2004-2008, Open Source Geospatial Foundation (OSGeo)
- *    
+ *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
  *    License as published by the Free Software Foundation;
@@ -38,7 +38,7 @@ public interface FileDataStoreFactory extends DataStoreFactory {
      * @return List of file extensions which can be read by this
      *         dataStore.
      */
-    public String[] getFileExtensions();
+    String[] getFileExtensions();
 
     /**
      * Tests if the provided url can be handled by this factory.
@@ -47,7 +47,7 @@ public interface FileDataStoreFactory extends DataStoreFactory {
      *
      * @return <code>true</code> if this url can when this dataStore can resolve and read the data specified
      */
-    public boolean canProcess(URL url);
+    boolean canProcess(URL url);
 
     /**
      * A DataStore attached to the provided url, may be created if needed.
@@ -62,6 +62,6 @@ public interface FileDataStoreFactory extends DataStoreFactory {
      *
      * @throws DataStoreException
      */
-    public DataStore createDataStore(URL url) throws DataStoreException;
+    DataStore createDataStore(URL url) throws DataStoreException;
 
 }

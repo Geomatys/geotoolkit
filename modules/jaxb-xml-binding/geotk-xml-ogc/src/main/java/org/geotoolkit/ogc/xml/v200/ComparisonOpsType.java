@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.filter.Filter;
 
 
 /**
@@ -49,7 +50,11 @@ import javax.xml.bind.annotation.XmlType;
     PropertyIsNullType.class,
     PropertyIsLikeType.class
 })
-public abstract class ComparisonOpsType {
+public abstract class ComparisonOpsType implements Filter {
 
+    @Override
+    public String toString() {
+        return "class: " + this.getClass().getSimpleName() + '\n';
+    }
 
 }

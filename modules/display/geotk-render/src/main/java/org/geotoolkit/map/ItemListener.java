@@ -22,7 +22,6 @@ import java.beans.PropertyChangeListener;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collection;
-
 import org.geotoolkit.internal.ReferenceQueueConsumer;
 import org.geotoolkit.util.Disposable;
 import org.geotoolkit.util.collection.CollectionChangeEvent;

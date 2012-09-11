@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
+import org.geotoolkit.wfs.xml.DescribeFeatureType;
 
 
 /**
@@ -52,35 +53,25 @@ import javax.xml.namespace.QName;
 @XmlType(name = "DescribeFeatureTypeType", propOrder = {
     "typeName"
 })
-public class DescribeFeatureTypeType
-    extends BaseRequestType
-{
+public class DescribeFeatureTypeType extends BaseRequestType implements DescribeFeatureType {
 
     @XmlElement(name = "TypeName")
     private List<QName> typeName;
     @XmlAttribute
     private String outputFormat;
 
+    public DescribeFeatureTypeType() {
+
+    }
+
+    public DescribeFeatureTypeType(final String service, final String version, final String handle, final List<QName> typeName, final String outputFormat) {
+        super(service, version, handle);
+        this.outputFormat = outputFormat;
+        this.typeName     = typeName;
+    }
+    
     /**
      * Gets the value of the typeName property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the typeName property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getTypeName().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link QName }
-     * 
      * 
      */
     public List<QName> getTypeName() {
@@ -114,7 +105,7 @@ public class DescribeFeatureTypeType
      *     {@link String }
      *     
      */
-    public void setOutputFormat(String value) {
+    public void setOutputFormat(final String value) {
         this.outputFormat = value;
     }
 

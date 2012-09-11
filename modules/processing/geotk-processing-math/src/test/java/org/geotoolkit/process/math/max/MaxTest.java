@@ -34,7 +34,6 @@ import static org.junit.Assert.*;
  */
 public class MaxTest extends AbstractProcessTest{
 
-   
 
     public MaxTest() {
         super("max");

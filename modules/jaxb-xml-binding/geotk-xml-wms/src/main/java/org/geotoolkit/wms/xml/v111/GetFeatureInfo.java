@@ -47,6 +47,21 @@ public class GetFeatureInfo extends AbstractOperation {
     public GetFeatureInfo() {
 
     }
+    
+    public GetFeatureInfo(final GetFeatureInfo that) {
+        if (that.format != null) {
+            this.format = new ArrayList<Format>();
+            for (Format f : that.format) {
+               this.format.add(new Format(f.getvalue()));
+            }
+        }
+        if (that.dcpType != null) {
+            this.dcpType = new ArrayList<DCPType>();
+            for (DCPType f : that.dcpType) {
+               this.dcpType.add(new DCPType(f));
+            }
+        }
+    }
 
     public GetFeatureInfo(final List<String> formats, final DCPType... dcpList) {
         if (formats != null) {

@@ -34,7 +34,6 @@ import static org.junit.Assert.*;
  */
 public class CosTest extends AbstractProcessTest{
 
-   
 
     public CosTest() {
         super("cos");
@@ -56,7 +55,6 @@ public class CosTest extends AbstractProcessTest{
         //result
         final Double result = (Double) proc.call().parameter("result").getValue();
 
-       
         assertEquals(0.8020, result.doubleValue(), 0.0001);
     }
     

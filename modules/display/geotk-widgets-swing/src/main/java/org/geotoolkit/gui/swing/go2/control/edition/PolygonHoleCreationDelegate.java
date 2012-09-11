@@ -131,7 +131,7 @@ public class PolygonHoleCreationDelegate extends AbstractFeatureEditionDelegate 
             }
         } else if (button == MouseEvent.BUTTON3 && feature != null) {
             //finish editing the feature
-            helper.sourceModifyFeature(feature, geometry);
+            helper.sourceModifyFeature(feature, geometry, true);
             reset();
         }
     }

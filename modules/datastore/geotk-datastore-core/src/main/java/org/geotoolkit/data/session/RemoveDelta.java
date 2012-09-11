@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -18,20 +18,18 @@
 package org.geotoolkit.data.session;
 
 import java.util.HashSet;
-import java.util.Set;
 import java.util.Map;
+import java.util.Set;
 import org.geotoolkit.data.DataStore;
-import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
-
+import org.geotoolkit.storage.DataStoreException;
+import static org.geotoolkit.util.ArgumentChecks.*;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Id;
 import org.opengis.filter.identity.Identifier;
 import org.opengis.geometry.Envelope;
-
-import static org.geotoolkit.util.ArgumentChecks.*;
 
 /**
  * Delta which remove a collection of features.

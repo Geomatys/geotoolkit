@@ -21,18 +21,16 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.geotoolkit.data.DataStore;
-import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.AbstractFeature;
 import org.geotoolkit.feature.FeatureUtilities;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.converter.Classes;
-
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;

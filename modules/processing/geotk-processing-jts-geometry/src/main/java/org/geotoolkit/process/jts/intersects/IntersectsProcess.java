@@ -16,52 +16,53 @@
  */
 package org.geotoolkit.process.jts.intersects;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.geotoolkit.process.jts.JTSProcessingUtils;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import com.vividsolutions.jts.geom.Geometry;
+
+import org.geotoolkit.process.jts.JTSProcessingUtils;
 import org.geotoolkit.process.AbstractProcess;
+import org.geotoolkit.process.ProcessException;
+
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 
 import static org.geotoolkit.process.jts.intersects.IntersectsDescriptor.*;
 import static org.geotoolkit.parameter.Parameters.*;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.util.FactoryException;
+
 /**
  * @author Quentin Boileau (Geomatys)
  * @module pending
  */
-public class IntersectsProcess extends AbstractProcess{
-    
-    public IntersectsProcess(final ParameterValueGroup input){
+public class IntersectsProcess extends AbstractProcess {
+
+    public IntersectsProcess(final ParameterValueGroup input) {
         super(INSTANCE,input);
     }
-    
+
     @Override
-    public ParameterValueGroup call() {
-        
+    protected void execute() throws ProcessException {
+
         try {
-            
-            final Geometry geom1 = value(GEOM1, inputParameters); 
-            Geometry geom2 = value(GEOM2, inputParameters); 
-            
+
+            final Geometry geom1 = value(GEOM1, inputParameters);
+            Geometry geom2 = value(GEOM2, inputParameters);
+
             // ensure geometries are in the same CRS
             final CoordinateReferenceSystem resultCRS = JTSProcessingUtils.getCommonCRS(geom1, geom2);
-            if(JTSProcessingUtils.isConversionNeeded(geom1, geom2)){
+            if (JTSProcessingUtils.isConversionNeeded(geom1, geom2)) {
                 geom2 = JTSProcessingUtils.convertToCRS(geom2, resultCRS);
             }
-            
-            final Boolean result = (Boolean) geom1.intersects(geom2);
-            
+
+            final boolean result = (Boolean) geom1.intersects(geom2);
+
             getOrCreate(RESULT, outputParameters).setValue(result);
-           
+
         } catch (FactoryException ex) {
-            Logger.getLogger(IntersectsProcess.class.getName()).log(Level.WARNING, null, ex);
+            throw new ProcessException(null, this, ex);
         } catch (TransformException ex) {
-            Logger.getLogger(IntersectsProcess.class.getName()).log(Level.WARNING, null, ex);
+            throw new ProcessException(null, this, ex);
         }
-         return outputParameters;
     }
-    
+
 }

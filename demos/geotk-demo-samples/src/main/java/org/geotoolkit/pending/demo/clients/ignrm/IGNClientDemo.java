@@ -9,6 +9,7 @@ import org.geotoolkit.ignrm.Token;
 import org.geotoolkit.ignrm.TokenClientSecurity;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
+import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.security.ClientSecurity;
 import org.geotoolkit.security.ClientSecurityStack;
@@ -17,12 +18,14 @@ import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.wmsc.WebMapServerCached;
 import org.geotoolkit.wmsc.map.WMSCMapLayer;
+import org.opengis.feature.type.Name;
 
 public class IGNClientDemo {
  
     public static final MutableStyleFactory SF = new DefaultStyleFactory();
     
     public static void main(String[] args) throws Exception {
+        Demos.init();
         
         // THIS DEMO REQUIERE ADDITIONAL CRS DEFINITIONS
         // those have been added in the module in path : 
@@ -55,14 +58,15 @@ public class IGNClientDemo {
         final ClientSecurity tokenAndReferer = ClientSecurityStack.wrap(refererInfo,tokenInfo);
         
         final WebMapServerCached server = new WebMapServerCached(
-                new URL("http://wxs.ign.fr/inspire/wmsc?"), tokenAndReferer);        
-        final WMSCMapLayer sloplayer = new WMSCMapLayer(server, "ELEVATION.SLOPES");
-        sloplayer.setDescription(SF.description("ELEVATION", ""));
-        context.layers().add(sloplayer);
+                new URL("http://wxs.ign.fr/inspire/wmsc?"), tokenAndReferer,true);
         
-        final WMSCMapLayer ortholayer = new WMSCMapLayer(server, "ORTHOIMAGERY.ORTHOPHOTOS");
-        sloplayer.setDescription(SF.description("ORTHOPHOTOS", ""));
-        context.layers().add(ortholayer);
+        for(Name name : server.getNames()){
+            if(name.getLocalPart().contains("ELEVATION.SLOPES") || name.getLocalPart().contains("ORTHOIMAGERY.ORTHOPHOTOS")){
+                final WMSCMapLayer sloplayer = new WMSCMapLayer(server, name);
+                sloplayer.setDescription(SF.description(name.getLocalPart(), ""));
+                context.layers().add(sloplayer);
+            }
+        }
         
         return context;
     }

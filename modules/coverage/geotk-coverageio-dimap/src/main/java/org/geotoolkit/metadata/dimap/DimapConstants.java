@@ -131,16 +131,19 @@ public final class DimapConstants {
     // Scene tags
     public static final String TAG_SCENE_SOURCE = "Scene_Source";
     public static final String TAG_SCENE_IMAGING_DATE = "IMAGING_DATE";
+    public static final String TAG_SCENE_IMAGING_TIME = "IMAGING_TIME";
     public static final String TAG_SCENE_MISSION = "MISSION";
     public static final String TAG_SCENE_MISSION_INDEX = "MISSION_INDEX";
     public static final String TAG_SCENE_INSTRUMENT = "INSTRUMENT";
     public static final String TAG_SCENE_INSTRUMENT_INDEX = "INSTRUMENT_INDEX";
+    public static final String TAG_SCENE_SENSOR_CODE = "SENSOR_CODE";
     public static final String TAG_SCENE_PROCESSING_LEVEL = "SCENE_PROCESSING_LEVEL";
     public static final String TAG_SCENE_INCIDENCE_ANGLE = "INCIDENCE_ANGLE";
     public static final String TAG_SCENE_THEORETICAL_RESOLUTION = "THEORETICAL_RESOLUTION";
     public static final String TAG_SCENE_VIEWING_ANGLE = "VIEWING_ANGLE";
     public static final String TAG_SCENE_SUN_AZIMUTH = "SUN_AZIMUTH";
     public static final String TAG_SCENE_SUN_ELEVATION = "SUN_ELEVATION";
+    public static final String TAG_SCENE_GRID_REFERENCE = "GRID_REFERENCE";
     // ...
     //TAG quality assessment
 
@@ -189,6 +192,7 @@ public final class DimapConstants {
 
     // RASTER CS tag group -----------------------------------------------------
     public static final String TAG_RASTER_CS = "Raster_CS";
+    
 
     // Image display information -----------------------------------------------
     public static final String TAG_IMAGE_DISPLAY = "Image_Display";
@@ -235,10 +239,17 @@ public final class DimapConstants {
     public static final String TAG_DATA_PROCESSING_ALGORITHM_TYPE = "ALGORITHM_TYPE";
     public static final String TAG_DATA_PROCESSING_ALGORITHM_NAME = "ALGORITHM_NAME";
     public static final String TAG_DATA_PROCESSING_ALGORITHM_ACTIVATION = "ALGORITHM_ACTIVATION";
-
+    
     //Satellite_Time------------------------------------------------------------
     public static final String TAG_SATELLITE_TIME = "Satellite_Time";
-
+    
+    //Processing_Options
+    public static final String TAG_PROCESSING_OPTIONS = "Processing_Options";
+    public static final String TAG_DYNAMIC_STRETCH = "Dynamic_Stretch";
+    public static final String TAG_THRESHOLDS = "Thresholds";
+    public static final String TAG_LOW_THRESHOLD = "LOW_THRESHOLD";
+    public static final String TAG_HIGH_THRESHOLD = "HIGH_THRESHOLD";
+    
     private DimapConstants(){}
 
 }

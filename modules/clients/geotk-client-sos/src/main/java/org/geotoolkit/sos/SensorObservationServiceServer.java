@@ -17,50 +17,58 @@
 package org.geotoolkit.sos;
 
 import java.net.URL;
-
 import org.geotoolkit.client.AbstractServer;
+import org.geotoolkit.client.ServerFactory;
+import org.geotoolkit.client.ServerFinder;
+import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
-import org.geotoolkit.sos.v100.DescribeFeatureType100;
-import org.geotoolkit.sos.v100.DescribeObservationType100;
-import org.geotoolkit.sos.v100.DescribeResultModel100;
-import org.geotoolkit.sos.v100.DescribeSensor100;
-import org.geotoolkit.sos.v100.GetCapabilities100;
-import org.geotoolkit.sos.v100.GetFeatureOfInterest100;
-import org.geotoolkit.sos.v100.GetFeatureOfInterestTime100;
-import org.geotoolkit.sos.v100.GetObservation100;
-import org.geotoolkit.sos.v100.GetObservationById100;
-import org.geotoolkit.sos.v100.GetResult100;
+import org.geotoolkit.sos.v100.*;
 import org.geotoolkit.sos.xml.SOSVersion;
-
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
- * CSW server.
+ * SOS server.
  *
  * @author Cédric Briançon (Geomatys)
  * @module pending
  */
 public class SensorObservationServiceServer extends AbstractServer {
 
-    private final SOSVersion version;
 
     public SensorObservationServiceServer(final URL serverURL, final String version) {
         this(serverURL,null,version);
     }
     
     public SensorObservationServiceServer(final URL serverURL, final ClientSecurity security, final String version) {
-        super(serverURL,security);
+        super(create(SOSServerFactory.PARAMETERS, serverURL, security));
         if (version.equals("1.0.0")){
-            this.version = SOSVersion.v100;
+            Parameters.getOrCreate(SOSServerFactory.VERSION, parameters).setValue(version);
         } else {
             throw new IllegalArgumentException("unkonwed version : "+ version);
         }
+    }
+    
+    public SensorObservationServiceServer(final URL serverURL, final ClientSecurity security, final SOSVersion version) {
+        super(create(SOSServerFactory.PARAMETERS, serverURL, security));
+        if(version == null){
+            throw new IllegalArgumentException("unkonwed version : "+ version);
+        }
+    }
+    
+    public SensorObservationServiceServer(ParameterValueGroup params) {
+        super(params);
+    }
+
+    @Override
+    public ServerFactory getFactory() {
+        return ServerFinder.getFactoryById(SOSServerFactory.NAME);
     }
 
     /**
      * Returns the currently used version for this server
      */
     public SOSVersion getVersion() {
-        return version;
+        return SOSVersion.fromCode(Parameters.value(SOSServerFactory.VERSION, parameters));
     }
 
     /**
@@ -68,7 +76,7 @@ public class SensorObservationServiceServer extends AbstractServer {
      */
     public DescribeFeatureTypeRequest createDescribeFeatureType() {
 
-        switch (version) {
+        switch (getVersion()) {
             case v100:
                 return new DescribeFeatureType100(this);
             default:
@@ -81,7 +89,7 @@ public class SensorObservationServiceServer extends AbstractServer {
      */
     public DescribeObservationTypeRequest createDescribeObservationType() {
 
-        switch (version) {
+        switch (getVersion()) {
             case v100:
                 return new DescribeObservationType100(this);
             default:
@@ -94,7 +102,7 @@ public class SensorObservationServiceServer extends AbstractServer {
      */
     public DescribeResultModelRequest createDescribeResultModel() {
 
-        switch (version) {
+        switch (getVersion()) {
             case v100:
                 return new DescribeResultModel100(this);
             default:
@@ -107,7 +115,7 @@ public class SensorObservationServiceServer extends AbstractServer {
      */
     public DescribeSensorRequest createDescribeSensor() {
 
-        switch (version) {
+        switch (getVersion()) {
             case v100:
                 return new DescribeSensor100(this);
             default:
@@ -120,7 +128,7 @@ public class SensorObservationServiceServer extends AbstractServer {
      */
     public GetCapabilitiesRequest createGetCapabilities() {
 
-        switch (version) {
+        switch (getVersion()) {
             case v100:
                 return new GetCapabilities100(this);
             default:
@@ -133,7 +141,7 @@ public class SensorObservationServiceServer extends AbstractServer {
      */
     public GetFeatureOfInterestRequest createGetFeatureOfInterest() {
 
-        switch (version) {
+        switch (getVersion()) {
             case v100:
                 return new GetFeatureOfInterest100(this);
             default:
@@ -146,7 +154,7 @@ public class SensorObservationServiceServer extends AbstractServer {
      */
     public GetFeatureOfInterestTimeRequest createGetFeatureOfInterestTime() {
 
-        switch (version) {
+        switch (getVersion()) {
             case v100:
                 return new GetFeatureOfInterestTime100(this);
             default:
@@ -159,7 +167,7 @@ public class SensorObservationServiceServer extends AbstractServer {
      */
     public GetObservationRequest createGetObservation() {
 
-        switch (version) {
+        switch (getVersion()) {
             case v100:
                 return new GetObservation100(this);
             default:
@@ -172,7 +180,7 @@ public class SensorObservationServiceServer extends AbstractServer {
      */
     public GetObservationByIdRequest createGetObservationById() {
 
-        switch (version) {
+        switch (getVersion()) {
             case v100:
                 return new GetObservationById100(this);
             default:
@@ -185,7 +193,7 @@ public class SensorObservationServiceServer extends AbstractServer {
      */
     public GetResultRequest createGetResult() {
 
-        switch (version) {
+        switch (getVersion()) {
             case v100:
                 return new GetResult100(this);
             default:

@@ -208,8 +208,8 @@ public class SLD110Test extends TestCase{
         assertNotNull(pvt);
         
         assertEquals(pvt.getName(), "SLD : name");
-        assertEquals(pvt.getDescription().getTitle(), "SLD : title");
-        assertEquals(pvt.getDescription().getAbstract(), "SLD : abstract");
+        assertEquals(String.valueOf(pvt.getDescription().getTitle()), "SLD : title");
+        assertEquals(String.valueOf(pvt.getDescription().getAbstract()), "SLD : abstract");
         
         //layers
         assertEquals(pvt.getNamedLayerOrUserLayer().size(), 2);
@@ -217,8 +217,8 @@ public class SLD110Test extends TestCase{
         //Named Layer-----------------------------------------------------------
         org.geotoolkit.sld.xml.v110.NamedLayer nlt = (org.geotoolkit.sld.xml.v110.NamedLayer) pvt.getNamedLayerOrUserLayer().get(0);
         assertEquals(nlt.getName(), "Named layer : name");
-        assertEquals(nlt.getDescription().getTitle(), "Named layer : title");
-        assertEquals(nlt.getDescription().getAbstract(), "Named layer : abstract");
+        assertEquals(String.valueOf(nlt.getDescription().getTitle()), "Named layer : title");
+        assertEquals(String.valueOf(nlt.getDescription().getAbstract()), "Named layer : abstract");
         
         List<org.geotoolkit.sld.xml.v110.FeatureTypeConstraint> constr = nlt.getLayerFeatureConstraints().getFeatureTypeConstraint();
         assertEquals(constr.size(), 1);
@@ -243,14 +243,14 @@ public class SLD110Test extends TestCase{
         assertEquals(nlt.getNamedStyleOrUserStyle().size(), 1);
         org.geotoolkit.sld.xml.v110.NamedStyle nst = (org.geotoolkit.sld.xml.v110.NamedStyle) nlt.getNamedStyleOrUserStyle().get(0);
         assertEquals(nst.getName(), "Named style : name");
-        assertEquals(nst.getDescription().getTitle(), "Named style : title");
-        assertEquals(nst.getDescription().getAbstract(), "Named style : abstract");
+        assertEquals(String.valueOf(nst.getDescription().getTitle()), "Named style : title");
+        assertEquals(String.valueOf(nst.getDescription().getAbstract()), "Named style : abstract");
         
         //User Layer------------------------------------------------------------
         org.geotoolkit.sld.xml.v110.UserLayer ulx = (org.geotoolkit.sld.xml.v110.UserLayer)pvt.getNamedLayerOrUserLayer().get(1);
         assertEquals(ulx.getName(), "User layer : name");
-        assertEquals(ulx.getDescription().getTitle(), "User layer : title");
-        assertEquals(ulx.getDescription().getAbstract(), "User layer : abstract");
+        assertEquals(String.valueOf(ulx.getDescription().getTitle()), "User layer : title");
+        assertEquals(String.valueOf(ulx.getDescription().getAbstract()), "User layer : abstract");
         
         org.geotoolkit.sld.xml.v110.RemoteOWS sourcex = (org.geotoolkit.sld.xml.v110.RemoteOWS) ulx.getRemoteOWS();
         assertEquals(sourcex.getService(), "WFS");

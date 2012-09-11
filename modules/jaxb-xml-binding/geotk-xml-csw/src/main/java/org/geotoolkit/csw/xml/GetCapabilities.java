@@ -25,6 +25,6 @@ import org.geotoolkit.ows.xml.AbstractGetCapabilities;
  */
 public interface GetCapabilities extends AbstractGetCapabilities {
 
-    public String getService();
+    String getService();
 
 }

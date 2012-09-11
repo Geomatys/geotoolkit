@@ -25,6 +25,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.pending.demo.symbology.Styles;
 import org.geotoolkit.sld.xml.Specification.SymbologyEncoding;
 import org.geotoolkit.sld.xml.XMLUtilities;
@@ -41,7 +42,8 @@ public class LegendDemo {
                                                    new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
 
     public static void main(String[] args) throws PortrayalException, JAXBException, FactoryException, URISyntaxException {
-
+        Demos.init();
+        
         //generate a map context
         final MapContext context = createContext();
 

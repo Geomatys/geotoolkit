@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Johann Sorel
+ *    (C) 2009-2012, Johann Sorel
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -25,12 +25,12 @@ import org.opengis.display.primitive.Graphic;
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
-public abstract class A3DGraphic extends Node implements Graphic{
+public class A3DGraphic extends Node implements Graphic{
 
     protected final A3DCanvas canvas;
     protected boolean visible = true;
 
-    protected A3DGraphic(final A3DCanvas canvas){
+    public A3DGraphic(final A3DCanvas canvas){
         this.canvas = canvas;
     }
 
@@ -46,6 +46,7 @@ public abstract class A3DGraphic extends Node implements Graphic{
 
     @Override
     public void dispose() {
+        removeFromParent();
     }
 
 }

@@ -40,6 +40,7 @@ public class JAnchorPointPane extends StyleElementEditor<AnchorPoint>{
 
     /** Creates new form JDisplacementPanel */
     public JAnchorPointPane() {
+        super(AnchorPoint.class);
         initComponents();
         init();
     }

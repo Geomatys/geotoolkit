@@ -18,6 +18,17 @@
 
 
     <dependencies>
+        <dependency>
+            <groupId>org.geotoolkit.pending</groupId>
+            <artifactId>geotk-index-tree</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.geotoolkit.pending</groupId>
+            <artifactId>geotk-xml-wmc</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.geotoolkit</groupId>
@@ -26,7 +37,6 @@
         <dependency>
             <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-epsg-javadb</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.geotoolkit</groupId>
@@ -65,7 +75,17 @@
         </dependency>
         <dependency>
             <groupId>org.geotoolkit.pending</groupId>
+            <artifactId>geotk-client-ncwms</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotoolkit.pending</groupId>
             <artifactId>geotk-client-osm-tms</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotoolkit.pending</groupId>
+            <artifactId>geotk-client-csw</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -83,6 +103,11 @@
             <artifactId>geotk-client-wmsc</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.geotoolkit.pending</groupId>
+            <artifactId>geotk-client-wmts</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 	<dependency>
             <groupId>org.geotoolkit.pending</groupId>
             <artifactId>geotk-client-sos</artifactId>
@@ -96,6 +121,11 @@
         <dependency>
             <groupId>org.geotoolkit.pending</groupId>
             <artifactId>geotk-coverageio-geotiff</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotoolkit</groupId>
+            <artifactId>geotk-coverageio-netcdf</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -117,7 +147,18 @@
         </dependency>
         <dependency>
             <groupId>org.geotoolkit.pending</groupId>
+            <artifactId>geotk-processing-math</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotoolkit.pending</groupId>
             <artifactId>geotk-processing-coverage</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.geotoolkit</groupId>
+            <artifactId>geotk-utility</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -137,6 +178,11 @@
         <dependency>
             <groupId>org.geotoolkit.pending</groupId>
             <artifactId>geotk-gpx</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotoolkit.pending</groupId>
+            <artifactId>geotk-csv</artifactId>
             <version>${project.version}</version>
         </dependency>
 

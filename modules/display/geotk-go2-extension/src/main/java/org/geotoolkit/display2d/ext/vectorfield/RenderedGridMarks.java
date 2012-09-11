@@ -214,7 +214,7 @@ public class RenderedGridMarks extends RenderedMarks {
      * @param coverage The grid coverage, or <code>null</code> if none.
      */
     public RenderedGridMarks(final J2DCanvas canvas,final GridCoverage2D cover) {
-        super(canvas, cover.getCoordinateReferenceSystem2D());
+        super(canvas);
         ensureNonNull("coverage", cover);
         
         //we reproject in 2D CRS
@@ -238,7 +238,6 @@ public class RenderedGridMarks extends RenderedMarks {
                 markShape = DEFAULT_SHAPE_2D;
             }
             
-            setEnvelope(this.coverage.getEnvelope());
             initGridCoverage(coverage);
         } catch (TransformException exception) {
             exception.printStackTrace();

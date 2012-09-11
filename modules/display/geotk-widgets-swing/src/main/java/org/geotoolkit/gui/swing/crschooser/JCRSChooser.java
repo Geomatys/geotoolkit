@@ -17,38 +17,71 @@
  */
 package org.geotoolkit.gui.swing.crschooser;
 
-import java.awt.BorderLayout;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LinearRing;
+import com.vividsolutions.jts.geom.Polygon;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.geom.NoninvertibleTransformException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.GroupLayout;
+import javax.measure.unit.NonSI;
+import javax.measure.unit.Unit;
+import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.SwingConstants;
-import javax.swing.WindowConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import org.geotoolkit.data.DataUtilities;
+import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
+import org.geotoolkit.display2d.canvas.painter.BackgroundPainter;
+import org.geotoolkit.display2d.canvas.painter.BackgroundPainterGroup;
+import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
+import org.geotoolkit.display2d.ext.grid.DefaultGridTemplate;
+import org.geotoolkit.display2d.ext.grid.GridPainter;
+import org.geotoolkit.display2d.ext.grid.GridTemplate;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.FeatureTypeBuilder;
+import org.geotoolkit.feature.FeatureUtilities;
+import org.geotoolkit.gui.swing.go2.JMap2D;
+import org.geotoolkit.gui.swing.go2.control.JNavigationBar;
+import org.geotoolkit.gui.swing.go2.control.navigation.PanHandler;
 
 import org.geotoolkit.gui.swing.resource.MessageBundle;
-import org.geotoolkit.io.wkt.UnformattableObjectException;
+import org.geotoolkit.io.X364;
+import org.geotoolkit.io.wkt.Colors;
+import org.geotoolkit.io.wkt.WKTFormat;
+import org.geotoolkit.map.MapBuilder;
+import org.geotoolkit.map.MapContext;
+import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.resources.Vocabulary;
+import org.geotoolkit.sld.DefaultSLDFactory;
+import org.geotoolkit.sld.MutableSLDFactory;
+import org.geotoolkit.style.MutableStyle;
+import org.geotoolkit.style.MutableStyleFactory;
+import org.geotoolkit.style.StyleConstants;
+import org.opengis.feature.Feature;
+import org.opengis.feature.type.FeatureType;
+import org.opengis.filter.FilterFactory;
+import org.opengis.filter.expression.Expression;
+import org.opengis.geometry.Envelope;
 
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.style.Description;
+import org.opengis.style.LineSymbolizer;
 
 /**
  * CRSChooser component
@@ -116,6 +149,29 @@ public class JCRSChooser extends javax.swing.JDialog {
             }
         }.start();
         
+        wktArea.setEditable(false);
+        wktArea.setContentType("text/html");
+        
+        guiMap.getCanvas().setRenderingHint(GO2Hints.KEY_GENERALIZE, false);
+        guiMap.getCanvas().setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
+                                            RenderingHints.VALUE_ANTIALIAS_ON);
+        guiMap.getContainer().setContext(MapBuilder.createContext());
+        guiNav.setMap(guiMap);
+        guiMap.setHandler(new PanHandler(guiMap));
+        
+        GridTemplate gridTemplate = new DefaultGridTemplate(
+                        DefaultGeographicCRS.WGS84,
+                        new BasicStroke(1.2f),
+                        new Color(120,120,120,200),
+                        new BasicStroke(1,BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 3, new float[]{5,5}, 0),
+                        new Color(120,120,120,60),
+                        new Font("serial", Font.BOLD, 10),Color.GRAY,0,Color.WHITE,
+                        new Font("serial", Font.ITALIC, 8),Color.GRAY,0,Color.WHITE);
+
+        BackgroundPainter bgWhite = new SolidColorPainter(Color.WHITE);
+        guiMap.getCanvas().setBackgroundPainter(BackgroundPainterGroup.wrap(bgWhite ,new GridPainter(gridTemplate)));
+
+        
     }
 
     public void setCRS(final CoordinateReferenceSystem crs) {
@@ -144,34 +200,115 @@ public class JCRSChooser extends javax.swing.JDialog {
     }
 
     private void setIdentifiedObject(final IdentifiedObject item) {
-        String text = "";
+        final WKTFormat formatter = new WKTFormat();
+        formatter.setColors(Colors.DEFAULT);        
+        
+        final StringBuilder buffer = new StringBuilder();
+        /*
+         * Set the Well Known Text (WKT) panel using the following steps:
+         *
+         *  1) Write the warning if there is one.
+         *  2) Replace the X3.64 escape sequences by HTML colors.
+         *  3) Turn quoted WKT names ("foo") in italic characters.
+         */
+        buffer.setLength(0);
+        buffer.append("<html>");
+        String text, warning;
         try {
-            if (item != null) {
-                text = item.toWKT();
-            }
-        } catch (UnsupportedOperationException e) {
-            text = e.getLocalizedMessage();
-            if (text == null) {
-                text = Classes.getShortClassName(e);
-            }
-            final String lineSeparator = System.getProperty("line.separator", "\n");
-            if (e instanceof UnformattableObjectException) {
-                text = Vocabulary.format(Vocabulary.Keys.WARNING) + ": " + text +
-                        lineSeparator + lineSeparator + item + lineSeparator;
-            } else {
-                text = Vocabulary.format(Vocabulary.Keys.ERROR) + ": " + text + lineSeparator;
-            }
+            text = formatter.format(item);
+            warning = formatter.getWarning();
+        } catch (RuntimeException e) {
+            text = String.valueOf((item!=null)?item.getName():"");
+            warning = e.getLocalizedMessage();
         }
-        wktArea.setText(text);
+        if (warning != null) {
+            buffer.append("<p><b>").append(Vocabulary.getResources(getLocale()).getString(Vocabulary.Keys.WARNING))
+                    .append(":</b> ").append(warning).append("</p><hr>\n");
+        }
+        buffer.append("<pre>");
+        // '\u001A' is the SUBSTITUTE character. We use it as a temporary replacement for avoiding
+        // confusion between WKT quotes and HTML quotes while we search for text to make italic.
+        makeItalic(X364.toHTML(text.replace('"', '\u001A')), buffer, '\u001A');
+        wktArea.setText(buffer.append("</pre></html>").toString());
+        
+        
+        //update map area
+        final MapContext ctx = guiMap.getContainer().getContext();
+        ctx.layers().clear();
+        
+        if(item instanceof CoordinateReferenceSystem){
+            final Envelope env = CRS.getEnvelope((CoordinateReferenceSystem)item);
+            
+            if(env != null){
+                final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+                ftb.setName("validity");
+                ftb.add("geom", Polygon.class,env.getCoordinateReferenceSystem());
+                final FeatureType type = ftb.buildFeatureType();            
+                final GeometryFactory GF = new GeometryFactory();
+                final FilterFactory FF = FactoryFinder.getFilterFactory(null);
+                final MutableStyleFactory SF = (MutableStyleFactory) FactoryFinder.getStyleFactory(
+                                                   new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
+                
+                final LinearRing ring = GF.createLinearRing(new Coordinate[]{
+                                    new Coordinate(env.getMinimum(0), env.getMinimum(1)),
+                                    new Coordinate(env.getMinimum(0), env.getMaximum(1)),
+                                    new Coordinate(env.getMaximum(0), env.getMaximum(1)),
+                                    new Coordinate(env.getMaximum(0), env.getMinimum(1)),
+                                    new Coordinate(env.getMinimum(0), env.getMinimum(1))});
+                final Polygon polygon = GF.createPolygon(ring, new LinearRing[0]);                
+                final Feature feature = FeatureUtilities.defaultFeature(type, "0");
+                feature.getProperty("geom").setValue(polygon);
+                final FeatureCollection col = DataUtilities.collection(feature);
+                
+                //general informations
+                final String name = "mySymbol";
+                final Description desc = StyleConstants.DEFAULT_DESCRIPTION;
+                final String geometry = null; //use the default geometry of the feature
+                final Unit unit = NonSI.PIXEL;
+                final Expression offset = StyleConstants.LITERAL_ZERO_FLOAT;
+                //the visual element
+                final Expression color = SF.literal(Color.BLUE);
+                final Expression width = FF.literal(2);
+                final Expression opacity = StyleConstants.LITERAL_ONE_FLOAT;
+                final org.opengis.style.Stroke stroke = SF.stroke(color,width,opacity);
+                final LineSymbolizer symbolizer = SF.lineSymbolizer(name,geometry,desc,unit,stroke,offset);
+                final MutableStyle style = SF.style(symbolizer);
+                
+                final MapLayer layer = MapBuilder.createFeatureLayer(col, style);
+                ctx.layers().add(layer);
+                try {
+                    guiMap.getCanvas().getController().setVisibleArea(env);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+            
+        }
     }
 
+    /**
+     * Copies the given text in the given buffer, while putting the quoted text in italic.
+     * The quote character is given by the {@code quote} argument and will be replaced by
+     * the usual {@code "} character.
+     */
+    private static void makeItalic(final String text, final StringBuilder buffer, final char quote) {
+        boolean isQuoting = false;
+        int last = 0;
+        for (int i=text.indexOf(quote); i>=0; i=text.indexOf(quote, last)) {
+            buffer.append(text.substring(last, i)).append(isQuoting ? "</cite>\"" : "\"<cite>");
+            isQuoting = !isQuoting;
+            last = i+1;
+        }
+        buffer.append(text.substring(last));
+    }
+    
     /**
      * Sets an error message to display instead of the current identified object.
      *
      * @param message The error message.
      */
     private void setErrorMessage(final String message) {
-        wktArea.setText(Vocabulary.format(Vocabulary.Keys.ERROR_$1, message));
+        wktArea.setText("<html>"+Vocabulary.format(Vocabulary.Keys.ERROR_$1, message)+"</html>");
     }
 
     public ACTION showDialog() {
@@ -190,9 +327,6 @@ public class JCRSChooser extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-
-
-
         jTabbedPane1 = new JTabbedPane();
         jPanel1 = new JPanel();
         jLabel1 = new JLabel();
@@ -200,14 +334,17 @@ public class JCRSChooser extends javax.swing.JDialog {
         pan_list = new JPanel();
         guiForceLongitudeFirst = new JCheckBox();
         jPanel2 = new JPanel();
-        jScrollPane1 = new JScrollPane();
-        wktArea = new JTextArea();
+        jScrollPane2 = new JScrollPane();
+        wktArea = new JEditorPane();
+        jPanel3 = new JPanel();
+        guiMap = new JMap2D();
+        guiNav = new JNavigationBar();
         but_valider = new JButton();
         but_fermer = new JButton();
 
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle(MessageBundle.getString("crschooser_title")); // NOI18N
-        jLabel1.setText(MessageBundle.getString("crschooser_crs")); // NOI18N
+        setTitle(MessageBundle.getString("crschooser_title")); 
+        jLabel1.setText(MessageBundle.getString("crschooser_crs")); 
         gui_jtf_crs.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 gui_jtf_crsActionPerformed(evt);
@@ -221,7 +358,7 @@ public class JCRSChooser extends javax.swing.JDialog {
 
         pan_list.setLayout(new BorderLayout());
 
-        guiForceLongitudeFirst.setText(MessageBundle.getString("force_longitude_first")); // NOI18N
+        guiForceLongitudeFirst.setText(MessageBundle.getString("force_longitude_first")); 
         GroupLayout jPanel1Layout = new GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -230,10 +367,8 @@ public class JCRSChooser extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(Alignment.TRAILING)
                     .addComponent(pan_list, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 429, Short.MAX_VALUE)
-                    .addComponent(gui_jtf_crs, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 429, Short.MAX_VALUE)
-                    .addGroup(Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(21, 21, 21))
+                    .addComponent(gui_jtf_crs, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 436, Short.MAX_VALUE)
+                    .addComponent(jLabel1, Alignment.LEADING)
                     .addComponent(guiForceLongitudeFirst, Alignment.LEADING))
                 .addContainerGap())
         );
@@ -247,45 +382,41 @@ public class JCRSChooser extends javax.swing.JDialog {
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(guiForceLongitudeFirst)
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(pan_list, GroupLayout.DEFAULT_SIZE, 175, Short.MAX_VALUE)
+                .addComponent(pan_list, GroupLayout.DEFAULT_SIZE, 176, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        jTabbedPane1.addTab(MessageBundle.getString("crschooser_list"), jPanel1); // NOI18N
-
-        wktArea.setColumns(20);
-        wktArea.setEditable(false);
-        wktArea.setRows(5);
-        jScrollPane1.setViewportView(wktArea);
+        jTabbedPane1.addTab(MessageBundle.getString("crschooser_list"), jPanel1); 
+        jScrollPane2.setViewportView(wktArea);
 
         GroupLayout jPanel2Layout = new GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
-
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 429, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(jScrollPane2)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 257, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(jScrollPane2, GroupLayout.DEFAULT_SIZE, 284, Short.MAX_VALUE)
         );
 
-        jTabbedPane1.addTab(MessageBundle.getString("crschooser_wkt"), jPanel2); // NOI18N
-        but_valider.setText(MessageBundle.getString("crschooser_apply")); // NOI18N
-        but_valider.addActionListener(new ActionListener() {
+        jTabbedPane1.addTab(MessageBundle.getString("crschooser_wkt"), jPanel2); 
+        jPanel3.setLayout(new BorderLayout());
+        jPanel3.add(guiMap, BorderLayout.CENTER);
+
+        guiNav.setFloatable(false);
+        guiNav.setOrientation(1);
+        guiNav.setRollover(true);
+        jPanel3.add(guiNav, BorderLayout.EAST);
+
+        jTabbedPane1.addTab(MessageBundle.getString("area_validity"), jPanel3); 
+        but_valider.setText(MessageBundle.getString("crschooser_apply"));         but_valider.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 but_valideractionAjouter(evt);
             }
         });
 
-        but_fermer.setText(MessageBundle.getString("crschooser_cancel")); // NOI18N
-        but_fermer.addActionListener(new ActionListener() {
+        but_fermer.setText(MessageBundle.getString("crschooser_cancel"));         but_fermer.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 but_fermeractionFermer(evt);
             }
@@ -296,17 +427,17 @@ public class JCRSChooser extends javax.swing.JDialog {
         layout.setHorizontalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addGroup(Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(352, Short.MAX_VALUE)
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(but_valider)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(but_fermer)
                 .addContainerGap())
-            .addComponent(jTabbedPane1, GroupLayout.DEFAULT_SIZE, 469, Short.MAX_VALUE)
+            .addComponent(jTabbedPane1)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addGroup(Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(jTabbedPane1, GroupLayout.DEFAULT_SIZE, 328, Short.MAX_VALUE)
+                .addComponent(jTabbedPane1)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(but_fermer)
@@ -337,13 +468,16 @@ public class JCRSChooser extends javax.swing.JDialog {
     private JButton but_fermer;
     private JButton but_valider;
     private JCheckBox guiForceLongitudeFirst;
+    private JMap2D guiMap;
+    private JNavigationBar guiNav;
     private JTextField gui_jtf_crs;
     private JLabel jLabel1;
     private JPanel jPanel1;
     private JPanel jPanel2;
-    private JScrollPane jScrollPane1;
+    private JPanel jPanel3;
+    private JScrollPane jScrollPane2;
     private JTabbedPane jTabbedPane1;
     private JPanel pan_list;
-    private JTextArea wktArea;
+    private JEditorPane wktArea;
     // End of variables declaration//GEN-END:variables
 }

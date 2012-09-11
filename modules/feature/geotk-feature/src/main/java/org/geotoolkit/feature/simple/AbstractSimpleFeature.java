@@ -30,6 +30,7 @@ import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureValidationUtilities;
 import org.geotoolkit.feature.SimpleIllegalAttributeException;
 import org.geotoolkit.io.TableWriter;
+import org.geotoolkit.util.Utilities;
 
 import org.opengis.feature.GeometryAttribute;
 import org.opengis.feature.IllegalAttributeException;
@@ -170,7 +171,7 @@ public abstract class AbstractSimpleFeature extends AbstractFeature<List<Propert
             return null;
         }
     }
-    
+
     @Override
     public Object getAttribute(final int idx) throws IndexOutOfBoundsException {
         return getProperties().get(idx).getValue();
@@ -193,7 +194,7 @@ public abstract class AbstractSimpleFeature extends AbstractFeature<List<Propert
                 return getAttribute(defaultGeomIndex.intValue());
             }
         }
-        
+
         return null;
     }
 
@@ -290,6 +291,16 @@ public abstract class AbstractSimpleFeature extends AbstractFeature<List<Propert
 
         for (int i=0,n=type.getAttributeCount(); i<n; i++) {
             final AttributeDescriptor descriptor = type.getDescriptor(i);
+            //check for attribute identifier
+//            if(properties.get(i) instanceof Attribute){
+//                Attribute toTest = (Attribute)properties.get(i);
+//                for(int j = i+1 ; j < n ; j++){
+//                    if(properties.get(j) instanceof Attribute){
+//                        if(toTest.getIdentifier().equals(((Attribute)properties.get(j)).getIdentifier()))
+//                            throw new IllegalAttributeException(descriptor, toTest, "We can't have two attributes with the same identifier");
+//                    }
+//                }
+//            }
             FeatureValidationUtilities.validate(descriptor, properties.get(i).getValue());
         }
     }
@@ -319,12 +330,19 @@ public abstract class AbstractSimpleFeature extends AbstractFeature<List<Propert
         for(Property prop : getProperties()){
             tablewriter.write(DefaultName.toJCRExtendedForm(prop.getName()));
             tablewriter.write("\t");
-            tablewriter.write(String.valueOf(prop.getValue()));
+            Object value = prop.getValue();
+            if(value != null && value.getClass().isArray()){
+                value = Utilities.deepToString(value);
+            }else{
+                value = String.valueOf(value);
+            }
+
+            tablewriter.write((String)value);
             tablewriter.write("\n");
         }
-        
+
         tablewriter.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
-        
+
         try {
             tablewriter.flush();
             writer.flush();

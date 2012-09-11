@@ -62,7 +62,7 @@ import org.opengis.geometry.primitive.Point;
     "coordinates"
 })
 @XmlRootElement(name="Point")
-public class PointType extends AbstractGeometricPrimitiveType implements Point {
+public class PointType extends AbstractGeometricPrimitiveType implements Point,  org.geotoolkit.gml.xml.Point {
 
     private DirectPositionType pos;
     private CoordinatesType coordinates;

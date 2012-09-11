@@ -27,7 +27,7 @@ import org.geotoolkit.storage.DataStoreException;
  * @author Guilhem Legal (Geomatys)
  * @author Johann Sorel (Geomatys)
  */
-public interface XmlFeatureWriter {
+public interface XmlFeatureWriter extends Configurable {
 
     /**
      * Write an XML representation of the specified feature collection or feature

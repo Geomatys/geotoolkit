@@ -23,7 +23,9 @@ import java.util.regex.Pattern;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.DefaultAssociation;
 import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.util.Converters;
 import org.geotoolkit.util.collection.Cache;
+import org.opengis.feature.Attribute;
 import org.opengis.feature.ComplexAttribute;
 import org.opengis.feature.Feature;
 
@@ -57,6 +59,7 @@ public final class DefaultFeaturePropertyAccessorFactory implements PropertyAcce
     private static final PropertyAccessor DEFAULT_GEOMETRY_ACCESS = new DefaultGeometrySimpleFeaturePropertyAccessor();
     private static final PropertyAccessor FID_ACCESS = new FidSimpleFeaturePropertyAccessor();
     private static final PropertyAccessor XNUM_ACCESS = new XNumPropertyAccessor();
+    private static final PropertyAccessor ATT_ACCESS = new IdentityAccessor();
     private static final Pattern ID_PATTERN       = Pattern.compile("@(\\w+:)?id");
     private static final Pattern PROPERTY_PATTERN = Pattern.compile("(\\w+:)?(.+)");
     private static final Cache<String,PropertyAccessor> CACHE = new Cache<String, PropertyAccessor>();
@@ -72,6 +75,11 @@ public final class DefaultFeaturePropertyAccessorFactory implements PropertyAcce
         }
 
         if (!ComplexAttribute.class.isAssignableFrom(type) && !ComplexType.class.isAssignableFrom(type)) {
+            
+            if(ATT_ACCESS.canHandle(type, xpath, target)){
+                return ATT_ACCESS;
+            }
+            
             return null; // we only work with feature
         }
 
@@ -184,8 +192,16 @@ public final class DefaultFeaturePropertyAccessorFactory implements PropertyAcce
 
         @Override
         public Object get(final Object object, final String xpath, final Class target) {
-            final ComplexAttribute feature = (ComplexAttribute) object;
-            return feature.getIdentifier().getID();
+            if(object instanceof ComplexAttribute){
+                final ComplexAttribute feature = (ComplexAttribute) object;
+                return feature.getIdentifier().getID();
+            }else if(object instanceof FeatureType){
+                final FeatureType ft = (FeatureType) object;
+                if(ft.isIdentified()){
+                    return true;
+                }
+            }
+            return null;
         }
 
         @Override
@@ -376,5 +392,32 @@ public final class DefaultFeaturePropertyAccessorFactory implements PropertyAcce
         }
     }
 
+    static class IdentityAccessor implements PropertyAccessor{
 
+        @Override
+        public boolean canHandle(Class clazz, String xpath, Class target) {
+            xpath = stripPrefix(xpath);
+            return ".".equalsIgnoreCase(xpath);
+        }
+
+        @Override
+        public Object get(Object object, String xpath, Class target) throws IllegalArgumentException {
+            if(object instanceof Attribute){
+                if(Property.class.isAssignableFrom(target)){
+                    return object;
+                }else{
+                    return ((Attribute)object).getValue();
+                }
+            }
+            return Converters.convert(object, target);
+        }
+
+        @Override
+        public void set(Object object, String xpath, Object value, Class target) throws IllegalArgumentException {
+            if(object instanceof Attribute){
+                ((Attribute)object).setValue(value);
+            }
+        }
+        
+    }
 }

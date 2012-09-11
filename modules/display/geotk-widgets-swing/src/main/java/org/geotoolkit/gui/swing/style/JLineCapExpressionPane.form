@@ -38,13 +38,11 @@
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="103" groupAlignment="1" max="-2" attributes="0">
-              <Component id="guiSpecial" linkSize="2" alignment="1" min="-2" pref="26" max="-2" attributes="0"/>
-              <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
-                  <Component id="guiRound" linkSize="2" alignment="0" max="32767" attributes="1"/>
-                  <Component id="guiSquare" linkSize="2" alignment="0" max="32767" attributes="1"/>
-                  <Component id="guiButt" linkSize="2" alignment="0" min="-2" max="-2" attributes="1"/>
-              </Group>
+          <Component id="guiSpecial" linkSize="2" alignment="1" min="-2" pref="26" max="-2" attributes="0"/>
+          <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
+              <Component id="guiRound" linkSize="2" alignment="0" max="32767" attributes="1"/>
+              <Component id="guiSquare" linkSize="2" alignment="0" max="32767" attributes="1"/>
+              <Component id="guiButt" linkSize="2" alignment="0" min="-2" max="-2" attributes="1"/>
           </Group>
       </Group>
     </DimensionLayout>

@@ -52,7 +52,7 @@ public class GetLegendGraphicTest {
         }
         final String sUrl = url.toString();
         assertTrue(sUrl.startsWith("http://test.com?"));
-        assertTrue(sUrl.contains("FORMAT=image/png"));
+        assertTrue(sUrl.contains("FORMAT=image%2Fpng"));
         assertTrue(sUrl.contains("WIDTH=140"));
         assertTrue(sUrl.contains("HEIGHT=20"));
         assertTrue(sUrl.contains("LAYER=test"));
@@ -78,12 +78,12 @@ public class GetLegendGraphicTest {
         }
         final String sUrl = url.toString();
         assertTrue(sUrl.startsWith("http://test.com?"));
-        assertTrue(sUrl.contains("FORMAT=image/png"));
+        assertTrue(sUrl.contains("FORMAT=image%2Fpng"));
         assertTrue(sUrl.contains("WIDTH=140"));
         assertTrue(sUrl.contains("HEIGHT=20"));
         assertTrue(sUrl.contains("LAYER=test"));
     }
-    
+
     /**
      * Ensures the {@link GetLegend111#getURL()} method returns a well-built url,
      * with the parameters given.
@@ -103,7 +103,7 @@ public class GetLegendGraphicTest {
         legend.dimensions().put("TIME", "20-20-20T20:20:20Z");
         legend.dimensions().put("ELEVATION", "500");
         legend.dimensions().put("DIMRANGE", "-50,50");
-        
+
         final URL url;
         try {
             url = legend.getURL();
@@ -112,24 +112,24 @@ public class GetLegendGraphicTest {
             return;
         }
         final String sUrl = url.toString();
-        assertTrue(sUrl.startsWith("http://test.com?"));
-        assertTrue(sUrl.contains("SERVICE=WMS"));
-        assertTrue(sUrl.contains("VERSION=1.1.1"));
-        assertTrue(sUrl.contains("REQUEST=GetLegendGraphic"));
-        assertTrue(sUrl.contains("FORMAT=image/png"));
-        assertTrue(sUrl.contains("EXCEPTIONS=application/test"));
-        assertTrue(sUrl.contains("LAYER=test"));
-        assertTrue(sUrl.contains("STYLE=test"));
-        assertTrue(sUrl.contains("WIDTH=140"));
-        assertTrue(sUrl.contains("HEIGHT=20"));
-        assertTrue(sUrl.contains("RULE=test"));
-        assertTrue(sUrl.contains("SCALE=2500"));
-        assertTrue(sUrl.contains("SLD_VERSION=3.3.3"));
-        assertTrue(sUrl.contains("TIME=20-20-20T20:20:20Z"));
-        assertTrue(sUrl.contains("ELEVATION=500"));
-        assertTrue(sUrl.contains("DIMRANGE=-50,50"));
+        assertTrue("was:" + sUrl, sUrl.startsWith("http://test.com?"));
+        assertTrue("was:" + sUrl, sUrl.contains("SERVICE=WMS"));
+        assertTrue("was:" + sUrl, sUrl.contains("VERSION=1.1.1"));
+        assertTrue("was:" + sUrl, sUrl.contains("REQUEST=GetLegendGraphic"));
+        assertTrue("was:" + sUrl, sUrl.contains("FORMAT=image%2Fpng"));
+        assertTrue("was:" + sUrl, sUrl.contains("EXCEPTIONS=application%2Ftest"));
+        assertTrue("was:" + sUrl, sUrl.contains("LAYER=test"));
+        assertTrue("was:" + sUrl, sUrl.contains("STYLE=test"));
+        assertTrue("was:" + sUrl, sUrl.contains("WIDTH=140"));
+        assertTrue("was:" + sUrl, sUrl.contains("HEIGHT=20"));
+        assertTrue("was:" + sUrl, sUrl.contains("RULE=test"));
+        assertTrue("was:" + sUrl, sUrl.contains("SCALE=2500"));
+        assertTrue("was:" + sUrl, sUrl.contains("SLD_VERSION=3.3.3"));
+        assertTrue("was:" + sUrl, sUrl.contains("TIME=20-20-20T20%3A20%3A20Z"));
+        assertTrue("was:" + sUrl, sUrl.contains("ELEVATION=500"));
+        assertTrue("was:" + sUrl, sUrl.contains("DIMRANGE=-50%2C50"));
     }
-    
+
     /**
      * Ensures the {@link GetLegend130#getURL()} method returns a well-built url,
      * with the parameters given.
@@ -149,7 +149,7 @@ public class GetLegendGraphicTest {
         legend.dimensions().put("TIME", "20-20-20T20:20:20Z");
         legend.dimensions().put("ELEVATION", "500");
         legend.dimensions().put("DIMRANGE", "-50,50");
-        
+
         final URL url;
         try {
             url = legend.getURL();
@@ -158,22 +158,22 @@ public class GetLegendGraphicTest {
             return;
         }
         final String sUrl = url.toString();
-        assertTrue(sUrl.startsWith("http://test.com?"));
-        assertTrue(sUrl.contains("SERVICE=WMS"));
-        assertTrue(sUrl.contains("VERSION=1.3.0"));
-        assertTrue(sUrl.contains("REQUEST=GetLegendGraphic"));
-        assertTrue(sUrl.contains("FORMAT=image/png"));
-        assertTrue(sUrl.contains("EXCEPTIONS=application/test"));
-        assertTrue(sUrl.contains("LAYER=test"));
-        assertTrue(sUrl.contains("STYLE=test"));
-        assertTrue(sUrl.contains("WIDTH=140"));
-        assertTrue(sUrl.contains("HEIGHT=20"));
-        assertTrue(sUrl.contains("RULE=test"));
-        assertTrue(sUrl.contains("SCALE=2500"));
-        assertTrue(sUrl.contains("SLD_VERSION=3.3.3"));
-        assertTrue(sUrl.contains("TIME=20-20-20T20:20:20Z"));
-        assertTrue(sUrl.contains("ELEVATION=500"));
-        assertTrue(sUrl.contains("DIMRANGE=-50,50"));
+        assertTrue("was:" + sUrl, sUrl.startsWith("http://test.com?"));
+        assertTrue("was:" + sUrl, sUrl.contains("SERVICE=WMS"));
+        assertTrue("was:" + sUrl, sUrl.contains("VERSION=1.3.0"));
+        assertTrue("was:" + sUrl, sUrl.contains("REQUEST=GetLegendGraphic"));
+        assertTrue("was:" + sUrl, sUrl.contains("FORMAT=image%2Fpng"));
+        assertTrue("was:" + sUrl, sUrl.contains("EXCEPTIONS=application%2Ftest"));
+        assertTrue("was:" + sUrl, sUrl.contains("LAYER=test"));
+        assertTrue("was:" + sUrl, sUrl.contains("STYLE=test"));
+        assertTrue("was:" + sUrl, sUrl.contains("WIDTH=140"));
+        assertTrue("was:" + sUrl, sUrl.contains("HEIGHT=20"));
+        assertTrue("was:" + sUrl, sUrl.contains("RULE=test"));
+        assertTrue("was:" + sUrl, sUrl.contains("SCALE=2500"));
+        assertTrue("was:" + sUrl, sUrl.contains("SLD_VERSION=3.3.3"));
+        assertTrue("was:" + sUrl, sUrl.contains("TIME=20-20-20T20%3A20%3A20Z"));
+        assertTrue("was:" + sUrl, sUrl.contains("ELEVATION=500"));
+        assertTrue("was:" + sUrl, sUrl.contains("DIMRANGE=-50%2C50"));
     }
     /**
      * Ensures the {@link GetLegend111#getURL()} method returns a well-built url,
@@ -187,7 +187,7 @@ public class GetLegendGraphicTest {
         legend.setLayer("test");
         legend.setStyle("test");
         legend.setSld("http://test.com/text/xml");
-        
+
         final URL url;
         try {
             url = legend.getURL();
@@ -197,9 +197,9 @@ public class GetLegendGraphicTest {
         }
         final String sUrl = url.toString();
         assertFalse(sUrl.contains("STYLE=test"));
-        assertTrue(sUrl.contains("SLD=http://test.com/text/xml"));
+        assertTrue("was:" + sUrl, sUrl.contains("SLD=http%3A%2F%2Ftest.com%2Ftext%2Fxml"));
     }
-    
+
     /**
      * Ensures the {@link GetLegend130#getURL()} method returns a well-built url,
      * with the parameters given.
@@ -212,7 +212,7 @@ public class GetLegendGraphicTest {
         legend.setLayer("test");
         legend.setStyle("test");
         legend.setSld("http://test.com/text/xml");
-        
+
         final URL url;
         try {
             url = legend.getURL();
@@ -222,9 +222,9 @@ public class GetLegendGraphicTest {
         }
         final String sUrl = url.toString();
         assertFalse(sUrl.contains("STYLE=test"));
-        assertTrue(sUrl.contains("SLD=http://test.com/text/xml"));
+        assertTrue("was:" + sUrl, sUrl.contains("SLD=http%3A%2F%2Ftest.com%2Ftext%2Fxml"));
     }
-    
+
     /**
      * Ensures the {@link GetLegend111#getURL()} method returns a well-built url,
      * with the parameters given.
@@ -238,34 +238,7 @@ public class GetLegendGraphicTest {
         legend.setStyle("test");
         legend.setSld("http://test.com/text/xml");
         legend.setSldBody("<xml>test</xml>");
-        
-        final URL url;
-        try {
-            url = legend.getURL();
-        } catch (MalformedURLException ex) {
-            fail(ex.getLocalizedMessage());
-            return;
-        }
-        final String sUrl = url.toString();
-        assertFalse(sUrl.contains("STYLE=test"));
-        assertFalse(sUrl.contains("SLD=http://test.com/text/xml"));        
-        assertTrue(sUrl.contains("SLD_BODY=<xml>test</xml>"));
-    }
-    
-    /**
-     * Ensures the {@link GetLegend130#getURL()} method returns a well-built url,
-     * with the parameters given.
-     * Test the precedence of SLD_BODY parameter on STYLE and SLD  
-     */
-    @Test
-    public void testGetLegendGraphic130SLDBODYPrecedence() {
-        final GetLegend130 legend = new GetLegend130("http://test.com",null);
-        legend.setDimension(new Dimension(140, 20));
-        legend.setLayer("test");
-        legend.setStyle("test");
-        legend.setSld("http://test.com/text/xml");       
-        legend.setSldBody("<xml>test</xml>");
-        
+
         final URL url;
         try {
             url = legend.getURL();
@@ -276,8 +249,35 @@ public class GetLegendGraphicTest {
         final String sUrl = url.toString();
         assertFalse(sUrl.contains("STYLE=test"));
         assertFalse(sUrl.contains("SLD=http://test.com/text/xml"));
-        assertTrue(sUrl.contains("SLD_BODY=<xml>test</xml>"));
+        assertTrue("was:" + sUrl, sUrl.contains("SLD_BODY=%3Cxml%3Etest%3C%2Fxml%3E"));
     }
-    
-    
+
+    /**
+     * Ensures the {@link GetLegend130#getURL()} method returns a well-built url,
+     * with the parameters given.
+     * Test the precedence of SLD_BODY parameter on STYLE and SLD
+     */
+    @Test
+    public void testGetLegendGraphic130SLDBODYPrecedence() {
+        final GetLegend130 legend = new GetLegend130("http://test.com",null);
+        legend.setDimension(new Dimension(140, 20));
+        legend.setLayer("test");
+        legend.setStyle("test");
+        legend.setSld("http://test.com/text/xml");
+        legend.setSldBody("<xml>test</xml>");
+
+        final URL url;
+        try {
+            url = legend.getURL();
+        } catch (MalformedURLException ex) {
+            fail(ex.getLocalizedMessage());
+            return;
+        }
+        final String sUrl = url.toString();
+        assertFalse(sUrl.contains("STYLE=test"));
+        assertFalse(sUrl.contains("SLD=http://test.com/text/xml"));
+        assertTrue("was:" + sUrl, sUrl.contains("SLD_BODY=%3Cxml%3Etest%3C%2Fxml%3E"));
+    }
+
+
 }

@@ -22,14 +22,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.storage.DataStoreException;
-
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
@@ -37,6 +35,7 @@ import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.geometry.Envelope;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * A Datastore is a storage object which manage a serie of FeatureTypes.
@@ -52,6 +51,20 @@ import org.opengis.geometry.Envelope;
  */
 public interface DataStore {
 
+    /**
+     * Get the parameters used to initialize this source from it's factory.
+     * 
+     * @return source configuration parameters
+     */
+    ParameterValueGroup getConfiguration();
+    
+    /**
+     * Get the factory which created this source.
+     * 
+     * @return this source original factory
+     */
+    DataStoreFactory getFactory();
+    
     /**
      * Create a session, that session may be synchrone or asynchrone.
      * If you choose it to be synchrone, every changes made in the session are directly

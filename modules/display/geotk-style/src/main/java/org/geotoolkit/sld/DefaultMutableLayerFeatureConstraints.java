@@ -65,6 +65,11 @@ class DefaultMutableLayerFeatureConstraints implements MutableLayerFeatureConstr
                 fireLibraryChange(CollectionChangeEvent.ITEM_REMOVED, items, range );
             }
             
+            @Override
+            protected void notifyChange(FeatureTypeConstraint oldItem, FeatureTypeConstraint newItem, int index) {
+                fireLibraryChange(CollectionChangeEvent.ITEM_CHANGED, oldItem, NumberRange.create(index, index) );
+            }
+            
         };
     
     private final EventListenerList listeners = new EventListenerList();

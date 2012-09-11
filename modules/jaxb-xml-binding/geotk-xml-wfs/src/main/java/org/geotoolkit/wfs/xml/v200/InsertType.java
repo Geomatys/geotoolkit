@@ -20,12 +20,16 @@ package org.geotoolkit.wfs.xml.v200;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
+import org.geotoolkit.wfs.xml.IdentifierGenerationOptionType;
+import org.geotoolkit.wfs.xml.InsertElement;
 
 
 /**
@@ -52,9 +56,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "InsertType", propOrder = {
     "any"
 })
-public class InsertType
-    extends AbstractTransactionActionType
-{
+public class InsertType extends AbstractTransactionActionType implements InsertElement {
 
     @XmlAnyElement(lax = true)
     private List<Object> any;
@@ -67,30 +69,16 @@ public class InsertType
     /**
      * Gets the value of the any property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the any property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getAny().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Object }
-     * 
-     * 
      */
     public List<Object> getAny() {
         if (any == null) {
             any = new ArrayList<Object>();
         }
         return this.any;
+    }
+    
+    public List getFeature() {
+        return getAny();
     }
 
     /**
@@ -145,4 +133,49 @@ public class InsertType
         this.srsName = value;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("[InsertType]\n");
+        if (inputFormat != null) {
+            sb.append("inputFormat").append(inputFormat).append('\n');
+        }
+        if (srsName != null) {
+            sb.append("srsName").append(srsName).append('\n');
+        }
+        if (any != null) {
+            sb.append("feature:\n");
+            for (Object q : any) {
+                sb.append(q).append("\nclass:").append(q.getClass().getName());
+            }
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        
+        if (obj instanceof InsertType) {
+            InsertType that = (InsertType) obj;
+            return Objects.equals(this.any, that.any) &&
+                   Objects.equals(this.inputFormat, that.inputFormat) &&
+                   Objects.equals(this.srsName, that.srsName);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 17 * hash + (this.any != null ? this.any.hashCode() : 0);
+        hash = 17 * hash + (this.inputFormat != null ? this.inputFormat.hashCode() : 0);
+        hash = 17 * hash + (this.srsName != null ? this.srsName.hashCode() : 0);
+        return hash;
+    }
+    
+    public IdentifierGenerationOptionType getIdgen() {
+        return null; // not implemented in 2.0.0
+    }
 }

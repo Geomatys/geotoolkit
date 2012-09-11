@@ -16,18 +16,21 @@
  */
 package org.geotoolkit.wmc.xml.v110;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
  * <p>Java class for ViewContextType complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="ViewContextType">
  *   &lt;complexContent>
@@ -42,8 +45,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -51,6 +54,7 @@ import javax.xml.bind.annotation.XmlType;
     "general",
     "layerList"
 })
+@XmlRootElement(name = "ViewContext")
 public class ViewContextType {
 
     @XmlElement(name = "General", required = true)
@@ -64,11 +68,11 @@ public class ViewContextType {
 
     /**
      * Gets the value of the general property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link GeneralType }
-     *     
+     *
      */
     public GeneralType getGeneral() {
         return general;
@@ -76,11 +80,11 @@ public class ViewContextType {
 
     /**
      * Sets the value of the general property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link GeneralType }
-     *     
+     *
      */
     public void setGeneral(final GeneralType value) {
         this.general = value;
@@ -88,11 +92,11 @@ public class ViewContextType {
 
     /**
      * Gets the value of the layerList property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LayerListType }
-     *     
+     *
      */
     public LayerListType getLayerList() {
         return layerList;
@@ -100,11 +104,11 @@ public class ViewContextType {
 
     /**
      * Sets the value of the layerList property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LayerListType }
-     *     
+     *
      */
     public void setLayerList(final LayerListType value) {
         this.layerList = value;
@@ -112,11 +116,11 @@ public class ViewContextType {
 
     /**
      * Gets the value of the id property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getId() {
         return id;
@@ -124,11 +128,11 @@ public class ViewContextType {
 
     /**
      * Sets the value of the id property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setId(final String value) {
         this.id = value;
@@ -136,11 +140,11 @@ public class ViewContextType {
 
     /**
      * Gets the value of the version property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getVersion() {
         if (version == null) {
@@ -152,14 +156,60 @@ public class ViewContextType {
 
     /**
      * Sets the value of the version property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setVersion(final String value) {
         this.version = value;
     }
 
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof ViewContextType) {
+            final ViewContextType that = (ViewContextType) object;
+
+            return Objects.equals(this.general, that.general) &&
+                   Objects.equals(this.layerList, that.layerList) &&
+                   Objects.equals(this.version, that.version) &&
+                   Objects.equals(this.id,  that.id);
+            }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 79 * hash + (this.general != null ? this.general.hashCode() : 0);
+        hash = 79 * hash + (this.id != null ? this.id.hashCode() : 0);
+        hash = 79 * hash + (this.layerList != null ? this.layerList.hashCode() : 0);
+        hash = 79 * hash + (this.version != null ? this.version.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder("[ViewContextType]\n");
+        if (id != null) {
+            s.append("id:").append(id).append('\n');
+        }
+        if (general != null) {
+            s.append("general:").append(general).append('\n');
+        }
+        if (version != null) {
+            s.append("version:").append(version).append('\n');
+        }
+        if (layerList != null) {
+            s.append("layerList:").append(layerList).append('\n');
+        }
+        return s.toString();
+    }
 }

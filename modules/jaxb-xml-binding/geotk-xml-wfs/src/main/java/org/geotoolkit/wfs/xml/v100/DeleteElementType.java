@@ -24,6 +24,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 import org.geotoolkit.ogc.xml.v100.FilterType;
+import org.geotoolkit.util.Utilities;
+import org.geotoolkit.wfs.xml.DeleteElement;
 
 
 /**
@@ -51,7 +53,7 @@ import org.geotoolkit.ogc.xml.v100.FilterType;
 @XmlType(name = "DeleteElementType", propOrder = {
     "filter"
 })
-public class DeleteElementType {
+public class DeleteElementType implements DeleteElement {
 
     @XmlElement(name = "Filter", namespace = "http://www.opengis.net/ogc", required = true)
     private FilterType filter;
@@ -59,6 +61,16 @@ public class DeleteElementType {
     private String handle;
     @XmlAttribute(required = true)
     private QName typeName;
+
+    public DeleteElementType() {
+
+    }
+
+    public DeleteElementType(final FilterType filter, final String handle, final QName typeName) {
+        this.filter   = filter;
+        this.handle   = handle;
+        this.typeName = typeName;
+    }
 
     /**
      * The Filter element is used to constrain the scope

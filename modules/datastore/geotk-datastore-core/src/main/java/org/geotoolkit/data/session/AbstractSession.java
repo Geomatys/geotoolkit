@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009-2010, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -20,20 +20,16 @@ package org.geotoolkit.data.session;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-
 import org.geotoolkit.data.DataStore;
-import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.StorageContentEvent;
-import org.geotoolkit.data.StorageManagementEvent;
 import org.geotoolkit.data.StorageListener;
-
-
+import org.geotoolkit.data.StorageManagementEvent;
+import org.geotoolkit.storage.DataStoreException;
+import static org.geotoolkit.util.ArgumentChecks.*;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.Id;
-
-import static org.geotoolkit.util.ArgumentChecks.*;
 
 /**
  *  Abstract session which handle listeners and add convenient fire event methods.

@@ -34,6 +34,7 @@ import org.geotoolkit.jdbc.dialect.PreparedStatementSQLDialect;
 import org.geotoolkit.jdbc.dialect.SQLDialect;
 import org.geotoolkit.metadata.iso.quality.DefaultConformanceResult;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
+import org.geotoolkit.util.ResourceInternationalString;
 
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.ParameterDescriptor;
@@ -51,10 +52,6 @@ import org.opengis.parameter.ParameterValueGroup;
  * @module pending
  */
 public abstract class JDBCDataStoreFactory extends AbstractDataStoreFactory {
-
-    /** parameter for database type */
-    public static final ParameterDescriptor<String> DBTYPE =
-             new DefaultParameterDescriptor<String>("dbtype","Type",String.class,null,true);
 
     /** parameter for database host */
     public static final ParameterDescriptor<String> HOST =
@@ -105,8 +102,13 @@ public abstract class JDBCDataStoreFactory extends AbstractDataStoreFactory {
              new DefaultParameterDescriptor<Integer>("Connection timeout","number of seconds the connection pool wait for login",Integer.class,20,false);
 
     @Override
-    public String getDisplayName() {
-        return getDescription();
+    public CharSequence getDisplayName() {
+        return super.getDescription();
+    }
+
+    @Override
+    public CharSequence getDescription() {
+        return super.getDescription();
     }
 
     @Override
@@ -126,16 +128,12 @@ public abstract class JDBCDataStoreFactory extends AbstractDataStoreFactory {
             }
         }
         
-        Object value = params.parameter(DBTYPE.getName().toString()).getValue();
-        if(value != null && value instanceof String){
-            return value.toString().equals(getDatabaseID());
-        }else{
-            return false;
-        }
+        return valid;
     }
 
     @Override
-    public JDBCDataStore createDataStore(final ParameterValueGroup params) throws DataStoreException {
+    public JDBCDataStore create(final ParameterValueGroup params) throws DataStoreException {
+        checkCanProcessWithError(params);
         // namespace
         String namespace = (String) params.parameter(NAMESPACE.getName().toString()).getValue();
 
@@ -143,7 +141,7 @@ public abstract class JDBCDataStoreFactory extends AbstractDataStoreFactory {
             namespace = "http://geotoolkit.org";
         }
 
-        final JDBCDataStore dataStore = new DefaultJDBCDataStore(namespace);
+        final JDBCDataStore dataStore = new DefaultJDBCDataStore(params,getDatabaseID());
 
         // dialect
         final SQLDialect dialect = createSQLDialect(dataStore);
@@ -183,7 +181,7 @@ public abstract class JDBCDataStoreFactory extends AbstractDataStoreFactory {
 
 
     @Override
-    public DataStore createNewDataStore(final ParameterValueGroup params) throws DataStoreException {
+    public DataStore createNew(final ParameterValueGroup params) throws DataStoreException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

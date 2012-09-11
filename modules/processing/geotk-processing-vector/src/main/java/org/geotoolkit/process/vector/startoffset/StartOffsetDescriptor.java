@@ -77,6 +77,6 @@ public final class StartOffsetDescriptor extends VectorDescriptor {
      */
     @Override
     public Process createProcess(final ParameterValueGroup input) {
-        return new StartOffset(input);
+        return new StartOffsetProcess(input);
     }
 }

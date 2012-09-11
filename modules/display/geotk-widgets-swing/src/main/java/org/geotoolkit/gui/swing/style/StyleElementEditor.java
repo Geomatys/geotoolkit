@@ -17,21 +17,30 @@
  */
 package org.geotoolkit.gui.swing.style;
 
-import org.opengis.util.InternationalString;
-import org.opengis.style.Description;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.ServiceLoader;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
-
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.filter.visitor.IsStaticExpressionVisitor;
+import org.geotoolkit.gui.swing.misc.LoadingLockableUI;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.MutableStyleFactory;
-
+import static org.geotoolkit.util.ArgumentChecks.*;
+import org.geotoolkit.util.logging.Logging;
+import org.jdesktop.jxlayer.JXLayer;
+import org.jdesktop.jxlayer.plaf.ext.LockableUI;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Expression;
-
-import static org.geotoolkit.util.ArgumentChecks.*;
+import org.opengis.style.Description;
+import org.opengis.util.InternationalString;
 
 /**
  * Style element editor
@@ -42,10 +51,38 @@ import static org.geotoolkit.util.ArgumentChecks.*;
  */
 public abstract class StyleElementEditor<T> extends JPanel {
 
+    /**
+     * The service loader. This loader and its iterator are not synchronized;
+     * when doing an iteration, the iterator must be used inside synchronized blocks.
+     */
+    private static final ServiceLoader<StyleElementEditor> LOADER = ServiceLoader.load(StyleElementEditor.class);
+    
+    protected static final Logger LOGGER = Logging.getLogger(StyleElementEditor.class);
+    
     private static MutableStyleFactory STYLE_FACTORY = null;
     private static FilterFactory2 FILTER_FACTORY = null;
+    
+    private final Class<T> targetClass;
 
-    public StyleElementEditor(){}
+    public StyleElementEditor(Class<T> targetClass){
+        this.targetClass = targetClass;
+    }
+    
+    /**
+     * 
+     * @param candidate
+     * @return true if the given object can be edited by this editor.
+     */
+    public boolean canHandle(Object candidate){
+        return targetClass.isInstance(candidate);
+    }
+
+    /**
+     * @return supported edited class.
+     */
+    public Class<T> getEditedClass() {
+        return targetClass;
+    }
     
     /**
      * Style element nearly always have an Expression field
@@ -78,7 +115,7 @@ public abstract class StyleElementEditor<T> extends JPanel {
     public void apply(){
     }
     
-    protected synchronized static final MutableStyleFactory getStyleFactory(){
+    protected static synchronized MutableStyleFactory getStyleFactory(){
         if(STYLE_FACTORY == null){
             final Hints hints = new Hints();
             hints.put(Hints.STYLE_FACTORY, MutableStyleFactory.class);
@@ -87,7 +124,7 @@ public abstract class StyleElementEditor<T> extends JPanel {
         return STYLE_FACTORY;
     }
 
-    protected synchronized static final FilterFactory2 getFilterFactory(){
+    protected static synchronized FilterFactory2 getFilterFactory(){
         if(FILTER_FACTORY == null){
             final Hints hints = new Hints();
             hints.put(Hints.FILTER_FACTORY, FilterFactory2.class);
@@ -142,6 +179,53 @@ public abstract class StyleElementEditor<T> extends JPanel {
                 return "";
             }
         }
+    }
+    
+    /**
+     * Search the registered StyleElementEditor for one which support the given 
+     * object.
+     * 
+     * @param candidate
+     * @return StyleElementEditor or null if no editor found
+     */
+    public static synchronized StyleElementEditor findEditor(Object candidate) {
+        for(StyleElementEditor editor : LOADER){
+            if(editor.canHandle(candidate)){
+                try {
+                    return editor.getClass().newInstance();
+                } catch (InstantiationException ex) {
+                    LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+                } catch (IllegalAccessException ex) {
+                    LOGGER.log(Level.WARNING, ex.getMessage(), ex);
+                }
+            }
+        }
+        return null;        
+    }
+    
+    /**
+     * Find all editors which handle a class child of the given one.
+     * 
+     * @param candidate
+     * @return Collection<StyleElementEditor> , never null, but can be empty.
+     *      List is sorted by edited class name.
+     */
+    public static synchronized List<StyleElementEditor> findEditorsForType(Class candidate){
+        final List<StyleElementEditor> editors = new ArrayList<StyleElementEditor>();
+        
+        for(StyleElementEditor editor : LOADER){
+            if(candidate == null || candidate.isAssignableFrom(editor.getEditedClass())){
+                editors.add(editor);
+            }
+        }
+        
+        Collections.sort(editors, new Comparator<StyleElementEditor>(){
+            @Override
+            public int compare(StyleElementEditor o1, StyleElementEditor o2) {
+                return o1.getEditedClass().getSimpleName().compareTo(o2.getEditedClass().getSimpleName());
+            }
+        });
+        return editors;        
     }
     
 }

@@ -272,7 +272,7 @@ public class JContextTree extends JScrollPane {
 
     private static String label(final Description desc){
         if(desc != null && desc.getTitle() != null){
-            return desc.getTitle().toString();
+            return desc.getTitle().toString().replace("{}", "");
         }else{
             return "";
         }

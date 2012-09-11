@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.WritableByteChannel;
 import java.nio.charset.Charset;
-import java.util.Date;
 import org.geotoolkit.io.Closeable;
 
 
@@ -50,9 +49,6 @@ public class DbaseFileWriter implements Closeable{
     private DbaseFieldFormatter formatter;
     WritableByteChannel channel;
     private ByteBuffer buffer;
-    private final Number NULL_NUMBER = new Integer(0);
-    private final String NULL_STRING = "";
-    private final Date NULL_DATE = new Date();
     private Charset charset;
     
     /**

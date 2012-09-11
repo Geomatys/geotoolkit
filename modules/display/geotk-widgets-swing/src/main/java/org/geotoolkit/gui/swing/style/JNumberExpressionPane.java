@@ -26,7 +26,6 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import org.geotoolkit.gui.swing.style.StyleElementEditor;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.filter.expression.Expression;
 
@@ -39,6 +38,7 @@ public class JNumberExpressionPane extends StyleElementEditor<Expression>{
 
     /** Creates new form JColorExpressionPane */
     public JNumberExpressionPane() {
+        super(Expression.class);
         initComponents();
     }
 

@@ -292,6 +292,25 @@ public class WCSCapabilityType {
         @XmlElement(name = "GetCoverage", required = true)
         private WCSCapabilityType.Request.GetCoverage getCoverage;
 
+        public Request() {
+            
+        }
+        
+        public Request(Request that) {
+            if (that != null) {
+                if (that.getCapabilities != null) {
+                    this.getCapabilities = new GetCapabilities(that.getCapabilities);
+                }
+                if (that.describeCoverage != null) {
+                    this.describeCoverage = new DescribeCoverage(that.describeCoverage);
+                }
+                if (that.getCoverage != null) {
+                    this.getCoverage = new GetCoverage(that.getCoverage);
+                }
+            }
+            
+        }
+                
         /**
          * Gets the value of the getCapabilities property.
          */
@@ -385,6 +404,15 @@ public class WCSCapabilityType {
             public DescribeCoverage() {
 
             }
+            
+            public DescribeCoverage(final DescribeCoverage that) {
+                if (that != null && that.dcpType != null) {
+                    this.dcpType = new ArrayList<DCPTypeType>();
+                    for (DCPTypeType t : that.dcpType) {
+                        this.dcpType.add(new DCPTypeType(t));
+                    }
+                }
+            }
 
             public DescribeCoverage(final List<DCPTypeType> dcp) {
                 this.dcpType = dcp;
@@ -444,6 +472,15 @@ public class WCSCapabilityType {
 
             }
 
+            public GetCapabilities(final GetCapabilities that) {
+                if (that != null && that.dcpType != null) {
+                    this.dcpType = new ArrayList<DCPTypeType>();
+                    for (DCPTypeType t : that.dcpType) {
+                        this.dcpType.add(new DCPTypeType(t));
+                    }
+                }
+            }
+            
             public GetCapabilities(final List<DCPTypeType> dcp) {
                 this.dcpType = dcp;
             }
@@ -502,6 +539,15 @@ public class WCSCapabilityType {
 
             }
 
+            public GetCoverage(final GetCoverage that) {
+                if (that != null && that.dcpType != null) {
+                    this.dcpType = new ArrayList<DCPTypeType>();
+                    for (DCPTypeType t : that.dcpType) {
+                        this.dcpType.add(new DCPTypeType(t));
+                    }
+                }
+            }
+            
             public GetCoverage(final List<DCPTypeType> dcp) {
                 this.dcpType = dcp;
             }

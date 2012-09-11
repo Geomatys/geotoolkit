@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.CurveProperty;
 
 
 /**
@@ -56,7 +57,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "CurvePropertyType", propOrder = {
     "abstractCurve"
 })
-public class CurvePropertyType {
+public class CurvePropertyType implements CurveProperty {
 
     @XmlElementRef(name = "AbstractCurve", namespace = "http://www.opengis.net/gml/3.2", type = JAXBElement.class)
     private JAXBElement<? extends AbstractCurveType> abstractCurve;
@@ -85,6 +86,24 @@ public class CurvePropertyType {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String actuate;
 
+    public CurvePropertyType() {
+        
+    }
+    
+    public CurvePropertyType(final LineStringType line) {
+        if (line != null) {
+            final ObjectFactory factory = new ObjectFactory();
+            this.abstractCurve = factory.createLineString(line);
+        }
+    }
+    
+    public AbstractCurveType getAbstractCurve() {
+        if (abstractCurve != null) {
+            return abstractCurve.getValue();
+        }
+        return null;
+    }
+    
     /**
      * Gets the value of the abstractCurve property.
      * 
@@ -97,7 +116,7 @@ public class CurvePropertyType {
      *     {@link JAXBElement }{@code <}{@link LineStringType }{@code >}
      *     
      */
-    public JAXBElement<? extends AbstractCurveType> getAbstractCurve() {
+    public JAXBElement<? extends AbstractCurveType> getJbAbstractCurve() {
         return abstractCurve;
     }
 
@@ -113,7 +132,7 @@ public class CurvePropertyType {
      *     {@link JAXBElement }{@code <}{@link LineStringType }{@code >}
      *     
      */
-    public void setAbstractCurve(JAXBElement<? extends AbstractCurveType> value) {
+    public void setJbAbstractCurve(JAXBElement<? extends AbstractCurveType> value) {
         this.abstractCurve = ((JAXBElement<? extends AbstractCurveType> ) value);
     }
 

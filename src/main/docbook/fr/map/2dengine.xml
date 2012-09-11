@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book [
+  <!ENTITY % book.entities SYSTEM "../../book.entities">
+  %book.entities;
+]>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xi    = "http://www.w3.org/2001/XInclude"
+         xmlns:xlink = "http://www.w3.org/1999/xlink">
+          
+    <title>
+        2D engine
+    </title>
+    
+    <para>
+        GeotoolKit contient un moteur de rendu par défaut nommée 
+        <emphasis>GO2</emphasis>.
+    </para>
+    <para>
+        Ce moteur, à l'origine limité aux données cartographiques et aux normes de styles en vigueur, s'est progressivement élargi pour devenir un véritable 
+        <emphasis>scénographe</emphasis>. Ses capacités sont limités à du rendu 2 dimensions mais ne se limite pas qu'aux données cartographiques. Il est possible de définir de nouveau symboles, de nouveau procédés de dessin, des éléments graphiques dynamiques et plus encore.
+    </para>
+    
+    <xi:include href="2dengine/service-portrayal.xml"/>
+    
+    <xi:include href="2dengine/service-glyph.xml"/>
+    
+    <xi:include href="2dengine/service-report.xml"/>
+    
+    <xi:include href="2dengine/service-legend.xml"/>
+    
+    <xi:include href="2dengine/custom-graphicobject.xml"/>
+    
+    <xi:include href="2dengine/custom-graphicbuilder.xml"/>
+    
+    <xi:include href="2dengine/custom-decoration.xml"/>
+    
+    <xi:include href="2dengine/custom-symbolizer.xml"/>
+    
+</section>

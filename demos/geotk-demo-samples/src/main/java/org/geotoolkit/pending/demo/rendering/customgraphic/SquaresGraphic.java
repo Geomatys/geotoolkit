@@ -18,7 +18,7 @@ import org.opengis.display.primitive.Graphic;
 public class SquaresGraphic extends AbstractGraphicJ2D{
 
     public SquaresGraphic(J2DCanvas canvas){
-        super(canvas, canvas.getObjectiveCRS2D());
+        super(canvas);
     }
 
     @Override

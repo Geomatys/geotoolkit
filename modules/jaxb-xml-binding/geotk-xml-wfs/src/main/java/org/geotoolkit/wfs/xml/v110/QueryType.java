@@ -31,6 +31,8 @@ import javax.xml.namespace.QName;
 import org.geotoolkit.ogc.xml.v110.FilterType;
 import org.geotoolkit.ogc.xml.v110.FunctionType;
 import org.geotoolkit.ogc.xml.v110.SortByType;
+import org.geotoolkit.wfs.xml.Query;
+import org.opengis.filter.sort.SortBy;
 
 
 /**
@@ -71,7 +73,7 @@ import org.geotoolkit.ogc.xml.v110.SortByType;
     "filter",
     "sortBy"
 })
-public class QueryType {
+public class QueryType implements Query {
 
     @XmlElements({
         @XmlElement(name = "PropertyName", type = String.class),
@@ -103,6 +105,21 @@ public class QueryType {
         this.typeName       = typeName;
     }
     
+    public QueryType(final FilterType filter, final List<QName> typeName, final String featureVersion, final String srsName,
+            final SortByType sortBy, final List<String> properties) {
+        this.filter         = filter;
+        this.typeName       = typeName;
+        this.featureVersion = featureVersion;
+        this.srsName        = srsName;
+        this.sortBy         = sortBy;
+        if (properties != null) {
+            if (propertyNameOrXlinkPropertyNameOrFunction == null) {
+                propertyNameOrXlinkPropertyNameOrFunction = new ArrayList<Object>();
+            }
+            this.propertyNameOrXlinkPropertyNameOrFunction.addAll(properties);
+        }
+    }
+    
     /**
      * Gets the value of the propertyNameOrXlinkPropertyNameOrFunction property.
      */
@@ -111,6 +128,10 @@ public class QueryType {
             propertyNameOrXlinkPropertyNameOrFunction = new ArrayList<Object>();
         }
         return this.propertyNameOrXlinkPropertyNameOrFunction;
+    }
+    
+    public List<Object> getPropertyNames() {
+        return getPropertyNameOrXlinkPropertyNameOrFunction();
     }
 
     /**
@@ -126,6 +147,7 @@ public class QueryType {
      *     {@link FilterType }
      *     
      */
+    @Override
     public FilterType getFilter() {
         return filter;
     }
@@ -156,6 +178,7 @@ public class QueryType {
      *     {@link SortByType }
      *     
      */
+    @Override
     public SortByType getSortBy() {
         return sortBy;
     }
@@ -207,6 +230,11 @@ public class QueryType {
         }
         return this.typeName;
     }
+    
+    @Override
+    public List<QName> getTypeNames() {
+        return getTypeName();
+    }
 
     /**
      * Gets the value of the featureVersion property.
@@ -240,6 +268,7 @@ public class QueryType {
      *     {@link String }
      *     
      */
+    @Override
     public String getSrsName() {
         return srsName;
     }

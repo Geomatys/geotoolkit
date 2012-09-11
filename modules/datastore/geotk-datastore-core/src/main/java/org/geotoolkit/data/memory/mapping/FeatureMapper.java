@@ -17,6 +17,7 @@
 package org.geotoolkit.data.memory.mapping;
 
 import org.opengis.feature.Feature;
+import org.opengis.feature.type.FeatureType;
 
 /**
  *
@@ -25,5 +26,9 @@ import org.opengis.feature.Feature;
  */
 public interface FeatureMapper {
 
+    FeatureType getSourceType();
+    
+    FeatureType getTargetType();
+    
     Feature transform(Feature feature);
 }

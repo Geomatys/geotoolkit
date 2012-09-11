@@ -18,6 +18,7 @@
 
 package org.geotoolkit.gml.xml.v321;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -29,6 +30,10 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.gml.xml.AbstractGML;
+import org.geotoolkit.internal.sql.table.Entry;
+import org.geotoolkit.metadata.AbstractMetadata;
+import org.geotoolkit.metadata.MetadataStandard;
 
 
 /**
@@ -70,7 +75,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     AbstractFeatureType.class,
     DefinitionBaseType.class
 })
-public abstract class AbstractGMLType {
+public abstract class AbstractGMLType extends AbstractMetadata implements AbstractGML, Serializable, Entry {
 
     private List<MetaDataPropertyType> metaDataProperty;
     private StringOrRefType description;
@@ -84,26 +89,27 @@ public abstract class AbstractGMLType {
     private String id;
 
     /**
+     *  Empty constructor used by JAXB.
+     */
+    protected AbstractGMLType() {}
+
+    /**
+     *  Simple super constructor to initialize the entry name.
+     */
+    public AbstractGMLType(final String id) {
+        this.id = id;
+    }
+    
+    @Override
+    public MetadataStandard getStandard() {
+        return null;
+    }
+    
+    /**
      * Gets the value of the metaDataProperty property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the metaDataProperty property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getMetaDataProperty().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link MetaDataPropertyType }
-     * 
-     * 
      */
     public List<MetaDataPropertyType> getMetaDataProperty() {
         if (metaDataProperty == null) {
@@ -120,8 +126,11 @@ public abstract class AbstractGMLType {
      *     {@link StringOrRefType }
      *     
      */
-    public StringOrRefType getDescription() {
-        return description;
+    public String getDescription() {
+        if (description != null) {
+            return description.getValue();
+        }
+        return null;
     }
 
     /**
@@ -132,8 +141,12 @@ public abstract class AbstractGMLType {
      *     {@link StringOrRefType }
      *     
      */
-    public void setDescription(StringOrRefType value) {
+    public void setDescription(final StringOrRefType value) {
         this.description = value;
+    }
+    
+    public void setDescription(final String value) {
+        this.description = new StringOrRefType(value);
     }
 
     /**
@@ -168,7 +181,11 @@ public abstract class AbstractGMLType {
      *     {@link CodeWithAuthorityType }
      *     
      */
-    public CodeWithAuthorityType getIdentifier() {
+    public String getIdentifier() {
+        return id;
+    }
+    
+    public CodeWithAuthorityType getFullIdentifier() {
         return identifier;
     }
 
@@ -187,30 +204,29 @@ public abstract class AbstractGMLType {
     /**
      * Gets the value of the name property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the name property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getName().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link CodeType }
-     * 
-     * 
      */
-    public List<CodeType> getName() {
+    public List<CodeType> getNames() {
         if (name == null) {
             name = new ArrayList<CodeType>();
         }
         return this.name;
+    }
+    
+    public String getName() {
+        if (name != null && !name.isEmpty()) {
+            return name.get(0).getValue();
+        }
+        return null;
+    }
+    
+    /**
+     *
+     */
+    public void setName(final String name) {
+        if (this.name == null) {
+            this.name = new ArrayList<CodeType>();
+        }
+        this.name.add(0, new CodeType(name));
     }
 
     /**
@@ -237,4 +253,7 @@ public abstract class AbstractGMLType {
         this.id = value;
     }
 
+    public org.geotoolkit.gml.xml.v311.CodeType getParameterName() {
+        return null; // not implemented in 3.2.1
+    }
 }

@@ -23,11 +23,11 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Polygon;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import javax.measure.quantity.Length;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
+
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
@@ -37,6 +37,7 @@ import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.process.vector.AbstractProcessTest;
 import org.geotoolkit.referencing.CRS;
+
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.parameter.ParameterValueGroup;
@@ -51,10 +52,10 @@ import static org.junit.Assert.*;
 
 /**
  * JUnit test douglas peucker simplification on FeatureCollection
- * @author Quentin Boileau
- * @module pending
+ *
+ * @author Quentin Boileau @module pending
  */
-public class DouglasPeuckerTest extends AbstractProcessTest{
+public class DouglasPeuckerTest extends AbstractProcessTest {
 
     private static SimpleFeatureBuilder sfb;
     private static GeometryFactory geometryFactory;
@@ -64,18 +65,16 @@ public class DouglasPeuckerTest extends AbstractProcessTest{
         super("douglasPeucker");
     }
 
-
     /**
-     * Test DouglasPeucker process with in input two Feature into a FeatureCollection
-     * Feature projection should be conic for the first and mercator for second one.
-     * The accuracy of the simplification is set to 10 and the "delete small geometry"
-     * disable.
+     * Test DouglasPeucker process with in input two Feature into a FeatureCollection Feature projection should be conic
+     * for the first and mercator for second one. The accuracy of the simplification is set to 10 and the "delete small
+     * geometry" disable.
      *
      */
     @Test
-    public void testDouglasPeucker() throws ProcessException, NoSuchIdentifierException{
+    public void testDouglasPeucker() throws ProcessException, NoSuchIdentifierException, FactoryException {
 
-         // Inputs
+        // Inputs
         final FeatureCollection<?> featureList = buildFeatureCollectionInput1();
         Unit<Length> unit = SI.METRE;
 
@@ -85,7 +84,6 @@ public class DouglasPeuckerTest extends AbstractProcessTest{
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("feature_in").setValue(featureList);
         in.parameter("accuracy_in").setValue(new Double(10));
-        in.parameter("unit_in").setValue(unit);
         in.parameter("del_small_geo_in").setValue(false);
         in.parameter("lenient_transform_in").setValue(false);
         org.geotoolkit.process.Process proc = desc.createProcess(in);
@@ -103,25 +101,25 @@ public class DouglasPeuckerTest extends AbstractProcessTest{
         FeatureIterator<?> iteratorResult = featureListResult.iterator();
 
         double precision = 0.0001;
-        while(iteratorOut.hasNext() && iteratorResult.hasNext()){
+        while (iteratorOut.hasNext() && iteratorResult.hasNext()) {
             Feature featureOut = iteratorOut.next();
             Feature featureResult = iteratorResult.next();
 
             for (Property propertyOut : featureOut.getProperties()) {
                 if (propertyOut.getDescriptor() instanceof GeometryDescriptor) {
 
-                    final Geometry  geomOut = (Geometry) propertyOut.getValue();
+                    final Geometry geomOut = (Geometry) propertyOut.getValue();
                     for (Property propertyResult : featureResult.getProperties()) {
                         if (propertyResult.getDescriptor() instanceof GeometryDescriptor) {
-                            final Geometry  geomResult = (Geometry) propertyResult.getValue();
+                            final Geometry geomResult = (Geometry) propertyResult.getValue();
 
                             Coordinate[] coordOut = geomOut.getCoordinates();
                             Coordinate[] coordResult = geomResult.getCoordinates();
 
                             assertEquals(coordOut.length, coordResult.length);
-                            for(int i=0; i < coordOut.length; i++){
-                                 assertEquals(coordOut[i].x, coordResult[i].x,precision);
-                                 assertEquals(coordOut[i].y, coordResult[i].y,precision);
+                            for (int i = 0; i < coordOut.length; i++) {
+                                assertEquals(coordOut[i].x, coordResult[i].x, precision);
+                                assertEquals(coordOut[i].y, coordResult[i].y, precision);
                             }
                         }
                     }
@@ -132,16 +130,14 @@ public class DouglasPeuckerTest extends AbstractProcessTest{
     }
 
     /**
-     * Test DouglasPeucker process when a geometry is smaller than the
-     * precision of the simplification, and the user want to delete
-     * small features.
-     * In input there is a small feature geometry, and in output
-     * an empty FeatureCollection.
+     * Test DouglasPeucker process when a geometry is smaller than the precision of the simplification, and the user
+     * want to delete small features. In input there is a small feature geometry, and in output an empty
+     * FeatureCollection.
      */
     @Test
-    public void testDouglasPeuckerWithDelete() throws ProcessException, NoSuchIdentifierException{
+    public void testDouglasPeuckerWithDelete() throws ProcessException, NoSuchIdentifierException, FactoryException {
 
-         // Inputs
+        // Inputs
         final FeatureCollection<?> featureList = buildFeatureCollectionInput2();
         Unit<Length> unit = SI.METRE;
 
@@ -151,7 +147,6 @@ public class DouglasPeuckerTest extends AbstractProcessTest{
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("feature_in").setValue(featureList);
         in.parameter("accuracy_in").setValue(new Double(61));
-        in.parameter("unit_in").setValue(unit);
         in.parameter("del_small_geo_in").setValue(true);
         in.parameter("lenient_transform_in").setValue(true);
         org.geotoolkit.process.Process proc = desc.createProcess(in);
@@ -160,20 +155,16 @@ public class DouglasPeuckerTest extends AbstractProcessTest{
         final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.call().parameter("feature_out").getValue();
 
         assertTrue(featureListOut.isEmpty());
-       
-    }
 
+    }
+    
     /**
-     * Test DouglasPeucker process when a geometry is smaller than the
-     * precision of the simplification, and the user don't want to delete
-     * small features.
-     * In input there is a small feature geometry, and in output
-     * a feature with null geometry
+     * Test DouglasPeucker process with no del_small_geo_in and lenient_transform_in parameters.
      */
     @Test
-    public void testDouglasPeuckerWithoutDelete() throws ProcessException, NoSuchIdentifierException{
+    public void testDouglasPeuckerOptionalParam() throws ProcessException, NoSuchIdentifierException, FactoryException {
 
-         // Inputs
+        // Inputs
         final FeatureCollection<?> featureList = buildFeatureCollectionInput2();
         Unit<Length> unit = SI.METRE;
 
@@ -183,7 +174,33 @@ public class DouglasPeuckerTest extends AbstractProcessTest{
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("feature_in").setValue(featureList);
         in.parameter("accuracy_in").setValue(new Double(61));
-        in.parameter("unit_in").setValue(unit);
+        org.geotoolkit.process.Process proc = desc.createProcess(in);
+
+        //Features out
+        final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.call().parameter("feature_out").getValue();
+
+        assertTrue(!featureListOut.isEmpty());
+
+    }
+
+    /**
+     * Test DouglasPeucker process when a geometry is smaller than the precision of the simplification, and the user
+     * don't want to delete small features. In input there is a small feature geometry, and in output a feature with
+     * null geometry
+     */
+    @Test
+    public void testDouglasPeuckerWithoutDelete() throws ProcessException, NoSuchIdentifierException, FactoryException {
+
+        // Inputs
+        final FeatureCollection<?> featureList = buildFeatureCollectionInput2();
+        Unit<Length> unit = SI.METRE;
+
+        // Process
+        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "douglasPeucker");
+
+        ParameterValueGroup in = desc.getInputDescriptor().createValue();
+        in.parameter("feature_in").setValue(featureList);
+        in.parameter("accuracy_in").setValue(new Double(61));
         in.parameter("del_small_geo_in").setValue(false);
         in.parameter("lenient_transform_in").setValue(true);
         org.geotoolkit.process.Process proc = desc.createProcess(in);
@@ -193,20 +210,20 @@ public class DouglasPeuckerTest extends AbstractProcessTest{
         //Expected Features out
         final FeatureCollection<?> featureListResult = buildFeatureCollectionResult2();
 
-        assertEquals(featureListResult.getFeatureType(),featureListOut.getFeatureType());
-        assertEquals(featureListResult.getID(),featureListOut.getID());
-        assertEquals(featureListResult.size(),featureListOut.size());
+        assertEquals(featureListResult.getFeatureType(), featureListOut.getFeatureType());
+        assertEquals(featureListResult.getID(), featureListOut.getID());
+        assertEquals(featureListResult.size(), featureListOut.size());
 
         FeatureIterator<?> iteratorOut = featureListOut.iterator();
         FeatureIterator<?> iteratorResult = featureListResult.iterator();
 
-        while(iteratorOut.hasNext() && iteratorResult.hasNext()){
+        while (iteratorOut.hasNext() && iteratorResult.hasNext()) {
             Feature featureOut = iteratorOut.next();
 
             for (Property propertyOut : featureOut.getProperties()) {
                 if (propertyOut.getDescriptor() instanceof GeometryDescriptor) {
 
-                    final Geometry  geomOut = (Geometry) propertyOut.getValue();
+                    final Geometry geomOut = (Geometry) propertyOut.getValue();
                     assertTrue(geomOut == null || geomOut.isEmpty());
                 }
             }
@@ -224,14 +241,8 @@ public class DouglasPeuckerTest extends AbstractProcessTest{
         return sft;
     }
 
-    private static FeatureCollection<Feature> buildFeatureCollectionInput1() {
-        try {
-            type = createSimpleType();
-        } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(DouglasPeuckerTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FactoryException ex) {
-            Logger.getLogger(DouglasPeuckerTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    private static FeatureCollection<Feature> buildFeatureCollectionInput1() throws FactoryException {
+        type = createSimpleType();
 
         final FeatureCollection<Feature> featureList = DataUtilities.collection("", type);
 
@@ -265,14 +276,14 @@ public class DouglasPeuckerTest extends AbstractProcessTest{
         LinearRing ring2 = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(-10.0, -10.0),
-                    new Coordinate(  0.0, -30.0),
+                    new Coordinate(0.0, -30.0),
                     new Coordinate(-20.0, -20.0),
-                    new Coordinate(-30.0,  10.0),
-                    new Coordinate(-20.0,  30.0),
-                    new Coordinate(  0.0,  20.0),
-                    new Coordinate( 10.0,  10.0),
-                    new Coordinate( 20.0, -20.0),
-                    new Coordinate( 10.0, -20.0),
+                    new Coordinate(-30.0, 10.0),
+                    new Coordinate(-20.0, 30.0),
+                    new Coordinate(0.0, 20.0),
+                    new Coordinate(10.0, 10.0),
+                    new Coordinate(20.0, -20.0),
+                    new Coordinate(10.0, -20.0),
                     new Coordinate(-10.0, -10.0)
                 });
         sfb = new SimpleFeatureBuilder(type);
@@ -284,14 +295,8 @@ public class DouglasPeuckerTest extends AbstractProcessTest{
         return featureList;
     }
 
-     private static FeatureCollection<Feature> buildFeatureCollectionInput2() {
-        try {
-            type = createSimpleType();
-        } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(DouglasPeuckerTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FactoryException ex) {
-            Logger.getLogger(DouglasPeuckerTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    private static FeatureCollection<Feature> buildFeatureCollectionInput2() throws FactoryException {
+        type = createSimpleType();
 
         final FeatureCollection<Feature> featureList = DataUtilities.collection("", type);
 
@@ -301,14 +306,14 @@ public class DouglasPeuckerTest extends AbstractProcessTest{
         LinearRing ring2 = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(-10.0, -10.0),
-                    new Coordinate(  0.0, -30.0),
+                    new Coordinate(0.0, -30.0),
                     new Coordinate(-20.0, -20.0),
-                    new Coordinate(-30.0,  10.0),
-                    new Coordinate(-20.0,  30.0),
-                    new Coordinate(  0.0,  20.0),
-                    new Coordinate( 10.0,  10.0),
-                    new Coordinate( 20.0, -20.0),
-                    new Coordinate( 10.0, -20.0),
+                    new Coordinate(-30.0, 10.0),
+                    new Coordinate(-20.0, 30.0),
+                    new Coordinate(0.0, 20.0),
+                    new Coordinate(10.0, 10.0),
+                    new Coordinate(20.0, -20.0),
+                    new Coordinate(10.0, -20.0),
                     new Coordinate(-10.0, -10.0)
                 });
         sfb = new SimpleFeatureBuilder(type);
@@ -320,14 +325,8 @@ public class DouglasPeuckerTest extends AbstractProcessTest{
         return featureList;
     }
 
-    private static FeatureCollection<Feature> buildFeatureCollectionResult() {
-        try {
-            type = createSimpleType();
-        } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(DouglasPeuckerTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FactoryException ex) {
-            Logger.getLogger(DouglasPeuckerTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    private static FeatureCollection<Feature> buildFeatureCollectionResult() throws FactoryException {
+        type = createSimpleType();
 
         final FeatureCollection<Feature> featureList = DataUtilities.collection("", type);
 
@@ -356,11 +355,11 @@ public class DouglasPeuckerTest extends AbstractProcessTest{
         LinearRing ring2 = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(-10.0, -10.0),
-                    new Coordinate(  0.0, -30.0),
-                    new Coordinate(-30.0,  10.0),
-                    new Coordinate(-20.0,  30.0),
-                    new Coordinate( 10.0,  10.0),
-                    new Coordinate( 20.0, -20.0),
+                    new Coordinate(0.0, -30.0),
+                    new Coordinate(-30.0, 10.0),
+                    new Coordinate(-20.0, 30.0),
+                    new Coordinate(10.0, 10.0),
+                    new Coordinate(20.0, -20.0),
                     new Coordinate(-10.0, -10.0)
                 });
         sfb = new SimpleFeatureBuilder(type);
@@ -373,14 +372,8 @@ public class DouglasPeuckerTest extends AbstractProcessTest{
 
     }
 
-    private static FeatureCollection<Feature> buildFeatureCollectionResult2() {
-        try {
-            type = createSimpleType();
-        } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(DouglasPeuckerTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FactoryException ex) {
-            Logger.getLogger(DouglasPeuckerTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    private static FeatureCollection<Feature> buildFeatureCollectionResult2() throws FactoryException {
+        type = createSimpleType();
 
         final FeatureCollection<Feature> featureList = DataUtilities.collection("", type);
 

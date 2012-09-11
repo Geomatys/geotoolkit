@@ -120,6 +120,26 @@ public class OWSExceptionCode extends CodeList<OWSExceptionCode> {
      * Invalid dimension value.
      */
     public static final OWSExceptionCode INVALID_DIMENSION_VALUE = new OWSExceptionCode("InvalidDimensionValue");
+    
+    /**
+     * Not Enough Storage.
+     */
+    public static final OWSExceptionCode NOT_ENOUGH_STORAGE = new OWSExceptionCode("NotEnoughStorage");
+    
+    /**
+     * Server Busy.
+     */
+    public static final OWSExceptionCode SERVER_BUSY = new OWSExceptionCode("ServerBusy");
+    
+    /**
+     * File Size Exceeded.
+     */
+    public static final OWSExceptionCode FILE_SIZE_EXCEEDED = new OWSExceptionCode("FileSizeExceeded");
+    
+    /**
+     * Storage Not Supported.
+     */
+    public static final OWSExceptionCode STORAGE_NOT_SUPPORTED = new OWSExceptionCode("StorageNotSupported");
 
     /**
      * Constructs an enum with the given name. The new enum is

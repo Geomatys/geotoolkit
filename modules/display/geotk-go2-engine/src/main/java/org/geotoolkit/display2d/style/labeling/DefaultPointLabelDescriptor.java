@@ -2,7 +2,6 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2004 - 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2008 - 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -19,7 +18,6 @@ package org.geotoolkit.display2d.style.labeling;
 
 import java.awt.Font;
 import java.awt.Paint;
-
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 

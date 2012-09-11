@@ -13,6 +13,7 @@ import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.feature.ValidatingFeatureFactory;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 
+import org.geotoolkit.pending.demo.Demos;
 import org.opengis.feature.ComplexAttribute;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureFactory;
@@ -38,7 +39,8 @@ public class FeatureDemo {
     private static final GeometryFactory GF = new GeometryFactory();
 
     public static void main(String[] args) throws NoSuchAuthorityCodeException, FactoryException {
-
+        Demos.init();
+        
         final SimpleFeatureType type = FeatureTypeBuilderDemo.createSimpleType();
         final FeatureType cpxtype = FeatureTypeBuilderDemo.createComplexType();
         

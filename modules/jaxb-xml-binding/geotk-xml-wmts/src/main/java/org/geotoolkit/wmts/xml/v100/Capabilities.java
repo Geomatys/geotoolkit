@@ -77,13 +77,17 @@ public class Capabilities extends CapabilitiesBaseType implements WMTSResponse {
 
     }
 
+    public Capabilities(final String version, final String updateSequence) {
+        super(null, null, null, version, updateSequence);
+    }
+    
     public Capabilities(final ServiceIdentification serviceIdentification, final ServiceProvider serviceProvider,
             final OperationsMetadata operationsMetadata, final String version, final String updateSequence, final ContentsType con, final List<Themes> them) {
         super(serviceIdentification, serviceProvider, operationsMetadata, version, updateSequence);
         this.contents = con;
         this.themes = them;
-
     }
+    
     /**
      * Gets the value of the contents property.
      * 

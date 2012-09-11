@@ -17,34 +17,33 @@
  */
 package org.geotoolkit.gui.swing.style;
 
-import org.geotoolkit.gui.swing.resource.MessageBundle;
 import javax.measure.quantity.Length;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
-
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.LayoutStyle.ComponentPlacement;
-import org.geotoolkit.gui.swing.style.StyleElementEditor;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 
 /**
  *
  * @author Johann Sorel
  * @module pending
  */
-public class JUOMPane extends StyleElementEditor<Unit<Length>>{
+public class JUOMPane extends StyleElementEditor<Unit>{
 
     /** Creates new form JUOMPane */
     public JUOMPane() {
+        super(Unit.class);
         initComponents();
     }
 
     @Override
-    public void parse(final Unit<Length> target) {
+    public void parse(final Unit target) {
         if(SI.METRE.equals(target)){
             jcb_uom.setSelectedIndex(1);
         }else if(NonSI.FOOT.equals(target)){

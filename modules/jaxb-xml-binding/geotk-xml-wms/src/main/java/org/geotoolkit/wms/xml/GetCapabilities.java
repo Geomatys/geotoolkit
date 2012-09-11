@@ -37,15 +37,22 @@ public final class GetCapabilities {
     private final String language;
 
     private final Version version;
+    
+    private final String updateSequence;
 
     public GetCapabilities(final Version version) {
-        this(version, null, null);
+        this(version, null, null, null);
     }
 
     public GetCapabilities(final Version version, final String format, final String language) {
-        this.version  = version;
-        this.format   = format;
-        this.language = language;
+        this(version, format, language, null);
+    }
+    
+    public GetCapabilities(final Version version, final String format, final String language, final String updateSequence) {
+        this.version        = version;
+        this.format         = format;
+        this.language       = language;
+        this.updateSequence = updateSequence;
     }
 
 
@@ -76,6 +83,13 @@ public final class GetCapabilities {
      */
     public final Version getVersion() {
         return version;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String getUpdateSequence() {
+        return updateSequence;
     }
 
 }

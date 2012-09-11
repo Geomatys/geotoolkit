@@ -36,7 +36,7 @@ public class GraphicProbe extends AbstractGraphicJ2D{
     private final ProbeMonitor monitor;
 
     public GraphicProbe(final J2DCanvas canvas, final ProbeMonitor monitor){
-        super(canvas,canvas.getObjectiveCRS2D());
+        super(canvas);
         this.monitor = monitor;
     }
 
@@ -51,9 +51,7 @@ public class GraphicProbe extends AbstractGraphicJ2D{
     }
 
     public static interface ProbeMonitor{
-
         void contextPaint(RenderingContext2D context);
-
     }
 
 }

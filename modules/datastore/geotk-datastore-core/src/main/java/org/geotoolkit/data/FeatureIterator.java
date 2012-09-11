@@ -17,7 +17,6 @@
 package org.geotoolkit.data;
 
 import org.geotoolkit.util.collection.CloseableIterator;
-
 import org.opengis.feature.Feature;
 
 /**

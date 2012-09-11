@@ -20,6 +20,13 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.internal.jaxb.gco.InternationalStringAdapter;
+import org.geotoolkit.se.xml.DirectStringAdapter;
+import org.geotoolkit.util.SimpleInternationalString;
+import org.opengis.style.Description;
+import org.opengis.style.StyleVisitor;
+import org.opengis.util.InternationalString;
 
 
 /**
@@ -48,12 +55,14 @@ import javax.xml.bind.annotation.XmlType;
     "title",
     "_abstract"
 })
-public class DescriptionType {
+public class DescriptionType implements Description {
 
     @XmlElement(name = "Title")
-    protected String title;
+    @XmlJavaTypeAdapter(DirectStringAdapter.class)
+    protected InternationalString title;
     @XmlElement(name = "Abstract")
-    protected String _abstract;
+    @XmlJavaTypeAdapter(DirectStringAdapter.class)
+    protected InternationalString _abstract;
 
     /**
      * Gets the value of the title property.
@@ -63,7 +72,8 @@ public class DescriptionType {
      *     {@link String }
      *     
      */
-    public String getTitle() {
+    @Override
+    public InternationalString getTitle() {
         return title;
     }
 
@@ -76,7 +86,7 @@ public class DescriptionType {
      *     
      */
     public void setTitle(final String value) {
-        this.title = value;
+        this.title = new SimpleInternationalString(value);
     }
 
     /**
@@ -87,7 +97,8 @@ public class DescriptionType {
      *     {@link String }
      *     
      */
-    public String getAbstract() {
+    @Override
+    public InternationalString getAbstract() {
         return _abstract;
     }
 
@@ -100,7 +111,12 @@ public class DescriptionType {
      *     
      */
     public void setAbstract(final String value) {
-        this._abstract = value;
+        this._abstract = new SimpleInternationalString(value);
+    }
+
+    @Override
+    public Object accept(StyleVisitor sv, Object o) {
+        return sv.visit(this, o);
     }
 
 }

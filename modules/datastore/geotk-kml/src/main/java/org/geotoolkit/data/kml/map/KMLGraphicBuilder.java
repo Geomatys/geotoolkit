@@ -81,8 +81,9 @@ import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display.primitive.SearchArea;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
+import org.geotoolkit.display2d.container.statefull.StatefullContextParams;
+import org.geotoolkit.display2d.container.statefull.StatefullProjectedGeometry;
 import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
-import org.geotoolkit.display2d.primitive.DefaultProjectedGeometry;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.display2d.primitive.jts.JTSGeometryJ2D;
 import org.geotoolkit.display2d.style.labeling.DefaultLabelLayer;
@@ -633,7 +634,7 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
         private RenderingContext2D context2d;
 
         private KMLGraphic(J2DCanvas canvas, KmlMapLayer layer) {
-            super(canvas, canvas.getObjectiveCRS());
+            super(canvas);
             cache = new KmlCache(layer.kml);
         }
 
@@ -1326,8 +1327,11 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
                     //                    return;
                     //                }
 
-                    final DefaultProjectedGeometry projectedGeometry = new DefaultProjectedGeometry(geom);
-                    projectedGeometry.setObjToDisplay(transform);
+                    final StatefullContextParams params = new StatefullContextParams(null, null);
+                    params.update(context2d);
+                    final StatefullProjectedGeometry projectedGeometry = new StatefullProjectedGeometry(params);
+                    projectedGeometry.setDataGeometry(geom, null);
+                    
                     final LabelLayer labelLayer = new DefaultLabelLayer(false, false);
                     //                Paint textPaint;
                     //                textPaint.

@@ -79,6 +79,6 @@ public final class AffineTransformDescriptor extends VectorDescriptor {
      */
     @Override
     public Process createProcess(final ParameterValueGroup input) {
-        return new AffineTransform(input);
+        return new AffineTransformProcess(input);
     }
 }

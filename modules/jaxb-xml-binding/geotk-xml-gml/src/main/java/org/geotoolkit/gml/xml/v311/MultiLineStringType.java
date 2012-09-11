@@ -22,6 +22,7 @@ import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.MultiLineString;
 import org.geotoolkit.util.ComparisonMode;
 import org.opengis.filter.expression.ExpressionVisitor;
 
@@ -52,10 +53,19 @@ import org.opengis.filter.expression.ExpressionVisitor;
 @XmlType(name = "MultiLineStringType", propOrder = {
     "lineStringMember"
 })
-public class MultiLineStringType extends AbstractGeometricAggregateType {
+public class MultiLineStringType extends AbstractGeometricAggregateType implements MultiLineString {
 
     private List<LineStringPropertyType> lineStringMember;
 
+    public MultiLineStringType() {
+        
+    }
+    
+    public MultiLineStringType(final String srsName, final List<LineStringPropertyType> lineStringMember) {
+        super(srsName);
+        this.lineStringMember = lineStringMember;
+    }
+    
     /**
      * Gets the value of the lineStringMember property.
      * 

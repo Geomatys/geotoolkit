@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.Ring;
 import org.geotoolkit.util.ComparisonMode;
 import org.opengis.filter.expression.ExpressionVisitor;
 
@@ -55,7 +56,7 @@ import org.opengis.filter.expression.ExpressionVisitor;
 @XmlType(name = "RingType", propOrder = {
     "curveMember"
 })
-public class RingType extends AbstractRingType {
+public class RingType extends AbstractRingType implements Ring{
 
     @XmlElement(required = true)
     private List<CurvePropertyType> curveMember;

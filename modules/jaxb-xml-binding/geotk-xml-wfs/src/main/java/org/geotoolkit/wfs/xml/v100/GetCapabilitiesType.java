@@ -20,6 +20,11 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.AcceptFormats;
+import org.geotoolkit.ows.xml.AcceptVersions;
+import org.geotoolkit.ows.xml.Sections;
+import org.geotoolkit.util.Version;
+import org.geotoolkit.wfs.xml.GetCapabilities;
 
 
 /**
@@ -49,12 +54,28 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GetCapabilitiesType")
-public class GetCapabilitiesType {
+public class GetCapabilitiesType implements GetCapabilities {
 
     @XmlAttribute
     private String version;
     @XmlAttribute(required = true)
     private String service;
+
+    /**
+     * An empty constructor used by JAXB
+     */
+    public GetCapabilitiesType() {
+    }
+
+    /**
+     * Build a minimal new getCapabilities request with the specified service.
+     *
+     * @param service MUST be WFS.
+     */
+    public GetCapabilitiesType(final String service, final String version) {
+        this.service = service;
+        this.version = version;
+    }
 
     /**
      * Gets the value of the version property.
@@ -64,11 +85,11 @@ public class GetCapabilitiesType {
      *     {@link String }
      *     
      */
-    public String getVersion() {
+    public Version getVersion() {
         if (version == null) {
-            return "1.0.0";
+            return new Version("1.0.0");
         } else {
-            return version;
+            return new Version(version);
         }
     }
 
@@ -112,4 +133,27 @@ public class GetCapabilitiesType {
         this.service = value;
     }
 
+    public AcceptVersions getAcceptVersions() {
+        return null; // not implemented in 1.0.0
+    }
+
+    public Sections getSections() {
+        return null; // not implemented in 1.0.0
+    }
+
+    public String getFirstAcceptFormat() {
+        return null; // not implemented in 1.0.0
+    }
+
+    public boolean containsSection(String sectionName) {
+        return false;
+    }
+
+    public AcceptFormats getAcceptFormats() {
+        return null; // not implemented in 1.0.0
+    }
+
+    public String getUpdateSequence() {
+        return null; // not implemented in 1.0.0
+    }
 }

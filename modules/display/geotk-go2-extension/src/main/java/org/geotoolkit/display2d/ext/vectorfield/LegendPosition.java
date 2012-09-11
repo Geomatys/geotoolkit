@@ -19,10 +19,10 @@ package org.geotoolkit.display2d.ext.vectorfield;
 
 
 import java.awt.geom.Rectangle2D;
-import javax.swing.SwingConstants;
 import java.io.ObjectStreamException;
 import java.util.NoSuchElementException;
 import javax.media.jai.EnumeratedParameter;
+import javax.swing.SwingConstants;
 
 
 /**

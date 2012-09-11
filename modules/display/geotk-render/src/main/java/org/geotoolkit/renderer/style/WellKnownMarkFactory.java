@@ -23,37 +23,21 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D.Double;
 import java.util.logging.Logger;
-
+import org.geotoolkit.util.logging.Logging;
 import org.opengis.filter.expression.Expression;
 
 public class WellKnownMarkFactory implements MarkFactory {
 
     /** The logger for the rendering module. */
-    private static final Logger LOGGER = org.geotoolkit.util.logging.Logging.getLogger(
-            "org.geotoolkit.rendering.style");
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.rendering.style");
 
-    /** Cross general path */
     public static final GeneralPath CROSS;
-
-    /** Star general path */
     public static final Shape STAR;
-
-    /** Triangle general path */
     public static final Shape TRIANGLE;
-
-    /** Arrow general path */
     public static final GeneralPath ARROW;
-
-    /** X general path */
     public static final Shape X;
-    
-    /** hatch path */
     public static final GeneralPath HATCH;
-    
-    /** square */
     public static final Shape SQUARE;
-    
-    /** circle */
     public static final Shape CIRCLE;
 
     static {
@@ -146,43 +130,32 @@ public class WellKnownMarkFactory implements MarkFactory {
     
     @Override
     public Shape getShape(final Graphics2D graphics, final Expression symbolUrl, final Object candidate) throws Exception {
-        // cannot handle a null url
-        if(symbolUrl == null)
+        
+        if(symbolUrl == null){
             return null;
+        }
         
         final String wellKnownName = symbolUrl.evaluate(candidate, String.class);
         
-        LOGGER.finer("fetching mark of name " + wellKnownName);
-
-        if (wellKnownName.equalsIgnoreCase("cross")) {
-            LOGGER.finer("returning cross");
+        if ("cross".equalsIgnoreCase(wellKnownName)) {
             return CROSS;
-        }else if (wellKnownName.equalsIgnoreCase("circle")) {
-            LOGGER.finer("returning circle");
+        }else if ("circle".equalsIgnoreCase(wellKnownName)) {
             return CIRCLE;
-        }else if (wellKnownName.equalsIgnoreCase("triangle")) {
-            LOGGER.finer("returning triangle");
+        }else if ("triangle".equalsIgnoreCase(wellKnownName)) {
             return TRIANGLE;
-        }else if (wellKnownName.equalsIgnoreCase("X")) {
-            LOGGER.finer("returning X");
+        }else if ("X".equalsIgnoreCase(wellKnownName)) {
             return X;
-        }else if (wellKnownName.equalsIgnoreCase("star")) {
-            LOGGER.finer("returning star");
+        }else if ("star".equalsIgnoreCase(wellKnownName)) {
             return STAR;
-        }else if (wellKnownName.equalsIgnoreCase("arrow")) {
-            LOGGER.finer("returning arrow");
+        }else if ("arrow".equalsIgnoreCase(wellKnownName)) {
             return ARROW;
-        }else if (wellKnownName.equalsIgnoreCase("hatch")) {
-            LOGGER.finer("returning hatch");
+        }else if ("hatch".equalsIgnoreCase(wellKnownName)) {
             return HATCH;
-        }else if (wellKnownName.equalsIgnoreCase("square")) {
-            LOGGER.finer("returning square");
+        }else if ("square".equalsIgnoreCase(wellKnownName)) {
             return SQUARE;
         }
 
-        // failing that return a square?
         LOGGER.finer("Could not find the symbol, returning null");
-
         return null;
     }
 

@@ -16,50 +16,50 @@
  */
 package org.geotoolkit.process.jts.centroid;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.geotoolkit.geometry.jts.JTS;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
+
 import org.geotoolkit.process.AbstractProcess;
+import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.process.ProcessException;
+
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.FactoryException;
 
 import static org.geotoolkit.process.jts.centroid.CentroidDescriptor.*;
 import static org.geotoolkit.parameter.Parameters.*;
-import org.opengis.util.FactoryException;
+
 /**
- * Compute input geometry centroid. 
+ * Compute input geometry centroid.
  * The returned point keep input geometry CRS.
  * @author Quentin Boileau (Geomatys)
  * @module pending
  */
 public class CentroidProcess extends AbstractProcess{
-    
-    public CentroidProcess(final ParameterValueGroup input){
+
+    public CentroidProcess(final ParameterValueGroup input) {
         super(INSTANCE,input);
     }
-    
+
     @Override
-    public ParameterValueGroup call() {
+    protected void execute() throws ProcessException {
         try {
-            final Geometry geom = value(GEOM, inputParameters);  
-           
+            final Geometry geom = value(GEOM, inputParameters);
+
             final CoordinateReferenceSystem geomCRS = JTS.findCoordinateReferenceSystem(geom);
-            
+
             final Point result = geom.getCentroid();
             JTS.setCRS(result, geomCRS);
-            
-            getOrCreate(RESULT_GEOM, outputParameters).setValue(result); 
-            
+
+            getOrCreate(RESULT_GEOM, outputParameters).setValue(result);
+
         } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(CentroidProcess.class.getName()).log(Level.WARNING, null, ex);
+            throw new ProcessException(null, this, ex);
         } catch (FactoryException ex) {
-            Logger.getLogger(CentroidProcess.class.getName()).log(Level.WARNING, null, ex);
+            throw new ProcessException(null, this, ex);
         }
-        
-        return outputParameters;
     }
-    
+
 }

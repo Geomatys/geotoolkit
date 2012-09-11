@@ -19,7 +19,7 @@ package org.geotoolkit.display.canvas.control;
 import java.util.logging.Level;
 
 /**
- * TODO: document me, pretty please.
+ * Monitor stopping rendering on first error. but does not fail.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending

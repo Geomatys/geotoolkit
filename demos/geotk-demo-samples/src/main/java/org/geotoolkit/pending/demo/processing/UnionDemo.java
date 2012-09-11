@@ -11,6 +11,7 @@ import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
+import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessException;
 import org.geotoolkit.process.ProcessFinder;
@@ -30,7 +31,9 @@ public class UnionDemo {
     private static SimpleFeatureType type;
     
     public static void main(String[] args) throws ProcessException, NoSuchIdentifierException{
-                
+        Demos.init();        
+        
+        
         // Inputs
         final FeatureCollection<?> featureList = buildFeatureList();
         System.out.println("Input FeatureCollection 1 : "+featureList);

@@ -21,7 +21,7 @@ package org.geotoolkit.wfs.xml.v200;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
-
+import org.geotoolkit.wfs.xml.CreateStoredQueryResponse;
 
 /**
  * <p>Java class for CreateStoredQueryResponseType complex type.
@@ -41,9 +41,14 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CreateStoredQueryResponseType")
-public class CreateStoredQueryResponseType
-    extends ExecutionStatusType
-{
+public class CreateStoredQueryResponseType extends ExecutionStatusType implements CreateStoredQueryResponse {
 
+    public CreateStoredQueryResponseType() {
+        
+    }
+    
+    public CreateStoredQueryResponseType(final String status) {
+        super(status);
+    }
 
 }

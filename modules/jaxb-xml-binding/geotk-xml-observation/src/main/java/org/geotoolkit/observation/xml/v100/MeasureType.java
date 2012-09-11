@@ -121,7 +121,7 @@ public class MeasureType implements Measure, Entry{
             final MeasureType that = (MeasureType) object;
             return Objects.equals(this.name,  that.name) &&
                    Objects.equals(this.uom,   that.uom) &&
-                   Utilities.equals(this.value, that.value) ;
+                   Objects.equals(this.value, that.value) ;
         }
         return false;
     }

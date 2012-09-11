@@ -47,9 +47,12 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.jdbc.dialect.SQLDialect;
+import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.referencing.CRS;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
+import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterValueGroup;
 
 
 /**
@@ -138,15 +141,19 @@ public abstract class JDBCTestSupport extends TestCase {
         //initialize the data
         setup.setUpData();
 
-        //create the dataStore
-        //TODO: replace this with call to datastore factory
-        HashMap params = new HashMap();
-        params.put( JDBCDataStoreFactory.NAMESPACE.getName().toString(), "http://www.geotoolkit.org/test" );
-        params.put( JDBCDataStoreFactory.SCHEMA.getName().toString(), "geotoolkit" );
-        params.put( JDBCDataStoreFactory.DATASOURCE.getName().toString(), setup.getDataSource() );
+        //create the dataStore        
+        final JDBCDataStoreFactory factory = setup.createDataStoreFactory();
+        final ParameterDescriptorGroup desc = factory.getParametersDescriptor();
+        final ParameterValueGroup param = desc.createValue();
+        Parameters.getOrCreate(JDBCDataStoreFactory.NAMESPACE, param).setValue("http://www.geotoolkit.org/test");
+        Parameters.getOrCreate(JDBCDataStoreFactory.SCHEMA, param).setValue("geotoolkit");
+        Parameters.getOrCreate(JDBCDataStoreFactory.DATASOURCE, param).setValue(setup.getDataSource());
+        Parameters.getOrCreate(JDBCDataStoreFactory.HOST, param).setValue("");
+        Parameters.getOrCreate(JDBCDataStoreFactory.PORT, param).setValue(5432);
+        Parameters.getOrCreate(JDBCDataStoreFactory.USER, param).setValue("");
+        Parameters.getOrCreate(JDBCDataStoreFactory.PASSWD, param).setValue("");
         
-        JDBCDataStoreFactory factory = setup.createDataStoreFactory();
-        dataStore = (JDBCDataStore) factory.createDataStore( params );
+        dataStore = (JDBCDataStore) factory.create( param );
         
         setup.setUpDataStore(dataStore);
         dialect = dataStore.getDialect();

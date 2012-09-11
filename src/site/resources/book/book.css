@@ -1,0 +1,235 @@
+/*
+ * Style for the Geotoolkit.org documentation
+ * generated from the docbook files.
+ */
+ 
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  background: #fafafa;
+  font-size: 13px;
+  line-height: 18px;
+  color: #333;
+  margin: 0;
+  padding: 0;
+}
+ 
+a[href^='#'] {
+  color: #4779e6;
+  text-decoration: none;
+  padding-bottom: 1px;
+}
+
+a[href^='#']:hover {
+  border-bottom: 1px solid #4779e6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  font-family: @headingsFontFamily;
+  font-weight: @headingsFontWeight;
+  color: @headingsColor;
+  text-rendering: optimizelegibility; // Fix the character spacing for headings
+  small {
+    font-weight: normal;
+    color: @grayLight;
+  }
+}
+h1 {
+  font-size: 30px;
+  line-height: 36px;
+  small {
+    font-size: 18px;
+  }
+}
+h2 {
+  font-size: 24px;
+  line-height: 36px;
+  small {
+    font-size: 18px;
+  }
+}
+h3 {
+  font-size: 18px;
+  line-height: 27px;
+  small {
+    font-size: 14px;
+  }
+}
+h4, h5, h6 {
+  line-height: 18px;
+}
+h4 {
+  font-size: 14px;
+  small {
+    font-size: 12px;
+  }
+}
+h5 {
+  font-size: 12px;
+}
+h6 {
+  font-size: 11px;
+  color: #ccc;
+  text-transform: uppercase;
+}
+
+p {
+  margin: 0 0 9px;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 13px;
+  line-height: 18px;
+  small {
+    font-size: 11px;
+    color: #ccc;
+  }
+}
+
+
+.book {
+  position: relative;
+  background: #fff;
+  width: 920px;
+  margin: 0 auto;
+  padding: 1px 40px;
+  border: 1px solid #eee;
+  border-top: none;
+  border-bottom: none;
+}
+
+.toc,
+.list-of-figures,
+.list-of-tables,
+.list-of-examples {
+  background: #fafafa;
+  padding: 20px 40px;
+  width: 500px;
+  margin-bottom: 10px;
+}
+
+dd,
+dt,
+dl {
+  margin: 0;
+  line-height: 18px;
+  margin-left: 12px;
+}
+
+dl {
+  margin-top: 0;
+  margin-bottom: 12px;
+}
+
+dd {
+  font-size: 13px;
+  font-weight: normal;
+}
+
+hr {
+  margin: 18px 0;
+  border: 0;
+  border-top: 1px solid #eee;
+}
+
+.mediaobject {
+  max-width: 100%;
+  overflow: auto;
+}
+
+span.deprecated {
+  text-decoration: line-through;
+}
+
+div.table p.title {
+  text-align: center;
+}
+
+table {
+  margin-left:  auto;
+  margin-right: auto;
+  border-style: solid;
+  border-width:   2pt;
+  border-spacing: 0pt;
+}
+
+table tr th {
+  background-color: #B9DCFF;
+  border-bottom-style: solid;
+  border-bottom-width: 1pt;
+  padding: 3pt;
+}
+
+table tr td {
+  padding-left:  9pt;
+  padding-right: 9pt;
+}
+
+table tr td.separator {
+  font-weight: bold;
+  text-align: center;
+  padding-top:    3pt;
+  padding-bottom: 3pt;
+  border-top-style: solid;
+  border-top-width: 1pt;
+  border-top-color: lightgray;
+  border-bottom-style: solid;
+  border-bottom-width: 1pt;
+  border-bottom-color: lightgray;
+  background-color: #F4F8FF;
+}
+
+.example {
+    background-color: aliceBlue;
+    border: dashed 1px;
+    margin: auto;
+    font-family: monospace;
+}
+
+.example {
+  display: block;
+  padding: 16px;
+  margin: 0 0 9px;
+  font-size: 12px;
+  line-height: 18px;
+  background-color: #f5f5f5;
+  border: 1px solid #ccc;
+  border: 1px solid rgba(0,0,0,.15);
+    -webkit-border-radius: 4px;
+       -moz-border-radius: 4px;
+            border-radius: 4px;
+}
+
+.example code {
+  padding: 0;
+  color: inherit;
+  background-color: transparent;
+  border: 0;
+}
+
+
+.programlisting {
+    font-family: monospace;
+    max-width: 100%;
+    padding: 2px 4px;
+    color: #d14;
+    background-color: #f7f7f9;
+    border: 1px solid #e1e1e8;
+    -webkit-border-radius: 4px;
+       -moz-border-radius: 4px;
+            border-radius: 4px;
+    overflow: auto;
+}
+
+.example .title {
+    font-size: 11px;
+    margin-left: 15px;
+}
+
+.chapter .title {
+    border-bottom: 1px solid #333;
+    margin-bottom: 15px;
+}
+
+.section .title {
+    border:none;
+}
+

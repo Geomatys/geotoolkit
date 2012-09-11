@@ -59,8 +59,8 @@ public abstract class AbstractTiledGraphic extends AbstractGraphicJ2D{
     
     private boolean silentErrors = false;
     
-    public AbstractTiledGraphic(final J2DCanvas canvas, final CoordinateReferenceSystem crs){
-        super(canvas, crs);
+    public AbstractTiledGraphic(final J2DCanvas canvas){
+        super(canvas);
     }
 
     public void setSilentErrors(boolean silentErrors) {
@@ -75,7 +75,7 @@ public abstract class AbstractTiledGraphic extends AbstractGraphicJ2D{
      * Render each query response as a coverage with the given gridToCRS and CRS.
      */
     protected void paint(final RenderingContext2D context, 
-            final Collection<TileReference>  queries) {
+            final Collection<QueryTileReference>  queries) {
         final CanvasMonitor monitor = context.getMonitor();
         
         //bypass all if no queries
@@ -91,7 +91,7 @@ public abstract class AbstractTiledGraphic extends AbstractGraphicJ2D{
         
         final ExecutorService executor = Executors.newFixedThreadPool(6);
         
-        for(final TileReference entry : queries){            
+        for(final QueryTileReference entry : queries){            
             if(monitor.stopRequested()){
                 return;
             }
@@ -116,7 +116,7 @@ public abstract class AbstractTiledGraphic extends AbstractGraphicJ2D{
     }
     
     private void paint(final RenderingContext2D context, 
-            final TileReference tileRef){        
+            final QueryTileReference tileRef){        
         final CanvasMonitor monitor = context.getMonitor();
         final CoordinateReferenceSystem objCRS2D = context.getObjectiveCRS2D();
                 

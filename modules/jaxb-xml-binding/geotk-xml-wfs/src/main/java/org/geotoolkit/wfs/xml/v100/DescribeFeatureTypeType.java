@@ -18,12 +18,11 @@ package org.geotoolkit.wfs.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import java.util.Map;
+import javax.xml.bind.annotation.*;
 import javax.xml.namespace.QName;
+import org.geotoolkit.util.Version;
+import org.geotoolkit.wfs.xml.DescribeFeatureType;
 
 
 /**
@@ -67,7 +66,7 @@ import javax.xml.namespace.QName;
 @XmlType(name = "DescribeFeatureTypeType", propOrder = {
     "typeName"
 })
-public class DescribeFeatureTypeType {
+public class DescribeFeatureTypeType implements DescribeFeatureType {
 
     @XmlElement(name = "TypeName")
     private List<QName> typeName;
@@ -78,26 +77,22 @@ public class DescribeFeatureTypeType {
     @XmlAttribute
     private String outputFormat;
 
+    @XmlTransient
+    private Map<String, String> prefixMapping;
+    
+    public DescribeFeatureTypeType() {
+
+    }
+
+    public DescribeFeatureTypeType(final String service, final String version, final List<QName> typeName, final String outputFormat) {
+        this.service      = service;
+        this.version      = version;
+        this.outputFormat = outputFormat;
+        this.typeName     = typeName;
+    }
+    
     /**
      * Gets the value of the typeName property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the typeName property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getTypeName().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link QName }
-     * 
      * 
      */
     public List<QName> getTypeName() {
@@ -115,11 +110,11 @@ public class DescribeFeatureTypeType {
      *     {@link String }
      *     
      */
-    public String getVersion() {
+    public Version getVersion() {
         if (version == null) {
-            return "1.0.0";
+            return new Version("1.0.0");
         } else {
-            return version;
+            return new Version(version);
         }
     }
 
@@ -189,6 +184,22 @@ public class DescribeFeatureTypeType {
      */
     public void setOutputFormat(String value) {
         this.outputFormat = value;
+    }
+
+    public String getHandle() {
+        return null; // not implemented in 1.0.0 version
+    }
+
+    public void setHandle(String value) {
+        // do nothing
+    }
+
+    public Map<String, String> getPrefixMapping() {
+        return prefixMapping;
+    }
+
+    public void setPrefixMapping(Map<String, String> prefixMapping) {
+        this.prefixMapping = prefixMapping;
     }
 
 }

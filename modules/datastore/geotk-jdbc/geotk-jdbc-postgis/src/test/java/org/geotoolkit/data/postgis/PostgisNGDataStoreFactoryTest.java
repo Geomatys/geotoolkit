@@ -20,7 +20,7 @@ import java.io.IOException;
 
 import static org.geotoolkit.data.postgis.PostgisNGDataStoreFactory.PORT;
 import static org.geotoolkit.jdbc.JDBCDataStoreFactory.DATABASE;
-import static org.geotoolkit.jdbc.JDBCDataStoreFactory.DBTYPE;
+import static org.geotoolkit.jdbc.JDBCDataStoreFactory.IDENTIFIER;
 import static org.geotoolkit.jdbc.JDBCDataStoreFactory.HOST;
 import static org.geotoolkit.jdbc.JDBCDataStoreFactory.PASSWD;
 import static org.geotoolkit.jdbc.JDBCDataStoreFactory.USER;
@@ -54,10 +54,10 @@ public class PostgisNGDataStoreFactoryTest extends JDBCTestSupport {
         params.put(USER.getName().toString(), db.getProperty(USER.getName().toString()));
         params.put(PASSWD.getName().toString(), db.getProperty(PASSWD.getName().toString()));
         
-        params.put(DBTYPE.getName().toString(), factory.getDatabaseID());
+        params.put(IDENTIFIER.getName().toString(), "postgis");
 
         assertTrue(factory.canProcess(params));
-        JDBCDataStore store = (JDBCDataStore) factory.createDataStore(params);
+        JDBCDataStore store = (JDBCDataStore) factory.create(params);
         assertNotNull(store);
         try {
             // check dialect

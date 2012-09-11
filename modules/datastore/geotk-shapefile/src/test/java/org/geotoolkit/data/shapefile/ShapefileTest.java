@@ -152,7 +152,7 @@ public class ShapefileTest extends AbstractTestCaseSupport {
 
         // write features
         ShapefileDataStoreFactory make = new ShapefileDataStoreFactory();
-        DataStore s = make.createNewDataStore(Collections.singletonMap("url", tmpFile.toURI().toURL()));
+        DataStore s = make.createNew(Collections.singletonMap("url", tmpFile.toURI().toURL()));
         s.createSchema(type.getName(),type);
         Name typeName = type.getName();
 

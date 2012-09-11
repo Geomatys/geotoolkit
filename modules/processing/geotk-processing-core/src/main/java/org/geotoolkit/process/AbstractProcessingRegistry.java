@@ -23,10 +23,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.opengis.util.NoSuchIdentifierException;
 
 /**
  * Abstract process factory.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
@@ -42,10 +43,10 @@ public abstract class AbstractProcessingRegistry implements ProcessingRegistry {
     }
 
     @Override
-    public final ProcessDescriptor getDescriptor(final String name) throws IllegalArgumentException{
+    public final ProcessDescriptor getDescriptor(final String name) throws NoSuchIdentifierException{
         final ProcessDescriptor desc = descriptors.get(name);
         if(desc == null){
-            throw new IllegalArgumentException("No process descriptor for name : "+ name);
+            throw new NoSuchIdentifierException("No process descriptor for name : "+name, name);
         }else{
             return desc;
         }

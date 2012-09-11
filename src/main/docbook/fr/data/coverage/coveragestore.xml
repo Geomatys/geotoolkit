@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE book [
+  <!ENTITY % book.entities SYSTEM "../../../book.entities">
+  %book.entities;
+]>
+<section xmlns="http://docbook.org/ns/docbook" version="5.0"
+         xmlns:xlink = "http://www.w3.org/1999/xlink">
+             
+    <title>CoverageStore</title>
+
+    <para>
+        Les coverage store sont encore en incubation, l'objectif de ceux ci est d'obtenir un niveau d'abstraction supérieur aux coverage reader afin des manipuler N coverages à la fois. La class Databse de Coverage-SQL devrait à terme implémenter cette interface. Ce modèle est susceptible de changer.
+    </para>
+
+    <section>
+        <title>
+            CoverageStoreFactory
+        </title>
+        <para>
+            Les fabriques sont utilsées pour créer les coveragestores. Chaque fabrique dispose d'un nom qui lui est propre ainsi que la définition de l'ensemble de paramètre qui lui est nécessaire afin de créer une nouvelle instance de Coveragestore.
+        </para>
+        <para>
+            Les implémentations de fabrique sont enregistrés via le registre de service du java (META-INF/services), cela permet la découverte automatique de nouvelles implémentations. La classe utilitaire <emphasis>CoveragestoreFinder</emphasis> permet de les récupérer rapidement.
+        </para>
+        
+        <example>
+            <title>Code source complet : </title>
+            <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/coverage/ListAllFactoriesDemo.java">
+                <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/coverage/ListAllFactoriesDemo.java</acronym>
+            </link>        
+        </example>
+        
+    </section>
+</section>

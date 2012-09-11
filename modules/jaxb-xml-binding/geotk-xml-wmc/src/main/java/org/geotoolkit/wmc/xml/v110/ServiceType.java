@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlEnumValue;
 
 /**
  * <p>Java class for serviceType.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
  * <pre>
@@ -33,7 +33,7 @@ import javax.xml.bind.annotation.XmlEnumValue;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
+ *
  */
 @XmlEnum
 public enum ServiceType {
@@ -43,7 +43,11 @@ public enum ServiceType {
     @XmlEnumValue("OGC:WMS-C")
     OGC_WMS_C("OGC:WMS-C"),
     @XmlEnumValue("OGC:WFS")
-    OGC_WFS("OGC:WFS");
+    OGC_WFS("OGC:WFS"),
+    @XmlEnumValue("OGC:WCS")
+    OGC_WCS("OGC:WCS"),
+    @XmlEnumValue("OGC:WMTS")
+    OGC_WMTS("OGC:WMTS");
     private final String value;
 
     ServiceType(final String v) {
@@ -56,7 +60,7 @@ public enum ServiceType {
 
     public static ServiceType fromValue(final String v) {
         for (ServiceType c: ServiceType.values()) {
-            if (c.value.equals(v)) {
+            if (c.value.equalsIgnoreCase(v)) {
                 return c;
             }
         }

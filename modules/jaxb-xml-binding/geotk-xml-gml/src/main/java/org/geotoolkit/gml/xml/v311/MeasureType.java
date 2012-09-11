@@ -131,7 +131,7 @@ public class MeasureType {
         if (object instanceof MeasureType) {
             final MeasureType that = (MeasureType) object;
             return Objects.equals(this.uom,    that.uom)   &&
-                   Utilities.equals(this.value,  that.value);
+                   Objects.equals(this.value,  that.value);
         }
         return false;
     }

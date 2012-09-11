@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.ows.xml.v110;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -73,6 +74,31 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
      * Empty constructor used by JAXB.
      */
     OperationsMetadata(){
+    }
+    
+    public OperationsMetadata(final OperationsMetadata that){
+        if (that != null)  {
+            if (that.constraint != null) {
+                this.constraint = new ArrayList<DomainType>();
+                for (DomainType d : that.constraint) {
+                    this.constraint.add(new DomainType(d));
+                }
+            }
+            if (that.parameter != null) {
+                this.parameter = new ArrayList<DomainType>();
+                for (DomainType d : that.parameter) {
+                    this.parameter.add(new DomainType(d));
+                }
+            }
+            if (that.operation != null) {
+                this.operation = new ArrayList<Operation>();
+                for (Operation d : that.operation) {
+                    this.operation.add(new Operation(d));
+                }
+            }
+            // unable to clone this attribute of type object
+            this.extendedCapabilities = that.extendedCapabilities;
+        }
     }
     
     /**

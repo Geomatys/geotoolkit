@@ -31,7 +31,7 @@
                       <Component id="guiIndice" pref="200" max="32767" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="1" attributes="0">
-                      <Component id="guiError" pref="124" max="32767" attributes="1"/>
+                      <Component id="guiError" pref="130" max="32767" attributes="1"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="guiApply" linkSize="1" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -132,8 +132,8 @@
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="1" attributes="0">
-                      <Component id="guiDataCrs" alignment="0" pref="57" max="32767" attributes="0"/>
-                      <Component id="guiMapCrs" alignment="0" pref="57" max="32767" attributes="0"/>
+                      <Component id="guiDataCrs" alignment="0" pref="60" max="32767" attributes="0"/>
+                      <Component id="guiMapCrs" alignment="0" pref="60" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -191,8 +191,8 @@
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="1" attributes="0">
-                      <Component id="guiDouglas" alignment="0" pref="123" max="32767" attributes="0"/>
-                      <Component id="guiTopology" alignment="0" pref="123" max="32767" attributes="0"/>
+                      <Component id="guiDouglas" alignment="0" pref="126" max="32767" attributes="0"/>
+                      <Component id="guiTopology" alignment="0" pref="126" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>

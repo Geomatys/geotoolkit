@@ -65,6 +65,13 @@ public class ValuesReference {
     ValuesReference(){
     }
     
+    public ValuesReference(final ValuesReference that){
+        if (that != null) {
+            this.reference = that.reference;
+            this.value     = that.value;
+        }
+    }
+    
     /**
      * Build a new Values reference.
      */

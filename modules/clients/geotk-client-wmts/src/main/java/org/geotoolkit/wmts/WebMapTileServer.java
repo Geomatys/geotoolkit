@@ -18,17 +18,30 @@ package org.geotoolkit.wmts;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.geotoolkit.client.AbstractServer;
+import org.geotoolkit.client.AbstractServerFactory;
+import org.geotoolkit.client.ServerFinder;
+import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.coverage.CoverageStore;
+import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.security.ClientSecurity;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.wmts.v100.GetCapabilities100;
 import org.geotoolkit.wmts.v100.GetTile100;
 import org.geotoolkit.wmts.xml.WMTSBindingUtilities;
 import org.geotoolkit.wmts.xml.WMTSVersion;
 import org.geotoolkit.wmts.xml.v100.Capabilities;
+import org.geotoolkit.wmts.xml.v100.LayerType;
+import org.opengis.feature.type.Name;
+import org.opengis.parameter.ParameterValueGroup;
 
 
 /**
@@ -37,12 +50,12 @@ import org.geotoolkit.wmts.xml.v100.Capabilities;
  * @author Guilhem Legal (Geomatys)
  * @module pending
  */
-public class WebMapTileServer extends AbstractServer{
+public class WebMapTileServer extends AbstractServer implements CoverageStore{
 
     private static final Logger LOGGER = Logging.getLogger(WebMapTileServer.class);
 
-    private final WMTSVersion version;
     private Capabilities capabilities;
+    private Set<Name> names = null;
 
     /**
      * Builds a web map server with the given server url and version.
@@ -85,7 +98,7 @@ public class WebMapTileServer extends AbstractServer{
      * @param capabilities A getCapabilities response.
      */
     public WebMapTileServer(final URL serverURL, final WMTSVersion version, final Capabilities capabilities) {
-        this(serverURL,null,version,capabilities);
+        this(serverURL,null,version,capabilities,false);
     }
     
     /**
@@ -96,10 +109,20 @@ public class WebMapTileServer extends AbstractServer{
      * @param capabilities A getCapabilities response.
      */
     public WebMapTileServer(final URL serverURL, final ClientSecurity security, 
-            final WMTSVersion version, final Capabilities capabilities) {
-        super(serverURL,security);
-        this.version = version;
+            final WMTSVersion version, final Capabilities capabilities, boolean cacheImage) {
+        super(create(WMTSServerFactory.PARAMETERS, serverURL, security));
+        Parameters.getOrCreate(WMTSServerFactory.VERSION, parameters).setValue(version.getCode());
+        Parameters.getOrCreate(WMTSServerFactory.IMAGE_CACHE, parameters).setValue(cacheImage);
         this.capabilities = capabilities;
+    }
+
+    public WebMapTileServer(ParameterValueGroup param){
+        super(param);
+    }
+    
+    @Override
+    public WMTSServerFactory getFactory() {
+        return (WMTSServerFactory)ServerFinder.getFactoryById(WMTSServerFactory.NAME);
     }
     
     /**
@@ -116,7 +139,7 @@ public class WebMapTileServer extends AbstractServer{
             @Override
             public void run() {
                 try {
-                    capabilities = WMTSBindingUtilities.unmarshall(createGetCapabilities().getURL(), version);
+                    capabilities = WMTSBindingUtilities.unmarshall(createGetCapabilities().getURL(), getVersion());
                 } catch (Exception ex) {
                     capabilities = null;
                     try {
@@ -146,18 +169,22 @@ public class WebMapTileServer extends AbstractServer{
      * Returns the request version.
      */
     public WMTSVersion getVersion() {
-        return version;
+        return WMTSVersion.getVersion(Parameters.value(WMTSServerFactory.VERSION, parameters));
     }
 
+    public boolean getImageCache(){
+        return (Boolean)Parameters.getOrCreate(AbstractServerFactory.IMAGE_CACHE, parameters).getValue();
+    }
+    
     /**
      * Returns the request object, in the version chosen.
      *
      * @throws IllegalArgumentException if the version requested is not supported.
      */
     public GetTileRequest createGetTile() {
-        switch (version) {
+        switch (getVersion()) {
             case v100:
-                return new GetTile100(serverURL.toString(),securityManager);
+                return new GetTile100(serverURL.toString(),getClientSecurity());
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
@@ -169,12 +196,47 @@ public class WebMapTileServer extends AbstractServer{
      * @throws IllegalArgumentException if the version requested is not supported.
      */
     public GetCapabilitiesRequest createGetCapabilities() {
-        switch (version) {
+        switch (getVersion()) {
             case v100:
-                return new GetCapabilities100(serverURL.toString(),securityManager);
+                return new GetCapabilities100(serverURL.toString(),getClientSecurity());
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
+    }
+
+    @Override
+    public synchronized Set<Name> getNames() throws DataStoreException {
+        if(names == null){
+            names = new HashSet<Name>();
+            final Capabilities capa = getCapabilities();
+            if(capa == null){
+                throw new DataStoreException("Could not get Capabilities.");
+            }
+            final List<LayerType> layers = capa.getContents().getLayers();
+            for(LayerType lt : layers){
+                final String name = lt.getIdentifier().getValue();
+                names.add(new DefaultName(name));
+            }
+            names = Collections.unmodifiableSet(names);
+        }
+        return names;
+    }
+
+    @Override
+    public CoverageReference getCoverageReference(Name name) throws DataStoreException {
+        if(getNames().contains(name)){
+            return new WMTSCoverageReference(this,name,getImageCache());
+        }
+        throw new DataStoreException("No layer for name : " + name);
+    }
+
+    @Override
+    public void dispose() {
+    }
+
+    @Override
+    public CoverageReference create(Name name) throws DataStoreException {
+        throw new DataStoreException("Can not create new coverage.");
     }
 
 }

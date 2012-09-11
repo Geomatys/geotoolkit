@@ -55,7 +55,7 @@ public class OutputDescriptionType
 {
 
     @XmlElement(name = "ComplexOutput", namespace = "")
-    protected SupportedComplexDataType complexOutput;
+    protected SupportedComplexDataInputType complexOutput;
     @XmlElement(name = "LiteralOutput", namespace = "")
     protected LiteralOutputType literalOutput;
     @XmlElement(name = "BoundingBoxOutput", namespace = "")
@@ -81,7 +81,7 @@ public class OutputDescriptionType
      *     {@link SupportedComplexDataType }
      *     
      */
-    public void setComplexOutput(final SupportedComplexDataType value) {
+    public void setComplexOutput(final SupportedComplexDataInputType value) {
         this.complexOutput = value;
     }
 

@@ -81,8 +81,9 @@ public class CapabilitiesBaseType implements AbstractCapabilitiesBase {
     /**
      *Build the base of a Capabilities document.
      */
-    public CapabilitiesBaseType(final String version) {
-        this.version = version;
+    public CapabilitiesBaseType(final String version, final String updateSequence) {
+        this.version        = version;
+        this.updateSequence = updateSequence;
     }
 
     /**

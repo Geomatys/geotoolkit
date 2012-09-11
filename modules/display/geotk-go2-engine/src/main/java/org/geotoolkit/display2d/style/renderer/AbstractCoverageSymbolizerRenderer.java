@@ -19,7 +19,6 @@ package org.geotoolkit.display2d.style.renderer;
 import java.awt.Shape;
 import java.awt.geom.Area;
 import java.util.logging.Level;
-
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -27,7 +26,6 @@ import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
-
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.Symbolizer;
 
@@ -41,8 +39,8 @@ import org.opengis.style.Symbolizer;
 public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymbolizer<? extends Symbolizer>> extends AbstractSymbolizerRenderer<C>{
 
 
-    public AbstractCoverageSymbolizerRenderer(final C symbol, final RenderingContext2D context){
-        super(symbol,context);
+    public AbstractCoverageSymbolizerRenderer(final SymbolizerRendererService service, final C symbol, final RenderingContext2D context){
+        super(service, symbol,context);
     }
 
     @Override

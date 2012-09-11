@@ -18,19 +18,18 @@
 package org.geotoolkit.gui.swing.style;
 
 import java.awt.Component;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JComboBox;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
-import org.geotoolkit.gui.swing.style.StyleElementEditor;
 import org.geotoolkit.map.MapLayer;
-
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
@@ -47,6 +46,7 @@ public class JComboExpressionPane extends StyleElementEditor<Expression>{
     
     /** Creates new form JColorExpressionPane */
     public JComboExpressionPane() {
+        super(Expression.class);
         initComponents();
         guiCombo.setEditable(false);
     }
@@ -93,6 +93,12 @@ public class JComboExpressionPane extends StyleElementEditor<Expression>{
             }
         });
 
+        guiCombo.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent evt) {
+                guiComboItemStateChanged(evt);
+            }
+        });
+
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -104,9 +110,8 @@ public class JComboExpressionPane extends StyleElementEditor<Expression>{
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(layout.createParallelGroup(Alignment.TRAILING)
-                .addComponent(guiSpecial, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE)
-                .addComponent(guiCombo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+            .addComponent(guiSpecial, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE)
+            .addComponent(guiCombo, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
         );
 
         layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiCombo, guiSpecial});
@@ -118,6 +123,17 @@ private void guiSpecialPropertyChange(final PropertyChangeEvent evt) {//GEN-FIRS
         parse(guiSpecial.get());
     }
 }//GEN-LAST:event_guiSpecialPropertyChange
+
+    private void guiComboItemStateChanged(ItemEvent evt) {//GEN-FIRST:event_guiComboItemStateChanged
+       
+        final Expression exp = (Expression) evt.getItem();
+        if(exp instanceof Literal && "-".equals(((Literal)exp).getValue())){
+            return;
+        }
+        
+        guiSpecial.parse(null);
+        
+    }//GEN-LAST:event_guiComboItemStateChanged
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

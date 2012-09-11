@@ -70,6 +70,13 @@ public class Capabilities extends CapabilitiesBaseType implements AbstractCapabi
     public Capabilities(){
     }
     
+     /**
+     * Build a new Capabilities document
+     */
+    public Capabilities(final String version, final String updateSequence){
+        super(version, updateSequence);
+    }
+    
     /**
      * Build a new Capabilities document
      */

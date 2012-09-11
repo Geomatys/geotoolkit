@@ -16,14 +16,19 @@
  */
 package org.geotoolkit.wmsc.model;
 
+import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.geom.Point2D;
+import java.util.Collection;
+import java.util.Map;
 import java.util.UUID;
-
-import org.geotoolkit.client.map.GridMosaic;
-import org.geotoolkit.client.map.Pyramid;
+import java.util.concurrent.BlockingQueue;
+import org.geotoolkit.coverage.GridMosaic;
+import org.geotoolkit.coverage.Pyramid;
+import org.geotoolkit.coverage.TileReference;
 import org.geotoolkit.geometry.GeneralEnvelope;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.wms.xml.v111.BoundingBox;
-
 import org.opengis.geometry.Envelope;
 
 /**
@@ -37,29 +42,26 @@ public class WMSCMosaic implements GridMosaic{
     private final WMSCPyramid pyramid;
     private final double scale;
     
-    private final int tileWidth;
-    private final int tileHeight;
+    private final Dimension gridSize = new Dimension();
     private final double tileSpanX;
     private final double tileSpanY;
-    private final int gridWidth;
-    private final int gridHeight;
 
     public WMSCMosaic(final WMSCPyramid pyramid, final double scaleLevel) {
         this.pyramid = pyramid;
         this.scale = scaleLevel;
                 
-        tileWidth = pyramid.getTileset().getWidth();
-        tileHeight = pyramid.getTileset().getHeight();
+        final int tileWidth = pyramid.getTileset().getWidth();
+        final int tileHeight = pyramid.getTileset().getHeight();
         
         final BoundingBox env = pyramid.getTileset().getBoundingBox();
         final double spanX = env.getMaxx() - env.getMinx();
         final double spanY = env.getMaxy() - env.getMiny();
         
-        gridWidth  = (int) (spanX / (scale*tileWidth));
-        gridHeight = (int) (spanY / (scale*tileHeight));
+        gridSize.width = (int) (spanX / (scale*tileWidth));
+        gridSize.height = (int) (spanY / (scale*tileHeight));
         
-        tileSpanX = spanX / gridWidth ;
-        tileSpanY = spanY / gridHeight ;   
+        tileSpanX = spanX / gridSize.width ;
+        tileSpanY = spanY / gridSize.height ;   
     }
 
     @Override
@@ -78,42 +80,29 @@ public class WMSCMosaic implements GridMosaic{
     }
 
     @Override
-    public int getWidth() {
-        return gridWidth;
+    public Dimension getGridSize() {
+        return (Dimension) gridSize.clone();
     }
 
     @Override
-    public int getHeight() {
-        return gridHeight;
+    public double getScale() {
+        return scale;
     }
 
     @Override
-    public double getTileSpanX() {
-        return tileSpanX;
+    public Dimension getTileSize() {
+        return new Dimension(
+                pyramid.getTileset().getWidth(), 
+                pyramid.getTileset().getHeight());
     }
-
-    @Override
-    public double getTileSpanY() {
-        return tileSpanY;
-    }
-
-    @Override
-    public int getTileWidth() {
-        return tileWidth;
-    }
-
-    @Override
-    public int getTileHeight() {
-        return tileHeight;
-    }
-
+    
     @Override
     public Envelope getEnvelope(int col, int row) {
         
         final double minX = getUpperLeftCorner().getX();
         final double maxY = getUpperLeftCorner().getY();
-        final double spanX = getTileSpanX();
-        final double spanY = getTileSpanY();
+        final double spanX = tileSpanX;
+        final double spanY = tileSpanY;
         
         final GeneralEnvelope envelope = new GeneralEnvelope(
                 getPyramid().getCoordinateReferenceSystem());
@@ -124,8 +113,33 @@ public class WMSCMosaic implements GridMosaic{
     }
 
     @Override
+    public Envelope getEnvelope() {
+        final double minX = getUpperLeftCorner().getX();
+        final double maxY = getUpperLeftCorner().getY();
+        final double spanX = getTileSize().width * getGridSize().width * getScale();
+        final double spanY = getTileSize().height* getGridSize().height* getScale();
+        
+        final GeneralEnvelope envelope = new GeneralEnvelope(
+                getPyramid().getCoordinateReferenceSystem());
+        envelope.setRange(0, minX, minX + spanX);
+        envelope.setRange(1, maxY - spanY, maxY );
+        
+        return envelope;
+    }
+    
+    @Override
     public boolean isMissing(int col, int row) {
         return false;
     }
-    
+
+    @Override
+    public TileReference getTile(int col, int row, Map hints) throws DataStoreException {
+        return ((WMSCPyramidSet)getPyramid().getPyramidSet()).getTile(this, col, row, hints);
+    }
+
+    @Override
+    public BlockingQueue<Object> getTiles(Collection<? extends Point> positions, Map hints) throws DataStoreException {
+        return ((WMSCPyramidSet)getPyramid().getPyramidSet()).getTiles(this, positions, hints);
+    }
+
 }

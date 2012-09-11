@@ -51,10 +51,15 @@
   <!--     Dependencies                                            -->
   <!-- =========================================================== -->
   <properties>
-    <ardor.version>0.6-SNAPSHOT</ardor.version>
+    <ardor.version>0.8-SNAPSHOT</ardor.version>
   </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>com.ardor3d</groupId>
+            <artifactId>ardor3d-jogl</artifactId>
+            <version>${ardor.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.ardor3d</groupId>
             <artifactId>ardor3d-awt</artifactId>
@@ -86,7 +91,11 @@
             <artifactId>geotk-filter</artifactId>
             <version>${project.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.geotoolkit</groupId>
+            <artifactId>geotk-widgets-swing</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
 

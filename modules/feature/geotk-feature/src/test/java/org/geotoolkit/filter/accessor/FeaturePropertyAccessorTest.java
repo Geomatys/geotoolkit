@@ -23,6 +23,7 @@ import java.util.Iterator;
 import com.vividsolutions.jts.geom.Geometry;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.junit.Test;
+import org.opengis.feature.Attribute;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
 import org.opengis.feature.type.ComplexType;
@@ -63,7 +64,7 @@ public class FeaturePropertyAccessorTest {
         
         
     }
-    
+        
     @Test
     public void testSimpleFeatureFlatAccessor() {
 
@@ -249,4 +250,18 @@ public class FeaturePropertyAccessorTest {
 
     }
 
+    @Test
+    public void testAttributeAccessor(){
+        
+        PropertyAccessor accessor = Accessors.getAccessor(Attribute.class, ".", null);
+        assertNotNull(accessor);
+        Property prop = FEATURE_1.getProperty("testGeometry");
+        Object att = accessor.get(prop, ".", Geometry.class);
+        assertEquals(FEATURE_1.getDefaultGeometryProperty().getValue(), att);
+        
+        att = accessor.get(prop, ".", Property.class);
+        assertEquals(FEATURE_1.getDefaultGeometryProperty(), att);
+        
+    }
+    
 }

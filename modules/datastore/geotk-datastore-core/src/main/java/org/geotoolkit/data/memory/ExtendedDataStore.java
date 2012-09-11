@@ -24,9 +24,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-
 import org.geotoolkit.data.AbstractDataStore;
 import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.DataStoreFactory;
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
@@ -39,7 +39,6 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.ArgumentChecks;
-
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
@@ -47,6 +46,7 @@ import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.geometry.Envelope;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * Wraps a datastore and store additional queries which will be made available
@@ -59,12 +59,24 @@ public final class ExtendedDataStore extends AbstractDataStore{
 
     private final Map<Name,Query> queries = new ConcurrentHashMap<Name, Query>();
     
+    private final Map<Name,FeatureType> featureTypes = new ConcurrentHashMap<Name, FeatureType>();
+    
     private final DataStore wrapped;
 
     public ExtendedDataStore(final DataStore wrapped) {
-        super(NO_NAMESPACE);
+        super(null);
         ArgumentChecks.ensureNonNull("datastore", wrapped);
         this.wrapped = wrapped;
+    }
+
+    @Override
+    public ParameterValueGroup getConfiguration() {
+        return wrapped.getConfiguration();
+    }
+
+    @Override
+    public DataStoreFactory getFactory() {
+        return wrapped.getFactory();
     }
 
     public Set<Name> getQueryNames() {
@@ -78,10 +90,12 @@ public final class ExtendedDataStore extends AbstractDataStore{
     public void addQuery(final Query query){
         ArgumentChecks.ensureNonNull("query name", query.getTypeName());
         queries.put(query.getTypeName(), query);
+        featureTypes.clear();
     }
 
     public void removeQuery(final Name name){
         queries.remove(name);
+        featureTypes.clear();
     }
 
     @Override
@@ -105,6 +119,7 @@ public final class ExtendedDataStore extends AbstractDataStore{
             throw new DataStoreException("Type for name "+typeName +" is a stred query, it can not be updated.");
         }
         wrapped.updateSchema(typeName, featureType);
+        featureTypes.clear();
     }
 
     @Override
@@ -113,14 +128,20 @@ public final class ExtendedDataStore extends AbstractDataStore{
             removeQuery(typeName);
         }
         wrapped.deleteSchema(typeName);
+        featureTypes.clear();
     }
 
     @Override
     public FeatureType getFeatureType(final Name typeName) throws DataStoreException {
         if(getQueryNames().contains(typeName)){
+            // return from cache when available
+            if (featureTypes.containsKey(typeName)) return featureTypes.get(typeName);
+            
             final Query original = getQuery(typeName);
             try {
-                return wrapped.getFeatureType(original);
+                final FeatureType ft = wrapped.getFeatureType(original);
+                featureTypes.put(typeName, ft);
+                return ft;
             } catch (SchemaException ex) {
                 throw new DataStoreException(ex);
             }

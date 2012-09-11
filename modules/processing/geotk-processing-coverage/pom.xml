@@ -40,7 +40,7 @@
       <id>eclesia</id>
       <email>johann.sorel@geomatys.com</email>
       <organization>Geomatys</organization>
-      <organizationUrl>http://www.geomatys.fr/</organizationUrl>
+      <organizationUrl>http://www.geomatys.com/</organizationUrl>
       <timezone>+1</timezone>
       <roles>
         <role>Developer</role>
@@ -48,10 +48,10 @@
     </developer>
     <developer>
         <name>Quentin Boileau</name>
-        <id>kite</id>
-        <email>quentin.boileau@gmail.com</email>
+        <id>qboileau</id>
+        <email>quentin.boileau@geomatys.com</email>
         <organization>Geomatys</organization>
-        <organizationUrl>http://www.geomatys.fr/</organizationUrl>
+        <organizationUrl>http://www.geomatys.com/</organizationUrl>
         <timezone>+1</timezone>
         <roles>
             <role>Developer</role>
@@ -75,8 +75,36 @@
           <version>${project.version}</version>
       </dependency>
       <dependency>
+          <groupId>org.geotoolkit.pending</groupId>
+          <artifactId>geotk-render</artifactId>
+          <version>${project.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.geotoolkit.pending</groupId>
+          <artifactId>geotk-coverageio-store</artifactId>
+          <version>${project.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.geotoolkit.pending</groupId>
+          <artifactId>geotk-coverage</artifactId>
+          <version>${project.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.geotoolkit.pending</groupId>
+          <artifactId>geotk-go2</artifactId>
+          <version>${project.version}</version>
+      </dependency>
+      <dependency>
           <groupId>org.geotoolkit</groupId>
           <artifactId>geotk-coverage</artifactId>
+      </dependency>
+      <dependency>
+          <groupId>org.geotoolkit</groupId>
+          <artifactId>geotk-coverageio-netcdf</artifactId>
+      </dependency>
+      <dependency>
+          <groupId>org.geotoolkit</groupId>
+          <artifactId>geotk-analytics</artifactId>
       </dependency>
       <dependency>
           <groupId>org.geotoolkit</groupId>

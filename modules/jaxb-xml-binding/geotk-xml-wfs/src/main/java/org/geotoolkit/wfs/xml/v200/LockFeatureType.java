@@ -28,6 +28,8 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ogc.xml.v200.AbstractQueryExpressionType;
+import org.geotoolkit.wfs.xml.AllSomeType;
+import org.geotoolkit.wfs.xml.LockFeature;
 
 
 /**
@@ -56,7 +58,7 @@ import org.geotoolkit.ogc.xml.v200.AbstractQueryExpressionType;
 @XmlType(name = "LockFeatureType", propOrder = {
     "abstractQueryExpression"
 })
-public class LockFeatureType extends BaseRequestType {
+public class LockFeatureType extends BaseRequestType implements LockFeature {
 
     @XmlElementRef(name = "AbstractQueryExpression", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
     private List<JAXBElement<? extends AbstractQueryExpressionType>> abstractQueryExpression;
@@ -68,29 +70,32 @@ public class LockFeatureType extends BaseRequestType {
     @XmlAttribute
     private AllSomeType lockAction;
 
+    public LockFeatureType() {
+
+    }
+
+    public LockFeatureType(final String service, final String version, final String handle, final List<QueryType> lock, final Integer expiry, final AllSomeType lockAction) {
+        super(service, version, handle);
+        this.expiry     = expiry;
+        if (lock != null) {
+            final ObjectFactory factory = new ObjectFactory();
+            this.abstractQueryExpression =  new ArrayList<JAXBElement<? extends AbstractQueryExpressionType>>();
+            for (QueryType q : lock) {
+                this.abstractQueryExpression.add(factory.createQuery(q));
+            }
+        }
+        
+        this.lockAction = lockAction;
+    }
+    
     /**
      * Gets the value of the abstractQueryExpression property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the abstractQueryExpression property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getAbstractQueryExpression().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link StoredQueryType }{@code >}
      * {@link JAXBElement }{@code <}{@link AbstractQueryExpressionType }{@code >}
      * {@link JAXBElement }{@code <}{@link AbstractAdhocQueryExpressionType }{@code >}
      * {@link JAXBElement }{@code <}{@link QueryType }{@code >}
-     * 
      * 
      */
     public List<JAXBElement<? extends AbstractQueryExpressionType>> getAbstractQueryExpression() {

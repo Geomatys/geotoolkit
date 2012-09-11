@@ -22,8 +22,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.util.logging.Logging;
 import org.opengis.filter.And;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
@@ -56,6 +59,8 @@ import org.opengis.filter.expression.PropertyName;
 public class FilterCQLSample {
 
 
+    private static final Logger LOGGER = Logging.getLogger(FilterCQLSample.class);
+    
     private static final FilterFactory FACTORY = FactoryFinder.getFilterFactory(null);
 
     private static final String DATE_TIME_FORMATTER = "yyyy-MM-dd'T'HH:mm:ss'Z'";
@@ -146,7 +151,7 @@ public class FilterCQLSample {
     public static final String NOT_BETWEEN_FILTER = "ATTR1 NOT BETWEEN 10 AND 20";
 
     /** Catalog of samples */
-    public static Map<String,Object> SAMPLES = new HashMap<String,Object>();
+    public final static Map<String,Object> SAMPLES = new HashMap<String,Object>();
 
     static {
         // Samples initialization
@@ -214,7 +219,7 @@ public class FilterCQLSample {
                 Date dateTime = dateFormatter.parse(FIRST_DATE);
                 beforeFilter = FACTORY.less(FACTORY.property("ATTR1"), FACTORY.literal(dateTime));
             } catch (ParseException e) {
-                e.printStackTrace();
+                LOGGER.log(Level.WARNING, e.getMessage(), e);
             }
 
             // ATTR1 BEFORE 2006-12-31T01:30:00Z
@@ -234,26 +239,23 @@ public class FilterCQLSample {
 
             {
                 // create during whith period during and date
-                Filter duringFilter = null;
-
-                Date lastDate = null;
 
                 try {
                     SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_TIME_FORMATTER);
 
-                    lastDate = dateFormatter.parse(LAST_DATE);
+                    final Date lastDate = dateFormatter.parse(LAST_DATE);
 
                     Date firstDate = subtractDuration(lastDate);
 
                     // creates an And filter firstDate <= prop <= lastDate
                     final String propName = "ATTR1";
 
-                    duringFilter = FACTORY.less(FACTORY.property(propName),
+                    final Filter duringFilter = FACTORY.less(FACTORY.property(propName),
                             FACTORY.literal(firstDate));
 
                     SAMPLES.put(FILTER_BEFORE_PERIOD_YMD_HMS_DATE, duringFilter);
                 } catch (ParseException e) {
-                    e.printStackTrace();
+                    LOGGER.log(Level.WARNING, e.getMessage(), e);
                 }
             }
         }
@@ -269,7 +271,7 @@ public class FilterCQLSample {
                 Date dateTime = dateFormatter.parse(LAST_DATE);
                 afterFilter = FACTORY.greater(FACTORY.property("ATTR1"), FACTORY.literal(dateTime));
             } catch (ParseException e) {
-                e.printStackTrace();
+                LOGGER.log(Level.WARNING, e.getMessage(), e);
             }
 
             SAMPLES.put(FILTER_AFTER_DATE, afterFilter);
@@ -366,7 +368,7 @@ public class FilterCQLSample {
 
                 SAMPLES.put(FILTER_AFTER_PERIOD_DATE_YMD_HMS, afterFilter);
             } catch (ParseException e) {
-                e.printStackTrace();
+                LOGGER.log(Level.WARNING, e.getMessage(), e);
             }
         }
 
@@ -374,7 +376,6 @@ public class FilterCQLSample {
         // Result filter for DURING tests
         try {
             // During with period between dates
-            Filter duringFilter = null;
 
             SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_TIME_FORMATTER);
 
@@ -382,19 +383,18 @@ public class FilterCQLSample {
             final Date lastDate = dateFormatter.parse(LAST_DATE);
             final String propName = "ATTR1";
 
-            duringFilter = FACTORY.and(FACTORY.lessOrEqual(FACTORY.literal(firstDate),
+            final Filter duringFilter = FACTORY.and(FACTORY.greaterOrEqual(FACTORY.literal(firstDate),
                         FACTORY.property(propName)),
                     FACTORY.lessOrEqual(FACTORY.property(propName), FACTORY.literal(lastDate)));
 
             SAMPLES.put(FILTER_DURING_PERIOD_BETWEEN_DATES, duringFilter);
         } catch (ParseException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
         }
 
         try {
             // creates during with period between date and duration
             {
-                Filter duringFilter = null;
                 SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_TIME_FORMATTER);
 
                 final Date firstDate = dateFormatter.parse(FIRST_DATE);
@@ -405,7 +405,7 @@ public class FilterCQLSample {
                 // creates an And filter firstDate <= prop <= lastDate
                 final String propName = "ATTR1";
 
-                duringFilter = FACTORY.and(FACTORY.lessOrEqual(FACTORY.literal(firstDate),
+                final Filter duringFilter = FACTORY.and(FACTORY.greaterOrEqual(FACTORY.literal(firstDate),
                             FACTORY.property(propName)),
                         FACTORY.lessOrEqual(FACTORY.property(propName), FACTORY.literal(lastDate)));
 
@@ -414,7 +414,6 @@ public class FilterCQLSample {
 
             {
                 // create during whith period during and date
-                Filter duringFilter = null;
 
                 SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_TIME_FORMATTER);
 
@@ -425,34 +424,31 @@ public class FilterCQLSample {
                 // creates an And filter firstDate <= prop <= lastDate
                 final String propName = "ATTR1";
 
-                duringFilter = FACTORY.and(FACTORY.lessOrEqual(FACTORY.literal(firstDate),
+                final Filter duringFilter = FACTORY.and(FACTORY.greaterOrEqual(FACTORY.literal(firstDate),
                             FACTORY.property(propName)),
                         FACTORY.lessOrEqual(FACTORY.property(propName), FACTORY.literal(lastDate)));
 
                 SAMPLES.put(FILTER_DURING_PERIOD_YMD_HMS_DATE, duringFilter);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
         }
 
         // ------------------------------------------------
         // result filter for Before or During test
         try {
-            Filter filter = null;
             SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_TIME_FORMATTER);
 
             final Date lastDate = dateFormatter.parse(LAST_DATE);
             final String propName = "ATTR1";
 
-            filter = FACTORY.lessOrEqual(FACTORY.property(propName), FACTORY.literal(lastDate));
+            final Filter filter = FACTORY.lessOrEqual(FACTORY.property(propName), FACTORY.literal(lastDate));
             SAMPLES.put(FILTER_BEFORE_OR_DURING_PERIOD_BETWEEN_DATES, filter);
         } catch (ParseException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
         }
 
         try {
-            Filter filter = null;
-
             SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_TIME_FORMATTER);
 
             final Date lastDate = dateFormatter.parse(LAST_DATE);
@@ -460,11 +456,11 @@ public class FilterCQLSample {
             // creates a filter prop <= lastDate
             final String propName = "ATTR1";
 
-            filter = FACTORY.lessOrEqual(FACTORY.property(propName), FACTORY.literal(lastDate));
+            final Filter filter = FACTORY.lessOrEqual(FACTORY.property(propName), FACTORY.literal(lastDate));
 
             SAMPLES.put(FILTER_BEFORE_OR_DURING_PERIOD_YMD_HMS_DATE, filter);
         } catch (ParseException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
         }
 
         try {
@@ -483,30 +479,26 @@ public class FilterCQLSample {
 
             SAMPLES.put(FILTER_BEFORE_OR_DURING_PERIOD_DATE_YMD_HMS, filter);
         } catch (ParseException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
         }
 
         // ---------------------------------------
         // DURING OR AFTER samples
         try {
             // period: first date / last date
-            Filter filter = null;
-
             SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_TIME_FORMATTER);
 
             final Date firstDate = dateFormatter.parse(FIRST_DATE);
             final String propName = "ATTR1";
 
-            filter = FACTORY.greaterOrEqual(FACTORY.property(propName), FACTORY.literal(firstDate));
+            final Filter filter = FACTORY.greaterOrEqual(FACTORY.property(propName), FACTORY.literal(firstDate));
             SAMPLES.put(FILTER_DURING_OR_AFTER_PERIOD_BETWEEN_DATES, filter);
         } catch (ParseException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
         }
 
         try {
             // period: duration / last date
-            Filter filter = null;
-
             SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_TIME_FORMATTER);
 
             final Date lastDate = dateFormatter.parse(LAST_DATE);
@@ -514,10 +506,10 @@ public class FilterCQLSample {
 
             final String propName = "ATTR1";
 
-            filter = FACTORY.greaterOrEqual(FACTORY.property(propName), FACTORY.literal(firstDate));
+            final Filter filter = FACTORY.greaterOrEqual(FACTORY.property(propName), FACTORY.literal(firstDate));
             SAMPLES.put(FILTER_DURING_OR_AFTER_PERIOD_YMD_HMS_DATE, filter);
         } catch (ParseException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
         }
 
         try {
@@ -533,7 +525,7 @@ public class FilterCQLSample {
             filter = FACTORY.greaterOrEqual(FACTORY.property(propName), FACTORY.literal(firstDate));
             SAMPLES.put(FILTER_DURING_OR_AFTER_PERIOD_DATE_YMD_HMS, filter);
         } catch (ParseException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
         }
 
         // ---------------------------------------
@@ -554,7 +546,7 @@ public class FilterCQLSample {
             Not notEq = FACTORY.not(propExists);
             SAMPLES.put(ATTRIBUTE_NAME_DOES_NOT_EXIST, notEq);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
         }
 
         // ---------------------------------------
@@ -600,7 +592,7 @@ public class FilterCQLSample {
 
             SAMPLES.put(FILTER_AND_NOT_COMPARASION, andNotComparasion);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
         }
 
         // Unary Expression sampel
@@ -626,7 +618,7 @@ public class FilterCQLSample {
 
 
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
         }
 
         // Like filter
@@ -645,7 +637,7 @@ public class FilterCQLSample {
             Not notLikeFileter = FACTORY.not(likeFilter);
             SAMPLES.put(NOT_LIKE_FILTER, notLikeFileter);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
         }
 
         // bettween filter
@@ -661,7 +653,7 @@ public class FilterCQLSample {
             Not notBetweenFileter = FACTORY.not(betweenFilter);
             SAMPLES.put(NOT_BETWEEN_FILTER, notBetweenFileter);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
         }
     } // end static initialization
 

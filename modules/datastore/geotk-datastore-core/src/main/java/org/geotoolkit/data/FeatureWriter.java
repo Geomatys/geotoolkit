@@ -17,7 +17,6 @@
 package org.geotoolkit.data;
 
 import java.io.IOException;
-
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 

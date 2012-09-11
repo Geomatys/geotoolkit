@@ -18,30 +18,25 @@
 package org.geotoolkit.data.dbf;
 
 
-import org.geotoolkit.feature.AttributeDescriptorBuilder;
-import org.geotoolkit.feature.AttributeTypeBuilder;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import org.geotoolkit.data.AbstractReadingTests;
 import org.geotoolkit.data.DataStore;
-import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.data.FeatureWriter;
+import org.geotoolkit.feature.AttributeDescriptorBuilder;
+import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-
-import org.opengis.feature.simple.SimpleFeature;
+import org.geotoolkit.storage.DataStoreException;
+import static org.junit.Assert.assertNotNull;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
-import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
-
-import static org.junit.Assert.*;
+import org.opengis.util.FactoryException;
 
 /**
  *
@@ -58,7 +53,7 @@ public class DBFReadingTest extends AbstractReadingTests{
 
         final File file = new File("src/test/resources/org/geotoolkit/data/dbf/sample.dbf");
         final String ns = "http://test.com";
-        store = new DbaseFileDataStore(file, ns, "dbfstore");
+        store = new DbaseFileDataStore(file, ns);
 
         for(Name n : store.getNames()){
             FeatureType ft = store.getFeatureType(n);
@@ -70,7 +65,7 @@ public class DBFReadingTest extends AbstractReadingTests{
         final AttributeTypeBuilder buildAtt = new AttributeTypeBuilder();
         final AttributeDescriptorBuilder buildDesc = new AttributeDescriptorBuilder();
         
-        Name name = new DefaultName("http://test.com", "dbfstore");
+        Name name = new DefaultName("http://test.com", "sample");
         builder.reset();
         builder.setName(name);
         

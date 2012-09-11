@@ -23,4 +23,7 @@ package org.geotoolkit.csw.xml;
  */
 public interface DistributedSearch {
 
+    Integer getHopCount();
+
+    void setHopCount(final Integer value);
 }

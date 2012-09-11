@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.Reference;
 import org.geotoolkit.internal.sql.table.Entry;
 
 
@@ -96,6 +97,21 @@ public class ReferenceType implements Reference, Entry {
     public ReferenceType(final String id, final String href) {
         this.id   = id;
         this.href = href;
+    }
+    
+    public ReferenceType(final Reference r) {
+        if (r != null) {
+            this.href         = r.getHref();
+            this.actuate      = r.getActuate();
+            this.arcrole      = r.getArcrole();
+            this.nilReason    = r.getNilReason();
+            this.owns         = r.getOwns();
+            this.remoteSchema = r.getRemoteSchema();
+            this.role         = r.getRole();
+            this.show         = r.getShow();
+            this.title        = r.getTitle();
+            this.type         = r.getType();
+        }
     }
 
     /**
@@ -350,7 +366,7 @@ public class ReferenceType implements Reference, Entry {
                    Objects.equals(this.show,               that.show)             &&
                    Objects.equals(this.role,               that.role)             &&
                    Objects.equals(this.title,              that.title)            &&
-                 //  Utilities.equals(this.id,                 that.id)               && because its transient
+                 //  Objects.equals(this.id,                 that.id)               && because its transient
                    Objects.equals(this.owns,               that.owns);
         }
         return false;

@@ -22,6 +22,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
+import org.geotoolkit.util.Utilities;
+import org.geotoolkit.wfs.xml.Property;
 
 /**
  * <p>Java class for PropertyType complex type.
@@ -49,7 +51,7 @@ import javax.xml.namespace.QName;
     "name",
     "value"
 })
-public class PropertyType {
+public class PropertyType implements Property {
 
     @XmlElement(name = "Name", required = true)
     private QName name;
@@ -73,6 +75,12 @@ public class PropertyType {
         return name;
     }
 
+    public String getLocalName() {
+        if (name != null) {
+            return name.getLocalPart();
+        }
+        return null;
+    }
     /**
      * Sets the value of the name property.
      */

@@ -25,9 +25,6 @@ import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Polygon;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.feature.FeatureTypeBuilder;
@@ -48,10 +45,10 @@ import static org.junit.Assert.*;
 
 /**
  * JUnit test of Union process
- * @author Quentin Boileau
- * @module pending
+ *
+ * @author Quentin Boileau @module pending
  */
-public class UnionTest extends AbstractProcessTest{
+public class UnionTest extends AbstractProcessTest {
 
     private static SimpleFeatureBuilder sfb;
     private static final GeometryFactory geometryFactory = new GeometryFactory();
@@ -62,7 +59,7 @@ public class UnionTest extends AbstractProcessTest{
     }
 
     @Test
-    public void testIntersection() throws ProcessException, NoSuchIdentifierException{
+    public void testIntersection() throws ProcessException, NoSuchIdentifierException, FactoryException {
 
         // Inputs
         final FeatureCollection<?> featureList = buildFeatureList();
@@ -79,10 +76,10 @@ public class UnionTest extends AbstractProcessTest{
 
         //Features out
         final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.call().parameter("feature_out").getValue();
-      
+
         //Expected Features out
         final FeatureCollection<?> featureListResult = buildResultList();
-        
+
         assertEquals(featureListOut.getFeatureType(), featureListResult.getFeatureType());
         assertEquals(featureListOut.getID(), featureListResult.getID());
         assertEquals(featureListOut.size(), featureListResult.size());
@@ -113,6 +110,7 @@ public class UnionTest extends AbstractProcessTest{
         final SimpleFeatureType sft = ftb.buildSimpleFeatureType();
         return sft;
     }
+
     private static SimpleFeatureType createSimpleResultType() throws NoSuchAuthorityCodeException, FactoryException {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("UnionTest-UnionTest");
@@ -126,17 +124,9 @@ public class UnionTest extends AbstractProcessTest{
         return sft;
     }
 
+    private static FeatureCollection<?> buildFeatureList() throws FactoryException {
 
-    private static FeatureCollection<?> buildFeatureList() {
-
-        try {
-            type = createSimpleType();
-        } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(UnionTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FactoryException ex) {
-            Logger.getLogger(UnionTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
+        type = createSimpleType();
         final FeatureCollection<Feature> featureList = DataUtilities.collection("", type);
 
 
@@ -204,15 +194,9 @@ public class UnionTest extends AbstractProcessTest{
         return featureList;
     }
 
-    private static FeatureCollection<?> buildFeatureUnionList() {
+    private static FeatureCollection<?> buildFeatureUnionList() throws FactoryException {
 
-        try {
-            type = createSimpleType2();
-        } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(UnionTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FactoryException ex) {
-            Logger.getLogger(UnionTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        type = createSimpleType2();
 
         final FeatureCollection<Feature> featureList = DataUtilities.collection("", type);
 
@@ -230,7 +214,7 @@ public class UnionTest extends AbstractProcessTest{
         sfb.set("name", "feature11");
         sfb.set("color", "red");
         sfb.set("geom3", geometryFactory.createPolygon(ring, null));
-        sfb.set("att",20);
+        sfb.set("att", 20);
         myFeature1 = sfb.buildFeature("id-11");
         featureList.add(myFeature1);
 
@@ -284,7 +268,7 @@ public class UnionTest extends AbstractProcessTest{
         sfb.set("att", 12);
         myFeature4 = sfb.buildFeature("id-14");
         featureList.add(myFeature4);
-        
+
         Feature myFeature5;
         ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
@@ -305,16 +289,9 @@ public class UnionTest extends AbstractProcessTest{
         return featureList;
     }
 
-    private static FeatureCollection<?> buildResultList() {
+    private static FeatureCollection<?> buildResultList() throws FactoryException {
 
-
-        try {
-            type = createSimpleResultType();
-        } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(UnionTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FactoryException ex) {
-            Logger.getLogger(UnionTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        type = createSimpleResultType();
 
         final FeatureCollection<Feature> featureList = DataUtilities.collection("", type);
 
@@ -332,10 +309,10 @@ public class UnionTest extends AbstractProcessTest{
         sfb.set("name", "feature1");
         sfb.set("color", "red");
         sfb.set("geom1", geometryFactory.createPolygon(ring, null));
-        sfb.set("att",20);
+        sfb.set("att", 20);
         myFeature = sfb.buildFeature("id-01-id-11");
         featureList.add(myFeature);
-        
+
         LineString str = geometryFactory.createLineString(
                 new Coordinate[]{
                     new Coordinate(3, 5),
@@ -345,7 +322,7 @@ public class UnionTest extends AbstractProcessTest{
         sfb.set("name", "feature1");
         sfb.set("color", "grey");
         sfb.set("geom1", str);
-        sfb.set("att",12);
+        sfb.set("att", 12);
         myFeature = sfb.buildFeature("id-01-id-15");
         featureList.add(myFeature);
 
@@ -410,7 +387,7 @@ public class UnionTest extends AbstractProcessTest{
         sfb = new SimpleFeatureBuilder(type);
         sfb.set("name", "feature3");
         sfb.set("color", "grey");
-        sfb.set("att",10);
+        sfb.set("att", 10);
         sfb.set("geom1", geometryFactory.createPolygon(ring, null));
         myFeature = sfb.buildFeature("id-03-id-13");
         featureList.add(myFeature);
@@ -478,7 +455,7 @@ public class UnionTest extends AbstractProcessTest{
         sfb = new SimpleFeatureBuilder(type);
         sfb.set("name", "feature12");
         sfb.set("color", "blue");
-        sfb.set("att",20);
+        sfb.set("att", 20);
         sfb.set("geom1", geometryFactory.createPolygon(ring, null));
         myFeature = sfb.buildFeature("id-12");
         featureList.add(myFeature);
@@ -514,7 +491,7 @@ public class UnionTest extends AbstractProcessTest{
         sfb.set("geom1", geometryFactory.createPolygon(ring, null));
         myFeature = sfb.buildFeature("id-14");
         featureList.add(myFeature);
-        
+
         ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(4, 4),
@@ -538,10 +515,10 @@ public class UnionTest extends AbstractProcessTest{
         sfb.set("name", "feature11");
         sfb.set("color", "red");
         sfb.set("att", 20);
-        sfb.set("geom1", geometryFactory.createMultiPolygon(new Polygon[]{ poly1,poly2}));
+        sfb.set("geom1", geometryFactory.createMultiPolygon(new Polygon[]{poly1, poly2}));
         myFeature = sfb.buildFeature("id-11");
         featureList.add(myFeature);
-        
+
         Feature myFeature5;
         ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
@@ -558,7 +535,7 @@ public class UnionTest extends AbstractProcessTest{
         sfb.set("att", 12);
         myFeature5 = sfb.buildFeature("id-15");
         featureList.add(myFeature5);
-   
+
         return featureList;
     }
 }

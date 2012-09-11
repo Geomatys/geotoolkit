@@ -68,6 +68,16 @@ public class LockType {
     @XmlAttribute(required = true)
     private QName typeName;
 
+    public LockType() {
+
+    }
+
+    public LockType(final FilterType filter, final String handle, final QName typeName) {
+        this.filter   = filter;
+        this.handle   = handle;
+        this.typeName = typeName;
+    }
+    
     /**
      * Gets the value of the filter property.
      * 

@@ -23,11 +23,9 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
-
 import org.geotoolkit.display.canvas.AbstractReferencedCanvas2D;
 import org.geotoolkit.display.primitive.AbstractReferencedGraphic2D;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
-
 import org.opengis.display.container.ContainerEvent;
 import org.opengis.display.primitive.Graphic;
 

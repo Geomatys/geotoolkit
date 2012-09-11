@@ -104,8 +104,8 @@ public class DefaultIntervalLength extends DefaultDuration implements IntervalLe
         if (object instanceof DefaultIntervalLength) {
             final DefaultIntervalLength that = (DefaultIntervalLength) object;
 
-            return Utilities.equals(this.factor, that.factor) &&
-                    Utilities.equals(this.radix, that.radix) &&
+            return Objects.equals(this.factor, that.factor) &&
+                    Objects.equals(this.radix, that.radix) &&
                     Objects.equals(this.unit, that.unit) &&
                     Objects.equals(this.value, that.unit);
         }

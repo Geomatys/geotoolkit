@@ -17,6 +17,7 @@
 package org.geotoolkit.wfs.xml.v100;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -57,26 +58,22 @@ public class InsertResultType {
     @XmlAttribute
     private String handle;
 
+    public InsertResultType() {
+
+    }
+    
+    public InsertResultType(final List<FeatureIdType> featureId, final String handle) {
+        this.featureId = featureId;
+        this.handle    = handle;
+    }
+
+    public InsertResultType(final FeatureIdType featureId, final String handle) {
+        this.featureId = Arrays.asList(featureId);
+        this.handle    = handle;
+    }
+    
     /**
      * Gets the value of the featureId property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the featureId property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getFeatureId().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link FeatureIdType }
-     * 
      * 
      */
     public List<FeatureIdType> getFeatureId() {

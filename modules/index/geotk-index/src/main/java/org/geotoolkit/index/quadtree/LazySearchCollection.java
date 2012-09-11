@@ -26,6 +26,7 @@ import org.geotoolkit.index.CloseableCollection;
 import org.geotoolkit.index.Data;
 
 import com.vividsolutions.jts.geom.Envelope;
+import java.util.logging.Logger;
 
 /**
  * A collection that will open and close the QuadTree and find the next id in
@@ -117,7 +118,8 @@ public class LazySearchCollection<T extends Data> extends AbstractCollection<T> 
     public void close() {
         try {
             reader.close();
-        } catch (IOException e) {
+            tree.close();
+        } catch (Exception e) {
             QuadTree.LOGGER.log(Level.WARNING, "Error closing QuadTree", e);
         }
     }

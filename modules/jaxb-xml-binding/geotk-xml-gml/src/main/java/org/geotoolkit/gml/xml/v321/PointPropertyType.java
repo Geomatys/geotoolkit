@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.PointProperty;
 
 
 /**
@@ -55,7 +56,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "PointPropertyType", propOrder = {
     "point"
 })
-public class PointPropertyType {
+public class PointPropertyType implements PointProperty {
 
     @XmlElement(name = "Point")
     private PointType point;
@@ -84,6 +85,14 @@ public class PointPropertyType {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String actuate;
 
+    public PointPropertyType() {
+
+    }
+
+    public PointPropertyType(final PointType point) {
+        this.point = point;
+    }
+    
     /**
      * Gets the value of the point property.
      * 

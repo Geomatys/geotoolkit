@@ -2,7 +2,6 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2004 - 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -23,13 +22,10 @@ import java.awt.LinearGradientPaint;
 import java.awt.MultipleGradientPaint;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-
 import java.util.List;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.CachedRasterSymbolizer;
 import org.geotoolkit.map.MapLayer;
-
-import org.geotoolkit.style.function.Categorize;
 import org.geotoolkit.style.function.Interpolate;
 import org.geotoolkit.style.function.InterpolationPoint;
 import org.opengis.filter.expression.Function;
@@ -42,6 +38,12 @@ import org.opengis.style.RasterSymbolizer;
  */
 public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRendererService<RasterSymbolizer, CachedRasterSymbolizer>{
 
+    
+    @Override
+    public boolean isGroupSymbolizer() {
+        return false;
+    }
+    
     /**
      * {@inheritDoc }
      */
@@ -71,7 +73,7 @@ public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRe
      */
     @Override
     public SymbolizerRenderer createRenderer(final CachedRasterSymbolizer symbol, final RenderingContext2D context) {
-        return new DefaultRasterSymbolizerRenderer(symbol, context);
+        return new DefaultRasterSymbolizerRenderer(this, symbol, context);
     }
 
     /**

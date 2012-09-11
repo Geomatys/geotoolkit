@@ -18,6 +18,7 @@
 package org.geotoolkit.data.iterator;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
@@ -27,13 +28,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import junit.framework.TestCase;
-
-import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
+import org.geotoolkit.data.memory.GenericCachedFeatureIterator;
 import org.geotoolkit.data.memory.GenericEmptyFeatureIterator;
 import org.geotoolkit.data.memory.GenericFilterFeatureIterator;
 import org.geotoolkit.data.memory.GenericMaxFeatureIterator;
@@ -50,17 +50,17 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.DefaultName;
-import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.LenientFeatureFactory;
-import org.geotoolkit.geometry.jts.transform.GeometryTransformer;
+import org.geotoolkit.feature.SchemaException;
+import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.transform.GeometryScaleTransformer;
+import org.geotoolkit.geometry.jts.transform.GeometryTransformer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-
+import org.geotoolkit.storage.DataStoreException;
 import org.junit.Test;
-
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureFactory;
 import org.opengis.feature.Property;
@@ -74,8 +74,9 @@ import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.sort.SortOrder;
-import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.FactoryException;
 
 /**
  * Tests of the different iterators.
@@ -102,6 +103,10 @@ public class GenericIteratorTest extends TestCase{
     private final String id3;
     private final String cid1;
     private final String cid2;
+    
+    private final SimpleFeature sf1;
+    private final SimpleFeature sf2;
+    private final SimpleFeature sf3;
 
     public GenericIteratorTest() throws NoSuchAuthorityCodeException, FactoryException{
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
@@ -130,25 +135,25 @@ public class GenericIteratorTest extends TestCase{
 
         collection = DataUtilities.collection("id", originalType);
 
-        SimpleFeature sf = FeatureUtilities.defaultFeature(originalType, "");
-        sf.setAttribute("att_geom", GF.createPoint(new Coordinate(3, 0)));
-        sf.setAttribute("att_string", "bbb");
-        sf.setAttribute("att_double", 3d);
-        collection.add(sf);
+        sf1 = FeatureUtilities.defaultFeature(originalType, "");
+        sf1.setAttribute("att_geom", GF.createPoint(new Coordinate(3, 0)));
+        sf1.setAttribute("att_string", "bbb");
+        sf1.setAttribute("att_double", 3d);
+        collection.add(sf1);
         id1 = name.getLocalPart()+"."+0;
 
-        sf = FeatureUtilities.defaultFeature(originalType, "");
-        sf.setAttribute("att_geom", GF.createPoint(new Coordinate(1, 0)));
-        sf.setAttribute("att_string", "ccc");
-        sf.setAttribute("att_double", 1d);
-        collection.add(sf);
+        sf2 = FeatureUtilities.defaultFeature(originalType, "");
+        sf2.setAttribute("att_geom", GF.createPoint(new Coordinate(1, 0)));
+        sf2.setAttribute("att_string", "ccc");
+        sf2.setAttribute("att_double", 1d);
+        collection.add(sf2);
         id2 = name.getLocalPart()+"."+1;
 
-        sf = FeatureUtilities.defaultFeature(originalType, "");
-        sf.setAttribute("att_geom", GF.createPoint(new Coordinate(2, 0)));
-        sf.setAttribute("att_string", "aaa");
-        sf.setAttribute("att_double", 2d);
-        collection.add(sf);
+        sf3 = FeatureUtilities.defaultFeature(originalType, "");
+        sf3.setAttribute("att_geom", GF.createPoint(new Coordinate(2, 0)));
+        sf3.setAttribute("att_string", "aaa");
+        sf3.setAttribute("att_double", 2d);
+        collection.add(sf3);
         id3 = name.getLocalPart()+"."+2;
 
         builder.reset();
@@ -262,7 +267,25 @@ public class GenericIteratorTest extends TestCase{
 
         iterator.close();
     }
+    
+    @Test
+    public void testCacheIterator(){
+        FeatureIterator ite = GenericCachedFeatureIterator.wrap(collection.iterator(), 1);
+        assertEquals(3, DataUtilities.calculateCount(ite));
 
+        ite = GenericCachedFeatureIterator.wrap(collection.iterator(), 1);
+        
+        Feature s1 = ite.next();
+        Feature s2 = ite.next();
+        Feature s3 = ite.next();
+        
+        assertEquals(s1.getIdentifier().getID(),id1);
+        assertEquals(s2.getIdentifier().getID(),id2);
+        assertEquals(s3.getIdentifier().getID(),id3);
+        
+    }
+
+    
     @Test
     public void testFilterIterator(){
         FeatureIterator ite = GenericFilterFeatureIterator.wrap(collection.iterator(), Filter.INCLUDE);
@@ -388,7 +411,9 @@ public class GenericIteratorTest extends TestCase{
         Query query = qb.buildQuery();
         FeatureReader reader = collection.getSession().getDataStore().getFeatureReader(query);
 
-        FeatureReader retyped = GenericReprojectFeatureIterator.wrap(reader, CRS.decode("EPSG:4326"), new Hints());
+        final CoordinateReferenceSystem targetCRS = CRS.decode("EPSG:4326");
+        
+        FeatureReader retyped = GenericReprojectFeatureIterator.wrap(reader, targetCRS, new Hints());
         assertEquals(reprojectedType,retyped.getFeatureType());
 
         Feature f;
@@ -396,14 +421,17 @@ public class GenericIteratorTest extends TestCase{
         f = retyped.next();
         assertEquals(3, f.getProperties().size());
         assertEquals(GF.createPoint(new Coordinate(0, 3)).toString(), f.getProperty("att_geom").getValue().toString());
+        assertEquals(targetCRS,JTS.findCoordinateReferenceSystem((Geometry)f.getProperty("att_geom").getValue()));
 
         f = retyped.next();
         assertEquals(3, f.getProperties().size());
         assertEquals(GF.createPoint(new Coordinate(0, 1)).toString(), f.getProperty("att_geom").getValue().toString());
+        assertEquals(targetCRS,JTS.findCoordinateReferenceSystem((Geometry)f.getProperty("att_geom").getValue()));
 
         f = retyped.next();
         assertEquals(3, f.getProperties().size());
         assertEquals(GF.createPoint(new Coordinate(0, 2)).toString(), f.getProperty("att_geom").getValue().toString());
+        assertEquals(targetCRS,JTS.findCoordinateReferenceSystem((Geometry)f.getProperty("att_geom").getValue()));
 
 
         //check has next do not iterate

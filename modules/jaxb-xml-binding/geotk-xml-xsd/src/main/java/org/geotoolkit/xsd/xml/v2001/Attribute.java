@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.xsd.xml.v2001;
 
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -25,13 +26,14 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.namespace.QName;
+import org.geotoolkit.util.Utilities;
 
 
 /**
  * <p>Java class for attribute complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="attribute">
  *   &lt;complexContent>
@@ -57,8 +59,8 @@ import javax.xml.namespace.QName;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -91,11 +93,11 @@ public class Attribute extends Annotated {
 
     /**
      * Gets the value of the simpleType property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link LocalSimpleType }
-     *     
+     *
      */
     public LocalSimpleType getSimpleType() {
         return simpleType;
@@ -103,11 +105,11 @@ public class Attribute extends Annotated {
 
     /**
      * Sets the value of the simpleType property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link LocalSimpleType }
-     *     
+     *
      */
     public void setSimpleType(final LocalSimpleType value) {
         this.simpleType = value;
@@ -115,11 +117,11 @@ public class Attribute extends Annotated {
 
     /**
      * Gets the value of the type property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link QName }
-     *     
+     *
      */
     public QName getType() {
         return type;
@@ -127,11 +129,11 @@ public class Attribute extends Annotated {
 
     /**
      * Sets the value of the type property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link QName }
-     *     
+     *
      */
     public void setType(final QName value) {
         this.type = value;
@@ -139,11 +141,11 @@ public class Attribute extends Annotated {
 
     /**
      * Gets the value of the use property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getUse() {
         if (use == null) {
@@ -155,11 +157,11 @@ public class Attribute extends Annotated {
 
     /**
      * Sets the value of the use property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setUse(final String value) {
         this.use = value;
@@ -167,11 +169,11 @@ public class Attribute extends Annotated {
 
     /**
      * Gets the value of the default property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getDefault() {
         return _default;
@@ -179,11 +181,11 @@ public class Attribute extends Annotated {
 
     /**
      * Sets the value of the default property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDefault(final String value) {
         this._default = value;
@@ -191,11 +193,11 @@ public class Attribute extends Annotated {
 
     /**
      * Gets the value of the fixed property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getFixed() {
         return fixed;
@@ -203,11 +205,11 @@ public class Attribute extends Annotated {
 
     /**
      * Sets the value of the fixed property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setFixed(final String value) {
         this.fixed = value;
@@ -215,11 +217,11 @@ public class Attribute extends Annotated {
 
     /**
      * Gets the value of the form property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link FormChoice }
-     *     
+     *
      */
     public FormChoice getForm() {
         return form;
@@ -227,11 +229,11 @@ public class Attribute extends Annotated {
 
     /**
      * Sets the value of the form property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link FormChoice }
-     *     
+     *
      */
     public void setForm(final FormChoice value) {
         this.form = value;
@@ -239,11 +241,11 @@ public class Attribute extends Annotated {
 
     /**
      * Gets the value of the name property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getName() {
         return name;
@@ -251,11 +253,11 @@ public class Attribute extends Annotated {
 
     /**
      * Sets the value of the name property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setName(final String value) {
         this.name = value;
@@ -263,11 +265,11 @@ public class Attribute extends Annotated {
 
     /**
      * Gets the value of the ref property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link QName }
-     *     
+     *
      */
     public QName getRef() {
         return ref;
@@ -275,14 +277,83 @@ public class Attribute extends Annotated {
 
     /**
      * Sets the value of the ref property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link QName }
-     *     
+     *
      */
     public void setRef(final QName value) {
         this.ref = value;
     }
 
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof Attribute && super.equals(object)) {
+            final Attribute that = (Attribute) object;
+            return Objects.equals(this._default,     that._default) &&
+                   Objects.equals(this.fixed,        that.fixed) &&
+                   Objects.equals(this.name,         that.name) &&
+                   Objects.equals(this.form,         that.form) &&
+                   Objects.equals(this.simpleType,   that.simpleType) &&
+                   Objects.equals(this.type,         that.type) &&
+                   Objects.equals(this.use,          that.use) &&
+                   Objects.equals(this.ref,          that.ref);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 53 * hash + super.hashCode();
+        hash = 53 * hash + (this.simpleType != null ? this.simpleType.hashCode() : 0);
+        hash = 53 * hash + (this.type != null ? this.type.hashCode() : 0);
+        hash = 53 * hash + (this.use != null ? this.use.hashCode() : 0);
+        hash = 53 * hash + (this._default != null ? this._default.hashCode() : 0);
+        hash = 53 * hash + (this.fixed != null ? this.fixed.hashCode() : 0);
+        hash = 53 * hash + (this.form != null ? this.form.hashCode() : 0);
+        hash = 53 * hash + (this.name != null ? this.name.hashCode() : 0);
+        hash = 53 * hash + (this.ref != null ? this.ref.hashCode() : 0);
+        return hash;
+    }
+
+
+
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString()).append('\n');
+        if (name != null) {
+            sb.append("name:").append(name).append('\n');
+        }
+        if (_default != null) {
+            sb.append("_default:").append(_default).append('\n');
+        }
+        if (fixed != null) {
+            sb.append("fixed:").append(fixed).append('\n');
+        }
+        if (form != null) {
+            sb.append("form:").append(form).append('\n');
+        }
+        if (ref != null) {
+            sb.append("ref:").append(ref).append('\n');
+        }
+        if (simpleType != null) {
+            sb.append("simpleType:").append(simpleType).append('\n');
+        }
+        if (type != null) {
+            sb.append("type:").append(type).append('\n');
+        }
+        if (use != null) {
+            sb.append("use:").append(use).append('\n');
+        }
+        return  sb.toString();
+    }
 }

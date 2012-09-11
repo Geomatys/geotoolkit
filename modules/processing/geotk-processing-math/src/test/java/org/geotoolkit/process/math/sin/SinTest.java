@@ -34,7 +34,6 @@ import static org.junit.Assert.*;
  */
 public class SinTest extends AbstractProcessTest{
 
-   
 
     public SinTest() {
         super("sin");
@@ -56,7 +55,6 @@ public class SinTest extends AbstractProcessTest{
         //result
         final Double result = (Double) proc.call().parameter("result").getValue();
 
-       
         assertEquals(0.5971, result.doubleValue(), 0.0001);
     }
     

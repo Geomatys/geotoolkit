@@ -135,7 +135,7 @@ public class DefaultExternalMark implements ExternalMark{
         return Objects.equals(this.online, other.online)
                 && Objects.equals(this.icon, other.icon)
                 && Objects.equals(this.format, other.format)
-                && Utilities.equals(this.index, other.index);
+                && Objects.equals(this.index, other.index);
 
     }
 

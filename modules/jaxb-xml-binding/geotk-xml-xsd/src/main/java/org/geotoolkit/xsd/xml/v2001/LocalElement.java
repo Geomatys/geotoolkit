@@ -25,9 +25,9 @@ import javax.xml.namespace.QName;
 
 /**
  * <p>Java class for localElement complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="localElement">
  *   &lt;complexContent>
@@ -44,8 +44,8 @@ import javax.xml.namespace.QName;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -63,8 +63,8 @@ public class LocalElement extends Element {
         super(name, type);
     }
 
-    public LocalElement(final String name, final QName type, final Integer minOccurs, final String maxOccurs) {
-        super(name, type, minOccurs, maxOccurs);
+    public LocalElement(final String name, final QName type, final Integer minOccurs, final String maxOccurs, final Boolean nillable) {
+        super(name, type, minOccurs, maxOccurs, nillable);
     }
 
 

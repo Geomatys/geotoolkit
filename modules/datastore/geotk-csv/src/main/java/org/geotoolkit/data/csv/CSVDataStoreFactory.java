@@ -17,19 +17,30 @@
 
 package org.geotoolkit.data.csv;
 
-import java.io.IOException;
-import java.net.URL;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import javax.measure.unit.Unit;
 
+import org.geotoolkit.data.AbstractDataStoreFactory;
 import org.geotoolkit.data.AbstractFileDataStoreFactory;
 import org.geotoolkit.data.DataStore;
-import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.metadata.iso.DefaultIdentifier;
+import org.geotoolkit.metadata.iso.citation.DefaultCitation;
+import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.util.ResourceInternationalString;
 
+import org.opengis.metadata.Identifier;
+import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.IdentifiedObject;
+
+import static org.geotoolkit.data.csv.CSVDataStore.*;
 
 /**
  * CSV datastore factory.
@@ -39,19 +50,47 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class CSVDataStoreFactory extends AbstractFileDataStoreFactory {
 
+    
+    
+    
+    /** factory identification **/
+    public static final String NAME = "csv";
+    public static final DefaultServiceIdentification IDENTIFICATION;
+    static {
+        IDENTIFICATION = new DefaultServiceIdentification();
+        final Identifier id = new DefaultIdentifier(NAME);
+        final DefaultCitation citation = new DefaultCitation(NAME);
+        citation.setIdentifiers(Collections.singleton(id));
+        IDENTIFICATION.setCitation(citation);
+    }
+    
+    public static final ParameterDescriptor<String> IDENTIFIER = createFixedIdentifier(NAME);
+    
     /**
      * Optional - the separator character
      */
-    public static final ParameterDescriptor<Character> SEPARATOR =
-            new DefaultParameterDescriptor<Character>("separator","spécify the separator",Character.class,';',false);
+    public static final ParameterDescriptor<Character> SEPARATOR = createDescriptor("separator",
+                    new ResourceInternationalString(BUNDLE_PATH,"paramSeparatorAlias"),
+                    new ResourceInternationalString(BUNDLE_PATH,"paramSeparatorRemarks"),
+                    Character.class,null,';',null,null,null,false);
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new DefaultParameterDescriptorGroup("CSVParameters",
-                URLP,NAMESPACE,SEPARATOR);
+                IDENTIFIER,URLP,NAMESPACE,SEPARATOR);
 
     @Override
-    public String getDescription() {
-        return "CSV files (*.csv)";
+    public Identification getIdentification() {
+        return IDENTIFICATION;
+    }
+
+    @Override
+    public CharSequence getDescription() {
+        return new ResourceInternationalString("org/geotoolkit/csv/bundle", "datastoreDescription");
+    }
+
+    @Override
+    public CharSequence getDisplayName() {
+        return new ResourceInternationalString("org/geotoolkit/csv/bundle", "datastoreTitle");
     }
 
     @Override
@@ -60,37 +99,19 @@ public class CSVDataStoreFactory extends AbstractFileDataStoreFactory {
     }
 
     @Override
-    public DataStore createDataStore(final ParameterValueGroup params) throws DataStoreException {
-        final URL url = (URL) params.parameter(URLP.getName().toString()).getValue();
-        String namespace = (String) params.parameter(NAMESPACE.getName().toString()).getValue();
-        final char separator = (Character) params.parameter(SEPARATOR.getName().toString()).getValue();
-        
-        if(namespace == null){
-            namespace = "http://geotoolkit.org";
-        }
-        
-        final String path = url.toString();
-        final int slash = Math.max(0, path.lastIndexOf('/') + 1);
-        int dot = path.indexOf('.', slash);
-        if (dot < 0) {
-            dot = path.length();
-        }
-        final String name = path.substring(slash, dot);
-        try {
-            return new CSVDataStore(IOUtilities.toFile(url, null), namespace, name, separator);
-        } catch (IOException ex) {
-            throw new DataStoreException(ex);
-        }
+    public DataStore create(final ParameterValueGroup params) throws DataStoreException {
+        checkCanProcessWithError(params);
+        return new CSVDataStore(params);
     }
 
     @Override
-    public DataStore createNewDataStore(final ParameterValueGroup params) throws DataStoreException {
-        return createDataStore(params);
+    public DataStore createNew(final ParameterValueGroup params) throws DataStoreException {
+        return create(params);
     }
 
     @Override
     public String[] getFileExtensions() {
         return new String[] {".csv"};
     }
-
+    
 }

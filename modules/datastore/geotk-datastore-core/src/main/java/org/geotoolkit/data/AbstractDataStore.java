@@ -17,6 +17,7 @@
 
 package org.geotoolkit.data;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -25,8 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.geotoolkit.data.memory.GenericEmptyFeatureIterator;
 import org.geotoolkit.data.memory.GenericFeatureWriter;
 import org.geotoolkit.data.memory.GenericFilterFeatureIterator;
@@ -37,6 +38,7 @@ import org.geotoolkit.data.memory.GenericSortByFeatureIterator;
 import org.geotoolkit.data.memory.GenericStartIndexFeatureIterator;
 import org.geotoolkit.data.memory.GenericTransformFeatureIterator;
 import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.Selector;
 import org.geotoolkit.data.query.Source;
 import org.geotoolkit.data.session.DefaultSession;
@@ -45,16 +47,17 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.SchemaException;
-import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.geometry.jts.transform.GeometryScaleTransformer;
+import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.logging.Logging;
-
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
+import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
@@ -62,8 +65,10 @@ import org.opengis.filter.Id;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.geometry.Envelope;
-import org.opengis.util.FactoryException;
+import org.opengis.parameter.ParameterNotFoundException;
+import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.FactoryException;
 
 /**
  * Uncomplete implementation of a datastore that handle most methods
@@ -87,9 +92,22 @@ public abstract class AbstractDataStore implements DataStore{
     private final Logger Logger = Logging.getLogger(getClass().getPackage().getName());
 
     private final Set<StorageListener> listeners = new HashSet<StorageListener>();
-    private final String defaultNamespace;
+    protected final ParameterValueGroup parameters;
+    protected String defaultNamespace;
 
-    protected AbstractDataStore(final String namespace) {
+    protected AbstractDataStore(final ParameterValueGroup params) {
+        
+        this.parameters = params;
+        String namespace = null;
+        if(params != null){
+            try{
+                namespace = (String)Parameters.getOrCreate(AbstractDataStoreFactory.NAMESPACE, params).getValue();
+            }catch(ParameterNotFoundException ex){
+                //ignore this error, factory might not necesarly have a namespace parameter
+                //example : gpx
+            }
+        }
+        
         if (namespace == null) {
             defaultNamespace = "http://geotoolkit.org";
         } else if (namespace.equals(NO_NAMESPACE)) {
@@ -99,6 +117,11 @@ public abstract class AbstractDataStore implements DataStore{
         }
     }
 
+    @Override
+    public ParameterValueGroup getConfiguration() {
+        return parameters;
+    }
+    
     protected String getDefaultNamespace() {
         return defaultNamespace;
     }
@@ -181,7 +204,8 @@ public abstract class AbstractDataStore implements DataStore{
             writer = getFeatureWriter(typeName, Filter.EXCLUDE);
             return true;
         }catch(Exception ex){
-            //catch anything, don't log it
+            //catch anything, log it
+            getLogger().log(Level.WARNING, "Type not writeable : {0}", ex.getMessage());
             return false;
         }finally{
             if(writer != null){
@@ -216,6 +240,21 @@ public abstract class AbstractDataStore implements DataStore{
     @Override
     public Envelope getEnvelope(Query query) throws DataStoreException, DataStoreRuntimeException {
         // TODO query = addSeparateFeatureHint(query);
+        
+        if(query.retrieveAllProperties()){
+            //we simplify it, get only geometry attributs
+            final FeatureType ft = getFeatureType(query.getTypeName());
+            final List<Name> names = new ArrayList<Name>();
+            for(PropertyDescriptor desc : ft.getDescriptors()){
+                if(desc instanceof GeometryDescriptor){
+                    names.add(desc.getName());
+                }
+            }
+            final QueryBuilder qb = new QueryBuilder(query);
+            qb.setProperties(names.toArray(new Name[names.size()]));
+            query = qb.buildQuery();
+        }
+        
         final FeatureReader reader = getFeatureReader(query);
         return DataUtilities.calculateEnvelope(reader);
     }
@@ -472,6 +511,8 @@ public abstract class AbstractDataStore implements DataStore{
             if(filter == Filter.EXCLUDE){
                 //filter that exclude everything, use optimzed reader
                 reader = GenericEmptyFeatureIterator.createReader(reader.getFeatureType());
+                //close original reader
+                reader.close();
             }else{
                 reader = GenericFilterFeatureIterator.wrap(reader, filter);
             }
@@ -487,6 +528,8 @@ public abstract class AbstractDataStore implements DataStore{
             if(max == 0){
                 //use an optimized reader
                 reader = GenericEmptyFeatureIterator.createReader(reader.getFeatureType());
+                //close original reader
+                reader.close();
             }else{
                 reader = GenericMaxFeatureIterator.wrap(reader, max);
             }

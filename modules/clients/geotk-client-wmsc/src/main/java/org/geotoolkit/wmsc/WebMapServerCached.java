@@ -17,10 +17,15 @@
 package org.geotoolkit.wmsc;
 
 import java.net.URL;
+import org.geotoolkit.client.CapabilitiesException;
+import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.security.ClientSecurity;
+import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.wms.GetMapRequest;
 import org.geotoolkit.wms.WebMapServer;
 import org.geotoolkit.wms.xml.WMSVersion;
+import org.opengis.feature.type.Name;
 
 /**
  * WMS-C is a osgeo profile for WMS 1.1.1.
@@ -29,24 +34,50 @@ import org.geotoolkit.wms.xml.WMSVersion;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class WebMapServerCached extends WebMapServer{
+public class WebMapServerCached extends WebMapServer implements CoverageStore{
+    
+    private final boolean cacheImage;
     
     /**
-     * Builds a web map server with the given server url and version.
+     * Builds a web map server with the given server url.
      *
      * @param serverURL The server base url.
      */
     public WebMapServerCached(final URL serverURL) {
-        super(serverURL,"1.1.1");
+        this(serverURL, false);
     }
-    
+
     /**
-     * Builds a web map server with the given server url and version.
+     * Builds a web map server with the given server url and cache flag.
      *
      * @param serverURL The server base url.
+     * @param cacheImage
+     */
+    public WebMapServerCached(final URL serverURL, boolean cacheImage) {
+        super(serverURL,"1.1.1");
+        this.cacheImage = cacheImage;
+    }
+
+    /**
+     * Builds a web map server with the given server url and security.
+     *
+     * @param serverURL The server base url.
+     * @param security
      */
     public WebMapServerCached(final URL serverURL, final ClientSecurity security) {
+        this(serverURL, security, false);
+    }
+
+    /**
+     * Builds a web map server with the given server url, security and cache flag.
+     *
+     * @param serverURL The server base url.
+     * @param security
+     * @param cacheImage  
+     */
+    public WebMapServerCached(final URL serverURL, final ClientSecurity security, boolean cacheImage) {
         super(serverURL, security, WMSVersion.v111, null);
+        this.cacheImage = cacheImage;
     }
     
     @Override
@@ -54,6 +85,23 @@ public class WebMapServerCached extends WebMapServer{
         final GetMapRequest request = super.createGetMap();
         request.dimensions().put("TILED", "true");
         return request;
+    }
+
+    @Override
+    public CoverageReference getCoverageReference(Name name) throws DataStoreException {
+        try {
+            return new WMSCCoverageReference(this, name);
+        } catch (CapabilitiesException ex) {
+            throw new DataStoreException(ex.getMessage(), ex);
+        }
+    }
+
+    public boolean isCacheImage() {
+        return cacheImage;
+    }
+
+    @Override
+    public void dispose() {
     }
     
 }

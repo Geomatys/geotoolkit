@@ -104,7 +104,7 @@ public class JTSGeometryBindingTest {
         un.setSchema(schema);
         //m.setSchema(schema);
 
-        
+
 
     }
 
@@ -197,7 +197,7 @@ public class JTSGeometryBindingTest {
         dp.setOrdinate(0, 2.1);
         dp.setOrdinate(1, 12.6);
         JTSPoint point = new JTSPoint(dp, crs);
-        
+
         StringWriter sw = new StringWriter();
         m.marshal(factory.createJTSPoint(point), sw);
 
@@ -241,7 +241,7 @@ public class JTSGeometryBindingTest {
         assertEquals(expResult.getDirectPosition(), result.getValue().getDirectPosition());
         assertEquals(expResult, result.getValue());
 
-        
+
     }
 
      /**
@@ -251,7 +251,7 @@ public class JTSGeometryBindingTest {
      */
    @Test
     public void CurveMarshalingTest() throws Exception {
-    
+
         CoordinateReferenceSystem crs = CRS.decode("urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572");
         assertTrue(crs != null);
 
@@ -285,7 +285,7 @@ public class JTSGeometryBindingTest {
         line2.getControlPoints().add(p22);
         curve.getSegments().add(line2);
 
-        
+
         StringWriter sw = new StringWriter();
         m.marshal(factory.createJTSCurve(curve), sw);
 
@@ -307,7 +307,7 @@ public class JTSGeometryBindingTest {
         "    </gml:segments>"                                                                           + '\n' +
         "</gml:Curve>"                                                                                  + '\n';
 
-        
+
         assertEquals(expResult, result);
 
         pool.release(m);
@@ -370,7 +370,7 @@ public class JTSGeometryBindingTest {
         line2.getControlPoints().add(p22);
         expResult.getSegments().add(line2);
 
-        
+
         JTSCurve result = (JTSCurve) ((JAXBElement) un.unmarshal(new StringReader(xml))).getValue();
 
         assertEquals(((GeneralDirectPosition)((JTSLineString)expResult.getSegments().get(0)).getPositions().get(0)).getCoordinateReferenceSystem(), ((GeneralDirectPosition)((JTSLineString)result.getSegments().get(0)).getPositions().get(0)).getCoordinateReferenceSystem());
@@ -380,7 +380,7 @@ public class JTSGeometryBindingTest {
         assertEquals(expResult.getSegments(), result.getSegments());
         assertEquals(expResult, result);
 
-        
+
     }
 
     /**
@@ -400,11 +400,11 @@ public class JTSGeometryBindingTest {
         DirectPosition p2 = new GeneralDirectPosition(crs);
         p2.setOrdinate(0, 402200);
         p2.setOrdinate(1, 3335200);
-        
+
         JTSEnvelope envelope = new JTSEnvelope(p1, p2);
 
 
-        
+
         StringWriter sw = new StringWriter();
         m.marshal(factory.createJTSEnvelope(envelope), sw);
         String result = StringUtilities.removeXmlns(sw.toString());
@@ -448,13 +448,13 @@ public class JTSGeometryBindingTest {
         "</gml:Envelope>" + '\n';
 
 
-        
-        
+
+
         JTSEnvelope result = (JTSEnvelope) ((JAXBElement)un.unmarshal(new StringReader(xml))).getValue();
-        
+
         assertEquals(expResult, result);
 
-        
+
     }
 
     /**
@@ -482,7 +482,7 @@ public class JTSGeometryBindingTest {
         multiPoint.getElements().add(pt1);
         multiPoint.getElements().add(pt2);
 
-        
+
         StringWriter sw = new StringWriter();
         m.marshal(factory.createJTSMultiPoint(multiPoint), sw);
         String result = StringUtilities.removeXmlns(sw.toString());
@@ -530,7 +530,7 @@ public class JTSGeometryBindingTest {
         expResult.getElements().add(pt1);
         expResult.getElements().add(pt2);
 
-        
+
 
         String xml =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                               + '\n' +
@@ -549,7 +549,7 @@ public class JTSGeometryBindingTest {
 
         JTSMultiPoint result = (JTSMultiPoint) ((JAXBElement)un.unmarshal(new StringReader(xml))).getValue();
 
-        
+
 
         assertEquals(expResult, result);
     }
@@ -568,7 +568,7 @@ public class JTSGeometryBindingTest {
         DirectPosition p1 = new GeneralDirectPosition(crs);
         p1.setOrdinate(0, 402000);
         p1.setOrdinate(1, 3334850);
-        
+
 
         DirectPosition p2 = new GeneralDirectPosition(crs);
         p2.setOrdinate(0, 402200);
@@ -617,7 +617,7 @@ public class JTSGeometryBindingTest {
         compositeCurve.getElements().add(c1);
         compositeCurve.getElements().add(c2);
 
-        
+
         StringWriter sw = new StringWriter();
         m.marshal(factory.createJTSCompositeCurve(compositeCurve), sw);
         String result = StringUtilities.removeXmlns(sw.toString());
@@ -901,7 +901,7 @@ public class JTSGeometryBindingTest {
         "    </gml:curveMember>"                                                                              + '\n' +
         "</gml:CompositeCurve>"                                                                               + '\n';
 
-        
+
         JTSCompositeCurve result = (JTSCompositeCurve) ((JAXBElement)un.unmarshal(new StringReader(xml))).getValue();
 
         assertEquals(((JTSLineString)((JTSCurve)expResult.getElements().iterator().next()).getSegments().get(0)).getCoordinateReferenceSystem(), ((JTSLineString)((JTSCurve)result.getElements().iterator().next()).getSegments().get(0)).getCoordinateReferenceSystem());
@@ -993,7 +993,7 @@ public class JTSGeometryBindingTest {
         /*
          * SECOND POLYGON
          */
-       
+
 
         // EXTERIOR
         JTSRing exterior2    = new JTSRing(crs);
@@ -1041,7 +1041,7 @@ public class JTSGeometryBindingTest {
         c4.getSegments().add(c4l1);
 
         interior2.getElements().add(c4);
-        
+
         Ring[] interiors2 = new Ring[1];
         interiors2[0]     = interior2;
 
@@ -1051,7 +1051,7 @@ public class JTSGeometryBindingTest {
         polyHedralSurface.getPatches().add(p1);
         polyHedralSurface.getPatches().add(p2);
 
-        
+
         StringWriter sw = new StringWriter();
         m.marshal(factory.createJTSPolyhedralSurface(polyHedralSurface), sw);
         String result = StringUtilities.removeXmlns(sw.toString());
@@ -1100,7 +1100,7 @@ public class JTSGeometryBindingTest {
     public void PolyHedralSurfaceUnmarshalingTest() throws Exception {
         CoordinateReferenceSystem crs = CRS.decode("urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572");
         assertTrue(crs != null);
-        
+
         JTSPolyhedralSurface expResult = new JTSPolyhedralSurface(crs);
 
         /*
@@ -1263,7 +1263,7 @@ public class JTSGeometryBindingTest {
         "    </gml:polygonPatches>"                                                                                           + '\n'  +
         "</gml:PolyhedralSurface>"                                                                                            + '\n';
 
-        
+
 
         PolyhedralSurfaceType tmp = (PolyhedralSurfaceType) ((JAXBElement)un.unmarshal(new StringReader(xml))).getValue();
 
@@ -1280,7 +1280,7 @@ public class JTSGeometryBindingTest {
         assertEquals(((JTSLineString)expCurve.getSegments().get(0)).getControlPoints().positions().get(0), ((JTSLineString)resCurve.getSegments().get(0)).getControlPoints().positions().get(0));
         assertEquals(expCurve.getSegments().get(0), resCurve.getSegments().get(0));
         assertEquals(expCurve, resCurve);
-        
+
         assertEquals(expBoundary.getExterior(),  resBoundary.getExterior());
         assertEquals(expBoundary.getInteriors(), resBoundary.getInteriors());
         assertEquals(expBoundary, resBoundary);
@@ -1333,12 +1333,12 @@ public class JTSGeometryBindingTest {
         c1.getSegments().add(c1l2);
         ring.getElements().add(c1);
 
-        
+
         StringWriter sw = new StringWriter();
         m.marshal(ring, sw);
         String result = StringUtilities.removeXmlns(sw.toString());
 
-        String expResult = 
+        String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                    + '\n'  +
         "<gml:Ring srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\" >"       + '\n'  +
         "    <gml:curveMember>"                                                            + '\n'  +
@@ -1425,7 +1425,7 @@ public class JTSGeometryBindingTest {
         "    </gml:curveMember>"                                                           + '\n'  +
         "</gml:Ring>"                                                                      + '\n';
 
-        
+
         JTSRing result  = (JTSRing) un.unmarshal(new StringReader(xml));
 
         assertEquals(expResult.getElements().iterator().next(), result.getElements().iterator().next());
@@ -1470,7 +1470,7 @@ public class JTSGeometryBindingTest {
         c1l1.getControlPoints().add(c1l1p3);
         c1l1.getControlPoints().add(c1l2p1);
         c1l1.getControlPoints().add(c1l2p2);
-        
+
         c1.getSegments().add(c1l1);
 
         exterior1.getElements().add(c1);
@@ -1505,7 +1505,7 @@ public class JTSGeometryBindingTest {
         JTSSurfaceBoundary bound1 = new JTSSurfaceBoundary(crs, exterior1, interiors1);
         JTSPolygon polygon = new JTSPolygon(bound1);
 
-        
+
         StringWriter sw = new StringWriter();
         m.marshal(factory.createJTSPolygon(polygon), sw);
         String result = StringUtilities.removeXmlns(sw.toString());
@@ -1558,7 +1558,7 @@ public class JTSGeometryBindingTest {
         c1l1.getControlPoints().add(c1l1p2);
         c1l1.getControlPoints().add(c1l1p3);
 
-        
+
 
         DirectPosition c1l2p1 = new GeneralDirectPosition(crs);
         c1l2p1.setOrdinate(0, 402320);
@@ -1619,10 +1619,30 @@ public class JTSGeometryBindingTest {
         "    </gml:interior>"                                                                                         + '\n'  +
         "</gml:Polygon>"                                                                                              + '\n';
 
-        
+
         PolygonType temp = (PolygonType) ((JAXBElement)un.unmarshal(new StringReader(xml))).getValue();
 
         JTSPolygon result  = temp.getJTSPolygon();
+        assertEquals(expResult, result);
+
+        xml =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                               + '\n'  +
+        "<gml:Polygon srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\" xmlns:gml=\"http://www.opengis.net/gml\">"                               + '\n'  +
+        "    <gml:outerBoundaryIs>"                                                                                          + '\n'  +
+        "        <gml:LinearRing>"                                                                   + '\n'  +
+        "            <gml:posList>401500.0 3334500.0 401700.0 3334850.0 402200.0 3335200.0 402320.0 3334850.0 402200.0 3335200.0</gml:posList>" + '\n'  +
+        "        </gml:LinearRing>"                                                                                         + '\n'  +
+        "    </gml:outerBoundaryIs>"                                                                                         + '\n'  +
+        "    <gml:innerBoundaryIs>"                                                                                          + '\n'  +
+        "        <gml:LinearRing>"                                                                   + '\n'  +
+        "            <gml:posList>401500.0 3334500.0 401700.0 3334850.0 402200.0 3335200.0</gml:posList>" + '\n'  +
+        "        </gml:LinearRing>"                                                                                         + '\n'  +
+        "    </gml:innerBoundaryIs>"                                                                                         + '\n'  +
+        "</gml:Polygon>"                                                                                              + '\n';
+
+        temp = (PolygonType) ((JAXBElement)un.unmarshal(new StringReader(xml))).getValue();
+
+        result  = temp.getJTSPolygon();
         assertEquals(expResult, result);
     }
 
@@ -1830,7 +1850,7 @@ public class JTSGeometryBindingTest {
         JTSMultiPolygon result = (JTSMultiPolygon) ((JAXBElement)un.unmarshal(new StringReader(xml))).getValue();
 
         result.applyCRSOnchild();
-        
+
         assertEquals(expResult, result);
     }
 
@@ -1896,7 +1916,7 @@ public class JTSGeometryBindingTest {
         multip.getElements().add(c1);
         multip.getElements().add(c2);
 
-        
+
         StringWriter sw = new StringWriter();
         m.marshal(factory.createJTSMultiGeometry(multip), sw);
         String result = StringUtilities.removeXmlns(sw.toString());
@@ -1999,7 +2019,7 @@ public class JTSGeometryBindingTest {
 
         assertEquals(expResult, result);
 
-        
+
         crs = CRS.decode("urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":4326");
 
          // EXTERIOR
@@ -2270,7 +2290,7 @@ public class JTSGeometryBindingTest {
         result = (JTSMultiPrimitive) ((JAXBElement)un.unmarshal(new StringReader(xml))).getValue();
 
 
-       
+
         crs = CRS.decode("urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":4326");
 
          // EXTERIOR

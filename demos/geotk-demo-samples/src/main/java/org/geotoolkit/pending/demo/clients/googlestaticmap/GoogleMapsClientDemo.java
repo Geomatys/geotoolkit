@@ -1,15 +1,20 @@
 
 package org.geotoolkit.pending.demo.clients.googlestaticmap;
 
-import org.geotoolkit.googlemaps.GetMapRequest;
-import org.geotoolkit.googlemaps.StaticGoogleMapsServer;
-import org.geotoolkit.googlemaps.map.GoogleMapsMapLayer;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+import org.geotoolkit.coverage.CoverageStore;
+import org.geotoolkit.coverage.CoverageStoreFinder;
 import org.geotoolkit.gui.swing.go2.JMap2DFrame;
+import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.geotoolkit.pending.demo.Demos;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
+import org.geotoolkit.style.StyleConstants;
+import org.opengis.feature.type.Name;
 
 
 public class GoogleMapsClientDemo {
@@ -17,6 +22,7 @@ public class GoogleMapsClientDemo {
     public static final MutableStyleFactory SF = new DefaultStyleFactory();
     
     public static void main(String[] args) throws Exception {
+        Demos.init();
         
         //Caution, Google Maps static api is limited to 1000 queries per day
         //and has not been build for real GIS applications
@@ -25,23 +31,23 @@ public class GoogleMapsClientDemo {
         //We recommand using OSM TMS client.
         //OSM maps are nearly as fast but is free, without ads and suffer no service limits or constraints.
         
-        final MapContext context = createGoogleMapsContext();
+        final MapContext context = MapBuilder.createContext();
+        
+        final Map parameters = new HashMap();
+        parameters.put("identifier", "googleStaticMaps");
+        parameters.put("url", new URL("http://maps.google.com/maps/api/staticmap"));
+        
+        final CoverageStore store = CoverageStoreFinder.open(parameters);
+        
+        for(Name name : store.getNames()){
+            final CoverageMapLayer layer = MapBuilder.createCoverageLayer(store.getCoverageReference(name), 
+                    SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), name.getLocalPart());
+            layer.setDescription(SF.description(name.getLocalPart(), ""));
+            context.layers().add(layer);
+        }
         
         JMap2DFrame.show(context);
         
     }
- 
-    public static MapContext createGoogleMapsContext() throws Exception{
-        final MapContext context = MapBuilder.createContext(DefaultGeographicCRS.WGS84);
-
-        final StaticGoogleMapsServer server = new StaticGoogleMapsServer(
-                StaticGoogleMapsServer.DEFAULT_GOOGLE_STATIC_MAPS,null);
-        final GoogleMapsMapLayer layer = new GoogleMapsMapLayer(server);
-        layer.setMapType(GetMapRequest.TYPE_TERRAIN);
-        
-        context.layers().add(layer);
-        
-        return context;
-    }
-    
+     
 }

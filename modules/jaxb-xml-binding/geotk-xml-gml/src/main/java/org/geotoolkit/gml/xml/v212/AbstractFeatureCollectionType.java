@@ -55,26 +55,16 @@ public abstract class AbstractFeatureCollectionType extends AbstractFeatureColle
 
     private List<FeatureAssociationType> featureMember;
 
+    public AbstractFeatureCollectionType() {
+
+    }
+
+    public AbstractFeatureCollectionType(final String fid) {
+        super(fid);
+    }
+    
     /**
      * Gets the value of the featureMember property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the featureMember property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getFeatureMember().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link FeatureAssociationType }
-     * 
      * 
      */
     public List<FeatureAssociationType> getFeatureMember() {

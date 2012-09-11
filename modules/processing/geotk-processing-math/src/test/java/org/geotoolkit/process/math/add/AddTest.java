@@ -34,7 +34,6 @@ import static org.junit.Assert.*;
  */
 public class AddTest extends AbstractProcessTest{
 
-   
 
     public AddTest() {
         super("add");
@@ -57,7 +56,6 @@ public class AddTest extends AbstractProcessTest{
 
         //result
         final Double result = (Double) proc.call().parameter("result").getValue();
-
        
         assertEquals(new Double(32.8), result);
     }

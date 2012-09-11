@@ -76,7 +76,7 @@ public class PointCreationDelegate extends AbstractFeatureEditionDelegate{
         }else if(button == MouseEvent.BUTTON3){
             //save changes if we had some
             if(this.modified){
-                helper.sourceModifyFeature(this.feature, this.geometry);
+                helper.sourceModifyFeature(this.feature, this.geometry, true);
                 decoration.setGeometries(null);
             }
             reset();

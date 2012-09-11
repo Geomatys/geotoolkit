@@ -17,8 +17,8 @@
 
 package org.geotoolkit.display2d.style.labeling.decimate;
 
-import org.geotoolkit.display2d.style.labeling.candidate.Candidate;
 import org.geotoolkit.display2d.style.labeling.LabelDescriptor;
+import org.geotoolkit.display2d.style.labeling.candidate.Candidate;
 
 
 /**

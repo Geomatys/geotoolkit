@@ -389,7 +389,7 @@ public class Layer extends AbstractLayer {
     @Override
     public Double getMinScaleDenominator() {
         if (getScaleInt() != null && (getScaleInt().getMin() != null) 
-                && (getScaleInt().getMin().isEmpty())) 
+                && (!getScaleInt().getMin().isEmpty())) 
             return (Double.valueOf(getScaleInt().getMin()) * 2525.38136138052696);
         return null;
     }
@@ -400,7 +400,7 @@ public class Layer extends AbstractLayer {
     @Override
     public Double getMaxScaleDenominator() {
         if (getScaleInt() != null && (getScaleInt().getMax() != null) 
-                && (getScaleInt().getMax().isEmpty())) 
+                && (!getScaleInt().getMax().isEmpty())) 
             return (Double.valueOf(getScaleInt().getMax()) * 2525.38136138052696);
         return null;
     }

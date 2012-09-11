@@ -172,6 +172,10 @@ public class GetCoverageType implements GetCoverage {
         }
     }
 
+    public void setService(final String value) {
+        this.service = value;
+    }
+    
     /**
      * Gets the value of the version property.
      */
@@ -183,6 +187,10 @@ public class GetCoverageType implements GetCoverage {
         return null;
     }
 
+    public void setVersion(final String value) {
+        this.version = value;
+    }
+    
     /**
      * {@inheritDoc}
      */

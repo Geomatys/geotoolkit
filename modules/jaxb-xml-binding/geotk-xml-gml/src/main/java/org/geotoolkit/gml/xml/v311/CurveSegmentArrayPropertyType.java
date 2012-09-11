@@ -24,6 +24,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.CurveSegmentArrayProperty;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -52,7 +54,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "CurveSegmentArrayPropertyType", propOrder = {
     "abstractCurveSegment"
 })
-public class CurveSegmentArrayPropertyType {
+public class CurveSegmentArrayPropertyType implements CurveSegmentArrayProperty{
 
     @XmlElementRef(name = "AbstractCurveSegment", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
     private List<JAXBElement<? extends AbstractCurveSegmentType>> abstractCurveSegment;

@@ -23,6 +23,8 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.MultiCurve;
+import org.opengis.filter.expression.ExpressionVisitor;
 
 
 /**
@@ -50,34 +52,22 @@ import javax.xml.bind.annotation.XmlType;
     "curveMember",
     "curveMembers"
 })
-public class MultiCurveType
-    extends AbstractGeometricAggregateType
-{
+public class MultiCurveType extends AbstractGeometricAggregateType implements MultiCurve {
 
     private List<CurvePropertyType> curveMember;
     private CurveArrayPropertyType curveMembers;
 
+    public MultiCurveType() {
+        
+    }
+    
+    public MultiCurveType(final String srsName, final List<CurvePropertyType> curveMember) {
+        super(srsName);
+        this.curveMember = curveMember;
+    }
+    
     /**
      * Gets the value of the curveMember property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the curveMember property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getCurveMember().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link CurvePropertyType }
-     * 
-     * 
      */
     public List<CurvePropertyType> getCurveMember() {
         if (curveMember == null) {
@@ -110,4 +100,18 @@ public class MultiCurveType
         this.curveMembers = value;
     }
 
+    @Override
+    public Object evaluate(final Object object) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public <T> T evaluate(final Object object, final Class<T> context) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

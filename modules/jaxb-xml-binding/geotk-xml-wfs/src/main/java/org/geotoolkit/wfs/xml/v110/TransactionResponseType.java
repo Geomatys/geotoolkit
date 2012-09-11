@@ -23,6 +23,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
+import org.geotoolkit.wfs.xml.TransactionResponse;
 import org.geotoolkit.wfs.xml.WFSResponse;
 
 
@@ -60,7 +62,7 @@ import org.geotoolkit.wfs.xml.WFSResponse;
     "insertResults"
 })
 @XmlRootElement(name = "TransactionResponse")
-public class TransactionResponseType implements WFSResponse {
+public class TransactionResponseType implements WFSResponse, TransactionResponse {
 
     @XmlElement(name = "TransactionSummary", required = true)
     private TransactionSummaryType transactionSummary;

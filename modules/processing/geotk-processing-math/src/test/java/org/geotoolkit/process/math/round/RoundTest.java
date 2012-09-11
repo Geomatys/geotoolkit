@@ -34,7 +34,6 @@ import static org.junit.Assert.*;
  */
 public class RoundTest extends AbstractProcessTest{
 
-   
 
     public RoundTest() {
         super("round");

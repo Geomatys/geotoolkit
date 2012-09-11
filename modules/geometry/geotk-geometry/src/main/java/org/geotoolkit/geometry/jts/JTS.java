@@ -125,6 +125,16 @@ public final class JTS {
     }
 
     /**
+     * Check that the first and last points have the same 2d coordinate.
+     * If not, override the last coordinate value to close the ring.
+     */
+    public static void ensureClosed(final Coordinate[] array){
+        if(!array[0].equals2D(array[array.length-1])){
+            array[array.length-1].setCoordinate(array[0]);
+        }
+    }
+    
+    /**
      * Transforms the envelope using the specified math transform.
      * Note that this method can not handle the case where the envelope contains the North or
      * South pole, or when it cross the &plusmn;180ï¿½ longitude, because {@linkplain MathTransform
@@ -168,7 +178,7 @@ public final class JTS {
         ensureNonNull("transform", transform);
 
         if ((transform.getSourceDimensions() != 2) || (transform.getTargetDimensions() != 2)) {
-            throw new MismatchedDimensionException(Errors.format(Errors.Keys.BAD_TRANSFORM_$1,
+            throw new MismatchedDimensionException(Errors.format(Errors.Keys.ILLEGAL_TRANSFORM_FOR_TYPE_$1,
                     Classes.getShortClassName(transform)));
         }
 

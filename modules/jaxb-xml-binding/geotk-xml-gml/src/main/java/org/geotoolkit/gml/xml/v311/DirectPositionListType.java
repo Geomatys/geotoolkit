@@ -25,6 +25,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+import org.geotoolkit.gml.xml.DirectPositionList;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -53,7 +55,7 @@ import javax.xml.bind.annotation.XmlValue;
 @XmlType(name = "DirectPositionListType", propOrder = {
     "value"
 })
-public class DirectPositionListType {
+public class DirectPositionListType implements DirectPositionList {
 
     @XmlValue
     private List<Double> value;
@@ -71,6 +73,14 @@ public class DirectPositionListType {
     @XmlAttribute
     private List<String> uomLabels;
 
+    public DirectPositionListType() {
+        
+    }
+    
+    public DirectPositionListType(List<Double> value) {
+        this.value = value;
+    }
+    
     /**
      * XML List based on XML Schema double type.
      * An element of this type contains a space-separated list of double values Gets the value of the value property.
