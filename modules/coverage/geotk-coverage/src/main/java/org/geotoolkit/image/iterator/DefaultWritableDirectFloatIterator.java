@@ -80,7 +80,7 @@ class DefaultWritableDirectFloatIterator extends DefaultDirectFloatIterator {
      */
     public DefaultWritableDirectFloatIterator(final Raster raster, final WritableRaster writableRaster, final Rectangle subArea) {
         super(raster, subArea);
-        checkRasters(raster, writableRaster);
+        checkRasters(raster, writableRaster, subArea);
         this.currentWritableRaster = writableRaster;
     }
 
@@ -95,7 +95,7 @@ class DefaultWritableDirectFloatIterator extends DefaultDirectFloatIterator {
      */
     public DefaultWritableDirectFloatIterator(final RenderedImage renderedImage, final WritableRenderedImage writableRI, final Rectangle subArea) {
         super(renderedImage, subArea);
-        checkRenderedImage(renderedImage, writableRI);
+        checkRenderedImage(renderedImage, writableRI, subArea);
         this.writableRenderedImage = writableRI;
     }
 

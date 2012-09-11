@@ -64,13 +64,13 @@ public class DefaultWritableIteratorTest extends DefaultWritableTest {
         return DataBuffer.TYPE_INT;
     }
 
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    protected PixelIterator getWritableRIIterator(final RenderedImage renderedImage, final WritableRenderedImage writableRenderedImage) {
-        return PixelIteratorFactory.createDefaultWriteableIterator(renderedImage, writableRenderedImage);
-    }
+//    /**
+//     * {@inheritDoc }.
+//     */
+//    @Override
+//    protected PixelIterator getWritableRIIterator(final RenderedImage renderedImage, final WritableRenderedImage writableRenderedImage) {
+//        return PixelIteratorFactory.createDefaultWriteableIterator(renderedImage, writableRenderedImage);
+//    }
 
     /**
      * {@inheritDoc }.

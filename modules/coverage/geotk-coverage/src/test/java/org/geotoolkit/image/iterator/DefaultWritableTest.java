@@ -41,6 +41,28 @@ public abstract class DefaultWritableTest extends WritableIteratorTest {
     }
 
     /**
+     * {@inheritDoc }.
+     */
+    @Override
+    protected PixelIterator getWritableRIIterator(RenderedImage renderedImage, WritableRenderedImage writableRenderedImage, Rectangle subArea) {
+        return PixelIteratorFactory.createDefaultWriteableIterator(renderedImage, writableRenderedImage, subArea);
+    }
+
+    /**
+     * Return "writable" {@code PixelIterator} adapted for {@code RenderedImage} and {@code Rectangle}.
+     *
+     * @param renderedImage {@code RenderedImage} which is followed by read only iterator.
+     * @param writableRenderedImage {@code RenderedImage} which is followed by write only iterator.
+     * @param subArea {@code Rectangle} which define iteration area.
+     * @see #unappropriateRenderedImageTest().
+     * @return "writable" {@code PixelIterator}.
+     */
+    private PixelIterator getWritableRIIterator(Raster raster,
+                                    WritableRaster writableRaster, Rectangle subArea){
+        return PixelIteratorFactory.createDefaultWriteableIterator(raster, writableRaster, subArea);
+    }
+
+    /**
      * {@inheritDoc }
      */
     @Override
@@ -70,6 +92,14 @@ public abstract class DefaultWritableTest extends WritableIteratorTest {
     @Override
     protected void setPixelIterator(RenderedImage renderedImage, Rectangle subArea) {
         pixIterator = PixelIteratorFactory.createDefaultWriteableIterator(renderedImage, (WritableRenderedImage)renderedImage, subArea);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    protected void setPixelIterator(RenderedImage renderedImage, WritableRenderedImage writableRI, Rectangle subArea) {
+        pixIterator = PixelIteratorFactory.createDefaultWriteableIterator(renderedImage, writableRI, subArea);
     }
 
     /**
@@ -197,7 +227,7 @@ public abstract class DefaultWritableTest extends WritableIteratorTest {
     @Test
     public void unappropriateRasterTest() {
         final int databuffer = getDataBufferType();
-        final Raster rasterRead = RasterFactory.createInterleavedRaster(databuffer, 20, 10, 3, new Point(0,0));
+        Raster rasterRead = RasterFactory.createInterleavedRaster(databuffer, 20, 10, 3, new Point(0,0));
         WritableRaster rasterWrite = RasterFactory.createInterleavedRaster(databuffer, 200, 100, 30, new Point(3,1));
 
         //test : different raster dimension.
@@ -215,6 +245,28 @@ public abstract class DefaultWritableTest extends WritableIteratorTest {
             PixelIteratorFactory.createDefaultWriteableIterator(rasterRead, rasterWrite);
             Assert.fail("test should had failed");
         } catch(IllegalArgumentException e) {
+            //ok
+        }
+
+        //test raster different size from subarea
+        rasterRead = RasterFactory.createBandedRaster(databuffer, 100, 100, 3, new Point(10, 15));
+        Rectangle subarea = new Rectangle(50, 55, 20, 10);
+        rasterWrite = RasterFactory.createBandedRaster(databuffer, 40, 20, 3, new Point(40, 50));
+
+        //writable raster contain subarea
+        try {
+            getWritableRIIterator(rasterRead, rasterWrite, subarea);
+            Assert.fail("test should had failed");
+        } catch (IllegalArgumentException e) {
+            //ok
+        }
+
+        //writable raster within subarea
+        rasterWrite = RasterFactory.createBandedRaster(databuffer, 15, 7, 3, new Point(55, 56));
+        try {
+            getWritableRIIterator(rasterRead, rasterWrite, subarea);
+            Assert.fail("test should had failed");
+        } catch (IllegalArgumentException e) {
             //ok
         }
     }

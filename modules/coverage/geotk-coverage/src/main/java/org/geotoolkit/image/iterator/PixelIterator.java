@@ -289,18 +289,17 @@ public abstract class PixelIterator {
     public abstract SequenceType getIterationDirection();
 
     /**
-     * Move forward iterator cursor at x, y coordinates. Cursor is automatically
-     * positioned at band index.
+     * <p>Move forward iterator cursor at x, y coordinates. Cursor is automatically
+     * positioned at band index.<br/>
      *
-     * Code example :
-     * {@code
-     *       PixelIterator.moveTo(x, y, b);
-     *       do {
-     *            PixelIterator.getSample();//for example
-     *       } while (PixelIterator.next());
-     * }
+     * Code example :<br/>
+     * {@code PixelIterator.moveTo(x, y, b);}<br/>
      *
-     * MoveTo method is configure to use do...while() loop after moveTo call.
+     * {@code       do} {<br/>
+     * {@code           PixelIterator.getSample();//for example}<br/>
+     *        } {@code while (PixelIterator.next());}<br/>
+     *
+     * MoveTo method is configure to use do...while() loop after moveTo call.</p>
      *
      * @param x the x coordinate cursor position.
      * @param y the y coordinate cursor position.
@@ -395,6 +394,82 @@ public abstract class PixelIterator {
         //data type
         if (renderedImage.getTile(rimtx, rimty).getDataBuffer().getDataType() != writableRI.getTile(wrimtx, wrimty).getDataBuffer().getDataType())
             throw new IllegalArgumentException("rendered image and writable rendered image haven't got same datas type");
+    }
+
+    /**
+     * Verify raster conformity.
+     */
+    protected void checkRasters(final Raster readableRaster, final WritableRaster writableRaster, final Rectangle subArea) {
+        final int wRmx = writableRaster.getMinX();
+        final int wRmy = writableRaster.getMinY();
+        final int wRw  = writableRaster.getWidth();
+        final int wRh  = writableRaster.getHeight();
+        if ((wRmx != areaIterateMinX)
+          || wRmy != areaIterateMinY
+          || wRw  != areaIterateMaxX - areaIterateMinX
+          || wRh  != areaIterateMaxY - areaIterateMinY)
+
+        //raster dimension
+        if ((readableRaster.getMinX()   != wRmx)
+          || readableRaster.getMinY()   != wRmy
+          || readableRaster.getWidth()  != wRw
+          || readableRaster.getHeight() != wRh)
+         throw new IllegalArgumentException("raster and writable raster are not in same dimension"+readableRaster+writableRaster);
+
+        if (readableRaster.getNumBands() != writableRaster.getNumBands())
+            throw new IllegalArgumentException("raster and writable raster haven't got same band number");
+        //raster data type
+        if (readableRaster.getDataBuffer().getDataType() != writableRaster.getDataBuffer().getDataType())
+            throw new IllegalArgumentException("raster and writable raster haven't got same datas type");
+    }
+
+    /**
+     * Verify Rendered image conformity.
+     */
+    protected void checkRenderedImage(final RenderedImage renderedImage, final WritableRenderedImage writableRI, final Rectangle subArea) {
+        if (renderedImage.getSampleModel().getNumBands() != writableRI.getSampleModel().getNumBands())
+            throw new IllegalArgumentException("renderedImage and writableRenderedImage haven't got same band number");
+        final int riMinX   = renderedImage.getMinX();
+        final int riMinY   = renderedImage.getMinY();
+        final int riTileWidth = renderedImage.getTileWidth();
+        final int riTileHeight = renderedImage.getTileHeight();
+        final int rimtx  = renderedImage.getMinTileX();
+        final int rimty  = renderedImage.getMinTileY();
+
+        final int wrimtx = writableRI.getMinTileX();
+        final int wrimty = writableRI.getMinTileY();
+
+        //data type
+        if (renderedImage.getTile(rimtx, rimty).getDataBuffer().getDataType() != writableRI.getTile(wrimtx, wrimty).getDataBuffer().getDataType())
+            throw new IllegalArgumentException("rendered image and writable rendered image haven't got same datas type");
+
+        //tiles dimensions
+        if (renderedImage.getTileHeight() != writableRI.getTileHeight()
+         || renderedImage.getTileWidth()  != writableRI.getTileWidth()
+         || renderedImage.getTileGridXOffset() != writableRI.getTileGridXOffset()
+         || renderedImage.getTileGridYOffset() != writableRI.getTileGridYOffset())
+            throw new IllegalArgumentException("rendered image and writable rendered image tiles configuration are not conform"+renderedImage+writableRI);
+
+        //verifier les index de tuiles au depart
+        final boolean minTileX = (wrimtx == (areaIterateMinX-riMinX)/riTileWidth+rimtx);
+        final boolean minTileY = (wrimty == (areaIterateMinY-riMinY)/riTileHeight+rimty);
+
+        //writable image correspond with iteration area
+        if (writableRI.getMinX()  != areaIterateMinX    //areaiteration
+         || writableRI.getMinY()  != areaIterateMinY    //areaiteration
+         || writableRI.getWidth() != areaIterateMaxX-areaIterateMinX//longueuriteration
+         || writableRI.getHeight()!= areaIterateMaxY-areaIterateMinY//largeuriteration
+         || !minTileX || !minTileY )
+
+        //image dimensions
+        if (renderedImage.getMinX()   != writableRI.getMinX()
+         || renderedImage.getMinY()   != writableRI.getMinY()
+         || renderedImage.getWidth()  != writableRI.getWidth()
+         || renderedImage.getHeight() != writableRI.getHeight()
+         || rimtx != wrimtx || rimty != wrimty
+         || renderedImage.getNumXTiles() != writableRI.getNumXTiles()
+         || renderedImage.getNumYTiles() != writableRI.getNumYTiles())
+         throw new IllegalArgumentException("rendered image and writable rendered image dimensions are not conform"+renderedImage+writableRI);
     }
 
     /**

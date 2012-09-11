@@ -16,11 +16,10 @@
  */
 package org.geotoolkit.image.iterator;
 
+import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.image.BandedSampleModel;
-import java.awt.image.DataBuffer;
-import java.awt.image.RenderedImage;
-import java.awt.image.WritableRenderedImage;
+import java.awt.image.*;
+import javax.media.jai.RasterFactory;
 import javax.media.jai.TiledImage;
 import org.junit.Assert;
 import static org.junit.Assert.assertTrue;
@@ -60,6 +59,26 @@ public abstract class WritableIteratorTest extends IteratorTest{
      */
     protected abstract PixelIterator getWritableRIIterator(RenderedImage renderedImage,
                                     WritableRenderedImage writableRenderedImage);
+
+    /**
+     * Return "writable" {@code PixelIterator} adapted for {@code RenderedImage} and {@code Rectangle}.
+     *
+     * @param renderedImage {@code RenderedImage} which is followed by read only iterator.
+     * @param writableRenderedImage {@code RenderedImage} which is followed by write only iterator.
+     * @param subArea {@code Rectangle} which define iteration area.
+     * @see #unappropriateRenderedImageTest().
+     * @return "writable" {@code PixelIterator}.
+     */
+    protected abstract PixelIterator getWritableRIIterator(RenderedImage renderedImage,
+                                    WritableRenderedImage writableRenderedImage, Rectangle subArea);
+
+    /**
+     * Affect an appropriate {@code PixelIterator} on {@link #pixIterator} attribute, relative to expected test.
+     *
+     * @param renderedImage {@code RenderedImage} which will be followed by {@link #pixIterator}.
+     * @param subArea {@code Rectangle} which represent {@link #renderedImage} sub area iteration.
+     */
+    protected abstract void setPixelIterator(final RenderedImage renderedImage, WritableRenderedImage writableRI, final Rectangle subArea);
 
     public WritableIteratorTest() {
     }
@@ -221,6 +240,29 @@ public abstract class WritableIteratorTest extends IteratorTest{
     }
 
     /**
+     * Test if iterator transverse expected value in define area.
+     * Area contains all image area.
+     */
+    @Test
+    public void rectEqualImageWriteWithinReadImageTest() {
+        final Rectangle rect = new Rectangle(10, 10, 5, 2);
+        minx = 0;
+        miny = 0;
+        width = 100;
+        height = 50;
+        tilesWidth = 10;
+        tilesHeight = 5;
+        numBand = 3;
+        setRenderedImgTest(minx, miny, width, height, tilesWidth, tilesHeight, numBand, null);
+        final SampleModel sampleMW = new PixelInterleavedSampleModel(getDataBufferType(), tilesWidth, tilesHeight, numBand, tilesWidth*numBand, new int[]{0, 1, 2});
+        final WritableRenderedImage rendWriteImage = new TiledImage(rect.x, rect.y, rect.width, rect.height, renderedImage.getTileGridXOffset(), renderedImage.getTileGridYOffset(), sampleMW, null);
+        setPixelIterator(renderedImage, rendWriteImage, rect);
+        while (pixIterator.next()) pixIterator.setSample(1);
+        setPixelIterator(rendWriteImage);
+        while (pixIterator.next()) assertTrue(pixIterator.getSampleDouble() == 1);
+    }
+
+    /**
      * Test catching exception if rendered images haven't got same criterion.
      */
     @Test
@@ -260,5 +302,26 @@ public abstract class WritableIteratorTest extends IteratorTest{
         } catch(IllegalArgumentException e) {
             //ok
         }
+
+
+        ///
+
+    }
+
+    /**
+     * Test catching exception if rendered images and raster haven't got appropriate criterion.
+     * Test if image or raster are appropriate from subarea iteration.
+     */
+    public void unappropriateWritableObjectTest() {
+
+
+        final int dataType = DataBuffer.TYPE_BYTE;
+        final BandedSampleModel sampleMR  = new BandedSampleModel(dataType, 100, 50, 3);
+        final RenderedImage rendReadImage = new TiledImage(0, 0, 1000, 500, 0, 0, sampleMR, null);
+
+        BandedSampleModel sampleMW = new BandedSampleModel(dataType, 100, 50, 3);
+        WritableRenderedImage rendWriteImage = new TiledImage(0, 0, 100, 500, 15, 25, sampleMW, null);
+
+        Rectangle subarea = new Rectangle(50, 55, 20, 10);
     }
 }

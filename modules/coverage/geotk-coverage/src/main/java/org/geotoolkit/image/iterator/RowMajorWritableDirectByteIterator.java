@@ -79,7 +79,7 @@ class RowMajorWritableDirectByteIterator extends RowMajorDirectByteIterator{
      */
     RowMajorWritableDirectByteIterator(final RenderedImage renderedImage, final WritableRenderedImage writableRI, final Rectangle subArea) {
         super(renderedImage, subArea);
-        checkRenderedImage(renderedImage, writableRI);
+        checkRenderedImage(renderedImage, writableRI, subArea);
         this.writableRenderedImage = writableRI;
     }
 

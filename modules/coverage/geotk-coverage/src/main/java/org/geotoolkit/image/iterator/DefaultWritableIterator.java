@@ -77,7 +77,7 @@ class DefaultWritableIterator extends DefaultIterator {
      */
     DefaultWritableIterator(final Raster raster, final WritableRaster writableRaster, final Rectangle subArea) {
         super(raster, subArea);
-        checkRasters(raster, writableRaster);
+        checkRasters(raster, writableRaster, subArea);
         this.currentWritableRaster = writableRaster;
     }
 
@@ -92,7 +92,7 @@ class DefaultWritableIterator extends DefaultIterator {
      */
     DefaultWritableIterator(final RenderedImage renderedImage, final WritableRenderedImage writableRI, Rectangle subArea) {
         super(renderedImage, subArea);
-        checkRenderedImage(renderedImage, writableRI);
+        checkRenderedImage(renderedImage, writableRI, subArea);
         this.writableRenderedImage = writableRI;
     }
 

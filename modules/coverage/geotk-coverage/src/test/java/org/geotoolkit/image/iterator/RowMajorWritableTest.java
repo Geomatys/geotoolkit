@@ -145,7 +145,23 @@ public abstract class RowMajorWritableTest extends WritableIteratorTest {
      * {@inheritDoc }.
      */
     @Override
+    protected void setPixelIterator(RenderedImage renderedImage, WritableRenderedImage writableRI, Rectangle subArea) {
+        pixIterator = PixelIteratorFactory.createRowMajorWriteableIterator(renderedImage, writableRI, subArea);
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
     protected PixelIterator getWritableRIIterator(RenderedImage renderedImage, WritableRenderedImage writableRenderedImage) {
+        return PixelIteratorFactory.createRowMajorWriteableIterator(renderedImage, writableRenderedImage);
+    }
+
+    /**
+     * {@inheritDoc }.
+     */
+    @Override
+    protected PixelIterator getWritableRIIterator(RenderedImage renderedImage, WritableRenderedImage writableRenderedImage, Rectangle subarea) {
         return PixelIteratorFactory.createRowMajorWriteableIterator(renderedImage, writableRenderedImage);
     }
 

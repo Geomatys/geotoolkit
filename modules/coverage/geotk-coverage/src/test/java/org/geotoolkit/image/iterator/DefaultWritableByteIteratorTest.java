@@ -17,9 +17,7 @@
 package org.geotoolkit.image.iterator;
 
 import java.awt.Rectangle;
-import java.awt.image.DataBuffer;
-import java.awt.image.RenderedImage;
-import java.awt.image.WritableRenderedImage;
+import java.awt.image.*;
 
 /**
  * Test DefaultWritableByteIterator class.
@@ -81,13 +79,29 @@ public class DefaultWritableByteIteratorTest extends DefaultWritableTest {
         DefaultByteIteratorTest.setRasterByteTest(this, minx, miny, width, height, numBand, subArea);
     }
 
-    /**
-     * {@inheritDoc }.
-     */
-    @Override
-    protected PixelIterator getWritableRIIterator(final RenderedImage renderedImage, final WritableRenderedImage writableRenderedImage) {
-        return PixelIteratorFactory.createDefaultWriteableIterator(renderedImage, writableRenderedImage);
-    }
+//    /**
+//     * {@inheritDoc }.
+//     */
+//    @Override
+//    protected PixelIterator getWritableRIIterator(final RenderedImage renderedImage, final WritableRenderedImage writableRenderedImage) {
+//        return PixelIteratorFactory.createDefaultWriteableIterator(renderedImage, writableRenderedImage);
+//    }
+
+//    /**
+//     * {@inheritDoc }.
+//     */
+//    @Override
+//    protected PixelIterator getWritableRIIterator(RenderedImage renderedImage, WritableRenderedImage writableRenderedImage, Rectangle subArea) {
+//        return PixelIteratorFactory.createDefaultWriteableIterator(renderedImage, writableRenderedImage, subArea);
+//    }
+//
+//    /**
+//     * {@inheritDoc }.
+//     */
+//    @Override
+//    protected PixelIterator getWritableRIIterator(Raster raster, WritableRaster writableRaster, Rectangle subArea) {
+//        return PixelIteratorFactory.createDefaultWriteableIterator(raster, writableRaster, subArea);
+//    }
 
     /**
      * {@inheritDoc }.
