@@ -40,6 +40,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.*;
 import org.opengis.filter.identity.Identifier;
 import org.opengis.parameter.*;
+import org.opengis.util.InternationalString;
 
 /**
  *
@@ -599,6 +600,34 @@ public final class FeatureUtilities {
         }
 
         return parameter;
+    }
+    
+    /**
+     * Build a {@link Property} from a {@link ParameterValue}.
+     * @param parameter {@link ParameterValue}
+     * @return a {@link Property}
+     */
+    public static Property toProperty (final ParameterValue parameter) {
+        final ParameterDescriptor descriptor = parameter.getDescriptor();
+        final Object value = parameter.getValue();
+        
+        final AttributeTypeBuilder atb = new AttributeTypeBuilder();
+        atb.setName(descriptor.getName().getCode());
+        atb.setDescription(descriptor.getRemarks());
+        atb.setBinding(descriptor.getValueClass());
+        
+        final AttributeType at = atb.buildType();
+        final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
+        adb.setType(at);
+        adb.setName(descriptor.getName().getCode());
+        adb.setMinOccurs(descriptor.getMinimumOccurs());
+        adb.setMaxOccurs(descriptor.getMaximumOccurs());
+        adb.setDefaultValue(descriptor.getDefaultValue());
+        final PropertyDescriptor adesc = adb.buildDescriptor();
+
+        final Property property = defaultProperty(adesc);
+        property.setValue(value);
+        return property;
     }
 
     private static void fill(final ParameterValueGroup source, final ComplexAttribute target){
