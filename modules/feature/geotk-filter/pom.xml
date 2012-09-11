@@ -24,7 +24,7 @@
   <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-filter</artifactId>
   <packaging>jar</packaging>
-  <name>Feature filter and expression</name>
+  <name>Filter and expression</name>
 
   <description>
     Implementation of GeoAPI Filter and Expression interface.
