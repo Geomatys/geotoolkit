@@ -55,7 +55,7 @@ public class ExpressionReadingTest {
         final PropertyName expression = (PropertyName) obj;
         assertEquals("geom", expression.getPropertyName());                
     }
-    
+        
     @Test
     public void testPropertyName2() throws CQLException{        
         final String cql = "\"geom\"";
@@ -63,6 +63,15 @@ public class ExpressionReadingTest {
         assertTrue(obj instanceof PropertyName);
         final PropertyName expression = (PropertyName) obj;
         assertEquals("geom", expression.getPropertyName());                
+    }
+    
+    @Test
+    public void testPropertyName3() throws CQLException{        
+        final String cql = "ùth{e_$uglY^_pr@perté";
+        final Object obj = CQL.parseExpression(cql);        
+        assertTrue(obj instanceof PropertyName);
+        final PropertyName expression = (PropertyName) obj;
+        assertEquals("ùth{e_$uglY^_pr@perté", expression.getPropertyName());                
     }
     
     @Test

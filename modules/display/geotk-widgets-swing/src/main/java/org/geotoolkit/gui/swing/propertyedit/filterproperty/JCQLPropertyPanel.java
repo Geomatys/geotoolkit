@@ -17,8 +17,11 @@
  */
 package org.geotoolkit.gui.swing.propertyedit.filterproperty;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.geotoolkit.cql.CQLException;
 import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.gui.swing.filter.JCQLFilterPanel;
+import org.geotoolkit.gui.swing.filter.JCQLEditor;
 import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
 import org.geotoolkit.map.FeatureMapLayer;
 
@@ -28,7 +31,7 @@ import org.geotoolkit.map.FeatureMapLayer;
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
-public class JCQLPropertyPanel extends JCQLFilterPanel implements PropertyPane{
+public class JCQLPropertyPanel extends JCQLEditor implements PropertyPane{
 
     private FeatureMapLayer layer;
         
@@ -53,7 +56,11 @@ public class JCQLPropertyPanel extends JCQLFilterPanel implements PropertyPane{
     @Override
     public void apply() {  
         if(layer !=null){
-            layer.setQuery(QueryBuilder.filtered(layer.getCollection().getFeatureType().getName(), getFilter()));
+            try {
+                layer.setQuery(QueryBuilder.filtered(layer.getCollection().getFeatureType().getName(), getFilter()));
+            } catch (CQLException ex) {
+                Logger.getLogger(JCQLPropertyPanel.class.getName()).log(Level.WARNING, ex.getMessage(), ex);
+            }
         }
     }
 

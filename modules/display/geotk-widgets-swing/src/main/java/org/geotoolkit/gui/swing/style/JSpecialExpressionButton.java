@@ -21,6 +21,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.Icon;
 import javax.swing.JButton;
+import org.geotoolkit.cql.CQLException;
+import org.geotoolkit.gui.swing.filter.JCQLEditor;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.filter.expression.Expression;
@@ -38,7 +40,6 @@ public class JSpecialExpressionButton extends JButton{
     private static final Icon ICON_EXP_YES = IconBundle.getIcon("16_expression_yes");
     private Expression exp = null;
     private MapLayer layer = null;
-    private final JExpressionDialog dialog = new JExpressionDialog();
     
     public JSpecialExpressionButton(){
         setBorderPainted(false);
@@ -50,14 +51,16 @@ public class JSpecialExpressionButton extends JButton{
 
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                dialog.setModal(true);
-                dialog.setLocationRelativeTo(JSpecialExpressionButton.this);
-                dialog.setLayer(layer);
-                dialog.setExpression(exp);
-                dialog.setVisible(true);
-                final Expression old = exp;
-                parse(dialog.getExpression());
-                firePropertyChange(EXPRESSION_PROPERTY, old, exp);
+                
+                try{
+                    final Expression ne = JCQLEditor.showDialog(layer, exp);
+                    if(ne != null && ne != exp){
+                        parse(ne);
+                        firePropertyChange(EXPRESSION_PROPERTY, exp, ne);
+                    }
+                }catch(CQLException ex){
+                    ex.printStackTrace();
+                }
             }
         });
     }

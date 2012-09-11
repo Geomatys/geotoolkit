@@ -165,7 +165,16 @@ public class FilterReadingTest {
     }
 
     @Test
-    public void testPropertyIsEqualTo() throws CQLException {
+    public void testPropertyIsEqualTo1() throws CQLException {
+        final String cql = "att=15";
+        final Object obj = CQL.parseFilter(cql);        
+        assertTrue(obj instanceof PropertyIsEqualTo);
+        final PropertyIsEqualTo filter = (PropertyIsEqualTo) obj;
+        assertEquals(FF.equals(FF.property("att"), FF.literal(15)), filter);                
+    }
+    
+    @Test
+    public void testPropertyIsEqualTo2() throws CQLException {
         final String cql = "att = 15";
         final Object obj = CQL.parseFilter(cql);        
         assertTrue(obj instanceof PropertyIsEqualTo);

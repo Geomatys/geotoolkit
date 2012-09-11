@@ -35,17 +35,18 @@ import org.opengis.filter.Filter;
 import org.opengis.filter.expression.Expression;
 
 /**
- * Swing filter/expression editor.
+ * Swing CQL text pane. highlights syntax.
  * 
  * @author Johann Sorel (Geomatys)
  */
-public class JCQLEditor extends JPanel implements KeyListener{
+public class JCQLTextPane extends JPanel implements KeyListener{
 
     private final JTextPane guiText = new JTextPane();
     private final JLabel guiError = new JLabel();
     
     final Style styleDefault;
     final Style styleComment;
+    final Style styleFunction;
     final Style styleLiteral;
     final Style styleParenthese;
     final Style styleOperator;
@@ -53,8 +54,11 @@ public class JCQLEditor extends JPanel implements KeyListener{
     final Style stylePropertyName;
     final Style styleError;
     
-    public JCQLEditor() {
+    public JCQLTextPane() {
         super(new BorderLayout());
+        
+        guiText.setBackground(Color.WHITE);
+        
         add(BorderLayout.CENTER,new JScrollPane(guiText));
         add(BorderLayout.SOUTH,guiError);
         guiText.addKeyListener(this);
@@ -67,6 +71,9 @@ public class JCQLEditor extends JPanel implements KeyListener{
         
         styleLiteral = guiText.addStyle("literal", null);
         StyleConstants.setForeground(styleLiteral, new Color(0, 150, 0));
+        
+        styleFunction = guiText.addStyle("function", null);
+        StyleConstants.setForeground(styleFunction, Color.MAGENTA);
         
         styleParenthese = guiText.addStyle("parenthese", null);
         StyleConstants.setForeground(styleParenthese, new Color(0, 100, 0));
@@ -88,14 +95,44 @@ public class JCQLEditor extends JPanel implements KeyListener{
         StyleConstants.setBold(styleError, true);
         
     }
-
+    
     public void setText(String cql){
         guiText.setText(cql);
         updateHightLight();
     }
     
+    /**
+     * Insert text at current caret position
+     * @param text 
+     */
+    public void insertText(String text){
+        final int position = guiText.getCaretPosition();
+        final String cql = guiText.getText();
+        final StringBuilder sb = new StringBuilder();
+        sb.append(cql.substring(0,position));
+        sb.append(text);
+        sb.append(cql.substring(position));
+        
+        guiText.setText(sb.toString());
+        guiText.setCaretPosition(position+text.length());
+        updateHightLight();
+    }
+    
+    public void addText(String text){
+        guiText.setText(guiText.getText()+text);
+        updateHightLight();
+    }
+    
     public String getText(){
         return guiText.getText();
+    }
+    
+    public void setFilter(Filter filter){
+        setText(CQL.write(filter));
+    }
+    
+    public void setExpression(Expression exp){
+        setText(CQL.write(exp));
     }
     
     public Filter getFilter() throws CQLException{
@@ -159,8 +196,16 @@ public class JCQLEditor extends JPanel implements KeyListener{
                     doc.setCharacterAttributes(offset, length, styleLiteral, true);
                     break;
                 case CQLLexer.PROPERTY_NAME :
-                case CQLLexer.NAME :
                     doc.setCharacterAttributes(offset, length, stylePropertyName, true);
+                    break;
+                case CQLLexer.NAME :
+                    if(tree.getChildCount()==0){
+                        //property name
+                        doc.setCharacterAttributes(offset, length, stylePropertyName, true);
+                    }else{
+                        //function name
+                        doc.setCharacterAttributes(offset, length, styleFunction, true);
+                    }
                     break;
                 case CQLLexer.RPAREN : 
                 case CQLLexer.LPAREN : 

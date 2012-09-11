@@ -138,12 +138,16 @@ public final class CQL {
     
     
     public static String write(Filter filter){
+        if(filter == null) return "";
+        
         final StringBuilder sb = new StringBuilder();
         filter.accept(FilterToCQLVisitor.INSTANCE,sb);
         return sb.toString();
     }
     
     public static String write(Expression exp){
+        if(exp == null) return "";
+        
         final StringBuilder sb = new StringBuilder();
         exp.accept(FilterToCQLVisitor.INSTANCE,sb);
         return sb.toString();
