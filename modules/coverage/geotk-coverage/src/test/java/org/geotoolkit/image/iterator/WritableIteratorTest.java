@@ -303,25 +303,35 @@ public abstract class WritableIteratorTest extends IteratorTest{
             //ok
         }
 
+        //out of rectangle
+        final Rectangle subArea = new Rectangle(10, 10, 200, 100);
+        sampleMW = new BandedSampleModel(dataType, 100, 50, 3);
+        rendWriteImage = new TiledImage(0, 0, 200, 100, 0, 0, sampleMW, null);
+        try {
+            getWritableRIIterator(rendReadImage, rendWriteImage, subArea);
+            Assert.fail("test should had failed");
+        } catch(IllegalArgumentException e) {
+            //ok
+        }
 
-        ///
+        //bad tiles size
+        sampleMW = new BandedSampleModel(dataType, 10, 50, 3);
+        rendWriteImage = new TiledImage(10, 10, 200, 100, 0, 0, sampleMW, null);
+        try {
+            getWritableRIIterator(rendReadImage, rendWriteImage, subArea);
+            Assert.fail("test should had failed");
+        } catch(IllegalArgumentException e) {
+            //ok
+        }
 
-    }
-
-    /**
-     * Test catching exception if rendered images and raster haven't got appropriate criterion.
-     * Test if image or raster are appropriate from subarea iteration.
-     */
-    public void unappropriateWritableObjectTest() {
-
-
-        final int dataType = DataBuffer.TYPE_BYTE;
-        final BandedSampleModel sampleMR  = new BandedSampleModel(dataType, 100, 50, 3);
-        final RenderedImage rendReadImage = new TiledImage(0, 0, 1000, 500, 0, 0, sampleMR, null);
-
-        BandedSampleModel sampleMW = new BandedSampleModel(dataType, 100, 50, 3);
-        WritableRenderedImage rendWriteImage = new TiledImage(0, 0, 100, 500, 15, 25, sampleMW, null);
-
-        Rectangle subarea = new Rectangle(50, 55, 20, 10);
+        //bad tilesgridOffset
+        sampleMW = new BandedSampleModel(dataType, 100, 50, 3);
+        rendWriteImage = new TiledImage(10, 10, 200, 100, 1, 2, sampleMW, null);
+        try {
+            getWritableRIIterator(rendReadImage, rendWriteImage, subArea);
+            Assert.fail("test should had failed");
+        } catch(IllegalArgumentException e) {
+            //ok
+        }
     }
 }
