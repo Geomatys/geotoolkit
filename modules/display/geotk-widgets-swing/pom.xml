@@ -79,31 +79,26 @@
     <dependency>
       <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-referencing</artifactId>
-      <classifier>${project.classifier}</classifier>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-coverage</artifactId>
-      <classifier>${project.classifier}</classifier>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-coverageio</artifactId>
-      <classifier>${project.classifier}</classifier>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-coverage-sql</artifactId>
-      <classifier>${project.classifier}</classifier>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-display</artifactId>
-      <classifier>${project.classifier}</classifier>
       <version>${project.version}</version>
     </dependency>
     <dependency>

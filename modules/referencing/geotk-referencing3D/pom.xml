@@ -67,7 +67,6 @@
     <dependency>
       <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-referencing</artifactId>
-      <classifier>${project.classifier}</classifier>
       <version>${project.version}</version>
     </dependency>
   </dependencies>

@@ -84,25 +84,21 @@
     <dependency>
       <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-utility</artifactId>
-      <classifier>${project.classifier}</classifier>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-metadata-sql</artifactId>
-      <classifier>${project.classifier}</classifier>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-referencing</artifactId>
-      <classifier>${project.classifier}</classifier>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-epsg-javadb</artifactId>
-      <classifier>${project.classifier}</classifier>
       <version>${project.version}</version>
     </dependency>
     <dependency>

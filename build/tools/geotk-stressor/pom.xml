@@ -60,13 +60,11 @@
     <dependency>
       <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-coverage-sql</artifactId>
-      <classifier>${project.classifier}</classifier>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-epsg-javadb</artifactId>
-      <classifier>${project.classifier}</classifier>
       <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>

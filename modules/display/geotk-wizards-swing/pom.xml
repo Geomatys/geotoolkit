@@ -81,19 +81,16 @@
     <dependency>
       <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-setup</artifactId>
-      <classifier>${project.classifier}</classifier>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-coverage-sql</artifactId>
-      <classifier>${project.classifier}</classifier>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-widgets-swing</artifactId>
-      <classifier>${project.classifier}</classifier>
       <version>${project.version}</version>
     </dependency>
     <dependency>

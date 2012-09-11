@@ -74,7 +74,6 @@
     <dependency>
       <groupId>org.geotoolkit</groupId>
       <artifactId>geotk-utility</artifactId>
-      <classifier>${project.classifier}</classifier>
       <version>${project.version}</version>
     </dependency>
     <dependency>
