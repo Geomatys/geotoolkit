@@ -56,6 +56,7 @@ import org.opengis.filter.identity.Identifier;
 import com.vividsolutions.jts.geom.CoordinateSequenceFactory;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
+import java.sql.Array;
 import org.geotoolkit.feature.simple.DefaultSimpleFeature;
 import org.geotoolkit.util.converter.ConverterRegistry;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
@@ -340,7 +341,11 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
         }
     }
 
-    private static <S,T> T convert(final S candidate,final Class<T> target) {
+    private static <S,T> T convert(final S candidate,final Class<T> target) throws SQLException {
+        if(candidate instanceof Array){
+            final Array a = (Array) candidate;
+            return (T) a.getArray();
+        }
         try {
             final ObjectConverter<S,T> converter = (ObjectConverter<S,T>) ConverterRegistry.system().converter(candidate.getClass(), target);
             return converter.convert(candidate);

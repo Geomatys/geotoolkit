@@ -94,6 +94,7 @@ import org.opengis.filter.spatial.Touches;
 import org.opengis.filter.spatial.Within;
 
 import com.vividsolutions.jts.geom.Geometry;
+import java.lang.reflect.Array;
 
 /**
  * Encodes a filter into a SQL WHERE statement.  It should hopefully be generic
@@ -1044,7 +1045,29 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
           out.write("NULL");
         } else if(literal instanceof Number || literal instanceof Boolean) {
             out.write(String.valueOf(literal));
-        } else {
+        } else if(literal.getClass().isArray()) {
+            final int size = Array.getLength(literal);
+            out.write("'{");
+            for(int i=0;i<size;i++){
+                if(i>0) out.write(',');
+                final Object o = Array.get(literal, i);
+                if(!(o instanceof Number || o instanceof Boolean) && o != null){
+                    // we don't know what this is, let's convert back to a string
+                    String encoding = Converters.convert(o, String.class);
+                    if (encoding == null) {
+                        // could not convert back to string, use original l value
+                        encoding = literal.toString();
+                    }
+
+                    // single quotes must be escaped to have a valid sql string
+                    final String escaped = encoding.replaceAll("'", "''");
+                    out.write(escaped);
+                }else{
+                    writeLiteral(o);
+                }
+            }
+            out.write("}'");
+        }else {
             // we don't know what this is, let's convert back to a string
             String encoding = Converters.convert(literal, String.class);
             if (encoding == null) {
@@ -1052,9 +1075,11 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
                 encoding = literal.toString();
             }
 
-            // sigle quotes must be escaped to have a valid sql string
+            // single quotes must be escaped to have a valid sql string
             final String escaped = encoding.replaceAll("'", "''");
-            out.write("'" + escaped + "'");
+            out.write('\'');
+            out.write(escaped);
+            out.write('\'');
         }
     }
 

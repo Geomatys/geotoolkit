@@ -35,6 +35,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Types;
 
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
@@ -443,7 +444,7 @@ public final class DataBaseModel {
         final int columnDataType    = columnSet.getInt(Column.DATA_TYPE);
         final String columnTypeName = columnSet.getString(Column.TYPE_NAME);
         final String columnNullable = columnSet.getString(Column.IS_NULLABLE);
-
+        
         atb.setName(columnName);
         adb.setName(columnName);
 

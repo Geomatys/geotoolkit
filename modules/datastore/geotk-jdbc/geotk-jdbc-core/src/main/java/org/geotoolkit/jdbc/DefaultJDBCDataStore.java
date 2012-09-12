@@ -880,7 +880,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
                         st.execute(sql,Statement.RETURN_GENERATED_KEYS);
                         ResultSet rs = st.getGeneratedKeys();
                         rs.next();
-                        final int id = rs.getInt(1);
+                        final Object id = rs.getObject(1);
                         nextKeyValues.set(0, id);
                         rs.close();
                         feature.setAttribute(key.getColumns().get(0).getName(), id);
