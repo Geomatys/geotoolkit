@@ -618,7 +618,6 @@ public class JCQLEditor extends javax.swing.JPanel{
     }
 
     public void setLayer(final MapLayer layer) {
-        ensureNonNull("layer", layer);
         this.layer = layer;
         
         if (layer instanceof FeatureMapLayer) {
