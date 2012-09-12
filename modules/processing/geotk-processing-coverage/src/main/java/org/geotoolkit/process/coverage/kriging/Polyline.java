@@ -16,9 +16,11 @@
 package org.geotoolkit.process.coverage.kriging;
 
 import java.util.Arrays;
+import java.awt.geom.Point2D;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.Envelope;
+import org.geotoolkit.display.shape.ShapeUtilities;
 
 
 /**
@@ -181,6 +183,7 @@ final class Polyline implements CoordinateSequence {
         gridLines[size] = gridLine;
         ordinates[size] = ordinate;
         this.size++;
+        assert isValidAdd(this, size, size-1);
         assert isValid();
     }
 
@@ -427,6 +430,35 @@ final class Polyline implements CoordinateSequence {
                 }
             }
             previous = c;
+        }
+        return true;
+    }
+
+    /**
+     * Tests if adding in this polyline a segment of the given polyline would be a valid operation.
+     * The operation is considered valid if it doesn't create line intersection. This method is used
+     * for assertions purpose only.
+     *
+     * @param other The other polyline from which to add a segment in this polyline.
+     * @param end Index of the ending point of the segment to add.
+     * @param n Number of segment to compare.
+     */
+    private boolean isValidAdd(final Polyline other, final int end, final int n) {
+        final double x1 = other.getX(end-1);
+        final double y1 = other.getY(end-1);
+        final double x2 = other.getX(end);
+        final double y2 = other.getY(end);
+        double px1 = getX(0);
+        double py1 = getY(0);
+        for (int i=1; i<n; i++) {
+            final double px2 = getX(i);
+            final double py2 = getY(i);
+            final Point2D pt = ShapeUtilities.intersectionPoint(px1, py1, px2, py2, x1, y1, x2, y2);
+            if (pt != null) {
+                throw new AssertionError("Adding to " + this + " create intersection at " + pt);
+            }
+            px1 = px2;
+            py1 = py2;
         }
         return true;
     }

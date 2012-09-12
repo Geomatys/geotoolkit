@@ -197,7 +197,10 @@ public class IsolineCreator {
                          * not test (dx != 1) since dx may have slight rounding errors. Note that
                          * if we reach that point while x == 0 then z == level and zOnLeft is NaN.
                          */
-                        if (zOnLeft != level) { // 'false' only if the value has already been added.
+                        if (zOnLeft == level) {
+                            // Point has already been added.
+                            assert row.last() == (inRange ? x-dx : x-1) : row;
+                        } else {
                             row.add(inRange ? x-dx : x-1);
                         }
                         if (!inRange) {
@@ -243,7 +246,7 @@ public class IsolineCreator {
         calculateIntersectionGrids();
         final CoordinateSequence[][] polylines = new CoordinateSequence[intersections.length][];
         for (int i=0; i<intersections.length; i++) {
-            final Collection<Polyline> p = intersections[i].createIsolines();
+            final Collection<Polyline> p = intersections[i].createPolylines();
             polylines[i] = p.toArray(new CoordinateSequence[p.size()]);
             // We convert to array in order to allow the garbage collector to collect
             // the map entries, since the key values are not of interest to the user.

@@ -59,7 +59,7 @@ final class IntersectionGrid {
     /**
      * Temporary variable for tracking content changes.
      */
-    private transient boolean changed;
+    transient int modCount;
 
     /**
      * Workaround for the lack of multi-values return in the Java language.
@@ -109,12 +109,12 @@ final class IntersectionGrid {
      * Creates the isolines by joining all intersections in this level.
      * This method shall be invoked only after all intersection points have been added.
      */
-    final Collection<Polyline> createIsolines() {
+    final Collection<Polyline> createPolylines() {
         do {
-            changed = false;
-            createIsolines(horizontal, vertical);
-            createIsolines(vertical, horizontal);
-        } while (changed);
+            modCount = 0;
+            createPolylines(horizontal, vertical);
+            createPolylines(vertical, horizontal);
+        } while (modCount != 0);
         return polylines.values();
     }
 
@@ -123,12 +123,12 @@ final class IntersectionGrid {
      * using also the {@code perpendicular} lines when searching for nearest points. Not
      * all {@code perpendicular} lines may be used.
      */
-    private void createIsolines(final Intersections[] gridLines, final Intersections[] perpendicular) {
+    private void createPolylines(final Intersections[] gridLines, final Intersections[] perpendicular) {
         for (int j=gridLines.length; --j>=0;) {
             final Intersections gridLine = gridLines[j];
             if (gridLine != null) {
                 for (int i=gridLine.size(); --i>=0;) {
-                    gridLine.nearest(this, gridLines, perpendicular, j, i, MAX_DISTANCE_SQUARED);
+                    gridLine.joinNearest(this, gridLines, perpendicular, j, i, MAX_DISTANCE_SQUARED);
                     final int size = gridLine.size();
                     if (i > size) {
                         i = size; // Above operation may have removed more than one point.
@@ -232,7 +232,7 @@ final class IntersectionGrid {
             final Polyline p = polylines.put(added, expand);
             assert (p == null) : p;
         }
-        changed = true;
+        modCount++;
         return toRemove;
     }
 
