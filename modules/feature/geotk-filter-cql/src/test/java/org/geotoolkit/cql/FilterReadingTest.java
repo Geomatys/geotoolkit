@@ -281,6 +281,15 @@ public class FilterReadingTest {
         final BBOX filter = (BBOX) obj;
         assertEquals(FF.bbox(FF.property("att"), 10,20,30,40, "CRS:84"), filter);   
     }
+    
+    @Test
+    public void testBBOX3() throws CQLException {
+        final String cql = "BBOX(att ,10, 20, 30, 40, 'CRS:84')";
+        final Object obj = CQL.parseFilter(cql);        
+        assertTrue(obj instanceof BBOX);
+        final BBOX filter = (BBOX) obj;
+        assertEquals(FF.bbox(FF.property("att"), 10,20,30,40, "CRS:84"), filter);   
+    }
 
     @Test
     public void testBeyond() throws CQLException {

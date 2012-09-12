@@ -18,27 +18,21 @@ package org.geotoolkit.gui.swing.propertyedit.featureeditor;
 
 import java.awt.BorderLayout;
 import java.awt.Insets;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import org.geotoolkit.cql.CQL;
 import org.geotoolkit.cql.CQLException;
 import org.geotoolkit.gui.swing.filter.JCQLEditor;
-import org.geotoolkit.gui.swing.propertyedit.styleproperty.JAdvancedStylePanel;
-import org.geotoolkit.style.DefaultMutableStyle;
 import org.opengis.feature.type.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.expression.Expression;
-import org.opengis.style.Style;
 
 /**
- * Style type editor.
+ * Filter/Expression type editor.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
