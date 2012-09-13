@@ -108,11 +108,13 @@ public class WFSDataStore extends AbstractDataStore{
     private final Map<Name,Envelope> bounds = new HashMap<Name, Envelope>();
     private final Map<String,String> prefixes = new HashMap<String, String>();
     private final boolean postRequest;
+    private final boolean longitudeFirst;
 
 
-    public WFSDataStore(final URI serverURI, final boolean postRequest) throws MalformedURLException{
+    public WFSDataStore(final URI serverURI, final boolean postRequest, final boolean longitudeFirst) throws MalformedURLException{
         super(null);
         this.postRequest = postRequest;
+        this.longitudeFirst = longitudeFirst;
         this.server = new WebFeatureServer(serverURI.toURL(), "1.1.0");
         final WFSCapabilitiesType capabilities = server.getCapabilities();
 
@@ -135,7 +137,7 @@ public class WFSDataStore extends AbstractDataStore{
             CoordinateReferenceSystem crs;
             FeatureType sft;
             try {
-                crs = CRS.decode(ftt.getDefaultSRS(),true);
+                crs = CRS.decode(ftt.getDefaultSRS(),longitudeFirst);
                 sft = requestType(typeName);                
             } catch (IOException ex) {
                 getLogger().log(Level.WARNING, null, ex);
