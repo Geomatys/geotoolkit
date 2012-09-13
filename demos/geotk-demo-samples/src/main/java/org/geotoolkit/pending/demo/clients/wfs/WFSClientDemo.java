@@ -23,7 +23,7 @@ public class WFSClientDemo {
         final GetFeatureRequest getFeature = wmsServer.createGetFeature();
 
         //simplify WFS like a datastore
-        final DataStore store = new WFSDataStore(new URI("http://demo.geomatys.com/constellation/WS/wfs?"), true);
+        final DataStore store = new WFSDataStore(new URI("http://demo.geomatys.com/constellation/WS/wfs?"), true,false);
 
     }
 
