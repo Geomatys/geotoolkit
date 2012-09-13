@@ -183,8 +183,8 @@ final class Polyline implements CoordinateSequence {
         gridLines[size] = gridLine;
         ordinates[size] = ordinate;
         this.size++;
-        assert isValidAdd(this, size, size-1);
-        assert isValid();
+        assert checkSegmentIntersects(this, size, size-1);
+        assert checkSegmentLengths();
     }
 
     /**
@@ -208,8 +208,9 @@ final class Polyline implements CoordinateSequence {
             gridLines[size] = gridLines[0];
             ordinates[size] = ordinates[0];
             this.size++;
-            assert isValid();
+            assert checkSegmentLengths();
         } else {
+            assert checkSegmentIntersects(toMerge);
             final boolean prepend = startsWith(key);
             final boolean mgStart = toMerge.startsWith(keyOther);
             final boolean reverse = (prepend == mgStart);
@@ -269,7 +270,7 @@ final class Polyline implements CoordinateSequence {
             System.arraycopy(toMerge.ordinates, 0, ordinates, copyAt, addLength);
         }
         size = newLength;
-        assert isValid();
+        assert checkSegmentLengths();
     }
 
     // ---- JTS methods ---------------------------------------------------------------------------
@@ -414,22 +415,38 @@ final class Polyline implements CoordinateSequence {
         return buffer.append(']').toString();
     }
 
+    // ---- Assertions ----------------------------------------------------------------------------
+
     /**
      * Tests the validity of this {@link Polyline} object. This method verifies that all points
      * are unique, and that the distance between them is less than 2. This method is used for
      * assertions only.
      */
-    private boolean isValid() {
+    private boolean checkSegmentLengths() {
         Coordinate previous = null;
         for (int i=0; i<size; i++) {
             final Coordinate c = getCoordinate(i);
             if (previous != null) {
                 final double d = c.distance(previous);
-                if (!(d > 0 && d*d < IntersectionGrid.MAX_DISTANCE_SQUARED)) { // Use ! for catching NaN.
+                if (!(d > 0 && d*d <= IntersectionGrid.MAX_DISTANCE_SQUARED)) { // Use ! for catching NaN.
                     throw new AssertionError("distance(" + (i-1) + '-' + i + ")=" + d + " in "+ this);
                 }
             }
             previous = c;
+        }
+        return true;
+    }
+
+    /**
+     * Tests if merging this polyline with the given one would be a valid operation.
+     * The operation is considered valid if it doesn't create line intersection.
+     * This method is used for assertions purpose only.
+     */
+    private boolean checkSegmentIntersects(final Polyline other) {
+        for (int i=1; i<other.size; i++) {
+            if (!checkSegmentIntersects(other, i, size)) {
+                return false;
+            }
         }
         return true;
     }
@@ -440,10 +457,10 @@ final class Polyline implements CoordinateSequence {
      * for assertions purpose only.
      *
      * @param other The other polyline from which to add a segment in this polyline.
-     * @param end Index of the ending point of the segment to add.
-     * @param n Number of segment to compare.
+     * @param end Index of the ending point of the segment to add in the {@code other} polyline.
+     * @param n Number of segment to compare in this polyline.
      */
-    private boolean isValidAdd(final Polyline other, final int end, final int n) {
+    private boolean checkSegmentIntersects(final Polyline other, final int end, final int n) {
         final double x1 = other.getX(end-1);
         final double y1 = other.getY(end-1);
         final double x2 = other.getX(end);

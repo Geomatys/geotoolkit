@@ -199,7 +199,7 @@ public class IsolineCreator {
                          */
                         if (zOnLeft == level) {
                             // Point has already been added.
-                            assert row.last() == (inRange ? x-dx : x-1) : row;
+                            assert row.ordinate(row.size()-1) == (inRange ? x-dx : x-1) : row;
                         } else {
                             row.add(inRange ? x-dx : x-1);
                         }
@@ -217,7 +217,7 @@ public class IsolineCreator {
                         // If dy == 0 or NaN, ensure that the ordinate value is present in the
                         // horizontal grid line. We could perform similar check for dy == 1,
                         // but this would require to fetch the previous horizontal grid line.
-                        assert (dy != 0 && !isNaN(dy)) || rows[k].indexOf(x, 0) >= 0 : rows[k];
+                        assert (dy != 0 && !isNaN(dy)) || rows[k].binarySearch(x, 0) >= 0 : rows[k];
                     }
                 }
                 // Remember the z value for next iterations.

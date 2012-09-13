@@ -139,24 +139,6 @@ final class IntersectionGrid {
     }
 
     /**
-     * Returns the square of the distance between the two given coordinates.
-     * This is used for assertions purpose only.
-     */
-    private static double distanceSquared(final Intersections[] gridLines1, final int gridLineIndex1, final double ordinate1,
-                                          final Intersections[] gridLines2, final int gridLineIndex2, final double ordinate2)
-    {
-        final double dx, dy;
-        if (gridLines1 == gridLines2) {
-            dx = gridLineIndex1 - gridLineIndex2;
-            dy = ordinate1      - ordinate2;
-        } else {
-            dx = gridLineIndex1 - ordinate2;
-            dy = gridLineIndex2 - ordinate1;
-        }
-        return dx*dx + dy*dy;
-    }
-
-    /**
      * Creates a line segment from the given starting and ending points. This method is called
      * back by {@link Intersections}.
      *
@@ -171,9 +153,8 @@ final class IntersectionGrid {
     final int createLineSegment(final Intersections[] gridLines1, int gridLineIndex1, final double ordinate1,
                                 final Intersections[] gridLines2, int gridLineIndex2, final double ordinate2)
     {
-        final double dsq;
-        assert (dsq = distanceSquared(gridLines1, gridLineIndex1, ordinate1,
-                                      gridLines2, gridLineIndex2, ordinate2)) < MAX_DISTANCE_SQUARED : dsq;
+        assert checkDistance(gridLines1, gridLineIndex1, ordinate1,
+                             gridLines2, gridLineIndex2, ordinate2);
         // Applies the sign convention documented in the Polyline class.
         if (gridLines1 == horizontal) gridLineIndex1 = ~gridLineIndex1;
         if (gridLines2 == horizontal) gridLineIndex2 = ~gridLineIndex2;
@@ -256,50 +237,6 @@ final class IntersectionGrid {
     }
 
     /**
-     * Tests the validity of this grid line, for assertion purposes only.
-     * This method tests that every {@link #polylines} key are associated
-     * to the correct {@link Polyline} instance, and that every polylines
-     * have its two extremities in the key set. Then, if the polyline is
-     * not closed, this method verifies that the two extremities are still
-     * available as intersection points.
-     * <p>
-     * This method does not invoke {@link Polyline#isValid()}, since this
-     * check is rather performed when the polylines are modified.
-     */
-    final boolean isValid() {
-        for (final Map.Entry<Long, Polyline> entry : polylines.entrySet()) {
-            final Polyline polyline = entry.getValue();
-            final Long     key      = entry.getKey();
-            boolean startsWith = false;
-            while (!key.equals(polyline.key(startsWith))) {
-                if ((startsWith = !startsWith) == false) {
-                    throw new AssertionError(polyline); // Invalid key.
-                }
-            }
-            if (polylines.get(polyline.key(!startsWith)) != polyline) {
-                throw new AssertionError(polyline); // Missing key.
-            }
-            /*
-             * At this point, we verified that the polylines map is correct regarding this
-             * polyline instance. Now check the grid of intersection points: intersections
-             * shall stil exist for the polyline extremities (if not closed), but shall not
-             * exist anymore for any point between the extremities.
-             */
-            final boolean isClosed = polyline.isClosed();
-            final int last = polyline.size() - 1;
-            for (int i=0; i<=last; i++) {
-                final int j = polyline.gridLine(i);
-                final Intersections gridLine = (j >= 0) ? vertical[j] : horizontal[~j];
-                final boolean exists = (gridLine != null) && gridLine.indexOf(polyline.ordinate(i), 0) >= 0;
-                if (exists != ((i == 0 || i == last) ? !isClosed : false)) {
-                    throw new AssertionError("exists=" + exists + " for i=" + i + " in " + polyline);
-                }
-            }
-        }
-        return true;
-    }
-
-    /**
      * Returns a partial list of intersection points, for debugging purpose.
      */
     @Override
@@ -345,5 +282,131 @@ final class IntersectionGrid {
             }
         } while ((isVertical = !isVertical) == true);
         return buffer.toString();
+    }
+
+    // ---- Assertions ----------------------------------------------------------------------------
+
+    /**
+     * Ensures, using the "brute force" method, that the given line segment is the shortest one
+     * that can link the point 1 to any point, and the point 2 to any point.
+     * This is used for assertions purpose only.
+     */
+    private boolean checkDistance(final Intersections[] gridLines1, final int gridLineIndex1, final double ordinate1,
+                                  final Intersections[] gridLines2, final int gridLineIndex2, final double ordinate2)
+    {
+        double dx, dy;
+        final boolean isHorizontal1 = (gridLines1 == horizontal);
+        final boolean isHorizontal2 = (gridLines2 == horizontal);
+        if (isHorizontal1 == isHorizontal2) {
+            dx = gridLineIndex1 - gridLineIndex2;
+            dy = ordinate1      - ordinate2;
+        } else {
+            dx = gridLineIndex1 - ordinate2;
+            dy = gridLineIndex2 - ordinate1;
+        }
+        final double distanceSquared = dx*dx + dy*dy;
+        if (!(distanceSquared <= MAX_DISTANCE_SQUARED)) {
+            throw new AssertionError(distanceSquared);
+        }
+        final Intersections excludedLine1, excludedLine2;
+        final double excludedOrdinate1, excludedOrdinate2;
+        excludedLine1 = findExclusion(gridLines1, gridLineIndex1, ordinate1); excludedOrdinate1 = excludedOrdinate;
+        excludedLine2 = findExclusion(gridLines2, gridLineIndex2, ordinate2); excludedOrdinate2 = excludedOrdinate;
+        boolean isHorizontal = false;
+        do { // To be executed exactly twice, for vertical (first) and horizontal (second) grid lines.
+            final Intersections[] gridLines = isHorizontal ? horizontal : vertical;
+            for (int gridLineIndex=0; gridLineIndex<gridLines.length; gridLineIndex++) {
+                final Intersections gridLine = gridLines[gridLineIndex];
+                if (gridLine != null) {
+                    final int size = gridLine.size();
+                    for (int j=0; j<size; j++) {
+                        final double ordinate = gridLine.ordinate(j);
+                        boolean second = false;
+                        do { // To be executed exactly twice.
+                            if (!second) {
+                                if (gridLine == excludedLine1 && ordinate == excludedOrdinate1) {
+                                    continue; // Skip excluded points.
+                                }
+                                if (isHorizontal1 == isHorizontal) {
+                                    dx = gridLineIndex1 - gridLineIndex;
+                                    dy = ordinate1      - ordinate;
+                                } else {
+                                    dx = ordinate1      - gridLineIndex;
+                                    dy = gridLineIndex1 - ordinate;
+                                }
+                            } else {
+                                if (gridLine == excludedLine2 && ordinate == excludedOrdinate2) {
+                                    continue; // Skip excluded points.
+                                }
+                                if (isHorizontal2 == isHorizontal) {
+                                    dx = gridLineIndex2 - gridLineIndex;
+                                    dy = ordinate2      - ordinate;
+                                } else {
+                                    dx = ordinate2      - gridLineIndex;
+                                    dy = gridLineIndex2 - ordinate;
+                                }
+                            }
+                            final double dsq = dx*dx + dy*dy;
+                            if (!(dsq >= distanceSquared || dsq == 0)) {
+                                throw new AssertionError("Distance squared of ("
+                                        + (isHorizontal1 ? ordinate1 : gridLineIndex1) + ", "
+                                        + (isHorizontal1 ? gridLineIndex1 : ordinate1) + ")-("
+                                        + (isHorizontal2 ? ordinate2 : gridLineIndex2) + ", "
+                                        + (isHorizontal2 ? gridLineIndex2 : ordinate2) + ") is "
+                                        + distanceSquared + " but found " + dsq + " in ("
+                                        + (isHorizontal ? ordinate : gridLineIndex) + ", "
+                                        + (isHorizontal ? gridLineIndex : ordinate) + ")-("
+                                        + (second ? "second" : "first") + " pt)");
+                            }
+                        } while ((second = !second) == true);
+                    }
+                }
+            }
+        } while ((isHorizontal = !isHorizontal) == true);
+        return true;
+    }
+
+    /**
+     * Tests the validity of this grid line, for assertion purposes only.
+     * This method tests that every {@link #polylines} key are associated
+     * to the correct {@link Polyline} instance, and that every polylines
+     * have its two extremities in the key set. Then, if the polyline is
+     * not closed, this method verifies that the two extremities are still
+     * available as intersection points.
+     * <p>
+     * This method does not invoke {@link Polyline#checkSegmentLengths()},
+     * since this check is rather performed when the polylines are modified.
+     */
+    final boolean checkConsistency() {
+        for (final Map.Entry<Long, Polyline> entry : polylines.entrySet()) {
+            final Polyline polyline = entry.getValue();
+            final Long     key      = entry.getKey();
+            boolean startsWith = false;
+            while (!key.equals(polyline.key(startsWith))) {
+                if ((startsWith = !startsWith) == false) {
+                    throw new AssertionError(polyline); // Invalid key.
+                }
+            }
+            if (polylines.get(polyline.key(!startsWith)) != polyline) {
+                throw new AssertionError(polyline); // Missing key.
+            }
+            /*
+             * At this point, we verified that the polylines map is correct regarding this
+             * polyline instance. Now check the grid of intersection points: intersections
+             * shall stil exist for the polyline extremities (if not closed), but shall not
+             * exist anymore for any point between the extremities.
+             */
+            final boolean isClosed = polyline.isClosed();
+            final int last = polyline.size() - 1;
+            for (int i=0; i<=last; i++) {
+                final int j = polyline.gridLine(i);
+                final Intersections gridLine = (j >= 0) ? vertical[j] : horizontal[~j];
+                final boolean exists = (gridLine != null) && gridLine.binarySearch(polyline.ordinate(i), 0) >= 0;
+                if (exists != ((i == 0 || i == last) ? !isClosed : false)) {
+                    throw new AssertionError("exists=" + exists + " for i=" + i + " in " + polyline);
+                }
+            }
+        }
+        return true;
     }
 }
