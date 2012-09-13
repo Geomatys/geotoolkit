@@ -163,7 +163,7 @@ public final class MapcontextPyramidProcess extends AbstractProcess {
     }
     
     private void progress(){
-        fireProgressing(progress+"/"+total, (float)((double)progress/(double)total), false);
+        fireProgressing(progress+"/"+total, (float)((double)progress/(double)total)*100f, false);
     }
 
 }
