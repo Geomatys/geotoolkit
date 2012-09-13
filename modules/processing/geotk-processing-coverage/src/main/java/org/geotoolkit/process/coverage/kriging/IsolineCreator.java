@@ -198,8 +198,10 @@ public class IsolineCreator {
                          * if we reach that point while x == 0 then z == level and zOnLeft is NaN.
                          */
                         if (zOnLeft == level) {
-                            // Point has already been added.
-                            assert row.ordinate(row.size()-1) == (inRange ? x-dx : x-1) : row;
+                            // Point has already been added. We do an exception for the column 1,
+                            // because the previous column (0) is handled in a special way below
+                            // this loop.
+                            assert (x == 1) || row.ordinate(row.size()-1) == (inRange ? x-dx : x-1) : row;
                         } else {
                             row.add(inRange ? x-dx : x-1);
                         }
@@ -210,9 +212,17 @@ public class IsolineCreator {
                     /*
                      * For the vertical grid lines, we do not accept dy == 0 or 1 because
                      * the same points should have been added in the horizontal grid lines.
+                     * We make an exception for the first column since the above loop never
+                     * adds intersection in that column (because zOnLeft is always NaN).
                      */
                     if (dy > 0 && dy < 1) {
                         gridAt(k).add(x, y-dy);
+                    } else if (x == 0 && (dy == 0 || (isNaN(dy) && !isNaN(zOnTop)))) {
+                        // First column: the ordinate can not be present in the horizontal grid
+                        // lines (doing so would create two ordinate values in the same [x…x+1]
+                        // range, which grid lines do not support). So exceptionnaly accept that
+                        // ordinate value in the vertical grid line.
+                        gridAt(k).add(x, y);
                     } else {
                         // If dy == 0 or NaN, ensure that the ordinate value is present in the
                         // horizontal grid line. We could perform similar check for dy == 1,

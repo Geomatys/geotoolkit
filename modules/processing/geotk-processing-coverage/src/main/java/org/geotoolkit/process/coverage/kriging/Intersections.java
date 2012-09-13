@@ -149,7 +149,7 @@ final class Intersections {
              * (excludedGridLine, excludedOrdinate) point shall be the opposite extremity of that
              * polyline.
              */
-            excludedGridLine = null;//grid.findExclusion(gridLines, gridLineIndex, ordinate);
+            excludedGridLine = grid.findExclusion(gridLines, gridLineIndex, ordinate);
             final double excludedOrdinate = grid.excludedOrdinate; // Must be stored now.
             double smallestDistanceSquared = distanceSquared;
 
@@ -169,12 +169,14 @@ final class Intersections {
              *    2  :  The grid line perpendicular to this one at ((int) ordinate) - 1.
              *    3  :  The grid line perpendicular to this one at ((int) ordinate).
              *    4  :  The grid line perpendicular to this one at ((int) ordinate) + 1.
+             *    5  :  The grid line perpendicular to this one at ((int) ordinate) + 2.
+             *    6  :  Iteration limit (should never be reached).
              *
              * On each grid line, we will consider two points: one having an ordinate value
              * lower than the target ordinate value, and one having a grater ordinate value.
              * Consequently the range of pointId identifiers is twice the one of gridLineId.
              */
-nextPoint:  for (int pointId=-2; pointId<8; pointId++) {
+nextPoint:  for (int pointId=-2; pointId<12; pointId++) {
                 final Intersections   neighbor;
                 final Intersections[] gridLinesOfNeighbor;
                 final int             gridLineIndexOfNeighbor;
@@ -271,14 +273,19 @@ nextPoint:  for (int pointId=-2; pointId<8; pointId++) {
                     if (ordinateIndex < 0) {
                         return true;  // Our point doesn't exist anymore.
                     }
-                    if (!used) {
-                        nearest                 = neighbor;
-                        ordinateOfNearest       = ordinateOfNeighbor;
-                        ordinateIndexOfNearest  = ordinateIndexOfNeighbor;
-                        gridLinesOfNearest      = gridLinesOfNeighbor;
-                        gridLineIndexOfNearest  = gridLineIndexOfNeighbor;
-                        smallestDistanceSquared = neighborDistanceSquared;
+                    if (used) {
+                        // If the point that we planed to use has been taken by someone else,
+                        // then we will need to reanalyse again the same case because an other
+                        // point behind the used point may be suitable.
+                        pointId--;
+                        continue nextPoint;
                     }
+                    nearest                 = neighbor;
+                    ordinateOfNearest       = ordinateOfNeighbor;
+                    ordinateIndexOfNearest  = ordinateIndexOfNeighbor;
+                    gridLinesOfNearest      = gridLinesOfNeighbor;
+                    gridLineIndexOfNearest  = gridLineIndexOfNeighbor;
+                    smallestDistanceSquared = neighborDistanceSquared;
                 }
             }
             /*
