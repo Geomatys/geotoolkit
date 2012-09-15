@@ -308,61 +308,63 @@ final class IntersectionGrid {
         if (!(distanceSquared <= MAX_DISTANCE_SQUARED)) {
             throw new AssertionError(distanceSquared);
         }
-        final Intersections excludedLine1, excludedLine2;
-        final double excludedOrdinate1, excludedOrdinate2;
-        excludedLine1 = findExclusion(gridLines1, gridLineIndex1, ordinate1); excludedOrdinate1 = excludedOrdinate;
-        excludedLine2 = findExclusion(gridLines2, gridLineIndex2, ordinate2); excludedOrdinate2 = excludedOrdinate;
-        boolean isHorizontal = false;
-        do { // To be executed exactly twice, for vertical (first) and horizontal (second) grid lines.
-            final Intersections[] gridLines = isHorizontal ? horizontal : vertical;
-            for (int gridLineIndex=0; gridLineIndex<gridLines.length; gridLineIndex++) {
-                final Intersections gridLine = gridLines[gridLineIndex];
-                if (gridLine != null) {
-                    final int size = gridLine.size();
-                    for (int j=0; j<size; j++) {
-                        final double ordinate = gridLine.ordinate(j);
-                        boolean second = false;
-                        do { // To be executed exactly twice.
-                            if (!second) {
-                                if (gridLine == excludedLine1 && ordinate == excludedOrdinate1) {
-                                    continue; // Skip excluded points.
-                                }
-                                if (isHorizontal1 == isHorizontal) {
-                                    dx = gridLineIndex1 - gridLineIndex;
-                                    dy = ordinate1      - ordinate;
+        if (!Intersections.RESTRICT_TO_ADJACENT) {
+            final Intersections excludedLine1, excludedLine2;
+            final double excludedOrdinate1, excludedOrdinate2;
+            excludedLine1 = findExclusion(gridLines1, gridLineIndex1, ordinate1); excludedOrdinate1 = excludedOrdinate;
+            excludedLine2 = findExclusion(gridLines2, gridLineIndex2, ordinate2); excludedOrdinate2 = excludedOrdinate;
+            boolean isHorizontal = false;
+            do { // To be executed exactly twice, for vertical (first) and horizontal (second) grid lines.
+                final Intersections[] gridLines = isHorizontal ? horizontal : vertical;
+                for (int gridLineIndex=0; gridLineIndex<gridLines.length; gridLineIndex++) {
+                    final Intersections gridLine = gridLines[gridLineIndex];
+                    if (gridLine != null) {
+                        final int size = gridLine.size();
+                        for (int j=0; j<size; j++) {
+                            final double ordinate = gridLine.ordinate(j);
+                            boolean second = false;
+                            do { // To be executed exactly twice.
+                                if (!second) {
+                                    if (gridLine == excludedLine1 && ordinate == excludedOrdinate1) {
+                                        continue; // Skip excluded points.
+                                    }
+                                    if (isHorizontal1 == isHorizontal) {
+                                        dx = gridLineIndex1 - gridLineIndex;
+                                        dy = ordinate1      - ordinate;
+                                    } else {
+                                        dx = ordinate1      - gridLineIndex;
+                                        dy = gridLineIndex1 - ordinate;
+                                    }
                                 } else {
-                                    dx = ordinate1      - gridLineIndex;
-                                    dy = gridLineIndex1 - ordinate;
+                                    if (gridLine == excludedLine2 && ordinate == excludedOrdinate2) {
+                                        continue; // Skip excluded points.
+                                    }
+                                    if (isHorizontal2 == isHorizontal) {
+                                        dx = gridLineIndex2 - gridLineIndex;
+                                        dy = ordinate2      - ordinate;
+                                    } else {
+                                        dx = ordinate2      - gridLineIndex;
+                                        dy = gridLineIndex2 - ordinate;
+                                    }
                                 }
-                            } else {
-                                if (gridLine == excludedLine2 && ordinate == excludedOrdinate2) {
-                                    continue; // Skip excluded points.
+                                final double dsq = dx*dx + dy*dy;
+                                if (!(dsq >= distanceSquared || dsq == 0)) {
+                                    throw new AssertionError("Distance squared of ("
+                                            + (isHorizontal1 ? ordinate1 : gridLineIndex1) + ", "
+                                            + (isHorizontal1 ? gridLineIndex1 : ordinate1) + ")-("
+                                            + (isHorizontal2 ? ordinate2 : gridLineIndex2) + ", "
+                                            + (isHorizontal2 ? gridLineIndex2 : ordinate2) + ") is "
+                                            + distanceSquared + " but found " + dsq + " in ("
+                                            + (isHorizontal ? ordinate : gridLineIndex) + ", "
+                                            + (isHorizontal ? gridLineIndex : ordinate) + ")-("
+                                            + (second ? "second" : "first") + " pt)");
                                 }
-                                if (isHorizontal2 == isHorizontal) {
-                                    dx = gridLineIndex2 - gridLineIndex;
-                                    dy = ordinate2      - ordinate;
-                                } else {
-                                    dx = ordinate2      - gridLineIndex;
-                                    dy = gridLineIndex2 - ordinate;
-                                }
-                            }
-                            final double dsq = dx*dx + dy*dy;
-                            if (!(dsq >= distanceSquared || dsq == 0)) {
-                                throw new AssertionError("Distance squared of ("
-                                        + (isHorizontal1 ? ordinate1 : gridLineIndex1) + ", "
-                                        + (isHorizontal1 ? gridLineIndex1 : ordinate1) + ")-("
-                                        + (isHorizontal2 ? ordinate2 : gridLineIndex2) + ", "
-                                        + (isHorizontal2 ? gridLineIndex2 : ordinate2) + ") is "
-                                        + distanceSquared + " but found " + dsq + " in ("
-                                        + (isHorizontal ? ordinate : gridLineIndex) + ", "
-                                        + (isHorizontal ? gridLineIndex : ordinate) + ")-("
-                                        + (second ? "second" : "first") + " pt)");
-                            }
-                        } while ((second = !second) == true);
+                            } while ((second = !second) == true);
+                        }
                     }
                 }
-            }
-        } while ((isHorizontal = !isHorizontal) == true);
+            } while ((isHorizontal = !isHorizontal) == true);
+        }
         return true;
     }
 
