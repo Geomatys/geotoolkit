@@ -178,56 +178,55 @@ public class IsolineCreator {
                         break;
                     }
                     /*
-                     * Find the intersection point between the edge and the isoline. The variables
-                     * below will be outside the [0…1] range if there is no intersection on the edge
-                     * (i.e. the intersection is outside the cell area). NaN may mean that there is
-                     * intersection everywhere (i.e. the line is vertical or horizontal).
+                     * Find the intersection point between the edge and the isoline. The dx or dy
+                     * variables are outside the [0…1] range when there is no intersection on the
+                     * edge (i.e. the intersection is outside the cell area). NaN could mean that
+                     * there is intersection everywhere (i.e. the line is vertical or horizontal).
                      */
-                    final double dx = (level - z) / (zOnLeft - z);
-                    final double dy = (level - z) / (zOnTop  - z);
-                    final boolean inRange = (dx >= 0 && dx <= 1);
-                    if (inRange || (isNaN(dx) && !isNaN(zOnLeft))) {
+                    final double dx, dy;
+                    if (z != level) {
+                        dx = (level - z) / (zOnLeft - z);
+                        dy = (level - z) / (zOnTop  - z);
+                    } else {
+                        /*
+                         * If (z == level), then the above formulas produce 0 except if we also
+                         * have (zOnLeft == level) or (zOnTop == level), in which case 0/0 give
+                         * NaN. In this case, we actually have intersections everywhere in the
+                         * [0…1] range (the line segment is fully horizontal or fully vertical).
+                         * By convention we will add an intersection point only at 0, since the
+                         * point at 1 should have been added by the previous iteration.
+                         *
+                         * Note that we intentionally ignore zOnLeft and zOnTop, which allow the
+                         * algorithm to work even when the above variables are NaN. This is the
+                         * case while iterating in the first row and first column.
+                         */
+                        dx = 0;
+                        dy = 0;
+                    }
+                    /*
+                     * If (zOnLeft == level), then dx == 1 in this iteration while it was 0
+                     * in the previous iteration since we had (z == level) at that time.
+                     * Concequently excluding 1 should avoid adding the same point twice.
+                     */
+                    if (dx >= 0 && dx < 1) {
                         Intersections row = rows[k];
                         if (row == null) {
                             rows[k] = row = new Intersections(width / 16);
                         }
-                        /*
-                         * If (zOnLeft == level), then dx == 1 in this iteration and was 0 or NaN
-                         * in the previous iteration since we had (z == level) at that time. We do
-                         * not test (dx != 1) since dx may have slight rounding errors. Note that
-                         * if we reach that point while x == 0 then z == level and zOnLeft is NaN.
-                         */
-                        if (zOnLeft == level) {
-                            // Point has already been added. We do an exception for the column 1,
-                            // because the previous column (0) is handled in a special way below
-                            // this loop.
-                            assert (x == 1) || row.ordinate(row.size()-1) == (inRange ? x-dx : x-1) : row;
-                        } else {
-                            row.add(inRange ? x-dx : x-1);
-                        }
-                        if (!inRange) {
-                            row.add(x); // Fully horizontal line segment.
-                        }
+                        // If (zOnLeft == level), then x-1 should have been added previously.
+                        assert (zOnLeft != level) || row.ordinate(row.size()-1) == x-1 : row;
+                        row.add(x-dx);
                     }
                     /*
                      * For the vertical grid lines, we do not accept dy == 0 or 1 because
                      * the same points should have been added in the horizontal grid lines.
-                     * We make an exception for the first column since the above loop never
-                     * adds intersection in that column (because zOnLeft is always NaN).
+                     * We verify that with the assertion in the 'else' block.
                      */
                     if (dy > 0 && dy < 1) {
                         gridAt(k).add(x, y-dy);
-                    } else if (x == 0 && (dy == 0 || (isNaN(dy) && !isNaN(zOnTop)))) {
-                        // First column: the ordinate can not be present in the horizontal grid
-                        // lines (doing so would create two ordinate values in the same [x…x+1]
-                        // range, which grid lines do not support). So exceptionnaly accept that
-                        // ordinate value in the vertical grid line.
-                        gridAt(k).add(x, y);
                     } else {
-                        // If dy == 0 or NaN, ensure that the ordinate value is present in the
-                        // horizontal grid line. We could perform similar check for dy == 1,
-                        // but this would require to fetch the previous horizontal grid line.
-                        assert (dy != 0 && !isNaN(dy)) || rows[k].binarySearch(x, 0) >= 0 : rows[k];
+                        assert (dy != 0 && !isNaN(dy)) || isNaN(zOnTop) || rows[k].binarySearch(x, 0) >= 0 : rows[k];
+                        assert (dy != 1 && !isNaN(dy)) || isNaN(zOnTop) || gridAt(k).contains(x, y-1);
                     }
                 }
                 // Remember the z value for next iterations.

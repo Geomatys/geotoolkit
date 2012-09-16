@@ -38,6 +38,13 @@ final class IntersectionGrid {
     static final double MAX_DISTANCE_SQUARED = 2.0000000000000004;
 
     /**
+     * If {@code true}, add symbols at the location of unused intersections. This value shall
+     * be {@code false} in production environment. It may be temporarily set to {@code true}
+     * for debugging purpose only.
+     */
+    private static final boolean MARK_UNUSED_POINTS = true;
+
+    /**
      * Maximal number of horizontal or vertical grid lines to format in the {@link #toString()}
      * method. If we reach this limit and there is more lines to format, skip some of them. We do
      * that because formating all intersections from a full image could produce a huge string.
@@ -106,6 +113,14 @@ final class IntersectionGrid {
     }
 
     /**
+     * Returns {@code true} if this grid contains the given ordinate value.
+     */
+    final boolean contains(final double x, final int y) {
+        final Intersections column = horizontal[y];
+        return (column != null) && column.binarySearch(x, column.size()-1) >= 0;
+    }
+
+    /**
      * Creates the isolines by joining all intersections in this level.
      * This method shall be invoked only after all intersection points have been added.
      */
@@ -115,6 +130,25 @@ final class IntersectionGrid {
             createPolylines(horizontal, vertical);
             createPolylines(vertical, horizontal);
         } while (modCount != 0);
+        if (MARK_UNUSED_POINTS) {
+            boolean isHorizontal = false;
+            long key = Long.MIN_VALUE;
+            do {
+                final Intersections[] gridLines = isHorizontal ? horizontal : vertical;
+                for (int i=0; i<gridLines.length; i++) {
+                    final Intersections gridLine = gridLines[i];
+                    if (gridLine != null) {
+                        for (int j=gridLine.size(); --j>=0;) {
+                            final int p = isHorizontal ? ~i : i;
+                            final double ordinate = gridLine.ordinate(j);
+                            if (polylines.put(key++, new Polyline(p, ordinate-0.25, p, ordinate+0.25)) != null) {
+                                throw new AssertionError();
+                            }
+                        }
+                    }
+                }
+            } while ((isHorizontal = !isHorizontal) == true);
+        }
         return polylines.values();
     }
 
@@ -227,10 +261,10 @@ final class IntersectionGrid {
         }
         final Long key = Polyline.key(gridLineIndex, ordinate);
         final Polyline polyline = polylines.get(key);
-        if (polyline == null) {
+        if (polyline == null || polyline.size() > 2) {
             return null;
         }
-        final int i = polyline.startsWith(key) ? polyline.size()-1 : 0; // Opposite extremity.
+        final int i = polyline.startsWith(key) ? 1 : 0; // Opposite extremity.
         excludedOrdinate = polyline.ordinate(i);
         gridLineIndex = polyline.gridLine(i);
         return (gridLineIndex >= 0) ? vertical[gridLineIndex] : horizontal[~gridLineIndex];

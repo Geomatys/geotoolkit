@@ -42,6 +42,14 @@ final class Intersections {
     static final boolean RESTRICT_TO_ADJACENT = true;
 
     /**
+     * {@code true} if the {@link #RESTRICT_TO_ADJACENT} condition can be slightly relaxed for
+     * points on the same line than this {@link Intersections} instance. A value of {@code true}
+     * may produce more discontinuities in the isolines, but those discontinuities may exist in
+     * the reality.
+     */
+    private static final boolean RELAX_ON_SAME_LINE = false;
+
+    /**
      * Intersections on the horizontal or vertical grid line in increasing order.
      * Values vary from 0 to the image width or height, depending on whatever the
      * grid line is horizontal or vertical.
@@ -92,15 +100,19 @@ final class Intersections {
     }
 
     /**
-     * Adds an intersection on this grid line. This method shall be invoked only for intersection
-     * in increasing order.
+     * Adds an intersection on this grid line. This method shall be invoked only for ordinate
+     * value in increasing order. Actually not only the ordinate value shall be in increasing
+     * order, but the integer part of ordinate values shall be increasing.
      */
     final void add(final double ordinate) {
-        assert (size == 0) || (ordinate > ordinates[size-1]) : ordinate;
+        assert ordinate >= 0 : ordinate;
         if (size >= ordinates.length) {
             ordinates = Arrays.copyOf(ordinates, size*2);
         }
         ordinates[size++] = ordinate;
+        // Do the assertion after we added the point in order to allow the
+        // developer to see his value in the Intersections.toString() output.
+        assert (size == 1) || (((int) ordinate > (int) ordinates[size-2])) : this;
     }
 
     /**
@@ -140,6 +152,7 @@ final class Intersections {
             final double distanceSquared)
     {
         final double ordinate = ordinates[ordinateIndex];
+        final int intOrdinate = (int) ordinate;
         Intersections excludedGridLine;
         int modCount;
         /*
@@ -176,17 +189,37 @@ final class Intersections {
              *   -1  :  The grid line before this one (above for horizontal grid lines).
              *    0  :  The grid line represented by this instance.
              *    1  :  The grid line after this one (below for horizontal grid lines).
-             *    2  :  The grid line perpendicular to this one at ((int) ordinate) - 1.
+             *    2  :  The grid line perpendicular to this one at ((int) ordinate) + 1.
              *    3  :  The grid line perpendicular to this one at ((int) ordinate).
-             *    4  :  The grid line perpendicular to this one at ((int) ordinate) + 1.
-             *    5  :  The grid line perpendicular to this one at ((int) ordinate) + 2.
-             *    6  :  Iteration limit (should never be reached).
+             *    4  :  The grid line perpendicular to this one at ((int) ordinate) - 1.
+             *    5  :  Iteration limit (should never be reached).
              *
              * On each grid line, we will consider two points: one having an ordinate value
              * lower than the target ordinate value, and one having a grater ordinate value.
              * Consequently the range of pointId identifiers is twice the one of gridLineId.
+             * Identifiers are illustrated below. Values in [ ] are 'gridLineId' and values
+             * in ( ) are 'pointId', with (*) as the point given in argument to this method.
+             *
+             *
+             *                          [4]           [3]           [2]
+             *             │             │             │             │             │
+             *     [-1]────┼─────────────┼─────────────┼─(-2)───(-1)─┼─────────────┼────
+             *             │             │             │             │             │
+             *             │            (8)           (6)           (4)            │
+             *             │             │             │             │             │
+             *      [0]────┼─────────────┼───────(0)───┼─────(*)─────┼───(1)───────┼────
+             *             │             │             │             │             │
+             *             │            (9)           (7)           (5)            │
+             *             │             │             │             │             │
+             *      [1]────┼─────────────┼─────────────┼─(2)─────(3)─┼─────────────┼────
+             *             │             │             │             │             │
+             *
+             *
+             * The vertical grid line [4] will be tested only if the (*) point is located
+             * on the intersection of [0] and [3].
              */
-nextPoint:  for (int pointId=-2; pointId<(RESTRICT_TO_ADJACENT ? 10 : 12); pointId++) {
+            final int pointIdStop = RESTRICT_TO_ADJACENT ? (ordinate != intOrdinate) ? 8 : 10 : 12;
+nextPoint:  for (int pointId=-2; pointId<pointIdStop; pointId++) {
                 final Intersections   neighbor;
                 final Intersections[] gridLinesOfNeighbor;
                 final int             gridLineIndexOfNeighbor;
@@ -202,7 +235,7 @@ nextPoint:  for (int pointId=-2; pointId<(RESTRICT_TO_ADJACENT ? 10 : 12); point
                     neighborDistanceSquared = gridLineId & 1; // == (id*id) when id = -1, 0 or +1.
                 } else {
                     gridLinesOfNeighbor     = perpendicular;
-                    gridLineIndexOfNeighbor = ((int) ordinate) + (gridLineId - 3); // See above comment for the meaning of '3'.
+                    gridLineIndexOfNeighbor = intOrdinate - (gridLineId - (RESTRICT_TO_ADJACENT ? 3 : 4));
                     neighborDistanceSquared = ordinate - gridLineIndexOfNeighbor;
                     neighborDistanceSquared *= neighborDistanceSquared;
                 }
@@ -272,34 +305,34 @@ nextPoint:  for (int pointId=-2; pointId<(RESTRICT_TO_ADJACENT ? 10 : 12); point
                 }
                 /*
                  * Check if 'ordinateOfNeighbor' is in the same column (for horizontal grid
-                 * lines) or row (for vertical grid lines) than the ordinate we searched for.
+                 * lines) or row (for vertical grid lines) than the ordinate we search for.
                  * This condition help to avoid geometric impossibilities.
                  */
                 if (RESTRICT_TO_ADJACENT) {
-                    final int intSearched = isPerpendicular ? gridLineIndex : (int) ordinate;
+                    final int intSearched = isPerpendicular ? gridLineIndex : intOrdinate;
                     final int intNeighbor = (int) ordinateOfNeighbor;
                     switch (intNeighbor - intSearched) {
-                        default: continue nextPoint; // Points too far away
-                        case 0:  break;              // Points on the same row or column.
-                        case 1:  {
+                        case 0: break; // Accept points on the same row or column.
+                        case 1: {
                             // 'ordinateOfNeighbor' may be on the next row/column. Accept only if
                             // the neighbor is on the edge between the current cell and the other
                             // cell, since it could actually belong to any of those two cells.
-                            if (intNeighbor != ordinateOfNeighbor) {
-                                continue nextPoint;
+                            if ((RELAX_ON_SAME_LINE && gridLineId == 0) || ordinateOfNeighbor == intNeighbor) {
+                                break; // Accept the point.
                             }
-                            break;
+                            continue nextPoint; // Reject.
                         }
                         case -1: {
                             // 'ordinateOfNeighbor' may be on the previous row or column. Accept
                             // only if the ordinate is on the edge between the current cell and
                             // the other cell, since it could actually belong to any of those two
                             // cells. Note: search for perpendicular values are always on the edge.
-                            if (!isPerpendicular && ordinate != intSearched) {
-                                continue nextPoint;
+                            if (isPerpendicular || (RELAX_ON_SAME_LINE && gridLineId == 0) || ordinate == intOrdinate) {
+                                break; // Accept the point.
                             }
-                            break;
+                            continue nextPoint; // Reject.
                         }
+                        default: continue nextPoint; // Reject points too far away.
                     }
                 }
                 /*
