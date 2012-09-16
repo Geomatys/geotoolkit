@@ -76,6 +76,14 @@ final class IntersectionGrid {
     transient double excludedOrdinate;
 
     /**
+     * Maximal number of intersection points before to consider that we have an ambiguity.
+     * This is a workaround for the lack of multi-values return in the Java language.
+     *
+     * @see #findExclusion(Intersections[], int, double)
+     */
+    transient int ambiguityThreshold;
+
+    /**
      * Creates a new instance for the given level.
      *
      * @param level  The isoline <var>z</var> value.
@@ -125,11 +133,20 @@ final class IntersectionGrid {
      * This method shall be invoked only after all intersection points have been added.
      */
     final Collection<Polyline> createPolylines() {
+        boolean nonAmbiguous = true;
         do {
-            modCount = 0;
-            createPolylines(horizontal, vertical);
-            createPolylines(vertical, horizontal);
-        } while (modCount != 0);
+            // In the first pass, join only the intersection points for which there is no
+            // ambiguity. In the second pass, try to resolve the remaining ambiguous points
+            // using the shorted distance criterion.
+            do {
+                modCount = 0;
+                createPolylines(horizontal, vertical, nonAmbiguous);
+                createPolylines(vertical, horizontal, nonAmbiguous);
+            } while (modCount != 0);
+        } while ((nonAmbiguous = !nonAmbiguous) == false);
+        /*
+         * Remaining if for debugging purpose only.
+         */
         if (MARK_UNUSED_POINTS) {
             boolean isHorizontal = false;
             long key = Long.MIN_VALUE;
@@ -157,12 +174,14 @@ final class IntersectionGrid {
      * using also the {@code perpendicular} lines when searching for nearest points. Not
      * all {@code perpendicular} lines may be used.
      */
-    private void createPolylines(final Intersections[] gridLines, final Intersections[] perpendicular) {
+    private void createPolylines(final Intersections[] gridLines, final Intersections[] perpendicular,
+            final boolean nonAmbiguous)
+    {
         for (int j=gridLines.length; --j>=0;) {
             final Intersections gridLine = gridLines[j];
             if (gridLine != null) {
                 for (int i=gridLine.size(); --i>=0;) {
-                    gridLine.joinNearest(this, gridLines, perpendicular, j, i, MAX_DISTANCE_SQUARED);
+                    gridLine.joinNearest(this, gridLines, perpendicular, j, i, MAX_DISTANCE_SQUARED, nonAmbiguous);
                     final int size = gridLine.size();
                     if (i > size) {
                         i = size; // Above operation may have removed more than one point.
@@ -261,13 +280,17 @@ final class IntersectionGrid {
         }
         final Long key = Polyline.key(gridLineIndex, ordinate);
         final Polyline polyline = polylines.get(key);
-        if (polyline == null || polyline.size() > 2) {
-            return null;
+        ambiguityThreshold = 2;
+        if (polyline != null) {
+            ambiguityThreshold = 1;
+            if (polyline.size() <= 2) {
+                final int i = polyline.startsWith(key) ? 1 : 0; // Opposite extremity.
+                excludedOrdinate = polyline.ordinate(i);
+                gridLineIndex = polyline.gridLine(i);
+                return (gridLineIndex >= 0) ? vertical[gridLineIndex] : horizontal[~gridLineIndex];
+            }
         }
-        final int i = polyline.startsWith(key) ? 1 : 0; // Opposite extremity.
-        excludedOrdinate = polyline.ordinate(i);
-        gridLineIndex = polyline.gridLine(i);
-        return (gridLineIndex >= 0) ? vertical[gridLineIndex] : horizontal[~gridLineIndex];
+        return null;
     }
 
     /**
