@@ -31,7 +31,7 @@ import org.geotoolkit.gml.xml.v311.AbstractGMLType;
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Concept", 
+@XmlType(name = "Concept",
 namespace = "http://www.w3.org/2004/02/skos/core#",
 propOrder = {
     "hierarchyRoot",
@@ -69,10 +69,10 @@ propOrder = {
 
 })
 public class Concept implements Serializable {
-    
+
     @XmlAttribute(namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#")
     private String about;
-    
+
     @XmlAttribute(namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#")
     private String resource;
 
@@ -84,22 +84,22 @@ public class Concept implements Serializable {
 
     @XmlElement(namespace="http://www.w3.org/2000/01/rdf-schema#")
     private List<Value> label;
-    
+
     @XmlElement(namespace="http://semantic-web.at/ontologies/csw.owl#")
     private Boolean hierarchyRoot;
-    
+
     @XmlElement(namespace="http://semantic-web.at/ontologies/csw.owl#")
     private Concept hierarchyRootType;
-    
+
     @XmlElement(namespace = "http://www.w3.org/2004/02/skos/core#")
     private List<Concept> hasTopConcept;
-            
+
     @XmlElement(namespace = "http://www.w3.org/2004/02/skos/core#")
     private String externalID;
-    
+
     @XmlElement(namespace = "http://www.w3.org/2004/02/skos/core#")
     private List<Value> prefLabel;
-    
+
     @XmlElement(namespace = "http://www.w3.org/2004/02/skos/core#")
     private List<Value> altLabel;
 
@@ -108,7 +108,7 @@ public class Concept implements Serializable {
 
     @XmlElement(namespace = "http://www.w3.org/2004/02/skos/core#")
     private List<Value> scopeNote;
-    
+
     @XmlElement(namespace = "http://www.w3.org/2004/02/skos/core#")
     private List<Value> historyNote;
 
@@ -120,7 +120,7 @@ public class Concept implements Serializable {
 
     @XmlElement(namespace = "http://www.w3.org/2004/02/skos/core#")
     private List<Concept> narrower;
-    
+
     @XmlElement(namespace = "http://www.w3.org/2004/02/skos/core#")
     private List<Concept> narrowerTransitive;
 
@@ -132,10 +132,10 @@ public class Concept implements Serializable {
 
     @XmlElement(namespace = "http://xmlns.com/foaf/0.1")
     private String name;
-    
+
     @XmlElement(namespace="http://purl.org/dc/elements/1.1/")
     private String subject;
-    
+
     @XmlElement(namespace="http://purl.org/dc/elements/1.1/")
     private String creator;
 
@@ -153,13 +153,13 @@ public class Concept implements Serializable {
 
     @XmlElement(namespace="http://purl.org/dc/elements/1.1/")
     private String title;
-    
+
     @XmlElement(namespace="http://purl.org/dc/elements/1.1/")
     private String contributor;
 
     @XmlElement(namespace="http://purl.org/dc/terms")
     private String hasVersion;
-    
+
     @XmlElement(namespace="http://purl.org/dc/terms")
     private String issued;
 
@@ -177,9 +177,9 @@ public class Concept implements Serializable {
      */
     @XmlTransient
     private String theme;
-    
+
     public Concept() {
-        
+
     }
 
     public Concept(final String about) {
@@ -197,7 +197,7 @@ public class Concept implements Serializable {
             this.prefLabel.add(new Value(prefLabel));
         }
     }
-    
+
     public Concept(final String about, final Value prefLabel) {
         this.about     = about;
         this.prefLabel = new ArrayList<Value>();
@@ -227,7 +227,7 @@ public class Concept implements Serializable {
             this.prefLabel.add(new Value(prefLabel));
         }
     }
-    
+
     public Concept(final String about, final String externalID, final Value prefLabel, final Value altLabel, final Value definition, final String date) {
         this.about      = about;
         this.altLabel = new ArrayList<Value>();
@@ -260,7 +260,7 @@ public class Concept implements Serializable {
             this.prefLabel.add(prefLabel);
         }
     }
-    
+
     public Concept(final String about, final String externalID, final List<Value> prefLabel, final List<Value>altLabel, final List<Value> definition, final String date) {
         this.about      = about;
         this.altLabel   = altLabel;
@@ -297,7 +297,7 @@ public class Concept implements Serializable {
         }
         return null;
     }
-    
+
     public Value getPropertyValue(final String property, final String language) {
         if (property != null) {
             if (property.equals("http://www.w3.org/2004/02/skos/core#definition") || property.equalsIgnoreCase("definition")) {
@@ -344,7 +344,7 @@ public class Concept implements Serializable {
         }
         return null;
     }
-    
+
     public List<Value> getPropertyValues(final String property) {
         if (property != null) {
             if (property.equals("http://www.w3.org/2004/02/skos/core#definition") || property.equalsIgnoreCase("definition")) {
@@ -442,7 +442,7 @@ public class Concept implements Serializable {
         }
         return prefLabel;
     }
-    
+
     public String getPrefLabel(final String language) {
         if (prefLabel != null) {
             for (Value v: prefLabel) {
@@ -464,14 +464,14 @@ public class Concept implements Serializable {
         }
         this.prefLabel.add(new Value(prefLabel));
     }
-    
+
     public void addPrefLabel(final Value prefLabel) {
         if (this.prefLabel == null) {
             this.prefLabel = new ArrayList<Value>();
         }
         this.prefLabel.add(prefLabel);
     }
-    
+
     public void setPrefLabel(final List<Value> prefLabel) {
         this.prefLabel = prefLabel;
     }
@@ -499,7 +499,7 @@ public class Concept implements Serializable {
         }
         return null;
     }
-    
+
     /**
      * @param label the label to set
      */
@@ -510,25 +510,25 @@ public class Concept implements Serializable {
         }
         this.label.add(new Value(label));
     }
-    
+
     public void addLabel(final Value label) {
         if (this.label == null) {
             this.label = new ArrayList<Value>();
         }
         this.label.add(label);
     }
-    
+
     public void setLabel(final List<Value> label) {
         this.label = label;
     }
-    
+
     public List<Value> getAltLabel() {
         if (altLabel == null) {
             altLabel = new ArrayList<Value>();
         }
         return altLabel;
     }
-    
+
     public List<String> getAltLabel(final String language) {
         final List<String> response = new ArrayList<String>();
         if (altLabel != null) {
@@ -555,7 +555,7 @@ public class Concept implements Serializable {
         }
         this.altLabel.add(new Value(altLabel));
     }
-    
+
     public void addAltLabel(final Value altLabel) {
         if (this.altLabel == null) {
             this.altLabel = new ArrayList<Value>();
@@ -577,14 +577,14 @@ public class Concept implements Serializable {
         }
         this.definition.add(new Value(definition));
     }
-    
+
     public void addDefinition(final Value definition) {
         if (this.definition == null) {
             this.definition = new ArrayList<Value>();
         }
         this.definition.add(definition);
     }
-    
+
     public void setDefinition(final List<Value> definition) {
         this.definition = definition;
     }
@@ -596,7 +596,7 @@ public class Concept implements Serializable {
     public void setDate(final String date) {
         this.date = date;
     }
-    
+
     /**
      * @return the description
      */
@@ -624,7 +624,7 @@ public class Concept implements Serializable {
         }
         this.language.add(language);
     }
-    
+
     /**
      * @param language the language to set
      */
@@ -784,6 +784,9 @@ public class Concept implements Serializable {
      * @return the narrower
      */
     public List<Concept> getNarrower() {
+        if (this.narrower == null) {
+            this.narrower = new ArrayList<Concept>();
+        }
         return narrower;
     }
 
@@ -819,7 +822,7 @@ public class Concept implements Serializable {
     public void setNarrowerTransitive(List<Concept> narrowerTransitive) {
         this.narrowerTransitive = narrowerTransitive;
     }
-    
+
     /**
      * @param broader the broader to add
      */
@@ -831,11 +834,14 @@ public class Concept implements Serializable {
             this.narrowerTransitive.add(narrower);
         }
     }
-    
+
     /**
      * @return the related
      */
     public List<Concept> getRelated() {
+        if (this.related == null) {
+            this.related = new ArrayList<Concept>();
+        }
         return related;
     }
 
@@ -848,11 +854,11 @@ public class Concept implements Serializable {
         }
         this.related.add(related);
     }
-    
+
     public void setRelated(final List<Concept> related) {
         this.related = related;
     }
-    
+
      /**
      * @param broader the broader to add
      */
@@ -892,11 +898,11 @@ public class Concept implements Serializable {
         }
         this.scopeNote.add(scopeNote);
     }
-    
+
     public void setScopeNote(final List<Value> scopeNote) {
         this.scopeNote = scopeNote;
     }
-    
+
     /**
      * @return the scopeNote
      */
@@ -913,11 +919,11 @@ public class Concept implements Serializable {
         }
         this.historyNote.add(historyNote);
     }
-    
+
     public void setHistoryNote(final List<Value> historyNote) {
         this.historyNote = historyNote;
     }
-    
+
     /**
      * @return the name
      */
@@ -959,11 +965,11 @@ public class Concept implements Serializable {
         }
         this.example.add(example);
     }
-    
+
     public void setExample(final List<Value> example) {
         this.example = example;
     }
-    
+
     /**
      * @return the resource
      */
@@ -977,7 +983,7 @@ public class Concept implements Serializable {
     public void setResource(final String resource) {
         this.resource = resource;
     }
-    
+
     /**
      * @return the hierarchyRoot
      */
@@ -1010,6 +1016,9 @@ public class Concept implements Serializable {
      * @return the hasTopConcept
      */
     public List<Concept> getHasTopConcept() {
+        if (this.hasTopConcept == null) {
+            this.hasTopConcept = new ArrayList<Concept>();
+        }
         return hasTopConcept;
     }
 
@@ -1031,7 +1040,7 @@ public class Concept implements Serializable {
             this.hasTopConcept.add(topConcept);
         }
     }
-    
+
     /**
      * @return the subject
      */
@@ -1073,7 +1082,7 @@ public class Concept implements Serializable {
     public void setHasVersion(String hasVersion) {
         this.hasVersion = hasVersion;
     }
-    
+
     /**
      * @return the geometry
      */
@@ -1087,7 +1096,7 @@ public class Concept implements Serializable {
     public void setGeometry(final List<AbstractGMLType> geometry) {
         this.geometry = geometry;
     }
-    
+
     /**
      * @return the count
      */
@@ -1101,7 +1110,7 @@ public class Concept implements Serializable {
     public void setCount(Integer count) {
         this.count = count;
     }
-    
+
     /**
      * @return the theme
      */

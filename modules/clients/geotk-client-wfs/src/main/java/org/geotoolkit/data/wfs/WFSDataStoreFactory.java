@@ -86,10 +86,17 @@ public class WFSDataStoreFactory extends AbstractDataStoreFactory implements Ser
             new DefaultParameterDescriptor<Boolean>("post",
                     new ResourceInternationalString("org/geotoolkit/wfs/bundle", "post"),
                     Boolean.class,false,false);    
+    /**
+     * Optional use true CRS axis ordering.
+     */
+    public static final ParameterDescriptor<Boolean> LONGITUDE_FIRST =
+            new DefaultParameterDescriptor<Boolean>("longitudeFirst",
+                    new ResourceInternationalString("org/geotoolkit/wfs/bundle", "longitudeFirst"),
+                    Boolean.class,false,false);    
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new DefaultParameterDescriptorGroup("WFSParameters",
-                IDENTIFIER, AbstractServerFactory.URL, VERSION, AbstractServerFactory.SECURITY, POST_REQUEST);
+                IDENTIFIER, AbstractServerFactory.URL, VERSION, AbstractServerFactory.SECURITY, LONGITUDE_FIRST,POST_REQUEST);
 
     @Override
     public Identification getIdentification() {

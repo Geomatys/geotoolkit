@@ -1,9 +1,12 @@
 
 package org.geotoolkit.pending.demo.coverage;
 
+import com.sun.java.swing.plaf.gtk.GTKLookAndFeel;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageFactory;
 import org.geotoolkit.geometry.GeneralEnvelope;
@@ -22,8 +25,10 @@ public class CustomCoverageDemo {
     
     public static final MutableStyleFactory SF = new DefaultStyleFactory();
     
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         Demos.init();
+        
+        UIManager.setLookAndFeel(new GTKLookAndFeel());
         
         //first create an image        
         final BufferedImage img = new BufferedImage(500, 500, BufferedImage.TYPE_INT_ARGB);        

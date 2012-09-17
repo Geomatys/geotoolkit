@@ -32,6 +32,7 @@ import com.vividsolutions.jts.io.WKTReader;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -108,6 +109,9 @@ public class PostGISDialect extends AbstractSQLDialect {
         CLASS_TO_TYPE_MAP.put(MultiLineString.class, "MULTILINESTRING");
         CLASS_TO_TYPE_MAP.put(MultiPolygon.class, "MULTIPOLYGON");
         CLASS_TO_TYPE_MAP.put(GeometryCollection.class, "GEOMETRYCOLLECTION");
+        
+        //array types
+        CLASS_TO_TYPE_MAP.put(float[].class, "float[]");
     }
 
     private final ThreadLocal<WKBAttributeIO> wkbReader = new ThreadLocal<WKBAttributeIO>();
@@ -147,12 +151,50 @@ public class PostGISDialect extends AbstractSQLDialect {
         classToSqlTypeMappings.put(Geometry.class, Types.OTHER);
 
         sqlTypeNameToClassMappings.put("geometry", Geometry.class);
+        sqlTypeNameToClassMappings.put("_int8", long[].class);
+        sqlTypeNameToClassMappings.put("_bool", boolean[].class);
+        sqlTypeNameToClassMappings.put("_varchar", String[].class);
+        sqlTypeNameToClassMappings.put("_date", Date[].class);
+        sqlTypeNameToClassMappings.put("_float8", double[].class);
+        sqlTypeNameToClassMappings.put("_int4", int[].class);
 
         sqlTypeToSqlTypeNameOverrides.put(Types.VARCHAR, "VARCHAR");
         sqlTypeToSqlTypeNameOverrides.put(Types.BOOLEAN, "BOOL");
 
     }
 
+    @Override
+    public Integer getMapping(Class<?> clazz) {
+        if(clazz.isArray()){
+            return Types.ARRAY;
+        }
+        return super.getMapping(clazz);
+    }
+
+    @Override
+    public String getSqlTypeToSqlTypeNameOverride(Integer sqlType, Class clazz) {
+        if(sqlType == Types.ARRAY){
+            final Class sc = clazz.getComponentType();
+            if(long.class.equals(sc) || Long.class.equals(sc)){
+                return "bigint[]";
+            }else if(int.class.equals(sc) || Integer.class.equals(sc)){
+                return "integer[]";
+            }else if(float.class.equals(sc) || Float.class.equals(sc)){
+                return "double precision[]";
+            }else if(double.class.equals(sc) || Double.class.equals(sc)){
+                return "double precision[]";
+            }else if(String.class.equals(sc)){
+                return "character varying[]";
+            }else if(boolean.class.equals(sc) || Boolean.class.equals(sc)){
+                return "boolean[]";
+            }else if(java.util.Date.class.equals(sc)){
+                return "date[]";
+            }
+        }
+        
+        return getSqlTypeToSqlTypeNameOverrides().get(sqlType);
+    }
+    
     public boolean isLooseBBOXEnabled(){
         return looseBBOXEnabled;
     }

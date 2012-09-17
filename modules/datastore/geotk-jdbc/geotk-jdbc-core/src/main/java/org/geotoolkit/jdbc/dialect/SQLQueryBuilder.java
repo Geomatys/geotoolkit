@@ -1121,7 +1121,7 @@ public final class SQLQueryBuilder {
             }
 
             //check the overrides
-            final String sqlTypeName = dialect.getSqlTypeToSqlTypeNameOverrides().get(sqlType);
+            final String sqlTypeName = dialect.getSqlTypeToSqlTypeNameOverride(sqlType,clazz);
             if (sqlTypeName != null) {
                 sqlTypeNames[i] = sqlTypeName;
             }

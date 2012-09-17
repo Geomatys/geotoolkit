@@ -165,7 +165,16 @@ public class FilterReadingTest {
     }
 
     @Test
-    public void testPropertyIsEqualTo() throws CQLException {
+    public void testPropertyIsEqualTo1() throws CQLException {
+        final String cql = "att=15";
+        final Object obj = CQL.parseFilter(cql);        
+        assertTrue(obj instanceof PropertyIsEqualTo);
+        final PropertyIsEqualTo filter = (PropertyIsEqualTo) obj;
+        assertEquals(FF.equals(FF.property("att"), FF.literal(15)), filter);                
+    }
+    
+    @Test
+    public void testPropertyIsEqualTo2() throws CQLException {
         final String cql = "att = 15";
         final Object obj = CQL.parseFilter(cql);        
         assertTrue(obj instanceof PropertyIsEqualTo);
@@ -267,6 +276,15 @@ public class FilterReadingTest {
     @Test
     public void testBBOX2() throws CQLException {
         final String cql = "BBOX(\"att\" ,10, 20, 30, 40, 'CRS:84')";
+        final Object obj = CQL.parseFilter(cql);        
+        assertTrue(obj instanceof BBOX);
+        final BBOX filter = (BBOX) obj;
+        assertEquals(FF.bbox(FF.property("att"), 10,20,30,40, "CRS:84"), filter);   
+    }
+    
+    @Test
+    public void testBBOX3() throws CQLException {
+        final String cql = "BBOX(att ,10, 20, 30, 40, 'CRS:84')";
         final Object obj = CQL.parseFilter(cql);        
         assertTrue(obj instanceof BBOX);
         final BBOX filter = (BBOX) obj;

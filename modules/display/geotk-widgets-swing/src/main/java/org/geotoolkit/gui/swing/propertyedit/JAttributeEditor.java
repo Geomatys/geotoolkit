@@ -31,6 +31,7 @@ import org.geotoolkit.gui.swing.propertyedit.featureeditor.CharsetEditor;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.ChoiceEditor;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.EnumEditor;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.FileEditor;
+import org.geotoolkit.gui.swing.propertyedit.featureeditor.FilterEditor;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.InternationalStringEditor;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.NumberEditor;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.PropertyValueEditor;
@@ -103,6 +104,7 @@ public class JAttributeEditor extends JPanel{
         lst.add(new EnumEditor());
         lst.add(new ArrayEditor());
         lst.add(new StyleEditor());
+        lst.add(new FilterEditor());
         return lst;
     }
 

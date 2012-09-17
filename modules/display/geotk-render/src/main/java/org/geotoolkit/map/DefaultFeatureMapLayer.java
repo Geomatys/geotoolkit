@@ -20,7 +20,6 @@ import java.util.logging.Level;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
@@ -34,7 +33,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Default implementation of the MapLayer.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
@@ -48,7 +47,7 @@ final class DefaultFeatureMapLayer extends DefaultCollectionMapLayer implements 
 
     /**
      * Creates a new instance of DefaultFeatureMapLayer
-     * 
+     *
      * @param collection : the data source for this layer
      * @param style : the style used to represent this layer
      */
@@ -100,7 +99,7 @@ final class DefaultFeatureMapLayer extends DefaultCollectionMapLayer implements 
     public FeatureCollection<? extends Feature> getCollection() {
         return (FeatureCollection<? extends Feature>) super.getCollection();
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -123,7 +122,7 @@ final class DefaultFeatureMapLayer extends DefaultCollectionMapLayer implements 
                 env = new GeneralEnvelope(crsEnv);
             }else{
                 //never return a null envelope, we better return an infinite envelope
-                env = new Envelope2D(sourceCrs,XRectangle2D.INFINITY);
+                env = new Envelope2D(sourceCrs,Double.NaN,Double.NaN,Double.NaN,Double.NaN);
             }
         }
 
@@ -171,6 +170,6 @@ final class DefaultFeatureMapLayer extends DefaultCollectionMapLayer implements 
     public void setTemporalRange(final Expression from, final Expression to) {
         temporalRange = new Expression[]{from,to};
     }
-    
+
 
 }

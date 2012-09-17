@@ -35,7 +35,7 @@ import org.opengis.feature.type.PropertyDescriptor;
 
 /**
  * Construct a Tree model for a feature/complexAttribut/property.
- * The tree is build with MutableTreeNode which can contain 
+ * The tree is build with MutableTreeNode which can contain
  * property or propertyDescriptor objects.
  *
  * @author Johann Sorel (Geomatys)
@@ -96,6 +96,7 @@ public class FeatureTreeModel extends DefaultTreeModel{
             //we must replace the descriptor by a real property
             final Property prop = FeatureUtilities.defaultProperty(desc);
             node.setUserObject(prop);
+            node.refresh();
             //update the feature
             final ComplexAttribute parent = getParent(node);
             ((Collection)parent.getValue()).add(prop);
@@ -152,7 +153,7 @@ public class FeatureTreeModel extends DefaultTreeModel{
             for(int i=getChildCount()-1;i>=0;i--){
                 removeNodeFromParent((ValueNode)getChildAt(i));
             }
-            
+
 
             //create all children
             if(userObject instanceof ComplexAttribute){

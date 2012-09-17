@@ -34,6 +34,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.Date;
@@ -42,6 +43,7 @@ import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -105,6 +107,7 @@ import static org.geotoolkit.util.ArgumentChecks.*;
  *   <li>DATE -> java.sql.Date *
  *   <li>TIME -> java.sql.Time *
  *   <li>TIMESTAMP -> java.sql.Timestmap *
+ *   <li>ARRAY -> ARRAY *
  * </ul>
  * Subclasses should <b>extend</b> (not override) the following methods to
  * configure the mappings:
@@ -278,7 +281,7 @@ public abstract class AbstractSQLDialect implements SQLDialect{
      * {@inheritDoc }
      */
     @Override
-    public final Integer getMapping(final Class<?> clazz) {
+    public Integer getMapping(final Class<?> clazz) {
         Integer mapping = getClassToSqlTypeMappings().get(clazz);
 
         if (mapping == null) {
@@ -310,7 +313,14 @@ public abstract class AbstractSQLDialect implements SQLDialect{
         
         //determine from type mappings
         Class binding = getMapping(datatype);
-
+        if(Array.class.equals(binding)){
+            //array type, use type name to determinate subtype
+            final Class subType = getMapping(typeName);
+            if(subType != null){
+                binding = subType;
+            }
+        }
+        
         if (binding == null) {
             //determine from type name mappings
             binding = getMapping(typeName);
@@ -326,6 +336,11 @@ public abstract class AbstractSQLDialect implements SQLDialect{
     ////////////////////////////////////////////////////////////////////////////
     // todo MUST CHECK ALL THOSES FOLLOWING ////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
+
+    @Override
+    public String getSqlTypeToSqlTypeNameOverride(Integer sqlType, Class clazz) {
+        return getSqlTypeToSqlTypeNameOverrides().get(sqlType);
+    }
 
     /**
      * {@inheritDoc }
@@ -614,6 +629,8 @@ public abstract class AbstractSQLDialect implements SQLDialect{
         mappings.put(Types.DATE, Date.class);
         mappings.put(Types.TIME, Time.class);
         mappings.put(Types.TIMESTAMP, Timestamp.class);
+        
+        mappings.put(Types.ARRAY, Array.class);
     }
 
     /**

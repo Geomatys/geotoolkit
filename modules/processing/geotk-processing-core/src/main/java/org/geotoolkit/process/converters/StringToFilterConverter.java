@@ -16,12 +16,10 @@
  */
 package org.geotoolkit.process.converters;
 
-
-import org.geotoolkit.filter.text.cql2.CQL;
-import org.geotoolkit.filter.text.cql2.CQLException;
+import org.geotoolkit.cql.CQL;
+import org.geotoolkit.cql.CQLException;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.util.converter.SimpleConverter;
-
 import org.opengis.filter.Filter;
 
 /**
@@ -52,7 +50,7 @@ public class StringToFilterConverter extends SimpleConverter<String, Filter> {
 
         if(s == null) throw new NonconvertibleObjectException("Empty CQL Query");
         try {
-            final Filter filter = CQL.toFilter(s);
+            final Filter filter = CQL.parseFilter(s);
             return filter;
         }
         catch (CQLException ex) {

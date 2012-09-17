@@ -200,6 +200,10 @@ public interface SQLDialect {
     // todo MUST CHECK ALL THOSES FOLLOWING ////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
+    
+    String getSqlTypeToSqlTypeNameOverride(Integer sqlType, Class clazz);
+    
+    
     /**
      * Determines if the specified table should be included in those published
      * by the datastore.
@@ -645,5 +649,5 @@ public interface SQLDialect {
      */
     public void analyzeResult(final DataBaseModel model, final FeatureTypeBuilder ftb, 
             final ResultSet result) throws SQLException,DataStoreException;
-    
+
 }
