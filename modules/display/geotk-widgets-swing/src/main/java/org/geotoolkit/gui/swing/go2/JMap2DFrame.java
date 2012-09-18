@@ -40,9 +40,6 @@ import javax.imageio.stream.ImageOutputStream;
 import javax.swing.*;
 import javax.swing.JToolBar.Separator;
 
-import org.geotoolkit.client.Server;
-import org.geotoolkit.coverage.CoverageStore;
-import org.geotoolkit.data.DataStore;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.gui.swing.go2.control.JConfigBar;
@@ -71,7 +68,6 @@ import org.geotoolkit.gui.swing.contexttree.menu.SessionRollbackItem;
 import org.geotoolkit.gui.swing.contexttree.menu.ZoomToLayerItem;
 import org.geotoolkit.gui.swing.filestore.JCoverageStoreChooser;
 import org.geotoolkit.gui.swing.filestore.JDataStoreChooser;
-import org.geotoolkit.gui.swing.filestore.JLayerChooser;
 import org.geotoolkit.gui.swing.filestore.JServerChooser;
 import org.geotoolkit.gui.swing.go2.decoration.JClassicNavigationDecoration;
 import org.geotoolkit.gui.swing.propertyedit.ClearSelectionAction;
@@ -111,7 +107,7 @@ public class JMap2DFrame extends javax.swing.JFrame {
         guiMap.getCanvas().setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         guiMap.getCanvas().setRenderingHint(GO2Hints.KEY_GENERALIZE, GO2Hints.GENERALIZE_ON);
         guiMap.getCanvas().setRenderingHint(GO2Hints.KEY_BEHAVIOR_MODE, GO2Hints.BEHAVIOR_PROGRESSIVE);
-        
+               
         if(hints != null){
             guiMap.getCanvas().setRenderingHints(hints);
         }

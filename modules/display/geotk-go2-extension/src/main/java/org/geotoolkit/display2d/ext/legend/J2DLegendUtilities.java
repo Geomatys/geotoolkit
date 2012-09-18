@@ -393,7 +393,7 @@ public class J2DLegendUtilities {
                     continue;
                 }
 
-                if (images != null) {
+                if (images != null && image != null) {
                     dim.height += image.getHeight();
                     if (dim.width < image.getWidth()) {
                         dim.width = image.getWidth();

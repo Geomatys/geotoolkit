@@ -71,7 +71,7 @@ public class NewGroupItem extends AbstractTreePopupItem{
     
     @Override
     public boolean isValid(final TreePath[] selection) {
-        if(selection.length > 1) return false;
+        if(selection.length > 1 || selection.length == 0) return false;
         Object obj = ((DefaultMutableTreeNode)selection[0].getLastPathComponent()).getUserObject();
         return (obj instanceof MapItem && !(obj instanceof MapLayer));
     }
