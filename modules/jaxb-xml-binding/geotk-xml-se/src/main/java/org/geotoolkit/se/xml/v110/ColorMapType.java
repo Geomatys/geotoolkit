@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.se.xml.vext.JenksType;
 
 
 /**
@@ -46,7 +47,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ColorMapType", propOrder = {
     "categorize",
-    "interpolate"
+    "interpolate",
+    "jenks"
 })
 public class ColorMapType {
 
@@ -54,6 +56,8 @@ public class ColorMapType {
     protected CategorizeType categorize;
     @XmlElement(name = "Interpolate")
     protected InterpolateType interpolate;
+    @XmlElement(name = "Jenks")
+    protected JenksType jenks;
 
     /**
      * Gets the value of the categorize property.
@@ -103,4 +107,30 @@ public class ColorMapType {
         this.interpolate = value;
     }
 
+    
+    /**
+     * Gets the value of the jenks property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link JenksType }
+     *     
+     */
+    public JenksType getJenks() {
+        return jenks;
+    }
+
+    /**
+     * Sets the value of the jenks property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link JenksType }
+     *     
+     */
+    public void setJenks(final JenksType jenks) {
+        this.jenks = jenks;
+    }
+
+    
 }

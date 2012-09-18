@@ -42,7 +42,6 @@ import org.geotoolkit.style.function.InterpolationPoint;
 import org.geotoolkit.style.function.Method;
 import org.geotoolkit.style.function.Mode;
 import org.geotoolkit.style.function.ThreshholdsBelongTo;
-import org.geotoolkit.util.Converters;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.util.logging.Logging;
 
@@ -93,6 +92,8 @@ import org.opengis.style.TextSymbolizer;
 import org.opengis.util.InternationalString;
 
 import static org.geotoolkit.style.StyleConstants.*;
+import org.geotoolkit.style.function.DefaultJenks;
+import org.geotoolkit.style.function.Jenks;
 
 /**
  * Factory for creating Styles.
@@ -995,4 +996,10 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
     public InterpolationPoint interpolationPoint(final Number data, final Expression value){
         return new DefaultInterpolationPoint(data, value);
     }
+
+    @Override
+    public Jenks jenksFunction(Literal classNumber, Literal paletteName, Literal fallback) {
+        return new DefaultJenks(classNumber, paletteName, fallback);
+    }
+   
 }

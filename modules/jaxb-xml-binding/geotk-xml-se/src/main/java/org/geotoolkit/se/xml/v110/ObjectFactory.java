@@ -21,6 +21,7 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElementDecl;
 import javax.xml.bind.annotation.XmlRegistry;
 import javax.xml.namespace.QName;
+import org.geotoolkit.se.xml.vext.JenksType;
 import org.geotoolkit.se.xml.vext.PatternSymbolizerType;
 import org.geotoolkit.se.xml.vext.RangeType;
 import org.geotoolkit.se.xml.vext.RecolorType;
@@ -148,6 +149,7 @@ public class ObjectFactory {
     private static final QName _PatternSymbolizer_QNAME = new QName("http://www.opengis.net/se", "PatternSymbolizer");
     private static final QName _Range_QNAME = new QName("http://www.opengis.net/se", "Range");
     private static final QName _Recolor_QNAME = new QName("http://www.opengis.net/se", "Recolor");
+    private static final QName _Jenks_QNAME = new QName("http://www.opengis.net/se", "Jenks");
     //extension ----------------------------------------------------------------
 
     /**
@@ -610,6 +612,14 @@ public class ObjectFactory {
     public RecolorType createRecolorType() {
         return new RecolorType();
     }
+    
+    /**
+     * Create an instance of {@link JenksType }
+     *
+     */
+    public JenksType createJenksType() {
+        return new JenksType();
+    }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PatternSymbolizerType }{@code >}}
@@ -637,6 +647,16 @@ public class ObjectFactory {
     public JAXBElement<RecolorType> createRecolor(final RecolorType value) {
         return new JAXBElement<RecolorType>(_Recode_QNAME, RecolorType.class, null, value);
     }
+    
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link JenksType }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/se", name = "Jenks", substitutionHeadNamespace = "http://www.opengis.net/se", substitutionHeadName = "Function")
+    public JAXBElement<JenksType> createJenksType(final JenksType value) {
+        return new JAXBElement<JenksType>(_Jenks_QNAME, JenksType.class, null, value);
+    }
+
 
     //extension ----------------------------------------------------------------
 

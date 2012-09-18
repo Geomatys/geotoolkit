@@ -29,10 +29,9 @@ import javax.measure.quantity.Length;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
 import javax.xml.namespace.QName;
+
 import org.geotoolkit.display2d.ext.pattern.PatternSymbolizer;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
@@ -125,6 +124,7 @@ import org.geotoolkit.se.xml.v110.SvgParameterType;
 import org.geotoolkit.se.xml.v110.TextSymbolizerType;
 import org.geotoolkit.se.xml.v110.ThreshholdsBelongToType;
 import org.geotoolkit.se.xml.vext.ColorItemType;
+import org.geotoolkit.se.xml.vext.JenksType;
 import org.geotoolkit.se.xml.vext.PatternSymbolizerType;
 import org.geotoolkit.se.xml.vext.RangeType;
 import org.geotoolkit.se.xml.vext.RecolorType;
@@ -132,10 +132,12 @@ import org.geotoolkit.style.function.Categorize;
 import org.geotoolkit.style.function.ColorItem;
 import org.geotoolkit.style.function.Interpolate;
 import org.geotoolkit.style.function.InterpolationPoint;
+import org.geotoolkit.style.function.Jenks;
 import org.geotoolkit.style.function.Method;
 import org.geotoolkit.style.function.Mode;
 import org.geotoolkit.style.function.RecolorFunction;
 import org.geotoolkit.style.function.ThreshholdsBelongTo;
+
 import org.opengis.feature.type.Name;
 import org.opengis.filter.And;
 import org.opengis.filter.BinaryComparisonOperator;
@@ -1470,6 +1472,8 @@ public class GTtoSE110Transformer implements StyleVisitor{
             cmt.setCategorize(visit((Categorize)fct));
         }else if(fct instanceof Interpolate){
             cmt.setInterpolate(visit((Interpolate)fct));
+        } else if(fct instanceof Jenks) {
+            cmt.setJenks(visit((Jenks)fct));
         }
 
         return cmt;
@@ -1530,6 +1534,14 @@ public class GTtoSE110Transformer implements StyleVisitor{
             point.setValue(visitExpression(ip.getValue()));
             points.add(point);
         }
+
+        return type;
+    }
+    
+    public JenksType visit(final Jenks jenks){
+        final JenksType type = se_factory.createJenksType();
+        type.setClassNumber(Integer.valueOf(jenks.getClassNumber().getValue().toString()));
+        type.setPalette(jenks.getPalette().getValue().toString());
 
         return type;
     }

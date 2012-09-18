@@ -23,11 +23,13 @@ import java.awt.MultipleGradientPaint;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
+import java.util.Map;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.CachedRasterSymbolizer;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.function.Interpolate;
 import org.geotoolkit.style.function.InterpolationPoint;
+import org.geotoolkit.style.function.Jenks;
 import org.opengis.filter.expression.Function;
 import org.opengis.style.ColorMap;
 import org.opengis.style.RasterSymbolizer;
@@ -103,6 +105,12 @@ public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRe
                     }
                     colors[i] = c;
                 }
+                
+            } else if (fct instanceof Jenks) {
+                final Jenks jenks = (Jenks) fct;
+                final Map<Integer, Color> colorMap = jenks.getColorMap();
+                return;
+                //TODO create jenks legend from colorMap.
                 
             }
 //            else if(fct instanceof Categorize){

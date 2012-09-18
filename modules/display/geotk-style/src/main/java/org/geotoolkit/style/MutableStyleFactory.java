@@ -27,6 +27,7 @@ import javax.measure.unit.Unit;
 import org.geotoolkit.style.function.Categorize;
 import org.geotoolkit.style.function.Interpolate;
 import org.geotoolkit.style.function.InterpolationPoint;
+import org.geotoolkit.style.function.Jenks;
 import org.geotoolkit.style.function.Method;
 import org.geotoolkit.style.function.Mode;
 import org.geotoolkit.style.function.ThreshholdsBelongTo;
@@ -284,5 +285,7 @@ public interface MutableStyleFactory extends org.opengis.style.StyleFactory {
             Method method, Mode mode, Literal fallback);
     
     public InterpolationPoint interpolationPoint(Number data,Expression value);
+    
+    public Jenks jenksFunction(Literal classNumber, Literal paletteName, Literal fallback);
         
 }

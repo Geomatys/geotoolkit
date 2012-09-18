@@ -17,13 +17,24 @@
 package org.geotoolkit.style.function;
 
 import java.awt.Color;
+import java.awt.image.ColorModel;
+import java.awt.image.ComponentColorModel;
+import java.awt.image.DataBuffer;
+import java.awt.image.IndexColorModel;
+import java.awt.image.RenderedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import javax.media.jai.ImageLayout;
+import javax.media.jai.NullOpImage;
+import javax.media.jai.OpImage;
 
 import org.geotoolkit.filter.AbstractExpression;
+import org.geotoolkit.internal.coverage.CoverageUtilities;
+import org.geotoolkit.internal.image.ColorUtilities;
+import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Converters;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
@@ -34,6 +45,7 @@ import org.opengis.filter.expression.ExpressionVisitor;
 import org.opengis.filter.expression.Literal;
 
 import static org.geotoolkit.style.StyleConstants.*;
+import org.geotoolkit.util.converter.Classes;
 import static org.opengis.filter.expression.Expression.*;
 
 /**
@@ -167,6 +179,11 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
 
     @Override
     public Object evaluate(final Object object) {
+        
+        if (object instanceof RenderedImage) {
+            return evaluateImage((RenderedImage) object);
+        }
+        
         return evaluate(object, Object.class);
     }
 
@@ -289,6 +306,144 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
 
         }
         
+    }
+    
+    /**
+     * Recolor image
+     * @param image
+     * @return recolored image
+     */
+    private RenderedImage evaluateImage (final RenderedImage image) {
+        final int visibleBand = CoverageUtilities.getVisibleBand(image);
+            final ColorModel candidate = image.getColorModel();
+
+            //TODO : this should be used when the index color model can not handle signed values
+            //
+            //final SampleModel sm = image.getSampleModel();
+            //final int datatype = sm.getDataType();
+            //if(datatype == DataBuffer.TYPE_SHORT){
+            //    final ColorModel model = new CompatibleColorModel(16, function);
+            //    final ImageLayout layout = new ImageLayout().setColorModel(model);
+            //    return new NullOpImage(image, layout, null, OpImage.OP_COMPUTE_BOUND);
+            //}
+
+
+            /*
+             * Extracts the ARGB codes from the ColorModel and invokes the
+             * transformColormap(...) method.
+             */
+            final int[] ARGB;
+            final ColorModel model;
+            if(candidate instanceof IndexColorModel) {
+                final IndexColorModel colors = (IndexColorModel) candidate;
+                final int mapSize = colors.getMapSize();
+                ARGB = new int[mapSize];
+                colors.getRGBs(ARGB);
+
+                transformColormap(ARGB);
+                model = ColorUtilities.getIndexColorModel(ARGB, 1, visibleBand, -1);
+
+            } else if(candidate instanceof ComponentColorModel) {
+                final ComponentColorModel colors = (ComponentColorModel) candidate;
+                final int nbbit = colors.getPixelSize();
+                final int type = image.getSampleModel().getDataType();
+
+                if(type == DataBuffer.TYPE_BYTE || type == DataBuffer.TYPE_USHORT){
+                    final int mapSize = 1 << nbbit;
+                    ARGB = new int[mapSize];
+
+                    for(int j=0; j<mapSize;j++){
+                        int v = j*255/mapSize;
+                        int a = 255 << 24;
+                        int r = v << 16;
+                        int g = v <<  8;
+                        int b = v <<  0;
+                        ARGB[j] = a|r|g|b;
+                    }
+
+                    transformColormap(ARGB);
+                    model = ColorUtilities.getIndexColorModel(ARGB, 1, visibleBand, -1);
+
+                } else {
+                    //we can't handle a index color model when values exceed int max value
+                    model = new CompatibleColorModel(nbbit, this);
+                }
+
+            } else {
+                // Current implementation supports only sources that use of index color model
+                // and component color model
+                throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_CLASS_$2,
+                        Classes.getClass(candidate), IndexColorModel.class));
+            }
+            
+            /*
+            * Gives the color model to the image layout and creates a new image using the Null
+            * operation, which merely propagates its first source along the operation chain
+            * unmodified (except for the ColorModel given in the layout in this case).
+            */
+           final ImageLayout layout = new ImageLayout().setColorModel(model);
+           return new NullOpImage(image, layout, null, OpImage.OP_COMPUTE_BOUND);
+    }
+    
+    private int[] transformColormap(final int[] ARGB) {
+        final List<InterpolationPoint> points = getInterpolationPoints();
+        final double[] SE_VALUES = new double[points.size()];
+        final int[] SE_ARGB = new int[points.size()];
+        for (int i = 0, n = points.size(); i < n; i++) {
+            final InterpolationPoint point = points.get(i);
+            SE_VALUES[i] = point.getData().doubleValue();
+            SE_ARGB[i] = point.getValue().evaluate(null, Color.class).getRGB();
+        }
+
+        int lastStep = -1;
+        int lastColor = -1;
+        for (int k = 0; k < SE_VALUES.length; k++) {
+            final double geoValue = SE_VALUES[k];
+            final int currentColor = SE_ARGB[k];
+            final int currentStep = (int) geoValue;
+
+            //first element, dont interpolate colors
+            if (k == 0) {
+                lastColor = currentColor;
+                lastStep = -1;
+            }
+
+            final int stepInterval = currentStep - lastStep;
+            final int lastAlpha = (lastColor >>> 24) & 0xFF;
+            final int lastRed = (lastColor >>> 16) & 0xFF;
+            final int lastGreen = (lastColor >>> 8) & 0xFF;
+            final int lastBlue = (lastColor >>> 0) & 0xFF;
+            final int alphaInterval = ((currentColor >>> 24) & 0xFF) - lastAlpha;
+            final int redInterval = ((currentColor >>> 16) & 0xFF) - lastRed;
+            final int greenInterval = ((currentColor >>> 8) & 0xFF) - lastGreen;
+            final int blueInterval = ((currentColor >>> 0) & 0xFF) - lastBlue;
+            for (int i = lastStep + 1; (i <= currentStep && i < ARGB.length); i++) {
+                //calculate interpolated color
+                final int relativePosition = i - lastStep;
+                final double pourcent = (double) ((double) relativePosition / (double) stepInterval);
+                int a = lastAlpha + (int) (pourcent * alphaInterval);
+                int r = lastRed + (int) (pourcent * redInterval);
+                int g = lastGreen + (int) (pourcent * greenInterval);
+                int b = lastBlue + (int) (pourcent * blueInterval);
+                a <<= 24;
+                r <<= 16;
+                g <<= 8;
+                b <<= 0;
+                ARGB[i] = a | r | g | b;
+            }
+
+            lastStep = (int) currentStep;
+            lastColor = currentColor;
+
+            //last element, fill the remaining cell with the color
+            if (k == SE_VALUES.length - 1) {
+                for (int i = lastStep; i < ARGB.length; i++) {
+                    ARGB[i] = currentColor;
+                }
+            }
+
+        }
+        return ARGB;
     }
 
     @Override

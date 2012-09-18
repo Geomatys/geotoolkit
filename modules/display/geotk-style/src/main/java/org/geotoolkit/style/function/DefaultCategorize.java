@@ -16,16 +16,29 @@
  */
 package org.geotoolkit.style.function;
 
+import java.awt.Color;
+import java.awt.image.ColorModel;
+import java.awt.image.ComponentColorModel;
+import java.awt.image.DataBuffer;
+import java.awt.image.IndexColorModel;
+import java.awt.image.RenderedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import javax.media.jai.ImageLayout;
+import javax.media.jai.NullOpImage;
+import javax.media.jai.OpImage;
 
 import org.geotoolkit.filter.AbstractExpression;
 import org.geotoolkit.filter.DefaultLiteral;
+import org.geotoolkit.internal.coverage.CoverageUtilities;
+import org.geotoolkit.internal.image.ColorUtilities;
+import org.geotoolkit.resources.Errors;
 import org.geotoolkit.style.StyleConstants;
 
 import org.opengis.feature.Feature;
@@ -35,6 +48,7 @@ import org.opengis.filter.expression.ExpressionVisitor;
 import org.opengis.filter.expression.Literal;
 
 import static org.geotoolkit.style.StyleConstants.*;
+import org.geotoolkit.util.converter.Classes;
 import static org.opengis.filter.expression.Expression.*;
 
 /**
@@ -207,8 +221,14 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
      */
     @Override
     public Object evaluate(final Object object) {
+        return evaluate(object, Object.class);
+    }
+
+    @Override
+    public Object evaluate(final Object object, final Class c) {
 
         if(object instanceof Feature){
+            
             final Feature f = (Feature)object;
             final Double value = lookup.evaluate(f,Double.class);
             final Expression exp = new DefaultLiteral<Double>(value);
@@ -217,11 +237,142 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
 
             final Expression closest = values.headMap(exp,!b).lastEntry().getValue();
             return closest.evaluate(f);
+            
+        } else if (object instanceof RenderedImage) {
+            return evaluateImage((RenderedImage) object);
         }
         
         return null;
     }
 
+    /**
+     * Recolor image
+     * @param image
+     * @return recolored image
+     */
+    private RenderedImage evaluateImage(final RenderedImage image) {
+        final int visibleBand = CoverageUtilities.getVisibleBand(image);
+        final ColorModel candidate = image.getColorModel();
+
+        //TODO : this should be used when the index color model can not handle signed values
+        //
+        //final SampleModel sm = image.getSampleModel();
+        //final int datatype = sm.getDataType();
+        //if(datatype == DataBuffer.TYPE_SHORT){
+        //    final ColorModel model = new CompatibleColorModel(16, function);
+        //    final ImageLayout layout = new ImageLayout().setColorModel(model);
+        //    return new NullOpImage(image, layout, null, OpImage.OP_COMPUTE_BOUND);
+        //}
+
+
+        /*
+         * Extracts the ARGB codes from the ColorModel and invokes the
+         * transformColormap(...) method.
+         */
+        final int[] ARGB;
+        final ColorModel model;
+        if (candidate instanceof IndexColorModel) {
+            final IndexColorModel colors = (IndexColorModel) candidate;
+            final int mapSize = colors.getMapSize();
+            ARGB = new int[mapSize];
+            colors.getRGBs(ARGB);
+
+            transformColormap(ARGB);
+            model = ColorUtilities.getIndexColorModel(ARGB, 1, visibleBand, -1);
+
+        } else if (candidate instanceof ComponentColorModel) {
+            final ComponentColorModel colors = (ComponentColorModel) candidate;
+            final int nbbit = colors.getPixelSize();
+            final int type = image.getSampleModel().getDataType();
+
+            if (type == DataBuffer.TYPE_BYTE || type == DataBuffer.TYPE_USHORT) {
+                final int mapSize = 1 << nbbit;
+                ARGB = new int[mapSize];
+
+                for (int j = 0; j < mapSize; j++) {
+                    int v = j * 255 / mapSize;
+                    int a = 255 << 24;
+                    int r = v << 16;
+                    int g = v << 8;
+                    int b = v << 0;
+                    ARGB[j] = a | r | g | b;
+                }
+
+                transformColormap(ARGB);
+                model = ColorUtilities.getIndexColorModel(ARGB, 1, visibleBand, -1);
+
+            } else {
+                //we can't handle a index color model when values exceed int max value
+                model = new CompatibleColorModel(nbbit, this);
+            }
+
+        } else {
+            // Current implementation supports only sources that use of index color model
+            // and component color model
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_CLASS_$2,
+                    Classes.getClass(candidate), IndexColorModel.class));
+        }
+
+        /*
+         * Gives the color model to the image layout and creates a new image using the Null
+         * operation, which merely propagates its first source along the operation chain
+         * unmodified (except for the ColorModel given in the layout in this case).
+         */
+        final ImageLayout layout = new ImageLayout().setColorModel(model);
+        return new NullOpImage(image, layout, null, OpImage.OP_COMPUTE_BOUND);
+    }
+    
+    /**
+     * 
+     * @param ARGB array of <code>int</code>
+     * @return an array of <code>int</code>
+     */
+    private int[] transformColormap(final int[] ARGB) {
+        
+        final Map<Expression,Expression> categorizes = getThresholds();
+        final List<Expression> keys = new ArrayList<Expression>(categorizes.keySet());
+        final double[] SE_VALUES = new double[keys.size()];
+        final int[] SE_ARGB = new int[keys.size()];
+
+        final Set<Map.Entry<Expression,Expression>> entries = categorizes.entrySet();
+
+        int l=0;
+        for(Map.Entry<Expression,Expression> entry : entries){
+            if(l==0){
+                SE_VALUES[0] = Double.NEGATIVE_INFINITY;
+                SE_ARGB[0] = entry.getValue().evaluate(null, Color.class).getRGB();
+            }else{
+                SE_VALUES[l] = entry.getKey().evaluate(null, Double.class);
+                SE_ARGB[l] = entry.getValue().evaluate(null, Color.class).getRGB();
+            }
+            l++;
+        }
+
+        int step = 0;
+        for(int k=0;k<SE_VALUES.length-1;k++){
+            final double geoValue = SE_VALUES[k+1];
+            int color = SE_ARGB[k];
+            int sampleValue = (int) geoValue;
+
+            for(int i=step ; (i<sampleValue && i<ARGB.length) ; i++){
+                ARGB[i] = color;
+            }
+
+            step = (int) sampleValue;
+            if(step < 0) step = 0;
+
+            //we are on the last element, fill the remaining cell with the color
+            if(k == SE_VALUES.length-2){
+                color = SE_ARGB[k+1];
+                for(int i=step ; i<ARGB.length ; i++){
+                    ARGB[i] = color;
+                }
+            }
+        }
+        return ARGB;
+    }
+    
+    
     /**
      * {@inheritDoc }
      */

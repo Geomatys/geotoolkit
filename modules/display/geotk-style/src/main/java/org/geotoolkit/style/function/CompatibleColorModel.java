@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.display2d.style.raster;
+package org.geotoolkit.style.function;
 
 import java.awt.Color;
 import java.awt.image.ColorModel;
