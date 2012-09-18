@@ -38,7 +38,10 @@ final class Intersections {
      * lines, and an oblique line crossing the first and last parallel lines but not the
      * one in the middle). However a value of {@code false} is occasionally useful for
      * debugging purpose, in order to verify if the search for nearest intersections work.
+     *
+     * @deprecated We are not going to keep this option.
      */
+    @Deprecated
     static final boolean RESTRICT_TO_ADJACENT = true;
 
     /**
@@ -47,7 +50,7 @@ final class Intersections {
      * may produce more discontinuities in the isolines, but those discontinuities may exist in
      * the reality.
      */
-    private static final boolean RELAX_ON_SAME_LINE = false;
+    static final boolean ACCEPT_NEIGHBOR_ON_SAME_LINE = false;
 
     /**
      * Intersections on the horizontal or vertical grid line in increasing order.
@@ -143,18 +146,20 @@ final class Intersections {
      * @param  ordinateIndex   Index of the intersection point in this grid line.
      * @param  distanceSquared A value greater than the square of the maximal allowed distance.
      *                         Only points nearest than this distance will be considered.
-     * @param  nonAmbiguous    If {@code true}, only non-ambiguous segments are created.
      * @return {@code true} if a point has been found, or {@code false} otherwise. When this method
      *         returns {@code true}, the point at the given index does not exist anymore as an
      *         available intersection point (i.e. it has been integrated in a polyline).
+     *
+     * @deprecated Moved large parts of this method to {@link Polyline#joinNonAmbiguous}.
+     *             However we still need to handle the case of ambiguities.
      */
+    @Deprecated
     final boolean joinNearest(final IntersectionGrid grid, final Intersections[] gridLines,
             final Intersections[] perpendicular, final int gridLineIndex, int ordinateIndex,
-            final double distanceSquared, final boolean nonAmbiguous)
+            final double distanceSquared)
     {
         final double ordinate = ordinates[ordinateIndex];
         final int intOrdinate = (int) ordinate;
-        boolean retry;
         int modCount;
         /*
          * We may need to execute the algorithm twice because the point can be associated to
@@ -176,8 +181,6 @@ final class Intersections {
             final Intersections excludedGridLine = grid.findExclusion(gridLines, gridLineIndex, ordinate);
             final double excludedOrdinate = grid.excludedOrdinate; // Must be stored now.
             double smallestDistanceSquared = distanceSquared;
-            int ambiguityThreshold = grid.ambiguityThreshold;
-            retry = (ambiguityThreshold >= 2);
 
             // All following fields will have a meaning only if 'nearest' is non-null.
             Intersections   nearest                = null;
@@ -272,12 +275,10 @@ nextPoint:  for (int pointId=-2; pointId<pointIdStop; pointId++) {
                     final double toSearch = isPerpendicular ? gridLineIndex : ordinate;
                     if (lastBinarySearchLength == neighbor.size) {
                         ordinateIndexOfNeighbor = lastBinarySearchIndex;
-                        assert ordinateIndexOfNeighbor ==
-                                Arrays.binarySearch(neighbor.ordinates, 0, lastBinarySearchLength, toSearch);
+                        assert ordinateIndexOfNeighbor == neighbor.binarySearch(toSearch);
                     } else {
                         lastBinarySearchLength = neighbor.size;
-                        lastBinarySearchIndex = ordinateIndexOfNeighbor =
-                                Arrays.binarySearch(neighbor.ordinates, 0, lastBinarySearchLength, toSearch);
+                        lastBinarySearchIndex = ordinateIndexOfNeighbor = neighbor.binarySearch(toSearch);
                     }
                     if (ordinateIndexOfNeighbor < 0) {
                         /*
@@ -285,7 +286,7 @@ nextPoint:  for (int pointId=-2; pointId<pointIdStop; pointId++) {
                          * than the one we were searching for. Consequently if and only if pointDirection
                          * is +1 (i.e. we are indeed searching for greater values), we need to substract 1
                          * in order to cancel the effect of the '+= pointDirection' statement in the loop.
-                         * The '- (pointId & 1)' trick to exactly that.
+                         * The '- (pointId & 1)' trick does exactly that.
                          */
                         ordinateIndexOfNeighbor = ~ordinateIndexOfNeighbor - (pointId & 1);
                     } else if (neighbor != excludedGridLine || neighbor.ordinates[ordinateIndexOfNeighbor] != excludedOrdinate) {
@@ -327,7 +328,7 @@ nextPoint:  for (int pointId=-2; pointId<pointIdStop; pointId++) {
                             // 'ordinateOfNeighbor' may be on the next row/column. Accept only if
                             // the neighbor is on the edge between the current cell and the other
                             // cell, since it could actually belong to any of those two cells.
-                            if ((RELAX_ON_SAME_LINE && gridLineId == 0) || ordinateOfNeighbor == intNeighbor) {
+                            if ((ACCEPT_NEIGHBOR_ON_SAME_LINE && gridLineId == 0) || ordinateOfNeighbor == intNeighbor) {
                                 break; // Accept the point.
                             }
                             continue nextPoint; // Reject.
@@ -337,7 +338,7 @@ nextPoint:  for (int pointId=-2; pointId<pointIdStop; pointId++) {
                             // only if the ordinate is on the edge between the current cell and
                             // the other cell, since it could actually belong to any of those two
                             // cells. Note: search for perpendicular values are always on the edge.
-                            if (isPerpendicular || (RELAX_ON_SAME_LINE && gridLineId == 0) || ordinate == intOrdinate) {
+                            if (isPerpendicular || (ACCEPT_NEIGHBOR_ON_SAME_LINE && gridLineId == 0) || ordinate == intOrdinate) {
                                 break; // Accept the point.
                             }
                             continue nextPoint; // Reject.
@@ -348,55 +349,43 @@ nextPoint:  for (int pointId=-2; pointId<pointIdStop; pointId++) {
                     }
                 }
                 /*
-                 * If we asked for non-ambiguous segments only, ensure that the amount of
-                 * intersection points found so far is below the threshold. Otherwise we
-                 * will need to make a choise based on the shortest distance.
+                 * At this point we found the ordinate value of a neighbor point to consider in
+                 * this iteration step. Accept this point only if it is nearer than the nearest
+                 * point considered so far. It is important to use the < operator, not <=, in
+                 * order to avoid potentially infinite recursive invocations of this method.
                  */
-                if (nonAmbiguous) {
-                    if (--ambiguityThreshold < 0) {
-                        return false;
+                if (!(neighborDistanceSquared < smallestDistanceSquared)) {
+                    continue nextPoint;
+                }
+                /*
+                 * If the distance is small enough, we may have found the nearest point one.
+                 * But before to retain that point, we need check if it has itself a nearer
+                 * neighbor. So we invoke this 'jointNearest' method resursively here.
+                 */
+                final boolean used = neighbor.joinNearest(grid,
+                        gridLinesOfNeighbor,
+                        isPerpendicular ? gridLines : perpendicular,
+                        gridLineIndexOfNeighbor,
+                        ordinateIndexOfNeighbor,
+                        neighborDistanceSquared);
+                /*
+                 * The above method call may have removed some intersections points from
+                 * the grid. Consequently all ordinate indices computed so far may become
+                 * invalid. We need to update the indices (which are instable) using the
+                 * ordinate values (which are stable).
+                 */
+                ordinateIndex = binarySearch(ordinate, ordinateIndex);
+                if (ordinateIndex < 0) {
+                    return true;  // Our point doesn't exist anymore.
+                }
+                if (used) {
+                    if (!RESTRICT_TO_ADJACENT) {
+                        // If the point that we planed to use has been taken by someone else,
+                        // then we will need to reanalyse again the same case because an other
+                        // point behind the used point may be suitable.
+                        pointId--;
                     }
-                } else {
-                    /*
-                     * At this point we found the ordinate value of a neighbor point to consider in
-                     * this iteration step. Accept this point only if it is nearer than the nearest
-                     * point considered so far. It is important to use the < operator, not <=, in
-                     * order to avoid potentially infinite recursive invocations of this method.
-                     */
-                    if (!(neighborDistanceSquared < smallestDistanceSquared)) {
-                        continue nextPoint;
-                    }
-                    /*
-                     * If the distance is small enough, we may have found the nearest point one.
-                     * But before to retain that point, we need check if it has itself a nearer
-                     * neighbor. So we invoke this 'jointNearest' method resursively here.
-                     */
-                    final boolean used = neighbor.joinNearest(grid,
-                            gridLinesOfNeighbor,
-                            isPerpendicular ? gridLines : perpendicular,
-                            gridLineIndexOfNeighbor,
-                            ordinateIndexOfNeighbor,
-                            neighborDistanceSquared,
-                            nonAmbiguous);
-                    /*
-                     * The above method call may have removed some intersections points from
-                     * the grid. Consequently all ordinate indices computed so far may become
-                     * invalid. We need to update the indices (which are instable) using the
-                     * ordinate values (which are stable).
-                     */
-                    ordinateIndex = binarySearch(ordinate, ordinateIndex);
-                    if (ordinateIndex < 0) {
-                        return true;  // Our point doesn't exist anymore.
-                    }
-                    if (used) {
-                        if (!RESTRICT_TO_ADJACENT) {
-                            // If the point that we planed to use has been taken by someone else,
-                            // then we will need to reanalyse again the same case because an other
-                            // point behind the used point may be suitable.
-                            pointId--;
-                        }
-                        continue nextPoint;
-                    }
+                    continue nextPoint;
                 }
                 nearest                 = neighbor;
                 ordinateOfNearest       = ordinateOfNeighbor;
@@ -436,12 +425,12 @@ nextPoint:  for (int pointId=-2; pointId<pointIdStop; pointId++) {
                         ordinateIndex--; // Must be kept up to date.
                     }
                 }
-                assert grid.checkConsistency();
+                assert grid.checkConsistency(true);
                 if ((toRemove & 1) != 0) {
                     return true;
                 }
             }
-        } while (retry && modCount != grid.modCount);
+        } while (modCount != grid.modCount);
         return false;
     }
 
@@ -454,6 +443,13 @@ nextPoint:  for (int pointId=-2; pointId<pointIdStop; pointId++) {
         if (expected >= 0 && expected < size && ordinates[expected] == ordinate) {
             return expected;
         }
+        return Arrays.binarySearch(ordinates, 0, size, ordinate);
+    }
+
+    /**
+     * Returns the index of the given ordinate value.
+     */
+    final int binarySearch(final double ordinate) {
         return Arrays.binarySearch(ordinates, 0, size, ordinate);
     }
 

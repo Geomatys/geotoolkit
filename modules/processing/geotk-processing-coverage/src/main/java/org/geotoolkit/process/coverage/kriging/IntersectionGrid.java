@@ -35,6 +35,7 @@ final class IntersectionGrid {
      * The square value of the diagonal in a 1x1 square is 2, and the smallest IEEE value greater
      * than 2 is 2.0000000000000004.
      */
+    @Deprecated
     static final double MAX_DISTANCE_SQUARED = 2.0000000000000004;
 
     /**
@@ -42,7 +43,7 @@ final class IntersectionGrid {
      * be {@code false} in production environment. It may be temporarily set to {@code true}
      * for debugging purpose only.
      */
-    private static final boolean MARK_UNUSED_POINTS = true;
+    private static final boolean MARK_UNUSED_POINTS = false;
 
     /**
      * Maximal number of horizontal or vertical grid lines to format in the {@link #toString()}
@@ -64,6 +65,12 @@ final class IntersectionGrid {
     private final Map<Long,Polyline> polylines;
 
     /**
+     * Dummy key values, used for closed polygons. We used dummy values
+     * because there is no extremity in closed polygon.
+     */
+    private transient long dummyKey = Long.MAX_VALUE;
+
+    /**
      * Temporary variable for tracking content changes.
      */
     transient int modCount;
@@ -73,15 +80,8 @@ final class IntersectionGrid {
      *
      * @see #findExclusion(Intersections[], int, double)
      */
+    @Deprecated
     transient double excludedOrdinate;
-
-    /**
-     * Maximal number of intersection points before to consider that we have an ambiguity.
-     * This is a workaround for the lack of multi-values return in the Java language.
-     *
-     * @see #findExclusion(Intersections[], int, double)
-     */
-    transient int ambiguityThreshold;
 
     /**
      * Creates a new instance for the given level.
@@ -133,17 +133,16 @@ final class IntersectionGrid {
      * This method shall be invoked only after all intersection points have been added.
      */
     final Collection<Polyline> createPolylines() {
-        boolean nonAmbiguous = true;
         do {
-            // In the first pass, join only the intersection points for which there is no
-            // ambiguity. In the second pass, try to resolve the remaining ambiguous points
-            // using the shorted distance criterion.
-            do {
-                modCount = 0;
-                createPolylines(horizontal, vertical, nonAmbiguous);
-                createPolylines(vertical, horizontal, nonAmbiguous);
-            } while (modCount != 0);
-        } while ((nonAmbiguous = !nonAmbiguous) == false);
+            modCount = 0;
+            joinNonAmbiguous(horizontal, vertical, -1);
+            joinNonAmbiguous(vertical, horizontal,  0);
+        } while (modCount != 0);
+        do {
+            modCount = 0;
+            createPolylines(horizontal, vertical);
+            createPolylines(vertical, horizontal);
+        } while (modCount != 0);
         /*
          * Remaining if for debugging purpose only.
          */
@@ -158,7 +157,10 @@ final class IntersectionGrid {
                         for (int j=gridLine.size(); --j>=0;) {
                             final int p = isHorizontal ? ~i : i;
                             final double ordinate = gridLine.ordinate(j);
-                            if (polylines.put(key++, new Polyline(p, ordinate-0.25, p, ordinate+0.25)) != null) {
+                            final Polyline segment = new Polyline();
+                            segment.append(false, p, ordinate-0.25);
+                            segment.append(false, p, ordinate+0.25);
+                            if (polylines.put(key++, segment) != null) {
                                 throw new AssertionError();
                             }
                         }
@@ -170,18 +172,80 @@ final class IntersectionGrid {
     }
 
     /**
-     * Creates the isolines by joining all intersections in the given {@code gridLines},
-     * using also the {@code perpendicular} lines when searching for nearest points. Not
-     * all {@code perpendicular} lines may be used.
+     * Creates polylines for non-ambiguous line segments.
      */
-    private void createPolylines(final Intersections[] gridLines, final Intersections[] perpendicular,
-            final boolean nonAmbiguous)
+    private void joinNonAmbiguous(final Intersections[] gridLines, final Intersections[] perpendicular,
+            final int signConvention)
     {
+        Polyline p = null;
         for (int j=gridLines.length; --j>=0;) {
             final Intersections gridLine = gridLines[j];
             if (gridLine != null) {
                 for (int i=gridLine.size(); --i>=0;) {
-                    gridLine.joinNearest(this, gridLines, perpendicular, j, i, MAX_DISTANCE_SQUARED, nonAmbiguous);
+                    if (p == null) {
+                        p = new Polyline();
+                    }
+                    p.joinNonAmbiguous(gridLines, perpendicular, signConvention, j, i, polylines.keySet());
+                    if (p.size() == 0) {
+                        // No non-ambiguous neighbor point. We can recycle
+                        // the 'p' instance for the next iteration.
+                        continue;
+                    }
+                    if (p.isClosed()) {
+                        polylines.put(dummyKey--, p);
+                    } else do { // Usually executed exactly once.
+                        final Long key1 = p.key(true);
+                        final Long key2 = p.key(false);
+                        final Polyline old1 = polylines.put(key1, p);
+                        final Polyline old2 = polylines.put(key2, p);
+                        if (old1 == null && (old2 == null || old2 == p)) {
+                            break;
+                        }
+                        /*
+                         * This may happen if some ambiguities has been resolved
+                         * as a side effect of creating other polylines, because
+                         * of the removal of points. Merge the polylines, or find
+                         * another key for polylines that are closed.
+                         */
+                        polylines.remove(key1);
+                        polylines.remove(key2);
+                        if (old2 != null && old2 != p) { // Must be tested before 'p' is changed.
+                            polylines.remove(old2.key(true));
+                            polylines.remove(old2.key(false));
+                            p = p.merge(key2, key2, old2, 1);
+                            if (p.isClosed()) {
+                                polylines.put(dummyKey--, p);
+                                break;
+                            }
+                        }
+                        if (old1 != null) {
+                            polylines.remove(old1.key(true));
+                            polylines.remove(old1.key(false));
+                            p = p.merge(key1, key1, old1, 1);
+                        }
+                    } while (true);
+                    p = null; // Will create a new polyline if needed.
+                    assert checkConsistency(false);
+                    final int size = gridLine.size();
+                    if (i > size) {
+                        i = size; // Above operation may have removed more than one point.
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Creates the isolines by joining all intersections in the given {@code gridLines},
+     * using also the {@code perpendicular} lines when searching for nearest points. Not
+     * all {@code perpendicular} lines may be used.
+     */
+    private void createPolylines(final Intersections[] gridLines, final Intersections[] perpendicular) {
+        for (int j=gridLines.length; --j>=0;) {
+            final Intersections gridLine = gridLines[j];
+            if (gridLine != null) {
+                for (int i=gridLine.size(); --i>=0;) {
+                    gridLine.joinNearest(this, gridLines, perpendicular, j, i, MAX_DISTANCE_SQUARED);
                     final int size = gridLine.size();
                     if (i > size) {
                         i = size; // Above operation may have removed more than one point.
@@ -224,7 +288,9 @@ final class IntersectionGrid {
                  * call. Do not remove any intersection point, since we will need to join
                  * the two extremities with other line segments when we will find them.
                  */
-                merged = new Polyline(gridLineIndex1, ordinate1, gridLineIndex2, ordinate2);
+                merged = new Polyline();
+                merged.append(false, gridLineIndex1, ordinate1);
+                merged.append(false, gridLineIndex2, ordinate2);
                 toRemove = 0;
             } else {
                 /*
@@ -232,7 +298,7 @@ final class IntersectionGrid {
                  * remove both intersection points, since no other segments can ba attached
                  * to those points (as they will be in the middle of the merged polylines).
                  */
-                merged = p1.merge(key1, key2, p2);
+                merged = p1.merge(key1, key2, p2, 0);
                 key1 = merged.key(true);
                 key2 = merged.key(false);
                 toRemove = 3;
@@ -252,12 +318,12 @@ final class IntersectionGrid {
             final Polyline expand;
             if (p1 != null) {
                 expand = p1;
-                expand.append(key1, gridLineIndex2, ordinate2);
+                expand.append(expand.startsWith(key1), gridLineIndex2, ordinate2);
                 added = key2;
                 toRemove = 1;
             } else {
                 expand = p2;
-                expand.append(key2, gridLineIndex1, ordinate1);
+                expand.append(expand.startsWith(key2), gridLineIndex1, ordinate1);
                 added = key1;
                 toRemove = 2;
             }
@@ -280,9 +346,7 @@ final class IntersectionGrid {
         }
         final Long key = Polyline.key(gridLineIndex, ordinate);
         final Polyline polyline = polylines.get(key);
-        ambiguityThreshold = 2;
         if (polyline != null) {
-            ambiguityThreshold = 1;
             if (polyline.size() <= 2) {
                 final int i = polyline.startsWith(key) ? 1 : 0; // Opposite extremity.
                 excludedOrdinate = polyline.ordinate(i);
@@ -436,10 +500,17 @@ final class IntersectionGrid {
      * This method does not invoke {@link Polyline#checkSegmentLengths()},
      * since this check is rather performed when the polylines are modified.
      */
-    final boolean checkConsistency() {
+    final boolean checkConsistency(final boolean extensive) {
         for (final Map.Entry<Long, Polyline> entry : polylines.entrySet()) {
-            final Polyline polyline = entry.getValue();
             final Long     key      = entry.getKey();
+            final Polyline polyline = entry.getValue();
+            final boolean  isClosed = polyline.isClosed();
+            if (key > dummyKey) {
+                if (!isClosed) {
+                    throw new AssertionError(polyline);
+                }
+                return true; // Skip the remaining of this check.
+            }
             boolean startsWith = false;
             while (!key.equals(polyline.key(startsWith))) {
                 if ((startsWith = !startsWith) == false) {
@@ -455,9 +526,9 @@ final class IntersectionGrid {
              * shall stil exist for the polyline extremities (if not closed), but shall not
              * exist anymore for any point between the extremities.
              */
-            final boolean isClosed = polyline.isClosed();
             final int last = polyline.size() - 1;
-            for (int i=0; i<=last; i++) {
+            final int step = extensive ? 1 : last;
+            for (int i=0; i<=last; i+=step) {
                 final int j = polyline.gridLine(i);
                 final Intersections gridLine = (j >= 0) ? vertical[j] : horizontal[~j];
                 final boolean exists = (gridLine != null) && gridLine.binarySearch(polyline.ordinate(i), 0) >= 0;
