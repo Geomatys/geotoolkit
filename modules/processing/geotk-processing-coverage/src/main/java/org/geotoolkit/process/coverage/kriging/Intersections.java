@@ -236,7 +236,7 @@ nextPoint:  for (int pointId=-2; pointId<pointIdStop; pointId++) {
                       double          neighborDistanceSquared;
                 final int             gridLineId      = pointId >> 1;
                 final boolean         isPerpendicular = (gridLineId >= 2);
-                int pointDirection = pointId & 1;
+                int pointDirection = pointId & 1; // Initially 0 or 1, then set to -1 or +1.
                 if (pointDirection == 0) {
                     pointDirection = -1;
                     lastBinarySearchLength = 0;
@@ -309,6 +309,8 @@ nextPoint:  for (int pointId=-2; pointId<pointIdStop; pointId++) {
                     }
                     ordinateOfNeighbor = neighbor.ordinates[ordinateIndexOfNeighbor];
                 } while (neighbor == excludedGridLine && ordinateOfNeighbor == excludedOrdinate);
+                final double delta = ordinateOfNeighbor - (isPerpendicular ? gridLineIndex : ordinate);
+                neighborDistanceSquared += delta*delta; // Final value for this variable.
                 /*
                  * Check if 'ordinateOfNeighbor' is in the same column (for horizontal grid
                  * lines) or row (for vertical grid lines) than the ordinate we search for.
@@ -347,7 +349,7 @@ nextPoint:  for (int pointId=-2; pointId<pointIdStop; pointId++) {
                 }
                 /*
                  * If we asked for non-ambiguous segments only, ensure that the amount of
-                 * intersections point found so far is below the threshold. Otherwise we
+                 * intersection points found so far is below the threshold. Otherwise we
                  * will need to make a choise based on the shortest distance.
                  */
                 if (nonAmbiguous) {
@@ -361,8 +363,6 @@ nextPoint:  for (int pointId=-2; pointId<pointIdStop; pointId++) {
                      * point considered so far. It is important to use the < operator, not <=, in
                      * order to avoid potentially infinite recursive invocations of this method.
                      */
-                    final double delta = ordinateOfNeighbor - (isPerpendicular ? gridLineIndex : ordinate);
-                    neighborDistanceSquared += delta*delta;
                     if (!(neighborDistanceSquared < smallestDistanceSquared)) {
                         continue nextPoint;
                     }
