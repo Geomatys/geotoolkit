@@ -60,7 +60,10 @@ import org.geotoolkit.math.Plane;
  * @author Howard Freeland
  * @author Johann Sorel (adaptation isoligne et mise a jour sur geotoolkit)
  * @module pending
+ *
+ * @deprecated Replaced by {@link org.geotoolkit.math.ObjectiveAnalysis} and {@link IsolineCreator}.
  */
+@Deprecated
 public class ObjectiveAnalysis {
 
     private static final double EPS = 1E-8;

@@ -34,35 +34,41 @@ import org.geotoolkit.math.Plane;
 /**
  *
  * @author rmarech
+ *
+ * @deprecated Seems a duplicated of {@link org.geotoolkit.math.ObjectiveAnalysis}?
  */
+@Deprecated
 public class IsolineGrid {
-
-
     /**
      * Valeur <var>x</var> minimale de la région
      * dans laquelle on veut interpoler des points.
      */
     private final double xmin;
+
     /**
      * Valeur <var>y</var> minimale de la région
      * dans laquelle on veut interpoler des points.
      */
     private final double ymin;
+
     /**
      * Pas selon <var>x</var> des positions pour
      * lesquelles on veut interpoler des points.
      */
     private final double dx;
+
     /**
      * Pas selon <var>y</var> des positions pour
      * lesquelles on veut interpoler des points.
      */
     private final double dy;
+
     /**
      * Nombre de colonnes
      * interpoller des points.
      */
     private final int nx;
+
     /**
      * Nombre de lignes
      * interpoller des points.

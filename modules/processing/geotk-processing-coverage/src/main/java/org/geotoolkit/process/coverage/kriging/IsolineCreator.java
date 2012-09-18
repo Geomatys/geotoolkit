@@ -1,6 +1,6 @@
 /*
  * Map and oceanographical data visualisation
- * Copyright (C) 1999 Pêches et Océans Canada
+ * Copyright (C) 2012 Geomatys
  *
  *
  *    This library is free software; you can redistribute it and/or
@@ -12,441 +12,280 @@
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Library General Public License for more details (http://www.gnu.org/).
- *
- *
- * Contact: Observatoire du Saint-Laurent
- *          Institut Maurice Lamontagne
- *          850 de la Mer, C.P. 1000
- *          Mont-Joli (Québec)
- *          G5H 3Z4
- *          Canada
- *
- *          mailto:osl@osl.gc.ca
  */
 package org.geotoolkit.process.coverage.kriging;
 
-import com.vividsolutions.jts.geom.Coordinate;
+import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.NoSuchElementException;
 import java.awt.Rectangle;
 import java.awt.image.RenderedImage;
-import java.util.*;
 import javax.vecmath.Point3d;
+
+import org.opengis.coverage.grid.SequenceType;
+import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.image.iterator.PixelIterator;
 import org.geotoolkit.image.iterator.PixelIteratorFactory;
-import org.geotoolkit.util.ArgumentChecks;
-import org.opengis.coverage.grid.SequenceType;
+
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.CoordinateSequence;
+
+import static java.lang.Double.isNaN;
+
 
 /**
- * <p>Search and compute Isoline on a {@link RenderedImage} or an
- * object given by {@link PixelIterator}.<br/><br/>
+ * Creates isolines at the given levels from the grid values provided in an {@link RenderedImage}
+ * or {@link PixelIterator}.
+ * <p>
+ * Uses example:
+ * <pre><blockquote>
+ * final {@link RenderedImage} ri = ...; // Grid values in a user image.
+ * final double[] isolineLevels = new double[] {10, 50, 100}; // Example values.
+ * {@link IsolineCreator} isolineContour = new IsolineCreator(ri, isolineLevels);
+ * final {@link Map}&lt;{@link Point3d},List&lt;{@link Coordinate}&gt;&gt; isoline = {@link #createIsolines()};
+ * </blockquote></pre>
  *
- * Uses example :<br/>
- * final  {@link RenderedImage} ri = user image.<br/>
- * final double[] isolineIntervals = new double[]{10, 50, 100};//for example<br/>
- * {@link PixelIterator} pixelIterator = {@link PixelIteratorFactory#createDefaultIterator(ri)}; <br/><br/>
+ * Note: By default, this class iterates over all sample values in the given rendered image,
+ * which shall have only one band. In order to create isolines for a subarea of a subset of
+ * the bands, use the constructor expecting a {@link PixelIterator} instead.
  *
- * {@link IsolineCreator} isolineContour    = new IsolineCreator(pixelIterator, isolineIntervals);<br/>
- * or {@link IsolineCreator} isolineContour = new IsolineCreator(ri, isolineIntervals);<br/><br/>
- *
- * final {@link Map}&lt;{@link Point3d},List&lt;{@link Coordinate}&gt;&gt; isoline = {@link #createIsolines() };<br/><br/>
- *
- * Note : Caller will choose constructor with {@link PixelIterator} parameter
- * if he search isoline within an area pre-define in {@link PixelIterator}.<br/>
- * Otherwise caller can use constructor with {@link RenderedImage} which find isoline in all image area.</p>
- *
- * @version 1.1
- * @author Martin Desruisseaux
- * @author Howard Freeland
- * @author Johann Sorel (adaptation isoligne et mise a jour sur geotoolkit)
- * @author Rémi Marechal (Geomatys).
+ * @version 3.20
+ * @author Martin Desruisseaux (Geomatys)
+ * @author Johann Sorel (Geomatys)
+ * @author Rémi Marechal (Geomatys)
  * @module pending
+ *
+ * @since 3.20 (derived from 1.1)
  */
 public class IsolineCreator {
-
-    private static final double EPS = 1E-8;
-
     /**
-     * Isoline Levels.
+     * Values for which to compute isolines, sorted in ascending order.
      */
-    private final double[] isolineLevel;
+    private final double[] levels;
 
     /**
-     * Iterator use to compute isoline.
+     * Iterator use for fetching grid values.
      */
-    private final PixelIterator pixelIterator;
+    private final PixelIterator iterator;
 
     /**
-     * Area where caller search isoline.
+     * Area where to compute isolines.
      */
-    private final Rectangle areaIterate;
+    private final int xMin, yMin, width, height;
 
     /**
-     * Define isoline on object that iterate by {@link PixelIterator}.
+     * The intersections on rows and columns. The length of this array is the number of isoline levels.
+     */
+    private final IntersectionGrid[] intersections;
+
+    /**
+     * Creates a new object which will creates isolines from the data provided by the given image.
      *
-     * @param pixelIterator must be instance of RowMajor iterator.
-     * @param isolineLevel Isoline levels.
+     * @param image  Image where caller search isoline.
+     * @param levels Values for which to compute isolines.
      */
-    public IsolineCreator(final PixelIterator pixelIterator, final double[] isolineLevel) {
-        if (!pixelIterator.getIterationDirection().equals(SequenceType.LINEAR))
-            throw new IllegalArgumentException("PixelIterator must be linear sequence direction type.");
-        ArgumentChecks.ensureNonNull("pixelIterator", pixelIterator);
-        ArgumentChecks.ensureNonNull("isoline interval", isolineLevel);
-        if (pixelIterator.getNumBands() != 1)
-            throw new IllegalArgumentException("image not conform, number of bands exceed 1");
-        this.pixelIterator = pixelIterator;
-        this.areaIterate   = pixelIterator.getBoundary(true);
-        this.isolineLevel = isolineLevel;
+    public IsolineCreator(final RenderedImage image, final double... levels) {
+        this(PixelIteratorFactory.createRowMajorIterator(image), levels);
     }
 
     /**
-     * Define isoline on {@link RenderedImage}.
+     * Creates a new object which will creates isolines from the data provided by the given iterator.
      *
-     * @param renderedImage Image where caller search isoline.
-     * @param isolineLevel Isoline levels.
+     * @param iterator The iterator over grid values. Iteration must be row-major.
+     * @param levels Values for which to compute isolines.
      */
-    public IsolineCreator(final RenderedImage renderedImage, final double[] isolineLevel) {
-        this(PixelIteratorFactory.createRowMajorIterator(renderedImage), isolineLevel);
+    public IsolineCreator(final PixelIterator iterator, final double... levels) {
+        ArgumentChecks.ensureNonNull("iterator", iterator);
+        ArgumentChecks.ensureNonNull("levels", levels);
+        if (iterator.getNumBands() != 1) {
+            throw new IllegalArgumentException("Image must have a single band.");
+        }
+        if (!SequenceType.LINEAR.equals(iterator.getIterationDirection())) {
+            throw new IllegalArgumentException("PixelIterator must be row-major.");
+        }
+        this.iterator = iterator;
+        this.levels = levels.clone();
+        Arrays.sort(this.levels);
+        final Rectangle area = iterator.getBoundary(true);
+        xMin   = area.x;
+        yMin   = area.y;
+        width  = area.width;
+        height = area.height;
+        intersections = new IntersectionGrid[levels.length];
     }
 
     /**
-     * <p>Create a contour plot of {@link RenderedImage} or object iterate from {@link PixelIterator}.<br/><br/>
+     * Returns the intersection grid for the given level.
+     * This method will create the grid when first needed.
      *
-     * The contouring result will be stored in the {@link #contour} field. If
-     * this field was null, a new {@link ca.dfo.map.Bathymetry} object will be
-     * created. Subclass may override this method to perform the contouring in an
-     * other way, or to create a different instance of <code>Bathymetry</code> if
-     * the <code>bathymetry</code> field was null.</p>
-     *
-     * @return Isoline {@link Map}.
-     * @throws IllegalStateException
+     * @param k Index of the desired level.
      */
-    public Map<Point3d, List<Coordinate>> createIsolines() throws IllegalStateException {
+    private IntersectionGrid gridAt(final int k) {
+        IntersectionGrid grid = intersections[k];
+        if (grid == null) {
+            intersections[k] = grid = new IntersectionGrid(width, height);
+        }
+        return grid;
+    }
 
-        final Map<Point3d,List<Coordinate>> cellMapResult = new HashMap<Point3d,List<Coordinate>>();
-
-        final double x[] = new double[4];
-        final double y[] = new double[4];
-        final double z[] = new double[4];
-        final Coordinate toMerge[] = new Coordinate[2];
-
-        final int minX       = areaIterate.x;
-        final int minY       = areaIterate.y;
-        final int areaWidth  = areaIterate.width;
-        final int areaHeight = areaIterate.height;
-        final int xlength    = minX + areaWidth - 1;
-        final int ylength    = minY + areaHeight - 1;
-
-        for (int i = minX; i<xlength; i++) {
-            /*
-             * Obtient les coordonnées des quatre coins    [0]...[3]
-             * de la cellule à tracer. Les coordonnées      :     :
-             * seront mémorisés aux index suivants:        [1]...[2]
-             */
-            x[0] = x[1] = i;
-            x[2] = x[3] = i+1;
-
-            for (int j = minY; j<ylength; j++) {
-                y[0] = y[3] = j;
-                y[1] = y[2] = j+1;
-
-//                pixelIterator.moveTo((int)x[0],(int)y[0], 0);
-//                pixelIterator.next();
-//                z[0] = pixelIterator.getSampleDouble();
-//                pixelIterator.moveTo((int)x[1],(int)y[1], 0);
-//                pixelIterator.next();
-//                z[1] = pixelIterator.getSampleDouble();
-//                pixelIterator.moveTo((int)x[3],(int)y[3], 0);
-//                pixelIterator.next();
-//                z[3] = pixelIterator.getSampleDouble();
-//                pixelIterator.moveTo((int)x[2],(int)y[2], 0);
-//                pixelIterator.next();
-//                z[2] = pixelIterator.getSampleDouble();
-
-                pixelIterator.moveTo((int)x[0],(int)y[0], 0);
-//                pixelIterator.next();
-                z[0] = pixelIterator.getSampleDouble();
-                pixelIterator.next();
-                z[3] = pixelIterator.getSampleDouble();
-                pixelIterator.moveTo((int)x[1],(int)y[1], 0);
-//                pixelIterator.next();
-                z[1] = pixelIterator.getSampleDouble();
-                pixelIterator.next();
-                z[2] = pixelIterator.getSampleDouble();
-
+    /**
+     * Calculate the intersection grids.
+     */
+    private void calculateIntersectionGrids() {
+        // Temporary buffer when calculating intersections on a single row.
+        final Intersections[] rows = new Intersections[levels.length];
+        /*
+         * For each pixel (x,y) having the value z, we will interpolate the intersection
+         * with the isolines on the bottom (0) and right (1) edges.
+         *
+         *            zOnTopRow[x]
+         *       ☐─────────☐
+         *       │         ↑ (1)
+         *       ☐←──(0)───☒
+         *    zOnLeft     z(x,y)
+         */
+        final double[] zOnTopRow = new double[width];
+        Arrays.fill(zOnTopRow, Double.NaN);
+        for (int y=0; y<height; y++) {
+            double zOnLeft = Double.NaN;
+            for (int x=0; x<width; x++) {
                 /*
-                 * Obtient les valeurs extrêmes de z: zmin et zmax.
-                 * Par la suite, on balayera les valeurs zl de toutes
-                 * les courbes de niveaux qui passent entre ces deux
-                 * bornes. Par exemple si zmin = 8.76 et zmax=11.35,
-                 * alors on balayera (par défaut) zl = 9, 10 et 11.
+                 * zOnLeft and zOnTop are z values in the previous column and in the previous row.
+                 * Note that zOnLeft will always be NaN when we are in the first column (i == 0),
+                 * and zOnTop will always be NaN when we are in the first row (j == 0).
                  */
-                double zmin = Double.POSITIVE_INFINITY;
-                double zmax = Double.NEGATIVE_INFINITY;
-                for (int k=0; k<4; k++) {//4 pour z.lenght
-                    if (z[k] < zmin) zmin = z[k];
-                    if (z[k] > zmax) zmax = z[k];
+                if (!iterator.next()) {
+                    throw new NoSuchElementException();
                 }
-                //zl = hauteur de courbe de niveau courante
-                for(double zline : isolineLevel){
-                    if (zline > zmax || zline < zmin) {
-                        // la cellule ne contient pas ce niveau
-                        continue;
+                final double z = iterator.getSampleDouble();
+                double zmin = z; // May be non-NaN even if zOnTop or zOnLeft is NaN.
+                double zmax = z;
+                final double zOnTop = zOnTopRow[x];
+                if (zOnTop  < zmin) zmin = zOnTop;
+                if (zOnTop  > zmax) zmax = zOnTop;
+                if (zOnLeft < zmin) zmin = zOnLeft;
+                if (zOnLeft > zmax) zmax = zOnLeft;
+                int k = Arrays.binarySearch(levels, zmin);
+                if (k < 0) {
+                    k = ~k;  // Tild operator, not minus.
+                }
+                for (; k<levels.length; k++) {
+                    final double level = levels[k];
+                    if (!(level <= zmax)) { // Use '!' for catching NaN values.
+                        break;
                     }
-
-                    final boolean isDone[] = new boolean[4];
-
-                    while (true) {
-                        int kmin = -1;
-                        int mmin = -1;
-                        double px0 = Double.NaN;
-                        double py0 = Double.NaN;
-                        double px1 = Double.NaN;
-                        double py1 = Double.NaN;
-                        double d2min = Double.POSITIVE_INFINITY;
+                    /*
+                     * Find the intersection point between the edge and the isoline. The dx or dy
+                     * variables are outside the [0…1] range when there is no intersection on the
+                     * edge (i.e. the intersection is outside the cell area). NaN could mean that
+                     * there is intersection everywhere (i.e. the line is vertical or horizontal).
+                     */
+                    final double dx, dy;
+                    if (z != level) {
+                        dx = (level - z) / (zOnLeft - z);
+                        dy = (level - z) / (zOnTop  - z);
+                    } else {
                         /*
-                         * Pour chacun des côtés de la cellule, on determine le point
-                         * d'intersection entre la courbe de niveau et le côté
-                         * de la cellule. Seuls les côtés qui n'ont pas déjà été
-                         * traités lors d'un passage précèdent (!isDone) seront
-                         * examinés.
+                         * If (z == level), then the above formulas produce 0 except if we also
+                         * have (zOnLeft == level) or (zOnTop == level), in which case 0/0 give
+                         * NaN. In this case, we actually have intersections everywhere in the
+                         * [0…1] range (the line segment is fully horizontal or fully vertical).
+                         * By convention we will add an intersection point only at 0, since the
+                         * point at 1 should have been added by the previous iteration.
+                         *
+                         * Note that we intentionally ignore zOnLeft and zOnTop, which allow the
+                         * algorithm to work even when the above variables are NaN. This is the
+                         * case while iterating in the first row and first column.
                          */
-                        for (int k0=0; k0<4; k0++) {
-                            if (!isDone[k0]) {
-                                final int k1 = (k0+1) % 4;
-                                if ((zline >= z[k0] && zline <= z[k1]) || (zline >= z[k1] && zline <= z[k0])) {
-                                    //Ce coté contient la valeur de la courbe de niveau
-                                    double tmp;
-                                    if (z[k1] == z[k0]) {
-                                        tmp = (x[k0]-x[k1])*(x[k0]-x[k1])+(y[k0]-y[k1])*(y[k0]-y[k1]);//Math.pow(x[k0]-x[k1], 2) + Math.pow(y[k0]-y[k1], 2);
-                                        if (tmp < d2min) {
-                                            d2min = tmp;
-                                            kmin = k0;
-                                            mmin = k0;
-                                            px0 = x[k0];
-                                            px1 = x[k1];
-                                            py0 = y[k0];
-                                            py1 = y[k1];
-                                        }
-                                    } else {
-                                        tmp = (zline-z[k0]) / (z[k1]-z[k0]);
-                                        final double tx0 = x[k0] + tmp * (x[k1] - x[k0]);
-                                        final double ty0 = y[k0] + tmp * (y[k1] - y[k0]);
-                                        /*
-                                         * (tx0,ty0) contient le point d'intersection de la courbe zline
-                                         * avec le côté k0. On recherche maintenant un point
-                                         * d'intersection avec un autre côté. La paire de points
-                                         * (tx0,ty0) - (tx1,ty1) qui donnent la distance la plus courte
-                                         * sera retenue comme la paire à tracer.
-                                         */
-                                        for (int m0 = 0; m0 < 4; m0++) {
-                                            if (m0 != k0 && !isDone[m0]) {
-                                                final int m1 = (m0 + 1) % 4;
-                                                if ((zline >= z[m0] && zline <= z[m1]) || (zline >= z[m1] && zline <= z[m0])) {
-                                                    tmp = (zline - z[m0]) / (z[m1] - z[m0]);
-                                                    final double tx1 = x[m0] + tmp * (x[m1] - x[m0]);
-                                                    final double ty1 = y[m0] + tmp * (y[m1] - y[m0]);
-//                                                    tmp = Math.pow(tx0 - tx1, 2) + Math.pow(ty0 - ty1, 2);
-                                                    tmp = (tx0 - tx1)*(tx0 - tx1)+(ty0 - ty1)*(ty0 - ty1);// Math.pow(tx0 - tx1, 2) + Math.pow(ty0 - ty1, 2);
-                                                    if (tmp < d2min) {
-                                                        d2min = tmp;
-                                                        kmin = k0;
-                                                        mmin = m0;
-                                                        px0 = tx0;
-                                                        py0 = ty0;
-                                                        px1 = tx1;
-                                                        py1 = ty1;
-                                                    }
-                                                } else {
-                                                    isDone[m0] = true;
-                                                }
-                                            }
-                                        }
-                                    }
-                                } else {
-                                    isDone[k0] = true;
-                                }
-                            }
-                        }
-                        /*
-                         * Maintenant que l'on dispose des coordonnées d'une ligne
-                         * droite, ajoute ces coordonnées à la "bathymetrie" que
-                         * l'on est en train de construire. Si aucune coordonnées
-                         * n'ont été trouvées, c'est qu'on en a fini avec cette cellule
-                         * pour ce niveau. On passera alors au niveau suivant.
-                         */
-                        if (kmin >= 0 && mmin >= 0) {
-                            isDone[kmin] = true;
-                            isDone[mmin] = true;
-                            toMerge[0] = new Coordinate(px0, py0);
-                            toMerge[1] = new Coordinate(px1, py1);
-
-                            /*
-                             * Vérifie si les points d'intersections (px0, py0) et/ou (px1, py1) ont
-                             * déjà été trouvés avant. Si c'est le cas, le segment de ligne (px0,py0)
-                             * (px1, py1) devra venir se rattacher aux segments déjà existants. Sinon,
-                             * on créera une nouvelle ligne à laquelle viendra peut-être s'en rattacher
-                             * d'autres plus tard. Note: La présence du (float) est une façon paresseuse
-                             * d'arrondir les nombres de façon à éviter certaines erreurs d'arrondissements.
-                             */
-                            final Point3d P0 = new Point3d((float) px0, (float) py0, zline);
-                            final Point3d P1 = new Point3d((float) px1, (float) py1, zline);
-                            final List<Coordinate> I0 = cellMapResult.remove(P0);
-                            final List<Coordinate> I1 = cellMapResult.remove(P1);
-                            /*
-                             * Si aucun des points d'intersections n'avaient été trouvés avant,
-                             * créé un nouvel {@link Polygon}. Sinon, procéde à des fusions...
-                             */
-                            if (I0 == null && I1 == null) {
-                                final List<Coordinate> polylines = new ArrayList<Coordinate>();
-                                polylines.add(toMerge[0]);
-                                polylines.add(toMerge[1]);
-                                cellMapResult.put(P0, polylines);
-                                cellMapResult.put(P1, polylines);
-
-                            }else if (I0 == null && I1 != null) {
-                                merge(toMerge, I1);
-                                cellMapResult.put(P0, I1);
-
-                            }else if (I0 != null && I1 == null) {
-                                merge(toMerge, I0);
-                                cellMapResult.put(P1, I0);
-
-                            }else if (I0 != null && I1 != null) {
-
-                                if(!merge(toMerge, I1)){
-                                    merge(toMerge,I0);
-                                }
-
-                                if (I0 != I1) {
-                                    merge(I1, I0);
-
-                                    /*
-                                     * Puisque I1 a été fusionné à I0 et qu'on ne gardera plus
-                                     * que I0, il faut maintenant changer les références vers
-                                     * I1 en référence vers I0. Il ne reste normalement qu'une
-                                     * référence vers I1 et une référence vers I0. On le vérifiera
-                                     * pour s'assurer que l'algorithme n'a pas de bug.
-                                     */
-                                    int checkRefCountI0 = 0;
-                                    int checkRefCountI1 = 0;
-                                    final Iterator<Map.Entry<Point3d,List<Coordinate>>> it = cellMapResult.entrySet().iterator();
-                                    if (it != null) {
-                                        while (it.hasNext()) {
-                                            final Map.Entry<Point3d,List<Coordinate>> entrie = it.next();
-                                            final Object I = entrie.getValue();
-                                            if (I == I0) {
-                                                checkRefCountI0++;
-                                            }
-                                            if (I == I1) {
-                                                entrie.setValue(I0);
-                                                checkRefCountI1++;
-                                            }
-                                        }
-                                    }
-                                    /*
-                                     *@TODO maybe this piece of code should be rewrited
-                                     * See issue GEOTK-196 on http://dev.geomatys.com for more informations
-                                     */
-//                                    if (checkRefCountI0 != 1) {
-//                                        throw new IllegalStateException("should not happen");
-//                                    }
-//                                    if (checkRefCountI1 != 1) {
-//                                        throw new IllegalStateException("should not happen");
-//                                    }
-                                } else {
-                                    /*
-                                     * Si on vient de refermer une cle (I0==I1), alors il ne
-                                     * reste plus de référence vers celle-ci. On en créera une
-                                     * avec un point bidon, choisie de façon à être innacessible
-                                     * par le reste de cette méthode.
-                                     */
-                                    P0.add(P1);
-                                    P0.scale(0.5);
-                                    P0.z = zline;
-                                    cellMapResult.put(P0, I0);
-                                }
-                            }
-                        } else {
-                            break;
-                        }
+                        dx = 0;
+                        dy = 0;
                     }
+                    /*
+                     * If (zOnLeft == level), then dx == 1 in this iteration while it was 0
+                     * in the previous iteration since we had (z == level) at that time.
+                     * Concequently excluding 1 should avoid adding the same point twice.
+                     */
+                    if (dx >= 0 && dx < 1) {
+                        Intersections row = rows[k];
+                        if (row == null) {
+                            rows[k] = row = new Intersections(width / 16);
+                        }
+                        // If (zOnLeft == level), then x-1 should have been added previously.
+                        assert (zOnLeft != level) || row.ordinate(row.size()-1) == x-1 : row;
+                        row.add(x-dx);
+                    }
+                    /*
+                     * For the vertical grid lines, we do not accept dy == 0 or 1 because
+                     * the same points should have been added in the horizontal grid lines.
+                     * We verify that with the assertion in the 'else' block.
+                     */
+                    if (dy > 0 && dy < 1) {
+                        gridAt(k).add(x, y-dy);
+                    } else {
+                        assert (dy != 0 && !isNaN(dy)) || isNaN(zOnTop) || rows[k].binarySearch(x, 0) >= 0 : rows[k];
+                        assert (dy != 1 && !isNaN(dy)) || isNaN(zOnTop) || gridAt(k).contains(x, y-1);
+                    }
+                }
+                // Remember the z value for next iterations.
+                zOnTopRow[x] = zOnLeft = z;
+            }
+            // Flush the row content before to move to next row.
+            for (int k=0; k<levels.length; k++) {
+                final Intersections row = rows[k];
+                if (row != null && row.size() != 0) {
+                    gridAt(k).setRow(y, row);
+                    row.clear();
                 }
             }
         }
-        return cellMapResult;
-    }
-
-    private boolean merge(final Coordinate[] toMerge,final List<Coordinate> coords){
-        Coordinate coord0 = toMerge[0];
-        Coordinate coord1 = toMerge[1];
-
-        Coordinate startCoord = coords.get(0);
-        Coordinate endCoord = coords.get(coords.size()-1);
-
-        if(equalCoordinates(startCoord, coord0)){
-            //add at the begining
-            coords.add(0,coord1);
-        }else if(equalCoordinates(startCoord, coord1)){
-            //add at the begining
-            coords.add(0,coord0);
-        }else if(equalCoordinates(endCoord, coord0)){
-            //add at the end
-            coords.add(coord1);
-        }else if(equalCoordinates(endCoord, coord1)){
-            //add at the end
-            coords.add(coord0);
-        }else{
-            return false;
-        }
-        return true;
-    }
-
-    private boolean merge(final List<Coordinate> toMerge,final List<Coordinate> coords){
-        Coordinate coord0 = toMerge.get(0);
-        Coordinate coord1 = toMerge.get(toMerge.size()-1);
-
-        Coordinate startCoord = coords.get(0);
-        Coordinate endCoord = coords.get(coords.size()-1);
-
-        if(equalCoordinates(startCoord, coord0)){
-            //add at the begining
-            toMerge.remove(0);
-            Collections.reverse(toMerge);
-            coords.addAll(0,toMerge);
-        }else if(equalCoordinates(startCoord, coord1)){
-            //add at the begining
-            toMerge.remove(toMerge.size()-1);
-            coords.addAll(0,toMerge);
-        }else if(equalCoordinates(endCoord, coord0)){
-            //add at the end
-            toMerge.remove(0);
-            coords.addAll(toMerge);
-        }else if(equalCoordinates(endCoord, coord1)){
-            //add at the end
-            toMerge.remove(toMerge.size()-1);
-            Collections.reverse(toMerge);
-            coords.addAll(toMerge);
-        }else{
-            return false;
-        }
-        return true;
     }
 
     /**
-     * Compare two {@link Coordinate}.
+     * Creates the polylines.
      *
-     * @param coord0
-     * @param coord1
-     * @return true if the two coordinates are considered equals else false.
+     * @return The isolines for each level.
+     *
+     * @todo Current implementation ignore the image (x,y) origin. This should be handled
+     *       with an affine transform.
      */
-    private boolean equalCoordinates(final Coordinate coord0, final Coordinate coord1){
+    public CoordinateSequence[][] createPolylines() {
+        calculateIntersectionGrids();
+        final CoordinateSequence[][] polylines = new CoordinateSequence[intersections.length][];
+        for (int i=0; i<intersections.length; i++) {
+            final Collection<Polyline> p = intersections[i].createPolylines();
+            polylines[i] = p.toArray(new CoordinateSequence[p.size()]);
+            // We convert to array in order to allow the garbage collector to collect
+            // the map entries, since the key values are not of interest to the user.
+        }
+        return polylines;
+    }
 
-        //test x values
-        if (Math.abs(coord0.x - coord1.x) > EPS * Math.max(Math.abs(coord0.x), Math.abs(coord1.x))) {
-            return false;
+    /**
+     * Creates isolines from the grid data specified at construction time.
+     *
+     * @return The isolines for each level.
+     *
+     * @deprecated Use {@link #createPolylines()} instead.
+     */
+    @Deprecated
+    public Map<Point3d, List<Coordinate>> createIsolines() {
+        final CoordinateSequence[][] polylines = createPolylines();
+        final Map<Point3d,List<Coordinate>> cellMapResult = new HashMap<Point3d,List<Coordinate>>();
+        for (int i=0; i<polylines.length; i++) {
+            int n = 0;
+            for (final CoordinateSequence polyline : polylines[i]) {
+                final Coordinate[] coords = polyline.toCoordinateArray();
+                for (final Coordinate coord : coords) {
+                    coord.x += xMin;
+                    coord.y += yMin;
+                }
+                // The (i,j) coordinates below are totally arbitrary; only the z one is significant.
+                cellMapResult.put(new Point3d(i, n++, levels[i]), Arrays.asList(coords));
+            }
         }
-        if (Math.abs(coord0.y - coord1.y) > EPS * Math.max(Math.abs(coord0.y), Math.abs(coord1.y))) {
-            return false;
-        }
-        return true;
+        return cellMapResult;
     }
 }
