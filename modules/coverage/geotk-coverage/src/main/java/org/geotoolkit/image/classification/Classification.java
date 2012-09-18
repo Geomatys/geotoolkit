@@ -123,6 +123,8 @@ public class Classification {
         if (classNumber > dataLength)
             throw new IllegalArgumentException("impossible to classify datas"
                 + " with class number larger than overall elements number");
+        if (!checkJenksDataValidity())
+            throw new IllegalArgumentException("not enough distincts datas for the requested number of classes");
         this.index = new int[classNumber];
         this.reComputeList = true;
         if (classNumber == 1) {
@@ -240,5 +242,30 @@ public class Classification {
         ArgumentChecks.ensureStrictlyPositive("classNumber", classNumber);
         this.classNumber = classNumber;
         this.index       = null;
+    }
+
+    /**
+     * Verify there are enough distinct data, from {@link #data} to compute Jenks classes.
+     *
+     * @return true if Jenks computing is possible else false.
+     */
+    private boolean checkJenksDataValidity() {
+        final int[] tabNbreClass = new int[dataLength];
+        double currentVal;
+        int nbreSameElmt;
+        for (int idCurrentVal = 0; idCurrentVal < dataLength; idCurrentVal++) {
+            currentVal = data[idCurrentVal];
+            nbreSameElmt = 1;
+            for (int idtest = 0; idtest < dataLength; idtest++) {
+                if (currentVal == data[idtest] && idCurrentVal != idtest) nbreSameElmt++;
+            }
+            tabNbreClass[nbreSameElmt]++;
+        }
+        int nbreClassMax = 0;
+        for (int i = 1; i<dataLength; i++) {
+            nbreClassMax += tabNbreClass[i]/i;
+            if (nbreClassMax >= classNumber) return true;
+        }
+        return false;
     }
 }

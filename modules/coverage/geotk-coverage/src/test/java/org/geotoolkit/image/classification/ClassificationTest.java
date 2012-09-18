@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 import junit.framework.Assert;
 import static org.junit.Assert.assertTrue;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -367,6 +368,28 @@ public class ClassificationTest {
        assertTrue(index[1] == 9);
        assertTrue(index[2] == 11);
        assertTrue(index[3] == 14);
+    }
+
+    /**
+     * Test with same value in data table.
+     */
+    @Test
+    public void checkJenksDataValidityTest() {
+        data = new double[]{1, 1, 1, 2, 2, 3, 4};
+        classification.setData(data);
+        classification.setClassNumber(4);
+        try {
+            classification.computeJenks();
+        } catch(Exception e) {
+            Assert.fail("test should had execute");
+        }
+        classification.setClassNumber(5);
+        try {
+            classification.computeJenks();
+            Assert.fail("test should had failed");
+        } catch(Exception e) {
+            //ok
+        }
     }
 
     /**
