@@ -75,6 +75,7 @@ import org.geotoolkit.image.io.SampleConverter;
 import org.geotoolkit.image.io.SpatialImageReadParam;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
+import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.image.io.DimensionManager;
 import org.geotoolkit.internal.image.io.IIOImageHelper;
 import org.geotoolkit.internal.image.io.NetcdfVariable;
@@ -87,7 +88,6 @@ import org.geotoolkit.util.Version;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.collection.BackingStoreException;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
-import org.geotoolkit.util.logging.Logging;
 
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.ISO_FORMAT_NAME;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.GEOTK_FORMAT_NAME;
@@ -1412,10 +1412,12 @@ public class NetcdfImageReader extends FileImageReader implements
         }
 
         /**
-         * Checks if the specified input seems to be a readable NetCDF file. If the given
-         * input is a stream like {@link javax.imageio.stream.ImageInputStream}, then this
-         * method conservatively returns {@code false} because testing this stream would
-         * require copying it to a temporary file.
+         * Checks if the specified input seems to be a readable NetCDF file. Current
+         * implementation check if the given source is a filename having one of the
+         * NetCDF {@linkplain #getFileSuffixes() file suffixes}. In particular this
+         * method conservatively returns {@code false} if the given input is a stream
+         * like {@link javax.imageio.stream.ImageInputStream}, because testing the stream
+         * content would require copying it to a temporary file.
          *
          * @param  source the object (typically a {@link File}) to be decoded.
          * @return {@code true} if it is likely that the given source can be decoded.
@@ -1423,21 +1425,28 @@ public class NetcdfImageReader extends FileImageReader implements
          */
         @Override
         public boolean canDecodeInput(final Object source) throws IOException {
-            if (source instanceof CharSequence || source instanceof File ||
-                source instanceof URL || source instanceof URI)
-            {
-                final String path = source.toString();
-                if (path.endsWith(".ncml")) {
-                    // The 'canOpen' method below doesn't check for NcML file. For now,
-                    // Assumes that any file having the ".ncml" extension is a NcML file.
-                    return true;
-                }
-                try {
-                    return NetcdfFile.canOpen(path);
-                } catch (NoClassDefFoundError e) {
-                    // May happen if an optional JAR file (e.g. the VisAD library) is not present.
-                    Logging.unexpectedException(LOGGER, Spi.class, "canDecodeInput", e);
-                }
+            if (IOUtilities.canProcessAsPath(source)) {
+                return XArrays.containsIgnoreCase(SUFFIXES, IOUtilities.extension(source));
+                /*
+                 * If a future version wants to use NetcdfFile.canOpen(String),
+                 * then please verify that the following issues are resolved:
+                 *
+                 *   - canOpen(String) recognizes NcML files (last time we tried, it didn't read
+                 *     any XML file, which is one reason why we had to rely on file extension).
+                 *
+                 *   - canOpen(String) doesn't throw an OutOfMemoryError when given non-NetCDF
+                 *     file (e.g. PNG, TIFF or JPEG files). Last time we tried, some text file
+                 *     format decoders invoked BufferedReader.readLine(), which can read huge
+                 *     amount of data when a binary file contains few '\n' or '\r' bytes.
+                 *
+                 *   - canOpen(String) doesn't load large library like VisAD just for testing
+                 *     a few bytes, or at the very least doesn't throw NoClassDefFoundError
+                 *     when such optional dependency is not on the classpath.
+                 *
+                 *   - canOpen(String) returns 'false' if the format is not recognized. Last
+                 *     time we tried, some code paths throw IOException instead, which make
+                 *     difficult to distinguish unrecognized formats from real I/O errors.
+                 */
             }
             return false;
         }
