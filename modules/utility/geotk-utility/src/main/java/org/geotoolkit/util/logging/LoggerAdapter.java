@@ -454,7 +454,7 @@ public abstract class LoggerAdapter extends Logger {
     }
 
     /**
-     * Logs a record at the specified level. The defaut implementation delegates to
+     * Logs a record at the specified level. The default implementation delegates to
      * <code>{@linkplain #log(Level,String,Object[]) log}(level, message, params)</code>
      * where the {@code params} array is built from the {@code param} object.
      *
@@ -464,7 +464,7 @@ public abstract class LoggerAdapter extends Logger {
      */
     @Override
     public void log(final Level level, final String message, final Object param) {
-        if (isLoggable(level)) {
+        if (isLoggable(level)) { // LGPL
             log(level, message, asArray(param));
         }
     }
@@ -480,7 +480,7 @@ public abstract class LoggerAdapter extends Logger {
      */
     @Override
     public void log(final Level level, final String message, final Object[] params) {
-        if (isLoggable(level)) {
+        if (isLoggable(level)) { // LGPL
             log(level, format(message, params));
         }
     }
@@ -539,7 +539,7 @@ public abstract class LoggerAdapter extends Logger {
     public void logp(final Level level, final String sourceClass, final String sourceMethod,
                      final String message, final Object param)
     {
-        if (isLoggable(level)) {
+        if (isLoggable(level)) { // LGPL
             logp(level, sourceClass, sourceMethod, message, asArray(param));
         }
     }
@@ -562,7 +562,7 @@ public abstract class LoggerAdapter extends Logger {
     public void logp(final Level level, final String sourceClass, final String sourceMethod,
                      final String message, final Object[] params)
     {
-        if (isLoggable(level)) {
+        if (isLoggable(level)) { // LGPL
             logp(level, sourceClass, sourceMethod, format(message, params));
         }
     }
@@ -582,7 +582,7 @@ public abstract class LoggerAdapter extends Logger {
     public void logrb(final Level level, final String sourceClass, final String sourceMethod,
                       final String bundleName, final String message)
     {
-        if (isLoggable(level)) {
+        if (isLoggable(level)) { // LGPL
             logp(level, sourceClass, sourceMethod, localize(bundleName, message));
         }
     }
@@ -603,7 +603,7 @@ public abstract class LoggerAdapter extends Logger {
     public void logrb(final Level level, final String sourceClass, final String sourceMethod,
                       final String bundleName, final String message, final Throwable thrown)
     {
-        if (isLoggable(level)) {
+        if (isLoggable(level)) { // LGPL
             logp(level, sourceClass, sourceMethod, localize(bundleName, message), thrown);
         }
     }
@@ -624,7 +624,7 @@ public abstract class LoggerAdapter extends Logger {
     public void logrb(final Level level, final String sourceClass, final String sourceMethod,
                       final String bundleName, final String message, final Object param)
     {
-        if (isLoggable(level)) {
+        if (isLoggable(level)) { // LGPL
             logp(level, sourceClass, sourceMethod, localize(bundleName, message), param);
         }
     }
@@ -645,7 +645,7 @@ public abstract class LoggerAdapter extends Logger {
     public void logrb(final Level level, final String sourceClass, final String sourceMethod,
                       final String bundleName, String message, final Object[] params)
     {
-        if (isLoggable(level)) {
+        if (isLoggable(level)) { // LGPL
             logp(level, sourceClass, sourceMethod, localize(bundleName, message), params);
         }
     }
@@ -731,7 +731,7 @@ public abstract class LoggerAdapter extends Logger {
     }
 
     /**
-     * Localize the specified message. This is a helper method for
+     * Localizes the specified message. This is a helper method for
      * {@code logrb(...)} methods that delegate their work to {@code logp(...)}
      */
     private static String localize(final String bundleName, String message) {

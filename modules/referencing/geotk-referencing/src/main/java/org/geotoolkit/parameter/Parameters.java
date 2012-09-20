@@ -751,7 +751,7 @@ public final class Parameters extends Static {
         if (parameters instanceof ParameterValueGroup) {
             if (!isRoot) {
                 if (buffer == null) {
-                    buffer = new StringBuilder();
+                    buffer = new StringBuilder(32);
                 }
                 buffer.setLength(base);
                 base = buffer.append(name).append(DefaultNameSpace.DEFAULT_SEPARATOR).length();
