@@ -39,6 +39,8 @@ import org.opengis.util.GenericName;
 import org.opengis.util.InternationalString;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.content.Band;
+import org.opengis.metadata.spatial.Dimension;
+import org.opengis.metadata.spatial.GridSpatialRepresentation;
 
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.ArgumentChecks;
@@ -683,6 +685,8 @@ public class MetadataTreeFormat extends Format {
      * @param  metadata The metadata object to examine.
      * @return A string representation, or {@code null} if there is no special case for this object.
      *
+     * @see #getTitle(Collection)
+     *
      * @since 3.20
      */
     private static String getTitleForSpecialCases(final Object metadata) {
@@ -697,6 +701,23 @@ public class MetadataTreeFormat extends Format {
                 if (min != null || max != null) {
                     return new MeasurementRange<>(Double.class, min, true, max, true, band.getUnits()).toString();
                 }
+            }
+        }
+        if (metadata instanceof GridSpatialRepresentation) {
+            StringBuilder buffer = null;
+            for (final Dimension dim : ((GridSpatialRepresentation) metadata).getAxisDimensionProperties()) {
+                final Integer size = dim.getDimensionSize();
+                if (size != null) {
+                    if (buffer == null) {
+                        buffer = new StringBuilder(16);
+                    } else {
+                        buffer.append('×');
+                    }
+                    buffer.append(size);
+                }
+            }
+            if (buffer != null) {
+                return buffer.toString();
             }
         }
         return null;
@@ -715,9 +736,11 @@ public class MetadataTreeFormat extends Format {
      *
      * @param  values The values of the metadata for which to append a title.
      * @return The title, or {@code null} if none were found.
+     *
+     * @see #getTitleForSpecialCases(Object)
      */
     private String getTitle(final Collection<?> values) {
-        String shortestName  = null;
+        String shortestName = null;
         for (int i=0; i<TITLE_TYPES.length-1; i++) { // Exclude the last type, which is Object.class
             final Class<?> baseType = TITLE_TYPES[i];
             for (final Object element : values) {
@@ -756,7 +779,12 @@ public class MetadataTreeFormat extends Format {
                 collections[count++] = (Collection<?>) element;
             }
         }
+        // Following loop will search for 'baseType' in the 'collections' array only.
+        // Elements will be removed from the 'collections' array after being examined.
         for (final Class<?> baseType : TITLE_TYPES) {
+            if (count == 0) { // May happen at any time because of the above-cited removal.
+                break;
+            }
             int newCount = 0;
             for (int i=0; i<count; i++) {
                 final Collection<?> collection = collections[i];
