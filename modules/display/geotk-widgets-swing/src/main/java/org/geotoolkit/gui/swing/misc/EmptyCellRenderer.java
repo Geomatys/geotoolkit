@@ -17,6 +17,7 @@
 package org.geotoolkit.gui.swing.misc;
 
 import java.awt.Component;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -37,4 +38,12 @@ public class EmptyCellRenderer extends DefaultTableCellRenderer{
         return lbl;
     }
 
+    public static void mimicStyle(final JComponent model, final JComponent candidate) {
+        candidate.setBackground(model.getBackground());
+        candidate.setForeground(model.getForeground());
+        candidate.setOpaque(model.isOpaque());
+        candidate.setBorder(model.getBorder());
+        candidate.setFont(model.getFont());
+    }
+    
 }

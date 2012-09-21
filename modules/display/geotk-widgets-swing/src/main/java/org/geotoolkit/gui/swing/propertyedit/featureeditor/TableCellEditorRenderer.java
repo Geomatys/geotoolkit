@@ -23,6 +23,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 import javax.swing.tree.DefaultMutableTreeNode;
+import org.geotoolkit.gui.swing.misc.EmptyCellRenderer;
 import org.opengis.feature.Property;
 
 /**
@@ -55,7 +56,7 @@ public final class TableCellEditorRenderer {
                 sub.setValue(prop.getType(), prop.getValue());
             }
 
-            TableCellEditorRenderer.mimicStyle(model, sub);
+            EmptyCellRenderer.mimicStyle(model, sub);
             return sub;
         }
 
@@ -90,12 +91,6 @@ public final class TableCellEditorRenderer {
 
     }
 
-    private static void mimicStyle(final JComponent model, final JComponent candidate) {
-        candidate.setBackground(model.getBackground());
-        candidate.setForeground(model.getForeground());
-        candidate.setOpaque(model.isOpaque());
-        candidate.setBorder(model.getBorder());
-        candidate.setFont(model.getFont());
-    }
+    
 
 }
