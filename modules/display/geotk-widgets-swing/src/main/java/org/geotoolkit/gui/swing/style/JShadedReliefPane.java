@@ -18,12 +18,16 @@
 package org.geotoolkit.gui.swing.style;
 
 import java.awt.Component;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.style.ShadedRelief;
@@ -46,6 +50,10 @@ public class JShadedReliefPane extends StyleElementEditor<ShadedRelief>{
         initComponents();
         guiFactor.setModel(1d, 0d, 1d, 0.1d);
     }
+    
+    public void setExpressionUnvisible(){
+        guiFactor.setExpressionUnvisible();
+    } 
 
     @Override
     public void setLayer(final MapLayer layer) {
@@ -88,10 +96,21 @@ public class JShadedReliefPane extends StyleElementEditor<ShadedRelief>{
 
         setOpaque(false);
 
-
-
         jLabel1.setText(MessageBundle.getString("factor")); // NOI18N
+
         guiBrightness.setText(MessageBundle.getString("brightnessonly")); // NOI18N
+        guiBrightness.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent evt) {
+                guiBrightnessStateChanged(evt);
+            }
+        });
+
+        guiFactor.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JShadedReliefPane.this.propertyChange(evt);
+            }
+        });
+
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -115,6 +134,19 @@ public class JShadedReliefPane extends StyleElementEditor<ShadedRelief>{
         layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiFactor, jLabel1});
 
     }// </editor-fold>//GEN-END:initComponents
+
+    private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
+        // TODO add your handling code here:
+        if (PROPERTY_TARGET.equalsIgnoreCase(evt.getPropertyName())) {            
+            firePropertyChange(PROPERTY_TARGET, null, create());
+            parse(create());
+        }
+    }//GEN-LAST:event_propertyChange
+
+    private void guiBrightnessStateChanged(ChangeEvent evt) {//GEN-FIRST:event_guiBrightnessStateChanged
+        // TODO add your handling code here:
+        firePropertyChange(PROPERTY_TARGET, null, create());
+    }//GEN-LAST:event_guiBrightnessStateChanged
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

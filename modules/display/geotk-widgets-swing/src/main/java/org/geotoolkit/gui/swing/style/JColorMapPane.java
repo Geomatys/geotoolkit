@@ -24,6 +24,8 @@ import javax.swing.JLabel;
 import javax.swing.JSpinner;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.style.ColorMap;
 
@@ -90,12 +92,17 @@ public class JColorMapPane extends StyleElementEditor<ColorMap>{
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-
         jLabel1 = new JLabel();
         guiType = new JSpinner();
 
         jLabel1.setText(MessageBundle.getString("type")); // NOI18N
+
         guiType.setModel(new SpinnerNumberModel());
+        guiType.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent evt) {
+                guiTypeStateChanged(evt);
+            }
+        });
 
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
@@ -115,6 +122,11 @@ public class JColorMapPane extends StyleElementEditor<ColorMap>{
                 .addGap(35, 35, 35))
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void guiTypeStateChanged(ChangeEvent evt) {//GEN-FIRST:event_guiTypeStateChanged
+        // TODO add your handling code here:
+        firePropertyChange(PROPERTY_TARGET, null, create());
+    }//GEN-LAST:event_guiTypeStateChanged
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

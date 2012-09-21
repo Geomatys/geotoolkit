@@ -18,6 +18,8 @@
 package org.geotoolkit.gui.swing.style;
 
 import java.awt.Component;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
@@ -112,34 +114,57 @@ public class JGraphicPane extends StyleElementEditor<Graphic> {
 
         jPanel1.setOpaque(false);
 
-
-
-
         jLabel1.setHorizontalAlignment(SwingConstants.RIGHT);
         jLabel1.setText(MessageBundle.getString("size")); // NOI18N
+
         jLabel2.setHorizontalAlignment(SwingConstants.RIGHT);
         jLabel2.setText(MessageBundle.getString("rotation")); // NOI18N
+
         jLabel3.setHorizontalAlignment(SwingConstants.RIGHT);
         jLabel3.setText(MessageBundle.getString("opacity")); // NOI18N
+
+        guiDisplacement.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JGraphicPane.this.propertyChange(evt);
+            }
+        });
+
+        guiSize.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JGraphicPane.this.propertyChange(evt);
+            }
+        });
+
+        guiRotation.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JGraphicPane.this.propertyChange(evt);
+            }
+        });
+
+        guiAlpha.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JGraphicPane.this.propertyChange(evt);
+            }
+        });
+
         GroupLayout jPanel1Layout = new GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(jPanel1Layout.createParallelGroup(Alignment.TRAILING)
-                .addComponent(guiDisplacement, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                .addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(guiAlpha, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(guiRotation, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(guiSize, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))))
+            .addComponent(guiDisplacement, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+            .addGroup(Alignment.TRAILING, jPanel1Layout.createParallelGroup(Alignment.LEADING)
+                .addGroup(jPanel1Layout.createSequentialGroup()
+                    .addComponent(jLabel3)
+                    .addPreferredGap(ComponentPlacement.RELATED)
+                    .addComponent(guiAlpha, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel1Layout.createSequentialGroup()
+                    .addComponent(jLabel2)
+                    .addPreferredGap(ComponentPlacement.RELATED)
+                    .addComponent(guiRotation, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel1Layout.createSequentialGroup()
+                    .addComponent(jLabel1)
+                    .addPreferredGap(ComponentPlacement.RELATED)
+                    .addComponent(guiSize, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
         );
 
         jPanel1Layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {jLabel1, jLabel2, jLabel3});
@@ -168,6 +193,12 @@ public class JGraphicPane extends StyleElementEditor<Graphic> {
 
         jPanel1Layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiSize, jLabel1});
 
+        guiGraphics.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JGraphicPane.this.propertyChange(evt);
+            }
+        });
+
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -185,6 +216,15 @@ public class JGraphicPane extends StyleElementEditor<Graphic> {
                 .addComponent(guiGraphics, GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
+        // TODO add your handling code here:
+        if (PROPERTY_TARGET.equalsIgnoreCase(evt.getPropertyName())) {            
+            firePropertyChange(PROPERTY_TARGET, null, create());
+            parse(create());
+        }
+    }//GEN-LAST:event_propertyChange
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JNumberExpressionPane guiAlpha;
     private JDisplacementPane guiDisplacement;

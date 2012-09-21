@@ -18,6 +18,8 @@
 package org.geotoolkit.gui.swing.style;
 
 import java.awt.Component;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -124,14 +126,10 @@ public class JTextSymbolizerPane extends StyleElementEditor<TextSymbolizer> {
         jPanel1.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("general"))); // NOI18N
         jPanel1.setOpaque(false);
 
-
         jLabel1.setText(MessageBundle.getString("label")); // NOI18N
+
         GroupLayout jPanel1Layout = new GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
-
-
-
-
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
@@ -163,9 +161,33 @@ public class JTextSymbolizerPane extends StyleElementEditor<TextSymbolizer> {
         jPanel1Layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiLabel, jLabel1});
 
         guiFont.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("fonts"))); // NOI18N
+        guiFont.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JTextSymbolizerPane.this.propertyChange(evt);
+            }
+        });
+
         guiHalo.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("halo"))); // NOI18N
+        guiHalo.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JTextSymbolizerPane.this.propertyChange(evt);
+            }
+        });
+
         guiFill.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("fill"))); // NOI18N
+        guiFill.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JTextSymbolizerPane.this.propertyChange(evt);
+            }
+        });
+
         guiPlacement.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("placement"))); // NOI18N
+        guiPlacement.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JTextSymbolizerPane.this.propertyChange(evt);
+            }
+        });
+
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -190,6 +212,14 @@ public class JTextSymbolizerPane extends StyleElementEditor<TextSymbolizer> {
                 .addComponent(guiPlacement, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
+        // TODO add your handling code here:
+        if (PROPERTY_TARGET.equalsIgnoreCase(evt.getPropertyName())) {            
+            firePropertyChange(PROPERTY_TARGET, null, create());
+            parse(create());
+        }
+    }//GEN-LAST:event_propertyChange
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JFillPane guiFill;

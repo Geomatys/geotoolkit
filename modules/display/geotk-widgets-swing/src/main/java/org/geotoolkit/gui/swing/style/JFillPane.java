@@ -21,6 +21,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ResourceBundle;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -115,9 +117,6 @@ public class JFillPane extends StyleElementEditor<Fill>{
         ResourceBundle bundle = ResourceBundle.getBundle("org/geotoolkit/gui/swing/resource/Bundle"); // NOI18N
         butFill.setText(bundle.getString("fill")); // NOI18N
         butFill.setBorderPainted(false);
-
-
-
         butFill.setPreferredSize(new Dimension(49, 22));
         butFill.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
@@ -127,10 +126,25 @@ public class JFillPane extends StyleElementEditor<Fill>{
 
         jLabel3.setHorizontalAlignment(SwingConstants.RIGHT);
         jLabel3.setText(MessageBundle.getString("graphic")); // NOI18N
+
         lbl2.setHorizontalAlignment(SwingConstants.RIGHT);
         lbl2.setText(MessageBundle.getString("opacity")); // NOI18N
+
         lbl_color1.setHorizontalAlignment(SwingConstants.RIGHT);
         lbl_color1.setText(MessageBundle.getString("color")); // NOI18N
+
+        guiColor.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JFillPane.this.propertyChange(evt);
+            }
+        });
+
+        guiAlpha.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JFillPane.this.propertyChange(evt);
+            }
+        });
+
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -187,6 +201,14 @@ public class JFillPane extends StyleElementEditor<Fill>{
 //        
 //        fill.setGraphicFill(pane.getEdited());
     }//GEN-LAST:event_butFillActionPerformed
+
+    private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
+        // TODO add your handling code here:
+        if (PROPERTY_TARGET.equalsIgnoreCase(evt.getPropertyName())) {            
+            firePropertyChange(PROPERTY_TARGET, null, create());
+            parse(create());
+        }
+    }//GEN-LAST:event_propertyChange
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JButton butFill;

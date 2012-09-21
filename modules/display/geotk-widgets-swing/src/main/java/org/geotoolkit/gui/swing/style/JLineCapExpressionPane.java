@@ -18,6 +18,9 @@
 package org.geotoolkit.gui.swing.style;
 
 import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -27,6 +30,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.JToggleButton;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
@@ -54,6 +58,11 @@ public class JLineCapExpressionPane extends StyleElementEditor<Expression>{
         guiSquare.setIcon(ICON_CAP_SQUARE);
         guiButt.setIcon(ICON_CAP_BUTT);
     }
+    
+    public void setExpressionUnvisible(){
+        guiSpecial.setPreferredSize(new Dimension(1, 1));
+        guiSpecial.setVisible(false);
+    }    
 
     @Override
     public void setLayer(final MapLayer layer) {
@@ -69,81 +78,83 @@ public class JLineCapExpressionPane extends StyleElementEditor<Expression>{
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        GridBagConstraints gridBagConstraints;
 
         capGroup = new ButtonGroup();
         guiSpecial = new JSpecialExpressionButton();
-        guiRound = new JToggleButton();
         guiSquare = new JToggleButton();
+        guiRound = new JToggleButton();
         guiButt = new JToggleButton();
+        jLabel1 = new JLabel();
 
         setOpaque(false);
+        setLayout(new GridBagLayout());
 
         guiSpecial.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
                 guiSpecialPropertyChange(evt);
             }
         });
-
-        capGroup.add(guiRound);
-        guiRound.setSelected(true);
-        guiRound.setBorderPainted(false);
-        guiRound.setIconTextGap(0);
-        guiRound.setMargin(new Insets(2, 2, 2, 2));
-        guiRound.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                guiRoundActionPerformed(evt);
-            }
-        });
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = GridBagConstraints.BOTH;
+        gridBagConstraints.weighty = 1.0;
+        add(guiSpecial, gridBagConstraints);
 
         capGroup.add(guiSquare);
         guiSquare.setBorderPainted(false);
         guiSquare.setIconTextGap(0);
-        guiSquare.setMargin(new Insets(2, 2, 2, 2));
         guiSquare.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 guiSquareActionPerformed(evt);
             }
         });
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = GridBagConstraints.BOTH;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new Insets(0, 6, 0, 0);
+        add(guiSquare, gridBagConstraints);
+
+        capGroup.add(guiRound);
+        guiRound.setSelected(true);
+        guiRound.setBorderPainted(false);
+        guiRound.setIconTextGap(0);
+        guiRound.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                guiRoundActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = GridBagConstraints.BOTH;
+        gridBagConstraints.weighty = 1.0;
+        add(guiRound, gridBagConstraints);
 
         capGroup.add(guiButt);
         guiButt.setBorderPainted(false);
         guiButt.setIconTextGap(0);
-        guiButt.setMargin(new Insets(2, 2, 2, 2));
         guiButt.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 guiButtActionPerformed(evt);
             }
         });
-
-        GroupLayout layout = new GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(guiRound)
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(guiSquare)
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(guiButt)
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(guiSpecial, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {guiButt, guiRound, guiSpecial, guiSquare});
-
-        layout.setVerticalGroup(
-            layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(layout.createParallelGroup(Alignment.TRAILING, false)
-                .addComponent(guiSpecial, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE)
-                .addGroup(Alignment.LEADING, layout.createParallelGroup(Alignment.TRAILING, false)
-                    .addComponent(guiRound, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(guiSquare, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(guiButt, Alignment.LEADING)))
-        );
-
-        layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiButt, guiRound, guiSpecial, guiSquare});
-
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = GridBagConstraints.BOTH;
+        gridBagConstraints.weighty = 1.0;
+        add(guiButt, gridBagConstraints);
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        add(jLabel1, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
 private void guiSpecialPropertyChange(final PropertyChangeEvent evt) {//GEN-FIRST:event_guiSpecialPropertyChange
@@ -171,6 +182,7 @@ private void guiButtActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_gu
     private JToggleButton guiRound;
     private JSpecialExpressionButton guiSpecial;
     private JToggleButton guiSquare;
+    private JLabel jLabel1;
     // End of variables declaration//GEN-END:variables
 
     @Override

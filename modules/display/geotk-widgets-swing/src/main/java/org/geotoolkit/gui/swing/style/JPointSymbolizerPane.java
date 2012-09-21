@@ -18,6 +18,8 @@
 package org.geotoolkit.gui.swing.style;
 
 import java.awt.Component;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -108,7 +110,6 @@ public class JPointSymbolizerPane extends StyleElementEditor<PointSymbolizer> {
 
         GroupLayout jPanel1Layout = new GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
-
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
@@ -131,12 +132,18 @@ public class JPointSymbolizerPane extends StyleElementEditor<PointSymbolizer> {
         );
 
         guiGraphic.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("graphic"))); // NOI18N
+        guiGraphic.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JPointSymbolizerPane.this.propertyChange(evt);
+            }
+        });
+
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addComponent(jPanel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(guiGraphic, GroupLayout.DEFAULT_SIZE, 206, Short.MAX_VALUE)
+            .addComponent(guiGraphic, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(Alignment.LEADING)
@@ -146,6 +153,14 @@ public class JPointSymbolizerPane extends StyleElementEditor<PointSymbolizer> {
                 .addComponent(guiGraphic, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
+        // TODO add your handling code here:
+        if (PROPERTY_TARGET.equalsIgnoreCase(evt.getPropertyName())) {            
+            firePropertyChange(PROPERTY_TARGET, null, create());
+            parse(create());
+        }
+    }//GEN-LAST:event_propertyChange
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JGeomPane guiGeom;

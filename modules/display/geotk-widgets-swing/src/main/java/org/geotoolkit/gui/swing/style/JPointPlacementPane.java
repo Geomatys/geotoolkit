@@ -18,6 +18,8 @@
 package org.geotoolkit.gui.swing.style;
 
 import java.awt.Component;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -66,11 +68,27 @@ public class JPointPlacementPane extends StyleElementEditor<PointPlacement>{
 
         guiAnchor.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("anchor"))); // NOI18N
         guiAnchor.setOpaque(false);
-
-
+        guiAnchor.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JPointPlacementPane.this.propertyChange(evt);
+            }
+        });
 
         guiDisplacement.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("displacement"))); // NOI18N
+        guiDisplacement.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JPointPlacementPane.this.propertyChange(evt);
+            }
+        });
+
         jLabel1.setText(MessageBundle.getString("rotation")); // NOI18N
+
+        guiRotation.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JPointPlacementPane.this.propertyChange(evt);
+            }
+        });
+
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -100,6 +118,14 @@ public class JPointPlacementPane extends StyleElementEditor<PointPlacement>{
         layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiRotation, jLabel1});
 
     }// </editor-fold>//GEN-END:initComponents
+
+    private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
+        // TODO add your handling code here:
+        if (PROPERTY_TARGET.equalsIgnoreCase(evt.getPropertyName())) {            
+            firePropertyChange(PROPERTY_TARGET, null, create());
+            parse(create());
+        }
+    }//GEN-LAST:event_propertyChange
 
     @Override
     public void setLayer(final MapLayer layer) {

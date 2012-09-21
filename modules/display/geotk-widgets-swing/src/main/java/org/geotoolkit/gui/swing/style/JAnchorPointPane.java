@@ -19,6 +19,8 @@ package org.geotoolkit.gui.swing.style;
 
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import java.awt.Component;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
@@ -97,8 +99,6 @@ public class JAnchorPointPane extends StyleElementEditor<AnchorPoint>{
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-
-
         jLabel1 = new JLabel();
         jLabel2 = new JLabel();
         guiX = new JNumberExpressionPane();
@@ -106,8 +106,22 @@ public class JAnchorPointPane extends StyleElementEditor<AnchorPoint>{
 
         jLabel1.setHorizontalAlignment(SwingConstants.RIGHT);
         jLabel1.setText(MessageBundle.getString("x")); // NOI18N
+
         jLabel2.setHorizontalAlignment(SwingConstants.RIGHT);
         jLabel2.setText(MessageBundle.getString("y")); // NOI18N
+
+        guiX.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JAnchorPointPane.this.propertyChange(evt);
+            }
+        });
+
+        guiY.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JAnchorPointPane.this.propertyChange(evt);
+            }
+        });
+
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -141,6 +155,13 @@ public class JAnchorPointPane extends StyleElementEditor<AnchorPoint>{
         layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiY, jLabel2});
 
     }// </editor-fold>//GEN-END:initComponents
+
+    private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
+        // TODO add your handling code here:
+        if (PROPERTY_TARGET.equalsIgnoreCase(evt.getPropertyName())) {
+            firePropertyChange(PROPERTY_TARGET, null, create());
+        }
+    }//GEN-LAST:event_propertyChange
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

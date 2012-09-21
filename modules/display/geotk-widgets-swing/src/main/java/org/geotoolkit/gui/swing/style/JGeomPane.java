@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.gui.swing.style;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
@@ -68,7 +70,6 @@ public class JGeomPane extends javax.swing.JPanel {
         setOpaque(false);
 
         guiBox.setEditable(true);
-        guiBox.setEnabled(true);
 
         lbl.setText(MessageBundle.getString("geometry")); // NOI18N
 
@@ -79,7 +80,7 @@ public class JGeomPane extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(lbl)
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(guiBox, GroupLayout.DEFAULT_SIZE, 76, Short.MAX_VALUE))
+                .addComponent(guiBox, GroupLayout.PREFERRED_SIZE, 76, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(Alignment.LEADING)

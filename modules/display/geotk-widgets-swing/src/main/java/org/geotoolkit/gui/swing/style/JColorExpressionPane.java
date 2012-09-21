@@ -64,6 +64,11 @@ public class JColorExpressionPane extends StyleElementEditor<Expression>{
         guiSpecial = new JSpecialExpressionButton();
 
         setOpaque(false);
+        addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JColorExpressionPane.this.propertyChange(evt);
+            }
+        });
 
         guiColor.setBackground(new Color(255, 0, 0));
         guiColor.setText("...");
@@ -93,7 +98,7 @@ public class JColorExpressionPane extends StyleElementEditor<Expression>{
         layout.setVerticalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addComponent(guiColor, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(guiSpecial, GroupLayout.DEFAULT_SIZE, 17, Short.MAX_VALUE)
+            .addComponent(guiSpecial, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -107,6 +112,14 @@ private void guiSpecialPropertyChange(final PropertyChangeEvent evt) {//GEN-FIRS
         parse(guiSpecial.get());
     }
 }//GEN-LAST:event_guiSpecialPropertyChange
+
+    private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
+        // TODO add your handling code here:
+         if (PROPERTY_TARGET.equalsIgnoreCase(evt.getPropertyName())) {            
+            firePropertyChange(PROPERTY_TARGET, null, create());
+            parse(create());
+        }
+    }//GEN-LAST:event_propertyChange
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

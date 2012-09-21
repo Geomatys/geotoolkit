@@ -21,6 +21,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
@@ -177,18 +179,25 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
 
         setOpaque(false);
 
-
-
         guiContrast.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("contrast"))); // NOI18N
+        guiContrast.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JRasterSymbolizerPane.this.propertyChange(evt);
+            }
+        });
+
         guiRelief.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("relief"))); // NOI18N
+        guiRelief.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JRasterSymbolizerPane.this.propertyChange(evt);
+            }
+        });
+
         jPanel1.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("general"))); // NOI18N
         jPanel1.setOpaque(false);
 
         butChannels.setText(MessageBundle.getString("edit")); // NOI18N
         butChannels.setBorderPainted(false);
-
-
-
         butChannels.setPreferredSize(new Dimension(79, 22));
         butChannels.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
@@ -198,10 +207,25 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
 
         jLabel3.setHorizontalAlignment(SwingConstants.RIGHT);
         jLabel3.setText(MessageBundle.getString("channels")); // NOI18N
+
+        guiOverLap.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JRasterSymbolizerPane.this.propertyChange(evt);
+            }
+        });
+
         jLabel2.setHorizontalAlignment(SwingConstants.RIGHT);
         jLabel2.setText(MessageBundle.getString("overlap")); // NOI18N
+
         jLabel1.setHorizontalAlignment(SwingConstants.RIGHT);
         jLabel1.setText(MessageBundle.getString("opacity")); // NOI18N
+
+        guiOpacity.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JRasterSymbolizerPane.this.propertyChange(evt);
+            }
+        });
+
         GroupLayout jPanel1Layout = new GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -247,7 +271,7 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
                     .addComponent(guiOverLap, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE)
-                    .addComponent(butChannels, GroupLayout.PREFERRED_SIZE, 24, Short.MAX_VALUE)
+                    .addComponent(butChannels, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel3))
                 .addContainerGap())
         );
@@ -322,7 +346,7 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
                         .addGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING)
                             .addComponent(butLineSymbolizer, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                             .addComponent(butPolygonSymbolizer, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(41, Short.MAX_VALUE))
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel2Layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {guiLine, guiPolygon, guinone});
@@ -349,8 +373,8 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
             layout.createParallelGroup(Alignment.LEADING)
             .addComponent(jPanel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jPanel2, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(guiRelief, GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
-            .addComponent(guiContrast, GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
+            .addComponent(guiRelief, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(guiContrast, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(Alignment.LEADING)
@@ -401,14 +425,18 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
 
     private void guiLineActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiLineActionPerformed
         testOutLine();
+        firePropertyChange(PROPERTY_TARGET, null, create());
+        
 }//GEN-LAST:event_guiLineActionPerformed
 
     private void guinoneActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guinoneActionPerformed
        testOutLine();
+       firePropertyChange(PROPERTY_TARGET, null, create());
     }//GEN-LAST:event_guinoneActionPerformed
 
     private void guiPolygonActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiPolygonActionPerformed
         testOutLine();
+        firePropertyChange(PROPERTY_TARGET, null, create());
     }//GEN-LAST:event_guiPolygonActionPerformed
 
     private void butChannelsActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_butChannelsActionPerformed
@@ -434,6 +462,14 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
 //        symbol.setChannelSelection(pane.getEdited());        
         
     }//GEN-LAST:event_butChannelsActionPerformed
+
+    private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
+        // TODO add your handling code here:
+        if (PROPERTY_TARGET.equalsIgnoreCase(evt.getPropertyName())) {            
+            firePropertyChange(PROPERTY_TARGET, null, create());
+            parse(create());
+        }
+    }//GEN-LAST:event_propertyChange
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JButton butChannels;

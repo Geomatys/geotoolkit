@@ -131,6 +131,7 @@ private void guiSpecialPropertyChange(final PropertyChangeEvent evt) {//GEN-FIRS
             return;
         }
         
+        firePropertyChange(PROPERTY_TARGET, null, create());
         guiSpecial.parse(null);
         
     }//GEN-LAST:event_guiComboItemStateChanged

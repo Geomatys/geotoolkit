@@ -43,6 +43,9 @@
       </Properties>
     </Component>
     <Component class="org.geotoolkit.gui.swing.style.JNumberExpressionPane" name="guiOffset">
+      <Events>
+        <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="propertyChange"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>

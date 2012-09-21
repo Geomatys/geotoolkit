@@ -50,6 +50,9 @@
           <SpinnerModel initial="0" numberType="java.lang.Integer" stepSize="1" type="number"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="guiTypeStateChanged"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>

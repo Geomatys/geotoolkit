@@ -43,6 +43,9 @@
   </Layout>
   <SubComponents>
     <Component class="org.geotoolkit.gui.swing.style.JFillPane" name="guiFill">
+      <Events>
+        <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="propertyChange"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel1">
       <Properties>
@@ -52,6 +55,9 @@
       </Properties>
     </Component>
     <Component class="org.geotoolkit.gui.swing.style.JNumberExpressionPane" name="guiRadius">
+      <Events>
+        <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="propertyChange"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>

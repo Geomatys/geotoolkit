@@ -18,6 +18,10 @@
 package org.geotoolkit.gui.swing.style;
 
 import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -47,6 +51,10 @@ public class JContrastEnhancement extends StyleElementEditor<ContrastEnhancement
         super(ContrastEnhancement.class);
         initComponents();
     }
+    
+    public void setExpressionUnvisible(){
+        guiGamma.setExpressionUnvisible();
+    } 
 
     /**
      * {@inheritDoc }
@@ -114,18 +122,39 @@ public class JContrastEnhancement extends StyleElementEditor<ContrastEnhancement
 
         setOpaque(false);
 
-
         jLabel2.setHorizontalAlignment(SwingConstants.RIGHT);
         jLabel2.setText(MessageBundle.getString("gamma")); // NOI18N
+
+        guiGamma.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JContrastEnhancement.this.propertyChange(evt);
+            }
+        });
+
         methodGroup.add(guiNone);
-
         guiNone.setText(MessageBundle.getString("method_none")); // NOI18N
+        guiNone.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                guiNoneActionPerformed(evt);
+            }
+        });
+
         methodGroup.add(guiHistogram);
-
         guiHistogram.setText(MessageBundle.getString("method_histogram")); // NOI18N
-        methodGroup.add(guiNormalize);
+        guiHistogram.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                guiNoneActionPerformed(evt);
+            }
+        });
 
+        methodGroup.add(guiNormalize);
         guiNormalize.setText(MessageBundle.getString("method_normalize")); // NOI18N
+        guiNormalize.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                guiNoneActionPerformed(evt);
+            }
+        });
+
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -158,6 +187,19 @@ public class JContrastEnhancement extends StyleElementEditor<ContrastEnhancement
         layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiGamma, jLabel2});
 
     }// </editor-fold>//GEN-END:initComponents
+
+    private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
+        // TODO add your handling code here:
+         if (PROPERTY_TARGET.equalsIgnoreCase(evt.getPropertyName())) {            
+            firePropertyChange(PROPERTY_TARGET, null, create());
+            parse(create());
+        }
+    }//GEN-LAST:event_propertyChange
+
+    private void guiNoneActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiNoneActionPerformed
+        // TODO add your handling code here:
+        firePropertyChange(PROPERTY_TARGET, null, create());
+    }//GEN-LAST:event_guiNoneActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

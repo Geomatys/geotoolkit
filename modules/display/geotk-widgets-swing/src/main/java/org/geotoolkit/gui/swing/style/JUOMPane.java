@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.gui.swing.style;
 
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import javax.measure.quantity.Length;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
@@ -80,9 +82,14 @@ public class JUOMPane extends StyleElementEditor<Unit>{
 
         setOpaque(false);
 
-
         jLabel1.setText(MessageBundle.getString("unit")); // NOI18N
+
         jcb_uom.setModel(new DefaultComboBoxModel(new String[] { "Pixels", "Meters", "Feet" }));
+        jcb_uom.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent evt) {
+                jcb_uomItemStateChanged(evt);
+            }
+        });
 
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
@@ -100,6 +107,11 @@ public class JUOMPane extends StyleElementEditor<Unit>{
                 .addComponent(jcb_uom, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jcb_uomItemStateChanged(ItemEvent evt) {//GEN-FIRST:event_jcb_uomItemStateChanged
+        // TODO add your handling code here:
+        firePropertyChange(PROPERTY_TARGET, null, create());
+    }//GEN-LAST:event_jcb_uomItemStateChanged
 
     
     // Variables declaration - do not modify//GEN-BEGIN:variables

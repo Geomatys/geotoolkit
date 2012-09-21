@@ -40,7 +40,6 @@
     <Component class="org.geotoolkit.gui.swing.style.JGeomBox" name="guiBox">
       <Properties>
         <Property name="editable" type="boolean" value="true"/>
-        <Property name="enabled" type="boolean" value="true"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="lbl">

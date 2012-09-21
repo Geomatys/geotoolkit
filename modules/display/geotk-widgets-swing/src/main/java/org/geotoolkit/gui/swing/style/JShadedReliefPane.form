@@ -55,8 +55,14 @@
           <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="brightnessonly" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="guiBrightnessStateChanged"/>
+      </Events>
     </Component>
     <Component class="org.geotoolkit.gui.swing.style.JNumberExpressionPane" name="guiFactor">
+      <Events>
+        <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="propertyChange"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>

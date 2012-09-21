@@ -19,6 +19,8 @@ package org.geotoolkit.gui.swing.style;
 
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import java.awt.Component;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
@@ -107,10 +109,22 @@ public class JDisplacementPane extends StyleElementEditor<Displacement>{
 
         setOpaque(false);
 
-
         jLabel1.setText(MessageBundle.getString("x")); // NOI18N
+
         jLabel2.setText(MessageBundle.getString("y")); // NOI18N
         jLabel2.setVerticalTextPosition(SwingConstants.TOP);
+
+        guiX.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JDisplacementPane.this.propertyChange(evt);
+            }
+        });
+
+        guiY.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JDisplacementPane.this.propertyChange(evt);
+            }
+        });
 
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
@@ -145,6 +159,14 @@ public class JDisplacementPane extends StyleElementEditor<Displacement>{
         layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiY, jLabel2});
 
     }// </editor-fold>//GEN-END:initComponents
+
+    private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
+        // TODO add your handling code here:
+        if (PROPERTY_TARGET.equalsIgnoreCase(evt.getPropertyName())) {            
+            firePropertyChange(PROPERTY_TARGET, null, create());
+            parse(create());
+        }
+    }//GEN-LAST:event_propertyChange
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
