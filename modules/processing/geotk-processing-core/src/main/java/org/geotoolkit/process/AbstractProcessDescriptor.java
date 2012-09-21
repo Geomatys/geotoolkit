@@ -38,6 +38,7 @@ public abstract class AbstractProcessDescriptor implements ProcessDescriptor {
     
     private final Identifier id;
     private final InternationalString abs;
+    private final InternationalString displayName;
     private final ParameterDescriptorGroup inputDesc;
     private final ParameterDescriptorGroup outputdesc;
 
@@ -45,8 +46,18 @@ public abstract class AbstractProcessDescriptor implements ProcessDescriptor {
             final ParameterDescriptorGroup inputDesc, final ParameterDescriptorGroup outputdesc) {
         this(new DerivateIdentifier(name, factoryId),abs,inputDesc,outputdesc);
     }
+    
+    public AbstractProcessDescriptor(final String name, final Identification factoryId, final InternationalString abs,
+            final InternationalString displayName, final ParameterDescriptorGroup inputDesc, final ParameterDescriptorGroup outputdesc) {
+        this(new DerivateIdentifier(name, factoryId), abs, displayName, inputDesc, outputdesc);
+    }
 
     public AbstractProcessDescriptor(final Identifier id, final InternationalString abs,
+            final ParameterDescriptorGroup inputDesc, final ParameterDescriptorGroup outputdesc) {
+        this(id, abs, null, inputDesc, outputdesc);
+    }
+    
+    public AbstractProcessDescriptor(final Identifier id, final InternationalString abs, final InternationalString displayName,
             final ParameterDescriptorGroup inputDesc, final ParameterDescriptorGroup outputdesc) {
         ensureNonNull("id", id);
         ensureNonNull("abs", abs);
@@ -54,13 +65,21 @@ public abstract class AbstractProcessDescriptor implements ProcessDescriptor {
         ensureNonNull("outputdesc", outputdesc);
         this.id = id;
         this.abs = abs;
+        this.displayName = displayName;
         this.inputDesc = inputDesc;
         this.outputdesc = outputdesc;
     }
+     
+   
 
     @Override
     public Identifier getIdentifier() {
         return id;
+    }
+
+    @Override
+    public InternationalString getDisplayName() {
+        return displayName;
     }
     
     @Override
