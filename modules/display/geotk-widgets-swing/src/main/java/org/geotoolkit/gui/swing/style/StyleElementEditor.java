@@ -50,6 +50,8 @@ import org.opengis.util.InternationalString;
  * @module pending
  */
 public abstract class StyleElementEditor<T> extends JPanel {
+    
+    public static final String PROPERTY_TARGET = "target";
 
     /**
      * The service loader. This loader and its iterator are not synchronized;
