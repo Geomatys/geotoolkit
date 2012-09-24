@@ -119,7 +119,6 @@ public class JBankPanel extends StyleElementEditor {
             }
         });
 
-        guiImportButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/geotoolkit/gui/swing/resource/icon/other/1347964241_import.png"))); // NOI18N
         guiImportButton.setText("Importer depuis un fichier");
         guiImportButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

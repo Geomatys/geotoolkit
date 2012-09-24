@@ -77,6 +77,7 @@ import org.geotoolkit.gui.swing.propertyedit.styleproperty.JClassificationSingle
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JClassificationIntervalStylePanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JRasterColorMapStylePanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JSLDImportExportPanel;
+import org.geotoolkit.gui.swing.propertyedit.styleproperty.simple.JSimpleStylePanel2;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 
@@ -176,6 +177,7 @@ public class JMap2DFrame extends javax.swing.JFrame {
         lstproperty.add(filters);
 
         LayerStylePropertyPanel styles = new LayerStylePropertyPanel();
+        styles.addPropertyPanel(new JSimpleStylePanel2());
         styles.addPropertyPanel(new JSimpleStylePanel());
         styles.addPropertyPanel(new JClassificationSingleStylePanel());
         styles.addPropertyPanel(new JClassificationIntervalStylePanel());

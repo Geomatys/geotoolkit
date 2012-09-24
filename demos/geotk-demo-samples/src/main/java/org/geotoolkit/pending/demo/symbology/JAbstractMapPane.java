@@ -46,6 +46,7 @@ import org.geotoolkit.gui.swing.propertyedit.styleproperty.JClassificationInterv
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JClassificationSingleStylePanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JSLDImportExportPanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JSimpleStylePanel;
+import org.geotoolkit.gui.swing.propertyedit.styleproperty.simple.JSimpleStylePanel2;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.style.DefaultStyleFactory;
@@ -151,6 +152,7 @@ public abstract class JAbstractMapPane extends javax.swing.JPanel {
         lstproperty.add(filters);
 
         LayerStylePropertyPanel styles = new LayerStylePropertyPanel();
+        styles.addPropertyPanel(new JSimpleStylePanel2());
         styles.addPropertyPanel(new JSimpleStylePanel());
         styles.addPropertyPanel(new JClassificationSingleStylePanel());
         styles.addPropertyPanel(new JClassificationIntervalStylePanel());

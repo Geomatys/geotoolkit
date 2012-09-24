@@ -212,7 +212,6 @@ public class JFontPane extends StyleElementEditor<Font>{
         // TODO add your handling code here:
         if (PROPERTY_TARGET.equalsIgnoreCase(evt.getPropertyName())) {            
             firePropertyChange(PROPERTY_TARGET, null, create());
-            parse(create());
         }
     }//GEN-LAST:event_propertyChange
     
