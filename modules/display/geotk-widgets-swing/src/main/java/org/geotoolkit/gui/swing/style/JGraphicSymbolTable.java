@@ -269,7 +269,7 @@ public class JGraphicSymbolTable <T> extends StyleElementEditor<List> {
         public void newExternal() {
             final GraphicalSymbol m;
             try {
-                m = getStyleFactory().externalGraphic(new URL("http://upload.wikimedia.org/wikipedia/commons/6/63/Wikipedia-logo.png"), "image/png");
+                m = getStyleFactory().externalGraphic(new URL("file:/..."), "image/png");
             } catch (MalformedURLException ex) {
                 //won't happen
                 throw new RuntimeException(ex.getMessage());
