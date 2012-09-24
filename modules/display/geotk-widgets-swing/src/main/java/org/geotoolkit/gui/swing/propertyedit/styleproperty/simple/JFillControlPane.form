@@ -26,7 +26,9 @@
   <SubComponents>
     <Component class="javax.swing.JButton" name="guiColorButton">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Changer"/>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="change" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
+        </Property>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="guiColorButtonActionPerformed"/>

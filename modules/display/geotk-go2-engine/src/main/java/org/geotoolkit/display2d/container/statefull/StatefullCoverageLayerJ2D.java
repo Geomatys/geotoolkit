@@ -68,7 +68,7 @@ public class StatefullCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapL
         this.ignoreBuilders = ignoreBuilders;
         
         try {
-            final GeneralGridGeometry ggg = layer.getCoverageReader().getGridGeometry(0);
+            final GeneralGridGeometry ggg = layer.getCoverageReader().getGridGeometry(layer.getImageIndex());
             if(ggg == null){
                 Logger.getLogger(StatefullCoverageLayerJ2D.class.getName()).log(
                         Level.WARNING, "Could not access envelope of layer {0}", layer.getName());

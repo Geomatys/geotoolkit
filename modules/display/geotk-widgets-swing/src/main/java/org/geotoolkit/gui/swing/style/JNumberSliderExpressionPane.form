@@ -21,17 +21,19 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
-              <EmptySpace max="32767" attributes="0"/>
-              <Component id="guiSlider" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="56" max="-2" attributes="0"/>
-              <Component id="guiNumber" min="-2" pref="75" max="-2" attributes="0"/>
+              <Component id="guiSlider" max="32767" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="guiNumber" min="-2" pref="53" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="guiSlider" alignment="1" min="-2" max="-2" attributes="0"/>
-          <Component id="guiNumber" alignment="1" min="-2" max="-2" attributes="0"/>
+          <Component id="guiSlider" min="-2" max="-2" attributes="0"/>
+          <Group type="102" alignment="0" attributes="0">
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="guiNumber" min="-2" max="-2" attributes="0"/>
+          </Group>
       </Group>
     </DimensionLayout>
   </Layout>
@@ -42,9 +44,6 @@
           <SpinnerModel initial="0" numberType="java.lang.Integer" stepSize="1" type="number"/>
         </Property>
       </Properties>
-      <BindingProperties>
-        <BindingProperty name="value" source="guiSlider" sourcePath="${value}" target="guiNumber" targetPath="value" updateStrategy="0" immediately="false"/>
-      </BindingProperties>
       <Events>
         <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="guiNumberStateChanged"/>
       </Events>
@@ -53,11 +52,9 @@
       <Properties>
         <Property name="paintLabels" type="boolean" value="true"/>
       </Properties>
-      <BindingProperties>
-        <BindingProperty name="value" source="guiNumber" sourcePath="${value}" target="guiSlider" targetPath="value" updateStrategy="0" immediately="false">
-          <BindingParameter name="IGNORE_ADJUSTING" value="N"/>
-        </BindingProperty>
-      </BindingProperties>
+      <Events>
+        <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="guiSliderStateChanged"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>

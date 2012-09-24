@@ -11,9 +11,6 @@
     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
       <Dimension value="[625, 156]"/>
     </Property>
-    <Property name="size" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-      <Dimension value="[625, 0]"/>
-    </Property>
   </Properties>
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
@@ -44,11 +41,6 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="Couleur :"/>
       </Properties>
-    </Component>
-    <Component class="org.geotoolkit.gui.swing.style.JNumberExpressionPane" name="guiRadius">
-      <Events>
-        <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="propertyChange"/>
-      </Events>
     </Component>
   </SubComponents>
 </Form>

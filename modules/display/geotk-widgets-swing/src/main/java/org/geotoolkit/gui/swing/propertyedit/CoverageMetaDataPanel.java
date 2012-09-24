@@ -32,9 +32,7 @@ public class CoverageMetaDataPanel extends IIOMetadataPanel implements PropertyP
     @Override
     public void setTarget(final Object target) {
         if(target instanceof CoverageMapLayer){
-            final CoverageMapLayer layer = (CoverageMapLayer) target;
-            final GridCoverageReader reader = layer.getCoverageReader();
-            
+            final CoverageMapLayer layer = (CoverageMapLayer) target;            
 
             //how do we recover metadatas from here ?
 

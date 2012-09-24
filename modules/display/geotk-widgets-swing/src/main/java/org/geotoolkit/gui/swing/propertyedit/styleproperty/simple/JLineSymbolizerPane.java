@@ -31,69 +31,70 @@ import org.opengis.style.LineSymbolizer;
 
 /**
  * This class able to display LineSymbolizer tool pane
- * @author Fabien Rétif
+ *
+ * @author Fabien Rétif (Geomatys)
  */
-public class JLineSymbolizerPane extends StyleElementEditor<LineSymbolizer>  {
+public class JLineSymbolizerPane extends StyleElementEditor<LineSymbolizer> {
 
     private MapLayer layer = null;
-    
-    /** 
+
+    /**
      * Creates new form JLineSymbolizerPanel
      */
     public JLineSymbolizerPane() {
         super(LineSymbolizer.class);
         initComponents();
-        guiDisplacementX.setModel(0d, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 1d);
-        guiDisplacementX.setExpressionUnvisible();
+//        guiDisplacementX.setModel(0d, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 1d);
+//        guiDisplacementX.setExpressionUnvisible();
     }
-    
+
     /**
      * {@inheritDoc }
      */
     @Override
-    public void setLayer(final MapLayer layer){
+    public void setLayer(final MapLayer layer) {
         this.layer = layer;
-        guiStrokeControlPane.setLayer(layer);
-        guiDisplacementX.setLayer(layer);
-        guiUOM.setLayer(layer);
+//        guiStrokeControlPane.setLayer(layer);
+//        guiDisplacementX.setLayer(layer);
+//        guiUOM.setLayer(layer);
 
     }
-    
+
     /**
      * {@inheritDoc }
      */
     @Override
-    public MapLayer getLayer(){
+    public MapLayer getLayer() {
         return layer;
     }
- 
+
     /**
      * {@inheritDoc }
      */
     @Override
     public void parse(final LineSymbolizer symbol) {
-        
-        if (symbol != null) {  
-            
-            guiStrokeControlPane.parse(symbol.getStroke());
-            guiDisplacementX.parse(symbol.getPerpendicularOffset());            
-//            guiGeom.setGeom(symbol.getGeometryPropertyName());          
-            guiUOM.parse(symbol.getUnitOfMeasure());
-    }
+
+        if (symbol != null) {
+//            guiStrokeControlPane.parse(symbol.getStroke());
+//            guiDisplacementX.parse(symbol.getPerpendicularOffset());
+////            guiGeom.setGeom(symbol.getGeometryPropertyName());          
+//            guiUOM.parse(symbol.getUnitOfMeasure());
+        }
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public LineSymbolizer create(){
-        return getStyleFactory().lineSymbolizer(
-                    "lineSymbolizer",
-                    (String)null,
-                    StyleConstants.DEFAULT_DESCRIPTION,
-                    guiUOM.create(),
-                    guiStrokeControlPane.create(), 
-                    guiDisplacementX.create());
+    public LineSymbolizer create() {
+        return null; //TODO
+//        return getStyleFactory().lineSymbolizer(
+//                "lineSymbolizer",
+//                (String) null,
+//                StyleConstants.DEFAULT_DESCRIPTION,
+//                guiUOM.create(),
+//                guiStrokeControlPane.create(),
+//                guiDisplacementX.create());
     }
 
     /**
@@ -107,9 +108,7 @@ public class JLineSymbolizerPane extends StyleElementEditor<LineSymbolizer>  {
 
         jLabel1 = new JLabel();
         jLabel5 = new JLabel();
-        guiDisplacementX = new JNumberExpressionPane();
         jLabel6 = new JLabel();
-        guiUOM = new JUOMPane();
 
         setBackground(new Color(204, 204, 204));
 
@@ -119,35 +118,19 @@ public class JLineSymbolizerPane extends StyleElementEditor<LineSymbolizer>  {
         jLabel5.setText("Décallage X :");
         add(jLabel5);
 
-        guiDisplacementX.addPropertyChangeListener(new PropertyChangeListener() {
-            public void propertyChange(PropertyChangeEvent evt) {
-                JLineSymbolizerPane.this.propertyChange(evt);
-            }
-        });
-        add(guiDisplacementX);
-
         jLabel6.setText("Unité :");
         add(jLabel6);
-        add(guiUOM);
     }// </editor-fold>//GEN-END:initComponents
 
     private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
-        // TODO add your handling code here:
         if (PROPERTY_TARGET.equalsIgnoreCase(evt.getPropertyName())) {
             firePropertyChange(PROPERTY_TARGET, null, create());
         }
     }//GEN-LAST:event_propertyChange
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private JNumberExpressionPane guiDisplacementX;
-    private JUOMPane guiUOM;
     private JLabel jLabel1;
     private JLabel jLabel5;
     private JLabel jLabel6;
     // End of variables declaration//GEN-END:variables
-
-    public void componentHidden(ComponentEvent e) {
-        System.out.println(e.getComponent().getClass().getName() + " --- Hidden");
-    }
 
 }

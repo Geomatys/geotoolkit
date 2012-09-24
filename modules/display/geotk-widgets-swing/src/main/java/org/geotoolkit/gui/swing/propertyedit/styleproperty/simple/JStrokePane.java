@@ -57,7 +57,7 @@ public class JStrokePane extends StyleElementEditor<Stroke> {
     public JStrokePane() {
         super(Stroke.class);
         initComponents();
-        guiFill.setBackground(this.getBackground());
+//        guiFill.setBackground(this.getBackground());
         guiLineType.setRenderer(new LineRenderer());
 
         guiLineType.setModel(new ListComboBoxModel(model.getCandidates(new StyleBank.ByClassComparator(new Class[]{Stroke.class}))));
@@ -75,7 +75,7 @@ public class JStrokePane extends StyleElementEditor<Stroke> {
     @Override
     public void setLayer(final MapLayer layer) {
         this.layer = layer;
-        guiFill.setLayer(layer);
+//        guiFill.setLayer(layer);
         guiLineCap.setLayer(layer);
         guiLineJoin.setLayer(layer);
         guiWidth.setLayer(layer);
@@ -101,7 +101,7 @@ public class JStrokePane extends StyleElementEditor<Stroke> {
             guiLineCap.parse(stroke.getLineCap());
             guiLineJoin.parse(stroke.getLineJoin());
             Fill strokeFill = getStyleFactory().fill(stroke.getGraphicFill(), stroke.getColor(), stroke.getOpacity());
-            guiFill.parse(strokeFill);
+//            guiFill.parse(strokeFill);
         }
     }
 
@@ -110,16 +110,17 @@ public class JStrokePane extends StyleElementEditor<Stroke> {
      */
     @Override
     public Stroke create() {
-        Fill strokeFill = guiFill.create();
-        final Expression dashOffset = StyleConstants.LITERAL_ZERO_FLOAT;
-
-        if (strokeFill.getGraphicFill() != null) {
-            return getStyleFactory().stroke(strokeFill.getGraphicFill(), strokeFill.getColor(), strokeFill.getOpacity(), guiWidth.create(), guiLineJoin.create(), guiLineCap.create(), ((Stroke) guiLineType.getSelectedItem()).getDashArray(), dashOffset);
-        } else if (strokeFill.getColor() != null) {
-            return getStyleFactory().stroke(strokeFill.getColor(), strokeFill.getOpacity(), guiWidth.create(), guiLineJoin.create(), guiLineCap.create(), ((Stroke) guiLineType.getSelectedItem()).getDashArray(), dashOffset);
-        } else {
-            return getStyleFactory().stroke();
-        }
+        return null; //TODO
+//        Fill strokeFill = guiFill.create();
+//        final Expression dashOffset = StyleConstants.LITERAL_ZERO_FLOAT;
+//
+//        if (strokeFill.getGraphicFill() != null) {
+//            return getStyleFactory().stroke(strokeFill.getGraphicFill(), strokeFill.getColor(), strokeFill.getOpacity(), guiWidth.create(), guiLineJoin.create(), guiLineCap.create(), ((Stroke) guiLineType.getSelectedItem()).getDashArray(), dashOffset);
+//        } else if (strokeFill.getColor() != null) {
+//            return getStyleFactory().stroke(strokeFill.getColor(), strokeFill.getOpacity(), guiWidth.create(), guiLineJoin.create(), guiLineCap.create(), ((Stroke) guiLineType.getSelectedItem()).getDashArray(), dashOffset);
+//        } else {
+//            return getStyleFactory().stroke();
+//        }
     }
 
     /**

@@ -2,7 +2,6 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Johann Sorel
  *    (C) 2012 Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -18,6 +17,7 @@
 package org.geotoolkit.gui.swing.propertyedit.styleproperty.simple;
 
 import javax.swing.JOptionPane;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.gui.swing.style.StyleElementEditor;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.style.Fill;
@@ -25,11 +25,12 @@ import org.opengis.style.Fill;
 /**
  * Fill control panel. This class displays a simple controller panel with a preview image and a button
  * @author Fabien Rétif (Geomatys)
+ * @author Johann Sorel (Geomatys)
  */
 public class JFillControlPane extends StyleElementEditor<Fill> {
 
     private MapLayer layer = null;   
-    private JFillPane paneFillChooser = new JFillPane();
+    private final JFillPane paneFillChooser = new JFillPane();
 
     /** 
      * Creates new form JFillControlPanel 
@@ -60,9 +61,7 @@ public class JFillControlPane extends StyleElementEditor<Fill> {
      */
     @Override
     public void parse(final Fill fill) {
-        
         if (fill != null) {
-                
             guiColorLabel.parse(fill);
             paneFillChooser.parse(fill);           
         }
@@ -76,8 +75,7 @@ public class JFillControlPane extends StyleElementEditor<Fill> {
         return paneFillChooser.create();
     }  
     
-    public void setActive(Boolean bool)
-    {       
+    public void setActive(boolean bool){       
         guiColorButton.setEnabled(bool);
         guiColorLabel.setVisible(bool);
     }
@@ -98,7 +96,7 @@ public class JFillControlPane extends StyleElementEditor<Fill> {
         setPreferredSize(new java.awt.Dimension(250, 30));
         setLayout(new java.awt.BorderLayout());
 
-        guiColorButton.setText("Changer");
+        guiColorButton.setText(MessageBundle.getString("change")); // NOI18N
         guiColorButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 guiColorButtonActionPerformed(evt);
@@ -119,7 +117,6 @@ public class JFillControlPane extends StyleElementEditor<Fill> {
      * @param evt 
      */
     private void guiColorButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guiColorButtonActionPerformed
-        // TODO add your handling code here:        
         JOptionPane.showMessageDialog(null,paneFillChooser,"",JOptionPane.PLAIN_MESSAGE);
         firePropertyChange(PROPERTY_TARGET, null, create());  
         parse(create());
@@ -130,7 +127,6 @@ public class JFillControlPane extends StyleElementEditor<Fill> {
      * @param evt 
      */
     private void guiColorLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_guiColorLabelMouseClicked
-        // TODO add your handling code here:
         JOptionPane.showMessageDialog(null,paneFillChooser,"",JOptionPane.PLAIN_MESSAGE);
         firePropertyChange(PROPERTY_TARGET, null, create());  
         parse(create());

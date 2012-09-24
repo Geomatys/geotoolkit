@@ -388,7 +388,7 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
                         }
                     }else{
                         //we explore the image and try to find the min and max
-                        Map<String,Object> an = StatisticOp.analyze(reader);
+                        Map<String,Object> an = StatisticOp.analyze(reader,layer.getImageIndex());
                         final double min = (Double)an.get(StatisticOp.MINIMUM);
                         final double max = (Double)an.get(StatisticOp.MAXIMUM);                
                         for(int s=0,l=steps.size();s<l;s++){

@@ -2,7 +2,6 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Johann Sorel
  *    (C) 2012 Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -17,19 +16,19 @@
  */
 package org.geotoolkit.gui.swing.propertyedit.styleproperty.simple;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.net.MalformedURLException;
+import java.util.logging.Level;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.gui.swing.style.JPreview;
 import org.geotoolkit.gui.swing.style.StyleElementEditor;
 import org.geotoolkit.map.MapLayer;
@@ -38,6 +37,7 @@ import org.opengis.style.ExternalGraphic;
 /**
  * External graphic pane editor
  * @author Fabien Rétif (Geomatys)
+ * @author Johann Sorel (Geomatys)
  */
 public class JExternalGraphicPane extends StyleElementEditor<ExternalGraphic> {
     
@@ -73,7 +73,6 @@ public class JExternalGraphicPane extends StyleElementEditor<ExternalGraphic> {
      */
     @Override
     public void parse(final ExternalGraphic externalGraphic) {
-        
         if (externalGraphic != null) {           
            guiOverviewLabel.parse(externalGraphic);            
         }
@@ -90,7 +89,7 @@ public class JExternalGraphicPane extends StyleElementEditor<ExternalGraphic> {
             try {
                 return getStyleFactory().externalGraphic(this.currentImage.toURI().toURL(), "");
             } catch (MalformedURLException ex) {
-                ex.printStackTrace();
+                LOGGER.log(Level.INFO, ex.getMessage());
                 return null;
             }
         } else {
@@ -98,8 +97,7 @@ public class JExternalGraphicPane extends StyleElementEditor<ExternalGraphic> {
         }
     } 
     
-     public void clearSelectedTarget() {        
-
+     public void clearSelectedTarget() {
         currentImage = null;
     }
    
@@ -113,68 +111,61 @@ public class JExternalGraphicPane extends StyleElementEditor<ExternalGraphic> {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new JPanel();
         jLabel1 = new JLabel();
-        jButton1 = new JButton();
-        jPanel3 = new JPanel();
         guiOverviewLabel = new JPreview();
+        jButton1 = new JButton();
 
         setMaximumSize(new Dimension(0, 0));
-        setLayout(new BorderLayout());
 
-        jLabel1.setText("A partir du fichier :");
+        jLabel1.setText(MessageBundle.getString("fromFile")); // NOI18N
 
-        jButton1.setText("Choisir une image");
+        GroupLayout guiOverviewLabelLayout = new GroupLayout(guiOverviewLabel);
+        guiOverviewLabel.setLayout(guiOverviewLabelLayout);
+        guiOverviewLabelLayout.setHorizontalGroup(
+            guiOverviewLabelLayout.createParallelGroup(Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        guiOverviewLabelLayout.setVerticalGroup(
+            guiOverviewLabelLayout.createParallelGroup(Alignment.LEADING)
+            .addGap(0, 119, Short.MAX_VALUE)
+        );
+
+        jButton1.setText(MessageBundle.getString("chooseImage")); // NOI18N
         jButton1.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 jButton1ActionPerformed(evt);
             }
         });
 
-        GroupLayout jPanel1Layout = new GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        GroupLayout layout = new GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1, GroupLayout.PREFERRED_SIZE, 130, GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(ComponentPlacement.RELATED, 202, Short.MAX_VALUE)
-                .addComponent(jButton1)
+                .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                    .addComponent(guiOverviewLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton1)))
                 .addContainerGap())
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        layout.setVerticalGroup(
+            layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE)
-                    .addComponent(jButton1, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(Alignment.BASELINE)
+                    .addComponent(jButton1)
+                    .addComponent(jLabel1))
+                .addPreferredGap(ComponentPlacement.RELATED)
+                .addComponent(guiOverviewLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
-
-        add(jPanel1, BorderLayout.NORTH);
-
-        jPanel3.setLayout(new BorderLayout());
-
-        GroupLayout guiOverviewLabelLayout = new GroupLayout(guiOverviewLabel);
-        guiOverviewLabel.setLayout(guiOverviewLabelLayout);
-        guiOverviewLabelLayout.setHorizontalGroup(
-            guiOverviewLabelLayout.createParallelGroup(Alignment.LEADING)
-            .addGap(0, 502, Short.MAX_VALUE)
-        );
-        guiOverviewLabelLayout.setVerticalGroup(
-            guiOverviewLabelLayout.createParallelGroup(Alignment.LEADING)
-            .addGap(0, 221, Short.MAX_VALUE)
-        );
-
-        jPanel3.add(guiOverviewLabel, BorderLayout.CENTER);
-
-        add(jPanel3, BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-        JFileChooser jFile = new JFileChooser();
+        final JFileChooser jFile = new JFileChooser();
         if (jFile.showOpenDialog(null)== JFileChooser.APPROVE_OPTION) {
             this.currentImage = jFile.getSelectedFile();
             //We plot preview image
@@ -186,7 +177,5 @@ public class JExternalGraphicPane extends StyleElementEditor<ExternalGraphic> {
     private JPreview guiOverviewLabel;
     private JButton jButton1;
     private JLabel jLabel1;
-    private JPanel jPanel1;
-    private JPanel jPanel3;
     // End of variables declaration//GEN-END:variables
 }

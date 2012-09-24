@@ -58,10 +58,10 @@ public class JPolygonSymbolizerPane extends  StyleElementEditor<PolygonSymbolize
     public void setLayer(final MapLayer layer){
         this.layer = layer;
         
-        guiFillControlPane.setLayer(layer);
+//        guiFillControlPane.setLayer(layer);
         guiDisplacementY.setLayer(layer);
         guiDisplacementX.setLayer(layer);
-        guiStrokeControlPane.setLayer(layer);
+//        guiStrokeControlPane.setLayer(layer);
         guiUOM.setLayer(layer); 
     }
     
@@ -81,8 +81,8 @@ public class JPolygonSymbolizerPane extends  StyleElementEditor<PolygonSymbolize
 
         if (symbol != null) {
 
-            guiStrokeControlPane.parse(symbol.getStroke());
-            guiFillControlPane.parse(symbol.getFill());
+//            guiStrokeControlPane.parse(symbol.getStroke());
+//            guiFillControlPane.parse(symbol.getFill());
             guiDisplacementX.parse(symbol.getDisplacement().getDisplacementX());
             guiDisplacementY.parse(symbol.getDisplacement().getDisplacementY());
             guiOffset.parse(symbol.getPerpendicularOffset());
@@ -96,15 +96,16 @@ public class JPolygonSymbolizerPane extends  StyleElementEditor<PolygonSymbolize
      */
     @Override
     public PolygonSymbolizer create(){
-        return getStyleFactory().polygonSymbolizer(
-                    "polygonSymbolizer",
-                    (String)null,
-                    StyleConstants.DEFAULT_DESCRIPTION,
-                    guiUOM.create(),
-                    guiStrokeControlPane.create(),
-                    guiFillControlPane.create(), 
-                    getStyleFactory().displacement(guiDisplacementX.create(),guiDisplacementY.create()),
-                    guiOffset.create());
+        return null;
+//        return getStyleFactory().polygonSymbolizer(
+//                    "polygonSymbolizer",
+//                    (String)null,
+//                    StyleConstants.DEFAULT_DESCRIPTION,
+//                    guiUOM.create(),
+////                    guiStrokeControlPane.create(),
+////                    guiFillControlPane.create(), 
+//                    getStyleFactory().displacement(guiDisplacementX.create(),guiDisplacementY.create()),
+//                    guiOffset.create());
     }
 
 

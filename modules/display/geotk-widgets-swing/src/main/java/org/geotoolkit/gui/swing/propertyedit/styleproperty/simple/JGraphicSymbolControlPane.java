@@ -2,8 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Johann Sorel
- *    (C) 2011 Geomatys
+ *    (C) 2012 Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -18,18 +17,21 @@
 package org.geotoolkit.gui.swing.propertyedit.styleproperty.simple;
 
 import javax.swing.JOptionPane;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.gui.swing.style.StyleElementEditor;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.style.GraphicalSymbol;
 
 /**
- * Graphical symbol controller editor
- * @author Fabien Rétif
+ * Graphical symbol controller editor.
+ * 
+ * @author Fabien Rétif (Geomatys)
+ * @author Johann Sorel (Geomatys)
  */
 public class JGraphicSymbolControlPane extends StyleElementEditor<GraphicalSymbol> {
 
     private MapLayer layer = null;    
-    private JGraphicalSymbolPane paneGraphicalSymbolChooser = new JGraphicalSymbolPane();
+    private final JGraphicalSymbolPane paneGraphicalSymbolChooser = new JGraphicalSymbolPane();
 
     /** 
      * Creates new form JGraphicSymbolControlPane
@@ -63,7 +65,6 @@ public class JGraphicSymbolControlPane extends StyleElementEditor<GraphicalSymbo
     public void parse(final GraphicalSymbol graphicalSymbol) {
         
         if (graphicalSymbol != null) {
-
             guiMarkLabel.parse(graphicalSymbol);            
             paneGraphicalSymbolChooser.parse(graphicalSymbol);            
         }
@@ -93,7 +94,7 @@ public class JGraphicSymbolControlPane extends StyleElementEditor<GraphicalSymbo
         setPreferredSize(new java.awt.Dimension(250, 30));
         setLayout(new java.awt.BorderLayout());
 
-        guiMarkButton.setText("Changer");
+        guiMarkButton.setText(MessageBundle.getString("change")); // NOI18N
         guiMarkButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 guiMarkButtonActionPerformed(evt);
@@ -110,7 +111,6 @@ public class JGraphicSymbolControlPane extends StyleElementEditor<GraphicalSymbo
     }// </editor-fold>//GEN-END:initComponents
 
     private void guiMarkButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guiMarkButtonActionPerformed
-        // TODO add your handling code here:        
         JOptionPane.showMessageDialog(null,paneGraphicalSymbolChooser,"",JOptionPane.PLAIN_MESSAGE);
         firePropertyChange(PROPERTY_TARGET, null, create());
         parse(create());
@@ -118,7 +118,6 @@ public class JGraphicSymbolControlPane extends StyleElementEditor<GraphicalSymbo
     }//GEN-LAST:event_guiMarkButtonActionPerformed
 
     private void guiMarkLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_guiMarkLabelMouseClicked
-        // TODO add your handling code here:        
         JOptionPane.showMessageDialog(null,paneGraphicalSymbolChooser,"",JOptionPane.PLAIN_MESSAGE);
         firePropertyChange(PROPERTY_TARGET, null, create());
         parse(create());

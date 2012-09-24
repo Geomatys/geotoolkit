@@ -46,7 +46,8 @@ import org.opengis.style.PointSymbolizer;
 import org.opengis.style.Stroke;
 
 /**
- * This class ables to display PointSymbolizer tool pane 
+ * This class ables to display PointSymbolizer tool pane
+ *
  * @author Fabien Rétif
  */
 public class JPointSymbolizerPane extends StyleElementEditor<PointSymbolizer> {
@@ -58,11 +59,11 @@ public class JPointSymbolizerPane extends StyleElementEditor<PointSymbolizer> {
         initComponents();
         init();
     }
-    
+
     /**
      * Sets range for number component (size, rotation, opacity, displacement)
      */
-     private void init() {        
+    private void init() {
         guiRotation.setModel(1, 0, 360, 1);
         guiSize.setModel(1, 0, 200, 1);
         guiOpacity.setModel(99, 0, 100, 1);
@@ -80,10 +81,10 @@ public class JPointSymbolizerPane extends StyleElementEditor<PointSymbolizer> {
         this.layer = layer;
         guiDisplacementY.setLayer(layer);
         guiDisplacementX.setLayer(layer);
-        guiFillControlPane.setLayer(layer);
+//        guiFillControlPane.setLayer(layer);
         guiRotation.setLayer(layer);
         guiSize.setLayer(layer);
-        guiStrokeControlPane.setLayer(layer);
+//        guiStrokeControlPane.setLayer(layer);
         guiUOM.setLayer(layer);
     }
 
@@ -96,90 +97,85 @@ public class JPointSymbolizerPane extends StyleElementEditor<PointSymbolizer> {
     }
 
     /**
-     * This method parses a PointSymbolizer object. This object can contains many Graphical Symbols but here we considered that only one is used.
+     * This method parses a PointSymbolizer object. This object can contains
+     * many Graphical Symbols but here we considered that only one is used.
      * {@inheritDoc }
      */
     @Override
     public void parse(final PointSymbolizer symbol) {
         if (symbol instanceof PointSymbolizer) {
-            
+
             guiSize.parse(symbol.getGraphic().getSize());
-            guiRotation.parse((symbol.getGraphic().getRotation()));            
+            guiRotation.parse((symbol.getGraphic().getRotation()));
 
             guiDisplacementY.parse(symbol.getGraphic().getDisplacement().getDisplacementY());
             guiDisplacementX.parse(symbol.getGraphic().getDisplacement().getDisplacementX());
 //            guiGeom.setGeom(symbol.getGeometryPropertyName());
             guiUOM.parse(symbol.getUnitOfMeasure());
-            
+
             //Parsing the first graphic symbol
             Iterator<GraphicalSymbol> iterGraphic = symbol.getGraphic().graphicalSymbols().iterator();
-                        
-            if(iterGraphic.hasNext())
-            {
-                GraphicalSymbol gs = iterGraphic.next();              
-                
-                guiGraphicalSymbolControlPane.parse(gs);           
-                             
-                if (gs instanceof Mark)
-                {
-                    guiFillControlPane.setActive(true);
-                    guiStrokeControlPane.setActive(true);
-                    
-                    Mark mark = (Mark) gs;                   
-                    guiFillControlPane.parse(mark.getFill());
-                    guiStrokeControlPane.parse(mark.getStroke());                    
-                }                
-                else if (gs instanceof ExternalGraphic)
-                {
-                    guiFillControlPane.setActive(false);
-                    guiStrokeControlPane.setActive(false);       
-                    
-                }
-            }         
-           
-        }           
+
+            if (iterGraphic.hasNext()) {
+//                GraphicalSymbol gs = iterGraphic.next();
+//
+//                guiGraphicalSymbolControlPane.parse(gs);
+//
+//                if (gs instanceof Mark) {
+//                    guiFillControlPane.setActive(true);
+//                    guiStrokeControlPane.setActive(true);
+//
+//                    Mark mark = (Mark) gs;
+//                    guiFillControlPane.parse(mark.getFill());
+//                    guiStrokeControlPane.parse(mark.getStroke());
+//                } else if (gs instanceof ExternalGraphic) {
+//                    guiFillControlPane.setActive(false);
+//                    guiStrokeControlPane.setActive(false);
+//
+//                }
+            }
+
+        }
 
     }
-    
 
     /**
      * {@inheritDoc }
      */
     @Override
     public PointSymbolizer create() {
-        
-        final String name = "mySymbol";
-        final Description desc = StyleConstants.DEFAULT_DESCRIPTION;
-        final String geometry = null; //use the default geometry of the feature
-        final Unit unit = guiUOM.create();
-        final Expression offset = StyleConstants.LITERAL_ONE_FLOAT;                 
-        
-        //the visual element
-        final List<GraphicalSymbol> symbols = new ArrayList<GraphicalSymbol>();
-        final Stroke stroke = guiStrokeControlPane.create();
-        final Fill fill = guiFillControlPane.create();
-        final AnchorPoint anchor = StyleConstants.DEFAULT_ANCHOR_POINT;
-        final Displacement disp = getStyleFactory().displacement(guiDisplacementX.create(), guiDisplacementY.create());
-        final Double alpha = guiOpacity.create().evaluate(null, Double.class);
-        final Expression opacity = getFilterFactory().literal(alpha/100.d);
-        
-        final GraphicalSymbol graphicalSymbol = guiGraphicalSymbolControlPane.create();
-        GraphicalSymbol finalGraphicalSymbol = null;
-        
-        if (graphicalSymbol instanceof Mark)
-        {
-            finalGraphicalSymbol = getStyleFactory().mark(((Mark)graphicalSymbol).getWellKnownName(), stroke, fill);            
-        }
-        else
-        {
-            finalGraphicalSymbol = graphicalSymbol;
-        }
-                
-        symbols.add(finalGraphicalSymbol);
-        final Graphic graphic = getStyleFactory().graphic(symbols, opacity, guiSize.create(), guiRotation.create(), anchor, disp);           
 
-        return getStyleFactory().pointSymbolizer(name, geometry, desc, unit, graphic);      
+        return null; //TODO
         
+//        final String name = "mySymbol";
+//        final Description desc = StyleConstants.DEFAULT_DESCRIPTION;
+//        final String geometry = null; //use the default geometry of the feature
+//        final Unit unit = guiUOM.create();
+//        final Expression offset = StyleConstants.LITERAL_ONE_FLOAT;
+//
+//        //the visual element
+//        final List<GraphicalSymbol> symbols = new ArrayList<GraphicalSymbol>();
+//        final Stroke stroke = guiStrokeControlPane.create();
+//        final Fill fill = guiFillControlPane.create();
+//        final AnchorPoint anchor = StyleConstants.DEFAULT_ANCHOR_POINT;
+//        final Displacement disp = getStyleFactory().displacement(guiDisplacementX.create(), guiDisplacementY.create());
+//        final Double alpha = guiOpacity.create().evaluate(null, Double.class);
+//        final Expression opacity = getFilterFactory().literal(alpha / 100.d);
+//
+//        final GraphicalSymbol graphicalSymbol = guiGraphicalSymbolControlPane.create();
+//        GraphicalSymbol finalGraphicalSymbol = null;
+//
+//        if (graphicalSymbol instanceof Mark) {
+//            finalGraphicalSymbol = getStyleFactory().mark(((Mark) graphicalSymbol).getWellKnownName(), stroke, fill);
+//        } else {
+//            finalGraphicalSymbol = graphicalSymbol;
+//        }
+//
+//        symbols.add(finalGraphicalSymbol);
+//        final Graphic graphic = getStyleFactory().graphic(symbols, opacity, guiSize.create(), guiRotation.create(), anchor, disp);
+//
+//        return getStyleFactory().pointSymbolizer(name, geometry, desc, unit, graphic);
+
     }
 
     /**
@@ -276,12 +272,11 @@ public class JPointSymbolizerPane extends StyleElementEditor<PointSymbolizer> {
 
     private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
         // TODO add your handling code here:
-        if (PROPERTY_TARGET.equalsIgnoreCase(evt.getPropertyName())) {            
+        if (PROPERTY_TARGET.equalsIgnoreCase(evt.getPropertyName())) {
             firePropertyChange(PROPERTY_TARGET, null, create());
             parse(create());
         }
     }//GEN-LAST:event_propertyChange
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JNumberExpressionPane guiDisplacementX;
     private JNumberExpressionPane guiDisplacementY;
@@ -303,5 +298,4 @@ public class JPointSymbolizerPane extends StyleElementEditor<PointSymbolizer> {
     public void componentHidden(ComponentEvent e) {
         System.out.println(e.getComponent().getClass().getName() + " --- Hidden");
     }
-
 }

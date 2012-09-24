@@ -38,9 +38,9 @@ public class JHaloPane extends StyleElementEditor<Halo> {
     public JHaloPane() {
         super(Halo.class);
         initComponents();
-        guiHaloFillPane.setBackground(getBackground());
-        guiRadius.setModel(0d, 0d, Double.POSITIVE_INFINITY, 1d);
-        guiRadius.setExpressionUnvisible();
+//        guiHaloFillPane.setBackground(getBackground());
+//        guiRadius.setModel(0d, 0d, Double.POSITIVE_INFINITY, 1d);
+//        guiRadius.setExpressionUnvisible();
     }
 
     /**
@@ -55,12 +55,10 @@ public class JHaloPane extends StyleElementEditor<Halo> {
         jLabel6 = new JLabel();
         jLabel7 = new JLabel();
         jLabel9 = new JLabel();
-        guiRadius = new JNumberExpressionPane();
 
         setBackground(new Color(204, 204, 204));
         setMaximumSize(new Dimension(625, 32767));
         setPreferredSize(new Dimension(625, 156));
-        setSize(new Dimension(625, 0));
 
         jLabel6.setText("Halo :");
         add(jLabel6);
@@ -70,13 +68,6 @@ public class JHaloPane extends StyleElementEditor<Halo> {
 
         jLabel9.setText("Couleur :");
         add(jLabel9);
-
-        guiRadius.addPropertyChangeListener(new PropertyChangeListener() {
-            public void propertyChange(PropertyChangeEvent evt) {
-                JHaloPane.this.propertyChange(evt);
-            }
-        });
-        add(guiRadius);
     }// </editor-fold>//GEN-END:initComponents
 
     private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
@@ -85,7 +76,6 @@ public class JHaloPane extends StyleElementEditor<Halo> {
     }//GEN-LAST:event_propertyChange
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private JNumberExpressionPane guiRadius;
     private JLabel jLabel6;
     private JLabel jLabel7;
     private JLabel jLabel9;
@@ -95,13 +85,14 @@ public class JHaloPane extends StyleElementEditor<Halo> {
     public void parse(Halo target) {
         
         if(target!= null) {
-            guiRadius.parse(target.getRadius());
-            guiHaloFillPane.parse(target.getFill());
+//            guiRadius.parse(target.getRadius());
+//            guiHaloFillPane.parse(target.getFill());
         }        
     }
 
     @Override
-    public Halo create() {        
-        return getStyleFactory().halo(guiHaloFillPane.create(), guiRadius.create());
+    public Halo create() {
+        return null; //TODO
+//        return getStyleFactory().halo(guiHaloFillPane.create(), guiRadius.create());
     }
 }

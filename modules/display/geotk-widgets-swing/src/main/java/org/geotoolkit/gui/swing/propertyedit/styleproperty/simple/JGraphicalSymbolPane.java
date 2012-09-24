@@ -2,8 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Johann Sorel
- *    (C) 2011 Geomatys
+ *    (C) 2012 Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,6 +16,7 @@
  */
 package org.geotoolkit.gui.swing.propertyedit.styleproperty.simple;
 
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.gui.swing.style.JBankView;
 import org.geotoolkit.gui.swing.style.StyleBank;
 import org.geotoolkit.gui.swing.style.StyleElementEditor;
@@ -26,28 +26,25 @@ import org.opengis.style.GraphicalSymbol;
 import org.opengis.style.Mark;
 
 /**
- * Graphical symbol editor
- * @author Fabien Rétif
+ * Graphical symbol editor.
+ *
+ * @author Fabien Rétif (Geomatys)
+ * @author Johann Sorel (Geomatys)
  */
 public class JGraphicalSymbolPane extends StyleElementEditor<GraphicalSymbol> {
 
-    private MapLayer layer = null;  
-    private StyleBank model = StyleBank.getInstance();    
-    private JBankView<Mark> guiMarkPane = null;
+    private MapLayer layer = null;
+    private final JBankView<Mark> guiMarkPane = new JBankView<Mark>(Mark.class);
 
-    
-    /** 
-     * Creates new form JGraphicalSymbolPane 
+    /**
+     * Creates new form JGraphicalSymbolPane
      */
     public JGraphicalSymbolPane() {
         super(GraphicalSymbol.class);
-        initComponents();  
-        
-        guiMarkPane = new JBankView<Mark>(Mark.class);
-        guiMarkPane.setCandidates( model.getCandidates(new StyleBank.ByClassComparator(new Class[] {Mark.class}))); 
-        
-        jTabbedPane1.addTab("Formes prédéfinies", guiMarkPane);
-        
+        initComponents();
+
+        guiMarkPane.setCandidates(StyleBank.getInstance().getCandidates(new StyleBank.ByClassComparator(Mark.class)));
+        jTabbedPane1.addTab(MessageBundle.getString("wellknownedform"), guiMarkPane);
     }
 
     /**
@@ -55,7 +52,7 @@ public class JGraphicalSymbolPane extends StyleElementEditor<GraphicalSymbol> {
      */
     @Override
     public void setLayer(final MapLayer layer) {
-        this.layer = layer;   
+        this.layer = layer;
         guiExternalGraphicPane.setLayer(layer);
         guiMarkPane.setLayer(layer);
     }
@@ -64,35 +61,28 @@ public class JGraphicalSymbolPane extends StyleElementEditor<GraphicalSymbol> {
      * {@inheritDoc }
      */
     @Override
-    public MapLayer getLayer(){
+    public MapLayer getLayer() {
         return layer;
     }
-    
+
     /**
      * {@inheritDoc }
-     * This method parses a GraphicalSymbol object and sets up all graphic components in order to display it. If the object can not be parse, we display a square mark
+     * This method parses a GraphicalSymbol object and sets up all graphic
+     * components in order to display it. If the object can not be parse, we
+     * display a square mark
      */
     @Override
     public void parse(final GraphicalSymbol graphicalSymbol) {
-        
-        if (graphicalSymbol != null) { 
-            
-             if (graphicalSymbol instanceof Mark)
-                {
-                    jTabbedPane1.setSelectedComponent(guiMarkPane);
-                    guiMarkPane.parse((Mark)graphicalSymbol);
-                }                
-                else if (graphicalSymbol instanceof ExternalGraphic)
-                {
-                    jTabbedPane1.setSelectedComponent(guiExternalGraphicPane);
-                    guiExternalGraphicPane.parse((ExternalGraphic)graphicalSymbol);     
-                }                    
-             else
-                {
-                    jTabbedPane1.setSelectedComponent(guiMarkPane);
-                    guiMarkPane.parse(getStyleFactory().getSquareMark());
-                }
-                
+
+        if (graphicalSymbol instanceof Mark) {
+            jTabbedPane1.setSelectedComponent(guiMarkPane);
+            guiMarkPane.parse((Mark) graphicalSymbol);
+        } else if (graphicalSymbol instanceof ExternalGraphic) {
+            jTabbedPane1.setSelectedComponent(guiExternalGraphicPane);
+            guiExternalGraphicPane.parse((ExternalGraphic) graphicalSymbol);
+        } else {
+            jTabbedPane1.setSelectedComponent(guiMarkPane);
+            guiMarkPane.parse(getStyleFactory().getSquareMark());
         }
     }
 
@@ -101,19 +91,15 @@ public class JGraphicalSymbolPane extends StyleElementEditor<GraphicalSymbol> {
      * This method creates a Graphical Symbol object from the user selection.
      */
     @Override
-    public GraphicalSymbol create() {        
-        
+    public GraphicalSymbol create() {
         GraphicalSymbol symbol = guiExternalGraphicPane.create();
-        
-        if(symbol == null) {
+
+        if (symbol == null) {
             symbol = guiMarkPane.create();
         }
-        
+
         return symbol;
-       
     }
-    
-    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -125,7 +111,7 @@ public class JGraphicalSymbolPane extends StyleElementEditor<GraphicalSymbol> {
     private void initComponents() {
 
         jTabbedPane1 = new javax.swing.JTabbedPane();
-        guiExternalGraphicPane = new JExternalGraphicPane();
+        guiExternalGraphicPane = new org.geotoolkit.gui.swing.propertyedit.styleproperty.simple.JExternalGraphicPane();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -134,21 +120,16 @@ public class JGraphicalSymbolPane extends StyleElementEditor<GraphicalSymbol> {
                 jTabbedPane1StateChanged(evt);
             }
         });
-        jTabbedPane1.addTab("Image", guiExternalGraphicPane);
+        jTabbedPane1.addTab(MessageBundle.getString("image"), guiExternalGraphicPane); // NOI18N
 
         add(jTabbedPane1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
     private void jTabbedPane1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jTabbedPane1StateChanged
-        // TODO add your handling code here:
-
-        // To avoid NullPointerException at the startup
-        if (guiMarkPane != null) {
-            guiMarkPane.parse(null);
-            guiExternalGraphicPane.parse(null);
-        }
+        
+        guiMarkPane.parse(null);
+        guiExternalGraphicPane.parse(null);
     }//GEN-LAST:event_jTabbedPane1StateChanged
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private org.geotoolkit.gui.swing.propertyedit.styleproperty.simple.JExternalGraphicPane guiExternalGraphicPane;
     private javax.swing.JTabbedPane jTabbedPane1;

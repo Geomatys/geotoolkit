@@ -39,8 +39,8 @@ public class StatisticOp{
     private StatisticOp(){
     }
 
-    public static Map<String,Object> analyze(GridCoverageReader reader) throws CoverageStoreException {
-        return analyze( ((GridCoverage2D)reader.read(0, null)).getRenderedImage() );
+    public static Map<String,Object> analyze(GridCoverageReader reader, int imageIndex) throws CoverageStoreException {
+        return analyze( ((GridCoverage2D)reader.read(imageIndex, null)).getRenderedImage() );
     }
     
     public static Map<String,Object> analyze(RenderedImage image) {

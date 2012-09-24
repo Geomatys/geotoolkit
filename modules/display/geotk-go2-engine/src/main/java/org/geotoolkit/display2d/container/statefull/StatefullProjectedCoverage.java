@@ -72,7 +72,7 @@ public class StatefullProjectedCoverage implements ProjectedCoverage {
             try {
                 value = handler.peek();
                 if (value == null) {
-                    value = (GridCoverage2D) layer.getCoverageReader().read(0,param);
+                    value = (GridCoverage2D) layer.getCoverageReader().read(layer.getImageIndex(),param);
                 }
             } finally {
                 handler.putAndUnlock(value);

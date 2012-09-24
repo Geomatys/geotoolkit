@@ -50,6 +50,7 @@ public class DefaultCoverageMapLayer extends AbstractMapLayer implements Coverag
     private final GridCoverageReader reader;
     private final Name coverageName;
     private Query query = null;
+    private int imageIndex = 0;
 
     protected DefaultCoverageMapLayer(final CoverageReference ref, final MutableStyle style, final Name name){
         super(style);
@@ -69,6 +70,16 @@ public class DefaultCoverageMapLayer extends AbstractMapLayer implements Coverag
         this.ref = null;
         this.reader = reader;
         this.coverageName = name;
+    }
+
+    @Override
+    public int getImageIndex() {
+        return imageIndex;
+    }
+
+    @Override
+    public void setImageIndex(int index) {
+        this.imageIndex = index;
     }
 
     /**
@@ -148,7 +159,7 @@ public class DefaultCoverageMapLayer extends AbstractMapLayer implements Coverag
 
 
         try {
-            final GeneralGridGeometry geom = getCoverageReader().getGridGeometry(0);
+            final GeneralGridGeometry geom = getCoverageReader().getGridGeometry(getImageIndex());
             if(geom == null){
                 LOGGER.log(Level.WARNING, "Could not access envelope of layer {0}", getCoverageName());
                 return INFINITE;

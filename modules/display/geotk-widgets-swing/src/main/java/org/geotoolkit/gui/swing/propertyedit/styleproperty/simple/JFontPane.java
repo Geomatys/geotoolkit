@@ -16,10 +16,10 @@
  */
 package org.geotoolkit.gui.swing.propertyedit.styleproperty.simple;
 
+import java.awt.Component;
 import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import javax.swing.AbstractListModel;
 import javax.swing.GroupLayout;
@@ -29,17 +29,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.geotoolkit.gui.swing.style.StyleElementEditor;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
-import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
-import org.jdesktop.beansbinding.BeanProperty;
-import org.jdesktop.beansbinding.Binding;
-import org.jdesktop.beansbinding.BindingGroup;
-import org.jdesktop.beansbinding.Bindings;
-import org.jdesktop.beansbinding.ELProperty;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.Font;
@@ -48,6 +43,7 @@ import org.opengis.style.Font;
  * Font editor pane
  *
  * @author Fabien Rétif (Geomatys)
+ * @author Johann Sorel (Geomatys)
  */
 public class JFontPane extends StyleElementEditor<Font> {
 
@@ -64,7 +60,7 @@ public class JFontPane extends StyleElementEditor<Font> {
         //Initialize family font list with available font family
         final GraphicsEnvironment environment = GraphicsEnvironment.getLocalGraphicsEnvironment();
         final String[] nomPolices = environment.getAvailableFontFamilyNames();
-        this.familyFontList = new ArrayList(Arrays.asList(nomPolices));
+        this.familyFontList = Arrays.asList(nomPolices);
 
         guiFamilyFontList.setModel(new ListComboBoxModel(familyFontList));
 
@@ -89,7 +85,6 @@ public class JFontPane extends StyleElementEditor<Font> {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-        bindingGroup = new BindingGroup();
 
         jScrollPane1 = new JScrollPane();
         guiFamilyFontList = new JList();
@@ -101,11 +96,7 @@ public class JFontPane extends StyleElementEditor<Font> {
         guiStyle = new JTextField();
         guiSize = new JTextField();
 
-        guiFamilyFontList.setModel(new AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
+        guiFamilyFontList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         guiFamilyFontList.addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent evt) {
                 propertyChange(evt);
@@ -139,33 +130,28 @@ public class JFontPane extends StyleElementEditor<Font> {
         });
         jScrollPane3.setViewportView(guiSizeList);
 
-        Binding binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, guiFamilyFontList, ELProperty.create("${selectedElement}"), guiFontFamily, BeanProperty.create("text"));
-        bindingGroup.addBinding(binding);
-
-        binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, guiStyleList, ELProperty.create("${selectedElement}"), guiStyle, BeanProperty.create("text"));
-        bindingGroup.addBinding(binding);
-
-        binding = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, guiSizeList, ELProperty.create("${selectedElement}"), guiSize, BeanProperty.create("text"));
-        bindingGroup.addBinding(binding);
-
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(Alignment.TRAILING)
-                    .addComponent(guiFontFamily, Alignment.LEADING)
-                    .addComponent(jScrollPane1, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 229, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                    .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 183, Short.MAX_VALUE)
+                    .addComponent(guiFontFamily))
+                .addPreferredGap(ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(Alignment.LEADING, false)
-                    .addComponent(jScrollPane2, GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
-                    .addComponent(guiStyle))
-                .addGap(18, 18, 18)
+                    .addComponent(jScrollPane2)
+                    .addComponent(guiStyle, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(Alignment.LEADING, false)
-                    .addComponent(jScrollPane3, GroupLayout.DEFAULT_SIZE, 98, Short.MAX_VALUE)
-                    .addComponent(guiSize))
-                .addContainerGap())
+                    .addComponent(jScrollPane3)
+                    .addComponent(guiSize, GroupLayout.PREFERRED_SIZE, 110, GroupLayout.PREFERRED_SIZE)))
         );
+
+        layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {guiSize, jScrollPane3});
+
+        layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {guiStyle, jScrollPane2});
+
         layout.setVerticalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
@@ -174,18 +160,18 @@ public class JFontPane extends StyleElementEditor<Font> {
                     .addComponent(guiStyle, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addComponent(guiSize, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(Alignment.TRAILING)
-                    .addComponent(jScrollPane2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane3, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                    .addComponent(jScrollPane3, GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1)))
         );
-
-        bindingGroup.bind();
     }// </editor-fold>//GEN-END:initComponents
 
     private void propertyChange(ListSelectionEvent evt) {//GEN-FIRST:event_propertyChange
-        // TODO add your handling code here:
+        guiSize.setText(String.valueOf(guiSizeList.getSelectedValue()));
+        guiStyle.setText(String.valueOf(guiStyleList.getSelectedValue()));
+        guiFontFamily.setText(String.valueOf(guiFamilyFontList.getSelectedValue()));
+        
         firePropertyChange(PROPERTY_TARGET, null, create());
     }//GEN-LAST:event_propertyChange
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -198,50 +184,38 @@ public class JFontPane extends StyleElementEditor<Font> {
     private JScrollPane jScrollPane1;
     private JScrollPane jScrollPane2;
     private JScrollPane jScrollPane3;
-    private BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
 
     @Override
     public void parse(Font target) {
-        if (target != null) {
-
-            //Parsing family fonts
-            final Iterator<Expression> iterFamily = target.getFamily().iterator();
-            boolean foundFamily = false;
-            String currentFamily = "";
-            Expression exp;
-
-            while (!foundFamily && iterFamily.hasNext()) {
-                exp = iterFamily.next();
-
-                if (isStatic(exp)) {
-                    currentFamily = exp.evaluate(null, String.class);
-
-                    foundFamily = this.familyFontList.contains(ui);
-                }
-            }
-
-            if (foundFamily) {
+        if(target == null) return;
+        
+        //Parsing family fonts
+        for(Expression f : target.getFamily()){
+            if(!isStatic(f))continue;
+            final String currentFamily = f.evaluate(null, String.class);
+            if(this.familyFontList.contains(currentFamily)){
                 guiFamilyFontList.setSelectedValue(currentFamily, true);
+                break;
             }
+        }
 
-            //Parsing size
-            exp = target.getSize();
-            if (isStatic(exp)) {
-                guiSizeList.setSelectedValue(exp.evaluate(null, String.class), true);
-            }
+        //Parsing size
+        final Expression  expSize = target.getSize();
+        if (isStatic(expSize)) {
+            guiSizeList.setSelectedValue(expSize.evaluate(null, String.class), true);
+        }
 
-            //Parsing style. Warning style and weight are mixed in graphic mode
-            Expression style = target.getStyle();
-            Expression weight = target.getWeight();
+        //Parsing style. Warning style and weight are mixed in graphic mode
+        final Expression style = target.getStyle();
+        final Expression weight = target.getWeight();
 
-            if (isStatic(style) && isStatic(weight)) {
-                String w = weight.evaluate(null, String.class);
-                if (w.equalsIgnoreCase(StyleConstants.FONT_WEIGHT_BOLD_STRING)) {
-                    guiStyleList.setSelectedValue(style.evaluate(null, String.class) + " " + w, true);
-                } else {
-                    guiStyleList.setSelectedValue(style.evaluate(null, String.class), true);
-                }
+        if (isStatic(style) && isStatic(weight)) {
+            final String w = weight.evaluate(null, String.class);
+            if (w.equalsIgnoreCase(StyleConstants.FONT_WEIGHT_BOLD_STRING)) {
+                guiStyleList.setSelectedValue(style.evaluate(null, String.class) + " " + w, true);
+            } else {
+                guiStyleList.setSelectedValue(style.evaluate(null, String.class), true);
             }
         }
     }

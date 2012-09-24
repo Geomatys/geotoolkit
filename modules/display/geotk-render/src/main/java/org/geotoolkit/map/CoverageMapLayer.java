@@ -31,6 +31,17 @@ public interface CoverageMapLayer extends MapLayer{
     Name getCoverageName();
     
     /**
+     * @return int image index in reader.
+     */
+    int getImageIndex();
+    
+    /**
+     * Image index to use in the reader.
+     * @param index 
+     */
+    void setImageIndex(int index);
+    
+    /**
      * CoverageReader used to obtain GridCoverages.
      * @return GridCoverageReader
      */

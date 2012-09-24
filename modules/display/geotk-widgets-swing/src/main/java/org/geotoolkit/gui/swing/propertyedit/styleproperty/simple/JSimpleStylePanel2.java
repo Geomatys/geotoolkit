@@ -46,6 +46,7 @@ import org.geotoolkit.gui.swing.propertyedit.styleproperty.JSLDImportExportPanel
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.style.JBankPanel;
 import org.geotoolkit.gui.swing.style.JPreview;
+import org.geotoolkit.gui.swing.style.JRasterSymbolizerPane;
 import org.geotoolkit.gui.swing.style.StyleElementEditor;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
