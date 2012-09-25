@@ -305,8 +305,12 @@ public class LayerCRSPropertyPanel extends javax.swing.JPanel implements Propert
             }
             final String lineSeparator = System.getProperty("line.separator", "\n");
             if (e instanceof UnformattableObjectException) {
-                text = Vocabulary.format(Vocabulary.Keys.WARNING) + ": " + text +
-                        lineSeparator + lineSeparator + item + lineSeparator;
+                try {
+                    text = Vocabulary.format(Vocabulary.Keys.WARNING) + ": " + text +
+                            lineSeparator + lineSeparator + item + lineSeparator;
+                } catch (UnformattableObjectException ex) {
+                    //do nothing just show the exception stack trace.
+                }
             } else {
                 text = Vocabulary.format(Vocabulary.Keys.ERROR) + ": " + text + lineSeparator;
             }
