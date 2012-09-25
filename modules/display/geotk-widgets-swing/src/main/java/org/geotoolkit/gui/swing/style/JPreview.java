@@ -89,7 +89,14 @@ public class JPreview extends JComponent implements ComponentListener {
      * @param obj Parsing object
      */
     public void parse(final Object obj) {
-
+        if(this.targetObj != null && this.targetObj.equals(obj)){
+            //same object
+            return;
+        }else if(this.targetObj == null && obj == null){
+            //both null
+            return;
+        }
+        
         this.targetObj = obj;
         image = null;
         repaint();

@@ -16,12 +16,11 @@
  */
 package org.geotoolkit.gui.swing.style;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import javax.swing.DefaultBoundedRangeModel;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
 import javax.swing.JSlider;
 import javax.swing.JSpinner;
-import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -48,7 +47,7 @@ public class JNumberSliderExpressionPane extends StyleElementEditor<Expression> 
         guiSlider.setMinorTickSpacing(min);
         guiSlider.setMajorTickSpacing(max);
     }
-
+    
     @Override
     public void setLayer(final MapLayer layer) {
         super.setLayer(layer);
@@ -62,18 +61,12 @@ public class JNumberSliderExpressionPane extends StyleElementEditor<Expression> 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        GridBagConstraints gridBagConstraints;
 
-        guiNumber = new JSpinner();
         guiSlider = new JSlider();
+        guiNumber = new JSpinner();
 
-        setOpaque(false);
-
-        guiNumber.setModel(new SpinnerNumberModel());
-        guiNumber.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent evt) {
-                guiNumberStateChanged(evt);
-            }
-        });
+        setLayout(new GridBagLayout());
 
         guiSlider.setPaintLabels(true);
         guiSlider.addChangeListener(new ChangeListener() {
@@ -81,23 +74,26 @@ public class JNumberSliderExpressionPane extends StyleElementEditor<Expression> 
                 guiSliderStateChanged(evt);
             }
         });
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridwidth = GridBagConstraints.RELATIVE;
+        gridBagConstraints.gridheight = GridBagConstraints.RELATIVE;
+        gridBagConstraints.fill = GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 1.0;
+        add(guiSlider, gridBagConstraints);
 
-        GroupLayout layout = new GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(guiSlider, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(guiNumber, GroupLayout.PREFERRED_SIZE, 53, GroupLayout.PREFERRED_SIZE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(Alignment.LEADING)
-            .addComponent(guiSlider, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(guiNumber, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-        );
+        guiNumber.setModel(new SpinnerNumberModel());
+        guiNumber.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent evt) {
+                guiNumberStateChanged(evt);
+            }
+        });
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.ipadx = 24;
+        gridBagConstraints.anchor = GridBagConstraints.EAST;
+        add(guiNumber, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
 private void guiNumberStateChanged(final ChangeEvent evt) {//GEN-FIRST:event_guiNumberStateChanged

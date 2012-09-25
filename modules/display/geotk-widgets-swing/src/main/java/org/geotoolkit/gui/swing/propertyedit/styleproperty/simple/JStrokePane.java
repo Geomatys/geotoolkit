@@ -17,16 +17,21 @@
 package org.geotoolkit.gui.swing.propertyedit.styleproperty.simple;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.SwingConstants;
 import org.geotoolkit.gui.swing.misc.EmptyCellRenderer;
 import org.geotoolkit.gui.swing.style.JLineCapExpressionPane;
 import org.geotoolkit.gui.swing.style.JLineJoinExpressionPane;
@@ -42,24 +47,24 @@ import org.opengis.style.Fill;
 import org.opengis.style.Stroke;
 
 /**
- * Stroke editor
+ * Stroke editor.
  *
  * @author Fabien Rétif (Geomatys)
+ * @author Johann Sorel (Geomatys)
  */
 public class JStrokePane extends StyleElementEditor<Stroke> {
 
     private StyleBank model = StyleBank.getInstance();
     private MapLayer layer = null;
-
+    
     /**
      * Creates new form JStrokePane and initializes number graphic component
      */
     public JStrokePane() {
         super(Stroke.class);
         initComponents();
-//        guiFill.setBackground(this.getBackground());
+        guiFill.setBackground(this.getBackground());
         guiLineType.setRenderer(new LineRenderer());
-
         guiLineType.setModel(new ListComboBoxModel(model.getCandidates(new StyleBank.ByClassComparator(new Class[]{Stroke.class}))));
 
         guiWidth.setModel(0d, 0d, Double.POSITIVE_INFINITY, 0.1d);
@@ -75,7 +80,7 @@ public class JStrokePane extends StyleElementEditor<Stroke> {
     @Override
     public void setLayer(final MapLayer layer) {
         this.layer = layer;
-//        guiFill.setLayer(layer);
+        guiFill.setLayer(layer);
         guiLineCap.setLayer(layer);
         guiLineJoin.setLayer(layer);
         guiWidth.setLayer(layer);
@@ -96,12 +101,11 @@ public class JStrokePane extends StyleElementEditor<Stroke> {
     public void parse(final Stroke stroke) {
 
         if (stroke != null) {
-
             guiWidth.parse(stroke.getWidth());
             guiLineCap.parse(stroke.getLineCap());
             guiLineJoin.parse(stroke.getLineJoin());
             Fill strokeFill = getStyleFactory().fill(stroke.getGraphicFill(), stroke.getColor(), stroke.getOpacity());
-//            guiFill.parse(strokeFill);
+            guiFill.parse(strokeFill);
         }
     }
 
@@ -110,17 +114,16 @@ public class JStrokePane extends StyleElementEditor<Stroke> {
      */
     @Override
     public Stroke create() {
-        return null; //TODO
-//        Fill strokeFill = guiFill.create();
-//        final Expression dashOffset = StyleConstants.LITERAL_ZERO_FLOAT;
-//
-//        if (strokeFill.getGraphicFill() != null) {
-//            return getStyleFactory().stroke(strokeFill.getGraphicFill(), strokeFill.getColor(), strokeFill.getOpacity(), guiWidth.create(), guiLineJoin.create(), guiLineCap.create(), ((Stroke) guiLineType.getSelectedItem()).getDashArray(), dashOffset);
-//        } else if (strokeFill.getColor() != null) {
-//            return getStyleFactory().stroke(strokeFill.getColor(), strokeFill.getOpacity(), guiWidth.create(), guiLineJoin.create(), guiLineCap.create(), ((Stroke) guiLineType.getSelectedItem()).getDashArray(), dashOffset);
-//        } else {
-//            return getStyleFactory().stroke();
-//        }
+        Fill strokeFill = guiFill.create();
+        final Expression dashOffset = StyleConstants.LITERAL_ZERO_FLOAT;
+
+        if (strokeFill.getGraphicFill() != null) {
+            return getStyleFactory().stroke(strokeFill.getGraphicFill(), strokeFill.getColor(), strokeFill.getOpacity(), guiWidth.create(), guiLineJoin.create(), guiLineCap.create(), ((Stroke) guiLineType.getSelectedItem()).getDashArray(), dashOffset);
+        } else if (strokeFill.getColor() != null) {
+            return getStyleFactory().stroke(strokeFill.getColor(), strokeFill.getOpacity(), guiWidth.create(), guiLineJoin.create(), guiLineCap.create(), ((Stroke) guiLineType.getSelectedItem()).getDashArray(), dashOffset);
+        } else {
+            return getStyleFactory().stroke();
+        }
     }
 
     /**
@@ -141,18 +144,15 @@ public class JStrokePane extends StyleElementEditor<Stroke> {
         guiLineCap = new JLineCapExpressionPane();
         jLabel6 = new JLabel();
         guiWidth = new JNumberExpressionPane();
+        guiFill = new JFillControlPane();
 
         jLabel1.setText("Style :");
-        add(jLabel1);
 
         jLabel3.setText("Type d'extrémité : ");
-        add(jLabel3);
 
         jLabel4.setText("Type de jointures :");
-        add(jLabel4);
 
         jLabel5.setText("Epaisseur :");
-        add(jLabel5);
 
         guiLineType.setModel(new DefaultComboBoxModel(new String[] { "ligne simple 1pt", "ligne simple 2pt", "ligne double 1pt", "ligne double 4pt" }));
         guiLineType.addItemListener(new ItemListener() {
@@ -160,20 +160,109 @@ public class JStrokePane extends StyleElementEditor<Stroke> {
                 guiLineTypeItemStateChanged(evt);
             }
         });
-        add(guiLineType);
-        add(guiLineJoin);
-        add(guiLineCap);
+
+        guiLineJoin.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JStrokePane.this.propertyChange(evt);
+            }
+        });
+
+        guiLineCap.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JStrokePane.this.propertyChange(evt);
+            }
+        });
 
         jLabel6.setText("Remplissage du trait :");
-        add(jLabel6);
-        add(guiWidth);
+
+        guiWidth.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JStrokePane.this.propertyChange(evt);
+            }
+        });
+
+        guiFill.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JStrokePane.this.propertyChange(evt);
+            }
+        });
+
+        GroupLayout layout = new GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(guiLineType, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel5)
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(guiWidth, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel4)
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(guiLineCap, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(guiLineJoin, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel6)
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(guiFill, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {jLabel3, jLabel4, jLabel5, jLabel6});
+
+        layout.setVerticalGroup(
+            layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(guiLineType, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                    .addComponent(jLabel6)
+                    .addComponent(guiFill, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                    .addComponent(jLabel3)
+                    .addComponent(guiLineJoin, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                    .addComponent(jLabel4)
+                    .addComponent(guiLineCap, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(Alignment.LEADING, false)
+                    .addComponent(guiWidth, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel5, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiLineCap, guiLineJoin, jLabel3, jLabel4});
+
+        layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiFill, jLabel6});
+
     }// </editor-fold>//GEN-END:initComponents
 
     private void guiLineTypeItemStateChanged(ItemEvent evt) {//GEN-FIRST:event_guiLineTypeItemStateChanged
-        // TODO add your handling code here:        
         guiWidth.parse(((Stroke) evt.getItem()).getWidth());
     }//GEN-LAST:event_guiLineTypeItemStateChanged
+
+    private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
+        if (PROPERTY_TARGET.equalsIgnoreCase(evt.getPropertyName())) {
+            firePropertyChange(PROPERTY_TARGET, null, create());
+        }
+    }//GEN-LAST:event_propertyChange
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private JFillControlPane guiFill;
     private JLineCapExpressionPane guiLineCap;
     private JLineJoinExpressionPane guiLineJoin;
     private JComboBox guiLineType;

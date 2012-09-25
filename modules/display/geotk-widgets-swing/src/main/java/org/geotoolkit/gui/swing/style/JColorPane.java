@@ -2,7 +2,6 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Johann Sorel
  *    (C) 2012 Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -19,7 +18,6 @@ package org.geotoolkit.gui.swing.style;
 
 import java.awt.Color;
 import java.awt.Component;
-import javax.swing.DefaultBoundedRangeModel;
 import javax.swing.JOptionPane;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 
@@ -38,7 +36,9 @@ public class JColorPane extends javax.swing.JPanel {
 
     public JColorPane(Color c) {
         initComponents();
-        guiOpacity.setModel(new DefaultBoundedRangeModel(100, 1, 0, 100));
+        guiOpacity.setMinimum(0);
+        guiOpacity.setMaximum(100);
+        guiOpacity.setValue(100);
         guiOpacity.setMinorTickSpacing(0);
         guiOpacity.setMajorTickSpacing(100);
         setColor(c);
@@ -46,7 +46,8 @@ public class JColorPane extends javax.swing.JPanel {
 
     public final Color getColor() {
         Color c = this.guiColor.getColor();
-        int alpha = this.guiOpacity.getValue();
+        int alpha = (int)((this.guiOpacity.getValue()/100f)*255f);
+        if(alpha>255) alpha = 255;
         c = new Color(c.getRed(), c.getGreen(), c.getBlue(), alpha);
         return c;
     }
@@ -79,6 +80,11 @@ public class JColorPane extends javax.swing.JPanel {
 
         guiOpacity.setMajorTickSpacing(100);
         guiOpacity.setPaintLabels(true);
+        guiOpacity.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                JColorPane.this.propertyChange(evt);
+            }
+        });
 
         jLabel1.setText(MessageBundle.getString("opacity")); // NOI18N
 
@@ -111,6 +117,11 @@ public class JColorPane extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void propertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
+        
+    }//GEN-LAST:event_propertyChange
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JColorChooser guiColor;
     private javax.swing.JSlider guiOpacity;

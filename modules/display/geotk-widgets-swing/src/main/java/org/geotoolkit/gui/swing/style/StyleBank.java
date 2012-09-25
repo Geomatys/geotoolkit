@@ -178,6 +178,14 @@ public final class StyleBank {
 
             parse(currentMark);
         }
+        
+        //load default symbolizers
+        parse(StyleConstants.DEFAULT_POINT_SYMBOLIZER);
+        parse(StyleConstants.DEFAULT_LINE_SYMBOLIZER);
+        parse(StyleConstants.DEFAULT_POLYGON_SYMBOLIZER);
+        parse(StyleConstants.DEFAULT_TEXT_SYMBOLIZER);
+        parse(StyleConstants.DEFAULT_RASTER_SYMBOLIZER);
+        
     }
 
     /**

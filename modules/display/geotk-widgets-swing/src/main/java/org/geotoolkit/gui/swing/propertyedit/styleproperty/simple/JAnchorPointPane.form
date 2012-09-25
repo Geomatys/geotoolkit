@@ -26,6 +26,9 @@
   <SubComponents>
     <Component class="javax.swing.JRadioButton" name="guiUpperLeft">
       <Properties>
+        <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+          <ComponentRef name="buttonGroup1"/>
+        </Property>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="placement_topleft" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
         </Property>
@@ -39,6 +42,9 @@
     </Component>
     <Component class="javax.swing.JRadioButton" name="guiUpper">
       <Properties>
+        <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+          <ComponentRef name="buttonGroup1"/>
+        </Property>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="placement_topmiddle" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
         </Property>
@@ -52,6 +58,9 @@
     </Component>
     <Component class="javax.swing.JRadioButton" name="guiUpperRight">
       <Properties>
+        <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+          <ComponentRef name="buttonGroup1"/>
+        </Property>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="placement_topright" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
         </Property>
@@ -65,6 +74,9 @@
     </Component>
     <Component class="javax.swing.JRadioButton" name="guiLeft">
       <Properties>
+        <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+          <ComponentRef name="buttonGroup1"/>
+        </Property>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="placement_centerleft" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
         </Property>
@@ -78,6 +90,9 @@
     </Component>
     <Component class="javax.swing.JRadioButton" name="guiCenter">
       <Properties>
+        <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+          <ComponentRef name="buttonGroup1"/>
+        </Property>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="placement_centermiddle" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
         </Property>
@@ -91,6 +106,9 @@
     </Component>
     <Component class="javax.swing.JRadioButton" name="guiRight">
       <Properties>
+        <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+          <ComponentRef name="buttonGroup1"/>
+        </Property>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="placement_centerright" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
         </Property>
@@ -104,6 +122,9 @@
     </Component>
     <Component class="javax.swing.JRadioButton" name="guiDownLeft">
       <Properties>
+        <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+          <ComponentRef name="buttonGroup1"/>
+        </Property>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="placement_bottomleft" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
         </Property>
@@ -117,6 +138,9 @@
     </Component>
     <Component class="javax.swing.JRadioButton" name="guiDown">
       <Properties>
+        <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+          <ComponentRef name="buttonGroup1"/>
+        </Property>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="placement_bottommiddle" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
         </Property>
@@ -130,6 +154,9 @@
     </Component>
     <Component class="javax.swing.JRadioButton" name="guiDownRight">
       <Properties>
+        <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+          <ComponentRef name="buttonGroup1"/>
+        </Property>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="org/geotoolkit/gui/swing/resource/Bundle.properties" key="placement_bottomright" replaceFormat="MessageBundle.getString(&quot;{key}&quot;)"/>
         </Property>

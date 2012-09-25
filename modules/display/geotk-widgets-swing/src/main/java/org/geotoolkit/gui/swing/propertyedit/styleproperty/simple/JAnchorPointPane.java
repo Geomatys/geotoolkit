@@ -142,6 +142,7 @@ public class JAnchorPointPane extends StyleElementEditor<AnchorPoint> {
 
         setLayout(new GridLayout(0, 3));
 
+        buttonGroup1.add(guiUpperLeft);
         guiUpperLeft.setText(MessageBundle.getString("placement_topleft")); // NOI18N
         guiUpperLeft.setHideActionText(true);
         guiUpperLeft.setHorizontalAlignment(SwingConstants.LEFT);
@@ -153,6 +154,7 @@ public class JAnchorPointPane extends StyleElementEditor<AnchorPoint> {
         });
         add(guiUpperLeft);
 
+        buttonGroup1.add(guiUpper);
         guiUpper.setText(MessageBundle.getString("placement_topmiddle")); // NOI18N
         guiUpper.setHideActionText(true);
         guiUpper.setHorizontalAlignment(SwingConstants.LEFT);
@@ -164,6 +166,7 @@ public class JAnchorPointPane extends StyleElementEditor<AnchorPoint> {
         });
         add(guiUpper);
 
+        buttonGroup1.add(guiUpperRight);
         guiUpperRight.setText(MessageBundle.getString("placement_topright")); // NOI18N
         guiUpperRight.setHideActionText(true);
         guiUpperRight.setHorizontalAlignment(SwingConstants.LEFT);
@@ -175,6 +178,7 @@ public class JAnchorPointPane extends StyleElementEditor<AnchorPoint> {
         });
         add(guiUpperRight);
 
+        buttonGroup1.add(guiLeft);
         guiLeft.setText(MessageBundle.getString("placement_centerleft")); // NOI18N
         guiLeft.setHideActionText(true);
         guiLeft.setHorizontalAlignment(SwingConstants.LEFT);
@@ -186,6 +190,7 @@ public class JAnchorPointPane extends StyleElementEditor<AnchorPoint> {
         });
         add(guiLeft);
 
+        buttonGroup1.add(guiCenter);
         guiCenter.setText(MessageBundle.getString("placement_centermiddle")); // NOI18N
         guiCenter.setHideActionText(true);
         guiCenter.setHorizontalAlignment(SwingConstants.LEFT);
@@ -197,6 +202,7 @@ public class JAnchorPointPane extends StyleElementEditor<AnchorPoint> {
         });
         add(guiCenter);
 
+        buttonGroup1.add(guiRight);
         guiRight.setText(MessageBundle.getString("placement_centerright")); // NOI18N
         guiRight.setHideActionText(true);
         guiRight.setHorizontalAlignment(SwingConstants.LEFT);
@@ -208,6 +214,7 @@ public class JAnchorPointPane extends StyleElementEditor<AnchorPoint> {
         });
         add(guiRight);
 
+        buttonGroup1.add(guiDownLeft);
         guiDownLeft.setText(MessageBundle.getString("placement_bottomleft")); // NOI18N
         guiDownLeft.setHideActionText(true);
         guiDownLeft.setHorizontalAlignment(SwingConstants.LEFT);
@@ -219,6 +226,7 @@ public class JAnchorPointPane extends StyleElementEditor<AnchorPoint> {
         });
         add(guiDownLeft);
 
+        buttonGroup1.add(guiDown);
         guiDown.setText(MessageBundle.getString("placement_bottommiddle")); // NOI18N
         guiDown.setHideActionText(true);
         guiDown.setHorizontalAlignment(SwingConstants.LEFT);
@@ -230,6 +238,7 @@ public class JAnchorPointPane extends StyleElementEditor<AnchorPoint> {
         });
         add(guiDown);
 
+        buttonGroup1.add(guiDownRight);
         guiDownRight.setText(MessageBundle.getString("placement_bottomright")); // NOI18N
         guiDownRight.setHideActionText(true);
         guiDownRight.setHorizontalAlignment(SwingConstants.LEFT);

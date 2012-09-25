@@ -2,8 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Johann Sorel
- *    (C) 2011 Geomatys
+ *    (C) 2012 Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,13 +16,16 @@
  */
 package org.geotoolkit.gui.swing.propertyedit.styleproperty.simple;
 
-import java.awt.Color;
-import java.awt.event.ComponentEvent;
+import java.awt.Component;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import javax.measure.unit.NonSI;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.SwingConstants;
 import org.geotoolkit.gui.swing.style.JNumberExpressionPane;
-import org.geotoolkit.gui.swing.style.JUOMPane;
 import org.geotoolkit.gui.swing.style.StyleElementEditor;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
@@ -33,6 +35,7 @@ import org.opengis.style.LineSymbolizer;
  * This class able to display LineSymbolizer tool pane
  *
  * @author Fabien Rétif (Geomatys)
+ * @author Johann Sorel (Geomatys)
  */
 public class JLineSymbolizerPane extends StyleElementEditor<LineSymbolizer> {
 
@@ -44,8 +47,8 @@ public class JLineSymbolizerPane extends StyleElementEditor<LineSymbolizer> {
     public JLineSymbolizerPane() {
         super(LineSymbolizer.class);
         initComponents();
-//        guiDisplacementX.setModel(0d, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 1d);
-//        guiDisplacementX.setExpressionUnvisible();
+        guiDisplacementX.setModel(0d, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 1d);
+        guiDisplacementX.setExpressionUnvisible();
     }
 
     /**
@@ -54,10 +57,8 @@ public class JLineSymbolizerPane extends StyleElementEditor<LineSymbolizer> {
     @Override
     public void setLayer(final MapLayer layer) {
         this.layer = layer;
-//        guiStrokeControlPane.setLayer(layer);
-//        guiDisplacementX.setLayer(layer);
-//        guiUOM.setLayer(layer);
-
+        guiStrokeControlPane.setLayer(layer);
+        guiDisplacementX.setLayer(layer);
     }
 
     /**
@@ -75,10 +76,8 @@ public class JLineSymbolizerPane extends StyleElementEditor<LineSymbolizer> {
     public void parse(final LineSymbolizer symbol) {
 
         if (symbol != null) {
-//            guiStrokeControlPane.parse(symbol.getStroke());
-//            guiDisplacementX.parse(symbol.getPerpendicularOffset());
-////            guiGeom.setGeom(symbol.getGeometryPropertyName());          
-//            guiUOM.parse(symbol.getUnitOfMeasure());
+            guiStrokeControlPane.parse(symbol.getStroke());
+            guiDisplacementX.parse(symbol.getPerpendicularOffset());
         }
     }
 
@@ -87,14 +86,13 @@ public class JLineSymbolizerPane extends StyleElementEditor<LineSymbolizer> {
      */
     @Override
     public LineSymbolizer create() {
-        return null; //TODO
-//        return getStyleFactory().lineSymbolizer(
-//                "lineSymbolizer",
-//                (String) null,
-//                StyleConstants.DEFAULT_DESCRIPTION,
-//                guiUOM.create(),
-//                guiStrokeControlPane.create(),
-//                guiDisplacementX.create());
+        return getStyleFactory().lineSymbolizer(
+                "lineSymbolizer",
+                (String) null,
+                StyleConstants.DEFAULT_DESCRIPTION,
+                NonSI.PIXEL,
+                guiStrokeControlPane.create(),
+                guiDisplacementX.create());
     }
 
     /**
@@ -108,18 +106,58 @@ public class JLineSymbolizerPane extends StyleElementEditor<LineSymbolizer> {
 
         jLabel1 = new JLabel();
         jLabel5 = new JLabel();
-        jLabel6 = new JLabel();
-
-        setBackground(new Color(204, 204, 204));
+        guiStrokeControlPane = new JStrokeControlPane();
+        guiDisplacementX = new JNumberExpressionPane();
 
         jLabel1.setText("Forme et couleur de la ligne :");
-        add(jLabel1);
 
         jLabel5.setText("Décallage X :");
-        add(jLabel5);
 
-        jLabel6.setText("Unité :");
-        add(jLabel6);
+        guiStrokeControlPane.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JLineSymbolizerPane.this.propertyChange(evt);
+            }
+        });
+
+        guiDisplacementX.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JLineSymbolizerPane.this.propertyChange(evt);
+            }
+        });
+
+        GroupLayout layout = new GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel5)
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(guiDisplacementX, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(guiStrokeControlPane, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(72, Short.MAX_VALUE))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(Alignment.LEADING, false)
+                    .addComponent(guiStrokeControlPane, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                    .addComponent(jLabel5)
+                    .addComponent(guiDisplacementX, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
+        );
+
+        layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiDisplacementX, jLabel5});
+
     }// </editor-fold>//GEN-END:initComponents
 
     private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
@@ -127,10 +165,12 @@ public class JLineSymbolizerPane extends StyleElementEditor<LineSymbolizer> {
             firePropertyChange(PROPERTY_TARGET, null, create());
         }
     }//GEN-LAST:event_propertyChange
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private JNumberExpressionPane guiDisplacementX;
+    private JStrokeControlPane guiStrokeControlPane;
     private JLabel jLabel1;
     private JLabel jLabel5;
-    private JLabel jLabel6;
     // End of variables declaration//GEN-END:variables
 
 }

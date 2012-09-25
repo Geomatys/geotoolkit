@@ -68,6 +68,9 @@
         <Property name="majorTickSpacing" type="int" value="100"/>
         <Property name="paintLabels" type="boolean" value="true"/>
       </Properties>
+      <Events>
+        <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="propertyChange"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JSeparator" name="jSeparator1">
     </Component>

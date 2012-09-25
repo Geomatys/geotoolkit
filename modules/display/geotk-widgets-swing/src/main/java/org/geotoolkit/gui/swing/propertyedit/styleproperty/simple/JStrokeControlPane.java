@@ -2,8 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Johann Sorel
- *    (C) 2011 Geomatys
+ *    (C) 2012 Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -40,15 +39,15 @@ public class JStrokeControlPane extends StyleElementEditor<Stroke> {
 
     private final JButton guiStrokeButton = new JButton();
     private final JPreview guiStrokeLabel = new JPreview();
+    private final JStrokePane paneStrokeChooser = new JStrokePane();
     private MapLayer layer = null;
-    private JStrokePane paneStrokeChooser = new JStrokePane();
 
     /**
      * Creates new form JStrokeControlPane
      */
     public JStrokeControlPane() {
         super(Stroke.class);
-        setLayout(new BorderLayout());
+        setLayout(new BorderLayout(8,8));
 
         guiStrokeButton.setText(MessageBundle.getString("change"));
         guiStrokeButton.addActionListener(new ActionListener() {
@@ -116,13 +115,13 @@ public class JStrokeControlPane extends StyleElementEditor<Stroke> {
 
     private void guiStrokeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guiStrokeButtonActionPerformed
         JOptionPane.showMessageDialog(null, paneStrokeChooser, "", JOptionPane.PLAIN_MESSAGE);
-        firePropertyChange(PROPERTY_TARGET, null, create());
         parse(create());
+        firePropertyChange(PROPERTY_TARGET, null, create());
     }
 
     private void guiStrokeLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_guiStrokeLabelMouseClicked
         JOptionPane.showMessageDialog(null, paneStrokeChooser, "", JOptionPane.PLAIN_MESSAGE);
-        firePropertyChange(PROPERTY_TARGET, null, create());
         parse(create());
+        firePropertyChange(PROPERTY_TARGET, null, create());
     }
 }

@@ -2,8 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Johann Sorel
- *    (C) 2011 Geomatys
+ *    (C) 2012 Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,21 +16,27 @@
  */
 package org.geotoolkit.gui.swing.propertyedit.styleproperty.simple;
 
-import java.awt.Color;
-import java.awt.event.ComponentEvent;
+import java.awt.Component;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import javax.measure.unit.NonSI;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.SwingConstants;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.gui.swing.style.JNumberExpressionPane;
-import org.geotoolkit.gui.swing.style.JUOMPane;
 import org.geotoolkit.gui.swing.style.StyleElementEditor;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
 import org.opengis.style.PolygonSymbolizer;
 
 /**
- * PolygonSymbolizer editor
- * @author Fabien Rétif
+ * PolygonSymbolizer editor.
+ * 
+ * @author Fabien Rétif (Geomatys)
+ * @author Johann Sorel (Geomatys)
  */
 public class JPolygonSymbolizerPane extends  StyleElementEditor<PolygonSymbolizer>  {
 
@@ -58,11 +63,10 @@ public class JPolygonSymbolizerPane extends  StyleElementEditor<PolygonSymbolize
     public void setLayer(final MapLayer layer){
         this.layer = layer;
         
-//        guiFillControlPane.setLayer(layer);
+        guiFillControlPane.setLayer(layer);
         guiDisplacementY.setLayer(layer);
         guiDisplacementX.setLayer(layer);
-//        guiStrokeControlPane.setLayer(layer);
-        guiUOM.setLayer(layer); 
+        guiStrokeControlPane.setLayer(layer);
     }
     
     /**
@@ -80,14 +84,11 @@ public class JPolygonSymbolizerPane extends  StyleElementEditor<PolygonSymbolize
     public void parse(final PolygonSymbolizer symbol) {
 
         if (symbol != null) {
-
-//            guiStrokeControlPane.parse(symbol.getStroke());
-//            guiFillControlPane.parse(symbol.getFill());
+            guiStrokeControlPane.parse(symbol.getStroke());
+            guiFillControlPane.parse(symbol.getFill());
             guiDisplacementX.parse(symbol.getDisplacement().getDisplacementX());
             guiDisplacementY.parse(symbol.getDisplacement().getDisplacementY());
-            guiOffset.parse(symbol.getPerpendicularOffset());
-            guiUOM.parse(symbol.getUnitOfMeasure());            
-//            guiGeom.setGeom(symbol.getGeometryPropertyName());          
+            guiOffset.parse(symbol.getPerpendicularOffset());  
         }
     }
 
@@ -96,16 +97,15 @@ public class JPolygonSymbolizerPane extends  StyleElementEditor<PolygonSymbolize
      */
     @Override
     public PolygonSymbolizer create(){
-        return null;
-//        return getStyleFactory().polygonSymbolizer(
-//                    "polygonSymbolizer",
-//                    (String)null,
-//                    StyleConstants.DEFAULT_DESCRIPTION,
-//                    guiUOM.create(),
-////                    guiStrokeControlPane.create(),
-////                    guiFillControlPane.create(), 
-//                    getStyleFactory().displacement(guiDisplacementX.create(),guiDisplacementY.create()),
-//                    guiOffset.create());
+        return getStyleFactory().polygonSymbolizer(
+                    "polygonSymbolizer",
+                    (String)null,
+                    StyleConstants.DEFAULT_DESCRIPTION,
+                    NonSI.PIXEL,
+                    guiStrokeControlPane.create(),
+                    guiFillControlPane.create(), 
+                    getStyleFactory().displacement(guiDisplacementX.create(),guiDisplacementY.create()),
+                    guiOffset.create());
     }
 
 
@@ -122,75 +122,144 @@ public class JPolygonSymbolizerPane extends  StyleElementEditor<PolygonSymbolize
         jLabel5 = new JLabel();
         jLabel6 = new JLabel();
         jLabel10 = new JLabel();
-        guiBorderLabel = new JLabel();
         guiDisplacementX = new JNumberExpressionPane();
         guiDisplacementY = new JNumberExpressionPane();
         guiOffset = new JNumberExpressionPane();
         guiOffsetLabel = new JLabel();
-        jLabel7 = new JLabel();
-        guiUOM = new JUOMPane();
+        guiStrokeControlPane = new JStrokeControlPane();
+        guiFillControlPane = new JFillControlPane();
 
-        setBackground(new Color(204, 204, 204));
+        jLabel2.setText(MessageBundle.getString("shapeFill")); // NOI18N
 
-        jLabel2.setText("Remplissage de la forme :");
-        add(jLabel2);
+        jLabel5.setText(MessageBundle.getString("displacementX")); // NOI18N
 
-        jLabel5.setText("Décallage X :");
-        add(jLabel5);
+        jLabel6.setText(MessageBundle.getString("displacementY")); // NOI18N
 
-        jLabel6.setText("Décallage Y :");
-        add(jLabel6);
-
-        jLabel10.setText("Bordure de la forme :");
-        add(jLabel10);
-        add(guiBorderLabel);
+        jLabel10.setText(MessageBundle.getString("shapeBorder")); // NOI18N
 
         guiDisplacementX.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
                 JPolygonSymbolizerPane.this.propertyChange(evt);
             }
         });
-        add(guiDisplacementX);
 
         guiDisplacementY.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
                 JPolygonSymbolizerPane.this.propertyChange(evt);
             }
         });
-        add(guiDisplacementY);
-        add(guiOffset);
 
-        guiOffsetLabel.setText("Largeur :");
-        add(guiOffsetLabel);
+        guiOffset.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JPolygonSymbolizerPane.this.propertyChange(evt);
+            }
+        });
 
-        jLabel7.setText("Unité :");
-        add(jLabel7);
-        add(guiUOM);
+        guiOffsetLabel.setText(MessageBundle.getString("offset")); // NOI18N
+
+        guiStrokeControlPane.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JPolygonSymbolizerPane.this.propertyChange(evt);
+            }
+        });
+
+        guiFillControlPane.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JPolygonSymbolizerPane.this.propertyChange(evt);
+            }
+        });
+
+        GroupLayout layout = new GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel10)
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(guiStrokeControlPane, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(guiFillControlPane, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel6)
+                            .addComponent(guiOffsetLabel))
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                            .addComponent(guiOffset, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(guiDisplacementX, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(guiDisplacementY, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(50, Short.MAX_VALUE))
+        );
+
+        layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {jLabel10, jLabel2});
+
+        layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {guiOffsetLabel, jLabel5, jLabel6});
+
+        layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {guiDisplacementX, guiDisplacementY, guiOffset});
+
+        layout.setVerticalGroup(
+            layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                    .addComponent(jLabel2)
+                    .addComponent(guiFillControlPane, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(Alignment.LEADING, false)
+                    .addComponent(guiStrokeControlPane, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel10, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                    .addComponent(guiOffsetLabel)
+                    .addComponent(guiOffset, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel5)
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(jLabel6))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(guiDisplacementX, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(guiDisplacementY, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiOffset, guiOffsetLabel});
+
+        layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiDisplacementX, jLabel5});
+
+        layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiDisplacementY, jLabel6});
+
+        layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiFillControlPane, jLabel2});
+
+        layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiStrokeControlPane, jLabel10});
+
     }// </editor-fold>//GEN-END:initComponents
 
     private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
-        // TODO add your handling code here:
         if (PROPERTY_TARGET.equalsIgnoreCase(evt.getPropertyName())) {
             firePropertyChange(PROPERTY_TARGET, null, create());
         }
     }//GEN-LAST:event_propertyChange
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private JLabel guiBorderLabel;
     private JNumberExpressionPane guiDisplacementX;
     private JNumberExpressionPane guiDisplacementY;
+    private JFillControlPane guiFillControlPane;
     private JNumberExpressionPane guiOffset;
     private JLabel guiOffsetLabel;
-    private JUOMPane guiUOM;
+    private JStrokeControlPane guiStrokeControlPane;
     private JLabel jLabel10;
     private JLabel jLabel2;
     private JLabel jLabel5;
     private JLabel jLabel6;
-    private JLabel jLabel7;
     // End of variables declaration//GEN-END:variables
-
-    public void componentHidden(ComponentEvent e) {
-        System.out.println(e.getComponent().getClass().getName() + " --- Hidden");
-    }
 
 }

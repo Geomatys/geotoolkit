@@ -2,8 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Johann Sorel
- *    (C) 2011 Geomatys
+ *    (C) 2012 Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,30 +16,34 @@
  */
 package org.geotoolkit.gui.swing.propertyedit.styleproperty.simple;
 
-import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
-import org.geotoolkit.gui.swing.style.JNumberExpressionPane;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.SwingConstants;
+import org.geotoolkit.gui.swing.style.JNumberSliderExpressionPane;
 import org.geotoolkit.gui.swing.style.StyleElementEditor;
 import org.opengis.style.Halo;
 
 /**
  * Text halo editor
- * @author Fabien Rétif
+ * @author Fabien Rétif (Geomatys)
+ * @author Johann Sorel (Geomatys)
  */
 public class JHaloPane extends StyleElementEditor<Halo> {
-
+    
     /**
      * Creates new form JHaloPane
      */
     public JHaloPane() {
         super(Halo.class);
         initComponents();
-//        guiHaloFillPane.setBackground(getBackground());
-//        guiRadius.setModel(0d, 0d, Double.POSITIVE_INFINITY, 1d);
-//        guiRadius.setExpressionUnvisible();
+        guiHaloFillPane.setBackground(getBackground());
+        guiRadius.setModel(0, 0, 100, 1);
     }
 
     /**
@@ -55,27 +58,81 @@ public class JHaloPane extends StyleElementEditor<Halo> {
         jLabel6 = new JLabel();
         jLabel7 = new JLabel();
         jLabel9 = new JLabel();
+        guiRadius = new JNumberSliderExpressionPane();
+        guiHaloFillPane = new JFillControlPane();
 
-        setBackground(new Color(204, 204, 204));
         setMaximumSize(new Dimension(625, 32767));
         setPreferredSize(new Dimension(625, 156));
 
         jLabel6.setText("Halo :");
-        add(jLabel6);
 
         jLabel7.setText("Rayon :");
-        add(jLabel7);
 
         jLabel9.setText("Couleur :");
-        add(jLabel9);
+
+        guiRadius.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JHaloPane.this.propertyChange(evt);
+            }
+        });
+
+        guiHaloFillPane.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JHaloPane.this.propertyChange(evt);
+            }
+        });
+
+        GroupLayout layout = new GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel6)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                            .addComponent(jLabel7)
+                            .addComponent(jLabel9))
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                            .addComponent(guiRadius, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(guiHaloFillPane, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE)))))
+                .addContainerGap())
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel6)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                    .addComponent(guiRadius, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel7))
+                .addPreferredGap(ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                    .addComponent(jLabel9)
+                    .addComponent(guiHaloFillPane, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiRadius, jLabel7});
+
+        layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiHaloFillPane, jLabel9});
+
     }// </editor-fold>//GEN-END:initComponents
 
     private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
-        // TODO add your handling code here:
-        firePropertyChange(PROPERTY_TARGET, null, create());
+       firePropertyChange(PROPERTY_TARGET, null, create());
     }//GEN-LAST:event_propertyChange
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private JFillControlPane guiHaloFillPane;
+    private JNumberSliderExpressionPane guiRadius;
     private JLabel jLabel6;
     private JLabel jLabel7;
     private JLabel jLabel9;
@@ -85,14 +142,13 @@ public class JHaloPane extends StyleElementEditor<Halo> {
     public void parse(Halo target) {
         
         if(target!= null) {
-//            guiRadius.parse(target.getRadius());
-//            guiHaloFillPane.parse(target.getFill());
+            guiRadius.parse(target.getRadius());
+            guiHaloFillPane.parse(target.getFill());
         }        
     }
 
     @Override
     public Halo create() {
-        return null; //TODO
-//        return getStyleFactory().halo(guiHaloFillPane.create(), guiRadius.create());
+        return getStyleFactory().halo(guiHaloFillPane.create(), guiRadius.create());
     }
 }

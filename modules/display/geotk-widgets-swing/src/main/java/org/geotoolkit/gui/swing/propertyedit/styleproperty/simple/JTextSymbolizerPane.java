@@ -2,8 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Johann Sorel
- *    (C) 2011 Geomatys
+ *    (C) 2012 Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,9 +16,10 @@
  */
 package org.geotoolkit.gui.swing.propertyedit.styleproperty.simple;
 
-import java.awt.Color;
+import java.awt.Component;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import javax.measure.unit.NonSI;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
@@ -29,12 +29,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.border.LineBorder;
-import org.geotoolkit.gui.swing.style.JFontPane;
-import org.geotoolkit.gui.swing.style.JHaloPane;
+import javax.swing.SwingConstants;
 import org.geotoolkit.gui.swing.style.JLabelPlacementPane;
 import org.geotoolkit.gui.swing.style.JTextExpressionPane;
-import org.geotoolkit.gui.swing.style.JUOMPane;
 import org.geotoolkit.gui.swing.style.StyleElementEditor;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.StyleConstants;
@@ -42,76 +39,68 @@ import org.opengis.style.TextSymbolizer;
 
 /**
  * TextSymbolizer editor
- * @author Fabien Rétif
+ *
+ * @author Fabien Rétif (Geomatys)
+ * @author Johann Sorel (Geomatys)
  */
-public class JTextSymbolizerPane extends StyleElementEditor<TextSymbolizer>  {
+public class JTextSymbolizerPane extends StyleElementEditor<TextSymbolizer> {
 
     private MapLayer layer = null;
-    
-    /** 
+
+    /**
      * Creates new form JTextSymbolizerPane
      */
     public JTextSymbolizerPane() {
         super(TextSymbolizer.class);
         initComponents();
-        guiHalo.setBackground(getBackground());
     }
-    
+
     /**
      * {@inheritDoc }
      */
     @Override
-    public void setLayer(final MapLayer layer){
-        this.layer = layer;        
-
-//        guiGeom.setLayer(layer);
-//        guiUOM.setLayer(layer);
-
+    public void setLayer(final MapLayer layer) {
+        this.layer = layer;
     }
-    
+
     /**
      * {@inheritDoc }
      */
     @Override
-    public MapLayer getLayer(){
+    public MapLayer getLayer() {
         return layer;
     }
- 
+
     /**
      * {@inheritDoc }
      */
     @Override
     public void parse(final TextSymbolizer text) {
-        
-        if (text != null) { 
-            
+
+        if (text != null) {
             guiLabel.parse(text.getLabel());
             guiFont.parse(text.getFont());
-//            guiFill.parse(text.getFill());
+            guiFill.parse(text.getFill());
             guiHalo.parse(text.getHalo());
             guiLabelPlacement.parse(text.getLabelPlacement());
-            
-//            guiGeom.setGeom(symbol.getGeometryPropertyName());          
-            guiUOM.parse(text.getUnitOfMeasure());
-    }
+        }
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public TextSymbolizer create(){
-        return null; //TODO
-//        return getStyleFactory().textSymbolizer(
-//                "textSymbolizer",
-//                    (String)null,
-//                    StyleConstants.DEFAULT_DESCRIPTION,
-//                    guiUOM.create(),
-//                    guiLabel.create(),
-//                    guiFont.create(), 
-//                    guiLabelPlacement.create(),
-//                    guiHalo.create(),
-//                    guiFill.create());
+    public TextSymbolizer create() {
+        return getStyleFactory().textSymbolizer(
+                "textSymbolizer",
+                    (String)null,
+                    StyleConstants.DEFAULT_DESCRIPTION,
+                    NonSI.PIXEL,
+                    guiLabel.create(),
+                    guiFont.create(), 
+                    guiLabelPlacement.create(),
+                    guiHalo.create(),
+                    guiFill.create());
     }
 
     /**
@@ -127,30 +116,16 @@ public class JTextSymbolizerPane extends StyleElementEditor<TextSymbolizer>  {
         jTabbedPane1 = new JTabbedPane();
         jPanel1 = new JPanel();
         jLabel1 = new JLabel();
-        jLabel2 = new JLabel();
-        jLabel3 = new JLabel();
-        jLabel4 = new JLabel();
         jLabel5 = new JLabel();
         jComboBox2 = new JComboBox();
         jLabel10 = new JLabel();
         guiLabel = new JTextExpressionPane();
         guiFont = new JFontPane();
+        guiFill = new JFillControlPane();
         guiHalo = new JHaloPane();
-        guiUOM = new JUOMPane();
         guiLabelPlacement = new JLabelPlacementPane();
 
-        setBackground(new Color(204, 204, 204));
-
-        jPanel1.setBackground(new Color(204, 204, 204));
-        jPanel1.setBorder(new LineBorder(new Color(102, 102, 102), 1, true));
-
         jLabel1.setText("Colonne :");
-
-        jLabel2.setText("Police :");
-
-        jLabel3.setText("Style :");
-
-        jLabel4.setText("Taille :");
 
         jLabel5.setText("Couleur :");
 
@@ -159,8 +134,13 @@ public class JTextSymbolizerPane extends StyleElementEditor<TextSymbolizer>  {
 
         jLabel10.setText("ou Libellé fixe :");
 
-        guiFont.setBackground(new Color(204, 204, 204));
         guiFont.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JTextSymbolizerPane.this.propertyChange(evt);
+            }
+        });
+
+        guiFill.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
                 JTextSymbolizerPane.this.propertyChange(evt);
             }
@@ -172,44 +152,36 @@ public class JTextSymbolizerPane extends StyleElementEditor<TextSymbolizer>  {
             }
         });
 
-        guiUOM.addPropertyChangeListener(new PropertyChangeListener() {
-            public void propertyChange(PropertyChangeEvent evt) {
-                JTextSymbolizerPane.this.propertyChange(evt);
-            }
-        });
-
         GroupLayout jPanel1Layout = new GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(guiHalo, GroupLayout.PREFERRED_SIZE, 640, GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createParallelGroup(Alignment.TRAILING, false)
-                        .addComponent(guiFont, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addGap(18, 18, 18)
-                                .addComponent(jComboBox2, GroupLayout.PREFERRED_SIZE, 200, GroupLayout.PREFERRED_SIZE)
-                                .addGap(165, 165, 165)
-                                .addComponent(guiLabel, GroupLayout.PREFERRED_SIZE, 188, GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jLabel5, GroupLayout.PREFERRED_SIZE, 270, GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel1Layout.createParallelGroup(Alignment.TRAILING)
-                                .addComponent(jLabel10)
-                                .addGroup(jPanel1Layout.createSequentialGroup()
-                                    .addComponent(jLabel2)
-                                    .addGap(205, 205, 205)
-                                    .addComponent(jLabel3)
-                                    .addGap(75, 75, 75)
-                                    .addComponent(jLabel4)))))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(282, 282, 282)
-                        .addComponent(guiUOM, GroupLayout.PREFERRED_SIZE, 355, GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(guiHalo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
+                            .addComponent(guiFont, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(jLabel1)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(jComboBox2, GroupLayout.PREFERRED_SIZE, 200, GroupLayout.PREFERRED_SIZE)
+                                        .addGap(165, 165, 165)
+                                        .addComponent(guiLabel, GroupLayout.PREFERRED_SIZE, 188, GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addGap(311, 311, 311)
+                                        .addComponent(jLabel10))
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(jLabel5)
+                                        .addPreferredGap(ComponentPlacement.RELATED)
+                                        .addComponent(guiFill, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+                                .addGap(0, 54, Short.MAX_VALUE)))
+                        .addContainerGap())))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(Alignment.LEADING)
@@ -221,25 +193,21 @@ public class JTextSymbolizerPane extends StyleElementEditor<TextSymbolizer>  {
                         .addComponent(jComboBox2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel10))
                     .addComponent(guiLabel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel2))
-                .addPreferredGap(ComponentPlacement.RELATED)
+                .addPreferredGap(ComponentPlacement.UNRELATED)
                 .addComponent(guiFont, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(jLabel5, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(guiHalo, GroupLayout.PREFERRED_SIZE, 174, GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
+                    .addComponent(jLabel5)
+                    .addComponent(guiFill, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(guiUOM, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)
+                .addComponent(guiHalo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
+        jPanel1Layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiFill, jLabel5});
+
         jTabbedPane1.addTab("Libellé, police et style", jPanel1);
 
-        guiLabelPlacement.setBorder(new LineBorder(new Color(102, 102, 102), 1, true));
         guiLabelPlacement.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
                 JTextSymbolizerPane.this.propertyChange(evt);
@@ -251,40 +219,29 @@ public class JTextSymbolizerPane extends StyleElementEditor<TextSymbolizer>  {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(18, 18, 18)
-                .addComponent(jTabbedPane1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(17, Short.MAX_VALUE))
+            .addComponent(jTabbedPane1)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(17, 17, 17)
-                .addComponent(jTabbedPane1, GroupLayout.DEFAULT_SIZE, 627, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(jTabbedPane1)
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange
-        // TODO add your handling code here:
         if (PROPERTY_TARGET.equalsIgnoreCase(evt.getPropertyName())) {
             firePropertyChange(PROPERTY_TARGET, null, create());
         }
     }//GEN-LAST:event_propertyChange
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private ButtonGroup buttonGroup1;
+    private JFillControlPane guiFill;
     private JFontPane guiFont;
     private JHaloPane guiHalo;
     private JTextExpressionPane guiLabel;
     private JLabelPlacementPane guiLabelPlacement;
-    private JUOMPane guiUOM;
     private JComboBox jComboBox2;
     private JLabel jLabel1;
     private JLabel jLabel10;
-    private JLabel jLabel2;
-    private JLabel jLabel3;
-    private JLabel jLabel4;
     private JLabel jLabel5;
     private JPanel jPanel1;
     private JTabbedPane jTabbedPane1;

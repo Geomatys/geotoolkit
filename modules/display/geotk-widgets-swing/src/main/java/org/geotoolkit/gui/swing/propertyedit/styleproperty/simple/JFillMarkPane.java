@@ -2,8 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Johann Sorel
- *    (C) 2011 Geomatys
+ *    (C) 2012 Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -21,6 +20,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import javax.swing.BorderFactory;
 import javax.swing.border.TitledBorder;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.gui.swing.style.JBankView;
 import org.geotoolkit.gui.swing.style.JColorPane;
 import org.geotoolkit.gui.swing.style.StyleBank;
@@ -40,8 +40,8 @@ import org.opengis.style.Mark;
 public class JFillMarkPane extends StyleElementEditor<Mark> {
 
     private final JColorPane guiMarkColorChooser;
+    private final StyleBank model = StyleBank.getInstance();
     private MapLayer layer = null;
-    private StyleBank model = StyleBank.getInstance();
     private JBankView<Mark> guiMarkPane = null;
 
     /**
@@ -51,11 +51,11 @@ public class JFillMarkPane extends StyleElementEditor<Mark> {
         super(Mark.class);
         guiMarkColorChooser = new JColorPane();
         setLayout(new BorderLayout());
-        guiMarkColorChooser.setBorder(BorderFactory.createTitledBorder("Couleur"));
-        add(guiMarkColorChooser, java.awt.BorderLayout.CENTER);
+        guiMarkColorChooser.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("color")));
+        add(guiMarkColorChooser, BorderLayout.CENTER);
 
         guiMarkPane = new JBankView<Mark>(Mark.class);
-        guiMarkPane.setCandidates(model.getCandidates(new StyleBank.ByClassComparator(new Class[]{Mark.class})));
+        guiMarkPane.setCandidates(model.getCandidates(new StyleBank.ByClassComparator(Mark.class)));
 
         guiMarkPane.setBorder(new TitledBorder("Forme"));
         this.add(BorderLayout.NORTH, guiMarkPane);
@@ -123,7 +123,7 @@ public class JFillMarkPane extends StyleElementEditor<Mark> {
 
         final Fill markFill = getStyleFactory().fill(
                 getStyleFactory().literal(guiMarkColorChooser.getColor()),
-                getFilterFactory().literal((double) guiMarkColorChooser.getColor().getAlpha() / 100.d));
+                getFilterFactory().literal((double) guiMarkColorChooser.getColor().getAlpha() / 255d));
 
         if (mark != null) {
             return getStyleFactory().mark(mark.getWellKnownName(), markFill, mark.getStroke());
