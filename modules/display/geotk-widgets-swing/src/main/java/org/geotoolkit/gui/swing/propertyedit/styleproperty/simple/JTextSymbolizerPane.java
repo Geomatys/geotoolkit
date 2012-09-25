@@ -21,15 +21,14 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import javax.measure.unit.NonSI;
 import javax.swing.ButtonGroup;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.gui.swing.style.JLabelPlacementPane;
 import org.geotoolkit.gui.swing.style.JTextExpressionPane;
 import org.geotoolkit.gui.swing.style.StyleElementEditor;
@@ -61,6 +60,11 @@ public class JTextSymbolizerPane extends StyleElementEditor<TextSymbolizer> {
     @Override
     public void setLayer(final MapLayer layer) {
         this.layer = layer;
+        guiLabel.setLayer(layer);
+        guiFont.setLayer(layer);
+        guiFill.setLayer(layer);
+        guiHalo.setLayer(layer);
+        guiLabelPlacement.setLayer(layer);
     }
 
     /**
@@ -115,9 +119,7 @@ public class JTextSymbolizerPane extends StyleElementEditor<TextSymbolizer> {
         buttonGroup1 = new ButtonGroup();
         jTabbedPane1 = new JTabbedPane();
         jPanel1 = new JPanel();
-        jLabel1 = new JLabel();
         jLabel5 = new JLabel();
-        jComboBox2 = new JComboBox();
         jLabel10 = new JLabel();
         guiLabel = new JTextExpressionPane();
         guiFont = new JFontPane();
@@ -125,14 +127,15 @@ public class JTextSymbolizerPane extends StyleElementEditor<TextSymbolizer> {
         guiHalo = new JHaloPane();
         guiLabelPlacement = new JLabelPlacementPane();
 
-        jLabel1.setText("Colonne :");
-
         jLabel5.setText("Couleur :");
 
-        jComboBox2.setModel(new DefaultComboBoxModel(new String[] { "Geo1", "Geo2" }));
-        jComboBox2.setSelectedIndex(-1);
+        jLabel10.setText(MessageBundle.getString("label")); // NOI18N
 
-        jLabel10.setText("ou Libellé fixe :");
+        guiLabel.addPropertyChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt) {
+                JTextSymbolizerPane.this.propertyChange(evt);
+            }
+        });
 
         guiFont.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
@@ -160,40 +163,33 @@ public class JTextSymbolizerPane extends StyleElementEditor<TextSymbolizer> {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(guiHalo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
                             .addComponent(guiFont, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(jLabel1)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(jComboBox2, GroupLayout.PREFERRED_SIZE, 200, GroupLayout.PREFERRED_SIZE)
-                                        .addGap(165, 165, 165)
-                                        .addComponent(guiLabel, GroupLayout.PREFERRED_SIZE, 188, GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addGap(311, 311, 311)
-                                        .addComponent(jLabel10))
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(jLabel5)
-                                        .addPreferredGap(ComponentPlacement.RELATED)
-                                        .addComponent(guiFill, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
-                                .addGap(0, 54, Short.MAX_VALUE)))
-                        .addContainerGap())))
+                                .addComponent(jLabel5)
+                                .addPreferredGap(ComponentPlacement.RELATED)
+                                .addComponent(guiFill, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 500, Short.MAX_VALUE)))
+                        .addContainerGap())
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(guiHalo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel10)
+                                .addPreferredGap(ComponentPlacement.RELATED)
+                                .addComponent(guiLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addGap(12, 12, 12))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(14, 14, 14)
+                .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE)
-                        .addComponent(jLabel1)
-                        .addComponent(jComboBox2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel10))
+                    .addComponent(jLabel10)
                     .addComponent(guiLabel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(ComponentPlacement.UNRELATED)
+                .addGap(14, 14, 14)
                 .addComponent(guiFont, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
@@ -205,6 +201,8 @@ public class JTextSymbolizerPane extends StyleElementEditor<TextSymbolizer> {
         );
 
         jPanel1Layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiFill, jLabel5});
+
+        jPanel1Layout.linkSize(SwingConstants.VERTICAL, new Component[] {guiLabel, jLabel10});
 
         jTabbedPane1.addTab("Libellé, police et style", jPanel1);
 
@@ -239,8 +237,6 @@ public class JTextSymbolizerPane extends StyleElementEditor<TextSymbolizer> {
     private JHaloPane guiHalo;
     private JTextExpressionPane guiLabel;
     private JLabelPlacementPane guiLabelPlacement;
-    private JComboBox jComboBox2;
-    private JLabel jLabel1;
     private JLabel jLabel10;
     private JLabel jLabel5;
     private JPanel jPanel1;

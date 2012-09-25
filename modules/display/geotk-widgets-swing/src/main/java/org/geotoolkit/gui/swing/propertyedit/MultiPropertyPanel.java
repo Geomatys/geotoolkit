@@ -22,6 +22,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.BorderFactory;
@@ -34,13 +35,14 @@ import javax.swing.JSplitPane;
 import javax.swing.JTree;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.border.BevelBorder;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
-
+import org.geotoolkit.gui.swing.misc.JImagePane;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.jdesktop.swingx.JXTitledPanel;
 import org.jdesktop.swingx.JXTree;
@@ -53,9 +55,10 @@ import org.jdesktop.swingx.JXTree;
  */
 public abstract class MultiPropertyPanel extends javax.swing.JPanel implements PropertyPane {
 
-    private List<PropertyPane> panels = new ArrayList<PropertyPane>();
+    private final List<PropertyPane> panels = new ArrayList<PropertyPane>();
+    private final DefaultTreeModel model = new DefaultTreeModel(new DefaultMutableTreeNode("Styles"));
     private PropertyPane active = null;
-    private DefaultTreeModel model = new DefaultTreeModel(new DefaultMutableTreeNode("Styles"));
+    
 
     /** Creates new form MultiPropertyPanel */
     public MultiPropertyPanel() {
@@ -81,6 +84,8 @@ public abstract class MultiPropertyPanel extends javax.swing.JPanel implements P
                         }
                     }
                 });
+        
+        guiTabIndex.add(BorderLayout.SOUTH, guiImage);        
 
     }
 
@@ -108,6 +113,14 @@ public abstract class MultiPropertyPanel extends javax.swing.JPanel implements P
 
     public boolean setSelectedPropertyPanel(final PropertyPane panel) {
 
+        guiImage.setBorder(null);
+        guiImage.setImage(null);
+        guiImage.setPreferredSize(new Dimension(1, 1));
+        guiImage.revalidate();
+        guiView.revalidate();
+        guiView.repaint();
+        
+        
         if (panel != null) {
             if (panels.contains(panel)) {
                 active = panel;
@@ -122,15 +135,26 @@ public abstract class MultiPropertyPanel extends javax.swing.JPanel implements P
                             }
                         });
 
+                final Image img = panel.getPreview();
+                guiImage.setImage(img);
+                if(img != null){
+                    guiImage.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+                    guiImage.setPreferredSize(new Dimension(100, 140));
+                    guiImage.revalidate();
+                    guiView.revalidate();
+                    guiView.repaint();
+                }
+                
                 return true;
             }
+            
         }else{
             active = null;
             panprop.removeAll();
             panprop.revalidate();
             panprop.repaint();
         }
-
+        
         return false;
     }
 
@@ -143,17 +167,21 @@ public abstract class MultiPropertyPanel extends javax.swing.JPanel implements P
     private void initComponents() {
 
         jSplitPane1 = new JSplitPane();
-        jXTitledPanel1 = new JXTitledPanel();
+        guiView = new JPanel();
+        guiTabIndex = new JXTitledPanel();
         jScrollPane1 = new JScrollPane();
         tree = new JXTree();
+        guiImage = new JImagePane();
         panprop = new JPanel();
 
         jSplitPane1.setBorder(null);
         jSplitPane1.setDividerSize(4);
 
-        jXTitledPanel1.setBorder(BorderFactory.createEtchedBorder());
-        jXTitledPanel1.setTitle(MessageBundle.getString("property_editor")); // NOI18N
-        jXTitledPanel1.setTitleFont(jXTitledPanel1.getTitleFont().deriveFont(jXTitledPanel1.getTitleFont().getStyle() | Font.BOLD));
+        guiView.setLayout(new BorderLayout());
+
+        guiTabIndex.setBorder(BorderFactory.createEtchedBorder());
+        guiTabIndex.setTitle(MessageBundle.getString("property_editor")); // NOI18N
+        guiTabIndex.setTitleFont(guiTabIndex.getTitleFont().deriveFont(guiTabIndex.getTitleFont().getStyle() | Font.BOLD));
 
         jScrollPane1.setBorder(null);
         jScrollPane1.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -165,9 +193,27 @@ public abstract class MultiPropertyPanel extends javax.swing.JPanel implements P
         tree.setPreferredSize(new Dimension(150, 200));
         jScrollPane1.setViewportView(tree);
 
-        jXTitledPanel1.add(jScrollPane1, BorderLayout.CENTER);
+        guiTabIndex.add(jScrollPane1, BorderLayout.CENTER);
 
-        jSplitPane1.setLeftComponent(jXTitledPanel1);
+        guiView.add(guiTabIndex, BorderLayout.CENTER);
+
+        guiImage.setMinimumSize(new Dimension(1, 1));
+        guiImage.setPreferredSize(new Dimension(1, 1));
+
+        GroupLayout guiImageLayout = new GroupLayout(guiImage);
+        guiImage.setLayout(guiImageLayout);
+        guiImageLayout.setHorizontalGroup(
+            guiImageLayout.createParallelGroup(Alignment.LEADING)
+            .addGap(0, 227, Short.MAX_VALUE)
+        );
+        guiImageLayout.setVerticalGroup(
+            guiImageLayout.createParallelGroup(Alignment.LEADING)
+            .addGap(0, 1, Short.MAX_VALUE)
+        );
+
+        guiView.add(guiImage, BorderLayout.SOUTH);
+
+        jSplitPane1.setLeftComponent(guiView);
 
         panprop.setLayout(new GridLayout(1, 1));
         jSplitPane1.setRightComponent(panprop);
@@ -242,39 +288,42 @@ public abstract class MultiPropertyPanel extends javax.swing.JPanel implements P
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private JImagePane guiImage;
+    private JXTitledPanel guiTabIndex;
+    private JPanel guiView;
     private JScrollPane jScrollPane1;
     private JSplitPane jSplitPane1;
-    private JXTitledPanel jXTitledPanel1;
     private JPanel panprop;
     private JXTree tree;
     // End of variables declaration//GEN-END:variables
 
-    private class MultiTreeRenderer extends DefaultTreeCellRenderer{
+    private class MultiTreeRenderer extends DefaultTreeCellRenderer {
 
-    /** Creates a new instance of MultiTreeRenderer */
-    public MultiTreeRenderer() {
-        super();
-    }
-
-    @Override
-    public Component getTreeCellRendererComponent(final JTree tree,final Object value,final boolean sel,final boolean expanded,final boolean leaf, final int row,final boolean hasFocus) {
-        super.getTreeCellRendererComponent(tree, value, sel,expanded, leaf, row,hasFocus);
-
-        if( value instanceof DefaultMutableTreeNode){
-            DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
-            Object obj = node.getUserObject();
-            if(obj instanceof PropertyPane){
-                PropertyPane pane = (PropertyPane) obj;
-                setIcon(pane.getIcon());
-                setText(pane.getTitle());
-            }
-
+        /**
+         * Creates a new instance of MultiTreeRenderer
+         */
+        public MultiTreeRenderer() {
+            super();
         }
 
-        return this;
-    }
+        @Override
+        public Component getTreeCellRendererComponent(final JTree tree, final Object value, final boolean sel, final boolean expanded, final boolean leaf, final int row, final boolean hasFocus) {
+            super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
 
-}
+            if (value instanceof DefaultMutableTreeNode) {
+                DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
+                Object obj = node.getUserObject();
+                if (obj instanceof PropertyPane) {
+                    PropertyPane pane = (PropertyPane) obj;
+                    setIcon(pane.getIcon());
+                    setText(pane.getTitle());
+                }
+
+            }
+
+            return this;
+        }
+    }
 
 
 }

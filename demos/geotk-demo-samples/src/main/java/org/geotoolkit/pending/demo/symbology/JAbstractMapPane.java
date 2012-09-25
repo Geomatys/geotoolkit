@@ -152,7 +152,6 @@ public abstract class JAbstractMapPane extends javax.swing.JPanel {
 
         LayerStylePropertyPanel styles = new LayerStylePropertyPanel();
         styles.addPropertyPanel(new JSimpleStylePanel());
-        styles.addPropertyPanel(new JSimpleStylePanel());
         styles.addPropertyPanel(new JClassificationSingleStylePanel());
         styles.addPropertyPanel(new JClassificationIntervalStylePanel());
         styles.addPropertyPanel(new JAdvancedStylePanel());

@@ -57,11 +57,6 @@
   </Layout>
   <SubComponents>
     <Component class="javax.swing.JColorChooser" name="guiColor">
-      <Properties>
-        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-          <Color blue="bf" green="bf" red="c3" type="rgb"/>
-        </Property>
-      </Properties>
     </Component>
     <Component class="javax.swing.JSlider" name="guiOpacity">
       <Properties>

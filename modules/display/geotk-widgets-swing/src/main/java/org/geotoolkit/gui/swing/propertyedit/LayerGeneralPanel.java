@@ -19,6 +19,7 @@ package org.geotoolkit.gui.swing.propertyedit;
 
 import java.awt.Component;
 import java.awt.Font;
+import java.awt.Image;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -269,6 +270,11 @@ public class LayerGeneralPanel extends javax.swing.JPanel implements PropertyPan
         return null;
     }
 
+    @Override
+    public Image getPreview() {
+        return null;
+    }
+    
     @Override
     public String getToolTip() {
         return title;

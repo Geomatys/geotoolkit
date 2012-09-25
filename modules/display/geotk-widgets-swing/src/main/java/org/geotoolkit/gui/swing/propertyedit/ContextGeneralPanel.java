@@ -20,6 +20,7 @@ package org.geotoolkit.gui.swing.propertyedit;
 import java.awt.Component;
 
 import java.awt.Font;
+import java.awt.Image;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.ImageIcon;
@@ -130,6 +131,11 @@ public class ContextGeneralPanel extends javax.swing.JPanel implements PropertyP
         return null;
     }
 
+    @Override
+    public Image getPreview() {
+        return null;
+    }
+    
     @Override
     public String getToolTip() {
         return "General";

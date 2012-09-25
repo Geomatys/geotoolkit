@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.gui.swing.propertyedit.filterproperty;
 
+import java.awt.Image;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.cql.CQLException;
@@ -67,6 +68,11 @@ public class JCQLPropertyPanel extends JCQLEditor implements PropertyPane{
     @Override
     public void reset() {
         parse();
+    }
+
+    @Override
+    public Image getPreview() {
+        return null;
     }
 
 }

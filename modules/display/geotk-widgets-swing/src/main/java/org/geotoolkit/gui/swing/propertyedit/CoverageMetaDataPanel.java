@@ -17,6 +17,7 @@
 package org.geotoolkit.gui.swing.propertyedit;
 
 import java.awt.Component;
+import java.awt.Image;
 import javax.swing.ImageIcon;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.gui.swing.image.IIOMetadataPanel;
@@ -66,6 +67,11 @@ public class CoverageMetaDataPanel extends IIOMetadataPanel implements PropertyP
         return null;
     }
 
+    @Override
+    public Image getPreview() {
+        return null;
+    }
+    
     @Override
     public String getToolTip() {
         return "Coverage metadatas";

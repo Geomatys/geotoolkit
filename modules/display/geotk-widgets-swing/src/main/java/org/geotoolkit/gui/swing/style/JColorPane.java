@@ -76,8 +76,6 @@ public class JColorPane extends javax.swing.JPanel {
 
         setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        guiColor.setBackground(new java.awt.Color(195, 191, 191));
-
         guiOpacity.setMajorTickSpacing(100);
         guiOpacity.setPaintLabels(true);
         guiOpacity.addPropertyChangeListener(new java.beans.PropertyChangeListener() {

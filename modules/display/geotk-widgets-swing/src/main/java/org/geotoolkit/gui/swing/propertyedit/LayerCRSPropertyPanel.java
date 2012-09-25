@@ -20,6 +20,7 @@ package org.geotoolkit.gui.swing.propertyedit;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Image;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -257,6 +258,11 @@ public class LayerCRSPropertyPanel extends javax.swing.JPanel implements Propert
         return null;
     }
 
+    @Override
+    public Image getPreview() {
+        return null;
+    }
+    
     @Override
     public String getToolTip() {
         return MessageBundle.getString("crs");

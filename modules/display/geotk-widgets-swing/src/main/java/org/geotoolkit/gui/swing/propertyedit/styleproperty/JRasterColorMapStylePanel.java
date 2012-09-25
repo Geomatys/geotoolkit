@@ -28,6 +28,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -479,6 +480,11 @@ public class JRasterColorMapStylePanel extends JPanel implements PropertyPane{
         return IconBundle.getIcon("16_classification_single");
     }
 
+    @Override
+    public Image getPreview() {
+        return null;
+    }
+    
     @Override
     public String getToolTip() {
         return "";

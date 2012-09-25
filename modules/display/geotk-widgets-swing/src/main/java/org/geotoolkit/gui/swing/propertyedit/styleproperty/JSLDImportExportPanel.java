@@ -18,6 +18,7 @@
 package org.geotoolkit.gui.swing.propertyedit.styleproperty;
 
 import java.awt.Component;
+import java.awt.Image;
 import java.util.logging.Level;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -224,6 +225,11 @@ public class JSLDImportExportPanel extends javax.swing.JPanel implements Propert
         return IconBundle.getIcon("16_advanced_style");
     }
 
+    @Override
+    public Image getPreview() {
+        return null;
+    }
+    
     @Override
     public String getToolTip() {
         return "";

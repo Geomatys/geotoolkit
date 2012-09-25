@@ -20,6 +20,7 @@ package org.geotoolkit.gui.swing.propertyedit.styleproperty;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.GridLayout;
+import java.awt.Image;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -185,6 +186,11 @@ public class JAdvancedStylePanel extends StyleElementEditor implements PropertyP
     public ImageIcon getIcon() {
         return IconBundle.getIcon("16_advanced_style");
     }
+    
+    @Override
+    public Image getPreview() {
+        return null;
+    }
 
     @Override
     public String getTitle() {
@@ -222,5 +228,6 @@ public class JAdvancedStylePanel extends StyleElementEditor implements PropertyP
     JPanel pan_info;
     JStyleTree tree;
     // End of variables declaration//GEN-END:variables
+
 
 }

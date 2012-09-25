@@ -18,6 +18,7 @@
 package org.geotoolkit.gui.swing.propertyedit;
 
 import java.awt.Component;
+import java.awt.Image;
 
 import javax.swing.ImageIcon;
 
@@ -40,6 +41,8 @@ public interface PropertyPane {
     public String getTitle();
     
     public ImageIcon getIcon();
+    
+    public Image getPreview();
     
     public String getToolTip();
     

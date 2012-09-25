@@ -21,6 +21,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -177,7 +178,7 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
                 }
                 
                 
-                pan_info.removeAll();
+                guiScrollInfo.setViewportView(null);
                 guiOverviewLabel.parse(null);
                 
                 // Get all selected items
@@ -203,15 +204,15 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
                             currentEditor.setLayer(layer);
                             currentEditor.parse(item);
                             currentEditor.addPropertyChangeListener(changeListener);
-                            pan_info.add(BorderLayout.CENTER, currentEditor);
+                            guiScrollInfo.setViewportView(currentEditor);
                         }
 
                         guiOverviewLabel.parse(item);
                     }
                 }
                 
-                pan_info.revalidate();
-                pan_info.repaint();
+                guiScrollInfo.revalidate();
+                guiScrollInfo.repaint();
             }
         });
         
@@ -239,8 +240,7 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
         guiTable = new JXTable();
         jPanel2 = new JPanel();
         jLabel6 = new JLabel();
-        jScrollPropPane = new JScrollPane();
-        pan_info = new JPanel();
+        guiScrollInfo = new JScrollPane();
 
         setMinimumSize(new Dimension(820, 400));
         setLayout(new BorderLayout());
@@ -315,9 +315,6 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
         jLabel6.setFont(new Font("Lucida Grande", 1, 13)); // NOI18N
         jLabel6.setText(MessageBundle.getString("editSymbol")); // NOI18N
 
-        pan_info.setLayout(new BorderLayout());
-        jScrollPropPane.setViewportView(pan_info);
-
         GroupLayout jPanel2Layout = new GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -326,7 +323,7 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
                 .addContainerGap()
                 .addComponent(jLabel6)
                 .addContainerGap(478, Short.MAX_VALUE))
-            .addComponent(jScrollPropPane, Alignment.TRAILING)
+            .addComponent(guiScrollInfo, Alignment.TRAILING)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(Alignment.LEADING)
@@ -334,7 +331,7 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
                 .addContainerGap()
                 .addComponent(jLabel6)
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(jScrollPropPane, GroupLayout.DEFAULT_SIZE, 365, Short.MAX_VALUE))
+                .addComponent(guiScrollInfo, GroupLayout.DEFAULT_SIZE, 365, Short.MAX_VALUE))
         );
 
         jSplitPane1.setRightComponent(jPanel2);
@@ -343,7 +340,7 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(Alignment.LEADING)
-            .addComponent(jSplitPane1, GroupLayout.DEFAULT_SIZE, 820, Short.MAX_VALUE)
+            .addComponent(jSplitPane1)
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(Alignment.LEADING)
@@ -390,6 +387,11 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
         return IconBundle.getIcon("16_simple_style");
     }
 
+    @Override
+    public Image getPreview() {
+        return IconBundle.getIcon("preview_style_simple").getImage();
+    }
+    
     @Override
     public String getToolTip() {
         return "";
@@ -461,6 +463,7 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JPreview guiOverviewLabel;
+    private JScrollPane guiScrollInfo;
     private JXTable guiTable;
     private JButton jAddButton;
     private JLabel jLabel5;
@@ -470,9 +473,7 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
     private JPanel jPanel2;
     private JPanel jPanel3;
     private JScrollPane jScrollPane2;
-    private JScrollPane jScrollPropPane;
     private JSplitPane jSplitPane1;
-    private JPanel pan_info;
     // End of variables declaration//GEN-END:variables
     
     
