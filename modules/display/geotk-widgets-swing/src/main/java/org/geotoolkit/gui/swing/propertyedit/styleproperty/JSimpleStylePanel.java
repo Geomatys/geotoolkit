@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.gui.swing.propertyedit.styleproperty.simple;
+package org.geotoolkit.gui.swing.propertyedit.styleproperty;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -49,6 +49,10 @@ import org.geotoolkit.gui.swing.misc.ActionCell;
 import org.geotoolkit.gui.swing.misc.EmptyCellRenderer;
 import org.geotoolkit.gui.swing.misc.JOptionDialog;
 import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
+import org.geotoolkit.gui.swing.propertyedit.styleproperty.simple.JLineSymbolizerPane;
+import org.geotoolkit.gui.swing.propertyedit.styleproperty.simple.JPointSymbolizerPane;
+import org.geotoolkit.gui.swing.propertyedit.styleproperty.simple.JPolygonSymbolizerPane;
+import org.geotoolkit.gui.swing.propertyedit.styleproperty.simple.JTextSymbolizerPane;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.gui.swing.style.JBankPanel;
