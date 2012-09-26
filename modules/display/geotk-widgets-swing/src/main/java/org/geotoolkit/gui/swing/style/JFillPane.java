@@ -182,24 +182,7 @@ public class JFillPane extends StyleElementEditor<Fill>{
         );
     }// </editor-fold>//GEN-END:initComponents
     private void butFillActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_butFillActionPerformed
-//        JDialog dia = new JDialog();
-//
-//        JGraphicPane pane = new JGraphicPane();
-//        pane.setLayer(layer);
-//
-//        if (fill != null) {
-//            pane.parse(fill.getGraphicFill());
-//        }
-//
-//        dia.setContentPane(pane);
-//        dia.pack();
-//        dia.setLocationRelativeTo(butFill);
-//        dia.setModal(true);
-//        dia.setVisible(true);
-//
-//        fill = new StyleBuilder().createFill();
-//        
-//        fill.setGraphicFill(pane.getEdited());
+        //TODO
     }//GEN-LAST:event_butFillActionPerformed
 
     private void propertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_propertyChange

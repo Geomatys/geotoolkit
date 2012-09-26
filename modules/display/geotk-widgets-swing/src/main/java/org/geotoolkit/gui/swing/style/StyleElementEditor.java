@@ -18,25 +18,22 @@
 package org.geotoolkit.gui.swing.style;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ServiceLoader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.filter.visitor.IsStaticExpressionVisitor;
-import org.geotoolkit.gui.swing.misc.LoadingLockableUI;
+import org.geotoolkit.gui.swing.misc.JOptionDialog;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.MutableStyleFactory;
 import static org.geotoolkit.util.ArgumentChecks.*;
 import org.geotoolkit.util.logging.Logging;
-import org.jdesktop.jxlayer.JXLayer;
-import org.jdesktop.jxlayer.plaf.ext.LockableUI;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.Description;
@@ -147,14 +144,13 @@ public abstract class StyleElementEditor<T> extends JPanel {
         setLayer(layer);
         parse(target);
 
-        JDialog dialog = new JDialog();
-        dialog.setContentPane(this);
-        dialog.setModal(true);
-        dialog.pack();
-        dialog.setLocationRelativeTo(null);
-        dialog.setVisible(true);
-
-        return create();
+        int res = JOptionDialog.show(null, this, JOptionPane.OK_CANCEL_OPTION);
+        
+        if(res == JOptionPane.OK_OPTION){
+            return create();
+        }else{
+            return null;
+        }
     }
 
     protected static String descriptionTitleText(final Description desc){

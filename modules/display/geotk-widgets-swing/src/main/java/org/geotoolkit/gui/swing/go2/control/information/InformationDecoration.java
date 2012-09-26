@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.gui.swing.go2.control.information;
 
-import org.geotoolkit.gui.swing.go2.control.information.presenter.InformationPresenter;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -30,16 +29,16 @@ import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JToolBar;
+import javax.swing.WindowConstants;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
-
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.gui.swing.go2.JMap2D;
+import org.geotoolkit.gui.swing.go2.control.information.presenter.InformationPresenter;
 import org.geotoolkit.gui.swing.go2.decoration.MapDecoration;
 
 /**
@@ -129,7 +128,7 @@ public class InformationDecoration extends JLayeredPane implements MapDecoration
         frame.setResizable(true);
         frame.setIconifiable(false);
         frame.setFrameIcon(null);
-        frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         add(frame);
 
     }

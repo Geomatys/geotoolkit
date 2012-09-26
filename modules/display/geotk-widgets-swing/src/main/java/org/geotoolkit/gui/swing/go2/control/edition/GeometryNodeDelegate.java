@@ -61,7 +61,7 @@ public class GeometryNodeDelegate extends AbstractFeatureEditionDelegate {
         decoration.setNodeSelection(this.selection);
     }
     
-    private void setCurrentFeature(final Feature feature){
+    public void setCurrentFeature(final Feature feature){
         this.feature = feature;
         if(feature != null){
             this.selection.geometry = helper.toObjectiveCRS(feature);

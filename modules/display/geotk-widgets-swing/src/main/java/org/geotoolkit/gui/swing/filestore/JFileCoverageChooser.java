@@ -17,8 +17,6 @@
 package org.geotoolkit.gui.swing.filestore;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -29,6 +27,7 @@ import javax.imageio.spi.ImageReaderSpi;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import org.geotoolkit.gui.swing.misc.JOptionDialog;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.image.io.SpatialImageReader;
 import org.geotoolkit.util.logging.Logging;
@@ -225,27 +224,8 @@ public class JFileCoverageChooser extends JPanel{
     }
     
     public static Map<File,ImageReaderSpi> showDialog(){
-        final JFileCoverageChooser chooser = new JFileCoverageChooser();
-        final JDialog dialog = new JDialog();
-        
-        final JToolBar bar = new JToolBar();
-        bar.setLayout(new FlowLayout(FlowLayout.RIGHT));
-        bar.setFloatable(false);
-        bar.add(new AbstractAction(MessageBundle.getString("open")) {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dialog.dispose();
-            }
-        });
-        
-        final JPanel panel = new JPanel(new BorderLayout());
-        panel.add(BorderLayout.CENTER,chooser);        
-        panel.add(BorderLayout.SOUTH, bar);
-        dialog.setModal(true);
-        dialog.setContentPane(panel);
-        dialog.pack();
-        dialog.setLocationRelativeTo(null);
-        dialog.setVisible(true);
+        final JFileCoverageChooser chooser = new JFileCoverageChooser();        
+        JOptionDialog.show(null, chooser, JOptionPane.OK_OPTION);        
         return chooser.getSources();
     }
     

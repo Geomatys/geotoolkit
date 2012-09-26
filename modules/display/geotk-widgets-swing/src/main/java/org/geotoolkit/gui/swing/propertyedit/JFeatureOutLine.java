@@ -35,6 +35,7 @@ import javax.swing.tree.TreePath;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.gui.swing.misc.EmptyCellRenderer;
+import org.geotoolkit.gui.swing.misc.JOptionDialog;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.*;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
@@ -537,15 +538,9 @@ public class JFeatureOutLine extends Outline{
     }
 
     public static void show(final Property candidate, boolean modal){
-        final JDialog dialog = new JDialog();
         final JFeatureOutLine outline = new JFeatureOutLine();
         outline.setEdited(candidate);
-        dialog.setContentPane(new JScrollPane(outline));
-        dialog.setSize(600, 600);
-        dialog.setModal(modal);
-        dialog.setLocationRelativeTo(null);
-        dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        dialog.setVisible(true);
+        JOptionDialog.show(null, outline, JOptionPane.OK_OPTION);
     }
 
 }

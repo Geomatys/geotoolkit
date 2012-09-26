@@ -450,7 +450,7 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
         
         bankController.setClazzList(clazz);
 
-        final int result = JOptionDialog.show(bankController);
+        final int result = JOptionDialog.show(null, bankController,JOptionPane.OK_CANCEL_OPTION);
 
         if (result == JOptionPane.OK_OPTION) {
             if (bankController.getSelectedSymbol() != null) {

@@ -18,27 +18,21 @@ package org.geotoolkit.gui.swing.filestore;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.AbstractAction;
-import javax.swing.JDialog;
-import javax.swing.JPanel;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
-import javax.swing.JToolBar;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.coverage.CoverageStoreFactory;
 import org.geotoolkit.coverage.CoverageStoreFinder;
 import org.geotoolkit.gui.swing.filestore.JServerChooser.FactoryCellRenderer;
+import org.geotoolkit.gui.swing.misc.JOptionDialog;
 import org.geotoolkit.gui.swing.propertyedit.JFeatureOutLine;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.PropertyValueEditor;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
@@ -268,30 +262,10 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
             chooser.guiEditor.getEditors().addAll(editors);
         }
         chooser.setLayerSelectionVisible(layerVisible);
-        final JDialog dialog = new JDialog();
-
-        final AtomicBoolean openAction = new AtomicBoolean(false);
-        final JToolBar bar = new JToolBar();
-        bar.setLayout(new FlowLayout(FlowLayout.RIGHT));
-        bar.setFloatable(false);
-        bar.add(new AbstractAction(MessageBundle.getString("open")) {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                openAction.set(true);
-                dialog.dispose();
-            }
-        });
-
-        final JPanel panel = new JPanel(new BorderLayout());
-        panel.add(BorderLayout.CENTER,chooser);
-        panel.add(BorderLayout.SOUTH, bar);
-        dialog.setModal(true);
-        dialog.setContentPane(panel);
-        dialog.pack();
-        dialog.setLocationRelativeTo(null);
-        dialog.setVisible(true);
-
-        if(openAction.get()){
+        
+        final int res = JOptionDialog.show(null, chooser, JOptionPane.OK_OPTION);
+        
+        if (JOptionPane.OK_OPTION == res) {
             if(layerVisible){
                 return chooser.getSelectedLayers();
             }else{
@@ -302,7 +276,7 @@ private void guiConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FI
                     return Collections.singletonList(store);
                 }
             }
-        }else{
+        } else {
             return Collections.EMPTY_LIST;
         }
     }

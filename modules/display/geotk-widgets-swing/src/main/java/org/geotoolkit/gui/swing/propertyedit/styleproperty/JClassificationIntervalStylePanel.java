@@ -40,9 +40,9 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
@@ -60,6 +60,7 @@ import javax.swing.table.TableCellEditor;
 import org.geotoolkit.display2d.service.DefaultGlyphService;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.gui.swing.misc.JOptionDialog;
 import org.geotoolkit.gui.swing.propertyedit.JPropertyDialog;
 import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
 import org.geotoolkit.gui.swing.resource.IconBundle;
@@ -460,16 +461,8 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
 
     private void guiClassifyActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiClassifyActionPerformed
 
-        JAnalizePanel panel = new JAnalizePanel(analyze);
-
-        JDialog dialog = new JDialog();
-        dialog.setModal(true);
-        dialog.setAlwaysOnTop(true);
-        dialog.setContentPane(panel);
-
-        dialog.pack();
-        dialog.setLocationRelativeTo(guiClassify);
-        dialog.setVisible(true);
+        final JAnalizePanel panel = new JAnalizePanel(analyze);        
+        JOptionDialog.show(null,panel, JOptionPane.OK_CANCEL_OPTION);
 
         guiMethod.setSelectedItem(analyze.getMethod());
         guiClasses.setValue(analyze.getNbClasses());

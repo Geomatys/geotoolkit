@@ -22,26 +22,19 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
-import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.FlowLayout;
 import java.awt.Graphics2D;
-import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-import javax.swing.AbstractAction;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JPanel;
+import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
-import javax.swing.JToolBar;
 import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.CoverageStore;
 import org.geotoolkit.data.DataStore;
@@ -51,8 +44,8 @@ import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.gui.swing.misc.JOptionDialog;
 import org.geotoolkit.gui.swing.resource.IconBundle;
-import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapBuilder;
@@ -231,36 +224,15 @@ public class JLayerChooser extends javax.swing.JPanel {
     public static List<MapLayer> showDialog(Object source) throws DataStoreException{
         final JLayerChooser chooser = new JLayerChooser();
         chooser.setSource(source);
-        final JDialog dialog = new JDialog();
         
-        final AtomicBoolean openAction = new AtomicBoolean(false);
-        final JToolBar bar = new JToolBar();
-        bar.setLayout(new FlowLayout(FlowLayout.RIGHT));
-        bar.setFloatable(false);
-        bar.add(new AbstractAction(MessageBundle.getString("open")) {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                openAction.set(true);
-                dialog.dispose();
-            }
-        });
+        final int res = JOptionDialog.show(null, chooser, JOptionPane.OK_OPTION);
         
-        final JPanel panel = new JPanel(new BorderLayout());
-        panel.add(BorderLayout.CENTER,chooser);        
-        panel.add(BorderLayout.SOUTH, bar);
-        dialog.setModal(true);
-        dialog.setContentPane(panel);
-        dialog.pack();
-        dialog.setLocationRelativeTo(null);
-        dialog.setVisible(true);
-        
-        if(openAction.get()){
+        if (JOptionPane.OK_OPTION == res) {
             return chooser.getLayers();
-        }else{
+        } else {
             return Collections.EMPTY_LIST;
         }
     }
-    
     
     private class NameCellRenderer extends DefaultListCellRenderer{
 

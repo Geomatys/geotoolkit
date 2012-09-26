@@ -17,14 +17,14 @@
 package org.geotoolkit.gui.swing.propertyedit.featureeditor;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Insets;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import org.geotoolkit.gui.swing.misc.JOptionDialog;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JAdvancedStylePanel;
 import org.geotoolkit.style.DefaultMutableStyle;
 import org.opengis.feature.type.PropertyType;
@@ -79,7 +79,6 @@ public class StyleEditor extends PropertyValueEditor implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent e) {
 
-        final JDialog dialog = new JDialog();
         final JAdvancedStylePanel stylePane = new JAdvancedStylePanel();
 
         if(value == null){
@@ -88,21 +87,11 @@ public class StyleEditor extends PropertyValueEditor implements ActionListener{
 
         stylePane.parse(value);
 
-        dialog.setContentPane(stylePane);
-        dialog.pack();
-        dialog.setSize(640, 480);
-
-        final Point p = ((JComponent)e.getSource()).getLocationOnScreen();
-        p.x -= dialog.getWidth()/2;
-        p.y -= dialog.getHeight()/2;
-        if(p.x < 0) p.x=0;
-        if(p.y < 0) p.y=0;
-
-        dialog.setLocation(p);
-        dialog.setModal(true);
-        dialog.setVisible(true);
-
-        value = stylePane.create();
+        final int res = JOptionDialog.show((Component)(e.getSource()),stylePane, JOptionPane.OK_CANCEL_OPTION);
+        
+        if(JOptionPane.OK_OPTION == res){
+            value = stylePane.create();
+        }
 
         updateText();
     }

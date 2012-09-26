@@ -17,9 +17,6 @@
  */
 package org.geotoolkit.gui.swing.filestore;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -36,9 +33,9 @@ import org.geotoolkit.data.FileDataStoreFactory;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.FeatureUtilities;
+import org.geotoolkit.gui.swing.misc.JOptionDialog;
 import org.geotoolkit.gui.swing.propertyedit.JFeatureOutLine;
 import org.geotoolkit.gui.swing.propertyedit.featureeditor.PropertyValueEditor;
-import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.io.DefaultFileFilter;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.feature.type.ComplexType;
@@ -228,26 +225,7 @@ public class JFileDatastoreChooser extends javax.swing.JSplitPane {
     public static List<DataStore> showDialog(List<PropertyValueEditor> editors){
         final JFileDatastoreChooser chooser = new JFileDatastoreChooser();
         chooser.getEditors().addAll(editors);
-        final JDialog dialog = new JDialog();
-
-        final JToolBar bar = new JToolBar();
-        bar.setLayout(new FlowLayout(FlowLayout.RIGHT));
-        bar.setFloatable(false);
-        bar.add(new AbstractAction(MessageBundle.getString("open")) {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dialog.dispose();
-            }
-        });
-
-        final JPanel panel = new JPanel(new BorderLayout());
-        panel.add(BorderLayout.CENTER,chooser);
-        panel.add(BorderLayout.SOUTH, bar);
-        dialog.setModal(true);
-        dialog.setContentPane(panel);
-        dialog.pack();
-        dialog.setLocationRelativeTo(null);
-        dialog.setVisible(true);
+        JOptionDialog.show(null, chooser, JOptionPane.OK_OPTION);
         return chooser.getSources();
     }
 
