@@ -136,6 +136,12 @@ public interface FeatureCollection<F extends Feature> extends Collection<F> {
     FeatureIterator<F> iterator(Hints hints) throws DataStoreRuntimeException;
 
     /**
+     * Convinient method to update a single feature.
+     * @see #update(org.opengis.feature.type.Name, org.opengis.filter.Filter, java.util.Map)
+     */
+    void update(Feature feature) throws DataStoreException;
+    
+    /**
      * Convinient method to update a single attribut.
      * @see #update(org.opengis.feature.type.Name, org.opengis.filter.Filter, java.util.Map)
      */

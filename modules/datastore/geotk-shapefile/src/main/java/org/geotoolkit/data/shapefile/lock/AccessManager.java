@@ -339,6 +339,10 @@ public final class AccessManager {
     }
  
     private ReadableByteChannel toClosingChannel(final ReadableByteChannel channel, final boolean writing){
+        if(channel instanceof ClosingFileChannel || channel instanceof ClosingReadableByteChannel){
+            throw new RuntimeException("Wrapping an already auto closing channel.");
+        }
+        
         if(channel instanceof FileChannel){
             return new ClosingFileChannel((FileChannel)channel, writing);
         }else{
@@ -350,7 +354,7 @@ public final class AccessManager {
 
         private final ReadableByteChannel wrapped;
 
-        public ClosingReadableByteChannel(final ReadableByteChannel wrapped) {
+        private ClosingReadableByteChannel(final ReadableByteChannel wrapped) {
             this.wrapped = wrapped;
             getReadLock();
         }
@@ -379,7 +383,7 @@ public final class AccessManager {
         private final boolean write;
         private boolean closed;
 
-        public ClosingFileChannel(final FileChannel channel, final boolean write) {
+        private ClosingFileChannel(final FileChannel channel, final boolean write) {
             this.wrapped = channel;
             this.closed = false;
             this.write = write;

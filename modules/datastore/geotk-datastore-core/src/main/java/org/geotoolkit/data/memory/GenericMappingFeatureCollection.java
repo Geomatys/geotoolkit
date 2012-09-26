@@ -141,6 +141,11 @@ public class GenericMappingFeatureCollection<F extends Feature> extends Abstract
     ////////////////////////////////////////////////////////////////////////////
 
     @Override
+    public void update(Feature feature) throws DataStoreException {
+        throw new DataStoreException("Not writable");
+    }
+    
+    @Override
     public void update(final Filter filter, final AttributeDescriptor desc, final Object value) throws DataStoreException {
         throw new DataStoreException("Not writable");
     }

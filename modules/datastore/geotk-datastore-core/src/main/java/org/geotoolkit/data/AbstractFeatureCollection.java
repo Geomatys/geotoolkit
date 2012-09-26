@@ -20,8 +20,10 @@ package org.geotoolkit.data;
 import java.util.AbstractCollection;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import org.geotoolkit.data.memory.GenericEmptyFeatureIterator;
 import org.geotoolkit.data.memory.GenericFilterFeatureIterator;
@@ -37,6 +39,7 @@ import org.geotoolkit.data.query.Selector;
 import org.geotoolkit.data.query.Source;
 import org.geotoolkit.data.query.TextStatement;
 import org.geotoolkit.data.session.Session;
+import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.FeatureTypeUtilities;
@@ -46,6 +49,7 @@ import org.geotoolkit.storage.DataStoreException;
 import static org.geotoolkit.util.ArgumentChecks.*;
 import org.geotoolkit.util.collection.CloseableIterator;
 import org.opengis.feature.Feature;
+import org.opengis.feature.Property;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
@@ -227,6 +231,21 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
         return "FeatureCollection\n"+String.valueOf(getFeatureType());
     }
 
+    @Override
+    public void update(Feature feature) throws DataStoreException {
+        if(feature == null) return;
+        final Filter filter = FactoryFinder.getFilterFactory(null).id(Collections.singleton(feature.getIdentifier()));
+        
+        final Map<AttributeDescriptor,Object> map = new HashMap<AttributeDescriptor, Object>();
+        for(Property p : feature.getProperties()){
+            if(p.getDescriptor() instanceof AttributeDescriptor){
+                map.put((AttributeDescriptor)p.getDescriptor(), p.getValue());
+            }
+        }
+        
+        update(filter, map);
+    }
+    
     /**
      * {@inheritDoc }
      */

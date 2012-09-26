@@ -498,7 +498,9 @@ public class DataUtilities {
             if (active.hasNext()) {
                 return true;
             } else {
-                active.close();
+                //Do not close it, datastore often use locks, so the thread who created
+                //the iterator must close it, but the iteration might be done by another.
+                //active.close();
             }
 
             currentIndex++;

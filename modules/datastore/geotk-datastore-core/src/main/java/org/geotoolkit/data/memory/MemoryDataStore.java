@@ -377,7 +377,7 @@ public class MemoryDataStore extends AbstractDataStore{
 
         final Set<Identifier> rems = new HashSet<Identifier>();
         for(final Identifier itd : toRemove){
-            final Feature candidate = grp.features.remove(itd.getID());
+            final Feature candidate = grp.features.remove(String.valueOf(itd.getID()));
             if(candidate == null) continue;
 
             rems.add(itd);

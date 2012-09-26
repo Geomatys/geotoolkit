@@ -156,6 +156,7 @@ public abstract class ShapefileFeatureReader implements FeatureReader<SimpleFeat
      */
     @Override
     public void close() throws DataStoreRuntimeException {
+        if(closed) return;
         closed = true;
 
         Exception ex = null;
