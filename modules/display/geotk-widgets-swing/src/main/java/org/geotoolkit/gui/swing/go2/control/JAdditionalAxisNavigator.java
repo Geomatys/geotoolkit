@@ -16,12 +16,14 @@
  */
 package org.geotoolkit.gui.swing.go2.control;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -37,22 +39,30 @@ import javax.swing.plaf.basic.BasicComboBoxEditor;
 import org.geotoolkit.display.canvas.DefaultCanvasController2D;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.resource.IconBundle;
+import org.geotoolkit.map.ContextListener;
+import org.geotoolkit.map.MapContext;
+import org.geotoolkit.map.MapItem;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.crs.AbstractCRS;
 import org.geotoolkit.referencing.crs.AbstractSingleCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.referencing.cs.AbstractCS;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 import org.geotoolkit.referencing.datum.AbstractDatum;
+import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
+import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.AxisDirection;
+import org.opengis.referencing.cs.CoordinateSystem;
+import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.operation.TransformException;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class JAdditionalAxisNavigator extends JPanel{
+public class JAdditionalAxisNavigator extends JPanel implements ContextListener{
     
     private class AxisDef{
         private final JPanel pane = new JPanel(new BorderLayout());
@@ -98,9 +108,7 @@ public class JAdditionalAxisNavigator extends JPanel{
         
         guiAxis.setEditable(true);
         
-        final List values = new ArrayList();
-        values.add( DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT);
-        guiAxis.setModel(new ListComboBoxModel(values));
+        updateModel();
         guiAxis.setEditor(new BasicComboBoxEditor(){
 
             private Object anObject;
@@ -137,11 +145,22 @@ public class JAdditionalAxisNavigator extends JPanel{
 
             @Override
             public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                final Object tmpVal = value;
+                
+                if (value instanceof CoordinateReferenceSystem) {
+                    value = "";
+                }
+                
                 final JLabel lbl = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 
-                if(value instanceof CoordinateReferenceSystem){
-                    final CoordinateReferenceSystem crs = (CoordinateReferenceSystem) value;
+                if(tmpVal instanceof CoordinateReferenceSystem){
+                    final CoordinateReferenceSystem crs = (CoordinateReferenceSystem) tmpVal;
                     lbl.setText(crs.getName().getCode());
+                }
+                
+                if(tmpVal instanceof CoordinateSystemAxis){
+                    final CoordinateSystemAxis axis = (CoordinateSystemAxis) tmpVal;
+                    lbl.setText(axis.getName().getCode());
                 }
                 
                 return lbl;
@@ -156,6 +175,41 @@ public class JAdditionalAxisNavigator extends JPanel{
         add(BorderLayout.CENTER,grid);
     }
     
+    private void updateModel() {
+        final List values = new ArrayList();
+        //values.add( DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT);
+        if (map != null) {
+            final MapContext context = map.getContainer().getContext();
+            final List<MapLayer> layers = context.layers();
+            for (MapLayer mapLayer : layers) {
+                final Envelope layerBounds = mapLayer.getBounds();
+                if (layerBounds != null) {
+                    final CoordinateReferenceSystem layerCRS = layerBounds.getCoordinateReferenceSystem();
+                    final CoordinateSystem layerCS = layerCRS.getCoordinateSystem();
+                    final int nbDim = layerCS.getDimension();
+
+                    for (int i = 0; i < nbDim; i++) {
+                        final CoordinateSystemAxis axis = layerCS.getAxis(i);
+                        final AxisDirection axisDir = axis.getDirection();
+
+                        if (!axisDir.equals(AxisDirection.EAST) && !axisDir.equals(AxisDirection.WEST) && 
+                                !axisDir.equals(AxisDirection.NORTH) && !axisDir.equals(AxisDirection.SOUTH) &&
+                                !axisDir.equals(AxisDirection.PAST) && !axisDir.equals(AxisDirection.FUTURE)) {
+                            
+                            final String axisName = axis.getName().getCode();
+                            
+                            final AbstractDatum datum = new AbstractDatum(Collections.singletonMap("name", axisName));
+                            final AbstractCS customCs = new AbstractCS(Collections.singletonMap("name", axisName), axis);
+                            final AbstractCRS customCRS = new AbstractSingleCRS(Collections.singletonMap("name", axisName), datum, customCs);
+                            values.add(customCRS);
+                        }
+                    }
+                }
+            }
+        }
+        guiAxis.setModel(new ListComboBoxModel(values));
+    }
+    
     public JMap2D getMap() {
         return map;
     }
@@ -165,9 +219,16 @@ public class JAdditionalAxisNavigator extends JPanel{
         for(AxisDef def : axis){
             def.nav.setMap(map);
         }
+        if (map != null) {
+            final MapContext ctx = map.getContainer().getContext();
+            if(ctx != null){
+                ctx.addContextListener(new  Weak(this));
+            }
+        }
+        
+        updateModel();
         repaint();
     }
-    
     
     private void addAxis(){
         final Object obj = guiAxis.getSelectedItem();
@@ -199,5 +260,17 @@ public class JAdditionalAxisNavigator extends JPanel{
         grid.repaint();
     }
     
+    @Override
+    public void layerChange(CollectionChangeEvent<MapLayer> event) {
+        updateModel();
+    }
+
+    @Override
+    public void itemChange(CollectionChangeEvent<MapItem> event) {
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+    }
     
 }
