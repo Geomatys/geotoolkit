@@ -16,13 +16,24 @@
  */
 package org.geotoolkit.wms;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.measure.unit.Unit;
 import org.geotoolkit.client.CapabilitiesException;
+import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.IdentifiedObjects;
+import org.geotoolkit.referencing.crs.AbstractSingleCRS;
+import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
+import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
+import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
+import org.geotoolkit.referencing.cs.AbstractCS;
+import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
+import org.geotoolkit.referencing.cs.DiscreteReferencingFactory;
+import org.geotoolkit.referencing.datum.AbstractDatum;
 import org.geotoolkit.temporal.object.ISODateParser;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.logging.Logging;
@@ -30,8 +41,11 @@ import org.geotoolkit.wms.xml.AbstractDimension;
 import org.geotoolkit.wms.xml.AbstractLayer;
 import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
 import org.geotoolkit.wms.xml.Style;
+import org.geotoolkit.wms.xml.v130.Dimension;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.cs.AxisDirection;
+import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.util.FactoryException;
 
 /**
@@ -185,18 +199,96 @@ public final class WMSUtilities {
      * @param layername wms layer name
      * @return
      * @throws CapabilitiesException 
+   
      */
-    public static Envelope findEnvelope(final WebMapServer server, 
-            final String layername) throws CapabilitiesException{
+    public static Envelope findEnvelope(final WebMapServer server,
+            final String layername) throws CapabilitiesException {
         ArgumentChecks.ensureNonNull("server", server);
         ArgumentChecks.ensureNonNull("layer name", layername);
-        
+
         final AbstractWMSCapabilities capa = server.getCapabilities();
-        
+
         final AbstractLayer layer = capa.getLayerFromName(layername);
-        if(layer == null) return null;
+        if (layer == null) {
+            return null;
+        }
+
+        GeneralEnvelope layerEnvelope = (GeneralEnvelope) layer.getEnvelope();
+
+        final List<Dimension> dimensions = (List<Dimension>) layer.getDimension();
+        if (!dimensions.isEmpty()) {
+            final CoordinateReferenceSystem envCRS = layerEnvelope.getCoordinateReferenceSystem();
+            final List<CoordinateReferenceSystem> dimensionsCRS = new ArrayList<CoordinateReferenceSystem>();
+            dimensionsCRS.add(envCRS);
+
+            final List<Double> lower = new ArrayList<Double>();
+            final List<Double> upper = new ArrayList<Double>();
+            lower.add(layerEnvelope.getLower(0));
+            lower.add(layerEnvelope.getLower(1));
+            upper.add(layerEnvelope.getUpper(0));
+            upper.add(layerEnvelope.getUpper(1));
+
+            for (final AbstractDimension dim : dimensions) {
+
+                CoordinateReferenceSystem dimCRS = null;
+                final String dimName = dim.getName();
+                final String dimUnitSymbol = dim.getUnitSymbol();
+                final Unit<?> unit = dimUnitSymbol != null ? Unit.valueOf(dimUnitSymbol) : Unit.ONE;
+
+                //create CRS
+                if ("time".equals(dimName)) {
+                    dimCRS = DefaultTemporalCRS.JAVA;
+                } else if ("elevation".equals(dimName)) {
+                    dimCRS = DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT;
+                } else {
+                    final AbstractDatum dimDatum = new AbstractDatum(Collections.singletonMap("name", dimName));
+                    final CoordinateSystemAxis csAxis = new DefaultCoordinateSystemAxis(dimName, dimName.substring(0, 1), AxisDirection.OTHER, unit);
+                    final AbstractCS dimCs = new AbstractCS(Collections.singletonMap("name", dimName), csAxis);
+                    dimCRS = new AbstractSingleCRS(Collections.singletonMap("name", dimName), dimDatum, dimCs);
+                }
+
+                double minVal = Double.MIN_VALUE;
+                double maxVal = Double.MAX_VALUE;
+
+                //extract discret values
+                final String dimValues = dim.getValue();
+                if (dimValues != null && !DefaultTemporalCRS.JAVA.equals(dimCRS)) {
+                    final String[] dimStrArray = dimValues.split(",");
+                    final double[] dblValues = new double[dimStrArray.length];
+                    for (int i = 0; i < dimStrArray.length; i++) {
+                        dblValues[i] = Double.valueOf(dimStrArray[i]).doubleValue();
+                    }
+                    dimCRS = DiscreteReferencingFactory.createDiscreteCRS(dimCRS, dblValues);
+                    minVal = dblValues[0];
+                    maxVal = dblValues[dblValues.length - 1];
+                }
+
+                //add CRS to list
+                if (dimCRS != null) {
+                    dimensionsCRS.add(dimCRS);
+                    lower.add(minVal);
+                    upper.add(maxVal);
+                }
+            }
+
+            // build new envelope with all dimension CRSs and lower/upper ordinates.
+            if (!dimensionsCRS.isEmpty()) {
+                final CoordinateReferenceSystem outCRS = new DefaultCompoundCRS(layer.getName(), dimensionsCRS.toArray(new CoordinateReferenceSystem[dimensionsCRS.size()]));
+                layerEnvelope = new GeneralEnvelope(outCRS);
+
+                //build ordinate list like (xmin, ymin, zmin, xmax, ymax, zmax)
+                final List<Double> ordinateList = new ArrayList<Double>(lower);
+                ordinateList.addAll(upper);
+
+                final double[] ordinates = new double[ordinateList.size()];
+                for (int i = 0; i < ordinateList.size(); i++) {
+                    ordinates[i] = ordinateList.get(i);
+                }
+                layerEnvelope.setEnvelope(ordinates);
+            }
+        }
         
-        return layer.getEnvelope();
+        return layerEnvelope;
     }
 
     /**
