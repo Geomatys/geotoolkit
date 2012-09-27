@@ -629,6 +629,8 @@ public abstract class AbstractSQLDialect implements SQLDialect{
         mappings.put(Types.DATE, Date.class);
         mappings.put(Types.TIME, Time.class);
         mappings.put(Types.TIMESTAMP, Timestamp.class);
+        mappings.put(Types.BINARY, byte[].class);
+        mappings.put(Types.VARBINARY, byte[].class);
         
         mappings.put(Types.ARRAY, Array.class);
     }

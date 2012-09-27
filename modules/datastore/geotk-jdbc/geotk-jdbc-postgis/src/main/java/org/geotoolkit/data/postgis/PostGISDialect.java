@@ -175,7 +175,9 @@ public class PostGISDialect extends AbstractSQLDialect {
     public String getSqlTypeToSqlTypeNameOverride(Integer sqlType, Class clazz) {
         if(sqlType == Types.ARRAY){
             final Class sc = clazz.getComponentType();
-            if(long.class.equals(sc) || Long.class.equals(sc)){
+            if(byte.class.equals(sc) || Byte.class.equals(sc)){
+                return "bytea";
+            }else if(long.class.equals(sc) || Long.class.equals(sc)){
                 return "bigint[]";
             }else if(int.class.equals(sc) || Integer.class.equals(sc)){
                 return "integer[]";
