@@ -307,32 +307,32 @@ System.out.println("L’interface GeoAPI du type ISO " + isoName + " est " + typ
     <tgroup cols="3">
       <colspec colname="ISO"/>
       <colspec colname="JDK"/>
-      <colspec colname="Alt"/>
+      <colspec colname="Remark"/>
       <thead>
         <row>
           <entry>Type ISO</entry>
           <entry>Type JDK</entry>
-          <entry>Alternative</entry>
+          <entry>Remarques</entry>
         </row>
       </thead>
       <tbody>
         <row>
-          <entry namest="ISO" nameend="Alt" role="separator">Nombres</entry>
+          <entry namest="ISO" nameend="Remark" role="separator">Nombres</entry>
         </row>
         <row>
           <entry><classname role="OGC">Integer</classname></entry>
           <entry><classname>int</classname></entry>
-          <entry><classname>java.lang.Integer</classname></entry>
+          <entry>Parfois <classname>java.lang.Integer</classname> pour les attributs optionnels.</entry>
         </row>
         <row>
           <entry><classname role="OGC">Integer</classname> (certains cas)</entry>
           <entry><classname>long</classname></entry>
-          <entry><classname>java.lang.Long</classname></entry>
+          <entry>Parfois <classname>java.lang.Long</classname> pour les attributs optionnels.</entry>
         </row>
         <row>
           <entry><classname role="OGC">Real</classname></entry>
           <entry><classname>double</classname></entry>
-          <entry><classname>java.lang.Double</classname></entry>
+          <entry>Parfois <classname>java.lang.Double</classname> pour les attributs optionnels.</entry>
         </row>
         <row>
           <entry><classname role="OGC">Decimal</classname></entry>
@@ -345,12 +345,12 @@ System.out.println("L’interface GeoAPI du type ISO " + isoName + " est " + typ
           <entry></entry>
         </row>
         <row>
-          <entry namest="ISO" nameend="Alt" role="separator">Textes</entry>
+          <entry namest="ISO" nameend="Remark" role="separator">Textes</entry>
         </row>
         <row>
           <entry><classname role="OGC">CharacterString</classname></entry>
           <entry><classname>java.lang.String</classname></entry>
-          <entry><classname role="GeoAPI">org.opengis.util.InternationalString</classname></entry>
+          <entry>Souvent <classname role="GeoAPI">org.opengis.util.InternationalString</classname> (voir ci-dessous)</entry>
         </row>
         <row>
           <entry><classname role="OGC">Sequence&lt;Character&gt;</classname></entry>
@@ -363,7 +363,7 @@ System.out.println("L’interface GeoAPI du type ISO " + isoName + " est " + typ
           <entry></entry>
         </row>
         <row>
-          <entry namest="ISO" nameend="Alt" role="separator">Dates et heures</entry>
+          <entry namest="ISO" nameend="Remark" role="separator">Dates et heures</entry>
         </row>
         <row>
           <entry><classname role="OGC">Date</classname></entry>
@@ -381,7 +381,7 @@ System.out.println("L’interface GeoAPI du type ISO " + isoName + " est " + typ
           <entry></entry>
         </row>
         <row>
-          <entry namest="ISO" nameend="Alt" role="separator">Collections</entry>
+          <entry namest="ISO" nameend="Remark" role="separator">Collections</entry>
         </row>
         <row>
           <entry><classname role="OGC">Collection</classname></entry>
@@ -391,7 +391,8 @@ System.out.println("L’interface GeoAPI du type ISO " + isoName + " est " + typ
         <row>
           <entry><classname role="OGC">Bag</classname></entry>
           <entry><classname>java.util.Collection</classname></entry>
-          <entry></entry>
+          <entry>Un <classname role="OGC">Bag</classname> est similaire à un <classname>Set</classname>
+                 sans la restriction d’unicité.</entry>
         </row>
         <row>
           <entry><classname role="OGC">Set</classname></entry>
@@ -414,7 +415,7 @@ System.out.println("L’interface GeoAPI du type ISO " + isoName + " est " + typ
           <entry></entry>
         </row>
         <row>
-          <entry namest="ISO" nameend="Alt" role="separator">Énumérations</entry>
+          <entry namest="ISO" nameend="Remark" role="separator">Énumérations</entry>
         </row>
         <row>
           <entry><classname role="OGC">Enumeration</classname></entry>
@@ -424,15 +425,15 @@ System.out.println("L’interface GeoAPI du type ISO " + isoName + " est " + typ
         <row>
           <entry><classname role="OGC">CodeList</classname></entry>
           <entry>(pas d’équivalent)</entry>
-          <entry><classname role="GeoAPI">org.opengis.util.CodeList</classname></entry>
+          <entry>Voir <classname role="GeoAPI">org.opengis.util.CodeList</classname> ci-dessous.</entry>
         </row>
         <row>
-          <entry namest="ISO" nameend="Alt" role="separator">Divers</entry>
+          <entry namest="ISO" nameend="Remark" role="separator">Divers</entry>
         </row>
         <row>
           <entry><classname role="OGC">Boolean</classname></entry>
           <entry><classname>boolean</classname></entry>
-          <entry><classname>java.lang.Boolean</classname></entry>
+          <entry>Parfois <classname>java.lang.Boolean</classname> pour les attributs optionnels.</entry>
         </row>
         <row>
           <entry><classname role="OGC">Any</classname></entry>
@@ -453,6 +454,17 @@ System.out.println("L’interface GeoAPI du type ISO " + isoName + " est " + typ
     ou <classname role="GeoAPI">Coverage</classname> (par exemple) pour les mêmes données peu importe la langue du client.
     Les traductions peuvent être faites à la volée à l’aide d’un <classname>ResourceBundle</classname> de l’application,
     ou être fournies directement avec les données (cas des <classname role="GeoAPI">Metadata</classname> notamment).
+  </para>
+  <para>
+    Les <classname role="OGC">Enumeration</classname> correspondent aux <classname>Enum</classname> du Java.
+    Ils ont en commun de définir toutes les valeurs autorisées, sans permettre à l’utilisateur d’en ajouter.
+    Les <classname role="OGC">CodeList</classname> sont similaires à ces énumérations, excepté que les
+    utilisateurs peuvent y ajouter leurs propres éléments. Le JDK standard n’offrant pas cette possibilité,
+    GeoAPI définie une classe abstraite <classname role="GeoAPI">CodeList</classname> reproduisant certaines
+    fonctionnalités de <classname>Enum</classname> tout en étant extensible. Les extensions s’obtiennent par
+    les méthodes statiques <function class="GeoAPI">valueOf(String)</function> qui, contrairement à celle de
+    <classname>Enum</classname>, créera de nouvelles instances si le nom donné ne correspond pas au nom d’une
+    instance existante.
   </para>
 </section>
 </section>
