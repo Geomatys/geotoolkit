@@ -180,28 +180,30 @@ public class JAdditionalAxisNavigator extends JPanel implements ContextListener{
         //values.add( DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT);
         if (map != null) {
             final MapContext context = map.getContainer().getContext();
-            final List<MapLayer> layers = context.layers();
-            for (MapLayer mapLayer : layers) {
-                final Envelope layerBounds = mapLayer.getBounds();
-                if (layerBounds != null) {
-                    final CoordinateReferenceSystem layerCRS = layerBounds.getCoordinateReferenceSystem();
-                    final CoordinateSystem layerCS = layerCRS.getCoordinateSystem();
-                    final int nbDim = layerCS.getDimension();
+            if (context != null) {
+                final List<MapLayer> layers = context.layers();
+                for (MapLayer mapLayer : layers) {
+                    final Envelope layerBounds = mapLayer.getBounds();
+                    if (layerBounds != null) {
+                        final CoordinateReferenceSystem layerCRS = layerBounds.getCoordinateReferenceSystem();
+                        final CoordinateSystem layerCS = layerCRS.getCoordinateSystem();
+                        final int nbDim = layerCS.getDimension();
 
-                    for (int i = 0; i < nbDim; i++) {
-                        final CoordinateSystemAxis axis = layerCS.getAxis(i);
-                        final AxisDirection axisDir = axis.getDirection();
+                        for (int i = 0; i < nbDim; i++) {
+                            final CoordinateSystemAxis axis = layerCS.getAxis(i);
+                            final AxisDirection axisDir = axis.getDirection();
 
-                        if (!axisDir.equals(AxisDirection.EAST) && !axisDir.equals(AxisDirection.WEST) && 
-                                !axisDir.equals(AxisDirection.NORTH) && !axisDir.equals(AxisDirection.SOUTH) &&
-                                !axisDir.equals(AxisDirection.PAST) && !axisDir.equals(AxisDirection.FUTURE)) {
-                            
-                            final String axisName = axis.getName().getCode();
-                            
-                            final AbstractDatum datum = new AbstractDatum(Collections.singletonMap("name", axisName));
-                            final AbstractCS customCs = new AbstractCS(Collections.singletonMap("name", axisName), axis);
-                            final AbstractCRS customCRS = new AbstractSingleCRS(Collections.singletonMap("name", axisName), datum, customCs);
-                            values.add(customCRS);
+                            if (!axisDir.equals(AxisDirection.EAST) && !axisDir.equals(AxisDirection.WEST) && 
+                                    !axisDir.equals(AxisDirection.NORTH) && !axisDir.equals(AxisDirection.SOUTH) &&
+                                    !axisDir.equals(AxisDirection.PAST) && !axisDir.equals(AxisDirection.FUTURE)) {
+
+                                final String axisName = axis.getName().getCode();
+
+                                final AbstractDatum datum = new AbstractDatum(Collections.singletonMap("name", axisName));
+                                final AbstractCS customCs = new AbstractCS(Collections.singletonMap("name", axisName), axis);
+                                final AbstractCRS customCRS = new AbstractSingleCRS(Collections.singletonMap("name", axisName), datum, customCs);
+                                values.add(customCRS);
+                            }
                         }
                     }
                 }
