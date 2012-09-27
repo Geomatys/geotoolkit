@@ -24,9 +24,18 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import org.geotoolkit.gui.swing.misc.JOptionDialog;
+import org.geotoolkit.gui.swing.propertyedit.LayerStylePropertyPanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JAdvancedStylePanel;
+import org.geotoolkit.gui.swing.propertyedit.styleproperty.JClassificationIntervalStylePanel;
+import org.geotoolkit.gui.swing.propertyedit.styleproperty.JClassificationSingleStylePanel;
+import org.geotoolkit.gui.swing.propertyedit.styleproperty.JRasterColorMapStylePanel;
+import org.geotoolkit.gui.swing.propertyedit.styleproperty.JSimpleStylePanel;
+import org.geotoolkit.map.MapBuilder;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.DefaultMutableStyle;
+import org.geotoolkit.style.MutableStyle;
 import org.opengis.feature.type.PropertyType;
 import org.opengis.style.Style;
 
@@ -79,18 +88,27 @@ public class StyleEditor extends PropertyValueEditor implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent e) {
 
-        final JAdvancedStylePanel stylePane = new JAdvancedStylePanel();
-
         if(value == null){
             value = new DefaultMutableStyle();
         }
+        
+        final MapLayer layer = MapBuilder.createEmptyMapLayer();
+        layer.setStyle((MutableStyle)value);
 
-        stylePane.parse(value);
+        final LayerStylePropertyPanel editors = new LayerStylePropertyPanel();
+        editors.addPropertyPanel(new JSimpleStylePanel());
+        editors.addPropertyPanel(new JClassificationSingleStylePanel());
+        editors.addPropertyPanel(new JClassificationIntervalStylePanel());
+        editors.addPropertyPanel(new JRasterColorMapStylePanel());
+        editors.addPropertyPanel(new JAdvancedStylePanel());
+        editors.setTarget(layer);
+        
 
-        final int res = JOptionDialog.show((Component)(e.getSource()),stylePane, JOptionPane.OK_CANCEL_OPTION);
+        final int res = JOptionDialog.show((Component)(e.getSource()),editors, JOptionPane.OK_CANCEL_OPTION);
         
         if(JOptionPane.OK_OPTION == res){
-            value = stylePane.create();
+            editors.apply();
+            value = layer.getStyle();
         }
 
         updateText();
