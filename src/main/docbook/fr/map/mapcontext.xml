@@ -73,7 +73,7 @@
         <title>Création</title>
         
         <example>
-            <title>Code source complet : </title>
+            <title>Création d'un MapContext </title>
             <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/mapmodel/MapContextDemo.java">
                 <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/mapmodel/MapContextDemo.java</acronym>
             </link>        
@@ -124,7 +124,7 @@
         </para>
     
         <example>
-            <title>Exemple :</title>
+            <title>Création d'un MapContext</title>
             <programlisting>
                 
                     final MapItem bggroup = MapBuilder.createItem();

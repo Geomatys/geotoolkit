@@ -23,9 +23,7 @@
     </para>
     
     <example>
-        <title>
-            Exemple
-        </title>
+        <title>Lecture d'un fichier shapefile</title>
             <programlisting>
                 
                     final Map&lt;String,Serializable&gt; map = new HashMap&lt;String, Serializable&gt;();

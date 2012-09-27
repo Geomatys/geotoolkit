@@ -66,7 +66,7 @@
         </figure>
 
         <example>
-           <title>Exemple :</title>
+           <title>Création de filtre standard et Javascript</title>
             <simplelist>
                 <member>
                     <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/filter/FilterDemo.java">

@@ -172,7 +172,7 @@
         <title>JasperReportService</title>
         
         <example>
-            <title>Code source complet  :</title>
+            <title>Génération de rapport avec JasperReport</title>
             <para>
                 <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/ReportDemo.java">
                     <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/rendering/ReportDemo.java</acronym>

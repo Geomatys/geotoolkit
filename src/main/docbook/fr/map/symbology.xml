@@ -90,7 +90,7 @@
         
         </para>
         <example>
-            <title>Exemple :</title>
+            <title>Style avec plusieurs règles</title>
             <literallayout>
                 Si l'on souhaite dessiner une couche de données contenant des routes, avec des voies piétonnes et d'autres pour les voitures.
 
@@ -120,7 +120,7 @@
         <title>Création</title>
         
         <example>
-            <title>Code source complet : </title>
+            <title>Divers examples de symbologie</title>
             <para>
                 <link xlink:href="http://hg.geotoolkit.org/geotoolkit-pending/files/tip/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/symbology/Styles.java">
                     <acronym>geotoolkit-pending/demos/geotk-demo-samples/src/main/java/org/geotoolkit/pending/demo/symbology/Styles.java</acronym>

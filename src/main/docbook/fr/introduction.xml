@@ -8,6 +8,9 @@
 
 <title>Introduction</title>
   <para>
-    TODO
+Geotookit est une librairie dédiée à la cartographie, toutefois ce domaine recoupe beaucoup d'autre domaines. Y sont inclus la manipulation des images, des métadonnées, des géometries, les méchanismes de retroingénierie sur les bases de données, la sécurisation de connexion ou encore les interfaces utilisateurs.
+  </para>
+  <para>
+Aujourd'hui le projet compte plus d'une centaine de modules.
   </para>
 </chapter>
