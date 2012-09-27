@@ -80,7 +80,7 @@ public class FeatureEditTDelegate extends AbstractFeatureEditionDelegate {
             
             final MapContext context = MapBuilder.createContext();
             final FeatureCollection col = DataUtilities.collection(feature);
-            final FeatureMapLayer layer = MapBuilder.createFeatureLayer(col, RandomStyleFactory.createRandomVectorStyle(col));
+            final FeatureMapLayer layer = MapBuilder.createFeatureLayer(col, RandomStyleFactory.createDefaultVectorStyle(col));
             context.layers().add(layer);
             
             //zoom on this single feature
