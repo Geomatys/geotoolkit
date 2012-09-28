@@ -183,7 +183,7 @@ public class JSimpleStylePanel extends StyleElementEditor implements PropertyPan
                 
                 // Get all selected items
                 final int selectetRow = guiTable.getSelectedRow();
-                if (selectetRow >= 0) {
+                if (selectetRow >= 0 && model.symbolizers.size() > selectetRow) {
                     final Object item = model.symbolizers.get(selectetRow);
 
                     if (item != null) {

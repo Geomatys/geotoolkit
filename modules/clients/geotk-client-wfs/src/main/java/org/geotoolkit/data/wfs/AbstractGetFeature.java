@@ -195,8 +195,8 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
 
         if(filter != null && filter != Filter.INCLUDE){
             final XMLUtilities util = new XMLUtilities();
-            final StringWriter writer = new StringWriter();
-
+            final StringWriter writer = new StringWriter();            
+            
             try {
                 util.writeFilter(writer, filter, org.geotoolkit.sld.xml.Specification.Filter.V_1_1_0);
             } catch (JAXBException ex) {
@@ -244,6 +244,12 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
             typeNames.add(typeName);
         }
 
+        Filter filter = Filter.INCLUDE;
+        if(this.filter != null && this.filter != Filter.INCLUDE){
+            final SimplifyingFilterVisitor visitor = new SimplifyingFilterVisitor();
+            filter = (Filter) this.filter.accept(visitor, null);
+        }
+        
         FilterType xmlFilter;
         if(filter != null && filter != Filter.INCLUDE){
             final XMLUtilities util = new XMLUtilities();
