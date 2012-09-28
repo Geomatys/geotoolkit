@@ -116,13 +116,7 @@ public class WebFeatureServer extends AbstractServer implements DataStore{
     
     private synchronized DataStore getStore() {
         if(store == null){
-            try {
-                store = new WFSDataStore(serverURL.toURI(), getUsePost(),getLongitudeFirst());
-            } catch (MalformedURLException ex) {
-                LOGGER.log(Level.WARNING, ex.getMessage(), ex);
-            } catch (URISyntaxException ex) {
-                LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
-            }
+            store = new WFSDataStore(this);
         }
         return store;
     }
