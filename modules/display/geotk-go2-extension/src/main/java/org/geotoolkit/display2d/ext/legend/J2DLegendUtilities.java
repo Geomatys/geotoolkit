@@ -393,13 +393,15 @@ public class J2DLegendUtilities {
                     continue;
                 }
 
-                if (images != null && image != null) {
+                if (image != null) {
                     dim.height += image.getHeight();
                     if (dim.width < image.getWidth()) {
                         dim.width = image.getWidth();
                     }
 
-                    images.put(covLayer.getCoverageName(), image);
+                    if(images != null){
+                        images.put(covLayer.getCoverageName(), image);
+                    }
                 }
                 continue;
             }
