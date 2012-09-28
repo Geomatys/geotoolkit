@@ -110,8 +110,8 @@ public class WebFeatureServer extends AbstractServer implements DataStore{
         return Parameters.value(WFSDataStoreFactory.POST_REQUEST, parameters);
     }
     
-    public boolean getLongitudeFirst(){        
-        return Parameters.value(WFSDataStoreFactory.LONGITUDE_FIRST, parameters);
+    public boolean getLongitudeFirst(){
+        return Parameters.getOrCreate(WFSDataStoreFactory.LONGITUDE_FIRST, parameters).booleanValue();
     }
     
     private synchronized DataStore getStore() {

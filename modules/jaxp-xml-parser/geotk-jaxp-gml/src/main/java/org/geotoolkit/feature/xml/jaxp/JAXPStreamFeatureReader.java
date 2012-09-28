@@ -63,6 +63,7 @@ import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
 
 import static javax.xml.stream.events.XMLEvent.*;
+import net.iharder.Base64;
 import org.geotoolkit.gml.GeometrytoJTS;
 import org.geotoolkit.gml.xml.AbstractGeometry;
 import org.geotoolkit.gml.xml.GMLMarshallerPool;
@@ -363,8 +364,19 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                         namedProperties.put(propName, FF.createAttribute(list, (AttributeDescriptor)pdesc, null));
 
                     } else if (previous == null) {
-                        namedProperties.put(propName, FF.createAttribute(Converters.convert(content, propertyType),
+                        if(propertyType == byte[].class && content != null){
+                            Object value = content;
+                            try {
+                                value = Base64.decode(content);
+                            } catch (IOException ex) {
+                                LOGGER.log(Level.INFO, "Failed to parser binary64 : "+ex.getMessage(),ex);
+                            }
+                            namedProperties.put(propName, FF.createAttribute(value,
                                 (AttributeDescriptor)pdesc, null));
+                        }else{
+                            namedProperties.put(propName, FF.createAttribute(Converters.convert(content, propertyType),
+                                (AttributeDescriptor)pdesc, null));
+                        }
 
                     } else if (previous instanceof Map && nameAttribute != null) {
                         ((Map) previous).put(nameAttribute, content);
@@ -378,7 +390,19 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                     } else {
                         final List multipleValue = new ArrayList();
                         multipleValue.add(previous);
-                        multipleValue.add(Converters.convert(content, propertyType));
+                        
+                        if(propertyType == byte[].class && content != null){
+                            Object value = content;
+                            try {
+                                value = Base64.decode(content);
+                            } catch (IOException ex) {
+                                LOGGER.log(Level.INFO, "Failed to parser binary64 : "+ex.getMessage(),ex);
+                            }
+                            multipleValue.add(value);
+                        }else{
+                            multipleValue.add(Converters.convert(content, propertyType));
+                        }
+                        
                         namedProperties.put(propName, FF.createAttribute(multipleValue, (AttributeDescriptor)pdesc, null));
                     }
 
