@@ -30,12 +30,15 @@ import org.opengis.filter.spatial.BinarySpatialOperator;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
+import java.lang.reflect.Array;
+import net.iharder.Base64;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
 import org.opengis.filter.FilterFactory;
 import org.opengis.geometry.Envelope;
 
 import static org.geotoolkit.util.ArgumentChecks.*;
+import org.geotoolkit.util.Converters;
 
 public class PostgisFilterToSQL extends FilterToSQL {
 
@@ -55,6 +58,18 @@ public class PostgisFilterToSQL extends FilterToSQL {
         helper.looseBBOXEnabled = looseBBOXEnabled;
     }
 
+    
+    @Override
+    protected void writeLiteral(final Object literal) throws IOException {
+        if(literal instanceof byte[]) {
+          out.write("decode('");
+          out.write(Base64.encodeBytes((byte[])literal));
+          out.write("','base64')");
+        }else{
+            super.writeLiteral(literal);
+        }
+    }
+    
     @Override
     protected void visitLiteralGeometry(final Literal expression) throws IOException {
         // evaluate the literal and store it for later
