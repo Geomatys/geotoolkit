@@ -251,7 +251,7 @@ public final strictfp class PassThroughTransformTest extends TransformTestBase {
         }
         transform.transform(sourceData, 0, sourceData, 0, numPts);
         assertCoordinatesEqual("Expected a plain copy.", fullDimension,
-                targetData, 0, sourceData, 0, numPts, CalculationType.STRICT);
+                targetData, 0, sourceData, 0, numPts, CalculationType.IDENTITY);
         /*
          * Below is a relatively high tolerance value, because result are
          * computed using inputs stored as float values.

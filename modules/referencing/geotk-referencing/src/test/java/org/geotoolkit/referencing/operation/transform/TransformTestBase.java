@@ -232,7 +232,7 @@ public abstract strictfp class TransformTestBase extends TransformTestCase imple
      */
     @Override
     public final void adjust(final double[] tolerance, final DirectPosition coordinate, final CalculationType mode) {
-        if (mode != CalculationType.STRICT) {
+        if (mode != CalculationType.IDENTITY) {
             final int zDim = forComparison(this.zDimension, mode);
             if (zDim >= 0 && zDim < tolerance.length) {
                 tolerance[zDim] = zTolerance;
