@@ -18,12 +18,13 @@ public class WFSClientDemo {
     public static void main(String[] args) throws MalformedURLException, URISyntaxException {
         Demos.init();
         
-        final WebFeatureServer wmsServer = new WebFeatureServer(new URL("http://demo.geomatys.com/constellation/WS/wfs?"), "1.1.0");
-        final GetCapabilitiesRequest getCapa = wmsServer.createGetCapabilities();
-        final GetFeatureRequest getFeature = wmsServer.createGetFeature();
+        
+        final WebFeatureServer wfsServer = new WebFeatureServer(new URL("http://demo.geomatys.com/constellation/WS/wfs?"), "1.1.0");
+        final GetCapabilitiesRequest getCapa = wfsServer.createGetCapabilities();
+        final GetFeatureRequest getFeature = wfsServer.createGetFeature();
 
         //simplify WFS like a datastore
-        final DataStore store = new WFSDataStore(new URI("http://demo.geomatys.com/constellation/WS/wfs?"), true,false);
+        final DataStore store = new WFSDataStore(wfsServer);
 
     }
 
