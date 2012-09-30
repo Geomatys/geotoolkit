@@ -2,9 +2,6 @@
 package org.geotoolkit.pending.demo.coverage;
 
 import com.sun.java.swing.plaf.gtk.GTKLookAndFeel;
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
 import javax.swing.UIManager;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
@@ -20,7 +17,7 @@ import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
 
 
-public class CustomCoverageDemo {
+public class CustomCoverage1SDemo {
     
     public static final MutableStyleFactory SF = new DefaultStyleFactory();
     
@@ -29,29 +26,31 @@ public class CustomCoverageDemo {
         
         UIManager.setLookAndFeel(new GTKLookAndFeel());
         
-        //first create an image        
-        final BufferedImage img = new BufferedImage(500, 500, BufferedImage.TYPE_INT_ARGB);        
-        final Graphics2D g2d = img.createGraphics();
-        g2d.setColor(Color.GREEN);
-        g2d.fillRect(0, 0, 500, 500);
+        //first create a matrix table
+        final float[][] matrix = new float[100][100];
+        for(int x=0;x<100;x++){
+            for(int y=0;y<100;y++){
+                matrix[x][y] = x+y;
+            }
+        }
+        
+        final GridCoverageBuilder gcb = new GridCoverageBuilder();
+        gcb.setRenderedImage(matrix);
         
         //set it's envelope
         final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
         env.setRange(0, 0, 100);
         env.setRange(1, 0, 100);
+        gcb.setEnvelope(env);
         
         //create the coverage
-        final GridCoverageBuilder gcb = new GridCoverageBuilder();
-        gcb.setEnvelope(env);
-        gcb.setRenderedImage(img);
-        final GridCoverage2D coverage =gcb.getGridCoverage2D();
+        final GridCoverage2D coverage = gcb.getGridCoverage2D();
                         
         //display it
         final MapContext context = MapBuilder.createContext();
         final CoverageMapLayer cl = MapBuilder.createCoverageLayer(coverage, SF.style(StyleConstants.DEFAULT_RASTER_SYMBOLIZER), "coverage");
         context.layers().add(cl);
         JMap2DFrame.show(context);
-        
     }
     
 }
