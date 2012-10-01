@@ -39,6 +39,7 @@ import org.geotoolkit.wps.converters.WPSObjectConverterAdapter;
 import org.geotoolkit.wps.xml.v100.ComplexDataType;
 import org.geotoolkit.wps.xml.v100.DataType;
 import org.geotoolkit.wps.xml.v100.ReferenceType;
+import org.opengis.coverage.Coverage;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
@@ -84,9 +85,9 @@ public final class WPSIO {
         for (final String readerMime : ImageIO.getReaderMIMETypes()) {
             if (!readerMime.isEmpty()) {
                 if (readerMime.equals("image/png")) {
-                    FORMATSUPPORTS.add(new FormatSupport(RenderedImage.class, IOType.BOTH, readerMime, null, null, true));
+                    FORMATSUPPORTS.add(new FormatSupport(RenderedImage.class, IOType.INPUT, readerMime, null, null, true));
                 } else {
-                    FORMATSUPPORTS.add(new FormatSupport(RenderedImage.class, IOType.BOTH, readerMime, null, null, false));
+                    FORMATSUPPORTS.add(new FormatSupport(RenderedImage.class, IOType.INPUT, readerMime, null, null, false));
                 }
             }
         }
@@ -94,20 +95,20 @@ public final class WPSIO {
         for (final String writerMime : ImageIO.getWriterMIMETypes()) {
             if (!writerMime.isEmpty()) {
                 if (writerMime.equals("image/png")) {
-                    FORMATSUPPORTS.add(new FormatSupport(RenderedImage.class, IOType.BOTH, writerMime, null, null, true));
+                    FORMATSUPPORTS.add(new FormatSupport(RenderedImage.class, IOType.OUTPUT, writerMime, null, null, true));
                 } else {
-                    FORMATSUPPORTS.add(new FormatSupport(RenderedImage.class, IOType.BOTH, writerMime, null, null, false));
+                    FORMATSUPPORTS.add(new FormatSupport(RenderedImage.class, IOType.OUTPUT, writerMime, null, null, false));
                 }
             }
         }
 
-        /*  Coverage
+        //  Coverage
         for (final String readerMime : ImageIO.getReaderMIMETypes()) {
             if (!readerMime.isEmpty()) {
                 if (readerMime.equals("image/png")) {
-                    FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.BOTH, readerMime, null, null, true));
+                    FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.INPUT, readerMime, null, null, true));
                 } else {
-                    FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.BOTH, readerMime, null, null, false));
+                    FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.INPUT, readerMime, null, null, false));
                 }
             }
         }
@@ -115,13 +116,12 @@ public final class WPSIO {
         for (final String writerMime : ImageIO.getWriterMIMETypes()) {
             if (!writerMime.isEmpty()) {
                 if (writerMime.equals("image/png")) {
-                    FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.BOTH, writerMime, null, null, true));
+                    FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.OUTPUT, writerMime, null, null, true));
                 } else {
-                    FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.BOTH, writerMime, null, null, false));
+                    FORMATSUPPORTS.add(new FormatSupport(Coverage.class, IOType.OUTPUT, writerMime, null, null, false));
                 }
             }
         }
-         */
 
         FORMATSUPPORTS.add(new FormatSupport(AffineTransform.class, IOType.INPUT, WPSMimeType.TEXT_XML.val(), Encoding.UTF8.getValue(), Schema.MATHML_3.getValue(), true));
 
@@ -273,7 +273,7 @@ public final class WPSIO {
 
         for (final FormatSupport formatSupport : FORMATSUPPORTS) {
             if (formatSupport.getClazz().equals(clazz) || formatSupport.getClazz().isAssignableFrom(clazz)) {
-                if (formatSupport.getIOType().equals(IOType.BOTH) || formatSupport.getIOType().equals(formatSupport.getIOType())) {
+                if (formatSupport.getIOType().equals(IOType.BOTH) || formatSupport.getIOType().equals(ioType)) {
                     supports.add(formatSupport);
                 }
             }
@@ -599,16 +599,28 @@ public final class WPSIO {
         } else if (dataType.equals(FormChoice.BBOX)) {
             clazz = Envelope.class;
         } else {
+            int nbSearch = 3;
+            int match;
+            for (final FormatSupport formatSupport : FORMATSUPPORTS) {
+                final String wpsMime = formatSupport.getMimeType();
+                final String wpsSchema = formatSupport.getSchema();
+                final String wpsEncoding = formatSupport.getEncoding();
 
-            final List<FormatSupport> candidates = new ArrayList<FormatSupport>();
+                match = 0;
 
-            for (final FormatSupport format : FORMATSUPPORTS) {
-                if (format.getIOType().equals(ioType) && format.getMimeType().equalsIgnoreCase(mimeType)) {
-                    candidates.add(format);
-                    if (schema != null && format.getSchema() != null && format.getSchema().equals(schema)) {
-                        clazz = format.getClazz();
-                        break;
-                    }
+                if ((mimeType == null && wpsMime== null)  || (mimeType != null && mimeType.equalsIgnoreCase(wpsMime))) {
+                    match++;
+                }
+                if ((schema == null && wpsSchema== null)  || (schema != null && schema.equalsIgnoreCase(wpsSchema))) {
+                    match++;
+                }
+                if ((encoding == null && wpsEncoding == null)  || (encoding != null && encoding.equalsIgnoreCase(wpsEncoding))) {
+                    match++;
+                }
+
+                if (match == nbSearch) {
+                    clazz = formatSupport.getClazz();
+                    break;
                 }
             }
         }
@@ -839,6 +851,19 @@ public final class WPSIO {
             hash = 83 * hash + (this.encoding != null ? this.encoding.hashCode() : 0);
             hash = 83 * hash + (this.schema != null ? this.schema.hashCode() : 0);
             return hash;
+        }
+
+        @Override
+        public String toString() {
+            final StringBuilder sb = new StringBuilder();
+            sb.append("FormatSupport{");
+            sb.append("class:").append(clazz.getCanonicalName()).append(", ");
+            sb.append("ioType:").append(ioType.toString()).append(", ");
+            sb.append("mimeType:").append(mimeType).append(", ");
+            sb.append("encoding:").append(encoding).append(", ");
+            sb.append("schema:").append(schema).append(", ");
+            sb.append("isDefault:").append(defaultFormat).append("}");
+            return sb.toString();
         }
     }
 }
