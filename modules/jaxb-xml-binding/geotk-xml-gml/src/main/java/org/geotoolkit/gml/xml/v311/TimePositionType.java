@@ -19,22 +19,20 @@ package org.geotoolkit.gml.xml.v311;
 import java.io.Serializable;
 import java.sql.Time;
 import java.sql.Timestamp;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+import org.geotoolkit.gml.xml.AbstractTimePosition;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.util.Utilities;
 import org.opengis.temporal.Position;
-import org.opengis.temporal.TemporalPosition;
 import org.opengis.util.InternationalString;
 
 
@@ -69,7 +67,7 @@ import org.opengis.util.InternationalString;
 @XmlType(name = "TimePositionType", propOrder = {
     "value"
 })
-public class TimePositionType implements Position, Serializable {
+public class TimePositionType extends AbstractTimePosition implements Serializable {
 
     @XmlValue
     private String value;
@@ -81,7 +79,6 @@ public class TimePositionType implements Position, Serializable {
     @XmlAttribute
     private TimeIndeterminateValueType indeterminatePosition;
 
-    private static final DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
     /**
      * empty constructor used by JAXB.
      */
@@ -97,8 +94,8 @@ public class TimePositionType implements Position, Serializable {
     }
 
     public TimePositionType(final Position value){
-        synchronized (formatter) {
-            this.value = formatter.format(value.getDate());
+        synchronized (FORMATTER) {
+            this.value = FORMATTER.format(value.getDate());
         }
     }
 
@@ -126,8 +123,8 @@ public class TimePositionType implements Position, Serializable {
      * @param value a date.
      */
     public TimePositionType(final Date time){
-        synchronized (formatter) {
-            this.value = formatter.format(time);
+        synchronized (FORMATTER) {
+            this.value = FORMATTER.format(time);
         }
     }
 
@@ -151,8 +148,8 @@ public class TimePositionType implements Position, Serializable {
     }
 
     public void setValue(Date value) {
-        synchronized (formatter) {
-            this.value = formatter.format(value);
+        synchronized (FORMATTER) {
+            this.value = FORMATTER.format(value);
         }
     }
 
@@ -229,19 +226,14 @@ public class TimePositionType implements Position, Serializable {
     }
 
     @Override
-    public TemporalPosition anyOther() {
-        return null;
-    }
-
-    @Override
     public Date getDate() {
         if (value != null && !value.isEmpty()) {
             try {
-                synchronized (formatter) {
-                    return formatter.parse(value);
+                synchronized (FORMATTER) {
+                    return FORMATTER.parse(value);
                 }
             } catch (ParseException ex) {
-                Logger.getLogger(TimePositionType.class.getName()).log(Level.WARNING, null, ex);
+                LOGGER.log(Level.WARNING, "Parse exception while parsing date value:" + value, ex);
             }
         }
         return null;
@@ -302,12 +294,12 @@ public class TimePositionType implements Position, Serializable {
             try {
                 final SimpleDateFormat sdf = new SimpleDateFormat("d MMMMM yyyy HH:mm:ss z");
                 final Date date;
-                synchronized (formatter) {
-                    date = formatter.parse(value);
+                synchronized (FORMATTER) {
+                    date = FORMATTER.parse(value);
                 }
                 s.append(sdf.format(date));
             } catch (ParseException ex) {
-                Logger.getLogger(TimePositionType.class.getName()).log(Level.WARNING, null, ex);
+               LOGGER.log(Level.WARNING, null, ex);
             }
         }
         return s.toString();
