@@ -23,6 +23,8 @@ import java.io.Serializable;
 
 import org.opengis.util.GenericName;
 import org.opengis.util.InternationalString;
+import org.geotoolkit.io.wkt.Formatter;
+import org.geotoolkit.io.wkt.FormattableObject;
 import org.opengis.metadata.extent.Extent;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.coverage.grid.GridGeometry;
@@ -65,7 +67,9 @@ import org.geotoolkit.lang.Decorator;
  * @module
  */
 @Decorator(CoordinateReferenceSystem.class)
-class DiscreteCRS<T extends CoordinateReferenceSystem> implements CoordinateReferenceSystem, GridGeometry, Serializable {
+class DiscreteCRS<T extends CoordinateReferenceSystem> extends FormattableObject
+        implements CoordinateReferenceSystem, GridGeometry, Serializable
+{
     /**
      * For cross-version compatibility.
      */
@@ -243,9 +247,22 @@ class DiscreteCRS<T extends CoordinateReferenceSystem> implements CoordinateRefe
     }
 
     /**
-     * Returns the WKT formatted by the wrapped CRS. This is okay to delegate to the
-     * wrapped CS despite having different CS, because the WKT representation of that
-     * CS is not changed.
+     * Delegates the formatting to the wrapped CRS if possible. It is okay to delegate to the
+     * wrapped CRS despite having different CS, because the WKT representation of that CS is
+     * not changed.
+     */
+    @Override
+    public String formatWKT(final Formatter formatter) {
+        if (crs instanceof FormattableObject) {
+            return ((FormattableObject) crs).formatWKT(formatter);
+        } else {
+            return super.formatWKT(formatter);
+        }
+    }
+
+    /**
+     * Returns the WKT formatted by the wrapped CRS.
+     * See the javadoc comment in {@link #formatWKT(Formatter)}.
      */
     @Override
     public final String toWKT() throws UnsupportedOperationException {

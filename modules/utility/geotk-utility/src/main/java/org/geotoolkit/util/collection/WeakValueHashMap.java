@@ -238,7 +238,7 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
      *
      * @param initialSize The initial size.
      */
-    public WeakValueHashMap(final int initialSize) {
+    public WeakValueHashMap(final int initialSize) { // LGPL
         final Entry[] table = newEntryTable(initialSize);
         threshold = Math.round(table.length * LOAD_FACTOR);
         lastRehashTime = System.currentTimeMillis();
@@ -246,7 +246,7 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
 
     /**
      * Sets the {@link #table} array to the specified size. The content of the old array is lost.
-     * The value is returned for convenience (this is actually a paranoic safety for making sure
+     * The value is returned for convenience (this is actually a paranoiac safety for making sure
      * that the caller will really use the new array, in case of synchronization bug).
      *
      * @todo Use the commented line instead if a future Java version supports generic arrays.
@@ -262,7 +262,7 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
      *
      * @param map Initial contents of the {@code WeakValueHashMap}.
      */
-    public WeakValueHashMap(final Map<K,V> map) {
+    public WeakValueHashMap(final Map<K,V> map) { // LGPL
         this(Math.round(map.size() / LOAD_FACTOR) + 1);
         putAll(map);
     }

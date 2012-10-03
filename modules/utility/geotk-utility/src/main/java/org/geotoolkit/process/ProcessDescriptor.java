@@ -48,6 +48,7 @@ import org.geotoolkit.internal.simple.SimpleParameterDescriptor;
  * See the {@linkplain org.geotoolkit.process package javadoc} for usage example.
  *
  * @author Johann Sorel (Geomatys)
+ * @author Quentin Boileau (Geomatys)
  * @version 3.20
  *
  * @since 3.19
@@ -82,9 +83,13 @@ public interface ProcessDescriptor extends Processing {
     Identifier getIdentifier();
 
     /**
-     * Proposed name to display in user interfaces.
+     * Process name to display in user interfaces.
+     * This name is not intended to identify the process;
+     * identification shall use the process {@linkplain #getIdentifier() identifier} instead.
      *
-     * @return The processing name to display in user interfaces.
+     * @return The processing name to display in user interfaces, or {@code null} if none.
+     *
+     * @since 3.20
      */
     InternationalString getDisplayName();
 
