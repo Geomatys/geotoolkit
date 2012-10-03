@@ -38,4 +38,13 @@ public final strictfp class AssertTest {
         assertMultilinesEquals("Line 1\nLine 2\r\nLine 3\n\rLine 5",
                                "Line 1\rLine 2\nLine 3\n\nLine 5");
     }
+
+    /**
+     * Tests the {@link Assert#serialize} method.
+     */
+    @Test
+    public void testSerialize() {
+        final String local = "Le silence éternel de ces espaces infinis m'effraie";
+        assertNotSame(local, assertSerializable(local));
+    }
 }
