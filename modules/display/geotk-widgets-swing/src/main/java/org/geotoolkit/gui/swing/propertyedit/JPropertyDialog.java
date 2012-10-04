@@ -96,8 +96,8 @@ public class JPropertyDialog extends JDialog{
         apply.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                for(PropertyPane edit : panels){
-                    edit.apply();
+                if(activePanel != null){
+                    activePanel.apply();
                 }
             }
         });
@@ -105,16 +105,17 @@ public class JPropertyDialog extends JDialog{
         revert.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(activePanel != null)
+                if(activePanel != null){
                     activePanel.reset();
+                }
             }
         });
         
         close.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                for(PropertyPane edit : panels){
-                    edit.apply();
+                if(activePanel != null){
+                    activePanel.apply();
                 }
                 dispose();
             }
