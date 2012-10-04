@@ -351,14 +351,18 @@ public class DuplicatingFilterVisitor implements FilterVisitor, ExpressionVisito
 
     @Override
     public Object visit(final Function expression, final Object extraData) {
-        final List<Expression> old = expression.getParameters();
-        final Expression[] args = new Expression[old.size()];
-        int i = 0;
-        for (Iterator<Expression> iter = old.iterator(); iter.hasNext(); i++) {
-            Expression exp = iter.next();
-            args[i] = visit(exp, extraData);
-        }
-        return getFactory(extraData).function(expression.getName(), args);
+        //TODO bug on duplicate interpolate and catorize.
+        //expecting the function to be immutable for now.
+        return expression;
+        
+//        final List<Expression> old = expression.getParameters();
+//        final Expression[] args = new Expression[old.size()];
+//        int i = 0;
+//        for (Iterator<Expression> iter = old.iterator(); iter.hasNext(); i++) {
+//            Expression exp = iter.next();
+//            args[i] = visit(exp, extraData);
+//        }
+//        return getFactory(extraData).function(expression.getName(), args);
     }
 
     @Override
