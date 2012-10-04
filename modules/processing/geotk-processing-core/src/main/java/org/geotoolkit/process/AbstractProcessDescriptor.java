@@ -20,6 +20,7 @@ package org.geotoolkit.process;
 import org.opengis.metadata.lineage.Algorithm;
 import java.util.Collections;
 import java.util.Collection;
+import org.geotoolkit.util.ArgumentChecks;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.identification.Identification;
@@ -125,6 +126,8 @@ public abstract class AbstractProcessDescriptor implements ProcessDescriptor {
         private final Identification factoryId;
 
         public DerivateIdentifier(final String code, final Identification factoryId) {
+            ArgumentChecks.ensureNonNull("factoryId", factoryId);
+            ArgumentChecks.ensureNonNull("code", code);
             this.code = code;
             this.factoryId = factoryId;
         }
