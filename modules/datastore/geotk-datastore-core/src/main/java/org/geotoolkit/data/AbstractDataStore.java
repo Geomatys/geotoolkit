@@ -540,8 +540,17 @@ public abstract class AbstractDataStore implements DataStore{
         final FeatureType original = reader.getFeatureType();
         FeatureType mask = original;
         if(properties != null){
+            final List<Name> names = new ArrayList<Name>();
+            loop:
+            for(Name n : properties){
+                for(Name dn : names){
+                    if(DefaultName.match(n, dn)) continue loop;
+                }
+                names.add(n);
+            }
+            
             try {
-                mask = FeatureTypeUtilities.createSubType(mask, properties);
+                mask = FeatureTypeUtilities.createSubType(mask, names.toArray(new Name[0]));
             } catch (SchemaException ex) {
                 throw new DataStoreException(ex);
             }
