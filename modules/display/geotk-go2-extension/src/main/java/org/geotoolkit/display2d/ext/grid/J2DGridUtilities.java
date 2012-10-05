@@ -33,8 +33,8 @@ import org.geotoolkit.display.axis.Graduation;
 import org.geotoolkit.display.axis.NumberGraduation;
 import org.geotoolkit.display.axis.TickIterator;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.container.statefull.StatefullContextParams;
-import org.geotoolkit.display2d.container.statefull.StatefullProjectedGeometry;
+import org.geotoolkit.display2d.container.stateless.DefaultProjectedGeometry;
+import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
 import org.geotoolkit.display2d.style.labeling.DefaultLabelLayer;
 import org.geotoolkit.display2d.style.labeling.DefaultLinearLabelDescriptor;
 import org.geotoolkit.display2d.style.labeling.LabelLayer;
@@ -133,8 +133,8 @@ public class J2DGridUtilities {
                 Geometry geom = fact.createLineString(lineCoords.toArray(new Coordinate[lineCoords.size()]));
                 if(geom == null) continue;
 
-                final StatefullContextParams params = new StatefullContextParams(null, null);            
-                final StatefullProjectedGeometry pg = new StatefullProjectedGeometry(params);
+                final StatelessContextParams params = new StatelessContextParams(null, null);            
+                final DefaultProjectedGeometry pg = new DefaultProjectedGeometry(params);
                 params.update(context);
                 pg.setDataGeometry(geom, gridCRS);
 
@@ -200,8 +200,8 @@ public class J2DGridUtilities {
                 lineCoords.add(new Coordinate(Math.nextAfter(maxX,Double.NEGATIVE_INFINITY), d));
 
                 Geometry geom = fact.createLineString(lineCoords.toArray(new Coordinate[lineCoords.size()]));
-                final StatefullContextParams params = new StatefullContextParams(null, null);            
-                final StatefullProjectedGeometry pg = new StatefullProjectedGeometry(params);
+                final StatelessContextParams params = new StatelessContextParams(null, null);            
+                final DefaultProjectedGeometry pg = new DefaultProjectedGeometry(params);
                 params.update(context);
                 pg.setDataGeometry(geom, gridCRS);
 

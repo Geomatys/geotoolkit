@@ -43,7 +43,7 @@ import org.geotoolkit.client.CapabilitiesException;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.primitive.SearchArea;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.container.statefull.StatefullProjectedCoverage;
+import org.geotoolkit.display2d.container.stateless.DefaultProjectedCoverage;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.gui.swing.go2.control.information.presenter.AbstractInformationPresenter;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
@@ -77,11 +77,11 @@ public class WMSPresenter extends AbstractInformationPresenter{
     public JComponent createComponent(final Object graphic,
             final RenderingContext2D context, final SearchAreaJ2D area) {
 
-        if (!(graphic instanceof StatefullProjectedCoverage)) {
+        if (!(graphic instanceof DefaultProjectedCoverage)) {
             return null;
         }
 
-        final StatefullProjectedCoverage graCoverage = (StatefullProjectedCoverage) graphic;
+        final DefaultProjectedCoverage graCoverage = (DefaultProjectedCoverage) graphic;
         final CoverageMapLayer layer = graCoverage.getLayer();
 
         if(!(layer.getCoverageReference() instanceof WMSCoverageReference)){

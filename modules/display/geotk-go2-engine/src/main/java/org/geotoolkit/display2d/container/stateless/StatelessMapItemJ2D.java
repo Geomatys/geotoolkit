@@ -39,7 +39,6 @@ import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.container.MultiThreadedRendering;
-import org.geotoolkit.display2d.container.statefull.StatefullCoverageLayerJ2D;
 import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.map.CollectionMapLayer;
@@ -121,7 +120,7 @@ public class StatelessMapItemJ2D<T extends MapItem> extends AbstractGraphicJ2D i
                 g2d = new StatelessPyramidalCoverageLayerJ2D(getCanvas(), (CoverageMapLayer)child);
             }else{
                 //normal coverage
-                g2d = new StatefullCoverageLayerJ2D(getCanvas(), (CoverageMapLayer)child);
+                g2d = new StatelessCoverageLayerJ2D(getCanvas(), (CoverageMapLayer)child);
             }            
         }else if(child instanceof MapLayer){
             g2d = new StatelessMapLayerJ2D(getCanvas(), (MapLayer)child);

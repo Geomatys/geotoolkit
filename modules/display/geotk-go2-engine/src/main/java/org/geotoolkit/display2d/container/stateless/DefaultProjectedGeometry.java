@@ -14,8 +14,9 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.display2d.container.statefull;
+package org.geotoolkit.display2d.container.stateless;
 
+import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
 import java.awt.Shape;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -41,9 +42,9 @@ import org.opengis.referencing.operation.TransformException;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class StatefullProjectedGeometry implements ProjectedGeometry {
+public class DefaultProjectedGeometry implements ProjectedGeometry {
 
-    private final StatefullContextParams params;
+    private final StatelessContextParams params;
     private MathTransform2D dataToObjective;
     private MathTransform2D dataToDisplay;
 
@@ -64,11 +65,11 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
     
     private boolean geomSet = false;
 
-    public StatefullProjectedGeometry(final StatefullContextParams params){
+    public DefaultProjectedGeometry(final StatelessContextParams params){
         this.params = params;
     }
 
-    public StatefullProjectedGeometry(final StatefullProjectedGeometry copy){
+    public DefaultProjectedGeometry(final DefaultProjectedGeometry copy){
         this.params = copy.params;
         this.dataToObjective = copy.dataToObjective;
         this.dataToDisplay = copy.dataToDisplay;
@@ -100,7 +101,7 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
                 dataToDisplay = (MathTransform2D) CRS.findMathTransform(dataCRS, params.displayCRS);
             }
         } catch (Exception ex) {
-            Logger.getLogger(StatefullProjectedGeometry.class.getName()).log(Level.WARNING, null, ex);
+            Logger.getLogger(DefaultProjectedGeometry.class.getName()).log(Level.WARNING, null, ex);
         }
     }
     

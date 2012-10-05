@@ -14,8 +14,9 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.display2d.container.statefull;
+package org.geotoolkit.display2d.container.stateless;
 
+import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.primitive.DefaultProjectedObject;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
@@ -36,13 +37,13 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class StatefullProjectedFeature extends DefaultProjectedObject<Feature> implements ProjectedFeature {
+public class DefaultProjectedFeature extends DefaultProjectedObject<Feature> implements ProjectedFeature {
 
-    public StatefullProjectedFeature(final StatefullContextParams<FeatureMapLayer> params){
+    public DefaultProjectedFeature(final StatelessContextParams<FeatureMapLayer> params){
         this(params,null);
     }
 
-    public StatefullProjectedFeature(final StatefullContextParams<FeatureMapLayer> params, 
+    public DefaultProjectedFeature(final StatelessContextParams<FeatureMapLayer> params, 
             final Feature feature){
         super(params,feature);
     }
@@ -50,7 +51,7 @@ public class StatefullProjectedFeature extends DefaultProjectedObject<Feature> i
     @Override
     public ProjectedGeometry getGeometry(String name) {
         if(name == null) name = DEFAULT_GEOM;
-        StatefullProjectedGeometry proj = geometries.get(name);
+        DefaultProjectedGeometry proj = geometries.get(name);
         
         CoordinateReferenceSystem dataCRS = null;
         if(proj == null){
@@ -69,7 +70,7 @@ public class StatefullProjectedFeature extends DefaultProjectedObject<Feature> i
                 dataCRS = ((GeometryDescriptor)prop).getCoordinateReferenceSystem();
             } 
             
-            proj = new StatefullProjectedGeometry(params);
+            proj = new DefaultProjectedGeometry(params);
             geometries.put(name, proj);
         }
         

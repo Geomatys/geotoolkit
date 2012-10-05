@@ -19,7 +19,6 @@ package org.geotoolkit.display2d.container.statefull;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.container.stateless.StatelessMapItemJ2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
-import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapItem;
 
@@ -38,12 +37,6 @@ public class StatefullContextJ2D extends StatelessMapItemJ2D<MapContext> {
     @Override
     protected GraphicJ2D parseChild(final MapItem item, final int index){
 
-        if (item instanceof FeatureMapLayer){
-            final StatefullFeatureLayerJ2D g2d = new StatefullFeatureLayerJ2D(getCanvas(), (FeatureMapLayer)item);
-            g2d.setParent(this);
-            g2d.setZOrderHint(index);
-            return g2d;
-        }
         return super.parseChild(item, index);
     }
 

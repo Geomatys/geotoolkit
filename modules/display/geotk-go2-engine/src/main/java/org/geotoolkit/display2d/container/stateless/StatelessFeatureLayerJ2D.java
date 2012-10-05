@@ -47,9 +47,6 @@ import org.geotoolkit.display2d.GO2Utilities;
 import static org.geotoolkit.display2d.GO2Utilities.*;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.container.statefull.StatefullCachedRule;
-import org.geotoolkit.display2d.container.statefull.StatefullContextParams;
-import org.geotoolkit.display2d.container.statefull.StatefullProjectedFeature;
 import org.geotoolkit.display2d.container.stateless.StatelessCollectionLayerJ2D.RenderingIterator;
 import org.geotoolkit.display2d.primitive.DefaultGraphicFeatureJ2D;
 import org.geotoolkit.display2d.primitive.DefaultSearchAreaJ2D;
@@ -123,7 +120,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
     }
 
     @Override
-    protected StatefullContextParams getStatefullParameters(final RenderingContext2D context){
+    protected StatelessContextParams getStatefullParameters(final RenderingContext2D context){
         params.update(context);
         return params;
     }
@@ -191,10 +188,10 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
 
     @Override
     protected RenderingIterator getIterator(final Collection<?> features,
-            final RenderingContext2D renderingContext, final StatefullContextParams params) {
+            final RenderingContext2D renderingContext, final StatelessContextParams params) {
         final Hints iteHints = new Hints(HintsPending.FEATURE_DETACHED, Boolean.FALSE);
         final FeatureIterator<? extends Feature> iterator = ((FeatureCollection)features).iterator(iteHints);
-        final StatefullProjectedFeature projectedFeature = new StatefullProjectedFeature(params);
+        final DefaultProjectedFeature projectedFeature = new DefaultProjectedFeature(params);
         return new GraphicIterator(iterator, projectedFeature);
     }
 
@@ -255,7 +252,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         //we do not check if the collection is empty or not since
         //it can be a very expensive operation
 
-        final StatefullContextParams params = getStatefullParameters(renderingContext);
+        final StatelessContextParams params = getStatefullParameters(renderingContext);
 
 
         // iterate and find the first graphic that hit the given point
@@ -268,9 +265,9 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         }
 
         //prepare the renderers
-        final StatefullCachedRule preparedRenderers = new StatefullCachedRule(rules, renderingContext);
+        final DefaultCachedRule preparedRenderers = new DefaultCachedRule(rules, renderingContext);
 
-        final StatefullProjectedFeature projectedFeature = new StatefullProjectedFeature(params);
+        final DefaultProjectedFeature projectedFeature = new DefaultProjectedFeature(params);
         try{
             while(iterator.hasNext()){
                 Feature feature = iterator.next();
@@ -611,9 +608,9 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
     private static class GraphicIterator implements RenderingIterator{
 
         private final FeatureIterator<? extends Feature> ite;
-        private final StatefullProjectedFeature projected;
+        private final DefaultProjectedFeature projected;
 
-        public GraphicIterator(final FeatureIterator<? extends Feature> ite, final StatefullProjectedFeature projected) {
+        public GraphicIterator(final FeatureIterator<? extends Feature> ite, final DefaultProjectedFeature projected) {
             this.ite = ite;
             this.projected = projected;
         }

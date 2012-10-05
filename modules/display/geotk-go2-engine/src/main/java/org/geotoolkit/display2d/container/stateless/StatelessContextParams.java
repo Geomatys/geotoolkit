@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.display2d.container.statefull;
+package org.geotoolkit.display2d.container.stateless;
 
 import java.awt.geom.AffineTransform;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
@@ -31,7 +31,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
-public class StatefullContextParams<T extends MapLayer> {
+public class StatelessContextParams<T extends MapLayer> {
 
     public RenderingContext2D context;
     public final ReferencedCanvas2D canvas;
@@ -42,7 +42,7 @@ public class StatefullContextParams<T extends MapLayer> {
     public CoordinateReferenceSystem objectiveCRS;
     public CoordinateReferenceSystem displayCRS;
 
-    public StatefullContextParams(final ReferencedCanvas2D canvas, final T layer){
+    public StatelessContextParams(final ReferencedCanvas2D canvas, final T layer){
         this.canvas = canvas;
         this.layer = layer;
     }
@@ -50,7 +50,7 @@ public class StatefullContextParams<T extends MapLayer> {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
-        sb.append(Classes.getShortName(StatefullContextParams.class));
+        sb.append(Classes.getShortName(StatelessContextParams.class));
         sb.append("  ");
         sb.append(objectiveToDisplay);
         return sb.toString();

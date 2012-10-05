@@ -22,8 +22,8 @@ import java.util.Map;
 import java.util.logging.Level;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display2d.GO2Utilities;
-import org.geotoolkit.display2d.container.statefull.StatefullContextParams;
-import org.geotoolkit.display2d.container.statefull.StatefullProjectedGeometry;
+import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
+import org.geotoolkit.display2d.container.stateless.DefaultProjectedGeometry;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.CRS;
@@ -46,17 +46,17 @@ public class DefaultProjectedObject<T> implements ProjectedObject {
 
     protected static final String DEFAULT_GEOM = "";
 
-    protected final StatefullContextParams params;
-    protected final Map<String,StatefullProjectedGeometry> geometries =
-            new LinkedHashMap<String,StatefullProjectedGeometry>(); //linked hashmap is faster than hashmap on iteration.
+    protected final StatelessContextParams params;
+    protected final Map<String,DefaultProjectedGeometry> geometries =
+            new LinkedHashMap<String,DefaultProjectedGeometry>(); //linked hashmap is faster than hashmap on iteration.
     protected T candidate;
 
 
-    public DefaultProjectedObject(final StatefullContextParams params){
+    public DefaultProjectedObject(final StatelessContextParams params){
         this(params,null);
     }
 
-    public DefaultProjectedObject(final StatefullContextParams params, final T candidate){
+    public DefaultProjectedObject(final StatelessContextParams params, final T candidate){
         this.params = params;
         this.candidate = candidate;
     }
@@ -69,19 +69,19 @@ public class DefaultProjectedObject<T> implements ProjectedObject {
     }
 
     public void clearDataCache(){
-        for(StatefullProjectedGeometry sg : geometries.values()){
+        for(DefaultProjectedGeometry sg : geometries.values()){
             sg.clearAll();
         }
     }
 
     public void clearObjectiveCache(){
-        for(StatefullProjectedGeometry geom : geometries.values()){
+        for(DefaultProjectedGeometry geom : geometries.values()){
             geom.clearObjectiveCache();
         }
     }
     
     public void clearDisplayCache(){
-        for(StatefullProjectedGeometry geom : geometries.values()){
+        for(DefaultProjectedGeometry geom : geometries.values()){
             geom.clearDisplayCache();
         }
     }
@@ -90,9 +90,9 @@ public class DefaultProjectedObject<T> implements ProjectedObject {
     public ProjectedGeometry getGeometry(String name) {
         if(name == null) name = DEFAULT_GEOM;
 
-        StatefullProjectedGeometry proj = geometries.get(name);
+        DefaultProjectedGeometry proj = geometries.get(name);
         if(proj == null){
-            proj = new StatefullProjectedGeometry(params);
+            proj = new DefaultProjectedGeometry(params);
             geometries.put(name, proj);
         }        
         

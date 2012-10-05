@@ -14,8 +14,9 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.display2d.container.statefull;
+package org.geotoolkit.display2d.container.stateless;
 
+import org.geotoolkit.display2d.container.stateless.StatelessContextParams;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -43,15 +44,15 @@ import org.opengis.referencing.operation.TransformException;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class StatefullProjectedCoverage implements ProjectedCoverage {
+public class DefaultProjectedCoverage implements ProjectedCoverage {
 
     private final Cache<GridCoverageReadParam,GridCoverage2D> cache = new Cache<GridCoverageReadParam,GridCoverage2D>(1,0,false);
 
-    private final StatefullContextParams params;
+    private final StatelessContextParams params;
     private final CoverageMapLayer layer;
-    private StatefullProjectedGeometry border;
+    private DefaultProjectedGeometry border;
 
-    public StatefullProjectedCoverage(final StatefullContextParams params, final CoverageMapLayer layer) {
+    public DefaultProjectedCoverage(final StatelessContextParams params, final CoverageMapLayer layer) {
         this.params = params;
         this.layer = layer;
     }
@@ -109,10 +110,10 @@ public class StatefullProjectedCoverage implements ProjectedCoverage {
             try {
                 env = CRS.transform(env, params.context.getObjectiveCRS2D());
             } catch (TransformException ex) {
-                Logger.getLogger(StatefullProjectedCoverage.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(DefaultProjectedCoverage.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-            border = new StatefullProjectedGeometry(params);
+            border = new DefaultProjectedGeometry(params);
             border.setDataGeometry(createGeometry(env),env.getCoordinateReferenceSystem());
         }
         return border;

@@ -112,24 +112,6 @@ public abstract  class ContextContainer2D extends AbstractContainer2D{
         DEFAULT_SELECTION_STYLE = style;
     }
 
-//    public static Style getBestSelectionStyle(FeatureType type){
-//        if(type == null){
-//            return DEFAULT_SELECTION_STYLE;
-//        }
-//
-//        Class clazz = type.getGeometryDescriptor().getType().getBinding();
-//
-//        if(Point.class.isAssignableFrom(clazz) || MultiPoint.class.isAssignableFrom(clazz)){
-//            return GO2Utilities.STYLE_FACTORY.style(DEFAULT_POLYGON_SELECTION_SYMBOL);
-//        }else if(LineString.class.isAssignableFrom(clazz) || MultiLineString.class.isAssignableFrom(clazz)){
-//            return GO2Utilities.STYLE_FACTORY.style(DEFAULT_POLYGON_SELECTION_SYMBOL);
-//        }else if(Polygon.class.isAssignableFrom(clazz) || MultiPolygon.class.isAssignableFrom(clazz)){
-//            return GO2Utilities.STYLE_FACTORY.style(DEFAULT_POLYGON_SELECTION_SYMBOL);
-//        }
-//
-//        return DEFAULT_SELECTION_STYLE;
-//    }
-
     protected final PropertyChangeSupport support = new PropertyChangeSupport(this);
     
     /**

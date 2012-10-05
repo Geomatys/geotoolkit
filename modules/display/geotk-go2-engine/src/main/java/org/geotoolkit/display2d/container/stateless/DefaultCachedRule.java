@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.display2d.container.statefull;
+package org.geotoolkit.display2d.container.stateless;
 
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.CachedRule;
@@ -27,13 +27,13 @@ import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class StatefullCachedRule {
+public class DefaultCachedRule {
 
     public final CachedRule[] rules;
     public final SymbolizerRenderer renderers[][];
     public final int elseRuleIndex;
 
-    public StatefullCachedRule(final CachedRule[] rules, final RenderingContext2D context) {
+    public DefaultCachedRule(final CachedRule[] rules, final RenderingContext2D context) {
 
         //sort the rules
         elseRuleIndex = sortByElseRule(rules);

@@ -27,7 +27,7 @@ import org.geotoolkit.coverage.CoverageReference;
 import org.geotoolkit.coverage.PyramidalModel;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
-import org.geotoolkit.display2d.container.statefull.StatefullCoverageLayerJ2D;
+import org.geotoolkit.display2d.container.stateless.StatelessCoverageLayerJ2D;
 import org.geotoolkit.display2d.container.stateless.StatelessPyramidalCoverageLayerJ2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.map.CoverageMapLayer;
@@ -67,7 +67,7 @@ public class WMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
         if(cr instanceof PyramidalModel){
             gra = new StatelessPyramidalCoverageLayerJ2D((J2DCanvas)canvas, cml);
         }else{
-            gra = new StatefullCoverageLayerJ2D((J2DCanvas)canvas, cml,true);
+            gra = new StatelessCoverageLayerJ2D((J2DCanvas)canvas, cml,true);
         }
         
         return Collections.<GraphicJ2D>singleton(gra);

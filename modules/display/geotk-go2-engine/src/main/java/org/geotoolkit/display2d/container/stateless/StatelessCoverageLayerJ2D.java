@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.display2d.container.statefull;
+package org.geotoolkit.display2d.container.stateless;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -49,20 +49,20 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class StatefullCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapLayer>{
+public class StatelessCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapLayer>{
 
-    private final StatefullProjectedCoverage projectedCoverage;
+    private final DefaultProjectedCoverage projectedCoverage;
     private final boolean ignoreBuilders;
     
     //compare values to update caches if necessary
-    private final StatefullContextParams params;
+    private final StatelessContextParams params;
     private CoordinateReferenceSystem lastObjectiveCRS = null;
 
-    public StatefullCoverageLayerJ2D(final J2DCanvas canvas, final CoverageMapLayer layer){
+    public StatelessCoverageLayerJ2D(final J2DCanvas canvas, final CoverageMapLayer layer){
         this(canvas,layer,false);
     }
     
-    public StatefullCoverageLayerJ2D(final J2DCanvas canvas, final CoverageMapLayer layer, final boolean ignoreBuilders){
+    public StatelessCoverageLayerJ2D(final J2DCanvas canvas, final CoverageMapLayer layer, final boolean ignoreBuilders){
         super(canvas, layer);
 
         this.ignoreBuilders = ignoreBuilders;
@@ -70,16 +70,16 @@ public class StatefullCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapL
         try {
             final GeneralGridGeometry ggg = layer.getCoverageReader().getGridGeometry(layer.getImageIndex());
             if(ggg == null){
-                Logger.getLogger(StatefullCoverageLayerJ2D.class.getName()).log(
+                Logger.getLogger(StatelessCoverageLayerJ2D.class.getName()).log(
                         Level.WARNING, "Could not access envelope of layer {0}", layer.getName());
             }
             
         } catch (CoverageStoreException ex) {
-            Logger.getLogger(StatefullCoverageLayerJ2D.class.getName()).log(Level.WARNING, null, ex);
+            Logger.getLogger(StatelessCoverageLayerJ2D.class.getName()).log(Level.WARNING, null, ex);
         }
 
-        params = new StatefullContextParams(canvas,null);
-        this.projectedCoverage = new StatefullProjectedCoverage(params, layer);
+        params = new StatelessContextParams(canvas,null);
+        this.projectedCoverage = new DefaultProjectedCoverage(params, layer);
     }
 
     private synchronized void updateCache(final RenderingContext2D context){
