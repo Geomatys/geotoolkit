@@ -26,13 +26,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JComponent;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
-
-import org.geotoolkit.map.MapContext;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display.canvas.control.NeverFailMonitor;
+import org.geotoolkit.display2d.canvas.J2DCanvas;
+import org.geotoolkit.display2d.canvas.J2DCanvasSwing;
 import org.geotoolkit.display2d.canvas.SwingVolatileGeoComponent;
 import org.geotoolkit.display2d.container.ContextContainer2D;
 import org.geotoolkit.display2d.container.DefaultContextContainer2D;
@@ -41,14 +40,14 @@ import org.geotoolkit.gui.swing.go2.decoration.ColorDecoration;
 import org.geotoolkit.gui.swing.go2.decoration.DefaultInformationDecoration;
 import org.geotoolkit.gui.swing.go2.decoration.InformationDecoration;
 import org.geotoolkit.gui.swing.go2.decoration.MapDecoration;
+import org.geotoolkit.map.MapContext;
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import static org.geotoolkit.util.ArgumentChecks.*;
 import org.geotoolkit.util.logging.Logging;
-
 import org.opengis.display.canvas.CanvasEvent;
 import org.opengis.display.canvas.CanvasListener;
 import org.opengis.display.canvas.RenderingState;
 import org.opengis.referencing.operation.TransformException;
-
-import static org.geotoolkit.util.ArgumentChecks.*;
 
 /**
  *
@@ -66,7 +65,8 @@ public class JMap2D extends JPanel{
     private static final Logger LOGGER = Logging.getLogger(JMap2D.class);
     
     private CanvasHandler handler;
-    private final SwingVolatileGeoComponent geoComponent;
+    private final J2DCanvas canvas;
+    private final JComponent geoComponent;
     private boolean statefull = false;
 
     private final List<MapDecoration> userDecorations = new ArrayList<MapDecoration>();
@@ -99,14 +99,19 @@ public class JMap2D extends JPanel{
         setBackground(Color.WHITE);
         setOpaque(true);
 
-        geoComponent = new SwingVolatileGeoComponent(DefaultGeographicCRS.WGS84);
-        geoComponent.getCanvas().setMonitor(new NeverFailMonitor());
-
+        if(statefull){
+            canvas = new J2DCanvasSwing(DefaultGeographicCRS.WGS84);
+            geoComponent = ((J2DCanvasSwing)canvas).getComponent();
+        }else{
+            geoComponent = new SwingVolatileGeoComponent(DefaultGeographicCRS.WGS84);
+            canvas = ((SwingVolatileGeoComponent)geoComponent).getCanvas();
+        }
+        canvas.setMonitor(new NeverFailMonitor());
+        
 
         mapDecorationPane.add(geoComponent, Integer.valueOf(0));
         mapDecorationPane.revalidate();
 
-        final J2DCanvas canvas = geoComponent.getCanvas();
         canvas.setContainer(new DefaultContextContainer2D(canvas, statefull));
         canvas.getController().setAutoRepaint(true);
 
@@ -146,23 +151,11 @@ public class JMap2D extends JPanel{
      * @return the effective Go2 Canvas.
      */
     public J2DCanvas getCanvas() {
-        return geoComponent.getCanvas();
-    }
-
-    public void setStatefull(final boolean stateFull){
-        this.statefull = stateFull;
-        final MapContext context = getContainer().getContext();
-        final ContextContainer2D container = new DefaultContextContainer2D(geoComponent.getCanvas(), stateFull);
-        container.setContext(context);
-        geoComponent.getCanvas().setContainer(container);
-    }
-
-    public boolean isStatefull(){
-        return statefull;
+        return canvas;
     }
 
     public ContextContainer2D getContainer(){
-        return (ContextContainer2D) geoComponent.getCanvas().getContainer();
+        return (ContextContainer2D) canvas.getContainer();
     }
     
     /**
@@ -170,7 +163,7 @@ public class JMap2D extends JPanel{
      * to avoid memoryleack if it uses thread or other resources
      */
     public void dispose() {
-        geoComponent.dispose();
+        canvas.dispose();
     }
     
     public CanvasHandler getHandler(){

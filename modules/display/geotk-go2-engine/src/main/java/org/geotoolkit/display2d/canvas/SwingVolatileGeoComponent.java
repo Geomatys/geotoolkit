@@ -143,8 +143,4 @@ public class SwingVolatileGeoComponent extends JComponent{
         
     }
 
-    public void dispose(){
-        canvas.dispose();
-    }
-
 }

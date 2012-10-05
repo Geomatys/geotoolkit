@@ -126,26 +126,6 @@ public class JCoordinateBar extends AbstractMapControlBar {
             }
         });
 
-        final JCheckBoxMenuItem guiStatefull = new JCheckBoxMenuItem(MessageBundle.getString("map_statefull")){
-            @Override
-            public boolean isSelected() {
-                if(map != null && map instanceof JMap2D){
-                    return ((JMap2D)map).isStatefull();
-                }else{
-                    return false;
-                }
-            }
-        };
-        guiStatefull.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent evt) {
-                if(map != null && map instanceof JMap2D){
-                    final JMap2D map2d = ((JMap2D)map);
-                    map2d.setStatefull(!map2d.isStatefull());
-                }
-            }
-        });
-
         final JCheckBoxMenuItem guiStyleOrder = new JCheckBoxMenuItem(MessageBundle.getString("map_style_order")){
             @Override
             public boolean isSelected() {
@@ -257,7 +237,6 @@ public class JCoordinateBar extends AbstractMapControlBar {
 
         final JPopupMenu guiHintMenu = new JPopupMenu();
         guiHintMenu.add(guiAxis);
-        guiHintMenu.add(guiStatefull);
         guiHintMenu.add(guiMultiThread);
         guiHintMenu.add(guiStyleOrder);
         guiHintMenu.add(guiAntiAliasing);
