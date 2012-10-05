@@ -21,11 +21,14 @@ import java.awt.AlphaComposite;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
 import java.beans.PropertyChangeEvent;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageBuilder;
+import org.geotoolkit.display.exception.PortrayalException;
+import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.service.CanvasDef;
@@ -35,9 +38,7 @@ import org.geotoolkit.display2d.service.ViewDef;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.opengis.geometry.Envelope;
-import org.opengis.metadata.spatial.PixelOrientation;
 
 /**
  *
@@ -66,16 +67,14 @@ public class StatefullMapLayerJ2D<T extends MapLayer> extends StatefullMapItemJ2
         
         GridCoverage2D coverage = this.buffer;        
         if(coverage == null) return;
-                
-        //we must switch to objectiveCRS for grid coverage
-        renderingContext.switchToObjectiveCRS();
         
-        final RenderedImage img = coverage.getRenderedImage();
-        final AffineTransform2D trs = (AffineTransform2D) coverage.getGridGeometry().getGridToCRS2D(PixelOrientation.UPPER_LEFT);
-                
         final Graphics2D g = renderingContext.getGraphics();
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,(float)item.getOpacity()));
-        g.drawRenderedImage(img, trs);
+        try {
+            GO2Utilities.portray(renderingContext, coverage);
+        } catch (PortrayalException ex) {
+            Logger.getLogger(StatefullMapLayerJ2D.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @Override
@@ -105,7 +104,7 @@ public class StatefullMapLayerJ2D<T extends MapLayer> extends StatefullMapItemJ2
         }
         this.env = env;
         this.env2d = env2d;
-        this.dim = dim;
+        this.dim = new Dimension(dim);
         if(mustUpdate){
             update();
         }

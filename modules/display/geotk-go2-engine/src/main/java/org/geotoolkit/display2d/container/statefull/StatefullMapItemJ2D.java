@@ -27,13 +27,17 @@ import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
+import org.geotoolkit.coverage.CoverageReference;
+import org.geotoolkit.coverage.PyramidalModel;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.primitive.SearchArea;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
+import org.geotoolkit.display2d.container.stateless.StatelessCoverageLayerJ2D;
 import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
+import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.ItemListener;
 import org.geotoolkit.map.MapItem;
@@ -129,6 +133,18 @@ public class StatefullMapItemJ2D<T extends MapItem> extends AbstractGraphicJ2D i
         final StatefullMapItemJ2D g2d;
         if (child instanceof FeatureMapLayer){
             g2d = new StatefullFeatureMapLayerJ2D(getCanvas(), this, (FeatureMapLayer)child);
+        }else if (child instanceof CoverageMapLayer){
+            final CoverageMapLayer layer = (CoverageMapLayer) child;
+            final CoverageReference ref = layer.getCoverageReference();
+            if(ref != null && ref instanceof PyramidalModel){
+                //pyramidal model, we can improve rendering
+                //TODO not ready yet
+                //g2d = new StatefullPyramidalCoverageLayerJ2D(getCanvas(), this, (CoverageMapLayer)child);
+                g2d = new StatefullMapLayerJ2D(getCanvas(), this, (CoverageMapLayer)child);
+            }else{
+                //normal coverage
+                g2d = new StatefullMapLayerJ2D(getCanvas(), this, (CoverageMapLayer)child);
+            }            
         }else if (child instanceof MapLayer){
             g2d = new StatefullMapLayerJ2D(getCanvas(), this, (MapLayer)child);
         }else{
