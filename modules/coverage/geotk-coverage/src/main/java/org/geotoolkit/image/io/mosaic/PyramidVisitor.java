@@ -120,39 +120,40 @@ public class PyramidVisitor implements TreeVisitor {
      */
     @Override
     public TreeVisitorResult visit(Envelope element) {
-        //recup le chemin
-        if (!(element instanceof RTreeTile))
-            throw new IllegalStateException("element is not pyramidTile type");
-
-        final int eltminx = (int) element.getMinimum(0);
-        final int eltminy = (int) element.getMinimum(1);
-
-        RenderedImage img = null;
-        try {
-            img = ImageIO.read(((RTreeTile)element).getPath());
-        } catch (IOException ex) {
-            Logger.getLogger(PyramidVisitor.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        if (img.getSampleModel().getNumBands() != nb)
-            throw new IllegalStateException("tile band number not equals to destination image band number = "+nb);
-
-        intersection.setBounds(bx - eltminx, by - eltminy, bw, bh);
-
-        final PixelIterator pix = PixelIteratorFactory.createRowMajorIterator(img, intersection);
-
-        final int ydeb = max(by, eltminy);
-        final int ymax = min(bymax, (int) element.getMaximum(1));
-        final int xdeb = max(bx, eltminx);
-        final int xmax = xdeb + (min(bxmax,(int) element.getMaximum(0)) - xdeb) * nb;
-
-        for (int y = ydeb ; y < ymax; y++) {
-            destPix.moveTo(xdeb, y, 0);
-            for (int x = xdeb; x < xmax; x++) {
-                pix.next();
-                destPix.setSample(pix.getSample());
-                destPix.next();
-            }
-        }
-        return TreeVisitorResult.CONTINUE;
+        return null;
+//        //recup le chemin
+//        if (!(element instanceof RTreeTile))
+//            throw new IllegalStateException("element is not pyramidTile type");
+//
+//        final int eltminx = (int) element.getMinimum(0);
+//        final int eltminy = (int) element.getMinimum(1);
+//
+//        RenderedImage img = null;
+//        try {
+//            img = ImageIO.read(((RTreeTile)element).getPath());
+//        } catch (IOException ex) {
+//            Logger.getLogger(PyramidVisitor.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//        if (img.getSampleModel().getNumBands() != nb)
+//            throw new IllegalStateException("tile band number not equals to destination image band number = "+nb);
+//
+//        intersection.setBounds(bx - eltminx, by - eltminy, bw, bh);
+//
+//        final PixelIterator pix = PixelIteratorFactory.createRowMajorIterator(img, intersection);
+//
+//        final int ydeb = max(by, eltminy);
+//        final int ymax = min(bymax, (int) element.getMaximum(1));
+//        final int xdeb = max(bx, eltminx);
+//        final int xmax = xdeb + (min(bxmax,(int) element.getMaximum(0)) - xdeb) * nb;
+//
+//        for (int y = ydeb ; y < ymax; y++) {
+//            destPix.moveTo(xdeb, y, 0);
+//            for (int x = xdeb; x < xmax; x++) {
+//                pix.next();
+//                destPix.setSample(pix.getSample());
+//                destPix.next();
+//            }
+//        }
+//        return TreeVisitorResult.CONTINUE;
     }
 }
