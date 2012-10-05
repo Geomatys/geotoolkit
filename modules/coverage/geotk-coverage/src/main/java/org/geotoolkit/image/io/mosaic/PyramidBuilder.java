@@ -130,7 +130,6 @@ public class PyramidBuilder {
         for (TileManager tileManager : originalMosaic) {
             //on defini la region globale de l'ensemble des tuiles
             globalRegion  = tileManager.getRegion();
-            System.out.println("globalregion = "+globalRegion);
 
             Collection<Tile> listTile = tileManager.getTiles();
             //pour chaque image de chacun des tiles manager

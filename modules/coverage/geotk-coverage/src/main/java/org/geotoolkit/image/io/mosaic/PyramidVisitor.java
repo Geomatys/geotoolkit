@@ -121,7 +121,7 @@ public class PyramidVisitor implements TreeVisitor {
     @Override
     public TreeVisitorResult visit(Envelope element) {
         //recup le chemin
-        if (!(element instanceof PyramidTile))
+        if (!(element instanceof RTreeTile))
             throw new IllegalStateException("element is not pyramidTile type");
 
         final int eltminx = (int) element.getMinimum(0);
@@ -129,7 +129,7 @@ public class PyramidVisitor implements TreeVisitor {
 
         RenderedImage img = null;
         try {
-            img = ImageIO.read(((PyramidTile)element).getPath());
+            img = ImageIO.read(((RTreeTile)element).getPath());
         } catch (IOException ex) {
             Logger.getLogger(PyramidVisitor.class.getName()).log(Level.SEVERE, null, ex);
         }
