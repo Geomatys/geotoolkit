@@ -34,6 +34,7 @@ import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
+import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.ItemListener;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
@@ -66,8 +67,9 @@ public class StatefullMapItemJ2D<T extends MapItem> extends AbstractGraphicJ2D i
 
         if(parent == null){
             queue = new ArrayBlockingQueue(100);
-            exec = new ThreadPoolExecutor(0, Runtime.getRuntime().availableProcessors(), 
-                    1, TimeUnit.MINUTES, queue, LOCAL_REJECT_EXECUTION_HANDLER);
+            exec = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors(), Runtime.getRuntime().availableProcessors(), 
+                    1, TimeUnit.MINUTES, queue, 
+                    LOCAL_REJECT_EXECUTION_HANDLER);
         }
         
         parseItem(this.item);
@@ -125,7 +127,9 @@ public class StatefullMapItemJ2D<T extends MapItem> extends AbstractGraphicJ2D i
     protected GraphicJ2D parseChild(final MapItem child, final int index){
 
         final StatefullMapItemJ2D g2d;
-        if (child instanceof MapLayer){
+        if (child instanceof FeatureMapLayer){
+            g2d = new StatefullFeatureMapLayerJ2D(getCanvas(), this, (FeatureMapLayer)child);
+        }else if (child instanceof MapLayer){
             g2d = new StatefullMapLayerJ2D(getCanvas(), this, (MapLayer)child);
         }else{
             g2d = new StatefullMapItemJ2D(getCanvas(), this, child);
